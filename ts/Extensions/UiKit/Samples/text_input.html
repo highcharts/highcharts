@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UI Kit - Text Input Component</title>
+    <link rel="stylesheet" href="../src/css/style.css" />
+    <style>
+      body {
+        padding: 20px;
+        background-color: var(--color-neutral-0);
+        color: var(--color-neutral-1000);
+        font-family: 'Segoe UI', sans-serif;
+      }
+
+      #container {
+        max-width: 650px;
+        margin: 0 auto;
+      }
+
+      .text-input-demo {
+        margin-bottom: 30px;
+        padding: 20px;
+        border: 1.5px solid var(--color-neutral-200);
+        border-radius: 12px;
+        background-color: var(--color-neutral-0);
+      }
+
+      .text-input-demo h3 {
+        margin-top: 0;
+        margin-bottom: 20px;
+        color: var(--color-neutral-1000);
+      }
+
+      .text-input-demo p {
+        margin-bottom: 16px;
+        color: var(--color-neutral-600);
+        font-size: 0.875em;
+      }
+
+      .output-display {
+        margin-top: 20px;
+        padding: 12px;
+        border: 1.5px solid var(--color-neutral-200);
+        border-radius: 8px;
+        background-color: var(--color-neutral-50);
+        font-family: monospace;
+        font-size: 0.875em;
+      }
+
+      .theme-toggle {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 10px 20px;
+        border-radius: 8px;
+        border: 1.5px solid var(--color-neutral-200);
+        background-color: var(--color-neutral-0);
+        color: var(--color-neutral-1000);
+        cursor: pointer;
+        font-size: 0.875em;
+      }
+
+      .theme-toggle:hover {
+        background-color: var(--color-neutral-50);
+      }
+
+      .highcharts-uik-button {
+        font-family: inherit;
+        font-size: 1em;
+        font-weight: 500;
+        line-height: 1.5;
+        padding: 10px 20px;
+        border-radius: 8px;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        box-sizing: border-box;
+        display: inline-block;
+        align-items: center;
+        justify-content: center;
+        transition:
+          background-color 0.2s ease-in-out,
+          color 0.2s ease-in-out,
+          box-shadow 0.2s ease-in-out,
+          transform 0.1s ease-in-out;
+      }
+
+      .highcharts-uik-button:hover {
+        opacity: 0.9;
+        box-shadow: var(--shadow-50);
+      }
+
+      .highcharts-uik-button.default {
+        color: var(--color-neutral-0);
+        background-color: var(--color-brand-500);
+      }
+    </style>
+  </head>
+  <body>
+    <button class="theme-toggle" id="theme-toggle">Toggle Light Mode</button>
+
+    <div id="container">
+      <h1>Text Input Component Samples</h1>
+
+      <div class="text-input-demo">
+        <h3>Basic Text Input</h3>
+        <p>
+          A simple text input with a label and onChange that displays the value
+          in real-time.
+        </p>
+        <div id="basic-demo"></div>
+        <div class="output-display" id="basic-output">
+          Current value: (empty)
+        </div>
+      </div>
+
+      <div class="text-input-demo">
+        <h3>Text Input with Placeholder</h3>
+        <p>
+          Text input with placeholder text that disappears when the user starts
+          typing.
+        </p>
+        <div id="placeholder-demo"></div>
+      </div>
+
+      <div class="text-input-demo">
+        <h3>Text Input with Initial Value</h3>
+        <p>
+          Text input pre-populated with a default value using the value option.
+        </p>
+        <div id="value-demo"></div>
+      </div>
+
+      <div class="text-input-demo">
+        <h3>Disabled State</h3>
+        <p>
+          Input can be disabled programmatically to prevent user interaction.
+        </p>
+        <div id="disabled-demo"></div>
+      </div>
+
+      <div class="text-input-demo">
+        <h3>Real-time Validation</h3>
+        <p>Example of input validation with instant feedback.</p>
+        <div id="validation-demo"></div>
+        <div class="output-display" id="validation-output">
+          Status: Waiting for input...
+        </div>
+      </div>
+    </div>
+  </body>
+
+  <script type="module">
+    import { appendEl, createEl } from '../dist/ts/dom.js';
+    import { TextInput } from '../dist/ts/components/TextInput.js';
+
+    // Theme toggle functionality
+    const themeToggle = document.getElementById('theme-toggle');
+    let isDark = true;
+
+    document.documentElement.setAttribute('data-theme', 'dark');
+
+    themeToggle.addEventListener('click', () => {
+      isDark = !isDark;
+      document.documentElement.setAttribute(
+        'data-theme',
+        isDark ? 'dark' : 'light'
+      );
+      themeToggle.textContent = isDark
+        ? 'Toggle Light Mode'
+        : 'Toggle Dark Mode';
+    });
+
+    // Basic demo with onChange callback
+    const basicInput = TextInput({
+      labelText: 'Font size',
+      onChange: (value) => {
+        document.getElementById('basic-output').textContent =
+          `Current value: ${value || '(empty)'}`;
+      }
+    });
+    appendEl(document.getElementById('basic-demo'), basicInput.element);
+
+    // Placeholder demo
+    const placeholderInput = TextInput({
+      labelText: 'Username',
+      placeholder: 'Enter your username...'
+    });
+    appendEl(
+      document.getElementById('placeholder-demo'),
+      placeholderInput.element
+    );
+
+    // Value demo
+    const valueInput = TextInput({
+      labelText: 'Pre-filled Input',
+      value: 'This input has an initial value'
+    });
+    appendEl(document.getElementById('value-demo'), valueInput.element);
+
+    // Disabled demo
+    const disabledInput = TextInput({
+      labelText: 'Disabled Input',
+      value: 'Testing disabled attribute',
+      id: 'disabled-input'
+    });
+    disabledInput.setInputDisabled(true);
+
+    const toggleButton = createEl(
+      'button',
+      'highcharts-uik-button default',
+      'Enable Input'
+    );
+
+    let isDisabled = true;
+    toggleButton.addEventListener('click', () => {
+      isDisabled = !isDisabled;
+      disabledInput.setInputDisabled(isDisabled);
+      toggleButton.textContent = isDisabled ? 'Enable Input' : 'Disable Input';
+    });
+
+    appendEl(
+      document.getElementById('disabled-demo'),
+      disabledInput.element,
+      toggleButton
+    );
+
+    // Validation demo
+    const emailValidationInput = TextInput({
+      labelText: 'Email Validation',
+      type: 'email',
+      placeholder: 'Enter a valid email...',
+      onChange: (value) => {
+        const output = document.getElementById('validation-output');
+        if (!value) {
+          output.textContent = 'Status: Waiting for input...';
+          output.style.color = 'var(--color-neutral-600)';
+        } else {
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (emailRegex.test(value)) {
+            output.textContent = '✓ Valid email address';
+            output.style.color = 'var(--color-success-600)';
+          } else {
+            output.textContent = '✗ Invalid email format';
+            output.style.color = 'var(--color-danger-500)';
+          }
+        }
+      }
+    });
+    appendEl(
+      document.getElementById('validation-demo'),
+      emailValidationInput.element
+    );
+  </script>
+</html>
