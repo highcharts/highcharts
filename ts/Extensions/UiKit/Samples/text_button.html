@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UI Kit - Text Button Component</title>
+    <link rel="stylesheet" href="../CSS/style.css" />
+    <style>
+      body {
+        padding: 20px;
+        background-color: var(--color-neutral-0);
+        color: var(--color-neutral-1000);
+        font-family: 'Segoe UI', sans-serif;
+      }
+
+      #container {
+        max-width: 650px;
+        margin: 0 auto;
+      }
+
+      .text-button-demo {
+        margin-bottom: 30px;
+        padding: 20px;
+        border: 1.5px solid var(--color-neutral-200);
+        border-radius: 12px;
+        background-color: var(--color-neutral-0);
+      }
+
+      .text-button-demo h3 {
+        margin-top: 0;
+        margin-bottom: 20px;
+        color: var(--color-neutral-1000);
+      }
+
+      .text-button-demo p {
+        margin-bottom: 16px;
+        color: var(--color-neutral-600);
+        font-size: 0.875em;
+      }
+
+      .button-row {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+
+      .output-display {
+        margin-top: 20px;
+        padding: 12px;
+        border: 1.5px solid var(--color-neutral-200);
+        border-radius: 8px;
+        background-color: var(--color-neutral-50);
+        font-family: monospace;
+        font-size: 0.875em;
+      }
+
+      .theme-toggle {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 10px 20px;
+        border-radius: 8px;
+        border: 1.5px solid var(--color-neutral-200);
+        background-color: var(--color-neutral-0);
+        color: var(--color-neutral-1000);
+        cursor: pointer;
+        font-size: 0.875em;
+        z-index: 100;
+      }
+
+      .theme-toggle:hover {
+        background-color: var(--color-neutral-50);
+      }
+
+      /* Button group container - like in the reference image */
+      .button-group {
+        display: inline-flex;
+        gap: 0;
+        background-color: var(--color-neutral-0);
+        border: 1px solid var(--color-neutral-200);
+        border-radius: 8px;
+        padding: 4px;
+        box-shadow: var(--shadow-50);
+      }
+
+      .button-group .highcharts-uik-button {
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <button class="theme-toggle" id="theme-toggle">Toggle Light Mode</button>
+
+    <div id="container">
+      <h1>Text Button Component Samples</h1>
+
+      <div class="text-button-demo">
+        <h3>Button Group</h3>
+        <p>Example of button group similar to the range selector.</p>
+        <div id="button-group-demo"></div>
+        <div class="output-display" id="button-group-output">
+          Selected: All time
+        </div>
+      </div>
+
+      <div class="text-button-demo">
+        <h3>Button Variants</h3>
+        <p>Different visual styles for various use cases.</p>
+        <div class="button-row" id="variants-demo"></div>
+      </div>
+
+      <div class="text-button-demo">
+        <h3>Button Sizes</h3>
+        <p>Three size options: small, medium, and large.</p>
+        <div class="button-row" id="sizes-demo"></div>
+      </div>
+
+      <div class="text-button-demo">
+        <h3>Active State</h3>
+        <p>Toggle buttons with active/selected state.</p>
+        <div class="button-row" id="active-demo"></div>
+        <div class="output-display" id="active-output">
+          Click buttons to toggle active state
+        </div>
+      </div>
+
+      <div class="text-button-demo">
+        <h3>Disabled State</h3>
+        <p>Buttons can be disabled to prevent interaction.</p>
+        <div class="button-row" id="disabled-demo"></div>
+      </div>
+
+      <div class="text-button-demo">
+        <h3>Click Event Handling</h3>
+        <p>Buttons with onClick callbacks.</p>
+        <div class="button-row" id="events-demo"></div>
+        <div class="output-display" id="events-output">
+          Click a button to see the event...
+        </div>
+      </div>
+
+      <div class="text-button-demo">
+        <h3>Programmatic Control</h3>
+        <p>
+          Demonstrating helper functions to control button state
+          programmatically.
+        </p>
+        <div class="button-row" id="programmatic-demo"></div>
+        <div class="button-row" style="margin-top: 12px">
+          <button class="highcharts-uik-button default" id="toggle-active-btn">
+            Toggle Active
+          </button>
+          <button
+            class="highcharts-uik-button default"
+            id="toggle-disabled-btn"
+          >
+            Toggle Disabled
+          </button>
+          <button class="highcharts-uik-button default" id="change-text-btn">
+            Change Text
+          </button>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script type="module">
+    import { appendEl, createEl } from '../dist/ts/dom.js';
+    import { TextButton } from '../dist/ts/components/TextButton.js';
+
+    // Theme toggle functionality
+    const themeToggle = document.getElementById('theme-toggle');
+    let isDark = true;
+
+    document.documentElement.setAttribute('data-theme', 'dark');
+
+    themeToggle.addEventListener('click', () => {
+      isDark = !isDark;
+      document.documentElement.setAttribute(
+        'data-theme',
+        isDark ? 'dark' : 'light'
+      );
+      themeToggle.textContent = isDark
+        ? 'Toggle Light Mode'
+        : 'Toggle Dark Mode';
+    });
+
+    // Button Group Demo (like reference image)
+    const timeRanges = ['1m', '2m', '6m', 'YTD', '1y', 'All time'];
+    let selectedRange = 'All time';
+    const buttonGroupButtons = [];
+
+    const buttonGroupContainer = createEl('div', 'button-group');
+
+    timeRanges.forEach((range) => {
+      const btn = TextButton({
+        text: range,
+        variant: 'default',
+        active: range === selectedRange,
+        onClick: () => {
+          // Deactivate all buttons
+          buttonGroupButtons.forEach((b) => b.toggleButtonActive(false));
+
+          // Activate clicked button
+          btn.toggleButtonActive(true);
+
+          selectedRange = range;
+          document.getElementById('button-group-output').textContent =
+            `Selected: ${range}`;
+        }
+      });
+      buttonGroupButtons.push(btn);
+      appendEl(buttonGroupContainer, btn.element);
+    });
+
+    appendEl(
+      document.getElementById('button-group-demo'),
+      buttonGroupContainer
+    );
+
+    // Variants Demo
+    const variantsContainer = document.getElementById('variants-demo');
+    appendEl(
+      variantsContainer,
+      TextButton({
+        text: 'Default',
+        variant: 'default'
+      }).element,
+      TextButton({
+        text: 'Primary',
+        variant: 'primary'
+      }).element,
+      TextButton({
+        text: 'Secondary',
+        variant: 'secondary'
+      }).element,
+      TextButton({
+        text: 'Success',
+        variant: 'success'
+      }).element,
+      TextButton({
+        text: 'Danger',
+        variant: 'danger'
+      }).element
+    );
+
+    // Sizes Demo
+    const sizesContainer = document.getElementById('sizes-demo');
+    appendEl(
+      sizesContainer,
+      TextButton({
+        text: 'Small',
+        size: 'small',
+        variant: 'primary'
+      }).element,
+      TextButton({
+        text: 'Medium',
+        size: 'medium',
+        variant: 'primary'
+      }).element,
+      TextButton({
+        text: 'Large',
+        size: 'large',
+        variant: 'primary'
+      }).element
+    );
+
+    // Active State Demo
+    const activeContainer = document.getElementById('active-demo');
+    const activeBtn1 = TextButton({
+      text: 'Toggle 1',
+      variant: 'secondary'
+    });
+    const activeBtn2 = TextButton({
+      text: 'Toggle 2',
+      variant: 'secondary'
+    });
+    const activeBtn3 = TextButton({
+      text: 'Toggle 3',
+      variant: 'secondary',
+      active: true
+    });
+
+    const activeButtonInstances = [activeBtn1, activeBtn2, activeBtn3];
+
+    // Add click handlers
+    activeBtn1.element.addEventListener('click', () => {
+      activeBtn1.toggleButtonActive();
+      updateActiveOutput();
+    });
+    activeBtn2.element.addEventListener('click', () => {
+      activeBtn2.toggleButtonActive();
+      updateActiveOutput();
+    });
+    activeBtn3.element.addEventListener('click', () => {
+      activeBtn3.toggleButtonActive();
+      updateActiveOutput();
+    });
+
+    const updateActiveOutput = () => {
+      const activeOnes = activeButtonInstances
+        .map((btn, idx) =>
+          btn.element.classList.contains('highcharts-uik-button-active')
+            ? `Toggle ${idx + 1}`
+            : null
+        )
+        .filter(Boolean);
+      document.getElementById('active-output').textContent =
+        activeOnes.length > 0
+          ? `Active: ${activeOnes.join(', ')}`
+          : 'No buttons active';
+    };
+
+    appendEl(
+      activeContainer,
+      activeBtn1.element,
+      activeBtn2.element,
+      activeBtn3.element
+    );
+
+    // Disabled State Demo
+    const disabledContainer = document.getElementById('disabled-demo');
+    appendEl(
+      disabledContainer,
+      TextButton({
+        text: 'Enabled',
+        variant: 'primary'
+      }).element,
+      TextButton({
+        text: 'Disabled',
+        variant: 'primary',
+        disabled: true
+      }).element,
+      TextButton({
+        text: 'Disabled Success',
+        variant: 'success',
+        disabled: true
+      }).element
+    );
+
+    // Events Demo
+    const eventsContainer = document.getElementById('events-demo');
+    let clickCount = 0;
+
+    appendEl(
+      eventsContainer,
+      TextButton({
+        text: 'Click Me!',
+        variant: 'primary',
+        onClick: () => {
+          clickCount++;
+          document.getElementById('events-output').textContent =
+            `Button clicked ${clickCount} time(s)`;
+        }
+      }).element,
+      TextButton({
+        text: 'Alert',
+        variant: 'secondary',
+        onClick: () => {
+          alert('Button clicked!');
+        }
+      }).element
+    );
+
+    // Programmatic Control Demo
+    const programmaticContainer = document.getElementById('programmatic-demo');
+    const controlledButton = TextButton({
+      text: 'Controlled Button',
+      variant: 'secondary'
+    });
+
+    appendEl(programmaticContainer, controlledButton.element);
+
+    document
+      .getElementById('toggle-active-btn')
+      .addEventListener('click', () => {
+        controlledButton.toggleButtonActive();
+      });
+
+    document
+      .getElementById('toggle-disabled-btn')
+      .addEventListener('click', () => {
+        controlledButton.setButtonDisabled(!controlledButton.element.disabled);
+      });
+
+    let textIndex = 0;
+    const texts = [
+      'Controlled Button',
+      'Text Changed!',
+      'Changed Again!',
+      'One More Time!'
+    ];
+    document.getElementById('change-text-btn').addEventListener('click', () => {
+      textIndex = (textIndex + 1) % texts.length;
+      controlledButton.setButtonText(texts[textIndex]);
+    });
+  </script>
+</html>
