@@ -538,6 +538,19 @@
     border-bottom-right-radius: var(--ig-border-radius);
 }
 
+/* Header cell menu button centered */
+.hcg-header-cell-container.hcg-zero-width .hcg-header-cell-menu-icon {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.hcg-header-cell-container.hcg-zero-width .hcg-header-cell-content {
+    visibility: hidden;
+    transition: none;
+}
+
 /* Header cell flex container */
 .hcg-header-cell-container {
     display: flex;
@@ -616,7 +629,8 @@
 .hcg-header-cell-icons:hover,
 .hcg-header-cell-icons:has(.hcg-button:focus-visible),
 .hcg-header-cell-icons:has(.hcg-button.highlighted),
-.hcg-header-cell-icons:has(.hcg-button.active) {
+.hcg-header-cell-icons:has(.hcg-button.active),
+.hcg-header-cell-container.hcg-zero-width .hcg-header-cell-icons {
     max-width: 100px;
     opacity: 1;
 }
