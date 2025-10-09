@@ -154,3 +154,85 @@
     color: var(--color-neutral-1000);
     background-color: var(--banner-danger);
 }
+
+/** INPUT VALUE STYLES */
+
+.highcharts-uik-number-input {
+    font-family: "IBM Plex Sans", sans-serif;
+    font-size: 11px;
+    font-weight: 450;
+    background-color: var(--number-input-bg);
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    white-space: nowrap;
+    border-style: solid;
+    border-radius: 6px;
+    border-color: #e8e8e8;
+    border-width: 1px;
+    height: 24px;
+}
+
+.highcharts-uik-number-input.split {
+    border: none;
+    background: none;
+    height: 26px;
+}
+
+.highcharts-uik-number-input-label {
+    margin-right: 16px;
+    padding: 0 16px;
+}
+
+.highcharts-uik-number-input-value-group {
+    font-family: "IBM Plex Sans", sans-serif;
+    font-size: 11px;
+    font-weight: 450;
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    white-space: nowrap;
+    border-radius: 6px;
+    height: 24px;
+    border: none;
+    background-color: var(--number-input-bg);
+}
+
+.highcharts-uik-number-input-value-group.split {
+    border: 1px solid #e8e8e8;
+}
+
+.highcharts-uik-number-input-value {
+    font-weight: 500;
+    padding-right: 16px;
+    flex: 0 0 auto;
+    display: flex;
+    justify-content: flex-end;
+    min-width: 5em;
+    overflow: hidden;
+}
+
+.highcharts-uik-input-value-button-group {
+    display: inline-flex;
+    flex-direction: row;
+    align-self: stretch;
+}
+
+.highcharts-uik-input-value-button {
+    border-left: solid;
+    border-color: #e8e8e8;
+    border-width: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.highcharts-uik-input-value-icon {
+    width: 0.75rem;
+    height: 0.75rem;
+}
