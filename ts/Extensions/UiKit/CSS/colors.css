@@ -64,6 +64,10 @@
     --banner-brand: #e1e3ff;
     --banner-success: #a7f3d0;
     --banner-danger: #fecaca;
+
+    /* Number input */
+    --number-input-bg: #f5f5f5;
+    --number-input-border: #e8e8e8;
 }
 
 [data-theme="dark"] {
