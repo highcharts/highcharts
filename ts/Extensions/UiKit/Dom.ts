@@ -78,7 +78,7 @@ export const appendEl = (
 ): HTMLElement => {
     // Iterate over each child
     for (const child of children) {
-    // Skip false children
+        // Skip false children
         if (child !== false) {
             // Append string as span element or HTMLElement directly
             parent.appendChild(
@@ -142,39 +142,6 @@ export const createEl = (
 };
 
 /**
- * Create an input HTML element with specified type, class, and value.
- *
- * @function createInputEl
- *
- * @param {string} type The type of input element to create (e.g., 'text',
- * 'checkbox').
- * @param {string} [className] Optional class name to assign to the input
- * element.
- * @param {string} [value] Optional value to assign to the input element.
- *
- * @return {HTMLInputElement} The created HTMLInputElement.
- */
-export const createInputEl = (
-    type: string,
-    className?: string,
-    value?: string
-): HTMLInputElement => {
-    // Create the specified HTML element
-    const node = createEl('input', className) as HTMLInputElement;
-
-    // Set the input type
-    node.type = type;
-
-    // Set the value if provided
-    if (value) {
-        node.value = value;
-    }
-
-    // Return the created element
-    return node;
-};
-
-/**
  * Set multiple attributes on an HTMLElement.
  *
  * @function setAttr
@@ -191,12 +158,12 @@ export const setAttr = (
 ): HTMLElement => {
     // Set attributes on the node
     for (const [key, value] of Object.entries(attr)) {
-    // Only set if value is not null or undefined
+        // Only set if value is not null or undefined
         if (value !== void 0 && value !== null) {
             // Assign property or attribute
             if (key in node) {
                 // Set as property if it exists on the element
-                Reflect.set(node, key, value);
+                (node as any)[key] = value;
             } else {
                 // Set as attribute otherwise
                 node.setAttribute(key, String(value));
@@ -267,7 +234,7 @@ export const addEvent = <T extends HTMLElement | Window>(
 ): { element: T; removeEvent: () => void } => {
     // If target is a string
     if (typeof target === 'string') {
-    // Create a span element
+        // Create a span element
         target = createEl('span', '', target) as T;
     }
 
@@ -306,13 +273,13 @@ export const addEvent = <T extends HTMLElement | Window>(
 export const once = <T extends HTMLElement | Window>(
     target: T | string,
     eventName: string,
-    callback: (event: Event, target: T) => void
+    callback: (event: Event, target?: T) => void
 ): T => {
     // Use addEvent to attach the event listener
     const handlerObj = addEvent(
         target,
         eventName,
-        (event: Event, target: T): void => {
+        (event: Event, target?: T): void => {
             // Call the provided callback
             // eslint-disable-next-line node/callback-return
             callback(event, target);
@@ -477,7 +444,6 @@ export default {
     respListen,
     appendEl,
     createEl,
-    createInputEl,
     applyStyle,
     addEvent,
     once,
