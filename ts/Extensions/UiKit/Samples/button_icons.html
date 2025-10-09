@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Button Icons Sample</title>
+    <link rel="stylesheet" href="./../src/css/style.css" />
+    <style>
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        background-color: var(--color-neutral-800);
+        color: var(--color-neutral-100);
+      }
+      #button-click-msg {
+        margin-top: 20px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container"></div>
+    <div id="button-click-msg"></div>
+  </body>
+  <script type="module">
+    import { appendEl, createEl, addEvent, toggleClass, setAttr } from '../dist/ts/dom.js';
+    import { ButtonIcon } from '../dist/ts/components/ButtonIcon.js';
+    import { ToggleSwitch } from '../dist/ts/components/ToggleSwitch.js';
+    import Icons from '../dist/ts/Icons.js';
+
+    const container = document.getElementById('container');
+
+    const preferred = window.matchMedia('(prefers-color-scheme: light)').matches
+      ? 'light'
+      : 'dark';
+
+    const showMsg = (msg) => () => {
+      document.getElementById('button-click-msg').innerText = msg;
+    };
+
+    const setButtonEvents = (button) => {
+      addEvent(button, 'click', showMsg(button.title + ' clicked!'));
+      addEvent(button, 'click', () => toggleClass(button, 'active'));
+
+      return button;
+    };
+
+    // Get icon from SVG icons collection
+    let icon = Icons['measure-xy.svg'];
+
+    // Create 1st buttonicon
+    const buttonIcon = ButtonIcon(icon, 'Measure XY');
+
+    // Create SVG element via DOM
+    const svgNS = 'http://www.w3.org/2000/svg';
+
+    const svg = document.createElementNS(svgNS, 'svg');
+    svg.setAttribute('width', '30');
+    svg.setAttribute('height', '30');
+
+    const circle = document.createElementNS(svgNS, 'circle');
+    circle.setAttribute('cx', '22');
+    circle.setAttribute('cy', '22');
+    circle.setAttribute('r', '15');
+    circle.setAttribute('fill', 'red');
+
+    svg.appendChild(circle);
+
+    // Create 2nd buttonicon
+    const svgButtonIcon = ButtonIcon(svg, 'Click Circle');
+
+    // Create image element
+    const image = createEl('img');
+    setAttr(
+      image,
+      {
+        'src': 'https://www.highcharts.com/samples/graphics/sun.png',
+        'alt': 'Sun icon'
+      }
+    );
+
+    // Create image buttonicon
+    const imageButtonIcon = ButtonIcon(image, 'Let there be sun');
+
+    // Create buttonicon from image URL
+    const srcButtonIcon = ButtonIcon(
+      'https://code.highcharts.com/12.4.0/gfx/stock-icons/label.svg',
+      'TXT annotation',
+      true
+    );
+
+    appendEl(
+      container,
+      createEl('h2', '', 'Button Icons Samples'),
+      createEl('h3', '', 'Toggle the switch for dark/light mode'),
+      setButtonEvents(buttonIcon),
+      setButtonEvents(svgButtonIcon),
+      setButtonEvents(imageButtonIcon),
+      setButtonEvents(srcButtonIcon),
+      addEvent(ToggleSwitch(), 'change', (e) => {
+        document.documentElement.setAttribute(
+          'data-theme',
+          e.target.checked ? 'dark' : 'light'
+        );
+      }).element
+    );
+
+  </script>
+</html>
