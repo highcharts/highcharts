@@ -242,7 +242,12 @@ class Accessibility {
             const parsedCondition =
                 ColumnFiltering.parseCamelCaseToReadable(condition);
 
-            if (condition === 'empty' || condition === 'notEmpty') {
+            if (
+                condition === 'empty' ||
+                condition === 'notEmpty' ||
+                condition === 'false' ||
+                condition === 'true'
+            ) {
                 msg = formatText(announcementsLang?.emptyFilterApplied || '', {
                     columnId,
                     condition: parsedCondition,
