@@ -2210,8 +2210,6 @@ class Series {
                             (pOptions as any).x = (pOptions as any).xOption;
                             delete (pOptions as any).xOption;
                         }
-                    } else if (isObject(pOptions, true)) {
-                        pOptions.x = xData[i];
                     }
 
                     data[cursor] = point = new PointClass(

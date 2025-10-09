@@ -386,6 +386,10 @@ class Point {
                     point.x = x;
                 }
             }
+        } else {
+            if (isNumber(x)) {
+                point.x = x;
+            }
         }
 
         if (!isMock) {
