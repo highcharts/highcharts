@@ -205,6 +205,8 @@ function calculateObstacleMargin(obstacles: Array<any>): number {
  *
  * @param {Highcharts.Chart} chart
  *        The chart to operate on.
+ *
+ * @internal
  */
 class Pathfinder {
 
@@ -439,15 +441,14 @@ class Pathfinder {
      * @function Highcharts.Pathfinder#getChartObstacles
      *
      * @param {Object} options
-     *        Options for the calculation. Currently only
-     *        `options.algorithmMargin`.
+     * Options for the calculation. Currently only `options.algorithmMargin`.
      *
      * @param {number} options.algorithmMargin
-     *        The algorithm margin to use for the obstacles.
-
-    * @return {Array<object>}
-     *         An array of calculated obstacles. Each obstacle is defined as an
-     *         object with xMin, xMax, yMin and yMax properties.
+     * The algorithm margin to use for the obstacles.
+     *
+     * @return {Array<object>}
+     * An array of calculated obstacles. Each obstacle is defined as an object
+     * with xMin, xMax, yMin and yMax properties.
      */
     public getChartObstacles(
         options: { algorithmMargin?: number }
@@ -535,8 +536,8 @@ class Pathfinder {
         }
 
         return {
-            maxHeight: maxHeight,
-            maxWidth: maxWidth
+            maxHeight,
+            maxWidth
         };
     }
 
@@ -572,6 +573,7 @@ class Pathfinder {
  *
  * */
 
+/** @internal */
 interface Pathfinder {
     algorithms: Record<string, PathfinderAlgorithmFunction>;
 }
@@ -579,6 +581,7 @@ interface Pathfinder {
 /**
  * @name Highcharts.Pathfinder#algorithms
  * @type {Highcharts.Dictionary<Function>}
+ * @internal
  */
 Pathfinder.prototype.algorithms = PathfinderAlgorithms;
 

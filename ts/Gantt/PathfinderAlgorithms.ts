@@ -31,6 +31,7 @@ const { pick } = U;
  *
  * */
 
+/** @internal */
 export interface Obstacle {
     xMax: number;
     xMin: number;
@@ -38,16 +39,19 @@ export interface Obstacle {
     yMin: number;
 }
 
+/** @internal */
 export interface ObstacleSegment {
     end: (PositionObject|Record<string, number>);
     start: (PositionObject|Record<string, number>);
 }
 
+/** @internal */
 export interface PathfinderAlgorithmFunction {
     (...args: Array<any>): PathfinderAlgorithmResultObject;
     requiresObstacles?: boolean;
 }
 
+/** @internal */
 export interface PathfinderAlgorithmResultObject {
     obstacles: Array<ObstacleSegment>;
     path: SVGPath;
@@ -243,6 +247,8 @@ function limitObstacleToBounds(
  *         An object with the SVG path in Array form as accepted by the SVG
  *         renderer, as well as an array of new obstacles making up this
  *         path.
+ *
+ * @internal
  */
 function straight(
     start: PositionObject,
@@ -281,6 +287,8 @@ function straight(
  *         An object with the SVG path in Array form as accepted by the SVG
  *         renderer, as well as an array of new obstacles making up this
  *         path.
+ *
+ * @internal
  */
 const simpleConnect = function (
     start: PositionObject,
@@ -459,6 +467,8 @@ simpleConnect.requiresObstacles = true;
  *         An object with the SVG path in Array form as accepted by the SVG
  *         renderer, as well as an array of new obstacles making up this
  *         path.
+ *
+ * @internal
  */
 function fastAvoid(
     start: PositionObject,
