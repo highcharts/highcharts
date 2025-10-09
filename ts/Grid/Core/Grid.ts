@@ -1100,25 +1100,30 @@ class Grid {
     }
 
     /**
-     * Returns the current grid data as a JSON string.
+     * Returns the grid data as a JSON string.
+     *
+     * @param modified
+     * Whether to return the modified data table (after filtering/sorting/etc.)
+     * or the unmodified, original one. Default value is set to `true`.
      *
      * @return
      * JSON representation of the data
      */
-    public getData(): string {
-        const json = this.viewport?.dataTable.getModified().columns;
+    public getData(modified: boolean = true): string {
+        const dataTable = modified ? this.viewport?.dataTable : this.dataTable;
+        const columns = dataTable?.columns;
 
-        if (!this.enabledColumns || !json) {
+        if (!this.enabledColumns || !columns) {
             return '{}';
         }
 
-        for (const key of Object.keys(json)) {
+        for (const key of Object.keys(columns)) {
             if (this.enabledColumns.indexOf(key) === -1) {
-                delete json[key];
+                delete columns[key];
             }
         }
 
-        return JSON.stringify(json);
+        return JSON.stringify(columns, null, 2);
     }
 
     /**
