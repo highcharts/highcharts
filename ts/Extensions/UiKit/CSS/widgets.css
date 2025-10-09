@@ -58,3 +58,144 @@
 .highcharts-uik-input-container.highcharts-uik-input-disabled .highcharts-uik-input-label {
     color: var(--color-neutral-400);
 }
+
+/** BUTTON STYLES **/
+
+.highcharts-uik-button {
+    font-family: inherit;
+    font-size: 1em;
+    font-weight: 500;
+    line-height: 1.5;
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    box-sizing: border-box;
+    display: inline-block;
+    align-items: center;
+    justify-content: center;
+    transition:
+        background-color 0.2s ease-in-out,
+        color 0.2s ease-in-out,
+        box-shadow 0.2s ease-in-out,
+        transform 0.1s ease-in-out;
+}
+
+.highcharts-uik-button:hover {
+    opacity: 0.9;
+    box-shadow: var(--shadow-50);
+}
+
+.highcharts-uik-button.default {
+    color: var(--color-neutral-0);
+    background-color: var(--color-brand-500);
+}
+
+.highcharts-uik-button.success {
+    color: var(--color-neutral-0);
+    background-color: var(--color-success-500);
+}
+
+.highcharts-uik-button.danger {
+    color: var(--color-neutral-0);
+    background-color: var(--color-danger-500);
+}
+
+.highcharts-uik-button:active {
+    transform: scale(0.98);
+}
+
+.highcharts-uik-button-small {
+    font-size: 0.875em;
+    padding: 6px 14px;
+}
+
+.highcharts-uik-button-medium {
+    font-size: 1em;
+    padding: 10px 20px;
+}
+
+.highcharts-uik-button-large {
+    font-size: 1.125em;
+    padding: 12px 24px;
+}
+
+/* Button Variants */
+
+/* Default variant - for button groups like in the reference image */
+.highcharts-uik-button-default {
+    background-color: transparent;
+    color: var(--color-neutral-1000);
+    border: 1.5px solid transparent;
+}
+
+.highcharts-uik-button-default:hover {
+    background-color: var(--color-neutral-50);
+}
+
+.highcharts-uik-button-default.highcharts-uik-button-active {
+    background-color: rgba(135, 145, 255, 0.15);
+    color: var(--color-brand-600);
+}
+
+/* Primary variant - solid brand color */
+.highcharts-uik-button-primary {
+    background-color: var(--color-brand-500);
+    color: var(--color-neutral-0);
+}
+
+.highcharts-uik-button-primary:hover {
+    background-color: var(--color-brand-600);
+    box-shadow: var(--shadow-50);
+}
+
+.highcharts-uik-button-primary:active {
+    background-color: var(--color-brand-600);
+}
+
+/* Secondary variant - outlined */
+.highcharts-uik-button-secondary {
+    background-color: transparent;
+    color: var(--color-neutral-1000);
+    border: 1.5px solid var(--color-neutral-300);
+}
+
+.highcharts-uik-button-secondary:hover {
+    background-color: var(--color-neutral-50);
+    border-color: var(--color-neutral-400);
+}
+
+.highcharts-uik-button-secondary.highcharts-uik-button-active {
+    background-color: var(--color-neutral-100);
+    border-color: var(--color-neutral-400);
+}
+
+/* Success variant */
+.highcharts-uik-button-success {
+    background-color: var(--color-success-500);
+    color: var(--color-neutral-0);
+}
+
+.highcharts-uik-button-success:hover {
+    background-color: var(--color-success-600);
+    box-shadow: var(--shadow-50);
+}
+
+/* Danger variant */
+.highcharts-uik-button-danger {
+    background-color: var(--color-danger-500);
+    color: var(--color-neutral-0);
+}
+
+.highcharts-uik-button-danger:hover {
+    background-color: #ef4444;
+    box-shadow: var(--shadow-50);
+}
+
+/* Disabled state */
+.highcharts-uik-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
