@@ -111,6 +111,15 @@
     },
     {
         "files": [
+            "Dashboards/Components/ComponentRegistry"
+        ],
+        "included": [
+            "dashboards"
+        ],
+        "namespacePath": ".ComponentRegistry"
+    },
+    {
+        "files": [
             "Core/Animation/AnimationUtilities",
             "Core/Defaults",
             "Core/Globals",
