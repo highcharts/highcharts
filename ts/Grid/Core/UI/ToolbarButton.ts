@@ -136,16 +136,34 @@ class ToolbarButton implements Button {
         button.setAttribute('type', 'button');
         button.setAttribute('tabindex', '-1');
 
-        if (cfg.tooltip) {
-            button.title = cfg.tooltip;
-            button.setAttribute('aria-label', cfg.tooltip);
-        }
+        this.setA11yAttributes(button);
 
         this.setIcon(cfg.icon);
         this.refreshState();
         this.addEventListeners();
 
         return this;
+    }
+
+    public setA11yAttributes(button: HTMLButtonElement): void {
+        const cfg = this.options;
+        const tooltip = cfg.tooltip;
+        const a11y = cfg.accessibility;
+
+        const { ariaExpanded, ariaControls } = a11y || {};
+
+        if (tooltip) {
+            button.title = tooltip;
+            button.setAttribute('aria-label', tooltip);
+        }
+
+        if (typeof ariaExpanded === 'boolean') {
+            button.setAttribute('aria-expanded', ariaExpanded);
+        }
+
+        if (ariaControls) {
+            button.setAttribute('aria-controls', ariaControls);
+        }
     }
 
     public focus(): void {
@@ -177,6 +195,11 @@ class ToolbarButton implements Button {
 
     public setHighlighted(highlighted: boolean): void {
         this.buttonEl?.classList.toggle('highlighted', highlighted);
+
+        const ariaExpanded = this.options.accessibility?.ariaExpanded;
+        if (typeof ariaExpanded === 'boolean') {
+            this.buttonEl?.setAttribute('aria-expanded', highlighted);
+        }
     }
 
     /**
@@ -291,9 +314,26 @@ namespace ToolbarButton {
         alwaysVisible?: boolean;
 
         /**
+         * The accessibility options for the button.
+         */
+        accessibility?: ToolbarButtonA11yOptions;
+
+        /**
          * The click handler for the button.
          */
         onClick?: (event: MouseEvent, button: ToolbarButton) => void;
+    }
+
+    export interface ToolbarButtonA11yOptions {
+        /**
+         * The aria expanded attribute for the button.
+         */
+        ariaExpanded?: boolean;
+
+        /**
+         * The aria controls attribute for the button.
+         */
+        ariaControls?: string;
     }
 
 }

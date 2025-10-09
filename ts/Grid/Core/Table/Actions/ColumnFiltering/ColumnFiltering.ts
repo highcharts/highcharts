@@ -63,7 +63,7 @@ class ColumnFiltering {
      * @returns
      * The readable string.
      */
-    private static parseCamelCaseToReadable(value: string): string {
+    public static parseCamelCaseToReadable(value: string): string {
         return value
             .replace(/([A-Z])/g, ' $1')
             .trim()
@@ -252,6 +252,8 @@ class ColumnFiltering {
         const viewport = this.column.viewport;
         const querying = viewport.grid.querying;
         const filteringController = querying.filtering;
+        const columnId = this.column.id;
+        const a11y = viewport.grid.accessibility;
 
         fireEvent(this.column, 'beforeFilter', {
             target: this.column
@@ -269,10 +271,16 @@ class ColumnFiltering {
 
         // Update the userOptions.
         this.column.update({ filtering: condition }, false);
-        filteringController.addColumnFilterCondition(this.column.id, condition);
+        filteringController.addColumnFilterCondition(columnId, condition);
 
         await querying.proceed();
         await viewport.updateRows();
+
+        a11y?.userFilteredColumn({
+            ...condition,
+            columnId,
+            rowsCount: viewport.rows.length
+        }, filteringApplied);
 
         fireEvent(this.column, 'afterFilter', {
             target: this.column

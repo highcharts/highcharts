@@ -17,7 +17,8 @@ Accessibility features are enabled by default, and we generally recommend keepin
     accessibility: {
         enabled: false,
         announcements: {
-            sorting: true
+            sorting: true,
+            filtering: true
         }
     }
 }
