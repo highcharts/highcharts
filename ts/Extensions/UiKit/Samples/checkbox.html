@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Basic Checkbox sample</title>
+    <link rel="stylesheet" href="./../src/css/style.css" />
+  </head>
+  <body>
+    <div id="container"></div>
+  </body>
+  <script type="module">
+    import { appendEl, createEl } from '../dist/ts/dom.js';
+    import { Checkbox } from '../dist/ts/components/Checkbox.js';
+
+    const container = document.getElementById('container');
+
+    appendEl(
+      container,
+      createEl('h2', '', 'Checkbox Sample'),
+      Checkbox(true),
+      Checkbox(false),
+      Checkbox(true, true),
+      Checkbox(false, true),
+    );
+
+  </script>
+</html>

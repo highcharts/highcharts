@@ -196,7 +196,7 @@ export const setAttr = (
             // Assign property or attribute
             if (key in node) {
                 // Set as property if it exists on the element
-                Reflect.set(node, key, value);
+                (node as any)[key] = value;
             } else {
                 // Set as attribute otherwise
                 node.setAttribute(key, String(value));

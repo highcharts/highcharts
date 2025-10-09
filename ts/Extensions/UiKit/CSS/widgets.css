@@ -1,0 +1,53 @@
+/** Checkbox **/
+
+.highcharts-uik-checkbox {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 1px solid var(--color-brand-600);
+    border-radius: 5px;
+    background: var(--color-highcharts-background);
+    display: inline-block;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    vertical-align: middle;
+    margin: 0;
+    margin-right: 5px;
+}
+
+.highcharts-uik-checkbox:hover {
+    background: var(--color-brand-100);
+}
+
+.highcharts-uik-checkbox::after {
+    content: "";
+    position: absolute;
+    top: 1px;
+    left: 5px;
+    width: 5px;
+    height: 10px;
+    border-right: 1px solid var(--color-brand-600);
+    border-bottom: 1px solid var(--color-brand-600);
+    transform: rotate(45deg);
+    opacity: 0;
+    transition: opacity 0.15s ease;
+}
+
+.highcharts-uik-checkbox:checked::after {
+    opacity: 1;
+}
+
+.highcharts-uik-checkbox:disabled {
+    background: unset;
+}
+
+.highcharts-uik-checkbox:disabled {
+    border-color: var(--color-neutral-50);
+    cursor: not-allowed;
+}
+
+.highcharts-uik-checkbox:disabled::after {
+    border-color: var(--color-neutral-200);
+}

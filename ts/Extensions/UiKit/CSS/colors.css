@@ -1,0 +1,134 @@
+:root {
+    --color-neutral-0: #fff;
+    --color-neutral-25: #f7f7f8;
+    --color-neutral-50: #e8e8e8;
+    --color-neutral-100: #e3e3e8;
+    --color-neutral-200: #bcbcbc;
+    --color-neutral-300: #acabba;
+    --color-neutral-400: #918fa3;
+    --color-neutral-500: #75738c;
+    --color-neutral-600: #5e5c70;
+    --color-neutral-700: #474554;
+    --color-neutral-800: #2f2e38;
+    --color-neutral-900: #18171c;
+    --color-neutral-1000: #000;
+
+    /* Brand colors */
+    --color-brand-100: #f0f1ff;
+    --color-brand-500: #8791ff;
+    --color-brand-600: #626bd0;
+
+    /* Semantic colors */
+    --color-success-200: #a7f3d0;
+    --color-success-500: #10b981;
+    --color-success-600: #059669;
+    --color-success-700: #047857;
+
+    /* Danger colors */
+    --color-danger-200: #fdd7d7;
+    --color-danger-500: #f87171;
+
+    /* Highcharts specific */
+    --color-highcharts-background: #fff;
+
+    /* Shadows */
+    --shadow-50:
+        0 0 1px 0 rgba(0, 0, 0, 0.1),
+        0 1px 1px 0 rgba(0, 0, 0, 0.09),
+        0 3px 2px 0 rgba(0, 0, 0, 0.05),
+        0 6px 2px 0 rgba(0, 0, 0, 0.01);
+    --shadow-200:
+        0 1px 2px 0 rgba(0, 0, 0, 0.08),
+        0 4px 4px 0 rgba(0, 0, 0, 0.07),
+        0 10 6px 0 rgba(0, 0, 0, 0.04),
+        0 18px 7px 0 rgba(0, 0, 0, 0.01);
+    --shadow-300:
+        0 2px 4px 0 rgba(0, 0, 0, 0.08),
+        0 7px 7px 0 rgba(0, 0, 0, 0.07),
+        0 17px 10 0 rgba(0, 0, 0, 0.04),
+        0 30 12px 0 rgba(0, 0, 0, 0.01);
+
+    /* Accent colors */
+    --accent-0-bg: #2a2f66;
+    --accent-0-fg: #fff;
+    --accent-1-bg: #545ecc;
+    --accent-1-fg: #fff;
+
+    /* Other */
+    --success: #047857;
+    --failure: #8e4c3d;
+    --highlight: #999;
+
+    /* Button colors */
+    --button-bg: #fff;
+    --button-active-outline: #c3c8ff;
+    --button-active-bg: #e1e3ff;
+    --button-icon-active: #4a55c9;
+}
+
+[data-theme="dark"] {
+    --color-neutral-0: #111;
+    --color-neutral-25: #18171c;
+    --color-neutral-50: #2f2e38;
+    --color-neutral-100: #474554;
+    --color-neutral-200: #5e5c70;
+    --color-neutral-300: #75738c;
+    --color-neutral-400: #918fa3;
+    --color-neutral-500: #acabba;
+    --color-neutral-600: #c8c7d1;
+    --color-neutral-700: #e3e3e8;
+    --color-neutral-800: #f2f1f4;
+    --color-neutral-900: #f7f7f8;
+    --color-neutral-1000: #fff;
+
+    /* Brand colors */
+    --color-brand-500: #8791ff;
+    --color-brand-600: #626bd0;
+
+    /* Semantic colors */
+    --color-success-200: #a7f3d0;
+    --color-success-500: #10b981;
+    --color-success-600: #059669;
+    --color-success-700: #047857;
+
+    /* Danger colors */
+    --color-danger-200: #fdd7d7;
+    --color-danger-500: #f87171;
+
+    /* Highcharts specific */
+    --color-highcharts-background: rgb(48, 48, 48);
+
+    /* Shadows */
+    --shadow-50:
+        0 0 1px 0 rgba(0, 0, 0, 0.1),
+        0 1px 1px 0 rgba(0, 0, 0, 0.09),
+        0 3px 2px 0 rgba(0, 0, 0, 0.05),
+        0 6px 2px 0 rgba(0, 0, 0, 0.01);
+    --shadow-200:
+        0 1px 2px 0 rgba(0, 0, 0, 0.08),
+        0 4px 4px 0 rgba(0, 0, 0, 0.07),
+        0 10 6px 0 rgba(0, 0, 0, 0.04),
+        0 18px 7px 0 rgba(0, 0, 0, 0.01);
+    --shadow-300:
+        0 2px 4px 0 rgba(0, 0, 0, 0.08),
+        0 7px 7px 0 rgba(0, 0, 0, 0.07),
+        0 17px 10 0 rgba(0, 0, 0, 0.04),
+        0 30 12px 0 rgba(0, 0, 0, 0.01);
+
+    /* Accent colors */
+    --accent-0-bg: #2a2f66;
+    --accent-0-fg: #fff;
+    --accent-1-bg: #545ecc;
+    --accent-1-fg: #fff;
+
+    /* Other */
+    --success: #047857;
+    --failure: #8e4c3d;
+    --highlight: #999;
+
+    /* Button colors */
+    --button-bg: #272727;
+    --button-active-outline: var(--button-icon-active);
+    --button-active-bg: #3f4699;
+    --button-icon-active: #f0f1ff;
+}
