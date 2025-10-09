@@ -142,14 +142,15 @@ abstract class Cell {
     }
 
     /**
-     * Handles user click on the cell.
+     * Handles user click on the cell. If Enter key is pressed, it will be
+     * handled by the `onClick` method.
      *
      * @param e
-     * Mouse event object.
+     * Mouse event object or keyboard event object when Enter key is pressed.
      *
      * @internal
      */
-    protected abstract onClick(e: MouseEvent): void;
+    protected abstract onClick(e: MouseEvent|KeyboardEvent): void;
 
     /**
      * Handles the focus event on the cell.
@@ -187,6 +188,10 @@ abstract class Cell {
         };
 
         const dir = changeFocusKeys[e.key];
+
+        if (e.key === 'Enter') {
+            this.onClick(e);
+        }
 
         if (dir) {
             e.preventDefault();
