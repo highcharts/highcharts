@@ -32,7 +32,7 @@ export const banner = (
 
     const banner = createEl('div', `highcharts-uik-banner ${variant || 'default'}`, title);
     const closeX = createEl('img', 'highcharts-uik-x-close');
-    setAttr(closeX, { src: '../../assets/icons/x-close.svg' });
+    setAttr(closeX, { src: '../assets/icons/x-close.svg' });
     const parent = appendEl(banner, closeX);
 
     addEvent(closeX, 'click', bannerFade(closeX));
