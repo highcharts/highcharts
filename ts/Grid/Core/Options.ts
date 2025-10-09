@@ -604,6 +604,7 @@ export interface CreditsOptions {
     position?: 'bottom' | 'top';
 }
 
+
 /**
  * Language options for the grid.
  */

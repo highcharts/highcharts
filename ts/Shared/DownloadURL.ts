@@ -24,7 +24,7 @@ const {
     win,
     win: { document: doc }
 } = H;
-import RegexLimits from './RegexLimits.js';
+import RegexLimits from '../Extensions/RegexLimits.js';
 import U from '../Core/Utilities.js';
 const { error } = U;
 
@@ -196,7 +196,7 @@ function downloadURL(
  * @param {string} scriptLocation
  * The location for the script to fetch.
  */
-export function getScript(
+function getScript(
     scriptLocation: string
 ): Promise<void> {
     return new Promise((resolve, reject): void => {
@@ -224,6 +224,48 @@ export function getScript(
     });
 }
 
+/**
+ * Get a blob object from content, if blob is supported.
+ *
+ * @private
+ * @function Highcharts.getBlobFromContent
+ *
+ * @param {string} content
+ * The content to create the blob from.
+ * @param {string} type
+ * The type of the content.
+ *
+ * @return {string | undefined}
+ * The blob object, or undefined if not supported.
+ *
+ * @requires modules/exporting
+ * @requires modules/export-data
+ */
+function getBlobFromContent(
+    content: string,
+    type: string
+): (string | undefined) {
+    const nav = win.navigator,
+        domurl = win.URL || win.webkitURL || win;
+
+    try {
+        // MS specific
+        if ((nav.msSaveOrOpenBlob) && win.MSBlobBuilder) {
+            const blob = new win.MSBlobBuilder();
+            blob.append(content);
+            return blob.getBlob('image/svg+xml');
+        }
+
+        return domurl.createObjectURL(new win.Blob(
+            ['\uFEFF' + content], // #7084
+            { type: type }
+        ));
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (e) {
+        // Ignore
+    }
+}
+
 /* *
  *
  *  Default Export
@@ -233,6 +275,7 @@ export function getScript(
 const DownloadURL = {
     dataURLtoBlob,
     downloadURL,
+    getBlobFromContent,
     getScript
 };
 
