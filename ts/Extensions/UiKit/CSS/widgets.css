@@ -1,0 +1,162 @@
+/** BUTTON STYLES **/
+
+.highcharts-uik-button {
+    margin-right: 5px;
+    border-radius: 12px;
+    box-sizing: border-box;
+    display: inline-block;
+    padding: 0.5em 1em;
+    font-size: 1em;
+    outline: none;
+    border: none;
+    cursor: pointer;
+    transition:
+        background-color 0.1s ease-in-out,
+        box-shadow 0.1s ease-in-out;
+}
+
+.highcharts-uik-button:hover {
+    opacity: 0.9;
+    box-shadow: var(--shadow-50);
+}
+
+.highcharts-uik-button.default {
+    color: var(--color-neutral-0);
+    background-color: var(--color-brand-500);
+}
+
+.highcharts-uik-button.neutral {
+    background-color: var(--color-neutral-500);
+}
+
+.highcharts-uik-button.success {
+    color: var(--color-neutral-0);
+    background-color: var(--color-success-500);
+}
+
+.highcharts-uik-button.danger {
+    color: var(--color-neutral-0);
+    background-color: var(--color-danger-500);
+}
+
+/** BUTTON ICON STYLES **/
+
+.highcharts-uik-button-icon {
+    width: 44px;
+    height: 44px;
+    padding: 6px;
+    background-color: var(--button-bg);
+}
+
+.highcharts-uik-button-icon:focus {
+    outline: 2px solid var(--color-brand-500);
+}
+
+.highcharts-uik-button-icon.active,
+.highcharts-uik-button-icon:hover {
+    opacity: 1;
+    box-shadow: none;
+    background-color: var(--button-active-bg);
+    outline: 2px solid var(--button-active-outline);
+}
+
+.highcharts-uik-button-icon circle,
+.highcharts-uik-button-icon path,
+.highcharts-uik-button-icon rect,
+.highcharts-uik-button-icon polygon,
+.highcharts-uik-button-icon line,
+.highcharts-uik-button-icon polyline {
+    fill: var(--color-neutral-1000);
+}
+
+.highcharts-uik-button-icon:hover circle,
+.highcharts-uik-button-icon:hover path,
+.highcharts-uik-button-icon:hover rect,
+.highcharts-uik-button-icon:hover polygon,
+.highcharts-uik-button-icon:hover line,
+.highcharts-uik-button-icon:hover polyline,
+.active circle,
+.active path,
+.active rect,
+.active polygon,
+.active line,
+.active polyline {
+    fill: var(--button-icon-active);
+}
+
+.highcharts-uik-button-icon img,
+.highcharts-uik-button-icon svg {
+    width: 100%;
+    height: 100%;
+}
+
+.highcharts-uik-button-icon img {
+    object-fit: contain;
+}
+
+.highcharts-uik-button-icon-bg {
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    background-size: 32px 32px;
+}
+
+/** TOOLTIP STYLES **/
+
+.highcharts-uik-tooltip {
+    position: fixed;
+    z-index: 1000;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: var(--shadow-200);
+    background-color: var(--color-neutral-1000);
+    color: var(--color-neutral-0);
+    font-size: 0.875em;
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+}
+
+/** TOGGLE SWITCH */
+
+.highcharts-uik-toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 28px;
+    padding-left: 4px;
+    padding-right: 4px;
+}
+
+.highcharts-uik-toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.highcharts-uik-toggle-switch .ball {
+    position: absolute;
+    cursor: pointer;
+    inset: 0;
+    background-color: var(--color-neutral-300);
+    border-radius: 28px;
+    transition: background-color 0.2s;
+}
+
+.highcharts-uik-toggle-switch .ball::before {
+    content: "";
+    position: absolute;
+    height: 22px;
+    width: 22px;
+    left: 4px;
+    top: 3px;
+    background-color: white;
+    border-radius: 50%;
+    transition: transform 0.2s;
+}
+
+.highcharts-uik-toggle-switch input:checked + .ball {
+    background-color: var(--color-brand-500);
+}
+
+.highcharts-uik-toggle-switch input:checked + .ball::before {
+    transform: translateX(26px);
+}
