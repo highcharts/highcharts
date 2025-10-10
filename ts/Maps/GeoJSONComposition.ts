@@ -821,4 +821,13 @@ export default GeoJSONComposition;
  * @typedef {Object} Highcharts.TopoJSON
  */
 
+/**
+ * The padding of the map view. Can be either a number of pixels, a percentage
+ * string, or an array of either. If an array is given, it sets the top, right,
+ * bottom, left paddings respectively.
+ *
+ * @interface Highcharts.MapViewPaddingType
+ * @typedef {number|string|Array<number|string>} Highcharts.MapViewPaddingType
+ */
+
 ''; // Detach doclets above
