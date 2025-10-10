@@ -378,7 +378,7 @@ namespace GeoJSONComposition {
     }
 
 
-    /** @private */
+    /** @internal */
     export function compose(
         ChartClass: typeof Chart
     ): void {
@@ -631,7 +631,7 @@ namespace GeoJSONComposition {
 
     /**
      * Override addCredits to include map source by default.
-     * @private
+     * @internal
      */
     function wrapChartAddCredit(
         this: Chart,

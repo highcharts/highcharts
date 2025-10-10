@@ -91,7 +91,7 @@ const tileSize = 256;
 /**
  * The world size in terms of 10k meters in the Web Mercator projection, to
  * match a 256 square tile to zoom level 0.
- * @private
+ * @internal
  */
 const worldSize = 400.979322;
 
@@ -112,7 +112,7 @@ let maps: AnyRecord = {};
 /**
  * Compute the zoom from given bounds and the size of the playing field. Used in
  * two places, hence the local function.
- * @private
+ * @internal
  */
 function zoomFromBounds(
     b: MapBounds,
@@ -130,7 +130,7 @@ function zoomFromBounds(
 /**
  * Calculate and set the recommended map view drilldown or drillup if mapData
  * is set for the series.
- * @private
+ * @internal
  */
 function recommendedMapViewAfterDrill(
     this: MapChart,
@@ -236,7 +236,7 @@ class MapView {
 
     /**
      * Return the composite bounding box of a collection of bounding boxes
-     * @private
+     * @internal
      */
     public static compositeBounds(
         arrayOfBounds: MapBounds[]
@@ -257,7 +257,7 @@ class MapView {
 
     /**
      * Merge two collections of insets by the id.
-     * @private
+     * @internal
      */
     private static mergeInsets(
         a: DeepPartial<MapViewInsetsOptions|undefined>[],
@@ -447,7 +447,7 @@ class MapView {
 
     /**
      * Create MapViewInset instances from insets options
-     * @private
+     * @internal
      */
     private createInsets(): void {
         const options = this.options,
@@ -1548,7 +1548,7 @@ class MapViewInset extends MapView {
 
     /**
      * Get the playing field in pixels
-     * @private
+     * @internal
      */
     public getField(
         padded: boolean = true
@@ -1580,7 +1580,7 @@ class MapViewInset extends MapView {
 
     /**
      * Get the hit zone in pixels.
-     * @private
+     * @internal
      */
     public getHitZone(): Polygon|undefined {
         const { chart, mapView, options } = this,
@@ -1612,7 +1612,7 @@ class MapViewInset extends MapView {
     /**
      * Determine whether a point on the main projected plane is inside the
      * geoBounds of the inset.
-     * @private
+     * @internal
      */
     public isInside(point: ProjectedXY): boolean {
         const { geoBoundsProjectedBox, geoBoundsProjectedPolygon } = this;
@@ -1635,7 +1635,7 @@ class MapViewInset extends MapView {
 
     /**
      * Render the map view inset with the border path
-     * @private
+     * @internal
      */
     public render(): void {
         const { chart, mapView, options } = this,
@@ -1704,7 +1704,7 @@ class MapViewInset extends MapView {
 
     /**
      * No chart-level events for insets
-     * @private
+     * @internal
      */
     public setUpEvents(): void {}
 }

@@ -64,7 +64,7 @@ export interface TreePointOptionsObject {
 /**
  * Creates an object map from parent id to children's index.
  *
- * @private
+ * @internal
  * @function Highcharts.Tree#getListOfParents
  *
  * @param {Array<*>} data
@@ -116,7 +116,7 @@ function getListOfParents(
     return listOfParents;
 }
 
-/** @private */
+/** @internal */
 function getNode(
     id: string,
     parent: (string|null),
@@ -205,7 +205,7 @@ function getNode(
     return node as TreeNode;
 }
 
-/** @private */
+/** @internal */
 function getTree(
     data: Array<TreePointOptionsObject>,
     options: TreeGetOptionsObject

@@ -80,7 +80,7 @@ const deg2rad = Math.PI * 2 / 360,
 /**
  * Keep longitude within -180 and 180. This is faster than using the modulo
  * operator, and preserves the distinction between -180 and 180.
- * @private
+ * @internal
  */
 const wrapLon = (lon: number): number => {
     // Replacing the if's with while would increase the range, but make it prone
@@ -96,13 +96,13 @@ const wrapLon = (lon: number): number => {
 
 /**
  * Calculate the haversine of an angle.
- * @private
+ * @internal
  */
 const hav = (radians: number): number => (1 - Math.cos(radians)) / 2;
 
 /**
 * Calculate the haversine of an angle from two coordinates.
-* @private
+* @internal
 */
 const havFromCoords = (point1: LonLatArray, point2: LonLatArray): number => {
     const cos = Math.cos,
@@ -142,7 +142,7 @@ class Projection {
 
     /**
      * Add a projection definition to the registry, accessible by its `name`.
-     * @private
+     * @internal
      */
     public static add<T extends ProjectionRegistryName>(
         name: T,
@@ -153,7 +153,7 @@ class Projection {
 
     /**
      * Calculate the distance in meters between two given coordinates.
-     * @private
+     * @internal
      */
     public static distance(
         point1: LonLatArray,
@@ -170,7 +170,7 @@ class Projection {
 
     /**
      * Calculate the geodesic line string between two given coordinates.
-     * @private
+     * @internal
      */
     public static geodesic(
         point1: LonLatArray,
@@ -404,7 +404,7 @@ class Projection {
     /**
      * Take the rotation options and returns the appropriate projection
      * functions.
-     * @private
+     * @internal
      */
     public getRotator(
         rotation: ProjectionRotationOption
@@ -474,7 +474,7 @@ class Projection {
     /**
      * Project a lonlat coordinate position to xy. Dynamically overridden when
      * projection is set.
-     * @private
+     * @internal
      */
     public forward(
         lonLat: LonLatArray
@@ -485,7 +485,7 @@ class Projection {
     /**
      * Unproject an xy chart coordinate position to lonlat. Dynamically
      * overridden when projection is set.
-     * @private
+     * @internal
      */
     public inverse(
         xy: ProjectedXYArray
@@ -692,7 +692,7 @@ class Projection {
 
     /**
      * Take a GeoJSON geometry and return a translated SVGPath.
-     * @private
+     * @internal
      */
     public path(geometry: GeoJSONGeometryMultiPoint): SVGPath {
 

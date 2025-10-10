@@ -59,7 +59,7 @@ const deg2rad = H.deg2rad,
  * The Connection class. Used internally to represent a connection between two
  * points.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.Connection
  *

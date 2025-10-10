@@ -74,7 +74,7 @@ const max = Math.max,
  * Get point bounding box using plotX/plotY and shapeArgs. If using
  * graphic.getBBox() directly, the bbox will be affected by animation.
  *
- * @private
+ * @internal
  * @function
  *
  * @param {Highcharts.Point} point
@@ -108,7 +108,7 @@ function getPointBB(point: Point): (Record<string, number>|null) {
 
 /**
  * Compute smallest distance between two rectangles.
- * @private
+ * @internal
  */
 function calculateObstacleDistance(
     a: Record<string, number>,
@@ -145,7 +145,7 @@ function calculateObstacleDistance(
  * Calculate margin to place around obstacles for the pathfinder in pixels.
  * Returns a minimum of 1 pixel margin.
  *
- * @private
+ * @internal
  * @function
  *
  * @param {Array<object>} obstacles
@@ -199,14 +199,12 @@ function calculateObstacleMargin(obstacles: Array<any>): number {
 /**
  * The Pathfinder class.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.Pathfinder
  *
  * @param {Highcharts.Chart} chart
  *        The chart to operate on.
- *
- * @internal
  */
 class Pathfinder {
 
