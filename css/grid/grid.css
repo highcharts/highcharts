@@ -1200,7 +1200,8 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     vertical-align: baseline;
     font: inherit;
     color: var(--ig-color);
-    font-size: 0.6rem;
+    font-size: 0.625rem;
+    white-space: nowrap;
     font-weight: normal;
     align-self: end;
 }
