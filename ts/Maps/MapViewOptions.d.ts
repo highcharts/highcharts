@@ -58,6 +58,7 @@ export type LonLatArray = [number, number];
  * bottom, left paddings respectively.
  *
  * @interface Highcharts.MapViewPaddingType
+ * @typedef {number|string|Array<number|string>} Highcharts.MapViewPaddingType
  */
 export type MapViewPaddingType = (
     number|
