@@ -799,7 +799,7 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
 .hcg-table tbody td:focus,
 .hcg-table thead th:focus-visible {
     outline: none;
-    box-shadow: inset 0 0 0 1px rgb(117, 124, 199);
+    box-shadow: inset 0 0 0 2px var(--hcg-focus-ring-color);
 }
 
 /* Header hovered background and color */
