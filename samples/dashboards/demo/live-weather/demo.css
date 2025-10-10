@@ -2,6 +2,11 @@
 @import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 
+body {
+    background: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
+}
+
 /**
  *
  *  Colors

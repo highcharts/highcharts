@@ -135,9 +135,36 @@ function compose(
 
     if (pushUnique(composed, 'PriceIndication')) {
         addEvent(SeriesClass, 'afterRender', onSeriesAfterRender);
+        addEvent(SeriesClass, 'hide', onSeriesHide);
     }
 
 }
+
+
+/**
+ * Hides price indication when parent series is hidden. Showing the indicator is
+ * handled by the `onSeriesAfterRender` function.
+ *
+ * @private
+ *
+ */
+function onSeriesHide(
+    this: Series
+): void {
+    const series = this;
+    (
+        [
+            'lastPrice',
+            'lastPriceLabel',
+            'lastVisiblePrice',
+            'lastVisiblePriceLabel'
+        ] as ('lastPrice'|'lastPriceLabel'|'lastVisiblePrice'|
+            'lastVisiblePriceLabel')[]
+    ).forEach((key): void => {
+        series[key]?.hide();
+    });
+}
+
 
 /** @private */
 function onSeriesAfterRender(
@@ -150,7 +177,8 @@ function onSeriesAfterRender(
 
     if (
         (lastVisiblePrice || lastPrice) &&
-         seriesOptions.id !== 'highcharts-navigator-series'
+         seriesOptions.id !== 'highcharts-navigator-series' &&
+         series.visible
     ) {
         const xAxis = series.xAxis,
             yAxis = series.yAxis,
