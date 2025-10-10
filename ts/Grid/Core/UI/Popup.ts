@@ -291,18 +291,18 @@ abstract class Popup {
         }
 
         const container = makeHTMLElement('div', {
-            className: Globals.getClassName('menuPopupHeader')
+            className: Globals.getClassName('menuHeader')
         }, this.content);
 
         if (category) {
             makeHTMLElement('span', {
-                className: Globals.getClassName('menuPopupHeaderCategory'),
+                className: Globals.getClassName('menuHeaderCategory'),
                 innerText: category + ' '
             }, container);
         }
 
         makeHTMLElement('span', {
-            className: Globals.getClassName('menuPopupHeaderName'),
+            className: Globals.getClassName('menuHeaderName'),
             innerText: label
         }, container);
 

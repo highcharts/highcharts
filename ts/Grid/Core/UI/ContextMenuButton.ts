@@ -133,20 +133,20 @@ class ContextMenuButton implements Button {
         }, container);
 
         const buttonEl = this.buttonEl = makeHTMLElement('button', {
-            className: Globals.getClassName('menuPopupItem')
+            className: Globals.getClassName('menuItem')
         }, liEl);
 
         const iconEl = this.iconWrapper = makeHTMLElement('span', {
-            className: Globals.getClassName('menuPopupItemIcon')
+            className: Globals.getClassName('menuItemIcon')
         }, buttonEl);
 
         this.spanEl = makeHTMLElement('span', {
-            className: Globals.getClassName('menuPopupItemLabel'),
+            className: Globals.getClassName('menuItemLabel'),
             innerText: cfg.label || ''
         }, buttonEl);
 
         const chevronEl = makeHTMLElement('span', {
-            className: Globals.getClassName('menuPopupItemIcon')
+            className: Globals.getClassName('menuItemIcon')
         }, buttonEl);
 
         iconEl.setAttribute('aria-hidden', 'true');
