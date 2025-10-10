@@ -41,11 +41,16 @@ window.grid = Grid.grid('container', {
                 'Lemons URL', 'Limes URL'
             ],
             date: [
-                '2025-10-01', '2025-10-02', '2025-10-03', '2025-10-04',
-                '2025-10-05', '2025-10-06', '2025-10-07', '2025-10-08',
-                '2025-10-09', '2025-10-10', '2025-10-11', '2025-10-12',
-                '2025-10-13', '2025-10-14', null, '2025-10-16',
-                '2025-10-17', '2025-10-18', '2025-10-19', '2025-10-20'
+                Date.UTC(2025, 9, 1), Date.UTC(2025, 9, 2),
+                Date.UTC(2025, 9, 3), Date.UTC(2025, 9, 4),
+                Date.UTC(2025, 9, 5), Date.UTC(2025, 9, 6),
+                Date.UTC(2025, 9, 7), Date.UTC(2025, 9, 8),
+                Date.UTC(2025, 9, 9), Date.UTC(2025, 9, 10),
+                Date.UTC(2025, 9, 11), Date.UTC(2025, 9, 12),
+                Date.UTC(2025, 9, 13), Date.UTC(2025, 9, 14),
+                null, Date.UTC(2025, 9, 16),
+                Date.UTC(2025, 9, 17), Date.UTC(2025, 9, 18),
+                Date.UTC(2025, 9, 19), Date.UTC(2025, 9, 20)
             ]
         }
     },
@@ -87,6 +92,12 @@ window.grid = Grid.grid('container', {
         }
     ],
     columns: [{
+        id: 'date',
+        dataType: 'datetime',
+        cells: {
+            format: '{value:%Y-%m-%d}'
+        }
+    }, {
         id: 'weight',
         filtering: {
             condition: 'greaterThan',

@@ -263,12 +263,16 @@ class ColumnFiltering {
             clearButton.disabled = !filteringApplied;
         }
 
-        if (
-            this.column.dataType === 'number' &&
-            defined(value) &&
-            value !== ''
-        ) {
-            condition.value = Number(value);
+
+        if (defined(value) && value !== '' && typeof value !== 'number') {
+            switch (this.column.dataType) {
+                case 'number':
+                    condition.value = Number(value);
+                    break;
+                case 'datetime':
+                    condition.value = new Date(`${value}Z`).getTime();
+                    break;
+            }
         }
 
         // Update the userOptions.
