@@ -48,6 +48,12 @@ To customize the default language or wording for ARIA attributes and announcers,
                     ascending: "Sorted ascending",
                     ...
                 }
+            },
+            filtering: {
+                announcements: {
+                    filterApplied: "Filter applied for {columnId}, {condition} {value}. {rowsCount} results found.",
+                    ...
+                }
             }
         }
     }
