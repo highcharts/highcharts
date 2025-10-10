@@ -31,8 +31,10 @@ import ToolbarButton from '../../../UI/ToolbarButton.js';
 import SortToolbarButton from './ToolbarButtons/SortToolbarButton.js';
 import FilterToolbarButton from './ToolbarButtons/FilterToolbarButton.js';
 import MenuToolbarButton from './ToolbarButtons/MenuToolbarButton.js';
+import U from '../../../../../Core/Utilities.js';
 
 const { makeHTMLElement } = GridUtils;
+const { getStyle } = U;
 
 
 /* *
@@ -70,6 +72,12 @@ class HeaderCellToolbar implements Toolbar {
      * the context menu button.
      */
     private isMinimized?: boolean;
+
+    /**
+     * Whether the menu button is centered. Used when the header content is
+     * super thin, so that it's not visible.
+     */
+    private isMenuCentered?: boolean;
 
     /**
      * The resize observer of the column.
@@ -190,6 +198,32 @@ class HeaderCellToolbar implements Toolbar {
             } else {
                 this.renderFull();
             }
+        }
+
+        if (!shouldBeMinimized) {
+            return;
+        }
+
+        const parent = this.column.header?.htmlElement;
+        const container = this.container;
+        const parentWidth = parent?.offsetWidth || 0;
+        const containerWidth = this.buttons[0]?.wrapper?.offsetWidth || 0;
+        const parentPaddings = (
+            (parent && getStyle(parent, 'padding-left', true) || 0) +
+            (parent && getStyle(parent, 'padding-right', true) || 0)
+        );
+        const containerMargins = (
+            (container && getStyle(container, 'margin-left', true) || 0) +
+            (container && getStyle(container, 'margin-right', true) || 0)
+        );
+        const shouldBeCentered =
+            parentWidth - parentPaddings < containerWidth + containerMargins;
+
+        if (this.isMenuCentered !== shouldBeCentered) {
+            this.isMenuCentered = shouldBeCentered;
+            this.column.header?.container?.classList.toggle(
+                Globals.getClassName('zeroWidth'), shouldBeCentered
+            );
         }
     }
 

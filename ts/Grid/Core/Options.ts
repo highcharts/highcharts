@@ -612,6 +612,7 @@ export interface CreditsOptions {
     position?: 'bottom' | 'top';
 }
 
+
 /**
  * Language options for the grid.
  */
@@ -670,6 +671,13 @@ export interface LangOptions extends LangOptionsCore {
      * @default 'Set filter'
      */
     setFilter?: string;
+
+    /**
+     * Language options for column filtering conditions.
+     */
+    columnFilteringConditions?: Partial<
+        Record<ColumnFilteringCondition, string>
+    >;
 
     /**
      * Language options for pagination text values.

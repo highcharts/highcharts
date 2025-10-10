@@ -130,6 +130,7 @@ module.exports = {
             'grid/sparklines',
             'grid/column-filtering',
             'grid/events',
+            'grid/exporting',
             'grid/pagination',
             {
                 'Theming': [

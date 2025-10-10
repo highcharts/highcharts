@@ -617,12 +617,14 @@
 .hcg-header-cell-icons:has(.hcg-button.highlighted),
 .hcg-header-cell-icons:has(.hcg-button.active),
 .hcg-header-cell-icons:has(.hcg-button:focus-visible),
+.hcg-header-cell-container.hcg-zero-width .hcg-header-cell-icons,
 .highcharts-datagrid-table thead th:hover .highcharts-datagrid-header-cell-icons,
 .highcharts-datagrid-table thead th:focus-visible .highcharts-datagrid-header-cell-icons,
 .highcharts-datagrid-header-cell-icons:hover,
 .highcharts-datagrid-header-cell-icons:has(.highcharts-datagrid-button.highlighted),
 .highcharts-datagrid-header-cell-icons:has(.highcharts-datagrid-button.active),
-.highcharts-datagrid-header-cell-icons:has(.highcharts-datagrid-button:focus-visible) {
+.highcharts-datagrid-header-cell-icons:has(.highcharts-datagrid-button:focus-visible),
+.highcharts-datagrid-header-cell-container.highcharts-datagrid-zero-width .highcharts-datagrid-header-cell-icons {
     max-width: 100px;
     opacity: 1;
 }
@@ -714,6 +716,21 @@
 .hcg-table tbody tr:last-of-type td:last-child,
 .highcharts-datagrid-table tbody tr:last-of-type td:last-child {
     border-bottom-right-radius: var(--ig-border-radius);
+}
+
+/* Header cell menu button centered */
+.highcharts-datagrid-header-cell-container.highcharts-datagrid-zero-width .highcharts-datagrid-header-cell-menu-icon,
+.hcg-header-cell-container.hcg-zero-width .hcg-header-cell-menu-icon {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.highcharts-datagrid-header-cell-container.highcharts-datagrid-zero-width .highcharts-datagrid-header-cell-content,
+.hcg-header-cell-container.hcg-zero-width .hcg-header-cell-content {
+    visibility: hidden;
+    transition: none;
 }
 
 .hcg-resizable-content tr,
