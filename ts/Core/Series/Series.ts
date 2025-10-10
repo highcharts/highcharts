@@ -1518,6 +1518,9 @@ class Series {
             // Reset properties
             series.xIncrement = null;
             delete series.xColumn;
+            if (this.tempNoXColumn) {
+                delete table.columns.x;
+            }
 
             series.colorCounter = 0; // For series with colorByPoint (#1547)
 
