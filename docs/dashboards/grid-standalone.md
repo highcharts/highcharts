@@ -32,8 +32,8 @@ import '@highcharts/grid/css/grid-pro.css';
 Load **Grid Pro** from our public CDN by adding the appropriate JavaScript and CSS files to your page's `<head>` section:
 
 ```html
-<script src="https://code.highcharts.com/grid/grid-pro.js"></script>
-<link rel="stylesheet" href="https://code.highcharts.com/grid/css/grid-pro.css" />
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/grid-pro.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css" />
 ```
 
 Alternatively, you can download the files from [highcharts.com](https://www.highcharts.com/download/) and host it on your own server:

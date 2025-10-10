@@ -131,13 +131,13 @@ See the [HighchartsComponent](https://www.highcharts.com/docs/dashboards/highcha
 ### Grid Component
 To visualize data in a row-column layout, you can use the Grid component. The `Grid` module *must* be imported before the **Dashboards** module as shown here:
 ```html
-<script src="https://code.highcharts.com/grid/grid-pro.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/grid-pro.js"></script>
 <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
 ```
 
 The `Grid` module has its own style set, so the CSS file must be imported for correct rendering.
 ```css
-@import url("https://code.highcharts.com/grid/css/grid-pro.css");
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 ```
 
