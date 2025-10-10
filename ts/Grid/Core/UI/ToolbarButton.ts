@@ -146,15 +146,15 @@ class ToolbarButton implements Button {
     }
 
     public setA11yAttributes(button: HTMLButtonElement): void {
-        const cfg = this.options;
-        const tooltip = cfg.tooltip;
-        const a11y = cfg.accessibility;
-
-        const { ariaExpanded, ariaControls } = a11y || {};
+        const { accessibility, tooltip } = this.options;
+        const { ariaLabel, ariaExpanded, ariaControls } = accessibility || {};
 
         if (tooltip) {
             button.title = tooltip;
-            button.setAttribute('aria-label', tooltip);
+        }
+
+        if (ariaLabel) {
+            button.setAttribute('aria-label', ariaLabel);
         }
 
         if (typeof ariaExpanded === 'boolean') {
@@ -325,6 +325,11 @@ namespace ToolbarButton {
     }
 
     export interface ToolbarButtonA11yOptions {
+        /**
+         * The aria label attribute for the button.
+         */
+        ariaLabel?: string;
+
         /**
          * The aria expanded attribute for the button.
          */

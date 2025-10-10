@@ -58,7 +58,10 @@ class SortToolbarButton extends ToolbarButton {
     constructor() {
         super({
             icon: 'upDownArrows',
-            classNameKey: 'headerCellSortIcon'
+            classNameKey: 'headerCellSortIcon',
+            accessibility: {
+                ariaLabel: 'sort'
+            }
         });
     }
 

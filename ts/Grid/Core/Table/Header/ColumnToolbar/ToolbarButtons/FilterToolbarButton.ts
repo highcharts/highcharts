@@ -63,6 +63,7 @@ class FilterToolbarButton extends ToolbarButton {
             icon: 'filter',
             classNameKey: 'headerCellFilterIcon',
             accessibility: {
+                ariaLabel: 'filter',
                 ariaExpanded: false,
                 ariaControls: 'filter-popup'
             }
