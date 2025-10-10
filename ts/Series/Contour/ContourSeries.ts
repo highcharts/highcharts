@@ -250,7 +250,9 @@ class ContourSeries extends ScatterSeries {
                         options.contourLineColor ||
                         [0, 0, 0]
                     ),
-                    lineWidth = new Float32Array([options.lineWidth]);
+                    lineWidth = new Float32Array([
+                        options.contourLineWidth || 1
+                    ]);
 
                 // WebGPU Buffers
                 const colorAxisStopsBuffer = device.createBuffer({
