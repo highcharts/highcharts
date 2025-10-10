@@ -30,6 +30,7 @@ import ContourSeriesOptions from './ContourSeriesOptions';
 import ColorType from '../../Core/Color/ColorType.js';
 import Chart from '../../Core/Chart/Chart.js';
 import Tooltip from '../../Core/Tooltip.js';
+import { GradientColorStop } from '../../Core/Color/GradientColor.js';
 
 const { extend, merge } = U;
 
@@ -66,13 +67,17 @@ class ContourSeries extends ScatterSeries {
 
     private contourLineColorBuffer?: GPUBuffer;
 
+    private lineWidthBuffer?: GPUBuffer;
+
 
     public init(chart: Chart, options: ContourSeriesOptions): void {
-        const lerpColorDec = (
-            a: number,
-            b: number,
-            t: number
-        ): number => 255 * (a * (1 - t) + b * t);
+        const stops = this.colorAxis?.stops ? this.colorAxis.stops.map(
+            (stop: GradientColorStop): number[] => this.colorToArray(stop[1])
+        ) :
+            [
+                [0, 0, 0, 0],
+                [1, 1, 1, 1]
+            ];
 
         function lerpVectors(
             v1: number[],
@@ -81,6 +86,12 @@ class ContourSeries extends ScatterSeries {
         ): number[] {
             const [v1A, v1B, v1C] = v1;
             const [v2A, v2B, v2C] = v2;
+            const lerpColorDec = (
+                a: number,
+                b: number,
+                t: number
+            ): number => 255 * (a * (1 - t) + b * t);
+
             return [
                 lerpColorDec(v1A, v2A, t),
                 lerpColorDec(v1B, v2B, t),
@@ -110,14 +121,12 @@ class ContourSeries extends ScatterSeries {
         chart.options = merge({
             tooltip: {
                 formatter: function (tt: Tooltip): string {
-                    const point = tt.chart.hoverPoint;
-                    const value = ((point as ContourPoint).value || 0);
+                    const value = (
+                        (tt.chart.hoverPoint as ContourPoint).value || 0
+                    );
                     const MAXVAL = 230; // Temp hardcoded
                     const normVal = value / MAXVAL;
-                    const stops = [ // Temp hardcoded
-                        [0, 0, 0, 0],
-                        [1, 1, 1, 1]
-                    ];
+
                     let color = [1, 0, 1];
                     for (let i = 0; i < 1; i++) {
                         if (normVal < stops[i + 1][0]) {
@@ -236,10 +245,12 @@ class ContourSeries extends ScatterSeries {
                     uniformUsage = (
                         GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
                     ),
+                    options = this.options,
                     contourLineColor = new Float32Array(
-                        this.options.contourLineColor ||
+                        options.contourLineColor ||
                         [0, 0, 0]
-                    );
+                    ),
+                    lineWidth = new Float32Array([options.lineWidth]);
 
                 // WebGPU Buffers
                 const colorAxisStopsBuffer = device.createBuffer({
@@ -295,6 +306,11 @@ class ContourSeries extends ScatterSeries {
                     usage: uniformUsage
                 });
 
+                this.lineWidthBuffer = device.createBuffer({
+                    size: 4,
+                    usage: uniformUsage
+                });
+
                 device.queue.writeBuffer(
                     vertexBuffer,
                     0,
@@ -320,6 +336,12 @@ class ContourSeries extends ScatterSeries {
                     0,
                     contourLineColor
                 );
+                device.queue.writeBuffer(
+                    this.lineWidthBuffer,
+                    0,
+                    lineWidth
+                );
+
 
                 this.setContourIntervalUniform();
                 this.setSmoothColoringUniform();
@@ -394,6 +416,8 @@ class ContourSeries extends ScatterSeries {
                         @group(0) @binding(5) var<uniform> smoothColoring: u32;
                         @group(0) @binding(6) var<uniform> showContourLines: u32;
                         @group(0) @binding(7) var<uniform> contourLineColor: vec3<f32>;
+                        @group(0) @binding(8) var<uniform> lineWidth: f32;
+
 
                         fn getColor(value: f32) -> vec3<f32> {
                             let stopCount = colorStopsCount;
@@ -430,7 +454,7 @@ class ContourSeries extends ScatterSeries {
                             let val = input.originalPos.z;
 
                             // CONTOUR LINES
-                            let lineWidth: f32 = 1.0;
+                            //let lineWidth: f32 = 1.0;
                             //let contourColor = vec3f(0.0, 0.0, 0.0);
 
                             let val_dx: f32 = dpdx(val);
@@ -607,6 +631,14 @@ class ContourSeries extends ScatterSeries {
                             ),
                             label: 'contourLineColorBuffer'
                         }
+                    }, {
+                        binding: 8,
+                        resource: {
+                            buffer: (
+                                this.lineWidthBuffer as GPUBuffer
+                            ),
+                            label: 'lineWidthBuffer'
+                        }
                     }]
                 });
 
@@ -756,18 +788,20 @@ class ContourSeries extends ScatterSeries {
         return [min || 0, max || 0];
     }
 
-    private getColorAxisStopsData() : { array: Float32Array, length: number } {
-        const colorAxisStops = this.colorAxis?.stops,
-            colorToArray = (color: ColorType): [number, number, number] => {
-                const hex = (color as string).replace('#', '');
+    public colorToArray(color: ColorType): [number, number, number] {
+        const hex = (color as string).replace('#', '');
 
-                // RGB array
-                return [
-                    parseInt(hex.substring(0, 2), 16) / 255,
-                    parseInt(hex.substring(2, 4), 16) / 255,
-                    parseInt(hex.substring(4, 6), 16) / 255
-                ];
-            };
+        // RGB array
+        return [
+            parseInt(hex.substring(0, 2), 16) / 255,
+            parseInt(hex.substring(2, 4), 16) / 255,
+            parseInt(hex.substring(4, 6), 16) / 255
+        ];
+    }
+
+
+    private getColorAxisStopsData() : { array: Float32Array, length: number } {
+        const colorAxisStops = this.colorAxis?.stops;
 
         let flattenedData;
 
@@ -775,7 +809,7 @@ class ContourSeries extends ScatterSeries {
             flattenedData = [];
 
             for (const stop of colorAxisStops) {
-                flattenedData.push(stop[0], ...colorToArray(stop[1]));
+                flattenedData.push(stop[0], ...this.colorToArray(stop[1]));
             }
         }
 

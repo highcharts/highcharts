@@ -7,5 +7,7 @@ export default interface ContourOptions extends ScatterSeriesOptions {
     // Defaults to black
     clearValue?: GPUColor;
     // No transparency, defaults to black
-    contourLineColor?: [number, number, number]
+    contourLineColor?: [number, number, number];
+    // Defaults to 1. Device Pixel Ratio insted?
+    lineWidth: number;
 }
