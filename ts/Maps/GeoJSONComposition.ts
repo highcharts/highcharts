@@ -830,4 +830,30 @@ export default GeoJSONComposition;
  * @typedef {number|string|Array<number|string>} Highcharts.MapViewPaddingType
  */
 
+
+/**
+ * Object containing the bounds of the map.
+ * All coordinates are in projected units.
+ *
+ * @interface Highcharts.MapBounds
+ *//**
+ * The center of the bounding box.
+ * @name Highcharts.MapBounds#midX
+ *//**
+ * The center of the bounding box.
+ * @name Highcharts.MapBounds#midY
+ *//**
+ * First point's X of the bounding box.
+ * @name Highcharts.MapBounds#x1
+ *//**
+ * First point's Y of the bounding box.
+ * @name Highcharts.MapBounds#y1
+ *//**
+ * Second point's X of the bounding box.
+ * @name Highcharts.MapBounds#x2
+ *//**
+ * Second point's Y of the bounding box.
+ * @name Highcharts.MapBounds#y2
+ */
+
 ''; // Detach doclets above
