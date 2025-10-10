@@ -212,8 +212,6 @@ export interface MapNavigationOptions {
         [key: string]: MapNavigationButtonOptions|undefined;
     };
 
-    //Record<string, MapNavigationButtonOptions>;
-
     /**
      * Whether to enable navigation buttons. By default it inherits the
      * [enabled](#mapNavigation.enabled) setting.
