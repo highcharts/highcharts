@@ -128,7 +128,9 @@ module.exports = {
             'grid/cell-editing',
             'grid/cell-renderers',
             'grid/sparklines',
+            'grid/column-filtering',
             'grid/events',
+            'grid/exporting',
             'grid/pagination',
             {
                 'Theming': [

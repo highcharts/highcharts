@@ -26,6 +26,7 @@
 import type { Options, GroupedHeaderOptions, IndividualColumnOptions } from './Options';
 import type DataTableOptions from '../../Data/DataTableOptions';
 import type Column from './Table/Column';
+import type Popup from './UI/Popup.js';
 
 import Accessibility from './Accessibility/Accessibility.js';
 import AST from '../../Core/Renderer/HTML/AST.js';
@@ -277,6 +278,11 @@ class Grid {
     public id: string;
 
     /**
+     * The list of currently shown popups.
+     */
+    public popups: Set<Popup> = new Set();
+
+    /**
      * Functions that unregister events attached to the grid's data table,
      * that need to be removed when the grid is destroyed.
      */
@@ -358,43 +364,30 @@ class Grid {
      * Initializes the pagination.
      */
     private initPagination(): void {
-
-        let paginationState = {};
+        let state: Pagination.PaginationState | undefined;
 
         if (this.pagination) {
             const {
                 currentPageSize,
-                currentPage,
-                totalItems,
-                totalPages
+                currentPage
             } = this.pagination || {};
 
-            paginationState = {
+            state = {
                 currentPageSize,
-                currentPage,
-                totalItems,
-                totalPages
+                currentPage
             };
         }
 
         this.pagination?.destroy();
         delete this.pagination;
 
+        const rawOptions = this.options?.pagination;
+        const options = isObject(rawOptions) ? rawOptions : {
+            enabled: rawOptions
+        };
 
-        const currentPaginationOptions = this.options?.pagination;
-        const paginationOptions = merge(
-            (
-                isObject(currentPaginationOptions) ?
-                    currentPaginationOptions :
-                    { enabled: currentPaginationOptions }
-            ),
-            {
-                ...paginationState
-            }
-        );
-
-        if (paginationOptions?.enabled) {
-            this.pagination = new Pagination(this, paginationOptions);
+        if (options?.enabled) {
+            this.pagination = new Pagination(this, options, state);
         }
     }
 
@@ -1107,25 +1100,30 @@ class Grid {
     }
 
     /**
-     * Returns the current grid data as a JSON string.
+     * Returns the grid data as a JSON string.
+     *
+     * @param modified
+     * Whether to return the modified data table (after filtering/sorting/etc.)
+     * or the unmodified, original one. Default value is set to `true`.
      *
      * @return
      * JSON representation of the data
      */
-    public getData(): string {
-        const json = this.viewport?.dataTable.getModified().columns;
+    public getData(modified: boolean = true): string {
+        const dataTable = modified ? this.viewport?.dataTable : this.dataTable;
+        const columns = dataTable?.columns;
 
-        if (!this.enabledColumns || !json) {
+        if (!this.enabledColumns || !columns) {
             return '{}';
         }
 
-        for (const key of Object.keys(json)) {
+        for (const key of Object.keys(columns)) {
             if (this.enabledColumns.indexOf(key) === -1) {
-                delete json[key];
+                delete columns[key];
             }
         }
 
-        return JSON.stringify(json);
+        return JSON.stringify(columns, null, 2);
     }
 
     /**

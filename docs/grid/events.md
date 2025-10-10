@@ -27,7 +27,10 @@ The available events are:
 | **Event Name**     | **Description**                                          | **Function Context** |
 |--------------------|----------------------------------------------------------|-----------------------|
 | `afterResize`      | Triggered after resizing a column.                       | `this: Column`        |
-| `afterSorting`     | Triggered after sorting a column.                        | `this: Column`        |
+| `beforeSort`       | Triggered before sorting a column.                       | `this: Column`        |
+| `afterSort`        | Triggered after sorting a column.                        | `this: Column`        |
+| `beforeFilter`     | Triggered before filtering a column.                     | `this: Column`        |
+| `afterFilter`      | Triggered after filtering a column.                      | `this: Column`        |
 
 ## header
 
@@ -55,8 +58,17 @@ columnDefaults: {
         afterResize: function () {
             console.log('Column resized:', this);
         },
-        afterSorting: function () {
-            console.log('Column sorted:', this);
+        beforeSort: function () {
+            console.log('Before sorting column:', this.id);
+        },
+        afterSort: function () {
+            console.log('After sorting column:', this.id);
+        },
+        beforeFilter: function () {
+            console.log('Before filtering column:', this.id);
+        },
+        afterFilter: function () {
+            console.log('After filtering column:', this.id);
         }
     },
     cells: {

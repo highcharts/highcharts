@@ -39,10 +39,12 @@ import Table from '../Grid/Core/Table/Table.js';
 import Column from '../Grid/Core/Table/Column.js';
 import HeaderCell from '../Grid/Core/Table/Header/HeaderCell.js';
 import TableCell from '../Grid/Core/Table/Body/TableCell.js';
+import SvgIcons from '../Grid/Core/UI/SvgIcons.js';
 
 import GridEvents from '../Grid/Pro/GridEvents.js';
 import CellEditingComposition from '../Grid/Pro/CellEditing/CellEditingComposition.js';
 import CreditsProComposition from '../Grid/Pro/Credits/CreditsProComposition.js';
+import ExportingComposition from '../Grid/Pro/Export/ExportingComposition.js';
 import ValidatorComposition from '../Grid/Pro/ColumnTypes/ValidatorComposition.js';
 import CellRenderersComposition from '../Grid/Pro/CellRendering/CellRenderersComposition.js';
 import CellRendererRegistry from '../Grid/Pro/CellRendering/CellRendererRegistry.js';
@@ -50,6 +52,7 @@ import PaginationComposition from '../Grid/Pro/Pagination/PaginationComposition.
 import Pagination from '../Grid/Core/Pagination/Pagination.js';
 import CellContentPro from '../Grid/Pro/CellRendering/CellContentPro.js';
 import CellRenderer from '../Grid/Pro/CellRendering/CellRenderer.js';
+
 
 
 /* *
@@ -73,6 +76,7 @@ import '../Data/Modifiers/FilterModifier.js';
 import '../Grid/Pro/GridEvents.js';
 import '../Grid/Pro/CellEditing/CellEditingComposition.js';
 import '../Grid/Pro/Credits/CreditsProComposition.js';
+import '../Grid/Pro/Export/ExportingComposition.js';
 
 // Cell Renderers
 import '../Grid/Pro/CellRendering/CellRenderer.js';
@@ -125,6 +129,7 @@ declare global {
         merge: typeof Utilities.merge;
         CellRendererRegistry: typeof CellRendererRegistry;
         CellRenderer: typeof CellRenderer;
+        SvgIcons: typeof SvgIcons;
     }
     interface Window {
         Grid: GridNamespace;
@@ -170,6 +175,7 @@ G.Pagination = G.Pagination || Pagination;
 GridEvents.compose(G.Column, G.HeaderCell, G.TableCell);
 CellEditingComposition.compose(G.Table, G.TableCell, G.Column);
 CreditsProComposition.compose(G.Grid);
+ExportingComposition.compose(G.Grid);
 ValidatorComposition.compose(G.Table);
 CellRenderersComposition.compose(G.Column);
 PaginationComposition.compose(G.Pagination);
@@ -177,6 +183,7 @@ PaginationComposition.compose(G.Pagination);
 G.CellRendererRegistry = G.CellRendererRegistry || CellRendererRegistry;
 G.CellContentPro = CellContentPro;
 G.CellRenderer = CellRenderer;
+G.SvgIcons = SvgIcons;
 
 
 /* *

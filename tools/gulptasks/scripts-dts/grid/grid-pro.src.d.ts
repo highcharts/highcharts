@@ -12,6 +12,7 @@ import './es-modules/Grid/Pro/GridEvents';
 import './es-modules/Grid/Pro/CellEditing/CellEditingComposition';
 import './es-modules/Grid/Pro/Dash3Compatibility';
 import './es-modules/Grid/Pro/Credits/CreditsProComposition';
+import './es-modules/Grid/Pro/Export/ExportingComposition';
 import './es-modules/Grid/Pro/ColumnTypes/ValidatorComposition';
 import './es-modules/Grid/Pro/CellRendering/CellRenderersComposition';
 import './es-modules/Grid/Pro/CellRendering/Renderers/TextRenderer';
@@ -26,7 +27,7 @@ import './es-modules/Grid/Pro/CellRendering/Renderers/SparklineRenderer';
 
 export { default as Grid } from './es-modules/Grid/Core/Grid.js';
 export { default as Column } from './es-modules/Grid/Core/Table/Column.js';
-export { default as ColumnResizing } from "./es-modules/Grid/Core/Table/ColumnResizing/ColumnResizing";
+export { default as ColumnResizing } from './es-modules/Grid/Core/Table/ColumnResizing/ColumnResizing';
 export { default as TableRow } from './es-modules/Grid/Core/Table/Body/TableRow.js';
 export { default as TableCell } from './es-modules/Grid/Core/Table/Body/TableCell.js';
 export { default as Options } from './es-modules/Grid/Core/Options.js';

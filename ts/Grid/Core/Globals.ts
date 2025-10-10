@@ -70,7 +70,12 @@ namespace Globals {
         virtualization: 'virtualization',
         scrollableContent: 'scrollable-content',
         headerCell: 'header-cell',
+        headerCellContainer: 'header-cell-container',
         headerCellContent: 'header-cell-content',
+        headerCellFilterIcon: 'header-cell-filter-icon',
+        headerCellIcons: 'header-cell-icons',
+        headerCellSortIcon: 'header-cell-sort-icon',
+        headerCellMenuIcon: 'header-cell-menu-icon',
         headerRow: 'head-row-content',
         noData: 'no-data',
         noPadding: 'no-padding',
@@ -90,8 +95,23 @@ namespace Globals {
         loadingWrapper: 'loading-wrapper',
         loadingSpinner: 'spinner',
         loadingMessage: 'loading-message',
-        paginationContainer: 'pagination-container',
+        popup: 'popup',
+        button: 'button',
+        icon: 'icon',
+        popupContent: 'popup-content',
+        columnFilterWrapper: 'column-filter-wrapper',
+        toolbarButtonActiveIndicator: 'active-indicator',
+        menuContainer: 'menu-container',
+        menuItem: 'menu-item',
+        menuHeader: 'menu-header',
+        menuHeaderCategory: 'menu-header-category',
+        menuHeaderName: 'menu-header-name',
+        menuItemIcon: 'menu-item-icon',
+        menuItemLabel: 'menu-item-label',
+        menuDivider: 'menu-divider',
+        clearFilterButton: 'clear-filter-button',
         paginationWrapper: 'pagination-wrapper',
+        paginationContainer: 'pagination-container',
         paginationPageInfo: 'pagination-info',
         paginationControls: 'pagination-controls',
         paginationButton: 'pagination-btn',
@@ -107,7 +127,8 @@ namespace Globals {
         paginationMobilePageSizeSelector:
             'pagination-mobile-page-size-selector',
         paginationPageSizeContainer: 'pagination-page-size-container',
-        paginationPageSizeSelect: 'pagination-page-size-select'
+        paginationPageSizeSelect: 'pagination-page-size-select',
+        zeroWidth: 'zero-width'
     } as const;
 
     export const win = window;

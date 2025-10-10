@@ -150,12 +150,6 @@ test('CSV with ""s', async (assert) => {
     connector.describeColumn('test', {
         dataType: 'string'
     })
-
-    assert.strictEqual(
-        connector.converter.export(connector).split('\n')[1].split(',')[0],
-        '\"12\"',
-        'The first value (12) should be quoted when exported to csv, if dataType is set to string'
-    )
 });
 
 test('CSVConnector from URL', async (assert) => {

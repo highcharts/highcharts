@@ -32,6 +32,9 @@ import type DataTableOptions from '../../Data/DataTableOptions';
 import type Cell from './Table/Cell';
 import type Column from './Table/Column';
 import type { LangOptionsCore } from '../../Shared/LangOptionsCore';
+import type {
+    Condition as ColumnFilteringCondition
+} from './Table/Actions/ColumnFiltering/FilteringTypes';
 
 
 /* *
@@ -348,6 +351,11 @@ export interface ColumnOptions {
      * `width` option is used to set the width of the column.
      */
     width?: number | string;
+
+    /**
+     * Filtering options for the column.
+     */
+    filtering?: ColumnFilteringOptions;
 }
 
 /**
@@ -421,7 +429,7 @@ export interface ColumnHeaderOptions {
 }
 
 /**
- * Column sorting options avalable for applying to all columns at once.
+ * Column sorting options available for applying to all columns at once.
  */
 export interface ColumnSortingOptions {
     /**
@@ -604,6 +612,7 @@ export interface CreditsOptions {
     position?: 'bottom' | 'top';
 }
 
+
 /**
  * Language options for the grid.
  */
@@ -629,6 +638,48 @@ export interface LangOptions extends LangOptionsCore {
     noData?: string;
 
     /**
+     * `Filter` translation.
+     *
+     * @default 'Filter'
+     */
+    filter?: string;
+
+    /**
+     * `Sort ascending` translation.
+     *
+     * @default 'Sort ascending'
+     */
+    sortAscending?: string;
+
+    /**
+     * `Sort descending` translation.
+     *
+     * @default 'Sort descending'
+     */
+    sortDescending?: string;
+
+    /**
+     * `Column` translation.
+     *
+     * @default 'Column'
+     */
+    column?: string;
+
+    /**
+     * `Set filter` translation.
+     *
+     * @default 'Set filter'
+     */
+    setFilter?: string;
+
+    /**
+     * Language options for column filtering conditions.
+     */
+    columnFilteringConditions?: Partial<
+        Record<ColumnFilteringCondition, string>
+    >;
+
+    /**
      * Language options for pagination text values.
      */
     pagination?: PaginationLangOptions;
@@ -648,6 +699,35 @@ export interface TimeOptions {
     timezone?: string;
 }
 
+/**
+ * Column filtering options.
+ */
+export interface FilteringCondition {
+    /**
+     * The condition to use for filtering the column.
+     */
+    condition?: ColumnFilteringCondition;
+
+    /**
+     * The value that is used with the condition to filter the column.
+     */
+    value?: string | number | boolean | null;
+}
+
+export interface ColumnFilteringOptions extends FilteringCondition {
+    /**
+     * Whether the filtering is enabled or not.
+     */
+    enabled?: boolean;
+
+    /**
+     * Whether the filtering inputs should be rendered inline in the special
+     * table header row (`true`), or should be accessed via a popup (`false`).
+     *
+     * @default false
+     */
+    inline?: boolean;
+}
 
 /* *
  *
