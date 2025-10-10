@@ -2483,6 +2483,8 @@ class Series {
 
         let clipRect = sharedClips[sharedClipKey];
 
+        fireEvent(this, 'setClip', { clipBox });
+
         // If a clipping rectangle for the same set of axes does not exist,
         // create it
         if (!clipRect) {
@@ -5226,6 +5228,10 @@ export default Series;
  * Related browser event.
  * @name Highcharts.SeriesLegendItemClickEventObject#browserEvent
  * @type {global.PointerEvent}
+ *//**
+ * Whether the default action has been prevented (`true`) or not.
+ * @name Highcharts.SeriesLegendItemClickEventObject#defaultPrevented
+ * @type {boolean|undefined}
  *//**
  * Prevent the default action of toggle the visibility of the series.
  * @name Highcharts.SeriesLegendItemClickEventObject#preventDefault
