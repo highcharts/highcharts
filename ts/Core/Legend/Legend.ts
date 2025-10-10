@@ -124,94 +124,134 @@ class Legend {
 
     public allItems: Array<Legend.Item> = [];
 
+    /** @internal */
     public baseline?: number;
 
     public box!: SVGElement;
 
     public chart: Chart;
 
+    /** @internal */
     public clipHeight?: number;
 
+    /** @internal */
     public clipRect?: SVGElement;
 
+    /** @internal */
     public contentGroup!: SVGElement;
 
+    /** @internal */
     public currentPage?: number;
 
+    /** @internal */
     public display?: boolean;
 
+    /** @internal */
     public down?: SVGElement;
 
+    /** @internal */
     public downTracker?: SVGElement;
 
+    /** @internal */
     public eventOptions!: Record<string, EventCallback<Series, Event>>;
 
+    /** @internal */
     public fontMetrics?: FontMetricsObject;
 
+    /** @internal */
     public fullHeight?: number;
 
     public group!: SVGElement;
 
+    /** @internal */
     public initialItemY: number = 0;
 
+    /** @internal */
     public itemHeight: number = 0;
 
+    /** @internal */
     public itemHiddenStyle?: CSSObject;
 
+    /** @internal */
     public itemMarginBottom: number = 0;
 
+    /** @internal */
     public itemMarginTop: number = 0;
 
+    /** @internal */
     public itemStyle?: CSSObject;
 
+    /** @internal */
     public itemX: number = 0;
 
+    /** @internal */
     public itemY: number = 0;
 
+    /** @internal */
     public lastItemY: number = 0;
 
+    /** @internal */
     public lastLineHeight: number = 0;
 
+    /** @internal */
     public legendHeight: number = 0;
 
+    /** @internal */
     public legendWidth: number = 0;
 
+    /** @internal */
     public maxItemWidth: number = 0;
 
+    /** @internal */
     public maxLegendWidth: number = 0;
 
+    /** @internal */
     public nav?: SVGElement;
 
+    /** @internal */
     public offsetWidth: number = 0;
 
     public options!: LegendOptions;
 
+    /** @internal */
     public padding: number = 0;
 
+    /** @internal */
     public pager?: SVGElement;
 
+    /** @internal */
     public pages: Array<number> = [];
 
+    /** @internal */
     public proximate?: boolean;
 
+    /** @internal */
     public scrollGroup!: SVGElement;
 
+    /** @internal */
     public scrollOffset?: number;
 
+    /** @internal */
     public symbolHeight: number = 0;
 
+    /** @internal */
     public symbolWidth: number = 0;
 
     public title?: SVGElement;
 
+    /** @internal */
     public titleHeight: number = 0;
 
+    /** @internal */
     public totalItemWidth: number = 0;
 
+    /** @internal */
     public up?: SVGElement;
 
+    /** @internal */
     public upTracker?: SVGElement;
 
+    /** @internal */
     public widthOption: number = 0;
 
     /* *
@@ -223,7 +263,7 @@ class Legend {
     /**
      * Initialize the legend.
      *
-     * @private
+     * @internal
      * @function Highcharts.Legend#init
      *
      * @param {Highcharts.Chart} chart
@@ -267,7 +307,7 @@ class Legend {
     }
 
     /**
-     * @private
+     * @internal
      * @function Highcharts.Legend#setOptions
      * @param {Highcharts.LegendOptions} options
      */
@@ -345,12 +385,14 @@ class Legend {
     /**
      * Set the colors for the legend item.
      *
-     * @private
+     * @internal
      * @function Highcharts.Legend#colorizeItem
+     *
      * @param {Highcharts.BubbleLegendItem|Highcharts.Point|Highcharts.Series} item
-     *        A Series or Point instance
+     * A Series or Point instance.
+     *
      * @param {boolean} [visible=false]
-     *        Dimmed or colored
+     * Dimmed or colored.
      *
      * @todo
      * Make events official: Fires the event `afterColorizeItem`.
@@ -410,7 +452,7 @@ class Legend {
     }
 
     /**
-     * @private
+     * @internal
      * @function Highcharts.Legend#positionItems
      */
     public positionItems(): void {
@@ -427,7 +469,7 @@ class Legend {
     /**
      * Position the legend item.
      *
-     * @private
+     * @internal
      * @function Highcharts.Legend#positionItem
      * @param {Highcharts.BubbleLegendItem|Highcharts.Point|Highcharts.Series} item
      * The item to position
@@ -467,7 +509,7 @@ class Legend {
     /**
      * Destroy a single legend item, used internally on removing series items.
      *
-     * @private
+     * @internal
      * @function Highcharts.Legend#destroyItem
      * @param {Highcharts.BubbleLegendItem|Highcharts.Point|Highcharts.Series} item
      * The item to remove
@@ -496,7 +538,7 @@ class Legend {
      * Destroy the legend. Used internally. To reflow objects, `chart.redraw`
      * must be called after destruction.
      *
-     * @private
+     * @internal
      * @function Highcharts.Legend#destroy
      */
     public destroy(): void {
@@ -529,7 +571,7 @@ class Legend {
     /**
      * Position the checkboxes after the width is determined.
      *
-     * @private
+     * @internal
      * @function Highcharts.Legend#positionCheckboxes
      */
     public positionCheckboxes(): void {
@@ -566,7 +608,7 @@ class Legend {
     /**
      * Render the legend title on top of the legend.
      *
-     * @private
+     * @internal
      * @function Highcharts.Legend#renderTitle
      */
     public renderTitle(): void {
@@ -624,8 +666,9 @@ class Legend {
      * Set the legend item text.
      *
      * @function Highcharts.Legend#setText
+     *
      * @param {Highcharts.Point|Highcharts.Series} item
-     *        The item for which to update the text in the legend.
+     * The item for which to update the text in the legend.
      */
     public setText(
         item: Legend.Item
@@ -643,7 +686,7 @@ class Legend {
      * Render a single specific legend item. Called internally from the `render`
      * function.
      *
-     * @private
+     * @internal
      * @function Highcharts.Legend#renderItem
      * @param {Highcharts.BubbleLegendItem|Highcharts.Point|Highcharts.Series} item
      * The item to render.
@@ -808,7 +851,7 @@ class Legend {
      * Get the position of the item in the layout. We now know the
      * maxItemWidth from the previous loop.
      *
-     * @private
+     * @internal
      * @function Highcharts.Legend#layoutItem
      * @param {Highcharts.BubbleLegendItem|Highcharts.Point|Highcharts.Series} item
      */
@@ -887,7 +930,7 @@ class Legend {
      * item per point for pie series and its derivatives. Fires the event
      * `afterGetAllItems`.
      *
-     * @private
+     * @internal
      * @function Highcharts.Legend#getAllItems
      * @return {Array<(Highcharts.BubbleLegendItem|Highcharts.Point|Highcharts.Series)>}
      * The current items in the legend.
@@ -927,7 +970,7 @@ class Legend {
     /**
      * Get a short, three letter string reflecting the alignment and layout.
      *
-     * @private
+     * @internal
      * @function Highcharts.Legend#getAlignment
      * @return {string}
      * The alignment, empty string if floating
@@ -952,7 +995,7 @@ class Legend {
      * side of the chart. If the position is set to a corner, top or bottom is
      * reserved for horizontal legends and left or right for vertical ones.
      *
-     * @private
+     * @internal
      * @function Highcharts.Legend#adjustMargins
      * @param {Array<number>} margin
      * @param {Array<number>} spacing
@@ -994,7 +1037,7 @@ class Legend {
     }
 
     /**
-     * @private
+     * @internal
      * @function Highcharts.Legend#proximatePositions
      */
     public proximatePositions(): void {
@@ -1064,7 +1107,7 @@ class Legend {
      * of creating new ones. Called internally on initial render and after
      * redraws.
      *
-     * @private
+     * @internal
      * @function Highcharts.Legend#render
      */
     public render(): void {
@@ -1225,7 +1268,7 @@ class Legend {
     /**
      * Align the legend to chart's box.
      *
-     * @private
+     * @internal
      * @function Highcharts.align
      * @param {Highcharts.BBoxObject} alignTo
      */
@@ -1269,7 +1312,7 @@ class Legend {
      * Set up the overflow handling by adding navigation with up and down arrows
      * below the legend.
      *
-     * @private
+     * @internal
      * @function Highcharts.Legend#handleOverflow
      */
     public handleOverflow(legendHeight: number): number {
@@ -1469,15 +1512,14 @@ class Legend {
     /**
      * Scroll the legend by a number of pages.
      *
-     * @private
+     * @internal
      * @function Highcharts.Legend#scroll
      *
      * @param {number} scrollBy
-     *        The number of pages to scroll.
+     * The number of pages to scroll.
      *
      * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
-     *        Whether and how to apply animation.
-     *
+     * Whether and how to apply animation.
      */
     public scroll(scrollBy: number, animation?: (boolean|Partial<AnimationOptions>)): void {
         const chart = this.chart,
@@ -1573,7 +1615,7 @@ class Legend {
     }
 
     /**
-     * @private
+     * @internal
      * @function Highcharts.Legend#setItemEvents
      * @param {Highcharts.BubbleLegendItem|Point|Highcharts.Series} item
      * @param {Highcharts.SVGElement} legendLabel
@@ -1704,7 +1746,7 @@ class Legend {
     }
 
     /**
-     * @private
+     * @internal
      * @function Highcharts.Legend#createCheckboxForItem
      * @param {Highcharts.BubbleLegendItem|Point|Highcharts.Series} item
      * @emits Highcharts.Series#event:checkboxClick
@@ -1755,6 +1797,7 @@ interface Legend extends LegendBase {
  *
  * */
 
+/** @internal */
 namespace Legend {
 
     /* *
@@ -1777,9 +1820,7 @@ namespace Legend {
      *
      * */
 
-    /**
-     * @private
-     */
+    /** @internal */
     export function compose(
         ChartClass: typeof Chart
     ): void {
@@ -1841,10 +1882,10 @@ export default Legend;
  * @callback Highcharts.LegendItemClickCallbackFunction
  *
  * @param {Highcharts.Legend} this
- *        The legend on which the event occurred.
+ * The legend on which the event occurred.
  *
  * @param {Highcharts.LegendItemClickEventObject} event
- *        The event that occurred.
+ * The event that occurred.
  */
 
 /**
@@ -1886,10 +1927,10 @@ export default Legend;
  * @callback Highcharts.PointLegendItemClickCallbackFunction
  *
  * @param {Highcharts.Point} this
- *        The point on which the event occurred.
+ * The point on which the event occurred.
  *
  * @param {Highcharts.PointLegendItemClickEventObject} event
- *        The event that occurred.
+ * The event that occurred.
  */
 
 /**
@@ -1945,10 +1986,10 @@ export default Legend;
  * @callback Highcharts.SeriesLegendItemClickCallbackFunction
  *
  * @param {Highcharts.Series} this
- *        The series where the event occurred.
+ * The series where the event occurred.
  *
  * @param {Highcharts.SeriesLegendItemClickEventObject} event
- *        The event that occurred.
+ * The event that occurred.
  */
 
 /**
