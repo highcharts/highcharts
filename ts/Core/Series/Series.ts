@@ -1089,7 +1089,7 @@ class Series {
             }
 
             // Reset the counter
-            this.xIncrement = this.points?.[0]?.x;
+            this.xIncrement = null;
 
             // Handle name-to-x, uniqueNames
             const nameColumn = table.getColumn('name');
@@ -1122,17 +1122,23 @@ class Series {
             }
 
             // X column exists in the data table, but has gaps or strings
-            const columnFilled = [...column];
-            if (columnFilled.some((x): boolean => !isNumber(x))) {
-                this.xColumn = columnFilled.map((x: unknown, i): number => (
-                    (
-                        isNumber(x) ? x :
-                            isString(x) ? this.chart.time.parse(x) :
-                                x instanceof Date ? x.getTime() :
-                                    void 0
-                    ) ?? this.autoIncrement(i)
-                ));
-                return this.xColumn;
+            if (
+                column.length < (this.options.turboThreshold || 0) &&
+                !this.boosted
+            ) {
+                const columnFilled = [...column];
+                if (columnFilled.some((x): boolean => !isNumber(x))) {
+                    this.xColumn = columnFilled.map((x: unknown, i): number => {
+                        const autoX = this.autoIncrement(i);
+                        return (
+                            isNumber(x) ? x :
+                                isString(x) ? this.chart.time.parse(x) :
+                                    x instanceof Date ? x.getTime() :
+                                        void 0
+                        ) ?? autoX;
+                    });
+                    return this.xColumn;
+                }
             }
         }
 
@@ -4715,7 +4721,7 @@ class Series {
                     plotOptions?.series?.pointStart ??
                     oldOptions.pointStart ??
                     // When updating after addPoint
-                    series.getColumn('x')[0]
+                    (!series.tempNoXColumn ? series.getColumn('x')[0] : void 0)
             },
             !keepPoints && { data: series.options.data },
             options,
