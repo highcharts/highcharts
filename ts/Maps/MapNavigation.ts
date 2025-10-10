@@ -64,9 +64,7 @@ declare module '../Core/Chart/ChartBase' {
  *
  * */
 
-/**
- * @private
- */
+/** @private */
 function stopEvent(e: Event): void {
     if (e) {
         e.preventDefault?.();

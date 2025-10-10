@@ -32,6 +32,7 @@ const r = 63.78137,
  *
  * */
 
+/** @internal */
 class WebMercator implements ProjectionDefinition {
 
     /* *

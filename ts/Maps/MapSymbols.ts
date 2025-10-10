@@ -35,9 +35,7 @@ let symbols: SymbolTypeRegistry;
  *
  * */
 
-/**
- *
- */
+/** @internal */
 function bottomButton(
     x: number,
     y: number,
@@ -53,22 +51,16 @@ function bottomButton(
     return symbols.roundedRect(x, y, w, h, options);
 }
 
-/**
- *
- */
+/** @internal */
 function compose(
     SVGRendererClass: typeof SVGRenderer
 ): void {
-
     symbols = SVGRendererClass.prototype.symbols;
     symbols.bottombutton = bottomButton;
     symbols.topbutton = topButton;
-
 }
 
-/**
- *
- */
+/** @internal */
 function topButton(
     x: number,
     y: number,
@@ -91,9 +83,16 @@ function topButton(
 
 declare module '../Core/Renderer/SVG/SymbolType' {
     interface SymbolTypeRegistry {
-        /** @requires Map/MapSymbols */
+        /**
+         * @requires Map/MapSymbols
+         * @internal
+         */
         bottombutton: typeof bottomButton;
-        /** @requires Map/MapSymbols */
+
+        /**
+         * @requires Map/MapSymbols
+         * @internal
+         */
         topbutton: typeof topButton;
     }
 }

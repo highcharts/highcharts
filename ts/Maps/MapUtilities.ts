@@ -15,7 +15,11 @@ import type {
 } from './MapViewOptions';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 
-// Compute bounds from a path element
+/**
+ * Compute bounds from a path element.
+ *
+ * @internal
+ */
 const boundsFromPath = function (
     path: SVGPath
 ): MapBounds|undefined {

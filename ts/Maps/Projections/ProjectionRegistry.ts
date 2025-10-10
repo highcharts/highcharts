@@ -24,6 +24,7 @@ import WebMercator from './WebMercator.js';
  *
  * */
 
+/** @internal */
 export interface ProjectionRegistry {
     EqualEarth: typeof EqualEarth;
     LambertConformalConic: typeof LambertConformalConic;
@@ -32,6 +33,7 @@ export interface ProjectionRegistry {
     WebMercator: typeof WebMercator;
 }
 
+/** @internal */
 export type ProjectionRegistryName = keyof ProjectionRegistry;
 
 /* *
@@ -40,6 +42,7 @@ export type ProjectionRegistryName = keyof ProjectionRegistry;
  *
  * */
 
+/** @internal */
 const projectionRegistry: ProjectionRegistry = {
     EqualEarth,
     LambertConformalConic,

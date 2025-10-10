@@ -43,6 +43,7 @@ declare module '../Core/PointerEvent' {
     }
 }
 
+/** @internal */
 interface MapPointer extends Pointer {
     chart: MapChart;
     mapNavigation: MapNavigation;
@@ -56,6 +57,7 @@ interface MapPointer extends Pointer {
  *
  * */
 
+/** @internal */
 namespace MapPointer {
 
     /* *
