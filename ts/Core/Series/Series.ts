@@ -1063,9 +1063,11 @@ class Series {
      */
     public getColumn(
         columnName: string,
-        modified?: boolean
+        modified?: boolean,
+        matchLength?: boolean
     ): Array<number> {
         const table = modified ? this.dataTable.modified : this.dataTable,
+            rowCount = table.rowCount,
             usingModified = this.dataTable !== table,
             column = table.getColumn(columnName, true) as Array<number>,
             points = this.points || [];
@@ -1094,7 +1096,7 @@ class Series {
             // Handle name-to-x, uniqueNames
             const nameColumn = table.getColumn('name');
             if (this.xAxis?.hasNames && nameColumn) {
-                this.xColumn = Array(table.rowCount).fill(0)
+                this.xColumn = Array(rowCount).fill(0)
                     .map((_, i): number => this.xAxis.nameToX({
                         name: nameColumn[i] as string,
                         series: this
@@ -1105,7 +1107,7 @@ class Series {
 
             if (!column) {
                 // Vanilla auto-increment
-                this.xColumn = Array(table.rowCount).fill(0).map((): number =>
+                this.xColumn = Array(rowCount).fill(0).map((): number =>
                     this.autoIncrement()
                 );
                 return this.xColumn;
@@ -1142,7 +1144,7 @@ class Series {
             }
         }
 
-        return column || [];
+        return column || Array(matchLength ? rowCount : 0);
     }
 
     /**
@@ -1672,18 +1674,6 @@ class Series {
                                 columns[key] ||= new Array(dataLength);
                                 columns[key][i] = (ptOptions as any)[key];
                             }
-
-                            // Needed for 3d scatter because x is not part of
-                            // options, but appended in the `applyOptions` call
-                            // itself. z in pt is for scatter, indexOf is for
-                            // bubbles. Find a better solution for this.
-                            if (
-                                'z' in ptOptions ||
-                                dataColumnKeys.indexOf('z') !== -1
-                            ) {
-                                columns.z ||= new Array(dataLength);
-                                columns.z[i] = (ptOptions as any).z;
-                            }
                         }
                     }
 
@@ -2101,8 +2091,27 @@ class Series {
         max: number
     ): Series.CropDataObject {
         const xData = table.getColumn('x', true) as Array<number> ||
-                this.getColumn('x'),
-            dataLength = xData.length;
+            this.getColumn('x');
+
+        /* // Passes the ordinal test when tempNoXColumn is true
+        // @todo: Revisit and simplify
+        let xData = table.getColumn('x', true) as Array<number>;
+        if (
+            !xData ||
+            (
+                [...xData].some((x: number): boolean => !isNumber(x)) &&
+                table === this.dataTable
+            )
+        ) {
+            const xColumn = this.getColumn('x') as number[] || [];
+            if (xColumn.length === table.rowCount) {
+                xData = xColumn;
+            } else {
+                xData = [];
+            }
+        }
+        */
+        const dataLength = xData.length;
 
         let i,
             j,
