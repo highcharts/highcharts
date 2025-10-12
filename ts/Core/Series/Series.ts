@@ -4443,7 +4443,8 @@ class Series {
             } else {
                 [
                     data,
-                    dataOptions
+                    dataOptions,
+                    this.xColumn
                 ].filter(defined).forEach((coll): void => {
                     coll.shift();
                 });
