@@ -48,12 +48,32 @@ jobs:
         run: PLAYWRIGHT_HTML_REPORT=playwright-report/highcharts npx playwright test --project highcharts
         continue-on-error: true
 
+      - name: Run Playwright project highcharts (Firefox)
+        run: PLAYWRIGHT_HTML_REPORT=playwright-report/highcharts-firefox npx playwright test --project highcharts-firefox
+        continue-on-error: true
+
+      - name: Run Playwright project highcharts (WebKit)
+        run: PLAYWRIGHT_HTML_REPORT=playwright-report/highcharts-webkit npx playwright test --project highcharts-webkit
+        continue-on-error: true
+
       - name: Run Playwright project qunit
         run: PLAYWRIGHT_HTML_REPORT=playwright-report/qunit npx playwright test --project qunit --headed
         continue-on-error: true
 
+      - name: Run Playwright project qunit (Firefox)
+        run: PLAYWRIGHT_HTML_REPORT=playwright-report/qunit-firefox npx playwright test --project qunit-firefox --headed
+        continue-on-error: true
+
       - name: Run Playwright project dashboards
         run: PLAYWRIGHT_HTML_REPORT=playwright-report/dashboards npx playwright test --project dashboards
+        continue-on-error: true
+
+      - name: Run Playwright project dashboards (Firefox)
+        run: PLAYWRIGHT_HTML_REPORT=playwright-report/dashboards-firefox npx playwright test --project dashboards-firefox
+        continue-on-error: true
+
+      - name: Run Playwright project dashboards (WebKit)
+        run: PLAYWRIGHT_HTML_REPORT=playwright-report/dashboards-webkit npx playwright test --project dashboards-webkit
         continue-on-error: true
 
       - name: Run Playwright project internal
