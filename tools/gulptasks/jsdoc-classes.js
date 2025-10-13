@@ -116,6 +116,7 @@ function jsDocClasses() {
             plugins: [
                 ['plugins', 'add-namespace'],
                 ['plugins', 'markdown'],
+                ['plugins', 'internaltag'],
                 ['plugins', 'sampletag']
             ].map(
                 filePath => Path.join(TEMPLATE_DIRECTORY, ...filePath)
