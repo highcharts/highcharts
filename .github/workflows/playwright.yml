@@ -37,6 +37,11 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
+      - name: Setup Display
+        run: |
+          chromedriver --url-base=/wd/hub &
+          sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 &
+
       - name: Run Playwright project highcharts
         run: PLAYWRIGHT_HTML_REPORT=playwright-report/highcharts npx playwright test --project highcharts
         continue-on-error: true
