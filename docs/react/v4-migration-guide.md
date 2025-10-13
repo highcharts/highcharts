@@ -596,6 +596,3 @@ export default function ChartPage({ data, title }) {
   return <Chart data={data} title={title} />;
 }
 ```
-
----
-*Last updated: 2025-10-08*
