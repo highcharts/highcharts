@@ -117,7 +117,7 @@ const zoomBy = function (
             height: 10 * howMuch
         },
         trigger: 'mousewheel',
-        mouseWheelResetButton: options.showResetButton
+        allowResetButton: options.showResetButton
     });
 
     if (hasZoomed) {

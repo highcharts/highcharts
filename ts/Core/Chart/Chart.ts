@@ -3764,7 +3764,7 @@ class Chart {
                 selection,
                 to = {},
                 trigger,
-                mouseWheelResetButton
+                allowResetButton = true
             } = params,
             { inverted, time } = this;
 
@@ -3956,9 +3956,11 @@ class Chart {
                         // disallow certain axis padding options that would make
                         // panning/zooming hard. Reset and redraw after the
                         // operation has finished.
-                        axis.isPanning = trigger !== 'zoom';
+                        axis.isPanning =
+                            trigger !== 'zoom' &&
+                            trigger !== 'mousewheel';
 
-                        if (axis.isPanning && trigger !== 'mousewheel') {
+                        if (axis.isPanning) {
                             isAnyAxisPanning = true; // #21319
                         }
 
@@ -3974,7 +3976,7 @@ class Chart {
                             !reset &&
                             (newMin > floor || newMax < ceiling)
                         ) {
-                            displayButton = true;
+                            displayButton = allowResetButton;
                         }
                     }
 
@@ -3986,7 +3988,7 @@ class Chart {
                     !this.hasCartesianSeries &&
                     !reset
                 ) {
-                    displayButton = true;
+                    displayButton = allowResetButton;
                 }
 
                 if (event) {
@@ -4011,10 +4013,6 @@ class Chart {
                     }
                 );
             } else {
-
-                if (defined(mouseWheelResetButton)) {
-                    displayButton = displayButton && mouseWheelResetButton;
-                }
 
                 // Show or hide the Reset zoom button, but not while panning
                 if (
@@ -4177,7 +4175,7 @@ namespace Chart {
         selection?: Pointer.SelectEventObject;
         from?: Partial<BBoxObject>;
         trigger?: string;
-        mouseWheelResetButton?: boolean;
+        allowResetButton?: boolean;
         hasZoomed?: boolean;
     }
 
