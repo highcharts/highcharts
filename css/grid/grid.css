@@ -436,6 +436,15 @@
     overflow: hidden;
     box-sizing: border-box;
     font: var(--ig-font);
+    color-scheme: light dark;
+}
+
+.highcharts-light .hcg-container {
+    color-scheme: light;
+}
+
+.highcharts-dark .hcg-container {
+    color-scheme: dark;
 }
 
 .hcg-container * {
