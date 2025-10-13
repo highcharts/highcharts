@@ -123,6 +123,13 @@ class GanttSeries extends XRangeSeries {
      *
      * */
 
+    public getColumn(columnName: string): Array<number> {
+        if (columnName === 'x') {
+            return super.getColumn('start');
+        }
+        return super.getColumn.apply(this, arguments);
+    }
+
     /**
      * Draws a single point in the series.
      *
