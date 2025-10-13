@@ -500,10 +500,10 @@ class SidebarPopup extends BaseForm {
             return;
         }
         const row = (
-            dropContext.getType() === 'cell' ?
-                (dropContext as Cell).row :
-                (dropContext as Row)
-        ),
+                dropContext.getType() === 'cell' ?
+                    (dropContext as Cell).row :
+                    (dropContext as Row)
+            ),
             newCell = row.addCell({
                 id: GUIElement.getElementId('col')
             });

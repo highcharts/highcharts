@@ -40,8 +40,7 @@ const {
  * Contains presentation information like column order, usually in relation to a
  * table instance.
  */
-class SharedComponentState
-    implements Serializable<SharedComponentState, SharedComponentState.JSON> {
+class SharedComponentState implements Serializable<SharedComponentState, SharedComponentState.JSON> {
 
     /* *
      *
@@ -248,8 +247,9 @@ class SharedComponentState
         });
     }
 
-    public getHoverPoint():
-        (SharedComponentState.PresentationHoverPointType | undefined) {
+    public getHoverPoint(): (
+        SharedComponentState.PresentationHoverPointType | undefined
+    ) {
         return this.hoverPoint;
     }
 

@@ -63,7 +63,7 @@ export interface Options extends Component.Options {
      */
     onUpdate(e: KeyboardEvent, connector: Component.ConnectorTypes): void
 
-    type: 'Grid' | 'Grid';
+    type: 'Grid';
     /**
      * Generic options to adjust behavior and styling of the rendered data
      * grid.
@@ -147,7 +147,7 @@ export interface SyncOptions extends Sync.RawOptionsRecord {
 }
 
 /**
- * grid component highlight sync options.
+ * Grid component highlight sync options.
  *
  * Example:
  * ```

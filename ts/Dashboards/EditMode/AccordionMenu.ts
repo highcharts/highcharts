@@ -366,16 +366,16 @@ class AccordionMenu {
 
             const collapsedHeader = EditRenderer.renderCollapseHeader(
                 parentElement, {
-                name,
-                isEnabled: !!component.getEditableOptionValue(propertyPath),
-                iconsURLPrefix: this.iconsURLPrefix,
-                showToggle: showToggle,
-                onchange: (value: boolean | string | number): void =>
-                    this.updateOptions(propertyPath, value),
-                isNested: !!accordionOptions,
-                isStandalone: !accordionOptions,
-                lang
-            }
+                    name,
+                    isEnabled: !!component.getEditableOptionValue(propertyPath),
+                    iconsURLPrefix: this.iconsURLPrefix,
+                    showToggle: showToggle,
+                    onchange: (value: boolean | string | number): void =>
+                        this.updateOptions(propertyPath, value),
+                    isNested: !!accordionOptions,
+                    isStandalone: !accordionOptions,
+                    lang
+                }
             );
 
             for (let j = 0, jEnd = accordionOptions?.length; j < jEnd; ++j) {
