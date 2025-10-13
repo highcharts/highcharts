@@ -6,12 +6,13 @@
 
 
 import * as Path from 'node:path';
+import FS from 'node:fs';
 import FSLib from '../libs/fs.js';
 
 import Error16Plugin from './plugins/Error16Plugin.mjs';
 import ProductMetaPlugin from './plugins/ProductMetaPlugin.mjs';
 import UMDExtensionPlugin from './plugins/UMDExtensionPlugin.mjs';
-import { loadExternalsJSON, resolveExternals } from './externals.mjs';
+import { appendExternals, loadExternalsJSON, resolveExternals } from './externals.mjs';
 
 
 /* *
@@ -40,6 +41,21 @@ const productMasters = [
 ];
 
 loadExternalsJSON(FSLib.path([import.meta.dirname, 'externals.json']));
+
+const dashboardsExternalsPath = Path.join(
+    'tools',
+    'webpacks',
+    'externals-dashboards.json'
+);
+
+if (FS.existsSync(dashboardsExternalsPath)) {
+    const dashboardsExternals = FSLib.getFile(
+        dashboardsExternalsPath,
+        true
+    );
+
+    appendExternals(dashboardsExternals);
+}
 
 /* *
  *
