@@ -23,7 +23,7 @@ const DTS_FILES = [
     'Core/Renderer/AlignObject.d.ts',
     'Core/Renderer/CSSObject.d.ts',
     'Core/Renderer/DashStyleValue.d.ts',
-    'Core/Renderer/DOMElementType.d.ts',
+    // 'Core/Renderer/DOMElementType.d.ts',
     'Core/Renderer/HTML/HTMLAttributes.d.ts',
     'Core/Renderer/SVG/SVGAttributes.d.ts',
     'Core/Renderer/SVG/SVGPath.d.ts',

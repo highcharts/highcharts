@@ -2459,6 +2459,10 @@ export default Utilities;
  */
 
 /**
+ * @typedef {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement} Highcharts.DOMElementType
+ */
+
+/**
  * The function callback to execute when the event is fired. The `this` context
  * contains the instance, that fired the event.
  *

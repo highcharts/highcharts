@@ -14,18 +14,11 @@
  *
  * */
 
-export type DOMElementType = DOMElementTypeRegistry[
-    keyof DOMElementTypeRegistry
-];
+export type DOMElementType = (HTMLDOMElement|SVGDOMElement);
 
 export type HTMLDOMElement = globalThis.HTMLElement;
 
 export type SVGDOMElement = globalThis.SVGElement;
-
-export interface DOMElementTypeRegistry {
-    HTMLDOMElement: HTMLDOMElement;
-    SVGDOMElement: SVGDOMElement;
-}
 
 /* *
  *
