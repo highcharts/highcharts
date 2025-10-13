@@ -188,20 +188,20 @@ class Board {
     /**
      * The accessibility module for the dashboard.
      * @internal
-     * */
+     */
     public a11y: DashboardsAccessibility;
 
     /**
      * The container referenced by the `renderTo` option when creating the
      * dashboard.
      * @internal
-     * */
+     */
     public boardWrapper!: HTMLElement;
 
     /**
      * The main container for the dashboard. Created inside the element
      * specified by user when creating the dashboard.
-     * */
+     */
     public container!: HTMLElement;
 
     /**
@@ -211,75 +211,73 @@ class Board {
     public componentTypes = ComponentRegistry.types;
 
     /**
-     * The data cursor instance used for interacting with the data.
-     * @internal
-     * */
+     * The data cursor instance used for emitting events on the data.
+     */
     public dataCursor: DataCursor;
 
     /**
      * The data pool instance with all the connectors.
-     * */
+     */
     public dataPool: DataPool;
 
     /**
      * The edit mode instance. Used to handle editing the dashboard.
      * @internal
-     * */
+     */
     public editMode?: EditMode;
 
     /**
      * The fullscreen instance. Controls the fullscreen mode.
      * @internal
-     * */
+     */
     public fullscreen?: Fullscreen;
 
     /**
      * Flag to determine if the GUI is enabled.
      * @internal
-     * */
+     */
     public guiEnabled?: boolean;
 
     /**
      * Flag to determine if the EditMode is enabled.
      * @internal
-     * */
+     */
     public editModeEnabled?: boolean;
 
     /**
      * The unique id of the dashboard, it is generated automatically.
-     * */
+     */
     public readonly id: string;
 
     /**
      * Index of the board in the global boards array. Allows to access the
      * specific one when having multiple dashboards.
-     * */
+     */
     public readonly index: number;
 
     /**
      * An array of generated layouts.
-     * */
+     */
     public layouts: Array<Layout>;
 
     /**
      * The wrapper for the layouts.
      * @internal
-     * */
+     */
     public layoutsWrapper?: globalThis.HTMLElement;
 
     /**
      * An array of mounted components on the dashboard.
-     * */
+     */
     public mountedComponents: Array<Bindings.MountedComponent>;
 
     /**
      * The options for the dashboard.
-     * */
+     */
     public options: Board.Options;
 
     /**
      * Reference to ResizeObserver, which allows running 'unobserve'.
-     * @internal
      */
     private resizeObserver?: ResizeObserver;
 

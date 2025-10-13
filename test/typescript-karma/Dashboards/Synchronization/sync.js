@@ -208,8 +208,10 @@ test('There should be no errors when syncing with chart with different extremes'
         }]
     }, true);
 
+    const dataConnector = await dashboard.dataPool.getConnector('data');
+
     assert.ok(
-        dashboard.dataCursor.emitCursor(dashboard.dataPool.connectors.data.getTable(), {
+        dashboard.dataCursor.emitCursor(dataConnector.getTable(), {
             type: 'position',
             row: 120,
             column: 'Series',
