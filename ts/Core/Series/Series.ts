@@ -434,7 +434,7 @@ class Series {
      * the data table, and it is not created unless there are actually x options
      * from the user. Computed x data is held in the `Series.xColumn` array.
      */
-    public tempNoXColumn = false;
+    public tempNoXColumn = true;
 
     public userOptions!: DeepPartial<SeriesTypeOptions>;
 
