@@ -48,6 +48,10 @@ pre#data {
     flex: 1 1 50%;
 }
 
+.grid-container {
+    max-height: 260px;
+}
+
 /* SMALL */
 @media (max-width: 576px) {
     #controls,

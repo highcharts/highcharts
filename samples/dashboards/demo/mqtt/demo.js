@@ -296,6 +296,12 @@ const gridComponent = {
         credits: {
             enabled: false
         },
+        rendering: {
+            rows: {
+                virtualization: true,
+                minVisibleRows: 5
+            }
+        },
         columns: [{
             id: 'time',
             header: {

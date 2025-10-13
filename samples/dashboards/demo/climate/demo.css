@@ -297,6 +297,10 @@ body {
     --hcg-cell-hovered-row-background: var(--color-hover-background);
 }
 
+.grid-container {
+    min-height: 260px;
+}
+
 /**
  *
  *  Time Range Selector

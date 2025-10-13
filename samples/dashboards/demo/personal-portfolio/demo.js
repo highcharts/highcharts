@@ -207,7 +207,6 @@ const getCurrentTotal = arrOfArr => {
                 }
             }]
         }
-
     };
 
     const riskScoreKPIOptions = {

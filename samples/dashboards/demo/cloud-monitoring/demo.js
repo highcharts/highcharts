@@ -633,7 +633,7 @@ const setupDashboard = instanceId => {
                 }
             }
         }, {
-            cell: 'instances-table',
+            renderTo: 'instances-table',
             type: 'Grid',
             title: 'Instances',
             gridOptions: {
