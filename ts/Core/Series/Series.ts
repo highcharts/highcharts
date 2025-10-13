@@ -2090,28 +2090,10 @@ class Series {
         min: number,
         max: number
     ): Series.CropDataObject {
-        const xData = table.getColumn('x', true) as Array<number> ||
-            this.getColumn('x');
-
-        /* // Passes the ordinal test when tempNoXColumn is true
-        // @todo: Revisit and simplify
-        let xData = table.getColumn('x', true) as Array<number>;
-        if (
-            !xData ||
-            (
-                [...xData].some((x: number): boolean => !isNumber(x)) &&
-                table === this.dataTable
-            )
-        ) {
-            const xColumn = this.getColumn('x') as number[] || [];
-            if (xColumn.length === table.rowCount) {
-                xData = xColumn;
-            } else {
-                xData = [];
-            }
-        }
-        */
-        const dataLength = xData.length;
+        const xData = table === this.dataTable ?
+                this.getColumn('x') :
+                table.getColumn('x', true) as Array<number>,
+            dataLength = xData.length;
 
         let i,
             j,
