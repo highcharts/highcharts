@@ -7,7 +7,6 @@
  * License: www.highcharts.com/license
  */
 
-
 'use strict';
 
 
@@ -17,8 +16,8 @@
  *
  * */
 
-import type { Highcharts as H } from '../Dashboards/Plugins/HighchartsTypes';
-import type { GridNamespace as D } from '../Dashboards/Plugins/GridTypes';
+import type { Highcharts as HighchartsNamespace } from '../Dashboards/Plugins/HighchartsTypes';
+import type { GridNamespace } from '../Dashboards/Plugins/GridTypes';
 
 // Fill registries
 import '../Dashboards/Components/HTMLComponent/HTMLComponent.js';
@@ -94,8 +93,8 @@ declare global {
     }
     interface Window {
         Dashboards: Dashboards;
-        Highcharts?: H;
-        Grid?: D;
+        Highcharts?: HighchartsNamespace;
+        Grid?: GridNamespace;
     }
     let Dashboards: Dashboards;
 }

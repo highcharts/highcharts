@@ -269,6 +269,11 @@ body {
  *  Weather forecast grid
  *
  **/
+
+#forecast-grid {
+    min-height: 260px;
+}
+
 #forecast-grid .highcharts-dashboards-component-title {
     font-size: 1.1em;
     text-align: center;

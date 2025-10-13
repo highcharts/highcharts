@@ -548,7 +548,7 @@ async function setupDashboard() {
                     }
                 }
             }, {
-                cell: 'forecast-grid',
+                renderTo: 'forecast-grid',
                 type: 'Grid',
                 title: {
                     enabled: true,
