@@ -71,8 +71,9 @@ class ContourSeries extends ScatterSeries {
 
 
     public init(chart: Chart, options: ContourSeriesOptions): void {
-        const stops = this.colorAxis?.stops ? this.colorAxis.stops.map(
-            (stop: GradientColorStop): number[] => this.colorToArray(stop[1])
+        const series = this;
+        const stops = series.colorAxis?.stops ? series.colorAxis.stops.map(
+            (stop: GradientColorStop): number[] => series.colorToArray(stop[1])
         ) :
             [
                 [0, 0, 0, 0],
@@ -124,7 +125,17 @@ class ContourSeries extends ScatterSeries {
                     const value = (
                         (tt.chart.hoverPoint as ContourPoint).value || 0
                     );
-                    const MAXVAL = 230; // Temp hardcoded
+                    // Should be refactored to class prop, updated with data
+                    const MAXVAL = ((): number => {
+                        let maxVal = 0;
+                        for (const p of series.points) {
+
+                            if ((p.value || 0) > maxVal) {
+                                maxVal = p.value || 0;
+                            }
+                        }
+                        return maxVal;
+                    })();
                     const normVal = value / MAXVAL;
 
                     let color = [1, 0, 1];
@@ -663,6 +674,7 @@ class ContourSeries extends ScatterSeries {
 
                 device.queue.submit([encoder.finish()]);
 
+                this.image?.destroy();
 
                 this.image = this.chart.renderer.image(
                     this.canvas.toDataURL('image/webp', 1)
