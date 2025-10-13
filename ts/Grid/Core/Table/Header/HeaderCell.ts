@@ -136,6 +136,7 @@ class HeaderCell extends Cell {
     public override init(): HTMLTableCellElement {
         const elem = document.createElement('th', {});
         elem.classList.add(Globals.getClassName('headerCell'));
+        elem.setAttribute('role', 'columnheader');
         return elem;
     }
 

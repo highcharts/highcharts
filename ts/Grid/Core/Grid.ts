@@ -903,6 +903,8 @@ class Grid {
             className: Globals.getClassName('tableElement')
         }, this.contentWrapper);
 
+        this.tableElement.setAttribute('role', 'grid');
+
         return new Table(this, this.tableElement);
     }
 
