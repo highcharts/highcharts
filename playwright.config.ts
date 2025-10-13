@@ -22,11 +22,19 @@ export default defineConfig({
         {
             name: 'highcharts',
             testDir: './tests/highcharts',
-            use: {
-                ...devices['Desktop Chrome'],
-                ...devices['Desktop Firefox'],
-                ...devices['Desktop safari']
-            },
+            use: { ...devices['Desktop Chrome'] },
+            dependencies: ['setup-highcharts'],
+        },
+        {
+            name: 'highcharts-firefox',
+            testDir: './tests/highcharts',
+            use: { ...devices['Desktop Firefox'] },
+            dependencies: ['setup-highcharts'],
+        },
+        {
+            name: 'highcharts-webkit',
+            testDir: './tests/highcharts',
+            use: { ...devices['Desktop Safari'] },
             dependencies: ['setup-highcharts'],
         },
         {
@@ -49,17 +57,34 @@ export default defineConfig({
             dependencies: ['setup-highcharts'],
         },
         {
+            name: 'qunit-firefox',
+            testDir: './tests/qunit',
+            use: {
+                ...devices['Desktop Firefox'],
+                headless: true,
+            },
+            dependencies: ['setup-highcharts'],
+        },
+        {
             name: 'setup-dashboards',
             testMatch: 'setup-dashboards.mts',
         },
         {
             name: 'dashboards',
             testDir: './tests/dashboards',
-            use: {
-                ...devices['Desktop Chrome'],
-                ...devices['Desktop Firefox'],
-                ...devices['Desktop safari']
-            },
+            use: { ...devices['Desktop Chrome'] },
+            dependencies: ['setup-dashboards'],
+        },
+        {
+            name: 'dashboards-firefox',
+            testDir: './tests/dashboards',
+            use: { ...devices['Desktop Firefox'] },
+            dependencies: ['setup-dashboards'],
+        },
+        {
+            name: 'dashboards-webkit',
+            testDir: './tests/dashboards',
+            use: { ...devices['Desktop Safari'] },
             dependencies: ['setup-dashboards'],
         },
         {
