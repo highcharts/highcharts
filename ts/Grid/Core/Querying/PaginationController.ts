@@ -47,14 +47,15 @@ class PaginationController {
     private querying: QueryingController;
 
     /**
-     * The modifier that is applied to the data table.
-     */
-    public modifier?: RangeModifier;
-
-    /**
      * The current page.
      */
     public currentPage?: number;
+
+    /**
+     * The number of rows before pagination.
+     */
+    public totalItems?: number;
+
 
     /* *
     *
@@ -88,7 +89,6 @@ class PaginationController {
     public setRange(currentPage: number): void {
         this.currentPage = currentPage;
         this.querying.shouldBeUpdated = true;
-        this.modifier = this.createModifier();
     }
 
     /**
@@ -108,8 +108,16 @@ class PaginationController {
 
     /**
      * Returns the range modifier.
+     *
+     * @param rowsCountBeforePagination
+     * The number of rows before pagination. Default is the number of rows in
+     * the original data table.
      */
-    private createModifier(): RangeModifier | undefined {
+    public createModifier(
+        rowsCountBeforePagination: number = (
+            this.querying.grid.dataTable?.rowCount || 0
+        )
+    ): RangeModifier | undefined {
         const currentPage = this.currentPage || 1; // Start from page 1, not 0
         const pageSize =
             this.querying.grid.pagination?.currentPageSize;
@@ -122,8 +130,10 @@ class PaginationController {
         const start = (currentPage - 1) * pageSize;
         const end = Math.min(
             start + pageSize,
-            this.querying.grid.dataTable?.rowCount || 0
+            rowsCountBeforePagination
         );
+
+        this.totalItems = rowsCountBeforePagination;
 
         return new RangeModifier({
             start,
@@ -135,21 +145,9 @@ class PaginationController {
      * Reset the pagination controller.
      */
     public reset(): void {
-        delete this.modifier;
         delete this.currentPage;
         this.querying.shouldBeUpdated = true;
     }
-}
-
-
-/* *
- *
- *  Class Namespace
- *
- * */
-
-namespace PaginationController {
-
 }
 
 

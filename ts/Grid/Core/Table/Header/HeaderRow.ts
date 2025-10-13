@@ -22,6 +22,8 @@
  *
  * */
 import type { GroupedHeaderOptions } from '../../Options';
+import type { HTMLAttributes } from '../../../../Core/Renderer/HTML/HTMLAttributes';
+
 import Table from '../Table.js';
 import Row from '../Row.js';
 import HeaderCell from './HeaderCell.js';
@@ -67,11 +69,14 @@ class HeaderRow extends Row {
      *
      * @param level
      * The current level of header that is rendered.
+     *
+     * @param attributes
+     * The HTML attributes for the header row.
      */
-    constructor(viewport: Table, level: number) {
+    constructor(viewport: Table, level: number, attributes?: HTMLAttributes) {
         super(viewport);
         this.level = level;
-        this.setRowAttributes();
+        this.setRowAttributes(attributes);
     }
     /* *
     *
@@ -91,11 +96,13 @@ class HeaderRow extends Row {
      *
      * @param level
      * The current level in the header tree
+     *
+     * @internal
      */
-    public renderMultipleLevel(level: number): void {
+    public renderContent(level: number): void {
         const headerOpt = this.viewport.grid.options?.header;
         const vp = this.viewport;
-        const enabledColumns = vp.grid.enabledColumns;
+        const enabledColumns = vp.grid.enabledColumns || [];
 
         // Render element
         vp.theadElement?.appendChild(this.htmlElement);
@@ -175,7 +182,15 @@ class HeaderRow extends Row {
             }
         }
 
+        this.setLastCellClass();
+    }
+
+    /**
+     * Sets a specific class to the last cell in the row.
+     */
+    public setLastCellClass(): void {
         const lastCell = this.cells[this.cells.length - 1] as HeaderCell;
+
         if (lastCell.isLastColumn()) {
             lastCell.htmlElement.classList.add(
                 Globals.getClassName('lastHeaderCellInRow')
@@ -235,10 +250,15 @@ class HeaderRow extends Row {
 
     /**
      * Sets the row HTML element attributes and additional classes.
+     *
+     * @param attributes
+     * The HTML attributes for the header row.
      */
-    public setRowAttributes(): void {
+    public setRowAttributes(attributes?: HTMLAttributes): void {
         const a11y = this.viewport.grid.accessibility;
-        a11y?.setRowIndex(this.htmlElement, this.level);
+
+        const rowIndex = attributes?.['aria-rowindex'] ?? this.level;
+        a11y?.setRowIndex(this.htmlElement, rowIndex);
     }
 }
 

@@ -10,29 +10,63 @@
 .hcg-container,
 .highcharts-light .hcg-container {
     --ig-default-color: #000000;
-    --ig-negative-default-border-color: #ff0000;
-    --ig-negative-default-background: #ffe5e5;
-    --ig-neutral-default-border-color: #595959;
-    --ig-neutral-default-background: #d1d1d1;
-    --ig-positive-default-border-color: #008000;
-    --ig-positive-default-background: #e0ebe0;
+    --ig-negative-default-color: #c10008;
+    --ig-negative-default-border-color: #e7000b;
+    --ig-negative-default-background: #fef3f2;
+    --ig-neutral-default-color: #884b00;
+    --ig-neutral-default-border-color: #d18700;
+    --ig-neutral-default-background: #fefce8;
+    --ig-positive-default-color: #008236;
+    --ig-positive-default-border-color: #00a63e;
+    --ig-positive-default-background: #effdf4;
     --ig-highlight-color-5: #f3f6fe;
     --ig-pagination-button-default-background: #ffffff;
     --ig-pagination-button-default-color: #000000;
     --ig-pagination-button-default-border: #e8e8e8;
     --ig-pagination-button-default-color-active: #ffffff;
     --ig-pagination-icon-default-color: #000000;
+
+    /* Button styles - Light mode */
+    --hcg-button-background: transparent;
+    --hcg-button-hover-background: #e8e8e8;
+    --hcg-button-color: #141414;
+    --hcg-button-padding: 3px;
+    --hcg-button-border-radius: 4px;
+
+    /* Icon styles - Light mode */
+    --hcg-icon-color: #626262;
+    --hcg-icon-hover-color: #141414;
+
+    /* Focus ring color for accessibility */
+    --hcg-focus-ring-color: #626bd0;
+
+    /* Header background - pure white in light mode */
+    --hcg-header-background: #ffffff;
+
+    /* GUI elements - Light mode */
+    --hcg-popup-background: #f6f6f6;
+    --hcg-popup-border-color: #e8e8e8;
+    --hcg-popup-border: 1px solid var(--hcg-popup-border-color);
+    --hcg-context-menu-item-hover-background: #ffffff;
+    --hcg-context-menu-item-hover-border: 1px solid #e8e8e8;
+    --hcg-context-menu-item-active-background: #e1e3ff;
+    --hcg-context-menu-item-active-border: 1px solid #c3c8ff;
+    --hcg-input-background: #ffffff;
+    --hcg-input-border: 1px solid #d1d1d1;
 }
 
 @media (prefers-color-scheme: dark) {
     .hcg-container {
         --ig-default-color: #ffffff;
-        --ig-negative-default-border-color: #a80000;
-        --ig-negative-default-background: #6b0000;
-        --ig-neutral-default-border-color: #b3b3b3;
-        --ig-neutral-default-background: #636363;
-        --ig-positive-default-border-color: #008000;
-        --ig-positive-default-background: #265a26;
+        --ig-negative-default-color: #ffb3b3;
+        --ig-negative-default-border-color: #7a1e1e;
+        --ig-negative-default-background: #3d0e0b;
+        --ig-neutral-default-color: #ffe8c1;
+        --ig-neutral-default-border-color: #7d5c20;
+        --ig-neutral-default-background: #3b2a11;
+        --ig-positive-default-color: #a6f8c1;
+        --ig-positive-default-border-color: #1e6f3e;
+        --ig-positive-default-background: #0a3e1a;
         --ig-highlight-color-5: #2d2e36;
 
         /* Dark mode pagination variables */
@@ -41,17 +75,38 @@
         --ig-pagination-button-default-color: #ffffff;
         --ig-pagination-button-default-color-active: #000000;
         --ig-pagination-icon-default-color: #ffffff;
+
+        /* Button styles - Dark mode */
+        --hcg-button-hover-background: #3b3b3b;
+        --hcg-button-color: #ffffff;
+
+        /* Icon styles - Dark mode */
+        --hcg-icon-hover-color: #ffffff;
+
+        /* GUI elements - Dark mode */
+        --hcg-popup-background: #272727;
+        --hcg-popup-border-color: #4f4f4f;
+        --hcg-popup-border: 1px solid var(--hcg-popup-border-color);
+        --hcg-context-menu-item-hover-background: #3b3b3b;
+        --hcg-context-menu-item-hover-border: 1px solid #4f4f4f;
+        --hcg-context-menu-item-active-background: #3f4699;
+        --hcg-context-menu-item-active-border: 1px solid #4a55c9;
+        --hcg-input-background: #272727;
+        --hcg-input-border: 1px solid #4f4f4f;
     }
 }
 
 .highcharts-dark .hcg-container {
     --ig-default-color: #ffffff;
-    --ig-negative-default-border-color: #a80000;
-    --ig-negative-default-background: #6b0000;
-    --ig-neutral-default-border-color: #b3b3b3;
-    --ig-neutral-default-background: #636363;
-    --ig-positive-default-border-color: #008000;
-    --ig-positive-default-background: #265a26;
+    --ig-negative-default-color: #ffb3b3;
+    --ig-negative-default-border-color: #7a1e1e;
+    --ig-negative-default-background: #3d0e0b;
+    --ig-neutral-default-color: #ffe8c1;
+    --ig-neutral-default-border-color: #7d5c20;
+    --ig-neutral-default-background: #3b2a11;
+    --ig-positive-default-color: #a6f8c1;
+    --ig-positive-default-border-color: #1e6f3e;
+    --ig-positive-default-background: #0a3e1a;
     --ig-highlight-color-5: #2d2e36;
 
     /* Dark mode pagination variables */
@@ -60,6 +115,24 @@
     --ig-pagination-button-default-color: #ffffff;
     --ig-pagination-button-default-color-active: #000000;
     --ig-pagination-icon-default-color: #ffffff;
+
+    /* Button styles - Dark mode */
+    --hcg-button-hover-background: #3b3b3b;
+    --hcg-button-color: #ffffff;
+
+    /* Icon styles - Dark mode */
+    --hcg-icon-hover-color: #ffffff;
+
+    /* GUI elements - Dark mode */
+    --hcg-popup-background: #272727;
+    --hcg-popup-border-color: #4f4f4f;
+    --hcg-popup-border: 1px solid var(--hcg-popup-border-color);
+    --hcg-context-menu-item-hover-background: #3b3b3b;
+    --hcg-context-menu-item-hover-border: 1px solid #4f4f4f;
+    --hcg-context-menu-item-active-background: #3f4699;
+    --hcg-context-menu-item-active-border: 1px solid #4a55c9;
+    --hcg-input-background: #272727;
+    --hcg-input-border: 1px solid #4f4f4f;
 }
 
 /*  ==== End Grid Color Scheme  ==== */
@@ -137,7 +210,7 @@
 
     /* Default borders */
     --ig-border-radius: var(--hcg-border-radius, 0);
-    --ig-border-width: var(--hcg-border-width, 0);
+    --ig-border-width: var(--hcg-border-width, 0px);
     --ig-border-style: var(--hcg-border-style, solid);
     --ig-border-color: var(--hcg-border-color, var(--ig-color));
     --ig-border: var(--ig-border-width) var(--ig-border-style) var(--ig-border-color);
@@ -174,7 +247,7 @@
     /* Header padding */
     --ig-header-horizontal-padding: var(--hcg-header-horizontal-padding, var(--hcg-header-padding, var(--ig-horizontal-padding)));
     --ig-header-vertical-padding: var(--hcg-header-vertical-padding, var(--hcg-header-padding, var(--ig-vertical-padding)));
-    --ig-header-padding: var(--ig-header-vertical-padding) max(var(--ig-header-horizontal-padding), 20px) var(--ig-header-vertical-padding) var(--ig-header-horizontal-padding);
+    --ig-header-padding: var(--ig-header-vertical-padding) var(--ig-header-horizontal-padding) var(--ig-header-vertical-padding) var(--ig-header-horizontal-padding);
 
     /* Caption padding */
     --ig-caption-horizontal-padding: var(--hcg-caption-horizontal-padding, var(--hcg-caption-padding, var(--ig-horizontal-padding)));
@@ -339,6 +412,17 @@
     --ig-pagination-button-border-hover: var(--hcg-pagination-button-border-hover, var(--ig-default-color));
     --ig-pagination-padding: var(--hcg-pagination-padding, 14px 0 10px 0);
     --ig-pagination-icon-color: var(--hcg-pagination-icon-color, var(--ig-pagination-icon-default-color));
+
+    /* Button styles */
+    --ig-button-background: var(--hcg-button-background, transparent);
+    --ig-button-hover-background: var(--hcg-button-hover-background, #e8e8e8);
+    --ig-button-color: var(--hcg-button-color, #141414);
+    --ig-button-padding: var(--hcg-button-padding, 3px);
+    --ig-button-border-radius: var(--hcg-button-border-radius, 4px);
+
+    /* Icon styles */
+    --ig-icon-color: var(--hcg-icon-color, #626262);
+    --ig-icon-hover-color: var(--hcg-icon-hover-color, #141414);
 }
 
 /* ==== End Grid Variables ==== */
@@ -454,35 +538,158 @@
     border-bottom-right-radius: var(--ig-border-radius);
 }
 
+/* Header cell menu button centered */
+.hcg-header-cell-container.hcg-zero-width .hcg-header-cell-menu-icon {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.hcg-header-cell-container.hcg-zero-width .hcg-header-cell-content {
+    visibility: hidden;
+    transition: none;
+}
+
+/* Header cell flex container */
+.hcg-header-cell-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 24px;
+    width: 100%;
+}
+
+.hcg-header-cell-content {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+}
+
+/* Generic button styling for Grid */
+.hcg-button {
+    background: var(--ig-button-background);
+    padding: var(--ig-button-padding);
+    border-radius: var(--ig-button-border-radius);
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hcg-button:hover {
+    background: var(--ig-button-hover-background);
+}
+
+/* Focus/A11Y - keyboard accessibility */
+.hcg-button:focus-visible {
+    outline: none;
+    background: var(--ig-button-hover-background);
+    box-shadow: 0 0 0 2px var(--hcg-header-background, #ffffff), 0 0 0 5px var(--hcg-focus-ring-color, #626bd0);
+}
+
+/* Generic icon styling for Grid */
+.hcg-icon {
+    color: var(--ig-icon-color);
+    transition: color 0.2s ease;
+    flex-shrink: 0;
+}
+
+/* Icons automatically inherit color from parent via currentColor */
+.hcg-icon path {
+    stroke: currentcolor;
+}
+
+.hcg-button:hover .hcg-icon,
+.hcg-button:focus-visible .hcg-icon,
+.hcg-header-cell-icons .hcg-button.highlighted .hcg-icon,
+.hcg-header-cell-icons .hcg-button.active .hcg-icon {
+    color: var(--ig-icon-hover-color);
+}
+
+/* Header cell icons container - generic for all icon types */
+.hcg-header-cell-icons {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    max-width: 0;
+    margin-left: 4px;
+    opacity: 0;
+    cursor: pointer;
+    transition: max-width 0.3s ease, margin-left 0.3s ease, opacity 0.3s ease;
+}
+
+/* Show icons on header cell hover, focus, or when has active icons */
+.hcg-table thead th:hover .hcg-header-cell-icons,
+.hcg-table thead th:focus-visible .hcg-header-cell-icons,
+.hcg-header-cell-icons:hover,
+.hcg-header-cell-icons:has(.hcg-button:focus-visible),
+.hcg-header-cell-icons:has(.hcg-button.highlighted),
+.hcg-header-cell-icons:has(.hcg-button.active),
+.hcg-header-cell-container.hcg-zero-width .hcg-header-cell-icons {
+    max-width: 100px;
+    opacity: 1;
+}
+
+/* Generic icon button styling - applies to all header icons */
+.hcg-header-cell-icons .hcg-button {
+    width: 26px;
+    height: 26px;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Active icon styling - icons that are in an active state */
+.hcg-header-cell-icons .hcg-button.highlighted {
+    background: var(--ig-button-hover-background);
+}
+
+/* Active indicator dot - positioned at top right of button */
+.hcg-active-indicator {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--ig-icon-hover-color, #626bd0);
+    pointer-events: none;
+}
+
+/* Make button relative for absolute positioning of indicator */
+.hcg-header-cell-icons .hcg-button {
+    position: relative;
+}
+
 .hcg-resizable-content tr {
     width: 100%;
 }
 
 .hcg-table thead th .hcg-column-resizer {
     position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     top: 0;
-    width: 16px;
-    right: -9px;
+    width: 9px;
+    right: -5px;
     height: 100%;
-    cursor: col-resize;
     user-select: none;
     z-index: 10;
+    cursor: col-resize;
 }
 
-.hcg-table thead th .hcg-column-resizer::after {
+.hcg-column-resizer.hovered::after {
     content: "";
-    position: absolute;
-    display: block;
-    height: 20px;
-    width: 7px;
-    margin-top: -10px;
-    top: 50%;
-    left: 2px;
-}
-
-.hcg-table thead th .hcg-column-resizer:hover::after {
-    border-left: 2px solid var(--ig-header-color);
-    border-right: 2px solid var(--ig-header-color);
+    width: max(3px, calc(var(--ig-header-column-border-width) + 2px));
+    height: 100%;
+    background: var(--ig-header-color);
 }
 
 /* Sorting */
@@ -909,6 +1116,108 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     }
 }
 
+/* Filtering */
+.hcg-column-filter-wrapper {
+    width: 100%;
+    display: flex;
+    flex-flow: column;
+    row-gap: 5px;
+    min-width: 50px;
+}
+
+.hcg-column-filter-wrapper input,
+.hcg-column-filter-wrapper select {
+    background: var(--hcg-input-background);
+    border: var(--hcg-input-border);
+    border-radius: 6px;
+    padding-right: 7px;
+    height: 28px;
+    max-height: 28px;
+    width: 100%;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1em;
+    color: var(--ig-color);
+}
+
+.hcg-column-filter-wrapper input:disabled,
+.hcg-column-filter-wrapper select:disabled {
+    opacity: 0.4;
+}
+
+.hcg-column-filter-wrapper input:hover,
+.hcg-column-filter-wrapper select:hover {
+    border-color: var(--header-utils-dropdown-stroke-hover, #9d9d9d);
+}
+
+.hcg-column-filter-wrapper input:focus-visible,
+.hcg-column-filter-wrapper select:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--hcg-focus-ring-color);
+}
+
+.hcg-column-filter-wrapper input {
+    padding-left: 27px;
+}
+
+.hcg-column-filter-wrapper input::placeholder {
+    color: var(--header-utils-input-text-placeholder, #626262);
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1em;
+}
+
+.hcg-column-filter-wrapper input[type="text"],
+.hcg-column-filter-wrapper input[type="number"],
+.hcg-column-filter-wrapper input[type="date"] {
+    padding-left: 11px;
+}
+
+.hcg-column-filter-wrapper input:not([type="date"], [type="number"]) {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none'%3e%3cpath d='M10.5 10.5L7.50005 7.5M8.5 5C8.5 6.933 6.933 8.5 5 8.5C3.067 8.5 1.5 6.933 1.5 5C1.5 3.067 3.067 1.5 5 1.5C6.933 1.5 8.5 3.067 8.5 5Z' stroke='%23767676' stroke-linecap='round' stroke-linejoin='round'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: left 11px center;
+}
+
+.hcg-column-filter-wrapper select {
+    padding-left: 11px;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg width='12' height='12' viewBox='0 0 12 12' fill='none' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M3.5 7.5L6 10L8.5 7.5M3.5 4.5L6 2L8.5 4.5' stroke='%23767676' stroke-linecap='round' stroke-linejoin='round'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.hcg-clear-filter-button {
+    appearance: none;
+    background: none;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    display: inline;
+    vertical-align: baseline;
+    font: inherit;
+    color: var(--ig-color);
+    font-size: 0.625rem;
+    white-space: nowrap;
+    font-weight: normal;
+    align-self: end;
+}
+
+.hcg-clear-filter-button:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.hcg-clear-filter-button:disabled,
+.hcg-clear-filter-button:disabled:hover {
+    opacity: 0.5;
+    text-decoration: none;
+    cursor: default;
+}
+
 /* Pagination */
 
 /* Footer pagination (tfoot) */
@@ -1074,6 +1383,31 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     display: none;
 }
 
+@media (max-width: 1024px) {
+    .hcg-pagination-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        align-items: center;
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    /* Show mobile selectors on mobile */
+    .hcg-pagination-wrapper .hcg-pagination-mobile-selector,
+    .hcg-pagination-wrapper .hcg-pagination-mobile-page-size-selector {
+        display: block;
+    }
+
+    .hcg-pagination-wrapper .hcg-pagination-page,
+    .hcg-pagination-wrapper .hcg-pagination-first,
+    .hcg-pagination-wrapper .hcg-pagination-last,
+    .hcg-pagination-wrapper .hcg-pagination-page-size-container span,
+    .hcg-pagination-wrapper .hcg-pagination-page-size-container .hcg-pagination-page-size-select {
+        display: none;
+    }
+}
+
 /* Start Grid CSS Helpers Classes */
 .hcg-table tbody tr td.hcg-negative::before,
 .hcg-table tbody tr:has(.hcg-negative-row) td::before,
@@ -1151,6 +1485,120 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     text-align: left;
 }
 
+.hcg-popup {
+    position: absolute;
+    z-index: 1000;
+}
+
+/* Column header menu */
+
+.hcg-popup {
+    background-color: var(--hcg-popup-background);
+    border: var(--hcg-popup-border);
+    border-radius: 6px;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08), 0 7px 7px 0 rgba(0, 0, 0, 0.07), 0 17px 10px 0 rgba(0, 0, 0, 0.04), 0 30px 12px 0 rgba(0, 0, 0, 0.01);
+    min-width: 200px;
+    overflow: auto;
+}
+
+.hcg-popup-content {
+    padding: 5px;
+}
+
+.hcg-menu-header {
+    font-size: 0.75rem;
+    padding: 3px;
+    margin-bottom: 5px;
+}
+
+.hcg-menu-header-category {
+    color: var(--ig-color-secondary);
+    opacity: 0.5;
+    user-select: none;
+}
+
+.hcg-menu-container {
+    --icon-size: 16px;
+
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    list-style: none;
+    row-gap: 5px;
+    padding: 0;
+}
+
+.hcg-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    width: 100%;
+    min-width: 185px;
+    min-height: 2rem;
+    padding: 8px 8px 8px 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background-color: transparent;
+    border: 1px solid transparent;
+    border-radius: 5px;
+    color: var(--ig-color);
+}
+
+.hcg-menu-item:not(:disabled) {
+    cursor: pointer;
+}
+
+.hcg-menu-item:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--hcg-focus-ring-color);
+}
+
+.hcg-menu-item:focus-visible,
+.hcg-menu-item:not(:disabled):hover,
+.hcg-menu-item.highlighted {
+    background-color: var(--hcg-context-menu-item-hover-background);
+    border: var(--hcg-context-menu-item-hover-border);
+}
+
+.hcg-menu-item.active,
+.hcg-menu-item.active:hover,
+.hcg-menu-item.active.highlighted {
+    background-color: var(--hcg-context-menu-item-active-background);
+    border: var(--hcg-context-menu-item-active-border);
+}
+
+.hcg-menu-item-icon {
+    flex: 0 0 var(--icon-size);
+    width: var(--icon-size);
+    height: var(--icon-size);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.6;
+}
+
+.hcg-menu-item.active .hcg-menu-item-icon,
+.hcg-menu-item.highlighted .hcg-menu-item-icon,
+.hcg-menu-item:not(:disabled):hover .hcg-menu-item-icon {
+    opacity: 1;
+}
+
+.hcg-menu-item-icon .hcg-icon {
+    color: var(--ig-icon-hover-color);
+}
+
+.hcg-menu-item-label {
+    flex: 1 1 auto;
+    min-width: 0;
+    text-align: left;
+    padding-left: 0.75rem;
+}
+
+.hcg-menu-divider {
+    border-top: 1px solid var(--hcg-popup-border-color);
+    height: 0;
+}
+
 /* End Grid CSS Helpers Classes */
 
 /* Start Grid Default Theme */
@@ -1164,10 +1612,10 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     --hcg-border-radius: 5px;
     --hcg-border-width: 1px;
     --hcg-caption-font-size: 18px;
-    --hcg-column-border-width: 0;
+    --hcg-column-border-width: 0px;
     --hcg-credits-padding: 5px;
     --hcg-font-size: 15px;
-    --hcg-header-column-border-width: 0;
+    --hcg-header-column-border-width: 0px;
     --hcg-header-vertical-padding: 10px;
     --hcg-padding: 15px;
 }
@@ -1267,31 +1715,6 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
                 var(--hcg-background, #ffffff)
             )
         );
-}
-
-@media (max-width: 1024px) {
-    .hcg-pagination-wrapper {
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-        align-items: center;
-        width: 100%;
-        margin-bottom: 20px;
-    }
-
-    /* Show mobile selectors on mobile */
-    .hcg-pagination-wrapper .hcg-pagination-mobile-selector,
-    .hcg-pagination-wrapper .hcg-pagination-mobile-page-size-selector {
-        display: block;
-    }
-
-    .hcg-pagination-wrapper .hcg-pagination-page,
-    .hcg-pagination-wrapper .hcg-pagination-first,
-    .hcg-pagination-wrapper .hcg-pagination-last,
-    .hcg-pagination-wrapper .hcg-pagination-page-size-container span,
-    .hcg-pagination-wrapper .hcg-pagination-page-size-container .hcg-pagination-page-size-select {
-        display: none;
-    }
 }
 
 /* End Grid Default Theme */

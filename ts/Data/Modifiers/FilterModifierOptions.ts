@@ -38,7 +38,7 @@ export interface ComparisonCondition {
      * Type of the operator used in the condition, comparing the value of the
      * cell with the provided value.
      */
-    operator: '==' | '!=' | '===' | '!==' | '>' | '>=' | '<' | '<=';
+    operator: '==' | '!=' | '===' | '!==' | '>' | '>=' | '<' | '<=' | 'empty';
 
     /**
      * Name of the column to compare the value of the cell with.

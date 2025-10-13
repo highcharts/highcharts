@@ -35,6 +35,7 @@ import whcm from '../Accessibility/HighContrastMode.js';
 import Table from '../Grid/Core/Table/Table.js';
 import CreditsLiteComposition from '../Grid/Lite/Credits/CreditsLiteComposition.js';
 import Utilities from '../Core/Utilities.js';
+import SvgIcons from '../Grid/Core/UI/SvgIcons.js';
 import Pagination from '../Grid/Core/Pagination/Pagination.js';
 
 // Fill registries
@@ -76,6 +77,7 @@ declare global {
         setOptions: typeof Defaults.setOptions;
         Templating: typeof Templating;
         merge: typeof Utilities.merge;
+        SvgIcons: typeof SvgIcons;
     }
     interface Window {
         Grid: GridNamespace;
@@ -109,6 +111,7 @@ G.Templating = Templating;
 G.product = 'Grid Lite';
 G.setOptions = Defaults.setOptions;
 G.merge = Utilities.merge;
+G.SvgIcons = SvgIcons;
 
 G.Table = G.Table || Table;
 G.Pagination = G.Pagination || Pagination;

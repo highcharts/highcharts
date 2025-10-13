@@ -183,4 +183,3 @@ Grid.setOptions({
 })
 ```
 This example disables end user sorting for every Grid on the page.
-
