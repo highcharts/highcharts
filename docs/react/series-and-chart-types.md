@@ -198,7 +198,7 @@ ReactDOM.createRoot(
 )?.render(<ChartComponent />);
 ```
 
-Live demo:
+**Live demo:**
 
 <iframe src="https://www.highcharts.com/samples/embed/highcharts/react/bubble" style="width: 100%; height: 600px; border: 0;"></iframe>
 

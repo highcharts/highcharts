@@ -131,7 +131,7 @@ export function ChartWithCustomHC () {
 
 ## Reactive updates
 
-Charts re-render automatically when their React props or children change. Drive the chart from component state and update in event handlers.
+Charts re-render automatically when their React props or children change. Control the chart from component state and update in event handlers.
 
 ```jsx
 // Pattern: state → props → rerender
