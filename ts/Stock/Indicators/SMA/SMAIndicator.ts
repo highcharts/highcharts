@@ -579,6 +579,7 @@ class SMAIndicator extends LineSeries {
             }
 
             table.setColumns(columns);
+            delete indicator.xColumn;
         }
 
         if (
