@@ -40,18 +40,10 @@ const dashboardsConfig = {
 
 const gridConfig = {
     sources: [
-        'css/grid/',
-        'gfx/grid-icons/'
+        'css/grid/'
     ],
     target: TARGET_DIRECTORY + '/grid/',
     replacePath: 'grid/',
-    exclude: []
-};
-
-const gridMainConfig = {
-    sources: 'gfx/grid-icons/',
-    target: TARGET_DIRECTORY + '/gfx/',
-    replacePath: 'gfx/',
     exclude: []
 };
 
