@@ -18,6 +18,8 @@ jobs:
     name: Run Playwright suites
     runs-on: ubuntu-latest
     timeout-minutes: 60
+    env:
+      DISPLAY: :99
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -47,7 +49,7 @@ jobs:
         continue-on-error: true
 
       - name: Run Playwright project qunit
-        run: PLAYWRIGHT_HTML_REPORT=playwright-report/qunit npx playwright test --project qunit
+        run: PLAYWRIGHT_HTML_REPORT=playwright-report/qunit npx playwright test --project qunit --headed
         continue-on-error: true
 
       - name: Run Playwright project dashboards
