@@ -542,10 +542,18 @@ export function VennExample() {
 ```javascript
 import { MapsChart } from '@highcharts/react/Maps';
 import { MapSeries } from '@highcharts/react/series/Map';
+import React, { useEffect, useState } from 'react';
 
-import mapData from '@highcharts/map-collection/custom/scandinavia.geo.json' with { type: 'json'};
-
+// Dynamically import the map data for compatibility with most bundlers
 export function MapExample() {
+  const [mapData, setMapData] = useState(null);
+
+  useEffect(() => {
+    import('@highcharts/map-collection/custom/scandinavia.geo.json')
+      .then(module => setMapData(module.default || module));
+  }, []);
+
+  if (!mapData) return <div>Loading map data...</div>;
   return (
     <MapsChart
       options={{
