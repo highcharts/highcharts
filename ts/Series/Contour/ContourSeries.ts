@@ -31,10 +31,17 @@ import ColorType from '../../Core/Color/ColorType.js';
 import Chart from '../../Core/Chart/Chart.js';
 import Tooltip from '../../Core/Tooltip.js';
 import { GradientColorStop } from '../../Core/Color/GradientColor.js';
+import ContourSeriesDefaults from './ContourSeriesDefaults.js';
 
 const { extend, merge } = U;
 
-class ContourSeries extends ScatterSeries {
+export default class ContourSeries extends ScatterSeries {
+
+    public static defaultOptions = merge(
+        ScatterSeries.defaultOptions,
+        ContourSeriesDefaults
+    );
+
     public canvas?: HTMLCanvasElement;
 
     public context?: GPUCanvasContext | null;
@@ -98,25 +105,6 @@ class ContourSeries extends ScatterSeries {
                 lerpColorDec(v1B, v2B, t),
                 lerpColorDec(v1C, v2C, t)
             ];
-        }
-
-        options.marker = merge({
-            symbol: 'cross',
-            states: {
-                hover: {
-                    symbol: 'cross',
-                    lineColor: 'black',
-                    fillColor: 'transparent'
-                }
-            }
-        }, options.marker);
-
-        if (!options.states?.hover?.halo) {
-            (options as any).states = merge({
-                hover: {
-                    halo: null
-                }
-            }, options.states || {});
         }
 
         chart.options = merge({
