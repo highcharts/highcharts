@@ -32,11 +32,9 @@ import type Popup from './Popup.js';
  * */
 
 /**
- * Very basic interface for buttons used in Grid components, like
- * `ContextMenu` or `Toolbar`. To be extended when needed in the future.
- * Probably some methods could be moved to a generic `Button` class already.
+ * Basic interface for buttons used in Grid components, like `ContextMenu` or
+ * `Toolbar`.
  * @private
- * @internal
  */
 interface Button {
     /**
