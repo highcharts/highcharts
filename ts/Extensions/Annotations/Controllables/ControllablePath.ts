@@ -40,24 +40,32 @@ const {
  *
  * */
 
+/** @internal */
 declare module './ControllableBase' {
+    /** @internal */
     interface ControllableBase {
         markerEnd?: SVGElement;
         markerStart?: SVGElement;
     }
 }
+
+/** @internal */
 declare module '../../../Core/Options'{
+    /** @internal */
     interface Options {
         defs?: Record<string, AST.Node>;
     }
 }
 
+/** @internal */
 declare module '../../../Core/Renderer/SVG/SVGRendererBase' {
+    /** @internal */
     interface SVGRendererBase {
         addMarker(id: string, markerOptions: AST.Node): SVGElement;
     }
 }
 
+/** @internal */
 interface MarkerSetterFunction {
     (this: SVGElement, value: string): void;
 }
@@ -420,6 +428,7 @@ class ControllablePath extends Controllable {
  *
  * */
 
+/** @internal */
 interface ControllablePath {
     collections: 'shapes';
     itemType: 'shape';
@@ -433,7 +442,9 @@ interface ControllablePath {
  *
  * */
 
+/** @internal */
 declare module './ControllableType' {
+    /** @internal */
     interface ControllableShapeTypeRegistry {
         path: typeof ControllablePath;
     }
@@ -445,4 +456,5 @@ declare module './ControllableType' {
  *
  * */
 
+/** @internal */
 export default ControllablePath;

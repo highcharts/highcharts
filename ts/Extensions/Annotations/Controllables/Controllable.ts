@@ -42,7 +42,8 @@ export type AttrsMapObject = Record<keyof ControllableOptions, keyof SVGAttribut
 /**
  * It provides methods for handling points, control points
  * and points transformations.
- * @internal
+ *
+ * @interface Highcharts.AnnotationControllable
  */
 abstract class Controllable implements ControlTarget {
 
@@ -52,6 +53,7 @@ abstract class Controllable implements ControlTarget {
      *
      * */
 
+    /** @internal */
     public constructor(
         annotation: Annotation,
         options: ControllableOptions,
@@ -75,13 +77,37 @@ abstract class Controllable implements ControlTarget {
      *
      * */
 
+    /**
+     * @name Highcharts.AnnotationControllable#annotation
+     * @type {Highcharts.Annotation}
+     */
     public annotation: Annotation;
+
+    /**
+     * @name Highcharts.AnnotationControllable#chart
+     * @type {Highcharts.Chart}
+     */
     public chart: AnnotationChart;
+
+    /**
+     * @name Highcharts.AnnotationControllable#collection
+     * @type {string}
+     */
     public collection: ('labels'|'shapes');
+
+    /** @internal */
     public graphic!: SVGElement;
+
+    /** @internal */
     public index: number;
+
+    /** @internal */
     public itemType: ('label'|'shape');
+
+    /** @internal */
     public options: ControllableOptions;
+
+    /** @internal */
     public tracker?: SVGElement;
 
     /* *
@@ -261,6 +287,7 @@ abstract class Controllable implements ControlTarget {
     /**
      * Translate shape within controllable item.
      * Replaces `controllable.translate` method.
+     *
      * @internal
      * @param {number} dx
      *        Translation for x coordinate
@@ -357,11 +384,15 @@ export default Controllable;
  * @internal
  * @interface Highcharts.AnnotationAnchorObject
  *//**
- * Relative to the plot area position
+ * Relative to the plot area position.
+ *
+ * @internal
  * @name Highcharts.AnnotationAnchorObject#relativePosition
  * @type {Highcharts.BBoxObject}
  *//**
- * Absolute position
+ * Absolute position.
+ *
+ * @internal
  * @name Highcharts.AnnotationAnchorObject#absolutePosition
  * @type {Highcharts.BBoxObject}
  */

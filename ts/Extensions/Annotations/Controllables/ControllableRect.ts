@@ -30,9 +30,9 @@ const { merge } = U;
 /**
  * A controllable rect class.
  *
+ * @internal
  * @requires modules/annotations
  *
- * @private
  * @class
  * @name Highcharts.AnnotationControllableRect
  *
@@ -136,6 +136,7 @@ class ControllableRect extends Controllable {
  *
  * */
 
+/** @internal */
 interface ControllableRect {
     collections: 'shapes';
     itemType: 'shape';
@@ -147,7 +148,9 @@ interface ControllableRect {
  *
  * */
 
+/** @internal */
 declare module './ControllableType' {
+    /** @internal */
     interface ControllableShapeTypeRegistry {
         rect: typeof ControllableRect;
     }
@@ -159,4 +162,5 @@ declare module './ControllableType' {
  *
  * */
 
+/** @internal */
 export default ControllableRect;

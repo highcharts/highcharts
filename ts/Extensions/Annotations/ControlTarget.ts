@@ -31,22 +31,56 @@ import U from '../../Core/Utilities.js';
  * */
 
 interface ControlTarget {
+    /** @internal */
     annotation?: Annotation;
+
+    /** @internal */
     chart: AnnotationChart;
+
+    /**
+     * @internal
+     * @name Highcharts.AnnotationControllable#controlPoints
+     * @type {Array<Highcharts.AnnotationControlPoint>}
+     */
     controlPoints: Array<ControlPoint>;
+
+    /** @internal */
     options: ControlTargetOptions;
+
+    /**
+     * @name Highcharts.AnnotationControllable#points
+     * @type {Array<Highcharts.Point>}
+     */
     points: Array<AnnotationPointType>;
+
+    /** @internal */
     addControlPoints(): void;
+
+    /** @internal */
     anchor(point: AnnotationPointType): ControlTarget.Anchor;
+
+    /** @internal */
     destroyControlTarget(): void;
+
+    /** @internal */
     getPointsOptions(): Array<MockPointOptions>;
+
+    /** @internal */
     linkPoints(): (Array<AnnotationPointType>|undefined);
+
+    /** @internal */
     point(
         pointOptions: (string|Function|MockPoint|MockPointOptions),
         point: (AnnotationPointType|null)
     ): (AnnotationPointType|null);
+
+    /** @internal */
     redrawControlPoints(animation?: boolean): void;
+
+    /** @internal */
     renderControlPoints(): void;
+
+    /** @internal */
     transform(
         transformation: string,
         cx: (number|null),
@@ -54,6 +88,8 @@ interface ControlTarget {
         p1: number,
         p2?: number
     ): void;
+
+    /** @internal */
     transformPoint(
         transformation: string,
         cx: (number|null),
@@ -62,7 +98,11 @@ interface ControlTarget {
         p2: (number|undefined),
         i: number
     ): void;
+
+    /** @internal */
     translate(dx: number, dy: number): void;
+
+    /** @internal */
     translatePoint(dx: number, dy: number, i: number): void;
 }
 
@@ -80,8 +120,30 @@ namespace ControlTarget {
      *
      * */
 
+    /**
+     * An object which denotes a controllable's anchor positions - relative and
+     * absolute.
+     *
+     * @internal
+     * @interface Highcharts.AnnotationAnchorObject
+     */
     export interface Anchor {
+        /**
+         * Absolute position.
+         *
+         * @internal
+         * @name Highcharts.AnnotationAnchorObject#absolutePosition
+         * @type {Highcharts.BBoxObject}
+         */
         absolutePosition: BBoxObject;
+
+        /**
+         * Relative to the plot area position.
+         *
+         * @internal
+         * @name Highcharts.AnnotationAnchorObject#relativePosition
+         * @type {Highcharts.BBoxObject}
+         */
         relativePosition: BBoxObject;
     }
 

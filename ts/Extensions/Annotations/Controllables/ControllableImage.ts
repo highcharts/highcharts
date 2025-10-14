@@ -137,6 +137,7 @@ class ControllableImage extends Controllable {
  *
  * */
 
+/** @internal */
 interface ControllableImage {
     collections: 'shapes';
     itemType: 'shape';
@@ -149,7 +150,9 @@ interface ControllableImage {
  *
  * */
 
+/** @internal */
 declare module './ControllableType' {
+    /** @internal */
     interface ControllableShapeTypeRegistry {
         image: typeof ControllableImage;
     }
@@ -161,4 +164,5 @@ declare module './ControllableType' {
  *
  * */
 
+/** @internal */
 export default ControllableImage;

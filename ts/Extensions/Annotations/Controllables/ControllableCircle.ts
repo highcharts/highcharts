@@ -30,9 +30,9 @@ const { merge } = U;
 /**
  * A controllable circle class.
  *
+ * @internal
  * @requires modules/annotations
  *
- * @internal
  * @class
  * @name Highcharts.AnnotationControllableCircle
  *
@@ -87,7 +87,6 @@ class ControllableCircle extends Controllable {
      *
      * */
 
-    /** @internal */
     public redraw(animation?: boolean): void {
 
         if (this.graphic) {
@@ -112,7 +111,6 @@ class ControllableCircle extends Controllable {
         super.redraw.call(this, animation);
     }
 
-    /** @internal */
     public render(parent: SVGElement): void {
         const attrs = this.attrsFromOptions(this.options);
 
@@ -143,6 +141,7 @@ class ControllableCircle extends Controllable {
  *
  * */
 
+/** @internal */
 interface ControllableCircle {
     collection: 'shapes';
     itemType: 'shape';
@@ -155,7 +154,9 @@ interface ControllableCircle {
  *
  * */
 
+/** @internal */
 declare module './ControllableType' {
+    /** @internal */
     interface ControllableShapeTypeRegistry {
         circle: typeof ControllableCircle;
     }
@@ -167,4 +168,5 @@ declare module './ControllableType' {
  *
  * */
 
+/** @internal */
 export default ControllableCircle;

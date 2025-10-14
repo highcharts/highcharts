@@ -36,12 +36,14 @@ const {
  *
  * */
 
+/** @internal */
 interface EllipseShapeOptions extends ControllableShapeOptions {
     yAxis: number;
     xAxis: number;
     ry: number;
 }
 
+/** @internal */
 interface EllipseShapeSVGOptions {
     cx: number;
     cy: number;
@@ -50,6 +52,7 @@ interface EllipseShapeSVGOptions {
     angle: number;
 }
 
+/** @internal */
 interface ReferencePointsOptions {
     x: number;
     y: number;
@@ -121,7 +124,6 @@ class ControllableEllipse extends Controllable {
      *
      * */
 
-    /** @internal */
     public init(
         annotation: Annotation,
         options: EllipseShapeOptions,
@@ -340,7 +342,9 @@ interface ControllableEllipse {
  *
  * */
 
+/** @internal */
 declare module './ControllableType' {
+    /** @internal */
     interface ControllableShapeTypeRegistry {
         ellipse: typeof ControllableEllipse;
     }
@@ -352,4 +356,5 @@ declare module './ControllableType' {
  *
  * */
 
+/** @internal */
 export default ControllableEllipse;

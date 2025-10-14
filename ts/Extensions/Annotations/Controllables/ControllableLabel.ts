@@ -44,13 +44,16 @@ const {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Renderer/SVG/SymbolType' {
+    /** @internal */
     interface SymbolTypeRegistry {
         /** @requires Extensions/ControllableLabel */
         connector: SymbolFunction;
     }
 }
 
+/** @internal */
 interface ControllableAlignObject extends AlignObject {
     height?: number;
     width?: number;
@@ -575,6 +578,7 @@ class ControllableLabel extends Controllable {
  *
  * */
 
+/** @internal */
 interface ControllableLabel {
     collection: 'labels';
     itemType: 'label';
@@ -587,7 +591,9 @@ interface ControllableLabel {
  *
  * */
 
+/** @internal */
 declare module './ControllableType' {
+    /** @internal */
     interface ControllableLabelTypeRegistry {
         label: typeof ControllableLabel;
     }
@@ -599,4 +605,5 @@ declare module './ControllableType' {
  *
  * */
 
+/** @internal */
 export default ControllableLabel;
