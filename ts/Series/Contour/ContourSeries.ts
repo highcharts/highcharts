@@ -30,6 +30,7 @@ import ContourSeriesOptions from './ContourSeriesOptions';
 import ColorType from '../../Core/Color/ColorType.js';
 import Chart from '../../Core/Chart/Chart.js';
 import ContourSeriesDefaults from './ContourSeriesDefaults.js';
+import Color from '../../Core/Color/Color.js';
 
 const { extend, merge } = U;
 
@@ -76,6 +77,7 @@ export default class ContourSeries extends ScatterSeries {
 
 
     public init(chart: Chart, options: ContourSeriesOptions): void {
+        // Necessary for default tooltip behavior
         chart.options = merge(
             ContourSeries.defaultOptions,
             chart.options || {}
@@ -175,8 +177,7 @@ export default class ContourSeries extends ScatterSeries {
                     ),
                     options = this.options,
                     contourLineColor = new Float32Array(
-                        options.contourLineColor ||
-                        [0, 0, 0]
+                        options.contourLineColor || [0, 0, 0]
                     ),
                     lineWidth = new Float32Array([
                         options.contourLineWidth || 1
@@ -578,7 +579,7 @@ export default class ContourSeries extends ScatterSeries {
                     colorAttachments: [{
                         view: context.getCurrentTexture().createView(),
                         loadOp: 'clear' as GPULoadOp,
-                        clearValue: this.options.clearValue || [1, 1, 1, 1],
+                        clearValue: [1, 1, 1, 1],
                         storeOp: 'store' as GPUStoreOp
                     }]
                 });
@@ -719,15 +720,9 @@ export default class ContourSeries extends ScatterSeries {
         return [min || 0, max || 0];
     }
 
-    public colorToArray(color: ColorType): [number, number, number] {
-        const hex = (color as string).replace('#', '');
-
-        // RGB array
-        return [
-            parseInt(hex.substring(0, 2), 16) / 255,
-            parseInt(hex.substring(2, 4), 16) / 255,
-            parseInt(hex.substring(4, 6), 16) / 255
-        ];
+    public colorToArray(color: ColorType): number[] {
+        const rgba = new Color(color).rgba;
+        return [rgba[0], rgba[1], rgba[2]].map((val): number => val / 255);
     }
 
 
