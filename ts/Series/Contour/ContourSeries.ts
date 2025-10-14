@@ -74,6 +74,7 @@ export default class ContourSeries extends ScatterSeries {
     private contourLineColorBuffer?: GPUBuffer;
 
     private lineWidthBuffer?: GPUBuffer;
+
     public renderWebGPU?: () => void;
 
 
@@ -129,495 +130,476 @@ export default class ContourSeries extends ScatterSeries {
         }
 
         const series = this,
+            { xAxis, yAxis, chart } = series,
             canvas = series.canvas = (
                 series.canvas ||
                 document.createElement('canvas')
             );
 
-        // Canvas.classList.add('contourmap-canvas');
+        canvas.style.width = xAxis.len + 'px';
+        canvas.style.height = yAxis.len + 'px';
 
-        this.setExtremes();
-        this.setCanvasSize();
-        this.context = canvas.getContext('webgpu');
+        const { chartWidth, chartHeight, inverted } = chart,
+            devicePixelRatio = window.devicePixelRatio,
+            [w, h] = inverted ? [
+                chartHeight * devicePixelRatio,
+                chartWidth * devicePixelRatio
+            ] : [
+                chartWidth * devicePixelRatio,
+                chartHeight * devicePixelRatio
+            ];
+
+        canvas.width = w;
+        canvas.height = h;
+
         this.run();
     }
 
 
     async run(): Promise<void> {
-        const context = this.context;
+        const canvas = this.canvas;
+        if (canvas) {
+            const context = canvas.getContext('webgpu');
 
-        if (context) {
-            let device = this.device;
+            if (context) {
+                let device = this.device;
 
-            if (!this.adapter) {
-                this.adapter = await navigator.gpu.requestAdapter();
-            }
-            if (!device && this.adapter) {
-                device = this.device = await this.adapter.requestDevice();
-            }
+                if (!this.adapter) {
+                    this.adapter = await navigator.gpu.requestAdapter();
+                }
+                if (!device && this.adapter) {
+                    device = this.device = await this.adapter.requestDevice();
+                }
 
-            const canvasFormat = navigator.gpu.getPreferredCanvasFormat();
+                const canvasFormat = navigator.gpu.getPreferredCanvasFormat();
 
-            if (device && this.canvas) {
-                context.configure({
-                    device: device,
-                    format: canvasFormat,
-                    colorSpace: 'display-p3',
-                    alphaMode: 'premultiplied'
-                });
+                if (device && this.canvas) {
+                    context.configure({
+                        device: device,
+                        format: canvasFormat,
+                        colorSpace: 'display-p3',
+                        alphaMode: 'premultiplied'
+                    });
 
-                const
-                    [indices, vertices] = this.getContourData(),
-                    extremesUniform = this.extremesUniform = (
-                        new Float32Array(
-                            this.getWebGPUExtremes()
-                        )
-                    ),
-                    valueExtremesUniform = (
-                        this.valueExtremesUniform = (
+                    const
+                        [indices, vertices] = this.getContourData(),
+                        extremesUniform = this.extremesUniform = (
                             new Float32Array(
-                                this.getDataExtremes()
+                                this.getWebGPUExtremes()
                             )
-                        )
-                    ),
-                    colorAxisStops = this.getColorAxisStopsData(),
+                        ),
+                        valueExtremesUniform = (
+                            this.valueExtremesUniform = (
+                                new Float32Array(
+                                    this.getDataExtremes()
+                                )
+                            )
+                        ),
+                        colorAxisStops = this.getColorAxisStopsData(),
 
-                    // Caching bitwise operation
-                    uniformUsage = (
-                        GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
-                    ),
-                    options = this.options,
-                    contourLineColor = new Float32Array(
-                        options.contourLineColor || [0, 0, 0]
-                    ),
-                    lineWidth = new Float32Array([
-                        options.contourLineWidth || 1
-                    ]);
+                        // Caching bitwise operation
+                        uniformUsage = (
+                            GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
+                        ),
+                        options = this.options,
+                        contourLineColor = new Float32Array(
+                            options.contourLineColor || [0, 0, 0]
+                        ),
+                        lineWidth = new Float32Array([
+                            (options.contourLineWidth || 1) *
+                            window.devicePixelRatio
+                        ]);
 
-                // WebGPU Buffers
-                const colorAxisStopsBuffer = device.createBuffer({
-                    size: colorAxisStops.array.byteLength,
-                    usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
-                    mappedAtCreation: true
-                });
+                    // WebGPU Buffers
+                    const colorAxisStopsBuffer = device.createBuffer({
+                        size: colorAxisStops.array.byteLength,
+                        usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
+                        mappedAtCreation: true
+                    });
 
-                const colorAxisStopsCountBuffer = device.createBuffer({
-                    size: 4,
-                    usage: uniformUsage,
-                    mappedAtCreation: true
-                });
+                    const colorAxisStopsCountBuffer = device.createBuffer({
+                        size: 4,
+                        usage: uniformUsage,
+                        mappedAtCreation: true
+                    });
 
-                const vertexBuffer = device.createBuffer({
-                    size: vertices.byteLength,
-                    usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST
-                });
+                    const vertexBuffer: GPUBuffer = device.createBuffer({
+                        size: vertices.byteLength,
+                        usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST
+                    });
 
-                const indexBuffer = device.createBuffer({
-                    size: indices.byteLength,
-                    usage: GPUBufferUsage.INDEX | GPUBufferUsage.COPY_DST
-                });
+                    const indexBuffer = device.createBuffer({
+                        size: indices.byteLength,
+                        usage: GPUBufferUsage.INDEX | GPUBufferUsage.COPY_DST
+                    });
 
-                const extremesUniformBuffer = (
-                    this.extremesUniformBuffer = device.createBuffer({
-                        size: extremesUniform.byteLength,
+                    const extremesUniformBuffer = (
+                        this.extremesUniformBuffer = device.createBuffer({
+                            size: extremesUniform.byteLength,
+                            usage: uniformUsage
+                        }));
+
+                    const valueExtremesUniformBuffer = (
+                        this.valueExtremesUniformBuffer = device.createBuffer({
+                            size: valueExtremesUniform.byteLength,
+                            usage: uniformUsage
+                        }));
+                    this.contourIntervalUniformBuffer = device.createBuffer({
+                        size: 4,
                         usage: uniformUsage
-                    }));
+                    });
 
-                const valueExtremesUniformBuffer = (
-                    this.valueExtremesUniformBuffer = device.createBuffer({
-                        size: valueExtremesUniform.byteLength,
+                    this.smoothColoringUniformBuffer = device.createBuffer({
+                        size: 4,
                         usage: uniformUsage
-                    }));
-                this.contourIntervalUniformBuffer = device.createBuffer({
-                    size: 4,
-                    usage: uniformUsage
-                });
+                    });
 
-                this.smoothColoringUniformBuffer = device.createBuffer({
-                    size: 4,
-                    usage: uniformUsage
-                });
+                    this.showContourLinesUniformBuffer = device.createBuffer({
+                        size: 4,
+                        usage: uniformUsage
+                    });
 
-                this.showContourLinesUniformBuffer = device.createBuffer({
-                    size: 4,
-                    usage: uniformUsage
-                });
+                    this.contourLineColorBuffer = device.createBuffer({
+                        size: 12,
+                        usage: uniformUsage
+                    });
 
-                this.contourLineColorBuffer = device.createBuffer({
-                    size: 12,
-                    usage: uniformUsage
-                });
+                    this.lineWidthBuffer = device.createBuffer({
+                        size: 4,
+                        usage: uniformUsage
+                    });
 
-                this.lineWidthBuffer = device.createBuffer({
-                    size: 4,
-                    usage: uniformUsage
-                });
-
-                device.queue.writeBuffer(
-                    vertexBuffer,
-                    0,
-                    vertices as GPUAllowSharedBufferSource
-                );
-                device.queue.writeBuffer(
-                    indexBuffer as GPUBuffer,
-                    0,
-                    indices as GPUAllowSharedBufferSource
-                );
-                device.queue.writeBuffer(
-                    extremesUniformBuffer,
-                    0,
-                    extremesUniform
-                );
-                device.queue.writeBuffer(
-                    valueExtremesUniformBuffer,
-                    0,
-                    valueExtremesUniform
-                );
-                device.queue.writeBuffer(
-                    this.contourLineColorBuffer,
-                    0,
-                    contourLineColor
-                );
-                device.queue.writeBuffer(
-                    this.lineWidthBuffer,
-                    0,
-                    lineWidth
-                );
+                    device.queue.writeBuffer(
+                        vertexBuffer,
+                        0,
+                        vertices as GPUAllowSharedBufferSource
+                    );
+                    device.queue.writeBuffer(
+                        indexBuffer as GPUBuffer,
+                        0,
+                        indices as GPUAllowSharedBufferSource
+                    );
+                    device.queue.writeBuffer(
+                        extremesUniformBuffer,
+                        0,
+                        extremesUniform
+                    );
+                    device.queue.writeBuffer(
+                        valueExtremesUniformBuffer,
+                        0,
+                        valueExtremesUniform
+                    );
+                    device.queue.writeBuffer(
+                        this.contourLineColorBuffer,
+                        0,
+                        contourLineColor
+                    );
+                    device.queue.writeBuffer(
+                        this.lineWidthBuffer,
+                        0,
+                        lineWidth
+                    );
 
 
-                this.setContourIntervalUniform();
-                this.setSmoothColoringUniform();
-                this.setShowContourLinesUniform();
+                    this.setContourIntervalUniform();
+                    this.setSmoothColoringUniform();
+                    this.setShowContourLinesUniform();
 
-                new Float32Array(
-                    colorAxisStopsBuffer.getMappedRange()
-                ).set(colorAxisStops.array);
-                colorAxisStopsBuffer.unmap();
+                    new Float32Array(
+                        colorAxisStopsBuffer.getMappedRange()
+                    ).set(colorAxisStops.array);
+                    colorAxisStopsBuffer.unmap();
 
-                new Uint32Array(
-                    colorAxisStopsCountBuffer.getMappedRange()
-                )[0] = colorAxisStops.length;
-                colorAxisStopsCountBuffer.unmap();
+                    new Uint32Array(
+                        colorAxisStopsCountBuffer.getMappedRange()
+                    )[0] = colorAxisStops.length;
+                    colorAxisStopsCountBuffer.unmap();
 
-                const vertexBufferLayout: GPUVertexBufferLayout = {
-                    arrayStride: 12,
-                    attributes: [{
-                        format: 'float32x3',
-                        offset: 0,
-                        shaderLocation: 0
-                    }] as GPUVertexAttribute[]
-                };
+                    const vertexBufferLayout: GPUVertexBufferLayout = {
+                        arrayStride: 12,
+                        attributes: [{
+                            format: 'float32x3',
+                            offset: 0,
+                            shaderLocation: 0
+                        }] as GPUVertexAttribute[]
+                    };
 
-                const shaderModule = device.createShaderModule({
-                    code: `
-                        struct VertexInput {
-                            @location(0) pos: vec3f
-                        }
-
-                        struct VertexOutput {
-                            @builtin(position) pos: vec4f,
-                            @location(0) originalPos: vec3f,
-                            @location(1) valExtremes: vec2f,
-                        }
-
-                        @group(0) @binding(0) var<uniform> extremesUniform: vec4f;
-                        @group(0) @binding(1) var<uniform> valueExtremesUniform: vec2f;
-
-                        @vertex
-                        fn vertexMain(input: VertexInput) -> VertexOutput {
-                            var output: VertexOutput;
-                            let pos = input.pos;
-
-                            let xMin = extremesUniform[0];
-                            let xMax = extremesUniform[1];
-                            let yMin = extremesUniform[2];
-                            let yMax = extremesUniform[3];
-
-                            output.valExtremes = valueExtremesUniform;
-                            output.originalPos = pos.xyz;
-                            output.pos = vec4f(
-                                (pos.x - xMin) / (xMax - xMin) * 2.0 - 1.0,
-                                (pos.y - yMin) / (yMax - yMin) * 2.0 - 1.0,
-                                0,
-                                1
-                            );
-
-                            return output;
-                        }
-
-                        // ----------------------------------------------------
-
-                        struct FragmentInput {
-                            @location(0) originalPos: vec3f,
-                            @location(1) valExtremes: vec2f
-                        }
-
-                        @group(0) @binding(2) var<storage> colorStops: array<vec4<f32>>;
-                        @group(0) @binding(3) var<uniform> colorStopsCount: u32;
-                        @group(0) @binding(4) var<uniform> contourInterval: f32;
-                        @group(0) @binding(5) var<uniform> smoothColoring: u32;
-                        @group(0) @binding(6) var<uniform> showContourLines: u32;
-                        @group(0) @binding(7) var<uniform> contourLineColor: vec3<f32>;
-                        @group(0) @binding(8) var<uniform> lineWidth: f32;
-
-
-                        fn getColor(value: f32) -> vec3<f32> {
-                            let stopCount = colorStopsCount;
-
-                            if (stopCount == 0u) {
-                                return vec3<f32>(1.0, 1.0, 1.0);
+                    const shaderModule = device.createShaderModule({
+                        code: `
+                            struct VertexInput {
+                                @location(0) pos: vec3f
                             }
 
-                            for (
-                                var i: u32 = 0u;
-                                i < stopCount - 1u;
-                                i = i + 1u
-                            ) {
-                                if (value < colorStops[i + 1u].x) {
-                                    let t = (
-                                        (value - colorStops[i].x) /
-                                        (
-                                            colorStops[i + 1u].x -
-                                            colorStops[i].x
+                            struct VertexOutput {
+                                @builtin(position) pos: vec4f,
+                                @location(0) originalPos: vec3f,
+                                @location(1) valExtremes: vec2f,
+                            }
+
+                            @group(0) @binding(0) var<uniform> extremesUniform: vec4f;
+                            @group(0) @binding(1) var<uniform> valueExtremesUniform: vec2f;
+
+                            @vertex
+                            fn vertexMain(input: VertexInput) -> VertexOutput {
+                                var output: VertexOutput;
+                                let pos = input.pos;
+
+                                let xMin = extremesUniform[0];
+                                let xMax = extremesUniform[1];
+                                let yMin = extremesUniform[2];
+                                let yMax = extremesUniform[3];
+
+                                output.valExtremes = valueExtremesUniform;
+                                output.originalPos = pos.xyz;
+                                output.pos = vec4f(
+                                    (pos.x - xMin) / (xMax - xMin) * 2.0 - 1.0,
+                                    (pos.y - yMin) / (yMax - yMin) * 2.0 - 1.0,
+                                    0,
+                                    1
+                                );
+
+                                return output;
+                            }
+
+                            // ------------------------------------------------
+
+                            struct FragmentInput {
+                                @location(0) originalPos: vec3f,
+                                @location(1) valExtremes: vec2f
+                            }
+
+                            @group(0) @binding(2) var<storage> colorStops: array<vec4<f32>>;
+                            @group(0) @binding(3) var<uniform> colorStopsCount: u32;
+                            @group(0) @binding(4) var<uniform> contourInterval: f32;
+                            @group(0) @binding(5) var<uniform> smoothColoring: u32;
+                            @group(0) @binding(6) var<uniform> showContourLines: u32;
+                            @group(0) @binding(7) var<uniform> contourLineColor: vec3<f32>;
+                            @group(0) @binding(8) var<uniform> lineWidth: f32;
+
+
+                            fn getColor(value: f32) -> vec3<f32> {
+                                let stopCount = colorStopsCount;
+
+                                if (stopCount == 0u) {
+                                    return vec3<f32>(1.0, 1.0, 1.0);
+                                }
+
+                                for (
+                                    var i: u32 = 0u;
+                                    i < stopCount - 1u;
+                                    i = i + 1u
+                                ) {
+                                    if (value < colorStops[i + 1u].x) {
+                                        let t = (
+                                            (value - colorStops[i].x) /
+                                            (
+                                                colorStops[i + 1u].x -
+                                                colorStops[i].x
+                                            )
+                                        );
+                                        return mix(
+                                            colorStops[i].yzw,
+                                            colorStops[i + 1u].yzw,
+                                            t
+                                        );
+                                    }
+                                }
+                                return colorStops[stopCount - 1u].yzw;
+                            }
+
+                            @fragment
+                            fn fragmentMain(input: FragmentInput) -> @location(0) vec4f {
+                                let val = input.originalPos.z;
+
+                                // CONTOUR LINES
+                                //let lineWidth: f32 = 1.0;
+                                //let contourColor = vec3f(0.0, 0.0, 0.0);
+
+                                let val_dx: f32 = dpdx(val);
+                                let val_dy: f32 = dpdy(val);
+                                let gradient: f32 = length(
+                                    vec2f(val_dx, val_dy)
+                                );
+
+                                let epsilon: f32 = 0.0001;
+                                let adjustedLineWidth: f32 = (
+                                    lineWidth * gradient + epsilon
+                                );
+
+                                let valDiv: f32 = val / contourInterval;
+                                let valMod: f32 = (
+                                    val -
+                                    contourInterval *
+                                    floor(valDiv)
+                                );
+
+                                let lineMask: f32 = (
+                                    smoothstep(0.0, adjustedLineWidth, valMod) *
+                                    (
+                                        1.0 -
+                                        smoothstep(
+                                            contourInterval - adjustedLineWidth,
+                                            contourInterval,
+                                            valMod
                                         )
-                                    );
-                                    return mix(
-                                        colorStops[i].yzw,
-                                        colorStops[i + 1u].yzw,
-                                        t
+                                    )
+                                );
+
+                                let contourIndex: f32 = floor(
+                                    val /
+                                    contourInterval
+                                );
+                                let averageValInBand : f32 = (
+                                    contourIndex *
+                                    contourInterval +
+                                    contourInterval /
+                                    2.0
+                                );
+
+                                // BACKGROUND COLOR
+                                let minHeight: f32 = input.valExtremes.x;
+                                let maxHeight: f32 = input.valExtremes.y;
+                                let normVal: f32 = (
+                                    (val - minHeight) /
+                                    (maxHeight - minHeight)
+                                );
+                                let averageNormVal: f32 = (
+                                    (averageValInBand - minHeight) /
+                                    (maxHeight - minHeight)
+                                );
+
+                                var bgColor: vec3f;
+                                if (smoothColoring > 0) {
+                                    bgColor = getColor(normVal);
+                                } else {
+                                    bgColor = getColor(averageNormVal);
+                                }
+
+                                // MIX
+                                var pixelColor = bgColor;
+
+                                if (showContourLines > 0) {
+                                    pixelColor = mix(
+                                        contourLineColor,
+                                        pixelColor,
+                                        lineMask
                                     );
                                 }
+
+                                return vec4(pixelColor, 1.0);
                             }
-                            return colorStops[stopCount - 1u].yzw;
+                        `
+                    });
+
+                    const pipeline = device.createRenderPipeline({
+                        layout: 'auto',
+                        vertex: {
+                            module: shaderModule,
+                            entryPoint: 'vertexMain',
+                            buffers: [vertexBufferLayout]
+                        },
+                        fragment: {
+                            module: shaderModule,
+                            entryPoint: 'fragmentMain',
+                            targets: [{
+                                format: canvasFormat
+                            }]
+                        },
+                        primitive: {
+                            topology: 'triangle-list'
                         }
+                    });
 
-                        @fragment
-                        fn fragmentMain(input: FragmentInput) -> @location(0) vec4f {
-                            let val = input.originalPos.z;
-
-                            // CONTOUR LINES
-                            //let lineWidth: f32 = 1.0;
-                            //let contourColor = vec3f(0.0, 0.0, 0.0);
-
-                            let val_dx: f32 = dpdx(val);
-                            let val_dy: f32 = dpdy(val);
-                            let gradient: f32 = length(vec2f(val_dx, val_dy));
-
-                            let epsilon: f32 = 0.0001;
-                            let adjustedLineWidth: f32 = (
-                                lineWidth * gradient + epsilon
-                            );
-
-                            let valDiv: f32 = val / contourInterval;
-                            let valMod: f32 = (
-                                val -
-                                contourInterval *
-                                floor(valDiv)
-                            );
-
-                            let lineMask: f32 = (
-                                smoothstep(0.0, adjustedLineWidth, valMod) *
-                                (
-                                    1.0 -
-                                    smoothstep(
-                                        contourInterval - adjustedLineWidth,
-                                        contourInterval,
-                                        valMod
-                                    )
-                                )
-                            );
-
-                            let contourIndex: f32 = floor(
-                                val /
-                                contourInterval
-                            );
-                            let averageValInBand : f32 = (
-                                contourIndex *
-                                contourInterval +
-                                contourInterval /
-                                2.0
-                            );
-
-                            // BACKGROUND COLOR
-                            let minHeight: f32 = input.valExtremes.x;
-                            let maxHeight: f32 = input.valExtremes.y;
-                            let normVal: f32 = (
-                                (val - minHeight) /
-                                (maxHeight - minHeight)
-                            );
-                            let averageNormVal: f32 = (
-                                (averageValInBand - minHeight) /
-                                (maxHeight - minHeight)
-                            );
-
-                            var bgColor: vec3f;
-                            if (smoothColoring > 0) {
-                                bgColor = getColor(normVal);
-                            } else {
-                                bgColor = getColor(averageNormVal);
+                    const bindGroup = device.createBindGroup({
+                        layout: pipeline.getBindGroupLayout(0),
+                        entries: [{
+                            binding: 0,
+                            resource: {
+                                buffer: extremesUniformBuffer,
+                                label: 'extremesUniformBuffer'
                             }
-
-                            // MIX
-                            var pixelColor = bgColor;
-
-                            if (showContourLines > 0) {
-                                pixelColor = mix(
-                                    contourLineColor,
-                                    pixelColor,
-                                    lineMask
-                                );
+                        }, {
+                            binding: 1,
+                            resource: {
+                                buffer: valueExtremesUniformBuffer,
+                                label: 'valueExtremesUniformBuffer'
                             }
-
-                            return vec4(pixelColor, 1.0);
-                        }
-                    `
-                });
-
-                const pipeline = device.createRenderPipeline({
-                    layout: 'auto',
-                    vertex: {
-                        module: shaderModule,
-                        entryPoint: 'vertexMain',
-                        buffers: [vertexBufferLayout]
-                    },
-                    fragment: {
-                        module: shaderModule,
-                        entryPoint: 'fragmentMain',
-                        targets: [{
-                            format: canvasFormat
-                        }]
-                    },
-                    primitive: {
-                        topology: 'triangle-list'
-                    }
-                });
-
-                /*
-                Const buffers = {
-                    'extremesUniformBuffer': extremesUniformBuffer,
-                    'valueExtremesUniformBuffer': valueExtremesUniformBuffer,
-                    'colorAxisStopsBuffer': colorAxisStopsBuffer,
-                    'colorAxisStopsCountBuffer': colorAxisStopsCountBuffer,
-                    'contourIntervalUniformBuffer': (
-                        this.contourIntervalUniformBuffer
-                    ),
-                    'smoothColoringUniformBuffer': (
-                        this.smoothColoringUniformBuffer
-                    ),
-                    'showContourLinesUniformBuffer': (
-                        this.showContourLinesUniformBuffer
-                    )
-                };
-
-                for (const [key, val] of Object.entries(buffers)) {
-                    console.log(key, val);
-                }
-                */
-
-                // Note: Overkill with casting all of the buffers
-                const bindGroup = device.createBindGroup({
-                    layout: pipeline.getBindGroupLayout(0),
-                    entries: [{
-                        binding: 0,
-                        resource: {
-                            buffer: extremesUniformBuffer as GPUBuffer,
-                            label: 'extremesUniformBuffer'
-                        }
-                    }, {
-                        binding: 1,
-                        resource: {
-                            buffer: valueExtremesUniformBuffer as GPUBuffer,
-                            label: 'valueExtremesUniformBuffer'
-                        }
-                    }, {
-                        binding: 2,
-                        resource: {
-                            buffer: colorAxisStopsBuffer as GPUBuffer,
-                            label: 'colorAxisStopsBuffer'
-                        }
-                    }, {
-                        binding: 3,
-                        resource: {
-                            buffer: colorAxisStopsCountBuffer as GPUBuffer,
-                            label: 'colorAxisStopsCountBuffer'
-                        }
-                    }, {
-                        binding: 4,
-                        resource: {
-                            buffer: (
-                                this.contourIntervalUniformBuffer as GPUBuffer
-                            ),
-                            label: 'contourIntervalUniformBuffer'
-                        }
-                    }, {
-                        binding: 5,
-                        resource: {
-                            buffer: (
-                                this.smoothColoringUniformBuffer as GPUBuffer
-                            ),
-                            label: 'smoothColoringUniformBuffer'
-                        }
-                    }, {
-                        binding: 6,
-                        resource: {
-                            buffer: (
-                                this.showContourLinesUniformBuffer as GPUBuffer
-                            ),
-                            label: 'showContourLinesUniformBuffer'
-                        }
-                    }, {
-                        binding: 7,
-                        resource: {
-                            buffer: (
-                                this.contourLineColorBuffer as GPUBuffer
-                            ),
-                            label: 'contourLineColorBuffer'
-                        }
-                    }, {
-                        binding: 8,
-                        resource: {
-                            buffer: (
-                                this.lineWidthBuffer as GPUBuffer
-                            ),
-                            label: 'lineWidthBuffer'
-                        }
-                    }]
-                });
-
-                this.renderWebGPU = function (): void {
-                    const encoder = device.createCommandEncoder();
-
-                    const pass = encoder.beginRenderPass({
-                        colorAttachments: [{
-                            view: context.getCurrentTexture().createView(),
-                            loadOp: 'clear' as GPULoadOp,
-                            clearValue: [1, 1, 1, 1],
-                            storeOp: 'store' as GPUStoreOp
+                        }, {
+                            binding: 2,
+                            resource: {
+                                buffer: colorAxisStopsBuffer,
+                                label: 'colorAxisStopsBuffer'
+                            }
+                        }, {
+                            binding: 3,
+                            resource: {
+                                buffer: colorAxisStopsCountBuffer,
+                                label: 'colorAxisStopsCountBuffer'
+                            }
+                        }, {
+                            binding: 4,
+                            resource: {
+                                buffer: this.contourIntervalUniformBuffer,
+                                label: 'contourIntervalUniformBuffer'
+                            }
+                        }, {
+                            binding: 5,
+                            resource: {
+                                buffer: this.smoothColoringUniformBuffer,
+                                label: 'smoothColoringUniformBuffer'
+                            }
+                        }, {
+                            binding: 6,
+                            resource: {
+                                buffer: this.showContourLinesUniformBuffer,
+                                label: 'showContourLinesUniformBuffer'
+                            }
+                        }, {
+                            binding: 7,
+                            resource: {
+                                buffer: this.contourLineColorBuffer,
+                                label: 'contourLineColorBuffer'
+                            }
+                        }, {
+                            binding: 8,
+                            resource: {
+                                buffer: this.lineWidthBuffer,
+                                label: 'lineWidthBuffer'
+                            }
                         }]
                     });
-                    pass.setPipeline(pipeline);
-                    pass.setVertexBuffer(0, vertexBuffer);
-                    pass.setIndexBuffer(indexBuffer, 'uint32');
-                    pass.setBindGroup(0, bindGroup);
-                    pass.drawIndexed(indices.length);
-                    pass.end();
 
-                    device.queue.submit([encoder.finish()]);
+                    this.renderWebGPU = function (): void {
+                        const encoder = device.createCommandEncoder();
 
-                    this.image?.destroy();
-                    if (this.canvas) {
+                        const pass = encoder.beginRenderPass({
+                            colorAttachments: [{
+                                view: context.getCurrentTexture().createView(),
+                                loadOp: 'clear' as GPULoadOp,
+                                clearValue: [1, 1, 1, 1],
+                                storeOp: 'store' as GPUStoreOp
+                            }]
+                        });
+                        pass.setPipeline(pipeline);
+                        pass.setVertexBuffer(0, vertexBuffer);
+                        pass.setIndexBuffer(indexBuffer, 'uint32');
+                        pass.setBindGroup(0, bindGroup);
+                        pass.drawIndexed(indices.length);
+                        pass.end();
 
+                        device.queue.submit([encoder.finish()]);
+
+                        this.image?.destroy();
                         this.image = this.chart.renderer.image(
-                            this.canvas.toDataURL('image/webp', 1)
+                            canvas.toDataURL('image/webp', 1)
                         ).attr({
                             width: this.xAxis.len,
                             height: this.yAxis.len
                         }).add(this.group);
+                    };
 
-                    }
-                };
-
-                this.renderWebGPU();
+                    this.renderWebGPU();
+                }
             }
         }
     }
@@ -796,11 +778,10 @@ export default class ContourSeries extends ScatterSeries {
      */
     public setExtremes(): void {
 
-        if (!this.render) {
+        if (!this.renderWebGPU) {
             return;
         }
 
-        this.setCanvasSize();
         if (this.device) {
 
             if (this.extremesUniform && this.extremesUniformBuffer) {
@@ -821,7 +802,7 @@ export default class ContourSeries extends ScatterSeries {
                 );
             }
 
-            // This?.render();
+            this?.renderWebGPU();
         }
     }
 }
