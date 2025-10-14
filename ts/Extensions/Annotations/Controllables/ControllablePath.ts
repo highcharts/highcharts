@@ -81,9 +81,7 @@ const TRACKER_FILL = 'rgba(192,192,192,' + (H.svg ? 0.0001 : 0.002) + ')';
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 function createMarkerSetter(
     markerType: string
 ): MarkerSetterFunction {
@@ -92,9 +90,7 @@ function createMarkerSetter(
     };
 }
 
-/**
- * @private
- */
+/** @internal */
 function onChartAfterGetContainer(
     this: Chart
 ): void {
@@ -113,9 +109,7 @@ function onChartAfterGetContainer(
     // }, this);
 }
 
-/**
- * @private
- */
+/** @internal */
 function svgRendererAddMarker(
     this: SVGRenderer,
     id: string,
@@ -163,9 +157,9 @@ function svgRendererAddMarker(
 /**
  * A controllable path class.
  *
+ * @internal
  * @requires modules/annotations
  *
- * @private
  * @class
  * @name Highcharts.AnnotationControllablePath
  *
@@ -360,7 +354,8 @@ class ControllablePath extends Controllable {
 
     /**
      * Set markers.
-     * @private
+     *
+     * @internal
      * @param {Highcharts.AnnotationControllablePath} item
      */
     public setMarkers(item: ControllablePath): void {

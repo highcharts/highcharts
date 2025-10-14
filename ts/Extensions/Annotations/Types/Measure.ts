@@ -322,9 +322,7 @@ if (defaultOptions.annotations) {
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 function average(
     this: Measure
 ): number {
@@ -364,9 +362,7 @@ function average(
     return average;
 }
 
-/**
- * @private
- */
+/** @internal */
 function isPointWithinExtremes(
     point: Point,
     ext: Record<string, number>
@@ -381,9 +377,7 @@ function isPointWithinExtremes(
     );
 }
 
-/**
- * @private
- */
+/** @internal */
 function bins(
     this: Measure
 ): number {
@@ -416,8 +410,8 @@ function bins(
 }
 
 /**
- * Default formatter of label's content
- * @private
+ * Default formatter of label's content.
+ * @internal
  */
 function defaultFormatter(
     this: Measure
@@ -430,8 +424,8 @@ function defaultFormatter(
 
 /**
  * Set values for xAxisMin, xAxisMax, yAxisMin, yAxisMax, also
- * when chart is inverted
- * @private
+ * when chart is inverted.
+ * @internal
  */
 function getExtremes(
     xAxisMin: number,
@@ -450,7 +444,8 @@ function getExtremes(
 /**
  * Set current xAxisMin, xAxisMax, yAxisMin, yAxisMax.
  * Calculations of measure values (min, max, average, bins).
- * @private
+ *
+ * @internal
  * @param {Highcharts.Axis} axis
  *        X or y axis reference
  * @param {number} value
@@ -467,8 +462,8 @@ function getPointPos(
 }
 
 /**
- * Set starting points
- * @private
+ * Set starting points.
+ * @internal
  */
 function init(
     this: Measure
@@ -519,9 +514,7 @@ function init(
 
 }
 
-/**
- * @private
- */
+/** @internal */
 function max(
     this: Measure
 ): number {
@@ -562,8 +555,8 @@ function max(
 }
 
 /**
- * Definitions of calculations (min, max, average, bins)
- * @private
+ * Definitions of calculations (min, max, average, bins).
+ * @internal
  */
 function min(
     this: Measure
@@ -607,7 +600,8 @@ function min(
 /**
  * Set current xAxisMin, xAxisMax, yAxisMin, yAxisMax.
  * Calculations of measure values (min, max, average, bins).
- * @private
+ *
+ * @internal
  * @param {boolean} [resize]
  *        Flag if shape is resized.
  */
@@ -638,9 +632,9 @@ function recalculate(
 }
 
 /**
- * Update position of start points
- * (startXMin, startXMax, startYMin, startYMax)
- * @private
+ * Update position of start points (startXMin, startXMax, startYMin, startYMax).
+ *
+ * @internal
  * @param {boolean} redraw
  *        Flag if shape is redraw
  * @param {boolean} resize
@@ -725,7 +719,7 @@ class Measure extends Annotation {
 
     /**
      * Init annotation object.
-     * @private
+     * @internal
      */
     public init(
         annotationOrChart: (Annotation|AnnotationChart),
@@ -746,7 +740,7 @@ class Measure extends Annotation {
 
     /**
      * Overrides default setter to get axes from typeOptions.
-     * @private
+     * @internal
      */
     public setClipAxes(): void {
         this.clipXAxis = this.chart.xAxis[this.options.typeOptions.xAxis];
@@ -755,7 +749,7 @@ class Measure extends Annotation {
 
     /**
      * Get points configuration objects for shapes.
-     * @private
+     * @internal
      */
     public shapePointsOptions(): Array<MockPointOptions> {
 
@@ -831,7 +825,8 @@ class Measure extends Annotation {
 
     /**
      * Add label with calculated values (min, max, average, bins).
-     * @private
+     *
+     * @internal
      * @param {boolean} [resize]
      * The flag for resize shape
      */
@@ -888,7 +883,7 @@ class Measure extends Annotation {
 
     /**
      * Crosshair, background (rect).
-     * @private
+     * @internal
      */
     public addShapes(): void {
         this.addCrosshairs();
@@ -897,7 +892,7 @@ class Measure extends Annotation {
 
     /**
      * Add background shape.
-     * @private
+     * @internal
      */
     public addBackground(): void {
         const shapePoints = this.shapePointsOptions();
@@ -921,7 +916,7 @@ class Measure extends Annotation {
 
     /**
      * Add internal crosshair shapes (on top and bottom).
-     * @private
+     * @internal
      */
     public addCrosshairs(): void {
         const chart = this.chart,
@@ -1036,8 +1031,9 @@ class Measure extends Annotation {
 
     /**
      * Translate start or end ("left" or "right") side of the measure.
-     * Update start points (startXMin, startXMax, startYMin, startYMax)
-     * @private
+     * Update start points (startXMin, startXMax, startYMin, startYMax).
+     *
+     * @internal
      * @param {number} dx
      * the amount of x translation
      * @param {number} dy
@@ -1092,7 +1088,8 @@ class Measure extends Annotation {
 
     /**
      * Redraw event which render elements and update start points if needed.
-     * @private
+     *
+     * @internal
      * @param {boolean} animation
      * @param {boolean} [resize]
      * flag if resized

@@ -70,7 +70,7 @@ interface IndicatorNameCouple {
 
 /**
  * Enum for properties which should have dropdown list.
- * @private
+ * @internal
  */
 enum DropdownProperties {
     'params.algorithm',
@@ -79,7 +79,7 @@ enum DropdownProperties {
 
 /**
  * List of available algorithms for the specific indicator.
- * @private
+ * @internal
  */
 const dropdownParameters: Record<string, Array<string>> = {
     'algorithm-pivotpoints': ['standard', 'fibonacci', 'camarilla'],
@@ -94,7 +94,8 @@ const dropdownParameters: Record<string, Array<string>> = {
 
 /**
  * Create two columns (divs) in HTML.
- * @private
+ *
+ * @internal
  * @param {Highcharts.HTMLDOMElement} container
  * Container of columns
  * @return {Highcharts.Dictionary<Highcharts.HTMLDOMElement>}
@@ -143,7 +144,7 @@ function addColsContainer(
 /**
  * Create indicator's form. It contains two tabs (ADD and EDIT) with
  * content.
- * @private
+ * @internal
  */
 function addForm(
     this: Popup,
@@ -225,7 +226,8 @@ function addForm(
  * fields are added:
  * - hidden input - contains indicator type (required for callback)
  * - select - list of series which can be linked with indicator
- * @private
+ *
+ * @internal
  * @param {Highcharts.Chart} chart
  * Chart
  * @param {Highcharts.Series} series
@@ -311,7 +313,7 @@ function addFormFields(
  * Create HTML list of all indicators (ADD mode) or added indicators
  * (EDIT mode).
  *
- * @private
+ * @internal
  *
  * @param {Highcharts.AnnotationChart} chart
  *        The chart object.
@@ -492,7 +494,8 @@ function addIndicatorList(
  * Recurrent function which lists all fields, from params object and
  * create them as inputs. Each input has unique `data-name` attribute,
  * which keeps chain of fields i.e params.styles.fontSize.
- * @private
+ *
+ * @internal
  * @param {Highcharts.Chart} chart
  * Chart
  * @param {string} parentNode
@@ -590,7 +593,7 @@ function addParamInputs(
 /**
  * Add searchbox HTML element and its' label.
  *
- * @private
+ * @internal
  *
  * @param {Highcharts.AnnotationChart} chart
  *        The chart object.
@@ -683,7 +686,7 @@ function addSearchBox(
 /**
  * Add selection HTML element and its' label.
  *
- * @private
+ * @internal
  *
  * @param {string} indicatorType
  * Type of the indicator i.e. sma, ema...
@@ -736,7 +739,7 @@ function addSelection(
 /**
  * Get and add selection options.
  *
- * @private
+ * @internal
  *
  * @param {Highcharts.AnnotationChart} chart
  *        The chart object.
@@ -830,7 +833,7 @@ function addSelectionOptions(
  * Filter object of series which are not indicators.
  * If the filter string exists, check against it.
  *
- * @private
+ * @internal
  *
  * @param {Highcharts.FilteredSeries} series
  *        All series are available in the plotOptions.
@@ -909,7 +912,7 @@ function filterSeries(
 /**
  * Filter an array of series and map its names and types.
  *
- * @private
+ * @internal
  *
  * @param {Highcharts.FilteredSeries} series
  *        All series that are available in the plotOptions.
@@ -939,7 +942,8 @@ function filterSeriesArray(
 
 /**
  * Get amount of indicators added to chart.
- * @private
+ *
+ * @internal
  * @return {number} - Amount of indicators
  */
 function getAmount(this: Chart): number {
@@ -960,7 +964,7 @@ function getAmount(this: Chart): number {
 /**
  * Extract full name and type of requested indicator.
  *
- * @private
+ * @internal
  *
  * @param {Highcharts.Series} series
  * Series which name is needed(EDITmode - defaultOptions.series,
@@ -1001,7 +1005,7 @@ function getNameType(
  * Create the selection box for the series,
  * add options and apply the default one.
  *
- * @private
+ * @internal
  *
  * @param {string} indicatorType
  *        Type of the indicator i.e. sma, ema...

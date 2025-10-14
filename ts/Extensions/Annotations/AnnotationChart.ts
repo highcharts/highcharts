@@ -103,9 +103,7 @@ function chartAddAnnotation(
     return annotation;
 }
 
-/**
- * @private
- */
+/** @internal */
 function chartCallback(
     this: Chart
 ): void {
@@ -291,9 +289,7 @@ function chartCallback(
     });
 }
 
-/**
- * @private
- */
+/** @internal */
 function chartDrawAnnotations(
     this: AnnotationChart
 ): void {
@@ -340,8 +336,8 @@ function chartRemoveAnnotation(
 }
 
 /**
- * Create lookups initially
- * @private
+ * Create lookups initially.
+ * @internal
  */
 function onChartAfterInit(
     this: Chart
@@ -365,9 +361,7 @@ function onChartAfterInit(
 
 }
 
-/**
- * @private
- */
+/** @internal */
 function wrapPointerOnContainerMouseDown(
     this: Annotation,
     proceed: Function
@@ -383,9 +377,7 @@ function wrapPointerOnContainerMouseDown(
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 namespace AnnotationChart {
 
     /* *
@@ -394,9 +386,7 @@ namespace AnnotationChart {
      *
      * */
 
-    /**
-     * @private
-     */
+    /** @internal */
     export function compose(
         AnnotationClass: typeof Annotation,
         ChartClass: typeof Chart,

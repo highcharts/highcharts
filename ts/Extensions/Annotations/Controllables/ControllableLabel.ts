@@ -63,8 +63,8 @@ interface ControllableAlignObject extends AlignObject {
  * */
 
 /**
- * General symbol definition for labels with connector
- * @private
+ * General symbol definition for labels with connector.
+ * @internal
  */
 function symbolConnector(
     x: number,
@@ -123,9 +123,9 @@ function symbolConnector(
 /**
  * A controllable label class.
  *
+ * @internal
  * @requires modules/annotations
  *
- * @private
  * @class
  * @name Highcharts.AnnotationControllableLabel
  *

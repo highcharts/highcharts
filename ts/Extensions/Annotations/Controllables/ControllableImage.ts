@@ -28,9 +28,9 @@ import ControllableLabel from './ControllableLabel.js';
 /**
  * A controllable image class.
  *
+ * @internal
  * @requires modules/annotations
  *
- * @private
  * @class
  * @name Highcharts.AnnotationControllableImage
  *

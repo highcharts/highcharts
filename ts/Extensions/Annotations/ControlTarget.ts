@@ -95,7 +95,7 @@ namespace ControlTarget {
 
     /**
      * Add control points.
-     * @private
+     * @internal
      */
     function addControlPoints(
         this: ControlTarget
@@ -125,7 +125,8 @@ namespace ControlTarget {
 
     /**
      * Returns object which denotes anchor position - relative and absolute.
-     * @private
+     *
+     * @internal
      * @param {Highcharts.AnnotationPointType} point
      * An annotation point.
      *
@@ -165,7 +166,7 @@ namespace ControlTarget {
 
     /**
      * Adds shared functions to be used with targets of ControlPoint.
-     * @private
+     * @internal
      */
     export function compose(
         ControlTargetClass: Class
@@ -193,7 +194,7 @@ namespace ControlTarget {
 
     /**
      * Destroy control points.
-     * @private
+     * @internal
      */
     function destroyControlTarget(
         this: ControlTarget
@@ -215,7 +216,8 @@ namespace ControlTarget {
 
     /**
      * Get the points options.
-     * @private
+     *
+     * @internal
      * @return {Array<Highcharts.PointOptionsObject>}
      * An array of points' options.
      */
@@ -232,7 +234,8 @@ namespace ControlTarget {
 
     /**
      * Find point-like objects based on points options.
-     * @private
+     *
+     * @internal
      * @return {Array<Annotation.PointBase>}
      *         An array of point-like objects.
      */
@@ -267,7 +270,8 @@ namespace ControlTarget {
 
     /**
      * Map point's options to a point-like object.
-     * @private
+     *
+     * @internal
      * @param {string|Function|Highcharts.AnnotationMockPointOptionsObject|Highcharts.AnnotationPointType} pointOptions
      *        Point's options.
      * @param {Highcharts.AnnotationPointType} point
@@ -312,7 +316,7 @@ namespace ControlTarget {
 
     /**
      * Redraw control points.
-     * @private
+     * @internal
      */
     function redrawControlPoints(
         this: ControlTarget,
@@ -325,7 +329,7 @@ namespace ControlTarget {
 
     /**
      * Render control points.
-     * @private
+     * @internal
      */
     function renderControlPoints(
         this: ControlTarget
@@ -337,7 +341,8 @@ namespace ControlTarget {
 
     /**
      * Transform control points with a specific transformation.
-     * @private
+     *
+     * @internal
      * @param {string} transformation
      *        A transformation name
      * @param {number|null} cx
@@ -373,7 +378,8 @@ namespace ControlTarget {
      * Transform a point with a specific transformation
      * If a transformed point is a real point it is replaced with
      * the mock point.
-     * @private
+     *
+     * @internal
      * @param {string} transformation
      *        A transformation name
      * @param {number|null} cx
@@ -407,7 +413,8 @@ namespace ControlTarget {
 
     /**
      * Translate control points.
-     * @private
+     *
+     * @internal
      * @param {number} dx
      *        Translation for x coordinate
      * @param {number} dy
@@ -423,7 +430,8 @@ namespace ControlTarget {
 
     /**
      * Translate a specific control point.
-     * @private
+     *
+     * @internal
      * @param {number} dx
      *        Translation for x coordinate
      * @param {number} dy

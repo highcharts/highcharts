@@ -164,7 +164,7 @@ This is being done for each fibonacci time zone line.
     |---------*--------------------------------------------------------|
         and this point here is found (intersection with the plot area edge)
 
-* @private
+* @internal
 */
 function edgePoint(
     startIndex: number,

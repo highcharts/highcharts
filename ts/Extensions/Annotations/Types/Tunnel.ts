@@ -154,9 +154,7 @@ if (defaultOptions.annotations) {
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 function getSecondCoordinate(
     p1: PositionObject,
     p2: PositionObject,
@@ -289,7 +287,8 @@ class Tunnel extends CrookedLine {
 
     /**
      * Translate start or end ("left" or "right") side of the tunnel.
-     * @private
+     *
+     * @internal
      * @param {number} dx
      * the amount of x translation
      * @param {number} dy
@@ -307,7 +306,8 @@ class Tunnel extends CrookedLine {
 
     /**
      * Translate height of the tunnel.
-     * @private
+     *
+     * @internal
      * @param {number} dh
      * the amount of height translation
      */

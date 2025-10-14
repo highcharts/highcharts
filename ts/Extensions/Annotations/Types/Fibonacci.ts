@@ -125,9 +125,7 @@ if (defaultOptions.annotations) {
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 function createPathDGenerator(
     retracementIndex: number,
     isBackground?: boolean

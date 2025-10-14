@@ -47,7 +47,8 @@ const {
 /**
  * Create annotation simple form.
  * It contains fields with param names.
- * @private
+ *
+ * @internal
  * @param {Highcharts.Chart} chart
  * Chart
  * @param {Object} options
@@ -127,7 +128,8 @@ function addForm(
 /**
  * Create annotation simple form. It contains two buttons
  * (edit / remove) and text label.
- * @private
+ *
+ * @internal
  * @param {Highcharts.Chart} - chart
  * @param {Highcharts.AnnotationsOptions} - options
  * @param {Function} - on click callback
@@ -218,7 +220,8 @@ function addToolbar(
 
 /**
  * Create annotation's form fields.
- * @private
+ *
+ * @internal
  * @param {Highcharts.HTMLDOMElement} parentDiv
  * Div where inputs are placed
  * @param {Highcharts.Chart} chart

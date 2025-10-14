@@ -32,7 +32,7 @@ const { merge } = U;
  *
  * @requires modules/annotations
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.AnnotationControllableCircle
  *
@@ -87,9 +87,7 @@ class ControllableCircle extends Controllable {
      *
      * */
 
-    /**
-     * @private
-     */
+    /** @internal */
     public redraw(animation?: boolean): void {
 
         if (this.graphic) {
@@ -114,9 +112,7 @@ class ControllableCircle extends Controllable {
         super.redraw.call(this, animation);
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     public render(parent: SVGElement): void {
         const attrs = this.attrsFromOptions(this.options);
 
@@ -130,7 +126,8 @@ class ControllableCircle extends Controllable {
 
     /**
      * Set the radius.
-     * @private
+     *
+     * @internal
      * @param {number} r
      *        A radius to be set
      */
