@@ -272,7 +272,7 @@ const HC_CONFIGS = {
     },
     chart3: { // Big heatmap
         custom: {
-            autoDesc: chart4desc
+            autoDesc: chart3desc
         },
         data: {
             csv: document.getElementById('csv').innerHTML
