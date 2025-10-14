@@ -247,6 +247,15 @@ class CellEditing {
         this.editModeContent.blurHandler = this.onInputBlur;
         this.editModeContent.changeHandler = this.onInputChange;
         this.editModeContent.keyDownHandler = this.onInputKeyDown;
+
+        const rules = cell.column.options?.cells?.editMode?.validationRules ||
+            [];
+        if (rules.includes('notEmpty')) {
+            this.editModeContent.getMainElement().setAttribute(
+                'aria-required',
+                'true'
+            );
+        }
     }
 
     /**
