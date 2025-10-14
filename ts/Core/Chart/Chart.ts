@@ -3956,11 +3956,9 @@ class Chart {
                         // disallow certain axis padding options that would make
                         // panning/zooming hard. Reset and redraw after the
                         // operation has finished.
-                        axis.isPanning =
-                            trigger !== 'zoom' &&
-                            trigger !== 'mousewheel';
+                        axis.isPanning = trigger !== 'zoom';
 
-                        if (axis.isPanning) {
+                        if (axis.isPanning && trigger !== 'mousewheel') {
                             isAnyAxisPanning = true; // #21319
                         }
 
