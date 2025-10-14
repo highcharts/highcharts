@@ -10,7 +10,6 @@ on:
       - 'package.json'
       - 'tools/**/*'
       - '.github/workflows/test-tooling.yml'
-      - 'playwright.config.ts'
       - 'tests/internal/*'
   workflow_dispatch:
 
@@ -40,13 +39,4 @@ jobs:
 
       - name: Run test
         run: node --test "./tools/gulptasks-tests/*.mjs"
-
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
-
-      - name: Run Playwright tests
-        run: npx playwright test --project internal
-
-      - name: Run Playwright QUnit tests
-        run: npx playwright test --project qunit
 

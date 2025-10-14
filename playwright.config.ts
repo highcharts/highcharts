@@ -22,11 +22,19 @@ export default defineConfig({
         {
             name: 'highcharts',
             testDir: './tests/highcharts',
-            use: {
-                ...devices['Desktop Chrome'],
-                ...devices['Desktop Firefox'],
-                ...devices['Desktop safari']
-            },
+            use: { ...devices['Desktop Chrome'] },
+            dependencies: ['setup-highcharts'],
+        },
+        {
+            name: 'highcharts-firefox',
+            testDir: './tests/highcharts',
+            use: { ...devices['Desktop Firefox'] },
+            dependencies: ['setup-highcharts'],
+        },
+        {
+            name: 'highcharts-webkit',
+            testDir: './tests/highcharts',
+            use: { ...devices['Desktop Safari'] },
             dependencies: ['setup-highcharts'],
         },
         {
@@ -34,7 +42,26 @@ export default defineConfig({
             testDir: './tests/qunit',
             use: {
                 ...devices['Desktop Chrome'],
+                headless: process.env.CI ? true : false,
+                launchOptions: {
+                    args: [
+                        '--enable-gpu',
+                        '--ignore-gpu-blocklist',
+                        '--enable-zero-copy',
+                        '--use-angle=gl',
+                        '--use-gl=angle',
+                        '--disable-software-rasterizer'
+                    ]
+                }
+            },
+            dependencies: ['setup-highcharts'],
+        },
+        {
+            name: 'qunit-firefox',
+            testDir: './tests/qunit',
+            use: {
                 ...devices['Desktop Firefox'],
+                headless: true,
             },
             dependencies: ['setup-highcharts'],
         },
@@ -45,11 +72,19 @@ export default defineConfig({
         {
             name: 'dashboards',
             testDir: './tests/dashboards',
-            use: {
-                ...devices['Desktop Chrome'],
-                ...devices['Desktop Firefox'],
-                ...devices['Desktop safari']
-            },
+            use: { ...devices['Desktop Chrome'] },
+            dependencies: ['setup-dashboards'],
+        },
+        {
+            name: 'dashboards-firefox',
+            testDir: './tests/dashboards',
+            use: { ...devices['Desktop Firefox'] },
+            dependencies: ['setup-dashboards'],
+        },
+        {
+            name: 'dashboards-webkit',
+            testDir: './tests/dashboards',
+            use: { ...devices['Desktop Safari'] },
             dependencies: ['setup-dashboards'],
         },
         {
