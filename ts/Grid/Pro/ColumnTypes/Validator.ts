@@ -385,10 +385,17 @@ namespace Validator {
         },
         ignoreCaseUnique: {
             validate: function ({ rawValue }): boolean {
+                const oldValue = String(this.value).toLowerCase();
+                const rowValueString = String(rawValue).toLowerCase();
+
+                if (oldValue === rowValueString) {
+                    return true;
+                }
+
                 const columnData = this.column.data;
                 const isDuplicate = columnData?.some(
                     (value): boolean => String(value).toLowerCase() ===
-                        String(rawValue).toLowerCase()
+                        rowValueString
                 );
 
                 return !isDuplicate;
@@ -399,6 +406,12 @@ namespace Validator {
         },
         unique: {
             validate: function ({ rawValue }): boolean {
+                const oldValue = this.value;
+
+                if (oldValue === rawValue) {
+                    return true;
+                }
+
                 const columnData = this.column.data;
                 const isDuplicate = columnData?.some(
                     (value): boolean => value === rawValue
