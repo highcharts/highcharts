@@ -34,7 +34,7 @@ describe('Column Header Toolbar', () => {
     it('Programmatically set sorting activates button.', () => {
         cy.viewport(800, 600);
         cy.grid().then(grid => {
-            grid.viewport.getColumn('date').sorting.setOrder('desc');
+            grid.viewport.getColumn('product').sorting.setOrder('desc');
         });
         cy.get('.hcg-button.active').should('have.length', 1);
     });
@@ -55,8 +55,8 @@ describe('Column Header Toolbar', () => {
         cy.viewport(800, 600);
         cy.get('.hcg-popup').type('{downarrow}{downarrow}{enter}');
         cy.get('.hcg-popup-content input').should('exist')
-            .type('2025-10-06{esc}{esc}{esc}{downArrow}{downArrow}');
-        cy.focused().should('have.attr', 'data-column-id', 'date')
-            .parent().should('have.attr', 'data-row-id', '5');
+            .type('es{esc}{esc}{esc}{downArrow}{downArrow}');
+        cy.focused().should('have.attr', 'data-column-id', 'product')
+            .parent().should('have.attr', 'data-row-id', '0');
     });
 });
