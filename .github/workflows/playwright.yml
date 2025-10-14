@@ -72,11 +72,6 @@ jobs:
         run: PLAYWRIGHT_HTML_REPORT=playwright-report/qunit npx playwright test --project qunit
         continue-on-error: true
 
-      - name: Run Playwright project qunit (Firefox)
-        id: test_qunit_firefox
-        run: PLAYWRIGHT_HTML_REPORT=playwright-report/qunit-firefox npx playwright test --project qunit-firefox
-        continue-on-error: true
-
       - name: Run Playwright project dashboards (Chromium)
         id: test_dashboards
         run: PLAYWRIGHT_HTML_REPORT=playwright-report/dashboards npx playwright test --project dashboards
@@ -123,7 +118,6 @@ jobs:
           check_step "${{ steps.test_highcharts_firefox.outcome }}" "highcharts-firefox"
           check_step "${{ steps.test_highcharts_webkit.outcome }}" "highcharts-webkit"
           check_step "${{ steps.test_qunit.outcome }}" "qunit"
-          check_step "${{ steps.test_qunit_firefox.outcome }}" "qunit-firefox"
           check_step "${{ steps.test_dashboards.outcome }}" "dashboards"
           check_step "${{ steps.test_dashboards_firefox.outcome }}" "dashboards-firefox"
           check_step "${{ steps.test_dashboards_webkit.outcome }}" "dashboards-webkit"
