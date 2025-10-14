@@ -74,6 +74,7 @@ export default class ContourSeries extends ScatterSeries {
     private contourLineColorBuffer?: GPUBuffer;
 
     private lineWidthBuffer?: GPUBuffer;
+    public renderWebGPU?: () => void;
 
 
     public init(chart: Chart, options: ContourSeriesOptions): void {
@@ -120,8 +121,18 @@ export default class ContourSeries extends ScatterSeries {
 
 
     public drawPoints(): void {
+
+        // If this function exists, buffers are set up
+        if (this.renderWebGPU) {
+            this.renderWebGPU?.();
+            return;
+        }
+
         const series = this,
-            canvas = series.canvas = document.createElement('canvas');
+            canvas = series.canvas = (
+                series.canvas ||
+                document.createElement('canvas')
+            );
 
         // Canvas.classList.add('contourmap-canvas');
 
@@ -573,33 +584,40 @@ export default class ContourSeries extends ScatterSeries {
                     }]
                 });
 
-                const encoder = device.createCommandEncoder();
+                this.renderWebGPU = function (): void {
+                    const encoder = device.createCommandEncoder();
 
-                const pass = encoder.beginRenderPass({
-                    colorAttachments: [{
-                        view: context.getCurrentTexture().createView(),
-                        loadOp: 'clear' as GPULoadOp,
-                        clearValue: [1, 1, 1, 1],
-                        storeOp: 'store' as GPUStoreOp
-                    }]
-                });
-                pass.setPipeline(pipeline);
-                pass.setVertexBuffer(0, vertexBuffer);
-                pass.setIndexBuffer(indexBuffer, 'uint32');
-                pass.setBindGroup(0, bindGroup);
-                pass.drawIndexed(indices.length);
-                pass.end();
+                    const pass = encoder.beginRenderPass({
+                        colorAttachments: [{
+                            view: context.getCurrentTexture().createView(),
+                            loadOp: 'clear' as GPULoadOp,
+                            clearValue: [1, 1, 1, 1],
+                            storeOp: 'store' as GPUStoreOp
+                        }]
+                    });
+                    pass.setPipeline(pipeline);
+                    pass.setVertexBuffer(0, vertexBuffer);
+                    pass.setIndexBuffer(indexBuffer, 'uint32');
+                    pass.setBindGroup(0, bindGroup);
+                    pass.drawIndexed(indices.length);
+                    pass.end();
 
-                device.queue.submit([encoder.finish()]);
+                    device.queue.submit([encoder.finish()]);
 
-                this.image?.destroy();
+                    this.image?.destroy();
+                    if (this.canvas) {
 
-                this.image = this.chart.renderer.image(
-                    this.canvas.toDataURL('image/webp', 1)
-                ).attr({
-                    width: this.xAxis.len,
-                    height: this.yAxis.len
-                }).add(this.group);
+                        this.image = this.chart.renderer.image(
+                            this.canvas.toDataURL('image/webp', 1)
+                        ).attr({
+                            width: this.xAxis.len,
+                            height: this.yAxis.len
+                        }).add(this.group);
+
+                    }
+                };
+
+                this.renderWebGPU();
             }
         }
     }
