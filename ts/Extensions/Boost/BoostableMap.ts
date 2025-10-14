@@ -26,7 +26,10 @@ import Boostables from './Boostables.js';
  *
  * */
 
-// These are the series we allow boosting for.
+/**
+ * These are the series we allow boosting for.
+ * @internal
+ */
 const BoostableMap: Record<string, boolean> = {};
 Boostables.forEach((item: string): void => {
     BoostableMap[item] = true;
@@ -38,4 +41,5 @@ Boostables.forEach((item: string): void => {
  *
  * */
 
+/** @internal */
 export default BoostableMap;
