@@ -124,8 +124,11 @@ class GanttSeries extends XRangeSeries {
      * */
 
     public getColumn(columnName: string): Array<number> {
+        const time = this.chart.time;
         if (columnName === 'x') {
-            return super.getColumn('start');
+            return super.getColumn('start').map((val: number): number =>
+                time.parse(val) || 0
+            );
         }
         return super.getColumn.apply(this, arguments);
     }
