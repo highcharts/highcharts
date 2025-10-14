@@ -274,4 +274,5 @@ class WGLVertexBuffer {
  *
  * */
 
+/** @internal */
 export default WGLVertexBuffer;

@@ -32,6 +32,7 @@ const {
  *
  * */
 
+/** @internal */
 type WGLProgramType = ('fragment'|'vertex');
 
 /* *
@@ -681,4 +682,5 @@ class WGLShader {
  *
  * */
 
+/** @internal */
 export default WGLShader;

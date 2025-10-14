@@ -53,18 +53,22 @@ import WGLVertexBuffer from './WGLVertexBuffer.js';
  *
  * */
 
+/** @internal */
 interface WGLNode {
     levelDynamic?: number;
 }
 
+/** @internal */
 interface WGLPoint extends Point {
     node?: WGLNode;
 }
 
+/** @internal */
 interface WGLRendererCallbackFunction {
     (renderer: WGLRenderer): void;
 }
 
+/** @internal */
 interface WGLSeriesObject {
     colorData: Array<number>;
     drawMode: WGLDrawModeValue;
@@ -79,10 +83,12 @@ interface WGLSeriesObject {
     zMin: number;
 }
 
+/** @internal */
 interface WGLTextureCallbackFunction {
     (ctx: CanvasRenderingContext2D): void;
 }
 
+/** @internal */
 interface WGLTextureObject {
     isReady: boolean;
     texture: HTMLCanvasElement;
@@ -94,6 +100,7 @@ interface WGLTextureObject {
  * @internal
  */
 declare global {
+    /** @internal */
     interface CanvasRenderingContext2D {
         FUNC_MIN: number;
         /** @deprecated */
@@ -107,6 +114,7 @@ declare global {
             CanvasImageSmoothing['imageSmoothingEnabled']
         );
     }
+    /** @internal */
     interface WebGLRenderingContext {
         /** @deprecated */
         readonly FUNC_MIN: number;
@@ -1832,4 +1840,5 @@ class WGLRenderer {
  *
  * */
 
+/** @internal */
 export default WGLRenderer;
