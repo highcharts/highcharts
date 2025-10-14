@@ -42,7 +42,7 @@ export default defineConfig({
             testDir: './tests/qunit',
             use: {
                 ...devices['Desktop Chrome'],
-                headless: true,
+                headless: process.env.CI ? true : false,
                 launchOptions: {
                     args: [
                         '--enable-gpu',
