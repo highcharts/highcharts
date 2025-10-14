@@ -48,6 +48,7 @@ const SOURCE_GLOBS = [
     'Extensions/Annotations/ControlPoint.js',
     'Extensions/Annotations/NavigationBindings.js',
     'Extensions/Sonification/*.js',
+    'Extensions/Boost/Boost.js',
     'Extensions/BorderRadius.js',
     'Extensions/Breadcrumbs/Breadcrumbs.js',
     'Extensions/Data.js',

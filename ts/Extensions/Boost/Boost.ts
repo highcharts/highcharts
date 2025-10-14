@@ -61,9 +61,7 @@ const contexts = [
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 function compose(
     ChartClass: typeof Chart,
     AxisClass: typeof Axis,

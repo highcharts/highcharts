@@ -91,7 +91,7 @@ interface WGLTextureObject {
 
 /**
  * Internal types
- * @private
+ * @internal
  */
 declare global {
     interface CanvasRenderingContext2D {
@@ -157,7 +157,7 @@ const contexts = [
  *   encoding values in the color data.
  * - Need to figure out a way to transform the data quicker
  *
- * @private
+ * @internal
  *
  * @param {Function} postRenderCallback
  */
@@ -170,8 +170,9 @@ class WGLRenderer {
      * */
 
     /**
-     * Returns an orthographic perspective matrix
-     * @private
+     * Returns an orthographic perspective matrix.
+     *
+     * @internal
      * @param {number} width
      * the width of the viewport in pixels
      * @param {number} height
@@ -189,9 +190,7 @@ class WGLRenderer {
         ];
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     private static seriesPointCount(series: Series): number {
         let isStacked: boolean,
             xData: Array<number>,
@@ -301,16 +300,12 @@ class WGLRenderer {
      *
      * */
 
-    /**
-     * @private
-     */
+    /** @internal */
     private getPixelRatio(): number {
         return this.settings.pixelRatio || win.devicePixelRatio || 1;
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     public setOptions(options: BoostOptions): void {
 
         // The pixelRatio defaults to 1. This is an antipattern, we should
@@ -324,7 +319,7 @@ class WGLRenderer {
 
     /**
      * Allocate a float buffer to fit all series
-     * @private
+     * @internal
      */
     public allocateBuffer(chart: Chart): void {
         const vbuffer = this.vbuffer;
@@ -344,9 +339,7 @@ class WGLRenderer {
         vbuffer && vbuffer.allocate(s);
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     public allocateBufferForSingleSeries(series: Series): void {
         const vbuffer = this.vbuffer;
 
@@ -365,7 +358,7 @@ class WGLRenderer {
 
     /**
      * Clear the depth and color buffer
-     * @private
+     * @internal
      */
     public clear(): void {
         const gl = this.gl;
@@ -374,10 +367,10 @@ class WGLRenderer {
     }
 
     /**
-     * Push data for a single series
+     * Push data for a single series.
      * This calculates additional vertices and transforms the data to be
-     * aligned correctly in memory
-     * @private
+     * aligned correctly in memory.
+     * @internal
      */
     private pushSeriesData(
         series: Series,
@@ -512,7 +505,7 @@ class WGLRenderer {
 
         /**
          * Push color to color buffer - need to do this per vertex.
-         * @private
+         * @internal
          */
         const pushColor = (color?: Color.RGBA): void => {
             if (color) {
@@ -525,7 +518,7 @@ class WGLRenderer {
 
         /**
          * Push a vertice to the data buffer.
-         * @private
+         * @internal
          */
         const vertice = (
             x: number,
@@ -559,9 +552,7 @@ class WGLRenderer {
             }
         };
 
-        /**
-         * @private
-         */
+        /** @internal */
         const closeSegment = (): void => {
             if (inst.segments.length) {
                 inst.segments[
@@ -572,7 +563,7 @@ class WGLRenderer {
 
         /**
          * Create a new segment for the current set.
-         * @private
+         * @internal
          */
         const beginSegment = (): void => {
             // Insert a segment on the series.
@@ -599,7 +590,7 @@ class WGLRenderer {
 
         /**
          * Push a rectangle to the data buffer.
-         * @private
+         * @internal
          */
         const pushRect = (
             x: number,
@@ -1157,9 +1148,10 @@ class WGLRenderer {
     }
 
     /**
-     * Push a series to the renderer
-     * If we render the series immediately, we don't have to loop later
-     * @private
+     * Push a series to the renderer.
+     * If we render the series immediately, we don't have to loop later.
+     *
+     * @internal
      * @param {Highchart.Series} s
      * The series to push.
      */
@@ -1212,8 +1204,8 @@ class WGLRenderer {
     /**
      * Flush the renderer.
      * This removes pushed series and vertices.
-     * Should be called after clearing and before rendering
-     * @private
+     * Should be called after clearing and before rendering.
+     * @internal
      */
     private flush(): void {
         const vbuffer = this.vbuffer;
@@ -1228,8 +1220,9 @@ class WGLRenderer {
     }
 
     /**
-     * Pass x-axis to shader
-     * @private
+     * Pass x-axis to shader.
+     *
+     * @internal
      * @param {Highcharts.Axis} axis
      * The x-axis.
      */
@@ -1255,8 +1248,9 @@ class WGLRenderer {
     }
 
     /**
-     * Pass y-axis to shader
-     * @private
+     * Pass y-axis to shader.
+     *
+     * @internal
      * @param {Highcharts.Axis} axis
      * The y-axis.
      */
@@ -1282,8 +1276,9 @@ class WGLRenderer {
     }
 
     /**
-     * Set the translation threshold
-     * @private
+     * Set the translation threshold.
+     *
+     * @internal
      * @param {boolean} has
      * Has threshold flag.
      * @param {numbe} translation
@@ -1301,9 +1296,9 @@ class WGLRenderer {
     }
 
     /**
-     * Render the data
+     * Render the data.
      * This renders all pushed series.
-     * @private
+     * @internal
      */
     private renderChart(chart: Chart): (false|undefined) {
         const gl = this.gl,
@@ -1575,8 +1570,8 @@ class WGLRenderer {
     }
 
     /**
-     * Render the data when ready
-     * @private
+     * Render the data when ready.
+     * @internal
      */
     public render(chart: Chart): (false|undefined) {
         this.clear();
@@ -1595,9 +1590,9 @@ class WGLRenderer {
     }
 
     /**
-     * Set the viewport size in pixels
+     * Set the viewport size in pixels.
      * Creates an orthographic perspective matrix and applies it.
-     * @private
+     * @internal
      */
     public setSize(width: number, height: number): void {
         const shader = this.shader;
@@ -1615,8 +1610,8 @@ class WGLRenderer {
     }
 
     /**
-     * Init OpenGL
-     * @private
+     * Init OpenGL.
+     * @internal
      */
     public init(canvas?: HTMLCanvasElement, noFlush?: boolean): boolean {
         const settings = this.settings;
@@ -1798,7 +1793,7 @@ class WGLRenderer {
     }
 
     /**
-     * @private
+     * @internal
      * @todo use it
      */
     public destroy(): void {

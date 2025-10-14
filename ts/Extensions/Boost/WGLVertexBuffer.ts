@@ -32,7 +32,7 @@ import type WGLShader from './WGLShader';
  * A vertex buffer is a set of vertices which are passed to the GPU
  * in a single call.
  *
- * @private
+ * @internal
  * @class
  * @name WGLVertexBuffer
  *
@@ -94,7 +94,7 @@ class WGLVertexBuffer {
     /**
      * Note about pre-allocated buffers:
      *     - This is slower for charts with many series
-     * @private
+     * @internal
      */
     public allocate(
         size: number
@@ -104,8 +104,8 @@ class WGLVertexBuffer {
     }
 
     /**
-     * Bind the buffer
-     * @private
+     * Bind the buffer.
+     * @internal
      */
     public bind(): (boolean|undefined) {
         if (!this.buffer) {
@@ -127,8 +127,9 @@ class WGLVertexBuffer {
     }
 
     /**
-     * Build the buffer
-     * @private
+     * Build the buffer.
+     *
+     * @internal
      * @param {Array<number>} dataIn
      * Zero padded array of indices
      * @param {string} attrib
@@ -180,9 +181,7 @@ class WGLVertexBuffer {
         return true;
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     public destroy(): void {
         if (this.buffer) {
             this.gl.deleteBuffer(this.buffer);
@@ -197,7 +196,8 @@ class WGLVertexBuffer {
 
     /**
      * Adds data to the pre-allocated buffer.
-     * @private
+     *
+     * @internal
      * @param {number} x
      * X data
      * @param {number} y
@@ -217,9 +217,9 @@ class WGLVertexBuffer {
     }
 
     /**
-     * Render the buffer
+     * Render the buffer.
      *
-     * @private
+     * @internal
      * @param {number} from
      * Start indice.
      * @param {number} to
