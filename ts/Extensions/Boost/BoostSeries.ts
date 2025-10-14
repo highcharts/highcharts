@@ -73,7 +73,9 @@ import DataTableCore from '../../Data/DataTableCore.js';
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesBase' {
+    /** @internal */
     interface SeriesBase extends BoostTargetObject {
         boosted?: boolean;
         boost?: BoostSeriesAdditions;
@@ -84,7 +86,9 @@ declare module '../../Core/Series/SeriesBase' {
     }
 }
 
+/** @internal */
 declare module '../../Core/Series/SeriesOptions' {
+    /** @internal */
     interface SeriesOptions {
         boostData?: Array<unknown>;
         xData?: Array<number>;
@@ -92,6 +96,7 @@ declare module '../../Core/Series/SeriesOptions' {
     }
 }
 
+/** @internal */
 interface BoostAlteredObject {
     own: boolean;
     prop: ('allowDG'|'directTouch'|'stickyTracking');
@@ -99,6 +104,7 @@ interface BoostAlteredObject {
     value?: unknown;
 }
 
+/** @internal */
 interface BoostPointMockup {
     destroy(): void;
     x: (false|number);
@@ -111,11 +117,13 @@ interface BoostPointMockup {
     percentage: number;
 }
 
+/** @internal */
 interface BoostSeriesAdditions extends BoostTargetAdditions {
     altered?: Array<BoostAlteredObject>;
     getPoint(boostPoint: (BoostPointMockup|Point)): BoostPointComposition;
 }
 
+/** @internal */
 export declare class BoostPointComposition extends Point {
     series: BoostSeriesComposition;
     init(
@@ -125,6 +133,7 @@ export declare class BoostPointComposition extends Point {
     ): BoostPointComposition;
 }
 
+/** @internal */
 export declare class BoostSeriesComposition extends Series {
     boosted?: boolean;
     boost: BoostSeriesAdditions;
@@ -1522,6 +1531,8 @@ function wrapSeriesDrawPoints(
  * canvas version or do nothing.
  *
  * Note that we're not overriding any of these for heatmaps.
+ *
+ * @internal
  */
 function wrapSeriesFunctions(
     seriesProto: Series,
@@ -1708,6 +1719,7 @@ function wrapSeriesSearchPoint(
  *
  * */
 
+/** @internal */
 const BoostSeries = {
     compose,
     destroyGraphics,
@@ -1715,4 +1727,5 @@ const BoostSeries = {
     getPoint
 };
 
+/** @internal */
 export default BoostSeries;

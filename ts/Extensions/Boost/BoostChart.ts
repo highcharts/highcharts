@@ -47,18 +47,21 @@ const {
  *
  * */
 
+/** @internal */
 interface BoostChartAdditions extends BoostTargetAdditions {
     forceChartBoost?: boolean;
     markerGroup?: Series['markerGroup'];
     lineWidthFilter?: SVGElement;
 }
 
+/** @internal */
 export declare class BoostChartComposition extends Chart {
     boosted?: boolean;
     boost: BoostChartAdditions;
     series: Array<BoostSeriesComposition>;
 }
 
+/** @internal */
 declare module '../../Core/Chart/ChartBase'{
     interface ChartBase extends BoostTargetObject {
         boosted?: boolean;
@@ -393,10 +396,12 @@ function patientMax(...args: Array<Array<unknown>|Types.TypedArray>): number {
  *
  * */
 
+/** @internal */
 const BoostChart = {
     compose,
     getBoostClipRect,
     isChartSeriesBoosting
 };
 
+/** @internal */
 export default BoostChart;
