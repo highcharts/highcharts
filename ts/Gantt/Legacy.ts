@@ -167,7 +167,9 @@ function warnLegacy(chart: Chart): void {
 
 /**
  * Contains detached legacy code not used anymore after tree shaking.
+ *
  * @deprecated
+ * @internal
  */
 const legacy = {
     calculateObstacleMargin,
@@ -175,4 +177,5 @@ const legacy = {
     warnLegacy
 };
 
+/** @internal */
 export default legacy;

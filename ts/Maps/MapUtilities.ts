@@ -59,4 +59,5 @@ const MapUtilities = {
     boundsFromPath
 };
 
+/** @internal */
 export default MapUtilities;

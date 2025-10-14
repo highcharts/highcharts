@@ -91,4 +91,5 @@ class Stamen implements ProviderDefinition {
  *
  * */
 
+/** @internal */
 export default Stamen;

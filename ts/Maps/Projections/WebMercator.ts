@@ -89,4 +89,5 @@ class WebMercator implements ProjectionDefinition {
  *
  * */
 
+/** @internal */
 export default WebMercator;

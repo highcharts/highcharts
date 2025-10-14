@@ -107,4 +107,5 @@ const MapSymbols = {
     compose
 };
 
+/** @internal */
 export default MapSymbols;

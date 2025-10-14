@@ -237,4 +237,5 @@ namespace MapPointer {
  *
  * */
 
+/** @internal */
 export default MapPointer;

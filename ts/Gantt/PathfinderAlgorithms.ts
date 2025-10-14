@@ -962,13 +962,17 @@ fastAvoid.requiresObstacles = true;
  *
  * */
 
-// Define the available pathfinding algorithms.
-// Algorithms take up to 3 arguments: starting point, ending point, and an
-// options object.
-const algorithms = {
+/**
+ * Defines the available pathfinding algorithms. Algorithms take up to 3
+ * arguments: starting point, ending point, and an options object.
+ *
+ * @internal
+ */
+const algorithms: Record<string, PathfinderAlgorithmFunction> = {
     fastAvoid,
     straight,
     simpleConnect
 };
 
+/** @internal */
 export default algorithms;

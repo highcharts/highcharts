@@ -143,4 +143,5 @@ class EqualEarth implements ProjectionDefinition {
  *
  * */
 
+/** @internal */
 export default EqualEarth;

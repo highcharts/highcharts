@@ -436,4 +436,5 @@ class MapNavigation {
  *
  * */
 
+/** @internal */
 export default MapNavigation;

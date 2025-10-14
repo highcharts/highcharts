@@ -589,6 +589,7 @@ Pathfinder.prototype.algorithms = PathfinderAlgorithms;
  *
  * */
 
+/** @internal */
 export default Pathfinder;
 
 /* *

@@ -57,4 +57,5 @@ const projectionRegistry: ProjectionRegistry = {
  *
  * */
 
+/** @internal */
 export default projectionRegistry;

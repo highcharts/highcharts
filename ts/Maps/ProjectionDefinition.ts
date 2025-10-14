@@ -66,4 +66,5 @@ export interface ProjectionDefinition extends Projector {
  *
  * */
 
+/** @internal */
 export default ProjectionDefinition;

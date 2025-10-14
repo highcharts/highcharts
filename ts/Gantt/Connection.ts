@@ -486,6 +486,7 @@ class Connection {
  *
  * */
 
+/** @internal */
 export default Connection;
 
 /* *

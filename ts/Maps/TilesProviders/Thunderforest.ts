@@ -98,4 +98,5 @@ class Thunderforest implements ProviderDefinition {
  *
  * */
 
+/** @internal */
 export default Thunderforest;

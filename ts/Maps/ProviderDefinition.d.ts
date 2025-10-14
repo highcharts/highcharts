@@ -50,4 +50,5 @@ export interface ProviderDefinition {
  *
  * */
 
+/** @internal */
 export default ProviderDefinition;

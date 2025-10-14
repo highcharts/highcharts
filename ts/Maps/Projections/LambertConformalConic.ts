@@ -159,4 +159,5 @@ class LambertConformalConic implements ProjectionDefinition {
  *
  * */
 
+/** @internal */
 export default LambertConformalConic;

@@ -44,6 +44,7 @@ export type TilesProviderRegistryName = keyof TilesProviderRegistry;
  *
  * */
 
+/** @internal */
 const tilesProviderRegistry: TilesProviderRegistry = {
     Esri,
     LimaLabs,
@@ -59,4 +60,5 @@ const tilesProviderRegistry: TilesProviderRegistry = {
  *
  * */
 
+/** @internal */
 export default tilesProviderRegistry;

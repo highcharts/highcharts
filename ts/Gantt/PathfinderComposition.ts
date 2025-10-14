@@ -152,6 +152,7 @@ function warnLegacy(chart: Chart): void {
  *
  * */
 
+/** @internal */
 namespace ConnectionComposition {
 
     /* *
@@ -160,7 +161,6 @@ namespace ConnectionComposition {
      *
      * */
 
-    /** @internal */
     export function compose(
         ChartClass: typeof Chart,
         PathfinderClass: typeof Pathfinder,
@@ -195,7 +195,6 @@ namespace ConnectionComposition {
     /**
      * Get coordinates of anchor point for pathfinder connection.
      *
-     * @internal
      * @function Highcharts.Point#getPathfinderAnchorPoint
      *
      * @param {Highcharts.ConnectorsMarkerOptions} markerOptions
@@ -239,7 +238,6 @@ namespace ConnectionComposition {
     /**
      * Utility to get the angle from one point to another.
      *
-     * @internal
      * @function Highcharts.Point#getRadiansToVector
      *
      * @param {Highcharts.PositionObject} v1
@@ -275,7 +273,6 @@ namespace ConnectionComposition {
      * Utility to get the position of the marker, based on the path angle and
      * the marker's radius.
      *
-     * @internal
      * @function Highcharts.Point#getMarkerVector
      *
      * @param {number} radians
@@ -364,7 +361,6 @@ namespace ConnectionComposition {
             y: edgePoint.y - (markerRadius * Math.sin(theta))
         };
     }
-
 }
 
 /* *
@@ -373,4 +369,5 @@ namespace ConnectionComposition {
  *
  * */
 
+/** @internal */
 export default ConnectionComposition;

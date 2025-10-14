@@ -67,4 +67,5 @@ class USGS implements ProviderDefinition {
  *
  * */
 
+/** @internal */
 export default USGS;

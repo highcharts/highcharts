@@ -71,4 +71,5 @@ class OpenStreetMap implements ProviderDefinition {
  *
  * */
 
+/** @internal */
 export default OpenStreetMap;

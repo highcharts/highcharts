@@ -86,4 +86,5 @@ class Miller implements ProjectionDefinition {
  *
  * */
 
+/** @internal */
 export default Miller;

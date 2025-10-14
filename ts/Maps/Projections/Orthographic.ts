@@ -98,4 +98,5 @@ class Orthographic implements ProjectionDefinition {
  *
  * */
 
+/** @internal */
 export default Orthographic;

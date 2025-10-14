@@ -219,9 +219,11 @@ function getTree(
  *
  * */
 
+/** @internal */
 const Tree = {
     getNode,
     getTree
 };
 
+/** @internal */
 export default Tree;

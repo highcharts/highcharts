@@ -123,4 +123,5 @@ class Esri implements ProviderDefinition {
  *
  * */
 
+/** @internal */
 export default Esri;

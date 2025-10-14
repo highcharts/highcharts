@@ -57,4 +57,5 @@ class LimaLabs implements ProviderDefinition {
  *
  * */
 
+/** @internal */
 export default LimaLabs;
