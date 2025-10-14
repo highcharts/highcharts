@@ -163,7 +163,7 @@ const HC_CONFIGS = {
         yAxis: {
             plotLines: [{
                 value: 0,
-                color: '#59D',
+                color: '#014CE5',       // from your palette
                 dashStyle: 'shortDash',
                 width: 2
             }],
@@ -180,20 +180,16 @@ const HC_CONFIGS = {
             plotBands: [{
                 from: 3.5,
                 to: 8.5,
-                color: '#00ff8833',
-                label: {
-                    text: 'Summer',
-                    align: 'left',
-                    x: 10
-                }
+                color: 'rgba(16,185,129,0.15)', // soft teal band (0.15 opacity)
+                label: { text: 'Summer', align: 'left', x: 10 }
             }],
             plotLines: [{
                 value: 3.5,
-                color: '#4EA291',
+                color: '#10B981',       // teal edge
                 width: 3
             }, {
                 value: 8.5,
-                color: '#4EA291',
+                color: '#10B981',       // teal edge
                 width: 3
             }],
             crosshair: true,
@@ -214,7 +210,7 @@ const HC_CONFIGS = {
         series: [{
             name: 'Helsinki',
             data: [-5, -6, -2, 4, 10, 14, 17, 15, 10, 6, 0, -4],
-            color: 'var(--highcharts-neutral-color-80, #334eff)'
+            color: '#014CE5'          // consistent series color
         }]
     },
     chart2: { // Stacked column
@@ -251,19 +247,28 @@ const HC_CONFIGS = {
                 }
             }
         },
-        series: [{
-            name: 'Espresso',
-            data: [120, 90, 80, 150]
-        }, {
-            name: 'Latte',
-            data: [100, 70, 60, 90]
-        }, {
-            name: 'Cappuccino',
-            data: [80, 60, 75, 50]
-        }, {
-            name: 'Americano',
-            data: [60, 40, 55, 70]
-        }]
+        series: [
+            {
+                name: 'Espresso',
+                data: [120, 90, 80, 150],
+                color: '#014CE5'
+            },
+            {
+                name: 'Latte',
+                data: [100, 70, 60, 90],
+                color: '#10B981'
+            },
+            {
+                name: 'Cappuccino',
+                data: [80, 60, 75, 50],
+                color: '#EAB308'
+            },
+            {
+                name: 'Americano',
+                data: [60, 40, 55, 70],
+                color: '#EA293C'
+            }
+        ]
     },
     chart3: { // Big heatmap
         custom: {
@@ -327,10 +332,11 @@ const HC_CONFIGS = {
 
         colorAxis: {
             stops: [
-                [0, '#3060cf'],
-                [0.5, '#fffbbc'],
-                [0.9, '#c4463a'],
-                [1, '#c4463a']
+                [0.00, 'rgba(1, 76, 229, 0.6)'],
+                [0.375, 'rgba(16, 185, 129, 0.6)'],
+                [0.625, 'rgba(234, 179, 8, 0.6)'],
+                [0.875, 'rgba(244, 118, 0, 0.6)'],
+                [1.00, 'rgba(234, 41, 60, 0.6)']
             ],
             min: -15,
             max: 25,
@@ -394,21 +400,21 @@ const HC_CONFIGS = {
                 {
                     from: 0,
                     to: 80,
-                    color: '#55BF3B',
+                    color: '#10B981',
                     thickness: 20,
                     borderRadius: '50%'
                 }, // green = healthy
                 {
                     from: 80,
                     to: 100,
-                    color: '#DDDF0D',
+                    color: '#EAB308',
                     thickness: 20,
                     borderRadius: '50%'
                 }, // yellow = watch
                 {
                     from: 100,
                     to: 120,
-                    color: '#DF5353',
+                    color: '#EA293C',
                     thickness: 20,
                     borderRadius: '50%'
                 }  // red = overspend
@@ -537,40 +543,126 @@ const HC_CONFIGS = {
 
         series: [{
             data: [
-                { x: 95, y: 95, z: 13.8, name: 'BE', country: 'Belgium' },
-                { x: 86.5, y: 102.9, z: 14.7, name: 'DE', country: 'Germany' },
-                { x: 80.8, y: 91.5, z: 15.8, name: 'FI', country: 'Finland' },
+                {
+                    x: 95,
+                    y: 95,
+                    z: 13.8,
+                    name: 'BE',
+                    country: 'Belgium',
+                    color: '#EAB308'
+                },
+                {
+                    x: 86.5,
+                    y: 102.9,
+                    z: 14.7,
+                    name: 'DE',
+                    country: 'Germany',
+                    color: '#EA293C'
+                },
+                {
+                    x: 80.8,
+                    y: 91.5,
+                    z: 15.8,
+                    name: 'FI',
+                    country: 'Finland',
+                    color: '#8132f8'
+                },
                 {
                     x: 80.4,
                     y: 102.5,
                     z: 12,
                     name: 'NL',
-                    country: 'Netherlands'
+                    country: 'Netherlands',
+                    color: '#06B6D4'
                 },
-                { x: 80.3, y: 86.1, z: 11.8, name: 'SE', country: 'Sweden' },
-                { x: 78.4, y: 70.1, z: 16.6, name: 'ES', country: 'Spain' },
-                { x: 74.2, y: 68.5, z: 14.5, name: 'FR', country: 'France' },
-                { x: 73.5, y: 83.1, z: 10, name: 'NO', country: 'Norway' },
+                {
+                    x: 80.3,
+                    y: 86.1,
+                    z: 11.8,
+                    name: 'SE',
+                    country: 'Sweden',
+                    color: '#10B981'
+                },
+                {
+                    x: 78.4,
+                    y: 70.1,
+                    z: 16.6,
+                    name: 'ES',
+                    country: 'Spain',
+                    color: '#EAB308'
+                },
+                {
+                    x: 74.2,
+                    y: 68.5,
+                    z: 14.5,
+                    name: 'FR',
+                    country: 'France',
+                    color: '#014CE5'
+                },
+                {
+                    x: 73.5,
+                    y: 83.1,
+                    z: 10,
+                    name: 'NO',
+                    country: 'Norway',
+                    color: '#000000'
+                },
                 {
                     x: 71,
                     y: 93.2,
                     z: 24.7,
                     name: 'UK',
-                    country: 'United Kingdom'
+                    country: 'United Kingdom',
+                    color: '#EA293C'
                 },
-                { x: 69.2, y: 57.6, z: 10.4, name: 'IT', country: 'Italy' },
-                { x: 68.6, y: 20, z: 16, name: 'RU', country: 'Russia' },
+                {
+                    x: 69.2,
+                    y: 57.6,
+                    z: 10.4,
+                    name: 'IT',
+                    country: 'Italy',
+                    color: '#000000'
+                },
+                {
+                    x: 68.6,
+                    y: 20,
+                    z: 16,
+                    name: 'RU',
+                    country: 'Russia',
+                    color: '#f47600'
+                },
                 {
                     x: 65.5,
                     y: 126.4,
                     z: 35.3,
-                    name:
-                    'US',
-                    country: 'United States'
+                    name: 'US',
+                    country: 'United States',
+                    color: '#014CE5'
                 },
-                { x: 65.4, y: 50.8, z: 28.5, name: 'HU', country: 'Hungary' },
-                { x: 63.4, y: 51.8, z: 15.4, name: 'PT', country: 'Portugal' },
-                { x: 64, y: 82.9, z: 31.3, name: 'NZ', country: 'New Zealand' }
+                {
+                    x: 65.4,
+                    y: 50.8,
+                    z: 28.5,
+                    name: 'HU',
+                    country: 'Hungary',
+                    color: '#f47600'
+                },
+                {
+                    x: 63.4,
+                    y: 51.8,
+                    z: 15.4,
+                    name: 'PT',
+                    country: 'Portugal',
+                    color: '#10B981'
+                },
+                {
+                    x: 64,
+                    y: 82.9,
+                    z: 31.3,
+                    name: 'NZ',
+                    country: 'New Zealand',
+                    color: '#8132f8'
+                }
             ],
             colorByPoint: true
         }]
@@ -596,6 +688,13 @@ const HC_CONFIGS = {
         series: [{
             type: 'sunburst',
             name: 'Root',
+            colors: [
+                '#014CE5',
+                '#EA293C',
+                '#10B981',
+                '#EAB308',
+                '#8132F8'
+            ],
             allowTraversingTree: true,
             borderRadius: 3,
             cursor: 'pointer',
