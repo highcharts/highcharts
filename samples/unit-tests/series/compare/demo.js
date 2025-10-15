@@ -240,7 +240,7 @@ QUnit.test('Compare with linked series, #21119.', assert => {
     assert.strictEqual(
         chart.series[1].dataModify.compareValue,
         2,
-        'Compare value is correct.'
+        'Compare value should be correct.'
     );
     assert.strictEqual(
         chart.series[1].options.compare,
