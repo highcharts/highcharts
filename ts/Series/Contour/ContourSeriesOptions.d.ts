@@ -1,11 +1,12 @@
+import ColorType from '../../Core/Color/ColorType';
 import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
 
-export default interface ContourOptions extends ScatterSeriesOptions {
+export default interface ContourSeriesOptions extends ScatterSeriesOptions {
     smoothColoring?: boolean;
     showContourLines?: boolean;
     contourInterval?: number;
     // No transparency, defaults to black
-    contourLineColor?: [number, number, number];
+    lineColor?: ColorType;
     // Defaults to 1. Device Pixel Ratio insted?
-    contourLineWidth?: number;
+    lineWidth?: number;
 }

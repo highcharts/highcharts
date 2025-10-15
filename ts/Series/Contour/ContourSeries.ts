@@ -202,12 +202,15 @@ export default class ContourSeries extends ScatterSeries {
                             GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
                         ),
                         options = this.options,
+                        {
+                            lineColor = '#000000',
+                            lineWidth = 1
+                        } = options,
                         contourLineColor = new Float32Array(
-                            options.contourLineColor || [0, 0, 0]
+                            this.colorToArray(lineColor)
                         ),
-                        lineWidth = new Float32Array([
-                            (options.contourLineWidth || 1) *
-                            window.devicePixelRatio
+                        contourLineWidth = new Float32Array([
+                            lineWidth
                         ]);
 
                     // WebGPU Buffers
@@ -297,7 +300,7 @@ export default class ContourSeries extends ScatterSeries {
                     device.queue.writeBuffer(
                         this.lineWidthBuffer,
                         0,
-                        lineWidth
+                        contourLineWidth
                     );
 
 
@@ -602,6 +605,10 @@ export default class ContourSeries extends ScatterSeries {
                 }
             }
         }
+    }
+
+    public drawGraph(): void {
+        // Empty
     }
 
     /**
