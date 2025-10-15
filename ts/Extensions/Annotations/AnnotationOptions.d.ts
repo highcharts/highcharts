@@ -23,6 +23,7 @@ import type {
 } from './Controllables/ControllableOptions';
 import type ControlPointOptions from './ControlPointOptions';
 import type ControlTargetOptions from './ControlTargetOptions';
+import type { DeepPartial } from '../../Shared/Types';
 import type EventCallback from '../../Core/EventCallback';
 import type MockPointOptions from './MockPointOptions';
 import type NavigationOptions from '../Exporting/NavigationOptions';
@@ -72,6 +73,7 @@ export interface AnnotationTypeOptions {
     line?: Partial<ControllableShapeOptions>;
     point: MockPointOptions;
     points?: Array<AnnotationTypePointsOptions>;
+    type?: string;
     xAxis?: number;
     yAxis?: number;
 }

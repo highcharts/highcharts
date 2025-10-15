@@ -45,6 +45,27 @@
 
 /*  ==== End Grid Color Scheme  ==== */
 
+/*  ==== Start Highcharts Variables  ==== */
+:root,
+.highcharts-light {
+    --highcharts-background-color: #ffffff;
+    --highcharts-neutral-color-100: #000000;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --highcharts-background-color: #141414;
+        --highcharts-neutral-color-100: #ffffff;
+    }
+}
+
+.highcharts-dark {
+    --highcharts-background-color: #141414;
+    --highcharts-neutral-color-100: #ffffff;
+}
+
+/*  ==== End Highcharts Variables  ==== */
+
 /* stylelint-disable max-line-length */
 
 /* ==== Start Grid Variables ==== */
@@ -302,6 +323,15 @@
     overflow: hidden;
     box-sizing: border-box;
     font: var(--ig-font);
+    color-scheme: light dark;
+}
+
+.highcharts-light .hcg-container {
+    color-scheme: light;
+}
+
+.highcharts-dark .hcg-container {
+    color-scheme: dark;
 }
 
 .hcg-container * {
@@ -942,8 +972,8 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
 .hcg-theme-default,
 .highcharts-light .hcg-theme-default {
     /* Primary colors */
-    --hcg-color: var(--highcharts-neutral-color-100, #000000);
-    --hcg-background: var(--highcharts-background-color, #ffffff);
+    --hcg-color: var(--highcharts-neutral-color-100);
+    --hcg-background: var(--highcharts-background-color);
 
     /* Other colors */
     --hcg-border-radius: 5px;
@@ -959,8 +989,8 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
 
 @media (prefers-color-scheme: dark) {
     .hcg-theme-default {
-        --hcg-color: var(--highcharts-neutral-color-100, #ffffff);
-        --hcg-background: var(--highcharts-background-color, #141414);
+        --hcg-color: var(--highcharts-neutral-color-100);
+        --hcg-background: var(--highcharts-background-color);
     }
 
     .hcg-credits {
@@ -974,8 +1004,8 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
 }
 
 .highcharts-dark .hcg-theme-default {
-    --hcg-color: var(--highcharts-neutral-color-100, #ffffff);
-    --hcg-background: var(--highcharts-background-color, #141414);
+    --hcg-color: var(--highcharts-neutral-color-100);
+    --hcg-background: var(--highcharts-background-color);
 }
 
 .hcg-theme-default {

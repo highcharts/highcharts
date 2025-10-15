@@ -23,6 +23,7 @@ import type {
     BreadcrumbsOptions
 } from './BreadcrumbsOptions';
 import type Chart from '../../Core/Chart/Chart.js';
+import type { DeepPartial } from '../../Shared/Types';
 import type Options from '../../Core/Options';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';

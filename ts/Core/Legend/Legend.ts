@@ -23,6 +23,7 @@ import type { EventCallback } from '../Callback';
 import type Chart from '../Chart/Chart';
 import type ColorAxis from '../Axis/Color/ColorAxis';
 import type CSSObject from '../Renderer/CSSObject';
+import type { DeepPartial } from '../../Shared/Types';
 import type FontMetricsObject from '../Renderer/FontMetricsObject';
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type LegendBase from './LegendBase';
@@ -1904,6 +1905,10 @@ export default Legend;
  * @name Highcharts.PointLegendItemClickEventObject#browserEvent
  * @type {Highcharts.PointerEvent}
  *//**
+ * Whether the default action has been prevented (`true`) or not.
+ * @name Highcharts.PointLegendItemClickEventObject#defaultPrevented
+ * @type {boolean|undefined}
+ *//**
  * Prevent the default action of toggle the visibility of the point.
  * @name Highcharts.PointLegendItemClickEventObject#preventDefault
  * @type {Function}
@@ -1958,6 +1963,10 @@ export default Legend;
  * Related browser event.
  * @name Highcharts.SeriesLegendItemClickEventObject#browserEvent
  * @type {Highcharts.PointerEvent}
+ *//**
+ * Whether the default action has been prevented (`true`) or not.
+ * @name Highcharts.SeriesLegendItemClickEventObject#defaultPrevented
+ * @type {boolean|undefined}
  *//**
  * Prevent the default action of toggle the visibility of the series.
  * @name Highcharts.SeriesLegendItemClickEventObject#preventDefault

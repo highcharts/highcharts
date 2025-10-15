@@ -15,6 +15,7 @@
  * */
 
 import type Chart from './Chart/Chart';
+import type { DeepPartial } from '../Shared/Types';
 import type Options from './Options';
 import type { SeriesTypeRegistry } from './Series/SeriesType';
 import type SizeObject from './Renderer/SizeObject';
