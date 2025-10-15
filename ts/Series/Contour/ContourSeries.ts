@@ -77,6 +77,8 @@ export default class ContourSeries extends ScatterSeries {
 
     public renderWebGPU?: () => void;
 
+    public dataMax?: number;
+
 
     public init(chart: Chart, options: ContourSeriesOptions): void {
         // Necessary for default tooltip behavior
@@ -104,10 +106,18 @@ export default class ContourSeries extends ScatterSeries {
                 10e6 :
                 1;
 
+        let foundMax = 0;
+
+        this.dataMax = 0;
+
         for (let i = 0; i < len; i++) {
             const { x, y = 0, value } = points[i],
                 index2d = i * 2,
                 index3d = i * 3;
+
+            if (foundMax < (value || 0)) {
+                foundMax = value || 0;
+            }
 
             points2d[index2d] = x / xDivider;
             points2d[index2d + 1] = y && (y / yDivider) || 0;
@@ -116,7 +126,7 @@ export default class ContourSeries extends ScatterSeries {
             points3d[index3d + 1] = y;
             points3d[index3d + 2] = value ?? 0;
         }
-
+        this.dataMax = foundMax;
         return [new Delaunay(points2d).triangles, points3d];
     }
 
@@ -594,8 +604,8 @@ export default class ContourSeries extends ScatterSeries {
                     this.image = this.chart.renderer.image(
                         canvas.toDataURL('image/webp', 1)
                     ).attr({
-                        width: this.xAxis.len,
-                        height: this.yAxis.len
+                        width: horiAxis.len,
+                        height: vertAxis.len
                     }).add(this.group);
                 };
 

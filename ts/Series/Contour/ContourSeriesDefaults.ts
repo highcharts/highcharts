@@ -24,18 +24,7 @@ const ContourSeriesDefaults: PlotOptionsOf<ContourSeries> = {
             const point = (tt.chart.hoverPoint as ContourPoint);
             const series = (point.series as ContourSeries);
             const value = point.value || 0;
-            // Should be refactored to class prop, updated with data
-            const MAXVAL = ((): number => {
-                let maxVal = 0;
-                for (const p of series.points) {
-
-                    if ((p.value || 0) > maxVal) {
-                        maxVal = p.value || 0;
-                    }
-                }
-                return maxVal;
-            })();
-            const normVal = (value / MAXVAL);
+            const normVal = (value / (series.dataMax || 1));
             const stops = series.colorAxis?.stops ?
                 series.colorAxis.stops.map(
                     (
@@ -45,6 +34,7 @@ const ContourSeriesDefaults: PlotOptionsOf<ContourSeries> = {
                     [0, 0, 0, 0],
                     [1, 1, 1, 1]
                 ];
+
             function lerpVectors(
                 v1: number[],
                 v2: number[],
