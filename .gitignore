@@ -82,3 +82,4 @@ node_modules/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+**/*.spec.*-snapshots/

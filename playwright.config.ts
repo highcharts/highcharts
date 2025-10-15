@@ -42,7 +42,26 @@ export default defineConfig({
             testDir: './tests/qunit',
             use: {
                 ...devices['Desktop Chrome'],
-                headless: process.env.CI ? true : false,
+                headless: true,
+                launchOptions: {
+                    args: [
+                        '--enable-gpu',
+                        '--ignore-gpu-blocklist',
+                        '--enable-zero-copy',
+                        '--use-angle=gl',
+                        '--use-gl=angle',
+                        '--disable-software-rasterizer'
+                    ]
+                }
+            },
+            dependencies: ['setup-highcharts'],
+        },
+        {
+            name: 'visual',
+            testDir: './tests/visual',
+            use: {
+                ...devices['Desktop Chrome'],
+                headless: true,
                 launchOptions: {
                     args: [
                         '--enable-gpu',
