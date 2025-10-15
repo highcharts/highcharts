@@ -5,8 +5,6 @@ export default interface ContourSeriesOptions extends ScatterSeriesOptions {
     smoothColoring?: boolean;
     showContourLines?: boolean;
     contourInterval?: number;
-    // No transparency, defaults to black
-    lineColor?: ColorType;
-    // Defaults to 1. Device Pixel Ratio insted?
-    lineWidth?: number;
+    lineColor?: ColorType; // Kept because we might want alternate docs
+    lineWidth?: number; // Kept because we might want alternate docs
 }
