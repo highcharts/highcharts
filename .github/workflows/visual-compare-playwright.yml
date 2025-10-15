@@ -29,6 +29,7 @@ jobs:
     timeout-minutes: 60
     env:
       DISPLAY: :99
+      PWTEST_WORKER_COUNT: 2
     steps:
       - name: Checkout master
         uses: actions/checkout@v4
@@ -59,33 +60,33 @@ jobs:
         continue-on-error: true
         run: |
           PLAYWRIGHT_HTML_REPORT=playwright-report/master/highcharts \
-          npx playwright test tests/visual/visual.spec.ts --project visual --update-snapshots
+          npx playwright test --project visual --update-snapshots
         env:
-          VISUAL_TEST_PATH: samples/highcharts
+          VISUAL_TEST_PATH: samples/highcharts/demo
 
       - name: Generate master snapshots (Stock)
         continue-on-error: true
         run: |
           PLAYWRIGHT_HTML_REPORT=playwright-report/master/stock \
-          npx playwright test tests/visual/visual.spec.ts --project visual --update-snapshots
+          npx playwright test --project visual --update-snapshots
         env:
-          VISUAL_TEST_PATH: samples/stock
+          VISUAL_TEST_PATH: samples/stock/demo
 
       - name: Generate master snapshots (Maps)
         continue-on-error: true
         run: |
           PLAYWRIGHT_HTML_REPORT=playwright-report/master/maps \
-          npx playwright test tests/visual/visual.spec.ts --project visual --update-snapshots
+          npx playwright test --project visual --update-snapshots
         env:
-          VISUAL_TEST_PATH: samples/maps
+          VISUAL_TEST_PATH: samples/maps/demo
 
       - name: Generate master snapshots (Gantt)
         continue-on-error: true
         run: |
           PLAYWRIGHT_HTML_REPORT=playwright-report/master/gantt \
-          npx playwright test tests/visual/visual.spec.ts --project visual --update-snapshots
+          npx playwright test --project visual --update-snapshots
         env:
-          VISUAL_TEST_PATH: samples/gantt
+          VISUAL_TEST_PATH: samples/gantt/demo
 
       - name: Checkout current branch
         uses: actions/checkout@v4
@@ -112,36 +113,36 @@ jobs:
         id: test_visual_highcharts
         run: |
           PLAYWRIGHT_HTML_REPORT=playwright-report/pr/highcharts \
-          npx playwright test tests/visual/visual.spec.ts --project visual
+          npx playwright test --project visual
         env:
-          VISUAL_TEST_PATH: samples/highcharts
+          VISUAL_TEST_PATH: samples/highcharts/demo
         continue-on-error: true
 
       - name: Run Playwright visual comparison (Stock)
         id: test_visual_stock
         run: |
           PLAYWRIGHT_HTML_REPORT=playwright-report/pr/stock \
-          npx playwright test tests/visual/visual.spec.ts --project visual
+          npx playwright test --project visual
         env:
-          VISUAL_TEST_PATH: samples/stock
+          VISUAL_TEST_PATH: samples/stock/demo
         continue-on-error: true
 
       - name: Run Playwright visual comparison (Maps)
         id: test_visual_maps
         run: |
           PLAYWRIGHT_HTML_REPORT=playwright-report/pr/maps \
-          npx playwright test tests/visual/visual.spec.ts --project visual
+          npx playwright test --project visual
         env:
-          VISUAL_TEST_PATH: samples/maps
+          VISUAL_TEST_PATH: samples/maps/demo
         continue-on-error: true
 
       - name: Run Playwright visual comparison (Gantt)
         id: test_visual_gantt
         run: |
           PLAYWRIGHT_HTML_REPORT=playwright-report/pr/gantt \
-          npx playwright test tests/visual/visual.spec.ts --project visual
+          npx playwright test --project visual
         env:
-          VISUAL_TEST_PATH: samples/gantt
+          VISUAL_TEST_PATH: samples/gantt/demo
         continue-on-error: true
 
       - name: Upload Playwright artifacts
