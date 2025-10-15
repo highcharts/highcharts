@@ -1127,15 +1127,9 @@ class Series {
             ) {
                 const columnFilled = [...column];
                 if (columnFilled.some((x): boolean => !isNumber(x))) {
-                    this.xColumn = columnFilled.map((x: unknown, i): number => {
-                        const autoX = this.autoIncrement(i);
-                        return (
-                            isNumber(x) ? x :
-                                isString(x) ? this.chart.time.parse(x) :
-                                    x instanceof Date ? x.getTime() :
-                                        void 0
-                        ) ?? autoX;
-                    });
+                    this.xColumn = columnFilled.map((x): number =>
+                        (isNumber(x) ? x : this.getX(x))
+                    );
                     return this.xColumn;
                 }
             }
