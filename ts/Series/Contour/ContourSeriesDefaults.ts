@@ -35,7 +35,7 @@ const ContourSeriesDefaults: PlotOptionsOf<ContourSeries> = {
                 }
                 return maxVal;
             })();
-            const normVal = value / MAXVAL;
+            const normVal = (value / MAXVAL);
             const stops = series.colorAxis?.stops ?
                 series.colorAxis.stops.map(
                     (
@@ -65,19 +65,19 @@ const ContourSeriesDefaults: PlotOptionsOf<ContourSeries> = {
                 ];
             }
 
-            let color = [1, 0, 1];
+            let color = stops[stops.length - 1];
             for (let i = 0; i < 1; i++) {
-                if (normVal < stops[i + 1][0]) {
-                    const t = (
-                        (normVal - stops[i][0]) /
-                        (stops[i + 1][0] - stops[i][0])
-                    );
-                    color = lerpVectors(
-                        stops[i].slice(1),
-                        stops[i + 1].slice(1),
-                        t
-                    );
-                }
+                // If (normVal < stops[i + 1][0]) {
+                const t = (
+                    (normVal - stops[i][0]) /
+                    (stops[i + 1][0] - stops[i][0])
+                );
+                color = lerpVectors(
+                    stops[i].slice(1),
+                    stops[i + 1].slice(1),
+                    t
+                );
+                // }
             }
 
             return `<span style="color: rgb(${
