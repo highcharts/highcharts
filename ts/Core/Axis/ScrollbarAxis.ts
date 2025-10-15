@@ -78,7 +78,7 @@ namespace ScrollbarAxis {
     /**
      * Attaches to axis events to create scrollbars if enabled.
      *
-     * @private
+     * @internal
      *
      * @param {Highcharts.Axis} AxisClass
      * Axis class to extend.
@@ -101,7 +101,7 @@ namespace ScrollbarAxis {
 
     }
 
-    /** @private */
+    /** @internal */
     function getExtremes(
         axis: ScrollbarAxis
     ): Record<string, number> {
@@ -138,7 +138,7 @@ namespace ScrollbarAxis {
 
     /**
      * Make space for a scrollbar.
-     * @private
+     * @internal
      */
     function onAxisAfterGetOffset(
         this: Axis
@@ -158,7 +158,7 @@ namespace ScrollbarAxis {
 
     /**
      * Wrap axis initialization and create scrollbar if enabled.
-     * @private
+     * @internal
      */
     function onAxisAfterInit(
         this: Axis
@@ -245,7 +245,7 @@ namespace ScrollbarAxis {
 
     /**
      * Wrap rendering axis, and update scrollbar if one is created.
-     * @private
+     * @internal
      */
     function onAxisAfterRender(
         this: Axis

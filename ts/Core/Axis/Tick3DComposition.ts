@@ -39,7 +39,7 @@ const {
  * */
 
 /**
- * @private
+ * @internal
  */
 function compose(
     TickClass: typeof Tick
@@ -58,7 +58,7 @@ function compose(
 }
 
 /**
- * @private
+ * @internal
  */
 function onTickAfterGetLabelPosition(
     this: Tick,
@@ -76,7 +76,7 @@ function onTickAfterGetLabelPosition(
 }
 
 /**
- * @private
+ * @internal
  */
 function wrapTickGetMarkPath(
     this: Tick,

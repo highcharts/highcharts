@@ -50,7 +50,7 @@ const {
  * let rect = renderer.rect(0, 0, 10, 10).add();
  * rect.animate({ width: 100 });
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.Fx
  *
@@ -427,7 +427,7 @@ class Fx {
 
         /**
          * If shifting points, prepend a dummy point to the end path.
-         * @private
+         * @internal
          */
         function prepend(
             arr: SVGPath,
@@ -469,7 +469,7 @@ class Fx {
 
         /**
          * Copy and append last point until the length matches the end length.
-         * @private
+         * @internal
          */
         function append(arr: SVGPath): void {
             while (arr.length < fullLength) {

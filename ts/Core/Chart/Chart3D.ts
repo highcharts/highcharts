@@ -153,7 +153,7 @@ namespace Chart3D {
 
     /**
      * @optionparent
-     * @private
+     * @internal
      */
     export const defaultOptions = {
 
@@ -348,7 +348,7 @@ namespace Chart3D {
      * */
 
     /**
-     * @private
+     * @internal
      */
     export function compose(
         ChartClass: typeof Chart,
@@ -360,7 +360,7 @@ namespace Chart3D {
 
         /**
          * Shorthand to check the is3d flag.
-         * @private
+         * @internal
          * @return {boolean}
          * Whether it is a 3D chart.
          */
@@ -373,7 +373,7 @@ namespace Chart3D {
 
         /**
          * Animation setter for matrix property.
-         * @private
+         * @internal
          */
 
         fxProto.matrixSetter = function (): void {
@@ -426,7 +426,7 @@ namespace Chart3D {
     /**
      * Legacy support for HC < 6 to make 'scatter' series in a 3D chart route to
      * the real 'scatter3d' series type. (#8407)
-     * @private
+     * @internal
      */
     function onAddSeries(
         this: Chart,
@@ -442,7 +442,7 @@ namespace Chart3D {
     }
 
     /**
-     * @private
+     * @internal
      */
     function onAfterDrawChartBox(this: Chart): void {
 
@@ -1265,7 +1265,7 @@ namespace Chart3D {
 
     /**
      * Add the required CSS classes for column sides (#6018)
-     * @private
+     * @internal
      */
     function onAfterGetContainer(this: Chart): void {
         if (this.styledMode) {
@@ -1312,7 +1312,7 @@ namespace Chart3D {
     /**
      * Legacy support for HC < 6 to make 'scatter' series in a 3D chart route to
      * the real 'scatter3d' series type. (#8407)
-     * @private
+     * @internal
      */
     function onAfterInit(this: Chart): void {
         const options = this.options;
@@ -1333,7 +1333,7 @@ namespace Chart3D {
     }
 
     /**
-     * @private
+     * @internal
      */
     function onAfterSetChartSize(this: Chart): void {
         const chart = this,
@@ -1383,7 +1383,7 @@ namespace Chart3D {
     }
 
     /**
-     * @private
+     * @internal
      */
     function onBeforeRedraw(this: Chart): void {
         if (this.is3d()) {
@@ -1393,7 +1393,7 @@ namespace Chart3D {
     }
 
     /**
-     * @private
+     * @internal
      */
     function onBeforeRender(this: Chart): void {
         if (this.chart3d && this.is3d()) {
@@ -1402,7 +1402,7 @@ namespace Chart3D {
     }
 
     /**
-     * @private
+     * @internal
      */
     function onInit(this: Chart): void {
 
@@ -1412,7 +1412,7 @@ namespace Chart3D {
     }
 
     /**
-     * @private
+     * @internal
      */
     function wrapIsInsidePlot(
         this: Chart,
@@ -1423,7 +1423,7 @@ namespace Chart3D {
 
     /**
      * Draw the series in the reverse order (#3803, #3917)
-     * @private
+     * @internal
      */
     function wrapRenderSeries(
         this: Chart,
@@ -1444,7 +1444,7 @@ namespace Chart3D {
     }
 
     /**
-     * @private
+     * @internal
      */
     function wrapSetClassName(
         this: Chart,
@@ -1915,7 +1915,7 @@ namespace Chart3D {
          * not practical. Possible to make both getScale and perspective more
          * logical and also immutable.
          *
-         * @private
+         * @internal
          * @function getScale
          *
          * @param {number} depth

@@ -124,7 +124,7 @@ declare class StackingAxis extends Axis {
 /**
  * Generate stacks for each series and calculate stacks total values
  *
- * @private
+ * @internal
  * @function Highcharts.Chart#getStacks
  */
 function chartGetStacks(
@@ -154,9 +154,7 @@ function chartGetStacks(
     });
 }
 
-/**
- * @private
- */
+/** @internal */
 function onAxisDestroy(this: Axis): void {
     const stacking = this.stacking;
 
@@ -177,9 +175,7 @@ function onAxisDestroy(this: Axis): void {
 
 }
 
-/**
- * @private
- */
+/** @internal */
 function onAxisInit(this: Axis): void {
     if (!this.stacking) {
         this.stacking = new AxisAdditions(this as StackingAxis);
@@ -190,7 +186,7 @@ function onAxisInit(this: Axis): void {
  * Get stack indicator, according to it's x-value, to determine points with the
  * same x-value
  *
- * @private
+ * @internal
  * @function Highcharts.Series#getStackIndicator
  */
 function seriesGetStackIndicator(
@@ -225,7 +221,7 @@ function seriesGetStackIndicator(
 /**
  * Iterate over all stacks and compute the absolute values to percent
  *
- * @private
+ * @internal
  * @function Highcharts.Series#modifyStacks
  */
 function seriesModifyStacks(
@@ -270,7 +266,7 @@ function seriesModifyStacks(
 /**
  * Modifier function for percent stacks. Blows up the stack to 100%.
  *
- * @private
+ * @internal
  * @function Highcharts.Series#percentStacker
  */
 function seriesPercentStacker(
@@ -293,7 +289,7 @@ function seriesPercentStacker(
  * and `stacking` is not enabled, we need a pseudo (horizontal) stack in order
  * to handle grouping of points within the same category.
  *
- * @private
+ * @internal
  * @function Highcharts.Series#setGroupedPoints
  * @return {void}
  */
@@ -323,7 +319,7 @@ function seriesSetGroupedPoints(
 /**
  * Adds series' points value to corresponding stack
  *
- * @private
+ * @internal
  * @function Highcharts.Series#setStackedPoints
  */
 function seriesSetStackedPoints(
@@ -500,7 +496,7 @@ function seriesSetStackedPoints(
 
 /**
  * Adds stacking support to axes.
- * @private
+ * @internal
  * @class
  */
 class AxisAdditions {
@@ -548,7 +544,7 @@ class AxisAdditions {
 
     /**
      * Build the stacks from top down
-     * @private
+     * @internal
      */
     public buildStacks(): void {
         const stacking = this,
@@ -582,9 +578,7 @@ class AxisAdditions {
         fireEvent(axis, 'afterBuildStacks');
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     public cleanStacks(): void {
         if (this.oldStacks) {
             this.stacks = this.oldStacks;
@@ -601,7 +595,7 @@ class AxisAdditions {
 
     /**
      * Set all the stacks to initial states and destroy unused ones.
-     * @private
+     * @internal
      */
     public resetStacks(): void {
         objectEach(this.stacks, (type): void => {
@@ -623,9 +617,7 @@ class AxisAdditions {
         });
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     public renderStackTotals(): void {
         const stacking = this,
             axis = stacking.axis,
@@ -663,6 +655,7 @@ class AxisAdditions {
             opacity: 1
         }, animationConfig);
     }
+
 }
 
 
@@ -672,6 +665,7 @@ class AxisAdditions {
  *
  * */
 
+/** @internal */
 namespace StackingAxis {
 
     /* *
@@ -682,7 +676,7 @@ namespace StackingAxis {
 
     /**
      * Extends axis with stacking support.
-     * @private
+     * @internal
      */
     export function compose(
         AxisClass: typeof Axis,
@@ -718,6 +712,7 @@ namespace StackingAxis {
 
 declare module '../AxisType' {
     interface AxisTypeRegistry {
+        /** @internal */
         StackingAxis: StackingAxis;
     }
 }
@@ -728,4 +723,5 @@ declare module '../AxisType' {
  *
  * */
 
+/** @internal */
 export default StackingAxis;

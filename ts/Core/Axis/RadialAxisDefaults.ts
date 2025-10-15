@@ -23,7 +23,7 @@ import type RadialAxisOptions from './RadialAxisOptions';
 
 /**
      * Circular axis around the perimeter of a polar chart.
-     * @private
+     * @internal
      */
 const defaultCircularOptions: DeepPartial<RadialAxisOptions> = {
     gridLineWidth: 1, // Spokes
@@ -40,7 +40,7 @@ const defaultCircularOptions: DeepPartial<RadialAxisOptions> = {
 
 /**
  * The default options extend defaultYAxisOptions.
- * @private
+ * @internal
  */
 const defaultRadialGaugeOptions: DeepPartial<RadialAxisOptions> = {
     endOnTick: false,
@@ -71,7 +71,7 @@ const defaultRadialGaugeOptions: DeepPartial<RadialAxisOptions> = {
 
 /**
  * Radial axis, like a spoke in a polar chart.
- * @private
+ * @internal
  */
 const defaultRadialOptions: DeepPartial<RadialAxisOptions> = {
 

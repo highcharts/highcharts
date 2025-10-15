@@ -86,7 +86,7 @@ declare module '../Series/PointBase' {
 
 /**
  * Axis instance with 3D support.
- * @private
+ * @internal
  */
 export declare class Axis3DComposition extends RadialAxis.AxisComposition {
     axis3D: Axis3DAdditions;
@@ -99,7 +99,7 @@ export declare class Axis3DComposition extends RadialAxis.AxisComposition {
  * */
 
 /**
- * @private
+ * @internal
  */
 function onAxisAfterSetOptions(
     this: Axis
@@ -115,7 +115,7 @@ function onAxisAfterSetOptions(
 }
 
 /**
- * @private
+ * @internal
  */
 function onAxisDrawCrosshair(
     this: Axis,
@@ -139,7 +139,7 @@ function onAxisDrawCrosshair(
 }
 
 /**
- * @private
+ * @internal
  */
 function onAxisInit(this: Axis): void {
     const axis = this as Axis3DComposition;
@@ -151,7 +151,7 @@ function onAxisInit(this: Axis): void {
 
 /**
  * Do not draw axislines in 3D.
- * @private
+ * @internal
  */
 function wrapAxisGetLinePath(
     this: Axis3DComposition,
@@ -168,7 +168,7 @@ function wrapAxisGetLinePath(
 }
 
 /**
- * @private
+ * @internal
  */
 function wrapAxisGetPlotBandPath(
     this: Axis3DComposition,
@@ -214,7 +214,7 @@ function wrapAxisGetPlotBandPath(
 }
 
 /**
- * @private
+ * @internal
  */
 function wrapAxisGetPlotLinePath(
     this: Axis3DComposition,
@@ -308,7 +308,7 @@ function wrapAxisGetPlotLinePath(
 /**
  * Wrap getSlotWidth function to calculate individual width value for each
  * slot (#8042).
- * @private
+ * @internal
  */
 function wrapAxisGetSlotWidth(
     this: Axis3DComposition,
@@ -390,7 +390,7 @@ function wrapAxisGetSlotWidth(
 }
 
 /**
- * @private
+ * @internal
  */
 function wrapAxisGetTitlePosition(
     this: Axis3DComposition,
@@ -412,7 +412,7 @@ function wrapAxisGetTitlePosition(
 
 /**
  * Adds 3D support to axes.
- * @private
+ * @internal
  * @class
  */
 class Axis3DAdditions {
@@ -425,7 +425,7 @@ class Axis3DAdditions {
 
     /**
      * Extends axis class with 3D support.
-     * @private
+     * @internal
      */
     public static compose(
         AxisClass: typeof Axis,
@@ -461,7 +461,7 @@ class Axis3DAdditions {
      * */
 
     /**
-     * @private
+     * @internal
      */
     public constructor(
         axis: Axis3DComposition
@@ -484,7 +484,7 @@ class Axis3DAdditions {
      * */
 
     /**
-     * @private
+     * @internal
      * @param {Highcharts.Axis} axis
      * Related axis.
      * @param {Highcharts.Position3DObject} pos
@@ -698,7 +698,7 @@ class Axis3DAdditions {
     }
 
     /**
-     * @private
+     * @internal
      */
     public swapZ(
         p: Position3DObject,

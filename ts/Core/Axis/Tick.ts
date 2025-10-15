@@ -254,7 +254,7 @@ class Tick {
     /**
      * Write the tick label.
      *
-     * @private
+     * @internal
      * @function Highcharts.Tick#addLabel
      */
     public addLabel(): void {
@@ -436,7 +436,7 @@ class Tick {
     /**
      * Render and return the label of the tick.
      *
-     * @private
+     * @internal
      * @function Highcharts.Tick#createLabel
      */
     public createLabel(
@@ -477,7 +477,7 @@ class Tick {
     /**
      * Destructor for the tick prototype
      *
-     * @private
+     * @internal
      * @function Highcharts.Tick#destroy
      */
     public destroy(): void {
@@ -487,7 +487,7 @@ class Tick {
     /**
      * Gets the x and y positions for ticks in terms of pixels.
      *
-     * @private
+     * @internal
      * @function Highcharts.Tick#getPosition
      *
      * @param {boolean} horiz
@@ -568,7 +568,7 @@ class Tick {
 
     /**
      * Get the x, y position of the tick label
-     * @private
+     * @internal
      */
     public getLabelPosition(
         x: number,
@@ -659,7 +659,7 @@ class Tick {
     /**
      * Get the offset height or width of the label
      *
-     * @private
+     * @internal
      * @function Highcharts.Tick#getLabelSize
      */
     public getLabelSize(): number {
@@ -670,7 +670,7 @@ class Tick {
 
     /**
      * Extendible method to return the path of the marker
-     * @private
+     * @internal
      */
     public getMarkPath(
         x: number,
@@ -695,7 +695,7 @@ class Tick {
      * Handle the label overflow by adjusting the labels to the left and right
      * edge, or hide them if they collide into the neighbour label.
      *
-     * @private
+     * @internal
      * @function Highcharts.Tick#handleOverflow
      */
     public handleOverflow(xy: PositionObject): void {
@@ -805,7 +805,7 @@ class Tick {
     /**
      * Try to replace the label if the same one already exists.
      *
-     * @private
+     * @internal
      * @function Highcharts.Tick#moveLabel
      */
     public moveLabel(str: string, labelOptions: AxisLabelOptions): void {
@@ -857,7 +857,7 @@ class Tick {
     /**
      * Put everything in place
      *
-     * @private
+     * @internal
      * @param {number} index
      *
      * @param {boolean} [old]
@@ -918,7 +918,7 @@ class Tick {
     /**
      * Renders the gridLine.
      *
-     * @private
+     * @internal
      * @function Highcharts.Tick#renderGridLine
      * @param {boolean} old  Whether or not the tick is old
      * @param {number} opacity  The opacity of the grid line
@@ -999,7 +999,7 @@ class Tick {
     /**
      * Renders the tick mark.
      *
-     * @private
+     * @internal
      * @function Highcharts.Tick#renderMark
      * @param {Highcharts.PositionObject} xy  The position vector of the mark
      * @param {number} opacity  The opacity of the mark
@@ -1073,7 +1073,7 @@ class Tick {
      * Note: The label should already be created in init(), so it should only
      * have to be moved into place.
      *
-     * @private
+     * @internal
      * @function Highcharts.Tick#renderLabel
      * @param {Highcharts.PositionObject} xy  The position vector of the label
      * @param {boolean} old  Whether or not the tick is old
@@ -1160,7 +1160,7 @@ class Tick {
      * Replace labels with the moved ones to perform animation. Additionally
      * destroy unused labels.
      *
-     * @private
+     * @internal
      * @function Highcharts.Tick#replaceMovedLabel
      */
     public replaceMovedLabel(): void {
@@ -1236,7 +1236,7 @@ export default Tick;
 
 /**
  * Optional parameters for the tick.
- * @private
+ * @internal
  * @interface Highcharts.TickParametersObject
  *//**
  * Set category for the tick.

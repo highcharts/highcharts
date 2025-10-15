@@ -50,7 +50,7 @@ declare module './AxisType' {
  * */
 
 /**
- * @private
+ * @internal
  */
 namespace LogarithmicAxis {
 
@@ -72,7 +72,7 @@ namespace LogarithmicAxis {
 
     /**
      * Provides logarithmic support for axes.
-     * @private
+     * @internal
      */
     export function compose<T extends typeof Axis>(
         AxisClass: T
@@ -89,7 +89,7 @@ namespace LogarithmicAxis {
     }
 
     /**
-     * @private
+     * @internal
      */
     function onAfterSetType(
         this: Axis
@@ -104,7 +104,7 @@ namespace LogarithmicAxis {
     }
 
     /**
-     * @private
+     * @internal
      */
     function onAfterInit(
         this: Axis
@@ -132,7 +132,7 @@ namespace LogarithmicAxis {
 
     /**
      * Provides logarithmic support for axes.
-     * @private
+     * @internal
      * @class
      */
     export class Additions {

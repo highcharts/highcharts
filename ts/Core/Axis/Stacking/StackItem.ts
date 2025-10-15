@@ -78,7 +78,7 @@ export interface StackBoxProps {
 /**
  * The class for stacks. Each stack, on a specific X value and either negative
  * or positive, has its own stack item.
- * @private
+ * @internal
  */
 class StackItem {
 
@@ -248,16 +248,14 @@ class StackItem {
      *
      * */
 
-    /**
-     * @private
-     */
+    /** @internal */
     public destroy(): void {
         destroyObjectProperties(this, this.axis);
     }
 
     /**
      * Renders the stack total label and adds it to the stack label group.
-     * @private
+     * @internal
      */
     public render(group: SVGElement): void {
         const chart = this.axis.chart,
@@ -316,7 +314,7 @@ class StackItem {
     /**
      * Sets the offset that the stack has from the x value and repositions the
      * label.
-     * @private
+     * @internal
      */
     public setOffset(
         xOffset: number,
@@ -433,7 +431,7 @@ class StackItem {
     }
     /**
      * Get the bbox of the stack.
-     * @private
+     * @internal
      * @function Highcharts.StackItem#getStackBox
      * @return {BBoxObject} The x, y, height, width of the stack.
      */
@@ -488,6 +486,7 @@ class StackItem {
  *
  * */
 
+/** @internal */
 export default StackItem;
 
 /* *

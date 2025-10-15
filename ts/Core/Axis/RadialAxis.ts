@@ -346,7 +346,7 @@ namespace RadialAxis {
      * In case of auto connect, add one closestPointRange to the max value
      * right before tickPositions are computed, so that ticks will extend
      * passed the real max.
-     * @private
+     * @internal
      */
     function beforeSetTickPositions(
         this: AxisComposition
@@ -380,7 +380,7 @@ namespace RadialAxis {
     /**
      * Augments methods for the value axis.
      *
-     * @private
+     * @internal
      *
      * @param {Highcharts.Axis} AxisClass
      * Axis class to extend.
@@ -449,7 +449,7 @@ namespace RadialAxis {
      * Attach and return collecting function for labels in radial axis for
      * anti-collision.
      *
-     * @private
+     * @internal
      */
     function createLabelCollector(
         this: AxisComposition
@@ -475,7 +475,7 @@ namespace RadialAxis {
 
     /**
      * Creates an empty collector function.
-     * @private
+     * @internal
      */
     function createLabelCollectorHidden(): Chart.LabelCollectorFunction {
         return noop as Chart.LabelCollectorFunction;
@@ -483,7 +483,7 @@ namespace RadialAxis {
 
     /**
      * Find the correct end values of crosshair in polar.
-     * @private
+     * @internal
      */
     function getCrosshairPosition(
         this: AxisComposition,
@@ -546,7 +546,7 @@ namespace RadialAxis {
      * Get the path for the axis line. This method is also referenced in the
      * getPlotLinePath method.
      *
-     * @private
+     * @internal
      * @param {number} _lineWidth
      * Line width is not used.
      * @param {number} [radius]
@@ -631,7 +631,7 @@ namespace RadialAxis {
     /**
      * Find the path for plot bands along the radial axis.
      *
-     * @private
+     * @internal
      */
     function getPlotBandPath(
         this: AxisComposition,
@@ -921,7 +921,7 @@ namespace RadialAxis {
      * Returns the x, y coordinate of a point given by a value and a pixel
      * distance from center.
      *
-     * @private
+     * @internal
      * @param {number} value
      * Point value.
      * @param {number} [length]
@@ -979,7 +979,7 @@ namespace RadialAxis {
 
     /**
      * Modify radial axis.
-     * @private
+     * @internal
      *
      * @param {Highcharts.Axis} radialAxis
      * Radial axis to modify.
@@ -1002,7 +1002,7 @@ namespace RadialAxis {
 
     /**
      * Modify radial axis as hidden.
-     * @private
+     * @internal
      *
      * @param {Highcharts.Axis} radialAxis
      * Radial axis to modify.
@@ -1391,7 +1391,7 @@ namespace RadialAxis {
      * Translate from intermediate plotX (angle), plotY (axis.len - radius)
      * to final chart coordinates.
      *
-     * @private
+     * @internal
      * @param {number} angle
      * Translation angle.
      * @param {number} radius
@@ -1426,7 +1426,7 @@ namespace RadialAxis {
      * Override the setAxisSize method to use the arc's circumference as
      * length. This allows tickPixelInterval to apply to pixel lengths along
      * the perimeter.
-     * @private
+     * @internal
      */
     function setAxisSize(
         this: AxisComposition
@@ -1471,7 +1471,7 @@ namespace RadialAxis {
      * difference in rotation. This allows the translate method to return
      * angle for any given value.
      *
-     * @private
+     * @internal
      */
     function setAxisTranslation(
         this: AxisComposition

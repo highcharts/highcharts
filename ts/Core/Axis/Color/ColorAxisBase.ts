@@ -103,7 +103,7 @@ namespace ColorAxisBase {
 
     /**
      * Initialize defined data classes.
-     * @private
+     * @internal
      */
     export function initDataClasses(
         this: ColorAxisBase,
@@ -159,7 +159,7 @@ namespace ColorAxisBase {
 
     /**
      * Create initial color stops.
-     * @private
+     * @internal
      */
     export function initStops(
         this: ColorAxisBase
@@ -178,7 +178,7 @@ namespace ColorAxisBase {
 
     /**
      * Normalize logarithmic values.
-     * @private
+     * @internal
      */
     export function normalizedValue(
         this: ColorAxisBase,
@@ -200,7 +200,7 @@ namespace ColorAxisBase {
 
     /**
      * Translate from a value to a color.
-     * @private
+     * @internal
      */
     export function toColor(
         this: ColorAxisBase,

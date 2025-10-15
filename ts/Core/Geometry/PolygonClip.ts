@@ -164,4 +164,5 @@ const PolygonClip = {
     clipPolygon
 };
 
+/** @internal */
 export default PolygonClip;

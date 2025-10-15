@@ -129,7 +129,7 @@ export interface GridAxisOptions {
 
 /**
  * Enum for which side the axis is on. Maps to axis.side.
- * @private
+ * @internal
  */
 enum GridAxisSide {
     top = 0,
@@ -145,14 +145,14 @@ enum GridAxisSide {
  * */
 
 /**
- * @private
+ * @internal
  */
 function argsToArray(args: IArguments): Array<any> {
     return Array.prototype.slice.call(args, 1);
 }
 
 /**
- * @private
+ * @internal
  */
 function isObject(x: unknown): x is object {
     // Always use strict mode
@@ -160,7 +160,7 @@ function isObject(x: unknown): x is object {
 }
 
 /**
- * @private
+ * @internal
  */
 function applyGridOptions(axis: Axis): void {
     const options = axis.options;
@@ -195,7 +195,7 @@ function applyGridOptions(axis: Axis): void {
 
 /**
  * Extends axis class with grid support.
- * @private
+ * @internal
  */
 function compose<T extends typeof Axis>(
     AxisClass: T,
@@ -249,7 +249,7 @@ function compose<T extends typeof Axis>(
 /**
  * Get the largest label width and height.
  *
- * @private
+ * @internal
  * @function Highcharts.Axis#getMaxLabelDimensions
  *
  * @param {Highcharts.Dictionary<Highcharts.Tick>} ticks
@@ -322,7 +322,7 @@ function getMaxLabelDimensions(
 
 /**
  * Handle columns and getOffset.
- * @private
+ * @internal
  */
 function wrapGetOffset(this: Axis, proceed: Function): void {
     const {
@@ -355,7 +355,7 @@ function wrapGetOffset(this: Axis, proceed: Function): void {
 }
 
 /**
- * @private
+ * @internal
  */
 function onAfterGetTitlePosition(
     this: Axis,
@@ -414,7 +414,7 @@ function onAfterGetTitlePosition(
 }
 
 /**
- * @private
+ * @internal
  */
 function onAfterInit(this: Axis): void {
     const axis = this as GridAxisComposition;
@@ -484,7 +484,7 @@ function onAfterInit(this: Axis): void {
  *             (axis.min) __________________________ (axis.max)
  *                        ___|____|____|____|____|__
  * ```
- * @private
+ * @internal
  */
 function onAfterRender(this: Axis): void {
     const axis = this,
@@ -694,7 +694,7 @@ function onAfterRender(this: Axis): void {
 }
 
 /**
- * @private
+ * @internal
  */
 function onAfterSetAxisTranslation(this: Axis): void {
     const axis = this;
@@ -751,7 +751,7 @@ function onAfterSetAxisTranslation(this: Axis): void {
  *   wall
  * - Ensures that the rightmost tick is at the end of the axis, to
  *   create a right wall.
- * @private
+ * @internal
  */
 function onAfterSetOptions(
     this: Axis,
@@ -947,7 +947,7 @@ function onAfterSetOptions(
 }
 
 /**
- * @private
+ * @internal
  */
 function onAfterSetOptions2(
     this: Axis,
@@ -967,7 +967,7 @@ function onAfterSetOptions2(
 
 /**
  * Handle columns and setScale.
- * @private
+ * @internal
  */
 function onAfterSetScale(this: Axis): void {
     const axis = this as GridAxisComposition;
@@ -978,7 +978,7 @@ function onAfterSetScale(this: Axis): void {
 /**
  * Draw vertical axis ticks extra long to create cell floors and roofs.
  * Overrides the tickLength for vertical axes.
- * @private
+ * @internal
  */
 function onAfterTickSize(
     this: Axis,
@@ -1008,7 +1008,7 @@ function onAfterTickSize(
 }
 
 /**
- * @private
+ * @internal
  */
 function onChartAfterSetChartSize(this: Chart): void {
     this.axes.forEach((axis): void => {
@@ -1020,7 +1020,7 @@ function onChartAfterSetChartSize(this: Chart): void {
 }
 
 /**
- * @private
+ * @internal
  */
 function onDestroy(
     this: Axis,
@@ -1038,7 +1038,7 @@ function onDestroy(
 
 /**
  * Wraps axis init to draw cell walls on vertical axes.
- * @private
+ * @internal
  */
 function onInit(
     this: Axis,
@@ -1064,7 +1064,7 @@ function onInit(
 
 /**
  * Center tick labels in cells.
- * @private
+ * @internal
  */
 function onTickAfterGetLabelPosition(
     this: Tick,
@@ -1189,7 +1189,7 @@ function onTickAfterGetLabelPosition(
 }
 
 /**
- * @private
+ * @internal
  */
 function onTickLabelFormat(ctx: AxisLabelFormatterContextObject): void {
     const {
@@ -1241,7 +1241,7 @@ function onTickLabelFormat(ctx: AxisLabelFormatterContextObject): void {
  *                        |___|_______|_______|_______|
  *                          ^
  * ```
- * @private
+ * @internal
  * @todo Does this function do what the drawing says? Seems to affect
  *       ticks and not the labels directly?
  */
@@ -1300,7 +1300,7 @@ function onTrimTicks(this: Axis): void {
 
 /**
  * Avoid altering tickInterval when reserving space.
- * @private
+ * @internal
  */
 function wrapUnsquish(
     this: Axis,
@@ -1328,7 +1328,7 @@ function wrapUnsquish(
 
 /**
  * Additions for grid axes.
- * @private
+ * @internal
  * @class
  */
 class GridAxisAdditions {
@@ -1385,7 +1385,7 @@ class GridAxisAdditions {
      * this function returns true if the axis supplied is the last
      * of the x-axes.
      *
-     * @private
+     * @internal
      *
      * @return {boolean}
      * True if the axis is the outermost axis in its dimension; false if
@@ -1438,7 +1438,7 @@ class GridAxisAdditions {
 
     /**
      * Add extra border based on the provided path.
-     * @private
+     * @internal
      * @param {SVGPath} path
      * The path of the border.
      * @return {Highcharts.SVGElement}

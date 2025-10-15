@@ -67,7 +67,7 @@ declare module '../Options' {
  * */
 
 /**
- * @private
+ * @internal
  */
 function chartAddZAxis(
     this: Chart,
@@ -78,7 +78,7 @@ function chartAddZAxis(
 
 /**
  * Get the Z axis in addition to the default X and Y.
- * @private
+ * @internal
  */
 function onChartAfterCreateAxes(this: Chart): void {
     const zAxisOptions = this.options.zAxis = splat(this.options.zAxis || {});
@@ -102,7 +102,7 @@ function onChartAfterCreateAxes(this: Chart): void {
 
 /**
  * 3D axis for z coordinates.
- * @private
+ * @internal
  */
 class ZAxis extends Axis implements AxisBase {
 
@@ -214,7 +214,7 @@ class ZAxis extends Axis implements AxisBase {
     }
 
     /**
-     * @private
+     * @internal
      */
     public setAxisSize(): void {
         const chart = this.chart;

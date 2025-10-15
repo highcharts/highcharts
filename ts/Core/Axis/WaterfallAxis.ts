@@ -114,7 +114,7 @@ namespace WaterfallAxis {
      * */
 
     /**
-     * @private
+     * @internal
      */
     export function compose(
         AxisClass: typeof Axis,
@@ -132,7 +132,7 @@ namespace WaterfallAxis {
     }
 
     /**
-     * @private
+     * @internal
      */
     function onAxisAfterBuildStacks(this: Axis): void {
         const axis = this as WaterfallAxis,
@@ -145,7 +145,7 @@ namespace WaterfallAxis {
     }
 
     /**
-     * @private
+     * @internal
      */
     function onAxisAfterRender(this: Axis): void {
         const axis = this as WaterfallAxis,
@@ -160,7 +160,7 @@ namespace WaterfallAxis {
     }
 
     /**
-     * @private
+     * @internal
      */
     function onAxisInit(this: Axis): void {
         const axis = this;
@@ -171,7 +171,7 @@ namespace WaterfallAxis {
     }
 
     /**
-     * @private
+     * @internal
      */
     function onChartBeforeRedraw(this: Chart): void {
         const axes = this.axes as Array<WaterfallAxis>,
@@ -233,7 +233,7 @@ namespace WaterfallAxis {
          * Calls StackItem.prototype.render function that creates and renders
          * stack total label for each waterfall stack item.
          *
-         * @private
+         * @internal
          * @function Highcharts.Axis#renderWaterfallStackTotals
          */
         public renderStackTotals(): void {

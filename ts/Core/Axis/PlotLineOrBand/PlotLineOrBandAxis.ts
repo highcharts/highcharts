@@ -81,7 +81,7 @@ namespace PlotLineOrBandAxis {
          * Add a plot band or plot line after render time. Called from
          * addPlotBand and addPlotLine internally.
          *
-         * @private
+         * @internal
          * @function Highcharts.Axis#addPlotBandOrLine
          * @param {Highcharts.AxisPlotBandsOptions|Highcharts.AxisPlotLinesOptions} options
          * The plotBand or plotLine configuration object.
@@ -156,7 +156,7 @@ namespace PlotLineOrBandAxis {
         /**
          * Remove a plot band or plot line from the chart by id. Called
          * internally from `removePlotBand` and `removePlotLine`.
-         * @private
+         * @internal
          * @function Highcharts.Axis#removePlotBandOrLine
          */
         removePlotBandOrLine(id: string): void;
@@ -219,7 +219,7 @@ namespace PlotLineOrBandAxis {
      * Add a plot band or plot line after render time. Called from
      * addPlotBand and addPlotLine internally.
      *
-     * @private
+     * @internal
      * @function Highcharts.Axis#addPlotBandOrLine
      * @param {Highcharts.AxisPlotBandsOptions|Highcharts.AxisPlotLinesOptions} options
      * The plotBand or plotLine configuration object.
@@ -292,7 +292,7 @@ namespace PlotLineOrBandAxis {
     }
 
     /**
-     * @private
+     * @internal
      */
     export function compose<T extends typeof Axis>(
         PlotLineOrBandType: typeof PlotLineOrBand,
@@ -436,7 +436,7 @@ namespace PlotLineOrBandAxis {
     /**
      * Remove a plot band or plot line from the chart by id. Called
      * internally from `removePlotBand` and `removePlotLine`.
-     * @private
+     * @internal
      * @function Highcharts.Axis#removePlotBandOrLine
      */
     function removePlotBandOrLine(

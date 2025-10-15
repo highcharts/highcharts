@@ -136,9 +136,7 @@ class ColorAxis extends Axis implements AxisBase {
     /** @internal */
     public static defaultLegendLength: number = 200;
 
-    /**
-     * @private
-     */
+    /** @internal */
     public static keepProps: Array<string> = [
         'legendItem'
     ];
@@ -172,9 +170,7 @@ class ColorAxis extends Axis implements AxisBase {
      *
      * */
 
-    /**
-     * @private
-     */
+    /** @internal */
     public constructor(
         chart: Chart,
         userOptions: Partial<ColorAxis.Options>
@@ -285,7 +281,7 @@ class ColorAxis extends Axis implements AxisBase {
 
     /**
      * Override so that ticks are not added in data class axes (#6914)
-     * @private
+     * @internal
      */
     public setTickPositions(): void {
         if (!this.dataClasses) {
@@ -295,7 +291,7 @@ class ColorAxis extends Axis implements AxisBase {
 
     /**
      * Extend the setOptions method to process extreme colors and color stops.
-     * @private
+     * @internal
      */
     public setOptions(userOptions: DeepPartial<ColorAxis.Options>): void {
 
@@ -316,9 +312,7 @@ class ColorAxis extends Axis implements AxisBase {
         this.options.crosshair = this.options.marker;
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     public setAxisSize(): void {
         const axis = this,
             chart = axis.chart,
@@ -348,7 +342,7 @@ class ColorAxis extends Axis implements AxisBase {
     /**
      * Override the getOffset method to add the whole axis groups inside the
      * legend.
-     * @private
+     * @internal
      */
     public getOffset(): void {
         const axis = this;
@@ -398,7 +392,7 @@ class ColorAxis extends Axis implements AxisBase {
 
     /**
      * Create the color gradient.
-     * @private
+     * @internal
      */
     public setLegendColor(): void {
         const axis = this;
@@ -421,7 +415,7 @@ class ColorAxis extends Axis implements AxisBase {
 
     /**
      * The color axis appears inside the legend and has its own legend symbol.
-     * @private
+     * @internal
      */
     public drawLegendSymbol(
         legend: Legend,
@@ -479,7 +473,7 @@ class ColorAxis extends Axis implements AxisBase {
 
     /**
      * Fool the legend.
-     * @private
+     * @internal
      */
     public setState(state?: StatesOptionsKey): void {
         this.series.forEach(function (series): void {
@@ -487,15 +481,11 @@ class ColorAxis extends Axis implements AxisBase {
         });
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     public setVisible(): void {
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     public getSeriesExtremes(): void {
         const axis = this;
         const series = axis.series;
@@ -632,9 +622,7 @@ class ColorAxis extends Axis implements AxisBase {
         }
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     public getPlotLinePath(
         options: Axis.PlotLinePathOptions
     ): (SVGPath|undefined) {
@@ -706,7 +694,7 @@ class ColorAxis extends Axis implements AxisBase {
 
     /**
      * Destroy color axis legend items.
-     * @private
+     * @internal
      */
     public destroyItems(): void {
         const axis = this,
@@ -751,7 +739,7 @@ class ColorAxis extends Axis implements AxisBase {
 
     /**
      * Get the legend item symbols for data classes.
-     * @private
+     * @internal
      */
     public getDataClassLegendSymbols(): Array<ColorAxis.LegendItemObject> {
         const axis = this,
@@ -849,7 +837,7 @@ class ColorAxis extends Axis implements AxisBase {
 
     /**
      * Get size of color axis symbol.
-     * @private
+     * @internal
      */
     public getSize(): ({
         width: number,

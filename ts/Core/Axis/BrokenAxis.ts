@@ -94,7 +94,7 @@ declare module '../Series/SeriesOptions' {
 
 /**
  * Axis with support of broken data rows.
- * @private
+ * @internal
  */
 namespace BrokenAxis {
 
@@ -108,7 +108,7 @@ namespace BrokenAxis {
         /**
          * HC <= 8 backwards compatibility, used by demo samples.
          * @deprecated
-         * @private
+         * @internal
          * @requires modules/broken-axis
          */
         breakArray: Array<AxisBreakObject>;
@@ -124,7 +124,7 @@ namespace BrokenAxis {
 
     /**
      * Adds support for broken axes.
-     * @private
+     * @internal
      */
     export function compose<T extends typeof Axis>(
         AxisClass: T,
@@ -160,7 +160,7 @@ namespace BrokenAxis {
     }
 
     /**
-     * @private
+     * @internal
      */
     function onAxisAfterInit(this: Axis): void {
         if (typeof this.brokenAxis !== 'undefined') {
@@ -170,7 +170,7 @@ namespace BrokenAxis {
 
     /**
      * Force Axis to be not-ordinal when breaks are defined.
-     * @private
+     * @internal
      */
     function onAxisAfterSetOptions(this: Axis): void {
         const axis = this;
@@ -181,7 +181,7 @@ namespace BrokenAxis {
     }
 
     /**
-     * @private
+     * @internal
      */
     function onAxisAfterSetTickPositions(this: Axis): void {
         const axis = this,
@@ -204,7 +204,7 @@ namespace BrokenAxis {
     }
 
     /**
-     * @private
+     * @internal
      */
     function onAxisInit(this: Axis): void {
         const axis = this;
@@ -215,7 +215,7 @@ namespace BrokenAxis {
     }
 
     /**
-     * @private
+     * @internal
      */
     function onSeriesAfterGeneratePoints(this: Series): void {
         const {
@@ -251,7 +251,7 @@ namespace BrokenAxis {
     }
 
     /**
-     * @private
+     * @internal
      */
     function onSeriesAfterRender(this: Series): void {
         this.drawBreaks(this.xAxis, ['x']);
@@ -259,7 +259,7 @@ namespace BrokenAxis {
     }
 
     /**
-     * @private
+     * @internal
      */
     function seriesDrawBreaks(
         this: Series,
@@ -323,7 +323,7 @@ namespace BrokenAxis {
      * can draw a gap in the line or area. This was moved from ordinal
      * axis module to broken axis module as of #5045.
      *
-     * @private
+     * @internal
      * @function Highcharts.Series#gappedPath
      *
      * @return {Highcharts.SVGPathArray}
@@ -470,7 +470,7 @@ namespace BrokenAxis {
 
     /**
      * Provides support for broken axes.
-     * @private
+     * @internal
      * @class
      */
     export class Additions {
@@ -482,7 +482,7 @@ namespace BrokenAxis {
          * */
 
         /**
-         * @private
+         * @internal
          */
         public static isInBreak(
             brk: AxisBreakOptions,
@@ -508,7 +508,7 @@ namespace BrokenAxis {
         }
 
         /**
-         * @private
+         * @internal
          */
         public static lin2Val(
             this: Axis,
@@ -555,7 +555,7 @@ namespace BrokenAxis {
         }
 
         /**
-         * @private
+         * @internal
          */
         public static val2Lin(
             this: Axis,
@@ -662,7 +662,7 @@ namespace BrokenAxis {
         }
 
         /**
-         * @private
+         * @internal
          */
         public isInAnyBreak(
             val: (number|null|undefined),
@@ -704,7 +704,7 @@ namespace BrokenAxis {
          * Dynamically set or unset breaks in an axis. This function in lighter
          * than using Axis.update, and it also preserves animation.
          *
-         * @private
+         * @internal
          * @function Highcharts.Axis#setBreaks
          *
          * @param {Array<Highcharts.XAxisBreaksOptions>} [breaks]

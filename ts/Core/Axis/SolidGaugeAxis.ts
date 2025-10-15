@@ -32,7 +32,7 @@ const { extend } = U;
  * */
 
 /**
- * @private
+ * @internal
  */
 interface SolidGaugeAxis extends ColorAxisBase, RadialAxis.AxisComposition {
     center: Array<number>;
@@ -50,7 +50,7 @@ interface SolidGaugeAxis extends ColorAxisBase, RadialAxis.AxisComposition {
  * */
 
 /**
- * @private
+ * @internal
  */
 function init(
     axis: RadialAxis.AxisComposition

@@ -54,7 +54,7 @@ export declare class NavigatorAxisComposition extends Axis {
  * */
 
 /**
- * @private
+ * @internal
  */
 function onAxisInit(
     this: Axis
@@ -70,7 +70,7 @@ function onAxisInit(
  * For Stock charts, override selection zooming with some special features
  * because X axis zooming is already allowed by the Navigator and Range
  * selector.
- * @private
+ * @internal
  */
 function onAxisSetExtremes(
     this: Axis,
@@ -135,7 +135,7 @@ function onAxisSetExtremes(
  * */
 
 /**
- * @private
+ * @internal
  * @class
  */
 class NavigatorAxisAdditions {
@@ -147,7 +147,7 @@ class NavigatorAxisAdditions {
      * */
 
     /**
-     * @private
+     * @internal
      */
     public static compose(
         AxisClass: typeof Axis
@@ -191,7 +191,7 @@ class NavigatorAxisAdditions {
      * */
 
     /**
-     * @private
+     * @internal
      */
     public destroy(): void {
         this.axis = void 0 as any;
@@ -201,7 +201,7 @@ class NavigatorAxisAdditions {
      * Add logic to normalize the zoomed range in order to preserve the pressed
      * state of range selector buttons
      *
-     * @private
+     * @internal
      * @function Highcharts.Axis#toFixedRange
      */
     public toFixedRange(

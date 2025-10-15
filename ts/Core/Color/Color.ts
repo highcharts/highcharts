@@ -72,7 +72,7 @@ class Color implements ColorBase {
     /**
      * Collection of named colors. Can be extended from the outside by adding
      * colors to Highcharts.Color.names.
-     * @private
+     * @internal
      */
     public static names: Record<string, ColorString> = {
         white: '#ffffff',
@@ -82,7 +82,7 @@ class Color implements ColorBase {
     /**
      * Collection of parsers. This can be extended from the outside by pushing
      * parsers to `Color.parsers`.
-     * @private
+     * @internal
      */
     public static parsers = [{
         // RGBA color
@@ -136,7 +136,7 @@ class Color implements ColorBase {
     /**
      * Whether to use CSS `color-mix` for color handling (brightening,
      * tweening). This can be disabled from the outside.
-     * @private
+     * @internal
      */
     public static useColorMix = win.CSS?.supports(
         'color',
@@ -238,9 +238,7 @@ class Color implements ColorBase {
      */
     public input: ColorType;
 
-    /**
-     * @internal
-     */
+    /** @internal */
     public output?: string;
 
     /**
@@ -415,6 +413,7 @@ class Color implements ColorBase {
 
         return (hasAlpha ? 'rgba(' : 'rgb(') + rgba.join(',') + ')';
     }
+
 }
 
 /* *

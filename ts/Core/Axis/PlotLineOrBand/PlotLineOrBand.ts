@@ -15,6 +15,7 @@
  *  Imports
  *
  * */
+
 import type Chart from '../../Chart/Chart';
 import type Templating from '../../Templating';
 import type {
