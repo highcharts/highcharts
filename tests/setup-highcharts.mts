@@ -19,9 +19,9 @@ createJSONSources();
 await run('scripts');
 
 if (
+    !process.env.CI &&
     !existsSync(
         join(import.meta.dirname, '../code/highcharts.src.d.ts')
-    )
-) {
+    ) ) {
     logger.warn('No Highcharts declarations found. Run `npx gulp jsdoc-dts` to get working types in test files');
 }
