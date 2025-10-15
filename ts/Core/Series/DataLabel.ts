@@ -694,7 +694,7 @@ namespace DataLabel {
                                     point.formatPrefix + 'Formatter'
                                 ] ||
                                 labelOptions.formatter
-                            ).call(point, labelOptions);
+                            ).call(point, labelOptions, point);
 
                         rotation = labelOptions.rotation;
 
