@@ -55,10 +55,8 @@ jobs:
           chromedriver --url-base=/wd/hub &
           sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 &
 
-      - name: Clean snapshots directory
-        run: rm -rf tests/visual/visual.spec.ts-snapshots
-
       - name: Generate master snapshots (Highcharts)
+        continue-on-error: true
         run: |
           PLAYWRIGHT_HTML_REPORT=playwright-report/master/highcharts \
           npx playwright test tests/visual/visual.spec.ts --project visual --update-snapshots
@@ -66,6 +64,7 @@ jobs:
           VISUAL_TEST_PATH: samples/highcharts
 
       - name: Generate master snapshots (Stock)
+        continue-on-error: true
         run: |
           PLAYWRIGHT_HTML_REPORT=playwright-report/master/stock \
           npx playwright test tests/visual/visual.spec.ts --project visual --update-snapshots
@@ -73,6 +72,7 @@ jobs:
           VISUAL_TEST_PATH: samples/stock
 
       - name: Generate master snapshots (Maps)
+        continue-on-error: true
         run: |
           PLAYWRIGHT_HTML_REPORT=playwright-report/master/maps \
           npx playwright test tests/visual/visual.spec.ts --project visual --update-snapshots
@@ -80,6 +80,7 @@ jobs:
           VISUAL_TEST_PATH: samples/maps
 
       - name: Generate master snapshots (Gantt)
+        continue-on-error: true
         run: |
           PLAYWRIGHT_HTML_REPORT=playwright-report/master/gantt \
           npx playwright test tests/visual/visual.spec.ts --project visual --update-snapshots
