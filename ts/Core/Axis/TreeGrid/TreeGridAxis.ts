@@ -174,17 +174,21 @@ function getSeriesData(
     const data = s.useDataTable ?
         new Array(s.dataTable.rowCount).fill(void 0)
             .map((_, i): GanttPointOptions => {
-                const row = s.dataTable.getRowObject(
-                    i
-                ) as GanttPointOptions;
-                if ('xOption' in row) {
-                    (row as any).x = row.xOption;
-                    delete row.xOption;
-                } else {
-                    delete row.x;
+                if (!s.tempNoXColumn) {
+                    const row = s.dataTable.getRowObject(
+                        i
+                    ) as GanttPointOptions;
+
+                    if ('xOption' in row) {
+                        (row as any).x = row.xOption;
+                        delete row.xOption;
+                    } else {
+                        delete row.x;
+                    }
+                    return row;
                 }
 
-                return row;
+                return s.dataTable.getRowObject(i) as GanttPointOptions;
             }) :
         s.options.data || [];
     return data;
