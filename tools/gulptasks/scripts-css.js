@@ -44,7 +44,9 @@ const gridConfig = {
     ],
     target: TARGET_DIRECTORY + '/grid/',
     replacePath: 'grid/',
-    exclude: []
+    exclude: [
+        '.stylelintrc'
+    ]
 };
 
 function handleConfig(config) {
@@ -198,7 +200,6 @@ function scriptCSS(argv) {
 
 scriptCSS.description = 'Creates CSS files for given product';
 scriptCSS.flags = {
-    '--dashboards': 'Creates CSS files for dashboards',
     '--product': 'Creates CSS files for product: Highcharts (default), Grid, Dashboards'
 };
 
