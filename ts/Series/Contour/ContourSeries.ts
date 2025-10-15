@@ -41,21 +41,21 @@ export default class ContourSeries extends ScatterSeries {
         ContourSeriesDefaults
     );
 
-    public canvas?: HTMLCanvasElement;
-
-    public context?: GPUCanvasContext | null;
-
-    public adapter?: GPUAdapter | null;
-
-    public device?: GPUDevice;
-
-    public image?: SVGElement;
-
     public data!: Array<ContourPoint>;
 
     public points!: Array<ContourPoint>;
 
     public options!: ContourSeriesOptions;
+
+    private canvas?: HTMLCanvasElement;
+
+    private context?: GPUCanvasContext | null;
+
+    private adapter?: GPUAdapter | null;
+
+    private device?: GPUDevice;
+
+    private image?: SVGElement;
 
     private extremesUniform?: Float32Array;
 
@@ -589,8 +589,8 @@ export default class ContourSeries extends ScatterSeries {
                     this.image = this.chart.renderer.image(
                         canvas.toDataURL('image/webp', 1)
                     ).attr({
-                        width: this.xAxis.len,
-                        height: this.yAxis.len
+                        width: canvas.width,
+                        height: canvas.height
                     }).add(this.group);
                 };
 

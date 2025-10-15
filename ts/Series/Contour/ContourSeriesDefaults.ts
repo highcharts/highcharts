@@ -40,7 +40,7 @@ const ContourSeriesDefaults: PlotOptionsOf<ContourSeries> = {
                 series.colorAxis.stops.map(
                     (
                         stop: GradientColorStop
-                    ): number[] => series.colorToArray(stop[1])
+                    ): number[] => [...series.colorToArray(stop[1]), 1]
                 ) : [
                     [0, 0, 0, 0],
                     [1, 1, 1, 1]
