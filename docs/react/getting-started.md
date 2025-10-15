@@ -1,10 +1,8 @@
 # Getting started
 
-** Note: version 4 of our React integration is currently in beta. Features described may change at any time **
-
 ## Requirements
 
-The beta release has been tested with:
+The release has been tested with:
 
 * The [Highcharts npm package](https://www.npmjs.com/package/highcharts) version 11.4.8 and newer
 * [Vite](https://vite.dev/) with [plugin-react](https://www.npmjs.com/package/@vitejs/plugin-react) version 4.3.3
