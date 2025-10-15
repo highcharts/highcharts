@@ -135,24 +135,29 @@ export default class ContourSeries extends ScatterSeries {
 
     async run(): Promise<void> {
         const series = this,
-            chart = series.chart,
+            { xAxis, yAxis, chart } = series,
             { chartWidth, chartHeight, inverted } = chart,
             canvas = series.canvas = (
                 series.canvas ||
                 document.createElement('canvas')
             ),
             devicePixelRatio = window.devicePixelRatio,
-            [w, h] = inverted ? [
+            [w, h, horiAxis, vertAxis] = inverted ? [
                 chartHeight * devicePixelRatio,
-                chartWidth * devicePixelRatio
+                chartWidth * devicePixelRatio,
+                yAxis,
+                xAxis
             ] : [
                 chartWidth * devicePixelRatio,
-                chartHeight * devicePixelRatio
+                chartHeight * devicePixelRatio,
+                xAxis,
+                yAxis
             ],
             context = this.context || canvas.getContext('webgpu');
-
-        canvas.style.width = (canvas.width = w) + 'px';
-        canvas.style.width = (canvas.height = h) + 'px';
+        canvas.width = w;
+        canvas.height = h;
+        canvas.style.width = horiAxis.len + 'px';
+        canvas.style.width = vertAxis.len + 'px';
 
         if (context) {
             let device = this.device;
@@ -589,8 +594,8 @@ export default class ContourSeries extends ScatterSeries {
                     this.image = this.chart.renderer.image(
                         canvas.toDataURL('image/webp', 1)
                     ).attr({
-                        width: canvas.width,
-                        height: canvas.height
+                        width: this.xAxis.len,
+                        height: this.yAxis.len
                     }).add(this.group);
                 };
 
