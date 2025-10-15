@@ -1096,29 +1096,26 @@ class Series {
             // Handle name-to-x, uniqueNames
             const nameColumn = table.getColumn('name');
             if (this.xAxis?.hasNames && nameColumn) {
-                this.xColumn = Array(rowCount).fill(0)
-                    .map((_, i): number => this.xAxis.nameToX({
-                        name: nameColumn[i] as string,
-                        series: this
-                    }, column?.[i]));
-
+                this.xColumn = (nameColumn as Array<string>)
+                    .map((name, i): number => this.getX(
+                        column?.[i],
+                        name
+                    ));
                 return this.xColumn;
             }
 
             if (!column) {
                 // Vanilla auto-increment
                 this.xColumn = Array(rowCount).fill(0).map((): number =>
-                    this.autoIncrement()
+                    this.getX()
                 );
                 return this.xColumn;
             }
 
             // Else, if the x column exists
             if (this.options.relativeXValue) {
-                this.xColumn = (
-                    table.getColumn('xOption') as undefined|number[] || column
-                ).map((x): number =>
-                    this.autoIncrement(x)
+                this.xColumn = (column).map((x): number =>
+                    this.getX(x)
                 );
                 return this.xColumn;
             }
@@ -1145,6 +1142,33 @@ class Series {
         }
 
         return column || Array(matchLength ? rowCount : 0);
+    }
+
+    public getX(xOption?: number, name?: string): number {
+        let x: number|undefined;
+        if (
+            this.dataTable.getColumn('name') &&
+            this.xAxis?.hasNames
+        ) {
+            x = this.xAxis.nameToX({
+                name: name as any,
+                series: this
+            }, xOption);
+
+        } else if (typeof xOption === 'undefined') {
+            x = this.autoIncrement();
+
+        } else if (isNumber(xOption) && this.options.relativeXValue) {
+            x = this.autoIncrement(xOption);
+
+        // If x is a string, try to parse it to a datetime
+        } else if (typeof xOption === 'string') {
+            xOption = this.chart.time.parse(xOption);
+            if (isNumber(xOption)) {
+                x = xOption;
+            }
+        }
+        return x ?? xOption ?? 0;
     }
 
     /**
