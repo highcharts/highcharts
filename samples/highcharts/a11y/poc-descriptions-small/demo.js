@@ -6,8 +6,6 @@ const chart1desc = `
     <ul>
         <li>X-axis: Months January–December</li>
         <li>Y-axis: Temperature in °C, range –10°C to 20°C</li>
-    </ul>
-    <ul>
         <li>Highest value: ~17°C in July</li>
         <li>Lowest value: ~–6°C in February</li>
         <li>Summer period marked: May–September</li>
@@ -22,9 +20,7 @@ const chart2desc = `
     <ul>
         <li>X-axis: HQ, Berlin, New York, Tokyo</li>
         <li>Y-axis: Cups of Coffee, range 0–400</li>
-    </ul>
-    <ul>
-        <li>Highest value: 360 total cups in Tokyo</li>
+        <li>Highest value: 370 total cups in Tokyo</li>
         <li>Lowest value: 260 total cups in Berlin</li>
     </ul>
 `;
@@ -34,27 +30,27 @@ const chart2desc = `
 const chart3desc = `
     <p>Temperatures vary by both season and time of day, with the 
     warmest conditions in July and cooler periods at the start and 
-    end of the year. </p>
+    end of the year. Daytime generally warmer than nighttime across 
+    all months.</p>
     <ul>
         <li>X-axis: Months January–December (2023)</li>
         <li>Y-axis: Hours of the day (0:00–18:00)</li>
         <li>Range: –10°C to 20°C</li>
-    </ul>
-    <ul>
-        <li>Highest temperatures: July, reaching around 20°C</li>
-        <li>Lowest temperatures: January, dropping to –10°C</li>
-        <li>Daytime generally warmer than nighttime across all months</li>
+        <li>Highest temperature: July, reaching around 20°C</li>
+        <li>Lowest temperature: January, dropping to –10°C</li>
+        <li>Warmest month average: June</li>
+        <li>Coldest month average: December</li>
     </ul>
 `;
 
 // Gauge
 const chart4desc = `
-    <p> The needle points to about 92%, which sits in the yellow watch zone.
-    The scale is color-coded to show healthy, watch, and overspend ranges. </p>
+    <p>The scale is color-coded to show healthy, watch, 
+    and overspend ranges. </p>
     <ul>
         <li>Current value: ~92% (yellow watch zone)</li>
         <li>Threshold for watch: above 80%</li>
-        <li>Threshold for overspend: at or above 100%</li>
+        <li>Threshold for overspend: above 100%</li>
     </ul>
 `;
 
@@ -72,11 +68,12 @@ const chart5desc = `
                 <li>Safe sugar intake: 50g/day (horizontal dotted line)</li>
             </ul>
         </li>
-    </ul>
-    <ul>
-        <li>Highest sugar intake: U.S. (126g/day)</li>
-        <li>Highest fat intake: Belgium (95g/day)</li>
+        <li>Highest sugar intake: U.S. (126 g/day)</li>
+        <li>Lowest sugar intake: Russia (20 g/day)</li>
+        <li>Highest fat intake: Belgium (95 g/day)</li>
+        <li>Lowest fat intake: Portugal (63 g/day) (</li>
         <li>Highest obesity rate: U.S. (35.3%)</li>
+        <li>Lowest obesity rate: Italy (10%)</li>
         <li>Closer to safe levels: Portugal (63g fat, 52g sugar), Hungary 
         (65g fat, 51g sugar), Russia (69g fat, 20g sugar)</li>
     </ul>
@@ -90,9 +87,6 @@ const chart6desc = `
     and training costs within HR and teams like QA/Data.</p>
     <ul>
         <li>Hierarchy: Company → Department → Team → Expense type</li>
-        <li>Measure: Budget (USD), year 2025</li>
-    </ul>
-    <ul>
         <li>Largest departments: Engineering (~$7.2M), 
         Sales & Marketing (~$5.1M)</li>
         <li>Largest teams: Sales (~$3.2M), Backend (~$2.8M), 
@@ -105,6 +99,9 @@ const chart6desc = `
 
 const HC_CONFIGS = {
     chart1: { // Spline w/plotlines
+        credits: {
+            enabled: false
+        },
         custom: { autoDesc: chart1desc },
         title: {
             text: 'Helsinki Average Monthly Temperature',
@@ -214,6 +211,9 @@ const HC_CONFIGS = {
         }]
     },
     chart2: { // Stacked column
+        credits: {
+            enabled: false
+        },
         custom: { autoDesc: chart2desc },
         chart: {
             type: 'column'
@@ -250,7 +250,7 @@ const HC_CONFIGS = {
         series: [
             {
                 name: 'Espresso',
-                data: [120, 90, 80, 150],
+                data: [120, 90, 80, 160],
                 color: '#014CE5'
             },
             {
@@ -271,6 +271,9 @@ const HC_CONFIGS = {
         ]
     },
     chart3: { // Big heatmap
+        credits: {
+            enabled: false
+        },
         custom: {
             autoDesc: chart3desc
         },
@@ -360,6 +363,9 @@ const HC_CONFIGS = {
         }]
     },
     chart4: {
+        credits: {
+            enabled: false
+        },
         custom: { autoDesc: chart4desc },
         chart: {
             type: 'gauge',
@@ -448,6 +454,9 @@ const HC_CONFIGS = {
     },
 
     chart5: { // Bubble
+        credits: {
+            enabled: false
+        },
         custom: {
             autoDesc: chart5desc
         },
@@ -668,6 +677,9 @@ const HC_CONFIGS = {
         }]
     },
     chart6: { // Sunburst
+        credits: {
+            enabled: false
+        },
         custom: { autoDesc: chart6desc },
         chart: {
             height: '100%',
@@ -928,8 +940,7 @@ function updateA11yDescPanel(chart, html) {
         if (id) {
             panel.id = id;
         }
-        panel.setAttribute('role', 'region');
-        panel.setAttribute('aria-label', 'Auto-description debug');
+        panel.setAttribute('aria-hidden', 'true');
         wrapper.appendChild(panel);
     }
     panel.innerHTML = `
@@ -939,7 +950,6 @@ function updateA11yDescPanel(chart, html) {
 }
 
 const NAME_LIMIT = 3;
-const NODE_NAME_LIMIT = 6;
 
 const getTypeLabel = (rawType, isPolar) => {
     const map = {
@@ -1020,88 +1030,41 @@ function basicSummary(chart) {
     const rawType = (chart.options?.chart?.type ||
         chart.series?.[0]?.type || '').toLowerCase();
     const typeLabel = getTypeLabel(rawType, !!chart.options?.chart?.polar);
-    const xs = chart.xAxis?.[0]?.categories || [];
     const vs = visibleSeries(chart);
 
     const strategies = [
-    // Word cloud
-        () => hasType(chart, 'wordcloud') && (() => {
-            const s = firstSeriesOfType(chart, 'wordcloud');
-            const pts = visiblePoints(s);
-            const top = pts
-                .filter(p => (p.name ?? '').toString().trim())
-                .slice()
-                .sort(
-                    (a, b) => (Number(b.weight) || 0) -
-                        (Number(a.weight) || 0)
-                );
-            const namesSnippet = listWithMore(
-                top.map(p => String(p.name)), NAME_LIMIT
-            );
-            const count = pts.length;
-            return `${typeLabel} with ${count} ${plural(count, 'word')}${
-                namesSnippet ? `: ${namesSnippet}` : ''
-            }.`;
-        })(),
-
-        // Timeline (minimal)
-        () => hasType(chart, 'timeline') && (() => {
-            const s = firstSeriesOfType(chart, 'timeline');
-            const count = visiblePoints(s).length;
-            return `${typeLabel} with ${count} ${plural(count, 'event')}.`;
-        })(),
-
-        // Waterfall (steps, rename totals)
-        () => hasType(chart, 'waterfall') && (() => {
-            const s = firstSeriesOfType(chart, 'waterfall');
-            const pts = visiblePoints(s);
-            const stepNames = pts.map((p, i) => {
-                if (p.isSum) {
-                    return 'Total';
-                }
-                if (p.isIntermediateSum) {
-                    return 'Subtotal';
-                }
-                if (p.name && String(p.name).trim()) {
-                    return p.name;
-                }
-                const cat = xs[p.x];
-                return (typeof cat === 'string' && cat.trim()) ?
-                    cat : `Step ${i + 1}`;
-            });
-            const namesSnippet = listWithMore(stepNames, NAME_LIMIT);
-            const count = pts.length;
-            return `${typeLabel} with ${count} ${plural(count, 'step')}${
-                namesSnippet ? `: ${namesSnippet}` : ''
-            }.`;
-        })(),
+        () => hasType(chart, 'gauge') && (() => 'Gauge showing budget used.')(),
 
         // Sunburst (root + top-level children)
-        () => hasType(chart, 'sunburst') && (() => {
-            const s = firstSeriesOfType(chart, 'sunburst');
-            const src = (Array.isArray(s?.points) && s.points.length) ?
-                s.points :
-                (Array.isArray(s?.options?.data) ? s.options.data : []);
-            const norm = src.map((p, i) => ({
-                id: (p.id ?? p.name ?? `node-${i}`).toString(),
-                parent: (p.parent ?? '').toString(),
-                name: (p.name ?? p.id ?? `Node ${i + 1}`).toString(),
-                visible: (p.visible !== false)
-            }));
-            const vis = norm.filter(n => n.visible);
-            if (!vis.length) {
-                return `${typeLabel}.`;
-            }
-            const idSet = new Set(norm.map(n => n.id));
-            const root = vis.find(n => !n.parent || !idSet.has(n.parent)) ||
-                vis[0];
-            const topNames = vis.filter(n => n.parent === root.id)
-                .map(n => n.name);
-            const namesSnippet = listWithMore(topNames, NAME_LIMIT);
-            return `${typeLabel} with ${vis.length} nodes (root: ${
-                root.name
-            })${namesSnippet ? `: ${namesSnippet}` : ''}.`;
-        })(),
+        () => hasType(chart, 'sunburst') && (() =>
+            // const s = firstSeriesOfType(chart, 'sunburst');
+            // const src = (Array.isArray(s?.points) && s.points.length) ?
+            //     s.points :
+            //     (Array.isArray(s?.options?.data) ? s.options.data : []);
+            // const norm = src.map((p, i) => ({
+            //     id: (p.id ?? p.name ?? `node-${i}`).toString(),
+            //     parent: (p.parent ?? '').toString(),
+            //     name: (p.name ?? p.id ?? `Node ${i + 1}`).toString(),
+            //     visible: (p.visible !== false)
+            // }));
+            // const vis = norm.filter(n => n.visible);
+            // if (!vis.length) {
+            //     return `${typeLabel}.`;
+            // }
+            // const idSet = new Set(norm.map(n => n.id));
+            // const root = vis.find(n => !n.parent || !idSet.has(n.parent)) ||
+            //     vis[0];
+            // const topNames = vis.filter(n => n.parent === root.id)
+            //     .map(n => n.name);
+            // const namesSnippet = listWithMore(topNames, NAME_LIMIT);
+            // return `${typeLabel} with ${vis.length} nodes (root: ${
+            //     root.name
+            // })${namesSnippet ? `: ${namesSnippet}` : ''}.`;
+            `Sunburst chart with 62 nodes in a hierarchy with 4 levels, 
+            showing budget (USD) 2025. The first node is "Company". 
+            Second level of nodes has Engineering, Sales & Marketing, 
+            Operations and two more`
+        )(),
 
         // Bubble (points by friendly name)
         () => hasType(chart, 'bubble') && (() => {
@@ -1119,156 +1082,25 @@ function basicSummary(chart) {
             }.`;
         })(),
 
-        // Pie (slices)
-        () => hasType(chart, 'pie') && (() => {
-            const s = firstSeriesOfType(chart, 'pie');
-            const slices = visiblePoints(s);
-            const names = slices.map(p => p.name || 'Unnamed slice');
-            const formatted = seriesNamesSnippet(names.map(n => ({ name: n })));
-            return `${typeLabel} with ${slices.length} ${
-                plural(slices.length, 'slice')
-            }${formatted ? `: ${formatted}` : ''}.`;
-        })(),
-
-        // Funnel / Pyramid (stages)
-        () => (hasType(chart, 'funnel') ||
-            hasType(chart, 'pyramid')) && (() => {
-            const wanted = hasType(chart, 'funnel') ? 'funnel' : 'pyramid';
-            const s = firstSeriesOfType(chart, wanted);
-            const pts = visiblePoints(s);
-            const names = pts.map(p => p.name || 'Unnamed stage');
-            const formatted = seriesNamesSnippet(names.map(n => ({ name: n })));
-            return `${getTypeLabel(wanted, false)} with ${pts.length} ${
-                plural(pts.length, 'stage')
-            }${formatted ? `: ${formatted}` : ''}.`;
-        })(),
-
-        // Sankey (nodes + links)
-        () => hasType(chart, 'sankey') && (() => {
-            const ss = visibleSeries(chart)
-                .filter(s => seriesType(s) === 'sankey');
-            const allNodes = new Map();
-            let linkCount = 0;
-            ss.forEach(s => {
-                const nodesOpt = s.options?.nodes || [];
-                const linksOpt = s.options?.data || [];
-                linkCount += Array.isArray(linksOpt) ? linksOpt.length : 0;
-                nodesOpt.forEach(n => {
-                    const key = (n.id ?? n.name ?? '').toString();
-                    if (key) {
-                        allNodes.set(key, n.name || n.id);
-                    }
-                });
-            });
-            const nodeNames = Array.from(allNodes.values());
-            const namesSnippet = listWithMore(nodeNames, NODE_NAME_LIMIT);
-            return `${typeLabel} with ${nodeNames.length} nodes and ${
-                linkCount
-            } links${namesSnippet ? `: ${namesSnippet}` : ''}.`;
-        })(),
-
-        // Dependency wheel (nodes + links)
-        () => hasType(chart, 'dependencywheel') && (() => {
-            const s = firstSeriesOfType(chart, 'dependencywheel');
-            const allNodes = new Map();
-            const pts = Array.isArray(s?.points) ? s.points : [];
-            (s?.options?.nodes || []).forEach(n => {
-                const key = (n.id ?? n.name ?? '').toString();
-                if (key) {
-                    allNodes.set(key, n.name || n.id);
-                }
-            });
-            pts.forEach(p => {
-                const fromNm = p?.fromNode?.name ?? p?.from ?? '';
-                const toNm   = p?.toNode?.name   ?? p?.to   ?? '';
-                if (fromNm) {
-                    allNodes.set(String(fromNm), String(fromNm));
-                }
-                if (toNm)   {
-                    allNodes.set(String(toNm),   String(toNm));
-                }
-            });
-            if (!pts.length && Array.isArray(s?.options?.data)) {
-                s.options.data.forEach(row => {
-                    if (Array.isArray(row) && row.length >= 2) {
-                        const [fromNm, toNm] = row;
-                        if (fromNm) {
-                            allNodes.set(String(fromNm), String(fromNm));
-                        }
-                        if (toNm)   {
-                            allNodes.set(String(toNm),   String(toNm));
-                        }
-                    }
-                });
-            }
-            const nodeNames = Array.from(allNodes.values());
-            const linkCount = pts.length ||
-                (Array.isArray(s?.options?.data) ? s.options.data.length : 0);
-            const namesSnippet = listWithMore(nodeNames, NODE_NAME_LIMIT);
-            return `${typeLabel} with ${nodeNames.length} nodes and ${
-                linkCount
-            } links${namesSnippet ? `: ${namesSnippet}` : ''}.`;
-        })(),
-
-        () => hasType(chart, 'boxplot') && (() => {
-            const s = firstSeriesOfType(chart, 'boxplot');
-            let pts = Array.isArray(s?.points) && s.points.length ?
-                s.points.map(p => ({
-                    name: p.name ?? chart.xAxis?.[0]?.categories?.[p.x],
-                    low: p.low,
-                    q1: p.q1,
-                    median: p.median,
-                    q3: p.q3,
-                    high: p.high
-                })) :
-                [];
-            if (!pts.length) {
-                const dataOpt = s?.options?.data || [];
-                pts = dataOpt.map((arr, i) => ({
-                    name: chart.xAxis?.[0]?.categories?.[i],
-                    low: arr[0],
-                    q1: arr[1],
-                    median: arr[2],
-                    q3: arr[3],
-                    high: arr[4]
-                }));
-            }
-            const groups = pts.filter(p => Number.isFinite(p.median));
-            if (!groups.length) {
-                return 'Box plot.';
-            }
-            const namesSnippet = listWithMore(
-                groups.map(p => p.name).filter(Boolean), NAME_LIMIT
-            );
-            const medians = groups.map(p => p.median);
-            const lows = groups.map(p => p.low);
-            const highs = groups.map(p => p.high);
-            const minMed = Math.min(...medians),
-                maxMed = Math.max(...medians);
-            const minLow = Math.min(...lows),
-                maxHigh = Math.max(...highs);
-            return `Box plot with ${groups.length} ${
-                plural(groups.length, 'group')
-            }` +
-             `${namesSnippet ? ` (${namesSnippet})` : ''}. ` +
-             `Medians range ${minMed}–${maxMed}; whiskers span ${
-                 minLow
-             }–${maxHigh}.`;
-        })(),
+        () => hasType(chart, 'column') && (() => `Bar chart showing 4 series
+        stacked on top of each other per bar: Espresso, Latte, Cappuccino, a
+        nd Americano.`)(),
 
         // Heatmap / tilemap (grid)
         () => (hasType(chart, 'heatmap') ||
-            hasType(chart, 'tilemap')) && (() => {
-            const s = vs[0];
-            const xCats = chart.xAxis?.[0]?.categories || [];
-            const yCats = chart.yAxis?.[0]?.categories || [];
-            const dimension = xCats.length && yCats.length ?
-                `${xCats.length}×${yCats.length} cells` :
-                `${s?.points?.length || 0} cells`;
-            return `${typeLabel} with ${dimension}${
-                s?.name ? ` (${s.name})` : ''
-            }.`;
-        })()
+            hasType(chart, 'tilemap')) && (() =>
+            // const s = vs[0];
+            // const xCats = chart.xAxis?.[0]?.categories || [];
+            // const yCats = chart.yAxis?.[0]?.categories || [];
+            // const dimension = xCats.length && yCats.length ?
+            //     `${xCats.length}×${yCats.length} cells` :
+            //     `${s?.points?.length || 0} cells`;
+            // return `${typeLabel} with ${dimension}${
+            //     s?.name ? ` (${s.name})` : ''
+            // }.`;
+            `
+            Heatmap with 8759 cells, showing temperature per hour over a year.`
+        )()
     ];
 
     for (const strat of strategies) {
