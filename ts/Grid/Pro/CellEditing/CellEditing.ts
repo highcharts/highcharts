@@ -136,13 +136,26 @@ class CellEditing {
         const { column } = cell;
         const vp = column.viewport;
         const newValue = emContent.value;
+        const mainElement = emContent.getMainElement();
 
         if (submit) {
             const validationErrors: string[] = [];
             if (!vp.validator.validate(cell, validationErrors)) {
                 vp.validator.initErrorBox(cell, validationErrors);
+
+                // Accessibility
+                mainElement.setAttribute('aria-invalid', 'true');
+                mainElement.setAttribute(
+                    'aria-errormessage',
+                    'notification-error'
+                );
+
                 return false;
             }
+
+            // Accessibility
+            mainElement.setAttribute('aria-invalid', 'false');
+            mainElement.setAttribute('aria-errormessage', '');
 
             vp.validator.hide();
             vp.validator.errorCell = void 0;
