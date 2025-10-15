@@ -1125,7 +1125,7 @@ class Series {
 
             // X column exists in the data table, but has gaps or strings
             if (
-                column.length < (this.options.turboThreshold || 0) &&
+                column.length < (this.options.turboThreshold || Infinity) &&
                 !this.boosted
             ) {
                 const columnFilled = [...column];
