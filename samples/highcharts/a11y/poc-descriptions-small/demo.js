@@ -435,11 +435,6 @@ const HC_CONFIGS = {
             dataLabels: {
                 format: '{y}%',
                 borderWidth: 0,
-                color:
-                    (Highcharts.defaultOptions.title &&
-                     Highcharts.defaultOptions.title.style &&
-                     Highcharts.defaultOptions.title.style.color) ||
-                    '#333333',
                 style: { fontSize: '16px' }
             },
             dial: {
