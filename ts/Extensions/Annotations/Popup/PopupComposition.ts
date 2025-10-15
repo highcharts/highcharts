@@ -43,6 +43,7 @@ const {
  *
  * */
 
+/** @internal */
 interface PopupConfigObject {
     annotation: Annotation;
     formType: string;
@@ -146,4 +147,5 @@ const PopupComposition = {
     compose
 };
 
+/** @internal */
 export default PopupComposition;

@@ -46,6 +46,7 @@ const {
  *
  * */
 
+/** @internal */
 interface InputAttributes {
     value?: string;
     type?: string;
@@ -53,6 +54,7 @@ interface InputAttributes {
     labelClassName?: string;
 }
 
+/** @internal */
 export interface PopupFieldsObject {
     actionType: string;
     fields: PopupFieldsTree;
@@ -61,6 +63,7 @@ export interface PopupFieldsObject {
     type?: string;
 }
 
+/** @internal */
 export interface PopupFieldsTree {
     [key: string]: (string | PopupFieldsTree);
 }
@@ -146,6 +149,7 @@ function getFields(
  *
  * */
 
+/** @internal */
 class Popup extends BaseForm {
 
     /* *
@@ -384,6 +388,7 @@ class Popup extends BaseForm {
  *
  * */
 
+/** @internal */
 interface Popup {
     readonly annotations: typeof PopupAnnotations;
     readonly indicators: typeof PopupIndicators;
@@ -402,4 +407,5 @@ extend(Popup.prototype, {
  *
  * */
 
+/** @internal */
 export default Popup;

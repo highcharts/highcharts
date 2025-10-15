@@ -342,4 +342,5 @@ const PopupAnnotations = {
     addToolbar
 };
 
+/** @internal */
 export default PopupAnnotations;

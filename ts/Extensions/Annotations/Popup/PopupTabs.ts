@@ -214,4 +214,5 @@ const PopupTabs = {
     init
 };
 
+/** @internal */
 export default PopupTabs;

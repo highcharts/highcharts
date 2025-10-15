@@ -51,12 +51,14 @@ const {
  *
  * */
 
+/** @internal */
 interface FilteredSeries {
     indicatorFullName: string;
     indicatorType: string;
     series: SMAIndicator;
 }
 
+/** @internal */
 interface IndicatorNameCouple {
     indicatorFullName: string;
     indicatorType: string;
@@ -1075,4 +1077,5 @@ const PopupIndicators = {
     getAmount
 };
 
+/** @internal */
 export default PopupIndicators;
