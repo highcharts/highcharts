@@ -210,7 +210,7 @@
 
     /* Default borders */
     --ig-border-radius: var(--hcg-border-radius, 0);
-    --ig-border-width: var(--hcg-border-width, 0px);
+    --ig-border-width: var(--hcg-border-width, 0);
     --ig-border-style: var(--hcg-border-style, solid);
     --ig-border-color: var(--hcg-border-color, var(--ig-color));
     --ig-border: var(--ig-border-width) var(--ig-border-style) var(--ig-border-color);
@@ -1621,10 +1621,10 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     --hcg-border-radius: 5px;
     --hcg-border-width: 1px;
     --hcg-caption-font-size: 18px;
-    --hcg-column-border-width: 0px;
+    --hcg-column-border-width: 0;
     --hcg-credits-padding: 5px;
     --hcg-font-size: 15px;
-    --hcg-header-column-border-width: 0px;
+    --hcg-header-column-border-width: 0;
     --hcg-header-vertical-padding: 10px;
     --hcg-padding: 15px;
 }
