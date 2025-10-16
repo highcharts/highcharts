@@ -166,29 +166,43 @@ async function replaceMapData(route: Route) {
 }
 
 export async function replaceSampleData(route: Route) {
-    const url = route.request().url();
-    const match = url.match(/(?:samples\/data\/|demo-live-data.+\/)(.+\.*)/u);
+    const requestUrl = route.request().url();
 
-    if (match?.length) {
-        const filename = match[1];
-        try {
-            const samplePath = join('samples/data', filename);
+    try {
+        const parsed = new URL(requestUrl);
+        let relativePath: string | undefined;
+
+        if (parsed.hostname === 'demo-live-data.highcharts.com') {
+            relativePath = parsed.pathname.replace(/^\/+/, '');
+        } else {
+            const match = parsed.pathname.match(/samples\/data\/(.+)/);
+            if (match) {
+                relativePath = match[1];
+            }
+        }
+
+        if (relativePath) {
+            const normalized = decodeURIComponent(
+                relativePath.replace(/^\/+/, '')
+            );
+            const samplePath = join('samples/data', normalized);
             const filePath = join(__dirname, '..', samplePath);
             const data = await readFile(filePath, 'utf8');
 
             test.info().annotations.push({
                 type: 'redirect',
-                description: `${url} --> ${samplePath}`
+                description: `${requestUrl} --> ${samplePath}`
             });
 
-            return route.fulfill({
+            await route.fulfill({
                 status: 200,
-                contentType: contentTypes[extname(filename)] ?? 'text/plain',
+                contentType: contentTypes[extname(normalized)] ?? 'text/plain',
                 body: data
             });
-        } catch (error) {
-            console.error(error);
+            return;
         }
+    } catch (error) {
+        console.error(error);
     }
 
     await route.abort();

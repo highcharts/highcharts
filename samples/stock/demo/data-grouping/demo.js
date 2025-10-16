@@ -13,12 +13,10 @@
         chart: {
             events: {
                 load: function () {
-                    if (!window.TestController) {
-                        this.setTitle(null, {
-                            text:
-                                'Built chart in ' + (new Date() - start) + 'ms'
-                        });
-                    }
+                    this.setTitle(null, {
+                        text:
+                        'Built chart in ' + (new Date() - start) + 'ms'
+                    });
                 }
             },
             zooming: {

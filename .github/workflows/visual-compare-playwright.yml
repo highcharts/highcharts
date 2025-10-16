@@ -62,7 +62,7 @@ jobs:
           PLAYWRIGHT_HTML_REPORT=playwright-report/master/highcharts \
           npx playwright test --project visual --update-snapshots
         env:
-          VISUAL_TEST_PATH: samples/highcharts/demo
+          VISUAL_TEST_PATH: samples/highcharts
 
       - name: Generate master snapshots (Stock)
         continue-on-error: true
@@ -70,7 +70,7 @@ jobs:
           PLAYWRIGHT_HTML_REPORT=playwright-report/master/stock \
           npx playwright test --project visual --update-snapshots
         env:
-          VISUAL_TEST_PATH: samples/stock/demo
+          VISUAL_TEST_PATH: samples/stock
 
       - name: Generate master snapshots (Maps)
         continue-on-error: true
@@ -78,7 +78,7 @@ jobs:
           PLAYWRIGHT_HTML_REPORT=playwright-report/master/maps \
           npx playwright test --project visual --update-snapshots
         env:
-          VISUAL_TEST_PATH: samples/maps/demo
+          VISUAL_TEST_PATH: samples/maps
 
       - name: Generate master snapshots (Gantt)
         continue-on-error: true
@@ -86,7 +86,7 @@ jobs:
           PLAYWRIGHT_HTML_REPORT=playwright-report/master/gantt \
           npx playwright test --project visual --update-snapshots
         env:
-          VISUAL_TEST_PATH: samples/gantt/demo
+          VISUAL_TEST_PATH: samples/gantt
 
       - name: Checkout current branch
         uses: actions/checkout@v4
@@ -115,7 +115,7 @@ jobs:
           PLAYWRIGHT_HTML_REPORT=playwright-report/pr/highcharts \
           npx playwright test --project visual
         env:
-          VISUAL_TEST_PATH: samples/highcharts/demo
+          VISUAL_TEST_PATH: samples/highcharts
         continue-on-error: true
 
       - name: Run Playwright visual comparison (Stock)
@@ -124,7 +124,7 @@ jobs:
           PLAYWRIGHT_HTML_REPORT=playwright-report/pr/stock \
           npx playwright test --project visual
         env:
-          VISUAL_TEST_PATH: samples/stock/demo
+          VISUAL_TEST_PATH: samples/stock
         continue-on-error: true
 
       - name: Run Playwright visual comparison (Maps)
@@ -133,7 +133,7 @@ jobs:
           PLAYWRIGHT_HTML_REPORT=playwright-report/pr/maps \
           npx playwright test --project visual
         env:
-          VISUAL_TEST_PATH: samples/maps/demo
+          VISUAL_TEST_PATH: samples/maps
         continue-on-error: true
 
       - name: Run Playwright visual comparison (Gantt)
@@ -142,7 +142,7 @@ jobs:
           PLAYWRIGHT_HTML_REPORT=playwright-report/pr/gantt \
           npx playwright test --project visual
         env:
-          VISUAL_TEST_PATH: samples/gantt/demo
+          VISUAL_TEST_PATH: samples/gantt
         continue-on-error: true
 
       - name: Upload Playwright artifacts
