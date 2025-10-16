@@ -9,6 +9,23 @@ import { glob } from 'glob';
 import { waitForScriptLoadWithTimeout} from '../qunit/utils/timeout-handler.ts';
 
 
+function transformVisualSampleScript(script: string | undefined): string {
+    let transformed = script ?? '';
+
+    transformed = transformed.replace(/setInterval/g, 'Highcharts.noop');
+
+    transformed = transformed.replace(
+        /enableSimulation:\s*true/g,
+        'enableSimulation: false'
+    );
+
+    transformed = transformed.replace(/(\s)animation:\s/g, '$1_animation: ');
+
+    return transformed;
+}
+
+const FIXED_CLOCK_TIME = '2024-01-01T00:00:00.000Z';
+
 test.describe('Visual tests', () => {
     test.describe.configure({
         timeout: 30_000,
@@ -29,7 +46,9 @@ test.describe('Visual tests', () => {
         context = await browser.newContext({
             viewport: { width: 800, height: 600 }
         });
+        await context.clock.install({ time: FIXED_CLOCK_TIME });
         page = await context.newPage();
+        await context.clock.setFixedTime(FIXED_CLOCK_TIME);
 
         await setupRoutes(page); // need to setup routes separately
 
@@ -87,7 +106,14 @@ test.describe('Visual tests', () => {
             if (window.Highcharts && Array.isArray(window.Highcharts.charts)) {
                 window.Highcharts.charts.forEach((chart) => {
                     if (chart && typeof chart.destroy === 'function') {
-                        chart.destroy();
+                        try {
+                            chart.destroy();
+                        } catch (error) {
+                            console.error(
+                                '[visual cleanup] chart.destroy failed',
+                                error
+                            );
+                        }
                     }
                 });
             }
@@ -132,7 +158,6 @@ test.describe('Visual tests', () => {
 
             // Clock
             'samples/highcharts/demo/dynamic-update/demo.js',
-            'samples/highcharts/demo/gauge-clock/demo.js',
             'samples/highcharts/demo/gauge-vu-meter/demo.js',
 
             // Too heavy
@@ -186,6 +211,9 @@ test.describe('Visual tests', () => {
 
     for (const samplePath of filteredSamples){
         test(samplePath + '', async () =>{
+            if (context) {
+                await context.clock.setFixedTime(FIXED_CLOCK_TIME);
+            }
             const sample = getSample(dirname(samplePath));
 
             if (
@@ -199,7 +227,7 @@ test.describe('Visual tests', () => {
             testResults.total++;
             // Load script with timeout handling
             const scriptPromise = page.addScriptTag({
-                content: sample.script
+                content: transformVisualSampleScript(sample.script)
             });
             const scriptHandle = await waitForScriptLoadWithTimeout(
                 page,
