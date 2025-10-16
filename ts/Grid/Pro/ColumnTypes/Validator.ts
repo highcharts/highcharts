@@ -386,7 +386,7 @@ namespace Validator {
         ignoreCaseUnique: {
             validate: function ({ rawValue }): boolean {
                 const oldValue = String(this.value).toLowerCase();
-                const rowValueString = String(rawValue).toLowerCase();
+                const rowValueString = rawValue.toLowerCase();
 
                 if (oldValue === rowValueString) {
                     return true;
