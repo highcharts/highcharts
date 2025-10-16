@@ -1075,6 +1075,7 @@ class Series {
         // column for the series. The `xColumn` array is cached and reused, but
         // cleared on series update.
         if (columnName === 'x' && this.tempNoXColumn && !usingModified) {
+            const nameColumn = table.getColumn('name', true);
 
             // Return cached xColumn if it exists
             if (this.xColumn) {
@@ -1085,11 +1086,16 @@ class Series {
             this.xIncrement = null;
 
             // Under these conditions, we need to generate the x data
-            const nameColumn = table.getColumn('name');
             if (
                 !column ||
                 this.xAxis?.hasNames ||
-                this.options.relativeXValue
+                this.options.relativeXValue ||
+                // X column exists in the data table, but has gaps or strings
+                (
+                    column.length < (this.options.turboThreshold || Infinity) &&
+                    !this.boosted &&
+                    column.some((x): boolean => !isNumber(x))
+                )
             ) {
                 return (
                     this.xColumn = Array(rowCount).fill(0).map((_, i): number =>
@@ -1100,21 +1106,6 @@ class Series {
                     )
                 );
             }
-
-            // X column exists in the data table, but has gaps or strings
-            if (
-                column.length < (this.options.turboThreshold || Infinity) &&
-                !this.boosted
-            ) {
-                const columnFilled = [...column];
-                if (columnFilled.some((x): boolean => !isNumber(x))) {
-                    return (
-                        this.xColumn = columnFilled.map((x): number =>
-                            (isNumber(x) ? x : this.getX(x))
-                        )
-                    );
-                }
-            }
         }
 
         return column || Array(matchLength ? rowCount : 0);
@@ -1123,7 +1114,7 @@ class Series {
     public getX(xOption?: number, name?: string): number {
         let x: number|undefined;
         if (
-            this.dataTable.getColumn('name') &&
+            this.dataTable.getColumn('name', true) &&
             this.xAxis?.hasNames
         ) {
             x = this.xAxis.nameToX({
