@@ -1088,7 +1088,7 @@ class Series {
             const nameColumn = table.getColumn('name');
             if (
                 !column ||
-                (this.xAxis?.hasNames && nameColumn) ||
+                this.xAxis?.hasNames ||
                 this.options.relativeXValue
             ) {
                 return (
@@ -1532,11 +1532,7 @@ class Series {
                 // we assume that all the rest are defined the same way.
                 // Although the 'for' loops are similar, they are repeated
                 // inside each if-else conditional for max performance.
-                let runTurbo = (
-                    turboThreshold &&
-                    !options.relativeXValue &&
-                    dataLength > turboThreshold
-                );
+                let runTurbo = turboThreshold && dataLength > turboThreshold;
                 if (runTurbo) {
 
                     const firstPoint = series.getFirstValidPoint(data),
@@ -1570,25 +1566,47 @@ class Series {
                             // When autoX is 1, the x is skipped: [low, high].
                             // When autoX is 0, the x is included: [x, low,
                             // high]
-                            const autoX = firstPoint.length === valueCount ?
-                                    1 : 0,
-                                colArray = new Array(dataColumnKeys.length)
-                                    .fill(0).map((): Array<number> => []);
-                            for (const pt of data as number[][]) {
-                                if (autoX) {
-                                    colArray[0].push(this.autoIncrement());
-                                }
-                                for (let j = autoX; j <= valueCount; j++) {
-                                    colArray[j]?.push(pt[j - autoX]);
-                                }
-                            }
+                            if (this.tempNoXColumn) {
+                                const autoX = firstPoint.length === valueCount,
+                                    colArray = new Array(firstPoint.length)
+                                        .fill(0).map((): Array<number> => []);
 
-                            table.setColumns(dataColumnKeys.reduce(
-                                (columns, columnName, i):
-                                DataTable.ColumnCollection => {
-                                    columns[columnName] = colArray[i];
-                                    return columns;
-                                }, {} as DataTable.ColumnCollection));
+                                for (const pt of data as number[][]) {
+                                    for (let j = 0; j <= valueCount; j++) {
+                                        colArray[j]?.push(pt[j]);
+                                    }
+                                }
+
+                                table.setColumns((
+                                    autoX ? pointArrayMap : dataColumnKeys
+                                ).reduce(
+                                    (columns, columnName, i):
+                                    DataTable.ColumnCollection => {
+                                        columns[columnName] = colArray[i];
+                                        return columns;
+                                    }, {} as DataTable.ColumnCollection));
+
+                            } else {
+                                const autoX = firstPoint.length === valueCount ?
+                                        1 : 0,
+                                    colArray = new Array(dataColumnKeys.length)
+                                        .fill(0).map((): Array<number> => []);
+                                for (const pt of data as number[][]) {
+                                    if (autoX) {
+                                        colArray[0].push(this.autoIncrement());
+                                    }
+                                    for (let j = autoX; j <= valueCount; j++) {
+                                        colArray[j]?.push(pt[j - autoX]);
+                                    }
+                                }
+
+                                table.setColumns(dataColumnKeys.reduce(
+                                    (columns, columnName, i):
+                                    DataTable.ColumnCollection => {
+                                        columns[columnName] = colArray[i];
+                                        return columns;
+                                    }, {} as DataTable.ColumnCollection));
+                            }
 
                         } else { // [x, y]
                             if (keys) {
