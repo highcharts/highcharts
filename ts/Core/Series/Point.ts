@@ -1154,7 +1154,7 @@ class Point {
             // Redraw
             series.isDirty = series.isDirtyData = true;
             if (series.xColumn && 'x' in pointOptions) {
-                series.xColumn[index] = NaN; // Force rebuild
+                series.xColumn[index] = series.getX(pointOptions.x);
             }
 
             if (!series.fixedBox && series.hasCartesianSeries) { // #1906, #2320

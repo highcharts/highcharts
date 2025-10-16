@@ -1069,24 +1069,13 @@ class Series {
         const table = modified ? this.dataTable.modified : this.dataTable,
             rowCount = table.rowCount,
             usingModified = this.dataTable !== table,
-            column = table.getColumn(columnName, true) as Array<number>,
-            points = this.points || [];
+            column = table.getColumn(columnName, true) as Array<number>;
 
         // When there is no x column in the data set, generate an internal x
         // column for the series. The `xColumn` array is cached and reused, but
         // cleared on series update.
         if (columnName === 'x' && this.tempNoXColumn && !usingModified) {
             if (this.xColumn) {
-
-                // When addPoint or Point.update has inserted NaN values
-                if (this.xColumn.some(isNaN)) {
-                    this.xColumn = this.xColumn.map((x, i): number => (
-                        isNaN(x) ?
-                            (points[i]?.x ?? this.autoIncrement(i)) :
-                            x
-                    ));
-                }
-
                 return this.xColumn;
             }
 
@@ -4407,7 +4396,7 @@ class Series {
         // Insert the row at the given index
         if (this.tempNoXColumn) {
             table.setRow(pointOptions as DataTable.RowObject, i, true);
-            this.xColumn?.splice(i, 0, x ?? NaN);
+            this.xColumn?.splice(i, 0, this.getX(x as any));
         } else {
             const row: DataTable.RowObject = { x };
             if (defined(xOption)) {
