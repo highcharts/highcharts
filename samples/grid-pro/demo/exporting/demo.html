@@ -1,0 +1,24 @@
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/grid-pro.js"></script>
+
+<div class="demo">
+    <div id="container"></div>
+    <p class="highcharts-description">
+        This demo showcases the exporting functionality of Highcharts Grid Pro.
+        You can export the grid data to CSV and JSON formats.<br />
+        The checkbox controls whether the export includes modified data
+        (after filtering/sorting/etc.) or the original data.
+        Modified data is exported by default.
+    </p>
+    <div class="controls">
+        <button id="csvExport">Export to CSV</button>
+        <button id="jsonExport">Export to JSON</button>
+        <button id="csvDownload">Download CSV</button>
+        <button id="jsonDownload">Download JSON</button>
+        <label>
+            <input type="checkbox" id="modifiedDataToggle" checked />
+            Export modified data
+        </label>
+    </div>
+    <h2>Exported file content</h2>
+    <textarea id="result"></textarea>
+</div>
