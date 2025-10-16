@@ -1,4 +1,6 @@
 /* eslint-disable playwright/no-conditional-in-test */
+import { Page, BrowserContext } from '@playwright/test';
+import type { ElementHandle } from '@playwright/test';
 import { test, expect, setupRoutes } from '../fixtures.ts';
 import { getKarmaScripts, getSample } from '../utils.ts';
 import { join, dirname, relative } from 'node:path';
@@ -13,6 +15,9 @@ test.describe('Visual tests', () => {
         // retries: 1 // retry once
     });
 
+    let page: Page;
+    let context: BrowserContext;
+
     // Track test results for summary
     const testResults = {
         passed: 0,
@@ -20,11 +25,13 @@ test.describe('Visual tests', () => {
         total: 0
     };
 
-    test.beforeEach(async ({ page }) => {
+    test.beforeAll(async ({ browser }) => {
+        context = await browser.newContext({
+            viewport: { width: 800, height: 600 }
+        });
+        page = await context.newPage();
 
-        await page.setViewportSize({ width: 800, height: 600 });
         await setupRoutes(page); // need to setup routes separately
-
 
         await page.setContent(`
         <div id="container" style="width: 600px; margin 0 auto"></div>
@@ -57,6 +64,40 @@ test.describe('Visual tests', () => {
                 });
             }
         });
+    });
+
+    test.afterEach(async () => {
+        if (!page) {
+            return;
+        }
+        await page.evaluate(() => {
+            const scripts = document.querySelectorAll('#visual-test-script');
+            scripts.forEach((script) => script.remove());
+
+            const container = document.getElementById('container');
+            if (container) {
+                container.innerHTML = '';
+            }
+
+            const output = document.getElementById('output');
+            if (output) {
+                output.innerHTML = '';
+            }
+
+            if (window.Highcharts && Array.isArray(window.Highcharts.charts)) {
+                window.Highcharts.charts.forEach((chart) => {
+                    if (chart && typeof chart.destroy === 'function') {
+                        chart.destroy();
+                    }
+                });
+            }
+        });
+    });
+
+    test.afterAll(async () => {
+        if (context) {
+            await context.close();
+        }
     });
 
     const pathEnv = process.env.VISUAL_TEST_PATH ?? '';
@@ -144,7 +185,7 @@ test.describe('Visual tests', () => {
         samples;
 
     for (const samplePath of filteredSamples){
-        test(samplePath + '', async ({ page }) =>{
+        test(samplePath + '', async () =>{
             const sample = getSample(dirname(samplePath));
 
             if (
@@ -160,12 +201,17 @@ test.describe('Visual tests', () => {
             const scriptPromise = page.addScriptTag({
                 content: sample.script
             });
-            await waitForScriptLoadWithTimeout(
+            const scriptHandle = await waitForScriptLoadWithTimeout(
                 page,
                 scriptPromise,
                 samplePath,
                 10000 // 10 second timeout for script loading
-            );
+            ) as ElementHandle<HTMLScriptElement> | null;
+            if (scriptHandle) {
+                await scriptHandle.evaluate((element: HTMLScriptElement) => {
+                    element.id = 'visual-test-script';
+                });
+            }
 
             await expect(page).toHaveScreenshot();
         });
