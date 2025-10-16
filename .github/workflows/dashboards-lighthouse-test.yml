@@ -57,7 +57,7 @@ jobs:
       - name: Build Dashboards
         run: |
           cd highcharts
-          npx gulp dashboards/scripts
+          npx gulp scripts --product Dashboards
 
       - name: Checkout utils
         uses: actions/checkout@v4
@@ -110,7 +110,7 @@ jobs:
       - name: Build Dashboards
         run: |
           cd highcharts
-          npx gulp dashboards/scripts
+          npx gulp scripts --product Dashboards
 
       - name: Run cypress via action
         uses: cypress-io/github-action@v5
