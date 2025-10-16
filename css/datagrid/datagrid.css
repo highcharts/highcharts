@@ -1462,7 +1462,8 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     vertical-align: baseline;
     font: inherit;
     color: var(--ig-color);
-    font-size: 0.6rem;
+    font-size: 0.625rem;
+    white-space: nowrap;
     font-weight: normal;
     align-self: end;
 }
@@ -1764,22 +1765,22 @@ button + .hcg-pagination-page,
     padding: 5px;
 }
 
-.hcg-menu-popup-header,
-.highcharts-datagrid-menu-popup-header {
+.hcg-menu-header,
+.highcharts-datagrid-menu-header {
     font-size: 0.75rem;
     padding: 3px;
     margin-bottom: 5px;
 }
 
-.hcg-menu-popup-header-category,
-.highcharts-datagrid-menu-popup-header-category {
+.hcg-menu-header-category,
+.highcharts-datagrid-menu-header-category {
     color: var(--ig-color-secondary);
     opacity: 0.5;
     user-select: none;
 }
 
-.hcg-menu-popup-container,
-.highcharts-datagrid-menu-popup-container {
+.hcg-menu-container,
+.highcharts-datagrid-menu-container {
     --icon-size: 16px;
 
     margin: 0;
@@ -1790,8 +1791,8 @@ button + .hcg-pagination-page,
     padding: 0;
 }
 
-.hcg-menu-popup-item,
-.highcharts-datagrid-menu-popup-item {
+.hcg-menu-item,
+.highcharts-datagrid-menu-item {
     display: flex;
     align-items: center;
     gap: 2px;
@@ -1807,39 +1808,39 @@ button + .hcg-pagination-page,
     border-radius: 5px;
 }
 
-.hcg-menu-popup-item:not(:disabled),
-.highcharts-datagrid-menu-popup-item:not(:disabled) {
+.hcg-menu-item:not(:disabled),
+.highcharts-datagrid-menu-item:not(:disabled) {
     cursor: pointer;
 }
 
-.highcharts-datagrid-menu-popup-item:focus-visible,
-.hcg-menu-popup-item:focus-visible {
+.highcharts-datagrid-menu-item:focus-visible,
+.hcg-menu-item:focus-visible {
     outline: none;
     box-shadow: 0 0 0 2px var(--hcg-focus-ring-color);
 }
 
-.highcharts-datagrid-menu-popup-item:focus-visible,
-.hcg-menu-popup-item:focus-visible,
-.hcg-menu-popup-item:not(:disabled):hover,
-.hcg-menu-popup-item.highlighted,
-.highcharts-datagrid-menu-popup-item:not(:disabled):hover,
-.highcharts-datagrid-menu-popup-item.highlighted {
+.highcharts-datagrid-menu-item:focus-visible,
+.hcg-menu-item:focus-visible,
+.hcg-menu-item:not(:disabled):hover,
+.hcg-menu-item.highlighted,
+.highcharts-datagrid-menu-item:not(:disabled):hover,
+.highcharts-datagrid-menu-item.highlighted {
     background-color: var(--hcg-context-menu-item-hover-background);
     border: var(--hcg-context-menu-item-hover-border);
 }
 
-.hcg-menu-popup-item.active:not(:disabled):hover,
-.hcg-menu-popup-item.active.highlighted,
-.highcharts-datagrid-menu-popup-item.active:not(:disabled):hover,
-.highcharts-datagrid-menu-popup-item.active.highlighted,
-.hcg-menu-popup-item.active,
-.highcharts-datagrid-menu-popup-item.active {
+.hcg-menu-item.active:not(:disabled):hover,
+.hcg-menu-item.active.highlighted,
+.highcharts-datagrid-menu-item.active:not(:disabled):hover,
+.highcharts-datagrid-menu-item.active.highlighted,
+.hcg-menu-item.active,
+.highcharts-datagrid-menu-item.active {
     background-color: var(--hcg-context-menu-item-active-background);
     border: var(--hcg-context-menu-item-active-border);
 }
 
-.hcg-menu-popup-item-icon,
-.highcharts-datagrid-menu-popup-item-icon {
+.hcg-menu-item-icon,
+.highcharts-datagrid-menu-item-icon {
     flex: 0 0 var(--icon-size);
     width: var(--icon-size);
     height: var(--icon-size);
@@ -1849,30 +1850,30 @@ button + .hcg-pagination-page,
     opacity: 0.6;
 }
 
-.hcg-menu-popup-item.active .hcg-menu-popup-item-icon,
-.hcg-menu-popup-item.highlighted .hcg-menu-popup-item-icon,
-.hcg-menu-popup-item:not(:disabled):hover .hcg-menu-popup-item-icon,
-.highcharts-datagrid-menu-popup-item.active .highcharts-datagrid-menu-popup-item-icon,
-.highcharts-datagrid-menu-popup-item.highlighted .highcharts-datagrid-menu-popup-item-icon,
-.highcharts-datagrid-menu-popup-item:not(:disabled):hover .highcharts-datagrid-menu-popup-item-icon {
+.hcg-menu-item.active .hcg-menu-item-icon,
+.hcg-menu-item.highlighted .hcg-menu-item-icon,
+.hcg-menu-item:not(:disabled):hover .hcg-menu-item-icon,
+.highcharts-datagrid-menu-item.active .highcharts-datagrid-menu-item-icon,
+.highcharts-datagrid-menu-item.highlighted .highcharts-datagrid-menu-item-icon,
+.highcharts-datagrid-menu-item:not(:disabled):hover .highcharts-datagrid-menu-item-icon {
     opacity: 1;
 }
 
-.hcg-menu-popup-item-icon .hcg-icon,
-.highcharts-datagrid-menu-popup-item-icon .highcharts-datagrid-icon {
+.hcg-menu-item-icon .hcg-icon,
+.highcharts-datagrid-menu-item-icon .highcharts-datagrid-icon {
     color: var(--ig-icon-hover-color);
 }
 
-.hcg-menu-popup-item-label,
-.highcharts-datagrid-menu-popup-item-label {
+.hcg-menu-item-label,
+.highcharts-datagrid-menu-item-label {
     flex: 1 1 auto;
     min-width: 0;
     text-align: left;
     padding-left: 0.75rem;
 }
 
-.hcg-menu-popup-divider,
-.highcharts-datagrid-menu-popup-divider {
+.hcg-menu-divider,
+.highcharts-datagrid-menu-divider {
     border-top: 1px solid var(--hcg-popup-border-color);
     height: 0;
 }

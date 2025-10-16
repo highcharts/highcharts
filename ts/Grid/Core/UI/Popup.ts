@@ -161,7 +161,7 @@ abstract class Popup {
         this.isVisible = true;
 
         this.grid.contentWrapper?.appendChild(this.container);
-        this.positionPopup(anchorElement);
+        this.position(anchorElement);
         this.addEventListeners();
 
         this.grid.popups.add(this);
@@ -214,7 +214,7 @@ abstract class Popup {
      */
     public reflow(): void {
         if (this.anchorElement?.isConnected) {
-            this.positionPopup(this.anchorElement);
+            this.position(this.anchorElement);
         } else {
             this.hide();
         }
@@ -227,7 +227,7 @@ abstract class Popup {
      * The element to position relative to. If not provided, the popup will be
      * positioned relative to the parent element.
      */
-    private positionPopup(anchorElement?: HTMLElement): void {
+    private position(anchorElement?: HTMLElement): void {
         const wrapper = this.grid.contentWrapper;
         if (!this.container || !this.content || !wrapper) {
             return;
@@ -241,14 +241,18 @@ abstract class Popup {
         const top = next ? anchorRect.top : anchorRect.bottom + 4;
         let left = next ? anchorRect.right + 3 : anchorRect.left;
 
-        if (left < parentRect.left) {
-            left = parentRect.left;
-        }
-
+        // If popup's right side is after the parent's right side, shift popup
+        // to the left of the anchor element.
         if (left + popupRect.width > parentRect.width) {
             left = -popupRect.width + (
                 next ? anchorRect.left + 4 : anchorRect.right
             );
+        }
+
+        // If popup's left side is before the parent's left side,
+        // shift popup so it's aligned to parent's left.
+        if (left < parentRect.left) {
+            left = parentRect.left;
         }
 
         // Apply positioning
@@ -291,18 +295,18 @@ abstract class Popup {
         }
 
         const container = makeHTMLElement('div', {
-            className: Globals.getClassName('menuPopupHeader')
+            className: Globals.getClassName('menuHeader')
         }, this.content);
 
         if (category) {
             makeHTMLElement('span', {
-                className: Globals.getClassName('menuPopupHeaderCategory'),
+                className: Globals.getClassName('menuHeaderCategory'),
                 innerText: category + ' '
             }, container);
         }
 
         makeHTMLElement('span', {
-            className: Globals.getClassName('menuPopupHeaderName'),
+            className: Globals.getClassName('menuHeaderName'),
             innerText: label
         }, container);
 

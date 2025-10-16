@@ -92,7 +92,11 @@ function updateVendor() {
 
         if (checksum !== expected) {
             console.log({ checksum, expected });
-            throw new Error('Checksum mismatch');
+            throw new Error(
+                checksum.startsWith('87c7882e51dc8f51cba26863a1353e5141488c5') ?
+                    'Remote failure' :
+                    'Checksum mismatch'
+            );
         }
     }
 

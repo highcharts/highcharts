@@ -187,10 +187,10 @@ class ColumnFiltering {
      */
     public onKeyDown = (e: KeyboardEvent): void => {
         const contentOrder: HTMLElement[] = [];
-        if (this.filterSelect) {
+        if (this.filterSelect && !this.filterSelect.disabled) {
             contentOrder.push(this.filterSelect);
         }
-        if (this.filterInput) {
+        if (this.filterInput && !this.filterInput.disabled) {
             contentOrder.push(this.filterInput);
         }
         if (this.clearButton && !this.clearButton.disabled) {
@@ -199,17 +199,14 @@ class ColumnFiltering {
 
         const direction = {
             'ArrowDown': 1,
-            'ArrowUp': -1,
-            'ArrowLeft': 1,
-            'ArrowRight': -1
+            'ArrowUp': -1
         }[e.key];
 
         if (direction) {
             e.preventDefault();
             const currentIndex = contentOrder.indexOf(e.target as HTMLElement);
-            contentOrder[
-                Math.abs(currentIndex + direction) % contentOrder.length
-            ].focus();
+            const n = contentOrder.length;
+            contentOrder[(currentIndex + direction + n) % n].focus();
             return;
         }
 
@@ -268,17 +265,22 @@ class ColumnFiltering {
             clearButton.disabled = !filteringApplied;
         }
 
-        if (
-            this.column.dataType === 'number' &&
-            defined(value) &&
-            value !== ''
-        ) {
-            condition.value = Number(value);
+
+        if (defined(value) && value !== '' && typeof value !== 'number') {
+            switch (this.column.dataType) {
+                case 'number':
+                    condition.value = Number(value);
+                    break;
+                case 'datetime':
+                    condition.value = new Date(`${value}Z`).getTime();
+                    break;
+            }
         }
 
         // Update the userOptions.
         void this.column.update({ filtering: condition }, false);
         filteringController.addColumnFilterCondition(columnId, condition);
+        this.disableInputIfNeeded();
 
         await querying.proceed();
         await viewport.updateRows();
@@ -392,7 +394,6 @@ class ColumnFiltering {
 
         // Attach event listener.
         this.filterSelect.addEventListener('change', (): void => {
-            this.disableInputIfNeeded();
             this.applyFilterFromForm();
         });
     }

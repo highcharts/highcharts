@@ -125,6 +125,11 @@ abstract class DataConnector implements DataEvent.Emitter<DataConnector.Event> {
         const dataTables = options?.dataTables;
         let dataTableIndex = 0;
 
+        if (options.options) {
+            // eslint-disable-next-line no-console
+            console.error('The `DataConnectorOptions.options` property was removed in Dashboards v4.0.0. Check how to upgrade your connector to use the new options structure here: https://api.highcharts.com/dashboards/#interfaces/Data_DataTableOptions.DataTableOptions-1');
+        }
+
         if (dataTables && dataTables?.length > 0) {
             for (let i = 0, iEnd = dataTables.length; i < iEnd; ++i) {
                 const dataTable = dataTables[i];

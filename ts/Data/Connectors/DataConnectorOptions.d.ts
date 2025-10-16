@@ -38,6 +38,16 @@ export interface DataConnectorOptions {
     dataTables?: DataTableConnectorOptions[];
     dataModifier?: DataModifierTypeOptions;
     metadata?: Metadata;
+
+    /**
+     * @internal
+     * @private
+     * @deprecated
+     * Removed in Dashboards v4.0.0
+     *
+     * {@link https://api.highcharts.com/dashboards/#interfaces/Data_Connectors_DataConnectorOptions.DataConnectorOptions-1 | Check how to upgrade your connector to use the new options structure}
+     */
+    options?: never;
 }
 
 export interface DataTableConnectorOptions {

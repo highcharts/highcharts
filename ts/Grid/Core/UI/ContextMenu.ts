@@ -85,7 +85,7 @@ abstract class ContextMenu extends Popup {
         }
 
         this.itemsContainer = makeHTMLElement('ul', {
-            className: Globals.getClassName('menuPopupContainer')
+            className: Globals.getClassName('menuContainer')
         }, this.content);
 
         return this.itemsContainer;
@@ -119,7 +119,7 @@ abstract class ContextMenu extends Popup {
         }
 
         return makeHTMLElement('li', {
-            className: Globals.getClassName('menuPopupDivider')
+            className: Globals.getClassName('menuDivider')
         }, this.itemsContainer);
     }
 
