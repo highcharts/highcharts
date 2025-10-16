@@ -48,8 +48,9 @@ function jsDocESMDTS() {
             file.endsWith('.d.ts') &&
             !file.includes('dashboards') &&
             !file.includes('datagrid') &&
-            !file.includes('grid') &&
-            !file.includes('es-modules')
+            !file.includes('es-modules') &&
+            !file.includes('esm') &&
+            !file.includes('grid')
         ));
     const argv = require('yargs').argv;
     const promises = [];
