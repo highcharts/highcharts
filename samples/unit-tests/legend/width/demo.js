@@ -1,7 +1,7 @@
 QUnit.test('Legend width', function (assert) {
     const chart = Highcharts.chart('container', {
             chart: {
-                width: 400
+                width: 500
             },
             legend: {
                 align: 'right',
@@ -72,11 +72,21 @@ cropping the legend as well.`
     });
     assert.ok(legend.legendWidth > 300, 'The legend has redrawn');
 
-    legend.update({ maxWidth: '1%' });
+    legend.update({ maxWidth: '20%' });
+
+    const constrainedWidth = legend.legendWidth;
 
     assert.strictEqual(
-        legend.legendWidth < 300,
+        constrainedWidth < 300,
         true,
-        'Legend width should have decreased by \´maxWidth\´'
+        'Legend width should have decreased by applying \´maxWidth\´'
+    );
+
+    legend.update({ maxWidth: '100%', width: 100 });
+
+    assert.strictEqual(
+        legend.legendWidth,
+        constrainedWidth,
+        'Legend maxWidth of 20% should result in same width as width: 100'
     );
 });
