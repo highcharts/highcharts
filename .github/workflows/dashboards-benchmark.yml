@@ -3,6 +3,7 @@ on:
   pull_request:
     branches:
       - 'master'
+      - 'dash/**'
     paths:
       - 'ts/Dashboards/**'
       - 'ts/Data/**'
