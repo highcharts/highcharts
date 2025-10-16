@@ -1173,6 +1173,22 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
     background-color: var(--ig-negative-background) !important;
 }
 
+/* Alignment */
+.hcg-table tbody td.hcg-right-align,
+.highcharts-datagrid-table tbody td.highcharts-datagrid-right-align {
+    text-align: right;
+}
+
+.hcg-table tbody td.hcg-center-align,
+.highcharts-datagrid-table tbody td.highcharts-datagrid-center-align {
+    text-align: center;
+}
+
+.hcg-table tbody td.hcg-left-align,
+.highcharts-datagrid-table tbody td.highcharts-datagrid-left-align {
+    text-align: left;
+}
+
 /* Notification container */
 .hcg-notification,
 .highcharts-datagrid-notification {
