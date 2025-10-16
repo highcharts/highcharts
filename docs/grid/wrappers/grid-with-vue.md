@@ -19,7 +19,7 @@ npm install @highcharts/grid-lite
 <script setup lang="ts">
 import { watch, ref } from 'vue';
 import Grid from '@highcharts/grid-lite/es-modules/masters/grid-lite.src.js';
-import '@highcharts/grid-lite/css/grid.css';
+import '@highcharts/grid-lite/css/grid-lite.css';
 
 const props = defineProps(['config']);
 const gridContainer = ref(null);

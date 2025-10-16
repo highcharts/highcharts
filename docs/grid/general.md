@@ -25,7 +25,7 @@ Let's dive right in with a bare minimum example of a fully functional **Grid Lit
         <meta charset="utf-8" />
         <title>My First Grid</title>
         <script src="https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/grid-lite.js"></script>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid.css" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid-lite.css" />
     </head>
     <body>
         <div id="container"></div>
@@ -48,7 +48,7 @@ Let's dive right in with a bare minimum example of a fully functional **Grid Lit
 
 ```html
 <script src="https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/grid-lite.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid-lite.css" />
 ```
 
 Import the required JS and CSS from our public CDN. The [Installation article](https://www.highcharts.com/docs/grid/installation) provides more information and other installation options.

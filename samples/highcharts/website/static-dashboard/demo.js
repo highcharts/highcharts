@@ -133,7 +133,7 @@ Dashboards.board('container', {
             }
         }, {
             renderTo: 'dashboard-col-1',
-            type: 'DataGrid',
+            type: 'Grid',
             connector: {
                 id: 'sample'
             },

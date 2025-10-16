@@ -1,10 +1,10 @@
-const inputProductFilter = '.highcharts-datagrid-header-cell[data-column-id="product"] input';
-const selectProductFilter = '.highcharts-datagrid-header-cell[data-column-id="product"] select';
-const inputWeightFilter = '.highcharts-datagrid-header-cell[data-column-id="weight"] input';
-const selectWeightFilter = '.highcharts-datagrid-header-cell[data-column-id="weight"] select';
-const inputBooleanFilter = '.highcharts-datagrid-header-cell[data-column-id="active"] input';
-const selectBooleanFilter = '.highcharts-datagrid-header-cell[data-column-id="active"] select';
-const gridRows = '.highcharts-datagrid-row';
+const inputProductFilter = '.hcg-header-cell[data-column-id="product"] input';
+const selectProductFilter = '.hcg-header-cell[data-column-id="product"] select';
+const inputWeightFilter = '.hcg-header-cell[data-column-id="weight"] input';
+const selectWeightFilter = '.hcg-header-cell[data-column-id="weight"] select';
+const inputBooleanFilter = '.hcg-header-cell[data-column-id="active"] input';
+const selectBooleanFilter = '.hcg-header-cell[data-column-id="active"] select';
+const gridRows = '.hcg-row';
 const productColumn = 'td[data-column-id="product"]';
 const weightColumn = 'td[data-column-id="weight"]';
 const booleanColumn = 'td[data-column-id="active"]';
