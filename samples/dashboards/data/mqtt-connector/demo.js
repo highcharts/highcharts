@@ -25,11 +25,11 @@ let dashboard;
 const topicMap = {
     'highcharts/topic1': {
         chart: 'column-chart-1',
-        grid: 'data-grid-1'
+        grid: 'grid-1'
     },
     'highcharts/topic2': {
         chart: 'column-chart-2',
-        grid: 'data-grid-2'
+        grid: 'grid-2'
     }
 };
 
@@ -191,7 +191,7 @@ async function createDashboard() {
                 }
             }
         }, {
-            renderTo: 'data-grid-1',
+            renderTo: 'grid-1',
             type: 'Grid',
             connector: {
                 id: 'mqtt-data-1'
@@ -223,7 +223,7 @@ async function createDashboard() {
                 }
             }
         }, {
-            renderTo: 'data-grid-2',
+            renderTo: 'grid-2',
             type: 'Grid',
             connector: {
                 id: 'mqtt-data-2'
@@ -243,14 +243,14 @@ async function createDashboard() {
                     cells: [{
                         id: 'column-chart-1'
                     }, {
-                        id: 'data-grid-1'
+                        id: 'grid-1'
                     }]
                 }, {
                     // For topic 2
                     cells: [{
                         id: 'column-chart-2'
                     }, {
-                        id: 'data-grid-2'
+                        id: 'grid-2'
                     }]
                 }]
             }]

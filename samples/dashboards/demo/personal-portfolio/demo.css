@@ -106,7 +106,7 @@ body {
 }
 
 @media (max-width: 800px) {
-    #data-grid,
+    #grid,
     #kpi-gauge-risk {
         flex: 1 1 100%;
     }
