@@ -128,7 +128,10 @@ namespace Globals {
             'pagination-mobile-page-size-selector',
         paginationPageSizeContainer: 'pagination-page-size-container',
         paginationPageSizeSelect: 'pagination-page-size-select',
-        zeroWidth: 'zero-width'
+        zeroWidth: 'zero-width',
+        rightAlign: 'right-align',
+        centerAlign: 'center-align',
+        leftAlign: 'left-align'
     } as const;
 
     export const win = window;

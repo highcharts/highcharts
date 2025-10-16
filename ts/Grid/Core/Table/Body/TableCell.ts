@@ -26,6 +26,7 @@ import type DataTable from '../../../../Data/DataTable';
 import type Column from '../Column';
 import type TableRow from './TableRow';
 
+import Globals from '../../Globals.js';
 import Cell from '../Cell.js';
 import CellContent from '../CellContent/CellContent.js';
 
@@ -136,7 +137,9 @@ class TableCell extends Cell {
 
         this.htmlElement.setAttribute('data-value', this.value + '');
         this.setCustomClassName(this.column.options.cells?.className);
-
+        if (this.column.dataType === 'number') {
+            this.setCustomClassName(Globals.getClassName('rightAlign'));
+        }
         fireEvent(this, 'afterRender', { target: this });
     }
 
