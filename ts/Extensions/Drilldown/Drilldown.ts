@@ -312,8 +312,8 @@ class ChartAdditions {
                 series.options.inactiveOtherPoints = true;
 
                 // Hide and disable dataLabels
-                series.dataLabelsGroup?.destroy();
-                delete series.dataLabelsGroup;
+                series.dataLabelsGroups?.forEach((g): void => g?.destroy());
+                series.dataLabelsGroups = [];
             });
 
             // #18925 map zooming is not working with geoJSON maps
@@ -805,10 +805,10 @@ class ChartAdditions {
                         oldSeries.remove(false);
                     } else {
                         // Hide and disable dataLabels
-                        if (oldSeries.dataLabelsGroup) {
-                            oldSeries.dataLabelsGroup.destroy();
-                            delete oldSeries.dataLabelsGroup;
-                        }
+                        oldSeries.dataLabelsGroups?.forEach((g): void => {
+                            g?.destroy();
+                        });
+                        oldSeries.dataLabelsGroups = [];
 
                         if (chart.mapView && newSeries) {
                             if (zoomingDrill) {
@@ -967,6 +967,7 @@ namespace Drilldown {
 
     export interface EventObject {
         category?: number;
+        defaultPrevented?: boolean;
         originalEvent?: Event;
         point: Point;
         points?: Array<(boolean|Point)>;

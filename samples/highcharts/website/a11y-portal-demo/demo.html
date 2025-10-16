@@ -1,0 +1,33 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/sonification.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+<div aria-live="polite" aria-atomic="true" id="announce"> </div>
+<figure class="highcharts-figure">
+     <div id="container"></div>
+     <div id="controls">
+        <div id="title">
+            Audio Chart Demo
+            <span>Choose an instrument and click play. Drag to zoom.</span>
+         </div>
+         <div id="instruments">
+            <select id="preset"></select>
+        </div> 
+        <div id="audio">
+            <button id="sonify">
+                <svg width="16" height="16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M3.33325 3.32642C3.33325 2.67898 3.33325 2.35526 3.46825 2.17681C3.58585 2.02135 3.7656 1.92515 3.96018 1.91353C4.18354 1.9002 4.45289 2.07977 4.9916 2.4389L12.002 7.11248C12.4471 7.40923 12.6697 7.55761 12.7472 7.74462C12.815 7.90813 12.815 8.09188 12.7472 8.25538C12.6697 8.4424 12.4471 8.59077 12.002 8.88752L4.9916 13.5611C4.45289 13.9202 4.18354 14.0998 3.96018 14.0865C3.7656 14.0749 3.58585 13.9787 3.46825 13.8232C3.33325 13.6447 3.33325 13.321 3.33325 12.6736V3.32642Z" stroke="currentColor" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+            </button>
+            <input id="slider" type="range" min="0" max="100" value="0">
+        </div>
+    </div>
+    <div class="highcharts-description">
+        <p>
+            This demo demonstrates "scrubbing", where the user can drag a slider to sonify the part of the chart where the slider is located. This allows for more control on the speed of the sonification, as well as exploring back and forth.
+        </p>
+        <p>
+            The concept can be extended to pure mouse/touch movements as well, and does not have to be linked to a slider. For example, the same concept can be used to sonify as the user is moving the mouse over the chart.
+        </p>
+    </div>
+</figure>

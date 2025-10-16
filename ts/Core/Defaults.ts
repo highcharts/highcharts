@@ -16,6 +16,7 @@
  *
  * */
 
+import type { DeepPartial } from '../Shared/Types';
 import type { DefaultOptions, Options } from './Options';
 import type Legend from './Legend/Legend';
 

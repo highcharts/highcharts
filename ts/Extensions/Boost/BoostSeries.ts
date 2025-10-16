@@ -512,6 +512,7 @@ function createAndAttachRenderer(
         // using panes, it is better to clip the target group, because then
         // we preserve clipping on touch- and mousewheel zoom preview.
         if (
+            !chart.navigator &&
             box.width === chart.clipBox.width &&
             box.height === chart.clipBox.height
         ) {

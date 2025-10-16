@@ -24,6 +24,7 @@
 
 import type Component from '../Components/Component';
 import type CSSJSONObject from '../CSSJSONObject';
+import type { DeepPartial } from '../../Shared/Types';
 import type LayoutType from './Layout';
 import type Row from './Row';
 
@@ -227,7 +228,7 @@ class Cell extends GUIElement {
      * @internal
      *
      */
-    public getOptions(): Globals.DeepPartial<Cell.Options> {
+    public getOptions(): DeepPartial<Cell.Options> {
         return this.options;
     }
 

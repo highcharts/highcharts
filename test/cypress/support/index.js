@@ -155,8 +155,15 @@ Cypress.Commands.add('selectRange', (range) =>
 );
 
 Cypress.Commands.add('toggleEditMode', () => {
-    cy.get('.highcharts-dashboards-edit-context-menu-btn').click();
-    cy.get('.highcharts-dashboards-edit-toggle-slider').first().click();
+    cy.get('body').then($body => {
+        const $toggle = $body.find('.highcharts-dashboards-edit-toggle-container:visible');
+        if ($toggle.length) {
+            cy.get('.highcharts-dashboards-edit-toggle-container').click();
+        } else {
+            cy.get('.highcharts-dashboards-edit-context-menu-btn').click();
+            cy.get('.highcharts-dashboards-edit-toggle-slider').first().click();
+        }
+    });
 });
 
 Cypress.Commands.add('submitEditing', () => {

@@ -2,7 +2,7 @@
 @import url("https://code.highcharts.com/dashboards/css/datagrid.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 
-* {
+body {
     font-family:
         -apple-system,
         BlinkMacSystemFont,

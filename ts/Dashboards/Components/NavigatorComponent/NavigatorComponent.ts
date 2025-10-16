@@ -31,8 +31,10 @@ import type {
     CrossfilterSyncOptions,
     Options
 } from './NavigatorComponentOptions';
+import type { DeepPartial } from '../../../Shared/Types';
 import type {
-    RangeModifierOptions, RangeModifierRangeOptions
+    RangeModifierOptions,
+    RangeModifierRangeOptions
 } from '../../../Data/Modifiers/RangeModifierOptions';
 
 import Component from '../Component.js';
@@ -172,7 +174,7 @@ class NavigatorComponent extends Component {
                 this.contentElement.clientHeight
             ),
             width = this.contentElement.clientWidth,
-            chartUpdates: Globals.DeepPartial<HighchartsOptions> = {};
+            chartUpdates: DeepPartial<HighchartsOptions> = {};
 
         if (
             chart.chartHeight !== height ||

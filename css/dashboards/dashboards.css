@@ -50,6 +50,7 @@
 .highcharts-dashboards,
 .highcharts-dashboards-wrapper {
     background-color: var(--highcharts-neutral-color-0);
+    color-scheme: light dark;
 }
 
 .highcharts-dashboards-cell > .highcharts-dashboards-component {
@@ -65,6 +66,7 @@
     .highcharts-dashboards,
     .highcharts-dashboards-wrapper {
         background-color: var(--highcharts-neutral-color-0);
+        color-scheme: light;
     }
 
     .highcharts-dashboards-cell > .highcharts-dashboards-component {
@@ -175,6 +177,7 @@
     .highcharts-dashboards,
     .highcharts-dashboards-wrapper {
         background-color: var(--highcharts-neutral-color-0);
+        color-scheme: dark;
     }
 
     .highcharts-dashboards-cell > .highcharts-dashboards-component {
