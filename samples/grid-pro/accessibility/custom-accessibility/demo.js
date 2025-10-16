@@ -23,6 +23,17 @@ Grid.grid('container', {
                     descending: 'The column is sorted in descending order.',
                     none: 'Cleared sorting of the column.'
                 }
+            },
+            filtering: {
+                announcements: {
+                    filterApplied: 'The filtering is applied for {columnId}, ' +
+                        '{condition} {value}. {rowsCount} results found.',
+                    emptyFilterApplied: 'The filtering is applied for ' +
+                        '{columnId}, {condition} values. {rowsCount} results ' +
+                        'found.',
+                    filterCleared: 'The filtering is cleared for {columnId}. ' +
+                        '{rowsCount} results found.'
+                }
             }
         }
     },

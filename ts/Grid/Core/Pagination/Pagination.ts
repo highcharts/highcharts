@@ -36,7 +36,7 @@ import GridUtils from '../GridUtils.js';
 import Utilities from '../../../Core/Utilities.js';
 import AST from '../../../Core/Renderer/HTML/AST.js';
 
-const { makeHTMLElement } = GridUtils;
+const { makeHTMLElement, formatText } = GridUtils;
 const { merge, fireEvent, isObject, defined } = Utilities;
 
 /**
@@ -246,19 +246,6 @@ class Pagination {
     }
 
     /**
-     * Format text with placeholders.
-     *
-     * @param template The text template with placeholders
-     * @param values Object containing values to replace placeholders
-     * @returns Formatted text
-     */
-    private formatText(template: string, values: Record<string, string | number>): string {
-        return template.replace(/\{(\w+)\}/g, (match, key): string => (
-            values[key] !== void 0 ? String(values[key]) : match
-        ));
-    }
-
-    /**
      * Render the pagination container.
      *
      * The pagination container is positioned based on the `position` option:
@@ -393,7 +380,7 @@ class Pagination {
             this.totalItems
         );
 
-        const pageInfoText = this.formatText(this.lang.pageInfo, {
+        const pageInfoText = formatText(this.lang.pageInfo, {
             start: startItem,
             end: endItem,
             total: this.totalItems,
@@ -805,15 +792,12 @@ class Pagination {
                 isActive ? 'paginationPageButtonActive' : 'paginationPageButton'
             )
         }, this.pageNumbersContainer);
-        button.title = this.formatText(
-            this.lang.pageNumber,
-            { page: pageNumber }
-        );
+        button.title = formatText(this.lang.pageNumber, { page: pageNumber });
 
         // Set aria-label for a11y
         button.setAttribute(
             'aria-label',
-            this.formatText(this.lang.pageNumber, { page: pageNumber })
+            formatText(this.lang.pageNumber, { page: pageNumber })
         );
 
         // Add click event

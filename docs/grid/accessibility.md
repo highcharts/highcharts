@@ -17,7 +17,8 @@ Accessibility features are enabled by default, and we generally recommend keepin
     accessibility: {
         enabled: false,
         announcements: {
-            sorting: true
+            sorting: true,
+            filtering: true
         }
     }
 }
@@ -45,6 +46,12 @@ To customize the default language or wording for ARIA attributes and announcers,
             sorting: {
                 announcements: {
                     ascending: "Sorted ascending",
+                    ...
+                }
+            },
+            filtering: {
+                announcements: {
+                    filterApplied: "Filter applied for {columnId}, {condition} {value}. {rowsCount} results found.",
                     ...
                 }
             }
