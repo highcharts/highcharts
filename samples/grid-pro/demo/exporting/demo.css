@@ -1,0 +1,18 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
+
+.demo {
+    padding: 8px 12px;
+}
+
+.highcharts-description {
+    padding: 0 8px;
+}
+
+#json {
+    margin-top: 20px;
+}
+
+textarea {
+    width: 400px;
+    height: 300px;
+}
