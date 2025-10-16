@@ -23,7 +23,7 @@ const ContourSeriesDefaults: PlotOptionsOf<ContourSeries> = {
             const series = (point.series as ContourSeries);
             const value = point.value || 1;
             const stops = series.colorAxis?.stops as any;
-            const extent = value / ((series.dataMax || 1) + 1);
+            const extent = value / ((series.dataMax || 1));
 
             function lerpVectors(
                 [v1A, v1B, v1C]: number[],
@@ -57,12 +57,13 @@ const ContourSeriesDefaults: PlotOptionsOf<ContourSeries> = {
                 finalColor = stops[stops.length - 1].color.rgba;
 
                 for (let i = 1; i < (stops as any).length; i++) {
-                    if (extent <= stops[i][0]) {
+                    if (extent < stops[i][0]) {
                         finalColor = lerpVectors(
                             stops[i - 1].color.rgba,
                             stops[i].color.rgba,
                             extent
                         );
+                        break;
                     }
                 }
             }

@@ -771,28 +771,6 @@ export default class ContourSeries extends ScatterSeries {
 
     }
 
-    private setCanvasSize(): void {
-        const { canvas, xAxis, yAxis, chart } = this;
-
-        if (canvas) {
-            canvas.style.width = xAxis.len + 'px';
-            canvas.style.height = yAxis.len + 'px';
-
-            const { chartWidth, chartHeight, inverted } = chart,
-                devicePixelRatio = window.devicePixelRatio,
-                [w, h] = inverted ? [
-                    chartHeight * devicePixelRatio,
-                    chartWidth * devicePixelRatio
-                ] : [
-                    chartWidth * devicePixelRatio,
-                    chartHeight * devicePixelRatio
-                ];
-
-            canvas.width = w;
-            canvas.height = h;
-        }
-    }
-
     /**
      * Set the extremes of the Contourmap axes.
      */
