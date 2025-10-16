@@ -327,14 +327,14 @@ async function setupDashboard() {
             }
         }, {
             renderTo: 'election-grid',
-            type: 'DataGrid',
+            type: 'Grid',
             connector: {
                 id: 'votes' + defaultYear
             },
             title: {
                 text: 'Updating...' // Populated later
             },
-            dataGridOptions: {
+            gridOptions: {
                 rendering: {
                     columns: {
                         included: [
@@ -819,7 +819,7 @@ async function updateGridComponent(component, year) {
         connector: {
             id: 'votes' + year
         },
-        dataGridOptions: {
+        gridOptions: {
             credits: {
                 enabled: false
             },
@@ -915,7 +915,7 @@ async function onYearClicked(board, year) {
     resetMap(mapComponent.chart);
     updateMapComponent(mapComponent, electionTable, year);
 
-    // Update data grid component (Dashboards datagrid)
+    // Update data grid component (Dashboards grid)
     updateGridComponent(gridComponent, year);
 
     // Update national bar chart

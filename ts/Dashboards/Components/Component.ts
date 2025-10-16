@@ -1062,7 +1062,10 @@ namespace Component {
         editableOptions?: Array<EditableOptions.Options>;
         /** @internal */
         editableOptionsBindings?: EditableOptions.OptionsBindings;
-        /** @internal */
+        /**
+         * Sync options. Predefined per component or custom sync options can be
+         * used here.
+         */
         sync?: Sync.RawOptionsRecord;
         /**
          * Connector options

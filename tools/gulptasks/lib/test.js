@@ -34,6 +34,7 @@ function getProducts(logPaths) {
         products = [
             'Core',
             'Dashboards',
+            'Grid',
             'Gantt',
             'Maps',
             'Stock',

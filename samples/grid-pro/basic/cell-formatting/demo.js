@@ -4,7 +4,7 @@ Grid.setOptions({
     }
 });
 
-Grid.dataGrid('container', {
+Grid.grid('container', {
     dataTable: {
         columns: {
             date: [1640995200000, 1641081600000, 1641168000000, 1641254400000],

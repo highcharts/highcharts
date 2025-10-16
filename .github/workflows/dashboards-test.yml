@@ -6,13 +6,12 @@ name: Dashboards and Grid Test
 on:
   # Triggers the workflow on push or pull request events but only for the default branch
   push:
-    branches: ['master']
+    branches: ['master', 'dash/**']
   pull_request:
-    branches: ['master']
+    branches: ['master', 'dash/**']
     paths:
       - '.github/workflows/dashboards-test.yml'
       - 'css/dashboards*'
-      - 'css/datagrid*'
       - 'css/grid*'
       - 'samples/dashboards/**'
       - 'samples/grid-lite/**'
@@ -66,7 +65,7 @@ jobs:
       - name: Run Dashboards Tests
         run: |
           cd highcharts
-          npx gulp dashboards/test
+          npx gulp test --product Dashboards
 
       - name: Checkout utils
         uses: actions/checkout@v4

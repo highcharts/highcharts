@@ -131,19 +131,19 @@ See the [HighchartsComponent](https://www.highcharts.com/docs/dashboards/highcha
 ### Grid Component
 To visualize data in a row-column layout, you can use the Grid component. The `Grid` module *must* be imported before the **Dashboards** module as shown here:
 ```html
-<script src="https://code.highcharts.com/dashboards/datagrid.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/grid-pro.js"></script>
 <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
 ```
 
 The `Grid` module has its own style set, so the CSS file must be imported for correct rendering.
 ```css
-@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 ```
 
-For a chart to be displayed, the type `Grid` must be specified, the `renderTo` option set, and data must be provided as an embedded `dataTable` object or via a `DataConnector`. In addition, the `dataGridOptions` object allows you to configure `Grid` specific parameters like cell formatting, column assignment, etc.
+For a chart to be displayed, the type `Grid` must be specified, the `renderTo` option set, and data must be provided as an embedded `dataTable` object or via a `DataConnector`. In addition, the `gridOptions` object allows you to configure `Grid` specific parameters like cell formatting, column assignment, etc.
 
-The **Grid** may have the series data directly embedded as part of the `dataGridOptions`. However, a more common usage is the **Dashboards**' data pool mechanism, which shares data between the dashboard components. In this case, the `id` of the `DataConnector` must be included in the data grid's configuration.
+The **Grid** may have the series data directly embedded as part of the `gridOptions`. However, a more common usage is the **Dashboards**' data pool mechanism, which shares data between the dashboard components. In this case, the `id` of the `DataConnector` must be included in the data grid's configuration.
 
 Code snippet with data embedded in the `Grid` data table; no data connector used.
 ```js

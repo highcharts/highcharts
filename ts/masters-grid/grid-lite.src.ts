@@ -58,11 +58,11 @@ import '../Data/Modifiers/FilterModifier.js';
 declare global {
     interface GridNamespace {
         win: typeof Globals.win;
-        product: 'Grid Lite',
+        product: 'Grid Lite' | 'Grid Pro';
         AST: typeof AST;
         Grid: typeof _Grid;
         grid: typeof _Grid.grid;
-        grids: Array<(_Grid|undefined)>;
+        grids: Array<(_Grid | undefined)>;
         ColumnResizing: typeof ColumnResizing;
         DataConverter: typeof DataConverter;
         DataCursor: typeof DataCursor;

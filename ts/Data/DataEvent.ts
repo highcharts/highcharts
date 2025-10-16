@@ -117,13 +117,17 @@ namespace DataEvent {
 
     }
 
-    /** @internal */
+    /**
+     * Object to manage an event.
+     */
     export interface HCEventObject {
         fn: Callback<unknown, DataEvent>;
         order?: number;
     }
 
-    /** @internal */
+    /**
+     * Collection of events managed by Highcharts utility functions.
+     */
     export type HCEventsCollection = (
         Record<string, Array<HCEventObject>>
     );

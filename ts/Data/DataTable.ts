@@ -27,7 +27,7 @@ import type DataEvent from './DataEvent';
 import type DataModifier from './Modifiers/DataModifier';
 import type DataTableOptions from './DataTableOptions';
 import type { DataTableValue } from './DataTableOptions';
-import type Types from '../Shared/Types';
+import type { TypedArray, TypedArrayConstructor } from '../Shared/Types';
 
 import DataTableCore from './DataTableCore.js';
 
@@ -1006,7 +1006,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
                     tableColumn: DataTable.Column,
                     columnId: string,
                     ArrayConstructor: (
-                        Types.TypedArrayConstructor|
+                        TypedArrayConstructor|
                         ArrayConstructor
                     );
                 i < iEnd;
@@ -1028,7 +1028,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
                     }
                 } else if (tableColumn.length < rowCount) {
                     tableColumn =
-                        new ArrayConstructor(rowCount) as Types.TypedArray;
+                        new ArrayConstructor(rowCount) as TypedArray;
                     tableColumn.set(
                         tableColumns[columnId] as ArrayLike<number>
                     );
@@ -1325,7 +1325,7 @@ namespace DataTable {
     /**
      * Array of table cells in vertical expansion.
      */
-    export type Column = BasicColumn|Types.TypedArray;
+    export type Column = BasicColumn|TypedArray;
 
     /**
      * Collection of columns, where the key is the column name and

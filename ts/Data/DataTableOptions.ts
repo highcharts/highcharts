@@ -20,7 +20,7 @@
  *
  * */
 
-import type Types from '../Shared/Types';
+import type { TypedArray } from '../Shared/Types';
 
 
 /* *
@@ -38,7 +38,7 @@ export interface DataTableOptions {
     /**
      * Initial columns with their values.
      */
-    columns?: Record<string, Array<DataTableValue>|Types.TypedArray>;
+    columns?: Record<string, Array<DataTableValue>|TypedArray>;
 
     /**
      * Custom ID to identify the new DataTable instance.
