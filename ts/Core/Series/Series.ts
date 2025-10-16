@@ -1075,6 +1075,8 @@ class Series {
         // column for the series. The `xColumn` array is cached and reused, but
         // cleared on series update.
         if (columnName === 'x' && this.tempNoXColumn && !usingModified) {
+
+            // Return cached xColumn if it exists
             if (this.xColumn) {
                 return this.xColumn;
             }
@@ -1082,31 +1084,21 @@ class Series {
             // Reset the counter
             this.xIncrement = null;
 
-            // Handle name-to-x, uniqueNames
+            // Under these conditions, we need to generate the x data
             const nameColumn = table.getColumn('name');
-            if (this.xAxis?.hasNames && nameColumn) {
-                this.xColumn = (nameColumn as Array<string>)
-                    .map((name, i): number => this.getX(
-                        column?.[i],
-                        name
-                    ));
-                return this.xColumn;
-            }
-
-            if (!column) {
-                // Vanilla auto-increment
-                this.xColumn = Array(rowCount).fill(0).map((): number =>
-                    this.getX()
+            if (
+                !column ||
+                (this.xAxis?.hasNames && nameColumn) ||
+                this.options.relativeXValue
+            ) {
+                return (
+                    this.xColumn = Array(rowCount).fill(0).map((_, i): number =>
+                        this.getX(
+                            column?.[i],
+                            nameColumn?.[i] as string|undefined
+                        )
+                    )
                 );
-                return this.xColumn;
-            }
-
-            // Else, if the x column exists
-            if (this.options.relativeXValue) {
-                this.xColumn = (column).map((x): number =>
-                    this.getX(x)
-                );
-                return this.xColumn;
             }
 
             // X column exists in the data table, but has gaps or strings
@@ -1116,10 +1108,11 @@ class Series {
             ) {
                 const columnFilled = [...column];
                 if (columnFilled.some((x): boolean => !isNumber(x))) {
-                    this.xColumn = columnFilled.map((x): number =>
-                        (isNumber(x) ? x : this.getX(x))
+                    return (
+                        this.xColumn = columnFilled.map((x): number =>
+                            (isNumber(x) ? x : this.getX(x))
+                        )
                     );
-                    return this.xColumn;
                 }
             }
         }
