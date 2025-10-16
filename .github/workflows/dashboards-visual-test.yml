@@ -1,8 +1,6 @@
 name: Dashboards visual comparison tests
 on:
   pull_request:
-    branches:
-      - 'master'
     paths:
       - '.github/workflows/dashboards-visual-test.yml'
       - 'css/dashboards*'
@@ -163,4 +161,3 @@ jobs:
             cypress/screenshots
             cypress/snapshots
             test/cypress/dashboards/cypress/snapshots/base
-

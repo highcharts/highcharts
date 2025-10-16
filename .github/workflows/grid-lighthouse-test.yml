@@ -1,8 +1,6 @@
 name: Grid Lighthouse tests
 on:
   pull_request:
-    branches:
-      - 'master'
     paths:
       - '.github/workflows/grid-lighthouse-test.yml'
       - 'css/grid*'
