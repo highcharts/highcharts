@@ -64,9 +64,7 @@ declare module '../Core/Chart/ChartBase' {
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 function stopEvent(e: Event): void {
     if (e) {
         e.preventDefault?.();
@@ -85,7 +83,7 @@ function stopEvent(e: Event): void {
  * The MapNavigation handles buttons for navigation in addition to mousewheel
  * and doubleclick handlers for chart zooming.
  *
- * @private
+ * @internal
  * @class
  * @name MapNavigation
  *
@@ -438,4 +436,5 @@ class MapNavigation {
  *
  * */
 
+/** @internal */
 export default MapNavigation;

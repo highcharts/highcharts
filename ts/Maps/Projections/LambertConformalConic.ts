@@ -38,6 +38,7 @@ const sign = Math.sign ||
  *
  * */
 
+/** @internal */
 class LambertConformalConic implements ProjectionDefinition {
 
     /* *
@@ -158,4 +159,5 @@ class LambertConformalConic implements ProjectionDefinition {
  *
  * */
 
+/** @internal */
 export default LambertConformalConic;

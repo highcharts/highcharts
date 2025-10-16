@@ -42,6 +42,7 @@ const A1 = 1.340264,
  *
  * */
 
+/** @internal */
 class EqualEarth implements ProjectionDefinition {
 
     /* *
@@ -142,4 +143,5 @@ class EqualEarth implements ProjectionDefinition {
  *
  * */
 
+/** @internal */
 export default EqualEarth;

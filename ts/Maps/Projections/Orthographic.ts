@@ -32,6 +32,7 @@ const deg2rad = Math.PI / 180,
  *
  * */
 
+/** @internal */
 class Orthographic implements ProjectionDefinition {
 
     /* *
@@ -97,4 +98,5 @@ class Orthographic implements ProjectionDefinition {
  *
  * */
 
+/** @internal */
 export default Orthographic;

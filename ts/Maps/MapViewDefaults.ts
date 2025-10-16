@@ -98,7 +98,7 @@ const MapViewDefaults: MapViewOptions = {
      * @sample {highmaps} maps/demo/mappoint-mapmarker
      *         Padding for individual sides
      *
-     * @type  {number|string|Array<number|string>}
+     * @type  {Highcharts.MapViewPaddingType}
      */
     padding: 0,
 

@@ -33,6 +33,7 @@ const quarterPI = Math.PI / 4,
  *
  * */
 
+/** @internal */
 class Miller implements ProjectionDefinition {
 
     /* *
@@ -85,4 +86,5 @@ class Miller implements ProjectionDefinition {
  *
  * */
 
+/** @internal */
 export default Miller;

@@ -22,6 +22,7 @@ import type { ProjectionRegistryName } from './Projections/ProjectionRegistry';
  *
  * */
 
+/** @internal */
 export interface Theme {
     credits?: string;
     maxZoom: number;
@@ -29,10 +30,12 @@ export interface Theme {
     url: string;
 }
 
+/** @internal */
 export interface Themes {
     [key: string]: Theme
 }
 
+/** @internal */
 export interface ProviderDefinition {
     defaultCredits: string;
     initialProjectionName: ProjectionRegistryName;
@@ -47,4 +50,5 @@ export interface ProviderDefinition {
  *
  * */
 
+/** @internal */
 export default ProviderDefinition;
