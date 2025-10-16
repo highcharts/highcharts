@@ -1075,12 +1075,22 @@ class Series {
         // column for the series. The `xColumn` array is cached and reused, but
         // cleared on series update.
         if (columnName === 'x' && this.tempNoXColumn && !usingModified) {
-            const nameColumn = table.getColumn('name', true);
-
             // Return cached xColumn if it exists
             if (this.xColumn) {
                 return this.xColumn;
             }
+
+            const nameColumn = table.getColumn('name', true),
+                // Check for empty or non-numeric x values. A for loop is faster
+                // than Array.prototype.some, and covers empty slots.
+                hasHoles = (arr: any[]): boolean => {
+                    for (let i = 0, n = arr.length; i < n; i++) {
+                        if (typeof arr[i] !== 'number') {
+                            return true;
+                        }
+                    }
+                    return false;
+                };
 
             // Reset the counter
             this.xIncrement = null;
@@ -1094,7 +1104,7 @@ class Series {
                 (
                     column.length < (this.options.turboThreshold || Infinity) &&
                     !this.boosted &&
-                    column.some((x): boolean => !isNumber(x))
+                    hasHoles(column)
                 )
             ) {
                 return (
