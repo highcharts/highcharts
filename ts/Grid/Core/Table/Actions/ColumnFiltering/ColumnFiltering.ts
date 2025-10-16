@@ -322,8 +322,13 @@ class ColumnFiltering {
         // Assign the default input value.
         {
             const { value } = this.column.options.filtering ?? {};
-            if (value) {
-                this.filterInput.value = value.toString();
+            if (value || value === 0) {
+                this.filterInput.value = columnType === 'datetime' ?
+                    column.viewport.grid.time.dateFormat(
+                        '%Y-%m-%d',
+                        Number(value)
+                    ) :
+                    value.toString();
             }
         }
 
