@@ -81,6 +81,7 @@ QUnit.test('RangeSelector update', function (assert) {
             width: 600
         },
         rangeSelector: {
+            allButtonsEnabled: true,
             buttonTheme: {
                 style: {
                     color: '#FF00FF'
@@ -89,10 +90,15 @@ QUnit.test('RangeSelector update', function (assert) {
         }
     });
 
-    assert.strictEqual(
-        chart.rangeSelector.buttons[5].text.styles.color,
-        '#FF00FF',
-        'Color of the range selector buttons should be updated, #23125.'
+    const buttonColors = chart.rangeSelector.buttons.map(
+        btn => btn.text.styles.color
+    );
+
+    assert.deepEqual(
+        buttonColors,
+        ['#FF00FF', '#FF00FF', '#FF00FF', '#000000', '#FF00FF', '#FF00FF'],
+        `All active range selector buttons color should be updated, except for
+        the selected one, #23125.`
     );
 });
 

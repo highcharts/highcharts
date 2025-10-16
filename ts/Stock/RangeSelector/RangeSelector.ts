@@ -47,7 +47,6 @@ const {
     css,
     defined,
     destroyObjectProperties,
-    diffObjects,
     discardElement,
     extend,
     fireEvent,
@@ -1796,19 +1795,11 @@ class RangeSelector {
 
             // Update current buttons
             for (let i = btnLength - 1; i >= 0; i--) {
-                const diff = diffObjects(
-                    newButtonsOptions[i],
-                    this.buttonOptions[i]
-                );
-
-                if (Object.keys(diff).length !== 0) {
-                    const rangeOptions = newButtonsOptions[i];
-                    this.buttons[i].destroy();
-                    dropdown?.options.remove(i + 1);
-                    this.createButton(rangeOptions, i, width, states);
-                    this.computeButtonRange(rangeOptions);
-
-                }
+                const rangeOptions = newButtonsOptions[i];
+                this.buttons[i].destroy();
+                dropdown?.options.remove(i + 1);
+                this.createButton(rangeOptions, i, width, states);
+                this.computeButtonRange(rangeOptions);
             }
 
             // Create missing buttons
@@ -2200,7 +2191,7 @@ class RangeSelector {
             return this.init(chart);
         }
 
-        this.isDirty = true;
+        this.isDirty = !!options.buttons || !!options.buttonTheme;
 
         if (redraw) {
             this.render();
