@@ -75,6 +75,12 @@ QUnit.test('RangeSelector update', function (assert) {
         before,
         '#14856: It should not leak chart event listeners on update'
     );
+
+    assert.strictEqual(
+        chart.rangeSelector.group.attr('text-align'),
+        0,
+        'Range selector group should not have text-align attr set, #22698.'
+    );
 });
 
 QUnit.test('RangeSelector update hover', function (assert) {
