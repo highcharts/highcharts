@@ -218,7 +218,7 @@ QUnit.test('Input data table, uniqueNames', assert => {
 });
 
 QUnit.test('Initialized with data options', assert => {
-    const { series: [series] } = Highcharts.chart('container', {
+    const chart = Highcharts.chart('container', {
         chart: {
             type: 'column'
         },
@@ -233,6 +233,7 @@ QUnit.test('Initialized with data options', assert => {
             data: [1, 3, 2, 4]
         }]
     });
+    const series = chart.series[0];
 
     series.addPoint(5, true, true);
     assert.deepEqual(
@@ -260,5 +261,36 @@ QUnit.test('Initialized with data options', assert => {
         series.getColumn('x'),
         [2, 3, 4],
         'Add point inside, x data should be inserted'
+    );
+
+    series.remove();
+    chart.xAxis[0].update({
+        type: 'datetime'
+    });
+    chart.addSeries({
+        data: [{
+            x: Date.UTC(2025, 9, 16),
+            y: 1
+        }, {
+            x: '2025-10-17',
+            y: 3
+        }, {
+            x: 'kjsdfkjsdf', // Invalid date
+            y: 2
+        }, {
+            x: Date.UTC(2025, 9, 19),
+            y: 4
+        }],
+        type: 'line'
+    });
+    assert.deepEqual(
+        chart.series[0].getColumn('x'),
+        [
+            1760572800000,
+            1760659200000,
+            undefined,
+            1760832000000
+        ],
+        'Mixed x data types should be resolved'
     );
 });

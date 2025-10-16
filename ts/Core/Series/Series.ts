@@ -1121,31 +1121,38 @@ class Series {
         return column || Array(matchLength ? rowCount : 0);
     }
 
+    /**
+     * Get the x value for a given point.
+     *
+     * @private
+     */
     public getX(xOption?: number, name?: string): number {
-        let x: number|undefined;
         if (
-            this.dataTable.getColumn('name', true) &&
-            this.xAxis?.hasNames
+            this.xAxis?.hasNames &&
+            this.dataTable.getColumn('name', true)
         ) {
-            x = this.xAxis.nameToX({
+            return this.xAxis.nameToX({
                 name: name as any,
                 series: this
             }, xOption);
+        }
 
-        } else if (typeof xOption === 'undefined') {
-            x = this.autoIncrement();
-
-        } else if (isNumber(xOption) && this.options.relativeXValue) {
-            x = this.autoIncrement(xOption);
+        if (
+            typeof xOption === 'undefined' ||
+            (isNumber(xOption) && this.options.relativeXValue)
+        ) {
+            return this.autoIncrement(xOption);
+        }
 
         // If x is a string, try to parse it to a datetime
-        } else if (typeof xOption === 'string') {
+        if (typeof xOption === 'string') {
             xOption = this.chart.time.parse(xOption);
             if (isNumber(xOption)) {
-                x = xOption;
+                return xOption;
             }
         }
-        return x ?? xOption ?? 0;
+
+        return xOption as any;
     }
 
     /**
