@@ -5,6 +5,7 @@ on:
   pull_request:
     branches:
       - 'master'
+      - 'tools/playwright'
     paths:
       - 'samples/**'
       - 'ts/**'
@@ -34,7 +35,7 @@ jobs:
       - name: Checkout master
         uses: actions/checkout@v4
         with:
-          ref: master
+          ref: tools/playwright # shall be master/base branch
 
       - name: Use Node.js lts/*
         uses: actions/setup-node@v4
