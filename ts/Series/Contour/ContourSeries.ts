@@ -27,7 +27,6 @@ import Delaunay from '../../Shared/Delaunay.js';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import U from '../../Core/Utilities.js';
 import ContourSeriesOptions from './ContourSeriesOptions';
-import ColorType from '../../Core/Color/ColorType.js';
 import Chart from '../../Core/Chart/Chart.js';
 import ContourSeriesDefaults from './ContourSeriesDefaults.js';
 import Color from '../../Core/Color/Color.js';
@@ -215,7 +214,7 @@ export default class ContourSeries extends ScatterSeries {
                         lineWidth = 1
                     } = options,
                     contourLineColor = new Float32Array(
-                        this.colorToArray(lineColor)
+                        this.rgbaAsFrac(new Color(lineColor).rgba)
                     ),
                     contourLineWidth = new Float32Array([
                         lineWidth
@@ -735,13 +734,15 @@ export default class ContourSeries extends ScatterSeries {
         return [min || 0, max || 0];
     }
 
-    public colorToArray(color: ColorType): number[] {
-        const rgba = new Color(color).rgba;
-        return [rgba[0], rgba[1], rgba[2]].map((val): number => val / 255);
+    public rgbaAsFrac(rgba: Color.RGBA): number[] {
+        return [
+            rgba[0],
+            rgba[1],
+            rgba[2]
+        ].map((val): number => val / 255);
     }
 
-
-    private getColorAxisStopsData() : { array: Float32Array, length: number } {
+    private getColorAxisStopsData(): { array: Float32Array, length: number } {
         const colorAxisStops = this.colorAxis?.stops;
 
         let flattenedData;
@@ -750,7 +751,11 @@ export default class ContourSeries extends ScatterSeries {
             flattenedData = [];
 
             for (const stop of colorAxisStops) {
-                flattenedData.push(stop[0], ...this.colorToArray(stop[1]));
+                const rgba = stop?.color?.rgba;
+
+                if (rgba) {
+                    flattenedData.push(stop[0], ...this.rgbaAsFrac(rgba));
+                }
             }
         }
 

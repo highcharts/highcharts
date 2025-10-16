@@ -1,6 +1,4 @@
-import { GradientColorStop } from '../../Core/Color/GradientColor';
 import type { PlotOptionsOf } from '../../Core/Series/SeriesOptions';
-import Tooltip from '../../Core/Tooltip';
 import ContourPoint from './ContourPoint';
 import type ContourSeries from './ContourSeries';
 
@@ -20,33 +18,23 @@ const ContourSeriesDefaults: PlotOptionsOf<ContourSeries> = {
         }
     },
     tooltip: {
-        formatter: function (tt: Tooltip): string {
+        formatter: function (tt): string {
             const point = (tt.chart.hoverPoint as ContourPoint);
             const series = (point.series as ContourSeries);
-            const value = point.value || 0;
-            const normVal = (value / (series.dataMax || 1));
-            const stops = series.colorAxis?.stops ?
-                series.colorAxis.stops.map(
-                    (
-                        stop: GradientColorStop
-                    ): number[] => [...series.colorToArray(stop[1]), 1]
-                ) : [
-                    [0, 0, 0, 0],
-                    [1, 1, 1, 1]
-                ];
+            const value = point.value || 1;
+            const stops = series.colorAxis?.stops as any;
+            const extent = value / ((series.dataMax || 1) + 1);
 
             function lerpVectors(
-                v1: number[],
-                v2: number[],
+                [v1A, v1B, v1C]: number[],
+                [v2A, v2B, v2C]: number[],
                 t: number
             ): number[] {
-                const [v1A, v1B, v1C] = v1;
-                const [v2A, v2B, v2C] = v2;
                 const lerpColorDec = (
                     a: number,
                     b: number,
                     t: number
-                ): number => 255 * (a * (1 - t) + b * t);
+                ): number => (a * (1 - t) + b * t);
 
                 return [
                     lerpColorDec(v1A, v2A, t),
@@ -55,28 +43,39 @@ const ContourSeriesDefaults: PlotOptionsOf<ContourSeries> = {
                 ];
             }
 
-            let color = stops[stops.length - 1];
-            for (let i = 0; i < 1; i++) {
-                // If (normVal < stops[i + 1][0]) {
-                const t = (
-                    (normVal - stops[i][0]) /
-                    (stops[i + 1][0] - stops[i][0])
-                );
-                color = lerpVectors(
-                    stops[i].slice(1),
-                    stops[i + 1].slice(1),
-                    t
-                );
-                // }
+            let finalColor = lerpVectors(
+                [
+                    0, 0, 0
+                ], [
+                    255, 255, 255
+                ],
+                extent
+            );
+
+            if (stops) {
+
+                finalColor = stops[stops.length - 1].color.rgba;
+
+                for (let i = 1; i < (stops as any).length; i++) {
+                    if (extent <= stops[i][0]) {
+                        finalColor = lerpVectors(
+                            stops[i - 1].color.rgba,
+                            stops[i].color.rgba,
+                            extent
+                        );
+                    }
+                }
             }
 
-            return `<span style="color: rgb(${
-                color[0]
-            }, ${
-                color[1]
-            }, ${
-                color[2]
-            });"> ● </span> Val: ${value}`;
+            const [r, g, b] = finalColor;
+
+            return `<span style="color: rgba(${
+                r
+            },${
+                g
+            },${
+                b
+            }, 1);">################</span>`;
         }
     }
 };
