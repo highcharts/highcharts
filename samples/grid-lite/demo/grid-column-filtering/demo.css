@@ -1,0 +1,9 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid-lite.css");
+
+.demo {
+    padding: 8px 12px;
+}
+
+.highcharts-description {
+    padding: 0 8px;
+}
