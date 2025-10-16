@@ -586,7 +586,7 @@ export default class ContourSeries extends ScatterSeries {
                         colorAttachments: [{
                             view: context.getCurrentTexture().createView(),
                             loadOp: 'clear' as GPULoadOp,
-                            clearValue: [1, 1, 1, 1],
+                            clearValue: [0, 0, 0, 0],
                             storeOp: 'store' as GPUStoreOp
                         }]
                     });
