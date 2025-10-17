@@ -107,8 +107,6 @@ export default class ContourSeries extends ScatterSeries {
 
         let foundMax = 0;
 
-        this.dataMax = 0;
-
         for (let i = 0; i < len; i++) {
             const { x, y = 0, value } = points[i],
                 index2d = i * 2,
@@ -125,7 +123,7 @@ export default class ContourSeries extends ScatterSeries {
             points3d[index3d + 1] = y;
             points3d[index3d + 2] = value ?? 0;
         }
-        this.dataMax = foundMax;
+        this.dataMax = foundMax ?? 0;
         return [new Delaunay(points2d).triangles, points3d];
     }
 
