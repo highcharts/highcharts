@@ -6,25 +6,84 @@
 
 /* You can override the default Infima variables here. */
 :root {
-  --ifm-color-primary: #2e8555;
-  --ifm-color-primary-dark: #29784c;
-  --ifm-color-primary-darker: #277148;
-  --ifm-color-primary-darkest: #205d3b;
-  --ifm-color-primary-light: #33925d;
-  --ifm-color-primary-lighter: #359962;
-  --ifm-color-primary-lightest: #3cad6e;
-  --ifm-code-font-size: 95%;
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+    --ifm-color-primary: #2e8555;
+    --ifm-color-primary-dark: #29784c;
+    --ifm-color-primary-darker: #277148;
+    --ifm-color-primary-darkest: #205d3b;
+    --ifm-color-primary-light: #33925d;
+    --ifm-color-primary-lighter: #359962;
+    --ifm-color-primary-lightest: #3cad6e;
+    --ifm-code-font-size: 95%;
+    --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
 }
 
 /* For readability concerns, you should choose a lighter palette in dark mode. */
-[data-theme='dark'] {
-  --ifm-color-primary: #25c2a0;
-  --ifm-color-primary-dark: #21af90;
-  --ifm-color-primary-darker: #1fa588;
-  --ifm-color-primary-darkest: #1a8870;
-  --ifm-color-primary-light: #29d5b0;
-  --ifm-color-primary-lighter: #32d8b4;
-  --ifm-color-primary-lightest: #4fddbf;
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+[data-theme="dark"] {
+    --ifm-color-primary: #25c2a0;
+    --ifm-color-primary-dark: #21af90;
+    --ifm-color-primary-darker: #1fa588;
+    --ifm-color-primary-darkest: #1a8870;
+    --ifm-color-primary-light: #29d5b0;
+    --ifm-color-primary-lighter: #32d8b4;
+    --ifm-color-primary-lightest: #4fddbf;
+    --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+}
+
+.menu__list-item a:has(.grid-pro-badge) {
+    text-decoration: none;
+    justify-content: flex-start;
+    gap: 0.5em;
+}
+
+.menu__list-item a:has(.grid-pro-badge) span:not(.grid-pro-badge) {
+    text-decoration: underline;
+}
+
+.grid-pro-badge {
+    text-transform: uppercase;
+    border-radius: 4px;
+    border: 1px solid #047857;
+    background: #ecfdf5;
+    display: inline-flex;
+    padding: 6px 8px;
+    justify-content: center;
+    align-items: center;
+    gap: 2px;
+    align-self: baseline;
+    color: #047857;
+    font-family: "IBM Plex Sans", sans-serif;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    width: fit-content;
+    height: 20px;
+}
+
+main p:has(.grid-pro-badge) {
+    margin-bottom: 0;
+}
+
+.grid-pro-badge.banner {
+    display: flex;
+    margin-bottom: 0;
+}
+
+main h1:has(.grid-pro-badge),
+main h2:has(.grid-pro-badge),
+main h3:has(.grid-pro-badge),
+main h4:has(.grid-pro-badge),
+main h5:has(.grid-pro-badge),
+main h6:has(.grid-pro-badge) {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+main h1:has(.grid-pro-badge) .grid-pro-badge,
+main h2:has(.grid-pro-badge) .grid-pro-badge,
+main h3:has(.grid-pro-badge) .grid-pro-badge,
+main h4:has(.grid-pro-badge) .grid-pro-badge,
+main h5:has(.grid-pro-badge) .grid-pro-badge,
+main h6:has(.grid-pro-badge) .grid-pro-badge {
+    margin-top: 0.7em;
 }

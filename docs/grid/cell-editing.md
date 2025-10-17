@@ -1,7 +1,3 @@
----
-tags: ["grid-pro"]
----
-
 # Cell editing
 
 ## Enable editMode

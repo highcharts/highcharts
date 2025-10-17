@@ -1,7 +1,3 @@
----
-tags: ["grid-pro"]
----
-
 # Cell renderers
 
 **Note:** Cell renderers are only available in Grid Pro. Grid Lite users can as an alternative use `formatter` and `format`to control [how data is rendered inside cells](https://www.highcharts.com/docs/grid/columns#cells).
