@@ -128,7 +128,7 @@ namespace Globals {
             'pagination-mobile-page-size-selector',
         paginationPageSizeContainer: 'pagination-page-size-container',
         paginationPageSizeSelect: 'pagination-page-size-select',
-        zeroWidth: 'zero-width',
+        noWidth: 'no-width',
         rightAlign: 'right',
         centerAlign: 'center',
         leftAlign: 'left'
