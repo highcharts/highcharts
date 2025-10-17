@@ -16,11 +16,14 @@ body {
     color: var(--highcharts-neutral-color-100);
 }
 
+.demo {
+    padding: 8px 12px;
+}
+
 #container {
-    height: 380px;
-    padding: 8px;
+    height: 470px;
 }
 
 .highcharts-description {
-    padding: 0 10px;
+    padding: 0 8px;
 }
