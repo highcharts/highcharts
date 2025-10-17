@@ -22,7 +22,7 @@ import { appendExternals, loadExternalsJSON, resolveExternals } from './external
  * */
 
 const dashboardsCfg = FSLib.getFile(
-    Path.join('tools', 'gulptasks', 'dashboards', '_config.json'),
+    Path.join('tools', 'gulptasks', 'scripts-dts', 'dashboards', '_config.json'),
     true
 );
 
@@ -42,20 +42,12 @@ const productMasters = [
 
 loadExternalsJSON(FSLib.path([import.meta.dirname, 'externals.json']));
 
-const dashboardsExternalsPath = Path.join(
-    'tools',
-    'webpacks',
-    'externals-dashboards.json'
+const dashboardsExternals = FSLib.getFile(
+    Path.join('tools', 'webpacks', 'externals-dashboards.json'),
+    true
 );
 
-if (FS.existsSync(dashboardsExternalsPath)) {
-    const dashboardsExternals = FSLib.getFile(
-        dashboardsExternalsPath,
-        true
-    );
-
-    appendExternals(dashboardsExternals);
-}
+appendExternals(dashboardsExternals);
 
 /* *
  *
