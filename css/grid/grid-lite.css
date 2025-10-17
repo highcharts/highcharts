@@ -1016,19 +1016,6 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     background: #b7d4ff;
 }
 
-/* Alignment */
-.hcg-table tbody td.hcg-right-align {
-    text-align: right;
-}
-
-.hcg-table tbody td.hcg-center-align {
-    text-align: center;
-}
-
-.hcg-table tbody td.hcg-left-align {
-    text-align: left;
-}
-
 /* Accessibility */
 .hcg-visually-hidden {
     position: absolute;

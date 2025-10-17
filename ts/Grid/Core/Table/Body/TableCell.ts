@@ -137,9 +137,12 @@ class TableCell extends Cell {
 
         this.htmlElement.setAttribute('data-value', this.value + '');
         this.setCustomClassName(this.column.options.cells?.className);
+
+        // Add alignment to number column
         if (this.column.dataType === 'number') {
             this.setCustomClassName(Globals.getClassName('rightAlign'));
         }
+
         fireEvent(this, 'afterRender', { target: this });
     }
 
