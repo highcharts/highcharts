@@ -20,6 +20,9 @@ const grid = Grid.grid('container', {
                 enabled: true
             }
         }
+        filtering: {
+            enabled: true
+        }
     }
 });
 
