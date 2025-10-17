@@ -153,7 +153,9 @@ class Accessibility {
         );
 
         this.element.appendChild(this.announcerElement);
-        this.announcerElement.textContent = msg;
+        requestAnimationFrame((): void => {
+            this.announcerElement.textContent = msg;
+        });
 
         this.announcerTimeout = setTimeout((): void => {
             this.announcerElement.remove();

@@ -236,9 +236,16 @@ columns.forEach(col => {
 
 openModal.addEventListener('click', () => {
     modal.style.display = 'flex';
+
+    document.getElementById('Category').focus();
 });
 closeModalBtn.addEventListener('click', () => {
     modal.style.display = 'none';
+});
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+        modal.style.display = 'none';
+    }
 });
 
 form.addEventListener('submit', function (e) {
