@@ -73,13 +73,58 @@ jobs:
       - name: File size comparison
         run: |
           npx gulp write-file-sizes --filename ${{github.event.pull_request.number}}.json
-          npx gulp compare-size-and-comment \
+          npx gulp write-size-table \
           --master ./tmp/filesizes/master.json \
-          --proposed ./tmp/filesizes/${{github.event.pull_request.number}}.json \
-          --pr ${{github.event.pull_request.number}} \
-          --user highsoft-bot
+          --proposed ./tmp/filesizes/${{github.event.pull_request.number}}.json
+
+      - name: Comment PR with file size table
+        if: ${{ github.event.pull_request.number && hashFiles('tmp/filesizes/comparison.md') != '' }}
         env:
-          GITHUB_TOKEN: ${{secrets.PR_COMMENT_TOKEN}}
+          GH_TOKEN: ${{ secrets.PR_COMMENT_TOKEN }}
+          FILESIZES_COMMENT_USER: highsoft-bot
+        run: |
+          pr_number=${{ github.event.pull_request.number }}
+          body_file="tmp/filesizes/comparison.md"
+          comment_user="${FILESIZES_COMMENT_USER:-}"
+          comment_filter="### File size comparison"
+
+          if [ ! -f "${body_file}" ]; then
+            echo "No comparison markdown found, skipping comment."
+            exit 0
+          fi
+
+          repo="${{ github.repository }}"
+          comments_json=$(gh api "repos/${repo}/issues/${pr_number}/comments")
+
+          if [ -n "${comment_user}" ]; then
+            comment_id=$(echo "${comments_json}" | jq -r --arg user "${comment_user}" --arg filter "${comment_filter}" \
+              'map(select(.user.login == $user and ((.body // "") | contains($filter)))) | .[0].id // empty')
+          else
+            comment_id=$(echo "${comments_json}" | jq -r --arg filter "${comment_filter}" \
+              'map(select((.body // "") | contains($filter))) | .[0].id // empty')
+          fi
+
+          if [ -n "${comment_id}" ]; then
+            echo "Updating existing comment ${comment_id}"
+            gh api "repos/${repo}/issues/comments/${comment_id}" \
+              --method PATCH \
+              -H "Accept: application/vnd.github+json" \
+              -f body@"${body_file}" \
+              >/dev/null
+          else
+            echo "Creating new file size comparison comment"
+            gh pr comment "${pr_number}" --body-file "${body_file}" >/dev/null
+          fi
+
+      - name: Upload file size comparison artifact
+        if: ${{ always() && hashFiles('tmp/filesizes/comparison.md') != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: filesize-comparison-${{ github.event.pull_request.number || github.run_id }}
+          path: |
+            tmp/filesizes/master.json
+            tmp/filesizes/${{ github.event.pull_request.number }}.json
+            tmp/filesizes/comparison.md
 
 
   visual_compare:
@@ -199,4 +244,3 @@ jobs:
             test/visual-test-results.json
             test/review-pr-*.json
             tmp/pr-visual-test-comment.json
-
