@@ -3847,7 +3847,7 @@ class Chart {
                     const valueColumnKey = series.dataColumnKeys()[1];
                     const seriesExtremes = series.getExtremes(
                         series.getProcessedData(true).modified
-                            .getColumn(valueColumnkey) as Array<number> || [],
+                            .getColumn(valueColumnKey) as Array<number> || [],
                         true
                     );
 
