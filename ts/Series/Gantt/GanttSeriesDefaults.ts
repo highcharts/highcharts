@@ -54,7 +54,7 @@ const GanttSeriesDefaults: GanttSeriesOptions = {
     tooltip: {
 
         headerFormat:
-            '<span style="font-size: 0.8em">{series.name}</span><br/>',
+            '<span style="font-size: 0.8em">{series.name}Hello</span><br/>',
 
         pointFormat: null as any,
 

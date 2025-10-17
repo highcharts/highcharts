@@ -260,6 +260,7 @@ class Chart {
         b?: (Chart.CallbackFunction|Partial<Options>),
         c?: Chart.CallbackFunction
     ): Chart {
+        setTimeout((): void => { }, 1000);
         return new Chart(a as any, b as any, c);
     }
 
