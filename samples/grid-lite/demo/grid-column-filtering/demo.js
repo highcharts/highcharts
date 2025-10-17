@@ -79,7 +79,6 @@ document.getElementById('inlineToggle').addEventListener('change', e => {
     grid.update({
         columnDefaults: {
             filtering: {
-                enabled: true,
                 inline: e.target.checked
             }
         }
