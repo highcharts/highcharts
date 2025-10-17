@@ -1552,17 +1552,22 @@ class Series {
 
                     // Assume all points are numbers
                     if (isNumber(firstPoint) && isNumber(lastPoint)) {
-                        const x: Array<number> = [],
-                            valueData: Array<number|null> = [];
-                        for (const value of data) {
-                            x.push(this.autoIncrement());
-                            valueData.push(value as number|null);
-                        }
-                        const columns = { [pointValKey]: valueData };
-                        if (!this.tempNoXColumn) {
+                        if (this.tempNoXColumn) {
+                            table.setColumn(
+                                pointValKey,
+                                data as Array<number|null>
+                            );
+                        } else {
+                            const x: Array<number> = [],
+                                valueData: Array<number|null> = [];
+                            for (const value of data) {
+                                x.push(this.autoIncrement());
+                                valueData.push(value as number|null);
+                            }
+                            const columns = { [pointValKey]: valueData };
                             columns.x = x;
+                            table.setColumns(columns);
                         }
-                        table.setColumns(columns);
 
                     // Assume all points are arrays when first point is
                     } else if (
@@ -1633,20 +1638,32 @@ class Series {
                                 valueData: Array<number|null> = [];
 
                             if (indexOfX === indexOfY) {
-                                for (const pt of data) {
-                                    xData.push(this.autoIncrement());
-                                    valueData.push((pt as any)[indexOfY]);
+                                if (this.tempNoXColumn) {
+                                    for (const pt of data) {
+                                        valueData.push((pt as any)[indexOfY]);
+                                    }
+                                    table.setColumn(pointValKey, valueData);
+
+                                } else {
+                                    for (const pt of data) {
+                                        xData.push(this.autoIncrement());
+                                        valueData.push((pt as any)[indexOfY]);
+                                    }
+                                    table.setColumns({
+                                        x: xData,
+                                        [pointValKey]: valueData
+                                    });
                                 }
                             } else {
                                 for (const pt of data) {
                                     xData.push((pt as any)[indexOfX]);
                                     valueData.push((pt as any)[indexOfY]);
                                 }
+                                table.setColumns({
+                                    x: xData,
+                                    [pointValKey]: valueData
+                                });
                             }
-                            table.setColumns({
-                                x: xData,
-                                [pointValKey]: valueData
-                            });
                         }
                     } else {
                         // Highcharts expects configs to be numbers or arrays in
