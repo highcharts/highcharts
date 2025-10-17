@@ -500,7 +500,7 @@ namespace Cell {
                     enabled?: boolean;
                 };
                 /**
-                 * Options for the `settings` toolbar item.
+                 * Options for the `drag` toolbar item.
                  */
                 drag: {
                     enabled?: boolean;
@@ -509,6 +509,12 @@ namespace Cell {
                  * Options for the `settings` toolbar item.
                  */
                 settings: {
+                    enabled?: boolean;
+                };
+                /**
+                 * Options for the `viewFullscreen` toolbar item.
+                 */
+                viewFullscreen: {
                     enabled?: boolean;
                 };
             }
