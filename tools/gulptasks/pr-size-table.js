@@ -61,7 +61,7 @@ function getFileSizes(out) {
 
     return Promise.resolve()
         .then(() => scriptsCompile(files.map(file => join('code', file))))
-        .then(() => scriptsCompile(void 0, require('./scripts-dts/dashboards/_config.json')))
+        .then(() => scriptsCompile(void 0, require('./scripts-dts/dashboards/_config.json')), 'dashboards')
         .then(() => getSizeOfSourceCompiledAndGzip(files))
 
         // Output the result to the console, or a file if filePath is defined
