@@ -403,7 +403,7 @@ QUnit.test('Stock panning (#6276, #21319)', function (assert) {
     assert.strictEqual(
         chart.yAxis[0].max > max,
         true,
-        'Panning vertically works for candlestick series, #23430.'
+        'Panning vertically should work for candlestick series, #23430.'
     );
 });
 
