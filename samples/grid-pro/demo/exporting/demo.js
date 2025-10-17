@@ -19,7 +19,7 @@ const grid = Grid.grid('container', {
             editMode: {
                 enabled: true
             }
-        }
+        },
         filtering: {
             enabled: true
         }
