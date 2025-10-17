@@ -1816,7 +1816,12 @@ class Pointer {
      */
     public setDOMEvents(): void {
         const container = this.chart.container,
-            ownerDoc = container.ownerDocument;
+            ownerDoc = container.ownerDocument,
+            // Get the parent element, including handling Shadow DOM (#23450)
+            getParent = (el: HTMLElement): HTMLElement|null|undefined =>
+                el.parentElement || (
+                    el.getRootNode() as ShadowRoot|undefined
+                )?.host?.parentElement;
 
         container.onmousedown = this.onContainerMouseDown.bind(this);
         container.onmousemove = this.onContainerMouseMove.bind(this);
@@ -1849,29 +1854,12 @@ class Pointer {
 
         // In case we are dealing with overflow, reset the chart position when
         // scrolling parent elements
-        let parent = this.chart.renderTo.parentElement;
-
-        if (!parent) {
-            const renderToRootNode = this.chart.renderTo.getRootNode();
-            if (renderToRootNode instanceof ShadowRoot) {
-                parent = renderToRootNode.host?.parentElement;
-            }
-        }
-
+        let parent = getParent(this.chart.renderTo);
         while (parent && parent.tagName !== 'BODY') {
             this.eventsToUnbind.push(addEvent(parent, 'scroll', (): void => {
                 delete this.chartPosition;
             }));
-
-            if (!parent.parentElement) {
-                const parentRootNode = parent.getRootNode();
-                if (parentRootNode instanceof ShadowRoot) {
-                    parent = parentRootNode.host?.parentElement;
-                    continue;
-                }
-            }
-
-            parent = parent.parentElement;
+            parent = getParent(parent);
         }
 
         this.eventsToUnbind.push(
