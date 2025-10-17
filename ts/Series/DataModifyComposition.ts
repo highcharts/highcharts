@@ -263,8 +263,13 @@ namespace DataModifyComposition {
     function afterInit(this: Series): void {
         // If linked series does not have compare option set, use the parent
         // series' compare option, #21119.
-        if (this.options.linkedTo) {
-            const linkedSeries = this.chart.get(this.options.linkedTo);
+        const linkedTo = this.options.linkedTo,
+            chart = this.chart;
+
+        if (linkedTo) {
+            const linkedSeries = linkedTo === ':previous' ?
+                chart.series[this.index - 1] :
+                chart.get(linkedTo);
 
             if (linkedSeries instanceof Series) {
                 this.options.compare = pick(
@@ -273,7 +278,6 @@ namespace DataModifyComposition {
                 );
             }
         }
-
         const compare = this.options.compare;
         let dataModify: Additions|undefined;
 

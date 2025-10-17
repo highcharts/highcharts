@@ -247,4 +247,15 @@ QUnit.test('Compare with linked series, #21119.', assert => {
         'percent',
         'Linked series should inherit compare option from parent series.'
     );
+
+    chart.series[1].update({
+        linkedTo: ':previous'
+    });
+
+    assert.strictEqual(
+        chart.series[1].options.compare,
+        'percent',
+        `Linked series should inherit compare option from parent series when
+        linked to :previous series.`
+    );
 });
