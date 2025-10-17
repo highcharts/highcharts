@@ -601,7 +601,7 @@ class Chart {
     }
 
     /**
-     * Internal function to unitialize an individual series.
+     * Internal function to initialize an individual series.
      *
      * @private
      * @function Highcharts.Chart#initSeries
@@ -617,7 +617,7 @@ class Chart {
 
         // No such series type
         if (!SeriesClass) {
-            error(17, true, chart as any, { missingModuleFor: type });
+            error(17, true, chart, { missingModuleFor: type });
         }
 
         const series = new SeriesClass();
