@@ -94,7 +94,7 @@ Dashboards.board('container', {
         }
     },
     components: [{
-        renderTo: 'data-grid',
+        renderTo: 'grid',
         connector: {
             id: 'climate-data'
         },

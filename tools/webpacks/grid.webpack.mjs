@@ -69,17 +69,11 @@ const webpacks = FSLib
                 library: {
                     export: 'default',
                     name: (
-                        productMasters.includes(masterName) ?
-                            {
-                                amd: `grid/${masterName}`,
-                                commonjs: `grid/${masterName}`,
-                                root: namespace
-                            } :
-                            {
-                                amd: `grid/${masterName}`,
-                                commonjs: `grid/${masterName}`,
-                                root: ['Grid', masterName.replace('grid-', '')]
-                            }
+                        {
+                            amd: `grid/${masterName}`,
+                            commonjs: `grid/${masterName}`,
+                            root: namespace
+                        }
                     ),
                     type: 'umd',
                     umdNamedDefine: true
