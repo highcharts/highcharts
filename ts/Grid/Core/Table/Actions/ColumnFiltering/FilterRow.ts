@@ -54,8 +54,10 @@ class FilterRow extends HeaderRow {
      * The Grid Table instance which the row belongs to.
      */
     constructor(viewport: Table) {
-        const level = (viewport.header?.levels ?? 0) + 1;
-        super(viewport, level, { 'aria-rowindex': level });
+        super(
+            viewport,
+            (viewport.header?.levels ?? 0) + 1 // Level (1-based)
+        );
     }
 
 

@@ -94,12 +94,12 @@ Dashboards.board('container', {
         }
     },
     components: [{
-        renderTo: 'data-grid',
+        renderTo: 'grid',
         connector: {
             id: 'climate-data'
         },
-        type: 'DataGrid',
-        dataGridOptions: {
+        type: 'Grid',
+        gridOptions: {
             credits: {
                 enabled: false
             },

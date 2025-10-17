@@ -634,9 +634,9 @@ const setupDashboard = instanceId => {
             }
         }, {
             renderTo: 'instances-table',
-            type: 'DataGrid',
+            type: 'Grid',
             title: 'Instances',
-            dataGridOptions: {
+            gridOptions: {
                 credits: {
                     enabled: false
                 },
@@ -714,7 +714,7 @@ const setupDashboard = instanceId => {
                     const component =
                         this.board.getComponentByCellId('instances-table');
                     setTimeout(() => {
-                        component.dataGrid.viewport.rows.find(
+                        component.grid.viewport.rows.find(
                             row => row.cells[0].value === instance.InstanceId
                         ).htmlElement.classList.add('current');
                     }, 1);

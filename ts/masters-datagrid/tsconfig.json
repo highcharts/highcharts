@@ -10,9 +10,6 @@
         "paths": {
             "highcharts": [
                 "../Dashboards/highcharts"
-            ],
-            "@highcharts/dashboards/datagrid": [
-                "../Dashboards/datagrid"
             ]
         }
     },

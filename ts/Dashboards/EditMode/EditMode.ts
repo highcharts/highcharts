@@ -60,7 +60,7 @@ class EditMode {
     /**
      * Edit mode constructor.
      * @internal
-      *
+     *
      * @param board
      * Board instance
      *
@@ -190,7 +190,7 @@ class EditMode {
     /**
      * URL from which the icons will be fetched.
      */
-    public iconsURLPrefix: string = '@product.assetPrefix@/gfx/dashboards-icons/';
+    public iconsURLPrefix: string = 'https://code.highcharts.com/dashboards/3.6.0/gfx/dashboards-icons/';
     /**
      * Dashboards' board instance.
      */

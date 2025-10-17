@@ -61,26 +61,26 @@ const board = Dashboards.board('container', {
     },
     components: [{
         // Original sheet
-        type: 'DataGrid',
+        type: 'Grid',
         renderTo: 'orig-sheet-cell',
         connector: {
             id: 'conn-orig'
         },
         title: sheetTitle().original,
-        dataGridOptions: {
+        gridOptions: {
             credits: {
                 enabled: false
             }
         }
     }, {
         // Modified sheet
-        type: 'DataGrid',
+        type: 'Grid',
         renderTo: 'mod-sheet-cell',
         connector: {
             id: 'conn-mod'
         },
         title: sheetTitle().modified,
-        dataGridOptions: {
+        gridOptions: {
             credits: {
                 enabled: false
             }

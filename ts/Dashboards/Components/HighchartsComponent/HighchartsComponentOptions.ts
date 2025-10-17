@@ -69,7 +69,7 @@ export interface Options extends Component.Options {
     /**
      * Connector options for the component.
      */
-    connector?: (ConnectorOptions|Array<ConnectorOptions>);
+    connector?: (ConnectorOptions | Array<ConnectorOptions>);
 
     /**
      * Type of the component.
@@ -213,7 +213,7 @@ export interface ColumnAssignmentOptions {
  */
 export interface SyncOptions extends Sync.RawOptionsRecord {
     /**
-     * Extremes sync is available for Highcharts, KPI, DataGrid and
+     * Extremes sync is available for Highcharts, KPI, Grid and
      * Navigator components. Sets a common range of displayed data. For the
      * KPI Component sets the last value.
      *
@@ -223,9 +223,9 @@ export interface SyncOptions extends Sync.RawOptionsRecord {
      *
      * @default false
      */
-    extremes?: boolean|Sync.OptionsEntry;
+    extremes?: boolean | Sync.OptionsEntry;
     /**
-     * Highlight sync is available for Highcharts and DataGrid components.
+     * Highlight sync is available for Highcharts and Grid components.
      * It allows to highlight hovered corresponding rows in the table and
      * chart points.
      *
@@ -235,9 +235,9 @@ export interface SyncOptions extends Sync.RawOptionsRecord {
      *
      * @default false
      */
-    highlight?: boolean|HighchartsHighlightSyncOptions;
+    highlight?: boolean | HighchartsHighlightSyncOptions;
     /**
-     * Visibility sync is available for Highcharts and DataGrid components.
+     * Visibility sync is available for Highcharts and Grid components.
      * Synchronizes the visibility of data from a hidden/shown series.
      *
      * Try it:
@@ -246,7 +246,7 @@ export interface SyncOptions extends Sync.RawOptionsRecord {
      *
      * @default false
      */
-    visibility?: boolean|Sync.OptionsEntry;
+    visibility?: boolean | Sync.OptionsEntry;
 }
 
 /**
@@ -274,7 +274,7 @@ export interface HighchartsHighlightSyncOptions extends Sync.OptionsEntry {
      *
      * @default null
      */
-    affectedSeriesId?: string|null;
+    affectedSeriesId?: string | null;
     /**
      * Whether the marker should be synced. When hovering over a point in
      * other component in the same group, the 'hover' state is enabled at

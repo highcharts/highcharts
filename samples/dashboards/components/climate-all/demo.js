@@ -1049,7 +1049,7 @@ async function updateBoard(board, city, column, scale, newData) {
         const showCelsius = scale === 'C';
 
         // Update city grid selection
-        await selectionGrid.dataGrid.update({
+        await selectionGrid.grid.update({
             columns: [{
                 id: 'TNC',
                 enabled: showCelsius

@@ -139,7 +139,7 @@ class Grid {
 
     /**
      * An array containing the current Grid objects in the page.
-     * @internal
+     * @private
      */
     public static readonly grids: Array<(Grid|undefined)> = [];
 
@@ -310,7 +310,7 @@ class Grid {
     constructor(
         renderTo: string | HTMLElement,
         options: Options,
-        afterLoadCallback?: Grid.AfterLoadCallback
+        afterLoadCallback?: (grid: Grid) => void
     ) {
         this.loadUserOptions(options);
 
@@ -1192,12 +1192,6 @@ class Grid {
  *
  * */
 namespace Grid {
-    /**
-     * @internal
-     * Callback that is called after the Grid is loaded.
-     */
-    export type AfterLoadCallback = (grid: Grid) => void;
-
     /**
      * @internal
      * An item in the column options map.
