@@ -19,11 +19,10 @@ const ContourSeriesDefaults: PlotOptionsOf<ContourSeries> = {
     },
     tooltip: {
         formatter: function (tt): string {
-            const point = (tt.chart.hoverPoint as ContourPoint);
-            const series = (point.series as ContourSeries);
-            const value = point.value || 1;
-            const stops = series.colorAxis?.stops as any;
-            const extent = value / ((series.dataMax || 1));
+            const point = (tt.chart.hoverPoint as ContourPoint),
+                { series, value } = point,
+                stops = series.colorAxis?.stops as any,
+                extent = (value ?? 0) / ((series.dataMax || 1));
 
             function lerpVectors(
                 [v1A, v1B, v1C]: number[],
@@ -43,20 +42,14 @@ const ContourSeriesDefaults: PlotOptionsOf<ContourSeries> = {
                 ];
             }
 
-            let finalColor = lerpVectors(
-                [
-                    0, 0, 0
-                ], [
-                    255, 255, 255
-                ],
-                extent
-            );
+            let finalColor;
 
             if (stops) {
+                const lenCap = stops.length - 1;
 
-                finalColor = stops[stops.length - 1].color.rgba;
+                finalColor = stops[lenCap].color.rgba;
 
-                for (let i = 1; i < (stops as any).length; i++) {
+                for (let i = 1; i < lenCap; i++) {
                     if (extent < stops[i][0]) {
                         finalColor = lerpVectors(
                             stops[i - 1].color.rgba,
@@ -68,7 +61,14 @@ const ContourSeriesDefaults: PlotOptionsOf<ContourSeries> = {
                 }
             }
 
-            const [r, g, b] = finalColor;
+            const [r, g, b] = finalColor ?? lerpVectors(
+                [
+                    0, 0, 0
+                ], [
+                    255, 255, 255
+                ],
+                extent
+            );
 
             return `<span style="color: rgba(${
                 r
