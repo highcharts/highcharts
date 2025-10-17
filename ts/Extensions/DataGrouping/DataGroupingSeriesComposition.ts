@@ -595,7 +595,11 @@ function groupData(
     groupPositions: Array<number>,
     approximation: (ApproximationKeyValue|Function)
 ): DataGroupingResultObject {
-    const xData = table.getColumn('x', true) as Array<number> || [],
+    const xData = (table === this.dataTable) ?
+            // If the table is the series dataTable, get the cached x data
+            // to avoid undefined x values from the data table.
+            this.getColumn('x') :
+            table.getColumn('x', true) as Array<number>,
         yData = table.getColumn('y', true) as Array<number>,
         series = this,
         topTable = series.dataTable,

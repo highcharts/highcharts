@@ -438,11 +438,13 @@ class ChartAdditions {
 
                     if (series.useDataTable) {
                         const columns = series.dataTable.getColumns();
-                        // Delete computed x and let xOption be used instead
-                        delete columns.x;
                         if (columns.xOption) {
+                            // Delete computed x and let xOption be used instead
                             columns.x = columns.xOption;
+                        } else if (!series.tempNoXColumn) {
+                            delete columns.x;
                         }
+                        delete columns.xOption;
                         series.purgedOptions.dataTable = { columns };
                     }
                     levelSeriesOptions.push(series.purgedOptions);

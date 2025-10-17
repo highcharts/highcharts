@@ -357,30 +357,36 @@ class Point {
             ) as (number|null|undefined);
         }
 
-        /**
-         * The x value of the point.
-         * @name Highcharts.Point#x
-         * @type {number}
-         */
-        // If no x is set by now, get auto incremented value. All points must
-        // have an x value, however the y value can be null to create a gap in
-        // the series
-        if (
-            'name' in point &&
-            typeof x === 'undefined' &&
-            series.xAxis &&
-            series.xAxis.hasNames
-        ) {
-            point.x = series.xAxis.nameToX(point);
-        }
-        if (typeof point.x === 'undefined' && series) {
-            point.x = x ?? series.autoIncrement();
-        } else if (isNumber(options.x) && series.options.relativeXValue) {
-            point.x = series.autoIncrement(options.x);
+        if (!series.tempNoXColumn) {
+            /**
+             * The x value of the point.
+             * @name Highcharts.Point#x
+             * @type {number}
+             */
+            // If no x is set by now, get auto incremented value. All points
+            // must have an x value, however the y value can be null to create a
+            // gap in the series
+            if (
+                'name' in point &&
+                typeof x === 'undefined' &&
+                series.xAxis &&
+                series.xAxis.hasNames
+            ) {
+                point.x = series.xAxis.nameToX(point, point.options.x);
+            }
+            if (typeof point.x === 'undefined' && series) {
+                point.x = x ?? series.autoIncrement();
+            } else if (isNumber(options.x) && series.options.relativeXValue) {
+                point.x = series.autoIncrement(options.x);
 
-        // If x is a string, try to parse it to a datetime
-        } else if (typeof point.x === 'string') {
-            x ??= series.chart.time.parse(point.x);
+            // If x is a string, try to parse it to a datetime
+            } else if (typeof point.x === 'string') {
+                x ??= series.chart.time.parse(point.x);
+                if (isNumber(x)) {
+                    point.x = x;
+                }
+            }
+        } else {
             if (isNumber(x)) {
                 point.x = x;
             }
@@ -1092,7 +1098,8 @@ class Point {
 
             // Update visuals, #4146
             // Handle mock graphic elements for a11y, #12718
-            const hasMockGraphic = graphic && point.hasMockGraphic;
+            const hasMockGraphic = graphic && point.hasMockGraphic,
+                index = point.index;
             const shouldDestroyGraphic = point.y === null ?
                 !hasMockGraphic :
                 hasMockGraphic;
@@ -1118,30 +1125,38 @@ class Point {
             }
 
             // Record changes in the data table
-            const row: DataTable.RowObject = {},
-                keys = series.getDataColumnKeys()
-                    .concat(Object.keys(options || {}));
+            const pointOptions = point.optionsToObject(options) as AnyRecord;
+            if (series.tempNoXColumn) {
+                series.dataTable.setRow(pointOptions, index);
+            } else {
+                const row: DataTable.RowObject = {},
+                    keys = series.getDataColumnKeys()
+                        .concat(Object.keys(options || {}));
 
-            for (const key of keys) {
-                row[key] = (point as any)[key];
+                for (const key of keys) {
+                    row[key] = (point as any)[key];
+                }
+                series.dataTable.setRow(row, index);
             }
-            series.dataTable.setRow(row, point.index);
 
             // Record the options to options.data. If the old or the new config
             // is an object, use point options, otherwise use raw options
             // (#4701, #4916).
             if (dataOptions) {
-                const i = point.index;
-                dataOptions[i] = (
-                    isObject(dataOptions[i], true) ||
+                dataOptions[index] = (
+                    isObject(dataOptions[index], true) ||
                     isObject(options, true)
                 ) ?
                     point.options :
-                    options ?? dataOptions[i];
+                    options ?? dataOptions[index];
             }
 
             // Redraw
             series.isDirty = series.isDirtyData = true;
+            if (series.xColumn && 'x' in pointOptions) {
+                series.xColumn[index] = series.getX(pointOptions.x);
+            }
+
             if (!series.fixedBox && series.hasCartesianSeries) { // #1906, #2320
                 chart.isDirtyBox = true;
             }

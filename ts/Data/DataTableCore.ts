@@ -281,9 +281,15 @@ class DataTableCore {
      */
     public log(msg = '', limit = 10, start = 0): void {
         /* eslint-disable no-console */
-        console.group(
-            (msg ? msg + ' / ' : '') + `Showing ${limit} rows out of ${this.rowCount}, start at ${start}`
-        );
+        const extra = (this.rowCount > limit || start > 0) ?
+            `Showing ${limit} rows out of ${this.rowCount}, start at ${start}` :
+            '';
+        if (extra) {
+            msg += ` / ${extra}`;
+        }
+        if (msg) {
+            console.group(msg);
+        }
         console.table(
             new Array(Math.min(this.rowCount, limit))
                 .fill(void 0)
@@ -291,7 +297,9 @@ class DataTableCore {
                     this.getRowObject(i + start) || {}
                 )
         );
-        console.groupEnd();
+        if (msg) {
+            console.groupEnd();
+        }
         /* eslint-enable no-console */
     }
 
