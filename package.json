@@ -59,6 +59,7 @@
     "preview-docs": "npm run start --workspace=docs-preview"
   },
   "devDependencies": {
+    "@actions/github": "^6.0.1",
     "@aws-sdk/client-s3": "^3.592.0",
     "@aws-sdk/credential-providers": "^3.592.0",
     "@babel/core": "^7.26.0",
