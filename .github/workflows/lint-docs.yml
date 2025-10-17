@@ -2,7 +2,6 @@ name: Linting docs
 
 on:
   pull_request:
-    branches: [ 'master' ]
     paths:
       - 'docs/**'
       - 'tools/cspell/*'
@@ -48,5 +47,4 @@ jobs:
           name: docs-build
           path: |
             tools/docs-preview/build
-
 
