@@ -8,10 +8,13 @@ const modifiedDataToggle = document.querySelector('#modifiedDataToggle');
 const grid = Grid.grid('container', {
     dataTable: {
         columns: {
-            product: ['Apples', 'Pears', 'Plums', 'Bananas'],
-            weight: [100, 40, 0.5, 200],
-            price: [1.5, 2.53, 5, 4.5],
-            metaData: ['a', 'b', 'c', 'd']
+            product: [
+                'Apples', 'Pears', 'Plums', 'Bananas', 'Oranges', 'Grapes',
+                'Strawberries', 'Blueberries'
+            ],
+            weight: [100, 40, 0.5, 200, 150, 100, 50, 30],
+            price: [1.5, 2.53, 5, 4.5, 3.5, 2.5, 6, 4.2],
+            metaData: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
         }
     },
     columnDefaults: {
