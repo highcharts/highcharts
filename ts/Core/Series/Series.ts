@@ -442,6 +442,8 @@ class Series {
 
     public xColumn?: Array<number>;
 
+    public xColumnIsNumbers?: boolean|undefined;
+
     public xIncrement?: (number|null);
 
     public yAxis!: AxisType;
@@ -1081,15 +1083,20 @@ class Series {
             }
 
             const nameColumn = table.getColumn('name', true),
+                options = this.options,
                 // Check for empty or non-numeric x values. A for loop is faster
-                // than Array.prototype.some, and covers empty slots.
-                hasHoles = (arr: any[]): boolean => {
+                // than Array.prototype.some, and covers empty slots. Cache the
+                // result for faster subsequent checks.
+                isNumbers = (arr: any[]): boolean => {
+                    if (this.xColumnIsNumbers !== void 0) {
+                        return this.xColumnIsNumbers;
+                    }
                     for (let i = 0, n = arr.length; i < n; i++) {
                         if (typeof arr[i] !== 'number') {
-                            return true;
+                            return (this.xColumnIsNumbers = false);
                         }
                     }
-                    return false;
+                    return (this.xColumnIsNumbers = true);
                 };
 
             // Reset the counter
@@ -1099,12 +1106,12 @@ class Series {
             if (
                 !column ||
                 this.xAxis?.hasNames ||
-                this.options.relativeXValue ||
+                options.relativeXValue ||
                 // X column exists in the data table, but has gaps or strings
                 (
-                    column.length < (this.options.turboThreshold || Infinity) &&
+                    column.length < (options.turboThreshold || Infinity) &&
                     !this.boosted &&
-                    hasHoles(column)
+                    !isNumbers(column)
                 )
             ) {
                 return (
@@ -1528,6 +1535,7 @@ class Series {
             // Reset properties
             series.xIncrement = null;
             delete series.xColumn;
+            delete series.xColumnIsNumbers;
             if (this.tempNoXColumn) {
                 delete table.columns.x;
             }
