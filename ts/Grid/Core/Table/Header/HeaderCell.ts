@@ -240,6 +240,11 @@ class HeaderCell extends Cell {
 
         this.setCustomClassName(options.header?.className);
 
+        // Add alignment to number column
+        if (column?.dataType === 'number') {
+            this.setCustomClassName(Globals.getClassName('rightAlign'));
+        }
+
         fireEvent(this, 'afterRender', { column });
     }
 
