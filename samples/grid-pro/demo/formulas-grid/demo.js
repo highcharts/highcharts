@@ -218,7 +218,15 @@ const initGrid = data => {
                     }
                 }
             }
-        }]
+        }],
+        pagination: {
+            enabled: true,
+            controls: {
+                pageButtons: {
+                    count: 5
+                }
+            }
+        }
     });
 };
 

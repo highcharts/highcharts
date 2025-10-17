@@ -22,6 +22,9 @@ body {
 }
 
 .demo {
-    padding: 8px;
-    font-family: Arial, Helvetica, sans-serif;
+    padding: 8px 12px;
+}
+
+.highcharts-description {
+    padding: 0 8px;
 }
