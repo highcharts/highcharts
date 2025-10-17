@@ -1,7 +1,3 @@
----
-tags: ["grid-pro"]
----
-
 # Cell editing
 
 **Note:** Cell editing is only available in [Highcharts Grid Pro](https://www.highcharts.com/docs/dashboards/grid-standalone).
@@ -121,7 +117,7 @@ columns: [{
 }]
 ```
 
-Note that a validator is a callback function that receives an object as its first argument. This object represents the cell content and contains two important properties: `value` and `rawValue`. 
+Note that a validator is a callback function that receives an object as its first argument. This object represents the cell content and contains two important properties: `value` and `rawValue`.
 
 - `value`: Returns the parsed value according to the specified `dataType`.
 - `rawValue`: Always returns the original string entered by the user in the input field, regardless of the column's `dataType`.

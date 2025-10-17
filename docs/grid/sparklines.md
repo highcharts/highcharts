@@ -1,7 +1,3 @@
----
-tags: ["grid-pro"]
----
-
 # Sparklines
 
 **Note:** Sparklines are only available in [Highcharts Grid Pro](https://www.highcharts.com/docs/dashboards/grid-standalone), and also requires a valid **Highcharts Core license**.
@@ -124,4 +120,3 @@ You can configure the sparkline using the `chartOptions` API option, that suppor
 Sparkline supports all standard Highcharts chart options and is optimized for speed, including virtual scrolling for large datasets.
 
 <iframe src="https://www.highcharts.com/samples/embed/grid/basic/sparklines?force-light-theme" allow="fullscreen"></iframe>
-

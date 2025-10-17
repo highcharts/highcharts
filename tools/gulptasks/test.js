@@ -206,11 +206,15 @@ function checkDemosConsistency() {
  * @async
  * @return {Promise<void>}
  */
-function checkDocsConsistency() {
+async function checkDocsConsistency() {
     const FS = require('fs');
     const LogLib = require('../libs/log');
+    const { pathToFileURL } = require('node:url');
 
-    const sidebar = require('../../docs/sidebars.js');
+    const sidebarModule = await import(
+        pathToFileURL(path.join(__dirname, '..', '..', 'docs', 'sidebars.mjs'))
+    );
+    const sidebar = sidebarModule.default || sidebarModule;
     const { unlisted } = require('../../docs/doc-config.js');
     const sidebarDocs = [];
 
@@ -253,7 +257,7 @@ function checkDocsConsistency() {
     });
 
     if (docsNotAdded.length > 0) {
-        LogLib.failure(`❌  Found ${docsNotAdded.length} docs not added to '/docs/sidebars.js' or '/docs/doc-config.js':`);
+        LogLib.failure(`❌  Found ${docsNotAdded.length} docs not added to '/docs/sidebars.mjs' or '/docs/doc-config.js':`);
         docsNotAdded.forEach(file => LogLib.warn(`   '${file}'`));
         throw new Error('Docs not added to sidebar');
     }
@@ -301,7 +305,7 @@ specified by config.imageCapture.resultsOutputPath.
         return;
     }
 
-    checkDocsConsistency();
+    await checkDocsConsistency();
     checkSamplesConsistency();
     checkDemosConsistency();
     checkJSWrap();

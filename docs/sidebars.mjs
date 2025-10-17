@@ -1,4 +1,4 @@
-module.exports = {
+const sidebars = {
     docs: {
         Highcharts: [
             'public-index'
@@ -125,10 +125,38 @@ module.exports = {
             'grid/understanding-grid',
             'grid/columns',
             'grid/header',
-            'grid/cell-editing',
-            'grid/cell-renderers',
-            'grid/sparklines',
-            'grid/events',
+            {
+                type: 'doc',
+                id: 'grid/cell-editing',
+                label: 'Cell editing',
+                customProps: {
+                    gridPro: true
+                }
+            },
+            {
+                type: 'doc',
+                id: 'grid/cell-renderers',
+                label: 'Cell renderers',
+                customProps: {
+                    gridPro: true
+                }
+            },
+            {
+                type: 'doc',
+                id: 'grid/sparklines',
+                label: 'Sparklines',
+                customProps: {
+                    gridPro: true
+                }
+            },
+            {
+                type: 'doc',
+                id: 'grid/events',
+                label: 'Events',
+                customProps: {
+                    gridPro: true
+                }
+            },
             {
                 'Theming': [
                     'grid/theming/theming',
@@ -311,3 +339,5 @@ module.exports = {
         ]
     }
 };
+
+export default sidebars;

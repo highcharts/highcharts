@@ -4,5 +4,21 @@
     },
     "env": {
         "node": true
-    }
+    },
+    "rules": {
+        "node/no-unsupported-features/es-syntax": "off"
+    },
+    "overrides": [
+        {
+            "files": [
+                "docs-preview/**/*.js"
+            ],
+            "parserOptions": {
+                "sourceType": "module"
+            },
+            "rules": {
+                "node/no-unpublished-import": "off"
+            }
+        }
+    ]
 }
