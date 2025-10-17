@@ -69,7 +69,7 @@ const grid = Grid.grid('container', {
         id: 'weight',
         filtering: {
             condition: 'greaterThan',
-            value: 1000
+            value: 100
         }
     }]
 });
