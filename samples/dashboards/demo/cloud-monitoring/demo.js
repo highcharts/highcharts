@@ -70,62 +70,56 @@ const setupDashboard = instanceId => {
             connectors: [{
                 id: 'charts',
                 type: 'JSON',
-                options: {
-                    firstRowAsNames: false,
-                    columnNames: [
-                        'timestamp', 'readOpt', 'writeOpt', 'networkIn',
-                        'networkOut', 'cpuUtilization'
-                    ],
-                    dataUrl: 'https://demo-live-data.highcharts.com/instance-details.json',
-                    beforeParse: function (data) {
-                        const currentInstance = data.find(
-                            inst => inst.InstanceId === currentInstanceId
-                        ) || data;
-                        return currentInstance.Details.map(
-                            el => el
-                        );
-                    }
+                firstRowAsNames: false,
+                columnIds: [
+                    'timestamp', 'readOpt', 'writeOpt', 'networkIn',
+                    'networkOut', 'cpuUtilization'
+                ],
+                dataUrl: 'https://demo-live-data.highcharts.com/instance-details.json',
+                beforeParse: function (data) {
+                    const currentInstance = data.find(
+                        inst => inst.InstanceId === currentInstanceId
+                    ) || data;
+                    return currentInstance.Details.map(
+                        el => el
+                    );
                 }
             }, {
                 id: 'instanceDetails',
                 type: 'JSON',
-                options: {
-                    firstRowAsNames: false,
-                    orientantion: 'columns',
-                    columnNames: [
-                        'index', 'CPUUtilization', 'MemoryUsage', 'DiskSizeGB',
-                        'DiskUsedGB', 'DiskFreeGB', 'MediaGB', 'RootGB',
-                        'Documents', 'Downloads'
-                    ],
-                    dataUrl: 'https://demo-live-data.highcharts.com/instances.json',
-                    beforeParse: function (data) {
-                        const currentInstance = data.find(
-                            inst => inst.InstanceId === currentInstanceId
-                        ) || data;
-                        const diskSpace = currentInstance.DiskSpace.RootDisk;
-                        return [
-                            [
-                                0, // display one record on chart KPI / disk
-                                currentInstance.CPUUtilization,
-                                currentInstance.MemoryUsage,
-                                diskSpace.SizeGB,
-                                diskSpace.UsedGB,
-                                diskSpace.FreeGB,
-                                diskSpace.MediaGB,
-                                diskSpace.RootGB,
-                                diskSpace.Documents,
-                                diskSpace.Downloads
-                            ]
-                        ];
-                    }
+                firstRowAsNames: false,
+                orientantion: 'columns',
+                columnIds: [
+                    'index', 'CPUUtilization', 'MemoryUsage', 'DiskSizeGB',
+                    'DiskUsedGB', 'DiskFreeGB', 'MediaGB', 'RootGB',
+                    'Documents', 'Downloads'
+                ],
+                dataUrl: 'https://demo-live-data.highcharts.com/instances.json',
+                beforeParse: function (data) {
+                    const currentInstance = data.find(
+                        inst => inst.InstanceId === currentInstanceId
+                    ) || data;
+                    const diskSpace = currentInstance.DiskSpace.RootDisk;
+                    return [
+                        [
+                            0, // display one record on chart KPI / disk
+                            currentInstance.CPUUtilization,
+                            currentInstance.MemoryUsage,
+                            diskSpace.SizeGB,
+                            diskSpace.UsedGB,
+                            diskSpace.FreeGB,
+                            diskSpace.MediaGB,
+                            diskSpace.RootGB,
+                            diskSpace.Documents,
+                            diskSpace.Downloads
+                        ]
+                    ];
                 }
             }, {
                 id: 'instances',
                 type: 'JSON',
-                options: {
-                    firstRowAsNames: false,
-                    data: instances
-                }
+                firstRowAsNames: false,
+                data: instances
             }]
         },
         gui: {
@@ -178,7 +172,7 @@ const setupDashboard = instanceId => {
             }]
         },
         components: [{
-            cell: 'instance',
+            renderTo: 'instance',
             type: 'HTML',
             title: 'Instance type:',
             elements: [{
@@ -190,7 +184,7 @@ const setupDashboard = instanceId => {
                 textContent: instance.InstanceType
             }]
         }, {
-            cell: 'zone',
+            renderTo: 'zone',
             type: 'HTML',
             title: 'Zone:',
             elements: [{
@@ -202,7 +196,7 @@ const setupDashboard = instanceId => {
                 textContent: instance.Zone
             }]
         }, {
-            cell: 'ami',
+            renderTo: 'ami',
             type: 'HTML',
             title: 'AMI:',
             elements: [{
@@ -214,7 +208,7 @@ const setupDashboard = instanceId => {
                 textContent: instance.AMI
             }]
         }, {
-            cell: 'os',
+            renderTo: 'os',
             type: 'HTML',
             title: 'OS:',
             elements: [{
@@ -226,7 +220,7 @@ const setupDashboard = instanceId => {
                 textContent: instance.OS
             }]
         }, {
-            cell: 'disk-usage',
+            renderTo: 'disk-usage',
             title: 'Disk usage',
             type: 'Highcharts',
             connector: {
@@ -320,7 +314,7 @@ const setupDashboard = instanceId => {
                 }
             }
         }, {
-            cell: 'cpu-utilization',
+            renderTo: 'cpu-utilization',
             title: 'CPU utilization',
             type: 'Highcharts',
             connector: {
@@ -371,12 +365,12 @@ const setupDashboard = instanceId => {
                 }
             }
         }, {
-            cell: 'cpu',
+            renderTo: 'cpu',
             type: 'KPI',
             connector: {
                 id: 'instanceDetails'
             },
-            columnName: 'CPUUtilization',
+            columnId: 'CPUUtilization',
             chartOptions: {
                 ...KPIOptions,
                 plotOptions: {
@@ -417,12 +411,12 @@ const setupDashboard = instanceId => {
                 }
             }
         }, {
-            cell: 'memory',
+            renderTo: 'memory',
             type: 'KPI',
             connector: {
                 id: 'instanceDetails'
             },
-            columnName: 'MemoryUsage',
+            columnId: 'MemoryUsage',
             chartOptions: {
                 ...KPIOptions,
                 yAxis: {
@@ -467,7 +461,7 @@ const setupDashboard = instanceId => {
                 }
             }
         }, {
-            cell: 'health',
+            renderTo: 'health',
             type: 'HTML',
             class: 'health-indicator',
             elements: [{
@@ -484,12 +478,12 @@ const setupDashboard = instanceId => {
                 textContent: 'Health'
             }]
         }, {
-            cell: 'disk',
+            renderTo: 'disk',
             type: 'KPI',
             connector: {
                 id: 'instanceDetails'
             },
-            columnName: 'DiskUsedGB',
+            columnId: 'DiskUsedGB',
             chartOptions: {
                 ...KPIOptions,
                 plotOptions: {
@@ -524,7 +518,7 @@ const setupDashboard = instanceId => {
                 }
             }
         }, {
-            cell: 'network-opt',
+            renderTo: 'network-opt',
             type: 'Highcharts',
             title: 'Network (bytes)',
             connector: {
@@ -585,7 +579,7 @@ const setupDashboard = instanceId => {
                 }]
             }
         }, {
-            cell: 'disk-opt',
+            renderTo: 'disk-opt',
             type: 'Highcharts',
             title: 'Disk operations',
             connector: {
@@ -639,10 +633,10 @@ const setupDashboard = instanceId => {
                 }
             }
         }, {
-            cell: 'instances-table',
-            type: 'DataGrid',
+            renderTo: 'instances-table',
+            type: 'Grid',
             title: 'Instances',
-            dataGridOptions: {
+            gridOptions: {
                 credits: {
                     enabled: false
                 },
@@ -657,19 +651,25 @@ const setupDashboard = instanceId => {
                 ],
                 columns: [{
                     id: 'InstanceId',
+                    width: '31%',
                     header: {
                         format: 'ID'
                     }
                 }, {
                     id: 'InstanceType',
+                    width: '19%',
                     header: {
                         format: 'Type'
                     }
                 }, {
                     id: 'PublicIpAddress',
+                    width: '24%',
                     header: {
                         format: 'Public IP'
                     }
+                }, {
+                    id: 'State',
+                    width: '16%'
                 }, {
                     id: 'HealthIndicator',
                     header: {
@@ -714,7 +714,7 @@ const setupDashboard = instanceId => {
                     const component =
                         this.board.getComponentByCellId('instances-table');
                     setTimeout(() => {
-                        component.dataGrid.viewport.rows.find(
+                        component.grid.viewport.rows.find(
                             row => row.cells[0].value === instance.InstanceId
                         ).htmlElement.classList.add('current');
                     }, 1);

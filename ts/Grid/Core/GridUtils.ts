@@ -49,6 +49,14 @@ export interface GridEvent<T, E extends Event = Event> {
     target: T;
 }
 
+/**
+ * The event listener for the grid.
+ */
+export interface GridEventListener {
+    eventName: keyof HTMLElementEventMap;
+    listener: EventListener;
+}
+
 /* *
  *
  *  Namespace

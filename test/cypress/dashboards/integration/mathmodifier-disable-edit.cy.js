@@ -3,13 +3,13 @@ describe('MathModifier created columns and interaction.', () => {
         cy.visit('/dashboards/cypress/grid-mathmodifier/');
     })
 
-    it('DataGrid and HC component should disable changing the mathmodifier column.', () => {
+    it('Grid and HC component should disable changing the mathmodifier column.', () => {
         cy.board().then((board) => {
         const mComponents = board.mountedComponents,
             hcComponent = mComponents[0].component,
             dgComponent = mComponents[1].component;
             assert.deepEqual(
-                dgComponent.dataGrid.options.columns,
+                dgComponent.grid.options.columns,
                 [{
                     id: 'USD',
                     cells: {
@@ -47,3 +47,4 @@ describe('MathModifier created columns and interaction.', () => {
     });
 
 });
+
