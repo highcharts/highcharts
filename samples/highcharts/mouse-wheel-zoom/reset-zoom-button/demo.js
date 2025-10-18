@@ -1,12 +1,17 @@
+// Create the chart
 Highcharts.chart('container', {
+
     chart: {
         zooming: {
-            mouseWheel: false
+            mouseWheel: {
+                type: 'x',
+                showResetButton: true
+            }
         }
     },
 
     title: {
-        text: 'Mouse wheel zooming set to false'
+        text: 'Mouse wheel zooming, show reset button'
     },
 
     series: [{
