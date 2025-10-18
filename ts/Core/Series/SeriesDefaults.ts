@@ -2002,7 +2002,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
             /** @internal */
             color: 'contrast',
             /** @internal */
-            textOutline: '1px contrast'
+            textOutline: '2px contrast'
         },
 
         /**
