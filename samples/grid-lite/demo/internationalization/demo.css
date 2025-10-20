@@ -28,3 +28,10 @@ body {
 .highcharts-description {
     padding: 0 8px;
 }
+
+code {
+    background-color: #eee;
+    border-radius: 3px;
+    font-family: "Courier New", monospace;
+    padding: 0 3px;
+}
