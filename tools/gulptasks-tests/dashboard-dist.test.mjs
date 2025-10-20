@@ -1,19 +1,13 @@
-import { describe, it, before, after } from 'node:test';
+import { describe, it, before } from 'node:test';
 import { ok } from 'node:assert';
 
 import { stat } from 'node:fs/promises';
 
 import { exec } from '../libs/process.js';
 
-describe('dashboards/dist', async () => {
+describe('dist --product Dashboards', async () => {
     before(async () => {
-        process.env.DASH_RELEASE = '1.2.3';
         await exec('npx gulp dist-clean');
-    });
-
-    after(async () => {
-        delete process.env.DASH_RELEASE;
-        // await exec('npx gulp dist-clean');
     });
 
     await it('dist-examples --product Dashboards creates build/dist/dashboards/index.html ', async () => {
