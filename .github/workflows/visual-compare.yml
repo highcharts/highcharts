@@ -41,7 +41,7 @@ jobs:
         run: npx gulp scripts
 
       - name: Build Dashboards
-        run: npx gulp dashboards/scripts
+        run: npx gulp scripts --product Dashboards
 
       - name: Write file sizes at master
         run: npx gulp write-file-sizes --filename master.json
@@ -68,7 +68,7 @@ jobs:
         run: npx gulp scripts
 
       - name: Build Dashboards
-        run: npx gulp dashboards/scripts
+        run: npx gulp scripts --product Dashboards
 
       - name: File size comparison
         run: |
