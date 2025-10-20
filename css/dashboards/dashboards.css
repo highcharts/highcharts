@@ -50,6 +50,7 @@
 .highcharts-dashboards,
 .highcharts-dashboards-wrapper {
     background-color: var(--highcharts-neutral-color-0);
+    color-scheme: light dark;
 }
 
 .highcharts-dashboards-cell > .highcharts-dashboards-component {
@@ -65,6 +66,7 @@
     .highcharts-dashboards,
     .highcharts-dashboards-wrapper {
         background-color: var(--highcharts-neutral-color-0);
+        color-scheme: light;
     }
 
     .highcharts-dashboards-cell > .highcharts-dashboards-component {
@@ -175,6 +177,7 @@
     .highcharts-dashboards,
     .highcharts-dashboards-wrapper {
         background-color: var(--highcharts-neutral-color-0);
+        color-scheme: dark;
     }
 
     .highcharts-dashboards-cell > .highcharts-dashboards-component {
@@ -575,7 +578,6 @@
 }
 
 .highcharts-dashboards-edit-toggle-container {
-    flex-basis: 45%;
     align-items: center;
     background-color: transparent;
     border: none;
@@ -583,7 +585,13 @@
     cursor: pointer;
     justify-content: space-around;
     display: flex;
+    column-gap: 6px;
     min-width: 100px;
+    padding-inline: 0;
+}
+
+.highcharts-dashboards-edit-toggle-container:not(:has(.highcharts-dashboards-edit-standalone-toggle)) {
+    flex-basis: 45%;
 }
 
 .highcharts-dashboards-edit-toggle-wrapper,
@@ -666,7 +674,6 @@
     display: flex;
     align-items: center;
     height: 32px;
-    margin-left: 16px;
     border-radius: 4px;
     border: none;
     float: right;
@@ -687,7 +694,14 @@
 
 .highcharts-dashboards-edit-tools {
     overflow: hidden;
-    width: 100%;
+    margin-bottom: 2px;
+    height: 30px;
+    padding: 0 10px;
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: end;
+    align-items: center;
+    column-gap: 16px;
 }
 
 .highcharts-dashboards-edit-context-menu-item {
@@ -700,6 +714,11 @@
 
 .highcharts-dashboards-edit-context-menu-item:hover {
     color: var(--highcharts-neutral-color-100);
+}
+
+.highcharts-dashboards-edit-context-menu-item > button {
+    margin: 0 auto;
+    display: flex;
 }
 
 .highcharts-dashboards-edit-separator {
@@ -818,7 +837,6 @@
 
 .highcharts-dashboards-edit-tools-btn {
     padding: 6px 10px 6px 40px;
-    margin-left: 16px;
     background-color: var(--highcharts-neutral-color-0);
     border: 1px solid transparent;
     background-repeat: no-repeat;

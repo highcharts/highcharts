@@ -73,8 +73,8 @@ import DataTableCore from '../../Data/DataTableCore.js';
  *
  * */
 
-declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike extends BoostTargetObject {
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase extends BoostTargetObject {
         boosted?: boolean;
         boost?: BoostSeriesAdditions;
         fill?: boolean;
@@ -512,6 +512,7 @@ function createAndAttachRenderer(
         // using panes, it is better to clip the target group, because then
         // we preserve clipping on touch- and mousewheel zoom preview.
         if (
+            !chart.navigator &&
             box.width === chart.clipBox.width &&
             box.height === chart.clipBox.height
         ) {

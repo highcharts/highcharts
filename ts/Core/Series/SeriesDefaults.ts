@@ -496,6 +496,9 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * its own sorting definition, the linked series will be sorted in the
      * same order as the master one.
      *
+     * If a `compare` value is not set on a linked series, it will be inherited
+     * from the parent series.
+     *
      * @sample {highcharts|highstock} highcharts/demo/arearange-line/
      *         Linked series
      *
@@ -2065,8 +2068,11 @@ const seriesDefaults: PlotOptionsOf<Series> = {
         x: 0,
 
         /**
-         * The z index of the data labels. Use a `zIndex` of 6 to display it above
-         * the series, or use a `zIndex` of 2 to display it behind the series.
+         * The z index of the data labels group. Does not apply below series
+         * level options.
+         *
+         * Use a `zIndex` of 6 to display it above the series,
+         * or use a `zIndex` of 2 to display it behind the series.
          *
          * @type      {number}
          * @default   6

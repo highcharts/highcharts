@@ -120,7 +120,6 @@
  * */
 
 body {
-    background-color: var(--container-background);
     font-family:
         -apple-system,
         BlinkMacSystemFont,
@@ -132,6 +131,8 @@ body {
         "Segoe UI Emoji",
         "Segoe UI Symbol",
         sans-serif;
+    background: var(--container-background);
+    color: var(--highcharts-neutral-color-100);
 }
 
 #container {

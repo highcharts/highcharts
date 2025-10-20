@@ -30,10 +30,11 @@ import type {
     XAxisOptions,
     YAxisOptions
 } from './AxisOptions';
-import type AxisLike from './AxisLike';
+import type AxisBase from './AxisBase';
 import type { AxisType, AxisTypeOptions } from './AxisType';
 import type Chart from '../Chart/Chart';
 import type CSSObject from '../Renderer/CSSObject';
+import type { DeepPartial } from '../../Shared/Types';
 import type { EventCallback } from '../Callback';
 import type FontMetricsObject from '../Renderer/FontMetricsObject';
 import type PlotLineOrBand from './PlotLineOrBand/PlotLineOrBand';
@@ -2348,9 +2349,10 @@ class Axis {
             !isNumber(this.dataMin) ||
             (
                 this !== callerAxis &&
-                this.series.some((s): boolean|undefined => (
-                    s.isDirty || s.isDirtyData
-                ))
+                this.series.some((s): boolean|undefined =>
+                    // The xAxis.isDirty check is for setExtremes (#23677)
+                    s.isDirty || s.isDirtyData || s.xAxis?.isDirty
+                )
             )
         ) {
             this.getSeriesExtremes();
@@ -4413,7 +4415,7 @@ class Axis {
  *
  * */
 
-interface Axis extends AxisComposition, AxisLike {
+interface Axis extends AxisComposition, AxisBase {
     // Nothing here yet
 }
 
