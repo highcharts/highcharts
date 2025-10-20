@@ -114,6 +114,18 @@ playButton.onclick = function () {
 
 };
 
+function announceInstrument(instrument) {
+
+    const announce = document.getElementById('announce');
+    announce.textContent = '';
+
+    const newElem = document.createElement('span');
+    newElem.textContent = 'New Instrument: ' + instrument;
+    announce.appendChild(newElem);
+
+
+}
+
 // Populate preset dropdown
 Object.keys(
     Highcharts.sonification.InstrumentPresets
@@ -124,6 +136,7 @@ Object.keys(
 });
 
 document.getElementById('preset').onchange = function () {
+    announceInstrument(this.value);
     chart.update({
         sonification: {
             defaultInstrumentOptions: {

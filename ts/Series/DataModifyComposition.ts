@@ -261,6 +261,23 @@ namespace DataModifyComposition {
      * @function Highcharts.Series#init
      */
     function afterInit(this: Series): void {
+        // If linked series does not have compare option set, use the parent
+        // series' compare option, #21119.
+        const linkedTo = this.options.linkedTo,
+            chart = this.chart;
+
+        if (linkedTo) {
+            const linkedSeries = linkedTo === ':previous' ?
+                chart.series[this.index - 1] :
+                chart.get(linkedTo);
+
+            if (linkedSeries instanceof Series) {
+                this.options.compare = pick(
+                    this.userOptions.compare,
+                    linkedSeries.options.compare
+                );
+            }
+        }
         const compare = this.options.compare;
         let dataModify: Additions|undefined;
 
@@ -707,7 +724,8 @@ export default DataModifyComposition;
  * or absolute change depending on whether `compare` is set to `"percent"`
  * or `"value"`. When this is applied to multiple series, it allows
  * comparing the development of the series against each other. Adds
- * a `change` field to every point object.
+ * a `change` field to every point object. If a `compare` value is not set on a
+ * linked series, it will be inherited from the parent series.
  *
  * @see [compareBase](#plotOptions.series.compareBase)
  * @see [Axis.setCompare()](/class-reference/Highcharts.Axis#setCompare)
