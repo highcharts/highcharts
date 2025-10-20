@@ -301,7 +301,7 @@ module.exports = {
             'flutter/your-first-chart',
             'flutter/highcharts-bundling'
         ],
-        'React integration (beta)': [
+        'React integration': [
             'react/getting-started',
             'react/series-and-chart-types',
             'react/options',
