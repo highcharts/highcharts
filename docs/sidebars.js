@@ -307,7 +307,8 @@ module.exports = {
             'react/options',
             'react/options-component-format',
             'react/nextjs',
-            'react/component-children'
+            'react/component-children',
+            'react/v4-migration-guide'
         ]
     }
 };
