@@ -16,14 +16,8 @@ describe('dashboards/dist', async () => {
         // await exec('npx gulp dist-clean');
     });
 
-    await it.skip('dashboards/dist-examples creates build/dist directory', async () => {
-        await exec('npx gulp dashboards/dist-build');
-
-        ok(await stat('build/dist'));
-    });
-
-    await it('dashboards/dist-examples creates build/dist/dashboards/index.html ', async () => {
-        await exec('npx gulp dashboards/dist-examples');
+    await it('dist-examples --product Dashboards creates build/dist/dashboards/index.html ', async () => {
+        await exec('npx gulp dist-examples --product Dashboards');
 
         ok(await stat('build/dist/dashboards/index.html'));
         ok(await stat('build/dist/dashboards/examples/minimal/index.html'));
