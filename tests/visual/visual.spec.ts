@@ -2,7 +2,7 @@
 import { Page, BrowserContext } from '@playwright/test';
 import type { ElementHandle } from '@playwright/test';
 import { test, expect, setupRoutes } from '../fixtures.ts';
-import { getKarmaScripts, getSample } from '../utils.ts';
+import { getKarmaScripts, getSample, setTestingOptions } from '../utils.ts';
 import { join, dirname, relative } from 'node:path';
 import { glob } from 'glob';
 
@@ -83,6 +83,8 @@ test.describe('Visual tests', () => {
                 });
             }
         });
+
+        await setTestingOptions(page);
     });
 
     test.afterEach(async () => {
