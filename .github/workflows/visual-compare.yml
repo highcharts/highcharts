@@ -40,6 +40,9 @@ jobs:
       - name: Build Highcharts
         run: npx gulp scripts
 
+      - name: Build Grid
+        run: npx gulp scripts --product Grid
+
       - name: Build Dashboards
         run: npx gulp scripts --product Dashboards
 
@@ -66,6 +69,9 @@ jobs:
 
       - name: Build Highcharts
         run: npx gulp scripts
+
+      - name: Build Grid
+        run: npx gulp scripts --product Grid
 
       - name: Build Dashboards
         run: npx gulp scripts --product Dashboards
