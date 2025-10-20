@@ -59,6 +59,7 @@
     "preview-docs": "npm run start --workspace=docs-preview"
   },
   "devDependencies": {
+    "@actions/github": "^6.0.1",
     "@aws-sdk/client-s3": "^3.592.0",
     "@aws-sdk/credential-providers": "^3.592.0",
     "@babel/core": "^7.26.0",
@@ -110,7 +111,7 @@
     "jquery": "^3.7.1",
     "js-yaml": "3.14.1",
     "jsdom": "^21.1.0",
-    "jspdf": "^3.0.3",
+    "jspdf": "3.0.3",
     "karma": "^6.4.3",
     "karma-browserstack-launcher": "^1.6.0",
     "karma-chrome-launcher": "^3.2.0",
@@ -136,7 +137,7 @@
     "semver": "^7.6.2",
     "stylelint": "^14.16.1",
     "stylelint-config-standard": "^29.0.0",
-    "svg2pdf.js": "2.5.0",
+    "svg2pdf.js": "2.6.0",
     "topojson-client": "^3.1.0",
     "ts-node": "^10.9.2",
     "tsx": "^4.20.6",
