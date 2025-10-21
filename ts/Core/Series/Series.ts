@@ -1444,20 +1444,31 @@ class Series {
 
         // Iterate the new data
         for (i = 0; i < dataTable.rowCount; i++) {
-            const x: any = newXColumn?.[i],
-                id = newIdColumn?.[i];
+            const x = newXColumn?.[i] as number|string|undefined,
+                id = newIdColumn?.[i] as string|undefined;
 
-            let pointIndex;
+            let pointIndex = -1;
 
-            if (id || (isNumber(x) && oldXColumn)) {
-                pointIndex = oldXColumn?.indexOf(x as number, lastIndex) ?? -1;
+            if ((id && oldIdColumn) || (isNumber(x) && oldXColumn)) {
+
+                if (id && oldIdColumn) {
+                    pointIndex = oldIdColumn.indexOf(id, lastIndex);
+                } else if (isNumber(x) && oldXColumn) {
+                    pointIndex = oldXColumn.indexOf(x, lastIndex);
+                }
 
                 // Matching X not found or used already due to non-unique x
                 // values (#8995), add point (but later)
                 if (pointIndex === -1) {
-                    const data = dataTable.getRowObject(i) as PointOptions;
+                    const data = dataTable.getRowObject(i) as PointOptions,
+                        dataX = data.x;
                     let index = oldXColumn?.length || 0;
-                    while (index && oldXColumn[index - 1] > data.x) {
+                    while (
+                        index &&
+                        oldXColumn &&
+                        typeof dataX === 'number' &&
+                        oldXColumn[index - 1] > dataX
+                    ) {
                         index--;
                     }
                     rowsToAdd.push({
@@ -1509,9 +1520,6 @@ class Series {
             }
         }
 
-        // Clear cache again, as findPointIndex has been using xColumn
-        // delete this.xColumn;
-
         // Remove points that don't exist in the updated data set
         if (hasUpdatedByKey) {
             // Update matching points
@@ -1524,7 +1532,7 @@ class Series {
             rowsToAdd.forEach((data): void => {
                 // Splice in an undefined item, `generatePoints` will pick it
                 // up and create the point
-                oldData.splice(data.index, 0, void 0);
+                oldData.splice(data.index, 0, void 0 as any);
             });
 
             // Remove points not touched
@@ -1543,28 +1551,28 @@ class Series {
         // same, update one-to-one
         } else if (equalLength && !dataSorting?.enabled) {
             for (i = 0; i < dataTable.rowCount; i++) {
-                // .update doesn't exist on a linked, hidden series (#3709)
-                // (#10187)
-                if (point !== oldData[i].y && !oldData[i].destroyed) {
-                    const pOptions = dataTable.getRowObject(i) as PointOptions;
-                    if (!defined(pOptions.x)) {
-                        // Point.update takes undefined literally
-                        delete pOptions.x;
+                if (!oldData[i].destroyed) {
+                    const pOptions = dataTable.getRowObject(i);
+                    if (pOptions) {
+                        Object.keys(pOptions).forEach((key): void => {
+                            if (
+                                !defined(pOptions[key]) /*||
+                                pOptions[key] === oldData[i].options[key]*/
+                            ) {
+                                delete pOptions[key];
+                            }
+                        });
+                        if (Object.keys(pOptions).length) {
+                            oldData[i].update(
+                                pOptions as PointOptions,
+                                false,
+                                void 0,
+                                false
+                            );
+                        }
                     }
-                    /*
-                    oldData[i].update(
-                        pOptions,
-                        false,
-                        void 0,
-                        false
-                    );
-                    */
-                    oldData[i].options = pOptions;
-                    merge(true, oldData[i], pOptions);
                 }
             }
-            // Don't add new points since those configs are used above
-            rowsToAdd.length = 0;
 
         // Did not succeed in updating data
         } else {
