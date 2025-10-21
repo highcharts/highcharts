@@ -78,6 +78,38 @@
     --highcharts-annotation-color-3: rgba(156, 229, 161, 0.4);
     --highcharts-annotation-color-4: rgba(162, 241, 130, 0.4);
     --highcharts-annotation-color-5: rgba(169, 255, 101, 0.4);
+
+    /* Buttons */
+    --primitives-neutral-0: #fff;
+    --primitives-neutral-25: #f7f7f8;
+    --primitives-neutral-50: #f2f1f4;
+    --primitives-neutral-100: #e3e3e8;
+    --primitives-neutral-200: #c8c7d1;
+    --primitives-neutral-300: #acabba;
+    --primitives-neutral-400: #918fa3;
+    --primitives-neutral-500: #75738c;
+    --primitives-neutral-600: #5e5c70;
+    --primitives-neutral-700: #474554;
+    --primitives-neutral-750: #3b3a46;
+    --primitives-neutral-800: #2f2e38;
+    --primitives-neutral-900: #18171c;
+    --primitives-neutral-1000: #000;
+    --primitives-brand-500: #8791ff;
+    --button-transparent-border: #00000012;
+    --button-transparent-border-hover: #0002;
+    --button-colors-neutral-background-default: var(--primitives-neutral-800);
+    --button-colors-neutral-background-hover: var(--primitives-neutral-700);
+    --button-colors-neutral-background-pressed: var(--primitives-neutral-900);
+    --button-colors-neutral-background-focus: var(--primitives-neutral-800);
+    --button-colors-neutral-background-disabled: var(--primitives-neutral-300);
+    --button-colors-neutral-text-default: var(--primitives-neutral-0);
+    --button-colors-neutral-text-hover: var(--primitives-neutral-0);
+    --button-colors-neutral-text-pressed: var(--primitives-neutral-0);
+    --button-colors-neutral-text-focus: var(--primitives-neutral-0);
+    --button-colors-neutral-text-disabled: var(--primitives-neutral-0);
+    --button-colors-neutral-stroke-inner: #ffffff0a;
+    --button-colors-neutral-stroke-outer-default: var(--primitives-neutral-900);
+    --button-colors-neutral-stroke-outer-hover: var(--primitives-neutral-800);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -135,6 +167,24 @@
     --highcharts-highlight-color-60: #2271a0;
     --highcharts-highlight-color-20: #193343;
     --highcharts-highlight-color-10: #16242b;
+
+    /* buttons */
+    --button-text: var(--primitives-neutral-1000);
+    --button-transparent-border: #00000012;
+    --button-transparent-border-hover: #0002;
+    --button-colors-neutral-background-default: var(--primitives-neutral-800);
+    --button-colors-neutral-background-hover: var(--primitives-neutral-700);
+    --button-colors-neutral-background-pressed: var(--primitives-neutral-900);
+    --button-colors-neutral-background-focus: var(--primitives-neutral-800);
+    --button-colors-neutral-background-disabled: var(--primitives-neutral-300);
+    --button-colors-neutral-text-default: var(--primitives-neutral-0);
+    --button-colors-neutral-text-hover: var(--primitives-neutral-0);
+    --button-colors-neutral-text-pressed: var(--primitives-neutral-0);
+    --button-colors-neutral-text-focus: var(--primitives-neutral-0);
+    --button-colors-neutral-text-disabled: var(--primitives-neutral-0);
+    --button-colors-neutral-stroke-inner: #ffffff0a;
+    --button-colors-neutral-stroke-outer-default: var(--primitives-neutral-900);
+    --button-colors-neutral-stroke-outer-hover: var(--primitives-neutral-800);
 }
 
 * {
@@ -155,6 +205,28 @@
 ::after,
 ::before {
     box-sizing: border-box;
+}
+
+[aria-live="polite"] {
+    position: absolute;
+    opacity: 0;
+    top: 0;
+    width: max-content;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
+    border-radius: 0 0 4px 4px;
+    color: #fff;
+}
+
+[aria-live="polite"]:not(:empty) {
+    padding: 0.25em 1em;
+    background: maroon;
+}
+
+input[type="range"] {
+    accent-color: var(--button-colors-neutral-background-default);
 }
 
 .highcharts-figure {
@@ -248,6 +320,7 @@ select {
     font-size: 12px;
     line-height: 18px;
     font-weight: 500;
+    cursor: pointer;
 }
 
 #sonify {
@@ -258,13 +331,29 @@ select {
     gap: 4px;
     align-items: center;
     border-radius: 4px;
-    color: #fff;
-    background-color: rgba(2, 117, 255, 1);
+    color: var(--button-colors-neutral-text-default);
+    background-color: var(--button-colors-neutral-background-default);
     text-decoration: none;
     font-size: 14px;
     line-height: 18px;
     font-weight: 500;
     transition: all 0.15s ease-out;
+    cursor: pointer;
+}
+
+#sonify:hover {
+    background-color: var(--button-colors-neutral-background-hover);
+    color: var(--button-colors-neutral-text-hover);
+}
+
+#sonify:active {
+    background-color: var(--button-colors-neutral-background-pressed);
+    color: var(--button-colors-neutral-text-pressed);
+}
+
+#sonify:focus-visible {
+    outline: 2px solid var(--primitives-brand-500);
+    outline-offset: 2px;
 }
 
 .highcharts-tooltip,
