@@ -142,6 +142,27 @@ namespace Globals {
     export const getClassName = (classNameKey: ClassNameKey): string =>
         classNamePrefix + rawClassNames[classNameKey];
 
+    /**
+     * The globally set license key for Grid Pro.
+     * @internal
+     */
+    // eslint-disable-next-line prefer-const
+    export let licenseKey: string | undefined = void 0;
+
+    /**
+     * Whether a license warning has been shown (to warn only once).
+     * @internal
+     */
+    // eslint-disable-next-line prefer-const
+    export let licenseWarningShown: boolean = false;
+
+    /**
+     * The last validated license key (to avoid redundant validation).
+     * @internal
+     */
+    // eslint-disable-next-line prefer-const
+    export let lastValidatedKey: string | undefined = void 0;
+
 }
 
 /* *

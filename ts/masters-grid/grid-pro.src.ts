@@ -49,10 +49,10 @@ import ValidatorComposition from '../Grid/Pro/ColumnTypes/ValidatorComposition.j
 import CellRenderersComposition from '../Grid/Pro/CellRendering/CellRenderersComposition.js';
 import CellRendererRegistry from '../Grid/Pro/CellRendering/CellRendererRegistry.js';
 import PaginationComposition from '../Grid/Pro/Pagination/PaginationComposition.js';
+import LicenseValidationComposition from '../Grid/Pro/License/LicenseValidationComposition.js';
 import Pagination from '../Grid/Core/Pagination/Pagination.js';
 import CellContentPro from '../Grid/Pro/CellRendering/CellContentPro.js';
 import CellRenderer from '../Grid/Pro/CellRendering/CellRenderer.js';
-
 
 
 /* *
@@ -179,6 +179,7 @@ ExportingComposition.compose(G.Grid);
 ValidatorComposition.compose(G.Table);
 CellRenderersComposition.compose(G.Column);
 PaginationComposition.compose(G.Pagination);
+LicenseValidationComposition.compose(G.Grid);
 
 G.CellRendererRegistry = G.CellRendererRegistry || CellRendererRegistry;
 G.CellContentPro = CellContentPro;
@@ -208,7 +209,9 @@ if (!G.win.Grid) {
     G.win.Grid = G;
 }
 
+// eslint-disable-next-line @highcharts/highcharts/no-highcharts-object
 if (G.win.Highcharts) {
+    // eslint-disable-next-line @highcharts/highcharts/no-highcharts-object
     G.CellRendererRegistry.types.sparkline.useHighcharts(G.win.Highcharts);
 }
 

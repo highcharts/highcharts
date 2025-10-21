@@ -107,7 +107,7 @@ export interface Options {
      *
      * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-lite/basic/grouped-headers | Grouped headers}
      */
-    header?: Array<GroupedHeaderOptions|string>;
+    header?: Array<GroupedHeaderOptions | string>;
 
     /**
      * The unique id of the grid. It is generated automatically, if not set.
@@ -128,6 +128,27 @@ export interface Options {
      * Options to control the way grid is rendered.
      */
     rendering?: RenderingSettings;
+
+    /**
+     * License key for Grid Pro. Get your license key at:
+     * https://shop.highcharts.com
+     *
+     * The license key can be set globally using `Grid.setOptions()` or
+     * on individual Grid instances. One license key works for all
+     * Grid instances on a page.
+     *
+     * @example
+     * // Global setting (recommended)
+     * Grid.setOptions({ licenseKey: 'ABCD-EFGH-IJKL-MN0P' });
+     *
+     * @example
+     * // Per instance (auto-promotes to global)
+     * Grid.grid('container', {
+     *   licenseKey: 'ABCD-EFGH-IJKL-MN0P',
+     *   dataTable: {...}
+     * });
+     */
+    licenseKey?: string;
 }
 
 /**
