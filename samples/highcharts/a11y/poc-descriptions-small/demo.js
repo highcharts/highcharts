@@ -992,6 +992,8 @@ function basicSummary(chart) {
     const vs = visibleSeries(chart);
 
     const strategies = [
+        () => hasType(chart, 'line') && (() =>
+            'Line chart showing temperatures for Helsinki and Oslo.')(),
         () => hasType(chart, 'gauge') && (() => 'Gauge showing budget used.')(),
 
         // Sunburst (root + top-level children)
