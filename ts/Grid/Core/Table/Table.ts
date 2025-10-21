@@ -175,7 +175,7 @@ class Table {
         const customClassName = dgOptions?.rendering?.table?.className;
 
         this.columnResizing = ColumnResizing.initMode(this);
-        this.virtualRows = !!dgOptions?.rendering?.rows?.virtualization;
+        this.virtualRows = this.shouldVirtualizeRows();
 
         if (dgOptions?.rendering?.header?.enabled) {
             this.theadElement = makeHTMLElement('thead', {}, tableElement);
@@ -260,6 +260,27 @@ class Table {
     }
 
     /**
+     * Checks if rows virtualization should be enabled.
+     *
+     * @returns
+     * Whether rows virtualization should be enabled.
+     */
+    private shouldVirtualizeRows(): boolean {
+        const rows = this.grid.userOptions.rendering?.rows;
+        if (defined(rows?.virtualization)) {
+            return rows.virtualization;
+        }
+
+        const threshold = rows?.virtualizationThreshold ?? 50;
+        const rowCount = Number(this.dataTable?.rowCount);
+        const paginationPageSize = this.grid.pagination?.currentPageSize;
+
+        return paginationPageSize ?
+            paginationPageSize >= threshold :
+            rowCount >= threshold;
+    }
+
+    /**
      * Loads the columns of the table.
      */
     private loadColumns(): void {
@@ -283,14 +304,17 @@ class Table {
      * Fires an empty update to properly load the virtualization, only if
      * there's a row count compared to the threshold change detected (due to
      * performance reasons).
+     *
+     * @returns
+     * Whether the rows virtualization was updated.
      */
-    private updateVirtualization(): void {
-        if (
-            this.grid.options?.rendering?.rows?.virtualization !==
-            this.grid.shouldVirtualize()
-        ) {
-            void this.grid.update();
+    private async updateVirtualization(): Promise<boolean> {
+        if (this.virtualRows !== this.shouldVirtualizeRows()) {
+            await this.grid.update();
+            return true;
         }
+
+        return false;
     }
 
     /**
@@ -313,7 +337,9 @@ class Table {
         }
 
         if (oldRowsCount !== vp.dataTable.rowCount) {
-            vp.updateVirtualization();
+            if (await vp.updateVirtualization()) {
+                return;
+            }
             vp.rowsVirtualizer.rerender();
         } else {
             for (let i = 0, iEnd = vp.rows.length; i < iEnd; ++i) {
