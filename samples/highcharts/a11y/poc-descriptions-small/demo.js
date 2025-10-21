@@ -1072,10 +1072,10 @@ function basicSummary(chart) {
             // return `${typeLabel} with ${vis.length} nodes (root: ${
             //     root.name
             // })${namesSnippet ? `: ${namesSnippet}` : ''}.`;
-            `Sunburst chart with 62 nodes in a hierarchy with 4 levels, 
-            showing budget (USD) 2025. The first node is "Company". 
-            Second level of nodes has Engineering, Sales & Marketing, 
-            Operations and two more`
+            `Sunburst chart with 62 nodes in a hierarchy with 4 levels. 
+            Chart shows budget (USD) in 2025. The first node is "Company". 
+            Below that, the second level of nodes has Engineering, Sales 
+            & Marketing, Operations and two more.`
         )(),
 
         // Bubble (points by friendly name)
