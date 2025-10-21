@@ -119,7 +119,7 @@ function mergeAndCopyGridProCSS(config) {
     fslib.setFile(path.join(config.target, 'css', 'grid-pro.css'), mergedCSS);
 }
 
-function copyGridLiteCSS(config) {
+function copyDeprecatedGridLiteCSS(config) {
     const fslib = require('../libs/fs');
     const path = require('path');
 
@@ -206,7 +206,7 @@ function scriptCSS(argv) {
             log.message('Generating css for Grid...');
             copyCSS(gridConfig);
             mergeAndCopyGridProCSS(gridConfig);
-            copyGridLiteCSS(gridConfig);
+            copyDeprecatedGridLiteCSS(gridConfig); // to be removed
             replaceProductVersionInFiles(
                 require('path').join(gridConfig.target, 'css'),
                 './grid/build-properties.json'
