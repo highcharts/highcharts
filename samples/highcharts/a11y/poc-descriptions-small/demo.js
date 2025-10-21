@@ -68,11 +68,9 @@ const chart4desc = `
         <li>Red (100-120%) for overspend.</li>
       </ul>
   </div>
-  <ul>
-      <li>Current value: ~92% (watch zone).</li>
-      <li>Threshold for watch: above 80%.</li>
-      <li>Threshold for overspend: above 100%.</li>
-  </ul>
+  <p>The gauge scale goes from 0-120%, and is divided into the
+  following zones: Healthy (up to 80%), Watch (80-100%),
+  Overspend (above 100%). Current value 92% is in the Watch zone.</p>
 `;
 
 
