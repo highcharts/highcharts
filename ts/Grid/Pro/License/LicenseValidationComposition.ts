@@ -80,50 +80,50 @@ namespace LicenseValidationComposition {
         }
 
         // Skip validation on whitelisted URLs
-        // (localhost, *.highcharts.com, *.jsfiddle.net)
+        // (localhost, *.highcharts.com, *.jsfiddle.net, *.stackblitz.com,
+        // *.highcharts.com.cn)
         if (LicenseValidation.isWhitelistedURL()) {
             return;
         }
 
-        // Get license key from instance
-        let licenseKey = this.options?.licenseKey;
+        const licenseState = GridGlobals.license;
+
+        // Get Grid key from instance
+        let gridKey = this.options?.gridKey;
 
         // Auto-promote instance key to global if different from current global
         // (Allows later grids to override stale/invalid keys)
-        if (
-            licenseKey &&
-            licenseKey !== (GridGlobals as AnyRecord).licenseKey
-        ) {
-            (GridGlobals as AnyRecord).licenseKey = licenseKey;
+        if (gridKey && gridKey !== licenseState.key) {
+            licenseState.key = gridKey;
         }
 
         // Use global key if instance doesn't have one
-        if (!licenseKey) {
-            licenseKey = (GridGlobals as AnyRecord).licenseKey;
+        if (!gridKey) {
+            gridKey = licenseState.key;
         }
 
         // Skip validation if we've already validated this exact key
-        const lastKey = (GridGlobals as AnyRecord).lastValidatedKey;
-        if (lastKey !== void 0 && licenseKey === lastKey) {
+        const lastKey = licenseState.lastValidatedKey;
+        if (lastKey !== void 0 && gridKey === lastKey) {
             return;
         }
 
-        // Validate the license key
-        const isValid = LicenseValidation.validate(licenseKey);
+        // Validate the Grid Key
+        const isValid = LicenseValidation.validate(gridKey);
 
         // Track the validated key to avoid redundant validation
-        (GridGlobals as AnyRecord).lastValidatedKey = licenseKey;
+        licenseState.lastValidatedKey = gridKey;
 
         // Show warning only once if invalid or missing
-        const hasWarned = (GridGlobals as AnyRecord).licenseWarningShown;
+        const hasWarned = licenseState.warningShown;
         if (!isValid && !hasWarned) {
             // eslint-disable-next-line no-console
             console.warn(
                 'This is an unlicensed version of Highcharts Grid Pro. ' +
-                'Insert Grid Key in the configuration or visit ' +
+                'Insert a Grid Key in the configuration or visit ' +
                 'https://shop.highcharts.com to get one.'
             );
-            (GridGlobals as AnyRecord).licenseWarningShown = true;
+            licenseState.warningShown = true;
         }
     }
 }

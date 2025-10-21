@@ -21,7 +21,7 @@
  * */
 
 /**
- * Validates Grid Pro license keys using checksum algorithm.
+ * Validates Grid Pro Grid Keys using checksum algorithm.
  * @internal
  */
 class LicenseValidation {
@@ -33,10 +33,10 @@ class LicenseValidation {
      * */
 
     /**
-     * Calculate checksum for license key data.
+     * Calculate checksum for Grid Key data.
      *
      * @param data
-     * First 12 characters of the license key (3 groups of 4).
+     * First 12 characters of the Grid Key (3 groups of 4).
      *
      * @return
      * 4-character checksum in uppercase alphanumeric format.
@@ -62,13 +62,13 @@ class LicenseValidation {
     }
 
     /**
-     * Validate a Grid Pro license key.
+     * Validate a Grid Pro Grid Key.
      *
      * @param key
-     * The license key to validate.
+     * The Grid Key to validate.
      *
      * @return
-     * True if the license key is valid, false otherwise.
+     * True if the Grid Key is valid, false otherwise.
      *
      * @internal
      */
@@ -109,6 +109,8 @@ class LicenseValidation {
      * - localhost (any port)
      * - *.highcharts.com (any subdomain, any port)
      * - *.jsfiddle.net (any subdomain, any port)
+     * - *.stackblitz.com (any subdomain, any port)
+     * - *.highcharts.com.cn (any subdomain, any port)
      *
      * @return
      * True if the current URL is whitelisted, false otherwise.
@@ -129,20 +131,17 @@ class LicenseValidation {
             return true;
         }
 
-        // Wildcard match: *.highcharts.com
-        if (
-            hostname === 'highcharts.com' ||
-            hostname.endsWith('.highcharts.com')
-        ) {
-            return true;
-        }
+        const wildcardDomains = [
+            'highcharts.com',
+            'jsfiddle.net',
+            'stackblitz.com',
+            'highcharts.com.cn'
+        ];
 
-        // Wildcard match: *.jsfiddle.net
-        if (
-            hostname === 'jsfiddle.net' ||
-            hostname.endsWith('.jsfiddle.net')
-        ) {
-            return true;
+        for (const domain of wildcardDomains) {
+            if (hostname === domain || hostname.endsWith(`.${domain}`)) {
+                return true;
+            }
         }
 
         return false;

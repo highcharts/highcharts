@@ -130,25 +130,25 @@ export interface Options {
     rendering?: RenderingSettings;
 
     /**
-     * License key for Grid Pro. Get your license key at:
+     * Grid Key for Grid Pro. Get your Grid Key at:
      * https://shop.highcharts.com
      *
-     * The license key can be set globally using `Grid.setOptions()` or
-     * on individual Grid instances. One license key works for all
+     * The Grid Key can be set globally using `Grid.setOptions()` or
+     * on individual Grid instances. One Grid Key works for all
      * Grid instances on a page.
      *
      * @example
      * // Global setting (recommended)
-     * Grid.setOptions({ licenseKey: 'ABCD-EFGH-IJKL-MN0P' });
+     * Grid.setOptions({ gridKey: 'ABCD-EFGH-IJKL-MN0P' });
      *
      * @example
      * // Per instance (auto-promotes to global)
      * Grid.grid('container', {
-     *   licenseKey: 'ABCD-EFGH-IJKL-MN0P',
+     *   gridKey: 'ABCD-EFGH-IJKL-MN0P',
      *   dataTable: {...}
      * });
      */
-    licenseKey?: string;
+    gridKey?: string;
 }
 
 /**
