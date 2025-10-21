@@ -265,9 +265,9 @@ class Time extends TimeBase {
                     unitRange <= timeUnits.month &&
                     unitRange > timeUnits.week
                 ) {
-                    tickPositions.forEach((t: number): void => {
+                    tickPositions.forEach((t: number, i: number): void => {
                         if (
-                            time.dateFormat('%m%d', t) === '0101'
+                            i === 1 || time.dateFormat('%m%d', t) === '0101'
                         ) {
                             higherRanks[t] = 'month';
                         } else {

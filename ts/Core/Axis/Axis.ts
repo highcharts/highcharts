@@ -2113,6 +2113,17 @@ class Axis {
                 }
             }
 
+            const info = tickPositions.info;
+
+            // Higher/lower ranks only. If we deal with the first tick on the
+            // whole chart, change the higher rank to the lower rank on the next
+            // tick as there is no hidden tick before the first visible one.
+            if (!this.options.isInternal && info && this.min === this.dataMin) {
+                info.lowerRanks[tickPositions[1]] =
+                    info.higherRanks[tickPositions[1]];
+                delete info.higherRanks[tickPositions[1]];
+            }
+
             // Too dense ticks, keep only the first and last (#4477)
             if (tickPositions.length > this.len) {
                 tickPositions = [
