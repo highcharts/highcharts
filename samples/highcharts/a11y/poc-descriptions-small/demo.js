@@ -55,14 +55,26 @@ const chart3desc = `
 
 // Gauge
 const chart4desc = `
-    <p>The scale is color-coded to show healthy, watch, 
-    and overspend ranges. </p>
-    <ul>
-        <li>Current value: ~92% (yellow watch zone)</li>
-        <li>Threshold for watch: above 80%</li>
-        <li>Threshold for overspend: above 100%</li>
-    </ul>
+  <button id="gauge-description-btn-sr" aria-expanded="false"
+          aria-controls="gauge-description-sr">
+      Visual Description
+  </button>
+  <div id="gauge-description-sr" aria-hidden="true">
+      <p>The gauge displays a semicircular meter from 0% to 120%.
+      The gauge has three zones:</p>
+      <ul>
+        <li>Green (0-80%) for healthy spending.</li>
+        <li>Yellow (80-100%) for watch zone.</li>
+        <li>Red (100-120%) for overspend.</li>
+      </ul>
+  </div>
+  <ul>
+      <li>Current value: ~92% (watch zone).</li>
+      <li>Threshold for watch: above 80%.</li>
+      <li>Threshold for overspend: above 100%.</li>
+  </ul>
 `;
+
 
 // Bubble
 const chart5desc = `
@@ -891,22 +903,62 @@ function updateA11yDescPanel(chart, html) {
     }
 
     const wrapper = chartEl.parentElement || chartEl;
-    const id = chartEl.id ? chartEl.id + '-a11y-debug' : '';
+
+    // Create or get the panel container
     let panel = wrapper.querySelector('.a11y-debug');
     if (!panel) {
         panel = document.createElement('div');
         panel.className = 'a11y-debug';
-        if (id) {
-            panel.id = id;
+        if (chartEl.id) {
+            panel.id = chartEl.id + '-a11y-debug';
         }
         panel.setAttribute('aria-hidden', 'true');
         wrapper.appendChild(panel);
     }
+
+    // IMPORTANT: read persisted state from the chart instance (default: false)
+    const expanded = chart.gaugeDescExpanded === true;
+
+    // Rebuild panel content
     panel.innerHTML = `
       <div class="a11y-debug__title">Auto-description:</div>
       <div class="a11y-debug__content">${html}</div>
     `;
+
+    // Find the freshly inserted nodes
+    const btn = panel.querySelector('#gauge-description-btn-sr');
+    const content = panel.querySelector('#gauge-description-sr');
+
+    if (btn && content) {
+        // Apply the persisted state
+        btn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+        content.setAttribute('aria-hidden', expanded ? 'false' : 'true');
+        content.style.display = expanded ? 'block' : 'none';
+        btn.textContent = expanded ? 'Hide Description' : 'Visual Description';
+
+        // Bind a fresh, stateless click handler that
+        // reads/writes from the chart
+        btn.onclick = ev => {
+            ev.preventDefault();
+            ev.stopPropagation();
+
+            const currentlyExpanded =
+                btn.getAttribute('aria-expanded') === 'true';
+
+            const next = !currentlyExpanded;
+
+            // Update ARIA + visibility
+            btn.setAttribute('aria-expanded', next ? 'true' : 'false');
+            content.setAttribute('aria-hidden', next ? 'false' : 'true');
+            content.style.display = next ? 'block' : 'none';
+            btn.textContent = next ? 'Hide Description' : 'Visual Description';
+
+            // 🔐 Persist for the next render
+            chart.gaugeDescExpanded = next;
+        };
+    }
 }
+
 
 const NAME_LIMIT = 3;
 
@@ -994,7 +1046,8 @@ function basicSummary(chart) {
     const strategies = [
         () => hasType(chart, 'line') && (() =>
             'Line chart showing temperatures for Helsinki and Oslo.')(),
-        () => hasType(chart, 'gauge') && (() => 'Gauge showing budget used.')(),
+        () => hasType(chart, 'gauge') && (() =>
+            'Gauge showing budget used, value 92%.')(),
 
         // Sunburst (root + top-level children)
         () => hasType(chart, 'sunburst') && (() =>

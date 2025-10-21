@@ -179,3 +179,11 @@ pre {
     color: hotpink;
     font-weight: 800;
 }
+
+#gauge-description-sr[aria-hidden="true"] {
+    display: none;
+}
+
+#gauge-description-sr[aria-hidden="false"] {
+    display: block;
+}
