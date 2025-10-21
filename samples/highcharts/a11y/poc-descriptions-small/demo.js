@@ -43,13 +43,13 @@ const chart3desc = `
     end of the year. Daytime generally warmer than nighttime across 
     all months.</p>
     <ul>
+        <li>Warmest month average: June</li>
+        <li>Coldest month average: December</li>
         <li>X-axis: Months January–December (2023)</li>
         <li>Y-axis: Hours of the day (0:00–18:00)</li>
         <li>Range: –10°C to 20°C</li>
         <li>Highest temperature: July, reaching around 20°C</li>
-        <li>Lowest temperature: January, dropping to –10°C</li>
-        <li>Warmest month average: June</li>
-        <li>Coldest month average: December</li>
+        <li>Lowest temperature: January, dropping to –10°C</li> 
     </ul>
 `;
 
@@ -254,13 +254,13 @@ const HC_CONFIGS = {
         },
 
         title: {
-            text: 'Highcharts heat map',
+            text: 'Temperature variation 2025',
             align: 'left',
             x: 40
         },
 
         subtitle: {
-            text: 'Temperature variation by day and hour through 2023',
+            text: 'By day and hour',
             align: 'left',
             x: 40
         },
