@@ -150,6 +150,7 @@ const CODE_FILTER = {
     'grid-pro': [
         // The main cleanup is done in `scripts-ts` at the `code` level.
         ['grid', 'css', 'grid-lite.css'],
+        ['grid', 'css', 'grid.css'],
         ['grid', 'es-modules', 'Grid', 'Lite'],
         ['grid', 'es-modules', 'masters', 'grid-lite.'],
         ['grid', 'grid-lite.']

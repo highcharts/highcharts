@@ -119,6 +119,29 @@ function mergeAndCopyGridProCSS(config) {
     fslib.setFile(path.join(config.target, 'css', 'grid-pro.css'), mergedCSS);
 }
 
+function copyDeprecatedGridLiteCSS(config) {
+    const fslib = require('../libs/fs');
+    const path = require('path');
+
+    config = handleConfig(config);
+
+    // Read the original source files
+    const gridLiteCSS = fslib.getFile(path.join('css/grid', 'grid-lite.css'));
+    const gridCSS = gridLiteCSS.replace(
+        '/*  ==== Start Grid Color Scheme  ==== */',
+        '/*  ==== UPGRADE WARNING NOTE  ==== */\n/**\n' +
+        ' * This file is provided for backward compatibility only.\n' +
+        ' * Please use grid-lite.css directly instead.\n' +
+        ' * This file will be removed in the future.\n' +
+        ' */\n' +
+        '/* ==== END UPGRADE WARNING NOTE ==== */\n\n' +
+        '/*  ==== Start Grid Color Scheme  ==== */'
+    );
+
+    // Write the merged CSS to the target directory
+    fslib.setFile(path.join(config.target, 'css', 'grid.css'), gridCSS);
+}
+
 /**
  * Changes the HC Grid product version in the CSS files.
  * @param  {string} folder
@@ -183,6 +206,7 @@ function scriptCSS(argv) {
             log.message('Generating css for Grid...');
             copyCSS(gridConfig);
             mergeAndCopyGridProCSS(gridConfig);
+            copyDeprecatedGridLiteCSS(gridConfig); // to be removed
             replaceProductVersionInFiles(
                 require('path').join(gridConfig.target, 'css'),
                 './grid/build-properties.json'
