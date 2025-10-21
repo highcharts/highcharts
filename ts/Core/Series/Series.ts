@@ -1440,19 +1440,28 @@ class Series {
         delete this.xColumn;
 
         const newXColumn = dataTable.getColumn('x'),
-            newIdColumn = dataTable.getColumn('id');
+            newIdColumn = dataTable.getColumn('id'),
+            newNameColumn = this.options.dataSorting?.matchByName ?
+                dataTable.getColumn('name') : void 0;
 
         // Iterate the new data
         for (i = 0; i < dataTable.rowCount; i++) {
             const x = newXColumn?.[i] as number|string|undefined,
-                id = newIdColumn?.[i] as string|undefined;
+                id = newIdColumn?.[i] as string|undefined,
+                name = newNameColumn?.[i] as string|undefined;
 
             let pointIndex = -1;
 
-            if ((id && oldIdColumn) || (isNumber(x) && oldXColumn)) {
+            if (
+                (id && oldIdColumn) ||
+                (isNumber(x) && oldXColumn) ||
+                (name && oldNameColumn)
+            ) {
 
                 if (id && oldIdColumn) {
                     pointIndex = oldIdColumn.indexOf(id, lastIndex);
+                } else if (name && oldNameColumn) {
+                    pointIndex = oldNameColumn.indexOf(name, lastIndex);
                 } else if (isNumber(x) && oldXColumn) {
                     pointIndex = oldXColumn.indexOf(x, lastIndex);
                 }
