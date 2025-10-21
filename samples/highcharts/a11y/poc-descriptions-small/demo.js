@@ -1,16 +1,26 @@
 // Spline w/Plotlines
 const chart1desc = `
     <p> Helsinki temperatures rise steadily from winter lows below zero to
-    a summer peak around July, before cooling again toward December.
-    Summer (May–September) is highlighted as the warmest period. </p>
+    a summer peak around July, before cooling again toward December. Oslo
+    temperatures follows a similar pattern, but is generally milder in the
+    winter and colder in the summer.
+    </p>
+    <p>
+    The two series cross each other twice during
+    the year, once in spring and once in autumn. Showing that Oslo is warmer
+    than Helsinki in the winter, while Helsinki becomes warmer through
+    summer.</p>
     <ul>
         <li>X-axis: Months January–December</li>
         <li>Y-axis: Temperature in °C, range –10°C to 20°C</li>
-        <li>Highest value: ~17°C in July</li>
-        <li>Lowest value: ~–6°C in February</li>
         <li>Summer period marked: May–September</li>
-        <li>Crosses above freezing (0°C) in April, falls below again 
-        in November</li>
+        <li>Helsinki highest value: ~17°C in July</li>
+        <li>Helsinki lowest value: ~–6°C in February</li>
+        <li>Oslo highest value: ~11°C in July–August</li>
+        <li>Oslo lowest value: around 0°C in winter months</li>
+        <li>Helsinki crosses above freezing in April and below 
+        again in November</li>
+        <li>Oslo remains mostly above freezing all year</li>
     </ul>
 `;
 
@@ -104,63 +114,14 @@ const HC_CONFIGS = {
         },
         custom: { autoDesc: chart1desc },
         title: {
-            text: 'Helsinki Average Monthly Temperature',
+            text: 'Average Monthly Temperature: Helsinki vs Oslo',
             align: 'left',
             margin: 25
         },
-
-        sonification: {
-            duration: 8000,
-            defaultInstrumentOptions: {
-                mapping: {
-                    pitch: {
-                        min: 'c3',
-                        max: 'd6'
-                    }
-                }
-            },
-            globalContextTracks: [{
-                // A repeated piano note for the 0 plot line
-                instrument: 'piano',
-                valueInterval: 1 / 3, // Play 3 times for every X-value
-                mapping: {
-                    pitch: {
-                        mapTo: 'y',
-                        value: 0 // Map to a fixed Y value
-                    },
-                    volume: 0.1
-                }
-            }, {
-                // Percussion sound indicates the plot band
-                instrument: 'shaker',
-                activeWhen: {
-                    valueProp: 'x', // Active when X is between these values.
-                    min: 4,
-                    max: 9
-                },
-                timeInterval: 100, // Play every 100 milliseconds
-                mapping: {
-                    volume: 0.1
-                }
-            }, {
-                // Speak the plot band label
-                type: 'speech',
-                valueInterval: 1,
-                activeWhen: {
-                    crossingUp: 4 // Active when crossing over x = 4
-                },
-                mapping: {
-                    text: 'Summer',
-                    rate: 2.5,
-                    volume: 0.3
-                }
-            }]
-        },
-
         yAxis: {
             plotLines: [{
                 value: 0,
-                color: '#014CE5',       // from your palette
+                color: '#014CE5',
                 dashStyle: 'shortDash',
                 width: 2
             }],
@@ -177,7 +138,7 @@ const HC_CONFIGS = {
             plotBands: [{
                 from: 3.5,
                 to: 8.5,
-                color: 'rgba(16,185,129,0.15)', // soft teal band (0.15 opacity)
+                color: 'rgba(16,185,129,0.15)',
                 label: { text: 'Summer', align: 'left', x: 10 }
             }],
             plotLines: [{
@@ -196,20 +157,23 @@ const HC_CONFIGS = {
             ]
         },
 
-        legend: {
-            enabled: false
-        },
+        legend: { enabled: true },
+        tooltip: { shared: true, valueSuffix: '°C' },
 
-        tooltip: {
-            valueSuffix: '°C'
-        },
-
-        series: [{
-            name: 'Helsinki',
-            data: [-5, -6, -2, 4, 10, 14, 17, 15, 10, 6, 0, -4],
-            color: '#014CE5'          // consistent series color
-        }]
+        series: [
+            {
+                name: 'Helsinki',
+                data: [-5, -6, -2, 4, 10, 14, 17, 15, 10, 6, 0, -4],
+                color: '#014CE5'
+            },
+            {
+                name: 'Oslo',
+                data: [0, 0, 1, 3, 6, 9, 11, 11, 8, 5, 2, 0],
+                color: '#EA293C'
+            }
+        ]
     },
+
     chart2: { // Stacked column
         credits: {
             enabled: false
