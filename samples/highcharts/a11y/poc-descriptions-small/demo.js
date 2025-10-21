@@ -28,7 +28,7 @@ const chart1desc = `
 const chart2desc = `
     <p>Tokyo leads in both Espresso consumption and overall total.</p>
     <ul>
-        <li>X-axis: HQ, Berlin, New York, Tokyo</li>
+        <li>X-axis: Sydney, Berlin, New York, Tokyo</li>
         <li>Y-axis: Cups of Coffee, range 0–400</li>
         <li>Highest value: 370 total cups in Tokyo</li>
         <li>Lowest value: 260 total cups in Berlin</li>
@@ -187,7 +187,7 @@ const HC_CONFIGS = {
             align: 'left'
         },
         xAxis: {
-            categories: ['HQ', 'Berlin', 'New York', 'Tokyo']
+            categories: ['Sydney', 'Berlin', 'New York', 'Tokyo']
         },
         yAxis: {
             min: 0,
@@ -1044,8 +1044,8 @@ function basicSummary(chart) {
         })(),
 
         () => hasType(chart, 'column') && (() => `Bar chart showing 4 series
-        stacked on top of each other per bar: Espresso, Latte, Cappuccino, a
-        nd Americano.`)(),
+        stacked on top of each other per bar: Espresso, Latte, Cappuccino, 
+        and Americano.`)(),
 
         // Heatmap / tilemap (grid)
         () => (hasType(chart, 'heatmap') ||
