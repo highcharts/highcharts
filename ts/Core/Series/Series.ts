@@ -1409,6 +1409,190 @@ class Series {
         return true;
     }
 
+    /**
+     * Internal function called from setData. If the point count is the same
+     * as it was, or if there are overlapping X values, just run
+     * Point.update which is cheaper, allows animation, and keeps references
+     * to points. This also allows adding or removing points if the X-es
+     * don't match.
+     *
+     * @private
+     * @function Highcharts.Series#updateData
+     */
+    public matchPoints(
+        oldXColumn?: Array<number>,
+        oldIdColumn?: Array<string|number|undefined>,
+        oldNameColumn?: Array<string|undefined>
+    ): boolean {
+        const { dataTable, options, requireSorting } = this,
+            dataSorting = options.dataSorting,
+            oldData = this.data,
+            rowsToAdd: Array<{index: number, data: PointOptions}> = [],
+            rowsToUpdate: Array<{index: number, data: PointOptions}> = [],
+            equalLength = dataTable.rowCount === oldData.length;
+        let hasUpdatedByKey,
+            i,
+            point,
+            lastIndex = 0,
+            succeeded = true;
+
+        this.xIncrement = null;
+        delete this.xColumn;
+
+        const newXColumn = dataTable.getColumn('x'),
+            newIdColumn = dataTable.getColumn('id');
+
+        // Iterate the new data
+        for (i = 0; i < dataTable.rowCount; i++) {
+            const x: any = newXColumn?.[i],
+                id = newIdColumn?.[i];
+
+            let pointIndex;
+
+            if (id || (isNumber(x) && oldXColumn)) {
+                pointIndex = oldXColumn?.indexOf(x as number, lastIndex) ?? -1;
+
+                // Matching X not found or used already due to non-unique x
+                // values (#8995), add point (but later)
+                if (pointIndex === -1) {
+                    const data = dataTable.getRowObject(i) as PointOptions;
+                    let index = oldXColumn?.length || 0;
+                    while (index && oldXColumn[index - 1] > data.x) {
+                        index--;
+                    }
+                    rowsToAdd.push({
+                        index,
+                        data
+                    });
+
+                // Matching X found, update
+                } else if (
+                    oldData[pointIndex]
+                    //&& pointOptions !== options.data?.[pointIndex]
+                ) {
+                    rowsToUpdate.push({
+                        index: pointIndex,
+                        data: dataTable.getRowObject(i) as PointOptions
+                    });
+
+                    // Mark it touched, below we will remove all points that
+                    // are not touched.
+                    oldData[pointIndex].touched = true;
+
+                    // Speed optimize by only searching after last known
+                    // index. Performs ~20% better on large data sets.
+                    if (requireSorting) {
+                        lastIndex = pointIndex + 1;
+                    }
+                // Point exists, no changes, don't remove it
+                } /*else if (oldData[pointIndex]) {
+                    oldData[pointIndex].touched = true;
+                }*/
+
+                // If the length is equal and some of the nodes had a
+                // match in the same position, we don't want to remove
+                // non-matches.
+                if (
+                    !equalLength ||
+                    i !== pointIndex ||
+                    dataSorting?.enabled ||
+                    this.hasDerivedData
+                ) {
+                    hasUpdatedByKey = true;
+                }
+            } else {
+                // Gather all points that are not matched
+                rowsToAdd.push({
+                    index: i,
+                    data: dataTable.getRowObject(i) as PointOptions
+                });
+            }
+        }
+
+        // Clear cache again, as findPointIndex has been using xColumn
+        // delete this.xColumn;
+
+        // Remove points that don't exist in the updated data set
+        if (hasUpdatedByKey) {
+            // Update matching points
+            rowsToUpdate.forEach((row): void => {
+                oldData[row.index].applyOptions(row.data);
+            });
+
+            // Add new points
+            rowsToAdd.sort((a, b): number => b.index - a.index);
+            rowsToAdd.forEach((data): void => {
+                // Splice in an undefined item, `generatePoints` will pick it
+                // up and create the point
+                oldData.splice(data.index, 0, void 0);
+            });
+
+            // Remove points not touched
+            i = oldData.length;
+            while (i--) {
+                point = oldData[i];
+                if (point && !point.touched) {
+                    point.destroy();
+                    oldData.splice(i, 1);
+                }
+            }
+
+            this.isDirtyData = true;
+
+        // If we did not find keys (ids or x-values), and the length is the
+        // same, update one-to-one
+        } else if (equalLength && !dataSorting?.enabled) {
+            for (i = 0; i < dataTable.rowCount; i++) {
+                // .update doesn't exist on a linked, hidden series (#3709)
+                // (#10187)
+                if (point !== oldData[i].y && !oldData[i].destroyed) {
+                    const pOptions = dataTable.getRowObject(i) as PointOptions;
+                    if (!defined(pOptions.x)) {
+                        // Point.update takes undefined literally
+                        delete pOptions.x;
+                    }
+                    /*
+                    oldData[i].update(
+                        pOptions,
+                        false,
+                        void 0,
+                        false
+                    );
+                    */
+                    oldData[i].options = pOptions;
+                    merge(true, oldData[i], pOptions);
+                }
+            }
+            // Don't add new points since those configs are used above
+            rowsToAdd.length = 0;
+
+        // Did not succeed in updating data
+        } else {
+            succeeded = false;
+        }
+
+        oldData.forEach((point): void => {
+            if (point) {
+                point.touched = false;
+            }
+        });
+
+        if (!succeeded) {
+            return false;
+        }
+
+        const xData = this.getColumn('x');
+        if (
+            this.xIncrement === null &&
+            xData.length
+        ) {
+            this.xIncrement = arrayMax(xData);
+            this.autoIncrement();
+        }
+
+        return true;
+    }
+
     public getDataColumnKeys(): Array<string> {
         return this.dataColumnKeys || ['x', ...(this.pointArrayMap || ['y'])];
     }
@@ -1514,6 +1698,7 @@ class Series {
 
         // First try to run Point.update which is cheaper, allows animation, and
         // keeps references to points.
+        /*
         if (
             chart.options.chart.allowMutatingData &&
             updatePoints !== false &&
@@ -1529,6 +1714,11 @@ class Series {
         ) {
             updatedData = this.updateData(data, animation);
         }
+        // */
+
+        const oldXColumn = table.getColumn('x'),
+            oldIdColumn = table.getColumn('id'),
+            oldNameColumn = table.getColumn('name');
 
         if (!updatedData) {
 
@@ -1861,6 +2051,27 @@ class Series {
                 });
             }
 
+            if (
+                chart.options.chart.allowMutatingData &&
+                updatePoints !== false &&
+                dataLength &&
+                oldDataLength &&
+                !series.cropped &&
+                !series.hasGroupedData &&
+                series.visible &&
+                // Soft updating has no benefit in boost, and causes JS error
+                // (#8355)
+                !series.boosted
+            ) {
+                updatedData = this.matchPoints(
+                    oldXColumn as any,
+                    oldIdColumn as any,
+                    oldNameColumn as unknown as Array<string|undefined>
+                );
+            }
+        }
+
+        if (!updatedData) {
             // Test for DataTable-based data handling
             if (this.useDataTable) {
                 data = void 0;
