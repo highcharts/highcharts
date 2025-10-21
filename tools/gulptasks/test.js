@@ -353,32 +353,38 @@ specified by config.imageCapture.resultsOutputPath.
 
         logLib.message('Run `gulp test --help` for available options');
 
-        const testArgumentParts = [];
+        // Use TypeScript karma for Grid/Dashboards, regular karma for others
+        if (argv.product === 'Grid' || argv.product === 'Dashboards') {
+            const { testKarma } = require('./test-karma');
+            await testKarma(argv);
+        } else {
+            const testArgumentParts = [];
 
-        if (Array.isArray(productTests)) {
-            testArgumentParts.push('--tests');
-            productTests.forEach(testPath =>
-                testArgumentParts.push(`unit-tests/${testPath}/**/demo.js`));
-        }
-
-        const result = childProcess.spawnSync('npx', [
-            'karma', 'start', KARMA_CONFIG_FILE,
-            testArgumentParts.join(' '),
-            ...process.argv
-        ], {
-            cwd: process.cwd(),
-            stdio: ['ignore', process.stdout, process.stderr],
-            timeout: 1800000,
-            shell: path.sep === path.win32.sep
-        });
-
-        if (result.error || result.status !== 0) {
-            if (argv.speak) {
-                logLib.say('Tests failed!');
+            if (Array.isArray(productTests)) {
+                testArgumentParts.push('--tests');
+                productTests.forEach(testPath =>
+                    testArgumentParts.push(`unit-tests/${testPath}/**/demo.js`));
             }
-            throw new PluginError('karma', {
-                message: 'Tests failed'
+
+            const result = childProcess.spawnSync('npx', [
+                'karma', 'start', KARMA_CONFIG_FILE,
+                testArgumentParts.join(' '),
+                ...process.argv
+            ], {
+                cwd: process.cwd(),
+                stdio: ['ignore', process.stdout, process.stderr],
+                timeout: 1800000,
+                shell: path.sep === path.win32.sep
             });
+
+            if (result.error || result.status !== 0) {
+                if (argv.speak) {
+                    logLib.say('Tests failed!');
+                }
+                throw new PluginError('karma', {
+                    message: 'Tests failed'
+                });
+            }
         }
 
         if (argv.speak) {
