@@ -1471,7 +1471,7 @@ class Series {
                 if (pointIndex === -1) {
                     const data = dataTable.getRowObject(i) as PointOptions,
                         dataX = data.x;
-                    let index = oldXColumn?.length || 0;
+                    let index = dataTable.rowCount;
                     while (
                         index &&
                         oldXColumn &&
@@ -1543,7 +1543,6 @@ class Series {
                 // up and create the point
                 oldData.splice(data.index, 0, void 0 as any);
             });
-
             // Remove points not touched
             i = oldData.length;
             while (i--) {
@@ -1554,7 +1553,7 @@ class Series {
                 }
             }
 
-            this.isDirtyData = true;
+            this.isDirtyData = this.isDirty = true;
 
         // If we did not find keys (ids or x-values), and the length is the
         // same, update one-to-one
