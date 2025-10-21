@@ -1471,7 +1471,7 @@ class Series {
                 if (pointIndex === -1) {
                     const data = dataTable.getRowObject(i) as PointOptions,
                         dataX = data.x;
-                    let index = dataTable.rowCount;
+                    let index = oldXColumn?.length ?? dataTable.rowCount;
                     while (
                         index &&
                         oldXColumn &&
