@@ -222,7 +222,7 @@ class HeaderCellToolbar implements Toolbar {
         if (this.isMenuCentered !== shouldBeCentered) {
             this.isMenuCentered = shouldBeCentered;
             this.column.header?.container?.classList.toggle(
-                Globals.getClassName('zeroWidth'), shouldBeCentered
+                Globals.getClassName('noWidth'), shouldBeCentered
             );
         }
     }

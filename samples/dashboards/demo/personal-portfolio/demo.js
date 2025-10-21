@@ -412,7 +412,7 @@ const getCurrentTotal = arrOfArr => {
                     }]
                 }, {
                     cells: [{
-                        id: 'data-grid'
+                        id: 'grid'
                     }, {
                         id: 'kpi-gauge-risk'
                     }]
@@ -471,7 +471,7 @@ const getCurrentTotal = arrOfArr => {
             connector: {
                 id: 'stock-grid'
             },
-            renderTo: 'data-grid',
+            renderTo: 'grid',
             gridOptions: {
                 rendering: {
                     rows: {

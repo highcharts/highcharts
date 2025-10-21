@@ -2,7 +2,7 @@ name: Linting
 
 on:
   pull_request:
-    branches: [ 'master' ]
+    branches: [ 'master', 'dash/**', 'grid/**' ]
     paths:
       - 'ts/**'
       - 'samples/**'
