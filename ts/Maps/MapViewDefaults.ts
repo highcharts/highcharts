@@ -118,7 +118,6 @@ const MapViewDefaults: MapViewOptions = {
      * @type   {object}
      */
     projection: {
-
         /**
          * Projection name. Built-in projections are `EqualEarth`,
          * `LambertConformalConic`, `Miller`, `Orthographic` and `WebMercator`.

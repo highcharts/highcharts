@@ -398,6 +398,8 @@ class MapView {
 
     /** @internal */
     public chart: MapChart;
+
+    /** @internal */
     protected eventsToUnbind: Array<Function> = [];
 
     /** @internal */
@@ -747,6 +749,44 @@ class MapView {
     }
 
     /**
+     * Convert pixel position to longitude and latitude.
+     *
+     * @function Highcharts.MapView#pixelsToLonLat
+     * @since 10.0.0
+     * @param  {Highcharts.PositionObject} pos
+     *         The position in pixels
+     * @return {Highcharts.MapLonLatObject|undefined}
+     *         The map coordinates
+     */
+    public pixelsToLonLat(
+        pos: PositionObject
+    ): (MapLonLatObject|undefined) {
+        return this.projectedUnitsToLonLat(this.pixelsToProjectedUnits(pos));
+    }
+
+    /**
+     * Convert pixel position to projected units
+     *
+     * @function Highcharts.MapView#pixelsToProjectedUnits
+     * @param {Highcharts.PositionObject} pos
+     *        The position in pixels
+     * @return {Highcharts.PositionObject} The position in projected units
+     */
+    public pixelsToProjectedUnits(pos: PositionObject): ProjectedXY {
+        const { x, y } = pos,
+            scale = this.getScale(),
+            projectedCenter = this.projection.forward(this.center),
+            field = this.playingField,
+            centerPxX = field.x + field.width / 2,
+            centerPxY = field.y + field.height / 2;
+
+        const projectedX = projectedCenter[0] + (x - centerPxX) / scale;
+        const projectedY = projectedCenter[1] - (y - centerPxY) / scale;
+
+        return { x: projectedX, y: projectedY };
+    }
+
+    /**
      * Calculate longitude/latitude values for a point or position. Returns an
      * object with the numeric properties `lon` and `lat`.
      *
@@ -812,6 +852,27 @@ class MapView {
 
         const coordinates = this.projection.inverse([point.x, point.y]);
         return { lon: coordinates[0], lat: coordinates[1] };
+    }
+
+    /**
+     * Convert projected units to pixel position
+     *
+     * @function Highcharts.MapView#projectedUnitsToPixels
+     * @param {Highcharts.PositionObject} pos
+     *        The position in projected units
+     * @return {Highcharts.PositionObject} The position in pixels
+     */
+    public projectedUnitsToPixels(pos: ProjectedXY): PositionObject {
+        const scale = this.getScale(),
+            projectedCenter = this.projection.forward(this.center),
+            field = this.playingField,
+            centerPxX = field.x + field.width / 2,
+            centerPxY = field.y + field.height / 2;
+
+        const x = centerPxX - scale * (projectedCenter[0] - pos.x);
+        const y = centerPxY + scale * (projectedCenter[1] - pos.y);
+
+        return { x, y };
     }
 
     /**
@@ -1058,65 +1119,6 @@ class MapView {
         if (redraw) {
             this.redraw(animation);
         }
-    }
-
-    /**
-     * Convert projected units to pixel position
-     *
-     * @function Highcharts.MapView#projectedUnitsToPixels
-     * @param {Highcharts.PositionObject} pos
-     *        The position in projected units
-     * @return {Highcharts.PositionObject} The position in pixels
-     */
-    public projectedUnitsToPixels(pos: ProjectedXY): PositionObject {
-        const scale = this.getScale(),
-            projectedCenter = this.projection.forward(this.center),
-            field = this.playingField,
-            centerPxX = field.x + field.width / 2,
-            centerPxY = field.y + field.height / 2;
-
-        const x = centerPxX - scale * (projectedCenter[0] - pos.x);
-        const y = centerPxY + scale * (projectedCenter[1] - pos.y);
-
-        return { x, y };
-    }
-
-    /**
-     * Convert pixel position to longitude and latitude.
-     *
-     * @function Highcharts.MapView#pixelsToLonLat
-     * @since 10.0.0
-     * @param  {Highcharts.PositionObject} pos
-     *         The position in pixels
-     * @return {Highcharts.MapLonLatObject|undefined}
-     *         The map coordinates
-     */
-    public pixelsToLonLat(
-        pos: PositionObject
-    ): (MapLonLatObject|undefined) {
-        return this.projectedUnitsToLonLat(this.pixelsToProjectedUnits(pos));
-    }
-
-    /**
-     * Convert pixel position to projected units
-     *
-     * @function Highcharts.MapView#pixelsToProjectedUnits
-     * @param {Highcharts.PositionObject} pos
-     *        The position in pixels
-     * @return {Highcharts.PositionObject} The position in projected units
-     */
-    public pixelsToProjectedUnits(pos: PositionObject): ProjectedXY {
-        const { x, y } = pos,
-            scale = this.getScale(),
-            projectedCenter = this.projection.forward(this.center),
-            field = this.playingField,
-            centerPxX = field.x + field.width / 2,
-            centerPxY = field.y + field.height / 2;
-
-        const projectedX = projectedCenter[0] + (x - centerPxX) / scale;
-        const projectedY = projectedCenter[1] - (y - centerPxY) / scale;
-
-        return { x: projectedX, y: projectedY };
     }
 
     /** @internal */

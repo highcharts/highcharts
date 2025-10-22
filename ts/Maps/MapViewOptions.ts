@@ -66,7 +66,12 @@ export type MapViewPaddingType = (
     [number|string, number|string, number|string, number|string]
 );
 
-/** @internal */
+/**
+ * An array of longitude, latitude.
+ *
+ * @interface Highcharts.ProjectedXYArray
+ * @typedef {Array<number> & { outside?: boolean }} Highcharts.ProjectedXYArray
+ */
 export type ProjectedXYArray = [number, number] & { outside?: boolean };
 
 /**

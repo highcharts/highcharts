@@ -43,12 +43,14 @@ const {
  *
  * */
 
+/** @internal */
 declare module '../Core/Chart/ChartBase'{
     interface ChartBase {
         pathfinder?: Pathfinder;
     }
 }
 
+/** @internal */
 declare module '../Core/Series/SeriesBase' {
     interface SeriesBase {
         pathfinderRemoveRenderEvent?: Function;

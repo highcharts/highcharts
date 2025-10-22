@@ -24,11 +24,8 @@ import type { ProjectionRegistryName } from './Projections/ProjectionRegistry';
  * */
 
 /**
- * Rotation of the projection in terms of degrees `[lambda, phi, gamma]`
- * applied to the globe prior to the projection. `phi` and `gamma` are
- * optional.
- *
- * @internal
+ * Rotation of the projection in terms of degrees `[lambda, phi, gamma]`.
+ * 1st number is mandatory, while 2nd and 3rd are optional.
  */
 export type ProjectionRotationOption = (
     [number]|[number, number]|[number, number, number]
@@ -67,7 +64,10 @@ export interface ProjectionOptions {
      * - `phi` shifts the latitudes by the given value. Can be omitted.
      * - `gamma` applies a roll. Can be omitted.
      *
-     * @type {Array<number>}
+     * @sample maps/demo/projection-explorer
+     *         Projection explorer
+     * @sample maps/mapview/projection-america-centric
+     *         America-centric world map
      */
     rotation?: ProjectionRotationOption;
 }

@@ -120,6 +120,75 @@ export interface MapNavigationButtonOptions {
     y?: number;
 }
 
+/**
+ * Options for the zoom in button. Properties for the zoom in and zoom
+ * out buttons are inherited from
+ * [mapNavigation.buttonOptions](#mapNavigation.buttonOptions), while
+ * individual options can be overridden. By default, the `onclick`,
+ * `text` and `y` options are individual.
+ *
+ * @extends mapNavigation.buttonOptions
+ */
+export interface MapNavigationButtonZoomInOptions extends MapNavigationButtonOptions {
+    /**
+     * Click handler for the button.
+     *
+     * @type    {Function}
+     * @default function () { this.mapZoom(0.5); }
+     */
+    onclick?: Function;
+
+    /**
+     * The text for the button. The tooltip (title) is a language option given
+     * by [lang.zoomIn](#lang.zoomIn).
+     *
+     * @default '+'
+     */
+    text?: string;
+
+    /**
+     * The position of the zoomIn button relative to the vertical alignment.
+     *
+     * @default 0
+     */
+    y?: number;
+}
+
+/**
+ * Options for the zoom out button. Properties for the zoom in and
+ * zoom out buttons are inherited from
+ * [mapNavigation.buttonOptions](#mapNavigation.buttonOptions), while
+ * individual options can be overridden. By default, the `onclick`,
+ * `text` and `y` options are individual.
+ *
+ * @extends mapNavigation.buttonOptions
+ */
+export interface MapNavigationButtonZoomOutOptions extends MapNavigationButtonOptions {
+    // eslint-disable-next-line valid-jsdoc
+    /**
+     * Click handler for the button.
+     *
+     * @type    {Function}
+     * @default function () { this.mapZoom(2); }
+     */
+    onclick?: Function;
+
+    /**
+     * The text for the button. The tooltip (title) is a language option given
+     * by [lang.zoomOut](#lang.zoomIn).
+     *
+     * @default '-'
+     */
+    text?: string;
+
+    /**
+     * The position of the zoomOut button relative to the vertical alignment.
+     *
+     * @default 28
+     */
+    y?: number;
+}
+
 export interface MapNavigationOptions {
     /**
      * General options for the map navigation buttons. Individual options
@@ -134,83 +203,15 @@ export interface MapNavigationOptions {
     /**
      * The individual buttons for the map navigation. This usually includes
      * the zoom in and zoom out buttons. Properties for each button is
-     * inherited from
-     * [mapNavigation.buttonOptions](#mapNavigation.buttonOptions), while
-     * individual options can be overridden. But default, the `onclick`, `text`
-     * and `y` options are individual.
+     * inherited from [mapNavigation.buttonOptions](#mapNavigation.buttonOptions),
+     * while individual options can be overridden. But default, the `onclick`,
+     * `text` and `y` options are individual.
      */
-    buttons?: {
-        /**
-         * Options for the zoom in button. Properties for the zoom in and zoom
-         * out buttons are inherited from
-         * [mapNavigation.buttonOptions](#mapNavigation.buttonOptions), while
-         * individual options can be overridden. By default, the `onclick`,
-         * `text` and `y` options are individual.
-         *
-         * @extends mapNavigation.buttonOptions
-         */
-        zoomIn?: MapNavigationButtonOptions & {
-            /**
-             * Click handler for the button.
-             *
-             * @type    {Function}
-             * @default function () { this.mapZoom(0.5); }
-             */
-            onclick?: Function;
-
-            /**
-             * The text for the button. The tooltip (title) is a language option
-             * given by [lang.zoomIn](#lang.zoomIn).
-             *
-             * @default '+'
-             */
-            text?: string;
-
-            /**
-             * The position of the zoomIn button relative to the vertical
-             * alignment.
-             *
-             * @default 0
-             */
-            y?: number;
-        };
-        /**
-         * Options for the zoom out button. Properties for the zoom in and
-         * zoom out buttons are inherited from
-         * [mapNavigation.buttonOptions](#mapNavigation.buttonOptions), while
-         * individual options can be overridden. By default, the `onclick`,
-         * `text` and `y` options are individual.
-         *
-         * @extends mapNavigation.buttonOptions
-         */
-        zoomOut?: MapNavigationButtonOptions & {
-            // eslint-disable-next-line valid-jsdoc
-            /**
-             * Click handler for the button.
-             *
-             * @type    {Function}
-             * @default function () { this.mapZoom(2); }
-             */
-            onclick?: Function;
-
-            /**
-             * The text for the button. The tooltip (title) is a language option
-             * given by [lang.zoomOut](#lang.zoomIn).
-             *
-             * @default '-'
-             */
-            text?: string;
-
-            /**
-             * The position of the zoomOut button relative to the vertical
-             * alignment.
-             *
-             * @default 28
-             */
-            y?: number;
-        };
-        [key: string]: MapNavigationButtonOptions|undefined;
-    };
+    buttons?: Record<string, (
+        MapNavigationButtonOptions |
+        MapNavigationButtonZoomInOptions |
+        MapNavigationButtonZoomOutOptions
+    )>;
 
     /**
      * Whether to enable navigation buttons. By default it inherits the

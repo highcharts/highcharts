@@ -52,6 +52,7 @@ const {
  *
  * */
 
+/** @internal */
 declare module '../Core/Chart/ChartBase' {
     interface ChartBase {
         mapNavigation: MapNavigation;

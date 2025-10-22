@@ -27,7 +27,6 @@ import type MapPointOptions from '../Series/Map/MapPointOptions';
  *
  * */
 
-/** @internal */
 export interface BaseGeometry {
     arcs?: (number[]|number[][]|number[][][]);
     properties?: Record<string, string|number>;
@@ -60,37 +59,31 @@ export interface MapLonLatObject {
     lon: number;
 }
 
-/** @internal */
 export interface MultiPoint extends BaseGeometry{
     type: 'MultiPoint';
     coordinates: LonLatArray[];
 }
 
-/** @internal */
 export interface LineString extends BaseGeometry{
     type: 'LineString';
     coordinates: LonLatArray[];
 }
 
-/** @internal */
 export interface Polygon extends BaseGeometry {
     type: 'Polygon';
     coordinates: LonLatArray[][];
 }
 
-/** @internal */
 export interface MultiLineString extends BaseGeometry {
     type: 'MultiLineString';
     coordinates: LonLatArray[][];
 }
 
-/** @internal */
 export interface MultiPolygon extends BaseGeometry {
     type: 'MultiPolygon';
     coordinates: LonLatArray[][][];
 }
 
-/** @internal */
 export interface GeoJSONGeometryMultiPointRegistry {
     LineString: LineString;
     MultiPoint: MultiPoint;
@@ -99,7 +92,6 @@ export interface GeoJSONGeometryMultiPointRegistry {
     MultiPolygon: MultiPolygon;
 }
 
-/** @internal */
 export type GeoJSONGeometryMultiPoint =
     GeoJSONGeometryMultiPointRegistry[keyof GeoJSONGeometryMultiPointRegistry];
 

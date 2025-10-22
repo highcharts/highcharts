@@ -1,10 +1,13 @@
 /* *
  *
- *  (c) 2023 Hubert Kozik
+ *  Provider definition
+ *
+ *  (c) 2023-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *  Authors:
+ *  - Hubert Kozik
  *
  * */
 

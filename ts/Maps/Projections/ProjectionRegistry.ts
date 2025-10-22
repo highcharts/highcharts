@@ -1,6 +1,13 @@
 /* *
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *  Projection registry
+ *
+ *  (c) 2021-2025 Highsoft AS
+ *
+ *  License: www.highcharts.com/license
+ *
+ *  Authors:
+ *  - Torstein Honsi
  *
  * */
 
@@ -24,7 +31,6 @@ import WebMercator from './WebMercator.js';
  *
  * */
 
-/** @internal */
 export interface ProjectionRegistry {
     EqualEarth: typeof EqualEarth;
     LambertConformalConic: typeof LambertConformalConic;
@@ -33,7 +39,6 @@ export interface ProjectionRegistry {
     WebMercator: typeof WebMercator;
 }
 
-/** @internal */
 export type ProjectionRegistryName = keyof ProjectionRegistry;
 
 /* *
@@ -42,7 +47,6 @@ export type ProjectionRegistryName = keyof ProjectionRegistry;
  *
  * */
 
-/** @internal */
 const projectionRegistry: ProjectionRegistry = {
     EqualEarth,
     LambertConformalConic,
@@ -57,5 +61,4 @@ const projectionRegistry: ProjectionRegistry = {
  *
  * */
 
-/** @internal */
 export default projectionRegistry;

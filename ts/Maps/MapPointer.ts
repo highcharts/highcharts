@@ -35,6 +35,7 @@ const {
  *
  * */
 
+/** @internal */
 declare module '../Core/PointerEvent' {
     interface PointerEvent {
         deltaY?: number;

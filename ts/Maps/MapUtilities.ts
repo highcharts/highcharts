@@ -55,6 +55,7 @@ const boundsFromPath = function (
  *
  * */
 
+/** @internal */
 const MapUtilities = {
     boundsFromPath
 };

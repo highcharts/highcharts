@@ -1,10 +1,13 @@
 /* *
  *
- *  (c) 2021 Torstein Honsi
+ *  Projection definition
+ *
+ *  (c) 2021-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *  Authors:
+ *  - Torstein Honsi
  *
  * */
 
@@ -28,28 +31,32 @@ import type {
 
 /**
  * Minimal interface describing a projector's forward and inverse functions.
- * @internal
+ *
+ * @sample maps/mapview/projection-custom-proj4js
+ *         Custom UTM projection definition
+ * @sample maps/mapview/projection-custom-d3geo
+ *         Custom Robinson projection definition
+ *
+ * @interface Highcharts.Projector
  */
 export interface Projector {
     /**
      * Project a lon/lat coordinate to projected xy.
-     * @internal
      */
     forward(coords: LonLatArray): ProjectedXYArray;
 
     /**
      * Inverse-project a projected xy coordinate to lon/lat.
-     * @internal
      */
     inverse(xy: ProjectedXYArray): LonLatArray;
 }
 
 /**
  * Definition for a projection, extending the basic projector.
- * @internal
+ *
+ * @interface Highcharts.ProjectionDefinition
  */
 export interface ProjectionDefinition extends Projector {
-
     /** @internal */
     antimeridianCutting?: boolean;
 
@@ -66,5 +73,4 @@ export interface ProjectionDefinition extends Projector {
  *
  * */
 
-/** @internal */
 export default ProjectionDefinition;

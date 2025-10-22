@@ -43,6 +43,7 @@ const {
  *
  * */
 
+/** @internal */
 declare module '../Core/Series/PointBase' {
     interface PointBase {
         getMarkerVector(
@@ -57,6 +58,7 @@ declare module '../Core/Series/PointBase' {
     }
 }
 
+/** @internal */
 declare module '../Core/Series/PointOptions' {
     interface PointOptions {
         connect?: (
@@ -67,6 +69,7 @@ declare module '../Core/Series/PointOptions' {
     }
 }
 
+/** @internal */
 export interface PointConnectOptionsObject {
     to?: string;
 }

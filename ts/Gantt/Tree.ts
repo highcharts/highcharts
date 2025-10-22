@@ -31,11 +31,13 @@ const {
  *
  * */
 
+/** @internal */
 export interface TreeGetOptionsObject {
     after?: Function;
     before?: Function;
 }
 
+/** @internal */
 export interface TreeNode {
     children: Array<TreeNode>;
     data: (TreePointOptionsObject|null);
@@ -47,6 +49,7 @@ export interface TreeNode {
     parent: string;
 }
 
+/** @internal */
 export interface TreePointOptionsObject {
     end?: number;
     id?: string;

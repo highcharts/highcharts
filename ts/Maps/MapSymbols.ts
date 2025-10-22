@@ -81,17 +81,16 @@ function topButton(
  *
  * */
 
+/** @internal */
 declare module '../Core/Renderer/SVG/SymbolType' {
     interface SymbolTypeRegistry {
         /**
          * @requires Map/MapSymbols
-         * @internal
          */
         bottombutton: typeof bottomButton;
 
         /**
          * @requires Map/MapSymbols
-         * @internal
          */
         topbutton: typeof topButton;
     }
@@ -103,6 +102,7 @@ declare module '../Core/Renderer/SVG/SymbolType' {
  *
  * */
 
+/** @internal */
 const MapSymbols = {
     compose
 };
