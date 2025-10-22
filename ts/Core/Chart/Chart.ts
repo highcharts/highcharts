@@ -34,20 +34,21 @@ import type {
     NumberFormatterCallbackFunction,
     Options
 } from '../Options';
-import type ChartLike from './ChartLike';
+import type ChartBase from './ChartBase';
 import type ChartOptions from './ChartOptions';
 import type {
     ChartPanningOptions,
     ChartZoomingOptions
 } from './ChartOptions';
 import type ColorAxis from '../Axis/Color/ColorAxis';
+import type { DeepPartial } from '../../Shared/Types';
+import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type Point from '../Series/Point';
 import type PointerEvent from '../PointerEvent';
 import type SeriesOptions from '../Series/SeriesOptions';
 import type {
     SeriesTypeOptions
 } from '../Series/SeriesType';
-import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 
 import A from '../Animation/AnimationUtilities.js';
@@ -121,16 +122,16 @@ const {
  *
  * */
 
-declare module '../Axis/AxisLike' {
-    interface AxisLike {
+declare module '../Axis/AxisBase' {
+    interface AxisBase {
         extKey?: string;
         index?: number;
         touched?: boolean;
     }
 }
 
-declare module './ChartLike' {
-    interface ChartLike {
+declare module './ChartBase' {
+    interface ChartBase {
         resetZoomButton?: SVGElement;
         pan(e: PointerEvent, panning: boolean|ChartPanningOptions): void;
         showResetZoom(): void;
@@ -157,14 +158,14 @@ declare module '../Options' {
     }
 }
 
-declare module '../Series/PointLike' {
-    interface PointLike {
+declare module '../Series/PointBase' {
+    interface PointBase {
         touched?: boolean;
     }
 }
 
-declare module '../Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../Series/SeriesBase' {
+    interface SeriesBase {
         index?: number;
         touched?: boolean;
     }
@@ -321,7 +322,6 @@ class Chart {
     public containerBox?: { height: number, width: number };
     public credits?: SVGElement;
     public caption?: SVGElement;
-    public dataLabelsGroup?: SVGElement;
     public eventOptions!: Record<string, EventCallback<Series, Event>>;
     public hasCartesianSeries?: boolean;
     public hasLoaded?: boolean;
@@ -601,7 +601,7 @@ class Chart {
     }
 
     /**
-     * Internal function to unitialize an individual series.
+     * Internal function to initialize an individual series.
      *
      * @private
      * @function Highcharts.Chart#initSeries
@@ -617,7 +617,7 @@ class Chart {
 
         // No such series type
         if (!SeriesClass) {
-            error(17, true, chart as any, { missingModuleFor: type });
+            error(17, true, chart, { missingModuleFor: type });
         }
 
         const series = new SeriesClass();
@@ -2467,42 +2467,39 @@ class Chart {
 
         // Apply new links
         chartSeries.forEach(function (series): void {
-            const { linkedTo } = series.options;
+            const { linkedTo } = series.options,
+                linkedParent = isString(linkedTo) && (
+                    linkedTo === ':previous' ?
+                        chartSeries[series.index - 1] :
+                        chart.get(linkedTo) as Series | undefined
+                );
 
-            if (isString(linkedTo)) {
-                let linkedParent: Series | undefined;
-                if (linkedTo === ':previous') {
-                    linkedParent = chart.series[series.index - 1];
-                } else {
-                    linkedParent = chart.get(linkedTo) as Series | undefined;
-                }
+            if (
+                linkedParent &&
                 // #3341 avoid mutual linking
-                if (
-                    linkedParent &&
-                    linkedParent.linkedParent !== series
-                ) {
-                    linkedParent.linkedSeries.push(series);
-                    /**
-                     * The parent series of the current series, if the current
-                     * series has a [linkedTo](https://api.highcharts.com/highcharts/series.line.linkedTo)
-                     * setting.
-                     *
-                     * @name Highcharts.Series#linkedParent
-                     * @type {Highcharts.Series}
-                     * @readonly
-                     */
-                    series.linkedParent = linkedParent;
+                linkedParent.linkedParent !== series
+            ) {
+                linkedParent.linkedSeries.push(series);
+                /**
+                 * The parent series of the current series, if the current
+                 * series has a [linkedTo](https://api.highcharts.com/highcharts/series.line.linkedTo)
+                 * setting.
+                 *
+                 * @name Highcharts.Series#linkedParent
+                 * @type {Highcharts.Series}
+                 * @readonly
+                 */
+                series.linkedParent = linkedParent;
 
-                    if (linkedParent.enabledDataSorting) {
-                        series.setDataSortingOptions();
-                    }
-
-                    series.visible = pick(
-                        series.options.visible,
-                        linkedParent.options.visible,
-                        series.visible
-                    ); // #3879
+                if (linkedParent.enabledDataSorting) {
+                    series.setDataSortingOptions();
                 }
+
+                series.visible = (
+                    series.options.visible ??
+                    linkedParent.options.visible ??
+                    series.visible
+                ); // #3879
             }
         });
 
@@ -2655,10 +2652,6 @@ class Chart {
         chart.seriesGroup ||= renderer.g('series-group')
             .attr({ zIndex: 3 })
             .shadow(chart.options.chart.seriesGroupShadow)
-            .add();
-
-        chart.dataLabelsGroup ||= renderer.g('datalabels-group')
-            .attr({ zIndex: 6 })
             .add();
 
         chart.renderSeries();
@@ -2906,6 +2899,7 @@ class Chart {
         }
 
         this.warnIfA11yModuleNotLoaded();
+        this.warnIfCSSNotLoaded();
 
         // Don't run again
         this.hasLoaded = true;
@@ -2939,6 +2933,20 @@ class Chart {
                     'warning. See https://www.highcharts.com/docs/accessibility/accessibility-module.',
                     false, this
                 );
+            }
+        }
+    }
+
+    /**
+     * Emit console warning if the highcharts.css file is not loaded.
+     * @private
+     */
+    public warnIfCSSNotLoaded(): void {
+        if (this.styledMode) {
+            const containerStyle = win.getComputedStyle(this.container);
+
+            if (containerStyle.zIndex !== '0') {
+                error(35, false, this);
             }
         }
     }
@@ -4032,7 +4040,7 @@ class Chart {
  *
  * */
 
-interface Chart extends ChartLike {
+interface Chart extends ChartBase {
     callbacks: Array<Chart.CallbackFunction>;
     collectionsWithInit: Record<string, [Function, Array<any>?]>;
     collectionsWithUpdate: Array<string>;

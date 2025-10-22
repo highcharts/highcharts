@@ -80,8 +80,8 @@ declare module './Boost/BoostOptions' {
     }
 }
 
-declare module '../Core/Series/SeriesLike' {
-    interface SeriesLike extends BoostTargetObject {
+declare module '../Core/Series/SeriesBase' {
+    interface SeriesBase extends BoostTargetObject {
         cvsStrokeBatch?: number;
         /** @requires modules/boost-canvas */
         canvasToSVG(): void;

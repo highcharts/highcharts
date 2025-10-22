@@ -32,10 +32,6 @@ namespace Globals {
      *
      * */
 
-    export type DeepPartial<T> = {
-        [K in keyof T]?: (T[K]|DeepPartial<T[K]>);
-    };
-
     export type DeepRequired<T> = {
         [K in keyof T]-?: DeepRequired<T[K]>;
     };

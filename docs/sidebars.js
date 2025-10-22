@@ -241,6 +241,8 @@ module.exports = {
                     'morningstar/security-details',
                     'morningstar/security-compare',
                     'morningstar/x-ray',
+                    'morningstar/performance',
+                    'morningstar/hypo-performance',
                     {
                         'Time Series': [
                             'morningstar/time-series/time-series',
@@ -299,13 +301,14 @@ module.exports = {
             'flutter/your-first-chart',
             'flutter/highcharts-bundling'
         ],
-        'React integration (beta)': [
+        'React integration': [
             'react/getting-started',
             'react/series-and-chart-types',
             'react/options',
             'react/options-component-format',
             'react/nextjs',
-            'react/component-children'
+            'react/component-children',
+            'react/v4-migration-guide'
         ]
     }
 };

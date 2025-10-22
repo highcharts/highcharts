@@ -57,6 +57,7 @@
     "new-cap": 0,
     "no-alert": 0,
     "no-console": 0,
+    "no-invalid-this": 0,
     "no-loss-of-precision": 1,
     "no-multi-spaces": 0,
     "no-multi-str": 0,
@@ -96,6 +97,9 @@
       "sourceType": "module"
     },
     "rules": {
+      "@typescript-eslint/no-explicit-any": 0,
+      "@typescript-eslint/no-namespace": 0,
+      "@typescript-eslint/no-unnecessary-type-assertion": 0,
       "@typescript-eslint/no-unsafe-assignment": 0,
       "@typescript-eslint/no-unsafe-call": 0,
       "@typescript-eslint/no-unsafe-member-access": 0,

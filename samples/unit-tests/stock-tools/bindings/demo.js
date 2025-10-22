@@ -31,6 +31,15 @@ QUnit.test('Bindings general tests', function (assert) {
                 gui: {
                     enabled: true
                 }
+            },
+            navigation: {
+                bindings: {
+                    segment: {
+                        annotationsOptions: {
+                            className: 'custom-annotation-class-name'
+                        }
+                    }
+                }
             }
         }),
         plotLeft = chart.plotLeft,
@@ -196,6 +205,13 @@ QUnit.test('Bindings general tests', function (assert) {
     controller.mouseUp(
         chart.plotLeft + chart.plotWidth / 2,
         chart.plotTop + chart.plotHeight / 2 + 10
+    );
+
+    assert.ok(
+        chart.annotations[3].graphic.element.classList.contains(
+            'custom-annotation-class-name'
+        ),
+        'Annotation should have a custom class name, #22902.'
     );
 
     assert.close(
