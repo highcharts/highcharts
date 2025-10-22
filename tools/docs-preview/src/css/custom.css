@@ -87,3 +87,14 @@ main h5:has(.grid-pro-badge) .grid-pro-badge,
 main h6:has(.grid-pro-badge) .grid-pro-badge {
     margin-top: 0.7em;
 }
+
+/* Align iframe presentation with doc-builder */
+iframe {
+    border: none;
+    width: 100%;
+}
+
+.iframe-container {
+    margin-top: 15px;
+    margin-bottom: 15px;
+}

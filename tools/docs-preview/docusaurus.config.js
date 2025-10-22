@@ -3,6 +3,7 @@ import { themes as prismThemes } from 'prism-react-renderer';
 
 import { visit } from 'unist-util-visit';
 import gridProPlugin from './src/remark/gridProPlugin.js';
+import iframePlugin from './src/remark/iframePlugin.js';
 
 // Plugin to remove iframe styles that can not be parsed as JSX
 function removeIframeStyle() {
@@ -51,6 +52,7 @@ const config = {
                     routeBasePath: '/',
                     remarkPlugins: [
                         removeIframeStyle,
+                        iframePlugin,
                         gridProPlugin
                     ]
                 },
