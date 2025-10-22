@@ -1,4 +1,26 @@
-describe('Grid Pro - events.', () => {
+describe('Grid Pro - grid events.', () => {
+    before(() => {
+        cy.visit('grid-pro/cypress/grid-events');
+    });
+
+    it('Grid beforeLoad event.', () => {
+        cy.get('#beforeLoad').should('have.value', 'beforeLoad');
+    });
+
+    it('Grid afterLoad event.', () => {
+        cy.get('#afterLoad').should('have.value', 'afterLoad');
+    });
+
+    it('Grid beforeRenderViewport event.', () => {
+        cy.get('#beforeRenderViewport').should('have.value', 'beforeRenderViewport');
+    });
+
+    it('Grid afterRenderViewport event.', () => {
+        cy.get('#afterRenderViewport').should('have.value', 'afterRenderViewport');
+    });
+});
+
+describe('Grid Pro - cell and column events.', () => {
     before(() => {
         cy.visit('grid-pro/cypress/column-cell-events');
     });

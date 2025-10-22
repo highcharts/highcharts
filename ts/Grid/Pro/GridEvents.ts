@@ -23,6 +23,7 @@ import type Column from '../Core/Table/Column';
 import type TableCell from '../Core/Table/Body/TableCell';
 import type HeaderCell from '../Core/Table/Header/HeaderCell';
 import type { GridEvent } from '../Core/GridUtils';
+import type Grid from '../Core/Grid';
 
 import U from '../../Core/Utilities.js';
 import Globals from '../../Core/Globals.js';
@@ -62,7 +63,10 @@ const propagate: Record<string, CustomAction> = {
  * */
 
 /**
- * Composition to add events to the TableCellClass methods.
+ * Composition to add events options to the Grid.
+ *
+ * @param GridClass
+ * The class to extend.
  *
  * @param ColumnClass
  * The class to extend.
@@ -76,6 +80,7 @@ const propagate: Record<string, CustomAction> = {
  * @internal
  */
 function compose(
+    GridClass: typeof Grid,
     ColumnClass: typeof Column,
     HeaderCellClass: typeof HeaderCell,
     TableCellClass: typeof TableCell
@@ -84,6 +89,18 @@ function compose(
     if (!pushUnique(Globals.composed, 'GridEvents')) {
         return;
     }
+
+    ([ // Grid Events
+        'beforeLoad',
+        'afterLoad',
+        'beforeRenderViewport',
+        'afterRenderViewport'
+    ] as const).forEach((name): void => {
+        addEvent(GridClass, name, (e: GridEvent<Grid>): void => {
+            const grid = e.target;
+            grid.options?.events?.[name]?.call(grid);
+        });
+    });
 
     ([ // TableCell Events
         'mouseOver',
@@ -112,8 +129,7 @@ function compose(
         });
     });
 
-    // HeaderCell Events
-    ([
+    ([ // HeaderCell Events
         'click',
         'afterRender'
     ] as const).forEach((name): void => {
@@ -144,6 +160,11 @@ export type CellEventCallback = (this: TableCell) => void;
  * Callback function to be called when a column event is triggered.
  */
 export type ColumnEventCallback = (this: Column) => void;
+
+/**
+ * Callback function to be called when a grid event is triggered.
+ */
+export type GridEventCallback = (this: Grid) => void;
 
 /**
  * Events related to the cells.
@@ -227,28 +248,35 @@ export interface HeaderEvents {
  */
 export interface GridEvents {
     /**
-     * Events related to the cells.
-     *
-     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-pro/basic/cell-events/ | Grid events}
+     * Callback function to be called before the grid is loaded.
      */
-    cell?: CellEvents;
+    beforeLoad?: GridEventCallback;
 
     /**
-     * Events related to the column.
-     *
-     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-pro/basic/cell-events/ | Grid events}
+     * Callback function to be called after the grid is loaded.
      */
-    column?: ColumnEvents
+    afterLoad?: GridEventCallback;
 
     /**
-     * Events related to the header.
-     *
-     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-pro/basic/cell-events/ | Grid events}
+     * Callback function to be called before the grid viewport is rendered.
      */
-    header?: HeaderEvents
+    beforeRenderViewport?: GridEventCallback;
+
+    /**
+     * Callback function to be called after the grid viewport is rendered.
+     */
+    afterRenderViewport?: GridEventCallback;
 }
 
 declare module '../Core/Options' {
+
+    interface Options {
+        /**
+         * Events options triggered by the grid.
+         */
+        events?: GridEvents;
+    }
+
     interface ColumnCellOptions {
         /**
          * Events options triggered by the grid elements.

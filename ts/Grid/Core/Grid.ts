@@ -312,33 +312,29 @@ class Grid {
         afterLoadCallback?: (grid: Grid) => void
     ) {
         this.loadUserOptions(options);
-
-        this.querying = new QueryingController(this);
         this.id = this.options?.id || U.uniqueKey();
-
-        this.initContainers(renderTo);
-        this.initAccessibility();
-        this.initPagination();
-        this.loadDataTable(this.options?.dataTable);
-
+        this.querying = new QueryingController(this);
         this.locale = this.options?.lang?.locale || (
             (this.container?.closest('[lang]') as HTMLElement|null)?.lang
         );
-
         this.time = new TimeBase(extend<TimeBase.TimeOptions>(
             this.options?.time,
             { locale: this.locale }
         ), this.options?.lang);
 
+        fireEvent(this, 'beforeLoad');
+
+        Grid.grids.push(this);
+        this.initContainers(renderTo);
+        this.initAccessibility();
+        this.initPagination();
+        this.loadDataTable(this.options?.dataTable);
         this.querying.loadOptions();
         void this.querying.proceed().then((): void => {
             this.renderViewport();
             afterLoadCallback?.(this);
-
             fireEvent(this, 'afterLoad');
         });
-
-        Grid.grids.push(this);
     }
 
 
@@ -854,6 +850,9 @@ class Grid {
         delete this.viewport;
 
         this.resetContentWrapper();
+
+        fireEvent(this, 'beforeRenderViewport');
+
         this.renderCaption();
 
         // Render top pagination if enabled (before table)
