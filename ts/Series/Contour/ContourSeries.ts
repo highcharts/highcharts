@@ -592,7 +592,7 @@ export default class ContourSeries extends ScatterSeries {
                     ).attr({
                         width: canvas.width,
                         height: canvas.height
-                    }).add(this.group);
+                    }).add(this.group).addClass('highcharts-contour-canvas');
                 };
 
                 this.renderWebGPU();

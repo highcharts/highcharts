@@ -326,15 +326,13 @@ QUnit.test('General contour stuff', function (assert) {
                 ]
             }]
         }),
-        s = chart.series[0],
-        p = s.points[63],
-        t = chart.tooltip,
+        p = chart.series[0].points[63],
         tc = new TestController(chart);
 
     tc.moveTo(p.plotX + chart.plotLeft, p.plotY + chart.plotTop);
 
     assert.strictEqual(
-        t.label.text.textStr,
+        chart.tooltip.label.text.textStr,
         // eslint-disable-next-line max-len
         '<span style="color: rgba(56.37076208068613,56.37076208068613,56.37076208068613, 1);">################</span>',
         'Tooltip should be colored correctly.'
