@@ -24,6 +24,7 @@
 
 import type Component from '../Components/Component';
 import type CSSJSONObject from '../CSSJSONObject';
+import type { DeepPartial } from '../../Shared/Types';
 import type LayoutType from './Layout';
 import type Row from './Row';
 
@@ -85,16 +86,6 @@ class Cell extends GUIElement {
             rowOptions = row.options || {},
             cellClassName = layoutOptions.cellClassName || '';
 
-        let cellHeight;
-
-        if (options.height) {
-            if (typeof options.height === 'number') {
-                cellHeight = options.height + 'px';
-            } else {
-                cellHeight = options.height;
-            }
-        }
-
         this.container = this.getElementContainer({
             render: row.layout.board.guiEnabled,
             parentContainer: parentContainer,
@@ -110,7 +101,7 @@ class Cell extends GUIElement {
                 rowOptions.style,
                 options.style,
                 {
-                    height: cellHeight
+                    height: this.height
                 }
             )
         });
@@ -166,6 +157,12 @@ class Cell extends GUIElement {
      * HTML container of a GUIElement.
      */
     public container: HTMLElement;
+
+    /**
+     * Declared height of the cell.
+     */
+    private height?: string;
+
     /* *
      *
      *  Functions
@@ -227,7 +224,7 @@ class Cell extends GUIElement {
      * @internal
      *
      */
-    public getOptions(): Globals.DeepPartial<Cell.Options> {
+    public getOptions(): DeepPartial<Cell.Options> {
         return this.options;
     }
 
@@ -335,14 +332,11 @@ class Cell extends GUIElement {
                     ) {
                         cell.container.style.flex = '0 0 ' + cellWidth;
                     }
-
-                    cell.options.width = cellWidth;
                 }
             }
 
             if (height) {
-                cell.options.height = cell.container.style.height =
-                    height + 'px';
+                cell.height = cell.container.style.height = height + 'px';
             }
 
             if (editMode) {
@@ -461,21 +455,6 @@ namespace Cell {
     }
 
     /**
-     * Responsive options of the cell.
-     *
-     * @deprecated
-     */
-    export interface CellResponsiveOptions {
-        /**
-         * The width, that should the cell have in the given responsive mode.
-         *
-         * @deprecated
-         *
-         */
-        width: (string|number);
-    }
-
-    /**
      * Options for each cell.
      **/
     export interface Options {
@@ -519,23 +498,6 @@ namespace Cell {
             }
         }
         /**
-         * Width of the cell. Can be a percentage value, pixels or a fraction.
-         *
-         * The fraction converts value into percents like in CSS grid is.
-         * For example `1/3` means `33.333%`.
-         *
-         * @deprecated
-         *
-         **/
-        width?: (string|number);
-        /**
-         * Height of the cell.
-         *
-         * @deprecated
-         *
-         * **/
-        height?: (string|number);
-        /**
          * CSS styles for cell container.
          **/
         style?: CSSJSONObject;
@@ -551,12 +513,6 @@ namespace Cell {
          * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/gui/nested-layout/ | Nested layout}
          **/
         layout?: LayoutType.Options;
-        /**
-         * Options for responsive design.
-         *
-         * @deprecated
-         **/
-        responsive?: Record<string, CellResponsiveOptions>;
     }
 }
 

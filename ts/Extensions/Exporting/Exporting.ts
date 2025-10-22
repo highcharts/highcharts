@@ -22,12 +22,13 @@ import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import type AxisOptions from '../../Core/Axis/AxisOptions';
 import type Axis from '../../Core/Axis/Axis';
 import type CSSObject from '../../Core/Renderer/CSSObject';
+import type { DeepPartial } from '../../Shared/Types';
 import type EventCallback from '../../Core/EventCallback';
 import type {
     ExportingOptions,
     ExportingButtonOptions
 } from './ExportingOptions';
-import type ExportingLike from './ExportingLike';
+import type ExportingBase from './ExportingBase';
 import type {
     DOMElementType,
     HTMLDOMElement,
@@ -52,7 +53,7 @@ const {
     defaultOptions,
     setOptions
 } = D;
-import DownloadURL from '../DownloadURL.js';
+import DownloadURL from '../../Shared/DownloadURL.js';
 const {
     downloadURL,
     getScript
@@ -133,8 +134,8 @@ declare module '../../Core/Axis/AxisOptions' {
     }
 }
 
-declare module '../../Core/Chart/ChartLike' {
-    interface ChartLike {
+declare module '../../Core/Chart/ChartBase' {
+    interface ChartBase {
         exporting?: Exporting;
         /**
          * Deprecated in favor of [Exporting.exportChart](https://api.highcharts.com/class-reference/Highcharts.Exporting#exportChart).
@@ -174,8 +175,8 @@ declare module '../../Core/Chart/ChartOptions' {
     }
 }
 
-declare module '../../Core/GlobalsLike.d.ts' {
-    interface GlobalsLike {
+declare module '../../Core/GlobalsBase.d.ts' {
+    interface GlobalsBase {
         /**
          * Deprecated in favor of [Exporting.downloadSVG](https://api.highcharts.com/class-reference/Highcharts.Exporting#downloadSVG).
          *
@@ -2474,7 +2475,7 @@ class Exporting {
  *
  * */
 
-interface Exporting extends ExportingLike {}
+interface Exporting extends ExportingBase {}
 
 /* *
  *

@@ -14,9 +14,9 @@
  *
  * */
 import type {
-    IndicatorLike,
-    IndicatorLinkedSeriesLike
-} from '../IndicatorLike';
+    IndicatorBase,
+    IndicatorLinkedSeriesBase
+} from '../IndicatorBase';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeriesType from '../../../Series/Line/LineSeries';
 import type {
@@ -71,7 +71,7 @@ const tableToMultiYData = <TLinkedSeries extends LineSeriesType>(
 ): Array<number|null|Array<number|null>> => {
     const yData = [],
         pointArrayMap = series.pointArrayMap,
-        table = processed && series.dataTable.modified || series.dataTable;
+        table = processed && series.dataTable.getModified() || series.dataTable;
 
     if (!pointArrayMap) {
         return series.getColumn('y', processed);
@@ -209,7 +209,7 @@ class SMAIndicator extends LineSeries {
 
     public dataEventsToUnbind!: Array<Function>;
 
-    public linkedParent!: LineSeriesType&IndicatorLinkedSeriesLike;
+    public linkedParent!: LineSeriesType&IndicatorLinkedSeriesBase;
 
     public nameBase?: string;
 
@@ -265,7 +265,7 @@ class SMAIndicator extends LineSeries {
      * @private
      */
     public getValues<TLinkedSeries extends LineSeriesType>(
-        series: TLinkedSeries&IndicatorLinkedSeriesLike,
+        series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: SMAParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const period: number = params.period as any,
@@ -609,7 +609,7 @@ class SMAIndicator extends LineSeries {
  *
  * */
 
-interface SMAIndicator extends IndicatorLike {
+interface SMAIndicator extends IndicatorBase {
     calculateOn: CalculateOnObject;
     hasDerivedData: boolean;
     nameComponents: Array<string>|undefined;

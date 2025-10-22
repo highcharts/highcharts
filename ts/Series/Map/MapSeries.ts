@@ -78,8 +78,8 @@ const {
  *
  * */
 
-declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase {
         clearBounds?(): void;
         getProjectedBounds?(): MapBounds|undefined;
         mapTitle?: string;
@@ -234,9 +234,10 @@ class MapSeries extends ScatterSeries {
      */
     public drawMapDataLabels(): void {
         super.drawDataLabels();
-        if (this.dataLabelsGroup) {
-            this.dataLabelsGroup.clip(this.chart.clipRect);
-        }
+
+        this.dataLabelsGroups?.forEach(
+            (g): SVGElement|undefined => g?.clip(this.chart.clipRect)
+        );
     }
 
     /**

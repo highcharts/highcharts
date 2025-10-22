@@ -25,12 +25,14 @@ async function testKarma(argv) {
     const logLib = require('../libs/log');
     const conf = path.join('test', 'typescript-karma', 'karma-conf.js');
 
-    if (argv.dashboards) {
+    if (argv.product === 'Dashboards') {
         const tests = [
             path.join('Dashboards', '**', '*'),
             path.join('Data', '**', '*')
         ].join(',');
-
+        await processLib.exec(`npx karma start ${conf} --tests ${tests}`);
+    } else if (argv.product === 'Grid') {
+        const tests = path.join('Grid', '*');
         await processLib.exec(`npx karma start ${conf} --tests ${tests}`);
     } else {
         await processLib.exec(`npx karma start ${conf}`);

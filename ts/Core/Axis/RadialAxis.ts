@@ -18,6 +18,7 @@
 
 import type Axis from './Axis.js';
 import type Chart from '../Chart/Chart';
+import type { DeepPartial } from '../../Shared/Types';
 import type { DefaultOptions } from '../Options';
 import type Pane from '../../Extensions/Pane/Pane';
 import type {
@@ -76,8 +77,8 @@ declare module './AxisType' {
         RadialAxis: RadialAxis.AxisComposition;
     }
 }
-declare module '../Chart/ChartLike'{
-    interface ChartLike {
+declare module '../Chart/ChartBase'{
+    interface ChartBase {
         inverted?: boolean;
     }
 }

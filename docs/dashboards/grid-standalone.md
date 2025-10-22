@@ -23,8 +23,8 @@ npm install @highcharts/dashboards
 Then, import the package into your project:
 
 ```js
-import * as Grid from '@highcharts/dashboards/datagrid';
-import '@highcharts/dashboards/css/datagrid.css';
+import * as Grid from '@highcharts/grid/grid-pro';
+import '@highcharts/grid/css/grid-pro.css';
 ```
 
 ### Include Grid Pro via `<script>` tag
@@ -32,15 +32,15 @@ import '@highcharts/dashboards/css/datagrid.css';
 Load **Grid Pro** from our public CDN by adding the appropriate JavaScript and CSS files to your page's `<head>` section:
 
 ```html
-<script src="https://code.highcharts.com/dashboards/datagrid.js"></script>
-<link rel="stylesheet" href="https://code.highcharts.com/dashboards/css/datagrid.css" />
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/grid-pro.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css" />
 ```
 
 Alternatively, you can download the files from [highcharts.com](https://www.highcharts.com/download/) and host it on your own server:
 
 ```html
-<script src="../code/dashboards/datagrid.js"></script>
-<link rel="stylesheet" href="../code/dashboards/css/datagrid.css" />
+<script src="../code/grid/grid-pro.js"></script>
+<link rel="stylesheet" href="../code/grid/css/grid-pro.css" />
 ```
 
 ## Usage

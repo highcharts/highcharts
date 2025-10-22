@@ -22,13 +22,14 @@ import type Annotation from '../../Extensions/Annotations/Annotation';
 import type {
     AnnotationOptions
 } from '../../Extensions/Annotations/AnnotationOptions';
-import type { YAxisOptions } from '../../Core/Axis/AxisOptions';
 import type AxisType from '../../Core/Axis/AxisType';
+import type { DeepPartial } from '../../Shared/Types';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type NavigationBindingsOptions from '../../Extensions/Annotations/NavigationBindingsOptions';
 import type PointerEvent from '../../Core/PointerEvent';
 import type { SeriesTypeOptions } from '../../Core/Series/SeriesType';
 import type Toolbar from './StockToolbar';
+import type { YAxisOptions } from '../../Core/Axis/AxisOptions';
 
 import H from '../../Core/Globals.js';
 import NavigationBindings from '../../Extensions/Annotations/NavigationBindings.js';
@@ -57,8 +58,8 @@ const {
  *
  * */
 
-declare module '../../Extensions/Annotations/NavigationBindingsLike' {
-    interface NavigationBindingsLike {
+declare module '../../Extensions/Annotations/NavigationBindingsBase' {
+    interface NavigationBindingsBase {
         toggledAnnotations?: boolean;
         verticalCounter?: number;
     }

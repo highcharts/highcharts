@@ -42,8 +42,8 @@ import '../../Maps/MapSymbols.js';
  *
  * */
 
-declare module './ChartLike'{
-    interface ChartLike {
+declare module './ChartBase'{
+    interface ChartBase {
         mapView?: MapView;
     }
 }

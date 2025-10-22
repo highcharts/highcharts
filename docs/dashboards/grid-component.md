@@ -7,12 +7,12 @@
 ## How to start
 
 ### 1. Import
-To use **Grid Pro** as a component in Dashboards, you need to import the required modules, [datagrid.js](https://code.highcharts.com/dashboards/datagrid.js) and [dashboards.js](https://code.highcharts.com/dashboards/dashboards.js), and bind them together.
+To use **Grid Pro** as a component in Dashboards, you need to import the required modules, [grid-pro.js](https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/grid-pro.js) and [dashboards.js](https://code.highcharts.com/dashboards/dashboards.js), and bind them together.
 
 The order of the imports is essential, so ensure the **Dashboards** module is imported after the **Grid** module.
 
 ```html
-<script src="https://code.highcharts.com/dashboards/datagrid.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/grid-pro.js"></script>
 <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
 ```
 
@@ -20,7 +20,7 @@ Alternatively, you can also use NPM packages (see: [Installation](https://www.hi
 
 ```typescript
 import * as Dashboards from '@highcharts/dashboards';
-import * as Grid from '@highcharts/dashboards/datagrid';
+import * as Grid from '@highcharts/grid/grid-pro';
 
 Dashboards.GridPlugin.custom.connectGrid(Grid);
 Dashboards.PluginHandler.addPlugin(Dashboards.GridPlugin);
@@ -30,7 +30,7 @@ Dashboards.PluginHandler.addPlugin(Dashboards.GridPlugin);
 You must also import the styles in your main CSS file.
 ```css
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
-@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
 ```
 
 ### 3. Cell identifier
@@ -55,14 +55,12 @@ dataPool: {
     connectors: [{
         id: 'data',
         type: 'CSV',
-        options: {
-            csv: `Food,Vitamin A,Iron
-            Beef Liver,6421,6.5
-            Lamb Liver,2122,6.5
-            Cod Liver Oil,1350,0.9
-            Mackerel,388,1
-            Tuna,214,0.6`
-        }
+        csv: `Food,Vitamin A,Iron
+        Beef Liver,6421,6.5
+        Lamb Liver,2122,6.5
+        Cod Liver Oil,1350,0.9
+        Mackerel,388,1
+        Tuna,214,0.6`
     }]
 }
 ```
@@ -80,7 +78,7 @@ components: [{
     type: 'Grid'
 }]
 ```
-To see more options available for the Grid Component, click [here](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_DataGridComponent_DataGridComponentOptions.Options).
+To see more options available for the Grid Component, click [here](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_GridComponent_GridComponentOptions.Options).
 
 See the summarized JS code needed to create a simple Grid:
 ```js
@@ -89,14 +87,12 @@ Dashboards.board('container', {
         connectors: [{
             id: 'data',
             type: 'CSV',
-            options: {
-                csv: `Food,Vitamin A,Iron
-                Beef Liver,6421,6.5
-                Lamb Liver,2122,6.5
-                Cod Liver Oil,1350,0.9
-                Mackerel,388,1
-                Tuna,214,0.6`
-            }
+            csv: `Food,Vitamin A,Iron
+            Beef Liver,6421,6.5
+            Lamb Liver,2122,6.5
+            Cod Liver Oil,1350,0.9
+            Mackerel,388,1
+            Tuna,214,0.6`
         }]
     },
     gui: {
@@ -140,18 +136,16 @@ The [`dataModifier`](https://api.highcharts.com/dashboards/#interfaces/Data_Conn
 connectors: [{
     id: 'data',
     type: 'CSV',
-    options: {
-        csv: `A,B
-        1,3
-        20,2
-        100,2`,
-        dataModifier: {
-            type: 'Math',
-            columnFormulas: [{
-                column: 'Sum',
-                formula: 'A1+B1'
-            }]
-        }
+    csv: `A,B
+    1,3
+    20,2
+    100,2`,
+    dataModifier: {
+        type: 'Math',
+        columnFormulas: [{
+            column: 'Sum',
+            formula: 'A1+B1'
+        }]
     }
 }]
 ```
@@ -164,7 +158,7 @@ Note that you also need to import modules to use the appropriate modifiers. For 
 
 ## Component synchronization
 
-One of the many available options for the **Grid Component** is the [`sync` option](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_DataGridComponent_DataGridComponentOptions.Options#sync), which allows setting the synchronization of component states with each other. You can find more information about it in the [sync article](https://www.highcharts.com/docs/dashboards/synchronize-components).
+One of the many available options for the **Grid Component** is the [`sync` option](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_GridComponent_GridComponentOptions.Options#sync), which allows setting the synchronization of component states with each other. You can find more information about it in the [sync article](https://www.highcharts.com/docs/dashboards/synchronize-components).
 
 <iframe style="width: 100%; height: 470px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/component-options/sync-highlight?force-light-theme" allow="fullscreen"></iframe>
 
@@ -190,7 +184,7 @@ sync: {
 ```
 
 If you want to scroll the **Grid Component** automatically to a highlighted row, turn on
-the [`autoScroll`](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_DataGridComponent_DataGridComponentOptions.DataGridHighlightSyncOptions) option.
+the [`autoScroll`](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_GridComponent_GridComponentOptions.GridHighlightSyncOptions) option.
 
 Demo:
 <iframe style="width: 100%; height: 470px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/sync/grid-highlight-sync-autoscroll?force-light-theme" allow="fullscreen"></iframe>

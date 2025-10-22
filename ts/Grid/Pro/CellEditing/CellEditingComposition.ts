@@ -23,13 +23,14 @@
  *
  * */
 
+import type CellRendererType from '../CellRendering/CellRendererType';
+import type Column from '../../Core/Table/Column';
+import type { DeepPartial } from '../../../Shared/Types';
+import type { EditModeRenderer } from './CellEditMode';
+import type { GridEvent } from '../../Core/GridUtils';
+import type Options from '../../Core/Options';
 import type Table from '../../Core/Table/Table';
 import type TableCell from '../../Core/Table/Body/TableCell';
-import type Column from '../../Core/Table/Column';
-import type { GridEvent } from '../../Core/GridUtils';
-import type CellRendererType from '../CellRendering/CellRendererType';
-import type { EditModeRenderer } from './CellEditMode';
-import type Options from '../../Core/Options';
 
 import Defaults from '../../Core/Defaults.js';
 import Globals from '../../Core/Globals.js';
@@ -63,7 +64,7 @@ namespace CellEditingComposition {
     /**
      * Default options for the cell editing.
      */
-    const defaultOptions: Globals.DeepPartial<Options> = {
+    const defaultOptions: DeepPartial<Options> = {
         accessibility: {
             announcements: {
                 cellEditing: true
@@ -122,14 +123,8 @@ namespace CellEditingComposition {
             TableCellClass,
             'stoppedEditing',
             function (e: AnyRecord): void {
-                const cellEvents = merge(
-                    // Backward compatibility
-                    this.column.viewport.grid.options?.events?.cell,
-                    this.column.options.cells?.events
-                );
-
                 if (e.submit) {
-                    cellEvents?.afterEdit?.call(this);
+                    this.column.options.cells?.events?.afterEdit?.call(this);
                 }
 
                 announceA11yUserEditedCell(
@@ -194,10 +189,7 @@ namespace CellEditingComposition {
     function afterColumnInit(this: Column): void {
         const { options } = this;
 
-        if (
-            options?.cells?.editMode?.enabled ||
-            options?.cells?.editable
-        ) {
+        if (options?.cells?.editMode?.enabled) {
             this.editModeRenderer = createEditModeRenderer(this);
         }
     }
@@ -243,13 +235,7 @@ namespace CellEditingComposition {
         const editableLang = this.row.viewport.grid.options
             ?.lang?.accessibility?.cellEditing?.editable;
 
-        if (
-            (
-                !this.column.options.cells?.editable &&
-                !this.column.options.cells?.editMode?.enabled
-            ) ||
-            !editableLang
-        ) {
+        if (!this.column.options.cells?.editMode?.enabled || !editableLang) {
             return;
         }
 
@@ -421,13 +407,6 @@ declare module '../../Core/Accessibility/A11yOptions' {
 
 declare module '../../Core/Options' {
     interface ColumnCellOptions {
-        /**
-         * @deprecated
-         * Use `editMode.enabled` instead. This option will be removed in the
-         * next major release.
-         */
-        editable?: boolean;
-
         /**
          * Whether to enabled the cell edit mode functionality. It allows to
          * edit the cell value in a separate input field that is displayed

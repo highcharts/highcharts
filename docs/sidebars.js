@@ -128,7 +128,10 @@ module.exports = {
             'grid/cell-editing',
             'grid/cell-renderers',
             'grid/sparklines',
+            'grid/column-filtering',
             'grid/events',
+            'grid/exporting',
+            'grid/pagination',
             {
                 'Theming': [
                     'grid/theming/theming',
@@ -301,13 +304,14 @@ module.exports = {
             'flutter/your-first-chart',
             'flutter/highcharts-bundling'
         ],
-        'React integration (beta)': [
+        'React integration': [
             'react/getting-started',
             'react/series-and-chart-types',
             'react/options',
             'react/options-component-format',
             'react/nextjs',
-            'react/component-children'
+            'react/component-children',
+            'react/v4-migration-guide'
         ]
     }
 };

@@ -27,7 +27,10 @@ The available events are:
 | **Event Name**     | **Description**                                          | **Function Context** |
 |--------------------|----------------------------------------------------------|-----------------------|
 | `afterResize`      | Triggered after resizing a column.                       | `this: Column`        |
-| `afterSorting`     | Triggered after sorting a column.                        | `this: Column`        |
+| `beforeSort`       | Triggered before sorting a column.                       | `this: Column`        |
+| `afterSort`        | Triggered after sorting a column.                        | `this: Column`        |
+| `beforeFilter`     | Triggered before filtering a column.                     | `this: Column`        |
+| `afterFilter`      | Triggered after filtering a column.                      | `this: Column`        |
 
 ## header
 
@@ -35,6 +38,15 @@ The available events are:
 |--------------------|----------------------------------------------------------|-----------------------|
 | `click`            | Triggered after clicking on a column header.             | `this: Column`        |
 | `afterRender`      | Triggered after init of a column header.                 | `this: Column`        |
+
+## pagination
+
+| **Event Name**     | **Description**                                          | **Function Context** |
+|--------------------|----------------------------------------------------------|-----------------------|
+| `beforePageChange` | Triggered before a page change occurs.                   | `this: Pagination`    |
+| `afterPageChange`  | Triggered after a page change occurs.                    | `this: Pagination`    |
+| `beforePageSizeChange` | Triggered before the page size setting changes.      | `this: Pagination`    |
+| `afterPageSizeChange`  | Triggered after the page size setting changes.       | `this: Pagination`    |
 
 # Example
 
@@ -46,8 +58,17 @@ columnDefaults: {
         afterResize: function () {
             console.log('Column resized:', this);
         },
-        afterSorting: function () {
-            console.log('Column sorted:', this);
+        beforeSort: function () {
+            console.log('Before sorting column:', this.id);
+        },
+        afterSort: function () {
+            console.log('After sorting column:', this.id);
+        },
+        beforeFilter: function () {
+            console.log('Before filtering column:', this.id);
+        },
+        afterFilter: function () {
+            console.log('After filtering column:', this.id);
         }
     },
     cells: {
@@ -107,6 +128,28 @@ columns: [{
         }
     }
 }]
+```
+
+Pagination events are configured at the grid level:
+
+```js
+pagination: {
+    enabled: true,
+    events: {
+        beforePageChange: function (e) {
+            // callback
+        },
+        afterPageChange: function (e) {
+            // callback
+        },
+        beforePageSizeChange: function (e) {
+            // callback
+        },
+        afterPageSizeChange: function (e) {
+            // callback
+        }
+    }
+}
 ```
 
 Live example:

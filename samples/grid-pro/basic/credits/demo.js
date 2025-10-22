@@ -3,7 +3,7 @@ const textOption = document.getElementById('text-option');
 const hrefOption = document.getElementById('href-option');
 const positionOption = document.getElementById('position-option');
 
-const dataTable = new DataGrid.DataTable({
+const dataTable = new Grid.DataTable({
     columns: {
         product: ['Apples', 'Pears', 'Plums', 'Bananas', 'Oranges', 'Grapes'],
         weight: [100, 40, 0.5, 200, 150, 75],

@@ -1,0 +1,11 @@
+---
+name: React Bubble Chart
+authors:
+  - Magdalena Gut
+js_wrap: b
+applyCSP: false
+resources:
+  - https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4
+alt_text: >-
+  Highcharts React sample showing a bubble series chart.
+...
