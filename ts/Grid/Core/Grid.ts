@@ -42,7 +42,6 @@ import Pagination from './Pagination/Pagination.js';
 
 const { makeHTMLElement, setHTMLContent } = GridUtils;
 const {
-    defined,
     extend,
     fireEvent,
     getStyle,
@@ -321,7 +320,6 @@ class Grid {
         this.initAccessibility();
         this.initPagination();
         this.loadDataTable(this.options?.dataTable);
-        this.initVirtualization();
 
         this.locale = this.options?.lang?.locale || (
             (this.container?.closest('[lang]') as HTMLElement|null)?.lang
@@ -336,6 +334,8 @@ class Grid {
         void this.querying.proceed().then((): void => {
             this.renderViewport();
             afterLoadCallback?.(this);
+
+            fireEvent(this, 'afterLoad');
         });
 
         Grid.grids.push(this);
@@ -599,7 +599,6 @@ class Grid {
 
         this.initAccessibility();
         this.initPagination();
-        this.initVirtualization();
 
         this.querying.loadOptions();
 
@@ -1147,41 +1146,6 @@ class Grid {
         }
 
         return options;
-    }
-
-    /**
-     * Enables virtualization if the row count is greater than or equal to the
-     * threshold or virtualization is enabled externally. Should be fired after
-     * the data table is loaded.
-     */
-    private initVirtualization(): void {
-        // Makes sure all nested options are defined.
-        ((this.options ??= {}).rendering ??= {}).rows ??= {};
-        this.options.rendering.rows.virtualization = this.shouldVirtualize();
-    }
-
-    /**
-     * Checks if virtualization should be enabled.
-     *
-     * @returns
-     * Whether virtualization should be enabled.
-     */
-    public shouldVirtualize(): boolean {
-        const rows = this.userOptions.rendering?.rows;
-        if (defined(rows?.virtualization)) {
-            return rows.virtualization;
-        }
-
-        const threshold = Number(
-            rows?.virtualizationThreshold ||
-            Defaults.defaultOptions.rendering?.rows?.virtualizationThreshold
-        );
-        const rowCount = Number(this.dataTable?.rowCount);
-        const paginationPageSize = this.pagination?.currentPageSize;
-
-        return paginationPageSize ?
-            paginationPageSize >= threshold :
-            rowCount >= threshold;
     }
 }
 
