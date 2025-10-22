@@ -23,3 +23,13 @@ body {
 .highcharts-description {
     padding: 0 8px;
 }
+
+code {
+    font-family: Consolas, "courier new", monospace;
+    line-height: 1em;
+    background: #f7f7f7;
+    border: 1px solid #e1e1e1;
+    padding: 2px 4px;
+    border-radius: 5px;
+    display: inline-block;
+}

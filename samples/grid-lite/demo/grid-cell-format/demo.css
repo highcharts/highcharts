@@ -92,3 +92,13 @@ formatting is kept regardless of any hover states etc. */
     background: var(--highlight-color);
     border-color: var(--highlight-border-color);
 }
+
+code {
+    font-family: Consolas, "courier new", monospace;
+    line-height: 1em;
+    background: #f7f7f7;
+    border: 1px solid #e1e1e1;
+    padding: 2px 4px;
+    border-radius: 5px;
+    display: inline-block;
+}

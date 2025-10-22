@@ -60,6 +60,9 @@ const grid = Grid.grid('container', {
         }
     },
     columns: [{
+        id: 'id',
+        width: 60
+    }, {
         id: 'date',
         dataType: 'datetime',
         cells: {

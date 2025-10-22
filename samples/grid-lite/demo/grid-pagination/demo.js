@@ -70,5 +70,9 @@ Grid.grid('container', {
                 count: 7
             }
         }
-    }
+    },
+    columns: [{
+        id: 'ID',
+        width: 60
+    }]
 });

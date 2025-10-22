@@ -162,3 +162,13 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 #modalContent .cancel {
     background: #6c757d;
 }
+
+code {
+    font-family: Consolas, "courier new", monospace;
+    line-height: 1em;
+    background: #f7f7f7;
+    border: 1px solid #e1e1e1;
+    padding: 2px 4px;
+    border-radius: 5px;
+    display: inline-block;
+}

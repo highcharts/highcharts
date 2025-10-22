@@ -46,5 +46,9 @@ Grid.grid('container', {
         rows: {
             minVisibleRows: 20
         }
-    }
+    },
+    columns: [{
+        id: 'ID',
+        width: 60
+    }]
 });
