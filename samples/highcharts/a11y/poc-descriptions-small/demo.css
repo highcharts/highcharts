@@ -198,3 +198,7 @@ pre {
 .visual-desc-content.hidden {
     display: none;
 }
+
+.hc-a11y-menu-button {
+    display: none !important;
+}

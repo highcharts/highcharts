@@ -132,6 +132,14 @@ const HC_CONFIGS = {
         credits: {
             enabled: false
         },
+        exporting: {
+            showTable: true,
+            buttons: {
+                contextButton: {
+                    enabled: false
+                }
+            }
+        },
         custom: { autoDesc: chart1desc },
         title: {
             text: 'Average Monthly Temperature: Helsinki vs Oslo',
@@ -198,6 +206,14 @@ const HC_CONFIGS = {
         credits: {
             enabled: false
         },
+        exporting: {
+            showTable: true,
+            buttons: {
+                contextButton: {
+                    enabled: false
+                }
+            }
+        },
         custom: {
             autoDesc: chart2desc,
             visualDesc: chart2visualdesc
@@ -259,6 +275,9 @@ const HC_CONFIGS = {
     },
     chart3: { // Big heatmap
         credits: {
+            enabled: false
+        },
+        exporting: {
             enabled: false
         },
         custom: {
@@ -354,6 +373,9 @@ const HC_CONFIGS = {
         credits: {
             enabled: false
         },
+        exporting: {
+            enabled: false
+        },
         custom: {
             autoDesc: chart4desc,
             visualDesc: chart4visualdesc
@@ -441,6 +463,9 @@ const HC_CONFIGS = {
 
     chart5: { // Bubble
         credits: {
+            enabled: false
+        },
+        exporting: {
             enabled: false
         },
         custom: {
@@ -664,6 +689,9 @@ const HC_CONFIGS = {
     },
     chart6: { // Sunburst
         credits: {
+            enabled: false
+        },
+        exporting: {
             enabled: false
         },
         custom: { autoDesc: chart6desc },
@@ -1415,6 +1443,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         charts[id] = Highcharts.chart(id, HC_CONFIGS[id]);
     });
+
+    // Hide accessibility menu buttons after charts load
+    setTimeout(() => {
+        const a11yButtons =
+            document.querySelectorAll('.hc-a11y-sr-only.hc-a11y-menu-button');
+        a11yButtons.forEach(button => {
+            button.style.display = 'none';
+        });
+    }, 500);
 
     // Add test function to the global scope for testing
     setTimeout(() => {
