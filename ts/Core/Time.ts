@@ -326,7 +326,6 @@ namespace Time {
         list?: DateTimeFormat[];
         main: DateTimeFormat;
         higherRank?: DateTimeFormat;
-        lowerRank?: DateTimeFormat;
         range?: boolean;
         to?: DateTimeFormat;
     }

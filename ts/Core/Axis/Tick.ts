@@ -234,8 +234,8 @@ class Tick {
         }
 
 
-        // Set the datetime label format. If a higher or lower rank is set for
-        // this position, use that. If not, use the general format.
+        // Set the datetime label format. If a higher rank is set for this
+        // position, use that. If not, use the main format.
         if (axis.dateTime) {
             const DTLFormats = options.dateTimeLabelFormats as any;
             if (tickPositionInfo) {
