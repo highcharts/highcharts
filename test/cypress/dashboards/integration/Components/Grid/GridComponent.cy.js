@@ -189,7 +189,7 @@ describe('layout resize on window changes', () => {
     });
 
     it('Applying class name to the component should work.', () => {
-        cy.get('.grid-container').should('exist');
+        cy.get('.highcharts-grid-container').should('exist');
 
         // Arrange
         cy.toggleEditMode();
@@ -201,6 +201,6 @@ describe('layout resize on window changes', () => {
         cy.get('.highcharts-dashboards-edit-confirmation-popup-confirm-btn').eq(0).click();
 
         // Assert
-        cy.get('.grid-container-lama').should('exist');
+        cy.get('.highcharts-grid-container-lama').should('exist');
     });
 });
