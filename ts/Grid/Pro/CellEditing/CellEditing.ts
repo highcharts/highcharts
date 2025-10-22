@@ -136,26 +136,17 @@ class CellEditing {
         const { column } = cell;
         const vp = column.viewport;
         const newValue = emContent.value;
-        const mainElement = emContent.getMainElement();
 
         if (submit) {
             const validationErrors: string[] = [];
             if (!vp.validator.validate(cell, validationErrors)) {
                 vp.validator.initErrorBox(cell, validationErrors);
-
-                // Accessibility
-                mainElement.setAttribute('aria-invalid', 'true');
-                mainElement.setAttribute(
-                    'aria-errormessage',
-                    'notification-error'
-                );
+                this.setA11yAttributes(false);
 
                 return false;
             }
 
-            // Accessibility
-            mainElement.setAttribute('aria-invalid', 'false');
-            mainElement.setAttribute('aria-errormessage', '');
+            this.setA11yAttributes(true);
 
             vp.validator.hide();
             vp.validator.errorCell = void 0;
@@ -185,6 +176,24 @@ class CellEditing {
         delete this.editedCell;
 
         return true;
+    }
+
+    public setA11yAttributes(valid: boolean): void {
+        const mainElement = this.editModeContent?.getMainElement();
+        if (!mainElement) {
+            return;
+        }
+
+        if (!valid) {
+            mainElement.setAttribute('aria-invalid', 'true');
+            mainElement.setAttribute(
+                'aria-errormessage',
+                'notification-error'
+            );
+        } else {
+            mainElement.setAttribute('aria-invalid', 'false');
+            mainElement.setAttribute('aria-errormessage', '');
+        }
     }
 
     /**
