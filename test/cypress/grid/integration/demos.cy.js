@@ -3,6 +3,9 @@ const gridLiteDir = '/grid-lite/';
 const gridProDir = '/grid-pro/';
 
 describe('Grid Lite demos', () => {
+    it('No gridLitePaths defined', () => {
+        assert.ok(gridLitePaths === void 0);
+    });
     (gridLitePaths || []).forEach((demoPath) => {
         it(`should not have console errors in ${demoPath}`, () => {
             let errorMessages = [];
@@ -29,6 +32,9 @@ describe('Grid Lite demos', () => {
 });
 
 describe('Grid Pro demos', () => {
+    it('No gridProPaths defined', () => {
+        assert.ok(gridLitePaths === void 0);
+    });
     (gridProPaths || []).forEach((demoPath) => {
         it(`should not have console errors in ${demoPath}`, () => {
             let errorMessages = [];
