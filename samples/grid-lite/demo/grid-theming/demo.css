@@ -55,8 +55,9 @@ body {
 .highcharts-light .hcg-description code {
     font-family: Consolas, "courier new", monospace;
     line-height: 1em;
-    background: #f7f7f7;
-    border: 1px solid #e1e1e1;
+    background: light-dark(#f7f7f7, #2a2a2a);
+    border: 1px solid light-dark(#e1e1e1, #4a4a4a);
+    color: var(--highcharts-neutral-color-100);
     padding: 2px 4px;
     border-radius: 5px;
     display: inline-block;
@@ -136,8 +137,14 @@ body {
     }
 
     .hcg-description code {
-        background: #222;
-        border-color: #474747;
+        font-family: Consolas, "courier new", monospace;
+        line-height: 1em;
+        background: light-dark(#f7f7f7, #2a2a2a);
+        border: 1px solid light-dark(#e1e1e1, #4a4a4a);
+        color: var(--highcharts-neutral-color-100);
+        padding: 2px 4px;
+        border-radius: 5px;
+        display: inline-block;
     }
 }
 
@@ -163,6 +170,12 @@ body {
 }
 
 .highcharts-dark .hcg-description code {
-    background: #222;
-    border-color: #474747;
+    font-family: Consolas, "courier new", monospace;
+    line-height: 1em;
+    background: light-dark(#f7f7f7, #2a2a2a);
+    border: 1px solid light-dark(#e1e1e1, #4a4a4a);
+    color: var(--highcharts-neutral-color-100);
+    padding: 2px 4px;
+    border-radius: 5px;
+    display: inline-block;
 }
