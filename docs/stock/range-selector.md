@@ -90,7 +90,7 @@ By default the range selector buttons will collapse into a dropdown when there i
 Data grouping
 ---------------------------
 
-Range Selector buttons can control **data grouping** - the granularity of data applied when a certain range is selected. This allows each button to specify how the displayed data range should be grouped. See a live example in the [Range Selector demo](https://www.highcharts.com/docs/stock/range-selector).
+Range Selector buttons can control **data grouping** - the granularity of data applied when a certain range is selected. This allows each button to specify how the displayed data range should be grouped. See a live example in the [Range Selector demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/demo/rangeselector-datagrouping/).
 
 ```js
 rangeSelector: {
