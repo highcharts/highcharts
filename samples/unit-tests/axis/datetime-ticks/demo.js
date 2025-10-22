@@ -256,3 +256,72 @@ QUnit.test(
         });
     }
 );
+
+
+QUnit.test('Higher and lower ranks general tests, (#22231)', function (assert) {
+    const chart = Highcharts.stockChart('container', {
+        series: [{
+            type: 'line',
+            data: Array.from({ length: 50 }, () => Math.random() * 10),
+            pointInterval: 2600000000,
+            pointStart: Date.UTC(2000, 0, 1)
+        }],
+        xAxis: {
+            dateTimeLabelFormats: {
+                month: {
+                    higherRank: '%Y',
+                    lowerRank: '%b'
+                }
+            }
+        }
+    });
+
+    let ticks = chart.xAxis[0].ticks,
+        tickPositions = chart.xAxis[0].tickPositions;
+
+    // First and second ticks on full range
+    assert.strictEqual(
+        ticks[tickPositions[0]].label.textStr,
+        '2000',
+        'First tick on full range chart should have a higher rank label.'
+    );
+    assert.strictEqual(
+        tickPositions.info.higherRanks[tickPositions[0]],
+        'month',
+        'First tick on full range chart should have a higher rank set as month.'
+    );
+    assert.strictEqual(
+        ticks[tickPositions[1]].label.textStr,
+        'Jul',
+        'Second tick on full range chart should have a lower rank applied.'
+    );
+    assert.strictEqual(
+        tickPositions.info.lowerRanks[tickPositions[1]],
+        'month',
+        'Second tick on full range chart should have a lower rank set as month.'
+    );
+
+    // Navigator ticks
+    const navigatorTickLabels =
+        Object.values(chart.xAxis[1].ticks).map(
+            tick => tick.label.textStr
+        );
+
+    assert.deepEqual(
+        navigatorTickLabels,
+        ['2000', '2001', '2002', '2003', '2004'],
+        'Navigator ticks should not be affected by higher and lower ranks.'
+    );
+
+    // Ticks after scrolling
+    chart.xAxis[0].setExtremes(989297903448, 1037622041379);
+
+    ticks = chart.xAxis[0].ticks;
+    tickPositions = chart.xAxis[0].tickPositions;
+
+    assert.strictEqual(
+        ticks[tickPositions[0]].label.textStr,
+        '2001',
+        'First tick after scrolling should have a higher rank label.'
+    );
+});
