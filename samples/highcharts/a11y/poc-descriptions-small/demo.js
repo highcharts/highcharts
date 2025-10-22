@@ -35,6 +35,13 @@ const chart2desc = `
     </ul>
 `;
 
+const chart2visualdesc = `
+    <p>Four vertical bars side by side. Each bar is stacked in
+    colored layers, like a cake. The layers show coffee types,
+    and each bar represents an office to show overall coffee
+    consumption.</p>
+`;
+
 
 // Big heatmap
 const chart3desc = `
@@ -53,21 +60,24 @@ const chart3desc = `
     </ul>
 `;
 
-// Gauge
-const chart4desc = `
-  <button id="gauge-description-btn-sr" aria-expanded="false"
-          aria-controls="gauge-description-sr">
-      Visual Description
-  </button>
-  <div id="gauge-description-sr" aria-hidden="true">
-      <p>The gauge displays a semicircular meter from 0% to 120%.
+const chart3visualdesc = `
+    <p> A broad grid of color fades from blues on the edges to
+    yellows and reds in the center to indicate temperature shifts
+    from January to December.</p>
+`;
+
+const chart4visualdesc = `
+    <p>The gauge displays a semicircular meter from 0% to 120%.
       The gauge has three zones:</p>
       <ul>
         <li>Green (0-80%) for healthy spending.</li>
         <li>Yellow (80-100%) for watch zone.</li>
         <li>Red (100-120%) for overspend.</li>
       </ul>
-  </div>
+`;
+
+// Gauge
+const chart4desc = `
   <p>The gauge scale goes from 0-120%, and is divided into the
   following zones: Healthy (up to 80%), Watch (80-100%),
   Overspend (above 100%). Current value 92% is in the Watch zone.</p>
@@ -188,7 +198,10 @@ const HC_CONFIGS = {
         credits: {
             enabled: false
         },
-        custom: { autoDesc: chart2desc },
+        custom: {
+            autoDesc: chart2desc,
+            visualDesc: chart2visualdesc
+        },
         chart: {
             type: 'column'
         },
@@ -249,7 +262,8 @@ const HC_CONFIGS = {
             enabled: false
         },
         custom: {
-            autoDesc: chart3desc
+            autoDesc: chart3desc,
+            visualDesc: chart3visualdesc
         },
         data: {
             csv: document.getElementById('csv').innerHTML
@@ -340,7 +354,10 @@ const HC_CONFIGS = {
         credits: {
             enabled: false
         },
-        custom: { autoDesc: chart4desc },
+        custom: {
+            autoDesc: chart4desc,
+            visualDesc: chart4visualdesc
+        },
         chart: {
             type: 'gauge',
             plotBackgroundColor: null,
@@ -879,17 +896,77 @@ Object.keys(AUTO_DESCS).forEach(id => {
         }
 
         const basic  = `<p>${basicSummary(this)}</p>`;
-        // string | null (or function result)
         const custom = getCustomAutoDesc(this);
+        const visual = getCustomVisualDesc(this);
 
-        // Always: basic summary, then your per-chart variable (if provided)
-        const html = custom ? (basic + custom) : basic;
+        // For screen reader: basic + visual toggle + custom
+        let srHtml;
+        if (visual !== null) {
+            // default false (hidden)
+            const showVisual = this.visualDescVisible === true;
+            const chartId = this.renderTo?.id || 'chart';
+            const toggleId = `visual-toggle-${chartId}`;
+            const contentId = `visual-content-${chartId}`;
 
-        // Highcharts hidden a11y region
-        e.chartDetailedInfo.chartAutoDescription = html;
-        this.__autoDescHTML = html;                      // for your debug panel
-        // visible panel below chart
-        updateA11yDescPanel(this, html);
+            // Create button and toggleable content for screen reader region
+            const toggleButton = `<button id="${toggleId}" 
+                aria-expanded="${showVisual ? 'true' : 'false'}" 
+                aria-controls="${contentId}"
+                style="margin: 0.5em 0;">
+                ${showVisual ? 'Hide' : 'Show'} Visual Description
+            </button>`;
+
+            const visualContent = `<div id="${contentId}" 
+                aria-hidden="${showVisual ? 'false' : 'true'}" 
+                style="display: ${showVisual ? 'block' : 'none'};">
+                ${visual}
+            </div>`;
+
+            srHtml = basic + toggleButton + visualContent + (custom || '');
+
+            // Add event listener after DOM update using setTimeout
+            setTimeout(() => {
+                const button = document.getElementById(toggleId);
+                const content = document.getElementById(contentId);
+
+                if (
+                    button && content &&
+                    !button.hasAttribute('data-listener-added')
+                ) {
+                    button.setAttribute('data-listener-added', 'true');
+                    button.addEventListener('click', function () {
+                        const isExpanded =
+                            this.getAttribute('aria-expanded') === 'true';
+                        const newState = !isExpanded;
+
+                        this.setAttribute(
+                            'aria-expanded',
+                            newState ? 'true' : 'false'
+                        );
+                        content.setAttribute(
+                            'aria-hidden',
+                            newState ? 'false' : 'true'
+                        );
+                        content.style.display = newState ? 'block' : 'none';
+                        this.textContent = newState ?
+                            'Hide Visual Description' :
+                            'Show Visual Description';
+                    });
+                }
+            }, 100);
+        } else {
+            srHtml = custom ? (basic + custom) : basic;
+        }
+
+        // For visible panel: basic + custom (no visual description)
+        const visibleHtml = custom ? (basic + custom) : basic;
+
+        // Highcharts hidden a11y region gets the full description with visual
+        e.chartDetailedInfo.chartAutoDescription = srHtml;
+        this.__autoDescHTML = srHtml;
+
+        // visible panel below chart gets description without visual
+        updateA11yDescPanel(this, visibleHtml);
     });
 }(Highcharts));
 
@@ -1133,6 +1210,24 @@ function basicSummary(chart) {
 function getCustomAutoDesc(chart) {
     const fromOpts = chart.options?.custom?.autoDesc ??
         chart.options?.chart?.custom?.autoDesc;
+    if (typeof fromOpts === 'function') {
+        try {
+            return fromOpts.call(chart, chart);
+        } catch {
+            // ignore error
+        }
+    }
+    if (typeof fromOpts === 'string') {
+        return fromOpts;
+    }
+    return null;
+}
+
+
+function getCustomVisualDesc(chart) {
+    const fromOpts = chart.options?.custom?.visualDesc ??
+        chart.options?.chart?.custom?.visualDesc;
+
     if (typeof fromOpts === 'function') {
         try {
             return fromOpts.call(chart, chart);
