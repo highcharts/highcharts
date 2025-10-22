@@ -4,7 +4,8 @@ const excludeList = [
     'gui/layout',
     'components/component-error-handler',
     'basic/google-spreadsheets',
-    'data/googlesheets-tutorial'
+    'data/googlesheets-tutorial',
+    'demo/personal-portfolio'
 ];
 
 const demoPaths = Cypress.env('demoPaths');

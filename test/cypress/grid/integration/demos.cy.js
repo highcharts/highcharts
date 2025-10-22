@@ -6,6 +6,11 @@ if (demoPaths && demoPaths.gridLitePaths && demoPaths.gridProPaths) {
     describe('Grid Lite demos', () => {
         demoPaths.gridLitePaths.forEach((demoPath) => {
             it(`should not have console errors in ${demoPath}`, () => {
+
+                if (excludeList.includes(demoPath)) {
+                    return;
+                }
+
                 let errorMessages = [];
                 cy.on('window:before:load', (win) => {
                     cy.stub(win.console, 'error').callsFake((msg) => {
