@@ -912,13 +912,14 @@ Object.keys(AUTO_DESCS).forEach(id => {
             const toggleButton = `<button id="${toggleId}" 
                 aria-expanded="${showVisual ? 'true' : 'false'}" 
                 aria-controls="${contentId}"
-                style="margin: 0.5em 0;">
+                tabindex="-1"
+                class="visual-desc-toggle">
                 ${showVisual ? 'Hide' : 'Show'} Visual Description
             </button>`;
 
+            const visibilityClass = showVisual ? 'visible' : 'hidden';
             const visualContent = `<div id="${contentId}" 
-                aria-hidden="${showVisual ? 'false' : 'true'}" 
-                style="display: ${showVisual ? 'block' : 'none'};">
+                class="visual-desc-content ${visibilityClass}">
                 ${visual}
             </div>`;
 
@@ -934,23 +935,48 @@ Object.keys(AUTO_DESCS).forEach(id => {
                     !button.hasAttribute('data-listener-added')
                 ) {
                     button.setAttribute('data-listener-added', 'true');
+                    // Capture chart reference in closure
+                    const chartRef = this;
                     button.addEventListener('click', function () {
                         const isExpanded =
                             this.getAttribute('aria-expanded') === 'true';
                         const newState = !isExpanded;
 
+                        // Update screen reader button and content
                         this.setAttribute(
                             'aria-expanded',
                             newState ? 'true' : 'false'
                         );
-                        content.setAttribute(
-                            'aria-hidden',
-                            newState ? 'false' : 'true'
-                        );
-                        content.style.display = newState ? 'block' : 'none';
+                        content.className = newState ?
+                            'visual-desc-content visible' :
+                            'visual-desc-content hidden';
                         this.textContent = newState ?
                             'Hide Visual Description' :
                             'Show Visual Description';
+
+                        // Persist state on chart
+                        chartRef.visualDescVisible = newState;
+
+                        // Update visible panel toggle if it exists
+                        const visToggleId = `visual-toggle-visible-${chartId}`;
+                        const visContentId =
+                            `visual-content-visible-${chartId}`;
+                        const visBtn = document.getElementById(visToggleId);
+                        const visContent =
+                            document.getElementById(visContentId);
+
+                        if (visBtn && visContent) {
+                            visBtn.setAttribute(
+                                'aria-expanded',
+                                newState ? 'true' : 'false'
+                            );
+                            visContent.className = newState ?
+                                'visual-desc-content visible' :
+                                'visual-desc-content hidden';
+                            visBtn.textContent = newState ?
+                                'Hide Visual Description' :
+                                'Show Visual Description';
+                        }
                     });
                 }
             }, 100);
@@ -958,20 +984,95 @@ Object.keys(AUTO_DESCS).forEach(id => {
             srHtml = custom ? (basic + custom) : basic;
         }
 
-        // For visible panel: basic + custom (no visual description)
-        const visibleHtml = custom ? (basic + custom) : basic;
+        // For visible panel: include visual description like SR region
+        let visibleHtml;
+        if (visual !== null) {
+            // Use same logic as screen reader region for consistency
+            const showVisual = this.visualDescVisible === true;
+            const chartId = this.renderTo?.id || 'chart';
+            const toggleId = `visual-toggle-visible-${chartId}`;
+            const contentId = `visual-content-visible-${chartId}`;
+
+            // Create button and toggleable content for visible panel
+            const toggleButton = `<button id="${toggleId}" 
+                aria-expanded="${showVisual ? 'true' : 'false'}" 
+                aria-controls="${contentId}"
+                tabindex="-1"
+                class="visual-desc-toggle">
+                ${showVisual ? 'Hide' : 'Show'} Visual Description
+            </button>`;
+
+            const visibilityClass = showVisual ? 'visible' : 'hidden';
+            const visualContent = `<div id="${contentId}" 
+                class="visual-desc-content ${visibilityClass}">
+                ${visual}
+            </div>`;
+
+            visibleHtml = basic + toggleButton + visualContent + (custom || '');
+        } else {
+            visibleHtml = custom ? (basic + custom) : basic;
+        }
 
         // Highcharts hidden a11y region gets the full description with visual
         e.chartDetailedInfo.chartAutoDescription = srHtml;
         this.__autoDescHTML = srHtml;
 
-        // visible panel below chart gets description without visual
-        updateA11yDescPanel(this, visibleHtml);
+        // visible panel below chart gets description with visual toggle
+        updateA11yDescPanel(this, visibleHtml, visual !== null);
+
+        // Add method to programmatically toggle visual description
+        this.toggleVisualDescription = function (forceState) {
+            const chartId = this.renderTo?.id || 'chart';
+            const srToggleId = `visual-toggle-${chartId}`;
+            const visToggleId = `visual-toggle-visible-${chartId}`;
+
+            // Get current state or use forced state
+            const currentState = this.visualDescVisible === true;
+            const newState = forceState !== undefined ?
+                forceState : !currentState;
+
+            // Update chart state
+            this.visualDescVisible = newState;
+
+            // Update screen reader toggle
+            const srBtn = document.getElementById(srToggleId);
+            const srContent =
+                document.getElementById(`visual-content-${chartId}`);
+            if (srBtn && srContent) {
+                srBtn.setAttribute(
+                    'aria-expanded',
+                    newState ? 'true' : 'false'
+                );
+                srContent.className = newState ?
+                    'visual-desc-content visible' :
+                    'visual-desc-content hidden';
+                srBtn.textContent = newState ?
+                    'Hide Visual Description' : 'Show Visual Description';
+            }
+
+            // Update visible panel toggle
+            const visBtn = document.getElementById(visToggleId);
+            const visContent =
+                document.getElementById(`visual-content-visible-${chartId}`);
+            if (visBtn && visContent) {
+                visBtn.setAttribute(
+                    'aria-expanded',
+                    newState ? 'true' : 'false'
+                );
+                visContent.className = newState ?
+                    'visual-desc-content visible' :
+                    'visual-desc-content hidden';
+                visBtn.textContent = newState ?
+                    'Hide Visual Description' : 'Show Visual Description';
+            }
+
+            return newState;
+        };
     });
 }(Highcharts));
 
 
-function updateA11yDescPanel(chart, html) {
+function updateA11yDescPanel(chart, html, hasVisualDesc = false) {
     const chartEl = chart?.renderTo;
     if (!chartEl) {
         return;
@@ -1000,15 +1101,76 @@ function updateA11yDescPanel(chart, html) {
       <div class="a11y-debug__content">${html}</div>
     `;
 
-    // Find the freshly inserted nodes
+    // Handle visual description toggle if present
+    if (hasVisualDesc) {
+        const chartId = chartEl.id || 'chart';
+        const toggleId = `visual-toggle-visible-${chartId}`;
+        const contentId = `visual-content-visible-${chartId}`;
+
+        const btn = panel.querySelector(`#${toggleId}`);
+        const content = panel.querySelector(`#${contentId}`);
+
+        if (btn && content) {
+            // Apply the persisted state
+            btn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+            content.className = expanded ?
+                'visual-desc-content visible' :
+                'visual-desc-content hidden';
+            btn.textContent = expanded ?
+                'Hide Visual Description' : 'Show Visual Description';
+
+            // Bind a fresh click handler
+            btn.onclick = ev => {
+                ev.preventDefault();
+                ev.stopPropagation();
+
+                const currentlyExpanded =
+                    btn.getAttribute('aria-expanded') === 'true';
+
+                const next = !currentlyExpanded;
+
+                // Update ARIA + visibility
+                btn.setAttribute('aria-expanded', next ? 'true' : 'false');
+                content.className = next ?
+                    'visual-desc-content visible' :
+                    'visual-desc-content hidden';
+                btn.textContent = next ?
+                    'Hide Visual Description' : 'Show Visual Description';
+
+                // 🔐 Persist for the next render
+                chart.visualDescVisible = next;
+
+                // Also update the screen reader region toggle state
+                const srToggleId = `visual-toggle-${chartId}`;
+                const srContentId = `visual-content-${chartId}`;
+                const srBtn = document.getElementById(srToggleId);
+                const srContent = document.getElementById(srContentId);
+
+                if (srBtn && srContent) {
+                    srBtn.setAttribute(
+                        'aria-expanded',
+                        next ? 'true' : 'false'
+                    );
+                    srContent.className = next ?
+                        'visual-desc-content visible' :
+                        'visual-desc-content hidden';
+                    srBtn.textContent = next ?
+                        'Hide Visual Description' : 'Show Visual Description';
+                }
+            };
+        }
+    }
+
+    // Find old gauge description button (backward compatibility)
     const btn = panel.querySelector('#gauge-description-btn-sr');
     const content = panel.querySelector('#gauge-description-sr');
 
     if (btn && content) {
         // Apply the persisted state
         btn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
-        content.setAttribute('aria-hidden', expanded ? 'false' : 'true');
-        content.style.display = expanded ? 'block' : 'none';
+        content.className = expanded ?
+            'visual-desc-content visible' :
+            'visual-desc-content hidden';
         btn.textContent = expanded ? 'Hide Description' : 'Visual Description';
 
         // Bind a fresh, stateless click handler that
@@ -1024,8 +1186,9 @@ function updateA11yDescPanel(chart, html) {
 
             // Update ARIA + visibility
             btn.setAttribute('aria-expanded', next ? 'true' : 'false');
-            content.setAttribute('aria-hidden', next ? 'false' : 'true');
-            content.style.display = next ? 'block' : 'none';
+            content.className = next ?
+                'visual-desc-content visible' :
+                'visual-desc-content hidden';
             btn.textContent = next ? 'Hide Description' : 'Visual Description';
 
             // 🔐 Persist for the next render
@@ -1248,9 +1411,23 @@ document.addEventListener('DOMContentLoaded', () => {
     Object.keys(HC_CONFIGS).forEach(id => {
         const el = document.getElementById(id);
         if (!el) {
-            console.warn(`Missing container #${id}`);
             return;
         }
         charts[id] = Highcharts.chart(id, HC_CONFIGS[id]);
     });
+
+    // Add test function to the global scope for testing
+    setTimeout(() => {
+        // Add a test function to the global scope for easy testing
+        window.testVisualDescSync = function (chartId) {
+            const chart = charts[chartId];
+            if (!chart || !chart.toggleVisualDescription) {
+                return;
+            }
+
+            // Toggle and show result
+            const newState = chart.toggleVisualDescription();
+            return newState;
+        };
+    }, 1000);
 });

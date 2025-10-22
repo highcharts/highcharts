@@ -180,10 +180,21 @@ pre {
     font-weight: 800;
 }
 
-#gauge-description-sr[aria-hidden="true"] {
-    display: none;
+#visual-content-visible-chart2,
+#visual-content-visible-chart3,
+#visible-content-visible-chart4 {
+    border: 2px solid red;
 }
 
-#gauge-description-sr[aria-hidden="false"] {
+/* Visual description toggle classes */
+.visual-desc-toggle {
+    margin: 0.5em 0;
+}
+
+.visual-desc-content.visible {
     display: block;
+}
+
+.visual-desc-content.hidden {
+    display: none;
 }
