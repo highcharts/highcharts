@@ -778,7 +778,7 @@ class Legend {
                         legend.widthOption ||
                         chart.spacingBox.width,
                         options.maxWidth ? relativeLength(
-                            options.maxWidth as any,
+                            options.maxWidth,
                             chart.chartWidth
                         ) : Infinity
                     ) - itemExtraWidth
@@ -1164,12 +1164,12 @@ class Legend {
 
         // Get the box
         legendWidth = (
-            legend.options.maxWidth ?
+            options.maxWidth ?
                 Math.min(
                     legend.widthOption ||
                     allowedWidth,
                     relativeLength(
-                        options.maxWidth as any,
+                        options.maxWidth,
                         chart.chartWidth
                     ) ||
                 Infinity
