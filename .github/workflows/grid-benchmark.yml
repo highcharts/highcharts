@@ -1,8 +1,6 @@
 name: Grid benchmark
 on:
   pull_request:
-    branches:
-      - 'master'
     paths:
       - 'ts/Grid/**'
       - 'test/ts-node-unit-tests/benchmarks/Grid/*'

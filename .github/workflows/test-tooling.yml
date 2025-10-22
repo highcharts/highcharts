@@ -2,7 +2,6 @@ name: Test tooling
 
 on:
   pull_request:
-    branches: [ 'master' ]
     paths:
       - 'package.json'
       - 'tools/**/*'
@@ -35,4 +34,3 @@ jobs:
 
       - name: Run test
         run: node --test "./tools/gulptasks-tests/*.mjs"
-

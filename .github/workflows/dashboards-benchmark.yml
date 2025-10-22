@@ -1,8 +1,6 @@
 name: Dashboards benchmark
 on:
   pull_request:
-    branches:
-      - 'master'
     paths:
       - 'ts/Dashboards/**'
       - 'ts/Data/**'
@@ -89,4 +87,3 @@ jobs:
         run: |
           echo "## Benchmark metrics" >> $GITHUB_STEP_SUMMARY
           cat ./tmp/benchmarks/table.md >> $GITHUB_STEP_SUMMARY
-
