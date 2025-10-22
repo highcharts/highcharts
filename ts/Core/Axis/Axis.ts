@@ -2115,12 +2115,10 @@ class Axis {
 
             const info = tickPositions.info;
 
-            // Higher/lower ranks only. If we deal with the first tick on the
-            // whole chart, change the higher rank to the lower rank on the next
-            // tick as there is no hidden tick before the first visible one.
+            // Higher ranks only. If we deal with the first tick on the
+            // whole chart, delete the higher rank from the second tick as there
+            // is no hidden tick before the first visible one.
             if (!this.options.isInternal && info && this.min === this.dataMin) {
-                info.lowerRanks[tickPositions[1]] =
-                    info.higherRanks[tickPositions[1]];
                 delete info.higherRanks[tickPositions[1]];
             }
 

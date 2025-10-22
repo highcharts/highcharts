@@ -258,7 +258,7 @@ QUnit.test(
 );
 
 
-QUnit.test('Higher and lower ranks general tests, (#22231)', function (assert) {
+QUnit.test('Higher ranks general tests, (#22231)', function (assert) {
     const chart = Highcharts.stockChart('container', {
         series: [{
             type: 'line',
@@ -270,7 +270,7 @@ QUnit.test('Higher and lower ranks general tests, (#22231)', function (assert) {
             dateTimeLabelFormats: {
                 month: {
                     higherRank: '%Y',
-                    lowerRank: '%b'
+                    main: '%b'
                 }
             }
         }
@@ -293,12 +293,7 @@ QUnit.test('Higher and lower ranks general tests, (#22231)', function (assert) {
     assert.strictEqual(
         ticks[tickPositions[1]].label.textStr,
         'Jul',
-        'Second tick on full range chart should have a lower rank applied.'
-    );
-    assert.strictEqual(
-        tickPositions.info.lowerRanks[tickPositions[1]],
-        'month',
-        'Second tick on full range chart should have a lower rank set as month.'
+        'Second tick on full range chart should have a main rank applied.'
     );
 
     // Navigator ticks
@@ -310,7 +305,7 @@ QUnit.test('Higher and lower ranks general tests, (#22231)', function (assert) {
     assert.deepEqual(
         navigatorTickLabels,
         ['2000', '2001', '2002', '2003', '2004'],
-        'Navigator ticks should not be affected by higher and lower ranks.'
+        'Navigator ticks should not be affected by higher ranks.'
     );
 
     // Ticks after scrolling

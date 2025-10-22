@@ -44,16 +44,12 @@ declare module './Axis/TickPositionsArray'{
  * */
 class Time extends TimeBase {
 
-    public getHigherLowerRanks(
+    public getHigherRanks(
         tickPositions: TickPositionsArray,
         unitRange: number
-    ): {
-            higherRanks: Record<string, string>,
-            lowerRanks: Record<string, string>
-        } {
+    ): Record<string, string> {
         const time = this,
-            higherRanks = {} as Record<string, string>,
-            lowerRanks = {} as Record<string, string>;
+            higherRanks = {} as Record<string, string>;
         // Handle higher ranks. Mark new days if the time is on midnight
         // (#950, #1649, #1760, #3349). Use a reasonable dropout threshold
         // to prevent looping over dense data grouping (#6156).
@@ -72,6 +68,7 @@ class Time extends TimeBase {
                 });
             }
 
+            // Monthly range
             if (
                 unitRange <= timeUnits.month &&
                 unitRange > timeUnits.week
@@ -81,14 +78,12 @@ class Time extends TimeBase {
                         i === 1 || time.dateFormat('%m%d', t) === '0101'
                     ) {
                         higherRanks[t] = 'month';
-                    } else {
-                        lowerRanks[t] = 'month';
                     }
                 });
             }
         }
 
-        return { higherRanks, lowerRanks };
+        return higherRanks;
     }
 
     /**
@@ -132,8 +127,7 @@ class Time extends TimeBase {
             ] = time.toParts(min),
             milliseconds = (min || 0) % 1000,
             variableDayLength: boolean|undefined,
-            higherRanks: Record<string, string> = {},
-            lowerRanks: Record<string, string> = {};
+            higherRanks: Record<string, string> = {};
 
         startOfWeek ??= 1;
 
@@ -289,12 +283,10 @@ class Time extends TimeBase {
             // Push the last time
             tickPositions.push(t);
 
-            const ranks = this.getHigherLowerRanks(
+            higherRanks = this.getHigherRanks(
                 tickPositions,
                 unitRange
             );
-            higherRanks = ranks.higherRanks;
-            lowerRanks = ranks.lowerRanks;
         }
 
 
@@ -303,7 +295,6 @@ class Time extends TimeBase {
             normalizedInterval,
             {
                 higherRanks,
-                lowerRanks,
                 totalRange: unitRange * count
             }
         ) as TimeTicksInfoObject;

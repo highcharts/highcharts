@@ -1,3 +1,5 @@
+const data = Array.from({ length: 50 }, () => Math.random() * 10);
+
 Highcharts.stockChart('container', {
     chart: {
         width: 800
@@ -5,8 +7,8 @@ Highcharts.stockChart('container', {
     series: [{
         id: 'main',
         type: 'line',
-        data: Array.from({ length: 50 }, () => Math.random() * 10),
-        pointInterval: 1000
+        data,
+        pointInterval: 10000
     }],
     xAxis: {
         dateTimeLabelFormats: {
@@ -24,14 +26,14 @@ Highcharts.stockChart('container1', {
     series: [{
         id: 'main',
         type: 'line',
-        data: Array.from({ length: 50 }, () => Math.random() * 10),
+        data,
         pointInterval: 2600000000
     }],
     xAxis: {
         dateTimeLabelFormats: {
             month: {
                 higherRank: '%Y',
-                lowerRank: '%b'
+                main: '%b'
             }
         }
     }
