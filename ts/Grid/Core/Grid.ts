@@ -328,7 +328,7 @@ class Grid {
         this.initContainers(renderTo);
         this.initAccessibility();
         this.initPagination();
-        this.loadDataTable(this.options?.dataTable);
+        this.loadDataTable();
         this.querying.loadOptions();
         void this.querying.proceed().then((): void => {
             this.renderViewport();
@@ -585,7 +585,7 @@ class Grid {
             this.userOptions.dataTable = options.dataTable;
             (this.options ?? {}).dataTable = options.dataTable;
 
-            this.loadDataTable(this.options?.dataTable);
+            this.loadDataTable();
             this.querying.shouldBeUpdated = true;
         }
 
@@ -944,14 +944,11 @@ class Grid {
     /**
      * Loads the data table of the Grid. If the data table is passed as a
      * reference, it should be used instead of creating a new one.
-     *
-     * @param tableOptions
-     * The data table to load. If not provided, a new data table will be
-     * created.
      */
-    private loadDataTable(tableOptions?: DataTable | DataTableOptions): void {
+    private loadDataTable(): void {
         // Unregister all events attached to the previous data table.
         this.dataTableEventDestructors.forEach((fn): void => fn());
+        const tableOptions = this.options?.dataTable;
 
         // If the table is passed as a reference, it should be used instead of
         // creating a new one.
