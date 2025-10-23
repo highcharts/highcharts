@@ -239,13 +239,15 @@ class Tick {
         if (axis.dateTime) {
             const DTLFormats = options.dateTimeLabelFormats as any;
             if (tickPositionInfo) {
-                const rankKey = tickPositionInfo.higherRanks[pos],
-                    format = (!options.grid?.enabled && rankKey) ?
+                const gridDisabled = !options.grid?.enabled,
+                    rankKey = tickPositionInfo.higherRanks[pos],
+                    format = gridDisabled && rankKey &&
                         (DTLFormats[rankKey].higherRank ||
-                        DTLFormats[rankKey].main) :
-                        DTLFormats[tickPositionInfo.unitName];
+                        DTLFormats[rankKey].main);
 
-                dateTimeLabelFormats = chart.time.resolveDTLFormat(format);
+                dateTimeLabelFormats = chart.time.resolveDTLFormat(
+                    format || DTLFormats[tickPositionInfo.unitName]
+                );
                 dateTimeLabelFormat = dateTimeLabelFormats.main;
             } else if (isNumber(value)) { // #1441
                 dateTimeLabelFormat = axis.dateTime.getXDateFormat(
