@@ -92,9 +92,7 @@ function compose(
 
     ([ // Grid Events
         'beforeLoad',
-        'afterLoad',
-        'beforeRenderViewport',
-        'afterRenderViewport'
+        'afterLoad'
     ] as const).forEach((name): void => {
         addEvent(GridClass, name, (e: GridEvent<Grid>): void => {
             const grid = e.target;
@@ -256,16 +254,6 @@ export interface GridEvents {
      * Callback function to be called after the grid is loaded.
      */
     afterLoad?: GridEventCallback;
-
-    /**
-     * Callback function to be called before the grid viewport is rendered.
-     */
-    beforeRenderViewport?: GridEventCallback;
-
-    /**
-     * Callback function to be called after the grid viewport is rendered.
-     */
-    afterRenderViewport?: GridEventCallback;
 }
 
 declare module '../Core/Options' {

@@ -13,14 +13,6 @@ Grid.grid('container', {
         },
         afterLoad: function () {
             document.getElementById('afterLoad').value = 'afterLoad';
-        },
-        beforeRenderViewport: function () {
-            document.getElementById('beforeRenderViewport').value =
-                'beforeRenderViewport';
-        },
-        afterRenderViewport: function () {
-            document.getElementById('afterRenderViewport').value =
-                'afterRenderViewport';
         }
     }
 });

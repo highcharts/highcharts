@@ -16,8 +16,6 @@ The available events are:
 |------------------------|---------------------------------------------------------------|-----------------------|
 | `beforeLoad`           | Triggered before the grid is fully loaded for the first time. | `this: Grid`          |
 | `afterLoad`            | Triggered after the grid is fully loaded for the first time.  | `this: Grid`          |
-| `beforeRenderViewport` | Triggered every time before the viewport is rendered.         | `this: Grid`          |
-| `afterRenderViewport`  | Triggered every time after the viewport is rendered.          | `this: Grid`          |
 
 ## cell
 
@@ -68,12 +66,6 @@ Here is a sample code that demonstrates how to use these event callbacks in the 
         },
         afterLoad: function () {
             console.log('Grid finished loading and is ready to use.');
-        },
-        beforeRenderViewport: function () {
-            console.log('Viewport rendering started.')
-        },
-        afterRenderViewport: function () {
-            console.log('Viewport rendering finished.')
         }
     },
     columnDefaults: {

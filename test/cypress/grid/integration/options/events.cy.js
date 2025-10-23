@@ -10,14 +10,6 @@ describe('Grid Pro - grid events.', () => {
     it('Grid afterLoad event.', () => {
         cy.get('#afterLoad').should('have.value', 'afterLoad');
     });
-
-    it('Grid beforeRenderViewport event.', () => {
-        cy.get('#beforeRenderViewport').should('have.value', 'beforeRenderViewport');
-    });
-
-    it('Grid afterRenderViewport event.', () => {
-        cy.get('#afterRenderViewport').should('have.value', 'afterRenderViewport');
-    });
 });
 
 describe('Grid Pro - cell and column events.', () => {
