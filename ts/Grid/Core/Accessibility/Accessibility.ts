@@ -30,7 +30,7 @@ import Globals from '../Globals.js';
 import ColumnFiltering from '../Table/Actions/ColumnFiltering/ColumnFiltering.js';
 import GridUtils from '../GridUtils.js';
 
-const { makeHTMLElement, formatText } = GridUtils;
+const { formatText } = GridUtils;
 
 
 /**
@@ -95,26 +95,6 @@ class Accessibility {
     *  Methods
     *
     * */
-
-    /**
-     * Add the 'sortable' hint span element for the sortable column.
-     *
-     * @param element
-     * The element to add the description to.
-     */
-    public addSortableColumnHint(element: HTMLElement): void {
-        const sortableLang =
-            this.grid.options?.lang?.accessibility?.sorting?.sortable;
-
-        if (!sortableLang) {
-            return;
-        }
-
-        makeHTMLElement('span', {
-            className: Globals.getClassName('visuallyHidden'),
-            innerText: ', ' + sortableLang
-        }, element);
-    }
 
     /**
      * Add the description to the header cell.
