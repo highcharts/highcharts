@@ -14,17 +14,20 @@
  *
  * */
 
+/**
+ * The font metrics.
+ */
 export interface FontMetricsObject {
     /**
-     * Baseline height
+     * The baseline relative to the top of the box.
      */
     b: number;
     /**
-     * Font size
+     * The font size.
      */
     f: number;
     /**
-     * Line height
+     * The line height.
      */
     h: number;
 }

@@ -23,11 +23,13 @@ import type CSSObject from '../CSSObject';
  *
  * */
 
+/** @internal */
 export interface ButtonThemeObject extends SVGAttributes {
     states?: ButtonThemeStatesObject;
     style?: CSSObject;
 }
 
+/** @internal */
 export interface ButtonThemeStatesObject {
     disabled?: SVGAttributes;
     hover?: SVGAttributes;
@@ -40,4 +42,5 @@ export interface ButtonThemeStatesObject {
  *
  * */
 
+/** @internal */
 export default ButtonThemeObject;

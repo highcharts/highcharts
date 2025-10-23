@@ -24,11 +24,13 @@ import type SVGRenderer from './SVG/SVGRenderer';
 
 /**
  * All possible renderer class constructors.
+ * @internal
  */
 export type RendererClass = RendererTypeRegistry[keyof RendererTypeRegistry];
 
 /**
  * All possible renderer types.
+ * @internal
  */
 export type RendererType = RendererTypeRegistry[
     keyof RendererTypeRegistry
@@ -39,6 +41,7 @@ export type RendererType = RendererTypeRegistry[
  *
  * Use the `declare module 'SeriesType'` pattern to overload the interface in
  * this definition file.
+ * @internal
  */
 export interface RendererTypeRegistry {
     [key: string]: typeof SVGRenderer;
@@ -50,4 +53,5 @@ export interface RendererTypeRegistry {
  *
  * */
 
+/** @internal */
 export default RendererType;
