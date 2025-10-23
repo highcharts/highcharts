@@ -44,6 +44,48 @@ declare module './Axis/TickPositionsArray'{
  * */
 class Time extends TimeBase {
 
+    public getHigherRanks(
+        tickPositions: TickPositionsArray,
+        unitRange: number
+    ): Record<string, string> {
+        const time = this,
+            higherRanks = {} as Record<string, string>;
+        // Handle higher ranks. Mark new days if the time is on midnight
+        // (#950, #1649, #1760, #3349). Use a reasonable dropout threshold
+        // to prevent looping over dense data grouping (#6156).
+        if (tickPositions.length < 10000) {
+            if (unitRange <= timeUnits.hour) {
+                tickPositions.forEach((t: number): void => {
+                    if (
+                        // Speed optimization, no need to run dateFormat
+                        // unless we're on a full or half hour
+                        t % 1800000 === 0 &&
+                        // Check for local or global midnight
+                        time.dateFormat('%H%M%S%L', t) === '000000000'
+                    ) {
+                        higherRanks[t] = 'day';
+                    }
+                });
+            }
+
+            // Monthly range
+            if (
+                unitRange <= timeUnits.month &&
+                unitRange > timeUnits.week
+            ) {
+                tickPositions.forEach((t: number, i: number): void => {
+                    if (
+                        i === 1 || time.dateFormat('%m%d', t) === '0101'
+                    ) {
+                        higherRanks[t] = 'month';
+                    }
+                });
+            }
+        }
+
+        return higherRanks;
+    }
+
     /**
      * Return an array with time positions distributed on round time values
      * right and right after min and max. Used in datetime axes as well as for
@@ -73,7 +115,6 @@ class Time extends TimeBase {
     ): TickPositionsArray {
         const time = this,
             tickPositions = [] as TickPositionsArray,
-            higherRanks = {} as Record<string, string>,
             { count = 1, unitRange } = normalizedInterval;
 
         let [
@@ -85,7 +126,8 @@ class Time extends TimeBase {
                 seconds
             ] = time.toParts(min),
             milliseconds = (min || 0) % 1000,
-            variableDayLength: boolean|undefined;
+            variableDayLength: boolean|undefined,
+            higherRanks: Record<string, string> = {};
 
         startOfWeek ??= 1;
 
@@ -241,23 +283,10 @@ class Time extends TimeBase {
             // Push the last time
             tickPositions.push(t);
 
-
-            // Handle higher ranks. Mark new days if the time is on midnight
-            // (#950, #1649, #1760, #3349). Use a reasonable dropout threshold
-            // to prevent looping over dense data grouping (#6156).
-            if (unitRange <= timeUnits.hour && tickPositions.length < 10000) {
-                tickPositions.forEach((t: number): void => {
-                    if (
-                        // Speed optimization, no need to run dateFormat unless
-                        // we're on a full or half hour
-                        t % 1800000 === 0 &&
-                        // Check for local or global midnight
-                        time.dateFormat('%H%M%S%L', t) === '000000000'
-                    ) {
-                        higherRanks[t] = 'day';
-                    }
-                });
-            }
+            higherRanks = this.getHigherRanks(
+                tickPositions,
+                unitRange
+            );
         }
 
 
@@ -296,6 +325,7 @@ namespace Time {
         from?: DateTimeFormat;
         list?: DateTimeFormat[];
         main: DateTimeFormat;
+        higherRank?: DateTimeFormat;
         range?: boolean;
         to?: DateTimeFormat;
     }
