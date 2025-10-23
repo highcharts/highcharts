@@ -34,7 +34,8 @@ const grid = Grid.grid('container', {
             editMode: {
                 enabled: false
             }
-        }
+        },
+        width: 60
     }, {
         id: 'product',
         header: {

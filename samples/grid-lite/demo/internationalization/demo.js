@@ -184,7 +184,8 @@ const grid = Grid.grid('container', {
         id: 'id',
         header: {
             format: 'ID'
-        }
+        },
+        width: 60
     }, {
         id: 'productEN',
         header: {

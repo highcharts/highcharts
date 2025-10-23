@@ -37,7 +37,7 @@ const {
  * */
 
 const GridComponentDefaults: DeepPartial<Options> = {
-    gridClassName: 'grid-container',
+    gridClassName: 'highcharts-grid-container',
     gridID: 'grid-' + uniqueKey(),
     gridOptions: {},
     editableOptions: [

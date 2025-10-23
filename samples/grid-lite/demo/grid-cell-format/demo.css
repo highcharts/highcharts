@@ -16,13 +16,12 @@ body {
     color: var(--highcharts-neutral-color-100);
 }
 
-#container {
-    margin: 8px;
-    padding: 20px;
+.demo {
+    padding: 8px 12px;
 }
 
 .highcharts-description {
-    padding-left: 10px;
+    padding: 0 8px;
 }
 
 .custom-theme,
@@ -92,4 +91,15 @@ formatting is kept regardless of any hover states etc. */
 .hcg-table span.highlight {
     background: var(--highlight-color);
     border-color: var(--highlight-border-color);
+}
+
+code {
+    font-family: Consolas, "courier new", monospace;
+    line-height: 1em;
+    background: light-dark(#f7f7f7, #2a2a2a);
+    border: 1px solid light-dark(#e1e1e1, #4a4a4a);
+    color: var(--highcharts-neutral-color-100);
+    padding: 2px 4px;
+    border-radius: 5px;
+    display: inline-block;
 }
