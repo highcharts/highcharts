@@ -2,6 +2,10 @@ QUnit.test('General contour stuff', function (assert) {
     const chart = Highcharts.chart('container', {
             series: [{
                 type: 'contour',
+                showContourLines: true,
+                lineColor: '#FF0000',
+                lineWidth: 2,
+                contourInterval: 2,
                 data: [
                     [
                         0,
@@ -326,10 +330,47 @@ QUnit.test('General contour stuff', function (assert) {
                 ]
             }]
         }),
-        p = chart.series[0].points[63],
+        contour = chart.series[0],
+        p = contour.points[63],
         tc = new TestController(chart);
 
     tc.moveTo(p.plotX + chart.plotLeft, p.plotY + chart.plotTop);
+
+    contour.renderPromise.then(function () {
+        const canvas = document.createElement('canvas'),
+            ctx = canvas.getContext('2d');
+
+        canvas.width = contour.canvas.width;
+        canvas.height = contour.canvas.height;
+        ctx.drawImage(contour.image.element, 0, 0);
+
+        const imgData = ctx.getImageData(
+                p.plotX,
+                p.plotY,
+                canvas.width,
+                canvas.height
+            ).data,
+            len = imgData.length;
+
+        let lines = false;
+        for (let i = 0; i < len; i += 4) {
+            const r = imgData[i];
+            const g = imgData[i + 1];
+            const b = imgData[i + 2];
+            const a = imgData[i + 3];
+
+            if (r === 255 && g === 0 && b === 0 && a === 255) {
+                lines = true;
+                break;
+            }
+        }
+
+        assert.strictEqual(
+            lines,
+            true,
+            'Contour lines should be rendered in correct color.'
+        );
+    });
 
     assert.strictEqual(
         chart.tooltip.label.text.textStr,
