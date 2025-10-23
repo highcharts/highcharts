@@ -451,7 +451,7 @@ namespace Cell {
     /**
      * Checks if a valid cell instance.
      */
-    export function isCell(cell: Cell|CellHTML|undefined): cell is Cell {
+    export function isCell(cell: Cell | CellHTML | undefined): cell is Cell {
         return !!cell && 'type' in cell && (cell as Cell).type === 'cell';
     }
 
