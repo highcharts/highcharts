@@ -811,7 +811,7 @@ export default GeoJSONComposition;
  * An array of GeoJSON or TopoJSON objects or strings used as map data for
  * series.
  *
- * @typedef {Array<*>|GeoJSON|TopoJSON|string} Highcharts.MapDataType
+ * @typedef {Array<*>|Highcharts.GeoJSON|Highcharts.TopoJSON|string} Highcharts.MapDataType
  */
 
 /**
@@ -819,6 +819,13 @@ export default GeoJSONComposition;
  * [project's GitHub page](https://github.com/topojson/topojson).
  *
  * @typedef {Object} Highcharts.TopoJSON
+ */
+
+/**
+ * Rotation of the projection in terms of degrees `[lambda, phi, gamma]`.
+ * 1st number is mandatory, while 2nd and 3rd are optional.
+ *
+ * @typedef {"TypeScript: [number]|[number,number]|[number,number,number]"} Highcharts.ProjectionRotationOption
  */
 
 /**

@@ -64,7 +64,7 @@ const sign = Math.sign ||
  * @class
  * @name Highcharts.LambertConformalConic
  *
- * @param {Highcharts.ProjectionOptions} options
+ * @param {Highcharts.MapViewProjectionOptions} options
  * The projection options, with support for `parallels`.
  */
 class LambertConformalConic implements ProjectionDefinition {

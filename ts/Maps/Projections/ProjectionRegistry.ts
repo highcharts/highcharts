@@ -31,6 +31,9 @@ import WebMercator from './WebMercator.js';
  *
  * */
 
+/**
+ * @interface Highcharts.ProjectionRegistry
+ */
 export interface ProjectionRegistry {
     EqualEarth: typeof EqualEarth;
     LambertConformalConic: typeof LambertConformalConic;
@@ -39,6 +42,9 @@ export interface ProjectionRegistry {
     WebMercator: typeof WebMercator;
 }
 
+/**
+ * @typedef {keyof Highcharts.ProjectionRegistry} Highcharts.ProjectionRegistryName
+ */
 export type ProjectionRegistryName = keyof ProjectionRegistry;
 
 /* *
