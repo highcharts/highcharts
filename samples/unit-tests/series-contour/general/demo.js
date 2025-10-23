@@ -336,6 +336,13 @@ QUnit.test('General contour stuff', function (assert) {
 
     tc.moveTo(p.plotX + chart.plotLeft, p.plotY + chart.plotTop);
 
+    assert.strictEqual(
+        chart.tooltip.label.text.textStr,
+        // eslint-disable-next-line max-len
+        '<span style="color: rgba(56.37076208068613,56.37076208068613,56.37076208068613, 1);">################</span>',
+        'Tooltip should be colored correctly.'
+    );
+
     contour.renderPromise.then(function () {
         const canvas = document.createElement('canvas'),
             ctx = canvas.getContext('2d');
@@ -350,32 +357,31 @@ QUnit.test('General contour stuff', function (assert) {
                 canvas.width,
                 canvas.height
             ).data,
-            len = imgData.length;
-
-        let lines = false;
-        for (let i = 0; i < len; i += 4) {
+            validColor = (i, res) => (
+                imgData[i] === res[0] &&
+                imgData[i + 1] === res[1] &&
+                imgData[i + 2] === res[2] &&
+                imgData[i + 3] === res[3]
+            );
+        /*
+            Uncomment to find color values in the image data
+            const len = imgData.length;
+            for (let i = 0; i < len; i += 4) {
             const r = imgData[i];
             const g = imgData[i + 1];
             const b = imgData[i + 2];
             const a = imgData[i + 3];
 
-            if (r === 255 && g === 0 && b === 0 && a === 255) {
-                lines = true;
+            if (r === 61 && g === 61 && b === 61 && a === 255) {
+                console.log(i);
                 break;
             }
-        }
+        } */
 
         assert.strictEqual(
-            lines,
+            validColor(63720, [255, 0, 0, 255]),
             true,
             'Contour lines should be rendered in correct color.'
         );
     });
-
-    assert.strictEqual(
-        chart.tooltip.label.text.textStr,
-        // eslint-disable-next-line max-len
-        '<span style="color: rgba(56.37076208068613,56.37076208068613,56.37076208068613, 1);">################</span>',
-        'Tooltip should be colored correctly.'
-    );
 });
