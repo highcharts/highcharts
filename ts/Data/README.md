@@ -249,40 +249,6 @@ catch (error) {
 connector.getTable().getRowCount() > 0;
 ```
 
-
-
-### Saving Data
-
-How to save a table depends on the connector type and use case. In a strict
-server-less situation, instead of the save function you usually use the
-related converter.
-
-```TypeScript
-const connector = new CSVConnector({
-    csv: 'column\n1\n2\n3\n'
-});
-connector.converter.export(connector) === 'column\n1\n2\n3\n';
-```
-
-If your connector is based on an external source on the internet or in the HTML
-DOM, the save function can write data back. Please note that an error will be
-thrown if this is not supported by the connector type, or if permissions do now
-allow this.
-
-```TypeScript
-const connector = new HTMLTableConnector({
-    tableElement: document.getElementById('the_table')
-});
-try {
-    await connector.save();
-}
-catch (error) {
-    console.error(error);
-}
-```
-
-
-
 DataPool
 --------
 
