@@ -84,6 +84,16 @@ for manual testing.
 are meant for education, where the actual feature is covered by other tests.
 
 
+TypeScript
+----------
+
+You can create demos with TypeScript-code, which comes with similar limitations
+as our official NPM packages.
+
+**Note:** The `type` option in `Options.series` is not required in demos thanks
+to a experimental `UnknownSeriesOptions` type. This should not be mentioned in
+any documentation, as a native solution has not been worked out yet.
+
 
 Test Templates
 --------------
