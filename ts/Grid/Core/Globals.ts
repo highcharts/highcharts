@@ -98,6 +98,7 @@ namespace Globals {
         popup: 'popup',
         button: 'button',
         icon: 'icon',
+        iconSearch: 'icon-search',
         popupContent: 'popup-content',
         columnFilterWrapper: 'column-filter-wrapper',
         toolbarButtonActiveIndicator: 'active-indicator',
@@ -131,7 +132,8 @@ namespace Globals {
         noWidth: 'no-width',
         rightAlign: 'right',
         centerAlign: 'center',
-        leftAlign: 'left'
+        leftAlign: 'left',
+        zeroWidth: 'zero-width'
     } as const;
 
     export const win = window;
