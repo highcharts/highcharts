@@ -183,11 +183,12 @@ function addCustomEvents(isTodoGrid) {
             targetGrid.viewport.updateRows();
 
             // Accessibility
-            if (isTodoGrid && selected) {
-                accessibility.announce(`Moved ${taskName} to Done`, true);
-            } else {
-                accessibility.announce(`Moved ${taskName} to Todo`, true);
-            }
+            accessibility.announce(
+                `Moved ${taskName} to ${
+                    isTodoGrid && selected ? 'Done' : 'Todo'
+                }.`,
+                true
+            );
         }
     });
 }
