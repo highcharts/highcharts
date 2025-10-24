@@ -354,11 +354,36 @@ export default class ContourSeries extends ScatterSeries {
                             let yMin = extremesUniform[2];
                             let yMax = extremesUniform[3];
 
+                            ${
+                                this.chart.inverted === false ? `
+                                let posX = (
+                                    (pos.x - xMin) /
+                                    (xMax - xMin) *
+                                    2.0 -
+                                    1.0
+                                );
+                                let posY = (
+                                    (pos.y - yMin) / (yMax - yMin) * 2.0 - 1.0
+                                );
+                                ` : `
+                                let posX = (
+                                    (pos.y - yMin) / (yMax - yMin) * 2.0 - 1.0
+                                );
+                                let posY = (
+                                    (
+                                        1.0 - (pos.x - xMin) / (xMax - xMin)
+                                    ) * 2.0 - 1.0
+                                );
+                                `
+                            }
+
                             output.valExtremes = valueExtremesUniform;
                             output.originalPos = pos.xyz;
                             output.pos = vec4f(
-                                (pos.x - xMin) / (xMax - xMin) * 2.0 - 1.0,
-                                (pos.y - yMin) / (yMax - yMin) * 2.0 - 1.0,
+                                posX,
+                                posY,
+                                //(pos.x - xMin) / (xMax - xMin) * 2.0 - 1.0,
+                                //(pos.y - yMin) / (yMax - yMin) * 2.0 - 1.0,
                                 0,
                                 1
                             );
