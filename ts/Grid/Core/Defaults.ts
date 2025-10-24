@@ -37,7 +37,6 @@ namespace Defaults {
 
     /**
      * Default options for the Grid.
-     * @internal
      */
     export const defaultOptions: DeepPartial<Options> = {
         accessibility: {
@@ -56,10 +55,51 @@ namespace Defaults {
                         descending: 'Sorted descending.',
                         none: 'Not sorted.'
                     }
+                },
+                pagination: {
+                    announcements: {
+                        pageSizeChange: 'Page size changed to',
+                        pageChange: 'Page changed to'
+                    }
                 }
             },
             loading: 'Loading...',
-            noData: 'No data to display'
+            noData: 'No data to display',
+            filter: 'Filter',
+            sortAscending: 'Sort ascending',
+            sortDescending: 'Sort descending',
+            column: 'Column',
+            setFilter: 'Set filter',
+            pagination: {
+                pageInfo: 'Showing {start} - {end} of {total} ' +
+                    '(page {currentPage} of {totalPages})',
+                pageSizeLabel: 'rows per page',
+                firstPage: 'First page',
+                previousPage: 'Previous page',
+                nextPage: 'Next page',
+                lastPage: 'Last page',
+                pageNumber: 'Page {page}',
+                ellipsis: 'More pages'
+            },
+            columnFilteringConditions: {
+                contains: 'Contains',
+                doesNotContain: 'Does not contain',
+                equals: 'Equals',
+                doesNotEqual: 'Does not equal',
+                beginsWith: 'Begins with',
+                endsWith: 'Ends with',
+                empty: 'Empty',
+                notEmpty: 'Not empty',
+                greaterThan: 'Greater than',
+                greaterThanOrEqualTo: 'Greater than or equal to',
+                lessThan: 'Less than',
+                lessThanOrEqualTo: 'Less than or equal to',
+                before: 'Before',
+                after: 'After',
+                all: 'All',
+                'true': 'True',
+                'false': 'False'
+            }
         },
         time: {
             timezone: 'UTC'
@@ -76,7 +116,8 @@ namespace Defaults {
             },
             columns: {
                 resizing: {
-                    enabled: true
+                    enabled: true,
+                    mode: 'adjacent'
                 }
             },
             theme: 'hcg-theme-default'
@@ -84,6 +125,9 @@ namespace Defaults {
         columnDefaults: {
             sorting: {
                 sortable: true
+            },
+            filtering: {
+                inline: false
             }
         }
     };

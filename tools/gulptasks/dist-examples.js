@@ -327,11 +327,18 @@ function distExamples() {
                 'grid-lite': {
                     path: ['grid', 'demo'],
                     title: 'Highcharts Grid Lite'
-                }/* ,
+                },
                 'grid-pro': {
                     path: ['grid', 'demo'],
                     title: 'Highcharts Grid Pro'
-                }*/
+                }
+            };
+        } else if (distProduct === 'Dashboards') {
+            samplesSubfolder = {
+                dashboards: {
+                    path: ['dashboards', 'demo'],
+                    title: 'Highcharts Dashboards'
+                }
             };
         }
 

@@ -100,7 +100,11 @@ Grid.grid('grid', {
                 setActiveColumnStyle(this);
             }
         }
-    }
+    },
+    columns: [{
+        id: 'Year',
+        width: 65
+    }]
 });
 
 function setActiveColumnStyle(cell) {

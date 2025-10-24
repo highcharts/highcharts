@@ -113,7 +113,7 @@ abstract class Row {
         }
         this.rendered = true;
 
-        if (this.viewport.grid.options?.rendering?.rows?.virtualization) {
+        if (this.viewport.virtualRows) {
             this.reflow();
         }
     }
@@ -183,18 +183,6 @@ abstract class Row {
         }
     }
 }
-
-
-/* *
- *
- *  Class Namespace
- *
- * */
-
-namespace Row {
-
-}
-
 
 /* *
  *

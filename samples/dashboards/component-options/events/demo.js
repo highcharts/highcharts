@@ -5,10 +5,8 @@ Dashboards.board('container', {
         connectors: [{
             id: 'Vitamin',
             type: 'CSV',
-            options: {
-                csv: csvData,
-                firstRowAsNames: true
-            }
+            csv: csvData,
+            firstRowAsNames: true
         }]
     },
     editMode: {
@@ -121,11 +119,11 @@ Dashboards.board('container', {
         connector: {
             id: 'Vitamin'
         },
-        type: 'DataGrid',
+        type: 'Grid',
         sync: {
             highlight: true
         },
-        dataGridOptions: {
+        gridOptions: {
             credits: {
                 enabled: false
             }

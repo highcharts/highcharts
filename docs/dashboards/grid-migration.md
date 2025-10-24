@@ -56,7 +56,7 @@ Some API options have been renamed or removed. For the full list, make sure to c
             sortable: false
         },
         events: {
-            afterSorting: function () {
+            afterSort: function () {
                 // Callback action
             },
             afterResize: function () {

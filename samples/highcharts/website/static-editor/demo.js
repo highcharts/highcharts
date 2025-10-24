@@ -8609,7 +8609,7 @@ highed.DataTable = function (parent, attributes) {
 
     function getHeaderTextArr(quoteStrings, section) {
 
-        const columnNames = [];
+        const columnIds = [];
 
 
         function cleanData(data) {
@@ -8621,7 +8621,7 @@ highed.DataTable = function (parent, attributes) {
                 title = '"' + title + '"';
             }
 
-            columnNames.push(title);
+            columnIds.push(title);
         }
 
         if (section) {
@@ -8639,7 +8639,7 @@ highed.DataTable = function (parent, attributes) {
 
         }, []);
 
-        return columnNames;
+        return columnIds;
     }
 
     function checkSections(sections, index) {
@@ -10138,7 +10138,7 @@ highed.DataPage = function (parent, options, chartPreview, chartFrame, props) {
                     'export'
                 ],
                 importer: {},
-                dataGrid: {},
+                grid: {},
                 customizer: {},
                 toolbarIcons: []
             },
@@ -10178,7 +10178,7 @@ highed.DataPage = function (parent, options, chartPreview, chartFrame, props) {
                 {
                     importer: properties.importer
                 },
-                properties.dataGrid
+                properties.grid
             )
         ),
         addRowInput = highed.dom.cr('input', 'highed-field-input highed-add-row-input'),
@@ -10922,7 +10922,7 @@ highed.SimpleDataPage = function (parent, assignDataParent, options, chartPrevie
                     'export'
                 ],
                 importer: {},
-                dataGrid: {},
+                grid: {},
                 customizer: {},
                 toolbarIcons: []
             },
@@ -10962,7 +10962,7 @@ highed.SimpleDataPage = function (parent, assignDataParent, options, chartPrevie
                 {
                     importer: properties.importer
                 },
-                properties.dataGrid
+                properties.grid
             )
         ),
         addRowInput = highed.dom.cr('input', 'highed-field-input highed-add-row-input'),
@@ -16398,7 +16398,7 @@ highed.highchartsErrors = {
     // Expected sorted data, got non-sorted
     15: {
         title: 'Highcharts expects data to be sorted',
-        text: 'The data passed to your chart needs to be sorted. If you\'re using the datagrid, you can sort your data by clicking the arrow in the x-axis column header, and selecting "Sort Ascending".'
+        text: 'The data passed to your chart needs to be sorted. If you\'re using the grid, you can sort your data by clicking the arrow in the x-axis column header, and selecting "Sort Ascending".'
     },
     // Highcharts already defined
     16: { title: 'Highcharts already defined in the page', text: 'Highcharts has already been defined in the page. Keep in mind that all features of Highcharts are included in Highstock' },
@@ -20911,7 +20911,7 @@ highed.DrawerEditor = function (parent, options, planCode) {
                     'export'
                 ],
                 importer: {},
-                dataGrid: {},
+                grid: {},
                 customizer: {},
                 toolbarIcons: []
             },
@@ -21097,7 +21097,7 @@ highed.DrawerEditor = function (parent, options, planCode) {
                 {
                     importer: properties.importer
                 },
-                properties.dataGrid
+                properties.grid
             ),
             chartPreview,
             highedChartContainer,

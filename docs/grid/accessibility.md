@@ -53,9 +53,9 @@ To customize the default language or wording for ARIA attributes and announcers,
 }
 ```
 
-For a complete list of available options, check out the [API reference](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.LangOptions).
+For a complete list of available options, check out the [API reference](https://api.highcharts.com/dashboards/#interfaces/Grid_Options.LangOptions).
 
-When configuring localization, it typically want it to apply to all grids on the same page. In such cases, we recommend using `setOptions()` to apply these changes globally. Read [Understanding Highcharts DataGrid](https://www.highcharts.com/docs/grid/understanding-grid#setOptions) for the details.
+When configuring localization, it typically want it to apply to all grids on the same page. In such cases, we recommend using `setOptions()` to apply these changes globally. Read [Understanding Highcharts Grid](https://www.highcharts.com/docs/grid/understanding-grid#setOptions) for the details.
 
 ## High contrast mode
 

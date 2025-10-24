@@ -47,10 +47,9 @@ function jsDocESMDTS() {
         .filter(file => (
             file.endsWith('.d.ts') &&
             !file.split(path.sep).includes('dashboards') &&
-            !file.split(path.sep).includes('datagrid') &&
+            !file.split(path.sep).includes('grid') &&
             !file.split(path.sep).includes('es-modules') &&
-            !file.split(path.sep).includes('esm') &&
-            !file.split(path.sep).includes('grid')
+            !file.split(path.sep).includes('esm')
         ));
     const argv = require('yargs').argv;
     const promises = [];

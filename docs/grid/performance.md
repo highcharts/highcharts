@@ -1,6 +1,8 @@
 # Performance and rendering
 Row virtualization is a performance optimization technique used in Grid. Instead of rendering all the rows of data at once, which can be thousands of entries, row virtualization renders only the rows currently visible within the user's viewport (plus a small buffer). As the user scrolls, the Grid dynamically renders new rows and removes those that scroll out of view.
 
+Alternatively, if you prefer to display data in discrete pages rather than continuous scrolling, you can use [Pagination](https://www.highcharts.com/docs/grid/pagination) to also avoid rendering all rows at once.
+
 ![Illustration showing virtualization of rows](ill_virtualization.png)
 
 This technique significantly enhances performance, leading to faster load times and efficient updates. Row virtualization reduces memory consumption, allowing the application to handle large datasets smoothly without compromising performance. Users benefit from a smoother experience with fluid scrolling and more responsive interactions such as sorting rows.
