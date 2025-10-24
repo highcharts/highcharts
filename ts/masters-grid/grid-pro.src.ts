@@ -54,7 +54,6 @@ import CellContentPro from '../Grid/Pro/CellRendering/CellContentPro.js';
 import CellRenderer from '../Grid/Pro/CellRendering/CellRenderer.js';
 
 
-
 /* *
  *
  *  Registers Imports
@@ -172,7 +171,7 @@ G.HeaderCell = G.HeaderCell || HeaderCell;
 G.TableCell = G.TableCell || TableCell;
 G.Pagination = G.Pagination || Pagination;
 
-GridEvents.compose(G.Column, G.HeaderCell, G.TableCell);
+GridEvents.compose(G.Grid, G.Column, G.HeaderCell, G.TableCell);
 CellEditingComposition.compose(G.Table, G.TableCell, G.Column);
 CreditsProComposition.compose(G.Grid);
 ExportingComposition.compose(G.Grid);
