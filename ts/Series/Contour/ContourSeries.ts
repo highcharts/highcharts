@@ -89,8 +89,11 @@ export default class ContourSeries extends ScatterSeries {
 
         super.init.apply(this, [chart, options]);
 
-        // Without this the axis will stretch above the canvas
+        // Adjusting to canvas
         this.yAxis.axisPointRange = 1;
+        this.yAxis.options.endOnTick = (
+            this.yAxis.userOptions.endOnTick || false
+        );
     }
 
     public getContourData(): [Uint32Array, Float32Array] {
