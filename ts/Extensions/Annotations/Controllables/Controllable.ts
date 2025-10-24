@@ -30,6 +30,7 @@ const { merge } = U;
  *
  * */
 
+/** @internal */
 export type AttrsMapObject = Record<keyof ControllableOptions, keyof SVGAttributes>;
 
 /* *
@@ -41,7 +42,8 @@ export type AttrsMapObject = Record<keyof ControllableOptions, keyof SVGAttribut
 /**
  * It provides methods for handling points, control points
  * and points transformations.
- * @private
+ *
+ * @interface Highcharts.AnnotationControllable
  */
 abstract class Controllable implements ControlTarget {
 
@@ -51,6 +53,7 @@ abstract class Controllable implements ControlTarget {
      *
      * */
 
+    /** @internal */
     public constructor(
         annotation: Annotation,
         options: ControllableOptions,
@@ -74,13 +77,37 @@ abstract class Controllable implements ControlTarget {
      *
      * */
 
+    /**
+     * @name Highcharts.AnnotationControllable#annotation
+     * @type {Highcharts.Annotation}
+     */
     public annotation: Annotation;
+
+    /**
+     * @name Highcharts.AnnotationControllable#chart
+     * @type {Highcharts.Chart}
+     */
     public chart: AnnotationChart;
+
+    /**
+     * @name Highcharts.AnnotationControllable#collection
+     * @type {string}
+     */
     public collection: ('labels'|'shapes');
+
+    /** @internal */
     public graphic!: SVGElement;
+
+    /** @internal */
     public index: number;
+
+    /** @internal */
     public itemType: ('label'|'shape');
+
+    /** @internal */
     public options: ControllableOptions;
+
+    /** @internal */
     public tracker?: SVGElement;
 
     /* *
@@ -91,7 +118,7 @@ abstract class Controllable implements ControlTarget {
 
     /**
      * Redirect attr usage on the controllable graphic element.
-     * @private
+     * @internal
      */
     public attr<T>(
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -103,7 +130,7 @@ abstract class Controllable implements ControlTarget {
     /**
      * Utility function for mapping item's options
      * to element's attribute
-     * @private
+     * @internal
      * @param {Highcharts.AnnotationsLabelsOptions|Highcharts.AnnotationsShapesOptions} options
      * @return {Highcharts.SVGAttributes}
      *         Mapped options.
@@ -138,7 +165,7 @@ abstract class Controllable implements ControlTarget {
 
     /**
      * Destroy a controllable.
-     * @private
+     * @internal
      */
     public destroy(): void {
 
@@ -155,7 +182,7 @@ abstract class Controllable implements ControlTarget {
 
     /**
      * Init the controllable
-     * @private
+     * @internal
      */
     public init(
         annotation: Annotation,
@@ -175,7 +202,7 @@ abstract class Controllable implements ControlTarget {
 
     /**
      * Redraw a controllable.
-     * @private
+     * @internal
      */
     public redraw(
         animation?: boolean
@@ -185,7 +212,7 @@ abstract class Controllable implements ControlTarget {
 
     /**
      * Render a controllable.
-     * @private
+     * @internal
      */
     public render(
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -199,7 +226,7 @@ abstract class Controllable implements ControlTarget {
 
     /**
      * Rotate a controllable.
-     * @private
+     * @internal
      * @param {number} cx
      *        Origin x rotation
      * @param {number} cy
@@ -216,7 +243,7 @@ abstract class Controllable implements ControlTarget {
 
     /**
      * Scale a controllable.
-     * @private
+     * @internal
      * @param {number} cx
      *        Origin x rotation
      * @param {number} cy
@@ -237,7 +264,7 @@ abstract class Controllable implements ControlTarget {
 
     /**
      * Set control points' visibility.
-     * @private
+     * @internal
      */
     public setControlPointsVisibility(
         visible: boolean
@@ -249,7 +276,7 @@ abstract class Controllable implements ControlTarget {
 
     /**
      * Check if a controllable should be rendered/redrawn.
-     * @private
+     * @internal
      * @return {boolean}
      *         Whether a controllable should be drawn.
      */
@@ -260,7 +287,8 @@ abstract class Controllable implements ControlTarget {
     /**
      * Translate shape within controllable item.
      * Replaces `controllable.translate` method.
-     * @private
+     *
+     * @internal
      * @param {number} dx
      *        Translation for x coordinate
      * @param {number} dy
@@ -298,7 +326,7 @@ abstract class Controllable implements ControlTarget {
 
     /**
      * Update a controllable.
-     * @private
+     * @internal
      */
     public update(
         newOptions: DeepPartial<ControllableOptions>
@@ -353,14 +381,18 @@ export default Controllable;
  * An object which denotes a controllable's anchor positions - relative and
  * absolute.
  *
- * @private
+ * @internal
  * @interface Highcharts.AnnotationAnchorObject
  *//**
- * Relative to the plot area position
+ * Relative to the plot area position.
+ *
+ * @internal
  * @name Highcharts.AnnotationAnchorObject#relativePosition
  * @type {Highcharts.BBoxObject}
  *//**
- * Absolute position
+ * Absolute position.
+ *
+ * @internal
  * @name Highcharts.AnnotationAnchorObject#absolutePosition
  * @type {Highcharts.BBoxObject}
  */
@@ -377,7 +409,7 @@ export default Controllable;
  * @name Highcharts.AnnotationControllable#collection
  * @type {string}
  *//**
- * @private
+ * @internal
  * @name Highcharts.AnnotationControllable#controlPoints
  * @type {Array<Highcharts.AnnotationControlPoint>}
  *//**

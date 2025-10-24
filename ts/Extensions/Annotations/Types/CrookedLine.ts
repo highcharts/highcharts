@@ -172,7 +172,7 @@ class CrookedLine extends Annotation {
 
     /**
      * Overrides default setter to get axes from typeOptions.
-     * @private
+     * @internal
      */
     public setClipAxes(): void {
         this.clipXAxis = this.chart.xAxis[
