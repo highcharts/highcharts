@@ -62,6 +62,7 @@ import D from '../Defaults.js';
 const {
     defaultOptions
 } = D;
+import DataTableCore from '../../Data/DataTableCore.js';
 import Templating from '../Templating.js';
 const { numberFormat } = Templating;
 import Foundation from '../Foundation.js';
@@ -86,6 +87,7 @@ import U from '../Utilities.js';
 import AST from '../Renderer/HTML/AST.js';
 import { AxisCollectionKey } from '../Axis/AxisOptions';
 import Tick from '../Axis/Tick.js';
+import { DataTableOptions } from '../../Data/DataTableOptions';
 const {
     addEvent,
     attr,
@@ -322,6 +324,7 @@ class Chart {
     public containerBox?: { height: number, width: number };
     public credits?: SVGElement;
     public caption?: SVGElement;
+    public dataTable!: Array<DataTableCore>;
     public eventOptions!: Record<string, EventCallback<Series, Event>>;
     public hasCartesianSeries?: boolean;
     public hasLoaded?: boolean;
@@ -354,6 +357,7 @@ class Chart {
     public plotWidth!: number;
     public pointCount!: number;
     public pointer?: Pointer;
+    public redrawTimeout?: number;
     public reflowTimeout?: number;
     public renderer!: Chart.Renderer;
     public renderTo!: globalThis.HTMLElement;
@@ -563,6 +567,9 @@ class Chart {
              */
             chart.index = charts.length; // Add the chart to the global lookup
 
+            // The chart.dataTable option
+            chart.dataTable = chart.getDataTable(options);
+
             charts.push(chart);
             H.chartCount++;
 
@@ -598,6 +605,22 @@ class Chart {
 
             chart.firstRender();
         });
+    }
+
+    public getDataTable(options: {
+        dataTable?: (
+            DataTableCore|
+            DataTableOptions|
+            Array<DataTableCore|DataTableOptions>
+        )
+    }): Array<DataTableCore> {
+        return (
+            options.dataTable ? splat(options.dataTable) : []
+        ).map((dataTableOptions): DataTableCore => (
+            dataTableOptions instanceof DataTableCore ?
+                dataTableOptions :
+                new DataTableCore(dataTableOptions)
+        ));
     }
 
     /**
@@ -638,7 +661,7 @@ class Chart {
         this.getSeriesOrderByLinks().forEach(function (series): void {
             // We need to set data for series with sorting after series init
             if (!series.points && !series.data && series.enabledDataSorting) {
-                series.setData(series.options.data as any, false);
+                series.setData(series.options.data, false);
             }
         });
     }
@@ -3007,7 +3030,7 @@ class Chart {
 
                     if (series.enabledDataSorting) {
                         // We need to call `setData` after `linkSeries`
-                        series.setData(options.data as any, false);
+                        series.setData(options.data, false);
                     }
 
                     fireEvent(chart, 'afterAddSeries', { series: series });

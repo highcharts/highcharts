@@ -72,6 +72,9 @@ import XRangePoint from './XRangePoint.js';
 function onAxisAfterGetSeriesExtremes(
     this: Axis
 ): void {
+
+    const time = this.chart.time;
+
     let dataMax: (number|undefined),
         modMax: (boolean|undefined);
 
@@ -80,15 +83,17 @@ function onAxisAfterGetSeriesExtremes(
         for (const series of this.series as Array<XRangeSeries>) {
             const column = (
                 series.dataTable.getColumn('x2', true) ||
-                series.dataTable.getColumn('end', true)
+                series.dataTable.getColumn('end', true) ||
+                []
             );
 
-            if (column) {
-                for (const val of (column as any)) {
-                    if (isNumber(val) && val > dataMax) {
-                        dataMax = val;
-                        modMax = true;
-                    }
+            for (let val of (column as any)) {
+                if (typeof val === 'string') {
+                    val = time.parse(val);
+                }
+                if (isNumber(val) && val > dataMax) {
+                    dataMax = val;
+                    modMax = true;
                 }
             }
         }
