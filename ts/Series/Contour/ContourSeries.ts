@@ -130,31 +130,35 @@ export default class ContourSeries extends ScatterSeries {
 
 
     public drawPoints(): void {
-
-        // If this function exists, buffers are set up
-        if (this.renderWebGPU) {
-            this.renderWebGPU?.();
-            return;
-        }
-
-        this.renderPromise = this.run();
-    }
-
-
-    async run(): Promise<void> {
         const series = this,
             { xAxis, yAxis } = series,
             canvas = series.canvas = (
                 series.canvas ||
                 document.createElement('canvas')
             ),
-            devicePixelRatio = window.devicePixelRatio,
-            context = this.context || canvas.getContext('webgpu');
+            devicePixelRatio = window.devicePixelRatio;
 
         canvas.width = xAxis.len * devicePixelRatio;
         canvas.height = yAxis.len * devicePixelRatio;
         canvas.style.width = xAxis.len + 'px';
         canvas.style.height = yAxis.len + 'px';
+
+        series.setExtremes();
+
+        // If this function exists, buffers are set up
+        if (series.renderWebGPU) {
+            series.renderWebGPU?.();
+            return;
+        }
+
+        series.renderPromise = series.run();
+    }
+
+
+    async run(): Promise<void> {
+        const series = this,
+            canvas = series.canvas as HTMLCanvasElement,
+            context = series.context || canvas.getContext('webgpu');
 
         if (context) {
             let device = this.device;
