@@ -173,12 +173,21 @@ function addCustomEvents(isTodoGrid) {
             const rowIndex = e.rowIndex;
             const rowData = dataTable.getRowObject(rowIndex);
             const data = { ...rowData, Completed: selected };
+            const accessibility = sourceGrid.accessibility;
+            const taskName = data.Task;
 
             targetGrid.dataTable.setRow(data);
             dataTable.deleteRows(rowIndex);
 
             sourceGrid.viewport.updateRows();
             targetGrid.viewport.updateRows();
+
+            // Accessibility
+            if (isTodoGrid && selected) {
+                accessibility.announce(`Moved ${taskName} to Done`, true);
+            } else {
+                accessibility.announce(`Moved ${taskName} to Todo`, true);
+            }
         }
     });
 }

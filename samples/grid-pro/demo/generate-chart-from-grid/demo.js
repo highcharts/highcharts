@@ -35,6 +35,7 @@ Grid.grid('grid', {
         cells: {
             events: {
                 click: function () {
+                    const grid = this.row.viewport.grid;
                     const yearColumnId = 'Year';
                     const columnId = this.column.id;
 
@@ -44,9 +45,7 @@ Grid.grid('grid', {
                     }
 
                     // We get the x axis from the Year column
-                    const years = this.row.viewport.grid.dataTable.getColumn(
-                        yearColumnId
-                    );
+                    const years = grid.dataTable.getColumn(yearColumnId);
 
                     // Create chart if it doesn't exist
                     if (!chart) {
@@ -79,13 +78,25 @@ Grid.grid('grid', {
                         }
                     };
 
+                    const accessibility = grid.accessibility;
+
                     if (existingSeries) {
                         // Remove the series from chart
                         existingSeries.remove();
+
+                        // Accessibility
+                        accessibility.announce(
+                            `Removed series ${columnId}.`,
+                            true
+                        );
+
                         // If no series left, destroy the chart
                         if (chart.series.length === 0) {
                             chart.destroy();
                             chart = null;
+
+                            // Accessibility
+                            accessibility.announce('Destroyed chart.', true);
                         }
                     } else {
                         // Add new series to chart
@@ -93,6 +104,12 @@ Grid.grid('grid', {
                             name: columnId,
                             data: this.column.data
                         });
+
+                        // Accessibility
+                        accessibility.announce(
+                            `Added series ${columnId}.`,
+                            true
+                        );
                     }
                     toggleColumnHighlight();
                     setActiveColumnStyle(this);
