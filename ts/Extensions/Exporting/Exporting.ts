@@ -285,11 +285,8 @@ class Exporting {
      *  Static Functions
      *
      * */
-
     /**
-     * Make hyphenated property names out of camelCase.
-     *
-     * @private
+     * Clean up after printing a chart.
      * @static
      * @function Highcharts.Exporting#hyphenate
      *
@@ -743,7 +740,7 @@ class Exporting {
                 if (e) {
                     e.stopPropagation();
                 }
-                onclick.call(chart, e);
+                onclick.call(chart, e, chart);
             };
         } else if (menuItems) {
             callback = function (
