@@ -142,6 +142,16 @@ namespace Globals {
     export const getClassName = (classNameKey: ClassNameKey): string =>
         classNamePrefix + rawClassNames[classNameKey];
 
+    /**
+     * License state shared across Grid instances.
+     * @internal
+     */
+    export const license = {
+        key: void 0 as string | undefined,
+        warningShown: false,
+        lastValidatedKey: void 0 as string | undefined
+    };
+
 }
 
 /* *
