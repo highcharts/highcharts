@@ -15,7 +15,12 @@ Highcharts.chart('container', {
 
     pane: {
         startAngle: -150,
-        endAngle: 150
+        endAngle: 150,
+        background: [{
+            outerRadius: '105%',
+            innerRadius: 0,
+            shape: 'circle'
+        }]
     },
 
     yAxis: [{
@@ -23,7 +28,11 @@ Highcharts.chart('container', {
         max: 200,
         lineColor: '#2caffe',
         tickColor: '#2caffe',
+        minorTicks: true,
         minorTickColor: '#2caffe',
+        minorTickWidth: 1,
+        minorTickPosition: 'inside',
+        tickWidth: 2,
         offset: -25,
         lineWidth: 2,
         labels: {
@@ -39,11 +48,13 @@ Highcharts.chart('container', {
         tickPosition: 'outside',
         lineColor: '#d66',
         lineWidth: 2,
-        minorTickPosition: 'outside',
-        tickColor: '#d66',
-        minorTickColor: '#d66',
-        tickLength: 5,
+        minorTicks: true,
         minorTickLength: 5,
+        minorTickColor: '#d66',
+        minorTickWidth: 1,
+        tickColor: '#d66',
+        tickWidth: 2,
+        tickLength: 5,
         labels: {
             distance: 12,
             rotation: 'auto'
@@ -58,20 +69,9 @@ Highcharts.chart('container', {
         dataLabels: {
             format: '<span style="color:#2caffe">{y} km/h</span><br/>' +
                 '<span style="color:#d66">{(multiply y 0.621):.0f} mph</span>',
-            backgroundColor: {
-                linearGradient: {
-                    x1: 0,
-                    y1: 0,
-                    x2: 0,
-                    y2: 1
-                },
-                stops: [
-                    [0, 'var(--highcharts-neutral-color-20, #ddd)'],
-                    [1, 'var(--highcharts-background-color, #fff)']
-                ]
-            },
             style: {
-                textOutline: 'none'
+                textOutline: 'none',
+                fontSize: '1.2em'
             }
         },
         tooltip: {
