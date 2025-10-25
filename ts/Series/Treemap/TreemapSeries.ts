@@ -900,7 +900,9 @@ class TreemapSeries extends ScatterSeries {
                 const { height = 0, width = 0 } = point.shapeArgs;
                 if (width > 32 && height > 16 && point.shouldDraw()) {
                     const dataLabelWidth = width -
-                        2 * (options.padding || padding || 0);
+                        2 * (
+                            splat(options.padding)[0] || splat(padding)[0] || 0
+                        );
                     style.width = `${dataLabelWidth}px`;
                     style.lineClamp ??= Math.floor(height / 16);
                     style.visibility = 'inherit';

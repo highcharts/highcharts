@@ -643,7 +643,8 @@ QUnit.test('Date objects as X values, column', function (assert) {
         });
 
         const series = chart.series[1],
-            datalabelY = series.points[0].dataLabel.y + series.xAxis.top,
+            datalabelY = series.points[0].dataLabel.y + series.xAxis.top -
+                series.points[0].dataLabel.options.distance,
             label = series.yAxis.stacking
                 .stacks[series.stackKey][0].label,
             stacklabelY = label.y + chart.plotTop;
