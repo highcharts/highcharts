@@ -4,7 +4,7 @@ tags: ["grid-pro"]
 
 # Cell renderers
 
-**Note:** Cell renderers are only available in [Highcharts Grid Pro](https://www.highcharts.com/docs/dashboards/grid-standalone). Highcharts Grid Lite users can as an alternative use `formatter` and `format`to control [how data is rendered inside cells](https://www.highcharts.com/docs/grid/columns#cells).
+**Note:** Cell renderers are only available in Grid Pro. Grid Lite users can as an alternative use `formatter` and `format`to control [how data is rendered inside cells](https://www.highcharts.com/docs/grid/columns#cells).
 
 Highcharts Grid Pro supports different cell renderers to provide interactive data presentation inside table cells. You can do this by setting the `columns[].cells.renderer` property for each column. This lets you control how each cell is displayed and interacted with, by e.g. turning a static value into an editable input field or a dropdown selector.
 
@@ -24,15 +24,15 @@ In the [renderer](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.
 
 Check out the [todo app demo](https://www.highcharts.com/demo/grid/todo-app) for how to implement renderers and read more below.
 
-| renderer | Description | dataType |
-|---|---|---|
-|[`textInput`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_TextInputRenderer.TextInputRenderer-1)| Text input that supports text/number and HTML | string / number |
-|[`numberInput`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_NumberInputRenderer.NumberInputRenderer-1) | Number input element | number |
-|[`dateInput`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_DateInputRenderer.DateInputRenderer-1) | Date input with datepicker | datetime |
-|[`dateTimeInput`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_DateTimeInputRenderer.DateTimeInputRenderer-1) | Date and time input with date/time picker | datetime |
-|[`timeInput`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_TimeInputRenderer.TimeInputRenderer-1) | Time input with time picker | datetime |
-|[`checkbox`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_CheckboxRenderer.CheckboxRenderer-1) | Checkbox input element | boolean |
-|[`select`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_SelectRenderer.SelectRenderer-1) | Select element. Note that `options` are required. | string |
+| renderer                                                                                                                                   | Description                                       | dataType        |
+| ------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------- | --------------- |
+| [`textInput`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_TextInputRenderer.TextInputRenderer-1)             | Text input that supports text/number and HTML     | string / number |
+| [`numberInput`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_NumberInputRenderer.NumberInputRenderer-1)       | Number input element                              | number          |
+| [`dateInput`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_DateInputRenderer.DateInputRenderer-1)             | Date input with datepicker                        | datetime        |
+| [`dateTimeInput`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_DateTimeInputRenderer.DateTimeInputRenderer-1) | Date and time input with date/time picker         | datetime        |
+| [`timeInput`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_TimeInputRenderer.TimeInputRenderer-1)             | Time input with time picker                       | datetime        |
+| [`checkbox`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_CheckboxRenderer.CheckboxRenderer-1)                | Checkbox input element                            | boolean         |
+| [`select`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_SelectRenderer.SelectRenderer-1)                      | Select element. Note that `options` are required. | string          |
 
 You can further customize input renderers by using the `attributes` option. This allows you to pass additional HTML attributes to the underlying input element, such as `min`, `max`, `step`, `placeholder`, or any other valid attribute.
 This is especially useful for number and date inputs, where you may want to restrict the allowed range or provide hints to users. For example:
@@ -49,35 +49,42 @@ renderer: {
 ```
 
 ### Text
+
 Renders an editable text field for the value in editMode, and plain text/HTML when not in editMode. No specific configuration is needed since this is the default:
 
 ```js
-columns: [{
-    id: 'whatever', // column id
+columns: [
+  {
+    id: "whatever", // column id
     cells: {
-        editMode: {
-            enabled: true
-        }
-    }
-}]
+      editMode: {
+        enabled: true,
+      },
+    },
+  },
+];
 ```
 
 ### Date
+
 Always renders a native date input. In `editMode` due to `dataType: 'datetime'`and is explicitly defined using `renderer` when not:
 
 ```js
-columns: [{
-    id: 'date', // column id
-    dataType: 'datetime',
+columns: [
+  {
+    id: "date", // column id
+    dataType: "datetime",
     cells: {
-        renderer: {
-            type: 'dateInput'
-        }
-    }
-}]
+      renderer: {
+        type: "dateInput",
+      },
+    },
+  },
+];
 ```
 
 ### Checkbox
+
 Renders a checkbox input element in `editMode` and uses `format` to display icons when not:
 
 ```js
@@ -97,74 +104,82 @@ columns: [{
 ```
 
 ### Select
+
 Renders a select element for predefined options in `editMode`. When not in `editMode` plain text is rendered:
 
 ```js
-columns: [{
-    id: 'country', // column id
-    dataType: 'string',
+columns: [
+  {
+    id: "country", // column id
+    dataType: "string",
     cells: {
-        editMode: {
-            renderer: {
-                type: 'select',
-                options: [
-                    { value: 'NO', label: 'Norway' },
-                    { value: 'NL', label: 'Netherlands' },
-                    { value: 'PL', label: 'Poland' },
-                    { value: 'EC', label: 'Ecuador' }
-                ]
-            }
-        }
-    }
-}]
+      editMode: {
+        renderer: {
+          type: "select",
+          options: [
+            { value: "NO", label: "Norway" },
+            { value: "NL", label: "Netherlands" },
+            { value: "PL", label: "Poland" },
+            { value: "EC", label: "Ecuador" },
+          ],
+        },
+      },
+    },
+  },
+];
 ```
 
 ### Number
+
 Renders an editable number field for the value in editMode, and plain text when not in editMode.
 
 ```js
-columns: [{
-    id: 'age', // column id
-    dataType: 'number',
+columns: [
+  {
+    id: "age", // column id
+    dataType: "number",
     cells: {
-        renderer: {
-            type: 'numberInput',
-            attributes: { // optional properties
-                min: 0,
-                max: 100,
-                step: 1
-            }
-        }
-    }
-}]
+      renderer: {
+        type: "numberInput",
+        attributes: {
+          // optional properties
+          min: 0,
+          max: 100,
+          step: 1,
+        },
+      },
+    },
+  },
+];
 ```
 
-
-
 ### Mixed
+
 Renders a select element for predefined options when not in `editMode`. When in `editMode` a text input is used. `dataType: 'number'` is set to make sure number and not string is written to `DataTable` on updates, and `validationRules` is also applied to provide user feedback:
 
 ```js
-columns: [{
-    id: 'size', // column id
-    dataType: 'number',
+columns: [
+  {
+    id: "size", // column id
+    dataType: "number",
     cells: {
+      renderer: {
+        type: "select",
+        options: [
+          { value: 1, label: 1 },
+          { value: 2, label: 2 },
+          { value: 3, label: 3 },
+        ],
+      },
+      editMode: {
         renderer: {
-            type: 'select',
-            options: [
-                { value: 1, label: 1 },
-                { value: 2, label: 2 },
-                { value: 3, label: 3 }
-            ]
+          type: "textInput",
         },
-        editMode: {
-            renderer: {
-                type: 'textInput'
-            },
-            validationRules: ['notEmpty', 'number']
-        }
-    }
-}]
+        validationRules: ["notEmpty", "number"],
+      },
+    },
+  },
+];
 ```
 
 ## Sparkline renderer
@@ -174,17 +189,19 @@ A [`sparkline`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_
 In its simplest form, given that cell data is an array of numbers, a line sparkline can be rendered using:
 
 ```js
-columns: [{
-    id: 'trend', // column id
+columns: [
+  {
+    id: "trend", // column id
     cells: {
-        renderer: {
-            type: 'sparkline',
-        }
-    }
-}]
+      renderer: {
+        type: "sparkline",
+      },
+    },
+  },
+];
 ```
 
-Line, bar, column, area and pie are preconfigured as generic, minimalistic sparklines in Highcharts Grid Pro, but you can use `chartConfig` to configure these further or use other chart types. All chart types and configuration options from the [Highcharts Core](https://www.highcharts.com/products/highcharts/) charting library are available. 
+Line, bar, column, area and pie are preconfigured as generic, minimalistic sparklines in Highcharts Grid Pro, but you can use `chartConfig` to configure these further or use other chart types. All chart types and configuration options from the [Highcharts Core](https://www.highcharts.com/products/highcharts/) charting library are available.
 
 Go to the [Sparkline documentation article](https://www.highcharts.com/docs/grid/sparklines) to read more about sparklines and configuration options.
 
@@ -194,67 +211,66 @@ You can also write a custom renderer. To do so, define:
 
 1. A class for the specific Cell Content (it should extend the abstract [`CellContent`](https://api.highcharts.com/grid/#classes/Grid_Core_Table_CellContent_CellContent.CellContent) or [`CellContentPro`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_CellContentPro.CellContentPro) class). It must implement lifecycle methods: `add`, `update`, `delete`.
 
-    ```ts
-    class CustomCellContent extends CellContentPro {
+   ```ts
+   class CustomCellContent extends CellContentPro {
+     constructor(cell: TableCell, renderer: CustomCellRenderer) {
+       super(cell, renderer);
+       this.add();
+     }
 
-        constructor(cell: TableCell, renderer: CustomCellRenderer) {
-            super(cell, renderer);
-            this.add();
-        }
+     protected override add(): void {
+       // create your content here
+     }
 
-        protected override add(): void {
-            // create your content here
-        }
+     public override update(): void {
+       // update your content here, when the cell value has changed
+     }
 
-        public override update(): void {
-            // update your content here, when the cell value has changed
-        }
-
-        public override delete(): void {
-            // remove the element from DOM, clear event listeners, etc.
-        }
-
-    }
-    ```
+     public override delete(): void {
+       // remove the element from DOM, clear event listeners, etc.
+     }
+   }
+   ```
 
 2. A class representing your Renderer, which inherits from the abstract [`CellRenderer`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_CellRenderer.CellRenderer-1) class. It should implement:
-    - `options` – an abstract property holding the renderer’s unique configuration options
-    - `render` – a method that creates and returns a new instance of CellContent
 
-    ```ts
-    export interface CustomRendererOptions extends CellRenderer.Options {
-        type: 'customRenderer';
-        additionalOptions: unknown;
-    }
+   - `options` – an abstract property holding the renderer’s unique configuration options
+   - `render` – a method that creates and returns a new instance of CellContent
 
-    class CustomRenderer extends CellRenderer {
+   ```ts
+   export interface CustomRendererOptions extends CellRenderer.Options {
+     type: "customRenderer";
+     additionalOptions: unknown;
+   }
 
-        public options: CustomRendererOptions;
+   class CustomRenderer extends CellRenderer {
+     public options: CustomRendererOptions;
 
-        constructor(column: Column, options: CustomRendererOptions) {
-            super(column);
-            this.options = options;
-        }
+     constructor(column: Column, options: CustomRendererOptions) {
+       super(column);
+       this.options = options;
+     }
 
-        public render(cell: TableCell): CustomCellContent {
-            return new CustomCellContent(cell, this);
-        }
-    }
-    ```
+     public render(cell: TableCell): CustomCellContent {
+       return new CustomCellContent(cell, this);
+     }
+   }
+   ```
 
 3. Add the renderer type to [`CellRendererRegistry`](https://api.highcharts.com/grid/#modules/Grid_Pro_CellRendering_CellRendererRegistry.CellRendererRegistry) so it can be used in Grid Options.
 
-    ```ts
-    declare module 'highcharts/grid/es-modules/Grid/Pro/CellRendering/CellRendererType' {
-        interface CellRendererTypeRegistry {
-            customRenderer: typeof CustomRenderer;
-        }
-    }
+   ```ts
+   declare module "highcharts/grid/es-modules/Grid/Pro/CellRendering/CellRendererType" {
+     interface CellRendererTypeRegistry {
+       customRenderer: typeof CustomRenderer;
+     }
+   }
 
-    CellRendererRegistry.registerRenderer('customRenderer', CustomRenderer);
-    ```
+   CellRendererRegistry.registerRenderer("customRenderer", CustomRenderer);
+   ```
 
 If you want your custom renderer to be usable in cell edit mode, you need to implement additionally the following interfaces:
+
 - [`EditModeContent`](https://api.highcharts.com/grid/#interfaces/Grid_Pro_CellEditing_CellEditMode.EditModeContent) - it should extend the custom cell content class.
 - [`EditModeRenderer`](https://api.highcharts.com/grid/#interfaces/Grid_Pro_CellEditing_CellEditMode.EditModeRenderer) - it should extend the custom cell renderer class.
 
@@ -267,76 +283,73 @@ This section demonstrates how to create a custom **Textarea** cell renderer for 
 1. We start by importing the default [`CellRenderer`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_CellRenderer.CellRenderer-1) and `CellContentPro` classes and [`CellRendererRegistry`](https://api.highcharts.com/grid/#modules/Grid_Pro_CellRendering_CellRendererRegistry.CellRendererRegistry) from the `Grid` namespace.
 
 ```js
-const {
-    CellRenderer,
-    CellContentPro,
-    CellRendererRegistry
-} = Grid;
+const { CellRenderer, CellContentPro, CellRendererRegistry } = Grid;
 
-class TextareaContent extends CellContentPro {
-
-}
+class TextareaContent extends CellContentPro {}
 ```
+
 2. The next step is to create a new class, such as **TextareaContent**, which extends the imported `CellContentPro` class and is responsible for creating and managing the `<textarea>` element.
 
 ```js
 class TextareaContent extends CellContentPro {
-    constructor(cell, renderer) {
-        super(cell, renderer);
-        this.add();
-    }
+  constructor(cell, renderer) {
+    super(cell, renderer);
+    this.add();
+  }
 
-    // Required by the interface
-    add(parentElement = this.cell.htmlElement) {
-        const textarea = this.textarea = document.createElement('textarea');
-        this.update();
-        parentElement.appendChild(textarea);
-        return textarea;
-    }
+  // Required by the interface
+  add(parentElement = this.cell.htmlElement) {
+    const textarea = (this.textarea = document.createElement("textarea"));
+    this.update();
+    parentElement.appendChild(textarea);
+    return textarea;
+  }
 
-    // Required by the interface
-    update() {
-        this.textarea.value = this.cell.value;
-    }
+  // Required by the interface
+  update() {
+    this.textarea.value = this.cell.value;
+  }
 
-    // Required by the interface
-    destroy() {
-        this.textarea.remove();
-    }
+  // Required by the interface
+  destroy() {
+    this.textarea.remove();
+  }
 }
 ```
 
 3. The **TextareaRenderer** class is responsible for integrating the custom textarea content into the grid. By extending the [`CellRenderer`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_CellRenderer.CellRenderer-1) base class, it provides a `render`
-method that creates and returns a new instance of `TextareaContent` for each cell.
+   method that creates and returns a new instance of `TextareaContent` for each cell.
 
 ```js
 class TextareaRenderer extends CellRenderer {
-    constructor(column, options) {
-        super(column);
-        this.options = options;
-    }
+  constructor(column, options) {
+    super(column);
+    this.options = options;
+  }
 
-    render(cell) {
-        return new TextareaContent(cell, this);
-    }
+  render(cell) {
+    return new TextareaContent(cell, this);
+  }
 }
 ```
 
 4. Register the new renderer type with the [`CellRendererRegistry`](https://api.highcharts.com/grid/#modules/Grid_Pro_CellRendering_CellRendererRegistry.CellRendererRegistry) so it can be used in the Grid configuration.
 
 ```js
-CellRendererRegistry.registerRenderer('textarea', TextareaRenderer);
+CellRendererRegistry.registerRenderer("textarea", TextareaRenderer);
 ```
 
 Once registered, you can use the custom `textarea` renderer in your column configuration:
 
 ```js
-columns: [{
-    id: 'description',
+columns: [
+  {
+    id: "description",
     cells: {
-        renderer: {
-            type: 'textarea'
-        }
-    }
-}]
+      renderer: {
+        type: "textarea",
+      },
+    },
+  },
+];
 ```
