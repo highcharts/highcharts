@@ -1,25 +1,31 @@
 # Types of Dashboards components
 
-Components are the building blocks of **Dashboards** layout. Several types of components are provided and can be used out of the box. The KPI, Highcharts, and Grid components come pre-configured with default configurations, whereas the HTML component can be customized to fit specific needs. It is also possible to create and register Custom components. 
+Components are the building blocks of **Dashboards** layout. Several types of components are provided and can be used out of the box. The KPI, Highcharts, and Grid components come pre-configured with default configurations, whereas the HTML component can be customized to fit specific needs. It is also possible to create and register Custom components.
 
 ## Overview
+
 This is an overview of the most critical parameters of a component:
-* `id` - The unique identifier of the component, which is later used to identify it by dashboard and/or used to set CSS styles.
-* `renderTo` - id of the cell to which the component should be rendered
-* `className` - CSS class that is applied to the component's container
-* `type` - the type of the component. It can be [`HTML`](#html-component), [`KPI`](#kpi-component), [`Highcharts`](#highcharts-component),
-[`Grid`](#grid-component) or [custom defined](https://www.highcharts.com/docs/dashboards/custom-component).
-* `events` - an object containing a pair of names for the event and a callback function that should be called on a given event. The list of events can be found in the API Reference, but the most common is `mount`.
-* `sync` - list of events that should be synchronized between components.
+
+- `id` - The unique identifier of the component, which is later used to identify it by dashboard and/or used to set CSS styles.
+- `renderTo` - id of the cell to which the component should be rendered
+- `className` - CSS class that is applied to the component's container
+- `type` - the type of the component. It can be [`HTML`](#html-component), [`KPI`](#kpi-component), [`Highcharts`](#highcharts-component),
+  [`Grid`](#grid-component) or [custom defined](https://www.highcharts.com/docs/dashboards/custom-component).
+- `events` - an object containing a pair of names for the event and a callback function that should be called on a given event. The list of events can be found in the API Reference, but the most common is `mount`.
+- `sync` - list of events that should be synchronized between components.
 
 ## HTML Component
+
 The most basic and generic component type allows you to add everything that could be defined as HTML, as well as some custom events.
 
-The HTML component can be defined in two ways:  
-### 1. Abstract Syntax Tree (AST) style  
+The HTML component can be defined in two ways:
+
+### 1. Abstract Syntax Tree (AST) style
+
 Defines the HTML code as a nested [tree structure](https://www.highcharts.com/docs/chart-concepts/dataviz-glossary#tree-data-structure).
 
 Code snippet:
+
 ```js
 {
     type: 'HTML',
@@ -32,10 +38,13 @@ Code snippet:
     }]
 }
 ```
+
 ### 2. HTML string
+
 Defines the HTML code as a standard HTML string.
 
 Code snippet:
+
 ```js
 {
     type: 'HTML',
@@ -51,15 +60,18 @@ Custom HTML components are explained in the [Custom Component](https://www.highc
 See the [HTML Component](https://www.highcharts.com/docs/dashboards/html-component) page for detailed information.
 
 ### Highcharts Component
+
 Dashboards support the use of `Highcharts` charts or maps out of the box.
 
-The `highcharts` module must be imported *before* the `dashboards` module, as shown here:
+The `highcharts` module must be imported _before_ the `dashboards` module, as shown here:
+
 ```html
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
 ```
 
 The `Highcharts`CSS file must be included for the correct chart rendering.
+
 ```css
 @import url("https://code.highcharts.com/css/highcharts.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
@@ -71,6 +83,7 @@ In addition, the `chartOptions` object allows you to configure anything that can
 Data may be provided directly in the chart option, but in a **Dashboards** application, one often wants to share data between components. In this case, the [Data Pool](https://www.highcharts.com/docs/dashboards/data-handling) mechanism offers a convenient solution.
 
 Code snippet with data embedded in the chart options, no data connector used:
+
 ```js
 {
     renderTo: 'dashboard-1',
@@ -82,9 +95,11 @@ Code snippet with data embedded in the chart options, no data connector used:
     }
 }
 ```
+
 The above code snippet is part of a [Highcharts Component example](https://www.highcharts.com/samples/embed/dashboards/components/component-highcharts) that uses embedded data.
 
 Code snippet using the Data Connector mechanism.
+
 ```js
 dataPool: {
     connectors: [{
@@ -114,6 +129,7 @@ components: [
     }
 }]
 ```
+
 The above code snippet is part of a [Highcharts Component example](https://www.highcharts.com/samples/dashboards/demo/minimal-html) that uses data shared via a `DataConnector`.
 
 When using a Data Connector, the data is parsed and organized in rows, with `columnIds` either given explicitly or used as column names in the first row.
@@ -122,30 +138,34 @@ The chart then uses the [columnAssignment](https://api.highcharts.com/dashboards
 Here is an [example](https://www.highcharts.com/samples/embed/dashboards/demo/minimal) that uses column assignment.
 
 You can load the Highcharts `drag-drop` module if the data connector is connected.
-This allows the user to change the value and sync the changes of this value with other 
+This allows the user to change the value and sync the changes of this value with other
 components. If a `mathModifier` is applied to the data from the connector,
 chart editing is disabled. See the `dataPool` section for more details.
 
 See the [HighchartsComponent](https://www.highcharts.com/docs/dashboards/highcharts-component) page for detailed information.
 
 ### Grid Component
-To visualize data in a row-column layout, you can use the Grid component. The `Grid` module *must* be imported before the **Dashboards** module as shown here:
+
+The Grid Component uses [Highcharts Grid](https://www.highcharts.com/docs/grid/general) to render its content. The `Grid` module _must_ be imported before the **Dashboards** module as shown here:
+
 ```html
 <script src="https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/grid-pro.js"></script>
 <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
 ```
 
 The `Grid` module has its own style set, so the CSS file must be imported for correct rendering.
+
 ```css
 @import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 ```
 
-For a chart to be displayed, the type `Grid` must be specified, the `renderTo` option set, and data must be provided as an embedded `dataTable` object or via a `DataConnector`. In addition, the `gridOptions` object allows you to configure `Grid` specific parameters like cell formatting, column assignment, etc.
+For a grid to be displayed, the type `Grid` must be specified, the `renderTo` option set, and data must be provided as an embedded `dataTable` object or via a `DataConnector`. In addition, the `gridOptions` object allows you to configure `Grid` specific parameters like cell formatting, column assignment, etc.
 
 The **Grid** may have the series data directly embedded as part of the `gridOptions`. However, a more common usage is the **Dashboards**' data pool mechanism, which shares data between the dashboard components. In this case, the `id` of the `DataConnector` must be included in the data grid's configuration.
 
 Code snippet with data embedded in the `Grid` data table; no data connector used.
+
 ```js
 {
     renderTo: 'dashboard-1',
@@ -159,9 +179,11 @@ Code snippet with data embedded in the `Grid` data table; no data connector used
     }
 }
 ```
+
 The above code snippet is part of a [Grid example](https://www.highcharts.com/samples/embed/grid-lite/demo/your-first-grid) that uses embedded data.
 
 Code snippet using a data connector.
+
 ```js
 dataPool: {
     connectors: [{
@@ -187,6 +209,7 @@ dataPool: {
     }
 }
 ```
+
 The above code snippet is part of a [Grid example](https://www.highcharts.com/samples/embed/dashboards/components/component-grid) that uses data shared via a `DataConnector`.
 
 When using the data connector, the `Grid` is automatically populated. If other components are using the same data connector, they will be automatically updated when the user edits a data grid cell. [Here is the example](https://www.highcharts.com/demo/dashboards/grid-sync).
@@ -196,11 +219,13 @@ NB! If the data was created by the [mathModifier](https://www.highcharts.com/doc
 See the [Grid Component](https://www.highcharts.com/docs/dashboards/grid-component) page for more information.
 
 ### KPI Component
+
 The `KPI component` (Key Performance Indicator) facilitates the visualization of one single value in a data set. It is a simple component that displays a title and a value but can also include a Highcharts component to visualize the value, typically a gauge. Additionally, the component can be configured with threshold values, which can adapt its style according to its current value.
 
 This component type is bundled with the Highcharts plugin, and you need to connect the Highcharts with the dashboard plugin to use it (similar to the Highcharts component).
 
 Code snippet:
+
 ```js
 {
     renderTo: 'kpi-00',
@@ -211,6 +236,7 @@ Code snippet:
     thresholdColors: ['#f45b5b', '#f7a35c', '#90ed7d']
 },
 ```
+
 The above code snippet is part of a [KPI component example](https://www.highcharts.com/samples/embed/dashboards/components/component-kpi).
 
 See the [KPI Component](https://www.highcharts.com/docs/dashboards/kpi-component) page for more information.
