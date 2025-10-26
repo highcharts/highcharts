@@ -11,6 +11,19 @@
 /* Grid Pro specific styles */
 
 .hcg-container {
+    /* Credits fonts */
+    --ig-credits-font-weight: var(--hcg-credits-font-weight, var(--ig-font-weight));
+    --ig-credits-font-size: var(--hcg-credits-font-size, 0.9em);
+    --ig-credits-font-family: var(--hcg-credits-font-family, var(--ig-font-family));
+    --ig-credits-color: var(--hcg-credits-color, var(--ig-color));
+    --ig-credits-font: var(--ig-credits-font-weight) var(--ig-credits-font-size) var(--ig-credits-font-family);
+    --ig-credits-text-align: var(--hcg-credits-text-align, right);
+
+    /* Credits padding */
+    --ig-credits-horizontal-padding: var(--hcg-credits-horizontal-padding, var(--hcg-credits-padding, 5px));
+    --ig-credits-vertical-padding: var(--hcg-credits-vertical-padding, var(--hcg-credits-padding, 5px));
+    --ig-credits-padding: var(--ig-credits-vertical-padding) var(--ig-credits-horizontal-padding) 0 var(--ig-credits-horizontal-padding);
+    
     /* CSS helpers */
     --ig-highlight-border-size: var(--hcg-highlight-border-size, 1px);
 
@@ -129,7 +142,7 @@
 
 .hcg-credits-container.hcg-credits-pro .hcg-credits {
     color: var(--ig-credits-color);
-    font-size: var(--ig-credits-font-size);
+    font: var(--ig-credits-font);
     text-decoration: none;
     display: inline-block;
 }
