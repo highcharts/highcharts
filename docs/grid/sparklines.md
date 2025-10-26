@@ -4,7 +4,7 @@ tags: ["grid-pro"]
 
 # Sparklines
 
-**Note:** Sparklines are only available in [Highcharts Grid Pro](https://www.highcharts.com/docs/dashboards/grid-standalone), and also requires a valid **Highcharts Core license**.
+**Note:** Sparklines are only available in **Highcharts Grid Pro**, and also requires a valid **Highcharts Core license**.
 
 ![Illustration showing different sparklines](ill_sparklines.png)
 
@@ -12,12 +12,10 @@ A [`sparkline`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_
 
 Line, bar, column, area and pie are preconfigured as generic, minimalistic sparklines in Highcharts Grid Pro, but you can use `chartConfig` to configure these further or use other chart types. All chart types and configuration options from the [Highcharts Core](https://www.highcharts.com/products/highcharts/) charting library are available. 
 
-
 ## Setup
 If you’re simply including the `highcharts.js` file, just make sure to load it before `grid-pro.js`. If you’re using ES Modules or importing the bundles in the opposite order, you’ll also need to manually register Highcharts by calling `SparklineRenderer.useHighcharts(Highcharts)` or `Grid.ColumnRendererRegistry.types.sparkline.useHighcharts(Highcharts)`.
 
 Check out the [sparklines demo](https://www.highcharts.com/demo/grid/sparklines) for how to implement sparklines with different configuration options and read more below.
-
 
 ## Basic line sparkline
 
@@ -124,4 +122,3 @@ You can configure the sparkline using the `chartOptions` API option, that suppor
 Sparkline supports all standard Highcharts chart options and is optimized for speed, including virtual scrolling for large datasets.
 
 <iframe src="https://www.highcharts.com/samples/embed/grid/basic/sparklines?force-light-theme" allow="fullscreen"></iframe>
-
