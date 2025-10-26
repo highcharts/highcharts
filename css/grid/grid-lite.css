@@ -150,11 +150,6 @@
     --ig-description-font: var(--ig-description-font-weight) var(--ig-description-font-size) var(--ig-description-font-family);
     --ig-description-text-align: var(--hcg-description-text-align, var(--ig-text-align));
 
-    /* Credits fonts */
-    --ig-credits-font-size: var(--hcg-credits-font-size, 0.7em);
-    --ig-credits-color: var(--hcg-credits-color, var(--ig-color));
-    --ig-credits-text-align: var(--hcg-credits-text-align, right);
-
     /* Default borders */
     --ig-border-radius: var(--hcg-border-radius, 0);
     --ig-border-width: var(--hcg-border-width, 0);
@@ -205,11 +200,6 @@
     --ig-description-horizontal-padding: var(--hcg-description-horizontal-padding, var(--hcg-description-padding, var(--ig-horizontal-padding)));
     --ig-description-vertical-padding: var(--hcg-description-vertical-padding, var(--hcg-description-padding, var(--ig-vertical-padding)));
     --ig-description-padding: var(--ig-description-vertical-padding) var(--ig-description-horizontal-padding) 0 var(--ig-description-horizontal-padding);
-
-    /* Credits padding */
-    --ig-credits-horizontal-padding: var(--hcg-credits-horizontal-padding, var(--hcg-credits-padding, var(--ig-horizontal-padding)));
-    --ig-credits-vertical-padding: var(--hcg-credits-vertical-padding, var(--hcg-credits-padding, var(--ig-vertical-padding)));
-    --ig-credits-padding: var(--ig-credits-vertical-padding) var(--ig-credits-horizontal-padding) 0 var(--ig-credits-horizontal-padding);
 
     /* Pagination padding */
     --ig-pagination-horizontal-padding: var(--hcg-pagination-horizontal-padding, var(--hcg-pagination-padding, var(--ig-horizontal-padding)));
@@ -1024,7 +1014,8 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
 
 /* Credits */
 
-.hcg-credits {
+.hcg-credits,
+.highcharts-light .hcg-credits {
     display: block;
     width: 114px;
     height: 20px;
@@ -1038,13 +1029,15 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
         );
 }
 
-.highcharts-light .hcg-credits {
-    background-image:
-        image-set(
-            /* stylelint-disable-next-line function-comma-newline-after */
-            url("https://assets.highcharts.com/grid/logo_light.png") 1x,
-            url("https://assets.highcharts.com/grid/logo_lightx2.png") 2x
-        );
+@media (prefers-color-scheme: dark) {
+    .hcg-credits {
+        background-image:
+            image-set(
+                /* stylelint-disable-next-line function-comma-newline-after */
+                url("https://assets.highcharts.com/grid/logo_dark.png") 1x,
+                url("https://assets.highcharts.com/grid/logo_darkx2.png") 2x
+            );
+    }
 }
 
 .highcharts-dark .hcg-credits {
@@ -1054,18 +1047,6 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
             url("https://assets.highcharts.com/grid/logo_dark.png") 1x,
             url("https://assets.highcharts.com/grid/logo_darkx2.png") 2x
         );
-}
-
-.hcg-credits-container.hcg-credits-pro {
-    text-align: var(--ig-credits-text-align);
-    padding: var(--ig-credits-padding);
-}
-
-.hcg-credits-container.hcg-credits-pro .hcg-credits {
-    color: var(--ig-credits-color);
-    font-size: var(--ig-credits-font-size);
-    text-decoration: none;
-    display: inline-block;
 }
 
 /* Loader */
@@ -1504,7 +1485,6 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     --hcg-border-radius: 5px;
     --hcg-border-width: 1px;
     --hcg-caption-font-size: 18px;
-    --hcg-credits-padding: 5px;
     --hcg-font-size: 15px;
     --hcg-header-vertical-padding: 10px;
     --hcg-padding: 15px;
@@ -1534,15 +1514,6 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
         --hcg-pagination-button-active-background: #ffffff;
         --hcg-pagination-button-active-color: #000000;
         --hcg-icon-hover-color: #ffffff;
-    }
-
-    .hcg-credits {
-        background-image:
-            image-set(
-                /* stylelint-disable-next-line function-comma-newline-after */
-                url("https://assets.highcharts.com/grid/logo_dark.png") 1x,
-                url("https://assets.highcharts.com/grid/logo_darkx2.png") 2x
-            );
     }
 
     .hcg-pagination-wrapper .hcg-pagination-page-size-container select,
