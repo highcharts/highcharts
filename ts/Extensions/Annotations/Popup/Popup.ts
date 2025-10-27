@@ -205,8 +205,6 @@ class Popup extends BaseForm {
     /**
      * Create input with label.
      *
-     * @internal
-     *
      * @param {string} option
      *        Chain of fields i.e params.styles.fontSize separated by the dot.
      *
@@ -293,7 +291,6 @@ class Popup extends BaseForm {
     /**
      * Create button.
      *
-     * @internal
      * @param {Highcharts.HTMLDOMElement} parentDiv
      * Container where elements should be added
      * @param {string} label
@@ -335,7 +332,6 @@ class Popup extends BaseForm {
     /**
      * Create content and show popup.
      *
-     * @internal
      * @param {string} - type of popup i.e indicators
      * @param {Highcharts.Chart} - chart
      * @param {Highcharts.AnnotationsOptions} - options

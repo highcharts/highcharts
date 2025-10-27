@@ -1072,6 +1072,7 @@ function listAllSeries(
  *
  * */
 
+/** @internal */
 const PopupIndicators = {
     addForm,
     getAmount

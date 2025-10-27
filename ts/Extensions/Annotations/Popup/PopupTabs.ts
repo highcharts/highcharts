@@ -210,6 +210,7 @@ function switchTabs(
  *
  * */
 
+/** @internal */
 const PopupTabs = {
     init
 };

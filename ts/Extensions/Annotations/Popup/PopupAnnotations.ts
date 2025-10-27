@@ -337,6 +337,7 @@ function addFormFields(
  *
  * */
 
+/** @internal */
 const PopupAnnotations = {
     addForm,
     addToolbar

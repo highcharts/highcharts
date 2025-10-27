@@ -143,6 +143,7 @@ function wrapPointerOnContainerMouserDown(
  *
  * */
 
+/** @internal */
 const PopupComposition = {
     compose
 };
