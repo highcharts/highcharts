@@ -145,18 +145,18 @@ export default class ContourSeries extends ScatterSeries {
                 'http://www.w3.org/2000/svg',
                 'foreignObject'
             ),
-            xLen = xAxis.len,
-            yLen = yAxis.len,
+            xLen = xAxis.len * devicePixelRatio,
+            yLen = yAxis.len * devicePixelRatio,
             foreignObjDimensions = series.chart.inverted ? {
                 x: yAxis.pos,
                 y: xAxis.pos,
-                width: yLen * devicePixelRatio,
-                height: xLen * devicePixelRatio
+                width: yLen,
+                height: xLen
             } : {
                 x: xAxis.pos,
                 y: yAxis.pos,
-                width: xLen * devicePixelRatio,
-                height: yLen * devicePixelRatio
+                width: xLen,
+                height: yLen
             };
 
         for (const [key, value] of Object.entries(foreignObjDimensions)) {
@@ -166,10 +166,12 @@ export default class ContourSeries extends ScatterSeries {
         foreignObject.appendChild(canvas);
         svg?.appendChild(foreignObject);
 
-        canvas.width = xLen * devicePixelRatio;
-        canvas.height = yLen * devicePixelRatio;
-        canvas.style.width = xLen + 'px';
-        canvas.style.height = yLen + 'px';
+        const { width, height } = foreignObjDimensions;
+
+        canvas.width = width;
+        canvas.height = height;
+        canvas.style.width = width + 'px';
+        canvas.style.height = height + 'px';
 
 
         // If this function exists, buffers are set up
