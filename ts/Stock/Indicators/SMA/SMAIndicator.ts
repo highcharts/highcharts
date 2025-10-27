@@ -26,6 +26,7 @@ import type {
 import type SMAPoint from './SMAPoint';
 
 import Chart from '../../../Core/Chart/Chart.js';
+import DataTableCore from '../../../Data/DataTableCore.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     line: LineSeries
@@ -555,7 +556,14 @@ class SMAIndicator extends LineSeries {
                 processedData.xData.length !== oldDataLength + 1
             ) {
                 overwriteData = false;
-                indicator.updateData(processedData.values as any);
+
+                this.setData(new DataTableCore({
+                    columns: {
+                        x: processedData.xData,
+                        ...valueColumns
+                    }
+                }), false);
+
             }
         }
 
