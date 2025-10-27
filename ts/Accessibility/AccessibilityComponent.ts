@@ -19,7 +19,7 @@
  * */
 
 import type Accessibility from './Accessibility';
-import type EventCallback from '../Core/EventCallback';
+import type { EventCallback } from '../Core/Callback';
 import type { DOMElementType } from '../Core/Renderer/DOMElementType';
 import type HTMLElement from '../Core/Renderer/HTML/HTMLElement';
 import type KeyboardNavigationHandler from './KeyboardNavigationHandler';

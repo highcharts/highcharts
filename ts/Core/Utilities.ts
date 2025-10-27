@@ -24,7 +24,7 @@ import type {
     DOMElementType,
     HTMLDOMElement
 } from './Renderer/DOMElementType';
-import type EventCallback from './EventCallback';
+import type { EventCallback } from './Callback';
 import type HTMLAttributes from './Renderer/HTML/HTMLAttributes';
 import type Series from './Series/Series';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';

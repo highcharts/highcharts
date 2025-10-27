@@ -54,7 +54,7 @@ namespace Foundation {
      * should be subject to Chart.update, Axis.update and Series.update. This is
      * contrary to general handlers that are set directly using addEvent either
      * on the class or on the instance. #6538, #6943, #10861.
-     * @private
+     * @internal
      */
     export function registerEventOptions(
         component: Axis|Chart|Legend|Series,

@@ -17,6 +17,7 @@
  * */
 
 import type AnimationOptions from '../Animation/AnimationOptions';
+import type Axis from '../Axis/Axis';
 import type BBoxObject from '../Renderer/BBoxObject';
 import type BubbleLegendItem from '../../Series/Bubble/BubbleLegendItem';
 import type { EventCallback } from '../Callback';
@@ -153,7 +154,7 @@ class Legend {
     public downTracker?: SVGElement;
 
     /** @internal */
-    public eventOptions!: Record<string, EventCallback<Series, Event>>;
+    public eventOptions!: Record<string, EventCallback<Axis|Chart|Series|Legend, Event>>;
 
     /** @internal */
     public fontMetrics?: FontMetricsObject;

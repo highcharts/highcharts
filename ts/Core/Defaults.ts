@@ -66,7 +66,7 @@ declare module './GlobalsBase' {
  * @type {Highcharts.Options}
  *//**
  * @optionparent
- * @private
+ * @internal
  */
 const defaultOptions: DefaultOptions = {
 
@@ -1134,7 +1134,7 @@ const defaultOptions: DefaultOptions = {
          *
          * @declare Highcharts.LegendEventsOptionsObject
          *
-         * @private
+         * @internal
          */
         events: {},
 
