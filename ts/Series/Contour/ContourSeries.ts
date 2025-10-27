@@ -168,10 +168,11 @@ export default class ContourSeries extends ScatterSeries {
 
         const { width, height } = foreignObjDimensions;
 
-        canvas.width = width;
-        canvas.height = height;
         canvas.style.width = width + 'px';
         canvas.style.height = height + 'px';
+
+        canvas.width = canvas.clientWidth * window.devicePixelRatio;
+        canvas.height = canvas.clientHeight * window.devicePixelRatio;
 
 
         // If this function exists, buffers are set up
@@ -381,7 +382,7 @@ export default class ContourSeries extends ScatterSeries {
                             let yMax = extremesUniform[3];
 
                             ${
-                                this.chart.inverted === false ? `
+                                !this.chart.inverted ? `
                                 let posX = (
                                     (pos.x - xMin) /
                                     (xMax - xMin) *
