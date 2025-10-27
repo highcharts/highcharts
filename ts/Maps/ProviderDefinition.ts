@@ -1,10 +1,13 @@
 /* *
  *
- *  (c) 2023 Hubert Kozik
+ *  Provider definition
+ *
+ *  (c) 2023-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *  Authors:
+ *  - Hubert Kozik
  *
  * */
 
@@ -22,6 +25,7 @@ import type { ProjectionRegistryName } from './Projections/ProjectionRegistry';
  *
  * */
 
+/** @internal */
 export interface Theme {
     credits?: string;
     maxZoom: number;
@@ -29,10 +33,12 @@ export interface Theme {
     url: string;
 }
 
+/** @internal */
 export interface Themes {
     [key: string]: Theme
 }
 
+/** @internal */
 export interface ProviderDefinition {
     defaultCredits: string;
     initialProjectionName: ProjectionRegistryName;
@@ -47,4 +53,5 @@ export interface ProviderDefinition {
  *
  * */
 
+/** @internal */
 export default ProviderDefinition;
