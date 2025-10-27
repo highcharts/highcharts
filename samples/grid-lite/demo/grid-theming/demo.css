@@ -92,6 +92,15 @@ body {
     --hcg-cell-hovered-row-color: var(--my-hover-color);
     --hcg-cell-hovered-column-color: var(--my-hover-color);
     --hcg-header-hovered-color: var(--my-hover-color);
+
+    /* Button styles */
+    --ig-button-color: #fff;
+    --ig-button-border-radius: 6px;
+    --ig-button-hover-color: var(--my-hover-color);
+    --ig-button-hover-background: #1a3f48;
+
+    /* Icon styles */
+    --ig-icon-hover-color: #666;
 }
 
 .opacity-theme,
@@ -112,6 +121,19 @@ body {
     --hcg-border-radius: 15px;
     --hcg-font-size: 15px;
     --hcg-padding: 10px;
+
+    /* Button styles */
+    --ig-button-color: rgba(var(--hover-color), 0.8);
+    --ig-button-border-radius: 15px;
+    --ig-button-hover-color: rgb(var(--hover-color));
+    --ig-button-hover-background: rgba(var(--hover-color), 0.2);
+
+    /* Icon styles */
+    --ig-icon-hover-color: #000;
+}
+
+.highcharts-light .opacity-theme .hcg-menu-item-label {
+    color: #000;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -127,6 +149,9 @@ body {
         --hcg-background: #003947;
         --hcg-row-even-background: #004556;
         --hcg-cell-hovered-column-border-color: #4b4b4b;
+
+        /* Icon styles */
+        --ig-icon-hover-color: #eee;
     }
 
     .opacity-theme {
@@ -134,6 +159,9 @@ body {
         --base-color: 0, 0, 0;
         --gradient-from-color: rgb(102, 20, 140);
         --gradient-to-color: rgb(50, 13, 144);
+
+        /* Icon styles */
+        --ig-icon-hover-color: #fff;
     }
 
     .hcg-description code {
@@ -160,6 +188,9 @@ body {
     --hcg-background: #003947;
     --hcg-row-even-background: #004556;
     --hcg-cell-hovered-column-border-color: #4b4b4b;
+
+    /* Icon styles */
+    --ig-icon-hover-color: #eee;
 }
 
 .highcharts-dark .opacity-theme {
@@ -167,6 +198,9 @@ body {
     --base-color: 0, 0, 0;
     --gradient-from-color: rgb(102, 20, 140);
     --gradient-to-color: rgb(50, 13, 144);
+
+    /* Icon styles */
+    --ig-icon-hover-color: #fff;
 }
 
 .highcharts-dark .hcg-description code {

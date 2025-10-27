@@ -50,6 +50,15 @@ body {
     --hcg-cell-hovered-background: #e03e9c;
     --hcg-cell-hovered-header-background: #7b88e3;
     --hcg-cell-hovered-color: #fff;
+
+    /* Button styles */
+    --ig-button-color: #fdfdfd;
+    --ig-button-border-radius: 6px;
+    --ig-button-hover-color: #fff;
+    --ig-button-hover-background: #4f5bbace;
+
+    /* Icon styles */
+    --ig-icon-hover-color: #141414;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -66,6 +75,9 @@ body {
         --hcg-cell-hovered-row-background: #3d3d3d;
         --hcg-cell-hovered-background: #841857;
         --hcg-cell-hovered-header-background: #4b5297;
+
+        /* Icon styles */
+        --ig-icon-hover-color: #fff;
     }
 }
 
@@ -82,4 +94,7 @@ body {
     --hcg-cell-hovered-row-background: #3d3d3d;
     --hcg-cell-hovered-background: #841857;
     --hcg-cell-hovered-header-background: #4b5297;
+
+    /* Icon styles */
+    --ig-icon-hover-color: #fff;
 }

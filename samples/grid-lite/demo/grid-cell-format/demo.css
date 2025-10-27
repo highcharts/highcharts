@@ -41,6 +41,15 @@ body {
     --hcg-cell-hovered-background: var(--highlight-color);
     --hcg-cell-hovered-column-border-width: 1px;
     --hcg-cell-hovered-column-border-color: var(--highlight-color);
+
+    /* Button styles */
+    --ig-button-color: #333;
+    --ig-button-border-radius: 6px;
+    --ig-button-hover-color: #000;
+    --ig-button-hover-background: var(--highlight-color);
+
+    /* Icon styles */
+    --ig-icon-hover-color: #000;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -49,6 +58,13 @@ body {
         --highlight-border-color: #7d754c;
         --high-color: #98d76a;
         --low-color: #ffa8a8;
+
+        /* Button styles */
+        --ig-button-color: #ddd;
+        --ig-button-hover-color: #fff;
+
+        /* Icon styles */
+        --ig-icon-hover-color: #fff;
     }
 }
 
@@ -57,6 +73,13 @@ body {
     --highlight-border-color: #7d754c;
     --high-color: #98d76a;
     --low-color: #ffa8a8;
+
+    /* Button styles */
+    --ig-button-color: #ddd;
+    --ig-button-hover-color: #fff;
+
+    /* Icon styles */
+    --ig-icon-hover-color: #fff;
 }
 
 .hcg-table th.bold span,

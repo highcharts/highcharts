@@ -361,6 +361,7 @@
     /* Icon styles */
     --ig-icon-color: var(--hcg-icon-color, var(--ig-button-color, var(--ig-default-color)));
     --ig-icon-hover-color: var(--hcg-icon-hover-color, var(--ig-button-hover-color, var(--ig-default-background)));
+    --ig-icon-header-hover-color: var(--hcg-icon-hover-color, var(--ig-button-hover-color, var(--ig-default-background)));
 
     /* Pagination variables */
     --ig-pagination-button-background: var(--hcg-pagination-button-background, var(--ig-button-background));
@@ -599,7 +600,7 @@
 .hcg-button:focus-visible .hcg-icon,
 .hcg-header-cell-icons .hcg-button.highlighted .hcg-icon,
 .hcg-header-cell-icons .hcg-button.active .hcg-icon {
-    color: var(--ig-icon-hover-color);
+    color: var(--ig-icon-header-hover-color);
 }
 
 /* Header cell icons container - generic for all icon types */
@@ -646,7 +647,7 @@
     width: 4px;
     height: 4px;
     border-radius: 50%;
-    background: var(--ig-icon-hover-color, #626bd0);
+    background: var(--ig-icon-header-hover-color, #626bd0);
     pointer-events: none;
 }
 
