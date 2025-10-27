@@ -132,8 +132,7 @@ namespace Globals {
         noWidth: 'no-width',
         rightAlign: 'right',
         centerAlign: 'center',
-        leftAlign: 'left',
-        zeroWidth: 'zero-width'
+        leftAlign: 'left'
     } as const;
 
     export const win = window;
