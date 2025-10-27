@@ -6,7 +6,7 @@ import CodeSwitchable from '../../components/CodeSwitchable';
 
 export default {
     ...MDXComponents,
-    'grid-pro-badge': GridProBadge,
-    'grid-pro-banner': GridProBanner,
+    GridProBadge,
+    GridProBanner,
     'CodeSwitchable': CodeSwitchable
 };

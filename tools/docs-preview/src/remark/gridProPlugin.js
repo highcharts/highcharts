@@ -105,7 +105,7 @@ function getDocIdFromFile(file) {
 function createBadgeNode() {
     return {
         type: 'mdxJsxTextElement',
-        name: 'grid-pro-badge',
+        name: 'GridProBadge',
         attributes: [],
         children: []
     };
@@ -114,7 +114,7 @@ function createBadgeNode() {
 function createBannerNode() {
     return {
         type: 'mdxJsxFlowElement',
-        name: 'grid-pro-banner',
+        name: 'GridProBanner',
         attributes: [],
         children: []
     };
@@ -151,7 +151,7 @@ function gridProPlugin() {
             const alreadyBanner =
                 firstChild &&
                 firstChild.type === 'mdxJsxFlowElement' &&
-                firstChild.name === 'grid-pro-banner';
+                firstChild.name === 'GridProBanner';
 
             if (!alreadyBanner) {
                 tree.children.unshift(createBannerNode());
