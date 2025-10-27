@@ -22,8 +22,12 @@
     /* Credits padding */
     --ig-credits-horizontal-padding: var(--hcg-credits-horizontal-padding, var(--hcg-credits-padding, 5px));
     --ig-credits-vertical-padding: var(--hcg-credits-vertical-padding, var(--hcg-credits-padding, 5px));
-    --ig-credits-padding: var(--ig-credits-vertical-padding) var(--ig-credits-horizontal-padding) 0 var(--ig-credits-horizontal-padding);
-    
+    --ig-credits-padding:
+        var(--ig-credits-vertical-padding)
+        var(--ig-credits-horizontal-padding)
+        0
+        var(--ig-credits-horizontal-padding);
+
     /* CSS helpers */
     --ig-highlight-border-size: var(--hcg-highlight-border-size, 1px);
 
