@@ -139,14 +139,38 @@ export default class ContourSeries extends ScatterSeries {
                 series.canvas ||
                 document.createElement('canvas')
             ),
-            devicePixelRatio = window.devicePixelRatio;
+            devicePixelRatio = window.devicePixelRatio,
+            svg = document.querySelector('.highcharts-root'),
+            foreignObject = document.createElementNS(
+                'http://www.w3.org/2000/svg',
+                'foreignObject'
+            ),
+            xLen = xAxis.len,
+            yLen = yAxis.len,
+            foreignObjDimensions = series.chart.inverted ? {
+                x: yAxis.pos,
+                y: xAxis.pos,
+                width: yLen * devicePixelRatio,
+                height: xLen * devicePixelRatio
+            } : {
+                x: xAxis.pos,
+                y: yAxis.pos,
+                width: xLen * devicePixelRatio,
+                height: yLen * devicePixelRatio
+            };
 
-        canvas.width = xAxis.len * devicePixelRatio;
-        canvas.height = yAxis.len * devicePixelRatio;
-        canvas.style.width = xAxis.len + 'px';
-        canvas.style.height = yAxis.len + 'px';
+        for (const [key, value] of Object.entries(foreignObjDimensions)) {
+            foreignObject.setAttribute(key, String(value));
+        }
 
-        series.setExtremes();
+        foreignObject.appendChild(canvas);
+        svg?.appendChild(foreignObject);
+
+        canvas.width = xLen * devicePixelRatio;
+        canvas.height = yLen * devicePixelRatio;
+        canvas.style.width = xLen + 'px';
+        canvas.style.height = yLen + 'px';
+
 
         // If this function exists, buffers are set up
         if (series.renderWebGPU) {
@@ -619,13 +643,13 @@ export default class ContourSeries extends ScatterSeries {
 
                     device.queue.submit([encoder.finish()]);
 
-                    this.image?.destroy();
+                    /* This.image?.destroy();
                     this.image = this.chart.renderer.image(
                         canvas.toDataURL('image/webp', 1)
                     ).attr({
                         width: canvas.width,
                         height: canvas.height
-                    }).add(this.group).addClass('highcharts-contour-canvas');
+                    }).add(this.group).addClass('highcharts-contour-canvas'); */
                 };
 
                 this.renderWebGPU();
