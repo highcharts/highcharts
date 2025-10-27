@@ -1427,8 +1427,8 @@ class Series {
         const { dataTable, options, requireSorting } = this,
             dataSorting = options.dataSorting,
             oldData = this.data,
-            rowsToAdd: Array<{index: number, data: PointOptions}> = [],
-            rowsToUpdate: Array<{index: number, data: PointOptions}> = [],
+            rowsToAdd: Array<{index: number, pOptions: PointOptions}> = [],
+            rowsToUpdate: Array<{index: number, pOptions: PointOptions}> = [],
             equalLength = dataTable.rowCount === oldData.length;
         let hasUpdatedByKey,
             i,
@@ -1448,7 +1448,8 @@ class Series {
         for (i = 0; i < dataTable.rowCount; i++) {
             const x = newXColumn?.[i] as number|string|undefined,
                 id = newIdColumn?.[i] as string|undefined,
-                name = newNameColumn?.[i] as string|undefined;
+                name = newNameColumn?.[i] as string|undefined,
+                pOptions = dataTable.getRowObject(i) as PointOptions;
 
             let pointIndex = -1;
 
@@ -1469,30 +1470,29 @@ class Series {
                 // Matching X not found or used already due to non-unique x
                 // values (#8995), add point (but later)
                 if (pointIndex === -1) {
-                    const data = dataTable.getRowObject(i) as PointOptions,
-                        dataX = data.x;
+                    const optionsX = pOptions.x;
                     let index = oldXColumn?.length ?? dataTable.rowCount;
                     while (
                         index &&
                         oldXColumn &&
-                        typeof dataX === 'number' &&
-                        oldXColumn[index - 1] > dataX
+                        typeof optionsX === 'number' &&
+                        oldXColumn[index - 1] > optionsX
                     ) {
                         index--;
                     }
                     rowsToAdd.push({
                         index,
-                        data
+                        pOptions
                     });
 
                 // Matching X found, update
                 } else if (
-                    oldData[pointIndex]
-                    // && pointOptions !== options.data?.[pointIndex]
+                    oldData[pointIndex] /* &&
+                    pOptions === oldData[pointIndex]?.options*/
                 ) {
                     rowsToUpdate.push({
                         index: pointIndex,
-                        data: dataTable.getRowObject(i) as PointOptions
+                        pOptions
                     });
 
                     // Mark it touched, below we will remove all points that
@@ -1524,7 +1524,7 @@ class Series {
                 // Gather all points that are not matched
                 rowsToAdd.push({
                     index: i,
-                    data: dataTable.getRowObject(i) as PointOptions
+                    pOptions
                 });
             }
         }
@@ -1533,7 +1533,7 @@ class Series {
         if (hasUpdatedByKey) {
             // Update matching points
             rowsToUpdate.forEach((row): void => {
-                oldData[row.index].applyOptions(row.data);
+                oldData[row.index].applyOptions(row.pOptions);
             });
 
             // Add new points
