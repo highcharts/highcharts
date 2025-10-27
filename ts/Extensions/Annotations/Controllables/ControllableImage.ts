@@ -152,7 +152,6 @@ interface ControllableImage {
 
 /** @internal */
 declare module './ControllableType' {
-    /** @internal */
     interface ControllableShapeTypeRegistry {
         image: typeof ControllableImage;
     }

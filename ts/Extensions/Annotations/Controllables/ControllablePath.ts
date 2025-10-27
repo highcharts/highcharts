@@ -91,7 +91,6 @@ declare module '../../../Core/Options'{
 
 /** @internal */
 declare module '../../../Core/Renderer/SVG/SVGRendererBase' {
-    /** @internal */
     interface SVGRendererBase {
         addMarker(id: string, markerOptions: AST.Node): SVGElement;
     }
@@ -395,7 +394,6 @@ class ControllablePath extends Controllable {
     /**
      * Set markers.
      *
-     * @internal
      * @param {Highcharts.AnnotationControllablePath} item
      */
     public setMarkers(item: ControllablePath): void {
@@ -476,7 +474,6 @@ interface ControllablePath {
 
 /** @internal */
 declare module './ControllableType' {
-    /** @internal */
     interface ControllableShapeTypeRegistry {
         path: typeof ControllablePath;
     }

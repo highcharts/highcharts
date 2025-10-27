@@ -156,7 +156,6 @@ interface ControllableCircle {
 
 /** @internal */
 declare module './ControllableType' {
-    /** @internal */
     interface ControllableShapeTypeRegistry {
         circle: typeof ControllableCircle;
     }

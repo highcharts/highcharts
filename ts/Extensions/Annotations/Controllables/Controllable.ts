@@ -39,12 +39,6 @@ export type AttrsMapObject = Record<keyof ControllableOptions, keyof SVGAttribut
  *
  * */
 
-/**
- * It provides methods for handling points, control points
- * and points transformations.
- *
- * @interface Highcharts.AnnotationControllable
- */
 abstract class Controllable implements ControlTarget {
 
     /* *
@@ -357,6 +351,13 @@ abstract class Controllable implements ControlTarget {
  *
  * */
 
+
+/**
+ * It provides methods for handling points, control points and points
+ * transformations.
+ *
+ * @interface Highcharts.AnnotationControllable
+ */
 interface Controllable extends ControllableBase, ControlTarget {
     // Placeholder for additional class members
 }

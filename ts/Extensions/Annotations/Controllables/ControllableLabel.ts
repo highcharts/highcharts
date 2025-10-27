@@ -593,7 +593,6 @@ interface ControllableLabel {
 
 /** @internal */
 declare module './ControllableType' {
-    /** @internal */
     interface ControllableLabelTypeRegistry {
         label: typeof ControllableLabel;
     }

@@ -150,7 +150,6 @@ interface ControllableRect {
 
 /** @internal */
 declare module './ControllableType' {
-    /** @internal */
     interface ControllableShapeTypeRegistry {
         rect: typeof ControllableRect;
     }
