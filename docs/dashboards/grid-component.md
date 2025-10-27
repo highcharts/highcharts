@@ -20,8 +20,8 @@ The order of the imports is essential, so ensure the **Dashboards** module is im
 Alternatively, you can also use NPM packages (see: [Installation](https://www.highcharts.com/docs/dashboards/installation)) and import to connect them to the Dashboards.
 
 ```typescript
-import * as Dashboards from "@highcharts/dashboards";
-import * as Grid from "@highcharts/grid/grid-pro";
+import * as Dashboards from '@highcharts/dashboards';
+import * as Grid from '@highcharts/grid/grid-pro';
 
 Dashboards.GridPlugin.custom.connectGrid(Grid);
 Dashboards.PluginHandler.addPlugin(Dashboards.GridPlugin);
@@ -42,20 +42,14 @@ After loading the necessary files, define a cell using a unique identifier for t
 
 ```js
 gui: {
-  layouts: [
-    {
-      id: "layout-1",
-      rows: [
-        {
-          cells: [
-            {
-              id: "dashboard-col-0",
-            },
-          ],
-        },
-      ],
-    },
-  ];
+    layouts: [{
+        id: 'layout-1',
+        rows: [{
+            cells: [{
+                id: 'dashboard-col-0'
+            }]
+        }]
+    }]
 }
 ```
 
@@ -65,18 +59,16 @@ You will also need some data to display in your grid. For this purpose, you can,
 
 ```js
 dataPool: {
-  connectors: [
-    {
-      id: "data",
-      type: "CSV",
-      csv: `Food,Vitamin A,Iron
+    connectors: [{
+        id: 'data',
+        type: 'CSV',
+        csv: `Food,Vitamin A,Iron
         Beef Liver,6421,6.5
         Lamb Liver,2122,6.5
         Cod Liver Oil,1350,0.9
         Mackerel,388,1
-        Tuna,214,0.6`,
-    },
-  ];
+        Tuna,214,0.6`
+    }]
 }
 ```
 
@@ -87,15 +79,13 @@ Click [here](https://www.highcharts.com/docs/dashboards/data-handling) to read m
 Once you have the data and where to place your component, you can define it as below. In the `renderTo` option, we're passing the ID of the cell, (which we described above or created in our layout), and the ID of the connector with the data in the `connector.id` option (point 4). For the component to be created as a Grid, it was set with the `type` option to `'Grid'`.
 
 ```js
-components: [
-  {
-    renderTo: "dashboard-col-1",
+components: [{
+    renderTo: 'dashboard-col-1',
     connector: {
-      id: "data",
+        id: 'data'
     },
-    type: "Grid",
-  },
-];
+    type: 'Grid'
+}]
 ```
 
 To see more options available for the Grid Component, click [here](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_GridComponent_GridComponentOptions.Options).
@@ -103,46 +93,36 @@ To see more options available for the Grid Component, click [here](https://api.h
 See the summarized JS code needed to create a simple Grid:
 
 ```js
-Dashboards.board("container", {
-  dataPool: {
-    connectors: [
-      {
-        id: "data",
-        type: "CSV",
-        csv: `Food,Vitamin A,Iron
+Dashboards.board('container', {
+    dataPool: {
+        connectors: [{
+            id: 'data',
+            type: 'CSV',
+            csv: `Food,Vitamin A,Iron
             Beef Liver,6421,6.5
             Lamb Liver,2122,6.5
             Cod Liver Oil,1350,0.9
             Mackerel,388,1
-            Tuna,214,0.6`,
-      },
-    ],
-  },
-  gui: {
-    layouts: [
-      {
-        id: "layout-1",
-        rows: [
-          {
-            cells: [
-              {
-                id: "dashboard-col-1",
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  },
-  components: [
-    {
-      renderTo: "dashboard-col-1",
-      connector: {
-        id: "data",
-      },
-      type: "Grid",
+            Tuna,214,0.6`
+        }]
     },
-  ],
+    gui: {
+        layouts: [{
+            id: 'layout-1',
+            rows: [{
+                cells: [{
+                    id: 'dashboard-col-1'
+                }]
+            }]
+        }]
+    },
+    components: [{
+        renderTo: 'dashboard-col-1',
+        connector: {
+            id: 'data'
+        },
+        type: 'Grid'
+    }]
 });
 ```
 
@@ -166,25 +146,21 @@ There are different types of data modifiers:
 The [`dataModifier`](https://api.highcharts.com/dashboards/#interfaces/Data_Connectors_CSVConnectorOptions.CSVConnectorOptions-1#dataModifier) option can be used in the connectors options, as follows:
 
 ```js
-connectors: [
-  {
-    id: "data",
-    type: "CSV",
+connectors: [{
+    id: 'data',
+    type: 'CSV',
     csv: `A,B
     1,3
     20,2
     100,2`,
     dataModifier: {
-      type: "Math",
-      columnFormulas: [
-        {
-          column: "Sum",
-          formula: "A1+B1",
-        },
-      ],
-    },
-  },
-];
+        type: 'Math',
+        columnFormulas: [{
+            column: 'Sum',
+            formula: 'A1+B1'
+        }]
+    }
+}]
 ```
 
 In this example, a column named `Sum` is created with data that is the sum of the numbers in the previous columns in the row.

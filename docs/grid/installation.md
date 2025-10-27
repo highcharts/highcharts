@@ -21,8 +21,8 @@ npm install @highcharts/grid-lite
 ```
 
 ```js
-import * as Grid from "@highcharts/grid-lite/grid-lite";
-import "@highcharts/grid-lite/css/grid-lite.css";
+import * as Grid from '@highcharts/grid-lite/grid-lite';
+import '@highcharts/grid-lite/css/grid-lite.css';
 ```
 
 Grid Pro
@@ -32,8 +32,8 @@ npm install @highcharts/grid-pro
 ```
 
 ```js
-import * as Grid from "@highcharts/grid-pro/grid-pro";
-import "@highcharts/grid-pro/css/grid-pro.css";
+import * as Grid from '@highcharts/grid-pro/grid-pro';
+import '@highcharts/grid-pro/css/grid-pro.css';
 ```
 
 ## Include Grid via `<script>` tag

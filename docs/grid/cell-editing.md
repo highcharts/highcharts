@@ -35,24 +35,22 @@ Cell renderers define how the cell input is displayed and interacted with when e
 You can read more about cell renderers in the [article on cell renderers](https://www.highcharts.com/docs/grid/cell-renderers).
 
 ```ts
-columns: [
-  {
+columns: [{
     id: "role",
     cells: {
-      editMode: {
-        enabled: true,
-        renderer: {
-          type: "select",
-          options: [
-            { value: "admin", label: "Administrator" },
-            { value: "editor", label: "Editor" },
-            { value: "viewer", label: "Viewer" },
-          ],
-        },
-      },
-    },
-  },
-];
+        editMode: {
+            enabled: true,
+            renderer: {
+                type: 'select',
+                options: [
+                    { value: 'admin', label: 'Administrator' },
+                    { value: 'editor', label: 'Editor' },
+                    { value: 'viewer', label: 'Viewer' }
+                ]
+            }
+        }
+    }
+}]
 ```
 
 ## Validation
@@ -73,17 +71,15 @@ In addition to `dataType` you can extend a selection of predefined validation ru
 See how adding the `notEmpty` validation rule prevents users from entering `null` or empty string values in any column:
 
 ```ts
-columns: [
-  {
-    id: "notEmptyColumn",
-    dataType: "number",
+columns: [{
+    id: 'notEmptyColumn',
+    dataType: 'number',
     cells: {
-      editMode: {
-        validationRules: ["notEmpty"],
-      },
-    },
-  },
-];
+        editMode: {
+            validationRules: ['notEmpty']
+        }
+    }
+}]
 ```
 
 Custom error messages for each validation rule can be set using the root `lang` API option:
@@ -106,25 +102,20 @@ lang: {
 You can define custom validation rules and error messages directly in the column options:
 
 ```ts
-columns: [
-  {
-    id: "emails",
-    dataType: "string",
+columns: [{
+    id: 'emails',
+    dataType: 'string',
     cells: {
-      editMode: {
-        validationRules: [
-          "notEmpty",
-          {
-            validator: function ({ value }) {
-              return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-            },
-            notification: "Value must be a valid email address.",
-          },
-        ],
-      },
-    },
-  },
-];
+        editMode: {
+            validationRules: ['notEmpty', {
+                validator: function({ value }) {
+                    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+                },
+                notification: 'Value must be a valid email address.'
+            }]
+        }
+    }
+}]
 ```
 
 Note that a validator is a callback function that receives an object as its first argument. This object represents the cell content and contains two important properties: `value` and `rawValue`.
@@ -139,24 +130,22 @@ This distinction allows you to implement validation logic based on either the pa
 You can also register custom validators globally in the `Validator.rulesRegistry` and then reference them by name in your columns:
 
 ```ts
-Validator.rulesRegistry["email"] = {
-  validator: function ({ value }) {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-  },
-  notification: "Value must be a valid email address.",
+Validator.rulesRegistry['email'] = {
+    validator: function({ value }) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+    },
+    notification: 'Value must be a valid email address.'
 };
 
-columns: [
-  {
-    id: "emails",
-    dataType: "string",
+columns: [{
+    id: 'emails',
+    dataType: 'string',
     cells: {
-      editMode: {
-        validationRules: ["notEmpty", "email"],
-      },
-    },
-  },
-];
+        editMode: {
+            validationRules: ['notEmpty', 'email']
+        }
+    }
+}]
 ```
 
 This approach allows you to reuse custom validation logic across multiple columns.
