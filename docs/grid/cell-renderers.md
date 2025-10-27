@@ -253,7 +253,7 @@ You can also write a custom renderer. To do so, define:
      }
    }
 
-   CellRendererRegistry.registerRenderer("customRenderer", CustomRenderer);
+   CellRendererRegistry.registerRenderer('customRenderer', CustomRenderer);
    ```
 
 If you want your custom renderer to be usable in cell edit mode, you need to implement additionally the following interfaces:
@@ -290,7 +290,7 @@ class TextareaContent extends CellContentPro {
 
   // Required by the interface
   add(parentElement = this.cell.htmlElement) {
-    const textarea = (this.textarea = document.createElement('textarea'));
+    const textarea = this.textarea = document.createElement('textarea');
     this.update();
     parentElement.appendChild(textarea);
     return textarea;
