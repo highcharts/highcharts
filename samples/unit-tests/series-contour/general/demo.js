@@ -349,7 +349,7 @@ QUnit.test('General contour stuff', function (assert) {
 
         canvas.width = contour.canvas.width;
         canvas.height = contour.canvas.height;
-        ctx.drawImage(contour.image.element, 0, 0);
+        ctx.drawImage(contour.canvas, 0, 0);
 
         const imgData = ctx.getImageData(
                 p.plotX,
@@ -363,23 +363,24 @@ QUnit.test('General contour stuff', function (assert) {
                 imgData[i + 2] === res[2] &&
                 imgData[i + 3] === res[3]
             );
-        /*
-            Uncomment to find color values in the image data
-            const len = imgData.length;
-            for (let i = 0; i < len; i += 4) {
+
+        // Uncomment to find color values in the image data
+        /* Const len = imgData.length;
+        for (let i = 0; i < len; i += 4) {
             const r = imgData[i];
             const g = imgData[i + 1];
             const b = imgData[i + 2];
             const a = imgData[i + 3];
 
-            if (r === 61 && g === 61 && b === 61 && a === 255) {
+            if (r === 255 && g === 0 && b === 0 && a === 255) {
                 console.log(i);
                 break;
             }
-        } */
+        }
+        */
 
         assert.strictEqual(
-            validColor(63720, [255, 0, 0, 255]),
+            validColor(72216, [255, 0, 0, 255]),
             true,
             'Contour lines should be rendered in correct color.'
         );
