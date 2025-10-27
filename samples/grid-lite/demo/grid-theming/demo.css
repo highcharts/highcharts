@@ -94,13 +94,14 @@ body {
     --hcg-header-hovered-color: var(--my-hover-color);
 
     /* Button styles */
-    --ig-button-color: #fff;
-    --ig-button-border-radius: 6px;
-    --ig-button-hover-color: var(--my-hover-color);
-    --ig-button-hover-background: #1a3f48;
+    --hcg-button-color: #fff;
+    --hcg-button-border-radius: 6px;
+    --hcg-button-hover-color: var(--my-hover-color);
+    --hcg-button-hover-background: #1a3f48;
 
     /* Icon styles */
-    --ig-icon-hover-color: #666;
+    --hcg-icon-hover-color: #666;
+    --hcg-icon-header-hover-color: var(--my-hover-color);
 }
 
 .opacity-theme,
@@ -123,13 +124,13 @@ body {
     --hcg-padding: 10px;
 
     /* Button styles */
-    --ig-button-color: rgba(var(--hover-color), 0.8);
-    --ig-button-border-radius: 15px;
-    --ig-button-hover-color: rgb(var(--hover-color));
-    --ig-button-hover-background: rgba(var(--hover-color), 0.2);
+    --hcg-button-color: rgba(var(--hover-color), 0.8);
+    --hcg-button-border-radius: 6px;
+    --hcg-button-hover-color: rgb(var(--hover-color));
+    --hcg-button-hover-background: rgba(var(--hover-color), 0.25);
 
     /* Icon styles */
-    --ig-icon-hover-color: #000;
+    --hcg-icon-hover-color: #000;
 }
 
 .highcharts-light .opacity-theme .hcg-menu-item-label {
@@ -151,7 +152,8 @@ body {
         --hcg-cell-hovered-column-border-color: #4b4b4b;
 
         /* Icon styles */
-        --ig-icon-hover-color: #eee;
+        --hcg-icon-hover-color: #eee;
+        --hcg-icon-header-hover-color: var(--my-hover-color);
     }
 
     .opacity-theme {
@@ -161,7 +163,7 @@ body {
         --gradient-to-color: rgb(50, 13, 144);
 
         /* Icon styles */
-        --ig-icon-hover-color: #fff;
+        --hcg-icon-hover-color: #fff;
     }
 
     .hcg-description code {
@@ -190,7 +192,8 @@ body {
     --hcg-cell-hovered-column-border-color: #4b4b4b;
 
     /* Icon styles */
-    --ig-icon-hover-color: #eee;
+    --hcg-icon-hover-color: #eee;
+    --hcg-icon-header-hover-color: var(--my-hover-color);
 }
 
 .highcharts-dark .opacity-theme {
@@ -200,7 +203,7 @@ body {
     --gradient-to-color: rgb(50, 13, 144);
 
     /* Icon styles */
-    --ig-icon-hover-color: #fff;
+    --hcg-icon-hover-color: #fff;
 }
 
 .highcharts-dark .hcg-description code {

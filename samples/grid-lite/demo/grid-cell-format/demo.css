@@ -43,13 +43,13 @@ body {
     --hcg-cell-hovered-column-border-color: var(--highlight-color);
 
     /* Button styles */
-    --ig-button-color: #333;
-    --ig-button-border-radius: 6px;
-    --ig-button-hover-color: #000;
-    --ig-button-hover-background: var(--highlight-color);
+    --hcg-button-color: #333;
+    --hcg-button-border-radius: 6px;
+    --hcg-button-hover-color: #000;
+    --hcg-button-hover-background: var(--highlight-color);
 
     /* Icon styles */
-    --ig-icon-hover-color: #000;
+    --hcg-icon-hover-color: #000;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -60,11 +60,11 @@ body {
         --low-color: #ffa8a8;
 
         /* Button styles */
-        --ig-button-color: #ddd;
-        --ig-button-hover-color: #fff;
+        --hcg-button-color: #ddd;
+        --hcg-button-hover-color: #fff;
 
         /* Icon styles */
-        --ig-icon-hover-color: #fff;
+        --hcg-icon-hover-color: #fff;
     }
 }
 
@@ -75,11 +75,11 @@ body {
     --low-color: #ffa8a8;
 
     /* Button styles */
-    --ig-button-color: #ddd;
-    --ig-button-hover-color: #fff;
+    --hcg-button-color: #ddd;
+    --hcg-button-hover-color: #fff;
 
     /* Icon styles */
-    --ig-icon-hover-color: #fff;
+    --hcg-icon-hover-color: #fff;
 }
 
 .hcg-table th.bold span,

@@ -361,7 +361,7 @@
     /* Icon styles */
     --ig-icon-color: var(--hcg-icon-color, var(--ig-button-color, var(--ig-default-color)));
     --ig-icon-hover-color: var(--hcg-icon-hover-color, var(--ig-button-hover-color, var(--ig-default-background)));
-    --ig-icon-header-hover-color: var(--hcg-icon-hover-color, var(--ig-button-hover-color, var(--ig-default-background)));
+    --ig-icon-header-hover-color: var(--hcg-icon-header-hover-color, var(--ig-button-hover-color, var(--ig-default-background)));
 
     /* Pagination variables */
     --ig-pagination-button-background: var(--hcg-pagination-button-background, var(--ig-button-background));
