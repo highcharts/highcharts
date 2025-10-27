@@ -1488,7 +1488,7 @@ class Series {
                 // Matching X found, update
                 } else if (
                     oldData[pointIndex]
-                    //&& pointOptions !== options.data?.[pointIndex]
+                    // && pointOptions !== options.data?.[pointIndex]
                 ) {
                     rowsToUpdate.push({
                         index: pointIndex,
@@ -1505,7 +1505,7 @@ class Series {
                         lastIndex = pointIndex + 1;
                     }
                 // Point exists, no changes, don't remove it
-                } /*else if (oldData[pointIndex]) {
+                } /*/ else if (oldData[pointIndex]) {
                     oldData[pointIndex].touched = true;
                 }*/
 
@@ -1564,7 +1564,7 @@ class Series {
                     if (pOptions) {
                         Object.keys(pOptions).forEach((key): void => {
                             if (
-                                !defined(pOptions[key]) /*||
+                                !defined(pOptions[key]) /* ||
                                 pOptions[key] === oldData[i].options[key]*/
                             ) {
                                 delete pOptions[key];
@@ -2088,11 +2088,6 @@ class Series {
         }
 
         if (!updatedData) {
-            // Test for DataTable-based data handling
-            if (this.useDataTable) {
-                data = void 0;
-            }
-
             // Forgetting to cast strings to numbers is a common caveat when
             // handling CSV or JSON
             if (isString(this.getColumn('y')[0])) {
@@ -2100,9 +2095,6 @@ class Series {
             }
 
             series.data = [];
-            if (isArray(data)) {
-                series.options.data = series.userOptions.data = data;
-            }
 
             // Destroy old points
             i = oldDataLength;
@@ -2119,6 +2111,10 @@ class Series {
             series.isDirty = chart.isDirtyBox = true;
             series.isDirtyData = !!oldData;
             animation = false;
+        }
+
+        if (isArray(data)) {
+            series.options.data = series.userOptions.data = data;
         }
 
         // Typically for pie series, points need to be processed and
@@ -2467,15 +2463,11 @@ class Series {
             cursor = cropStart + i;
             if (!hasGroupedData) {
                 point = data[cursor];
-                if (!this.useDataTable) {
-                    pOptions = dataOptions ?
-                        dataOptions[cursor] :
-                        table.getRowObject(
-                            i
-                        ) as unknown as PointOptions;
-                } else {
-                    pOptions = table.getRowObject(i) as unknown as PointOptions;
-                }
+                pOptions = dataOptions ?
+                    // We could use table.getRowObject(i) here, but that would
+                    // be less performant
+                    dataOptions[cursor] :
+                    table.getRowObject(i) as unknown as PointOptions;
 
                 // #970
                 if (!point && pOptions !== void 0) {
