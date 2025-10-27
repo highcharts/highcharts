@@ -1862,9 +1862,11 @@ class Series {
             }
 
             // Test for DataTable-based data handling
+            /*
             if (this.useDataTable) {
                 data = void 0;
             }
+            */
 
             // Forgetting to cast strings to numbers is a common caveat when
             // handling CSV or JSON
@@ -2240,15 +2242,9 @@ class Series {
             cursor = cropStart + i;
             if (!hasGroupedData) {
                 point = data[cursor];
-                if (!this.useDataTable) {
-                    pOptions = dataOptions ?
-                        dataOptions[cursor] :
-                        table.getRowObject(
-                            i
-                        ) as unknown as PointOptions;
-                } else {
-                    pOptions = table.getRowObject(i) as unknown as PointOptions;
-                }
+                pOptions = dataOptions ?
+                    dataOptions[cursor] :
+                    table.getRowObject(i) as unknown as PointOptions;
 
                 // #970
                 if (!point && pOptions !== void 0) {
