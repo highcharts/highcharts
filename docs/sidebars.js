@@ -33,7 +33,8 @@ module.exports = {
             'chart-concepts/3d-charts',
             'chart-concepts/responsive',
             'chart-concepts/security',
-            'chart-concepts/dataviz-glossary'
+            'chart-concepts/dataviz-glossary',
+            'chart-concepts/common-events'
         ],
         'Stock': [
             'stock/getting-started-stock',
