@@ -1,5 +1,5 @@
 ---
-slug: index
+slug: /
 ---
 
 # Highcharts Documentation

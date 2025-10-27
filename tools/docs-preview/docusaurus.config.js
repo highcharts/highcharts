@@ -31,7 +31,7 @@ const config = {
 
     // Set the production url of your site here
     url: 'https://www.highcharts.com',
-    baseUrl: '/docs',
+    baseUrl: '/',
 
     onBrokenLinks: 'throw',
     onBrokenMarkdownLinks: 'warn',
@@ -67,8 +67,6 @@ const config = {
     themeConfig:
         /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
         ({
-            // Replace with your project's social card
-            image: 'img/docusaurus-social-card.jpg',
             colorMode: {
                 defaultMode: 'light',
                 disableSwitch: true,
