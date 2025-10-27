@@ -21,6 +21,7 @@ import type {
  *
  * */
 
+/** @internal */
 class Stamen implements ProviderDefinition {
 
     /* *
@@ -90,4 +91,5 @@ class Stamen implements ProviderDefinition {
  *
  * */
 
+/** @internal */
 export default Stamen;

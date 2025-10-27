@@ -25,6 +25,7 @@ import USGS from './USGS.js';
  *
  * */
 
+/** @internal */
 export interface TilesProviderRegistry {
     Esri: typeof Esri;
     LimaLabs: typeof LimaLabs;
@@ -34,6 +35,7 @@ export interface TilesProviderRegistry {
     USGS: typeof USGS;
 }
 
+/** @internal */
 export type TilesProviderRegistryName = keyof TilesProviderRegistry;
 
 /* *
@@ -42,6 +44,7 @@ export type TilesProviderRegistryName = keyof TilesProviderRegistry;
  *
  * */
 
+/** @internal */
 const tilesProviderRegistry: TilesProviderRegistry = {
     Esri,
     LimaLabs,
@@ -57,4 +60,5 @@ const tilesProviderRegistry: TilesProviderRegistry = {
  *
  * */
 
+/** @internal */
 export default tilesProviderRegistry;
