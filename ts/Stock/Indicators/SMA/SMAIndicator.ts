@@ -546,7 +546,7 @@ class SMAIndicator extends LineSeries {
                     }
                 }
 
-                indicator.updateData(croppedDataValues);
+                indicator.setData(croppedData.modified, false);
 
             } else if (
                 indicator.updateAllPoints || // #18710
