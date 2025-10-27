@@ -75,6 +75,31 @@ QUnit.test('RangeSelector update', function (assert) {
         before,
         '#14856: It should not leak chart event listeners on update'
     );
+
+    chart.update({
+        chart: {
+            width: 600
+        },
+        rangeSelector: {
+            allButtonsEnabled: true,
+            buttonTheme: {
+                style: {
+                    color: '#FF00FF'
+                }
+            }
+        }
+    });
+
+    const buttonColors = chart.rangeSelector.buttons.map(
+        btn => btn.text.styles.color
+    );
+
+    assert.deepEqual(
+        buttonColors,
+        ['#FF00FF', '#FF00FF', '#FF00FF', '#000000', '#FF00FF', '#FF00FF'],
+        `All active range selector buttons color should be updated, except for
+        the selected one, #23125.`
+    );
 });
 
 QUnit.test('RangeSelector update hover', function (assert) {

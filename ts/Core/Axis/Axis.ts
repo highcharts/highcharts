@@ -2349,9 +2349,10 @@ class Axis {
             !isNumber(this.dataMin) ||
             (
                 this !== callerAxis &&
-                this.series.some((s): boolean|undefined => (
-                    s.isDirty || s.isDirtyData
-                ))
+                this.series.some((s): boolean|undefined =>
+                    // The xAxis.isDirty check is for setExtremes (#23677)
+                    s.isDirty || s.isDirtyData || s.xAxis?.isDirty
+                )
             )
         ) {
             this.getSeriesExtremes();
