@@ -1157,6 +1157,10 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
 
 /* Filtering */
 
+.hcg-header-cell:has(.hcg-column-filter-wrapper) {
+    overflow: hidden;
+}
+
 .hcg-column-filter-wrapper {
     width: 100%;
     display: flex;
