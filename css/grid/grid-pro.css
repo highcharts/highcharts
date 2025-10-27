@@ -103,6 +103,7 @@
     padding: inherit;
     z-index: 1;
     background: #dbeaff;
+    color: #141414;
     box-shadow: inset var(--ig-focus-ring);
     display: flex;
     align-items: center;
@@ -125,6 +126,7 @@
     float: left;
     font: var(--ig-font);
     background: transparent;
+    color: unset;
     padding: var(--ig-padding);
     max-height: unset;
     height: unset;
