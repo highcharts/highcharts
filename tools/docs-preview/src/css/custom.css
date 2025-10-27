@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap");
 @import url("highsoft-design-tokens/dist/css/tokens.css");
 
 :root {
@@ -138,6 +139,20 @@ main p:has(.grid-pro-badge) {
     margin-bottom: 0;
 }
 
+.navbar,
+.navbar__title,
+.navbar__link,
+.menu__link,
+[class*="Navbar"],
+[class*="navbar"] button,
+footer,
+.footer,
+.footer__title,
+.footer__item,
+.footer__link {
+    font-family: "IBM Plex Sans", sans-serif;
+}
+
 main h1:has(.grid-pro-badge),
 main h2:has(.grid-pro-badge),
 main h3:has(.grid-pro-badge),
@@ -168,6 +183,7 @@ main h6:has(.grid-pro-badge) .grid-pro-badge {
 iframe {
     border: none;
     width: 100%;
+    color-scheme: unset;
 }
 
 .iframe-container {
