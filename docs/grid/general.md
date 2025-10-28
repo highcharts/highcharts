@@ -10,6 +10,8 @@ sidebar_label: "Introduction"
 
 **Highcharts Grid Pro** – A commercial version that includes everything in Grid Lite plus advanced features such as cell editing, data validation, sparklines and events to expand functionality and tailor the grid to your needs.
 
+**Important notice**: In Dashboards versions prior to 4.0.0, Grid Pro was bundled with Dashboards. Learn more about migrating to latest version in our [Migration Guide](https://www.highcharts.com/docs/dashboards/grid-migration).
+
 ## Your first Grid
 
 Let's dive right in with a bare minimum example of a fully functional **Grid Lite**:
