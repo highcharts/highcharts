@@ -1,13 +1,10 @@
 /* eslint-disable playwright/no-conditional-in-test */
-import { Page, BrowserContext } from '@playwright/test';
-import type { ElementHandle } from '@playwright/test';
-import { test, expect, setupRoutes } from '../fixtures.ts';
+import type { Page, BrowserContext } from '@playwright/test';
+import { test, expect} from '@playwright/test';
+import { setupRoutes } from '../fixtures.ts';
 import { getKarmaScripts, getSample, setTestingOptions } from '../utils.ts';
 import { join, dirname, relative } from 'node:path';
 import { glob } from 'glob';
-
-import { waitForScriptLoadWithTimeout} from '../qunit/utils/timeout-handler.ts';
-
 
 function transformVisualSampleScript(script: string | undefined): string {
     let transformed = script ?? '';
@@ -21,47 +18,50 @@ function transformVisualSampleScript(script: string | undefined): string {
 
     transformed = transformed.replace(/(\s)animation:\s/g, '$1_animation: ');
 
-    return transformed;
+    return `;(function () {\n${transformed.trim()}\n}).call(window);`;
 }
 
 const FIXED_CLOCK_TIME = '2024-01-01T00:00:00.000Z';
 
+const defaultPageContent = '<div id="container" style="width: 600px; margin 0 auto"></div>';
+
+const pageTemplate = (bodyContent = '') =>
+    `<!DOCTYPE html>
+<html>
+    <body>
+        <div data-test-container>
+            ${bodyContent}
+        </div>
+    </body>
+</html>`;
+
 test.describe('Visual tests', () => {
     test.describe.configure({
-        timeout: 30_000,
-        // retries: 1 // retry once
+        timeout: 5_000,
     });
 
     let page: Page;
     let context: BrowserContext;
 
-    // Track test results for summary
-    const testResults = {
-        passed: 0,
-        failed: 0,
-        total: 0
-    };
-
     test.beforeAll(async ({ browser }) => {
-        context = await browser.newContext({
+        context ??= await browser.newContext({
             viewport: { width: 800, height: 600 }
         });
+
+        await context.setOffline(true);
+
         await context.clock.install({ time: FIXED_CLOCK_TIME });
         page = await context.newPage();
         await context.clock.setFixedTime(FIXED_CLOCK_TIME);
 
         await setupRoutes(page); // need to setup routes separately
 
-        await page.setContent(`
-        <div id="container" style="width: 600px; margin 0 auto"></div>
-        <div id="output"></div>`);
+        await page.setContent(pageTemplate(defaultPageContent));
 
         const scripts = [
             ...(await getKarmaScripts()),
-            join('test', 'call-analyzer.js'),
-            join('test', 'test-utilities.js'),
             join('tmp', 'json-sources.js'),
-            join('test', 'karma-setup.js')
+            join('tests', 'visual', 'visual-setup.js')
         ];
 
         for (const script of scripts) {
@@ -70,21 +70,15 @@ test.describe('Visual tests', () => {
             });
         }
 
-        await page.evaluate(() => {
-            if (window.Highcharts) {
-                window.Highcharts.setOptions({
-                    chart: {
-                        events: {
-                            load: function () {
-                                (window as any).setHCStyles(this);
-                            }
-                        }
-                    }
-                });
-            }
-        });
+        await page.waitForFunction(
+            () => window.HCVisualSetup?.initialized === true
+        );
+        await page.evaluate((mode) => window.HCVisualSetup?.configure({ mode }), 'fast');
+
 
         await setTestingOptions(page);
+        await page.evaluate(() => window.HCVisualSetup?.markOptionsClean());
+
     });
 
     test.afterEach(async () => {
@@ -92,34 +86,13 @@ test.describe('Visual tests', () => {
             return;
         }
         await page.evaluate(() => {
-            const scripts = document.querySelectorAll('#visual-test-script');
-            scripts.forEach((script) => script.remove());
-
-            const container = document.getElementById('container');
-            if (container) {
-                container.innerHTML = '';
-            }
-
-            const output = document.getElementById('output');
-            if (output) {
-                output.innerHTML = '';
-            }
-
-            if (window.Highcharts && Array.isArray(window.Highcharts.charts)) {
-                window.Highcharts.charts.forEach((chart) => {
-                    if (chart && typeof chart.destroy === 'function') {
-                        try {
-                            chart.destroy();
-                        } catch (error) {
-                            console.error(
-                                '[visual cleanup] chart.destroy failed',
-                                error
-                            );
-                        }
-                    }
-                });
-            }
+            const elementsToRemove = document.querySelectorAll(
+                '#visual-test-script, #visual-test-styles'
+            );
+            elementsToRemove.forEach((el) => el.remove());
         });
+
+        await page.evaluate(() => window.HCVisualSetup?.afterSample());
     });
 
     test.afterAll(async () => {
@@ -216,7 +189,8 @@ test.describe('Visual tests', () => {
             if (context) {
                 await context.clock.setFixedTime(FIXED_CLOCK_TIME);
             }
-            const sample = getSample(dirname(samplePath));
+
+            const sample = getSample(dirname(samplePath), true);
 
             if (
                 sample.details?.requiresManualTesting ||
@@ -226,22 +200,62 @@ test.describe('Visual tests', () => {
                 test.skip();
             }
 
-            testResults.total++;
+            await page.evaluate(() => window.HCVisualSetup?.beforeSample());
+
+            await page.evaluate(body => {
+                const testContainer = document.querySelector('div[data-test-container]');
+                testContainer.innerHTML = body;
+            }, sample.html ?? defaultPageContent);
+
+            if (sample.css) {
+                const styleHandle = await page.addStyleTag({
+                    content: sample.css
+                });
+
+                await styleHandle.evaluate(
+                    (el: HTMLStyleElement) => el.id = 'visual-test-styles'
+                );
+            }
+
+            await setTestingOptions(page);
+
+            await page.evaluate(() => window.HCVisualSetup?.markOptionsClean());
+
+            await page.evaluate(() => {
+                if (window.Highcharts) {
+                    window.Highcharts.setOptions({
+                        chart: {
+                            events: {
+                                load: function () {
+                                    (window as any).setHCStyles(this);
+                                }
+                            }
+                        }
+                    });
+                }
+            });
+
             // Load script with timeout handling
-            const scriptPromise = page.addScriptTag({
+            const scriptHandle = await page.addScriptTag({
                 content: transformVisualSampleScript(sample.script)
             });
-            const scriptHandle = await waitForScriptLoadWithTimeout(
-                page,
-                scriptPromise,
-                samplePath,
-                10000 // 10 second timeout for script loading
-            ) as ElementHandle<HTMLScriptElement> | null;
+
             if (scriptHandle) {
                 await scriptHandle.evaluate((element: HTMLScriptElement) => {
                     element.id = 'visual-test-script';
                 });
             }
+
+            await page.evaluate(() => {
+                if (window.Highcharts) {
+                    const chart = Highcharts.charts[
+                        Highcharts.charts.length - 1
+                    ];
+
+                    window.Highcharts.prepareShot(chart);
+                }
+            });
+
 
             await expect(page).toHaveScreenshot();
         });

@@ -29,12 +29,14 @@ export default tseslint.config(
     {
        ignores: [
             'eslint.config.mjs',
-            'qunit/vendor/**'
+            'qunit/vendor/**',
+            'tsconfig.json',
+            'visual/visual-setup.js'
         ]
     },
     eslint.configs.recommended,
-    tseslint.configs.recommended,
-    tseslint.configs.recommendedTypeChecked,
+    ...tseslint.configs.recommended,
+    ...tseslint.configs.recommendedTypeChecked,
     {
         ...playwright.configs['flat/recommended'],
         files: ['**/*.spec.*'],
@@ -52,6 +54,7 @@ export default tseslint.config(
     },
     {
         languageOptions: {
+            parser: tseslint.parser,
             parserOptions: {
                 projectService: true,
                 allowDefaultProject: true,
