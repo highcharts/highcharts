@@ -21,8 +21,7 @@
 import U from '../Core/Utilities.js';
 const {
     extend,
-    isNumber,
-    pick
+    isNumber
 } = U;
 
 /* *
@@ -190,8 +189,8 @@ function getNode(
 
     // Calculate start and end for point if it is not already explicitly set.
     if (data) {
-        data.start = pick(data.start, start);
-        data.end = pick(data.end, end);
+        data.start ??= start;
+        data.end ??= end;
     }
 
     extend(node, {

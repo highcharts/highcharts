@@ -122,11 +122,12 @@ class MapPoint extends ScatterPoint {
      */
     public applyOptions(
         options: (MapPointOptions|PointShortOptions),
-        x?: number
+        x?: number,
+        isMock?: boolean
     ): MapPoint {
 
         const series = this.series,
-            point = super.applyOptions(options, x) as MapPoint,
+            point = super.applyOptions(options, x, isMock) as MapPoint,
             joinBy = series.joinBy;
 
         if (series.mapData && series.mapMap) {

@@ -232,8 +232,7 @@ class TimelineSeries extends LineSeries {
             xData = series.getColumn('x');
 
         for (let i = 0, iEnd = pointsLen; i < iEnd; ++i) {
-            const x = xData[i];
-            points[i].applyOptions({ x: x }, x);
+            points[i].x = xData[i];
         }
     }
 
@@ -447,7 +446,7 @@ class TimelineSeries extends LineSeries {
 // Add series-specific properties after data is already processed, #17890
 addEvent(TimelineSeries, 'afterProcessData', function (): void {
     const series = this,
-        xData = series.getColumn('x');
+        yData: Array<number|null> = series.getColumn('y');
 
     let visiblePoints = 0;
 
@@ -461,8 +460,11 @@ addEvent(TimelineSeries, 'afterProcessData', function (): void {
     }
 
     series.visiblePointsCount = visiblePoints;
-
-    this.dataTable.setColumn('y', new Array(xData.length).fill(1));
+    yData.length = series.dataTable.rowCount;
+    for (let i = 0; i < yData.length; ++i) {
+        yData[i] = yData[i] === null ? null : 1;
+    }
+    this.dataTable.setColumn('y', yData);
 
 });
 

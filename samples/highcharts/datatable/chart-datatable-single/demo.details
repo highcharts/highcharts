@@ -1,0 +1,6 @@
+---
+ name: Single data table on chart
+ authors:
+   - Torstein Hønsi
+ js_wrap: b
+...

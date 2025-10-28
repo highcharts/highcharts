@@ -595,11 +595,17 @@ function groupData(
     groupPositions: Array<number>,
     approximation: (ApproximationKeyValue|Function)
 ): DataGroupingResultObject {
-    const xData = table.getColumn('x', true) as Array<number> || [],
+    const xData = (table === this.dataTable) ?
+            // If the table is the series dataTable, get the cached x data
+            // to avoid undefined x values from the data table.
+            this.getColumn('x') :
+            table.getColumn('x', true) as Array<number>,
         yData = table.getColumn('y', true) as Array<number>,
         series = this,
+        topTable = series.dataTable,
+        cropStart = series.cropStart || 0,
         data = series.data,
-        dataOptions = series.options && series.options.data,
+        dataOptions = series.options?.data,
         groupedXData = [],
         modified = new DataTableCore(),
         groupMap = [],
@@ -613,10 +619,7 @@ function groupData(
         extendedPointArrayMap = ['x'].concat(pointArrayMap || ['y']),
         // Data columns to be applied to the modified data table at the end
         valueColumns = (pointArrayMap || ['y']).map((): Array<number> => []),
-        groupAll = (
-            this.options.dataGrouping &&
-            this.options.dataGrouping.groupAll
-        );
+        groupAll = this.options.dataGrouping?.groupAll;
 
     let pointX,
         pointY,
@@ -678,15 +681,19 @@ function groupData(
             // `name` and `color` or custom properties. Implementers can
             // override this from the approximation function, where they can
             // write custom options to `this.dataGroupInfo.options`.
-            if (series.pointClass && !defined(series.dataGroupInfo.options)) {
+            if (
+                series.pointClass &&
+                !defined(series.dataGroupInfo.options) &&
+                dataOptions
+            ) {
                 // Convert numbers and arrays into objects
                 series.dataGroupInfo.options = merge(
                     series.pointClass.prototype
                         .optionsToObject.call(
-                            { series: series },
-                            (series.options.data as any)[
-                                (series.cropStart as any) + start
-                            ]
+                            { series },
+                            topTable.getRowObject(
+                                cropStart + start
+                            ) as unknown as PointOptions
                         )
                 );
 
@@ -731,13 +738,13 @@ function groupData(
         }
 
         // For each raw data point, push it to an array that contains all values
-        // for this specific group
+        // for this specific
         if (pointArrayMap) {
             const index = groupAll ? i : (series.cropStart as any) + i,
                 point = (data && data[index]) ||
                     series.pointClass.prototype.applyOptions.apply({
                         series: series
-                    }, [(dataOptions as any)[index]]);
+                    }, [topTable.getRow(index) as unknown as PointOptions]);
 
             let val;
 

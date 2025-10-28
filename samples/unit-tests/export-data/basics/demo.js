@@ -1120,7 +1120,7 @@ QUnit.test('Descending categories', function (assert) {
         csv = chart.exporting.getCSV().split('\n');
 
     assert.strictEqual(
-        csv[2],
+        csv[1],
         '"Category 1",34,66',
         'First point should be in Category 2 (#12767)'
     );

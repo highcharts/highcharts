@@ -1,7 +1,7 @@
 ---
- name: Highcharts Demo
+ name: Series data table
  authors:
-   - Sophie Bremer
+   - Torstein Hønsi
  skipTest: true
  js_wrap: b
 ...

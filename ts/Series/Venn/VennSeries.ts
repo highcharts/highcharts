@@ -518,14 +518,13 @@ class VennSeries extends ScatterSeries {
                 (state && (seriesOptions.states as any)[state as any]) || {},
             options = merge(
                 seriesOptions,
-                { color: point?.color },
                 pointOptions,
                 stateOptions
             );
 
         // Return resulting values for the attributes.
         return {
-            'fill': color(options.color)
+            'fill': color(options.color || point.color)
                 .brighten(options.brightness as any)
                 .get(),
             // Set opacity directly to the SVG element, not to pattern #14372.
@@ -545,7 +544,7 @@ class VennSeries extends ScatterSeries {
 
         // Process the data before passing it into the layout function.
         const relations = VennUtils.processVennData(
-            this.options.data as any,
+            this.dataTable,
             VennSeries.splitter
         );
 

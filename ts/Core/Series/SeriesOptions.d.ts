@@ -18,6 +18,8 @@ import type AnimationOptions from '../Animation/AnimationOptions';
 import type ColorType from '../Color/ColorType';
 import type { CursorValue } from '../Renderer/CSSObject';
 import type DashStyleValue from '../Renderer/DashStyleValue';
+import type DataTableCore from '../../Data/DataTableCore';
+import type DataTableOptions from '../../Data/DataTableOptions';
 import type { DeepPartial } from '../../Shared/Types';
 import type { EventCallback } from '../Callback';
 import type Point from './Point';
@@ -44,6 +46,12 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
  *  Declarations
  *
  * */
+
+export interface ColumnAssignmentItem {
+    key: string;
+    columnName: string;
+    dataTable: number;
+}
 
 export type NonPlotOptions = (
     'data'|'id'|'index'|'legendIndex'|'mapData'|'name'|'stack'|'treemap'|'type'|
@@ -106,12 +114,14 @@ export interface SeriesOptions {
     colorByPoint?: boolean;
     colorIndex?: number;
     colors?: Array<ColorType>;
+    columnAssignment?: Array<ColumnAssignmentItem>
     connectNulls?: boolean;
     crisp?: boolean;
     cursor?: CursorValue;
     dashStyle?: DashStyleValue;
     data?: Array<(PointOptions|PointShortOptions)>;
     dataSorting?: SeriesDataSortingOptions;
+    dataTable?: DataTableCore|DataTableOptions;
     enableMouseTracking?: boolean;
     events?: SeriesEventsOptions;
     findNearestPointBy?: SeriesFindNearestPointByValue;

@@ -94,7 +94,7 @@ namespace ColumnDataLabel {
             dataLabel: SVGElement
         ): number {
             const pos = dataLabel.dataLabelPosition;
-            return series.getX(
+            return series.getXPos(
                 y < (pos?.top || 0) + 2 || y > (pos?.bottom || 0) - 2 ?
                     naturalY :
                     y,

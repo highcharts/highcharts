@@ -24,6 +24,7 @@ import type ColorType from '../Color/ColorType';
 import type DataExtremesObject from './DataExtremesObject';
 import type DataLabelOptions from './DataLabelOptions';
 import type DataTable from '../../Data/DataTable';
+import type DataTableOptions from '../../Data/DataTableOptions';
 import type { DeepPartial } from '../../Shared/Types';
 import type { EventCallback } from '../Callback';
 import type KDPointSearchObjectBase from './KDPointSearchObjectBase';
@@ -82,6 +83,7 @@ import T from '../Templating.js';
 const { format } = T;
 import U from '../Utilities.js';
 const {
+    addEvent,
     arrayMax,
     arrayMin,
     clamp,
@@ -93,7 +95,6 @@ const {
     erase,
     error,
     extend,
-    find,
     fireEvent,
     getClosestDistance,
     getNestedProperty,
@@ -104,6 +105,7 @@ const {
     merge,
     objectEach,
     pick,
+    pushUnique,
     removeEvent,
     syncTimeout
 } = U;
@@ -275,6 +277,7 @@ class Series {
         'dataTable',
 
         'processedData', // #17057
+        'hasProcessedDataTable', // #17057
 
         'xIncrement',
         'cropped',
@@ -331,6 +334,8 @@ class Series {
 
     public data!: Array<Point>;
 
+    public dataColumnKeys?: Array<string>;
+
     public dataMax?: number;
 
     public dataMin?: number;
@@ -356,6 +361,8 @@ class Series {
     public halo?: SVGElement;
 
     public hasCartesianSeries?: Chart['hasCartesianSeries'];
+
+    public hasProcessedDataTable?: boolean;
 
     public hasRendered?: boolean;
 
@@ -415,6 +422,10 @@ class Series {
 
     public xAxis!: AxisType;
 
+    public xColumn?: Array<number>;
+
+    public xColumnIsNumbers?: boolean|undefined;
+
     public xIncrement?: (number|null);
 
     public yAxis!: AxisType;
@@ -437,9 +448,6 @@ class Series {
     ): void {
 
         fireEvent(this, 'init', { options: userOptions });
-
-        // Create the data table
-        this.dataTable ??= new DataTableCore();
 
         const series = this,
             chartSeries = chart.series;
@@ -476,6 +484,10 @@ class Series {
         series.options = series.setOptions(userOptions);
         const options = series.options,
             visible = options.visible !== false;
+
+        // Create the data table
+        this.dataTable ??= options.dataTable instanceof DataTableCore ?
+            options.dataTable : new DataTableCore(options.dataTable);
 
         /**
          * All child series that are linked to the current series through the
@@ -556,7 +568,7 @@ class Series {
             series.setDataSortingOptions();
 
         } else if (!series.points && !series.data) {
-            series.setData(options.data as any, false);
+            series.setData(options.data, false);
         }
 
         fireEvent(this, 'afterInit');
@@ -1035,103 +1047,101 @@ class Series {
      */
     public getColumn(
         columnName: string,
-        modified?: boolean
+        modified?: boolean,
+        matchLength?: boolean
     ): Array<number> {
-        return (
-            (modified ? this.dataTable.modified : this.dataTable)
-                .getColumn(columnName, true) as Array<number>
-        ) || [];
+        const table = modified ? this.dataTable.modified : this.dataTable,
+            rowCount = table.rowCount,
+            usingModified = this.dataTable !== table,
+            column = table.getColumn(columnName, true) as Array<number>;
+
+        // When there is no x column in the data set, generate an internal x
+        // column for the series. The `xColumn` array is cached and reused, but
+        // cleared on series update.
+        if (columnName === 'x' && !usingModified) {
+            // Return cached xColumn if it exists
+            if (this.xColumn) {
+                return this.xColumn;
+            }
+
+            const nameColumn = table.getColumn('name', true),
+                options = this.options,
+                // Check for empty or non-numeric x values. A for loop is faster
+                // than Array.prototype.some, and covers empty slots. Cache the
+                // result for faster subsequent checks.
+                isNumbers = (arr: any[]): boolean => {
+                    if (this.xColumnIsNumbers !== void 0) {
+                        return this.xColumnIsNumbers;
+                    }
+                    for (let i = 0, n = arr.length; i < n; i++) {
+                        if (typeof arr[i] !== 'number') {
+                            return (this.xColumnIsNumbers = false);
+                        }
+                    }
+                    return (this.xColumnIsNumbers = true);
+                };
+
+            // Reset the counter
+            this.xIncrement = null;
+
+            // Under these conditions, we need to generate the x data
+            if (
+                !column ||
+                this.xAxis?.hasNames ||
+                options.relativeXValue ||
+                // X column exists in the data table, but has gaps or strings
+                (
+                    column.length < (options.turboThreshold || Infinity) &&
+                    !this.boosted &&
+                    !isNumbers(column)
+                )
+            ) {
+                return (
+                    this.xColumn = Array(rowCount).fill(0).map((_, i): number =>
+                        this.getX(
+                            column?.[i],
+                            nameColumn?.[i] as string|undefined
+                        )
+                    )
+                );
+            }
+        }
+
+        return column || Array(matchLength ? rowCount : 0);
     }
 
     /**
-     * Finds the index of an existing point that matches the given point
-     * options.
+     * Get the x value for a given point.
      *
      * @private
-     * @function Highcharts.Series#findPointIndex
-     * @param {Highcharts.PointOptionsObject} optionsObject
-     * The options of the point.
-     * @param {number} fromIndex
-     * The index to start searching from, used for optimizing series with
-     * required sorting.
-     * @return {number|undefined}
-     * Returns the index of a matching point, or undefined if no match is found.
      */
-    public findPointIndex(
-        optionsObject: PointOptions,
-        fromIndex: number
-    ): (number|undefined) {
-        const { id, x } = optionsObject,
-            oldData = this.points,
-            dataSorting = this.options.dataSorting,
-            cropStart = this.cropStart || 0;
-
-        let matchingPoint: Point|undefined,
-            matchedById: boolean|undefined,
-            pointIndex: number|undefined;
-
-        if (id) {
-            const item = this.chart.get(id);
-            if (item instanceof Point) {
-                matchingPoint = item;
-            }
-
-        } else if (
-            this.linkedParent ||
-            this.enabledDataSorting ||
-            this.options.relativeXValue
-        ) {
-
-            let matcher = (oldPoint: Point): boolean => !oldPoint.touched &&
-                oldPoint.index === optionsObject.index;
-
-            if (dataSorting?.matchByName) {
-                matcher = (oldPoint: Point): boolean => !oldPoint.touched &&
-                    oldPoint.name === optionsObject.name;
-
-            } else if (this.options.relativeXValue) {
-                matcher = (oldPoint: Point): boolean => !oldPoint.touched &&
-                    oldPoint.options.x === optionsObject.x;
-            }
-
-            matchingPoint = find(oldData, matcher);
-
-            // Add unmatched point as a new point
-            if (!matchingPoint) {
-                return void 0;
-            }
-        }
-
-        if (matchingPoint) {
-            pointIndex = matchingPoint?.index;
-            if (typeof pointIndex !== 'undefined') {
-                matchedById = true;
-            }
-        }
-
-        // Search for the same X in the existing data set
-        if (typeof pointIndex === 'undefined' && isNumber(x)) {
-            pointIndex = this.getColumn('x').indexOf(x as any, fromIndex);
-        }
-
-        // Reduce pointIndex if data is cropped
+    public getX(xOption?: number, name?: string): number {
         if (
-            pointIndex !== -1 &&
-            typeof pointIndex !== 'undefined' &&
-            this.cropped
+            this.xAxis?.hasNames &&
+            this.dataTable.getColumn('name', true)
         ) {
-            pointIndex = pointIndex >= cropStart ?
-                pointIndex - cropStart : pointIndex;
+            return this.xAxis.nameToX({
+                name: name as any,
+                series: this
+            }, xOption);
         }
 
         if (
-            !matchedById &&
-            isNumber(pointIndex) &&
-            oldData[pointIndex]?.touched
+            typeof xOption === 'undefined' ||
+            (isNumber(xOption) && this.options.relativeXValue)
         ) {
-            pointIndex = void 0;
+            return this.autoIncrement(xOption);
         }
-        return pointIndex;
+
+        // If x is a string, try to parse it to a datetime
+        if (typeof xOption === 'string') {
+            xOption = this.chart.time.parse(xOption);
+            if (isNumber(xOption)) {
+                return xOption;
+            }
+        }
+
+        return xOption as any;
     }
 
     /**
@@ -1142,63 +1152,80 @@ class Series {
      * don't match.
      *
      * @private
-     * @function Highcharts.Series#updateData
+     * @function Highcharts.Series#matchPoints
      */
-    public updateData(
-        data: Array<(PointOptions|PointShortOptions)>,
-        animation?: (boolean|Partial<AnimationOptions>)
+    public matchPoints(
+        oldXColumn?: DataTable.Column,
+        oldIdColumn?: DataTable.Column,
+        oldNameColumn?: DataTable.Column
     ): boolean {
-        const { options, requireSorting } = this,
+        const { dataTable, options, requireSorting } = this,
             dataSorting = options.dataSorting,
-            oldData = this.points,
-            pointsToAdd = [] as Array<(PointOptions|PointShortOptions)>,
-            equalLength = data.length === oldData.length;
+            oldData = this.data,
+            rowsToAdd: Array<{ newIndex: number, oldIndex: number }> = [],
+            rowsToUpdate: Array<{ newIndex: number, oldIndex: number }> = [],
+            equalLength = dataTable.rowCount === oldData.length;
         let hasUpdatedByKey,
             i,
             point,
-            lastIndex: number,
+            lastIndex = 0,
             succeeded = true;
 
         this.xIncrement = null;
+        delete this.xColumn;
+
+        const newXColumn = dataTable.getColumn('x'),
+            newIdColumn = dataTable.getColumn('id'),
+            newNameColumn = dataSorting?.matchByName ?
+                dataTable.getColumn('name') : void 0;
 
         // Iterate the new data
-        data.forEach((pointOptions, i): void => {
-            const optionsObject = (
-                    defined(pointOptions) &&
-                        this.pointClass.prototype.optionsToObject.call(
-                            { series: this },
-                            pointOptions
-                        )
-                ) || {},
-                { id, x } = optionsObject;
+        for (i = 0; i < dataTable.rowCount; i++) {
+            const x = newXColumn?.[i] as number|string|undefined,
+                id = newIdColumn?.[i] as string|undefined,
+                name = newNameColumn?.[i] as string|undefined,
+                [needle, haystack]: [
+                    string|number,
+                    DataTable.Column
+                ] | [] = id && oldIdColumn ?
+                    [id, oldIdColumn] :
+                    name && oldNameColumn ?
+                        [name, oldNameColumn] :
+                        defined(x) && oldXColumn ?
+                            [x, oldXColumn] :
+                            [];
 
-            let pointIndex;
+            let pointIndex = -1;
 
-            if (id || isNumber(x)) {
-                pointIndex = this.findPointIndex(
-                    optionsObject,
-                    lastIndex
-                );
+            // We have a needle and a haystack to search for matching points
+            if (haystack) {
+
+                pointIndex = haystack.indexOf(needle as any, lastIndex);
 
                 // Matching X not found or used already due to non-unique x
                 // values (#8995), add point (but later)
-                if (
-                    pointIndex === -1 ||
-                    typeof pointIndex === 'undefined'
-                ) {
-                    pointsToAdd.push(pointOptions);
+                if (pointIndex === -1) {
+                    const optionsX = newXColumn?.[i];
+                    let newIndex = oldXColumn?.length ?? dataTable.rowCount;
+                    while (
+                        newIndex &&
+                        oldXColumn &&
+                        typeof optionsX === 'number' &&
+                        oldXColumn[newIndex - 1] as number > optionsX
+                    ) {
+                        newIndex--;
+                    }
+                    rowsToAdd.push({ newIndex, oldIndex: i });
 
                 // Matching X found, update
                 } else if (
-                    oldData[pointIndex] &&
-                    pointOptions !== options.data?.[pointIndex]
+                    oldData[pointIndex] /* &&
+                    pOptions === oldData[pointIndex]?.options*/
                 ) {
-                    oldData[pointIndex].update(
-                        pointOptions,
-                        false,
-                        void 0,
-                        false
-                    );
+                    rowsToUpdate.push({
+                        newIndex: pointIndex,
+                        oldIndex: i
+                    });
 
                     // Mark it touched, below we will remove all points that
                     // are not touched.
@@ -1210,9 +1237,9 @@ class Series {
                         lastIndex = pointIndex + 1;
                     }
                 // Point exists, no changes, don't remove it
-                } else if (oldData[pointIndex]) {
+                } /*/ else if (oldData[pointIndex]) {
                     oldData[pointIndex].touched = true;
-                }
+                }*/
 
                 // If the length is equal and some of the nodes had a
                 // match in the same position, we don't want to remove
@@ -1227,32 +1254,64 @@ class Series {
                 }
             } else {
                 // Gather all points that are not matched
-                pointsToAdd.push(pointOptions);
+                rowsToAdd.push({ newIndex: i, oldIndex: i });
             }
-        }, this);
+        }
 
         // Remove points that don't exist in the updated data set
         if (hasUpdatedByKey) {
+            // Update matching points
+            rowsToUpdate.forEach((row): void => {
+                oldData[row.newIndex].applyOptions(
+                    dataTable.getRowObject(row.oldIndex) as PointOptions
+                );
+            });
+
+            // Add new points
+            rowsToAdd.sort((a, b): number => b.newIndex - a.newIndex);
+            rowsToAdd.forEach((data): void => {
+                // Splice in an undefined item, `generatePoints` will pick it
+                // up and create the point
+                oldData.splice(data.newIndex, 0, void 0 as any);
+            });
+            // Remove points not touched
             i = oldData.length;
             while (i--) {
                 point = oldData[i];
                 if (point && !point.touched) {
-                    point.remove?.(false, animation);
+                    point.destroy();
+                    oldData.splice(i, 1);
                 }
             }
+
+            this.isDirtyData = this.isDirty = true;
 
         // If we did not find keys (ids or x-values), and the length is the
         // same, update one-to-one
         } else if (equalLength && !dataSorting?.enabled) {
-            data.forEach((point, i): void => {
-                // .update doesn't exist on a linked, hidden series (#3709)
-                // (#10187)
-                if (point !== oldData[i].y && !oldData[i].destroyed) {
-                    oldData[i].update(point, false, void 0, false);
+            for (i = 0; i < dataTable.rowCount; i++) {
+                if (!oldData[i].destroyed) {
+                    const pOptions = dataTable.getRowObject(i);
+                    if (pOptions) {
+                        Object.keys(pOptions).forEach((key): void => {
+                            if (
+                                !defined(pOptions[key]) /* ||
+                                pOptions[key] === oldData[i].options[key]*/
+                            ) {
+                                delete pOptions[key];
+                            }
+                        });
+                        if (Object.keys(pOptions).length) {
+                            oldData[i].update(
+                                pOptions as PointOptions,
+                                false,
+                                void 0,
+                                false
+                            );
+                        }
+                    }
                 }
-            });
-            // Don't add new points since those configs are used above
-            pointsToAdd.length = 0;
+            }
 
         // Did not succeed in updating data
         } else {
@@ -1269,11 +1328,6 @@ class Series {
             return false;
         }
 
-        // Add new points
-        pointsToAdd.forEach((point): void => {
-            this.addPoint(point, false, void 0, void 0, false);
-        }, this);
-
         const xData = this.getColumn('x');
         if (
             this.xIncrement === null &&
@@ -1286,8 +1340,8 @@ class Series {
         return true;
     }
 
-    public dataColumnKeys(): Array<string> {
-        return ['x', ...(this.pointArrayMap || ['y'])];
+    public getDataColumnKeys(): Array<string> {
+        return this.dataColumnKeys || ['x', ...(this.pointArrayMap || ['y'])];
     }
 
     /**
@@ -1338,28 +1392,36 @@ class Series {
      *        `false` to prevent.
      */
     public setData(
-        data: Array<(PointOptions|PointShortOptions)>|undefined,
+        data: (
+            Array<PointOptions|PointShortOptions>|
+            DataTableOptions|
+            DataTableCore|
+            undefined
+        ),
         redraw: boolean = true,
         animation?: (boolean|Partial<AnimationOptions>),
         updatePoints?: boolean
     ): void {
         const series = this,
+            table = this.dataTable,
             oldData = series.points,
             oldDataLength = oldData?.length || 0,
+            oldXColumn = table.getColumn('x'),
+            oldIdColumn = table.getColumn('id'),
+            oldNameColumn = table.getColumn('name'),
             options = series.options,
             chart = series.chart,
             dataSorting = options.dataSorting,
             xAxis = series.xAxis,
             turboThreshold = options.turboThreshold,
-            table = this.dataTable,
-            dataColumnKeys = this.dataColumnKeys(),
+            dataColumnKeys = this.getDataColumnKeys(),
             pointValKey = series.pointValKey || 'y',
             pointArrayMap = series.pointArrayMap || [],
             valueCount = pointArrayMap.length,
             keys = options.keys;
 
-        let i,
-            updatedData,
+        let updatedData: boolean|undefined,
+            i,
             indexOfX = 0,
             indexOfY = 1,
             copiedData;
@@ -1375,71 +1437,45 @@ class Series {
             copiedData = merge(true, data);
 
         }
-        data = copiedData || data || [];
+        data = copiedData || data;
 
 
-        const dataLength = data.length;
+        const dataLength = isArray(data) && data.length || 0;
 
-        if (dataSorting?.enabled) {
+        if (dataSorting?.enabled && isArray(data)) {
             data = this.sortData(data);
         }
 
-        // First try to run Point.update which is cheaper, allows animation, and
-        // keeps references to points.
-        if (
-            chart.options.chart.allowMutatingData &&
-            updatePoints !== false &&
-            dataLength &&
-            oldDataLength &&
-            !series.cropped &&
-            !series.hasGroupedData &&
-            series.visible &&
-            // Soft updating has no benefit in boost, and causes JS error
-            // (#8355)
-            !series.boosted
-        ) {
-            updatedData = this.updateData(data, animation);
-        }
+        // Reset properties
+        series.xIncrement = null;
+        delete series.xColumn;
+        delete series.xColumnIsNumbers;
+        delete table.columns.x;
 
-        if (!updatedData) {
+        series.colorCounter = 0; // For series with colorByPoint (#1547)
 
-            // Reset properties
-            series.xIncrement = null;
-
-            series.colorCounter = 0; // For series with colorByPoint (#1547)
-
-            // In turbo mode, look for one- or twodimensional arrays of numbers.
-            // The first and the last valid value are tested, and we assume that
-            // all the rest are defined the same way. Although the 'for' loops
-            // are similar, they are repeated inside each if-else conditional
-            // for max performance.
-            let runTurbo = (
-                turboThreshold &&
-                !options.relativeXValue &&
-                dataLength > turboThreshold
-            );
+        if (isArray(data)) {
+            // In turbo mode, look for one- or twodimensional arrays of
+            // numbers. The first and the last valid value are tested, and
+            // we assume that all the rest are defined the same way.
+            // Although the 'for' loops are similar, they are repeated
+            // inside each if-else conditional for max performance.
+            let runTurbo = turboThreshold && dataLength > turboThreshold;
             if (runTurbo) {
 
                 const firstPoint = series.getFirstValidPoint(data),
                     lastPoint = series.getFirstValidPoint(
                         data, dataLength - 1, -1
                     ),
-                    isShortArray = (a: unknown): a is Array<unknown> => Boolean(
-                        isArray(a) && (keys || isNumber(a[0]))
-                    );
+                    isShortArray = (a: unknown): a is Array<unknown> =>
+                        Boolean(isArray(a) && (keys || isNumber(a[0])));
 
                 // Assume all points are numbers
                 if (isNumber(firstPoint) && isNumber(lastPoint)) {
-                    const x: Array<number> = [],
-                        valueData: Array<number|null> = [];
-                    for (const value of data) {
-                        x.push(this.autoIncrement());
-                        valueData.push(value as number|null);
-                    }
-                    table.setColumns({
-                        x,
-                        [pointValKey]: valueData
-                    });
+                    table.setColumn(
+                        pointValKey,
+                        data as Array<number|null>
+                    );
 
                 // Assume all points are arrays when first point is
                 } else if (
@@ -1448,22 +1484,22 @@ class Series {
                 ) {
                     if (valueCount) { // [x, low, high] or [x, o, h, l, c]
 
-                        // When autoX is 1, the x is skipped: [low, high]. When
-                        // autoX is 0, the x is included: [x, low, high]
-                        const autoX = firstPoint.length === valueCount ?
-                                1 : 0,
-                            colArray = new Array(dataColumnKeys.length)
+                        // When autoX is 1, the x is skipped: [low, high].
+                        // When autoX is 0, the x is included: [x, low,
+                        // high]
+                        const autoX = firstPoint.length === valueCount,
+                            colArray = new Array(firstPoint.length)
                                 .fill(0).map((): Array<number> => []);
+
                         for (const pt of data as number[][]) {
-                            if (autoX) {
-                                colArray[0].push(this.autoIncrement());
-                            }
-                            for (let j = autoX; j <= valueCount; j++) {
-                                colArray[j]?.push(pt[j - autoX]);
+                            for (let j = 0; j <= valueCount; j++) {
+                                colArray[j]?.push(pt[j]);
                             }
                         }
 
-                        table.setColumns(dataColumnKeys.reduce(
+                        table.setColumns((
+                            autoX ? pointArrayMap : dataColumnKeys
+                        ).reduce(
                             (columns, columnName, i):
                             DataTable.ColumnCollection => {
                                 columns[columnName] = colArray[i];
@@ -1488,19 +1524,20 @@ class Series {
 
                         if (indexOfX === indexOfY) {
                             for (const pt of data) {
-                                xData.push(this.autoIncrement());
                                 valueData.push((pt as any)[indexOfY]);
                             }
+                            table.setColumn(pointValKey, valueData);
+
                         } else {
                             for (const pt of data) {
                                 xData.push((pt as any)[indexOfX]);
                                 valueData.push((pt as any)[indexOfY]);
                             }
+                            table.setColumns({
+                                x: xData,
+                                [pointValKey]: valueData
+                            });
                         }
-                        table.setColumns({
-                            x: xData,
-                            [pointValKey]: valueData
-                        });
                     }
                 } else {
                     // Highcharts expects configs to be numbers or arrays in
@@ -1510,25 +1547,162 @@ class Series {
             }
 
             if (!runTurbo) {
-                const columns = dataColumnKeys.reduce(
-                    (columns, columnName):
-                    DataTable.ColumnCollection => {
-                        columns[columnName] = [];
-                        return columns;
-                    }, {} as DataTable.ColumnCollection);
+                const columns = {} as DataTable.ColumnCollection;
                 for (i = 0; i < dataLength; i++) {
-                    const pt = series.pointClass.prototype.applyOptions.apply(
-                        { series },
-                        [data[i]]
-                    );
-                    for (const key of dataColumnKeys) {
-                        columns[key][i] = (pt as any)[key];
+                    const ptOptions = series.pointClass.prototype
+                        .optionsToObject
+                        .call({ series }, data[i]);
+
+                    for (const key of Object.keys(ptOptions)) {
+                        columns[key] ||= new Array(dataLength);
+                        columns[key][i] = (ptOptions as any)[key];
                     }
                 }
 
-                table.setColumns(columns);
+                // Empty data, clear table
+                if (dataLength) {
+                    table.setColumns(columns);
+                } else {
+                    table.deleteRows(0, table.rowCount);
+                }
             }
 
+        // Data table passed as option
+        } else {
+            const seriesDataTable = chart.getDataTable(options),
+                dataTable = data ? [data] : (
+                    // Use either dataTable from series options or from
+                    // the chart
+                    seriesDataTable.length ?
+                        seriesDataTable :
+                        chart.dataTable
+                ),
+                columnAssignment = options.columnAssignment,
+                keys = dataColumnKeys.slice();
+
+            // Extend the data column keys with the keys from the column
+            // assignment
+            if (columnAssignment) {
+                columnAssignment.forEach((assignment): void => {
+                    pushUnique(keys, assignment.key);
+                });
+                this.dataColumnKeys = keys;
+            }
+
+            // Resolve column assignment
+            const getTableSpecificColumns = (
+                dataTable?: DataTableCore|DataTableOptions,
+                index?: number
+            ): DataTable.ColumnCollection => keys
+                .reduce((acc, key): DataTable.ColumnCollection => {
+                    const assignment = columnAssignment?.find(
+                            (assignment): boolean => (
+                                (assignment.dataTable ?? index) === index &&
+                                assignment.key === key
+                            )
+                        ),
+                        column = dataTable?.columns?.[
+                            assignment?.columnName || key
+                        ];
+
+                    if (column) {
+                        acc[key] = column;
+                    }
+                    return acc;
+                }, {} as DataTable.ColumnCollection);
+
+            dataTable.forEach((dtItem, index): void => {
+                // If a DataTable is passed and no column assignment is set,
+                // use it directly
+                if (columnAssignment || dtItem) {
+                    // Set the columns
+                    table.setColumns(
+                        getTableSpecificColumns(dtItem, index)
+                    );
+                }
+
+                // If a DataTable is passed directly by reference, bind
+                // events to keep the series updated
+                if (dtItem instanceof DataTableCore) {
+
+                    const queueRedraw = (): void => {
+                        clearTimeout(chart.redrawTimeout);
+                        chart.redrawTimeout = setTimeout(
+                            (): void => chart.renderer && chart.redraw(),
+                            0
+                        );
+                    };
+
+                    addEvent(
+                        dtItem,
+                        'afterSetRows',
+                        (e: DataTable.RowEvent): void => {
+                            const row = dtItem.getRow.call({
+                                    columns: getTableSpecificColumns(
+                                        dtItem,
+                                        index
+                                    )
+                                }, e.rowIndex),
+                                point = this.points[e.rowIndex];
+
+                            if (row) {
+                                if (point) {
+                                    point.update(
+                                        row as unknown as PointOptions,
+                                        false
+                                    );
+                                } else {
+                                    this.addPoint(
+                                        row as unknown as PointOptions,
+                                        false
+                                    );
+                                }
+
+                                queueRedraw();
+                            }
+                        }
+                    );
+
+                    addEvent(
+                        dtItem,
+                        'afterDeleteRows',
+                        (e: DataTable.RowEvent): void => {
+                            const { rowCount, rowIndex } = e;
+
+                            for (
+                                let i = rowIndex + rowCount - 1;
+                                i >= rowIndex;
+                                i--
+                            ) {
+                                this.removePoint(i, false);
+                            }
+
+                            queueRedraw();
+                        }
+                    );
+                }
+            });
+        }
+
+        if (
+            chart.options.chart.allowMutatingData &&
+            updatePoints !== false &&
+            oldDataLength &&
+            !series.cropped &&
+            !series.hasGroupedData &&
+            series.visible &&
+            // Soft updating has no benefit in boost, and causes JS error
+            // (#8355)
+            !series.boosted
+        ) {
+            updatedData = this.matchPoints(
+                oldXColumn,
+                oldIdColumn,
+                oldNameColumn
+            );
+        }
+
+        if (!updatedData) {
             // Forgetting to cast strings to numbers is a common caveat when
             // handling CSV or JSON
             if (isString(this.getColumn('y')[0])) {
@@ -1536,7 +1710,6 @@ class Series {
             }
 
             series.data = [];
-            series.options.data = series.userOptions.data = data;
 
             // Destroy old points
             i = oldDataLength;
@@ -1553,6 +1726,10 @@ class Series {
             series.isDirty = chart.isDirtyBox = true;
             series.isDirtyData = !!oldData;
             animation = false;
+        }
+
+        if (isArray(data)) {
+            series.options.data = series.userOptions.data = data;
         }
 
         // Typically for pie series, points need to be processed and
@@ -1722,7 +1899,7 @@ class Series {
         }
 
         // Find the closest distance between processed points
-        xData = modified.getColumn('x') as Array<number> || [];
+        xData = this.getColumn('x', true);
         const closestPointRange = getClosestDistance(
             [
                 logarithmic ?
@@ -1802,9 +1979,10 @@ class Series {
         min: number,
         max: number
     ): Series.CropDataObject {
-        const xData = table.getColumn('x', true) as Array<number> || [],
-            dataLength = xData.length,
-            columns: DataTable.ColumnCollection = {};
+        const xData = table === this.dataTable ?
+                this.getColumn('x') :
+                table.getColumn('x', true) as Array<number>,
+            dataLength = xData.length;
 
         let i,
             j,
@@ -1827,12 +2005,18 @@ class Series {
             }
         }
 
-        for (const key of this.dataColumnKeys()) {
-            const column = table.getColumn(key, true);
-            if (column) {
-                columns[key] = column.slice(start, end);
-            }
-        }
+        // Slice all the columns and return a copy
+        const columns = Object.keys(table.columns)
+            .reduce((columns, key): DataTable.ColumnCollection => {
+                columns[key] = (
+                    table.getColumn(key, true) || []
+                ).slice(start, end);
+                return columns;
+            }, {} as DataTable.ColumnCollection);
+
+        // Add cropped x data to modified table
+        columns.x = xData.slice(start, end);
+
         return {
             modified: new DataTableCore({ columns }),
             start,
@@ -1850,7 +2034,7 @@ class Series {
     public generatePoints(): void {
         const series = this,
             options = series.options,
-            dataOptions = series.processedData || options.data,
+            dataOptions = series.hasProcessedDataTable ? void 0 : options.data,
             table = series.dataTable.modified,
             xData = series.getColumn('x', true),
             PointClass = series.pointClass,
@@ -1865,16 +2049,14 @@ class Series {
                     0
             ),
             categories = series.xAxis?.categories,
-            pointArrayMap = series.pointArrayMap || ['y'],
             // Create a configuration object out of a data row
-            dataColumnKeys = this.dataColumnKeys();
+            dataColumnKeys = this.getDataColumnKeys();
         let dataLength,
             cursor,
             point,
             i: number,
             data = series.data,
             pOptions: PointShortOptions|PointOptions;
-
 
         if (!data && !hasGroupedData) {
             const arr = [] as Array<Point>;
@@ -1893,14 +2075,13 @@ class Series {
             if (!hasGroupedData) {
                 point = data[cursor];
                 pOptions = dataOptions ?
+                    // We could use table.getRowObject(i) here, but that would
+                    // be less performant
                     dataOptions[cursor] :
-                    table.getRow(i, pointArrayMap) as Array<number>;
+                    table.getRowObject(i) as unknown as PointOptions;
 
-                // #970:
-                if (
-                    !point &&
-                    pOptions !== void 0
-                ) {
+                // #970
+                if (!point && pOptions !== void 0) {
                     data[cursor] = point = new PointClass(
                         series,
                         pOptions,
@@ -1911,7 +2092,10 @@ class Series {
                 // Splat the y data in case of ohlc data array
                 point = new PointClass(
                     series,
-                    table.getRow(i, dataColumnKeys) as Array<number> || []
+                    table.getRowObject(
+                        i,
+                        dataColumnKeys
+                    ) as unknown as PointOptions
                 );
 
                 point.dataGroup = (series.groupMap as any)[
@@ -4055,8 +4239,13 @@ class Series {
         // Get options and push the point to xData, yData and series.options. In
         // series.generatePoints the Point instance will be created on demand
         // and pushed to the series.data array.
-        const point = { series: series } as any;
-        series.pointClass.prototype.applyOptions.apply(point, [options]);
+        const {
+                applyOptions,
+                optionsToObject
+            } = series.pointClass.prototype,
+            point = { series } as any,
+            pointOptions = optionsToObject.call(point, options);
+        applyOptions.call(point, pointOptions, void 0, false);
         const x: (number|null) = point.x;
 
         // Get the insertion point
@@ -4069,7 +4258,8 @@ class Series {
         }
 
         // Insert the row at the given index
-        table.setRow(point, i, true, { addColumns: false });
+        table.setRow(pointOptions as DataTable.RowObject, i, true);
+        this.xColumn?.splice(i, 0, this.getX(x as any));
 
         if (names && point.name) {
             names[x as any] = point.name;
@@ -4080,7 +4270,7 @@ class Series {
             isInTheMiddle ||
             // When processedData is present we need to splice an empty slot
             // into series.data, otherwise generatePoints won't pick it up.
-            series.processedData
+            series.hasProcessedDataTable
         ) {
             series.data.splice(i, 0, null as any);
             series.processData();
@@ -4098,7 +4288,8 @@ class Series {
             } else {
                 [
                     data,
-                    dataOptions
+                    dataOptions,
+                    this.xColumn
                 ].filter(defined).forEach((coll): void => {
                     coll.shift();
                 });
@@ -4163,12 +4354,15 @@ class Series {
                     // #4935
                     points?.length === data.length ? points : void 0,
                     data,
-                    series.options.data
+                    series.options.data,
+                    series.xColumn
                 ].filter(defined).forEach((coll): void => {
                     coll.splice(i, 1);
                 });
 
                 table.deleteRows(i);
+                // Reset modified data (shouldn't this happen automagically?)
+                table.modified = table;
 
                 point?.destroy();
 
@@ -4311,7 +4505,8 @@ class Series {
             // directly after chart initialization, or when applying responsive
             // rules (#6912).
             animation = series.finishedAnimating && { animation: false },
-            kinds = {} as Record<string, number>;
+            kinds = {} as Record<string, number>,
+            dataOptions = options.data || options.dataTable;
         let seriesOptions: SeriesOptions,
             n,
             keepProps = Series.keepProps.slice(),
@@ -4351,13 +4546,13 @@ class Series {
                 keepProps.push(key + 'Data');
             });
 
-            if (options.data) {
+            if (dataOptions) {
                 // `setData` uses `dataSorting` options so we need to update
                 // them earlier
                 if (options.dataSorting) {
                     extend(series.options.dataSorting, options.dataSorting);
                 }
-                this.setData(options.data as any, false);
+                this.setData(dataOptions as any, false);
             }
         } else {
             this.dataTable.modified = this.dataTable;
@@ -4382,9 +4577,7 @@ class Series {
                 pointStart:
                     // When updating from blank (#7933)
                     plotOptions?.series?.pointStart ??
-                    oldOptions.pointStart ??
-                    // When updating after addPoint
-                    series.getColumn('x')[0]
+                    oldOptions.pointStart
             },
             !keepPoints && { data: series.options.data },
             options,
