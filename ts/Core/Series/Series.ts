@@ -261,8 +261,7 @@ class Series {
         'eventOptions',
         'navigatorSeries',
         'symbolIndex',
-        'baseSeries',
-        'useDataTable'
+        'baseSeries'
     ];
 
     /**
@@ -418,13 +417,6 @@ class Series {
     public tracker?: SVGElement;
 
     public trackerGroups?: Array<string>;
-
-    /**
-     * Preliminary flag for migration. When true, series.options.data is deleted
-     * in setData, and all further data operations should be done on the data
-     * table.
-     */
-    public useDataTable = true;
 
     public userOptions!: DeepPartial<SeriesTypeOptions>;
 

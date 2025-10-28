@@ -544,7 +544,7 @@ class VennSeries extends ScatterSeries {
 
         // Process the data before passing it into the layout function.
         const relations = VennUtils.processVennData(
-            this.useDataTable ? this.dataTable : (this.options.data || []),
+            this.dataTable,
             VennSeries.splitter
         );
 

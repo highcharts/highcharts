@@ -436,10 +436,9 @@ class ChartAdditions {
                         selected: series.options.selected
                     }, series.userOptions);
 
-                    if (series.useDataTable) {
-                        const columns = series.dataTable.getColumns();
-                        series.purgedOptions.dataTable = { columns };
-                    }
+                    const columns = series.dataTable.getColumns();
+                    series.purgedOptions.dataTable = { columns };
+
                     levelSeriesOptions.push(series.purgedOptions);
                 }
             }
@@ -1147,9 +1146,7 @@ namespace Drilldown {
                     points = series.points;
 
                 for (let i = 0, iEnd = xData.length, p; i < iEnd; i++) {
-                    p = series.useDataTable ?
-                        series.dataTable.getRowObject(i) :
-                        series.options.data?.[i];
+                    p = series.dataTable.getRowObject(i);
 
                     // The `drilldown` property can only be set on an array or an
                     // object

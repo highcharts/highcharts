@@ -50,8 +50,6 @@ const { getLevelOptions } = TU;
 import U from '../../Utilities.js';
 const {
     addEvent,
-    isArray,
-    splat,
     find,
     fireEvent,
     isObject,
@@ -171,13 +169,10 @@ let TickConstructor: (typeof Tick|undefined);
 function getSeriesData(
     s: GanttSeries
 ): Array<(PointOptions|PointShortOptions)> {
-    const data = s.useDataTable ?
-        new Array(s.dataTable.rowCount).fill(void 0)
-            .map((_, i): GanttPointOptions =>
-                s.dataTable.getRowObject(i) as GanttPointOptions
-            ) :
-        s.options.data || [];
-    return data;
+    return new Array(s.dataTable.rowCount).fill(void 0)
+        .map((_, i): GanttPointOptions =>
+            s.dataTable.getRowObject(i) as GanttPointOptions
+        );
 }
 
 /**
@@ -511,60 +506,19 @@ function onBeforeRender(
                 axis.treeGrid.tree = treeGrid.tree;
 
                 // Update yData now that we have calculated the y values
-                axis.series.forEach(function (series, index): void {
-                    if (series.useDataTable) {
-                        const axisData = data.filter((point): boolean =>
-                            point.seriesIndex === series.index
-                        );
+                axis.series.forEach((series): void => {
+                    const axisData = data.filter((point): boolean =>
+                        point.seriesIndex === series.index
+                    );
 
-                        axisData.forEach((point): void => {
-                            delete point.seriesIndex;
-                            delete point.yIndex;
-                        });
+                    axisData.forEach((point): void => {
+                        delete point.seriesIndex;
+                        delete point.yIndex;
+                    });
 
-                        // Avoid destroying points when series is not visible
-                        if (series.visible) {
-                            series.setData(axisData, false);
-                        }
-
-                    } else {
-
-                        const axisData = data
-                            .filter((point): boolean =>
-                                point.seriesIndex === series.index
-                            ).map((
-                                d: (PointOptions|PointShortOptions)
-                            ): (PointOptions|PointShortOptions) => {
-
-                                if (
-                                    seriesHasPrimitivePoints[index] ||
-                                    (isArray(d) && series.options.keys?.length)
-                                ) {
-                                    // Get the axisData from the data array used
-                                    // to build the treeGrid where has been
-                                    // modified
-                                    data.forEach(function (
-                                        point: GanttPointOptions
-                                    ): void {
-                                        const toArray = splat(d);
-                                        if (
-                                            toArray.indexOf(
-                                                point.x || 0
-                                            ) >= 0 &&
-                                            toArray.indexOf(point.x2 || 0) >= 0
-                                        ) {
-                                            d = point;
-                                        }
-                                    });
-                                }
-                                d = isObject(d, true) ? merge(d) : d;
-                                return d;
-                            });
-
-                        // Avoid destroying points when series is not visible
-                        if (series.visible) {
-                            series.setData(axisData, false);
-                        }
+                    // Avoid destroying points when series is not visible
+                    if (series.visible) {
+                        series.setData(axisData, false);
                     }
                 });
 
@@ -1006,12 +960,11 @@ class TreeGridAxisAdditions {
                 const point = chart.get(node.id) as GanttPoint,
                     dataPoint = data[series.data.indexOf(point)];
 
-                if (series.useDataTable) {
-                    series.dataTable.setRow(
-                        { collapsed: node.collapsed },
-                        series.data.indexOf(point)
-                    );
-                }
+                series.dataTable.setRow(
+                    { collapsed: node.collapsed },
+                    series.data.indexOf(point)
+                );
+
                 if (point && isObject(dataPoint, true)) {
                     point.collapsed = node.collapsed;
                     dataPoint.collapsed = node.collapsed;

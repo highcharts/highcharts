@@ -787,11 +787,10 @@ namespace ExportData {
 
                 // Export directly from options.data because we need the
                 // uncropped data (#7913), and we need to support Boost (#7026).
-                const data = series.useDataTable ?
-                        new Array(series.dataTable.rowCount)
-                            .fill(void 0).map((_, i): PointOptions =>
-                                series.dataTable.getRowObject(i) as PointOptions
-                            ) : series.options.data,
+                const data = new Array(series.dataTable.rowCount)
+                        .fill(void 0).map((_, i): PointOptions =>
+                            series.dataTable.getRowObject(i) as PointOptions
+                        ),
                     xColumn = series.getColumn('x');
 
                 (data || []).forEach(function eachData(

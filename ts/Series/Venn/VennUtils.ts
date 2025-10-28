@@ -835,18 +835,17 @@ function nelderMead(
  * @return {Array<object>} Returns an array of valid venn data.
  */
 function processVennData(
-    // @todo: Remove VennPointOptions when useDataTable is remvoed
-    dataTable: DataTableCore|Array<VennPointOptions>|undefined,
+    dataTable: DataTableCore|undefined,
     splitter: string
 ): Array<VennRelationObject> {
-    const rows: Array<VennPointOptions> = (dataTable as DataTableCore)?.columns ?
+    const rows: Array<VennPointOptions> = dataTable?.columns ?
         new Array((dataTable as DataTableCore).rowCount)
             .fill(void 0)
             .map((_, i): VennPointOptions =>
                 (dataTable as DataTableCore)
                     .getRowObject(i) as unknown as VennPointOptions
             ) :
-        (isArray(dataTable) ? dataTable : []);
+        [];
 
     const validSets = rows
         .reduce(function (

@@ -684,18 +684,16 @@ function groupData(
             if (
                 series.pointClass &&
                 !defined(series.dataGroupInfo.options) &&
-                (this.useDataTable || dataOptions)
+                dataOptions
             ) {
                 // Convert numbers and arrays into objects
                 series.dataGroupInfo.options = merge(
                     series.pointClass.prototype
                         .optionsToObject.call(
                             { series },
-                            this.useDataTable ?
-                                topTable.getRowObject(
-                                    cropStart + start
-                                ) as unknown as PointOptions :
-                                (dataOptions?.[cropStart + start] || {})
+                            topTable.getRowObject(
+                                cropStart + start
+                            ) as unknown as PointOptions
                         )
                 );
 
