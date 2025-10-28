@@ -173,7 +173,6 @@ class HeaderCell extends Cell {
             column?.options
         );
         const headerCellOptions = options.header || {};
-        const isSortableData = options.sorting?.sortable && column?.data;
 
 
         if (headerCellOptions.formatter) {
@@ -211,14 +210,7 @@ class HeaderCell extends Cell {
 
         if (column) {
             this.htmlElement.setAttribute('data-column-id', column.id);
-
             this.htmlElement.setAttribute('aria-label', column.id);
-
-            if (isSortableData) {
-                column.viewport.grid.accessibility?.addSortableColumnHint(
-                    this.headerContent
-                );
-            }
 
             // Add user column classname
             if (column.options.className) {

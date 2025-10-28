@@ -43,7 +43,8 @@ namespace Defaults {
             enabled: true,
             highContrastMode: 'auto',
             announcements: {
-                sorting: true
+                sorting: true,
+                filtering: true
             }
         },
         lang: {
@@ -60,6 +61,16 @@ namespace Defaults {
                     announcements: {
                         pageSizeChange: 'Page size changed to',
                         pageChange: 'Page changed to'
+                    }
+                },
+                filtering: {
+                    announcements: {
+                        filterApplied: 'Filter applied for {columnId}, ' +
+                            '{condition} {value}. {rowsCount} results found.',
+                        emptyFilterApplied: 'Filter applied for {columnId}, ' +
+                            '{condition} values. {rowsCount} results found.',
+                        filterCleared: 'Filter cleared for {columnId}. ' +
+                            '{rowsCount} results found.'
                     }
                 }
             },
