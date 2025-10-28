@@ -1169,12 +1169,12 @@ class Series {
      * don't match.
      *
      * @private
-     * @function Highcharts.Series#updateData
+     * @function Highcharts.Series#matchPoints
      */
     public matchPoints(
-        oldXColumn?: Array<number>,
-        oldIdColumn?: Array<string|number|undefined>,
-        oldNameColumn?: Array<string|undefined>
+        oldXColumn?: DataTable.Column,
+        oldIdColumn?: DataTable.Column,
+        oldNameColumn?: DataTable.Column
     ): boolean {
         const { dataTable, options, requireSorting } = this,
             dataSorting = options.dataSorting,
@@ -1202,8 +1202,8 @@ class Series {
                 id = newIdColumn?.[i] as string|undefined,
                 name = newNameColumn?.[i] as string|undefined,
                 [needle, haystack]: [
-                    string|number|undefined,
-                    Array<string|number|undefined>
+                    string|number,
+                    DataTable.Column
                 ] | [] = id && oldIdColumn ?
                     [id, oldIdColumn] :
                     name && oldNameColumn ?
@@ -1217,7 +1217,7 @@ class Series {
             // We have a needle and a haystack to search for matching points
             if (haystack) {
 
-                pointIndex = haystack.indexOf(needle, lastIndex);
+                pointIndex = haystack.indexOf(needle as any, lastIndex);
 
                 // Matching X not found or used already due to non-unique x
                 // values (#8995), add point (but later)
@@ -1228,7 +1228,7 @@ class Series {
                         newIndex &&
                         oldXColumn &&
                         typeof optionsX === 'number' &&
-                        oldXColumn[newIndex - 1] > optionsX
+                        oldXColumn[newIndex - 1] as number > optionsX
                     ) {
                         newIndex--;
                     }
@@ -1795,7 +1795,6 @@ class Series {
         if (
             chart.options.chart.allowMutatingData &&
             updatePoints !== false &&
-            dataLength &&
             oldDataLength &&
             !series.cropped &&
             !series.hasGroupedData &&
@@ -1805,9 +1804,9 @@ class Series {
             !series.boosted
         ) {
             updatedData = this.matchPoints(
-                oldXColumn as any,
-                oldIdColumn as any,
-                oldNameColumn as unknown as Array<string|undefined>
+                oldXColumn,
+                oldIdColumn,
+                oldNameColumn
             );
         }
 
