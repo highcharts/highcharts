@@ -25,11 +25,11 @@ let dashboard;
 const topicMap = {
     'highcharts/topic1': {
         chart: 'column-chart-1',
-        dataGrid: 'data-grid-1'
+        grid: 'grid-1'
     },
     'highcharts/topic2': {
         chart: 'column-chart-2',
-        dataGrid: 'data-grid-2'
+        grid: 'grid-2'
     }
 };
 
@@ -67,8 +67,8 @@ const chartOptions = {
     }
 };
 
-// Options for datagrid
-const dataGridOptions = {
+// Options for grid
+const gridOptions = {
     cellHeight: 30,
     editable: false,
     credits: {
@@ -191,8 +191,8 @@ async function createDashboard() {
                 }
             }
         }, {
-            renderTo: 'data-grid-1',
-            type: 'DataGrid',
+            renderTo: 'grid-1',
+            type: 'Grid',
             connector: {
                 id: 'mqtt-data-1'
             },
@@ -202,7 +202,7 @@ async function createDashboard() {
                     autoScroll: true
                 }
             },
-            dataGridOptions
+            gridOptions
         }, {
             renderTo: 'column-chart-2',
             type: 'Highcharts',
@@ -223,8 +223,8 @@ async function createDashboard() {
                 }
             }
         }, {
-            renderTo: 'data-grid-2',
-            type: 'DataGrid',
+            renderTo: 'grid-2',
+            type: 'Grid',
             connector: {
                 id: 'mqtt-data-2'
             },
@@ -234,7 +234,7 @@ async function createDashboard() {
                     autoScroll: true
                 }
             },
-            dataGridOptions: dataGridOptions
+            gridOptions: gridOptions
         }],
         gui: {
             layouts: [{
@@ -243,14 +243,14 @@ async function createDashboard() {
                     cells: [{
                         id: 'column-chart-1'
                     }, {
-                        id: 'data-grid-1'
+                        id: 'grid-1'
                     }]
                 }, {
                     // For topic 2
                     cells: [{
                         id: 'column-chart-2'
                     }, {
-                        id: 'data-grid-2'
+                        id: 'grid-2'
                     }]
                 }]
             }]

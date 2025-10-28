@@ -98,6 +98,7 @@ namespace Globals {
         popup: 'popup',
         button: 'button',
         icon: 'icon',
+        iconSearch: 'icon-search',
         popupContent: 'popup-content',
         columnFilterWrapper: 'column-filter-wrapper',
         toolbarButtonActiveIndicator: 'active-indicator',
@@ -128,7 +129,10 @@ namespace Globals {
             'pagination-mobile-page-size-selector',
         paginationPageSizeContainer: 'pagination-page-size-container',
         paginationPageSizeSelect: 'pagination-page-size-select',
-        zeroWidth: 'zero-width'
+        noWidth: 'no-width',
+        rightAlign: 'right',
+        centerAlign: 'center',
+        leftAlign: 'left'
     } as const;
 
     export const win = window;

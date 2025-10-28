@@ -65,7 +65,7 @@ const riskScoreConnector = new HighchartsConnectors.Morningstar.RiskScoreConnect
 
 await riskScoreConnector.load();
 
-new DataGrid.DataGrid('container', {
+new Grid.Grid('container', {
     dataTable: riskScoreConnector,
     editable: false,
     columns: {

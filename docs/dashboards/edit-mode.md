@@ -199,7 +199,7 @@ See the live demo [here](https://jsfiddle.net/gh/get/library/pure/highcharts/hig
 All default styles for the edit mode are defined in the `dashboards.css` file. It can be imported to your project by adding the following line to your CSS file:
 
 ```css
-@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 ```
 
 You can override them by adding your own styles to your project, for example:

@@ -101,11 +101,11 @@ Dashboards.board('container', {
         }
     }, {
         renderTo: 'bottom',
-        type: 'DataGrid',
+        type: 'Grid',
         connector: {
             id: 'Economy'
         },
-        dataGridOptions: {
+        gridOptions: {
             credits: {
                 enabled: false
             },

@@ -42,7 +42,6 @@ import Pagination from './Pagination/Pagination.js';
 
 const { makeHTMLElement, setHTMLContent } = GridUtils;
 const {
-    defined,
     extend,
     fireEvent,
     getStyle,
@@ -139,7 +138,7 @@ class Grid {
 
     /**
      * An array containing the current Grid objects in the page.
-     * @internal
+     * @private
      */
     public static readonly grids: Array<(Grid|undefined)> = [];
 
@@ -310,35 +309,32 @@ class Grid {
     constructor(
         renderTo: string | HTMLElement,
         options: Options,
-        afterLoadCallback?: Grid.AfterLoadCallback
+        afterLoadCallback?: (grid: Grid) => void
     ) {
         this.loadUserOptions(options);
-
-        this.querying = new QueryingController(this);
         this.id = this.options?.id || U.uniqueKey();
-
-        this.initContainers(renderTo);
-        this.initAccessibility();
-        this.initPagination();
-        this.loadDataTable(this.options?.dataTable);
-        this.initVirtualization();
-
+        this.querying = new QueryingController(this);
         this.locale = this.options?.lang?.locale || (
             (this.container?.closest('[lang]') as HTMLElement|null)?.lang
         );
-
         this.time = new TimeBase(extend<TimeBase.TimeOptions>(
             this.options?.time,
             { locale: this.locale }
         ), this.options?.lang);
 
+        fireEvent(this, 'beforeLoad');
+
+        Grid.grids.push(this);
+        this.initContainers(renderTo);
+        this.initAccessibility();
+        this.initPagination();
+        this.loadDataTable();
         this.querying.loadOptions();
         void this.querying.proceed().then((): void => {
             this.renderViewport();
             afterLoadCallback?.(this);
+            fireEvent(this, 'afterLoad');
         });
-
-        Grid.grids.push(this);
     }
 
 
@@ -589,7 +585,7 @@ class Grid {
             this.userOptions.dataTable = options.dataTable;
             (this.options ?? {}).dataTable = options.dataTable;
 
-            this.loadDataTable(this.options?.dataTable);
+            this.loadDataTable();
             this.querying.shouldBeUpdated = true;
         }
 
@@ -599,7 +595,6 @@ class Grid {
 
         this.initAccessibility();
         this.initPagination();
-        this.initVirtualization();
 
         this.querying.loadOptions();
 
@@ -855,6 +850,9 @@ class Grid {
         delete this.viewport;
 
         this.resetContentWrapper();
+
+        fireEvent(this, 'beforeRenderViewport');
+
         this.renderCaption();
 
         // Render top pagination if enabled (before table)
@@ -896,6 +894,8 @@ class Grid {
         this.tableElement = makeHTMLElement('table', {
             className: Globals.getClassName('tableElement')
         }, this.contentWrapper);
+
+        this.tableElement.setAttribute('role', 'grid');
 
         return new Table(this, this.tableElement);
     }
@@ -946,14 +946,11 @@ class Grid {
     /**
      * Loads the data table of the Grid. If the data table is passed as a
      * reference, it should be used instead of creating a new one.
-     *
-     * @param tableOptions
-     * The data table to load. If not provided, a new data table will be
-     * created.
      */
-    private loadDataTable(tableOptions?: DataTable | DataTableOptions): void {
+    private loadDataTable(): void {
         // Unregister all events attached to the previous data table.
         this.dataTableEventDestructors.forEach((fn): void => fn());
+        const tableOptions = this.options?.dataTable;
 
         // If the table is passed as a reference, it should be used instead of
         // creating a new one.
@@ -1148,41 +1145,6 @@ class Grid {
 
         return options;
     }
-
-    /**
-     * Enables virtualization if the row count is greater than or equal to the
-     * threshold or virtualization is enabled externally. Should be fired after
-     * the data table is loaded.
-     */
-    private initVirtualization(): void {
-        // Makes sure all nested options are defined.
-        ((this.options ??= {}).rendering ??= {}).rows ??= {};
-        this.options.rendering.rows.virtualization = this.shouldVirtualize();
-    }
-
-    /**
-     * Checks if virtualization should be enabled.
-     *
-     * @returns
-     * Whether virtualization should be enabled.
-     */
-    public shouldVirtualize(): boolean {
-        const rows = this.userOptions.rendering?.rows;
-        if (defined(rows?.virtualization)) {
-            return rows.virtualization;
-        }
-
-        const threshold = Number(
-            rows?.virtualizationThreshold ||
-            Defaults.defaultOptions.rendering?.rows?.virtualizationThreshold
-        );
-        const rowCount = Number(this.dataTable?.rowCount);
-        const paginationPageSize = this.pagination?.currentPageSize;
-
-        return paginationPageSize ?
-            paginationPageSize >= threshold :
-            rowCount >= threshold;
-    }
 }
 
 
@@ -1192,12 +1154,6 @@ class Grid {
  *
  * */
 namespace Grid {
-    /**
-     * @internal
-     * Callback that is called after the Grid is loaded.
-     */
-    export type AfterLoadCallback = (grid: Grid) => void;
-
     /**
      * @internal
      * An item in the column options map.

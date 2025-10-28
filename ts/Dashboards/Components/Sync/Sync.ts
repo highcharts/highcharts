@@ -402,17 +402,12 @@ namespace Sync {
 
     /** @internal */
     export type OptionsRecord = (
-        // eslint-disable-next-line @typescript-eslint/no-duplicate-type-constituents
-        Record<(SyncEmitter['id']|SyncHandler['id']), OptionsEntry>
+        Record<string, OptionsEntry>
     );
 
     /** @internal */
     export type RawOptionsRecord = (
-        Record<
-            // eslint-disable-next-line @typescript-eslint/no-duplicate-type-constituents
-            (SyncEmitter['id']|SyncHandler['id']),
-            (boolean|OptionsEntry|undefined)
-        >
+        Record<string, boolean | OptionsEntry | undefined>
     );
 }
 

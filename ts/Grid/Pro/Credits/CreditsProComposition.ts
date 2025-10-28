@@ -60,6 +60,7 @@ namespace CreditsProComposition {
             credits: CreditsPro.defaultOptions
         });
 
+        // TODO: Change to `beforeLoad` after upgrading grid update.
         addEvent(GridClass, 'afterRenderViewport', initCredits);
     }
 

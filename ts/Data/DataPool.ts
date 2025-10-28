@@ -112,8 +112,6 @@ class DataPool implements DataEvent.Emitter<DataPool.Event> {
      *
      * @param {DataTable.Event} e
      * Event object with event information.
-     *
-     * @internal
      */
     public emit(e: DataPool.Event): void {
         fireEvent(this, e.type, e);

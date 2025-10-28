@@ -159,6 +159,7 @@ class HeaderCell extends Cell {
     public override init(): HTMLTableCellElement {
         const elem = document.createElement('th', {});
         elem.classList.add(Globals.getClassName('headerCell'));
+        elem.setAttribute('role', 'columnheader');
         return elem;
     }
 
@@ -209,6 +210,7 @@ class HeaderCell extends Cell {
 
         if (column) {
             this.htmlElement.setAttribute('data-column-id', column.id);
+            this.htmlElement.setAttribute('aria-label', column.id);
 
             // Add user column classname
             if (column.options.className) {
@@ -232,6 +234,11 @@ class HeaderCell extends Cell {
         }
 
         this.setCustomClassName(options.header?.className);
+
+        // Add alignment to number column
+        if (column?.dataType === 'number') {
+            this.setCustomClassName(Globals.getClassName('rightAlign'));
+        }
 
         fireEvent(this, 'afterRender', { column });
     }

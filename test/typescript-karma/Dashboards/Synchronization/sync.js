@@ -1,16 +1,15 @@
 //@ts-check
-import Highcharts from '../../../../code/es-modules/masters/highstock.src.js';
-import Dashboards from '../../../../code/dashboards/es-modules/masters/dashboards.src.js';
-import DataGrid from '../../../../code/datagrid/es-modules/masters/datagrid.src.js';
-import EditMode from '../../../../code/dashboards/es-modules/masters/modules/layout.src.js';
+import '../../../../code/dashboards/es-modules/masters/dashboards.src.js';
+import '../../../../code/grid/es-modules/masters/grid-pro.src.js';
 
-Dashboards.HighchartsPlugin.custom.connectHighcharts(Highcharts);
-Dashboards.DataGridPlugin.custom.connectDataGrid(DataGrid);
+// Access the globals created by the UMD modules
+const Dashboards = window.Dashboards;
+const Grid = window.Grid;
 
-Dashboards.PluginHandler.addPlugin(Dashboards.HighchartsPlugin);
-Dashboards.PluginHandler.addPlugin(Dashboards.DataGridPlugin);
+Dashboards.GridPlugin.custom.connectGrid(Grid);
+Dashboards.PluginHandler.addPlugin(Dashboards.GridPlugin);
 
-const { test } = QUnit;
+const { test, skip } = QUnit;
 
 
 test('Sync events leak in updated components', async function (assert) {
@@ -40,7 +39,7 @@ test('Sync events leak in updated components', async function (assert) {
                     cells: [{
                         id: 'chart'
                     }, {
-                        id: 'datagrid'
+                        id: 'grid'
                     }]
                 }]
             }]
@@ -57,8 +56,8 @@ test('Sync events leak in updated components', async function (assert) {
                 extremes: true
             }
         }, {
-            renderTo: 'datagrid',
-            type: 'DataGrid',
+            renderTo: 'grid',
+            type: 'Grid',
             connector: {
                 id: 'micro-element'
             },
@@ -71,7 +70,7 @@ test('Sync events leak in updated components', async function (assert) {
     }, true);
 
     const cChart = dashboard.mountedComponents[0].component;
-    const cDataGrid = dashboard.mountedComponents[1].component;
+    const cGrid = dashboard.mountedComponents[1].component;
 
     const testLeaks = async (component) => {
         // only the most important events, not all possible ones are checked
@@ -84,7 +83,7 @@ test('Sync events leak in updated components', async function (assert) {
         await component.update({});
 
         // Disconnect the resize observer to avoid errors in the test
-        component.dataGrid?.viewport.resizeObserver.disconnect();
+        component.grid?.viewport.resizeObserver.disconnect();
 
         return Object.keys(events).every((key) => (
             events[key] === component.hcEvents[key]?.length
@@ -97,8 +96,8 @@ test('Sync events leak in updated components', async function (assert) {
     );
 
     assert.ok(
-        await testLeaks(cDataGrid),
-        'DataGrid Component should not leak events when update.'
+        await testLeaks(cGrid),
+        'Grid Component should not leak events when update.'
     );
 });
 
@@ -209,8 +208,10 @@ test('There should be no errors when syncing with chart with different extremes'
         }]
     }, true);
 
+    const dataConnector = await dashboard.dataPool.getConnector('data');
+
     assert.ok(
-        dashboard.dataCursor.emitCursor(dashboard.dataPool.connectors.data.getTable(), {
+        dashboard.dataCursor.emitCursor(dataConnector.getTable(), {
             type: 'position',
             row: 120,
             column: 'Series',

@@ -76,6 +76,11 @@ class Table {
     public dataTable: DataTable;
 
     /**
+     * The HTML element of the table.
+     */
+    public readonly tableElement: HTMLTableElement;
+
+    /**
      * The HTML element of the table head.
      */
     public readonly theadElement?: HTMLElement;
@@ -169,13 +174,14 @@ class Table {
         tableElement: HTMLTableElement
     ) {
         this.grid = grid;
+        this.tableElement = tableElement;
         this.dataTable = this.grid.presentationTable as DataTable;
 
         const dgOptions = grid.options;
         const customClassName = dgOptions?.rendering?.table?.className;
 
         this.columnResizing = ColumnResizing.initMode(this);
-        this.virtualRows = !!dgOptions?.rendering?.rows?.virtualization;
+        this.virtualRows = this.shouldVirtualizeRows();
 
         if (dgOptions?.rendering?.header?.enabled) {
             this.theadElement = makeHTMLElement('thead', {}, tableElement);
@@ -260,6 +266,30 @@ class Table {
     }
 
     /**
+     * Checks if rows virtualization should be enabled.
+     *
+     * @returns
+     * Whether rows virtualization should be enabled.
+     */
+    private shouldVirtualizeRows(): boolean {
+        const { grid } = this;
+        const rows = grid.userOptions.rendering?.rows;
+        if (defined(rows?.virtualization)) {
+            return rows.virtualization;
+        }
+
+        // Consider changing this to use the presentation table row count
+        // instead of the original data table row count.
+        const rowCount = Number(grid.dataTable?.rowCount);
+        const threshold = rows?.virtualizationThreshold ?? 50;
+        const paginationPageSize = grid.pagination?.currentPageSize;
+
+        return paginationPageSize ?
+            paginationPageSize >= threshold :
+            rowCount >= threshold;
+    }
+
+    /**
      * Loads the columns of the table.
      */
     private loadColumns(): void {
@@ -280,20 +310,6 @@ class Table {
     }
 
     /**
-     * Fires an empty update to properly load the virtualization, only if
-     * there's a row count compared to the threshold change detected (due to
-     * performance reasons).
-     */
-    private updateVirtualization(): void {
-        if (
-            this.grid.options?.rendering?.rows?.virtualization !==
-            this.grid.shouldVirtualize()
-        ) {
-            void this.grid.update();
-        }
-    }
-
-    /**
      * Updates the rows of the table.
      */
     public async updateRows(): Promise<void> {
@@ -305,6 +321,7 @@ class Table {
 
         vp.grid.pagination?.clampCurrentPage();
 
+        // Update data
         const oldRowsCount = (vp.rows[vp.rows.length - 1]?.index ?? -1) + 1;
         await vp.grid.querying.proceed();
         vp.dataTable = vp.grid.presentationTable as DataTable;
@@ -312,20 +329,33 @@ class Table {
             column.loadData();
         }
 
-        if (oldRowsCount !== vp.dataTable.rowCount) {
-            vp.updateVirtualization();
+        // Update virtualization if needed
+        const shouldVirtualize = this.shouldVirtualizeRows();
+        let shouldRerender = false;
+        if (this.virtualRows !== shouldVirtualize) {
+            this.virtualRows = shouldVirtualize;
+            vp.tableElement.classList.toggle(
+                Globals.getClassName('virtualization'),
+                shouldVirtualize
+            );
+            shouldRerender = true;
+        }
+
+        if (shouldRerender || oldRowsCount !== vp.dataTable.rowCount) {
+            // Rerender all rows
             vp.rowsVirtualizer.rerender();
         } else {
+            // Update existing rows
             for (let i = 0, iEnd = vp.rows.length; i < iEnd; ++i) {
                 vp.rows[i].update();
             }
-            vp.rowsVirtualizer.adjustRowHeights();
-            vp.reflow();
         }
 
         // Update the pagination controls
         vp.grid.pagination?.updateControls();
+        vp.reflow();
 
+        // Scroll to the focused row
         if (focusedRowId !== void 0 && vp.focusCursor) {
             const newRowIndex = vp.dataTable.getLocalRowIndex(focusedRowId);
             if (newRowIndex !== void 0) {
@@ -406,7 +436,7 @@ class Table {
      * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-lite/basic/scroll-to-row | Scroll to row}
      */
     public scrollToRow(index: number): void {
-        if (this.grid.options?.rendering?.rows?.virtualization) {
+        if (this.virtualRows) {
             this.tbodyElement.scrollTop =
                 index * this.rowsVirtualizer.defaultRowHeight;
             return;

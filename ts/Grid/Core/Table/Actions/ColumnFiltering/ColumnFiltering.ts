@@ -319,20 +319,29 @@ class ColumnFiltering {
             'filter-input-' + column.viewport.grid.id + '-' + column.id
         );
 
-        this.filterInput.placeholder = 'value...';
+        this.filterInput.placeholder = 'Value...';
 
         if (columnType === 'number') {
             this.filterInput.type = 'number';
         } else if (columnType === 'datetime') {
             this.filterInput.type = 'date';
+        } else {
+            this.filterInput.type = 'text';
+            this.filterInput.classList.add(
+                Globals.getClassName('icon'),
+                Globals.getClassName('iconSearch')
+            );
         }
 
         // Assign the default input value.
-        {
-            const { value } = this.column.options.filtering ?? {};
-            if (value) {
-                this.filterInput.value = value.toString();
-            }
+        const { value } = this.column.options.filtering ?? {};
+        if (value || value === 0) {
+            this.filterInput.value = columnType === 'datetime' ?
+                column.viewport.grid.time.dateFormat(
+                    '%Y-%m-%d',
+                    Number(value)
+                ) :
+                value.toString();
         }
 
         if (this.filterSelect) {

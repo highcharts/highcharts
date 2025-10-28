@@ -109,7 +109,7 @@ Dashboards.board('container', {
         connector: {
             id: 'Economy'
         },
-        dataGridOptions: {
+        gridOptions: {
             credits: {
                 enabled: false
             },

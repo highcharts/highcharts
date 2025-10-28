@@ -132,15 +132,15 @@ const chart = new Highcharts.chart('container', {
 ```
 
 
-### DataTable in DataGrid
+### DataTable in Grid
 
-DataGrid shows and optionally modifies cell content in a table. DataGrid can
+Grid shows and optionally modifies cell content in a table. Grid can
 also change the order of cells, but DataTable provides only limited information
 about the original order of a source. Therefore, a DataConnector might be needed
 to retrieve the original order.
 
 ```TypeScript
-const dataGrid = DataGrid.dataGrid('container', {
+const grid = Grid.grid('container', {
     dataTable: new DataTable({
         columns: {
             Value: [ 12.34, 45.67, 78.90 ],
@@ -153,7 +153,7 @@ const dataGrid = DataGrid.dataGrid('container', {
 If a row reference is needed, an index column has to be part of the dataTable:
 
 ```TypeScript
-const dataGrid = new DataGrid('container', {
+const grid = new Grid('container', {
     dataTable: new DataTable({
         columns: {
             '': [1, 2, 3],
@@ -162,7 +162,7 @@ const dataGrid = new DataGrid('container', {
         }
     }
 });
-dataGrid.dataTable.getRow(dataGrid.getTable().getRowIndexBy('', 2));
+grid.dataTable.getRow(grid.getTable().getRowIndexBy('', 2));
 ```
 
 
@@ -248,40 +248,6 @@ catch (error) {
 }
 connector.getTable().getRowCount() > 0;
 ```
-
-
-
-### Saving Data
-
-How to save a table depends on the connector type and use case. In a strict
-server-less situation, instead of the save function you usually use the
-related converter.
-
-```TypeScript
-const connector = new CSVConnector({
-    csv: 'column\n1\n2\n3\n'
-});
-connector.converter.export(connector) === 'column\n1\n2\n3\n';
-```
-
-If your connector is based on an external source on the internet or in the HTML
-DOM, the save function can write data back. Please note that an error will be
-thrown if this is not supported by the connector type, or if permissions do now
-allow this.
-
-```TypeScript
-const connector = new HTMLTableConnector({
-    tableElement: document.getElementById('the_table')
-});
-try {
-    await connector.save();
-}
-catch (error) {
-    console.error(error);
-}
-```
-
-
 
 DataPool
 --------

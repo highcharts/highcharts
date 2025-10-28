@@ -217,6 +217,9 @@ class Validator {
             Validator.classNames.notifError,
             Validator.classNames.notifAnimation
         );
+
+        // Set for the aria-errormessage attribute.
+        this.notifContainer.setAttribute('id', 'notification-error');
     }
 
     /**
@@ -237,6 +240,8 @@ class Validator {
             Validator.classNames.notifError,
             Validator.classNames.notifAnimation
         );
+
+        this.notifContainer.removeAttribute('id');
 
         if (hideErrorBox) {
             this.errorCell = void 0;
@@ -385,10 +390,17 @@ namespace Validator {
         },
         ignoreCaseUnique: {
             validate: function ({ rawValue }): boolean {
+                const oldValue = String(this.value).toLowerCase();
+                const rowValueString = rawValue.toLowerCase();
+
+                if (oldValue === rowValueString) {
+                    return true;
+                }
+
                 const columnData = this.column.data;
                 const isDuplicate = columnData?.some(
                     (value): boolean => String(value).toLowerCase() ===
-                        String(rawValue).toLowerCase()
+                        rowValueString
                 );
 
                 return !isDuplicate;
@@ -399,6 +411,12 @@ namespace Validator {
         },
         unique: {
             validate: function ({ rawValue }): boolean {
+                const oldValue = this.value;
+
+                if (oldValue === rawValue) {
+                    return true;
+                }
+
                 const columnData = this.column.data;
                 const isDuplicate = columnData?.some(
                     (value): boolean => value === rawValue

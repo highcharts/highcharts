@@ -23,7 +23,7 @@ Dashboards.board('container', {
         connector: {
             id: 'data'
         },
-        type: 'DataGrid',
+        type: 'Grid',
         renderTo: 'dashboard-col-1'
     }]
 });
