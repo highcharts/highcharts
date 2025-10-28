@@ -1523,33 +1523,11 @@ class Axis {
 
                     series.processData();
                     series.generatePoints();
-                } else if (series.tempNoXColumn) {
+                } else {
                     const xData = series.getColumn('x');
                     series.points?.forEach((point): void => {
                         point.x = xData[point.index];
                     });
-                }
-
-
-                if (!series.tempNoXColumn) {
-                    const xData = series.getColumn('x').slice();
-                    series.data.forEach((
-                        point,
-                        i: number
-                    ): void => { // #9487
-                        let x = xData[i];
-
-                        if (
-                            point?.options &&
-                            typeof point.name !== 'undefined' // #9562
-                        ) {
-                            x = axis.nameToX(point, point.options.x);
-                            if (typeof x !== 'undefined' && x !== point.x) {
-                                xData[i] = point.x = x;
-                            }
-                        }
-                    });
-                    series.dataTable.setColumn('x', xData);
                 }
             });
         }

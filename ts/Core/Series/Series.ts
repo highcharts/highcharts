@@ -101,7 +101,6 @@ const {
     insertItem,
     isArray,
     isNumber,
-    isObject,
     isString,
     merge,
     objectEach,
@@ -1597,10 +1596,6 @@ class Series {
                 columnAssignment = options.columnAssignment,
                 keys = dataColumnKeys.slice();
 
-            if (dataTable.length) {
-                this.tempNoXColumn = true;
-            }
-
             // Extend the data column keys with the keys from the column
             // assignment
             if (columnAssignment) {
@@ -2029,18 +2024,14 @@ class Series {
         // Slice all the columns and return a copy
         const columns = Object.keys(table.columns)
             .reduce((columns, key): DataTable.ColumnCollection => {
-                if (this.tempNoXColumn || key !== 'xOption') {
-                    columns[key] = (
-                        table.getColumn(key, true) || []
-                    ).slice(start, end);
-                }
+                columns[key] = (
+                    table.getColumn(key, true) || []
+                ).slice(start, end);
                 return columns;
             }, {} as DataTable.ColumnCollection);
 
-        if (this.tempNoXColumn) {
-            // Add cropped x data to modified table
-            columns.x = xData.slice(start, end);
-        }
+        // Add cropped x data to modified table
+        columns.x = xData.slice(start, end);
 
         return {
             modified: new DataTableCore({ columns }),
@@ -2107,17 +2098,6 @@ class Series {
 
                 // #970
                 if (!point && pOptions !== void 0) {
-                    if (!this.tempNoXColumn) {
-                        if (
-                            this.useDataTable &&
-                            pOptions &&
-                            isObject(pOptions)
-                        ) {
-                            (pOptions as any).x = (pOptions as any).xOption;
-                            delete (pOptions as any).xOption;
-                        }
-                    }
-
                     data[cursor] = point = new PointClass(
                         series,
                         pOptions,
@@ -4280,8 +4260,7 @@ class Series {
             point = { series } as any,
             pointOptions = optionsToObject.call(point, options);
         applyOptions.call(point, pointOptions, void 0, false);
-        const x: (number|null) = point.x,
-            xOption = pointOptions.x;
+        const x: (number|null) = point.x;
 
         // Get the insertion point
         i = xData.length;
@@ -4293,16 +4272,8 @@ class Series {
         }
 
         // Insert the row at the given index
-        if (this.tempNoXColumn) {
-            table.setRow(pointOptions as DataTable.RowObject, i, true);
-            this.xColumn?.splice(i, 0, this.getX(x as any));
-        } else {
-            const row: DataTable.RowObject = { x };
-            if (defined(xOption)) {
-                row.xOption = xOption;
-            }
-            table.setRow(extend(row, point.options), i, true);
-        }
+        table.setRow(pointOptions as DataTable.RowObject, i, true);
+        this.xColumn?.splice(i, 0, this.getX(x as any));
 
         if (names && point.name) {
             names[x as any] = point.name;
@@ -4620,9 +4591,7 @@ class Series {
                 pointStart:
                     // When updating from blank (#7933)
                     plotOptions?.series?.pointStart ??
-                    oldOptions.pointStart ??
-                    // When updating after addPoint
-                    (!series.tempNoXColumn ? series.getColumn('x')[0] : void 0)
+                    oldOptions.pointStart
             },
             !keepPoints && { data: series.options.data },
             options,
