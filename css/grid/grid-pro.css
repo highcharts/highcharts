@@ -11,6 +11,23 @@
 /* Grid Pro specific styles */
 
 .hcg-container {
+    /* Credits fonts */
+    --ig-credits-font-weight: var(--hcg-credits-font-weight, var(--ig-font-weight));
+    --ig-credits-font-size: var(--hcg-credits-font-size, 0.9em);
+    --ig-credits-font-family: var(--hcg-credits-font-family, var(--ig-font-family));
+    --ig-credits-color: var(--hcg-credits-color, var(--ig-color));
+    --ig-credits-font: var(--ig-credits-font-weight) var(--ig-credits-font-size) var(--ig-credits-font-family);
+    --ig-credits-text-align: var(--hcg-credits-text-align, right);
+
+    /* Credits padding */
+    --ig-credits-horizontal-padding: var(--hcg-credits-horizontal-padding, var(--hcg-credits-padding, 5px));
+    --ig-credits-vertical-padding: var(--hcg-credits-vertical-padding, var(--hcg-credits-padding, 5px));
+    --ig-credits-padding:
+        var(--ig-credits-vertical-padding)
+        var(--ig-credits-horizontal-padding)
+        0
+        var(--ig-credits-horizontal-padding);
+
     /* CSS helpers */
     --ig-highlight-border-size: var(--hcg-highlight-border-size, 1px);
 
@@ -69,67 +86,6 @@
         ) var(--ig-notification-border-style) var(--ig-notification-border-color);
 }
 
-.hcg-table tbody tr td.hcg-negative::before,
-.hcg-table tbody tr:has(.hcg-negative-row) td::before,
-.hcg-table tbody tr td.hcg-neutral::before,
-.hcg-table tbody tr:has(.hcg-neutral-row) td::before,
-.hcg-table tbody tr td.hcg-positive::before,
-.hcg-table tbody tr:has(.hcg-positive-row) td::before {
-    content: "";
-    display: block;
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    pointer-events: none;
-}
-
-.hcg-table tbody tr td.hcg-negative,
-.hcg-table tbody tr:has(.hcg-negative-row) td {
-    background: var(--ig-negative-background) !important;
-    color: var(--ig-negative-color) !important;
-}
-
-.hcg-table tbody tr td.hcg-negative::before {
-    border: var(--ig-negative-border-size) solid var(--ig-negative-border-color) !important;
-}
-
-.hcg-table tbody tr:has(.hcg-negative-row) td::before {
-    border-top: var(--ig-negative-border-size) solid var(--ig-negative-border-color) !important;
-    border-bottom: var(--ig-negative-border-size) solid var(--ig-negative-border-color) !important;
-}
-
-.hcg-table tbody tr td.hcg-neutral,
-.hcg-table tbody tr:has(.hcg-neutral-row) td {
-    background: var(--ig-neutral-background) !important;
-    color: var(--ig-neutral-color) !important;
-}
-
-.hcg-table tbody tr td.hcg-neutral::before {
-    border: var(--ig-neutral-border-size) solid var(--ig-neutral-border-color) !important;
-}
-
-.hcg-table tbody tr:has(.hcg-neutral-row) td::before {
-    border-top: var(--ig-neutral-border-size) solid var(--ig-neutral-border-color) !important;
-    border-bottom: var(--ig-neutral-border-size) solid var(--ig-neutral-border-color) !important;
-}
-
-.hcg-table tbody tr td.hcg-positive,
-.hcg-table tbody tr:has(.hcg-positive-row) td {
-    background: var(--ig-positive-background) !important;
-    color: var(--ig-positive-color) !important;
-}
-
-.hcg-table tbody tr td.hcg-positive::before {
-    border: var(--ig-positive-border-size) solid var(--ig-positive-border-color) !important;
-}
-
-.hcg-table tbody tr:has(.hcg-positive-row) td::before {
-    border-top: var(--ig-positive-border-size) solid var(--ig-positive-border-color) !important;
-    border-bottom: var(--ig-positive-border-size) solid var(--ig-positive-border-color) !important;
-}
-
 .hcg-no-padding {
     padding: 0 !important;
 }
@@ -142,20 +98,24 @@
     position: absolute;
     top: 0;
     right: 0;
-    width: 100%;
-    height: 100%;
-    padding-left: inherit;
+    bottom: 0;
+    left: 0;
+    padding: inherit;
     z-index: 1;
-    background: #b7d4ff;
-    box-shadow: inset 0 0 0 1px #0000ed;
+    background: #dbeaff;
+    color: #141414;
+    box-shadow: inset var(--ig-focus-ring);
     display: flex;
     align-items: center;
+    justify-content: center;
 }
 
-.hcg-table tbody td.hcg-edited-cell input:not(.hcg-field-auto-width),
-.hcg-table tbody td.hcg-edited-cell input:not(.hcg-field-auto-width):focus,
-.hcg-table tbody td.hcg-edited-cell select:not(.hcg-field-auto-width),
-.hcg-table tbody td.hcg-edited-cell select:not(.hcg-field-auto-width):focus {
+.hcg-cell-editing-container:has(input[type="checkbox"]) {
+    padding: var(--ig-padding);
+}
+
+.hcg-table tbody td.hcg-edited-cell input:not([type="checkbox"]),
+.hcg-table tbody td.hcg-edited-cell select {
     border-width: 0;
     position: absolute;
     top: 0;
@@ -165,16 +125,19 @@
     outline: none;
     float: left;
     font: var(--ig-font);
-    padding-left: inherit;
     background: transparent;
+    color: unset;
+    padding: var(--ig-padding);
+    max-height: unset;
+    height: unset;
+    border-radius: unset;
+    line-height: inherit;
 }
 
-.hcg-table tbody td.hcg-edited-cell-error input:not(.hcg-field-width),
-.hcg-table tbody td.hcg-edited-cell-error input:not(.hcg-field-width):focus,
-.hcg-table tbody td.hcg-edited-cell-error select,
-.hcg-table tbody td.hcg-edited-cell-error select:focus {
+.hcg-table tbody td.hcg-edited-cell-error input,
+.hcg-table tbody td.hcg-edited-cell-error select {
     color: var(--ig-color);
-    box-shadow: inset 0 0 0 1px var(--ig-negative-border-color) !important;
+    box-shadow: inset 0 0 0 var(--ig-focus-ring-width) var(--ig-negative-border-color) !important;
     background-color: var(--ig-negative-background) !important;
 }
 
@@ -186,7 +149,7 @@
 
 .hcg-credits-container.hcg-credits-pro .hcg-credits {
     color: var(--ig-credits-color);
-    font-size: var(--ig-credits-font-size);
+    font: var(--ig-credits-font);
     text-decoration: none;
     display: inline-block;
 }

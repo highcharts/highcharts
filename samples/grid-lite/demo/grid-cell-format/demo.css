@@ -41,6 +41,15 @@ body {
     --hcg-cell-hovered-background: var(--highlight-color);
     --hcg-cell-hovered-column-border-width: 1px;
     --hcg-cell-hovered-column-border-color: var(--highlight-color);
+
+    /* Button styles */
+    --hcg-button-color: #333;
+    --hcg-button-border-radius: 6px;
+    --hcg-button-hover-color: #000;
+    --hcg-button-hover-background: var(--highlight-color);
+
+    /* Icon styles */
+    --hcg-icon-hover-color: #000;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -49,6 +58,13 @@ body {
         --highlight-border-color: #7d754c;
         --high-color: #98d76a;
         --low-color: #ffa8a8;
+
+        /* Button styles */
+        --hcg-button-color: #ddd;
+        --hcg-button-hover-color: #fff;
+
+        /* Icon styles */
+        --hcg-icon-hover-color: #fff;
     }
 }
 
@@ -57,6 +73,13 @@ body {
     --highlight-border-color: #7d754c;
     --high-color: #98d76a;
     --low-color: #ffa8a8;
+
+    /* Button styles */
+    --hcg-button-color: #ddd;
+    --hcg-button-hover-color: #fff;
+
+    /* Icon styles */
+    --hcg-icon-hover-color: #fff;
 }
 
 .hcg-table th.bold span,

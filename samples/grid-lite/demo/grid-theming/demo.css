@@ -92,6 +92,16 @@ body {
     --hcg-cell-hovered-row-color: var(--my-hover-color);
     --hcg-cell-hovered-column-color: var(--my-hover-color);
     --hcg-header-hovered-color: var(--my-hover-color);
+
+    /* Button styles */
+    --hcg-button-color: #fff;
+    --hcg-button-border-radius: 6px;
+    --hcg-button-hover-color: var(--my-hover-color);
+    --hcg-button-hover-background: #1a3f48;
+
+    /* Icon styles */
+    --hcg-icon-hover-color: #666;
+    --hcg-icon-header-hover-color: var(--my-hover-color);
 }
 
 .opacity-theme,
@@ -112,6 +122,19 @@ body {
     --hcg-border-radius: 15px;
     --hcg-font-size: 15px;
     --hcg-padding: 10px;
+
+    /* Button styles */
+    --hcg-button-color: rgba(var(--hover-color), 0.8);
+    --hcg-button-border-radius: 6px;
+    --hcg-button-hover-color: rgb(var(--hover-color));
+    --hcg-button-hover-background: rgba(var(--hover-color), 0.25);
+
+    /* Icon styles */
+    --hcg-icon-hover-color: #000;
+}
+
+.highcharts-light .opacity-theme .hcg-menu-item-label {
+    color: #000;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -127,6 +150,10 @@ body {
         --hcg-background: #003947;
         --hcg-row-even-background: #004556;
         --hcg-cell-hovered-column-border-color: #4b4b4b;
+
+        /* Icon styles */
+        --hcg-icon-hover-color: #eee;
+        --hcg-icon-header-hover-color: var(--my-hover-color);
     }
 
     .opacity-theme {
@@ -134,6 +161,9 @@ body {
         --base-color: 0, 0, 0;
         --gradient-from-color: rgb(102, 20, 140);
         --gradient-to-color: rgb(50, 13, 144);
+
+        /* Icon styles */
+        --hcg-icon-hover-color: #fff;
     }
 
     .hcg-description code {
@@ -160,6 +190,10 @@ body {
     --hcg-background: #003947;
     --hcg-row-even-background: #004556;
     --hcg-cell-hovered-column-border-color: #4b4b4b;
+
+    /* Icon styles */
+    --hcg-icon-hover-color: #eee;
+    --hcg-icon-header-hover-color: var(--my-hover-color);
 }
 
 .highcharts-dark .opacity-theme {
@@ -167,6 +201,9 @@ body {
     --base-color: 0, 0, 0;
     --gradient-from-color: rgb(102, 20, 140);
     --gradient-to-color: rgb(50, 13, 144);
+
+    /* Icon styles */
+    --hcg-icon-hover-color: #fff;
 }
 
 .highcharts-dark .hcg-description code {

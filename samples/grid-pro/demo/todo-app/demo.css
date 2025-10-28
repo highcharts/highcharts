@@ -138,10 +138,6 @@ td[data-column-id="Priority"] {
     box-sizing: border-box;
 }
 
-input[type="date"]::-webkit-calendar-picker-indicator {
-    filter: invert(1);
-}
-
 #modalContent #formButtons {
     display: flex;
     flex-direction: column;
