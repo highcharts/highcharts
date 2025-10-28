@@ -86,7 +86,7 @@ Grid.grid('grid', {
 
                         // Accessibility
                         accessibility.announce(
-                            `Removed series ${columnId}.`,
+                            `Removed series ${columnId} from chart.`,
                             true
                         );
 
@@ -107,7 +107,7 @@ Grid.grid('grid', {
 
                         // Accessibility
                         accessibility.announce(
-                            `Added series ${columnId}.`,
+                            `Added series ${columnId} to the chart.`,
                             true
                         );
                     }
