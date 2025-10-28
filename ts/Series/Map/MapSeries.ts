@@ -686,10 +686,10 @@ class MapSeries extends ScatterSeries {
         return attr;
     }
 
-    public updateData(): boolean {
+    public matchPoints(): boolean {
         // #16782
         return !this.hasProcessedDataTable &&
-            super.updateData.apply(this, arguments);
+            super.matchPoints.apply(this, arguments);
     }
 
     /**

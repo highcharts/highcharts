@@ -617,7 +617,7 @@ QUnit.test('Series.update and setData', function (assert) {
     });
 
     assert.strictEqual(
-        chart.series[0].options.data[0].customProp,
+        chart.series[0].points[0].options.customProp,
         true,
         'Custom property should be available in options after update (#11244)'
     );

@@ -26,6 +26,7 @@ import type {
 import type SMAPoint from './SMAPoint';
 
 import Chart from '../../../Core/Chart/Chart.js';
+import DataTableCore from '../../../Data/DataTableCore.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     line: LineSeries
@@ -421,10 +422,8 @@ class SMAIndicator extends LineSeries {
      * @private
      */
     public recalculateValues(): void {
-        const croppedDataValues = [],
-            indicator = this,
+        const indicator = this,
             table = this.dataTable,
-            oldData = indicator.points || [],
             oldDataLength = indicator.dataTable.rowCount,
             emptySet: IndicatorValuesObject<typeof LineSeries.prototype> = {
                 values: [],
@@ -432,8 +431,6 @@ class SMAIndicator extends LineSeries {
                 yData: []
             };
         let overwriteData = true,
-            oldFirstPointIndex,
-            oldLastPointIndex,
             min,
             max;
 
@@ -516,37 +513,7 @@ class SMAIndicator extends LineSeries {
                     max as any
                 );
 
-                const keys = ['x', ...(indicator.pointArrayMap || ['y'])];
-                for (
-                    let i = 0;
-                    i < (croppedData.modified?.rowCount || 0);
-                    i++
-                ) {
-                    const values = keys.map((key): number =>
-                        this.getColumn(key)[i] || 0
-                    );
-                    croppedDataValues.push(values);
-                }
-
-                const indicatorXData = indicator.getColumn('x');
-                oldFirstPointIndex = processedData.xData.indexOf(
-                    indicatorXData[0]
-                );
-                oldLastPointIndex = processedData.xData.indexOf(
-                    indicatorXData[indicatorXData.length - 1]
-                );
-
-                // Check if indicator points should be shifted (#8572)
-                if (
-                    oldFirstPointIndex === -1 &&
-                    oldLastPointIndex === processedData.xData.length - 2
-                ) {
-                    if (croppedDataValues[0][0] === oldData[0].x) {
-                        croppedDataValues.shift();
-                    }
-                }
-
-                indicator.updateData(croppedDataValues);
+                indicator.setData(croppedData.modified, false);
 
             } else if (
                 indicator.updateAllPoints || // #18710
@@ -555,7 +522,14 @@ class SMAIndicator extends LineSeries {
                 processedData.xData.length !== oldDataLength + 1
             ) {
                 overwriteData = false;
-                indicator.updateData(processedData.values as any);
+
+                this.setData(new DataTableCore({
+                    columns: {
+                        x: processedData.xData,
+                        ...valueColumns
+                    }
+                }), false);
+
             }
         }
 
