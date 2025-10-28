@@ -423,7 +423,7 @@ const rawData = grid.getData(false); // unmodified
 **What changed:** CSS class prefix in Grid Pro is now `.hcg-`.
 
 **Migration steps:**
-- Change all occurences of `.highcharts-datagrid-` to `.hcg-` in any custom styles overrides.
+- Change all occurrences of `.highcharts-datagrid-` to `.hcg-` in any custom styles overrides.
 - Recommended: use [theming variables](https://www.highcharts.com/docs/grid/theming/theming) instead of CSS overrides.
 
 **Example:**
