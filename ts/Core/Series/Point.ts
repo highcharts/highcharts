@@ -356,39 +356,13 @@ class Point {
             ) as (number|null|undefined);
         }
 
-        if (!series.tempNoXColumn) {
-            // If no x is set by now, get auto incremented value. All points
-            // must have an x value, however the y value can be null to create a
-            // gap in the series
-            if (
-                'name' in point &&
-                typeof x === 'undefined' &&
-                series.xAxis &&
-                series.xAxis.hasNames
-            ) {
-                point.x = series.xAxis.nameToX(point, point.options.x);
-            }
-            if (typeof point.x === 'undefined' && series) {
-                point.x = x ?? series.autoIncrement();
-            } else if (isNumber(options.x) && series.options.relativeXValue) {
-                point.x = series.autoIncrement(options.x);
-
-            // If x is a string, try to parse it to a datetime
-            } else if (typeof point.x === 'string') {
-                x ??= series.chart.time.parse(point.x);
-                if (isNumber(x)) {
-                    point.x = x;
-                }
-            }
-        } else {
-            if (isNumber(x)) {
-                /**
-                 * The x value of the point.
-                 * @name Highcharts.Point#x
-                 * @type {number}
-                 */
-                point.x = x;
-            }
+        if (isNumber(x)) {
+            /**
+             * The x value of the point.
+             * @name Highcharts.Point#x
+             * @type {number}
+             */
+            point.x = x;
         }
 
         if (!isMock) {

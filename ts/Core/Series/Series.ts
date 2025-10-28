@@ -262,7 +262,6 @@ class Series {
         'navigatorSeries',
         'symbolIndex',
         'baseSeries',
-        'tempNoXColumn',
         'useDataTable'
     ];
 
@@ -426,13 +425,6 @@ class Series {
      * table.
      */
     public useDataTable = true;
-
-    /**
-     * Preliminary flag for migration. When true, no x column is required for
-     * the data table, and it is not created unless there are actually x options
-     * from the user. Computed x data is held in the `Series.xColumn` array.
-     */
-    public tempNoXColumn = true;
 
     public userOptions!: DeepPartial<SeriesTypeOptions>;
 
