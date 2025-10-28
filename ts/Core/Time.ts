@@ -48,8 +48,7 @@ class Time extends TimeBase {
         tickPositions: TickPositionsArray,
         unitRange: number
     ): Record<string, string> {
-        const time = this,
-            higherRanks = {} as Record<string, string>;
+        const higherRanks = {} as Record<string, string>;
         // Handle higher ranks. Mark new days if the time is on midnight
         // (#950, #1649, #1760, #3349). Use a reasonable dropout threshold
         // to prevent looping over dense data grouping (#6156).
@@ -61,7 +60,7 @@ class Time extends TimeBase {
                         // unless we're on a full or half hour
                         t % 1800000 === 0 &&
                         // Check for local or global midnight
-                        time.dateFormat('%H%M%S%L', t) === '000000000'
+                        this.dateFormat('%H%M%S%L', t) === '000000000'
                     ) {
                         higherRanks[t] = 'day';
                     }
@@ -75,7 +74,7 @@ class Time extends TimeBase {
             ) {
                 tickPositions.forEach((t: number, i: number): void => {
                     if (
-                        i === 1 || time.dateFormat('%m%d', t) === '0101'
+                        i === 1 || this.dateFormat('%m%d', t) === '0101'
                     ) {
                         higherRanks[t] = 'month';
                     }
