@@ -885,7 +885,7 @@ th.highcharts-datagrid-column-sortable > .highcharts-datagrid-column-sortable-ic
 .hcg-table thead th:focus-visible,
 .highcharts-datagrid-table thead th:focus-visible {
     outline: none;
-    box-shadow: inset 0 0 0 2px var(--hcg-focus-ring-color);
+    box-shadow: inset 0 0 0 1px rgb(117, 124, 199);
 }
 
 /* Header hovered background and color */
