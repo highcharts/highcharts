@@ -418,6 +418,26 @@ const rawData = grid.getData(false); // unmodified
 
 **Common error:** If you see `DataGrid is not defined` or Grid Pro features don't work, ensure Grid Pro is installed and imported before Dashboards.
 
+### New CSS prefix
+
+**What changed:** CSS class prefix in Grid Pro is now `.hcg-`.
+
+**Migration steps:**
+- Change all occurences of `.highcharts-datagrid-` to `.hcg-` in any custom styles overrides.
+- Recommended: use [theming variables](https://www.highcharts.com/docs/grid/theming/theming) instead of CSS overrides.
+
+**Example:**
+```css
+// Before
+.highcharts-datagrid-row-even {background: #ccc};
+
+// After
+.hcg-row-even {background: #ccc};
+
+// Recommended
+--hcg-row-even-background: #ccc;
+```
+
 ### Other Breaking Changes
 
 Grid Pro 2.0.0 includes the same breaking changes as Grid Lite 2.0.0:
@@ -456,6 +476,7 @@ Use this checklist to ensure complete migration:
 - [ ] Install Grid Pro as separate package
 - [ ] Import Grid Pro (before Dashboards if using both)
 - [ ] Include Grid Pro CSS (contains all Grid Lite styles)
+- [ ] Change CSS class prefix
 - [ ] Apply all Grid Lite migration steps
 
 ---
