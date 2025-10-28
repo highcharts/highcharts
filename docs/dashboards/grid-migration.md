@@ -101,10 +101,12 @@ dataPool: {
     id: 'my-connector',
     type: 'CSV',
     options: {
-      csv: 'data.csv',
+      csv: `Product,Price
+            Apples,1.5
+            Oranges,2.0`,
       // ... other options
     },
-    dataTables: [{ 
+    dataTables: [{
       key: 'myTable'
       // ... table options
     }]
@@ -116,7 +118,9 @@ dataPool: {
   connectors: [{
     id: 'my-connector',
     type: 'CSV',
-    csv: 'data.csv',
+    csv: `Product,Price
+          Apples,1.5
+          Oranges,2.0`,
     // ... other options
     dataTables: [{
       key: 'myTable'
@@ -432,20 +436,20 @@ Use this checklist to ensure complete migration:
 - [ ] Replace `table.modified` with `table.getModified()`
 - [ ] Flatten connector options (remove nested `options` object)
 - [ ] Update connector API calls (`connector.table` → `connector.getTable()`)
-- [ ] Move DataTable parsing options to connector configurations
 - [ ] Consolidate modifier logic into `modifyTable()` only
 - [ ] Update DataConverter helper references to DataConverterUtils namespace
 
 ### For Dashboards Users
 
 - [ ] Replace `cell` with `renderTo` in all components
-- [ ] Move deprecated component-level `columnAssignment` to `connector.columnAssignment`
+- [ ] Move deprecated `components[].columnAssignment` to `components[].connector.columnAssignment`
 - [ ] Update connector event listeners (remove `e.tables` references)
 
 ### For Grid Lite Users
 
 - [ ] Update column resizing API and configuration
 - [ ] Replace `getJSON()` with `getData()`
+- [ ] Replace `grid.css` with `grid-lite.css`
 
 ### For Grid Pro Users
 
@@ -461,16 +465,3 @@ Use this checklist to ensure complete migration:
 - **Documentation**: [highcharts.com/docs](https://www.highcharts.com/docs)
 - **Support**: Contact your support representative
 - **Community**: [forum.highcharts.com](https://forum.highcharts.com/)
-
----
-
-## Summary of Key Changes
-
-|Area|Change|Impact|
-|---|---|---|
-|**Grid Pro**|Now standalone product|Must install separately|
-|**Columns**|Names → IDs|Update all column references|
-|**Connectors**|Flattened options|Restructure configurations|
-|**Resizing**|New API and modes|Update column sizing code|
-|**Components**|`renderTo` required|Update all component configs|
-|**Data Export**|`getData()` only|Replace `getJSON()` calls|
