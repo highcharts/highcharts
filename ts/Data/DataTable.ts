@@ -1635,6 +1635,7 @@ namespace DataTable {
         readonly columns?: ColumnCollection;
         readonly columnNames: Array<string>;
         readonly rowIndex?: number;
+        readonly target: DataTableCore;
     }
 
     /**

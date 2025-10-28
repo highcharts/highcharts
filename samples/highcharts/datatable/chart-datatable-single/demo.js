@@ -81,17 +81,10 @@ document.getElementById('deleterow').addEventListener('click', e => {
     previewTable();
 });
 
-// @todo: Support for setColumn too. Fails to update the point because in
-// generatePoints, before the `new PointClass` call, the point already exists.
-// Probably need to refactor the `updateData` method to a true data-matching
-// method between old table and updated table, instead of working on options.
-// This could run either at the end of setData, or possibly within
-// generatePoints.
 document.getElementById('setcolumn').addEventListener('click', () => {
     dataTable.setColumn(
         'revenue',
         dataTable.columns.revenue.map(() => Math.round(10 * Math.random()))
     );
     previewTable();
-    console.log('@todo: Support for setColumn');
 });

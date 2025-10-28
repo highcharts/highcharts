@@ -360,6 +360,8 @@ class Series {
 
     public halo?: SVGElement;
 
+    public hasBoundDataTableEvents?: boolean;
+
     public hasCartesianSeries?: Chart['hasCartesianSeries'];
 
     public hasProcessedDataTable?: boolean;
@@ -1625,15 +1627,20 @@ class Series {
                 // events to keep the series updated
                 if (dtItem instanceof DataTableCore) {
 
-                    const queueRedraw = (): void => {
-                        clearTimeout(chart.redrawTimeout);
-                        chart.redrawTimeout = setTimeout(
-                            (): void => chart.renderer && chart.redraw(),
-                            0
-                        );
-                    };
+                    if (this.hasBoundDataTableEvents) {
+                        return;
+                    }
 
-                    addEvent(
+                    const eventsToUnbind = this.eventsToUnbind,
+                        queueRedraw = (): void => {
+                            clearTimeout(chart.redrawTimeout);
+                            chart.redrawTimeout = setTimeout(
+                                (): void => chart.renderer && chart.redraw(),
+                                0
+                            );
+                        };
+
+                    eventsToUnbind.push(addEvent(
                         dtItem,
                         'afterSetRows',
                         (e: DataTable.RowEvent): void => {
@@ -1661,9 +1668,9 @@ class Series {
                                 queueRedraw();
                             }
                         }
-                    );
+                    ));
 
-                    addEvent(
+                    eventsToUnbind.push(addEvent(
                         dtItem,
                         'afterDeleteRows',
                         (e: DataTable.RowEvent): void => {
@@ -1679,7 +1686,17 @@ class Series {
 
                             queueRedraw();
                         }
-                    );
+                    ));
+
+                    eventsToUnbind.push(addEvent(
+                        dtItem,
+                        'afterSetColumns',
+                        (e: DataTable.ColumnEvent): void => {
+                            this.setData(e.target);
+                        }
+                    ));
+
+                    this.hasBoundDataTableEvents = true;
                 }
             });
         }
