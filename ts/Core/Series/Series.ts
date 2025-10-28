@@ -1193,7 +1193,7 @@ class Series {
 
         const newXColumn = dataTable.getColumn('x'),
             newIdColumn = dataTable.getColumn('id'),
-            newNameColumn = this.options.dataSorting?.matchByName ?
+            newNameColumn = dataSorting?.matchByName ?
                 dataTable.getColumn('name') : void 0;
 
         // Iterate the new data
@@ -1201,23 +1201,25 @@ class Series {
             const x = newXColumn?.[i] as number|string|undefined,
                 id = newIdColumn?.[i] as string|undefined,
                 name = newNameColumn?.[i] as string|undefined,
-                pOptions = dataTable.getRowObject(i) as PointOptions;
+                pOptions = dataTable.getRowObject(i) as PointOptions,
+                needleAndHaystack: [
+                    string|number|undefined,
+                    Array<string|number|undefined>
+                ] | null = id && oldIdColumn ?
+                    [id, oldIdColumn] :
+                    name && oldNameColumn ?
+                        [name, oldNameColumn] :
+                        defined(x) && oldXColumn ?
+                            [x, oldXColumn] :
+                            null,
+                [needle, haystack] = needleAndHaystack || [];
 
             let pointIndex = -1;
 
-            if (
-                (id && oldIdColumn) ||
-                (isNumber(x) && oldXColumn) ||
-                (name && oldNameColumn)
-            ) {
+            // We have a needle and a haystack to search for matching points
+            if (haystack) {
 
-                if (id && oldIdColumn) {
-                    pointIndex = oldIdColumn.indexOf(id, lastIndex);
-                } else if (name && oldNameColumn) {
-                    pointIndex = oldNameColumn.indexOf(name, lastIndex);
-                } else if (isNumber(x) && oldXColumn) {
-                    pointIndex = oldXColumn.indexOf(x, lastIndex);
-                }
+                pointIndex = haystack.indexOf(needle, lastIndex);
 
                 // Matching X not found or used already due to non-unique x
                 // values (#8995), add point (but later)
@@ -1274,10 +1276,7 @@ class Series {
                 }
             } else {
                 // Gather all points that are not matched
-                rowsToAdd.push({
-                    index: i,
-                    pOptions
-                });
+                rowsToAdd.push({ index: i, pOptions });
             }
         }
 
