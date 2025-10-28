@@ -101,6 +101,7 @@ module.exports = {
             'dashboards/edit-mode',
             'dashboards/types-of-components',
             'dashboards/grid-component',
+            'dashboards/migration-guide',
             'dashboards/kpi-component',
             'dashboards/highcharts-component',
             'dashboards/html-component',

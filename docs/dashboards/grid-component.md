@@ -2,6 +2,8 @@
 
 The **Grid Component** acts as a wrapper for **Highcharts Grid** that can be placed inside a dashboards cell to allow users to visualize data a tabular format. Keep reading to learn how to embed **Highcharts Grid** in **Highcharts Dashboards**, or check out the full documentation for [Highcharts Grid](https://www.highcharts.com/docs/grid/general).
 
+**Important notice**: Learn more about the Grid component in our [Migration Guide](https://www.highcharts.com/docs/dashboards/migration-guide).
+
 <iframe style="width: 100%; height: 470px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/grid-component/grid-options?force-light-theme" allow="fullscreen"></iframe>
 
 ## How to start
