@@ -1120,11 +1120,7 @@ QUnit.test('Descending categories', function (assert) {
         csv = chart.exporting.getCSV().split('\n');
 
     assert.strictEqual(
-        csv[
-            chart.series[0].useDataTable && !chart.series[0].tempNoXColumn ?
-                1 :
-                2
-        ],
+        csv[2],
         '"Category 1",34,66',
         'First point should be in Category 2 (#12767)'
     );

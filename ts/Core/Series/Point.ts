@@ -18,7 +18,6 @@
 
 import type AnimationOptions from '../Animation/AnimationOptions';
 import type ColorType from '../Color/ColorType';
-import type DataTable from '../../Data/DataTable';
 import type { EventCallback } from '../Callback';
 import type PointBase from './PointBase';
 import type {
@@ -358,11 +357,6 @@ class Point {
         }
 
         if (!series.tempNoXColumn) {
-            /**
-             * The x value of the point.
-             * @name Highcharts.Point#x
-             * @type {number}
-             */
             // If no x is set by now, get auto incremented value. All points
             // must have an x value, however the y value can be null to create a
             // gap in the series
@@ -388,6 +382,11 @@ class Point {
             }
         } else {
             if (isNumber(x)) {
+                /**
+                 * The x value of the point.
+                 * @name Highcharts.Point#x
+                 * @type {number}
+                 */
                 point.x = x;
             }
         }
@@ -1126,18 +1125,7 @@ class Point {
 
             // Record changes in the data table
             const pointOptions = point.optionsToObject(options) as AnyRecord;
-            if (series.tempNoXColumn) {
-                series.dataTable.setRow(pointOptions, index);
-            } else {
-                const row: DataTable.RowObject = {},
-                    keys = series.getDataColumnKeys()
-                        .concat(Object.keys(options || {}));
-
-                for (const key of keys) {
-                    row[key] = (point as any)[key];
-                }
-                series.dataTable.setRow(row, index);
-            }
+            series.dataTable.setRow(pointOptions, index);
 
             // Record the options to options.data. If the old or the new config
             // is an object, use point options, otherwise use raw options
