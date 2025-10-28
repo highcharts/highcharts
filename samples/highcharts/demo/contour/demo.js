@@ -1,5 +1,4 @@
 Highcharts.chart('container', {
-    chart: { height: 640 },
     colorAxis: {
         stops: [
             [0, '#3060cf'],

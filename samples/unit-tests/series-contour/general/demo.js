@@ -2,14 +2,12 @@ QUnit.test('General contour stuff', function (assert) {
     const origRun = Highcharts.Series.types.contour.prototype.run;
 
     Highcharts.Series.types.contour.prototype.run = function () {
-        console.trace('Series run');
         const res = origRun.apply(this, Array.prototype.slice.call(arguments));
         Highcharts.Series.types.contour.prototype.renderPromise = res;
         return res;
     };
 
     const chart = Highcharts.chart('container', {
-            tooltip: { hideDelay: 5000000 },
             series: [{
                 type: 'contour',
                 showContourLines: true,

@@ -731,16 +731,22 @@ export default class ContourSeries extends ScatterSeries {
 
     // Place-holder
     private getWebGPUExtremes(): number[] {
-        const { xAxis, yAxis } = this;
-
+        const { xAxis, yAxis } = this,
+            { max: xMax = 0, min: xMin = 0 } = xAxis,
+            { max: yMax = 0, min: yMin = 0 } = yAxis,
+            // Use a small percentage of the range as padding
+            paddingPercent = 0.001,
+            xRange = ((xMax || 1) - (xMin || 0)) * paddingPercent,
+            yRange = ((yMax || 1) - (yMin || 0)) * paddingPercent;
 
         return [
-            xAxis.toValue(0, true), // XMin
-            xAxis.toValue(xAxis.len, true), // XMax
-            yAxis.toValue(yAxis.len, true), // YMin
-            yAxis.toValue(0, true) // YMax
+            xMin - xRange,
+            xMax + xRange,
+            yMin - yRange,
+            yMax + yRange
         ];
     }
+
     private getDataExtremes(): number[] {
         const series = this;
 
