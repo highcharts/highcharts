@@ -193,7 +193,7 @@ table.setColumns(columns);
 
 ### Component Rendering
 
-**What changed:** The `cell` option is removed; components must use `renderTo`.
+**What changed:** The deprecated `cell` option is now removed; components must use `renderTo`.
 
 **Migration steps:**
 - Replace all `cell` options with `renderTo`
