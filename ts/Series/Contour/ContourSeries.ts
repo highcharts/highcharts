@@ -24,7 +24,6 @@ const {
 
 import ContourPoint from './ContourPoint.js';
 import Delaunay from '../../Shared/Delaunay.js';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import U from '../../Core/Utilities.js';
 import ContourSeriesOptions from './ContourSeriesOptions';
 import Chart from '../../Core/Chart/Chart.js';
@@ -53,8 +52,6 @@ export default class ContourSeries extends ScatterSeries {
     private adapter?: GPUAdapter | null;
 
     private device?: GPUDevice;
-
-    private image?: SVGElement;
 
     private extremesUniform?: Float32Array;
 
@@ -166,10 +163,8 @@ export default class ContourSeries extends ScatterSeries {
         foreignObject.appendChild(canvas);
         svg?.appendChild(foreignObject);
 
-        const { width, height } = foreignObjDimensions;
-
-        canvas.style.width = width + 'px';
-        canvas.style.height = height + 'px';
+        canvas.style.width = foreignObjDimensions.width + 'px';
+        canvas.style.height = foreignObjDimensions.height + 'px';
 
         canvas.width = canvas.clientWidth * window.devicePixelRatio;
         canvas.height = canvas.clientHeight * window.devicePixelRatio;
@@ -409,8 +404,6 @@ export default class ContourSeries extends ScatterSeries {
                             output.pos = vec4f(
                                 posX,
                                 posY,
-                                //(pos.x - xMin) / (xMax - xMin) * 2.0 - 1.0,
-                                //(pos.y - yMin) / (yMax - yMin) * 2.0 - 1.0,
                                 0,
                                 1
                             );
@@ -645,20 +638,20 @@ export default class ContourSeries extends ScatterSeries {
                     pass.end();
 
                     device.queue.submit([encoder.finish()]);
-
-                    /* This.image?.destroy();
-                    this.image = this.chart.renderer.image(
-                        canvas.toDataURL('image/webp', 1)
-                    ).attr({
-                        width: canvas.width,
-                        height: canvas.height
-                    }).add(this.group).addClass('highcharts-contour-canvas'); */
                 };
 
                 this.renderWebGPU();
             }
         }
 
+    }
+
+    public destroy(): void {
+        if (this.canvas) {
+            this.canvas.remove();
+        }
+
+        super.destroy();
     }
 
     public drawGraph(): void {
@@ -670,7 +663,6 @@ export default class ContourSeries extends ScatterSeries {
      */
     public setContourIntervalUniform(rerender = false): void {
         if (this.device && this.contourIntervalUniformBuffer) {
-
 
             this.device.queue.writeBuffer(
                 this.contourIntervalUniformBuffer,
