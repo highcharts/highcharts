@@ -217,6 +217,9 @@ class Validator {
             Validator.classNames.notifError,
             Validator.classNames.notifAnimation
         );
+
+        // Set for the aria-errormessage attribute.
+        this.notifContainer.setAttribute('id', 'notification-error');
     }
 
     /**
@@ -237,6 +240,8 @@ class Validator {
             Validator.classNames.notifError,
             Validator.classNames.notifAnimation
         );
+
+        this.notifContainer.removeAttribute('id');
 
         if (hideErrorBox) {
             this.errorCell = void 0;
