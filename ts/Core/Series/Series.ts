@@ -1179,8 +1179,8 @@ class Series {
         const { dataTable, options, requireSorting } = this,
             dataSorting = options.dataSorting,
             oldData = this.data,
-            rowsToAdd: Array<{index: number, pOptions: PointOptions}> = [],
-            rowsToUpdate: Array<{index: number, pOptions: PointOptions}> = [],
+            rowsToAdd: Array<{ newIndex: number, oldIndex: number }> = [],
+            rowsToUpdate: Array<{ newIndex: number, oldIndex: number }> = [],
             equalLength = dataTable.rowCount === oldData.length;
         let hasUpdatedByKey,
             i,
@@ -1201,18 +1201,16 @@ class Series {
             const x = newXColumn?.[i] as number|string|undefined,
                 id = newIdColumn?.[i] as string|undefined,
                 name = newNameColumn?.[i] as string|undefined,
-                pOptions = dataTable.getRowObject(i) as PointOptions,
-                needleAndHaystack: [
+                [needle, haystack]: [
                     string|number|undefined,
                     Array<string|number|undefined>
-                ] | null = id && oldIdColumn ?
+                ] | [] = id && oldIdColumn ?
                     [id, oldIdColumn] :
                     name && oldNameColumn ?
                         [name, oldNameColumn] :
                         defined(x) && oldXColumn ?
                             [x, oldXColumn] :
-                            null,
-                [needle, haystack] = needleAndHaystack || [];
+                            [];
 
             let pointIndex = -1;
 
@@ -1224,20 +1222,17 @@ class Series {
                 // Matching X not found or used already due to non-unique x
                 // values (#8995), add point (but later)
                 if (pointIndex === -1) {
-                    const optionsX = pOptions.x;
-                    let index = oldXColumn?.length ?? dataTable.rowCount;
+                    const optionsX = newXColumn?.[i];
+                    let newIndex = oldXColumn?.length ?? dataTable.rowCount;
                     while (
-                        index &&
+                        newIndex &&
                         oldXColumn &&
                         typeof optionsX === 'number' &&
-                        oldXColumn[index - 1] > optionsX
+                        oldXColumn[newIndex - 1] > optionsX
                     ) {
-                        index--;
+                        newIndex--;
                     }
-                    rowsToAdd.push({
-                        index,
-                        pOptions
-                    });
+                    rowsToAdd.push({ newIndex, oldIndex: i });
 
                 // Matching X found, update
                 } else if (
@@ -1245,8 +1240,8 @@ class Series {
                     pOptions === oldData[pointIndex]?.options*/
                 ) {
                     rowsToUpdate.push({
-                        index: pointIndex,
-                        pOptions
+                        newIndex: pointIndex,
+                        oldIndex: i
                     });
 
                     // Mark it touched, below we will remove all points that
@@ -1276,7 +1271,7 @@ class Series {
                 }
             } else {
                 // Gather all points that are not matched
-                rowsToAdd.push({ index: i, pOptions });
+                rowsToAdd.push({ newIndex: i, oldIndex: i });
             }
         }
 
@@ -1284,15 +1279,17 @@ class Series {
         if (hasUpdatedByKey) {
             // Update matching points
             rowsToUpdate.forEach((row): void => {
-                oldData[row.index].applyOptions(row.pOptions);
+                oldData[row.newIndex].applyOptions(
+                    dataTable.getRowObject(row.oldIndex) as PointOptions
+                );
             });
 
             // Add new points
-            rowsToAdd.sort((a, b): number => b.index - a.index);
+            rowsToAdd.sort((a, b): number => b.newIndex - a.newIndex);
             rowsToAdd.forEach((data): void => {
                 // Splice in an undefined item, `generatePoints` will pick it
                 // up and create the point
-                oldData.splice(data.index, 0, void 0 as any);
+                oldData.splice(data.newIndex, 0, void 0 as any);
             });
             // Remove points not touched
             i = oldData.length;
