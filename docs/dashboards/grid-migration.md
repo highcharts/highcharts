@@ -432,7 +432,7 @@ const rawData = grid.getData(false); // unmodified
 .highcharts-datagrid-row-even {background: #ccc};
 
 // After
-.hcg-row-even {background: #ccc};
+.hcg-row-even {background: #ccc}
 
 // Recommended
 --hcg-row-even-background: #ccc;
