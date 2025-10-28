@@ -75,6 +75,8 @@ export default class ContourSeries extends ScatterSeries {
 
     public dataMax?: number;
 
+    public renderPromise?: Promise<void>;
+
     public init(chart: Chart, options: ContourSeriesOptions): void {
         // Necessary for default tooltip behavior
         chart.options = merge(
@@ -180,14 +182,16 @@ export default class ContourSeries extends ScatterSeries {
             return;
         }
 
-        series.run();
+        this.renderPromise = series.run();
     }
 
 
     async run(): Promise<void> {
         const series = this,
             canvas = series.canvas as HTMLCanvasElement,
-            context = series.context || canvas.getContext('webgpu');
+            context = series.context = (
+                canvas.getContext('webgpu')
+            );
 
         if (context) {
             let device = this.device;
@@ -741,7 +745,7 @@ export default class ContourSeries extends ScatterSeries {
             { max: xMax = 0, min: xMin = 0 } = xAxis,
             { max: yMax = 0, min: yMin = 0 } = yAxis,
             // Use a small percentage of the range as padding
-            paddingPercent = 0.001,
+            paddingPercent = -0.02,
             xRange = ((xMax || 1) - (xMin || 0)) * paddingPercent,
             yRange = ((yMax || 1) - (yMin || 0)) * paddingPercent;
 
