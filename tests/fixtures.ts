@@ -255,6 +255,40 @@ export async function setupRoutes(page: Page){
                 handler: replaceSampleData
             },
             {
+                pattern: 'https://fonts.googleapis.com/**',
+                handler: async (route) => {
+                    const url = route.request().url();
+
+                    test.info().annotations.push({
+                        type: 'redirect',
+                        description: `${url} --> (empty stylesheet)`
+                    });
+
+                    await route.fulfill({
+                        status: 200,
+                        contentType: contentTypes['.css'],
+                        body: ''
+                    });
+                }
+            },
+            {
+                pattern: '**/font-awesome/**',
+                handler: async (route) => {
+                    const url = route.request().url();
+
+                    test.info().annotations.push({
+                        type: 'redirect',
+                        description: `${url} --> (empty stylesheet)`
+                    });
+
+                    await route.fulfill({
+                        status: 200,
+                        contentType: contentTypes['.css'],
+                        body: ''
+                    });
+                }
+            },
+            {
                 pattern: '**/**/mapdata/**',
                 handler: replaceMapData
             },

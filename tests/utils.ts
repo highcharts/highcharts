@@ -100,7 +100,7 @@ type SampleObj = {
     script?: string;
     css?: string;
     html?: string;
-    details?: Details
+    details?: Details;
 };
 
 export const template = ({ script, css, html, details }: SampleObj) => `<html>
@@ -192,61 +192,54 @@ export const template = ({ script, css, html, details }: SampleObj) => `<html>
 
 
 // TODO: stolen from karma-conf. Can likely rely on intercepts for some of these
-function resolveJSON(js: string) {
+function resolveJSON(js: string): { script: string;  } {
     const regex = /(?:(\$|Highcharts)\.getJSON|fetch)\([ \r\n]*'([^']+)/g;
-    let match;
-    const codeblocks = [];
+    let match: RegExpExecArray | null;
+    const codeblocks: string[] = [];
 
-    // eslint-disable-next-line no-cond-assign
-    while (match = regex.exec(js)) {
+    while ((match = regex.exec(js)) !== null) {
         const src = match[2];
-        let innerMatch: string[],
-            filename: string,
-            data: string;
+        let data: string | undefined;
+        let localPath: string | undefined;
 
         // Look for sources that can be matched to samples/data
-        innerMatch = src.match(
+        const sampleMatch = src.match(
             // eslint-disable-next-line @stylistic/max-len
             /^(https:\/\/cdn\.jsdelivr\.net\/gh\/highcharts\/highcharts@[a-z0-9.]+|https:\/\/www\.highcharts\.com)\/samples\/data\/([a-z0-9\-.]+$)/
         ) || src.match(
             /^(https:\/\/demo-live-data\.highcharts\.com)\/([a-z0-9\-.]+$)/
         );
 
-        if (innerMatch) {
-            filename = innerMatch[2];
+        if (sampleMatch) {
+            const filename = sampleMatch[2];
+            localPath = join('samples', 'data', filename);
             data = readFileSync(
-                join(
-                    __dirname,
-                    '..',
-                    'samples/data',
-                    filename
-                ),
+                join(__dirname, '..', localPath),
                 'utf8'
             );
         }
 
         // Look for sources that can be matched to the map collection
-        innerMatch = src.match(
+        const mapMatch = src.match(
             /^(https:\/\/code\.highcharts\.com\/mapdata\/([a-z/.-]+))$/
         );
-        if (innerMatch) {
-            filename = innerMatch[2];
+        if (!data && mapMatch) {
+            const filename = mapMatch[2];
+            localPath = join('node_modules', '@highcharts', 'map-collection', filename);
             data = readFileSync(
-                join(
-                    __dirname,
-                    '..',
-                    'node_modules/@highcharts/map-collection',
-                    filename
-                ),
+                join(__dirname, '..', localPath),
                 'utf8'
             );
         }
 
-        if (data) {
-            if (/json$/.test(filename)) {
+        if (data && localPath) {
+            const normalizedPath = localPath.replace(/\\/g, '/');
+            const extension = extname(normalizedPath);
+
+            if (/json$/i.test(extension)) {
                 codeblocks.push(`window.JSONSources['${src}'] = ${data};`);
             }
-            if (/csv$/.test(filename)) {
+            if (/csv$/i.test(extension)) {
                 codeblocks.push(`window.JSONSources['${src}'] = \`${data}\`;`);
             }
         }
@@ -254,7 +247,9 @@ function resolveJSON(js: string) {
 
     codeblocks.push(js);
 
-    return codeblocks.join('\n');
+    return {
+        script: codeblocks.join('\n')
+    };
 }
 const highchartsCssPath = [
     join(__dirname, '..', 'code', 'css', 'highcharts.css'),
@@ -266,9 +261,9 @@ if (!highchartsCssPath) {
 }
 
 // Prefer the built CSS but fall back to the source file when dist assets are absent.
-const highchartsCSS = readFileSync(highchartsCssPath, 'utf8');
+export const highchartsCSS = readFileSync(highchartsCssPath, 'utf8');
 
-export function getSample(path: string) {
+export function getSample(path: string, injectCSS: boolean = false) {
     path = normalize(path.replace(/\\/g, '/')).replace(/\\/g, '/');
     const files = {
         html: 'demo.html',
@@ -292,8 +287,10 @@ export function getSample(path: string) {
         } catch {/**/}
     }
 
-    obj.script = resolveJSON(obj.script ?? '');
-    if (path.includes('unit-tests') && /styledMode:\s+true/.test(obj.script)) {
+    const resolvedScript = resolveJSON(obj.script ?? '');
+    obj.script = resolvedScript.script;
+
+    if ((injectCSS || path.includes('unit-tests')) && /styledMode:\s+true/.test(obj.script)) {
         // Inject css
         obj.script = `window.highchartsCSS = \`${highchartsCSS}\`;
 ${obj.script}`;
