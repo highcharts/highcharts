@@ -27,7 +27,7 @@ export namespace JSON {
     }
 
     /**
-     * Class API for JSON.stringify.
+     * Class API for toJSON implementation based on JSON.stringify.
      */
     export interface Builder {
         toJSON(): Type;

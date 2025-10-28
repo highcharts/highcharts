@@ -80,12 +80,12 @@ declare global {
 
     interface Element {
         /**
-         * @private
+         * @internal
          * @requires Core/Renderer/SVG/SVGElement
          */
         gradient?: string;
         /**
-         * @private
+         * @internal
          * @requires Core/Renderer/SVG/SVGElement
          */
         radialReference?: Array<number>;
@@ -127,7 +127,7 @@ declare global {
 
     interface SVGElement {
         /**
-         * @private
+         * @internal
          * @requires Core/Renderer/SVG/SVGElement
          */
         cutHeight?: number;
@@ -194,7 +194,7 @@ declare global {
 
 /**
  * Shared Highcharts properties.
- * @private
+ * @internal
  */
 namespace Globals {
 
@@ -269,7 +269,7 @@ namespace Globals {
     /**
      * A shared registry between all bundles to keep track of applied
      * compositions.
-     * @private
+     * @internal
      */
     export const composed: Array<string> = [];
 
@@ -296,14 +296,14 @@ namespace Globals {
     export const dateFormats: GlobalsBase['dateFormats'] = {};
 
     /**
-     * @private
+     * @internal
      * @deprecated
      * @todo Use only `Core/Series/SeriesRegistry.seriesTypes`
      */
     export const seriesTypes = {} as GlobalsBase['seriesTypes'];
 
     /**
-     * @private
+     * @internal
      */
     export const symbolSizes: GlobalsBase['symbolSizes'] = {};
 
