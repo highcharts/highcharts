@@ -338,7 +338,8 @@ function diffObjects(
                 }
             } else if (
                 isObject(newerVal, true) &&
-                !newerVal.nodeType // #10044
+                !newerVal.nodeType && // #10044
+                !newerVal.modified // Simplified test for DataTable instance
             ) {
                 ret[key] = isArray(newerVal) ? [] : {};
                 diff(newerVal, older[key] || {}, ret[key], depth + 1);

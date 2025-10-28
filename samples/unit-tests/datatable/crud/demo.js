@@ -58,9 +58,6 @@ QUnit.test('Series dataTable option update', assert => {
         'Passing DataTable config to Series.update, series should be updated'
     );
 
-    /*
-    Fails with diffObects inside Series.update. If we want this, we must
-    except the DataTable instance from diffing.
     Highcharts.charts[0].series[0].update({
         dataTable: new Highcharts.DataTableCore({
             columns: {
@@ -71,9 +68,8 @@ QUnit.test('Series dataTable option update', assert => {
     });
 
     assert.strictEqual(
-        series.points.map(p => p.y).toString(),
+        chart.series[0].points.map(p => p.y).toString(),
         [4, 5, 6].toString(),
         'Passing DataTable instance to Series.update, series should be updated'
     );
-    */
 });
