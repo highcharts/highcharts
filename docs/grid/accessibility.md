@@ -17,7 +17,8 @@ Accessibility features are enabled by default, and we generally recommend keepin
     accessibility: {
         enabled: false,
         announcements: {
-            sorting: true
+            sorting: true,
+            filtering: true
         }
     }
 }
@@ -47,15 +48,21 @@ To customize the default language or wording for ARIA attributes and announcers,
                     ascending: "Sorted ascending",
                     ...
                 }
+            },
+            filtering: {
+                announcements: {
+                    filterApplied: "Filter applied for {columnId}, {condition} {value}. {rowsCount} results found.",
+                    ...
+                }
             }
         }
     }
 }
 ```
 
-For a complete list of available options, check out the [API reference](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.LangOptions).
+For a complete list of available options, check out the [API reference](https://api.highcharts.com/dashboards/#interfaces/Grid_Options.LangOptions).
 
-When configuring localization, it typically want it to apply to all grids on the same page. In such cases, we recommend using `setOptions()` to apply these changes globally. Read [Understanding Highcharts DataGrid](https://www.highcharts.com/docs/grid/understanding-grid#setOptions) for the details.
+When configuring localization, it typically want it to apply to all grids on the same page. In such cases, we recommend using `setOptions()` to apply these changes globally. Read [Understanding Highcharts Grid](https://www.highcharts.com/docs/grid/understanding-grid#setOptions) for the details.
 
 ## High contrast mode
 

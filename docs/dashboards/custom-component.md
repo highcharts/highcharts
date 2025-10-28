@@ -292,7 +292,7 @@ class TotalRevenueHTML extends HTMLComponent {
 
     getTotalRevenue() {
         const connector = this.getFirstConnector();
-        const table = connector.table.modified;
+        const table = connector.getTable().getModified();
 
         return table.columns.Revenue.reduce((acc, cur) => acc + cur);
     }
@@ -318,7 +318,7 @@ components: [{
 ## Custom YouTube Component
 This article shows how to create a custom **Dashboards** Component. In this example, we create a YouTube Component.
 
-<iframe style="width: 100%; height: 590px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/components/custom-component?force-light-theme" allow="fullscreen" allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 590px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/components/custom-component?force-light-theme" allow="fullscreen"></iframe>
 
 Note that to create the custom component, we are using ES6 and using the `class` and `extends` keywords, which makes creating a custom class much easier.
 
