@@ -3,12 +3,13 @@
         "typeRoots": ["./globals.d.ts", "../node_modules/@types"],
         "module": "nodenext",
         "resolveJsonModule": true,
-        "allowImportingTsExtensions": true
+        "allowImportingTsExtensions": true,
+        "allowJs": true
     },
     "paths": {
         "highcharts": [
             "../"
         ]
     },
-    "include": ["./**/*.ts", "./**/*.mts" ]
+    "include": ["./**/*.ts", "./**/*.mts", "./**/*.js" ]
 }
