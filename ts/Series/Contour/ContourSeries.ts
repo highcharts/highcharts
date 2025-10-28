@@ -75,8 +75,6 @@ export default class ContourSeries extends ScatterSeries {
 
     public dataMax?: number;
 
-    public renderPromise?: Promise<void>;
-
     public init(chart: Chart, options: ContourSeriesOptions): void {
         // Necessary for default tooltip behavior
         chart.options = merge(
@@ -176,7 +174,7 @@ export default class ContourSeries extends ScatterSeries {
             return;
         }
 
-        series.renderPromise = series.run();
+        series.run();
     }
 
 
