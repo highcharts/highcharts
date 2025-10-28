@@ -8,6 +8,8 @@ QUnit.test('General contour stuff', function (assert) {
     };
 
     const chart = Highcharts.chart('container', {
+            xAxis: { gridLineWidth: 0 },
+            yAxis: { gridLineWidth: 0 },
             series: [{
                 type: 'contour',
                 showContourLines: true,
@@ -113,17 +115,17 @@ QUnit.test('General contour stuff', function (assert) {
 
     contour.renderPromise.then(function () {
         const canvas = document.createElement('canvas'),
-            ctx = canvas.getContext('2d');
+            ctx = canvas.getContext('2d'),
+            w = canvas.width = contour.canvas.width,
+            h = canvas.height = contour.canvas.height;
 
-        canvas.width = contour.canvas.width;
-        canvas.height = contour.canvas.height;
         ctx.drawImage(contour.canvas, 0, 0);
 
         const imgData = ctx.getImageData(
-                p.plotX,
-                p.plotY,
-                canvas.width,
-                canvas.height
+                0,
+                0,
+                w,
+                h
             ).data,
             validColor = (i, res) => (
                 imgData[i] === res[0] &&
@@ -146,8 +148,16 @@ QUnit.test('General contour stuff', function (assert) {
             }
         } */
 
+        // Check the first non-transparent pixel
         assert.strictEqual(
-            validColor(376, [255, 0, 0, 255]),
+            validColor(40, [197, 197, 197, 255]),
+            true,
+            'First pixel in contour plot should be gray.'
+        );
+
+        // Check a pixel that should be part of a contour line
+        assert.strictEqual(
+            validColor(716, [255, 0, 0, 255]),
             true,
             'Contour lines should be rendered in correct color.'
         );
