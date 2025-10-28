@@ -89,6 +89,9 @@ export default class ContourSeries extends ScatterSeries {
         this.yAxis.options.endOnTick = (
             this.yAxis.userOptions.endOnTick || false
         );
+        this.yAxis.options.gridLineWidth = (
+            this.yAxis.userOptions.gridLineWidth || 0
+        );
     }
 
     public getContourData(): [Uint32Array, Float32Array] {
@@ -159,7 +162,10 @@ export default class ContourSeries extends ScatterSeries {
         }
 
         foreignObject.appendChild(canvas);
-        svg?.appendChild(foreignObject);
+        svg?.insertBefore(
+            foreignObject,
+            document.querySelector('.highcharts-plot-background')
+        );
 
         canvas.style.width = foreignObjDimensions.width + 'px';
         canvas.style.height = foreignObjDimensions.height + 'px';
