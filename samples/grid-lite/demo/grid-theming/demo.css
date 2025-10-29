@@ -1,4 +1,4 @@
-@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid.css");
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid-lite.css");
 
 body {
     font-family:
@@ -16,12 +16,12 @@ body {
     color: var(--highcharts-neutral-color-100);
 }
 
-#container {
-    padding: 12px;
+.demo {
+    padding: 8px 12px;
 }
 
 .highcharts-description {
-    padding: 0 20px;
+    padding: 0 8px;
 }
 
 .table-wrapper {
@@ -55,8 +55,9 @@ body {
 .highcharts-light .hcg-description code {
     font-family: Consolas, "courier new", monospace;
     line-height: 1em;
-    background: #f7f7f7;
-    border: 1px solid #e1e1e1;
+    background: light-dark(#f7f7f7, #2a2a2a);
+    border: 1px solid light-dark(#e1e1e1, #4a4a4a);
+    color: var(--highcharts-neutral-color-100);
     padding: 2px 4px;
     border-radius: 5px;
     display: inline-block;
@@ -91,6 +92,16 @@ body {
     --hcg-cell-hovered-row-color: var(--my-hover-color);
     --hcg-cell-hovered-column-color: var(--my-hover-color);
     --hcg-header-hovered-color: var(--my-hover-color);
+
+    /* Button styles */
+    --hcg-button-color: #fff;
+    --hcg-button-border-radius: 6px;
+    --hcg-button-hover-color: var(--my-hover-color);
+    --hcg-button-hover-background: #1a3f48;
+
+    /* Icon styles */
+    --hcg-icon-hover-color: #666;
+    --hcg-icon-header-hover-color: var(--my-hover-color);
 }
 
 .opacity-theme,
@@ -111,6 +122,19 @@ body {
     --hcg-border-radius: 15px;
     --hcg-font-size: 15px;
     --hcg-padding: 10px;
+
+    /* Button styles */
+    --hcg-button-color: rgba(var(--hover-color), 0.8);
+    --hcg-button-border-radius: 6px;
+    --hcg-button-hover-color: rgb(var(--hover-color));
+    --hcg-button-hover-background: rgba(var(--hover-color), 0.25);
+
+    /* Icon styles */
+    --hcg-icon-hover-color: #000;
+}
+
+.highcharts-light .opacity-theme .hcg-menu-item-label {
+    color: #000;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -126,6 +150,10 @@ body {
         --hcg-background: #003947;
         --hcg-row-even-background: #004556;
         --hcg-cell-hovered-column-border-color: #4b4b4b;
+
+        /* Icon styles */
+        --hcg-icon-hover-color: #eee;
+        --hcg-icon-header-hover-color: var(--my-hover-color);
     }
 
     .opacity-theme {
@@ -133,11 +161,20 @@ body {
         --base-color: 0, 0, 0;
         --gradient-from-color: rgb(102, 20, 140);
         --gradient-to-color: rgb(50, 13, 144);
+
+        /* Icon styles */
+        --hcg-icon-hover-color: #fff;
     }
 
     .hcg-description code {
-        background: #222;
-        border-color: #474747;
+        font-family: Consolas, "courier new", monospace;
+        line-height: 1em;
+        background: light-dark(#f7f7f7, #2a2a2a);
+        border: 1px solid light-dark(#e1e1e1, #4a4a4a);
+        color: var(--highcharts-neutral-color-100);
+        padding: 2px 4px;
+        border-radius: 5px;
+        display: inline-block;
     }
 }
 
@@ -153,6 +190,10 @@ body {
     --hcg-background: #003947;
     --hcg-row-even-background: #004556;
     --hcg-cell-hovered-column-border-color: #4b4b4b;
+
+    /* Icon styles */
+    --hcg-icon-hover-color: #eee;
+    --hcg-icon-header-hover-color: var(--my-hover-color);
 }
 
 .highcharts-dark .opacity-theme {
@@ -160,9 +201,18 @@ body {
     --base-color: 0, 0, 0;
     --gradient-from-color: rgb(102, 20, 140);
     --gradient-to-color: rgb(50, 13, 144);
+
+    /* Icon styles */
+    --hcg-icon-hover-color: #fff;
 }
 
 .highcharts-dark .hcg-description code {
-    background: #222;
-    border-color: #474747;
+    font-family: Consolas, "courier new", monospace;
+    line-height: 1em;
+    background: light-dark(#f7f7f7, #2a2a2a);
+    border: 1px solid light-dark(#e1e1e1, #4a4a4a);
+    color: var(--highcharts-neutral-color-100);
+    padding: 2px 4px;
+    border-radius: 5px;
+    display: inline-block;
 }

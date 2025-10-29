@@ -3,6 +3,7 @@ on:
   pull_request:
     branches:
       - 'master'
+      - 'dash/**'
     paths:
       - 'ts/Dashboards/**'
       - 'ts/Data/**'
@@ -39,8 +40,12 @@ jobs:
 
       - name: Build Highcharts
         run: npx gulp scripts
+
+      - name: Build Grid
+        run: npx gulp scripts --product Grid
+
       - name: Build Dashboards
-        run: npx gulp dashboards/scripts
+        run: npx gulp scripts --product Dashboards
 
       - name: Benchmark
         continue-on-error: true
@@ -55,8 +60,11 @@ jobs:
       - name: Build Highcharts
         run: npx gulp scripts
 
+      - name: Build Grid
+        run: npx gulp scripts --product Grid
+
       - name: Build Dashboards
-        run: npx gulp dashboards/scripts
+        run: npx gulp scripts --product Dashboards
 
       - name: Benchmark
         run: cd test/ts-node-unit-tests && node --import tsx bench.ts --context actual --pattern Dashboards/

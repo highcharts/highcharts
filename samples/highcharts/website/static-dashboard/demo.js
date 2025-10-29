@@ -5,9 +5,7 @@ Dashboards.board('container', {
         connectors: [{
             id: 'sample',
             type: 'CSV',
-            options: {
-                csv: csvData
-            }
+            csv: csvData
         }]
     },
     gui: {
@@ -135,7 +133,7 @@ Dashboards.board('container', {
             }
         }, {
             renderTo: 'dashboard-col-1',
-            type: 'DataGrid',
+            type: 'Grid',
             connector: {
                 id: 'sample'
             },

@@ -1,7 +1,7 @@
 Grid.grid('container', {
     dataTable: {
         columns: {
-            id: ['1', '2', '3', '4'],
+            id: [1, 2, 3, 4],
             product: ['Apples', 'Pears', 'Plums', 'Bananas'],
             weight: [100, 40, 0.5, 200],
             price: [1.5, 2.53, 5, 4.5]
@@ -22,6 +22,17 @@ Grid.grid('container', {
                     ascending: 'The column is sorted in ascending order.',
                     descending: 'The column is sorted in descending order.',
                     none: 'Cleared sorting of the column.'
+                }
+            },
+            filtering: {
+                announcements: {
+                    filterApplied: 'The filtering is applied for {columnId}, ' +
+                        '{condition} {value}. {rowsCount} results found.',
+                    emptyFilterApplied: 'The filtering is applied for ' +
+                        '{columnId}, {condition} values. {rowsCount} results ' +
+                        'found.',
+                    filterCleared: 'The filtering is cleared for {columnId}. ' +
+                        '{rowsCount} results found.'
                 }
             }
         }
