@@ -39,7 +39,6 @@ import type RangeSelector from '../../Stock/RangeSelector/RangeSelector';
 import type SeriesBase from './SeriesBase';
 import type {
     NonPlotOptions,
-    SeriesDataSortingOptions,
     SeriesOptions,
     SeriesStateHoverOptions,
     SeriesZonesOptions
@@ -96,7 +95,6 @@ const {
     find,
     fireEvent,
     getClosestDistance,
-    getNestedProperty,
     insertItem,
     isArray,
     isNumber,
@@ -1348,7 +1346,6 @@ class Series {
             oldDataLength = oldData?.length || 0,
             options = series.options,
             chart = series.chart,
-            dataSorting = options.dataSorting,
             xAxis = series.xAxis,
             turboThreshold = options.turboThreshold,
             table = this.dataTable,
@@ -1379,10 +1376,6 @@ class Series {
 
 
         const dataLength = data.length;
-
-        if (dataSorting?.enabled) {
-            data = this.sortData(data);
-        }
 
         // First try to run Point.update which is cheaper, allows animation, and
         // keeps references to points.
@@ -1565,84 +1558,6 @@ class Series {
         if (redraw) {
             chart.redraw(animation);
         }
-    }
-
-    /**
-     * Internal function to sort series data
-     *
-     * @private
-     * @function Highcharts.Series#sortData
-     * @param {Array<Highcharts.PointOptionsType>} data
-     * Force data grouping.
-     */
-    public sortData(
-        data: Array<(PointOptions|PointShortOptions)>
-    ): Array<PointOptions> {
-        const series = this,
-            options = series.options,
-            dataSorting: SeriesDataSortingOptions = options.dataSorting as any,
-            sortKey = dataSorting.sortKey || 'y',
-            getPointOptionsObject = function (
-                series: Series,
-                pointOptions: (PointOptions|PointShortOptions)
-            ): PointOptions {
-                return (defined(pointOptions) &&
-                    series.pointClass.prototype.optionsToObject.call({
-                        series: series
-                    }, pointOptions)) || {};
-            };
-
-        data.forEach(function (pointOptions, i): void {
-            data[i] = getPointOptionsObject(series, pointOptions);
-            (data[i] as any).index = i;
-        }, this);
-
-        // Sorting
-        const sortedData: Array<Point> = data.concat().sort((a, b): number => {
-            const aValue = getNestedProperty(
-                sortKey,
-                a
-            ) as (boolean|number|string);
-            const bValue = getNestedProperty(
-                sortKey,
-                b
-            ) as (boolean|number|string);
-            return bValue < aValue ? -1 : bValue > aValue ? 1 : 0;
-        }) as Array<Point>;
-        // Set x value depending on the position in the array
-        sortedData.forEach(function (point, i): void {
-            point.x = i;
-        }, this);
-
-        // Set the same x for linked series points if they don't have their
-        // own sorting
-        if (series.linkedSeries) {
-            series.linkedSeries.forEach(function (linkedSeries): void {
-                const options = linkedSeries.options,
-                    seriesData = options.data as Array<PointOptions>;
-
-                if (
-                    !options.dataSorting?.enabled &&
-                    seriesData
-                ) {
-                    seriesData.forEach(function (pointOptions, i): void {
-                        seriesData[i] = getPointOptionsObject(
-                            linkedSeries,
-                            pointOptions
-                        );
-
-                        if (data[i]) {
-                            seriesData[i].x = (data[i] as any).x;
-                            seriesData[i].index = i;
-                        }
-                    });
-
-                    linkedSeries.setData(seriesData, false);
-                }
-            });
-        }
-
-        return data as any;
     }
 
     /**
