@@ -15,6 +15,7 @@
  *  Imports
  *
  * */
+import type Chart from '../../Core/Chart/Chart';
 import type Point from '../../Core/Series/Point';
 import type {
     PointOptions,
@@ -24,6 +25,7 @@ import type Series from '../../Core/Series/Series';
 
 import U from '../../Core/Utilities.js';
 const {
+    addEvent,
     defined,
     getNestedProperty,
     wrap
@@ -125,9 +127,22 @@ function sortData(
 }
 
 /**
+ * Set data for all series with enabled sorting.
+ */
+function setSortedData(chart: Chart): void {
+    chart.getSeriesOrderByLinks().forEach((series): void => {
+        // We need to set data for series with sorting after series init
+        if (!series.points && !series.data && series.enabledDataSorting) {
+            series.setData(series.options.data, false);
+        }
+    });
+}
+
+/**
  * @private
  */
 function compose(
+    ChartClass: typeof Chart,
     SeriesClass: typeof Series
 ): void {
 
@@ -147,6 +162,16 @@ function compose(
             return proceed.apply(this, [data].concat(args));
         }
     );
+
+    addEvent(ChartClass, 'beforeRender', function (): void {
+        setSortedData(this);
+    });
+
+    // Set data for series with sorting enabled if it isn't set yet
+    // (#19715, #20318)
+    addEvent(SeriesClass, 'afterUpdate', function (): void {
+        setSortedData(this.chart);
+    });
 }
 
 

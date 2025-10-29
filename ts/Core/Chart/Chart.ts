@@ -629,21 +629,6 @@ class Chart {
     }
 
     /**
-     * Internal function to set data for all series with enabled sorting.
-     *
-     * @private
-     * @function Highcharts.Chart#setSortedData
-     */
-    public setSortedData(): void {
-        this.getSeriesOrderByLinks().forEach(function (series): void {
-            // We need to set data for series with sorting after series init
-            if (!series.points && !series.data && series.enabledDataSorting) {
-                series.setData(series.options.data as any, false);
-            }
-        });
-    }
-
-    /**
      * Sort and return chart series in order depending on the number of linked
      * series.
      *
@@ -2848,7 +2833,6 @@ class Chart {
         );
 
         chart.linkSeries();
-        chart.setSortedData();
 
         // Run an event after axes and series are initialized, but before
         // render. At this stage, the series data is indexed and cached in the

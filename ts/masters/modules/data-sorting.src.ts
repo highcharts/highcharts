@@ -17,6 +17,6 @@ import DataSorting from '../../Extensions/DataSorting/DataSortingComposition.js'
 const G: AnyRecord = Highcharts;
 
 // Compose
-DataSorting.compose(G.Series);
+DataSorting.compose(G.Chart, G.Series);
 
 export default Highcharts;
