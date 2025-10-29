@@ -2478,10 +2478,6 @@ class Chart {
                      */
                     series.linkedParent = linkedParent;
 
-                    if (linkedParent.enabledDataSorting) {
-                        series.setDataSortingOptions();
-                    }
-
                     series.visible = pick(
                         series.options.visible,
                         linkedParent.options.visible,

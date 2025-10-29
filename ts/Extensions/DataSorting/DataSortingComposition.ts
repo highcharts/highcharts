@@ -27,6 +27,7 @@ import U from '../../Core/Utilities.js';
 const {
     addEvent,
     defined,
+    extend,
     getNestedProperty,
     wrap
 } = U;
@@ -36,6 +37,11 @@ const {
  *  Declarations
  *
  * */
+declare module '../../Core/Chart/ChartBase' {
+    interface ChartBase {
+        hasInitializedLinkedSeries?: boolean;
+    }
+}
 
 /* *
  *
@@ -139,6 +145,21 @@ function setSortedData(chart: Chart): void {
 }
 
 /**
+ * Set properties for a series if data sorting is enabled.
+ */
+function setDataSortingOptions(series: Series): void {
+    extend<Series>(series, {
+        requireSorting: false,
+        sorted: false,
+        enabledDataSorting: true,
+        allowDG: false
+    });
+
+    // To allow unsorted data for column series.
+    series.options.pointRange ??= 1;
+}
+
+/**
  * @private
  */
 function compose(
@@ -155,8 +176,16 @@ function compose(
             data: Array<(PointOptions|PointShortOptions)>,
             ...args: Array<any>
         ): Series {
-            if (this.options.dataSorting?.enabled && Array.isArray(data)) {
-                data = sortData(this, data);
+            if (this.options.dataSorting?.enabled) {
+
+                // Not ready until we have linked series. Instead, call
+                // `setData` again on `beforeRender`.
+                if (!this.chart.hasInitializedLinkedSeries) {
+                    return this;
+                }
+                if (Array.isArray(data)) {
+                    data = sortData(this, data);
+                }
             }
 
             return proceed.apply(this, [data].concat(args));
@@ -167,13 +196,27 @@ function compose(
         setSortedData(this);
     });
 
+    addEvent(ChartClass, 'afterLinkSeries', function (): void {
+        this.series.forEach((series): void => {
+            if (series.linkedParent?.enabledDataSorting) {
+                setDataSortingOptions(series);
+            }
+        });
+        this.hasInitializedLinkedSeries = true;
+    });
+
     // Set data for series with sorting enabled if it isn't set yet
     // (#19715, #20318)
     addEvent(SeriesClass, 'afterUpdate', function (): void {
         setSortedData(this.chart);
     });
-}
 
+    addEvent(SeriesClass, 'afterInit', function (): void {
+        if (this.options.dataSorting?.enabled) {
+            setDataSortingOptions(this);
+        }
+    });
+}
 
 /* *
  *

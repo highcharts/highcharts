@@ -549,11 +549,7 @@ class Series {
         // point.
         chart.orderItems('series', insertItem(this, chartSeries));
 
-        // Set options for series with sorting and set data later.
-        if (options.dataSorting?.enabled) {
-            series.setDataSortingOptions();
-
-        } else if (!series.points && !series.data) {
+        if (!series.points && !series.data) {
             series.setData(options.data as any, false);
         }
 
@@ -743,29 +739,6 @@ class Series {
         }
         this.xIncrement = xIncrement + pointInterval;
         return xIncrement;
-    }
-
-    /**
-     * Internal function to set properties for series if data sorting is
-     * enabled.
-     *
-     * @private
-     * @function Highcharts.Series#setDataSortingOptions
-     */
-    public setDataSortingOptions(): void {
-        const options = this.options;
-
-        extend<Series>(this, {
-            requireSorting: false,
-            sorted: false,
-            enabledDataSorting: true,
-            allowDG: false
-        });
-
-        // To allow unsorted data for column series.
-        if (!defined(options.pointRange)) {
-            options.pointRange = 1;
-        }
     }
 
     /**
