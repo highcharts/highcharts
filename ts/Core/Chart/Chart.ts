@@ -2988,11 +2988,6 @@ class Chart {
                     chart.isDirtyLegend = true;
                     chart.linkSeries();
 
-                    if (series.enabledDataSorting) {
-                        // We need to call `setData` after `linkSeries`
-                        series.setData(options.data as any, false);
-                    }
-
                     fireEvent(chart, 'afterAddSeries', { series: series });
 
                     if (redraw) {

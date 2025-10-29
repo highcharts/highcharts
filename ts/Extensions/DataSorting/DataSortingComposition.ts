@@ -16,6 +16,9 @@
  *
  * */
 import type Chart from '../../Core/Chart/Chart';
+import type {
+    ChartAfterAddSeriesCallbackFunction
+} from '../../Core/Chart/ChartOptions';
 import type Point from '../../Core/Series/Point';
 import type {
     PointOptions,
@@ -204,6 +207,13 @@ function compose(
         });
         this.hasInitializedLinkedSeries = true;
     });
+
+    addEvent(ChartClass, 'afterAddSeries', function ({ series }): void {
+        if (series.enabledDataSorting) {
+            // We need to call `setData` after `linkSeries`
+            series.setData(series.options.data, false);
+        }
+    } as ChartAfterAddSeriesCallbackFunction);
 
     // Set data for series with sorting enabled if it isn't set yet
     // (#19715, #20318)
