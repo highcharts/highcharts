@@ -43,9 +43,9 @@ function ChartComponent () {
 }
 ```
 
-## 4. Loading modules
+## 4. Loading modules (optional)
 
-To load additional Highcharts modules, use the `setHighcharts` function:
+If you wish to load additional Highcharts modules, use the `setHighcharts` function:
 
 ```jsx
 import { Chart, setHighcharts } from '@highcharts/react';
