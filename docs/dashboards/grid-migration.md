@@ -10,6 +10,7 @@ Before diving into the detailed migration guide, here are the most critical brea
 - **Replace `getJSON()` with `getData()`** - for Grid Lite and Grid Pro users
 - **Connector options are flattened** - move nested `options` content to top level
 - **`table.modified` is now `table.getModified()`** - property replaced with method
+- **`.highcharts-datagrid-` is now `.hcg-`** - replace all occurrences in CSS overrides
 
 ## Overview
 
@@ -429,10 +430,10 @@ const rawData = grid.getData(false); // unmodified
 **Example:**
 ```css
 // Before
-.highcharts-datagrid-row-even {background: #ccc};
+.highcharts-datagrid-row-even {background: #ccc;}
 
 // After
-.hcg-row-even {background: #ccc}
+.hcg-row-even {background: #ccc;}
 
 // Recommended
 --hcg-row-even-background: #ccc;
