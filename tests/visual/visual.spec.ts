@@ -40,8 +40,8 @@ test.describe('Visual tests', () => {
         timeout: 5_000,
     });
 
-    let page: Page;
-    let context: BrowserContext;
+    let page: Page | undefined;
+    let context: BrowserContext | undefined;
 
     test.beforeAll(async ({ browser }) => {
         context ??= await browser.newContext({
@@ -96,8 +96,13 @@ test.describe('Visual tests', () => {
     });
 
     test.afterAll(async () => {
+        if (page) {
+            await page.close();
+            page = undefined;
+        }
         if (context) {
             await context.close();
+            context = undefined;
         }
     });
 
@@ -198,6 +203,10 @@ test.describe('Visual tests', () => {
             ) {
                 // eslint-disable-next-line playwright/no-skipped-test
                 test.skip();
+            }
+
+            if (!page) {
+                throw new Error('Page not initialized');
             }
 
             await page.evaluate(() => window.HCVisualSetup?.beforeSample());
