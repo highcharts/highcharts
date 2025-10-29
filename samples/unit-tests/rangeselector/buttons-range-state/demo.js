@@ -123,7 +123,7 @@ QUnit.test('Range selector buttons states (#3375)', function (assert) {
         [1317895200000, 376.94, 377.01, 375.75, 375.98]
     ];
 
-    let chart = Highcharts.stockChart('container', {
+    const chart = Highcharts.stockChart('container', {
         rangeSelector: {
             buttons: [{
                 type: 'hour',
@@ -303,7 +303,7 @@ QUnit.test('Range selector buttons states (#3375)', function (assert) {
         '2', 'Month button should be selected, #23521.'
     );
 
-    chart = Highcharts.stockChart('container', {
+    chart.update({
         rangeSelector: {
             buttons: [{
                 type: 'month',
@@ -340,6 +340,8 @@ QUnit.test('Range selector buttons states (#3375)', function (assert) {
             }
         ]
     });
+
+    chart.xAxis[0].setExtremes(null, null);
 
     assert.strictEqual(
         chart.series[0].xIncrement,
@@ -378,7 +380,7 @@ QUnit.test('Range selector buttons states (#3375)', function (assert) {
 
     assert.strictEqual(
         chart.series[0].xIncrement,
-        11,
-        'The xIncrement should be 11 after setting the data, #22656.'
+        1706227200011,
+        'The xIncrement should be 1706227200011 after setting the data, #22656.'
     );
 });
