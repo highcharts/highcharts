@@ -81,6 +81,7 @@
     "code/modules/navigator.src.js",
     "code/modules/textpath.src.js",
     "code/indicators/indicators-all.src.js",
+    "code/modules/contour.src.js",
 
     "node_modules/@highcharts/map-collection/countries/gb/gb-all.js",
     "node_modules/@highcharts/map-collection/custom/british-isles.js",
