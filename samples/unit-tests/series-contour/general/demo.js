@@ -90,6 +90,7 @@ QUnit.test('General contour stuff', function (assert) {
                 ]
             }]
         }),
+        done = assert.async(),
         contour = chart.series[0],
         p = contour.points[5],
         tc = new TestController(chart);
@@ -151,6 +152,8 @@ QUnit.test('General contour stuff', function (assert) {
             true,
             'Contour lines should be rendered in correct color.'
         );
+
+        done();
     });
 });
 
@@ -250,6 +253,7 @@ QUnit.test('Inverted', function (assert) {
                 ]
             }]
         }),
+        done = assert.async(),
         contour = chart.series[0];
 
     assert.notStrictEqual(
@@ -291,6 +295,8 @@ QUnit.test('Inverted', function (assert) {
             true,
             'Last pixel in inverted contour plot should be light gray.'
         );
+
+        done();
     });
 });
 
@@ -389,6 +395,7 @@ QUnit.test('Reversed', function (assert) {
                 ]
             }]
         }),
+        done = assert.async(),
         contour = chart.series[0];
 
     assert.notStrictEqual(
@@ -430,5 +437,7 @@ QUnit.test('Reversed', function (assert) {
             true,
             'Last pixel in reversed contour plot should be dark gray.'
         );
+
+        done();
     });
 });
