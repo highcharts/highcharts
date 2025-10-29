@@ -1,8 +1,5 @@
 /* *
  *
- *  Experimental Highcharts module which enables visualization of a Venn
- *  diagram.
- *
  *  (c) 2016-2025 Highsoft AS
  *  Authors: Jon Arild Nygard
  *
