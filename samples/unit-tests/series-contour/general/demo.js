@@ -1,6 +1,3 @@
-const preTag = document.getElementById('data');
-const data = JSON.parse(preTag.innerText.trim());
-
 const getColorFunc = contourCanvas => {
     const canvas = document.createElement('canvas'),
         ctx = canvas.getContext('2d'),
@@ -23,7 +20,9 @@ const getColorFunc = contourCanvas => {
 };
 
 QUnit.test('General contour stuff', function (assert) {
-    const chart = Highcharts.chart('container', {
+    const preTag = document.getElementById('data'),
+        data = JSON.parse(preTag.innerText.trim()),
+        chart = Highcharts.chart('container', {
             series: [{
                 type: 'contour',
                 showContourLines: true,
@@ -70,7 +69,9 @@ QUnit.test('General contour stuff', function (assert) {
 
 
 QUnit.test('Inverted', function (assert) {
-    const chart = Highcharts.chart('container', {
+    const preTag = document.getElementById('data'),
+        data = JSON.parse(preTag.innerText.trim()),
+        chart = Highcharts.chart('container', {
             chart: {
                 inverted: true
             },
@@ -113,7 +114,9 @@ QUnit.test('Inverted', function (assert) {
 });
 
 QUnit.test('X Axis Reversed', function (assert) {
-    const chart = Highcharts.chart('container', {
+    const preTag = document.getElementById('data'),
+        data = JSON.parse(preTag.innerText.trim()),
+        chart = Highcharts.chart('container', {
             xAxis: {
                 reversed: true
             },
