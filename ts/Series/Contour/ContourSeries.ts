@@ -145,8 +145,8 @@ export default class ContourSeries extends ScatterSeries {
                 'http://www.w3.org/2000/svg',
                 'foreignObject'
             ),
-            xLen = xAxis.len * devicePixelRatio,
-            yLen = yAxis.len * devicePixelRatio,
+            xLen = xAxis.len,
+            yLen = yAxis.len,
             foreignObjDimensions = series.chart.inverted ? {
                 x: yAxis.pos,
                 y: xAxis.pos,
@@ -172,8 +172,8 @@ export default class ContourSeries extends ScatterSeries {
         canvas.style.width = foreignObjDimensions.width + 'px';
         canvas.style.height = foreignObjDimensions.height + 'px';
 
-        canvas.width = canvas.clientWidth * window.devicePixelRatio;
-        canvas.height = canvas.clientHeight * window.devicePixelRatio;
+        canvas.width = canvas.clientWidth * devicePixelRatio;
+        canvas.height = canvas.clientHeight * devicePixelRatio;
 
 
         // If this function exists, buffers are set up

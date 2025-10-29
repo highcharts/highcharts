@@ -1,5 +1,5 @@
 const preTag = document.getElementById('data');
-const data = JSON.parse(preTag.textContent?.trim() || preTag.innerText?.trim());
+const data = JSON.parse(preTag.innerText.trim());
 
 const getColorFunc = contourCanvas => {
     const canvas = document.createElement('canvas'),
