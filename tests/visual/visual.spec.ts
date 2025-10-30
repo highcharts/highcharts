@@ -73,12 +73,10 @@ test.describe('Visual tests', () => {
         await page.waitForFunction(
             () => window.HCVisualSetup?.initialized === true
         );
-        await page.evaluate((mode) => window.HCVisualSetup?.configure({ mode }), 'fast');
-
-
-        await setTestingOptions(page);
-        await page.evaluate(() => window.HCVisualSetup?.markOptionsClean());
-
+        await page.evaluate(() => {
+            window.HCVisualSetup?.configure({ mode: 'fast' });
+            window.HCVisualSetup?.markOptionsClean();
+        });
     });
 
     test.afterEach(async () => {
@@ -209,9 +207,9 @@ test.describe('Visual tests', () => {
                 throw new Error('Page not initialized');
             }
 
-            await page.evaluate(() => window.HCVisualSetup?.beforeSample());
-
             await page.evaluate(body => {
+                window.HCVisualSetup?.beforeSample();
+
                 const testContainer = document.querySelector('div[data-test-container]');
                 testContainer.innerHTML = body;
             }, sample.html ?? defaultPageContent);
@@ -228,9 +226,9 @@ test.describe('Visual tests', () => {
 
             await setTestingOptions(page);
 
-            await page.evaluate(() => window.HCVisualSetup?.markOptionsClean());
-
             await page.evaluate(() => {
+                window.HCVisualSetup?.markOptionsClean();
+
                 if (window.Highcharts) {
                     window.Highcharts.setOptions({
                         chart: {
@@ -249,12 +247,6 @@ test.describe('Visual tests', () => {
                 content: transformVisualSampleScript(sample.script)
             });
 
-            if (scriptHandle) {
-                await scriptHandle.evaluate((element: HTMLScriptElement) => {
-                    element.id = 'visual-test-script';
-                });
-            }
-
             await page.evaluate(() => {
                 if (window.Highcharts) {
                     const chart = Highcharts.charts[
@@ -266,7 +258,24 @@ test.describe('Visual tests', () => {
             });
 
 
-            await expect(page).toHaveScreenshot();
+            let screenshotError: unknown;
+            try {
+                await expect(page).toHaveScreenshot();
+            } catch (err) {
+                screenshotError = err;
+            } finally {
+                if (scriptHandle) {
+                    await scriptHandle.evaluate(
+                        (element: HTMLScriptElement) => {
+                            element.id = 'visual-test-script';
+                        }
+                    );
+                }
+            }
+
+            if (screenshotError) {
+                throw screenshotError;
+            }
         });
     }
 });
