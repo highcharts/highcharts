@@ -25,7 +25,8 @@ import type SVGAttributes from './Renderer/SVG/SVGAttributes';
  * */
 
 /**
- * Extended DOM event for pointer interaction.
+ * A native browser mouse or touch event, extended with position information
+ * relative to the `Highcharts.Chart.container`.
  */
 export interface PointerEvent extends globalThis.PointerEvent {
     accumulate?: boolean;
@@ -39,6 +40,7 @@ export interface PointerEvent extends globalThis.PointerEvent {
     yAxis?: Array<Pointer.AxisCoordinateObject>;
 }
 
+/** @internal */
 export interface GetSelectionMarkerAttrsEvent {
     args: Record<string, number>;
     attrs: SVGAttributes;
