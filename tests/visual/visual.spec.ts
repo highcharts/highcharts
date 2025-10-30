@@ -40,8 +40,8 @@ test.describe('Visual tests', () => {
         timeout: 5_000,
     });
 
-    let page: Page;
-    let context: BrowserContext;
+    let page: Page | undefined;
+    let context: BrowserContext | undefined;
 
     test.beforeAll(async ({ browser }) => {
         context ??= await browser.newContext({
@@ -73,12 +73,10 @@ test.describe('Visual tests', () => {
         await page.waitForFunction(
             () => window.HCVisualSetup?.initialized === true
         );
-        await page.evaluate((mode) => window.HCVisualSetup?.configure({ mode }), 'fast');
-
-
-        await setTestingOptions(page);
-        await page.evaluate(() => window.HCVisualSetup?.markOptionsClean());
-
+        await page.evaluate(() => {
+            window.HCVisualSetup?.configure({ mode: 'fast' });
+            window.HCVisualSetup?.markOptionsClean();
+        });
     });
 
     test.afterEach(async () => {
@@ -96,8 +94,13 @@ test.describe('Visual tests', () => {
     });
 
     test.afterAll(async () => {
+        if (page) {
+            await page.close();
+            page = undefined;
+        }
         if (context) {
             await context.close();
+            context = undefined;
         }
     });
 
@@ -200,9 +203,13 @@ test.describe('Visual tests', () => {
                 test.skip();
             }
 
-            await page.evaluate(() => window.HCVisualSetup?.beforeSample());
+            if (!page) {
+                throw new Error('Page not initialized');
+            }
 
             await page.evaluate(body => {
+                window.HCVisualSetup?.beforeSample();
+
                 const testContainer = document.querySelector('div[data-test-container]');
                 testContainer.innerHTML = body;
             }, sample.html ?? defaultPageContent);
@@ -219,9 +226,9 @@ test.describe('Visual tests', () => {
 
             await setTestingOptions(page);
 
-            await page.evaluate(() => window.HCVisualSetup?.markOptionsClean());
-
             await page.evaluate(() => {
+                window.HCVisualSetup?.markOptionsClean();
+
                 if (window.Highcharts) {
                     window.Highcharts.setOptions({
                         chart: {
@@ -240,12 +247,6 @@ test.describe('Visual tests', () => {
                 content: transformVisualSampleScript(sample.script)
             });
 
-            if (scriptHandle) {
-                await scriptHandle.evaluate((element: HTMLScriptElement) => {
-                    element.id = 'visual-test-script';
-                });
-            }
-
             await page.evaluate(() => {
                 if (window.Highcharts) {
                     const chart = Highcharts.charts[
@@ -257,7 +258,24 @@ test.describe('Visual tests', () => {
             });
 
 
-            await expect(page).toHaveScreenshot();
+            let screenshotError: unknown;
+            try {
+                await expect(page).toHaveScreenshot();
+            } catch (err) {
+                screenshotError = err;
+            } finally {
+                if (scriptHandle) {
+                    await scriptHandle.evaluate(
+                        (element: HTMLScriptElement) => {
+                            element.id = 'visual-test-script';
+                        }
+                    );
+                }
+            }
+
+            if (screenshotError) {
+                throw screenshotError;
+            }
         });
     }
 });

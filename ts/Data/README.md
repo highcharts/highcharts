@@ -13,7 +13,7 @@ Sub-folders:
   table
 
 * Modifiers - modify table data into a second table, accessible via the
-  `DataTable.modified` property.
+  `DataTable.getModified()` method.
 
 
 
@@ -83,28 +83,34 @@ help of modifiers. Each table can have only one modifier, but this modifier
 might call additional modifiers.
 
 Modifications usually do not change the table. Instead modifiers produce a
-second table, accessible under `DataTable.modified`. Changes in the original
-table will also result in changes in the second table, unless the modifier
-explicitly dismisses incoming changes.
+second table, accessible under `DataTable.getModified()` method. Changes in the
+original table will also result in changes in the second table, unless the 
+modifier explicitly dismisses incoming changes.
 
 ```TypeScript
-table.setModifier(new RangeModifier({
-    ranges: [{
-        column: 'year',
-        minValue: 1980,
-        maxValue: 1989,
-    }],
-    strict: true
+table.setModifier(new FilterModifier({
+    condition: {
+        operator: 'and',
+        conditions: [{
+            operator: '>=',
+            columnId: 'year',
+            value: 1980
+        }, {
+            operator: '<=',
+            columnId: 'year',
+            value: 1989
+        }]
+    }
 });
 table.getRowCount() === 2;
-table.modified.getRowCount() === 1;
+table.getModified().getRowCount() === 1;
 
 table.setRows([
     [1983, 'Gremlins Teaser'],
     [2023, 'Gremlins 3']
 ]);
 table.getRowCount() === 4;
-table.modified.getRowCount() === 2;
+table.getModified().getRowCount() === 2;
 ```
 
 
@@ -126,15 +132,15 @@ const chart = new Highcharts.chart('container', {
 ```
 
 
-### DataTable in DataGrid
+### DataTable in Grid
 
-DataGrid shows and optionally modifies cell content in a table. DataGrid can
+Grid shows and optionally modifies cell content in a table. Grid can
 also change the order of cells, but DataTable provides only limited information
 about the original order of a source. Therefore, a DataConnector might be needed
 to retrieve the original order.
 
 ```TypeScript
-const dataGrid = DataGrid.dataGrid('container', {
+const grid = Grid.grid('container', {
     dataTable: new DataTable({
         columns: {
             Value: [ 12.34, 45.67, 78.90 ],
@@ -147,7 +153,7 @@ const dataGrid = DataGrid.dataGrid('container', {
 If a row reference is needed, an index column has to be part of the dataTable:
 
 ```TypeScript
-const dataGrid = new DataGrid('container', {
+const grid = new Grid('container', {
     dataTable: new DataTable({
         columns: {
             '': [1, 2, 3],
@@ -156,7 +162,7 @@ const dataGrid = new DataGrid('container', {
         }
     }
 });
-dataGrid.dataTable.getRow(dataGrid.table.getRowIndexBy('', 2));
+grid.dataTable.getRow(grid.getTable().getRowIndexBy('', 2));
 ```
 
 
@@ -207,7 +213,7 @@ const connector = new CSVConnector({
     csv: 'a;b\n1,2;3,4\n5,6;7,8'
 });
 await connector.load();
-connector.table.getRowCount() === 2;
+connector.getTable().getRowCount() === 2;
 ```
 
 
@@ -220,10 +226,10 @@ provide a table with existing data.
 
 ```TypeScript
 const connector = new CSVConnector();
-connector.table.getRowCount() === 0;
+connector.getTable().getRowCount() === 0;
 const table = new DataTable({ columns: { column: [1, 2, 3] } });
 const connector2 = new CSVConnector(table);
-connector.table.getRowCount() === 3;
+connector.getTable().getRowCount() === 3;
 ```
 
 Depending on the connector type you have to provide different mandatory options
@@ -240,42 +246,8 @@ try {
 catch (error) {
     console.error(error);
 }
-connector.table.getRowCount() > 0;
+connector.getTable().getRowCount() > 0;
 ```
-
-
-
-### Saving Data
-
-How to save a table depends on the connector type and use case. In a strict
-server-less situation, instead of the save function you usually use the
-related converter.
-
-```TypeScript
-const connector = new CSVConnector({
-    csv: 'column\n1\n2\n3\n'
-});
-connector.converter.export(connector) === 'column\n1\n2\n3\n';
-```
-
-If your connector is based on an external source on the internet or in the HTML
-DOM, the save function can write data back. Please note that an error will be
-thrown if this is not supported by the connector type, or if permissions do now
-allow this.
-
-```TypeScript
-const connector = new HTMLTableConnector({
-    tableElement: document.getElementById('the_table')
-});
-try {
-    await connector.save();
-}
-catch (error) {
-    console.error(error);
-}
-```
-
-
 
 DataPool
 --------
@@ -291,21 +263,20 @@ const dataPool = new DataPool({
     connectors: [{
         id: 'my-google-spreadsheet',
         type: 'GoogleSheets',
-        options: {
-            googleAPIKey: 'XXXXX',
-            googleSpreadsheetKey: 'XXXXX',
-        }
+        googleAPIKey: 'XXXXX',
+        googleSpreadsheetKey: 'XXXXX',
     }]
 });
 dataPool.setConnectorOptions({
     name: 'my-csv',
     type: 'CSV',
-    options: {
-        csvURL: 'https://domain.example/data.csv'
-    }
+    csvURL: 'https://domain.example/data.csv'
 });
 const googleConnector = await dataPool.getConnector('my-google-spreadsheet');
-const csvTable = await dataPool.getConnectorTable('my-csv');
+const csvTable =
+    await dataPool
+        .getConnector('my-csv')
+        .then(connector => connector.getTable());
 ```
 
 DataPool can be used to coordinate and share connectors and their

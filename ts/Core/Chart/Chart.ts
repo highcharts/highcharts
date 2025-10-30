@@ -3761,7 +3761,8 @@ class Chart {
                 reset,
                 selection,
                 to = {},
-                trigger
+                trigger,
+                allowResetButton = true
             } = params,
             { inverted, time } = this;
 
@@ -3955,7 +3956,7 @@ class Chart {
                         // operation has finished.
                         axis.isPanning = trigger !== 'zoom';
 
-                        if (axis.isPanning) {
+                        if (axis.isPanning && trigger !== 'mousewheel') {
                             isAnyAxisPanning = true; // #21319
                         }
 
@@ -3969,24 +3970,21 @@ class Chart {
 
                         if (
                             !reset &&
-                            (newMin > floor || newMax < ceiling) &&
-                            trigger !== 'mousewheel'
+                            (newMin > floor || newMax < ceiling)
                         ) {
-                            displayButton = true;
+                            displayButton = allowResetButton;
                         }
                     }
 
                     hasZoomed = true;
                 }
 
-                // Show the resetZoom button for non-cartesian series,
-                // except when triggered by mouse wheel zoom
+                // Show the resetZoom button for non-cartesian series.
                 if (
                     !this.hasCartesianSeries &&
-                    !reset &&
-                    trigger !== 'mousewheel'
+                    !reset
                 ) {
-                    displayButton = true;
+                    displayButton = allowResetButton;
                 }
 
                 if (event) {
@@ -4173,6 +4171,7 @@ namespace Chart {
         selection?: Pointer.SelectEventObject;
         from?: Partial<BBoxObject>;
         trigger?: string;
+        allowResetButton?: boolean;
         hasZoomed?: boolean;
     }
 

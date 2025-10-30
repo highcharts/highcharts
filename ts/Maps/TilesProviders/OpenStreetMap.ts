@@ -21,6 +21,7 @@ import type {
  *
  * */
 
+/** @internal */
 class OpenStreetMap implements ProviderDefinition {
 
     /* *
@@ -70,4 +71,5 @@ class OpenStreetMap implements ProviderDefinition {
  *
  * */
 
+/** @internal */
 export default OpenStreetMap;

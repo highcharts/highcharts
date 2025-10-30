@@ -132,7 +132,6 @@ namespace Globals {
         return supportsPassive;
     }());
 
-
 }
 
 /* *

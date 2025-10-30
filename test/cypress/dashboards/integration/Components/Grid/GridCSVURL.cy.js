@@ -23,7 +23,7 @@ describe('Grid Component and data csvURL.', () => {
 
     it('Should render the Grid when data provided through csvURL.', () => {
         cy.wait('@request');
-        cy.get('.highcharts-datagrid-table').should('exist');
+        cy.get('.hcg-table').should('exist');
     });
 
     it('Cells should display a loading indicator when loading connectors.', () => {

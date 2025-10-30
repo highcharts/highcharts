@@ -180,6 +180,16 @@ const VariablePieSeriesDefaults: VariablePieSeriesOptions = {
  * @apioption series.variablepie.data
  */
 
+/**
+* The z value of the point.
+*
+* @type {(number| null)}
+*
+* @product highcharts
+*
+* @apioption series.variablepie.data.z
+*/
+
 ''; // Keeps doclets above separate
 
 /* *

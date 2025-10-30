@@ -1,4 +1,4 @@
-@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid.css");
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid-lite.css");
 
 .content {
     background-color: var(--hcg-background);
@@ -10,12 +10,8 @@
     padding: 8px;
 }
 
-.highcharts-datagrid-table thead th .highcharts-datagrid-header-cell-content {
+.highcharts-grid-table thead th .highcharts-grid-header-cell-content {
     padding: 0;
     width: 100%;
     font-size: 0.8em;
-}
-
-.highcharts-datagrid-column:not([data-column-id="employee"]) {
-    width: 40px;
 }

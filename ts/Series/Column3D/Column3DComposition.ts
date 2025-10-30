@@ -361,7 +361,9 @@ function onColumnSeriesAfterInit(
 
         // @todo grouping === true ?
         if (!(typeof grouping !== 'undefined' && !grouping)) {
-            const stacks = retrieveStacks(this.chart, stacking) as AnyRecord,
+            const stacks = retrieveStacks(
+                    this.chart, stacking || void 0
+                ) as AnyRecord,
                 stack: (string|number) = seriesOptions.stack || 0;
 
             let i; // Position within the stack

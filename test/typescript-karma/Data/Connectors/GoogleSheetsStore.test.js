@@ -1,8 +1,7 @@
 
 import GoogleSheetsConnector from '/base/code/es-modules/Data/Connectors/GoogleSheetsConnector.js'
 import { registerConnectorEvents } from './utils.js'
-import GoogleSheetsConverter from '/base/code/es-modules/Data/Converters/GoogleSheetsConverter.js';
-const { test, only } = QUnit;
+const { test } = QUnit;
 
 test('GoogleDataConnector', (assert) => {
     const registeredEvents = [];
@@ -16,8 +15,8 @@ test('GoogleDataConnector', (assert) => {
 
     registerConnectorEvents(connector, registeredEvents, assert);
 
-    connector.on('afterLoad', (e) => {
-        const eventTable = Object.values(e.tables)[0];
+    connector.on('afterLoad', () => {
+        const table = connector.getTable();
         assert.deepEqual(
             registeredEvents,
             ['load', 'afterLoad'],
@@ -25,23 +24,23 @@ test('GoogleDataConnector', (assert) => {
         );
 
         assert.deepEqual(
-            eventTable.getRow(1).map(cellValue => typeof cellValue),
+            table.getRow(1).map(cellValue => typeof cellValue),
             ['string', 'number', 'number', 'number'],
             'The connector table has the correct data types'
         );
 
-        const columnNames = eventTable.getColumnNames();
+        const columnIds = table.getColumnIds();
 
         assert.notOk(
-            columnNames.includes('null'),
+            columnIds.includes('null'),
             'Columns where the first value is of type `null`, ' +
             'should be assigned an unique name'
         );
 
-        eventTable.renameColumn(columnNames[0], 'null');
+        table.changeColumnId(columnIds[0], 'null');
 
         assert.ok(
-            eventTable.getColumnNames().includes('null'),
+            table.getColumnIds().includes('null'),
             'A string value of `null` is ok'
         );
 
@@ -70,7 +69,7 @@ test('GoogleDataConnector, bad spreadsheetkey', function (assert) {
 
     registerConnectorEvents(connector, registeredEvents, assert);
 
-    connector.on('loadError', (error) => {
+    connector.on('loadError', () => {
         assert.deepEqual(
             registeredEvents,
             ['load', 'loadError'],
@@ -113,7 +112,7 @@ test('GoogleDataConnector with beforeParse', async (assert) => {
     // Test after load event
     registerConnectorEvents(connector, registeredEvents, assert);
 
-    connector.on('afterLoad', (e) => {
+    connector.on('afterLoad', () => {
         assert.deepEqual(
             registeredEvents,
             ['load', 'afterLoad'],
@@ -126,9 +125,9 @@ test('GoogleDataConnector with beforeParse', async (assert) => {
             'beforeParse was fired'
         );
 
-        const columnNames = Object.values(e.tables)[0].getColumnNames();
+        const columnIds = connector.getTable().getColumnIds();
         assert.deepEqual(
-            columnNames,
+            columnIds,
             ['Test0', 'Test1', 'Test2', 'Test3'],
             'The column names have been changed by the beforeParse function'
         );
@@ -146,8 +145,7 @@ test('GoogleDataConnector with beforeParse', async (assert) => {
         .then(() => done())
 
     // Test data converter event
-    const converter = connector.converter;
-    converter.on('afterParse', (e) => {
+    connector.converter.on('afterParse', () => {
         assert.equal(
             beforeParseFired,
             true,
@@ -172,22 +170,22 @@ test('GoogleDataConnector, worksheet 1', async (assert) => {
     // Test after load event
     registerConnectorEvents(connector, registeredEvents, assert);
 
-    connector.on('afterLoad', (e) => {
-        const eventTable = Object.values(e.tables)[0];
+    connector.on('afterLoad', () => {
+        const table = connector.getTable();
         assert.deepEqual(
             registeredEvents,
             ['load', 'afterLoad'],
             'Events are fired in the correct order'
         );
 
-        const columnNames = eventTable.getColumnNames();
+        const columnIds = table.getColumnIds();
         assert.deepEqual(
-            columnNames,
+            columnIds,
             ['0', 'John', 'Jane', 'Joe'],
             'Column names are correct'
         );
 
-        const firstColumn = eventTable.getColumn('0');
+        const firstColumn = table.getColumn('0');
         assert.deepEqual(
             firstColumn,
             ['Apples', 'Oranges', 'Pears', 'Bananas'],
@@ -223,22 +221,22 @@ test('GoogleDataConnector, worksheet 2', async (assert) => {
     // Test after load event
     registerConnectorEvents(connector, registeredEvents, assert);
 
-    connector.on('afterLoad', (e) => {
-        const eventTable = Object.values(e.tables)[0];
+    connector.on('afterLoad', () => {
+        const table = connector.getTable();
         assert.deepEqual(
             registeredEvents,
             ['load', 'afterLoad'],
             'Events are fired in the correct order'
         );
 
-        const columnNames = eventTable.getColumnNames();
+        const columnIds = table.getColumnIds();
         assert.deepEqual(
-            columnNames,
+            columnIds,
             ['0', 'John', 'Jane', 'Joe'],
             'Column names are correct'
         );
 
-        const firstColumn = eventTable.getColumn('0');
+        const firstColumn = table.getColumn('0');
         assert.deepEqual(
             firstColumn,
             ['Apricots', 'Melons', 'Papayas', 'Kiwis'],
