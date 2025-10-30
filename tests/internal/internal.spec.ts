@@ -62,12 +62,12 @@ test('Redirects are applied for code', async ({ page }) => {
 
     await expect.poll(()=> test.info().annotations).toContainEqual({
         type: 'redirect',
-        description: 'https://code.highcharts.com/dashboards/datagrid.src.js --> code/dashboards/datagrid.src.js'
+        description: 'https://code.highcharts.com/dashboards/datagrid.src.js --> code/grid/grid-pro.src.js'
     });
 
     await expect.poll(()=> test.info().annotations).toContainEqual({
         type: 'redirect',
-        description: 'https://code.highcharts.com/dashboards/css/datagrid.css --> code/dashboards/css/datagrid.css'
+        description: 'https://code.highcharts.com/dashboards/css/datagrid.css --> code/grid/css/grid-pro.css'
     });
 });
 
