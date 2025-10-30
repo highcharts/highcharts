@@ -55,11 +55,11 @@ if (defaultOptions.annotations) {
                 line: {
                     strokeWidth: 1
                 },
+
                 /**
                  * The height of the annotation in terms of yAxis.
                  */
                 height: -2,
-
 
                 /**
                  * Options for the control point which controls
@@ -169,6 +169,7 @@ function getSecondCoordinate(
  *
  * */
 
+/** @internal */
 class Tunnel extends CrookedLine {
 
     /* *
@@ -288,7 +289,6 @@ class Tunnel extends CrookedLine {
     /**
      * Translate start or end ("left" or "right") side of the tunnel.
      *
-     * @internal
      * @param {number} dx
      * the amount of x translation
      * @param {number} dy
@@ -307,7 +307,6 @@ class Tunnel extends CrookedLine {
     /**
      * Translate height of the tunnel.
      *
-     * @internal
      * @param {number} dh
      * the amount of height translation
      */
@@ -319,7 +318,6 @@ class Tunnel extends CrookedLine {
             (this.points[0].y as any);
         this.userOptions.typeOptions.height = this.options.typeOptions.height;
     }
-
 }
 
 /* *
@@ -328,6 +326,7 @@ class Tunnel extends CrookedLine {
  *
  * */
 
+/** @internal */
 interface Tunnel {
     defaultOptions: CrookedLine['defaultOptions'];
 }
@@ -339,11 +338,31 @@ interface Tunnel {
  * */
 
 namespace Tunnel {
+    /**
+     * Options for the tunnel annotation type.
+     *
+     * @extends annotations.types.crookedLine
+     * @sample highcharts/annotations-advanced/tunnel/
+     *         Tunnel
+     * @product highstock
+     * @optionparent annotations.types.tunnel
+     */
     export interface Options extends CrookedLine.Options {
         typeOptions: TypeOptions;
     }
     export interface TypeOptions extends CrookedLine.TypeOptions {
+        /**
+         * The height of the annotation in terms of yAxis.
+         */
         height: number;
+
+        /**
+         * Options for the control point which controls
+         * the annotation's height.
+         *
+         * @extends annotations.types.crookedLine.controlPointOptions
+         * @excluding positioner, events
+         */
         heightControlPoint: ControlPointOptionsObject;
     }
 }
@@ -354,6 +373,7 @@ namespace Tunnel {
  *
  * */
 
+/** @internal */
 declare module './AnnotationType'{
     interface AnnotationTypeRegistry {
         tunnel: typeof Tunnel;

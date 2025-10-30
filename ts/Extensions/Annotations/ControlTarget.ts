@@ -47,10 +47,7 @@ interface ControlTarget {
     /** @internal */
     options: ControlTargetOptions;
 
-    /**
-     * @name Highcharts.AnnotationControllable#points
-     * @type {Array<Highcharts.Point>}
-     */
+    /** @internal */
     points: Array<AnnotationPointType>;
 
     /** @internal */

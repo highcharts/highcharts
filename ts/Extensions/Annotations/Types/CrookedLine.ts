@@ -162,6 +162,7 @@ if (defaultOptions.annotations) {
  *
  * */
 
+/** @internal */
 class CrookedLine extends Annotation {
 
     /* *
@@ -172,7 +173,6 @@ class CrookedLine extends Annotation {
 
     /**
      * Overrides default setter to get axes from typeOptions.
-     * @internal
      */
     public setClipAxes(): void {
         this.clipXAxis = this.chart.xAxis[
@@ -253,8 +253,20 @@ class CrookedLine extends Annotation {
  * */
 
 namespace CrookedLine {
+    /**
+     * Options for the crooked line annotation type.
+     *
+     * @sample highcharts/annotations-advanced/crooked-line/
+     *         Crooked line
+     *
+     * @product      highstock
+     * @optionparent annotations.types.crookedLine
+     */
     export interface Options extends AnnotationOptions {
-        typeOptions: TypeOptions;
+        /**
+         * Additional options for an annotation with the type.
+         */
+        typeOptions: AnnotationTypeOptions;
     }
     export interface TypeOptions extends AnnotationTypeOptions {
         points?: Array<AnnotationTypePointsOptions>;
@@ -267,6 +279,7 @@ namespace CrookedLine {
  *
  * */
 
+/** @internal */
 declare module './AnnotationType' {
     interface AnnotationTypeRegistry {
         crookedLine: typeof CrookedLine;

@@ -38,6 +38,7 @@ const {
  *
  * */
 
+/** @internal */
 interface TimeCyclesOptions extends CrookedLine.Options {
     xAxis: number;
     yAxis: number;
@@ -131,6 +132,8 @@ if (defaultOptions.annotations) {
 
 /**
  * Function to create start of the path.
+ *
+ * @internal
  * @param {number} x x position of the TimeCycles
  * @param {number} y y position of the TimeCycles
  * @return {string} path
@@ -140,14 +143,14 @@ function getStartingPath(x: number, y: number): SVGPath.MoveTo {
 }
 
 /**
- * Function which generates the path of the halfcircle.
+ * Function which generates the path of the semicircle.
  *
+ * @internal
  * @param {number} pixelInterval diameter of the circle in pixels
- * @param {number} numberOfCircles number of cricles
+ * @param {number} numberOfCircles number of circles
  * @param {number} startX x position of the first circle
  * @param {number} y y position of the bottom of the timeCycles
  * @return {string} path
- *
  */
 function getCirclePath(
     pixelInterval: number,
@@ -179,6 +182,7 @@ function getCirclePath(
  *
  * */
 
+/** @internal */
 class TimeCycles extends CrookedLine {
 
     /* *
@@ -322,6 +326,7 @@ class TimeCycles extends CrookedLine {
  *
  * */
 
+/** @internal */
 interface TimeCycles {
     defaultOptions: CrookedLine['defaultOptions'];
     startX: number;
@@ -337,6 +342,17 @@ interface TimeCycles {
  * */
 
 namespace TimeCycles {
+    /**
+     * Options for the  time cycles annotation type.
+     *
+     * @sample highcharts/annotations-advanced/time-cycles/
+     *         Time Cycles annotation
+     *
+     * @extends      annotations.types.crookedLine
+     * @product      highstock
+     * @exclude      labelOptions
+     * @optionparent annotations.types.timeCycles
+     */
     export interface Options extends CrookedLine.Options {
         typeOptions: TypeOptions;
     }
@@ -352,6 +368,7 @@ namespace TimeCycles {
  *
  * */
 
+/** @internal */
 declare module './AnnotationType' {
     interface AnnotationTypeRegistry {
         timeCycles: typeof TimeCycles;

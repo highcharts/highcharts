@@ -52,6 +52,7 @@ const {
  *
  * */
 
+/** @internal */
 export interface AnnotationEventObject extends PointerEvent {
     prevChartX: number;
     prevChartY: number;
@@ -63,7 +64,9 @@ export interface AnnotationEventObject extends PointerEvent {
  *
  * */
 
-/** @internal */
+/**
+ * Internal class, but made public because Annotation extends it.
+ */
 abstract class EventEmitter {
 
     /* *
@@ -173,6 +176,7 @@ abstract class EventEmitter {
 
     /**
      * Destroy the event emitter.
+     * @internal
      */
     public destroy(): void {
         this.removeDocEvents();
@@ -388,11 +392,13 @@ abstract class EventEmitter {
 
     /**
      * Mouse up handler.
+     * @internal
      */
     public onMouseUp(): void {
         this.removeDocEvents();
     }
 
+    /** @internal */
     abstract redraw(animation?: boolean): void;
 
     /**
@@ -417,19 +423,45 @@ abstract class EventEmitter {
  *
  * */
 
+/** @internal */
 interface EventEmitter {
+    /** @internal */
     cancelClick?: boolean;
+
+    /** @internal */
     chart: AnnotationChart;
+
+    /** @internal */
     graphic: SVGElement;
+
+    /** @internal */
     hasDragged?: boolean;
+
+    /** @internal */
     hcEvents?: unknown;
+
+    /** @internal */
     isUpdating?: boolean;
+
+    /** @internal */
     labels?: Array<ControllableLabelType>;
+
+    /** @internal */
     nonDOMEvents?: Array<string>;
+
+    /** @internal */
     options: Partial<(ControlPointOptionsObject|AnnotationOptions)>;
+
+    /** @internal */
     removeDrag?: Function;
+
+    /** @internal */
     removeMouseUp?: Function;
+
+    /** @internal */
     shapes?: Array<ControllableShapeType>;
+
+    /** @internal */
     target?: ControlTarget;
 }
 

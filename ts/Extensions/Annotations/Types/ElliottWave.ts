@@ -59,7 +59,7 @@ if (defaultOptions.annotations) {
                 align: 'center',
                 allowOverlap: true,
                 crop: true,
-                overflow: 'none' as any,
+                overflow: 'none',
                 type: 'rect',
                 backgroundColor: 'none',
                 borderWidth: 0,
@@ -67,7 +67,7 @@ if (defaultOptions.annotations) {
                 style: {
                     color: Palette.neutralColor80
                 }
-            } as any
+            }
         }
     );
 }
@@ -78,6 +78,7 @@ if (defaultOptions.annotations) {
  *
  * */
 
+/** @internal */
 class ElliottWave extends CrookedLine {
 
     /* *
@@ -111,6 +112,7 @@ class ElliottWave extends CrookedLine {
  *
  * */
 
+/** @internal */
 interface ElliottWave {
 
 }
@@ -127,11 +129,23 @@ namespace ElliottWave {
         borderWidth: number;
         y: number;
     }
+
+    /**
+     * Options for the elliott wave annotation type.
+     *
+     * @sample highcharts/annotations-advanced/elliott-wave/
+     *         Elliott wave
+     *
+     * @extends      annotations.types.crookedLine
+     * @product      highstock
+     * @optionparent annotations.types.elliottWave
+     */
     export interface Options extends CrookedLine.Options {
         labelOptions: LabelOptions;
         typeOptions: TypeOptions;
     }
     export interface TypeOptions extends CrookedLine.TypeOptions {
+        /** @internal */
         labels: Array<string>;
     }
 }
@@ -142,6 +156,7 @@ namespace ElliottWave {
  *
  * */
 
+/** @internal */
 declare module './AnnotationType' {
     interface AnnotationTypeRegistry {
         elliottWave: typeof ElliottWave;

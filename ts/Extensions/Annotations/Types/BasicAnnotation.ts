@@ -37,6 +37,7 @@ import MockPoint from '../MockPoint.js';
  *
  * */
 
+/** @internal */
 class BasicAnnotation extends Annotation {
 
     /* *
@@ -372,6 +373,7 @@ class BasicAnnotation extends Annotation {
  *
  * */
 
+/** @internal */
 interface BasicAnnotation {
     basicType: string;
     defaultOptions: Annotation['defaultOptions'];
@@ -383,6 +385,7 @@ interface BasicAnnotation {
  *
  * */
 
+/** @internal */
 namespace BasicAnnotation {
     export interface ControlPoints {
         label: DeepPartial<ControlPointOptions>[];
@@ -398,6 +401,7 @@ namespace BasicAnnotation {
  *
  * */
 
+/** @internal */
 declare module './AnnotationType' {
     interface AnnotationTypeRegistry {
         basicAnnotation: typeof BasicAnnotation;
@@ -412,4 +416,5 @@ Annotation.types.basicAnnotation = BasicAnnotation;
  *
  * */
 
+/** @internal */
 export default BasicAnnotation;

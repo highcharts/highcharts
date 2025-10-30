@@ -359,7 +359,11 @@ abstract class Controllable implements ControlTarget {
  * @interface Highcharts.AnnotationControllable
  */
 interface Controllable extends ControllableBase, ControlTarget {
-    // Placeholder for additional class members
+    /**
+     * @name Highcharts.AnnotationControllable#points
+     * @type {Array<Highcharts.Point>}
+     */
+    points: ControlTarget['points'];
 }
 
 ControlTarget.compose(Controllable);

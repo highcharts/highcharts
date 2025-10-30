@@ -68,7 +68,6 @@ export interface ControllableLabelOptions extends ControllableOptions {
     yAxis?: number|string;
 }
 
-/** @internal */
 export interface ControllableOptions extends ControlTargetOptions {
     className?: string;
     id?: (number|string);
@@ -80,7 +79,6 @@ export interface ControllableOptions extends ControlTargetOptions {
     type?: string;
 }
 
-/** @internal */
 export interface ControllableShapeOptions extends ControllableOptions {
     d?: (string|Function|SVGPath);
     fill?: ColorType;

@@ -223,6 +223,7 @@ function edgePoint(
  *
  * */
 
+/** @internal */
 class FibonacciTimeZones extends CrookedLine {
 
     /* *
@@ -293,6 +294,7 @@ class FibonacciTimeZones extends CrookedLine {
  *
  * */
 
+/** @internal */
 interface FibonacciTimeZones {
     defaultOptions: CrookedLine['defaultOptions'];
     secondLineEdgePoints: [Function, Function];
@@ -305,6 +307,17 @@ interface FibonacciTimeZones {
  * */
 
 namespace FibonacciTimeZones {
+    /**
+     * Options for the fibonacci time zones annotation type.
+     *
+     * @sample highcharts/annotations-advanced/fibonacci-time-zones/
+     *         Fibonacci Time Zones
+     *
+     * @extends      annotations.types.crookedLine
+     * @since        9.3.0
+     * @product      highstock
+     * @optionparent annotations.types.fibonacciTimeZones
+     */
     export interface Options extends CrookedLine.Options{
         typeOptions: TypeOptions;
     }
@@ -320,6 +333,7 @@ namespace FibonacciTimeZones {
  *
  * */
 
+/** @internal */
 declare module './AnnotationType'{
     interface AnnotationTypeRegistry {
         fibonacciTimeZones: typeof FibonacciTimeZones;

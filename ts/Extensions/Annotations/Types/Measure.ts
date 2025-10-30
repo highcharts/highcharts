@@ -709,6 +709,7 @@ function updateStartPoints(
  *
  * */
 
+/** @internal */
 class Measure extends Annotation {
 
     /* *
@@ -719,7 +720,6 @@ class Measure extends Annotation {
 
     /**
      * Init annotation object.
-     * @internal
      */
     public init(
         annotationOrChart: (Annotation|AnnotationChart),
@@ -740,7 +740,6 @@ class Measure extends Annotation {
 
     /**
      * Overrides default setter to get axes from typeOptions.
-     * @internal
      */
     public setClipAxes(): void {
         this.clipXAxis = this.chart.xAxis[this.options.typeOptions.xAxis];
@@ -749,7 +748,6 @@ class Measure extends Annotation {
 
     /**
      * Get points configuration objects for shapes.
-     * @internal
      */
     public shapePointsOptions(): Array<MockPointOptions> {
 
@@ -826,7 +824,6 @@ class Measure extends Annotation {
     /**
      * Add label with calculated values (min, max, average, bins).
      *
-     * @internal
      * @param {boolean} [resize]
      * The flag for resize shape
      */
@@ -883,7 +880,6 @@ class Measure extends Annotation {
 
     /**
      * Crosshair, background (rect).
-     * @internal
      */
     public addShapes(): void {
         this.addCrosshairs();
@@ -892,7 +888,6 @@ class Measure extends Annotation {
 
     /**
      * Add background shape.
-     * @internal
      */
     public addBackground(): void {
         const shapePoints = this.shapePointsOptions();
@@ -916,7 +911,6 @@ class Measure extends Annotation {
 
     /**
      * Add internal crosshair shapes (on top and bottom).
-     * @internal
      */
     public addCrosshairs(): void {
         const chart = this.chart,
@@ -1033,7 +1027,6 @@ class Measure extends Annotation {
      * Translate start or end ("left" or "right") side of the measure.
      * Update start points (startXMin, startXMax, startYMin, startYMax).
      *
-     * @internal
      * @param {number} dx
      * the amount of x translation
      * @param {number} dy
@@ -1089,7 +1082,6 @@ class Measure extends Annotation {
     /**
      * Redraw event which render elements and update start points if needed.
      *
-     * @internal
      * @param {boolean} animation
      * @param {boolean} [resize]
      * flag if resized
@@ -1178,21 +1170,49 @@ class Measure extends Annotation {
 interface Measure {
     average: number;
     bins: number;
+
+    /** @internal */
     defaultOptions: Annotation['defaultOptions'];
     min: number;
     max: number;
+
+    /** @internal */
     offsetX: number;
+
+    /** @internal */
     offsetY: number;
+
+    /** @internal */
     options: Measure.MeasureOptions;
+
+    /** @internal */
     resizeX: number;
+
+    /** @internal */
     resizeY: number;
+
+    /** @internal */
     startXMax: number;
+
+    /** @internal */
     startXMin: number;
+
+    /** @internal */
     startYMax: number;
+
+    /** @internal */
     startYMin: number;
+
+    /** @internal */
     xAxisMin: number;
+
+    /** @internal */
     xAxisMax: number;
+
+    /** @internal */
     yAxisMin: number;
+
+    /** @internal */
     yAxisMax: number;
 }
 
@@ -1203,27 +1223,153 @@ interface Measure {
  * */
 
 namespace Measure {
+    /**
+     * Options for the measure annotation type.
+     *
+     * @extends annotations.types.crookedLine
+     * @excluding labels, labelOptions, shapes, shapeOptions
+     * @sample highcharts/annotations-advanced/measure/
+     *         Measure
+     * @product highstock
+     * @optionparent annotations.types.measure
+     */
     export interface MeasureOptions extends AnnotationOptions {
         typeOptions: MeasureTypeOptions;
     }
     export interface MeasureTypeCrosshairOptions {
+        /**
+         * The dash or dot style of the crosshair's line. For possible
+         * values, see
+         * [this demonstration](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-dashstyle-all/).
+         *
+         * @type    {Highcharts.DashStyleValue}
+         * @default Dash
+         */
         dashStyle: DashStyleValue;
+
+        /**
+         * Enable or disable the horizontal crosshair.
+         *
+         */
         enabled: boolean;
+
+        /**
+         * The marker-end defines the arrowhead that will be drawn
+         * at the final vertex of the given crosshair's path.
+         *
+         * @type       {string}
+         * @default    arrow
+         */
         markerEnd: string;
+
+        /**
+         * The Z index of the crosshair in annotation.
+         */
         zIndex: number;
     }
     export interface MeasureTypeLabelOptions {
+        /**
+         * Enable or disable the label text (min, max, average,
+         * bins values).
+         *
+         * Defaults to true.
+         */
         enabled: boolean;
+
+        /**
+         * Formatter function for the label text.
+         *
+         * Available data are:
+         *
+         * <table>
+         *
+         * <tbody>
+         *
+         * <tr>
+         *
+         * <td>`this.min`</td>
+         *
+         * <td>The minimum value of the points in the selected
+         * range.</td>
+         *
+         * </tr>
+         *
+         * <tr>
+         *
+         * <td>`this.max`</td>
+         *
+         * <td>The maximum value of the points in the selected
+         * range.</td>
+         *
+         * </tr>
+         *
+         * <tr>
+         *
+         * <td>`this.average`</td>
+         *
+         * <td>The average value of the points in the selected
+         * range.</td>
+         *
+         * </tr>
+         *
+         * <tr>
+         *
+         * <td>`this.bins`</td>
+         *
+         * <td>The amount of the points in the selected range.</td>
+         *
+         * </tr>
+         *
+         * </table>
+         *
+         * @type {Function}
+         *
+         */
         formatter?: Templating.FormatterCallback<Measure>;
+
+        /**
+         * CSS styles for the measure label.
+         *
+         * @type    {Highcharts.CSSObject}
+         * @default {"color": "#666666", "fontSize": "11px"}
+         */
         style: CSSObject;
     }
     export interface MeasureTypeOptions extends AnnotationTypeOptions {
         background: ControllableShapeOptions;
+
+        /**
+         * Configure a crosshair that is horizontally placed in middle of
+         * rectangle.
+         *
+         */
         crosshairX: MeasureTypeCrosshairOptions;
+
+        /**
+         * Configure a crosshair that is vertically placed in middle of
+         * rectangle.
+         */
         crosshairY: MeasureTypeCrosshairOptions;
         label: MeasureTypeLabelOptions;
+
+        /**
+         * Decides in what dimensions the user can resize by dragging the
+         * mouse. Can be one of x, y or xy.
+         */
         selectType: AnnotationDraggableValue;
+
+        /**
+         * This number defines which xAxis the point is connected to.
+         * It refers to either the axis id or the index of the axis
+         * in the xAxis array.
+         */
         xAxis: number;
+
+        /**
+         * This number defines which yAxis the point is connected to.
+         * It refers to either the axis id or the index of the axis
+         * in the yAxis array.
+         */
         yAxis: number;
     }
 
@@ -1235,6 +1381,7 @@ namespace Measure {
  *
  * */
 
+/** @internal */
 declare module './AnnotationType'{
     interface AnnotationTypeRegistry {
         measure: typeof Measure;
