@@ -3,6 +3,7 @@ import ContourPoint from './ContourPoint';
 import type ContourSeries from './ContourSeries';
 
 const ContourSeriesDefaults: PlotOptionsOf<ContourSeries> = {
+    colorKey: 'value',
     marker: {
         symbol: 'cross',
         states: {
