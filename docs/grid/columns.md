@@ -98,16 +98,15 @@ columns: [{
 
 ### Column resizing
 
-End users can resize columns by dragging the handle on the right edge of each header. There are two main [resizing modes](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.ResizingOptions#mode):
+End users can resize columns by dragging the handle on the right edge of each header. There are three main [resizing modes](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.ResizingOptions#mode):
 
-- **`mixed`**: Adjusts both the column being resized and its neighbor to maintain overall table width.
-- **`fixed`**: Only the dragged column changes width; columns to the right shift position accordingly.
-- ~~**`full`**~~ (deprecated): Behaves like `mixed` when no columns have explicit widths; slated for removal in the next major release.
-
-> **Note:** Resizing mode names will be updated to more descriptive terms in the forthcoming major version (breaking change incoming).
+- **`adjacent`**: Adjusts both the column being resized and its neighbor, so the columns to the right remain in their original positions.
+- **`independent`**: Only the column being resized changes its width; columns to the right are shifted and their widths become fixed in pixels.
+- **`distributed`**: Only the column being resized is directly affected. Other columns without a fixed width automatically adjust to fill the remaining space, so the overall table layout is preserved.
 
 To disable column resizing entirely, set [`resizing.enabled`](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.ResizingOptions#enabled) to `false`.
 
+Try out [this interactive sample](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-lite/basic/column-resizing/) to see how the different column resizing modes work in practice.
 
 ## Sorting
 ```js
@@ -136,6 +135,31 @@ When the `sortable` option is enabled, clicking the header will toggle the sorti
 The sorting options are available for individual columns, but the default value for `sortable` can also be set in `columnDefaults.sorting.sortable`.
 
 Alternatively, you can programmatically sort a column using the `column.sorting.setOrder` method, even if the sortable option is turned off.
+
+## Filtering
+Column filtering in Highcharts Grid allows users to filter data based on specific conditions and values for each column. This feature enhances data exploration and helps users focus on relevant information within large datasets.
+
+The main options include:
+* `enabled`: Set to `true` to activate filtering for the column.
+* `inline`: Set to `true` to render filter inputs directly in the header row, or `false` (default) to use a popup interface.
+* `condition`: The initial filtering condition (e.g., 'contains', 'equals', 'greaterThan').
+* `value`: The initial filter value to apply.
+
+```js
+columns: [{
+    id: "product",
+    filtering: {
+        enabled: true,
+        inline: true,
+        condition: "contains",
+        value: "Apple"
+    }
+}]
+```
+
+The `columns[].filtering` property can be used to enable/disable filtering, configure the filtering interface (inline or dropdown), and set initial filter conditions for individual columns. Use `columnDefaults.filtering` to set the default configuration for all columns.
+
+For more information on filtering options and events, see the [Column filtering article](https://www.highcharts.com/docs/grid/column-filtering) or the [API reference](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.ColumnFilteringOptions).
 
 ## Formatting
 
