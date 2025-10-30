@@ -10,6 +10,7 @@ import type {
 
 import type Highcharts from '../code/esm/highcharts.src';
 
+import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import { join, extname } from 'node:path/posix';
 
@@ -41,6 +42,59 @@ async function replaceHCCode(route: Route) {
             relativePath.match(/(?<preceding>^.+)\/gfx/).groups;
 
         relativePath = relativePath.replace(preceding, '');
+    }
+
+    if (rootPath === 'code') {
+        const datagridMatch = relativePath.match(
+            /^(?<prefix>dashboards|datagrid|grid)\/(?<tail>.*datagrid.*)$/u
+        );
+
+        if (datagridMatch?.groups) {
+            const { prefix: currentPrefix, tail } = datagridMatch.groups;
+            const tailCandidates = [tail];
+
+            if (tail.includes('datagrid')) {
+                for (const replacement of [
+                    tail.replace(/datagrid/gu, 'grid-pro'),
+                    tail.replace(/datagrid/gu, 'grid-lite'),
+                    tail.replace(/datagrid/gu, 'grid')
+                ]) {
+                    if (!tailCandidates.includes(replacement)) {
+                        tailCandidates.push(replacement);
+                    }
+                }
+            }
+
+            const prefixCandidates = [
+                currentPrefix,
+                'grid',
+                'datagrid',
+                'dashboards'
+            ].filter((prefix, index, array) => array.indexOf(prefix) === index);
+
+            let resolved: string | undefined;
+
+            outer: for (const prefix of prefixCandidates) {
+                for (const candidateTail of tailCandidates) {
+                    const candidateRelativePath = join(prefix, candidateTail);
+                    const candidatePath = join(
+                        __dirname,
+                        '..',
+                        rootPath,
+                        candidateRelativePath
+                    );
+
+                    if (existsSync(candidatePath)) {
+                        resolved = candidateRelativePath;
+                        break outer;
+                    }
+                }
+            }
+
+            if (resolved) {
+                relativePath = resolved;
+            }
+        }
     }
 
     const localPath = join(
