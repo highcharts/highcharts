@@ -260,7 +260,9 @@ test.describe('Visual tests', () => {
 
             let screenshotError: unknown;
             try {
-                await expect(page).toHaveScreenshot();
+                await expect(page).toHaveScreenshot({
+                    fullPage: true
+                });
             } catch (err) {
                 screenshotError = err;
             } finally {
