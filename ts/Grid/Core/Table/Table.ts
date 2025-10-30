@@ -27,15 +27,14 @@ import type TableRow from './Body/TableRow';
 import GridUtils from '../GridUtils.js';
 import Utils from '../../../Core/Utilities.js';
 import DataTable from '../../../Data/DataTable.js';
-import ColumnDistribution from './ColumnDistribution/ColumnDistribution.js';
-import ColumnDistributionStrategy from './ColumnDistribution/ColumnDistributionStrategy.js';
+import ColumnResizing from './ColumnResizing/ColumnResizing.js';
+import ColumnResizingMode from './ColumnResizing/ResizingMode.js';
 import Column from './Column.js';
 import TableHeader from './Header/TableHeader.js';
 import Grid from '../Grid.js';
 import RowsVirtualizer from './Actions/RowsVirtualizer.js';
 import ColumnsResizer from './Actions/ColumnsResizer.js';
 import Globals from '../Globals.js';
-import Defaults from '../Defaults.js';
 import Cell from './Cell.js';
 
 const { makeHTMLElement } = GridUtils;
@@ -75,6 +74,11 @@ class Table {
      * instance that is stored in the `grid.dataTable` property.
      */
     public dataTable: DataTable;
+
+    /**
+     * The HTML element of the table.
+     */
+    public readonly tableElement: HTMLTableElement;
 
     /**
      * The HTML element of the table head.
@@ -117,7 +121,7 @@ class Table {
     /**
      * The column distribution.
      */
-    public readonly columnDistribution: ColumnDistributionStrategy;
+    public readonly columnResizing: ColumnResizingMode;
 
     /**
      * The columns resizer instance that handles the columns resizing logic.
@@ -170,13 +174,14 @@ class Table {
         tableElement: HTMLTableElement
     ) {
         this.grid = grid;
+        this.tableElement = tableElement;
         this.dataTable = this.grid.presentationTable as DataTable;
 
         const dgOptions = grid.options;
         const customClassName = dgOptions?.rendering?.table?.className;
 
-        this.columnDistribution = ColumnDistribution.initStrategy(this);
-        this.virtualRows = !!dgOptions?.rendering?.rows?.virtualization;
+        this.columnResizing = ColumnResizing.initMode(this);
+        this.virtualRows = this.shouldVirtualizeRows();
 
         if (dgOptions?.rendering?.header?.enabled) {
             this.theadElement = makeHTMLElement('thead', {}, tableElement);
@@ -188,10 +193,7 @@ class Table {
             );
         }
 
-        if (!(
-            dgOptions?.rendering?.columns?.resizing?.enabled === false ||
-            dgOptions?.columnDefaults?.resizing === false
-        )) {
+        if (dgOptions?.rendering?.columns?.resizing?.enabled) {
             this.columnsResizer = new ColumnsResizer(this);
         }
 
@@ -264,6 +266,30 @@ class Table {
     }
 
     /**
+     * Checks if rows virtualization should be enabled.
+     *
+     * @returns
+     * Whether rows virtualization should be enabled.
+     */
+    private shouldVirtualizeRows(): boolean {
+        const { grid } = this;
+        const rows = grid.userOptions.rendering?.rows;
+        if (defined(rows?.virtualization)) {
+            return rows.virtualization;
+        }
+
+        // Consider changing this to use the presentation table row count
+        // instead of the original data table row count.
+        const rowCount = Number(grid.dataTable?.rowCount);
+        const threshold = rows?.virtualizationThreshold ?? 50;
+        const paginationPageSize = grid.pagination?.currentPageSize;
+
+        return paginationPageSize ?
+            paginationPageSize >= threshold :
+            rowCount >= threshold;
+    }
+
+    /**
      * Loads the columns of the table.
      */
     private loadColumns(): void {
@@ -280,25 +306,7 @@ class Table {
             );
         }
 
-        this.columnDistribution.loadColumns();
-    }
-
-    /**
-     * Fires an empty update to properly load the virtualization, only if
-     * there's a row count compared to the threshold change detected (due to
-     * performance reasons).
-     */
-    private updateVirtualization(): void {
-        const rows = this.grid.options?.rendering?.rows;
-        const threshold = Number(
-            rows?.virtualizationThreshold ||
-            Defaults.defaultOptions.rendering?.rows?.virtualizationThreshold
-        );
-        const rowCount = Number(this.dataTable?.rowCount);
-
-        if (rows?.virtualization !== (rowCount >= threshold)) {
-            void this.grid.update();
-        }
+        this.columnResizing.loadColumns();
     }
 
     /**
@@ -311,24 +319,43 @@ class Table {
             focusedRowId = vp.dataTable.getOriginalRowIndex(vp.focusCursor[0]);
         }
 
+        vp.grid.pagination?.clampCurrentPage();
+
+        // Update data
         const oldRowsCount = (vp.rows[vp.rows.length - 1]?.index ?? -1) + 1;
         await vp.grid.querying.proceed();
-        this.dataTable = this.grid.presentationTable as DataTable;
-        for (const column of this.columns) {
+        vp.dataTable = vp.grid.presentationTable as DataTable;
+        for (const column of vp.columns) {
             column.loadData();
         }
 
-        if (oldRowsCount !== vp.dataTable.rowCount) {
-            this.updateVirtualization();
-            this.rowsVirtualizer.rerender();
-        } else {
-            for (let i = 0, iEnd = this.rows.length; i < iEnd; ++i) {
-                this.rows[i].update();
-            }
-            this.rowsVirtualizer.adjustRowHeights();
-            this.reflow();
+        // Update virtualization if needed
+        const shouldVirtualize = this.shouldVirtualizeRows();
+        let shouldRerender = false;
+        if (this.virtualRows !== shouldVirtualize) {
+            this.virtualRows = shouldVirtualize;
+            vp.tableElement.classList.toggle(
+                Globals.getClassName('virtualization'),
+                shouldVirtualize
+            );
+            shouldRerender = true;
         }
 
+        if (shouldRerender || oldRowsCount !== vp.dataTable.rowCount) {
+            // Rerender all rows
+            vp.rowsVirtualizer.rerender();
+        } else {
+            // Update existing rows
+            for (let i = 0, iEnd = vp.rows.length; i < iEnd; ++i) {
+                vp.rows[i].update();
+            }
+        }
+
+        // Update the pagination controls
+        vp.grid.pagination?.updateControls();
+        vp.reflow();
+
+        // Scroll to the focused row
         if (focusedRowId !== void 0 && vp.focusCursor) {
             const newRowIndex = vp.dataTable.getLocalRowIndex(focusedRowId);
             if (newRowIndex !== void 0) {
@@ -349,36 +376,24 @@ class Table {
     }
 
     /**
-     * Loads the modified data from the data table and renders the rows. Always
-     * removes all rows and re-renders them, so it's better to use `updateRows`
-     * instead, because it is more performant in some cases.
-     *
-     * @deprecated
-     * Use `updateRows` instead. This method is kept for backward compatibility
-     * reasons, but it will be removed in the next major version.
-     */
-    public loadPresentationData(): void {
-        this.dataTable = this.grid.presentationTable as DataTable;
-
-        for (const column of this.columns) {
-            column.loadData();
-        }
-
-        this.updateVirtualization();
-        this.rowsVirtualizer.rerender();
-    }
-
-    /**
      * Reflows the table's content dimensions.
      */
     public reflow(): void {
-        this.columnDistribution.reflow();
+        this.columnResizing.reflow();
 
         // Reflow the head
         this.header?.reflow();
 
         // Reflow rows content dimensions
         this.rowsVirtualizer.reflowRows();
+
+        // Reflow the pagination
+        this.grid.pagination?.reflow();
+
+        // Reflow popups
+        this.grid.popups.forEach((popup): void => {
+            popup.reflow();
+        });
     }
 
     /**
@@ -421,7 +436,7 @@ class Table {
      * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-lite/basic/scroll-to-row | Scroll to row}
      */
     public scrollToRow(index: number): void {
-        if (this.grid.options?.rendering?.rows?.virtualization) {
+        if (this.virtualRows) {
             this.tbodyElement.scrollTop =
                 index * this.rowsVirtualizer.defaultRowHeight;
             return;
@@ -477,6 +492,7 @@ class Table {
         this.tbodyElement.removeEventListener('scroll', this.onScroll);
         this.resizeObserver.disconnect();
         this.columnsResizer?.removeEventListeners();
+        this.header?.destroy();
 
         for (let i = 0, iEnd = this.rows.length; i < iEnd; ++i) {
             this.rows[i].destroy();
@@ -496,7 +512,7 @@ class Table {
         return {
             scrollTop: this.tbodyElement.scrollTop,
             scrollLeft: this.tbodyElement.scrollLeft,
-            columnDistribution: this.columnDistribution,
+            columnResizing: this.columnResizing,
             focusCursor: this.focusCursor
         };
     }
@@ -576,7 +592,7 @@ namespace Table {
     export interface ViewportStateMetadata {
         scrollTop: number;
         scrollLeft: number;
-        columnDistribution: ColumnDistributionStrategy;
+        columnResizing: ColumnResizingMode;
         focusCursor?: [number, number];
     }
 }

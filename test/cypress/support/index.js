@@ -73,7 +73,7 @@ Cypress.Commands.add('openCellEditSidebar', (cellId) => {
     cy.get('.highcharts-dashboards-edit-menu-item > div')
         .each(($el) => {
             const backgroundImage = $el.css('background-image');
-            if (backgroundImage.includes('/code/dashboards/gfx/dashboards-icons/settings.svg')) {
+            if (backgroundImage.includes('dashboards-icons/settings.svg')) {
                 cy.wrap($el).click();
             }
         });
