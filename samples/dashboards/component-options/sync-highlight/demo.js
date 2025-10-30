@@ -15,10 +15,8 @@ Dashboards.board('container', {
         connectors: [{
             id: 'Vitamin',
             type: 'CSV',
-            options: {
-                csv: csvData,
-                firstRowAsNames: true
-            }
+            csv: csvData,
+            firstRowAsNames: true
         }]
     },
     gui: {
@@ -68,7 +66,7 @@ Dashboards.board('container', {
                 text: 'sync highlight: true'
             },
             renderTo: 'dashboard-col-2',
-            type: 'DataGrid',
+            type: 'Grid',
             connector: {
                 id: 'Vitamin'
             },

@@ -79,7 +79,7 @@
     }
 }
 
-.highcharts-datagrid-container {
+.highcharts-grid-container {
     --ig-border-width: 0;
     --ig-row-border-width: 1px;
 }

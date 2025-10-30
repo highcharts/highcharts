@@ -81,6 +81,31 @@ QUnit.test('RangeSelector update', function (assert) {
         0,
         'Range selector group should not have text-align attr set, #22698.'
     );
+
+    chart.update({
+        chart: {
+            width: 600
+        },
+        rangeSelector: {
+            allButtonsEnabled: true,
+            buttonTheme: {
+                style: {
+                    color: '#FF00FF'
+                }
+            }
+        }
+    });
+
+    const buttonColors = chart.rangeSelector.buttons.map(
+        btn => btn.text.styles.color
+    );
+
+    assert.deepEqual(
+        buttonColors,
+        ['#FF00FF', '#FF00FF', '#FF00FF', '#000000', '#FF00FF', '#FF00FF'],
+        `All active range selector buttons color should be updated, except for
+        the selected one, #23125.`
+    );
 });
 
 QUnit.test('RangeSelector update hover', function (assert) {
