@@ -112,9 +112,10 @@
     /* Fonts */
 
     /* Global fonts */
+    --ig-default-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
     --ig-font-weight: var(--hcg-font-weight, normal);
     --ig-font-size: var(--hcg-font-size, 1rem);
-    --ig-font-family: var(--hcg-font-family, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif);
+    --ig-font-family: var(--hcg-font-family, var(--ig-default-font-family));
     --ig-color: var(--hcg-color, var(--ig-default-color));
     --ig-font: var(--ig-font-weight) var(--ig-font-size) var(--ig-font-family);
     --ig-text-align: var(--hcg-text-align, left);
