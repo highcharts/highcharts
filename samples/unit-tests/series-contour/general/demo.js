@@ -105,14 +105,6 @@ const getColorFunc = contourCanvas => {
 };
 
 QUnit.test('General contour stuff', function (assert) {
-    const runFunc = Highcharts.Series.types.contour.prototype.run;
-
-    Highcharts.Series.types.contour.prototype.run = function (
-    ) {
-        const series = this;
-        this.runPromise = runFunc.apply(series, []);
-    };
-
     const chart = Highcharts.chart('container', {
             series: [{
                 type: 'contour',
@@ -137,7 +129,7 @@ QUnit.test('General contour stuff', function (assert) {
         'Tooltip should be colored correctly.'
     );
 
-    contour.runPromise.then(function () {
+    contour.renderPromise.then(function () {
         const getColor = getColorFunc(contour.canvas);
 
         // Check the first non-transparent pixel
@@ -182,7 +174,7 @@ QUnit.test('Inverted', function (assert) {
         'WebGPU should be initialized in inverted contour plot.'
     );
 
-    contour.runPromise.then(function () {
+    contour.renderPromise.then(function () {
         const getColor = getColorFunc(contour.canvas);
 
         // Check the first non-transparent pixel
@@ -225,7 +217,7 @@ QUnit.test('X Axis Reversed', function (assert) {
         'WebGPU should be initialized in reverted contour plot.'
     );
 
-    contour.runPromise.then(function () {
+    contour.renderPromise.then(function () {
         const getColor = getColorFunc(contour.canvas);
 
         // Check the first non-transparent pixel
