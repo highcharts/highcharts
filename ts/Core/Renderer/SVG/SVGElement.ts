@@ -457,7 +457,7 @@ class SVGElement implements SVGElementBase {
             attribs: SVGAttributes = {};
 
         // Add text-align attribute only if option is defined, #22698
-        if (defined(alignOptions.align)) {
+        if (alignOptions.align) {
             attribs['text-align'] = alignOptions.align;
         }
 
