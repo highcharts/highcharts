@@ -3844,10 +3844,11 @@ class Chart {
                 !allExtremes
             ) {
                 for (const series of axis.series) {
-                    const valueColumnKey = series.dataColumnKeys()[1];
                     const seriesExtremes = series.getExtremes(
                         series.getProcessedData(true).modified
-                            .getColumn(valueColumnKey) as Array<number> || [],
+                            .getColumn(
+                                series.pointValKey || 'y'
+                            ) as Array<number> || [],
                         true
                     );
 
