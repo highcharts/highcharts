@@ -58,7 +58,6 @@ body {
     --hcg-icon-hover-color: #000;
 }
 
-/* Dark theme: applies both to automatic (prefers-color-scheme) and explicit (.highcharts-dark) dark mode */
 @media (prefers-color-scheme: dark) {
     :root {
         --code-background: #2a2a2a;
@@ -80,7 +79,6 @@ body {
     }
 }
 
-/* Explicit dark mode inherits the same values as the media query */
 .highcharts-dark {
     --code-background: #2a2a2a;
     --code-border: #4a4a4a;
