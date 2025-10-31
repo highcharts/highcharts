@@ -343,6 +343,44 @@ class Legend {
     }
 
     /**
+    * Tries to safely get the default point attributes for a series.
+    * Returns a style object or null if it fails or isn't applicable.
+    */
+    private getSafePointAttribs(series: Series): (SVGAttributes|null) {
+        const MAP_LIKE_SERIES_TYPES: Record<string, boolean> = {
+            'map': true,
+            'mapline': true,
+            'mappoint': true,
+            'tilemap': true,
+            'mapbubble': true
+        };
+
+        const isMapLike = MAP_LIKE_SERIES_TYPES[series.type];
+
+        // Don't try for map-like series or if function doesn't exist
+        if (isMapLike || typeof series.pointAttribs !== 'function') {
+            return null;
+        }
+
+        try {
+            // Try to get default attributes for a 'normal' state
+            const result = series.pointAttribs(void 0, 'normal');
+
+            // Validate it's a usable object before returning (BUG FIX)
+            if (result && typeof result === 'object') {
+                return result;
+            }
+
+        } catch {
+            // Fail silently: some series implementations require
+            // a real Point and will throw an error here. We back off
+            // and return null.
+        }
+
+        return null; // Fallback
+    }
+
+    /**
      * Set the colors for the legend item.
      *
      * @private
@@ -390,12 +428,44 @@ class Legend {
             line?.attr(colorizeHidden({ stroke: lineColor || item.color }));
 
             if (symbol) {
-                // Apply marker options
-                symbol.attr(colorizeHidden(
-                    marker && symbol.isMarker ? // #585
-                        (item as Series).pointAttribs() :
-                        { fill: item.color }
-                ));
+                const series = item as Series;
+                const isMarker = marker && symbol.isMarker;
+
+                // 1. Safely get the point attributes
+                const pointAttribs = this.getSafePointAttribs(series);
+
+                // 2. Check if we got usable visual styles
+                const hasFillOrBorder = !!pointAttribs && (
+                    typeof pointAttribs.fill !== 'undefined' ||
+                    (typeof pointAttribs['stroke-width'] !== 'undefined' &&
+                    Number(pointAttribs['stroke-width']) > 0)
+                );
+
+                // 3. Apply styles based on conditions
+                if (isMarker && pointAttribs) {
+                    // Case 1: Marker-based series (scatter/line).
+                    // Use all attributes.
+                    symbol.attr(colorizeHidden(pointAttribs));
+
+                } else if (!isMarker && hasFillOrBorder && pointAttribs) {
+                    // Case 2: Non-marker with fill/border (bar/area).
+                    // Use only visual attrs to avoid geometry-related leaks.
+                    const { fill, stroke, opacity } = pointAttribs;
+                    const sw = pointAttribs['stroke-width'];
+
+                    symbol.attr(colorizeHidden({
+                        fill,
+                        stroke,
+                        'stroke-width': sw,
+                        opacity
+                    }));
+
+                } else {
+                    // Case 3: Fallback (e.g., try/catch failed
+                    // or no fill/border).
+                    // Use the basic series color.
+                    symbol.attr(colorizeHidden({ fill: item.color }));
+                }
             }
 
             area?.attr(colorizeHidden({

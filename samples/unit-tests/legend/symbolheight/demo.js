@@ -134,5 +134,29 @@ QUnit.test(
             `First symbol of pie series should be set to default color when 
             series.legendColor is undefined.`
         );
+
+        chart.series[0].update({
+            type: 'column',
+            borderColor: '#000000',
+            borderWidth: 2
+        }, true);
+
+        // Assert legend symbol reflects border styling from pointAttribs
+        assert.ok(
+            chart.series[0].legendItem && chart.series[0].legendItem.symbol,
+            'Legend symbol exists for column series'
+        );
+
+        assert.strictEqual(
+            chart.series[0].legendItem.symbol.attr('stroke'),
+            '#000000',
+            'Legend symbol inherits borderColor from column series'
+        );
+
+        assert.strictEqual(
+            +chart.series[0].legendItem.symbol.attr('stroke-width'),
+            2,
+            'Legend symbol inherits borderWidth from column series'
+        );
     }
 );
