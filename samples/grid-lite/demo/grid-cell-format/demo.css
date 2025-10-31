@@ -16,6 +16,12 @@ body {
     color: var(--highcharts-neutral-color-100);
 }
 
+:root,
+.highcharts-light {
+    --code-background: #f7f7f7;
+    --code-border: #e1e1e1;
+}
+
 .demo {
     padding: 8px 12px;
 }
@@ -53,6 +59,11 @@ body {
 }
 
 @media (prefers-color-scheme: dark) {
+    :root {
+        --code-background: #2a2a2a;
+        --code-border: #4a4a4a;
+    }
+
     .custom-theme {
         --highlight-color: #4c4c4c;
         --highlight-border-color: #7d754c;
@@ -66,6 +77,11 @@ body {
         /* Icon styles */
         --hcg-icon-hover-color: #fff;
     }
+}
+
+.highcharts-dark {
+    --code-background: #2a2a2a;
+    --code-border: #4a4a4a;
 }
 
 .highcharts-dark .custom-theme {
@@ -119,8 +135,8 @@ formatting is kept regardless of any hover states etc. */
 code {
     font-family: Consolas, "courier new", monospace;
     line-height: 1em;
-    background: light-dark(#f7f7f7, #2a2a2a);
-    border: 1px solid light-dark(#e1e1e1, #4a4a4a);
+    background: var(--code-background);
+    border: 1px solid var(--code-border);
     color: var(--highcharts-neutral-color-100);
     padding: 2px 4px;
     border-radius: 5px;
