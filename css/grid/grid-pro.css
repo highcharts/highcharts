@@ -134,6 +134,10 @@
     line-height: inherit;
 }
 
+.hcg-table tbody td.hcg-edited-cell select {
+    appearance: base-select;
+}
+
 .hcg-table tbody td.hcg-edited-cell-error input,
 .hcg-table tbody td.hcg-edited-cell-error select {
     color: var(--ig-color);
