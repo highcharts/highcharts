@@ -45,7 +45,8 @@ test.describe('Visual tests', () => {
 
     test.beforeAll(async ({ browser }) => {
         context ??= await browser.newContext({
-            viewport: { width: 800, height: 600 }
+            viewport: { width: 800, height: 600 },
+            colorScheme: 'light'
         });
 
         await context.setOffline(true);
