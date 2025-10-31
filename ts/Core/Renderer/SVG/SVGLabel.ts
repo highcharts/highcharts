@@ -172,6 +172,8 @@ class SVGLabel extends SVGElement {
             if (this.bBox && isNumber(this.xSetting)) {
                 this.attr({ x: this.xSetting }); // #5134
             }
+
+            this.updateTextPadding(); // #23595
         }
     }
 
