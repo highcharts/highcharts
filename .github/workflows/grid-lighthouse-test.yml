@@ -73,7 +73,7 @@ jobs:
         with:
           browser: chrome
           start: node ../utils/server --localOnly
-          wait-on: "http://localhost:3030/samples/view?mobile=true&path=/,http://localhost:3031/grid-lite.js"
+          wait-on: "http://localhost:3030/,http://localhost:3031/grid-lite.js"
           env: type=base
           working-directory: highcharts
           config-file: test/cypress/grid/lighthouse.config.mjs
@@ -108,7 +108,7 @@ jobs:
         with:
           browser: chrome
           start: node ../utils/server --localOnly
-          wait-on: "http://localhost:3030/samples/view?mobile=true&path=/,http://localhost:3031/grid-lite.js"
+          wait-on: "http://localhost:3030/,http://localhost:3031/grid-lite.js"
           env: type=actual
           working-directory: highcharts
           config-file: test/cypress/grid/lighthouse.config.mjs
