@@ -1,5 +1,5 @@
 @import url("https://code.highcharts.com/css/highcharts.css");
-@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 
 /* *
@@ -231,7 +231,7 @@ body {
 }
 
 #el-kpi,
-#el-datagrid {
+#el-grid {
     flex: 1 1 30%;
     height: var(--chart-row-height);
 }
@@ -449,7 +449,7 @@ div#control-cell button:hover {
  *
  * */
 
-#el-datagrid {
+#el-grid {
     font-size: var(--text-font-size);
 }
 
@@ -652,7 +652,7 @@ div#control-cell button:hover {
 
     #el-kpi,
     #el-chart,
-    #el-datagrid,
+    #el-grid,
     .el-info,
     .el-info > div,
     .el-aggr {

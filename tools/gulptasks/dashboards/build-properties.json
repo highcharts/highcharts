@@ -1,0 +1,9 @@
+{
+    "version": "4.0.0",
+    "products": {
+        "Highcharts Dashboards": {
+            "cdnpath": "/dashboards",
+            "distpath": "/dashboards"
+        }
+    }
+}

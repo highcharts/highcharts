@@ -44,7 +44,8 @@ const { getAssignedAxis } = NBU;
 const composedClasses: Array<(Function|GlobalsBase)> = [],
     defaultOptions: MouseWheelZoomOptions = {
         enabled: true,
-        sensitivity: 1.1
+        sensitivity: 1.1,
+        showResetButton: false
     };
 
 let wheelTimer: number;
@@ -115,7 +116,8 @@ const zoomBy = function (
             width: 10 * howMuch,
             height: 10 * howMuch
         },
-        trigger: 'mousewheel'
+        trigger: 'mousewheel',
+        allowResetButton: options.showResetButton
     });
 
     if (hasZoomed) {
@@ -285,6 +287,20 @@ export default MouseWheelZoomComposition;
  * @since 11.1.0
  * @requires  modules/mouse-wheel-zoom
  * @apioption chart.zooming.mouseWheel.type
+ */
+
+/**
+ * Whether to enable the reset zoom button when zooming with the mouse wheel.
+ *
+ * @type      {boolean}
+ * @default   false
+ * @since {next}
+ * @requires  modules/mouse-wheel-zoom
+ * @sample    {highcharts} highcharts/mouse-wheel-zoom/reset-zoom-button
+ *            Enable reset zoom button for mouse wheel zooming
+ * @sample    {highstock} stock/mouse-wheel-zoom/reset-zoom-button
+ *            Enable reset zoom button for mouse wheel zooming
+ * @apioption chart.zooming.mouseWheel.showResetButton
  */
 
 (''); // Keeps doclets above in JS file

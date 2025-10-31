@@ -76,6 +76,12 @@ QUnit.test('RangeSelector update', function (assert) {
         '#14856: It should not leak chart event listeners on update'
     );
 
+    assert.strictEqual(
+        chart.rangeSelector.group.attr('text-align'),
+        0,
+        'Range selector group should not have text-align attr set, #22698.'
+    );
+
     chart.update({
         chart: {
             width: 600
