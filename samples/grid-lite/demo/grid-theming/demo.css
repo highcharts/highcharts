@@ -16,6 +16,12 @@ body {
     color: var(--highcharts-neutral-color-100);
 }
 
+:root,
+.highcharts-light {
+    --code-background: #f7f7f7;
+    --code-border: #e1e1e1;
+}
+
 .demo {
     padding: 8px 12px;
 }
@@ -55,8 +61,8 @@ body {
 .highcharts-light .hcg-description code {
     font-family: Consolas, "courier new", monospace;
     line-height: 1em;
-    background: light-dark(#f7f7f7, #2a2a2a);
-    border: 1px solid light-dark(#e1e1e1, #4a4a4a);
+    background: var(--code-background);
+    border: 1px solid var(--code-border);
     color: var(--highcharts-neutral-color-100);
     padding: 2px 4px;
     border-radius: 5px;
@@ -137,7 +143,13 @@ body {
     color: #000;
 }
 
+/* Dark theme: applies both to automatic (prefers-color-scheme) and explicit (.highcharts-dark) dark mode */
 @media (prefers-color-scheme: dark) {
+    :root {
+        --code-background: #2a2a2a;
+        --code-border: #4a4a4a;
+    }
+
     .hcg-container {
         --hcg-caption-color: #eee;
         --hcg-description-color: #eee;
@@ -165,17 +177,12 @@ body {
         /* Icon styles */
         --hcg-icon-hover-color: #fff;
     }
+}
 
-    .hcg-description code {
-        font-family: Consolas, "courier new", monospace;
-        line-height: 1em;
-        background: light-dark(#f7f7f7, #2a2a2a);
-        border: 1px solid light-dark(#e1e1e1, #4a4a4a);
-        color: var(--highcharts-neutral-color-100);
-        padding: 2px 4px;
-        border-radius: 5px;
-        display: inline-block;
-    }
+/* Explicit dark mode inherits the same values as the media query */
+.highcharts-dark {
+    --code-background: #2a2a2a;
+    --code-border: #4a4a4a;
 }
 
 .highcharts-dark .hcg-container {
@@ -204,15 +211,4 @@ body {
 
     /* Icon styles */
     --hcg-icon-hover-color: #fff;
-}
-
-.highcharts-dark .hcg-description code {
-    font-family: Consolas, "courier new", monospace;
-    line-height: 1em;
-    background: light-dark(#f7f7f7, #2a2a2a);
-    border: 1px solid light-dark(#e1e1e1, #4a4a4a);
-    color: var(--highcharts-neutral-color-100);
-    padding: 2px 4px;
-    border-radius: 5px;
-    display: inline-block;
 }
