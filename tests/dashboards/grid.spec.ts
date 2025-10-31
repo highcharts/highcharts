@@ -169,8 +169,11 @@ test('Grid update methods', async ({ page }) => {
     );
 
     expect(
-        await gridHandle.evaluate(grid => grid?.getOptionsJSON()),
-        'The getOptionsJSON method should return the correct JSON string.'
+        await gridHandle.evaluate(grid => {
+            const options = grid?.getOptions();
+            return options ? JSON.stringify(options) : '';
+        }),
+        'The getOptions method should return the correct JSON string.'
     ).toBe(
         '{"columns":[{"id":"product","header":{"format":"Column 1"},"cells":{"format":"after update"},"enabled":false},' +
         '{"id":"imaginary-column","header":{"format":"New One!"}}],"dataTable":{"columns":{"product":["Apples","P' +
