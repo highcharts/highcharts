@@ -793,13 +793,6 @@ class ColumnSeries extends Series {
                     graphic = graphic.destroy();
                 }
 
-                // Set starting position for point sliding animation.
-                if (series.enabledDataSorting) {
-                    point.startXPos = series.xAxis.reversed ?
-                        -(shapeArgs ? (shapeArgs.width || 0) : 0) :
-                        series.xAxis.width;
-                }
-
                 if (!graphic) {
                     point.graphic = graphic =
                         renderer[

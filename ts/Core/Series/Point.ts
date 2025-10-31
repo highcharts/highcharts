@@ -57,7 +57,6 @@ const {
     isObject,
     merge,
     pick,
-    syncTimeout,
     removeEvent,
     uniqueKey
 } = U;
@@ -141,7 +140,6 @@ class Point {
     public series!: Series;
     public shapeArgs?: SVGAttributes;
     public shapeType?: string;
-    public startXPos?: number;
     public state?: StatesOptionsKey;
     public tooltipPos?: Array<number>;
     public total?: number;
@@ -268,44 +266,6 @@ class Point {
      *  Functions
      *
      * */
-
-    /**
-     * Animate SVG elements associated with the point.
-     *
-     * @private
-     * @function Highcharts.Point#animateBeforeDestroy
-     */
-    public animateBeforeDestroy(): void {
-        const point = this,
-            animateParams = { x: point.startXPos, opacity: 0 },
-            graphicalProps = point.getGraphicalProps();
-
-        graphicalProps.singular.forEach(function (prop: string): void {
-            const isDataLabel = prop === 'dataLabel';
-
-            (point as any)[prop] = (point as any)[prop].animate(
-                isDataLabel ? {
-                    x: (point as any)[prop].startXPos,
-                    y: (point as any)[prop].startYPos,
-                    opacity: 0
-                } : animateParams
-            );
-        });
-
-        graphicalProps.plural.forEach(function (plural: any): void {
-            (point as any)[plural].forEach(function (item: any): void {
-                if (item.element) {
-                    item.animate(extend<SVGAttributes>(
-                        { x: point.startXPos },
-                        (item.startYPos ? {
-                            x: item.startXPos,
-                            y: item.startYPos
-                        } : {})
-                    ));
-                }
-            });
-        });
-    }
 
     /**
      * Apply the options containing the x and y data and possible some extra
@@ -465,10 +425,9 @@ class Point {
             const point = this,
                 series = point.series,
                 chart = series.chart,
-                dataSorting = series.options.dataSorting,
                 hoverPoints = chart.hoverPoints,
                 globalAnimation = point.series.chart.renderer.globalAnimation,
-                animation = animObject(globalAnimation);
+                { duration } = animObject(globalAnimation);
 
             /**
              * Allow to call after animation.
@@ -509,28 +468,12 @@ class Point {
             }
 
             // Remove properties after animation
-            if (!dataSorting?.enabled) {
-                destroyPoint();
-
-            } else {
-                this.animateBeforeDestroy();
-                syncTimeout(destroyPoint, animation.duration);
-            }
-
-            /*
-            // Remove properties after animation
-            if (dataSorting?.enabled) {
-                // @todo: Work on the exit animation for bar-race and
-                // `datasorting/sort-key`. The sort-key demo would benefit from
-                // fading out into its existing position, but not the bar-race,
-                // where it should fade out into the bottom.
-                this.animateBeforeDestroy();
-
-            } else {
+            if (duration) {
                 series.condemnedPoints.push(this);
+                setTimeout(destroyPoint, duration);
+            } else {
+                destroyPoint();
             }
-            syncTimeout(destroyPoint, animation.duration);
-            */
 
             chart.pointCount--;
         }
@@ -923,13 +866,13 @@ class Point {
     ): [number, number]|undefined {
 
         const { series } = this,
-            { chart, xAxis, yAxis } = series;
+            { chart, xAxis, yAxis } = series || {};
 
         let posX = 0,
             posY = 0;
 
         if (isNumber(plotX) && isNumber(plotY)) {
-            if (chartCoordinates) {
+            if (chart && chartCoordinates) {
                 posX = xAxis ? xAxis.pos : chart.plotLeft;
                 posY = yAxis ? yAxis.pos : chart.plotTop;
             }

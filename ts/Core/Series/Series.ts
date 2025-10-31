@@ -2613,13 +2613,6 @@ class Series {
                         (point.selected && 'select') as any
                     );
 
-                    // Set starting position for point sliding animation.
-                    if (series.enabledDataSorting) {
-                        point.startXPos = xAxis.reversed ?
-                            -(markerAttribs.width || 0) :
-                            xAxis.width;
-                    }
-
                     const isInside = point.isInside !== false;
                     if (
                         !graphic &&

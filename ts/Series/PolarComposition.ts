@@ -1486,10 +1486,10 @@ function wrapPointPos(
     plotY: number|undefined = this.plotY
 ): [number, number]|undefined {
     const { series } = this,
-        { chart } = series;
+        { chart } = series || {};
 
     if (
-        chart.polar &&
+        chart?.polar &&
         isNumber(plotX) &&
         isNumber(plotY)
     ) {
