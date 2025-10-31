@@ -35,6 +35,13 @@ import type CoreOptions from '../../Core/Options';
  *
  * */
 
+/**
+ * Possible directions for draggable annotations. An empty string (`''`)
+ * makes the annotation undraggable.
+ *
+ * @typedef {''|'x'|'xy'|'y'} Highcharts.AnnotationDraggableValue
+ * @requires modules/annotations
+ */
 export type AnnotationDraggableValue = (''|'x'|'y'|'xy');
 
 export interface AnnotationEventsOptions {
@@ -61,6 +68,10 @@ export interface AnnotationOptions extends ControlTargetOptions {
     shapeOptions: ControllableShapeOptions;
     shapes?: Array<ControllableShapeOptions>;
     type?: string;
+
+    /**
+     * Additional options for an annotation with the type.
+     */
     typeOptions: AnnotationTypeOptions;
     types: Record<string, DeepPartial<AnnotationOptions>>;
     visible: boolean;
@@ -70,18 +81,40 @@ export interface AnnotationOptions extends ControlTargetOptions {
 export interface AnnotationTypeOptions {
     background?: Partial<ControllableShapeOptions>;
     height?: number;
+
+    /**
+     * Line options.
+     */
     line?: Partial<ControllableShapeOptions>;
     point: MockPointOptions;
     points?: Array<AnnotationTypePointsOptions>;
     type?: string;
+
+    /**
+     * This number defines which xAxis the point is connected to. It refers to
+     * either the axis id or the index of the axis in the xAxis array.
+     */
     xAxis?: number;
+
+    /**
+     * This number defines which yAxis the point is connected to. It refers to
+     * either the axis id or the index of the axis in the xAxis array.
+     */
     yAxis?: number;
 }
 
 export interface AnnotationTypePointsOptions {
     controlPoint?: number;
+
+    /**
+     * The x position of the point.
+     */
     x?: number;
     xAxis?: number;
+
+    /**
+     * The y position of the point.
+     */
     y?: (number|null);
     yAxis?: number;
 }
