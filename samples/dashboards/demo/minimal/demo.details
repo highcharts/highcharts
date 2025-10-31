@@ -1,12 +1,16 @@
 ---
 name: Minimal
 authors:
-  - Pawel Lysy, Karol Kolodziej
+  - Pawel Lysy
+  - Karol Kolodziej
 js_wrap: b
 tags:
+  - Highcharts overview
   - Highcharts Dashboards demo
 categories:
+  - Basics:
+      priority: 14
   - Basic:
-        priority: 10
+      priority: 10
 use_png_thumbnail: true
 ...
