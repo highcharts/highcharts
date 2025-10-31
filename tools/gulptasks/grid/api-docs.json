@@ -39,6 +39,7 @@
 
         "../../../ts/Grid/Pro/CellEditing/CellEditing.ts",
         "../../../ts/Grid/Pro/CellEditing/CellEditMode.d.ts",
+        "../../../ts/Grid/Pro/CellEditing/CellEditingComposition.ts",
         "../../../ts/Grid/Pro/Credits/CreditsPro.ts",
         "../../../ts/Grid/Pro/GridEvents.ts",
 
