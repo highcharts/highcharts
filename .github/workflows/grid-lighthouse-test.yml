@@ -76,7 +76,7 @@ jobs:
           wait-on: 'http://localhost:3031/grid-lite.js'
           env: type=base
           working-directory: highcharts
-          config-file: test/cypress/grid/lighthouse.config.mjs
+          config-file: test/cypress/grid/config.mjs
           install: false
 
       - name: Stop server
