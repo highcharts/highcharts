@@ -78,12 +78,6 @@ export default class ContourSeries extends ScatterSeries {
     public renderPromise?: Promise<void>;
 
     public init(chart: Chart, options: ContourSeriesOptions): void {
-        // Necessary for default tooltip behavior
-        chart.options = merge(
-            ContourSeries.defaultOptions,
-            chart.options || {}
-        );
-
         super.init.apply(this, [chart, options]);
 
         // Adjusting to canvas

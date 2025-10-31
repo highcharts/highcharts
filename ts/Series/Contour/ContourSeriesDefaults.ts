@@ -19,8 +19,8 @@ const ContourSeriesDefaults: PlotOptionsOf<ContourSeries> = {
         }
     },
     tooltip: {
-        formatter: function (tt): string {
-            const point = (tt.chart.hoverPoint as ContourPoint),
+        pointFormatter: function (): string {
+            const point = (this as ContourPoint),
                 { series, value } = point,
                 stops = series.colorAxis?.stops as any,
                 extent = (value ?? 0) / ((series.dataMax || 1));
