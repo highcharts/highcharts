@@ -74,7 +74,7 @@ interface DataAfterCompleteCallbackFunction {
 }
 
 interface DataBeforeParseCallbackFunction {
-    (csv: string): string;
+    (csv: string, ctx: Data): string;
 }
 
 interface DataColumnsArray extends Array<DataValueType> {
@@ -127,7 +127,7 @@ interface DataParseDateCallbackFunction {
     (dateValue: string): number;
 }
 interface DataParsedCallbackFunction {
-    (columns: Array<DataColumnsArray>): (boolean|undefined);
+    (columns: Array<DataColumnsArray>, ctx: Data): (boolean|undefined);
 }
 interface DataValueCountObject {
     global: number;
@@ -987,7 +987,7 @@ class Data {
         }
 
         if (csv && options.beforeParse) {
-            csv = options.beforeParse.call(this, csv);
+            csv = options.beforeParse.call(this, csv, this);
         }
 
         if (csv) {
@@ -1791,7 +1791,7 @@ class Data {
      */
     public parsed(): (boolean|undefined) {
         if (this.options.parsed) {
-            return this.options.parsed.call(this, this.columns as any);
+            return this.options.parsed.call(this, this.columns as any, this);
         }
     }
 
