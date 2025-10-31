@@ -60,7 +60,7 @@ jobs:
         continue-on-error: true
         run: |
           PLAYWRIGHT_HTML_REPORT=playwright-report/master/highcharts \
-          npx playwright test --project visual --update-snapshots
+          npx playwright test --project visual --update-snapshots --output test-results/master/highcharts
         env:
           VISUAL_TEST_PATH: samples/highcharts
 
@@ -68,7 +68,7 @@ jobs:
         continue-on-error: true
         run: |
           PLAYWRIGHT_HTML_REPORT=playwright-report/master/stock \
-          npx playwright test --project visual --update-snapshots
+          npx playwright test --project visual --update-snapshots --output test-results/master/stock
         env:
           VISUAL_TEST_PATH: samples/stock
 
@@ -76,7 +76,7 @@ jobs:
         continue-on-error: true
         run: |
           PLAYWRIGHT_HTML_REPORT=playwright-report/master/maps \
-          npx playwright test --project visual --update-snapshots
+          npx playwright test --project visual --update-snapshots --output test-results/master/maps
         env:
           VISUAL_TEST_PATH: samples/maps
 
@@ -84,7 +84,7 @@ jobs:
         continue-on-error: true
         run: |
           PLAYWRIGHT_HTML_REPORT=playwright-report/master/gantt \
-          npx playwright test --project visual --update-snapshots
+          npx playwright test --project visual --update-snapshots --output test-results/master/gantt
         env:
           VISUAL_TEST_PATH: samples/gantt
 
@@ -113,7 +113,7 @@ jobs:
         id: test_visual_highcharts
         run: |
           PLAYWRIGHT_HTML_REPORT=playwright-report/pr/highcharts \
-          npx playwright test --project visual
+          npx playwright test --project visual --output test-results/pr/highcharts
         env:
           VISUAL_TEST_PATH: samples/highcharts
         continue-on-error: true
@@ -122,7 +122,7 @@ jobs:
         id: test_visual_stock
         run: |
           PLAYWRIGHT_HTML_REPORT=playwright-report/pr/stock \
-          npx playwright test --project visual
+          npx playwright test --project visual --output test-results/pr/stock
         env:
           VISUAL_TEST_PATH: samples/stock
         continue-on-error: true
@@ -131,7 +131,7 @@ jobs:
         id: test_visual_maps
         run: |
           PLAYWRIGHT_HTML_REPORT=playwright-report/pr/maps \
-          npx playwright test --project visual
+          npx playwright test --project visual --output test-results/pr/maps
         env:
           VISUAL_TEST_PATH: samples/maps
         continue-on-error: true
@@ -140,7 +140,7 @@ jobs:
         id: test_visual_gantt
         run: |
           PLAYWRIGHT_HTML_REPORT=playwright-report/pr/gantt \
-          npx playwright test --project visual
+          npx playwright test --project visual --output test-results/pr/gantt
         env:
           VISUAL_TEST_PATH: samples/gantt
         continue-on-error: true
