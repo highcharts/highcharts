@@ -258,6 +258,18 @@ test.describe('Visual tests', () => {
                 }
             });
 
+            await page.evaluate(async () => {
+                try {
+                    await document.fonts?.ready;
+                } catch {
+                    // Swallow errors if fonts API is unavailable or fails.
+                }
+                await new Promise<void>((resolve) => {
+                    requestAnimationFrame(
+                        () => requestAnimationFrame(() => resolve())
+                    );
+                });
+            });
 
             let screenshotError: unknown;
             try {
