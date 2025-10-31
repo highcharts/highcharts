@@ -13,7 +13,7 @@ export default defineConfig({
     },
     e2e: {
         ...defaultConfig.e2e,
-        baseUrl: 'http://localhost:3030',
+        baseUrl: 'http://localhost:3030/samples/view?mobile=true&path=',
         setupNodeEvents(on, config) {
             on('before:browser:launch', (browser = {}, launchOptions) => {
                 prepareAudit(launchOptions);
