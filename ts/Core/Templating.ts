@@ -182,35 +182,18 @@ function format(
     owner?: Templating.Owner
 ): string {
 
-    const languages =
-        'a-zA-Z' + // ASCII
-        '\u00C0-\u017F' + // Latin Extended
-        '\u0370-\u03FF' + // Greek
-        '\u0400-\u04FF\u0500-\u052F' + // Cyrillic
-        '\u0590-\u05FF' + // Hebrew
-        '\u0600-\u06FF\u0750-\u077F' + // Arabic + Extended
-        '\u0900-\u097F' + // Devanagari
-        '\u3040-\u30FF' + // Hiragana + Katakana
-        '\u3130-\u318F\uAC00-\uD7AF' + // Hangul Jamo + Syllables
-        '\u4E00-\u9FFF'; // CJK Unified Ideographs
-
-    // Notice: using u flag will require a refactor for ES5 (#22450).
-    /* eslint-disable-next-line no-misleading-character-class */
+    // eslint-disable-next-line prefer-regex-literals
     const regex = new RegExp(
-            '\\{([' +
-            languages +
-            '\\d:\\.,;\\-/<>\\[\\]%_@+"\'’= #\\(\\)]+)\\}',
-            'g'
+            '\\{([\\p{L}\\d:\\.,;\\-\\/<>\\[\\]%_@+"\'’= #\\(\\)]+)\\}',
+            'gu'
         ),
         // The sub expression regex is the same as the top expression regex,
         // but except parens and block helpers (#), and surrounded by parens
         // instead of curly brackets.
-        /* eslint-disable-next-line no-misleading-character-class */
+        // eslint-disable-next-line prefer-regex-literals
         subRegex = new RegExp(
-            '\\(([' +
-            languages +
-            '\\d:\\.,;\\-/<>\\[\\]%_@+"\'= ]+)\\)',
-            'g'
+            '\\(([\\p{L}\\d:\\.,;\\-\\/<>\\[\\]%_@+"\'= ]+)\\)',
+            'gu'
         ),
         matches = [],
         floatRegex = /f$/,
