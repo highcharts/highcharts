@@ -325,6 +325,8 @@ class Series {
 
     public colorIndex?: number;
 
+    public condemnedPoints!: Array<Point>;
+
     public cropped?: boolean;
 
     public data!: Array<Point>;
@@ -446,6 +448,8 @@ class Series {
         // Series init to avoid reference to the same array between
         // the different series and charts. #12959, #13937
         this.eventsToUnbind = [];
+
+        this.condemnedPoints = [];
 
         /**
          * Read only. The chart that the series belongs to.
@@ -1215,7 +1219,7 @@ class Series {
             data.forEach((point, i): void => {
                 // .update doesn't exist on a linked, hidden series (#3709)
                 // (#10187)
-                if (point !== oldData[i].y && !oldData[i].destroyed) {
+                if (point !== oldData[i].y && !oldData[i].condemned) {
                     oldData[i].update(point, false, void 0, false);
                 }
             });
@@ -2088,7 +2092,8 @@ class Series {
             xAxis = series.xAxis,
             enabledDataSorting = series.enabledDataSorting,
             yAxis = series.yAxis,
-            points = series.points,
+            { hasRendered, polar } = series.chart,
+            points = series.points.concat(series.condemnedPoints),
             dataLength = points.length,
             pointPlacement = series.pointPlacementToXValue(), // #7860
             dynamicallyPlaced = Boolean(pointPlacement),
@@ -2114,6 +2119,28 @@ class Series {
             return clamp(val, -1e9, 1e9);
         }
 
+        const getPlotX = (x: number, old?: boolean): number|undefined => {
+            const plotX = xAxis.translate(
+                x, false, false, old, true, pointPlacement
+            );
+            return isNumber(plotX) ? correctFloat(limitedRange(plotX)) : void 0;
+        };
+
+        const getPlotY = (
+            yValue: (number|null|undefined),
+            point: Point,
+            old?: boolean
+        ): number|undefined => {
+            // Set the plotY value, reset it for redraws #3201, #18422
+            if (isNumber(yValue) && point.plotX !== void 0) {
+                const plotY = yAxis.translate(yValue, false, true, old, true);
+                return isNumber(plotY) ? limitedRange(plotY) : void 0;
+            }
+            if (!isNumber(yValue) && nullYSubstitute) {
+                return nullYSubstitute;
+            }
+        };
+
         // Translate each point
         for (i = 0; i < dataLength; i++) {
             const point = points[i],
@@ -2130,9 +2157,6 @@ class Series {
                     ''
             ) + series.stackKey];
 
-            plotX = xAxis.translate( // #3923
-                xValue, false, false, false, true, pointPlacement
-            );
             /**
              * The translated X value for the point in terms of pixels. Relative
              * to the X axis position if the series has one, otherwise relative
@@ -2147,9 +2171,7 @@ class Series {
              * @name Highcharts.Point#plotX
              * @type {number|undefined}
              */
-            point.plotX = isNumber(plotX) ? correctFloat( // #5236
-                limitedRange(plotX) // #3923
-            ) : void 0;
+            point.plotX = plotX = getPlotX(xValue);
 
             // Calculate the bottom y value for stacked series
             if (
@@ -2227,14 +2249,6 @@ class Series {
                 yValue = series.dataModify.modifyValue(yValue, i);
             }
 
-            // Set the plotY value, reset it for redraws #3201, #18422
-            let plotY: number|undefined;
-            if (isNumber(yValue) && point.plotX !== void 0) {
-                plotY = yAxis.translate(yValue, false, true, false, true);
-                plotY = isNumber(plotY) ? limitedRange(plotY) : void 0;
-            } else if (!isNumber(yValue) && nullYSubstitute) {
-                plotY = nullYSubstitute;
-            }
             /**
              * The translated Y value for the point in terms of pixels. Relative
              * to the Y axis position if the series has one, otherwise relative
@@ -2249,7 +2263,13 @@ class Series {
              * @name Highcharts.Point#plotY
              * @type {number|undefined}
              */
-            point.plotY = plotY;
+            point.plotY = getPlotY(yValue, point);
+
+            // Set the starting point of point entrance animation
+            point.origin = hasRendered && !point.graphic && !polar ? {
+                x: getPlotX(xValue, true),
+                y: getPlotY(yValue, point, true)
+            } : void 0;
 
             point.isInside = this.isPointInside(point);
 
@@ -2273,7 +2293,7 @@ class Series {
                 if (typeof lastPlotX !== 'undefined') {
                     closestPointRangePx = Math.min(
                         closestPointRangePx,
-                        Math.abs(plotX - lastPlotX)
+                        Math.abs((plotX as any) - lastPlotX)
                     );
                 }
                 lastPlotX = plotX;
@@ -2529,7 +2549,10 @@ class Series {
      *
      * @function Highcharts.Series#drawPoints
      */
-    public drawPoints(points: Array<Point> = this.points): void {
+    public drawPoints(points?: Array<Point>): void {
+
+        points ||= this.points.concat(this.condemnedPoints);
+
         const series = this,
             chart = series.chart,
             styledMode = chart.styledMode,
@@ -2634,14 +2657,12 @@ class Series {
                                     seriesMarkerOptions
                             )
                             .add(markerGroup);
-                        // Sliding animation for new points
-                        if (
-                            series.enabledDataSorting &&
-                            chart.hasRendered
-                        ) {
-                            graphic.attr({
-                                x: point.startXPos
-                            });
+
+                        // New points fade in from old axis position
+                        if (point.origin) {
+                            graphic.attr(
+                                point.getOrigin(point.origin, markerAttribs)
+                            );
                             verb = 'animate';
                         }
                     }
@@ -2869,7 +2890,8 @@ class Series {
             'stroke': stroke,
             'stroke-width': strokeWidth,
             'fill': fill,
-            'opacity': opacity
+            'opacity': point?.condemned || point?.isInside === false ?
+                0 : opacity
         };
     }
 
@@ -3433,6 +3455,7 @@ class Series {
         if (wasDirty) { // #3868, #3945
             delete this.kdTree;
         }
+        this.condemnedPoints.length = 0;
     }
 
     /**

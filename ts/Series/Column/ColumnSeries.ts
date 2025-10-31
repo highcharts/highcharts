@@ -531,7 +531,9 @@ class ColumnSeries extends Series {
         Series.prototype.translate.apply(series);
 
         // Record the new values
-        series.points.forEach(function (point): void {
+        series.points.concat(
+            series.condemnedPoints as ColumnPoint[]
+        ).forEach(function (point): void {
             const yBottom = pick(point.yBottom, translatedThreshold as any),
                 safeDistance = 999 + Math.abs(yBottom),
                 plotX = point.plotX || 0,
@@ -745,7 +747,7 @@ class ColumnSeries extends Series {
             fill: fill as any,
             stroke: stroke,
             'stroke-width': strokeWidth,
-            opacity: opacity
+            opacity: point?.condemned ? 0 : opacity
         };
 
         if (dashstyle) {
@@ -763,7 +765,10 @@ class ColumnSeries extends Series {
      * @private
      * @function Highcharts.seriesTypes.column#drawPoints
      */
-    public drawPoints(points: Array<ColumnPoint> = this.points): void {
+    public drawPoints(points?: Array<ColumnPoint>): void {
+
+        points ||= this.points.concat(this.condemnedPoints as ColumnPoint[]);
+
         const series = this,
             chart = this.chart,
             options = series.options,
@@ -776,7 +781,6 @@ class ColumnSeries extends Series {
         points.forEach(function (point): void {
             const plotY = point.plotY;
             let graphic = point.graphic,
-                hasGraphic = !!graphic,
                 verb = graphic && chart.pointCount < animationLimit ?
                     'animate' : 'attr';
 
@@ -798,29 +802,25 @@ class ColumnSeries extends Series {
 
                 if (!graphic) {
                     point.graphic = graphic =
-                        (renderer as any)[point.shapeType as any](shapeArgs)
+                        renderer[
+                            point.shapeType as 'roundedRect'|'rect'|'circle'
+                        ](shapeArgs)
                             .add(point.group || series.group);
 
+                    // New points fade in from old axis position
                     if (
-                        graphic &&
-                        series.enabledDataSorting &&
-                        chart.hasRendered &&
+                        point.origin &&
                         chart.pointCount < animationLimit
                     ) {
-                        graphic.attr({
-                            x: point.startXPos
-                        });
-
-                        hasGraphic = true;
+                        graphic.attr(
+                            point.getOrigin(point.origin, shapeArgs)
+                        );
                         verb = 'animate';
                     }
                 }
 
-                if (graphic && hasGraphic) { // Update
-                    graphic[verb](
-                        merge(shapeArgs)
-                    );
-                }
+                // Update
+                graphic?.[verb](merge(shapeArgs));
 
                 // Presentational
                 if (!chart.styledMode) {

@@ -1036,6 +1036,11 @@ class Chart {
         // Redraw if canvas
         renderer.draw();
 
+        // Save the existing state
+        axes.forEach((axis): void => {
+            axis.saveOld();
+        });
+
         // Fire the events
         fireEvent(chart, 'redraw');
         fireEvent(chart, 'render');

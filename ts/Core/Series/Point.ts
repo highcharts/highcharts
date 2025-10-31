@@ -116,9 +116,9 @@ class Point {
     public category!: (number|string);
     public color?: ColorType;
     public colorIndex?: number;
+    public condemned?: boolean;
     public cumulativeSum?: number;
     public dataLabels?: Array<SVGElement|SVGLabel>;
-    public destroyed?: boolean;
     public formatPrefix: string = 'point';
     public formattedValue?: string;
     public graphic?: SVGElement;
@@ -132,6 +132,8 @@ class Point {
     public name!: string;
     public nonZonedColor?: ColorType;
     public options!: PointOptions;
+    /** The starting point when animating in new points */
+    public origin?: SVGAttributes|undefined;
     public percentage?: number;
     public point: Point;
     public points?: Array<Point>;
@@ -168,8 +170,8 @@ class Point {
      *
      * // Object config
      * data: [{
-     *        name: 'John',
-     *        y: 1
+     *     name: 'John',
+     *     y: 1
      * }, {
      *     name: 'Jane',
      *     y: 2
@@ -403,6 +405,55 @@ class Point {
     }
 
     /**
+     * Get the origin position for entrance animation of new points. Modifies
+     * the given x and y based on the chart orientation and shape dimensions.
+     * Adds an opacity of 0 to make the point fade in.
+     *
+     * To disable entrance animation, return an empty object.
+     *
+     * @param {Highcharts.PositionObject} position
+     *      The initial x and y position in terms of plot area coordinates.
+     * @param {Highcharts.SVGAttributes} shape
+     *      The shape arguments, containing width and height and more.
+     * @return {Highcharts.SVGAttributes}
+     *      The modified attributes with x and y adjusted for the shape.
+     *
+     * @function Highcharts.Point#getOrigin
+     */
+    public getOrigin(
+        { x = 0, y = 0 }: SVGAttributes,
+        shape: SVGAttributes = {}
+    ): SVGAttributes {
+        if (
+            this.series.chart.inverted &&
+            !this.graphic?.parentGroup?.rotation
+        ) {
+            const pos = this.pos(false, x, y);
+            if (pos) {
+                x = pos[0];
+                y = pos[1];
+            }
+        }
+
+        x -= (shape.width || 0) / 2;
+        y -= (shape.height || 0) / 2;
+
+        const attribs: SVGAttributes = {
+            opacity: 0,
+            x
+        };
+
+        // To avoid having to deal with stacking, column height etc, we only set
+        // y for non-column series. Range series (having this.plotHigh) also
+        // have their own logic, with two markers per point.
+        if (!this.series.is('column') && !this.plotHigh) {
+            attribs.y = y;
+        }
+
+        return attribs;
+    }
+
+    /**
      * Destroy a point to clear memory. Its reference still stays in
      * `series.data`.
      *
@@ -410,7 +461,7 @@ class Point {
      * @function Highcharts.Point#destroy
      */
     public destroy(): void {
-        if (!this.destroyed) {
+        if (!this.condemned) {
             const point = this,
                 series = point.series,
                 chart = series.chart,
@@ -449,7 +500,7 @@ class Point {
                 point.setState();
                 erase(hoverPoints, point);
                 if (!hoverPoints.length) {
-                    chart.hoverPoints = null as any;
+                    chart.hoverPoints = void 0;
                 }
 
             }
@@ -466,10 +517,25 @@ class Point {
                 syncTimeout(destroyPoint, animation.duration);
             }
 
+            /*
+            // Remove properties after animation
+            if (dataSorting?.enabled) {
+                // @todo: Work on the exit animation for bar-race and
+                // `datasorting/sort-key`. The sort-key demo would benefit from
+                // fading out into its existing position, but not the bar-race,
+                // where it should fade out into the bottom.
+                this.animateBeforeDestroy();
+
+            } else {
+                series.condemnedPoints.push(this);
+            }
+            syncTimeout(destroyPoint, animation.duration);
+            */
+
             chart.pointCount--;
         }
 
-        this.destroyed = true;
+        this.condemned = true;
     }
 
     /**
@@ -536,7 +602,7 @@ class Point {
             defaultFunction = function (event: MouseEvent): void {
                 // Control key is for Windows, meta (= Cmd key) for Mac, Shift
                 // for Opera.
-                if (!point.destroyed && point.select) { // #2911, #19075
+                if (!point.condemned && point.select) { // #2911, #19075
                     point.select(
                         null as any,
                         event.ctrlKey || event.metaKey || event.shiftKey
@@ -838,35 +904,38 @@ class Point {
      * If true, the returned position is relative to the full chart area.
      * If false, it is relative to the plot area determined by the axes.
      *
+     * @param {number|undefined} plotX
+     * A custom plot x position to be computed. Used internally for getting the
+     * starting point of an animation.
+     *
      * @param {number|undefined} plotY
-     * A custom plot y position to be computed. Used internally for some
-     * series types that have multiple `y` positions, like area range (low
-     * and high values).
+     * A custom plot y position to be computed. Used internally for getting the
+     * starting point of an animation, and for some series types that have
+     * multiple `y` positions, like area range (low and high values).
      *
      * @return {Array<number>|undefined}
      * Coordinates of the point if the point exists.
      */
     public pos(
         chartCoordinates?: boolean,
+        plotX: number|undefined = this.plotX,
         plotY: number|undefined = this.plotY
     ): [number, number]|undefined {
 
-        if (!this.destroyed) {
-            const { plotX, series } = this,
-                { chart, xAxis, yAxis } = series;
+        const { series } = this,
+            { chart, xAxis, yAxis } = series;
 
-            let posX = 0,
-                posY = 0;
+        let posX = 0,
+            posY = 0;
 
-            if (isNumber(plotX) && isNumber(plotY)) {
-                if (chartCoordinates) {
-                    posX = xAxis ? xAxis.pos : chart.plotLeft;
-                    posY = yAxis ? yAxis.pos : chart.plotTop;
-                }
-                return chart.inverted && xAxis && yAxis ?
-                    [yAxis.len - plotY + posY, xAxis.len - plotX + posX] :
-                    [plotX + posX, plotY + posY];
+        if (isNumber(plotX) && isNumber(plotY)) {
+            if (chartCoordinates) {
+                posX = xAxis ? xAxis.pos : chart.plotLeft;
+                posY = yAxis ? yAxis.pos : chart.plotTop;
             }
+            return chart.inverted && xAxis && yAxis ?
+                [yAxis.len - plotY + posY, xAxis.len - plotX + posX] :
+                [plotX + posX, plotY + posY];
         }
 
     }
