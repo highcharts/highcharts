@@ -242,10 +242,12 @@ namespace DataLabel {
         isNew?: boolean
     ): void {
         const series = this,
-            { chart, enabledDataSorting } = this,
+            { chart } = this,
             inverted = this.isCartesian && chart.inverted,
-            { origin, plotX, plotY } = point,
-            rotation = options.rotation || 0,
+            { condemned, origin, plotX, plotY } = point,
+            { crop = true, overflow = 'justify', rotation = 0 } = options,
+            justify = rotation === 0 && !condemned && overflow === 'justify',
+            pos = point.pos(),
             isInsidePlot = defined(plotX) &&
                 defined(plotY) &&
                 chart.isInsidePlot(
@@ -256,12 +258,7 @@ namespace DataLabel {
                         paneCoordinates: true,
                         series
                     }
-                ),
-            justify = rotation === 0 ? pick(
-                options.overflow,
-                (enabledDataSorting ? 'none' : 'justify'
-                )
-            ) === 'justify' : false;
+                );
 
         // Math.round for rounding errors (#2683), alignTo to allow column
         // labels (#2700)
@@ -271,7 +268,7 @@ namespace DataLabel {
             defined(plotX) &&
             (
                 series.forceDL ||
-                (enabledDataSorting && !justify) ||
+                condemned || // Allow it to fade out
                 isInsidePlot ||
                 (
                     // If the data label is inside the align box, it is enough
@@ -294,7 +291,6 @@ namespace DataLabel {
                 )
             );
 
-        const pos = point.pos();
         if (visible && pos) {
             const bBox = dataLabel.getBBox(),
                 unrotatedbBox = dataLabel.getBBox(void 0, 0);
@@ -343,10 +339,9 @@ namespace DataLabel {
             // offset the computed position by the difference between current
             // position and the origin.
             if (origin) {
-                const pos = point.pos(),
-                    originPos = point.pos(false, origin.x, origin.y);
+                const originPos = point.pos(false, origin.x, origin.y);
 
-                if (originPos && pos) {
+                if (originPos) {
                     const offset = [
                         originPos[0] - pos[0],
                         originPos[1] - pos[1]
@@ -367,13 +362,17 @@ namespace DataLabel {
             }
 
             // Set the position before potential justification
-            dataLabel[dataLabel.placed ? 'animate' : 'attr']({
+            const placeAttribs: SVGAttributes = {
                 'text-align': dataLabel.alignAttr['text-align'] || 'center',
                 x,
                 y,
                 rotationOriginX: (dataLabel.width || 0) / 2,
                 rotationOriginY: (dataLabel.height || 0) / 2
-            });
+            };
+            if (condemned) {
+                placeAttribs.opacity = 0;
+            }
+            dataLabel[dataLabel.placed ? 'animate' : 'attr'](placeAttribs);
 
             // Uncomment this block to visualize the bounding boxes used for
             // determining visibility
@@ -405,7 +404,7 @@ namespace DataLabel {
                     alignTo,
                     isNew
                 );
-            } else if (pick(options.crop, true)) {
+            } else if (crop && !condemned) {
                 const { x, y } = dataLabel.alignAttr,
                     correction = 1;
 
@@ -438,12 +437,9 @@ namespace DataLabel {
                 });
             }
         }
-        // To use alignAttr property in hideOverlappingLabels
-        if (isNew && enabledDataSorting) {
-            dataLabel.placed = false;
-        }
+
         // Show or hide based on the final aligned position
-        if (!visible && (!enabledDataSorting || justify)) {
+        if (!visible) {
             dataLabel.hide();
             dataLabel.placed = false; // Don't animate back in
         } else {
@@ -639,7 +635,7 @@ namespace DataLabel {
 
         if (series.hasDataLabels?.()) {
             // Make the labels for each point
-            points.forEach((point): void => {
+            points.concat(series.condemnedPoints).forEach((point): void => {
 
                 const dataLabels = point.dataLabels || [],
                     pointColor = point.color || series.color;
