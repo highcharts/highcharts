@@ -16,10 +16,9 @@
  *
  * */
 
-import type { AlignObject, AlignValue } from '../Renderer/AlignObject';
+import type { AlignValue } from '../Renderer/AlignObject';
 import type BBoxObject from '../Renderer/BBoxObject';
 import type ColorString from '../Color/ColorString';
-import type ColumnPoint from '../../Series/Column/ColumnPoint';
 import type CorePositionObject from '../../Core/Renderer/PositionObject';
 import type DataLabelOptions from './DataLabelOptions';
 import type PiePoint from '../../Series/Pie/PiePoint';
@@ -122,13 +121,6 @@ declare module './SeriesBase' {
             two: (DataLabelOptions|Array<DataLabelOptions>|undefined)
         ): (DataLabelOptions|Array<DataLabelOptions>);
         placeDataLabels?(): void;
-        setDataLabelStartPos(
-            point: ColumnPoint,
-            dataLabel: SVGElement,
-            isNew: boolean|undefined,
-            isInside: boolean,
-            alignOptions: AlignObject
-        ): void;
         verifyDataLabelOverflow?(overflow: Array<number>): boolean;
     }
 }
@@ -252,8 +244,7 @@ namespace DataLabel {
         const series = this,
             { chart, enabledDataSorting } = this,
             inverted = this.isCartesian && chart.inverted,
-            plotX = point.plotX,
-            plotY = point.plotY,
+            { origin, plotX, plotY } = point,
             rotation = options.rotation || 0,
             isInsidePlot = defined(plotX) &&
                 defined(plotY) &&
@@ -266,17 +257,6 @@ namespace DataLabel {
                         series
                     }
                 ),
-            setStartPos = (alignOptions: AlignObject): void => {
-                if (enabledDataSorting && series.xAxis && !justify) {
-                    series.setDataLabelStartPos(
-                        point as ColumnPoint,
-                        dataLabel,
-                        isNew,
-                        isInsidePlot,
-                        alignOptions
-                    );
-                }
-            },
             justify = rotation === 0 ? pick(
                 options.overflow,
                 (enabledDataSorting ? 'none' : 'justify'
@@ -290,7 +270,7 @@ namespace DataLabel {
             point.visible !== false &&
             defined(plotX) &&
             (
-                point.series.forceDL ||
+                series.forceDL ||
                 (enabledDataSorting && !justify) ||
                 isInsidePlot ||
                 (
@@ -339,8 +319,6 @@ namespace DataLabel {
                 height: bBox.height
             });
 
-            setStartPos(alignTo); // Data sorting
-
             // Align the label to the adjusted box with for unrotated bBox due
             // to rotationOrigin, which is based on unrotated label
             dataLabel.align(merge(
@@ -355,12 +333,44 @@ namespace DataLabel {
             dataLabel.alignAttr.y += getAlignFactor(options.verticalAlign) *
                 (unrotatedbBox.height - bBox.height);
 
+            // The placement attributes before justifyDataLabel correction
+            const x = dataLabel.alignAttr.x +
+                    (bBox.width - unrotatedbBox.width) / 2,
+                y = dataLabel.alignAttr.y +
+                    (bBox.height - unrotatedbBox.height) / 2;
+
+            // Handle the data label position for entrance animation. Simply
+            // offset the computed position by the difference between current
+            // position and the origin.
+            if (origin) {
+                const pos = point.pos(),
+                    originPos = point.pos(false, origin.x, origin.y);
+
+                if (originPos && pos) {
+                    const offset = [
+                        originPos[0] - pos[0],
+                        originPos[1] - pos[1]
+                    ];
+
+                    if (series.is('column') || point.plotHigh) {
+                        offset[inverted ? 0 : 1] = 0;
+                    }
+                    dataLabel.attr({
+                        x: x + offset[0],
+                        y: y + offset[1],
+                        // Start at non-zero to avoid overlapping logic treating
+                        // it as hidden
+                        opacity: 0.01
+                    });
+                    dataLabel.placed = true;
+                }
+            }
+
+            // Set the position before potential justification
             dataLabel[dataLabel.placed ? 'animate' : 'attr']({
                 'text-align': dataLabel.alignAttr['text-align'] || 'center',
-                x: dataLabel.alignAttr.x +
-                    (bBox.width - unrotatedbBox.width) / 2,
-                y: dataLabel.alignAttr.y +
-                    (bBox.height - unrotatedbBox.height) / 2,
+                x,
+                y,
                 rotationOriginX: (dataLabel.width || 0) / 2,
                 rotationOriginY: (dataLabel.height || 0) / 2
             });
@@ -497,7 +507,6 @@ namespace DataLabel {
             seriesProto.drawDataLabels = drawDataLabels;
             seriesProto.justifyDataLabel = justifyDataLabel;
             seriesProto.mergeArrays = mergeArrays;
-            seriesProto.setDataLabelStartPos = setDataLabelStartPos;
             seriesProto.hasDataLabels = hasDataLabels;
         }
 
@@ -1049,70 +1058,6 @@ namespace DataLabel {
             )
         );
     }
-
-    /**
-     * Set starting position for data label sorting animation.
-     * @private
-     */
-    function setDataLabelStartPos(
-        this: Series,
-        point: ColumnPoint,
-        dataLabel: SVGElement,
-        isNew: boolean,
-        isInside: boolean,
-        alignOptions: AlignObject
-    ): void {
-        const chart = this.chart,
-            inverted = chart.inverted,
-            xAxis = this.xAxis,
-            reversed = xAxis.reversed,
-            labelCenter = (
-                (inverted ? dataLabel.height : dataLabel.width) || 0
-            ) / 2,
-            pointWidth = point.pointWidth,
-            halfWidth = pointWidth ? pointWidth / 2 : 0;
-
-        dataLabel.startXPos = inverted ?
-            alignOptions.x :
-            (reversed ?
-                -labelCenter - halfWidth :
-                xAxis.width - labelCenter + halfWidth
-            );
-        dataLabel.startYPos = inverted ?
-            (reversed ?
-                this.yAxis.height - labelCenter + halfWidth :
-                -labelCenter - halfWidth
-            ) : alignOptions.y;
-
-        // We need to handle visibility in case of sorting point outside plot
-        // area
-        if (!isInside) {
-            dataLabel
-                .attr({ opacity: 1 })
-                .animate(
-                    { opacity: 0 },
-                    void 0,
-                    dataLabel.hide
-                );
-
-        } else if (dataLabel.visibility === 'hidden') {
-            dataLabel.show();
-            dataLabel
-                .attr({ opacity: 0 })
-                .animate({ opacity: 1 });
-        }
-        // Save start position on first render, but do not change position
-        if (!chart.hasRendered) {
-            return;
-        }
-        // Set start position
-        if (isNew) {
-            dataLabel.attr({ x: dataLabel.startXPos, y: dataLabel.startYPos });
-        }
-
-        dataLabel.placed = true;
-    }
-
 }
 
 /* *
