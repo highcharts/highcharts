@@ -2663,7 +2663,9 @@ class Series {
                     if (graphic && verb === 'animate') { // Update
                         // Since the marker group isn't clipped, each
                         // individual marker must be toggled
-                        graphic[isInside ? 'show' : 'hide'](isInside)
+                        graphic[
+                            isInside || point.condemned ? 'show' : 'hide'
+                        ](isInside)
                             .animate(markerAttribs);
 
                     }

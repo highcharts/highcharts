@@ -72,6 +72,12 @@ QUnit.test('Add point with entrance animation', assert => {
                     `The ${type} condemned point should slide out to the left`
                 );
 
+                assert.notEqual(
+                    condemnedPoint.graphic.attr('visibility'),
+                    'hidden',
+                    `The ${type} condemned point graphic should not be hidden`
+                );
+
                 assert.close(
                     condemnedPoint.dataLabel.opacity,
                     0.5,
