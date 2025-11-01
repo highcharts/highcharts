@@ -4006,23 +4006,16 @@ class Axis {
             axisTitle.isNew = false;
         }
 
-
-        // Stacked totals:
+        // Stacked totals
         if (stackLabelOptions?.enabled && axis.stacking) {
             axis.stacking.renderStackTotals();
         }
-        // End stacked totals
 
-        // Record old scaling for updating/animation. Pinch base must be
-        // preserved until the pinch ends.
-        axis.old = {
-            len: axis.len,
-            max: axis.max,
-            min: axis.min,
-            transA: axis.transA,
-            userMax: axis.userMax,
-            userMin: axis.userMin
-        };
+        // First time, save the existing state
+        if (!this.old) {
+            this.saveOld();
+        }
+
         axis.isDirty = false;
 
         fireEvent(this, 'afterRender');
@@ -4052,6 +4045,22 @@ class Axis {
             series.isDirty = true;
         });
 
+    }
+
+    /**
+     * Record old scaling for updating/animation.
+     *
+     * @private
+     */
+    public saveOld(): void {
+        this.old = {
+            len: this.len,
+            max: this.max,
+            min: this.min,
+            transA: this.transA,
+            userMax: this.userMax,
+            userMin: this.userMin
+        };
     }
 
     /**
