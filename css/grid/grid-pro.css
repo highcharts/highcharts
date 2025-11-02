@@ -10,7 +10,8 @@
 
 /* Grid Pro specific styles */
 
-.hcg-container {
+.hcg-container,
+.highcharts-light .hcg-container {
     /* Credits fonts */
     --ig-credits-font-weight: var(--hcg-credits-font-weight, var(--ig-font-weight));
     --ig-credits-font-size: var(--hcg-credits-font-size, 0.9em);
@@ -84,6 +85,19 @@
         var(
             --ig-notification-border-width
         ) var(--ig-notification-border-style) var(--ig-notification-border-color);
+    
+    /*  Editable cell */
+    --ig-cell-editable-background: #dbeaff;
+}
+
+@media (prefers-color-scheme: dark) {
+    .hcg-container {
+        --ig-cell-editable-background: #2d415e;
+    }
+}
+
+.highcharts-dark .hcg-container {
+    --ig-cell-editable-background: #2d415e;
 }
 
 .hcg-no-padding {
@@ -102,8 +116,8 @@
     left: 0;
     padding: inherit;
     z-index: 1;
-    background: #dbeaff;
-    color: #141414;
+    background: var(--ig-cell-editable-background);
+    color: var(--ig-color);
     box-shadow: inset var(--ig-focus-ring);
     display: flex;
     align-items: center;
