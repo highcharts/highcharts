@@ -842,4 +842,5 @@ const AnnotationDefaults: AnnotationOptions = {
  *
  * */
 
+/** @internal */
 export default AnnotationDefaults;

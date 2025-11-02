@@ -39,7 +39,6 @@ import type { SymbolKey } from '../../../Core/Renderer/SVG/SymbolType';
  *
  * */
 
-/** @internal */
 export interface ControllableLabelOptions extends ControllableOptions {
     align: AlignValue;
     allowOverlap: boolean;
