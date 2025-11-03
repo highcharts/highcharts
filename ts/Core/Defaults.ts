@@ -325,16 +325,17 @@ const defaultOptions: DefaultOptions = {
         resetZoom: 'Reset zoom',
 
         /**
-         * The tooltip title for the label appearing when a chart is zoomed.
-         *
-         * @since 1.2.4
-         */
-        /**
          * The default title of the Y axis
          *
          * @since 12.2.0
          */
         yAxisTitle: 'Values',
+
+        /**
+         * The tooltip title for the label appearing when a chart is zoomed.
+         *
+         * @since 1.2.4
+         */
         resetZoomTitle: 'Reset zoom level 1:1'
     },
 

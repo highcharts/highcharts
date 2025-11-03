@@ -148,6 +148,20 @@ declare global {
         webkitURL?: typeof URL;
     }
 
+    /**
+     * Global options that don't apply to each chart. These options must be set
+     * using the `Highcharts.setOptions` method.
+     *
+     * ```js
+     * Highcharts.setOptions({
+     *     global: {
+     *         buttonTheme: {
+     *             fill: '#d0d0d0'
+     *         }
+     *     }
+     * });
+     * ```
+     */
     interface GlobalOptions {
         /**
          * General theme for buttons. This applies to the zoom button, exporting
