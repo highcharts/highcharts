@@ -143,7 +143,8 @@ class CellEditToolbar extends EditToolbar {
             events: {
                 click: function (this: MenuItem): void {
                     const fullScreen = this.menu.parent.editMode.board.fullscreen;
-                    const container = this.menu.parent.cell.container;
+                    const container =
+                        this.menu.parent.cell.container.firstElementChild;
 
                     if (fullScreen) {
                         fullScreen.toggle(container);
