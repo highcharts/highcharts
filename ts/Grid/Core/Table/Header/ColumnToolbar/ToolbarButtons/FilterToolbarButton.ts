@@ -61,7 +61,12 @@ class FilterToolbarButton extends ToolbarButton {
     constructor() {
         super({
             icon: 'filter',
-            classNameKey: 'headerCellFilterIcon'
+            classNameKey: 'headerCellFilterIcon',
+            accessibility: {
+                ariaLabel: 'filter',
+                ariaExpanded: false,
+                ariaControls: 'filter-popup'
+            }
         });
     }
 

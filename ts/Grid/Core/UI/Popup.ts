@@ -320,7 +320,9 @@ abstract class Popup {
      * Keyboard event
      */
     protected onKeyDown(e: KeyboardEvent): void {
-        if (e.key === 'Escape') {
+        if (e.key === 'Escape' || (
+            e.key === 'Tab' && e.shiftKey
+        )) {
             e.preventDefault();
             this.hide();
             this.button?.focus();

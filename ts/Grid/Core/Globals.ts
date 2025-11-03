@@ -98,6 +98,7 @@ namespace Globals {
         popup: 'popup',
         button: 'button',
         icon: 'icon',
+        iconSearch: 'icon-search',
         popupContent: 'popup-content',
         columnFilterWrapper: 'column-filter-wrapper',
         toolbarButtonActiveIndicator: 'active-indicator',

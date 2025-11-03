@@ -159,6 +159,7 @@ class HeaderCell extends Cell {
     public override init(): HTMLTableCellElement {
         const elem = document.createElement('th', {});
         elem.classList.add(Globals.getClassName('headerCell'));
+        elem.setAttribute('role', 'columnheader');
         return elem;
     }
 
@@ -172,7 +173,6 @@ class HeaderCell extends Cell {
             column?.options
         );
         const headerCellOptions = options.header || {};
-        const isSortableData = options.sorting?.sortable && column?.data;
 
 
         if (headerCellOptions.formatter) {
@@ -210,12 +210,7 @@ class HeaderCell extends Cell {
 
         if (column) {
             this.htmlElement.setAttribute('data-column-id', column.id);
-
-            if (isSortableData) {
-                column.viewport.grid.accessibility?.addSortableColumnHint(
-                    this.headerContent
-                );
-            }
+            this.htmlElement.setAttribute('aria-label', column.id);
 
             // Add user column classname
             if (column.options.className) {

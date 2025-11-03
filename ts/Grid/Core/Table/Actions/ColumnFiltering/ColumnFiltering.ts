@@ -64,7 +64,7 @@ class ColumnFiltering {
      * @returns
      * The readable string with the first letter capitalized.
      */
-    private static parseCamelCaseToReadable(value: string): string {
+    public static parseCamelCaseToReadable(value: string): string {
         const readable = value
             .replace(/([A-Z])/g, ' $1')
             .trim()
@@ -251,6 +251,8 @@ class ColumnFiltering {
         const viewport = this.column.viewport;
         const querying = viewport.grid.querying;
         const filteringController = querying.filtering;
+        const columnId = this.column.id;
+        const a11y = viewport.grid.accessibility;
         const { value } = condition;
 
         fireEvent(this.column, 'beforeFilter', {
@@ -277,11 +279,17 @@ class ColumnFiltering {
 
         // Update the userOptions.
         void this.column.update({ filtering: condition }, false);
-        filteringController.addColumnFilterCondition(this.column.id, condition);
+        filteringController.addColumnFilterCondition(columnId, condition);
         this.disableInputIfNeeded();
 
         await querying.proceed();
         await viewport.updateRows();
+
+        a11y?.userFilteredColumn({
+            ...condition,
+            columnId,
+            rowsCount: viewport.rows.length
+        }, filteringApplied);
 
         fireEvent(this.column, 'afterFilter', {
             target: this.column
@@ -311,12 +319,18 @@ class ColumnFiltering {
             'filter-input-' + column.viewport.grid.id + '-' + column.id
         );
 
-        this.filterInput.placeholder = 'value...';
+        this.filterInput.placeholder = 'Value...';
 
         if (columnType === 'number') {
             this.filterInput.type = 'number';
         } else if (columnType === 'datetime') {
             this.filterInput.type = 'date';
+        } else {
+            this.filterInput.type = 'text';
+            this.filterInput.classList.add(
+                Globals.getClassName('icon'),
+                Globals.getClassName('iconSearch')
+            );
         }
 
         // Assign the default input value.

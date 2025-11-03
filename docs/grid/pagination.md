@@ -2,6 +2,8 @@
 
 Pagination in Highcharts Grid enables you to split large datasets into manageable pages, improving performance and user experience. When enabled, pagination displays a subset of data at a time with navigation controls, making it easier to browse through extensive datasets without overwhelming the user interface.
 
+Alternatively, you can use row [Virtualization](https://www.highcharts.com/docs/grid/performance#performance-and-rendering), which renders only the rows currently visible in the viewport, enabling smooth, continuous scrolling through extensive datasets without dividing them into pages.
+
 ## Basic setup
 
 To enable pagination in your Grid, you can use either `pagination: true` for default settings or `pagination.enabled: true` for custom configuration:
@@ -246,4 +248,4 @@ Highcharts Grid Pro provides pagination events that allow you to respond to page
 
 For detailed information about pagination events and how to use them, see the [Events article](https://www.highcharts.com/docs/grid/events).
 
-<iframe src="https://www.highcharts.com/samples/embed/grid-lite/basic/pagination?force-light-theme" allow="fullscreen"></iframe>
+<iframe src="https://www.highcharts.com/samples/embed/grid/basic/pagination?force-light-theme" allow="fullscreen"></iframe>

@@ -25,11 +25,9 @@ import type Grid from '../../Core/Grid';
 import type { ExportingOptions } from '../../Core/Options';
 import type DataTable from '../../../Data/DataTable';
 
-import U from '../../../Core/Utilities.js';
 import DownloadURL from '../../../Shared/DownloadURL.js';
 
 const { downloadURL, getBlobFromContent } = DownloadURL;
-const { merge } = U;
 
 
 /* *
@@ -55,14 +53,10 @@ class Exporting {
     public readonly grid: Grid;
 
     /**
-     * The options for the exporting.
-     */
-    public options: ExportingOptions;
-
-    /**
      * Default options of the credits.
      */
     public static defaultOptions: ExportingOptions = {
+        filename: 'Grid',
         csv: {
             firstRowAsNames: true,
             useLocalDecimalPoint: true,
@@ -83,13 +77,9 @@ class Exporting {
      *
      * @param grid
      * The Grid instance.
-     *
-     * @param options
-     * The options for the exporting.
      */
-    constructor(grid: Grid, options?: ExportingOptions) {
+    constructor(grid: Grid) {
         this.grid = grid;
-        this.options = merge(Exporting.defaultOptions, options);
     }
 
 
@@ -253,7 +243,7 @@ class Exporting {
      * A file name without extension.
      */
     private getFilename(): string {
-        let filename = this.options.filename || 'Grid';
+        let filename = this.grid.options?.exporting?.filename || 'Grid';
 
         if (filename) {
             return filename.replace(/\//g, '-');

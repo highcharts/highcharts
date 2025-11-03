@@ -27,6 +27,7 @@ import type CSSJSONObject from '../CSSJSONObject';
 import type { DeepPartial } from '../../Shared/Types';
 import type LayoutType from './Layout';
 import type Row from './Row';
+import type CellHTML from './CellHTML.js';
 
 import EditGlobals from '../EditMode/EditGlobals.js';
 import Globals from '../Globals.js';
@@ -450,8 +451,8 @@ namespace Cell {
     /**
      * Checks if a valid cell instance.
      */
-    export function isCell(cell: unknown): cell is Cell {
-        return cell instanceof Cell;
+    export function isCell(cell: Cell | CellHTML | undefined): cell is Cell {
+        return (!!cell && 'row' in cell && cell.type === 'cell');
     }
 
     /**

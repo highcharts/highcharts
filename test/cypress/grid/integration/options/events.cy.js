@@ -1,4 +1,18 @@
-describe('Grid Pro - events.', () => {
+describe('Grid Pro - grid events.', () => {
+    before(() => {
+        cy.visit('grid-pro/cypress/grid-events');
+    });
+
+    it('Grid beforeLoad event.', () => {
+        cy.get('#beforeLoad').should('have.value', 'beforeLoad');
+    });
+
+    it('Grid afterLoad event.', () => {
+        cy.get('#afterLoad').should('have.value', 'afterLoad');
+    });
+});
+
+describe('Grid Pro - cell and column events.', () => {
     before(() => {
         cy.visit('grid-pro/cypress/column-cell-events');
     });

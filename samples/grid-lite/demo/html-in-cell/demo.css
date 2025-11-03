@@ -22,7 +22,7 @@ body {
 }
 
 .highcharts-description {
-    padding: 0 10px;
+    padding: 0 8px;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -35,8 +35,8 @@ body {
     --anchor-color: #8ec3fc;
 }
 
-#container {
-    padding: 8px;
+.demo {
+    padding: 8px 12px;
 }
 
 .column-description {

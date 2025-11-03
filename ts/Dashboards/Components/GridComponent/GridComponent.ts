@@ -305,8 +305,7 @@ class GridComponent extends Component {
 
         if (gridClassName) {
             this.contentElement.classList.value =
-                GridComponentDefaults.className + ' ' +
-                gridClassName;
+                GridComponentDefaults.gridClassName + ' ' + gridClassName;
         }
 
         if (gridID) {

@@ -23,6 +23,7 @@
 
 import type Grid from '../../Core/Grid';
 
+import Defaults from '../../Core/Defaults.js';
 import Exporting from './Exporting.js';
 import Globals from '../../Core/Globals.js';
 import U from '../../../Core/Utilities.js';
@@ -50,14 +51,15 @@ namespace ExportingComposition {
             return;
         }
 
-        addEvent(GridClass, 'afterRenderViewport', initExporting);
+        Defaults.defaultOptions.exporting = Exporting.defaultOptions;
+        addEvent(GridClass, 'beforeLoad', initExporting);
     }
 
     /**
      * Init exporting
      */
     function initExporting(this: Grid): void {
-        this.exporting = new Exporting(this, this.options?.exporting);
+        this.exporting = new Exporting(this);
     }
 }
 

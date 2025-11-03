@@ -12,12 +12,14 @@
         "Segoe UI Emoji",
         "Segoe UI Symbol",
         sans-serif;
+    background: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
 }
 
-#container {
-    padding: 8px;
+.demo {
+    padding: 8px 12px;
 }
 
 .highcharts-description {
-    padding: 0 10px;
+    padding: 0 8px;
 }
