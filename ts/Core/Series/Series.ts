@@ -2660,18 +2660,13 @@ class Series {
                         }
                     }
 
-                    if (graphic && verb === 'animate') { // Update
-                        // Since the marker group isn't clipped, each
-                        // individual marker must be toggled
-                        graphic[
-                            isInside || point.condemned ? 'show' : 'hide'
-                        ](isInside)
-                            .animate(markerAttribs);
-
-                    }
-
-                    // Presentational attributes
                     if (graphic) {
+                        // Updating pre-existing point
+                        if (verb === 'animate') {
+                            graphic?.animate(markerAttribs);
+                        }
+
+                        // Presentational attributes
                         const pointAttr = series.pointAttribs(
                             point,
                             (
@@ -2688,9 +2683,7 @@ class Series {
                                 fill: pointAttr.fill
                             });
                         }
-                    }
 
-                    if (graphic) {
                         graphic.addClass(point.getClassName(), true);
                     }
 

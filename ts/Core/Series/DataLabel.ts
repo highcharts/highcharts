@@ -264,7 +264,7 @@ namespace DataLabel {
         // labels (#2700)
         let visible =
             this.visible &&
-            point.visible !== false &&
+            point.visible &&
             defined(plotX) &&
             (
                 series.forceDL ||

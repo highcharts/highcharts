@@ -161,3 +161,113 @@ QUnit.test('Add point with entrance animation', assert => {
         TestUtilities.lolexUninstall(clock);
     }
 });
+
+QUnit.test('Set extremes with entrance and exit animations', assert => {
+    let clock;
+    try {
+        clock = TestUtilities.lolexInstall();
+
+        const chart = Highcharts.chart('container', {
+            chart: {
+                animation: {
+                    duration: 100
+                }
+            },
+            plotOptions: {
+                series: {
+                    minRange: 1
+                }
+            }
+        });
+
+        const types = [
+            'line',
+            'column',
+            'bubble'
+        ];
+
+        const shiftAndRun = () => {
+            const type = types.shift();
+
+            if (!type) {
+                return;
+            }
+
+            chart.series[0]?.remove();
+            chart.xAxis[0].setExtremes(undefined, undefined, true, false);
+
+            const series = chart.addSeries({
+                type,
+                data: [1, 3, 2, 4, 5, 4, 3, 4],
+                dataLabels: {
+                    enabled: true,
+                    format: '{y}'
+                }
+            }, true, false);
+
+            assert.strictEqual(
+                chart.series[0].type,
+                type,
+                `The ${type} should be added`
+            );
+
+            const firstPoint = series.points[0],
+                firstPointX = firstPoint.graphic.x;
+
+            // const firstDataLabelX = firstPoint.dataLabel.x;
+
+            series.xAxis.setExtremes(2, 6);
+
+            setTimeout(() => {
+                // Columns don't fade out, the're clipped
+                if (!series.is('column')) {
+                    assert.close(
+                        firstPoint.graphic.opacity,
+                        0.5,
+                        0.3,
+                        `The ${type} outgoing point should be semi-opaque ` +
+                        'mid exit'
+                    );
+                }
+
+                assert.ok(
+                    firstPoint.graphic.x < firstPointX,
+                    `The ${type} outgoing point should slide out to the left`
+                );
+
+                assert.notEqual(
+                    firstPoint.graphic.attr('visibility'),
+                    'hidden',
+                    `The ${type} outgoing point graphic should not be hidden`
+                );
+
+                /*
+                assert.close(
+                    firstPoint.dataLabel.opacity,
+                    0.5,
+                    0.3,
+                    `The ${type} outgoing data label should be semi-opaque`
+                );
+
+                assert.ok(
+                    firstPoint.dataLabel.x < firstDataLabelX,
+                    `The ${type} outgoing data label should slide out`
+                );
+                */
+            }, 50);
+
+            setTimeout(() => {
+
+                // Next type
+                shiftAndRun();
+            }, 150);
+
+        };
+
+        shiftAndRun();
+
+        TestUtilities.lolexRunAndUninstall(clock);
+    } finally {
+        TestUtilities.lolexUninstall(clock);
+    }
+});
