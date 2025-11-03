@@ -2320,37 +2320,6 @@ const defaultOptions: DefaultOptions = {
          */
 
         /**
-         * Prevents the tooltip from switching or closing, when touched or
-         * pointed.
-         *
-         * @sample highcharts/tooltip/stickoncontact/
-         *         Tooltip sticks on pointer contact
-         *
-         * @type      {boolean}
-         * @since     8.0.1
-         * @apioption tooltip.stickOnContact
-         */
-
-        /**
-         * Use HTML to render the contents of the tooltip instead of SVG. Using
-         * HTML allows advanced formatting like tables and images in the
-         * tooltip. It is also recommended for rtl languages as it works around
-         * rtl bugs in early Firefox.
-         *
-         * @sample {highcharts|highstock} highcharts/tooltip/footerformat/
-         *         A table for value alignment
-         * @sample {highcharts|highstock} highcharts/tooltip/fullhtml/
-         *         Full HTML tooltip
-         * @sample {highmaps} maps/tooltip/usehtml/
-         *         Pure HTML tooltip
-         *
-         * @type      {boolean}
-         * @default   false
-         * @since     2.2
-         * @apioption tooltip.useHTML
-         */
-
-        /**
          * How many decimals to show in each series' y value. This is
          * overridable in each series' tooltip options object. The default is to
          * preserve all decimals.
@@ -2809,13 +2778,14 @@ const defaultOptions: DefaultOptions = {
          */
 
         /**
-         * Prevents the tooltip from switching or closing when touched or
+         * Prevents the tooltip from switching or closing, when touched or
          * pointed.
          *
          * @sample highcharts/tooltip/stickoncontact/
          *         Tooltip sticks on pointer contact
          *
-         * @since 8.0.1
+         * @type      {boolean}
+         * @since     8.0.1
          */
         stickOnContact: false,
 
@@ -2856,7 +2826,7 @@ const defaultOptions: DefaultOptions = {
          * @sample {highmaps} maps/tooltip/usehtml/
          *         Pure HTML tooltip
          *
-         * @since 2.2
+         * @since     2.2
          */
         useHTML: false
     },

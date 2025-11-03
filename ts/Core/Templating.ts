@@ -40,6 +40,7 @@ const {
     ucfirst
 } = U;
 
+/** @internal */
 interface MatchObject {
     body?: string;
     ctx: any;
@@ -53,6 +54,7 @@ interface MatchObject {
     startInner: number;
 }
 
+/** @internal */
 const helpers: Record<string, Function> = {
     // Built-in helpers
     add: (a: number, b: number): number => a + b,
@@ -92,7 +94,10 @@ const numberFormatCache: Record<string, Intl.NumberFormat> = {};
  *
  * */
 
-// Internal convenience function
+/**
+ * Internal convenience function.
+ * @internal
+ */
 const isQuotedString = (str: string): boolean => /^["'].+["']$/.test(str);
 
 /**

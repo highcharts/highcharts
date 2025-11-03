@@ -176,7 +176,7 @@ class Tooltip {
     /**
      * List of crosshairs.
      *
-     * @private
+     * @internal
      * @readonly
      * @name Highcharts.Tooltip#crosshairs
      * @type {Array<null>}
@@ -192,7 +192,7 @@ class Tooltip {
     /**
      * Tooltips are initially hidden.
      *
-     * @private
+     * @internal
      * @readonly
      * @name Highcharts.Tooltip#isHidden
      * @type {boolean}
@@ -283,7 +283,7 @@ class Tooltip {
      * returning one entry for each item, abstracting this functionality allows
      * to easily overwrite and extend it.
      *
-     * @private
+     * @internal
      * @function Highcharts.Tooltip#bodyFormatter
      */
     public bodyFormatter(
@@ -307,7 +307,7 @@ class Tooltip {
      * Destroy the single tooltips in a split tooltip.
      * If the tooltip is active then it is not destroyed, unless forced to.
      *
-     * @private
+     * @internal
      * @function Highcharts.Tooltip#cleanSplit
      *
      * @param {boolean} [force]
@@ -385,7 +385,7 @@ class Tooltip {
      * Extendable method to get the anchor position of the tooltip
      * from a point or set of points
      *
-     * @private
+     * @internal
      * @function Highcharts.Tooltip#getAnchor
      */
     public getAnchor(
@@ -652,7 +652,7 @@ class Tooltip {
     /**
      * Get the total area available area to place the tooltip
      *
-     * @private
+     * @internal
      */
     public getPlayingField(): SizeObject {
         const { body, documentElement } = doc,
@@ -771,7 +771,7 @@ class Tooltip {
              * tooltip on top or bottom of the point, it will look for space
              * there.
              *
-             * @private
+             * @internal
              */
             firstDimension = function (
                 dim: ('x'|'y'),
@@ -819,7 +819,7 @@ class Tooltip {
              * align the tooltip above the point, trying to align center but
              * allowing left or right align within the chart box.
              *
-             * @private
+             * @internal
              */
             secondDimension = function (
                 dim: ('x'|'y'),
@@ -882,7 +882,7 @@ class Tooltip {
      * Place the tooltip when `position.fixed` is true. This is called both for
      * single tooltips, and for partial tooltips when `split`.
      *
-     * @private
+     * @internal
      */
     public getFixedPosition(
         boxWidth: number,
@@ -954,7 +954,7 @@ class Tooltip {
     /**
      * Initialize tooltip.
      *
-     * @private
+     * @internal
      * @function Highcharts.Tooltip#init
      *
      * @param {Highcharts.Chart} chart
@@ -989,7 +989,7 @@ class Tooltip {
         /**
          * List of crosshairs.
          *
-         * @private
+         * @internal
          * @readonly
          * @name Highcharts.Tooltip#crosshairs
          * @type {Array<null>}
@@ -999,7 +999,7 @@ class Tooltip {
         /**
          * Tooltips are initially hidden.
          *
-         * @private
+         * @internal
          * @readonly
          * @name Highcharts.Tooltip#isHidden
          * @type {boolean}
@@ -1061,7 +1061,7 @@ class Tooltip {
     /**
      * Moves the tooltip with a soft animation to a new position.
      *
-     * @private
+     * @internal
      * @function Highcharts.Tooltip#move
      *
      * @param {number} x
@@ -1274,7 +1274,7 @@ class Tooltip {
      * a label next to the point, then uses the distribute function to
      * find best non-overlapping positions.
      *
-     * @private
+     * @internal
      * @function Highcharts.Tooltip#renderSplit
      *
      * @param {string|Array<(boolean|string)>} labels
@@ -1337,7 +1337,7 @@ class Tooltip {
         /**
          * Calculates the anchor position for the partial tooltip
          *
-         * @private
+         * @internal
          * @param {Highcharts.Point} point The point related to the tooltip
          * @return {Object} Returns an object with anchorX and anchorY
          */
@@ -1382,7 +1382,7 @@ class Tooltip {
 
         /**
          * Calculate the position of the partial tooltip
-         * @private
+         * @internal
          */
         const defaultPositioner: Tooltip.PositionerCallbackFunction = function (
             boxWidth,
@@ -1428,7 +1428,7 @@ class Tooltip {
          * Updates the attributes and styling of the partial tooltip. Creates a
          * new partial tooltip if it does not exists.
          *
-         * @private
+         * @internal
          * @param {Highcharts.SVGElement|undefined} partialTooltip
          *  The partial tooltip to update
          * @param {Highcharts.Point} point
@@ -1716,7 +1716,7 @@ class Tooltip {
     /**
      * If the `stickOnContact` option is active, this will add a tracker shape.
      *
-     * @private
+     * @internal
      * @function Highcharts.Tooltip#drawTracker
      */
     private drawTracker(): void {
@@ -1794,7 +1794,7 @@ class Tooltip {
     }
 
     /**
-     * @private
+     * @internal
      */
     public styledModeFormat(formatString: string): string {
         return formatString
@@ -1814,7 +1814,7 @@ class Tooltip {
      * Format the footer/header of the tooltip
      * #3397: abstraction to enable formatting of footer and header
      *
-     * @private
+     * @internal
      * @function Highcharts.Tooltip#headerFooterFormatter
      */
     public headerFooterFormatter(
@@ -1893,7 +1893,7 @@ class Tooltip {
     /**
      * Find the new position and perform the move
      *
-     * @private
+     * @internal
      * @function Highcharts.Tooltip#updatePosition
      *
      * @param {Highcharts.Point} point
@@ -2041,7 +2041,7 @@ namespace Tooltip {
      * */
 
     /**
-     * @private
+     * @internal
      */
     export function compose(
         PointerClass: typeof Pointer

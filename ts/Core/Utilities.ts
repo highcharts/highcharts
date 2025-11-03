@@ -239,7 +239,7 @@ function merge<T>(
 /**
  * Constrain a value to within a lower and upper threshold.
  *
- * @private
+ * @internal
  * @param {number} value The initial value
  * @param {number} min The lower threshold
  * @param {number} max The upper threshold
@@ -274,7 +274,7 @@ function crisp(
 /**
  * Return the deep difference between two objects. It can either return the new
  * properties, or optionally return the old values of new properties.
- * @private
+ * @internal
  */
 function diffObjects(
     newer: AnyRecord,
@@ -376,7 +376,7 @@ function diffObjects(
 /**
  * Shortcut for parseInt
  *
- * @private
+ * @internal
  * @function Highcharts.pInt
  *
  * @param {*} s
@@ -533,7 +533,7 @@ function erase(arr: Array<unknown>, item: unknown): void {
  * according to the index option and whether it is internal. Used internally
  * when adding series and axes.
  *
- * @private
+ * @internal
  * @function Highcharts.Chart#insertItem
  * @param  {Highcharts.Series|Highcharts.Axis} item
  *         The item to insert
@@ -1351,7 +1351,7 @@ const timeUnits: Record<Time.TimeUnit, number> = {
 /**
  * Easing definition
  *
- * @private
+ * @internal
  * @function Math.easeInOutSine
  *
  * @param {number} pos
@@ -1367,7 +1367,7 @@ Math.easeInOutSine = function (pos: number): number {
 /**
  * Convenience function to get the align factor, used several places for
  * computing positions
- * @private
+ * @internal
  */
 const getAlignFactor = (align: string = ''): number => ({
     center: 0.5,
@@ -1378,7 +1378,7 @@ const getAlignFactor = (align: string = ''): number => ({
 
 /**
  * Find the closest distance between two values of a two-dimensional array
- * @private
+ * @internal
  * @function Highcharts.getClosestDistance
  *
  * @param {Array<Array<number>>} arrays
@@ -1421,7 +1421,7 @@ function getClosestDistance(
 /**
  * Returns the value of a property path on a given object.
  *
- * @private
+ * @internal
  * @function getNestedProperty
  *
  * @param {string} path
@@ -1783,7 +1783,7 @@ function removeEvent<T>(
     /* eslint-enable valid-jsdoc */
 
     /**
-     * @private
+     * @internal
      */
     function removeOneEvent(
         type: string,
@@ -1797,7 +1797,7 @@ function removeEvent<T>(
     }
 
     /**
-     * @private
+     * @internal
      */
     function removeAllEvents(eventCollection: any): void {
         let types: Record<string, boolean>,

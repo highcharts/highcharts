@@ -83,7 +83,7 @@ namespace Responsive {
         setResponsive(redraw?: boolean, reset?: boolean): void;
         /**
          * A flag to prevent responsive updates from running recursively.
-         * @private
+         * @internal
          */
         updatingResponsive: boolean;
     }
@@ -91,17 +91,17 @@ namespace Responsive {
     export interface CurrentObject {
         /**
          * The merged chart options from active rules.
-         * @private
+         * @internal
          */
         mergedOptions: Partial<GlobalOptions>;
         /**
          * A stringified key of the rules that currently apply.
-         * @private
+         * @internal
          */
         ruleIds: string;
         /**
          * The options to revert to when the rules are no longer active.
-         * @private
+         * @internal
          */
         undoOptions: Partial<GlobalOptions>;
     }
@@ -142,7 +142,7 @@ namespace Responsive {
     export interface RuleOptions {
         /**
          * Unique rule id.
-         * @private
+         * @internal
          */
         _id?: string;
         /**
@@ -164,7 +164,7 @@ namespace Responsive {
      * */
 
     /**
-     * @private
+     * @internal
      */
     export function compose<T extends typeof Chart>(
         ChartClass: T
@@ -184,7 +184,7 @@ namespace Responsive {
     /**
      * Handle a single responsiveness rule.
      *
-     * @private
+     * @internal
      * @function Highcharts.Chart#matchResponsiveRule
      * @param {Highcharts.ResponsiveRulesOptions} rule
      * @param {Array<string>} matches
@@ -220,7 +220,7 @@ namespace Responsive {
      * Update the chart based on the current chart/document size and options
      * for responsiveness.
      *
-     * @private
+     * @internal
      * @function Highcharts.Chart#setResponsive
      * @param  {boolean} [redraw=true]
      * @param  {boolean} [reset=false]

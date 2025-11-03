@@ -26,11 +26,15 @@ const {
     extend,
     timeUnits
 } = U;
+
+
 /* *
  *
  *  Declarations
  *
  * */
+
+
 declare module './Axis/TickPositionsArray'{
     interface TickPositionsArray {
         info?: TimeTicksInfoObject;
