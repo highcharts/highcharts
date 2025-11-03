@@ -13,7 +13,7 @@ import FSLib from '../libs/fs.js';
 import Error16Plugin from './plugins/Error16Plugin.mjs';
 import ProductMetaPlugin from './plugins/ProductMetaPlugin.mjs';
 import UMDExtensionPlugin from './plugins/UMDExtensionPlugin.mjs';
-import { resolveExternals } from './externals.mjs';
+import { loadExternalsJSON, resolveExternals } from './externals.mjs';
 
 
 /* *
@@ -33,8 +33,11 @@ const buildProps = FSLib.getFile(
 
 const namespace = 'Grid';
 const productMasters = [
-    'grid-lite'
+    'grid-lite',
+    'grid-pro'
 ];
+
+loadExternalsJSON(FSLib.path([import.meta.dirname, 'externals.json']));
 
 /* *
  *
@@ -66,17 +69,11 @@ const webpacks = FSLib
                 library: {
                     export: 'default',
                     name: (
-                        productMasters.includes(masterName) ?
-                            {
-                                amd: 'grid/grid',
-                                commonjs: 'grid',
-                                root: namespace
-                            } :
-                            {
-                                amd: `grid/${masterName}`,
-                                commonjs: `grid/${masterName}`,
-                                root: namespace
-                            }
+                        {
+                            amd: `grid/${masterName}`,
+                            commonjs: `grid/${masterName}`,
+                            root: namespace
+                        }
                     ),
                     type: 'umd',
                     umdNamedDefine: true
@@ -111,7 +108,9 @@ const webpacks = FSLib
                     info,
                     masterName,
                     sourceFolder,
-                    namespace
+                    namespace,
+                    productMasters[0], // grid-lite as default product
+                    'umd'
                 )
             ];
         }

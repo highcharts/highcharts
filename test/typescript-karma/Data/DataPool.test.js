@@ -7,17 +7,13 @@ QUnit.test('DataPool', function (assert) {
     dataPool.setConnectorOptions({
         id: 'A',
         type: 'CSVConnector',
-        options: {
-            csvURL: 'https://domain.example/data.csv'
-        }
+        csvURL: 'https://domain.example/data.csv'
     });
 
     dataPool.setConnectorOptions({
         id: 'B',
         type: 'CSVConnector',
-        options: {
-            csvURL: 'https://domain.example/data.csv'
-        }
+        csvURL: 'https://domain.example/data.csv'
     });
 
     assert.deepEqual(
@@ -31,9 +27,7 @@ QUnit.test('DataPool events', async function (assert) {
     const connectorOptions = {
         type: 'CSV',
         id: 'my-connector',
-        options: {
-            csv: 'A,B\n1,2'
-        }
+        csv: 'A,B\n1,2'
     };
     const dataPool = new DataPool();
 
@@ -88,22 +82,30 @@ QUnit.test('DataPool promises', async function (assert) {
         connectors: [{
             id: 'My Data',
             type: 'CSV',
-            options: {
-                csv: 'a,b,c\n1,2,3\n4,5,6\n7,8,9',
-                dataModifier: {
+            csv: 'a,b,c\n1,2,3\n4,5,6\n7,8,9',
+            dataModifier: {
+                type: 'Chain',
+                chain: [{
                     type: 'Chain',
                     chain: [{
                         type: 'Chain',
                         chain: [{
                             type: 'Range',
-                            ranges: [{
-                                column: 'a',
-                                minValue: 1,
-                                maxValue: 7
-                            }]
+                            condition: {
+                                operator: 'and',
+                                conditions: [{
+                                    column: 'a',
+                                    operator: '>=',
+                                    value: 1
+                                }, {
+                                    column: 'a',
+                                    operator: '<=',
+                                    value: 7
+                                }]
+                            }
                         }]
                     }]
-                }
+                }]
             }
         }]
     });
@@ -130,9 +132,7 @@ QUnit.test('DataPool replacement', async function (assert) {
         connectors: [{
             id: 'My Data',
             type: 'CSV',
-            options: {
-                csv: 'a,b,c\n1,2,3\n4,5,6\n7,8,9'
-            }
+            csv: 'a,b,c\n1,2,3\n4,5,6\n7,8,9'
         }]
     });
 
@@ -151,10 +151,8 @@ QUnit.test('DataPool replacement', async function (assert) {
     dataPool.setConnectorOptions({
         id: 'My Data',
         type: 'JSON',
-        options: {
-            columns: ['a', 'b', 'c'],
-            data: [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
-        }
+        columns: ['a', 'b', 'c'],
+        data: [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
     });
 
     assert.ok(

@@ -1,6 +1,6 @@
 @import url("https://code.highcharts.com/css/highcharts.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
-@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
 
 body {
     font-family:
@@ -44,7 +44,7 @@ body {
     fill: var(--highcharts-color-0);
 }
 
-.highcharts-datagrid-table {
+.highcharts-grid-table {
     border: 0;
 }
 
@@ -71,7 +71,7 @@ body {
     font-weight: 500;
 }
 
-.highcharts-datagrid-table tbody td {
+.highcharts-grid-table tbody td {
     padding-left: 14px;
 }
 
@@ -106,7 +106,7 @@ body {
 }
 
 @media (max-width: 800px) {
-    #data-grid,
+    #grid,
     #kpi-gauge-risk {
         flex: 1 1 100%;
     }

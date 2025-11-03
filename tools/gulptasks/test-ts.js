@@ -92,7 +92,7 @@ async function testTS() {
     }
 
     // Conditionally build required code
-    await gulpLib.run('scripts', 'dashboards/scripts');
+    await gulpLib.run('scripts');
 
     const shouldRunTests = forceRun ||
         (await shouldRun(runConfig).catch(error => {

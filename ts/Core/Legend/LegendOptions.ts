@@ -74,6 +74,7 @@ export interface LegendOptions {
     /** @deprecated */
     lineHeight?: number;
     margin?: number;
+    maxWidth?: number|string;
     maxHeight?: number;
     navigation: LegendNavigationOptions;
     padding?: number;

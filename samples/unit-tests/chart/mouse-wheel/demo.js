@@ -5,7 +5,10 @@ QUnit.test('Mouse wheel zoom on chart', function (assert) {
     const chart = Highcharts.stockChart('container', {
         chart: {
             zooming: {
-                type: 'x'
+                mouseWheel: {
+                    type: 'x',
+                    showResetButton: true
+                }
             }
         },
         navigator: {
@@ -29,10 +32,10 @@ QUnit.test('Mouse wheel zoom on chart', function (assert) {
         10,
         'Should zoom to retract xAxis to this on column chart (#19976)'
     );
-    assert.strictEqual(
+    assert.notEqual(
         typeof chart.resetZoomButton,
         'undefined',
-        'Reset zoom button should not display'
+        'Reset zoom button should display.'
     );
 
     controller.mouseWheel(200, 100, 1001);

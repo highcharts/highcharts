@@ -7,7 +7,7 @@
  *  Constants
  *
  * */
-const PRODUCTS = ['Highcharts', 'Grid'];
+const PRODUCTS = ['Highcharts', 'Grid', 'Dashboards'];
 
 /**
  * The validation of product name.

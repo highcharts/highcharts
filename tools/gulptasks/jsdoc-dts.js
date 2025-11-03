@@ -61,7 +61,7 @@ function jsDocESMDTS() {
             if (
                 // Skip compiled DTS for es-modules/masters
                 !dtsFile.endsWith('.src.d.ts') &&
-                folder.includes('masters')
+                folder.split(path.sep).includes('masters')
             ) {
                 continue;
             }
