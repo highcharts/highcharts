@@ -212,9 +212,8 @@ QUnit.test('Set extremes with entrance and exit animations', assert => {
             );
 
             const firstPoint = series.points[0],
-                firstPointX = firstPoint.graphic.x;
-
-            // const firstDataLabelX = firstPoint.dataLabel.x;
+                firstPointX = firstPoint.graphic.x,
+                firstDataLabelX = firstPoint.dataLabel.x;
 
             series.xAxis.setExtremes(2, 6);
 
@@ -241,7 +240,6 @@ QUnit.test('Set extremes with entrance and exit animations', assert => {
                     `The ${type} outgoing point graphic should not be hidden`
                 );
 
-                /*
                 assert.close(
                     firstPoint.dataLabel.opacity,
                     0.5,
@@ -253,7 +251,6 @@ QUnit.test('Set extremes with entrance and exit animations', assert => {
                     firstPoint.dataLabel.x < firstDataLabelX,
                     `The ${type} outgoing data label should slide out`
                 );
-                */
             }, 50);
 
             setTimeout(() => {

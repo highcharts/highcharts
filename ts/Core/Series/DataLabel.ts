@@ -291,7 +291,7 @@ namespace DataLabel {
                 )
             );
 
-        if (visible && pos) {
+        if (pos) {
             const bBox = dataLabel.getBBox(),
                 unrotatedbBox = dataLabel.getBBox(void 0, 0);
 
@@ -369,7 +369,7 @@ namespace DataLabel {
                 rotationOriginX: (dataLabel.width || 0) / 2,
                 rotationOriginY: (dataLabel.height || 0) / 2
             };
-            if (condemned) {
+            if (condemned || !visible) {
                 placeAttribs.opacity = 0;
             }
             dataLabel[dataLabel.placed ? 'animate' : 'attr'](placeAttribs);
@@ -395,7 +395,7 @@ namespace DataLabel {
             //     zIndex: 20
             // }).add();
 
-            if (justify && alignTo.height >= 0) { // #8830
+            if (justify && visible && alignTo.height >= 0) { // #8830
                 this.justifyDataLabel(
                     dataLabel,
                     options,
@@ -439,13 +439,10 @@ namespace DataLabel {
         }
 
         // Show or hide based on the final aligned position
-        if (!visible) {
-            dataLabel.hide();
-            dataLabel.placed = false; // Don't animate back in
-        } else {
-            dataLabel.show();
-            dataLabel.placed = true; // Flag for overlapping logic
-        }
+        dataLabel[isNew ? 'attr' : 'animate']({
+            visibility: visible ? 'inherit' : 'hidden'
+        });
+        dataLabel.placed = visible;
     }
 
     /**
