@@ -169,4 +169,4 @@ pagination: {
 ```
 
 Live example:
-<iframe src="https://www.highcharts.com/samples/embed/grid-pro/basic/cell-events?force-light-theme" allow="fullscreen"></iframe>
+<iframe src="https://www.highcharts.com/samples/embed/grid/basic/cell-events?force-light-theme" allow="fullscreen"></iframe>

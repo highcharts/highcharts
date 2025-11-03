@@ -16,6 +16,24 @@ body {
     color: var(--highcharts-neutral-color-100);
 }
 
+:root,
+.highcharts-light {
+    --code-background: #f7f7f7;
+    --code-border: #e1e1e1;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --code-background: #2a2a2a;
+        --code-border: #4a4a4a;
+    }
+}
+
+.highcharts-dark {
+    --code-background: #2a2a2a;
+    --code-border: #4a4a4a;
+}
+
 .lang-options {
     display: flex;
     justify-content: end;
@@ -32,8 +50,8 @@ body {
 code {
     font-family: Consolas, "courier new", monospace;
     line-height: 1em;
-    background: light-dark(#f7f7f7, #2a2a2a);
-    border: 1px solid light-dark(#e1e1e1, #4a4a4a);
+    background: var(--code-background);
+    border: 1px solid var(--code-border);
     color: var(--highcharts-neutral-color-100);
     padding: 2px 4px;
     border-radius: 5px;

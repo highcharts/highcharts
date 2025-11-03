@@ -248,4 +248,4 @@ Highcharts Grid Pro provides pagination events that allow you to respond to page
 
 For detailed information about pagination events and how to use them, see the [Events article](https://www.highcharts.com/docs/grid/events).
 
-<iframe src="https://www.highcharts.com/samples/embed/grid-lite/basic/pagination?force-light-theme" allow="fullscreen"></iframe>
+<iframe src="https://www.highcharts.com/samples/embed/grid/basic/pagination?force-light-theme" allow="fullscreen"></iframe>

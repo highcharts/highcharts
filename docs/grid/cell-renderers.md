@@ -265,7 +265,7 @@ If you want your custom renderer to be usable in cell edit mode, you need to imp
 
 This section demonstrates how to create a custom **Textarea** cell renderer for the Grid. The custom renderer will display a `<textarea>` element inside the cell, allowing for multi-line text editing.
 
-<iframe style="width: 100%; height: 590px; border: none;" src="https://www.highcharts.com/samples/embed/grid-pro/basic/custom-renderer?force-light-theme" allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 590px; border: none;" src="https://www.highcharts.com/samples/embed/grid/basic/custom-renderer?force-light-theme" allow="fullscreen"></iframe>
 
 1. We start by importing the default [`CellRenderer`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_CellRenderer.CellRenderer-1) and `CellContentPro` classes and [`CellRendererRegistry`](https://api.highcharts.com/grid/#modules/Grid_Pro_CellRendering_CellRendererRegistry.CellRendererRegistry) from the `Grid` namespace.
 

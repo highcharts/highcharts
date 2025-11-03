@@ -326,4 +326,4 @@ Here's a complete example showing column filtering in action:
 
 This example creates a grid with filtering enabled for all columns through `columnDefaults`. The grid displays various fruit data with different data types including strings, numbers, booleans, and dates. The weight column has an initial filter set to show only items weighing more than 1000 units, demonstrating how to pre-configure filtering conditions. The grouped header structure shows how filtering works with complex column layouts.
 
-<iframe src="https://www.highcharts.com/samples/embed/grid-lite/basic/column-filtering?force-light-theme" allow="fullscreen"></iframe>
+<iframe src="https://www.highcharts.com/samples/embed/grid/basic/column-filtering?force-light-theme" allow="fullscreen"></iframe>
