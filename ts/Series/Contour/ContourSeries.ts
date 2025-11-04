@@ -80,14 +80,22 @@ export default class ContourSeries extends ScatterSeries {
     public init(chart: Chart, options: ContourSeriesOptions): void {
         super.init.apply(this, [chart, options]);
 
-        // Adjusting to canvas
-        this.yAxis.axisPointRange = 1;
-        this.yAxis.options.endOnTick = (
-            this.yAxis.userOptions.endOnTick || false
-        );
-        this.yAxis.options.gridLineWidth = (
-            this.yAxis.userOptions.gridLineWidth || 0
-        );
+        const props = {
+            minPadding: 0,
+            maxPadding: 0,
+            gridLineWidth: 0,
+            endOnTick: true,
+            startOnTick: true
+        };
+
+        for (const axis of [this.xAxis, this.yAxis]) {
+
+            for (const [key, val] of Object.entries(props)) {
+                if (axis.userOptions[key as keyof typeof props] === void 0) {
+                    (axis.options as any)[key] = val;
+                }
+            }
+        }
     }
 
     public getContourData(): [Uint32Array, Float32Array] {
@@ -103,7 +111,9 @@ export default class ContourSeries extends ScatterSeries {
                 10e6 :
                 1;
 
-        let foundMax = 0;
+        let foundMax = 0,
+            foundXMax = 0,
+            foundYMax = 0;
 
         for (let i = 0; i < len; i++) {
             const { x, y = 0, value } = points[i],
@@ -114,6 +124,14 @@ export default class ContourSeries extends ScatterSeries {
                 foundMax = value || 0;
             }
 
+            if (foundXMax < x) {
+                foundXMax = x;
+            }
+
+            if (foundYMax < (y || 0)) {
+                foundYMax = y || 0;
+            }
+
             points2d[index2d] = x / xDivider;
             points2d[index2d + 1] = y && (y / yDivider) || 0;
 
@@ -122,6 +140,10 @@ export default class ContourSeries extends ScatterSeries {
             points3d[index3d + 2] = value ?? 0;
         }
         this.dataMax = foundMax ?? 0;
+
+        this.xAxis.setExtremes(0, foundXMax, false);
+        this.yAxis.setExtremes(0, foundYMax, false);
+
         return [new Delaunay(points2d).triangles, points3d];
     }
 
@@ -737,17 +759,13 @@ export default class ContourSeries extends ScatterSeries {
     private getWebGPUExtremes(): number[] {
         const { xAxis, yAxis } = this,
             { max: xMax = 0, min: xMin = 0 } = xAxis,
-            { max: yMax = 0, min: yMin = 0 } = yAxis,
-            // Use a small percentage of the range as padding
-            paddingPercent = -0.02,
-            xRange = ((xMax || 1) - (xMin || 0)) * paddingPercent,
-            yRange = ((yMax || 1) - (yMin || 0)) * paddingPercent;
+            { max: yMax = 0, min: yMin = 0 } = yAxis;
 
         return [
-            xMin - xRange,
-            xMax + xRange,
-            yMin - yRange,
-            yMax + yRange
+            xMin,
+            xMax,
+            yMin,
+            yMax
         ];
     }
 
