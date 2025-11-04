@@ -1,5 +1,6 @@
-root, .highcharts-light {
-  --highcharts-background-color: #ffffff;
+root,
+.highcharts-light {
+    --highcharts-background-color: #fff;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -9,7 +10,7 @@ root, .highcharts-light {
 }
 
 .highcharts-dark {
-  --highcharts-background-color: #141414;
+    --highcharts-background-color: #141414;
 }
 
 * {
@@ -24,12 +25,6 @@ root, .highcharts-light {
         "Segoe UI Emoji",
         "Segoe UI Symbol",
         sans-serif;
-}
-
-body.highcharts-light,
-body.highcharts-dark,
-body {
-    background-color: transparent !important;
 }
 
 .highcharts-figure {
