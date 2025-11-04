@@ -267,6 +267,7 @@ class Axis {
         len: number;
         max?: number;
         min?: number;
+        names: Array<string>;
         transA: number;
         userMax?: number;
         userMin?: number;
@@ -2938,7 +2939,6 @@ class Axis {
 
         return this.chart.renderer.fontMetrics(
             tick.label ||
-            tick.movedLabel ||
             renderer.box
         );
     }
@@ -3143,17 +3143,10 @@ class Axis {
 
         // Get the longest label length
         tickPositions.forEach(function (tickPosition): void {
-            const tick = ticks[tickPosition];
-
-            // Replace label - sorting animation
-            if (tick.movedLabel) {
-                tick.replaceMovedLabel();
-            }
-
-            const textPxLength = tick.label?.textPxLength || 0;
-            if (textPxLength > maxLabelLength) {
-                maxLabelLength = textPxLength;
-            }
+            maxLabelLength = Math.max(
+                maxLabelLength,
+                ticks[tickPosition].label?.textPxLength || 0
+            );
         });
         this.maxLabelLength = maxLabelLength;
 
@@ -3460,10 +3453,31 @@ class Axis {
 
         if (hasData || axis.isLinked) {
 
-            // Generate ticks
-            tickPositions.forEach(function (pos: number): void {
-                axis.generateTick(pos);
-            });
+            // Shuffle existing category ticks, like in bar race chart
+            const oldNames = axis.old?.names,
+                movedTicks: [number, Tick][] = [];
+            if (axis.type === 'category' && oldNames) {
+                oldNames.forEach((name, oldPos): void => {
+                    const pos = (axis.names as any).keys[name];
+                    if (defined(pos) && oldPos !== pos) {
+                        movedTicks.push([pos, axis.ticks[oldPos]]);
+                    }
+                });
+                movedTicks.forEach(([pos, tick]): void => {
+                    if (tick) {
+                        tick.pos = pos;
+                        axis.ticks[pos] = tick;
+                    } else {
+                        delete axis.ticks[pos];
+                    }
+                });
+                if (movedTicks.length) {
+                    axis.isDirty = true;
+                }
+            }
+
+            // Generate new ticks
+            tickPositions.forEach(axis.generateTick.bind(axis));
 
             axis.renderUnsquish();
 
@@ -4057,6 +4071,7 @@ class Axis {
             len: this.len,
             max: this.max,
             min: this.min,
+            names: this.names.slice(),
             transA: this.transA,
             userMax: this.userMax,
             userMin: this.userMin
