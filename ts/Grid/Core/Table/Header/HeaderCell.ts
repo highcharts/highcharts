@@ -233,12 +233,13 @@ class HeaderCell extends Cell {
             this.initColumnSorting();
         }
 
-        this.setCustomClassName(options.header?.className);
+        // Set alignment in column cells based on column data type
+        this.htmlElement.classList[
+            column?.dataType === 'number' ? 'add' : 'remove'
+        ](Globals.getClassName('rightAlign'));
 
-        // Add alignment to number column
-        if (column?.dataType === 'number') {
-            this.setCustomClassName(Globals.getClassName('rightAlign'));
-        }
+        // Add custom class name from column options
+        this.setCustomClassName(options.header?.className);
 
         fireEvent(this, 'afterRender', { column });
     }
