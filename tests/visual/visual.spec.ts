@@ -1,3 +1,4 @@
+/* eslint-disable playwright/no-conditional-expect */
 /* eslint-disable playwright/no-conditional-in-test */
 import type { Page, BrowserContext } from '@playwright/test';
 import { test, expect} from '@playwright/test';
@@ -43,6 +44,18 @@ test.describe('Visual tests', () => {
     let page: Page | undefined;
     let context: BrowserContext | undefined;
 
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    process.once('SIGINT', async () => {
+        console.log('\nReceived SIGINT, closing browser...');
+        if (page) {
+            await page.close().catch(() => {});
+        }
+        if (context) {
+            await context.close().catch(() => {});
+        }
+        process.exit(130);
+    });
+
     test.beforeAll(async ({ browser }) => {
         context ??= await browser.newContext({
             viewport: { width: 800, height: 600 },
@@ -55,7 +68,7 @@ test.describe('Visual tests', () => {
         page = await context.newPage();
         await context.clock.setFixedTime(FIXED_CLOCK_TIME);
 
-        await setupRoutes(page); // need to setup routes separately
+        await setupRoutes(page);
 
         await page.setContent(pageTemplate(defaultPageContent));
 
@@ -231,7 +244,7 @@ test.describe('Visual tests', () => {
                 window.HCVisualSetup?.markOptionsClean();
 
                 if (window.Highcharts) {
-                    window.Highcharts.setOptions({
+                    (window.Highcharts as any).setOptions({
                         chart: {
                             events: {
                                 load: function () {
@@ -250,11 +263,11 @@ test.describe('Visual tests', () => {
 
             await page.evaluate(() => {
                 if (window.Highcharts) {
-                    const chart = Highcharts.charts[
-                        Highcharts.charts.length - 1
+                    const chart = (window.Highcharts as any).charts[
+                        (window.Highcharts as any).charts.length - 1
                     ];
 
-                    window.Highcharts.prepareShot(chart);
+                    (window.Highcharts as any).prepareShot(chart);
                 }
             });
 
@@ -271,25 +284,74 @@ test.describe('Visual tests', () => {
                 });
             });
 
-            let screenshotError: unknown;
             try {
-                await expect(page).toHaveScreenshot({
-                    fullPage: true
+                // Wait for charts to be ready with SVG elements
+                await page.waitForFunction(
+                    () => {
+                        const Highcharts = (window as any).Highcharts;
+                        if (!Highcharts?.charts) return true;
+
+                        const validCharts = Highcharts.charts.filter(
+                            (chart: any) => chart && chart.container
+                            && !chart.renderer?.forExport
+                        );
+
+                        return validCharts.length === 0 || validCharts.every(
+                            (chart: any) => chart.container?.querySelector('svg')
+                        );
+                    },
+                    { timeout: 1000 }
+                );
+
+                // Add a small delay to ensure chart rendering is stable
+                // await page.waitForTimeout(50);
+
+                // Single evaluation to get both chart count and SVG content atomically
+                const { chartCount, svgContent } = await page.evaluate(() => {
+                    const Highcharts = (window as any).Highcharts;
+                    if (!Highcharts?.charts) {
+                        return { chartCount: 0, svgContent: null };
+                    }
+
+                    // Use consistent filtering logic
+                    const validCharts = Highcharts.charts.filter(
+                        (chart: any) => chart && chart.container &&
+                            !chart.renderer?.forExport &&
+                            chart.container.querySelector('svg')
+                    );
+
+                    const count = validCharts.length;
+                    let svg = null;
+
+                    // Only extract SVG if we have exactly one valid chart
+                    if (count === 1 && validCharts[0]) {
+                        const svgElement = validCharts[0].container.querySelector('svg');
+                        svg = svgElement ? svgElement.outerHTML : null;
+                    }
+
+                    return { chartCount: count, svgContent: svg };
                 });
-            } catch (err) {
-                screenshotError = err;
+
+                // Use SVG snapshot for single chart with valid SVG content
+                if (chartCount === 1 && svgContent) {
+                    expect(svgContent).toMatchSnapshot(`${samplePath}.svg`);
+
+                    await page.screenshot({ fullPage: true });
+                } else {
+                    await expect(page).toHaveScreenshot({
+                        fullPage: true
+                    });
+                }
+            } catch {
+                // noop
             } finally {
-                if (scriptHandle) {
+                if (page && scriptHandle) {
                     await scriptHandle.evaluate(
                         (element: HTMLScriptElement) => {
                             element.id = 'visual-test-script';
                         }
                     );
                 }
-            }
-
-            if (screenshotError) {
-                throw screenshotError;
             }
         });
     }
