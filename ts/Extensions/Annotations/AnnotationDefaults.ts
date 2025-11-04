@@ -46,6 +46,12 @@ const { defined } = U;
  */
 
 const AnnotationDefaults: AnnotationOptions = {
+    /**
+     * A class name for styling by CSS.
+     *
+     * @type      {string}
+     * @apioption annotations.className
+     */
 
     /**
      * Sets an ID for an annotation. Can be user later when

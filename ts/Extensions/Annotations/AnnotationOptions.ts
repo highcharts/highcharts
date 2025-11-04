@@ -143,6 +143,12 @@ export interface AnnotationOptions extends ControlTargetOptions {
      */
     animation: Partial<AnimationOptions>;
 
+    /**
+     * A class name for styling by CSS.
+     *
+     * @type      {string}
+     * @apioption annotations.className
+     */
     className?: string;
 
     /**
@@ -195,6 +201,7 @@ export interface AnnotationOptions extends ControlTargetOptions {
      */
     id?: (number|string);
 
+    /** @internal */
     itemType?: string;
 
     /**
@@ -484,6 +491,7 @@ export interface AnnotationOptions extends ControlTargetOptions {
         point?: ControllableLabelOptions['point'];
     }>;
 
+    /** @internal */
     langKey?: string;
 
     /**
