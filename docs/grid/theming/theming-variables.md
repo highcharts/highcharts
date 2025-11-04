@@ -236,40 +236,6 @@ If `format` or `formatter` are used to insert links in table cells, or caption/d
 | --hcg-link-hovered-color           | Parent        | [color](https://developer.mozilla.org/en-US/docs/Web/CSS/color)                     |
 | --hcg-link-hovered-text-decoration | underline     | [text-decoration](https://developer.mozilla.org/en-US/docs/Web/CSS/text-decoration) |
 
-## Pagination
-
-### Globals
-
-Global pagination variables define the appearance of pagination controls including buttons, page info, and page size selector.
-
-| Variable                                    | Default Value   | Valid Values                                                                        |
-| ------------------------------------------- | --------------- | ----------------------------------------------------------------------------------- |
-| --hcg-pagination-button-background         | #ffffff         | [background](https://developer.mozilla.org/en-US/docs/Web/CSS/background)          |
-| --hcg-pagination-button-color              | #000000         | [color](https://developer.mozilla.org/en-US/docs/Web/CSS/color)                    |
-| --hcg-pagination-button-background-active  | #000000         | [background](https://developer.mozilla.org/en-US/docs/Web/CSS/background)          |
-| --hcg-pagination-button-color-active       | #ffffff         | [color](https://developer.mozilla.org/en-US/docs/Web/CSS/color)                    |
-| --hcg-pagination-button-border             | #e8e8e8         | [border-color](https://developer.mozilla.org/en-US/docs/Web/CSS/border-color)      |
-| --hcg-pagination-button-border-hover       | #000000         | [border-color](https://developer.mozilla.org/en-US/docs/Web/CSS/border-color)      |
-| --hcg-pagination-icon-color                | #000000         | [color](https://developer.mozilla.org/en-US/docs/Web/CSS/color)                    |
-| --hcg-pagination-padding                   | 10px 0px        | [padding](https://developer.mozilla.org/en-US/docs/Web/CSS/padding)                |
-
-### Example
-
-This example customizes pagination styling with a custom color scheme and larger font size.
-
-```css
-.theme-custom {
-    --hcg-pagination-button-background: #f0f0f0;
-    --hcg-pagination-button-color: #333333;
-    --hcg-pagination-button-background-active: #007acc;
-    --hcg-pagination-button-color-active: #ffffff;
-    --hcg-pagination-button-border: #cccccc;
-    --hcg-pagination-button-border-hover: #007acc;
-    --hcg-pagination-icon-color: #666666;
-    --hcg-pagination-padding: 12px 0px;
-}
-```
-
 ## Putting It All Together
 
 Define a few global variables for a consistent base style. Use section-specific prefixes to refine headers, captions, rows, and columns. Use your own custom variables to avoid repetition.
