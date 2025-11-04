@@ -135,23 +135,26 @@ class CellEditToolbar extends EditToolbar {
             }
         });
 
-        items.push({
-            id: 'viewFullscreen',
-            type: 'icon',
-            className: EditGlobals.classNames.viewFullscreen,
-            icon: iconURLPrefix + 'fullscreen.svg',
-            events: {
-                click: function (this: MenuItem): void {
-                    const fullScreen = this.menu.parent.editMode.board.fullscreen;
-                    const container =
-                        this.menu.parent.cell.container.firstElementChild;
+        if (options.viewFullscreen?.enabled) {
+            items.push({
+                id: 'viewFullscreen',
+                type: 'icon',
+                className: EditGlobals.classNames.viewFullscreen,
+                icon: iconURLPrefix + 'fullscreen.svg',
+                events: {
+                    click: function (this: MenuItem): void {
+                        const fullScreen = this.menu.parent.editMode.board.fullscreen;
+                        const container =
+                            this.menu.parent.cell.container.firstElementChild;
 
-                    if (fullScreen) {
-                        fullScreen.toggle(container);
+                        if (fullScreen) {
+                            fullScreen.toggle(container);
+                        }
                     }
                 }
-            }
-        })
+            })
+        }
+
 
         return items;
     }
