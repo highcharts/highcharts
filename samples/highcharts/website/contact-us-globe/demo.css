@@ -1,3 +1,17 @@
+root, .highcharts-light {
+  --highcharts-background-color: #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --highcharts-background-color: #141414;
+    }
+}
+
+.highcharts-dark {
+  --highcharts-background-color: #141414;
+}
+
 * {
     font-family:
         -apple-system,
