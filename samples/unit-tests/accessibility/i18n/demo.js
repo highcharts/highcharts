@@ -244,10 +244,12 @@ QUnit.test('Chart lang can be configured', function (assert) {
 
     // #23744
     chart.update({
-        chart: {
-            lang: {
-                lang: {
-                    locale: 'zh-CN'
+        lang: {
+            accessibility: {
+                axis: {
+                    defaultAxisNames: {
+                        categories: '类别'
+                    }
                 }
             }
         },
@@ -255,6 +257,14 @@ QUnit.test('Chart lang can be configured', function (assert) {
             type: 'category'
         }
     });
+
+    const defaultAxisNames = chart.options.lang.accessibility.axis
+        .defaultAxisNames;
+
+    assert.ok(
+        defaultAxisNames.categories === '类别',
+        'defaultAxisNames.categories is configurable'
+    );
 
     const screenReaderHTML = chart.accessibility.components.infoRegions
         .screenReaderSections.before.element.innerHTML;
