@@ -1126,6 +1126,10 @@ namespace EditMode {
          * Tools options.
          */
         tools?: Tools;
+        /**
+         * Fullscreen options.
+         */
+        viewFullscreen?: ViewFullscreenOptions;
     }
 
     /**
@@ -1134,6 +1138,15 @@ namespace EditMode {
     export interface SettingsOptions {
         /**
          * Whether the toolbar settings buttons should be enabled.
+         *
+         * @default true
+         */
+        enabled?: boolean;
+    }
+
+    export interface ViewFullscreenOptions {
+        /**
+         * Whether the view fullscreen button should be enabled.
          *
          * @default true
          */
