@@ -231,6 +231,18 @@ QUnit.test('alignThresholds', function (assert) {
         point2Box.y + point2Box.height,
         '#17314: alignThresholds and stacking should place columns correctly.'
     );
+
+    // #23787
+    chart.series[0].setData([1, 3, -1]);
+    chart.series[1].setData([2, -2, 2]);
+    chart.setSize(undefined, 300);
+
+    assert.strictEqual(
+        chart.yAxis[0].tickPositions.indexOf(0),
+        1,
+        'Top-heavy data, zero should be the second tick on first axis'
+    );
+
 });
 
 QUnit.test('Align thresholds and zooming', function (assert) {
