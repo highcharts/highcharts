@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
@@ -13,7 +14,7 @@ export async function setTestingOptions(
     page: Page, HC: JSHandle<typeof Highcharts> | undefined = undefined
 ){
     await page.evaluate(({ HC }) => {
-        (HC ?? window.Highcharts).setOptions({
+        (HC ?? window.Highcharts as any).setOptions({
             chart: {
                 animation: false
             },
@@ -93,7 +94,9 @@ export async function getKarmaScripts() {
 }
 
 type Details = {
-    resources?: string[]
+    resources?: string[];
+    requiresManualTesting?: boolean;
+    skipTest?: boolean;
 };
 
 type SampleObj = {

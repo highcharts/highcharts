@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { default as Chart } from '../code/esm/highcharts.src.js';
 
 import type GridType from '../ts/Grid/Core/Grid.ts';
@@ -13,5 +14,15 @@ declare global {
     interface Window {
         Highcharts: HighchartsType;
         Grid: typeof GridType;
+        HCVisualSetup?: {
+            initialized?: boolean;
+            mode?: string;
+            beforeSample?(): void;
+            afterSample?(): void;
+            markOptionsClean?(): void;
+            configure?(options: { mode?: string }): string;
+            deepClone?<T>(obj: T, seen?: WeakMap<any, any>): T;
+        };
+        setHCStyles?(chart: any): void;
     }
 }
