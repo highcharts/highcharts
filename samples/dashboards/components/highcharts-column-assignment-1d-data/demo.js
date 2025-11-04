@@ -3,16 +3,14 @@ Dashboards.board('container', {
         connectors: [{
             id: 'data',
             type: 'JSON',
-            options: {
-                data: [
-                    ['First Column', 'Second Column'],
-                    [1, 5],
-                    [4, 2],
-                    [3, 3],
-                    [2, 4],
-                    [5, 1]
-                ]
-            }
+            data: [
+                ['First Column', 'Second Column'],
+                [1, 5],
+                [4, 2],
+                [3, 3],
+                [2, 4],
+                [5, 1]
+            ]
         }]
     },
     gui: {
@@ -78,14 +76,16 @@ Dashboards.board('container', {
         }
     }, {
         renderTo: 'dashboard-col-1',
-        type: 'DataGrid',
+        type: 'Grid',
         connector: {
             id: 'data'
         },
-        dataGridOptions: {
+        gridOptions: {
             columnDefaults: {
                 cells: {
-                    editable: true
+                    editMode: {
+                        enabled: true
+                    }
                 }
             }
         }

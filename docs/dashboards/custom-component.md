@@ -3,7 +3,7 @@
 ## Custom HTML Component
 The basic HTML component described in the [Types of Components](https://www.highcharts.com/docs/dashboards/types-of-components) doesn't allow the reuse of the HTML code, which is already present in the DOM. To overcome this limitation, you can create a custom HTML component, which will allow you to reference the HTML element by its `id` attribute or pass the HTML as a string to the `html` property.
 
-<iframe style="width: 100%; height: 590px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/components/custom-html-component" allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 590px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/components/custom-html-component?force-light-theme" allow="fullscreen"></iframe>
 
 This custom component will extend the basic HTML component, so we must import the `HTMLComponent` class. The easiest way is through the `ComponentRegistry`, as shown below. We will also use the `Dashboards.AST` class, which will be used to parse the string-type HTML into an AST-like object. In case something is missing in the AST class, you can extend it the same way as in Highcharts. See the documentation for [AST](https://api.highcharts.com/class-reference/Highcharts.AST).
 
@@ -83,7 +83,7 @@ Dashboards.board('container', {
 ## Custom Threshold Component
 Sometimes, you may want to create a component that works as if it changes its type and/or options depending on certain conditions. Such a condition may be, for example, value. The example below shows how to program a custom so-called Threshold Component.
 
-<iframe style="width: 100%; height: 700px; border: none;" src='https://www.highcharts.com/samples/embed/dashboards/components/custom-threshold-component' allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 700px; border: none;" src='https://www.highcharts.com/samples/embed/dashboards/components/custom-threshold-component?force-light-theme' allow="fullscreen"></iframe>
 
 Such a component can be implemented very similarly to the previously described `YouTubeComponent`, except that you need to consider replacing the default cell content with the child component. This can be achieved by overriding the render method with the code for clearing the cell content and then the logic for creating and updating a new component like this:
 
@@ -256,7 +256,7 @@ The example below shows how to develop a custom component that fetches data from
 
 The custom component is created by extending the `HTMLComponent` class, which displays the total revenue.
 
-<iframe style="width: 100%; height: 700px; border: none;" src='https://www.highcharts.com/samples/embed/dashboards/components/custom-component-data-connector' allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 700px; border: none;" src='https://www.highcharts.com/samples/embed/dashboards/components/custom-component-data-connector?force-light-theme' allow="fullscreen"></iframe>
 
 The DataConnector is registered on the `load`, so we need to execute and await the `super.load()` method first to ensure that the `DataConnector` is registered. An important part is that the `load` method is `async` because we need to wait for the data to be fetched and processed.
 
@@ -292,7 +292,7 @@ class TotalRevenueHTML extends HTMLComponent {
 
     getTotalRevenue() {
         const connector = this.getFirstConnector();
-        const table = connector.table.modified;
+        const table = connector.getTable().getModified();
 
         return table.columns.Revenue.reduce((acc, cur) => acc + cur);
     }
@@ -318,7 +318,7 @@ components: [{
 ## Custom YouTube Component
 This article shows how to create a custom **Dashboards** Component. In this example, we create a YouTube Component.
 
-<iframe style="width: 100%; height: 590px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/components/custom-component" allow="fullscreen" allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 590px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/components/custom-component?force-light-theme" allow="fullscreen"></iframe>
 
 Note that to create the custom component, we are using ES6 and using the `class` and `extends` keywords, which makes creating a custom class much easier.
 

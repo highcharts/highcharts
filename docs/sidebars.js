@@ -101,7 +101,7 @@ module.exports = {
             'dashboards/edit-mode',
             'dashboards/types-of-components',
             'dashboards/grid-component',
-            'dashboards/grid-standalone',
+            'dashboards/grid-migration',
             'dashboards/kpi-component',
             'dashboards/highcharts-component',
             'dashboards/html-component',
@@ -116,7 +116,6 @@ module.exports = {
             'dashboards/custom-component',
             'dashboards/installation-with-es-modules',
             'dashboards/get-options',
-            'dashboards/grid-migration',
             'dashboards/frequently-asked-questions',
         ],
         'Grid': [
@@ -126,7 +125,12 @@ module.exports = {
             'grid/columns',
             'grid/header',
             'grid/cell-editing',
+            'grid/cell-renderers',
+            'grid/sparklines',
+            'grid/column-filtering',
             'grid/events',
+            'grid/exporting',
+            'grid/pagination',
             {
                 'Theming': [
                     'grid/theming/theming',
@@ -200,7 +204,7 @@ module.exports = {
         'Advanced chart features': [
             'advanced-chart-features/renderer',
             'advanced-chart-features/annotations-module',
-            'advanced-chart-features/annotations-and-fibonacci-retracements',
+            'advanced-chart-features/creating-advanced-annotations',
             'advanced-chart-features/annotations-gui',
             'advanced-chart-features/boost-module',
             'advanced-chart-features/breadcrumbs',
@@ -237,7 +241,10 @@ module.exports = {
                     'morningstar/risk-score',
                     'morningstar/regulatory-news-announcements',
                     'morningstar/security-details',
+                    'morningstar/security-compare',
                     'morningstar/x-ray',
+                    'morningstar/performance',
+                    'morningstar/hypo-performance',
                     {
                         'Time Series': [
                             'morningstar/time-series/time-series',
@@ -292,14 +299,18 @@ module.exports = {
             'extending-highcharts/extending-highcharts'
         ],
         'Flutter': [
-            'flutter/getting-started'
+            'flutter/getting-started',
+            'flutter/your-first-chart',
+            'flutter/highcharts-bundling'
         ],
-        'React integration (beta)': [
+        'React integration': [
             'react/getting-started',
             'react/series-and-chart-types',
             'react/options',
             'react/options-component-format',
+            'react/nextjs',
             'react/component-children',
+            'react/v4-migration-guide'
         ]
     }
 };

@@ -32,7 +32,7 @@ import type PositionObject from '../PositionObject';
 import type ShadowOptionsObject from '../ShadowOptionsObject';
 import type SVGAttributes from './SVGAttributes';
 import type SVGPath from './SVGPath';
-import type SVGRendererLike from './SVGRendererLike';
+import type SVGRendererBase from './SVGRendererBase';
 import type SymbolOptions from './SymbolOptions';
 import type { SymbolKey } from './SymbolType';
 
@@ -145,7 +145,7 @@ let hasInternalReferenceBug: (boolean|undefined);
  *        some cases, but not when set explicitly through `.attr` and `.css`
  *        etc.
  */
-class SVGRenderer implements SVGRendererLike {
+class SVGRenderer implements SVGRendererBase {
 
     /**
      * The root `svg` node of the renderer.
@@ -1726,18 +1726,18 @@ class SVGRenderer implements SVGRendererLike {
      *
      * @function Highcharts.SVGRenderer#fontMetrics
      *
-     * @param {Highcharts.SVGElement|Highcharts.SVGDOMElement|number} [element]
-     *        The element to inspect for a current font size. If a number is
-     *        given, it's used as a fall back for direct font size in pixels.
+     * @param {Highcharts.SVGElement|Highcharts.SVGDOMElement|number} ref
+     * The element to inspect for a current font size. If a number is given,
+     * it's used as a fall back for direct font size in pixels.
      *
      * @return {Highcharts.FontMetricsObject}
-     *         The font metrics.
+     * The font metrics.
      */
     public fontMetrics(
-        element: (DOMElementType|SVGElement)
+        ref: (DOMElementType|SVGElement|number)
     ): FontMetricsObject {
-        const f = pInt(
-            SVGElement.prototype.getStyle.call(element, 'font-size') || 0
+        const f = isNumber(ref) ? ref : pInt(
+            (SVGElement.prototype.getStyle.call(ref, 'font-size') || 0)
         );
 
         // Empirical values found by comparing font size and bounding box
@@ -2118,7 +2118,7 @@ class SVGRenderer implements SVGRendererLike {
  *
  * */
 
-interface SVGRenderer extends SVGRendererLike {
+interface SVGRenderer extends SVGRendererBase {
     Element: typeof SVGElement;
     SVG_NS: string;
     escapes: Record<string, string>;

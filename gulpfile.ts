@@ -33,17 +33,6 @@ Gulp.registry(new GulpForwardReference());
     'dashboards/api-docs',
     'dashboards/api-server',
     'dashboards/cypress',
-    'dashboards/dist',
-    'dashboards/dist-build',
-    'dashboards/dist-examples',
-    'dashboards/dist-release',
-    'dashboards/dist-upload',
-    'dashboards/dist-zip',
-    'dashboards/scripts',
-    'dashboards/scripts-dts',
-    'dashboards/scripts-watch',
-    'dashboards/test',
-    'dashboards/lint',
     'default',
     'dist',
     'dist-clean',
@@ -119,7 +108,7 @@ Gulp.registry(new GulpForwardReference());
  *
  * */
 
-(function (tasks) {
+(function (tasks: Record<string, string>) {
     Object
         .keys(tasks)
         .forEach(alias => Gulp.task(alias, Gulp.series(tasks[alias])));

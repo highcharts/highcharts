@@ -29,7 +29,7 @@ const connector = new HighchartsConnectors.Morningstar.TimeSeriesConnector({
 (async () => {
     await connector.load();
 
-    const cols = connector.table.getColumns();
+    const cols = connector.getTable().getColumns();
 
     const name = Array.from(Object.keys(cols).filter(k => k !== 'Date'))[0];
     const data = cols[name].map((value, i) => [cols.Date[i], value]);
@@ -241,13 +241,12 @@ const connector = new HighchartsConnectors.Morningstar.TimeSeriesConnector({
         series: [
             {
                 data,
-                lineColor: '#cc0000',
                 color: '#cc0000',
                 fillColor: {
                     linearGradient: { x1: 0, x2: 0, y1: 0, y2: 1 },
                     stops: [
-                        [0, '#818181'],
-                        [1, '#fafafa']
+                        [0, 'var(--highcharts-neutral-color-40, #999999)'],
+                        [1, 'var(--highcharts-neutral-color-3, #f7f7f7)']
                     ]
                 },
                 fillOpacity: 0.5,

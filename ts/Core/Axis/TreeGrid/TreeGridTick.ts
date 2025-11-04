@@ -36,6 +36,7 @@ import { Palette } from '../../Color/Palettes.js';
 import U from '../../Utilities.js';
 const {
     addEvent,
+    correctFloat,
     removeEvent,
     isObject,
     isNumber,
@@ -351,6 +352,7 @@ function wrapRenderLabel(
         removeEvent(labelElement);
         label?.css({ cursor: 'default' });
         icon.destroy();
+        tickGrid.labelIcon = void 0;
     }
 }
 
@@ -450,19 +452,15 @@ class TreeGridTickAdditions {
      * {@link Highcharts.Chart#redraw}
      */
     public collapse(redraw?: boolean): void {
-        const tick = this.tick,
-            axis = tick.axis,
-            brokenAxis = axis.brokenAxis;
+        const { pos, axis } = this.tick,
+            { treeGrid, brokenAxis } = axis,
+            posMappedNodes = treeGrid.mapOfPosToGridNode;
 
-        if (
-            brokenAxis &&
-            axis.treeGrid.mapOfPosToGridNode
-        ) {
-            const pos = tick.pos,
-                node = axis.treeGrid.mapOfPosToGridNode[pos],
-                breaks = axis.treeGrid.collapse(node);
-
-            brokenAxis.setBreaks(breaks, pick(redraw, true));
+        if (brokenAxis && posMappedNodes) {
+            brokenAxis.setBreaks(
+                treeGrid.collapse(posMappedNodes[pos]),
+                redraw ?? true
+            );
         }
     }
 
@@ -473,9 +471,7 @@ class TreeGridTickAdditions {
      * @function Highcharts.Tick#destroy
      */
     public destroy(): void {
-        if (this.labelIcon) {
-            this.labelIcon.destroy();
-        }
+        this.labelIcon?.destroy();
     }
 
     /**
@@ -491,16 +487,15 @@ class TreeGridTickAdditions {
      * {@link Highcharts.Chart#redraw}
      */
     public expand(redraw?: boolean): void {
-
         const { pos, axis } = this.tick,
             { treeGrid, brokenAxis } = axis,
             posMappedNodes = treeGrid.mapOfPosToGridNode;
 
         if (brokenAxis && posMappedNodes) {
-            const node = posMappedNodes[pos],
-                breaks = treeGrid.expand(node);
-
-            brokenAxis.setBreaks(breaks, pick(redraw, true));
+            brokenAxis.setBreaks(
+                treeGrid.expand(posMappedNodes[pos]),
+                redraw ?? true
+            );
         }
     }
 
@@ -517,20 +512,62 @@ class TreeGridTickAdditions {
      * Whether to redraw the chart or wait for an explicit call to
      * {@link Highcharts.Chart#redraw}
      */
-    public toggleCollapse(redraw?: boolean): void {
-        const tick = this.tick,
-            axis = tick.axis,
-            brokenAxis = axis.brokenAxis;
+    public toggleCollapse(redraw: boolean = true): void {
+        const { axis, pos } = this.tick,
+            { brokenAxis, treeGrid } = axis;
 
-        if (
-            brokenAxis &&
-            axis.treeGrid.mapOfPosToGridNode
-        ) {
-            const pos = tick.pos,
-                node = axis.treeGrid.mapOfPosToGridNode[pos],
-                breaks = axis.treeGrid.toggleCollapse(node);
+        if (brokenAxis && treeGrid.mapOfPosToGridNode) {
+            const scrollMode = !!(axis.scrollbar && axis.staticScale),
+                maxPx = axis.pos + axis.len +
+                    (treeGrid.pendingSizeAdjustment || 0);
 
-            brokenAxis.setBreaks(breaks, pick(redraw, true));
+            treeGrid.pendingSizeAdjustment = 0;
+
+            brokenAxis.setBreaks(
+                treeGrid.toggleCollapse(treeGrid.mapOfPosToGridNode[pos]),
+                scrollMode && redraw
+            );
+
+            if (scrollMode) {
+                const adjustedMax = axis.toValue(axis.toPixels(axis.dataMax));
+                let newMaxVal = axis.toValue(maxPx) - axis.tickmarkOffset,
+                    newMinVal = axis.userMin ?? axis.min;
+
+                // If dataMax is in a break.
+                treeGrid.adjustedMax = adjustedMax !== axis.dataMax ?
+                    adjustedMax - axis.tickmarkOffset :
+                    void 0;
+
+                if (newMaxVal > axis.dataMax) {
+                    let missingPx = maxPx -
+                        axis.toPixels(axis.dataMax + axis.tickmarkOffset);
+                    newMaxVal = treeGrid.adjustedMax ?? axis.dataMax;
+
+                    // Check if enough space available on the min end.
+                    newMinVal = axis.toValue(axis.toPixels(
+                        newMinVal - axis.tickmarkOffset
+                    ) - missingPx) + axis.tickmarkOffset;
+
+                    if (newMinVal < axis.dataMin) {
+                        missingPx = axis.toPixels(axis.dataMin) -
+                            axis.toPixels(newMinVal);
+                        newMinVal = axis.dataMin;
+                        treeGrid.pendingSizeAdjustment = missingPx;
+                    }
+                }
+
+                axis.setExtremes(
+                    correctFloat(newMinVal),
+                    correctFloat(newMaxVal),
+                    false,
+                    false,
+                    { trigger: 'toggleCollapse' }
+                );
+            }
+
+            if (redraw) {
+                axis.chart.redraw();
+            }
         }
     }
 }

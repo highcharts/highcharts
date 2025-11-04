@@ -159,7 +159,7 @@ items: [{
 ## Edit mode live example
 
 Use the context menu on the upper-right corner to enable and explore the edit mode.
-<iframe style="width: 100%; height: 600px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/edit-mode/ctx-enabled" allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 600px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/edit-mode/ctx-enabled?force-light-theme" allow="fullscreen"></iframe>
 
 
 ## Edit mode events
@@ -199,7 +199,7 @@ See the live demo [here](https://jsfiddle.net/gh/get/library/pure/highcharts/hig
 All default styles for the edit mode are defined in the `dashboards.css` file. It can be imported to your project by adding the following line to your CSS file:
 
 ```css
-@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 ```
 
 You can override them by adding your own styles to your project, for example:

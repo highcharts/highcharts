@@ -16,6 +16,7 @@
  *
  * */
 
+import type { DeepPartial } from '../../Shared/Types';
 import type {
     XAxisOptions,
     YAxisOptions
@@ -755,15 +756,6 @@ namespace AxisDefaults {
          * @product   highcharts highstock gantt
          * @context   Highcharts.Axis
          * @apioption xAxis.events.pointInBreak
-         */
-
-        /**
-         * An event fired when a point is outside a break after zoom.
-         *
-         * @type      {Highcharts.AxisPointBreakEventCallbackFunction}
-         * @product   highcharts highstock gantt
-         * @context   Highcharts.Axis
-         * @apioption xAxis.events.pointBreakOut
          */
 
         /**

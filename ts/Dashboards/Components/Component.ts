@@ -22,18 +22,16 @@
  *
  * */
 
+import type { AnyRecord } from '../../Shared/Types';
 import type Board from '../Board';
 import type {
     ComponentType,
     ComponentTypeRegistry
 } from './ComponentType';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import type JSON from '../JSON';
-import type Serializable from '../Serializable';
-import type TextOptions from './TextOptions';
+import type DataConnectorType from '../../Data/Connectors/DataConnectorType';
 import type Row from '../Layout/Row';
 import type SidebarPopup from '../EditMode/SidebarPopup';
-import type DataConnectorType from '../../Data/Connectors/DataConnectorType';
+import type TextOptions from './TextOptions';
 
 import Cell from '../Layout/Cell.js';
 import CellHTML from '../Layout/CellHTML.js';
@@ -235,10 +233,6 @@ abstract class Component {
      */
     public id: string;
     /**
-     * Reference to the specific connector data table.
-     */
-    public dataTableKey?: string;
-    /**
      * An array of options marked as editable by the UI.
      *
      */
@@ -307,7 +301,7 @@ abstract class Component {
         options: Partial<Component.Options>,
         board?: Board
     ) {
-        const renderTo = options.renderTo || options.cell;
+        const renderTo = options.renderTo;
         this.board = board || cell?.row?.layout?.board || {};
         this.parentElement =
             cell?.container || document.querySelector('#' + renderTo);
@@ -332,11 +326,6 @@ abstract class Component {
                     new ConnectorHandler(this, connectorOptions)
                 );
             }
-
-            // Assign the data table key to define the proper dataTable.
-            this.dataTableKey = isArray(this.options.connector) ?
-                this.options.connector[0].dataTableKey :
-                this.options.connector.dataTableKey;
         }
 
         this.editableOptions =
@@ -669,10 +658,13 @@ abstract class Component {
 
         if (!connectorsHaveChanged) {
             for (let i = 0, iEnd = connectorOptions.length; i < iEnd; i++) {
-                const oldConnectorId = this.connectorHandlers[i]?.options.id;
-                const newConnectorId = connectorOptions[i]?.id;
+                const oldOpt = this.connectorHandlers[i]?.options;
+                const newOpt = connectorOptions[i];
 
-                if (oldConnectorId !== newConnectorId) {
+                if (
+                    newOpt?.id !== oldOpt?.id ||
+                    newOpt?.dataTableKey !== oldOpt?.dataTableKey
+                ) {
                     connectorsHaveChanged = true;
                     break;
                 }
@@ -693,12 +685,6 @@ abstract class Component {
                 );
             }
             await this.initConnectors();
-        }
-
-        // Assign the data table key to define the proper dataTable.
-        const firstConnectorDataTableKey = connectorOptions[0]?.dataTableKey;
-        if (firstConnectorDataTableKey) {
-            this.dataTableKey = firstConnectorDataTableKey;
         }
 
         if (shouldRerender || eventObject.shouldForceRerender) {
@@ -902,41 +888,6 @@ abstract class Component {
     }
 
     /**
-     * Converts the class instance to a class JSON.
-     * @internal
-     *
-     * @returns
-     * Class JSON of this Component instance.
-     *
-     * @internal
-     */
-    public toJSON(): Component.JSON {
-        const dimensions: Record<'width' | 'height', number> = {
-            width: 0,
-            height: 0
-        };
-        objectEach(this.dimensions, function (value, key): void {
-            if (value === null) {
-                return;
-            }
-            dimensions[key] = value;
-        });
-
-        const json: Component.JSON = {
-            $class: this.options.type,
-            options: {
-                renderTo: this.options.renderTo,
-                parentElement: this.parentElement.id,
-                dimensions,
-                id: this.id,
-                type: this.type
-            }
-        };
-
-        return json;
-    }
-
-    /**
      * Get the component's options.
      * @returns
      * The JSON of component's options.
@@ -1025,10 +976,6 @@ namespace Component {
     *  Declarations
     *
     * */
-    /** @internal */
-    export interface JSON extends Serializable.JSON<string> {
-        options: ComponentOptionsJSON;
-    }
 
     /**
      * The basic events
@@ -1041,7 +988,6 @@ namespace Component {
         TableChangedEvent |
         LoadEvent |
         RenderEvent |
-        JSONEvent |
         PresentationModifierEvent;
 
     export type SetConnectorsEvent =
@@ -1065,10 +1011,6 @@ namespace Component {
     export type RenderEvent = Event<'render' | 'afterRender', {}>;
 
     /** @internal */
-    export type JSONEvent = Event<'toJSON' | 'fromJSON', {
-        json: Serializable.JSON<string>;
-    }>;
-    /** @internal */
     export type TableChangedEvent = Event<'tableChanged', {}>;
     /** @internal */
     export type PresentationModifierEvent =
@@ -1080,18 +1022,10 @@ namespace Component {
         EventRecord extends Record<string, any>> = {
             readonly type: EventType;
             target?: Component;
-            detail?: Globals.AnyRecord;
+            detail?: AnyRecord;
         } & EventRecord;
 
     export interface Options {
-
-        /**
-         * Cell id, where component is attached.
-         * Deprecated, use `renderTo` instead.
-         *
-         * @deprecated
-         */
-        cell?: string;
 
         /**
          * Cell id, where component is attached.
@@ -1113,7 +1047,7 @@ namespace Component {
          * Allow overwriting gui elements.
          * @internal
          */
-        navigationBindings?: Array<Globals.AnyRecord>;
+        navigationBindings?: Array<AnyRecord>;
         /**
          * Events attached to the component : `mount`, `unmount`, `resize`, `update`.
          *
@@ -1128,7 +1062,10 @@ namespace Component {
         editableOptions?: Array<EditableOptions.Options>;
         /** @internal */
         editableOptionsBindings?: EditableOptions.OptionsBindings;
-        /** @internal */
+        /**
+         * Sync options. Predefined per component or custom sync options can be
+         * used here.
+         */
         sync?: Sync.RawOptionsRecord;
         /**
          * Connector options
@@ -1196,25 +1133,6 @@ namespace Component {
              */
             enabled?: boolean;
         };
-    }
-
-    /**
-     * JSON compatible options for export
-     * @internal
-     *  */
-    export interface ComponentOptionsJSON extends JSON.Object {
-        caption?: string;
-        className?: string;
-        renderTo?: string;
-        editableOptions?: JSON.Array<string>;
-        editableOptionsBindings?: EditableOptions.OptionsBindings&JSON.Object;
-        id: string;
-        parentCell?: Cell.JSON;
-        parentElement?: string; // ID?
-        style?: {};
-        sync?: Sync.RawOptionsRecord&JSON.Object;
-        title?: string;
-        type: keyof ComponentTypeRegistry;
     }
 
     /** @internal */

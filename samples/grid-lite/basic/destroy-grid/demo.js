@@ -9,15 +9,23 @@ const options = {
         }
     }
 };
-let dg = Grid.grid('container', options);
+let grid = Grid.grid('container', options);
 
-document.getElementById('destroy-btn').addEventListener('click', () => {
-    dg.destroy();
-    console.log('destroyed:', dg);
+document.getElementById('delete-rows-btn').addEventListener('click', () => {
+    if (grid.dataTable) {
+        grid.dataTable.deleteRows(0, 4);
+        grid.viewport.updateRows();
+    }
+    console.log('deleted rows:', grid.dataTable);
 });
 
-document.getElementById('load-btn').addEventListener('click', () => {
-    dg.destroy();
-    dg = Grid.grid('container', options);
-    console.log('created:', dg);
+document.getElementById('destroy-grid-btn').addEventListener('click', () => {
+    grid.destroy();
+    console.log('destroyed:', grid);
+});
+
+document.getElementById('reload-btn').addEventListener('click', () => {
+    grid.destroy();
+    grid = Grid.grid('container', options);
+    console.log('created:', grid);
 });

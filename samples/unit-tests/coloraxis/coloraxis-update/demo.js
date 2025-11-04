@@ -1,38 +1,39 @@
 QUnit.test('Color axis updates', function (assert) {
-    var chart = Highcharts.chart('container', {
-        chart: {
-            type: 'heatmap',
-            width: 500,
-            height: 300
-        },
+    const chart = Highcharts.chart('container', {
+            chart: {
+                type: 'heatmap',
+                width: 500,
+                height: 300
+            },
 
-        colorAxis: {
-            min: 0
-        },
+            colorAxis: {
+                width: '100%',
+                min: 0
+            },
 
-        series: [
-            {
-                data: [
-                    [0, 0, 10],
-                    [0, 1, 19],
-                    [0, 2, 8],
-                    [0, 3, 24],
-                    [0, 4, 67],
-                    [1, 0, 92],
-                    [1, 1, 58],
-                    [1, 2, 78],
-                    [1, 3, 117],
-                    [1, 4, 48]
-                ]
-            }
-        ]
-    });
-
-    var plotHeight = chart.plotHeight;
+            series: [
+                {
+                    data: [
+                        [0, 0, 10],
+                        [0, 1, 19],
+                        [0, 2, 8],
+                        [0, 3, 24],
+                        [0, 4, 67],
+                        [1, 0, 92],
+                        [1, 1, 58],
+                        [1, 2, 78],
+                        [1, 3, 117],
+                        [1, 4, 48]
+                    ]
+                }
+            ]
+        }),
+        colorAxis = chart.colorAxis[0],
+        plotHeight = chart.plotHeight;
 
     assert.ok(plotHeight > 100, 'Ready');
 
-    chart.colorAxis[0].update({
+    colorAxis.update({
         max: 500
     });
 
@@ -64,18 +65,28 @@ QUnit.test('Color axis updates', function (assert) {
         }
     });
     assert.notOk(
-        chart.colorAxis[0].visible,
+        colorAxis.visible,
         '#16053: Color axis should be hidden after hiding legend'
     );
 
     chart.update({
         legend: {
             enabled: true
+        },
+        chart: {
+            width: 600
         }
     });
+
     assert.ok(
-        chart.colorAxis[0].visible,
+        colorAxis.visible,
         '#16053: Color axis should be visible after showing legend again'
+    );
+
+    assert.strictEqual(
+        colorAxis.width >= 600,
+        true,
+        'Color axis width follows chart width, even after updating (#22850)'
     );
 });
 

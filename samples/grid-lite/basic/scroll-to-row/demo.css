@@ -1,4 +1,18 @@
-@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid.css");
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid-lite.css");
+
+body {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
+}
 
 #demo {
     padding: 8px;
@@ -10,29 +24,6 @@
     width: 100%;
 }
 
-.highcharts-datagrid-row[data-row-index="998"] td {
-    height: 150px;
-}
-
-.highcharts-datagrid-column {
-    width: 15%;
-}
-
-.highcharts-datagrid-column[data-column-id="b"] {
-    width: 30%;
-}
-
-.highcharts-datagrid-column[data-column-id="c"] {
-    width: 10%;
-}
-
 .custom-caption-class {
     text-decoration: underline;
-}
-
-@media (prefers-color-scheme: dark) {
-    #demo {
-        background-color: #292929;
-        color: #fff;
-    }
 }

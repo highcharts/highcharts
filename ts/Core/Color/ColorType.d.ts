@@ -23,7 +23,7 @@ import type GradientColor from './GradientColor';
  *
  * */
 
-export interface ColorLike {
+export interface ColorBase {
     // Nothing here yet
 }
 

@@ -68,6 +68,7 @@ QUnit.test('General waterfall tests', function (assert) {
         {
             series: [
                 {
+                    cropThreshold: 1,
                     dataLabels: {
                         enabled: true,
                         inside: false
@@ -77,6 +78,9 @@ QUnit.test('General waterfall tests', function (assert) {
             ],
             yAxis: {
                 max: -5 // #15334
+            },
+            xAxis: {
+                minRange: 0.1
             }
         },
         true,
@@ -87,5 +91,13 @@ QUnit.test('General waterfall tests', function (assert) {
         chart.series[0].points[0].dataLabel.attr('y') >=
             chart.series[0].points[0].plotY,
         'Label rendered below the point.'
+    );
+
+    chart.xAxis[0].setExtremes(-0.1, 0.1);
+
+    assert.strictEqual(
+        chart.series[0].getGraphPath().length,
+        2,
+        'Graph path should not be drawn for points outside of the extremes.'
     );
 });

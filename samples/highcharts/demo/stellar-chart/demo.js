@@ -39,14 +39,22 @@ Highcharts.chart('container', {
             'series'
     },
     colorAxis: {
-        min: 0,
-        max: 12,
-        stops: [
-            [0, colors[0]],
-            [1 / 3, colors[1]],
-            [2 / 3, colors[2]],
-            [1, colors[3]]
-        ]
+        dataClasses: [{
+            from: 1990,
+            to: 2000,
+            color: colors[0]
+        }, {
+            from: 2000,
+            to: 2010,
+            color: colors[1]
+        }, {
+            from: 2010,
+            to: 2020,
+            color: colors[2]
+        }, {
+            from: 2020,
+            color: colors[3]
+        }]
     },
     legend: {
         enabled: false
@@ -55,10 +63,10 @@ Highcharts.chart('container', {
         innerSize: '42%',
         size: '95%',
         background: [{
-            backgroundColor: '#f7f7f7',
+            backgroundColor: 'var(--highcharts-neutral-color-3, #f7f7f7)',
             borderWidth: 0
         }, {
-            backgroundColor: '#fff',
+            backgroundColor: 'var(--highcharts-background-color, #fff)',
             borderWidth: 0,
             outerRadius: '42%'
         }]
@@ -85,7 +93,6 @@ Highcharts.chart('container', {
     },
     tooltip: {
         borderWidth: 1,
-        backgroundColor: '#fff',
         shadow: false,
         outside: true,
         hideDelay: 20,
@@ -116,7 +123,7 @@ Highcharts.chart('container', {
         }
     },
     series: [{
-        colorKey: 'custom.stellarMagnitude',
+        colorKey: 'custom.discoveryDate',
         maxSize: 14,
         minSize: 3,
         tooltip: {
@@ -270,7 +277,7 @@ function fillCenter(percentage, decade, chart, customLabel) {
             labelText, 0, 0, void 0, void 0,
             void 0, true
         ).css({
-            color: '#000',
+            color: 'var(--highcharts-neutral-color-100, #000)',
             pointerEvents: 'none'
         }).add();
     } else {

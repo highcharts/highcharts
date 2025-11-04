@@ -21,7 +21,7 @@ import type Pane from '../../Extensions/Pane/Pane';
 import type RadialAxis from './RadialAxis';
 import type RadialAxisOptions from './RadialAxisOptions';
 
-import ColorAxisLike from './Color/ColorAxisLike.js';
+import ColorAxisBase from './Color/ColorAxisBase';
 import U from '../Utilities.js';
 const { extend } = U;
 
@@ -34,12 +34,12 @@ const { extend } = U;
 /**
  * @private
  */
-interface SolidGaugeAxis extends ColorAxisLike, RadialAxis.AxisComposition {
+interface SolidGaugeAxis extends ColorAxisBase, RadialAxis.AxisComposition {
     center: Array<number>;
     coll: AxisCollectionKey;
     max: number;
     min: number;
-    options: (ColorAxisLike.Options&RadialAxisOptions);
+    options: (ColorAxisBase.Options&RadialAxisOptions);
     pane: Pane;
 }
 
@@ -55,7 +55,7 @@ interface SolidGaugeAxis extends ColorAxisLike, RadialAxis.AxisComposition {
 function init(
     axis: RadialAxis.AxisComposition
 ): void {
-    extend<SolidGaugeAxis|RadialAxis.AxisComposition>(axis, ColorAxisLike);
+    extend<SolidGaugeAxis|RadialAxis.AxisComposition>(axis, ColorAxisBase);
 }
 
 /* *

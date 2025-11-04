@@ -19,7 +19,7 @@
  *
  * */
 
-import type Globals from '../Globals';
+import type { AnyRecord } from '../../Shared/Types';
 import type JSON from '../JSON';
 
 import DataCursor from '../../Data/DataCursor.js';
@@ -57,7 +57,7 @@ function fromJSON(
  * false.
  */
 function jsonSupportFor(
-    obj: Globals.AnyRecord
+    obj: AnyRecord
 ): obj is DataCursor {
     return obj instanceof DataCursor;
 }
@@ -131,6 +131,7 @@ namespace DataCursorHelper {
         column?: string;
         row?: number;
         state: DataCursor.State;
+        sourceId?: string;
         type: 'position';
     }
 
@@ -139,6 +140,7 @@ namespace DataCursorHelper {
         firstRow: number;
         lastRow: number;
         state: DataCursor.State;
+        sourceId?: string;
         type: 'range';
     }
 

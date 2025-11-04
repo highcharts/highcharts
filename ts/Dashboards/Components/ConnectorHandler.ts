@@ -93,6 +93,12 @@ class ConnectorHandler {
      * @internal
      */
     public presentationTable?: DataTable;
+    /**
+     * Helper flag for detecting whether the connector handler has been
+     * destroyed, used to check and prevent further operations if the connector
+     * handler has been destroyed during asynchronous functions.
+     */
+    private destroyed?: boolean;
 
 
     /* *
@@ -149,7 +155,12 @@ class ConnectorHandler {
             }
 
             const connector = await dataPool.getConnector(connectorId);
-            this.setConnector(connector);
+
+            // The connector shouldn't be set if the handler was destroyed
+            // during its creation.
+            if (!this.destroyed) {
+                this.setConnector(connector);
+            }
         }
 
         return component;
@@ -187,8 +198,8 @@ class ConnectorHandler {
         if (this.presentationModifier) {
             this.presentationTable =
                 this.presentationModifier.modifyTable(
-                    table.modified.clone()
-                ).modified;
+                    table.getModified().clone()
+                ).getModified();
         } else {
             this.presentationTable = table;
         }
@@ -212,12 +223,11 @@ class ConnectorHandler {
         this.connector = connector;
 
         if (connector) {
-            const dataTableKey = this.component.dataTableKey;
             const dataTables = connector.dataTables;
 
-            if (dataTableKey) {
+            if (this.options.dataTableKey) {
                 // Match a data table used in this component.
-                this.setTable(dataTables[dataTableKey]);
+                this.setTable(dataTables[this.options.dataTableKey]);
 
                 // Take the first connector data table if id not provided.
             } else {
@@ -283,12 +293,12 @@ class ConnectorHandler {
         if (connector) {
             tableEvents.push(table.on(
                 'afterSetModifier',
-                (e): void => {
+                (e: DataTable.SetModifierEvent): void => {
                     if (e.type === 'afterSetModifier') {
                         clearTimeout(this.tableEventTimeout);
                         this.tableEventTimeout = Globals.win.setTimeout(
                             (): void => {
-                                connector.emit({
+                                this.component.emit({
                                     ...e,
                                     type: 'tableChanged',
                                     targetConnector: connector
@@ -382,6 +392,7 @@ class ConnectorHandler {
      * @internal
      */
     public destroy(): void {
+        this.destroyed = true;
         this.removeConnectorAssignment();
         this.removeTableEvents();
     }

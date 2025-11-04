@@ -315,7 +315,7 @@ const options = {
             {
                 from: '2009-11-27',
                 to: '2010-12-01',
-                color: '#EFFFFF',
+                color: '#00ffff22',
                 label: {
                     text: '<em>Offices:</em><br>Torstein´s<br>basement',
                     style: {
@@ -328,7 +328,7 @@ const options = {
             {
                 from: '2010-12-01',
                 to: '2013-10-01',
-                color: '#FFFFEF',
+                color: '#ffff0022',
                 label: {
                     text: '<em>Offices:</em><br> Tomtebu',
                     style: {
@@ -340,7 +340,7 @@ const options = {
             {
                 from: '2013-10-01',
                 to: '2016-03-01',
-                color: '#FFEFFF',
+                color: '#ff00ff22',
                 label: {
                     text: '<em>Offices:</em><br> VikØrsta',
                     style: {
@@ -352,12 +352,9 @@ const options = {
             {
                 from: '2016-03-10',
                 to: '2022-12-30',
-                color: '#dff9e7',
+                color: '#00ffff22',
                 label: {
                     text: '<em>Offices</em>:<br>Blix Hotel',
-                    style: {
-                        color: '#000'
-                    },
                     y: 20
                 }
             }
@@ -396,13 +393,13 @@ const options = {
             allowDecimals: false,
             labels: {
                 style: {
-                    color: Highcharts.getOptions().colors[2]
+                    color: Highcharts.getOptions().colors[1]
                 }
             },
             title: {
                 text: 'Employees',
                 style: {
-                    color: Highcharts.getOptions().colors[2]
+                    color: Highcharts.getOptions().colors[1]
                 }
             },
             opposite: true,
@@ -427,7 +424,8 @@ const options = {
                     valueDescriptionFormat:
                         '{xDescription}. {point.title}: {point.text}.'
                 }
-            }
+            },
+            opacity: 0.8
         }
     },
     series: [
@@ -632,7 +630,6 @@ if (Highcharts.Series.types.flags) {
         {
             type: 'flags',
             name: 'Cloud',
-            color: '#333333',
             shape: 'squarepin',
             y: -80,
             data: [
@@ -648,7 +645,6 @@ if (Highcharts.Series.types.flags) {
         {
             type: 'flags',
             name: 'Highmaps',
-            color: '#333333',
             shape: 'squarepin',
             y: -55,
             data: [
@@ -663,7 +659,6 @@ if (Highcharts.Series.types.flags) {
         {
             type: 'flags',
             name: 'Gantt',
-            color: '#333333',
             shape: 'squarepin',
             y: -55,
             data: [
@@ -678,7 +673,6 @@ if (Highcharts.Series.types.flags) {
         {
             type: 'flags',
             name: 'Highcharts GPT',
-            color: '#333333',
             shape: 'squarepin',
             y: -55,
             data: [
@@ -693,7 +687,6 @@ if (Highcharts.Series.types.flags) {
         {
             type: 'flags',
             name: 'Highcharts',
-            color: '#333333',
             shape: 'circlepin',
             data: [
                 {
@@ -778,8 +771,6 @@ if (Highcharts.Series.types.flags) {
         {
             type: 'flags',
             name: 'Events',
-            color: '#333333',
-            fillColor: 'rgba(255,255,255,0.8)',
             data: [
                 {
                     x: '2012-11-01',

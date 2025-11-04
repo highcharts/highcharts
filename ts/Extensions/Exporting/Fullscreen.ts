@@ -24,7 +24,7 @@
  *
  * */
 
-import type Chart from '../../Core/Chart/Chart.js';
+import type Chart from '../../Core/Chart/Chart';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
 import H from '../../Core/Globals.js';
@@ -42,8 +42,8 @@ const {
  *
  * */
 
-declare module '../../Core/Chart/ChartLike' {
-    interface ChartLike {
+declare module '../../Core/Chart/ChartBase' {
+    interface ChartBase {
         /** @requires Extensions/Fullscreen */
         fullscreen?: Fullscreen;
     }
@@ -130,7 +130,7 @@ class Fullscreen {
          * the fullscreen mode.
          *
          * @name Highcharts.Fullscreen#isOpen
-         * @type {boolean|undefined}
+         * @type {boolean | undefined}
          * @since 8.0.1
          */
         this.isOpen = false;
@@ -184,13 +184,13 @@ class Fullscreen {
     public origHeight?: number;
 
     /** @private */
-    public origHeightOption?: (number|string|null);
+    public origHeightOption?: (number | string | null);
 
     /** @private */
     public origWidth?: number;
 
     /** @private */
-    public origWidthOption?: (number|null);
+    public origWidthOption?: (number | null);
 
     /** @private */
     public unbindFullscreenEvent?: Function;
@@ -334,7 +334,7 @@ class Fullscreen {
      */
     private setButtonText(): void {
         const chart = this.chart,
-            exportDivElements = chart.exportDivElements,
+            exportDivElements = chart.exporting?.divElements,
             exportingOptions = chart.options.exporting,
             menuItems = (
                 exportingOptions &&
@@ -411,21 +411,21 @@ namespace Fullscreen {
 
     export interface BrowserProperties {
         fullscreenChange: (
-            'fullscreenchange'|
-            'mozfullscreenchange'|
-            'webkitfullscreenchange'|
+            'fullscreenchange' |
+            'mozfullscreenchange' |
+            'webkitfullscreenchange' |
             'MSFullscreenChange'
         );
         requestFullscreen: (
-            'msRequestFullscreen'|
-            'mozRequestFullScreen'|
-            'requestFullscreen'|
+            'msRequestFullscreen' |
+            'mozRequestFullScreen' |
+            'requestFullscreen' |
             'webkitRequestFullScreen'
         );
         exitFullscreen: (
-            'exitFullscreen'|
-            'mozCancelFullScreen'|
-            'webkitExitFullscreen'|
+            'exitFullscreen' |
+            'mozCancelFullScreen' |
+            'webkitExitFullscreen' |
             'msExitFullscreen'
         );
     }

@@ -23,35 +23,42 @@ The `dataTable` object is the only required option for proper rendering of Grid,
 
 Read more about [data handling and the DataTable class](https://www.highcharts.com/docs/dashboards/data-table).
 
+### Data modifiers
+
+Alternatively to serializable options, you can pass a reference to the [DataTable](https://www.highcharts.com/docs/dashboards/data-table) you want to use when rendering the Grid. This lets you, for example, apply a [Math Modifier](https://www.highcharts.com/docs/dashboards/mathmodifier-module) from Highcharts Dashboards library to it beforehand to add a new column whose values are the result of a mathematical operation on one or more existing columns.
+
+You can read more about Data Modifiers [here](https://www.highcharts.com/docs/dashboards/data-modifiers).
+
 ## columnDefaults and columns[]
 ```js
 {
     columnDefaults: {
         cells: {
-            editable: true
+            editMode: {
+                enabled: true
+            }
         }
     },
-    columns: [
-        {
-            id: "weight",
-            header: {
-                format: "Weight"
-            },
-            cells: {
-                format: "{value}g"
-                editable: false
-            }
+    columns: [{
+        id: "weight",
+        header: {
+            format: "Weight"
         },
-        {
-            id: "price",
-            header: {
-                format: "Price"
-            },
-            cells: {
-                format: "${value}"
+        cells: {
+            format: "{value}g",
+            editMode: {
+                enabled: false
             }
         }
-    ]
+    }, {
+        id: "price",
+        header: {
+            format: "Price"
+        },
+        cells: {
+            format: "${value}"
+        }
+    }]
 }
 ```
 
@@ -123,6 +130,42 @@ The `rendering` option object can be used to configure options related to perfor
 ```
 
 For more information on rendering options, please read our article on [Performance and rendering](https://www.highcharts.com/docs/grid/performance) or see the [API reference](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.RenderingSettings).
+
+## pagination
+The `pagination` option object enables you to split large datasets into manageable pages, improving performance and user experience. When enabled, pagination displays a subset of data at a time with navigation controls.
+
+```js
+{
+    pagination: {
+        enabled: true,
+        pageSize: 25,
+        position: 'bottom',
+        controls: {
+            pageSizeSelector: {
+                enabled: true,
+                options: [10, 25, 50, 100]
+            },
+            pageInfo: {
+                enabled: true
+            },
+            firstLastButtons: {
+                enabled: true
+            },
+            previousNextButtons: {
+                enabled: true
+            },
+            pageButtons: {
+                enabled: true,
+                count: 5
+            }
+        }
+    }
+}
+```
+
+The pagination controls include page size selection, page information display, first/last page buttons, previous/next buttons, and numbered page buttons. You can also configure pagination events (in the Grid Pro version) to respond to page changes and page size modifications.
+
+For more information on pagination options and events, see the [Pagination article](https://www.highcharts.com/docs/grid/pagination) or the [API reference](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.PaginationOptions).
 
 ## events __grid_pro__
 Highcharts Grid Pro supports several event listeners that can be added to the header, columns and cells. These provide custom functionality and extendibility of Grid. Read more about events in the [Events article](https://www.highcharts.com/docs/grid/events).

@@ -8,6 +8,10 @@ Highcharts.stockChart('container', {
         overscroll: '50%'
     },
 
+    tooltip: {
+        valueDecimals: 2
+    },
+
     series: [{
         name: 'Random data',
         pointStart: '2017-01-01',

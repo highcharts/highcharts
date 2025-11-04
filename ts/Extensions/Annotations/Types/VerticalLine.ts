@@ -29,6 +29,7 @@ import D from '../../../Core/Defaults.js';
 const { defaultOptions } = D;
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
+import { Palette } from '../../../Core/Color/Palettes';
 const {
     merge,
     pick
@@ -77,14 +78,20 @@ if (defaultOptions.annotations) {
             /**
              * Connector options.
              *
-             * @extends   annotations.types.crookedLine.shapeOptions
+             * @extends   annotations.shapeOptions
              * @excluding height, r, type, width
              */
             connector: {
                 strokeWidth: 1,
                 markerEnd: 'arrow'
             }
-        } as any
+        } as any,
+        labelOptions: {
+            style: {
+                color: Palette.neutralColor80,
+                fontSize: '0.7em'
+            }
+        }
     };
 }
 

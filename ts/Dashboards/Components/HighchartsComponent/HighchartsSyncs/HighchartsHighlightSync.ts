@@ -70,14 +70,14 @@ const syncPair: Sync.SyncPair = {
             const seriesId = series.options.id ?? '';
             const connectorHandler: HCComponent.HCConnectorHandler =
                 component.seriesFromConnector[seriesId];
-            const table = connectorHandler?.connector?.table;
-            let columnName: string | undefined;
+            const table = connectorHandler?.connector?.getTable();
+            let columnId: string | undefined;
 
             if (!table) {
                 continue;
             }
 
-            const presTable = table?.modified;
+            const presTable = table?.getModified();
             const colAssignment = connectorHandler.columnAssignment?.find(
                 (s): boolean => s.seriesId === seriesId
             );
@@ -85,15 +85,15 @@ const syncPair: Sync.SyncPair = {
             if (colAssignment) {
                 const { data } = colAssignment;
                 if (typeof data === 'string') {
-                    columnName = data;
+                    columnId = data;
                 } else if (Array.isArray(data)) {
-                    columnName = data[1];
+                    columnId = data[1];
                 } else {
-                    columnName = data.y ?? data.value;
+                    columnId = data.y ?? data.value;
                 }
             }
-            if (!columnName) {
-                columnName = series.name;
+            if (!columnId) {
+                columnId = series.name;
             }
 
             series.update({
@@ -104,16 +104,18 @@ const syncPair: Sync.SyncPair = {
                             cursor.emitCursor(table, {
                                 type: 'position',
                                 row: presTable.getOriginalRowIndex(this.index),
-                                column: columnName,
-                                state: 'point.mouseOver' + groupKey
+                                column: columnId,
+                                state: 'point.mouseOver' + groupKey,
+                                sourceId: component.id
                             });
                         },
                         mouseOut: function (): void {
                             cursor.emitCursor(table, {
                                 type: 'position',
                                 row: presTable.getOriginalRowIndex(this.index),
-                                column: columnName,
-                                state: 'point.mouseOut' + groupKey
+                                column: columnId,
+                                state: 'point.mouseOut' + groupKey,
+                                sourceId: component.id
                             });
                         }
                     }
@@ -186,7 +188,7 @@ const syncPair: Sync.SyncPair = {
                         const connectorHandler: HCComponent.HCConnectorHandler =
                                 component.seriesFromConnector[seriesId];
 
-                        if (connectorHandler?.connector?.table !== table) {
+                        if (connectorHandler?.connector?.getTable() !== table) {
                             continue;
                         }
 
@@ -226,7 +228,7 @@ const syncPair: Sync.SyncPair = {
 
                 const row = cursor.row;
                 if (series?.visible && row !== void 0) {
-                    const rowIndex = table.modified.getLocalRowIndex(row);
+                    const rowIndex = table.getModified().getLocalRowIndex(row);
                     if (rowIndex === void 0) {
                         return;
                     }
@@ -243,7 +245,10 @@ const syncPair: Sync.SyncPair = {
             const highlightOptions = this.sync
                 .syncConfig.highlight as HighchartsHighlightSyncOptions;
 
-            if (!highlightOptions.enabled) {
+            if (
+                !highlightOptions.enabled ||
+                e.cursor.sourceId === component.id
+            ) {
                 return;
             }
 
@@ -303,7 +308,8 @@ const syncPair: Sync.SyncPair = {
 
             if (
                 !chart || !chart.series.length ||
-                !highlightOptions.enabled
+                !highlightOptions.enabled ||
+                e.cursor.sourceId === component.id
             ) {
                 return;
             }
@@ -388,7 +394,7 @@ const syncPair: Sync.SyncPair = {
             }
 
             for (let i = 0, iEnd = connectorHandlers.length; i < iEnd; ++i) {
-                const table = connectorHandlers[i]?.connector?.table;
+                const table = connectorHandlers[i]?.connector?.getTable();
                 if (!table) {
                     continue;
                 }
@@ -397,13 +403,7 @@ const syncPair: Sync.SyncPair = {
                     table.id, 'point.mouseOver' + groupKey, handleCursor
                 );
                 cursor.addListener(
-                    table.id, 'dataGrid.hoverRow' + groupKey, handleCursor
-                );
-                cursor.addListener(
                     table.id, 'point.mouseOut' + groupKey, handleCursorOut
-                );
-                cursor.addListener(
-                    table.id, 'dataGrid.hoverOut' + groupKey, handleCursorOut
                 );
             }
         };
@@ -416,7 +416,7 @@ const syncPair: Sync.SyncPair = {
             }
 
             for (let i = 0, iEnd = connectorHandlers.length; i < iEnd; ++i) {
-                const table = connectorHandlers[i]?.connector?.table;
+                const table = connectorHandlers[i]?.connector?.getTable();
                 if (!table) {
                     continue;
                 }
@@ -425,13 +425,7 @@ const syncPair: Sync.SyncPair = {
                     table.id, 'point.mouseOver' + groupKey, handleCursor
                 );
                 cursor.removeListener(
-                    table.id, 'dataGrid.hoverRow' + groupKey, handleCursor
-                );
-                cursor.removeListener(
                     table.id, 'point.mouseOut' + groupKey, handleCursorOut
-                );
-                cursor.removeListener(
-                    table.id, 'dataGrid.hoverOut' + groupKey, handleCursorOut
                 );
             }
         };

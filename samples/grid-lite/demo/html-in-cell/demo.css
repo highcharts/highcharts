@@ -1,25 +1,42 @@
-@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid.css");
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid-lite.css");
 
-.hcg-theme-default {
+body {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
+    background: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
+}
+
+.hcg-theme-default,
+.highcharts-light .hcg-theme-default {
     --anchor-color: #007bff;
 }
 
 .highcharts-description {
-    padding: 0 20px;
+    padding: 0 8px;
 }
 
 @media (prefers-color-scheme: dark) {
     .hcg-theme-default {
         --anchor-color: #8ec3fc;
     }
-
-    #container {
-        background-color: #292929;
-    }
 }
 
-#container {
-    padding: 8px;
+.highcharts-dark .hcg-theme-default {
+    --anchor-color: #8ec3fc;
+}
+
+.demo {
+    padding: 8px 12px;
 }
 
 .column-description {

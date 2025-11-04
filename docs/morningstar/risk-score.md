@@ -37,8 +37,10 @@ For more details, see [Morningstar’s RiskScore API].
 
 ```js
 const riskScoreConnector = new HighchartsConnectors.Morningstar.RiskScoreConnector({
-    postman: {
-        environmentJSON: postmanJSON
+    api: {
+        access: {
+            token: 'your_access_token'
+        }
     },
     portfolios: [
         {
@@ -63,7 +65,7 @@ const riskScoreConnector = new HighchartsConnectors.Morningstar.RiskScoreConnect
 
 await riskScoreConnector.load();
 
-new DataGrid.DataGrid('container', {
+new Grid.Grid('container', {
     dataTable: riskScoreConnector,
     editable: false,
     columns: {

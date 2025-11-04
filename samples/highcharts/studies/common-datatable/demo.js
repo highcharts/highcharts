@@ -41,7 +41,7 @@ const previewTable = () => {
                 assignment => assignment.key === key
             );
             acc[key] = dataTable.getColumn(
-                assignment?.columnName || key
+                assignment?.columnId || key
             );
             return acc;
         }, {});
@@ -99,19 +99,19 @@ Highcharts.chart('container', {
         name: 'Cost',
         columnAssignment: [{
             key: 'x',
-            columnName: 'year'
+            columnId: 'year'
         }, {
             key: 'y',
-            columnName: 'cost'
+            columnId: 'cost'
         }]
     }, {
         name: 'Revenue',
         columnAssignment: [{
             key: 'x',
-            columnName: 'year'
+            columnId: 'year'
         }, {
             key: 'y',
-            columnName: 'revenue'
+            columnId: 'revenue'
         }]
     }]
 });
