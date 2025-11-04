@@ -16,8 +16,8 @@ body {
     color: var(--highcharts-neutral-color-100);
 }
 
-.hcg-theme-default,
-.highcharts-light .hcg-theme-default {
+:root,
+.highcharts-light {
     --anchor-color: #007bff;
 }
 
@@ -26,12 +26,12 @@ body {
 }
 
 @media (prefers-color-scheme: dark) {
-    .hcg-theme-default {
+    :root {
         --anchor-color: #8ec3fc;
     }
 }
 
-.highcharts-dark .hcg-theme-default {
+.highcharts-dark {
     --anchor-color: #8ec3fc;
 }
 
@@ -53,8 +53,10 @@ td {
     text-align: center;
 }
 
-.hcg-theme-default a {
+.hcg-theme-default a,
+.highcharts-description a {
     color: var(--anchor-color);
+    text-decoration: none;
 }
 
 td button {
