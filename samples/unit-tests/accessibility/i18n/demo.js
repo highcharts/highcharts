@@ -241,4 +241,28 @@ QUnit.test('Chart lang can be configured', function (assert) {
                 '<div>testing3</div>'
             ) > -1
     );
+
+    // #23744
+    chart.update({
+        chart: {
+            lang: {
+                lang: {
+                    locale: 'zh-CN'
+                }
+            }
+        },
+        xAxis: {
+            type: 'category'
+        }
+    });
+
+    const screenReaderHTML = chart.accessibility.components.infoRegions
+        .screenReaderSections.before.element.innerHTML;
+
+    assert.ok(
+        screenReaderHTML.includes('类别') &&
+        !screenReaderHTML.includes('categories'),
+        'Screen reader uses translated "类别" instead of default "categories"'
+    );
+
 });
