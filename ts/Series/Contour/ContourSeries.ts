@@ -141,8 +141,8 @@ export default class ContourSeries extends ScatterSeries {
         }
         this.dataMax = foundMax ?? 0;
 
-        this.xAxis.setExtremes(0, foundXMax, false);
-        this.yAxis.setExtremes(0, foundYMax, false);
+        xAxis.setExtremes(0, foundXMax, false);
+        yAxis.setExtremes(0, foundYMax, false);
 
         return [new Delaunay(points2d).triangles, points3d];
     }
@@ -163,15 +163,16 @@ export default class ContourSeries extends ScatterSeries {
             ),
             xLen = xAxis.len,
             yLen = yAxis.len,
+            xTickWidth = xAxis.options.tickWidth || 1,
             foreignObjDimensions = series.chart.inverted ? {
                 x: yAxis.pos,
                 y: xAxis.pos,
-                width: yLen,
+                width: yLen + xTickWidth,
                 height: xLen
             } : {
                 x: xAxis.pos,
                 y: yAxis.pos,
-                width: xLen,
+                width: xLen + xTickWidth,
                 height: yLen
             };
 
@@ -188,7 +189,7 @@ export default class ContourSeries extends ScatterSeries {
         canvas.style.width = foreignObjDimensions.width + 'px';
         canvas.style.height = foreignObjDimensions.height + 'px';
 
-        canvas.width = canvas.clientWidth * devicePixelRatio;
+        canvas.width = (canvas.clientWidth + xTickWidth) * devicePixelRatio;
         canvas.height = canvas.clientHeight * devicePixelRatio;
 
 
@@ -763,7 +764,7 @@ export default class ContourSeries extends ScatterSeries {
 
         return [
             xMin,
-            xMax,
+            xMax + xAxis.toValue(8, false),
             yMin,
             yMax
         ];
