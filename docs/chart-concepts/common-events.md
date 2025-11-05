@@ -1,9 +1,64 @@
-Understanding Common Highcharts Events
-===
-
+# Understanding Common Highcharts Events
 
 Highcharts provides a flexible event system that allows you to add interactivity and custom behavior to charts and their elements. This guide highlights the most common and useful events in Highcharts and explains how to work with them effectively.
 
+Before looking at individual events, it is important to understand that **there are several different ways to attach event handlers in Highcharts**. Which one you choose depends on your use case.
+
+## Ways to Attach Events in Highcharts
+
+Events can be registered in several ways depending on whether the configuration is static, dynamic, or intended to be reused across multiple charts.
+
+| Method | Scope | Best For | Supports JSON Config? | Example |
+|--------|------|---------|----------------------|---------|
+| **In Configuration** | One chart | Custom, chart-specific behavior | ❌ No (functions cannot be stored in JSON) | `chart.events.load` |
+| **On a Chart Instance** | One already-created chart | When config is loaded from backend / editable UI | ✅ Yes | `Highcharts.addEvent(chart, 'render', ...)` |
+| **On a Highcharts Class** | All charts of a type | Plugin-style reusable logic | ✅ Yes | `Highcharts.addEvent(Highcharts.Series, 'legendItemClick', ...)` |
+
+### When to Choose Each Method
+
+- Use **in configuration** when defining interaction directly in your implementation for a specific chart.
+- Use **instance-level** when chart config is provided as pure JSON.
+- Use **class-level** when you want consistent behavior across multiple charts, or when writing extensions/plugins.
+
+### Code Examples
+
+#### A) In Configuration (most common)
+
+```javascript
+Highcharts.chart('container', {
+  chart: {
+    events: {
+      load() {
+        console.log('Chart loaded');
+      }
+    }
+  }
+});
+```
+
+#### B) On a Chart Instance
+
+```javascript
+const chart = Highcharts.chart('container', {
+  series: [{ data: [1, 2, 3] }]
+});
+
+Highcharts.addEvent(chart, 'render', function () {
+  console.log('Rendered (instance)');
+});
+```
+
+#### C) On a Class (applies to all charts/series/points)
+
+```javascript
+Highcharts.addEvent(Highcharts.Series, 'legendItemClick', function () {
+  console.log('Legend clicked:', this.name);
+});
+```
+
+* Checkout **[Extending Highcharts](https://www.highcharts.com/docs/extending-highcharts/extending-highcharts)** docs
+
+---
 
 ## Common Events
 
@@ -169,10 +224,16 @@ Highcharts.chart("container", {
 
 ## Dealing with Promises and Asynchronous Data in Highcharts
 
-Highcharts doesn’t natively support promises in its configuration, as it expects data to be available when Highcharts.chart() is called. To handle asynchronous data, use `fetch()` or other promise-based APIs to load data first, then create the chart or update it using `chart.series[0].setData(newData)` or `chart.update()`.
+Highcharts expects data to be available when `Highcharts.chart()` runs. However, loading data asynchronously is very common. In these cases, the chart is typically initialized with **empty or placeholder data**, and the real data is added once it has been fetched.
 
-If the chart needs to refresh dynamically (for example, after user input or an event), trigger a re-render with `chart.redraw()`. Loading data asynchronously, especially for maps or large datasets, improves performance and ensures a smoother user experience.
+There are two main approaches:
+1. **Fetch the data before creating the chart**, then pass it directly into `Highcharts.chart()`, or  
+2. **Create the chart first and update it when the data arrives**, which is useful for live or continuously updating data.
+
+A typical pattern is to load data using `fetch()` (or any async API) and then update the chart using `series.setData()` or `series.addPoint()`. These methods trigger a redraw automatically. If multiple updates are batched together for performance reasons, you can call `chart.redraw()` manually after applying them.
+
+Asynchronous loading is especially beneficial for large datasets or map visualizations, where deferring the data request improves performance and keeps the UI responsive.
 
 <iframe style="width: 100%; height: 450px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/data/livedata-fetch" allow="fullscreen"></iframe>
 
- * [Checkout Live-data](https://www.highcharts.com/docs/working-with-data/live-data)
+* Checkout **[Live data](https://www.highcharts.com/docs/working-with-data/live-data)** docs
