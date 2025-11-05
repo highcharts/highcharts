@@ -83,9 +83,10 @@ export default class ContourSeries extends ScatterSeries {
         const props = {
             minPadding: 0,
             maxPadding: 0,
+            tickInterval: 1,
             gridLineWidth: 0,
-            endOnTick: true,
-            startOnTick: true
+            endOnTick: false,
+            startOnTick: false
         };
 
         for (const axis of [this.xAxis, this.yAxis]) {
@@ -142,7 +143,7 @@ export default class ContourSeries extends ScatterSeries {
         this.dataMax = foundMax ?? 0;
 
         xAxis.setExtremes(0, foundXMax, false);
-        yAxis.setExtremes(0, foundYMax, false);
+        yAxis.setExtremes(0, 7, false);
 
         return [new Delaunay(points2d).triangles, points3d];
     }
