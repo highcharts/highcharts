@@ -21,6 +21,11 @@ body {
     --anchor-color: #007bff;
 }
 
+.hcg-theme-default,
+.highcharts-light .hcg-theme-default {
+    --hcg-link-color: #007bff;
+}
+
 .highcharts-description {
     padding: 0 8px;
 }
@@ -29,10 +34,18 @@ body {
     :root {
         --anchor-color: #8ec3fc;
     }
+
+    .hcg-theme-default {
+        --hcg-link-color: #8ec3fc;
+    }
 }
 
 .highcharts-dark {
     --anchor-color: #8ec3fc;
+}
+
+.highcharts-dark .hcg-theme-default {
+    --hcg-link-color: #8ec3fc;
 }
 
 .demo {
@@ -53,10 +66,8 @@ td {
     text-align: center;
 }
 
-.hcg-theme-default a,
 .highcharts-description a {
     color: var(--anchor-color);
-    text-decoration: none;
 }
 
 td button {
