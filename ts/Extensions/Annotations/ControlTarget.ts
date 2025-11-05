@@ -109,6 +109,7 @@ interface ControlTarget {
  *
  * */
 
+/** @internal */
 namespace ControlTarget {
 
     /* *
@@ -144,6 +145,7 @@ namespace ControlTarget {
         relativePosition: BBoxObject;
     }
 
+    /** @internal */
     export type Class = (typeof Annotation|typeof Controllable);
 
     /* *

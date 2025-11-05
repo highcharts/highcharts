@@ -93,10 +93,13 @@ class ControlPoint extends EventEmitter {
      *
      * */
 
+    /** @internal */
     public chart: AnnotationChart;
 
+    /** @internal */
     public graphic!: SVGElement;
 
+    /** @internal */
     public index: number;
 
     /**
@@ -109,8 +112,10 @@ class ControlPoint extends EventEmitter {
      */
     public nonDOMEvents = ['drag'];
 
+    /** @internal */
     public options: ControlPointOptions;
 
+    /** @internal */
     public target: ControlTarget;
 
     /* *

@@ -52,7 +52,6 @@ const {
  *
  * */
 
-/** @internal */
 export interface AnnotationEventObject extends PointerEvent {
     prevChartX: number;
     prevChartY: number;
@@ -64,9 +63,7 @@ export interface AnnotationEventObject extends PointerEvent {
  *
  * */
 
-/**
- * Internal class, but made public because Annotation extends it.
- */
+// Internal class, but made public because Annotation extends it.
 abstract class EventEmitter {
 
     /* *

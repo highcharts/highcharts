@@ -39,11 +39,20 @@ const {
 
 declare module './AnnotationSeries' {
     interface AnnotationPoint {
+        /** @internal */
         command?: string;
+
+        /**
+         * Indicates if this is a mock point for an annotation.
+         *
+         * @name Highcharts.Point#mock
+         * @type {boolean|undefined}
+         */
         mock: undefined;
     }
 }
 
+/** @internal */
 declare module './MockPointOptions' {
     interface MockPointOptions {
         command?: string;
@@ -51,6 +60,7 @@ declare module './MockPointOptions' {
     }
 }
 
+/** @internal */
 export interface MockLabelConfigObject {
     x?: number;
     y?: (number|null);
@@ -575,6 +585,7 @@ class MockPoint {
  *
  * */
 
+/** @internal */
 export default MockPoint;
 
 /* *
@@ -637,6 +648,8 @@ export default MockPoint;
  * @name      Highcharts.AnnotationMockPointOptionsObject.yAxis
  */
 
+// TODO: Unable to copy into native due to type mismatch between TS and Docs.
+// TODO: Start with no casting to any in ControlTarget's point function.
 /**
  * Callback function that returns the annotation shape point.
  *
