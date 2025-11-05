@@ -24,8 +24,10 @@
 import type Grid from '../../Core/Grid';
 import type { ExportingOptions } from '../../Core/Options';
 import type DataTable from '../../../Data/DataTable';
+import type { UpdateConfig } from '../../Core/Update/UpdateScope';
 
 import DownloadURL from '../../../Shared/DownloadURL.js';
+import { UpdateScope } from '../../Core/Update/UpdateScope.js';
 
 const { downloadURL, getBlobFromContent } = DownloadURL;
 
@@ -62,6 +64,26 @@ class Exporting {
             useLocalDecimalPoint: true,
             itemDelimiter: ',',
             lineDelimiter: '\n'
+        }
+    };
+
+    /**
+     * Update configuration for exporting options.
+     */
+    public static readonly updateConfig: UpdateConfig = {
+
+        // All exporting options are NONE - they don't affect UI
+        // Only used when user triggers export
+        'export_options': {
+            scope: UpdateScope.NONE,
+            options: [
+                'filename',
+                'csv',
+                'csv.firstRowAsNames',
+                'csv.useLocalDecimalPoint',
+                'csv.itemDelimiter',
+                'csv.lineDelimiter'
+            ]
         }
     };
 
