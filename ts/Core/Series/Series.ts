@@ -270,6 +270,7 @@ class Series {
         // GeoHeatMap interpolation
         'isDirtyCanvas',
         'points',
+        'condemnedPoints',
         'dataTable',
 
         'processedData', // #17057
@@ -449,7 +450,7 @@ class Series {
         // the different series and charts. #12959, #13937
         this.eventsToUnbind = [];
 
-        this.condemnedPoints = [];
+        this.condemnedPoints ||= [];
 
         /**
          * Read only. The chart that the series belongs to.
