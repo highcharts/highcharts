@@ -95,11 +95,12 @@ jobs:
           node-version: 'lts/*'
           cache: 'npm'
       - uses: browser-actions/setup-chrome@v2
+        id: setup-chrome
         with:
           install-chromedriver: true
 
       - run: |
-          set CHROME_BIN $(which chrome || which google-chrome || which chromium)
+          set CHROME_BIN ${{ steps.setup-chrome.outputs.chrome-path }}
           echo $CHROME_BIN
           $CHROME_BIN --version
 
