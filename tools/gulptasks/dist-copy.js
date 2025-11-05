@@ -264,7 +264,7 @@ function distCopy() {
             }
             if (distProduct === 'Dashboards') {
                 const dashGfx = Path.join(CODE_DIRECTORY, product, 'gfx');
-                directory = Path.join(TARGET_DIRECTORY, product, 'code', 'gfx');
+                directory = Path.join(TARGET_DIRECTORY, product, 'gfx');
                 FsLib.copyAllFiles(dashGfx, directory, true, file => (
                     file.includes('dashboards')
                 ));
