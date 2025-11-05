@@ -429,6 +429,18 @@ const colorAxisDefaults: DeepPartial<ColorAxis.Options> = {
     tickLength: 5,
 
     /**
+     * The color axis title. Displayed alongside the color axis. When the
+     * legend is vertical the title is rotated accordingly.
+     *
+     * @sample highcharts/coloraxis/coloraxis-title/
+     *         Color axis with title
+     *
+     * @type      {Highcharts.AxisTitleOptions}
+     * @product   highcharts highstock highmaps
+     * @apioption colorAxis.title
+     */
+
+    /**
      * The type of interpolation to use for the color axis. Can be
      * `linear` or `logarithmic`.
      *
