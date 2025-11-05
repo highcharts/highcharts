@@ -15922,6 +15922,48 @@ import &#39;highcharts/modules/accessibility&#39;;
           </div>
           <div class="changelog-container">
             <h3 class="release-header">
+              <a id="highcharts-grid-v2.0.1"></a>
+              <span>Highcharts Grid v2.0.1 (2025-11-03)</span>
+              <a class="release-header-hashtag" href="#highcharts-grid-v2.0.1">#</a>
+              <span class="download-link" ><a href="https://code.highcharts.com/grid/zips/Highcharts-Grid-2.0.1.zip" title="Download the zip archive for Highcharts Grid v2.0.1"><i class="fas fa-download"></i></a></span>
+            </h3>
+            <ul>
+              <li><strong>Grid:</strong> Tweaked menu styling and demo code block colors to inherit the active theme, fixing unreadable elements in dark mode examples and popovers.</li>
+              <li><strong>Grid:</strong> Updated focus outlines for table cells to use the shared <code>--ig-focus-ring</code> token so keyboard navigation renders a single, consistent ring.</li>
+              <li><strong>Grid Pro:</strong> Introduced theme-aware variables for editable cell backgrounds and restored the select arrow appearance inside edited cells across light and dark themes.</li>
+              <li><strong>Grid:</strong> Exposed <code>--ig-default-font-family</code> and normalised the fallback stack so custom font overrides continue to cascade correctly.</li>
+            </ul>
+            <div class="accordion card-group">
+              <div class="card">
+                <div id="hGrid-heading-2-0-1-upgrade-notes" class="card-header">
+                  <h4 class="card-title">
+                    <button aria-label="Upgrade Notes Highcharts-grid v2.0.1" aria-expanded="false" class="btn btn-link collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#upgrade-notes-hGrid-2-0-1"><span> Upgrade notes </span></button>
+                  </h4>
+                </div>
+                <div id="upgrade-notes-hGrid-2-0-1" class="collapse" aria-labelledby="hGrid-heading-2-0-1-bug-fixes" data-parent=".accordion">
+                  <div class="card-body">
+                    <ul>
+                      <li><strong>Important Notice</strong>: If you upgrade directly from 1.x.x you should read the <a href="https://www.highcharts.com/docs/dashboards/grid-migration">migration guide</a> for 2.0.0</li>
+                    </ul>
+
+                  </div>
+                </div>
+                <div id="hGrid-heading-2-0-1-bug-fixes" class="card-header">
+                  <h4 class="card-title" aria-label="Bug Fixes Highcharts-grid v2.0.1">
+                    <button aria-label="Bug Fixes Highcharts-grid v2.0.1" aria-expanded="false" class="btn btn-link collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#bug-fixes-hGrid-2-0-1"><span> Bug fixes </span></button>
+                  </h4>
+                </div>
+                <div id="bug-fixes-hGrid-2-0-1" class="collapse" aria-labelledby="hGrid-heading-2-0-1-bug-fixes" data-parent=".accordion">
+                  <div class="card-body">
+                    <ul>
+                      <li><strong>Grid:</strong> Fixed regression where <code>columns[].cells.className</code> and <code>columns[].header.className</code> were ignored for numeric columns.</li>
+                    </ul>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+            <h3 class="release-header">
               <a id="highcharts-grid-v2.0.0"></a>
               <span>Highcharts Grid v2.0.0 (2025-10-29)</span>
               <a class="release-header-hashtag" href="#highcharts-grid-v2.0.0">#</a>
