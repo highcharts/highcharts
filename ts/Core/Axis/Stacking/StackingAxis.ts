@@ -46,18 +46,21 @@ const {
  *
  * */
 
+/** @internal */
 declare module '../AxisComposition' {
     interface AxisComposition {
         stacking?: AxisAdditions;
     }
 }
 
+/** @internal */
 declare module '../../Chart/ChartBase'{
     interface ChartBase {
         getStacks(): void;
     }
 }
 
+/** @internal */
 declare module '../../Series/PointBase' {
     interface PointBase {
         leftCliff?: number;
@@ -65,6 +68,7 @@ declare module '../../Series/PointBase' {
     }
 }
 
+/** @internal */
 declare module '../../Series/SeriesBase' {
     interface SeriesBase {
         isRadialBar?: boolean;
@@ -95,6 +99,7 @@ declare module '../../Series/SeriesBase' {
     }
 }
 
+/** @internal */
 interface StackerFunction {
     (
         this: Series,
@@ -104,6 +109,7 @@ interface StackerFunction {
     ): void;
 }
 
+/** @internal */
 export interface StackItemIndicatorObject {
     index: number;
     key?: string;
@@ -111,6 +117,7 @@ export interface StackItemIndicatorObject {
     x: number;
 }
 
+/** @internal */
 declare class StackingAxis extends Axis {
     stacking: AxisAdditions;
 }
@@ -710,9 +717,9 @@ namespace StackingAxis {
  *
  * */
 
+/** @internal */
 declare module '../AxisType' {
     interface AxisTypeRegistry {
-        /** @internal */
         StackingAxis: StackingAxis;
     }
 }

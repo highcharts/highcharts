@@ -17,7 +17,6 @@
  * */
 
 import type AnimationOptions from '../../Animation/AnimationOptions';
-import type AxisBase from '../AxisBase';
 import type Chart from '../../Chart/Chart.js';
 import type ColorType from '../../Color/ColorType';
 import type { DeepPartial } from '../../../Shared/Types';
@@ -32,9 +31,9 @@ import type { StatesOptionsKey } from '../../Series/StatesOptions';
 import type SVGPath from '../../Renderer/SVG/SVGPath';
 
 import Axis from '../Axis.js';
+import ColorAxisBase from './ColorAxisBase.js';
 import ColorAxisComposition from './ColorAxisComposition.js';
 import ColorAxisDefaults from './ColorAxisDefaults.js';
-import ColorAxisBase from './ColorAxisBase.js';
 import D from '../../Defaults.js';
 const { defaultOptions } = D;
 import LegendSymbol from '../../Legend/LegendSymbol.js';
@@ -124,7 +123,7 @@ defaultOptions.colorAxis = merge(defaultOptions.xAxis, ColorAxisDefaults);
  * @param {Highcharts.ColorAxisOptions} userOptions
  * The color axis options for initialization.
  */
-class ColorAxis extends Axis implements AxisBase {
+class ColorAxis extends Axis implements ColorAxisBase {
 
     /* *
      *
@@ -882,7 +881,8 @@ class ColorAxis extends Axis implements AxisBase {
  * */
 
 interface ColorAxis extends ColorAxisBase {
-    // Nothing to add
+    coll: 'colorAxis';
+    options: ColorAxis.Options;
 }
 
 extend(ColorAxis.prototype, ColorAxisBase);

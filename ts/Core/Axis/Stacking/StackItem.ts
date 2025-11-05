@@ -47,12 +47,14 @@ const {
  *
  * */
 
+/** @internal */
 export interface AdjustStackPositionProps {
     labelBox: BBoxObject;
     verticalAlign: VerticalAlignValue;
     textAlign: AlignValue;
 }
 
+/** @internal */
 export interface AlignOptions {
     verticalAlign: 'top'|'middle'|'bottom';
     align: 'left'|'center'|'right';
@@ -60,6 +62,7 @@ export interface AlignOptions {
     y?: number;
 }
 
+/** @internal */
 export interface StackBoxProps {
     xOffset: number;
     width: number;

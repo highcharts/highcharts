@@ -334,35 +334,65 @@ class Axis {
 
     /** @internal */
     public isDirty?: boolean;
+    /** @internal */
     public isLinked!: boolean;
+    /** @internal */
     public isOrdinal?: boolean;
+    /** @internal */
     public isPanning?: boolean;
+    /** @internal */
     public isRadial?: boolean;
+    /** @internal */
     public isXAxis?: boolean;
+    /** @internal */
     public isZAxis?: boolean;
+    /** @internal */
     public keepProps?: Array<string>;
+    /** @internal */
     public labelAlign?: AlignValue;
+    /** @internal */
     public labelEdge!: Array<null>; // @todo
+    /** @internal */
     public labelFormatter!: AxisLabelFormatterCallback;
+    /** @internal */
     public labelGroup?: SVGElement;
+    /** @internal */
     public labelOffset?: number;
+    /** @internal */
     public labelRotation?: number;
+    /** @internal */
     public left!: number;
+    /** @internal */
     public len!: number;
+    /** @internal */
     public linkedParent?: Axis;
+    /** @internal */
     public max?: number;
+    /** @internal */
     public maxLabelDimensions?: SizeObject;
+    /** @internal */
     public maxLabelLength?: number;
+    /** @internal */
     public min?: number;
+    /** @internal */
     public minorTickInterval!: number;
+    /** @internal */
     public minorTicks!: Record<string, Tick>;
+    /** @internal */
     public minPixelPadding!: number;
+    /** @internal */
     public minPointOffset?: number;
-    // When the minRange is undefined, it is not yet evaluated. When it is null,
-    // it is deliberately not a number because we have user extremes.
+    /**
+     * When the minRange is undefined, it is not yet evaluated. When it is null,
+     * it is deliberately not a number because we have user extremes.
+     * @internal
+     */
     public minRange?: null|number;
+    /** @internal */
     public names!: Array<string>;
+    /** @internal */
     public offset!: number;
+    /** @internal */
     public old?: { // @todo create a type
         len: number;
         max?: number;
@@ -371,49 +401,93 @@ class Axis {
         userMax?: number;
         userMin?: number;
     };
+    /** @internal */
     public opposite?: boolean;
+    /** @internal */
     public options!: (AxisOptions|XAxisOptions|YAxisOptions);
+    /** @internal */
     public ordinal?: AxisComposition['ordinal'];
+    /** @internal */
     public overlap!: boolean;
+    /** @internal */
     public paddedTicks!: Array<number>;
+    /** @internal */
     public plotLinesAndBands!: Array<PlotLineOrBand>;
+    /** @internal */
     public plotLinesAndBandsGroups!: Record<string, SVGElement>;
+    /** @internal */
     public pointRange!: number;
+    /** @internal */
     public pointRangePadding!: number;
+    /** @internal */
     public pos!: number;
+    /** @internal */
     public positiveValuesOnly!: boolean;
+    /** @internal */
     public reserveSpaceDefault?: boolean;
+    /** @internal */
     public reversed?: boolean;
+    /** @internal */
     public right!: number;
+    /** @internal */
     public sector?: number;
+    /** @internal */
     public series!: Array<Series>;
+    /** @internal */
     public showAxis?: boolean;
+    /** @internal */
     public side!: number;
+    /** @internal */
     public single?: boolean;
+    /** @internal */
     public softThreshold?: boolean;
+    /** @internal */
     public staggerLines?: number;
+    /** @internal */
     public staticScale?: number;
+    /** @internal */
     public threshold?: number;
+    /** @internal */
     public thresholdAlignment?: number;
+    /** @internal */
     public tickAmount!: number;
+    /** @internal */
     public tickInterval!: number;
+    /** @internal */
     public tickmarkOffset!: number;
+    /** @internal */
     public tickPositions!: TickPositionsArray;
+    /** @internal */
     public tickRotCorr!: PositionObject;
+    /** @internal */
     public ticks!: Record<string, Tick>;
+    /** @internal */
     public titleOffset?: number;
+    /** @internal */
     public top!: number;
+    /** @internal */
     public transA!: number;
+    /** @internal */
     public transB!: number;
+    /** @internal */
     public translationSlope!: number;
+    /** @internal */
     public type?: AxisOptions['type'];
+    /** @internal */
     public uniqueNames?: boolean;
+    /** @internal */
     public userMax?: number;
+    /** @internal */
     public userMin?: number;
+    /** @internal */
     public userMinRange?: number;
+    /** @internal */
     public userOptions!: DeepPartial<AxisOptions>;
+    /** @internal */
     public visible!: boolean;
+    /** @internal */
     public width!: number;
+    /** @internal */
     public zoomEnabled!: boolean;
 
     /* *
@@ -4534,6 +4608,7 @@ namespace Axis {
         userMax?: number;
         userMin?: number;
     }
+    /** @internal */
     export interface AllExtremes {
         dataMin: number;
         dataMax: number;

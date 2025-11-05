@@ -85,7 +85,7 @@ class PlotLineOrBand {
     public static compose<T extends typeof Axis>(
         ChartClass: Chart,
         AxisClass: T
-    ): ReturnType<typeof PlotLineOrBandAxis.compose> {
+    ): (T&typeof PlotLineOrBandAxis.Composition) {
 
         addEvent(ChartClass, 'afterInit', function (): void {
             this.labelCollectors.push((): SVGElement[] => {

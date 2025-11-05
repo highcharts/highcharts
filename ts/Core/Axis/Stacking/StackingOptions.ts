@@ -23,8 +23,10 @@ import type ColorType from '../../Color/ColorType';
 import type CSSObject from '../../Renderer/CSSObject';
 import type { DataLabelOverflowValue } from '../../Series/DataLabelOptions';
 import type Templating from '../../Templating';
-import type StackItem from './StackItem';
 import type { SymbolKey } from '../../Renderer/SVG/SymbolType';
+
+/** @internal */
+import type StackItem from './StackItem';
 
 /* *
  *
