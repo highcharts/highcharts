@@ -88,6 +88,9 @@ jobs:
         env:
           VISUAL_TEST_PATH: samples/gantt
 
+      - name: Analyze master snapshots
+        run: node --import tsx tests/analyze-snapshots.mts
+
       - name: Checkout current branch
         uses: actions/checkout@v4
         with:

@@ -23,6 +23,10 @@ function transformVisualSampleScript(script: string | undefined): string {
 }
 
 const FIXED_CLOCK_TIME = '2024-01-01T00:00:00.000Z';
+const MAX_CHART_LOAD_ATTEMPTS = 100;
+const CHART_LOAD_RETRY_DELAY_MS = 100;
+const CHART_LOAD_TIMEOUT_MS =
+    MAX_CHART_LOAD_ATTEMPTS * CHART_LOAD_RETRY_DELAY_MS;
 
 const defaultPageContent = '<div id="container" style="width: 600px; margin 0 auto"></div>';
 
@@ -228,16 +232,6 @@ test.describe('Visual tests', () => {
                 testContainer.innerHTML = body;
             }, sample.html ?? defaultPageContent);
 
-            if (sample.css) {
-                const styleHandle = await page.addStyleTag({
-                    content: sample.css
-                });
-
-                await styleHandle.evaluate(
-                    (el: HTMLStyleElement) => el.id = 'visual-test-styles'
-                );
-            }
-
             await setTestingOptions(page);
 
             await page.evaluate(() => {
@@ -256,86 +250,156 @@ test.describe('Visual tests', () => {
                 }
             });
 
+            // Inject CSS for styled mode like karma-conf.js does
+            const transformedScript = transformVisualSampleScript(
+                sample.script
+            );
+            const isStyledMode = transformedScript.indexOf('styledMode: true') !== -1;
+
+            if (isStyledMode) {
+                // Add highcharts.css
+                const highchartsCSS = await page.evaluate(() => {
+                    return (window as any).highchartsCSS || '';
+                });
+
+                if (highchartsCSS) {
+                    const styleHandle = await page.addStyleTag({
+                        content: highchartsCSS
+                    });
+                    await styleHandle.evaluate(
+                        (el: HTMLStyleElement) => el.id = 'highcharts.css'
+                    );
+                }
+
+                // Add demo.css if exists (for styled mode, use id 'demo.css' for SVG injection)
+                if (sample.css) {
+                    const styleHandle = await page.addStyleTag({
+                        content: sample.css
+                    });
+                    await styleHandle.evaluate(
+                        (el: HTMLStyleElement) => el.id = 'demo.css'
+                    );
+                }
+            } else {
+                // For non-styled mode, add demo.css with standard id
+                if (sample.css) {
+                    const styleHandle = await page.addStyleTag({
+                        content: sample.css
+                    });
+                    await styleHandle.evaluate(
+                        (el: HTMLStyleElement) => el.id = 'visual-test-styles'
+                    );
+                }
+            }
+
             // Load script with timeout handling
             const scriptHandle = await page.addScriptTag({
-                content: transformVisualSampleScript(sample.script)
-            });
-
-            await page.evaluate(() => {
-                if (window.Highcharts) {
-                    const chart = (window.Highcharts as any).charts[
-                        (window.Highcharts as any).charts.length - 1
-                    ];
-
-                    (window.Highcharts as any).prepareShot(chart);
-                }
-            });
-
-            await page.evaluate(async () => {
-                try {
-                    await document.fonts?.ready;
-                } catch {
-                    // Swallow errors if fonts API is unavailable or fails.
-                }
-                await new Promise<void>((resolve) => {
-                    requestAnimationFrame(
-                        () => requestAnimationFrame(() => resolve())
-                    );
-                });
+                content: transformedScript
             });
 
             try {
-                // Wait for charts to be ready with SVG elements
-                await page.waitForFunction(
-                    () => {
+                // Wait for chart to load, similar to karma-conf.js waitForChartToLoad
+                const { chartCount, svgContent } = await page.evaluate(
+                    async ({ maxAttempts, retryDelay, timeoutMs }) => {
                         const Highcharts = (window as any).Highcharts;
-                        if (!Highcharts?.charts) return true;
 
-                        const validCharts = Highcharts.charts.filter(
-                            (chart: any) => chart && chart.container
-                            && !chart.renderer?.forExport
-                        );
+                        // Modern while loop approach instead of recursion
+                        let attempts = 0;
+                        while (attempts < maxAttempts) {
+                            const chart = Highcharts?.charts?.at(-1);
 
-                        return validCharts.length === 0 || validCharts.every(
-                            (chart: any) => chart.container?.querySelector('svg')
+                            if (chart || document.getElementsByTagName('svg').length) {
+                                // Chart exists, prepare shot like karma-setup.js:prepareShot
+                                if (Highcharts && chart) {
+                                    Highcharts.prepareShot(chart);
+                                }
+
+                                // Extract SVG similar to karma-setup.js:getSVG
+                                const validCharts = Highcharts?.charts?.filter(
+                                    (c: any) => c &&
+                                        c.container &&
+                                        !c.renderer?.forExport
+                                ) || [];
+
+                                const count = validCharts.length;
+                                let svg: string | null = null;
+
+                                if (count >= 1 && validCharts[0]) {
+                                    const container = validCharts[0].container;
+                                    const svgElement = container.querySelector('svg');
+
+                                    if (svgElement) {
+                                        // Step 1: Extract SVG and add xmlns:xlink namespace
+                                        svg = svgElement.outerHTML.replace(
+                                            /<svg /,
+                                            '<svg xmlns:xlink="http://www.w3.org/1999/xlink" '
+                                        );
+
+                                        // Step 2: For styled mode, inject CSS into SVG like karma-setup.js
+                                        if (validCharts[0].styledMode) {
+                                            // Inject Highcharts base CSS
+                                            const highchartsCSS = document.getElementById('highcharts.css');
+                                            if (highchartsCSS) {
+                                                svg = svg
+                                                    .replace(
+                                                        ' class="highcharts-root" ',
+                                                        ' class="highcharts-root highcharts-container" ' +
+                                                        'style="width:auto; height:auto" '
+                                                    )
+                                                    .replace(
+                                                        '</defs>',
+                                                        `<style>${highchartsCSS.innerText}</style></defs>`
+                                                    );
+                                            }
+
+                                            // Inject demo-specific CSS
+                                            const demoCSS = document.getElementById('demo.css');
+                                            if (demoCSS) {
+                                                svg = svg.replace(
+                                                    '</defs>',
+                                                    `<style>${demoCSS.innerText}</style></defs>`
+                                                );
+                                            }
+                                        }
+
+                                        // Step 3: Pretty-print SVG like karma-setup.js:prettyXML
+                                        svg = svg
+                                            .replace(/>/g, '>\n')
+                                            // Don't introduce newlines inside tspans or links
+                                            .replace(/<tspan([^>]*)>\n/g, '<tspan$1>')
+                                            .replace(/<\/tspan>\n/g, '</tspan>')
+                                            .replace(/<a([^>]*)>\n/g, '<a$1>')
+                                            .replace(/<\/a>\n/g, '</a>');
+                                    }
+                                }
+
+                                return { chartCount: count, svgContent: svg };
+                            }
+
+                            attempts++;
+                            await new Promise(
+                                resolve => setTimeout(resolve, retryDelay)
+                            );
+                        }
+
+                        throw new Error(
+                            `Chart test failed to load within ${timeoutMs}ms ` +
+                            `(${maxAttempts} attempts at ${retryDelay}ms intervals).`
                         );
                     },
-                    { timeout: 1000 }
+                    {
+                        maxAttempts: MAX_CHART_LOAD_ATTEMPTS,
+                        retryDelay: CHART_LOAD_RETRY_DELAY_MS,
+                        timeoutMs: CHART_LOAD_TIMEOUT_MS
+                    }
                 );
 
-                // Add a small delay to ensure chart rendering is stable
-                // await page.waitForTimeout(50);
-
-                // Single evaluation to get both chart count and SVG content atomically
-                const { chartCount, svgContent } = await page.evaluate(() => {
-                    const Highcharts = (window as any).Highcharts;
-                    if (!Highcharts?.charts) {
-                        return { chartCount: 0, svgContent: null };
-                    }
-
-                    // Use consistent filtering logic
-                    const validCharts = Highcharts.charts.filter(
-                        (chart: any) => chart && chart.container &&
-                            !chart.renderer?.forExport &&
-                            chart.container.querySelector('svg')
-                    );
-
-                    const count = validCharts.length;
-                    let svg = null;
-
-                    // Only extract SVG if we have exactly one valid chart
-                    if (count === 1 && validCharts[0]) {
-                        const svgElement = validCharts[0].container.querySelector('svg');
-                        svg = svgElement ? svgElement.outerHTML : null;
-                    }
-
-                    return { chartCount: count, svgContent: svg };
-                });
-
-                // Use SVG snapshot for single chart with valid SVG content
-                if (chartCount === 1 && svgContent) {
+                if (svgContent) {
                     expect(svgContent).toMatchSnapshot(`${samplePath}.svg`);
+                }
 
+                if (svgContent && chartCount === 1) {
+                    // For single chart, still take screenshot but don't compare
                     await page.screenshot({ fullPage: true });
                 } else {
                     await expect(page).toHaveScreenshot({
