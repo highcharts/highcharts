@@ -1,4 +1,4 @@
-@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
 
 :root,
 .highcharts-light {
@@ -6,6 +6,8 @@
     --mask-background: rgba(255, 255, 255, 0.5);
     --default-color: #000;
     --shadow: rgba(0, 0, 0, 0.5);
+    --code-background: #f7f7f7;
+    --code-border: #e1e1e1;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -14,6 +16,8 @@
         --mask-background: rgba(0, 0, 0, 0.7);
         --default-color: #fff;
         --shadow: rgba(255, 255, 255, 0.5);
+        --code-background: #2a2a2a;
+        --code-border: #4a4a4a;
     }
 }
 
@@ -22,6 +26,8 @@
     --mask-background: rgba(0, 0, 0, 0.7);
     --default-color: #fff;
     --shadow: rgba(255, 255, 255, 0.5);
+    --code-background: #2a2a2a;
+    --code-border: #4a4a4a;
 }
 
 body {
@@ -40,8 +46,12 @@ body {
     color: var(--highcharts-neutral-color-100);
 }
 
-.content {
-    padding: 8px;
+.demo {
+    padding: 8px 12px;
+}
+
+.highcharts-description {
+    padding: 0 8px;
 }
 
 td {
@@ -134,10 +144,6 @@ td[data-column-id="Priority"] {
     box-sizing: border-box;
 }
 
-input[type="date"]::-webkit-calendar-picker-indicator {
-    filter: invert(1);
-}
-
 #modalContent #formButtons {
     display: flex;
     flex-direction: column;
@@ -157,4 +163,15 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 #modalContent .cancel {
     background: #6c757d;
+}
+
+code {
+    font-family: Consolas, "courier new", monospace;
+    line-height: 1em;
+    background: var(--code-background);
+    border: 1px solid var(--code-border);
+    color: var(--highcharts-neutral-color-100);
+    padding: 2px 4px;
+    border-radius: 5px;
+    display: inline-block;
 }

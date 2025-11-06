@@ -31,14 +31,12 @@ Dashboards.board('container', {
         connectors: [{
             id: 'Population',
             type: 'JSON',
-            options: {
-                columnNames: [
-                    'City', 'Population (mln)', 'Metro Area (km²)',
-                    'Highest Elevation (m)'
-                ],
-                firstRowAsNames: false,
-                data
-            }
+            columnIds: [
+                'City', 'Population (mln)', 'Metro Area (km²)',
+                'Highest Elevation (m)'
+            ],
+            firstRowAsNames: false,
+            data
         }]
     },
     gui: {
@@ -255,11 +253,11 @@ Dashboards.board('container', {
         connector: {
             id: 'Population'
         },
-        type: 'DataGrid',
+        type: 'Grid',
         sync: {
             extremes: true
         },
-        dataGridOptions: {
+        gridOptions: {
             credits: {
                 enabled: false
             }

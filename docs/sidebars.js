@@ -101,7 +101,7 @@ const sidebars = {
             'dashboards/edit-mode',
             'dashboards/types-of-components',
             'dashboards/grid-component',
-            'dashboards/grid-standalone',
+            'dashboards/grid-migration',
             'dashboards/kpi-component',
             'dashboards/highcharts-component',
             'dashboards/html-component',
@@ -116,7 +116,6 @@ const sidebars = {
             'dashboards/custom-component',
             'dashboards/installation-with-es-modules',
             'dashboards/get-options',
-            'dashboards/grid-migration',
             'dashboards/frequently-asked-questions'
         ],
         Grid: [
@@ -140,6 +139,9 @@ const sidebars = {
                 id: 'grid/sparklines',
                 customProps: { gridPro: true }
             },
+            'grid/column-filtering',
+            'grid/exporting',
+            'grid/pagination',
             {
                 type: 'doc',
                 id: 'grid/events',

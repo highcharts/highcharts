@@ -1,0 +1,20 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
+
+.content {
+    background-color: var(--hcg-background);
+    color: var(--hcg-color);
+    padding: 8px;
+}
+
+#container {
+    height: 200px;
+}
+
+button {
+    margin-top: 20px;
+}
+
+textarea {
+    width: 500px;
+    height: 300px;
+}

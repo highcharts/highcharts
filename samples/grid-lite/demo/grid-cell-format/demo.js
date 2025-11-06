@@ -57,7 +57,8 @@ Grid.grid('container', {
             },
             header: {
                 format: ''
-            }
+            },
+            width: 60
         },
         /*
         In the Name column a custom CSS class is applied to all cells. See CSS.

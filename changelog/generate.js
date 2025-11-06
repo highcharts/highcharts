@@ -42,6 +42,7 @@ const getFile = url => new Promise((resolve, reject) => {
     });
 });
 
+
 (function () {
     'use strict';
 
@@ -95,7 +96,6 @@ const getFile = url => new Promise((resolve, reject) => {
             params.since,
             params.fromCache,
             params.branches,
-            params.highchartsDashboards, // ToDo: remove this when working on dash and use product
             product
         ).catch(e => console.error(e));
         callback(log);
@@ -318,55 +318,31 @@ const getFile = url => new Promise((resolve, reject) => {
         const pack = require(path.join(__dirname, '/../package.json'));
         const d = new Date();
         const review = [];
+        const productPaths = {
+            Grid: '../tools/gulptasks/grid/build-properties.json',
+            Dashboards: '../tools/gulptasks/dashboards/build-properties.json'
+        };
 
-        if (product === 'Grid') {
-            const { version } = require('../tools/gulptasks/grid/build-properties.json');
+        if (productPaths[product]) {
+            const { version } = require(productPaths[product]);
 
             if (!version) {
-                throw new Error('No release version provided (e.g. --release 2.x.x)');
+                throw new Error('Check `build-properties.json` for `version` property.');
             }
+
             if (!/^\d+\.\d+\.\d+(?:-\w+)?$/su.test(version)) {
-                throw new Error('No valid `--release x.x.x` provided.');
+                throw new Error('No valid release version provided.');
             }
-            const date = d.getFullYear() + '-' +
-                pad(d.getMonth() + 1, 2) + '-' +
-                pad(d.getDate(), 2);
 
             review.push(buildMarkdown(
                 `Highcharts ${product}`,
                 version,
-                date,
+                `${d.getFullYear()}-${pad(d.getMonth() + 1, 2)}-${pad(d.getDate(), 2)}`,
                 log,
                 void 0,
                 product
             ));
 
-            if (params.review) {
-                saveReview(review.join('\n\n___\n'));
-            }
-        } else if (params.highchartsDashboards && params.release) {
-            const version = params.release;
-            if (!/^\d+\.\d+\.\d+(?:-\w+)?$/su.test(version)) {
-                throw new Error('No valid `--release x.x.x` provided.');
-            }
-            const dashboardsName = 'Highcharts Dashboards';
-            const dashboardsProduct = {
-                'Highcharts Dashboards': {
-                    nr: version,
-                    date: d.getFullYear() + '-' +
-                pad(d.getMonth() + 1, 2) + '-' +
-                pad(d.getDate(), 2)
-                }
-            };
-
-
-            review.push(buildMarkdown(
-                dashboardsName,
-                version,
-                dashboardsProduct[dashboardsName].date,
-                log,
-                void 0
-            ));
             if (params.review) {
                 saveReview(review.join('\n\n___\n'));
             }

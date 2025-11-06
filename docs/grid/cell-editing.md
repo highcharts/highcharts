@@ -4,8 +4,6 @@ tags: ["grid-pro"]
 
 # Cell editing
 
-**Note:** Cell editing is only available in [Highcharts Grid Pro](https://www.highcharts.com/docs/dashboards/grid-standalone).
-
 ## Enable editMode
 
 End users can edit data in cells if `editMode` is enabled by setting the `columnDefaults.cells.editMode.enabled` and/or `columns[].cells.editMode.enabled` API options:
@@ -54,7 +52,6 @@ columns: [{
     }
 }]
 ```
-
 
 ## Validation
 

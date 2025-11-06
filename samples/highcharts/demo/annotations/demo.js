@@ -29,7 +29,7 @@ const connector = new HighchartsConnectors.Morningstar.TimeSeriesConnector({
 (async () => {
     await connector.load();
 
-    const cols = connector.table.getColumns();
+    const cols = connector.getTable().getColumns();
 
     const name = Array.from(Object.keys(cols).filter(k => k !== 'Date'))[0];
     const data = cols[name].map((value, i) => [cols.Date[i], value]);
