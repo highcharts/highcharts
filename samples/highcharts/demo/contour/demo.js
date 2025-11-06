@@ -1,4 +1,10 @@
 Highcharts.chart('container', {
+    title: {
+        text: 'Contour plot'
+    },
+    yAxis: {
+        title: null
+    },
     colorAxis: {
         stops: [
             [0, '#3060cf'],
