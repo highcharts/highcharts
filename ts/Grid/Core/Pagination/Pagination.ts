@@ -141,11 +141,6 @@ class Pagination {
     public mobilePageSelector?: HTMLSelectElement;
 
     /**
-     * Mobile page size selector dropdown
-     */
-    public mobilePageSizeSelector?: HTMLSelectElement;
-
-    /**
      * Page info text element
      */
     public pageInfoElement?: HTMLElement;
@@ -871,9 +866,6 @@ class Pagination {
 
             void this.setPageSize(parseInt(this.pageSizeSelect.value, 10));
         });
-
-        // Render mobile page size selector in the same container
-        this.renderMobilePageSizeSelector(container);
     }
 
     /**
@@ -913,13 +905,8 @@ class Pagination {
         // Announce the page size change
         this.grid.accessibility?.announce(
             langAccessibility?.pagination?.announcements?.pageSizeChange +
-                ' ' + newPageSize
+            ' ' + newPageSize
         );
-
-        // Update mobile page size selector if it exists
-        if (this.mobilePageSizeSelector) {
-            this.mobilePageSizeSelector.value = this.currentPageSize.toString();
-        }
 
         fireEvent(
             this,
@@ -971,7 +958,7 @@ class Pagination {
         // Announce the page change
         this.grid.accessibility?.announce(
             langAccessibility?.pagination?.announcements?.pageChange +
-                ' ' + this.currentPage
+            ' ' + this.currentPage
         );
 
         fireEvent(
@@ -1161,43 +1148,6 @@ class Pagination {
             if (newPage !== this.currentPage) {
                 void this.goToPage(newPage);
             }
-        });
-    }
-
-    /**
-     * Render the mobile page size selector (select dropdown).
-     *
-     * @param container
-     * The container element for the mobile page size selector.
-     */
-    public renderMobilePageSizeSelector(container: HTMLElement): void {
-        const mobilePageSizeSelect: HTMLSelectElement =
-            makeHTMLElement('select', {
-                className:
-                    Globals.getClassName('paginationMobilePageSizeSelector')
-            }, container);
-
-        this.pageSizeOptions.forEach((option: number): void => {
-            const optionElement: HTMLOptionElement =
-                makeHTMLElement('option', {}, mobilePageSizeSelect);
-            optionElement.value = option.toString();
-            optionElement.textContent = `${option} ${this.lang.pageSizeLabel}`;
-
-            if (option === this.currentPageSize) {
-                optionElement.selected = true;
-            }
-        });
-
-        this.mobilePageSizeSelector = mobilePageSizeSelect;
-
-        mobilePageSizeSelect.addEventListener('change', (): void => {
-            if (!this.mobilePageSizeSelector) {
-                return;
-            }
-
-            void this.setPageSize(
-                parseInt(this.mobilePageSizeSelector.value, 10)
-            );
         });
     }
 

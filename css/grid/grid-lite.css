@@ -412,6 +412,8 @@
 
 /* Grid container */
 .hcg-container {
+    container-type: inline-size;
+    container-name: hcg;
     position: relative;
     display: flex;
     flex-direction: column;
@@ -1321,13 +1323,7 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     text-align: center;
 }
 
-/* Mobile page size selector - hidden by default */
-.hcg-pagination-wrapper .hcg-pagination-mobile-page-size-selector {
-    width: 150px;
-    display: none;
-}
-
-@media (max-width: 1024px) {
+@container hcg (max-width: 1024px) {
     .hcg-pagination-wrapper {
         display: flex;
         flex-direction: column;
@@ -1337,17 +1333,11 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
         margin-bottom: 20px;
     }
 
-    /* Show mobile selectors on mobile */
-    .hcg-pagination-wrapper .hcg-pagination-mobile-selector,
-    .hcg-pagination-wrapper .hcg-pagination-mobile-page-size-selector {
+    .hcg-pagination-wrapper .hcg-pagination-mobile-selector {
         display: block;
     }
 
-    .hcg-pagination-wrapper div.hcg-pagination-page,
-    .hcg-pagination-wrapper .hcg-pagination-first,
-    .hcg-pagination-wrapper .hcg-pagination-last,
-    .hcg-pagination-wrapper .hcg-pagination-page-size-container span,
-    .hcg-pagination-wrapper .hcg-pagination-page-size-container .hcg-pagination-page-size-select {
+    .hcg-pagination-wrapper div.hcg-pagination-page {
         display: none;
     }
 }

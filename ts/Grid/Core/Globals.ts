@@ -125,8 +125,6 @@ namespace Globals {
         paginationPageButtonActive: 'pagination-page-active',
         paginationEllipsis: 'pagination-ellipsis',
         paginationMobileSelector: 'pagination-mobile-selector',
-        paginationMobilePageSizeSelector:
-            'pagination-mobile-page-size-selector',
         paginationPageSizeContainer: 'pagination-page-size-container',
         paginationPageSizeSelect: 'pagination-page-size-select',
         noWidth: 'no-width',
