@@ -1,7 +1,7 @@
 const sidebars = {
     docs: {
         Highcharts: [
-            'public-index'
+            'index'
         ],
         'Getting started': [
             'getting-started/system-requirements',
@@ -339,4 +339,4 @@ const sidebars = {
     }
 };
 
-export default sidebars;
+module.exports = sidebars;

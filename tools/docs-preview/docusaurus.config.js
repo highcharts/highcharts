@@ -4,6 +4,7 @@ import { themes as prismThemes } from 'prism-react-renderer';
 import { visit } from 'unist-util-visit';
 import gridProPlugin from './src/remark/gridProPlugin.js';
 import iframePlugin from './src/remark/iframePlugin.js';
+import customStartMessagePlugin from './plugins/custom-start-message.js';
 
 // Plugin to remove iframe styles that can not be parsed as JSX
 function removeIframeStyle() {
@@ -34,7 +35,14 @@ const config = {
     baseUrl: '/',
 
     onBrokenLinks: 'throw',
-    onBrokenMarkdownLinks: 'warn',
+    onDuplicateRoutes: 'warn',
+
+    // Markdown configuration
+    markdown: {
+        hooks: {
+            onBrokenMarkdownLinks: 'warn'
+        }
+    },
 
     i18n: {
         defaultLocale: 'en',
@@ -48,8 +56,9 @@ const config = {
             ({
                 docs: {
                     path: '../../docs',
-                    sidebarPath: '../../docs/sidebars.mjs',
-                    routeBasePath: '/',
+                    sidebarPath: '../../docs/sidebars.js',
+                    routeBasePath: '/docs/',
+                    exclude: ['**/Readme.md'],
                     remarkPlugins: [
                         removeIframeStyle,
                         iframePlugin,
@@ -62,6 +71,10 @@ const config = {
                 }
             })
         ]
+    ],
+
+    plugins: [
+        customStartMessagePlugin
     ],
 
     themeConfig:

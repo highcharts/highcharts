@@ -305,12 +305,8 @@ function checkDemosConsistency() {
 async function checkDocsConsistency() {
     const FS = require('fs');
     const LogLib = require('../libs/log');
-    const { pathToFileURL } = require('node:url');
 
-    const sidebarModule = await import(
-        pathToFileURL(path.join(__dirname, '..', '..', 'docs', 'sidebars.mjs'))
-    );
-    const sidebar = sidebarModule.default || sidebarModule;
+    const sidebar = require('../../docs/sidebars.js');
     const { unlisted } = require('../../docs/doc-config.js');
     const sidebarDocs = [];
 
@@ -353,7 +349,7 @@ async function checkDocsConsistency() {
     });
 
     if (docsNotAdded.length > 0) {
-        LogLib.failure(`❌  Found ${docsNotAdded.length} docs not added to '/docs/sidebars.mjs' or '/docs/doc-config.js':`);
+        LogLib.failure(`❌  Found ${docsNotAdded.length} docs not added to '/docs/sidebars.js' or '/docs/doc-config.js':`);
         docsNotAdded.forEach(file => LogLib.warn(`   '${file}'`));
         throw new Error('Docs not added to sidebar');
     }
