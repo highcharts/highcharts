@@ -6,8 +6,7 @@ const gulp = require('gulp');
 const path = require('path');
 const process = require('node:process');
 const yargs = require('yargs/yargs');
-
-const { runTasks } = require('./lib/gulp');
+const processLib = require('../libs/process');
 
 /* *
  *
@@ -93,6 +92,8 @@ async function testTS() {
 
     // Conditionally build required code
     await gulpLib.run('scripts');
+    await processLib.exec('npx gulp scripts --product Grid');
+    await processLib.exec('npx gulp scripts --product Dashboards');
 
     const shouldRunTests = forceRun ||
         (await shouldRun(runConfig).catch(error => {
