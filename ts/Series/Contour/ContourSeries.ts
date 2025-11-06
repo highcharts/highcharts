@@ -86,7 +86,9 @@ export default class ContourSeries extends ScatterSeries {
             tickInterval: 1,
             gridLineWidth: 0,
             endOnTick: false,
-            startOnTick: false
+            startOnTick: false,
+            tickWidth: 1,
+            lineWidth: 1
         };
 
         for (const axis of [this.xAxis, this.yAxis]) {
@@ -158,7 +160,7 @@ export default class ContourSeries extends ScatterSeries {
             ),
             devicePixelRatio = window.devicePixelRatio,
             svg = document.querySelector('.highcharts-root'),
-            foreignObject = document.createElementNS(
+            foreignObject = canvas.parentElement || document.createElementNS(
                 'http://www.w3.org/2000/svg',
                 'foreignObject'
             ),
@@ -520,13 +522,13 @@ export default class ContourSeries extends ScatterSeries {
                                     )
                                 )
                             );
-
-                            let contourIndex: f32 = floor(
-                                val /
-                                contourInterval
-                            );
+\
                             let averageValInBand : f32 = (
-                                contourIndex *
+                                // Contour index
+                                floor(
+                                    val /
+                                    contourInterval
+                                ) *
                                 contourInterval +
                                 contourInterval /
                                 2.0
@@ -535,21 +537,32 @@ export default class ContourSeries extends ScatterSeries {
                             // BACKGROUND COLOR
                             let minHeight: f32 = input.valExtremes.x;
                             let maxHeight: f32 = input.valExtremes.y;
-                            let normVal: f32 = (
-                                (val - minHeight) /
-                                (maxHeight - minHeight)
-                            );
-                            let averageNormVal: f32 = (
-                                (averageValInBand - minHeight) /
-                                (maxHeight - minHeight)
-                            );
 
-                            var bgColor: vec3f;
-                            if (smoothColoring > 0) {
-                                bgColor = getColor(normVal);
-                            } else {
-                                bgColor = getColor(averageNormVal);
-                            }
+                            var bgColor: vec3f = getColor(select(
+                                // Norm value
+                                (
+                                    (val - minHeight) /
+                                    (maxHeight - minHeight)
+                                ),
+                                // Average norm value
+                                (
+                                    (
+                                        // Average val in band
+                                        (
+                                            // Contour index
+                                            floor(
+                                                val /
+                                                contourInterval
+                                            ) *
+                                            contourInterval +
+                                            contourInterval /
+                                            2.0
+                                        ) - minHeight
+                                    ) /
+                                    (maxHeight - minHeight)
+                                ),
+                                smoothColoring > 0
+                            ));
 
                             // MIX
                             var pixelColor = bgColor;
