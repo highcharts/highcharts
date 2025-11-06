@@ -92,7 +92,6 @@ export default class ContourSeries extends ScatterSeries {
         };
 
         for (const axis of [this.xAxis, this.yAxis]) {
-
             for (const [key, val] of Object.entries(props)) {
                 if (axis.userOptions[key as keyof typeof props] === void 0) {
                     (axis.options as any)[key] = val;
@@ -121,8 +120,8 @@ export default class ContourSeries extends ScatterSeries {
                 index2d = i * 2,
                 index3d = i * 3;
 
-            if (foundMax < (value || 0)) {
-                foundMax = value || 0;
+            if (foundMax < (value ?? 0)) {
+                foundMax = value ?? 0;
             }
 
             points2d[index2d] = x / xDivider;
@@ -765,7 +764,7 @@ export default class ContourSeries extends ScatterSeries {
 
         return [
             xMin,
-            xMax + xAxis.toValue(8, false),
+            xMax,
             yMin,
             yMax
         ];
