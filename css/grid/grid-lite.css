@@ -1218,9 +1218,13 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     width: 100%;
 }
 
+.hcg-pagination-wrapper select {
+    min-height: 30px;
+}
+
 /* Pagination button styling - unified approach */
-.hcg-pagination-wrapper button,
-.hcg-pagination-wrapper .hcg-pagination-ellipsis {
+.hcg-pagination-controls button,
+.hcg-pagination-controls span {
     color: var(--ig-pagination-button-color);
     background: var(--ig-pagination-button-background);
     border: var(--ig-pagination-button-border);
@@ -1236,26 +1240,26 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     cursor: pointer;
 }
 
-.hcg-pagination-wrapper .hcg-pagination-ellipsis {
+.hcg-pagination-controls span {
     cursor: default;
     border-color: transparent;
 }
 
 /* SVG icon styling for pagination buttons */
-.hcg-pagination-wrapper button svg {
+.hcg-pagination-controls button svg {
     color: var(--ig-pagination-icon-color);
     width: var(--ig-input-font-size);
     height: var(--ig-input-font-size);
     display: block;
 }
 
-.hcg-pagination-wrapper button svg path {
+.hcg-pagination-controls button svg path {
     stroke: currentcolor;
 }
 
 /* Fix horizontal layout for pagination pages */
 
-.hcg-pagination-wrapper div.hcg-pagination-nav-buttons {
+.hcg-pagination-controls div.hcg-pagination-nav-buttons {
     margin-right: 12px;
     margin-left: 12px;
     display: inline-flex;
@@ -1306,11 +1310,7 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     text-align: right;
 }
 
-.hcg-pagination-wrapper select {
-    min-height: 30px;
-}
-
-.hcg-pagination-wrapper .hcg-pagination-page-size-select {
+.hcg-pagination-wrapper .hcg-pagination-page-size-container select {
     width: 60px;
     margin-left: 8px;
 }
