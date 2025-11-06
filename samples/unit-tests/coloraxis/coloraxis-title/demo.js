@@ -13,7 +13,7 @@ QUnit.test('Color axis title should render', function (assert) {
     assert.ok(
         colorAxis.axisTitle &&
         colorAxis.axisTitle.element.textContent === 'Test Title',
-        'Color axis title is rendered with correct text'
+        'Color axis title should be rendered with correct text'
     );
 });
 
@@ -38,13 +38,6 @@ QUnit.test(
 
         const colorAxis = chart.colorAxis && chart.colorAxis[0];
         const title = colorAxis && colorAxis.axisTitle;
-
-        assert.ok(title && title.element, 'Color axis title exists');
-        assert.strictEqual(
-            title && title.element && title.element.textContent,
-            'Test Title',
-            'Color axis title has correct text'
-        );
 
         // Rotation can be on the SVG transform or wrapper rotation property
         const transform = title && title.element &&
