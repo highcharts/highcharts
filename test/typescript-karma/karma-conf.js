@@ -144,9 +144,14 @@ module.exports = function (config) {
                 { pattern: 'test/typescript-karma/**/!(*.test).js', type: 'module' }
             ],
             Highcharts: [
-                { pattern: 'test/typescript-karma/**/!(demo).js', type: 'module' }
+                { pattern: 'test/typescript-karma/Core/**/*.test.js', type: 'module' },
+                { pattern: 'test/typescript-karma/masters/**/*.test.js', type: 'module' },
+                { pattern: 'test/typescript-karma/**/!(*.test).js', type: 'module' }
+            ],
+            All: [
+                { pattern: 'test/typescript-karma/**/*.js', type: 'module' },
             ]
-        }[argv.product || 'Highcharts'])
+        }[argv.product || 'All'])
     );
 
     let options = {
