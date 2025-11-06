@@ -11,7 +11,7 @@ Events can be registered in several ways depending on whether the configuration 
 | Method | Scope | Best For | Supports JSON Config? | Example |
 |--------|------|---------|----------------------|---------|
 | **In Configuration** | One chart | Custom, chart-specific behavior | ❌ No (functions cannot be stored in JSON) | `chart.events.load` |
-| **On a Chart Instance** | One already-created chart | When config is loaded from backend / editable UI | ✅ Yes | `Highcharts.addEvent(chart, 'render', ...)` |
+| **On a Component Instance (Chart, Series, Point etc.)** | One already-created chart | When config is loaded from backend / editable UI | ✅ Yes | `Highcharts.addEvent(chart, 'render', ...)` |
 | **On a Highcharts Class** | All charts of a type | Plugin-style reusable logic | ✅ Yes | `Highcharts.addEvent(Highcharts.Series, 'legendItemClick', ...)` |
 
 ### When to Choose Each Method
