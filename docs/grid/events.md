@@ -1,3 +1,7 @@
+---
+tags: ["grid-pro"]
+---
+
 # Events
 
 **Highcharts Grid Pro** supports event listeners that are triggered when interacting with the grid. Events are configured at different levels depending on their scope:

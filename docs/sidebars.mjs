@@ -36,7 +36,7 @@ const sidebars = {
             'chart-concepts/dataviz-glossary',
             'chart-concepts/common-events'
         ],
-        'Stock': [
+        Stock: [
             'stock/getting-started-stock',
             'stock/understanding-highcharts-stock',
             'stock/stock-tools',
@@ -60,7 +60,7 @@ const sidebars = {
             'stock/custom-technical-indicators',
             'stock/standalone-navigator'
         ],
-        'Maps': [
+        Maps: [
             'maps/getting-started',
             'maps/mapview-and-projection',
             'maps/map-navigation',
@@ -80,21 +80,21 @@ const sidebars = {
             'maps/tilemap-series',
             'maps/geoheatmap-series'
         ],
-        'Gantt': [
+        Gantt: [
             'gantt/getting-started-gantt',
             'gantt/gantt-grouping-tasks',
             'gantt/gantt-task-dependencies',
             'gantt/gantt-axis-grid',
             'gantt/gantt-task-config'
         ],
-        'Dashboards': [
+        Dashboards: [
             'dashboards/installation',
             'dashboards/your-first-dashboard',
             {
-                'Wrappers': [
+                Wrappers: [
                     'dashboards/wrappers/dashboards-with-angular',
                     'dashboards/wrappers/dashboards-with-react',
-                    'dashboards/wrappers/dashboards-with-vue',
+                    'dashboards/wrappers/dashboards-with-vue'
                 ]
             },
             'dashboards/layout-description',
@@ -117,9 +117,9 @@ const sidebars = {
             'dashboards/custom-component',
             'dashboards/installation-with-es-modules',
             'dashboards/get-options',
-            'dashboards/frequently-asked-questions',
+            'dashboards/frequently-asked-questions'
         ],
-        'Grid': [
+        Grid: [
             'grid/general',
             'grid/installation',
             'grid/understanding-grid',
@@ -129,50 +129,38 @@ const sidebars = {
             {
                 type: 'doc',
                 id: 'grid/cell-editing',
-                label: 'Cell editing',
-                customProps: {
-                    gridPro: true
-                }
+                customProps: { gridPro: true }
             },
             {
                 type: 'doc',
                 id: 'grid/cell-renderers',
-                label: 'Cell renderers',
-                customProps: {
-                    gridPro: true
-                }
+                customProps: { gridPro: true }
             },
             'grid/cell-context-menu',
             {
                 type: 'doc',
                 id: 'grid/sparklines',
-                label: 'Sparklines',
-                customProps: {
-                    gridPro: true
-                }
+                customProps: { gridPro: true }
             },
             {
                 type: 'doc',
                 id: 'grid/events',
-                label: 'Events',
-                customProps: {
-                    gridPro: true
-                }
+                customProps: { gridPro: true }
             },
             'grid/column-filtering',
             'grid/exporting',
             'grid/pagination',
             {
-                'Theming': [
+                Theming: [
                     'grid/theming/theming',
                     'grid/theming/theming-variables',
-                    'grid/theming/conditional-theming',
+                    'grid/theming/conditional-theming'
                 ]
             },
             'grid/performance',
             'grid/accessibility',
             {
-                'Frameworks': [
+                Frameworks: [
                     'grid/frameworks/grid-with-angular',
                     'grid/frameworks/grid-with-nextjs',
                     'grid/frameworks/grid-with-react',
@@ -288,13 +276,13 @@ const sidebars = {
                             'morningstar/time-series/ohlcv',
                             'morningstar/time-series/price'
                         ],
-                        'Screeners': [
+                        Screeners: [
                             'morningstar/screeners/screener',
                             'morningstar/screeners/esg-screener',
                             'morningstar/screeners/find-similar-screener',
                             'morningstar/screeners/investment-screener',
                             'morningstar/screeners/investor-preferences',
-                            'morningstar/screeners/regulatory-screener',
+                            'morningstar/screeners/regulatory-screener'
                         ]
                     }
                 ]
@@ -309,7 +297,7 @@ const sidebars = {
             'chart-design-and-style/custom-themes-in-styled-mode',
             'chart-design-and-style/gradients-shadows-and-patterns'
         ],
-        'Accessibility': [
+        Accessibility: [
             'accessibility/accessibility-module',
             'accessibility/accessibility-module-feature-overview',
             'accessibility/configure-the-accessibility-module',
@@ -332,7 +320,7 @@ const sidebars = {
         'Extending Highcharts': [
             'extending-highcharts/extending-highcharts'
         ],
-        'Flutter': [
+        Flutter: [
             'flutter/getting-started',
             'flutter/your-first-chart',
             'flutter/highcharts-bundling'

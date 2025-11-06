@@ -1,3 +1,7 @@
+---
+tags: ["grid-pro"]
+---
+
 # Sparklines
 
 **Note:** Sparklines are only available in **Highcharts Grid Pro**, and also requires a valid **Highcharts Core license**.
