@@ -1,3 +1,7 @@
+---
+tags: ["grid-pro"]
+---
+
 # Cell editing
 
 **Note:** Cell editing is only available in [Highcharts Grid Pro](https://www.highcharts.com/docs/dashboards/grid-standalone).

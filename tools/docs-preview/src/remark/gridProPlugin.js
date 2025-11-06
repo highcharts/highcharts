@@ -1,105 +1,14 @@
 import { visit } from 'unist-util-visit';
-import sidebars from '../../../../docs/sidebars.mjs';
 
 const GRID_PRO_TOKEN = '__grid_pro__';
 
-function isObject(value) {
-    return typeof value === 'object' && value !== null;
-}
-
-function collectGridProDocIds() {
-    const ids = new Set();
-
-    function traverse(node) {
-        if (!node) {
-            return;
-        }
-
-        if (Array.isArray(node)) {
-            node.forEach(traverse);
-            return;
-        }
-
-        if (!isObject(node)) {
-            return;
-        }
-
-        if (node.type === 'doc') {
-            if (node.customProps?.gridPro && typeof node.id === 'string') {
-                ids.add(node.id);
-            }
-            return;
-        }
-
-        if (Array.isArray(node.items)) {
-            traverse(node.items);
-        }
-
-        for (const [key, value] of Object.entries(node)) {
-            if (key === 'customProps' || key === 'items') {
-                continue;
-            }
-
-            if (Array.isArray(value) || isObject(value)) {
-                traverse(value);
-            }
-        }
+function hasGridProTag(frontmatter) {
+    if (!frontmatter || !frontmatter.tags) {
+        return false;
     }
 
-    for (const sidebar of Object.values(sidebars)) {
-        traverse(sidebar);
-    }
-
-    return ids;
-}
-
-const GRID_PRO_DOC_IDS = collectGridProDocIds();
-
-function normalizeDocId(value) {
-    if (typeof value !== 'string') {
-        return null;
-    }
-
-    let normalized = value.replace(/\\/gu, '/').replace(/^\/+/u, '');
-
-    const docsSegmentIndex = normalized.indexOf('/docs/');
-
-    if (docsSegmentIndex !== -1) {
-        normalized = normalized.slice(docsSegmentIndex + '/docs/'.length);
-    }
-
-    normalized = normalized.replace(/^docs\//u, '');
-    normalized = normalized.replace(/\.mdx?$/u, '');
-    normalized = normalized.replace(/\/$/u, '');
-
-    return normalized || null;
-}
-
-function getDocIdFromFile(file) {
-    const candidates = [
-        file?.data?.id,
-        file?.data?.docId,
-        file?.data?.source,
-        file?.data?.slug
-    ];
-
-    for (const candidate of candidates) {
-        const normalized = normalizeDocId(candidate);
-        if (normalized) {
-            return normalized;
-        }
-    }
-
-    const history = Array.isArray(file?.history) ? [...file.history].reverse() : [];
-
-    for (const entry of history) {
-        const normalized = normalizeDocId(entry);
-        if (normalized) {
-            return normalized;
-        }
-    }
-
-    return null;
+    const tags = Array.isArray(frontmatter.tags) ? frontmatter.tags : [];
+    return tags.includes('grid-pro');
 }
 
 function createBadgeNode() {
@@ -142,8 +51,8 @@ function splitTextNode(value) {
 
 function gridProPlugin() {
     return function transformer(tree, file) {
-        const docId = getDocIdFromFile(file);
-        const hasGridProFlag = docId ? GRID_PRO_DOC_IDS.has(docId) : false;
+        const frontmatter = file.data?.frontMatter || file.data?.matter || {};
+        const hasGridProFlag = hasGridProTag(frontmatter);
 
         if (hasGridProFlag) {
             const firstChild = tree.children[0];

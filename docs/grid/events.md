@@ -1,3 +1,7 @@
+---
+tags: ["grid-pro"]
+---
+
 # Events
 
 The Grid supports event listeners that can be added to the [columnDefaults.events](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.Options-1#columnDefaults) object or a particular column. These listeners will call functions when interacting with the Grid.
