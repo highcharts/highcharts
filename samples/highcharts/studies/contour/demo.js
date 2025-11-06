@@ -1,5 +1,6 @@
 Highcharts.chart('container', {
-    yAxis: { gridLineWidth: 1, gridLineColor: '#000000' },
+    chart: { title: { text: 'Contour studies' } },
+    yAxis: { gridLineWidth: 1, gridLineColor: '#000000', title: null },
     xAxis: { gridLineWidth: 1, gridLineColor: '#000000' },
     colorAxis: {
         stops: [
