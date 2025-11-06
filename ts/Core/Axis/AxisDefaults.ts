@@ -427,6 +427,18 @@ namespace AxisDefaults {
          */
 
         /**
+         * The number of milliseconds to wait until the crosshair is shown when
+         * mouse over a point. Works on initial hover.
+         *
+         * TODO: Add sample
+         *
+         * @type      {number}
+         * @default   0
+         * @since     12.4
+         * @apioption xAxis.crosshair.showDelay
+         */
+
+        /**
          * Whether the crosshair should snap to the point or follow the pointer
          * independent of points.
          *
