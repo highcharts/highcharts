@@ -75,6 +75,7 @@ declare module '../../Core/Chart/ChartBase'{
     }
 }
 
+/** @internal */
 declare module '../../Core/PointerEvent' {
     interface PointerEvent {
         activeAnnotation?: boolean;

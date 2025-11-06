@@ -123,10 +123,12 @@ function getFieldType(
  *
  * */
 
+/** @internal */
 const NavigationBindingUtilities = {
     annotationsFieldsTypes,
     getAssignedAxis,
     getFieldType
 };
 
+/** @internal */
 export default NavigationBindingUtilities;
