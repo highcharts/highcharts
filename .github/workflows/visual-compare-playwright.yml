@@ -148,6 +148,9 @@ jobs:
           VISUAL_TEST_PATH: samples/gantt
         continue-on-error: true
 
+      - name: Analyze PR snapshots
+        run: node --import tsx tests/analyze-snapshots.mts
+
       - name: Upload Playwright artifacts
         if: always()
         uses: actions/upload-artifact@v4
