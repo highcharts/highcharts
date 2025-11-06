@@ -457,9 +457,7 @@ class Pagination {
 
         // Create first button
         this.firstButton = makeHTMLElement('button', {
-            innerHTML: Icons.first,
-            className: Globals.getClassName('paginationButton') + ' ' +
-                Globals.getClassName('paginationFirstButton')
+            innerHTML: Icons.first
         }, container);
         this.firstButton.title = this.lang.firstPage;
 
@@ -497,9 +495,7 @@ class Pagination {
 
         // Create previous button
         this.prevButton = makeHTMLElement('button', {
-            innerHTML: Icons.previous,
-            className: Globals.getClassName('paginationButton') + ' ' +
-                Globals.getClassName('paginationPrevButton')
+            innerHTML: Icons.previous
         }, container);
         this.prevButton.title = this.lang.previousPage;
 
@@ -537,9 +533,7 @@ class Pagination {
 
         // Create next button
         this.nextButton = makeHTMLElement('button', {
-            innerHTML: Icons.next,
-            className: Globals.getClassName('paginationButton') + ' ' +
-                Globals.getClassName('paginationNextButton')
+            innerHTML: Icons.next
         }, container);
         this.nextButton.title = this.lang.nextPage;
 
@@ -577,9 +571,7 @@ class Pagination {
 
         // Create last button
         this.lastButton = makeHTMLElement('button', {
-            innerHTML: Icons.last,
-            className: Globals.getClassName('paginationButton') + ' ' +
-                Globals.getClassName('paginationLastButton')
+            innerHTML: Icons.last
         }, container);
         this.lastButton.title = this.lang.lastPage;
 
@@ -782,11 +774,14 @@ class Pagination {
         }
 
         const button = makeHTMLElement('button', {
-            innerHTML: pageNumber.toString(),
-            className: Globals.getClassName(
-                isActive ? 'paginationPageButtonActive' : 'paginationPageButton'
-            )
+            innerHTML: pageNumber.toString()
         }, this.pageNumbersContainer);
+
+        if (isActive) {
+            button.classList.add(
+                Globals.getClassName('paginationPageButtonActive')
+            );
+        }
         button.title = formatText(this.lang.pageNumber, { page: pageNumber });
 
         // Set aria-label for a11y
@@ -810,8 +805,7 @@ class Pagination {
         }
 
         const ellipsisElement = makeHTMLElement('span', {
-            innerHTML: '...',
-            className: Globals.getClassName('paginationEllipsis')
+            innerHTML: '...'
         }, this.pageNumbersContainer);
         ellipsisElement.title = this.lang.ellipsis;
 
@@ -843,9 +837,9 @@ class Pagination {
             innerHTML: this.lang.pageSizeLabel
         }, container);
 
-        this.pageSizeSelect = makeHTMLElement('select', {
-            className: Globals.getClassName('paginationPageSizeSelect')
-        }, container) as HTMLSelectElement;
+        this.pageSizeSelect = makeHTMLElement(
+            'select', {}, container
+        ) as HTMLSelectElement;
 
         this.pageSizeOptions.forEach((option: number): void => {
             const optionElement = document.createElement('option');
@@ -1067,14 +1061,8 @@ class Pagination {
      */
     public setButtonState(button: HTMLElement, disabled?: boolean): void {
         if (disabled) {
-            button.classList.add(
-                Globals.getClassName('paginationButtonDisabled')
-            );
             button.setAttribute('disabled', 'disabled');
         } else {
-            button.classList.remove(
-                Globals.getClassName('paginationButtonDisabled')
-            );
             button.removeAttribute('disabled');
         }
     }
