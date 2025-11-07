@@ -56,7 +56,7 @@ const isNoteDefinition = (str: string): boolean =>
 
 /**
  * Get the value of a point property from string.
- * @private
+ * @internal
  */
 function getPointPropValue(point: Point, prop?: string): number|undefined {
     let ret;
@@ -74,7 +74,7 @@ function getPointPropValue(point: Point, prop?: string): number|undefined {
 /**
  * Get chart wide min/max for a set of props, as well as per
  * series min/max for selected props.
- * @private
+ * @internal
  */
 function getChartExtremesForProps(
     chart: Chart,
@@ -139,7 +139,7 @@ function getChartExtremesForProps(
 /**
  * Build a cache of prop extremes for the chart. Goes through
  * options to find out which props are needed.
- * @private
+ * @internal
  */
 function getPropMetrics(chart: Chart): PropMetrics {
     type MappingOpts = Sonification.InstrumentTrackMappingOptions|
@@ -284,7 +284,7 @@ function getPropMetrics(chart: Chart): PropMetrics {
 
 /**
  * Map a relative value onto a virtual axis.
- * @private
+ * @internal
  */
 function mapToVirtualAxis(
     value: number,
@@ -331,7 +331,7 @@ function mapToVirtualAxis(
 
 /**
  * Get the value of a mapped parameter for a point.
- * @private
+ * @internal
  */
 function getMappingParameterValue(
     context: Sonification.TimelineEventContext,
@@ -455,7 +455,7 @@ function getMappingParameterValue(
 
 /**
  * Get mapping parameter value with defined fallback and defaults.
- * @private
+ * @internal
  */
 function getParamValWithDefault(
     context: Sonification.TimelineEventContext,
@@ -483,7 +483,7 @@ function getParamValWithDefault(
 
 /**
  * Get time value for a point event.
- * @private
+ * @internal
  */
 function getPointTime(
     point: Point,
@@ -504,7 +504,7 @@ function getPointTime(
 
 /**
  * Get duration for a series
- * @private
+ * @internal
  */
 function getAvailableDurationForSeries(
     series: Series,
@@ -557,7 +557,7 @@ function getAvailableDurationForSeries(
 
 /**
  * Build and add a track to the timeline.
- * @private
+ * @internal
  */
 function addTimelineChannelFromTrack(
     timeline: SonificationTimeline,
@@ -600,7 +600,7 @@ function addTimelineChannelFromTrack(
 
 /**
  * Add event from a point to a mapped instrument track.
- * @private
+ * @internal
  */
 function addMappedInstrumentEvent(
     context: Sonification.TimelineEventContext,
@@ -733,7 +733,7 @@ function addMappedInstrumentEvent(
 
 /**
  * Get the message value to speak for a point.
- * @private
+ * @internal
  */
 function getSpeechMessageValue(
     context: Sonification.TimelineEventContext,
@@ -751,7 +751,7 @@ function getSpeechMessageValue(
 
 /**
  * Add an event from a point to a mapped speech track.
- * @private
+ * @internal
  */
 function addMappedSpeechEvent(
     context: Sonification.TimelineEventContext,
@@ -793,7 +793,7 @@ function addMappedSpeechEvent(
 
 /**
  * Add events to a channel for a point&track combo.
- * @private
+ * @internal
  */
 function addMappedEventForPoint(
     context: Sonification.TimelineEventContext,
@@ -831,7 +831,7 @@ function addMappedEventForPoint(
 
 /**
  * Get a reduced set of points from a list, depending on grouping opts.
- * @private
+ * @internal
  */
 function getGroupedPoints(
     pointGroupOpts: Sonification.PointGroupingOptions,
@@ -889,7 +889,7 @@ function getGroupedPoints(
 
 /**
  * Should a track be active for this event?
- * @private
+ * @internal
  */
 function isActive(
     context: Sonification.TimelineEventContext,
@@ -942,7 +942,7 @@ function isActive(
 
 /**
  * Build a new timeline object from a chart.
- * @private
+ * @internal
  */
 function timelineFromChart(
     audioContext: AudioContext,

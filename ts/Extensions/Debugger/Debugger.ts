@@ -82,9 +82,7 @@ const defaultOptions = {
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 function compose(
     ChartClass: typeof Chart
 ): void {
@@ -99,9 +97,7 @@ function compose(
 
 }
 
-/**
- * @private
- */
+/** @internal */
 function onChartBeforeRedraw(
     this: Chart
 ): void {
@@ -116,9 +112,7 @@ function onChartBeforeRedraw(
     delete this.errorElements;
 }
 
-/**
- * @private
- */
+/** @internal */
 function onHighchartsDisplayError(
     this: GlobalsBase,
     e: U.ErrorMessageEventObject

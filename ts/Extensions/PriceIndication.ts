@@ -72,7 +72,7 @@ export interface LastVisiblePriceLabelOptions {
  *
  * */
 
-/** @private */
+/** @internal */
 function compose(
     SeriesClass: typeof Series
 ): void {
@@ -89,7 +89,7 @@ function compose(
  * Hides price indication when parent series is hidden. Showing the indicator is
  * handled by the `onSeriesAfterRender` function.
  *
- * @private
+ * @internal
  *
  */
 function onSeriesHide(
@@ -110,7 +110,7 @@ function onSeriesHide(
 }
 
 
-/** @private */
+/** @internal */
 function onSeriesAfterRender(
     this: Series
 ): void {

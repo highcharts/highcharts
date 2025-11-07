@@ -34,9 +34,7 @@ const {
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 function average(
     arr: ApproximationArray
 ): (null|number|undefined) {
@@ -55,7 +53,7 @@ function average(
 
 /**
  * The same as average, but for series with multiple values, like area ranges.
- * @private
+ * @internal
  */
 function averages(): (Array<(null|number|undefined)>|undefined) { // #5479
     const ret = [] as Array<(null|number|undefined)>;
@@ -71,9 +69,7 @@ function averages(): (Array<(null|number|undefined)>|undefined) { // #5479
     return typeof ret[0] === 'undefined' ? void 0 : ret;
 }
 
-/**
- * @private
- */
+/** @internal */
 function close(
     arr: ApproximationArray
 ): (null|number|undefined) {
@@ -82,9 +78,7 @@ function close(
         (arr.hasNulls ? null : void 0);
 }
 
-/**
- * @private
- */
+/** @internal */
 function high(
     arr: ApproximationArray
 ): (null|number|undefined) {
@@ -96,7 +90,7 @@ function high(
 /**
  * HLC, OHLC and range are special cases where a multidimensional array is input
  * and an array is output.
- * @private
+ * @internal
  */
 function hlc(
     high: ApproximationArray,
@@ -116,9 +110,7 @@ function hlc(
     }
 }
 
-/**
- * @private
- */
+/** @internal */
 function low(
     arr: ApproximationArray
 ): (null|number|undefined) {
@@ -127,9 +119,7 @@ function low(
         (arr.hasNulls ? null : void 0);
 }
 
-/**
- * @private
- */
+/** @internal */
 function ohlc(
     open: ApproximationArray,
     high: ApproximationArray,
@@ -151,18 +141,14 @@ function ohlc(
     }
 }
 
-/**
- * @private
- */
+/** @internal */
 function open(
     arr: ApproximationArray
 ): (null|number|undefined) {
     return arr.length ? arr[0] : ((arr as any).hasNulls ? null : void 0);
 }
 
-/**
- * @private
- */
+/** @internal */
 function range(
     low: ApproximationArray,
     high: ApproximationArray
@@ -178,9 +164,7 @@ function range(
     // Else, return is undefined
 }
 
-/**
- * @private
- */
+/** @internal */
 function sum(
     arr: ApproximationArray
 ): (null|number|undefined) {

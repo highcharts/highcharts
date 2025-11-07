@@ -128,9 +128,7 @@ const baseGeneratePoints = seriesProto.generatePoints;
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 function adjustExtremes(
     xAxis: Axis,
     groupedXData: Array<number>|Types.TypedArray
@@ -187,9 +185,7 @@ function adjustExtremes(
     }
 }
 
-/**
- * @private
- */
+/** @internal */
 function anchorPoints(
     series: Series,
     groupedXData: Array<number>|Types.TypedArray,
@@ -281,7 +277,7 @@ function anchorPoints(
 /**
  * For the processed data, calculate the grouped data if needed.
  *
- * @private
+ * @internal
  * @function Highcharts.Series#applyGrouping
  */
 function applyGrouping(
@@ -465,9 +461,7 @@ function applyGrouping(
 
 }
 
-/**
- * @private
- */
+/** @internal */
 function compose(
     SeriesClass: typeof Series
 ): void {
@@ -502,7 +496,7 @@ function compose(
 
 /**
  * Destroy the grouped data points. #622, #740
- * @private
+ * @internal
  */
 function destroyGroupedData(
     this: Series
@@ -530,7 +524,7 @@ function destroyGroupedData(
 
 /**
  * Override the generatePoints method by adding a reference to grouped data
- * @private
+ * @internal
  */
 function generatePoints(
     this: Series
@@ -547,7 +541,7 @@ function generatePoints(
 /**
  * Set default approximations to the prototypes if present. Properties are
  * inherited down. Can be overridden for individual series types.
- * @private
+ * @internal
  */
 function getDGApproximation(
     this: Series
@@ -778,7 +772,7 @@ function groupData(
 /**
  * Handle default options for data grouping. This must be set at runtime because
  * some series types are defined after this.
- * @private
+ * @internal
  */
 function onAfterSetOptions(
     this: Series,
@@ -823,9 +817,7 @@ function onAfterSetOptions(
     }
 }
 
-/**
- * @private
- */
+/** @internal */
 function skipDataGrouping(series: Series, force: boolean): boolean {
     return !(series.isCartesian &&
         !series.isDirty &&

@@ -37,7 +37,7 @@ const lang: Partial<LangOptions> = {
      * @since   10.0.0
      * @product highcharts highmaps
      *
-     * @private
+     * @internal
      */
     mainBreadcrumb: 'Main'
 };

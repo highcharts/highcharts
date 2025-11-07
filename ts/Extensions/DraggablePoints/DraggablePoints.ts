@@ -201,7 +201,7 @@ Supported options for each prop:
         is easier, but won't update the data).
 */
 
-/** @private */
+/** @internal */
 function compose(
     ChartClass: typeof Chart,
     SeriesClass: typeof Series
@@ -277,7 +277,7 @@ function compose(
 /**
  * On point mouse out. Hide drag handles, depending on state.
  *
- * @private
+ * @internal
  * @function mouseOut
  * @param {Highcharts.Point} point
  *        The point mousing out of.
@@ -305,7 +305,7 @@ function mouseOut(point: Point): void {
 /**
  * Mouseover on a point. Show drag handles if the conditions are right.
  *
- * @private
+ * @internal
  * @function mouseOver
  * @param {Highcharts.Point} point
  *        The point mousing over.
@@ -337,7 +337,7 @@ function mouseOver(point: Point): void {
 
 /**
  * Point mouseleave event. See above function for explanation of the timeout.
- * @private
+ * @internal
  */
 function onPointMouseOut(
     this: Point
@@ -371,7 +371,7 @@ function onPointMouseOver(
 
 /**
  * Hide drag handles on a point if it is removed.
- * @private
+ * @internal
  */
 function onPointRemove(
     this: Point
@@ -387,7 +387,7 @@ function onPointRemove(
 /**
  * Mouseout on resize handle. Handle states, and possibly run mouseOut on point.
  *
- * @private
+ * @internal
  * @function onResizeHandleMouseOut
  * @param {Highcharts.Point} point
  *        The point mousing out of.
@@ -410,7 +410,7 @@ function onResizeHandleMouseOut(point: Point): void {
 /**
  * Mousedown on resize handle. Init a drag if the conditions are right.
  *
- * @private
+ * @internal
  * @function onResizeHandleMouseDown
  * @param {Highcharts.PointerEventObject} e
  *        The mousedown event.
@@ -448,7 +448,7 @@ function onResizeHandleMouseDown(
 /**
  * Get updated point values when dragging a point.
  *
- * @private
+ * @internal
  * @function Highcharts.Point#getDropValues
  *
  * @param {Object} origin
@@ -491,7 +491,7 @@ function pointGetDropValues(
     /**
      * Utility function to apply precision and limit a value within the
      * draggable range.
-     * @private
+     * @internal
      * @param {number} val
      *        Value to limit
      * @param {string} direction
@@ -524,7 +524,7 @@ function pointGetDropValues(
     /**
      * Utility function to apply precision and limit a value within the
      * draggable range used only for Highcharts Maps.
-     * @private
+     * @internal
      * @param {PointerEvent} newPos
      *        PointerEvent, which is used to get the value
      * @param {string} direction
@@ -635,7 +635,7 @@ function pointGetDropValues(
  * Render drag handles on a point - depending on which handles are enabled - and
  * attach events to them.
  *
- * @private
+ * @internal
  * @function Highcharts.Point#showDragHandles
  */
 function pointShowDragHandles(
@@ -766,7 +766,7 @@ function pointShowDragHandles(
 /**
  * Returns an SVGElement to use as the guide box for a set of points.
  *
- * @private
+ * @internal
  * @function Highcharts.Series#getGuideBox
  *
  * @param {Array<Highcharts.Point>} points

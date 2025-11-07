@@ -74,7 +74,7 @@ declare module '../../Core/Options' {
 
 /**
  * Shift the drillUpButton to make the space for resetZoomButton, #8095.
- * @private
+ * @internal
  */
 function onChartAfterShowResetZoom(
     this: Chart
@@ -99,7 +99,7 @@ function onChartAfterShowResetZoom(
 
 /**
  * Remove resize/afterSetExtremes at chart destroy.
- * @private
+ * @internal
  */
 function onChartDestroy(
     this: Chart
@@ -112,7 +112,7 @@ function onChartDestroy(
 
 /**
  * Logic for making space for the buttons above the plot area
- * @private
+ * @internal
  */
 function onChartGetMargins(
     this: Chart
@@ -147,9 +147,7 @@ function onChartGetMargins(
     }
 }
 
-/**
- * @private
- */
+/** @internal */
 function onChartRedraw(
     this: Chart
 ): void {
@@ -158,7 +156,7 @@ function onChartRedraw(
 
 /**
  * After zooming out, shift the drillUpButton to the previous position, #8095.
- * @private
+ * @internal
  */
 function onChartSelection(
     this: Chart,
@@ -181,7 +179,7 @@ function onChartSelection(
 /**
  * The Breadcrumbs class
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.Breadcrumbs
  *

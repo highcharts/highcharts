@@ -28,7 +28,7 @@ import type {
 
 /**
  * Common options
- * @private
+ * @internal
  */
 const common = {
     /// enabled: null, // (true for stock charts, false for basic),
@@ -84,7 +84,7 @@ const common = {
 
 /**
  * Extends common options
- * @private
+ * @internal
  */
 const seriesSpecific = {
     line: {},
@@ -116,7 +116,7 @@ const seriesSpecific = {
 /**
  * Units are defined in a separate array to allow complete overriding in
  * case of a user option.
- * @private
+ * @internal
  */
 const units = [
     [

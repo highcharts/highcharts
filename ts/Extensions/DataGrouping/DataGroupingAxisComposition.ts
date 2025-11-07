@@ -99,9 +99,7 @@ function applyGrouping(
     });
 }
 
-/**
- * @private
- */
+/** @internal */
 function compose(
     AxisClass: typeof Axis
 ): void {
@@ -127,7 +125,7 @@ function compose(
 /**
  * Get the data grouping pixel width based on the greatest defined individual
  * width of the axis' series, and if whether one of the axes need grouping.
- * @private
+ * @internal
  */
 function getGroupPixelWidth(
     this: Axis
@@ -185,7 +183,7 @@ function getGroupPixelWidth(
  * When resetting the scale reset the hasProcessed flag to avoid taking
  * previous data grouping of neighbour series into account when determining
  * group pixel width (#2692).
- * @private
+ * @internal
  */
 function onAfterSetScale(
     this: Axis

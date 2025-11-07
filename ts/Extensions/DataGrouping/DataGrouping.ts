@@ -43,9 +43,7 @@ const {
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 function compose(
     AxisClass: typeof Axis,
     SeriesClass: typeof Series,
@@ -66,7 +64,7 @@ function compose(
 /**
  * Extend the original method, make the tooltip's header reflect the grouped
  * range.
- * @private
+ * @internal
  */
 function onTooltipHeaderFormatter(
     this: Tooltip,

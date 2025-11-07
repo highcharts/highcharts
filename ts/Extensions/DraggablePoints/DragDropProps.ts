@@ -754,7 +754,7 @@ const gantt: Record<string, Partial<SeriesDragDropPropsObject>> = {
 
 /**
  * Use a circle covering the marker as drag handle.
- * @private
+ * @internal
  */
 function arearangeHandleFormatter(
     point: AreaRangePoint
@@ -772,7 +772,7 @@ function arearangeHandleFormatter(
 
 /**
  * 90deg rotated column handle path, used in multiple series types.
- * @private
+ * @internal
  */
 function horizHandleFormatter(
     point: Point
@@ -799,7 +799,7 @@ function horizHandleFormatter(
  * Handle positioner logic is the same for x and x2 apart from the x value.
  * shapeArgs does not take yAxis reversed etc into account, so we use
  * axis.toPixels to handle positioning.
- * @private
+ * @internal
  */
 function xrangeHandlePositioner(
     point: XRangePoint,
