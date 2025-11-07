@@ -52,16 +52,21 @@ const {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Chart/ChartBase' {
     interface ChartBase {
-        breadcrumbsBottomMargin?: boolean;
-        breadcrumbsTopMargin?: boolean;
         breadcrumbs?: Breadcrumbs;
     }
 }
+
 declare module '../../Core/Options' {
     interface LangOptions {
-        breadcrumbsToLabel?: string;
+        /**
+         * The text for the main breadcrumb.
+         *
+         * @since   10.0.0
+         * @product highcharts highmaps
+         */
         mainBreadcrumb?: string;
     }
 }
@@ -288,12 +293,6 @@ class Breadcrumbs {
 
     /**
      * Set breadcrumbs list.
-     * @function Highcharts.Breadcrumbs#setList
-     *
-     * @param {Highcharts.Breadcrumbs} this
-     *        Breadcrumbs class.
-     * @param {Highcharts.BreadcrumbsOptions} list
-     *        Breadcrumbs list.
      */
     public setList(
         list: Array<BreadcrumbOptions>
@@ -645,17 +644,6 @@ class Breadcrumbs {
         return separator;
     }
 
-    /**
-     * Update.
-     * @function Highcharts.Breadcrumbs#update
-     *
-     * @param {Highcharts.Breadcrumbs} this
-     *        Breadcrumbs class.
-     * @param {Highcharts.BreadcrumbsOptions} options
-     *        Breadcrumbs class.
-     * @param {boolean} redraw
-     *        Redraw flag
-     */
     public update(
         options: DeepPartial<BreadcrumbsOptions>
     ): void {
@@ -874,6 +862,7 @@ class Breadcrumbs {
  *
  * */
 
+/** @internal */
 namespace Breadcrumbs {
     export type BreadcrumbElement = {
         button?: SVGElement,
@@ -889,6 +878,7 @@ namespace Breadcrumbs {
  *
  * */
 
+/** @internal */
 export default Breadcrumbs;
 
 /* *
@@ -972,18 +962,6 @@ export default Breadcrumbs;
  * Y offset of a Breadcrumbs group.
  * @name Highcharts.BreadcrumbsAlignOptions#y
  * @type {number}
- */
-
-/**
- * Options for all breadcrumbs.
- *
- * @interface Highcharts.BreadcrumbsOptions
- */
-
-/**
- * Button theme.
- * @name Highcharts.BreadcrumbsOptions#buttonTheme
- * @type { SVGAttributes | undefined }
  */
 
 (''); // Keeps doclets above in JS file
