@@ -590,6 +590,7 @@ class Fx {
  *
  * */
 
+/** @internal */
 interface Fx extends FxBase {
     // Nothing here yet
 }
@@ -600,6 +601,7 @@ interface Fx extends FxBase {
  *
  * */
 
+/** @internal */
 namespace Fx {
     export interface Timer {
         (gotoEnd?: boolean): boolean;
@@ -615,4 +617,5 @@ namespace Fx {
  *
  * */
 
+/** @internal */
 export default Fx;

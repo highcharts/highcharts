@@ -51,6 +51,7 @@ const {
  *
  * */
 
+/** @internal */
 declare module '../Animation/FxBase' {
     interface FxBase {
         matrixSetter?(): void;
