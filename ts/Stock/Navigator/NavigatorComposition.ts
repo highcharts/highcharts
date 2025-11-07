@@ -72,9 +72,7 @@ declare module '../../Core/Series/SeriesBase' {
  *
  * */
 
-/**
- * @internal
- */
+/** @internal */
 function compose(
     ChartClass: typeof Chart,
     AxisClass: typeof Axis,

@@ -80,9 +80,7 @@ let NavigatorConstructor: typeof Navigator;
  *
  * */
 
-/**
- * @internal
- */
+/** @internal */
 function compose(
     ChartClass: typeof Chart,
     NavigatorClass: typeof Navigator
@@ -260,9 +258,7 @@ function onChartBeforeShowResetZoom(
     }
 }
 
-/**
- * @internal
- */
+/** @internal */
 function onChartCallback(
     chart: Chart
 ): void {

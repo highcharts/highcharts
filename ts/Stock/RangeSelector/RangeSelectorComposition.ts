@@ -157,16 +157,12 @@ function axisMinFromRange(
     return min;
 }
 
-/**
- * @internal
- */
+/** @internal */
 function updateRangeSelectorButtons(this: Chart): void {
     this.rangeSelector?.redrawElements();
 }
 
-/**
- * @internal
- */
+/** @internal */
 function compose(
     AxisClass: typeof Axis,
     ChartClass: typeof Chart,
@@ -217,9 +213,7 @@ function createRangeSelector(
     }
 }
 
-/**
- * @internal
- */
+/** @internal */
 function onChartBeforeRender(
     this: Chart
 ): void {
@@ -337,9 +331,7 @@ function onChartGetMargins(
     }
 }
 
-/**
- * @internal
- */
+/** @internal */
 function onChartUpdate(
     this: Chart,
     e: Chart

@@ -97,9 +97,7 @@ export interface YAxisPositions {
  *
  * */
 
-/**
- * @internal
- */
+/** @internal */
 function compose(
     NavigationBindingsClass: typeof NavigationBindings
 ): void {

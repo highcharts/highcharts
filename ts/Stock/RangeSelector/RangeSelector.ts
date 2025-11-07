@@ -157,9 +157,7 @@ class RangeSelector {
      *
      * */
 
-    /**
-     * @internal
-     */
+    /** @internal */
     public static compose(
         AxisClass: typeof Axis,
         ChartClass: typeof Chart
@@ -947,9 +945,7 @@ class RangeSelector {
             lang = defaultOptions.lang,
             isMin = name === 'min';
 
-        /**
-         * @internal
-         */
+        /** @internal */
         function updateExtremes(name: 'min'| 'max'): void {
             const { maxInput, minInput } = rangeSelector,
                 chartAxis = chart.xAxis[0],
@@ -1736,9 +1732,7 @@ class RangeSelector {
         }
     }
 
-    /**
-     * @internal
-     */
+    /** @internal */
     public redrawElements(): void {
         const chart = this.chart,
             { inputBoxHeight, inputBoxBorderColor } = this.options;

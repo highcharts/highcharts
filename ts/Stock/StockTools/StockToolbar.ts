@@ -809,9 +809,7 @@ class Toolbar {
         }
     }
 
-    /**
-     * @internal
-     */
+    /** @internal */
     public getIconsURL(): string {
         return (this.chart.options.navigation as any).iconsURL ||
             this.options.iconsURL ||

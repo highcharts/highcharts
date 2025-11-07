@@ -72,9 +72,7 @@ interface StockToolsFieldsObject {
  *
  * */
 
-/**
- * @internal
- */
+/** @internal */
 const indicatorsWithAxes = [
     'apo',
     'ad',
@@ -109,9 +107,7 @@ const indicatorsWithAxes = [
     'williamsr'
 ];
 
-/**
- * @internal
- */
+/** @internal */
 const indicatorsWithVolume = [
     'ad',
     'cmf',
@@ -345,9 +341,7 @@ function isPriceIndicatorEnabled(
     );
 }
 
-/**
- * @internal
- */
+/** @internal */
 function manageIndicators(
     this: NavigationBindings,
     data: StockToolsFieldsObject
@@ -620,6 +614,7 @@ function shallowArraysEqual(
  *
  * */
 
+/** @internal */
 const StockToolsUtilities = {
     indicatorsWithAxes,
     indicatorsWithVolume,
@@ -635,4 +630,5 @@ const StockToolsUtilities = {
     updateRectSize
 };
 
+/** @internal */
 export default StockToolsUtilities;
