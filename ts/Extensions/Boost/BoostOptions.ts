@@ -129,21 +129,6 @@ export interface BoostOptions {
     enabled?: boolean;
 
     /**
-     * Set the series threshold for when the boost should kick in globally.
-     *
-     * Setting to e.g. 20 will cause the whole chart to enter boost mode if
-     * there are 20 or more series active. When the chart is in boost mode,
-     * every series in it will be rendered to a common canvas. This offers a
-     * significant speed improvement in charts with a very high amount of
-     * series.
-     *
-     * @type      {number}
-     * @default   50
-     * @apioption boost.seriesThreshold
-     */
-    seriesThreshold?: number;
-
-    /**
      * The pixel ratio for the WebGL content. If 0, the
      * `window.devicePixelRatio` is used. This ensures sharp graphics on high
      * DPI displays like Apple's Retina, as well as when a page is zoomed.
@@ -171,6 +156,21 @@ export interface BoostOptions {
      * @apioption boost.pixelRatio
      */
     pixelRatio?: number;
+
+    /**
+     * Set the series threshold for when the boost should kick in globally.
+     *
+     * Setting to e.g. 20 will cause the whole chart to enter boost mode if
+     * there are 20 or more series active. When the chart is in boost mode,
+     * every series in it will be rendered to a common canvas. This offers a
+     * significant speed improvement in charts with a very high amount of
+     * series.
+     *
+     * @type      {number}
+     * @default   50
+     * @apioption boost.seriesThreshold
+     */
+    seriesThreshold?: number;
 
     /**
      * Enable or disable GPU translations. GPU translations are faster than
