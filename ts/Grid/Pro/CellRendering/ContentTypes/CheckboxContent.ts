@@ -156,7 +156,7 @@ class CheckboxContent extends CellContentPro implements EditModeContent {
         if (this.changeHandler) {
             this.changeHandler(e);
         } else {
-            void this.cell.setValue(this.value, true);
+            void this.cell.editValue(this.value);
         }
     };
 
