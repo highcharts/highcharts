@@ -54,7 +54,6 @@ export interface AdjustStackPositionProps {
     textAlign: AlignValue;
 }
 
-/** @internal */
 export interface AlignOptions {
     verticalAlign: 'top'|'middle'|'bottom';
     align: 'left'|'center'|'right';
@@ -81,7 +80,6 @@ export interface StackBoxProps {
 /**
  * The class for stacks. Each stack, on a specific X value and either negative
  * or positive, has its own stack item.
- * @internal
  */
 class StackItem {
 
@@ -91,6 +89,7 @@ class StackItem {
      *
      * */
 
+    /** @internal */
     public constructor(
         axis: StackingAxis,
         options: StackLabelOptions,
@@ -418,8 +417,10 @@ class StackItem {
      * Adjust the stack BBox position, to take into consideration the alignment
      * of the dataLabel. This is necessary to make the stackDataLabel work with
      * core methods like `SVGLabel.adjust` and `Series.justifyDataLabel`.
+     * @internal
      * @param AdjustStackPositionProps
-     * @return {{x: number, y: number}} Adjusted BBox position of the stack.
+     * @return {{x: number, y: number}}
+     * Adjusted BBox position of the stack.
      */
     public adjustStackPosition({
         labelBox,
@@ -436,7 +437,8 @@ class StackItem {
      * Get the bbox of the stack.
      * @internal
      * @function Highcharts.StackItem#getStackBox
-     * @return {BBoxObject} The x, y, height, width of the stack.
+     * @return {BBoxObject}
+     * The x, y, height, width of the stack.
      */
     public getStackBox(stackBoxProps: StackBoxProps): BBoxObject {
         const stackItem = this,
@@ -489,7 +491,6 @@ class StackItem {
  *
  * */
 
-/** @internal */
 export default StackItem;
 
 /* *

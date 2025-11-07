@@ -117,11 +117,6 @@ export interface StackItemIndicatorObject {
     x: number;
 }
 
-/** @internal */
-declare class StackingAxis extends Axis {
-    stacking: AxisAdditions;
-}
-
 /* *
  *
  *  Functions
@@ -501,6 +496,11 @@ function seriesSetStackedPoints(
  *
  * */
 
+declare class StackingAxis extends Axis {
+    /** @internal */
+    stacking: AxisAdditions;
+}
+
 /**
  * Adds stacking support to axes.
  * @internal
@@ -514,6 +514,7 @@ class AxisAdditions {
      *
      * */
 
+    /** @internal */
     public constructor(axis: StackingAxis) {
         this.axis = axis;
     }
@@ -730,5 +731,4 @@ declare module '../AxisType' {
  *
  * */
 
-/** @internal */
 export default StackingAxis;
