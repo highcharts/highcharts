@@ -98,7 +98,7 @@ declare module './RangeSelectorOptions' {
 /**
  * Get the preferred input type based on a date format string.
  *
- * @private
+ * @internal
  * @function preferredInputType
  */
 function preferredInputType(format: Time.DateTimeFormat): string {
@@ -143,7 +143,7 @@ function preferredInputType(format: Time.DateTimeFormat): string {
 /**
  * The range selector.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.RangeSelector
  * @param {Highcharts.Chart} chart
@@ -158,7 +158,7 @@ class RangeSelector {
      * */
 
     /**
-     * @private
+     * @internal
      */
     public static compose(
         AxisClass: typeof Axis,
@@ -222,7 +222,7 @@ class RangeSelector {
      * The method to run when one of the buttons in the range selectors is
      * clicked
      *
-     * @private
+     * @internal
      * @function Highcharts.RangeSelector#clickButton
      * @param {number} i
      *        The index of the button
@@ -418,7 +418,7 @@ class RangeSelector {
      * Set the selected option. This method only sets the internal flag, it
      * doesn't update the buttons or the actual zoomed range.
      *
-     * @private
+     * @internal
      * @function Highcharts.RangeSelector#setSelected
      * @param {number} [selected]
      */
@@ -431,7 +431,7 @@ class RangeSelector {
     /**
      * Initialize the range selector
      *
-     * @private
+     * @internal
      * @function Highcharts.RangeSelector#init
      * @param {Highcharts.Chart} chart
      */
@@ -527,7 +527,7 @@ class RangeSelector {
      * Dynamically update the range selector buttons after a new range has been
      * set
      *
-     * @private
+     * @internal
      * @function Highcharts.RangeSelector#updateButtonStates
      */
     public updateButtonStates(): void {
@@ -709,7 +709,7 @@ class RangeSelector {
     /**
      * Compute and cache the range for an individual button
      *
-     * @private
+     * @internal
      * @function Highcharts.RangeSelector#computeButtonRange
      * @param {Highcharts.RangeSelectorButtonsOptions} rangeOptions
      */
@@ -749,7 +749,7 @@ class RangeSelector {
     /**
      * Get the unix timestamp of a HTML input for the dates
      *
-     * @private
+     * @internal
      * @function Highcharts.RangeSelector#getInputValue
      */
     public getInputValue(name: string): number {
@@ -770,7 +770,7 @@ class RangeSelector {
     /**
      * Set the internal and displayed value of a HTML input for the dates
      *
-     * @private
+     * @internal
      * @function Highcharts.RangeSelector#setInputValue
      */
     public setInputValue(
@@ -820,7 +820,7 @@ class RangeSelector {
     /**
      * Set the min and max value of a HTML input for the dates
      *
-     * @private
+     * @internal
      * @function Highcharts.RangeSelector#setInputExtremes
      */
     public setInputExtremes(
@@ -847,7 +847,7 @@ class RangeSelector {
     }
 
     /**
-     * @private
+     * @internal
      * @function Highcharts.RangeSelector#showInput
      * @param {string} name
      */
@@ -896,7 +896,7 @@ class RangeSelector {
     }
 
     /**
-     * @private
+     * @internal
      * @function Highcharts.RangeSelector#hideInput
      * @param {string} name
      */
@@ -913,7 +913,7 @@ class RangeSelector {
     }
 
     /**
-     * @private
+     * @internal
      * @function Highcharts.RangeSelector#defaultInputDateParser
      */
     public defaultInputDateParser(
@@ -927,7 +927,7 @@ class RangeSelector {
     /**
      * Draw either the 'from' or the 'to' HTML input box of the range selector
      *
-     * @private
+     * @internal
      * @function Highcharts.RangeSelector#drawInput
      */
     public drawInput(
@@ -948,7 +948,7 @@ class RangeSelector {
             isMin = name === 'min';
 
         /**
-         * @private
+         * @internal
          */
         function updateExtremes(name: 'min'| 'max'): void {
             const { maxInput, minInput } = rangeSelector,
@@ -1130,7 +1130,7 @@ class RangeSelector {
      * Get the position of the range selector buttons and inputs. This can be
      * overridden from outside for custom positioning.
      *
-     * @private
+     * @internal
      * @function Highcharts.RangeSelector#getPosition
      */
     public getPosition(): Record<string, number> {
@@ -1151,7 +1151,7 @@ class RangeSelector {
      * the current timestamp. Will choose dataMin if its value is higher than
      * the timestamp for the start of current year.
      *
-     * @private
+     * @internal
      * @function Highcharts.RangeSelector#getYTDExtremes
      * @return {*}
      * Returns min and max for the YTD
@@ -1234,7 +1234,7 @@ class RangeSelector {
      * time render is called, the elements are created and positioned. On
      * subsequent calls, they are moved and updated.
      *
-     * @private
+     * @internal
      * @function Highcharts.RangeSelector#render
      * @param {number} [min]
      *        X axis minimum
@@ -1336,7 +1336,7 @@ class RangeSelector {
      * Render the range buttons. This only runs the first time, later the
      * positioning is laid out in alignElements.
      *
-     * @private
+     * @internal
      * @function Highcharts.RangeSelector#renderButtons
      */
     public renderButtons(): void {
@@ -1517,7 +1517,7 @@ class RangeSelector {
     /**
      * Align the elements horizontally and vertically.
      *
-     * @private
+     * @internal
      * @function Highcharts.RangeSelector#alignElements
      */
     public alignElements(): void {
@@ -1737,7 +1737,7 @@ class RangeSelector {
     }
 
     /**
-     * @private
+     * @internal
      */
     public redrawElements(): void {
         const chart = this.chart,
@@ -1826,7 +1826,7 @@ class RangeSelector {
     /**
      * Align the button group horizontally and vertically.
      *
-     * @private
+     * @internal
      * @function Highcharts.RangeSelector#alignButtonGroup
      * @param {number} xOffsetForExportButton
      * @param {number} [width]
@@ -1881,7 +1881,7 @@ class RangeSelector {
     }
 
     /**
-     * @private
+     * @internal
      * @function Highcharts.RangeSelector#positionButtons
      */
     public positionButtons(): void {
@@ -1936,7 +1936,7 @@ class RangeSelector {
     /**
      * Handle collision between the button group and the input group
      *
-     * @private
+     * @internal
      * @function Highcharts.RangeSelector#handleCollision
      *
      * @param  {number} xOffsetForExportButton
@@ -2022,7 +2022,7 @@ class RangeSelector {
     /**
      * Collapse the buttons and show the select element.
      *
-     * @private
+     * @internal
      * @function Highcharts.RangeSelector#collapseButtons
      * @param {number} xOffsetForExportButton
      */
@@ -2046,7 +2046,7 @@ class RangeSelector {
     /**
      * Show all the buttons and hide the select element.
      *
-     * @private
+     * @internal
      * @function Highcharts.RangeSelector#expandButtons
      */
     public expandButtons(): void {
@@ -2070,7 +2070,7 @@ class RangeSelector {
     /**
      * Position the select element on top of the button.
      *
-     * @private
+     * @internal
      * @function Highcharts.RangeSelector#showDropdown
      */
     public showDropdown(): void {
@@ -2088,7 +2088,7 @@ class RangeSelector {
     }
 
     /**
-     * @private
+     * @internal
      * @function Highcharts.RangeSelector#hideDropdown
      */
     public hideDropdown(): void {
@@ -2106,7 +2106,7 @@ class RangeSelector {
     /**
      * Extracts height of range selector
      *
-     * @private
+     * @internal
      * @function Highcharts.RangeSelector#getHeight
      * @return {number}
      * Returns rangeSelector height
@@ -2153,7 +2153,7 @@ class RangeSelector {
     /**
      * Detect collision with title or subtitle
      *
-     * @private
+     * @internal
      * @function Highcharts.RangeSelector#titleCollision
      * @return {boolean}
      * Returns collision status
@@ -2170,7 +2170,7 @@ class RangeSelector {
     /**
      * Update the range selector with new options
      *
-     * @private
+     * @internal
      * @function Highcharts.RangeSelector#update
      * @param {Highcharts.RangeSelectorOptions} options
      */
@@ -2202,7 +2202,7 @@ class RangeSelector {
     /**
      * Destroys allocated elements.
      *
-     * @private
+     * @internal
      * @function Highcharts.RangeSelector#destroy
      */
     public destroy(): void {
@@ -2265,7 +2265,7 @@ interface RangeSelector {
 extend(RangeSelector.prototype, {
     /**
      * The date formats to use when setting min, max and value on date inputs.
-     * @private
+     * @internal
      */
     inputTypeFormats: {
         'datetime-local': '%Y-%m-%dT%H:%M:%S',

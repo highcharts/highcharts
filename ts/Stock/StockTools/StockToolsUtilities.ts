@@ -73,7 +73,7 @@ interface StockToolsFieldsObject {
  * */
 
 /**
- * @private
+ * @internal
  */
 const indicatorsWithAxes = [
     'apo',
@@ -110,7 +110,7 @@ const indicatorsWithAxes = [
 ];
 
 /**
- * @private
+ * @internal
  */
 const indicatorsWithVolume = [
     'ad',
@@ -136,7 +136,7 @@ const indicatorsWithVolume = [
  * Example: NavigationBindings.utils.addFlagFromForm('url(...)') - will
  * generate function that shows modal in GUI.
  *
- * @private
+ * @internal
  * @function bindingsUtils.addFlagFromForm
  *
  * @param {Highcharts.FlagsShapeValue} type
@@ -256,7 +256,7 @@ function addFlagFromForm(
 }
 
 /**
- * @private
+ * @internal
  * @todo
  * Consider using getHoverData(), but always kdTree (columns?)
  */
@@ -310,7 +310,7 @@ function attractToPoint(
 /**
  * Shorthand to check if given yAxis comes from navigator.
  *
- * @private
+ * @internal
  * @function bindingsUtils.isNotNavigatorYAxis
  *
  * @param {Highcharts.Axis} axis
@@ -327,7 +327,7 @@ function isNotNavigatorYAxis(
 
 /**
  * Check if any of the price indicators are enabled.
- * @private
+ * @internal
  * @function bindingsUtils.isLastPriceEnabled
  *
  * @param {Array} series
@@ -346,7 +346,7 @@ function isPriceIndicatorEnabled(
 }
 
 /**
- * @private
+ * @internal
  */
 function manageIndicators(
     this: NavigationBindings,
@@ -466,7 +466,7 @@ function manageIndicators(
  * between last point in `typeOptions` and current position. It's a value,
  * not pixels height.
  *
- * @private
+ * @internal
  * @function bindingsUtils.updateHeight
  *
  * @param {Highcharts.PointerEventObject} e
@@ -501,7 +501,7 @@ function updateHeight(
  * Example: NavigationBindings.utils.updateNthPoint(1) - will generate
  * function that updates all consecutive points except point with index=0.
  *
- * @private
+ * @internal
  * @function bindingsUtils.updateNthPoint
  *
  * @param {number} startIndex
@@ -550,7 +550,7 @@ function updateNthPoint(
  * Update size of background (rect) in some annotations: Measure, Simple
  * Rect.
  *
- * @private
+ * @internal
  * @function Highcharts.NavigationBindingsUtilsObject.updateRectSize
  *
  * @param {Highcharts.PointerEventObject} event
