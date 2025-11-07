@@ -151,6 +151,13 @@
     --ig-description-font: var(--ig-description-font-weight) var(--ig-description-font-size) var(--ig-description-font-family);
     --ig-description-text-align: var(--hcg-description-text-align, var(--ig-text-align));
 
+    /* Pagination fonts */
+    --ig-pagination-font-weight: var(--hcg-pagination-font-weight, var(--ig-font-weight));
+    --ig-pagination-font-size: var(--hcg-pagination-font-size, var(--ig-font-size));
+    --ig-pagination-font-family: var(--hcg-pagination-font-family, var(--ig-font-family));
+    --ig-pagination-color: var(--hcg-pagination-color, var(--ig-color));
+    --ig-pagination-font: var(--ig-pagination-font-weight) var(--ig-pagination-font-size) var(--ig-pagination-font-family);
+
     /* Default borders */
     --ig-border-radius: var(--hcg-border-radius, 0);
     --ig-border-width: var(--hcg-border-width, 0);
@@ -1211,6 +1218,8 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
 .hcg-pagination-wrapper {
     background: var(--ig-pagination-background);
     padding: var(--ig-pagination-padding);
+    color: var(--ig-pagination-color);
+    font: var(--ig-pagination-font);
     display: grid;
     grid-template-columns: 1fr auto 1fr;
     align-items: center;
@@ -1222,7 +1231,6 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     min-height: 30px;
 }
 
-/* Pagination button styling - unified approach */
 .hcg-pagination-controls button,
 .hcg-pagination-controls span {
     color: var(--ig-pagination-button-color);
