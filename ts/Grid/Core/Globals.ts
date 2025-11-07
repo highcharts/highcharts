@@ -46,6 +46,7 @@ namespace Globals {
      * */
 
     export const classNamePrefix: string = 'hcg-';
+    export const version = '@product.version@';
 
     export const rawClassNames = {
         container: 'container',

@@ -59,6 +59,7 @@ declare global {
     interface GridNamespace {
         win: typeof Globals.win;
         product: 'Grid Lite' | 'Grid Pro';
+        version: typeof Globals.version;
         AST: typeof AST;
         Grid: typeof _Grid;
         grid: typeof _Grid.grid;
@@ -95,6 +96,7 @@ declare global {
 const G = Globals as unknown as GridNamespace;
 
 G.AST = AST;
+G.version = Globals.version;
 G.DataConnector = DataConnector;
 G.DataCursor = DataCursor;
 G.DataConverter = DataConverter;
