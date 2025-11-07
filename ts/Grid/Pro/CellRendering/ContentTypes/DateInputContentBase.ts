@@ -197,7 +197,7 @@ abstract class DateInputContentBase extends CellContentPro implements EditModeCo
 
         if (e.key === 'Enter') {
             this.cell.htmlElement.focus();
-            void this.cell.setValue(this.value, true);
+            void this.cell.editValue(this.value);
         }
     };
 
@@ -207,7 +207,7 @@ abstract class DateInputContentBase extends CellContentPro implements EditModeCo
             return;
         }
 
-        void this.cell.setValue(this.value, true);
+        void this.cell.editValue(this.value);
     };
 
     private readonly onCellKeyDown = (e: KeyboardEvent): void => {

@@ -203,7 +203,7 @@ class SelectContent extends CellContentPro implements EditModeContent {
             this.changeHandler(e);
         } else {
             this.cell.htmlElement.focus();
-            void this.cell.setValue(this.value, true);
+            void this.cell.editValue(this.value);
         }
     };
 
