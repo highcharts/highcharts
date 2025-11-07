@@ -3454,26 +3454,38 @@ class Axis {
         if (hasData || axis.isLinked) {
 
             // Shuffle existing category ticks, like in bar race chart
-            const oldNames = axis.old?.names,
-                movedTicks: [number, Tick][] = [];
+            const oldNames = axis.old?.names;
             if (axis.type === 'category' && oldNames) {
                 oldNames.forEach((name, oldPos): void => {
                     const pos = (axis.names as any).keys[name];
                     if (defined(pos) && oldPos !== pos) {
-                        movedTicks.push([pos, axis.ticks[oldPos]]);
+                        // Move tick instance
+                        if (ticks[oldPos]) {
+                            ticks[oldPos].pos = pos;
+                        }
+                        // Check if the existing tick in the new position has a
+                        // new place to go
+                        if (
+                            ticks[pos] &&
+                            axis.names.indexOf(oldNames[pos]) === -1
+                        ) {
+                            // Mark for destruction below
+                            ticks[pos].pos = NaN;
+                        }
                     }
                 });
-                movedTicks.forEach(([pos, tick]): void => {
-                    if (tick) {
-                        tick.pos = pos;
-                        axis.ticks[pos] = tick;
+                // Remap ticks to new positions
+                const values = Object.values(ticks);
+                Object.keys(ticks).forEach((key): void => {
+                    delete ticks[key];
+                });
+                values.forEach((tick): void => {
+                    if (!isNaN(tick.pos)) {
+                        ticks[tick.pos] = tick;
                     } else {
-                        delete axis.ticks[pos];
+                        tick.destroy();
                     }
                 });
-                if (movedTicks.length) {
-                    axis.isDirty = true;
-                }
             }
 
             // Generate new ticks
