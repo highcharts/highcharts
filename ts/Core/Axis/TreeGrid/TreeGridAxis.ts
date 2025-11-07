@@ -67,25 +67,28 @@ const {
  *
  * */
 
+/** @internal */
 declare module '../AxisComposition' {
     interface AxisComposition {
         treeGrid?: TreeGridAxisComposition['treeGrid'];
     }
 }
 
+/** @internal */
 declare module '../AxisBase' {
     interface AxisBase {
         utils: TreeGridAxisUtilsObject;
     }
 }
 
+/** @internal */
 declare module '../AxisType' {
     interface AxisTypeRegistry {
-        /** @internal */
         TreeGridAxis: TreeGridAxisComposition;
     }
 }
 
+/** @internal */
 declare module '../../Series/PointOptions' {
     interface PointOptions extends TreePointOptionsObject {
         collapsed?: boolean;
@@ -93,11 +96,13 @@ declare module '../../Series/PointOptions' {
     }
 }
 
+/** @internal */
 interface AxisBreakObject extends AxisBreakOptions {
     showPoints?: boolean;
     maxOffset?: number;
 }
 
+/** @internal */
 interface GridNode {
     children: Array<GridNode>;
     collapsed?: boolean;
@@ -113,6 +118,7 @@ interface GridNode {
     tickmarkOffset?: number;
 }
 
+/** @internal */
 export declare class TreeGridAxisComposition extends Axis {
     dataMax: number;
     dataMin: number;
@@ -123,16 +129,19 @@ export declare class TreeGridAxisComposition extends Axis {
     treeGrid: TreeGridAxisAdditions;
 }
 
+/** @internal */
 interface TreeGridAxisUtilsObject {
     getNode: typeof Tree['getNode'];
 }
 
+/** @internal */
 interface TreeGridNode extends TreeNode {
     data: PointOptions;
     pos: number;
     seriesIndex: number;
 }
 
+/** @internal */
 interface TreeGridObject {
     categories: Array<string>;
     mapOfIdToNode: Record<string, TreeGridNode>;
@@ -147,6 +156,7 @@ interface TreeGridObject {
  *
  * */
 
+/** @internal */
 let TickConstructor: (typeof Tick|undefined);
 
 /* *

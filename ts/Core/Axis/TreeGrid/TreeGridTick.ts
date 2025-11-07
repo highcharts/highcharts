@@ -50,6 +50,7 @@ const {
  *
  * */
 
+/** @internal */
 interface LabelIconObject {
     collapsed?: boolean;
     color: ColorType;
@@ -60,7 +61,8 @@ interface LabelIconObject {
     xy: PositionObject;
 }
 
-export interface TreeGridTick extends Tick {
+/** @internal */
+interface TreeGridTick extends Tick {
 
     /** @internal */
     axis: TreeGridAxisComposition;

@@ -14,12 +14,14 @@
  *
  * */
 
+/** @internal */
 export interface AxisBreakBorderObject {
     move: string;
     size?: number;
     value: number;
 }
 
+/** @internal */
 export interface AxisBreakObject {
     from: number;
     len: number;
@@ -32,4 +34,5 @@ export interface AxisBreakObject {
  *
  * */
 
+/** @internal */
 export default AxisBreakBorderObject;
