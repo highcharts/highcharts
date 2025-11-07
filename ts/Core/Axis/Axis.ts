@@ -169,8 +169,11 @@ class Axis {
      *
      * */
 
-    // Properties to survive after destroy, needed for Axis.update (#4317,
-    // #5773, #5881).
+    /**
+     * Properties to survive after destroy, needed for Axis.update (#4317,
+     * #5773, #5881).
+     * @internal
+     */
     public static keepProps = [
         'coll',
         'extKey',

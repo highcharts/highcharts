@@ -52,12 +52,14 @@ const {
  *
  * */
 
+/** @internal */
 declare module './AxisComposition' {
     interface AxisComposition {
         axis3D?: Axis3DAdditions;
     }
 }
 
+/** @internal */
 declare module './AxisOptions' {
     interface AxisLabelOptions {
         position3d?: OptionsPosition3dValue;
@@ -69,12 +71,14 @@ declare module './AxisOptions' {
     }
 }
 
+/** @internal */
 declare module '../Renderer/Position3DObject' {
     interface Position3DObject {
         matrix?: Array<number>;
     }
 }
 
+/** @internal */
 declare module '../Series/PointBase' {
     interface PointBase {
         crosshairPos?: number;
@@ -726,4 +730,5 @@ class Axis3DAdditions {
  *
  * */
 
+/** @internal */
 export default Axis3DAdditions;
