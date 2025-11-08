@@ -457,6 +457,7 @@ class Pagination {
 
         // Create first button
         this.firstButton = makeHTMLElement('button', {
+            className: Globals.getClassName('button'),
             innerHTML: Icons.first
         }, container);
         this.firstButton.title = this.lang.firstPage;
@@ -495,6 +496,7 @@ class Pagination {
 
         // Create previous button
         this.prevButton = makeHTMLElement('button', {
+            className: Globals.getClassName('button'),
             innerHTML: Icons.previous
         }, container);
         this.prevButton.title = this.lang.previousPage;
@@ -533,6 +535,7 @@ class Pagination {
 
         // Create next button
         this.nextButton = makeHTMLElement('button', {
+            className: Globals.getClassName('button'),
             innerHTML: Icons.next
         }, container);
         this.nextButton.title = this.lang.nextPage;
@@ -571,6 +574,7 @@ class Pagination {
 
         // Create last button
         this.lastButton = makeHTMLElement('button', {
+            className: Globals.getClassName('button'),
             innerHTML: Icons.last
         }, container);
         this.lastButton.title = this.lang.lastPage;
@@ -774,14 +778,15 @@ class Pagination {
         }
 
         const button = makeHTMLElement('button', {
+            className: Globals.getClassName('button'),
             innerHTML: pageNumber.toString()
         }, this.pageNumbersContainer);
 
         if (isActive) {
-            button.classList.add(
-                Globals.getClassName('paginationPageButtonActive')
-            );
+            button.classList.add(Globals.getClassName('buttonSelected'));
+            button.setAttribute('aria-current', 'page');
         }
+
         button.title = formatText(this.lang.pageNumber, { page: pageNumber });
 
         // Set aria-label for a11y
@@ -830,16 +835,17 @@ class Pagination {
         }
 
         const container = makeHTMLElement('div', {
-            className: Globals.getClassName('paginationPageSizeContainer')
+            className: Globals.getClassName('paginationPageSize')
         }, this.contentWrapper);
 
         makeHTMLElement('span', {
             innerHTML: this.lang.pageSizeLabel
         }, container);
 
-        this.pageSizeSelect = makeHTMLElement(
-            'select', {}, container
-        ) as HTMLSelectElement;
+        this.pageSizeSelect = makeHTMLElement('select', {
+            className: Globals.getClassName('input'),
+            id: Globals.getClassName('paginationPageSize')
+        }, container) as HTMLSelectElement;
 
         this.pageSizeOptions.forEach((option: number): void => {
             const optionElement = document.createElement('option');
@@ -1118,6 +1124,7 @@ class Pagination {
         }, container);
 
         const select: HTMLSelectElement = makeHTMLElement('select', {
+            className: Globals.getClassName('input'),
             id: Globals.getClassName('paginationNavDropdown')
         }, wrapper);
 
