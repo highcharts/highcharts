@@ -100,7 +100,22 @@ class TextContent extends CellContent {
                     format ? cell.format(format) : value + ''
                 );
         } else if (isDefaultFormat) {
-            cellContent = formatter?.call(cell).toString() || value + '';
+            const formattedValue = formatter?.call(cell);
+
+            if (typeof formattedValue === 'string') {
+                cellContent = formattedValue;
+            } else {
+                cellContent = value + '';
+
+                // eslint-disable-next-line no-console
+                console.warn(
+                    // eslint-disable-next-line max-len
+                    `Formatter function for column %c${cell.column.id}%c returned a non-string value.`,
+                    'font-weight: bold;',
+                    ''
+                );
+            }
+
         } else if (isDefaultFormatter) {
             cellContent = format ? cell.format(format) : value + '';
         }

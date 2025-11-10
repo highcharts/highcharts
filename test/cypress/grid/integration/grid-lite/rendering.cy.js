@@ -1,10 +1,19 @@
-describe('Rendering types.', () => {
-    before(() => {
+describe('Rendering types and formatters.', () => {
+    beforeEach(() => {
         cy.visit('grid-lite/cypress/column-data-type');
     });
 
-    it('Formatted date.', () => {
-        cy.get('tr[data-row-index="0"] td[data-column-id="date"]').eq(0)
-            .contains('2023-01-01 00:00:00');
+    it('For column with dateType of datetime, formatted date should be displayed', () => {
+        cy.get('tr[data-row-index="0"] td[data-column-id="date"]').eq(0).contains('2023-01-01 00:00:00');
+    });
+
+    it('When formatter returns null, the cell should have custom className and values should be unchanged', () => {
+        cy.get('td[data-column-id="booleans"]').eq(0).should('have.class', 'highlight_green');
+        cy.get('td[data-column-id="booleans"]').eq(0).should('have.text', 'true');
+    });
+
+    it('When formatter returns empty string, the cell should have custom className and values should be empty', () => {
+        cy.get('td[data-column-id="string"]').eq(0).should('have.class', 'highlight_green');
+        cy.get('td[data-column-id="string"]').eq(0).should('have.text', '');
     });
 });
