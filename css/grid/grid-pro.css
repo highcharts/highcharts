@@ -85,7 +85,7 @@
         var(
             --ig-notification-border-width
         ) var(--ig-notification-border-style) var(--ig-notification-border-color);
-    
+
     /*  Editable cell */
     --ig-cell-editable-background: #dbeaff;
 }
