@@ -18,7 +18,6 @@ Highcharts.chart('container', {
         contourInterval: 1,
         showContourLines: true,
         lineColor: '#000000',
-        lineWidth: 2,
         data: JSON.parse(
             document
                 .getElementById('data')
