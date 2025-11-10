@@ -146,6 +146,7 @@ export interface AnnotationOptions extends ControlTargetOptions {
     /**
      * A class name for styling by CSS.
      *
+     * @since next
      * @type      {string}
      * @apioption annotations.className
      */

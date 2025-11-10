@@ -61,7 +61,7 @@ if (defaultOptions.annotations) {
 
                 /**
                  * An array of background colors:
-                 * Default to:
+                 * Defaults to:
                  * ```
                  * [
                  * 'rgba(130, 170, 255, 0.4)',
@@ -370,7 +370,7 @@ namespace Fibonacci {
     export interface TypeOptions extends Tunnel.TypeOptions {
         /**
          * An array of background colors:
-         * Default to:
+         * Defaults to:
          * ```
          * [
          * 'rgba(130, 170, 255, 0.4)',
