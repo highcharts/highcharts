@@ -1,6 +1,10 @@
 // Set up the image path
 const imagePath = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@8967ac2dfa99c53005e2aa6221a03f3f6445e376/samples/graphics/homepage/';
 
+// reduced motion
+// eslint-disable-next-line max-len
+const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
 // common data label format for the pie chart
 function pieLabels() {
     let color = '--var(text-primary)';
@@ -126,7 +130,7 @@ const coreChart = {
 
 // Stock live candlestick
 let csInterval;
-let stopped = false;
+// let stopped = false;
 let csSeries;
 
 // Imitate getting point from backend
@@ -300,11 +304,11 @@ function cs() {
 
     // On load, start the interval that adds points
     options.chart = {
+        animation: false,
         events: {
             load() {
                 const chart = this;
                 csSeries = chart.series[0];
-                animateCS();
             }
         },
         margin: [50, 20, 0, 20]
@@ -1228,21 +1232,21 @@ function cs() {
     Highcharts.stockChart('container', options);
 
     // stop button for candlestick animation
-    setTimeout(() => {
-        document.getElementById('stop-cs').addEventListener('click', () => {
-            if (stopped === false) {
-                clearInterval(csInterval);
-                stopped = true;
-                document.getElementById('stop-cs').innerHTML =
-                '(Start animation)';
-            } else {
-                animateCS();
-                stopped = false;
-                document.getElementById('stop-cs').innerHTML =
-                '(Stop animation)';
-            }
-        });
-    }, 200);
+    // setTimeout(() => {
+    //     document.getElementById('stop-cs').addEventListener('click', () => {
+    //         if (stopped === false) {
+    //             clearInterval(csInterval);
+    //             stopped = true;
+    //             document.getElementById('stop-cs').innerHTML =
+    //             '(Start animation)';
+    //         } else {
+    //             animateCS();
+    //             stopped = false;
+    //             document.getElementById('stop-cs').innerHTML =
+    //             '(Stop animation)';
+    //         }
+    //     });
+    // }, 200);
 
 }
 
@@ -1544,26 +1548,6 @@ function animatedMap() {
                 }
             ]
         });
-
-        // give the map info time to render
-        // before adding the event listeners
-        setTimeout(() => {
-            // eslint-disable-next-line max-len
-            document.getElementById('stop-map').addEventListener('click', () => {
-                document.querySelectorAll('.animated-line').forEach(line => {
-                    line.classList.toggle('paused');
-                });
-                if (stopped === false) {
-                    stopped = true;
-                    // eslint-disable-next-line max-len
-                    document.getElementById('stop-map').innerHTML = '(Start animation)';
-                } else {
-                    stopped = false;
-                    // eslint-disable-next-line max-len
-                    document.getElementById('stop-map').innerHTML = '(Stop animation)';
-                }
-            });
-        }, 100);
     })();
 }
 
@@ -2417,12 +2401,12 @@ const products = [
     {
         name: 'Highcharts Core',
         tagline: '40+ Chart Types',
+        id: 'coreTitle',
         icon: 'icon-core.svg',
         chart: coreChart,
         demoTitle: 'Pie Chart',
         demoDesc: `Pie charts 
         show a compact overview of a composition or comparison`,
-        stopLink: null,
         description: `<p>Pie Chart</p><div>A purely decorative pie 
         chart showing the five most 
         popular waffle toppings. Strawberry jam is the favorite at 
@@ -2433,11 +2417,11 @@ const products = [
     {
         name: 'Highcharts Stock',
         tagline: 'Financial visualization and analysis tools',
+        id: 'stockTitle',
         icon: 'icon-stock.svg',
         chart: cs,
         // eslint-disable-next-line max-len
-        demoTitle: 'Live Candlestick chart',
-        stopLink: '<span id="stop-cs">(Stop animation)</span>',
+        demoTitle: 'Candlestick chart',
         // eslint-disable-next-line max-len
         demoDesc: 'Candlesticks make it easy to spot trends over time.',
         description: `<p>Dynamic Candlestick Chart</p>
@@ -2447,10 +2431,10 @@ const products = [
     {
         name: 'Highcharts Maps',
         tagline: 'Data mapped to geography',
+        id: 'mapsTitle',
         chart: animatedMap,
         icon: 'icon-maps.svg',
         demoTitle: 'History of the Coffee Bean',
-        stopLink: '<span id="stop-map">(Stop animation)</span>',
         demoDesc: 'Maps can tell stories when connected to data.',
         description: `<p>Animated line map</p>A purely decorative 
         world map showing the historical 
@@ -2463,10 +2447,10 @@ const products = [
     {
         name: 'Highcharts Gantt',
         tagline: 'Resource and timeline management',
+        id: 'ganttTitle',
         chart: gantt,
         icon: 'icon-gantt.svg',
         demoTitle: 'Gantt chart',
-        stopLink: null,
         demoDesc: `Use Gantts to track tasks, dependencies, and 
         progress.`,
         description: `<p>Gantt Chart</p>A purely decorative gantt chart showing 
@@ -2480,10 +2464,10 @@ const products = [
     {
         name: 'Highcharts Dashboards',
         tagline: 'Time-saving dashboard tools',
+        id: 'dashboardsTitle',
         chart: dashboards,
         icon: 'icon-dashboards.svg',
         demoTitle: 'Personal finance dashboard',
-        stopLink: null,
         demoDesc: 'Use our data sync tools to create dynamic dashboards fast.',
         description: `<p>Personal Finance Dashboard</p>A purely decorative  
         dashboard showing key financial metrics, including total 
@@ -2497,10 +2481,10 @@ const products = [
     {
         name: 'Highcharts Grid ',
         tagline: 'Tools for JavaScript data tables',
+        id: 'gridTitle',
         chart: grid,
         icon: 'icon-grid.svg',
         demoTitle: 'Data grid with sparklines',
-        stopLink: null,
         demoDesc: `Combine tabular data and inline 
         charts for instant visual context.`,
         description: `<p>Data Grid with Sparklines</p>
@@ -2512,6 +2496,10 @@ const products = [
     }
 ];
 
+const carousel = document.getElementById('carousel');
+const chartWrapper = document.getElementById('chart-wrapper');
+
+
 // --- Build header strip ---
 const titleContainer = document.querySelector('.demo-title');
 const titleInner = document.createElement('div');
@@ -2522,16 +2510,19 @@ let isPaused = false;
 
 // Add all products + one clone of first
 // so the vertical loop seems infinite
-products.forEach(p => {
+products.forEach((p, index) => {
     const item = document.createElement('div');
     item.className = 'demo-title-item';
+    item.id = 'title-' + index;
+    item.ariaHidden = 'true';
     item.innerHTML = `
-        <img src="${imagePath + p.icon}" width="28" height="28">
+        <img src="${imagePath + p.icon}" width="28" height="28" alt="">
         <div><h2>${p.name}</h2><p>${p.tagline}</p></div>
     `;
     titleInner.appendChild(item);
 });
 const clone = titleInner.firstElementChild.cloneNode(true);
+clone.id = 'title-6';
 titleInner.appendChild(clone);
 
 // --- Footer + pagination setup ---
@@ -2563,10 +2554,19 @@ function updateView() {
         return;
     }
 
+    // hide all the product titles from screen readers
+    products.forEach((p, index) => {
+        // eslint-disable-next-line max-len
+        document.getElementById('title-' + index).setAttribute('aria-hidden', 'true');
+    });
+
     if (currentIndex === products.length) {
         isResetting = true;
         titleInner.style.transform = 'translateY(-240px)';
         titleInner.style.opacity = 1;
+        // hide all product headers from screen readers
+
+
         currentIndex = 0;
         updateFooter(currentIndex);
         updateChart(currentIndex);
@@ -2585,6 +2585,10 @@ function updateView() {
         updateFooter(currentIndex);
         updateChart(currentIndex);
     }
+
+    // make the current product header visible to screen readers
+    // eslint-disable-next-line max-len
+    document.getElementById('title-' + currentIndex).setAttribute('aria-hidden', 'false');
 }
 
 function updateFooter(i) {
@@ -2605,8 +2609,6 @@ function updateFooter(i) {
 
 function getChartDescription(i) {
 
-    const chartWrapper = document.getElementById('chart-wrapper');
-
     if (document.getElementById('chart-description') !== null) {
         document.getElementById('chart-description').remove();
     }
@@ -2624,26 +2626,71 @@ function getChartDescription(i) {
 
 }
 
-function announceChange(announcement) {
-    const announce = document.getElementById('announce');
-    announce.textContent = '';
+function toggleStockChartAnimation() {
+    if (isPaused) {
+        clearInterval(csInterval);
+    } else {
+        if (!reducedMotion) {
+            animateCS();
+        }
+    }
+}
 
-    const newElem = document.createElement('span');
-    newElem.textContent = announcement;
-    announce.appendChild(newElem);
+function toggleMapAnimation() {
+    if (isPaused) {
+        // eslint-disable-next-line max-len
+        document.querySelectorAll('.animated-line').forEach(line => {
+            line.classList.add('paused');
+        });
+    } else {
+        // reduced motion is handled in the CSS
+        // with a media query
+        // eslint-disable-next-line max-len
+        document.querySelectorAll('.animated-line').forEach(line => {
+            line.classList.remove('paused');
+        });
+    }
+}
+
+function toggleChartAnimations() {
+    if (products[currentIndex].chart === animatedMap) {
+        toggleMapAnimation();
+    }
+    if (products[currentIndex].chart === cs) {
+        toggleStockChartAnimation();
+    }
+}
+
+function announceChange(announcement) {
+    if (isPaused) {
+        const announce = document.getElementById('announce');
+        announce.textContent = '';
+
+        const newElem = document.createElement('span');
+        newElem.textContent = announcement;
+        announce.appendChild(newElem);
+    }
 }
 
 
 function updateChart(i) {
-    const wrapper = document.getElementById('chart-wrapper');
+
     const p = products[i];
 
-    wrapper.classList.add('fade-out'); // fade out
+    // Hide the chart from screen readers while animating
+    if (!isPaused) {
+        chartWrapper.setAttribute('aria-hidden', 'true');
+    }
+
+    // fade transition between charts
+    chartWrapper.classList.add('fade-out');
 
     setTimeout(() => {
     // once faded out, swap charts
         if (p.chart) {
+            // clear interval for stock chart
             clearInterval(csInterval);
+
             // dash and grid use their own containers
             if (typeof p.chart === 'function') {
                 if (p.chart === dashboards) {
@@ -2675,10 +2722,22 @@ function updateChart(i) {
                 document.getElementById('container').style.display = 'block';
                 Highcharts.chart('container', p.chart);
             }
+
+            // stop or start the animated map lines
+            setTimeout(() => {
+                // toggle chart animations
+                toggleChartAnimations();
+            }, 100);
         }
-        getChartDescription(i);
+
+        // if the carousel is paused, update the chart description
+        // and make the product title visible to screen readers
+        if (isPaused) {
+            getChartDescription(i);
+        }
+
         // fade back in
-        wrapper.classList.remove('fade-out');
+        chartWrapper.classList.remove('fade-out');
     }, 250);
 }
 
@@ -2707,25 +2766,80 @@ function resetTimer() {
 }
 
 function pause() {
-    clearInterval(carouselInterval);
     isPaused = true;
+
+    // stop the carousel interval
+    clearInterval(carouselInterval);
+
+    // stop chart animations
+    setTimeout(() => {
+        toggleChartAnimations();
+    }, 100);
+
+
+    // update aria label on carousel container
+    carousel.setAttribute(
+        'aria-label',
+        // eslint-disable-next-line max-len
+        'Demo carousel paused. You can now explore individual demos using keyboard navigation.'
+    );
+
+    // make charts visible to screen readers
+    chartWrapper.removeAttribute('aria-hidden');
+    // chartWrapper.setAttribute('aria-hidden', 'false');
+
+
+    // change the screen reader helper button text
+    // eslint-disable-next-line max-len
+    document.getElementById('accessibility-helper').innerHTML = 'Click to play the carousel';
+
+    // add the chart description for screen readers
+    // since the carousel is paused
+    getChartDescription(currentIndex);
+
+    // update carousel pause button
     pauseBtn.ariaLabel = 'Resume automatic slide show';
-    pauseBtn.innerHTML = '<span class="QF-Hta_content">' +
-    '<span class="m_QBtq_gpt">Resume</span>' +
+    pauseBtn.innerHTML = '<span class="hc-button_content">' +
+    '<span>Resume</span>' +
     '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">' +
     // eslint-disable-next-line max-len
     '<path d="M1 5C1 5 2.00249 3.63411 2.81692 2.81912C3.63134 2.00413 4.7568 1.5 6 1.5C8.48528 1.5 10.5 3.51472 10.5 6C10.5 8.48528 8.48528 10.5 6 10.5C3.94845 10.5 2.21756 9.12714 1.67588 7.25M1 5V2M1 5H4" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>' +
     '</svg>';
 
+    // announce that the carousel is paused
     announceChange('Demo carousel paused');
 }
 
 function resume() {
-    startAuto();
+
     isPaused = false;
+
+    // restart the carousel interval
+    startAuto();
+
+    // restart chart animations
+    toggleChartAnimations();
+
+    // update the carousel aria label
+    carousel.setAttribute(
+        'aria-label',
+        // eslint-disable-next-line max-len
+        `Highcharts product demos. Pause the carousel to explore demos 
+        individually and use the carousel controls to switch between demos.`
+    );
+
+    // update the helper button text
+    // eslint-disable-next-line max-len
+    document.getElementById('accessibility-helper').innerHTML = 'Click to pause the carousel';
+
+    // hide the charts from screen readers
+    // since the carousel is playing
+    chartWrapper.setAttribute('aria-hidden', 'true');
+
+    // update carousel pause button
     pauseBtn.ariaLabel = 'Pause automatic slide show';
-    pauseBtn.innerHTML = '<span class="QF-Hta_content">' +
-    '<span class="m_QBtq_gpt">Pause</span>' +
+    pauseBtn.innerHTML = '<span class="hc-button_content">' +
+    '<span>Pause</span>' +
     '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">' +
     // eslint-disable-next-line max-len
     '<path d="M3.4 1.5H3.1C2.53995 1.5 2.25992 1.5 2.04601 1.60899C1.85785 1.70487 1.70487 1.85785 1.60899 2.04601C1.5 2.25992 1.5 2.53995 1.5 3.1V8.9C1.5 9.46005 1.5 9.74008 1.60899 9.95399C1.70487 10.1422 1.85785 10.2951 2.04601 10.391C2.25992 10.5 2.53995 10.5 3.1 10.5H3.4C3.96005 10.5 4.24008 10.5 4.45399 10.391C4.64215 10.2951 4.79513 10.1422 4.89101 9.95399C5 9.74008 5 9.46005 5 8.9V3.1C5 2.53995 5 2.25992 4.89101 2.04601C4.79513 1.85785 4.64215 1.70487 4.45399 1.60899C4.24008 1.5 3.96005 1.5 3.4 1.5Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>' +
@@ -2733,6 +2847,13 @@ function resume() {
     '<path d="M8.9 1.5H8.6C8.03995 1.5 7.75992 1.5 7.54601 1.60899C7.35785 1.70487 7.20487 1.85785 7.10899 2.04601C7 2.25992 7 2.53995 7 3.1V8.9C7 9.46005 7 9.74008 7.10899 9.95399C7.20487 10.1422 7.35785 10.2951 7.54601 10.391C7.75992 10.5 8.03995 10.5 8.6 10.5H8.9C9.46005 10.5 9.74008 10.5 9.95399 10.391C10.1422 10.2951 10.2951 10.1422 10.391 9.95399C10.5 9.74008 10.5 9.46005 10.5 8.9V3.1C10.5 2.53995 10.5 2.25992 10.391 2.04601C10.2951 1.85785 10.1422 1.70487 9.95399 1.60899C9.74008 1.5 9.46005 1.5 8.9 1.5Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>' +
     '</svg>';
 
+    // remove chart description
+    // since the carousel is playing
+    if (document.getElementById('chart-description') !== null) {
+        document.getElementById('chart-description').remove();
+    }
+
+    // announce that the carousel is playing
     announceChange('Demo carousel playing');
 
 }
@@ -2747,6 +2868,9 @@ function toggleCarousel() {
 
 document.getElementById('pause').addEventListener('click', toggleCarousel);
 
+// eslint-disable-next-line max-len
+document.getElementById('accessibility-helper').addEventListener('click', toggleCarousel);
+
 document.addEventListener('DOMContentLoaded', function () {
     // --- Start carousel ---
     // create the dashboard and grid first to prevent errors
@@ -2754,7 +2878,7 @@ document.addEventListener('DOMContentLoaded', function () {
     grid();
     // create the first chart
     document.querySelector('.demo-title-inner').style.opacity = 1;
-    updateChart(0);
+    updateView(0);
     // start the carousel
     startAuto();
 });
