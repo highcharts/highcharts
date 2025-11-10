@@ -2550,6 +2550,14 @@ demoDescEl.textContent = products[0].demoDesc;
 
 // --- vertical scroll of product names ---
 function updateView() {
+
+    let transition = 'all 1s cubic-bezier(0.45, 0, 0.2, 1)';
+    let setTimeoutDuration = 1000;
+
+    if (reducedMotion) {
+        transition = 'none';
+        setTimeoutDuration = 0;
+    }
     if (isResetting) {
         return;
     }
@@ -2576,10 +2584,10 @@ function updateView() {
             console.log('resetting');
             titleInner.style.transition = 'none';
             titleInner.style.transform = 'translateY(0)';
-        }, 1000);
+        }, setTimeoutDuration);
 
     } else {
-        titleInner.style.transition = 'all 1s cubic-bezier(0.45, 0, 0.2, 1)';
+        titleInner.style.transition = transition;
         titleInner.style.transform = `translateY(-${currentIndex * 40}px)`;
         titleInner.style.opacity = 1;
         updateFooter(currentIndex);
@@ -2593,6 +2601,11 @@ function updateView() {
 
 function updateFooter(i) {
     const demoInfo = document.getElementById('demo-info');
+
+    let setTimeoutDuration = 400;
+    if (reducedMotion) {
+        setTimeoutDuration = 0;
+    }
     demoInfo.classList.add('fade-out');
     setTimeout(() => {
         const p = products[i];
@@ -2604,7 +2617,7 @@ function updateFooter(i) {
         dots.forEach(dot => dot.classList.remove('active'));
         dots[i % products.length].classList.add('active');
         demoInfo.classList.remove('fade-out');
-    }, 400);
+    }, setTimeoutDuration);
 }
 
 function getChartDescription(i) {
@@ -2677,6 +2690,11 @@ function updateChart(i) {
 
     const p = products[i];
 
+    let setTimeoutDuration = 250;
+    if (reducedMotion) {
+        setTimeoutDuration = 0;
+    }
+
     // Hide the chart from screen readers while animating
     if (!isPaused) {
         chartWrapper.setAttribute('aria-hidden', 'true');
@@ -2738,7 +2756,7 @@ function updateChart(i) {
 
         // fade back in
         chartWrapper.classList.remove('fade-out');
-    }, 250);
+    }, setTimeoutDuration);
 }
 
 
@@ -2878,7 +2896,8 @@ document.addEventListener('DOMContentLoaded', function () {
     grid();
     // create the first chart
     document.querySelector('.demo-title-inner').style.opacity = 1;
-    updateView(0);
+    document.getElementById('title-0').setAttribute('aria-hidden', 'false');
+    updateChart(0);
     // start the carousel
     startAuto();
 });
