@@ -1,0 +1,40 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/export-data.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+<script src="https://code.highcharts.com/themes/adaptive.js"></script>
+
+<div aria-live="polite" aria-atomic="true" id="announce"> </div>
+
+<div class="demo-card"  aria-label="Highcharts repsonsive demo">
+    <div class="demo-header">
+        <div class="demo-title">
+                <p class="demo-name">Intelligent responsiveness</p>
+                <p class="demo-description">Intelligent responsiveness adjusts the chart to its container and smartly positions labels, legends, and headings.</p>
+        </div>
+        <div class="m_QBtq_buttons">
+            <a href="/docs" target="_blank" rel="noopener noreferrer" aria-label="Desktop" data-link-template="/docs" class="hc-button hc-button--white hc-button--size-100">
+               Explore the docs
+               </a>
+        </div>
+    </div>
+    <div id="chart-wrapper">
+        <div class="demo-body" id="container" ></div>
+    </div>
+
+    <div class="demo-footer">
+        <div class="demo-button-container">
+            <button aria-label="Desktop" class="hc-button demo-button active hc-button--size-200" id="desktop">
+                Desktop
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width="20" height="20"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 2.27V6.4c0 .56 0 .84.109 1.054a1 1 0 0 0 .437.437c.214.11.494.11 1.054.11h4.13M14 17H8m8-4H8m12-3.012V17.2c0 1.68 0 2.52-.327 3.162a3 3 0 0 1-1.311 1.311C17.72 22 16.88 22 15.2 22H8.8c-1.68 0-2.52 0-3.162-.327a3 3 0 0 1-1.311-1.311C4 19.72 4 18.88 4 17.2V6.8c0-1.68 0-2.52.327-3.162a3 3 0 0 1 1.311-1.311C6.28 2 7.12 2 8.8 2h3.212c.733 0 1.1 0 1.446.083.306.073.598.195.867.36.303.185.562.444 1.08.963l3.19 3.188c.518.519.777.778.963 1.081a3 3 0 0 1 .36.867c.082.346.082.712.082 1.446"></path></svg></button>
+
+             <button aria-label="Mobile" class="hc-button demo-button hc-button--size-200" id="mobile">
+                Mobile
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width="20" height="20"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 2.27V6.4c0 .56 0 .84.109 1.054a1 1 0 0 0 .437.437c.214.11.494.11 1.054.11h4.13M14 17H8m8-4H8m12-3.012V17.2c0 1.68 0 2.52-.327 3.162a3 3 0 0 1-1.311 1.311C17.72 22 16.88 22 15.2 22H8.8c-1.68 0-2.52 0-3.162-.327a3 3 0 0 1-1.311-1.311C4 19.72 4 18.88 4 17.2V6.8c0-1.68 0-2.52.327-3.162a3 3 0 0 1 1.311-1.311C6.28 2 7.12 2 8.8 2h3.212c.733 0 1.1 0 1.446.083.306.073.598.195.867.36.303.185.562.444 1.08.963l3.19 3.188c.518.519.777.778.963 1.081a3 3 0 0 1 .36.867c.082.346.082.712.082 1.446"></path></svg></button>
+
+                
+           
+           
+        </div>
+    </div>
+</div>
