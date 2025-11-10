@@ -883,12 +883,6 @@ body {
     }
 }
 
-@media (prefers-reduced-motion: reduce) {
-    .highcharts-mapline-series .highcharts-point.animated-line {
-        animation: none;
-    }
-}
-
 /* GANTT CHART */
 .homepage-gantt.highcharts-partfill-overlay {
     fill: var(--highcharts-color-0);
@@ -1222,6 +1216,26 @@ body {
 .hcg-table.hcg-scrollable-content tbody {
     overflow-y: scroll;
     overflow-x: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .demo-title-inner {
+        transition: none;
+    }
+
+    .demo-title,
+    .demo-info,
+    #chart-wrapper {
+        transition: none;
+    }
+
+    .dot {
+        transition: none;
+    }
+
+    .highcharts-mapline-series .highcharts-point.animated-line {
+        animation: none;
+    }
 }
 
 @media (max-width: 500px) {
