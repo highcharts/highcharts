@@ -69,8 +69,6 @@ export default class ContourSeries extends ScatterSeries {
 
     private contourLineColorBuffer?: GPUBuffer;
 
-    private lineWidthBuffer?: GPUBuffer;
-
     public renderWebGPU?: () => void;
 
     public dataMax?: number;
@@ -87,8 +85,7 @@ export default class ContourSeries extends ScatterSeries {
             gridLineWidth: 0,
             endOnTick: false,
             startOnTick: false,
-            tickWidth: 1,
-            lineWidth: 1
+            tickWidth: 1
         };
 
         for (const axis of [this.xAxis, this.yAxis]) {
@@ -265,15 +262,11 @@ export default class ContourSeries extends ScatterSeries {
                     ),
                     options = series.options,
                     {
-                        lineColor = '#000000',
-                        lineWidth = 1
+                        lineColor = '#000000'
                     } = options,
                     contourLineColor = new Float32Array(
                         this.rgbaAsFrac(new Color(lineColor).rgba)
-                    ),
-                    contourLineWidth = new Float32Array([
-                        lineWidth
-                    ]);
+                    );
 
                 // WebGPU Buffers
                 const colorAxisStopsBuffer = device.createBuffer({
@@ -329,11 +322,6 @@ export default class ContourSeries extends ScatterSeries {
                     usage: uniformUsage
                 });
 
-                this.lineWidthBuffer = device.createBuffer({
-                    size: 4,
-                    usage: uniformUsage
-                });
-
                 device.queue.writeBuffer(
                     vertexBuffer,
                     0,
@@ -359,12 +347,6 @@ export default class ContourSeries extends ScatterSeries {
                     0,
                     contourLineColor
                 );
-                device.queue.writeBuffer(
-                    this.lineWidthBuffer,
-                    0,
-                    contourLineWidth
-                );
-
 
                 this.setContourIntervalUniform();
                 this.setSmoothColoringUniform();
@@ -462,8 +444,6 @@ export default class ContourSeries extends ScatterSeries {
                         @group(0) @binding(5) var<uniform> smoothColoring: u32;
                         @group(0) @binding(6) var<uniform> showContourLines: u32;
                         @group(0) @binding(7) var<uniform> contourLineColor: vec3<f32>;
-                        @group(0) @binding(8) var<uniform> lineWidth: f32;
-
 
                         fn getColor(value: f32) -> vec3<f32> {
                             let stopCount = colorStopsCount;
@@ -500,7 +480,7 @@ export default class ContourSeries extends ScatterSeries {
                             let val = input.originalPos.z;
 
                             // CONTOUR LINES
-                            //let lineWidth: f32 = 1.0;
+                            let lineWidth: f32 = 1.0;
                             //let contourColor = vec3f(0.0, 0.0, 0.0);
 
                             let val_dx: f32 = dpdx(val);
@@ -532,7 +512,7 @@ export default class ContourSeries extends ScatterSeries {
                                     )
                                 )
                             );
-\
+
                             let averageValInBand : f32 = (
                                 // Contour index
                                 floor(
@@ -658,12 +638,6 @@ export default class ContourSeries extends ScatterSeries {
                         resource: {
                             buffer: this.contourLineColorBuffer,
                             label: 'contourLineColorBuffer'
-                        }
-                    }, {
-                        binding: 8,
-                        resource: {
-                            buffer: this.lineWidthBuffer,
-                            label: 'lineWidthBuffer'
                         }
                     }]
                 });
