@@ -1268,7 +1268,7 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
 
 /* Fix horizontal layout for pagination pages */
 
-.hcg-pagination-controls div.hcg-pagination-nav-buttons {
+.hcg-pagination-controls div.hcg-pagination-nav-button {
     margin-right: 12px;
     margin-left: 12px;
     display: inline-flex;
@@ -1342,7 +1342,7 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
         display: block;
     }
 
-    .hcg-pagination-wrapper div.hcg-pagination-nav-buttons {
+    .hcg-pagination-wrapper div.hcg-pagination-nav-button {
         display: none;
     }
 }

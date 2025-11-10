@@ -117,7 +117,7 @@ namespace Globals {
         paginationContainer: 'pagination-container',
         paginationPageInfo: 'pagination-info',
         paginationControls: 'pagination-controls',
-        paginationNavButtons: 'pagination-nav-buttons',
+        paginationNavButton: 'pagination-nav-button',
         paginationNavDropdown: 'pagination-nav-dropdown',
         paginationPageSize: 'pagination-page-size',
         noWidth: 'no-width',
