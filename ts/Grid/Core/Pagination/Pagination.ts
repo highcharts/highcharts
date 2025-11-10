@@ -612,7 +612,7 @@ class Pagination {
         }
 
         this.pageNumbersContainer = makeHTMLElement('div', {
-            className: Globals.getClassName('paginationNavButtons')
+            className: Globals.getClassName('paginationNavButton')
         }, container);
 
         this.updatePageNumbers();
