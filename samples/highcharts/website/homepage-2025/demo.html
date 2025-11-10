@@ -11,18 +11,21 @@
 
 <div aria-live="polite" aria-atomic="true" id="announce"> </div>
 
-<div class="demo-card" id="carousel" aria-roledescription="carousel" aria-label="Highcharts product demos">
+<div class="demo-card" id="carousel" aria-roledescription="carousel" aria-label="Highcharts product demos. Pause the carousel to explore demos individually and use the carousel controls to switch between demos.">
+<button id="accessibility-helper" class="visually-hidden">
+  Click to pause the carousel
+</button>
     <div class="demo-header">
-        <div class="demo-title">
-            <img id="productIcon" src="https://cdn.jsdelivr.net/gh/highcharts/highcharts@8967ac2dfa99c53005e2aa6221a03f3f6445e376/samples/graphics/homepage/icon-core.svg" alt="Highcharts logo">
+        <div class="demo-title" id="title0">
+            <img id="productIcon" src="https://cdn.jsdelivr.net/gh/highcharts/highcharts@8967ac2dfa99c53005e2aa6221a03f3f6445e376/samples/graphics/homepage/icon-core.svg" alt="">
             <div>
                 <h2 id="productName">Highcharts Core</h2>
                 <p id="productDescription">40+ Chart Types</p>
             </div>
         </div>
         <div class="m_QBtq_buttons">
-            <a href="https://www.highcharts.com/demo" aria-label="More demos" class="hsui-button QF-Hta_button QF-Hta_transparent QF-Hta_size-200">
-                <span class="QF-Hta_content"><span class="m_QBtq_gpt" id="more-demos">More demos</span>
+            <a href="https://www.highcharts.com/demo" aria-label="More demos" class="hc-button_button hc-button_transparent hc-button_size-200">
+                <span class="hc-button_content"><span id="more-demos">More demos</span>
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M8.00005 8.00016L1.55456 6.29719C1.13987 7.86673 1.31213 9.53365 2.03902 10.9852C2.76591 12.4368 3.99748 13.5733 5.50267 14.1814L8.00005 8.00016ZM8.00005 8.00016L8.06986 1.33386C6.59042 1.31837 5.14787 1.79545 3.96939 2.68996C2.79091 3.58448 1.94347 4.8456 1.56054 6.2747L8.00005 8.00016ZM14.6667 8.00016C14.6667 11.6821 11.6819 14.6668 8.00005 14.6668C4.31815 14.6668 1.33338 11.6821 1.33338 8.00016C1.33338 4.31826 4.31815 1.3335 8.00005 1.3335C11.6819 1.3335 14.6667 4.31826 14.6667 8.00016Z" stroke="currentColor" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
@@ -36,7 +39,7 @@
     </div>
 
     <div class="demo-footer">
-        <div class="demo-footer-left demo-info" id="demo-info">
+        <div class="demo-footer-left demo-info" id="demo-info" aria-hidden="true">
             <h3 id="demoName">Pie chart</h3> 
             <p id="demoDescription">Pie charts offer an easy, familiar way to compare parts of a whole at a glance.</p>
         </div>
@@ -51,8 +54,8 @@
                 <div class="dot" aria-label="Slide 6" aria-controls="carousel-item-6" role="tab" tabindex="-1"></div>
             </div>
             <div class="button-container">
-                <button class="hsui-button QF-Hta_button QF-Hta_transparent QF-Hta_size-100" id="pause" aria-label="Pause automatic slide show">
-                    <span class="QF-Hta_content"><span class="m_QBtq_gpt">Pause</span>
+                <button class="hc-button_button hc-button_transparent hc-button_size-100" id="pause" aria-label="Pause automatic slide show">
+                    <span class="hc-button_content"><span>Pause</span>
                     <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M3.4 1.5H3.1C2.53995 1.5 2.25992 1.5 2.04601 1.60899C1.85785 1.70487 1.70487 1.85785 1.60899 2.04601C1.5 2.25992 1.5 2.53995 1.5 3.1V8.9C1.5 9.46005 1.5 9.74008 1.60899 9.95399C1.70487 10.1422 1.85785 10.2951 2.04601 10.391C2.25992 10.5 2.53995 10.5 3.1 10.5H3.4C3.96005 10.5 4.24008 10.5 4.45399 10.391C4.64215 10.2951 4.79513 10.1422 4.89101 9.95399C5 9.74008 5 9.46005 5 8.9V3.1C5 2.53995 5 2.25992 4.89101 2.04601C4.79513 1.85785 4.64215 1.70487 4.45399 1.60899C4.24008 1.5 3.96005 1.5 3.4 1.5Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
                         <path d="M8.9 1.5H8.6C8.03995 1.5 7.75992 1.5 7.54601 1.60899C7.35785 1.70487 7.20487 1.85785 7.10899 2.04601C7 2.25992 7 2.53995 7 3.1V8.9C7 9.46005 7 9.74008 7.10899 9.95399C7.20487 10.1422 7.35785 10.2951 7.54601 10.391C7.75992 10.5 8.03995 10.5 8.6 10.5H8.9C9.46005 10.5 9.74008 10.5 9.95399 10.391C10.1422 10.2951 10.2951 10.1422 10.391 9.95399C10.5 9.74008 10.5 9.46005 10.5 8.9V3.1C10.5 2.53995 10.5 2.25992 10.391 2.04601C10.2951 1.85785 10.1422 1.70487 9.95399 1.60899C9.74008 1.5 9.46005 1.5 8.9 1.5Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>

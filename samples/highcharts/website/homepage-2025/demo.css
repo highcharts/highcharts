@@ -339,6 +339,17 @@
     padding: 0 !important;
 }
 
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    border: 0;
+}
+
 [aria-live="polite"] {
     position: absolute;
     opacity: 0;
@@ -585,16 +596,7 @@ body {
     width: 74px;
 }
 
-.m_QBtq_links,
-.m_QBtq_buttons {
-    gap: 8px;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    display: flex;
-}
-
-.QF-Hta_button {
+.hc-button_button {
     background-color: var(--primitives-neutral-800);
     color: var(--primitives-neutral-0);
     -webkit-user-select: none;
@@ -617,7 +619,7 @@ body {
     transform: translate(0);
 }
 
-.QF-Hta_button::before {
+.hc-button::before {
     content: "";
     border-radius: inherit;
     background: linear-gradient(rgba(255, 255, 255, 0.102), rgba(0, 0, 0, 0)) border-box;
@@ -642,7 +644,7 @@ body {
     mask-mode: match-source, match-source;
 }
 
-.QF-Hta_size-200 {
+.hc-button_size-200 {
     font-size: var(--typography-size-100);
     border-radius: 8px;
 
@@ -652,7 +654,7 @@ body {
     line-height: 130%;
 }
 
-.QF-Hta_size-100 {
+.hc-button_size-100 {
     font-size: var(--typography-size-75);
     border-radius: 8px;
     height: 24px;
@@ -661,29 +663,29 @@ body {
     line-height: 130%;
 }
 
-.QF-Hta_transparent {
+.hc-button_transparent {
     background-color: var(--button-colors-transparent-background-default);
     color: var(--button-colors-transparent-text-default);
     border-color: var(--button-colors-transparent-stroke-outer-default);
 }
 
-.QF-Hta_transparent:hover {
+.hc-button_transparent:hover {
     background-color: var(--button-colors-transparent-background-hover);
     color: var(--button-colors-transparent-text-hover);
     border-color: var(--button-colors-transparent-stroke-outer-hover);
 }
 
-.QF-Hta_content {
+.hc-button_content {
     justify-content: center;
     align-items: center;
     display: inline-flex;
 }
 
-.QF-Hta_size-200 .QF-Hta_content {
+.hc-button_size-200 .hc-button_content {
     gap: 8px;
 }
 
-.QF-Hta_size-100 .QF-Hta_content {
+.hc-button_size-100 .hc-button_content {
     gap: 6px;
 }
 
@@ -817,19 +819,19 @@ body {
     margin-bottom: 4px;
 }
 
-.highcharts-mapline-series .highcharts-point.animated-line {
-    stroke-dasharray: 8;
-    stroke-dashoffset: 10;
-    stroke: var(--map-animated-line-stroke) !important;
-    animation: dash 5s linear infinite;
-}
-
 .highcharts-crosshair-label text {
     fill: #fff;
     font-size: 1em;
 }
 
 /* map chart */
+
+.highcharts-mapline-series .highcharts-point.animated-line {
+    stroke-dasharray: 8;
+    stroke-dashoffset: 10;
+    stroke: var(--map-animated-line-stroke) !important;
+    animation: dash 5s linear infinite;
+}
 
 .highcharts-mapline-series .highcharts-point.animated-line.paused {
     animation-play-state: paused;
@@ -878,6 +880,12 @@ body {
 
     to {
         stroke-dashoffset: 20;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .highcharts-mapline-series .highcharts-point.animated-line {
+        animation: none;
     }
 }
 
