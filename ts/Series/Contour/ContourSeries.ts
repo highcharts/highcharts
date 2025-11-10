@@ -139,6 +139,7 @@ export default class ContourSeries extends ScatterSeries {
 
     public drawPoints(): void {
         const series = this,
+            inverted = series.chart.inverted,
             { xAxis, yAxis } = series,
             canvas = series.canvas = (
                 series.canvas ||
@@ -153,17 +154,46 @@ export default class ContourSeries extends ScatterSeries {
             xLen = xAxis.len,
             yLen = yAxis.len,
             xTickWidth = xAxis.options.tickWidth || 1,
-            foreignObjDimensions = series.chart.inverted ? {
-                x: yAxis.pos,
-                y: xAxis.pos,
-                width: yLen + xTickWidth,
-                height: xLen
-            } : {
-                x: xAxis.pos,
-                y: yAxis.pos,
-                width: xLen + xTickWidth,
-                height: yLen
-            };
+            currentWidth = parseInt(
+                foreignObject.style.width.split('px')[0], 10
+            ) || 0,
+            currentHeight = parseInt(
+                foreignObject.style.height.split('px')[0], 10
+            ) || 0;
+
+        let foreignObjDimensions = {};
+
+        if (
+            !inverted ? (
+                xLen + xTickWidth !== currentWidth ||
+                yLen !== currentHeight
+            ) : (
+                yLen + xTickWidth !== currentWidth ||
+                xLen !== currentHeight
+            )
+        ) {
+            const canvasProps = foreignObjDimensions = merge(
+                foreignObjDimensions,
+                series.chart.inverted ? {
+                    x: yAxis.pos,
+                    y: xAxis.pos,
+                    width: yLen + xTickWidth,
+                    height: xLen
+                } : {
+                    x: xAxis.pos,
+                    y: yAxis.pos,
+                    width: xLen + xTickWidth,
+                    height: yLen
+                }
+            );
+            canvas.width = (
+                canvasProps.width +
+                xTickWidth
+            ) * devicePixelRatio;
+            canvas.height = canvasProps.height * devicePixelRatio;
+            canvas.style.width = canvasProps.width + 'px';
+            canvas.style.height = canvasProps.height + 'px';
+        }
 
         for (const [key, value] of Object.entries(foreignObjDimensions)) {
             foreignObject.setAttribute(key, String(value));
@@ -174,12 +204,6 @@ export default class ContourSeries extends ScatterSeries {
             foreignObject,
             document.querySelector('.highcharts-plot-background')
         );
-
-        canvas.style.width = foreignObjDimensions.width + 'px';
-        canvas.style.height = foreignObjDimensions.height + 'px';
-
-        canvas.width = (canvas.clientWidth + xTickWidth) * devicePixelRatio;
-        canvas.height = canvas.clientHeight * devicePixelRatio;
 
 
         // If this function exists, buffers are set up
