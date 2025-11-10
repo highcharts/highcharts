@@ -152,10 +152,12 @@ const units = [
  *
  * */
 
+/** @internal */
 const DataGroupingDefaults = {
     common,
     seriesSpecific,
     units
 };
 
+/** @internal */
 export default DataGroupingDefaults;

@@ -45,4 +45,5 @@ const ApproximationRegistry = {
  *
  * */
 
+/** @internal */
 export default ApproximationRegistry;

@@ -35,6 +35,7 @@ const {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Axis/AxisBase' {
     interface AxisBase {
         applyGrouping(e: PostProcessDataEvent): void;
@@ -46,6 +47,7 @@ declare module '../../Core/Axis/AxisBase' {
     }
 }
 
+/** @internal */
 export interface PostProcessDataEvent {
     hasExtremesChanged?: boolean;
 }
@@ -99,7 +101,6 @@ function applyGrouping(
     });
 }
 
-/** @internal */
 function compose(
     AxisClass: typeof Axis
 ): void {
@@ -263,8 +264,10 @@ function setDataGrouping(
  *
  * */
 
+/** @internal */
 const DataGroupingAxisComposition = {
     compose
 };
 
+/** @internal */
 export default DataGroupingAxisComposition;

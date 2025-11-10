@@ -34,7 +34,6 @@ const {
  *
  * */
 
-/** @internal */
 function average(
     arr: ApproximationArray
 ): (null|number|undefined) {
@@ -53,7 +52,6 @@ function average(
 
 /**
  * The same as average, but for series with multiple values, like area ranges.
- * @internal
  */
 function averages(): (Array<(null|number|undefined)>|undefined) { // #5479
     const ret = [] as Array<(null|number|undefined)>;
@@ -69,7 +67,6 @@ function averages(): (Array<(null|number|undefined)>|undefined) { // #5479
     return typeof ret[0] === 'undefined' ? void 0 : ret;
 }
 
-/** @internal */
 function close(
     arr: ApproximationArray
 ): (null|number|undefined) {
@@ -78,7 +75,6 @@ function close(
         (arr.hasNulls ? null : void 0);
 }
 
-/** @internal */
 function high(
     arr: ApproximationArray
 ): (null|number|undefined) {
@@ -90,7 +86,6 @@ function high(
 /**
  * HLC, OHLC and range are special cases where a multidimensional array is input
  * and an array is output.
- * @internal
  */
 function hlc(
     high: ApproximationArray,
@@ -110,7 +105,6 @@ function hlc(
     }
 }
 
-/** @internal */
 function low(
     arr: ApproximationArray
 ): (null|number|undefined) {
@@ -119,7 +113,6 @@ function low(
         (arr.hasNulls ? null : void 0);
 }
 
-/** @internal */
 function ohlc(
     open: ApproximationArray,
     high: ApproximationArray,
@@ -141,14 +134,12 @@ function ohlc(
     }
 }
 
-/** @internal */
 function open(
     arr: ApproximationArray
 ): (null|number|undefined) {
     return arr.length ? arr[0] : ((arr as any).hasNulls ? null : void 0);
 }
 
-/** @internal */
 function range(
     low: ApproximationArray,
     high: ApproximationArray
@@ -164,7 +155,6 @@ function range(
     // Else, return is undefined
 }
 
-/** @internal */
 function sum(
     arr: ApproximationArray
 ): (null|number|undefined) {
