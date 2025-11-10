@@ -391,7 +391,7 @@ class Pagination {
      */
     public renderControls(): void {
         const navContainer = makeHTMLElement('div', {
-            className: Globals.getClassName('paginationControls')
+            className: Globals.getClassName('paginationControlsContainer')
         }, this.contentWrapper);
 
         // Render first/previous buttons
@@ -612,7 +612,7 @@ class Pagination {
         }
 
         this.pageNumbersContainer = makeHTMLElement('div', {
-            className: Globals.getClassName('paginationNavButton')
+            className: Globals.getClassName('paginationNavButtonsContainer')
         }, container);
 
         this.updatePageNumbers();
