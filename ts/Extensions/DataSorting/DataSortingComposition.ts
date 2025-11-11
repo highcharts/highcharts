@@ -46,6 +46,12 @@ declare module '../../Core/Chart/ChartBase' {
     }
 }
 
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase {
+        enabledDataSorting?: boolean;
+    }
+}
+
 /* *
  *
  *  Variables
@@ -163,7 +169,7 @@ function setSortedData(chart: Chart): void {
 /**
  * Set properties for a series if data sorting is enabled.
  */
-function setDataSortingOptions(series: Series): void {
+function setDataSortingProperties(series: Series): void {
     extend<Series>(series, {
         requireSorting: false,
         sorted: false,
@@ -215,7 +221,7 @@ function compose(
     addEvent(ChartClass, 'afterLinkSeries', function (): void {
         this.series.forEach((series): void => {
             if (series.linkedParent?.enabledDataSorting) {
-                setDataSortingOptions(series);
+                setDataSortingProperties(series);
             }
         });
         this.hasInitializedLinkedSeries = true;
@@ -236,7 +242,7 @@ function compose(
 
     addEvent(SeriesClass, 'afterInit', function (): void {
         if (this.options.dataSorting?.enabled) {
-            setDataSortingOptions(this);
+            setDataSortingProperties(this);
         }
     });
 }

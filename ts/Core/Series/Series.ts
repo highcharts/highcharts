@@ -336,8 +336,6 @@ class Series {
 
     public dataMin?: number;
 
-    public enabledDataSorting?: boolean;
-
     public fillColor?: ColorType;
 
     public finishedAnimating?: boolean;
@@ -2088,17 +2086,13 @@ class Series {
         this.generatePoints();
 
         const series = this,
-            options = series.options,
-            stacking = options.stacking,
-            xAxis = series.xAxis,
-            enabledDataSorting = series.enabledDataSorting,
-            yAxis = series.yAxis,
+            { options, xAxis, yAxis } = series,
+            { stacking, threshold } = options,
             { hasRendered, polar } = series.chart,
             points = series.points.concat(series.condemnedPoints),
             dataLength = points.length,
             pointPlacement = series.pointPlacementToXValue(), // #7860
             dynamicallyPlaced = Boolean(pointPlacement),
-            threshold = options.threshold,
             stackThreshold = options.startFromThreshold ? threshold : 0,
             nullYSubstitute = (
                 options?.nullInteraction &&
@@ -2302,11 +2296,6 @@ class Series {
 
             // Find point zone
             point.zone = this.zones.length ? point.getZone() : void 0;
-
-            // Animate new points with data sorting
-            if (!point.graphic && series.group && enabledDataSorting) {
-                point.isNew = true;
-            }
         }
         series.closestPointRangePx = closestPointRangePx;
 
