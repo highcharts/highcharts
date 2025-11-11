@@ -1,4 +1,5 @@
 <script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/highcharts-more.js"></script>
 <script src="https://code.highcharts.com/modules/exporting.js"></script>
 <script src="https://code.highcharts.com/modules/export-data.js"></script>
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
@@ -10,17 +11,25 @@
 
 <div aria-live="polite" aria-atomic="true" id="announce"> </div>
 <div class="chart-description" id="chart-description">
-    This is a purely decorative chart demonstrating Highcharts built-in smart defaults. The chart was created with only 7 lines of code, showcasing how Highcharts can deliver powerful visualizations with minimal configuration.
+    This demo shows how to use the Highcharts React integration to create a simple bubble chart. The demo and code are purely decorative.
 </div>
 <div class="demo-card"  aria-label="Highcharts repsonsive demo">
     <div class="demo-header">
-        <div class="demo-title">
-                <p class="demo-name">Smart defaults</p>
-                <p class="demo-description">The chart below was configured with 7 lines of code.</p>
-        </div>
+        <div class="hc-button hc-button--plain hc-button--size-100 code-button" aria-label="React syntax">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g clip-path="url(#clip0_2325_1891)">
+            <path d="M12.8812 5.46022C12.7186 5.40576 12.5561 5.35426 12.3936 5.30585C12.4207 5.1939 12.4448 5.08191 12.4688 4.96994C12.839 3.16627 12.5952 1.71668 11.7737 1.23853C10.9823 0.781555 9.69129 1.25668 8.38528 2.40062C8.25585 2.51258 8.12951 2.63064 8.0091 2.74864C7.92785 2.66996 7.84365 2.59127 7.75938 2.51562C6.39013 1.293 5.0179 0.778545 4.19637 1.25971C3.40795 1.71973 3.17322 3.08461 3.50424 4.79139C3.53735 4.96086 3.57346 5.1273 3.61559 5.29678C3.42299 5.35124 3.23341 5.4118 3.05587 5.47533C1.44893 6.03521 0.296387 6.91888 0.296387 7.83284C0.296387 8.77702 1.52414 9.72428 3.19432 10.2993C3.32974 10.3447 3.46518 10.3901 3.60362 10.4294C3.55842 10.611 3.51934 10.7895 3.48324 10.9741C3.16727 12.6537 3.41402 13.9853 4.20245 14.4423C5.01495 14.9143 6.38113 14.4302 7.7112 13.259C7.81651 13.1652 7.92187 13.0683 8.02717 12.9654C8.15956 13.0955 8.29799 13.2196 8.43642 13.3407C9.72442 14.4543 10.9973 14.9053 11.7827 14.4483C12.5952 13.9762 12.8601 12.5448 12.517 10.8016C12.4899 10.6685 12.4598 10.5323 12.4267 10.3931C12.523 10.3658 12.6163 10.3356 12.7096 10.3053C14.4459 9.7273 15.7038 8.79219 15.7038 7.83284C15.7038 6.91586 14.5181 6.02614 12.8812 5.46022ZM8.80963 2.89088C9.92904 1.91037 10.9732 1.52599 11.4487 1.80145C11.9573 2.095 12.1529 3.28129 11.8339 4.83984C11.8128 4.94274 11.7918 5.04262 11.7647 5.14247C11.0975 4.99043 10.4209 4.88324 9.73947 4.82165C9.34859 4.25763 8.92033 3.72076 8.45757 3.21469C8.57491 3.10271 8.68922 2.99681 8.80963 2.89088ZM5.32791 9.40351C5.48139 9.66673 5.63784 9.93002 5.80335 10.1873C5.33437 10.136 4.8683 10.0602 4.40708 9.96031C4.54782 9.50336 4.71153 9.05387 4.89759 8.61364C5.03601 8.87995 5.17745 9.14324 5.32791 9.40351ZM4.41611 5.76285C4.84945 5.66596 5.30984 5.58727 5.78842 5.52676C5.62889 5.77796 5.47245 6.03521 5.32495 6.29548C5.17751 6.55272 5.03305 6.81601 4.89766 7.08232C4.70807 6.63142 4.54852 6.18952 4.41611 5.76285ZM5.24062 7.84795C5.4392 7.43035 5.65591 7.02176 5.88465 6.61927C6.11333 6.21678 6.36009 5.82638 6.61888 5.44208C7.07025 5.40878 7.5307 5.39059 8.00015 5.39059C8.46954 5.39059 8.93301 5.40878 9.38136 5.44208C9.63719 5.82336 9.88092 6.21376 10.1126 6.61322C10.3443 7.01269 10.562 7.42028 10.7657 7.83586C10.564 8.25346 10.3473 8.66508 10.1156 9.07059C9.88696 9.47308 9.64317 9.86348 9.38741 10.2509C8.93905 10.2841 8.47256 10.2993 8.00003 10.2993C7.52756 10.2993 7.07014 10.2841 6.62782 10.2569C6.36602 9.87254 6.11926 9.47912 5.88756 9.07663C5.65585 8.67414 5.44228 8.26561 5.24062 7.84795ZM10.6753 9.3974C10.8288 9.13109 10.9733 8.86176 11.1147 8.5894C11.3069 9.02727 11.4766 9.47473 11.6233 9.93002C11.1565 10.0365 10.6844 10.1173 10.2089 10.1722C10.3714 9.91793 10.5249 9.65767 10.6753 9.3974ZM11.1087 7.08232C10.9673 6.81601 10.8228 6.54964 10.6723 6.28937C10.5249 6.03219 10.3715 5.77796 10.2119 5.52676C10.6761 5.58395 11.1372 5.66478 11.5932 5.7689C11.4546 6.21488 11.2929 6.65328 11.1087 7.08232ZM8.00613 3.67772C8.32187 4.02279 8.61917 4.38444 8.89686 4.76112C8.30107 4.73388 7.70219 4.73388 7.1064 4.76112C7.40128 4.37073 7.70522 4.00758 8.00613 3.67772ZM4.51541 1.8226C5.02097 1.52602 6.14344 1.9497 7.32608 3.00285C7.40128 3.06943 7.47653 3.14207 7.55482 3.21469C7.08916 3.72064 6.65781 4.2575 6.26379 4.82165C5.58373 4.88269 4.90821 4.98781 4.24158 5.13636C4.20246 4.98204 4.16939 4.82468 4.13629 4.66731C3.85341 3.20259 4.03995 2.09799 4.51541 1.8226ZM3.77815 9.79989C3.65176 9.76356 3.52839 9.72427 3.405 9.6819C2.72348 9.47989 2.08202 9.16036 1.50918 8.73767C1.35892 8.63313 1.2313 8.49909 1.13406 8.34359C1.03682 8.18804 0.971972 8.01429 0.943439 7.83278C0.943439 7.279 1.89437 6.57079 3.26658 6.08961C3.43812 6.0291 3.61265 5.97465 3.78718 5.92321C3.99176 6.57998 4.23802 7.22288 4.52445 7.84795C4.23499 8.48214 3.98573 9.13399 3.77815 9.79989ZM7.28691 12.7657C6.79079 13.2231 6.21556 13.5851 5.58966 13.834C5.4248 13.9135 5.24536 13.9581 5.06261 13.9648C4.87987 13.9716 4.69768 13.9405 4.52742 13.8733C4.04894 13.5949 3.85033 12.5266 4.12118 11.0891C4.15427 10.9197 4.19039 10.7501 4.23252 10.5837C4.90606 10.7294 5.58877 10.8286 6.27576 10.8802C6.67375 11.4468 7.10806 11.9866 7.57579 12.4964C7.47956 12.5902 7.3832 12.6809 7.28691 12.7657ZM8.02415 12.0303C7.71725 11.6974 7.41028 11.3282 7.11239 10.9317C7.40128 10.9438 7.69917 10.9499 8.00009 10.9499C8.31002 10.9499 8.61402 10.9438 8.91499 10.9287C8.63813 11.3119 8.34071 11.6797 8.02415 12.0303ZM11.9573 12.9382C11.9434 13.1218 11.8922 13.3007 11.8068 13.4636C11.7214 13.6266 11.6036 13.7701 11.4608 13.8854C10.9823 14.1638 9.96216 13.8007 8.86077 12.8504C8.73437 12.7415 8.60797 12.6234 8.47861 12.5023C8.93852 11.9917 9.36282 11.4497 9.74848 10.8803C10.4391 10.8227 11.1249 10.7165 11.8008 10.5625C11.8309 10.6866 11.858 10.8107 11.882 10.9317C12.0289 11.5903 12.0544 12.2704 11.9573 12.9382ZM12.505 9.68487C12.4207 9.71213 12.3365 9.73939 12.2492 9.76356C12.037 9.1033 11.7807 8.45826 11.4818 7.83278C11.7695 7.21553 12.0158 6.57962 12.2191 5.92925C12.3756 5.9747 12.526 6.02306 12.6705 6.07148C14.0728 6.55568 15.0568 7.27598 15.0568 7.82673C15.0569 8.41992 14.0066 9.18555 12.505 9.68487ZM8.00009 9.23094C8.27268 9.23094 8.53917 9.14964 8.76584 8.99734C8.99245 8.84505 9.1691 8.62857 9.27345 8.3753C9.37775 8.12202 9.40501 7.84339 9.35185 7.57447C9.29864 7.30561 9.16738 7.05868 8.97467 6.86484C8.7819 6.671 8.53633 6.53897 8.26901 6.48552C8.00163 6.43201 7.72453 6.4595 7.47268 6.56439C7.22083 6.66928 7.0056 6.84694 6.85414 7.07485C6.70267 7.30276 6.62184 7.57079 6.62184 7.84493C6.62184 8.02691 6.65745 8.20718 6.72673 8.37536C6.79594 8.54353 6.89751 8.69636 7.02551 8.82507C7.15345 8.95379 7.30539 9.05583 7.47262 9.12552C7.63985 9.19515 7.81911 9.23094 8.00009 9.23094Z" fill="#56CCF2"/>
+            </g>
+            <defs>
+            <clipPath id="clip0_2325_1891">
+            <rect width="16" height="14.2222" fill="white" transform="translate(0 0.888672)"/>
+            </clipPath>
+            </defs>
+            </svg>
+            React</div>
         <div>
-            <a href="https://www.highcharts.com/docs/chart-concepts/responsive" aria-label="Explore documentation" class="hc-button hc-button--white hc-button--size-100">
-               Explore the docs
+            <a href="https://www.highcharts.com/docs/react/getting-started" target="_blank" aria-label="Get started with React documentation" class="hc-button hc-button--white hc-button--size-100">
+               Get started with React
                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M7 5.5H4M5 7.5H4M8 3.5H4M10 3.4V8.6C10 9.44008 10 9.86012 9.83651 10.181C9.6927 10.4632 9.46323 10.6927 9.18099 10.8365C8.86012 11 8.44008 11 7.6 11H4.4C3.55992 11 3.13988 11 2.81901 10.8365C2.53677 10.6927 2.3073 10.4632 2.16349 10.181C2 9.86012 2 9.44008 2 8.6V3.4C2 2.55992 2 2.13988 2.16349 1.81901C2.3073 1.53677 2.53677 1.3073 2.81901 1.16349C3.13988 1 3.55992 1 4.4 1H7.6C8.44008 1 8.86012 1 9.18099 1.16349C9.46323 1.3073 9.6927 1.53677 9.83651 1.81901C10 2.13988 10 2.55992 10 3.4Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
@@ -46,6 +55,48 @@
                 <div class="gutter-element">12</div>
                 <div class="gutter-element">13</div>
                 <div class="gutter-element">14</div>
+                <div class="gutter-element">15</div>
+                <div class="gutter-element">16</div>
+                <div class="gutter-element">17</div>
+                <div class="gutter-element">18</div>
+                <div class="gutter-element">19</div>
+                <div class="gutter-element">20</div>
+                <div class="gutter-element">21</div>
+                <div class="gutter-element">22</div>
+                <div class="gutter-element">23</div>
+                <div class="gutter-element">24</div>
+                <div class="gutter-element">25</div>
+                <div class="gutter-element">26</div>
+                <div class="gutter-element">27</div>
+                <div class="gutter-element">28</div>
+                <div class="gutter-element">29</div>
+                <div class="gutter-element">30</div>
+                <div class="gutter-element">31</div>
+                <div class="gutter-element">32</div>
+                <div class="gutter-element">33</div>
+                <div class="gutter-element">34</div>
+                <div class="gutter-element">35</div>
+                <div class="gutter-element">36</div>
+                <div class="gutter-element">37</div>
+                <div class="gutter-element">38</div>
+                <div class="gutter-element">39</div>
+                <div class="gutter-element">40</div>
+                <div class="gutter-element">41</div>
+                <div class="gutter-element">42</div>
+                <div class="gutter-element">43</div>
+                <div class="gutter-element">44</div>
+                <div class="gutter-element">45</div>
+                <div class="gutter-element">46</div>
+                <div class="gutter-element">47</div>
+                <div class="gutter-element">48</div>
+                <div class="gutter-element">49</div>
+                <div class="gutter-element">50</div>
+                <div class="gutter-element">51</div>
+                <div class="gutter-element">52</div>
+                <div class="gutter-element">53</div>
+                <div class="gutter-element">54</div>
+                <div class="gutter-element">55</div>
+                <div class="gutter-element">56</div>
             </div>
             <div id="code">
                 <div class="code-line"><span class="code-purple">import</span> <span class="code-blue">React</span> <span class="code-purple">from</span> <span class="code-green">'react'</span>;</div>
@@ -55,153 +106,56 @@
                 <div class="code-line"><span class="code-purple">import</span> { <span class="code-blue">Accessibility</span> } <span class="code-purple">from</span> <span class="code-green">'@highcharts/react/options/Accessibility'</span>;</div>
                 <div class="code-line"><span class="code-purple">import</span> { <span class="code-blue">BubbleSeries</span> } <span class="code-purple">from</span> <span class="code-green">'@highcharts/react/series/Bubble'</span>;</div>
                 <div class="code-line"><br></div>
-                 <div class="code-line"><span class="code-purple">export default function</span> <span class="code-blue">ChartComponent</span>() {
-                </div>
-                <div class="code-line"><span class="code-purple">const</span> series1 = [
-                </div>
-                <div class="code-line">[<span class="code-orange">9</span>, <span class="code-orange">81</span>, <span class="code-orange">63</span>],
-                </div>
-                <div class="code-line">
-                    [<span class="code-orange">98</span>, <span class="code-orange">5</span>, <span class="code-orange">89</span>],
-                </div>
-                <div class="code-line">
-                    [<span class="code-orange">51</span>, <span class="code-orange">50</span>, <span class="code-orange">73</span>],
-                </div>
-                <div class="code-line">
-                    [<span class="code-orange">41</span>, <span class="code-orange">22</span>, <span class="code-orange">14</span>],
-                </div>
-                <div class="code-line">
-                    [<span class="code-orange">58</span>, <span class="code-orange">24</span>, <span class="code-orange">20</span>],
-                </div>
-                <div class="code-line">
-                    [<span class="code-orange">78</span>, <span class="code-orange">37</span>, <span class="code-orange">34</span>],
-                </div>
-                <div class="code-line">
-                    [<span class="code-orange">55</span>, <span class="code-orange">56</span>, <span class="code-orange">53</span>],
-                </div>
-                <div class="code-line">
-                    [<span class="code-orange">18</span>, <span class="code-orange">45</span>, <span class="code-orange">70</span>],
-                </div>
-                <div class="code-line">
-                    [<span class="code-orange">42</span>, <span class="code-orange">44</span>, <span class="code-orange">28</span>],
-                </div>
-                <div class="code-line">
-                    [<span class="code-orange">3</span>, <span class="code-orange">52</span>, <span class="code-orange">59</span>],
-                </div>
-                <div class="code-line">
-                    [<span class="code-orange">31</span>, <span class="code-orange">18</span>, <span class="code-orange">97</span>],
-                </div>
-                <div class="code-line">
-                    [<span class="code-orange">79</span>, <span class="code-orange">91</span>, <span class="code-orange">63</span>],
-                </div>
-                <div class="code-line">
-                    [<span class="code-orange">93</span>, <span class="code-orange">23</span>, <span class="code-orange">23</span>],
-                </div>
-                <div class="code-line">
-                    [<span class="code-orange">44</span>, <span class="code-orange">83</span>, <span class="code-orange">22</span>]
-                </div>
-                <div class="code-line"> ];</div>
+                <div class="code-line"><span class="code-purple">export default function</span> <span class="code-blue">ChartComponent</span>() {</div>
+                <div class="code-line">    <span class="code-purple">const</span> series1 = [</div>
+                <div class="code-line">        [<span class="code-orange">9</span>, <span class="code-orange">81</span>, <span class="code-orange">63</span>],</div>
+                <div class="code-line">        [<span class="code-orange">98</span>, <span class="code-orange">5</span>, <span class="code-orange">89</span>],</div>
+                <div class="code-line">        [<span class="code-orange">51</span>, <span class="code-orange">50</span>, <span class="code-orange">73</span>],</div>
+                <div class="code-line">        [<span class="code-orange">41</span>, <span class="code-orange">22</span>, <span class="code-orange">14</span>],</div>
+                <div class="code-line">        [<span class="code-orange">58</span>, <span class="code-orange">24</span>, <span class="code-orange">20</span>],</div>
+                <div class="code-line">        [<span class="code-orange">78</span>, <span class="code-orange">37</span>, <span class="code-orange">34</span>],</div>
+                <div class="code-line">        [<span class="code-orange">55</span>, <span class="code-orange">56</span>, <span class="code-orange">53</span>],</div>
+                <div class="code-line">        [<span class="code-orange">18</span>, <span class="code-orange">45</span>, <span class="code-orange">70</span>],</div>
+                <div class="code-line">        [<span class="code-orange">42</span>, <span class="code-orange">44</span>, <span class="code-orange">28</span>],</div>
+                <div class="code-line">        [<span class="code-orange">3</span>, <span class="code-orange">52</span>, <span class="code-orange">59</span>],</div>
+                <div class="code-line">        [<span class="code-orange">31</span>, <span class="code-orange">18</span>, <span class="code-orange">97</span>],</div>
+                <div class="code-line">        [<span class="code-orange">79</span>, <span class="code-orange">91</span>, <span class="code-orange">63</span>],</div>
+                <div class="code-line">        [<span class="code-orange">93</span>, <span class="code-orange">23</span>, <span class="code-orange">23</span>],</div>
+                <div class="code-line">        [<span class="code-orange">44</span>, <span class="code-orange">83</span>, <span class="code-orange">22</span>]</div>
+                <div class="code-line">     ];</div>
                 <div class="code-line"><br></div>
-                <div class="code-line">
-                    <span class="code-purple">const</span> series2 = [
-                </div>
-                <div class="code-line">
-                    [<span class="code-orange">42</span>, <span class="code-orange">38</span>, <span class="code-orange">20</span>],
-                </div>
-                <div class="code-line">
-                    [<span class="code-orange">6</span>, <span class="code-orange">18</span>, <span class="code-orange">1</span>],
-                </div>
-                <div class="code-line">
-                    [<span class="code-orange">1</span>, <span class="code-orange">93</span>, <span class="code-orange">55</span>],
-                </div>
-                <div class="code-line">
-                    [<span class="code-orange">57</span>, <span class="code-orange">2</span>, <span class="code-orange">90</span>],
-                </div>
-                <div class="code-line">
-                    [<span class="code-orange">80</span>, <span class="code-orange">76</span>, <span class="code-orange">22</span>],
-                </div>
-                <div class="code-line">
-                    [<span class="code-orange">11</span>, <span class="code-orange">74</span>, <span class="code-orange">96</span>],
-                </div>
-                <div class="code-line">
-                    [<span class="code-orange">88</span>, <span class="code-orange">56</span>, <span class="code-orange">10</span>],
-                </div>
-                <div class="code-line">
-                    [<span class="code-orange">30</span>, <span class="code-orange">47</span>, <span class="code-orange">49</span>],
-                </div>
-                <div class="code-line">
-                    [<span class="code-orange">57</span>, <span class="code-orange">62</span>, <span class="code-orange">98</span>],
-                </div>
-                <div class="code-line">
-                    [<span class="code-orange">4</span>, <span class="code-orange">16</span>, <span class="code-orange">16</span>], 
-                </div>
-                <div class="code-line">
-                    [<span class="code-orange">46</span>, <span class="code-orange">10</span>, <span class="code-orange">11</span>],
-                </div>
-                <div class="code-line">
-                    [<span class="code-orange">22</span>, <span class="code-orange">87</span>, <span class="code-orange">89</span>],
-                </div>
-                <div class="code-line">
-                    [<span class="code-orange">57</span>, <span class="code-orange">91</span>, <span class="code-orange">82</span>],
-                </div>
-                <div class="code-line">
-                    [<span class="code-orange">45</span>, <span class="code-orange">15</span>, <span class="code-orange">98</span>]
-                </div>
-                <div class="code-line"> ];</div>
+                <div class="code-line">    <span class="code-purple">const</span> series2 = [</div>
+                <div class="code-line">        [<span class="code-orange">42</span>, <span class="code-orange">38</span>, <span class="code-orange">20</span>],</div>
+                <div class="code-line">        [<span class="code-orange">6</span>, <span class="code-orange">18</span>, <span class="code-orange">1</span>],</div>
+                <div class="code-line">        [<span class="code-orange">1</span>, <span class="code-orange">93</span>, <span class="code-orange">55</span>],</div>
+                <div class="code-line">        [<span class="code-orange">57</span>, <span class="code-orange">2</span>, <span class="code-orange">90</span>],</div>
+                <div class="code-line">        [<span class="code-orange">80</span>, <span class="code-orange">76</span>, <span class="code-orange">22</span>],</div>
+                <div class="code-line">        [<span class="code-orange">11</span>, <span class="code-orange">74</span>, <span class="code-orange">96</span>],</div>
+                <div class="code-line">        [<span class="code-orange">88</span>, <span class="code-orange">56</span>, <span class="code-orange">10</span>],</div>
+                <div class="code-line">        [<span class="code-orange">30</span>, <span class="code-orange">47</span>, <span class="code-orange">49</span>],</div>
+                <div class="code-line">        [<span class="code-orange">57</span>, <span class="code-orange">62</span>, <span class="code-orange">98</span>],</div>
+                <div class="code-line">        [<span class="code-orange">4</span>, <span class="code-orange">16</span>, <span class="code-orange">16</span>],</div>
+                <div class="code-line">        [<span class="code-orange">46</span>, <span class="code-orange">10</span>, <span class="code-orange">11</span>],</div>
+                <div class="code-line">        [<span class="code-orange">22</span>, <span class="code-orange">87</span>, <span class="code-orange">89</span>],</div>
+                <div class="code-line">        [<span class="code-orange">57</span>, <span class="code-orange">91</span>, <span class="code-orange">82</span>],</div>
+                <div class="code-line">        [<span class="code-orange">45</span>, <span class="code-orange">15</span>, <span class="code-orange">98</span>]</div>
+                <div class="code-line">     ];</div>
                 <div class="code-line"><br></div>
-                <div class="code-line"><span class="code-purple"></span>return</span> (</div>
-                <div class="code-line"><span class="code-red">&lt;div&gt;</span></div>
-    
-                <div class="code-line">
-                    <span class="code-red">&lt;Chart&gt;</span>
-                </div>
-                <div class="code-line">
-                    <span class="code-red">&lt;Title&gt;</span>Simple Bubble Chart<span class="code-red">&lt;/Title&gt;</span>
-                </div>
-                <div class="code-line"> 
-                    <span class="code-red">&lt;Accessibility /&gt;</span>
-                </div>
-                <div class="code-line">
-                    <span class="code-red">&lt;BubbleSeries data=</span>{series1}<span class="code-red"> /&gt;</span>
-                </div> 
-                <div class="code-line">
-                    <span class="code-red">&lt;/Chart&gt;</span>
-                </div>
-                <div class="code-line">
-                    <span class="code-red">&lt;/div&gt;</span>
-                </div>
-                <div class="code-line">);</div> 
+                <div class="code-line">    <span class="code-purple"></span>return</span> (</div>
+                <div class="code-line">        <span class="code-red">&lt;div&gt;</span></div>
+                <div class="code-line">            <span class="code-red">&lt;Chart&gt;</span></div>
+                <div class="code-line">                <span class="code-red">&lt;Title&gt;</span>Simple Bubble Chart<span class="code-red">&lt;/Title&gt;</span></div>
+                <div class="code-line">                <span class="code-red">&lt;Accessibility /&gt;</span></div>
+                <div class="code-line">                <span class="code-red">&lt;BubbleSeries data=</span>{series1}<span class="code-red"> /&gt;</span></div> 
+                <div class="code-line">            <span class="code-red">&lt;/Chart&gt;</span></div>
+                <div class="code-line">        <span class="code-red">&lt;/div&gt;</span></div>
+                <div class="code-line">    );</div> 
                 <div class="code-line">}</div>
                 <div class="code-line"><br></div>
-                <div class="code-line">
-                    <span class="code-blue">ReactDOM.createRoot</span>(
-                </div>  
-                <div class="code-line">
-                    <span class="code-red">document</span>.<span class="code-blue">querySelector</span>(<span class="code-green">'#container'</span>)
-                </div>
-                <div class="code-line">
-                    )?.<span class="code-blue">render</span>(<span class="code-red">&lt;ChartComponent /&gt;</span>);
-                </div>
+                <div class="code-line"><span class="code-blue">ReactDOM.createRoot</span>(</div>  
+                <div class="code-line">    <span class="code-red">document</span>.<span class="code-blue">querySelector</span>(<span class="code-green">'#container'</span>)</div>
+                <div class="code-line">)?.<span class="code-blue">render</span>(<span class="code-red">&lt;ChartComponent /&gt;</span>);</div>
             </div>
         </div>
     </div>
-
-
-    <!-- <div class="demo-footer">
-        <div class="demo-button-container">
-            <button aria-label="Desktop" class="hc-button demo-button active hc-button--size-200" id="desktop">
-                Desktop
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M10 11.3333V14H6.00004V11.3333M3.46671 11.3333H12.5334C13.2801 11.3333 13.6535 11.3333 13.9387 11.188C14.1896 11.0602 14.3936 10.8562 14.5214 10.6053C14.6667 10.3201 14.6667 9.94674 14.6667 9.2V4.13333C14.6667 3.3866 14.6667 3.01323 14.5214 2.72801C14.3936 2.47713 14.1896 2.27316 13.9387 2.14532C13.6535 2 13.2801 2 12.5334 2H3.46671C2.71997 2 2.3466 2 2.06139 2.14532C1.8105 2.27316 1.60653 2.47713 1.4787 2.72801C1.33337 3.01323 1.33337 3.3866 1.33337 4.13333V9.2C1.33337 9.94674 1.33337 10.3201 1.4787 10.6053C1.60653 10.8562 1.8105 11.0602 2.06139 11.188C2.3466 11.3333 2.71997 11.3333 3.46671 11.3333Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-            </button>
-
-             <button aria-label="Mobile" class="hc-button demo-button hc-button--size-200" id="mobile">
-                Mobile
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M8.00004 11.6668H8.00671M5.46671 14.6668H10.5334C11.2801 14.6668 11.6535 14.6668 11.9387 14.5215C12.1896 14.3937 12.3936 14.1897 12.5214 13.9388C12.6667 13.6536 12.6667 13.2802 12.6667 12.5335V3.46683C12.6667 2.72009 12.6667 2.34672 12.5214 2.06151C12.3936 1.81063 12.1896 1.60665 11.9387 1.47882C11.6535 1.3335 11.2801 1.3335 10.5334 1.3335H5.46671C4.71997 1.3335 4.3466 1.3335 4.06139 1.47882C3.8105 1.60665 3.60653 1.81063 3.4787 2.06151C3.33337 2.34672 3.33337 2.72009 3.33337 3.46683V12.5335C3.33337 13.2802 3.33337 13.6536 3.4787 13.9388C3.60653 14.1897 3.8105 14.3937 4.06139 14.5215C4.3466 14.6668 4.71997 14.6668 5.46671 14.6668ZM8.33337 11.6668C8.33337 11.8509 8.18414 12.0002 8.00004 12.0002C7.81595 12.0002 7.66671 11.8509 7.66671 11.6668C7.66671 11.4827 7.81595 11.3335 8.00004 11.3335C8.18414 11.3335 8.33337 11.4827 8.33337 11.6668Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-            </button>
-        </div>
-    </div> -->
 </div>
