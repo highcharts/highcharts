@@ -358,6 +358,7 @@ namespace DataLabel {
                         opacity: 0.01
                     });
                     dataLabel.placed = true;
+                    isNew = false;
                 }
             }
 
