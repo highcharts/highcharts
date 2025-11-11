@@ -529,6 +529,7 @@ class VBPIndicator extends SMAIndicator {
                     // rendered. Remove it to avoid issues with fading in data
                     // labels from overlapping labels logic.
                     delete point.origin;
+                    point.isInside = indicator.isPointInside(point);
                 }
             );
 
