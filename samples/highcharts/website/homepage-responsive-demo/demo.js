@@ -1,12 +1,22 @@
 const colors =  ['#6CDDCA', '#C771F3', '#4D90DB', '#FAB776'];
 
 const chart = Highcharts.chart('container', {
+    accessibility: {
+        screenReaderSection: {
+            beforeChartFormat: '',
+            afterChartFormat: ''
+        },
+        keyboardNavigation: {
+            enabled: false
+        }
+    },
     colors: colors,
     chart: {
         type: 'column',
         // backgroundColor: '#F2F1F4',
         borderRadius: 10,
-        margin: [30, 30, 40, 70]
+        margin: [30, 30, 40, 70],
+        width: 500
     },
 
     exporting: {
@@ -41,7 +51,7 @@ const chart = Highcharts.chart('container', {
         verticalAlign: 'top',
         layout: 'vertical',
         itemStyle: {
-            fontSize: 11
+            fontSize: '12px'
         }
     },
 
@@ -100,7 +110,7 @@ const chart = Highcharts.chart('container', {
             },
             chartOptions: {
                 chart: {
-                    margin: [10, 10, 150, 10]
+                    margin: [10, 10, 100, 10]
                 },
                 title: {
                     text: 'Olympic all-time medals by country',
@@ -154,13 +164,20 @@ const chart = Highcharts.chart('container', {
 document.getElementById('mobile').addEventListener('click', function () {
     this.classList.add('active');
     document.getElementById('desktop').classList.remove('active');
-    document.getElementById('container').style.width = '300px';
+    document.getElementById('container').style.minWidth = '300px';
+    document.getElementById('container').style.maxWidth = '300px';
+    document.getElementById('chart-wrapper').classList.remove('large');
+    document.getElementById('chart-wrapper').classList.add('small');
     chart.setSize(300);
+
 });
 
 document.getElementById('desktop').addEventListener('click', function () {
     this.classList.add('active');
     document.getElementById('mobile').classList.remove('active');
-    document.getElementById('container').style.width = '620px';
-    chart.setSize(600);
+    document.getElementById('container').style.minWidth = '500px';
+    document.getElementById('container').style.maxWidth = '500px';
+    document.getElementById('chart-wrapper').classList.remove('small');
+    document.getElementById('chart-wrapper').classList.add('large');
+    chart.setSize(500);
 });
