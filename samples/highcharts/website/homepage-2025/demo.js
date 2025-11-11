@@ -1,9 +1,19 @@
+const DEBUG_ANIM = true;
+function logAnim(msg) {
+    if (DEBUG_ANIM) {
+        console.log('[DemoAnim]', msg);
+    }
+}
+
 // Set up the image path
 const imagePath = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@8967ac2dfa99c53005e2aa6221a03f3f6445e376/samples/graphics/homepage/';
 
 // reduced motion
 // eslint-disable-next-line max-len
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+let isPaused = false;
+let gridControls = null;
 
 // common data label format for the pie chart
 function pieLabels() {
@@ -126,7 +136,6 @@ const coreChart = {
         }]
     }
 };
-
 
 // Stock live candlestick
 let csInterval;
@@ -1923,7 +1932,18 @@ function dashboards() {
 // Grid sparklines
 function grid() {
 
-    // let running;
+    let gridUpdateTimeouts = [];
+    let gridIsRunning = true;
+
+    // detect global carousel pause state if defined
+    const globallyPaused = typeof isPaused !== 'undefined' ? isPaused : false;
+
+    // If reduced motion or the carousel is paused when grid() initializes,
+    // start with updates disabled.
+    if (reducedMotion || globallyPaused) {
+        gridIsRunning = false;
+    }
+
     // Data preparation
     const data = new Grid.DataTable({
         columns: {
@@ -2295,38 +2315,43 @@ function grid() {
         }
     });
 
+    // --- Utility: fade sparkline visuals when paused ---
+    const gridContainer = document.getElementById('grid-container');
+    function setGridPausedVisual(paused) {
+        gridContainer.classList.toggle('paused-grid', paused);
+    }
+
+    // --- Update scheduler ---
     function scheduleUpdate(rowIndex) {
+        // never start scheduling if paused or reducedMotion is active
+        if (!gridIsRunning) {
+            return;
+        }
+        if (reducedMotion) {
+            return;
+        }
+
         const delay = Math.random() * 1500 + 500;
-        setTimeout(async () => {
+        const timeout = setTimeout(async () => {
+            if (!gridIsRunning || reducedMotion) {
+                return;
+            }
             await updateInstanceStatus(rowIndex);
             scheduleUpdate(rowIndex);
         }, delay);
+
+        gridUpdateTimeouts.push(timeout);
     }
 
-    // Schedule updates for all rows in the data table.
-    for (let i = 0, iEnd = data.getRowCount(); i < iEnd; i++) {
-        scheduleUpdate(i);
-    }
-
-    // Function to generate a new dummy sparkline
-    // data array based on the old one.
     function generateArrayFlow(stringArray) {
         const r = Math.random() * 2 - 1;
         const change = Math.floor(r * r * r * 30);
-
         const array = stringArray.split(',').map(Number);
         array.shift();
-        array.push(
-            Highcharts.clamp(array[array.length - 1] + change, 0, 100)
-        );
-
+        array.push(Highcharts.clamp(array[array.length - 1] + change, 0, 100));
         return array.join(', ');
     }
 
-    // Function to update the instance status in the
-    // data table and refresh the
-    // cells. It updates the data even if the
-    // cells are not rendered in the grid.
     async function updateInstanceStatus(rowIndex) {
         const running = data.getCell('running', rowIndex);
         if (!running) {
@@ -2336,64 +2361,67 @@ function grid() {
         const cpuUtilization = data.getCell('cpuUtilization', rowIndex);
         const memoryUtilization = data.getCell('memoryUtilization', rowIndex);
 
-        // Data Table cells can be updated directly, even if the cells are not
-        // rendered in the grid.
-        data.setCell(
-            'cpuUtilization',
-            rowIndex,
-            generateArrayFlow(cpuUtilization)
-        );
-        data.setCell(
-            'memoryUtilization',
-            rowIndex,
-            generateArrayFlow(memoryUtilization)
-        );
-        data.setCell(
-            'diskOperationsIn',
-            rowIndex,
-            Math.round(Math.random() * 100)
-        );
-        data.setCell(
-            'diskOperationsOut',
-            rowIndex,
-            Math.round(Math.random() * 100)
-        );
-        data.setCell(
-            'diskUsage',
-            rowIndex,
-            Math.round(Math.random() * 100)
-        );
+        // eslint-disable-next-line max-len
+        data.setCell('cpuUtilization', rowIndex, generateArrayFlow(cpuUtilization));
+        // eslint-disable-next-line max-len
+        data.setCell('memoryUtilization', rowIndex, generateArrayFlow(memoryUtilization));
+        // eslint-disable-next-line max-len
+        data.setCell('diskOperationsIn', rowIndex, Math.round(Math.random() * 100));
+        // eslint-disable-next-line max-len
+        data.setCell('diskOperationsOut', rowIndex, Math.round(Math.random() * 100));
+        data.setCell('diskUsage', rowIndex, Math.round(Math.random() * 100));
 
         const row = grid?.viewport.getRow(rowIndex);
         if (!row) {
             return;
         }
 
-        // Apply the modifiers to the data table.
         await grid.querying.proceed(true);
-
-        // Matach the data table to the presentation table.
         grid.viewport.dataTable = grid.presentationTable;
-
-        // Load the data into the columns.
         for (const column of grid.viewport.columns) {
             column.loadData();
         }
-
-        // row.loadData() is used to fetch the data from the data table into the
-        // `row.data` object, because unlike the `column.data`, the `row.data`
-        // is not a direct reference to the data table, but a copy of the data
-        // for the row.
         row.loadData();
-
-        row.cells.forEach(cell => {
-        // `cell.setValue()` without arguments will refresh the cell with
-        // the current value from the data table.
-            cell.setValue();
-        });
+        row.cells.forEach(cell => cell.setValue());
     }
 
+    // --- Pause / Resume controls ---
+    function clearGridUpdates() {
+        gridIsRunning = false;
+        gridUpdateTimeouts.forEach(timeout => clearTimeout(timeout));
+        gridUpdateTimeouts = [];
+        setGridPausedVisual(true);
+    }
+
+    function resumeGridUpdates() {
+        if (gridIsRunning) {
+            return;
+        }
+        gridIsRunning = true;
+        for (let i = 0, iEnd = data.getRowCount(); i < iEnd; i++) {
+            scheduleUpdate(i);
+        }
+        setGridPausedVisual(false);
+    }
+
+    // --- Initialize ---
+    if (!reducedMotion && !globallyPaused) {
+        for (let i = 0, iEnd = data.getRowCount(); i < iEnd; i++) {
+            scheduleUpdate(i);
+        }
+        gridIsRunning = true;
+    } else {
+        gridIsRunning = false;
+        setGridPausedVisual(true);
+    }
+
+    return {
+        gridInstance: grid,
+        clearGridUpdates,
+        resumeGridUpdates
+    };
 }
+
 
 /* DEMO VIEWER */
 // product info for demo viewer
@@ -2506,7 +2534,7 @@ const titleInner = document.createElement('div');
 titleInner.className = 'demo-title-inner';
 titleContainer.innerHTML = '';
 titleContainer.appendChild(titleInner);
-let isPaused = false;
+
 
 // Add all products + one clone of first
 // so the vertical loop seems infinite
@@ -2539,10 +2567,13 @@ const dots = document.querySelectorAll('.dot');
 
 dots.forEach((dot, i) => {
     dot.addEventListener('click', function () {
-        pause();
         goTo(i);
+        if (!isPaused) {
+            resetTimer(); // keeps autoplay going after manual navigation
+        }
     });
 });
+
 
 // Initial footer state
 demoTitleEl.innerHTML = products[0].demoTitle;
@@ -2581,7 +2612,6 @@ function updateView() {
         isResetting = false;
 
         setTimeout(() => {
-            console.log('resetting');
             titleInner.style.transition = 'none';
             titleInner.style.transform = 'translateY(0)';
         }, setTimeoutDuration);
@@ -2639,40 +2669,88 @@ function getChartDescription(i) {
 
 }
 
-function toggleStockChartAnimation() {
-    if (isPaused) {
+// --- Stock Chart Animation Control ---
+function startStockChartAnimation() {
+    if (typeof animateCS === 'function' && !reducedMotion) {
+        // Prevent multiple intervals
+        if (typeof csInterval !== 'undefined') {
+            clearInterval(csInterval);
+        }
+        animateCS();
+        logAnim('Stock animation started');
+    }
+}
+
+function stopStockChartAnimation() {
+    if (typeof csInterval !== 'undefined') {
         clearInterval(csInterval);
-    } else {
-        if (!reducedMotion) {
-            animateCS();
+        logAnim('Stock animation stopped');
+    }
+}
+
+// --- Map Animation Control ---
+function startMapAnimation() {
+    if (!reducedMotion) {
+        document.querySelectorAll('.animated-line').forEach(line => {
+            line.classList.remove('paused');
+        });
+        logAnim('Map animation started');
+    }
+}
+
+function stopMapAnimation() {
+    document.querySelectorAll('.animated-line').forEach(line => {
+        line.classList.add('paused');
+    });
+    logAnim('Map animation stopped');
+}
+
+
+function toggleChartAnimations() {
+    const currentChart = products[currentIndex].chart;
+
+    if (currentChart === cs) {
+        if (isPaused) {
+            stopStockChartAnimation();
+        } else {
+            startStockChartAnimation();
+        }
+    }
+
+    if (currentChart === animatedMap) {
+        if (isPaused) {
+            stopMapAnimation();
+        } else {
+            startMapAnimation();
         }
     }
 }
 
-function toggleMapAnimation() {
+// --- Animation Failsafe ---
+function ensureCorrectAnimationState() {
+    const p = products[currentIndex];
+    const currentChart = p.chart;
+
+    stopStockChartAnimation();
+    stopMapAnimation();
+    if (gridControls) {
+        gridControls.clearGridUpdates();
+    }
+
     if (isPaused) {
-        // eslint-disable-next-line max-len
-        document.querySelectorAll('.animated-line').forEach(line => {
-            line.classList.add('paused');
-        });
-    } else {
-        // reduced motion is handled in the CSS
-        // with a media query
-        // eslint-disable-next-line max-len
-        document.querySelectorAll('.animated-line').forEach(line => {
-            line.classList.remove('paused');
-        });
+        return;
+    }
+
+    if (currentChart === cs) {
+        startStockChartAnimation();
+    } else if (currentChart === animatedMap) {
+        startMapAnimation();
+    } else if (currentChart === grid && gridControls) {
+        gridControls.resumeGridUpdates();
+        logAnim('[Failsafe] Grid updates resumed.');
     }
 }
 
-function toggleChartAnimations() {
-    if (products[currentIndex].chart === animatedMap) {
-        toggleMapAnimation();
-    }
-    if (products[currentIndex].chart === cs) {
-        toggleStockChartAnimation();
-    }
-}
 
 function announceChange(announcement) {
     if (isPaused) {
@@ -2684,7 +2762,6 @@ function announceChange(announcement) {
         announce.appendChild(newElem);
     }
 }
-
 
 function updateChart(i) {
 
@@ -2723,6 +2800,7 @@ function updateChart(i) {
                     document.getElementById('dash-container').style.display = 'none';
                     // eslint-disable-next-line max-len
                     document.getElementById('grid-container').style.display = 'block';
+                    gridControls = grid();
                 } else {
                     // eslint-disable-next-line max-len
                     document.getElementById('dash-container').style.display = 'none';
@@ -2757,6 +2835,11 @@ function updateChart(i) {
         // fade back in
         chartWrapper.classList.remove('fade-out');
     }, setTimeoutDuration);
+
+    // final failsafe after chart transition completes
+    setTimeout(() => {
+        ensureCorrectAnimationState();
+    }, 300);
 }
 
 
@@ -2789,11 +2872,14 @@ function pause() {
     // stop the carousel interval
     clearInterval(carouselInterval);
 
-    // stop chart animations
-    setTimeout(() => {
-        toggleChartAnimations();
-    }, 100);
+    // stop chart animations cleanly
+    stopStockChartAnimation();
+    stopMapAnimation();
 
+    if (gridControls) {
+        gridControls.clearGridUpdates();
+        logAnim('Grid updates paused');
+    }
 
     // update aria label on carousel container
     carousel.setAttribute(
@@ -2804,74 +2890,80 @@ function pause() {
 
     // make charts visible to screen readers
     chartWrapper.removeAttribute('aria-hidden');
-    // chartWrapper.setAttribute('aria-hidden', 'false');
 
+    // change the helper button text
+    document.getElementById('accessibility-helper').innerHTML =
+        'Click to play the carousel';
 
-    // change the screen reader helper button text
-    // eslint-disable-next-line max-len
-    document.getElementById('accessibility-helper').innerHTML = 'Click to play the carousel';
-
-    // add the chart description for screen readers
-    // since the carousel is paused
+    // add the chart description since paused
     getChartDescription(currentIndex);
 
     // update carousel pause button
     pauseBtn.ariaLabel = 'Resume automatic slide show';
-    pauseBtn.innerHTML = '<span class="hc-button_content">' +
-    '<span>Resume</span>' +
-    '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">' +
-    // eslint-disable-next-line max-len
-    '<path d="M1 5C1 5 2.00249 3.63411 2.81692 2.81912C3.63134 2.00413 4.7568 1.5 6 1.5C8.48528 1.5 10.5 3.51472 10.5 6C10.5 8.48528 8.48528 10.5 6 10.5C3.94845 10.5 2.21756 9.12714 1.67588 7.25M1 5V2M1 5H4" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>' +
-    '</svg>';
+    pauseBtn.innerHTML =
+        '<span class="hc-button_content">' +
+        '<span>Resume</span>' +
+        '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+        // eslint-disable-next-line max-len
+        '<path d="M1 5C1 5 2.00249 3.63411 2.81692 2.81912C3.63134 2.00413 4.7568 1.5 6 1.5C8.48528 1.5 10.5 3.51472 10.5 6C10.5 8.48528 8.48528 10.5 6 10.5C3.94845 10.5 2.21756 9.12714 1.67588 7.25M1 5V2M1 5H4" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>' +
+        '</svg>';
 
-    // announce that the carousel is paused
     announceChange('Demo carousel paused');
 }
 
 function resume() {
-
     isPaused = false;
 
     // restart the carousel interval
     startAuto();
 
-    // restart chart animations
-    toggleChartAnimations();
+    // restart chart animations based on current chart
+    const p = products[currentIndex];
+    if (p.chart === cs) {
+        startStockChartAnimation();
+    } else if (p.chart === animatedMap) {
+        startMapAnimation();
+    } else if (p.chart === grid && gridControls) {
+        gridControls.resumeGridUpdates();
+        logAnim('Grid updates resumed');
+    } else {
+        toggleChartAnimations();
+    }
+
 
     // update the carousel aria label
     carousel.setAttribute(
         'aria-label',
         // eslint-disable-next-line max-len
-        `Highcharts product demos. Pause the carousel to explore demos 
-        individually and use the carousel controls to switch between demos.`
+        'Highcharts product demos. Pause the carousel to explore demos individually and use the carousel controls to switch between demos.'
     );
 
     // update the helper button text
-    // eslint-disable-next-line max-len
-    document.getElementById('accessibility-helper').innerHTML = 'Click to pause the carousel';
+    document.getElementById('accessibility-helper').innerHTML =
+        'Click to pause the carousel';
 
     // hide the charts from screen readers
-    // since the carousel is playing
     chartWrapper.setAttribute('aria-hidden', 'true');
 
     // update carousel pause button
     pauseBtn.ariaLabel = 'Pause automatic slide show';
-    pauseBtn.innerHTML = '<span class="hc-button_content">' +
-    '<span>Pause</span>' +
-    '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">' +
-    // eslint-disable-next-line max-len
-    '<path d="M3.4 1.5H3.1C2.53995 1.5 2.25992 1.5 2.04601 1.60899C1.85785 1.70487 1.70487 1.85785 1.60899 2.04601C1.5 2.25992 1.5 2.53995 1.5 3.1V8.9C1.5 9.46005 1.5 9.74008 1.60899 9.95399C1.70487 10.1422 1.85785 10.2951 2.04601 10.391C2.25992 10.5 2.53995 10.5 3.1 10.5H3.4C3.96005 10.5 4.24008 10.5 4.45399 10.391C4.64215 10.2951 4.79513 10.1422 4.89101 9.95399C5 9.74008 5 9.46005 5 8.9V3.1C5 2.53995 5 2.25992 4.89101 2.04601C4.79513 1.85785 4.64215 1.70487 4.45399 1.60899C4.24008 1.5 3.96005 1.5 3.4 1.5Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>' +
-    // eslint-disable-next-line max-len
-    '<path d="M8.9 1.5H8.6C8.03995 1.5 7.75992 1.5 7.54601 1.60899C7.35785 1.70487 7.20487 1.85785 7.10899 2.04601C7 2.25992 7 2.53995 7 3.1V8.9C7 9.46005 7 9.74008 7.10899 9.95399C7.20487 10.1422 7.35785 10.2951 7.54601 10.391C7.75992 10.5 8.03995 10.5 8.6 10.5H8.9C9.46005 10.5 9.74008 10.5 9.95399 10.391C10.1422 10.2951 10.2951 10.1422 10.391 9.95399C10.5 9.74008 10.5 9.46005 10.5 8.9V3.1C10.5 2.53995 10.5 2.25992 10.391 2.04601C10.2951 1.85785 10.1422 1.70487 9.95399 1.60899C9.74008 1.5 9.46005 1.5 8.9 1.5Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>' +
-    '</svg>';
+    pauseBtn.innerHTML =
+        '<span class="hc-button_content">' +
+        '<span>Pause</span>' +
+        '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+        // eslint-disable-next-line max-len
+        '<path d="M3.4 1.5H3.1C2.53995 1.5 2.25992 1.5 2.04601 1.60899C1.85785 1.70487 1.70487 1.85785 1.60899 2.04601C1.5 2.25992 1.5 2.53995 1.5 3.1V8.9C1.5 9.46005 1.5 9.74008 1.60899 9.95399C1.70487 10.1422 1.85785 10.2951 2.04601 10.391C2.25992 10.5 2.53995 10.5 3.1 10.5H3.4C3.96005 10.5 4.24008 10.5 4.45399 10.391C4.64215 10.2951 4.79513 10.1422 4.89101 9.95399C5 9.74008 5 9.46005 5 8.9V3.1C5 2.53995 5 2.25992 4.89101 2.04601C4.79513 1.85785 4.64215 1.70487 4.45399 1.60899C4.24008 1.5 3.96005 1.5 3.4 1.5Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>' +
+        // eslint-disable-next-line max-len
+        '<path d="M8.9 1.5H8.6C8.03995 1.5 7.75992 1.5 7.54601 1.60899C7.35785 1.70487 7.20487 1.85785 7.10899 2.04601C7 2.25992 7 2.53995 7 3.1V8.9C7 9.46005 7 9.74008 7.10899 9.95399C7.20487 10.1422 7.35785 10.2951 7.54601 10.391C7.75992 10.5 8.03995 10.5 8.6 10.5H8.9C9.46005 10.5 9.74008 10.5 9.95399 10.391C10.1422 10.2951 10.2951 10.1422 10.391 9.95399C10.5 9.74008 10.5 9.46005 10.5 8.9V3.1C10.5 2.53995 10.5 2.25992 10.391 2.04601C10.2951 1.85785 10.1422 1.70487 9.95399 1.60899C9.74008 1.5 9.46005 1.5 8.9 1.5Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>' +
+        '</svg>';
 
-    // remove chart description
-    // since the carousel is playing
+    // remove chart description since carousel is running
     if (document.getElementById('chart-description') !== null) {
         document.getElementById('chart-description').remove();
     }
 
-    // announce that the carousel is playing
+    // ensure correct animation running for current chart
+    ensureCorrectAnimationState();
     announceChange('Demo carousel playing');
 
 }
@@ -2889,15 +2981,92 @@ document.getElementById('pause').addEventListener('click', toggleCarousel);
 // eslint-disable-next-line max-len
 document.getElementById('accessibility-helper').addEventListener('click', toggleCarousel);
 
+function initializePauseButtonState() {
+    const helper = document.getElementById('accessibility-helper');
+
+    if (reducedMotion) {
+        // Start paused, so button should show "Resume"
+        isPaused = true;
+
+        pauseBtn.ariaLabel = 'Resume automatic slide show';
+        pauseBtn.innerHTML =
+            '<span class="hc-button_content">' +
+            '<span>Resume</span>' +
+            '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+            // eslint-disable-next-line max-len
+            '<path d="M1 5C1 5 2.00249 3.63411 2.81692 2.81912C3.63134 2.00413 4.7568 1.5 6 1.5C8.48528 1.5 10.5 3.51472 10.5 6C10.5 8.48528 8.48528 10.5 6 10.5C3.94845 10.5 2.21756 9.12714 1.67588 7.25M1 5V2M1 5H4" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>' +
+            '</svg>';
+        helper.innerHTML = 'Click to play the carousel';
+    } else {
+        // Normal autoplay state → button shows "Pause"
+        isPaused = false;
+
+        pauseBtn.ariaLabel = 'Pause automatic slide show';
+        pauseBtn.innerHTML =
+            '<span class="hc-button_content">' +
+            '<span>Pause</span>' +
+            '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+            // eslint-disable-next-line max-len
+            '<path d="M3.4 1.5H3.1C2.53995 1.5 2.25992 1.5 2.04601 1.60899C1.85785 1.70487 1.70487 1.85785 1.60899 2.04601C1.5 2.25992 1.5 2.53995 1.5 3.1V8.9C1.5 9.46005 1.5 9.74008 1.60899 9.95399C1.70487 10.1422 1.85785 10.2951 2.04601 10.391C2.25992 10.5 2.53995 10.5 3.1 10.5H3.4C3.96005 10.5 4.24008 10.5 4.45399 10.391C4.64215 10.2951 4.79513 10.1422 4.89101 9.95399C5 9.74008 5 9.46005 5 8.9V3.1C5 2.53995 5 2.25992 4.89101 2.04601C4.79513 1.85785 4.64215 1.70487 4.45399 1.60899C4.24008 1.5 3.96005 1.5 3.4 1.5Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>' +
+            // eslint-disable-next-line max-len
+            '<path d="M8.9 1.5H8.6C8.03995 1.5 7.75992 1.5 7.54601 1.60899C7.35785 1.70487 7.20487 1.85785 7.10899 2.04601C7 2.25992 7 2.53995 7 3.1V8.9C7 9.46005 7 9.74008 7.10899 9.95399C7.20487 10.1422 7.35785 10.2951 7.54601 10.391C7.75992 10.5 8.03995 10.5 8.6 10.5H8.9C9.46005 10.5 9.74008 10.5 9.95399 10.391C10.1422 10.2951 10.2951 10.1422 10.391 9.95399C10.5 9.74008 10.5 9.46005 10.5 8.9V3.1C10.5 2.53995 10.5 2.25992 10.391 2.04601C10.2951 1.85785 10.1422 1.70487 9.95399 1.60899C9.74008 1.5 9.46005 1.5 8.9 1.5Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>' +
+            '</svg>';
+        helper.innerHTML = 'Click to pause the carousel';
+    }
+}
+
+
 document.addEventListener('DOMContentLoaded', function () {
-    // --- Start carousel ---
-    // create the dashboard and grid first to prevent errors
+
+    // --- Initialize button states first ---
+    initializePauseButtonState();
+
+    // --- Start carousel setup ---
     dashboards();
-    grid();
+    gridControls = grid();
+
     // create the first chart
     document.querySelector('.demo-title-inner').style.opacity = 1;
     document.getElementById('title-0').setAttribute('aria-hidden', 'false');
     updateChart(0);
-    // start the carousel
-    startAuto();
+
+    if (reducedMotion) {
+        // Start paused for users who prefer reduced motion
+        isPaused = true;
+
+        // Stop any intervals or animations
+        clearInterval(carouselInterval);
+        stopStockChartAnimation();
+        stopMapAnimation();
+
+        // Make charts accessible to screen readers
+        chartWrapper.removeAttribute('aria-hidden');
+        getChartDescription(0);
+
+        // Update accessibility and button states to "resume" mode
+        carousel.setAttribute(
+            'aria-label',
+            `Demo carousel paused by default due to reduced motion preference. 
+            You can explore demos manually or resume automatic playback.`
+        );
+
+        document.getElementById('accessibility-helper').innerHTML =
+            'Click to play the carousel';
+
+        pauseBtn.ariaLabel = 'Resume automatic slide show';
+        pauseBtn.innerHTML =
+            '<span class="hc-button_content">' +
+            '<span>Resume</span>' +
+            '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+            // eslint-disable-next-line max-len
+            '<path d="M1 5C1 5 2.00249 3.63411 2.81692 2.81912C3.63134 2.00413 4.7568 1.5 6 1.5C8.48528 1.5 10.5 3.51472 10.5 6C10.5 8.48528 8.48528 10.5 6 10.5C3.94845 10.5 2.21756 9.12714 1.67588 7.25M1 5V2M1 5H4" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>' +
+            '</svg>';
+
+        // eslint-disable-next-line max-len
+        announceChange('Demo carousel paused due to reduced motion preference.');
+    } else {
+        // Normal behavior for non-reduced motion users
+        isPaused = false;
+        startAuto();
+    }
 });

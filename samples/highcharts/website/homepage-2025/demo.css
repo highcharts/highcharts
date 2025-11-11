@@ -591,6 +591,11 @@ body {
     border-radius: 6px;
 }
 
+.dot:focus-visible {
+    outline: 2px solid var(--primitives-brand-500);
+    outline-offset: 2px;
+}
+
 /* this is to make sure the dots don't shift */
 .button-container {
     width: 74px;
@@ -673,6 +678,11 @@ body {
     background-color: var(--button-colors-transparent-background-hover);
     color: var(--button-colors-transparent-text-hover);
     border-color: var(--button-colors-transparent-stroke-outer-hover);
+}
+
+.hc-button_button:focus-visible {
+    outline: 2px solid var(--primitives-brand-500);
+    outline-offset: 2px;
 }
 
 .hc-button_content {
