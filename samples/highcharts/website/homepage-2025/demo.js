@@ -1,4 +1,4 @@
-const DEBUG_ANIM = true;
+const DEBUG_ANIM = false;
 function logAnim(msg) {
     if (DEBUG_ANIM) {
         console.log('[DemoAnim]', msg);
