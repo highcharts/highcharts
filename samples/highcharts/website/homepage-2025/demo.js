@@ -1308,6 +1308,9 @@ function animatedMap() {
         // Initialize the chart
         Highcharts.mapChart('container', {
             accessibility: {
+                point: {
+                    descriptionFormat: '{point.name}'
+                },
                 screenReaderSection: {
                     beforeChartFormat: '',
                     afterChartFormat: ''
