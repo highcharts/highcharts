@@ -136,10 +136,23 @@ function sortData(
 }
 
 /**
+ * Sort and return chart series in order depending on the number of linked
+ * series.
+ */
+function getSeriesOrderByLinks(chart: Chart): Array<Series> {
+    return chart.series.concat().sort((a, b): number => {
+        if (a.linkedSeries.length || b.linkedSeries.length) {
+            return b.linkedSeries.length - a.linkedSeries.length;
+        }
+        return 0;
+    });
+}
+
+/**
  * Set data for all series with enabled sorting.
  */
 function setSortedData(chart: Chart): void {
-    chart.getSeriesOrderByLinks().forEach((series): void => {
+    getSeriesOrderByLinks(chart).forEach((series): void => {
         // We need to set data for series with sorting after series init
         if (!series.points && !series.data && series.enabledDataSorting) {
             series.setData(series.options.data, false);
