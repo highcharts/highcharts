@@ -4959,25 +4959,6 @@ export default Series;
  */
 
 /**
- * Options for `dataSorting`.
- *
- * @interface Highcharts.DataSortingOptionsObject
- * @since 8.0.0
- *//**
- * Enable or disable data sorting for the series.
- * @name Highcharts.DataSortingOptionsObject#enabled
- * @type {boolean|undefined}
- *//**
- * Whether to allow matching points by name in an update.
- * @name Highcharts.DataSortingOptionsObject#matchByName
- * @type {boolean|undefined}
- *//**
- * Determines what data value should be used to sort by.
- * @name Highcharts.DataSortingOptionsObject#sortKey
- * @type {string|undefined}
- */
-
-/**
  * Function callback when a series has been animated.
  *
  * @callback Highcharts.SeriesAfterAnimateCallbackFunction
