@@ -490,22 +490,38 @@ class Point {
      * @param {Highcharts.Dictionary<number>} [kinds]
      * Kinds of elements to destroy
      */
-    public destroyElements(kinds?: Record<string, number>): void {
+    public destroyElements(
+        kinds: Record<string, number> = { graphic: 1, dataLabel: 1 }
+    ): void {
         const point = this,
-            props = point.getGraphicalProps(kinds);
+            props = [];
 
-        props.singular.forEach(function (prop: string): void {
-            (point as any)[prop] = (point as any)[prop].destroy();
-        });
+        let prop: string, i: number;
 
-        props.plural.forEach(function (plural: any): void {
-            (point as any)[plural].forEach(function (item: any): void {
-                if (item?.element) {
-                    item.destroy();
-                }
-            });
+        if (kinds.graphic) {
+            props.push('graphic', 'connector');
+        }
+        if (kinds.dataLabel) {
+            props.push('dataLabel', 'dataLabelPath', 'dataLabelUpper');
+        }
 
-            delete (point as any)[plural];
+        i = props.length;
+        while (i--) {
+            prop = props[i];
+            if ((point as any)[prop]) {
+                (point as any)[prop] = (point as any)[prop].destroy();
+            }
+        }
+        ['graphic', 'dataLabel'].forEach((prop): void => {
+            const plural = `${prop}s`;
+            if (kinds[prop] && (point as any)[plural]) {
+                (point as any)[plural].forEach((item: any): void => {
+                    if (item.element) {
+                        item.destroy();
+                    }
+                });
+                delete (point as any)[plural];
+            }
         });
     }
 
@@ -582,57 +598,6 @@ class Point {
                     ) :
                     ''
             );
-    }
-
-    /**
-     * Get props of all existing graphical point elements.
-     *
-     * @private
-     * @function Highcharts.Point#getGraphicalProps
-     */
-    public getGraphicalProps(kinds?: Record<string, number>): Point.GraphicalProps {
-        const point = this,
-            props = [],
-            graphicalProps: Point.GraphicalProps =
-                { singular: [], plural: [] };
-        let prop,
-            i;
-
-        kinds = kinds || { graphic: 1, dataLabel: 1 };
-
-        if (kinds.graphic) {
-            props.push(
-                'graphic',
-                'connector' // Used by dumbbell
-            );
-        }
-        if (kinds.dataLabel) {
-            props.push(
-                'dataLabel',
-                'dataLabelPath',
-                'dataLabelUpper'
-            );
-        }
-
-        i = props.length;
-        while (i--) {
-            prop = props[i];
-            if ((point as any)[prop]) {
-                graphicalProps.singular.push(prop);
-            }
-        }
-
-        [
-            'graphic',
-            'dataLabel'
-        ].forEach(function (prop: string): void {
-            const plural = prop + 's';
-            if ((kinds as any)[prop] && (point as any)[plural]) {
-                graphicalProps.plural.push(plural);
-            }
-        });
-
-        return graphicalProps;
     }
 
     /**
