@@ -302,7 +302,7 @@ class Tick {
             }
             return axis.defaultLabelFormatter.call(ctx);
         };
-        const str = labelFormatter.call(ctx, ctx);
+        const text = labelFormatter.call(ctx, ctx);
 
         // Set up conditional formatting based on the format list if existing.
         const list = dateTimeLabelFormats?.list;
@@ -340,27 +340,24 @@ class Tick {
              * @name Highcharts.Tick#label
              * @type {Highcharts.SVGElement|undefined}
              */
-            tick.label = label = tick.createLabel(
-                str,
-                labelOptions
-            );
+            tick.label = label = tick.createLabel(text, labelOptions);
 
             // Base value to detect change for new calls to getBBox
             tick.rotation = 0;
 
         // Update
-        } else if (label.textStr !== str) {
+        } else if (label.textStr !== text) {
             // When resetting text, also reset the width if dynamically set
             // (#8809)
             if (
                 label.textWidth &&
                 !labelOptions.style.width &&
-                !(label.styles as any).width
+                !label.styles.width
             ) {
-                label.css({ width: null as any });
+                label.css({ width: void 0 });
             }
 
-            label.attr({ text: str });
+            label.attr({ text });
 
             label.textPxLength = label.getBBox().width;
         }
