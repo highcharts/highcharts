@@ -52,10 +52,6 @@
     --shadow-size-100: 0 1px 2px 0 rgba(0, 0, 0, 0.06), 0 3px 3px 0 rgba(0, 0, 0, 0.05), 0 7px 4px 0 rgba(0, 0, 0, 0.03), 0 13px 5px 0 rgba(0, 0, 0, 0.01);
     --shadow-size-200: 0 1px 2px 0 rgba(0, 0, 0, 0.08), 0 4px 4px 0 rgba(0, 0, 0, 0.07), 0 10px 6px 0 rgba(0, 0, 0, 0.04), 0 18px 7px 0 rgba(0, 0, 0, 0.01);
     --shadow-size-300: 0 2px 4px 0 rgba(0, 0, 0, 0.08), 0 7px 7px 0 rgba(0, 0, 0, 0.07), 0 17px 10px 0 rgba(0, 0, 0, 0.04), 0 30px 12px 0 rgba(0, 0, 0, 0.01);
-    --highcharts-color-0: #6cddca;
-    --highcharts-color-1: #c771f3;
-    --highcharts-color-2: #4d90db;
-    --highcharts-color-3: #fab776;
     --data-label-text-0: #fff;
     --data-label-text-1000: var(--text-primary);
     --background-color: #fff;
@@ -169,6 +165,12 @@
     --tick-stroke-color: var(--primitives-neutral-200);
     --tooltip-background: var(--primitives-neutral-50);
     --tooltip-stroke: var(--primitives-neutral-100);
+    --code-blue: #007faa;
+    --code-purple: #8339a8;
+    --code-green: #0b850b;
+    --code-gray: #333;
+    --code-orange: #aa5d00;
+    --code-red: #d91e18;
 }
 
 .highcharts-dark {
@@ -241,16 +243,18 @@
     --text-secondary: var(--primitives-neutral-200);
     --text-tertiary: var(--primitives-neutral-400);
     --border-100: var(--primitives-neutral-700);
-    --highcharts-color-0: #6cddca;
-    --highcharts-color-1: #c771f3;
-    --highcharts-color-2: #4d90db;
-    --highcharts-color-3: #fab776;
     --data-label-text-0: #fff;
     --data-label-text-1000: #fff;
     --tooltip-border-color: var(--primitives-neutral-700);
     --tick-stroke-color: var(--primitives-neutral-700);
     --tooltip-background: var(--primitives-neutral-800);
     --tooltip-stroke: var(--primitives-neutral-700);
+    --code-blue: #f8f8f2;
+    --code-purple: #4ce073;
+    --code-green: #f1fa8c;
+    --code-gray: #f8f8f2;
+    --code-orange: #bd93f9;
+    --code-red: #ff79c6;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -324,16 +328,18 @@
         --text-secondary: var(--primitives-neutral-200);
         --text-tertiary: var(--primitives-neutral-400);
         --border-100: var(--primitives-neutral-700);
-        --highcharts-color-0: #6cddca;
-        --highcharts-color-1: #c771f3;
-        --highcharts-color-2: #4d90db;
-        --highcharts-color-3: #fab776;
         --data-label-text-0: #fff;
         --data-label-text-1000: #fff;
         --tooltip-border-color: var(--primitives-neutral-700);
         --tick-stroke-color: var(--primitives-neutral-700);
         --tooltip-background: var(--primitives-neutral-800);
         --tooltip-stroke: var(--primitives-neutral-700);
+        --code-blue: #f8f8f2;
+        --code-purple: #4ce073;
+        --code-green: #f1fa8c;
+        --code-gray: #f8f8f2;
+        --code-orange: #bd93f9;
+        --code-red: #ff79c6;
     }
 }
 
@@ -341,6 +347,29 @@
 ::before,
 ::after {
     box-sizing: border-box;
+}
+
+* {
+    scroll-margin-top: inherit;
+    scroll-margin-bottom: inherit;
+}
+
+.ibm-plex-mono-light {
+    font-family: "IBM Plex Mono", monospace;
+    font-weight: 300;
+    font-style: normal;
+}
+
+.ibm-plex-mono-regular {
+    font-family: "IBM Plex Mono", monospace;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.ibm-plex-mono-medium {
+    font-family: "IBM Plex Mono", monospace;
+    font-weight: 500;
+    font-style: normal;
 }
 
 #demo-content {
@@ -437,13 +466,11 @@ body {
 #chart-wrapper {
     position: relative;
     display: flex;
+    flex-direction: column;
     overflow-x: auto;
     width: 100%;
     margin: 0 auto;
-    text-align: center;
     background-color: var(--background);
-    min-height: 400px;
-    max-height: 400px;
 }
 
 #chart-wrapper.large,
@@ -452,9 +479,74 @@ body {
 }
 
 #container {
-    min-width: 500px;
-    max-width: 500px;
-    max-height: 400px;
+    max-height: 250px;
+}
+
+#code-container {
+    display: flex;
+    flex-direction: row;
+    border-top: 1px solid var(--border-100);
+    overflow: hidden;
+    background: var(--surface-50);
+    font-family: "IBM Plex Mono", monospace;
+}
+
+#gutter {
+    flex-shrink: 0;
+    width: 37px;
+    padding: 10px;
+    color: var(--primitives-neutral-400);
+    background: var(--surface-75);
+    user-select: none;
+    border-right: 1px solid var(--border-100);
+}
+
+#gutter .gutter-element {
+    line-height: 22px;
+    font-size: 11px;
+    width: 33px;
+}
+
+#code {
+    flex-grow: 1;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 10px;
+    background: var(--surface-50);
+}
+
+.code-gray {
+    color: var(--code-gray);
+}
+
+.code-blue {
+    color: var(--code-blue);
+}
+
+.code-purple {
+    color: var(--code-purple);
+}
+
+.code-green {
+    color: var(--code-green);
+}
+
+.code-orange {
+    color: var(--code-orange);
+}
+
+.code-red {
+    color: var(--code-red);
+}
+
+/* This is the key part */
+#code .code-line {
+    display: block;
+    white-space: pre; /* now works! */
+    font-size: 13px;
+    line-height: 22px;
+    color: var(--code-gray);
+    font-family: inherit;
 }
 
 .demo-body {

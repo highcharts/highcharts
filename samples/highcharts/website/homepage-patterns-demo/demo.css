@@ -52,10 +52,6 @@
     --shadow-size-100: 0 1px 2px 0 rgba(0, 0, 0, 0.06), 0 3px 3px 0 rgba(0, 0, 0, 0.05), 0 7px 4px 0 rgba(0, 0, 0, 0.03), 0 13px 5px 0 rgba(0, 0, 0, 0.01);
     --shadow-size-200: 0 1px 2px 0 rgba(0, 0, 0, 0.08), 0 4px 4px 0 rgba(0, 0, 0, 0.07), 0 10px 6px 0 rgba(0, 0, 0, 0.04), 0 18px 7px 0 rgba(0, 0, 0, 0.01);
     --shadow-size-300: 0 2px 4px 0 rgba(0, 0, 0, 0.08), 0 7px 7px 0 rgba(0, 0, 0, 0.07), 0 17px 10px 0 rgba(0, 0, 0, 0.04), 0 30px 12px 0 rgba(0, 0, 0, 0.01);
-    --highcharts-color-0: #6cddca;
-    --highcharts-color-1: #c771f3;
-    --highcharts-color-2: #4d90db;
-    --highcharts-color-3: #fab776;
     --data-label-text-0: #fff;
     --data-label-text-1000: var(--text-primary);
     --background-color: #fff;
@@ -169,6 +165,15 @@
     --tick-stroke-color: var(--primitives-neutral-200);
     --tooltip-background: var(--primitives-neutral-50);
     --tooltip-stroke: var(--primitives-neutral-100);
+    --highcharts-color-0: #265fb5;
+    --highcharts-color-1: #222;
+    --highcharts-color-2: #698f01;
+    --highcharts-color-3: #f4693e;
+    --highcharts-color-4: #4c0684;
+    --highcharts-color-5: #0fa388;
+    --highcharts-color-6: #b7104a;
+    --highcharts-color-7: #af9023;
+    --highcharts-color-8: #1a704c;
 }
 
 .highcharts-dark {
@@ -241,16 +246,21 @@
     --text-secondary: var(--primitives-neutral-200);
     --text-tertiary: var(--primitives-neutral-400);
     --border-100: var(--primitives-neutral-700);
-    --highcharts-color-0: #6cddca;
-    --highcharts-color-1: #c771f3;
-    --highcharts-color-2: #4d90db;
-    --highcharts-color-3: #fab776;
     --data-label-text-0: #fff;
     --data-label-text-1000: #fff;
     --tooltip-border-color: var(--primitives-neutral-700);
     --tick-stroke-color: var(--primitives-neutral-700);
     --tooltip-background: var(--primitives-neutral-800);
     --tooltip-stroke: var(--primitives-neutral-700);
+    --highcharts-color-0: #67b9ee;
+    --highcharts-color-1: #ceeda5;
+    --highcharts-color-2: #9f6ae1;
+    --highcharts-color-3: #fea26e;
+    --highcharts-color-4: #6ba48f;
+    --highcharts-color-5: #ea3535;
+    --highcharts-color-6: #8d96b7;
+    --highcharts-color-7: #ecca15;
+    --highcharts-color-8: #20aa09;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -324,16 +334,21 @@
         --text-secondary: var(--primitives-neutral-200);
         --text-tertiary: var(--primitives-neutral-400);
         --border-100: var(--primitives-neutral-700);
-        --highcharts-color-0: #6cddca;
-        --highcharts-color-1: #c771f3;
-        --highcharts-color-2: #4d90db;
-        --highcharts-color-3: #fab776;
         --data-label-text-0: #fff;
         --data-label-text-1000: #fff;
         --tooltip-border-color: var(--primitives-neutral-700);
         --tick-stroke-color: var(--primitives-neutral-700);
         --tooltip-background: var(--primitives-neutral-800);
         --tooltip-stroke: var(--primitives-neutral-700);
+        --highcharts-color-0: #67b9ee;
+        --highcharts-color-1: #ceeda5;
+        --highcharts-color-2: #9f6ae1;
+        --highcharts-color-3: #fea26e;
+        --highcharts-color-4: #6ba48f;
+        --highcharts-color-5: #ea3535;
+        --highcharts-color-6: #8d96b7;
+        --highcharts-color-7: #ecca15;
+        --highcharts-color-8: #20aa09;
     }
 }
 
@@ -437,6 +452,7 @@ body {
 #chart-wrapper {
     position: relative;
     display: flex;
+    padding: 12px;
     overflow-x: auto;
     width: 100%;
     margin: 0 auto;
@@ -446,13 +462,11 @@ body {
     max-height: 400px;
 }
 
-#chart-wrapper.large,
-#chart-wrapper.small {
+#chart-wrapper {
     justify-content: center;
 }
 
 #container {
-    min-width: 500px;
     max-width: 500px;
     max-height: 400px;
 }

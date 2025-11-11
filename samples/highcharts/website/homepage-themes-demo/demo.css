@@ -52,10 +52,6 @@
     --shadow-size-100: 0 1px 2px 0 rgba(0, 0, 0, 0.06), 0 3px 3px 0 rgba(0, 0, 0, 0.05), 0 7px 4px 0 rgba(0, 0, 0, 0.03), 0 13px 5px 0 rgba(0, 0, 0, 0.01);
     --shadow-size-200: 0 1px 2px 0 rgba(0, 0, 0, 0.08), 0 4px 4px 0 rgba(0, 0, 0, 0.07), 0 10px 6px 0 rgba(0, 0, 0, 0.04), 0 18px 7px 0 rgba(0, 0, 0, 0.01);
     --shadow-size-300: 0 2px 4px 0 rgba(0, 0, 0, 0.08), 0 7px 7px 0 rgba(0, 0, 0, 0.07), 0 17px 10px 0 rgba(0, 0, 0, 0.04), 0 30px 12px 0 rgba(0, 0, 0, 0.01);
-    --highcharts-color-0: #6cddca;
-    --highcharts-color-1: #c771f3;
-    --highcharts-color-2: #4d90db;
-    --highcharts-color-3: #fab776;
     --data-label-text-0: #fff;
     --data-label-text-1000: var(--text-primary);
     --background-color: #fff;
@@ -241,10 +237,6 @@
     --text-secondary: var(--primitives-neutral-200);
     --text-tertiary: var(--primitives-neutral-400);
     --border-100: var(--primitives-neutral-700);
-    --highcharts-color-0: #6cddca;
-    --highcharts-color-1: #c771f3;
-    --highcharts-color-2: #4d90db;
-    --highcharts-color-3: #fab776;
     --data-label-text-0: #fff;
     --data-label-text-1000: #fff;
     --tooltip-border-color: var(--primitives-neutral-700);
@@ -324,10 +316,6 @@
         --text-secondary: var(--primitives-neutral-200);
         --text-tertiary: var(--primitives-neutral-400);
         --border-100: var(--primitives-neutral-700);
-        --highcharts-color-0: #6cddca;
-        --highcharts-color-1: #c771f3;
-        --highcharts-color-2: #4d90db;
-        --highcharts-color-3: #fab776;
         --data-label-text-0: #fff;
         --data-label-text-1000: #fff;
         --tooltip-border-color: var(--primitives-neutral-700);
@@ -437,6 +425,7 @@ body {
 #chart-wrapper {
     position: relative;
     display: flex;
+    padding: 12px;
     overflow-x: auto;
     width: 100%;
     margin: 0 auto;
@@ -452,7 +441,6 @@ body {
 }
 
 #container {
-    min-width: 500px;
     max-width: 500px;
     max-height: 400px;
 }
