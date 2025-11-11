@@ -434,7 +434,7 @@ body {
     align-items: center;
     justify-content: space-between;
     gap: unset;
-    padding: 16px 20px;
+    padding: 6px 8px;
     border-bottom: 1px solid var(--border-100);
 }
 
@@ -479,7 +479,19 @@ body {
 }
 
 #container {
-    max-height: 200px;
+    max-height: 300px;
+}
+
+.code-toolbar-selector-button {
+    height: 28px;
+    padding: 0 8px;
+    display: flex;
+    align-items: center;
+    border-radius: 4px;
+    border: 1px solid transparent;
+    color: inherit;
+    text-wrap: nowrap;
+    font-size: var(--typography-size-100);
 }
 
 #code-container {
@@ -488,13 +500,14 @@ body {
     border-top: 1px solid var(--border-100);
     overflow-x: auto;
     overflow-y: scroll;
-    max-height: 250px;
+    max-height: 200px;
     background: var(--surface-50);
     font-family: "IBM Plex Mono", monospace;
 }
 
 #gutter {
     flex-shrink: 0;
+    height: 100%;
     width: 37px;
     padding: 10px;
     color: var(--primitives-neutral-400);
@@ -506,7 +519,7 @@ body {
 #gutter .gutter-element {
     line-height: 22px;
     font-size: 11px;
-    width: 33px;
+    text-align: right;
 }
 
 #code {
@@ -700,7 +713,7 @@ body {
 }
 
 .demo-button-container .demo-button:hover,
-.hc-button--plain:hover {
+.hc-button--plain:hover .hc-button--plain:not('.code-button'):hover {
     background-color: var(--button-colors-plain-background-hover);
     border-color: var(--button-colors-plain-stroke-outer-hover);
     color: var(--button-colors-plain-text-hover);
@@ -727,6 +740,11 @@ body {
 .hc-button--white:active {
     background-color: var(--button-colors-white-background-pressed);
     color: var(--button-colors-white-text-pressed);
+}
+
+.code-button {
+    color: var(--text-tertiary);
+    cursor: default;
 }
 
 #more-demos {
