@@ -4,15 +4,19 @@
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 <script src="https://code.highcharts.com/themes/adaptive.js"></script>
 
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+
 <div aria-live="polite" aria-atomic="true" id="announce"> </div>
 <div class="chart-description" id="chart-description">
-    This is a purely decorative example of a grouped column chart showing all-time olympic medals won by four countries: Norway, Germany, United States and Canada. The columns are grouped by medal categories gold, silver and bronze. Norway has won the most medals across all categories. The buttons below the chart allow you to change the size of the chart between a mobile and desktop view.
+    This is a purely decorative chart demonstrating Highcharts built-in smart defaults. The chart was created with only 7 lines of code, showcasing how Highcharts can deliver powerful visualizations with minimal configuration.
 </div>
 <div class="demo-card"  aria-label="Highcharts repsonsive demo">
     <div class="demo-header">
         <div class="demo-title">
-                <p class="demo-name">Intelligent responsiveness demo</p>
-                <p class="demo-description">Click the buttons below the chart to change its size.</p>
+                <p class="demo-name">Smart defaults</p>
+                <p class="demo-description">The chart below was configured with 7 lines of code.</p>
         </div>
         <div>
             <a href="https://www.highcharts.com/docs/chart-concepts/responsive" aria-label="Explore documentation" class="hc-button hc-button--white hc-button--size-100">
@@ -24,11 +28,31 @@
         </div>
       
     </div>
-    <div id="chart-wrapper" class="large">
+    <div id="chart-wrapper">
         <div class="demo-body" id="container" ></div>
+        <div id="code-container">
+            <div id="gutter">
+                <div class="gutter-element">1</div>
+                <div class="gutter-element">2</div>
+                <div class="gutter-element">3</div>
+                <div class="gutter-element">4</div>
+                <div class="gutter-element">5</div>
+                <div class="gutter-element">6</div>
+                <div class="gutter-element">7</div>
+            </div>
+            <div id="code">
+                <div class="code-line"><span class="code-blue">Highcharts</span>.<span class="code-purple">chart</span>(<span class="code-green">'container'</span>, {</div>
+                <div class="code-line">  series<span class="code-red">:</span> [{</div>
+                <div class="code-line">    data<span class="code-red">:</span> [<span class="code-blue">1</span>, <span class="code-blue">3</span>, <span class="code-blue">2</span>, <span class="code-blue">4</span>]</div>
+                <div class="code-line">  }, {</div>
+                <div class="code-line">    data<span class="code-red">:</span> [<span class="code-blue">4</span>, <span class="code-blue">1</span>, <span class="code-blue">2</span>, <span class="code-blue">3</span>]</div>
+                <div class="code-line">  }]</div>
+                <div class="code-line">});</div>
+            </div>
+        </div>
     </div>
 
-    <div class="demo-footer">
+    <!-- <div class="demo-footer">
         <div class="demo-button-container">
             <button aria-label="Desktop" class="hc-button demo-button active hc-button--size-200" id="desktop">
                 Desktop
@@ -44,5 +68,5 @@
                 </svg>
             </button>
         </div>
-    </div>
+    </div> -->
 </div>
