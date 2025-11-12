@@ -105,19 +105,31 @@ const chart = Highcharts.chart('container', {
     }
 });
 
+const announce = document.getElementById('announce');
+
 // Toggle patterns enabled
 document.getElementById('patterns').onclick = function () {
     this.classList.add('active');
+    this.ariaLabel = 'Pattern fills selected';
     document.getElementById('default').classList.remove('active');
+    document.getElementById('default').ariaLabel = 'Default colors';
     chart.update({
         colors: patterns
-    });
+    }, true, true, false);
+
+    announce.textContent = '';
+    announce.textContent = 'Pattern fill applied to chart demo';
 };
 
 document.getElementById('default').onclick = function () {
     this.classList.add('active');
+    this.ariaLabel = 'Default colors selected';
     document.getElementById('patterns').classList.remove('active');
+    document.getElementById('patterns').ariaLabel = 'Pattern fills';
     chart.update({
         colors: pieColors
-    });
+    }, true, true, false);
+
+    announce.textContent = '';
+    announce.textContent = 'Pattern fill removed from chart demo';
 };

@@ -5,10 +5,7 @@
 <script src="https://code.highcharts.com/themes/adaptive.js"></script>
 
 <div aria-live="polite" aria-atomic="true" id="announce"> </div>
-<div class="chart-description" id="chart-description">
-    A purely decorative chart demonstrating Highcharts adaptive themes. 
-    Use the buttons below to switch between light, dark and system themes.
-</div>
+
 <div class="demo-card"  aria-label="Highcharts adaptive themes demo">
     <div class="demo-header">
         <div class="demo-title">
@@ -16,8 +13,8 @@
                 <p class="demo-description">Instantly switch between light, dark and system themes.</p>
         </div>
         <div>
-            <a href="https://www.highcharts.com/docs/chart-design-and-style/themes" target="_blank" aria-label="Explore adaptive themes documentation" class="hc-button hc-button--white hc-button--size-100">
-               Explore the docs
+            <a href="https://www.highcharts.com/docs/chart-design-and-style/themes" target="_blank" class="hc-button hc-button--white hc-button--size-100">
+               Explore adaptive themes docs
                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M7 5.5H4M5 7.5H4M8 3.5H4M10 3.4V8.6C10 9.44008 10 9.86012 9.83651 10.181C9.6927 10.4632 9.46323 10.6927 9.18099 10.8365C8.86012 11 8.44008 11 7.6 11H4.4C3.55992 11 3.13988 11 2.81901 10.8365C2.53677 10.6927 2.3073 10.4632 2.16349 10.181C2 9.86012 2 9.44008 2 8.6V3.4C2 2.55992 2 2.13988 2.16349 1.81901C2.3073 1.53677 2.53677 1.3073 2.81901 1.16349C3.13988 1 3.55992 1 4.4 1H7.6C8.44008 1 8.86012 1 9.18099 1.16349C9.46323 1.3073 9.6927 1.53677 9.83651 1.81901C10 2.13988 10 2.55992 10 3.4Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
@@ -26,6 +23,10 @@
       
     </div>
     <div id="chart-wrapper" class="large highcharts-light">
+        <div class="chart-description" id="chart-description">
+            A purely decorative chart demonstrating Highcharts adaptive themes. 
+            Use the buttons below to switch between light, dark and system themes.
+        </div>
         <div class="demo-body" id="container" ></div>
     </div>
 
@@ -46,7 +47,7 @@
                 </svg>
             </button>
 
-             <button aria-label="System settings" class="hc-button demo-button hc-button--size-200" id="system">
+             <button aria-label="System Settings" class="hc-button demo-button hc-button--size-200" id="system">
                 System
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M10 11.3333V14H6.00004V11.3333M3.46671 11.3333H12.5334C13.2801 11.3333 13.6535 11.3333 13.9387 11.188C14.1896 11.0602 14.3936 10.8562 14.5214 10.6053C14.6667 10.3201 14.6667 9.94674 14.6667 9.2V4.13333C14.6667 3.3866 14.6667 3.01323 14.5214 2.72801C14.3936 2.47713 14.1896 2.27316 13.9387 2.14532C13.6535 2 13.2801 2 12.5334 2H3.46671C2.71997 2 2.3466 2 2.06139 2.14532C1.8105 2.27316 1.60653 2.47713 1.4787 2.72801C1.33337 3.01323 1.33337 3.3866 1.33337 4.13333V9.2C1.33337 9.94674 1.33337 10.3201 1.4787 10.6053C1.60653 10.8562 1.8105 11.0602 2.06139 11.188C2.3466 11.3333 2.71997 11.3333 3.46671 11.3333Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
