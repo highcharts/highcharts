@@ -1254,23 +1254,6 @@ function cs() {
     // Create the chart
     Highcharts.stockChart('container', options);
 
-    // stop button for candlestick animation
-    // setTimeout(() => {
-    //     document.getElementById('stop-cs').addEventListener('click', () => {
-    //         if (stopped === false) {
-    //             clearInterval(csInterval);
-    //             stopped = true;
-    //             document.getElementById('stop-cs').innerHTML =
-    //             '(Start animation)';
-    //         } else {
-    //             animateCS();
-    //             stopped = false;
-    //             document.getElementById('stop-cs').innerHTML =
-    //             '(Stop animation)';
-    //         }
-    //     });
-    // }, 200);
-
 }
 
 // Maps animated map
@@ -2501,7 +2484,7 @@ const products = [
         // eslint-disable-next-line max-len
         demoDesc: 'Candlesticks make it easy to spot trends over time.',
         // eslint-disable-next-line max-len
-        stopLink: `<span class="stop-link" aria-label="Stop chart animation" 
+        stopLink: `<span class="stop-link" 
         id="stop-stock">(Stop chart animation)</span>`,
         description: `<p>Dynamic Candlestick Chart</p>
         <div>A purely decorative candlestick chart that updates with 
@@ -2516,7 +2499,7 @@ const products = [
         demoTitle: 'History of the Coffee Bean',
         demoDesc: 'Maps can tell stories when connected to data.',
         // eslint-disable-next-line max-len
-        stopLink: `<span class="stop-link" aria-label="Stop chart animation" 
+        stopLink: `<span class="stop-link"  
         id="stop-maps">(Stop chart animation)</span>`,
         description: `<p>Animated line map</p>A purely decorative 
         world map showing the historical 
@@ -2569,7 +2552,7 @@ const products = [
         chart: grid,
         icon: 'icon-grid.svg',
         // eslint-disable-next-line max-len
-        stopLink: `<span class="stop-link" aria-label="Stop chart animation"
+        stopLink: `<span class="stop-link" 
          id="stop-grid">(Stop chart animation)</span>`,
         demoTitle: 'Data grid with sparklines',
         demoDesc: `Combine tabular data and inline 
