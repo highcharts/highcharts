@@ -342,19 +342,21 @@ namespace DataLabel {
                 const originPos = point.pos(false, origin.x, origin.y);
 
                 if (originPos) {
-                    const attr = {
-                        x: x + originPos[0] - pos[0],
-                        y: y + originPos[1] - pos[1],
+                    const offset = [
+                        originPos[0] - pos[0],
+                        originPos[1] - pos[1]
+                    ];
+
+                    if (series.is('column') || point.plotHigh) {
+                        offset[inverted ? 0 : 1] = 0;
+                    }
+                    dataLabel.attr({
+                        x: x + offset[0],
+                        y: y + offset[1],
                         // Start at non-zero to avoid overlapping logic treating
                         // it as hidden
                         opacity: 0.01
-                    };
-
-                    if (series.is('column') || point.plotHigh) {
-                        delete attr[inverted ? 'x' : 'y'];
-                    }
-
-                    dataLabel.attr(attr);
+                    });
                     dataLabel.placed = true;
                     isNew = false;
                 }

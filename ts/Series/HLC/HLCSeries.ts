@@ -220,11 +220,20 @@ class HLCSeries extends ColumnSeries {
                     }
                 });
 
+            // The data label box
+            const {
+                x = 0,
+                y = 0,
+                width = 0,
+                height = 0
+            } = point.shapeArgs || {};
+            point.dlBox = { x, y, width, height };
+
+            // The new shape args overwrite those of ColumnSeries
             point.shapeType = 'path';
             point.shapeArgs = { d: series.getPointPath(point) };
 
-            // Align the tooltip to the high value to avoid covering the
-            // point
+            // Align the tooltip to the high value to avoid covering the point
             (point.tooltipPos as any)[1] =
                 (point.plotHigh as any) + yAxis.pos - series.chart.plotTop;
         });
