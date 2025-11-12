@@ -2,20 +2,10 @@ const gridLiteDir = '/grid-lite/';
 const gridProDir = '/grid-pro/';
 const demoPaths = Cypress.env('demoPaths');
 
-const excludeList = [
-    'data/googlesheets-tutorial',
-    'demo/personal-portfolio'
-];
-
 if (demoPaths && demoPaths.gridLitePaths && demoPaths.gridProPaths) {
     describe('Grid Lite demos', () => {
         demoPaths.gridLitePaths.forEach((demoPath) => {
             it(`should not have console errors in ${demoPath}`, () => {
-
-                if (excludeList.includes(demoPath)) {
-                    return;
-                }
-
                 let errorMessages = [];
                 cy.on('window:before:load', (win) => {
                     cy.stub(win.console, 'error').callsFake((msg) => {
@@ -29,7 +19,6 @@ if (demoPaths && demoPaths.gridLitePaths && demoPaths.gridProPaths) {
                     });
                 });
                 cy.visit(gridLiteDir + demoPath);
-                cy.log('lite errorMessages', JSON.stringify(errorMessages));
                 cy.then(() => {
                     expect(
                         errorMessages,
@@ -56,7 +45,6 @@ if (demoPaths && demoPaths.gridLitePaths && demoPaths.gridProPaths) {
                     });
                 });
                 cy.visit(gridProDir + demoPath);
-                cy.log('pro errorMessages', JSON.stringify(errorMessages));
                 cy.then(() => {
                     expect(
                         errorMessages,

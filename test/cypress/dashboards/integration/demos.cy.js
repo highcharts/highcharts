@@ -3,7 +3,8 @@ const dashboardsDir = '/dashboards/';
 const excludeList = [
     'gui/layout',
     'components/component-error-handler',
-    'basic/google-spreadsheets'
+    'basic/google-spreadsheets',
+    'demo/personal-portfolio'
 ];
 
 const demoPaths = Cypress.env('demoPaths');
