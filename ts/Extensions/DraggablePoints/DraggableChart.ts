@@ -61,6 +61,7 @@ const {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Chart/ChartBase'{
     interface ChartBase {
         /** @requires modules/draggable-points */
@@ -91,10 +92,23 @@ declare module '../../Core/Chart/ChartBase'{
 
 declare module '../../Core/Chart/ChartOptions'{
     interface ChartOptions {
+        /**
+         * Set a key to hold when dragging to zoom the chart. This is useful to
+         * avoid zooming while moving points. Should be set different than
+         * [chart.panKey](#chart.panKey).
+         *
+         * @type       {string}
+         * @since      6.2.0
+         * @validvalue ["alt", "ctrl", "meta", "shift"]
+         * @deprecated
+         * @requires  modules/draggable-points
+         * @apioption  chart.zoomKey
+         */
         zoomKey?: string;
     }
 }
 
+/** @internal */
 interface DragDropDataObject {
     draggedPastSensitivity?: boolean;
     groupedPoints: Array<Point>;
@@ -106,20 +120,62 @@ interface DragDropDataObject {
     updateProp?: string;
 }
 
+/** @internal */
 interface DragDropPointObject {
     point: Point;
     newValues: Record<string, number>;
 }
 
+/**
+ * Current drag and drop position.
+ *
+ * @interface Highcharts.DragDropPositionObject
+ */
 export interface DragDropPositionObject {
+    /**
+     * Chart x position
+     * @name Highcharts.DragDropPositionObject#chartX
+     * @type {number}
+     */
     chartX: number;
+
+    /**
+     * Chart y position
+     * @name Highcharts.DragDropPositionObject#chartY
+     * @type {number}
+     */
     chartY: number;
+
+    /**
+     * Drag and drop guide box.
+     * @name Highcharts.DragDropPositionObject#guideBox
+     * @type {Highcharts.BBoxObject|undefined}
+     */
     guideBox?: BBoxObject;
+
+    /**
+     * Updated point data.
+     * @name Highcharts.DragDropPositionObject#points
+     * @type {Highcharts.Dictionary<Highcharts.Dictionary<number>>}
+     */
     points: Record<string, Record<string, number>>;
+
+    /**
+     * Delta of previous x position.
+     * @name Highcharts.DragDropPositionObject#prevdX
+     * @type {number|undefined}
+     */
     prevdX?: number;
+
+    /**
+     * Delta of previous y position.
+     * @name Highcharts.DragDropPositionObject#prevdY
+     * @type {number|undefined}
+     */
     prevdY?: number;
 }
 
+/** @internal */
 interface DragHandlesObject {
     group: SVGElement;
     point: string;
@@ -1122,10 +1178,12 @@ function updatePoints(
  *
  * */
 
+/** @internal */
 const DraggableChart = {
     compose,
     flipResizeSide,
     initDragDrop
 };
 
+/** @internal */
 export default DraggableChart;

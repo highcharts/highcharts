@@ -138,6 +138,7 @@ function getNormalizedEvent<T extends PointerEvent>(
  *
  * */
 
+/** @internal */
 const DragDropUtilities = {
     addEvents,
     countProps,
@@ -145,4 +146,5 @@ const DragDropUtilities = {
     getNormalizedEvent
 };
 
+/** @internal */
 export default DragDropUtilities;
