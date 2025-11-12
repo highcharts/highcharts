@@ -409,6 +409,13 @@ body {
     border-bottom: 1px solid var(--border-100);
 }
 
+#demo-name-container {
+    display: flex;
+    flex-direction: row;
+    gap: 4px;
+    align-items: center;
+}
+
 .demo-title {
     display: flex;
     align-items: center;
@@ -516,6 +523,16 @@ body {
     border-radius: 8px;
 }
 
+.stop_link {
+    color: var(--text-secondary);
+    text-decoration: none;
+}
+
+.stop_link:hover {
+    color: var(--text-primary);
+    text-decoration: underline;
+}
+
 .demo-footer {
     display: flex;
     align-items: center;
@@ -570,14 +587,17 @@ body {
     gap: 6px;
 }
 
-.dot {
+button.dot {
+    all: unset;
+    display: inline-block;    /* give it layout again */
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    border: 1px solid var(--dot-border);
-    background-color: var(--dot-color);
-    transition: background-color 0.2s, width 0.2s, height 0.2s;
+    border: 1px solid var(--dot-border, #ccc);
+    background-color: var(--dot-color, #ddd);
     cursor: pointer;
+    transition: background-color 0.2s, width 0.2s;
+    vertical-align: middle;   /* keeps alignment tidy in flex/inline contexts */
 }
 
 .dot:hover:not(.active) {
@@ -589,6 +609,7 @@ body {
     border: 1px solid var(--dot-active-border);
     width: 24px;
     border-radius: 6px;
+    max-width: none;
 }
 
 .dot:focus-visible {
@@ -1243,9 +1264,9 @@ body {
         transition: none;
     }
 
-    .highcharts-mapline-series .highcharts-point.animated-line {
+    /* .highcharts-mapline-series .highcharts-point.animated-line {
         animation: none;
-    }
+    } */
 }
 
 @media (max-width: 500px) {

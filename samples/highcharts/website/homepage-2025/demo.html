@@ -39,19 +39,21 @@
     </div>
 
     <div class="demo-footer">
-        <div class="demo-footer-left demo-info" id="demo-info" aria-hidden="true">
-            <h3 id="demoName">Pie chart</h3> 
-            <p id="demoDescription">Pie charts offer an easy, familiar way to compare parts of a whole at a glance.</p>
+        <div class="demo-footer-left demo-info" id="demo-info" >
+            <div id="demo-name-container">
+                <h3 id="demoName">Pie chart</h3> 
+            </div>
+             <p id="demoDescription" aria-hidden="true">Pie charts offer an easy, familiar way to compare parts of a whole at a glance.</p>
         </div>
 
         <div class="demo-footer-right">
-            <div class="pagination" id="pagination" aria-label="Slides" role="tablist">
-                <div class="dot active" aria-label="Slide 1" aria-selected="true" aria-controls="carousel-item-1" role="tab"></div>
-                <div class="dot" aria-label="Slide 2" aria-controls="carousel-item-2" role="tab" tabindex="-1"></div>
-                <div class="dot" aria-label="Slide 3" aria-controls="carousel-item-3" role="tab" tabindex="-1"></div>
-                <div class="dot" aria-label="Slide 4" aria-controls="carousel-item-4" role="tab" tabindex="-1"></div>
-                <div class="dot" aria-label="Slide 5" aria-controls="carousel-item-5" role="tab" tabindex="-1"></div>
-                <div class="dot" aria-label="Slide 6" aria-controls="carousel-item-6" role="tab" tabindex="-1"></div>
+            <div class="pagination" id="pagination" aria-label="Slide navigation" role="tablist">
+                <button class="dot active" aria-label="Go to slide 1" aria-selected="true" aria-controls="carousel-item-1" role="tab"></button>
+                <button class="dot" aria-label="Go to slide 2" aria-controls="carousel-item-2" role="tab" ></button>
+                <button class="dot" aria-label="Go to slide 3" aria-controls="carousel-item-3" role="tab" ></button>
+                <button class="dot" aria-label="Go to slide 4" aria-controls="carousel-item-4" role="tab"></button>
+                <button class="dot" aria-label="Go to slide 5" aria-controls="carousel-item-5" role="tab"></button>
+                <button class="dot" aria-label="Go to slide 6" aria-controls="carousel-item-6" role="tab"></button>
             </div>
             <div class="button-container">
                 <button class="hc-button_button hc-button_transparent hc-button_size-100" id="pause" aria-label="Pause automatic slide show">
