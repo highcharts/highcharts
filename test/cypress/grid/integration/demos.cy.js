@@ -29,7 +29,7 @@ if (demoPaths && demoPaths.gridLitePaths && demoPaths.gridProPaths) {
                     });
                 });
                 cy.visit(gridLiteDir + demoPath);
-                console.log('lite errorMessages', JSON.stringify(errorMessages));
+                cy.log('lite errorMessages', JSON.stringify(errorMessages));
                 cy.then(() => {
                     expect(
                         errorMessages,
@@ -56,7 +56,7 @@ if (demoPaths && demoPaths.gridLitePaths && demoPaths.gridProPaths) {
                     });
                 });
                 cy.visit(gridProDir + demoPath);
-                console.log('pro errorMessages', JSON.stringify(errorMessages));
+                cy.log('pro errorMessages', JSON.stringify(errorMessages));
                 cy.then(() => {
                     expect(
                         errorMessages,
