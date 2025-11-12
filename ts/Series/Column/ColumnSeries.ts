@@ -773,7 +773,7 @@ class ColumnSeries extends Series {
             chart = this.chart,
             options = series.options,
             nullInteraction = options.nullInteraction,
-            renderer = chart.renderer,
+            { styledMode, renderer } = chart,
             animationLimit = options.animationLimit || 250;
         let shapeArgs;
 
@@ -805,9 +805,11 @@ class ColumnSeries extends Series {
                         point.origin &&
                         chart.pointCount < animationLimit
                     ) {
-                        graphic.attr(
-                            point.getOrigin(point.origin, shapeArgs)
-                        );
+                        const attr = point.getOrigin(point.origin, shapeArgs);
+                        if (!styledMode) {
+                            attr.opacity = 0;
+                        }
+                        graphic.attr(attr);
                         verb = 'animate';
                     }
                 }
@@ -816,7 +818,7 @@ class ColumnSeries extends Series {
                 graphic[verb](merge(shapeArgs));
 
                 // Presentational
-                if (!chart.styledMode) {
+                if (!styledMode) {
                     graphic[verb](series.pointAttribs(
                         point,
                         (point.selected && 'select') as any

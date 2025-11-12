@@ -398,10 +398,7 @@ class Point {
         x -= (shape.width || 0) / 2;
         y -= (shape.height || 0) / 2;
 
-        const attribs: SVGAttributes = {
-            opacity: 0,
-            x
-        };
+        const attribs: SVGAttributes = { x };
 
         // To avoid having to deal with stacking, column height etc, we only set
         // y for non-column series. Range series (having this.plotHigh) also
@@ -470,6 +467,7 @@ class Point {
             // Remove properties after animation
             if (duration) {
                 series.condemnedPoints.push(this);
+                this.graphic?.addClass('highcharts-point-condemned');
                 setTimeout(destroyPoint, duration);
             } else {
                 destroyPoint();

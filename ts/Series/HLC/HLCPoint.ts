@@ -80,8 +80,7 @@ class HLCPoint extends ColumnPoint {
                         slice[1] += shiftX;
                     }
                     return slice;
-                }),
-                opacity: 0
+                })
             };
         }
         return shape;

@@ -2643,9 +2643,14 @@ class Series {
 
                         // New points fade in from old axis position
                         if (point.origin) {
-                            graphic.attr(
-                                point.getOrigin(point.origin, markerAttribs)
+                            const attr = point.getOrigin(
+                                point.origin,
+                                markerAttribs
                             );
+                            if (!styledMode) {
+                                attr.opacity = 0;
+                            }
+                            graphic.attr(attr);
                             verb = 'animate';
                         }
                     }
