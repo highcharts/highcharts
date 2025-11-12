@@ -15,6 +15,20 @@ const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matc
 let isPaused = false;
 let gridControls = null;
 
+// Track per-chart animation states (true = running)
+const chartAnimationState = {
+    stock: false,
+    maps: false,
+    grid: false
+};
+if (!reducedMotion) {
+    // Start all animations by default for non-reduced-motion users
+    chartAnimationState.stock = true;
+    chartAnimationState.maps = true;
+    chartAnimationState.grid = true;
+}
+
+
 // common data label format for the pie chart
 function pieLabels() {
     let color = '--var(text-primary)';
@@ -1309,7 +1323,7 @@ function animatedMap() {
         Highcharts.mapChart('container', {
             accessibility: {
                 point: {
-                    descriptionFormat: '{point.name}'
+                    descriptionFormat: '{point.name}: {point.info}'
                 },
                 screenReaderSection: {
                     beforeChartFormat: '',
@@ -1384,7 +1398,9 @@ function animatedMap() {
                                     [55.5325, -21.114444] // La reunion
                                 ]
                             },
-                            className: 'animated-line'
+                            className: 'animated-line',
+                            info: 'Connection from Yemen to La Reunion'
+
                         },
                         {
                             geometry: {
@@ -1394,7 +1410,9 @@ function animatedMap() {
                                     [-43.2, -22.9] // Brazil
                                 ]
                             },
-                            className: 'animated-line'
+                            className: 'animated-line',
+                            info: 'Connection from La Reunion to Brazil'
+
                         },
                         {
                             geometry: {
@@ -1404,17 +1422,20 @@ function animatedMap() {
                                     [78, 21] // India
                                 ]
                             },
-                            className: 'animated-line'
+                            className: 'animated-line',
+                            info: 'Connection from Yemen to India'
                         },
                         {
                             geometry: {
                                 type: 'LineString',
+                                info: 'Connection from India to Amsterdam',
                                 coordinates: [
                                     [110.004444, -7.491667], // Java
                                     [4.9, 52.366667] // Amsterdam
                                 ]
                             },
-                            className: 'animated-line'
+                            className: 'animated-line',
+                            info: 'Connection from Java to Amsterdam'
                         },
                         {
                             geometry: {
@@ -1424,7 +1445,8 @@ function animatedMap() {
                                     [-61.030556, 14.681944] // Antilles
                                 ]
                             },
-                            className: 'animated-line'
+                            className: 'animated-line',
+                            info: 'Connection from UK to Antilles'
                         },
                         {
                             geometry: {
@@ -1434,7 +1456,8 @@ function animatedMap() {
                                     [-53, 4] // Guyane
                                 ]
                             },
-                            className: 'animated-line'
+                            className: 'animated-line',
+                            info: 'Connection from France to Guyane'
                         }
                     ],
                     lineWidth: 2,
@@ -1457,6 +1480,7 @@ function animatedMap() {
                     data: [
                         {
                             name: 'Yemen',
+                            info: 'Yemen is where coffee took off in 1414',
                             geometry: {
                                 type: 'Point',
                                 coordinates: [48.516388, 15.552727] // Yemen
@@ -1470,6 +1494,7 @@ function animatedMap() {
                         },
                         {
                             name: 'Java',
+                            info: 'Coffee came from Yemen in 1696',
                             geometry: {
                                 type: 'Point',
                                 coordinates: [110.004444, -7.491667] // Java
@@ -1484,6 +1509,7 @@ function animatedMap() {
                         },
                         {
                             name: 'La Reunion',
+                            info: 'Coffee came from Yemen in 1708',
                             geometry: {
                                 type: 'Point',
                                 coordinates: [55.5325, -21.114444] // La reunion
@@ -1498,6 +1524,7 @@ function animatedMap() {
                         },
                         {
                             name: 'Brazil',
+                            info: 'Coffee came from La Reunion in 1770',
                             geometry: {
                                 type: 'Point',
                                 coordinates: [-43.2, -22.9] // Brazil
@@ -1511,6 +1538,7 @@ function animatedMap() {
                         },
                         {
                             name: 'India',
+                            info: 'Coffee came from Yemen in 1670',
                             geometry: {
                                 type: 'Point',
                                 coordinates: [78, 21] // India
@@ -1521,6 +1549,7 @@ function animatedMap() {
                         },
                         {
                             name: 'Amsterdam',
+                            info: 'Coffee came from India in 1696',
                             geometry: {
                                 type: 'Point',
                                 coordinates: [4.9, 52.366667] // Amsterdam
@@ -1531,6 +1560,7 @@ function animatedMap() {
                         },
                         {
                             name: 'Antilles',
+                            info: 'Coffee came from the UK in 1714',
                             geometry: {
                                 type: 'Point',
                                 coordinates: [-61.030556, 14.681944] // Antilles
@@ -1544,6 +1574,7 @@ function animatedMap() {
                         },
                         {
                             name: 'Guyane',
+                            info: 'Coffee came from France in 1714',
                             geometry: {
                                 type: 'Point',
                                 coordinates: [-53, 4] // Guyane
@@ -1937,6 +1968,8 @@ function grid() {
 
     let gridUpdateTimeouts = [];
     let gridIsRunning = true;
+    let manualOverride = false;
+
 
     // detect global carousel pause state if defined
     const globallyPaused = typeof isPaused !== 'undefined' ? isPaused : false;
@@ -2326,17 +2359,20 @@ function grid() {
 
     // --- Update scheduler ---
     function scheduleUpdate(rowIndex) {
-        // never start scheduling if paused or reducedMotion is active
+    // Never start scheduling if paused, unless manually overridden
         if (!gridIsRunning) {
             return;
         }
-        if (reducedMotion) {
+
+        // If reduced motion, skip updates *unless manually overridden*
+        if (reducedMotion && !manualOverride) {
             return;
         }
 
         const delay = Math.random() * 1500 + 500;
         const timeout = setTimeout(async () => {
-            if (!gridIsRunning || reducedMotion) {
+        // Skip during reduced motion unless manually allowed
+            if (!gridIsRunning || (reducedMotion && !manualOverride)) {
                 return;
             }
             await updateInstanceStatus(rowIndex);
@@ -2345,6 +2381,7 @@ function grid() {
 
         gridUpdateTimeouts.push(timeout);
     }
+
 
     function generateArrayFlow(stringArray) {
         const r = Math.random() * 2 - 1;
@@ -2397,15 +2434,22 @@ function grid() {
     }
 
     function resumeGridUpdates() {
-        if (gridIsRunning) {
+        if (gridIsRunning && !reducedMotion) {
             return;
         }
         gridIsRunning = true;
+
+        // If reduced motion, treat this as explicit user opt-in
+        if (reducedMotion) {
+            manualOverride = true;
+        }
+
         for (let i = 0, iEnd = data.getRowCount(); i < iEnd; i++) {
             scheduleUpdate(i);
         }
         setGridPausedVisual(false);
     }
+
 
     // --- Initialize ---
     if (!reducedMotion && !globallyPaused) {
@@ -2435,6 +2479,7 @@ const products = [
         id: 'coreTitle',
         icon: 'icon-core.svg',
         chart: coreChart,
+        stopLink: null,
         demoTitle: 'Pie Chart',
         demoDesc: `Pie charts 
         show a compact overview of a composition or comparison`,
@@ -2455,6 +2500,9 @@ const products = [
         demoTitle: 'Candlestick chart',
         // eslint-disable-next-line max-len
         demoDesc: 'Candlesticks make it easy to spot trends over time.',
+        // eslint-disable-next-line max-len
+        stopLink: `<span class="stop-link" aria-label="Stop chart animation" 
+        id="stop-stock">(Stop chart animation)</span>`,
         description: `<p>Dynamic Candlestick Chart</p>
         <div>A purely decorative candlestick chart that updates with 
         new data every 100 milliseconds.</div>`
@@ -2467,6 +2515,9 @@ const products = [
         icon: 'icon-maps.svg',
         demoTitle: 'History of the Coffee Bean',
         demoDesc: 'Maps can tell stories when connected to data.',
+        // eslint-disable-next-line max-len
+        stopLink: `<span class="stop-link" aria-label="Stop chart animation" 
+        id="stop-maps">(Stop chart animation)</span>`,
         description: `<p>Animated line map</p>A purely decorative 
         world map showing the historical 
         spread of coffee cultivation. Animated lines trace the journey of 
@@ -2480,6 +2531,7 @@ const products = [
         tagline: 'Resource and timeline management',
         id: 'ganttTitle',
         chart: gantt,
+        stopLink: null,
         icon: 'icon-gantt.svg',
         demoTitle: 'Gantt chart',
         demoDesc: `Use Gantts to track tasks, dependencies, and 
@@ -2499,6 +2551,7 @@ const products = [
         chart: dashboards,
         icon: 'icon-dashboards.svg',
         demoTitle: 'Personal finance dashboard',
+        stopLink: null,
         demoDesc: 'Use our data sync tools to create dynamic dashboards fast.',
         description: `<p>Personal Finance Dashboard</p>A purely decorative  
         dashboard showing key financial metrics, including total 
@@ -2515,6 +2568,9 @@ const products = [
         id: 'gridTitle',
         chart: grid,
         icon: 'icon-grid.svg',
+        // eslint-disable-next-line max-len
+        stopLink: `<span class="stop-link" aria-label="Stop chart animation"
+         id="stop-grid">(Stop chart animation)</span>`,
         demoTitle: 'Data grid with sparklines',
         demoDesc: `Combine tabular data and inline 
         charts for instant visual context.`,
@@ -2557,9 +2613,11 @@ clone.id = 'title-6';
 titleInner.appendChild(clone);
 
 // --- Footer + pagination setup ---
+const demoNameContainer = document.getElementById('demo-name-container');
 const demoTitleEl = document.getElementById('demoName');
 const demoDescEl = document.getElementById('demoDescription');
 const pauseBtn = document.getElementById('pause');
+// const pagination = document.getElementById('pagination');
 
 let currentIndex = 0;
 let carouselInterval;
@@ -2603,13 +2661,11 @@ function updateView() {
     });
 
     if (currentIndex === products.length) {
+        currentIndex = 0;
         isResetting = true;
         titleInner.style.transform = 'translateY(-240px)';
         titleInner.style.opacity = 1;
-        // hide all product headers from screen readers
 
-
-        currentIndex = 0;
         updateFooter(currentIndex);
         updateChart(currentIndex);
         isResetting = false;
@@ -2634,24 +2690,132 @@ function updateView() {
 
 function updateFooter(i) {
     const demoInfo = document.getElementById('demo-info');
-
+    const p = products[i];
     let setTimeoutDuration = 400;
     if (reducedMotion) {
         setTimeoutDuration = 0;
     }
     demoInfo.classList.add('fade-out');
     setTimeout(() => {
-        const p = products[i];
-        demoTitleEl.innerHTML = p.demoTitle;
+
+
+        demoNameContainer.innerHTML = `<h3 id="demoName">${p.demoTitle}</h3>`;
         if (p.stopLink) {
-            demoTitleEl.innerHTML += ' ' + p.stopLink;
+            demoNameContainer.innerHTML += ' ' + p.stopLink;
         }
         demoDescEl.textContent = p.demoDesc;
         dots.forEach(dot => dot.classList.remove('active'));
         dots[i % products.length].classList.add('active');
         demoInfo.classList.remove('fade-out');
+        // Attach event listeners to stop/start links
+        attachStopLinkListeners();
+
     }, setTimeoutDuration);
 }
+
+function attachStopLinkListeners() {
+    // Stock
+    const stockLink = document.getElementById('stop-stock');
+    if (stockLink) {
+        // eslint-disable-next-line max-len
+        stockLink.addEventListener('click', () => toggleChartAnimation('stock', stockLink));
+        stockLink.textContent = chartAnimationState.stock ?
+            '(Stop chart animation)' :
+            '(Start chart animation)';
+    }
+
+    // Maps
+    const mapsLink = document.getElementById('stop-maps');
+    if (mapsLink) {
+        // eslint-disable-next-line max-len
+        mapsLink.addEventListener('click', () => toggleChartAnimation('maps', mapsLink));
+        mapsLink.textContent = chartAnimationState.maps ?
+            '(Stop chart animation)' :
+            '(Start chart animation)';
+    }
+
+    // Grid
+    const gridLink = document.getElementById('stop-grid');
+    if (gridLink) {
+        // eslint-disable-next-line max-len
+        gridLink.addEventListener('click', () => toggleChartAnimation('grid', gridLink));
+        gridLink.textContent = chartAnimationState.grid ?
+            '(Stop chart animation)' :
+            '(Start chart animation)';
+    }
+}
+
+function updateAnimationLinkText() {
+    const stockLink = document.getElementById('stop-stock');
+    const mapsLink = document.getElementById('stop-maps');
+    const gridLink = document.getElementById('stop-grid');
+
+    if (stockLink) {
+        stockLink.textContent = chartAnimationState.stock ?
+            '(Stop chart animation)' :
+            '(Start chart animation)';
+    }
+    if (mapsLink) {
+        mapsLink.textContent = chartAnimationState.maps ?
+            '(Stop chart animation)' :
+            '(Start chart animation)';
+    }
+    if (gridLink) {
+        gridLink.textContent = chartAnimationState.grid ?
+            '(Stop chart animation)' :
+            '(Start chart animation)';
+    }
+}
+
+
+function toggleChartAnimation(chartType, link) {
+    const isStarting = !chartAnimationState[chartType];
+    chartAnimationState[chartType] = isStarting;
+
+    // Update link text
+    link.textContent = isStarting ?
+        '(Stop chart animation)' :
+        '(Start chart animation)';
+
+    // Handle chart-specific animation
+    if (chartType === 'stock') {
+        if (isStarting) {
+            startStockChartAnimation();
+            announceChange('Stock chart animation started.');
+        } else {
+            stopStockChartAnimation();
+            announceChange('Stock chart animation paused.');
+        }
+    } else if (chartType === 'maps') {
+        if (isStarting) {
+            startMapAnimation();
+            announceChange('Map animation started.');
+        } else {
+            stopMapAnimation();
+            announceChange('Map animation paused.');
+        }
+    } else if (chartType === 'grid') {
+        if (!gridControls) {
+            return;
+        }
+        if (isStarting) {
+            if (typeof gridControls.resumeGridUpdates === 'function') {
+                gridControls.resumeGridUpdates();
+            } else if (typeof gridControls.startGridUpdates === 'function') {
+                gridControls.startGridUpdates();
+            } else {
+                // nothing
+            }
+            announceChange('Grid chart animation started.');
+        } else {
+            if (typeof gridControls.clearGridUpdates === 'function') {
+                gridControls.clearGridUpdates();
+                announceChange('Grid chart animation paused.');
+            }
+        }
+    }
+}
+
 
 function getChartDescription(i) {
 
@@ -2671,16 +2835,14 @@ function getChartDescription(i) {
     announceChange('New Chart: ' + products[i].demoTitle);
 
 }
-
 // --- Stock Chart Animation Control ---
 function startStockChartAnimation() {
-    if (typeof animateCS === 'function' && !reducedMotion) {
+    if (typeof animateCS === 'function') {
         // Prevent multiple intervals
         if (typeof csInterval !== 'undefined') {
             clearInterval(csInterval);
         }
         animateCS();
-        logAnim('Stock animation started');
     }
 }
 
@@ -2693,12 +2855,9 @@ function stopStockChartAnimation() {
 
 // --- Map Animation Control ---
 function startMapAnimation() {
-    if (!reducedMotion) {
-        document.querySelectorAll('.animated-line').forEach(line => {
-            line.classList.remove('paused');
-        });
-        logAnim('Map animation started');
-    }
+    document.querySelectorAll('.animated-line').forEach(line => {
+        line.classList.remove('paused');
+    });
 }
 
 function stopMapAnimation() {
@@ -2707,53 +2866,51 @@ function stopMapAnimation() {
     });
     logAnim('Map animation stopped');
 }
-
-
-function toggleChartAnimations() {
-    const currentChart = products[currentIndex].chart;
-
-    if (currentChart === cs) {
-        if (isPaused) {
-            stopStockChartAnimation();
-        } else {
-            startStockChartAnimation();
-        }
-    }
-
-    if (currentChart === animatedMap) {
-        if (isPaused) {
-            stopMapAnimation();
-        } else {
-            startMapAnimation();
-        }
-    }
-}
-
 // --- Animation Failsafe ---
 function ensureCorrectAnimationState() {
-    const p = products[currentIndex];
-    const currentChart = p.chart;
-
-    stopStockChartAnimation();
-    stopMapAnimation();
-    if (gridControls) {
-        gridControls.clearGridUpdates();
-    }
-
-    if (isPaused) {
-        return;
-    }
-
-    if (currentChart === cs) {
-        startStockChartAnimation();
-    } else if (currentChart === animatedMap) {
-        startMapAnimation();
-    } else if (currentChart === grid && gridControls) {
-        gridControls.resumeGridUpdates();
-        logAnim('[Failsafe] Grid updates resumed.');
-    }
+    // When resuming, respect each chart's individual animation preference
+    Object.keys(chartAnimationState).forEach(key => {
+        const isActive = chartAnimationState[key];
+        // stock chart
+        if (key === 'stock' && currentIndex === 1) {
+            if (isActive) {
+                startStockChartAnimation();
+                logAnim('Stock animation resumed');
+            } else {
+                stopStockChartAnimation();
+                logAnim('Stock animation paused');
+            }
+        }
+        // map chart
+        if (key === 'maps' && currentIndex === 2) {
+            if (isActive) {
+                startMapAnimation();
+                logAnim('Map animation resumed');
+            } else {
+                stopMapAnimation();
+                logAnim('Map animation paused');
+            }
+        }
+        // grid
+        if (key === 'grid' && gridControls && currentIndex === 5) {
+            if (isActive) {
+                if (typeof gridControls.resumeGridUpdates === 'function') {
+                    gridControls.resumeGridUpdates();
+                    logAnim('Grid updates resumed');
+                // eslint-disable-next-line max-len
+                } else if (typeof gridControls.startGridUpdates === 'function') {
+                    gridControls.startGridUpdates();
+                    logAnim('Grid updates resumed (startGridUpdates fallback)');
+                }
+            } else {
+                if (typeof gridControls.clearGridUpdates === 'function') {
+                    gridControls.clearGridUpdates();
+                    logAnim('Grid updates paused');
+                }
+            }
+        }
+    });
 }
-
 
 function announceChange(announcement) {
     if (isPaused) {
@@ -2821,12 +2978,6 @@ function updateChart(i) {
                 document.getElementById('container').style.display = 'block';
                 Highcharts.chart('container', p.chart);
             }
-
-            // stop or start the animated map lines
-            setTimeout(() => {
-                // toggle chart animations
-                toggleChartAnimations();
-            }, 100);
         }
 
         // if the carousel is paused, update the chart description
@@ -2837,6 +2988,32 @@ function updateChart(i) {
 
         // fade back in
         chartWrapper.classList.remove('fade-out');
+
+        if (p.chart === cs && !chartAnimationState.stock) {
+            stopStockChartAnimation();
+        }
+
+        if (p.chart === animatedMap) {
+            if (!chartAnimationState.maps) {
+                // Wait briefly for map DOM to fully render
+                // before stopping animation
+                setTimeout(() => {
+                    stopMapAnimation();
+                }, 200); // give time for .animated-line elements to appear
+            } else {
+                // ensure they’re active if user turned them on
+                setTimeout(() => {
+                    startMapAnimation();
+                }, 200);
+            }
+        }
+
+        if (p.chart === grid && gridControls && !chartAnimationState.grid) {
+            if (typeof gridControls.clearGridUpdates === 'function') {
+                gridControls.clearGridUpdates();
+            }
+        }
+
     }, setTimeoutDuration);
 
     // final failsafe after chart transition completes
@@ -2875,14 +3052,11 @@ function pause() {
     // stop the carousel interval
     clearInterval(carouselInterval);
 
-    // stop chart animations cleanly
-    stopStockChartAnimation();
-    stopMapAnimation();
+    ensureCorrectAnimationState();
 
-    if (gridControls) {
-        gridControls.clearGridUpdates();
-        logAnim('Grid updates paused');
-    }
+    // Update the animation control link text
+    updateAnimationLinkText();
+    // }
 
     // update aria label on carousel container
     carousel.setAttribute(
@@ -2920,18 +3094,9 @@ function resume() {
     // restart the carousel interval
     startAuto();
 
-    // restart chart animations based on current chart
-    const p = products[currentIndex];
-    if (p.chart === cs) {
-        startStockChartAnimation();
-    } else if (p.chart === animatedMap) {
-        startMapAnimation();
-    } else if (p.chart === grid && gridControls) {
-        gridControls.resumeGridUpdates();
-        logAnim('Grid updates resumed');
-    } else {
-        toggleChartAnimations();
-    }
+    // ensure correct animation running for current chart
+    ensureCorrectAnimationState();
+    updateAnimationLinkText();
 
 
     // update the carousel aria label
@@ -2965,9 +3130,8 @@ function resume() {
         document.getElementById('chart-description').remove();
     }
 
-    // ensure correct animation running for current chart
-    ensureCorrectAnimationState();
     announceChange('Demo carousel playing');
+
 
 }
 
@@ -3041,6 +3205,10 @@ document.addEventListener('DOMContentLoaded', function () {
         clearInterval(carouselInterval);
         stopStockChartAnimation();
         stopMapAnimation();
+
+        Object.keys(chartAnimationState).forEach(function (key) {
+            chartAnimationState[key] = false;
+        });
 
         // Make charts accessible to screen readers
         chartWrapper.removeAttribute('aria-hidden');
