@@ -106,14 +106,6 @@ class TextContent extends CellContent {
                 cellContent = formattedValue;
             } else {
                 cellContent = value + '';
-
-                // eslint-disable-next-line no-console
-                console.warn(
-                    // eslint-disable-next-line max-len
-                    `Formatter function for column %c${cell.column.id}%c returned a non-string value.`,
-                    'font-weight: bold;',
-                    ''
-                );
             }
 
         } else if (isDefaultFormatter) {
