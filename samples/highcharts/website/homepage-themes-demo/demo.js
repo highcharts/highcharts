@@ -19,47 +19,29 @@ Highcharts.chart('container', {
     }],
     yAxis: [{ // Primary yAxis
         labels: {
-            format: '{value}°C',
-            style: {
-                color: Highcharts.getOptions().colors[2]
-            }
+            format: '{value}°C'
         },
         title: {
-            text: 'Temperature',
-            style: {
-                color: Highcharts.getOptions().colors[2]
-            }
+            text: 'Temperature'
         },
         opposite: true
 
     }, { // Secondary yAxis
         gridLineWidth: 0,
         title: {
-            text: 'Rainfall',
-            style: {
-                color: Highcharts.getOptions().colors[0]
-            }
+            text: 'Rainfall'
         },
         labels: {
-            format: '{value} mm',
-            style: {
-                color: Highcharts.getOptions().colors[0]
-            }
+            format: '{value} mm'
         }
 
     }, { // Tertiary yAxis
         gridLineWidth: 0,
         title: {
-            text: 'Sea-Level Pressure',
-            style: {
-                color: Highcharts.getOptions().colors[1]
-            }
+            text: 'Sea-Level Pressure'
         },
         labels: {
-            format: '{value} mb',
-            style: {
-                color: Highcharts.getOptions().colors[1]
-            }
+            format: '{value} mb'
         },
         opposite: true
     }],
@@ -151,15 +133,36 @@ Highcharts.chart('container', {
     }
 });
 
+const announce = document.getElementById('announce');
+
 const demoContainer = document.getElementById('chart-wrapper');
 const demoButtons = document.querySelectorAll('.demo-button');
 let bodyTheme = 'light';
 
+const themeNames = ['Light Mode', 'Dark Mode', 'System Settings'];
+
 function changeTheme(theme) {
-    demoButtons.forEach(btn => btn.classList.remove('active'));
+    let nameIndex;
+
+    // remove active state from all buttons
+    demoButtons.forEach(function (btn, index) {
+        btn.classList.remove('active');
+        btn.ariaLabel = themeNames[index];
+        if (btn.id === theme) {
+            nameIndex = index;
+        }
+    });
+
+    // add active state to the selected button
     document.getElementById(theme).classList.add('active');
+    // eslint-disable-next-line max-len
+    document.getElementById(theme).ariaLabel = themeNames[nameIndex] + ' selected';
+
     demoContainer.classList.remove('highcharts-light', 'highcharts-dark');
     demoContainer.classList.add(`highcharts-${theme}`);
+
+    announce.textContent = '';
+    announce.textContent = 'Chart theme changed to ' + themeNames[nameIndex];
 }
 
 document.getElementById('light').addEventListener('click', function () {

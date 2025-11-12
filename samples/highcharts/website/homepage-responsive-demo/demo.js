@@ -161,23 +161,36 @@ const chart = Highcharts.chart('container', {
     }
 });
 
+const announce = document.getElementById('announce');
+
+
 document.getElementById('mobile').addEventListener('click', function () {
     this.classList.add('active');
+    this.ariaLabel = 'Mobile selected';
     document.getElementById('desktop').classList.remove('active');
+    document.getElementById('desktop').ariaLabel = 'Desktop';
     document.getElementById('container').style.minWidth = '300px';
     document.getElementById('container').style.maxWidth = '300px';
     document.getElementById('chart-wrapper').classList.remove('large');
     document.getElementById('chart-wrapper').classList.add('small');
     chart.setSize(300);
 
+    announce.textContent = '';
+    announce.textContent = 'Chart resized to mobile view';
+
 });
 
 document.getElementById('desktop').addEventListener('click', function () {
     this.classList.add('active');
+    this.ariaLabel = 'Desktop selected';
     document.getElementById('mobile').classList.remove('active');
+    document.getElementById('mobile').ariaLabel = 'Mobile';
     document.getElementById('container').style.minWidth = '500px';
     document.getElementById('container').style.maxWidth = '500px';
     document.getElementById('chart-wrapper').classList.remove('small');
     document.getElementById('chart-wrapper').classList.add('large');
     chart.setSize(500);
+
+    announce.textContent = '';
+    announce.textContent = 'Chart resized to desktop view';
 });

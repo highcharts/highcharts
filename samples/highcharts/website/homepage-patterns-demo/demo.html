@@ -6,18 +6,16 @@
 <script src="https://code.highcharts.com/themes/adaptive.js"></script>
 
 <div aria-live="polite" aria-atomic="true" id="announce"> </div>
-<div class="chart-description" id="chart-description">
-    A purely decorative chart demonstrating Highcharts pattern fills. Use the buttons below to switch between default colors and pattern fills.
-</div>
-<div class="demo-card"  aria-label="Highcharts repsonsive demo">
+
+<div class="demo-card"  aria-label="Highcharts accessibility demo">
     <div class="demo-header">
         <div class="demo-title">
                 <p class="demo-name">Accessible patterns</p>
                 <p class="demo-description">Switch between default colors and pattern fills to see accessibility in action.</p>
         </div>
         <div>
-            <a href="https://www.highcharts.com/docs/accessibility/accessibility-module" target="_blank" aria-label="Explore accessibility documentation" class="hc-button hc-button--white hc-button--size-100">
-               Explore the docs
+            <a href="https://www.highcharts.com/docs/accessibility/accessibility-module" target="_blank" class="hc-button hc-button--white hc-button--size-100">
+               Explore accessibility docs
                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M7 5.5H4M5 7.5H4M8 3.5H4M10 3.4V8.6C10 9.44008 10 9.86012 9.83651 10.181C9.6927 10.4632 9.46323 10.6927 9.18099 10.8365C8.86012 11 8.44008 11 7.6 11H4.4C3.55992 11 3.13988 11 2.81901 10.8365C2.53677 10.6927 2.3073 10.4632 2.16349 10.181C2 9.86012 2 9.44008 2 8.6V3.4C2 2.55992 2 2.13988 2.16349 1.81901C2.3073 1.53677 2.53677 1.3073 2.81901 1.16349C3.13988 1 3.55992 1 4.4 1H7.6C8.44008 1 8.86012 1 9.18099 1.16349C9.46323 1.3073 9.6927 1.53677 9.83651 1.81901C10 2.13988 10 2.55992 10 3.4Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
@@ -26,12 +24,15 @@
       
     </div>
     <div id="chart-wrapper">
+        <div class="chart-description" id="chart-description">
+            A purely decorative chart demonstrating Highcharts pattern fills. Use the buttons below to switch between default colors and pattern fills.
+        </div>
         <div class="demo-body" id="container" ></div>
     </div>
 
     <div class="demo-footer">
         <div class="demo-button-container">
-            <button aria-label="Pattern fills" class="hc-button demo-button active hc-button--size-200" id="patterns">
+            <button aria-label="Pattern fills selected" class="hc-button demo-button active hc-button--size-200" id="patterns">
                 Patterns
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M2 2H2.00667M2 8H2.00667M2 14H2.00667M2 11H2.00667M2 5H2.00667M5 2H5.00667M5 8H5.00667M5 14H5.00667M11 2H11.0067M11 8H11.0067M11 14H11.0067M8 2H8.00667M8 8H8.00667M8 14H8.00667M8 11H8.00667M8 5H8.00667M14 2H14.0067M14 8H14.0067M14 14H14.0067M14 11H14.0067M14 5H14.0067" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
