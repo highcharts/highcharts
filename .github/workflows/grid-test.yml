@@ -49,6 +49,11 @@ jobs:
           cd highcharts
           npm i
 
+      - name: Build Highcharts
+        run: |
+          cd highcharts
+          npx gulp scripts
+
       - name: Build Grid
         run: |
           cd highcharts

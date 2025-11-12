@@ -29,11 +29,11 @@ if (demoPaths && demoPaths.gridLitePaths && demoPaths.gridProPaths) {
                     });
                 });
                 cy.visit(gridLiteDir + demoPath);
-                cy.wait(1000);
+                console.log('lite errorMessages', JSON.stringify(errorMessages));
                 cy.then(() => {
                     expect(
                         errorMessages,
-                        `Console errors in ${demoPath}: ${JSON.stringify(errorMessages)}`
+                        `Console errors in ${demoPath}`
                     ).to.be.empty;
                 });
             });
@@ -56,6 +56,7 @@ if (demoPaths && demoPaths.gridLitePaths && demoPaths.gridProPaths) {
                     });
                 });
                 cy.visit(gridProDir + demoPath);
+                console.log('pro errorMessages', JSON.stringify(errorMessages));
                 cy.then(() => {
                     expect(
                         errorMessages,
