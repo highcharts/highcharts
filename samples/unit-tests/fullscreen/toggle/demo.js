@@ -50,7 +50,7 @@ QUnit.test('#20548, chart resizing after fullscreen.', async function (assert) {
     function buttonClick() {
         chart.container.parentElement.style.width = isWide ? '300px' : '600px';
         isWide = !isWide;
-    };
+    }
     if (btn) {
         btn.onclick = buttonClick;
     }
