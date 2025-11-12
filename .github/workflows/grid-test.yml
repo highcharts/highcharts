@@ -78,7 +78,7 @@ jobs:
           wait-on: 'http://localhost:3031/grid/grid-lite.js'
           browser: chrome
           working-directory: highcharts
-          config-file: test/cypress/grid/config.mjs
+          config-file: test/cypress/grid/config-lite.mjs
           install: false
 
       - name: Run Grid Pro Cypress Tests
@@ -88,5 +88,5 @@ jobs:
           wait-on: 'http://localhost:3031/grid/grid-pro.js'
           browser: chrome
           working-directory: highcharts
-          config-file: test/cypress/grid/config.mjs
+          config-file: test/cypress/grid/config-pro.mjs
           install: false

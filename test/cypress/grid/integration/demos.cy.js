@@ -2,6 +2,11 @@ const gridLiteDir = '/grid-lite/';
 const gridProDir = '/grid-pro/';
 const demoPaths = Cypress.env('demoPaths');
 
+const excludeList = [
+    'data/googlesheets-tutorial',
+    'demo/personal-portfolio'
+];
+
 if (demoPaths && demoPaths.gridLitePaths && demoPaths.gridProPaths) {
     describe('Grid Lite demos', () => {
         demoPaths.gridLitePaths.forEach((demoPath) => {
