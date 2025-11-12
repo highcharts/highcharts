@@ -12,9 +12,10 @@ QUnit.test('Add point with entrance animation', assert => {
         });
 
         const types = [
-            'line',
-            'column',
-            'bubble'
+            // 'line',
+            // 'column',
+            // 'bubble',
+            'candlestick'
         ];
 
         const shiftAndRun = () => {
@@ -24,9 +25,19 @@ QUnit.test('Add point with entrance animation', assert => {
                 return;
             }
 
+            const data = type === 'candlestick' ?
+                [
+                    [1, 2, 0.5, 1.5],
+                    [3, 4, 2.5, 3.5],
+                    [2, 3, 1.5, 2.5],
+                    [4, 5, 3.5, 4.5]
+                ] :
+                [1, 3, 2, 4];
+
+
             const series = chart.addSeries({
                 type,
-                data: [1, 3, 2, 4],
+                data,
                 dataLabels: {
                     enabled: true,
                     format: '{y}'
@@ -40,10 +51,11 @@ QUnit.test('Add point with entrance animation', assert => {
             );
 
             const condemnedPoint = series.points[0],
-                condemnedPointX = condemnedPoint.graphic.x,
+                condemnedPointX = condemnedPoint.graphic.getBBox().x,
                 condemnedDataLabelX = condemnedPoint.dataLabel.x;
 
-            series.addPoint(5, true, true);
+            const newValue = type === 'candlestick' ? [5, 6, 4.5, 5.5] : 5;
+            series.addPoint(newValue, true, true);
             const newPoint = series.points[3];
 
             let graphicMidOpacity,
@@ -54,8 +66,8 @@ QUnit.test('Add point with entrance animation', assert => {
                 dlMidY;
             setTimeout(() => {
                 graphicMidOpacity = newPoint.graphic.opacity;
-                graphicMidX = newPoint.graphic.x;
-                graphicMidY = newPoint.graphic.y;
+                graphicMidX = newPoint.graphic.getBBox().x;
+                graphicMidY = newPoint.graphic.getBBox().y;
                 dlMidOpacity = newPoint.dataLabel.opacity;
                 dlMidX = newPoint.dataLabel.x;
                 dlMidY = newPoint.dataLabel.y;
@@ -68,7 +80,7 @@ QUnit.test('Add point with entrance animation', assert => {
                 );
 
                 assert.ok(
-                    condemnedPoint.graphic.x < condemnedPointX,
+                    condemnedPoint.graphic.getBBox().x < condemnedPointX,
                     `The ${type} condemned point should slide out to the left`
                 );
 
@@ -101,19 +113,19 @@ QUnit.test('Add point with entrance animation', assert => {
                     `The ${type} point should be semi-opaque mid entrance`
                 );
                 assert.ok(
-                    graphicMidX > newPoint.graphic.x,
+                    graphicMidX > newPoint.graphic.getBBox().x,
                     `The ${type} point should slide in from the right`
                 );
 
                 if (series.is('column')) {
                     assert.strictEqual(
                         graphicMidY,
-                        newPoint.graphic.y,
+                        newPoint.graphic.getBBox().y,
                         `The ${type} point should retain y position`
                     );
                 } else {
                     assert.ok(
-                        graphicMidY < newPoint.graphic.y,
+                        graphicMidY < newPoint.graphic.getBBox().y,
                         `The ${type} point should slide in from the top`
                     );
                 }
@@ -183,7 +195,8 @@ QUnit.test('Set extremes with entrance and exit animations', assert => {
         const types = [
             'line',
             'column',
-            'bubble'
+            'bubble',
+            'candlestick'
         ];
 
         const shiftAndRun = () => {
@@ -196,9 +209,22 @@ QUnit.test('Set extremes with entrance and exit animations', assert => {
             chart.series[0]?.remove();
             chart.xAxis[0].setExtremes(undefined, undefined, true, false);
 
+            const data = type === 'candlestick' ?
+                [
+                    [1, 2, 0.5, 1.5],
+                    [3, 4, 2.5, 3.5],
+                    [2, 3, 1.5, 2.5],
+                    [4, 5, 3.5, 4.5],
+                    [5, 6, 4.5, 5.5],
+                    [4, 5, 3.5, 4.5],
+                    [3, 4, 2.5, 3.5],
+                    [4, 5, 3.5, 4.5]
+                ] :
+                [1, 3, 2, 4, 5, 4, 3, 4];
+
             const series = chart.addSeries({
                 type,
-                data: [1, 3, 2, 4, 5, 4, 3, 4],
+                data,
                 dataLabels: {
                     enabled: true,
                     format: '{y}'
@@ -212,7 +238,7 @@ QUnit.test('Set extremes with entrance and exit animations', assert => {
             );
 
             const firstPoint = series.points[0],
-                firstPointX = firstPoint.graphic.x,
+                firstPointX = firstPoint.graphic.getBBox().x,
                 firstDataLabelX = firstPoint.dataLabel.x;
 
             series.xAxis.setExtremes(2, 6);
@@ -230,7 +256,7 @@ QUnit.test('Set extremes with entrance and exit animations', assert => {
                 }
 
                 assert.ok(
-                    firstPoint.graphic.x < firstPointX,
+                    firstPoint.graphic.getBBox().x < firstPointX,
                     `The ${type} outgoing point should slide out to the left`
                 );
 

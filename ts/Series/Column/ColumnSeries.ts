@@ -813,11 +813,11 @@ class ColumnSeries extends Series {
                 }
 
                 // Update
-                graphic?.[verb](merge(shapeArgs));
+                graphic[verb](merge(shapeArgs));
 
                 // Presentational
                 if (!chart.styledMode) {
-                    (graphic as any)[verb](series.pointAttribs(
+                    graphic[verb](series.pointAttribs(
                         point,
                         (point.selected && 'select') as any
                     ))
@@ -826,13 +826,11 @@ class ColumnSeries extends Series {
                         );
                 }
 
-                if (graphic) {
-                    graphic.addClass(point.getClassName(), true);
-
-                    graphic.attr({
+                graphic
+                    .addClass(point.getClassName(), true)
+                    .attr({
                         visibility: point.visible ? 'inherit' : 'hidden'
                     });
-                }
 
             } else if (graphic) {
                 point.graphic = graphic.destroy(); // #1269
