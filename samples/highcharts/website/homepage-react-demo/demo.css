@@ -171,6 +171,7 @@
     --code-gray: #333;
     --code-orange: #aa5d00;
     --code-red: #d91e18;
+    --code-yellow: #696024;
 }
 
 .highcharts-dark {
@@ -255,6 +256,7 @@
     --code-gray: #f8f8f2;
     --code-orange: #bd93f9;
     --code-red: #ff79c6;
+    --code-yellow: #f1eabe;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -394,7 +396,7 @@
     background: maroon;
 }
 
-#chart-description {
+.chart-description {
     position: absolute;
     width: 1px;
     height: 1px;
@@ -550,6 +552,11 @@ body {
 
 .code-red {
     color: var(--code-red);
+    font-weight: bold;
+}
+
+.code-yellow {
+    color: var(--code-yellow);
 }
 
 /* This is the key part */
