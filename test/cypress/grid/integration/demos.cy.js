@@ -29,10 +29,11 @@ if (demoPaths && demoPaths.gridLitePaths && demoPaths.gridProPaths) {
                     });
                 });
                 cy.visit(gridLiteDir + demoPath);
+                cy.wait(1000);
                 cy.then(() => {
                     expect(
                         errorMessages,
-                        `Console errors in ${demoPath}`
+                        `Console errors in ${demoPath}: ${JSON.stringify(errorMessages)}`
                     ).to.be.empty;
                 });
             });
