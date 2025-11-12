@@ -16,7 +16,7 @@
 
 // **
 //  * Useful for debugging.
-//  * @private
+//  * @internal
 //  */
 // function drawGridLines(
 //     series: Highcharts.Series,

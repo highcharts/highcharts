@@ -175,7 +175,7 @@ function axisDrilldownCategory(
 /**
  * Return drillable points for this specific X value.
  *
- * @private
+ * @internal
  * @function Highcharts.Axis#getDDPoints
  * @param {number} x
  *        Tick position
@@ -193,7 +193,7 @@ function axisGetDDPoints(
  * This method creates an array of arrays containing a level number
  * with the corresponding series/point.
  *
- * @private
+ * @internal
  * @param {Highcharts.Chart} chart
  *        Highcharts Chart object.
  * @return {Array<Breadcrumbs.BreadcrumbOptions>}
@@ -241,9 +241,7 @@ function createBreadcrumbsList(
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 class ChartAdditions {
 
     /* *
@@ -378,7 +376,7 @@ class ChartAdditions {
         }
     }
 
-    /** @private */
+    /** @internal */
     public addSingleSeriesAsDrilldown(
         this: (this|Drilldown.ChartComposition),
         point: Point,
@@ -902,7 +900,7 @@ class ChartAdditions {
      *
      * @requires modules/drilldown
      *
-     * @private
+     * @internal
      * @param {SVGElement} [group]
      *        The SVG element to be faded in.
      */
@@ -931,7 +929,7 @@ class ChartAdditions {
 
     /**
      * Update function to be called internally from Chart.update (#7600, #12855)
-     * @private
+     * @internal
      */
     public update(
         options: Partial<DrilldownOptions>,
@@ -1001,7 +999,7 @@ namespace Drilldown {
      *
      * */
 
-    /** @private */
+    /** @internal */
     export function compose(
         AxisClass: typeof Axis,
         ChartClass: typeof Chart,
@@ -1052,7 +1050,7 @@ namespace Drilldown {
         }
     }
 
-    /** @private */
+    /** @internal */
     function onBreadcrumbsUp(
         this: Breadcrumbs,
         e: AnyRecord
@@ -1071,7 +1069,7 @@ namespace Drilldown {
 
     }
 
-    /** @private */
+    /** @internal */
     function onChartAfterDrilldown(
         this: ChartComposition
     ): void {
@@ -1088,7 +1086,7 @@ namespace Drilldown {
 
     }
 
-    /** @private */
+    /** @internal */
     function onChartAfterDrillUp(
         this: ChartComposition
     ): void {
@@ -1103,7 +1101,7 @@ namespace Drilldown {
     /**
      * Add update function to be called internally from Chart.update (#7600,
      * #12855)
-     * @private
+     * @internal
      */
     function onChartAfterInit(
         this: ChartComposition
@@ -1111,7 +1109,7 @@ namespace Drilldown {
         this.drilldown = new ChartAdditions(this);
     }
 
-    /** @private */
+    /** @internal */
     function onChartDrillup(
         this: ChartComposition
     ): void {
@@ -1122,7 +1120,7 @@ namespace Drilldown {
         }
     }
 
-    /** @private */
+    /** @internal */
     function onChartDrillupall(
         this: ChartComposition
     ): void {
@@ -1133,7 +1131,7 @@ namespace Drilldown {
         }
     }
 
-    /** @private */
+    /** @internal */
     function onChartRender(
         this: ChartComposition
     ): void {
@@ -1177,7 +1175,7 @@ namespace Drilldown {
         });
     }
 
-    /** @private */
+    /** @internal */
     function onChartUpdate(
         this: ChartComposition,
         e: { options: Options }
@@ -1220,7 +1218,7 @@ namespace Drilldown {
 
     /**
      * Make a tick label drillable, or remove drilling on update.
-     * @private
+     * @internal
      */
     function tickDrillable(
         this: Tick

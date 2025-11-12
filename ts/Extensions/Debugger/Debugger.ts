@@ -39,6 +39,7 @@ const {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Chart/ChartBase'{
     interface ChartBase {
         errorElements?: Array<SVGElement>;
@@ -47,6 +48,16 @@ declare module '../../Core/Chart/ChartBase'{
 
 declare module '../../Core/Chart/ChartOptions'{
     interface ChartOptions {
+        /**
+         * Whether to display errors on the chart. When `false`, the errors will
+         * be shown only in the console.
+         *
+         * @sample highcharts/chart/display-errors/
+         *         Show errors on chart
+         *
+         * @since    7.0.0
+         * @requires modules/debugger
+         */
         displayErrors?: boolean;
     }
 }
@@ -82,9 +93,7 @@ const defaultOptions = {
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 function compose(
     ChartClass: typeof Chart
 ): void {
@@ -99,9 +108,7 @@ function compose(
 
 }
 
-/**
- * @private
- */
+/** @internal */
 function onChartBeforeRedraw(
     this: Chart
 ): void {
@@ -116,9 +123,7 @@ function onChartBeforeRedraw(
     delete this.errorElements;
 }
 
-/**
- * @private
- */
+/** @internal */
 function onHighchartsDisplayError(
     this: GlobalsBase,
     e: U.ErrorMessageEventObject
@@ -216,8 +221,10 @@ function onHighchartsDisplayError(
  *
  * */
 
+/** @internal */
 const Debugger = {
     compose
 };
 
+/** @internal */
 export default Debugger;

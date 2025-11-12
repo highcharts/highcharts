@@ -62,7 +62,7 @@ namespace ExportingSymbols {
     /* eslint-disable valid-jsdoc */
 
     /**
-     * @private
+     * @internal
      */
     export function compose(
         SVGRendererClass: typeof SVGRenderer
@@ -78,7 +78,7 @@ namespace ExportingSymbols {
     }
 
     /**
-     * @private
+     * @internal
      */
     function menu(
         x: number,
@@ -99,7 +99,7 @@ namespace ExportingSymbols {
     }
 
     /**
-     * @private
+     * @internal
      */
     function menuball(
         this: typeof Symbols,

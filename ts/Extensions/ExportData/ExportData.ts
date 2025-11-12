@@ -228,7 +228,7 @@ namespace ExportData {
     /**
      * Composition function.
      *
-     * @private
+     * @internal
      * @function Highcharts.Exporting#compose
      *
      * @param {ChartClass} ChartClass
@@ -992,7 +992,7 @@ namespace ExportData {
     /**
      * Get the AST of a HTML table representing the chart data.
      *
-     * @private
+     * @internal
      * @function Highcharts.Exporting#getTableAST
      *
      * @param {boolean} [useLocalDecimalPoint]
@@ -1267,7 +1267,7 @@ namespace ExportData {
     /**
      * Toggle showing data table.
      *
-     * @private
+     * @internal
      * @function Highcharts.Exporting#hideData
      *
      * @param {boolean} [show]
@@ -1367,7 +1367,7 @@ namespace ExportData {
      * Wrapper function for the download functions, which handles showing and
      * hiding the loading message
      *
-     * @private
+     * @internal
      *
      * @requires modules/exporting
      * @requires modules/export-data
@@ -1399,7 +1399,7 @@ namespace ExportData {
     /**
      * Function that runs on the chart's 'afterViewData' event.
      *
-     * @private
+     * @internal
      * @function Highcharts.Chart#onChartAfterViewData
      *
      * @requires modules/exporting
@@ -1477,7 +1477,7 @@ namespace ExportData {
      * Function that runs on the chart's 'render' event. Handle the showTable
      * option.
      *
-     * @private
+     * @internal
      * @function Highcharts.Chart#onChartRenderer
      *
      * @requires modules/exporting
@@ -1498,7 +1498,7 @@ namespace ExportData {
      * Function that runs on the chart's 'destroy' event. Handle cleaning up the
      * dataTableDiv element.
      *
-     * @private
+     * @internal
      * @function Highcharts.Chart#onChartDestroy
      *
      * @requires modules/exporting

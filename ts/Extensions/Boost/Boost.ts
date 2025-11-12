@@ -143,6 +143,7 @@ function compose(
 /**
  * Returns true if the current browser supports WebGL.
  *
+ * @internal
  * @requires modules/boost
  *
  * @function Highcharts.hasWebGLSupport
@@ -178,11 +179,13 @@ function hasWebGLSupport(): boolean {
  *
  * */
 
+/** @internal */
 const Boost = {
     compose,
     hasWebGLSupport
 };
 
+/** @internal */
 export default Boost;
 
 /* *

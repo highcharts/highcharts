@@ -46,7 +46,7 @@ const {
 /**
  * The AxisResizer class.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.AxisResizer
  *

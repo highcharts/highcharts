@@ -61,6 +61,7 @@ const {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Chart/ChartBase'{
     interface ChartBase {
         /** @requires modules/draggable-points */
@@ -91,10 +92,23 @@ declare module '../../Core/Chart/ChartBase'{
 
 declare module '../../Core/Chart/ChartOptions'{
     interface ChartOptions {
+        /**
+         * Set a key to hold when dragging to zoom the chart. This is useful to
+         * avoid zooming while moving points. Should be set different than
+         * [chart.panKey](#chart.panKey).
+         *
+         * @type       {string}
+         * @since      6.2.0
+         * @validvalue ["alt", "ctrl", "meta", "shift"]
+         * @deprecated
+         * @requires  modules/draggable-points
+         * @apioption  chart.zoomKey
+         */
         zoomKey?: string;
     }
 }
 
+/** @internal */
 interface DragDropDataObject {
     draggedPastSensitivity?: boolean;
     groupedPoints: Array<Point>;
@@ -106,20 +120,62 @@ interface DragDropDataObject {
     updateProp?: string;
 }
 
+/** @internal */
 interface DragDropPointObject {
     point: Point;
     newValues: Record<string, number>;
 }
 
+/**
+ * Current drag and drop position.
+ *
+ * @interface Highcharts.DragDropPositionObject
+ */
 export interface DragDropPositionObject {
+    /**
+     * Chart x position
+     * @name Highcharts.DragDropPositionObject#chartX
+     * @type {number}
+     */
     chartX: number;
+
+    /**
+     * Chart y position
+     * @name Highcharts.DragDropPositionObject#chartY
+     * @type {number}
+     */
     chartY: number;
+
+    /**
+     * Drag and drop guide box.
+     * @name Highcharts.DragDropPositionObject#guideBox
+     * @type {Highcharts.BBoxObject|undefined}
+     */
     guideBox?: BBoxObject;
+
+    /**
+     * Updated point data.
+     * @name Highcharts.DragDropPositionObject#points
+     * @type {Highcharts.Dictionary<Highcharts.Dictionary<number>>}
+     */
     points: Record<string, Record<string, number>>;
+
+    /**
+     * Delta of previous x position.
+     * @name Highcharts.DragDropPositionObject#prevdX
+     * @type {number|undefined}
+     */
     prevdX?: number;
+
+    /**
+     * Delta of previous y position.
+     * @name Highcharts.DragDropPositionObject#prevdY
+     * @type {number|undefined}
+     */
     prevdY?: number;
 }
 
+/** @internal */
 interface DragHandlesObject {
     group: SVGElement;
     point: string;
@@ -134,7 +190,7 @@ interface DragHandlesObject {
 /**
  * Add events to document and chart if the chart is draggable.
  *
- * @private
+ * @internal
  * @function addDragDropEvents
  * @param {Highcharts.Chart} chart
  *        The chart to add events to.
@@ -186,7 +242,7 @@ function addDragDropEvents(
 /**
  * Remove the chart's drag handles if they exist.
  *
- * @private
+ * @internal
  * @function Highcharts.Chart#hideDragHandles
  */
 function chartHideDragHandles(
@@ -208,7 +264,7 @@ function chartHideDragHandles(
 /**
  * Set the state of the guide box.
  *
- * @private
+ * @internal
  * @function Highcharts.Chart#setGuideBoxState
  * @param {string} state
  *        The state to set the guide box to.
@@ -245,7 +301,7 @@ function chartSetGuideBoxState(
 /**
  * Check whether the zoomKey or panKey is pressed.
  *
- * @private
+ * @internal
  * @function zoomOrPanKeyPressed
  * @param {global.Event} e
  *        A mouse event.
@@ -269,7 +325,7 @@ function chartZoomOrPanKeyPressed(
  * Composes the chart class with essential functions to support draggable
  * points.
  *
- * @private
+ * @internal
  * @function compose
  *
  * @param {Highcharts.Chart} ChartClass
@@ -294,7 +350,7 @@ function compose(
  * Default mouse move handler while dragging. Handles updating points or guide
  * box.
  *
- * @private
+ * @internal
  * @function dragMove
  * @param {Highcharts.PointerEventObject} e
  *        The mouse move event.
@@ -354,7 +410,7 @@ function dragMove(
  * Flip a side property, used with resizeRect. If input side is "left", return
  * "right" etc.
  *
- * @private
+ * @internal
  * @function flipResizeSide
  *
  * @param {string} side
@@ -375,7 +431,7 @@ function flipResizeSide(side: string): string {
  * Get a list of points that are grouped with this point. If only one point is
  * in the group, that point is returned by itself in an array.
  *
- * @private
+ * @internal
  * @function getGroupedPoints
  * @param {Highcharts.Point} point
  *        Point to find group from.
@@ -416,7 +472,7 @@ function getGroupedPoints(point: Point): Array<Point> {
 /**
  * Calculate new point options from points being dragged.
  *
- * @private
+ * @internal
  * @function getNewPoints
  *
  * @param {Object} dragDropData
@@ -505,7 +561,7 @@ function getNewPoints(
 /**
  * Get a snapshot of points, mouse position, and guide box dimensions
  *
- * @private
+ * @internal
  * @function getPositionSnapshot
  *
  * @param {Highcharts.PointerEventObject} e
@@ -577,7 +633,7 @@ function getPositionSnapshot(
  * In mousemove events, check that we have dragged mouse further than the
  * dragSensitivity before we call mouseMove handler.
  *
- * @private
+ * @internal
  * @function hasDraggedPastSensitivity
  *
  * @param {Highcharts.PointerEventObject} e
@@ -614,7 +670,7 @@ function hasDraggedPastSensitivity(
 /**
  * Prepare chart.dragDropData with origin info, and show the guide box.
  *
- * @private
+ * @internal
  * @function initDragDrop
  * @param {Highcharts.PointerEventObject} e
  *        Mouse event with original mouse position.
@@ -659,7 +715,7 @@ function initDragDrop(
  * Utility function to test if a chart should have drag/drop enabled, looking at
  * its options.
  *
- * @private
+ * @internal
  * @function isChartDraggable
  * @param {Highcharts.Chart} chart
  *        The chart to test.
@@ -692,7 +748,7 @@ function isChartDraggable(
  * Utility function to test if a point is movable (any of its props can be
  * dragged by a move, not just individually).
  *
- * @private
+ * @internal
  * @function isPointMovable
  * @param {Highcharts.Point} point
  *        The point to test.
@@ -744,7 +800,7 @@ function isPointMovable(point: Point): (boolean|undefined) {
  * Utility function to test if a series is using drag/drop, looking at its
  * options.
  *
- * @private
+ * @internal
  * @function isSeriesDraggable
  * @param {Highcharts.Series} series
  *        The series to test.
@@ -779,7 +835,7 @@ function isSeriesDraggable(series: Series): (boolean|undefined) {
 /**
  * On container mouse down. Init dragdrop if conditions are right.
  *
- * @private
+ * @internal
  * @function mouseDown
  * @param {Highcharts.PointerEventObject} e
  *        The mouse down event.
@@ -830,7 +886,7 @@ function mouseDown(
 /**
  * On container mouse move. Handle drag sensitivity and fire drag event.
  *
- * @private
+ * @internal
  * @function mouseMove
  * @param {Highcharts.PointerEventObject} e
  *        The mouse move event.
@@ -905,7 +961,7 @@ function mouseMove(
 /**
  * On container mouse up. Fire drop event and reset state.
  *
- * @private
+ * @internal
  * @function mouseUp
  * @param {Highcharts.PointerEventObject} e
  *        The mouse up event.
@@ -970,7 +1026,7 @@ function mouseUp(
 /**
  * Add event listener to Chart.render that checks whether or not we should add
  * dragdrop.
- * @private
+ * @internal
  */
 function onChartRender(
     this: Chart
@@ -985,7 +1041,7 @@ function onChartRender(
  * Resize the guide box according to point options and a difference in mouse
  * positions. Handles reversed axes.
  *
- * @private
+ * @internal
  * @function resizeGuideBox
  * @param {Highcharts.Point} point
  *        The point that is being resized.
@@ -1028,7 +1084,7 @@ function resizeGuideBox(point: Point, dX: number, dY: number): void {
 /**
  * Resize a rect element on one side. The element is modified.
  *
- * @private
+ * @internal
  * @function resizeRect
  * @param {Highcharts.SVGElement} rect
  *        Rect element to resize.
@@ -1078,7 +1134,7 @@ function resizeRect(
 /**
  * Update the points in a chart from dragDropData.newPoints.
  *
- * @private
+ * @internal
  * @function updatePoints
  * @param {Highcharts.Chart} chart
  *        A chart with dragDropData.newPoints.
@@ -1122,10 +1178,12 @@ function updatePoints(
  *
  * */
 
+/** @internal */
 const DraggableChart = {
     compose,
     flipResizeSide,
     initDragDrop
 };
 
+/** @internal */
 export default DraggableChart;

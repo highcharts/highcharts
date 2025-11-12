@@ -303,4 +303,84 @@ QUnit.test('Range selector buttons states (#3375)', function (assert) {
         '2', 'Month button should be selected, #23521.'
     );
 
+    chart.update({
+        rangeSelector: {
+            buttons: [{
+                type: 'month',
+                count: 1,
+                text: '1m'
+            }, {
+                type: 'month',
+                count: 3,
+                text: '3m'
+            }, {
+                type: 'month',
+                count: 6,
+                text: '6m'
+            }, {
+                type: 'all',
+                text: 'All'
+            }]
+        },
+        series: [
+            {
+                data: [
+                    [1652970600000, 55],
+                    [1660919460000, 62],
+                    [1660919520000, 61],
+                    [1660919580000, 55],
+                    [1660919640000, null],
+                    [1660919700000, null],
+                    [1660919760000, 67],
+                    [1660919820000, 61],
+                    [1660919880000, 61],
+                    [1660919940000, 60],
+                    [1668868800000, 59]
+                ]
+            }
+        ]
+    });
+
+    chart.xAxis[0].setExtremes(null, null);
+
+    assert.strictEqual(
+        chart.series[0].xIncrement,
+        null,
+        'The xIncrement should be null before setting the data, #22656.'
+    );
+
+    chart.series[0].setData([
+        [1652970600000, 555],
+        [1660919460000, 62],
+        [1660919520000, 61],
+        [1660919580000, 55],
+        [1660919640000, null],
+        [1660919700000, null],
+        [1660919760000, 67],
+        [1660919820000, 61],
+        [1660919880000, 61],
+        [1660919940000, 60],
+        [1668868800000, 59]
+    ]);
+
+    assert.strictEqual(
+        chart.series[0].xIncrement,
+        null,
+        'The xIncrement should be null after setting the data, #22656.'
+    );
+
+    assert.strictEqual(
+        getStates(),
+        '0,0,0,2',
+        'All buttons should be available after setting the data, #22656.'
+    );
+
+    chart.rangeSelector.clickButton(0);
+    chart.series[0].setData([555, 62, 61, 55, null, null, 67, 61, 61, 60, 59]);
+
+    assert.strictEqual(
+        chart.series[0].xIncrement,
+        1706227200011,
+        'The xIncrement should be 1706227200011 after setting the data, #22656.'
+    );
 });

@@ -55,9 +55,7 @@ declare module '../../Core/Chart/ChartBase' {
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 function onChartBeforeRender(
     this: Chart
 ): void {
@@ -173,26 +171,26 @@ class Fullscreen {
      *
      * */
 
-    /** @private */
+    /** @internal */
     public browserProps?: Fullscreen.BrowserProperties;
 
     public chart: Chart;
 
     public isOpen: boolean;
 
-    /** @private */
+    /** @internal */
     public origHeight?: number;
 
-    /** @private */
+    /** @internal */
     public origHeightOption?: (number | string | null);
 
-    /** @private */
+    /** @internal */
     public origWidth?: number;
 
-    /** @private */
+    /** @internal */
     public origWidthOption?: (number | null);
 
-    /** @private */
+    /** @internal */
     public unbindFullscreenEvent?: Function;
 
     /* *
@@ -326,7 +324,7 @@ class Fullscreen {
      * Replaces the exporting context button's text when toogling the
      * fullscreen mode.
      *
-     * @private
+     * @internal
      *
      * @since 8.0.1
      *

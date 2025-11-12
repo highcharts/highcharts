@@ -64,9 +64,7 @@ declare module '../../Core/Chart/ChartBase' {
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 function compose(
     AxisClass: typeof Axis,
     PointerClass: typeof Pointer
@@ -97,7 +95,7 @@ function compose(
 
 /**
  * Add new AxisResizer, update or remove it
- * @private
+ * @internal
  */
 function onAxisAfterRender(
     this: Axis
@@ -133,7 +131,7 @@ function onAxisAfterRender(
 
 /**
  * Clear resizer on axis remove.
- * @private
+ * @internal
  */
 function onAxisDestroy(
     this: Axis,
@@ -149,7 +147,7 @@ function onAxisDestroy(
 /**
  * Prevent default drag action detection while dragging a control line of
  * AxisResizer. (#7563)
- * @private
+ * @internal
  */
 function wrapPointerDrag(
     this: Pointer,
@@ -164,7 +162,7 @@ function wrapPointerDrag(
 
 /**
  * Prevent any hover effects while dragging a control line of AxisResizer.
- * @private
+ * @internal
  */
 function wrapPointerRunPointActions(
     this: Pointer,

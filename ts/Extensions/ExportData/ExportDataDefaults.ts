@@ -31,7 +31,7 @@ import type {
 
 /**
  * @optionparent exporting
- * @private
+ * @internal
  */
 const exporting: ExportingOptions = {
 
@@ -279,7 +279,7 @@ const exporting: ExportingOptions = {
 
 /**
  * @optionparent lang
- * @private
+ * @internal
  */
 const lang: LangOptions = {
 
