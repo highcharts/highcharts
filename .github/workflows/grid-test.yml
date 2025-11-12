@@ -54,10 +54,10 @@ jobs:
           cd highcharts
           npx gulp scripts
 
-      - name: Build Grid
+      - name: Build Dashboards
         run: |
           cd highcharts
-          npx gulp scripts --product Grid
+          npx gulp scripts --product Dashboards
 
       - name: Run Grid Tests
         run: |
