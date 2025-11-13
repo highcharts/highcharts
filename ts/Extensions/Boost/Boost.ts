@@ -44,6 +44,28 @@ const {
 
 /* *
  *
+ *  Declarations
+ *
+ * */
+
+declare module '../../Core/GlobalsBase.d.ts' {
+    interface GlobalsBase {
+        /**
+         * Returns true if the current browser supports WebGL.
+         *
+         * @requires modules/boost
+         *
+         * @function Highcharts.hasWebGLSupport
+         *
+         * @return {boolean}
+         * `true` if the browser supports WebGL.
+         */
+        hasWebGLSupport?: typeof hasWebGLSupport;
+    }
+}
+
+/* *
+ *
  *  Constants
  *
  * */
@@ -143,7 +165,6 @@ function compose(
 /**
  * Returns true if the current browser supports WebGL.
  *
- * @internal
  * @requires modules/boost
  *
  * @function Highcharts.hasWebGLSupport
