@@ -330,9 +330,6 @@ specified by config.imageCapture.resultsOutputPath.
         return;
     }
 
-    // Conditionally build required code
-    await gulp.task('scripts')(gulpback);
-
     const shouldRunTests = forceRun ||
         (await shouldRun(runConfig).catch(error => {
             logLib.failure(error.message);
@@ -358,6 +355,9 @@ specified by config.imageCapture.resultsOutputPath.
             const { testKarma } = require('./test-karma');
             await testKarma(argv);
         } else {
+            // Conditionally build required code
+            await gulp.task('scripts')(gulpback);
+
             const testArgumentParts = [];
 
             if (Array.isArray(productTests)) {
