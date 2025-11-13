@@ -36,15 +36,12 @@
       
     </div>
     <div id="chart-wrapper">
-        <div class="chart-description" id="chart-description">
+        <div class="hidden-description" id="chart-description">
             This demo shows how to use the Highcharts React integration to create a simple bubble chart. The demo and code are purely decorative.
         </div>
         <div class="demo-body" id="container" ></div>
-        <div class="chart-description" id="code-description">
-           This is a container displaying the React code used to create the chart above.
-        </div>
-        <div id="code-container" aria-hidden="true">
-            <div id="gutter">
+        <div id="code-container">
+            <div id="gutter" aria-hidden="true">
                 <div class="gutter-element">1</div>
                 <div class="gutter-element">2</div>
                 <div class="gutter-element">3</div>
@@ -150,6 +147,7 @@
                 <div class="gutter-element">103</div>
                 <div class="gutter-element">104</div> -->
             </div>
+            <p class="hidden-description sr-only">Code view for Simple Bubble Chart</p>
             <div id="code">
                 <div class="code-line"><span class="code-blue">import</span> <span class="code-purple">React</span>, { <span class="code-purple">useRef</span> } <span class="code-blue">from</span> <span class="code-green">'react'</span>;</div>
                 <div class="code-line"><span class="code-blue">import</span> <span class="code-orange">*</span> <span class="code-blue">as</span> <span class="code-purple">Highcharts</span> <span class="code-blue">from</span> <span class="code-green">'highcharts'</span>;</div>
