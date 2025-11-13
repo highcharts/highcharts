@@ -1107,7 +1107,7 @@ class Grid {
      * JSON representation of the data
      */
     public getData(modified: boolean = true): string {
-        const dataTable = modified ? this.viewport?.dataTable : this.dataTable;
+        const dataTable = modified ? this.presentationTable : this.dataTable;
         const columns = dataTable?.columns;
 
         if (!this.enabledColumns || !columns) {
