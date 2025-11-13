@@ -396,7 +396,7 @@
     background: maroon;
 }
 
-.chart-description {
+.hidden-description {
     position: absolute;
     width: 1px;
     height: 1px;
