@@ -1,28 +1,38 @@
+// theme changer from the main site
+if (window.top.document.children[0].hasAttribute('data-theme')) {
+    const theme = window.top.document.children[0].getAttribute('data-theme');
+    const body = document.getElementsByTagName('body')[0];
+
+    body.classList.remove('highcharts-dark');
+    body.classList.remove('highcharts-light');
+    body.classList.add('highcharts-' + theme);
+}
+
 const  mapbuttons = {
     theme: {
-        fill: '#46465C',
+        fill: 'var(--illo-accent-50)',
         'stroke-width': 1,
-        stroke: '#BBBAC5',
+        stroke: 'var(--illo-accent-200)',
         r: 2,
         style: {
             color: '#fff'
         },
         states: {
             hover: {
-                fill: '#000',
+                fill: 'var(--illo-background)',
                 'stroke-width': 1,
-                stroke: '#f0f0f0',
+                stroke: 'var(--illo-accent-50)',
                 style: {
                     color: '#fff'
                 }
             },
 
             select: {
-                fill: '#000',
+                fill: 'var(--illo-background)',
                 'stroke-width': 1,
-                stroke: '#f0f0f0',
+                stroke: 'var(--illo-accent-50)',
                 style: {
-                    color: '#fff'
+                    color: 'var(--text-primary)'
                 }
             }
         }

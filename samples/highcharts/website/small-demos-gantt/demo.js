@@ -1,9 +1,24 @@
+// theme changer from the main site
+if (window.top.document.children[0].hasAttribute('data-theme')) {
+    const theme = window.top.document.children[0].getAttribute('data-theme');
+    const body = document.getElementsByTagName('body')[0];
+
+    body.classList.remove('highcharts-dark');
+    body.classList.remove('highcharts-light');
+    body.classList.add('highcharts-' + theme);
+}
+
 const params = (new URL(document.location)).search;
 
 const pArray = params.split('&');
 
 let chartStr = '';
 let chartToShow = 'inverted';
+
+const colors = [
+    '#8087E8', '#A3EDBA', '#F19E53', '#6699A1',
+    '#E1D369', '#87B4E7', '#DA6D85', '#BBBAC5'
+];
 
 
 pArray.forEach(function (element) {
@@ -29,6 +44,7 @@ function inverted() {
         title: {
             text: ''
         },
+        colors: colors,
         scrollbar: {
             enabled: false
         },
@@ -241,12 +257,12 @@ function subtasks() {
         chart: {
             scrollablePlotArea: {
                 minHeight: 800
-            },
-            backgroundColor: '#2F2B38'
+            }
         },
         credits: {
             enabled: false
         },
+        colors: colors,
         title: {
             text: ''
         },
@@ -257,7 +273,7 @@ function subtasks() {
             plotBands: [{
                 from: today.getTime() + (0 * day),
                 to: today.getTime() + (14 * day),
-                color: '#46465C'
+                color: 'var(--illo-accent-50)'
             }],
             dateTimeLabelFormats: {
                 day: {
@@ -267,7 +283,7 @@ function subtasks() {
                     list: ['Week %W', 'W%W']
                 }
             },
-            gridLineColor: '#2F2B38',
+            gridLineColor: 'var(--illo-accent-50)',
             gridLineWidth: 1,
             grid: {
                 borderWidth: 0
@@ -319,11 +335,9 @@ function subtasks() {
                 },
                 symbol: {
                     // y: 0,
-                    fillColor: '#fff',
                     padding: 5
                 },
                 style: {
-                    color: '#fff',
                     fontSize: '12px',
                     padding: 0
                 }
@@ -363,12 +377,12 @@ function subtasks() {
                 start: today.getTime(),
                 end: today.getTime() + (2 * day),
                 color: 'transparent',
-                borderColor: Highcharts.getOptions().colors[0],
+                borderColor: 'var(--highcharts-color-0)',
                 borderWidth: 1,
                 connectors: {
                     dashStyle: 'dot',
                     lineWidth: 1,
-                    lineColor: Highcharts.getOptions().colors[0]
+                    lineColor: 'var(--highcharts-color-0)'
                 }
             },
             {
@@ -379,12 +393,12 @@ function subtasks() {
                 start: today.getTime() + (2 * day),
                 end: today.getTime() + (3 * day),
                 color: 'transparent',
-                borderColor: Highcharts.getOptions().colors[0],
+                borderColor: 'var(--highcharts-color-0)',
                 borderWidth: 1,
                 connectors: {
                     dashStyle: 'dot',
                     lineWidth: 1,
-                    lineColor: Highcharts.getOptions().colors[0]
+                    lineColor: 'var(--highcharts-color-0)'
                 }
             },
             {
@@ -394,14 +408,14 @@ function subtasks() {
                 dependency: '1',
                 start: today.getTime() + (3.5 * day),
                 end: today.getTime() + (7 * day),
-                color: Highcharts.getOptions().colors[1]
+                color: 'var(--highcharts-color-1)'
             }, {
                 name: '2a',
                 id: '2a',
                 parent: '2',
                 start: today.getTime() + (3.5 * day),
                 end: today.getTime() + (5 * day),
-                color: Highcharts.getOptions().colors[1]
+                color: 'var(--highcharts-color-1)'
             },
             {
                 name: '2a-1',
@@ -410,12 +424,12 @@ function subtasks() {
                 start: today.getTime() + (3.5 * day),
                 end: today.getTime() + (4 * day),
                 color: 'transparent',
-                borderColor: Highcharts.getOptions().colors[1],
+                borderColor: 'var(--highcharts-color-1)',
                 borderWidth: 1,
                 connectors: {
                     dashStyle: 'dot',
                     lineWidth: 1,
-                    lineColor: Highcharts.getOptions().colors[1]
+                    lineColor: 'var(--highcharts-color-1)'
                 }
             },
             {
@@ -426,12 +440,12 @@ function subtasks() {
                 start: today.getTime() + (4 * day),
                 end: today.getTime() + (4.5 * day),
                 color: 'transparent',
-                borderColor: Highcharts.getOptions().colors[1],
+                borderColor: 'var(--highcharts-color-1)',
                 borderWidth: 1,
                 connectors: {
                     dashStyle: 'dot',
                     lineWidth: 1,
-                    lineColor: Highcharts.getOptions().colors[1]
+                    lineColor: 'var(--highcharts-color-1)'
                 }
             },
             {
@@ -442,12 +456,12 @@ function subtasks() {
                 start: today.getTime() + (4.5 * day),
                 end: today.getTime() + (5 * day),
                 color: 'transparent',
-                borderColor: Highcharts.getOptions().colors[1],
+                borderColor: 'var(--highcharts-color-1)',
                 borderWidth: 1,
                 connectors: {
                     dashStyle: 'dot',
                     lineWidth: 1,
-                    lineColor: Highcharts.getOptions().colors[1]
+                    lineColor: 'var(--highcharts-color-1)'
 
                 }
             },
@@ -458,14 +472,14 @@ function subtasks() {
                 parent: '2',
                 start: today.getTime() + (5 * day),
                 end: today.getTime() + (7 * day),
-                color: Highcharts.getOptions().colors[1]
+                color: 'var(--highcharts-color-1)'
             }, {
                 name: '2c',
                 id: '2c',
                 parent: '2',
                 start: today.getTime() + (5 * day),
                 end: today.getTime() + (7 * day),
-                color: Highcharts.getOptions().colors[1]
+                color: 'var(--highcharts-color-1)'
             },
             {
                 name: 'Task 3',
@@ -474,7 +488,7 @@ function subtasks() {
                 collapsed: false,
                 start: today.getTime() + (7.5 * day),
                 end: today.getTime() + (12 * day),
-                color: Highcharts.getOptions().colors[2]
+                color: 'var(--highcharts-color-2)'
             }, {
                 name: '3a',
                 id: '3a',
@@ -482,12 +496,12 @@ function subtasks() {
                 start: today.getTime() + (7.5 * day),
                 end: today.getTime() + (10 * day),
                 color: 'transparent',
-                borderColor: Highcharts.getOptions().colors[2],
+                borderColor: 'var(--highcharts-color-2)',
                 borderWidth: 1,
                 connectors: {
                     dashStyle: 'dot',
                     lineWidth: 1,
-                    lineColor: Highcharts.getOptions().colors[2]
+                    lineColor: 'var(--highcharts-color-2)'
                 }
             }, {
                 name: '3b',
@@ -497,12 +511,12 @@ function subtasks() {
                 start: today.getTime() + (10 * day),
                 end: today.getTime() + (12 * day),
                 color: 'transparent',
-                borderColor: Highcharts.getOptions().colors[2],
+                borderColor: 'var(--highcharts-color-2)',
                 borderWidth: 1,
                 connectors: {
                     dashStyle: 'dot',
                     lineWidth: 1,
-                    lineColor: Highcharts.getOptions().colors[2]
+                    lineColor: 'var(--highcharts-color-2)'
                 }
             }
             ]
@@ -552,6 +566,7 @@ function nav() {
         title: {
             text: ''
         },
+        colors: colors,
         credits: {
             enabled: false
         },
@@ -768,6 +783,7 @@ function drag() {
                 }
             }
         },
+        colors: colors,
         title: {
             floating: false
         },

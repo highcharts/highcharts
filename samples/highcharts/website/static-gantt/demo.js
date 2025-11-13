@@ -1,3 +1,13 @@
+// theme changer from the main site
+if (window.top.document.children[0].hasAttribute('data-theme')) {
+    const theme = window.top.document.children[0].getAttribute('data-theme');
+    const body = document.getElementsByTagName('body')[0];
+
+    body.classList.remove('highcharts-dark');
+    body.classList.remove('highcharts-light');
+    body.classList.add('highcharts-' + theme);
+}
+
 Math.easeInSine = function (pos) {
     return -Math.cos(pos * (Math.PI / 2)) + 1;
 };
@@ -93,7 +103,7 @@ const ganttChart = function () {
                     buttonGroup.classList.add('on');
                     background.classList.add('on');
                     if (scrollMask) {
-                        scrollMask.style.fill = '#2F2B38';
+                        scrollMask.style.fill = 'var(--illo-background)';
                     }
 
                     chart.series[0].points[6].onMouseOver();
@@ -120,7 +130,7 @@ const ganttChart = function () {
                     );
                     background.classList.add('on');
                     if (scrollMask) {
-                        scrollMask.style.fill = '#2F2B38';
+                        scrollMask.style.fill = 'var(--illo-background)';
                     }
 
                 }
@@ -238,7 +248,7 @@ const ganttChart = function () {
             padding: 0,
             labels: {
                 useHTML: true,
-                indentation: 0,
+                align: 'left',
                 formatter: function () {
                     const name = this.value;
                     if (this.value.length > 1) {
