@@ -4282,15 +4282,15 @@ class Axis {
                 }
 
                 currentCross.show().attr({
-                    d: path as any
+                    d: path as SVGPath
                 });
 
-                if (categorized && !(options as any).width) {
+                if (categorized && !(options).width) {
                     currentCross.attr({
                         'stroke-width': this.transA
                     });
                 }
-                (this.cross as any).e = e;
+                this.cross ? this.cross.e = e : null;
             };
 
             // Get delay and visibility
@@ -4308,7 +4308,7 @@ class Axis {
                 // Delay showing
                 this.crossShowTimer = setTimeout((): void => {
                     doShow();
-                }, showDelay) as any;
+                }, showDelay);
             }
         }
 
