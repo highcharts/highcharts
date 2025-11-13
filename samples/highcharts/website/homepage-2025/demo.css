@@ -523,12 +523,14 @@ body {
     border-radius: 8px;
 }
 
-.stop_link {
+a.stop-link {
     color: var(--text-secondary);
-    text-decoration: none;
+    font-size: var(--typography-size-100);
+    text-decoration: underline;
+    cursor: pointer;
 }
 
-.stop_link:hover {
+a.stop-link:hover {
     color: var(--text-primary);
     text-decoration: underline;
 }
@@ -888,6 +890,7 @@ button.dot {
     font-weight: bold;
     color: var(--map-label-name);
     font-size: 1em;
+    text-align: left;
 }
 
 .highcharts-data-label span.map-label-arrival,
@@ -895,12 +898,19 @@ button.dot {
     font-weight: normal;
     font-size: 0.9em;
     color: var(--map-label-arrival);
+    text-align: left;
 }
 
 .highcharts-markers .highcharts-point {
     fill: var(--map-point-color);
     stroke: var(--background);
     stroke-width: 1px;
+}
+
+.highcharts-title {
+    fill: var(--highcharts-neutral-color-80);
+    font-size: 1em;
+    font-weight: 500;
 }
 
 /* for animated map */

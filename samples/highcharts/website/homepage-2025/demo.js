@@ -1321,7 +1321,10 @@ function animatedMap() {
             },
 
             title: {
-                text: ''
+                text: 'The history of the coffee bean',
+                align: 'center',
+                verticalAlign: 'bottom',
+                y: -15
             },
             legend: {
                 enabled: false
@@ -1453,7 +1456,7 @@ function animatedMap() {
                         formatter: function () {
                             return '<div class="map-label">' +
                                 // eslint-disable-next-line max-len
-                                '<span class="map-label-name">' + this.point.name + '</span>' +
+                                '<span class="map-label-name"><span style="font-size:14px">☕</span>' + this.point.name + '</span>' +
                                 '<span class="map-label-arrival">Arrived: ' +
                                 this.point.custom.arrival + '</span></div>';
                         },
@@ -2484,8 +2487,8 @@ const products = [
         // eslint-disable-next-line max-len
         demoDesc: 'Candlesticks make it easy to spot trends over time.',
         // eslint-disable-next-line max-len
-        stopLink: `<span class="stop-link" 
-        id="stop-stock">(Stop chart animation)</span>`,
+        stopLink: `<a class="stop-link" 
+        id="stop-stock">(Stop chart animation)</a>`,
         description: `<p>Dynamic Candlestick Chart</p>
         <div>A purely decorative candlestick chart that updates with 
         new data every 100 milliseconds.</div>`
@@ -2496,11 +2499,11 @@ const products = [
         id: 'mapsTitle',
         chart: animatedMap,
         icon: 'icon-maps.svg',
-        demoTitle: 'History of the Coffee Bean',
+        demoTitle: 'Animated Map',
         demoDesc: 'Maps can tell stories when connected to data.',
         // eslint-disable-next-line max-len
-        stopLink: `<span class="stop-link"  
-        id="stop-maps">(Stop chart animation)</span>`,
+        stopLink: `<a class="stop-link"  
+        id="stop-maps">(Stop chart animation)</a>`,
         description: `<p>Animated line map</p>A purely decorative 
         world map showing the historical 
         spread of coffee cultivation. Animated lines trace the journey of 
@@ -2552,8 +2555,8 @@ const products = [
         chart: grid,
         icon: 'icon-grid.svg',
         // eslint-disable-next-line max-len
-        stopLink: `<span class="stop-link" 
-         id="stop-grid">(Stop chart animation)</span>`,
+        stopLink: `<a class="stop-link" 
+         id="stop-grid">(Stop chart animation)</a>`,
         demoTitle: 'Data grid with sparklines',
         demoDesc: `Combine tabular data and inline 
         charts for instant visual context.`,
@@ -2696,42 +2699,35 @@ function updateFooter(i) {
     }, setTimeoutDuration);
 }
 
+let stockLink, mapsLink, gridLink;
+
+
 function attachStopLinkListeners() {
+
+    stockLink = document.getElementById('stop-stock');
+    mapsLink = document.getElementById('stop-maps');
+    gridLink = document.getElementById('stop-grid');
+
     // Stock
-    const stockLink = document.getElementById('stop-stock');
     if (stockLink) {
         // eslint-disable-next-line max-len
         stockLink.addEventListener('click', () => toggleChartAnimation('stock', stockLink));
-        stockLink.textContent = chartAnimationState.stock ?
-            '(Stop chart animation)' :
-            '(Start chart animation)';
     }
 
     // Maps
-    const mapsLink = document.getElementById('stop-maps');
     if (mapsLink) {
         // eslint-disable-next-line max-len
         mapsLink.addEventListener('click', () => toggleChartAnimation('maps', mapsLink));
-        mapsLink.textContent = chartAnimationState.maps ?
-            '(Stop chart animation)' :
-            '(Start chart animation)';
     }
 
     // Grid
-    const gridLink = document.getElementById('stop-grid');
     if (gridLink) {
         // eslint-disable-next-line max-len
         gridLink.addEventListener('click', () => toggleChartAnimation('grid', gridLink));
-        gridLink.textContent = chartAnimationState.grid ?
-            '(Stop chart animation)' :
-            '(Start chart animation)';
     }
 }
 
 function updateAnimationLinkText() {
-    const stockLink = document.getElementById('stop-stock');
-    const mapsLink = document.getElementById('stop-maps');
-    const gridLink = document.getElementById('stop-grid');
 
     if (stockLink) {
         stockLink.textContent = chartAnimationState.stock ?
