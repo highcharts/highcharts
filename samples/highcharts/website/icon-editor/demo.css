@@ -200,7 +200,7 @@ body {
 }
 
 #editor .bottom {
-    fill: var(--illo-background);
+    fill: var(--illo-accent-50);
     stroke: transparent;
     fill-opacity: 1;
 }
