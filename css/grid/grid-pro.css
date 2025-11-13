@@ -139,7 +139,7 @@
     outline: none;
     float: left;
     font: var(--ig-font);
-    background: transparent;
+    background-color: transparent;
     color: unset;
     padding: var(--ig-padding);
     max-height: unset;
@@ -149,7 +149,7 @@
 }
 
 .hcg-table tbody td.hcg-edited-cell select {
-    appearance: base-select;
+    appearance: none;
 }
 
 .hcg-table tbody td.hcg-edited-cell-error input,
