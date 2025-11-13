@@ -2487,8 +2487,8 @@ const products = [
         // eslint-disable-next-line max-len
         demoDesc: 'Candlesticks make it easy to spot trends over time.',
         // eslint-disable-next-line max-len
-        stopLink: `<a class="stop-link" 
-        id="stop-stock">(Stop chart animation)</a>`,
+        stopLink: `<button class="stop-link" 
+        id="stop-stock">(Stop chart animation)</button>`,
         description: `<p>Dynamic Candlestick Chart</p>
         <div>A purely decorative candlestick chart that updates with 
         new data every 100 milliseconds.</div>`
@@ -2502,8 +2502,8 @@ const products = [
         demoTitle: 'Animated Map',
         demoDesc: 'Maps can tell stories when connected to data.',
         // eslint-disable-next-line max-len
-        stopLink: `<a class="stop-link"  
-        id="stop-maps">(Stop chart animation)</a>`,
+        stopLink: `<button class="stop-link"  
+        id="stop-maps">(Stop chart animation)</button>`,
         description: `<p>Animated line map</p>A purely decorative 
         world map showing the historical 
         spread of coffee cultivation. Animated lines trace the journey of 
@@ -2555,8 +2555,8 @@ const products = [
         chart: grid,
         icon: 'icon-grid.svg',
         // eslint-disable-next-line max-len
-        stopLink: `<a class="stop-link" 
-         id="stop-grid">(Stop chart animation)</a>`,
+        stopLink: `<button class="stop-link" 
+         id="stop-grid">(Stop chart animation)</button>`,
         demoTitle: 'Data grid with sparklines',
         demoDesc: `Combine tabular data and inline 
         charts for instant visual context.`,
