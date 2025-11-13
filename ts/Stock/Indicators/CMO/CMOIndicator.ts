@@ -35,7 +35,7 @@ const { isNumber, merge } = U;
 /**
  * The CMO series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.cmo
  *

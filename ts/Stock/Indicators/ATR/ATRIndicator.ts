@@ -41,9 +41,7 @@ const {
 
 // Utils:
 
-/**
- * @private
- */
+/** @internal */
 function accumulateAverage(
     points: Array<[number, Array<number>]>,
     xVal: Array<number>,
@@ -56,9 +54,7 @@ function accumulateAverage(
     points.push([xValue, yValue]);
 }
 
-/**
- * @private
- */
+/** @internal */
 function getTR(
     currentPoint: Array<number>,
     prevPoint: Array<number>
@@ -73,9 +69,7 @@ function getTR(
     return TR;
 }
 
-/**
- * @private
- */
+/** @internal */
 function populateAverage(
     points: Array<[number, Array<number>]>,
     xVal: Array<number>,
@@ -100,7 +94,7 @@ function populateAverage(
 /**
  * The ATR series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.atr
  *

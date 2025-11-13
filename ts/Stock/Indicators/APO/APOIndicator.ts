@@ -42,7 +42,7 @@ const {
 /**
  * The APO series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.apo
  *

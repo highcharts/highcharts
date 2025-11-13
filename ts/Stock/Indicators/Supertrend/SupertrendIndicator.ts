@@ -54,9 +54,7 @@ const {
  * */
 
 // Utils:
-/**
- * @private
- */
+/** @internal */
 function createPointObj(
     mainSeries: SupertrendLinkedParentObject,
     index: number
@@ -77,7 +75,7 @@ function createPointObj(
 /**
  * The Supertrend series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.supertrend
  *

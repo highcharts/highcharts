@@ -39,18 +39,14 @@ const {
  * */
 
 // Utils:
-/**
- * @private
- */
+/** @internal */
 function sumArray(array: Array<number>): number {
     return array.reduce(function (prev, cur): number {
         return prev + cur;
     }, 0);
 }
 
-/**
- * @private
- */
+/** @internal */
 function meanDeviation(arr: Array<number>, sma: number): number {
     const len = arr.length;
     let sum = 0,
@@ -72,7 +68,7 @@ function meanDeviation(arr: Array<number>, sma: number): number {
 /**
  * The CCI series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.cci
  *

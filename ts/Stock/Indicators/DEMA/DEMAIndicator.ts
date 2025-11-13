@@ -43,7 +43,7 @@ const {
 /**
  * The DEMA series Type
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.dema
  *

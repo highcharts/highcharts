@@ -56,7 +56,7 @@ function toFixed(a: number, n: number): number {
 /**
  * The RSI series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.rsi
  *

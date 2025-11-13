@@ -42,7 +42,7 @@ const {
 /**
  * The Linear Regression Intercept series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.linearRegressionIntercept
  *

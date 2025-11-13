@@ -66,27 +66,21 @@ declare module '../../../Core/Series/SeriesBase' {
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 function maxHigh(arr: Array<Array<number>>): number {
     return arr.reduce(function (max: number, res: Array<number>): number {
         return Math.max(max, res[1]);
     }, -Infinity);
 }
 
-/**
- * @private
- */
+/** @internal */
 function minLow(arr: Array<Array<number>>): number {
     return arr.reduce(function (min: number, res: Array<number>): number {
         return Math.min(min, res[2]);
     }, Infinity);
 }
 
-/**
- * @private
- */
+/** @internal */
 function highlowLevel(
     arr: Array<Array<number>>
 ): Record<string, number> {
@@ -99,7 +93,7 @@ function highlowLevel(
 /**
  * Check two lines intersection (line a1-a2 and b1-b2)
  * Source: https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection
- * @private
+ * @internal
  */
 function checkLineIntersection(
     a1: IKHPoint | undefined,
@@ -130,7 +124,7 @@ function checkLineIntersection(
 /**
  * Parameter opt (indicator options object) include indicator, points,
  * nextPoints, color, options, gappedExtend and graph properties
- * @private
+ * @internal
  */
 function drawSenkouSpan(
     opt: IKHDrawSenkouSpanObject
@@ -153,7 +147,7 @@ function drawSenkouSpan(
  * Data integrity in Ichimoku is different than default 'averages':
  * Point: [undefined, value, value, ...] is correct
  * Point: [undefined, undefined, undefined, ...] is incorrect
- * @private
+ * @internal
  */
 function ichimokuAverages(): Array<(number|null|undefined)> | undefined {
     const ret: Array<(number|null|undefined)> = [];
@@ -179,7 +173,7 @@ function ichimokuAverages(): Array<(number|null|undefined)> | undefined {
 /**
  * The IKH series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.ikh
  *

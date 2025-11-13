@@ -41,7 +41,7 @@ const {
 /**
  * The Linear Regression Slope series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.linearRegressionSlope
  *

@@ -44,9 +44,7 @@ const {
 // Utils
 
 // Index of element with extreme value from array (min or max)
-/**
- * @private
- */
+/** @internal */
 function getExtremeIndexInArray(arr: Array<number>, extreme: string): number {
     let extremeValue = arr[0],
         valueIndex = 0,
@@ -74,7 +72,7 @@ function getExtremeIndexInArray(arr: Array<number>, extreme: string): number {
 /**
  * The Aroon series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.aroon
  *

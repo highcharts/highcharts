@@ -88,7 +88,7 @@ function populateAverage(
 /**
  * The ROC series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.roc
  *

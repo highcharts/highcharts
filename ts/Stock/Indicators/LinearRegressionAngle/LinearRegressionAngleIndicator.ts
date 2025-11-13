@@ -41,7 +41,7 @@ const {
 /**
  * The Linear Regression Angle series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.linearRegressionAngle
  *
@@ -98,7 +98,7 @@ class LinearRegressionAngleIndicator extends LinearRegressionIndicator {
     /**
      * Convert a slope of a line to angle (in degrees) between
      * the line and x axis
-     * @private
+     * @internal
      * @param {number} slope of the straight line function
      * @return {number} angle in degrees
      */

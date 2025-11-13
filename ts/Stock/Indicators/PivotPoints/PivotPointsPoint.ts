@@ -27,9 +27,7 @@ const SMAPoint: typeof SMAPointType =
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 function destroyExtraLabels(
     point: PivotPointsPoint,
     functionName: string

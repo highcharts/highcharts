@@ -43,7 +43,7 @@ const {
 /**
  * The PPO series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.ppo
  *
