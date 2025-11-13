@@ -19,7 +19,11 @@ const grid = Grid.grid('container', {
                 enabled: true
             }
         }
-    }
+    },
+    columns: [{
+        id: 'price',
+        dataType: 'string'
+    }]
 });
 
 csvExport.addEventListener('click', () => {
