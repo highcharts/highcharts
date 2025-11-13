@@ -616,6 +616,7 @@
 /* Header cell icons container - generic for all icon types */
 .hcg-header-cell-icons {
     display: flex;
+    overflow: hidden;
     align-items: center;
     gap: 2px;
     max-width: 0;
@@ -1501,6 +1502,8 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     --hcg-pagination-button-selected-color: #ffffff;
     --hcg-icon-color: #626262;
     --hcg-icon-hover-color: #141414;
+    --hcg-button-border-width: 1px;
+    --hcg-button-border-color: #cccccc;
 }
 
 @media (prefers-color-scheme: dark) {
