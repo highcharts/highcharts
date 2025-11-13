@@ -75,6 +75,10 @@ export default class ContourSeries extends ScatterSeries {
 
     public renderPromise?: Promise<void>;
 
+    public contourOffsetsBuffer?: GPUBuffer;
+
+    public contourOffsetsCountBuffer?: GPUBuffer;
+
     public init(chart: Chart, options: ContourSeriesOptions): void {
         super.init.apply(this, [chart, options]);
 
@@ -322,6 +326,37 @@ export default class ContourSeries extends ScatterSeries {
                     usage: uniformUsage
                 });
 
+                // After contourLineColorBuffer
+                this.contourOffsetsBuffer = device.createBuffer({
+                    size: Math.max(
+                        64 * 4,
+                        (
+                            options.contourOffsets?.length || 0
+                        ) *
+                        4
+                    ),
+                    usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
+                    mappedAtCreation: true
+                });
+
+                const offsets = options.contourOffsets || [];
+                const offsetArray = new Float32Array(
+                    this.contourOffsetsBuffer.getMappedRange()
+                );
+                offsetArray.fill(0);
+                offsetArray.set(offsets.slice(0, 64));
+                this.contourOffsetsBuffer.unmap();
+
+                const contourOffsetsCountBuffer = device.createBuffer({
+                    size: 4,
+                    usage: uniformUsage,
+                    mappedAtCreation: true
+                });
+                new Uint32Array(
+                    contourOffsetsCountBuffer.getMappedRange()
+                )[0] = offsets.length;
+                contourOffsetsCountBuffer.unmap();
+
                 device.queue.writeBuffer(
                     vertexBuffer,
                     0,
@@ -444,6 +479,8 @@ export default class ContourSeries extends ScatterSeries {
                         @group(0) @binding(5) var<uniform> smoothColoring: u32;
                         @group(0) @binding(6) var<uniform> showContourLines: u32;
                         @group(0) @binding(7) var<uniform> contourLineColor: vec3<f32>;
+                        @group(0) @binding(8) var<storage> contourOffsets: array<f32>;
+                        @group(0) @binding(9) var<uniform> contourOffsetsCount: u32;
 
                         fn getColor(value: f32) -> vec3<f32> {
                             let stopCount = colorStopsCount;
@@ -481,26 +518,36 @@ export default class ContourSeries extends ScatterSeries {
 
                             // CONTOUR LINES
                             let lineWidth: f32 = 1.0;
-                            //let contourColor = vec3f(0.0, 0.0, 0.0);
 
                             let val_dx: f32 = dpdx(val);
                             let val_dy: f32 = dpdy(val);
-                            let gradient: f32 = length(
-                                vec2f(val_dx, val_dy)
-                            );
+                            let gradient: f32 = length(vec2f(val_dx, val_dy));
 
                             let epsilon: f32 = 0.0001;
                             let adjustedLineWidth: f32 = (
-                                lineWidth * gradient + epsilon
+                                lineWidth *
+                                gradient +
+                                epsilon
                             );
 
-                            let valDiv: f32 = val / contourInterval;
+                            // --- NEW: Per-level offset ---
+                            var effectiveVal = val;
+                            let baseLevel = floor(val / contourInterval);
+                            let levelIndex = u32(baseLevel);
+
+                            if (levelIndex < contourOffsetsCount) {
+                                effectiveVal = val - contourOffsets[levelIndex];
+                            }
+
+                            // Use effectiveVal for modulo
+                            let valDiv: f32 = effectiveVal / contourInterval;
                             let valMod: f32 = (
-                                val -
+                                effectiveVal -
                                 contourInterval *
                                 floor(valDiv)
                             );
 
+                            // Anti-aliased line
                             let lineMask: f32 = (
                                 smoothstep(0.0, adjustedLineWidth, valMod) *
                                 (
@@ -639,6 +686,12 @@ export default class ContourSeries extends ScatterSeries {
                             buffer: this.contourLineColorBuffer,
                             label: 'contourLineColorBuffer'
                         }
+                    }, {
+                        binding: 8,
+                        resource: { buffer: this.contourOffsetsBuffer }
+                    }, {
+                        binding: 9,
+                        resource: { buffer: contourOffsetsCountBuffer }
                     }]
                 });
 

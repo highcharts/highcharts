@@ -26,15 +26,12 @@ import ContourPoint from './ContourPoint';
  */
 
 const ContourSeriesDefaults: ContourSeriesOptions = {
-
+    contourOffsets: [],
     /**
      * This must be set to 'value' to make the colorAxis track with the contour
      * plot.
-     *
-     * @type      {string}
-     * @default   value
-     * @apioption plotOptions.contour.colorKey
      */
+    colorKey: 'value',
 
     /**
      * Whether to use smooth color transitions.
