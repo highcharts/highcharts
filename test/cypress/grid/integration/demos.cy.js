@@ -2,46 +2,26 @@ const gridLiteDir = '/grid-lite/';
 const gridProDir = '/grid-pro/';
 const demoPaths = Cypress.env('demoPaths');
 
-const expectedBodyStyles = `body {
-    font-family:
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        Roboto,
-        Helvetica,
-        Arial,
-        "Apple Color Emoji",
-        "Segoe UI Emoji",
-        "Segoe UI Symbol",
-        sans-serif;
-    background: var(--highcharts-background-color);
-    color: var(--highcharts-neutral-color-100);
-}`;
-
-const expectedDemoStyles = `.demo {
-    padding: 8px 12px;
-}`;
-
-const expectedDescriptionStyles = `.highcharts-description {
-    padding: 0 8px;
-}`;
+const expectedBodyStylesRegex = /body\s*\{[^}]*font-family:\s*-apple-system,\s*BlinkMacSystemFont,\s*"Segoe UI",\s*Roboto,\s*Helvetica,\s*Arial,\s*"Apple Color Emoji",\s*"Segoe UI Emoji",\s*"Segoe UI Symbol",\s*sans-serif[^}]*background:\s*var\(--highcharts-background-color\)[^}]*color:\s*var\(--highcharts-neutral-color-100\)/;
+const expectedDemoPaddingRegex = /\.demo[^{]*\{[^}]*padding:\s*8px\s+12px\s*[;}]/;
+const expectedDescriptionPaddingRegex = /\.highcharts-description[^{]*\{[^}]*padding:\s*0\s+8px\s*[;}]/;
 
 const validateStyles = (cssPath) => {
     it('should contain proper body styles', () => {
         cy.readFile(cssPath).then((cssContent) => {
-            expect(cssContent).to.include(expectedBodyStyles);
+            expect(cssContent).to.match(expectedBodyStylesRegex);
         });
     });
 
     it('should contain proper .demo styles', () => {
         cy.readFile(cssPath).then((cssContent) => {
-            expect(cssContent).to.include(expectedDemoStyles);
+            expect(cssContent).to.match(expectedDemoPaddingRegex);
         });
     });
 
     it('should contain proper .highcharts-description styles', () => {
         cy.readFile(cssPath).then((cssContent) => {
-            expect(cssContent).to.include(expectedDescriptionStyles);
+            expect(cssContent).to.match(expectedDescriptionPaddingRegex);
         });
     });
 };
@@ -71,9 +51,14 @@ if (demoPaths && demoPaths.gridLitePaths && demoPaths.gridProPaths) {
                 });
             });
 
-            describe(demoPath, () => {
-                validateStyles(gridLiteDir + 'demo/' + demoPath + '/demo.css');
-            });
+            // Only validate styles for the samples under the demo directory.
+            if (demoPath.startsWith('demo/')) {
+                describe(demoPath, () => {
+                    validateStyles(
+                        'samples' + gridLiteDir + demoPath + '/demo.css'
+                    );
+                });
+            }
         });
     });
 
@@ -101,9 +86,14 @@ if (demoPaths && demoPaths.gridLitePaths && demoPaths.gridProPaths) {
                 });
             });
 
-            describe(demoPath, () => {
-                validateStyles(gridProDir + 'demo/' + demoPath + '/demo.css');
-            });
+            // Only validate styles for the samples under the demo directory.
+            if (demoPath.startsWith('demo/')) {
+                describe(demoPath, () => {
+                    validateStyles(
+                        'samples' + gridProDir + demoPath + '/demo.css'
+                    );
+                });
+            }
         });
     });
 } else {
