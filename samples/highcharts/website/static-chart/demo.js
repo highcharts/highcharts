@@ -1,3 +1,13 @@
+// theme changer from the main site
+if (window.top.document.children[0].hasAttribute('data-theme')) {
+    const theme = window.top.document.children[0].getAttribute('data-theme');
+    const body = document.getElementsByTagName('body')[0];
+
+    body.classList.remove('highcharts-dark');
+    body.classList.remove('highcharts-light');
+    body.classList.add('highcharts-' + theme);
+}
+
 Math.easeInSine = function (pos) {
     return -Math.cos(pos * (Math.PI / 2)) + 1;
 };
@@ -53,9 +63,9 @@ const iceberg = {
 
 
                 cover.style.fill =  '#30426B';
-                background.style.fill = '#f0f0f0';
+                background.style.fill = 'var(--illo-accent-0)';
                 plotBackground.style.transition = 'none';
-                plotBackground.style.fill = '#f0f0f0';
+                plotBackground.style.fill = 'var(--illo-accent-0)';
                 title.style.opacity = 1;
 
                 // turn on tooltip
@@ -76,7 +86,7 @@ const iceberg = {
                 [].forEach.call(
                     document.querySelectorAll('#charts .iceberg-types'),
                     function (elem) {
-                        elem.style.color = '#000';
+                        elem.style.color = 'var(--text-primary)';
                     }
                 );
 
@@ -241,7 +251,7 @@ const iceberg = {
                     const label = icebergLabels[index];
                     let color = '#fff';
                     if (labelPos > 8) {
-                        color = '#000';
+                        color = 'var(--text-primary)';
                     }
                     return `
                 <p style="color:${color};white-space:nowrap;">${label} m</p>
@@ -445,6 +455,13 @@ const iceberg = {
             marker: {
                 enabled: false
             },
+            point: {
+                events: {
+                    mouseOver: function () {
+                        this.series.chart.series[2].setState('hover');
+                    }
+                }
+            },
             data: [
                 {
                     x: 0.24,
@@ -534,6 +551,13 @@ const iceberg = {
             visible: true,
             marker: {
                 enabled: false
+            },
+            point: {
+                events: {
+                    mouseOver: function () {
+                        this.series.chart.series[4].setState('hover');
+                    }
+                }
             },
             data: [
                 {
@@ -632,6 +656,13 @@ const iceberg = {
             visible: true,
             marker: {
                 enabled: false
+            },
+            point: {
+                events: {
+                    mouseOver: function () {
+                        this.series.chart.series[6].setState('hover');
+                    }
+                }
             },
             data: [
                 {
@@ -734,6 +765,13 @@ const iceberg = {
             marker: {
                 enabled: false
             },
+            point: {
+                events: {
+                    mouseOver: function () {
+                        this.series.chart.series[8].setState('hover');
+                    }
+                }
+            },
             data: [{
                 x: 12.5,
                 y: 8
@@ -822,6 +860,13 @@ const iceberg = {
             visible: true,
             marker: {
                 enabled: false
+            },
+            point: {
+                events: {
+                    mouseOver: function () {
+                        this.series.chart.series[10].setState('hover');
+                    }
+                }
             },
             data: [{
                 x: 16.12,

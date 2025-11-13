@@ -1,12 +1,128 @@
 @import url("https://code.highcharts.com/css/highcharts.css");
 
+:root,
+.highcharts-light {
+    --primitives-neutral-0: #fff;
+    --primitives-neutral-25: #f6f6f8;
+    --primitives-neutral-50: #f1f1f3;
+    --primitives-neutral-100: #e3e2e8;
+    --primitives-neutral-200: #c8c7d1;
+    --primitives-neutral-300: #acabba;
+    --primitives-neutral-400: #908ea3;
+    --primitives-neutral-500: #75728c;
+    --primitives-neutral-600: #5d5b70;
+    --primitives-neutral-700: #464553;
+    --primitives-neutral-800: #2f2e37;
+    --primitives-neutral-900: #17171b;
+    --primitives-neutral-950: #0a090d;
+    --primitives-neutral-1000: #000;
+    --primitives-brand-50: #f6f8ff;
+    --primitives-brand-100: #f0f1ff;
+    --primitives-brand-200: #e1e3ff;
+    --primitives-brand-300: #c3c8ff;
+    --primitives-brand-400: #a5acff;
+    --primitives-brand-500: #8791ff;
+    --primitives-brand-600: #6975ff;
+    --primitives-brand-700: #545ecc;
+    --primitives-brand-800: #3f4699;
+    --primitives-brand-900: #2a2f66;
+    --primitives-brand-1000: #151733;
+    --primitives-success-50: #ecfdf5;
+    --primitives-success-100: #d1fae5;
+    --primitives-success-200: #a7f3d0;
+    --primitives-success-300: #6ee7b7;
+    --primitives-success-400: #34d399;
+    --primitives-success-500: #10b981;
+    --primitives-success-600: #059669;
+    --primitives-success-700: #047857;
+    --primitives-success-800: #065f46;
+    --primitives-success-900: #064e3b;
+    --primitives-success-1000: #033427;
+    --primitives-danger-50: #fef2f2;
+    --primitives-danger-100: #fee2e2;
+    --primitives-danger-200: #fecaca;
+    --primitives-danger-300: #fca5a5;
+    --primitives-danger-400: #f87171;
+    --primitives-danger-500: #ef4444;
+    --primitives-danger-600: #dc2626;
+    --primitives-danger-700: #b91c1c;
+    --primitives-danger-800: #991b1b;
+    --primitives-danger-900: #7f1d1d;
+    --primitives-danger-1000: #570d0d;
+    --illo-green: var(--primitives-success-200);
+    --illo-purple: var(--primitives-brand-500);
+    --illo-accent-0: var(--primitives-neutral-0);
+    --illo-accent-50: var(--primitives-neutral-50);
+    --illo-accent-100: var(--primitives-neutral-100);
+    --illo-accent-200: var(--primitives-neutral-200);
+    --illo-accent-800: var(--primitives-neutral-800);
+    --illo-brand-200: var(--primitives-brand-200);
+    --illo-brand-700: var(--primitives-brand-700);
+    --illo-brand-800: var(--primitives-brand-800);
+    --illo-background: var(--primitives-neutral-0);
+    --illo-lines: var(--primitives-neutral-100);
+    --illo-just-white: #fff;
+    --illo-just-black: #000;
+    --illo-accent-teal: #6699a1;
+    --text-primary: var(--primitives-neutral-900);
+    --text-secondary: var(--primitives-neutral-700);
+    --text-tertiary: var(--primitives-neutral-500);
+    --background: var(--primitives-neutral-0);
+    --highcharts-highlight-color-10: rgba(0, 0, 0, 0.2);
+}
+
+.highcharts-dark {
+    --illo-green: var(--primitives-success-300);
+    --illo-purple: var(--primitives-brand-500);
+    --illo-accent-0: var(--primitives-neutral-1000);
+    --illo-accent-50: var(--primitives-neutral-700);
+    --illo-accent-100: var(--primitives-neutral-800);
+    --illo-accent-200: var(--primitives-neutral-200);
+    --illo-accent-800: var(--primitives-neutral-0);
+    --illo-brand-200: var(--primitives-brand-500);
+    --illo-brand-800: var(--primitives-brand-200);
+    --illo-brand-700: var(--primitives-brand-500);
+    --illo-background: var(--primitives-neutral-1000);
+    --illo-lines: var(--primitives-neutral-500);
+    --illo-just-white: #fff;
+    --illo-just-black: #000;
+    --background: var(--primitives-neutral-950);
+    --text-primary: var(--primitives-neutral-25);
+    --text-secondary: var(--primitives-neutral-200);
+    --text-tertiary: var(--primitives-neutral-400);
+    --highcharts-highlight-color-10: rgba(255, 255, 255, 0.5);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --illo-green: var(--primitives-success-300);
+        --illo-purple: var(--primitives-brand-500);
+        --illo-accent-0: var(--primitives-neutral-1000);
+        --illo-accent-50: var(--primitives-neutral-700);
+        --illo-accent-100: var(--primitives-neutral-800);
+        --illo-accent-200: var(--primitives-neutral-200);
+        --illo-accent-800: var(--primitives-neutral-0);
+        --illo-brand-700: var(--primitives-brand-300);
+        --illo-brand-200: var(--primitives-brand-500);
+        --illo-brand-800: var(--primitives-brand-200);
+        --illo-background: var(--primitives-neutral-1000);
+        --illo-lines: var(--primitives-neutral-500);
+        --illo-just-white: #fff;
+        --illo-just-black: #000;
+        --background: var(--primitives-neutral-950);
+        --text-primary: var(--primitives-neutral-25);
+        --text-secondary: var(--primitives-neutral-200);
+        --text-tertiary: var(--primitives-neutral-400);
+        --highcharts-highlight-color-10: rgba(255, 255, 255, 0.2);
+    }
+}
+
 html {
     overflow: hidden;
 }
 
 body {
-    margin: 0 !important;
-    font-size: 1rem;
+    margin: 0;
 }
 
 /* BUTTONS OUTSIDE CHART */
@@ -26,7 +142,7 @@ textarea {
     display: inline-block;
     font-weight: 400;
     line-height: 1.5;
-    color: #fff;
+    color: var(--text-primary);
     text-align: center;
     text-decoration: none;
     vertical-align: middle;
@@ -93,7 +209,7 @@ textarea {
     flex-direction: column;
     width: 100%;
     pointer-events: auto;
-    background-color: #fff;
+    background-color: var(--illo-background);
     background-clip: padding-box;
     border: 1px solid rgb(0 0 0 / 20%);
     border-radius: 0.3rem;
@@ -126,7 +242,7 @@ textarea {
     width: 1em;
     height: 1em;
     padding: 0.25em;
-    color: #000;
+    color: var(--text-primary);
     background: transparent url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000'%3e%3cpath d='M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z'/%3e%3c/svg%3e") center/1em auto no-repeat;
     border: 0;
     border-radius: 0.25rem;
@@ -158,7 +274,7 @@ textarea {
     z-index: 1050;
     width: 100vw;
     height: 100vh;
-    background-color: #000;
+    background-color: var(--illo-background);
     visibility: hidden;
 }
 
@@ -182,10 +298,10 @@ textarea {
     font-size: 1rem;
     font-weight: 400;
     line-height: 1.5;
-    color: #212529;
-    background-color: #fff;
+    color: var(--text-primary);
+    background-color: var(--illo-background);
     background-clip: padding-box;
-    border: 1px solid #ced4da;
+    border: 1px solid var(--illo-accent-100);
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
@@ -201,13 +317,13 @@ textarea {
     font-size: 1rem;
     font-weight: 400;
     line-height: 1.5;
-    color: #212529;
-    background-color: #fff;
+    color: var(--text-primary);
+    background-color: var(--illo-background);
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
     background-repeat: no-repeat;
     background-position: right 0.75rem center;
     background-size: 16px 12px;
-    border: 1px solid #ced4da;
+    border: 1px solid var(--illo-accent-100);
     border-radius: 0.25rem;
     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
     -webkit-appearance: none;
@@ -228,35 +344,35 @@ textarea {
 }
 
 .main-container .btn {
-    background-color: #2f2b38;
-    border-color: #2f2b38;
+    background-color: var(--illo-background);
+    border-color: var(--illo-background);
 }
 
 .main-container .btn:hover {
-    background-color: #2f2b38;
-    border-color: #2f2b38;
+    background-color: var(--illo-background);
+    border-color: var(--illo-background);
     opacity: 80%;
 }
 
 .main-container .btn.disabled,
 .main-container .btn:disabled {
-    color: #fff;
+    color: var(--text-tertiary);
     opacity: 40%;
 }
 
 .main-container .btn:focus,
 .main-container .btn-check:focus + .btn {
-    color: #fff;
-    background-color: #2f2b38;
-    border-color: #2f2b38;
+    color: var(--text-primary);
+    background-color: var(--illo-background);
+    border-color: var(--illo-background);
     box-shadow: 0 0 0 0.25rem rgb(49 132 253 / 50%);
 }
 
 .highcharts-tooltip.highcharts-color-0,
 .highcharts-tooltip.highcharts-color-1,
 .highcharts-tooltip.highcharts-color-2 {
-    fill: #f0f0f0;
-    stroke: #f0f0f0;
+    fill: var(--illo-accent-50);
+    stroke: var(--illo-accent-100);
 }
 
 /* CHART */
@@ -291,8 +407,8 @@ textarea {
 
 .chart-container .highcharts-title,
 .chart-container .highcharts-subtitle {
-    fill: #fff;
-    stroke: #fff;
+    fill: var(--text-primary);
+    stroke: var(--text-primary);
     opacity: 1;
     font-size: 0.9rem;
     font-weight: 400;
@@ -308,18 +424,18 @@ textarea {
 }
 
 .chart-container .line {
-    color: #fff;
-    stroke: #fff;
+    color: var(--illo-lines);
+    stroke: var(--illo-lines);
     stroke-width: 1px;
 }
 
 .chart-container .highcharts-tick,
 .chart-container .highcharts-axis-line {
-    stroke: #ebebeb;
+    stroke: var(--illo-accent-100);
 }
 
 .chart-container .highcharts-minor-grid-line {
-    stroke: #f2f2f2;
+    stroke: var(--illo-accent-100);
     opacity: 20%;
     stroke-dasharray: 2px;
 }
@@ -330,18 +446,18 @@ textarea {
 }
 
 .chart-container .highcharts-point-connecting-path-start-marker {
-    fill: #fff;
+    fill: var(--text-primary);
 }
 
 .chart-container .highcharts-axis-labels {
-    fill: #fff;
+    fill: var(--text-primary);
     cursor: default;
     font-size: 0.7rem;
 }
 
 .chart-container .highcharts-data-label text,
 .chart-container text.highcharts-data-label {
-    fill: #fff;
+    fill: var(--text-primary);
     font-weight: 400;
 }
 
@@ -349,12 +465,12 @@ textarea {
 .chart-container .highcharts-color-0.highcharts-point-select,
 .chart-container .highcharts-point-select .highcharts-color-1,
 .chart-container .highcharts-point-select .highcharts-color-2 {
-    fill: #f0f0f0 !important;
+    fill: var(--illo-accent-50) !important;
 }
 
 .chart-container .highcharts-color-0 {
-    fill: #8087e8;
-    stroke: #fff;
+    fill: var(--illo-purple);
+    stroke: var(--illo-brand-200);
 }
 
 .chart-container .highcharts-point-connecting-path.highcharts-color-0,
@@ -365,12 +481,12 @@ textarea {
 
 .chart-container .highcharts-color-1 {
     fill: #e2a13f;
-    stroke: #fff;
+    stroke: #e2a13f;
 }
 
 .chart-container .highcharts-color-2 {
-    fill: #82d2a6;
-    stroke: #fff;
+    fill: var(--illo-green);
+    stroke: var(--illo-green);
 }
 
 .chart-container .highcharts-container {
@@ -388,12 +504,12 @@ textarea {
 }
 
 .chart-container .highcharts-background {
-    fill: #211836;
+    fill: var(--illo-accent-50);
     transition: all 1s;
 }
 
 .chart-container .highcharts-background.on {
-    fill: #211836;
+    fill: var(--illo-accent-50);
 }
 
 .chart-container .highcharts-grid-line {
@@ -408,7 +524,7 @@ textarea {
 
 .chart-container .highcharts-plot-band,
 .highcharts-pane {
-    fill: #30426b;
+    fill: var(--illo-accent-50);
     fill-opacity: 1;
     z-index: 30;
 }
@@ -434,19 +550,18 @@ textarea {
 .highcharts-tooltip-container .highcharts-tooltip.tip .highcharts-label-box {
     stroke-width: 1;
     border: none;
-    stroke: #fff;
-    fill: #fff;
+    stroke: var(--illo-accent-100);
+    fill: var(--illo-accent-0);
     fill-opacity: 1;
-    filter: drop-shadow(0 8px 24px rgb(0 0 0 / 20%));
 }
 
 .chart-container .highcharts-data-label-box {
-    fill: #2f2b38;
+    fill: var(--illo-accent-0);
     stroke-width: 0;
 }
 
 .chart-container .highcharts-tooltip text {
-    fill: #333;
+    fill: var(--text-primary);
 }
 
 .chart-container .highcharts-tooltip {
@@ -467,7 +582,7 @@ textarea {
     font-size: 1rem;
     aspect-ratio: 1 / 1;
     border-radius: 4px;
-    background-color: #2f2b38;
+    background-color: var(--illo-accent-50);
 }
 
 #gantt .hide {
@@ -479,17 +594,17 @@ textarea {
 }
 
 #gantt .highcharts-plot-background {
-    fill: #45445d;
+    fill: var(--illo-accent-0);
     stroke: transparent;
 }
 
 #gantt .cover {
-    fill: #46445d;
+    fill: var(--illo-accent-50);
     stroke: transparent;
 }
 
 #gantt .foreground {
-    fill: #201836;
+    fill: var(--illo-accent-50);
     stroke: transparent;
 }
 
@@ -588,7 +703,7 @@ textarea {
     position: absolute;
     left: 15px;
     top: -25px;
-    color: #fff;
+    color: var(--text-secondary);
 }
 
 #gantt .day-label {
@@ -596,7 +711,7 @@ textarea {
     top: -8px;
     text-align: center;
     background-color: transparent;
-    color: #fff;
+    color: var(--text-primary);
     font-size: 0.7rem;
 }
 
@@ -731,13 +846,7 @@ textarea {
     }
 
     #gantt .gantt-label {
-        width: 100px;
-        padding: 2px;
-        font-weight: bold;
-        font-size: 1.2em;
-        position: absolute;
         left: 20px;
         top: -50px;
-        color: #fff;
     }
 }

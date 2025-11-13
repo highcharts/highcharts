@@ -1,3 +1,13 @@
+// theme changer from the main site
+if (window.top.document.children[0].hasAttribute('data-theme')) {
+    const theme = window.top.document.children[0].getAttribute('data-theme');
+    const body = document.getElementsByTagName('body')[0];
+
+    body.classList.remove('highcharts-dark');
+    body.classList.remove('highcharts-light');
+    body.classList.add('highcharts-' + theme);
+}
+
 Math.easeInSine = function (pos) {
     return -Math.cos(pos * (Math.PI / 2)) + 1;
 };
@@ -804,7 +814,7 @@ const gantt = {
         // 0 - bottom line
         {
             type: 'line',
-            className: 'transparent',
+            className: 'green',
             data: [
                 { x: 0, y: -1 },
                 { x: 20, y: -1 }
@@ -816,7 +826,7 @@ const gantt = {
         {
             type: 'line',
             lineWidth: 1,
-            className: 'transparent',
+            className: 'green',
             data: [
                 { x: 0, y: 0 },
                 { x: 20, y: 0 }
@@ -827,7 +837,7 @@ const gantt = {
         {
             type: 'line',
             lineWidth: 1,
-            className: 'transparent',
+            className: 'green',
             data: [
                 { x: 0, y: 1 },
                 { x: 20, y: 1 }

@@ -100,6 +100,10 @@ html {
     overflow: hidden;
 }
 
+body {
+    margin: 0;
+}
+
 .chart-container .thick {
     stroke-width: 1;
     stroke: var(--illo-lines);

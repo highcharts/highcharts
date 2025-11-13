@@ -1,3 +1,13 @@
+// theme changer from the main site
+if (window.top.document.children[0].hasAttribute('data-theme')) {
+    const theme = window.top.document.children[0].getAttribute('data-theme');
+    const body = document.getElementsByTagName('body')[0];
+
+    body.classList.remove('highcharts-dark');
+    body.classList.remove('highcharts-light');
+    body.classList.add('highcharts-' + theme);
+}
+
 const params = (new URL(document.location)).search;
 
 const pArray = params.split('&');
@@ -17,12 +27,18 @@ if (chartArray.length > 1) {
     chartToShow = chartArray[1];
 }
 
+const colors = [
+    '#8087E8', '#A3EDBA', '#F19E53', '#6699A1',
+    '#E1D369', '#87B4E7', '#DA6D85', '#BBBAC5'
+];
+
 // dependency wheel
 function dependencyWheel() {
     Highcharts.chart('container', {
         title: {
             text: ''
         },
+        colors: colors,
         credits: {
             enabled: false
         },
@@ -106,6 +122,7 @@ function area() {
         chart: {
             type: 'area'
         },
+        colors: colors,
         exporting: {
             enabled: false
         },
@@ -301,6 +318,7 @@ function range() {
         exporting: {
             enabled: false
         },
+        colors: colors,
         title: {
             text: ''
         },
@@ -396,6 +414,7 @@ function bubble() {
         credits: {
             enabled: false
         },
+        colors: colors,
         exporting: {
             enabled: false
         },

@@ -1,3 +1,13 @@
+// theme changer from the main site
+if (window.top.document.children[0].hasAttribute('data-theme')) {
+    const theme = window.top.document.children[0].getAttribute('data-theme');
+    const body = document.getElementsByTagName('body')[0];
+
+    body.classList.remove('highcharts-dark');
+    body.classList.remove('highcharts-light');
+    body.classList.add('highcharts-' + theme);
+}
+
 const params = (new URL(document.location)).search;
 // const chartToShow = params.get('chart');
 
@@ -194,50 +204,11 @@ function compare() {
 
             Highcharts.stockChart('container', {
                 chart: {
-                    borderWidth: 0,
-                    borderColor: 'white',
-                    backgroundColor: {
-                        linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
-                        stops: [
-                            [0, '#1f1836'],
-                            [1, '#45445d']
-                        ]
-                    }
+                    borderWidth: 0
                 },
                 rangeSelector: {
                     selected: 4,
-                    labelStyle: {
-                        color: '#fff'
-                    },
                     verticalAlign: 'top',
-                    buttonTheme: {
-                        fill: '#46465C',
-                        stroke: '#BBBAC5',
-                        'stroke-width': 1,
-                        height: 30,
-                        y: 5,
-                        style: {
-                            color: '#fff'
-                        },
-                        states: {
-                            hover: {
-                                fill: '#1f1836',
-                                style: {
-                                    color: '#fff'
-                                },
-                                'stroke-width': 1,
-                                stroke: 'white'
-                            },
-                            select: {
-                                fill: '#1f1836',
-                                style: {
-                                    color: '#fff'
-                                },
-                                'stroke-width': 1,
-                                stroke: 'white'
-                            }
-                        }
-                    },
                     dropdown: 'always',
                     inputDateFormat: '%b %e, %y',
                     inputBoxHeight: 30,
@@ -248,7 +219,7 @@ function compare() {
                     xAxis: {
                         labels: {
                             style: {
-                                color: 'transparent'
+                                textOutline: 'none'
                             }
                         }
                     },
@@ -269,34 +240,35 @@ function compare() {
                     enabled: false
                 },
                 xAxis: {
-                    gridLineColor: '#707073',
+                    gridLineColor: 'var(--illo-lines)',
                     labels: {
                         style: {
-                            color: '#fff',
-                            fontSize: '12px'
+                            color: 'var(--text-primary)',
+                            fontSize: '12px',
+                            textOutline: 'none'
                         }
                     },
-                    lineColor: '#707073',
-                    minorGridLineColor: '#505053',
-                    tickColor: '#707073',
+                    lineColor: 'var(--illo-lines)',
+                    minorGridLineColor: 'var(--illo-accent-50)',
+                    tickColor: 'var(--illo-lines)',
                     min: '2013-05-05',
                     max: '2013-05-10'
                 },
                 yAxis: {
-                    gridLineColor: '#707073',
+                    gridLineColor: 'var(--illo-lines)',
                     labels: {
                         formatter: function () {
                             return (this.value > 0 ?
                                 ' + ' : '') + this.value + '%';
                         },
                         style: {
-                            color: '#fff',
+                            color: 'var(--text-primary)',
                             fontSize: '12px'
                         }
                     },
-                    lineColor: '#707073',
-                    minorGridLineColor: '#505053',
-                    tickColor: '#707073',
+                    lineColor: 'var(--illo-lines)',
+                    minorGridLineColor: 'var(--illo-accent-50)',
+                    tickColor: 'var(--illo-lines)',
                     tickWidth: 1,
                     plotLines: [{
                         value: 0,
@@ -314,7 +286,7 @@ function compare() {
                             }
                         },
                         dataLabels: {
-                            color: '#46465C',
+                            color: 'var(--illo-accent-50)',
                             style: {
                                 fontSize: '14px'
                             }
@@ -494,7 +466,15 @@ function ao() {
                 inputSpacing: 2
             },
             navigator: {
-                height: 30
+                height: 30,
+                xAxis: {
+                    labels: {
+                        style: {
+                            stroke: 'none',
+                            textOutline: 'none'
+                        }
+                    }
+                }
             },
             title: {
                 text: ''

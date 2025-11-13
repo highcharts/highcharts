@@ -1,3 +1,13 @@
+// theme changer from the main site
+if (window.top.document.children[0].hasAttribute('data-theme')) {
+    const theme = window.top.document.children[0].getAttribute('data-theme');
+    const body = document.getElementsByTagName('body')[0];
+
+    body.classList.remove('highcharts-dark');
+    body.classList.remove('highcharts-light');
+    body.classList.add('highcharts-' + theme);
+}
+
 Math.easeInSine = function (pos) {
     return -Math.cos(pos * (Math.PI / 2)) + 1;
 };
@@ -78,7 +88,7 @@ const finalMap = function () {
                 text: 'World Population Density',
                 style: {
                     fontFamily: 'IBM Plex Sans',
-                    color: '#fff'
+                    color: 'var(--text-primary)'
                 }
             },
             exporting: {
@@ -89,7 +99,7 @@ const finalMap = function () {
                     text: 'Population density per km²'
                 },
                 labelStyle: {
-                    color: '#fff'
+                    color: 'var(--text-primary)'
 
                 },
                 floating: true,
@@ -99,12 +109,13 @@ const finalMap = function () {
                 min: 1,
                 max: 1000,
                 type: 'logarithmic',
-                maxColor: '#4455f2'
+                maxColor: 'var(--illo-brand-700)'
             },
             mapNavigation: {
                 enabled: true,
                 buttonOptions: {
                     verticalAlign: 'bottom',
+                    padding: 10,
                     x: 5
                 }
             },
