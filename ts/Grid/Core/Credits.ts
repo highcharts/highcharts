@@ -24,9 +24,11 @@
 
 import type { CreditsOptions } from './Options';
 import type Grid from './Grid';
+import type { UpdateConfig } from './Update/UpdateScope';
 
 import Globals from './Globals.js';
 import GridUtils from './GridUtils.js';
+import { UpdateScope } from './Update/UpdateScope.js';
 
 const { makeHTMLElement, setHTMLContent } = GridUtils;
 
@@ -55,6 +57,49 @@ class Credits {
         text: '',
         href: 'https://www.highcharts.com',
         position: 'bottom'
+    };
+
+    /**
+     * Update configuration for credits options.
+     */
+    public static readonly updateConfig: UpdateConfig = {
+
+        'enabled': {
+            scope: UpdateScope.DOM_ELEMENT,
+            options: ['enabled'],
+            handler: function (module, newVal): void {
+                if (newVal && !module) {
+                    // Initialize credits will be handled by renderViewport
+                } else if (!newVal && module) {
+                    module?.destroy();
+                }
+            }
+        },
+
+        'text': {
+            scope: UpdateScope.DOM_ELEMENT,
+            options: ['text'],
+            handler: function (module, newVal): void {
+                if (module?.textElement) {
+                    setHTMLContent(module.textElement, newVal || '');
+                }
+            }
+        },
+
+        'href': {
+            scope: UpdateScope.DOM_ATTR,
+            options: ['href'],
+            handler: function (module, newVal): void {
+                if (module?.textElement) {
+                    module.textElement.setAttribute('href', newVal || '');
+                }
+            }
+        },
+
+        'position': {
+            scope: UpdateScope.REFLOW,
+            options: ['position']
+        }
     };
 
 

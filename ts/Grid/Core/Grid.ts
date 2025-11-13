@@ -27,6 +27,7 @@ import type { Options, GroupedHeaderOptions, IndividualColumnOptions } from './O
 import type DataTableOptions from '../../Data/DataTableOptions';
 import type Column from './Table/Column';
 import type Popup from './UI/Popup.js';
+import type { UpdateConfig, OptionChange, UpdatePlan } from './Update/UpdateScope';
 
 import Accessibility from './Accessibility/Accessibility.js';
 import AST from '../../Core/Renderer/HTML/AST.js';
@@ -39,6 +40,13 @@ import QueryingController from './Querying/QueryingController.js';
 import Globals from './Globals.js';
 import TimeBase from '../../Shared/TimeBase.js';
 import Pagination from './Pagination/Pagination.js';
+import { UpdateScope } from './Update/UpdateScope.js';
+import { CaptionUpdateConfig } from './Caption/CaptionUpdateConfig.js';
+import { DescriptionUpdateConfig } from './Description/DescriptionUpdateConfig.js';
+import { LangUpdateConfig } from './Lang/LangUpdateConfig.js';
+import { RenderingUpdateConfig } from './Rendering/RenderingUpdateConfig.js';
+import { TimeUpdateConfig } from './Time/TimeUpdateConfig.js';
+import Credits from './Credits.js';
 
 const { makeHTMLElement, setHTMLContent } = GridUtils;
 const {
@@ -47,7 +55,8 @@ const {
     getStyle,
     merge,
     pick,
-    isObject
+    isObject,
+    diffObjects
 } = U;
 
 
@@ -64,6 +73,7 @@ class Grid {
 
     /* *
     *
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     *  Static Methods
     *
     * */
@@ -287,6 +297,19 @@ class Grid {
      */
     private dataTableEventDestructors: Function[] = [];
 
+    /**
+     * Registry of update configurations from all modules.
+     * @internal
+     */
+    private updateConfigRegistry = new Map<string, UpdateConfig>();
+
+    /**
+     * Module instances for update handlers.
+     * @internal
+     */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    private moduleInstances = new Map<string, any>();
+
 
     /* *
     *
@@ -325,6 +348,7 @@ class Grid {
         fireEvent(this, 'beforeLoad');
 
         Grid.grids.push(this);
+        this.registerUpdateConfigs();
         this.initContainers(renderTo);
         this.initAccessibility();
         this.initPagination();
@@ -347,7 +371,7 @@ class Grid {
     /*
      * Initializes the accessibility controller.
      */
-    private initAccessibility(): void {
+    public initAccessibility(): void {
         this.accessibility?.destroy();
         delete this.accessibility;
 
@@ -359,7 +383,7 @@ class Grid {
     /*
      * Initializes the pagination.
      */
-    private initPagination(): void {
+    public initPagination(): void {
         let state: Pagination.PaginationState | undefined;
 
         if (this.pagination) {
@@ -579,6 +603,8 @@ class Grid {
         render = true,
         oneToOne = false
     ): Promise<void> {
+        const previousOptions = merge({}, this.options);
+
         this.loadUserOptions(options, oneToOne);
 
         if (!this.dataTable || options.dataTable) {
@@ -593,24 +619,381 @@ class Grid {
             return;
         }
 
-        this.initAccessibility();
-        this.initPagination();
+        // Check structural options (columns, header, dataTable, columnDefaults)
+        // These always require full viewport render
+        let requiresViewportRender = false;
+        const structuralOptions: Array<keyof Options> = [
+            'columns',
+            'header',
+            'dataTable',
+            'columnDefaults'
+        ];
 
-        this.querying.loadOptions();
+        for (const key of structuralOptions) {
+            if (options[key] !== void 0 && options[key] !== null) {
+                const newVal = this.options?.[key];
+                const oldVal = previousOptions?.[key];
 
-        // Update locale.
-        const locale = options.lang?.locale;
-        if (locale) {
-            this.locale = locale;
-            this.time.update(extend<TimeBase.TimeOptions>(
-                options.time || {},
-                { locale: this.locale }
-            ));
+                // Check if values are objects before using diffObjects
+                if (
+                    isObject(newVal, true) &&
+                    isObject(oldVal, true)
+                ) {
+                    const diff = diffObjects(newVal, oldVal);
+                    if (Object.keys(diff).length > 0) {
+                        requiresViewportRender = true;
+                        break;
+                    }
+                } else if (newVal !== oldVal) {
+                    // For non-objects, simple comparison
+                    requiresViewportRender = true;
+                    break;
+                }
+            }
         }
 
-        await this.querying.proceed();
-        this.renderViewport();
+        // Collect all changes from module configs
+        const allChanges = this.collectChangesFromConfigs(
+            options,
+            previousOptions
+        );
+
+        // Create update plan (sort + group by phases)
+        const plan = this.createUpdatePlan(allChanges);
+
+        // Override maxScope if structural changes detected
+        if (requiresViewportRender) {
+            plan.maxScope = UpdateScope.VIEWPORT_RENDER;
+        }
+
+        // Execute update plan
+        await this.executeUpdatePlan(plan);
     }
+
+    /**
+     * Registers update configurations from all modules.
+     * @internal
+     */
+    private registerUpdateConfigs(): void {
+        // Register configs from modules
+        this.updateConfigRegistry.set('pagination', Pagination.updateConfig);
+        this.updateConfigRegistry.set(
+            'accessibility',
+            Accessibility.updateConfig
+        );
+        this.updateConfigRegistry.set('lang', LangUpdateConfig);
+        this.updateConfigRegistry.set(
+            'rendering',
+            RenderingUpdateConfig
+        );
+        this.updateConfigRegistry.set('caption', CaptionUpdateConfig);
+        this.updateConfigRegistry.set(
+            'description',
+            DescriptionUpdateConfig
+        );
+        this.updateConfigRegistry.set('time', TimeUpdateConfig);
+        this.updateConfigRegistry.set('credits', Credits.updateConfig);
+
+    }
+
+    /**
+     * Collects changes from all registered configs.
+     * @param newOptions New options to compare
+     * @param oldOptions Previous options to compare
+     * @internal
+     */
+    private collectChangesFromConfigs(
+        newOptions: Partial<Options>,
+        oldOptions: Partial<Options>
+    ): OptionChange[] {
+        const changes: OptionChange[] = [];
+
+        // Update module instances (may have been re-initialized)
+        this.moduleInstances.set('pagination', this.pagination);
+        this.moduleInstances.set('accessibility', this.accessibility);
+        this.moduleInstances.set('credits', this.credits);
+
+        for (const [moduleKey, moduleConfig] of this.updateConfigRegistry) {
+            if (newOptions[moduleKey as keyof Options] === void 0) {
+                continue;
+            }
+
+            const moduleInstance = this.moduleInstances.get(moduleKey);
+            const moduleChanges = this.processModuleConfig(
+                moduleKey,
+                moduleConfig,
+                moduleInstance,
+                newOptions[moduleKey as keyof Options],
+                oldOptions[moduleKey as keyof Options]
+            );
+
+            changes.push(...moduleChanges);
+        }
+
+        return changes;
+    }
+
+    /**
+     * Processes a single module's config and returns changes.
+     * @param moduleKey Module key (pagination, accessibility, etc.)
+     * @param moduleConfig Module's update configuration
+     * @param moduleInstance Module instance or undefined
+     * @param newOptions New module options
+     * @param oldOptions Previous module options
+     * @internal
+     */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    private processModuleConfig(
+        moduleKey: string,
+        moduleConfig: UpdateConfig,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        moduleInstance: any,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        newOptions: any,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        oldOptions: any
+    ): OptionChange[] {
+        const changes: OptionChange[] = [];
+
+        for (const configEntry of Object.values(moduleConfig)) {
+            const { scope, options, handler, priority, dependencies } =
+                configEntry;
+
+            for (const optionPath of options) {
+                const rawNewVal = this.getValueByPath(newOptions, optionPath);
+                const rawOldVal = this.getValueByPath(oldOptions, optionPath);
+
+                // Normalize boolean shorthand
+                const newVal = this.normalizeOption(rawNewVal);
+                const oldVal = this.normalizeOption(rawOldVal);
+
+                // Deep comparison - skip if no changes
+                if (newVal === oldVal) {
+                    continue;
+                }
+
+                // For objects, check if there are any differences
+                if (
+                    typeof newVal === 'object' &&
+                    typeof oldVal === 'object' &&
+                    newVal !== null &&
+                    oldVal !== null
+                ) {
+                    const diff = diffObjects(newVal, oldVal);
+                    if (Object.keys(diff).length === 0) {
+                        continue;
+                    }
+                }
+
+                const gridContext = this;
+                changes.push({
+                    path: `${moduleKey}.${optionPath}`,
+                    scope,
+                    priority,
+                    dependencies: dependencies?.map(
+                        (d): string => `${moduleKey}.${d}`
+                    ),
+                    handler: handler ?
+                        function (): void {
+                            handler.call(
+                                gridContext,
+                                moduleInstance,
+                                rawNewVal,
+                                rawOldVal,
+                                optionPath
+                            );
+                        } :
+                        (): void => {}
+                });
+            }
+        }
+
+        return changes;
+    }
+
+    /**
+     * Creates update plan with phases and sorting.
+     * @param changes Collected option changes to process
+     * @internal
+     */
+    private createUpdatePlan(changes: OptionChange[]): UpdatePlan {
+        // Sort by dependencies and priority
+        const sortedChanges = this.sortChangesByDependencies(changes);
+
+        // Group by scope (phases)
+        const phases = new Map<UpdateScope, OptionChange[]>();
+        let maxScope = UpdateScope.NONE;
+
+        for (const change of sortedChanges) {
+            maxScope = Math.max(maxScope, change.scope);
+
+            if (!phases.has(change.scope)) {
+                phases.set(change.scope, []);
+            }
+            phases.get(change.scope)!.push(change);
+        }
+
+        const hasStructuralChanges = sortedChanges.some(
+            (c): boolean => c.scope === UpdateScope.VIEWPORT_RENDER
+        );
+
+        return { phases, maxScope, hasStructuralChanges };
+    }
+
+    /**
+     * Sorts changes by dependencies and priority.
+     * @param changes Changes to sort by dependencies
+     * @internal
+     */
+    private sortChangesByDependencies(
+        changes: OptionChange[]
+    ): OptionChange[] {
+        const sorted: OptionChange[] = [];
+        const processed = new Set<string>();
+        const inProgress = new Set<string>();
+
+        const visit = (change: OptionChange): void => {
+            const path = change.path;
+
+            // Cycle detection
+            if (inProgress.has(path)) {
+                // eslint-disable-next-line no-console
+                console.warn(`Circular dependency detected: ${path}`);
+                return;
+            }
+
+            if (processed.has(path)) {
+                return;
+            }
+
+            inProgress.add(path);
+
+            // Process dependencies first
+            if (change.dependencies) {
+                for (const depPath of change.dependencies) {
+                    const depChange = changes.find(
+                        (c): boolean => c.path === depPath
+                    );
+                    if (depChange) {
+                        visit(depChange);
+                    }
+                }
+            }
+
+            inProgress.delete(path);
+            processed.add(path);
+            sorted.push(change);
+        };
+
+        // Pre-sort by scope and priority
+        const preSorted = [...changes].sort((a, b): number => {
+            if (a.scope !== b.scope) {
+                return a.scope - b.scope;
+            }
+            return (a.priority || 0) - (b.priority || 0);
+        });
+
+        // Visit all changes
+        for (const change of preSorted) {
+            visit(change);
+        }
+
+        return sorted;
+    }
+
+    /**
+     * Executes update plan in phases.
+     * @param plan Update plan to execute
+     * @internal
+     */
+    private async executeUpdatePlan(plan: UpdatePlan): Promise<void> {
+        const { phases, maxScope, hasStructuralChanges } = plan;
+
+        // Shortcut for structural changes
+        if (hasStructuralChanges || maxScope === UpdateScope.VIEWPORT_RENDER) {
+            this.executeAllHandlers(phases);
+            this.initAccessibility();
+            this.initPagination();
+            this.querying.loadOptions();
+            await this.querying.proceed();
+            this.renderViewport();
+            return;
+        }
+
+        // Execute phases in order
+        const scopeOrder = [
+            UpdateScope.NONE,
+            UpdateScope.DOM_ATTR,
+            UpdateScope.DOM_ELEMENT,
+            UpdateScope.REFLOW,
+            UpdateScope.ROWS_UPDATE
+        ];
+
+        for (const scope of scopeOrder) {
+            const scopeChanges = phases.get(scope);
+            if (scopeChanges) {
+                for (const change of scopeChanges) {
+                    change.handler();
+                }
+            }
+        }
+
+        // Execute global action based on max scope
+        if (maxScope === UpdateScope.ROWS_UPDATE) {
+            this.querying.loadOptions();
+            await this.querying.proceed();
+            await this.viewport?.updateRows();
+        } else if (maxScope === UpdateScope.REFLOW) {
+            this.viewport?.reflow();
+        }
+    }
+
+    /**
+     * Executes all handlers from all phases.
+     * @param phases Grouped changes by UpdateScope
+     * @internal
+     */
+    private executeAllHandlers(phases: Map<UpdateScope, OptionChange[]>): void {
+        for (const [, changes] of phases) {
+            for (const change of changes) {
+                change.handler();
+            }
+        }
+    }
+
+    /**
+     * Gets value by dot-notation path.
+     * @param obj Object to traverse
+     * @param path Dot-separated path
+     * @internal
+     */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    private getValueByPath(obj: any, path: string): any {
+        return path.split('.').reduce(
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (current, key): any => current?.[key],
+            obj
+        );
+    }
+
+    /**
+     * Normalizes boolean shorthand to object with 'enabled' property.
+     * @param value Value to normalize
+     * @internal
+     */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    private normalizeOption(value: any): any {
+        if (value === null || value === void 0) {
+            return value;
+        }
+
+        if (typeof value === 'boolean') {
+            return { enabled: value };
+        }
+
+        return value;
+    }
+
 
     public updateColumn(
         columnId: string,

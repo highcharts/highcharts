@@ -24,11 +24,13 @@
 
 import type Grid from '../Grid';
 import type { ColumnSortingOrder, FilteringCondition } from '../Options';
+import type { UpdateConfig } from '../Update/UpdateScope';
 import whcm from '../../../Accessibility/HighContrastMode.js';
 
 import Globals from '../Globals.js';
 import ColumnFiltering from '../Table/Actions/ColumnFiltering/ColumnFiltering.js';
 import GridUtils from '../GridUtils.js';
+import { UpdateScope } from '../Update/UpdateScope.js';
 
 const { formatText } = GridUtils;
 
@@ -37,6 +39,53 @@ const { formatText } = GridUtils;
  *  Representing the accessibility functionalities for the Data Grid.
  */
 class Accessibility {
+
+    /* *
+    *
+    *  Static Properties
+    *
+    * */
+
+    /**
+     * Update configuration for accessibility options.
+     */
+    public static readonly updateConfig: UpdateConfig = {
+
+        'enabled': {
+            scope: UpdateScope.DOM_ATTR,
+            options: ['enabled'],
+            priority: 0,
+            handler: function (module, newVal): void {
+                if (newVal) {
+                    this.initAccessibility();
+                } else if (module) {
+                    module.destroy();
+                }
+            }
+        },
+
+        'highContrastMode': {
+            scope: UpdateScope.DOM_ATTR,
+            options: ['highContrastMode'],
+            priority: 1,
+            handler: function (module, newVal): void {
+                if (module && newVal) {
+                    module.addHighContrast();
+                }
+            }
+        },
+
+        'announcements': {
+            scope: UpdateScope.NONE,
+            options: [
+                'announcements',
+                'announcements.sorting',
+                'announcements.filtering',
+                'announcements.pagination',
+                'announcements.cellEditing'
+            ]
+        }
+    };
 
     /* *
     *

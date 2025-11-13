@@ -28,6 +28,7 @@ import type {
     PageSizeSelectorOptions,
     PageButtonsOptions
 } from './PaginationOptions';
+import type { UpdateConfig } from '../Update/UpdateScope';
 
 import Icons from './Icons.js';
 import Defaults from '../Defaults.js';
@@ -35,6 +36,7 @@ import Globals from '../Globals.js';
 import GridUtils from '../GridUtils.js';
 import Utilities from '../../../Core/Utilities.js';
 import AST from '../../../Core/Renderer/HTML/AST.js';
+import { UpdateScope } from '../Update/UpdateScope.js';
 
 const { makeHTMLElement, formatText } = GridUtils;
 const { merge, fireEvent, isObject, defined } = Utilities;
@@ -75,6 +77,74 @@ class Pagination {
                 enabled: true,
                 count: 7
             }
+        }
+    };
+
+    /**
+     * Update configuration for pagination options.
+     */
+    public static readonly updateConfig: UpdateConfig = {
+
+        'enabled': {
+            scope: UpdateScope.DOM_ELEMENT,
+            options: ['enabled'],
+            priority: 0,
+            handler: function (module, newVal): void {
+                if (newVal) {
+                    this.initPagination();
+                    // Must render after init
+                    if (this.pagination) {
+                        this.pagination.render();
+                    }
+                } else if (module) {
+                    module.destroy();
+                }
+            }
+        },
+
+        'pageSize': {
+            scope: UpdateScope.ROWS_UPDATE,
+            options: ['pageSize'],
+            priority: 1,
+            handler: function (module, newVal): void {
+                if (!module) {
+                    return;
+                }
+
+                // Update state
+                module.currentPageSize = newVal;
+                module.currentPage = 1;
+
+                // Update select UI
+                if (module.pageSizeSelect) {
+                    module.pageSizeSelect.value = String(newVal);
+                }
+
+                // Mark for query update
+                this.querying.pagination.setRange(1);
+            }
+        },
+
+        'position': {
+            scope: UpdateScope.VIEWPORT_RENDER,
+            options: ['position']
+        },
+
+        'controls': {
+            scope: UpdateScope.VIEWPORT_RENDER,
+            options: [
+                'controls',
+                'controls.pageSizeSelector',
+                'controls.pageInfo',
+                'controls.firstLastButtons',
+                'controls.previousNextButtons',
+                'controls.pageButtons'
+            ]
+        },
+
+        'events': {
+            scope: UpdateScope.NONE,
+            options: ['events']
         }
     };
 
