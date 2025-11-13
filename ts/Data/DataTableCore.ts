@@ -338,9 +338,11 @@ class DataTableCore {
         const { columns } = this,
             indexRowCount = insert ? this.rowCount + 1 : rowIndex + 1;
 
-        objectEach(row, (cellValue, columnId): void => {
-            let column = columns[columnId] ||
-                eventDetail?.addColumns !== false && new Array(indexRowCount);
+        objectEach(columns, (column, columnId): void => {
+            if (!column && eventDetail?.addColumns !== false) {
+                column = new Array(indexRowCount);
+            }
+
             if (column) {
                 if (insert) {
                     column = splice(
@@ -348,10 +350,10 @@ class DataTableCore {
                         rowIndex,
                         0,
                         true,
-                        [cellValue]
+                        [row[columnId] ?? null]
                     ).array;
                 } else {
-                    column[rowIndex] = cellValue;
+                    column[rowIndex] = row[columnId] ?? null;
                 }
                 columns[columnId] = column;
             }
