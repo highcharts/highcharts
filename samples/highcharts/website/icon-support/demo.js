@@ -1,5 +1,12 @@
 (function syncThemeWithParentAndSystem() {
     try {
+
+        if (window.top?.location?.href?.startsWith('http://localhost:3030/samples/')) {
+            // eslint-disable-next-line max-len
+            console.info('[Highcharts Demo] Local samples environment detected — skipping theme sync.');
+            return;
+        }
+
         const parentDoc = window.top?.document;
         if (!parentDoc) {
             return;
