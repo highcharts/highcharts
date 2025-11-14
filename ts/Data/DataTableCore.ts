@@ -336,7 +336,16 @@ class DataTableCore {
         eventDetail?: DataEvent.Detail
     ): void {
         const { columns } = this,
-            indexRowCount = insert ? this.rowCount + 1 : rowIndex + 1;
+            indexRowCount = insert ? this.rowCount + 1 : rowIndex + 1,
+            rowKeys = Object.keys(row);
+
+        for (let i = 0, iEnd = rowKeys.length; i < iEnd; i++) {
+            const key = rowKeys[i];
+
+            if (!columns[key] && eventDetail?.addColumns !== false) {
+                columns[key] = [];
+            }
+        }
 
         objectEach(columns, (column, columnId): void => {
             if (!column && eventDetail?.addColumns !== false) {
