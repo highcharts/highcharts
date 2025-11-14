@@ -34,7 +34,8 @@ const {
 
 import Utils from '../../../../Core/Utilities.js';
 const {
-    defined
+    defined,
+    isString
 } = Utils;
 
 
@@ -102,7 +103,7 @@ class TextContent extends CellContent {
         } else if (isDefaultFormat) {
             const formattedValue = formatter?.call(cell);
 
-            if (typeof formattedValue === 'string') {
+            if (isString(formattedValue)) {
                 cellContent = formattedValue;
             } else {
                 cellContent = value + '';
