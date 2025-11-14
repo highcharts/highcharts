@@ -27,7 +27,7 @@ import type DataTable from '../../../Data/DataTable';
 import type Column from '../../Core/Table/Column';
 
 import DownloadURL from '../../../Shared/DownloadURL.js';
-import U from '../../../Core/Utilities';
+import U from '../../../Core/Utilities.js';
 
 const { downloadURL, getBlobFromContent } = DownloadURL;
 const { defined } = U;
