@@ -1,12 +1,88 @@
-// theme changer from the main site
-if (window.top.document.children[0].hasAttribute('data-theme')) {
-    const theme = window.top.document.children[0].getAttribute('data-theme');
-    const body = document.getElementsByTagName('body')[0];
+(function syncThemeWithParentAndSystem() {
+    try {
+        const parentDoc = window.top?.document;
+        if (!parentDoc) {
+            return;
+        }
 
-    body.classList.remove('highcharts-dark');
-    body.classList.remove('highcharts-light');
-    body.classList.add('highcharts-' + theme);
-}
+        const parentHtml = parentDoc.documentElement;
+        if (!parentHtml) {
+            return;
+        }
+
+        const body = document.body;
+        if (!body) {
+            return;
+        }
+
+        let currentTheme = null;
+
+        // --- System-level preference ---
+        const systemPref = window.matchMedia('(prefers-color-scheme: dark)');
+
+        const getEffectiveTheme = () => {
+            // Get main site's data-theme attribute
+            // eslint-disable-next-line max-len
+            const parentTheme = parentHtml.getAttribute('data-theme') || 'light';
+            // If main site is using system mode,
+            // derive from user’s system preference
+            if (parentTheme === 'system') {
+                return systemPref.matches ? 'dark' : 'light';
+            }
+            return parentTheme;
+        };
+
+        const applyTheme = () => {
+            const theme = getEffectiveTheme();
+            if (theme === currentTheme) {
+                return;
+            } // Avoid unnecessary DOM churn
+
+            currentTheme = theme;
+
+            body.classList.remove('highcharts-light', 'highcharts-dark');
+            body.classList.add('highcharts-' + theme);
+
+            // Mirror color-scheme hint for form controls, scrollbars, etc.
+            document.documentElement.style.colorScheme = theme;
+
+            console.info(`[Highcharts Demo] Applied theme: ${theme}`);
+        };
+
+        // Initial apply
+        applyTheme();
+
+        // --- Watch parent <html> attribute changes ---
+        const observer = new MutationObserver(mutations => {
+            for (const m of mutations) {
+                // eslint-disable-next-line max-len
+                if (m.attributeName === 'data-theme' || m.attributeName === 'style') {
+                    applyTheme();
+                }
+            }
+        });
+        observer.observe(parentHtml, { attributes: true });
+
+        // --- Watch for system color scheme changes ---
+        systemPref.addEventListener('change', applyTheme);
+
+        // --- Cleanup when iframe unloads ---
+        window.addEventListener('unload', () => {
+            observer.disconnect();
+            systemPref.removeEventListener('change', applyTheme);
+        });
+
+        // eslint-disable-next-line max-len
+        console.info('[Highcharts Demo] Theme sync active (with system mode support).');
+    } catch (err) {
+        if (err.name === 'SecurityError') {
+            // eslint-disable-next-line max-len
+            console.warn('[Highcharts Demo] Cross-origin context; theme sync disabled.');
+        } else {
+            console.error('[Highcharts Demo] Theme sync failed:', err);
+        }
+    }
+}());
 
 Math.easeInSine = function (pos) {
     return -Math.cos(pos * (Math.PI / 2)) + 1;
