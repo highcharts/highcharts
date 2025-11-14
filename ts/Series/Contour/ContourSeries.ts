@@ -347,11 +347,13 @@ export default class ContourSeries extends ScatterSeries {
                 offsetArray.set(offsets.slice(0, 64));
                 this.contourOffsetsBuffer.unmap();
 
-                const contourOffsetsCountBuffer = device.createBuffer({
-                    size: 4,
-                    usage: uniformUsage,
-                    mappedAtCreation: true
-                });
+                const contourOffsetsCountBuffer = (
+                    this.contourOffsetsCountBuffer = device.createBuffer({
+                        size: 4,
+                        usage: uniformUsage,
+                        mappedAtCreation: true
+                    })
+                );
                 new Uint32Array(
                     contourOffsetsCountBuffer.getMappedRange()
                 )[0] = offsets.length;
@@ -475,7 +477,7 @@ export default class ContourSeries extends ScatterSeries {
 
                         @group(0) @binding(2) var<storage> colorStops: array<vec4<f32>>;
                         @group(0) @binding(3) var<uniform> colorStopsCount: u32;
-                        @group(0) @binding(4) var<uniform> contourInterval: f32;
+                        @group(0) @binding(4) var<uniform> contourBaseInterval: f32;
                         @group(0) @binding(5) var<uniform> smoothColoring: u32;
                         @group(0) @binding(6) var<uniform> showContourLines: u32;
                         @group(0) @binding(7) var<uniform> contourLineColor: vec3<f32>;
@@ -525,50 +527,41 @@ export default class ContourSeries extends ScatterSeries {
 
                             let epsilon: f32 = 0.0001;
                             let adjustedLineWidth: f32 = (
-                                lineWidth *
-                                gradient +
-                                epsilon
+                                lineWidth * gradient + epsilon
                             );
 
-                            // --- NEW: Per-level offset ---
-                            var effectiveVal = val;
-                            let baseLevel = floor(val / contourInterval);
+                            // Calculate level index and effective interval
+                            let baseLevel = floor(val / contourBaseInterval);
                             let levelIndex = u32(baseLevel);
 
+                            // Get offset for this levels
+                            var offset: f32 = 0.0;
                             if (levelIndex < contourOffsetsCount) {
-                                effectiveVal = val - contourOffsets[levelIndex];
+                                offset = contourOffsets[levelIndex];
                             }
 
-                            // Use effectiveVal for modulo
-                            let valDiv: f32 = effectiveVal / contourInterval;
+                            // Use base interval if no offsets are defined
+                            let contourInterval = select(
+                                contourBaseInterval,
+                                contourBaseInterval + offset,
+                                contourOffsetsCount > 0u
+                            );
+
+                            let valDiv: f32 = val / contourInterval;
                             let valMod: f32 = (
-                                effectiveVal -
-                                contourInterval *
-                                floor(valDiv)
+                                val - contourInterval * floor(valDiv)
                             );
 
-                            // Anti-aliased line
-                            let lineMask: f32 = (
-                                smoothstep(0.0, adjustedLineWidth, valMod) *
-                                (
-                                    1.0 -
-                                    smoothstep(
-                                        contourInterval - adjustedLineWidth,
-                                        contourInterval,
-                                        valMod
-                                    )
+                            let lineMask: f32 = smoothstep(
+                                0.0,
+                                adjustedLineWidth,
+                                valMod
+                            ) * (
+                                1.0 - smoothstep(
+                                    contourInterval - adjustedLineWidth,
+                                    contourInterval,
+                                    valMod
                                 )
-                            );
-
-                            let averageValInBand : f32 = (
-                                // Contour index
-                                floor(
-                                    val /
-                                    contourInterval
-                                ) *
-                                contourInterval +
-                                contourInterval /
-                                2.0
                             );
 
                             // BACKGROUND COLOR
@@ -576,35 +569,23 @@ export default class ContourSeries extends ScatterSeries {
                             let maxHeight: f32 = input.valExtremes.y;
 
                             var bgColor: vec3f = getColor(select(
-                                // Average norm value
+                                // Average norm value (for smooth coloring off)
                                 (
-                                    (
-                                        // Average val in band
-                                        (
-                                            // Contour index
-                                            floor(
-                                                val /
-                                                contourInterval
-                                            ) *
-                                            contourInterval +
-                                            contourInterval /
-                                            2.0
-                                        ) - minHeight
-                                    ) /
-                                    (maxHeight - minHeight)
-                                ),
-                                // Norm value
-                                (
-                                    (val - minHeight) /
-                                    (maxHeight - minHeight)
-                                ),
-                                smoothColoring > 0
+                                    (floor(val / contourInterval) *
+                                    contourInterval +
+                                    contourInterval /
+                                    2.0
+                                ) - minHeight) /
+                                (maxHeight - minHeight),
+                                // Norm value (for smooth coloring on)
+                                (val - minHeight) / (maxHeight - minHeight),
+                                smoothColoring > 0u
                             ));
 
                             // MIX
                             var pixelColor = bgColor;
 
-                            if (showContourLines > 0) {
+                            if (showContourLines > 0u) {
                                 pixelColor = mix(
                                     contourLineColor,
                                     pixelColor,
@@ -691,7 +672,7 @@ export default class ContourSeries extends ScatterSeries {
                         resource: { buffer: this.contourOffsetsBuffer }
                     }, {
                         binding: 9,
-                        resource: { buffer: contourOffsetsCountBuffer }
+                        resource: { buffer: this.contourOffsetsCountBuffer }
                     }]
                 });
 

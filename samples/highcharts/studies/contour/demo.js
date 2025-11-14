@@ -21,7 +21,7 @@ Highcharts.chart('container', {
         type: 'contour',
         showContourLines: true,
         contourInterval: 0.5,
-        contourOffsets: [0, 0.2],
+        contourOffsets: [0, 0.3],
         data: d
     }]
 });
