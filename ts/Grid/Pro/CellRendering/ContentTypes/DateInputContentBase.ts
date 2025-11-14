@@ -27,6 +27,7 @@ import type TableCell from '../../../Core/Table/Body/TableCell';
 
 import CellContentPro from '../CellContentPro.js';
 import CellRenderer from '../CellRenderer';
+import Globals from '../../../Core/Globals.js';
 
 
 /* *
@@ -99,6 +100,7 @@ abstract class DateInputContentBase extends CellContentPro implements EditModeCo
         input.tabIndex = -1;
         input.type = this.getInputType();
         input.name = cell.column.id + '-' + cell.row.id;
+        input.classList.add(Globals.getClassName('input'));
 
         if (options.attributes) {
             Object.entries(options.attributes).forEach(([key, value]): void => {
