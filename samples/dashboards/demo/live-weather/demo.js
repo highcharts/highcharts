@@ -184,7 +184,8 @@ const kpiGaugeOptions = {
         },
         enableMouseTracking: false,
         innerRadius: '90%',
-        radius: '120%'
+        radius: '120%',
+        clip: false
     }],
     accessibility: {
         typeDescription: 'The gauge chart with 1 data point.'
