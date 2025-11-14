@@ -145,7 +145,7 @@ There are different types of data modifiers:
 - `Sort` - Sort modifiers allow the display order of rows to be set based on the result of sorting the data in specific columns.
 - `Math` - Math modifiers allow the creation of additional columns with data mathematically transformed from another column.
 
-The [`dataModifier`](https://api.highcharts.com/dashboards/#interfaces/Data_Connectors_CSVConnectorOptions.CSVConnectorOptions-1#dataModifier) option can be used in the connectors options, as follows:
+The [`dataModifier`](https://api.highcharts.com/dashboards/#interfaces/Data_Connectors_CSVConnectorOptions.CSVConnectorOptions#dataModifier) option can be used in the connectors options, as follows:
 
 ```js
 connectors: [{
