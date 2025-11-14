@@ -28,7 +28,6 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type { YAxisOptions } from '../../Core/Axis/AxisOptions';
 
-import AxisResizerDefaults from './AxisResizerDefaults.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -54,16 +53,6 @@ const {
  *        Main axis for the AxisResizer.
  */
 class AxisResizer {
-
-    /* *
-     *
-     *  Static Properties
-     *
-     * */
-
-    // Default options for AxisResizer.
-    public static resizerOptions = AxisResizerDefaults;
-
     /* *
      *
      *  Constructor
@@ -377,7 +366,7 @@ class AxisResizer {
                     // Normalize height to option limits
                     height = normalize(axis.len - yDelta, minLength, maxLength);
 
-                    // Adjust top, so the axis looks like shrinked from top
+                    // Adjust top, so the axis looks like shrank from top
                     top = axis.top + yDelta;
 
                     // Check for plot area limits
@@ -477,4 +466,5 @@ class AxisResizer {
  *
  * */
 
+/** @internal */
 export default AxisResizer;

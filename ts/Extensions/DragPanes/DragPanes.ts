@@ -21,10 +21,11 @@
  * */
 
 import type Axis from '../../Core/Axis/Axis';
-import type AxisResizerOptions from './AxisResizerOptions';
+import type AxisResizeOptions from './AxisResizerOptions';
 import type Pointer from '../../Core/Pointer';
 
 import AxisResizer from './AxisResizer.js';
+import AxisResizerDefaults from './AxisResizerDefaults.js';
 import D from '../../Core/Defaults.js';
 const { defaultOptions } = D;
 import U from '../../Core/Utilities.js';
@@ -40,6 +41,7 @@ const {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Axis/AxisBase' {
     interface AxisBase {
         resizer?: AxisResizer;
@@ -47,11 +49,50 @@ declare module '../../Core/Axis/AxisBase' {
 }
 
 declare module '../../Core/Axis/AxisOptions' {
-    interface AxisOptions extends AxisResizerOptions {
-        // Nothing more to add
+    interface AxisOptions {
+        /**
+         * Maximal size of a resizable axis. Could be set as a percent
+         * of plot area or pixel size.
+         *
+         * @sample {highstock} stock/yaxis/resize-min-max-length
+         *         minLength and maxLength
+         *
+         * @type      {number|string}
+         * @product   highstock
+         * @requires  modules/drag-panes
+         * @apioption yAxis.maxLength
+         */
+        maxLength?: (number|string);
+
+        /**
+         * Minimal size of a resizable axis. Could be set as a percent
+         * of plot area or pixel size.
+         *
+         * @sample {highstock} stock/yaxis/resize-min-max-length
+         *         minLength and maxLength
+         *
+         * @type      {number|string}
+         * @product   highstock
+         * @requires  modules/drag-panes
+         * @apioption yAxis.minLength
+         */
+        minLength?: (number|string);
+
+        /**
+         * Options for axis resizing. It adds a thick line between panes which
+         * the user can drag in order to resize the panes.
+         *
+         * @sample {highstock} stock/demo/candlestick-and-volume
+         *         Axis resizing enabled
+         *
+         * @product      highstock
+         * @requires     modules/drag-panes
+         */
+        resize?: AxisResizeOptions;
     }
 }
 
+/** @internal */
 declare module '../../Core/Chart/ChartBase' {
     interface ChartBase {
         activeResizer?: boolean;
@@ -71,7 +112,7 @@ function compose(
 ): void {
 
     if (!AxisClass.keepProps.includes('resizer')) {
-        merge(true, defaultOptions.yAxis, AxisResizer.resizerOptions);
+        merge(true, defaultOptions.yAxis, AxisResizerDefaults);
 
         // Keep resizer reference on axis update
         AxisClass.keepProps.push('resizer');
@@ -181,8 +222,10 @@ function wrapPointerRunPointActions(
  *
  * */
 
+/** @internal */
 const DragPanes = {
     compose
 };
 
+/** @internal */
 export default DragPanes;
