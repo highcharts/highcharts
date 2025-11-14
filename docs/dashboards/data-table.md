@@ -174,7 +174,7 @@ The `DataTable` class offers several methods for accessing data. Some of the mos
 - `getColumns`- Returns all or several columns.
 - `getModifier`- Returns the modifier for the table.
 
-And many more. For a full list of methods, see the [API documentation](https://api.highcharts.com/dashboards/#classes/Data_DataTable.DataTable-1).
+And many more. For a full list of methods, see the [API documentation](https://api.highcharts.com/dashboards/#classes/Data_DataTable.DataTable).
 
 
 ## Set operations
@@ -186,7 +186,7 @@ The `DataTable` class offers several methods for modifying data. Some of the mos
 - `setColumns`- Sets cell values for multiple columns.
 - `setModifier`- Sets or unsets the modifier for the table.
 
-See other available methods in the [API documentation](https://api.highcharts.com/dashboards/#classes/Data_DataTable.DataTable-1).
+See other available methods in the [API documentation](https://api.highcharts.com/dashboards/#classes/Data_DataTable.DataTable).
 
 ## Other operations
 Other useful operations include:
@@ -195,4 +195,3 @@ Other useful operations include:
 - `deleteColumns`- Deletes columns from the table.
 - `deleteRows`- Deletes rows from the table.
 - `on`- Adds an event listener to the table for a specific event.
-
