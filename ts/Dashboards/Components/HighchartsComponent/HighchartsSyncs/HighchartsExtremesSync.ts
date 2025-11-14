@@ -50,7 +50,7 @@ const syncPair: Sync.SyncPair = {
 
         const { chart, board } = component;
         const connector = component.connectorHandlers?.[0]?.connector;
-        const table = connector && connector.table;
+        const table = connector && connector.getTable();
         const syncOptions = this.sync.syncConfig.extremes;
         const groupKey = syncOptions.group ?
             ':' + syncOptions.group : '';
@@ -97,7 +97,7 @@ const syncPair: Sync.SyncPair = {
                             axis.coll === 'xAxis' &&
                             visiblePoints.length
                         ) {
-                            let columnName: string | undefined;
+                            let columnId: string | undefined;
                             const columnAssignment = (
                                 component.connectorHandlers[0]
                                     ?.options as ConnectorOptions
@@ -114,28 +114,28 @@ const syncPair: Sync.SyncPair = {
                                 if (assignment) {
                                     const data = assignment.data;
                                     if (isString(data)) {
-                                        columnName = data;
+                                        columnId = data;
                                     } else if (Array.isArray(data)) {
-                                        columnName = data[data.length - 1];
+                                        columnId = data[data.length - 1];
                                     } else {
-                                        columnName = data.y;
+                                        columnId = data.y;
                                     }
                                 }
                             }
 
-                            if (!columnName) {
-                                columnName = axis.dateTime && (
+                            if (!columnId) {
+                                columnId = axis.dateTime && (
                                     table.hasColumns(['x']) ? 'x' :
                                         series.options.id ?? series.name
                                 );
                             }
 
                             minCursorData.row = visiblePoints[0].index;
-                            minCursorData.column = columnName;
+                            minCursorData.column = columnId;
 
                             maxCursorData.row =
                                 visiblePoints[visiblePoints.length - 1].index;
-                            maxCursorData.column = columnName;
+                            maxCursorData.column = columnId;
                         }
 
                         // Emit as lasting cursors
@@ -236,7 +236,7 @@ const syncPair: Sync.SyncPair = {
 
         if (chart && board && chart.zooming?.type) {
             const dimensions = chart.zooming.type.split('')
-                .map((c): String => c + 'Axis') as ('xAxis'|'yAxis')[];
+                .map((c): string => c + 'Axis') as ('xAxis'|'yAxis')[];
             const unregisterCallbacks: (() => void)[] = [];
 
             dimensions.forEach((dimension): void => {
@@ -288,7 +288,7 @@ const syncPair: Sync.SyncPair = {
                         component.connectorHandlers?.[0]?.connector;
 
                     if (connector) {
-                        const { table } = connector;
+                        const table = connector.getTable();
                         cursor.addListener(
                             table.id,
                             `${dimension}.extremes.min${groupKey}`,

@@ -1,47 +1,147 @@
 Highcharts.chart('container', {
-    accessibility: {
-        point: {
-            valueDescriptionFormat: '{point.name}: {point.longDescription}.'
-        }
+    tooltip: {
+        headerFormat: '',
+        pointFormat: '' +
+            '{#if (eq 1 point.sets.length)}' +
+                'Product:<br><b>Highcharts {point.sets.0}</b>' +
+            '{else}' +
+                'Products:<br>' +
+                '{#each point.sets}' +
+                    'Highcharts <b>{this}</b>{#unless @last} and {/unless}' +
+                '{/each}<br><br>' +
+                'Shared components:<br>' +
+                '<b>{point.name}</b><br>' +
+            '{/if}'
     },
     series: [{
         type: 'venn',
+        colors: [
+            'rgb(180, 210, 255)',
+            'rgb(180, 255, 210)',
+            'rgb(180, 235, 235)',
+            'rgb(200, 200, 200)',
+            'rgb(170, 230, 250)',
+            'rgb(170, 250, 230)',
+            'rgb(170, 240, 240)',
+            'rgb(190, 190, 190)',
+            'rgb(160, 220, 245)',
+            'rgb(160, 245, 220)'
+        ],
         data: [{
-            sets: ['A'],
-            value: 4,
-            name: 'Euler diagrams',
-            longDescription: 'An Euler diagram is a diagrammatic means of ' +
-                'representing sets and their ' +
-                'relationships. Unlike Venn diagrams, which show all ' +
-                'possible relations ' +
-                'between different sets, the Euler diagram shows only ' +
-                'relevant ' +
-                'relationships.'
+            sets: ['Core'],
+            value: 10,
+            name: 'Highcharts Core',
+            dataLabels: {
+                style: {
+                    fontSize: 15
+                }
+            }
         }, {
-            sets: ['B'],
+            sets: ['Stock'],
+            value: 3,
+            dataLabels: {
+                style: {
+                    fontSize: 13
+                }
+            }
+        }, {
+            sets: ['Dashboards'],
+            value: 3,
+            dataLabels: {
+                style: {
+                    fontSize: 13
+                }
+            }
+        }, {
+            sets: ['Gantt'],
+            value: 2.5,
+            dataLabels: {
+                style: {
+                    fontSize: 13
+                }
+            }
+        }, {
+            sets: ['Maps'],
+            value: 3,
+            dataLabels: {
+                style: {
+                    fontSize: 13
+                }
+            }
+        }, {
+            sets: ['Gantt', 'Maps', 'Stock'],
             value: 1,
-            name: 'Venn diagrams',
-            longDescription: 'In Venn diagrams the curves are overlapped in ' +
-                'every possible way, ' +
-                'showing all possible relations between the sets. They are ' +
-                'thus a ' +
-                'special case of Euler diagrams, which do not necessarily ' +
-                'show all ' +
-                'relations'
+            name: 'Core'
         }, {
-            sets: ['A', 'B'],
-            value: 1
+            sets: ['Stock', 'Core'],
+            value: 1,
+            name: 'DateTime Series and Axis'
+        }, {
+            sets: ['Gantt', 'Core'],
+            value: 1,
+            name: 'X-range Series and DateTime Axis'
+        }, {
+            sets: ['Maps', 'Core'],
+            value: 1,
+            name: 'Heatmap and ColorAxis'
+        }, {
+            sets: ['Stock', 'Gantt'],
+            value: 0.25,
+            name: 'Navigator & RangeSelector'
+        }, {
+            sets: ['Dashboards', 'Core'],
+            value: 1,
+            name: 'Data Layer'
+        }, {
+            sets: ['Dashboards', 'Grid'],
+            value: 0.5,
+            name: 'Grid'
+        }, {
+            sets: ['Dashboards', 'KPI'],
+            value: 0.5,
+            name: 'KPI'
+        }, {
+            sets: ['Grid'],
+            value: 0.5,
+            name: ''
+        }, {
+            sets: ['KPI'],
+            value: 0.2,
+            name: 'KPI'
+        }, {
+            sets: ['Custom'],
+            value: 2,
+            name: 'Custom component'
+        }, {
+            sets: ['Custom', 'Dashboards'],
+            value: 0.3,
+            name: 'Sync API'
         }]
     }],
-    tooltip: {
-        headerFormat:
-            '<span style="color:{point.color}">\u2022</span> ' +
-            '<span style="font-size: 14px"> {point.point.name}</span><br/>',
-        pointFormat: '{point.longDescription}<br><span style="font-size: ' +
-            '10px">Source: Wikipedia</span>'
-    },
     title: {
-        text: 'Relationship between Euler and Venn diagrams',
-        align: 'left'
+        text: 'Highsoft products relationships'
+    },
+    subtitle: {
+        text: 'Highcharts Core, Stock, Maps, Gantt, and Dashboards'
+    },
+    accessibility: {
+        point: {
+            valueDescriptionFormat: '' +
+                '{#if (eq 1 point.sets.length)}' +
+                    'Product: Highcharts {point.sets.0}' +
+                '{else}' +
+                    'Products: ' +
+                    '{#each point.sets}' +
+                        'Highcharts {this}{#unless @last} and {/unless}' +
+                    '{/each}' +
+                    ', Shared components: ' +
+                    '{point.name}' +
+                '{/if}'
+        },
+        series: {
+            describeSingleSeries: true,
+            descriptionFormat: 'Venn diagram with ' +
+                '{series.points.length} relations.'
+        }
     }
 });

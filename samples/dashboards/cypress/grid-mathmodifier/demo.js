@@ -4,17 +4,15 @@ Dashboards.board('container', {
         connectors: [{
             id: 'EUR-USD',
             type: 'CSV',
-            options: {
-                csv: document.getElementById('csv').innerText,
-                firstRowAsNames: true,
-                // Add MathModifier to create USD column with exchange valuta
-                dataModifier: {
-                    type: 'Math',
-                    columnFormulas: [{
-                        column: 'USD',
-                        formula: 'B1*C1' // Multiply EUR (B1) with the rate (C1)
-                    }]
-                }
+            csv: document.getElementById('csv').innerText,
+            firstRowAsNames: true,
+            // Add MathModifier to create USD column with exchange valuta
+            dataModifier: {
+                type: 'Math',
+                columnFormulas: [{
+                    column: 'USD',
+                    formula: 'B1*C1' // Multiply EUR (B1) with the rate (C1)
+                }]
             }
         }]
     },
@@ -88,13 +86,17 @@ Dashboards.board('container', {
             gridOptions: {
                 columnDefaults: {
                     cells: {
-                        editable: true
+                        editMode: {
+                            enabled: true
+                        }
                     }
                 },
                 columns: [{
                     id: 'USD',
                     cells: {
-                        editable: false
+                        editMode: {
+                            enabled: false
+                        }
                     }
                 }]
             },

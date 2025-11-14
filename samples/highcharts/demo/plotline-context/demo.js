@@ -73,7 +73,7 @@ const chart = Highcharts.chart('container', {
         plotBands: [{
             from: 3.5,
             to: 8.5,
-            color: '#EEFFF4',
+            color: '#00ff8833',
             label: {
                 text: 'Summer',
                 align: 'left',
@@ -107,7 +107,7 @@ const chart = Highcharts.chart('container', {
     series: [{
         name: 'Helsinki',
         data: [-5, -6, -2, 4, 10, 14, 17, 15, 10, 6, 0, -4],
-        color: '#2F2D2E'
+        color: 'var(--highcharts-neutral-color-80, #334eff)'
     }]
 });
 

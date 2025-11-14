@@ -167,6 +167,28 @@ QUnit.test(
             `When the data label background color is set to 'auto', set the
             data label color by contrast to the point color. (#20007).`
         );
+
+        chart.update({
+            chart: {
+                backgroundColor: 'transparent'
+            },
+            series: [{
+                data: [1],
+                dataLabels: {
+                    enabled: true
+                }
+            }]
+        });
+
+        const transparentLabelFill = chart.series[0].points[0]
+            .dataLabel.options.style.color;
+
+        assert.strictEqual(
+            Highcharts.color(transparentLabelFill).get(),
+            Highcharts.color('#000000').get(),
+            `When chart background is 'transparent', data label color should
+            fall back to black (#transparent-contrast).`
+        );
     }
 );
 

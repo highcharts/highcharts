@@ -47,8 +47,8 @@ const {
  *
  * */
 
-declare module '../SVG/SVGRendererLike' {
-    interface SVGRendererLike {
+declare module '../SVG/SVGRendererBase' {
+    interface SVGRendererBase {
         /** @requires Core/Renderer/HTML/HTMLElement */
         html(str: string, x: number, y: number): HTMLElement;
     }
@@ -429,7 +429,8 @@ class HTMLElement extends SVGElement {
             if (textWidth !== oldTextWidth) { // #983, #1254
                 const textPxLength = getTextPxLength(),
                     textWidthNum = textWidth || 0,
-                    willOverWrap = element.style.textOverflow === '' &&
+                    willOverWrap = !renderer.styledMode &&
+                        element.style.textOverflow === '' &&
                         element.style.webkitLineClamp;
                 if (
                     (

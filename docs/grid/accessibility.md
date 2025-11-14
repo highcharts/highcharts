@@ -14,12 +14,13 @@ Accessibility features are enabled by default, and we generally recommend keepin
 
 ```js
 {
-  accessibility: {
-    enabled: false,
-    announcements: {
-      sorting: true
+    accessibility: {
+        enabled: false,
+        announcements: {
+            sorting: true,
+            filtering: true
+        }
     }
-  }
 }
 ```
 
@@ -33,29 +34,35 @@ To customize the default language or wording for ARIA attributes and announcers,
 
 ```js
 {
-  lang: {
-    accessibility: {
-      cellEditing: {
-        editable: "Editable",
-        announcements: {
-          started: "Entered cell editing mode",
-          ...
+    lang: {
+        accessibility: {
+            cellEditing: {
+                editable: "Editable",
+                announcements: {
+                    started: "Entered cell editing mode",
+                    ...
+                }
+            },
+            sorting: {
+                announcements: {
+                    ascending: "Sorted ascending",
+                    ...
+                }
+            },
+            filtering: {
+                announcements: {
+                    filterApplied: "Filter applied for {columnId}, {condition} {value}. {rowsCount} results found.",
+                    ...
+                }
+            }
         }
-      },
-      sorting: {
-        announcements: {
-          ascending: "Sorted ascending",
-          ...
-        }
-      }
     }
-  }
 }
 ```
 
-For a complete list of available options, check out the [API reference](https://api.highcharts.com/dashboards/#interfaces/DataGrid_Options.LangOptions).
+For a complete list of available options, check out the [API reference](https://api.highcharts.com/dashboards/#interfaces/Grid_Options.LangOptions).
 
-When configuring localization, it typically want it to apply to all grids on the same page. In such cases, we recommend using `setOptions()` to apply these changes globally. Read [Understanding Highcharts DataGrid](https://www.highcharts.com/docs/grid/understanding-grid#setOptions) for the details.
+When configuring localization, it typically want it to apply to all grids on the same page. In such cases, we recommend using `setOptions()` to apply these changes globally. Read [Understanding Highcharts Grid](https://www.highcharts.com/docs/grid/understanding-grid#setOptions) for the details.
 
 ## High contrast mode
 
@@ -63,16 +70,16 @@ When developing your own custom theme it's recommended to include a high contras
 
 ```css
 .my-theme {
-  --hcg-color: #606060;
-  --hcg-border-stye: dashed;
-  ...;
+    --hcg-color: #606060;
+    --hcg-border-stye: dashed;
+    ...;
 }
 @media (prefers-contrast: more) {
-  .my-theme {
-    --hcg-color: #000000;
-    --hcg-border-style: solid;
-    ...;
-  }
+    .my-theme {
+        --hcg-color: #000000;
+        --hcg-border-style: solid;
+        ...;
+    }
 }
 ```
 
@@ -88,6 +95,6 @@ Make sure you use a proper heading level (`<h1>`–`<h6>`) when configuring the 
 
 ```js
 caption: {
-  text: "<h3>This is the caption</h3>";
+    text: "<h3>This is the caption</h3>";
 }
 ```

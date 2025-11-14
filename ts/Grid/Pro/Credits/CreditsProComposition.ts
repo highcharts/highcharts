@@ -60,11 +60,14 @@ namespace CreditsProComposition {
             credits: CreditsPro.defaultOptions
         });
 
+        // TODO: Change to `beforeLoad` after upgrading grid update.
         addEvent(GridClass, 'afterRenderViewport', initCredits);
     }
 
     /**
-     * Callback function called before table initialization.
+     * Init configurable credits.
+     * @param this
+     * Reference to Grid.
      */
     function initCredits(this: Grid): void {
         this.credits = new CreditsPro(this, this.options?.credits);

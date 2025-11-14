@@ -22,6 +22,7 @@
 
 import type Accessibility from '../Accessibility';
 import type Chart from '../../Core/Chart/Chart.js';
+import type { DeepPartial } from '../../Shared/Types';
 import type { LegendAccessibilityOptions } from '../Options/A11yOptions';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type ProxyElement from '../ProxyElement';
@@ -66,14 +67,14 @@ declare module '../../Core/Legend/LegendItem' {
     }
 }
 
-declare module '../../Core/Series/PointLike' {
-    interface PointLike {
+declare module '../../Core/Series/PointBase' {
+    interface PointBase {
         a11yProxyElement?: ProxyElement;
     }
 }
 
-declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase {
         a11yProxyElement?: ProxyElement;
     }
 }
@@ -520,7 +521,7 @@ class LegendComponent extends AccessibilityComponent {
                 ]
             ],
 
-            validate: function (): (boolean) {
+            validate: function (): boolean {
                 return component.shouldHaveLegendNavigation();
             },
 
@@ -591,7 +592,7 @@ class LegendComponent extends AccessibilityComponent {
     /**
      * @private
      */
-    public shouldHaveLegendNavigation(): (boolean) {
+    public shouldHaveLegendNavigation(): boolean {
         if (!shouldDoLegendA11y(this.chart)) {
             return false;
         }

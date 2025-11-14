@@ -61,9 +61,7 @@ Dashboards.board('container', {
         connectors: [{
             type: 'JSON',
             id: 'synchro-data',
-            options: {
-                data
-            }
+            data
         }]
     },
     gui: {
@@ -131,7 +129,9 @@ Dashboards.board('container', {
             columns: [{
                 id: 'Vitamin A',
                 cells: {
-                    editable: true
+                    editMode: {
+                        enabled: true
+                    }
                 }
             }]
         }

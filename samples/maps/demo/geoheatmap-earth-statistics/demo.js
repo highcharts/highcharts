@@ -11,7 +11,7 @@
             title: 'Land Surface (day) and Sea Temperature in August 2022',
             url: 'https://www.highcharts.com/samples/data/geoheatmap-land-sea-day-temp-august-2022.json',
             colorAxis: {
-                min: -20,
+                min: -40,
                 max: 40,
                 labels: {
                     format: '{value}°C',
@@ -20,13 +20,15 @@
                     }
                 },
                 stops: [
-                    [0, '#9589d3'],
-                    [0.16, '#7cc4be'],
-                    [0.33, '#5d8bbe'],
-                    [0.5, '#688f2c'],
-                    [0.66, '#dbac0b'],
-                    [0.83, '#e75e14'],
-                    [1, '#852809']
+                    [0.00, 'rgb(14,   14, 120)'],
+                    [0.17, 'rgb(62,  117, 207)'],
+                    [0.30, 'rgb(91,  190, 243)'],
+                    [0.43, 'rgb(175, 237, 234)'],
+                    [0.50, 'rgb(229, 241, 196)'],
+                    [0.59, 'rgb(244, 213, 130)'],
+                    [0.71, 'rgb(237, 158,  80)'],
+                    [0.85, 'rgb(204,  90,  41)'],
+                    [1.00, 'rgb(150,  20,  30)']
                 ]
             },
             data: landDayData
@@ -35,22 +37,24 @@
             title: 'Land Surface (night) and Sea Temperature in August 2022',
             url: 'https://www.highcharts.com/samples/data/geoheatmap-land-sea-night-temp-august-2022.json',
             colorAxis: {
-                min: -20,
+                min: -40,
                 max: 40,
                 labels: {
-                    format: '{value} °C',
+                    format: '{value}°C',
                     style: {
                         color: '#fff'
                     }
                 },
                 stops: [
-                    [0, '#9589d3'],
-                    [0.16, '#7cc4be'],
-                    [0.33, '#5d8bbe'],
-                    [0.5, '#688f2c'],
-                    [0.66, '#dbac0b'],
-                    [0.83, '#e75e14'],
-                    [1, '#852809']
+                    [0.00, 'rgb(14,   14, 120)'],
+                    [0.17, 'rgb(62,  117, 207)'],
+                    [0.30, 'rgb(91,  190, 243)'],
+                    [0.43, 'rgb(175, 237, 234)'],
+                    [0.50, 'rgb(229, 241, 196)'],
+                    [0.59, 'rgb(244, 213, 130)'],
+                    [0.71, 'rgb(237, 158,  80)'],
+                    [0.85, 'rgb(204,  90,  41)'],
+                    [1.00, 'rgb(150,  20,  30)']
                 ]
             },
             data: void 0
@@ -100,7 +104,7 @@
     const chart = Highcharts.mapChart('container', {
         chart: {
             map: topology,
-            backgroundColor: '#000'
+            backgroundColor: '#141414'
         },
 
         title: {

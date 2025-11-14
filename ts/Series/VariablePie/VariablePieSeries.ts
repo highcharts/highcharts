@@ -43,8 +43,8 @@ import VariablePieSeriesDefaults from './VariablePieSeriesDefaults.js';
  *
  * */
 
-declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase {
         maxPxSize?: number;
         minPxSize?: number;
     }

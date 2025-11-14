@@ -19,6 +19,7 @@
  * */
 
 import type A11yOptions from './A11yOptions';
+import type { DeepPartial } from '../../Shared/Types';
 
 /* *
  *
@@ -186,6 +187,9 @@ const Options: DeepPartial<A11yOptions> = {
              *
              * Set to empty string to remove the region altogether.
              *
+             * @sample highcharts/accessibility/before-chart-format
+             *         beforeChartFormat
+             *
              * @since 8.0.0
              */
             beforeChartFormat:
@@ -300,6 +304,9 @@ const Options: DeepPartial<A11yOptions> = {
              * won't have accessible descriptions unless handled separately.
              *
              * Set to `false` to disable.
+             *
+             * @sample highcharts/accessibility/point-description-enabled-threshold
+             *         pointDescriptionEnabledThreshold
              *
              * @type  {boolean|number}
              * @since 8.0.0
@@ -531,6 +538,9 @@ const Options: DeepPartial<A11yOptions> = {
          * The default option is `auto`, which applies the high contrast theme
          * the user's system has a high contrast theme active.
          *
+         * @sample highcharts/accessibility/high-contrast-mode
+         *         High contrast mode enabled
+         *
          * @since 11.4.0
          */
         highContrastMode: 'auto',
@@ -654,6 +664,9 @@ const Options: DeepPartial<A11yOptions> = {
              * `container` first in order will make the keyboard focus stop on
              * the chart container first, requiring the user to tab again to
              * enter the chart.
+             *
+             * @sample highcharts/accessibility/custom-component
+             *         Custom order is set
              *
              * @type  {Array<string>}
              * @since 7.1.0

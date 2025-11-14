@@ -30,8 +30,7 @@ import FSLib from '../libs/fs.js';
 
 
 /** @type {ExternalsJSON} */
-const externals =
-    FSLib.getFile(FSLib.path([import.meta.dirname, 'externals.json']), true);
+const externals = [];
 
 
 /* *
@@ -62,6 +61,80 @@ function createUMDConfig(namespace, ...pathMembers) {
         commonjs2: commonjs,
         root: [namespace, ...pathMembers]
     };
+}
+
+
+/**
+ * Decorates an import path to make sure it follows specifications.
+ *
+ * @param {string} path
+ * Import path to decorate.
+ *
+ * @param {boolean} [asCJS]
+ * Flag to indicate that the import path is for a CommonJS module.
+ *
+ * @return {string}
+ * Decorated import path according to specifications.
+ */
+function decorateImportPath(
+    path,
+    asCJS
+) {
+
+    if (asCJS) {
+        const extMatch = path.match(/\.[jt]sx?$/u);
+        if (extMatch) {
+            path = path.substring(0, path.length - extMatch[0].length);
+        }
+    } else {
+        if (!path.match(/^[.]{1,2}\//u)) {
+            path = `./${path}`;
+        }
+        if (!path.match(/\.[jt]sx?$/u)) {
+            path += '.js';
+        }
+    }
+
+    return path;
+}
+
+
+/**
+ * Loads a configuration file with an array of external descriptions. This gets
+ * consumed internally by `resolveExternals`.
+ *
+ * @see {@link ExternalsJSON}
+ *
+ * @param {string} filePath
+ * File path to the configuration JSON.
+ */
+export function loadExternalsJSON(filePath) {
+    const entries = FSLib.getFile(filePath, true);
+
+    externals.length = 0;
+
+    if (entries instanceof Array) {
+        for (const entry of entries) {
+            externals.push(entry);
+        }
+    }
+
+}
+
+/**
+ * Appends additional externals to the current list.
+ *
+ * @param {Array<ExternalsDefinition>} [entries]
+ * Additional externals to register.
+ */
+export function appendExternals(entries) {
+    if (!entries) {
+        return;
+    }
+
+    for (const entry of entries) {
+        externals.push(entry);
+    }
 }
 
 
@@ -130,41 +203,6 @@ export async function makeExternals(
                 [externalsType]: [namespace, namespaceName]
             };
     }
-}
-
-
-/**
- * Decorates an import path to make sure it follows specifications.
- *
- * @param {string} path
- * Import path to decorate.
- *
- * @param {boolean} [asCJS]
- * Flag to indicate that the import path is for a CommonJS module.
- *
- * @return {string}
- * Decorated import path according to specifications.
- */
-function decorateImportPath(
-    path,
-    asCJS
-) {
-
-    if (asCJS) {
-        const extMatch = path.match(/\.[jt]sx?$/u);
-        if (extMatch) {
-            path = path.substring(0, path.length - extMatch[0].length);
-        }
-    } else {
-        if (!path.match(/^[.]{1,2}\//u)) {
-            path = `./${path}`;
-        }
-        if (!path.match(/\.[jt]sx?$/u)) {
-            path += '.js';
-        }
-    }
-
-    return path;
 }
 
 
@@ -281,6 +319,8 @@ export async function resolveExternals(
 
 
 export default {
+    loadExternalsJSON,
+    makeExternals,
     resolveExternals
 };
 

@@ -43,8 +43,10 @@ async function run() {
     // ...
   }, true);
   // A component usually performs access to the data pool.
-  const table = await board.dataPool.getConnectorTable('My Currency Data');
-  const modifiedTable = table.modified;
+  const table = await board.dataPool
+    .getConnector('My Currency Data')
+    .then((connector) => connector.getTable());
+  const modifiedTable = table.getModified();
 }
 run();
 ```
@@ -132,7 +134,7 @@ Spreadsheet key: **1U17c4GljMWpgk1bcTvUzIuWT8vdOnlCBHTm5S8Jh8tw**
 
 ### Basic demo
 
-<iframe style="width: 100%; height: 450px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/data/googlesheets-tutorial" allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 450px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/data/googlesheets-tutorial?force-light-theme" allow="fullscreen"></iframe>
 
 
 ## HTMLTableConnector
@@ -303,4 +305,4 @@ The `MQTTConnector` can be reused for other applications by copying the entire c
 MQTTConnector.registerType('MQTT', MQTTConnector);
 ```
 
-<iframe style="width: 100%; height: 450px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/data/mqtt-connector" allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 450px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/data/mqtt-connector?force-light-theme" allow="fullscreen"></iframe>

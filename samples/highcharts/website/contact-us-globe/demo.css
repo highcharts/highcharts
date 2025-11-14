@@ -1,0 +1,96 @@
+root,
+.highcharts-light {
+    --highcharts-background-color: #fff;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --highcharts-background-color: #141414;
+    }
+}
+
+.highcharts-dark {
+    --highcharts-background-color: #141414;
+}
+
+* {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
+}
+
+.highcharts-figure {
+    min-width: 300px;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.highcharts-light #demo-content,
+.highcharts-dark #demo-content,
+#demo-content {
+    background: transparent;
+}
+
+.highcharts-dark #demo-content,
+.highcharts-light #demo-content {
+    background-color: transparent;
+    box-shadow: none;
+}
+
+body.highcharts-light {
+    background-color: #fff;
+}
+
+#container {
+    max-height: 500px;
+    max-width: 500px;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+}
+
+.highcharts-description {
+    margin: 0.3rem 10px;
+}
+
+.highcharts-data-label .city {
+    box-shadow:
+        0 6px 2px 0 rgba(0, 0, 0, 0.01),
+        0 3px 2px 0 rgba(0, 0, 0, 0.05),
+        0 1px 1px 0 rgba(0, 0, 0, 0.09),
+        0 0 1px 0 rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    padding: 4px;
+    background-color: var(--highcharts-neutral-color-3);
+    color: var(--highcharts-neutral-color-100);
+    border-radius: 4px;
+    border: 0 solid #fff;
+}
+
+#chart-description {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    white-space: nowrap;
+    clip: rect(1px, 1px, 1px, 1px);
+    margin-top: -3px;
+    opacity: 0.01;
+}
+
+.highcharts-title {
+    display: none;
+}
+
+#container svg {
+    cursor: grab;
+}

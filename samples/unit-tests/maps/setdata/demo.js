@@ -847,7 +847,7 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
 
     const series = chart.series[0],
         mapView = chart.mapView,
-        columnNames = Object.keys(series.dataTable.columns);
+        columnIds = Object.keys(series.dataTable.columns);
 
     let centerBeforeUpdate,
         zoomBeforeUpdate;
@@ -981,7 +981,7 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
 
     assert.deepEqual(
         Object.keys(series.dataTable.columns),
-        columnNames,
+        columnIds,
         'The column names should not change after addPoint'
     );
 
@@ -1002,8 +1002,8 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
     // #15782 Right side
     let mapNavY = chart.mapNavigation.navButtonsGroup.getBBox().y +
         chart.mapNavigation.navButtonsGroup.translateY;
-    let expBtnEdge = chart.exportingGroup.getBBox().y +
-        chart.exportingGroup.getBBox().height;
+    let expBtnEdge = chart.exporting.group.getBBox().y +
+        chart.exporting.group.getBBox().height;
 
     assert.ok(
         mapNavY > expBtnEdge,
@@ -1029,8 +1029,8 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
     // #15782 Left side
     mapNavY = chart.mapNavigation.navButtonsGroup.getBBox().y +
         chart.mapNavigation.navButtonsGroup.translateY;
-    expBtnEdge = chart.exportingGroup.getBBox().y +
-        chart.exportingGroup.getBBox().height;
+    expBtnEdge = chart.exporting.group.getBBox().y +
+        chart.exporting.group.getBBox().height;
 
     assert.ok(
         mapNavY > expBtnEdge,
@@ -1056,7 +1056,7 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
 
     mapNavY = chart.mapNavigation.navButtonsGroup.getBBox().y +
         chart.mapNavigation.navButtonsGroup.getBBox().height;
-    expBtnEdge = chart.exportingGroup.getBBox().y;
+    expBtnEdge = chart.exporting.group.getBBox().y;
 
     assert.ok(
         mapNavY < expBtnEdge,
@@ -1083,7 +1083,7 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
 
     mapNavY = chart.mapNavigation.navButtonsGroup.getBBox().y +
         chart.mapNavigation.navButtonsGroup.getBBox().height;
-    expBtnEdge = chart.exportingGroup.getBBox().y;
+    expBtnEdge = chart.exporting.group.getBBox().y;
 
     assert.ok(
         mapNavY < expBtnEdge,

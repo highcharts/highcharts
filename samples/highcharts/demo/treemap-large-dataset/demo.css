@@ -10,6 +10,8 @@ body {
         "Segoe UI Emoji",
         "Segoe UI Symbol",
         sans-serif;
+    background: #252931;
+    color: white;
 }
 
 #container {

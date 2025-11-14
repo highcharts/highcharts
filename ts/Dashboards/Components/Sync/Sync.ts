@@ -402,16 +402,16 @@ namespace Sync {
 
     /** @internal */
     export type OptionsRecord = (
-        Record<(SyncEmitter['id']|SyncHandler['id']), OptionsEntry>
+        Record<string, OptionsEntry>
     );
 
     /** @internal */
     export type RawOptionsRecord = (
-        Record<(
-            SyncEmitter['id']|SyncHandler['id']
-        ), undefined|boolean|OptionsEntry>
+        Record<string, boolean | OptionsEntry | undefined>
     );
 }
+
+
 /* *
  *
  *  Default Export

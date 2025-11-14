@@ -7,13 +7,16 @@ on:
     branches: [ 'master' ]
     paths:
       - 'css/**'
+      - '!css/dashboards*'
+      - '!css/grid*'
       - 'samples/**'
       - '!samples/dashboards/**'
-      - '!samples/data-grid/**'
+      - '!samples/grid-lite/**'
+      - '!samples/grid-pro/**'
       - 'test/**'
       - 'ts/**'
       - '!ts/Dashboards/**'
-      - '!ts/DataGrid/**'
+      - '!ts/Grid/**'
       - '!ts/masters-dashboards/**'
       - '.github/workflows/**'
 

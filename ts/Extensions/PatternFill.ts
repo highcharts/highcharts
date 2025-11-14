@@ -54,8 +54,8 @@ const {
  *
  * */
 
-declare module '../Core/Renderer/SVG/SVGRendererLike' {
-    interface SVGRendererLike {
+declare module '../Core/Renderer/SVG/SVGRendererBase' {
+    interface SVGRendererBase {
         defIds?: Array<string>;
         idCounter?: number;
         patternElements?: Record<string, SVGElement>;
@@ -66,8 +66,8 @@ declare module '../Core/Renderer/SVG/SVGRendererLike' {
     }
 }
 
-declare module '../Core/Series/PointLike' {
-    interface PointLike {
+declare module '../Core/Series/PointBase' {
+    interface PointBase {
         /** @requires modules/pattern-fill */
         calculatePatternDimensions(
             pattern: PatternOptionsObject
@@ -88,7 +88,7 @@ export interface PatternObject {
 }
 
 export interface PatternOptionsObject {
-    _inverted?: (Boolean);
+    _inverted?: boolean;
     _height?: (number|string);
     _width?: (number|string);
     _x?: number;
@@ -198,11 +198,10 @@ function createPatterns(): Array<PatternOptionsObject> {
     ) {
         patterns.push({
             path: pattern,
-            color: colors[i],
+            color: colors[i++],
             width: 10,
             height: 10
         });
-        i = i + 5;
     }
 
     return patterns;

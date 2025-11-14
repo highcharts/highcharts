@@ -194,7 +194,7 @@ class ContainerComponent extends AccessibilityComponent {
         return new (KeyboardNavigationHandler as any)(chart, {
             keyCodeMap: [],
 
-            validate: function (): (boolean) {
+            validate: function (): boolean {
                 return true;
             },
 

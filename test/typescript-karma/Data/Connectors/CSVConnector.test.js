@@ -1,7 +1,11 @@
 import CSVConnector from '/base/code/es-modules/Data/Connectors/CSVConnector.js';
-import { registerConnectorEvents, testExportedDataTable } from './utils.js';
+import { registerConnectorEvents } from './utils.js';
+import ColumnUtils from '/base/code/es-modules/Data/ColumnUtils.js';
+const {
+    convertToNumber
+} = ColumnUtils;
 
-const { test, only, skip } = QUnit;
+const { test } = QUnit;
 
 const csv = `Grade,Ounce,Gram,Inch,mm,PPO
 "#TriBall",0.7199,  20.41,    0.60,15.24,     1 #this is a comment
@@ -37,21 +41,17 @@ test('CSVConnector from string', async (assert) => {
 
     assert.strictEqual(
         // names are not loaded as data unless firstRowAsNames = false
-        connector.table.getRowCount(), csv.split('\n').length - 1,
+        connector.getTable().getRowCount(),
+        csv.split('\n').length - 1,
         'DataTable has correct amount of rows.'
     );
     assert.strictEqual(
-        connector.table.getColumnNames().length,
+        connector.getTable().getColumnIds().length,
         csv.split('\n')[0].split(',').length,
         'DataTable has correct amount of columns.'
     );
 
-    // const dataConnectorFromJSON = CSVConnector.fromJSON(connector.toJSON());
-    // dataConnectorFromJSON.load();
-
-    // testExportedDataTable(connector.table, dataConnectorFromJSON.table, assert);
-
-    const foundComment = connector.table
+    const foundComment = connector.getTable()
         .getRow(1)
         .some((col) => ('' + col).includes('#this is a comment'));
     assert.ok(!foundComment, 'Comment is not added to the dataTable');
@@ -65,7 +65,7 @@ test('CSVConnector from string, spaces in header', async (assert) =>{
     await connector.load();
 
     assert.deepEqual(
-        connector.table.getColumnNames(),
+        connector.getTable().getColumnIds(),
         ['Number', 'Letter', 'Color'],
         'DataTable headers are trimmed of whitespace'
     );
@@ -79,7 +79,7 @@ test('CSVConnector from string, quoted spaces in header', async (assert) =>{
     await connector.load();
 
     assert.deepEqual(
-        connector.table.getColumnNames(),
+        connector.getTable().getColumnIds(),
         [' Number', ' Letter', ' Color'],
         'Quoted DataTable headers are not trimmed of whitespace'
     );
@@ -93,11 +93,11 @@ test('CSVConnector from string, with decimalpoint option', async (assert) => {
     await connector.load();
 
     assert.strictEqual(
-        connector.table.getRowCount(),
+        connector.getTable().getRowCount(),
         3
     );
     assert.strictEqual(
-        typeof connector.table.getCell('Value', 2),
+        typeof connector.getTable().getCell('Value', 2),
         'number',
         'The converter should be able to guess this decimalpoint'
     )
@@ -107,7 +107,7 @@ test('CSVConnector from string, with decimalpoint option', async (assert) => {
     await connector.load();
 
     assert.strictEqual(
-        typeof connector.table.getCell('Value', 2),
+        typeof connector.getTable().getCell('Value', 2),
         'string',
         'Converter should respect given decimal point in options and not convert to number.'
     );
@@ -124,7 +124,7 @@ test('CSVConnector, negative values', async (assert) => {
     await connector.load();
 
     assert.deepEqual(
-        connector.table.getColumns(['Values'])['Values'],
+        connector.getTable().getColumns(['Values'])['Values'],
         array
     );
 
@@ -142,7 +142,7 @@ test('CSV with ""s', async (assert) => {
     await connector.load();
 
     assert.deepEqual(
-        connector.table.getColumnNames(),
+        connector.getTable().getColumnIds(),
         ['test', 'test2'],
         'Headers should not contain ""s'
     )
@@ -150,20 +150,6 @@ test('CSV with ""s', async (assert) => {
     connector.describeColumn('test', {
         dataType: 'string'
     })
-
-    assert.strictEqual(
-        connector.converter.export(connector).split('\n')[1].split(',')[0],
-        '\"12\"',
-        'The first value (12) should be quoted when exported to csv, if dataType is set to string'
-    )
-
-    // Not quite here yet
-
-    // assert.strictEqual(
-    //     connector.save(),
-    //     csv,
-    //     'Output should be same as input'
-    // )
 });
 
 test('CSVConnector from URL', async (assert) => {
@@ -182,14 +168,15 @@ test('CSVConnector from URL', async (assert) => {
     const doneLoading = assert.async(3);
 
     connector.on('afterLoad', (e) => {
+        const table = connector.getTable();
         assert.ok(
-            e.table.getRowCount() > 1,
+            table.getRowCount() > 1,
             'DataConnector should have rows.'
         );
 
         // Check that the connector is updated
         // with the new dataset when polling
-        states[pollNumber] = e.table.clone();
+        states[pollNumber] = table.clone();
 
         if (pollNumber > 0 && states[pollNumber]) {
             assert.strictEqual(
@@ -198,8 +185,10 @@ test('CSVConnector from URL', async (assert) => {
                 'Should have the same amount of rows'
             )
 
-            const currentValue = states[pollNumber].getCellAsNumber('X', 1, true);
-            const previousValue = states[pollNumber - 1].getCellAsNumber('X', 1, true);
+            const currentValue = 
+                convertToNumber(states[pollNumber].getCell('X', 1), true);
+            const previousValue = 
+                convertToNumber(states[pollNumber - 1].getCell('X', 1), true);
             assert.notStrictEqual(
                 currentValue,
                 previousValue,
@@ -235,10 +224,6 @@ test('CSVConnector from URL', async (assert) => {
         doneLoading();
     });
 
-    connector.on('load', (e) => {
-        assert.deepEqual(e.table, connector.table, 'DataTable from event is same as DataTable from connector')
-    });
-
     connector.on('loadError', (e) => {
         // In case of an error do a log and finish the test
         console.warn(e.error);
@@ -249,23 +234,3 @@ test('CSVConnector from URL', async (assert) => {
     await connector.load();
 
 })
-
-// TODO: test amount of retries, event orders
-skip('CSVConnector error', async (assert) => {
-    const connector = new CSVConnector({
-        csvURL: ''
-    });
-
-    const afterError = assert.async();
-
-    connector.on('load', (e) =>{
-        // console.log('Attempting to load');
-    })
-
-    connector.on('loadError', (e)=>{
-        assert.ok(true);
-        afterError();
-    })
-
-    await connector.load();
-});

@@ -10,12 +10,15 @@ Grid.grid('container', {
     },
     columnDefaults: {
         cells: {
-            editable: true
+            editMode: {
+                enabled: true
+            }
         }
     },
     columns: [{
         id: 'weight',
         className: 'custom-column-class-name',
+        width: '40%',
         cells: {
             formatter: function () {
                 return 'V: ' + this.value;

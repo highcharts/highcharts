@@ -67,8 +67,8 @@ declare module '../Core/Chart/ChartOptions' {
     }
 }
 
-declare module '../Core/Chart/ChartLike'{
-    interface ChartLike {
+declare module '../Core/Chart/ChartBase'{
+    interface ChartBase {
         scrollablePixelsX?: number;
         scrollablePixelsY?: number;
         scrollablePlotBox?: BBoxObject;
@@ -141,40 +141,44 @@ class ScrollablePlotArea {
             scrollablePixelsY: number,
             recalculateHoriz: boolean|undefined;
 
-        if (!renderer.forExport) {
+        // Skip for exporting
+        if (renderer.forExport) {
+            return;
+        }
 
-            // The amount of pixels to scroll, the difference between chart
-            // width and scrollable width
-            if (minWidth) {
-                chart.scrollablePixelsX = scrollablePixelsX = Math.max(
-                    0,
-                    minWidth - chart.chartWidth
-                );
+        // The amount of pixels to scroll, the difference between chart width
+        // and scrollable width
+        if (minWidth) {
+            chart.scrollablePixelsX = scrollablePixelsX = Math.max(
+                0,
+                minWidth - chart.chartWidth
+            );
 
-                if (scrollablePixelsX) {
-                    chart.scrollablePlotBox = merge(chart.plotBox);
-                    plotBox.width = chart.plotWidth += scrollablePixelsX;
-                    clipBox[inverted ? 'height' : 'width'] += scrollablePixelsX;
+            if (scrollablePixelsX) {
+                chart.scrollablePlotBox = merge(chart.plotBox);
+                plotBox.width = chart.plotWidth += scrollablePixelsX;
+                clipBox[inverted ? 'height' : 'width'] += scrollablePixelsX;
 
-                    recalculateHoriz = true;
-                }
-
-            // Currently we can only do either X or Y
-            } else if (minHeight) {
-                chart.scrollablePixelsY = scrollablePixelsY = Math.max(
-                    0,
-                    minHeight - chart.chartHeight
-                );
-                if (defined(scrollablePixelsY)) {
-                    chart.scrollablePlotBox = merge(chart.plotBox);
-                    plotBox.height = chart.plotHeight += scrollablePixelsY;
-                    clipBox[inverted ? 'width' : 'height'] += scrollablePixelsY;
-
-                    recalculateHoriz = false;
-                }
+                recalculateHoriz = true;
             }
 
-            if (defined(recalculateHoriz) && !e.skipAxes) {
+        // Currently we can only do either X or Y
+        } else if (minHeight) {
+            chart.scrollablePixelsY = scrollablePixelsY = Math.max(
+                0,
+                minHeight - chart.chartHeight
+            );
+            if (defined(scrollablePixelsY)) {
+                chart.scrollablePlotBox = merge(chart.plotBox);
+                plotBox.height = chart.plotHeight += scrollablePixelsY;
+                clipBox[inverted ? 'width' : 'height'] += scrollablePixelsY;
+
+                recalculateHoriz = false;
+            }
+        }
+
+        if (defined(recalculateHoriz)) {
+            if (!e.skipAxes) {
                 for (const axis of chart.axes) {
                     // Apply the corrected plot size to the axes of the other
                     // orientation than the scrolling direction
@@ -188,6 +192,9 @@ class ScrollablePlotArea {
                     }
                 }
             }
+        } else {
+            // Clear (potential) old box when a new one was not set
+            delete chart.scrollablePlotBox;
         }
     }
 

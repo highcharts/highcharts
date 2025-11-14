@@ -20,11 +20,17 @@ function distClean() {
 
     const fsLib = require('../libs/fs');
     const logLib = require('../libs/log');
+    const skipDistClean = process.env.HIGHCHARTS_SKIP_DIST_CLEAN === 'true';
+
+    if (skipDistClean) {
+        logLib.message('Skipping dist-clean (preserving build/dist).');
+        return Promise.resolve();
+    }
 
     return new Promise((resolve, reject) => {
 
         try {
-            fsLib.deleteDirectory('build/dist', true);
+            fsLib.deleteDirectory('build/dist');
             resolve();
         } catch (catchedError) {
             logLib.failure(catchedError);

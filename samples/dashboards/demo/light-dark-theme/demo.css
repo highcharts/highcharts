@@ -1,9 +1,22 @@
 @import url("https://code.highcharts.com/css/highcharts.css");
-@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 
-* {
+body {
     transition: background-color 100ms, color 100ms;
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
+    background: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
 }
 
 .highcharts-description {
@@ -24,7 +37,6 @@
 
 .inputs-wrapper {
     padding: 12px;
-    background-color: white;
     box-shadow: none;
     margin: 1em;
 }
@@ -32,60 +44,6 @@
 .inputs-wrapper label {
     display: block;
     margin-bottom: 10px;
-}
-
-/* Themes */
-.highcharts-light .hcg-theme-default {
-    --hcg-border-radius: 5px;
-    --hcg-color: #000;
-    --hcg-padding: 8px;
-    --hcg-border-width: 1px;
-    --hcg-border-color: #ccc;
-    --hcg-background: #fff;
-
-    /* Header row background color */
-    --hcg-header-row-background: #f2f2f2;
-
-    /* Row colors */
-    --hcg-row-even-background: #f7f7f7;
-
-    /* Hovered colors */
-    --hcg-cell-hovered-background: #ccd3ff;
-    --hcg-row-hovered-background: #e6e9ff;
-    --hcg-column-hovered-background: #e6e9ff;
-    --hcg-header-column-hovered-background: #ccd3ff;
-    --hcg-header-cell-hovered-background: #ccd3ff;
-
-    /* Loader */
-    --hcg-loader-color: #666;
-}
-
-.highcharts-dark .hcg-theme-default {
-    --hcg-color: rgb(255, 255, 255);
-    --hcg-border-color: rgb(92, 92, 92);
-    --hcg-background: #333;
-
-    /* Header row background color */
-    --hcg-header-row-background: rgb(61, 61, 61);
-
-    /* Row colors */
-    --hcg-row-even-background: rgb(57, 57, 57);
-
-    /* Hovered colors */
-    --hcg-cell-hovered-background: rgb(65, 74, 92);
-    --hcg-row-hovered-background: rgb(58, 63, 71);
-    --hcg-column-hovered-background: rgb(58, 63, 71);
-    --hcg-header-column-hovered-background: rgb(65, 74, 92);
-    --hcg-header-cell-hovered-background: rgb(65, 74, 92);
-
-    /* Loader */
-    --hcg-loader-color: rgb(173, 173, 173);
-}
-
-@media (prefers-color-scheme: dark) {
-    .highcharts-point {
-        fill-opacity: 0.9;
-    }
 }
 
 /* Responsive */

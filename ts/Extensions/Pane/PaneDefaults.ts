@@ -21,6 +21,9 @@ import type {
     PaneOptions
 } from './PaneOptions';
 
+import D from '../../Core/Defaults.js';
+const { defaultOptions } = D;
+
 /* *
  *
  *  API Options
@@ -28,7 +31,8 @@ import type {
  * */
 
 /**
- * An array of background items for the pane.
+ * A background item or an array of such for the pane. When used in
+ * `Highcharts.setOptions` for theming, the background must be a single item.
  *
  * @sample {highcharts} highcharts/demo/gauge-speedometer/
  *         Speedometer gauge with multiple backgrounds
@@ -147,6 +151,9 @@ const background: PaneBackgroundOptions = {
  * The pane serves as a container for axes and backgrounds for circular
  * gauges and polar charts.
  *
+ * When used in `Highcharts.setOptions` for theming, the pane must be a single
+ * object, otherwise arrays are supported.
+ *
  * @type         {*|Array<*>}
  * @since        2.3.0
  * @product      highcharts
@@ -154,6 +161,8 @@ const background: PaneBackgroundOptions = {
  * @optionparent pane
  */
 const pane: PaneOptions|Array<PaneOptions> = {
+
+    background,
 
     /**
      * The end angle of the polar X axis or gauge value axis, given in
@@ -222,6 +231,8 @@ const pane: PaneOptions|Array<PaneOptions> = {
     startAngle: 0
 
 };
+
+defaultOptions.pane = pane;
 
 /* *
  *

@@ -4,6 +4,7 @@
  *
  * */
 
+import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type Chart from '../../Core/Chart/Chart';
 import type Pane from './Pane';
 import type Pointer from '../../Core/Pointer';
@@ -23,8 +24,8 @@ const {
  *
  * */
 
-declare module '../../Core/Chart/ChartLike'{
-    interface ChartLike {
+declare module '../../Core/Chart/ChartBase'{
+    interface ChartBase {
         hoverPane?: Pane;
         pane?: Array<Pane>;
         getHoverPane?(eventArgs: any): (Pane|undefined);
@@ -68,10 +69,47 @@ function chartGetHoverPane(
     return hoverPane;
 }
 
+/**
+ * Adjusts the clipBox based on the position of panes.
+ * @private
+ */
+function onSetClip(
+    this: Series,
+    {
+        clipBox
+    }: {
+        clipBox: BBoxObject
+    }
+): void {
+    if (
+        !this.xAxis ||
+        !this.yAxis ||
+        (!this.chart.angular && !this.chart.polar)
+    ) {
+        return;
+    }
+
+    const { plotWidth, plotHeight } = this.chart,
+        smallestSize = Math.min(plotWidth, plotHeight),
+        xPane = this.xAxis.pane,
+        yPane = this.yAxis.pane;
+
+    if (xPane && xPane.axis) {
+        clipBox.x += xPane.center[0] -
+            (xPane.center[2] / smallestSize) * plotWidth / 2;
+    }
+
+    if (yPane && yPane.axis) {
+        clipBox.y += yPane.center[1] -
+            (yPane.center[2] / smallestSize) * plotHeight / 2;
+    }
+}
+
 /** @private */
 function compose(
     ChartClass: typeof Chart,
-    PointerClass: typeof Pointer
+    PointerClass: typeof Pointer,
+    SeriesClass: typeof Series
 ): void {
     const chartProto = ChartClass.prototype as PaneChart;
 
@@ -87,6 +125,8 @@ function compose(
             'beforeGetHoverData',
             onPointerBeforeGetHoverData
         );
+
+        addEvent(SeriesClass, 'setClip', onSetClip);
     }
 
 }
@@ -115,7 +155,8 @@ function isInsidePane(
     let insideSlice = true;
 
     const cx = center[0],
-        cy = center[1];
+        cy = center[1],
+        twoPi = 2 * Math.PI;
 
     const distance = Math.sqrt(
         Math.pow(x - cx, 2) + Math.pow(y - cy, 2)
@@ -123,32 +164,38 @@ function isInsidePane(
 
     if (defined(startAngle) && defined(endAngle)) {
         // Round angle to N-decimals to avoid numeric errors
-        const angle = Math.atan2(
+        let angle = Math.atan2(
             correctFloat(y - cy, 8),
             correctFloat(x - cx, 8)
         );
 
+        // Normalize angle to [0, 2π)
+        angle = (angle + twoPi) % (twoPi);
+        startAngle = (startAngle + twoPi) % (twoPi);
+        endAngle = (endAngle + twoPi) % (twoPi);
+
         // Ignore full circle panes:
-        if (endAngle !== startAngle) {
-            // If normalized start angle is bigger than normalized end,
-            // it means angles have different signs. In such situation we
-            // check the <-PI, startAngle> and <endAngle, PI> ranges.
+        if (Math.abs(endAngle - startAngle) > 1e-6) {
+        // If the normalized start angle is greater than the end angle,
+        // it means the arc wraps around 0°. In this case, we check
+        // if the angle falls into either [startAngle, 2π) or [0, endAngle].
             if (startAngle > endAngle) {
                 insideSlice = (
-                    angle >= startAngle &&
-                    angle <= Math.PI
-                ) || (
-                    angle <= endAngle &&
-                    angle >= -Math.PI
+                    angle >= startAngle ||
+                    angle <= endAngle
                 );
             } else {
-                // In this case, we simple check if angle is within the
-                // <startAngle, endAngle> range
+                // In this case, we simply check if angle is within the
+                // [startAngle, endAngle] range
                 insideSlice = angle >= startAngle &&
-                    angle <= correctFloat(endAngle, 8);
+                    angle <= endAngle;
             }
         }
+    } else {
+        // If no start/end angles are defined, treat it as a full circle
+        insideSlice = true;
     }
+
     // Round up radius because x and y values are rounded
     return distance <= Math.ceil(center[2] / 2) && insideSlice;
 }

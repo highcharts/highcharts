@@ -26,6 +26,72 @@ In order to use a series that is not part of the main Highcharts bundle, you can
 either [load the required module](https://www.highcharts.com/docs/react/options#setting-a-custom-highcharts-instance)
 from the main `highcharts` package, or use the series component for that series.
 
+## Add series dynamically
+
+Because `Series` components are regular React components, you can create them from
+state or props. This makes it straightforward to add new series at runtime:
+
+```jsx
+import React from 'react';
+import { Chart, Series, Subtitle, Title } from '@highcharts/react';
+
+const seriesCatalog = [
+  { id: 'line', name: 'Line', type: 'line', data: [5, 7, 6, 8, 9] },
+  { id: 'area', name: 'Area', type: 'area', data: [3, 4, 3, 5, 6] },
+  { id: 'column', name: 'Column', type: 'column', data: [2, 3, 4, 3, 5] }
+];
+
+export default function ChartComponent() {
+    const [activeSeriesIds, setActiveSeriesIds] = React.useState(() => [seriesCatalog[0].id]);
+
+    const toggleSeries = React.useCallback(seriesId => {
+        setActiveSeriesIds(current => {
+            if (current.includes(seriesId)) {
+                return current.filter(id => id !== seriesId);
+            }
+
+            return [...current, seriesId];
+        });
+    }, []);
+
+    const activeSeries = React.useMemo(
+        () => seriesCatalog.filter(series => activeSeriesIds.includes(series.id)),
+        [activeSeriesIds]
+    );
+
+    return (
+        <div className="dynamic-basics-demo">
+            <Chart>
+            {/* ... chart options ... */}
+            {activeSeries.map(series => (
+                <Series
+                    key={series.id}
+                    type={series.type}
+                    data={series.data}
+                    options={{
+                            ...series.options,
+                            id: series.id,
+                            name: series.name
+                        }}
+                    />
+                ))}
+            </Chart>
+
+            <SeriesControls
+                activeSeriesIds={activeSeriesIds}
+                onToggleSeries={toggleSeries}
+            />
+        </div>
+    );
+}
+```
+
+This basic example uses the generic `Series` component for built-in chart types. For a more advanced
+pattern that wires up Stock indicators dynamically, see the dedicated
+[`Dynamic React indicators` sample](https://www.highcharts.com/samples/highcharts/react/dynamic-indicators).
+
+<iframe src="https://www.highcharts.com/samples/embed/highcharts/react/dynamic-basics" style="width: 100%; height: 600px; border: 0;"></iframe>
+
 
 ## Series type components
 
@@ -133,3 +199,76 @@ export function MapsChart() {
   );
 }
 ```
+
+### Bubble
+
+Use the `BubbleSeries` component for bubble charts. Data points are three-dimensional tuples `[x, y, z]`.
+
+```jsx
+import React from 'react';
+import ReactDOM from 'react-dom';
+
+import { Chart, Title } from '@highcharts/react';
+import { Accessibility } from '@highcharts/react/options/Accessibility';
+import { BubbleSeries } from '@highcharts/react/series/Bubble';
+
+export default function ChartComponent() {
+    const series1 = [
+      [9, 81, 63],
+      [98, 5, 89],
+      [51, 50, 73],
+      [41, 22, 14],
+      [58, 24, 20],
+      [78, 37, 34],
+      [55, 56, 53],
+      [18, 45, 70],
+      [42, 44, 28],
+      [3, 52, 59],
+      [31, 18, 97],
+      [79, 91, 63],
+      [93, 23, 23],
+      [44, 83, 22]
+    ];
+
+    const series2 = [
+      [42, 38, 20],
+      [6, 18, 1],
+      [1, 93, 55],
+      [57, 2, 90],
+      [80, 76, 22],
+      [11, 74, 96],
+      [88, 56, 10],
+      [30, 47, 49],
+      [57, 62, 98],
+      [4, 16, 16],
+      [46, 10, 11],
+      [22, 87, 89],
+      [57, 91, 82],
+      [45, 15, 98]
+    ];
+
+    return (
+        <div>
+          <Chart>
+            <Title>Simple Bubble Chart</Title>
+            <Accessibility />
+            <BubbleSeries data={series1} />
+            <BubbleSeries data={series2} />
+          </Chart>
+        </div>
+      );
+}
+
+ReactDOM.createRoot(
+    document.querySelector('#container')
+)?.render(<ChartComponent />);
+```
+
+**Live demo:**
+
+<iframe src="https://www.highcharts.com/samples/embed/highcharts/react/bubble" style="width: 100%; height: 600px; border: 0;"></iframe>
+
+
+**Live demo:**
+
+<iframe src="https://www.highcharts.com/samples/embed/highcharts/react/venn-diagram" style="width: 100%; height: 600px; border: 0;"></iframe>

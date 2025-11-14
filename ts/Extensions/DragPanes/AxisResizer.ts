@@ -21,11 +21,12 @@
  * */
 
 import type Axis from '../../Core/Axis/Axis';
-import type { YAxisOptions } from '../../Core/Axis/AxisOptions';
 import type { AxisResizeOptions } from './AxisResizerOptions';
+import type { DeepPartial } from '../../Shared/Types';
 import type PointerEvent from '../../Core/PointerEvent';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type { YAxisOptions } from '../../Core/Axis/AxisOptions';
 
 import AxisResizerDefaults from './AxisResizerDefaults.js';
 import U from '../../Core/Utilities.js';

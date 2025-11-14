@@ -75,8 +75,8 @@ declare module '../Renderer/Position3DObject' {
     }
 }
 
-declare module '../Series/PointLike' {
-    interface PointLike {
+declare module '../Series/PointBase' {
+    interface PointBase {
         crosshairPos?: number;
         axisXpos?: number;
         axisYpos?: number;
@@ -611,9 +611,6 @@ class Axis3DAdditions {
                 let sin = Math.sin(alpha);
                 const cos = Math.cos(alpha);
 
-                if (axis.opposite) {
-                    sin = -sin;
-                }
                 if (reverseFlap) {
                     sin = -sin;
                 }

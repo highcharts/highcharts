@@ -56,7 +56,7 @@ export interface LoadingOptions {
 
 export interface NumberFormatterCallbackFunction {
     (
-        this: Chart|Object|void,
+        this: Chart|object|void,
         number: number,
         decimals: number,
         decimalPoint?: string,

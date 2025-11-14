@@ -22,6 +22,7 @@ import type {
     AxisOptions,
     YAxisOptions
 } from '../Axis/AxisOptions';
+import type { DeepPartial } from '../../Shared/Types';
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type Options from '../Options';
 
@@ -149,7 +150,8 @@ class GanttChart extends Chart {
                 // Defaults
                 {
                     grid: {
-                        borderColor: '{palette.neutralColor20}',
+                        borderColor: defaultOptions.xAxis?.grid?.borderColor ||
+                            '{palette.neutralColor20}',
                         enabled: true
                     },
                     opposite: defaultOptions.xAxis?.opposite ??
@@ -173,7 +175,8 @@ class GanttChart extends Chart {
             // Defaults
             {
                 grid: {
-                    borderColor: '{palette.neutralColor20}',
+                    borderColor: defaultOptions.yAxis?.grid?.borderColor ||
+                        '{palette.neutralColor20}',
                     enabled: true
                 },
 

@@ -327,9 +327,13 @@ class MockPoint {
      * The mock point's options.
      */
     public getOptions(): MockPointOptions {
-        return this.hasDynamicOptions() ?
-            (this.options as Function)(this.target) :
-            this.options;
+        if (this.hasDynamicOptions()) {
+            if (typeof this.options === 'function') {
+                return (this.options as (target: any) =>
+                MockPointOptions)(this.target);
+            }
+        }
+        return this.options as MockPointOptions;
     }
 
     /**
@@ -631,8 +635,8 @@ export default MockPoint;
  *
  * @callback Highcharts.AnnotationMockPointFunction
  *
- * @param  {Highcharts.Annotation} annotation
- *         An annotation instance.
+ * @param {Highcharts.AnnotationControllable} controllable
+ *        Controllable shape or label.
  *
  * @return {Highcharts.AnnotationMockPointOptionsObject}
  *         Annotations shape point.

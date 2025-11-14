@@ -43,7 +43,7 @@ declare module '../Sankey/SankeySeriesOptions' {
     }
 }
 
-export type OrganizationLinkTypeValues = 'curved' | 'straight' | 'default';
+export type OrganizationLinkTypeValues = 'curved' | 'straight' | 'orthogonal';
 
 export type OrganizationNodesLayoutValue = ('normal'|'hanging');
 

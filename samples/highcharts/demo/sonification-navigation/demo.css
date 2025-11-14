@@ -1,3 +1,19 @@
+body {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
+    background: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
+}
+
 .highcharts-figure {
     max-width: 1000px;
     min-width: 320px;
@@ -11,7 +27,7 @@
 #title {
     font-size: 0.8rem;
     font-family: Helvetica, sans-serif;
-    color: #333;
+    color: var(--highcharts-neutral-color-100, #333);
 }
 
 #title h1 {
@@ -57,9 +73,9 @@
 }
 
 #sonify {
-    background-color: #fff;
-    border: 1px solid #25386f;
-    color: #25386f;
+    background-color: var(--highcharts-background-color, #fff);
+    border: 1px solid var(--highcharts-highlight-color-100, #25386f);
+    color: var(--highcharts-highlight-color-100, #25386f);
     font-size: 0.9rem;
     max-height: 1.8rem;
     line-height: 1rem;
@@ -71,11 +87,12 @@
     margin-top: 0.5rem;
     text-align: center;
     cursor: pointer;
+    transition: background 150ms, color 150ms;
 }
 
 #sonify:hover {
-    background-color: #25386f;
-    color: #fff;
+    background-color: var(--highcharts-highlight-color-100, #25386f);
+    color: var(--highcharts-background-color, #fff);
 }
 
 @media (min-width: 530px) {

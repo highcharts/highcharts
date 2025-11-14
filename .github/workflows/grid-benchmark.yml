@@ -1,0 +1,91 @@
+name: Grid benchmark
+on:
+  pull_request:
+    branches:
+      - 'master'
+      - 'grid/**'
+    paths:
+      - 'ts/Grid/**'
+      - 'test/ts-node-unit-tests/benchmarks/Grid/*'
+      - '.github/workflows/grid-benchmark.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read # to fetch code (actions/checkout)
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  grid_benchmark:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    strategy:
+      matrix:
+        node-version: [lts/*]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - run: npm i
+
+      - name: Build Highcharts
+        run: npx gulp scripts
+      - name: Build Grid
+        run: npx gulp scripts --product Grid
+
+      - name: Benchmark
+        continue-on-error: true
+        run: cd test/ts-node-unit-tests && node --import tsx bench.ts --context base --pattern Grid/
+
+      - name: Checkout current branch
+        uses: actions/checkout@v4
+        with:
+           clean: false # do not remove files from previous run
+      - run: npm i
+
+      - name: Build Highcharts
+        run: npx gulp scripts
+
+      - name: Build Grid
+        run: npx gulp scripts --product Grid
+
+      - name: Benchmark
+        run: cd test/ts-node-unit-tests && node --import tsx bench.ts --context actual --pattern Grid/
+
+      - name: Benchmark comparison
+        run: cd test/ts-node-unit-tests && node --import tsx benchmark-compare.ts
+
+      - name: Store artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: grid-benchmark-files
+          path: |
+            tmp/benchmarks
+
+      - name: Comment on PR
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{secrets.PR_COMMENT_TOKEN}}
+          script: |
+            const { createOrUpdateComment } = require('./.github/scripts/commentOnPR');
+            const { readFileSync } = require('node:fs')
+
+            const benchmarkMD = readFileSync('./tmp/benchmarks/table.md');
+
+            await createOrUpdateComment(github, context, 'Benchmark report - Grid', benchmarkMD || 'No table to show');
+
+
+      - name: Add to summary
+        if: ${{ always() }}
+        run: |
+          echo "## Grid Benchmark metrics" >> $GITHUB_STEP_SUMMARY
+          cat ./tmp/benchmarks/table.md >> $GITHUB_STEP_SUMMARY

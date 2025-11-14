@@ -47,27 +47,11 @@ namespace Globals {
      * */
 
     /**
-     * Any type for objects with mixed property types.
-     *
-     * **Note:** This is not type safe and should be used only for property
-     *           loops.
-     */
-    export type AnyRecord = Record<string, any>;
-
-    /**
      * Abstract class type to wrap expected instance T.
      */
     export interface Class<T = unknown> extends Function {
         new(...args: Array<unknown>): T;
     }
-
-    /**
-     * Utility type to mark recursively all properties and sub-properties
-     * optional.
-     */
-    export type DeepPartial<T> = {
-        [K in keyof T]?: (T[K]|DeepPartial<T[K]>);
-    };
 
     /**
      * Event callback as used by Highcharts.
@@ -147,7 +131,6 @@ namespace Globals {
 
         return supportsPassive;
     }());
-
 
 }
 

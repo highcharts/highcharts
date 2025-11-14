@@ -6,12 +6,15 @@ period.
 
 ## Capabilities
 
-- [Cumulative Return](https://www.highcharts.com/docs/morningstar/time-series/cumulative-return.md)
-- [Dividend](https://www.highcharts.com/docs/morningstar/time-series/dividend.md)
-- [Growth](https://www.highcharts.com/docs/morningstar/time-series/growth.md)
-- [OHLCV](https://www.highcharts.com/docs/morningstar/time-series/ohlcv.md)
-- [Price](https://www.highcharts.com/docs/morningstar/time-series/price.md)
-- [Regulatory News Announcements](https://www.highcharts.com/docs/morningstar/regulatory-news-announcements.md)
+- [Cumulative Return](https://www.highcharts.com/docs/morningstar/time-series/cumulative-return)
+- [Dividend](https://www.highcharts.com/docs/morningstar/time-series/dividend)
+- [Growth](https://www.highcharts.com/docs/morningstar/time-series/growth)
+- [OHLCV](https://www.highcharts.com/docs/morningstar/time-series/ohlcv)
+- [Price](https://www.highcharts.com/docs/morningstar/time-series/price)
+- [Rating](https://www.highcharts.com/docs/morningstar/time-series/rating)
+- [Regulatory News Announcements](https://www.highcharts.com/docs/morningstar/regulatory-news-announcements)
+- [Return](https://www.highcharts.com/docs/morningstar/time-series/return)
+- [Rolling Return](https://www.highcharts.com/docs/morningstar/time-series/rolling-return)
 
 
 For more details, see [Morningstar’s Time Series API].
@@ -31,8 +34,10 @@ or `currencyId`.
 
 ```js
 const dividendConnector = new HighchartsConnectors.Morningstar.TimeSeriesConnector({
-    postman: {
-        environmentJSON: postmanJSON
+    api: {
+        access: {
+            token: 'your_access_token'
+        }
     },
     series: {
         type: 'Dividend'
@@ -51,7 +56,7 @@ await dividendConnector.load();
 Highcharts.stockChart('container', {
     series: [{
         type: 'line',
-        table: dividendConnector.table.getRows(0, undefined)
+        table: dividendConnector.getTable().getRows(0, undefined)
     }]
 });
 ```
@@ -64,21 +69,21 @@ Dashboards.board('container', {
         connectors: [{
             id: 'time-series',
             type: 'MorningstarTimeSeries',
-            options: {
-                postman: {
-                    environmentJSON: postmanJSON
-                },
-                series: {
-                    type: 'Dividend'
-                },
-                securities: [{
-                    id: 'F0GBR04S23',
-                    idType: 'MSID'
-                }],
-                startDate: '2000-01-01',
-                endDate: '2020-12-31',
-                currencyId: 'EUR'
-            }
+            api: {
+                access: {
+                    token: 'your_access_token'
+                }
+            },
+            series: {
+                type: 'Dividend'
+            },
+            securities: [{
+                id: 'F0GBR04S23',
+                idType: 'MSID'
+            }],
+            startDate: '2000-01-01',
+            endDate: '2020-12-31',
+            currencyId: 'EUR'
         }]
     },
     components: [
@@ -87,9 +92,9 @@ Dashboards.board('container', {
             connector: {
                 id: 'time-series'
             },
-            type: 'DataGrid',
+            type: 'Grid',
             title: 'Dividends',
-            dataGridOptions: {
+            gridOptions: {
                 editable: false,
                 columns: {
                     Date: {

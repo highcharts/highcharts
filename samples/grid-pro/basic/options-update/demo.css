@@ -1,4 +1,18 @@
-@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
+
+body {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
+}
 
 #demo {
     padding: 8px;
@@ -18,11 +32,4 @@
     min-height: 250px;
     min-width: 400px;
     margin: 4px 0;
-}
-
-@media (prefers-color-scheme: dark) {
-    #demo {
-        background-color: #292929;
-        color: #fff;
-    }
 }

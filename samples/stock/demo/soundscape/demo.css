@@ -1,4 +1,4 @@
-* {
+body {
     font-family:
         -apple-system,
         BlinkMacSystemFont,
@@ -10,6 +10,8 @@
         "Segoe UI Emoji",
         "Segoe UI Symbol",
         sans-serif;
+    background: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
 }
 
 figure {
@@ -69,6 +71,7 @@ figure {
     text-align: center;
     border-radius: 4px;
     box-sizing: content-box;
+    color: #333;
 }
 
 #focus label:hover,
@@ -81,8 +84,8 @@ figure {
 }
 
 #focus input[type="radio"]:checked + label {
-    background-color: #353a47;
-    border-color: #353a47;
+    background-color: #5a6175;
+    border-color: #5a6175;
     color: #fff;
     font-weight: bold;
 }

@@ -308,14 +308,14 @@ text.highcharts-data-label {
     stroke-width: 2px;
 }
 
-.highcharts-datagrid-column-header {
+.highcharts-grid-column-header {
     font-size: 0.7em !important;
     padding: 8px 2px 6px !important;
     min-height: 30px !important;
     height: 30px !important;
 }
 
-.highcharts-datagrid-cell {
+.highcharts-grid-cell {
     font-size: 0.7em !important;
     padding: 4px 8px !important;
     min-height: 30px !important;

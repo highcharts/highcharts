@@ -95,8 +95,6 @@ yourtheme
 hollowcandlestick
 contextbutton
 drillup
-datagrid
-datagrids
 unsets
 editmode
 formular
@@ -201,3 +199,11 @@ Dataviz
 KIIDs
 SFDR
 Segoe
+sparkline
+sparklines
+preconfigured
+datepicker
+specific
+EMEA
+dendrogram
+datagrid
