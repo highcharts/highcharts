@@ -42,6 +42,7 @@ import Pagination from './Pagination/Pagination.js';
 
 const { makeHTMLElement, setHTMLContent } = GridUtils;
 const {
+    defined,
     extend,
     fireEvent,
     getStyle,
@@ -1107,20 +1108,46 @@ class Grid {
      * JSON representation of the data
      */
     public getData(modified: boolean = true): string {
-        const dataTable = modified ? this.viewport?.dataTable : this.dataTable;
-        const columns = dataTable?.columns;
+        const dataTable = modified ? this.presentationTable : this.dataTable;
+        const tableColumns = dataTable?.columns;
+        const outputColumns: Record<string, DataTable.Column> = {};
 
-        if (!this.enabledColumns || !columns) {
+        if (!this.enabledColumns || !tableColumns) {
             return '{}';
         }
 
-        for (const key of Object.keys(columns)) {
-            if (this.enabledColumns.indexOf(key) === -1) {
-                delete columns[key];
+        const typeParser = (type: Column.DataType) => {
+            const TypeMap: Record<
+                Column.DataType,
+                (value: DataTable.CellType) => DataTable.CellType
+            > = {
+                number: Number,
+                datetime: Number,
+                string: String,
+                'boolean': Boolean
+            };
+
+            return (value: DataTable.CellType): DataTable.CellType | null => (
+                defined(value) ? TypeMap[type](value) : null
+            );
+        };
+
+        for (const columnId of Object.keys(tableColumns)) {
+            const column = this.viewport?.getColumn(columnId);
+            if (column) {
+                const columnData = tableColumns[columnId];
+                const parser = typeParser(column.dataType);
+                outputColumns[columnId] = ((): DataTable.Column => {
+                    const result = [];
+                    for (let i = 0, iEnd = columnData.length; i < iEnd; ++i) {
+                        result.push(parser(columnData[i]));
+                    }
+                    return result;
+                })();
             }
         }
 
-        return JSON.stringify(columns, null, 2);
+        return JSON.stringify(outputColumns, null, 2);
     }
 
     /**

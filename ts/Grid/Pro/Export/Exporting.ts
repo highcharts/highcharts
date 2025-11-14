@@ -24,10 +24,13 @@
 import type Grid from '../../Core/Grid';
 import type { ExportingOptions } from '../../Core/Options';
 import type DataTable from '../../../Data/DataTable';
+import type Column from '../../Core/Table/Column';
 
 import DownloadURL from '../../../Shared/DownloadURL.js';
+import U from '../../../Core/Utilities.js';
 
 const { downloadURL, getBlobFromContent } = DownloadURL;
+const { defined } = U;
 
 
 /* *
@@ -124,19 +127,18 @@ class Exporting {
     }
 
     /**
-     * Creates a CSV string from the data table.
+     * Creates a CSV string from the data grid.
      *
      * @param modified
-     * Whether to return the modified data table (after filtering/sorting/etc.)
-     * or the unmodified, original one. Default value is set to `true`.
+     * Whether to return the data including the modifiers (filtering, sorting,
+     * etc.) or the original data. Default value is set to `true`.
      *
      * @return
      * CSV string representing the data table.
      */
     public getCSV(modified: boolean = true): string {
-        const dataTable = modified ?
-            this.grid.viewport?.dataTable :
-            this.grid.dataTable;
+        const { grid } = this;
+        const dataTable = modified ? grid.presentationTable : grid.dataTable;
 
         if (!dataTable) {
             return '';
@@ -161,10 +163,9 @@ class Exporting {
             itemDelimiter = (decimalPoint === ',' ? ';' : ',');
         }
 
-        const columns = dataTable.getColumns();
-        const columnIds = Object.keys(columns);
+        const columnIds = grid.enabledColumns ?? [];
+        const columnsCount = columnIds?.length;
         const csvRows: string[] = [];
-        const columnsCount = columnIds.length;
         const rowArray: DataTable.CellType[][] = [];
 
         // Add the names as the first row if they should be exported
@@ -174,30 +175,47 @@ class Exporting {
             ).join(itemDelimiter));
         }
 
+        const typeParser = (
+            type: Column.DataType
+        ): ((val: DataTable.CellType) => string) => {
+            switch (type) {
+                case 'number':
+                case 'datetime':
+                    return (val: DataTable.CellType): string => (
+                        defined(val) ?
+                            String(val).replace('.', decimalPoint) :
+                            ''
+                    );
+                case 'string':
+                    return (val: DataTable.CellType): string => (
+                        defined(val) ?
+                            `"${val}"` :
+                            ''
+                    );
+                case 'boolean':
+                    return (val: DataTable.CellType): string => (
+                        defined(val) ?
+                            (val ? 'TRUE' : 'FALSE') :
+                            ''
+                    );
+            }
+        };
+
         for (let columnIndex = 0; columnIndex < columnsCount; columnIndex++) {
             const columnId = columnIds[columnIndex],
-                column = columns[columnId],
-                columnLength = column.length;
-
-            let columnDataType;
+                column = grid.viewport?.getColumn(columnId),
+                colType = column?.dataType,
+                columnArray = dataTable.getColumn(columnId) ?? [],
+                columnLength = columnArray?.length,
+                parser = typeParser(colType ?? 'string');
 
             for (let rowIndex = 0; rowIndex < columnLength; rowIndex++) {
-                let cellValue = column[rowIndex];
-
-                if (!rowArray[rowIndex]) {
-                    rowArray[rowIndex] = [];
+                let row = rowArray[rowIndex];
+                if (!row) {
+                    row = rowArray[rowIndex] = [];
                 }
 
-                // Prefer datatype from metadata
-                if (columnDataType === 'string') {
-                    cellValue = '"' + cellValue + '"';
-                } else if (typeof cellValue === 'number') {
-                    cellValue = String(cellValue).replace('.', decimalPoint);
-                } else if (typeof cellValue === 'string') {
-                    cellValue = `"${cellValue}"`;
-                }
-
-                rowArray[rowIndex][columnIndex] = cellValue;
+                row[columnIndex] = parser(columnArray[rowIndex]);
 
                 // On the final column, push the row to the CSV
                 if (columnIndex === columnsCount - 1) {
@@ -205,16 +223,16 @@ class Exporting {
                     // Currently, we export the first "comma" even if the
                     // second value is undefined
                     let i = columnIndex;
-                    while (rowArray[rowIndex].length > 2) {
-                        const cellVal = rowArray[rowIndex][i];
+                    while (row.length > 2) {
+                        const cellVal = row[i];
                         if (cellVal !== void 0) {
                             break;
                         }
-                        rowArray[rowIndex].pop();
+                        row.pop();
                         i--;
                     }
 
-                    csvRows.push(rowArray[rowIndex].join(itemDelimiter));
+                    csvRows.push(row.join(itemDelimiter));
                 }
             }
         }
