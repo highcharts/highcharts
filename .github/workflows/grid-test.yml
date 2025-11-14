@@ -1,21 +1,22 @@
 # This is a basic workflow to help you get started with Actions
 
-name: Dashboards Test
+name: Grid Test
 
 # Controls when the workflow will run
 on:
   # Triggers the workflow on push or pull request events but only for the default branch
   push:
-    branches: ['master', 'dash/**']
+    branches: ['master', 'grid/**']
   pull_request:
-    branches: ['master', 'dash/**']
+    branches: ['master', 'grid/**']
     paths:
-      - '.github/workflows/dashboards-test.yml'
-      - 'css/dashboards*'
-      - 'samples/dashboards/**'
-      - 'test/cypress/dashboards/visual/**'
-      - 'ts/Dashboards/**'
+      - '.github/workflows/grid-test.yml'
+      - 'css/grid*'
+      - 'samples/grid-lite/**'
+      - 'samples/grid-pro/**'
+      - 'test/cypress/grid/visual/**'
       - 'ts/Data/**'
+      - 'ts/Grid/**'
 
 permissions:
   contents: read # to fetch code (actions/checkout)
@@ -25,7 +26,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  dashboards_test:
+  grid_test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -53,15 +54,15 @@ jobs:
           cd highcharts
           npx gulp scripts
 
-      - name: Build Grid
+      - name: Build Dashboards
         run: |
           cd highcharts
-          npx gulp scripts --product Grid
+          npx gulp scripts --product Dashboards
 
-      - name: Run Dashboards Tests
+      - name: Run Grid Tests
         run: |
           cd highcharts
-          npx gulp test --product Dashboards
+          npx gulp test --product Grid
 
       - name: Checkout utils
         uses: actions/checkout@v4
@@ -75,12 +76,12 @@ jobs:
           cd utils
           npm i
 
-      - name: Run Cypress test
+      - name: Run Grid Cypress Tests
         uses: cypress-io/github-action@v6
         with:
           start: node ../utils/server --localOnly
-          wait-on: 'http://localhost:3031/dashboards.js'
+          wait-on: 'http://localhost:3031/grid/grid-lite.js http://localhost:3031/grid/grid-pro.js'
           browser: chrome
           working-directory: highcharts
-          config-file: test/cypress/dashboards/config.mjs
+          config-file: test/cypress/grid/config.mjs
           install: false
