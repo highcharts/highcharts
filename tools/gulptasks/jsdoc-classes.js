@@ -65,6 +65,8 @@ const SOURCE_GLOBS = [
     'Maps/GeoJSONComposition.js',
     'Maps/MapNavigation.js',
     'Maps/MapView.js',
+    'Maps/ProjectionOptions.js',
+    'Maps/Projections/*.js',
     'Series/AreaRange/AreaRangePoint.js',
     'Series/AreaRange/AreaRangeSeries.js',
     'Series/Column/ColumnSeries.js',
@@ -116,6 +118,7 @@ function jsDocClasses() {
             plugins: [
                 ['plugins', 'add-namespace'],
                 ['plugins', 'markdown'],
+                ['plugins', 'internaltag'],
                 ['plugins', 'sampletag']
             ].map(
                 filePath => Path.join(TEMPLATE_DIRECTORY, ...filePath)

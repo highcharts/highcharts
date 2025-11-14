@@ -40,8 +40,8 @@ const {
     getOptions,
     setOptions
 } = D;
-import DownloadURL from '../DownloadURL.js';
-const { downloadURL } = DownloadURL;
+import DownloadURL from '../../Shared/DownloadURL.js';
+const { downloadURL, getBlobFromContent } = DownloadURL;
 import ExportDataDefaults from './ExportDataDefaults.js';
 import G from '../../Core/Globals.js';
 const {
@@ -67,8 +67,8 @@ const {
  *
  * */
 
-declare module '../../Core/Chart/ChartLike'{
-    interface ChartLike {
+declare module '../../Core/Chart/ChartBase'{
+    interface ChartBase {
         /**
          * Deprecated in favor of [Exporting.downloadCSV](https://api.highcharts.com/class-reference/Highcharts.Exporting#downloadCSV).
          *
@@ -135,15 +135,15 @@ declare module '../../Core/Chart/ChartLike'{
     }
 }
 
-declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase {
         exportKey?: string;
         keyToAxis?: Record<string, string>;
     }
 }
 
-declare module '../../Extensions/Exporting/ExportingLike' {
-    interface ExportingLike {
+declare module '../../Extensions/Exporting/ExportingBase' {
+    interface ExportingBase {
         ascendingOrderInTable?: boolean
         dataTableDiv?: HTMLDivElement;
         isDataTableVisible?: boolean;
@@ -482,47 +482,6 @@ namespace ExportData {
                 this.getFilename() + '.xls'
             );
         });
-    }
-
-    /**
-     * Get a blob object from content, if blob is supported.
-     *
-     * @private
-     * @function Highcharts.getBlobFromContent
-     *
-     * @param {string} content
-     * The content to create the blob from.
-     * @param {string} type
-     * The type of the content.
-     *
-     * @return {string | undefined}
-     * The blob object, or undefined if not supported.
-     *
-     * @requires modules/exporting
-     * @requires modules/export-data
-     */
-    function getBlobFromContent(
-        content: string,
-        type: string
-    ): (string | undefined) {
-        const nav = win.navigator,
-            domurl = win.URL || win.webkitURL || win;
-
-        try {
-            // MS specific
-            if ((nav.msSaveOrOpenBlob) && win.MSBlobBuilder) {
-                const blob = new win.MSBlobBuilder();
-                blob.append(content);
-                return blob.getBlob('image/svg+xml');
-            }
-
-            return domurl.createObjectURL(new win.Blob(
-                ['\uFEFF' + content], // #7084
-                { type: type }
-            ));
-        } catch {
-            // Ignore
-        }
     }
 
     /**

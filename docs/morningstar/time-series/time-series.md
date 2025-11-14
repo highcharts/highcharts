@@ -34,8 +34,10 @@ or `currencyId`.
 
 ```js
 const dividendConnector = new HighchartsConnectors.Morningstar.TimeSeriesConnector({
-    postman: {
-        environmentJSON: postmanJSON
+    api: {
+        access: {
+            token: 'your_access_token'
+        }
     },
     series: {
         type: 'Dividend'
@@ -54,7 +56,7 @@ await dividendConnector.load();
 Highcharts.stockChart('container', {
     series: [{
         type: 'line',
-        table: dividendConnector.table.getRows(0, undefined)
+        table: dividendConnector.getTable().getRows(0, undefined)
     }]
 });
 ```
@@ -67,21 +69,21 @@ Dashboards.board('container', {
         connectors: [{
             id: 'time-series',
             type: 'MorningstarTimeSeries',
-            options: {
-                postman: {
-                    environmentJSON: postmanJSON
-                },
-                series: {
-                    type: 'Dividend'
-                },
-                securities: [{
-                    id: 'F0GBR04S23',
-                    idType: 'MSID'
-                }],
-                startDate: '2000-01-01',
-                endDate: '2020-12-31',
-                currencyId: 'EUR'
-            }
+            api: {
+                access: {
+                    token: 'your_access_token'
+                }
+            },
+            series: {
+                type: 'Dividend'
+            },
+            securities: [{
+                id: 'F0GBR04S23',
+                idType: 'MSID'
+            }],
+            startDate: '2000-01-01',
+            endDate: '2020-12-31',
+            currencyId: 'EUR'
         }]
     },
     components: [
@@ -90,9 +92,9 @@ Dashboards.board('container', {
             connector: {
                 id: 'time-series'
             },
-            type: 'DataGrid',
+            type: 'Grid',
             title: 'Dividends',
-            dataGridOptions: {
+            gridOptions: {
                 editable: false,
                 columns: {
                     Date: {

@@ -21,6 +21,7 @@ import type {
  *
  * */
 
+/** @internal */
 class Thunderforest implements ProviderDefinition {
 
     /* *
@@ -97,4 +98,5 @@ class Thunderforest implements ProviderDefinition {
  *
  * */
 
+/** @internal */
 export default Thunderforest;

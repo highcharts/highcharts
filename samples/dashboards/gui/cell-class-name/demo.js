@@ -8,10 +8,8 @@ Dashboards.board(
                 {
                     id: 'sample',
                     type: 'CSV',
-                    options: {
-                        csv: csvData,
-                        firstRowAsNames: true
-                    }
+                    csv: csvData,
+                    firstRowAsNames: true
                 }
             ]
         },
@@ -92,7 +90,7 @@ Dashboards.board(
             },
             {
                 renderTo: 'dashboard-col-1',
-                type: 'DataGrid',
+                type: 'Grid',
                 connector: {
                     id: 'sample'
                 },

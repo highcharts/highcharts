@@ -43,6 +43,11 @@ export interface LangAccessibilityAxisOptions {
     xAxisDescriptionSingular: string;
     yAxisDescriptionPlural: string;
     yAxisDescriptionSingular: string;
+    defaultAxisNames?: {
+        categories: string;
+        time: string;
+        values: string;
+    };
 }
 
 export interface LangAccessibilityChartTypesOptions {

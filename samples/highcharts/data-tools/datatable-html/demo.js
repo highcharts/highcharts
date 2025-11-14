@@ -12,7 +12,7 @@ addColumnButton.addEventListener('click', () => {
     // Set column name; second parameter can be an array of cell values.
     table.setColumn(addColumnInput.value);
     // Render changed table.
-    renderTable(container, table.modified);
+    renderTable(container, table.getModified());
     // Reset input field
     addColumnInput.value = '';
 });
@@ -36,7 +36,7 @@ addRowButton.addEventListener('click', () => {
             ))
     );
     // Render changed table.
-    renderTable(container, table.modified);
+    renderTable(container, table.getModified());
     // Reset input field
     addRowInput.value = '';
 });
@@ -57,7 +57,7 @@ setModifierSelect.addEventListener('change', async () => {
     }
 
     // without modifier table.modified = table
-    renderTable(container, table.modified);
+    renderTable(container, table.getModified());
 });
 
 
@@ -69,7 +69,7 @@ function renderTable(container, table) {
     html.push('<table>');
     html.push('<thead>');
     html.push('<tr>');
-    for (const column of table.getColumnNames()) {
+    for (const column of table.getColumnIds()) {
         html.push('<th>', escapeStringForHTML(column), '</th>');
     }
     html.push('</tr>');

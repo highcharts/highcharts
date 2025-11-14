@@ -48,10 +48,6 @@ if (defaultOptions.annotations) {
          * @apioption annotations.types.crookedLine.labelOptions
          */
 
-        /**
-         * @extends   annotations.shapeOptions
-         * @apioption annotations.types.crookedLine.shapeOptions
-         */
 
         /**
          * Additional options for an annotation with the type.
@@ -107,6 +103,7 @@ if (defaultOptions.annotations) {
 
         /**
          * @excluding positioner, events
+         * @extends annotations.controlPointOptions
          */
         controlPointOptions: {
             positioner: function (

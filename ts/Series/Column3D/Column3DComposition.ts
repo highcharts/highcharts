@@ -53,8 +53,8 @@ const {
  *
  * */
 
-declare module '../../Core/Chart/ChartLike' {
-    interface ChartLike {
+declare module '../../Core/Chart/ChartBase' {
+    interface ChartBase {
         columnGroup: SVGElement;
     }
 }
@@ -65,8 +65,8 @@ declare module '../../Core/Series/DataLabelOptions' {
     }
 }
 
-declare module '../../Core/Series/PointLike' {
-    interface PointLike {
+declare module '../../Core/Series/PointBase' {
+    interface PointBase {
         height?: number;
         outside3dPlot?: (boolean|null);
         shapey?: number;
@@ -74,8 +74,8 @@ declare module '../../Core/Series/PointLike' {
     }
 }
 
-declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase {
         z: number;
         /** @requires Series/Column3DSeries */
         translate3dShapes(): void;
@@ -361,7 +361,9 @@ function onColumnSeriesAfterInit(
 
         // @todo grouping === true ?
         if (!(typeof grouping !== 'undefined' && !grouping)) {
-            const stacks = retrieveStacks(this.chart, stacking) as AnyRecord,
+            const stacks = retrieveStacks(
+                    this.chart, stacking || void 0
+                ) as AnyRecord,
                 stack: (string|number) = seriesOptions.stack || 0;
 
             let i; // Position within the stack

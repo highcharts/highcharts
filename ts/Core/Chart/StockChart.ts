@@ -24,6 +24,7 @@ import type {
 } from '../Axis/AxisOptions';
 import type BBoxObject from '../Renderer/BBoxObject';
 import type CSSObject from '../Renderer/CSSObject';
+import type { DeepPartial } from '../../Shared/Types';
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type Options from '../Options';
 import type PointerEvent from '../PointerEvent';
@@ -69,14 +70,14 @@ const {
  *
  * */
 
-declare module '../Axis/AxisLike' {
-    interface AxisLike {
+declare module '../Axis/AxisBase' {
+    interface AxisBase {
         crossLabel?: SVGElement;
     }
 }
 
-declare module './ChartLike' {
-    interface ChartLike {
+declare module './ChartBase' {
+    interface ChartBase {
         _labelPanes?: Record<string, Axis>;
         fixedRange?: number;
         setFixedRange(range: number|undefined): void;
@@ -89,15 +90,15 @@ declare module '../Options'{
     }
 }
 
-declare module '../Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../Series/SeriesBase' {
+    interface SeriesBase {
         clipBox?: BBoxObject;
         forceCropping(): boolean|undefined;
     }
 }
 
-declare module '../Renderer/SVG/SVGRendererLike' {
-    interface SVGRendererLike {
+declare module '../Renderer/SVG/SVGRendererBase' {
+    interface SVGRendererBase {
         crispPolyLine(points: SVGPath, width: number): SVGPath;
     }
 }

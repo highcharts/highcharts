@@ -32,8 +32,8 @@ const {
     pick
 } = U;
 
-declare module '../../Core/GlobalsLike.d.ts' {
-    interface GlobalsLike {
+declare module '../../Core/GlobalsBase.d.ts' {
+    interface GlobalsBase {
         navigators: Array<StandaloneNavigator>;
     }
 }
