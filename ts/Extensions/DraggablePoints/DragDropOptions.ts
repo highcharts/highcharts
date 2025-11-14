@@ -311,13 +311,6 @@ export interface DragDropHandleOptions {
     zIndex?: number;
 }
 
-// TODO: remove
-export interface PointEventsOptionsObject {
-    drag?: PointDragCallbackFunction;
-    dragStart?: PointDragStartCallbackFunction;
-    drop?: PointDropCallbackFunction;
-}
-
 declare module '../../Core/Series/PointOptions' {
     interface PointEventsOptions {
         /**
