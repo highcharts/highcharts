@@ -21,7 +21,7 @@
  * */
 
 import type Axis from '../../Core/Axis/Axis';
-import type { AxisResizeOptions } from './AxisResizerOptions';
+import type AxisResizeOptions from './AxisResizeOptions';
 import type { DeepPartial } from '../../Shared/Types';
 import type PointerEvent from '../../Core/PointerEvent';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';

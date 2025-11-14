@@ -19,9 +19,7 @@
  * */
 
 import type ColorType from '../../Core/Color/ColorType';
-import type {
-    CursorValue
-} from '../../Core/Renderer/CSSObject';
+import type { CursorValue } from '../../Core/Renderer/CSSObject';
 import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
 
 /* *

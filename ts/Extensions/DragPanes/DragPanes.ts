@@ -21,7 +21,7 @@
  * */
 
 import type Axis from '../../Core/Axis/Axis';
-import type AxisResizeOptions from './AxisResizerOptions';
+import type AxisResizeOptions from './AxisResizeOptions';
 import type Pointer from '../../Core/Pointer';
 
 import AxisResizer from './AxisResizer.js';
