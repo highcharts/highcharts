@@ -76,8 +76,8 @@ const connectorsDefaults: ConnectorsDefaults = {
         /**
          * Set the default dash style for this chart's connecting lines.
          *
-         * @type      {string}
-         * @default   solid
+         * @type      {Highcharts.DashStyleValue}
+         * @default   Solid
          * @since     6.2.0
          * @apioption connectors.dashStyle
          */
@@ -167,6 +167,7 @@ const connectorsDefaults: ConnectorsDefaults = {
          * @since   6.2.0
          */
         marker: {
+
             /**
              * Set the radius of the connector markers. The default is
              * automatically computed based on the algorithmMargin setting.
@@ -254,6 +255,7 @@ const connectorsDefaults: ConnectorsDefaults = {
          * @since   6.2.0
          */
         startMarker: {
+
             /**
              * Set the symbol of the connector start markers.
              */
@@ -269,6 +271,7 @@ const connectorsDefaults: ConnectorsDefaults = {
          * @since   6.2.0
          */
         endMarker: {
+
             /**
              * Set the symbol of the connector end markers.
              */

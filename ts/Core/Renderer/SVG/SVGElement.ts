@@ -22,6 +22,7 @@ import type BBoxObject from '../BBoxObject';
 import type ColorString from '../../Color/ColorString';
 import type ColorType from '../../Color/ColorType';
 import type CSSObject from '../CSSObject';
+import type { DeepPartial } from '../../../Shared/Types';
 import type {
     DOMElementType,
     HTMLDOMElement,
@@ -453,9 +454,12 @@ class SVGElement implements SVGElementBase {
             y = (alignToBox.y || 0) + (alignOptions.y || 0) +
                 ((alignToBox.height || 0) - (alignOptions.height || 0)) *
                 getAlignFactor(alignOptions.verticalAlign),
-            attribs: SVGAttributes = {
-                'text-align': alignOptions?.align
-            };
+            attribs: SVGAttributes = {};
+
+        // Add text-align attribute only if option is defined, #22698
+        if (alignOptions.align) {
+            attribs['text-align'] = alignOptions.align;
+        }
 
         attribs[alignByTranslate ? 'translateX' : 'x'] = Math.round(x);
         attribs[alignByTranslate ? 'translateY' : 'y'] = Math.round(y);

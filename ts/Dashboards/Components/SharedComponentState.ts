@@ -20,7 +20,7 @@
  *
  * */
 
-import type Globals from '../Globals';
+import type { AnyRecord } from '../../Shared/Types';
 
 import Serializable from '../Serializable.js';
 import U from '../../Core/Utilities.js';
@@ -40,8 +40,7 @@ const {
  * Contains presentation information like column order, usually in relation to a
  * table instance.
  */
-class SharedComponentState
-implements Serializable<SharedComponentState, SharedComponentState.JSON> {
+class SharedComponentState implements Serializable<SharedComponentState, SharedComponentState.JSON> {
 
     /* *
      *
@@ -96,8 +95,8 @@ implements Serializable<SharedComponentState, SharedComponentState.JSON> {
         return (this.columnOrder || []).slice();
     }
 
-    public getColumnVisibility(columnName: string): boolean | undefined {
-        return this.columnVisibilityMap[columnName];
+    public getColumnVisibility(columnId: string): boolean | undefined {
+        return this.columnVisibilityMap[columnId];
     }
 
     /**
@@ -172,7 +171,7 @@ implements Serializable<SharedComponentState, SharedComponentState.JSON> {
      */
     public setColumnOrder(
         columnOrder: Array<string>,
-        eventDetail?: Globals.AnyRecord
+        eventDetail?: AnyRecord
     ): void {
         const presentationState = this,
             oldColumnOrder = (presentationState.columnOrder || []).slice(),
@@ -233,23 +232,24 @@ implements Serializable<SharedComponentState, SharedComponentState.JSON> {
         point?: SharedComponentState.PresentationHoverPointType | HTMLElement,
         eventDetail?: SharedComponentState.HoverPointEventDetails
     ): void {
-        const isDataGrid = eventDetail && eventDetail.isDataGrid;
-        this.hoverPoint = isDataGrid ? void 0 : point;
+        const isGrid = eventDetail && eventDetail.isGrid;
+        this.hoverPoint = isGrid ? void 0 : point;
 
         if (point instanceof HTMLElement) {
-            this.hoverRow = isDataGrid ? point : void 0;
+            this.hoverRow = isGrid ? point : void 0;
         }
 
         this.emit({
             type: 'afterHoverPointChange',
-            hoverPoint: isDataGrid ? void 0 : this.hoverPoint,
-            hoverRow: isDataGrid ? this.hoverRow : void 0,
+            hoverPoint: isGrid ? void 0 : this.hoverPoint,
+            hoverRow: isGrid ? this.hoverRow : void 0,
             detail: eventDetail
         });
     }
 
-    public getHoverPoint():
-    (SharedComponentState.PresentationHoverPointType|undefined) {
+    public getHoverPoint(): (
+        SharedComponentState.PresentationHoverPointType | undefined
+    ) {
         return this.hoverPoint;
     }
 
@@ -360,7 +360,7 @@ namespace SharedComponentState {
      * Event types related to the column order.
      */
     export type ColumnOrderEventType = (
-        'columnOrderChange'|'afterColumnOrderChange'
+        'columnOrderChange' | 'afterColumnOrderChange'
     );
 
     export type ColumnVisibilityEventType = (
@@ -387,8 +387,8 @@ namespace SharedComponentState {
     }
 
     export interface HoverPointEventDetails {
-        detail?: Globals.AnyRecord;
-        isDataGrid?: boolean;
+        detail?: AnyRecord;
+        isGrid?: boolean;
         sender?: string
     }
 
@@ -405,39 +405,39 @@ namespace SharedComponentState {
      */
     export interface ColumnOrderEvent {
         type: ColumnOrderEventType;
-        detail?: Globals.AnyRecord,
+        detail?: AnyRecord,
         newColumnOrder: Array<string>;
         oldColumnOrder: Array<string>;
     }
     export interface ColumnVisibilityEvent {
         type: ColumnVisibilityEventType;
-        detail?: Globals.AnyRecord,
+        detail?: AnyRecord,
         visibilityMap: Record<string, boolean>;
     }
     export interface HiddenRowEvent {
         type: ('afterSetHiddenRows');
-        detail?: Globals.AnyRecord,
+        detail?: AnyRecord,
         hiddenRows: number[];
     }
 
     export interface PointHoverEvent {
         type: HoverPointEventType;
-        detail?: Globals.AnyRecord,
+        detail?: AnyRecord,
         hoverPoint?: PresentationHoverPointType;
         hoverRow?: HTMLElement;
     }
 
     export type ColumnVisibilityType = Record<string, boolean>;
 
-    export type SelectionObjectType = Record<string, { columnName?: string; min?: number; max?: number }>;
+    export type SelectionObjectType = Record<string, { columnId?: string; min?: number; max?: number }>;
 
-    export type PresentationHoverPointType = Partial<Globals.AnyRecord>;
+    export type PresentationHoverPointType = Partial<AnyRecord>;
 
     export interface SelectionEvent {
         type: selectionEventType;
-        detail?: Globals.AnyRecord,
+        detail?: AnyRecord,
         reset: boolean;
-        selection: Record<string, {min?: number | undefined; max?: number | undefined}>;
+        selection: Record<string, { min?: number | undefined; max?: number | undefined }>;
     }
 
     /**

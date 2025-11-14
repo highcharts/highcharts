@@ -1,6 +1,6 @@
-@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
 
-* {
+body {
     font-family:
         -apple-system,
         BlinkMacSystemFont,
@@ -12,11 +12,13 @@
         "Segoe UI Emoji",
         "Segoe UI Symbol",
         sans-serif;
+    background: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
 }
 
 .demo,
 .highcharts-light .demo {
-    padding: 8px;
+    padding: 8px 12px;
     font-family: Arial, Helvetica, sans-serif;
     color: #121212;
 }
@@ -72,7 +74,7 @@
 }
 
 .highcharts-description {
-    padding: 0 20px;
+    padding: 0 8px;
 }
 
 @media (prefers-color-scheme: dark) {

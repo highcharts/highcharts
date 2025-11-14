@@ -1,0 +1,146 @@
+name: Grid Lighthouse tests
+on:
+  pull_request:
+    branches:
+      - 'master'
+      - 'grid/**'
+    paths:
+      - '.github/workflows/grid-lighthouse-test.yml'
+      - 'css/grid*'
+      - 'samples/grid-lite/**'
+      - 'samples/grid-pro/**'
+      - 'test/cypress/grid/performance/**'
+      - 'ts/Grid/**'
+      - 'ts/Data/**'
+
+permissions:
+  contents: read # to fetch code (actions/checkout)
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  cypress_lighthouse:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    strategy:
+      matrix:
+        node-version: [lts/*]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+          path: highcharts
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: highcharts/package-lock.json
+
+      - name: Install Highcharts dependencies
+        run: |
+          cd highcharts
+          npm ci
+
+      - name: Build Highcharts
+        run: |
+          cd highcharts
+          npx gulp scripts
+
+      - name: Build Grid
+        run: |
+          cd highcharts
+          npx gulp scripts --product Grid
+
+      - name: Checkout utils
+        uses: actions/checkout@v4
+        with:
+          repository: highcharts/highcharts-utils
+          path: utils
+          fetch-depth: 1
+
+      - name: Install Highcharts Utils
+        run: |
+          cd utils
+          npm i
+
+      - name: Run cypress via action
+        uses: cypress-io/github-action@v5
+        continue-on-error: true
+        with:
+          browser: chrome
+          start: node ../utils/server --localOnly
+          wait-on: 'http://localhost:3031/grid-lite.js'
+          env: type=base
+          working-directory: highcharts
+          config-file: test/cypress/grid/lighthouse.config.mjs
+          install: false
+
+      - name: Stop server
+        run: kill $(lsof -t -i:3030)
+
+      - name: Checkout current branch
+        uses: actions/checkout@v4
+        with:
+          path: highcharts
+          clean: false # do not remove files from previous run
+
+      - name: Install Highcharts dependencies
+        run: |
+          cd highcharts
+          npm ci
+
+      - name: Build Highcharts
+        run: |
+          cd highcharts
+          npx gulp scripts
+
+      - name: Build Grid
+        run: |
+          cd highcharts
+          npx gulp scripts --product Grid
+
+      - name: Run cypress via action
+        uses: cypress-io/github-action@v5
+        with:
+          browser: chrome
+          start: node ../utils/server --localOnly
+          wait-on: 'http://localhost:3031/grid-lite.js'
+          env: type=actual
+          working-directory: highcharts
+          config-file: test/cypress/grid/lighthouse.config.mjs
+          install: false
+
+      - name: Store artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: tmp-files
+          path: |
+            highcharts/tmp
+
+      - name: Write markdown to file
+        if: ${{ always() }}
+        run: |
+          node highcharts/test/cypress/lighthouseCompare.mjs --reportsDir ./highcharts/tmp/lighthouseReports > ./highcharts/tmp/lighthousetable.md
+
+      - name: Add to summary
+        if: ${{ always() }}
+        run: |
+          echo "## Lighthouse metrics" >> $GITHUB_STEP_SUMMARY
+          cat highcharts/tmp/lighthousetable.md >> $GITHUB_STEP_SUMMARY
+
+      - name: Comment on PR
+        uses: actions/github-script@v7
+        if: ${{ always() }}
+        with:
+          github-token: ${{secrets.PR_COMMENT_TOKEN}}
+          script: |
+            const { createOrUpdateComment } = require('./highcharts/.github/scripts/commentOnPR');
+            const { readFileSync } = require('node:fs')
+
+            const markdown = readFileSync('./highcharts/tmp/lighthousetable.md');
+
+            await createOrUpdateComment(github, context, 'Lighthouse report', markdown || 'No table to show');

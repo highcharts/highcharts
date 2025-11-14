@@ -3,10 +3,10 @@ on:
   pull_request:
     branches:
       - 'master'
+      - 'dash/**'
     paths:
       - '.github/workflows/dashboards-visual-test.yml'
       - 'css/dashboards*'
-      - 'css/datagrid*'
       - 'samples/dashboards/**'
       - 'test/cypress/dashboards/**'
       - 'ts/Dashboards/**'
@@ -49,10 +49,15 @@ jobs:
           cd highcharts
           npx gulp scripts
 
+      - name: Build Grid
+        run: |
+          cd highcharts
+          npx gulp scripts --product Grid
+
       - name: Build Dashboards
         run: |
           cd highcharts
-          npx gulp dashboards/scripts
+          npx gulp scripts --product Dashboards
 
       - name: Checkout utils
         uses: actions/checkout@v4
@@ -102,10 +107,15 @@ jobs:
           cd highcharts
           npx gulp scripts
 
+      - name: Build Grid
+        run: |
+          cd highcharts
+          npx gulp scripts --product Grid
+
       - name: Build Dashboards
         run: |
           cd highcharts
-          npx gulp dashboards/scripts
+          npx gulp scripts --product Dashboards
 
       - name: Run visual test
         uses: cypress-io/github-action@v6

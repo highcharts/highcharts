@@ -9,20 +9,11 @@ const argv = require('yargs').argv;
 const highchartsVersion = require('../../package').version;
 const { getFilesChanged, getLatestCommitShaSync } = require('../libs/git');
 const { uploadFiles, putS3Object } = require('./lib/uploadS3');
-const { doRequest } = require('./lib/github');
+const { setCommitStatus } = require('../../.github/scripts/setCommitStatus');
 
 const S3_PULLREQUEST_PATH = 'visualtests/diffs/pullrequests';
 const S3_REVIEWS_PATH = 'visualtests/reviews';
 const DEFAULT_COMMENT_TITLE = 'Visual test results';
-const DEFAULT_OPTIONS = {
-    method: 'GET',
-    json: true,
-    headers: {
-        Accept: 'application/vnd.github.v3+json',
-        Authorization: `token ${process.env.GITHUB_TOKEN || argv.token}`,
-        'User-Agent': 'Highcharts PR Commenter'
-    }
-};
 
 const VISUAL_TESTS_BUCKET = process.env.HIGHCHARTS_VISUAL_TESTS_BUCKET || 'staging-vis-dev.highcharts.com';
 
@@ -57,23 +48,25 @@ async function postGitCommitStatusUpdate(pr, newReview) {
         logLib.message('All samples are already approved.');
     }
 
+    const token = process.env.GITHUB_TOKEN || argv.token;
+
+    if (!token) {
+        logLib.warn('No GitHub token provided, skipping commit status update.');
+        return response;
+    }
+
     try {
-        response = await doRequest({
-            ...DEFAULT_OPTIONS,
-            url: `https://api.github.com/repos/highcharts/highcharts/statuses/${commitSha}`,
-            method: 'POST',
-            body: {
-                owner: 'highcharts',
-                repo: 'highcharts',
-                sha: commitSha,
-                state: commitState,
-                // eslint-disable-next-line camelcase
-                target_url: `https://vrevs.highsoft.com/pr/${pr}/review`,
-                description,
-                context: 'Highcharts review tool'
-            }
+        response = await setCommitStatus({
+            token,
+            owner: 'highcharts',
+            repo: 'highcharts',
+            sha: commitSha,
+            state: commitState,
+            targetUrl: `https://vrevs.highsoft.com/pr/${pr}/review`,
+            description,
+            context: 'Highcharts review tool'
         });
-        logLib.message(`Github status for ${commitSha} created with ${commitState}`);
+        logLib.message(`GitHub status for ${commitSha} created with ${commitState}`);
     } catch (error) {
         // catch error as we dont wan't to terminate the gulp task if given failure of status update.
         logLib.warn(`Failed to create github status for sha ${commitSha}: ${error.message}`);

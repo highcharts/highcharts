@@ -154,6 +154,7 @@
     line-height: normal;
     z-index: 0; /* #1072 */
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    color-scheme: light dark;
     font-family:
         -apple-system,
         BlinkMacSystemFont,
@@ -169,6 +170,14 @@
     user-select: none;
     touch-action: manipulation;
     outline: none;
+}
+
+.highcharts-light .highcharts-container {
+    color-scheme: light;
+}
+
+.highcharts-dark .highcharts-container {
+    color-scheme: dark;
 }
 
 .highcharts-no-touch-action {
@@ -954,7 +963,7 @@ input.highcharts-range-selector {
 
 .highcharts-crosshair-label text {
     fill: var(--highcharts-background-color);
-    font-size: 1.7em;
+    font-size: 1em;
 }
 
 .highcharts-crosshair-label .highcharts-label-box {

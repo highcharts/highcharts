@@ -32,10 +32,6 @@ namespace Globals {
      *
      * */
 
-    export type DeepPartial<T> = {
-        [K in keyof T]?: (T[K]|DeepPartial<T[K]>);
-    };
-
     export type DeepRequired<T> = {
         [K in keyof T]-?: DeepRequired<T[K]>;
     };
@@ -74,7 +70,12 @@ namespace Globals {
         virtualization: 'virtualization',
         scrollableContent: 'scrollable-content',
         headerCell: 'header-cell',
+        headerCellContainer: 'header-cell-container',
         headerCellContent: 'header-cell-content',
+        headerCellFilterIcon: 'header-cell-filter-icon',
+        headerCellIcons: 'header-cell-icons',
+        headerCellSortIcon: 'header-cell-sort-icon',
+        headerCellMenuIcon: 'header-cell-menu-icon',
         headerRow: 'head-row-content',
         noData: 'no-data',
         noPadding: 'no-padding',
@@ -93,7 +94,45 @@ namespace Globals {
         lastHeaderCellInRow: 'last-header-cell-in-row',
         loadingWrapper: 'loading-wrapper',
         loadingSpinner: 'spinner',
-        loadingMessage: 'loading-message'
+        loadingMessage: 'loading-message',
+        popup: 'popup',
+        button: 'button',
+        icon: 'icon',
+        iconSearch: 'icon-search',
+        popupContent: 'popup-content',
+        columnFilterWrapper: 'column-filter-wrapper',
+        toolbarButtonActiveIndicator: 'active-indicator',
+        menuContainer: 'menu-container',
+        menuItem: 'menu-item',
+        menuHeader: 'menu-header',
+        menuHeaderCategory: 'menu-header-category',
+        menuHeaderName: 'menu-header-name',
+        menuItemIcon: 'menu-item-icon',
+        menuItemLabel: 'menu-item-label',
+        menuDivider: 'menu-divider',
+        clearFilterButton: 'clear-filter-button',
+        paginationWrapper: 'pagination-wrapper',
+        paginationContainer: 'pagination-container',
+        paginationPageInfo: 'pagination-info',
+        paginationControls: 'pagination-controls',
+        paginationButton: 'pagination-btn',
+        paginationButtonDisabled: 'pagination-btn-disabled',
+        paginationFirstButton: 'pagination-first',
+        paginationPrevButton: 'pagination-prev',
+        paginationNextButton: 'pagination-next',
+        paginationLastButton: 'pagination-last',
+        paginationPageButton: 'pagination-page',
+        paginationPageButtonActive: 'pagination-page-active',
+        paginationEllipsis: 'pagination-ellipsis',
+        paginationMobileSelector: 'pagination-mobile-selector',
+        paginationMobilePageSizeSelector:
+            'pagination-mobile-page-size-selector',
+        paginationPageSizeContainer: 'pagination-page-size-container',
+        paginationPageSizeSelect: 'pagination-page-size-select',
+        noWidth: 'no-width',
+        rightAlign: 'right',
+        centerAlign: 'center',
+        leftAlign: 'left'
     } as const;
 
     export const win = window;

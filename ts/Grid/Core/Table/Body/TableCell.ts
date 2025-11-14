@@ -26,6 +26,7 @@ import type DataTable from '../../../../Data/DataTable';
 import type Column from '../Column';
 import type TableRow from './TableRow';
 
+import Globals from '../../Globals.js';
 import Cell from '../Cell.js';
 import CellContent from '../CellContent/CellContent.js';
 
@@ -135,6 +136,13 @@ class TableCell extends Cell {
         }
 
         this.htmlElement.setAttribute('data-value', this.value + '');
+
+        // Set alignment in column cells based on column data type
+        this.htmlElement.classList[
+            this.column.dataType === 'number' ? 'add' : 'remove'
+        ](Globals.getClassName('rightAlign'));
+
+        // Add custom class name from column options
         this.setCustomClassName(this.column.options.cells?.className);
 
         fireEvent(this, 'afterRender', { target: this });
@@ -173,7 +181,8 @@ class TableCell extends Cell {
             this.value
         );
 
-        if (vp.grid.querying.getModifiers().length < 1) {
+        // If no modifiers, don't update all rows
+        if (vp.grid.dataTable === vp.grid.presentationTable) {
             return false;
         }
 

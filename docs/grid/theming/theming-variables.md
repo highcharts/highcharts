@@ -261,6 +261,16 @@ Define a few global variables for a consistent base style. Use section-specific 
     --hcg-cell-hovered-row-color: var(--my-hover-color);
     --hcg-cell-hovered-column-color: var(--my-hover-color);
     --hcg-header-hovered-color: var(--my-hover-color);
+    
+    /* Pagination styling */
+    --hcg-pagination-button-background: #f8f9fa;
+    --hcg-pagination-button-color: #495057;
+    --hcg-pagination-button-background-active: var(--my-hover-color);
+    --hcg-pagination-button-color-active: #ffffff;
+    --hcg-pagination-button-border: #dee2e6;
+    --hcg-pagination-button-border-hover: var(--my-hover-color);
+    --hcg-pagination-icon-color: #6c757d;
+    --hcg-pagination-padding: 12px 0px;
 }
 ```
 
@@ -268,8 +278,9 @@ Check our [theming demo](https://www.highcharts.com/demo/grid/grid-theming) to s
 
 ## Summary
 
-1. Define global variables for fonts, borders, padding, and backgrounds.
+1. Define global variables for fonts, borders, padding, backgrounds, and pagination.
 2. Use section-specific prefixes to refine specific areas.
-3. The DataGrid falls back to global values when no section-specific variable is defined.
+3. The Grid falls back to global values when no section-specific variable is defined.
+4. Pagination variables automatically adapt to light and dark modes for optimal contrast.
 
-This system ensures flexible, maintainable, and consistent theming.
+This system ensures flexible, maintainable, and consistent theming across all grid components.

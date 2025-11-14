@@ -1,6 +1,6 @@
 import Dashboards from '../../../../code/dashboards/es-modules/masters/dashboards.src.js';
 import '../../../../code/dashboards/es-modules/masters/modules/layout.src.js';
-import Grid from '../../../../code/datagrid/es-modules/masters/datagrid.src.js';
+import Grid from '../../../../code/grid/es-modules/masters/grid-pro.src.js';
 
 Dashboards.GridPlugin.custom.connectGrid(Grid);
 Dashboards.PluginHandler.addPlugin(Dashboards.GridPlugin);
@@ -10,14 +10,12 @@ Dashboards.board('container', {
         connectors: [{
             id: 'data',
             type: 'JSON',
-            options: {
-                data: [
-                    ['Product Name', 'Quantity'],
-                    ['Laptop', 100],
-                    ['Smartphone', 150],
-                    ['Desk Chair', 120]
-                ]
-            }
+            data: [
+                ['Product Name', 'Quantity'],
+                ['Laptop', 100],
+                ['Smartphone', 150],
+                ['Desk Chair', 120]
+            ]
         }]
     },
     gui: {
