@@ -50,6 +50,7 @@ Gulp.registry(new GulpForwardReference());
     'dist-upload-more',
     'dist-verify',
     'grid/api-docs',
+    'grid/cypress',
     'jsdoc',
     'jsdoc-classes',
     'jsdoc-clean',
