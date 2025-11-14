@@ -123,13 +123,13 @@ body,
 }
 
 .chart-container {
-    border: 0 solid #000;
+    border: 0 solid var(--text-primary);
     width: 100%;
 }
 
 a,
 a:hover {
-    color: #000;
+    color: var(--text-primary);
 }
 
 a:hover {
