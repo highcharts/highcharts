@@ -110,8 +110,6 @@ Math.easeOutBounce = pos => {
 
 const big = window.matchMedia('(min-width: 500px)').matches;
 
-let chart;
-
 const ganttChart = function () {
 
     const day = 24 * 3600 * 1000,
@@ -121,7 +119,7 @@ const ganttChart = function () {
             new Date().getUTCDate()
         );
     // Create the chart
-    chart = Highcharts.ganttChart('gantt', {
+    Highcharts.ganttChart('gantt', {
         chart: {
             height: '100%',
             margin: [120, 10, 20, 10],
@@ -250,7 +248,7 @@ const ganttChart = function () {
                 },
                 pointPadding: 0.42,
                 groupPadding: 0,
-                allowPointSelect: true,
+                allowPointSelect: true
                 // point: {
                 //     events: {
                 //         select: updateRemoveButtonStatus,
@@ -487,94 +485,6 @@ const ganttChart = function () {
             }]
         }
     });
-
-
-    /* Add button handlers for add/remove tasks */
-
-    // function hideDialog() {
-    //     addTaskDialog.classList.remove('show');
-    //     addTaskDialogOverlay.classList.remove('show');
-    //     isAddingTask = false;
-    //     btnShowDialog.focus();
-    // }
-
-    // btnRemoveTask.onclick = function () {
-    //     const points = chart.getSelectedPoints();
-    //     each(points, function (point) {
-    //         point.remove();
-    //     });
-    // };
-
-    // addTaskDialog.addEventListener('keydown', function (e) {
-    //     if (e.keyCode === 27) {
-    //         hideDialog();
-    //     }
-    // });
-
-    // btnShowDialog.onclick = function () {
-    //     // Update dependency list
-
-    //     let depInnerHTML = '<option value=""></option>';
-    //     each(chart.series[0].points, function (point) {
-    //         depInnerHTML += '<option value="' + point.id + '">' + point.name +
-    //     ' </option>';
-    //     });
-    //     selectDependency.innerHTML = depInnerHTML;
-
-    //     document.getElementsByTagName('body')[0].classList.add('modal-open');
-    //     addTaskDialogOverlay.classList.add('show');
-    //     addTaskDialog.classList.add('show');
-
-    //     // Show dialog by removing "hidden" class
-    //     // addTaskDialog.className = 'overlay';
-    //     isAddingTask = true;
-
-    //     addTaskDialog.focus();
-    // };
-
-    // btnAddTask.onclick = function () {
-    //     // Get values from dialog
-    //     const series = chart.series[0],
-    //         name = inputName.value,
-    //         dependency = chart.get(
-    //             selectDependency.options[selectDependency.selectedIndex].value
-    //         ),
-    //         y = parseInt(
-    //             selectDepartment.options[selectDepartment.selectedIndex].value,
-    //             10
-    //         );
-
-    //     let undef,
-    //         maxEnd = series.points.map(function (acc, point) {
-    //             return point.y === y && point.end ?
-    //                 Math.max(acc, point.end) : acc;
-    //         }, 0);
-
-    //     const milestone = chkMilestone.checked || undef;
-
-    //     // Empty category
-    //     if (maxEnd === 0) {
-    //         maxEnd = today;
-    //     }
-
-    //     // Add the point
-    //     if (name) {
-    //         series.addPoint({
-    //             start: maxEnd + (milestone ? day : 0),
-    //             end: milestone ? undef : maxEnd + day,
-    //             y: y,
-    //             name: name,
-    //             dependency: dependency ? dependency.id : undef,
-    //             milestone: milestone
-    //         });
-    //     }
-
-    //     hideDialog();
-    // };
-
-    // btnCancelAddTask.onclick = hideDialog;
-    // btnCloseAddTask.onclick = hideDialog;
-
 };
 
 ganttChart();
