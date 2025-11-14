@@ -339,11 +339,13 @@ class DataTableCore {
             indexRowCount = insert ? this.rowCount + 1 : rowIndex + 1,
             rowKeys = Object.keys(row);
 
-        for (let i = 0, iEnd = rowKeys.length; i < iEnd; i++) {
-            const key = rowKeys[i];
+        if (eventDetail?.addColumns !== false) {
+            for (let i = 0, iEnd = rowKeys.length; i < iEnd; i++) {
+                const key = rowKeys[i];
 
-            if (!columns[key] && eventDetail?.addColumns !== false) {
-                columns[key] = [];
+                if (!columns[key]) {
+                    columns[key] = [];
+                }
             }
         }
 
