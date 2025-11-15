@@ -32,5 +32,4 @@ export default interface ContourSeriesOptions extends ScatterSeriesOptions {
     contourInterval?: number;
     contourOffset?: number;
     lineColor?: ColorType; // Kept because we might want alternate docs
-    lineWidth?: number; // Kept because we might want alternate docs
 }

@@ -80,6 +80,13 @@ const invertedCbx = document.getElementById('inverted');
 const xReversedCbx = document.getElementById('x-reversed');
 const yReversedCbx = document.getElementById('y-reversed');
 const bgRenderCbx = document.getElementById('bg-render');
+const contourIntervalRange = document.getElementById('contour-interval');
+const contourOffsetRange = document.getElementById('contour-offset');
+const showLinesCbx = document.getElementById('show-lines');
+const smoothColoringCbx = document.getElementById('smooth-coloring');
+
+const contourIntervalSpan = document.getElementById('contour-interval-span');
+const contourOffsetSpan = document.getElementById('contour-offset-span');
 
 invertedCbx.addEventListener('click', () => {
     chart.update({
@@ -104,5 +111,31 @@ yReversedCbx.addEventListener('click', () => {
 bgRenderCbx.addEventListener('click', () => {
     chart.series[0].update({
         renderOnBackground: bgRenderCbx.checked
+    });
+});
+
+contourIntervalRange.addEventListener('input', () => {
+    chart.series[0].update({
+        contourInterval: parseInt(contourIntervalRange.value, 10)
+    });
+    contourIntervalSpan.textContent = contourIntervalRange.value;
+});
+
+contourOffsetRange.addEventListener('input', () => {
+    chart.series[0].update({
+        contourOffset: parseInt(contourOffsetRange.value, 10)
+    });
+    contourOffsetSpan.textContent = contourOffsetRange.value;
+});
+
+showLinesCbx.addEventListener('click', () => {
+    chart.series[0].update({
+        showContourLines: showLinesCbx.checked
+    });
+});
+
+smoothColoringCbx.addEventListener('click', () => {
+    chart.series[0].update({
+        smoothColoring: smoothColoringCbx.checked
     });
 });

@@ -19,6 +19,24 @@
         <input type="checkbox" id="bg-render" checked>
         renderOnBackground
     </label><br>
+    <label>
+        contourInterval
+        <input type="range" id="contour-interval" min="0" max="100" value="50">
+        (<span id="contour-interval-span">50</span>)
+    </label><br>
+    <label>
+        contourOffset
+        <input type="range" id="contour-offset" min="0" max="100" step="0.1" value="0">
+        (<span id="contour-offset-span">0</span>)
+    </label><br>
+    <label>
+        <input type="checkbox" id="show-lines">
+        showContourLines
+    </label><br>
+    <label>
+        <input type="checkbox" id="smooth-coloring">
+        smoothColoring
+    </label>
 </div>
 
 <pre id="data">

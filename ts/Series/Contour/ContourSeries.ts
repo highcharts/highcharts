@@ -20,6 +20,7 @@
 
 import type Chart from '../../Core/Chart/Chart.js';
 import type ContourSeriesOptions from './ContourSeriesOptions';
+import type { DeepPartial } from '../../Shared/Types';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 
 import Color from '../../Core/Color/Color.js';
@@ -36,6 +37,7 @@ const {
     }
 } = SeriesRegistry;
 const {
+    diffObjects,
     extend,
     merge
 } = U;
@@ -128,7 +130,7 @@ export default class ContourSeries extends ScatterSeries {
      * */
 
     public override init(chart: Chart, options: ContourSeriesOptions): void {
-        super.init.apply(this, [chart, options]);
+        super.init(chart, options);
 
         const props = {
             minPadding: 0,
@@ -222,6 +224,36 @@ export default class ContourSeries extends ScatterSeries {
         }
 
         super.render();
+    }
+
+    public override update(
+        options: DeepPartial<ContourSeriesOptions>,
+        redraw?: boolean
+    ): void {
+        options = diffObjects(options, this.userOptions);
+        const uniformOptions = [
+            'smoothColoring',
+            'showContourLines',
+            'contourInterval',
+            'contourOffset',
+            'lineColor'
+        ] as const;
+
+        for (const key of uniformOptions) {
+            if (Object.prototype.hasOwnProperty.call(options, key)) {
+                (this.userOptions as any)[key] = (options as any)[key];
+                (this.options as any)[key] = (options as any)[key];
+                delete (options as any)[key];
+            }
+        }
+
+        if (Object.keys(options).length > 0) {
+            super.update(options, redraw);
+        } else {
+            // If no options besides uniform ones are changed, just set the
+            // uniforms without rerendering the series.
+            this.setUniforms();
+        }
     }
 
     public override drawPoints(): void {
@@ -503,6 +535,10 @@ export default class ContourSeries extends ScatterSeries {
 
     public override destroy(): void {
         // Remove the foreign object. The canvas will be removed with it.
+        // For some reason, `series.update` calls `series.destroy` even if
+        // update does not trigger a rerender. This causes the canvas to be
+        // removed here (unnecessarily) and that causes the flickering effect
+        // when updating.
         this.canvas?.parentElement?.remove();
         super.destroy();
     }
