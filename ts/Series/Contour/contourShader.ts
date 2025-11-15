@@ -31,6 +31,7 @@ struct VertexOutput {
 
 @group(0) @binding(0) var<uniform> uExtremes: vec4f;
 @group(0) @binding(1) var<uniform> uValueExtremes: vec2f;
+@group(0) @binding(9) var<uniform> uIsInverted: u32;
 
 @vertex
 fn vertexMain(input: VertexInput) -> VertexOutput {
@@ -42,8 +43,15 @@ fn vertexMain(input: VertexInput) -> VertexOutput {
     let yMin = uExtremes[2];
     let yMax = uExtremes[3];
 
-    let posX = (pos.x - xMin) / (xMax - xMin) * 2.0 - 1.0;
-    let posY = (pos.y - yMin) / (yMax - yMin) * 2.0 - 1.0;
+    var posX: f32;
+    var posY: f32;
+    if (uIsInverted > 0u) {
+        posX = (1.0 - (pos.y - yMin) / (yMax - yMin)) * 2.0 - 1.0;
+        posY = (1.0 - (pos.x - xMin) / (xMax - xMin)) * 2.0 - 1.0;
+    } else {
+        posX = (pos.x - xMin) / (xMax - xMin) * 2.0 - 1.0;
+        posY = (pos.y - yMin) / (yMax - yMin) * 2.0 - 1.0;
+    }
 
     output.valExtremes = uValueExtremes;
     output.originalPos = pos.xyz;

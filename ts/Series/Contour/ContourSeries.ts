@@ -104,6 +104,8 @@ export default class ContourSeries extends ScatterSeries {
 
     private colorAxisStopsCountUniformBuffer?: GPUBuffer;
 
+    private isInvertedUniformBuffer?: GPUBuffer;
+
     /* Uniforms:
      * - extremesUniform,
      * - valueExtremesUniform,
@@ -114,6 +116,7 @@ export default class ContourSeries extends ScatterSeries {
      * - contourLineColor
      * - colorAxisStops
      * - colorAxisStopsCount
+     * - isInverted
      */
 
 
@@ -317,6 +320,11 @@ export default class ContourSeries extends ScatterSeries {
                     usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST
                 });
 
+                this.isInvertedUniformBuffer = device.createBuffer({
+                    size: 4,
+                    usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
+                });
+
                 device.queue.writeBuffer(
                     vertexBuffer,
                     0,
@@ -416,6 +424,12 @@ export default class ContourSeries extends ScatterSeries {
                             buffer: this.contourLineColorBuffer,
                             label: 'contourLineColorBuffer'
                         }
+                    }, {
+                        binding: 9,
+                        resource: {
+                            buffer: this.isInvertedUniformBuffer,
+                            label: 'isInvertedUniformBuffer'
+                        }
                     }]
                 });
 
@@ -475,9 +489,7 @@ export default class ContourSeries extends ScatterSeries {
         this.setSmoothColoringUniform(false);
         this.setShowContourLinesUniform(false);
         this.setContourLineColorUniform(false);
-        if (renderFrame) {
-            this.renderFrame?.();
-        }
+        this.setIsInvertedUniform(renderFrame);
     }
 
     /**
@@ -647,6 +659,26 @@ export default class ContourSeries extends ScatterSeries {
                 new Uint32Array([length]) as GPUAllowSharedBufferSource
             );
 
+            if (renderFrame) {
+                this.renderFrame?.();
+            }
+        }
+    }
+
+    /**
+     * Set the is inverted uniform according to the series options.
+     *
+     * @param {boolean} renderFrame
+     * Whether to rerender the series' context after setting the uniform.
+     * Defaults to `true`.
+     */
+    public setIsInvertedUniform(renderFrame = true): void {
+        if (this.device && this.isInvertedUniformBuffer) {
+            this.device.queue.writeBuffer(
+                this.isInvertedUniformBuffer,
+                0,
+                new Uint32Array([this.chart.inverted ? 1 : 0])
+            );
             if (renderFrame) {
                 this.renderFrame?.();
             }
