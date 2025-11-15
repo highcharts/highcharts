@@ -326,6 +326,12 @@ class Series {
 
     public colorIndex?: number;
 
+    /**
+     * Points that are marked for removal. During deleting of points, whether it
+     * is after adding points with shift, destroying points directly, udating
+     * data or other operations, we render the condemened point one last time
+     * into their final position as we fade them out, then destroy the elements.
+     */
     public condemnedPoints!: Array<Point>;
 
     public cropped?: boolean;
@@ -2099,8 +2105,8 @@ class Series {
                 yAxis.len
             );
         let i,
-            plotX,
-            lastPlotX,
+            plotX: number|undefined,
+            lastPlotX: number|undefined,
             stackIndicator,
             closestPointRangePx = Number.MAX_VALUE;
 
@@ -2284,11 +2290,11 @@ class Series {
             point.negative = (point.y || 0) < (threshold || 0);
 
             // Determine auto enabling of markers (#3635, #5099)
-            if (!point.isNull && point.visible !== false) {
-                if (typeof lastPlotX !== 'undefined') {
+            if (!point.isNull && point.visible !== false && isNumber(plotX)) {
+                if (isNumber(lastPlotX)) {
                     closestPointRangePx = Math.min(
                         closestPointRangePx,
-                        Math.abs((plotX as any) - lastPlotX)
+                        Math.abs((plotX) - lastPlotX)
                     );
                 }
                 lastPlotX = plotX;

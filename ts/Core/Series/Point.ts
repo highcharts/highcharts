@@ -378,6 +378,7 @@ class Point {
      * @return {Highcharts.SVGAttributes}
      *      The modified attributes with x and y adjusted for the shape.
      *
+     * @internal
      * @function Highcharts.Point#getOrigin
      */
     public getOrigin(
@@ -511,14 +512,14 @@ class Point {
             }
         }
         ['graphic', 'dataLabel'].forEach((prop): void => {
-            const plural = `${prop}s`;
-            if (kinds[prop] && (point as any)[plural]) {
-                (point as any)[plural].forEach((item: any): void => {
-                    if (item.element) {
+            const plural = `${prop}s` as ('graphics'|'dataLabels');
+            if (kinds[prop] && point[plural]) {
+                point[plural].forEach((item): void => {
+                    if (item?.element) {
                         item.destroy();
                     }
                 });
-                delete (point as any)[plural];
+                delete point[plural];
             }
         });
     }
@@ -834,8 +835,8 @@ class Point {
         let posX = 0,
             posY = 0;
 
-        if (isNumber(plotX) && isNumber(plotY)) {
-            if (chart && chartCoordinates) {
+        if (chart && isNumber(plotX) && isNumber(plotY)) {
+            if (chartCoordinates) {
                 posX = xAxis ? xAxis.pos : chart.plotLeft;
                 posY = yAxis ? yAxis.pos : chart.plotTop;
             }
