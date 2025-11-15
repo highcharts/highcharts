@@ -144,7 +144,7 @@
     max-height: unset;
     height: unset;
     border-radius: unset;
-    line-height: inherit;
+    line-height: 1.2em;
 }
 
 .hcg-table tbody td.hcg-edited-cell select {
