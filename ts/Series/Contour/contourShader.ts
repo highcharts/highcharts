@@ -45,8 +45,6 @@ fn vertexMain(input: VertexInput) -> VertexOutput {
     let posX = (pos.x - xMin) / (xMax - xMin) * 2.0 - 1.0;
     let posY = (pos.y - yMin) / (yMax - yMin) * 2.0 - 1.0;
 
-    // TODO: handle inverted with uniform
-
     output.valExtremes = uValueExtremes;
     output.originalPos = pos.xyz;
     output.pos = vec4f(posX, posY, 0, 1);

@@ -34,7 +34,10 @@ const {
         scatter: ScatterSeries
     }
 } = SeriesRegistry;
-const { extend, merge } = U;
+const {
+    extend,
+    merge
+} = U;
 
 
 /* *
@@ -69,6 +72,8 @@ export default class ContourSeries extends ScatterSeries {
 
     public options!: ContourSeriesOptions;
 
+    private foreignObject?: SVGForeignObjectElement;
+
     private canvas?: HTMLCanvasElement;
 
     public context?: GPUCanvasContext | null;
@@ -95,11 +100,9 @@ export default class ContourSeries extends ScatterSeries {
 
     private contourLineColorBuffer?: GPUBuffer;
 
-    public renderWebGPU?: () => void;
+    public renderFrame?: () => void;
 
     public dataMax?: number;
-
-    public renderPromise?: Promise<void>;
 
     public contourOffsetsBuffer?: GPUBuffer;
 
@@ -122,8 +125,7 @@ export default class ContourSeries extends ScatterSeries {
             gridLineWidth: 0,
             endOnTick: false,
             startOnTick: false,
-            tickWidth: 1,
-            lineWidth: 1
+            tickWidth: 1
         };
 
         for (const axis of [this.xAxis, this.yAxis]) {
@@ -173,81 +175,50 @@ export default class ContourSeries extends ScatterSeries {
 
 
     public override drawPoints(): void {
-        const series = this,
-            inverted = series.chart.inverted,
-            { xAxis, yAxis } = series,
-            canvas = series.canvas = (
-                series.canvas ||
-                document.createElement('canvas')
-            ),
-            devicePixelRatio = window.devicePixelRatio,
-            svg = document.querySelector('.highcharts-root'),
-            foreignObject = canvas.parentElement || document.createElementNS(
-                'http://www.w3.org/2000/svg',
-                'foreignObject'
-            ),
-            xLen = xAxis.len,
-            yLen = yAxis.len,
-            xTickWidth = xAxis.options.tickWidth || 1,
-            currentWidth = parseInt(
-                foreignObject.style.width.split('px')[0], 10
-            ) || 0,
-            currentHeight = parseInt(
-                foreignObject.style.height.split('px')[0], 10
-            ) || 0;
-
-        let foreignObjDimensions = {};
-
-        if (
-            !inverted ? (
-                xLen + xTickWidth !== currentWidth ||
-                yLen !== currentHeight
-            ) : (
-                yLen + xTickWidth !== currentWidth ||
-                xLen !== currentHeight
-            )
-        ) {
-            const canvasProps = foreignObjDimensions = merge(
-                foreignObjDimensions,
-                series.chart.inverted ? {
-                    x: yAxis.pos,
-                    y: xAxis.pos,
-                    width: yLen + xTickWidth,
-                    height: xLen
-                } : {
-                    x: xAxis.pos,
-                    y: yAxis.pos,
-                    width: xLen + xTickWidth,
-                    height: yLen
-                }
-            );
-            canvas.width = (
-                canvasProps.width +
-                xTickWidth
-            ) * devicePixelRatio;
-            canvas.height = canvasProps.height * devicePixelRatio;
-            canvas.style.width = canvasProps.width + 'px';
-            canvas.style.height = canvasProps.height + 'px';
-        }
-
-        for (const [key, value] of Object.entries(foreignObjDimensions)) {
-            foreignObject.setAttribute(key, String(value));
-        }
-
-        foreignObject.appendChild(canvas);
-        svg?.insertBefore(
-            foreignObject,
-            document.querySelector('.highcharts-plot-background')
-        );
-
-
-        // If this function exists, buffers are set up
-        if (series.renderWebGPU) {
-            series.renderWebGPU?.();
+        const { group } = this;
+        if (!group) {
             return;
         }
 
-        this.renderPromise = series.run();
+        if (!this.canvas) {
+            this.foreignObject = document.createElementNS(
+                'http://www.w3.org/2000/svg',
+                'foreignObject'
+            );
+            group.element.appendChild(this.foreignObject);
+            this.canvas = document.createElement('canvas');
+            this.foreignObject.appendChild(this.canvas);
+        }
+
+        const { canvas, xAxis, yAxis } = this,
+            foreignObject = this.foreignObject!,
+            oldWidth = foreignObject.width.baseVal.value,
+            oldHeight = foreignObject.height.baseVal.value,
+            { devicePixelRatio: dpr } = window,
+            // Canvas is inside the foreign object, so inversion rotates and
+            // scales the canvas using the SVG attributes. If this generates
+            // any rendering issues, we should turn off the SVG inversion and
+            // handle it in the GPU shader.
+            width = xAxis.len,
+            height = yAxis.len;
+
+        if (oldWidth !== width) {
+            foreignObject.setAttribute('width', width);
+            canvas.width = width * dpr;
+            canvas.style.width = width + 'px';
+        }
+
+        if (oldHeight !== height) {
+            foreignObject.setAttribute('height', height);
+            canvas.height = height * dpr;
+            canvas.style.height = height + 'px';
+        }
+
+        if (this.renderFrame) {
+            this.renderFrame();
+        } else {
+            void this.run();
+        }
     }
 
 
@@ -391,10 +362,10 @@ export default class ContourSeries extends ScatterSeries {
                     contourLineColor
                 );
 
-                this.setContourIntervalUniform();
-                this.setContourOffsetUniform();
-                this.setSmoothColoringUniform();
-                this.setShowContourLinesUniform();
+                this.setContourIntervalUniform(false);
+                this.setContourOffsetUniform(false);
+                this.setSmoothColoringUniform(false);
+                this.setShowContourLinesUniform(false);
 
                 new Float32Array(
                     colorAxisStopsBuffer.getMappedRange()
@@ -497,7 +468,7 @@ export default class ContourSeries extends ScatterSeries {
                     }]
                 });
 
-                this.renderWebGPU = function (): void {
+                this.renderFrame = function (): void {
                     const encoder = device.createCommandEncoder();
 
                     const pass = encoder.beginRenderPass({
@@ -518,85 +489,98 @@ export default class ContourSeries extends ScatterSeries {
                     device.queue.submit([encoder.finish()]);
                 };
 
-                this.renderWebGPU();
+                this.renderFrame();
             }
         }
 
     }
 
     public override destroy(): void {
-        this.canvas?.remove();
+        // Remove the foreign object. The canvas will be removed with it.
+        this.canvas?.parentElement?.remove();
         super.destroy();
     }
 
     public override drawGraph(): void {
-        // Empty
+        // Do nothing
     }
 
     /**
      * Set the contour interval uniform according to the series options.
      *
-     * @param {boolean} rerender
+     * @param {boolean} renderFrame
      * Whether to rerender the series' context after setting the uniform.
-     * Defaults to true.
+     * Defaults to `true`.
      */
-    public setContourIntervalUniform(rerender = true): void {
+    public setContourIntervalUniform(renderFrame = true): void {
         if (this.device && this.contourIntervalUniformBuffer) {
             this.device.queue.writeBuffer(
                 this.contourIntervalUniformBuffer,
                 0,
                 new Float32Array([this.getContourInterval()])
             );
-            if (rerender) {
-                this.renderWebGPU?.();
+            if (renderFrame) {
+                this.renderFrame?.();
             }
         }
     }
 
     /**
      * Set the contour offset uniform according to the series options.
+     *
+     * @param {boolean} renderFrame
+     * Whether to rerender the series' context after setting the uniform.
+     * Defaults to `true`.
      */
-    public setContourOffsetUniform(rerender = false): void {
+    public setContourOffsetUniform(renderFrame = true): void {
         if (this.device && this.contourOffsetUniformBuffer) {
             this.device.queue.writeBuffer(
                 this.contourOffsetUniformBuffer,
                 0,
                 new Float32Array([this.getContourOffset()])
             );
-            if (rerender) {
-                this.renderWebGPU?.();
+            if (renderFrame) {
+                this.renderFrame?.();
             }
         }
     }
 
     /**
      * Set the smooth coloring uniform according to the series options.
+     *
+     * @param {boolean} renderFrame
+     * Whether to rerender the series' context after setting the uniform.
+     * Defaults to `true`.
      */
-    public setSmoothColoringUniform(rerender = false): void {
+    public setSmoothColoringUniform(renderFrame = true): void {
         if (this.device && this.smoothColoringUniformBuffer) {
             this.device.queue.writeBuffer(
                 this.smoothColoringUniformBuffer || true,
                 0,
                 new Float32Array([this.getSmoothColoring()])
             );
-            if (rerender) {
-                this.renderWebGPU?.();
+            if (renderFrame) {
+                this.renderFrame?.();
             }
         }
     }
 
     /**
      * Set the show contour lines uniform according to the series options.
+     *
+     * @param {boolean} renderFrame
+     * Whether to rerender the series' context after setting the uniform.
+     * Defaults to `true`.
      */
-    public setShowContourLinesUniform(rerender = false): void {
+    public setShowContourLinesUniform(renderFrame = true): void {
         if (this.device && this.showContourLinesUniformBuffer) {
             this.device.queue.writeBuffer(
                 this.showContourLinesUniformBuffer || true,
                 0,
                 new Float32Array([this.getShowContourLines()])
             );
-            if (rerender) {
-                this.renderWebGPU?.();
+            if (renderFrame) {
+                this.renderFrame?.();
             }
         }
     }
@@ -728,7 +712,7 @@ export default class ContourSeries extends ScatterSeries {
      */
     public setExtremes(): void {
 
-        if (!this.renderWebGPU) {
+        if (!this.renderFrame) {
             return;
         }
 
@@ -752,7 +736,7 @@ export default class ContourSeries extends ScatterSeries {
                 );
             }
 
-            this?.renderWebGPU();
+            this?.renderFrame();
         }
     }
 
