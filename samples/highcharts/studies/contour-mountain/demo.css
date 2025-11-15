@@ -1,0 +1,9 @@
+#container {
+    width: 600px;
+    height: 500px;
+    margin: 1em auto;
+}
+
+#data {
+    display: none;
+}
