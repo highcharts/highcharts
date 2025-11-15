@@ -50,7 +50,7 @@ import type ContourSeriesOptions from './ContourSeriesOptions';
  * @optionparent plotOptions.contour
  */
 
-const contourSeriesDefaults: ContourSeriesOptions = {
+const ContourSeriesDefaults: ContourSeriesOptions = {
 
     /**
      * The offset of the contour lines.
@@ -62,6 +62,8 @@ const contourSeriesDefaults: ContourSeriesOptions = {
      * plot.
      */
     colorKey: 'value',
+
+    clip: false,
 
     /**
      * Whether to use smooth color transitions.
@@ -139,4 +141,4 @@ const contourSeriesDefaults: ContourSeriesOptions = {
 };
 ''; // Keeps doclets above separate
 
-export default contourSeriesDefaults;
+export default ContourSeriesDefaults;

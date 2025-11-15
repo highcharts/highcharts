@@ -17,7 +17,7 @@ const data = (() => {
     return res;
 })();
 
-Highcharts.chart('container', {
+const chart = Highcharts.chart('container', {
     title: {
         text: 'Mountain elevation'
     },
@@ -71,4 +71,28 @@ Highcharts.chart('container', {
             fillColor: '#000'
         }
     }]
+});
+
+const invertedCbx = document.getElementById('inverted');
+const xReversedCbx = document.getElementById('x-reversed');
+const yReversedCbx = document.getElementById('y-reversed');
+
+invertedCbx.addEventListener('click', () => {
+    chart.update({
+        chart: {
+            inverted: invertedCbx.checked
+        }
+    });
+});
+
+xReversedCbx.addEventListener('click', () => {
+    chart.xAxis[0].update({
+        reversed: xReversedCbx.checked
+    });
+});
+
+yReversedCbx.addEventListener('click', () => {
+    chart.yAxis[0].update({
+        reversed: yReversedCbx.checked
+    });
 });

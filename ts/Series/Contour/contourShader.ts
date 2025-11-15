@@ -65,7 +65,7 @@ struct FragmentInput {
 @group(0) @binding(5) var<uniform> uContourOffset: f32;
 @group(0) @binding(6) var<uniform> uSmoothColoring: u32;
 @group(0) @binding(7) var<uniform> uShowContourLines: u32;
-@group(0) @binding(8) var<uniform> uContourLineColor: vec3<f32>;
+@group(0) @binding(8) var<uniform> uContourLineColor: vec3f;
 
 fn getColor(value: f32) -> vec3<f32> {
     let stopCount = uColorStopsCount;

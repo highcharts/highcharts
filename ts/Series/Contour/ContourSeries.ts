@@ -24,7 +24,7 @@ import type ContourSeriesOptions from './ContourSeriesOptions';
 import Color from '../../Core/Color/Color.js';
 import ContourPoint from './ContourPoint.js';
 import contourShader from './contourShader.js';
-import contourSeriesDefaults from './contourSeriesDefaults.js';
+import ContourSeriesDefaults from './ContourSeriesDefaults.js';
 import Delaunay from '../../Shared/Delaunay.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
@@ -56,7 +56,7 @@ export default class ContourSeries extends ScatterSeries {
 
     public static defaultOptions = merge(
         ScatterSeries.defaultOptions,
-        contourSeriesDefaults
+        ContourSeriesDefaults
     );
 
 
@@ -78,10 +78,6 @@ export default class ContourSeries extends ScatterSeries {
 
     public dataMax?: number;
 
-    public contourOffsetsBuffer?: GPUBuffer;
-
-    public contourOffsetsCountBuffer?: GPUBuffer;
-
     private foreignObject?: SVGForeignObjectElement;
 
     private canvas?: HTMLCanvasElement;
@@ -90,11 +86,7 @@ export default class ContourSeries extends ScatterSeries {
 
     private device?: GPUDevice;
 
-    private extremesUniform?: Float32Array;
-
     private extremesUniformBuffer?: GPUBuffer;
-
-    private valueExtremesUniform?: Float32Array;
 
     private valueExtremesUniformBuffer?: GPUBuffer;
 
@@ -107,6 +99,22 @@ export default class ContourSeries extends ScatterSeries {
     private showContourLinesUniformBuffer?: GPUBuffer;
 
     private contourLineColorBuffer?: GPUBuffer;
+
+    private colorAxisStopsUniformBuffer?: GPUBuffer;
+
+    private colorAxisStopsCountUniformBuffer?: GPUBuffer;
+
+    /* Uniforms:
+     * - extremesUniform,
+     * - valueExtremesUniform,
+     * - contourInterval,
+     * - contourOffset,
+     * - smoothColoring,
+     * - showContourLines,
+     * - contourLineColor
+     * - colorAxisStops
+     * - colorAxisStopsCount
+     */
 
 
     /* *
@@ -194,13 +202,14 @@ export default class ContourSeries extends ScatterSeries {
             foreignObject = this.foreignObject!,
             oldWidth = foreignObject.width.baseVal.value,
             oldHeight = foreignObject.height.baseVal.value,
-            { devicePixelRatio: dpr } = window,
-            // Canvas is inside the foreign object, so inversion rotates and
-            // scales the canvas using the SVG attributes. If this generates
-            // any rendering issues, we should turn off the SVG inversion and
-            // handle it in the GPU shader.
-            width = xAxis.len,
+            { devicePixelRatio: dpr } = window;
+
+        let width = xAxis.len,
             height = yAxis.len;
+
+        if (this.chart.inverted) {
+            [width, height] = [height, width];
+        }
 
         if (oldWidth !== width) {
             foreignObject.setAttribute('width', width);
@@ -249,47 +258,9 @@ export default class ContourSeries extends ScatterSeries {
                     alphaMode: 'premultiplied'
                 });
 
-                const
-                    [indices, vertices] = this.getContourData(),
-                    extremesUniform = this.extremesUniform = (
-                        new Float32Array(
-                            this.getFrameExtremes()
-                        )
-                    ),
-                    valueExtremesUniform = (
-                        this.valueExtremesUniform = (
-                            new Float32Array(
-                                this.getValueAxisExtremes()
-                            )
-                        )
-                    ),
-                    colorAxisStops = this.getColorAxisStopsData(),
-
-                    // Caching bitwise operation
-                    uniformUsage = (
-                        GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
-                    ),
-                    options = series.options,
-                    {
-                        lineColor = '#000000'
-                    } = options,
-                    contourLineColor = new Float32Array(
-                        ContourSeries.rgbaAsFrac(new Color(lineColor).rgba)
-                    );
+                const [indices, vertices] = this.getContourData();
 
                 // WebGPU Buffers
-                const colorAxisStopsBuffer = device.createBuffer({
-                    size: colorAxisStops.array.byteLength,
-                    usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
-                    mappedAtCreation: true
-                });
-
-                const colorAxisStopsCountBuffer = device.createBuffer({
-                    size: 4,
-                    usage: uniformUsage,
-                    mappedAtCreation: true
-                });
-
                 const vertexBuffer: GPUBuffer = device.createBuffer({
                     size: vertices.byteLength,
                     usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST
@@ -300,40 +271,50 @@ export default class ContourSeries extends ScatterSeries {
                     usage: GPUBufferUsage.INDEX | GPUBufferUsage.COPY_DST
                 });
 
-                const extremesUniformBuffer = (
-                    this.extremesUniformBuffer = device.createBuffer({
-                        size: extremesUniform.byteLength,
-                        usage: uniformUsage
-                    }));
+                this.extremesUniformBuffer = device.createBuffer({
+                    size: Float32Array.BYTES_PER_ELEMENT * 4,
+                    usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
+                });
 
                 this.valueExtremesUniformBuffer = device.createBuffer({
-                    size: valueExtremesUniform.byteLength,
-                    usage: uniformUsage
+                    size: Float32Array.BYTES_PER_ELEMENT * 2,
+                    usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
                 });
 
                 this.contourIntervalUniformBuffer = device.createBuffer({
                     size: 4,
-                    usage: uniformUsage
+                    usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
                 });
 
                 this.contourOffsetUniformBuffer = device.createBuffer({
                     size: 4,
-                    usage: uniformUsage
+                    usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
                 });
 
                 this.smoothColoringUniformBuffer = device.createBuffer({
                     size: 4,
-                    usage: uniformUsage
+                    usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
                 });
 
                 this.showContourLinesUniformBuffer = device.createBuffer({
                     size: 4,
-                    usage: uniformUsage
+                    usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
                 });
 
                 this.contourLineColorBuffer = device.createBuffer({
                     size: 12,
-                    usage: uniformUsage
+                    usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
+                });
+
+                this.colorAxisStopsCountUniformBuffer = device.createBuffer({
+                    size: 4,
+                    usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
+                });
+
+                // Let's assume the color axis has at most 64 stops
+                this.colorAxisStopsUniformBuffer = device.createBuffer({
+                    size: Float32Array.BYTES_PER_ELEMENT * 64,
+                    usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST
                 });
 
                 device.queue.writeBuffer(
@@ -346,36 +327,6 @@ export default class ContourSeries extends ScatterSeries {
                     0,
                     indices as GPUAllowSharedBufferSource
                 );
-                device.queue.writeBuffer(
-                    extremesUniformBuffer,
-                    0,
-                    extremesUniform
-                );
-                device.queue.writeBuffer(
-                    this.valueExtremesUniformBuffer,
-                    0,
-                    valueExtremesUniform
-                );
-                device.queue.writeBuffer(
-                    this.contourLineColorBuffer,
-                    0,
-                    contourLineColor
-                );
-
-                this.setContourIntervalUniform(false);
-                this.setContourOffsetUniform(false);
-                this.setSmoothColoringUniform(false);
-                this.setShowContourLinesUniform(false);
-
-                new Float32Array(
-                    colorAxisStopsBuffer.getMappedRange()
-                ).set(colorAxisStops.array);
-                colorAxisStopsBuffer.unmap();
-
-                new Uint32Array(
-                    colorAxisStopsCountBuffer.getMappedRange()
-                )[0] = colorAxisStops.length;
-                colorAxisStopsCountBuffer.unmap();
 
                 const vertexBufferLayout: GPUVertexBufferLayout = {
                     arrayStride: 12,
@@ -414,7 +365,7 @@ export default class ContourSeries extends ScatterSeries {
                     entries: [{
                         binding: 0,
                         resource: {
-                            buffer: extremesUniformBuffer,
+                            buffer: this.extremesUniformBuffer,
                             label: 'extremesUniformBuffer'
                         }
                     }, {
@@ -426,13 +377,13 @@ export default class ContourSeries extends ScatterSeries {
                     }, {
                         binding: 2,
                         resource: {
-                            buffer: colorAxisStopsBuffer,
+                            buffer: this.colorAxisStopsUniformBuffer,
                             label: 'colorAxisStopsBuffer'
                         }
                     }, {
                         binding: 3,
                         resource: {
-                            buffer: colorAxisStopsCountBuffer,
+                            buffer: this.colorAxisStopsCountUniformBuffer,
                             label: 'colorAxisStopsCountBuffer'
                         }
                     }, {
@@ -469,6 +420,10 @@ export default class ContourSeries extends ScatterSeries {
                 });
 
                 this.renderFrame = function (): void {
+                    // Set all uniforms before each frame
+                    this.setUniforms(false);
+
+                    // Render the frame
                     const encoder = device.createCommandEncoder();
 
                     const pass = encoder.beginRenderPass({
@@ -492,7 +447,6 @@ export default class ContourSeries extends ScatterSeries {
                 this.renderFrame();
             }
         }
-
     }
 
     public override destroy(): void {
@@ -503,6 +457,27 @@ export default class ContourSeries extends ScatterSeries {
 
     public override drawGraph(): void {
         // Do nothing
+    }
+
+    /**
+     * Set all the updateable uniforms.
+     *
+     * @param {boolean} renderFrame
+     * Whether to rerender the series' context after setting the uniforms.
+     * Defaults to `true`.
+     */
+    public setUniforms(renderFrame = true): void {
+        this.setFrameExtremesUniform(false);
+        this.setValueExtremesUniform(false);
+        this.setColorAxisStopsUniforms(false);
+        this.setContourIntervalUniform(false);
+        this.setContourOffsetUniform(false);
+        this.setSmoothColoringUniform(false);
+        this.setShowContourLinesUniform(false);
+        this.setContourLineColorUniform(false);
+        if (renderFrame) {
+            this.renderFrame?.();
+        }
     }
 
     /**
@@ -586,6 +561,99 @@ export default class ContourSeries extends ScatterSeries {
     }
 
     /**
+     * Set the contour line color uniform according to the series options.
+     *
+     * @param {boolean} renderFrame
+     * Whether to rerender the series' context after setting the uniform.
+     * Defaults to `true`.
+     */
+    public setContourLineColorUniform(renderFrame = true): void {
+        if (this.device && this.contourLineColorBuffer) {
+            this.device.queue.writeBuffer(
+                this.contourLineColorBuffer,
+                0,
+                new Float32Array(this.getContourLineColor())
+            );
+        }
+        if (renderFrame) {
+            this.renderFrame?.();
+        }
+    }
+
+    /**
+     * Set the frame extremes uniform according to the series options.
+     *
+     * @param {boolean} renderFrame
+     * Whether to rerender the series' context after setting the uniform.
+     * Defaults to `true`.
+     */
+    public setFrameExtremesUniform(renderFrame = true): void {
+        if (this.device && this.extremesUniformBuffer) {
+            this.device.queue.writeBuffer(
+                this.extremesUniformBuffer,
+                0,
+                new Float32Array(this.getFrameExtremes())
+            );
+            if (renderFrame) {
+                this.renderFrame?.();
+            }
+        }
+    }
+
+    /**
+     * Set the value extremes uniform according to the series data.
+     *
+     * @param {boolean} renderFrame
+     * Whether to rerender the series' context after setting the uniform.
+     * Defaults to `true`.
+     */
+    public setValueExtremesUniform(renderFrame = true): void {
+        if (this.device && this.valueExtremesUniformBuffer) {
+            this.device.queue.writeBuffer(
+                this.valueExtremesUniformBuffer,
+                0,
+                new Float32Array(this.getValueAxisExtremes())
+            );
+            if (renderFrame) {
+                this.renderFrame?.();
+            }
+        }
+    }
+
+    /**
+     * Set the color axis stops uniforms according to the color axis options.
+     *
+     * @param {boolean} renderFrame
+     * Whether to rerender the series' context after setting the uniforms.
+     * Defaults to `true`.
+     */
+    public setColorAxisStopsUniforms(renderFrame = true): void {
+        const stopsBuffer = this.colorAxisStopsUniformBuffer;
+        const countBuffer = this.colorAxisStopsCountUniformBuffer;
+        if (this.device && stopsBuffer && countBuffer) {
+            const { array, length } = this.getColorAxisStopsData();
+
+            // Write the stops to the buffer
+            this.device.queue.writeBuffer(
+                stopsBuffer,
+                0,
+                array as GPUAllowSharedBufferSource
+            );
+
+            // Write the count to the buffer
+            this.device.queue.writeBuffer(
+                countBuffer,
+                0,
+                new Uint32Array([length]) as GPUAllowSharedBufferSource
+            );
+
+            if (renderFrame) {
+                this.renderFrame?.();
+            }
+        }
+    }
+
+    /**
      * Returns the contour interval from the series options in format of the
      * WebGPU uniform.
      */
@@ -623,6 +691,15 @@ export default class ContourSeries extends ScatterSeries {
      */
     private getShowContourLines(): number {
         return this.options.showContourLines ? 1 : 0;
+    }
+
+    /**
+     * Returns the contour line color from the series options in format of the
+     * WebGPU uniform.
+     */
+    private getContourLineColor(): number[] {
+        const { lineColor = '#000000' } = this.options;
+        return ContourSeries.rgbaAsFrac(new Color(lineColor).rgba);
     }
 
     /**
@@ -704,38 +781,6 @@ export default class ContourSeries extends ScatterSeries {
 
     }
 
-    /**
-     * Set the extremes of the Contourmap axes.
-     */
-    public setExtremes(): void {
-
-        if (!this.renderFrame) {
-            return;
-        }
-
-        if (this.device) {
-
-            if (this.extremesUniform && this.extremesUniformBuffer) {
-                this.device.queue.writeBuffer(
-                    this.extremesUniformBuffer,
-                    0,
-                    this.extremesUniform as GPUAllowSharedBufferSource
-                );
-                this.extremesUniform?.set(this.getFrameExtremes());
-            }
-
-            if (this.valueExtremesUniform && this.valueExtremesUniformBuffer) {
-                this.valueExtremesUniform?.set(this.getValueAxisExtremes());
-                this.device.queue.writeBuffer(
-                    this.valueExtremesUniformBuffer,
-                    0,
-                    this.valueExtremesUniform as GPUAllowSharedBufferSource
-                );
-            }
-
-            this?.renderFrame();
-        }
-    }
 
     /* *
      *
@@ -758,7 +803,8 @@ export default class ContourSeries extends ScatterSeries {
 extend(ContourSeries.prototype, {
     pointClass: ContourPoint,
     pointArrayMap: ['x', 'y', 'value'],
-    keysAffectYAxis: ['y']
+    keysAffectYAxis: ['y'],
+    invertible: false
 });
 
 // Registry
