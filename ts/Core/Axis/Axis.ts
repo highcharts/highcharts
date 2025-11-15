@@ -3404,6 +3404,48 @@ class Axis {
     }
 
     /**
+     * Shuffle existing category ticks, like in bar race chart
+     *
+     * @private
+     */
+    public shuffleTicks(): void {
+        const ticks = this.ticks,
+            oldNames = this.old?.names;
+        if (this.type === 'category' && oldNames) {
+            oldNames.forEach((name, oldPos): void => {
+                const pos = (this.names as any).keys[name];
+                if (defined(pos) && oldPos !== pos) {
+                    // Move tick instance
+                    if (ticks[oldPos]) {
+                        ticks[oldPos].pos = pos;
+                    }
+                    // Check if the existing tick in the new position has a
+                    // new place to go
+                    if (
+                        ticks[pos] &&
+                        this.names.indexOf(oldNames[pos]) === -1
+                    ) {
+                        // Mark for destruction below
+                        ticks[pos].pos = NaN;
+                    }
+                }
+            });
+            // Remap ticks to new positions
+            const values = Object.values(ticks);
+            Object.keys(ticks).forEach((key): void => {
+                delete ticks[key];
+            });
+            values.forEach((tick): void => {
+                if (!isNaN(tick.pos)) {
+                    ticks[tick.pos] = tick;
+                } else {
+                    tick.destroy();
+                }
+            });
+        }
+    }
+
+    /**
      * Render the tick labels to a preliminary position to get their sizes
      *
      * @private
@@ -3453,40 +3495,8 @@ class Axis {
 
         if (hasData || axis.isLinked) {
 
-            // Shuffle existing category ticks, like in bar race chart
-            const oldNames = axis.old?.names;
-            if (axis.type === 'category' && oldNames) {
-                oldNames.forEach((name, oldPos): void => {
-                    const pos = (axis.names as any).keys[name];
-                    if (defined(pos) && oldPos !== pos) {
-                        // Move tick instance
-                        if (ticks[oldPos]) {
-                            ticks[oldPos].pos = pos;
-                        }
-                        // Check if the existing tick in the new position has a
-                        // new place to go
-                        if (
-                            ticks[pos] &&
-                            axis.names.indexOf(oldNames[pos]) === -1
-                        ) {
-                            // Mark for destruction below
-                            ticks[pos].pos = NaN;
-                        }
-                    }
-                });
-                // Remap ticks to new positions
-                const values = Object.values(ticks);
-                Object.keys(ticks).forEach((key): void => {
-                    delete ticks[key];
-                });
-                values.forEach((tick): void => {
-                    if (!isNaN(tick.pos)) {
-                        ticks[tick.pos] = tick;
-                    } else {
-                        tick.destroy();
-                    }
-                });
-            }
+            // Shuffle existing category ticks
+            axis.shuffleTicks();
 
             // Generate new ticks
             tickPositions.forEach(axis.generateTick.bind(axis));
