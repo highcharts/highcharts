@@ -11,35 +11,57 @@
 /// <reference types="@webgpu/types" />
 'use strict';
 
+
 /* *
  *
  *  Imports
  *
  * */
+
+import type Chart from '../../Core/Chart/Chart.js';
+import type ContourSeriesOptions from './ContourSeriesOptions';
+
+import Color from '../../Core/Color/Color.js';
+import ContourPoint from './ContourPoint.js';
+import contourShader from './contourShader.js';
+import contourSeriesDefaults from './contourSeriesDefaults.js';
+import Delaunay from '../../Shared/Delaunay.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import U from '../../Core/Utilities.js';
+
 const {
     seriesTypes: {
         scatter: ScatterSeries
     }
 } = SeriesRegistry;
-
-import ContourPoint from './ContourPoint.js';
-import contourShader from './contourShader.js';
-import Delaunay from '../../Shared/Delaunay.js';
-import U from '../../Core/Utilities.js';
-import ContourSeriesOptions from './ContourSeriesOptions';
-import Chart from '../../Core/Chart/Chart.js';
-import ContourSeriesDefaults from './ContourSeriesDefaults.js';
-import Color from '../../Core/Color/Color.js';
-
 const { extend, merge } = U;
+
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 export default class ContourSeries extends ScatterSeries {
 
+    /* *
+     *
+     * Static Properties
+     *
+     * */
+
     public static defaultOptions = merge(
         ScatterSeries.defaultOptions,
-        ContourSeriesDefaults
+        contourSeriesDefaults
     );
+
+
+    /* *
+     *
+     * Properties
+     *
+     * */
 
     public data!: Array<ContourPoint>;
 
@@ -83,7 +105,14 @@ export default class ContourSeries extends ScatterSeries {
 
     public contourOffsetsCountBuffer?: GPUBuffer;
 
-    public init(chart: Chart, options: ContourSeriesOptions): void {
+
+    /* *
+     *
+     * Methods
+     *
+     * */
+
+    public override init(chart: Chart, options: ContourSeriesOptions): void {
         super.init.apply(this, [chart, options]);
 
         const props = {
@@ -143,7 +172,7 @@ export default class ContourSeries extends ScatterSeries {
     }
 
 
-    public drawPoints(): void {
+    public override drawPoints(): void {
         const series = this,
             inverted = series.chart.inverted,
             { xAxis, yAxis } = series,
@@ -274,7 +303,7 @@ export default class ContourSeries extends ScatterSeries {
                         lineColor = '#000000'
                     } = options,
                     contourLineColor = new Float32Array(
-                        this.rgbaAsFrac(new Color(lineColor).rgba)
+                        ContourSeries.rgbaAsFrac(new Color(lineColor).rgba)
                     );
 
                 // WebGPU Buffers
@@ -495,22 +524,23 @@ export default class ContourSeries extends ScatterSeries {
 
     }
 
-    public destroy(): void {
-        if (this.canvas) {
-            this.canvas.remove();
-        }
-
+    public override destroy(): void {
+        this.canvas?.remove();
         super.destroy();
     }
 
-    public drawGraph(): void {
+    public override drawGraph(): void {
         // Empty
     }
 
     /**
      * Set the contour interval uniform according to the series options.
+     *
+     * @param {boolean} rerender
+     * Whether to rerender the series' context after setting the uniform.
+     * Defaults to true.
      */
-    public setContourIntervalUniform(rerender = false): void {
+    public setContourIntervalUniform(rerender = true): void {
         if (this.device && this.contourIntervalUniformBuffer) {
             this.device.queue.writeBuffer(
                 this.contourIntervalUniformBuffer,
@@ -571,6 +601,10 @@ export default class ContourSeries extends ScatterSeries {
         }
     }
 
+    /**
+     * Returns the contour interval from the series options in format of the
+     * WebGPU uniform.
+     */
     private getContourInterval(): number {
         const interval = this.options.contourInterval ?? 1;
         if (isNaN(interval) || interval <= 0) {
@@ -579,6 +613,10 @@ export default class ContourSeries extends ScatterSeries {
         return interval;
     }
 
+    /**
+     * Returns the contour offset from the series options in format of the
+     * WebGPU uniform.
+     */
     private getContourOffset(): number {
         const offset = this.options.contourOffset ?? 0;
         if (isNaN(offset) || offset <= 0) {
@@ -587,15 +625,26 @@ export default class ContourSeries extends ScatterSeries {
         return offset;
     }
 
+    /**
+     * Returns the smooth coloring from the series options in format of the
+     * WebGPU uniform.
+     */
     private getSmoothColoring(): number {
         return this.options.smoothColoring ? 1 : 0;
     }
 
+    /**
+     * Returns the show contour lines from the series options in format of the
+     * WebGPU uniform.
+     */
     private getShowContourLines(): number {
         return this.options.showContourLines ? 1 : 0;
     }
 
-    // Place-holder
+    /**
+     * Returns the extremes of the Contourmap axes in format of the WebGPU
+     * uniform.
+     */
     private getWebGPUExtremes(): number[] {
         const { xAxis, yAxis } = this,
             { max: xMax = 0, min: xMin = 0 } = xAxis,
@@ -609,6 +658,9 @@ export default class ContourSeries extends ScatterSeries {
         ];
     }
 
+    /**
+     * Returns the extremes of the data in format of the WebGPU uniform.
+     */
     private getDataExtremes(): number[] {
         const series = this;
 
@@ -639,14 +691,6 @@ export default class ContourSeries extends ScatterSeries {
         return [min || 0, max || 0];
     }
 
-    public rgbaAsFrac(rgba: Color.RGBA): number[] {
-        return [
-            rgba[0],
-            rgba[1],
-            rgba[2]
-        ].map((val): number => val / 255);
-    }
-
     private getColorAxisStopsData(): { array: Float32Array, length: number } {
         const colorAxisStops = this.colorAxis?.stops;
 
@@ -659,7 +703,10 @@ export default class ContourSeries extends ScatterSeries {
                 const rgba = stop?.color?.rgba;
 
                 if (rgba) {
-                    flattenedData.push(stop[0], ...this.rgbaAsFrac(rgba));
+                    flattenedData.push(
+                        stop[0],
+                        ...ContourSeries.rgbaAsFrac(rgba)
+                    );
                 }
             }
         }
@@ -707,6 +754,23 @@ export default class ContourSeries extends ScatterSeries {
 
             this?.renderWebGPU();
         }
+    }
+
+    /* *
+     *
+     * Static Methods
+     *
+     * */
+
+    /**
+     * Returns the RGBA color as a fraction of the 255 range.
+     */
+    public static rgbaAsFrac(rgba: Color.RGBA): number[] {
+        return [
+            rgba[0],
+            rgba[1],
+            rgba[2]
+        ].map((val): number => val / 255);
     }
 }
 

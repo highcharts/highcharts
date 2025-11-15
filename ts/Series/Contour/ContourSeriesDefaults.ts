@@ -1,5 +1,24 @@
+/* *
+ *
+ *  (c) 2010-2025 Torstein Honsi
+ *
+ *  License: www.highcharts.com/license
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ * */
+
+'use strict';
+
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type ContourSeriesOptions from './ContourSeriesOptions';
-import ContourPoint from './ContourPoint';
+import type ContourPoint from './ContourPoint';
 
 /**
  * A contour plot is a graphical representation of three-dimensional data
@@ -25,7 +44,7 @@ import ContourPoint from './ContourPoint';
  * @optionparent plotOptions.contour
  */
 
-const ContourSeriesDefaults: ContourSeriesOptions = {
+const contourSeriesDefaults: ContourSeriesOptions = {
 
     /**
      * The offset of the contour lines.
@@ -99,6 +118,7 @@ const ContourSeriesDefaults: ContourSeriesOptions = {
             }
         }
     },
+
     states: {
         hover: {
             /** @ignore-option */
@@ -134,4 +154,4 @@ const ContourSeriesDefaults: ContourSeriesOptions = {
 };
 ''; // Keeps doclets above separate
 
-export default ContourSeriesDefaults;
+export default contourSeriesDefaults;
