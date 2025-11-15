@@ -781,6 +781,7 @@ class ColumnSeries extends Series {
         points.forEach(function (point): void {
             const plotY = point.plotY;
             let graphic = point.graphic,
+                shouldUpdate = !!graphic,
                 verb = graphic && chart.pointCount < animationLimit ?
                     'animate' : 'attr';
 
@@ -794,28 +795,38 @@ class ColumnSeries extends Series {
                 }
 
                 if (!graphic) {
-                    point.graphic = graphic =
-                        renderer[
-                            point.shapeType as 'roundedRect'|'rect'|'circle'
-                        ](shapeArgs)
-                            .add(point.group || series.group);
+                    let initialAttr = shapeArgs;
 
                     // New points fade in from old axis position
                     if (
                         point.origin &&
                         chart.pointCount < animationLimit
                     ) {
-                        const attr = point.getOrigin(point.origin, shapeArgs);
+                        initialAttr = merge(
+                            shapeArgs,
+                            point.getOrigin(point.origin, shapeArgs)
+                        );
                         if (!styledMode) {
-                            attr.opacity = 0;
+                            initialAttr.opacity = 0;
                         }
-                        graphic.attr(attr);
+                        shouldUpdate = true;
                         verb = 'animate';
                     }
+
+                    // Create new graphic
+                    point.graphic = graphic =
+                        renderer[
+                            point.shapeType as (
+                                'roundedRect'|'rect'|'circle'|'path'
+                            )
+                        ](initialAttr).add(point.group || series.group);
                 }
 
-                // Update
-                graphic[verb](merge(shapeArgs));
+                // Update existing graphic, either because it pre-existed, or
+                // because we created it in a temporary position
+                if (shouldUpdate) {
+                    graphic[verb](merge(shapeArgs));
+                }
 
                 // Presentational
                 if (!styledMode) {

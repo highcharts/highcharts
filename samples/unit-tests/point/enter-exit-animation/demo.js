@@ -12,9 +12,9 @@ QUnit.test('Add point with entrance animation', assert => {
         });
 
         const types = [
-            // 'line',
-            // 'column',
-            // 'bubble',
+            'line',
+            'column',
+            'bubble',
             'candlestick'
         ];
 
