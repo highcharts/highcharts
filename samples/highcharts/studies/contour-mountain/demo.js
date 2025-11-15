@@ -26,14 +26,16 @@ const chart = Highcharts.chart('container', {
         gridLineWidth: 1,
         title: {
             text: 'longitude'
-        }
+        },
+        gridLineColor: '#fff4'
     },
     yAxis: {
         tickInterval: 0.01,
         gridLineWidth: 1,
         title: {
             text: 'latitude'
-        }
+        },
+        gridLineColor: '#fff4'
     },
     colorAxis: {
         stops: [
@@ -52,6 +54,7 @@ const chart = Highcharts.chart('container', {
     series: [{
         type: 'contour',
         name: 'Elevation',
+        renderOnBackground: true,
         contourInterval: 50,
         data
     }, {
@@ -76,6 +79,7 @@ const chart = Highcharts.chart('container', {
 const invertedCbx = document.getElementById('inverted');
 const xReversedCbx = document.getElementById('x-reversed');
 const yReversedCbx = document.getElementById('y-reversed');
+const bgRenderCbx = document.getElementById('bg-render');
 
 invertedCbx.addEventListener('click', () => {
     chart.update({
@@ -94,5 +98,11 @@ xReversedCbx.addEventListener('click', () => {
 yReversedCbx.addEventListener('click', () => {
     chart.yAxis[0].update({
         reversed: yReversedCbx.checked
+    });
+});
+
+bgRenderCbx.addEventListener('click', () => {
+    chart.series[0].update({
+        renderOnBackground: bgRenderCbx.checked
     });
 });

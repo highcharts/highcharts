@@ -20,6 +20,7 @@
 
 import type Chart from '../../Core/Chart/Chart.js';
 import type ContourSeriesOptions from './ContourSeriesOptions';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 
 import Color from '../../Core/Color/Color.js';
 import ContourPoint from './ContourPoint.js';
@@ -136,7 +137,8 @@ export default class ContourSeries extends ScatterSeries {
             gridLineWidth: 0,
             endOnTick: false,
             startOnTick: false,
-            tickWidth: 1
+            tickWidth: 1,
+            lineWidth: 1
         };
 
         for (const axis of [this.xAxis, this.yAxis]) {
@@ -184,6 +186,43 @@ export default class ContourSeries extends ScatterSeries {
         return [new Delaunay(points2d).triangles, points3d];
     }
 
+    public override render(): void {
+        const { chart, options } = this,
+            visibility: 'hidden'|'inherit'|'visible' = this.visible ?
+                'inherit' : 'hidden',
+            zIndex = options.zIndex;
+
+        let targetGroup: SVGElement | undefined;
+        if (options.renderOnBackground) {
+            if (!chart.backgroundSeriesGroup) {
+                chart.backgroundSeriesGroup = chart.renderer
+                    .g('background-series-group')
+                    .attr({ zIndex: 0 })
+                    .add();
+            }
+            targetGroup = chart.backgroundSeriesGroup;
+        } else {
+            targetGroup = chart.seriesGroup;
+        }
+
+        this.plotGroup(
+            'group',
+            'series',
+            visibility,
+            zIndex,
+            targetGroup
+        );
+
+        const { group } = this;
+        if (group && group?.parentGroup !== targetGroup) {
+            group.parentGroup = targetGroup;
+            // Can be improved by checking the exact zIndex of the series and
+            // placing it after the first element with a lower zIndex.
+            targetGroup?.element.prepend(group.element);
+        }
+
+        super.render();
+    }
 
     public override drawPoints(): void {
         const { group } = this;
@@ -233,8 +272,7 @@ export default class ContourSeries extends ScatterSeries {
         }
     }
 
-
-    async run(): Promise<void> {
+    public async run(): Promise<void> {
         const series = this,
             canvas = series.canvas as HTMLCanvasElement,
             context = series.context = (
@@ -843,6 +881,12 @@ extend(ContourSeries.prototype, {
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         contour: typeof ContourSeries;
+    }
+}
+
+declare module '../../Core/Chart/Chart' {
+    export default interface Chart {
+        backgroundSeriesGroup?: SVGElement;
     }
 }
 

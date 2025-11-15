@@ -28,6 +28,7 @@ import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
 export default interface ContourSeriesOptions extends ScatterSeriesOptions {
     smoothColoring?: boolean;
     showContourLines?: boolean;
+    renderOnBackground?: boolean;
     contourInterval?: number;
     contourOffset?: number;
     lineColor?: ColorType; // Kept because we might want alternate docs

@@ -127,6 +127,13 @@ const ContourSeriesDefaults: ContourSeriesOptions = {
         }
     },
 
+    /**
+     * Whether to render the series on the background, so that it is visible
+     * behind axes and grid lines. It will be also visible behind series that
+     * are rendered before it.
+     */
+    renderOnBackground: true,
+
     states: {
         hover: {
             /** @ignore-option */
@@ -136,7 +143,9 @@ const ContourSeriesDefaults: ContourSeriesOptions = {
 
     tooltip: {
         pointFormat: '{point.x}, {point.y}: {point.value}<br/>'
-    }
+    },
+
+    zIndex: 0
 
 };
 ''; // Keeps doclets above separate
