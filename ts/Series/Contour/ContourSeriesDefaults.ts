@@ -18,7 +18,13 @@
  * */
 
 import type ContourSeriesOptions from './ContourSeriesOptions';
-import type ContourPoint from './ContourPoint';
+
+
+/* *
+ *
+ *  Definitions
+ *
+ * */
 
 /**
  * A contour plot is a graphical representation of three-dimensional data
@@ -127,28 +133,7 @@ const contourSeriesDefaults: ContourSeriesOptions = {
     },
 
     tooltip: {
-        /**
-         * A callback function for formatting the HTML output for a single point
-         * in the tooltip. Like the `pointFormat` string, but with more
-         * flexibility.
-         *
-         * For contour plots, this function, by default, ensures a correctly
-         * colored tooltip.
-         *
-         * @type      {Highcharts.FormatterCallbackFunction<Highcharts.Point>}
-         * @since     4.1.0
-         * @context   Highcharts.Point
-         * @apioption plotOptions.contour.tooltip.pointFormatter
-         */
-        pointFormatter: function (): string {
-            const point = (this as ContourPoint),
-                { series, value } = point;
-
-            return `<span style="color: ${
-                series.colorAxis?.toColor(value ?? 0, point.value as any) ||
-                'black'
-            };">●●●●●●●●●●●●●●●●●●●●●●●●●●●</span>`;
-        }
+        pointFormat: '{point.x}, {point.y}: {point.value}<br/>'
     }
 
 };

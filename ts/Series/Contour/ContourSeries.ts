@@ -72,11 +72,19 @@ export default class ContourSeries extends ScatterSeries {
 
     public options!: ContourSeriesOptions;
 
+    public context?: GPUCanvasContext | null;
+
+    public renderFrame?: () => void;
+
+    public dataMax?: number;
+
+    public contourOffsetsBuffer?: GPUBuffer;
+
+    public contourOffsetsCountBuffer?: GPUBuffer;
+
     private foreignObject?: SVGForeignObjectElement;
 
     private canvas?: HTMLCanvasElement;
-
-    public context?: GPUCanvasContext | null;
 
     private adapter?: GPUAdapter | null;
 
@@ -99,14 +107,6 @@ export default class ContourSeries extends ScatterSeries {
     private showContourLinesUniformBuffer?: GPUBuffer;
 
     private contourLineColorBuffer?: GPUBuffer;
-
-    public renderFrame?: () => void;
-
-    public dataMax?: number;
-
-    public contourOffsetsBuffer?: GPUBuffer;
-
-    public contourOffsetsCountBuffer?: GPUBuffer;
 
 
     /* *
@@ -253,13 +253,13 @@ export default class ContourSeries extends ScatterSeries {
                     [indices, vertices] = this.getContourData(),
                     extremesUniform = this.extremesUniform = (
                         new Float32Array(
-                            this.getWebGPUExtremes()
+                            this.getFrameExtremes()
                         )
                     ),
                     valueExtremesUniform = (
                         this.valueExtremesUniform = (
                             new Float32Array(
-                                this.getDataExtremes()
+                                this.getValueAxisExtremes()
                             )
                         )
                     ),
@@ -626,26 +626,23 @@ export default class ContourSeries extends ScatterSeries {
     }
 
     /**
-     * Returns the extremes of the Contourmap axes in format of the WebGPU
-     * uniform.
+     * Returns the extremes of the x and y axes in format of the WebGPU uniform.
      */
-    private getWebGPUExtremes(): number[] {
-        const { xAxis, yAxis } = this,
-            { max: xMax = 0, min: xMin = 0 } = xAxis,
-            { max: yMax = 0, min: yMin = 0 } = yAxis;
+    private getFrameExtremes(): number[] {
+        const { xAxis, yAxis } = this;
 
         return [
-            xMin,
-            xMax,
-            yMin,
-            yMax
+            xAxis.toValue(0, true),
+            xAxis.toValue(xAxis.len, true),
+            yAxis.toValue(yAxis.len, true),
+            yAxis.toValue(0, true)
         ];
     }
 
     /**
      * Returns the extremes of the data in format of the WebGPU uniform.
      */
-    private getDataExtremes(): number[] {
+    private getValueAxisExtremes(): number[] {
         const series = this;
 
         let min = series.valueMin;
@@ -724,11 +721,11 @@ export default class ContourSeries extends ScatterSeries {
                     0,
                     this.extremesUniform as GPUAllowSharedBufferSource
                 );
-                this.extremesUniform?.set(this.getWebGPUExtremes() as Array<number>);
+                this.extremesUniform?.set(this.getFrameExtremes());
             }
 
             if (this.valueExtremesUniform && this.valueExtremesUniformBuffer) {
-                this.valueExtremesUniform?.set(this.getDataExtremes());
+                this.valueExtremesUniform?.set(this.getValueAxisExtremes());
                 this.device.queue.writeBuffer(
                     this.valueExtremesUniformBuffer,
                     0,
