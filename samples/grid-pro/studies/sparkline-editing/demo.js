@@ -28,6 +28,8 @@ class SparklineEditorPopup extends Popup {
         const btn = document.createElement('button');
 
         wrap.classList.add('sparkline-editor-popup-item');
+        btn.classList.add('hcg-button');
+        input.classList.add('hcg-input');
         input.type = 'number';
         input.value = value;
         btn.innerText = 'x';
@@ -79,20 +81,15 @@ class SparklineEditorPopup extends Popup {
         this.footer.classList.add('popup-footer');
         this.content.appendChild(this.footer);
 
-        const cancelBtn = document.createElement('button');
-        cancelBtn.innerText = 'Cancel';
         const editBtn = document.createElement('button');
         editBtn.innerText = 'Save';
 
-        cancelBtn.addEventListener('click', () => {
-            cellEditing.stopEditing(false);
-        });
-
+        editBtn.classList.add('hcg-button');
         editBtn.addEventListener('click', () => {
             cellEditing.stopEditing(true);
         });
 
-        this.footer.append(cancelBtn, editBtn);
+        this.footer.append(editBtn);
     }
 
     hide(hiddenByEditor) {
