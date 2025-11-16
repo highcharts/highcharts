@@ -16,11 +16,9 @@
     padding-top: 4px;
     margin-top: 4px;
     border-top: 1px solid #6662;
-    display: flex;
-    justify-content: flex-end;
 }
 
-.popup-footer button {
+.popup-footer .hcg-button {
     margin-right: 4px;
     display: block;
 }
@@ -29,6 +27,12 @@
     margin: 4px 0;
 }
 
-.sparkline-editor-popup-item input {
+.sparkline-editor-popup-item .hcg-button {
+    height: 24px;
+}
+
+.sparkline-editor-popup-item .hcg-input {
     margin-right: 4px;
+    width: auto;
+    height: 24px;
 }
