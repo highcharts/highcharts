@@ -4,9 +4,7 @@ const today = +(new Date().setHours(0, 0, 0, 0)),
 // THE CHART
 Highcharts.chart('container', {
     chart: {
-        type: 'scatter',
-        marginLeft: 150,
-        marginRight: 150
+        type: 'scatter'
     },
     title: {
         text: 'Highcharts TreeGrid'
@@ -37,7 +35,8 @@ Highcharts.chart('container', {
                     fontSize: '10px'
                 }
             }]
-        }
+        },
+        staticScale: 50
     }],
     series: [{
         name: 'Project 1',
