@@ -233,7 +233,9 @@ QUnit.test('Vertical Linear axis horizontal placement', function (assert) {
     );
 
     chart.yAxis[1].update({
-        lineColor: 'red'
+        grid: {
+            borderColor: 'red'
+        }
     });
 
     assert.strictEqual(
