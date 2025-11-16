@@ -89,7 +89,6 @@ class SparklineEditorPopup extends Popup {
         });
 
         editBtn.addEventListener('click', () => {
-            console.log(this.data);
             cellEditing.stopEditing(true);
         });
 
