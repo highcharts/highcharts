@@ -18,6 +18,11 @@ const data = (() => {
 })();
 
 const chart = Highcharts.chart('container', {
+    chart: {
+        zooming: {
+            type: 'xy'
+        }
+    },
     title: {
         text: 'Mountain elevation'
     },
@@ -61,6 +66,8 @@ const chart = Highcharts.chart('container', {
         type: 'scatter',
         name: 'Peaks',
         keys: ['x', 'y', 'value', 'name'],
+        colorAxis: false,
+        showInLegend: false,
         data: [
             [22.7688, 49.072, 1333, 'Halicz'],
             [22.7702, 49.062, 1280, 'Rozsypaniec']

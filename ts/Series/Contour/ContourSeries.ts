@@ -834,9 +834,8 @@ export default class ContourSeries extends ScatterSeries {
 
             if (isNaN(min || NaN)) {
                 min = Math.min(...series.points.map(
-                    (point): number => (point as any)?.value || 0
-                )
-                );
+                    (point): number => point.value || 0
+                ));
             }
         }
 
@@ -846,9 +845,8 @@ export default class ContourSeries extends ScatterSeries {
 
             if (isNaN(max || NaN)) {
                 max = Math.max(...series.points.map(
-                    (point): number => (point as any)?.value || 0
-                )
-                );
+                    (point): number => point.value || 0
+                ));
             }
         }
 
