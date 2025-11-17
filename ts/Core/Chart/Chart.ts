@@ -629,37 +629,6 @@ class Chart {
     }
 
     /**
-     * Internal function to set data for all series with enabled sorting.
-     *
-     * @private
-     * @function Highcharts.Chart#setSortedData
-     */
-    public setSortedData(): void {
-        this.getSeriesOrderByLinks().forEach(function (series): void {
-            // We need to set data for series with sorting after series init
-            if (!series.points && !series.data && series.enabledDataSorting) {
-                series.setData(series.options.data as any, false);
-            }
-        });
-    }
-
-    /**
-     * Sort and return chart series in order depending on the number of linked
-     * series.
-     *
-     * @private
-     * @function Highcharts.Series#getSeriesOrderByLinks
-     */
-    public getSeriesOrderByLinks(): Array<Series> {
-        return this.series.concat().sort(function (a, b): number {
-            if (a.linkedSeries.length || b.linkedSeries.length) {
-                return b.linkedSeries.length - a.linkedSeries.length;
-            }
-            return 0;
-        });
-    }
-
-    /**
      * Order all series or axes above a given index. When series or axes are
      * added and ordered by configuration, only the last series is handled
      * (#248, #1123, #2456, #6112). This function is called on series and axis
@@ -1050,6 +1019,11 @@ class Chart {
 
         // Redraw if canvas
         renderer.draw();
+
+        // Save the existing state
+        axes.forEach((axis): void => {
+            axis.saveOld();
+        });
 
         // Fire the events
         fireEvent(chart, 'redraw');
@@ -2491,10 +2465,6 @@ class Chart {
                  */
                 series.linkedParent = linkedParent;
 
-                if (linkedParent.enabledDataSorting) {
-                    series.setDataSortingOptions();
-                }
-
                 series.visible = (
                     series.options.visible ??
                     linkedParent.options.visible ??
@@ -2845,7 +2815,6 @@ class Chart {
         );
 
         chart.linkSeries();
-        chart.setSortedData();
 
         // Run an event after axes and series are initialized, but before
         // render. At this stage, the series data is indexed and cached in the
@@ -3004,11 +2973,6 @@ class Chart {
 
                     chart.isDirtyLegend = true;
                     chart.linkSeries();
-
-                    if (series.enabledDataSorting) {
-                        // We need to call `setData` after `linkSeries`
-                        series.setData(options.data as any, false);
-                    }
 
                     fireEvent(chart, 'afterAddSeries', { series: series });
 
@@ -3539,12 +3503,12 @@ class Chart {
         // Certain options require the whole series structure to be thrown away
         // and rebuilt
         if (updateAllSeries) {
-            chart.getSeriesOrderByLinks().forEach(function (series): void {
+            chart.series.forEach((series): void => {
                 // Avoid removed navigator series
                 if (series.chart) {
                     series.update({}, false);
                 }
-            }, this);
+            });
         }
 
         // Update size. Redraw is forced.

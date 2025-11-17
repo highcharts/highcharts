@@ -524,6 +524,12 @@ class VBPIndicator extends SMAIndicator {
                     point.volumeNeg = priceZones[index].negativeVolumeData;
                     point.volumePos = priceZones[index].positiveVolumeData;
                     point.volumeAll = priceZones[index].wholeVolumeData;
+
+                    // ColumnSeries.translate adds an origin if chart is already
+                    // rendered. Remove it to avoid issues with fading in data
+                    // labels from overlapping labels logic.
+                    delete point.origin;
+                    point.isInside = indicator.isPointInside(point);
                 }
             );
 

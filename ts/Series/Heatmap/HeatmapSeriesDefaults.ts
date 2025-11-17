@@ -187,8 +187,9 @@ const HeatmapSeriesDefaults: HeatmapSeriesOptions = {
          *         Predefined, graphic and custom markers
          * @sample {highstock} highcharts/plotoptions/series-marker-symbol/
          *         Predefined, graphic and custom markers
+         * @default rect
+         * @apioption plotOptions.heatmap.marker.symbol
          */
-        symbol: 'rect',
         /** @ignore-option */
         radius: 0,
         lineColor: void 0,
