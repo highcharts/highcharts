@@ -121,6 +121,16 @@ QUnit.test('Add point with entrance animation', assert => {
                     0.3,
                     `The ${type} point should be semi-opaque mid entrance`
                 );
+
+                if (!newPoint.graphic) {
+                    assert.ok(
+                        false,
+                        `The ${type} new point graphic should exist ` +
+                        'at the end of the animation'
+                    );
+                    return;
+                }
+
                 assert.ok(
                     graphicMidX > newPoint.graphic.getBBox().x,
                     `The ${type} point should slide in from the right`
