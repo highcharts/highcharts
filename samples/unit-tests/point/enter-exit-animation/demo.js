@@ -5,6 +5,8 @@ QUnit.test('Add point with entrance animation', assert => {
 
         const chart = Highcharts.chart('container', {
             chart: {
+                width: 600,
+                height: 400,
                 animation: {
                     duration: 100
                 }
