@@ -67,7 +67,8 @@ QUnit.test('Add point with entrance animation', assert => {
             setTimeout(() => {
 
                 if (!newPoint.graphic) {
-                    assert.fail(
+                    assert.ok(
+                        false,
                         `The ${type} new point graphic should exist ` +
                         'halfway through entrance animation'
                     );
