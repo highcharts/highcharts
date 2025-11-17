@@ -262,6 +262,7 @@ class Axis {
     // it is deliberately not a number because we have user extremes.
     public minRange?: null|number;
     public names!: Array<string>;
+    public namesMap!: Record<string, number>;
     public offset!: number;
     public old?: { // @todo create a type
         len: number;
@@ -462,10 +463,11 @@ class Axis {
          */
         axis.categories = (isArray(options.categories) && options.categories) ||
             (axis.hasNames ? [] : void 0);
-        if (!axis.names) { // Preserve on update (#3830)
-            axis.names = [];
-            (axis.names as any).keys = {};
-        }
+
+        // Axis names and its map for quick access. Backwards mapping is much
+        // faster than array searching (#7725). Preserve on update (#3830)
+        axis.names ||= [];
+        axis.namesMap ||= {};
 
 
         // Placeholder for plotlines and plotbands groups
@@ -1445,7 +1447,8 @@ class Axis {
      */
     public nameToX(point: Point): number {
         const explicitCategories = isArray(this.options.categories),
-            names = explicitCategories ? this.categories : this.names;
+            names = explicitCategories ? this.categories : this.names,
+            namesMap = this.namesMap;
 
         let nameX = point.options.x,
             x: (number|undefined);
@@ -1457,7 +1460,7 @@ class Axis {
                 (
                     explicitCategories ?
                         names.indexOf(point.name) :
-                        pick((names as any).keys[point.name], -1)
+                        (namesMap[point.name] ?? -1)
 
                 ) :
                 point.series.autoIncrement();
@@ -1473,8 +1476,8 @@ class Axis {
         // Write the last point's name to the names array
         if (typeof x !== 'undefined') {
             this.names[x] = point.name;
-            // Backwards mapping is much faster than array searching (#7725)
-            (this.names as any).keys[point.name as any] = x;
+            namesMap[point.name] = x;
+
         } else if (point.x) {
             x = point.x; // #17438
         }
@@ -1490,14 +1493,14 @@ class Axis {
      */
     public updateNames(): void {
         const axis = this,
-            names = this.names,
+            { names, namesMap } = this,
             i = names.length;
 
         if (i > 0) {
-            Object.keys((names as any).keys).forEach(function (
+            Object.keys(namesMap).forEach(function (
                 key: string
             ): void {
-                delete ((names as any).keys)[key];
+                delete namesMap[key];
             });
             names.length = 0;
 
@@ -3413,7 +3416,7 @@ class Axis {
             oldNames = this.old?.names;
         if (this.type === 'category' && oldNames) {
             oldNames.forEach((name, oldPos): void => {
-                const pos = (this.names as any).keys[name];
+                const pos = this.namesMap[name];
                 if (defined(pos) && oldPos !== pos) {
                     // Move tick instance
                     if (ticks[oldPos]) {
