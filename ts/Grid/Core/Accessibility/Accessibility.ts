@@ -23,13 +23,14 @@
  * */
 
 import type Grid from '../Grid';
-import type { ColumnSortingOrder } from '../Options';
+import type { ColumnSortingOrder, FilteringCondition } from '../Options';
 import whcm from '../../../Accessibility/HighContrastMode.js';
 
 import Globals from '../Globals.js';
+import ColumnFiltering from '../Table/Actions/ColumnFiltering/ColumnFiltering.js';
 import GridUtils from '../GridUtils.js';
 
-const { makeHTMLElement } = GridUtils;
+const { formatText } = GridUtils;
 
 
 /**
@@ -96,26 +97,6 @@ class Accessibility {
     * */
 
     /**
-     * Add the 'sortable' hint span element for the sortable column.
-     *
-     * @param element
-     * The element to add the description to.
-     */
-    public addSortableColumnHint(element: HTMLElement): void {
-        const sortableLang =
-            this.grid.options?.lang?.accessibility?.sorting?.sortable;
-
-        if (!sortableLang) {
-            return;
-        }
-
-        makeHTMLElement('span', {
-            className: Globals.getClassName('visuallyHidden'),
-            innerText: ', ' + sortableLang
-        }, element);
-    }
-
-    /**
      * Add the description to the header cell.
      *
      * @param thElement
@@ -153,7 +134,9 @@ class Accessibility {
         );
 
         this.element.appendChild(this.announcerElement);
-        this.announcerElement.textContent = msg;
+        requestAnimationFrame((): void => {
+            this.announcerElement.textContent = msg;
+        });
 
         this.announcerTimeout = setTimeout((): void => {
             this.announcerElement.remove();
@@ -210,6 +193,64 @@ class Accessibility {
         state: Accessibility.AriaSortState
     ): void {
         thElement?.setAttribute('aria-sort', state);
+    }
+
+    /**
+     * Announce the message to the screen reader that the user filtered the
+     * column.
+     *
+     * @param filteredColumnValues
+     * The values of the filtered column.
+     *
+     * @param filteringApplied
+     * Whether the filtering was applied or cleared.
+     */
+    public userFilteredColumn(
+        filteredColumnValues: Accessibility.FilteredColumnValues,
+        filteringApplied: boolean
+    ): void {
+        const { columnId, condition, value, rowsCount } = filteredColumnValues;
+        const { lang, accessibility } = this.grid.options || {};
+
+        if (!accessibility?.announcements?.filtering) {
+            return;
+        }
+
+        const announcementsLang = lang?.accessibility?.filtering?.announcements;
+
+        let msg: string | undefined;
+
+        if (filteringApplied && condition) {
+            const parsedCondition =
+                ColumnFiltering.parseCamelCaseToReadable(condition);
+
+            if (
+                condition === 'empty' ||
+                condition === 'notEmpty' ||
+                condition === 'false' ||
+                condition === 'true'
+            ) {
+                msg = formatText(announcementsLang?.emptyFilterApplied || '', {
+                    columnId,
+                    condition: parsedCondition,
+                    rowsCount: rowsCount
+                });
+            } else {
+                msg = formatText(announcementsLang?.filterApplied || '', {
+                    columnId,
+                    condition: parsedCondition,
+                    value: value?.toString() || '',
+                    rowsCount: rowsCount
+                });
+            }
+        } else {
+            msg = formatText(announcementsLang?.filterCleared || '', {
+                columnId,
+                rowsCount: rowsCount
+            });
+        }
+
+        this.announce(msg, true);
     }
 
     /**
@@ -299,6 +340,14 @@ namespace Accessibility {
      * The possible states of the aria-sort attribute.
      */
     export type AriaSortState = 'ascending' | 'descending' | 'none';
+
+    /**
+     * The values of the filtered column.
+     */
+    export type FilteredColumnValues = FilteringCondition & {
+        columnId: string;
+        rowsCount: number;
+    };
 }
 
 

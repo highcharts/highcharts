@@ -36,7 +36,7 @@ function test_grid() {
         rendering: {
             columns: {
                 resizing: {
-                    mode: 'fixed'
+                    mode: 'distributed'
                 }
             }
         },

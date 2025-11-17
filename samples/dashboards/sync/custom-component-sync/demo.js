@@ -89,12 +89,12 @@ class Slider extends Component {
 
         const mainConnectorHandler = this.connectorHandlers[0] || {};
         const table = mainConnectorHandler.connector &&
-            mainConnectorHandler.connector.table;
-        const valuesColumnName = mainConnectorHandler.options &&
+            mainConnectorHandler.connector.getTable();
+        const valuesColumnId = mainConnectorHandler.options &&
             mainConnectorHandler.options.valuesColumn;
 
-        if (table && valuesColumnName) {
-            this.xColumn = table.columns[valuesColumnName] || [];
+        if (table && valuesColumnId) {
+            this.xColumn = table.columns[valuesColumnId] || [];
         }
 
         this.cell.setLoadingState(false);
@@ -139,9 +139,7 @@ Dashboards.board('container', {
         connectors: [{
             id: 'data',
             type: 'CSV',
-            options: {
-                csv: document.getElementById('csv').innerHTML
-            }
+            csv: document.getElementById('csv').innerHTML
         }]
     },
     components: [{
@@ -171,7 +169,7 @@ Dashboards.board('container', {
 
                     return this.on('sliderValueChanged', e => {
                         const connector = this.getFirstConnector();
-                        const table = connector && connector.table;
+                        const table = connector && connector.getTable();
 
                         if (table) {
                             // Emit cursor event when slider value changes
@@ -255,9 +253,9 @@ Dashboards.board('container', {
                     const connectorHandler = this.connectorHandlers[0];
                     const table = connectorHandler &&
                         connectorHandler.connector &&
-                        connectorHandler.connector.table;
+                        connectorHandler.connector.getTable();
                     const chart = this.chart;
-                    const syncedColumnName =
+                    const syncedColumnId =
                         this.sync.syncConfig.customSync.syncedColumn;
 
                     if (
@@ -342,7 +340,7 @@ Dashboards.board('container', {
                     const handleCursor = e => {
                         const target = e.cursor.target;
                         const rowIndex = e.cursor.row;
-                        const yColumn = e.table.columns[syncedColumnName];
+                        const yColumn = e.table.columns[syncedColumnId];
 
                         const averages = [
                             yColumn.slice(0, rowIndex + 1),

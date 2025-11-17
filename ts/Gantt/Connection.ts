@@ -59,7 +59,7 @@ const deg2rad = H.deg2rad,
  * The Connection class. Used internally to represent a connection between two
  * points.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.Connection
  *
@@ -73,6 +73,8 @@ const deg2rad = H.deg2rad,
  *        Connection options.
  */
 class Connection {
+
+    /** @internal */
     public constructor(
         from: Point,
         to: Point,
@@ -86,11 +88,23 @@ class Connection {
     * Properties
     *
     * */
+
+    /** @internal */
     public chart!: Chart;
+
+    /** @internal */
     public fromPoint!: Point;
+
+    /** @internal */
     public graphics!: Record<string, SVGElement>;
+
+    /** @internal */
     public options?: ConnectorsOptions;
+
+    /** @internal */
     public pathfinder!: Pathfinder;
+
+    /** @internal */
     public toPoint!: Point;
 
     /**
@@ -472,6 +486,7 @@ class Connection {
  *
  * */
 
+/** @internal */
 export default Connection;
 
 /* *

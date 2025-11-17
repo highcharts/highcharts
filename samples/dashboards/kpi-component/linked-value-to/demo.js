@@ -3,16 +3,14 @@ Dashboards.board('container', {
         connectors: [{
             id: 'value',
             type: 'CSV',
-            options: {
-                csv: document.getElementById('csv').innerText
-            }
+            csv: document.getElementById('csv').innerText
         }]
     },
     components: [{
         renderTo: 'kpi',
         type: 'KPI',
         title: 'Last day\'s value',
-        columnName: 'Value',
+        columnId: 'Value',
         sync: {
             extremes: true
         },
