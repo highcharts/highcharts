@@ -65,6 +65,14 @@ QUnit.test('Add point with entrance animation', assert => {
                 dlMidX,
                 dlMidY;
             setTimeout(() => {
+
+                if (!newPoint.graphic) {
+                    assert.fail(
+                        `The ${type} new point graphic should exist ` +
+                        'halfway through entrance animation'
+                    );
+                    return;
+                }
                 graphicMidOpacity = newPoint.graphic.opacity;
                 graphicMidX = newPoint.graphic.getBBox().x;
                 graphicMidY = newPoint.graphic.getBBox().y;
