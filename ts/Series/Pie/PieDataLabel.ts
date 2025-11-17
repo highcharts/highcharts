@@ -328,7 +328,9 @@ namespace ColumnDataLabel {
                             width: Math.round(maxWidth * 0.7) + 'px'
                         });
                         dataLabel.shortened = true;
-                        dataLabel.updateTextPadding(); // #23595
+                        if (!dataLabelOptions?.alignTo) {
+                            dataLabel.updateTextPadding(); // #23595
+                        }
                     }
                 }
 
