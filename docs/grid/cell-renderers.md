@@ -12,7 +12,7 @@ Cell renderers are also available in [edit mode](https://www.highcharts.com/docs
 
 ## Default renderer
 
-Unless specified the default renderer is [`text`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_TextRenderer.TextRenderer-1), and [`textInput`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_TextInputRenderer.TextInputRenderer-1) in `editMode`. This can be plain text, and HTML markup is also supported. If needed the text/markup can be formatted using `formatter` or `format`, and Grid Pro users can also use the built-in renderers as described below.
+Unless specified the default renderer is [`text`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_TextRenderer.TextRenderer), and [`textInput`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_TextInputRenderer.TextInputRenderer) in `editMode`. This can be plain text, and HTML markup is also supported. If needed the text/markup can be formatted using `formatter` or `format`, and Grid Pro users can also use the built-in renderers as described below.
 
 ## Input renderers
 
@@ -26,13 +26,13 @@ Check out the [todo app demo](https://www.highcharts.com/demo/grid/todo-app) for
 
 | renderer                                                                                                                                   | Description                                       | dataType        |
 | ------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------- | --------------- |
-| [`textInput`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_TextInputRenderer.TextInputRenderer-1)             | Text input that supports text/number and HTML     | string / number |
-| [`numberInput`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_NumberInputRenderer.NumberInputRenderer-1)       | Number input element                              | number          |
-| [`dateInput`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_DateInputRenderer.DateInputRenderer-1)             | Date input with datepicker                        | datetime        |
-| [`dateTimeInput`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_DateTimeInputRenderer.DateTimeInputRenderer-1) | Date and time input with date/time picker         | datetime        |
-| [`timeInput`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_TimeInputRenderer.TimeInputRenderer-1)             | Time input with time picker                       | datetime        |
-| [`checkbox`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_CheckboxRenderer.CheckboxRenderer-1)                | Checkbox input element                            | boolean         |
-| [`select`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_SelectRenderer.SelectRenderer-1)                      | Select element. Note that `options` are required. | string          |
+| [`textInput`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_TextInputRenderer.TextInputRenderer)             | Text input that supports text/number and HTML     | string / number |
+| [`numberInput`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_NumberInputRenderer.NumberInputRenderer)       | Number input element                              | number          |
+| [`dateInput`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_DateInputRenderer.DateInputRenderer)             | Date input with datepicker                        | datetime        |
+| [`dateTimeInput`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_DateTimeInputRenderer.DateTimeInputRenderer) | Date and time input with date/time picker         | datetime        |
+| [`timeInput`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_TimeInputRenderer.TimeInputRenderer)             | Time input with time picker                       | datetime        |
+| [`checkbox`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_CheckboxRenderer.CheckboxRenderer)                | Checkbox input element                            | boolean         |
+| [`select`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_SelectRenderer.SelectRenderer)                      | Select element. Note that `options` are required. | string          |
 
 You can further customize input renderers by using the `attributes` option. This allows you to pass additional HTML attributes to the underlying input element, such as `min`, `max`, `step`, `placeholder`, or any other valid attribute.
 This is especially useful for number and date inputs, where you may want to restrict the allowed range or provide hints to users. For example:
@@ -173,7 +173,7 @@ columns: [{
 
 ## Sparkline renderer
 
-A [`sparkline`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_SparklineRenderer.SparklineRenderer-1) is a small, inline chart, typically a line, bar, or area chart, embedded within a cell to visually represent trends or patterns in data at a glance. Unlike full-size charts, sparklines are minimal and non-intrusive, making them ideal for showing changes over time or comparing values directly within rows of a grid, without leaving the context of the table.
+A [`sparkline`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_SparklineRenderer.SparklineRenderer) is a small, inline chart, typically a line, bar, or area chart, embedded within a cell to visually represent trends or patterns in data at a glance. Unlike full-size charts, sparklines are minimal and non-intrusive, making them ideal for showing changes over time or comparing values directly within rows of a grid, without leaving the context of the table.
 
 In its simplest form, given that cell data is an array of numbers, a line sparkline can be rendered using:
 
@@ -219,7 +219,7 @@ You can also write a custom renderer. To do so, define:
    }
    ```
 
-2. A class representing your Renderer, which inherits from the abstract [`CellRenderer`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_CellRenderer.CellRenderer-1) class. It should implement:
+2. A class representing your Renderer, which inherits from the abstract [`CellRenderer`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_CellRenderer.CellRenderer) class. It should implement:
 
    - `options` – an abstract property holding the renderer’s unique configuration options
    - `render` – a method that creates and returns a new instance of CellContent
@@ -267,7 +267,7 @@ This section demonstrates how to create a custom **Textarea** cell renderer for 
 
 <iframe style="width: 100%; height: 590px; border: none;" src="https://www.highcharts.com/samples/embed/grid/basic/custom-renderer?force-light-theme" allow="fullscreen"></iframe>
 
-1. We start by importing the default [`CellRenderer`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_CellRenderer.CellRenderer-1) and `CellContentPro` classes and [`CellRendererRegistry`](https://api.highcharts.com/grid/#modules/Grid_Pro_CellRendering_CellRendererRegistry.CellRendererRegistry) from the `Grid` namespace.
+1. We start by importing the default [`CellRenderer`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_CellRenderer.CellRenderer) and `CellContentPro` classes and [`CellRendererRegistry`](https://api.highcharts.com/grid/#modules/Grid_Pro_CellRendering_CellRendererRegistry.CellRendererRegistry) from the `Grid` namespace.
 
 ```js
 const {
@@ -308,7 +308,7 @@ class TextareaContent extends CellContentPro {
 }
 ```
 
-3. The **TextareaRenderer** class is responsible for integrating the custom textarea content into the grid. By extending the [`CellRenderer`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_CellRenderer.CellRenderer-1) base class, it provides a `render`
+3. The **TextareaRenderer** class is responsible for integrating the custom textarea content into the grid. By extending the [`CellRenderer`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_CellRenderer.CellRenderer) base class, it provides a `render`
    method that creates and returns a new instance of `TextareaContent` for each cell.
 
 ```js
