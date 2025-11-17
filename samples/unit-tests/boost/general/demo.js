@@ -164,7 +164,7 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
         let clock = null;
         try {
             clock = TestUtilities.lolexInstall();
-            (async () => {
+            await (async () => {
                 const x = point.plotX + chart.plotLeft,
                     y = point.plotY + chart.plotTop;
 
@@ -177,8 +177,9 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
                     `After updating to empty zones the color should be
                     remained, #23571.`
                 );
+
+                TestUtilities.lolexRunAndUninstall(clock);
             })();
-            TestUtilities.lolexRunAndUninstall(clock);
         } finally {
             TestUtilities.lolexUninstall(clock);
         }
