@@ -136,14 +136,9 @@ class Pagination {
     public pageSizeSelect?: HTMLSelectElement;
 
     /**
-     * Mobile page selector dropdown
+     * Page selector dropdown
      */
-    public mobilePageSelector?: HTMLSelectElement;
-
-    /**
-     * Mobile page size selector dropdown
-     */
-    public mobilePageSizeSelector?: HTMLSelectElement;
+    public dropdownPageSelector?: HTMLSelectElement;
 
     /**
      * Page info text element
@@ -396,7 +391,7 @@ class Pagination {
      */
     public renderControls(): void {
         const navContainer = makeHTMLElement('div', {
-            className: Globals.getClassName('paginationControls')
+            className: Globals.getClassName('paginationControlsContainer')
         }, this.contentWrapper);
 
         // Render first/previous buttons
@@ -414,8 +409,8 @@ class Pagination {
             this.renderPageNumbers(navContainer);
         }
 
-        // Render mobile page selector
-        this.renderMobilePageSelector(navContainer);
+        // Render dropdown page selector
+        this.renderDropdownPageSelector(navContainer);
 
         // Render next button
         if (this.options.controls?.previousNextButtons) {
@@ -462,9 +457,8 @@ class Pagination {
 
         // Create first button
         this.firstButton = makeHTMLElement('button', {
-            innerHTML: Icons.first,
-            className: Globals.getClassName('paginationButton') + ' ' +
-                Globals.getClassName('paginationFirstButton')
+            className: Globals.getClassName('button'),
+            innerHTML: Icons.first
         }, container);
         this.firstButton.title = this.lang.firstPage;
 
@@ -502,9 +496,8 @@ class Pagination {
 
         // Create previous button
         this.prevButton = makeHTMLElement('button', {
-            innerHTML: Icons.previous,
-            className: Globals.getClassName('paginationButton') + ' ' +
-                Globals.getClassName('paginationPrevButton')
+            className: Globals.getClassName('button'),
+            innerHTML: Icons.previous
         }, container);
         this.prevButton.title = this.lang.previousPage;
 
@@ -542,9 +535,8 @@ class Pagination {
 
         // Create next button
         this.nextButton = makeHTMLElement('button', {
-            innerHTML: Icons.next,
-            className: Globals.getClassName('paginationButton') + ' ' +
-                Globals.getClassName('paginationNextButton')
+            className: Globals.getClassName('button'),
+            innerHTML: Icons.next
         }, container);
         this.nextButton.title = this.lang.nextPage;
 
@@ -582,9 +574,8 @@ class Pagination {
 
         // Create last button
         this.lastButton = makeHTMLElement('button', {
-            innerHTML: Icons.last,
-            className: Globals.getClassName('paginationButton') + ' ' +
-                Globals.getClassName('paginationLastButton')
+            className: Globals.getClassName('button'),
+            innerHTML: Icons.last
         }, container);
         this.lastButton.title = this.lang.lastPage;
 
@@ -621,7 +612,7 @@ class Pagination {
         }
 
         this.pageNumbersContainer = makeHTMLElement('div', {
-            className: Globals.getClassName('paginationPageButton')
+            className: Globals.getClassName('paginationNavButtonsContainer')
         }, container);
 
         this.updatePageNumbers();
@@ -766,9 +757,9 @@ class Pagination {
             });
         }
 
-        // Update mobile selector if it exists
-        if (this.mobilePageSelector) {
-            this.mobilePageSelector.value = this.currentPage.toString();
+        // Update dropdown selector if it exists
+        if (this.dropdownPageSelector) {
+            this.dropdownPageSelector.value = this.currentPage.toString();
         }
     }
 
@@ -787,11 +778,15 @@ class Pagination {
         }
 
         const button = makeHTMLElement('button', {
-            innerHTML: pageNumber.toString(),
-            className: Globals.getClassName(
-                isActive ? 'paginationPageButtonActive' : 'paginationPageButton'
-            )
+            className: Globals.getClassName('button'),
+            innerHTML: pageNumber.toString()
         }, this.pageNumbersContainer);
+
+        if (isActive) {
+            button.classList.add(Globals.getClassName('buttonSelected'));
+            button.setAttribute('aria-current', 'page');
+        }
+
         button.title = formatText(this.lang.pageNumber, { page: pageNumber });
 
         // Set aria-label for a11y
@@ -815,8 +810,7 @@ class Pagination {
         }
 
         const ellipsisElement = makeHTMLElement('span', {
-            innerHTML: '...',
-            className: Globals.getClassName('paginationEllipsis')
+            innerHTML: '...'
         }, this.pageNumbersContainer);
         ellipsisElement.title = this.lang.ellipsis;
 
@@ -841,7 +835,7 @@ class Pagination {
         }
 
         const container = makeHTMLElement('div', {
-            className: Globals.getClassName('paginationPageSizeContainer')
+            className: Globals.getClassName('paginationPageSize')
         }, this.contentWrapper);
 
         makeHTMLElement('span', {
@@ -849,7 +843,8 @@ class Pagination {
         }, container);
 
         this.pageSizeSelect = makeHTMLElement('select', {
-            className: Globals.getClassName('paginationPageSizeSelect')
+            className: Globals.getClassName('input'),
+            id: Globals.getClassName('paginationPageSize')
         }, container) as HTMLSelectElement;
 
         this.pageSizeOptions.forEach((option: number): void => {
@@ -871,9 +866,6 @@ class Pagination {
 
             void this.setPageSize(parseInt(this.pageSizeSelect.value, 10));
         });
-
-        // Render mobile page size selector in the same container
-        this.renderMobilePageSizeSelector(container);
     }
 
     /**
@@ -913,13 +905,8 @@ class Pagination {
         // Announce the page size change
         this.grid.accessibility?.announce(
             langAccessibility?.pagination?.announcements?.pageSizeChange +
-                ' ' + newPageSize
+            ' ' + newPageSize
         );
-
-        // Update mobile page size selector if it exists
-        if (this.mobilePageSizeSelector) {
-            this.mobilePageSizeSelector.value = this.currentPageSize.toString();
-        }
 
         fireEvent(
             this,
@@ -971,7 +958,7 @@ class Pagination {
         // Announce the page change
         this.grid.accessibility?.announce(
             langAccessibility?.pagination?.announcements?.pageChange +
-                ' ' + this.currentPage
+            ' ' + this.currentPage
         );
 
         fireEvent(
@@ -1080,14 +1067,8 @@ class Pagination {
      */
     public setButtonState(button: HTMLElement, disabled?: boolean): void {
         if (disabled) {
-            button.classList.add(
-                Globals.getClassName('paginationButtonDisabled')
-            );
             button.setAttribute('disabled', 'disabled');
         } else {
-            button.classList.remove(
-                Globals.getClassName('paginationButtonDisabled')
-            );
             button.removeAttribute('disabled');
         }
     }
@@ -1127,77 +1108,45 @@ class Pagination {
     }
 
     /**
-     * Render the mobile page selector (select dropdown).
+     * Render the dropdown page selector (select dropdown).
      *
      * @param container
-     * The container element for the mobile page selector.
+     * The container element for the dropdown page selector.
      */
-    public renderMobilePageSelector(container: HTMLElement): void {
+    public renderDropdownPageSelector(container: HTMLElement): void {
         const totalPages = this.totalPages;
         if (totalPages <= 1) {
             return;
         }
 
-        const mobileSelect: HTMLSelectElement = makeHTMLElement('select', {
-            className: Globals.getClassName('paginationMobileSelector')
+        const wrapper: HTMLSelectElement = makeHTMLElement('div', {
+            className: Globals.getClassName('paginationNavDropdown')
         }, container);
+
+        const select: HTMLSelectElement = makeHTMLElement('select', {
+            className: Globals.getClassName('input'),
+            id: Globals.getClassName('paginationNavDropdown')
+        }, wrapper);
 
         // Add options for each page
         for (let i = 1; i <= totalPages; i++) {
             const option: HTMLOptionElement =
-                makeHTMLElement('option', {}, mobileSelect);
+                makeHTMLElement('option', {}, select);
             option.value = i.toString();
             option.textContent = `Page ${i} of ${totalPages}`;
         }
 
         // Set current page as selected
-        mobileSelect.value = this.currentPage.toString();
+        select.value = this.currentPage.toString();
 
-        this.mobilePageSelector = mobileSelect;
+        this.dropdownPageSelector = select;
 
         // Add event listener for page change
-        mobileSelect.addEventListener('change', (): void => {
-            const newPage = parseInt(mobileSelect.value, 10);
+        select.addEventListener('change', (): void => {
+            const newPage = parseInt(select.value, 10);
             if (newPage !== this.currentPage) {
                 void this.goToPage(newPage);
             }
-        });
-    }
-
-    /**
-     * Render the mobile page size selector (select dropdown).
-     *
-     * @param container
-     * The container element for the mobile page size selector.
-     */
-    public renderMobilePageSizeSelector(container: HTMLElement): void {
-        const mobilePageSizeSelect: HTMLSelectElement =
-            makeHTMLElement('select', {
-                className:
-                    Globals.getClassName('paginationMobilePageSizeSelector')
-            }, container);
-
-        this.pageSizeOptions.forEach((option: number): void => {
-            const optionElement: HTMLOptionElement =
-                makeHTMLElement('option', {}, mobilePageSizeSelect);
-            optionElement.value = option.toString();
-            optionElement.textContent = `${option} ${this.lang.pageSizeLabel}`;
-
-            if (option === this.currentPageSize) {
-                optionElement.selected = true;
-            }
-        });
-
-        this.mobilePageSizeSelector = mobilePageSizeSelect;
-
-        mobilePageSizeSelect.addEventListener('change', (): void => {
-            if (!this.mobilePageSizeSelector) {
-                return;
-            }
-
-            void this.setPageSize(
-                parseInt(this.mobilePageSizeSelector.value, 10)
-            );
         });
     }
 
