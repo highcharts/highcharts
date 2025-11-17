@@ -57,17 +57,38 @@ const {
 
 declare module '../../Core/Series/PointBase' {
     interface PointBase {
+        /** @internal */
         drilldown?: string;
+
+        /**
+         * Perform drilldown on a point instance. The [drilldown](https://api.highcharts.com/highcharts/series.line.data.drilldown)
+         * property must be set on the point options.
+         *
+         * To drill down multiple points in the same category, use
+         * `Axis.drilldownCategory` instead.
+         *
+         * @requires  modules/drilldown
+         *
+         * @function Highcharts.Point#doDrilldown
+         *
+         * @sample highcharts/drilldown/programmatic
+         *         Programmatic drilldown
+         */
         doDrilldown(): void;
+
+        /** @internal */
         runDrilldown(
             holdRedraw?: boolean,
             category?: number,
             originalEvent?: Event
         ): void;
+
+        /** @internal */
         unbindDrilldownClick?: Function;
     }
 }
 
+/** @internal */
 declare module '../../Core/Series/SeriesBase' {
     interface SeriesBase {
         drilldownLevel?: Drilldown.LevelObject;
@@ -82,6 +103,7 @@ declare module '../../Core/Series/SeriesBase' {
     }
 }
 
+/** @internal */
 declare module '../../Core/Series/SeriesOptions' {
     interface SeriesOptions {
         _ddSeriesId?: number;
@@ -693,7 +715,7 @@ function pieAnimateDrilldown(
  *
  * @function Highcharts.Point#doDrilldown
  *
- * @sample {highcharts} highcharts/drilldown/programmatic
+ * @sample highcharts/drilldown/programmatic
  *         Programmatic drilldown
  */
 function pointDoDrilldown(
@@ -738,27 +760,32 @@ function pointRunDrilldown(
 
     // Fire the event. If seriesOptions is undefined, the implementer can check
     // for seriesOptions, and call addSeriesAsDrilldown async if necessary.
-    fireEvent(chart, 'drilldown', {
-        point,
-        seriesOptions: seriesOptions,
-        category: category,
-        originalEvent: originalEvent,
-        points: (
-            typeof category !== 'undefined' &&
-            series.xAxis.getDDPoints(category).slice(0)
-        )
-    } as Drilldown.EventObject, (e: Drilldown.EventObject): void => {
-        const chart = e.point.series && e.point.series.chart,
-            seriesOptions = e.seriesOptions;
+    fireEvent(
+        chart,
+        'drilldown',
+        {
+            point,
+            seriesOptions,
+            category,
+            originalEvent,
+            points: (
+                typeof category !== 'undefined' &&
+                series.xAxis.getDDPoints(category).slice(0)
+            )
+        } as Drilldown.DrilldownEventObject,
+        (e: Drilldown.DrilldownEventObject): void => {
+            const chart = e.point.series?.chart,
+                seriesOptions = e.seriesOptions;
 
-        if (chart && seriesOptions) {
-            if (holdRedraw) {
-                chart.addSingleSeriesAsDrilldown(e.point, seriesOptions);
-            } else {
-                chart.addSeriesAsDrilldown(e.point, seriesOptions);
+            if (chart && seriesOptions) {
+                if (holdRedraw) {
+                    chart.addSingleSeriesAsDrilldown(e.point, seriesOptions);
+                } else {
+                    chart.addSeriesAsDrilldown(e.point, seriesOptions);
+                }
             }
         }
-    });
+    );
 }
 
 /* *
@@ -767,8 +794,10 @@ function pointRunDrilldown(
  *
  * */
 
+/** @internal */
 const DrilldownSeries = {
     compose
 };
 
+/** @internal */
 export default DrilldownSeries;

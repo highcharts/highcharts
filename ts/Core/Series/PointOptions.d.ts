@@ -84,7 +84,6 @@ export interface PointOptions {
     color?: ColorType;
     colorIndex?: number;
     custom?: AnyRecord;
-    drilldown?: string;
     events?: PointEventsOptions;
     id?: string;
     index?: number;

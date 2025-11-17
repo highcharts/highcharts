@@ -56,6 +56,7 @@ const SOURCE_GLOBS = [
     'Extensions/DataGrouping/DataGroupingSeriesComposition.js',
     'Extensions/DraggablePoints/DraggablePoints.js',
     'Extensions/Drilldown/Drilldown.js',
+    'Extensions/Drilldown/DrilldownSeries.js',
     'Extensions/ExportData/ExportData.js',
     'Extensions/Exporting/Exporting.js',
     'Extensions/Exporting/Fullscreen.js',
