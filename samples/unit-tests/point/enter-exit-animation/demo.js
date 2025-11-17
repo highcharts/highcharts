@@ -98,7 +98,7 @@ QUnit.test('Add point with entrance animation', assert => {
                 );
 
                 assert.ok(
-                    condemnedPoint.dataLabel.x < condemnedDataLabelX,
+                    condemnedPoint.dataLabel.x < condemnedDataLabelX - 10,
                     `The ${type} condemned data label should slide out`
                 );
             }, 50);
