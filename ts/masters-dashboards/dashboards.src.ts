@@ -75,6 +75,7 @@ declare global {
         merge: typeof Utilities.merge;
         removeEvent: typeof Utilities.removeEvent;
         uniqueKey: typeof Utilities.uniqueKey;
+        version: typeof Globals.version;
         win: typeof Globals.win;
         AST: typeof AST;
         Board: typeof Board;
@@ -115,6 +116,7 @@ G.error = Utilities.error;
 G.merge = Utilities.merge;
 G.removeEvent = Utilities.removeEvent;
 G.uniqueKey = Utilities.uniqueKey;
+G.version = Globals.version;
 G.AST = AST;
 G.Board = Board;
 G.Component = Component;
