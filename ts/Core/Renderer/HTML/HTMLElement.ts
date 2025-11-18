@@ -58,13 +58,6 @@ declare module '../SVG/SVGRendererBase' {
  * */
 
 class HTMLElement extends SVGElement {
-    /* *
-     *
-     *  Static Functions
-     *
-     * */
-    public static useForeignObject: boolean|undefined;
-
     /**
      * Compose
      * @private
