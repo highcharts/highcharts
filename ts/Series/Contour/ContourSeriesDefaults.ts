@@ -1,5 +1,30 @@
+/* *
+ *
+ *  (c) 2010-2025 Torstein Honsi
+ *
+ *  License: www.highcharts.com/license
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ * */
+
+'use strict';
+
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type ContourSeriesOptions from './ContourSeriesOptions';
-import ContourPoint from './ContourPoint';
+
+
+/* *
+ *
+ *  Definitions
+ *
+ * */
 
 /**
  * A contour plot is a graphical representation of three-dimensional data
@@ -26,12 +51,19 @@ import ContourPoint from './ContourPoint';
  */
 
 const ContourSeriesDefaults: ContourSeriesOptions = {
-    contourOffsets: [],
+
+    /**
+     * The offset of the contour lines.
+     */
+    contourOffset: 0,
+
     /**
      * This must be set to 'value' to make the colorAxis track with the contour
      * plot.
      */
     colorKey: 'value',
+
+    clip: false,
 
     /**
      * Whether to use smooth color transitions.
@@ -94,6 +126,14 @@ const ContourSeriesDefaults: ContourSeriesOptions = {
             }
         }
     },
+
+    /**
+     * Whether to render the series on the background, so that it is visible
+     * behind axes and grid lines. It will be also visible behind series that
+     * are rendered before it.
+     */
+    renderOnBackground: true,
+
     states: {
         hover: {
             /** @ignore-option */
@@ -102,29 +142,10 @@ const ContourSeriesDefaults: ContourSeriesOptions = {
     },
 
     tooltip: {
-        /**
-         * A callback function for formatting the HTML output for a single point
-         * in the tooltip. Like the `pointFormat` string, but with more
-         * flexibility.
-         *
-         * For contour plots, this function, by default, ensures a correctly
-         * colored tooltip.
-         *
-         * @type      {Highcharts.FormatterCallbackFunction<Highcharts.Point>}
-         * @since     4.1.0
-         * @context   Highcharts.Point
-         * @apioption plotOptions.contour.tooltip.pointFormatter
-         */
-        pointFormatter: function (): string {
-            const point = (this as ContourPoint),
-                { series, value } = point;
+        pointFormat: '{point.x}, {point.y}: {point.value}<br/>'
+    },
 
-            return `<span style="color: ${
-                series.colorAxis?.toColor(value ?? 0, point.value as any) ||
-                'black'
-            };">●●●●●●●●●●●●●●●●●●●●●●●●●●●</span>`;
-        }
-    }
+    zIndex: 0
 
 };
 ''; // Keeps doclets above separate
