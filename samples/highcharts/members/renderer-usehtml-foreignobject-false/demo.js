@@ -6,11 +6,13 @@
     createElement,
     css,
     defined,
+    Exporting,
     getAlignFactor,
     isNumber,
     HTMLElement,
     SVGElement,
-    SVGRenderer
+    SVGRenderer,
+    wrap
 }) => {
 
     /**
@@ -359,6 +361,33 @@
                 y: Math.round(y || 0)
             });
     };
+
+    if (Exporting) {
+        wrap(
+            Exporting,
+            'sanitizeSVG',
+            function (proceed, svg, options) {
+                const split = svg.indexOf('</svg>') + 6;
+                let html = svg.substr(split);
+
+                // Remove any HTML added to the container after the SVG (#894,
+                // #9087)
+                svg = svg.substr(0, split);
+
+                html = '<foreignObject x="0" y="0" ' +
+                        'width="' + options.chart.width + '" ' +
+                        'height="' + options.chart.height + '">' +
+                    '<body xmlns="http://www.w3.org/1999/xhtml">' +
+                    // Some tags needs to be closed in xhtml (#13726)
+                    html.replace(/(<(?:img|br).*?(?=\>))>/g, '$1 />') +
+                    '</body>' +
+                    '</foreignObject>';
+                svg = svg.replace('</svg>', html + '</svg>');
+
+                return proceed.call(this, svg, options);
+            }
+        );
+    }
 })(Highcharts);
 
 Highcharts.chart('container', {
