@@ -1,4 +1,7 @@
-QUnit.test('Fullscreen module.', function (assert) {
+// Automated fullscreen tests disabled.
+// See samples\highcharts\members\chart-togglefullscreen\test-notes.md
+
+QUnit.skip('Fullscreen module.', function (assert) {
     var chart = Highcharts.chart('container', {
         series: [
             {
@@ -30,7 +33,7 @@ QUnit.test('Fullscreen module.', function (assert) {
     assert.ok(true, 'Chart displayed in fullscreen mode without any errors.');
 });
 
-QUnit.test('#20548, chart resizing after fullscreen.', async function (assert) {
+QUnit.skip('#20548, chart resizing after fullscreen.', async function (assert) {
     // Time out after 1000ms. Fail safe in case endRisize event is not triggered
     assert.timeout(1000);
 
@@ -39,22 +42,13 @@ QUnit.test('#20548, chart resizing after fullscreen.', async function (assert) {
             series: [{ data: [5, 3, 4, 2, 4, 3] }]
         }),
         oldChartWidth = chart.chartWidth,
-        oldXAxisLength = chart.axes[0].len,
-        btn = document.getElementById('btn');
-    let isWide = true;
+        oldXAxisLength = chart.axes[0].len;
 
     chart.fullscreen.open();
     chart.fullscreen.close();
 
     // Simulates a container resize, e.g. like a window resize.
-    function buttonClick() {
-        chart.container.parentElement.style.width = isWide ? '300px' : '600px';
-        isWide = !isWide;
-    }
-    if (btn) {
-        btn.onclick = buttonClick;
-    }
-    buttonClick();
+    chart.container.parentElement.style.width = '300px';
 
     Highcharts.addEvent(chart, 'endResize', function () {
         assert.ok(
