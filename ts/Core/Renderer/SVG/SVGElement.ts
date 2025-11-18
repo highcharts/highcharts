@@ -1216,22 +1216,13 @@ class SVGElement implements SVGElementBase {
      */
     public destroy(): undefined {
         const wrapper = this,
-            element = wrapper.element || {},
-            renderer = wrapper.renderer,
+            { element = {} as DOMElementType, renderer, stops } = wrapper,
             ownerSVGElement = (element as SVGDOMElement).ownerSVGElement;
-
-        let parentToClean: (SVGElement|undefined) = (
-                element.nodeName === 'SPAN' &&
-                wrapper.parentGroup ||
-                void 0
-            ),
-            grandParent: SVGElement,
-            i;
 
         // Remove events
         element.onclick = element.onmouseout = element.onmouseover =
             element.onmousemove = (element as any).point = null;
-        stop(wrapper as any); // Stop running animations
+        stop(wrapper); // Stop running animations
 
         if (wrapper.clipPath && ownerSVGElement) {
             const clipPath = wrapper.clipPath;
@@ -1252,28 +1243,15 @@ class SVGElement implements SVGElementBase {
         }
 
         // Destroy stops in case this is a gradient object @todo old code?
-        if (wrapper.stops) {
-            for (i = 0; i < wrapper.stops.length; i++) {
-                wrapper.stops[i].destroy();
+        if (stops) {
+            for (const stop of stops) {
+                stop.destroy();
             }
-            wrapper.stops.length = 0;
-            wrapper.stops = void 0;
+            stops.length = 0;
         }
 
         // Remove element
         wrapper.safeRemoveChild(element);
-
-        // In case of useHTML, clean up empty containers emulating SVG groups
-        // (#1960, #2393, #2697).
-        while (
-            parentToClean?.div &&
-            parentToClean.div.childNodes.length === 0
-        ) {
-            grandParent = (parentToClean as any).parentGroup;
-            wrapper.safeRemoveChild((parentToClean as any).div);
-            delete (parentToClean as any).div;
-            parentToClean = grandParent;
-        }
 
         // Remove from alignObjects
         if (wrapper.alignOptions) {

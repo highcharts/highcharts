@@ -383,6 +383,29 @@
         }
     });
 
+    wrap(SVGRenderer.prototype, 'destroy', function (proceed) {
+        let parentToClean = (
+                (this.element?.nodeName === 'SPAN' && this.parentGroup) ||
+                void 0
+            ),
+            grandParent;
+
+        // In case of legacy useHTML, clean up empty containers emulating SVG
+        // groups (#1960, #2393, #2697).
+        while (
+            parentToClean?.div &&
+            parentToClean.div.childNodes.length === 0
+        ) {
+            grandParent = parentToClean.parentGroup;
+            this.safeRemoveChild(parentToClean.div);
+            delete parentToClean.div;
+            parentToClean = grandParent;
+        }
+
+        proceed.call(this);
+
+    });
+
     if (Exporting) {
         wrap(
             Exporting,
