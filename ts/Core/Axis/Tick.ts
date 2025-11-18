@@ -57,6 +57,7 @@ const {
  *
  * */
 
+/** @internal */
 declare module './AxisOptions' {
     interface AxisLabelFormatterContextObject {
         tickPositionInfo?: TimeTicksInfoObject;

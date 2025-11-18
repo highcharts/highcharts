@@ -60,7 +60,9 @@ declare module '../Animation/FxBase' {
 
 declare module '../Chart/ChartBase'{
     interface ChartBase {
+        /** @internal */
         chart3d?: Chart3D.Additions;
+        /** @internal */
         frameShapes?: Record<string, SVGElement3D>;
         is3d(): boolean;
     }
@@ -141,6 +143,7 @@ namespace Chart3D {
         [index: number]: Stack3DDictionaryObject;
         totalStacks: number;
     }
+
     export interface Stack3DDictionaryObject {
         position: number;
         series: Array<Series>;

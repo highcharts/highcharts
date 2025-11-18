@@ -49,6 +49,7 @@ const {
 
 declare module './AxisComposition' {
     interface AxisComposition {
+        /** @internal */
         ordinal?: OrdinalAxis.Additions;
         /** @deprecated */
         lin2val(val: number): number;
@@ -57,18 +58,21 @@ declare module './AxisComposition' {
     }
 }
 
+/** @internal */
 declare module './AxisOptions' {
     interface AxisOptions {
         keepOrdinalPadding?: boolean;
     }
 }
 
+/** @internal */
 declare module './TimeTicksInfoObject' {
     interface TimeTicksInfoObject {
         segmentStarts?: Array<number>;
     }
 }
 
+/** @internal */
 declare module './AxisType' {
     interface AxisTypeRegistry {
         OrdinalAxis: OrdinalAxis.Composition;
@@ -1618,4 +1622,5 @@ namespace OrdinalAxis {
  *
  * */
 
+/** @internal */
 export default OrdinalAxis;

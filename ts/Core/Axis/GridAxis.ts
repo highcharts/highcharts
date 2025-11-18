@@ -58,12 +58,14 @@ const {
  *
  * */
 
+/** @internal */
 declare module './AxisComposition' {
     interface AxisComposition {
         grid?: GridAxisComposition['grid'];
     }
 }
 
+/** @internal */
 declare module './AxisBase' {
     interface AxisBase {
         axisBorder?: SVGElement;
@@ -81,43 +83,91 @@ declare module './AxisBase' {
 }
 
 declare module './AxisOptions' {
+    /** @internal */
     interface AxisLabelFormatterContextObject {
         point?: Point;
     }
     interface AxisOptions {
         grid?: GridAxisOptions;
+        /** @internal */
         isInternal?: boolean;
     }
 }
 
+/** @internal */
 declare module '../Chart/ChartBase'{
     interface ChartBase {
         marginRight: ChartOptions['marginRight'];
     }
 }
 
+/** @internal */
 declare module './TickBase' {
     interface TickBase {
         slotWidth?: number;
     }
 }
 
+/** @internal */
 declare module './AxisType' {
     interface AxisTypeRegistry {
         GridAxis: GridAxisComposition;
     }
 }
 
+/** @internal */
 export interface GridAxisComposition extends Axis {
     grid: GridAxisAdditions;
     linkedParent?: GridAxisComposition;
 }
 
+/**
+ * Set grid options for the axis labels. Requires Highcharts Gantt.
+ *
+ * @since     6.2.0
+ * @product   gantt
+ */
 export interface GridAxisOptions {
+    /**
+     * Set border color for the label grid lines.
+     *
+     * @default   #e6e6e6
+     */
     borderColor?: ColorType;
+    /**
+     * Set border width of the label grid lines.
+     *
+     * @default   1
+     */
     borderWidth?: number;
+    /**
+     * Set cell height for grid axis labels. By default this is calculated from
+     * font size. This option only applies to horizontal axes. For vertical
+     * axes, check the [#yAxis.staticScale](yAxis.staticScale) option.
+     *
+     * @sample gantt/grid-axis/cellheight
+     *         Gant chart with custom cell height
+     */
     cellHeight?: number;
+    /**
+     * Set specific options for each column (or row for horizontal axes) in the
+     * grid. Each extra column/row is its own axis, and the axis options can be
+     * set here.
+     *
+     * @sample gantt/demo/left-axis-table
+     *         Left axis as a table
+     * @sample gantt/demo/treegrid-columns
+     *         Collapsible tree grid with columns
+     *
+     */
     columns?: Array<AxisOptions>;
+    /**
+     * Enable grid on the axis labels. Defaults to true for Gantt charts.
+     *
+     * @default   true
+     * @since     6.2.0
+     * @product   gantt
+     */
     enabled?: boolean;
 }
 
@@ -1508,10 +1558,12 @@ dateFormats.W = function (this: Time, timestamp: number): string {
  *
  * */
 
+/** @internal */
 const GridAxis = {
     compose
 };
 
+/** @internal */
 export default GridAxis;
 
 /* *

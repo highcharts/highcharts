@@ -102,7 +102,6 @@ function onChartAfterCreateAxes(this: Chart): void {
 
 /**
  * 3D axis for z coordinates.
- * @internal
  */
 class ZAxis extends Axis implements AxisBase {
 
@@ -171,6 +170,7 @@ class ZAxis extends Axis implements AxisBase {
      *
      * */
 
+    /** @internal */
     public getSeriesExtremes(): void {
         this.hasVisibleSeries = false;
 
@@ -213,9 +213,7 @@ class ZAxis extends Axis implements AxisBase {
         });
     }
 
-    /**
-     * @internal
-     */
+    /** @internal */
     public setAxisSize(): void {
         const chart = this.chart;
 

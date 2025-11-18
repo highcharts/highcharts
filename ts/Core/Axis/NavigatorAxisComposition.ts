@@ -37,12 +37,14 @@ const {
  *
  * */
 
+/** @internal */
 declare module './AxisComposition' {
     interface AxisComposition {
         navigatorAxis?: NavigatorAxisAdditions;
     }
 }
 
+/** @internal */
 export declare class NavigatorAxisComposition extends Axis {
     navigatorAxis: NavigatorAxisAdditions;
 }
@@ -53,9 +55,7 @@ export declare class NavigatorAxisComposition extends Axis {
  *
  * */
 
-/**
- * @internal
- */
+/** @internal */
 function onAxisInit(
     this: Axis
 ): void {
@@ -134,10 +134,7 @@ function onAxisSetExtremes(
  *
  * */
 
-/**
- * @internal
- * @class
- */
+/** @internal */
 class NavigatorAxisAdditions {
 
     /* *
@@ -146,9 +143,6 @@ class NavigatorAxisAdditions {
      *
      * */
 
-    /**
-     * @internal
-     */
     public static compose(
         AxisClass: typeof Axis
     ): void {
@@ -190,9 +184,6 @@ class NavigatorAxisAdditions {
      *
      * */
 
-    /**
-     * @internal
-     */
     public destroy(): void {
         this.axis = void 0 as any;
     }
@@ -247,4 +238,5 @@ class NavigatorAxisAdditions {
  *
  * */
 
+/** @internal */
 export default NavigatorAxisAdditions;

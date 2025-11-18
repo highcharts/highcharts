@@ -37,18 +37,21 @@ const {
  *
  * */
 
+/** @internal */
 declare module './AxisComposition' {
     interface AxisComposition {
         waterfall?: WaterfallAxis['waterfall'];
     }
 }
 
+/** @internal */
 declare module '../../Core/Axis/AxisType' {
     interface AxisTypeRegistry {
         WaterfallAxis: WaterfallAxis;
     }
 }
 
+/** @internal */
 interface WaterfallAxis extends StackingAxis {
     waterfall?: WaterfallAxis.Composition;
 }
@@ -59,6 +62,7 @@ interface WaterfallAxis extends StackingAxis {
  *
  * */
 
+/** @internal */
 namespace WaterfallAxis {
 
     /* *
@@ -285,4 +289,5 @@ namespace WaterfallAxis {
  *
  * */
 
+/** @internal */
 export default WaterfallAxis;

@@ -15,9 +15,7 @@
  * */
 
 /**
- *
  * Helper interface for Tick.
- *
  */
 export interface TickBase {
     // Add with `declare module` pattern

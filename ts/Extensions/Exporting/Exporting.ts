@@ -175,7 +175,7 @@ declare module '../../Core/Chart/ChartOptions' {
     }
 }
 
-declare module '../../Core/GlobalsBase.d.ts' {
+declare module '../../Core/GlobalsBase' {
     interface GlobalsBase {
         /**
          * Deprecated in favor of [Exporting.downloadSVG](https://api.highcharts.com/class-reference/Highcharts.Exporting#downloadSVG).

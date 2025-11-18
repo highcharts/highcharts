@@ -31,12 +31,14 @@ const {
  *
  * */
 
+/** @internal */
 declare module './AxisComposition' {
     interface AxisComposition {
         logarithmic?: LogarithmicAxis.Additions;
     }
 }
 
+/** @internal */
 declare module './AxisType' {
     interface AxisTypeRegistry {
         LogarithmicAxis: LogarithmicAxis.Composition;
@@ -49,9 +51,7 @@ declare module './AxisType' {
  *
  * */
 
-/**
- * @internal
- */
+/** @internal */
 namespace LogarithmicAxis {
 
     /* *
@@ -324,4 +324,5 @@ namespace LogarithmicAxis {
  *
  * */
 
+/** @internal */
 export default LogarithmicAxis;
