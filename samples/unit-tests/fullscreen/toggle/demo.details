@@ -1,5 +1,4 @@
 ---
- requiresManualTesting: true
  resources:
    - https://code.jquery.com/qunit/qunit-2.4.0.js
    - https://code.jquery.com/qunit/qunit-2.4.0.css
