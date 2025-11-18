@@ -362,6 +362,27 @@
             });
     };
 
+    wrap(SVGElement.prototype, 'updateTransform', function (proceed) {
+        proceed.call(this);
+
+        const {
+            padding,
+            rotation,
+            rotationOriginX,
+            rotationOriginY,
+            text
+        } = this;
+
+        // HTML labels rotation (#20685)
+        if (text?.element.tagName === 'SPAN') {
+            text.attr({
+                rotation,
+                rotationOriginX: (rotationOriginX || 0) - padding,
+                rotationOriginY: (rotationOriginY || 0) - padding
+            });
+        }
+    });
+
     if (Exporting) {
         wrap(
             Exporting,

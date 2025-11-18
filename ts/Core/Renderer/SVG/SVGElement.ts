@@ -2194,7 +2194,6 @@ class SVGElement implements SVGElementBase {
             element,
             foreignObject,
             matrix,
-            padding,
             rotation = 0,
             rotationOriginX,
             rotationOriginY,
@@ -2208,7 +2207,7 @@ class SVGElement implements SVGElementBase {
         // Apply translate. Nearly all transformed elements have translation,
         // so instead of checking for translate = 0, do it always (#1767,
         // #1846).
-        const transform = ['translate(' + translateX + ',' + translateY + ')'];
+        const transform = [`translate(${translateX},${translateY})`];
 
         // Apply matrix
         if (defined(matrix)) {
@@ -2226,25 +2225,11 @@ class SVGElement implements SVGElementBase {
                 (rotationOriginY ?? element.getAttribute('y') ?? this.y ?? 0) +
                 ')'
             );
-
-            // HTML labels rotation (#20685)
-            if (
-                text?.element.tagName === 'SPAN' &&
-                !text?.foreignObject
-            ) {
-                text.attr({
-                    rotation,
-                    rotationOriginX: (rotationOriginX || 0) - padding,
-                    rotationOriginY: (rotationOriginY || 0) - padding
-                });
-            }
         }
 
         // Apply scale
         if (defined(scaleX) || defined(scaleY)) {
-            transform.push(
-                'scale(' + pick(scaleX, 1) + ' ' + pick(scaleY, 1) + ')'
-            );
+            transform.push(`scale(${scaleX ?? 1} ${scaleY ?? 1})`);
         }
 
         if (transform.length && !(text || this).textPath) {
