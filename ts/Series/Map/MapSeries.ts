@@ -625,7 +625,7 @@ class MapSeries extends ScatterSeries {
         state?: StatesOptionsKey
     ): SVGAttributes {
         const { mapView, styledMode } = point.series.chart;
-        const attr = styledMode ?
+        const attr: SVGAttributes = styledMode ?
             this.colorAttribs(point) :
             ColumnSeries.prototype.pointAttribs.call(
                 this, point as unknown as ColumnPoint, state
@@ -674,6 +674,13 @@ class MapSeries extends ScatterSeries {
         if (!point.visible) {
             attr.fill = this.options.nullColor;
         }
+
+        // Set opacity: if point is null and nullInteraction is true,
+        // force opacity 1. Otherwise use point/series opacity or default 1
+        if (point.isNull && this.options.nullInteraction) {
+            attr.opacity = 1;
+        }
+
 
         if (defined(pointStrokeWidth)) {
             attr['stroke-width'] = pointStrokeWidth;

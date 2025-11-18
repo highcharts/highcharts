@@ -679,8 +679,8 @@ class ColumnSeries extends Series {
         const options = this.options,
             p2o = (this as any).pointAttrToOptions || {},
             strokeOption = p2o.stroke || 'borderColor',
-            strokeWidthOption = p2o['stroke-width'] || 'borderWidth',
-            isMapSeries = this.type === 'map';
+            strokeWidthOption = p2o['stroke-width'] || 'borderWidth';
+
         let stateOptions: SeriesStateHoverOptions,
             zone,
             brightness,
@@ -696,10 +696,9 @@ class ColumnSeries extends Series {
             strokeWidth = (point && (point as any)[strokeWidthOption]) ||
                 (options as any)[strokeWidthOption] ||
                 (this as any)[strokeWidthOption] || 0,
-            opacity = (
-                // Added check for nullInteraction in map series (#23019)
-                point?.isNull && options.nullInteraction && !isMapSeries
-            ) ? 0 : (point?.opacity ?? options.opacity ?? 1);
+            opacity = (point?.isNull && options.nullInteraction) ?
+                0 :
+                (point?.opacity ?? options.opacity ?? 1);
 
         // Handle zone colors
         if (point && this.zones.length) {
