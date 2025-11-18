@@ -336,11 +336,24 @@ class DataTableCore {
         eventDetail?: DataEvent.Detail
     ): void {
         const { columns } = this,
-            indexRowCount = insert ? this.rowCount + 1 : rowIndex + 1;
+            indexRowCount = insert ? this.rowCount + 1 : rowIndex + 1,
+            rowKeys = Object.keys(row);
 
-        objectEach(row, (cellValue, columnId): void => {
-            let column = columns[columnId] ||
-                eventDetail?.addColumns !== false && new Array(indexRowCount);
+        if (eventDetail?.addColumns !== false) {
+            for (let i = 0, iEnd = rowKeys.length; i < iEnd; i++) {
+                const key = rowKeys[i];
+
+                if (!columns[key]) {
+                    columns[key] = [];
+                }
+            }
+        }
+
+        objectEach(columns, (column, columnId): void => {
+            if (!column && eventDetail?.addColumns !== false) {
+                column = new Array(indexRowCount);
+            }
+
             if (column) {
                 if (insert) {
                     column = splice(
@@ -348,10 +361,10 @@ class DataTableCore {
                         rowIndex,
                         0,
                         true,
-                        [cellValue]
+                        [row[columnId] ?? null]
                     ).array;
                 } else {
-                    column[rowIndex] = cellValue;
+                    column[rowIndex] = row[columnId] ?? null;
                 }
                 columns[columnId] = column;
             }

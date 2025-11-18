@@ -1,0 +1,7 @@
+---
+ name: Highcharts Homepage Chart Demos 2025
+ authors:
+   - Nancy Dillon
+ requiresManualTesting: true
+ js_wrap: b
+...
