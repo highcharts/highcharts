@@ -39,6 +39,7 @@ const {
  *
  * */
 
+/** @internal */
 namespace Foundation {
 
     /* *
@@ -102,4 +103,5 @@ namespace Foundation {
  *
  * */
 
+/** @internal */
 export default Foundation;

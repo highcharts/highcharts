@@ -34,20 +34,32 @@ import type Time from './Time';
  * this definition file.
  */
 export interface GlobalsBase {
+    /** @internal */
     readonly Obj: ObjectConstructor;
+    /** @internal */
     readonly SVG_NS: string;
+    /** @internal */
     chartCount: number;
     readonly charts: Array<(Chart|undefined)>;
+    /** @internal */
     readonly composed: Array<unknown>;
     readonly dateFormats: Record<string, Time.TimeFormatCallbackFunction>;
+    /** @internal */
     readonly deg2rad: number;
     readonly doc: Document;
+    /** @internal */
     readonly isChrome: boolean;
+    /** @internal */
     readonly isFirefox: boolean;
+    /** @internal */
     readonly isMS: boolean;
+    /** @internal */
     readonly isSafari: boolean;
+    /** @internal */
     readonly isTouchDevice: boolean;
+    /** @internal */
     readonly isWebKit: boolean;
+    /** @internal */
     readonly marginNames: ReadonlyArray<
     'plotTop'|'marginRight'|'marginBottom'|'plotLeft'
     >;
@@ -56,10 +68,14 @@ export interface GlobalsBase {
     readonly pageLang?: string,
     readonly product: string;
     readonly seriesTypes: SeriesTypeRegistry;
+    /** @internal */
     readonly supportsPassiveEvents: boolean;
+    /** @internal */
     readonly svg: boolean;
+    /** @internal */
     readonly symbolSizes: Record<string, SizeObject>;
     theme?: DeepPartial<Options>;
+    /** @internal */
     readonly userAgent: string;
     readonly version: string;
     // eslint-disable-next-line node/no-unsupported-features/es-builtins

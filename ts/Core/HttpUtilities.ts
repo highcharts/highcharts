@@ -127,9 +127,7 @@ function ajax(
 
     /**
      * Private error handler.
-     *
      * @internal
-     *
      * @param {XMLHttpRequest} xhr
      * Internal request object.
      * @param {string | Error} err
@@ -230,8 +228,10 @@ function getJSON(
  *
  * @param {string} url
  * Post URL.
+ *
  * @param {Object} data
  * Post data.
+ *
  * @param {RequestInit} [fetchOptions]
  * Additional attributes for the post request.
  */
@@ -278,17 +278,24 @@ async function post(
  *
  * */
 
+interface HttpUtilities {
+    ajax: typeof ajax,
+    getJSON: typeof getJSON,
+    /** @internal */
+    post: typeof post
+}
+
 /**
  * Utility functions for Ajax.
- * @private
  * @class
  * @name Highcharts.HttpUtilities
  */
 const HttpUtilities = {
     ajax,
-    getJSON,
-    post
-};
+    getJSON
+} as HttpUtilities;
+
+HttpUtilities.post = post;
 
 export default HttpUtilities;
 
