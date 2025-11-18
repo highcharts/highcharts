@@ -1,33 +1,3 @@
-if (!Highcharts.HTMLElement.useForeignObject) {
-    QUnit.test('Data labels, useHTML and defer (#5075)', function (assert) {
-        var chart = Highcharts.chart('container', {
-            series: [
-                {
-                    type: 'column',
-                    animation: true,
-                    dataLabels: {
-                        enabled: true,
-                        useHTML: true,
-                        defer: true
-                    },
-                    data: [1000, 2000, 3000]
-                }
-            ]
-        });
-
-        assert.strictEqual(
-            chart.series[0].dataLabelsGroup.div.nodeName,
-            'DIV',
-            'The data labels group has a HTML counterpart'
-        );
-        assert.strictEqual(
-            chart.series[0].dataLabelsGroup.div.style.opacity,
-            '0',
-            'And that div is hidden'
-        );
-    });
-}
-
 QUnit.test(
     '#7287: Correct class for the last dataLable when useHTML',
     function (assert) {

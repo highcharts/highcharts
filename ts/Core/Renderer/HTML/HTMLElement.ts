@@ -19,8 +19,7 @@
 import type BBoxObject from '../BBoxObject';
 import type CSSObject from '../CSSObject';
 import type {
-    HTMLDOMElement,
-    SVGDOMElement
+    HTMLDOMElement
 } from '../DOMElementType';
 import type SVGRenderer from '../SVG/SVGRenderer.js';
 
@@ -30,9 +29,7 @@ const { composed, isFirefox } = H;
 import SVGElement from '../SVG/SVGElement.js';
 import U from '../../Utilities.js';
 const {
-    attr,
     css,
-    createElement,
     defined,
     extend,
     getAlignFactor,
@@ -53,138 +50,6 @@ declare module '../SVG/SVGRendererBase' {
         html(str: string, x: number, y: number): HTMLElement;
     }
 }
-
-/**
- * The opacity and visibility properties are set as attributes on the main
- * element and SVG groups, and as identical CSS properties on the HTML element
- * and the ancestry divs. (#3542)
- *
- * @private
- */
-function commonSetter(
-    this: SVGElement,
-    value: string,
-    key: string,
-    elem: HTMLDOMElement
-): void {
-    const style = this.div?.style;
-    SVGElement.prototype[`${key}Setter`].call(this, value, key, elem);
-    if (style) {
-        elem.style[key as any] = style[key as any] = value;
-    }
-}
-
-/**
- * Decorate each SVG group in the ancestry line. Each SVG `g` element that
- * contains children with useHTML, will receive a `div` element counterpart to
- * contain the HTML span. These div elements are translated and styled like
- * original `g` counterparts.
- *
- * @private
- */
-const decorateSVGGroup = (
-    g: SVGElement,
-    container: HTMLDOMElement
-): HTMLDOMElement => {
-    if (!g.div) {
-        const className = attr(g.element, 'class'),
-            cssProto = g.css;
-
-        // Create the parallel HTML group
-        const div = createElement(
-            'div',
-            className ? { className } : void 0,
-            {
-                // Add HTML specific styles
-                position: 'absolute',
-                left: `${g.translateX || 0}px`,
-                top: `${g.translateY || 0}px`,
-
-                // Add pre-existing styles
-                ...g.styles,
-
-                // Add g attributes that correspond to CSS
-                display: g.display,
-                opacity: g.opacity, // #5075
-                visibility: g.visibility
-            },
-            // The top group is appended to container
-            g.parentGroup?.div || container
-        );
-
-        g.classSetter = (
-            value: string,
-            key: string,
-            element: SVGDOMElement
-        ): void => {
-            element.setAttribute('class', value);
-            div.className = value;
-        };
-
-        /**
-         * Common translate setter for X and Y on the HTML group.
-         *
-         * Reverted the fix for #6957 due to positioning problems and offline
-         * export (#7254, #7280, #7529)
-         * @private
-         */
-        g.translateXSetter = g.translateYSetter = (
-            value: number|string|null,
-            key: string
-        ): void => {
-            g[key] = value;
-
-            div.style[key === 'translateX' ? 'left' : 'top'] = `${value}px`;
-
-            g.doTransform = true;
-        };
-
-        g.scaleXSetter = g.scaleYSetter = (
-            value: number|string|null,
-            key: string
-        ) : void => {
-            g[key] = value;
-
-            g.doTransform = true;
-        };
-
-        g.opacitySetter = (g as any).visibilitySetter = commonSetter;
-
-        // Extend the parent group's css function by updating the parallel div
-        // counterpart with the same style.
-        g.css = (styles: CSSObject): SVGElement => {
-
-            // Call the base css method. The `parentGroup` can be either an
-            // SVGElement or an SVGLabel, in which the css method is extended
-            // (#19200).
-            cssProto.call(g, styles);
-
-            // #6794
-            if (styles.cursor) {
-                div.style.cursor = styles.cursor;
-            }
-
-            // #18821
-            if (styles.pointerEvents) {
-                div.style.pointerEvents = styles.pointerEvents;
-            }
-
-            return g;
-        };
-
-        // Event handling
-        g.on = function (): SVGElement {
-            SVGElement.prototype.on.apply({
-                element: div,
-                onEvents: g.onEvents
-            }, arguments);
-            return g;
-        };
-
-        g.div = div;
-    }
-    return g.div;
-};
 
 /* *
  *
@@ -238,7 +103,7 @@ class HTMLElement extends SVGElement {
      * */
 
     public div?: HTMLDOMElement;
-    public foreignObject?: SVGElement;
+    public foreignObject: SVGElement;
     public parentGroup?: SVGElement;
     public xCorr?: number;
     public yCorr?: number;
@@ -255,21 +120,10 @@ class HTMLElement extends SVGElement {
     ) {
         super(renderer, nodeName);
 
-        if (HTMLElement.useForeignObject) {
-            this.foreignObject = renderer.createElement('foreignObject')
-                .attr({
-                    zIndex: 2
-                });
-
-        } else {
-            this.css({
-                position: 'absolute',
-                ...(renderer.styledMode ? {} : {
-                    fontFamily: renderer.style.fontFamily,
-                    fontSize: renderer.style.fontSize
-                })
+        this.foreignObject = renderer.createElement('foreignObject')
+            .attr({
+                zIndex: 2
             });
-        }
 
         this.element.style.whiteSpace = 'nowrap';
     }
@@ -382,8 +236,6 @@ class HTMLElement extends SVGElement {
             styles: { display = 'inline-block', whiteSpace },
             textAlign = 'left',
             textWidth,
-            translateX = 0,
-            translateY = 0,
             x = 0,
             y = 0
         } = this;
@@ -401,14 +253,6 @@ class HTMLElement extends SVGElement {
             });
             return element.offsetWidth;
         };
-
-        // Apply translate
-        if (!foreignObject) {
-            css(element, {
-                marginLeft: `${translateX}px`,
-                marginTop: `${translateY}px`
-            });
-        }
 
         if (element.tagName === 'SPAN') {
             const currentTextTransform = [
@@ -446,7 +290,8 @@ class HTMLElement extends SVGElement {
                         element.style.textOverflow === 'ellipsis'
                     )
                 ) {
-                    const usePxWidth = rotation || scaleX ||
+                    const usePxWidth = rotation ||
+                        scaleX ||
                         textPxLength > textWidthNum ||
                         // Set width to prevent over-wrapping (#22609)
                         willOverWrap;
@@ -461,44 +306,23 @@ class HTMLElement extends SVGElement {
                 }
             }
 
-            if (foreignObject) {
-                css(element, {
-                    // Inline block must be set before we can read the offset
-                    // width
-                    display: 'inline-block',
-                    verticalAlign: 'top'
-                });
-                // In many cases (Firefox always, others on title layout) we
-                // need the foreign object to have a larger width and height
-                // than its content, in order to read its content's size
-                foreignObject.attr({
-                    width: renderer.width,
-                    height: renderer.height
-                });
-            }
+            css(element, {
+                // Inline block must be set before we can read the offset
+                // width
+                display: 'inline-block',
+                verticalAlign: 'top'
+            });
+            // In many cases (Firefox always, others on title layout) we
+            // need the foreign object to have a larger width and height
+            // than its content, in order to read its content's size
+            foreignObject.attr({
+                width: renderer.width,
+                height: renderer.height
+            });
 
             // Do the calculations and DOM access only if properties changed
             if (currentTextTransform !== this.cTT) {
                 baseline = renderer.fontMetrics(element).b;
-
-                // Renderer specific handling of span rotation, but only if we
-                // have something to update.
-                if (
-                    defined(rotation) &&
-                    !foreignObject &&
-                    (
-                        (rotation !== (this.oldRotation || 0)) ||
-                        (textAlign !== this.oldAlign)
-                    )
-                ) {
-                    // CSS transform and transform-origin both supported without
-                    // prefix since Firefox 16 (2012), IE 10 (2012), Chrome 36
-                    // (2014), Safari 9 (2015).;
-                    css(element, {
-                        transform: `rotate(${rotation}deg)`,
-                        transformOrigin: `${parentPadding}% ${parentPadding}px`
-                    });
-                }
 
                 this.getSpanCorrection(
                     // Avoid elem.offsetWidth if we can, it affects rendering
@@ -532,29 +356,25 @@ class HTMLElement extends SVGElement {
             }
 
             // Move the foreign object
-            if (foreignObject) {
-                super.updateTransform();
-                if (isNumber(x) && isNumber(y)) {
-                    foreignObject.attr({
-                        x: x + xCorr,
-                        y: y + yCorr,
-                        width: element.offsetWidth + 3,
-                        height: element.offsetHeight,
-                        'transform-origin': element
-                            .getAttribute('transform-origin') || '0 0'
-                    });
+            super.updateTransform();
+            if (isNumber(x) && isNumber(y)) {
+                foreignObject.attr({
+                    x: x + xCorr,
+                    y: y + yCorr,
+                    width: element.offsetWidth + 3,
+                    height: element.offsetHeight,
+                    'transform-origin': element
+                        .getAttribute('transform-origin') || '0 0'
+                });
 
-                    // Reset, otherwise lineClamp will not work
-                    css(element, { display, textAlign });
+                // Reset, otherwise lineClamp will not work
+                css(element, { display, textAlign });
 
-                } else if (isFirefox) {
-                    foreignObject.attr({
-                        width: 0,
-                        height: 0
-                    });
-                }
-            } else {
-                css(element, styles);
+            } else if (isFirefox) {
+                foreignObject.attr({
+                    width: 0,
+                    height: 0
+                });
             }
 
             // Record current text transform
@@ -571,57 +391,21 @@ class HTMLElement extends SVGElement {
      * @private
      */
     public add(parentGroup?: SVGElement): this {
-        const { foreignObject, renderer } = this,
-            container = renderer.box.parentNode as unknown as HTMLDOMElement,
-            parents = [] as Array<SVGElement>;
+        const { foreignObject, renderer } = this;
 
         // Foreign object
-        if (foreignObject) {
-            foreignObject.add(parentGroup);
-            super.add(
-                // Create a body inside the foreignObject
-                renderer.createElement('body')
-                    .attr({ xmlns: 'http://www.w3.org/1999/xhtml' })
-                    .css({
-                        background: 'transparent',
-                        // 3px is to avoid clipping on the right
-                        margin: '0 3px 0 0' // For export
-                    })
-                    .add(foreignObject)
-            );
-
-        // Add span next to the SVG
-        } else {
-            let div: HTMLDOMElement|undefined;
-
-            this.parentGroup = parentGroup;
-
-            // Create a parallel divs to hold the HTML elements
-            if (parentGroup) {
-                div = parentGroup.div;
-                if (!div) {
-
-                    // Read the parent chain into an array and read from top
-                    // down
-                    let svgGroup: SVGElement|undefined = parentGroup;
-                    while (svgGroup) {
-
-                        parents.push(svgGroup);
-
-                        // Move up to the next parent group
-                        svgGroup = svgGroup.parentGroup;
-                    }
-
-                    // Decorate each of the ancestor group elements with a
-                    // parallel div that reflects translation and styling
-                    for (const parentGroup of parents.reverse()) {
-                        div = decorateSVGGroup(parentGroup, container);
-                    }
-                }
-            }
-
-            (div || container).appendChild(this.element);
-        }
+        foreignObject.add(parentGroup);
+        super.add(
+            // Create a body inside the foreignObject
+            renderer.createElement('body')
+                .attr({ xmlns: 'http://www.w3.org/1999/xhtml' })
+                .css({
+                    background: 'transparent',
+                    // 3px is to avoid clipping on the right
+                    margin: '0 3px 0 0' // For export
+                })
+                .add(foreignObject)
+        );
 
         this.added = true;
         if (this.alignOnAdd) {
@@ -668,7 +452,6 @@ class HTMLElement extends SVGElement {
 
 // Some shared setters
 const proto = HTMLElement.prototype;
-(proto as any).visibilitySetter = proto.opacitySetter = commonSetter;
 proto.ySetter =
 proto.rotationSetter =
 proto.rotationOriginXSetter =
