@@ -2077,7 +2077,6 @@ class SVGElement implements SVGElementBase {
     public textSetter(value: string): void {
         if (value !== this.textStr) {
             // Delete size caches when the text changes
-            // delete this.bBox; // old code in series-label
             delete this.textPxLength;
 
             this.textStr = value;

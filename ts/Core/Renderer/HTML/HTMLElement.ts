@@ -400,7 +400,6 @@ class HTMLElement extends SVGElement {
                 .add(foreignObject)
         );
 
-        this.added = true;
         if (this.alignOnAdd) {
             this.updateTransform();
         }
@@ -414,7 +413,6 @@ class HTMLElement extends SVGElement {
      */
     public textSetter(value: string): void {
         if (value !== this.textStr) {
-            delete this.bBox;
             delete this.oldTextWidth;
 
             AST.setElementHTML(this.element, value ?? '');
