@@ -9,7 +9,8 @@
             "modules/heatmap",
             "modules/map",
             "modules/sunburst",
-            "modules/treemap"
+            "modules/treemap",
+            "modules/contour"
         ],
         "namespacePath": ".{name}"
     },
