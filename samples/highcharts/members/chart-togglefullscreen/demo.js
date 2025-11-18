@@ -24,7 +24,30 @@ const chart = Highcharts.chart('container', {
     }
 });
 
-// The button handler
-document.getElementById('button').addEventListener('click', function () {
-    chart.fullscreen.toggle();
+const eventCount = el => {
+    let count = 0;
+    // eslint-disable-next-line
+    for (const t in el.hcEvents) {
+        count += el.hcEvents[t].length;
+    }
+    return count;
+};
+
+const before = eventCount(chart);
+
+// The button handlers
+document.getElementById('button-fullscreen').addEventListener(
+    'click',
+    () => chart.fullscreen.toggle()
+);
+
+let isWide = true;
+document.getElementById('button-resize').addEventListener('click', function () {
+    chart.container.parentElement.style.width = isWide ? '300px' : '600px';
+    isWide = !isWide;
+
+    // It should not leak event listeners
+    if (eventCount(chart) !== before) {
+        console.error('Leaked event listeners!');
+    }
 });
