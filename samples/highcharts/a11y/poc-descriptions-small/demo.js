@@ -13,10 +13,10 @@ const chart1desc = `
     <ul>
         <li>X-axis: Months January–December</li>
         <li>Y-axis: Temperature in °C, range –10°C to 20°C</li>
-        <li>Summer period marked: May–September</li>
-        <li>Helsinki highest value: ~17°C in July</li>
-        <li>Helsinki lowest value: ~–6°C in February</li>
-        <li>Oslo highest value: ~11°C in July–August</li>
+        <li>Period highlighted: May–September</li>
+        <li>Helsinki highest value: 17°C in July</li>
+        <li>Helsinki lowest value: –6°C in February</li>
+        <li>Oslo highest value: 11°C in July–August</li>
         <li>Oslo lowest value: around 0°C in winter months</li>
         <li>Helsinki crosses above freezing in April and below 
         again in November</li>
@@ -52,7 +52,7 @@ const chart3desc = `
     <ul>
         <li>Warmest month average: June</li>
         <li>Coldest month average: December</li>
-        <li>X-axis: Months January–December (2023)</li>
+        <li>X axis: Days of the year from January-December</li>
         <li>Y-axis: Hours of the day (0:00–18:00)</li>
         <li>Range: –10°C to 20°C</li>
         <li>Highest temperature: July, reaching around 20°C</li>
@@ -101,7 +101,7 @@ const chart5desc = `
         <li>Highest sugar intake: U.S. (126 g/day)</li>
         <li>Lowest sugar intake: Russia (20 g/day)</li>
         <li>Highest fat intake: Belgium (95 g/day)</li>
-        <li>Lowest fat intake: Portugal (63 g/day) (</li>
+        <li>Lowest fat intake: Portugal (63 g/day)</li>
         <li>Highest obesity rate: U.S. (35.3%)</li>
         <li>Lowest obesity rate: Italy (10%)</li>
         <li>Closer to safe levels: Portugal (63g fat, 52g sugar), Hungary 
@@ -118,10 +118,10 @@ const chart6desc = `
     <ul>
         <li>Hierarchy: Company → Department → Team → Expense type</li>
         <li>Largest departments: Engineering (~$7.2M), 
-        Sales & Marketing (~$5.1M)</li>
-        <li>Largest teams: Sales (~$3.2M), Backend (~$2.8M), 
-        Frontend (~$2.6M)</li>
-        <li>Smallest nodes shown: HR Tools (~$50k) and other 
+        Sales & Marketing ($5.1M)</li>
+        <li>Largest teams: Sales ($3.2M), Backend ($2.8M), 
+        Frontend ($2.6M)</li>
+        <li>Smallest nodes shown: HR Tools ($50k) and other 
         low-cost tools/training items</li>
     </ul>
 `;
@@ -1313,7 +1313,7 @@ function basicSummary(chart) {
         () => hasType(chart, 'line') && (() =>
             'Line chart showing temperatures for Helsinki and Oslo.')(),
         () => hasType(chart, 'gauge') && (() =>
-            'Gauge showing budget used, value 92%.')(),
+            'Gauge scale showing budget used, current value 92%')(),
 
         // Sunburst (root + top-level children)
         () => hasType(chart, 'sunburst') && (() =>
@@ -1341,9 +1341,11 @@ function basicSummary(chart) {
             //     root.name
             // })${namesSnippet ? `: ${namesSnippet}` : ''}.`;
             `Sunburst chart with 62 nodes in a hierarchy with 4 levels. 
-            Chart shows budget (USD) in 2025. The first node is "Company". 
-            Below that, the second level of nodes has Engineering, Sales 
-            & Marketing, Operations and two more.`
+            Chart shows budget (USD) in 2025. Hierarchy structure: The 
+            first node is "Company". Below that, the second level of nodes 
+            has Engineering, Sales & Marketing, Operations and two more. 
+            The third level shows teams, and the fourth level shows expense 
+            types.`
         )(),
 
         // Bubble (points by friendly name)
