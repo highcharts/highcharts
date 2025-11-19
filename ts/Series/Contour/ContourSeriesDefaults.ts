@@ -107,7 +107,6 @@ const ContourSeriesDefaults: ContourSeriesOptions = {
          */
         symbol: 'cross',
         /** @ignore-option */
-        radius: 0,
         lineColor: void 0,
         states: {
             /**
