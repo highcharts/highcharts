@@ -1,32 +1,32 @@
 const  mapbuttons = {
-    theme: {
-        fill: 'var(--illo-accent-50)',
-        'stroke-width': 1,
-        stroke: 'var(--illo-accent-200)',
-        r: 2,
-        style: {
-            color: '#fff'
-        },
-        states: {
-            hover: {
-                fill: 'var(--illo-background)',
-                'stroke-width': 1,
-                stroke: 'var(--illo-accent-50)',
-                style: {
-                    color: '#fff'
-                }
-            },
+    // theme: {
+    //     fill: '#46465C',
+    //     'stroke-width': 1,
+    //     stroke: '#BBBAC5',
+    //     r: 2,
+    //     style: {
+    //         color: '#fff'
+    //     },
+    //     states: {
+    //         hover: {
+    //             fill: '#000',
+    //             'stroke-width': 1,
+    //             stroke: '#f0f0f0',
+    //             style: {
+    //                 color: '#fff'
+    //             }
+    //         },
 
-            select: {
-                fill: 'var(--illo-background)',
-                'stroke-width': 1,
-                stroke: 'var(--illo-accent-50)',
-                style: {
-                    color: 'var(--text-primary)'
-                }
-            }
-        }
-    },
+    //         select: {
+    //             fill: '#000',
+    //             'stroke-width': 1,
+    //             stroke: '#f0f0f0',
+    //             style: {
+    //                 color: '#fff'
+    //             }
+    //         }
+    //     }
+    // },
     verticalAlign: 'bottom'
 };
 
@@ -200,7 +200,8 @@ function spider() {
 
 
 //         async function getJSON(url, cb) {
-//             const request = await fetch(url).then(response => response.json());
+//             const request = await fetch(url).
+// then(response => response.json());
 //             return cb(request);
 //         }
 
@@ -255,7 +256,8 @@ function spider() {
 //             ['md', 47, 28.85, 'Chisinau'],
 //             ['cz', 50.08, 14.46, 'Prague']
 //         ];
-//         // Get temperature for specific localization, and add it to the chart.
+//         // Get temperature for specific localization,
+// and add it to the chart.
 //         // It takes point as first argument, countries series as second
 //         // and capitals series as third. Capitals series have to be the
 //         // 'mappoint' series type, and it should be defined before in the
@@ -267,7 +269,8 @@ function spider() {
 
 //             const callBack = json => {
 
-//                 const temp = json.properties.timeseries[0].data.instant.details
+//                 const temp = json.properties.
+// timeseries[0].data.instant.details
 //                     .air_temperature;
 //                 const colorAxis = countries.chart.colorAxis[0];
 
