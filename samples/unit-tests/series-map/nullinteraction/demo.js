@@ -200,7 +200,7 @@ QUnit.test('nullInteraction', function (assert) {
     );
 
     assert.strictEqual(
-        point.graphic && point.graphic.opacity,
+        point.graphic?.opacity,
         1,
         'Null point opacity should be 1 when nullInteraction is true'
     );
