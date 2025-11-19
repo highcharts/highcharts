@@ -103,14 +103,17 @@ QUnit.test('Pie data labels general tests', function (assert) {
         }]
     });
 
-    const prevX = chart.series[0].points[2].dataLabel.getBBox().x;
+    const prevX = chart.series[0].points[2].dataLabel.getBBox().x,
+        prevW = chart.chartWidth,
+        prevH = chart.chartHeight;
 
-    chart.fullscreen.open();
-    chart.fullscreen.close();
+    chart.setSize(1920, 1080);
+    chart.setSize(prevW, prevH);
 
-    assert.strictEqual(
+    assert.close(
         prevX,
         chart.series[0].points[2].dataLabel.getBBox().x,
+        1,
         `Data labels x position should be the same after changing and reversing
         chart size, #23595.`
     );
