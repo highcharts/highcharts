@@ -12,8 +12,7 @@ Highcharts.chart('container', {
     },
     yAxis: {
         title: {
-            useHTML: true,
-            text: 'Million tonnes CO<sub>2</sub>-equivalents'
+            text: 'Million tonnes CO₂-equivalents'
         }
     },
     tooltip: {

@@ -512,6 +512,7 @@ function createAndAttachRenderer(
         // using panes, it is better to clip the target group, because then
         // we preserve clipping on touch- and mousewheel zoom preview.
         if (
+            !chart.navigator &&
             box.width === chart.clipBox.width &&
             box.height === chart.clipBox.height
         ) {
@@ -773,7 +774,7 @@ function hasExtremes(
     checkX?: boolean
 ): boolean {
     const options = series.options,
-        dataLength = series.dataTable.modified.rowCount,
+        dataLength = series.dataTable.getModified().rowCount,
         xAxis = series.xAxis && series.xAxis.options,
         yAxis = series.yAxis && series.yAxis.options,
         colorAxis = series.colorAxis && series.colorAxis.options;
@@ -1021,7 +1022,7 @@ function scatterProcessData(
         yMin >= (yAxis.old.min ?? -Number.MAX_VALUE) &&
         yMax <= (yAxis.old.max ?? Number.MAX_VALUE)
     ) {
-        series.dataTable.modified.setColumns({
+        series.dataTable.getModified().setColumns({
             x: xData,
             y: yData
         });
@@ -1041,7 +1042,7 @@ function scatterProcessData(
             dataLength < cropThreshold
         )
     ) {
-        series.dataTable.modified.setColumns({
+        series.dataTable.getModified().setColumns({
             x: xData,
             y: yData
         });
@@ -1100,12 +1101,12 @@ function scatterProcessData(
     series.cropped = cropped;
     series.cropStart = 0;
     // For boosted points rendering
-    if (cropped && series.dataTable.modified === series.dataTable) {
+    if (cropped && !series.dataTable.modified) {
         // Calling setColumns with cropped data must be done on a new instance
         // to avoid modification of the original (complete) data
         series.dataTable.modified = new DataTableCore();
     }
-    series.dataTable.modified.setColumns({
+    series.dataTable.getModified().setColumns({
         x: processedXData,
         y: processedYData
     });

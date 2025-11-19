@@ -1,0 +1,6 @@
+---
+ name: Mouse wheel reset zoom button
+ authors:
+   - Askel Eirik Johansson
+ js_wrap: b
+...

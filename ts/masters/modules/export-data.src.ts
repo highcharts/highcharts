@@ -13,7 +13,7 @@
 'use strict';
 
 import Highcharts from '../../Core/Globals.js';
-import DownloadURL from '../../Extensions/DownloadURL.js';
+import DownloadURL from '../../Shared/DownloadURL.js';
 import ExportData from '../../Extensions/ExportData/ExportData.js';
 
 const G: AnyRecord = Highcharts;

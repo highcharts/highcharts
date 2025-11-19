@@ -37,15 +37,16 @@ function scriptsCompile(filePaths, config = {}, product = 'highcharts') {
     if (argv.product === 'Grid') {
         esModulesFolder = fsLib.path(['code', 'grid', 'es-modules']);
         targetFolder = fsLib.path(['code', 'grid']);
+    } else if (argv.product === 'Dashboards') {
+        const dashCfg = require('./scripts-dts/dashboards/_config.json');
+        esModulesFolder = dashCfg.esModulesFolder;
+        targetFolder = dashCfg.bundleTargetFolder;
     } else if (product === 'highcharts') {
         esModulesFolder = '/es-modules/';
         targetFolder = 'code';
     } else if (product === 'dashboards') {
         esModulesFolder = config.esModulesFolder;
         targetFolder = config.bundleTargetFolder;
-    } else if (product === 'datagrid') {
-        esModulesFolder = config.esModulesFolderDataGrid;
-        targetFolder = config.bundleTargetFolderDataGrid;
     }
 
 

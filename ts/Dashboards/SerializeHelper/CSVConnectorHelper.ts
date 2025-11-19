@@ -81,7 +81,7 @@ function toJSON(
 ): CSVConnectorHelper.JSON {
     const options = merge(obj.options) as CSVConnectorHelper.OptionsJSON;
 
-    options.dataTable = DataTableHelper.toJSON(obj.table);
+    options.dataTable = DataTableHelper.toJSON(obj.getTable());
 
     return {
         $class: 'Data.CSVConnector',

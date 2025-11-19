@@ -601,7 +601,7 @@ class Chart {
     }
 
     /**
-     * Internal function to unitialize an individual series.
+     * Internal function to initialize an individual series.
      *
      * @private
      * @function Highcharts.Chart#initSeries
@@ -617,7 +617,7 @@ class Chart {
 
         // No such series type
         if (!SeriesClass) {
-            error(17, true, chart as any, { missingModuleFor: type });
+            error(17, true, chart, { missingModuleFor: type });
         }
 
         const series = new SeriesClass();
@@ -2467,42 +2467,39 @@ class Chart {
 
         // Apply new links
         chartSeries.forEach(function (series): void {
-            const { linkedTo } = series.options;
+            const { linkedTo } = series.options,
+                linkedParent = isString(linkedTo) && (
+                    linkedTo === ':previous' ?
+                        chartSeries[series.index - 1] :
+                        chart.get(linkedTo) as Series | undefined
+                );
 
-            if (isString(linkedTo)) {
-                let linkedParent: Series | undefined;
-                if (linkedTo === ':previous') {
-                    linkedParent = chart.series[series.index - 1];
-                } else {
-                    linkedParent = chart.get(linkedTo) as Series | undefined;
-                }
+            if (
+                linkedParent &&
                 // #3341 avoid mutual linking
-                if (
-                    linkedParent &&
-                    linkedParent.linkedParent !== series
-                ) {
-                    linkedParent.linkedSeries.push(series);
-                    /**
-                     * The parent series of the current series, if the current
-                     * series has a [linkedTo](https://api.highcharts.com/highcharts/series.line.linkedTo)
-                     * setting.
-                     *
-                     * @name Highcharts.Series#linkedParent
-                     * @type {Highcharts.Series}
-                     * @readonly
-                     */
-                    series.linkedParent = linkedParent;
+                linkedParent.linkedParent !== series
+            ) {
+                linkedParent.linkedSeries.push(series);
+                /**
+                 * The parent series of the current series, if the current
+                 * series has a [linkedTo](https://api.highcharts.com/highcharts/series.line.linkedTo)
+                 * setting.
+                 *
+                 * @name Highcharts.Series#linkedParent
+                 * @type {Highcharts.Series}
+                 * @readonly
+                 */
+                series.linkedParent = linkedParent;
 
-                    if (linkedParent.enabledDataSorting) {
-                        series.setDataSortingOptions();
-                    }
-
-                    series.visible = pick(
-                        series.options.visible,
-                        linkedParent.options.visible,
-                        series.visible
-                    ); // #3879
+                if (linkedParent.enabledDataSorting) {
+                    series.setDataSortingOptions();
                 }
+
+                series.visible = (
+                    series.options.visible ??
+                    linkedParent.options.visible ??
+                    series.visible
+                ); // #3879
             }
         });
 
@@ -3764,7 +3761,8 @@ class Chart {
                 reset,
                 selection,
                 to = {},
-                trigger
+                trigger,
+                allowResetButton = true
             } = params,
             { inverted, time } = this;
 
@@ -3846,7 +3844,9 @@ class Chart {
                 for (const series of axis.series) {
                     const seriesExtremes = series.getExtremes(
                         series.getProcessedData(true).modified
-                            .getColumn('y') as Array<number> || [],
+                            .getColumn(
+                                series.pointValKey || 'y'
+                            ) as Array<number> || [],
                         true
                     );
 
@@ -3958,7 +3958,7 @@ class Chart {
                         // operation has finished.
                         axis.isPanning = trigger !== 'zoom';
 
-                        if (axis.isPanning) {
+                        if (axis.isPanning && trigger !== 'mousewheel') {
                             isAnyAxisPanning = true; // #21319
                         }
 
@@ -3972,24 +3972,21 @@ class Chart {
 
                         if (
                             !reset &&
-                            (newMin > floor || newMax < ceiling) &&
-                            trigger !== 'mousewheel'
+                            (newMin > floor || newMax < ceiling)
                         ) {
-                            displayButton = true;
+                            displayButton = allowResetButton;
                         }
                     }
 
                     hasZoomed = true;
                 }
 
-                // Show the resetZoom button for non-cartesian series,
-                // except when triggered by mouse wheel zoom
+                // Show the resetZoom button for non-cartesian series.
                 if (
                     !this.hasCartesianSeries &&
-                    !reset &&
-                    trigger !== 'mousewheel'
+                    !reset
                 ) {
-                    displayButton = true;
+                    displayButton = allowResetButton;
                 }
 
                 if (event) {
@@ -4176,6 +4173,7 @@ namespace Chart {
         selection?: Pointer.SelectEventObject;
         from?: Partial<BBoxObject>;
         trigger?: string;
+        allowResetButton?: boolean;
         hasZoomed?: boolean;
     }
 

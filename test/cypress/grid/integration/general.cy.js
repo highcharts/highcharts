@@ -3,7 +3,7 @@ describe('Remove the dashboard.', () => {
         cy.visit('/dashboards/cypress/grid-hidden');
     });
 
-    it('Rows should be visible when datagrid is switched from hidden.', () => {
+    it('Rows should be visible when grid is switched from hidden.', () => {
         // Act
         cy.get('#show').trigger('click');
 
@@ -12,8 +12,8 @@ describe('Remove the dashboard.', () => {
     });
 
     it('Rows should have even and odd classes.', () => {
-        cy.get('tbody tr').eq(0).should('have.class', 'highcharts-datagrid-row-odd');
-        cy.get('tbody tr').eq(1).should('have.class', 'highcharts-datagrid-row-even');
+        cy.get('tbody tr').eq(0).should('have.class', 'hcg-row-odd');
+        cy.get('tbody tr').eq(1).should('have.class', 'hcg-row-even');
     });
 });
 
