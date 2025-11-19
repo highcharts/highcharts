@@ -288,6 +288,16 @@ class Grid {
      */
     private dataTableEventDestructors: Function[] = [];
 
+    /**
+     * The render target (container) of the Grid.
+     */
+    private renderTo: string|HTMLElement;
+
+    /**
+     * Whether the Grid is rendered.
+     */
+    private isRendered: boolean = false;
+
 
     /* *
     *
@@ -312,6 +322,8 @@ class Grid {
         options: Options,
         afterLoadCallback?: (grid: Grid) => void
     ) {
+        this.renderTo = renderTo;
+
         this.loadUserOptions(options);
         this.id = this.options?.id || U.uniqueKey();
         this.querying = new QueryingController(this);
@@ -326,13 +338,9 @@ class Grid {
         fireEvent(this, 'beforeLoad');
 
         Grid.grids.push(this);
-        this.initContainers(renderTo);
-        this.initAccessibility();
-        this.initPagination();
         this.loadDataTable();
-        this.querying.loadOptions();
-        void this.querying.proceed().then((): void => {
-            this.renderViewport();
+
+        void this.render().then((): void => {
             afterLoadCallback?.(this);
             fireEvent(this, 'afterLoad');
         });
@@ -395,18 +403,16 @@ class Grid {
      * The render target (html element or id) of the Grid.
      *
      */
-    private initContainers(renderTo: string|HTMLElement): void {
+    private initContainer(renderTo: string|HTMLElement): void {
         const container = (typeof renderTo === 'string') ?
             Globals.win.document.getElementById(renderTo) : renderTo;
 
         // Display an error if the renderTo is wrong
         if (!container) {
-            // eslint-disable-next-line no-console
-            console.error(`
-                Rendering div not found. It is unable to find the HTML element
-                to render the Grid in.
-            `);
-            return;
+            throw new Error(
+                'Rendering div not found. It is unable to find the HTML ' +
+                'element to render the Grid in.'
+            );
         }
 
         this.initialContainerHeight = getStyle(container, 'height', true) || 0;
@@ -590,15 +596,6 @@ class Grid {
             this.querying.shouldBeUpdated = true;
         }
 
-        if (!render) {
-            return;
-        }
-
-        this.initAccessibility();
-        this.initPagination();
-
-        this.querying.loadOptions();
-
         // Update locale.
         const locale = options.lang?.locale;
         if (locale) {
@@ -609,8 +606,9 @@ class Grid {
             ));
         }
 
-        await this.querying.proceed();
-        this.renderViewport();
+        if (render) {
+            await this.render(); // TODO: Change to redraw
+        }
     }
 
     public updateColumn(
@@ -656,6 +654,23 @@ class Grid {
         }], overwrite);
 
         await this.update(void 0, render);
+    }
+
+    private async render(): Promise<void> {
+        if (this.isRendered) {
+            this.destroy(true);
+        }
+
+        this.initContainer(this.renderTo);
+        this.initAccessibility();
+        this.initPagination();
+
+        this.querying.loadOptions();
+        await this.querying.proceed();
+
+        this.renderViewport();
+
+        this.isRendered = true;
     }
 
     /**
@@ -1020,13 +1035,19 @@ class Grid {
 
     /**
      * Destroys the Grid.
+     *
+     * @param onlyDOM
+     * Whether to destroy the Grid instance completely (`false` - default) or
+     * just the DOM elements (`true`). If `true`, the Grid can be re-rendered
+     * after destruction by calling the `render` method.
      */
-    public destroy(): void {
-        const dgIndex = Grid.grids.findIndex(
-            (dg): boolean => dg === this
-        );
+    public destroy(onlyDOM = false): void {
+        this.isRendered = false;
+        const dgIndex = Grid.grids.findIndex((dg): boolean => dg === this);
 
         this.dataTableEventDestructors.forEach((fn): void => fn());
+        this.accessibility?.destroy();
+        this.pagination?.destroy();
         this.viewport?.destroy();
 
         if (this.container) {
@@ -1034,6 +1055,10 @@ class Grid {
             this.container.classList.remove(
                 Globals.getClassName('container')
             );
+        }
+
+        if (onlyDOM) {
+            return;
         }
 
         // Clear all properties
