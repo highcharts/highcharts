@@ -8,10 +8,10 @@ Highcharts Grid ships in two editions that share the same API but differ in feat
 
 | Edition | Package | Highlights |
 | --- | --- | --- |
-| Grid Lite | `@highcharts/grid-lite` | Free, focused on viewing and interacting with data. |
-| Grid Pro | `@highcharts/grid-pro` | Commercial, adds editing, validation, sparklines, events and advanced workflows. |
+| **Grid Lite** | `@highcharts/grid-lite` | **Free**. Focused on viewing and interacting with data. |
+| **Grid Pro** | `@highcharts/grid-pro` | **Commercial**. Adds editing, validation, sparklines, events and advanced workflows. |
 
-Start with Lite if you only need read-only tables; switch to Pro when you need editing, validation or deep Highcharts Dashboards integration.
+Start with Lite if you only need read-only, interactive tables. Switch to Pro when you need editing, data validation, events or sparklines.
 
 ## 🚀 Try before installing
 
@@ -22,11 +22,11 @@ See Grid in action without installing anything:
 
 ## Installation
 
-Get started with Highcharts Grid using either a bundler (Path A) or a CDN (Path B):
+Get started with Highcharts Grid using either a bundler (Option 1) or a CDN (Option 2).
 
-### 📦 Path A: NPM/ESM (Modern bundlers)
+### 📦 Option 1: NPM & Bundlers
 
-Best for: Projects using Vite, Webpack, Next.js, or other modern build tools
+Best for projects using Vite, Webpack, Next.js, or other modern build tools.
 
 **Step 1: Install**
 ```bash
@@ -53,13 +53,11 @@ Grid.grid('container', {
 });
 ```
 
-That's it!
-
 > **TIP:** Using TypeScript? Types are included automatically - no `@types` package needed.
 
-### ⚡ Path B: CDN (No build tools)
+### ⚡ Option 2: CDN & Static
 
-Best for: Quick prototypes, CodePen, JSFiddle, or projects without build tools
+Best for quick prototypes, CodePen, JSFiddle, or projects without build tools.
 
 **Grid Lite - Complete HTML:**
 ```html
@@ -157,43 +155,23 @@ export function GridComponent({ config }: { config: Grid.Options }) {
     const containerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        if (!containerRef.current) {
-            return;
-        }
-
+        if (!containerRef.current) return;
         const grid = Grid.grid(containerRef.current, config);
-
-        // Cleanup on unmount
-        return () => {
-            grid?.destroy();
-        };
+        return () => grid?.destroy();
     }, [config]);
 
     return <div ref={containerRef} />;
 }
 ```
 
-**App.tsx:**
-```tsx
-import { GridComponent } from './components/GridComponent';
-
-export default function App() {
-    return <GridComponent config={{
-        dataTable: {
-            columns: {
-                product: ['Apple', 'Pear', 'Plum', 'Banana'],
-                price: [1.5, 2.53, 5, 4.5]
-            }
-        }
-    }} />;
-}
-```
-
-> **NOTE:** For Next.js and other SSR frameworks, the `useEffect` hook ensures Grid only runs in the browser.
-
 **[View complete React guide →](https://www.highcharts.com/docs/grid/wrappers/grid-with-react)**
 
-Need Vue or Angular? Follow the [Vue guide](https://www.highcharts.com/docs/grid/wrappers/grid-with-vue) or [Angular guide](https://www.highcharts.com/docs/grid/wrappers/grid-with-angular) for full templates and CLI instructions.
+### Other Frameworks
+
+| Framework | Guide |
+| --- | --- |
+| **Vue** | [View Vue Guide →](https://www.highcharts.com/docs/grid/wrappers/grid-with-vue) |
+| **Angular** | [View Angular Guide →](https://www.highcharts.com/docs/grid/wrappers/grid-with-angular) |
 
 ## Next steps
 
