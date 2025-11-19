@@ -477,8 +477,7 @@ function markers() {
         Highcharts.mapChart('container', {
             chart: {
                 map: topology,
-                margin: 1,
-                height: '100%'
+                margin: 1
             },
 
             exporting: {
@@ -938,69 +937,33 @@ function clusters() {
         Highcharts.mapChart('container', {
             chart: {
                 map: topology,
-                margin: [0, 0, 10, 0]
+                margin: 1
             },
             title: {
-                text: ''
+                text: '',
+                align: 'left'
             },
-            subtitle: {
-                text: ''
-            },
-            exporting: {
-                enabled: false
-            },
-            credits: {
-                enabled: false
-            },
+            // subtitle: {
+            //     text: 'Source: <a href="https://github.com/trainline-eu/stations">' +
+            //         'github.com/trainline-eu/stations</a>',
+            //     align: 'left'
+            // },
             mapNavigation: {
                 enabled: true,
-                buttonOptions: mapbuttons,
-                buttons: {
-                    zoomIn: {
-                        x: 5,
-                        y: 5
-                    },
-                    zoomOut: {
-                        x: 5,
-                        y: 31
-                    }
-                },
-                enableMouseWheelZoom: false
-            },
-            mapView: {
-                center: [17, 54],
-                zoom: 3.8
+                buttonOptions: {
+                    verticalAlign: 'bottom'
+                }
             },
             tooltip: {
-                formatter: function () {
-                    if (this.point.clusteredData) {
-                        return 'Clustered points: ' +
-                            this.point.clusterPointsAmount;
-                    }
-                    return '<b>' + this.key + '</b><br>Lat: ' +
-                        this.point.lat.toFixed(2) + ', Lon: ' +
-                        this.point.lon.toFixed(2);
-                }
-            },
-            legend: {
-                layout: 'vertical',
-                align: 'right',
-                verticalAlign: 'top',
-                margin: 20,
-                floating: false,
-                padding: 8,
-                y: 20,
-                navigation: {
-                    enabled: false
-                }
+                headerFormat: '',
+                // eslint-disable-next-line max-len
+                pointFormat: '<b>{point.name}</b><br>Lat: {point.lat:.2f}, Lon: ' +
+                '{point.lon:.2f}'
             },
             colorAxis: {
-                lineColor: 'black',
-                minColor: '#D9DBF8',
-                maxColor: '#E1D369',
-                style: {
-                    fontSize: '10px'
-                }
+                visible: false,
+                min: 0,
+                max: 20
             },
             plotOptions: {
                 mappoint: {
@@ -1009,17 +972,6 @@ function clusters() {
                         allowOverlap: false,
                         animation: {
                             duration: 450
-                        },
-                        marker: {
-                            lineColor: '#000',
-                            lineWidth: 1
-                        },
-                        dataLabels: {
-                            style: {
-                                color: '#000',
-                                textOutline: '#fff',
-                                fontWeight: 'bold'
-                            }
                         },
                         layoutAlgorithm: {
                             type: 'grid',
@@ -1060,59 +1012,43 @@ function clusters() {
                 }
             },
             series: [{
-                name: 'Basemap',
+                name: 'Europe',
+                accessibility: {
+                    exposeAsGroupOnly: true
+                },
                 borderColor: '#A0A0A0',
-                nullColor: '#A3EDBA',
+                nullColor: 'rgba(177, 244, 177, 0.5)',
                 showInLegend: false
             }, {
                 type: 'mappoint',
                 enableMouseTracking: true,
+                accessibility: {
+                    point: {
+                        descriptionFormat: '{#if isCluster}' +
+                            'Grouping of {clusterPointsAmount} points.' +
+                            '{else}' +
+                            '{name}, country code: {country}.' +
+                            '{/if}'
+                    }
+                },
                 colorKey: 'clusterPointsAmount',
                 name: 'Cities',
-                color: '#5749AD',
-                data: data
-            }],
-            responsive: {
-                rules: [
-                    // /up to 219
-                    {
-                        condition: {
-                            // /up tp this
-                            maxWidth: 219
-                        },
-                        chartOptions: {
-                            chart: {
-                                height: 150
-                            },
-                            mapView: {
-                                zoom: 2
-                            },
-                            colorAxis: {
-                                visible: false
-                            }
-                        }
-                    },
-                    {
-                        condition: {
-                            minWidth: 220
-                        },
-                        chartOptions: {
-                            chart: {
-                                height: 260
-                            },
-                            colorAxis: {
-                                visible: false
-                            },
-                            mapView: {
-                                zoom: 3.8
-                            }
-                        }
-                    }
-                ]
-            }
+                data: data,
+                color: Highcharts.getOptions().colors[5],
+                marker: {
+                    lineWidth: 1,
+                    lineColor: '#fff',
+                    symbol: 'mapmarker',
+                    radius: 8
+                },
+                dataLabels: {
+                    verticalAlign: 'top'
+                }
+            }]
         });
 
     })();
+
 }
 
 function projection() {

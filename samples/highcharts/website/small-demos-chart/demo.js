@@ -72,7 +72,7 @@ function dependencyWheel() {
             type: 'dependencywheel',
             name: 'Dependency wheel series',
             dataLabels: {
-                color: 'var(--text-primary)',
+                color: 'var(--highcharts-neutral-color-100)',
                 style: {
                     textOutline: 'none'
                 },
@@ -162,11 +162,9 @@ function area() {
         plotOptions: {
             area: {
                 stacking: 'percent',
-                lineColor: '#ffffff',
                 lineWidth: 1,
                 marker: {
-                    lineWidth: 1,
-                    lineColor: '#ffffff'
+                    lineWidth: 1
                 }
             }
         },
@@ -422,14 +420,7 @@ function bubble() {
             pointFormat: '<b>{point.name}:</b> {point.value}m CO<sub>2</sub>'
         },
         legend: {
-            enabled: true,
-            floating: true,
-            itemDistance: 5,
-            symbolPadding: 2,
-            labelFormatter: function () {
-                return this.options.id;
-                // '{point.id}'
-            }
+            enabled: false
         },
         plotOptions: {
             packedbubble: {
@@ -450,7 +441,6 @@ function bubble() {
                         value: 250
                     },
                     style: {
-                        color: 'black',
                         textOutline: 'none',
                         fontWeight: 'normal'
                     }

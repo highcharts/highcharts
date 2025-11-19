@@ -6,7 +6,6 @@ html {
 
 body {
     margin: 0;
-    margin-top: -115px;
 }
 
 .chart-container .highcharts-container {
@@ -41,7 +40,7 @@ body {
     border: none;
 }
 
-#maps {
+/* #maps {
     width: 500px;
     height: 500px;
-}
+} */
