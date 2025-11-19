@@ -180,7 +180,9 @@ class StandaloneNavigator {
                     if (
                         e.trigger === 'pan' ||
                         e.trigger === 'zoom' ||
-                        e.trigger === 'mousewheel'
+                        e.trigger === 'mousewheel' ||
+                        e.trigger === 'rangeSelectorButton' ||
+                        e.trigger === 'rangeSelectorInput'
                     ) {
                         nav.setRange(
                             e.min,
