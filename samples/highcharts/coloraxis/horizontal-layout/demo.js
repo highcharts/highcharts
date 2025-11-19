@@ -31,8 +31,7 @@ Highcharts.chart('container', {
         padding: 30
     },
     tooltip: {
-        useHTML: true,
-        pointFormat: '<b>{point.name}:</b> {point.value}m CO<sub>2</sub>'
+        pointFormat: '<b>{point.name}:</b> {point.value}m CO₂'
     },
     plotOptions: {
         packedbubble: {
