@@ -335,7 +335,9 @@ class HTMLElement extends SVGElement {
                 foreignObject.attr({
                     x: x + (this.xCorr || 0),
                     y: y + (this.yCorr || 0),
-                    width: element.offsetWidth + 3,
+                    // Add 4 px to avoid ellipsis, since the body adds 3 px
+                    // right margin. We need one more because of rounding.
+                    width: element.offsetWidth + 4,
                     height: element.offsetHeight,
                     'transform-origin': element
                         .getAttribute('transform-origin') || '0 0'
@@ -353,8 +355,6 @@ class HTMLElement extends SVGElement {
 
             // Record current text transform
             this.cTT = currentTextTransform;
-            this.oldRotation = rotation;
-            this.oldAlign = textAlign;
         }
     }
 
@@ -376,7 +376,7 @@ class HTMLElement extends SVGElement {
                 .css({
                     background: 'transparent',
                     // 3px is to avoid clipping on the right
-                    margin: '0 3px 0 0' // For export
+                    margin: '0 3px 0 0'
                 })
                 .add(foreignObject)
         );
