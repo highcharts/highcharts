@@ -1,82 +1,40 @@
-@import url("https://www.highcharts.com/demo/_next/static/css/pages/_app.css");
-
-:root,
-.highcharts-light {
-    --illo-green: var(--primitives-success-200);
-    --illo-purple: var(--primitives-brand-500);
-    --illo-accent-0: var(--primitives-neutral-0);
-    --illo-accent-50: var(--primitives-neutral-50);
-    --illo-accent-200: var(--primitives-neutral-200);
-    --illo-accent-800: var(--primitives-neutral-800);
-    --illo-brand-200: var(--primitives-brand-200);
-    --illo-brand-800: var(--primitives-brand-800);
-    --illo-background: var(--primitives-neutral-0);
-    --illo-lines: var(--primitives-neutral-100);
-    --illo-just-white: #fff;
-    --illo-just-black: #000;
-    --illo-accent-teal: #6699a1;
-    --highcharts-color-0: #8087e8;
-    --highcharts-color-1: #a3edba;
-    --highcharts-color-2: #f19e53;
-    --highcharts-color-3: #6699a1;
-    --highcharts-color-4: #e1d369;
-    --highcharts-color-5: #87b4e7;
-    --highcharts-color-6: #da6d85;
-    --highcharts-color-7: #bbbac5;
-}
-
-.highcharts-dark {
-    --illo-green: var(--primitives-success-300);
-    --illo-purple: var(--primitives-brand-500);
-    --illo-accent-0: var(--primitives-neutral-1000);
-    --illo-accent-50: var(--primitives-neutral-700);
-    --illo-accent-200: var(--primitives-neutral-500);
-    --illo-accent-800: var(--primitives-neutral-0);
-    --illo-brand-200: var(--primitives-brand-500);
-    --illo-brand-800: var(--primitives-brand-200);
-    --illo-background: var(--primitives-neutral-1000);
-    --illo-lines: var(--primitives-neutral-500);
-    --illo-just-white: #fff;
-    --illo-just-black: #000;
-}
-
-@media (prefers-color-scheme: dark) {
-    :root {
-        --illo-green: var(--primitives-success-300);
-        --illo-purple: var(--primitives-brand-500);
-        --illo-accent-0: var(--primitives-neutral-1000);
-        --illo-accent-50: var(--primitives-neutral-700);
-        --illo-accent-200: var(--primitives-neutral-500);
-        --illo-accent-800: var(--primitives-neutral-0);
-        --illo-brand-200: var(--primitives-brand-500);
-        --illo-brand-800: var(--primitives-brand-200);
-        --illo-background: var(--primitives-neutral-1000);
-        --illo-lines: var(--primitives-neutral-500);
-        --illo-just-white: #fff;
-        --illo-just-black: #000;
-    }
-}
-
-body,
-#demo-content {
-    background-color: var(--background);
+body {
     margin: 0;
-    padding: 0;
-    color: var(--text-primary);
 }
 
-.chart-container {
-    border: 0 solid var(--text-primary);
+.chart-container .highcharts-container {
+    position: relative;
+    overflow: hidden;
+    text-align: left;
+    line-height: normal;
+    fill: #fff;
+    z-index: 0;
+    -webkit-tap-highlight-color: rgb(0 0 0 / 0%);
+    font-family: "IBM Plex Sans", sans-serif;
+    font-size: 12px;
+    user-select: none;
+    touch-action: manipulation;
+    outline: none;
+}
+
+.chart-container .highcharts-graph {
+    fill: unset;
+    stroke-width: unset;
+    stroke: unset;
+    stroke-linecap: butt;
+    stroke-linejoin: round;
+}
+
+#maps {
     width: 100%;
+    height: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 4px;
+    background-color: var(--highcharts-background-color);
+    border: none;
 }
 
-a,
-a:hover {
-    color: var(--text-primary);
-}
-
-a:hover {
-    text-decoration: underline;
-}
-
-#demo-content { margin: 0; }
+/* #maps {
+    width: 500px;
+    height: 500px;
+} */
