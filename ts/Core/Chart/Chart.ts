@@ -122,6 +122,7 @@ const {
  *
  * */
 
+/** @internal */
 declare module '../Axis/AxisBase' {
     interface AxisBase {
         extKey?: string;
@@ -132,13 +133,29 @@ declare module '../Axis/AxisBase' {
 
 declare module './ChartBase' {
     interface ChartBase {
+        /** @internal */
         resetZoomButton?: SVGElement;
+        /** @internal */
         pan(e: PointerEvent, panning: boolean|ChartPanningOptions): void;
+        /**
+         * Display the zoom button, so users can reset zoom to the default view
+         * settings.
+         *
+         * @emits Highcharts.Chart#event:afterShowResetZoom
+         * @emits Highcharts.Chart#event:beforeShowResetZoom
+         */
         showResetZoom(): void;
+        /**
+         * Zoom the chart out after a user has zoomed in. See also
+         * [Axis.setExtremes](/class-reference/Highcharts.Axis#setExtremes).
+         *
+         * @emits Highcharts.Chart#event:selection
+         */
         zoomOut(): void;
     }
 }
 
+/** @internal */
 declare module './ChartOptions' {
     interface ChartOptions {
         forExport?: boolean;

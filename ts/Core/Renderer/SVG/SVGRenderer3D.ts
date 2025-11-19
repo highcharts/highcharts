@@ -60,6 +60,7 @@ const {
  *
  * */
 
+/** @internal */
 declare module './SVGElementBase' {
     interface SVGElementBase {
         attribs?: SVGAttributes;
@@ -70,6 +71,7 @@ declare module './SVGElementBase' {
     }
 }
 
+/** @internal */
 declare module './SVGRendererBase' {
     interface SVGRendererBase {
         Element3D: typeof SVGElement3D;
@@ -94,6 +96,7 @@ declare module './SVGRendererBase' {
  *
  * */
 
+/** @internal */
 const cos = Math.cos,
     sin = Math.sin,
     PI = Math.PI,

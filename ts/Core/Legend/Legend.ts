@@ -1819,7 +1819,6 @@ interface Legend extends LegendBase {
  *
  * */
 
-/** @internal */
 namespace Legend {
 
     /* *

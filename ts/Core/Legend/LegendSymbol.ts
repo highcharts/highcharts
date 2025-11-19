@@ -257,4 +257,5 @@ namespace LegendSymbol {
  *
  * */
 
+/** @internal */
 export default LegendSymbol;

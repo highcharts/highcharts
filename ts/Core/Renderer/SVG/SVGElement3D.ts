@@ -294,6 +294,7 @@ class SVGElement3D extends SVGElement {
  *
  * */
 
+/** @internal */
 interface SVGElement3D {
     renderer: SVGRenderer3D.Composition;
     add(parent?: SVGElement3D): this;

@@ -492,4 +492,5 @@ namespace CircleUtilities {
  *
  * */
 
+/** @internal */
 export default CircleUtilities;

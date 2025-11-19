@@ -37,7 +37,7 @@ const {
 
 /**
  * Arc symbol path.
- * @internal
+ *
  * @param {number} cx
  * Center X
  * @param {number} cy
@@ -158,7 +158,7 @@ function arc(
 
 /**
  * Callout shape used for default tooltips.
- * @internal
+ *
  * @param {number} cx
  * Center X
  * @param {number} cy
@@ -314,7 +314,7 @@ function callout(
 
 /**
  * Circle symbol path.
- * @internal
+ *
  * @param {number} x
  * X coordinate
  * @param {number} y
@@ -343,7 +343,7 @@ function circle(
 
 /**
  * Diamond symbol path.
- * @internal
+ *
  * @param {number} x
  * X coordinate
  * @param {number} y
@@ -374,7 +374,7 @@ function diamond(
 
 /**
  * Rect symbol path.
- * @internal
+ *
  * @param {number} x
  * X coordinate
  * @param {number} y
@@ -410,7 +410,7 @@ function rect(
 
 /**
  * Rounded rectangle symbol path.
- * @internal
+ *
  * @param {number} x
  * X coordinate
  * @param {number} y
@@ -449,7 +449,7 @@ function roundedRect(
 
 /**
  * Triangle symbol path.
- * @internal
+ *
  * @param {number} x
  * X coordinate
  * @param {number} y
@@ -478,7 +478,7 @@ function triangle(
 
 /**
  * Inverted triangle symbol path.
- * @internal
+ *
  * @param {number} x
  * X coordinate
  * @param {number} y

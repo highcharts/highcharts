@@ -19,7 +19,10 @@
 import type AxisType from './Axis/AxisType';
 import type Chart from './Chart/Chart';
 import type CSSObject from './Renderer/CSSObject';
-import type { DeepPartial } from '../Shared/Types';
+import type {
+    DeepPartial,
+    TypedArray
+} from '../Shared/Types';
 import type {
     DOMElementType,
     HTMLDOMElement
@@ -29,7 +32,6 @@ import type HTMLAttributes from './Renderer/HTML/HTMLAttributes';
 import type Series from './Series/Series';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import type Time from './Time';
-import type Types from '../Shared/Types';
 
 import H from './Globals.js';
 const {
@@ -1226,7 +1228,7 @@ function stableSort<T>(
  * @return {number}
  *         The lowest number.
  */
-function arrayMin(data: Array<any>|Types.TypedArray): number {
+function arrayMin(data: Array<any>|TypedArray): number {
     let i = data.length,
         min = data[0];
 
@@ -1251,7 +1253,7 @@ function arrayMin(data: Array<any>|Types.TypedArray): number {
  * @return {number}
  *         The highest number.
  */
-function arrayMax(data: Array<any>|Types.TypedArray): number {
+function arrayMax(data: Array<any>|TypedArray): number {
     let i = data.length,
         max = data[0];
 
@@ -1388,7 +1390,7 @@ const getAlignFactor = (align: string = ''): number => ({
  *          The closest distance between values
  */
 function getClosestDistance(
-    arrays: (number[]|Types.TypedArray)[],
+    arrays: (number[]|TypedArray)[],
     onError?: Function
 ): (number|undefined) {
     const allowNegative = !onError;
@@ -2197,8 +2199,73 @@ namespace Utilities {
  *
  * */
 
+interface Utilities {
+    addEvent: typeof addEvent;
+    arrayMax: typeof arrayMax;
+    arrayMin: typeof arrayMin;
+    attr: typeof attr;
+    /** @internal */
+    clamp: typeof clamp;
+    clearTimeout: typeof internalClearTimeout;
+    correctFloat: typeof correctFloat;
+    createElement: typeof createElement;
+    /** @internal */
+    crisp: typeof crisp;
+    css: typeof css;
+    defined: typeof defined;
+    destroyObjectProperties: typeof destroyObjectProperties;
+    /** @internal */
+    diffObjects: typeof diffObjects;
+    discardElement: typeof discardElement;
+    erase: typeof erase;
+    error: typeof error;
+    extend: typeof extend;
+    extendClass: typeof extendClass;
+    find: typeof find;
+    fireEvent: typeof fireEvent;
+    /** @internal */
+    getAlignFactor: typeof getAlignFactor;
+    /** @internal */
+    getClosestDistance: typeof getClosestDistance;
+    getMagnitude: typeof getMagnitude;
+    /** @internal */
+    getNestedProperty: typeof getNestedProperty;
+    getStyle: typeof getStyle;
+    /** @internal */
+    insertItem: typeof insertItem;
+    isArray: typeof isArray;
+    isClass: typeof isClass;
+    isDOMElement: typeof isDOMElement;
+    isFunction: typeof isFunction;
+    isNumber: typeof isNumber;
+    isObject: typeof isObject;
+    isString: typeof isString;
+    merge: typeof merge;
+    normalizeTickInterval: typeof normalizeTickInterval;
+    objectEach: typeof objectEach;
+    offset: typeof offset;
+    pad: typeof pad;
+    pick: typeof pick;
+    /** @internal */
+    pInt: typeof pInt;
+    pushUnique: typeof pushUnique;
+    relativeLength: typeof relativeLength;
+    removeEvent: typeof removeEvent;
+    replaceNested: typeof replaceNested;
+    splat: typeof splat;
+    stableSort: typeof stableSort;
+    syncTimeout: typeof syncTimeout;
+    /** @internal */
+    timeUnits: typeof timeUnits;
+    /** @internal */
+    ucfirst: typeof ucfirst;
+    uniqueKey: typeof uniqueKey;
+    useSerialIds: typeof useSerialIds;
+    wrap: typeof wrap;
+}
+
 // TODO use named exports when supported.
-const Utilities = {
+const Utilities: Utilities = {
     addEvent,
     arrayMax,
     arrayMin,
@@ -2251,7 +2318,7 @@ const Utilities = {
     uniqueKey,
     useSerialIds,
     wrap
-};
+} as Utilities;
 
 export default Utilities;
 
