@@ -266,6 +266,8 @@ function distUploadCode() {
         switch (argv.product) {
             case 'Grid':
                 return require('./grid/build-properties.json');
+            case 'Dashboards':
+                return require('./dashboards/build-properties.json');
             default:
                 return require('../../build-properties.json');
         }

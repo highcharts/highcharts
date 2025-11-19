@@ -22,6 +22,7 @@ export interface HTMLAttributes {
     'aria-atomic'?: boolean;
     'aria-sort'?: string;
     'aria-pressed'?: boolean;
+    'aria-rowindex'?: number;
     checked?: boolean;
     class?: string;
     className?: string;

@@ -49,6 +49,18 @@ const languages = {
                         descending: 'Sortert synkende.',
                         none: 'Ikke sortert.'
                     }
+                },
+                filtering: {
+                    announcements: {
+                        filterApplied: 'Filter brukt for {columnId}, ' +
+                            '{condition} {value}. {rowsCount} resultater ' +
+                            'funnet.',
+                        emptyFilterApplied: 'Filter brukt for {columnId}, ' +
+                            '{condition} verdier. {rowsCount} resultater ' +
+                            'funnet.',
+                        filterCleared: 'Filter fjernet for {columnId}. ' +
+                            '{rowsCount} resultater funnet.'
+                    }
                 }
             },
             locale: 'no'
@@ -88,6 +100,18 @@ const languages = {
                         ascending: 'Posortowano rosnąco.',
                         descending: 'Posortowano malejąco.',
                         none: 'Nie posortowano.'
+                    }
+                },
+                filtering: {
+                    announcements: {
+                        filterApplied: 'Zastosowano filtr dla {columnId}, ' +
+                            '{condition} {value}. Znaleziono {rowsCount} ' +
+                            'wyników.',
+                        emptyFilterApplied: 'Zastosowano filtr dla ' +
+                            '{columnId}, {condition} wartości. Znaleziono ' +
+                            '{rowsCount} wyników.',
+                        filterCleared: 'Wyczyszczono filtr dla {columnId}.' +
+                            'Znaleziono {rowsCount} wyników.'
                     }
                 }
             },
@@ -129,6 +153,16 @@ const languages = {
                         descending: '已按降序排序。',
                         none: '未排序。'
                     }
+                },
+                filtering: {
+                    announcements: {
+                        filterApplied: '已为 {columnId} 应用筛选器,' +
+                            '{condition} {value}。找到 {rowsCount} 个结果。',
+                        emptyFilterApplied: '已为 {columnId} 应用筛选器,' +
+                            '{condition} 值。找到 {rowsCount} 个结果。',
+                        filterCleared: '已清除 {columnId} 的筛选器。' +
+                            '找到 {rowsCount} 个结果。'
+                    }
                 }
             },
             locale: 'zh'
@@ -167,7 +201,7 @@ const grid = Grid.grid('container', {
     header: languages.en.header,
     dataTable: {
         columns: {
-            id: ['1', '2', '3', '4'],
+            id: [1, 2, 3, 4],
             productEN: ['Apple', 'Pear', 'Plum', 'Banana'],
             productNO: ['Eple', 'Pære', 'Plomme', 'Banan'],
             productPL: ['Jabłko', 'Gruszka', 'Śliwka', 'Banan'],
@@ -184,7 +218,8 @@ const grid = Grid.grid('container', {
         id: 'id',
         header: {
             format: 'ID'
-        }
+        },
+        width: 60
     }, {
         id: 'productEN',
         header: {

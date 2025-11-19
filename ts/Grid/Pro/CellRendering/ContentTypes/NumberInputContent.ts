@@ -27,6 +27,7 @@ import type NumberInputRenderer from '../Renderers/NumberInputRenderer';
 
 import CellContentPro from '../CellContentPro.js';
 import U from '../../../../Core/Utilities.js';
+import Globals from '../../../Core/Globals.js';
 
 const {
     defined
@@ -98,6 +99,7 @@ class NumberInputContent extends CellContentPro implements EditModeContent {
         input.type = 'number';
         input.tabIndex = -1;
         input.name = cell.column.id + '-' + cell.row.id;
+        input.classList.add(Globals.getClassName('input'));
 
         if (options.attributes) {
             Object.entries(options.attributes).forEach(([key, value]): void => {
@@ -185,7 +187,7 @@ class NumberInputContent extends CellContentPro implements EditModeContent {
             return;
         }
 
-        void this.cell.setValue(this.value, true);
+        void this.cell.editValue(this.value);
     };
 
     private readonly onKeyDown = (e: KeyboardEvent): void => {

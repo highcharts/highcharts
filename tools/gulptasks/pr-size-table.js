@@ -28,7 +28,8 @@ const files = argv.files ? argv.files.split(',') : [
     'modules/offline-exporting.src.js',
     'dashboards/dashboards.src.js',
     'dashboards/modules/layout.src.js',
-    'datagrid/datagrid.src.js'
+    'grid/grid-pro.src.js',
+    'grid/grid-lite.src.js'
 ];
 
 /* *
@@ -59,7 +60,7 @@ function getFileSizes(out) {
 
     return Promise.resolve()
         .then(() => scriptsCompile(files.map(file => join('code', file))))
-        .then(() => scriptsCompile(void 0, require('./dashboards/_config.json')))
+        .then(() => scriptsCompile(void 0, require('./scripts-dts/dashboards/_config.json')), 'dashboards')
         .then(() => getSizeOfSourceCompiledAndGzip(files))
 
         // Output the result to the console, or a file if filePath is defined

@@ -94,22 +94,16 @@ jobs:
         with:
           node-version: 'lts/*'
           cache: 'npm'
-      # browser-actions/setup-chrome installs chrome at a separate location
-      # which setup-chromedriver does not pick up, so doing it manually
-      - name: Update Chrome
-        if: ${{ runner.os == 'Linux' }}
-        run: |
-          sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
-          wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
-          sudo apt update
-          sudo apt --only-upgrade install google-chrome-stable
-      - name: Chrome info
-        run: |
-          set CHROME_BIN $(which chrome || which google-chrome || which chromium)
+      - uses: browser-actions/setup-chrome@v2
+        id: setup-chrome
+        with:
+          install-chromedriver: true
+
+      - run: |
+          export CHROME_BIN=${{ steps.setup-chrome.outputs.chrome-path }}
           echo $CHROME_BIN
           $CHROME_BIN --version
 
-      - uses: nanasess/setup-chromedriver@v2
       - uses: browser-actions/setup-firefox@latest
         with:
           firefox-version: latest-esr

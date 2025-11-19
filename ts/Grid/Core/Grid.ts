@@ -26,6 +26,7 @@
 import type { Options, GroupedHeaderOptions, IndividualColumnOptions } from './Options';
 import type DataTableOptions from '../../Data/DataTableOptions';
 import type Column from './Table/Column';
+import type Popup from './UI/Popup.js';
 
 import Accessibility from './Accessibility/Accessibility.js';
 import AST from '../../Core/Renderer/HTML/AST.js';
@@ -37,15 +38,17 @@ import U from '../../Core/Utilities.js';
 import QueryingController from './Querying/QueryingController.js';
 import Globals from './Globals.js';
 import TimeBase from '../../Shared/TimeBase.js';
+import Pagination from './Pagination/Pagination.js';
 
 const { makeHTMLElement, setHTMLContent } = GridUtils;
 const {
-    fireEvent,
+    defined,
     extend,
+    fireEvent,
     getStyle,
     merge,
     pick,
-    defined
+    isObject
 } = U;
 
 
@@ -136,7 +139,7 @@ class Grid {
 
     /**
      * An array containing the current Grid objects in the page.
-     * @internal
+     * @private
      */
     public static readonly grids: Array<(Grid|undefined)> = [];
 
@@ -144,6 +147,11 @@ class Grid {
      * The accessibility controller.
      */
     public accessibility?: Accessibility;
+
+    /**
+     * The Pagination controller.
+     */
+    public pagination?: Pagination;
 
     /**
      * The caption element of the Grid.
@@ -270,6 +278,11 @@ class Grid {
     public id: string;
 
     /**
+     * The list of currently shown popups.
+     */
+    public popups: Set<Popup> = new Set();
+
+    /**
      * Functions that unregister events attached to the grid's data table,
      * that need to be removed when the grid is destroyed.
      */
@@ -297,34 +310,32 @@ class Grid {
     constructor(
         renderTo: string | HTMLElement,
         options: Options,
-        afterLoadCallback?: Grid.AfterLoadCallback
+        afterLoadCallback?: (grid: Grid) => void
     ) {
         this.loadUserOptions(options);
-
-        this.querying = new QueryingController(this);
         this.id = this.options?.id || U.uniqueKey();
-
-        this.initContainers(renderTo);
-        this.initAccessibility();
-        this.loadDataTable(this.options?.dataTable);
-        this.initVirtualization();
-
+        this.querying = new QueryingController(this);
         this.locale = this.options?.lang?.locale || (
             (this.container?.closest('[lang]') as HTMLElement|null)?.lang
         );
-
         this.time = new TimeBase(extend<TimeBase.TimeOptions>(
             this.options?.time,
             { locale: this.locale }
         ), this.options?.lang);
 
+        fireEvent(this, 'beforeLoad');
+
+        Grid.grids.push(this);
+        this.initContainers(renderTo);
+        this.initAccessibility();
+        this.initPagination();
+        this.loadDataTable();
         this.querying.loadOptions();
         void this.querying.proceed().then((): void => {
             this.renderViewport();
             afterLoadCallback?.(this);
+            fireEvent(this, 'afterLoad');
         });
-
-        Grid.grids.push(this);
     }
 
 
@@ -343,6 +354,37 @@ class Grid {
 
         if (this.options?.accessibility?.enabled) {
             this.accessibility = new Accessibility(this);
+        }
+    }
+
+    /*
+     * Initializes the pagination.
+     */
+    private initPagination(): void {
+        let state: Pagination.PaginationState | undefined;
+
+        if (this.pagination) {
+            const {
+                currentPageSize,
+                currentPage
+            } = this.pagination || {};
+
+            state = {
+                currentPageSize,
+                currentPage
+            };
+        }
+
+        this.pagination?.destroy();
+        delete this.pagination;
+
+        const rawOptions = this.options?.pagination;
+        const options = isObject(rawOptions) ? rawOptions : {
+            enabled: rawOptions
+        };
+
+        if (options?.enabled) {
+            this.pagination = new Pagination(this, options, state);
         }
     }
 
@@ -539,18 +581,21 @@ class Grid {
         oneToOne = false
     ): Promise<void> {
         this.loadUserOptions(options, oneToOne);
-        this.initAccessibility();
 
-        let newDataTable = false;
         if (!this.dataTable || options.dataTable) {
             this.userOptions.dataTable = options.dataTable;
             (this.options ?? {}).dataTable = options.dataTable;
 
-            this.loadDataTable(this.options?.dataTable);
-            newDataTable = true;
-
-            this.initVirtualization();
+            this.loadDataTable();
+            this.querying.shouldBeUpdated = true;
         }
+
+        if (!render) {
+            return;
+        }
+
+        this.initAccessibility();
+        this.initPagination();
 
         this.querying.loadOptions();
 
@@ -564,10 +609,8 @@ class Grid {
             ));
         }
 
-        if (render) {
-            await this.querying.proceed(newDataTable);
-            this.renderViewport();
-        }
+        await this.querying.proceed();
+        this.renderViewport();
     }
 
     public updateColumn(
@@ -797,6 +840,8 @@ class Grid {
      */
     public renderViewport(): void {
         const viewportMeta = this.viewport?.getStateMeta();
+        const pagination = this.pagination;
+        const paginationPosition = pagination?.options.position;
 
         this.enabledColumns = this.getEnabledColumnIDs();
 
@@ -806,7 +851,15 @@ class Grid {
         delete this.viewport;
 
         this.resetContentWrapper();
+
+        fireEvent(this, 'beforeRenderViewport');
+
         this.renderCaption();
+
+        // Render top pagination if enabled (before table)
+        if (paginationPosition === 'top') {
+            pagination?.render();
+        }
 
         if (this.enabledColumns.length > 0) {
             this.viewport = this.renderTable();
@@ -817,9 +870,15 @@ class Grid {
             this.renderNoData();
         }
 
-        this.renderDescription();
-
         this.accessibility?.setA11yOptions();
+
+        // Render bottom pagination, footer pagination,
+        // or custom container pagination (after table).
+        if (paginationPosition !== 'top') {
+            pagination?.render();
+        }
+
+        this.renderDescription();
 
         fireEvent(this, 'afterRenderViewport');
 
@@ -836,6 +895,8 @@ class Grid {
         this.tableElement = makeHTMLElement('table', {
             className: Globals.getClassName('tableElement')
         }, this.contentWrapper);
+
+        this.tableElement.setAttribute('role', 'grid');
 
         return new Table(this, this.tableElement);
     }
@@ -860,7 +921,7 @@ class Grid {
         const headerColumns = this.getColumnIds(header || [], false);
         const columnsIncluded = this.options?.rendering?.columns?.included || (
             headerColumns && headerColumns.length > 0 ?
-                headerColumns : this.dataTable?.getColumnNames()
+                headerColumns : this.dataTable?.getColumnIds()
         );
 
         if (!columnsIncluded?.length) {
@@ -871,12 +932,12 @@ class Grid {
             return columnsIncluded;
         }
 
-        let columnName: string;
+        let columnId: string;
         const result: string[] = [];
         for (let i = 0, iEnd = columnsIncluded.length; i < iEnd; ++i) {
-            columnName = columnsIncluded[i];
-            if (columnOptionsMap?.[columnName]?.options?.enabled !== false) {
-                result.push(columnName);
+            columnId = columnsIncluded[i];
+            if (columnOptionsMap?.[columnId]?.options?.enabled !== false) {
+                result.push(columnId);
             }
         }
 
@@ -886,20 +947,17 @@ class Grid {
     /**
      * Loads the data table of the Grid. If the data table is passed as a
      * reference, it should be used instead of creating a new one.
-     *
-     * @param tableOptions
-     * The data table to load. If not provided, a new data table will be
-     * created.
      */
-    private loadDataTable(tableOptions?: DataTable | DataTableOptions): void {
+    private loadDataTable(): void {
         // Unregister all events attached to the previous data table.
         this.dataTableEventDestructors.forEach((fn): void => fn());
+        const tableOptions = this.options?.dataTable;
 
         // If the table is passed as a reference, it should be used instead of
         // creating a new one.
         if ((tableOptions as DataTable)?.clone) {
             this.dataTable = tableOptions as DataTable;
-            this.presentationTable = this.dataTable.modified;
+            this.presentationTable = this.dataTable.getModified();
             return;
         }
 
@@ -1040,37 +1098,56 @@ class Grid {
     }
 
     /**
-     * Returns the current grid data as a JSON string.
+     * Returns the grid data as a JSON string.
+     *
+     * @param modified
+     * Whether to return the modified data table (after filtering/sorting/etc.)
+     * or the unmodified, original one. Default value is set to `true`.
      *
      * @return
      * JSON representation of the data
      */
-    public getData(): string {
-        const json = this.viewport?.dataTable.modified.columns;
+    public getData(modified: boolean = true): string {
+        const dataTable = modified ? this.presentationTable : this.dataTable;
+        const tableColumns = dataTable?.columns;
+        const outputColumns: Record<string, DataTable.Column> = {};
 
-        if (!this.enabledColumns || !json) {
+        if (!this.enabledColumns || !tableColumns) {
             return '{}';
         }
 
-        for (const key of Object.keys(json)) {
-            if (this.enabledColumns.indexOf(key) === -1) {
-                delete json[key];
+        const typeParser = (type: Column.DataType) => {
+            const TypeMap: Record<
+                Column.DataType,
+                (value: DataTable.CellType) => DataTable.CellType
+            > = {
+                number: Number,
+                datetime: Number,
+                string: String,
+                'boolean': Boolean
+            };
+
+            return (value: DataTable.CellType): DataTable.CellType | null => (
+                defined(value) ? TypeMap[type](value) : null
+            );
+        };
+
+        for (const columnId of Object.keys(tableColumns)) {
+            const column = this.viewport?.getColumn(columnId);
+            if (column) {
+                const columnData = tableColumns[columnId];
+                const parser = typeParser(column.dataType);
+                outputColumns[columnId] = ((): DataTable.Column => {
+                    const result = [];
+                    for (let i = 0, iEnd = columnData.length; i < iEnd; ++i) {
+                        result.push(parser(columnData[i]));
+                    }
+                    return result;
+                })();
             }
         }
 
-        return JSON.stringify(json);
-    }
-
-    /**
-     * Returns the current grid data as a JSON string.
-     *
-     * @return
-     * JSON representation of the data
-     *
-     * @deprecated
-     */
-    public getJSON(): string {
-        return this.getData();
+        return JSON.stringify(outputColumns, null, 2);
     }
 
     /**
@@ -1095,42 +1172,6 @@ class Grid {
 
         return options;
     }
-
-    /**
-     * Returns the current Grid options.
-     *
-     * @param onlyUserOptions
-     * Whether to return only the user options or all options (user options
-     * merged with the default ones). Default is `true`.
-     *
-     * @returns
-     * Options as a JSON string
-     *
-     * @deprecated
-     */
-    public getOptionsJSON(onlyUserOptions = true): string {
-        return JSON.stringify(this.getOptions(onlyUserOptions));
-    }
-
-    /**
-     * Enables virtualization if the row count is greater than or equal to the
-     * threshold or virtualization is enabled externally. Should be fired after
-     * the data table is loaded.
-     */
-    private initVirtualization(): void {
-        const rows = this.userOptions.rendering?.rows;
-        const virtualization = rows?.virtualization;
-        const threshold = Number(
-            rows?.virtualizationThreshold ||
-            Defaults.defaultOptions.rendering?.rows?.virtualizationThreshold
-        );
-        const rowCount = Number(this.dataTable?.rowCount);
-
-        // Makes sure all nested options are defined.
-        ((this.options ??= {}).rendering ??= {}).rows ??= {};
-        this.options.rendering.rows.virtualization =
-            defined(virtualization) ? virtualization : rowCount >= threshold;
-    }
 }
 
 
@@ -1140,12 +1181,6 @@ class Grid {
  *
  * */
 namespace Grid {
-    /**
-     * @internal
-     * Callback that is called after the Grid is loaded.
-     */
-    export type AfterLoadCallback = (grid: Grid) => void;
-
     /**
      * @internal
      * An item in the column options map.
