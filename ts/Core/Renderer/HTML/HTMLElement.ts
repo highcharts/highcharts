@@ -222,10 +222,7 @@ class HTMLElement extends SVGElement {
             oldTextWidth,
             renderer,
             rotation,
-            rotationOriginX,
-            rotationOriginY,
             scaleX,
-            scaleY,
             styles: { display = 'inline-block', whiteSpace },
             textAlign = 'left',
             textWidth,
@@ -249,13 +246,12 @@ class HTMLElement extends SVGElement {
 
         if (element.tagName === 'SPAN') {
             const currentTextTransform = [
-                    rotation,
-                    textAlign,
-                    element.innerHTML,
-                    textWidth,
-                    this.textAlign
-                ].join(','),
-                parentPadding = (this.parentGroup?.padding * -1) || 0;
+                rotation,
+                textAlign,
+                element.innerHTML,
+                textWidth,
+                this.textAlign
+            ].join(',');
 
             let baseline;
 
@@ -300,14 +296,14 @@ class HTMLElement extends SVGElement {
             }
 
             css(element, {
-                // Inline block must be set before we can read the offset
-                // width
+                // Inline block must be set before we can read the offset width
                 display: 'inline-block',
                 verticalAlign: 'top'
             });
-            // In many cases (Firefox always, others on title layout) we
-            // need the foreign object to have a larger width and height
-            // than its content, in order to read its content's size
+
+            // In many cases (Firefox always, others on title layout) we need
+            // the foreign object to have a larger width and height than its
+            // content, in order to read its content's size
             foreignObject.attr({
                 width: renderer.width,
                 height: renderer.height
@@ -333,27 +329,12 @@ class HTMLElement extends SVGElement {
                 );
             }
 
-            // Apply position with correction and rotation origin
-            const { xCorr = 0, yCorr = 0 } = this,
-                rotOriginX = (rotationOriginX ?? x) - xCorr - x - parentPadding,
-                rotOriginY = (rotationOriginY ?? y) - yCorr - y - parentPadding,
-                styles: CSSObject = {
-                    left: `${x + xCorr}px`,
-                    top: `${y + yCorr}px`,
-                    textAlign,
-                    transformOrigin: `${rotOriginX}px ${rotOriginY}px`
-                };
-
-            if (scaleX || scaleY) {
-                styles.transform = `scale(${scaleX ?? 1},${scaleY ?? 1})`;
-            }
-
             // Move the foreign object
             super.updateTransform();
             if (isNumber(x) && isNumber(y)) {
                 foreignObject.attr({
-                    x: x + xCorr,
-                    y: y + yCorr,
+                    x: x + (this.xCorr || 0),
+                    y: y + (this.yCorr || 0),
                     width: element.offsetWidth + 3,
                     height: element.offsetHeight,
                     'transform-origin': element
@@ -443,10 +424,7 @@ class HTMLElement extends SVGElement {
 
 // Some shared setters
 const proto = HTMLElement.prototype;
-proto.ySetter =
-proto.rotationSetter =
-proto.rotationOriginXSetter =
-proto.rotationOriginYSetter = proto.xSetter;
+proto.ySetter = proto.xSetter;
 
 
 /* *
