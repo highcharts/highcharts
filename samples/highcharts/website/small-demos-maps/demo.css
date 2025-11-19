@@ -1,40 +1,26 @@
-body {
+body,
+#demo-content {
+    background-color: var(--highcharts-background-color);
+    margin: 0;
+    padding: 0;
+    color: var(--highcharts-neutral-color-100);
+}
+
+a,
+a:hover {
+    color: var(--highcharts-neutral-color-100);
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.chart-container {
+    width: 100%;
+    height: 260px !important;
+    overflow: hidden;
+}
+
+#demo-content {
     margin: 0;
 }
-
-.chart-container .highcharts-container {
-    position: relative;
-    overflow: hidden;
-    text-align: left;
-    line-height: normal;
-    fill: #fff;
-    z-index: 0;
-    -webkit-tap-highlight-color: rgb(0 0 0 / 0%);
-    font-family: "IBM Plex Sans", sans-serif;
-    font-size: 12px;
-    user-select: none;
-    touch-action: manipulation;
-    outline: none;
-}
-
-.chart-container .highcharts-graph {
-    fill: unset;
-    stroke-width: unset;
-    stroke: unset;
-    stroke-linecap: butt;
-    stroke-linejoin: round;
-}
-
-#maps {
-    width: 100%;
-    height: 100%;
-    aspect-ratio: 1 / 1;
-    border-radius: 4px;
-    background-color: var(--highcharts-background-color);
-    border: none;
-}
-
-/* #maps {
-    width: 500px;
-    height: 500px;
-} */
