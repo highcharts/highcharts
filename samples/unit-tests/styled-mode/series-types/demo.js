@@ -62,7 +62,9 @@ QUnit.module('Styled mode for series types', function () {
             // Uses CSS for HTML data label positioning
             type !== 'organization' &&
             // Error because of missing data
-            type !== 'renko'
+            type !== 'renko' &&
+            // WebGPU
+            type !== 'contour'
         ) {
             QUnit.test('Styled mode for ' + type, function (assert) {
                 var cfg = {
