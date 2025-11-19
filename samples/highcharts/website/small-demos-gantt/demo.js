@@ -76,17 +76,7 @@ function inverted() {
                 week: {
                     list: ['🗓 W%W', '🗓 W%W']
                 }
-            },
-            grid: {
-                borderColor: '#707073',
-                borderWidth: 0,
-                cellHeight: 10
-            },
-            gridLineColor: '#2f2b38',
-            gridLineWidth: 0,
-            gridLineDashStyle: 'dot',
-            maxPadding: 0,
-            minPadding: 0
+            }
         }],
         yAxis: {
             offset: -40,
@@ -100,8 +90,7 @@ function inverted() {
                 align: 'center',
                 x: -22,
                 style: {
-                    fontSize: '14px',
-                    color: '#000'
+                    fontSize: '14px'
                 },
                 padding: 0
             },
@@ -263,7 +252,7 @@ function subtasks() {
             plotBands: [{
                 from: today.getTime() + (0 * day),
                 to: today.getTime() + (14 * day),
-                color: 'var(--illo-accent-50)'
+                color: 'var(--highcharts-background-color)'
             }],
             dateTimeLabelFormats: {
                 day: {
@@ -273,16 +262,13 @@ function subtasks() {
                     list: ['Week %W', 'W%W']
                 }
             },
-            gridLineColor: 'var(--illo-accent-50)',
+            gridLineColor: 'var(--highcharts-neutral-color-10)',
             gridLineWidth: 1,
             grid: {
                 borderWidth: 0
             },
             labels: {
-                allowOverlap: true,
-                style: {
-                    color: '#fff'
-                }
+                allowOverlap: true
             }
         },
         accessibility: {
@@ -329,7 +315,8 @@ function subtasks() {
                 },
                 style: {
                     fontSize: '12px',
-                    padding: 0
+                    padding: 0,
+                    color: 'var(--highcharts-neutral-color-100)'
                 }
             }
 
@@ -359,7 +346,7 @@ function subtasks() {
                 id: '1',
                 start: today.getTime(),
                 end: today.getTime() + (3 * day),
-                color: Highcharts.getOptions().colors[0]
+                color: colors[0]
             }, {
                 name: '1a ',
                 id: '1a',
@@ -367,12 +354,12 @@ function subtasks() {
                 start: today.getTime(),
                 end: today.getTime() + (2 * day),
                 color: 'transparent',
-                borderColor: 'var(--highcharts-color-0)',
-                borderWidth: 1,
+                borderColor: colors[0],
+                borderWidth: 2,
                 connectors: {
                     dashStyle: 'dot',
                     lineWidth: 1,
-                    lineColor: 'var(--highcharts-color-0)'
+                    lineColor: colors[0]
                 }
             },
             {
@@ -383,12 +370,12 @@ function subtasks() {
                 start: today.getTime() + (2 * day),
                 end: today.getTime() + (3 * day),
                 color: 'transparent',
-                borderColor: 'var(--highcharts-color-0)',
-                borderWidth: 1,
+                borderColor: colors[0],
+                borderWidth: 2,
                 connectors: {
                     dashStyle: 'dot',
                     lineWidth: 1,
-                    lineColor: 'var(--highcharts-color-0)'
+                    lineColor: colors[0]
                 }
             },
             {
@@ -398,14 +385,14 @@ function subtasks() {
                 dependency: '1',
                 start: today.getTime() + (3.5 * day),
                 end: today.getTime() + (7 * day),
-                color: 'var(--highcharts-color-1)'
+                color: colors[1]
             }, {
                 name: '2a',
                 id: '2a',
                 parent: '2',
                 start: today.getTime() + (3.5 * day),
                 end: today.getTime() + (5 * day),
-                color: 'var(--highcharts-color-1)'
+                color: colors[1]
             },
             {
                 name: '2a-1',
@@ -414,12 +401,12 @@ function subtasks() {
                 start: today.getTime() + (3.5 * day),
                 end: today.getTime() + (4 * day),
                 color: 'transparent',
-                borderColor: 'var(--highcharts-color-1)',
-                borderWidth: 1,
+                borderColor: colors[1],
+                borderWidth: 2,
                 connectors: {
                     dashStyle: 'dot',
                     lineWidth: 1,
-                    lineColor: 'var(--highcharts-color-1)'
+                    lineColor: colors[1]
                 }
             },
             {
@@ -430,12 +417,12 @@ function subtasks() {
                 start: today.getTime() + (4 * day),
                 end: today.getTime() + (4.5 * day),
                 color: 'transparent',
-                borderColor: 'var(--highcharts-color-1)',
-                borderWidth: 1,
+                borderColor: colors[1],
+                borderWidth: 2,
                 connectors: {
                     dashStyle: 'dot',
                     lineWidth: 1,
-                    lineColor: 'var(--highcharts-color-1)'
+                    lineColor: colors[1]
                 }
             },
             {
@@ -446,12 +433,12 @@ function subtasks() {
                 start: today.getTime() + (4.5 * day),
                 end: today.getTime() + (5 * day),
                 color: 'transparent',
-                borderColor: 'var(--highcharts-color-1)',
-                borderWidth: 1,
+                borderColor: colors[1],
+                borderWidth: 2,
                 connectors: {
                     dashStyle: 'dot',
                     lineWidth: 1,
-                    lineColor: 'var(--highcharts-color-1)'
+                    lineColor: colors[1]
 
                 }
             },
@@ -462,14 +449,14 @@ function subtasks() {
                 parent: '2',
                 start: today.getTime() + (5 * day),
                 end: today.getTime() + (7 * day),
-                color: 'var(--highcharts-color-1)'
+                color: colors[1]
             }, {
                 name: '2c',
                 id: '2c',
                 parent: '2',
                 start: today.getTime() + (5 * day),
                 end: today.getTime() + (7 * day),
-                color: 'var(--highcharts-color-1)'
+                color: colors[1]
             },
             {
                 name: 'Task 3',
@@ -478,7 +465,7 @@ function subtasks() {
                 collapsed: false,
                 start: today.getTime() + (7.5 * day),
                 end: today.getTime() + (12 * day),
-                color: 'var(--highcharts-color-2)'
+                color: colors[2]
             }, {
                 name: '3a',
                 id: '3a',
@@ -486,12 +473,12 @@ function subtasks() {
                 start: today.getTime() + (7.5 * day),
                 end: today.getTime() + (10 * day),
                 color: 'transparent',
-                borderColor: 'var(--highcharts-color-2)',
-                borderWidth: 1,
+                borderColor: colors[2],
+                borderWidth: 2,
                 connectors: {
                     dashStyle: 'dot',
                     lineWidth: 1,
-                    lineColor: 'var(--highcharts-color-2)'
+                    lineColor: colors[2]
                 }
             }, {
                 name: '3b',
@@ -501,12 +488,12 @@ function subtasks() {
                 start: today.getTime() + (10 * day),
                 end: today.getTime() + (12 * day),
                 color: 'transparent',
-                borderColor: 'var(--highcharts-color-2)',
-                borderWidth: 1,
+                borderColor: colors[2],
+                borderWidth: 2,
                 connectors: {
                     dashStyle: 'dot',
                     lineWidth: 1,
-                    lineColor: 'var(--highcharts-color-2)'
+                    lineColor: colors[2]
                 }
             }
             ]
@@ -679,7 +666,7 @@ function nav() {
                 end: '2018-02-02',
                 completed: 0.85,
                 name: 'Prototyping',
-                borderColor: Highcharts.getOptions().colors[3]
+                borderColor: colors[3]
             }, {
                 start: '2018-02-02',
                 end: '2018-12-05',
@@ -695,7 +682,7 @@ function nav() {
                 end: '2018-12-19',
                 completed: {
                     amount: 0.3,
-                    fill: '#fa0'
+                    fill: colors[2]
                 },
                 name: 'Development'
             }, {
@@ -824,33 +811,21 @@ function drag() {
                 states: {
                     select:
                     {
-                        borderColor: Highcharts.getOptions().colors[6],
-                        color: Highcharts.getOptions().colors[6],
+                        borderColor: colors[2],
+                        color: colors[2],
                         enabled: true
                     },
                     hover:
                     {
-                        borderColor: Highcharts.getOptions().colors[6],
-                        color: Highcharts.getOptions().colors[6],
+                        borderColor: colors[2],
+                        color: colors[2],
                         enabled: true
                     }
                 },
                 borderColor: 'transparent',
                 pointPadding: 0.2,
                 dataLabels: {
-                    enabled: true,
-                    formatter: function () {
-                        // nothing
-                    },
-                    style: {
-                        cursor: 'default',
-                        pointerEvents: 'none',
-                        color: '#fff',
-                        textOutline: 'none',
-                        fontSize: '18px',
-                        padding: 0
-                    },
-                    y: -5
+                    enabled: false
                 },
                 allowPointSelect: true
             }
@@ -882,18 +857,6 @@ function drag() {
         },
         xAxis: {
             offset: -20,
-            currentDateIndicator: {
-                enabled: true,
-                label: {
-                    style: {
-                        color: '#FEEAC3',
-                        fontSize: '10px',
-                        fontWeight: 'bold'
-                    }
-                },
-                color: '#FEEAC3'
-
-            },
             dateTimeLabelFormats: {
                 day: {
                     list: ['%e']
@@ -908,7 +871,7 @@ function drag() {
             // minPadding: 0,
             // margin: 0,
             // padding: 0,
-            gridLineColor: '#BBBAC5',
+            gridLineColor: 'var(--highcharts-neutral-color-20)',
             gridLineWidth: 1,
             gridLineDashStyle: 'dot',
             labels: {
@@ -931,7 +894,7 @@ function drag() {
                 end: today + day * 4.5,
                 name: '1',
                 id: 'prototype',
-                borderColor: '#E1D369',
+                borderColor: colors[0],
                 borderWidth: 2,
                 y: 0,
                 zIndex: 1
@@ -943,28 +906,28 @@ function drag() {
                 id: 'proto_done',
                 zIndex: 100,
                 y: 0,
-                borderColor: Highcharts.getOptions().colors[4],
+                borderColor: colors[0],
                 borderWidth: 2,
                 color: 'black',
                 connectors: {
-                    lineColor: '#E1D369',
+                    lineColor: colors[0],
                     marker: {
-                        color: Highcharts.getOptions().colors[0]
+                        color: colors[0]
                     }
                 }
             }, {
                 start: today + day * 5.5,
                 end: today + day * 6,
-                borderColor: '#E1D369',
+                borderColor: colors[0],
                 borderWidth: 2,
                 name: '2',
                 dependency: 'proto_done',
                 zIndex: 1,
                 y: 0,
                 connectors: {
-                    lineColor: '#E1D369',
+                    lineColor: colors[0],
                     marker: {
-                        color: Highcharts.getOptions().colors[0]
+                        color: colors[0]
                     }
                 }
             },
