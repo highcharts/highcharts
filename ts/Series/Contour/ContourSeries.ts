@@ -79,6 +79,8 @@ export default class ContourSeries extends ScatterSeries {
 
     public renderFrame?: () => void;
 
+    public renderPromise?: Promise<void>;
+
     public dataMax?: number;
 
     private foreignObject?: SVGForeignObjectElement;
@@ -300,7 +302,7 @@ export default class ContourSeries extends ScatterSeries {
         if (this.renderFrame) {
             this.renderFrame();
         } else {
-            void this.run();
+            this.renderPromise = this.run();
         }
     }
 
