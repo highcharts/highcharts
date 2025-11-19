@@ -173,7 +173,9 @@ class SVGLabel extends SVGElement {
                 this.attr({ x: this.xSetting }); // #5134
             }
 
-            this.updateTextPadding(); // #23595
+            if (this.options?.alignTo !== 'plotEdges') {
+                this.updateTextPadding(); // #23595
+            }
         }
     }
 
