@@ -174,20 +174,20 @@ const DependencyMapping: Record<string, Array<string>> = {
         'modules/drilldown'
     ],
     'series.abands': [
-        'stock/indicators/indicators',
-        'stock/indicators/acceleration-bands'
+        'indicators/indicators',
+        'indicators/acceleration-bands'
     ],
     'series.ad': [
-        'stock/indicators/indicators',
-        'stock/indicators/accumulation-distribution'
+        'indicators/indicators',
+        'indicators/accumulation-distribution'
     ],
     'series.ao': [
-        'stock/indicators/indicators',
-        'stock/indicators/ao'
+        'indicators/indicators',
+        'indicators/ao'
     ],
     'series.apo': [
-        'stock/indicators/indicators',
-        'stock/indicators/apo'
+        'indicators/indicators',
+        'indicators/apo'
     ],
     'series.arcdiagram': [
         'modules/sankey',
@@ -200,21 +200,21 @@ const DependencyMapping: Record<string, Array<string>> = {
         'highcharts-more'
     ],
     'series.aroon': [
-        'stock/indicators/indicators',
-        'stock/indicators/aroon'
+        'indicators/indicators',
+        'indicators/aroon'
     ],
     'series.aroonoscillator': [
-        'stock/indicators/indicators',
-        'stock/indicators/aroon',
-        'stock/indicators/aroon-oscillator'
+        'indicators/indicators',
+        'indicators/aroon',
+        'indicators/aroon-oscillator'
     ],
     'series.atr': [
-        'stock/indicators/indicators',
-        'stock/indicators/atr'
+        'indicators/indicators',
+        'indicators/atr'
     ],
     'series.bb': [
-        'stock/indicators/indicators',
-        'stock/indicators/bollinger-bands'
+        'indicators/indicators',
+        'indicators/bollinger-bands'
     ],
     'series.bellcurve': [
         'modules/histogram-bellcurve'
@@ -229,20 +229,20 @@ const DependencyMapping: Record<string, Array<string>> = {
         'modules/bullet'
     ],
     'series.cci': [
-        'stock/indicators/indicators',
-        'stock/indicators/cci'
+        'indicators/indicators',
+        'indicators/cci'
     ],
     'series.chaikin': [
-        'stock/indicators/indicators',
-        'stock/indicators/chaikin'
+        'indicators/indicators',
+        'indicators/chaikin'
     ],
     'series.cmf': [
-        'stock/indicators/indicators',
-        'stock/indicators/cmf'
+        'indicators/indicators',
+        'indicators/cmf'
     ],
     'series.cmo': [
-        'stock/indicators/indicators',
-        'stock/indicators/cmo'
+        'indicators/indicators',
+        'indicators/cmo'
     ],
     'series.columnpyramid': [
         'highcharts-more'
@@ -255,31 +255,31 @@ const DependencyMapping: Record<string, Array<string>> = {
         'modules/cylinder'
     ],
     'series.dema': [
-        'stock/indicators/indicators',
-        'stock/indicators/dema'
+        'indicators/indicators',
+        'indicators/dema'
     ],
     'series.dependencywheel': [
         'modules/sankey',
         'modules/dependency-wheel'
     ],
     'series.disparityindex': [
-        'stock/indicators/indicators',
-        'stock/indicators/disparity-index'
+        'indicators/indicators',
+        'indicators/disparity-index'
     ],
     'series.dmi': [
-        'stock/indicators/indicators',
-        'stock/indicators/dmi'
+        'indicators/indicators',
+        'indicators/dmi'
     ],
     'series.dpo': [
-        'stock/indicators/indicators',
-        'stock/indicators/dpo'
+        'indicators/indicators',
+        'indicators/dpo'
     ],
     'series.dumbbell': [
         'highcharts-more',
         'modules/dumbbell'
     ],
     'series.ema': [
-        'stock/indicators/indicators'
+        'indicators/indicators'
     ],
     'series.errorbar': [
         'highcharts-more'
@@ -317,35 +317,35 @@ const DependencyMapping: Record<string, Array<string>> = {
         'modules/hollowcandlestick'
     ],
     'series.ikh': [
-        'stock/indicators/indicators',
-        'stock/indicators/ichimoku-kinko-hyo'
+        'indicators/indicators',
+        'indicators/ichimoku-kinko-hyo'
     ],
     'series.item': [
         'modules/item-series'
     ],
     'series.keltnerchannels': [
-        'stock/indicators/indicators',
-        'stock/indicators/keltner-channels'
+        'indicators/indicators',
+        'indicators/keltner-channels'
     ],
     'series.klinger': [
-        'stock/indicators/indicators',
-        'stock/indicators/klinger'
+        'indicators/indicators',
+        'indicators/klinger'
     ],
     'series.linearregression': [
-        'stock/indicators/indicators',
-        'stock/indicators/regressions'
+        'indicators/indicators',
+        'indicators/regressions'
     ],
     'series.linearregressionangle': [
-        'stock/indicators/indicators',
-        'stock/indicators/regressions'
+        'indicators/indicators',
+        'indicators/regressions'
     ],
     'series.linearregressionintercept': [
-        'stock/indicators/indicators',
-        'stock/indicators/regressions'
+        'indicators/indicators',
+        'indicators/regressions'
     ],
     'series.linearregressionslope': [
-        'stock/indicators/indicators',
-        'stock/indicators/regressions'
+        'indicators/indicators',
+        'indicators/regressions'
     ],
     'series.lollipop': [
         'highcharts-more',
@@ -353,28 +353,28 @@ const DependencyMapping: Record<string, Array<string>> = {
         'modules/lollipop'
     ],
     'series.macd': [
-        'stock/indicators/indicators',
-        'stock/indicators/macd'
+        'indicators/indicators',
+        'indicators/macd'
     ],
     'series.mfi': [
-        'stock/indicators/indicators',
-        'stock/indicators/mfi'
+        'indicators/indicators',
+        'indicators/mfi'
     ],
     'series.momentum': [
-        'stock/indicators/indicators',
-        'stock/indicators/momentum'
+        'indicators/indicators',
+        'indicators/momentum'
     ],
     'series.natr': [
-        'stock/indicators/indicators',
-        'stock/indicators/atr',
-        'stock/indicators/natr'
+        'indicators/indicators',
+        'indicators/atr',
+        'indicators/natr'
     ],
     'series.networkgraph': [
         'modules/networkgraph'
     ],
     'series.obv': [
-        'stock/indicators/indicators',
-        'stock/indicators/obv'
+        'indicators/indicators',
+        'indicators/obv'
     ],
     'series.organization': [
         'modules/sankey',
@@ -387,15 +387,15 @@ const DependencyMapping: Record<string, Array<string>> = {
         'modules/pareto'
     ],
     'series.pc': [
-        'stock/indicators/indicators',
-        'stock/indicators/price-channel'
+        'indicators/indicators',
+        'indicators/price-channel'
     ],
     'series.pictorial': [
         'modules/pictorial'
     ],
     'series.pivotpoints': [
-        'stock/indicators/indicators',
-        'stock/indicators/pivot-points'
+        'indicators/indicators',
+        'indicators/pivot-points'
     ],
     'series.pointandfigure': [
         'modules/pointandfigure'
@@ -404,16 +404,16 @@ const DependencyMapping: Record<string, Array<string>> = {
         'highcharts-more'
     ],
     'series.ppo': [
-        'stock/indicators/indicators',
-        'stock/indicators/ppo'
+        'indicators/indicators',
+        'indicators/ppo'
     ],
     'series.priceenvelopes': [
-        'stock/indicators/indicators',
-        'stock/indicators/price-envelopes'
+        'indicators/indicators',
+        'indicators/price-envelopes'
     ],
     'series.psar': [
-        'stock/indicators/indicators',
-        'stock/indicators/psar'
+        'indicators/indicators',
+        'indicators/psar'
     ],
     'series.pyramid': [
         'modules/funnel'
@@ -428,12 +428,12 @@ const DependencyMapping: Record<string, Array<string>> = {
         'modules/renko'
     ],
     'series.roc': [
-        'stock/indicators/indicators',
-        'stock/indicators/roc'
+        'indicators/indicators',
+        'indicators/roc'
     ],
     'series.rsi': [
-        'stock/indicators/indicators',
-        'stock/indicators/rsi'
+        'indicators/indicators',
+        'indicators/rsi'
     ],
     'series.sankey': [
         'modules/sankey'
@@ -442,20 +442,20 @@ const DependencyMapping: Record<string, Array<string>> = {
         'highcharts-3d'
     ],
     'series.slowstochastic': [
-        'stock/indicators/indicators',
-        'stock/indicators/stochastic',
-        'stock/indicators/slow-stochastic'
+        'indicators/indicators',
+        'indicators/stochastic',
+        'indicators/slow-stochastic'
     ],
     'series.sma': [
-        'stock/indicators/indicators'
+        'indicators/indicators'
     ],
     'series.solidgauge': [
         'highcharts-more',
         'modules/solid-gauge'
     ],
     'series.stochastic': [
-        'stock/indicators/indicators',
-        'stock/indicators/stochastic'
+        'indicators/indicators',
+        'indicators/stochastic'
     ],
     'series.streamgraph': [
         'modules/streamgraph'
@@ -464,12 +464,12 @@ const DependencyMapping: Record<string, Array<string>> = {
         'modules/sunburst'
     ],
     'series.supertrend': [
-        'stock/indicators/indicators',
-        'stock/indicators/supertrend'
+        'indicators/indicators',
+        'indicators/supertrend'
     ],
     'series.tema': [
-        'stock/indicators/indicators',
-        'stock/indicators/tema'
+        'indicators/indicators',
+        'indicators/tema'
     ],
     'series.tiledwebmap': [
         'modules/tiledwebmap'
@@ -488,13 +488,13 @@ const DependencyMapping: Record<string, Array<string>> = {
         'modules/treemap'
     ],
     'series.trendline': [
-        'stock/indicators/indicators',
-        'stock/indicators/trendline'
+        'indicators/indicators',
+        'indicators/trendline'
     ],
     'series.trix': [
-        'stock/indicators/indicators',
-        'stock/indicators/tema',
-        'stock/indicators/trix'
+        'indicators/indicators',
+        'indicators/tema',
+        'indicators/trix'
     ],
     'series.variablepie': [
         'modules/variable-pie'
@@ -503,8 +503,8 @@ const DependencyMapping: Record<string, Array<string>> = {
         'modules/variwide'
     ],
     'series.vbp': [
-        'stock/indicators/indicators',
-        'stock/indicators/volume-by-price'
+        'indicators/indicators',
+        'indicators/volume-by-price'
     ],
     'series.vector': [
         'modules/vector'
@@ -513,22 +513,22 @@ const DependencyMapping: Record<string, Array<string>> = {
         'modules/venn'
     ],
     'series.vwap': [
-        'stock/indicators/indicators',
-        'stock/indicators/vwap'
+        'indicators/indicators',
+        'indicators/vwap'
     ],
     'series.waterfall': [
         'highcharts-more'
     ],
     'series.williamsr': [
-        'stock/indicators/indicators',
-        'stock/indicators/williams-r'
+        'indicators/indicators',
+        'indicators/williams-r'
     ],
     'series.windbarb': [
         'modules/windbarb'
     ],
     'series.wma': [
-        'stock/indicators/indicators',
-        'stock/indicators/wma'
+        'indicators/indicators',
+        'indicators/wma'
     ],
     'series.wordcloud': [
         'modules/wordcloud'
@@ -537,14 +537,14 @@ const DependencyMapping: Record<string, Array<string>> = {
         'modules/xrange'
     ],
     'series.zigzag': [
-        'stock/indicators/indicators',
-        'stock/indicators/zigzag'
+        'indicators/indicators',
+        'indicators/zigzag'
     ],
     'sonification': [
         'modules/sonification'
     ],
     'stockTools': [
-        'stock/modules/stock-tools'
+        'modules/stock-tools'
     ],
     'xAxis.accessibility': [
         'modules/accessibility'

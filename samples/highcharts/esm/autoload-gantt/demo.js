@@ -1,6 +1,7 @@
 let success = 0,
     failed = 0;
 
+// gantt test
 (async () => {
     const container = document.createElement('div');
     container.className = 'test-container';
@@ -34,6 +35,7 @@ let success = 0,
     }
 })();
 
+// xrange test
 (async () => {
     const container = document.createElement('div');
     container.className = 'test-container';

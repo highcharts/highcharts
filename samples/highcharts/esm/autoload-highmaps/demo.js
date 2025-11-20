@@ -1,6 +1,7 @@
 let success = 0,
     failed = 0;
 
+// flowmap test
 (async () => {
     const container = document.createElement('div');
     container.className = 'test-container';
@@ -30,6 +31,7 @@ let success = 0,
     }
 })();
 
+// geoheatmap test
 (async () => {
     const container = document.createElement('div');
     container.className = 'test-container';
@@ -59,6 +61,7 @@ let success = 0,
     }
 })();
 
+// heatmap test
 (async () => {
     const container = document.createElement('div');
     container.className = 'test-container';
@@ -88,6 +91,7 @@ let success = 0,
     }
 })();
 
+// map test
 (async () => {
     const container = document.createElement('div');
     container.className = 'test-container';
@@ -117,6 +121,7 @@ let success = 0,
     }
 })();
 
+// mapbubble test
 (async () => {
     const container = document.createElement('div');
     container.className = 'test-container';
@@ -146,6 +151,7 @@ let success = 0,
     }
 })();
 
+// mapline test
 (async () => {
     const container = document.createElement('div');
     container.className = 'test-container';
@@ -175,6 +181,7 @@ let success = 0,
     }
 })();
 
+// mappoint test
 (async () => {
     const container = document.createElement('div');
     container.className = 'test-container';
@@ -204,6 +211,7 @@ let success = 0,
     }
 })();
 
+// pie test
 (async () => {
     const container = document.createElement('div');
     container.className = 'test-container';
@@ -233,6 +241,7 @@ let success = 0,
     }
 })();
 
+// tiledwebmap test
 (async () => {
     const container = document.createElement('div');
     container.className = 'test-container';
@@ -262,6 +271,7 @@ let success = 0,
     }
 })();
 
+// tilemap test
 (async () => {
     const container = document.createElement('div');
     container.className = 'test-container';

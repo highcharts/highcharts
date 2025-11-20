@@ -13,12 +13,16 @@ function treeToMappingRecursive(key, branch, keyPath, mapping = {}) {
         });
         keyPath.pop();
     }
-    if (branch.doclet && branch.doclet.requires) {
+    if (branch.doclet?.requires) {
         const fullKey = (keyPath.filter(Boolean).join('.') + '.' + key)
             .replace(/^\./u, '');
         mapping[
             fullKey
-        ] = branch.doclet.requires.map(r => r.replace(/module:/u, ''));
+        ] = branch.doclet.requires.map(
+            r => r
+                .replace(/module:/u, '')
+                .replace(/^stock\//u, '')
+        );
     }
     return mapping;
 }
@@ -58,12 +62,18 @@ there and run \`gulp dependency-mapping\` to update the file.
     await fs.writeFile(
         path.join(testPath, 'demo.html'),
         `<h1>Autoload test for ${product} series types</h1>
-<p>Do not edit these test files, they are generated using the
- <code>gulp dependency-mapping</code> task.</p>
+<p>
+    Do not edit these test files, they are generated using the
+    <code>gulp dependency-mapping</code> task.
+    <br>
+    When testing, remember to turn off "Compile on demand" and run
+    <code>npx gulp scripts && npx gulp scripts-compile</code>.
+</p>
 <p id="results">
     <span id="success">0</span> success,
     <span id="failed">0</span> failed
 </p>
+
 <div id="container"></div>`
     );
 
@@ -219,6 +229,7 @@ code {
         }
 
         js += `
+// ${seriesType} test
 (async () => {
     const container = document.createElement('div');
     container.className = 'test-container';
