@@ -210,6 +210,12 @@ code {
                     { x: 1, x2: 3, y: 1 },
                     { x: 2, x2: 5, y: 2 }
                 ]`;
+        } else if (seriesType === 'gantt') {
+            data = `[
+                    { start: 1, end: 2, y: 0 },
+                    { start: 1, end: 3, y: 1 },
+                    { start: 2, end: 5, y: 2 }
+                ]`;
         }
 
         js += `

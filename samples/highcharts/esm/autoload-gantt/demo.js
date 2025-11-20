@@ -16,7 +16,11 @@ let success = 0,
             },
             series: [{
                 type: 'gantt',
-                data: [1, 3, 2, 4]
+                data: [
+                    { start: 1, end: 2, y: 0 },
+                    { start: 1, end: 3, y: 1 },
+                    { start: 2, end: 5, y: 2 }
+                ]
             }]
         });
         success++;
