@@ -261,7 +261,7 @@ async function scriptsTS(argv) {
                 await replaceProductPlaceholders(
                     file,
                     'Dashboards',
-                    argv.release || dashboardsBuildPropertiesJSON.version
+                    dashboardsBuildPropertiesJSON.version
                 );
             }
 
@@ -298,7 +298,7 @@ async function scriptsTS(argv) {
                 await replaceProductPlaceholders(
                     file,
                     'Grid',
-                    argv.release || gridBuildPropertiesJSON.version
+                    gridBuildPropertiesJSON.version
                 );
             }
         } else if (argv.assembler) {
