@@ -2014,8 +2014,15 @@ let success = 0,
                 text: 'Testing vbp'
             },
             series: [{
-                type: 'vbp',
+                type: 'line',
+                id: 'volume',
                 data: [1, 3, 2, 4]
+            },
+            {
+                type: 'vbp',
+                params: {
+                    volumeSeriesID: 'volume'
+                }
             }]
         });
         success++;

@@ -241,6 +241,18 @@ code {
                 type: '${seriesType}',
                 linkedTo: ':previous'
             }]`;
+        } else if (seriesType === 'vbp') {
+            series = `[{
+                type: 'line',
+                id: 'volume',
+                data: [1, 3, 2, 4]
+            },
+            {
+                type: '${seriesType}',
+                params: {
+                    volumeSeriesID: 'volume'
+                }
+            }]`;
         }
 
         js += `
