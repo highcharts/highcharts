@@ -59,6 +59,7 @@ declare global {
     interface GridNamespace {
         win: typeof Globals.win;
         product: 'Grid Lite' | 'Grid Pro';
+        version: typeof Globals.version;
         AST: typeof AST;
         Grid: typeof _Grid;
         grid: typeof _Grid.grid;

@@ -190,7 +190,7 @@ class EditMode {
     /**
      * URL from which the icons will be fetched.
      */
-    public iconsURLPrefix: string = 'https://code.highcharts.com/dashboards/3.6.0/gfx/dashboards-icons/';
+    public iconsURLPrefix: string = 'https://code.highcharts.com/dashboards/@product.version@/gfx/dashboards-icons/';
     /**
      * Dashboards' board instance.
      */
