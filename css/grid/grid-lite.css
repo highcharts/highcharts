@@ -589,9 +589,7 @@
 
 /* Focus/A11Y - keyboard accessibility */
 .hcg-button:focus-visible {
-    outline: none;
     background: var(--ig-button-hover-background);
-    box-shadow: var(--ig-focus-ring);
 }
 
 /* Generic icon styling for Grid */
