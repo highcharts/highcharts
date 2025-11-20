@@ -975,14 +975,14 @@
                 className: 'purple-line',
                 data: [{
                     x: 0,
-                    y: 8.25
+                    y: 8.4
                 }, {
                     x: 0,
-                    y: 8.25
+                    y: 8.4
                 },
                 {
                     x: 0,
-                    y: 8.25,
+                    y: 8.4,
                     marker: {
                         enabled: false,
                         radius: 70,
@@ -1238,33 +1238,33 @@
                 zIndex: 21,
                 yAxis: 3,
                 xAxis: 1
-            },
-            // 12 -- candlestick
-            {
-                type: 'candlestick',
-                name: 'AAPL',
-                className: 'stick',
-                data: ohlc,
-                zIndex: 300,
-                dataGrouping: {
-                    units: groupingUnits
-                },
-                visible: false
-
-            },
-            // 13 --column
-            {
-                type: 'column',
-                className: 'column',
-                name: 'Volume',
-                data: volume,
-                yAxis: 1,
-                zIndex: 300,
-                dataGrouping: {
-                    units: groupingUnits
-                },
-                visible: false
             }
+            // 12 -- candlestick
+            // {
+            //     type: 'candlestick',
+            //     name: 'AAPL',
+            //     className: 'stick',
+            //     data: ohlc,
+            //     zIndex: 300,
+            //     dataGrouping: {
+            //         units: groupingUnits
+            //     },
+            //     visible: false
+
+            // },
+            // 13 --column
+            // {
+            //     type: 'column',
+            //     className: 'column',
+            //     name: 'Volume',
+            //     data: volume,
+            //     yAxis: 1,
+            //     zIndex: 300,
+            //     dataGrouping: {
+            //         units: groupingUnits
+            //     },
+            //     visible: false
+            // }
 
 
         ],
