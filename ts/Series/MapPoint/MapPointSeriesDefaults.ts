@@ -58,7 +58,8 @@ const MapPointSeriesDefaults: MapPointSeriesOptions = {
             color: Palette.neutralColor100
         }
     },
-    legendSymbol: 'lineMarker'
+    legendSymbol: 'lineMarker',
+    stickyTracking: true
 };
 
 /* *
