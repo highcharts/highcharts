@@ -197,7 +197,7 @@ class TextInputContent extends CellContentPro implements EditModeContent {
             return;
         }
 
-        void this.cell.setValue((e.target as HTMLSelectElement).value, true);
+        void this.cell.editValue((e.target as HTMLSelectElement).value);
     };
 
     private readonly onKeyDown = (e: KeyboardEvent): void => {
