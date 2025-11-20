@@ -128,49 +128,95 @@ AST.allowedTags.push(
  *
  * */
 
+/** @internal */
 declare module '../../Core/Axis/AxisOptions' {
     interface AxisOptions {
+        // TODO: Consider making this Axis property instead of AxisOptions to
+        // avoid polluting user options.
         internalKey?: string;
     }
 }
 
 declare module '../../Core/Chart/ChartBase' {
     interface ChartBase {
+        /**
+         * Exporting object.
+         *
+         * @name Highcharts.Chart#exporting
+         * @type {Highcharts.Exporting}
+         */
         exporting?: Exporting;
+
         /**
          * Deprecated in favor of [Exporting.exportChart](https://api.highcharts.com/class-reference/Highcharts.Exporting#exportChart).
          *
-         * @deprecated */
+         * @deprecated 11.4.1
+         */
         exportChart(
             exportingOptions?: ExportingOptions,
             chartOptions?: Options
         ): Promise<void>;
+
         /**
          * Deprecated in favor of [Exporting.getChartHTML](https://api.highcharts.com/class-reference/Highcharts.Exporting#getChartHTML).
          *
-         * @deprecated */
+         * @deprecated 11.4.1
+         */
         getChartHTML(applyStyleSheets?: boolean): (string | void);
+
         /**
          * Deprecated in favor of [Exporting.getFilename](https://api.highcharts.com/class-reference/Highcharts.Exporting#getFilename).
          *
-         * @deprecated */
+         * @deprecated 11.4.1
+         */
         getFilename(): (string | void);
+
         /**
          * Deprecated in favor of [Exporting.getSVG](https://api.highcharts.com/class-reference/Highcharts.Exporting#getSVG).
          *
-         * @deprecated */
+         * @deprecated 11.4.1
+         */
         getSVG(chartOptions?: Partial<Options>): (string | void);
+
         /**
          * Deprecated in favor of [Exporting.print](https://api.highcharts.com/class-reference/Highcharts.Exporting#print).
          *
-         * @deprecated */
+         * @deprecated 11.4.1
+         */
         print(): void;
     }
 }
 
 declare module '../../Core/Chart/ChartOptions' {
     interface ChartEventsOptions {
+        /**
+         * Fires after a chart is printed through the context menu item or the
+         * `Chart.print` method.
+         *
+         * @sample highcharts/chart/events-beforeprint-afterprint/
+         * Rescale the chart to print
+         *
+         * @type {Highcharts.ExportingAfterPrintCallbackFunction}
+         * @since 4.1.0
+         * @context Highcharts.Chart
+         * @requires modules/exporting
+         * @apioption chart.events.afterPrint
+         */
         afterPrint?: Exporting.AfterPrintCallbackFunction;
+
+        /**
+         * Fires before a chart is printed through the context menu item or
+         * the `Chart.print` method.
+         *
+         * @sample highcharts/chart/events-beforeprint-afterprint/
+         * Rescale the chart to print
+         *
+         * @type {Highcharts.ExportingBeforePrintCallbackFunction}
+         * @since 4.1.0
+         * @context Highcharts.Chart
+         * @requires modules/exporting
+         * @apioption chart.events.beforePrint
+         */
         beforePrint?: Exporting.BeforePrintCallbackFunction;
     }
 }
@@ -180,7 +226,8 @@ declare module '../../Core/GlobalsBase.d.ts' {
         /**
          * Deprecated in favor of [Exporting.downloadSVG](https://api.highcharts.com/class-reference/Highcharts.Exporting#downloadSVG).
          *
-         * @deprecated */
+         * @deprecated 11.4.4
+         */
         downloadSVGLocal: Exporting.DownloadSVGFunction
     }
 }
@@ -191,7 +238,7 @@ declare module '../../Core/GlobalsBase.d.ts' {
  *
  * */
 
-export const domurl = win.URL || win.webkitURL || win;
+const domurl = win.URL || win.webkitURL || win;
 
 /* *
  *
@@ -238,9 +285,14 @@ class Exporting {
      *
      * */
 
+    /** @internal */
     public static inlineAllowlist: Array<RegExp> = [];
 
-    // These CSS properties are not inlined. Remember camelCase.
+    /**
+     * These CSS properties are not inlined. Remember camelCase.
+     *
+     * @internal
+     */
     public static inlineDenylist: Array<RegExp> = [
         /-/, // In Firefox, both hyphened and camelCased names are listed
         /^(clipPath|cssText|d|height|width)$/, // Full words
@@ -255,7 +307,11 @@ class Exporting {
         /^\d+$/ // #17538
     ];
 
-    // These ones are translated to attributes rather than styles
+    /**
+     * These ones are translated to attributes rather than styles.
+     *
+     * @internal
+     */
     public static inlineToAttributes: Array<string> = [
         'fill',
         'stroke',
@@ -267,13 +323,20 @@ class Exporting {
         'y'
     ];
 
-    // Milliseconds to defer image load event handlers to offset IE bug
+    /**
+     * Milliseconds to defer image load event handlers to offset IE bug
+     *
+     * @internal
+     */
     public static loadEventDeferDelay = isMS ? 150 : 0;
 
+    /** @internal */
     public static objectURLRevoke?: boolean;
 
+    /** @internal */
     public static printingChart?: Chart;
 
+    /** @internal */
     public static unstyledElements: Array<string> = [
         'clipPath',
         'defs',
@@ -353,6 +416,7 @@ class Exporting {
         }
     }
 
+    /** @internal */
     private static async fetchCSS(href: string): Promise<CSSStyleSheet> {
         const content = await fetch(href)
             .then((res): Promise<string> => res.text());
@@ -363,6 +427,7 @@ class Exporting {
         return newSheet;
     }
 
+    /** @internal */
     private static async handleStyleSheet(
         sheet: CSSStyleSheet,
         resultArray: string[]
@@ -403,6 +468,7 @@ class Exporting {
         }
     }
 
+    /** @internal */
     private static async fetchStyleSheets(): Promise<string[]> {
         const cssTexts: string[] = [];
 
@@ -413,6 +479,7 @@ class Exporting {
         return cssTexts;
     }
 
+    /** @internal */
     public static async inlineFonts(svg: SVGSVGElement): Promise<SVGSVGElement> {
         const cssTexts = await Exporting.fetchStyleSheets(),
             urlRegex = /url\(([^)]+)\)/g,
@@ -663,34 +730,49 @@ class Exporting {
      *
      * */
 
+    /** @internal */
     public btnCount: number;
 
+    /** @internal */
     public buttonOffset: number;
 
+    /** @internal */
     public chart: Chart;
 
+    /** @internal */
     public contextMenuEl?: Exporting.DivElement;
 
+    /** @internal */
     public divElements: Array<(Exporting.DivElement | null)>;
 
+    /** @internal */
     public events?: Array<Function>;
 
+    /** @internal */
     public group?: SVGElement;
 
+    /** @internal */
     public isDirty?: boolean;
 
+    /** @internal */
     public isPrinting?: boolean;
 
+    /** @internal */
     public menuHeight?: number;
 
+    /** @internal */
     public menuWidth?: number;
 
+    /** @internal */
     public openMenu?: boolean;
 
+    /** @internal */
     public options: ExportingOptions = {};
 
+    /** @internal */
     public printReverseInfo?: Exporting.PrintReverseInfoObject;
 
+    /** @internal */
     public svgElements: Array<(SVGElement | undefined)>;
 
     /* *
@@ -2491,18 +2573,42 @@ namespace Exporting {
      *
      * */
 
+    /**
+     * Gets fired after a chart is printed through the context menu item or the
+     * Chart.print method.
+     *
+     * @callback Highcharts.ExportingAfterPrintCallbackFunction
+     *
+     * @param {Highcharts.Chart} this
+     * The chart on which the event occurred.
+     * @param {global.Event} event
+     * The event that occurred.
+     */
     export interface AfterPrintCallbackFunction {
         (chart: Chart, event: Event): void;
     }
 
+    /**
+     * Gets fired before a chart is printed through the context menu item or the
+     * Chart.print method.
+     *
+     * @callback Highcharts.ExportingBeforePrintCallbackFunction
+     *
+     * @param {Highcharts.Chart} this
+     * The chart on which the event occurred.
+     * @param {global.Event} event
+     * The event that occurred.
+     */
     export interface BeforePrintCallbackFunction {
         (chart: Chart, event: Event): void;
     }
 
+    /** @internal */
     export declare interface ChartAdditions {
         update(options: ExportingOptions, redraw?: boolean): void;
     }
 
+    /** @internal */
     export interface DivElement extends HTMLDOMElement {
         hideTimer?: number;
         hideMenu(): void;
@@ -2515,6 +2621,7 @@ namespace Exporting {
         ): Promise<void>
     }
 
+    /** @internal */
     export interface DownloadSVGEventArgs {
         svg: string;
         exportingOptions: ExportingOptions;
@@ -2523,6 +2630,17 @@ namespace Exporting {
         preventDefault?: Function;
     }
 
+    /**
+     * Function to call if the offline-exporting module fails to export a chart
+     * on the client side.
+     *
+     * @callback Highcharts.ExportingErrorCallbackFunction
+     *
+     * @param {Highcharts.ExportingOptions} options
+     * The exporting options.
+     * @param {global.Error} err
+     * The error from the module.
+     */
     export interface ErrorCallbackFunction {
         (options: ExportingOptions, err: Error): void;
     }
@@ -2531,6 +2649,7 @@ namespace Exporting {
         (this: T, eventArguments: (AnyRecord | Event)): (boolean | void | Promise<boolean | void>);
     }
 
+    /** @internal */
     export interface ImageOptions {
         type: string;
         filename: string;
@@ -2538,13 +2657,46 @@ namespace Exporting {
         libURL: string;
     }
 
+    /**
+     * Definition for a menu item in the context menu.
+     *
+     * @interface Highcharts.ExportingMenuObject
+     */
     export interface MenuObject {
+        /**
+         * The click handler for the menu item.
+         *
+         * @name Highcharts.ExportingMenuObject#onclick
+         * @type {Highcharts.EventCallbackFunction<Highcharts.Chart> | undefined}
+         */
         onclick?: ExportEventCallback<Chart>;
+
+        /**
+         * Indicates a separator line instead of an item.
+         *
+         * @name Highcharts.ExportingMenuObject#separator
+         * @type {boolean | undefined}
+         */
         separator?: boolean;
+
+        /**
+         * The text for the menu item.
+         *
+         * @name Highcharts.ExportingMenuObject#text
+         * @type {string | undefined}
+         */
         text?: string;
+
+        /**
+         * If internationalization is required, the key to a language string.
+         *
+         * @name Highcharts.ExportingMenuObject#textKey
+         * @type {string | undefined}
+         */
         textKey?: string;
     }
 
+    /** @internal */
     export interface PrintReverseInfoObject {
         childNodes: NodeListOf<ChildNode>;
         origDisplay: Array<(string | null)> ;

@@ -44,9 +44,78 @@ const {
 
 declare module '../../Core/Chart/ChartBase' {
     interface ChartBase {
-        /** @requires Extensions/Fullscreen */
+        /**
+         * @name Highcharts.Chart#fullscreen
+         * @type {Highcharts.Fullscreen}
+         * @requires modules/full-screen
+         */
         fullscreen?: Fullscreen;
     }
+}
+
+declare module '../../Core/Chart/ChartOptions' {
+    interface ChartEventsOptions {
+        /**
+         * Fires when a fullscreen is closed through the context menu item,
+         * or a fullscreen is closed on the `Escape` button click,
+         * or the `Chart.fullscreen.close` method.
+         *
+         * @sample highcharts/chart/events-fullscreen
+         *         Title size change on fullscreen open
+         *
+         * @type      {Highcharts.FullScreenfullscreenCloseCallbackFunction}
+         * @since     10.1.0
+         * @context   Highcharts.Chart
+         * @requires  modules/full-screen
+         * @apioption chart.events.fullscreenClose
+         */
+        fullscreenClose?: FullScreenfullscreenCloseCallbackFunction;
+
+        /**
+         * Fires when a fullscreen is opened through the context menu item,
+         * or the `Chart.fullscreen.open` method.
+         *
+         * @sample highcharts/chart/events-fullscreen
+         *         Title size change on fullscreen open
+         *
+         * @type      {Highcharts.FullScreenfullscreenOpenCallbackFunction}
+         * @since     10.1.0
+         * @context   Highcharts.Chart
+         * @requires  modules/full-screen
+         * @apioption chart.events.fullscreenOpen
+         */
+        fullscreenOpen?: FullScreenfullscreenOpenCallbackFunction;
+    }
+}
+
+/**
+ * Gets fired when closing the fullscreen.
+ *
+ * @callback Highcharts.FullScreenfullscreenCloseCallbackFunction
+ *
+ * @param {Highcharts.Chart} chart
+ *        The chart on which the event occurred.
+ *
+ * @param {global.Event} event
+ *        The event that occurred.
+ */
+export interface FullScreenfullscreenCloseCallbackFunction {
+    (chart: Chart, event: Event): void;
+}
+
+/**
+ * Gets fired when opening the fullscreen.
+ *
+ * @callback Highcharts.FullScreenfullscreenOpenCallbackFunction
+ *
+ * @param {Highcharts.Chart} chart
+ *        The chart on which the event occurred.
+ *
+ * @param {global.Event} event
+ *        The event that occurred.
+ */
+export interface FullScreenfullscreenOpenCallbackFunction {
+    (chart: Chart, event: Event): void;
 }
 
 /* *
@@ -81,6 +150,8 @@ function onChartBeforeRender(
  * @class
  * @name Highcharts.Fullscreen
  *
+ * @param {Highcharts.Chart} chart
+ *
  * @requires modules/exporting
  */
 class Fullscreen {
@@ -96,6 +167,7 @@ class Fullscreen {
      *
      * @param {typeof_Highcharts.Chart} ChartClass
      * The chart class to decorate with fullscreen support.
+     * @internal
      */
     public static compose(
         ChartClass: typeof Chart
@@ -174,8 +246,21 @@ class Fullscreen {
     /** @internal */
     public browserProps?: Fullscreen.BrowserProperties;
 
+    /**
+     * Chart managed by the fullscreen controller.
+     * @name Highcharts.Fullscreen#chart
+     * @type {Highcharts.Chart}
+     */
     public chart: Chart;
 
+    /**
+     * The flag is set to `true` when the chart is displayed in
+     * the fullscreen mode.
+     *
+     * @name Highcharts.Fullscreen#isOpen
+     * @type {boolean | undefined}
+     * @since 8.0.1
+     */
     public isOpen: boolean;
 
     /** @internal */
@@ -214,7 +299,7 @@ class Fullscreen {
             chart = fullscreen.chart,
             optionsChart = chart.options.chart;
 
-        fireEvent(chart, 'fullscreenClose', null as any, function (): void {
+        fireEvent(chart, 'fullscreenClose', void 0, function (): void {
 
             // Don't fire exitFullscreen() when user exited
             // using 'Escape' button.
@@ -269,7 +354,7 @@ class Fullscreen {
             chart = fullscreen.chart,
             optionsChart = chart.options.chart;
 
-        fireEvent(chart, 'fullscreenOpen', null as any, function (): void {
+        fireEvent(chart, 'fullscreenOpen', void 0, function (): void {
 
             if (optionsChart) {
                 fullscreen.origWidthOption = optionsChart.width;
@@ -321,7 +406,7 @@ class Fullscreen {
     }
 
     /**
-     * Replaces the exporting context button's text when toogling the
+     * Replaces the exporting context button's text when toggling the
      * fullscreen mode.
      *
      * @internal
@@ -342,10 +427,8 @@ class Fullscreen {
             lang = chart.options.lang;
 
         if (
-            exportingOptions &&
-            exportingOptions.menuItemDefinitions &&
-            lang &&
-            lang.exitFullscreen &&
+            exportingOptions?.menuItemDefinitions &&
+            lang?.exitFullscreen &&
             lang.viewFullscreen &&
             menuItems &&
             exportDivElements
@@ -359,7 +442,7 @@ class Fullscreen {
                     !this.isOpen ?
                         (
                             exportingOptions.menuItemDefinitions.viewFullscreen
-                                .text ||
+                                ?.textKey ||
                             lang.viewFullscreen
                         ) : lang.exitFullscreen
                 );
@@ -399,6 +482,7 @@ class Fullscreen {
  *
  * */
 
+/** @internal */
 namespace Fullscreen {
 
     /* *
@@ -445,7 +529,7 @@ export default Fullscreen;
  * */
 
 /**
- * Gets fired when closing the fullscreen
+ * Gets fired when closing the fullscreen.
  *
  * @callback Highcharts.FullScreenfullscreenCloseCallbackFunction
  *
@@ -457,7 +541,7 @@ export default Fullscreen;
  */
 
 /**
- * Gets fired when opening the fullscreen
+ * Gets fired when opening the fullscreen.
  *
  * @callback Highcharts.FullScreenfullscreenOpenCallbackFunction
  *

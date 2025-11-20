@@ -23,6 +23,7 @@
  * */
 
 import type Axis from '../../Core/Axis/Axis';
+import type EventCallback from '../../Core/EventCallback';
 import type Exporting from '../Exporting/Exporting';
 import type HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
@@ -67,6 +68,7 @@ const {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Chart/ChartBase'{
     interface ChartBase {
         /**
@@ -135,6 +137,7 @@ declare module '../../Core/Chart/ChartBase'{
     }
 }
 
+/** @internal */
 declare module '../../Core/Series/SeriesBase' {
     interface SeriesBase {
         exportKey?: string;
@@ -144,42 +147,207 @@ declare module '../../Core/Series/SeriesBase' {
 
 declare module '../../Extensions/Exporting/ExportingBase' {
     interface ExportingBase {
-        ascendingOrderInTable?: boolean
+        /** @internal */
+        ascendingOrderInTable?: boolean;
+
+        /** @internal */
         dataTableDiv?: HTMLDivElement;
+
+        /** @internal */
         isDataTableVisible?: boolean;
-        /** @requires modules/export-data */
+
+        /**
+         * Generates a data URL of CSV for local download in the browser. This
+         * is the default action for a click on the 'Download CSV' button.
+         *
+         * See {@link Highcharts.Exporting#getCSV} to get the CSV data itself.
+         *
+         * @function Highcharts.Exporting#downloadCSV
+         *
+         * @requires modules/exporting
+         * @requires modules/export-data
+         */
         downloadCSV(): void;
-        /** @requires modules/export-data */
+
+        /**
+         * Generates a data URL of an XLS document for local download in the
+         * browser. This is the default action for a click on the 'Download XLS'
+         * button.
+         *
+         * See {@link Highcharts.Exporting#getTable} to get the table data
+         * itself.
+         *
+         * @function Highcharts.Exporting#downloadXLS
+         *
+         * @requires modules/exporting
+         * @requires modules/export-data
+         */
         downloadXLS(): void;
-        /** @requires modules/export-data */
+
+        /**
+         * Returns the current chart data as a CSV string.
+         *
+         * @function Highcharts.Exporting#getCSV
+         *
+         * @param {boolean} [useLocalDecimalPoint]
+         * Whether to use the local decimal point as detected from the browser.
+         * This makes it easier to export data to Excel in the same locale as
+         * the user is.
+         *
+         * @return {string}
+         * CSV representation of the data.
+         *
+         * @requires modules/exporting
+         * @requires modules/export-data
+         */
         getCSV(
             useLocalDecimalPoint?: boolean
         ): string;
-        /** @requires modules/export-data */
+
+        /**
+         * Returns a two-dimensional array containing the current chart data.
+         *
+         * @function Highcharts.Exporting#getDataRows
+         *
+         * @param {boolean} [multiLevelHeaders]
+         * Use multilevel headers for the rows by default. Adds an extra row
+         * with top level headers. If a custom columnHeaderFormatter is defined,
+         * this can override the behavior.
+         *
+         * @return {Array<Array<(number | string)>>}
+         * The current chart data
+         *
+         * @emits Highcharts.Chart#event:exportData
+         *
+         * @requires modules/exporting
+         * @requires modules/export-data
+         */
         getDataRows(
             multiLevelHeaders?: boolean
         ): Array<Array<(number | string)>>;
-        /** @requires modules/export-data */
+
+        /**
+         * Build a HTML table with the chart's current data.
+         *
+         * @sample highcharts/export-data/viewdata/
+         * View the data from the export menu
+         *
+         * @function Highcharts.Exporting#getTable
+         *
+         * @param {boolean} [useLocalDecimalPoint]
+         * Whether to use the local decimal point as detected from the browser.
+         * This makes it easier to export data to Excel in the same locale as
+         * the user is.
+         *
+         * @return {string}
+         * HTML representation of the data.
+         *
+         * @emits Highcharts.Chart#event:afterGetTable
+         *
+         * @requires modules/exporting
+         * @requires modules/export-data
+         */
         getTable(
             useLocalDecimalPoint?: boolean
         ): string;
-        /** @requires modules/export-data */
+
+        /**
+         * @internal
+         * @requires modules/exporting
+         * @requires modules/export-data
+         */
         getTableAST(
             useLocalDecimalPoint?: boolean
         ): AST.Node;
-        /** @requires modules/export-data */
+
+        /**
+         * Hide the data table when visible.
+         *
+         * @function Highcharts.Exporting#hideData
+         *
+         * @requires modules/exporting
+         * @requires modules/export-data
+         */
         hideData(): void;
-        /** @requires modules/export-data */
+
+        /**
+         * @internal
+         * @requires modules/exporting
+         * @requires modules/export-data
+         */
         toggleDataTable(
             show?: boolean
         ): void;
-        /** @requires modules/export-data */
+
+        /**
+         * View the data in a table below the chart.
+         *
+         * @function Highcharts.Exporting#viewData
+         *
+         * @emits Highcharts.Chart#event:afterViewData
+         *
+         * @requires modules/exporting
+         * @requires modules/export-data
+         */
         viewData(): void;
-        /** @requires modules/export-data */
+
+        /**
+         * @internal
+         * @requires modules/exporting
+         * @requires modules/export-data
+         */
         wrapLoading(
             fn: Function
         ): void
     }
+}
+
+declare module '../../Core/Chart/ChartOptions' {
+    interface ChartEventsOptions {
+        /**
+         * Callback that fires while exporting data. This allows the
+         * modification of data rows before processed into the final format.
+         *
+         * @type      {Highcharts.ExportDataCallbackFunction}
+         * @context   Highcharts.Chart
+         * @requires  modules/exporting
+         * @requires  modules/export-data
+         * @apioption chart.events.exportData
+         */
+        exportData?: ExportDataCallbackFunction;
+    }
+}
+
+/**
+ * Function callback to execute while data rows are processed for exporting.
+ * This allows the modification of data rows before processed into the final
+ * format.
+ *
+ * @callback Highcharts.ExportDataCallbackFunction
+ * @extends Highcharts.EventCallbackFunction<Highcharts.Chart>
+ *
+ * @param {Highcharts.Chart} this
+ * Chart context where the event occurred.
+ *
+ * @param {Highcharts.ExportDataEventObject} event
+ * Event object with data rows that can be modified.
+ */
+export interface ExportDataCallbackFunction extends EventCallback<Chart> {
+    (event: ExportDataEventObject): void;
+}
+
+/**
+ * Contains information about the export data event.
+ *
+ * @interface Highcharts.ExportDataEventObject
+ */
+export interface ExportDataEventObject {
+    /**
+     * Contains the data rows for the current export task and can be modified.
+     * @name Highcharts.ExportDataEventObject#dataRows
+     * @type {Array<Array<string>>}
+     */
+    dataRows: Array<Array<string>>;
 }
 
 /* *
@@ -188,6 +356,7 @@ declare module '../../Extensions/Exporting/ExportingBase' {
  *
  * */
 
+/** @internal */
 namespace ExportData {
 
     /* *
@@ -926,7 +1095,7 @@ namespace ExportData {
         }
         dataRows = dataRows.concat(rowArr);
 
-        fireEvent(chart, 'exportData', { dataRows: dataRows });
+        fireEvent(chart, 'exportData', { dataRows } as ExportDataEventObject);
 
         return dataRows;
     }
@@ -1365,7 +1534,7 @@ namespace ExportData {
 
     /**
      * Wrapper function for the download functions, which handles showing and
-     * hiding the loading message
+     * hiding the loading message.
      *
      * @internal
      *
@@ -1517,6 +1686,7 @@ namespace ExportData {
  *
  * */
 
+/** @internal */
 export default ExportData;
 
 /* *

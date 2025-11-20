@@ -28,6 +28,7 @@ import type Symbols from '../../Core/Renderer/SVG/Symbols';
  *
  * */
 
+/** @internal */
 declare module '../../Core/Renderer/SVG/SymbolType' {
     interface SymbolTypeRegistry {
         /** @requires Extensions/Exporting */
@@ -43,6 +44,7 @@ declare module '../../Core/Renderer/SVG/SymbolType' {
  *
  * */
 
+/** @internal */
 namespace ExportingSymbols {
 
     /* *
@@ -128,4 +130,5 @@ namespace ExportingSymbols {
  *
  * */
 
+/** @internal */
 export default ExportingSymbols;
