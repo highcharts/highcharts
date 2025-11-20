@@ -178,6 +178,8 @@ abstract class Popup {
             return;
         }
 
+        fireEvent(this, 'beforeHide');
+
         this.grid.popups.delete(this);
 
         this.isVisible = false;
