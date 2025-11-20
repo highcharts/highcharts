@@ -278,7 +278,8 @@ class ColumnFiltering {
         }
 
         // Update the userOptions.
-        void this.column.update({ filtering: condition }, false);
+        (viewport.grid.columnOptionsMap[columnId].options.filtering ??= {})
+            .condition = condition.condition;
         filteringController.addColumnFilterCondition(columnId, condition);
         this.disableInputIfNeeded();
 
