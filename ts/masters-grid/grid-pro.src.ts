@@ -149,7 +149,6 @@ const G = Globals as unknown as GridNamespace;
 
 G.AST = AST;
 G.classNamePrefix = 'hcg-';
-G.version = Globals.version;
 G.DataConnector = DataConnector;
 G.DataCursor = DataCursor;
 G.DataConverter = DataConverter;
