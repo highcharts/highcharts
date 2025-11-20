@@ -143,7 +143,8 @@ class CellEditToolbar extends EditToolbar {
                 icon: iconURLPrefix + 'fullscreen.svg',
                 events: {
                     click: function (this: MenuItem): void {
-                        const fullScreen = this.menu.parent.editMode.board.fullscreen;
+                        const fullScreen =
+                            this.menu.parent.editMode.board.fullscreen;
                         const container =
                             this.menu.parent.cell.container.firstElementChild;
 
@@ -152,7 +153,7 @@ class CellEditToolbar extends EditToolbar {
                         }
                     }
                 }
-            })
+            });
         }
 
 

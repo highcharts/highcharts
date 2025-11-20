@@ -88,6 +88,9 @@ class EditMode {
                 dragDrop: {
                     enabled: true
                 },
+                viewFullscreen: {
+                    enabled: true
+                },
                 enabled: true,
                 resize: {
                     enabled: true
