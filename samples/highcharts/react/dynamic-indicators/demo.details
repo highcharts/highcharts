@@ -1,0 +1,8 @@
+---
+name: Dynamic React indicators
+authors:
+  - Highcharts Team
+js_wrap: b
+alt_text: >-
+  Highcharts React sample showing how to add indicator series on top of a candlestick chart at runtime.
+...

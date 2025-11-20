@@ -104,7 +104,19 @@ class SparklineContent extends CellContentPro {
         };
 
 
+    /**
+     * The Highcharts chart instance.
+     */
     public chart?: HighchartsNamespace.Chart;
+
+    /**
+     * The parent element for the sparkline content.
+     */
+    private parentElement: HTMLElement;
+
+    /**
+     * The HTML container element for the chart.
+     */
     private chartContainer?: HTMLDivElement;
 
 
@@ -120,7 +132,8 @@ class SparklineContent extends CellContentPro {
         parentElement?: HTMLElement
     ) {
         super(cell, renderer);
-        this.add(parentElement);
+        this.parentElement = parentElement ?? this.cell.htmlElement;
+        this.add(this.parentElement);
     }
 
 
@@ -138,9 +151,11 @@ class SparklineContent extends CellContentPro {
             return;
         }
 
+        this.parentElement = parentElement;
+
         this.chartContainer = document.createElement('div');
-        parentElement.classList.add(Globals.getClassName('noPadding'));
-        parentElement.appendChild(this.chartContainer);
+        this.parentElement.classList.add(Globals.getClassName('noPadding'));
+        this.parentElement.appendChild(this.chartContainer);
 
         this.chart = H.Chart.chart(this.chartContainer, merge(
             SparklineContent.defaultChartOptions,
@@ -151,13 +166,18 @@ class SparklineContent extends CellContentPro {
     }
 
     public override update(): void {
-        const chartOptions = this.getProcessedOptions();
-        this.chart?.update(
-            chartOptions,
-            true,
-            false,
-            chartOptions.chart?.animation
-        );
+        if (this.chart) {
+            const chartOptions = this.getProcessedOptions();
+            this.chart.update(
+                chartOptions,
+                true,
+                false,
+                chartOptions.chart?.animation
+            );
+        } else {
+            this.destroy();
+            this.add(this.parentElement);
+        }
     }
 
     public override destroy(): void {
@@ -169,7 +189,7 @@ class SparklineContent extends CellContentPro {
         delete this.chart;
         delete this.chartContainer;
 
-        this.cell.htmlElement.classList.remove(
+        this.parentElement.classList.remove(
             Globals.getClassName('noPadding')
         );
     }

@@ -154,7 +154,12 @@
             "timeRangeMinutes": "Plage de données : {range} minutes.",
             "timeRangeSeconds": "Plage de données : {range} secondes.",
             "rangeFromTo": "Les données vont de {rangeFrom} à {rangeTo}.",
-            "rangeCategories": "Plage de données : {numCategories} catégories."
+            "rangeCategories": "Plage de données : {numCategories} catégories.",
+            "defaultAxisNames": {
+                "categories": "catégories",
+                "time": "temps",
+                "values": "valeurs"
+            }
         },
         "exporting": {
             "chartMenuLabel": "Menu du graphique",

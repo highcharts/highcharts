@@ -1149,7 +1149,8 @@ class Series {
             dataSorting = options.dataSorting,
             oldData = this.points,
             pointsToAdd = [] as Array<(PointOptions|PointShortOptions)>,
-            equalLength = data.length === oldData.length;
+            equalLength = data.length === oldData.length,
+            oldXIncrement = this.xIncrement;
         let hasUpdatedByKey,
             i,
             point,
@@ -1273,6 +1274,7 @@ class Series {
 
         const xData = this.getColumn('x');
         if (
+            oldXIncrement !== null &&
             this.xIncrement === null &&
             xData.length
         ) {
