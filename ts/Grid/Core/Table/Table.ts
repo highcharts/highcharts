@@ -153,6 +153,19 @@ class Table {
      */
     public virtualRows: boolean;
 
+    /**
+     * Whether the rows have been changed since the last render and they should
+     * be re-rendered.
+     * @internal
+     */
+    public isDirty?: boolean;
+
+    /**
+     * Whether the table needs to be reflowed to fit the new content dimensions.
+     * @internal
+     */
+    public needsReflow?: boolean;
+
 
     /* *
     *
@@ -373,12 +386,17 @@ class Table {
                 });
             }
         }
+
+        delete this.isDirty;
     }
 
     /**
      * Reflows the table's content dimensions.
      */
     public reflow(): void {
+        // TODO: More `needsReflow` logic can be added in the future to avoid
+        // unnecessary reflows of the table parts.
+
         this.columnResizing.reflow();
 
         // Reflow the head
@@ -394,6 +412,8 @@ class Table {
         this.grid.popups.forEach((popup): void => {
             popup.reflow();
         });
+
+        delete this.needsReflow;
     }
 
     /**
