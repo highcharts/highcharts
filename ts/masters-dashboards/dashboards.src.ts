@@ -116,7 +116,6 @@ G.error = Utilities.error;
 G.merge = Utilities.merge;
 G.removeEvent = Utilities.removeEvent;
 G.uniqueKey = Utilities.uniqueKey;
-G.version = Globals.version;
 G.AST = AST;
 G.Board = Board;
 G.Component = Component;
