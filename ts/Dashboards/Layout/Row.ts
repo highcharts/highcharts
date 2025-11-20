@@ -447,7 +447,7 @@ namespace Row {
              **/
             toolbarItems?: {
                 /**
-                 * Options for the `drag` toolbar item.
+                 * Options for the `destroy` toolbar item.
                  */
                 destroy: {
                     enabled?: boolean;
