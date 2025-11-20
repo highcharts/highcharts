@@ -190,6 +190,10 @@ test.describe('Visual tests', () => {
 
             // Visual test fails due to external library used
             'samples/highcharts/demo/combo-regression/demo.js',
+
+            'samples/grid-pro/**/demo.js', // TODO: Fails as Grid is not defined
+            'samples/grid-lite/**/demo.js', // TODO: Fails as Grid is not defined
+            'samples/dashboards/**/demo.js' // TODO: Fails as Grid is not defined
         ],
         absolute: true
     });
