@@ -201,7 +201,7 @@ describe('JSON serialization - gui enabled', () => {
         cy.toggleEditMode();
         cy.get('.highcharts-dashboards-component').first().click();
         cy.get('.highcharts-dashboards-edit-toolbar-cell').children()
-            .last()
+            .eq(2)
             .click();
 
         cy.get('button').contains('Confirm').click();
