@@ -15,8 +15,8 @@ test.describe('unit-tests/chart/renderto equivalent', () => {
         await setupRoutes(page); // need to setup routes separately
     });
 
-    test.afterAll(async ({ browser }) => {
-        await browser.close();
+    test.afterAll(async () => {
+        await page.close();
     });
 
     test.beforeEach(async () => {

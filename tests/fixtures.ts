@@ -343,6 +343,106 @@ export async function setupRoutes(page: Page){
                 }
             },
             {
+                pattern: '**/grid-lite.css',
+                handler: async (route) => {
+                    const url = route.request().url();
+                    const localPath = 'css/grid/grid-lite.css';
+
+                    try {
+                        const body = await readFile(join(__dirname, '..', localPath));
+
+                        test.info().annotations.push({
+                            type: 'redirect',
+                            description: `${url} --> ${localPath}`
+                        });
+
+                        await route.fulfill({
+                            status: 200,
+                            body,
+                            contentType: contentTypes['.css']
+                        });
+                    } catch {
+                        await route.abort();
+                        throw new Error(`Missing local file for ${localPath}`);
+                    }
+                }
+            },
+            {
+                pattern: '**/grid-lite.js',
+                handler: async (route) => {
+                    const url = route.request().url();
+                    const localPath = 'code/grid/grid-lite.src.js';
+
+                    try {
+                        const body = await readFile(join(__dirname, '..', localPath));
+
+                        test.info().annotations.push({
+                            type: 'redirect',
+                            description: `${url} --> ${localPath}`
+                        });
+
+                        await route.fulfill({
+                            status: 200,
+                            body,
+                            contentType: contentTypes['.js']
+                        });
+                    } catch {
+                        await route.abort();
+                        throw new Error(`Missing local file for ${localPath}`);
+                    }
+                }
+            },
+            {
+                pattern: '**/grid-pro.css',
+                handler: async (route) => {
+                    const url = route.request().url();
+                    const localPath = 'css/grid/grid-pro.css';
+
+                    try {
+                        const body = await readFile(join(__dirname, '..', localPath));
+
+                        test.info().annotations.push({
+                            type: 'redirect',
+                            description: `${url} --> ${localPath}`
+                        });
+
+                        await route.fulfill({
+                            status: 200,
+                            body,
+                            contentType: contentTypes['.css']
+                        });
+                    } catch {
+                        await route.abort();
+                        throw new Error(`Missing local file for ${localPath}`);
+                    }
+                }
+            },
+            {
+                pattern: '**/grid-pro.js',
+                handler: async (route) => {
+                    const url = route.request().url();
+                    const localPath = 'code/grid/grid-pro.src.js';
+
+                    try {
+                        const body = await readFile(join(__dirname, '..', localPath));
+
+                        test.info().annotations.push({
+                            type: 'redirect',
+                            description: `${url} --> ${localPath}`
+                        });
+
+                        await route.fulfill({
+                            status: 200,
+                            body,
+                            contentType: contentTypes['.js']
+                        });
+                    } catch {
+                        await route.abort();
+                        throw new Error(`Missing local file for ${localPath}`);
+                    }
+                }
+            },
+            {
                 pattern: '**/**/mapdata/**',
                 handler: replaceMapData
             },
