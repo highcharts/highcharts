@@ -191,7 +191,7 @@
                 return element.offsetWidth;
             };
 
-            if (element.tagName === 'SPAN') {
+            if (element.tagName === 'DIV' || element.tagName === 'SPAN') {
                 const currentTextTransform = [
                         rotation,
                         textAlign,
@@ -354,7 +354,7 @@
     }
 
     SVGRenderer.prototype.html = function (str, x, y) {
-        return new HTMLElementLegacy(this, 'span')
+        return new HTMLElementLegacy(this, 'div')
             .attr({
                 text: str,
                 x: Math.round(x || 0),

@@ -95,7 +95,6 @@ class HTMLElement extends SVGElement {
      *
      * */
 
-    public div?: HTMLDOMElement;
     public foreignObject: SVGElement;
     public parentGroup?: SVGElement;
     public xCorr?: number;
