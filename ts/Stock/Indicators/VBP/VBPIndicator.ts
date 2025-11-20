@@ -75,9 +75,7 @@ const abs = Math.abs;
  * */
 
 // Utils
-/**
- * @private
- */
+/** @internal */
 function arrayExtremesOHLC(
     data: Array<Array<number>>
 ): Record<string, number> {
@@ -114,7 +112,7 @@ function arrayExtremesOHLC(
 /**
  * The Volume By Price (VBP) series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.vbp
  *

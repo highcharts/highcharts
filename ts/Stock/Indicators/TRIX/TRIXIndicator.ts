@@ -35,7 +35,7 @@ const {
 /**
  * The TRIX series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.trix
  *

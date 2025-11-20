@@ -42,7 +42,7 @@ const {
 /**
  * The Aroon Oscillator series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.aroonoscillator
  *

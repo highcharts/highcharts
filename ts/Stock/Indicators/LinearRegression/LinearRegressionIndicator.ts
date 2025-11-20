@@ -45,7 +45,7 @@ const {
 /**
  * Linear regression series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.linearregression
  *
@@ -151,7 +151,7 @@ class LinearRegressionIndicator extends SMAIndicator {
     /**
      * Return the slope and intercept of a straight line function.
      *
-     * @private
+     * @internal
      *
      * @param {Array<number>} xData
      * List of all x coordinates in a period.
@@ -215,7 +215,7 @@ class LinearRegressionIndicator extends SMAIndicator {
     /**
      * Return the y value on a straight line.
      *
-     * @private
+     * @internal
      *
      * @param {Highcharts.RegressionLineParametersObject} lineParameters
      * Object that contains the slope and the intercept of a straight line
@@ -238,7 +238,7 @@ class LinearRegressionIndicator extends SMAIndicator {
      * Transform the coordinate system so that x values start at 0 and
      * apply xAxisUnit.
      *
-     * @private
+     * @internal
      *
      * @param {Array<number>} xData
      * List of all x coordinates in a period
@@ -262,7 +262,7 @@ class LinearRegressionIndicator extends SMAIndicator {
 
     /**
      * Find the closest distance between points in the base series.
-     * @private
+     * @internal
      * @param {Array<number>} xData list of all x coordinates in the base series
      * @return {number} - closest distance between points in the base series
      */

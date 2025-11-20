@@ -43,7 +43,7 @@ const {
 /**
  * The Stochastic series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.stochastic
  *

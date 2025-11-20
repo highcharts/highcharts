@@ -41,7 +41,7 @@ const {
 /**
  * The TEMA series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.tema
  *

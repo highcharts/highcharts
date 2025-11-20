@@ -43,7 +43,7 @@ const {
 /**
  * The Keltner Channels series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.keltnerchannels
  *

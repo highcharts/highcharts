@@ -43,7 +43,7 @@ const {
 /**
  * The EMA series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.ema
  *

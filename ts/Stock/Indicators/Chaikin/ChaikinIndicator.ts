@@ -44,7 +44,7 @@ const {
 /**
  * The Chaikin series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.chaikin
  *

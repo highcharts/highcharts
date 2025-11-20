@@ -46,7 +46,7 @@ const {
 /**
  * The Volume Weighted Average Price (VWAP) series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.vwap
  *
@@ -154,7 +154,7 @@ class VWAPIndicator extends SMAIndicator {
      * Main algorithm used to calculate Volume Weighted Average Price (VWAP)
      * values
      *
-     * @private
+     * @internal
      *
      * @param {boolean} isOHLC
      * Says if data has OHLC format

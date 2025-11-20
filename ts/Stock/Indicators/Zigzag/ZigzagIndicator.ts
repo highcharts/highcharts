@@ -42,7 +42,7 @@ const {
 /**
  * The Zig Zag series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.zigzag
  *

@@ -47,7 +47,7 @@ const {
 /**
  * The Klinger oscillator series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.klinger
  *
