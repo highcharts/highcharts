@@ -1892,8 +1892,10 @@ let success = 0,
                 text: 'Testing supertrend'
             },
             series: [{
-                type: 'supertrend',
                 data: [1, 3, 2, 4]
+            }, {
+                type: 'supertrend',
+                linkedTo: ':previous'
             }]
         });
         success++;

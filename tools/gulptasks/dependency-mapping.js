@@ -228,6 +228,21 @@ code {
                 ]`;
         }
 
+        // Allow the whole series structure to be overridden in some cases
+        let series = `[{
+                type: '${seriesType.replace('series.', '')}',
+                data: ${data}
+            }]`;
+
+        if (seriesType === 'supertrend') {
+            series = `[{
+                data: [1, 3, 2, 4]
+            }, {
+                type: '${seriesType}',
+                linkedTo: ':previous'
+            }]`;
+        }
+
         js += `
 // ${seriesType} test
 (async () => {
@@ -243,10 +258,7 @@ code {
             title: {
                 text: 'Testing ${seriesType}'
             },${options3d}
-            series: [{
-                type: '${seriesType.replace('series.', '')}',
-                data: ${data}
-            }]
+            series: ${series}
         });
         success++;
         document.getElementById('success').innerText = success;
