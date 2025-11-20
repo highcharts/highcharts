@@ -172,6 +172,15 @@ class HeaderCellToolbar implements Toolbar {
     }
 
     /**
+     * Refreshes the state of the toolbar buttons.
+     */
+    public refreshState(): void {
+        for (const button of this.buttons) {
+            button.refreshState();
+        }
+    }
+
+    /**
      * Destroys all buttons of the toolbar.
      */
     public clearButtons(): void {

@@ -153,19 +153,6 @@ class Table {
      */
     public virtualRows: boolean;
 
-    /**
-     * Whether the rows have been changed since the last render and they should
-     * be re-rendered.
-     * @internal
-     */
-    public isDirty?: boolean;
-
-    /**
-     * Whether the table needs to be reflowed to fit the new content dimensions.
-     * @internal
-     */
-    public needsReflow?: boolean;
-
 
     /* *
     *
@@ -387,7 +374,7 @@ class Table {
             }
         }
 
-        delete this.isDirty;
+        vp.grid.dirtyFlags.delete('rows');
     }
 
     /**
@@ -413,7 +400,7 @@ class Table {
             popup.reflow();
         });
 
-        delete this.needsReflow;
+        this.grid.dirtyFlags.delete('reflow');
     }
 
     /**

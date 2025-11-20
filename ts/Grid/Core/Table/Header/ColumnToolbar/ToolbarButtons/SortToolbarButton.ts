@@ -77,7 +77,7 @@ class SortToolbarButton extends ToolbarButton {
         this.toolbar?.column.sorting?.toggle();
     }
 
-    protected override refreshState(): void {
+    public override refreshState(): void {
         const column = this.toolbar?.column;
         if (!column) {
             return;
