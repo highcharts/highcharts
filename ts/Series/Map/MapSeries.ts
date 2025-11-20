@@ -675,8 +675,8 @@ class MapSeries extends ScatterSeries {
             attr.fill = this.options.nullColor;
         }
 
-        // Set opacity: if point is null and nullInteraction is true,
-        // force opacity 1. Otherwise use point/series opacity or default 1
+        // Set opacity: if point is null and nullInteraction is true, force
+        // opacity 1. Otherwise use point/series opacity or default 1 (#23019)
         if (point.isNull && this.options.nullInteraction) {
             attr.opacity = 1;
         }
