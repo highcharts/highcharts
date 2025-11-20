@@ -73,7 +73,10 @@ export default defineConfig({
                     ]
                 }
             },
-            dependencies: ['setup-highcharts'],
+            dependencies: [
+                'setup-dashboards',
+                'setup-highcharts'
+            ],
         },
         {
             name: 'qunit-firefox',
