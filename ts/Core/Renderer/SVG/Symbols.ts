@@ -688,3 +688,60 @@ const Symbols: SymbolTypeRegistry = {
  * */
 
 export default Symbols;
+
+/* *
+ *
+ *  API Declarations
+ *
+ * */
+
+/**
+ * @interface Highcharts.SymbolOptions
+ *//**
+ * @name anchorX
+ * @type {number|undefined}
+ *//**
+ * @name anchorY
+ * @type {number|undefined}
+ *//**
+ * @name backgroundSize
+ * @type {"contain"|"cover"|"within"}
+ *//**
+ * @name clockwise
+ * @type {0|1|undefined}
+ *//**
+ * @name context
+ * @type {string|undefined}
+ *//**
+ * @name end
+ * @type {number|undefined}
+ *//**
+ * @name height
+ * @type {number|undefined}
+ *//**
+ * @name innerR
+ * @type {number|undefined}
+ *//**
+ * @name longArc
+ * @type {0|1|undefined}
+ *//**
+ * @name open
+ * @type {boolean|undefined}
+ *//**
+ * @name r
+ * @type {number|undefined}
+ *//**
+ * @name start
+ * @type {number|undefined}
+ *//**
+ * @name width
+ * @type {number|undefined}
+ *//**
+ * @name x
+ * @type {number|undefined}
+ *//**
+ * @name y
+ * @type {number|undefined}
+ */
+
+''; // Keeps doclets above in file

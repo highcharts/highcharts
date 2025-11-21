@@ -18,7 +18,6 @@ export interface ChartBase {
     // Nothing here yet
 }
 
-
 /* *
  *
  *  Default Export

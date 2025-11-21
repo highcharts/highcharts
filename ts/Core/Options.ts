@@ -14,6 +14,7 @@
  *
  * */
 
+import type ButtonThemeObject from './Renderer/SVG/ButtonThemeObject';
 import type Chart from './Chart/Chart';
 import type ColorString from './Color/ColorString';
 import type CSSObject from './Renderer/CSSObject';
@@ -26,6 +27,46 @@ import type { LangOptionsCore } from '../Shared/LangOptionsCore';
  *  Declarations
  *
  * */
+
+/**
+ * Global options that don't apply to each chart. These options must be set
+ * using the `Highcharts.setOptions` method.
+ *
+ * ```js
+ * Highcharts.setOptions({
+ *     global: {
+ *         buttonTheme: {
+ *             fill: '#d0d0d0'
+ *         }
+ *     }
+ * });
+ * ```
+ */
+interface GlobalOptions {
+    /**
+     * General theme for buttons. This applies to the zoom button, exporting
+     * context menu, map navigation, range selector buttons and custom
+     * buttons generated using the `SVGRenderer.button` function. However,
+     * each of these may be overridden with more specific options.
+     *
+     * @sample highcharts/global/buttontheme
+     *         General button theme
+     * @since 11.4.2
+     */
+    buttonTheme: ButtonThemeObject;
+    /** @deprecated */
+    canvasToolsURL?: string;
+    /** @deprecated */
+    Date?: Function;
+    /** @deprecated */
+    getTimezoneOffset?: Function;
+    /** @deprecated */
+    timezone?: string;
+    /** @deprecated */
+    timezoneOffset?: number;
+    /** @deprecated */
+    useUTC?: boolean;
+}
 
 /**
  * An object containing language-related strings and settings. A typical

@@ -16,7 +16,6 @@
  *
  * */
 
-import type ButtonThemeObject from './Renderer/SVG/ButtonThemeObject';
 import type { HTMLDOMElement } from './Renderer/DOMElementType';
 import type GlobalsBase from './GlobalsBase';
 
@@ -146,46 +145,6 @@ declare global {
         webkitAudioContext?: typeof AudioContext;
         /** @deprecated */
         webkitURL?: typeof URL;
-    }
-
-    /**
-     * Global options that don't apply to each chart. These options must be set
-     * using the `Highcharts.setOptions` method.
-     *
-     * ```js
-     * Highcharts.setOptions({
-     *     global: {
-     *         buttonTheme: {
-     *             fill: '#d0d0d0'
-     *         }
-     *     }
-     * });
-     * ```
-     */
-    interface GlobalOptions {
-        /**
-         * General theme for buttons. This applies to the zoom button, exporting
-         * context menu, map navigation, range selector buttons and custom
-         * buttons generated using the `SVGRenderer.button` function. However,
-         * each of these may be overridden with more specific options.
-         *
-         * @sample highcharts/global/buttontheme
-         *         General button theme
-         * @since 11.4.2
-         */
-        buttonTheme: ButtonThemeObject;
-        /** @deprecated */
-        canvasToolsURL?: string;
-        /** @deprecated */
-        Date?: Function;
-        /** @deprecated */
-        getTimezoneOffset?: Function;
-        /** @deprecated */
-        timezone?: string;
-        /** @deprecated */
-        timezoneOffset?: number;
-        /** @deprecated */
-        useUTC?: boolean;
     }
 
     namespace Intl {

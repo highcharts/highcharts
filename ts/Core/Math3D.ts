@@ -31,12 +31,14 @@ const { pick } = U;
  *
  * */
 
+/** @internal */
 declare module './Chart/ChartBase'{
     interface ChartBase {
         scale3d?: number;
     }
 }
 
+/** @internal */
 interface Rotation3DObject {
     /**
      * Cosine of the alpha (roll) angle.
