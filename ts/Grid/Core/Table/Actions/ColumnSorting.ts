@@ -28,7 +28,9 @@ import Column from '../Column.js';
 import Globals from '../../Globals.js';
 import U from '../../../../Core/Utilities.js';
 
-const { fireEvent } = U;
+const {
+    fireEvent
+} = U;
 
 /* *
  *
@@ -141,11 +143,9 @@ class ColumnSorting {
         const order = col.viewport.grid.querying.sorting.currentSorting?.order;
 
         if (col.id === this.column.id && order) {
-            col.update({
-                sorting: {
-                    order
-                }
-            }, false);
+            ((this.column.viewport.grid.columnOptionsMap[
+                col.id
+            ]?.options ?? {}).sorting ??= {}).order = order;
         } else {
             delete col.options.sorting?.order;
             if (
