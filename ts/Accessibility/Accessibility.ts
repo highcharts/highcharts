@@ -478,6 +478,14 @@ namespace Accessibility {
             }
         } else if (a11y) {
             // Destroy if after update we have a11y and it is disabled
+
+            // Mark series dirty to cleanup a11y markers. Only if a11y was
+            // active to avoid unnecessary redraws
+            if (!a11y.zombie) {
+                this.series.forEach(function (series: Series): void {
+                    series.isDirty = true;
+                });
+            }
             if (a11y.destroy) {
                 a11y.destroy();
             }
