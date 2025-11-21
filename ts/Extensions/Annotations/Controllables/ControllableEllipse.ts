@@ -36,12 +36,14 @@ const {
  *
  * */
 
+/** @internal */
 interface EllipseShapeOptions extends ControllableShapeOptions {
     yAxis: number;
     xAxis: number;
     ry: number;
 }
 
+/** @internal */
 interface EllipseShapeSVGOptions {
     cx: number;
     cy: number;
@@ -50,6 +52,7 @@ interface EllipseShapeSVGOptions {
     angle: number;
 }
 
+/** @internal */
 interface ReferencePointsOptions {
     x: number;
     y: number;
@@ -64,9 +67,9 @@ interface ReferencePointsOptions {
 /**
  * A controllable ellipse class.
  *
+ * @internal
  * @requires modules/annotations
  *
- * @private
  * @class
  * @name Highcharts.AnnotationControllableEllipse
  *
@@ -121,9 +124,6 @@ class ControllableEllipse extends Controllable {
      *
      * */
 
-    /**
-     * @private
-     */
     public init(
         annotation: Annotation,
         options: EllipseShapeOptions,
@@ -149,8 +149,8 @@ class ControllableEllipse extends Controllable {
     }
 
     /**
-     * Render the element
-     * @private
+     * Render the element.
+     *
      * @param parent
      *        Parent SVG element.
      */
@@ -164,7 +164,6 @@ class ControllableEllipse extends Controllable {
 
     /**
      * Translate the points. Mostly used to handle dragging of the ellipse.
-     * @private
      */
     public translate(dx: number, dy: number): void {
         super.translateShape(dx, dy, true);
@@ -172,7 +171,7 @@ class ControllableEllipse extends Controllable {
 
     /**
      * Get the distance from the line to the point.
-     * @private
+     *
      * @param point1
      *        First point which is on the line
      * @param point2
@@ -200,7 +199,7 @@ class ControllableEllipse extends Controllable {
     /**
      * The function calculates the svg attributes of the ellipse, and returns
      * all parameters necessary to draw the ellipse.
-     * @private
+     *
      * @param position
      *        Absolute position of the first point in points array
      * @param position2
@@ -234,7 +233,6 @@ class ControllableEllipse extends Controllable {
 
     /**
      * Get the value of minor radius of the ellipse.
-     * @private
      */
     public getRY(): number {
         const yAxis = this.getYAxis();
@@ -245,7 +243,6 @@ class ControllableEllipse extends Controllable {
 
     /**
      * Get the yAxis object to which the ellipse is pinned.
-     * @private
      */
     public getYAxis(): AxisType {
         const yAxisIndex = (this.options as EllipseShapeOptions).yAxis;
@@ -253,8 +250,8 @@ class ControllableEllipse extends Controllable {
     }
 
     /**
-     * Get the absolute coordinates of the MockPoint
-     * @private
+     * Get the absolute coordinates of the MockPoint.
+     *
      * @param point
      *        MockPoint that is added through options
      */
@@ -265,8 +262,8 @@ class ControllableEllipse extends Controllable {
     }
 
     /**
-     * Redraw the element
-     * @private
+     * Redraw the element.
+     *
      * @param animation
      *        Display an animation
      */
@@ -302,7 +299,7 @@ class ControllableEllipse extends Controllable {
 
     /**
      * Set the radius Y.
-     * @private
+     *
      * @param {number} ry
      *        A radius in y direction to be set
      */
@@ -324,6 +321,7 @@ class ControllableEllipse extends Controllable {
  *
  * */
 
+/** @internal */
 interface ControllableEllipse {
     collection: 'shapes';
     itemType: 'shape'
@@ -336,6 +334,7 @@ interface ControllableEllipse {
  *
  * */
 
+/** @internal */
 declare module './ControllableType' {
     interface ControllableShapeTypeRegistry {
         ellipse: typeof ControllableEllipse;
@@ -348,4 +347,5 @@ declare module './ControllableType' {
  *
  * */
 
+/** @internal */
 export default ControllableEllipse;

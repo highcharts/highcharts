@@ -27,7 +27,7 @@ import type { LabelIntersectBoxObject } from './SeriesLabelOptions';
 /**
  * Counter-clockwise, part of the fast line intersection logic.
  *
- * @private
+ * @internal
  * @function ccw
  */
 function ccw(
@@ -46,7 +46,7 @@ function ccw(
 /**
  * Detect if two lines intersect.
  *
- * @private
+ * @internal
  * @function intersectLine
  */
 function intersectLine(
@@ -66,7 +66,7 @@ function intersectLine(
 /**
  * Detect if a box intersects with a line.
  *
- * @private
+ * @internal
  * @function boxIntersectLine
  */
 function boxIntersectLine(
@@ -87,9 +87,7 @@ function boxIntersectLine(
     );
 }
 
-/**
- * @private
- */
+/** @internal */
 function intersectRect(
     r1: LabelIntersectBoxObject,
     r2: LabelIntersectBoxObject

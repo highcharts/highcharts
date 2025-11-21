@@ -213,6 +213,7 @@ class VerticalLine extends Annotation {
  *
  * */
 
+/** @internal */
 interface VerticalLine {
     defaultOptions: Annotation['defaultOptions'];
     options: VerticalLine.Options;
@@ -225,6 +226,17 @@ interface VerticalLine {
  * */
 
 namespace VerticalLine {
+    /**
+     * Options for the vertical line annotation type.
+     *
+     * @sample highcharts/annotations-advanced/vertical-line/
+     *         Vertical line
+     *
+     * @extends      annotations.types.crookedLine
+     * @excluding    labels, shapes, controlPointOptions
+     * @product      highstock
+     * @optionparent annotations.types.verticalLine
+     */
     export interface Options extends AnnotationOptions {
         typeOptions: TypeOptions;
     }
@@ -232,8 +244,19 @@ namespace VerticalLine {
         offset: number;
     }
     export interface TypeOptions extends AnnotationTypeOptions {
+        /**
+         * Connector options.
+         *
+         * @excluding height, r, type, width
+         */
         connector: Partial<ControllableShapeOptions>;
+
+        /**
+         * Label options.
+         */
         label: TypeLabelOptions;
+
+        /** @internal */
         yOffset: number;
     }
 }
@@ -244,6 +267,7 @@ namespace VerticalLine {
  *
  * */
 
+/** @internal */
 declare module './AnnotationType'{
     interface AnnotationTypeRegistry {
         verticalLine: typeof VerticalLine;

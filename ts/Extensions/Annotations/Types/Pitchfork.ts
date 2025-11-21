@@ -74,6 +74,7 @@ if (defaultOptions.annotations) {
  *
  * */
 
+/** @internal */
 class Pitchfork extends InfinityLine {
 
     public static topLineEdgePoint = Pitchfork.outerLineEdgePoint(1);
@@ -253,6 +254,7 @@ class Pitchfork extends InfinityLine {
  *
  * */
 
+/** @internal */
 interface Pitchfork {
     defaultOptions: InfinityLine['defaultOptions'];
 }
@@ -264,11 +266,34 @@ interface Pitchfork {
  * */
 
 namespace Pitchfork {
+    /**
+     * Options for the pitchfork annotation type.
+     *
+     * @sample highcharts/annotations-advanced/pitchfork/
+     *         Pitchfork
+     *
+     * @extends      annotations.types.infinityLine
+     * @product      highstock
+     * @optionparent annotations.types.pitchfork
+     */
     export interface Options extends InfinityLine.Options {
         typeOptions: TypeOptions;
     }
     export interface TypeOptions extends InfinityLine.TypeOptions {
+        /**
+         * Inner background options.
+         *
+         * @extends   annotations.shapeOptions
+         * @excluding height, r, type, width
+         */
         innerBackground: ControllableShapeOptions;
+
+        /**
+         * Outer background options.
+         *
+         * @extends   annotations.shapeOptions
+         * @excluding height, r, type, width
+         */
         outerBackground: ControllableShapeOptions;
     }
 }
@@ -279,6 +304,7 @@ namespace Pitchfork {
  *
  * */
 
+/** @internal */
 declare module './AnnotationType'{
     interface AnnotationTypeRegistry {
         pitchfork: typeof Pitchfork;

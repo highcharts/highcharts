@@ -28,6 +28,7 @@ import type Symbols from '../../Core/Renderer/SVG/Symbols';
  *
  * */
 
+/** @internal */
 declare module '../../Core/Renderer/SVG/SymbolType' {
     interface SymbolTypeRegistry {
         /** @requires Extensions/Exporting */
@@ -43,6 +44,7 @@ declare module '../../Core/Renderer/SVG/SymbolType' {
  *
  * */
 
+/** @internal */
 namespace ExportingSymbols {
 
     /* *
@@ -62,7 +64,7 @@ namespace ExportingSymbols {
     /* eslint-disable valid-jsdoc */
 
     /**
-     * @private
+     * @internal
      */
     export function compose(
         SVGRendererClass: typeof SVGRenderer
@@ -78,7 +80,7 @@ namespace ExportingSymbols {
     }
 
     /**
-     * @private
+     * @internal
      */
     function menu(
         x: number,
@@ -99,7 +101,7 @@ namespace ExportingSymbols {
     }
 
     /**
-     * @private
+     * @internal
      */
     function menuball(
         this: typeof Symbols,
@@ -128,4 +130,5 @@ namespace ExportingSymbols {
  *
  * */
 
+/** @internal */
 export default ExportingSymbols;

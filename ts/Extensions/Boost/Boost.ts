@@ -44,6 +44,28 @@ const {
 
 /* *
  *
+ *  Declarations
+ *
+ * */
+
+declare module '../../Core/GlobalsBase.d.ts' {
+    interface GlobalsBase {
+        /**
+         * Returns true if the current browser supports WebGL.
+         *
+         * @requires modules/boost
+         *
+         * @function Highcharts.hasWebGLSupport
+         *
+         * @return {boolean}
+         * `true` if the browser supports WebGL.
+         */
+        hasWebGLSupport?: typeof hasWebGLSupport;
+    }
+}
+
+/* *
+ *
  *  Constants
  *
  * */
@@ -61,9 +83,7 @@ const contexts = [
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 function compose(
     ChartClass: typeof Chart,
     AxisClass: typeof Axis,
@@ -180,11 +200,13 @@ function hasWebGLSupport(): boolean {
  *
  * */
 
+/** @internal */
 const Boost = {
     compose,
     hasWebGLSupport
 };
 
+/** @internal */
 export default Boost;
 
 /* *
