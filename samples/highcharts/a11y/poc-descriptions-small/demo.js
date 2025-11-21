@@ -1084,7 +1084,7 @@ function generateCustomTable(chart, config) {
         // For screen reader: basic + visual toggle + table toggle + custom
         let srHtml;
         if (visual !== null) {
-            // default false (hidden)
+            // default falses (hidden)
             const showVisual = this.visualDescVisible === true;
             const chartId = this.renderTo?.id || 'chart';
             const toggleId = `visual-toggle-${chartId}`;
