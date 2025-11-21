@@ -79,7 +79,10 @@ const Pyramid3DSeriesDefaults: Pyramid3DSeriesOptions = {
  * @excluding allAreas,boostThreshold,colorAxis,compare,compareBase,dataSorting
  * @product   highcharts
  * @sample    {highcharts} highcharts/demo/pyramid3d/ Pyramid3d
- * @requires  modules/pyramid3d
+ * @requires     highcharts-3d
+ * @requires     modules/cylinder
+ * @requires     modules/funnel3d
+ * @requires     modules/pyramid3d
  * @apioption series.pyramid3d
  */
 
