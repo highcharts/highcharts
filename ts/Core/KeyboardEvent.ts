@@ -16,10 +16,24 @@
 
 import type Point from './Series/Point';
 
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+/** @internal */
 export interface KeyboardEvent extends globalThis.KeyboardEvent {
     chartX: number;
     chartY: number;
     point?: Point;
 }
 
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+/** @internal */
 export default KeyboardEvent;

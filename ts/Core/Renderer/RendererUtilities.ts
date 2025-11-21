@@ -30,6 +30,7 @@ const {
  *
  * */
 
+/** @internal */
 namespace RendererUtilities {
 
     /* *
@@ -261,4 +262,5 @@ namespace RendererUtilities {
  *
  * */
 
+/** @internal */
 export default RendererUtilities;

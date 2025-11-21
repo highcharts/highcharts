@@ -14,14 +14,17 @@
  *
  * */
 
-export interface FormatterCallback<TScope, TValue=undefined> {
-    (this: TScope, value: TValue): string;
+/**
+ * Helper interface for Tick.
+ */
+export interface TickBase {
+    // Add with `declare module` pattern
 }
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 
-export default FormatterCallback;
+export default TickBase;

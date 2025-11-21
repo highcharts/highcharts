@@ -14,17 +14,11 @@
  *
  * */
 
-export interface AxisBreakBorderObject {
-    move: string;
-    size?: number;
-    value: number;
-}
+export type DOMElementType = (HTMLDOMElement|SVGDOMElement);
 
-export interface AxisBreakObject {
-    from: number;
-    len: number;
-    to: number;
-}
+export type HTMLDOMElement = globalThis.HTMLElement;
+
+export type SVGDOMElement = globalThis.SVGElement;
 
 /* *
  *
@@ -32,4 +26,4 @@ export interface AxisBreakObject {
  *
  * */
 
-export default AxisBreakBorderObject;
+export default DOMElementType;

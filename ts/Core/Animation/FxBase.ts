@@ -17,6 +17,7 @@
 /**
  * Optional properties for the Fx class. Should be defined outside of this file
  * by `declare module` pattern.
+ * @internal
  */
 export interface FxBase {
     // Nothing here yet
@@ -28,4 +29,5 @@ export interface FxBase {
  *
  * */
 
+/** @internal */
 export default FxBase;

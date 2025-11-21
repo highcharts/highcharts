@@ -80,12 +80,12 @@ declare global {
 
     interface Element {
         /**
-         * @private
+         * @internal
          * @requires Core/Renderer/SVG/SVGElement
          */
         gradient?: string;
         /**
-         * @private
+         * @internal
          * @requires Core/Renderer/SVG/SVGElement
          */
         radialReference?: Array<number>;
@@ -113,12 +113,21 @@ declare global {
     }
 
     interface Math {
+        /**
+         * Easing definition
+         *
+         * @param pos
+         * Current position, ranging from 0 to 1.
+         *
+         * @return
+         * Ease result
+         */
         easeInOutSine(pos: number): number;
     }
 
     interface SVGElement {
         /**
-         * @private
+         * @internal
          * @requires Core/Renderer/SVG/SVGElement
          */
         cutHeight?: number;
@@ -139,7 +148,31 @@ declare global {
         webkitURL?: typeof URL;
     }
 
+    /**
+     * Global options that don't apply to each chart. These options must be set
+     * using the `Highcharts.setOptions` method.
+     *
+     * ```js
+     * Highcharts.setOptions({
+     *     global: {
+     *         buttonTheme: {
+     *             fill: '#d0d0d0'
+     *         }
+     *     }
+     * });
+     * ```
+     */
     interface GlobalOptions {
+        /**
+         * General theme for buttons. This applies to the zoom button, exporting
+         * context menu, map navigation, range selector buttons and custom
+         * buttons generated using the `SVGRenderer.button` function. However,
+         * each of these may be overridden with more specific options.
+         *
+         * @sample highcharts/global/buttontheme
+         *         General button theme
+         * @since 11.4.2
+         */
         buttonTheme: ButtonThemeObject;
         /** @deprecated */
         canvasToolsURL?: string;
@@ -175,7 +208,7 @@ declare global {
 
 /**
  * Shared Highcharts properties.
- * @private
+ * @internal
  */
 namespace Globals {
 
@@ -250,7 +283,7 @@ namespace Globals {
     /**
      * A shared registry between all bundles to keep track of applied
      * compositions.
-     * @private
+     * @internal
      */
     export const composed: Array<string> = [];
 
@@ -277,14 +310,14 @@ namespace Globals {
     export const dateFormats: GlobalsBase['dateFormats'] = {};
 
     /**
-     * @private
+     * @internal
      * @deprecated
      * @todo Use only `Core/Series/SeriesRegistry.seriesTypes`
      */
     export const seriesTypes = {} as GlobalsBase['seriesTypes'];
 
     /**
-     * @private
+     * @internal
      */
     export const symbolSizes: GlobalsBase['symbolSizes'] = {};
 

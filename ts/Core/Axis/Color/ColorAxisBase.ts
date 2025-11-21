@@ -35,15 +35,34 @@ const { merge } = U;
  * */
 
 interface ColorAxisBase extends AxisComposition {
+
+    /** @internal */
     chart: Chart;
+
+    /** @internal */
     dataClasses: Array<ColorAxisBase.DataClassOptions>;
+
+    /** @internal */
     index: number;
+
+    /** @internal */
     options: ColorAxisBase.Options;
+
+    /** @internal */
     stops: Array<GradientColorStop>;
+
+    /** @internal */
     initDataClasses(userOptions: Partial<ColorAxisBase.Options>): void;
+
+    /** @internal */
     initStops(): void;
+
+    /** @internal */
     normalizedValue(value: number): number;
+
+    /** @internal */
     toColor(value: number, point: Point): (ColorType|undefined);
+
 }
 
 /* *
@@ -84,7 +103,7 @@ namespace ColorAxisBase {
 
     /**
      * Initialize defined data classes.
-     * @private
+     * @internal
      */
     export function initDataClasses(
         this: ColorAxisBase,
@@ -140,7 +159,7 @@ namespace ColorAxisBase {
 
     /**
      * Create initial color stops.
-     * @private
+     * @internal
      */
     export function initStops(
         this: ColorAxisBase
@@ -159,7 +178,7 @@ namespace ColorAxisBase {
 
     /**
      * Normalize logarithmic values.
-     * @private
+     * @internal
      */
     export function normalizedValue(
         this: ColorAxisBase,
@@ -181,7 +200,7 @@ namespace ColorAxisBase {
 
     /**
      * Translate from a value to a color.
-     * @private
+     * @internal
      */
     export function toColor(
         this: ColorAxisBase,

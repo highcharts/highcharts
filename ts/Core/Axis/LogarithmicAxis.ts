@@ -31,12 +31,14 @@ const {
  *
  * */
 
+/** @internal */
 declare module './AxisComposition' {
     interface AxisComposition {
         logarithmic?: LogarithmicAxis.Additions;
     }
 }
 
+/** @internal */
 declare module './AxisType' {
     interface AxisTypeRegistry {
         LogarithmicAxis: LogarithmicAxis.Composition;
@@ -49,9 +51,7 @@ declare module './AxisType' {
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 namespace LogarithmicAxis {
 
     /* *
@@ -72,7 +72,7 @@ namespace LogarithmicAxis {
 
     /**
      * Provides logarithmic support for axes.
-     * @private
+     * @internal
      */
     export function compose<T extends typeof Axis>(
         AxisClass: T
@@ -89,7 +89,7 @@ namespace LogarithmicAxis {
     }
 
     /**
-     * @private
+     * @internal
      */
     function onAfterSetType(
         this: Axis
@@ -104,7 +104,7 @@ namespace LogarithmicAxis {
     }
 
     /**
-     * @private
+     * @internal
      */
     function onAfterInit(
         this: Axis
@@ -132,7 +132,7 @@ namespace LogarithmicAxis {
 
     /**
      * Provides logarithmic support for axes.
-     * @private
+     * @internal
      * @class
      */
     export class Additions {
@@ -153,7 +153,14 @@ namespace LogarithmicAxis {
         *
         * */
 
+        /**
+         * The axis instance.
+         */
         public axis: Composition;
+
+        /**
+         * The calculated minor tick interval.
+         */
         public minorAutoInterval?: number;
 
         /* *
@@ -278,10 +285,32 @@ namespace LogarithmicAxis {
             return positions;
         }
 
+        /**
+         * Converts a linear value to a logarithmic value.
+         *
+         * @internal
+         *
+         * @param {number} num
+         * The linear value.
+         *
+         * @return {number}
+         * The logarithmic value.
+         */
         public lin2log(num: number): number {
             return Math.pow(10, num);
         }
 
+        /**
+         * Converts a logarithmic value to a linear value.
+         *
+         * @internal
+         *
+         * @param {number} num
+         * The logarithmic value.
+         *
+         * @return {number}
+         * The linear value.
+         */
         public log2lin(num: number): number {
             return Math.log(num) / Math.LN10;
         }
@@ -295,4 +324,5 @@ namespace LogarithmicAxis {
  *
  * */
 
+/** @internal */
 export default LogarithmicAxis;

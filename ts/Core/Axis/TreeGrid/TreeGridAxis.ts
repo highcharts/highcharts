@@ -67,24 +67,28 @@ const {
  *
  * */
 
+/** @internal */
 declare module '../AxisComposition' {
     interface AxisComposition {
         treeGrid?: TreeGridAxisComposition['treeGrid'];
     }
 }
 
+/** @internal */
 declare module '../AxisBase' {
     interface AxisBase {
         utils: TreeGridAxisUtilsObject;
     }
 }
 
+/** @internal */
 declare module '../AxisType' {
     interface AxisTypeRegistry {
         TreeGridAxis: TreeGridAxisComposition;
     }
 }
 
+/** @internal */
 declare module '../../Series/PointOptions' {
     interface PointOptions extends TreePointOptionsObject {
         collapsed?: boolean;
@@ -92,11 +96,13 @@ declare module '../../Series/PointOptions' {
     }
 }
 
+/** @internal */
 interface AxisBreakObject extends AxisBreakOptions {
     showPoints?: boolean;
     maxOffset?: number;
 }
 
+/** @internal */
 interface GridNode {
     children: Array<GridNode>;
     collapsed?: boolean;
@@ -112,6 +118,7 @@ interface GridNode {
     tickmarkOffset?: number;
 }
 
+/** @internal */
 export declare class TreeGridAxisComposition extends Axis {
     dataMax: number;
     dataMin: number;
@@ -122,16 +129,19 @@ export declare class TreeGridAxisComposition extends Axis {
     treeGrid: TreeGridAxisAdditions;
 }
 
+/** @internal */
 interface TreeGridAxisUtilsObject {
     getNode: typeof Tree['getNode'];
 }
 
+/** @internal */
 interface TreeGridNode extends TreeNode {
     data: PointOptions;
     pos: number;
     seriesIndex: number;
 }
 
+/** @internal */
 interface TreeGridObject {
     categories: Array<string>;
     mapOfIdToNode: Record<string, TreeGridNode>;
@@ -146,6 +156,7 @@ interface TreeGridObject {
  *
  * */
 
+/** @internal */
 let TickConstructor: (typeof Tick|undefined);
 
 /* *
@@ -156,11 +167,9 @@ let TickConstructor: (typeof Tick|undefined);
 
 /**
  * Creates a break object from a node.
- *
+ * @internal
  * @param {Object} node
  * The node to create a break object from.
- *
- * @private
  */
 function getBreakFromNode(
     node: GridNode
@@ -176,7 +185,7 @@ function getBreakFromNode(
  * Creates a tree structure of the data, and the treegrid. Calculates
  * categories, and y-values of points based on the tree.
  *
- * @private
+ * @internal
  * @function getTreeGridFromData
  *
  * @param {Array<Highcharts.GanttPointOptions>} data
@@ -370,7 +379,7 @@ function getTreeGridFromData(
 
 /**
  * Builds the tree of categories and calculates its positions.
- * @private
+ * @internal
  * @param {Object} e Event object
  * @param {Object} e.target The chart instance which the event was fired on.
  * @param {object[]} e.target.axes The axes of the chart.
@@ -538,7 +547,7 @@ function onBeforeRender(
 /**
  * Generates a tick for initial positioning.
  *
- * @private
+ * @internal
  * @function Highcharts.GridAxis#generateTick
  *
  * @param {Function} proceed
@@ -595,9 +604,7 @@ function wrapGenerateTick(
     }
 }
 
-/**
- * @private
- */
+/** @internal */
 function wrapInit(
     this: TreeGridAxisComposition,
     proceed: Function,
@@ -697,7 +704,7 @@ function wrapInit(
                 * @product   gantt
                 * @apioption yAxis.labels.levels
                 *
-                * @private
+                * @internal
                 */
                 levels: [{
                     /**
@@ -708,7 +715,7 @@ function wrapInit(
                     * @product   gantt
                     * @apioption yAxis.labels.levels.level
                     *
-                    * @private
+                    * @internal
                     */
                     level: void 0
                 }, {
@@ -718,7 +725,7 @@ function wrapInit(
                      * @product   gantt
                      * @apioption yAxis.labels.levels.style
                      *
-                     * @private
+                     * @internal
                      */
                     style: {
                         /** @ignore-option */
@@ -733,7 +740,7 @@ function wrapInit(
                  * @product      gantt
                  * @optionparent yAxis.labels.symbol
                  *
-                 * @private
+                 * @internal
                  */
                 symbol: {
                     /**
@@ -742,7 +749,7 @@ function wrapInit(
                      *
                      * @type {Highcharts.SymbolKeyValue}
                      *
-                     * @private
+                     * @internal
                      */
                     type: 'triangle',
                     x: -5,
@@ -772,7 +779,7 @@ function wrapInit(
 /**
  * Set the tick positions, tickInterval, axis min and max.
  *
- * @private
+ * @internal
  * @function Highcharts.GridAxis#setTickInterval
  *
  * @param {Function} proceed
@@ -822,7 +829,7 @@ function wrapSetTickInterval(
 /**
  * Wrap axis redraw to remove TreeGrid events from ticks
  *
- * @private
+ * @internal
  * @function Highcharts.GridAxis#redraw
  *
  * @param {Function} proceed
@@ -854,7 +861,7 @@ function wrapRedraw(
  * */
 
 /**
- * @private
+ * @internal
  * @class
  */
 class TreeGridAxisAdditions {
@@ -865,9 +872,7 @@ class TreeGridAxisAdditions {
      *
      * */
 
-    /**
-     * @private
-     */
+    /** @internal */
     public static compose<T extends typeof Axis>(
         AxisClass: T,
         ChartClass: typeof Chart,
@@ -908,9 +913,7 @@ class TreeGridAxisAdditions {
      *
      * */
 
-    /**
-     * @private
-     */
+    /** @internal */
     public constructor(axis: TreeGridAxisComposition) {
         this.axis = axis;
     }
@@ -921,12 +924,26 @@ class TreeGridAxisAdditions {
      *
      * */
 
+
+    /** @internal */
     public adjustedMax?: number;
+
+    /** @internal */
     public axis: TreeGridAxisComposition;
+
+    /** @internal */
     public collapsedNodes?: GridNode[];
+
+    /** @internal */
     public mapOfPosToGridNode?: Record<string, GridNode>;
+
+    /** @internal */
     public mapOptionsToLevel?: Record<string, TreeGridAxisLabelOptions>;
+
+    /** @internal */
     public pendingSizeAdjustment: number = 0;
+
+    /** @internal */
     public tree?: TreeNode;
 
     /* *
@@ -938,7 +955,7 @@ class TreeGridAxisAdditions {
     /**
      * Set the collapse status.
      *
-     * @private
+     * @internal
      *
      * @param {Highcharts.Axis} axis
      * The axis to check against.
@@ -967,7 +984,7 @@ class TreeGridAxisAdditions {
     /**
      * Calculates the new axis breaks to collapse a node.
      *
-     * @private
+     * @internal
      *
      * @param {Highcharts.Axis} axis
      * The axis to check against.
@@ -997,7 +1014,7 @@ class TreeGridAxisAdditions {
     /**
      * Calculates the new axis breaks to expand a node.
      *
-     * @private
+     * @internal
      *
      * @param {Highcharts.Axis} axis
      * The axis to check against.
@@ -1035,7 +1052,7 @@ class TreeGridAxisAdditions {
      * Creates a list of positions for the ticks on the axis. Filters out
      * positions that are outside min and max, or is inside an axis break.
      *
-     * @private
+     * @internal
      *
      * @return {Array<number>}
      * List of positions.
@@ -1068,7 +1085,7 @@ class TreeGridAxisAdditions {
     /**
      * Check if a node is collapsed.
      *
-     * @private
+     * @internal
      *
      * @param {Object} node
      * The node to check if is collapsed.
@@ -1091,7 +1108,7 @@ class TreeGridAxisAdditions {
      * state of a node. If it is collapsed it will be expanded, and if it is
      * expanded it will be collapsed.
      *
-     * @private
+     * @internal
      *
      * @param {Highcharts.Axis} axis
      * The axis to check against.
@@ -1118,4 +1135,5 @@ class TreeGridAxisAdditions {
  *
  * */
 
+/** @internal */
 export default TreeGridAxisAdditions;
