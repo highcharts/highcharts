@@ -1104,7 +1104,7 @@ function generateCustomTable(chart, config) {
             </button>`;
 
             const visibilityClass = showVisual ? 'visible' : 'hidden';
-            const visualContent = `<div id="${contentId}" s
+            const visualContent = `<div id="${contentId}"
                 class="visual-desc-content ${visibilityClass}">
                 ${visual}
             </div>`;
