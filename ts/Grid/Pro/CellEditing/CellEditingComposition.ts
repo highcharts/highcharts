@@ -122,14 +122,25 @@ namespace CellEditingComposition {
         addEvent(
             TableCellClass,
             'stoppedEditing',
-            function (e: AnyRecord): void {
+            function (this: TableCell, e: AnyRecord): void {
                 if (e.submit) {
                     this.column.options.cells?.events?.afterEdit?.call(this);
                 }
-
                 announceA11yUserEditedCell(
                     this,
                     e.submit ? 'edited' : 'cancelled'
+                );
+            }
+        );
+
+        addEvent(
+            TableCellClass,
+            'afterEditValue',
+            function (this: TableCell): void {
+                this.column.options.cells?.events?.afterEdit?.call(this);
+                announceA11yUserEditedCell(
+                    this,
+                    'edited'
                 );
             }
         );

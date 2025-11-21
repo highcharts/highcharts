@@ -310,7 +310,9 @@ class ColumnFiltering {
         columnType: Exclude<Column.DataType, 'boolean'>
     ): void {
         // Render the input element.
-        this.filterInput = makeHTMLElement('input', {}, inputWrapper);
+        this.filterInput = makeHTMLElement('input', {
+            className: Globals.getClassName('input')
+        }, inputWrapper);
         this.filterInput.setAttribute('tabindex', '-1');
 
         const column = this.column;
@@ -369,7 +371,9 @@ class ColumnFiltering {
      */
     private renderConditionSelect(inputWrapper: HTMLElement): void {
         // Render the select element.
-        this.filterSelect = makeHTMLElement('select', {}, inputWrapper);
+        this.filterSelect = makeHTMLElement('select', {
+            className: Globals.getClassName('input')
+        }, inputWrapper);
         this.filterSelect.setAttribute('tabindex', '-1');
 
         const column = this.column;

@@ -46,6 +46,7 @@ namespace Globals {
      * */
 
     export const classNamePrefix: string = 'hcg-';
+    export const version = '@product.version@';
 
     export const rawClassNames = {
         container: 'container',
@@ -97,6 +98,8 @@ namespace Globals {
         loadingMessage: 'loading-message',
         popup: 'popup',
         button: 'button',
+        buttonSelected: 'button-selected',
+        input: 'input',
         icon: 'icon',
         iconSearch: 'icon-search',
         popupContent: 'popup-content',
@@ -114,21 +117,10 @@ namespace Globals {
         paginationWrapper: 'pagination-wrapper',
         paginationContainer: 'pagination-container',
         paginationPageInfo: 'pagination-info',
-        paginationControls: 'pagination-controls',
-        paginationButton: 'pagination-btn',
-        paginationButtonDisabled: 'pagination-btn-disabled',
-        paginationFirstButton: 'pagination-first',
-        paginationPrevButton: 'pagination-prev',
-        paginationNextButton: 'pagination-next',
-        paginationLastButton: 'pagination-last',
-        paginationPageButton: 'pagination-page',
-        paginationPageButtonActive: 'pagination-page-active',
-        paginationEllipsis: 'pagination-ellipsis',
-        paginationMobileSelector: 'pagination-mobile-selector',
-        paginationMobilePageSizeSelector:
-            'pagination-mobile-page-size-selector',
-        paginationPageSizeContainer: 'pagination-page-size-container',
-        paginationPageSizeSelect: 'pagination-page-size-select',
+        paginationControlsContainer: 'pagination-controls-container',
+        paginationNavButtonsContainer: 'pagination-nav-buttons-container',
+        paginationNavDropdown: 'pagination-nav-dropdown',
+        paginationPageSize: 'pagination-page-size',
         noWidth: 'no-width',
         rightAlign: 'right',
         centerAlign: 'center',

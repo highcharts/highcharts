@@ -109,6 +109,23 @@ class TableCell extends Cell {
     }
 
     /**
+     * Edits the cell value and updates the data table. Call this instead of
+     * `setValue` when you want it to trigger the cell value user change event.
+     *
+     * @param value
+     * The new value to set.
+     */
+    public async editValue(value: DataTable.CellType): Promise<void> {
+        if (this.value === value) {
+            return;
+        }
+
+        fireEvent(this, 'beforeEditValue');
+        await this.setValue(value, true);
+        fireEvent(this, 'afterEditValue');
+    }
+
+    /**
      * Sets the cell value and updates its content with it.
      *
      * @param value

@@ -339,7 +339,6 @@ QUnit.test('DataTable.setRows', function (assert) {
         table.getRow(0),
         'Row values are the same after clone.'
     );
-
 });
 
 QUnit.test('DataTable.setColumns', function (assert) {
@@ -528,3 +527,34 @@ QUnit.test('DataTable.setModifier', function (assert) {
             done()
         );
 });
+
+QUnit.test('DataTable.setRow insert argument', function (assert) {
+    const table = new DataTable({
+        columns: {
+            ID: [1, 2, 3],
+            Name: ['John', 'Jane', 'Alice']
+        }
+    });
+
+    assert.deepEqual(
+        table.getColumn('ID'),
+        [1, 2, 3],
+        'Initial ID column values are correct.'
+    );
+
+    // Insert a new row at position 0 (beginning)
+    table.setRow({ ID: 99 }, 0, true);
+
+    assert.deepEqual(
+        table.getColumn('ID'),
+        [99, 1, 2, 3],
+        'New row inserted at the beginning when insert=true.'
+    );
+
+    assert.deepEqual(
+        table.getColumn('Name'),
+        [null, 'John', 'Jane', 'Alice'],
+        'If no value is provided, the new row is filled with `null`.'
+    );
+});
+
