@@ -38,6 +38,13 @@
     "test-node": "tsx ./test/ts-node-unit-tests/index.ts",
     "test-node:watch": "tsx ./test/ts-node-unit-tests/index.ts --watch",
     "test:precommit": "npx gulp test-ts --modified && npx gulp test --modified && npm run test-node",
+    "test:pw": "playwright test --project=setup-highcharts --project=highcharts",
+    "test:pw:all": "playwright test",
+    "test:pw:qunit": "playwright test --project=setup-highcharts --project=qunit --project=qunit-firefox",
+    "test:pw:visual": "playwright test --project=setup-highcharts --project=visual",
+    "test:pw:dashboards": "playwright test --project=setup-dashboards --project=dashboards",
+    "test:pw:dashboards:all": "playwright test --project=setup-dashboards --project=dashboards --project=dashboards-firefox --project=dashboards-webkit",
+    "test:pw:internal": "playwright test --project=setup-highcharts --project=setup-dashboards --project=internal",
     "testall": "npx gulp test --browsers all --force --speak",
     "test-all": "npx gulp test --browsers all --force --speak",
     "test-dts": "npx gulp scripts && npx gulp jsdoc-dts && npx gulp lint-dts",
@@ -77,6 +84,8 @@
     "@swc/core": "^1.9.2",
     "@types/gulp": "^4.0.17",
     "@types/jquery": "^3.5.30",
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^24.0.12",
     "@types/qunit": "^2.19.10",
     "@types/trusted-types": "^2.0.7",
     "@types/yargs": "^17.0.32",
@@ -148,7 +157,8 @@
     "yargs": "^17.7.2"
   },
   "workspaces": [
-    "tools/docs-preview"
+    "tools/docs-preview",
+    "tests/"
   ],
   "overrides": {
     "gulp-jsdoc3": {
@@ -178,10 +188,13 @@
       "npm run glint"
     ],
     "*.css": [
-      "stylelint"
+      "stylelint --allow-empty-input"
     ],
     "./docs/**/*.md": [
       "npx cspell -c ./tools/cspell/cspell.json"
+    ],
+    "./tests/**": [
+      "npx --workspace tests eslint"
     ]
   },
   "license": "SEE LICENSE IN <license.txt>"
