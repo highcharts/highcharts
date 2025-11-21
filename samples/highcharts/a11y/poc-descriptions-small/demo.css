@@ -182,21 +182,60 @@ pre {
 
 #visual-content-visible-chart2,
 #visual-content-visible-chart3,
-#visible-content-visible-chart4 {
+#visual-content-visible-chart4,
+#visual-content-visible-chart5,
+#visual-content-visible-chart6 {
     border: 2px solid red;
 }
 
-/* Visual description toggle classes */
-.visual-desc-toggle {
+/* Toggle button styles */
+.visual-desc-toggle,
+.table-toggle {
     margin: 0.5em 0;
+    padding: 0.4em 0.8em;
+    background: #f3f4f6;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    font-size: 0.875rem;
+    color: #374151;
 }
 
-.visual-desc-content.visible {
+.visual-desc-toggle:hover,
+.table-toggle:hover {
+    background: #e5e7eb;
+}
+
+/* Toggle content styles */
+.visual-desc-content.visible,
+.table-content.visible {
     display: block;
+    margin-top: 0.5em;
 }
 
-.visual-desc-content.hidden {
+.visual-desc-content.hidden,
+.table-content.hidden {
     display: none;
+}
+
+/* Table content specific styling */
+.table-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 0.5em;
+    font-size: 0.875rem;
+}
+
+.table-content th,
+.table-content td {
+    padding: 0.5em;
+    border: 1px solid #e5e7eb;
+    text-align: left;
+}
+
+.table-content th {
+    background: #f9fafb;
+    font-weight: 600;
 }
 
 .hc-a11y-menu-button {

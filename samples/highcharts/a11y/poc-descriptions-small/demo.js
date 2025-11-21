@@ -109,6 +109,16 @@ const chart5desc = `
     </ul>
 `;
 
+const chart5visualdesc = `
+  <p>A grid-like plot with colored circles of different sizes scattered 
+  across it. Most circles appear in the upper-right area, above both 
+  dotted guide lines, while a few smaller circles sit near or below them. 
+  One noticeably large bubble stands out near the upper edge, and several 
+  medium bubbles cluster in the center, with a few smaller ones toward 
+  the lower-left.</p>
+`;
+
+
 // Sunburst
 const chart6desc = `
     <p>Engineering receives the largest share of the 2025 company budget,
@@ -126,6 +136,15 @@ const chart6desc = `
     </ul>
 `;
 
+const chart6visualdesc = `
+  <p>A circular “sun-like” graphic with a bright center and several colored
+  rings radiating outward like beams. Each ring is divided into segments of
+  different sizes, forming a layered wheel. Large outer segments appear as
+  wide arcs, while smaller ones create thin slivers around the edges. The
+  colors shift between departments and their sub-sections, giving the whole
+  chart the look of a multicolored sunburst.</p>
+`;
+
 
 const HC_CONFIGS = {
     chart1: { // Spline w/plotlines
@@ -133,14 +152,27 @@ const HC_CONFIGS = {
             enabled: false
         },
         exporting: {
-            showTable: true,
             buttons: {
                 contextButton: {
                     enabled: false
                 }
             }
         },
-        custom: { autoDesc: chart1desc },
+        custom: {
+            autoDesc: chart1desc,
+            hasDataTable: true,  // Enable data table button
+            tableConfig: {
+                columnHeaderFormatter: function (item, key) {
+                    if (key === 'x') {
+                        return 'Month';
+                    }
+                    if (key === 'y') {
+                        return item.name + ' Temperature (°C)';
+                    }
+                    return item.name || 'Series';
+                }
+            }
+        },
         title: {
             text: 'Average Monthly Temperature: Helsinki vs Oslo',
             align: 'left',
@@ -207,7 +239,6 @@ const HC_CONFIGS = {
             enabled: false
         },
         exporting: {
-            showTable: true,
             buttons: {
                 contextButton: {
                     enabled: false
@@ -216,7 +247,19 @@ const HC_CONFIGS = {
         },
         custom: {
             autoDesc: chart2desc,
-            visualDesc: chart2visualdesc
+            visualDesc: chart2visualdesc,
+            hasDataTable: true,  // Enable data table button
+            tableConfig: {
+                columnHeaderFormatter: function (item, key) {
+                    if (key === 'x') {
+                        return 'Office Location';
+                    }
+                    if (key === 'y') {
+                        return item.name + ' (Cups)';
+                    }
+                    return item.name || 'Coffee Type';
+                }
+            }
         },
         chart: {
             type: 'column'
@@ -466,10 +509,30 @@ const HC_CONFIGS = {
             enabled: false
         },
         exporting: {
-            enabled: false
+            buttons: {
+                contextButton: {
+                    enabled: false
+                }
+            }
         },
         custom: {
-            autoDesc: chart5desc
+            autoDesc: chart5desc,
+            visualDesc: chart5visualdesc,
+            hasDataTable: true,  // Enable data table button
+            tableConfig: {
+                columnHeaderFormatter: function (item, key) {
+                    if (key === 'x') {
+                        return 'Daily Fat Intake (g)';
+                    }
+                    if (key === 'y') {
+                        return 'Daily Sugar Intake (g)';
+                    }
+                    if (key === 'z') {
+                        return 'Adult Obesity (%)';
+                    }
+                    return item.name || 'Country Data';
+                }
+            }
         },
         chart: {
             type: 'bubble',
@@ -488,7 +551,8 @@ const HC_CONFIGS = {
         },
 
         subtitle: {
-            text: 'Source: <a href="http://www.euromonitor.com/">Euromonitor</a> and <a href="https://data.oecd.org/">OECD</a>'
+            text: 'Source: <a href="http://www.euromonitor.com/">Euromonitor</a> ' +
+                'and <a href="https://data.oecd.org/">OECD</a>'
         },
         xAxis: {
             gridLineWidth: 1,
@@ -694,7 +758,10 @@ const HC_CONFIGS = {
         exporting: {
             enabled: false
         },
-        custom: { autoDesc: chart6desc },
+        custom: {
+            autoDesc: chart6desc,
+            visualDesc: chart6visualdesc
+        },
         chart: {
             height: '100%',
             type: 'sunburst'
@@ -915,6 +982,92 @@ Object.keys(AUTO_DESCS).forEach(id => {
     }
 });
 
+// Custom table generation function with better headers
+function generateCustomTable(chart, config) {
+    if (!chart.series || !chart.series.length) {
+        return '<p>No data available</p>';
+    }
+
+    let html = '<table class="highcharts-data-table"><thead><tr>';
+
+    // Get first series to determine structure
+    const firstSeries = chart.series[0];
+    const firstPoint = firstSeries.points && firstSeries.points[0];
+
+    if (!firstPoint) {
+        return chart.getTable(); // Fallback to default
+    }
+
+    // Determine if this is a bubble chart or other chart type
+    const isBubble = firstSeries.type === 'bubble' ||
+        (firstPoint.x !== undefined && firstPoint.y !== undefined &&
+         firstPoint.z !== undefined);
+
+    if (isBubble) {
+        // For bubble charts, add headers for country and dimensions
+        html += '<th scope="col">Country</th>';
+        html += '<th scope="col">' + (config.columnHeaderFormatter ?
+            config.columnHeaderFormatter(firstSeries, 'x') :
+            'X Value') + '</th>';
+        html += '<th scope="col">' + (config.columnHeaderFormatter ?
+            config.columnHeaderFormatter(firstSeries, 'y') :
+            'Y Value') + '</th>';
+        html += '<th scope="col">' + (config.columnHeaderFormatter ?
+            config.columnHeaderFormatter(firstSeries, 'z') :
+            'Z Value') + '</th>';
+    } else {
+        // For regular charts, show categories and series
+        if (chart.xAxis[0].categories) {
+            html += '<th scope="col">' + (config.columnHeaderFormatter ?
+                config.columnHeaderFormatter(firstSeries, 'x') :
+                'Category') + '</th>';
+        }
+        chart.series.forEach(series => {
+            if (series.visible !== false) {
+                html += '<th scope="col">' + (config.columnHeaderFormatter ?
+                    config.columnHeaderFormatter(series, 'y') :
+                    series.name || 'Value') + '</th>';
+            }
+        });
+    }
+
+    html += '</tr></thead><tbody>';
+
+    if (isBubble) {
+        // For bubble charts, each point is a row
+        firstSeries.points.forEach(point => {
+            if (point.visible !== false) {
+                html += '<tr>';
+                html += '<td>' + (point.country || point.name ||
+                    'Data Point') + '</td>';
+                html += '<td>' + (point.x || '') + '</td>';
+                html += '<td>' + (point.y || '') + '</td>';
+                html += '<td>' + (point.z || '') + '</td>';
+                html += '</tr>';
+            }
+        });
+    } else {
+        // For regular charts, categories are rows, series are columns
+        const categories = chart.xAxis[0].categories;
+        if (categories) {
+            categories.forEach((category, i) => {
+                html += '<tr>';
+                html += '<td>' + category + '</td>';
+                chart.series.forEach(series => {
+                    if (series.visible !== false) {
+                        const point = series.points && series.points[i];
+                        html += '<td>' + (point ? point.y : '') + '</td>';
+                    }
+                });
+                html += '</tr>';
+            });
+        }
+    }
+
+    html += '</tbody></table>';
+    return html;
+}
+
 (function POC_A11Y_DESC_PLUGIN(Highcharts) {
     const H = Highcharts;
 
@@ -926,8 +1079,9 @@ Object.keys(AUTO_DESCS).forEach(id => {
         const basic  = `<p>${basicSummary(this)}</p>`;
         const custom = getCustomAutoDesc(this);
         const visual = getCustomVisualDesc(this);
+        const hasTable = this.options?.custom?.hasDataTable === true;
 
-        // For screen reader: basic + visual toggle + custom
+        // For screen reader: basic + visual toggle + table toggle + custom
         let srHtml;
         if (visual !== null) {
             // default false (hidden)
@@ -940,18 +1094,46 @@ Object.keys(AUTO_DESCS).forEach(id => {
             const toggleButton = `<button id="${toggleId}" 
                 aria-expanded="${showVisual ? 'true' : 'false'}" 
                 aria-controls="${contentId}"
+                aria-label="${showVisual ? 'Hide' : 'Show'}
+                visual description for chart ${
+    this.title?.textStr || 'Untitled Chart'
+    }"
                 tabindex="-1"
                 class="visual-desc-toggle">
                 ${showVisual ? 'Hide' : 'Show'} Visual Description
             </button>`;
 
             const visibilityClass = showVisual ? 'visible' : 'hidden';
-            const visualContent = `<div id="${contentId}" 
+            const visualContent = `<div id="${contentId}" s
                 class="visual-desc-content ${visibilityClass}">
                 ${visual}
             </div>`;
 
-            srHtml = basic + toggleButton + visualContent + (custom || '');
+            // Add table toggle if chart has showTable enabled
+            let tableToggle = '';
+            if (hasTable) {
+                const showTable = this.tableVisible === true;
+                const tableToggleId = `table-toggle-${chartId}`;
+                const tableContentId = `table-content-${chartId}`;
+
+                tableToggle = `<button id="${tableToggleId}" 
+                    aria-expanded="${showTable ? 'true' : 'false'}" 
+                    aria-controls="${tableContentId}"
+                    aria-label="${showTable ? 'Hide' : 'Show'}
+                     data table for chart ${
+    this.title?.textStr || 'Untitled Chart'
+    }"
+                    tabindex="-1"
+                    class="table-toggle">
+                    ${showTable ? 'Hide' : 'Show'} Data Table
+                </button>
+                <div id="${tableContentId}" 
+                    class="table-content ${showTable ? 'visible' : 'hidden'}">
+                </div>`;
+            }
+
+            srHtml = basic + toggleButton + visualContent + tableToggle +
+                (custom || '');
 
             // Add event listener after DOM update using setTimeout
             setTimeout(() => {
@@ -981,6 +1163,13 @@ Object.keys(AUTO_DESCS).forEach(id => {
                         this.textContent = newState ?
                             'Hide Visual Description' :
                             'Show Visual Description';
+                        this.setAttribute(
+                            'aria-label',
+                            `${newState ? 'Hide' : 'Show'} 
+                            visual description for chart ${
+    chartRef.title?.textStr || 'Untitled Chart'
+    }`
+                        );
 
                         // Persist state on chart
                         chartRef.visualDescVisible = newState;
@@ -1004,15 +1193,253 @@ Object.keys(AUTO_DESCS).forEach(id => {
                             visBtn.textContent = newState ?
                                 'Hide Visual Description' :
                                 'Show Visual Description';
+                            visBtn.setAttribute(
+                                'aria-label',
+                                `${newState ? 'Hide' : 'Show'} 
+                                visual description for chart ${
+    chartRef.title?.textStr || 'Untitled Chart'
+    }`
+                            );
                         }
                     });
                 }
+
+                // Add table toggle event listeners if table exists
+                if (hasTable) {
+                    const tableButtonId = `table-toggle-${chartId}`;
+                    const tableContentId = `table-content-${chartId}`;
+                    const tableButton = document.getElementById(tableButtonId);
+                    const tableContent =
+                        document.getElementById(tableContentId);
+
+                    if (
+                        tableButton && tableContent &&
+                        !tableButton.hasAttribute(
+                            'data-listener-added'
+                        )) {
+                        tableButton.setAttribute('data-listener-added', 'true');
+                        // Capture chart reference in closure
+                        const chartRef = this;
+                        tableButton.addEventListener('click', function () {
+                            const isExpanded =
+                                this.getAttribute('aria-expanded') === 'true';
+                            const newState = !isExpanded;
+
+                            // Update screen reader button and content
+                            this.setAttribute(
+                                'aria-expanded',
+                                newState ? 'true' : 'false'
+                            );
+                            tableContent.className = newState ?
+                                'table-content visible' :
+                                'table-content hidden';
+                            const tableTextSpan = this.querySelector('span');
+                            if (tableTextSpan) {
+                                tableTextSpan.textContent = newState ?
+                                    'Hide Data Table' : 'Show Data Table';
+                            }
+
+                            // Persist state on chart
+                            chartRef.tableVisible = newState;
+
+                            // Update visible panel toggle if it exists
+                            const visTableToggleId =
+                                `table-toggle-visible-${chartId}`;
+                            const visTableContentId =
+                                `table-content-visible-${chartId}`;
+                            const visTableBtn =
+                                document.getElementById(visTableToggleId);
+                            const visTableContent =
+                                document.getElementById(visTableContentId);
+
+                            if (visTableBtn && visTableContent) {
+                                visTableBtn.setAttribute(
+                                    'aria-expanded',
+                                    newState ? 'true' : 'false'
+                                );
+                                visTableContent.className = newState ?
+                                    'table-content visible' :
+                                    'table-content hidden';
+                                const visTableTextSpan =
+                                visTableBtn.querySelector('span');
+                                if (visTableTextSpan) {
+                                    visTableTextSpan.textContent = newState ?
+                                        'Hide Data Table' : 'Show Data Table';
+                                }
+                            }
+
+                            // Generate and insert table content if showing
+                            if (newState && chartRef.getTable) {
+                                try {
+                                    // Check if custom table config exists
+                                    const tableConfig =
+                                        chartRef.options?.custom?.tableConfig;
+                                    let tableHTML;
+
+                                    if (tableConfig) {
+                                        // Use custom table generation
+                                        // with better headers
+                                        tableHTML = generateCustomTable(
+                                            chartRef, tableConfig
+                                        );
+                                    } else {
+                                        // Fall back to default Highcharts table
+                                        tableHTML = chartRef.getTable();
+                                    }
+
+                                    tableContent.innerHTML = tableHTML;
+                                    if (visTableContent) {
+                                        visTableContent.innerHTML = tableHTML;
+                                    }
+                                } catch (e) {
+                                    console.warn(
+                                        'Could not generate table:', e
+                                    );
+                                }
+                            } else if (!newState) {
+                                // Clear table content when hiding
+                                tableContent.innerHTML = '';
+                                if (visTableContent) {
+                                    visTableContent.innerHTML = '';
+                                }
+                            }
+                        });
+                    }
+                }
             }, 100);
         } else {
-            srHtml = custom ? (basic + custom) : basic;
+            // No visual description, but might have table toggle
+            if (hasTable) {
+                const showTable = this.tableVisible === true;
+                const chartId = this.renderTo?.id || 'chart';
+                const tableToggleId = `table-toggle-${chartId}`;
+                const tableContentId = `table-content-${chartId}`;
+                const tableToggle = `<button id="${tableToggleId}" 
+                    aria-expanded="${showTable ? 'true' : 'false'}" 
+                    aria-controls="${tableContentId}"
+                    aria-label="${showTable ? 'Hide' : 'Show'} 
+                    data table for chart ${
+    this.title?.textStr || 'Untitled Chart'
+    }"
+                    tabindex="-1"
+                    class="table-toggle">
+                    ${showTable ? 'Hide' : 'Show'} Data Table
+                </button>
+                <div id="${tableContentId}" 
+                    class="table-content ${showTable ? 'visible' : 'hidden'}">
+                </div>`;
+
+                srHtml = basic + tableToggle + (custom || '');
+
+                // Add event listener for table toggle
+                setTimeout(() => {
+                    const tableButton = document.getElementById(tableToggleId);
+                    const tableContent =
+                        document.getElementById(tableContentId);
+
+                    if (
+                        tableButton && tableContent &&
+                        !tableButton.hasAttribute(
+                            'data-listener-added'
+                        )) {
+                        tableButton.setAttribute('data-listener-added', 'true');
+                        const chartRef = this;
+                        tableButton.addEventListener('click', function () {
+                            const isExpanded =
+                                this.getAttribute('aria-expanded') === 'true';
+                            const newState = !isExpanded;
+
+                            // Update screen reader button and content
+                            this.setAttribute(
+                                'aria-expanded',
+                                newState ? 'true' : 'false'
+                            );
+                            tableContent.className = newState ?
+                                'table-content visible' :
+                                'table-content hidden';
+                            const tableTextSpan = this.querySelector('span');
+                            if (tableTextSpan) {
+                                tableTextSpan.textContent = newState ?
+                                    'Hide Data Table' : 'Show Data Table';
+                            }
+
+                            // Persist state on chart
+                            chartRef.tableVisible = newState;
+
+                            // Update visible panel toggle if it exists
+                            const visTableToggleId =
+                                `table-toggle-visible-
+                                ${chartRef.renderTo?.id || 'chart'}`;
+                            const visTableContentId =
+                                `table-content-visible-
+                                ${chartRef.renderTo?.id ||
+                                'chart'}`;
+                            const visTableBtn =
+                                document.getElementById(visTableToggleId);
+                            const visTableContent =
+                                document.getElementById(visTableContentId);
+
+                            if (visTableBtn && visTableContent) {
+                                visTableBtn.setAttribute(
+                                    'aria-expanded',
+                                    newState ? 'true' : 'false'
+                                );
+                                visTableContent.className = newState ?
+                                    'table-content visible' :
+                                    'table-content hidden';
+                                const visTableTextSpan =
+                                    visTableBtn.querySelector('span');
+                                if (visTableTextSpan) {
+                                    visTableTextSpan.textContent = newState ?
+                                        'Hide Data Table' : 'Show Data Table';
+                                }
+                            }
+
+                            // Generate and insert table content if showing
+                            if (newState && chartRef.getTable) {
+                                try {
+                                    // Check if custom table config exists
+                                    const tableConfig =
+                                        chartRef.options?.custom?.tableConfig;
+                                    let tableHTML;
+
+                                    if (tableConfig) {
+                                        // Use custom table generation with
+                                        // better headers
+                                        tableHTML = generateCustomTable(
+                                            chartRef, tableConfig
+                                        );
+                                    } else {
+                                        // Fall back to default Highcharts table
+                                        tableHTML = chartRef.getTable();
+                                    }
+
+                                    tableContent.innerHTML = tableHTML;
+                                    if (visTableContent) {
+                                        visTableContent.innerHTML = tableHTML;
+                                    }
+                                } catch (e) {
+                                    console.warn(
+                                        'Could not generate table:', e
+                                    );
+                                }
+                            } else if (!newState) {
+                                // Clear table content when hiding
+                                tableContent.innerHTML = '';
+                                if (visTableContent) {
+                                    visTableContent.innerHTML = '';
+                                }
+                            }
+                        });
+                    }
+                }, 100);
+            } else {
+                srHtml = custom ? (basic + custom) : basic;
+            }
         }
 
-        // For visible panel: include visual description like SR region
+        // For visible panel: include visual description and table toggle
+        // like SR region
         let visibleHtml;
         if (visual !== null) {
             // Use same logic as screen reader region for consistency
@@ -1025,6 +1452,10 @@ Object.keys(AUTO_DESCS).forEach(id => {
             const toggleButton = `<button id="${toggleId}" 
                 aria-expanded="${showVisual ? 'true' : 'false'}" 
                 aria-controls="${contentId}"
+                aria-label="${showVisual ? 'Hide' : 'Show'} 
+                visual description for chart ${
+    this.title?.textStr || 'Untitled Chart'
+    }"
                 tabindex="-1"
                 class="visual-desc-toggle">
                 ${showVisual ? 'Hide' : 'Show'} Visual Description
@@ -1036,17 +1467,67 @@ Object.keys(AUTO_DESCS).forEach(id => {
                 ${visual}
             </div>`;
 
-            visibleHtml = basic + toggleButton + visualContent + (custom || '');
+            // Add table toggle for visible panel
+            let tableToggle = '';
+            if (hasTable) {
+                const showTable = this.tableVisible === true;
+                const tableToggleId = `table-toggle-visible-${chartId}`;
+                const tableContentId = `table-content-visible-${chartId}`;
+
+                tableToggle = `<button id="${tableToggleId}" 
+                    aria-expanded="${showTable ? 'true' : 'false'}" 
+                    aria-controls="${tableContentId}"
+                    aria-label="${showTable ? 'Hide' : 'Show'} 
+                    data table for chart ${
+    this.title?.textStr || 'Untitled Chart'
+    }"
+                    tabindex="-1"
+                    class="table-toggle">
+                    ${showTable ? 'Hide' : 'Show'} Data Table
+                </button>
+                <div id="${tableContentId}" 
+                    class="table-content ${showTable ? 'visible' : 'hidden'}">
+                </div>`;
+            }
+
+            visibleHtml = basic + toggleButton + visualContent +
+                tableToggle + (custom || '');
         } else {
-            visibleHtml = custom ? (basic + custom) : basic;
+            // No visual description, but might have table toggle
+            if (hasTable) {
+                const showTable = this.tableVisible === true;
+                const chartId = this.renderTo?.id || 'chart';
+                const tableToggleId = `table-toggle-visible-${chartId}`;
+                const tableContentId = `table-content-visible-${chartId}`;
+
+                const tableToggle = `<button id="${tableToggleId}" 
+                    aria-expanded="${showTable ? 'true' : 'false'}" 
+                    aria-controls="${tableContentId}"
+                    aria-label="${showTable ? 'Hide' : 'Show'} 
+                    data table for chart ${
+    this.title?.textStr || 'Untitled Chart'
+    }"
+                    tabindex="-1"
+                    class="table-toggle">
+                    ${showTable ? 'Hide' : 'Show'} Data Table
+                </button>
+                <div id="${tableContentId}" 
+                    class="table-content ${showTable ? 'visible' : 'hidden'}">
+                </div>`;
+
+                visibleHtml = basic + tableToggle + (custom || '');
+            } else {
+                visibleHtml = custom ? (basic + custom) : basic;
+            }
         }
 
         // Highcharts hidden a11y region gets the full description with visual
         e.chartDetailedInfo.chartAutoDescription = srHtml;
         this.__autoDescHTML = srHtml;
 
-        // visible panel below chart gets description with visual toggle
-        updateA11yDescPanel(this, visibleHtml, visual !== null);
+        // visible panel below chart gets description with visual and
+        // table toggles
+        updateA11yDescPanel(this, visibleHtml, visual !== null, hasTable);
 
         // Add method to programmatically toggle visual description
         this.toggleVisualDescription = function (forceState) {
@@ -1074,8 +1555,11 @@ Object.keys(AUTO_DESCS).forEach(id => {
                 srContent.className = newState ?
                     'visual-desc-content visible' :
                     'visual-desc-content hidden';
-                srBtn.textContent = newState ?
-                    'Hide Visual Description' : 'Show Visual Description';
+                const srTextSpan = srBtn.querySelector('span');
+                if (srTextSpan) {
+                    srTextSpan.textContent = newState ?
+                        'Hide Visual Description' : 'Show Visual Description';
+                }
             }
 
             // Update visible panel toggle
@@ -1090,8 +1574,103 @@ Object.keys(AUTO_DESCS).forEach(id => {
                 visContent.className = newState ?
                     'visual-desc-content visible' :
                     'visual-desc-content hidden';
-                visBtn.textContent = newState ?
-                    'Hide Visual Description' : 'Show Visual Description';
+                const visTextSpan = visBtn.querySelector('span');
+                if (visTextSpan) {
+                    visTextSpan.textContent = newState ?
+                        'Hide Visual Description' : 'Show Visual Description';
+                }
+            }
+
+            return newState;
+        };
+
+        // Add method to programmatically toggle data table
+        this.toggleDataTable = function (forceState) {
+            if (!hasTable) {
+                return false;
+            }
+            const chartId = this.renderTo?.id || 'chart';
+            const srToggleId = `table-toggle-${chartId}`;
+            const visToggleId = `table-toggle-visible-${chartId}`;
+
+            // Get current state or use forced state
+            const currentState = this.tableVisible === true;
+            const newState = forceState !== undefined ?
+                forceState : !currentState;
+
+            // Update chart state
+            this.tableVisible = newState;
+
+            // Update screen reader toggle
+            const srBtn = document.getElementById(srToggleId);
+            const srContent =
+                document.getElementById(`table-content-${chartId}`);
+            if (srBtn && srContent) {
+                srBtn.setAttribute(
+                    'aria-expanded',
+                    newState ? 'true' : 'false'
+                );
+                srContent.className = newState ?
+                    'table-content visible' :
+                    'table-content hidden';
+                const srTableTextSpan = srBtn.querySelector('span');
+                if (srTableTextSpan) {
+                    srTableTextSpan.textContent = newState ?
+                        'Hide Data Table' : 'Show Data Table';
+                }
+            }
+
+            // Update visible panel toggle
+            const visBtn = document.getElementById(visToggleId);
+            const visContent =
+                document.getElementById(`table-content-visible-${chartId}`);
+            if (visBtn && visContent) {
+                visBtn.setAttribute(
+                    'aria-expanded',
+                    newState ? 'true' : 'false'
+                );
+                visContent.className = newState ?
+                    'table-content visible' :
+                    'table-content hidden';
+                const visTableTextSpan = visBtn.querySelector('span');
+                if (visTableTextSpan) {
+                    visTableTextSpan.textContent = newState ?
+                        'Hide Data Table' : 'Show Data Table';
+                }
+            }
+
+            // Generate and insert table content if showing
+            if (newState && this.getTable) {
+                try {
+                    // Check if custom table config exists
+                    const tableConfig = this.options?.custom?.tableConfig;
+                    let tableHTML;
+
+                    if (tableConfig) {
+                        // Use custom table generation with better headers
+                        tableHTML = generateCustomTable(this, tableConfig);
+                    } else {
+                        // Fall back to default Highcharts table
+                        tableHTML = this.getTable();
+                    }
+
+                    if (srContent) {
+                        srContent.innerHTML = tableHTML;
+                    }
+                    if (visContent) {
+                        visContent.innerHTML = tableHTML;
+                    }
+                } catch (e) {
+                    console.warn('Could not generate table:', e);
+                }
+            } else if (!newState) {
+                // Clear table content when hiding
+                if (srContent) {
+                    srContent.innerHTML = '';
+                }
+                if (visContent) {
+                    visContent.innerHTML = '';
+                }
             }
 
             return newState;
@@ -1100,7 +1679,12 @@ Object.keys(AUTO_DESCS).forEach(id => {
 }(Highcharts));
 
 
-function updateA11yDescPanel(chart, html, hasVisualDesc = false) {
+function updateA11yDescPanel(
+    chart,
+    html,
+    hasVisualDesc = false,
+    hasTableDesc = false
+) {
     const chartEl = chart?.renderTo;
     if (!chartEl) {
         return;
@@ -1144,8 +1728,11 @@ function updateA11yDescPanel(chart, html, hasVisualDesc = false) {
             content.className = expanded ?
                 'visual-desc-content visible' :
                 'visual-desc-content hidden';
-            btn.textContent = expanded ?
-                'Hide Visual Description' : 'Show Visual Description';
+            const btnTextSpan = btn.querySelector('span');
+            if (btnTextSpan) {
+                btnTextSpan.textContent = expanded ?
+                    'Hide Visual Description' : 'Show Visual Description';
+            }
 
             // Bind a fresh click handler
             btn.onclick = ev => {
@@ -1162,8 +1749,11 @@ function updateA11yDescPanel(chart, html, hasVisualDesc = false) {
                 content.className = next ?
                     'visual-desc-content visible' :
                     'visual-desc-content hidden';
-                btn.textContent = next ?
-                    'Hide Visual Description' : 'Show Visual Description';
+                const btnTextSpan = btn.querySelector('span');
+                if (btnTextSpan) {
+                    btnTextSpan.textContent = next ?
+                        'Hide Visual Description' : 'Show Visual Description';
+                }
 
                 // 🔐 Persist for the next render
                 chart.visualDescVisible = next;
@@ -1182,8 +1772,113 @@ function updateA11yDescPanel(chart, html, hasVisualDesc = false) {
                     srContent.className = next ?
                         'visual-desc-content visible' :
                         'visual-desc-content hidden';
-                    srBtn.textContent = next ?
-                        'Hide Visual Description' : 'Show Visual Description';
+                    const srBtnTextSpan = srBtn.querySelector('span');
+                    if (srBtnTextSpan) {
+                        srBtnTextSpan.textContent = next ?
+                            'Hide Visual Description' :
+                            'Show Visual Description';
+                    }
+                }
+            };
+        }
+    }
+
+    // Handle table toggle if present
+    if (hasTableDesc) {
+        const chartId = chartEl.id || 'chart';
+        const tableToggleId = `table-toggle-visible-${chartId}`;
+        const tableContentId = `table-content-visible-${chartId}`;
+
+        const tableBtn = panel.querySelector(`#${tableToggleId}`);
+        const tableContent = panel.querySelector(`#${tableContentId}`);
+
+        if (tableBtn && tableContent) {
+            // Apply the persisted state
+            const tableExpanded = chart.tableVisible === true;
+            tableBtn.setAttribute(
+                'aria-expanded',
+                tableExpanded ? 'true' : 'false'
+            );
+            tableContent.className = tableExpanded ?
+                'table-content visible' :
+                'table-content hidden';
+            const tableBtnTextSpan = tableBtn.querySelector('span');
+            if (tableBtnTextSpan) {
+                tableBtnTextSpan.textContent = tableExpanded ?
+                    'Hide Data Table' : 'Show Data Table';
+            }
+
+            // Bind a fresh click handler
+            tableBtn.onclick = ev => {
+                ev.preventDefault();
+                ev.stopPropagation();
+
+                const currentlyExpanded =
+                    tableBtn.getAttribute('aria-expanded') === 'true';
+                const next = !currentlyExpanded;
+
+                // Update ARIA + visibility
+                tableBtn.setAttribute('aria-expanded', next ? 'true' : 'false');
+                tableContent.className = next ?
+                    'table-content visible' :
+                    'table-content hidden';
+                const tableBtnTextSpan = tableBtn.querySelector('span');
+                if (tableBtnTextSpan) {
+                    tableBtnTextSpan.textContent = next ?
+                        'Hide Data Table' : 'Show Data Table';
+                }
+
+                // Persist for the next render
+                chart.tableVisible = next;
+
+                // Also update the screen reader region toggle state
+                const srTableToggleId = `table-toggle-${chartId}`;
+                const srTableContentId = `table-content-${chartId}`;
+                const srTableBtn = document.getElementById(srTableToggleId);
+                const srTableContent =
+                    document.getElementById(srTableContentId);
+
+                if (srTableBtn && srTableContent) {
+                    srTableBtn.setAttribute(
+                        'aria-expanded',
+                        next ? 'true' : 'false'
+                    );
+                    srTableContent.className = next ?
+                        'table-content visible' :
+                        'table-content hidden';
+                    const srTableBtnTextSpan = srTableBtn.querySelector('span');
+                    if (srTableBtnTextSpan) {
+                        srTableBtnTextSpan.textContent = next ?
+                            'Hide Data Table' : 'Show Data Table';
+                    }
+                }
+                // Generate and insert table content if showing
+                if (next && chart.getTable) {
+                    try {
+                        // Check if custom table config exists
+                        const tableConfig = chart.options?.custom?.tableConfig;
+                        let tableHTML;
+
+                        if (tableConfig) {
+                            // Use custom table generation with better headers
+                            tableHTML = generateCustomTable(chart, tableConfig);
+                        } else {
+                            // Fall back to default Highcharts table
+                            tableHTML = chart.getTable();
+                        }
+                        tableContent.innerHTML = tableHTML;
+                        if (srTableContent) {
+                            srTableContent.innerHTML = tableHTML;
+                        }
+                    } catch (e) {
+                        console.warn('Could not generate table:', e);
+                    }
+                } else if (!next) {
+                    // Clear table content when hiding
+                    tableContent.innerHTML = '';
+                    if (srTableContent) {
+                        srTableContent.innerHTML = '';
+                    }
                 }
             };
         }
@@ -1466,6 +2161,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Toggle and show result
             const newState = chart.toggleVisualDescription();
+            return newState;
+        };
+
+        // Add a test function for table toggle
+        window.testDataTableSync = function (chartId) {
+            const chart = charts[chartId];
+            if (!chart || !chart.toggleDataTable) {
+                return;
+            }
+
+            // Toggle and show result
+            const newState = chart.toggleDataTable();
             return newState;
         };
     }, 1000);
