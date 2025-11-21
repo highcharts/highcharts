@@ -19,6 +19,7 @@ code {
 
 #results {
     margin: 1em;
+    border-radius: 4px;
 }
 
 #results span {
@@ -34,7 +35,7 @@ code {
     margin: 5px;
 }
 
-.test-container.failed {
+.failed {
     border-color: red;
     background-color: #f003;
     color: red;

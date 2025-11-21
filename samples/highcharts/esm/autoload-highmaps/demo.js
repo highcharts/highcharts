@@ -3,12 +3,20 @@ let success = 0,
 
 // flowmap test
 (async () => {
-    const container = document.createElement('div');
-    container.className = 'test-container';
-    document.getElementById('container').appendChild(container);
     const { default: Highcharts } = await import(
         'https://code.highcharts.com/esm/highcharts-autoload.js'
     );
+
+    if (/Compiled on demand/.test(Highcharts.version)) {
+        document.getElementById('results').innerText =
+            'Compiled on demand is enabled. ' +
+            'Please disable it to run the tests.';
+        document.getElementById('results').classList.add('failed');
+        return;
+    }
+    const container = document.createElement('div');
+    container.className = 'test-container';
+    document.getElementById('container').appendChild(container);
 
     try {
         await Highcharts.mapChart(container, {
@@ -33,12 +41,20 @@ let success = 0,
 
 // geoheatmap test
 (async () => {
-    const container = document.createElement('div');
-    container.className = 'test-container';
-    document.getElementById('container').appendChild(container);
     const { default: Highcharts } = await import(
         'https://code.highcharts.com/esm/highcharts-autoload.js'
     );
+
+    if (/Compiled on demand/.test(Highcharts.version)) {
+        document.getElementById('results').innerText =
+            'Compiled on demand is enabled. ' +
+            'Please disable it to run the tests.';
+        document.getElementById('results').classList.add('failed');
+        return;
+    }
+    const container = document.createElement('div');
+    container.className = 'test-container';
+    document.getElementById('container').appendChild(container);
 
     try {
         await Highcharts.mapChart(container, {
@@ -63,12 +79,20 @@ let success = 0,
 
 // heatmap test
 (async () => {
-    const container = document.createElement('div');
-    container.className = 'test-container';
-    document.getElementById('container').appendChild(container);
     const { default: Highcharts } = await import(
         'https://code.highcharts.com/esm/highcharts-autoload.js'
     );
+
+    if (/Compiled on demand/.test(Highcharts.version)) {
+        document.getElementById('results').innerText =
+            'Compiled on demand is enabled. ' +
+            'Please disable it to run the tests.';
+        document.getElementById('results').classList.add('failed');
+        return;
+    }
+    const container = document.createElement('div');
+    container.className = 'test-container';
+    document.getElementById('container').appendChild(container);
 
     try {
         await Highcharts.mapChart(container, {
@@ -93,12 +117,20 @@ let success = 0,
 
 // map test
 (async () => {
-    const container = document.createElement('div');
-    container.className = 'test-container';
-    document.getElementById('container').appendChild(container);
     const { default: Highcharts } = await import(
         'https://code.highcharts.com/esm/highcharts-autoload.js'
     );
+
+    if (/Compiled on demand/.test(Highcharts.version)) {
+        document.getElementById('results').innerText =
+            'Compiled on demand is enabled. ' +
+            'Please disable it to run the tests.';
+        document.getElementById('results').classList.add('failed');
+        return;
+    }
+    const container = document.createElement('div');
+    container.className = 'test-container';
+    document.getElementById('container').appendChild(container);
 
     try {
         await Highcharts.mapChart(container, {
@@ -123,12 +155,20 @@ let success = 0,
 
 // mapbubble test
 (async () => {
-    const container = document.createElement('div');
-    container.className = 'test-container';
-    document.getElementById('container').appendChild(container);
     const { default: Highcharts } = await import(
         'https://code.highcharts.com/esm/highcharts-autoload.js'
     );
+
+    if (/Compiled on demand/.test(Highcharts.version)) {
+        document.getElementById('results').innerText =
+            'Compiled on demand is enabled. ' +
+            'Please disable it to run the tests.';
+        document.getElementById('results').classList.add('failed');
+        return;
+    }
+    const container = document.createElement('div');
+    container.className = 'test-container';
+    document.getElementById('container').appendChild(container);
 
     try {
         await Highcharts.mapChart(container, {
@@ -153,12 +193,20 @@ let success = 0,
 
 // mapline test
 (async () => {
-    const container = document.createElement('div');
-    container.className = 'test-container';
-    document.getElementById('container').appendChild(container);
     const { default: Highcharts } = await import(
         'https://code.highcharts.com/esm/highcharts-autoload.js'
     );
+
+    if (/Compiled on demand/.test(Highcharts.version)) {
+        document.getElementById('results').innerText =
+            'Compiled on demand is enabled. ' +
+            'Please disable it to run the tests.';
+        document.getElementById('results').classList.add('failed');
+        return;
+    }
+    const container = document.createElement('div');
+    container.className = 'test-container';
+    document.getElementById('container').appendChild(container);
 
     try {
         await Highcharts.mapChart(container, {
@@ -183,12 +231,20 @@ let success = 0,
 
 // mappoint test
 (async () => {
-    const container = document.createElement('div');
-    container.className = 'test-container';
-    document.getElementById('container').appendChild(container);
     const { default: Highcharts } = await import(
         'https://code.highcharts.com/esm/highcharts-autoload.js'
     );
+
+    if (/Compiled on demand/.test(Highcharts.version)) {
+        document.getElementById('results').innerText =
+            'Compiled on demand is enabled. ' +
+            'Please disable it to run the tests.';
+        document.getElementById('results').classList.add('failed');
+        return;
+    }
+    const container = document.createElement('div');
+    container.className = 'test-container';
+    document.getElementById('container').appendChild(container);
 
     try {
         await Highcharts.mapChart(container, {
@@ -213,12 +269,20 @@ let success = 0,
 
 // pie test
 (async () => {
-    const container = document.createElement('div');
-    container.className = 'test-container';
-    document.getElementById('container').appendChild(container);
     const { default: Highcharts } = await import(
         'https://code.highcharts.com/esm/highcharts-autoload.js'
     );
+
+    if (/Compiled on demand/.test(Highcharts.version)) {
+        document.getElementById('results').innerText =
+            'Compiled on demand is enabled. ' +
+            'Please disable it to run the tests.';
+        document.getElementById('results').classList.add('failed');
+        return;
+    }
+    const container = document.createElement('div');
+    container.className = 'test-container';
+    document.getElementById('container').appendChild(container);
 
     try {
         await Highcharts.mapChart(container, {
@@ -243,12 +307,20 @@ let success = 0,
 
 // tiledwebmap test
 (async () => {
-    const container = document.createElement('div');
-    container.className = 'test-container';
-    document.getElementById('container').appendChild(container);
     const { default: Highcharts } = await import(
         'https://code.highcharts.com/esm/highcharts-autoload.js'
     );
+
+    if (/Compiled on demand/.test(Highcharts.version)) {
+        document.getElementById('results').innerText =
+            'Compiled on demand is enabled. ' +
+            'Please disable it to run the tests.';
+        document.getElementById('results').classList.add('failed');
+        return;
+    }
+    const container = document.createElement('div');
+    container.className = 'test-container';
+    document.getElementById('container').appendChild(container);
 
     try {
         await Highcharts.mapChart(container, {
@@ -273,12 +345,20 @@ let success = 0,
 
 // tilemap test
 (async () => {
-    const container = document.createElement('div');
-    container.className = 'test-container';
-    document.getElementById('container').appendChild(container);
     const { default: Highcharts } = await import(
         'https://code.highcharts.com/esm/highcharts-autoload.js'
     );
+
+    if (/Compiled on demand/.test(Highcharts.version)) {
+        document.getElementById('results').innerText =
+            'Compiled on demand is enabled. ' +
+            'Please disable it to run the tests.';
+        document.getElementById('results').classList.add('failed');
+        return;
+    }
+    const container = document.createElement('div');
+    container.className = 'test-container';
+    document.getElementById('container').appendChild(container);
 
     try {
         await Highcharts.mapChart(container, {

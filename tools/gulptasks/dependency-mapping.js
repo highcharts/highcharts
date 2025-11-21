@@ -66,7 +66,7 @@ there and run \`gulp dependency-mapping\` to update the file.
     Do not edit these test files, they are generated using the
     <code>gulp dependency-mapping</code> task.
     <br>
-    When testing, remember to turn off "Compile on demand" and run
+    When testing, remember to run
     <code>npx gulp scripts && npx gulp scripts-compile</code>.
 </p>
 <p id="results">
@@ -112,6 +112,7 @@ code {
 
 #results {
     margin: 1em;
+    border-radius: 4px;
 }
 
 #results span {
@@ -127,7 +128,7 @@ code {
     margin: 5px;
 }
 
-.test-container.failed {
+.failed {
     border-color: red;
     background-color: #f003;
     color: red;
@@ -258,12 +259,20 @@ code {
         js += `
 // ${seriesType} test
 (async () => {
-    const container = document.createElement('div');
-    container.className = 'test-container';
-    document.getElementById('container').appendChild(container);
     const { default: Highcharts } = await import(
         'https://code.highcharts.com/esm/highcharts-autoload.js'
     );
+
+    if (/Compiled on demand/.test(Highcharts.version)) {
+        document.getElementById('results').innerText =
+            'Compiled on demand is enabled. ' +
+            'Please disable it to run the tests.';
+        document.getElementById('results').classList.add('failed');
+        return;
+    }
+    const container = document.createElement('div');
+    container.className = 'test-container';
+    document.getElementById('container').appendChild(container);
 
     try {
         await Highcharts.${factory}(container, {
