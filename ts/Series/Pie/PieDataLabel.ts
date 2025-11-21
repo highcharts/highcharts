@@ -328,6 +328,9 @@ namespace ColumnDataLabel {
                             width: Math.round(maxWidth * 0.7) + 'px'
                         });
                         dataLabel.shortened = true;
+                        if (dataLabelOptions?.alignTo !== 'plotEdges') {
+                            dataLabel.updateTextPadding(); // #23595
+                        }
                     }
                 }
 
