@@ -25,8 +25,8 @@ import H from './Globals.js';
 const {
     isTouchDevice
 } = H;
-import { Palette } from './Color/Palettes.js';
-import Palettes from './Color/Palettes.js';
+import Palette from './Color/Palettes.js';
+const { palette } = Palette;
 import Time from './Time.js';
 import U from './Utilities.js';
 const {
@@ -64,6 +64,8 @@ declare module './GlobalsBase' {
  */
 const defaultOptions: DefaultOptions = {
 
+    palette,
+
     /**
      * An array containing the default colors for the chart's series. When
      * all colors are used, new colors are pulled from the start again.
@@ -95,7 +97,7 @@ const defaultOptions: DefaultOptions = {
      *     "#91e8e1"
      * ]
      */
-    colors: Palettes.colors,
+    colors: palette.dataColors,
 
     /**
      * Styled mode only. Configuration object for adding SVG definitions for
@@ -361,7 +363,7 @@ const defaultOptions: DefaultOptions = {
             /**
              * The fill color for buttons
              */
-            fill: Palette.neutralColor3,
+            fill: '{palette.neutralColor3}',
             /**
              * The padding of buttons
              */
@@ -373,7 +375,7 @@ const defaultOptions: DefaultOptions = {
             /**
              * The stroke color for buttons
              */
-            stroke: Palette.neutralColor20,
+            stroke: '{palette.neutralColor20}',
             /**
              * The stroke width for buttons
              */
@@ -382,7 +384,7 @@ const defaultOptions: DefaultOptions = {
              * CSS styling for the buttons' text
              */
             style: {
-                color: Palette.neutralColor80,
+                color: '{palette.neutralColor80}',
                 cursor: 'pointer',
                 fontSize: '0.8em',
                 fontWeight: 'normal'
@@ -396,16 +398,16 @@ const defaultOptions: DefaultOptions = {
                  * to the normal state options
                  */
                 hover: {
-                    fill: Palette.neutralColor10
+                    fill: '{palette.neutralColor10}'
                 },
                 /**
                  * Select state overrides for the buttons are applied in
                  * addition to the normal state options
                  */
                 select: {
-                    fill: Palette.highlightColor10,
+                    fill: '{palette.highlightColor10}',
                     style: {
-                        color: Palette.neutralColor100,
+                        color: '{palette.neutralColor100}',
                         fontWeight: 'bold'
                     }
                 },
@@ -418,7 +420,7 @@ const defaultOptions: DefaultOptions = {
                      * Disabled state CSS style overrides for the buttons' text
                      */
                     style: {
-                        color: Palette.neutralColor20
+                        color: '{palette.neutralColor20}'
                     }
                 }
             }
@@ -667,7 +669,7 @@ const defaultOptions: DefaultOptions = {
          * @default   {highstock} { "color": "#333333", "fontSize": "16px" }
          */
         style: {
-            color: Palette.neutralColor80,
+            color: '{palette.neutralColor80}',
             fontWeight: 'bold'
         },
 
@@ -888,7 +890,7 @@ const defaultOptions: DefaultOptions = {
          * @default   {"color": "#666666"}
          */
         style: {
-            color: Palette.neutralColor60,
+            color: '{palette.neutralColor60}',
             /**
              * @type {number|string}
              */
@@ -971,7 +973,7 @@ const defaultOptions: DefaultOptions = {
          * @default   {"color": "#666666"}
          */
         style: {
-            color: Palette.neutralColor60,
+            color: '{palette.neutralColor60}',
             /**
              * @type {number|string}
              */
@@ -1351,7 +1353,7 @@ const defaultOptions: DefaultOptions = {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        borderColor: Palette.neutralColor40,
+        borderColor: '{palette.neutralColor40}',
 
         /**
          * The border corner radius of the legend.
@@ -1464,7 +1466,7 @@ const defaultOptions: DefaultOptions = {
              * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              * @since 2.2.4
              */
-            activeColor: Palette.highlightColor100,
+            activeColor: '{palette.highlightColor100}',
 
             /**
              * The color of the inactive up or down arrow in the legend page
@@ -1481,7 +1483,7 @@ const defaultOptions: DefaultOptions = {
              * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              * @since 2.2.4
              */
-            inactiveColor: Palette.neutralColor20
+            inactiveColor: '{palette.neutralColor20}'
         },
 
         /**
@@ -1562,7 +1564,7 @@ const defaultOptions: DefaultOptions = {
             /**
              * @ignore
              */
-            color: Palette.neutralColor80,
+            color: '{palette.neutralColor80}',
             /**
              * @ignore
              */
@@ -1601,7 +1603,7 @@ const defaultOptions: DefaultOptions = {
             /**
              * @ignore
              */
-            color: Palette.neutralColor100
+            color: '{palette.neutralColor100}'
         },
 
         /**
@@ -1623,7 +1625,7 @@ const defaultOptions: DefaultOptions = {
             /**
              * @ignore
              */
-            color: Palette.neutralColor60,
+            color: '{palette.neutralColor60}',
             /**
              * @ignore
              */
@@ -1894,7 +1896,7 @@ const defaultOptions: DefaultOptions = {
                 /**
                  * @ignore
                  */
-                color: Palette.neutralColor80,
+                color: '{palette.neutralColor80}',
                 /**
                  * @ignore
                  */
@@ -1996,7 +1998,7 @@ const defaultOptions: DefaultOptions = {
             /**
              * @ignore
              */
-            backgroundColor: Palette.backgroundColor,
+            backgroundColor: '{palette.backgroundColor}',
             /**
              * @ignore
              */
@@ -2768,7 +2770,7 @@ const defaultOptions: DefaultOptions = {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        backgroundColor: Palette.backgroundColor,
+        backgroundColor: '{palette.backgroundColor}',
 
         /**
          * The pixel width of the tooltip border. Defaults to 0 for single
@@ -2838,7 +2840,7 @@ const defaultOptions: DefaultOptions = {
          */
         style: {
             /** @internal */
-            color: Palette.neutralColor80,
+            color: '{palette.neutralColor80}',
             /** @internal */
             cursor: 'default',
             /**
@@ -2961,7 +2963,7 @@ const defaultOptions: DefaultOptions = {
             /** @internal */
             cursor: 'pointer',
             /** @internal */
-            color: Palette.neutralColor40,
+            color: '{palette.neutralColor40}',
             /**
              * @type {number|string}
              */

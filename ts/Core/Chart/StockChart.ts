@@ -43,7 +43,6 @@ const { format } = F;
 import D from '../Defaults.js';
 const { getOptions } = D;
 import NavigatorDefaults from '../../Stock/Navigator/NavigatorDefaults.js';
-import { Palette } from '../../Core/Color/Palettes.js';
 import Point from '../Series/Point.js';
 import RangeSelectorDefaults from '../../Stock/RangeSelector/RangeSelectorDefaults.js';
 import ScrollbarDefaults from '../../Stock/Scrollbar/ScrollbarDefaults.js';
@@ -498,12 +497,12 @@ namespace StockChart {
                     .attr({
                         fill: options.backgroundColor ||
                             point?.series?.color || // #14888
-                            Palette.neutralColor60,
+                            '{palette.neutralColor60}',
                         stroke: options.borderColor || '',
                         'stroke-width': options.borderWidth || 0
                     })
                     .css(extend<CSSObject>({
-                        color: Palette.backgroundColor,
+                        color: '{palette.backgroundColor}',
                         fontWeight: 'normal',
                         fontSize: '0.7em',
                         textAlign: 'center'
