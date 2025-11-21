@@ -36,6 +36,7 @@ import ComponentRegistry from './Components/ComponentRegistry.js';
 import DashboardsAccessibility from './Accessibility/DashboardsAccessibility.js';
 import DataCursor from '../Data/DataCursor.js';
 import DataPool from '../Data/DataPool.js';
+import Defaults from './Defaults.js';
 import Globals from './Globals.js';
 import Layout from './Layout/Layout.js';
 import HTMLComponent from './Components/HTMLComponent/HTMLComponent.js';
@@ -156,7 +157,7 @@ class Board {
         renderTo: (string | HTMLElement),
         options: Board.Options
     ) {
-        this.options = merge(Board.defaultOptions, options);
+        this.options = merge(Defaults.defaultOptions, options);
         this.dataPool = new DataPool(options.dataPool);
         this.id = uniqueKey();
         this.guiEnabled = !options.gui ?
@@ -645,22 +646,6 @@ namespace Board {
      *  Constants
      *
      * */
-
-    /**
-     * Global dashboard settings.
-     */
-    export const defaultOptions: Board.Options = {
-        gui: {
-            enabled: true,
-            layoutOptions: {
-                rowClassName: void 0,
-                cellClassName: void 0
-            },
-            layouts: []
-        },
-        components: []
-    };
-
 }
 
 /* *
