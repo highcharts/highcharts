@@ -288,3 +288,71 @@ QUnit.test('#8635: Variwide zoom', assert => {
         );
     });
 });
+
+
+QUnit.test('Zooming in Variwide should not occlude column (#14182)', assert => {
+    const chart = Highcharts.chart('container', {
+        xAxis: [{
+            type: 'datetime',
+            min: 1587502697151,
+            max: 1587508014677
+        }],
+        series: [{
+            type: 'variwide',
+            keys: ['x', 'y', 'z', 'color'],
+            data: [
+                [1587500934161, -0.12713, 668520, '#FF6666'],
+                [1587502696151, 0.0955, 4318151, '#5CCE61'],
+                [1587507014677, -0.11131, 2254849, '#FF6666']
+            ],
+            cropThreshold: false
+        }]
+    });
+
+    const processedXData = chart.series[0].dataTable.modified.getColumn('x');
+
+    assert.strictEqual(
+        processedXData[0],
+        1587502696151,
+        'Timestamp at 20:58 should be visisble and first'
+    );
+});
+
+QUnit.test('Zoom to empty region should not render points (#21696)', assert => {
+    Highcharts.seriesTypes.variwide.prototype.cropShoulder = 0;
+
+    const chart = Highcharts.chart('container', {
+        chart: {
+            panning: {
+                enabled: true
+            }
+        },
+        xAxis: {
+            min: 1721427150000,
+            max: 1721512350000,
+            type: 'datetime'
+        },
+        series: [{
+            type: 'variwide',
+            keys: ['x', 'y', 'z'],
+            cropThreshold: false,
+            data: [
+                [1721418923000, 24, 1000000],
+                [1721420723000, 12, 1000000],
+                [1721423423000, 67, 1000000],
+                // <--
+                [1721539158000, 32, 1000000],
+                [1721540058000, 32, 1000000],
+                [1721542758000, 59, 1000000]
+            ]
+        }]
+    });
+
+    const processedXData = chart.series[0].dataTable.modified.getColumn('x');
+
+    assert.strictEqual(
+        processedXData.length,
+        0,
+        'Cropped data should be empty'
+    );
+});
