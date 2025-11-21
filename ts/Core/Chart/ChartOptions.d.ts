@@ -25,6 +25,7 @@ import type { GeoJSON, TopoJSON } from '../../Maps/GeoJSON';
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type { NumberFormatterCallbackFunction } from '../Options';
 import type { SeriesTypeOptions } from '../Series/SeriesType';
+import type Series from '../Series/Series';
 import type ShadowOptionsObject from '../Renderer/ShadowOptionsObject';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 
@@ -56,6 +57,17 @@ export interface ChartAddSeriesEventObject {
     preventDefault: Function;
     target: Chart;
     type: 'addSeries';
+}
+
+export interface ChartAfterAddSeriesCallbackFunction {
+    (this: Chart, event: ChartAfterAddSeriesEventObject): void;
+}
+
+export interface ChartAfterAddSeriesEventObject {
+    series: Series;
+    preventDefault: Function;
+    target: Chart;
+    type: 'afterAddSeries';
 }
 
 export interface ChartClickCallbackFunction {

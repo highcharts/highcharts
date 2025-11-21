@@ -407,6 +407,10 @@ g.highcharts-series,
     opacity: 0.2;
 }
 
+.highcharts-point-condemned {
+    opacity: 0;
+}
+
 /* Series options */
 
 /* Default colors */
