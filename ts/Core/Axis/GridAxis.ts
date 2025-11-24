@@ -1489,7 +1489,7 @@ class GridAxisAdditions {
     /**
      * Add extra border based on the provided path.
      * @internal
-     * @param {SVGPath} path
+     * @param {Highcharts.SVGPathArray} path
      * The path of the border.
      * @return {Highcharts.SVGElement}
      * Border

@@ -48,7 +48,7 @@ const {
  * Height
  * @param {Highcharts.SymbolOptions} [options]
  * Options
- * @return {Highcharts.SVGPath}
+ * @return {Highcharts.SVGPathArray}
  * Path
  */
 function arc(
@@ -169,7 +169,7 @@ function arc(
  * Height
  * @param {Highcharts.SymbolOptions} [options]
  * Options
- * @return {Highcharts.SVGPath}
+ * @return {Highcharts.SVGPathArray}
  * Path
  */
 function callout(
@@ -323,7 +323,7 @@ function callout(
  * Width
  * @param {number} h
  * Height
- * @return {Highcharts.SVGPath}
+ * @return {Highcharts.SVGPathArray}
  * Path
  */
 function circle(
@@ -352,7 +352,7 @@ function circle(
  * Width
  * @param {number} h
  * Height
- * @return {Highcharts.SVGPath}
+ * @return {Highcharts.SVGPathArray}
  * Path
  */
 function diamond(
@@ -385,7 +385,7 @@ function diamond(
  * Height
  * @param {Highcharts.SymbolOptions} [options]
  * Options
- * @return {Highcharts.SVGPath}
+ * @return {Highcharts.SVGPathArray}
  * Path
  */
 function rect(
@@ -421,7 +421,7 @@ function rect(
  * Height
  * @param {Highcharts.SymbolOptions} [options]
  * Options
- * @return {Highcharts.SVGPath}
+ * @return {Highcharts.SVGPathArray}
  * Path
  */
 function roundedRect(
@@ -458,7 +458,7 @@ function roundedRect(
  * Width
  * @param {number} h
  * Height
- * @return {Highcharts.SVGPath}
+ * @return {Highcharts.SVGPathArray}
  * Path
  */
 function triangle(
@@ -487,7 +487,7 @@ function triangle(
  * Width
  * @param {number} h
  * Height
- * @return {Highcharts.SVGPath}
+ * @return {Highcharts.SVGPathArray}
  * Path
  */
 function triangleDown(
@@ -539,7 +539,7 @@ const Symbols: SymbolTypeRegistry = {
      * Height
      * @param {Highcharts.SymbolOptions} [options]
      * Options
-     * @return {Highcharts.SVGPath}
+     * @return {Highcharts.SVGPathArray}
      * Path
      */
     arc,
@@ -557,7 +557,7 @@ const Symbols: SymbolTypeRegistry = {
      * Height
      * @param {Highcharts.SymbolOptions} [options]
      * Options
-     * @return {Highcharts.SVGPath}
+     * @return {Highcharts.SVGPathArray}
      * Path
      */
     callout,
@@ -573,7 +573,7 @@ const Symbols: SymbolTypeRegistry = {
      * Width
      * @param {number} h
      * Height
-     * @return {Highcharts.SVGPath}
+     * @return {Highcharts.SVGPathArray}
      * Path
      */
     circle,
@@ -589,7 +589,7 @@ const Symbols: SymbolTypeRegistry = {
      * Width
      * @param {number} h
      * Height
-     * @return {Highcharts.SVGPath}
+     * @return {Highcharts.SVGPathArray}
      * Path
      */
     diamond,
@@ -607,7 +607,7 @@ const Symbols: SymbolTypeRegistry = {
      * Height
      * @param {Highcharts.SymbolOptions} [options]
      * Options
-     * @return {Highcharts.SVGPath}
+     * @return {Highcharts.SVGPathArray}
      * Path
      */
     rect,
@@ -625,7 +625,7 @@ const Symbols: SymbolTypeRegistry = {
      * Height
      * @param {Highcharts.SymbolOptions} [options]
      * Options
-     * @return {Highcharts.SVGPath}
+     * @return {Highcharts.SVGPathArray}
      * Path
      */
     roundedRect,
@@ -643,7 +643,7 @@ const Symbols: SymbolTypeRegistry = {
      * Height
      * @param {Highcharts.SymbolOptions} [options]
      * Options
-     * @return {Highcharts.SVGPath}
+     * @return {Highcharts.SVGPathArray}
      * Path
      */
     square: rect,
@@ -659,7 +659,7 @@ const Symbols: SymbolTypeRegistry = {
      * Width
      * @param {number} h
      * Height
-     * @return {Highcharts.SVGPath}
+     * @return {Highcharts.SVGPathArray}
      * Path
      */
     triangle,
@@ -675,7 +675,7 @@ const Symbols: SymbolTypeRegistry = {
      * Width
      * @param {number} h
      * Height
-     * @return {Highcharts.SVGPath}
+     * @return {Highcharts.SVGPathArray}
      * Path
      */
     'triangle-down': triangleDown
