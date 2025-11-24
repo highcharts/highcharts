@@ -394,7 +394,6 @@ class Axis {
          * @type {number}
          */
         axis.side = userOptions.side ??
-            axis.side ??
             (
                 horiz ?
                     (axis.opposite ? 0 : 2) : // Top : bottom

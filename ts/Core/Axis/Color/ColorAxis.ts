@@ -223,11 +223,13 @@ class ColorAxis extends Axis implements AxisBase {
                 userOptions.layout !== 'vertical' :
                 legend.layout !== 'vertical';
 
-        axis.side = userOptions.side || horiz ? 2 : 1;
         axis.reversed = userOptions.reversed;
         axis.opposite = !horiz;
 
         super.init(chart, userOptions, 'colorAxis');
+
+        axis.side = userOptions.side || horiz ? 2 : 1;
+
 
         // `super.init` saves the extended user options, now replace it with the
         // originals
