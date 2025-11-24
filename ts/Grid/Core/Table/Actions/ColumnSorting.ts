@@ -143,9 +143,7 @@ class ColumnSorting {
         const order = col.viewport.grid.querying.sorting.currentSorting?.order;
 
         if (col.id === this.column.id && order) {
-            ((this.column.viewport.grid.columnOptionsMap[
-                col.id
-            ]?.options ?? {}).sorting ??= {}).order = order;
+            col.setOptions({ sorting: { order } });
         } else {
             delete col.options.sorting?.order;
             if (

@@ -514,8 +514,10 @@ class Grid {
      * @returns
      * An object of the changed column options in form of a record of
      * `[column.id]: column.options`.
+     *
+     * @internal
      */
-    private setColumnOptions(
+    public setColumnOptions(
         newColumnOptions: IndividualColumnOptions[],
         overwrite = false
     ): DeepPartial<Grid.NonArrayColumnOptions> {
@@ -534,25 +536,33 @@ class Grid {
             // If the new column options contain only the id.
             if (Object.keys(newOptions).length < 2) {
                 if (overwrite && colOptionsIndex !== -1) {
+                    columnDiffOptions[newOptions.id] = diffObjects(
+                        columnOptions[colOptionsIndex],
+                        { id: newOptions.id },
+                        true
+                    );
                     columnOptions.splice(colOptionsIndex, 1);
                 }
                 continue;
             }
 
-            let oldOptions: Omit<IndividualColumnOptions, 'id'>;
+            let diff: DeepPartial<IndividualColumnOptions>;
             if (colOptionsIndex === -1) {
-                oldOptions = {};
+                diff = merge(newOptions);
                 columnOptions.push(newOptions);
             } else if (overwrite) {
-                oldOptions = columnOptions[colOptionsIndex] ?? {};
+                const prevOptions = columnOptions[colOptionsIndex];
+                diff = merge(
+                    diffObjects(prevOptions, newOptions, true),
+                    diffObjects(newOptions, prevOptions)
+                );
                 columnOptions[colOptionsIndex] = newOptions;
             } else {
-                const prevOptions = columnOptions[colOptionsIndex] ?? {};
-                oldOptions = merge(prevOptions);
+                const prevOptions = columnOptions[colOptionsIndex];
+                diff = diffObjects(newOptions, prevOptions);
                 merge(true, prevOptions, newOptions);
             }
 
-            const diff = diffObjects(newOptions, oldOptions);
             delete diff.id;
             if (Object.keys(diff).length > 0) {
                 columnDiffOptions[newOptions.id] = diff;
@@ -561,6 +571,14 @@ class Grid {
 
         if (columnOptions.length < 1) {
             delete this.userOptions.columns;
+            this.columnOptionsMap = {};
+        } else {
+            for (let i = 0, iEnd = columnOptions.length; i < iEnd; ++i) {
+                this.columnOptionsMap[columnOptions[i].id] = {
+                    index: i,
+                    options: columnOptions[i]
+                };
+            }
         }
 
         return columnDiffOptions;
@@ -676,14 +694,14 @@ class Grid {
 
             for (const id of ids) {
                 // TODO: Move this to the column update method.
-                this.loadColumnOptionDiffs(id, diff.columns?.[id]);
+                this.loadColumnOptionDiffs(viewport, id, diff.columns?.[id]);
                 delete diff.columns?.[id];
             }
             delete diff.columns;
         }
 
         if ('columnDefaults' in diff) {
-            this.loadColumnOptionDiffs(null, diff.columnDefaults);
+            this.loadColumnOptionDiffs(viewport, null, diff.columnDefaults);
             delete diff.columnDefaults;
         }
 
@@ -729,6 +747,9 @@ class Grid {
     /**
      * Loads the column option diffs by updating the dirty flags.
      *
+     * @param vp
+     * The viewport that the column option diffs should be loaded for.
+     *
      * @param columnId
      * The ID of the column that should be updated.
      *
@@ -738,6 +759,7 @@ class Grid {
      * it refers to the column defaults.
      */
     private loadColumnOptionDiffs(
+        vp: Table,
         columnId: string | null,
         columnDiff: DeepPartial<IndividualColumnOptions> = {}
     ): void {
@@ -780,7 +802,7 @@ class Grid {
         delete columnDiff.cells;
 
         if ('width' in columnDiff) {
-            flags.add('reflow');
+            vp.columnResizing.isDirty = true;
         }
         delete columnDiff.width;
 
@@ -840,13 +862,22 @@ class Grid {
         }
 
         const { viewport: vp } = this;
+        const colResizing = vp?.columnResizing;
+
+        if (colResizing?.isDirty) {
+            colResizing.loadColumns();
+        }
+
         if (
             flags.has('rows') ||
             flags.has('sorting') ||
             flags.has('filtering')
         ) {
             await vp?.updateRows();
-        } else if (flags.has('reflow')) {
+        } else if (
+            flags.has('reflow') ||
+            colResizing?.isDirty
+        ) {
             vp?.reflow();
         }
 
@@ -859,6 +890,7 @@ class Grid {
             });
         }
 
+        delete vp?.columnResizing?.isDirty;
         flags.clear();
     }
 
@@ -886,8 +918,8 @@ class Grid {
      * The options of the columns that should be updated. If null,
      * column options for this column ID will be removed.
      *
-     * @param render
-     * Whether to re-render the Grid after updating the columns.
+     * @param redraw
+     * Whether to redraw the Grid after updating the columns.
      *
      * @param overwrite
      * If true, the column options will be updated by replacing the existing
@@ -896,15 +928,22 @@ class Grid {
     public async updateColumn(
         columnId: string,
         options: Column.Options,
-        render: boolean = true,
+        redraw = true,
         overwrite = false
     ): Promise<void> {
-        this.setColumnOptions([{
+        const vp = this.viewport;
+        const diff = this.setColumnOptions([{
             id: columnId,
             ...options
-        }], overwrite);
+        }], overwrite)[0];
 
-        await this.update(void 0, render);
+        if (diff && vp) {
+            this.loadColumnOptionDiffs(vp, columnId, diff);
+        }
+
+        if (redraw) {
+            await this.redraw();
+        }
     }
 
     private async render(): Promise<void> {

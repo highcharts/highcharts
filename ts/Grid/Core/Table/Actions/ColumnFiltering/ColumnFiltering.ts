@@ -277,9 +277,13 @@ class ColumnFiltering {
             }
         }
 
-        // Update the userOptions.
-        (viewport.grid.columnOptionsMap[columnId].options.filtering ??= {})
-            .condition = condition.condition;
+        this.column.setOptions({
+            filtering: {
+                condition: condition.condition,
+                value: condition.value
+            }
+        });
+
         filteringController.addColumnFilterCondition(columnId, condition);
         this.disableInputIfNeeded();
 
