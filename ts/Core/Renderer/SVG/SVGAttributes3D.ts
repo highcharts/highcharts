@@ -23,6 +23,7 @@ import type SVGAttributes from './SVGAttributes';
  *
  * */
 
+/** @internal */
 interface SVGAttributes3D extends SVGAttributes {
     alpha?: number;
     beta?: number;
@@ -39,4 +40,5 @@ interface SVGAttributes3D extends SVGAttributes {
  *
  * */
 
+/** @internal */
 export default SVGAttributes3D;

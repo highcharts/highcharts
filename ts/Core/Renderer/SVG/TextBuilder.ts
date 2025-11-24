@@ -217,7 +217,7 @@ class TextBuilder {
      * Modify the DOM of the generated SVG structure. This function only does
      * operations that cannot be done until the elements are attached to the
      * DOM, like doing layout based on rendered metrics of the added elements.
-     * @private
+     * @internal
      */
     private modifyDOM(): void {
 

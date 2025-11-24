@@ -15,7 +15,6 @@
  * */
 
 import type SVGPath from './SVGPath';
-import type SVGPath3D from './SVGPath3D';
 
 /* *
  *
@@ -23,14 +22,18 @@ import type SVGPath3D from './SVGPath3D';
  *
  * */
 
-export interface SVGCuboid extends SVGPath3D {
-    front: SVGPath;
-    isFront: number;
-    isTop: number;
-    side: SVGPath;
+/** @internal */
+export interface SVGArc3D {
+    out: SVGPath;
+    inn: SVGPath;
+    side1: SVGPath;
+    side2: SVGPath;
     top: SVGPath;
-    zIndexes: Record<string, number>;
-    forcedSides?: Array<string>;
+    zInn: number;
+    zOut: number;
+    zSide1: number;
+    zSide2: number;
+    zTop: number;
 }
 
 /* *
@@ -39,4 +42,5 @@ export interface SVGCuboid extends SVGPath3D {
  *
  * */
 
-export default SVGCuboid;
+/** @internal */
+export default SVGArc3D;

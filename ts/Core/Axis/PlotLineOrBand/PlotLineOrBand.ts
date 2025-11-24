@@ -200,7 +200,7 @@ class PlotLineOrBand {
     /**
      * Render the plot line or plot band. If it is already existing,
      * move it.
-     * @private
+     * @internal
      * @function Highcharts.PlotLineOrBand#render
      */
     public render(): (PlotLineOrBand|undefined) {
@@ -356,7 +356,7 @@ class PlotLineOrBand {
 
     /**
      * Render and align label for plot line or band.
-     * @private
+     * @internal
      * @function Highcharts.PlotLineOrBand#renderLabel
      */
     public renderLabel(
@@ -462,7 +462,7 @@ class PlotLineOrBand {
 
     /**
      * Get label's text content.
-     * @private
+     * @internal
      * @function Highcharts.PlotLineOrBand#getLabelText
      */
     public getLabelText(
