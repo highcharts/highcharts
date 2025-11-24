@@ -14,6 +14,7 @@ const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matc
 
 let isPaused = false;
 let gridControls = null;
+let currentChart = null;
 
 // Track per-chart animation states (true = running)
 const chartAnimationState = {
@@ -330,8 +331,8 @@ function cs() {
         animation: false,
         events: {
             load() {
-                const chart = this;
-                csSeries = chart.series[0];
+                currentChart = this;
+                csSeries = currentChart.series[0];
             }
         },
         margin: [50, 20, 0, 20]
@@ -1317,7 +1318,12 @@ function animatedMap() {
                 }
             },
             chart: {
-                map: topology
+                map: topology,
+                events: {
+                    load: function () {
+                        currentChart = this;
+                    }
+                }
             },
 
             title: {
@@ -2920,7 +2926,14 @@ function updateChart(i) {
     chartWrapper.classList.add('fade-out');
 
     setTimeout(() => {
-    // once faded out, swap charts
+
+        // destroy current chart
+        if (currentChart !== null) {
+            currentChart.destroy();
+            currentChart = null;
+        }
+
+        // once faded out, swap charts
         if (p.chart) {
             // clear interval for stock chart
             clearInterval(csInterval);
@@ -2939,7 +2952,6 @@ function updateChart(i) {
                     document.getElementById('dash-container').style.display = 'none';
                     // eslint-disable-next-line max-len
                     document.getElementById('grid-container').style.display = 'block';
-                    gridControls = grid();
                 } else {
                     // eslint-disable-next-line max-len
                     document.getElementById('dash-container').style.display = 'none';
@@ -2955,7 +2967,7 @@ function updateChart(i) {
                 // eslint-disable-next-line max-len
                 document.getElementById('grid-container').style.display = 'none';
                 document.getElementById('container').style.display = 'block';
-                Highcharts.chart('container', p.chart);
+                currentChart = Highcharts.chart('container', p.chart);
             }
         }
 
