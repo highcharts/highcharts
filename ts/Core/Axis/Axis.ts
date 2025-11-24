@@ -3828,7 +3828,6 @@ class Axis {
             ticks = axis.ticks,
             minorTicks = axis.minorTicks,
             alternateBands = axis.alternateBands,
-            stackLabelOptions = options.stackLabels,
             alternateGridColor = options.alternateGridColor,
             crossing = options.crossing,
             tickmarkOffset = axis.tickmarkOffset,
@@ -4012,11 +4011,8 @@ class Axis {
         }
 
 
-        // Stacked totals:
-        if (stackLabelOptions?.enabled && axis.stacking) {
-            axis.stacking.renderStackTotals();
-        }
-        // End stacked totals
+        // Stacked total labels
+        axis.stacking?.renderStackTotals();
 
         // Record old scaling for updating/animation. Pinch base must be
         // preserved until the pinch ends.
