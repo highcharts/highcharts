@@ -20,6 +20,10 @@ body {
     padding: 8px 12px;
 }
 
+.highcharts-description {
+    padding: 0 8px;
+}
+
 #container {
     height: 800px;
 }
