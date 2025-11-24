@@ -13,18 +13,18 @@ Highcharts Grid ships in two editions that share the same API but differ in feat
 
 Start with Lite if you only need read-only, interactive tables. Switch to Pro when you need editing, data validation, events or sparklines.
 
-## 🚀 Try before installing
+## Try before installing
 
 See Grid in action without installing anything:
 
-- **[Try in CodePen →](https://www.highcharts.com/samples/grid/demo/grid-column-filtering?codepen)**
-- **[Try in JSFiddle →](https://www.highcharts.com/samples/grid/demo/grid-column-filtering?jsfiddle)**
+- **[Try in CodePen →](https://www.highcharts.com/samples/grid/demo/general?codepen)**
+- **[Try in JSFiddle →](https://www.highcharts.com/samples/grid/demo/general?jsfiddle)**
 
 ## Installation
 
 Get started with Highcharts Grid using either a bundler (Option 1) or a CDN (Option 2).
 
-### 📦 Option 1: NPM & Bundlers
+### Option 1: NPM & Bundlers
 
 Best for projects using Vite, Webpack, Next.js, or other modern build tools.
 
@@ -55,7 +55,7 @@ Grid.grid('container', {
 
 > **TIP:** Using TypeScript? Types are included automatically - no `@types` package needed.
 
-### ⚡ Option 2: CDN & Static
+### Option 2: CDN & Static
 
 Best for quick prototypes, CodePen, JSFiddle, or projects without build tools.
 
