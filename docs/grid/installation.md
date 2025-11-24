@@ -88,6 +88,28 @@ Best for quick prototypes, CodePen, JSFiddle, or projects without build tools.
 
 ---
 
+### Option 3: Download and self-host
+
+Best when you need an offline setup or must serve assets from your own domain.
+
+1. Download the latest Grid package from [highcharts.com/download](https://www.highcharts.com/download/).
+2. Place the JS/CSS files on your server.
+3. Reference them directly:
+
+```html
+<script src="/assets/grid/grid-lite.js"></script>
+<link rel="stylesheet" href="/assets/grid/css/grid-lite.css" />
+```
+
+For Grid Pro, swap the filenames:
+
+```html
+<script src="/assets/grid/grid-pro.js"></script>
+<link rel="stylesheet" href="/assets/grid/css/grid-pro.css" />
+```
+
+---
+
 ## Using Grid Pro
 
 Switch to Grid Pro for editing, validation, sparklines, and advanced features.
