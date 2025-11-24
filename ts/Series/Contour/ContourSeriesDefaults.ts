@@ -28,24 +28,18 @@ import type ContourSeriesOptions from './ContourSeriesOptions';
 
 /**
  * A contour plot is a graphical representation of three-dimensional data
- * in two dimensions using contour lines or color-coded regions.
  *
  * @productdesc {highcharts}
  * Requires `modules/contour`.
  *
  * @sample highcharts/demo/contour/
- *         Simple contour
  *
  * @extends      plotOptions.scatter
  * @excluding    animationLimit, cluster, connectEnds, connectNulls,
  *               cropThreshold, dashStyle, dragDrop, findNearestPointBy,
  *               getExtremesFromAll, jitter, legendSymbolColor, linecap,
  *               lineWidth, pointInterval, pointIntervalUnit, pointRange,
- *               pointStart, shadow, softThreshold, stacking, step, threshold,
- *               boostBlending, boostThreshold, crisp, clip, colorIndex,
- *               inactiveOtherPoints, negativeColor, color, turboThreshold,
- *
- *
+ *               pointStart, shadow, softThreshold, stacking, step, threshold
  * @product      highcharts highmaps
  * @optionparent plotOptions.contour
  */
@@ -65,6 +59,8 @@ const ContourSeriesDefaults: ContourSeriesOptions = {
 
     clip: false,
 
+    findNearestPointBy: 'xy',
+
     /**
      * Whether to use smooth color transitions.
      *
@@ -79,6 +75,14 @@ const ContourSeriesDefaults: ContourSeriesOptions = {
      * @type      {number}
      * @default   1
      * @apioption plotOptions.contour.contourInterval
+     */
+
+    /**
+     * Whether to display contour lines.
+     *
+     * @type      {boolean}
+     * @default   true
+     * @apioption plotOptions.contour.showContourLines
      */
 
     /**
@@ -147,6 +151,112 @@ const ContourSeriesDefaults: ContourSeriesOptions = {
     zIndex: 0
 
 };
+
+
+/**
+ * A contour plot is a graphical representation of three-dimensional data
+ * in two dimensions using contour lines or color-coded regions.
+ *
+ * @productdesc {highcharts}
+ * Requires `modules/contour`.
+ *
+ * @sample highcharts/demo/contour/
+ *         Simple contour
+ *
+ * @extends      series,plotOptions.contour
+ * @excluding    cropThreshold, dataParser, dataURL, dragDrop ,pointRange,
+ *               stack, allowPointSelect, boostBlending, boostThreshold, color,
+ *               colorIndex, connectEnds, connectNulls, crisp, dashStyle,
+ *               inactiveOtherPoints, jitter, linecap, negativeColor,
+ *               pointInterval,
+ *
+ * @product      highcharts highmaps
+ * @apioption    series.contour
+ */
+
+/**
+ * An array of data points for the series. For the `contour` series
+ * type, points can be given in the following ways:
+ *
+ * 1.  An array of arrays with 3 or 2 values. In this case, the values
+ * correspond to `x,y,value`. If the first value is a string, it is
+ * applied as the name of the point, and the `x` value is inferred.
+ * The `x` value can also be omitted, in which case the inner arrays
+ * should be of length 2\. Then the `x` value is automatically calculated,
+ * either starting at 0 and incremented by 1, or from `pointStart`
+ * and `pointInterval` given in the series options.
+ *
+ *  ```js
+ *     data: [
+ *         [0, 9, 7],
+ *         [1, 10, 4],
+ *         [2, 6, 3]
+ *     ]
+ *  ```
+ *
+ * 2.  An array of objects with named values. The following snippet shows only a
+ * few settings, see the complete options set below. If the total number of data
+ * points exceeds the series' [turboThreshold](#series.contour.turboThreshold),
+ * this option is not available.
+ *
+ *  ```js
+ *     data: [{
+ *         x: 1,
+ *         y: 3,
+ *         value: 10,
+ *         name: "Point2"
+ *     }, {
+ *         x: 1,
+ *         y: 7,
+ *         value: 10,
+ *         name: "Point1"
+ *     }]
+ *  ```
+ *
+ * @sample {highcharts} highcharts/chart/reflow-true/
+ *         Numerical values
+ * @sample {highcharts} highcharts/series/data-array-of-arrays/
+ *         Arrays of numeric x and y
+ * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/
+ *         Arrays of datetime x and y
+ * @sample {highcharts} highcharts/series/data-array-of-name-value/
+ *         Arrays of point.name and y
+ * @sample {highcharts} highcharts/series/data-array-of-objects/
+ *         Config objects
+ *
+ * @type      {Array<Array<number>|*>}
+ * @extends   series.line.data
+ * @product   highcharts highmaps
+ * @apioption series.contour.data
+ */
+
+/**
+ * The value of the point, resulting in a color controlled by options
+ * as set in the [colorAxis](#colorAxis) configuration.
+ *
+ * @type      {number}
+ * @product   highcharts highmaps
+ * @apioption series.contour.data.value
+ */
+
+/**
+ * The x value of the point. For datetime axes,
+ * the X value is the timestamp in milliseconds since 1970.
+ *
+ * @type      {number}
+ * @product   highcharts highmaps
+ * @apioption series.contour.data.x
+ */
+
+/**
+ * The y value of the point.
+ *
+ * @type      {number}
+ * @product   highcharts highmaps
+ * @apioption series.contour.data.y
+ */
+
+
 ''; // Keeps doclets above separate
 
 export default ContourSeriesDefaults;
