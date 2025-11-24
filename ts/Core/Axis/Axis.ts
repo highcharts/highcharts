@@ -3286,14 +3286,9 @@ class Axis {
             opposite = axis.opposite,
             options = axis.options,
             axisTitleOptions = options.title,
-            styledMode = axis.chart.styledMode;
-
-        let textAlign: (AlignValue|undefined);
-
-        if (!axis.axisTitle) {
-            textAlign = axisTitleOptions.textAlign;
-            if (!textAlign) {
-                textAlign = ((horiz ? {
+            styledMode = axis.chart.styledMode,
+            textAlign = axisTitleOptions.textAlign ||
+                ((horiz ? {
                     low: 'left',
                     middle: 'center',
                     high: 'right'
@@ -3302,45 +3297,53 @@ class Axis {
                     middle: 'center',
                     high: opposite ? 'left' : 'right'
                 }) as Record<string, AlignValue>)[
-                    axisTitleOptions.align as any
-                ];
-            }
-            axis.axisTitle = renderer
+                    axisTitleOptions.align
+                ],
+            attr: SVGAttributes = {
+                text: axisTitleOptions.text || '',
+                zIndex: 7,
+                rotation: axisTitleOptions.rotation || 0,
+                align: textAlign
+            };
+
+        let axisTitle = axis.axisTitle;
+
+        if (!axisTitle) {
+            axisTitle = renderer
                 .text(
-                    axisTitleOptions.text || '',
+                    '',
                     0,
                     0,
                     axisTitleOptions.useHTML
                 )
-                .attr({
-                    zIndex: 7,
-                    rotation: axisTitleOptions.rotation || 0,
-                    align: textAlign
-                })
+                .attr(attr)
                 .addClass('highcharts-axis-title');
 
-            // #7814, don't mutate style option
-            if (!styledMode) {
-                axis.axisTitle.css(merge(axisTitleOptions.style));
-            }
+            axisTitle.add(axis.axisGroup);
+            axisTitle.isNew = true;
 
-            axis.axisTitle.add(axis.axisGroup);
-            axis.axisTitle.isNew = true;
+        } else {
+            axisTitle.attr(attr);
         }
 
-        // Max width defaults to the length of the axis
-        if (
-            !styledMode &&
-            !axisTitleOptions.style.width &&
-            !axis.isRadial
-        ) {
-            axis.axisTitle.css({
-                width: axis.len + 'px'
-            });
+        if (!styledMode) {
+            // #7814, don't mutate the style option
+            const css = merge(axisTitleOptions.style);
+            // Max width defaults to the length of the axis
+            if (
+                !axisTitleOptions.style.width &&
+                !axis.isRadial
+            ) {
+                css.width = axis.len + 'px';
+            }
+            axisTitle.css(css);
         }
 
         // Hide or show the title depending on whether showEmpty is set
-        axis.axisTitle[display ? 'show' : 'hide'](display);
+        axisTitle[display ? 'show' : 'hide'](display);
+
+        // Register
+        axis.axisTitle = axisTitle;
     }
 
     /**
@@ -4332,7 +4335,6 @@ class Axis {
             /// unit-tests/3d/column-crop, unit-tests/axis/type-logarithmic
             'type' in options ||
             'stackLabels' in options ||
-            'title' in options ||
             /// unit-tests/scrollable-plotarea/dynamics
             chart.hasParallelCoordinates ||
             /// unit-tests/polar/update
