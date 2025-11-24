@@ -393,14 +393,13 @@ class Axis {
          * @name Highcharts.Axis#side
          * @type {number}
          */
-        axis.side = pick(
-            userOptions.side,
-            axis.side,
-            (horiz ?
-                (axis.opposite ? 0 : 2) : // Top : bottom
-                (axis.opposite ? 1 : 3)
-            ) // Right : left
-        );
+        axis.side = userOptions.side ??
+            axis.side ??
+            (
+                horiz ?
+                    (axis.opposite ? 0 : 2) : // Top : bottom
+                    (axis.opposite ? 1 : 3) // Right : left
+            );
 
         /**
          * Current options for the axis after merge of defaults and user's
@@ -468,7 +467,7 @@ class Axis {
 
 
         // Placeholder for plotlines and plotbands groups
-        axis.plotLinesAndBandsGroups = {};
+        axis.plotLinesAndBandsGroups ||= {};
 
         // Shorthand types
         axis.positiveValuesOnly = !!axis.logarithmic;
@@ -484,8 +483,8 @@ class Axis {
          * @name Highcharts.Axis#ticks
          * @type {Highcharts.Dictionary<Highcharts.Tick>}
          */
-        axis.ticks = {};
-        axis.labelEdge = [];
+        axis.ticks ||= {};
+        axis.labelEdge ||= [];
         /**
          * List of minor ticks mapped by position on the axis.
          *
@@ -494,13 +493,13 @@ class Axis {
          * @name Highcharts.Axis#minorTicks
          * @type {Highcharts.Dictionary<Highcharts.Tick>}
          */
-        axis.minorTicks = {};
+        axis.minorTicks ||= {};
 
         // List of plotLines/Bands
-        axis.plotLinesAndBands = [];
+        axis.plotLinesAndBands ||= [];
 
         // Alternate bands
-        axis.alternateBands = {};
+        axis.alternateBands ||= {};
 
         /**
          * The length of the axis in terms of pixels.
@@ -4319,17 +4318,47 @@ class Axis {
      */
     public update(
         options: DeepPartial<AxisTypeOptions>,
-        redraw?: boolean
+        redraw: boolean = true
     ): void {
         const chart = this.chart;
 
         options = merge(this.userOptions, options);
 
-        this.destroy(true);
+
+        // @todo: Look for update for each case
+        if (
+            this.coll === 'colorAxis' ||
+            'crosshair' in options ||
+            /// unit-tests/responsive/responsive
+            'labels' in options ||
+            'overscroll' in options ||
+            'plotBands' in options ||
+            'plotLines' in options ||
+            /// unit-tests/3d/column-crop, unit-tests/axis/type-logarithmic
+            'type' in options ||
+            'stackLabels' in options ||
+            'title' in options ||
+            /// unit-tests/scrollable-plotarea/dynamics
+            chart.hasParallelCoordinates ||
+            /// unit-tests/polar/update
+            'polar' in (chart.userOptions.chart || {}) ||
+            /// unit-tests/series/centerincategory
+            'inverted' in (chart.userOptions.chart || {}) ||
+            /// unit-tests/series-variwide/variwide
+            this.variwide
+        ) {
+            this.destroy(true);
+
+        } else {
+            this.isDirty = true;
+            this.forceRedraw = true;
+        }
+
+
         this.init(chart, options);
 
         chart.isDirtyBox = true;
-        if (pick(redraw, true)) {
+        if (redraw) {
             chart.redraw();
         }
     }
