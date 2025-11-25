@@ -26,10 +26,56 @@ import type LegendOptions from '../../Legend/LegendOptions';
  *
  * */
 
-export interface ColorAxisDataClassesOptions {
+export interface ColorAxisDataClassOptions {
+    /**
+     * The color of each data class. If not set, the color is pulled
+     * from the global or chart-specific [colors](#colors) array. In
+     * styled mode, this option is ignored. Instead, use colors defined
+     * in CSS.
+     *
+     * @sample {highmaps} maps/demo/data-class-two-ranges/
+     *         Explicit colors
+     *
+     * @product   highcharts highstock highmaps
+     */
     color?: ColorType;
+    /** @internal */
+    colorIndex?: number;
+    /**
+     * The start of the value range that the data class represents,
+     * relating to the point value.
+     *
+     * The range of each `dataClass` is closed in both ends, but can be
+     * overridden by the next `dataClass`.
+     *
+     * @product   highcharts highstock highmaps
+     */
     from?: number;
+    /**
+     * The name of the data class as it appears in the legend.
+     * If no name is given, it is automatically created based on the
+     * `from` and `to` values. For full programmatic control,
+     * [legend.labelFormatter](#legend.labelFormatter) can be used.
+     * In the formatter, `this.from` and `this.to` can be accessed.
+     *
+     * @sample {highmaps} maps/coloraxis/dataclasses-name/
+     *         Named data classes
+     *
+     * @sample {highmaps} maps/coloraxis/dataclasses-labelformatter/
+     *         Formatted data classes
+     *
+     * @product   highcharts highstock highmaps
+     */
     name?: string;
+    /**
+     * The end of the value range that the data class represents,
+     * relating to the point value.
+     *
+     * The range of each `dataClass` is closed in both ends, but can be
+     * overridden by the next `dataClass`.
+     *
+     * @product   highcharts highstock highmaps
+     */
     to?: number;
 }
 
@@ -93,7 +139,7 @@ export interface ColorAxisOptions extends AxisOptions {
      * @type      {Array<*>}
      * @product   highcharts highstock highmaps
      */
-    dataClasses?: Array<ColorAxisDataClassesOptions>;
+    dataClasses?: Array<ColorAxisDataClassOptions>;
 
     /** @internal */
     labelRight?: number;

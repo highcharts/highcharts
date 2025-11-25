@@ -19,6 +19,7 @@
 import type AxisComposition from '../AxisComposition';
 import type AxisOptions from '../AxisOptions';
 import type Chart from '../../Chart/Chart';
+import type { ColorAxisDataClassOptions } from './ColorAxisOptions';
 import type ColorType from '../../Color/ColorType';
 import type { GradientColorStop } from '../../Color/GradientColor';
 import type Point from '../../Series/Point';
@@ -40,7 +41,7 @@ interface ColorAxisBase extends AxisComposition {
     chart: Chart;
 
     /** @internal */
-    dataClasses: Array<ColorAxisBase.DataClassOptions>;
+    dataClasses: Array<ColorAxisDataClassOptions>;
 
     /** @internal */
     index: number;
@@ -81,18 +82,10 @@ namespace ColorAxisBase {
 
     export interface Options extends AxisOptions {
         dataClassColor?: string;
-        dataClasses?: Array<DataClassOptions>;
+        dataClasses?: Array<ColorAxisDataClassOptions>;
         maxColor?: ColorType;
         minColor?: ColorType;
         stops?: Array<GradientColorStop>;
-    }
-
-    export interface DataClassOptions {
-        color?: ColorType;
-        colorIndex?: number;
-        from?: number;
-        name?: string;
-        to?: number;
     }
 
     /* *
@@ -115,8 +108,8 @@ namespace ColorAxisBase {
             options = axis.options,
             userDataClasses = userOptions.dataClasses || [];
 
-        let dataClass: DataClassOptions,
-            dataClasses: Array<DataClassOptions>,
+        let dataClass: ColorAxisDataClassOptions,
+            dataClasses: Array<ColorAxisDataClassOptions>,
             colorCount = chart.options.chart.colorCount,
             colorCounter = 0,
             colors: (Array<string>|undefined);

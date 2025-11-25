@@ -18,7 +18,10 @@
 
 import type AnimationOptions from '../../Animation/AnimationOptions';
 import type Chart from '../../Chart/Chart';
-import type ColorAxisOptions from './ColorAxisOptions';
+import type {
+    ColorAxisDataClassOptions,
+    ColorAxisOptions
+} from './ColorAxisOptions';
 import type ColorType from '../../Color/ColorType';
 import type { DeepPartial } from '../../../Shared/Types';
 import type Fx from '../../Animation/Fx';
@@ -195,7 +198,7 @@ class ColorAxis extends Axis implements ColorAxisBase {
     public coll = 'colorAxis' as const;
 
     /** @internal */
-    public dataClasses!: Array<ColorAxis.DataClassesOptions>;
+    public dataClasses!: Array<ColorAxisDataClassOptions>;
 
     /** @internal */
     public legendColor?: GradientColor;
@@ -901,9 +904,7 @@ namespace ColorAxis {
      *
      * */
 
-    export type DataClassesOptions = ColorAxisBase.DataClassOptions;
-
-    export interface LegendItemObject extends DataClassesOptions {
+    export interface LegendItemObject extends ColorAxisDataClassOptions {
         [key: string]: any;
         chart: Chart;
         name: string;
