@@ -558,3 +558,27 @@ QUnit.test('DataTable.setRow insert argument', function (assert) {
     );
 });
 
+QUnit.test('Metadata in a cloned table', function (assert) {
+    // Arrange
+    const table = new DataTable({
+        columns: {
+            ID: [1, 2, 3],
+            Name: ['John', 'Jane', 'Alice']
+        },
+        metadata: {
+            ID: {
+                dataType: 'number'
+            }
+        }
+    });
+
+    // Act
+    const tableClone = table.clone();
+
+    // Assert
+    assert.deepEqual(
+        tableClone.metadata,
+        table.metadata,
+        'Cloned table should have the same metadata.'
+    );
+});
