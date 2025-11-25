@@ -58,7 +58,7 @@ declare module '../Exporting/ExportingOptions' {
 declare module '../Exporting/ExportingOptions' {
     interface ExportingOptions {
         /**
-         * Options for exporting data to CSV or ExCel, or displaying the data
+         * Options for exporting data to CSV or Excel, or displaying the data
          * in a HTML table or a JavaScript structure.
          *
          * This module adds data export options to the export menu and provides

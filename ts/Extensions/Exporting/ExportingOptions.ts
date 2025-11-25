@@ -47,6 +47,7 @@ declare module '../../Core/Options' {
          * from full screen.
          *
          * @since 8.0.1
+         * @requires modules/exporting
          */
         exitFullscreen?: string;
 
@@ -95,6 +96,7 @@ declare module '../../Core/Options' {
          * in full screen.
          *
          * @since 8.0.1
+         * @requires modules/exporting
          */
         viewFullscreen?: string;
     }

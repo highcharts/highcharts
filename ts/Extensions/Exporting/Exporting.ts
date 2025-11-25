@@ -2585,7 +2585,7 @@ namespace Exporting {
      * The event that occurred.
      */
     export interface AfterPrintCallbackFunction {
-        (chart: Chart, event: Event): void;
+        (this: Chart, event: Event): void;
     }
 
     /**
@@ -2600,7 +2600,7 @@ namespace Exporting {
      * The event that occurred.
      */
     export interface BeforePrintCallbackFunction {
-        (chart: Chart, event: Event): void;
+        (this: Chart, event: Event): void;
     }
 
     /** @internal */

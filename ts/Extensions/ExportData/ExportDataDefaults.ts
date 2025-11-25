@@ -47,7 +47,7 @@ const exporting: ExportingOptions = {
      */
 
     /**
-     * Options for exporting data to CSV or ExCel, or displaying the data
+     * Options for exporting data to CSV or Excel, or displaying the data
      * in a HTML table or a JavaScript structure.
      *
      * This module adds data export options to the export menu and provides
@@ -352,6 +352,7 @@ export default ExportDataDefaults;
  * data rows before processed into the final format.
  *
  * @type      {Highcharts.ExportDataCallbackFunction}
+ * @since     7.2.0
  * @context   Highcharts.Chart
  * @requires  modules/exporting
  * @requires  modules/export-data

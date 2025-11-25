@@ -309,6 +309,7 @@ declare module '../../Core/Chart/ChartOptions' {
          * modification of data rows before processed into the final format.
          *
          * @type      {Highcharts.ExportDataCallbackFunction}
+         * @since     7.2.0
          * @context   Highcharts.Chart
          * @requires  modules/exporting
          * @requires  modules/export-data
@@ -333,7 +334,10 @@ declare module '../../Core/Chart/ChartOptions' {
  * Event object with data rows that can be modified.
  */
 export interface ExportDataCallbackFunction extends EventCallback<Chart> {
-    (event: ExportDataEventObject): void;
+    (
+        this: Chart,
+        event: ExportDataEventObject
+    ): void;
 }
 
 /**
