@@ -3661,18 +3661,17 @@ class Axis {
      * @function Highcharts.Axis#renderLine
      */
     public renderLine(): void {
-        if (!this.axisLine) {
-            this.axisLine = this.chart.renderer.path()
-                .addClass('highcharts-axis-line')
-                .add(this.axisGroup);
+        const verb = this.axisLine ? 'animate' : 'attr';
+        this.axisLine ||= this.chart.renderer.path()
+            .addClass('highcharts-axis-line')
+            .attr({ zIndex: 7 })
+            .add(this.axisGroup);
 
-            if (!this.chart.styledMode) {
-                this.axisLine.attr({
-                    stroke: this.options.lineColor,
-                    'stroke-width': this.options.lineWidth,
-                    zIndex: 7
-                });
-            }
+        if (!this.chart.styledMode) {
+            this.axisLine[verb]({
+                stroke: this.options.lineColor,
+                'stroke-width': this.options.lineWidth
+            });
         }
     }
 
