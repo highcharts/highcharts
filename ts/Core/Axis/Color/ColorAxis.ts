@@ -17,15 +17,15 @@
  * */
 
 import type AnimationOptions from '../../Animation/AnimationOptions';
-import type Chart from '../../Chart/Chart.js';
+import type Chart from '../../Chart/Chart';
+import type ColorAxisOptions from './ColorAxisOptions';
 import type ColorType from '../../Color/ColorType';
 import type { DeepPartial } from '../../../Shared/Types';
 import type Fx from '../../Animation/Fx';
 import type GradientColor from '../../Color/GradientColor';
 import type Legend from '../../Legend/Legend';
 import type { LegendItemObject } from '../../Legend/LegendItem';
-import type LegendOptions from '../../Legend/LegendOptions';
-import type Point from '../../Series/Point.js';
+import type Point from '../../Series/Point';
 import type PointerEvent from '../../PointerEvent';
 import type { StatesOptionsKey } from '../../Series/StatesOptions';
 import type SVGPath from '../../Renderer/SVG/SVGPath';
@@ -74,8 +74,8 @@ declare module '../../Chart/ChartBase' {
 declare module '../../../Core/Options'{
     interface Options {
         colorAxis?: (
-            DeepPartial<ColorAxis.Options>|
-            Array<DeepPartial<ColorAxis.Options>>
+            DeepPartial<ColorAxisOptions>|
+            Array<DeepPartial<ColorAxisOptions>>
         );
     }
 }
@@ -172,7 +172,7 @@ class ColorAxis extends Axis implements ColorAxisBase {
     /** @internal */
     public constructor(
         chart: Chart,
-        userOptions: Partial<ColorAxis.Options>
+        userOptions: Partial<ColorAxisOptions>
     ) {
         super(chart, userOptions);
         this.init(chart, userOptions);
@@ -207,7 +207,7 @@ class ColorAxis extends Axis implements ColorAxisBase {
     public name?: string;
 
     /** @internal */
-    public options!: ColorAxis.Options;
+    public options!: ColorAxisOptions;
 
     /** @internal */
     public stops!: GradientColor['stops'];
@@ -234,7 +234,7 @@ class ColorAxis extends Axis implements ColorAxisBase {
      */
     public init(
         chart: Chart,
-        userOptions: Partial<ColorAxis.Options>
+        userOptions: Partial<ColorAxisOptions>
     ): void {
         const axis = this;
         const legend = chart.options.legend || {},
@@ -292,10 +292,10 @@ class ColorAxis extends Axis implements ColorAxisBase {
      * Extend the setOptions method to process extreme colors and color stops.
      * @internal
      */
-    public setOptions(userOptions: DeepPartial<ColorAxis.Options>): void {
+    public setOptions(userOptions: DeepPartial<ColorAxisOptions>): void {
 
         const options = merge(
-            defaultOptions.colorAxis as ColorAxis.Options,
+            defaultOptions.colorAxis as ColorAxisOptions,
             userOptions,
             // Forced options
             {
@@ -665,7 +665,7 @@ class ColorAxis extends Axis implements ColorAxisBase {
      * and call {@link Highcharts.Chart#redraw} after.
      */
     public update(
-        newOptions: DeepPartial<ColorAxis.Options>,
+        newOptions: DeepPartial<ColorAxisOptions>,
         redraw?: boolean
     ): void {
         const axis = this,
@@ -882,7 +882,7 @@ class ColorAxis extends Axis implements ColorAxisBase {
 
 interface ColorAxis extends ColorAxisBase {
     coll: 'colorAxis';
-    options: ColorAxis.Options;
+    options: ColorAxisOptions;
 }
 
 extend(ColorAxis.prototype, ColorAxisBase);
@@ -919,15 +919,6 @@ namespace ColorAxis {
         animation?: (boolean|Partial<AnimationOptions>);
         color?: ColorType;
         width?: number;
-    }
-
-    export interface Options extends ColorAxisBase.Options {
-        dataClasses?: Array<DataClassesOptions>;
-        layout?: 'horizontal'|'vertical';
-        legend?: LegendOptions;
-        marker?: MarkerOptions;
-        showInLegend?: boolean;
-        labelRight?: number;
     }
 
 }

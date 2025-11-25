@@ -19,6 +19,7 @@
 import type Axis from '../Axis';
 import type Chart from '../../Chart/Chart';
 import type ColorAxis from './ColorAxis';
+import type ColorAxisOptions from './ColorAxisOptions';
 import type ColorType from '../../Color/ColorType';
 import type Fx from '../../Animation/Fx';
 import type Legend from '../../Legend/Legend';
@@ -183,7 +184,7 @@ namespace ColorAxisComposition {
             userOptions.colorAxis.map((axisOptions): ColorAxis => (
                 new ColorAxisConstructor(
                     this,
-                    axisOptions as Partial<ColorAxis.Options>
+                    axisOptions as Partial<ColorAxisOptions>
                 )
             ));
         }
@@ -211,7 +212,7 @@ namespace ColorAxisComposition {
             };
 
         let colorAxisItems = [] as Array<(ColorAxis|ColorAxis.LegendItemObject)>,
-            options: ColorAxis.Options,
+            options: ColorAxisOptions,
             i;
 
         colorAxes.forEach(function (colorAxis: ColorAxis): void {
@@ -393,7 +394,7 @@ namespace ColorAxisComposition {
             const axis = new ColorAxisConstructor(
                 chart,
                 merge(
-                    options.axis as Partial<ColorAxis.Options>,
+                    options.axis as Partial<ColorAxisOptions>,
                     {
                         index: (chart as AnyRecord)[type].length,
                         isX: false

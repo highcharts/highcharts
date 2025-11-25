@@ -25,6 +25,7 @@ import type AnimationOptions from '../Animation/AnimationOptions';
 import type AxisOptions from '../Axis/AxisOptions';
 import type AxisType from '../Axis/AxisType';
 import type BBoxObject from '../Renderer/BBoxObject';
+import type ColorAxisOptions from '../Axis/Color/ColorAxisOptions';
 import type {
     CSSObject,
     CursorValue
@@ -40,7 +41,6 @@ import type {
     ChartPanningOptions,
     ChartZoomingOptions
 } from './ChartOptions';
-import type ColorAxis from '../Axis/Color/ColorAxis';
 import type { DeepPartial } from '../../Shared/Types';
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type Point from '../Series/Point';
@@ -3393,7 +3393,7 @@ class Chart {
      *         The newly generated Axis object.
      */
     public addColorAxis(
-        options: ColorAxis.Options,
+        options: ColorAxisOptions,
         redraw?: boolean,
         animation?: boolean
     ): Axis {
@@ -4480,7 +4480,7 @@ namespace Chart {
 
     export interface CreateAxisOptionsObject {
         animation: (undefined|boolean|Partial<AnimationOptions>);
-        axis: (DeepPartial<AxisOptions>|DeepPartial<ColorAxis.Options>);
+        axis: (DeepPartial<AxisOptions>|DeepPartial<ColorAxisOptions>);
         redraw: (undefined|boolean);
     }
 

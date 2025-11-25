@@ -16,7 +16,7 @@
  *
  * */
 
-import type ColorAxis from './ColorAxis';
+import type ColorAxisOptions from './ColorAxisOptions';
 import type { DeepPartial } from '../../../Shared/Types';
 
 import { Palette } from '../../Color/Palettes.js';
@@ -81,7 +81,7 @@ import { Palette } from '../../Color/Palettes.js';
  * @type         {*|Array<*>}
  * @optionparent colorAxis
  */
-const colorAxisDefaults: DeepPartial<ColorAxis.Options> = {
+const colorAxisDefaults: DeepPartial<ColorAxisOptions> = {
 
     /**
      * Whether to allow decimals on the color axis.

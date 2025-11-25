@@ -95,6 +95,9 @@ export interface ColorAxisOptions extends AxisOptions {
      */
     dataClasses?: Array<ColorAxisDataClassesOptions>;
 
+    /** @internal */
+    labelRight?: number;
+
     /**
      * The layout of the color axis. Can be `'horizontal'` or `'vertical'`.
      * If none given, the color axis has the same layout as the legend.
