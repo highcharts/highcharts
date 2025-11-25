@@ -165,9 +165,9 @@ class Fullscreen {
     /**
      * Prepares the chart class to support fullscreen.
      *
+     * @internal
      * @param {typeof_Highcharts.Chart} ChartClass
      * The chart class to decorate with fullscreen support.
-     * @internal
      */
     public static compose(
         ChartClass: typeof Chart
