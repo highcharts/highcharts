@@ -4336,8 +4336,6 @@ class Axis {
             'stackLabels' in options ||
             /// unit-tests/scrollable-plotarea/dynamics
             chart.hasParallelCoordinates ||
-            /// unit-tests/polar/update
-            'polar' in (chart.userOptions.chart || {}) ||
             /// unit-tests/series/centerincategory
             'inverted' in (chart.userOptions.chart || {}) ||
             /// unit-tests/series-variwide/variwide
