@@ -101,6 +101,7 @@ if (defaultOptions.annotations) {
  *
  * */
 
+/** @internal */
 class VerticalLine extends Annotation {
 
     public static connectorFirstPoint(

@@ -47,7 +47,6 @@ interface ControlTarget {
     /** @internal */
     options: ControlTargetOptions;
 
-    /** @internal */
     points: Array<AnnotationPointType>;
 
     /** @internal */
