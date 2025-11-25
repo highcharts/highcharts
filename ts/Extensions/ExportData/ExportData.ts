@@ -1500,6 +1500,13 @@ namespace ExportData {
                                     'highcharts-sort-ascending' :
                                     'highcharts-sort-descending'
                             );
+
+                            th?.setAttribute(
+                                'aria-sort',
+                                exporting.ascendingOrderInTable ?
+                                    'ascending' :
+                                    'descending'
+                            );
                         }
                     });
                 });
