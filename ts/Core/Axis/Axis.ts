@@ -4335,9 +4335,7 @@ class Axis {
             'type' in options ||
             'stackLabels' in options ||
             /// unit-tests/scrollable-plotarea/dynamics
-            chart.hasParallelCoordinates ||
-            /// unit-tests/series-variwide/variwide
-            this.variwide
+            chart.hasParallelCoordinates
         ) {
             this.destroy(true);
 
