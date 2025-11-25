@@ -3530,6 +3530,8 @@ class Axis {
                     0 :
                     pick(axisTitleOptions.margin, horiz ? 5 : 10);
             }
+        } else {
+            axis.axisTitle = axis.axisTitle?.destroy();
         }
 
         // Render the axis line
