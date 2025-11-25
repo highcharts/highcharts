@@ -45,6 +45,14 @@ namespace Defaults {
             announcements: {
                 sorting: true,
                 filtering: true
+            },
+            screenReaderSection: {
+                beforeGridFormat:
+                    '<div>{gridTitle}</div>' +
+                    '<div>{gridDescription}</div>' +
+                    '<div>Grid with {rowCount} rows and {columnCount}' +
+                    ' columns.</div>',
+                afterGridFormat: 'End of Grid.'
             }
         },
         lang: {
@@ -72,6 +80,10 @@ namespace Defaults {
                         filterCleared: 'Filter cleared for {columnId}. ' +
                             '{rowsCount} results found.'
                     }
+                },
+                screenReaderSection: {
+                    beforeRegionLabel: 'Before Grid information.',
+                    afterRegionLabel: 'After Grid information.'
                 }
             },
             loading: 'Loading...',
