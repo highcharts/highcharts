@@ -215,7 +215,8 @@ class ToolbarButton implements Button {
     }
 
     /**
-     * Initializes the state of the button.
+     * Refreshes the state of the button.
+     * @internal
      */
     public refreshState(): void {
         // Do nothing, to be overridden by subclasses

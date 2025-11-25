@@ -173,6 +173,7 @@ class HeaderCellToolbar implements Toolbar {
 
     /**
      * Refreshes the state of the toolbar buttons.
+     * @internal
      */
     public refreshState(): void {
         for (const button of this.buttons) {
