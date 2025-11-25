@@ -435,7 +435,7 @@ class Axis {
          * @name Highcharts.Axis#reversed
          * @type {boolean}
          */
-        axis.reversed = pick(options.reversed, axis.reversed);
+        axis.reversed = options.reversed;
         axis.visible = options.visible;
         axis.zoomEnabled = options.zoomEnabled;
 
