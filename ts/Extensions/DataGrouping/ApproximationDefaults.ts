@@ -204,6 +204,7 @@ declare module './ApproximationType' {
  *
  * */
 
+/** @internal */
 const ApproximationDefaults = {
     average,
     averages,
@@ -218,4 +219,5 @@ const ApproximationDefaults = {
 };
 extend(ApproximationRegistry, ApproximationDefaults);
 
+/** @internal */
 export default ApproximationDefaults;
