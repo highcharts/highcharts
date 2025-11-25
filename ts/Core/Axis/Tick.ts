@@ -872,14 +872,12 @@ class Tick {
         const tick = this,
             axis = tick.axis,
             options = axis.options,
-            attribs: SVGAttributes = {},
             pos = tick.pos,
             type = tick.type,
             tickmarkOffset = pick(tick.tickmarkOffset, axis.tickmarkOffset),
             renderer = axis.chart.renderer;
 
         let gridLine = tick.gridLine,
-            gridLinePath,
             gridLineWidth = options.gridLineWidth,
             gridLineColor = options.gridLineColor,
             dashStyle = options.gridLineDashStyle;
@@ -891,24 +889,13 @@ class Tick {
         }
 
         if (!gridLine) {
-            if (!axis.chart.styledMode) {
-                attribs.stroke = gridLineColor;
-                attribs['stroke-width'] = gridLineWidth || 0;
-                attribs.dashstyle = dashStyle;
-            }
-            if (!type) {
-                attribs.zIndex = 1;
-            }
-            if (old) {
-                opacity = 0;
-            }
             /**
              * The rendered grid line of the tick.
              * @name Highcharts.Tick#gridLine
              * @type {Highcharts.SVGElement|undefined}
              */
             tick.gridLine = gridLine = renderer.path()
-                .attr(attribs)
+                .attr(type ? {} : { zIndex: 1 })
                 .addClass(
                     'highcharts-' + (type ? type + '-' : '') + 'grid-line'
                 )
@@ -916,25 +903,31 @@ class Tick {
 
         }
 
-        if (gridLine) {
-            gridLinePath = axis.getPlotLinePath(
-                {
-                    value: pos + tickmarkOffset,
-                    lineWidth: gridLine.strokeWidth(),
-                    force: 'pass',
-                    old: old,
-                    acrossPanes: false // #18025
-                }
-            );
+        // Grid line path
+        const d = axis.getPlotLinePath(
+            {
+                value: pos + tickmarkOffset,
+                lineWidth: gridLine.strokeWidth(),
+                force: 'pass',
+                old: old,
+                acrossPanes: false // #18025
+            }
+        );
+
+        if (d) {
+            const attribs: SVGAttributes = {
+                d,
+                opacity: old ? 0 : opacity
+            };
+            if (!axis.chart.styledMode) {
+                attribs.stroke = gridLineColor;
+                attribs['stroke-width'] = gridLineWidth || 0;
+                attribs.dashstyle = dashStyle;
+            }
 
             // If the parameter 'old' is set, the current call will be followed
             // by another call, therefore do not do any animations this time
-            if (gridLinePath) {
-                gridLine[old || tick.isNew ? 'attr' : 'animate']({
-                    d: gridLinePath,
-                    opacity: opacity
-                });
-            }
+            gridLine[old || tick.isNew ? 'attr' : 'animate'](attribs);
         }
     }
 
