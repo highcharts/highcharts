@@ -18,9 +18,15 @@
  * */
 
 import type Axis from '../Axis';
-import type { AxisBreakOptions, AxisCollectionKey } from '../AxisOptions';
+import type {
+    AxisBreakOptions,
+    AxisCollectionKey,
+    AxisLabelOptions,
+    AxisOptions
+} from '../AxisOptions';
 import type Chart from '../../Chart/Chart';
 import type { ChartAddSeriesEventObject } from '../../Chart/ChartOptions';
+import type ColorType from '../../Color/ColorType';
 import type { DeepPartial } from '../../../Shared/Types';
 import type GanttPoint from '../../../Series/Gantt/GanttPoint';
 import type GanttPointOptions from '../../../Series/Gantt/GanttPointOptions';
@@ -31,10 +37,6 @@ import type {
 } from '../../Series/PointOptions';
 import type Series from '../../Series/Series';
 import type Tick from '../Tick';
-import type {
-    TreeGridAxisLabelOptions,
-    TreeGridAxisOptions
-} from './TreeGridOptions';
 import type {
     TreeGetOptionsObject,
     TreeNode,
@@ -124,7 +126,7 @@ export declare class TreeGridAxisComposition extends Axis {
     dataMin: number;
     max: number;
     min: number;
-    options: TreeGridAxisOptions;
+    options: TreeGridCompositionOptions;
     series: Array<GanttSeries>;
     treeGrid: TreeGridAxisAdditions;
 }
@@ -148,6 +150,29 @@ interface TreeGridObject {
     mapOfPosToGridNode: Record<string, GridNode>;
     collapsedNodes: Array<GridNode>;
     tree: TreeNode;
+}
+
+/** @internal */
+export interface TreeGridCompositionLabelIconOptions {
+    height?: number;
+    lineColor?: ColorType;
+    lineWidth?: number;
+    padding?: number;
+    type?: number;
+    width?: number;
+    x?: number;
+    y?: number;
+}
+
+/** @internal */
+export interface TreeGridCompositionLabelOptions extends AxisLabelOptions {
+    levels?: number;
+    symbol?: TreeGridCompositionLabelIconOptions;
+}
+
+/** @internal */
+export interface TreeGridCompositionOptions extends AxisOptions {
+    labels: TreeGridCompositionLabelOptions;
 }
 
 /* *
@@ -567,7 +592,7 @@ function wrapGenerateTick(
         ticks = axis.ticks;
     let tick = ticks[pos],
         levelOptions,
-        options: (DeepPartial<TreeGridAxisOptions> | undefined),
+        options: (DeepPartial<TreeGridCompositionOptions> | undefined),
         gridNode;
 
     if (
@@ -609,7 +634,7 @@ function wrapInit(
     this: TreeGridAxisComposition,
     proceed: Function,
     chart: Chart,
-    userOptions: TreeGridAxisOptions,
+    userOptions: TreeGridCompositionOptions,
     coll: AxisCollectionKey
 ): void {
     const axis = this,
@@ -694,18 +719,16 @@ function wrapInit(
                 align: 'left',
 
                 /**
-                * Set options on specific levels in a tree grid axis. Takes
-                * precedence over labels options.
-                *
-                * @sample {gantt} gantt/treegrid-axis/labels-levels
-                *         Levels on TreeGrid Labels
-                *
-                * @type      {Array<*>}
-                * @product   gantt
-                * @apioption yAxis.labels.levels
-                *
-                * @internal
-                */
+                 * Set options on specific levels in a tree grid axis. Takes
+                 * precedence over labels options.
+                 *
+                 * @sample {gantt} gantt/treegrid-axis/labels-levels
+                 *         Levels on TreeGrid Labels
+                 *
+                 * @type      {Array<*>}
+                 * @product   gantt
+                 * @apioption yAxis.labels.levels
+                 */
                 levels: [{
                     /**
                     * Specify the level which the options within this object
@@ -938,7 +961,7 @@ class TreeGridAxisAdditions {
     public mapOfPosToGridNode?: Record<string, GridNode>;
 
     /** @internal */
-    public mapOptionsToLevel?: Record<string, TreeGridAxisLabelOptions>;
+    public mapOptionsToLevel?: Record<string, TreeGridCompositionLabelOptions>;
 
     /** @internal */
     public pendingSizeAdjustment: number = 0;
