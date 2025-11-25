@@ -40,10 +40,10 @@ import type ContourSeriesOptions from './ContourSeriesOptions';
  *               getExtremesFromAll, jitter, legendSymbolColor, linecap,
  *               lineWidth, pointInterval, pointIntervalUnit, pointRange,
  *               pointStart, shadow, softThreshold, stacking, step, threshold
+ *
  * @product      highcharts highmaps
  * @optionparent plotOptions.contour
  */
-
 const ContourSeriesDefaults: ContourSeriesOptions = {
 
     /**
@@ -129,11 +129,23 @@ const ContourSeriesDefaults: ContourSeriesOptions = {
             hover: {
                 /**
                  * Color of the cross marker. Defaults to `'black'`.
+                 *
+                 * @type    {string}
+                 *
+                 * @default black
+                 *
+                 * @apioption plotOptions.contour.marker.states.hover.lineColor
                  */
                 lineColor: 'black',
 
                 /**
                  * Fill of the cross marker. Defaults to `'transparent'`.
+                 *
+                 * @type    {string}
+                 *
+                 * @default transparent
+                 *
+                 * @apioption plotOptions.contour.marker.states.hover.fillColor
                  */
                 fillColor: 'transparent'
             }
@@ -144,6 +156,12 @@ const ContourSeriesDefaults: ContourSeriesOptions = {
      * Whether to render the series on the background, so that it is visible
      * behind axes and grid lines. It will be also visible behind series that
      * are rendered before it.
+     *
+     * @type      {boolean}
+     *
+     * @default   true
+     *
+     * @apioption plotOptions.contour.renderOnBackground
      */
     renderOnBackground: true,
 
@@ -180,7 +198,7 @@ const ContourSeriesDefaults: ContourSeriesOptions = {
  *               inactiveOtherPoints, jitter, linecap, negativeColor,
  *               pointInterval, pointStart, pointIntervalUnit, lineWidth,
  *               onPoint, pointPlacement, shadow, stacking, step, threshold,
- *               zoneAxis, zones,
+ *               zoneAxis, zones, onPoint
  *
  *
  * @product      highcharts highmaps
