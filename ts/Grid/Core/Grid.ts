@@ -670,6 +670,13 @@ class Grid {
         redraw = true,
         oneToOne = false
     ): Promise<void> {
+        fireEvent(this, 'beforeUpdate', {
+            scope: 'grid',
+            options,
+            redraw,
+            oneToOne
+        });
+
         const { viewport } = this;
         const diff = this.loadUserOptions(options, oneToOne);
         const flags = this.dirtyFlags;
@@ -738,16 +745,16 @@ class Grid {
             flags.add('grid');
         }
 
-        if (
-            flags.has('sorting') ||
-            flags.has('filtering')
-        ) {
-            this.querying.loadOptions();
-        }
-
         if (redraw) {
             await this.redraw();
         }
+
+        fireEvent(this, 'afterUpdate', {
+            scope: 'grid',
+            options,
+            redraw,
+            oneToOne
+        });
     }
 
     /**
@@ -861,6 +868,8 @@ class Grid {
      * them minimizing the number of DOM operations.
      */
     public async redraw(): Promise<void> {
+        fireEvent(this, 'beforeRedraw');
+
         const flags = this.dirtyFlags;
 
         if (flags.has('grid')) {
@@ -869,6 +878,13 @@ class Grid {
 
         const { viewport: vp } = this;
         const colResizing = vp?.columnResizing;
+
+        if (
+            flags.has('sorting') ||
+            flags.has('filtering')
+        ) {
+            this.querying.loadOptions();
+        }
 
         if (colResizing?.isDirty) {
             colResizing.loadColumns();
@@ -887,17 +903,27 @@ class Grid {
             vp?.reflow();
         }
 
+        const columns = vp?.columns ?? [];
+
         if (
             flags.has('sorting') ||
             flags.has('filtering')
         ) {
-            this.viewport?.columns.forEach((column): void => {
+            for (const column of columns) {
                 column.header?.toolbar?.refreshState();
-            });
+            }
         }
 
-        delete vp?.columnResizing?.isDirty;
+        if (flags.has('filtering')) {
+            for (const column of columns) {
+                column.filtering?.refreshState();
+            }
+        }
+
+        delete colResizing?.isDirty;
         flags.clear();
+
+        fireEvent(this, 'afterRedraw');
     }
 
     public updateColumn(
@@ -937,11 +963,20 @@ class Grid {
         redraw = true,
         overwrite = false
     ): Promise<void> {
+        fireEvent(this, 'beforeUpdate', {
+            scope: 'column',
+            options,
+            redraw,
+            overwrite,
+            columnId
+        });
+
         const vp = this.viewport;
-        const diff = this.setColumnOptions([{
+        const diffs = this.setColumnOptions([{
             id: columnId,
             ...options
-        }], overwrite)[0];
+        }], overwrite);
+        const diff = diffs?.[columnId];
 
         if (diff && vp) {
             this.loadColumnOptionDiffs(vp, columnId, diff);
@@ -950,6 +985,14 @@ class Grid {
         if (redraw) {
             await this.redraw();
         }
+
+        fireEvent(this, 'afterUpdate', {
+            scope: 'column',
+            options,
+            redraw,
+            overwrite,
+            columnId
+        });
     }
 
     private async render(): Promise<void> {

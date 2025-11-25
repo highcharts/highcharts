@@ -153,6 +153,30 @@ class ColumnFiltering {
     }
 
     /**
+     * Refreshes the state of the filtering content by updating the select,
+     * input and clear button according to the column filtering options.
+     * @internal
+     */
+    public refreshState(): void {
+        const colFilteringOptions = this.column.options.filtering;
+        if (this.filterSelect) {
+            this.filterSelect.value =
+                colFilteringOptions?.condition ??
+                conditionsMap[this.column.dataType][0];
+        }
+
+        if (this.filterInput) {
+            this.filterInput.value = '' + (colFilteringOptions?.value ?? '');
+        }
+
+        if (this.clearButton) {
+            this.clearButton.disabled = !this.isFilteringApplied();
+        }
+
+        this.disableInputIfNeeded();
+    }
+
+    /**
      * Render the filtering content in the container.
      *
      * @param container
