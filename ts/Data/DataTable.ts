@@ -143,6 +143,8 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
             tableClone.localRowIndexes = table.localRowIndexes;
         }
 
+        tableClone.metadata = table.metadata;
+
         table.emit({
             type: 'afterCloneTable',
             detail: eventDetail,
