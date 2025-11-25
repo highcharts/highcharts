@@ -2241,4 +2241,5 @@ class Navigator {
  *
  * */
 
+/** @internal */
 export default Navigator;

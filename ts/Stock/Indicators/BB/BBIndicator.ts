@@ -328,6 +328,7 @@ SeriesRegistry.registerSeriesType('bb', BBIndicator);
  *
  * */
 
+/** @internal */
 export default BBIndicator;
 
 /* *

@@ -635,6 +635,7 @@ SeriesRegistry.registerSeriesType('sma', SMAIndicator);
  *
  * */
 
+/** @internal */
 export default SMAIndicator;
 
 /* *

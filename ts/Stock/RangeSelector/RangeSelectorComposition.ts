@@ -391,8 +391,10 @@ function onChartUpdate(
  *
  * */
 
+/** @internal */
 const RangeSelectorComposition = {
     compose
 };
 
+/** @internal */
 export default RangeSelectorComposition;

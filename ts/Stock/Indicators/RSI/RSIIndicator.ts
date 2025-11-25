@@ -246,6 +246,7 @@ SeriesRegistry.registerSeriesType('rsi', RSIIndicator);
  *
  * */
 
+/** @internal */
 export default RSIIndicator;
 
 /* *

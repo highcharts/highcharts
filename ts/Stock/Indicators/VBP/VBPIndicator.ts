@@ -951,6 +951,7 @@ SeriesRegistry.registerSeriesType('vbp', VBPIndicator);
  *
  * */
 
+/** @internal */
 export default VBPIndicator;
 
 /* *

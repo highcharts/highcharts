@@ -214,6 +214,7 @@ SeriesRegistry.registerSeriesType('cmo', CMOIndicator);
  *
  * */
 
+/** @internal */
 export default CMOIndicator;
 
 /* *

@@ -37,6 +37,7 @@ const {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Chart/ChartBase'{
     interface ChartBase {
         navigator?: Navigator;
@@ -51,6 +52,7 @@ declare module '../../Core/Renderer/SVG/SymbolType' {
     }
 }
 
+/** @internal */
 declare module '../../Core/Series/SeriesBase' {
     interface SeriesBase {
         baseSeries?: Series;
@@ -302,8 +304,10 @@ function onChartUpdate(
  *
  * */
 
+/** @internal */
 const ChartNavigatorComposition = {
     compose
 };
 
+/** @internal */
 export default ChartNavigatorComposition;

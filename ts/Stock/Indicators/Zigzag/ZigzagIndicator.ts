@@ -301,6 +301,7 @@ SeriesRegistry.registerSeriesType('zigzag', ZigzagIndicator);
  *
  * */
 
+/** @internal */
 export default ZigzagIndicator;
 
 /* *

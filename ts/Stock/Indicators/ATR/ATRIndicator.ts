@@ -243,6 +243,7 @@ SeriesRegistry.registerSeriesType('atr', ATRIndicator);
  *
  * */
 
+/** @internal */
 export default ATRIndicator;
 
 /* *

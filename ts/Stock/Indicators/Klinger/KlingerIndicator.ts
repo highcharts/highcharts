@@ -416,6 +416,7 @@ SeriesRegistry.registerSeriesType('klinger', KlingerIndicator);
  *
  * */
 
+/** @internal */
 export default KlingerIndicator;
 
 /* *

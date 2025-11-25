@@ -545,6 +545,7 @@ SeriesRegistry.registerSeriesType('macd', MACDIndicator);
  *
  * */
 
+/** @internal */
 export default MACDIndicator;
 
 /* *

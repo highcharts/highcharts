@@ -448,6 +448,7 @@ SeriesRegistry.registerSeriesType('pivotpoints', PivotPointsIndicator);
  *
  * */
 
+/** @internal */
 export default PivotPointsIndicator;
 
 /* *

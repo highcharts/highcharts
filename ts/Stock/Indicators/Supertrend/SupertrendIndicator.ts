@@ -691,6 +691,7 @@ SeriesRegistry.registerSeriesType('supertrend', SupertrendIndicator);
  *
  * */
 
+/** @internal */
 export default SupertrendIndicator;
 
 /* *

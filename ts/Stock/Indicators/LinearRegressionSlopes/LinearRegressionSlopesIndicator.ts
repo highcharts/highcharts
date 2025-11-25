@@ -134,6 +134,7 @@ SeriesRegistry.registerSeriesType(
  *
  * */
 
+/** @internal */
 export default LinearRegressionSlopesIndicator;
 
 /* *

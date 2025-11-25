@@ -447,6 +447,7 @@ SeriesRegistry.registerSeriesType('psar', PSARIndicator);
  *
  * */
 
+/** @internal */
 export default PSARIndicator;
 
 /* *

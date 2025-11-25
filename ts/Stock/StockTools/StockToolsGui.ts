@@ -296,8 +296,10 @@ function onNavigationBindingsSelectButton(
  *
  * */
 
+/** @internal */
 const StockToolsGui = {
     compose
 };
 
+/** @internal */
 export default StockToolsGui;

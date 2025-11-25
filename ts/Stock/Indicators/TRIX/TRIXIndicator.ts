@@ -135,6 +135,7 @@ SeriesRegistry.registerSeriesType('trix', TRIXIndicator);
  *
  * */
 
+/** @internal */
 export default TRIXIndicator;
 
 /* *

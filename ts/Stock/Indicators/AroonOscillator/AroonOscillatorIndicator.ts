@@ -173,6 +173,7 @@ SeriesRegistry.registerSeriesType('aroonoscillator', AroonOscillatorIndicator);
  *
  * */
 
+/** @internal */
 export default AroonOscillatorIndicator;
 
 /* *

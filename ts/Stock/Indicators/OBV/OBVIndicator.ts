@@ -226,6 +226,7 @@ SeriesRegistry.registerSeriesType('obv', OBVIndicator);
  *
  * */
 
+/** @internal */
 export default OBVIndicator;
 
 /* *

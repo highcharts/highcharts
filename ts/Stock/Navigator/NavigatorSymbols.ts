@@ -64,8 +64,10 @@ function navigatorHandle(
  *
  * */
 
+/** @internal */
 const NavigatorSymbols: Partial<SymbolTypeRegistry> = {
     'navigator-handle': navigatorHandle
 };
 
+/** @internal */
 export default NavigatorSymbols;

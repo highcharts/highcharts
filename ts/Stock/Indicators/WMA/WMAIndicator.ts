@@ -244,6 +244,7 @@ SeriesRegistry.registerSeriesType('wma', WMAIndicator);
  *
  * */
 
+/** @internal */
 export default WMAIndicator;
 
 /* *

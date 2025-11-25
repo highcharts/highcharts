@@ -236,6 +236,7 @@ SeriesRegistry.registerSeriesType('pc', PCIndicator);
  *
  * */
 
+/** @internal */
 export default PCIndicator;
 
 /* *

@@ -154,6 +154,7 @@ SeriesRegistry.registerSeriesType(
  *
  * */
 
+/** @internal */
 export default LinearRegressionAngleIndicator;
 
 /**

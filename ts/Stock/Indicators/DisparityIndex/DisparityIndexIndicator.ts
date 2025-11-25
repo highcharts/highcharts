@@ -226,6 +226,7 @@ SeriesRegistry.registerSeriesType('disparityindex', DisparityIndexIndicator);
  *
  * */
 
+/** @internal */
 export default DisparityIndexIndicator;
 
 /* *

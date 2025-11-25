@@ -25,6 +25,7 @@ import type { Options } from '../../Core/Options';
  *
  * */
 
+/** @internal */
 const standaloneNavigatorDefaults: DeepPartial<Options> = {
     chart: {
         height: 70,
@@ -75,4 +76,5 @@ const standaloneNavigatorDefaults: DeepPartial<Options> = {
  *
  * */
 
+/** @internal */
 export default standaloneNavigatorDefaults;

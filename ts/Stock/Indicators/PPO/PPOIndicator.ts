@@ -215,6 +215,7 @@ SeriesRegistry.registerSeriesType('ppo', PPOIndicator);
  *
  * */
 
+/** @internal */
 export default PPOIndicator;
 
 /* *

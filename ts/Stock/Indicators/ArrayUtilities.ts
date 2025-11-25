@@ -69,8 +69,10 @@ namespace ArrayUtilities {
  *
  * */
 
+/** @internal */
 const ArrayUtilities = {
     getArrayExtremes
 };
 
+/** @internal */
 export default ArrayUtilities;

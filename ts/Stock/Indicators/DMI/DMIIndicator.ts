@@ -390,6 +390,7 @@ SeriesRegistry.registerSeriesType('dmi', DMIIndicator);
  *
  * */
 
+/** @internal */
 export default DMIIndicator;
 
 /* *

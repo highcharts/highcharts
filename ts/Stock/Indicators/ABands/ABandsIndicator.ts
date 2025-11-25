@@ -300,6 +300,7 @@ SeriesRegistry.registerSeriesType('abands', ABandsIndicator);
  *
  * */
 
+/** @internal */
 export default ABandsIndicator;
 
 /* *

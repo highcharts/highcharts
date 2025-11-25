@@ -227,6 +227,7 @@ SeriesRegistry.registerSeriesType('roc', ROCIndicator);
  *
  * */
 
+/** @internal */
 export default ROCIndicator;
 
 /* *
