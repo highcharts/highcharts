@@ -4328,8 +4328,7 @@ class Axis {
             this.coll === 'colorAxis' ||
             'crosshair' in options ||
             /// unit-tests/responsive/responsive
-            'labels' in options ||
-            'overscroll' in options ||
+            'labels' in options || // Wait for data sorting refactor
             'plotBands' in options ||
             'plotLines' in options ||
             /// unit-tests/3d/column-crop, unit-tests/axis/type-logarithmic
