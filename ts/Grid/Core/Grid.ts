@@ -484,21 +484,36 @@ class Grid {
             this.userOptions
         );
 
-        // Generate column options map
-        const columnOptionsArray = this.options?.columns;
-        if (!columnOptionsArray) {
-            return diff;
+        return diff;
+    }
+
+    /**
+     * Cleans up and reloads the column options from the `userOptions.columns`.
+     * Generates the internal column options map from the options.columns array.
+     */
+    private reloadColumnOptions(): void {
+        const colOptions = this.userOptions.columns;
+
+        if (!colOptions) {
+            this.columnOptionsMap = {};
+            return;
         }
+
+        if (colOptions.length < 1) {
+            delete this.userOptions.columns;
+            this.columnOptionsMap = {};
+            return;
+        }
+
         const columnOptionsMap: Record<string, Grid.ColumnOptionsMapItem> = {};
-        for (let i = 0, iEnd = columnOptionsArray?.length ?? 0; i < iEnd; ++i) {
-            columnOptionsMap[columnOptionsArray[i].id] = {
+        for (let i = 0, iEnd = colOptions.length; i < iEnd; ++i) {
+            columnOptionsMap[colOptions[i].id] = {
                 index: i,
-                options: columnOptionsArray[i]
+                options: colOptions[i]
             };
         }
-        this.columnOptionsMap = columnOptionsMap;
 
-        return diff;
+        this.columnOptionsMap = columnOptionsMap;
     }
 
     /**
@@ -569,17 +584,7 @@ class Grid {
             }
         }
 
-        if (columnOptions.length < 1) {
-            delete this.userOptions.columns;
-            this.columnOptionsMap = {};
-        } else {
-            for (let i = 0, iEnd = columnOptions.length; i < iEnd; ++i) {
-                this.columnOptionsMap[columnOptions[i].id] = {
-                    index: i,
-                    options: columnOptions[i]
-                };
-            }
-        }
+        this.reloadColumnOptions();
 
         return columnDiffOptions;
     }
@@ -627,6 +632,7 @@ class Grid {
         }
 
         this.userOptions.columns = columnOptions;
+        this.reloadColumnOptions();
 
         return columnDiffOptions;
     }
