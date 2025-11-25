@@ -4333,9 +4333,7 @@ class Axis {
             'plotLines' in options ||
             /// unit-tests/3d/column-crop, unit-tests/axis/type-logarithmic
             'type' in options ||
-            'stackLabels' in options ||
-            /// unit-tests/scrollable-plotarea/dynamics
-            chart.hasParallelCoordinates
+            'stackLabels' in options
         ) {
             this.destroy(true);
 
