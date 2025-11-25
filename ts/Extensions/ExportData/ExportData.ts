@@ -1437,7 +1437,7 @@ namespace ExportData {
      * Toggle showing data table.
      *
      * @internal
-     * @function Highcharts.Exporting#hideData
+     * @function Highcharts.Exporting#toggleDataTable
      *
      * @param {boolean} [show]
      * Whether to show data table or not.
