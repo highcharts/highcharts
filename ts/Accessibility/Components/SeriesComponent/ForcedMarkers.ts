@@ -200,13 +200,8 @@ namespace ForcedMarkersComposition {
         // options, and we need to add/remove classes to achieve the same.
         if (series.chart.styledMode) {
             if (series.markerGroup) {
-                // Prevent ghost markers when zooming out (#23878).
-                const markerOptions = series.options.marker,
-                    shouldHideMarkers = series.a11yMarkersForced ||
-                        (markerOptions && markerOptions.enabled === false);
-
                 series.markerGroup[
-                    shouldHideMarkers ? 'addClass' : 'removeClass'
+                    series.a11yMarkersForced ? 'addClass' : 'removeClass'
                 ]('highcharts-a11y-markers-hidden');
             }
 
@@ -319,6 +314,19 @@ namespace ForcedMarkersComposition {
             const originalOpacity = resetMarkerOptions.states &&
                 resetMarkerOptions.states.normal &&
                 resetMarkerOptions.states.normal.opacity;
+
+            // Prevent ghost markers when zooming out (#23878).
+            if (
+                series.chart.styledMode &&
+                resetMarkerOptions.enabled === false &&
+                series.points
+            ) {
+                series.points.forEach((point): void => {
+                    if (point.graphic) {
+                        point.graphic = point.graphic.destroy();
+                    }
+                });
+            }
 
             // Temporarily set the old marker options to enabled in order to
             // trigger destruction of the markers in Series.update.
