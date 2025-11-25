@@ -1367,11 +1367,14 @@ namespace RadialAxis {
                 start = this.postTranslate(this.angleRad, center[3] / 2);
                 center[0] = start.x - this.chart.plotLeft;
                 center[1] = start.y - this.chart.plotTop;
+
+                // After updating chart.inverted
+                delete this.sector;
             }
 
             // Axis len is used to lay out the ticks
             this.len = this.width = this.height =
-                (center[2] - center[3]) * pick(this.sector, 1) / 2;
+                (center[2] - center[3]) * (this.sector ?? 1) / 2;
         }
     }
 

@@ -4338,8 +4338,6 @@ class Axis {
             'stackLabels' in options ||
             /// unit-tests/scrollable-plotarea/dynamics
             chart.hasParallelCoordinates ||
-            /// unit-tests/series/centerincategory
-            'inverted' in (chart.userOptions.chart || {}) ||
             /// unit-tests/series-variwide/variwide
             this.variwide
         ) {
