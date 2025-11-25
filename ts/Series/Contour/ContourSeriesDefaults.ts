@@ -70,7 +70,7 @@ const ContourSeriesDefaults: ContourSeriesOptions = {
      */
 
     /**
-     * Interval between contour lines.
+     * The interval between contour lines.
      *
      * @type      {number}
      * @default   1
@@ -83,6 +83,16 @@ const ContourSeriesDefaults: ContourSeriesOptions = {
      * @type      {boolean}
      * @default   true
      * @apioption plotOptions.contour.showContourLines
+     */
+
+    /**
+     * Whether to render the series on the background, so that it is visible
+     * behind axes and grid lines. It will be also visible behind series that
+     * are rendered before it.
+     *
+     * @type      {boolean}
+     * @default   true
+     * @apioption plotOptions.contour.renderOnBackground
      */
 
     /**
@@ -168,7 +178,10 @@ const ContourSeriesDefaults: ContourSeriesOptions = {
  *               stack, allowPointSelect, boostBlending, boostThreshold, color,
  *               colorIndex, connectEnds, connectNulls, crisp, dashStyle,
  *               inactiveOtherPoints, jitter, linecap, negativeColor,
- *               pointInterval,
+ *               pointInterval, pointStart, pointIntervalUnit, lineWidth,
+ *               onPoint, pointPlacement, shadow, stacking, step, threshold,
+ *               zoneAxis, zones,
+ *
  *
  * @product      highcharts highmaps
  * @apioption    series.contour
