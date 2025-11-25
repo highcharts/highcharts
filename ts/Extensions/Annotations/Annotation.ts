@@ -260,7 +260,6 @@ class Annotation extends EventEmitter implements ControlTarget {
         /**
          * The array of points which defines the annotation.
          *
-         * @internal
          * @name Highcharts.Annotation#points
          * @type {Array<Highcharts.Point>}
          */
@@ -422,6 +421,14 @@ class Annotation extends EventEmitter implements ControlTarget {
      * @type {Highcharts.AnnotationsOptions}
      */
     public options!: AnnotationOptions;
+
+    /**
+     * The array of points which defines the annotation.
+     *
+     * @name Highcharts.Annotation#points
+     * @type {Array<Highcharts.AnnotationPointType>}
+     */
+    public points: Array<AnnotationPointType>;
 
     /**
      * The array of shapes which belong to the annotation.

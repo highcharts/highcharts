@@ -67,6 +67,18 @@ const {
  *
  * */
 
+/** @internal */
+declare module '../../Core/Globals' {
+    interface GlobalsBase {
+        // TODO: NavigationBindings is a private class. Can be initialized
+        // through either stock-tools or annotations modules. If the class will
+        // become public this would make typing clearer. Alternatively, use
+        // H.composed.
+        NavigationBindings?: NavigationBindings;
+    }
+}
+
+/** @internal */
 declare module '../../Core/Chart/ChartBase'{
     interface ChartBase {
         navigationBindings?: NavigationBindings;
@@ -1223,6 +1235,7 @@ class NavigationBindings {
  *
  * */
 
+/** @internal */
 interface NavigationBindings extends NavigationBindingsBase {
 }
 
@@ -1233,6 +1246,7 @@ interface NavigationBindings extends NavigationBindingsBase {
  *
  * */
 
+/** @internal */
 export default NavigationBindings;
 
 /* *

@@ -23,12 +23,10 @@ export interface ControlTargetOptions {
     /** @internal */
     controlPointOptions?: ControlPointOptions;
 
-    /** @internal */
     controlPoints?: Array<ControlPointOptions>;
 
     point?: (string|MockPointOptions);
 
-    /** @internal */
     points?: Array<(string|MockPointOptions)>;
 
     /** @internal */

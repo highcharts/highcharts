@@ -579,13 +579,16 @@ class MockPoint {
 
 }
 
+// Minimal interface to hide the fully internal class.
+interface MockPoint {
+}
+
 /* *
  *
  *  Default Export
  *
  * */
 
-/** @internal */
 export default MockPoint;
 
 /* *
