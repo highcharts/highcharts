@@ -1,5 +1,5 @@
 // Automated fullscreen tests disabled.
-// See samples\highcharts\members\chart-togglefullscreen\test-notes.md
+// See samples\highcharts\members\chart-togglefullscreen-test\test-notes.md
 
 QUnit.skip('Fullscreen module.', function (assert) {
     var chart = Highcharts.chart('container', {
