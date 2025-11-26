@@ -1,13 +1,40 @@
 const countryByCode = {
-    PL: 'Poland 🇵🇱',
-    NL: 'Netherlands 🇳🇱',
-    RO: 'Romania 🇷🇴',
-    EC: 'Ecuador 🇪🇨',
-    ES: 'Spain 🇪🇸',
-    IT: 'Italy 🇮🇹',
-    DE: 'Germany 🇩🇪',
-    TR: 'Turkey 🇹🇷',
-    BR: 'Brazil 🇧🇷'
+    PL: {
+        flag: '🇵🇱',
+        name: 'Poland'
+    },
+    NL: {
+        flag: '🇳🇱',
+        name: 'Netherlands'
+    },
+    RO: {
+        flag: '🇷🇴',
+        name: 'Romania'
+    },
+    EC: {
+        flag: '🇪🇨',
+        name: 'Ecuador'
+    },
+    ES: {
+        flag: '🇪🇸',
+        name: 'Spain'
+    },
+    IT: {
+        flag: '🇮🇹',
+        name: 'Italy'
+    },
+    DE: {
+        flag: '🇩🇪',
+        name: 'Germany'
+    },
+    TR: {
+        flag: '🇹🇷',
+        name: 'Turkey'
+    },
+    BR: {
+        flag: '🇧🇷',
+        name: 'Brazil'
+    }
 };
 
 const productCatalog = [
@@ -61,7 +88,13 @@ const columnsConfig = [{
         format: 'In Stock'
     },
     cells: {
-        format: '{#if value}✅{else}❌{/if}'
+        format: `
+            {#if value}
+                <span class="green">✓</span>
+            {else}
+                <span class="red">✗</span>
+            {/if}
+        `
     }
 }, {
     id: 'product',
@@ -81,14 +114,15 @@ const columnsConfig = [{
     },
     cells: {
         formatter: function () {
-            return countryByCode[this.value] || this.value;
+            const countryObj = countryByCode[this.value];
+            return `${countryObj.name} ${countryObj.flag}` || this.value;
         },
         editMode: {
             renderer: {
                 type: 'select',
                 options: Object.keys(countryByCode).map(code => ({
                     value: code,
-                    label: countryByCode[code]
+                    label: countryByCode[code].name
                 }))
             }
         }
@@ -101,7 +135,7 @@ const columnsConfig = [{
 }, {
     id: 'price',
     header: {
-        format: 'Price ($)'
+        format: 'Price'
     },
     cells: {
         format: '${value}',
