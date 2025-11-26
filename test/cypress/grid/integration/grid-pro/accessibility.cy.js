@@ -27,6 +27,34 @@ describe('Screen reader sections.', () => {
           .should('exist');
   });
 
+  it('Format contexts should render correctly.', () => {
+      cy.grid().then((grid) => {
+          grid.update({
+              accessibility: {
+                  screenReaderSection: {
+                      beforeGridFormat: 
+                        'Custom text: {rowCount} rows and {columnCount} columns'
+                  }
+              }
+          });
+
+          const dataTable = grid.dataTable;
+          const expectedRowCount = dataTable.rowCount;
+          const expectedColumnCount = dataTable.getColumnIds().length;
+
+          cy.get(
+            '[id^="grid-screen-reader-region-before-"] .hcg-visually-hidden'
+          )
+          .should('exist')
+              .invoke('text')
+              .should(
+                'include', 
+                `Custom text: ${expectedRowCount} rows and` +
+                    ` ${expectedColumnCount} columns`
+            );
+      });
+  });
+
   it('Screen reader sections should be properly destroyed.', () => {
       cy.grid().then((grid) => {
           grid.accessibility.destroy();
