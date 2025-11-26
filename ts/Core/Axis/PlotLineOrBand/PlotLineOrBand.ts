@@ -81,6 +81,8 @@ class PlotLineOrBand {
      *
      * @param {Highcharts.Axis} AxisClass
      * Axis class to compose.
+     *
+     * @internal
      */
     public static compose<T extends typeof Axis>(
         ChartClass: Chart,
@@ -498,6 +500,7 @@ class PlotLineOrBand {
  *
  * */
 
+/** @internal */
 namespace PlotLineOrBand {
 
     /* *
@@ -516,6 +519,7 @@ namespace PlotLineOrBand {
  *
  * */
 
+/** @internal */
 export default PlotLineOrBand;
 
 /* *
