@@ -959,9 +959,10 @@ class Pagination {
         );
 
         this.controller.setPage(pageNumber);
+        const newPage = this.controller.currentPage; // Take clamped page
 
         this.setOptions({
-            page: pageNumber
+            page: newPage
         });
 
         await this.updateGridPagination();
@@ -973,14 +974,14 @@ class Pagination {
         // Announce the page change
         this.grid.accessibility?.announce(
             langAccessibility?.pagination?.announcements?.pageChange +
-            ' ' + currentPage
+            ' ' + newPage
         );
 
         fireEvent(
             this,
             'afterPageChange',
             {
-                currentPage: currentPage,
+                currentPage: newPage,
                 previousPage: previousPage,
                 pageSize: currentPageSize
             }
