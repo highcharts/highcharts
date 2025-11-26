@@ -1,38 +1,47 @@
+/**
+ * A custom plugin to add proportional variation, based on volume values,
+ * to the width of candle sticks and column series types.
+ * Works with:
+ * Candlestick, HollowCandlestick, Heikin Aishi, and Column series types.
+ */
 (function (H) {
     H.addEvent(
         H.seriesTypes.column,
         'afterColumnTranslate',
-        dynamicWidth
+        function () {
+            const series = this;
+
+            if (
+                series.options.baseVolume &&
+                series.is('column') &&
+                series.points
+            ) {
+                const volumeSeries =
+                    series.chart.get(series.options.baseVolume);
+                const processedYData = volumeSeries.getColumn('y', true);
+                if (volumeSeries && processedYData) {
+                    const maxVolume = volumeSeries.dataMax,
+                        metrics = series.getColumnMetrics(),
+                        baseWidth = metrics.width;
+
+                    series.points.forEach((point, i) => {
+                        const volume = processedYData[i];
+                        const scale = volume / maxVolume;
+                        const width = baseWidth * scale;
+
+                        if (point.shapeArgs) {
+                            point.shapeArgs.x = point.shapeArgs.x - width /
+                                2 + point.shapeArgs.width / 2;
+                            point.shapeArgs.width = width;
+                        }
+                    });
+                }
+            }
+        }
     );
 
 }(Highcharts));
 
-function dynamicWidth() {
-
-    const series = this;
-
-    if (series.options.baseVolume && series.is('column') && series.points) {
-        const volumeSeries = series.chart.get(series.options.baseVolume);
-        const processedYData = volumeSeries.getColumn('y', true);
-        if (volumeSeries && processedYData) {
-            const maxVolume = volumeSeries.dataMax,
-                metrics = series.getColumnMetrics(),
-                baseWidth = metrics.width;
-
-            series.points.forEach((point, i) => {
-                const volume = processedYData[i];
-                const scale = volume / maxVolume;
-                const width = baseWidth * scale;
-
-                if (point.shapeArgs) {
-                    point.shapeArgs.x = point.shapeArgs.x - width /
-                        2 + point.shapeArgs.width / 2;
-                    point.shapeArgs.width = width;
-                }
-            });
-        }
-    }
-}
 
 (async () => {
 
@@ -59,8 +68,7 @@ function dynamicWidth() {
         volume.push({
             x: data[i][0], // the date
             y: data[i][5], // the volume
-            color: data[i][4] > previousCandleClose ? '#466742' : '#a23f43',
-            labelColor: data[i][4] > previousCandleClose ? '#51a958' : '#ea3d3d'
+            color: data[i][4] > previousCandleClose ? '#466742' : '#a23f43'
         });
         previousCandleClose = data[i][4];
     }
