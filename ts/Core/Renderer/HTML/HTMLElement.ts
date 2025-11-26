@@ -67,7 +67,7 @@ function commonSetter(
     key: string,
     elem: HTMLDOMElement
 ): void {
-    const style = this.div?.style;
+    const style = (this.div || this.element)?.style;
     SVGElement.prototype[`${key}Setter`].call(this, value, key, elem);
     if (style) {
         elem.style[key as any] = style[key as any] = value;
