@@ -374,12 +374,17 @@ class Table {
                 });
             }
         }
+
+        vp.grid.dirtyFlags.delete('rows');
     }
 
     /**
      * Reflows the table's content dimensions.
      */
     public reflow(): void {
+        // TODO: More `needsReflow` logic can be added in the future to avoid
+        // unnecessary reflows of the table parts.
+
         this.columnResizing.reflow();
 
         // Reflow the head
@@ -395,6 +400,8 @@ class Table {
         this.grid.popups.forEach((popup): void => {
             popup.reflow();
         });
+
+        this.grid.dirtyFlags.delete('reflow');
     }
 
     /**
