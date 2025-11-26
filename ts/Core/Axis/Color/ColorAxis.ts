@@ -188,7 +188,7 @@ class ColorAxis extends Axis implements AxisBase {
     public added?: boolean;
     public chart!: Chart;
     public coll = 'colorAxis' as const;
-    public dataClasses!: Array<ColorAxis.DataClassesOptions>;
+    public dataClasses?: Array<ColorAxis.DataClassesOptions>;
     public legendColor?: GradientColor;
     public legendItem?: LegendItemObject;
     public name?: string;
@@ -241,6 +241,8 @@ class ColorAxis extends Axis implements AxisBase {
         // Prepare data classes
         if (userOptions.dataClasses) {
             axis.initDataClasses(userOptions);
+        } else {
+            delete axis.dataClasses;
         }
         axis.initStops();
 
@@ -371,6 +373,23 @@ class ColorAxis extends Axis implements AxisBase {
             axis.labelRight = axis.width;
             // Reset it to avoid color axis reserving space
             axis.chart.axisOffset[axis.side] = sideOffset;
+        }
+    }
+
+    /**
+     * Retain the axis groups in the legend group after axis update. This is
+     * needed after legend update because the legend destroys and rebuilds its
+     * contents. If we refactor to not destroy the legend contents, this can be
+     * removed.
+     * @private
+     */
+    public createGroups(): void {
+        const axisParent = this.axisParent;
+        super.createGroups();
+        if (this.axisGroup?.parentGroup !== axisParent) {
+            this.gridGroup?.add(axisParent);
+            this.axisGroup?.add(axisParent);
+            this.labelGroup?.add(axisParent);
         }
     }
 
@@ -687,20 +706,20 @@ class ColorAxis extends Axis implements AxisBase {
      * @private
      */
     public destroyItems(): void {
-        const axis = this,
-            chart = axis.chart,
-            legendItem = axis.legendItem || {};
+        const { chart, legendItem = {} } = this;
 
-        if (legendItem.label) {
-            chart.legend.destroyItem(axis);
+        if (chart) { // Means axis not destroyed yet
+            if (legendItem.label) {
+                chart.legend.destroyItem(this);
 
-        } else if (legendItem.labels) {
-            for (const item of legendItem.labels) {
-                chart.legend.destroyItem(item as any);
+            } else if (legendItem.labels) {
+                for (const item of legendItem.labels) {
+                    chart.legend.destroyItem(item as any);
+                }
             }
-        }
 
-        chart.isDirtyLegend = true;
+            chart.isDirtyLegend = true;
+        }
     }
 
     //   Removing the whole axis (#14283)
@@ -751,7 +770,7 @@ class ColorAxis extends Axis implements AxisBase {
         let name;
 
         if (!legendItems.length) {
-            axis.dataClasses.forEach((dataClass, i): void => {
+            axis.dataClasses?.forEach((dataClass, i): void => {
                 const from = dataClass.from,
                     to = dataClass.to,
                     { numberFormatter } = chart;

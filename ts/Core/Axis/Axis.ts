@@ -4330,7 +4330,6 @@ class Axis {
 
         // @todo: Look for update for each case
         if (
-            this.coll === 'colorAxis' ||
             /// unit-tests/responsive/responsive
             'labels' in options || // Wait for data sorting refactor
             'plotBands' in options ||
@@ -4344,7 +4343,6 @@ class Axis {
             this.isDirty = true;
             this.forceRedraw = true;
         }
-
 
         this.init(chart, options);
 

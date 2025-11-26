@@ -71,11 +71,12 @@ import { Palette } from '../../Color/Palettes.js';
  *               Min color and max color
  *
  * @extends      xAxis
- * @excluding    alignTicks, allowDecimals, alternateGridColor, breaks,
- *               categories, crosshair, dateTimeLabelFormats, left,
+ * @excluding    alignTicks, allowDecimals, alternateGridColor, angle, breaks,
+ *               categories, crosshair, crossing, dateTimeLabelFormats, left,
  *               lineWidth, linkedTo, maxZoom, minRange, minTickInterval,
- *               offset, opposite, pane, plotBands, plotLines,
- *               reversedStacks, scrollbar, showEmpty, title, top,
+ *               offset, opposite, pane, panningEnabled, plotBands, plotLines,
+ *               reversedStacks, scrollbar, showEmpty, startOfWeek,
+ *               tickPlacement, title, top, uniqueNames, units,
  *               zoomEnabled
  * @product      highcharts highstock highmaps
  * @type         {*|Array<*>}
