@@ -115,7 +115,7 @@ const columnsConfig = [{
     cells: {
         formatter: function () {
             const countryObj = countryByCode[this.value];
-            return `${countryObj.name} ${countryObj.flag}` || this.value;
+            return `${countryObj.flag} ${countryObj.name}` || this.value;
         },
         editMode: {
             renderer: {
