@@ -22,7 +22,7 @@ See Grid in action without installing anything:
 
 ## Installation
 
-Get started with Highcharts Grid using either a bundler (Option 1) or a CDN (Option 2).
+Get started with Highcharts Grid using a bundler ([Option 1](#option-1-npm--bundlers)), a CDN ([Option 2](#option-2-cdn--static)) or self-hosted ([Option 3](#option-3-download-and-self-host)).
 
 ### Option 1: NPM & Bundlers
 
