@@ -20,7 +20,6 @@ import type Chart from '../../Chart/Chart';
 import type Series from '../../Series/Series';
 import type { StackOverflowValue } from './StackingOptions';
 import type SVGElement from '../../Renderer/SVG/SVGElement';
-import type { YAxisOptions } from '../AxisOptions';
 
 import A from '../../Animation/AnimationUtilities.js';
 const { getDeferredAnimation } = A;
@@ -402,7 +401,6 @@ function seriesSetStackedPoints(
             } else {
                 stacks[key][x] = new StackItem(
                     axis,
-                    (axis.options as YAxisOptions).stackLabels as any,
                     !!isNegative,
                     x,
                     stackOption

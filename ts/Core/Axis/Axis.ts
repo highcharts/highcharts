@@ -4332,8 +4332,7 @@ class Axis {
             'plotBands' in options ||
             'plotLines' in options ||
             /// unit-tests/3d/column-crop, unit-tests/axis/type-logarithmic
-            'type' in options ||
-            'stackLabels' in options
+            'type' in options
         ) {
             this.destroy(true);
 
