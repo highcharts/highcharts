@@ -2,6 +2,7 @@
  name: Highcharts Demo
  authors:
    - Rafal Sebestjanski
+   - Kacper Madej
  requiresManualTesting: true
  skipTest: true
  js_wrap: b
