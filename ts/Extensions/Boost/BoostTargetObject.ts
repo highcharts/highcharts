@@ -14,6 +14,7 @@ import type WGLRenderer from './WGLRenderer';
  *
  * */
 
+/** @internal */
 export interface BoostTargetAdditions {
     canvas?: HTMLCanvasElement;
     clipRect?: SVGElement;
@@ -26,6 +27,7 @@ export interface BoostTargetAdditions {
     resize?(): void;
 }
 
+/** @internal */
 export interface BoostTargetObject {
     boost?: BoostTargetAdditions;
     /**
@@ -42,4 +44,5 @@ export interface BoostTargetObject {
  *
  * */
 
+/** @internal */
 export default BoostTargetObject;

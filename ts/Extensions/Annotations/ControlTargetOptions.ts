@@ -20,11 +20,19 @@ import type MockPointOptions from './MockPointOptions';
  * */
 
 export interface ControlTargetOptions {
+    /** @internal */
     controlPointOptions?: ControlPointOptions;
+
     controlPoints?: Array<ControlPointOptions>;
+
     point?: (string|MockPointOptions);
+
     points?: Array<(string|MockPointOptions)>;
+
+    /** @internal */
     x?: number;
+
+    /** @internal */
     y?: number;
 }
 
