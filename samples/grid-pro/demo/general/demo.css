@@ -27,3 +27,15 @@ body {
 #container {
     height: 800px;
 }
+
+.hcg-pagination-wrapper {
+    grid-template-columns: 1fr 1fr auto; /* left info, middle page-size, right controls */
+}
+
+.hcg-pagination-wrapper .hcg-pagination-info { grid-column: 1; }
+.hcg-pagination-wrapper .hcg-pagination-page-size-container { grid-column: 2; }
+
+.hcg-pagination-wrapper .hcg-pagination-controls {
+    grid-column: 3;
+    justify-self: end; /* align to the right edge */
+}
