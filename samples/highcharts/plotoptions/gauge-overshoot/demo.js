@@ -16,12 +16,7 @@ Highcharts.chart('container', {
         startAngle: -110,
         endAngle: 110,
         borderWidth: 1,
-        background: [{
-            backgroundColor: '#fff',
-            borderWidth: 0,
-            outerRadius: '100%',
-            innerRadius: '88%'
-        }]
+        background: null
     },
 
     // the value axis
@@ -55,20 +50,20 @@ Highcharts.chart('container', {
         plotBands: [{
             from: -50,
             to: 50,
-            innerRadius: 103,
-            outerRadius: 116,
+            outerRadius: '100%',
+            thickness: 12,
             color: '#d3e9f7' // light blue
         }, {
             from: 20,
             to: 50,
-            innerRadius: 103,
-            outerRadius: 116,
+            thickness: 12,
+            outerRadius: '100%',
             color: '#6fbe6b' // green
         }, {
             from: -50,
             to: -20,
-            innerRadius: 103,
-            outerRadius: 116,
+            thickness: 12,
+            outerRadius: '100%',
             color: '#e7797d' // yellow
         }]
     },
@@ -89,17 +84,6 @@ Highcharts.chart('container', {
                 borderWidth: 0,
                 borderColor: '#1f9fd9',
                 backgroundColor: '#1f9fd9'
-            },
-            dataLabels: {
-                borderWidth: 2,
-                borderColor: '#d3e9f7',
-                padding: 5,
-                borderRadius: 2,
-                verticalAlign: 'middle',
-                y: 30,
-                style: {
-                    fontWeight: 'normal'
-                }
             },
             wrap: false
         }

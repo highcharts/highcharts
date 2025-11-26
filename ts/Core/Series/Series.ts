@@ -4580,11 +4580,8 @@ class Series {
             hoverSeries.onMouseOut();
         }
 
-        // Trigger the event, but to save processing time,
-        // only if defined
-        if ((series.options.events as any).mouseOver) {
-            fireEvent(series, 'mouseOver');
-        }
+        // Trigger the event
+        fireEvent(series, 'mouseOver');
 
         // Hover this
         series.setState('hover');
@@ -4608,7 +4605,6 @@ class Series {
     public onMouseOut(): void {
         // Trigger the event only if listeners exist
         const series = this,
-            options = series.options,
             chart = series.chart,
             tooltip = chart.tooltip,
             hoverPoint = chart.hoverPoint;
@@ -4622,10 +4618,7 @@ class Series {
         }
 
         // Fire the mouse out event
-        if (series && (options.events as any).mouseOut) {
-            fireEvent(series, 'mouseOut');
-        }
-
+        fireEvent(series, 'mouseOut');
 
         // Hide the tooltip
         if (
