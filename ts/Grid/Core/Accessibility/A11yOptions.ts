@@ -218,12 +218,6 @@ export interface ScreenReaderSectionOptions {
     /**
      * A formatter function to create the HTML contents of the hidden screen
      * reader information region before the Grid.
-     *
-     * @param grid
-     * The Grid instance.
-     *
-     * @returns
-     * A string with the HTML content of the region.
      */
     beforeGridFormatter?: ScreenReaderFormatterCallback;
 
@@ -244,12 +238,6 @@ export interface ScreenReaderSectionOptions {
     /**
      * A formatter function to create the HTML contents of the hidden screen
      * reader information region after the Grid.
-     *
-     * @param grid
-     * The Grid instance.
-     *
-     * @returns
-     * A string with the HTML content of the region.
      */
     afterGridFormatter?: ScreenReaderFormatterCallback;
 
@@ -263,6 +251,12 @@ export interface ScreenReaderSectionOptions {
 
 /**
  * Formatter callback function for screen reader sections.
+ *
+ * @param grid
+ * A Grid instance.
+ *
+ * @returns
+ * A string with the HTML content of the region.
  */
 export type ScreenReaderFormatterCallback = (grid: Grid) => string;
 
