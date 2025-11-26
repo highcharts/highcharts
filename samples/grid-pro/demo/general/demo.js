@@ -1,13 +1,13 @@
 const countryByCode = {
-    PL: 'Poland',
-    NL: 'Netherlands',
-    RO: 'Romania',
-    EC: 'Ecuador',
-    ES: 'Spain',
-    IT: 'Italy',
-    DE: 'Germany',
-    TR: 'Turkey',
-    BR: 'Brazil'
+    PL: 'Poland 🇵🇱',
+    NL: 'Netherlands 🇳🇱',
+    RO: 'Romania 🇷🇴',
+    EC: 'Ecuador 🇪🇨',
+    ES: 'Spain 🇪🇸',
+    IT: 'Italy 🇮🇹',
+    DE: 'Germany 🇩🇪',
+    TR: 'Turkey 🇹🇷',
+    BR: 'Brazil 🇧🇷'
 };
 
 const productCatalog = [
@@ -61,7 +61,7 @@ const columnsConfig = [{
         format: 'In Stock'
     },
     cells: {
-        format: '{#if value}✓{else}✗{/if}'
+        format: '{#if value}✅{else}❌{/if}'
     }
 }, {
     id: 'product',
