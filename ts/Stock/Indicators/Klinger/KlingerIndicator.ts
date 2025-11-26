@@ -47,7 +47,7 @@ const {
 /**
  * The Klinger oscillator series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.klinger
  *
@@ -416,6 +416,7 @@ SeriesRegistry.registerSeriesType('klinger', KlingerIndicator);
  *
  * */
 
+/** @internal */
 export default KlingerIndicator;
 
 /* *

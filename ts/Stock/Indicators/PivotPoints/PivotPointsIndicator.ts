@@ -47,7 +47,7 @@ const {
 /**
  * The Pivot Points series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.pivotpoints
  *
@@ -448,6 +448,7 @@ SeriesRegistry.registerSeriesType('pivotpoints', PivotPointsIndicator);
  *
  * */
 
+/** @internal */
 export default PivotPointsIndicator;
 
 /* *

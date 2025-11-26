@@ -48,7 +48,7 @@ const {
 /**
  * The Disparity Index series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.disparityindex
  *
@@ -226,6 +226,7 @@ SeriesRegistry.registerSeriesType('disparityindex', DisparityIndexIndicator);
  *
  * */
 
+/** @internal */
 export default DisparityIndexIndicator;
 
 /* *

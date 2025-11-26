@@ -42,7 +42,7 @@ const {
 /**
  * The Slow Stochastic series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.slowstochastic
  *
@@ -196,6 +196,7 @@ SeriesRegistry.registerSeriesType('slowstochastic', SlowStochasticIndicator);
  *
  * */
 
+/** @internal */
 export default SlowStochasticIndicator;
 
 /* *

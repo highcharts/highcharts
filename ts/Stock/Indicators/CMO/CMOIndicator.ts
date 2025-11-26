@@ -35,7 +35,7 @@ const { isNumber, merge } = U;
 /**
  * The CMO series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.cmo
  *
@@ -214,6 +214,7 @@ SeriesRegistry.registerSeriesType('cmo', CMOIndicator);
  *
  * */
 
+/** @internal */
 export default CMOIndicator;
 
 /* *

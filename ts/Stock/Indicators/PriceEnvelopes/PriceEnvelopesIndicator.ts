@@ -42,7 +42,7 @@ const {
 /**
  * The Price Envelopes series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.priceenvelopes
  *
@@ -297,6 +297,7 @@ SeriesRegistry.registerSeriesType('priceenvelopes', PriceEnvelopesIndicator);
  *
  * */
 
+/** @internal */
 export default PriceEnvelopesIndicator;
 
 /* *

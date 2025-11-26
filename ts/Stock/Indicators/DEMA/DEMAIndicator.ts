@@ -43,7 +43,7 @@ const {
 /**
  * The DEMA series Type
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.dema
  *
@@ -242,6 +242,7 @@ SeriesRegistry.registerSeriesType('dema', DEMAIndicator);
  *
  * */
 
+/** @internal */
 export default DEMAIndicator;
 
 /* *

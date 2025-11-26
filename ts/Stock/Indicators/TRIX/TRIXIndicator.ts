@@ -35,7 +35,7 @@ const {
 /**
  * The TRIX series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.trix
  *
@@ -135,6 +135,7 @@ SeriesRegistry.registerSeriesType('trix', TRIXIndicator);
  *
  * */
 
+/** @internal */
 export default TRIXIndicator;
 
 /* *
