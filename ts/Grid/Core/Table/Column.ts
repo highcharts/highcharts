@@ -26,6 +26,8 @@ import type { IndividualColumnOptions } from '../Options';
 import type Cell from './Cell';
 import type CellContent from './CellContent/CellContent';
 import type HeaderCell from './Header/HeaderCell';
+import type { DeepPartial } from '../../../Shared/Types';
+import type Grid from '../Grid';
 
 import Table from './Table.js';
 import DataTable from '../../../Data/DataTable.js';
@@ -337,6 +339,32 @@ class Column {
      */
     public format(template: string): string {
         return Templating.format(template, this, this.viewport.grid);
+    }
+
+    /**
+     * Sets the new column options to the userOptions field.
+     *
+     * @param options
+     * The options to set.
+     *
+     * @param overwrite
+     * Whether to overwrite the existing column options with the new ones.
+     * Default is `false`.
+     *
+     * @returns
+     * The difference between the previous and the new column options in form
+     * of a record of `[column.id]: column.options`.
+     *
+     * @internal
+     */
+    public setOptions(
+        options: Column.Options,
+        overwrite = false
+    ): DeepPartial<Grid.NonArrayColumnOptions> {
+        return this.viewport.grid.setColumnOptions([{
+            id: this.id,
+            ...options
+        }], overwrite);
     }
 
     public update(options: Column.Options, render?: boolean): void;

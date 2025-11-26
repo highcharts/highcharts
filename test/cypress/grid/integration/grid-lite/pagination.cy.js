@@ -83,17 +83,6 @@ describe('Pagination.', () => {
         cy.get('.hcg-pagination-info').should('contain', 'Showing 45 - 66 of 254');
     });
 
-    it('Page size', () => {
-        // Change page size to 10
-        cy.get('.hcg-pagination-page-size select.hcg-input').eq(0).select('20');
-
-        // Check page info updates
-        cy.get('.hcg-pagination-info').should('contain', 'Showing 1 - 20');
-
-        // Check data rows update
-        cy.get('table tbody tr').should('have.length', 20);
-    });
-
     it('Update pagination.', () => {
         cy.window().its('Grid').then((grid) => {
             // Disable pagination
@@ -117,6 +106,17 @@ describe('Pagination.', () => {
             cy.get('.hcg-pagination-wrapper').should('exist');
             cy.get('table tbody tr').should('have.length', 22);
         });
+    });
+
+    it('Page size', () => {
+        // Change page size to 10
+        cy.get('.hcg-pagination-page-size select.hcg-input').eq(0).select('20');
+
+        // Check page info updates
+        cy.get('.hcg-pagination-info').should('contain', 'Showing 1 - 20');
+
+        // Check data rows update
+        cy.get('table tbody tr').should('have.length', 20);
     });
 
     it('Sorted pagination.', () => {
@@ -240,7 +240,7 @@ describe('Pagination.', () => {
 
         cy.get('.hcg-pagination-nav-dropdown')
             .should('be.visible')
-            .contains('Page 1 of 12');
+            .contains('Page 1 of 26');
         cy.get('.hcg-pagination-page-size')
             .should('be.visible')
             .contains('10');
