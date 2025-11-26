@@ -28,6 +28,7 @@ import type {
     PageSizeSelectorOptions,
     PageButtonsOptions
 } from './PaginationOptions';
+import type { DeepPartial } from '../../../Shared/Types';
 
 import Icons from './Icons.js';
 import Globals from '../Globals.js';
@@ -152,6 +153,12 @@ class Pagination {
      */
     private oldTotalItems?: number;
 
+    /**
+     * Whether the pagination is dirty due to querying changes.
+     * @internal
+     */
+    public isDirtyQuerying?: boolean;
+
 
     /* *
     *
@@ -204,6 +211,32 @@ class Pagination {
             Pagination.defaultOptions
                 .controls?.pageSizeSelector as PageSizeSelectorOptions
         ).options ?? [];
+    }
+
+    /**
+     * Internal method to set the dirty flags for the pagination based on the
+     * options differences.
+     *
+     * @param diff
+     * The differences between the previous and the new options.
+     *
+     * @internal
+     */
+    public update(diff: DeepPartial<PaginationOptions>): void {
+        if (
+            'page' in diff ||
+            'pageSize' in diff
+        ) {
+            this.isDirtyQuerying = true;
+            delete diff.page;
+            delete diff.pageSize;
+        }
+
+        // TODO: Optimize more options here.
+
+        if (Object.keys(diff).length > 0) {
+            this.grid.dirtyFlags.add('grid');
+        }
     }
 
     /**
@@ -396,14 +429,19 @@ class Pagination {
 
     /**
      * Update the pagination controls.
+     *
+     * @param force
+     * Whether to force update the controls.
+     *
+     * @internal
      */
-    public updateControls(): void {
+    public updateControls(force: boolean = false): void {
         const {
             totalItems,
             currentPageSize
         } = this.controller;
 
-        if (this.oldTotalItems === totalItems) {
+        if (this.oldTotalItems === this.controller.totalItems && !force) {
             return;
         }
 

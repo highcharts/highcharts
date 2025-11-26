@@ -47,6 +47,11 @@ class PaginationController {
     private querying: QueryingController;
 
     /**
+     * Whether the pagination is enabled.
+     */
+    public enabled: boolean;
+
+    /**
      * The current page (1-based index).
      */
     public currentPage: number = 1;
@@ -76,6 +81,7 @@ class PaginationController {
      */
     constructor(querying: QueryingController) {
         this.querying = querying;
+        this.enabled = !!querying.grid.options?.pagination?.enabled;
     }
 
 
@@ -141,8 +147,10 @@ class PaginationController {
      */
     public loadOptions(): void {
         const options = this.querying.grid.options?.pagination || {};
-        if (!options.enabled) {
-            return;
+
+        if (this.enabled === !options.enabled) {
+            this.enabled = !!options.enabled;
+            this.querying.shouldBeUpdated = true;
         }
 
         if (this.currentPage !== options.page) {
@@ -166,7 +174,7 @@ class PaginationController {
             this.querying.grid.dataTable?.rowCount || 0
         )
     ): RangeModifier | undefined {
-        if (!this.querying.grid.options?.pagination?.enabled) {
+        if (!this.enabled) {
             return;
         }
 

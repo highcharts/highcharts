@@ -719,6 +719,18 @@ class Grid {
             delete diff.time;
         }
 
+        if (diff.pagination) {
+            const paginationDiff = diff.pagination;
+            if ('enabled' in paginationDiff) {
+                if (!this.pagination && paginationDiff.enabled) {
+                    this.pagination = new Pagination(this);
+                }
+            }
+
+            this.pagination?.update(paginationDiff);
+        }
+        delete diff.pagination;
+
         // TODO: Add more options that can be optimized here.
 
         if (Object.keys(diff).length > 0) {
@@ -856,12 +868,13 @@ class Grid {
             return await this.render();
         }
 
-        const { viewport: vp } = this;
+        const { viewport: vp, pagination } = this;
         const colResizing = vp?.columnResizing;
 
         if (
             flags.has('sorting') ||
-            flags.has('filtering')
+            flags.has('filtering') ||
+            pagination?.isDirtyQuerying
         ) {
             this.querying.loadOptions();
         }
@@ -873,7 +886,8 @@ class Grid {
         if (
             flags.has('rows') ||
             flags.has('sorting') ||
-            flags.has('filtering')
+            flags.has('filtering') ||
+            pagination?.isDirtyQuerying
         ) {
             await vp?.updateRows();
         } else if (
@@ -900,6 +914,11 @@ class Grid {
             }
         }
 
+        if (pagination?.isDirtyQuerying) {
+            pagination.updateControls(true);
+        }
+
+        delete pagination?.isDirtyQuerying;
         delete colResizing?.isDirty;
         flags.clear();
 
