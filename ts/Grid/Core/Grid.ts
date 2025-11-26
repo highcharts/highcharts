@@ -870,7 +870,7 @@ class Grid {
             this.renderNoData();
         }
 
-        this.accessibility?.setA11yOptions();
+        this.renderAccessibility();
 
         // Render bottom pagination, footer pagination,
         // or custom container pagination (after table).
@@ -883,6 +883,22 @@ class Grid {
         fireEvent(this, 'afterRenderViewport');
 
         this.viewport?.reflow();
+    }
+
+    /**
+     * Renders the Grid accessibility.
+     * @internal
+     */
+    private renderAccessibility(): void {
+        const accessibility = this.accessibility;
+
+        if (!accessibility) {
+            return;
+        }
+
+        accessibility.setA11yOptions();
+        accessibility.addScreenReaderSection('before');
+        accessibility.addScreenReaderSection('after');
     }
 
     /**
