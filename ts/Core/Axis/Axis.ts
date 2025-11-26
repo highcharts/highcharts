@@ -606,14 +606,14 @@ class Axis {
                 },
                 margin: 15
             } :
-            // Left and right axis, title rotated 90 or 270 degrees
+            // Left and right axis, title rotated -90 or 90 degrees
             // respectively
             {
                 labels: {
                     padding: 1
                 },
                 title: {
-                    rotation: 90 * this.side
+                    rotation: this.side === 1 ? 90 : -90
                 }
             };
 
@@ -3302,8 +3302,10 @@ class Axis {
             attr: SVGAttributes = {
                 text: axisTitleOptions.text || '',
                 zIndex: 7,
-                rotation: axisTitleOptions.rotation || 0,
                 align: textAlign
+            },
+            animatable: SVGAttributes = {
+                rotation: axisTitleOptions.rotation || 0
             };
 
         let axisTitle = axis.axisTitle;
@@ -3316,14 +3318,16 @@ class Axis {
                     0,
                     axisTitleOptions.useHTML
                 )
-                .attr(attr)
+                .attr(extend(attr, animatable))
                 .addClass('highcharts-axis-title');
 
             axisTitle.add(axis.axisGroup);
             axisTitle.isNew = true;
 
         } else {
-            axisTitle.attr(attr);
+            axisTitle
+                .attr(attr)
+                .animate(animatable);
         }
 
         if (!styledMode) {
