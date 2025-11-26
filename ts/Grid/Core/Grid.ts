@@ -726,7 +726,6 @@ class Grid {
                     this.pagination = new Pagination(this);
                 }
             }
-
             this.pagination?.update(paginationDiff);
         }
         delete diff.pagination;
