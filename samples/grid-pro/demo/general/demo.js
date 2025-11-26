@@ -148,7 +148,15 @@ Grid.grid('container', {
     },
     pagination: {
         enabled: true,
-        pageSize: 20
+        pageSize: 20,
+        controls: {
+            pageInfo: {
+                enabled: false
+            },
+            pageSizeSelector: {
+                enabled: false
+            }
+        }
     },
     columns: columnsConfig
 });
