@@ -47,8 +47,7 @@ const {
     fireEvent,
     getStyle,
     merge,
-    pick,
-    isObject
+    pick
 } = U;
 
 
@@ -361,30 +360,11 @@ class Grid {
      * Initializes the pagination.
      */
     private initPagination(): void {
-        let state: Pagination.PaginationState | undefined;
-
-        if (this.pagination) {
-            const {
-                currentPageSize,
-                currentPage
-            } = this.pagination || {};
-
-            state = {
-                currentPageSize,
-                currentPage
-            };
-        }
-
         this.pagination?.destroy();
         delete this.pagination;
 
-        const rawOptions = this.options?.pagination;
-        const options = isObject(rawOptions) ? rawOptions : {
-            enabled: rawOptions
-        };
-
-        if (options?.enabled) {
-            this.pagination = new Pagination(this, options, state);
+        if (this.options?.pagination?.enabled) {
+            this.pagination = new Pagination(this);
         }
     }
 
@@ -841,7 +821,7 @@ class Grid {
     public renderViewport(): void {
         const viewportMeta = this.viewport?.getStateMeta();
         const pagination = this.pagination;
-        const paginationPosition = pagination?.options.position;
+        const paginationPosition = pagination?.options?.position;
 
         this.enabledColumns = this.getEnabledColumnIDs();
 

@@ -30,7 +30,7 @@ export interface PageSizeSelectorOptions {
      *
      * @default [10, 20, 50, 100]
      */
-    options: Array<number>;
+    options?: Array<number>;
 }
 
 /**
@@ -44,7 +44,7 @@ export interface PaginationControlsOptions {
      *
      * @default { enabled: true, options: [10, 20, 50, 100] }
      */
-    pageSizeSelector: boolean | PageSizeSelectorOptions;
+    pageSizeSelector?: boolean | PageSizeSelectorOptions;
 
     /**
      * Whether to show the page information text
@@ -73,7 +73,7 @@ export interface PaginationControlsOptions {
      *
      * @default { enabled: true, count: 5 }
      */
-    pageButtons: boolean | PageButtonsOptions;
+    pageButtons?: boolean | PageButtonsOptions;
 }
 
 /**
@@ -86,42 +86,42 @@ export interface PaginationLangOptions {
      *
      * @default "Showing {start} - {end} of {total} (Page {currentPage} of {totalPages})" // eslint-disable-line
      */
-    pageInfo: string;
+    pageInfo?: string;
 
     /**
      * Text for the page size label.
      *
      * @default "rows per page"
      */
-    pageSizeLabel: string;
+    pageSizeLabel?: string;
 
     /**
      * Text for the first page button (accessibility).
      *
      * @default "First page"
      */
-    firstPage: string;
+    firstPage?: string;
 
     /**
      * Text for the previous page button (accessibility).
      *
      * @default "Previous page"
      */
-    previousPage: string;
+    previousPage?: string;
 
     /**
      * Text for the next page button (accessibility).
      *
      * @default "Next page"
      */
-    nextPage: string;
+    nextPage?: string;
 
     /**
      * Text for the last page button (accessibility).
      *
      * @default "Last page"
      */
-    lastPage: string;
+    lastPage?: string;
 
     /**
      * Text for page number button (accessibility).
@@ -129,14 +129,14 @@ export interface PaginationLangOptions {
      *
      * @default "Page {page}"
      */
-    pageNumber: string;
+    pageNumber?: string;
 
     /**
      * Text for ellipsis (accessibility).
      *
      * @default "More pages"
      */
-    ellipsis: string;
+    ellipsis?: string;
 }
 
 /**
@@ -148,7 +148,14 @@ export interface PaginationOptions {
      *
      * @default false
      */
-    enabled: boolean;
+    enabled?: boolean;
+
+    /**
+     * The current page number.
+     *
+     * @default 1
+     */
+    page?: number;
 
     /**
      * Initial number of items per page when the Grid is initialized.
@@ -157,7 +164,7 @@ export interface PaginationOptions {
      *
      * @default 10
      */
-    pageSize: number;
+    pageSize?: number;
 
     /**
      * Position of the pagination container relative to the table.
@@ -169,7 +176,7 @@ export interface PaginationOptions {
     /**
      * Controls options for pagination UI elements.
      */
-    controls: PaginationControlsOptions;
+    controls?: PaginationControlsOptions;
 }
 
 /**
@@ -188,7 +195,7 @@ export interface PageButtonsOptions {
      *
      * @default 5
      */
-    count: number;
+    count?: number;
 }
 
 /**

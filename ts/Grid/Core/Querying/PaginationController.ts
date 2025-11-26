@@ -47,14 +47,19 @@ class PaginationController {
     private querying: QueryingController;
 
     /**
-     * The current page.
+     * The current page (1-based index).
      */
-    public currentPage?: number;
+    public currentPage: number = 1;
+
+    /**
+     * The current page size.
+     */
+    public currentPageSize: number = 10;
 
     /**
      * The number of rows before pagination.
      */
-    public totalItems?: number;
+    private _totalItems?: number;
 
 
     /* *
@@ -81,13 +86,53 @@ class PaginationController {
     * */
 
     /**
-     * Sets the range options.
+     * Total number of items (rows)
+     */
+    public get totalItems(): number {
+        return this._totalItems ?? this.querying.grid.dataTable?.rowCount ?? 0;
+    }
+
+    /**
+     * Gets the total number of pages.
+     */
+    public get totalPages(): number {
+        return this.currentPageSize > 0 ? Math.ceil(
+            this.totalItems / this.currentPageSize
+        ) : 1;
+    }
+
+    /**
+     * Clamps the current page to the total number of pages.
+     */
+    public clampPage(): void {
+        if (this.currentPage <= this.totalPages) {
+            return;
+        }
+
+        this.currentPage = this.totalPages;
+        this.querying.shouldBeUpdated = true;
+    }
+
+    /**
+     * Sets the page.
      *
      * @param currentPage
      * The current page.
      */
-    public setRange(currentPage: number): void {
+    public setPage(currentPage: number): void {
         this.currentPage = currentPage;
+        this.clampPage();
+        this.querying.shouldBeUpdated = true;
+    }
+
+    /**
+     * Sets the page size.
+     *
+     * @param pageSize
+     * The page size.
+     */
+    public setPageSize(pageSize: number): void {
+        this.currentPageSize = pageSize;
         this.querying.shouldBeUpdated = true;
     }
 
@@ -95,14 +140,17 @@ class PaginationController {
      * Loads range options from the grid options.
      */
     public loadOptions(): void {
-        const pagination = this.querying.grid.pagination;
+        const options = this.querying.grid.options?.pagination || {};
+        if (!options.enabled) {
+            return;
+        }
 
-        if (
-            pagination?.options.enabled &&
-            this.currentPage !== pagination.currentPage
-        ) {
-            this.currentPage = pagination.currentPage;
-            this.setRange(this.currentPage);
+        if (this.currentPage !== options.page) {
+            this.setPage(options.page ?? this.currentPage);
+        }
+
+        if (this.currentPageSize !== options.pageSize) {
+            this.setPageSize(options.pageSize ?? this.currentPageSize);
         }
     }
 
@@ -118,13 +166,12 @@ class PaginationController {
             this.querying.grid.dataTable?.rowCount || 0
         )
     ): RangeModifier | undefined {
-        const currentPage = this.currentPage || 1; // Start from page 1, not 0
-        const pageSize =
-            this.querying.grid.pagination?.currentPageSize;
-
-        if (!pageSize) {
+        if (!this.querying.grid.options?.pagination?.enabled) {
             return;
         }
+
+        const currentPage = this.currentPage;
+        const pageSize = this.currentPageSize;
 
         // Calculate the start index (0-based)
         const start = (currentPage - 1) * pageSize;
@@ -133,20 +180,12 @@ class PaginationController {
             rowsCountBeforePagination
         );
 
-        this.totalItems = rowsCountBeforePagination;
+        this._totalItems = rowsCountBeforePagination;
 
         return new RangeModifier({
             start,
             end
         });
-    }
-
-    /**
-     * Reset the pagination controller.
-     */
-    public reset(): void {
-        delete this.currentPage;
-        this.querying.shouldBeUpdated = true;
     }
 }
 

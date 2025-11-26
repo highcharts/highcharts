@@ -282,11 +282,12 @@ class Table {
         // instead of the original data table row count.
         const rowCount = Number(grid.dataTable?.rowCount);
         const threshold = rows?.virtualizationThreshold ?? 50;
-        const paginationPageSize = grid.pagination?.currentPageSize;
 
-        return paginationPageSize ?
-            paginationPageSize >= threshold :
-            rowCount >= threshold;
+        if (grid.querying.pagination) {
+            return grid.querying.pagination.currentPageSize >= threshold;
+        }
+
+        return rowCount >= threshold;
     }
 
     /**
@@ -319,7 +320,7 @@ class Table {
             focusedRowId = vp.dataTable.getOriginalRowIndex(vp.focusCursor[0]);
         }
 
-        vp.grid.pagination?.clampCurrentPage();
+        vp.grid.querying.pagination.clampPage();
 
         // Update data
         const oldRowsCount = (vp.rows[vp.rows.length - 1]?.index ?? -1) + 1;
