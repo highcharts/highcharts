@@ -69,7 +69,8 @@ const coreChart = {
         pointFormat: `<span style="color:{point.color}">\u25CF</span>
         <span style="font-weight:bold;
         font-size:14px;">{point.name}: {point.y}%</span>`,
-        useHTML: true
+        useHTML: true,
+        outside: true
     },
     series: [
         {
