@@ -39,3 +39,11 @@ body {
     grid-column: 3;
     justify-self: end; /* align to the right edge */
 }
+
+.green {
+    color: green;
+}
+
+.red {
+    color: red;
+}
