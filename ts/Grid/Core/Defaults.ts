@@ -37,51 +37,6 @@ const { merge } = Utils;
 namespace Defaults {
 
     /**
-     * Default options for the Grid.
-     */
-    export const defaultOptions: DeepPartial<Options> = {
-        accessibility: {
-            enabled: true,
-            highContrastMode: 'auto',
-            announcements: {
-                sorting: true,
-                filtering: true
-            }
-        },
-        time: {
-            timezone: 'UTC'
-        },
-        rendering: {
-            rows: {
-                bufferSize: 10,
-                minVisibleRows: 2,
-                strictHeights: false,
-                virtualizationThreshold: 50
-            },
-            header: {
-                enabled: true
-            },
-            columns: {
-                resizing: {
-                    enabled: true,
-                    mode: 'adjacent'
-                }
-            },
-            theme: 'hcg-theme-default'
-        },
-        columnDefaults: {
-            sorting: {
-                sortable: true
-            },
-            filtering: {
-                inline: false
-            }
-        },
-        pagination: Pagination.defaultOptions,
-        lang: Defaults.defaultLangOptions
-    };
-
-    /**
      * Default language options for the Grid.
      */
     export const defaultLangOptions: DeepPartial<LangOptions> = {
@@ -148,6 +103,51 @@ namespace Defaults {
             'true': 'True',
             'false': 'False'
         }
+    };
+
+    /**
+     * Default options for the Grid.
+     */
+    export const defaultOptions: DeepPartial<Options> = {
+        accessibility: {
+            enabled: true,
+            highContrastMode: 'auto',
+            announcements: {
+                sorting: true,
+                filtering: true
+            }
+        },
+        time: {
+            timezone: 'UTC'
+        },
+        rendering: {
+            rows: {
+                bufferSize: 10,
+                minVisibleRows: 2,
+                strictHeights: false,
+                virtualizationThreshold: 50
+            },
+            header: {
+                enabled: true
+            },
+            columns: {
+                resizing: {
+                    enabled: true,
+                    mode: 'adjacent'
+                }
+            },
+            theme: 'hcg-theme-default'
+        },
+        columnDefaults: {
+            sorting: {
+                sortable: true
+            },
+            filtering: {
+                inline: false
+            }
+        },
+        pagination: Pagination.defaultOptions,
+        lang: Defaults.defaultLangOptions
     };
 
     /**
