@@ -283,7 +283,7 @@ class Table {
         const rowCount = Number(grid.dataTable?.rowCount);
         const threshold = rows?.virtualizationThreshold ?? 50;
 
-        if (grid.querying.pagination) {
+        if (grid.pagination) {
             return grid.querying.pagination.currentPageSize >= threshold;
         }
 
