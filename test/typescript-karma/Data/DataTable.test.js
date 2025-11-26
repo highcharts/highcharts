@@ -558,12 +558,11 @@ QUnit.test('DataTable.setRow insert argument', function (assert) {
     );
 });
 
-QUnit.test('Metadata in a cloned table', function (assert) {
+QUnit.test('Metadata in a cloned table should be a shallow copy', function (assert) {
     // Arrange
     const table = new DataTable({
         columns: {
-            ID: [1, 2, 3],
-            Name: ['John', 'Jane', 'Alice']
+            ID: [1, 2, 3]
         },
         metadata: {
             ID: {
@@ -576,9 +575,19 @@ QUnit.test('Metadata in a cloned table', function (assert) {
     const tableClone = table.clone();
 
     // Assert
+    assert.notStrictEqual(
+        tableClone.metadata,
+        table.metadata,
+        'Metadata object should be a new shallow copy.'
+    );
+    assert.strictEqual(
+        tableClone.metadata.ID,
+        table.metadata.ID,
+        'Nested metadata objects should still reference the same object.'
+    );
     assert.deepEqual(
         tableClone.metadata,
         table.metadata,
-        'Cloned table should have the same metadata.'
+        'Cloned metadata should have equal structure and values.'
     );
 });
