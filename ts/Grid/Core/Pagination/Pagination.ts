@@ -1138,11 +1138,7 @@ class Pagination {
      * The container element for the dropdown page selector.
      */
     public renderDropdownPageSelector(container: HTMLElement): void {
-        const {
-            totalPages,
-            currentPage
-        } = this.controller;
-        if (totalPages <= 1) {
+        if (this.controller.totalPages <= 1) {
             return;
         }
 
@@ -1162,7 +1158,7 @@ class Pagination {
         // Add event listener for page change
         select.addEventListener('change', (): void => {
             const newPage = parseInt(select.value, 10);
-            if (newPage !== currentPage) {
+            if (newPage !== this.controller.currentPage) {
                 void this.goToPage(newPage);
             }
         });
