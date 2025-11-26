@@ -22,7 +22,6 @@ import CrookedLine from './CrookedLine.js';
 import D from '../../../Core/Defaults.js';
 const { defaultOptions } = D;
 import U from '../../../Core/Utilities.js';
-import { Palette } from '../../../Core/Color/Palettes';
 const { merge } = U;
 
 if (defaultOptions.annotations) {
@@ -65,7 +64,7 @@ if (defaultOptions.annotations) {
                 borderWidth: 0,
                 y: -5,
                 style: {
-                    color: Palette.neutralColor80
+                    color: '{palette.neutralColor80}'
                 }
             } as any
         }

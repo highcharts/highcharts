@@ -33,7 +33,6 @@ import type { YAxisOptions } from '../../Core/Axis/AxisOptions';
 
 import H from '../../Core/Globals.js';
 import NavigationBindings from '../../Extensions/Annotations/NavigationBindings.js';
-import { Palette } from '../../Core/Color/Palettes.js';
 import STU from './StockToolsUtilities.js';
 const {
     addFlagFromForm,
@@ -721,6 +720,11 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                                 { x, y },
                                 { x, y }
                             ]
+                        },
+                        labelOptions: {
+                            style: {
+                                color: '{palette.neutralColor60}'
+                            }
                         }
                     },
                     navigation.annotationsOptions,
@@ -1172,7 +1176,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                                 y: coordsY.value,
                                 controlPoint: {
                                     style: {
-                                        fill: Palette.negativeColor
+                                        fill: '{palette.negativeColor}'
                                     }
                                 }
                             },
@@ -1415,8 +1419,8 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                             connector: {
                                 fill: 'none',
                                 stroke: closestPoint.below ?
-                                    Palette.negativeColor :
-                                    Palette.positiveColor
+                                    '{palette.negativeColor}' :
+                                    '{palette.positiveColor}'
                             }
                         }
                     },

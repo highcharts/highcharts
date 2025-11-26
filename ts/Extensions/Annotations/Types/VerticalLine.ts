@@ -29,7 +29,6 @@ import D from '../../../Core/Defaults.js';
 const { defaultOptions } = D;
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
-import { Palette } from '../../../Core/Color/Palettes';
 const {
     merge,
     pick
@@ -88,7 +87,7 @@ if (defaultOptions.annotations) {
         } as any,
         labelOptions: {
             style: {
-                color: Palette.neutralColor80,
+                color: '{palette.neutralColor80}',
                 fontSize: '0.7em'
             }
         }
