@@ -325,7 +325,7 @@ function applyGrouping(
 
     const table = dataGroupingOptions.groupAll ?
             series.dataTable :
-            series.dataTable.modified || series.dataTable,
+            series.dataTable.getModified() || series.dataTable,
         processedXData = series.getColumn('x', !dataGroupingOptions.groupAll),
         xData = processedXData,
         plotSizeX = chart.plotSizeX,

@@ -19,9 +19,7 @@ Dashboards.board('container', {
         connectors: [{
             type: 'CSV',
             id: 'my-connector',
-            options: {
-                csvURL: 'https://example.com/data.csv'
-            }
+            csvURL: 'https://example.com/data.csv'
         }]
         ...
 ```
@@ -34,18 +32,18 @@ const dataPool = new DataPool();
 dataPool.setConnectorOptions({
     type: 'CSV',
     id: 'my-connector',
-    options: {
-        csvURL: 'https://example.com/data.csv'
-    }
+    csvURL: 'https://example.com/data.csv'
 });
 
-const dataTable = await dataPool.getConnectorTable('my-connector');
+const dataTable = await dataPool
+    .getConnector('my-connector')
+    .then((connector) => connector.getTable());
 ```
 
 ### 2. From a data connector
 A `DataConnector` is a service that retrieves data from an external source and creates a `DataTable` to store the imported data.
 
-The `DataTable` is accessible via the `DataConnector.table`
+The `DataTable` is accessible via the `DataConnector.getTable()` method.
 
 ```javascript
 async function loadData() {
@@ -55,7 +53,7 @@ async function loadData() {
 
     await connector.load();
 
-    const dataTable = connector.table;
+    const dataTable = connector.getTable();
 }
 ```
 
@@ -100,7 +98,7 @@ each adjustment.
 Each `DataTable` should have a `key` property that will be referenced in the
 component.
 
-Also, you can define connector options (`columnNames`, `firstRowAsNames`,
+Also, you can define connector options (`columnIds`, `firstRowAsNames`,
 `orientation`, `beforeParse`) and use the `DataModifier` service.
 
 ```javascript
@@ -108,19 +106,17 @@ dataPool: {
     connectors: [{
         id: 'data-connector',
         type: 'JSON',
-        options: {
-            data: {
-                employees: [
-                    ['Name', 'Age', 'Salary'],
-                    ['John', 30, 50000],
-                    ['Jane', 25, 45000],
-                    ['Bob', 35, 60000],
-                    ['Alice', 28, 52000]
-                ],
-                metrics: {
-                    revenue: 100000,
-                    costs: 75000
-                }
+        data: {
+            employees: [
+                ['Name', 'Age', 'Salary'],
+                ['John', 30, 50000],
+                ['Jane', 25, 45000],
+                ['Bob', 35, 60000],
+                ['Alice', 28, 52000]
+            ],
+            metrics: {
+                revenue: 100000,
+                costs: 75000
             }
         },
         dataTables: [{
@@ -131,7 +127,7 @@ dataPool: {
         }, {
             key: 'metrics',
             firstRowAsNames: false,
-            columnNames: ['revenue', 'costs'],
+            columnIds: ['revenue', 'costs'],
             beforeParse: function({ metrics }) {
                 return [[metrics.revenue, metrics.costs]];
             },
@@ -178,7 +174,7 @@ The `DataTable` class offers several methods for accessing data. Some of the mos
 - `getColumns`- Returns all or several columns.
 - `getModifier`- Returns the modifier for the table.
 
-And many more. For a full list of methods, see the [API documentation](https://api.highcharts.com/dashboards/#classes/Data_DataTable.DataTable-1).
+And many more. For a full list of methods, see the [API documentation](https://api.highcharts.com/dashboards/#classes/Data_DataTable.DataTable).
 
 
 ## Set operations
@@ -190,7 +186,7 @@ The `DataTable` class offers several methods for modifying data. Some of the mos
 - `setColumns`- Sets cell values for multiple columns.
 - `setModifier`- Sets or unsets the modifier for the table.
 
-See other available methods in the [API documentation](https://api.highcharts.com/dashboards/#classes/Data_DataTable.DataTable-1).
+See other available methods in the [API documentation](https://api.highcharts.com/dashboards/#classes/Data_DataTable.DataTable).
 
 ## Other operations
 Other useful operations include:
@@ -199,4 +195,3 @@ Other useful operations include:
 - `deleteColumns`- Deletes columns from the table.
 - `deleteRows`- Deletes rows from the table.
 - `on`- Adds an event listener to the table for a specific event.
-

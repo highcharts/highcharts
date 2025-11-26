@@ -23,6 +23,7 @@ import type { AnyRecord } from '../../Shared/Types';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type JSON from '../JSON';
 import type HTMLTableConnectorOptions from '../../Data/Connectors/HTMLTableConnectorOptions';
+import type HTMLTableConverterOptions from '../../Data/Converters/HTMLTableConverterOptions';
 
 import DataTableHelper from './DataTableHelper.js';
 import HTMLTableConnector from '../../Data/Connectors/HTMLTableConnector.js';
@@ -81,7 +82,7 @@ function toJSON(
 ): HTMLTableConnectorHelper.JSON {
     const options = merge(obj.options) as HTMLTableConnectorHelper.OptionsJSON;
 
-    options.dataTable = DataTableHelper.toJSON(obj.table);
+    options.dataTable = DataTableHelper.toJSON(obj.getTable());
 
     return {
         $class: 'Data.HTMLTableConnector',
@@ -107,7 +108,8 @@ namespace HTMLTableConnectorHelper {
         options: OptionsJSON;
     }
 
-    export type OptionsJSON = (JSON.Object&HTMLTableConnectorOptions);
+    export type OptionsJSON =
+        JSON.Object & HTMLTableConnectorOptions & HTMLTableConverterOptions;
 
 }
 

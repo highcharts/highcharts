@@ -4,17 +4,24 @@ const firstYear = 1961;
 const lastYear = 2022;
 
 const dataModifier = {
-    type: 'Range',
-    ranges: [{
-        column: 'Year',
-        minValue: firstYear,
-        maxValue: lastYear
-    }]
+    type: 'Filter',
+    condition: {
+        operator: 'and',
+        conditions: [{
+            columnId: 'Year',
+            operator: '>=',
+            value: firstYear
+        }, {
+            columnId: 'Year',
+            operator: '<=',
+            value: lastYear
+        }]
+    }
 };
 
 
-function createColumnAssignment(columnNames) {
-    return columnNames.map(function (column) {
+function createColumnAssignment(columnIds) {
+    return columnIds.map(function (column) {
         return {
             seriesId: column,
             data: ['Year', column]
@@ -208,12 +215,10 @@ Dashboards.board('container', {
         connectors: [{
             id: 'population-growth',
             type: 'CSV',
-            options: {
-                csv: csvData,
-                firstRowAsNames: true,
-                dataModifier: dataModifier,
-                beforeParse: beforeParse
-            }
+            csv: csvData,
+            firstRowAsNames: true,
+            dataModifier: dataModifier,
+            beforeParse
         }]
     },
     gui: {

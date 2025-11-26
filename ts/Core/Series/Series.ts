@@ -1033,13 +1033,10 @@ class Series {
      * @private
      * @function Highcharts.Series#getColumn
      */
-    public getColumn(
-        columnName: string,
-        modified?: boolean
-    ): Array<number> {
+    public getColumn(columnId: string, modified?: boolean): Array<number> {
         return (
-            (modified ? this.dataTable.modified : this.dataTable)
-                .getColumn(columnName, true) as Array<number>
+            (modified ? this.dataTable.getModified() : this.dataTable)
+                .getColumn(columnId, true) as Array<number>
         ) || [];
     }
 
@@ -1152,7 +1149,8 @@ class Series {
             dataSorting = options.dataSorting,
             oldData = this.points,
             pointsToAdd = [] as Array<(PointOptions|PointShortOptions)>,
-            equalLength = data.length === oldData.length;
+            equalLength = data.length === oldData.length,
+            oldXIncrement = this.xIncrement;
         let hasUpdatedByKey,
             i,
             point,
@@ -1276,6 +1274,7 @@ class Series {
 
         const xData = this.getColumn('x');
         if (
+            oldXIncrement !== null &&
             this.xIncrement === null &&
             xData.length
         ) {
@@ -1464,9 +1463,9 @@ class Series {
                         }
 
                         table.setColumns(dataColumnKeys.reduce(
-                            (columns, columnName, i):
+                            (columns, columnId, i):
                             DataTable.ColumnCollection => {
-                                columns[columnName] = colArray[i];
+                                columns[columnId] = colArray[i];
                                 return columns;
                             }, {} as DataTable.ColumnCollection));
 
@@ -1511,9 +1510,9 @@ class Series {
 
             if (!runTurbo) {
                 const columns = dataColumnKeys.reduce(
-                    (columns, columnName):
+                    (columns, columnId):
                     DataTable.ColumnCollection => {
-                        columns[columnName] = [];
+                        columns[columnId] = [];
                         return columns;
                     }, {} as DataTable.ColumnCollection);
                 for (i = 0; i < dataLength; i++) {
@@ -1851,7 +1850,7 @@ class Series {
         const series = this,
             options = series.options,
             dataOptions = series.processedData || options.data,
-            table = series.dataTable.modified,
+            table = series.dataTable.getModified(),
             xData = series.getColumn('x', true),
             PointClass = series.pointClass,
             processedDataLength = table.rowCount,
@@ -2050,7 +2049,7 @@ class Series {
                 this.options.getExtremesFromAll, // #4599, #21003
             table = getExtremesFromAll && this.cropped ?
                 this.dataTable :
-                this.dataTable.modified,
+                this.dataTable.getModified(),
             rowCount = table.rowCount,
             customData = yData || this.stackedYData,
             yAxisData = customData ?

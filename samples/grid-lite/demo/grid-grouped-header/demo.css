@@ -1,4 +1,4 @@
-@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid.css");
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid-lite.css");
 
 body {
     font-family:
@@ -16,13 +16,12 @@ body {
     color: var(--highcharts-neutral-color-100);
 }
 
-#container {
-    height: 408px;
-    padding: 20px;
+.demo {
+    padding: 8px 12px;
 }
 
 .highcharts-description {
-    padding: 0 20px;
+    padding: 0 8px;
 }
 
 .my-theme,
@@ -51,6 +50,15 @@ body {
     --hcg-cell-hovered-background: #e03e9c;
     --hcg-cell-hovered-header-background: #7b88e3;
     --hcg-cell-hovered-color: #fff;
+
+    /* Button styles */
+    --hcg-button-color: #fdfdfd;
+    --hcg-button-border-radius: 6px;
+    --hcg-button-hover-color: #fff;
+    --hcg-button-hover-background: #4f5bbace;
+
+    /* Icon styles */
+    --hcg-icon-hover-color: #141414;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -67,6 +75,9 @@ body {
         --hcg-cell-hovered-row-background: #3d3d3d;
         --hcg-cell-hovered-background: #841857;
         --hcg-cell-hovered-header-background: #4b5297;
+
+        /* Icon styles */
+        --hcg-icon-hover-color: #fff;
     }
 }
 
@@ -83,4 +94,7 @@ body {
     --hcg-cell-hovered-row-background: #3d3d3d;
     --hcg-cell-hovered-background: #841857;
     --hcg-cell-hovered-header-background: #4b5297;
+
+    /* Icon styles */
+    --hcg-icon-hover-color: #fff;
 }

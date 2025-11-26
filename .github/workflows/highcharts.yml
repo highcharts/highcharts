@@ -8,7 +8,6 @@ on:
     paths:
       - 'css/**'
       - '!css/dashboards*'
-      - '!css/datagrid*'
       - '!css/grid*'
       - 'samples/**'
       - '!samples/dashboards/**'

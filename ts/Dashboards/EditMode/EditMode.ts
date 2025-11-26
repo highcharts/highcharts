@@ -60,7 +60,7 @@ class EditMode {
     /**
      * Edit mode constructor.
      * @internal
-      *
+     *
      * @param board
      * Board instance
      *
@@ -86,6 +86,9 @@ class EditMode {
                     icon: this.iconsURLPrefix + 'menu.svg'
                 },
                 dragDrop: {
+                    enabled: true
+                },
+                viewFullscreen: {
                     enabled: true
                 },
                 enabled: true,
@@ -190,7 +193,7 @@ class EditMode {
     /**
      * URL from which the icons will be fetched.
      */
-    public iconsURLPrefix: string = '@product.assetPrefix@/gfx/dashboards-icons/';
+    public iconsURLPrefix: string = 'https://code.highcharts.com/dashboards/@product.version@/gfx/dashboards-icons/';
     /**
      * Dashboards' board instance.
      */
@@ -1126,6 +1129,10 @@ namespace EditMode {
          * Tools options.
          */
         tools?: Tools;
+        /**
+         * Fullscreen options.
+         */
+        viewFullscreen?: ViewFullscreenOptions;
     }
 
     /**
@@ -1134,6 +1141,15 @@ namespace EditMode {
     export interface SettingsOptions {
         /**
          * Whether the toolbar settings buttons should be enabled.
+         *
+         * @default true
+         */
+        enabled?: boolean;
+    }
+
+    export interface ViewFullscreenOptions {
+        /**
+         * Whether the view fullscreen button should be enabled.
          *
          * @default true
          */
@@ -1170,15 +1186,6 @@ namespace EditMode {
         */
         addComponentBtn?: AddComponentBtn;
         /**
-         * RWD buttons options.
-         *
-         * RWD buttons are permanently disabled since the change from
-         * options-managed responsiveness to fully CSS-managed.
-         *
-         * @deprecated
-         */
-        rwdButtons?: RwdButtons;
-        /**
         * @internal
         */
         contextMenu?: EditContextMenu;
@@ -1214,55 +1221,6 @@ namespace EditMode {
          * URL to the Add Component button icon.
          */
         icon: string;
-    }
-
-    /**
-     * Deprecated RWD buttons options.
-     *
-     * RWD buttons are permanently disabled since the change from
-     * options-managed responsiveness to fully CSS-managed.
-     *
-     * @deprecated
-     */
-    export interface RwdButtons {
-        /**
-         * Whether the RWD buttons should be visible.
-         *
-         * @deprecated
-         */
-        enabled?: boolean;
-        /**
-         * RWD buttons icons options.
-         *
-         * @deprecated
-         */
-        icons: RwdIcons;
-    }
-
-    /**
-     * RWD Buttons icons options.
-     *
-     * @deprecated
-     */
-    export interface RwdIcons {
-        /**
-         * URL to small RWD button icon.
-         *
-         * @deprecated
-         */
-        small: string;
-        /**
-         * URL to medium RWD button icon.
-         *
-         * @deprecated
-         */
-        medium: string;
-        /**
-         * URL to large RWD button icon.
-         *
-         * @deprecated
-         */
-        large: string;
     }
 
     /**

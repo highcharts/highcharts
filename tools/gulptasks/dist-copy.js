@@ -37,14 +37,9 @@ const CODE_FILTER = {
         ['es-modules', 'masters', 'highmaps.'],
         ['es-modules', 'masters', 'highstock.'],
         ['es-modules', 'masters', 'indicators'],
-        ['es-modules', 'masters', 'modules', 'canvasrenderer.experimental.'],
         ['es-modules', 'masters', 'modules', 'data-tools.'],
-        ['es-modules', 'masters', 'modules', 'map.'],
-        ['es-modules', 'modules', 'canvasrenderer.experimental.'],
-        ['es-modules', 'modules', 'map.'],
-        ['indicators'],
-        ['modules', 'canvasrenderer.experimental.'],
-        ['modules', 'map.']
+        ['indicators']
+
     ].map(
         filePath => Path.join(CODE_DIRECTORY, ...filePath)
     ),
@@ -59,16 +54,13 @@ const CODE_FILTER = {
         ['es-modules', 'masters', 'highcharts-gantt.'],
         ['es-modules', 'masters', 'highmaps.'],
         ['es-modules', 'masters', 'modules', 'broken-axis.'],
-        ['es-modules', 'masters', 'modules', 'canvasrenderer.experimental.'],
         ['es-modules', 'masters', 'modules', 'data-tools.'],
         ['es-modules', 'masters', 'modules', 'gantt.'],
         ['es-modules', 'masters', 'modules', 'map.'],
         ['es-modules', 'modules', 'broken-axis.'],
-        ['es-modules', 'modules', 'canvasrenderer.experimental.'],
         ['es-modules', 'modules', 'gantt.'],
         ['es-modules', 'modules', 'map.'],
         ['modules', 'broken-axis.'],
-        ['modules', 'canvasrenderer.experimental.'],
         ['modules', 'gantt.'],
         ['modules', 'map.']
     ].map(
@@ -84,19 +76,16 @@ const CODE_FILTER = {
         ['es-modules', 'masters', 'highstock.'],
         ['es-modules', 'masters', 'indicators'],
         ['es-modules', 'masters', 'modules', 'broken-axis.'],
-        ['es-modules', 'masters', 'modules', 'canvasrenderer.experimental.'],
         ['es-modules', 'masters', 'modules', 'data-tools.'],
         ['es-modules', 'masters', 'modules', 'gantt.'],
         ['es-modules', 'masters', 'modules', 'series-label.'],
         ['es-modules', 'masters', 'modules', 'solid-gauge.'],
         ['es-modules', 'modules', 'broken-axis.'],
-        ['es-modules', 'modules', 'canvasrenderer.experimental.'],
         ['es-modules', 'modules', 'gantt.'],
         ['es-modules', 'modules', 'series-label.'],
         ['es-modules', 'modules', 'solid-gauge.'],
         ['indicators'],
         ['modules', 'broken-axis.'],
-        ['modules', 'canvasrenderer.experimental.'],
         ['modules', 'gantt.'],
         ['modules', 'series-label.'],
         ['modules', 'solid-gauge.']
@@ -118,19 +107,16 @@ const CODE_FILTER = {
         ['es-modules', 'masters', 'highmaps.'],
         ['es-modules', 'masters', 'highstock.'],
         ['es-modules', 'masters', 'indicators'],
-        ['es-modules', 'masters', 'modules', 'canvasrenderer.experimental.'],
         ['es-modules', 'masters', 'modules', 'data-tools.'],
         ['es-modules', 'masters', 'modules', 'map.'],
         ['es-modules', 'masters', 'modules', 'series-label.'],
         ['es-modules', 'masters', 'modules', 'solid-gauge.'],
         ['es-modules', 'masters', 'modules', 'stock.'],
-        ['es-modules', 'modules', 'canvasrenderer.experimental.'],
         ['es-modules', 'modules', 'map.'],
         ['es-modules', 'modules', 'series-label.'],
         ['es-modules', 'modules', 'solid-gauge.'],
         ['es-modules', 'modules', 'stock.'],
         ['indicators'],
-        ['modules', 'canvasrenderer.experimental.'],
         ['modules', 'map.'],
         ['modules', 'series-label.'],
         ['modules', 'solid-gauge.'],
@@ -140,6 +126,7 @@ const CODE_FILTER = {
     ),
     'grid-lite': [
         // The main cleanup is done in `scripts-ts` at the `code` level.
+        ['grid', 'css', 'grid-pro.css'],
         ['grid', 'es-modules', 'Grid', 'Pro'],
         ['grid', 'es-modules', 'masters', 'grid-pro.'],
         ['grid', 'grid-pro.']
@@ -148,12 +135,15 @@ const CODE_FILTER = {
     ),
     'grid-pro': [
         // The main cleanup is done in `scripts-ts` at the `code` level.
+        ['grid', 'css', 'grid-lite.css'],
+        ['grid', 'css', 'grid.css'],
         ['grid', 'es-modules', 'Grid', 'Lite'],
         ['grid', 'es-modules', 'masters', 'grid-lite.'],
         ['grid', 'grid-lite.']
     ].map(
         filePath => Path.join(CODE_DIRECTORY, ...filePath)
-    )
+    ),
+    dashboards: []
 };
 
 /**
@@ -197,7 +187,8 @@ const VENDOR_FILTER = [
  */
 const PRODUCTS = {
     Highcharts: ['highcharts', 'highstock', 'highmaps', 'gantt'],
-    Grid: ['grid-lite'/* , 'grid-pro'*/]
+    Grid: ['grid-lite', 'grid-pro'],
+    Dashboards: ['dashboards']
 };
 
 /* *
@@ -228,6 +219,9 @@ function distCopy() {
 
         if (distProduct === 'Grid') {
             sourceDir = Path.join(CODE_DIRECTORY, 'grid');
+            codeExtensions = [...CODE_EXTENSIONS, '.ts']; // copy also d.ts files
+        } else if (distProduct === 'Dashboards') {
+            sourceDir = Path.join(CODE_DIRECTORY, 'dashboards');
             codeExtensions = [...CODE_EXTENSIONS, '.ts']; // copy also d.ts files
         } else {
             sourceDir = CODE_DIRECTORY;
@@ -268,11 +262,20 @@ function distCopy() {
                 // No need to copy CSS, GFX, i18n, and Graphics for Grid from root
                 continue;
             }
+            if (distProduct === 'Dashboards') {
+                const dashGfx = Path.join(CODE_DIRECTORY, product, 'gfx');
+                directory = Path.join(TARGET_DIRECTORY, product, 'gfx');
+                FsLib.copyAllFiles(dashGfx, directory, true, file => (
+                    file.includes('dashboards')
+                ));
+                LogLib.success('Created', directory);
+                continue;
+            }
 
             directory = Path.join(TARGET_DIRECTORY, product, 'code', 'css');
 
             // Copy all the CSS files to /code
-            FsLib.copyAllFiles(CSS_DIRECTORY, directory, true, fileName => !['dashboards', 'datagrid', 'grid']
+            FsLib.copyAllFiles(CSS_DIRECTORY, directory, true, fileName => !['dashboards', 'grid']
                 .some(name => fileName.includes(`${name}.css`)));
 
             FsLib.copyAllFiles(CODE_DIRECTORY + '/' + CSS_DIRECTORY, directory, true);

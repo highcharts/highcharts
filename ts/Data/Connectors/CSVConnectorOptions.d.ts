@@ -8,6 +8,7 @@
  *
  *  Authors:
  *  - Karol Kolodziej
+ *  - Kamil Kubik
  *
  * */
 
@@ -18,7 +19,7 @@
  * */
 
 import type DataConnectorOptions from './DataConnectorOptions';
-import type DataTableOptions from '../DataTableOptions';
+import type { DataTableConnectorOptions } from './DataConnectorOptions';
 
 
 /* *
@@ -31,6 +32,10 @@ import type DataTableOptions from '../DataTableOptions';
  * Options of the CSVConnector.
  */
 export interface CSVConnectorOptions extends DataConnectorOptions {
+    /**
+     * The corresponding connector type.
+     */
+    type: 'CSV';
     /**
      * Data in CSV format passed directly to connector as a string.
      */
@@ -67,12 +72,6 @@ export interface CSVConnectorOptions extends DataConnectorOptions {
     itemDelimiter?: string;
 
     /**
-     * A custom callback function that parses the data before it's being parsed
-     * to the data table format inside the converter.
-     */
-    beforeParse?: CSVBeforeParseCallbackFunction;
-
-    /**
      * Allows defining multiple data tables within a single connector to adjust
      * options or data parsing in various ways based on the same data source.
      *
@@ -81,13 +80,11 @@ export interface CSVConnectorOptions extends DataConnectorOptions {
      *     connectors: [{
      *         id: 'data-connector',
      *         type: 'JSON',
-     *         options: {
-     *             data: {
-     *                 kpis: { a: 1, b: 2 },
-     *                 more: {
-     *                     alpha: [1, 2, 3, 4, 5],
-     *                     beta: [10, 20, 30, 40, 50]
-     *                 }
+     *         data: {
+     *             kpis: { a: 1, b: 2 },
+     *             more: {
+     *                 alpha: [1, 2, 3, 4, 5],
+     *                 beta: [10, 20, 30, 40, 50]
      *             }
      *         },
      *         dataTables: [{
@@ -104,7 +101,7 @@ export interface CSVConnectorOptions extends DataConnectorOptions {
      *         }, {
      *             key: 'kpis',
      *             firstRowAsNames: false,
-     *             columnNames: ['a', 'b'],
+     *             columnIds: ['a', 'b'],
      *             beforeParse: function ({ kpis }) {
      *                 return [[kpis.a, kpis.b]];
      *             },
@@ -119,7 +116,20 @@ export interface CSVConnectorOptions extends DataConnectorOptions {
      *     }]
      * }
      **/
-    dataTables?: Array<DataTableOptions>;
+    dataTables?: CSVDataTableConnectorOptions[];
+
+    /**
+     * A custom callback function that parses the data before it's being parsed
+     * to the data table format inside the converter.
+     */
+    beforeParse?: CSVBeforeParseCallbackFunction;
+}
+
+/**
+ * Options of the CSVConnector dataTable.
+ */
+export interface CSVDataTableConnectorOptions extends DataTableConnectorOptions {
+    beforeParse?: CSVBeforeParseCallbackFunction;
 }
 
 /**

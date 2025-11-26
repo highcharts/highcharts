@@ -40,7 +40,9 @@ namespace PluginHandler {
      * */
 
     export interface DashboardsPlugin<T = (AnyRecord|undefined)> {
-        /** @internal */
+        /**
+         * Custom properties of the plugin
+         */
         custom: T;
         /**
          * Maximal version of plugin that is compatible with dashboard

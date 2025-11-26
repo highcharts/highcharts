@@ -48,14 +48,6 @@ class DataCursor {
      *
      * */
 
-
-    /**
-     * Semantic version string of the DataCursor class.
-     * @internal
-     */
-    public static readonly version: string = '1.0.0';
-
-
     /* *
      *
      *  Constructor

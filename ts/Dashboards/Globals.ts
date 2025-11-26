@@ -74,6 +74,8 @@ namespace Globals {
      */
     export const classNamePrefix = 'highcharts-dashboards-';
 
+    export const version = '@product.version@';
+
     /** @internal */
     export const classNames = {
         layout: classNamePrefix + 'layout',
@@ -131,7 +133,6 @@ namespace Globals {
 
         return supportsPassive;
     }());
-
 
 }
 

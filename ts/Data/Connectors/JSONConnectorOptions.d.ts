@@ -8,6 +8,7 @@
  *
  *  Authors:
  *  - Pawel Lysy
+ *  - Kamil Kubik
  *
  * */
 
@@ -15,11 +16,11 @@
  *
  *  Imports
  *
-* */
+ * */
 
 import type DataConnectorOptions from './DataConnectorOptions';
-import type JSONConverter from '../Converters/JSONConverter';
-import type DataTableOptions from '../DataTableOptions';
+import type { DataTableConnectorOptions } from './DataConnectorOptions';
+import type { JSONData } from '../Converters/JSONConverterOptions';
 
 /* *
  *
@@ -32,23 +33,27 @@ import type DataTableOptions from '../DataTableOptions';
  */
 export interface JSONConnectorOptions extends DataConnectorOptions {
     /**
+     * The corresponding connector type.
+     */
+    type: 'JSON';
+    /**
      * If JSON data is row oriented, these options define keys for the columns.
      * In column oriented case this is handled automatically unless the
-     * `firstRowAsNames` set to false, then the `columnNames` can be used.
+     * `firstRowAsNames` set to false, then the `columnIds` can be used.
      *
-     * In case of complex JSON structure, use the `ColumnNamesOptions` to define
+     * In case of complex JSON structure, use the `ColumnIdsOptions` to define
      * the key and path to the data.
      *
      * If you have more complex data, you can adjust it by  the `beforeParse`
      * callback function to manually parse the rows into valid JSON. However,
      * the resulting JSON will still be converted into a proper table structure.
      */
-    columnNames?: Array<string>|ColumnNamesOptions;
+    columnIds?: string[] | ColumnIdsOptions;
 
     /**
      * Data in JSON format.
      */
-    data?: JSONConverter.Data;
+    data?: JSONData;
 
     /**
      * Data refresh rate in seconds.
@@ -80,7 +85,7 @@ export interface JSONConnectorOptions extends DataConnectorOptions {
      *
      * @default 'rows'
      */
-    orientation?: 'columns'|'rows';
+    orientation?: 'columns' | 'rows';
 
     /**
      * Allows defining multiple data tables within a single connector to adjust
@@ -91,13 +96,11 @@ export interface JSONConnectorOptions extends DataConnectorOptions {
      *     connectors: [{
      *         id: 'data-connector',
      *         type: 'JSON',
-     *         options: {
-     *             data: {
-     *                 kpis: { a: 1, b: 2 },
-     *                 more: {
-     *                     alpha: [1, 2, 3, 4, 5],
-     *                     beta: [10, 20, 30, 40, 50]
-     *                 }
+     *         data: {
+     *             kpis: { a: 1, b: 2 },
+     *             more: {
+     *                 alpha: [1, 2, 3, 4, 5],
+     *                 beta: [10, 20, 30, 40, 50]
      *             }
      *         },
      *         dataTables: [{
@@ -114,7 +117,7 @@ export interface JSONConnectorOptions extends DataConnectorOptions {
      *         }, {
      *             key: 'kpis',
      *             firstRowAsNames: false,
-     *             columnNames: ['a', 'b'],
+     *             columnIds: ['a', 'b'],
      *             beforeParse: function ({ kpis }) {
      *                 return [[kpis.a, kpis.b]];
      *             },
@@ -129,7 +132,7 @@ export interface JSONConnectorOptions extends DataConnectorOptions {
      *     }]
      * }
      **/
-    dataTables?: Array<DataTableOptions>;
+    dataTables?: JSONDataTableConnectorOptions[];
 
     /**
      * A custom callback function that parses the data before it's being parsed
@@ -144,14 +147,23 @@ export interface JSONConnectorOptions extends DataConnectorOptions {
  * an array of keys that are used to access the data.
  *
  * @example
- * columnNames: {
+ * columnIds: {
  *     InstanceType: ['InstanceType'],
  *     DiskSpace: ['DiskSpace', 'RootDisk', 'SizeGB'],
  *     ReadOps: ['DiskOperations', 0, 'ReadOps']
  * },
  */
-export interface ColumnNamesOptions {
-    [key: string]: Array<string|number>;
+export interface ColumnIdsOptions {
+    [key: string]: (string|number)[]
+}
+
+/**
+ * Options of the JSONConnector dataTable.
+ */
+export interface JSONDataTableConnectorOptions extends DataTableConnectorOptions {
+    columnIds?: string[] | ColumnIdsOptions;
+    orientation?: 'columns' | 'rows';
+    beforeParse?: JSONBeforeParseCallbackFunction;
 }
 
 /**
@@ -161,7 +173,7 @@ export interface ColumnNamesOptions {
  * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/data-tools/datapool-json-connector-enable-polling/ | JSON Connector with beforeParse and enablePolling }
  */
 export interface JSONBeforeParseCallbackFunction {
-    (data: JSONConverter.Data): JSONConverter.Data;
+    (data: JSONData): JSONData;
 }
 
 /* *

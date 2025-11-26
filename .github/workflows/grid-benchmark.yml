@@ -3,6 +3,7 @@ on:
   pull_request:
     branches:
       - 'master'
+      - 'grid/**'
     paths:
       - 'ts/Grid/**'
       - 'test/ts-node-unit-tests/benchmarks/Grid/*'

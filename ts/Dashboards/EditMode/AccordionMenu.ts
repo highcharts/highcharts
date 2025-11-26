@@ -197,8 +197,8 @@ class AccordionMenu {
         let currentLevel = this.changedOptions as AnyRecord;
         let currentChartOptionsLevel;
         let currentOldChartOptionsBufferLevel;
-        let currentDataGridOptionsLevel;
-        let currentOldDataGridOptionsBufferLevel;
+        let currentGridOptionsLevel;
+        let currentOldGridOptionsBufferLevel;
 
         if (pathLength === 0 && propertyPath[0] === 'chartOptions') {
             try {
@@ -223,7 +223,7 @@ class AccordionMenu {
 
             if (key === 'gridOptions') {
                 const realGridOptions =
-                    (this.component as any).dataGrid?.options;
+                    (this.component as any).grid?.options;
 
                 if (realGridOptions) {
                     const oldOptionsBuffer =
@@ -231,22 +231,22 @@ class AccordionMenu {
                     if (!oldOptionsBuffer.gridOptions) {
                         oldOptionsBuffer.gridOptions = {};
                     }
-                    currentOldDataGridOptionsBufferLevel =
+                    currentOldGridOptionsBufferLevel =
                         oldOptionsBuffer.gridOptions as AnyRecord;
-                    currentDataGridOptionsLevel = realGridOptions;
+                    currentGridOptionsLevel = realGridOptions;
                 }
             } else if (
-                currentDataGridOptionsLevel &&
-                currentOldDataGridOptionsBufferLevel
+                currentGridOptionsLevel &&
+                currentOldGridOptionsBufferLevel
             ) {
-                currentDataGridOptionsLevel = currentDataGridOptionsLevel[key];
+                currentGridOptionsLevel = currentGridOptionsLevel[key];
 
-                if (currentOldDataGridOptionsBufferLevel[key] === void 0) {
-                    currentOldDataGridOptionsBufferLevel[key] = {};
+                if (currentOldGridOptionsBufferLevel[key] === void 0) {
+                    currentOldGridOptionsBufferLevel[key] = {};
                 }
 
-                currentOldDataGridOptionsBufferLevel =
-                    currentOldDataGridOptionsBufferLevel[key];
+                currentOldGridOptionsBufferLevel =
+                    currentOldGridOptionsBufferLevel[key];
             }
 
             if (key === 'chartOptions') {
@@ -317,6 +317,7 @@ class AccordionMenu {
         }
 
         const renderFunction = EditRenderer.getRendererFunction(options.type);
+        const lang = (component.board?.editMode || EditGlobals).lang;
 
         if (!renderFunction) {
             return;
@@ -327,6 +328,7 @@ class AccordionMenu {
             iconsURLPrefix: this.iconsURLPrefix,
             value: component.getEditableOptionValue(options.propertyPath),
             enabledOnOffLabels: options.type === 'toggle',
+            lang,
             onchange: (
                 value: boolean | string | number
             ): void => this.updateOptions(options.propertyPath || [], value)

@@ -3,7 +3,6 @@
  */
 
 const gulp = require('gulp');
-const path = require('path');
 
 /* *
  *
@@ -33,10 +32,32 @@ function task() {
 
     const fs = require('../libs/fs');
     const log = require('../libs/log');
+    const skipBuildClean = process.env.HIGHCHARTS_SKIP_BUILD_CLEAN === 'true';
+    const skipCodeClean = process.env.HIGHCHARTS_SKIP_CODE_CLEAN === 'true';
+
+    const pathsToDelete = PATHS_TO_DELETE.filter(path => {
+        if (skipBuildClean && path === 'build') {
+            return false;
+        }
+
+        if (skipCodeClean && path === 'code') {
+            return false;
+        }
+
+        return true;
+    });
 
     return new Promise((resolve, reject) => {
         try {
-            for (const ptd of PATHS_TO_DELETE) {
+            if (skipBuildClean) {
+                log.message('Preserving build directory (dashboards-all sequence).');
+            }
+
+            if (skipCodeClean) {
+                log.message('Preserving code directory (dashboards-all sequence).');
+            }
+
+            for (const ptd of pathsToDelete) {
                 log.message('Cleaning', ptd, '...');
                 if (fs.isDirectory(ptd)) {
                     fs.deleteDirectory(ptd);

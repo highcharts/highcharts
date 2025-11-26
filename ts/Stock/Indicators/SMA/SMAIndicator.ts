@@ -71,7 +71,7 @@ const tableToMultiYData = <TLinkedSeries extends LineSeriesType>(
 ): Array<number|null|Array<number|null>> => {
     const yData = [],
         pointArrayMap = series.pointArrayMap,
-        table = processed && series.dataTable.modified || series.dataTable;
+        table = processed && series.dataTable.getModified() || series.dataTable;
 
     if (!pointArrayMap) {
         return series.getColumn('y', processed);

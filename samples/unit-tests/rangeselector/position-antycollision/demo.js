@@ -1,5 +1,5 @@
 QUnit.test('Inputs and buttons aligning.', function (assert) {
-    var align = ['left', 'center', 'right'],
+    const align = ['left', 'center', 'right'],
         series = [
             {
                 data: (function () {
@@ -11,8 +11,8 @@ QUnit.test('Inputs and buttons aligning.', function (assert) {
                 }()),
                 pointInterval: 24 * 36e5
             }
-        ],
-        chart,
+        ];
+    let chart,
         inputGroup,
         buttonGroup,
         inputPosition,
@@ -23,7 +23,7 @@ QUnit.test('Inputs and buttons aligning.', function (assert) {
         buttonGroupWidth,
         selectorGroupBBox;
 
-    for (var i = 0; i < align.length; i++) {
+    for (let i = 0; i < align.length; i++) {
         chart = Highcharts.stockChart('container', {
             chart: {
                 width: 400
@@ -64,7 +64,12 @@ QUnit.test('Inputs and buttons aligning.', function (assert) {
                 inputGroup.translateY > buttonGroup.translateY, // check if
             // input group is lower
             true,
-            'rangeSelector'
+            'Input group should move below buttons group with not enough space.'
+        );
+
+        assert.ok(
+            chart.plotTop > chart.rangeSelector.getHeight(),
+            'RangeSelector should not overlap into plotArea, #23058.'
         );
     }
 

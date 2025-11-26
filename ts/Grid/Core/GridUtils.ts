@@ -49,6 +49,14 @@ export interface GridEvent<T, E extends Event = Event> {
     target: T;
 }
 
+/**
+ * The event listener for the grid.
+ */
+export interface GridEventListener {
+    eventName: keyof HTMLElementEventMap;
+    listener: EventListener;
+}
+
 /* *
  *
  *  Namespace
@@ -237,6 +245,22 @@ namespace GridUtils {
         });
 
         return new Proxy(options, handler(defaultOptions));
+    }
+
+    /**
+     * Format text with placeholders. Used for lang texts.
+     *
+     * @param template The text template with placeholders
+     * @param values Object containing values to replace placeholders
+     * @returns Formatted text
+     */
+    export function formatText(
+        template: string,
+        values: Record<string, string | number>
+    ): string {
+        return template.replace(/\{(\w+)\}/g, (match, key): string => (
+            values[key] !== void 0 ? String(values[key]) : match
+        ));
     }
 }
 

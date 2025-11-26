@@ -22,6 +22,7 @@
  *
  * */
 import type { GroupedHeaderOptions } from '../../Options';
+
 import Table from '../Table.js';
 import Row from '../Row.js';
 import HeaderCell from './HeaderCell.js';
@@ -91,11 +92,13 @@ class HeaderRow extends Row {
      *
      * @param level
      * The current level in the header tree
+     *
+     * @internal
      */
-    public renderMultipleLevel(level: number): void {
+    public renderContent(level: number): void {
         const headerOpt = this.viewport.grid.options?.header;
         const vp = this.viewport;
-        const enabledColumns = vp.grid.enabledColumns;
+        const enabledColumns = vp.grid.enabledColumns || [];
 
         // Render element
         vp.theadElement?.appendChild(this.htmlElement);
@@ -175,12 +178,7 @@ class HeaderRow extends Row {
             }
         }
 
-        const lastCell = this.cells[this.cells.length - 1] as HeaderCell;
-        if (lastCell.isLastColumn()) {
-            lastCell.htmlElement.classList.add(
-                Globals.getClassName('lastHeaderCellInRow')
-            );
-        }
+        this.setLastCellClass();
     }
 
     public override reflow(): void {
@@ -189,6 +187,19 @@ class HeaderRow extends Row {
         for (let i = 0, iEnd = row.cells.length; i < iEnd; i++) {
             const cell = row.cells[i] as HeaderCell;
             cell.reflow();
+        }
+    }
+
+    /**
+     * Sets a specific class to the last cell in the row.
+     */
+    protected setLastCellClass(): void {
+        const lastCell = this.cells[this.cells.length - 1] as HeaderCell;
+
+        if (lastCell.isLastColumn()) {
+            lastCell.htmlElement.classList.add(
+                Globals.getClassName('lastHeaderCellInRow')
+            );
         }
     }
 
@@ -236,9 +247,11 @@ class HeaderRow extends Row {
     /**
      * Sets the row HTML element attributes and additional classes.
      */
-    public setRowAttributes(): void {
-        const a11y = this.viewport.grid.accessibility;
-        a11y?.setRowIndex(this.htmlElement, this.level);
+    private setRowAttributes(): void {
+        this.viewport.grid.accessibility?.setRowIndex(
+            this.htmlElement,
+            this.level // Level (1-based)
+        );
     }
 }
 

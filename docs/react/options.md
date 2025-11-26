@@ -103,7 +103,7 @@ function RefExample(){
 }
 ```
 
-## Setting a custom Highcharts instance
+## Loading modules and setting a custom Highcharts instance
 If you need to load additional modules or use a specific Highcharts version, you can provide a
 custom Highcharts instance. This can be accomplished via the `setHighcharts` function:
 

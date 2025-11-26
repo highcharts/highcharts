@@ -84,7 +84,7 @@ function toJSON(
     const options =
         merge(obj.options) as GoogleSheetsConnectorHelper.OptionsJSON;
 
-    options.dataTable = DataTableHelper.toJSON(obj.table);
+    options.dataTable = DataTableHelper.toJSON(obj.getTable());
 
     return {
         $class: 'Data.GoogleSheetsConnector',

@@ -3,6 +3,7 @@ on:
   pull_request:
     branches:
       - 'master'
+      - 'grid/**'
     paths:
       - '.github/workflows/grid-lighthouse-test.yml'
       - 'css/grid*'

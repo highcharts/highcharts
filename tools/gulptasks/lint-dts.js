@@ -32,9 +32,7 @@ function lintDTS(argv) {
     const fsLib = require('../libs/fs');
     const processLib = require('../libs/process');
     const logLib = require('../libs/log');
-    const product = argv.product || (
-        argv.dashboards ? 'Dashboards' : 'Highcharts'
-    );
+    const product = argv.product || 'Highcharts';
 
     return new Promise((resolve, reject) => {
 

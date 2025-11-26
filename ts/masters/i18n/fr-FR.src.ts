@@ -5,7 +5,7 @@
 *
 * fr-FR language pack
 *
-* (c) 2009-2025 Torstein Honsi
+* (c) 2009-2025 Highsoft AS
 *
 * License: www.highcharts.com/license
 *
@@ -172,7 +172,12 @@ const languageOptions = {
             "timeRangeMinutes": "Plage de données : {range} minutes.",
             "timeRangeSeconds": "Plage de données : {range} secondes.",
             "rangeFromTo": "Les données vont de {rangeFrom} à {rangeTo}.",
-            "rangeCategories": "Plage de données : {numCategories} catégories."
+            "rangeCategories": "Plage de données : {numCategories} catégories.",
+            "defaultAxisNames": {
+                "categories": "catégories",
+                "time": "temps",
+                "values": "valeurs"
+            }
         },
         "exporting": {
             "chartMenuLabel": "Menu du graphique",
