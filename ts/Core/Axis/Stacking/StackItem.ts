@@ -305,11 +305,8 @@ class StackItem {
                 );
             }
 
-            // Add attr to avoid the default animation of justifyDataLabel.
-            // Also add correct rotation with its rotation origin. #15129
+            // Add correct rotation with its rotation origin (#15129)
             label.attr({
-                x: label.alignAttr.x,
-                y: label.alignAttr.y,
                 rotation: options.rotation,
                 rotationOriginX: labelBox.width *
                     getAlignFactor(options.textAlign || 'center'),
