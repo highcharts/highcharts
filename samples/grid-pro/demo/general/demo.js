@@ -23,7 +23,7 @@ const productCatalog = [
     { name: 'Mangos', baseWeight: 150, basePrice: 3.9, country: 'EC' }
 ];
 
-const rows = Array.from({ length: 50 }, (_, index) => {
+const rows = Array.from({ length: 200 }, (_, index) => {
     const catalogEntry = productCatalog[index % productCatalog.length];
     const seasonalShift = (index % 5) * 5;
     const priceVariation = ((index % 4) * 0.15);
@@ -34,11 +34,11 @@ const rows = Array.from({ length: 50 }, (_, index) => {
         weight: catalogEntry.baseWeight + seasonalShift,
         price: Number((catalogEntry.basePrice + priceVariation).toFixed(2)),
         country: catalogEntry.country,
-        trend: Array.from({ length: 12 }, (_, pointIndex) => {
+        trend: Array.from({ length: 6 }, (_, pointIndex) => {
             const base = 2 + (index % 6);
             const seasonal = Math.sin((index + pointIndex) / 2) * 2;
             const growth = pointIndex * 0.5;
-            return Number((base + seasonal + growth).toFixed(2));
+            return Math.floor(base + seasonal + growth);
         })
     };
 });
@@ -61,12 +61,7 @@ const columnsConfig = [{
         format: 'In Stock'
     },
     cells: {
-        format: '{#if value}✓{else}✗{/if}',
-        editMode: {
-            renderer: {
-                type: 'checkbox'
-            }
-        }
+        format: '{#if value}✓{else}✗{/if}'
     }
 }, {
     id: 'product',
@@ -102,19 +97,23 @@ const columnsConfig = [{
     id: 'weight',
     header: {
         format: 'Weight (kg)'
-    },
-    cells: {
-        editMode: {
-            validationRules: ['notEmpty', 'number'],
-            renderer: {
-                type: 'numberInput'
-            }
-        }
     }
 }, {
     id: 'price',
     header: {
         format: 'Price ($)'
+    },
+    cells: {
+        format: '${value}',
+        editMode: {
+            renderer: {
+                type: 'numberInput',
+                attributes: {
+                    step: 0.5,
+                    min: 1
+                }
+            }
+        }
     }
 }, {
     id: 'trend',
@@ -124,6 +123,14 @@ const columnsConfig = [{
     cells: {
         renderer: {
             type: 'sparkline'
+        },
+        editMode: {
+            validationRules: ['notEmpty', {
+                validate: function ({ value }) {
+                    return /^\d+(?:,\d+)*$/.test(value);
+                },
+                notification: 'Please enter a comma-separated list of numbers.'
+            }]
         }
     }
 }];
@@ -138,6 +145,10 @@ Grid.grid('container', {
                 enabled: true
             }
         }
+    },
+    pagination: {
+        enabled: true,
+        pageSize: 20
     },
     columns: columnsConfig
 });
