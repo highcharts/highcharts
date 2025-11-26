@@ -40,6 +40,7 @@ import type CylinderSeriesOptions from './CylinderSeriesOptions';
  * @product      highcharts
  * @excluding    allAreas, boostThreshold, colorAxis, compare, compareBase,
  *               dragDrop, boostBlending
+ * @requires     highcharts-3d
  * @requires     modules/cylinder
  * @optionparent plotOptions.cylinder
  */
@@ -54,6 +55,7 @@ const CylinderSeriesDefaults: CylinderSeriesOptions = {};
  * @product   highcharts
  * @excluding allAreas, boostThreshold, colorAxis, compare, compareBase,
  *            boostBlending
+ * @requires  highcharts-3d
  * @requires  modules/cylinder
  * @apioption series.cylinder
  */

@@ -215,18 +215,17 @@ class SupertrendIndicator extends SMAIndicator {
             this.chart.constructor,
             'afterLinkSeries',
             (): void => {
+                const { linkedParent, options } = indicator;
+
                 // Protection for a case where the indicator is being updated,
                 // for a brief moment the indicator is deleted.
-                if (indicator.options) {
-                    const options = indicator.options,
-                        parentOptions = indicator.linkedParent.options;
-
+                if (options && linkedParent) {
                     // Indicator cropThreshold has to be equal linked series one
                     // reduced by period due to points comparison in drawGraph
                     // (#9787)
                     options.cropThreshold = (
-                        (parentOptions.cropThreshold as any) -
-                        ((options.params as any).period - 1)
+                        (linkedParent.options.cropThreshold ?? 0) -
+                        ((options.params?.period ?? 0) - 1)
                     );
                 }
                 unbinder();

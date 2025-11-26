@@ -47,6 +47,7 @@ const SOURCE_GLOBS = [
     'Extensions/Annotations/AnnotationChart.js',
     'Extensions/Annotations/ControlPoint.js',
     'Extensions/Annotations/NavigationBindings.js',
+    'Extensions/Autoload/Loader.js',
     'Extensions/Sonification/*.js',
     'Extensions/BorderRadius.js',
     'Extensions/Breadcrumbs/Breadcrumbs.js',
