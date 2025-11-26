@@ -148,7 +148,7 @@ namespace Defaults {
      * reusable templates.
      *
      * @param options
-     * The new custom chart options.
+     * The new custom grid options.
      */
     export function setOptions(
         options: DeepPartial<Options>

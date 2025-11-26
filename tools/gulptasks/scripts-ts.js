@@ -252,6 +252,19 @@ async function scriptsTS(argv) {
                 );
             }
 
+            const dashboardsBuildPropertiesJSON =
+                fsLib.getFile(fsLib.path(['tools', 'gulptasks', 'dashboards', 'build-properties.json']), true);
+            const dashboardsEsmFiles =
+                fsLib.getFilePaths(fsLib.path(['code', 'dashboards', 'es-modules']), true);
+
+            for (const file of dashboardsEsmFiles) {
+                await replaceProductPlaceholders(
+                    file,
+                    'Dashboards',
+                    dashboardsBuildPropertiesJSON.version
+                );
+            }
+
             logLib.success('Completed Dashboards TypeScript compilation');
         } else if (product === 'Grid') {
             await processLib
@@ -275,6 +288,19 @@ async function scriptsTS(argv) {
                 fsLib.path(['code', 'grid', 'es-modules', 'masters-grid']),
                 fsLib.path(['code', 'grid', 'es-modules', 'masters'])
             );
+
+            const gridBuildPropertiesJSON =
+                fsLib.getFile(fsLib.path(['tools', 'gulptasks', 'grid', 'build-properties.json']), true);
+            const gridEsmFiles =
+                fsLib.getFilePaths(fsLib.path(['code', 'grid', 'es-modules']), true);
+
+            for (const file of gridEsmFiles) {
+                await replaceProductPlaceholders(
+                    file,
+                    'Grid',
+                    gridBuildPropertiesJSON.version
+                );
+            }
         } else if (argv.assembler) {
             await processLib
                 .exec('npx tsc -p ts --outDir js');
@@ -292,9 +318,6 @@ async function scriptsTS(argv) {
                 fsLib.getFilePaths(fsLib.path(['code', 'es-modules']), true);
 
             for (const file of esmFiles) {
-                if (file.includes('dashboards')) {
-                    continue;
-                }
                 await replaceProductPlaceholders(
                     file,
                     'Highcharts',
