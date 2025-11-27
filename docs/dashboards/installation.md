@@ -13,7 +13,7 @@ import * as Dashboards from '@highcharts/dashboards';
 If you don't intend to use your own [custom layout](https://www.highcharts.com/docs/dashboards/layout-description#custom-layout), import and register the layout module as well:
 ```js
 import * as Dashboards from '@highcharts/dashboards';
-import LayoutModule from '@highcharts/dashboards/modules/layout';
+import '@highcharts/dashboards/modules/layout';
 
 LayoutModule(Dashboards);
 ```

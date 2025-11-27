@@ -27,7 +27,7 @@ Then, import the package and the dedicated plugin to connect it to the dashboard
 ```typescript
     import * as Highcharts from 'highcharts';
     import * as Dashboards from '@highcharts/dashboards';
-    import LayoutModule from '@highcharts/dashboards/modules/layout';
+    import '@highcharts/dashboards/modules/layout';
 
     LayoutModule(Dashboards);
 
