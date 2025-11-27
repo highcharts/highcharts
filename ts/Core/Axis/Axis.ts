@@ -413,7 +413,7 @@ class Axis {
             labelsOptions = options.labels;
 
         // Set the type and fire an event
-        axis.type ??= options.type || 'linear';
+        axis.type = options.type || 'linear';
         axis.uniqueNames ??= options.uniqueNames ?? true;
         fireEvent(axis, 'afterSetType');
 
