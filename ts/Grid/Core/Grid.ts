@@ -866,7 +866,6 @@ class Grid {
         fireEvent(this, 'beforeRedraw');
 
         if (this.isDirtyGrid) {
-            // console.log('grid render');
             return await this.render();
         }
 
@@ -883,10 +882,8 @@ class Grid {
         }
 
         if (refreshData) {
-            // console.log('update rows');
             await vp?.updateRows();
         } else if (colResizing?.isDirty) {
-            // console.log('reflow');
             vp?.reflow();
         }
 
@@ -900,7 +897,6 @@ class Grid {
         }
 
         if (refreshData) {
-            // console.log('update controls');
             pagination?.updateControls(true);
         }
 
