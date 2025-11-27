@@ -304,11 +304,17 @@ class Grid {
     private isRendered: boolean = false;
 
     /**
-     * The flags that indicate which parts of the Grid are dirty and need to be
-     * re-rendered.
+     * Flag that indicates if the Grid needs a full re-render.
      * @internal
      */
-    public readonly dirtyFlags: Set<Grid.DirtyFlags> = new Set();
+    public isDirtyGrid: boolean = false;
+
+    /**
+     * Flag that indicates if the Grid data/viewport needs to be updated
+     * (rows, sorting, filtering, pagination).
+     * @internal
+     */
+    public isDirtyData: boolean = false;
 
 
     /* *
@@ -659,10 +665,9 @@ class Grid {
 
         const { viewport } = this;
         const diff = this.loadUserOptions(options, oneToOne);
-        const flags = this.dirtyFlags;
 
         if (!viewport) {
-            flags.add('grid');
+            this.isDirtyGrid = true;
             if (redraw) {
                 await this.redraw();
             }
@@ -679,7 +684,7 @@ class Grid {
             // TODO: Sometimes it can be too much, so we need to check if the
             // columns have changed or just their data. If just their data, we
             // can just mark the grid.table as dirty instead of the whole grid.
-            flags.add('grid');
+            this.isDirtyGrid = true;
         }
 
         if ('columns' in diff) {
@@ -709,7 +714,7 @@ class Grid {
             // TODO: Add more lang diff checks here.
 
             if (Object.keys(langDiff).length > 0) {
-                flags.add('grid');
+                this.isDirtyGrid = true;
             }
         }
         delete diff.lang;
@@ -733,7 +738,7 @@ class Grid {
         // TODO: Add more options that can be optimized here.
 
         if (Object.keys(diff).length > 0) {
-            flags.add('grid');
+            this.isDirtyGrid = true;
         }
 
         if (redraw) {
@@ -771,7 +776,6 @@ class Grid {
             return;
         }
 
-        const flags = this.dirtyFlags;
         const column = columnId ? this.viewport?.getColumn(columnId) : null;
 
         if (
@@ -780,7 +784,7 @@ class Grid {
                 (column && columnDiff.enabled === false)
             )
         ) {
-            flags.add('grid');
+            this.isDirtyGrid = true;
         }
         delete columnDiff.enabled;
 
@@ -793,14 +797,14 @@ class Grid {
                 'className' in cellsDiff // TODO: check if this too
             ) {
                 // Optimization idea: list of columns to update
-                flags.add('rows');
+                this.isDirtyData = true;
             }
             delete cellsDiff.format;
             delete cellsDiff.formatter;
             delete cellsDiff.className;
 
             if (Object.keys(cellsDiff).length > 0) {
-                flags.add('rows');
+                this.isDirtyData = true;
             }
         }
         delete columnDiff.cells;
@@ -817,7 +821,7 @@ class Grid {
                 'compare' in sortingDiff ||
                 'order' in sortingDiff
             ) {
-                flags.add('sorting');
+                this.isDirtyData = true;
             }
             delete sortingDiff.compare;
             delete sortingDiff.order;
@@ -825,7 +829,7 @@ class Grid {
             // Idea: sortable - redraw only header cell
 
             if (Object.keys(sortingDiff).length > 0) {
-                flags.add('grid');
+                this.isDirtyGrid = true;
             }
         }
         delete columnDiff.sorting;
@@ -837,19 +841,19 @@ class Grid {
                 'condition' in filteringDiff ||
                 'value' in filteringDiff
             ) {
-                flags.add('filtering');
+                this.isDirtyData = true;
             }
             delete filteringDiff.condition;
             delete filteringDiff.value;
 
             if (Object.keys(filteringDiff).length > 0) {
-                flags.add('grid');
+                this.isDirtyGrid = true;
             }
         }
         delete columnDiff.filtering;
 
         if (Object.keys(columnDiff).length > 0) {
-            flags.add('grid');
+            this.isDirtyGrid = true;
         }
     }
 
@@ -861,20 +865,16 @@ class Grid {
     public async redraw(): Promise<void> {
         fireEvent(this, 'beforeRedraw');
 
-        const flags = this.dirtyFlags;
-
-        if (flags.has('grid')) {
+        if (this.isDirtyGrid) {
+            // console.log('grid render');
             return await this.render();
         }
 
         const { viewport: vp, pagination } = this;
         const colResizing = vp?.columnResizing;
+        const refreshData = this.isDirtyData || this.querying.shouldBeUpdated;
 
-        if (
-            flags.has('sorting') ||
-            flags.has('filtering') ||
-            pagination?.isDirtyQuerying
-        ) {
+        if (refreshData) {
             this.querying.loadOptions();
         }
 
@@ -882,44 +882,31 @@ class Grid {
             colResizing.loadColumns();
         }
 
-        if (
-            flags.has('rows') ||
-            flags.has('sorting') ||
-            flags.has('filtering') ||
-            pagination?.isDirtyQuerying
-        ) {
+        if (refreshData) {
+            // console.log('update rows');
             await vp?.updateRows();
-        } else if (
-            flags.has('reflow') ||
-            colResizing?.isDirty
-        ) {
+        } else if (colResizing?.isDirty) {
+            // console.log('reflow');
             vp?.reflow();
         }
 
         const columns = vp?.columns ?? [];
 
-        if (
-            flags.has('sorting') ||
-            flags.has('filtering')
-        ) {
+        if (refreshData) {
             for (const column of columns) {
                 column.header?.toolbar?.refreshState();
-            }
-        }
-
-        if (flags.has('filtering')) {
-            for (const column of columns) {
                 column.filtering?.refreshState();
             }
         }
 
-        if (pagination?.isDirtyQuerying) {
-            pagination.updateControls(true);
+        if (refreshData) {
+            // console.log('update controls');
+            pagination?.updateControls(true);
         }
 
-        delete pagination?.isDirtyQuerying;
         delete colResizing?.isDirty;
-        flags.clear();
+        this.isDirtyGrid = false;
+        this.isDirtyData = false;
 
         fireEvent(this, 'afterRedraw');
     }
@@ -1008,7 +995,8 @@ class Grid {
         this.renderViewport();
 
         this.isRendered = true;
-        this.dirtyFlags.clear();
+        this.isDirtyGrid = false;
+        this.isDirtyData = false;
     }
 
     /**
@@ -1567,9 +1555,6 @@ namespace Grid {
         columns?: NonArrayColumnOptions;
     };
 
-    export type DirtyFlags = (
-        'grid' | 'rows' | 'sorting' | 'filtering' | 'reflow'
-    );
 }
 
 
