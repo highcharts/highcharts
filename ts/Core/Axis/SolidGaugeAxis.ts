@@ -31,9 +31,7 @@ const { extend } = U;
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 interface SolidGaugeAxis extends ColorAxisBase, RadialAxis.AxisComposition {
     center: Array<number>;
     coll: AxisCollectionKey;
@@ -49,9 +47,7 @@ interface SolidGaugeAxis extends ColorAxisBase, RadialAxis.AxisComposition {
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 function init(
     axis: RadialAxis.AxisComposition
 ): void {
@@ -64,8 +60,10 @@ function init(
  *
  * */
 
+/** @internal */
 const SolidGaugeAxis = {
     init
 };
 
+/** @internal */
 export default SolidGaugeAxis;
