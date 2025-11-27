@@ -36,7 +36,7 @@ export interface ColorAxisDataClassOptions {
      * @sample {highmaps} maps/demo/data-class-two-ranges/
      *         Explicit colors
      *
-     * @product   highcharts highstock highmaps
+     * @product highcharts highstock highmaps
      */
     color?: ColorType;
     /** @internal */
@@ -48,7 +48,7 @@ export interface ColorAxisDataClassOptions {
      * The range of each `dataClass` is closed in both ends, but can be
      * overridden by the next `dataClass`.
      *
-     * @product   highcharts highstock highmaps
+     * @product highcharts highstock highmaps
      */
     from?: number;
     /**
@@ -64,7 +64,7 @@ export interface ColorAxisDataClassOptions {
      * @sample {highmaps} maps/coloraxis/dataclasses-labelformatter/
      *         Formatted data classes
      *
-     * @product   highcharts highstock highmaps
+     * @product highcharts highstock highmaps
      */
     name?: string;
     /**
@@ -74,7 +74,7 @@ export interface ColorAxisDataClassOptions {
      * The range of each `dataClass` is closed in both ends, but can be
      * overridden by the next `dataClass`.
      *
-     * @product   highcharts highstock highmaps
+     * @product highcharts highstock highmaps
      */
     to?: number;
 }
@@ -84,7 +84,6 @@ export interface ColorAxisMarkerOptions {
      * Animation for the marker as it moves between values. Set to
      * `false` to disable animation. Defaults to `{ duration: 50 }`.
      *
-     * @type    {boolean|Partial<AnimationOptions>}
      * @product highcharts highstock highmaps
      */
     animation?: (boolean|Partial<AnimationOptions>);
@@ -92,7 +91,6 @@ export interface ColorAxisMarkerOptions {
     /**
      * The color of the marker.
      *
-     * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @product highcharts highstock highmaps
      */
     color?: ColorType;
@@ -100,14 +98,83 @@ export interface ColorAxisMarkerOptions {
     /**
      * The width of the marker.
      *
-     * @type      {number}
-     * @default   0.01
-     * @product   highcharts highstock highmaps
+     * @default 0.01
+     * @product highcharts highstock highmaps
      */
     width?: number;
 }
 
+/**
+ * A color axis for series. Visually, the color
+ * axis will appear as a gradient or as separate items inside the
+ * legend, depending on whether the axis is scalar or based on data
+ * classes.
+ *
+ * For supported color formats, see the
+ * [docs article about colors](https://www.highcharts.com/docs/chart-design-and-style/colors).
+ *
+ * A scalar color axis is represented by a gradient. The colors either
+ * range between the [minColor](#colorAxis.minColor) and the
+ * [maxColor](#colorAxis.maxColor), or for more fine grained control the
+ * colors can be defined in [stops](#colorAxis.stops). Often times, the
+ * color axis needs to be adjusted to get the right color spread for the
+ * data. In addition to stops, consider using a logarithmic
+ * [axis type](#colorAxis.type), or setting [min](#colorAxis.min) and
+ * [max](#colorAxis.max) to avoid the colors being determined by
+ * outliers.
+ *
+ * When [dataClasses](#colorAxis.dataClasses) are used, the ranges are
+ * subdivided into separate classes like categories based on their
+ * values. This can be used for ranges between two values, but also for
+ * a true category. However, when your data is categorized, it may be as
+ * convenient to add each category to a separate series.
+ *
+ * Color axis does not work with: `sankey`, `sunburst`, `dependencywheel`,
+ * `networkgraph`, `wordcloud`, `venn`, `gauge` and `solidgauge` series
+ * types.
+ *
+ * Since v7.2.0 `colorAxis` can also be an array of options objects.
+ *
+ * See [the Axis object](/class-reference/Highcharts.Axis) for
+ * programmatic access to the axis.
+ *
+ * @sample {highcharts} highcharts/coloraxis/custom-color-key
+ *         Column chart with color axis
+ * @sample {highcharts} highcharts/coloraxis/horizontal-layout
+ *         Horizontal layout
+ * @sample {highmaps} maps/coloraxis/dataclasscolor
+ *         With data classes
+ * @sample {highmaps} maps/coloraxis/mincolor-maxcolor
+ *         Min color and max color
+ *
+ * @product highcharts highstock highmaps
+ */
 export interface ColorAxisOptions extends AxisOptions {
+    // TODO alignTicks?: undefined;
+    allowDecimals?: undefined;
+    alternateGridColor?: undefined;
+    breaks?: undefined;
+    categories?: undefined;
+    // TODO crosshair?: undefined;
+    dateTimeLabelFormats?: undefined;
+    left?: undefined;
+    // TODO lineWidth?: undefined;
+    linkedTo?: undefined;
+    maxZoom?: undefined;
+    minRange?: undefined;
+    minTickInterval?: undefined;
+    offset?: 0;
+    opposite?: undefined;
+    pane?: undefined;
+    plotBands?: undefined;
+    plotLines?: undefined;
+    // TODO reversedStacks?: undefined;
+    scrollbar?: undefined;
+    // TODO showEmpty?: undefined;
+    // TODO title?: undefined;
+    top?: undefined;
+    // TODO zoomEnabled?: undefined;
+
     /**
      * Determines how to set each data class' color if no individual
      * color is set. The default value, `tween`, computes intermediate
@@ -118,7 +185,6 @@ export interface ColorAxisOptions extends AxisOptions {
      * @sample {highmaps} maps/coloraxis/dataclasscolor/
      *         Category colors
      *
-     * @type       {string}
      * @default    tween
      * @product    highcharts highstock highmaps
      * @validvalue ["tween", "category"]
@@ -136,8 +202,7 @@ export interface ColorAxisOptions extends AxisOptions {
      * @sample {highmaps} maps/demo/data-class-two-ranges/
      *         Two ranges
      *
-     * @type      {Array<*>}
-     * @product   highcharts highstock highmaps
+     * @product highcharts highstock highmaps
      */
     dataClasses?: Array<ColorAxisDataClassOptions>;
 
@@ -151,17 +216,15 @@ export interface ColorAxisOptions extends AxisOptions {
      * @sample highcharts/coloraxis/horizontal-layout/
      *         Horizontal color axis layout with vertical legend
      *
-     * @type      {string|undefined}
-     * @since     7.2.0
-     * @product   highcharts highstock highmaps
+     * @since   7.2.0
+     * @product highcharts highstock highmaps
      */
     layout?: ('horizontal'|'vertical');
 
     /**
      * The legend options for the color axis.
      *
-     * @type      {Highcharts.LegendOptions}
-     * @product   highcharts highstock highmaps
+     * @product highcharts highstock highmaps
      */
     legend?: LegendOptions;
 
@@ -173,7 +236,6 @@ export interface ColorAxisOptions extends AxisOptions {
      * @sample {highmaps} maps/coloraxis/marker/
      *         Black marker
      *
-     * @declare Highcharts.PointMarkerOptionsObject
      * @product highcharts highstock highmaps
      */
     marker?: ColorAxisMarkerOptions;
@@ -193,7 +255,6 @@ export interface ColorAxisOptions extends AxisOptions {
      * @sample {highmaps} maps/coloraxis/mincolor-maxcolor-dataclasses/
      *         On data classes
      *
-     * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @product highcharts highstock highmaps
      */
     maxColor?: ColorType;
@@ -213,7 +274,6 @@ export interface ColorAxisOptions extends AxisOptions {
      * @sample {highmaps} maps/coloraxis/mincolor-maxcolor-dataclasses/
      *         On data classes
      *
-     * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @product highcharts highstock highmaps
      */
     minColor?: ColorType;
@@ -245,8 +305,7 @@ export interface ColorAxisOptions extends AxisOptions {
      * @sample {highmaps} maps/demo/heatmap/
      *         Heatmap with three color stops
      *
-     * @type      {Array<Array<number,Highcharts.ColorString>>}
-     * @product   highcharts highstock highmaps
+     * @product highcharts highstock highmaps
      */
     stops?: GradientColor['stops'];
 }

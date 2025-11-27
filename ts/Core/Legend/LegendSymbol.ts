@@ -65,7 +65,6 @@ declare module '../Series/SeriesBase' {
  *
  * */
 
-/** @internal */
 namespace LegendSymbol {
 
     /* *
@@ -77,7 +76,6 @@ namespace LegendSymbol {
     /**
      * Draw a line, a point marker and an area in the legend.
      *
-     * @internal
      * @function Highcharts.LegendSymbolMixin.areaMarker
      *
      * @param {Highcharts.Legend} legend
@@ -94,7 +92,6 @@ namespace LegendSymbol {
     /**
      * Draw a line and a point marker in the legend.
      *
-     * @internal
      * @function Highcharts.LegendSymbolMixin.lineMarker
      *
      * @param {Highcharts.Legend} legend
@@ -213,7 +210,6 @@ namespace LegendSymbol {
      * This method should be overridable to create custom symbols through
      * Highcharts.seriesTypes[type].prototype.drawLegendSymbol.
      *
-     * @internal
      * @function Highcharts.LegendSymbolMixin.rectangle
      *
      * @param {Highcharts.Legend} legend
@@ -257,5 +253,4 @@ namespace LegendSymbol {
  *
  * */
 
-/** @internal */
 export default LegendSymbol;

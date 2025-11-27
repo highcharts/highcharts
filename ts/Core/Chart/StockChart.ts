@@ -70,12 +70,14 @@ const {
  *
  * */
 
+/** @internal */
 declare module '../Axis/AxisBase' {
     interface AxisBase {
         crossLabel?: SVGElement;
     }
 }
 
+/** @internal */
 declare module './ChartBase' {
     interface ChartBase {
         _labelPanes?: Record<string, Axis>;
@@ -84,12 +86,14 @@ declare module './ChartBase' {
     }
 }
 
+/** @internal */
 declare module '../Options'{
     interface Options {
         isStock?: boolean;
     }
 }
 
+/** @internal */
 declare module '../Series/SeriesBase' {
     interface SeriesBase {
         clipBox?: BBoxObject;
@@ -97,6 +101,7 @@ declare module '../Series/SeriesBase' {
     }
 }
 
+/** @internal */
 declare module '../Renderer/SVG/SVGRendererBase' {
     interface SVGRendererBase {
         crispPolyLine(points: SVGPath, width: number): SVGPath;
@@ -378,6 +383,7 @@ addEvent(Chart, 'update', function (
  *
  * */
 
+/** @internal */
 namespace StockChart {
 
     /* *

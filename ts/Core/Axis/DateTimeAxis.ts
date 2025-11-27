@@ -36,6 +36,7 @@ const {
  *
  * */
 
+/** @internal */
 declare module './AxisComposition' {
     interface AxisComposition {
         dateTime?: DateTimeAxis.Composition['dateTime'];
@@ -51,6 +52,7 @@ declare module './AxisComposition' {
     }
 }
 
+/** @internal */
 declare module './AxisOptions' {
     interface AxisOptions {
         dateTimeLabelFormats?: Time.DateTimeLabelFormatsOption;
@@ -58,6 +60,7 @@ declare module './AxisOptions' {
     }
 }
 
+/** @internal */
 declare module './AxisType' {
     interface AxisTypeRegistry {
         DateTimeAxis: DateTimeAxis.Composition;
@@ -93,6 +96,7 @@ namespace DateTimeAxis{
      *
      * */
 
+    /** @internal */
     export declare class Composition extends Axis {
         dateTime: Additions;
     }
@@ -149,9 +153,7 @@ namespace DateTimeAxis{
         );
     }
 
-    /**
-     * @internal
-     */
+    /** @internal */
     function onAfterSetType(
         this: Axis
     ): void {
@@ -171,6 +173,7 @@ namespace DateTimeAxis{
      *
      * */
 
+    /** @internal */
     export class Additions {
 
         /* *
