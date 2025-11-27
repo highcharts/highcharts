@@ -128,7 +128,7 @@ const ContourSeriesDefaults: ContourSeriesOptions = {
              */
             hover: {
                 /**
-                 * Color of the cross marker. Defaults to `'black'`.
+                 * Color of the marker. Defaults to `'black'`.
                  *
                  * @type    {string}
                  *
@@ -198,7 +198,8 @@ const ContourSeriesDefaults: ContourSeriesOptions = {
  *               inactiveOtherPoints, jitter, linecap, negativeColor,
  *               pointInterval, pointStart, pointIntervalUnit, lineWidth,
  *               onPoint, pointPlacement, shadow, stacking, step, threshold,
- *               zoneAxis, zones, onPoint
+ *               zoneAxis, zones, onPoint, grouping, groupPadding,
+ *               groupZPadding
  *
  *
  * @product      highcharts highmaps
@@ -212,10 +213,8 @@ const ContourSeriesDefaults: ContourSeriesOptions = {
  * 1.  An array of arrays with 3 or 2 values. In this case, the values
  * correspond to `x,y,value`. If the first value is a string, it is
  * applied as the name of the point, and the `x` value is inferred.
- * The `x` value can also be omitted, in which case the inner arrays
- * should be of length 2\. Then the `x` value is automatically calculated,
- * either starting at 0 and incremented by 1, or from `pointStart`
- * and `pointInterval` given in the series options.
+ * Unlike the heatmap, the contour series data points, do not have to appear
+ * in any specific order.
  *
  *  ```js
  *     data: [
