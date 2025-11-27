@@ -29,8 +29,6 @@ Then, import the package and the dedicated plugin to connect it to the dashboard
     import * as Dashboards from '@highcharts/dashboards';
     import '@highcharts/dashboards/modules/layout';
 
-    LayoutModule(Dashboards);
-
     Dashboards.HighchartsPlugin.custom.connectHighcharts(Highcharts);
     Dashboards.PluginHandler.addPlugin(Dashboards.HighchartsPlugin);
  ```
