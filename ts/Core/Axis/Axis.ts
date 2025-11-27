@@ -414,7 +414,7 @@ class Axis {
 
         // Set the type and fire an event
         axis.type = options.type || 'linear';
-        axis.uniqueNames ??= options.uniqueNames ?? true;
+        axis.uniqueNames = options.uniqueNames ?? true;
         fireEvent(axis, 'afterSetType');
 
         /**
