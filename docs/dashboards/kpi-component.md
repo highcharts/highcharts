@@ -59,7 +59,7 @@ and import it in your project like:
 ```js
 import * as Dashboards from '@highcharts/dashboards';
 import * as Highcharts from 'highcharts';
-import LayoutModule from '@highcharts/dashboards/modules/layout';
+import '@highcharts/dashboards/modules/layout';
 
 LayoutModule(Dashboards);
 
