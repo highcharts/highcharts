@@ -17,6 +17,8 @@
 import type ColorType from '../Color/ColorType';
 import type DashStyleValue from '../Renderer/DashStyleValue';
 import type { DeepPartial } from '../../Shared/Types';
+import type PointOptions from './PointOptions';
+import type SeriesOptions from './SeriesOptions';
 
 /* *
  *
@@ -26,8 +28,8 @@ import type { DeepPartial } from '../../Shared/Types';
 
 export interface StateClassWithOptions {}
 
-export type StateGenericOptions<T extends { options: AnyRecord }> = (
-    DeepPartial<Omit<T['options'], ('states'|'data')>>
+export type StateGenericOptions<T extends SeriesOptions | PointOptions> = (
+    DeepPartial<Omit<T, ('states'|'data')>>
 );
 
 export interface StateHoverOptions {

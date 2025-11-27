@@ -19,7 +19,6 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type WaterfallPointOptions from './WaterfallPointOptions';
-import type WaterfallSeries from './WaterfallSeries';
 import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
 
 /* *
@@ -192,7 +191,7 @@ export interface WaterfallSeriesOptions extends ColumnSeriesOptions {
      */
     lineWidth?: number;
 
-    states?: SeriesStatesOptions<WaterfallSeries>;
+    states?: SeriesStatesOptions<WaterfallSeriesOptions>;
 
     /**
      * The color used specifically for positive point columns. When not

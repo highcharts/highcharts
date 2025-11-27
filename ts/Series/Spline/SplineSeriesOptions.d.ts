@@ -16,7 +16,6 @@
 
 import type LineSeriesOptions from '../Line/LineSeriesOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type SplineSeries from './SplineSeries';
 
 /* *
  *
@@ -25,7 +24,7 @@ import type SplineSeries from './SplineSeries';
  * */
 
 export interface SplineSeriesOptions extends LineSeriesOptions {
-    states?: SeriesStatesOptions<SplineSeries>;
+    states?: SeriesStatesOptions<SplineSeriesOptions>;
 }
 
 /* *

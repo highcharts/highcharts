@@ -43,21 +43,20 @@ export interface ArcDiagramPointOptions extends SankeyPointOptions {
      *
      * @apioption series.arcdiagram.data.dataLabels
      */
+    dataLabels?: SankeyPointOptions['dataLabels'];
 
     /**
-     * The global link weight, in pixels. If not set, width is calculated
-     * per link, depending on the weight value.
+     * The link weight, in pixels. If not set, width is calculated per link,
+     * depending on the weight value.
      *
      * @sample highcharts/series-arcdiagram/link-weight
-     *         Link weight
+     *         Link weight set on series
      *
      * @type {number}
-     *
      * @since 10.0.0
-     *
      * @default undefined
-     *
      * @product highcharts
+     * @apioption series.arcdiagram.data.linkWeight
      */
     linkWeight?: number;
 

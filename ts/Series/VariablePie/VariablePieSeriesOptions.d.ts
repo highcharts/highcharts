@@ -21,7 +21,6 @@ import type PointShortOptions from '../../Core/Series/PointOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type TooltipOptions from '../../Core/TooltipOptions';
 import type VariablePiePointOptions from './VariablePiePointOptions';
-import type VariablePieSeries from './VariablePieSeries';
 
 /* *
  *
@@ -156,7 +155,7 @@ export interface VariablePieSeriesOptions extends PieSeriesOptions {
      */
     sizeBy?: VariablePieSizeByValue;
 
-    states?: SeriesStatesOptions<VariablePieSeries>;
+    states?: SeriesStatesOptions<VariablePieSeriesOptions>;
 
     tooltip?: Partial<TooltipOptions>;
 

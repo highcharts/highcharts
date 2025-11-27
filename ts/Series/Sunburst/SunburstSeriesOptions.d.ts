@@ -314,7 +314,7 @@ export interface SunburstSeriesOptions extends TreemapSeriesOptions {
 
     startAngle?: number;
 
-    states?: SeriesStatesOptions<SunburstSeries>;
+    states?: SeriesStatesOptions<SunburstSeriesOptions>;
 
     /**
      * Options for the button appearing when traversing down in a sunburst.

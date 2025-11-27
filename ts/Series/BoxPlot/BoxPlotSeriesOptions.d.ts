@@ -16,7 +16,6 @@
 
 import type BoxPlotPoint from './BoxPlotPoint';
 import type BoxPlotPointOptions from './BoxPlotPointOptions';
-import type BoxPlotSeries from './BoxPlotSeries';
 import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
@@ -177,7 +176,7 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      * @product highcharts
      */
     medianWidth?: BoxPlotPoint['medianWidth'];
-    states?: SeriesStatesOptions<BoxPlotSeries>;
+    states?: SeriesStatesOptions<BoxPlotSeriesOptions>;
 
     /**
      * The color of the stem, the vertical line extending from the box to

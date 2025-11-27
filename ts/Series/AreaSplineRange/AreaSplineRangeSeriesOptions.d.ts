@@ -15,7 +15,6 @@
  * */
 
 import type AreaRangeSeriesOptions from '../AreaRange/AreaRangeSeriesOptions';
-import type AreaSplineSeries from '../AreaSpline/AreaSplineSeries.js';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 
 /* *
@@ -25,7 +24,7 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  * */
 
 export interface AreaSplineRangeSeriesOptions extends AreaRangeSeriesOptions {
-    states?: SeriesStatesOptions<AreaSplineSeries>;
+    states?: SeriesStatesOptions<AreaSplineRangeSeriesOptions>;
 }
 
 /* *

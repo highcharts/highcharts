@@ -22,7 +22,6 @@ import type NetworkgraphSeriesOptions from '../Networkgraph/NetworkgraphSeriesOp
 import type PackedBubbleDataLabelOptions from './PackedBubbleDataLabelOptions';
 import type PackedBubbleLayout from './PackedBubbleLayout';
 import type PackedBubblePointOptions from './PackedBubblePointOptions';
-import type PackedBubbleSeries from './PackedBubbleSeries';
 import type {
     SeriesEventsOptions,
     SeriesStatesOptions
@@ -203,7 +202,7 @@ export interface PackedBubbleSeriesOptions
 
     sizeBy?: BubbleSizeByValue;
 
-    states?: SeriesStatesOptions<PackedBubbleSeries>;
+    states?: SeriesStatesOptions<PackedBubbleSeriesOptions>;
     stickyTracking: false;
     tooltip?: Partial<TooltipOptions>;
 

@@ -16,7 +16,6 @@
 
 import type AreaRangeDataLabelOptions from './AreaRangeDataLabelOptions';
 import type AreaRangePointOptions from './AreaRangePointOptions';
-import type AreaRangeSeries from './AreaRangeSeries';
 import type AreaSeriesOptions from '../Area/AreaSeriesOptions';
 import type ColorType from '../../Core/Color/ColorType';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
@@ -58,7 +57,7 @@ export interface AreaRangeSeriesOptions extends AreaSeriesOptions {
         Array<AreaRangeDataLabelOptions>
     );
 
-    states?: SeriesStatesOptions<AreaRangeSeries>;
+    states?: SeriesStatesOptions<AreaRangeSeriesOptions>;
 
     trackByArea?: boolean;
 

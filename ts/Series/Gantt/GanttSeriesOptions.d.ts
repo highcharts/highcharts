@@ -24,7 +24,6 @@ import type {
 } from '../../Gantt/ConnectorsOptions';
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type GanttPointOptions from './GanttPointOptions';
-import type GanttSeries from './GanttSeries';
 import type {
     SeriesEventsOptions,
     SeriesStatesOptions
@@ -117,7 +116,7 @@ export interface GanttSeriesOptions extends XRangeSeriesOptions {
 
     grouping?: boolean;
 
-    states?: SeriesStatesOptions<GanttSeries>;
+    states?: SeriesStatesOptions<GanttSeriesOptions>;
 
     tooltip?: Partial<TooltipOptions>;
 

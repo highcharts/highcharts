@@ -71,7 +71,7 @@ export interface PointMarkerOptions {
     lineWidth?: number;
     radius?: number;
     radiusPlus?: number;
-    states?: PointStatesOptions<Point>;
+    states?: PointStatesOptions<PointOptions>;
     symbol?: SymbolKey;
     width?: number;
 }
@@ -96,7 +96,7 @@ export interface PointOptions {
     marker?: PointMarkerOptions;
     name?: string;
     selected?: boolean;
-    states?: PointStatesOptions<Point>;
+    states?: PointStatesOptions<PointOptions>;
     visible?: boolean;
     x?: number|string;
     y?: null|number;
@@ -133,11 +133,11 @@ export interface PointStateNormalOptions extends StateNormalOptions {
     opacity?: number;
 }
 
-export interface PointStatesOptions<T extends { options: AnyRecord }> extends StatesOptions {
-    hover?: PointStateHoverOptions&StateGenericOptions<T>;
-    inactive?: PointStateInactiveOptions&StateGenericOptions<T>;
-    normal?: PointStateNormalOptions&StateGenericOptions<T>;
-    select?: PointStateSelectOptions&StateGenericOptions<T>;
+export interface PointStatesOptions<T extends PointOptions> extends StatesOptions {
+    hover?: PointStateHoverOptions & StateGenericOptions<T>;
+    inactive?: PointStateInactiveOptions & StateGenericOptions<T>;
+    normal?: PointStateNormalOptions & StateGenericOptions<T>;
+    select?: PointStateSelectOptions & StateGenericOptions<T>;
 }
 
 export interface PointStateSelectOptions extends StateSelectOptions {

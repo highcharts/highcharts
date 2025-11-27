@@ -399,8 +399,8 @@ class TimelineSeries extends LineSeries {
                 seriesMarkerOptions.height as any
             );
 
-        let seriesStateOptions: SeriesStatesOptions<TimelineSeries>,
-            pointStateOptions: PointStatesOptions<TimelinePoint>,
+        let seriesStateOptions: SeriesStatesOptions<TimelineSeriesOptions>,
+            pointStateOptions: PointStatesOptions<TimelinePointOptions>,
             radius = 0;
 
         // Call default markerAttribs method, when the xAxis type
