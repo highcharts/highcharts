@@ -33,7 +33,7 @@ import type PointerEvent from '../PointerEvent';
 import type {
     PointOptions,
     PointShortOptions,
-    PointStateHoverOptions
+    PointMarkerStateHoverOptions
 } from './PointOptions';
 import type RangeSelector from '../../Stock/RangeSelector/RangeSelector';
 import type SeriesBase from './SeriesBase';
@@ -2831,7 +2831,7 @@ class Series {
             attribs: SVGAttributes = {};
 
         let seriesStateOptions: SeriesStateHoverOptions,
-            pointStateOptions: PointStateHoverOptions,
+            pointStateOptions: PointMarkerStateHoverOptions,
             radius: number|undefined = pick(
                 pointMarkerOptions.radius,
                 seriesMarkerOptions?.radius

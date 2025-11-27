@@ -32,7 +32,15 @@ import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
  * */
 
 export interface ArcDiagramSeriesNodeOptions extends SankeySeriesNodeOptions {
-    // Nothing to add
+    /**
+     * Individual data label for each node. The options are the same as the ones
+     * for [series.arcdiagram.dataLabels](#series.arcdiagram.dataLabels).
+     *
+     * @type {Highcharts.SeriesArcDiagramDataLabelsOptionsObject|Array<Highcharts.SeriesArcDiagramDataLabelsOptionsObject>}
+     *
+     * @apioption series.arcdiagram.nodes.dataLabels
+     */
+    dataLabels?: SankeySeriesNodeOptions['dataLabels'];
 }
 
 /**

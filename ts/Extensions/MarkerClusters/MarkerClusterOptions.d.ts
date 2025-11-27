@@ -21,11 +21,10 @@
 import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type Point from '../../Core/Series/Point';
-import type PointOptions from '../../Core/Series/PointOptions';
 import type {
     PointClickEvent,
     PointMarkerOptions,
-    PointStatesOptions
+    PointMarkerStatesOptions
 } from '../../Core/Series/PointOptions';
 
 /* *
@@ -88,9 +87,7 @@ export interface MarkerClusterOptions {
     layoutAlgorithm: MarkerClusterLayoutAlgorithmOptions;
     marker: MarkerClusterMarkerOptions;
     minimumClusterSize?: number;
-    // TODO: refactor events so this can be of type
-    // PointStatesOptions<MarkerClusterOptions>
-    states?: PointStatesOptions<PointOptions>;
+    states?: PointMarkerStatesOptions<MarkerClusterOptions>;
     zones?: Array<MarkerClusterZonesOptions>;
 }
 

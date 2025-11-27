@@ -71,7 +71,7 @@ export interface PointMarkerOptions {
     lineWidth?: number;
     radius?: number;
     radiusPlus?: number;
-    states?: PointStatesOptions<PointOptions>;
+    states?: PointMarkerStatesOptions<PointMarkerOptions>;
     symbol?: SymbolKey;
     width?: number;
 }
@@ -96,7 +96,6 @@ export interface PointOptions {
     marker?: PointMarkerOptions;
     name?: string;
     selected?: boolean;
-    states?: PointStatesOptions<PointOptions>;
     visible?: boolean;
     x?: number|string;
     y?: null|number;
@@ -114,7 +113,7 @@ export type PointShortOptions = (
     null
 );
 
-export interface PointStateHoverOptions extends StateHoverOptions {
+export interface PointMarkerStateHoverOptions extends StateHoverOptions {
     animation?: (boolean|DeepPartial<AnimationOptions>);
     enabled?: boolean;
     fillColor?: ColorType;
@@ -124,23 +123,23 @@ export interface PointStateHoverOptions extends StateHoverOptions {
     opacity?: number;
 }
 
-export interface PointStateInactiveOptions extends StateInactiveOptions {
+export interface PointMarkerStateInactiveOptions extends StateInactiveOptions {
     opacity?: number;
 }
 
-export interface PointStateNormalOptions extends StateNormalOptions {
+export interface PointMarkerStateNormalOptions extends StateNormalOptions {
     animation?: (boolean|DeepPartial<AnimationOptions>);
     opacity?: number;
 }
 
-export interface PointStatesOptions<T extends PointOptions> extends StatesOptions {
-    hover?: PointStateHoverOptions & StateGenericOptions<T>;
-    inactive?: PointStateInactiveOptions & StateGenericOptions<T>;
-    normal?: PointStateNormalOptions & StateGenericOptions<T>;
-    select?: PointStateSelectOptions & StateGenericOptions<T>;
+export interface PointMarkerStatesOptions<T extends PointMarkerOptions> extends StatesOptions {
+    hover?: PointMarkerStateHoverOptions & StateGenericOptions<T>;
+    inactive?: PointMarkerStateInactiveOptions & StateGenericOptions<T>;
+    normal?: PointMarkerStateNormalOptions & StateGenericOptions<T>;
+    select?: PointMarkerStateSelectOptions & StateGenericOptions<T>;
 }
 
-export interface PointStateSelectOptions extends StateSelectOptions {
+export interface PointMarkerStateSelectOptions extends StateSelectOptions {
     enabled?: boolean;
     fillColor?: ColorType;
     lineColor?: ColorType;
