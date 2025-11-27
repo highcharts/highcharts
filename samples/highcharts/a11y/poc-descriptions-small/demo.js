@@ -1,26 +1,23 @@
 // Spline w/Plotlines
 const chart1desc = `
-    <p> Helsinki temperatures rise steadily from winter lows below zero to
-    a summer peak around July, before cooling again toward December. Oslo
-    temperatures follows a similar pattern, but is generally milder in the
-    winter and colder in the summer.
+    <p>
+      JAWS usage starts very high in 2009 and gradually declines before rising
+      again in 2017 and 2021, while NVDA grows steadily from a low starting
+      point and levels off in later years.
     </p>
     <p>
-    The two series cross each other twice during
-    the year, once in spring and once in autumn. Showing that Oslo is warmer
-    than Helsinki in the winter, while Helsinki becomes warmer through
-    summer.</p>
+      NVDA and JAWS move closer together over time, with NVDA overtaking JAWS
+      once in 2019, and the two ending at nearly the same level again in 2024.
+    </p>
     <ul>
-        <li>X-axis: Months January–December</li>
-        <li>Y-axis: Temperature in °C, range –10°C to 20°C</li>
-        <li>Period highlighted: May–September</li>
-        <li>Helsinki highest value: 17°C in July</li>
-        <li>Helsinki lowest value: –6°C in February</li>
-        <li>Oslo highest value: 11°C in July–August</li>
-        <li>Oslo lowest value: around 0°C in winter months</li>
-        <li>Helsinki crosses above freezing in April and below 
-        again in November</li>
-        <li>Oslo remains mostly above freezing all year</li>
+        <li>X-axis: Survey years 2009–2024</li>
+        <li>Y-axis: Primary screen reader usage (%)</li>
+        <li>JAWS highest value: 74% (2009)</li>
+        <li>JAWS lowest value: 30% (2014–2015)</li>
+        <li>NVDA highest value: 41% (2019)</li>
+        <li>NVDA lowest value: 8% (2009)</li>
+        <li>Only year NVDA overtakes JAWS: 2019</li>
+        <li>Ending values (2024): JAWS 41%, NVDA 38%</li>
     </ul>
 `;
 
@@ -147,7 +144,7 @@ const chart6visualdesc = `
 
 
 const HC_CONFIGS = {
-    chart1: { // Spline w/plotlines
+    chart1: { // Spline w/plotlines -> Screen reader usage over time
         credits: {
             enabled: false
         },
@@ -160,79 +157,73 @@ const HC_CONFIGS = {
         },
         custom: {
             autoDesc: chart1desc,
-            hasDataTable: true,  // Enable data table button
+            hasDataTable: true,
             tableConfig: {
                 columnHeaderFormatter: function (item, key) {
                     if (key === 'x') {
-                        return 'Month';
+                        return 'Survey year';
                     }
                     if (key === 'y') {
-                        return item.name + ' Temperature (°C)';
+                        return item.name + ' (primary usage %)';
                     }
                     return item.name || 'Series';
                 }
             }
         },
+        chart: {
+            type: 'spline'
+        },
         title: {
-            text: 'Average Monthly Temperature: Helsinki vs Oslo',
-            align: 'left',
-            margin: 25
+            text: 'Primary screen reader usage: JAWS vs NVDA'
+        },
+        subtitle: {
+            text: 'From 2009 to 2024'
         },
         yAxis: {
-            plotLines: [{
-                value: 0,
-                color: '#014CE5',
-                dashStyle: 'shortDash',
-                width: 2
-            }],
             title: {
-                enabled: false
+                text: 'Respondents using as primary screen reader (%)'
             },
             labels: {
-                format: '{text}°C'
-            },
-            gridLineWidth: 0
+                format: '{value}%'
+            }
         },
 
         xAxis: {
-            plotBands: [{
-                from: 3.5,
-                to: 8.5,
-                color: 'rgba(16,185,129,0.15)',
-                label: { text: 'Summer', align: 'left', x: 10 }
-            }],
-            plotLines: [{
-                value: 3.5,
-                color: '#10B981',       // teal edge
-                width: 3
-            }, {
-                value: 8.5,
-                color: '#10B981',       // teal edge
-                width: 3
-            }],
             crosshair: true,
             categories: [
-                'Jan', 'Feb', 'Mar', 'Apr', 'May', 'June',
-                'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'
+                '2009',
+                '2010',
+                '2012',
+                '2014',
+                '2015',
+                '2017',
+                '2019',
+                '2021',
+                '2024'
             ]
         },
 
         legend: { enabled: true },
-        tooltip: { shared: true, valueSuffix: '°C' },
+
+        tooltip: {
+            shared: true,
+            valueSuffix: '%'
+        },
 
         series: [
             {
-                name: 'Helsinki',
-                data: [-5, -6, -2, 4, 10, 14, 17, 15, 10, 6, 0, -4],
+                name: 'JAWS (primary screen reader)',
+                data: [74, 59, 49, 30, 30, 46, 40, 54, 41],
                 color: '#014CE5'
             },
             {
-                name: 'Oslo',
-                data: [0, 0, 1, 3, 6, 9, 11, 11, 8, 5, 2, 0],
+                name: 'NVDA (primary screen reader)',
+                data: [8, 14, 31, 26, 31, 31, 41, 31, 38],
                 color: '#EA293C'
             }
         ]
     },
+
 
     chart2: { // Stacked column
         credits: {
