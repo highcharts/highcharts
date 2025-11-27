@@ -316,6 +316,18 @@ class Grid {
      */
     public isDirtyData: boolean = false;
 
+    /**
+     * Flag that indicates if sorting has changed (through update/updateColumn).
+     * @internal
+     */
+    private isDirtySorting: boolean = false;
+
+    /**
+     * Flag that indicates if filtering has changed (through update/updateColumn).
+     * @internal
+     */
+    private isDirtyFiltering: boolean = false;
+
 
     /* *
     *
@@ -822,6 +834,7 @@ class Grid {
                 'order' in sortingDiff
             ) {
                 this.isDirtyData = true;
+                this.isDirtySorting = true;
             }
             delete sortingDiff.compare;
             delete sortingDiff.order;
@@ -842,6 +855,7 @@ class Grid {
                 'value' in filteringDiff
             ) {
                 this.isDirtyData = true;
+                this.isDirtyFiltering = true;
             }
             delete filteringDiff.condition;
             delete filteringDiff.value;
@@ -866,12 +880,16 @@ class Grid {
         fireEvent(this, 'beforeRedraw');
 
         if (this.isDirtyGrid) {
+            console.log('redraw isDirtyGrid');
             return await this.render();
         }
 
         const { viewport: vp, pagination } = this;
         const colResizing = vp?.columnResizing;
-        const refreshData = this.isDirtyData || this.querying.shouldBeUpdated;
+        const shouldBeUpdated = this.querying.shouldBeUpdated;
+        const refreshData = this.isDirtyData || shouldBeUpdated;
+        const hasSortingOrFilteringChange =
+            this.isDirtySorting || this.isDirtyFiltering || shouldBeUpdated;
 
         if (refreshData) {
             this.querying.loadOptions();
@@ -889,20 +907,28 @@ class Grid {
 
         const columns = vp?.columns ?? [];
 
-        if (refreshData) {
+        if (hasSortingOrFilteringChange) {
             for (const column of columns) {
                 column.header?.toolbar?.refreshState();
+            }
+        }
+
+        if ((this.isDirtyFiltering || shouldBeUpdated)) {
+            for (const column of columns) {
                 column.filtering?.refreshState();
             }
         }
 
-        if (refreshData) {
+        // Update pagination controls only if data changed but not sorting/filtering
+        if (refreshData && !hasSortingOrFilteringChange) {
             pagination?.updateControls(true);
         }
 
         delete colResizing?.isDirty;
         this.isDirtyGrid = false;
         this.isDirtyData = false;
+        this.isDirtySorting = false;
+        this.isDirtyFiltering = false;
 
         fireEvent(this, 'afterRedraw');
     }
@@ -993,6 +1019,8 @@ class Grid {
         this.isRendered = true;
         this.isDirtyGrid = false;
         this.isDirtyData = false;
+        this.isDirtySorting = false;
+        this.isDirtyFiltering = false;
     }
 
     /**
