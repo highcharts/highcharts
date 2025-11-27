@@ -1,0 +1,14 @@
+#container {
+    width: 600px;
+    height: 500px;
+    margin: 1em auto;
+}
+
+#data {
+    display: none;
+}
+
+.controls {
+    padding: 5px 20px;
+    user-select: none;
+}
