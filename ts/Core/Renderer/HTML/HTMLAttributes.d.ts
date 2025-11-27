@@ -20,6 +20,8 @@ export interface HTMLAttributes {
     'aria-label'?: string;
     'aria-live'?: string;
     'aria-atomic'?: boolean;
+    'aria-sort'?: string;
+    'aria-pressed'?: boolean;
     'aria-rowindex'?: number;
     checked?: boolean;
     class?: string;
