@@ -540,6 +540,12 @@ const ColumnSeriesDefaults: PlotOptionsOf<ColumnSeries> = {
  * @apioption series.column.states.select
  */
 
+/**
+ * @extends   series.column.states
+ * @product   highcharts highstock
+ * @apioption series.column.data.states
+ */
+
 ''; // Keeps doclets above in JS file
 
 /* *

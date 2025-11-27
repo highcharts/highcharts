@@ -637,11 +637,8 @@ class MapSeries extends ScatterSeries {
         // Handle state specific border or line width
         if (state) {
             const stateOptions = merge(
-                    this.options.states &&
-                    this.options.states[state] as MapSeriesOptions,
-                    point.options.states &&
-                    point.options.states[state] as MapPointOptions ||
-                    {}
+                    this.options.states?.[state] as MapSeriesOptions,
+                    point.options.states?.[state] || {}
                 ),
                 stateStrokeWidth = this.getStrokeWidth(stateOptions);
 
