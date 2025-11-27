@@ -23,7 +23,6 @@ import type {
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type { StackOverflowValue } from '../../Core/Axis/Stacking/StackingOptions';
 import type StreamgraphPointOptions from './StreamgraphPointOptions';
-import type StreamgraphSeries from './StreamgraphSeries';
 
 /* *
  *
@@ -167,7 +166,7 @@ export interface StreamgraphSeriesOptions extends AreaSplineSeriesOptions {
 
     stacking?: StackOverflowValue;
 
-    states?: SeriesStatesOptions<StreamgraphSeries>;
+    states?: SeriesStatesOptions<StreamgraphSeriesOptions>;
 
     marker?: PointMarkerOptions;
 

@@ -250,7 +250,7 @@ export interface NetworkgraphSeriesOptions
      */
     nodes?: Array<NetworkgraphPointOptions>;
 
-    states?: SeriesStatesOptions<NetworkgraphSeries>;
+    states?: SeriesStatesOptions<NetworkgraphSeriesOptions>;
 
     /**
      * The opposite state of a hover for a single point link. Applied

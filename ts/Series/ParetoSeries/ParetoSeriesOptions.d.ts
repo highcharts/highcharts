@@ -16,7 +16,6 @@
 
 import type LineSeriesOptions from '../Line/LineSeriesOptions';
 import type ParetoPointOptions from './ParetoPointOptions';
-import type ParetoSeries from './ParetoSeries';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 
@@ -80,7 +79,7 @@ interface ParetoSeriesOptions extends LineSeriesOptions {
      */
     baseSeries?: number|string;
 
-    states?: SeriesStatesOptions<ParetoSeries>;
+    states?: SeriesStatesOptions<ParetoSeriesOptions>;
 
     /**
      * Higher zIndex than column series to draw line above shapes.

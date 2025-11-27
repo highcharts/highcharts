@@ -14,7 +14,6 @@
  *
  * */
 
-import type LollipopSeries from './LollipopSeries';
 import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type ColorString from '../../Core/Color/ColorString';
@@ -33,7 +32,7 @@ export interface LollipopSeriesOptions extends ScatterSeriesOptions {
     /** @deprecated */
     lowColor?: ColorType;
     pointPadding?: number;
-    states?: SeriesStatesOptions<LollipopSeries>;
+    states?: SeriesStatesOptions<LollipopSeriesOptions>;
 }
 
 /* *

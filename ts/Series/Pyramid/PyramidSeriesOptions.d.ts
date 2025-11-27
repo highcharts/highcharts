@@ -18,7 +18,6 @@
 
 import type FunnelSeriesOptions from '../Funnel/FunnelSeriesOptions';
 import type PyramidPointOptions from './PyramidPointOptions';
-import type PyramidSeries from './PyramidSeries';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 
 /* *
@@ -113,7 +112,7 @@ export interface PyramidSeriesOptions extends FunnelSeriesOptions {
      */
     reversed?: boolean;
 
-    states?: SeriesStatesOptions<PyramidSeries>;
+    states?: SeriesStatesOptions<PyramidSeriesOptions>;
 
 }
 

@@ -444,7 +444,7 @@ class HeatmapSeries extends ScatterSeries {
             const stateOptions = merge(
                 seriesOptions.states?.[state],
                 seriesOptions.marker?.states?.[state],
-                point?.options.states?.[state] || {}
+                point?.options.marker?.states?.[state] || {}
             );
 
             attr.fill =
