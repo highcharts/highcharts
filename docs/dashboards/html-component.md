@@ -24,8 +24,6 @@ and import it in your project like:
 ```js
 import * as Dashboards from '@highcharts/dashboards';
 import '@highcharts/dashboards/modules/layout';
-
-LayoutModule(Dashboards);
 ```
 
 ### 2. Layout

@@ -61,8 +61,6 @@ import * as Dashboards from '@highcharts/dashboards';
 import * as Highcharts from 'highcharts';
 import '@highcharts/dashboards/modules/layout';
 
-LayoutModule(Dashboards);
-
 Dashboards.HighchartsPlugin.custom.connectHighcharts(Highcharts);
 Dashboards.PluginHandler.addPlugin(Dashboards.HighchartsPlugin);
 ```
