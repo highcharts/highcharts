@@ -157,7 +157,6 @@ class Pagination {
      * Whether the pagination is dirty due to querying changes.
      * @internal
      */
-    public isDirtyQuerying?: boolean;
 
 
     /* *
@@ -227,7 +226,7 @@ class Pagination {
             'page' in diff ||
             'pageSize' in diff
         ) {
-            this.isDirtyQuerying = true;
+            this.grid.isDirtyData = true;
             delete diff.page;
             delete diff.pageSize;
         }
@@ -235,7 +234,7 @@ class Pagination {
         // TODO: Optimize more options here.
 
         if (Object.keys(diff).length > 0) {
-            this.grid.dirtyFlags.add('grid');
+            this.grid.isDirtyGrid = true;
         }
     }
 

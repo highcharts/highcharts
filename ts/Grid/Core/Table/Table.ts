@@ -375,7 +375,6 @@ class Table {
             }
         }
 
-        vp.grid.dirtyFlags.delete('rows');
     }
 
     /**
@@ -401,7 +400,6 @@ class Table {
             popup.reflow();
         });
 
-        this.grid.dirtyFlags.delete('reflow');
     }
 
     /**
