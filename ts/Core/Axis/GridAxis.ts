@@ -431,7 +431,14 @@ function onAfterInit(this: Axis): void {
     }
 
     if (gridOptions.columns) {
-        const columns = axis.grid.columns = [] as Array<GridAxisComposition>;
+        axis.grid.columns ||= [];
+
+        const columns = axis.grid.columns;
+
+        // Destroy existing columns. In a future update we could consider
+        // matching and updating existing columns instead of recreating all.
+        columns.forEach((column): void => column.destroy());
+        columns.length = 0;
 
         let columnIndex = axis.grid.columnIndex = 0;
 

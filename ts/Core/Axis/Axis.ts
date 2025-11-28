@@ -4327,8 +4327,6 @@ class Axis {
 
         // @todo: Look for update for each case
         const fullRebuild = options && (
-            /// unit-tests/gantt/grid-axis
-            'grid' in options ||
             // Wait for data sorting refactor
             'labels' in options ||
             // Wait for #23894
