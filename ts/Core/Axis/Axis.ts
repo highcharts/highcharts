@@ -4329,8 +4329,9 @@ class Axis {
         const fullRebuild = options && (
             /// unit-tests/gantt/grid-axis
             'grid' in options ||
-            /// unit-tests/responsive/responsive
-            'labels' in options || // Wait for data sorting refactor
+            // Wait for data sorting refactor
+            'labels' in options ||
+            // Wait for #23894
             'overscroll' in options ||
             'plotBands' in options ||
             'plotLines' in options ||
