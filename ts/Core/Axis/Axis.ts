@@ -4336,9 +4336,7 @@ class Axis {
             'plotBands' in options ||
             'plotLines' in options ||
             /// unit-tests/3d/column-crop, unit-tests/axis/type-logarithmic
-            'type' in options ||
-            /// unit-tests/series-variwide/variwide
-            this.variwide
+            'type' in options
         );
 
         options = merge(this.userOptions, options);
