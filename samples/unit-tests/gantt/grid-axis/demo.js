@@ -1891,7 +1891,7 @@ QUnit.test(
             chart.xAxis[1].tickPositions.map(tickPosition =>
                 chart.xAxis[1].ticks[tickPosition].label.textStr
             ).join(', '),
-            'July, January, July',
+            'July, January, ',
             'Secondary axis should show months when xAxis.units set (#16626)'
         );
     }

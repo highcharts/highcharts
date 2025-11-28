@@ -985,20 +985,19 @@ function onAfterTickSize(
     e: { tickSize?: [number, number] }
 ): void {
     const {
-        horiz,
-        maxLabelDimensions,
-        options: {
-            grid: gridOptions = {}
-        }
-    } = this;
-    if (gridOptions.enabled && maxLabelDimensions) {
-        const labelPadding = this.options.labels.distance * 2;
-        const distance = horiz ?
-            (
-                gridOptions.cellHeight ||
-                labelPadding + maxLabelDimensions.height
-            ) :
-            labelPadding + maxLabelDimensions.width;
+            horiz,
+            maxLabelDimensions,
+            options
+        } = this,
+        { labels, grid = {} } = options;
+    if (grid.enabled && maxLabelDimensions) {
+        const labelPadding = (labels.distance ?? 15) * 2,
+            distance = horiz ?
+                (
+                    grid.cellHeight ||
+                    labelPadding + maxLabelDimensions.height
+                ) :
+                labelPadding + maxLabelDimensions.width;
         if (isArray(e.tickSize)) {
             e.tickSize[0] = distance;
         } else {

@@ -523,13 +523,12 @@ class Tick {
         step: number
     ): PositionObject {
         const axis = this.axis,
-            transA = axis.transA,
+            { labelAlign, side, staggerLines, transA } = axis,
             reversed = ( // #7911
                 axis.isLinked && axis.linkedParent ?
                     axis.linkedParent.reversed :
                     axis.reversed
             ),
-            staggerLines = axis.staggerLines,
             rotCorr = axis.tickRotCorr || { x: 0, y: 0 },
 
             // Adjust for label alignment if we use reserveSpace: true (#5286)
@@ -540,15 +539,20 @@ class Tick {
                     ) :
                     0
             ),
-            distance = labelOptions.distance,
+            distance = labelOptions.distance ?? (
+                // If the label is aligned inside the plot area, default to 0.
+                // This is default behavior or Stock y-axis labels.
+                (side === 1 && labelAlign === 'right') ? 0 :
+                    (side === 3 && labelAlign === 'left') ? 0 : 15
+            ),
             pos = {} as PositionObject;
 
         let yOffset: number,
             line: number;
 
-        if (axis.side === 0) {
+        if (side === 0) {
             yOffset = label.rotation ? -distance : -label.getBBox().height;
-        } else if (axis.side === 2) {
+        } else if (side === 2) {
             yOffset = rotCorr.y + distance;
         } else {
             // #3140, #3140
@@ -557,7 +561,7 @@ class Tick {
         }
 
         if (defined(labelOptions.y)) {
-            yOffset = axis.side === 0 && axis.horiz ?
+            yOffset = side === 0 && axis.horiz ?
                 labelOptions.y + yOffset :
                 labelOptions.y;
         }
@@ -565,7 +569,7 @@ class Tick {
         x = x +
             pick(
                 labelOptions.x,
-                [0, 1, 0, -1][axis.side] * distance
+                [0, 1, 0, -1][side] * distance
             ) +
             labelOffsetCorrection +
             rotCorr.x -

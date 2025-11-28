@@ -467,7 +467,7 @@ class ColorAxis extends Axis implements AxisBase {
             (
                 horiz ?
                     itemDistance :
-                    pick(labelOptions.x, labelOptions.distance) +
+                    (labelOptions.x ?? labelOptions.distance ?? 15) +
                         (this.maxLabelLength || 0)
             )
         );

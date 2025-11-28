@@ -3127,7 +3127,7 @@ class Axis {
                 Math.round(slotWidth - (
                     horiz ?
                         2 * (labelOptions.padding || 0) :
-                        labelOptions.distance || 0 // #21172
+                        labelOptions.distance ?? 15 // #21172
                 ))
             ),
             attr: SVGAttributes = {},
@@ -3452,7 +3452,8 @@ class Axis {
             hasCrossing = isNumber(options.crossing),
             axisOffset = chart.axisOffset,
             clipOffset = chart.clipOffset,
-            directionFactor = [-1, 1, 1, -1][side];
+            directionFactor = [-1, 1, 1, -1][side],
+            appliedDistance = directionFactor * (labelOptions.distance ?? 15);
 
         let showAxis,
             titleOffset = 0,
@@ -3564,12 +3565,11 @@ class Axis {
                 horiz ?
                     pick(
                         labelOptions.y,
-                        axis.tickRotCorr.y +
-                            directionFactor * labelOptions.distance
+                        axis.tickRotCorr.y + appliedDistance
                     ) :
                     pick(
                         labelOptions.x,
-                        directionFactor * labelOptions.distance
+                        appliedDistance
                     )
             );
         }
@@ -4325,18 +4325,24 @@ class Axis {
     ): void {
         const chart = this.chart;
 
-        options = merge(this.userOptions, options);
-
-
         // @todo: Look for update for each case
-        if (
+        const fullRebuild = options && (
+            /// unit-tests/gantt/grid-axis
+            'grid' in options ||
             /// unit-tests/responsive/responsive
             'labels' in options || // Wait for data sorting refactor
+            'overscroll' in options ||
             'plotBands' in options ||
             'plotLines' in options ||
             /// unit-tests/3d/column-crop, unit-tests/axis/type-logarithmic
-            'type' in options
-        ) {
+            'type' in options ||
+            /// unit-tests/series-variwide/variwide
+            this.variwide
+        );
+
+        options = merge(this.userOptions, options);
+
+        if (fullRebuild) {
             this.destroy(true);
 
         } else {
