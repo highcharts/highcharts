@@ -921,15 +921,16 @@ namespace AxisDefaults {
             /**
              * The label's pixel distance from the perimeter of the plot area.
              * On cartesian charts, this is overridden if the `labels.y` setting
-             * is set.
+             * is set. Defaults to 15 unless the labels are aligned inside the
+             * plot area, in which case it defaults to 0.
              *
              * @sample {highcharts} highcharts/yaxis/labels-distance/
              *         Polar chart, labels centered under the arc
              *
              * @type      {number}
              * @product   highcharts gantt
+             * @apioption xAxis.labels.distance
              */
-            distance: 15,
 
             /**
              * Enable or disable the axis labels.

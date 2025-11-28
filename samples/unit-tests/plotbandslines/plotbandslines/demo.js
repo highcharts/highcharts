@@ -251,11 +251,9 @@ QUnit.test(
 
         assert.deepEqual(clicked, 'plotLine', 'Click event fired on plot line');
 
-        assert.strictEqual(
-            plotLineReference,
-            chart.xAxis[0].plotLinesAndBands[0],
-            '\"this\" in plotline event should refer to the corresponding ' +
-            'plotline object.'
+        assert.ok(
+            plotLineReference === chart.xAxis[0].plotLinesAndBands[0],
+            'Plot line event context should be corresponding plot line object.'
         );
     }
 );

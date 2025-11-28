@@ -393,14 +393,12 @@ class Axis {
          * @name Highcharts.Axis#side
          * @type {number}
          */
-        axis.side = pick(
-            userOptions.side,
-            axis.side,
-            (horiz ?
-                (axis.opposite ? 0 : 2) : // Top : bottom
-                (axis.opposite ? 1 : 3)
-            ) // Right : left
-        );
+        axis.side = userOptions.side ??
+            (
+                horiz ?
+                    (axis.opposite ? 0 : 2) : // Top : bottom
+                    (axis.opposite ? 1 : 3) // Right : left
+            );
 
         /**
          * Current options for the axis after merge of defaults and user's
@@ -415,8 +413,8 @@ class Axis {
             labelsOptions = options.labels;
 
         // Set the type and fire an event
-        axis.type ??= options.type || 'linear';
-        axis.uniqueNames ??= options.uniqueNames ?? true;
+        axis.type = options.type || 'linear';
+        axis.uniqueNames = options.uniqueNames ?? true;
         fireEvent(axis, 'afterSetType');
 
         /**
@@ -437,7 +435,7 @@ class Axis {
          * @name Highcharts.Axis#reversed
          * @type {boolean}
          */
-        axis.reversed = pick(options.reversed, axis.reversed);
+        axis.reversed = options.reversed;
         axis.visible = options.visible;
         axis.zoomEnabled = options.zoomEnabled;
 
@@ -468,7 +466,7 @@ class Axis {
 
 
         // Placeholder for plotlines and plotbands groups
-        axis.plotLinesAndBandsGroups = {};
+        axis.plotLinesAndBandsGroups ||= {};
 
         // Shorthand types
         axis.positiveValuesOnly = !!axis.logarithmic;
@@ -484,8 +482,8 @@ class Axis {
          * @name Highcharts.Axis#ticks
          * @type {Highcharts.Dictionary<Highcharts.Tick>}
          */
-        axis.ticks = {};
-        axis.labelEdge = [];
+        axis.ticks ||= {};
+        axis.labelEdge ||= [];
         /**
          * List of minor ticks mapped by position on the axis.
          *
@@ -494,13 +492,13 @@ class Axis {
          * @name Highcharts.Axis#minorTicks
          * @type {Highcharts.Dictionary<Highcharts.Tick>}
          */
-        axis.minorTicks = {};
+        axis.minorTicks ||= {};
 
         // List of plotLines/Bands
-        axis.plotLinesAndBands = [];
+        axis.plotLinesAndBands ||= [];
 
         // Alternate bands
-        axis.alternateBands = {};
+        axis.alternateBands ||= {};
 
         /**
          * The length of the axis in terms of pixels.
@@ -608,14 +606,14 @@ class Axis {
                 },
                 margin: 15
             } :
-            // Left and right axis, title rotated 90 or 270 degrees
+            // Left and right axis, title rotated -90 or 90 degrees
             // respectively
             {
                 labels: {
                     padding: 1
                 },
                 title: {
-                    rotation: 90 * this.side
+                    rotation: this.side === 1 ? 90 : -90
                 }
             };
 
@@ -3129,7 +3127,7 @@ class Axis {
                 Math.round(slotWidth - (
                     horiz ?
                         2 * (labelOptions.padding || 0) :
-                        labelOptions.distance || 0 // #21172
+                        labelOptions.distance ?? 15 // #21172
                 ))
             ),
             attr: SVGAttributes = {},
@@ -3288,14 +3286,9 @@ class Axis {
             opposite = axis.opposite,
             options = axis.options,
             axisTitleOptions = options.title,
-            styledMode = axis.chart.styledMode;
-
-        let textAlign: (AlignValue|undefined);
-
-        if (!axis.axisTitle) {
-            textAlign = axisTitleOptions.textAlign;
-            if (!textAlign) {
-                textAlign = ((horiz ? {
+            styledMode = axis.chart.styledMode,
+            textAlign = axisTitleOptions.textAlign ||
+                ((horiz ? {
                     low: 'left',
                     middle: 'center',
                     high: 'right'
@@ -3304,45 +3297,57 @@ class Axis {
                     middle: 'center',
                     high: opposite ? 'left' : 'right'
                 }) as Record<string, AlignValue>)[
-                    axisTitleOptions.align as any
-                ];
-            }
-            axis.axisTitle = renderer
+                    axisTitleOptions.align
+                ],
+            attr: SVGAttributes = {
+                text: axisTitleOptions.text || '',
+                zIndex: 7,
+                align: textAlign
+            },
+            animatable: SVGAttributes = {
+                rotation: axisTitleOptions.rotation || 0
+            };
+
+        let axisTitle = axis.axisTitle;
+
+        if (!axisTitle) {
+            axisTitle = renderer
                 .text(
-                    axisTitleOptions.text || '',
+                    '',
                     0,
                     0,
                     axisTitleOptions.useHTML
                 )
-                .attr({
-                    zIndex: 7,
-                    rotation: axisTitleOptions.rotation || 0,
-                    align: textAlign
-                })
+                .attr(extend(attr, animatable))
                 .addClass('highcharts-axis-title');
 
-            // #7814, don't mutate style option
-            if (!styledMode) {
-                axis.axisTitle.css(merge(axisTitleOptions.style));
-            }
+            axisTitle.add(axis.axisGroup);
+            axisTitle.isNew = true;
 
-            axis.axisTitle.add(axis.axisGroup);
-            axis.axisTitle.isNew = true;
+        } else {
+            axisTitle
+                .attr(attr)
+                .animate(animatable);
         }
 
-        // Max width defaults to the length of the axis
-        if (
-            !styledMode &&
-            !axisTitleOptions.style.width &&
-            !axis.isRadial
-        ) {
-            axis.axisTitle.css({
-                width: axis.len + 'px'
-            });
+        if (!styledMode) {
+            // #7814, don't mutate the style option
+            const css = merge(axisTitleOptions.style);
+            // Max width defaults to the length of the axis
+            if (
+                !axisTitleOptions.style.width &&
+                !axis.isRadial
+            ) {
+                css.width = axis.len + 'px';
+            }
+            axisTitle.css(css);
         }
 
         // Hide or show the title depending on whether showEmpty is set
-        axis.axisTitle[display ? 'show' : 'hide'](display);
+        axisTitle[display ? 'show' : 'hide'](display);
+
+        // Register
+        axis.axisTitle = axisTitle;
     }
 
     /**
@@ -3447,7 +3452,8 @@ class Axis {
             hasCrossing = isNumber(options.crossing),
             axisOffset = chart.axisOffset,
             clipOffset = chart.clipOffset,
-            directionFactor = [-1, 1, 1, -1][side];
+            directionFactor = [-1, 1, 1, -1][side],
+            appliedDistance = directionFactor * (labelOptions.distance ?? 15);
 
         let showAxis,
             titleOffset = 0,
@@ -3529,6 +3535,8 @@ class Axis {
                     0 :
                     pick(axisTitleOptions.margin, horiz ? 5 : 10);
             }
+        } else {
+            axis.axisTitle = axis.axisTitle?.destroy();
         }
 
         // Render the axis line
@@ -3557,12 +3565,11 @@ class Axis {
                 horiz ?
                     pick(
                         labelOptions.y,
-                        axis.tickRotCorr.y +
-                            directionFactor * labelOptions.distance
+                        axis.tickRotCorr.y + appliedDistance
                     ) :
                     pick(
                         labelOptions.x,
-                        directionFactor * labelOptions.distance
+                        appliedDistance
                     )
             );
         }
@@ -3658,18 +3665,17 @@ class Axis {
      * @function Highcharts.Axis#renderLine
      */
     public renderLine(): void {
-        if (!this.axisLine) {
-            this.axisLine = this.chart.renderer.path()
-                .addClass('highcharts-axis-line')
-                .add(this.axisGroup);
+        const verb = this.axisLine ? 'animate' : 'attr';
+        this.axisLine ||= this.chart.renderer.path()
+            .addClass('highcharts-axis-line')
+            .attr({ zIndex: 7 })
+            .add(this.axisGroup);
 
-            if (!this.chart.styledMode) {
-                this.axisLine.attr({
-                    stroke: this.options.lineColor,
-                    'stroke-width': this.options.lineWidth,
-                    zIndex: 7
-                });
-            }
+        if (!this.chart.styledMode) {
+            this.axisLine[verb]({
+                stroke: this.options.lineColor,
+                'stroke-width': this.options.lineWidth
+            });
         }
     }
 
@@ -3830,7 +3836,6 @@ class Axis {
             ticks = axis.ticks,
             minorTicks = axis.minorTicks,
             alternateBands = axis.alternateBands,
-            stackLabelOptions = options.stackLabels,
             alternateGridColor = options.alternateGridColor,
             crossing = options.crossing,
             tickmarkOffset = axis.tickmarkOffset,
@@ -4014,11 +4019,8 @@ class Axis {
         }
 
 
-        // Stacked totals:
-        if (stackLabelOptions?.enabled && axis.stacking) {
-            axis.stacking.renderStackTotals();
-        }
-        // End stacked totals
+        // Stacked total labels
+        axis.stacking?.renderStackTotals();
 
         // Record old scaling for updating/animation. Pinch base must be
         // preserved until the pinch ends.
@@ -4319,17 +4321,36 @@ class Axis {
      */
     public update(
         options: DeepPartial<AxisTypeOptions>,
-        redraw?: boolean
+        redraw: boolean = true
     ): void {
         const chart = this.chart;
 
+        // @todo: Look for update for each case
+        const fullRebuild = options && (
+            // Wait for data sorting refactor
+            'labels' in options ||
+            // Wait for #23894
+            'overscroll' in options ||
+            'plotBands' in options ||
+            'plotLines' in options ||
+            /// unit-tests/3d/column-crop, unit-tests/axis/type-logarithmic
+            'type' in options
+        );
+
         options = merge(this.userOptions, options);
 
-        this.destroy(true);
+        if (fullRebuild) {
+            this.destroy(true);
+
+        } else {
+            this.isDirty = true;
+            this.forceRedraw = true;
+        }
+
         this.init(chart, options);
 
         chart.isDirtyBox = true;
-        if (pick(redraw, true)) {
+        if (redraw) {
             chart.redraw();
         }
     }
