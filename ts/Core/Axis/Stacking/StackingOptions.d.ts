@@ -21,7 +21,7 @@ import type {
 import type AnimationOptions from '../../Animation/AnimationOptions';
 import type ColorType from '../../Color/ColorType';
 import type CSSObject from '../../Renderer/CSSObject';
-import type { DataLabelOverflowValue } from '../../Series/DataLabelOptions';
+import type { DataLabelsOverflowValue } from '../../Series/DataLabelOptions';
 import type Templating from '../../Templating';
 import type StackItem from './StackItem';
 import type { SymbolKey } from '../../Renderer/SVG/SymbolType';
@@ -57,7 +57,7 @@ export interface StackLabelOptions {
     enabled?: boolean;
     format?: string;
     formatter?: Templating.FormatterCallback<StackItem>;
-    overflow?: DataLabelOverflowValue;
+    overflow?: DataLabelsOverflowValue;
     padding?: number;
     rotation?: number;
     shape?: SymbolKey;

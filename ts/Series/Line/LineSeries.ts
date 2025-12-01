@@ -581,9 +581,11 @@ export default LineSeries;
  */
 
 /**
- * The rank for this point's data label in case of collision. If two
+ * The rank for all this point's data labels in case of collision. If two
  * data labels are about to overlap, only the one with the highest `labelrank`
  * will be drawn.
+ *
+ * The `labelrank` set on `series.dataLabels` takes precedence over this.
  *
  * @type      {number}
  * @apioption series.line.data.labelrank

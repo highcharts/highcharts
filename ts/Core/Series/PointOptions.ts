@@ -91,7 +91,6 @@ export interface PointOptions {
     events?: PointEventsOptions;
     id?: string;
     index?: number;
-    labelrank?: number;
     legendIndex?: number;
     marker?: PointMarkerOptions;
     name?: string;

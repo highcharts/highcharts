@@ -31,7 +31,8 @@ import type SankeyPoint from '../Sankey/SankeyPoint';
 
 export interface OrganizationDataLabelsFormatterCallbackFunction {
     (
-        this: (Point|OrganizationPoint|SankeyPoint)
+        this: (Point|OrganizationPoint|SankeyPoint),
+        options: OrganizationDataLabelOptions
     ): (string|undefined);
 }
 

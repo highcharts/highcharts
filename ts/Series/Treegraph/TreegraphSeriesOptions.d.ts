@@ -97,7 +97,7 @@ export interface CollapseButtonOptions {
 
 }
 
-export interface TreegraphDataLabelFormatterCallback {
+export interface TreegraphDataLabelsFormatterCallbackFunction {
     (
         this: (TreegraphPoint|Point)
     ): (string|undefined);
@@ -109,7 +109,7 @@ export interface TreegraphDataLabelFormatterContext {
 
 export interface TreegraphDataLabelOptions extends DataLabelOptions {
     linkFormat?: string;
-    linkFormatter: TreegraphDataLabelFormatterCallback;
+    linkFormatter: TreegraphDataLabelsFormatterCallbackFunction;
     linkTextPath?: DataLabelTextPathOptions;
 }
 

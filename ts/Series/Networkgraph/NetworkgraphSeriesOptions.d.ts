@@ -58,7 +58,10 @@ declare module '../../Core/Series/SeriesOptions' {
 }
 
 export interface NetworkgraphDataLabelsFormatterCallbackFunction {
-    (this: Point|NetworkgraphPoint): (number|string|null|undefined);
+    (
+        this: Point|NetworkgraphPoint,
+        options: DataLabelOptions
+    ): (number|string|null|undefined);
 }
 
 export interface NetworkgraphDataLabelsOptions
