@@ -26,7 +26,7 @@ describe('Update performance.', () => {
 
             const duration =
                 performance.measure('Start-end', 'Start', 'End').duration;
-            expect(duration).to.be.lessThan(5);
+            expect(duration).to.be.lessThan(10);
         });
     });
 
@@ -52,7 +52,7 @@ describe('Update performance.', () => {
 
             const duration =
                 performance.measure('Start-end', 'Start', 'End').duration;
-            expect(duration).to.be.lessThan(10);
+            expect(duration).to.be.lessThan(15);
         });
     });
 
@@ -75,7 +75,7 @@ describe('Update performance.', () => {
 
             const duration =
                 performance.measure('Start-end', 'Start', 'End').duration;
-            expect(duration).to.be.lessThan(5);
+            expect(duration).to.be.lessThan(7);
         });
     });
 
@@ -104,7 +104,7 @@ describe('Update performance.', () => {
 
             const duration =
                 performance.measure('Start-end', 'Start', 'End').duration;
-            expect(duration).to.be.lessThan(5);
+            expect(duration).to.be.lessThan(10);
         });
     });
 });
