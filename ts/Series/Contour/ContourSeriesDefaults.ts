@@ -47,11 +47,6 @@ import type ContourSeriesOptions from './ContourSeriesOptions';
 const ContourSeriesDefaults: ContourSeriesOptions = {
 
     /**
-     * The offset of the contour lines.
-     */
-    contourOffset: 0,
-
-    /**
      * This must be set to 'value' to make the colorAxis track with the contour
      * plot.
      */
@@ -59,6 +54,16 @@ const ContourSeriesDefaults: ContourSeriesOptions = {
 
     clip: false,
 
+    /**
+     * Determines whether the series should look for the nearest point in both
+     * dimensions or just the x-dimension when hovering the series. Defaults
+     * to 'xy' for scatter and contour series and 'x' for most other series.
+     * If the data has duplicate x-values, it is recommended to set this to 'xy'
+     * to allow hovering over all points.
+     *
+     * Applies only to series types using nearest neighbor search
+     * (not direct hover) for tooltip.
+     */
     findNearestPointBy: 'xy',
 
     /**
@@ -108,7 +113,7 @@ const ContourSeriesDefaults: ContourSeriesOptions = {
      */
 
     /**
-     * @excluding radius, enabledThreshold
+     * @excluding radius, enabledThreshold, fillColor, lineColor
      */
     marker: {
         /**
@@ -132,15 +137,13 @@ const ContourSeriesDefaults: ContourSeriesOptions = {
          *         Predefined, graphic and custom markers
          */
         symbol: 'cross',
-        /** @ignore-option */
-        lineColor: void 0,
         states: {
             /**
              * @excluding radius, radiusPlus
              */
             hover: {
                 /**
-                 * Color of the marker. Defaults to `'black'`.
+                 * Color of the marker outline. Defaults to `'black'`.
                  *
                  * @type    {string}
                  *
