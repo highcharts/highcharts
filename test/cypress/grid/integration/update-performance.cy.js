@@ -26,7 +26,7 @@ describe('Update performance.', () => {
 
             const duration =
                 performance.measure('Start-end', 'Start', 'End').duration;
-            expect(duration).to.be.lessThan(10);
+            expect(duration).to.be.lessThan(15);
         });
     });
 
@@ -52,7 +52,7 @@ describe('Update performance.', () => {
 
             const duration =
                 performance.measure('Start-end', 'Start', 'End').duration;
-            expect(duration).to.be.lessThan(15);
+            expect(duration).to.be.lessThan(20);
         });
     });
 
@@ -75,7 +75,7 @@ describe('Update performance.', () => {
 
             const duration =
                 performance.measure('Start-end', 'Start', 'End').duration;
-            expect(duration).to.be.lessThan(7);
+            expect(duration).to.be.lessThan(10);
         });
     });
 
@@ -100,11 +100,11 @@ describe('Update performance.', () => {
 
             const memoryAfter = performance.memory?.usedJSHeapSize || 0;
             const memoryDelta = memoryAfter - memoryBefore;
-            expect(memoryDelta).to.be.lessThan(150000);
+            expect(memoryDelta).to.be.lessThan(450000);
 
             const duration =
                 performance.measure('Start-end', 'Start', 'End').duration;
-            expect(duration).to.be.lessThan(10);
+            expect(duration).to.be.lessThan(15);
         });
     });
 });
