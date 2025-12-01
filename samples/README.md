@@ -31,7 +31,9 @@ regression tests.
 user input, are still manual. In the utils, they are marked with a checkbox to
 the name. We are gradually replacing these with automatic tests. For each manual
 test, there should be a file, `test-notes.md` that instructs the tester on
-what to look for.
+what to look for. To mark a test for manual testing, add
+`requiresManualTesting: true` in the `demo.details` file. Manual tests **cannot
+be placed in the `unit-tests` dir**.
 
 3. **Unit tests**. These samples are designed to run both in our sample viewer
 and in karma. They load QUnit. Unit tests are recognized by a jigsaw puzzle
