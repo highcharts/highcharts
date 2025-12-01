@@ -29,12 +29,14 @@ import type * as D from '../../Grid';
  *
  * */
 
-export { Grid } from '../../Grid';
-export { Column } from '../../Grid';
-export { TableRow } from '../../Grid';
-export { TableCell } from '../../Grid';
-export { TableCellEvent } from '../../Grid';
-export { Options as GridOptions } from '../../Grid';
+export {
+    Grid,
+    Column,
+    TableRow,
+    TableCell,
+    TableCellEvent,
+    Options as GridOptions
+} from '../../Grid';
 export type GridNamespace = typeof D;
 
 
