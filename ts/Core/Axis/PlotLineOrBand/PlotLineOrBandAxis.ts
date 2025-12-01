@@ -362,29 +362,25 @@ namespace PlotLineOrBandAxis {
         id: string
     ): void {
         const plotLinesAndBands = this.plotLinesAndBands,
-            options = this.options,
-            userOptions = this.userOptions;
+            options = this.options;
 
         if (plotLinesAndBands) { // #15639
             let i = plotLinesAndBands.length;
             while (i--) {
                 if (plotLinesAndBands[i].id === id) {
+
+                    const plotGuideOptions = plotLinesAndBands[i].options;
+
+                    // Destroy
                     plotLinesAndBands[i].destroy();
+
+                    // Remove from options
+                    ([options.plotLines, options.plotBands])
+                        .forEach((arr = []): void => {
+                            erase(arr, plotGuideOptions);
+                        });
                 }
             }
-            ([
-                options.plotLines || [],
-                userOptions.plotLines || [],
-                options.plotBands || [],
-                userOptions.plotBands || []
-            ]).forEach(function (arr): void {
-                i = arr.length;
-                while (i--) {
-                    if (arr[i]?.id === id) {
-                        erase(arr, arr[i]);
-                    }
-                }
-            });
         }
     }
 
