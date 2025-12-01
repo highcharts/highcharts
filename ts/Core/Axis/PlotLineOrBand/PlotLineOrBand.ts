@@ -185,13 +185,12 @@ class PlotLineOrBand {
             group;
 
         const isBand = this.coll === 'plotBands',
+            shortKey = isBand ? 'band' : 'line',
+            groupName = `${shortKey}s-${zIndex}`,
             isNew = !svgElem,
             attribs: SVGAttributes = {
-                'class': 'highcharts-plot-' + (isBand ? 'band ' : 'line ') +
-                    (options.className || '')
+                'class': `highcharts-plot-${shortKey} ${options.className || ''}`
             };
-
-        let groupName = isBand ? 'bands' : 'lines';
 
         // Set the presentational attributes
         if (!axis.chart.styledMode) {
@@ -215,8 +214,6 @@ class PlotLineOrBand {
 
         // Grouping and zIndex
         groupAttribs.zIndex = zIndex;
-        groupName += '-' + zIndex;
-
         group = axis.plotLinesAndBandsGroups[groupName];
         if (!group) {
             axis.plotLinesAndBandsGroups[groupName] = group =

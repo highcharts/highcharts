@@ -4077,23 +4077,31 @@ class Axis {
             removeEvent(axis);
         }
 
-        // Destroy collections
-        [axis.ticks, axis.minorTicks, axis.alternateBands].forEach(
-            function (
-                coll: (
-                    Record<string, PlotLineOrBand>|
-                    Record<string, Tick>
-                )
-            ): void {
-                destroyObjectProperties(coll);
-            }
-        );
+
         if (plotLinesAndBands) {
             let i = plotLinesAndBands.length;
             while (i--) { // #1975
                 plotLinesAndBands[i].destroy();
             }
         }
+
+        // Destroy collections
+        [
+            axis.ticks,
+            axis.minorTicks,
+            axis.alternateBands,
+            axis.plotLinesAndBandsGroups
+        ].forEach(
+            function (
+                coll: (
+                    Record<string, PlotLineOrBand>|
+                    Record<string, Tick>|
+                    Record<string, SVGElement>
+                )
+            ): void {
+                destroyObjectProperties(coll);
+            }
+        );
 
         // Destroy elements
         [
@@ -4106,12 +4114,6 @@ class Axis {
                 }
             }
         );
-
-        // Destroy each generated group for plotlines and plotbands
-        for (const plotGroup in axis.plotLinesAndBandsGroups) { // eslint-disable-line guard-for-in
-            axis.plotLinesAndBandsGroups[plotGroup] =
-                axis.plotLinesAndBandsGroups[plotGroup].destroy() as any;
-        }
 
         // Delete all properties and fall back to the prototype.
         objectEach(axis, function (_val: any, key: string): void {
