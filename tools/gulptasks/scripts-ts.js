@@ -267,7 +267,7 @@ async function scriptsTS(argv) {
                 fsLib.path(['code', 'grid', 'es-modules', 'masters'])
             );
 
-            [
+            [ // Copy the master dts files to the umd bundles folder
                 'grid-lite.src.d.ts',
                 'grid-pro.src.d.ts'
             ].forEach(dtsFile => {
@@ -284,12 +284,20 @@ async function scriptsTS(argv) {
                     dtsFile
                 ]);
 
+                // Update relative paths from '../' to './es-modules/'
                 if (FS.existsSync(sourcePath)) {
                     const content = FS.readFileSync(sourcePath, 'utf8')
                         .replace(/\.\.\//gu, './es-modules/');
 
                     FS.writeFileSync(destinationPath, content, 'utf8');
                 }
+
+                // Copy the copied file to the same destination but with a
+                // .d.ts extension instead of .src.d.ts
+                FS.copyFileSync(
+                    destinationPath,
+                    destinationPath.replace(/\.src\.d\.ts$/u, '.d.ts')
+                );
             });
 
             const gridBuildPropertiesJSON =
