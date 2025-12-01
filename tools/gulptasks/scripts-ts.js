@@ -187,29 +187,7 @@ async function scriptsTS(argv) {
             logLib.success('Copied stand-alone DTS for Dashboards');
         }
 
-        if (product === 'Grid') {
-            const bundleDtsFolder = path.join(__dirname, 'scripts-dts/grid/');
-            const codeGridFolder = 'code/grid/';
-
-            fsLib.copyAllFiles(
-                bundleDtsFolder,
-                codeGridFolder,
-                true
-            );
-
-            fsLib.copyFile(
-                codeGridFolder + 'grid-lite.src.d.ts',
-                codeGridFolder + 'grid-lite.d.ts'
-            );
-
-            fsLib.copyFile(
-                codeGridFolder + 'grid-pro.src.d.ts',
-                codeGridFolder + 'grid-pro.d.ts'
-            );
-
-            logLib.success('Copied stand-alone DTS for Grid');
-
-        } else {
+        if (product !== 'Grid') {
             fsLib.copyAllFiles(
                 'ts',
                 argv.assembler ? 'js' : fsLib.path(['code', 'es-modules']),
@@ -289,12 +267,37 @@ async function scriptsTS(argv) {
                 fsLib.path(['code', 'grid', 'es-modules', 'masters'])
             );
 
+            [
+                'grid-lite.src.d.ts',
+                'grid-pro.src.d.ts'
+            ].forEach(dtsFile => {
+                const sourcePath = fsLib.path([
+                    'code',
+                    'grid',
+                    'es-modules',
+                    'masters',
+                    dtsFile
+                ]);
+                const destinationPath = fsLib.path([
+                    'code',
+                    'grid',
+                    dtsFile
+                ]);
+
+                if (FS.existsSync(sourcePath)) {
+                    const content = FS.readFileSync(sourcePath, 'utf8')
+                        .replace(/\.\.\//gu, './es-modules/');
+
+                    FS.writeFileSync(destinationPath, content, 'utf8');
+                }
+            });
+
             const gridBuildPropertiesJSON =
                 fsLib.getFile(fsLib.path(['tools', 'gulptasks', 'grid', 'build-properties.json']), true);
-            const gridEsmFiles =
-                fsLib.getFilePaths(fsLib.path(['code', 'grid', 'es-modules']), true);
+            const gridFiles =
+                fsLib.getFilePaths(fsLib.path(['code', 'grid']), true);
 
-            for (const file of gridEsmFiles) {
+            for (const file of gridFiles) {
                 await replaceProductPlaceholders(
                     file,
                     'Grid',
