@@ -24,6 +24,7 @@ import type SVGPath from '../../Renderer/SVG/SVGPath';
 
 import U from '../../Utilities.js';
 const {
+    addEvent,
     erase,
     extend,
     isNumber
@@ -135,7 +136,6 @@ namespace PlotLineOrBandAxis {
                 'plotLines'
         )
     ): (PlotLineOrBand|undefined) {
-        const userOptions = this.userOptions;
 
         let obj: (PlotLineOrBand|undefined) = new PlotLineOrBandClass(
             this,
@@ -147,23 +147,20 @@ namespace PlotLineOrBandAxis {
         }
 
         if (obj) { // #2189
-            if (!this._addedPlotLB) {
-                this._addedPlotLB = true;
-                (userOptions.plotLines || [])
-                    .concat((userOptions.plotBands as any) || [])
-                    .forEach(
-                        (plotLineOptions: any): void => {
-                            this.addPlotBandOrLine(plotLineOptions);
-                        }
-                    );
-            }
-
             // Add it to the user options for exporting and Axis.update
             if (coll) {
+
+                // Axis.options[coll] and Axis.userOptions[coll] are always the
+                // same object, because there are no default options for
+                // plot lines and plot bands.
+                this.options[coll] ||= this.userOptions[coll] = [];
+
+                this.options[coll].push(options);
+
                 // Workaround Microsoft/TypeScript issue #32693
-                const updatedOptions = (userOptions[coll] || []) as Array<T>;
-                updatedOptions.push(options);
-                userOptions[coll] = updatedOptions;
+                // const updatedOptions = (userOptions[coll] || []) as Array<T>;
+                // updatedOptions.push(options);
+                // userOptions[coll] = updatedOptions;
             }
             this.plotLinesAndBands.push(obj);
         }
@@ -243,6 +240,26 @@ namespace PlotLineOrBandAxis {
                  */
                 removePlotLine: removePlotBandOrLine,
                 removePlotBandOrLine
+            });
+
+            addEvent(AxisClass, 'afterInit', function (): void {
+                // Placeholder for plotlines and plotbands groups
+                this.plotLinesAndBandsGroups = {};
+
+                // List of plotLines/Bands
+                this.plotLinesAndBands = [];
+
+                // Plot lines and bands from options
+                (this.options.plotLines || [])
+                    .concat((this.options.plotBands as any) || [])
+                    .forEach((plotLineOptions): void => {
+                        this.plotLinesAndBands.push(
+                            new PlotLineOrBandClass(
+                                this as Composition,
+                                plotLineOptions
+                            )
+                        );
+                    });
             });
         }
 
