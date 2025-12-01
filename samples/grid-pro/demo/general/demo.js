@@ -81,7 +81,6 @@ const gridData = {
 
 const columnsConfig = [{
     id: 'available',
-    dataType: 'boolean',
     width: 100,
     className: 'hcg-center',
     header: {
@@ -108,14 +107,14 @@ const columnsConfig = [{
     }
 }, {
     id: 'country',
-    dataType: 'string',
     header: {
         format: 'Country'
     },
     cells: {
         formatter: function () {
             const countryObj = countryByCode[this.value];
-            return `${countryObj.flag} ${countryObj.name}` || this.value;
+            return countryObj ? `${countryObj.flag} ${countryObj.name}` :
+                this.value;
         },
         editMode: {
             renderer: {
