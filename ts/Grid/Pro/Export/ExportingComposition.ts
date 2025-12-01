@@ -30,38 +30,38 @@ import U from '../../../Core/Utilities.js';
 
 const { addEvent, pushUnique } = U;
 
+
 /* *
  *
- *  Class Namespace
+ *  Composition
  *
  * */
 
-namespace ExportingComposition {
-    /**
-     * Extends the grid classes with exporting.
-     *
-     * @param GridClass
-     * The class to extend.
-     *
-     */
-    export function compose(
-        GridClass: typeof Grid
-    ): void {
-        if (!pushUnique(Globals.composed, 'Exporting')) {
-            return;
-        }
-
-        Defaults.defaultOptions.exporting = Exporting.defaultOptions;
-        addEvent(GridClass, 'beforeLoad', initExporting);
+/**
+ * Extends the grid classes with exporting.
+ *
+ * @param GridClass
+ * The class to extend.
+ *
+ */
+export function compose(
+    GridClass: typeof Grid
+): void {
+    if (!pushUnique(Globals.composed, 'Exporting')) {
+        return;
     }
 
-    /**
-     * Init exporting
-     */
-    function initExporting(this: Grid): void {
-        this.exporting = new Exporting(this);
-    }
+    Defaults.defaultOptions.exporting = Exporting.defaultOptions;
+    addEvent(GridClass, 'beforeLoad', initExporting);
 }
+
+/**
+ * Init exporting
+ */
+function initExporting(this: Grid): void {
+    this.exporting = new Exporting(this);
+}
+
 
 /* *
  *
@@ -137,4 +137,6 @@ declare module '../../Core/Grid' {
  *
  * */
 
-export default ExportingComposition;
+export default {
+    compose
+} as const;

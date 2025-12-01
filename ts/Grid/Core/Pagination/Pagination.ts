@@ -193,7 +193,7 @@ class Pagination {
     constructor(
         grid: Grid,
         options: PaginationOptions,
-        state: Pagination.PaginationState = {}
+        state: PaginationState = {}
     ) {
         this.grid = grid;
         this.options = merge(Pagination.defaultOptions, options);
@@ -1165,12 +1165,17 @@ class Pagination {
     }
 }
 
-namespace Pagination {
-    export type PaginationState = {
-        currentPage?: number;
-        currentPageSize?: number;
-    };
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+export interface PaginationState {
+    currentPage?: number;
+    currentPageSize?: number;
 }
+
 
 /* *
  *
