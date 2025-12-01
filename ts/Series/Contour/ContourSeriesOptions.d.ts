@@ -27,18 +27,25 @@ import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
 
 export default interface ContourSeriesOptions extends ScatterSeriesOptions {
     /**
-     * Whether to use smooth color transitions.
+     * Whether to use gradually transitioning color gradients between contour
+     * levels. When disabled, each contour level is filled with a single flat
+     * color.
      *
      * @sample {highcharts} highcharts/demo/contour/
      *         Contour plot with smooth coloring
+     *
+     * @default false
      */
     smoothColoring?: boolean;
 
     /**
-     * Whether to display contour lines.
+     * Whether to display contour lines on the canvas. When enabled, lines are
+     * drawn along the boundaries between different values.
      *
      * @sample {highcharts} highcharts/demo/contour/
      *         Contour plot with lines
+     *
+     * @default true
      */
     showContourLines?: boolean;
 
@@ -53,7 +60,8 @@ export default interface ContourSeriesOptions extends ScatterSeriesOptions {
     renderOnBackground?: boolean;
 
     /**
-     * The interval between contour lines.
+     * The interval between contour lines. Determines the spacing of value
+     * levels where lines are drawn on the plot.
      *
      * @sample {highcharts} highcharts/demo/contour/
      *         Contour plot with lines
@@ -61,7 +69,8 @@ export default interface ContourSeriesOptions extends ScatterSeriesOptions {
     contourInterval?: number;
 
     /**
-     * The offset of the contour lines.
+     * The offset for contour line positioning. Shifts where lines are drawn
+     * relative to the data values.
      *
      * @sample {highcharts} highcharts/demo/contour/
      *         Contour plot with lines

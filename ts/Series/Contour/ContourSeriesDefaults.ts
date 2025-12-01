@@ -62,7 +62,9 @@ const ContourSeriesDefaults: ContourSeriesOptions = {
     findNearestPointBy: 'xy',
 
     /**
-     * Whether to use smooth color transitions.
+     * Whether to use gradually transitioning color gradients between contour
+     * levels. When disabled, each contour level is filled with a single flat
+     * color.
      *
      * @type      {boolean}
      * @default   true
@@ -70,7 +72,8 @@ const ContourSeriesDefaults: ContourSeriesOptions = {
      */
 
     /**
-     * The interval between contour lines.
+     * The interval between contour lines. Determines the spacing of value
+     * levels where lines are drawn on the plot.
      *
      * @type      {number}
      * @default   1
@@ -78,8 +81,8 @@ const ContourSeriesDefaults: ContourSeriesOptions = {
      */
 
     /**
-     * Whether to display contour lines.
-     *
+     * Whether to display contour lines on the canvas. When enabled, lines are
+     * drawn along the boundaries between different values.
      * @type      {boolean}
      * @default   true
      * @apioption plotOptions.contour.showContourLines
@@ -93,6 +96,15 @@ const ContourSeriesDefaults: ContourSeriesOptions = {
      * @type      {boolean}
      * @default   true
      * @apioption plotOptions.contour.renderOnBackground
+     */
+
+    /**
+     * The offset for contour line positioning. Shifts where lines are drawn
+     * relative to the data values.
+     *
+     * @type      {number}
+     * @default   0
+     * @apioption plotOptions.contour.contourOffset
      */
 
     /**
