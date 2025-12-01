@@ -162,7 +162,7 @@ class PlotLineOrBand {
      * @private
      * @function Highcharts.PlotLineOrBand#render
      */
-    public render(): (PlotLineOrBand|undefined) {
+    public render(): (PlotLineOrBand) {
         fireEvent(this, 'render');
 
         const { axis, options } = this,
@@ -251,10 +251,7 @@ class PlotLineOrBand {
                 logarithmic?.log2lin(to) ?? to,
                 options
             );
-        } else {
-            return;
         }
-
 
         // Common for lines and bands. Add events only if they were not added
         // before.

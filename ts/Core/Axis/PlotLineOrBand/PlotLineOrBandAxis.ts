@@ -135,37 +135,27 @@ namespace PlotLineOrBandAxis {
                 'plotBands' :
                 'plotLines'
         )
-    ): (PlotLineOrBand|undefined) {
+    ): PlotLineOrBand {
 
-        let obj: (PlotLineOrBand|undefined) = new PlotLineOrBandClass(
-            this,
-            options
-        );
+        const plotGuide = new PlotLineOrBandClass(this, options);
 
         if (this.visible) {
-            obj = obj.render();
+            plotGuide.render();
         }
 
-        if (obj) { // #2189
-            // Add it to the user options for exporting and Axis.update
-            if (coll) {
+        // Add it to the user options for exporting and Axis.update
+        if (coll) {
 
-                // Axis.options[coll] and Axis.userOptions[coll] are always the
-                // same object, because there are no default options for
-                // plot lines and plot bands.
-                this.options[coll] ||= this.userOptions[coll] = [];
+            // Axis.options[coll] and Axis.userOptions[coll] are always the same
+            // object, because there are no default options for plot lines and
+            // plot bands.
+            this.options[coll] ||= this.userOptions[coll] = [];
 
-                this.options[coll].push(options);
-
-                // Workaround Microsoft/TypeScript issue #32693
-                // const updatedOptions = (userOptions[coll] || []) as Array<T>;
-                // updatedOptions.push(options);
-                // userOptions[coll] = updatedOptions;
-            }
-            this.plotLinesAndBands.push(obj);
+            this.options[coll].push(options);
         }
+        this.plotLinesAndBands.push(plotGuide);
 
-        return obj;
+        return plotGuide;
     }
 
     /**
