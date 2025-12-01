@@ -143,7 +143,6 @@ class PlotLineOrBand {
      */
     public id?: string;
     public isActive?: boolean;
-    public eventsAdded?: boolean;
     public label?: SVGElement;
     public options: (PlotBandOptions|PlotLineOptions);
     public svgElem?: SVGElement;
@@ -255,7 +254,7 @@ class PlotLineOrBand {
 
         // Common for lines and bands. Add events only if they were not added
         // before.
-        if (!this.eventsAdded && events) {
+        if (isNew && events) {
             objectEach(events, (_event, eventType): void => {
                 svgElem?.on(
                     eventType,
@@ -264,8 +263,8 @@ class PlotLineOrBand {
                     }
                 );
             });
-            this.eventsAdded = true;
         }
+
         if ((isNew || !svgElem.d) && path?.length) {
             svgElem.attr({ d: path });
         } else if (svgElem) {
