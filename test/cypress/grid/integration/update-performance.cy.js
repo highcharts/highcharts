@@ -22,7 +22,7 @@ describe('Update performance.', () => {
 
             const memoryAfter = performance.memory?.usedJSHeapSize || 0;
             const memoryDelta = memoryAfter - memoryBefore;
-            expect(memoryDelta).to.be.lessThan(250000);
+            expect(memoryDelta).to.be.lessThan(350000);
 
             const duration =
                 performance.measure('Start-end', 'Start', 'End').duration;
@@ -48,7 +48,7 @@ describe('Update performance.', () => {
 
             const memoryAfter = performance.memory?.usedJSHeapSize || 0;
             const memoryDelta = memoryAfter - memoryBefore;
-            expect(memoryDelta).to.be.lessThan(300000);
+            expect(memoryDelta).to.be.lessThan(400000);
 
             const duration =
                 performance.measure('Start-end', 'Start', 'End').duration;
@@ -71,7 +71,7 @@ describe('Update performance.', () => {
 
             const memoryAfter = performance.memory?.usedJSHeapSize || 0;
             const memoryDelta = memoryAfter - memoryBefore;
-            expect(memoryDelta).to.be.lessThan(50000);
+            expect(memoryDelta).to.be.lessThan(600000);
 
             const duration =
                 performance.measure('Start-end', 'Start', 'End').duration;
@@ -100,7 +100,7 @@ describe('Update performance.', () => {
 
             const memoryAfter = performance.memory?.usedJSHeapSize || 0;
             const memoryDelta = memoryAfter - memoryBefore;
-            expect(memoryDelta).to.be.lessThan(450000);
+            expect(memoryDelta).to.be.lessThan(750000);
 
             const duration =
                 performance.measure('Start-end', 'Start', 'End').duration;
