@@ -125,6 +125,9 @@ class PlotLineOrBand {
          */
         this.options = options;
         this.id = options.id;
+
+        this.coll = defined((options as PlotLineOptions).value) ?
+            'plotLines' : 'plotBands';
     }
 
     /* *
@@ -134,7 +137,7 @@ class PlotLineOrBand {
      * */
 
     public axis: PlotLineOrBandAxis.Composition;
-
+    public coll: 'plotLines'|'plotBands';
     /**
      * The id of the plot line or plot band.
      *
@@ -143,7 +146,6 @@ class PlotLineOrBand {
      */
     public id?: string;
     public isActive?: boolean;
-    public eventsAdded?: boolean;
     public label?: SVGElement;
     public options: (PlotBandOptions|PlotLineOptions);
     public svgElem?: SVGElement;
@@ -162,7 +164,7 @@ class PlotLineOrBand {
      * @private
      * @function Highcharts.PlotLineOrBand#render
      */
-    public render(): (PlotLineOrBand|undefined) {
+    public render(): (PlotLineOrBand) {
         fireEvent(this, 'render');
 
         const { axis, options } = this,
@@ -182,19 +184,23 @@ class PlotLineOrBand {
             path: SVGPath|undefined = [],
             group;
 
-        const isBand = defined(from) && defined(to),
-            isLine = defined(value),
+        const isBand = this.coll === 'plotBands',
+            shortKey = isBand ? 'band' : 'line',
+            groupName = `${shortKey}s-${zIndex}`,
             isNew = !svgElem,
             attribs: SVGAttributes = {
-                'class': 'highcharts-plot-' + (isBand ? 'band ' : 'line ') +
-                    (options.className || '')
+                'class': `highcharts-plot-${shortKey} ${options.className || ''}`
             };
-
-        let groupName = isBand ? 'bands' : 'lines';
 
         // Set the presentational attributes
         if (!axis.chart.styledMode) {
-            if (isLine) {
+            if (isBand) { // Plot band
+                attribs.fill = color || Palette.highlightColor10;
+                if (borderWidth) {
+                    attribs.stroke = (options as PlotBandOptions).borderColor;
+                    attribs['stroke-width'] = borderWidth;
+                }
+            } else {
                 attribs.stroke = color || Palette.neutralColor40;
                 attribs['stroke-width'] = pick(
                     (options as PlotLineOptions).width,
@@ -203,20 +209,11 @@ class PlotLineOrBand {
                 if ((options as PlotLineOptions).dashStyle) {
                     attribs.dashstyle = (options as PlotLineOptions).dashStyle;
                 }
-
-            } else if (isBand) { // Plot band
-                attribs.fill = color || Palette.highlightColor10;
-                if (borderWidth) {
-                    attribs.stroke = (options as PlotBandOptions).borderColor;
-                    attribs['stroke-width'] = borderWidth;
-                }
             }
         }
 
         // Grouping and zIndex
         groupAttribs.zIndex = zIndex;
-        groupName += '-' + zIndex;
-
         group = axis.plotLinesAndBandsGroups[groupName];
         if (!group) {
             axis.plotLinesAndBandsGroups[groupName] = group =
@@ -251,14 +248,11 @@ class PlotLineOrBand {
                 logarithmic?.log2lin(to) ?? to,
                 options
             );
-        } else {
-            return;
         }
-
 
         // Common for lines and bands. Add events only if they were not added
         // before.
-        if (!this.eventsAdded && events) {
+        if (isNew && events) {
             objectEach(events, (_event, eventType): void => {
                 svgElem?.on(
                     eventType,
@@ -267,8 +261,8 @@ class PlotLineOrBand {
                     }
                 );
             });
-            this.eventsAdded = true;
         }
+
         if ((isNew || !svgElem.d) && path?.length) {
             svgElem.attr({ d: path });
         } else if (svgElem) {

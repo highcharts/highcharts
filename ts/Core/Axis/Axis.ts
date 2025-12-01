@@ -202,7 +202,6 @@ class Axis {
      *
      * */
 
-    public _addedPlotLB?: boolean;
     public allExtremes?: Axis.AllExtremes;
     public allowZoomOutside?: boolean;
     public alternateBands!: Record<string, PlotLineOrBand>;
@@ -464,10 +463,6 @@ class Axis {
             (axis.names as any).keys = {};
         }
 
-
-        // Placeholder for plotlines and plotbands groups
-        axis.plotLinesAndBandsGroups ||= {};
-
         // Shorthand types
         axis.positiveValuesOnly = !!axis.logarithmic;
 
@@ -493,9 +488,6 @@ class Axis {
          * @type {Highcharts.Dictionary<Highcharts.Tick>}
          */
         axis.minorTicks ||= {};
-
-        // List of plotLines/Bands
-        axis.plotLinesAndBands ||= [];
 
         // Alternate bands
         axis.alternateBands ||= {};
@@ -3942,19 +3934,10 @@ class Axis {
                 });
             }
 
-            // Custom plot lines and bands
-            if (!axis._addedPlotLB) { // Only first time
-                axis._addedPlotLB = true;
+            this.plotLinesAndBands.forEach((plotLine): void => {
+                plotLine.render();
+            });
 
-                (options.plotLines || [])
-                    .concat((options.plotBands as any) || [])
-                    .forEach(
-                        function (plotLineOptions: any): void {
-                            (axis as unknown as PlotLineOrBand.Axis)
-                                .addPlotBandOrLine(plotLineOptions);
-                        }
-                    );
-            }
         } // End if hasData
 
         // Remove inactive ticks
@@ -4096,23 +4079,31 @@ class Axis {
             removeEvent(axis);
         }
 
-        // Destroy collections
-        [axis.ticks, axis.minorTicks, axis.alternateBands].forEach(
-            function (
-                coll: (
-                    Record<string, PlotLineOrBand>|
-                    Record<string, Tick>
-                )
-            ): void {
-                destroyObjectProperties(coll);
-            }
-        );
+
         if (plotLinesAndBands) {
             let i = plotLinesAndBands.length;
             while (i--) { // #1975
                 plotLinesAndBands[i].destroy();
             }
         }
+
+        // Destroy collections
+        [
+            axis.ticks,
+            axis.minorTicks,
+            axis.alternateBands,
+            axis.plotLinesAndBandsGroups
+        ].forEach(
+            function (
+                coll: (
+                    Record<string, PlotLineOrBand>|
+                    Record<string, Tick>|
+                    Record<string, SVGElement>
+                )
+            ): void {
+                destroyObjectProperties(coll);
+            }
+        );
 
         // Destroy elements
         [
@@ -4125,12 +4116,6 @@ class Axis {
                 }
             }
         );
-
-        // Destroy each generated group for plotlines and plotbands
-        for (const plotGroup in axis.plotLinesAndBandsGroups) { // eslint-disable-line guard-for-in
-            axis.plotLinesAndBandsGroups[plotGroup] =
-                axis.plotLinesAndBandsGroups[plotGroup].destroy() as any;
-        }
 
         // Delete all properties and fall back to the prototype.
         objectEach(axis, function (_val: any, key: string): void {

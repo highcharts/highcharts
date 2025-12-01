@@ -339,7 +339,7 @@ class Tick {
         }
 
         // Call only after first render
-        if (animateLabels && axis._addedPlotLB) {
+        if (animateLabels) {
             tick.moveLabel(str, labelOptions);
         }
         // First call
