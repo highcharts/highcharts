@@ -125,6 +125,9 @@ class PlotLineOrBand {
          */
         this.options = options;
         this.id = options.id;
+
+        this.coll = defined((options as PlotLineOptions).value) ?
+            'plotLines' : 'plotBands';
     }
 
     /* *
@@ -134,7 +137,7 @@ class PlotLineOrBand {
      * */
 
     public axis: PlotLineOrBandAxis.Composition;
-
+    public coll: 'plotLines'|'plotBands';
     /**
      * The id of the plot line or plot band.
      *
@@ -181,8 +184,7 @@ class PlotLineOrBand {
             path: SVGPath|undefined = [],
             group;
 
-        const isBand = defined(from) && defined(to),
-            isLine = defined(value),
+        const isBand = this.coll === 'plotBands',
             isNew = !svgElem,
             attribs: SVGAttributes = {
                 'class': 'highcharts-plot-' + (isBand ? 'band ' : 'line ') +
@@ -193,7 +195,13 @@ class PlotLineOrBand {
 
         // Set the presentational attributes
         if (!axis.chart.styledMode) {
-            if (isLine) {
+            if (isBand) { // Plot band
+                attribs.fill = color || Palette.highlightColor10;
+                if (borderWidth) {
+                    attribs.stroke = (options as PlotBandOptions).borderColor;
+                    attribs['stroke-width'] = borderWidth;
+                }
+            } else {
                 attribs.stroke = color || Palette.neutralColor40;
                 attribs['stroke-width'] = pick(
                     (options as PlotLineOptions).width,
@@ -201,13 +209,6 @@ class PlotLineOrBand {
                 );
                 if ((options as PlotLineOptions).dashStyle) {
                     attribs.dashstyle = (options as PlotLineOptions).dashStyle;
-                }
-
-            } else if (isBand) { // Plot band
-                attribs.fill = color || Palette.highlightColor10;
-                if (borderWidth) {
-                    attribs.stroke = (options as PlotBandOptions).borderColor;
-                    attribs['stroke-width'] = borderWidth;
                 }
             }
         }

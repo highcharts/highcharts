@@ -62,16 +62,14 @@ namespace PlotLineOrBandAxis {
             options: PlotBandOptions
         ): (PlotLineOrBand|undefined);
         addPlotBandOrLine(
-            options: PlotBandOptions,
-            coll?: 'plotBands'
-        ): (PlotLineOrBand|undefined);
+            options: PlotBandOptions
+        ): (PlotLineOrBand);
         addPlotBandOrLine(
-            options: PlotLineOptions,
-            coll?: 'plotLines'
-        ): (PlotLineOrBand|undefined);
+            options: PlotLineOptions
+        ): (PlotLineOrBand);
         addPlotLine(
             options: PlotLineOptions
-        ): (PlotLineOrBand|undefined);
+        ): (PlotLineOrBand);
         getPlotBandPath(
             from: number,
             to: number,
@@ -97,28 +95,6 @@ namespace PlotLineOrBandAxis {
      * */
 
     /**
-     * Add a plot band after render time.
-     *
-     * @sample highcharts/members/axis-addplotband/
-     *         Toggle the plot band from a button
-     *
-     * @function Highcharts.Axis#addPlotBand
-     *
-     * @param {Highcharts.AxisPlotBandsOptions} options
-     * A configuration object for the plot band, as defined in
-     * [xAxis.plotBands](https://api.highcharts.com/highcharts/xAxis.plotBands).
-     *
-     * @return {Highcharts.PlotLineOrBand|undefined}
-     * The added plot band, or `undefined` if the options are not valid.
-     */
-    function addPlotBand(
-        this: Composition,
-        options: PlotBandOptions
-    ): (PlotLineOrBand|undefined) {
-        return this.addPlotBandOrLine(options, 'plotBands');
-    }
-
-    /**
      * Add a plot band or plot line after render time. Called from
      * addPlotBand and addPlotLine internally.
      *
@@ -129,55 +105,26 @@ namespace PlotLineOrBandAxis {
      */
     function addPlotBandOrLine<T extends PlotBandOptions|PlotLineOptions>(
         this: Composition,
-        options: T,
-        coll?: (
-            T extends PlotBandOptions ?
-                'plotBands' :
-                'plotLines'
-        )
+        options: T
     ): PlotLineOrBand {
 
-        const plotGuide = new PlotLineOrBandClass(this, options);
+        const plotGuide = new PlotLineOrBandClass(this, options),
+            coll = plotGuide.coll;
 
         if (this.visible) {
             plotGuide.render();
         }
 
         // Add it to the user options for exporting and Axis.update
-        if (coll) {
+        // Axis.options[coll] and Axis.userOptions[coll] are always the same
+        // object, because there are no default options for plot lines and
+        // plot bands.
+        this.options[coll] ||= this.userOptions[coll] = [];
+        this.options[coll].push(options);
 
-            // Axis.options[coll] and Axis.userOptions[coll] are always the same
-            // object, because there are no default options for plot lines and
-            // plot bands.
-            this.options[coll] ||= this.userOptions[coll] = [];
-
-            this.options[coll].push(options);
-        }
         this.plotLinesAndBands.push(plotGuide);
 
         return plotGuide;
-    }
-
-    /**
-     * Add a plot line after render time.
-     *
-     * @sample highcharts/members/axis-addplotline/
-     *         Toggle the plot line from a button
-     *
-     * @function Highcharts.Axis#addPlotLine
-     *
-     * @param {Highcharts.AxisPlotLinesOptions} options
-     * A configuration object for the plot line, as defined in
-     * [xAxis.plotLines](https://api.highcharts.com/highcharts/xAxis.plotLines).
-     *
-     * @return {Highcharts.PlotLineOrBand|undefined}
-     * The added plot line, or `undefined` if the options are not valid.
-     */
-    function addPlotLine(
-        this: Composition,
-        options: PlotLineOptions
-    ): (PlotLineOrBand|undefined) {
-        return this.addPlotBandOrLine(options, 'plotLines');
     }
 
     /**
@@ -193,8 +140,39 @@ namespace PlotLineOrBandAxis {
             PlotLineOrBandClass = PlotLineOrBandType;
 
             extend(axisProto, {
-                addPlotBand,
-                addPlotLine,
+                /**
+                 * Add a plot band after render time.
+                 *
+                 * @sample highcharts/members/axis-addplotband/
+                 *         Toggle the plot band from a button
+                 *
+                 * @function Highcharts.Axis#addPlotBand
+                 *
+                 * @param {Highcharts.AxisPlotBandsOptions} options
+                 * A configuration object for the plot band, as defined in
+                 * [xAxis.plotBands](https://api.highcharts.com/highcharts/xAxis.plotBands).
+                 *
+                 * @return {Highcharts.PlotLineOrBand|undefined}
+                 * The added plot band, or `undefined` if the options are not valid.
+                 */
+                addPlotBand: addPlotBandOrLine,
+
+                /**
+                 * Add a plot line after render time.
+                 *
+                 * @sample highcharts/members/axis-addplotline/
+                 *         Toggle the plot line from a button
+                 *
+                 * @function Highcharts.Axis#addPlotLine
+                 *
+                 * @param {Highcharts.AxisPlotLinesOptions} options
+                 * A configuration object for the plot line, as defined in
+                 * [xAxis.plotLines](https://api.highcharts.com/highcharts/xAxis.plotLines).
+                 *
+                 * @return {Highcharts.PlotLineOrBand|undefined}
+                 * The added plot line, or `undefined` if the options are not valid.
+                 */
+                addPlotLine: addPlotBandOrLine,
                 addPlotBandOrLine,
                 getPlotBandPath,
 
