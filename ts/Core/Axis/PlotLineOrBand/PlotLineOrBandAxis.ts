@@ -210,8 +210,38 @@ namespace PlotLineOrBandAxis {
                 addPlotLine,
                 addPlotBandOrLine,
                 getPlotBandPath,
-                removePlotBand,
-                removePlotLine,
+
+                /**
+                 * Remove a plot band by its id.
+                 *
+                 * @sample highcharts/members/axis-removeplotband/
+                 *         Remove plot band by id
+                 * @sample highcharts/members/axis-addplotband/
+                 *         Toggle the plot band from a button
+                 *
+                 * @function Highcharts.Axis#removePlotBand
+                 *
+                 * @param {string} id
+                 *        The plot band's `id` as given in the original configuration
+                 *        object or in the `addPlotBand` option.
+                 */
+                removePlotBand: removePlotBandOrLine,
+
+                /**
+                 * Remove a plot line by its id.
+                 *
+                 * @sample highcharts/xaxis/plotlines-id/
+                 *         Remove plot line by id
+                 * @sample highcharts/members/axis-addplotline/
+                 *         Toggle the plot line from a button
+                 *
+                 * @function Highcharts.Axis#removePlotLine
+                 *
+                 * @param {string} id
+                 *        The plot line's `id` as given in the original configuration
+                 *        object or in the `addPlotLine` option.
+                 */
+                removePlotLine: removePlotBandOrLine,
                 removePlotBandOrLine
             });
         }
@@ -315,27 +345,6 @@ namespace PlotLineOrBandAxis {
     }
 
     /**
-     * Remove a plot band by its id.
-     *
-     * @sample highcharts/members/axis-removeplotband/
-     *         Remove plot band by id
-     * @sample highcharts/members/axis-addplotband/
-     *         Toggle the plot band from a button
-     *
-     * @function Highcharts.Axis#removePlotBand
-     *
-     * @param {string} id
-     *        The plot band's `id` as given in the original configuration
-     *        object or in the `addPlotBand` option.
-     */
-    function removePlotBand(
-        this: Composition,
-        id: string
-    ): void {
-        this.removePlotBandOrLine(id);
-    }
-
-    /**
      * Remove a plot band or plot line from the chart by id. Called
      * internally from `removePlotBand` and `removePlotLine`.
      * @private
@@ -370,27 +379,6 @@ namespace PlotLineOrBandAxis {
                 }
             });
         }
-    }
-
-    /**
-     * Remove a plot line by its id.
-     *
-     * @sample highcharts/xaxis/plotlines-id/
-     *         Remove plot line by id
-     * @sample highcharts/members/axis-addplotline/
-     *         Toggle the plot line from a button
-     *
-     * @function Highcharts.Axis#removePlotLine
-     *
-     * @param {string} id
-     *        The plot line's `id` as given in the original configuration
-     *        object or in the `addPlotLine` option.
-     */
-    function removePlotLine(
-        this: Composition,
-        id: string
-    ): void {
-        this.removePlotBandOrLine(id);
     }
 
 }
