@@ -211,23 +211,28 @@ namespace PlotLineOrBandAxis {
             });
 
             addEvent(AxisClass, 'afterInit', function (): void {
-                // Placeholder for plotlines and plotbands groups
-                this.plotLinesAndBandsGroups = {};
 
-                // List of plotLines/Bands
-                this.plotLinesAndBands = [];
+                // First time only, not on Axis.update()
+                if (!this.plotLinesAndBands) {
 
-                // Plot lines and bands from options
-                (this.options.plotLines || [])
-                    .concat((this.options.plotBands as any) || [])
-                    .forEach((plotLineOptions): void => {
-                        this.plotLinesAndBands.push(
-                            new PlotLineOrBandClass(
-                                this as Composition,
-                                plotLineOptions
-                            )
-                        );
-                    });
+                    // Placeholder for plotlines and plotbands groups
+                    this.plotLinesAndBandsGroups = {};
+
+                    // List of plotLines/Bands
+                    this.plotLinesAndBands = [];
+
+                    // Plot lines and bands from options
+                    (this.options.plotLines || [])
+                        .concat((this.options.plotBands as any) || [])
+                        .forEach((plotLineOptions): void => {
+                            this.plotLinesAndBands.push(
+                                new PlotLineOrBandClass(
+                                    this as Composition,
+                                    plotLineOptions
+                                )
+                            );
+                        });
+                }
             });
         }
 
