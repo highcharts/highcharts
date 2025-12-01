@@ -64,7 +64,7 @@ declare module '../Renderer/SVG/SVGElementBase' {
  * Hide overlapping labels. Labels are moved and faded in and out on zoom to
  * provide a smooth visual impression.
  *
- * @private
+ * @internal
  * @function Highcharts.Chart#hideOverlappingLabels
  * @param {Array<Highcharts.SVGElement>} labels
  *        Rendered data labels
@@ -220,7 +220,7 @@ function chartHideOverlappingLabels(
     }
 }
 
-/** @private */
+/** @internal */
 function compose(
     ChartClass: typeof Chart
 ): void {
@@ -237,7 +237,7 @@ function compose(
 /**
  * Hide or show labels based on opacity.
  *
- * @private
+ * @internal
  * @function hideOrShow
  * @param {Highcharts.SVGElement} label
  * The label.
@@ -300,7 +300,7 @@ function hideOrShow(label: SVGElement, chart: Chart): boolean {
  * Collect potential overlapping data labels. Stack labels probably don't need
  * to be considered because they are usually accompanied by data labels that lie
  * inside the columns.
- * @private
+ * @internal
  */
 function onChartRender(
     this: Chart

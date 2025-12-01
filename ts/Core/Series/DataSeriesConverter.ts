@@ -47,7 +47,7 @@ const {
  * Class to convert Highcharts series data to table and get series data from the
  * table.
  *
- * @private
+ * @internal
  */
 class DataSeriesConverter {
 

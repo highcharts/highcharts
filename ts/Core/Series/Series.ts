@@ -582,7 +582,7 @@ class Series {
      * Set the xAxis and yAxis properties of cartesian series, and register
      * the series in the `axis.series` array.
      *
-     * @private
+     * @internal
      * @function Highcharts.Series#bindAxes
      */
     public bindAxes(): void {
@@ -654,7 +654,7 @@ class Series {
      * Define hasData functions for series. These return true if there
      * are data points on this series within the plot area.
      *
-     * @private
+     * @internal
      * @function Highcharts.Series#hasData
      */
     public hasData(): boolean {
@@ -671,7 +671,7 @@ class Series {
     /**
      * Determine whether the marker in a series has changed.
      *
-     * @private
+     * @internal
      * @function Highcharts.Series#hasMarkerChanged
      */
     public hasMarkerChanged(
@@ -694,7 +694,7 @@ class Series {
      * pointInterval options. This is only used if an x value is not given
      * for the point that calls autoIncrement.
      *
-     * @private
+     * @internal
      * @function Highcharts.Series#autoIncrement
      */
     public autoIncrement(x?: number): number {
@@ -751,7 +751,7 @@ class Series {
      * Internal function to set properties for series if data sorting is
      * enabled.
      *
-     * @private
+     * @internal
      * @function Highcharts.Series#setDataSortingOptions
      */
     public setDataSortingOptions(): void {
@@ -774,7 +774,7 @@ class Series {
      * Set the series options by merging from the options tree. Called
      * internally on initializing and updating series. This function will
      * not redraw the series. For API usage, use {@link Series#update}.
-     * @private
+     * @internal
      * @function Highcharts.Series#setOptions
      * @param {Highcharts.SeriesOptionsType} itemOptions
      * The series options.
@@ -921,7 +921,7 @@ class Series {
      * Set series-specific properties for color and symbol. Called internally
      * from Series.update().
      *
-     * @private
+     * @internal
      * @function Highcharts.Series#getCyclic
      *
      * @param {'color'|'symbol'} prop
@@ -980,7 +980,7 @@ class Series {
      * Get the series' color based on either the options or pulled from
      * global options.
      *
-     * @private
+     * @internal
      * @function Highcharts.Series#getColor
      */
     public getColor(): void {
@@ -1003,7 +1003,7 @@ class Series {
     /**
      * Get all points' instances created for this series.
      *
-     * @private
+     * @internal
      * @function Highcharts.Series#getPointsCollection
      */
     public getPointsCollection(): Array<Point> {
@@ -1014,7 +1014,7 @@ class Series {
      * Get the series' symbol based on either the options or pulled from
      * global options.
      *
-     * @private
+     * @internal
      * @function Highcharts.Series#getSymbol
      */
     public getSymbol(): void {
@@ -1030,7 +1030,7 @@ class Series {
     /**
      * Shorthand to get one of the series' data columns from `Series.dataTable`.
      *
-     * @private
+     * @internal
      * @function Highcharts.Series#getColumn
      */
     public getColumn(columnId: string, modified?: boolean): Array<number> {
@@ -1044,7 +1044,7 @@ class Series {
      * Finds the index of an existing point that matches the given point
      * options.
      *
-     * @private
+     * @internal
      * @function Highcharts.Series#findPointIndex
      * @param {Highcharts.PointOptionsObject} optionsObject
      * The options of the point.
@@ -1138,7 +1138,7 @@ class Series {
      * to points. This also allows adding or removing points if the X-es
      * don't match.
      *
-     * @private
+     * @internal
      * @function Highcharts.Series#updateData
      */
     public updateData(
@@ -1569,7 +1569,7 @@ class Series {
     /**
      * Internal function to sort series data
      *
-     * @private
+     * @internal
      * @function Highcharts.Series#sortData
      * @param {Array<Highcharts.PointOptionsType>} data
      * Force data grouping.
@@ -1649,7 +1649,7 @@ class Series {
      * points if the series is longer than the crop threshold. This saves
      * computing time for large series.
      *
-     * @private
+     * @internal
      * @function Highcharts.Series#getProcessedData
      * @param {boolean} [forceExtremesFromAll]
      * Force getting extremes of a total series data range.
@@ -1752,7 +1752,7 @@ class Series {
      * Internal function to apply processed data.
      * In Highcharts Stock, this function is extended to provide data grouping.
      *
-     * @private
+     * @internal
      * @function Highcharts.Series#processData
      * @param {boolean} [force]
      * Force data grouping.
@@ -1793,7 +1793,7 @@ class Series {
      * object containing crop start/end cropped xData with corresponding
      * part of yData, dataMin and dataMax within the cropped range.
      *
-     * @private
+     * @internal
      * @function Highcharts.Series#cropData
      */
     public cropData(
@@ -1843,7 +1843,7 @@ class Series {
      * Generate the data point after the data has been processed by cropping
      * away unused points and optionally grouped in Highcharts Stock.
      *
-     * @private
+     * @internal
      * @function Highcharts.Series#generatePoints
      */
     public generatePoints(): void {
@@ -2009,7 +2009,7 @@ class Series {
     /**
      * Get current X extremes for the visible data.
      *
-     * @private
+     * @internal
      * @function Highcharts.Series#getXExtremes
      * @param {Array<number>} xData
      * The data to inspect. Defaults to the current data within the visible
@@ -2026,7 +2026,7 @@ class Series {
      * Calculate Y extremes for the visible data. The result is returned
      * as an object with `dataMin` and `dataMax` properties.
      *
-     * @private
+     * @internal
      * @function Highcharts.Series#getExtremes
      * @param {Array<number>} [yData]
      * The data to inspect. Defaults to the current data within the visible
@@ -2125,7 +2125,7 @@ class Series {
      * Series item. Use this only when the series properties should be
      * updated.
      *
-     * @private
+     * @internal
      * @function Highcharts.Series#applyExtremes
      */
     public applyExtremes(): DataExtremesObject {
@@ -2157,7 +2157,7 @@ class Series {
     /**
      * Find and return the first non nullish point in the data
      *
-     * @private
+     * @internal
      * @function Highcharts.Series.getFirstValidPoint
      * @param {Array<Highcharts.PointOptionsType>} data
      *        Array of options for points
@@ -2222,7 +2222,7 @@ class Series {
          * Plotted coordinates need to be within a limited range. Drawing
          * too far outside the viewport causes various rendering issues
          * (#3201, #3923, #7555).
-         * @private
+         * @internal
          */
         function limitedRange(val: number): number {
             return clamp(val, -1e9, 1e9);
@@ -2456,7 +2456,7 @@ class Series {
     /**
      * Get the shared clip key, creating it if it doesn't exist.
      *
-     * @private
+     * @internal
      * @function Highcharts.Series#getSharedClipKey
      */
     public getSharedClipKey(): string {
@@ -2470,7 +2470,7 @@ class Series {
      * Set the clipping for the series. For animated series the clip is later
      * modified.
      *
-     * @private
+     * @internal
      * @function Highcharts.Series#setClip
      */
     public setClip(): void {
@@ -2612,7 +2612,7 @@ class Series {
     /**
      * This runs after animation to land on the final plot clipping.
      *
-     * @private
+     * @internal
      * @function Highcharts.Series#afterAnimate
      *
      * @emits Highcharts.Series#event:afterAnimate
@@ -2889,7 +2889,7 @@ class Series {
      * those attributes that can also be set in CSS. In styled mode,
      * `pointAttribs` won't be called.
      *
-     * @private
+     * @internal
      * @function Highcharts.Series#pointAttribs
      *
      * @param {Highcharts.Point} [point]
@@ -2990,7 +2990,7 @@ class Series {
     /**
      * Clear DOM objects and free up memory.
      *
-     * @private
+     * @internal
      * @function Highcharts.Series#destroy
      *
      * @emits Highcharts.Series#event:destroy
@@ -3072,7 +3072,7 @@ class Series {
     /**
      * Clip the graphs into zones for colors and styling.
      *
-     * @private
+     * @internal
      * @function Highcharts.Series#applyZones
      */
     public applyZones(): void {
@@ -3291,7 +3291,7 @@ class Series {
      * series.dataLabelsGroup and series.markerGroup. On subsequent calls,
      * the group will only be adjusted to the updated plot size.
      *
-     * @private
+     * @internal
      * @function Highcharts.Series#plotGroup
      */
     public plotGroup(
@@ -3407,7 +3407,7 @@ class Series {
 
     /**
      * Removes the event handlers attached previously with addEvents.
-     * @private
+     * @internal
      * @function Highcharts.Series#removeEvents
      */
     public removeEvents(keepEventsForUpdate?: boolean): void {
@@ -3535,7 +3535,7 @@ class Series {
     /**
      * Redraw the series. This function is called internally from
      * `chart.redraw` and normally shouldn't be called directly.
-     * @private
+     * @internal
      * @function Highcharts.Series#redraw
      */
     public redraw(): void {
@@ -3553,7 +3553,7 @@ class Series {
      * Whether to reserve space for the series, either because it is visible or
      * because the `chart.ignoreHiddenSeries` option is false.
      *
-     * @private
+     * @internal
      */
     public reserveSpace(): boolean {
         return this.visible || !this.chart.options.chart.ignoreHiddenSeries;
@@ -3601,7 +3601,7 @@ class Series {
      * tree where points are searched along the X axis, while scatter-like
      * series typically search in two dimensions, X and Y.
      *
-     * @private
+     * @internal
      * @function Highcharts.Series#buildKDTree
      */
     public buildKDTree(e?: PointerEvent): void {
@@ -3617,7 +3617,7 @@ class Series {
 
         /**
          * Internal function
-         * @private
+         * @internal
          */
         function kdtree(
             points: Array<Point>,
@@ -3657,7 +3657,7 @@ class Series {
         /**
          * Start the recursive build process with a clone of the points
          * array and null points filtered out. (#3873)
-         * @private
+         * @internal
          */
         function startRecursive(): void {
             series.kdTree = kdtree(
@@ -3686,7 +3686,7 @@ class Series {
     /**
      * Search the k-d-tree for the point closest to the given point.
      *
-     * @private
+     * @internal
      * @function Highcharts.Series#searchKDTree
      *
      * @param {Highcharts.KDPointSearchObject} point
@@ -3741,7 +3741,7 @@ class Series {
 
         /**
          * Set the one and two dimensional distance on the point object.
-         * @private
+         * @internal
          */
         function setDistance(
             p1: KDPointSearchObject,
@@ -3762,7 +3762,7 @@ class Series {
         /**
          * Search the kd-tree.
          *
-         * @private
+         * @internal
          * @function doSearch
          *
          * @param {Highcharts.KDPointSearchObject} search
@@ -3847,7 +3847,7 @@ class Series {
     /**
      * Return the value of pointPlacement relative to the point's x value.
      *
-     * @private
+     * @internal
      * @function Highcharts.Series#pointPlacementToXValue
      */
     public pointPlacementToXValue(): number {
@@ -3867,7 +3867,7 @@ class Series {
     /**
      * Check whether a point is inside the plot area.
      *
-     * @private
+     * @internal
      * @function Highcharts.Series#isPointInside
      *
      * @param {Highcharts.Dictionary<number>|Highcharts.Point} point
@@ -3894,7 +3894,7 @@ class Series {
      * track mouse events on the graph or points. For the line type charts
      * the tracker uses the same graphPath, but with a greater stroke width
      * for better control.
-     * @private
+     * @internal
      */
     public drawTracker(): void {
         const series = this,
@@ -4223,7 +4223,7 @@ class Series {
         /**
          * Remove the series.
          *
-         * @private
+         * @internal
          */
         function remove(): void {
 
@@ -4526,7 +4526,7 @@ class Series {
 
     /**
      * Used from within series.update
-     * @private
+     * @internal
      */
     public setName(name: string): void {
         this.name = this.options.name = this.userOptions.name = name;
@@ -4535,7 +4535,7 @@ class Series {
 
     /**
      * Check if the option has changed.
-     * @private
+     * @internal
      */
     public hasOptionChanged(optionName: string): boolean {
         const chart = this.chart,
@@ -4761,7 +4761,7 @@ class Series {
      *
      * @function Highcharts.Series#setAllPointsToState
      *
-     * @private
+     * @internal
      *
      * @param {string} [state]
      *        Can be either `hover` or undefined to set to normal state.
@@ -4931,7 +4931,7 @@ class Series {
     /**
      * Checks if a tooltip should be shown for a given point.
      *
-     * @private
+     * @internal
      */
     public shouldShowTooltip(
         plotX: number,
@@ -4946,7 +4946,7 @@ class Series {
     /**
      * Draws the legend symbol based on the legendSymbol user option.
      *
-     * @private
+     * @internal
      */
     public drawLegendSymbol(legend: Legend, item: Legend.Item): void {
         LegendSymbol[this.options.legendSymbol || 'rectangle']

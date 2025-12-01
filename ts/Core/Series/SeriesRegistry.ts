@@ -63,7 +63,7 @@ namespace SeriesRegistry {
     /**
      * Registers class pattern of a series.
      *
-     * @private
+     * @internal
      */
     export function registerSeriesType(
         seriesType: string,

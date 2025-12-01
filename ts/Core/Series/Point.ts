@@ -270,7 +270,7 @@ class Point {
     /**
      * Animate SVG elements associated with the point.
      *
-     * @private
+     * @internal
      * @function Highcharts.Point#animateBeforeDestroy
      */
     public animateBeforeDestroy(): void {
@@ -309,7 +309,7 @@ class Point {
      * Apply the options containing the x and y data and possible some extra
      * properties. Called on point init or from point.update.
      *
-     * @private
+     * @internal
      * @function Highcharts.Point#applyOptions
      *
      * @param {Highcharts.PointOptionsType} options
@@ -406,7 +406,7 @@ class Point {
      * Destroy a point to clear memory. Its reference still stays in
      * `series.data`.
      *
-     * @private
+     * @internal
      * @function Highcharts.Point#destroy
      */
     public destroy(): void {
@@ -421,7 +421,7 @@ class Point {
 
             /**
              * Allow to call after animation.
-             * @private
+             * @internal
              */
             const destroyPoint = (): void => {
                 // Remove all events and elements
@@ -475,7 +475,7 @@ class Point {
     /**
      * Destroy SVG elements associated with the point.
      *
-     * @private
+     * @internal
      * @function Highcharts.Point#destroyElements
      *
      * @param {Highcharts.Dictionary<number>} [kinds]
@@ -503,7 +503,7 @@ class Point {
     /**
      * Fire an event on the Point object.
      *
-     * @private
+     * @internal
      * @function Highcharts.Point#firePointEvent
      *
      * @param {string} eventType
@@ -578,7 +578,7 @@ class Point {
     /**
      * Get props of all existing graphical point elements.
      *
-     * @private
+     * @internal
      * @function Highcharts.Point#getGraphicalProps
      */
     public getGraphicalProps(kinds?: Record<string, number>): Point.GraphicalProps {
@@ -628,7 +628,7 @@ class Point {
 
     /**
      * Returns the value of the point property for a given value.
-     * @private
+     * @internal
      */
     public getNestedProperty(key?: string): unknown {
         if (!key) {
@@ -677,7 +677,7 @@ class Point {
     /**
      * Utility to check if point has new shape type. Used in column series and
      * all others that are based on column series.
-     * @private
+     * @internal
      */
     public hasNewShapeType(): boolean|undefined {
         const point = this;
@@ -733,7 +733,7 @@ class Point {
 
     /**
      * Determine if point is valid.
-     * @private
+     * @internal
      * @function Highcharts.Point#isValid
      */
     public isValid(): boolean {
@@ -874,7 +874,7 @@ class Point {
     /**
      * Resolve the color of a point.
      *
-     * @private
+     * @internal
      * @function Highcharts.Point#resolveColor
      */
     public resolveColor(): void {
@@ -1077,7 +1077,7 @@ class Point {
         /**
          * Perform the actual update of the point.
          *
-         * @private
+         * @internal
          */
         function update(): void {
 
@@ -1332,7 +1332,7 @@ class Point {
      * Manage specific event from the series' and point's options. Only do it on
      * demand, to save processing time on hovering.
      *
-     * @private
+     * @internal
      * @function Highcharts.Point#importEvents
      */
     public manageEvent(eventType: string): void {

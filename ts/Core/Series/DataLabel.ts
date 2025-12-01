@@ -228,7 +228,7 @@ namespace DataLabel {
      * Check if this series has data labels, either a series-level setting, or
      * individual. In case of individual point labels, this method is overridden
      * to always return true.
-     * @private
+     * @internal
      */
     function hasDataLabels(this: Series): boolean {
         return mergedDataLabelOptions(this)
@@ -239,7 +239,7 @@ namespace DataLabel {
 
     /**
      * Align each individual data label.
-     * @private
+     * @internal
      */
     function alignDataLabel(
         this: Series,
@@ -444,7 +444,7 @@ namespace DataLabel {
 
     /**
      * Handle the dataLabels.filter option.
-     * @private
+     * @internal
      */
     function applyFilter(
         point: Point,
@@ -477,7 +477,7 @@ namespace DataLabel {
     /**
      * Compose the data label composition onto a series class.
      *
-     * @private
+     * @internal
      * @function compose
      *
      * @param {Highcharts.Series} SeriesClass
@@ -506,7 +506,7 @@ namespace DataLabel {
     /**
      * Create the SVGElement group for dataLabels
      *
-     * @private
+     * @internal
      * @function initDataLabelsGroup
      *
      * @param {number} index
@@ -554,7 +554,7 @@ namespace DataLabel {
     /**
      * Init the data labels with the correct animation.
      *
-     * @private
+     * @internal
      * @function initDataLabels
      *
      * @param {number} index
@@ -597,7 +597,7 @@ namespace DataLabel {
 
     /**
      * Draw the data labels
-     * @private
+     * @internal
      */
     function drawDataLabels(
         this: Series,
@@ -909,7 +909,7 @@ namespace DataLabel {
     /**
      * If data labels fall partly outside the plot area, align them back in, in
      * a way that doesn't hide the point.
-     * @private
+     * @internal
      */
     function justifyDataLabel(
         this: Series,
@@ -997,7 +997,7 @@ namespace DataLabel {
      * Merge two objects that can be arrays. If one of them is an array, the
      * other is merged into each element. If both are arrays, each element is
      * merged by index. If neither are arrays, we use normal merge.
-     * @private
+     * @internal
      */
     function mergeArrays(
         one: (DataLabelOptions|Array<DataLabelOptions>|undefined),
@@ -1032,7 +1032,7 @@ namespace DataLabel {
 
     /**
      * Merge plotOptions and series options for dataLabels.
-     * @private
+     * @internal
      */
     function mergedDataLabelOptions(
         series: Series
@@ -1052,7 +1052,7 @@ namespace DataLabel {
 
     /**
      * Set starting position for data label sorting animation.
-     * @private
+     * @internal
      */
     function setDataLabelStartPos(
         this: Series,

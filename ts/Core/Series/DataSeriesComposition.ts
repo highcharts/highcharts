@@ -67,9 +67,7 @@ export declare class DataSeriesComposition extends Series {
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 function wrapSeriesGeneratePoints(
     this: DataSeriesComposition,
     proceed: DataSeriesComposition['generatePoints']
@@ -108,9 +106,7 @@ function wrapSeriesGeneratePoints(
     fireEvent(this, 'afterGeneratePoints');
 }
 
-/**
- * @private
- */
+/** @internal */
 function wrapSeriesSetData(
     this: DataSeriesComposition,
     proceed: DataSeriesComposition['setData'],
@@ -178,7 +174,7 @@ class DataSeriesAdditions {
      * */
 
     /**
-     * @private
+     * @internal
      */
     public static compose(
         SeriesClass: typeof Series
@@ -241,7 +237,7 @@ class DataSeriesAdditions {
 
     /**
      * Triggers processing and redrawing
-     * @private
+     * @internal
      */
     public processTable(
         redraw?: boolean,
@@ -266,7 +262,7 @@ class DataSeriesAdditions {
 
     /**
      * Experimental integration of the data layer
-     * @private
+     * @internal
      */
     public setTable(
         table: DataTable,
@@ -382,7 +378,7 @@ class DataSeriesAdditions {
 
     /**
      * Stops synchronisation of table changes with series.
-     * @private
+     * @internal
      */
     public syncOff(): void {
         const unlisteners = this.unlisteners;
@@ -396,7 +392,7 @@ class DataSeriesAdditions {
 
     /**
      * Activates synchronization of table changes with series.
-     * @private
+     * @internal
      */
     public syncOn(): void {
         if (this.unlisteners.length) {

@@ -103,7 +103,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *
      * @since 1.2.0
      *
-     * @private
+     * @internal
      */
     allowPointSelect: false,
 
@@ -121,7 +121,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @since   5.0.10
      * @product highcharts highstock gantt
      *
-     * @private
+     * @internal
      */
     crisp: true,
 
@@ -139,7 +139,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *
      * @since 1.2.0
      *
-     * @private
+     * @internal
      */
     showCheckbox: false,
 
@@ -183,7 +183,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @default {highstock} true
      * @default {highmaps} false
      *
-     * @private
+     * @internal
      */
     animation: {
         /** @ignore-option */
@@ -919,7 +919,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *
      * @declare Highcharts.SeriesEventsOptionsObject
      *
-     * @private
+     * @internal
      */
     events: {},
 
@@ -1059,7 +1059,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @sample {highmaps} maps/demo/mappoint-mapmarker
      *         Using the mapmarker symbol for points
      *
-     * @private
+     * @internal
      */
     marker: {
 
@@ -1380,7 +1380,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *
      * @declare Highcharts.PlotSeriesPointOptions
      *
-     * @private
+     * @internal
      */
     point: {
 
@@ -1532,7 +1532,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @type    {*|Array<*>}
      * @product highcharts highstock highmaps gantt
      *
-     * @private
+     * @internal
      */
     dataLabels: {
         /**
@@ -2104,7 +2104,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @since   2.2
      * @product highcharts highstock
      *
-     * @private
+     * @internal
      */
     cropThreshold: 300,
 
@@ -2115,7 +2115,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *
      * @since 7.1.0
      *
-     * @private
+     * @internal
      */
     opacity: 1,
 
@@ -2127,7 +2127,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *
      * @product highstock
      *
-     * @private
+     * @internal
      */
     pointRange: 0,
 
@@ -2144,14 +2144,14 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @since   4.1.9
      * @product highcharts highstock
      *
-     * @private
+     * @internal
      */
     softThreshold: true,
 
     /**
      * @declare Highcharts.SeriesStatesOptionsObject
      *
-     * @private
+     * @internal
      */
     states: {
 
@@ -2398,7 +2398,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @default {highmaps} false
      * @since   2.0
      *
-     * @private
+     * @internal
      */
     stickyTracking: true,
 
@@ -2437,7 +2437,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @since   2.2
      * @product highcharts highstock gantt
      *
-     * @private
+     * @internal
      */
     turboThreshold: 1000,
 
@@ -2616,7 +2616,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @since      5.0.10
      * @validvalue ["x", "xy"]
      *
-     * @private
+     * @internal
      */
     findNearestPointBy: 'x'
 
