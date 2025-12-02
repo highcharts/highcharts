@@ -31,7 +31,7 @@ import type { PaginationState } from './Pagination/Pagination.js';
 
 import Accessibility from './Accessibility/Accessibility.js';
 import AST from '../../Core/Renderer/HTML/AST.js';
-import Defaults from './Defaults.js';
+import { defaultOptions } from './Defaults.js';
 import GridUtils from './GridUtils.js';
 import DataTable from '../../Data/DataTable.js';
 import Table from './Table/Table.js';
@@ -449,7 +449,7 @@ export class Grid {
 
         this.userOptions = merge(this.userOptions, newOptions);
         this.options = merge(
-            this.options ?? Defaults.defaultOptions,
+            this.options ?? defaultOptions,
             this.userOptions
         );
 

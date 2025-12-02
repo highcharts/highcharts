@@ -32,7 +32,7 @@ import type Options from '../../Core/Options';
 import type Table from '../../Core/Table/Table';
 import type TableCell from '../../Core/Table/Body/TableCell';
 
-import Defaults from '../../Core/Defaults.js';
+import { defaultOptions as gridDefaultOptions } from '../../Core/Defaults.js';
 import Globals from '../../Core/Globals.js';
 import CellEditing from './CellEditing.js';
 import CellRendererRegistry from '../CellRendering/CellRendererRegistry.js';
@@ -102,7 +102,7 @@ export function compose(
         return;
     }
 
-    merge(true, Defaults.defaultOptions, defaultOptions);
+    merge(true, gridDefaultOptions, defaultOptions);
 
     addEvent(ColumnClass, 'afterInit', afterColumnInit);
 

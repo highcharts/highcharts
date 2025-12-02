@@ -23,7 +23,7 @@
 
 import type Grid from '../../Core/Grid';
 
-import Defaults from '../../Core/Defaults.js';
+import { defaultOptions } from '../../Core/Defaults.js';
 import Exporting from './Exporting.js';
 import Globals from '../../Core/Globals.js';
 import U from '../../../Core/Utilities.js';
@@ -51,7 +51,7 @@ export function compose(
         return;
     }
 
-    Defaults.defaultOptions.exporting = Exporting.defaultOptions;
+    defaultOptions.exporting = Exporting.defaultOptions;
     addEvent(GridClass, 'beforeLoad', initExporting);
 }
 

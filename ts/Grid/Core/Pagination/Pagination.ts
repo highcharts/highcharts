@@ -30,7 +30,7 @@ import type {
 } from './PaginationOptions';
 
 import Icons from './Icons.js';
-import Defaults from '../Defaults.js';
+import { defaultOptions } from '../Defaults.js';
 import Globals from '../Globals.js';
 import GridUtils from '../GridUtils.js';
 import Utilities from '../../../Core/Utilities.js';
@@ -210,7 +210,7 @@ class Pagination {
 
         // Lang pack
         this.lang = merge(
-            Defaults.defaultOptions.pagination,
+            defaultOptions.pagination,
             this.grid.options?.lang?.pagination
         );
 
