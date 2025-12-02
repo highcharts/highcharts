@@ -34,7 +34,7 @@ import type {
  * @sample {highstock} stock/indicators/acceleration-bands
  *         Acceleration Bands
  *
- * @extends      Highcharts.SMAOptions
+ * @extends      plotOptions.sma
  * @since        7.0.0
  * @product      highstock
  * @excluding    allAreas, colorAxis, compare, compareBase, joinBy, keys,
@@ -84,7 +84,7 @@ export interface ABandsOptions extends SMAOptions, MultipleLinesComposition.Indi
  * Parameters used in calculation of acceleration bands values.
  *
  * @interface Highcharts.ABandsParamsOptions
- * @extends Highcharts.SMAParamsOptions
+ * @extends plotOptions.sma.params
  */
 export interface ABandsParamsOptions extends SMAParamsOptions {
     /**
