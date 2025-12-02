@@ -25,42 +25,56 @@ import type {
 * */
 
 /**
- * Options for the Awesome Oscillator indicator.
+ * Awesome Oscillator. This series requires the `linkedTo` option to
+ * be set and should be loaded after the `stock/indicators/indicators.js`
  *
+ * @sample {highstock} stock/indicators/ao
+ *         Awesome
+ *
+ * @extends      plotOptions.sma
+ * @since        7.0.0
+ * @product      highstock
+ * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
+ *               params, pointInterval, pointIntervalUnit, pointPlacement,
+ *               pointRange, pointStart, showInNavigator, stacking
+ * @requires     stock/indicators/indicators
+ * @requires     stock/indicators/ao
+ * @optionparent plotOptions.ao
  * @interface Highcharts.AOOptions
- * @extends Highcharts.SMAOptions
  */
 export interface AOOptions extends SMAOptions {
     /**
      * Color of the Awesome oscillator series bar that is greater than the
-     * previous one. Note that if a `color` is defined, the `color` takes
-     * precedence and the `greaterBarColor` is ignored.
+     * previous one. Note that if a `color` is defined, the `color`
+     * takes precedence and the `greaterBarColor` is ignored.
+     *
+     * @sample {highstock} stock/indicators/ao/
+     *         greaterBarColor
+     *
+     * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @since 7.0.0
      */
     greaterBarColor?: ColorString;
 
-    /**
-     * Padding between each column or bar, in x axis units.
-     */
     groupPadding?: number;
 
     /**
      * Color of the Awesome oscillator series bar that is lower than the
-     * previous one. Note that if a `color` is defined, the `color` takes
-     * precedence and the `lowerBarColor` is ignored.
+     * previous one. Note that if a `color` is defined, the `color`
+     * takes precedence and the `lowerBarColor` is ignored.
+     *
+     * @sample {highstock} stock/indicators/ao/
+     *         lowerBarColor
+     *
+     * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @since 7.0.0
      */
     lowerBarColor?: ColorString;
 
-    /**
-     * Padding between each column value, in x axis units.
-     */
     pointPadding?: number;
 
     states?: SeriesStatesOptions<AOIndicator>;
 
-    /**
-     * The threshold value that determines whether the bar is seen as positive
-     * or negative.
-     */
     threshold?: number;
 }
 

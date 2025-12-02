@@ -39,19 +39,11 @@ import type {
  */
 export interface ADOptions extends SMAOptions {
     /**
-     * Parameters used in calculation of accumulation/distribution values.
-     *
      * @excluding index
      */
     params?: ADParamsOptions;
 }
 
-/**
- * Parameters used in calculation of accumulation/distribution values.
- *
- * @interface Highcharts.ADParamsOptions
- * @extends plotOptions.sma.params
- */
 export interface ADParamsOptions extends SMAParamsOptions {
     /**
      * The id of volume series which is mandatory.

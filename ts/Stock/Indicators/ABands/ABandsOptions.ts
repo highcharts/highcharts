@@ -59,33 +59,15 @@ export interface ABandsOptions extends SMAOptions, MultipleLinesComposition.Indi
      */
     fillColor?: ColorType;
 
-    /**
-     * Pixel width of the middle line.
-     */
     lineWidth?: number;
 
-    /**
-     * Parameters used in calculation of acceleration bands values.
-     */
     params?: ABandsParamsOptions;
 
-    /**
-     * Options for the bottom line.
-     */
     bottomLine?: ABandsLineOptions;
 
-    /**
-     * Options for the top line.
-     */
     topLine?: ABandsLineOptions;
 }
 
-/**
- * Parameters used in calculation of acceleration bands values.
- *
- * @interface Highcharts.ABandsParamsOptions
- * @extends plotOptions.sma.params
- */
 export interface ABandsParamsOptions extends SMAParamsOptions {
     /**
      * The algorithms factor value used to calculate bands.
@@ -95,23 +77,10 @@ export interface ABandsParamsOptions extends SMAParamsOptions {
     factor?: number;
 }
 
-/**
- * Options for the top or bottom line.
- *
- * @interface Highcharts.ABandsLineOptions
- */
 export interface ABandsLineOptions {
-    /**
-     * Line specific CSS styles.
-     */
     styles?: ABandsLineStyleOptions;
 }
 
-/**
- * CSS properties for acceleration bands lines.
- *
- * @interface Highcharts.ABandsLineStyleOptions
- */
 export interface ABandsLineStyleOptions extends CSSObject {
     /**
      * Pixel width of the line.
