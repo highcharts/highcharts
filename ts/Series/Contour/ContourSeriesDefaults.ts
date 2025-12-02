@@ -151,18 +151,7 @@ const ContourSeriesDefaults: ContourSeriesOptions = {
                  *
                  * @apioption plotOptions.contour.marker.states.hover.lineColor
                  */
-                lineColor: 'black',
-
-                /**
-                 * Fill of the cross marker. Defaults to `'transparent'`.
-                 *
-                 * @type    {string}
-                 *
-                 * @default transparent
-                 *
-                 * @apioption plotOptions.contour.marker.states.hover.fillColor
-                 */
-                fillColor: 'transparent'
+                lineColor: 'black'
             }
         }
     },
