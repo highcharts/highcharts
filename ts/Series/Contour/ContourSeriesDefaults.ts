@@ -32,7 +32,7 @@ import type ContourSeriesOptions from './ContourSeriesOptions';
  * @productdesc {highcharts}
  * Requires `modules/contour`.
  *
- * @sample highcharts/demo/contour/
+ * @sample highcharts/demo/contour-mountain/
  *
  * @extends      plotOptions.scatter
  * @excluding    animationLimit, cluster, connectEnds, connectNulls,
@@ -192,7 +192,7 @@ const ContourSeriesDefaults: ContourSeriesOptions = {
  * @productdesc {highcharts}
  * Requires `modules/contour`.
  *
- * @sample highcharts/demo/contour/
+ * @sample highcharts/demo/contour-mountain/
  *         Simple contour
  *
  * @extends      series,plotOptions.contour

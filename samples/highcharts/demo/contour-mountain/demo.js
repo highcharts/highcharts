@@ -57,6 +57,17 @@ const chart = Highcharts.chart('container', {
         `
     },
     series: [{
+        /*
+            +------------+
+            | NEW OPTIONS:
+            +------------+
+
+                - smoothColoring,
+                - contourInterval,
+                - contourOffset,
+                - showContourLines,
+                - renderOnBackground
+        */
         type: 'contour',
         name: 'Elevation',
         renderOnBackground: true,
