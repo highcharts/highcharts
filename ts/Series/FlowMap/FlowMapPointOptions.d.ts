@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2018-2025 Askel Eirik Johansson
+ *  (c) 2018-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *

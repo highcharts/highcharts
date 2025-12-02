@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2025 Øystein Moseng
+ *  (c) 2009-2025 Highsoft AS
  *
  *  Utility functions for accessibility module.
  *

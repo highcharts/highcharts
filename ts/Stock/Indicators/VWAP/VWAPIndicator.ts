@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2025 Paweł Dalek
+ *  (c) 2010-2025 Highsoft AS
  *
  *  Volume Weighted Average Price (VWAP) indicator for Highcharts Stock
  *

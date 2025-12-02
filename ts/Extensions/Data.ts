@@ -2,7 +2,7 @@
  *
  *  Data module
  *
- *  (c) 2012-2025 Torstein Honsi
+ *  (c) 2012-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2025 Highsoft AS
  *
  *  Extensions to the SVGRenderer class to enable 3D shapes
  *

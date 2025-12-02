@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2025 Highsoft AS
  *
  *  Extension to the Series object in 3D charts.
  *

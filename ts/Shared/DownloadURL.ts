@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2015-2025 Oystein Moseng
+ *  (c) 2015-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2025 Øystein Moseng
+ *  (c) 2009-2025 Highsoft AS
  *
  *  Build a timeline from a chart.
  *

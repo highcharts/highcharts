@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2025 Torstein Honsi
+ *  (c) 2009-2025 Highsoft AS
  *
  *  Dot plot series type for Highcharts
  *
