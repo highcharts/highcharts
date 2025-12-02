@@ -551,9 +551,23 @@ export default PlotLineOrBand;
  * In styled mode, the plot bands are styled by the `.highcharts-plot-band`
  * class in addition to the `className` option.
  *
+ * When doing `Chart.update()` or `Axis.update()`, the plot bands are updated
+ * by index or id. The following merging rules apply:
+ * - If `plotBands` are not defined in the new options, all existing plot bands
+ *   are kept.
+ * - If `plotBands` are defined without ids, the existing plot bands are updated
+ *   by index. If the new array has fewer plot bands, the remaining existing
+ *   plot bands are removed. If the new array has more plot bands, the extra
+ *   ones are added. An empty array removes all existing plot bands.
+ * - If `plotBands` are defined with ids, the existing plot bands are matched
+ *   by id, and remaining unmatched existing plot bands are removed.
+ *
  * @productdesc {highcharts}
  * In a gauge, a plot band on the Y axis (value axis) will stretch along the
  * perimeter of the gauge.
+ *
+ * @sample    {highcharts} highcharts/xaxis/plotbands-color/
+ *            Basic plot band
  *
  * @type      {Array<*>}
  * @product   highcharts highstock gantt
@@ -874,12 +888,23 @@ export default PlotLineOrBand;
  * In styled mode, the plot lines are styled by the
  * `.highcharts-plot-line` class in addition to the `className` option.
  *
+ * When doing `Chart.update()` or `Axis.update()`, the plot lines are updated
+ * by index or id. The following merging rules apply:
+ * - If `plotLines` are not defined in the new options, all existing plot lines
+ *   are kept.
+ * - If `plotLines` are defined without ids, the existing plot lines are updated
+ *   by index. If the new array has fewer plot lines, the remaining existing
+ *   plot lines are removed. If the new array has more plot lines, the extra
+ *   ones are added. An empty array removes all existing plot lines.
+ * - If `plotLines` are defined with ids, the existing plot lines are matched
+ *   by id, and remaining unmatched existing plot lines are removed.
+ *
  * @type      {Array<*>}
  * @product   highcharts highstock gantt
- * @sample {highcharts} highcharts/xaxis/plotlines-color/
- *         Basic plot line
- * @sample {highcharts} highcharts/series-solidgauge/labels-auto-aligned/
- *         Solid gauge plot line
+ * @sample    {highcharts} highcharts/xaxis/plotlines-color/
+ *            Basic plot line
+ * @sample    {highcharts} highcharts/series-solidgauge/labels-auto-aligned/
+ *            Solid gauge plot line
  * @apioption xAxis.plotLines
  */
 
