@@ -27,8 +27,7 @@ import U from '../../Utilities.js';
 const {
     addEvent,
     extend,
-    isNumber,
-    merge
+    isNumber
 } = U;
 
 /* *
@@ -245,7 +244,7 @@ namespace PlotLineOrBandAxis {
 
                         const plotItems = this[coll];
                         options[coll].forEach(
-                            (pOptions, i): void => {
+                            (pOptions = {}, i): void => {
                                 // Match by id
                                 let pItem: PlotLineOrBand | undefined;
                                 if (pOptions?.id) {
@@ -259,7 +258,7 @@ namespace PlotLineOrBandAxis {
 
                                 // Update
                                 if (pItem) {
-                                    merge(true, pItem.options, pOptions);
+                                    pItem.update(pOptions, false);
 
                                 // Add
                                 } else {

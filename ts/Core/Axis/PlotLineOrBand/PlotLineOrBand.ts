@@ -16,6 +16,7 @@
  *
  * */
 import type Chart from '../../Chart/Chart';
+import type { DeepPartial } from '../../../Shared/Types';
 import type Templating from '../../Templating';
 import type {
     PlotBandLabelOptions,
@@ -415,6 +416,26 @@ class PlotLineOrBand {
         }
 
         label.show(true);
+    }
+
+    /**
+     * Update the plot line or band with new options.
+     *
+     * @param {Highcharts.AxisPlotLinesOptions|Highcharts.AxisPlotBandsOptions} options
+     *        The new options to apply
+     * @param {boolean} [redraw=true]
+     *        Whether to redraw the plot guide immediately
+     *
+     * @function Highcharts.PlotLineOrBand#update
+     */
+    public update(
+        options: DeepPartial<PlotBandOptions|PlotLineOptions>,
+        redraw = true
+    ): void {
+        merge(true, this.options, options);
+        if (redraw) {
+            this.render();
+        }
     }
 
     /**
