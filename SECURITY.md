@@ -1,6 +1,6 @@
 # Security
 
-Highsoft takes security seriously. We will investigate all legitimate reports and do our best to quickly fix the problem. If you believe you have found a security vulnerability in one of the following product, we encourage you to report it to us as described below:
+Highsoft takes security seriously. We will investigate all legitimate reports and do our best to quickly fix the problem. If you believe you have found a security vulnerability in one of the following products, we encourage you to report it to us as described below:
 
   * Highcharts
   * Highcharts Gantt
