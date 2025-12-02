@@ -4311,7 +4311,7 @@ class Axis {
      * call {@link Chart#redraw} after.
      */
     public update(
-        options: DeepPartial<AxisTypeOptions>,
+        options: DeepPartial<AxisTypeOptions> = {},
         redraw: boolean = true
     ): void {
         const chart = this.chart;
@@ -4322,8 +4322,6 @@ class Axis {
             'labels' in options ||
             // Wait for #23894
             'overscroll' in options ||
-            'plotBands' in options ||
-            'plotLines' in options ||
             /// unit-tests/3d/column-crop, unit-tests/axis/type-logarithmic
             'type' in options
         );

@@ -17,6 +17,7 @@
  * */
 
 import type Axis from '../Axis';
+import type { DeepPartial } from '../../../Shared/Types';
 import type PlotBandOptions from './PlotBandOptions';
 import type PlotLineOptions from './PlotLineOptions';
 import type PlotLineOrBand from './PlotLineOrBand';
@@ -26,7 +27,8 @@ import U from '../../Utilities.js';
 const {
     addEvent,
     extend,
-    isNumber
+    isNumber,
+    merge
 } = U;
 
 /* *
@@ -231,44 +233,57 @@ namespace PlotLineOrBandAxis {
             });
 
             // Update plot bands and lines one to one
-            /*
-            addEvent(AxisClass, 'update', function ({ options }): void {
+            addEvent(AxisClass, 'update', function ({
+                options
+            }: { options: DeepPartial<Axis['options']> }): void {
 
-                const { plotBands = [], plotLines = [] } = this.options;
+                for (const coll of ['plotBands', 'plotLines'] as const) {
 
-                (options.plotBands || []).forEach(
-                    (pOptions, i): void => {
-                        // Match by id
-                        let pItem: PlotLineOrBand | undefined;
-                        if (pOptions.id) {
-                            pItem = plotBands.find(
-                                (pb): boolean => pb.id === pOptions.id
-                            );
+                    // Check if we have new options to process, otherwise do
+                    // nothing with existing plot lines and bands
+                    if (options[coll]) {
+
+                        const plotItems = this[coll];
+                        options[coll].forEach(
+                            (pOptions, i): void => {
+                                // Match by id
+                                let pItem: PlotLineOrBand | undefined;
+                                if (pOptions?.id) {
+                                    pItem = plotItems.find(
+                                        (p): boolean => p.id === pOptions.id
+                                    );
+                                }
+
+                                // Match by index
+                                pItem ||= plotItems[i];
+
+                                // Update
+                                if (pItem) {
+                                    merge(true, pItem.options, pOptions);
+
+                                // Add
+                                } else {
+                                    pItem = (this as Composition)
+                                        .addPlotBandOrLine(
+                                            pOptions as PlotBandOptions
+                                        );
+                                }
+                                pItem.isActive = true;
+                            }
+                        );
+
+                        // Remove inactive items from end to start
+                        let i = plotItems.length;
+                        while (i--) {
+                            if (!plotItems[i].isActive) {
+                                plotItems[i].remove();
+                            } else {
+                                delete plotItems[i].isActive;
+                            }
                         }
-
-                        // Match by index
-                        pItem ||= plotBands[i];
-
-                        // Update
-                        if (pItem) {
-                            merge(true, pItem, pOptions);
-                            pItem.touched = true;
-
-                        // Add
-                        } else {
-                            this.addPlotBandOrLine(pOptions);
-                        }
-                    }
-                );
-                for (const pItem of plotBands) {
-                    if (!pItem.touched) {
-                        this.removePlotBandOrLine(pItem.id as string);
-                    } else {
-                        delete pItem.touched;
                     }
                 }
             });
-            */
         }
 
         return AxisClass as (T&typeof Composition);

@@ -954,3 +954,206 @@ QUnit.test(
         opacityTester([1, 1, 1]);
     }
 );
+
+QUnit.test(
+    'Soft update',
+    assert => {
+        const chart = Highcharts.chart('container', {
+            xAxis: {
+                plotBands: [
+                    {
+                        from: 2,
+                        to: 3,
+                        color: 'green'
+
+                    },
+                    {
+                        from: 4,
+                        to: 5,
+                        color: 'blue'
+                    }
+                ]
+            },
+            series: [{
+                data: [1, 3, 2, 4, 3, 5, 4]
+            }]
+        });
+
+        const [greenBand, blueBand] = chart.xAxis[0].plotBands;
+
+        // Update one to one without id
+        chart.update({
+            xAxis: {
+                plotBands: [
+                    {
+                        from: 1
+                    },
+                    {
+                        from: 3
+                    }
+                ]
+            }
+        });
+
+        assert.strictEqual(
+            chart.xAxis[0].plotBands.length,
+            2,
+            'There should be two plot bands after update'
+        );
+        assert.strictEqual(
+            chart.xAxis[0].plotBands[0],
+            greenBand,
+            'The first plot band should be the same instance'
+        );
+        assert.strictEqual(
+            chart.xAxis[0].plotBands[1],
+            blueBand,
+            'The second plot band should be the same instance'
+        );
+        assert.strictEqual(
+            greenBand.options.from,
+            1,
+            'The "from" option of the first plot band should be updated'
+        );
+        assert.strictEqual(
+            blueBand.options.from,
+            3,
+            'The "from" option of the second plot band should be updated'
+        );
+
+        // Chart/Axis update with no relevant changes
+        chart.update({
+            xAxis: {
+                title: {
+                    text: 'New title'
+                }
+            }
+        });
+        assert.strictEqual(
+            chart.xAxis[0].plotBands.length,
+            2,
+            'There should be two plot bands after update'
+        );
+        assert.strictEqual(
+            chart.xAxis[0].plotBands[0],
+            greenBand,
+            'The first plot band should be the same instance'
+        );
+        assert.strictEqual(
+            chart.xAxis[0].plotBands[1],
+            blueBand,
+            'The second plot band should be the same instance'
+        );
+
+        // Update without id, add plot band
+        chart.update({
+            xAxis: {
+                plotBands: [
+                    {
+                        to: 2
+                    },
+                    {
+                        from: 4
+                    },
+                    {
+                        from: 2.5,
+                        to: 3.5,
+                        color: 'red'
+                    }
+                ]
+            }
+        });
+        assert.strictEqual(
+            chart.xAxis[0].plotBands.length,
+            3,
+            'There should be three plot bands after update'
+        );
+        assert.strictEqual(
+            chart.xAxis[0].plotBands[0],
+            greenBand,
+            'The first plot band should be the same instance'
+        );
+        assert.strictEqual(
+            chart.xAxis[0].plotBands[1],
+            blueBand,
+            'The second plot band should be the same instance'
+        );
+
+        // Update without id, remove plot band
+        chart.update({
+            xAxis: {
+                plotBands: [{}, {}]
+            }
+        });
+        assert.strictEqual(
+            chart.xAxis[0].plotBands.length,
+            2,
+            'There should be two plot bands after update'
+        );
+        assert.strictEqual(
+            chart.xAxis[0].plotBands[0],
+            greenBand,
+            'The first plot band should be the same instance'
+        );
+        assert.strictEqual(
+            chart.xAxis[0].plotBands[1],
+            blueBand,
+            'The second plot band should be the same instance'
+        );
+
+        chart.xAxis[0].plotBands[1].id = 'blue-band';
+
+        // Update with id, remove unidentified plot band
+        chart.update({
+            xAxis: {
+                plotBands: [
+                    {
+                        id: 'blue-band',
+                        color: 'lightblue'
+                    }
+                ]
+            }
+        });
+        assert.strictEqual(
+            chart.xAxis[0].plotBands.length,
+            1,
+            'There should be one plot band after update'
+        );
+        assert.strictEqual(
+            chart.xAxis[0].plotBands[0],
+            blueBand,
+            'The plot band should be the same instance'
+        );
+        assert.strictEqual(
+            blueBand.svgElem.element.getAttribute('fill'),
+            'lightblue',
+            'The "color" option of the plot band should be updated'
+        );
+
+        // Update without idea should match id'ed band
+        chart.update({
+            xAxis: {
+                plotBands: [
+                    {
+                        from: 3
+                    }
+                ]
+            }
+        });
+        assert.strictEqual(
+            chart.xAxis[0].plotBands.length,
+            1,
+            'There should be one plot band after update'
+        );
+        assert.strictEqual(
+            chart.xAxis[0].plotBands[0],
+            blueBand,
+            'The plot band should be the same instance'
+        );
+        assert.strictEqual(
+            blueBand.options.from,
+            3,
+            'The "from" option of the plot band should be updated'
+        );
+    }
+);

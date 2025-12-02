@@ -368,6 +368,10 @@ class PlotLineOrBand {
             }
 
             label.add();
+
+        } else if (label.opacity === 0) {
+            // Reset overlap hiding
+            label.attr({ opacity: 1 });
         }
 
         // Get the bounding box and align the label
