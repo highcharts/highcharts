@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2025 Øystein Moseng
+ *  (c) 2009-2025 Highsoft AS
  *
  *  Class that can keep track of events added, and clean them up on destroy.
  *

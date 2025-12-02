@@ -2,7 +2,7 @@
  *
  *  Parallel coordinates module
  *
- *  (c) 2010-2025 Pawel Fus
+ *  (c) 2010-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *

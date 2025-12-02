@@ -2,7 +2,7 @@
  *
  *  Parabolic SAR indicator for Highcharts Stock
  *
- *  (c) 2010-2025 Grzegorz Blachliński
+ *  (c) 2010-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *

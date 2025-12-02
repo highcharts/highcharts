@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2025 Paweł Dalek
+ *  (c) 2010-2025 Highsoft AS
  *
  *  Volume By Price (VBP) indicator for Highcharts Stock
  *
