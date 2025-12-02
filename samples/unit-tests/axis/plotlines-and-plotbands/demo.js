@@ -930,7 +930,7 @@ QUnit.test(
                 from: 0,
                 to: 1,
                 label: {
-                    text: '0000000000000000',
+                    text: 'UpdatedLabelText',
                     allowOverlap: true
                 }
             },
@@ -952,6 +952,12 @@ QUnit.test(
         });
 
         opacityTester([1, 1, 1]);
+
+        assert.strictEqual(
+            chart.series[0].xAxis.plotBands[0].label.element.textContent,
+            'UpdatedLabelText',
+            'First label text should be correct after update'
+        );
     }
 );
 

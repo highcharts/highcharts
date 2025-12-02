@@ -341,37 +341,30 @@ class PlotLineOrBand {
              * @type {Highcharts.SVGElement}
              */
             plotLine.label = label = renderer
-                .text(
-                    this.getLabelText(optionsLabel),
-                    0,
-                    0,
-                    optionsLabel.useHTML
-                )
-                .attr({
-                    align: optionsLabel.textAlign || optionsLabel.align,
-                    rotation: optionsLabel.rotation,
-                    'class': 'highcharts-plot-' + (isBand ? 'band' : 'line') +
-                        '-label ' + (optionsLabel.className || ''),
-                    zIndex
-                });
+                .text('', 0, 0, optionsLabel.useHTML)
+                .add();
+        }
 
-            if (!axis.chart.styledMode) {
-                label.css(merge({
-                    // To allow theming, and in lack of a general place to set
-                    // default options for plot lines and bands, default to the
-                    // title color. If we expose the palette, we should use that
-                    // instead.
-                    color: axis.chart.options.title?.style?.color,
-                    fontSize: '0.8em',
-                    textOverflow: (isBand && !inside) ? '' : 'ellipsis'
-                }, optionsLabel.style));
-            }
+        label.attr({
+            opacity: 1,
+            text: this.getLabelText(optionsLabel),
+            align: optionsLabel.textAlign || optionsLabel.align,
+            rotation: optionsLabel.rotation,
+            'class': 'highcharts-plot-' + (isBand ? 'band' : 'line') +
+                '-label ' + (optionsLabel.className || ''),
+            zIndex
+        });
 
-            label.add();
-
-        } else if (label.opacity === 0) {
-            // Reset overlap hiding
-            label.attr({ opacity: 1 });
+        if (!axis.chart.styledMode) {
+            label.css(merge({
+                // To allow theming, and in lack of a general place to set
+                // default options for plot lines and bands, default to the
+                // title color. If we expose the palette, we should use that
+                // instead.
+                color: axis.chart.options.title?.style?.color,
+                fontSize: '0.8em',
+                textOverflow: (isBand && !inside) ? '' : 'ellipsis'
+            }, optionsLabel.style));
         }
 
         // Get the bounding box and align the label
