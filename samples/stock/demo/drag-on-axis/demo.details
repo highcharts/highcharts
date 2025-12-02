@@ -8,6 +8,7 @@ requiresManualTesting: true
 is_morningstar: true
 tags:
   - Highcharts Stock demo
+  - Morningstar
 categories:
   - Various features
 ...

@@ -112,11 +112,14 @@ abstract class BaseForm {
             this.container
         );
 
-        closeButton.style['background-image' as any] = 'url(' +
-                (
-                    iconsURL.match(/png|svg|jpeg|jpg|gif/ig) ?
-                        iconsURL : iconsURL + 'close.svg'
-                ) + ')';
+        createElement('span', {
+            className: 'highcharts-icon'
+        }, {
+            backgroundImage: 'url(' + (
+                iconsURL.match(/png|svg|jpeg|jpg|gif/ig) ?
+                    iconsURL : iconsURL + 'close.svg'
+            ) + ')'
+        }, closeButton);
 
         ['click', 'touchstart'].forEach((eventName: string): void => {
             addEvent(

@@ -52,7 +52,7 @@ async function resetClone(argv) {
     for (const item of TO_DELETE) {
         logLib.warn(item);
         if (fsLib.isDirectory(item)) {
-            fsLib.deleteDirectory(item, true);
+            fsLib.deleteDirectory(item);
         } else {
             fsLib.deleteFile(item);
         }

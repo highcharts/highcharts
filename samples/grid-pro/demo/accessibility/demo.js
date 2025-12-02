@@ -1,7 +1,7 @@
 const grid = Grid.grid('container', {
     dataTable: {
         columns: {
-            id: ['1', '2', '3', '4'],
+            id: [1, 2, 3, 4],
             product: ['Apple', 'Pear', 'Plum', 'Banana'],
             weight: [100, 60, 30, 200],
             price: [1.5, 2.53, 5, 4.5]
@@ -14,7 +14,9 @@ const grid = Grid.grid('container', {
     },
     columnDefaults: {
         cells: {
-            editable: true
+            editMode: {
+                enabled: true
+            }
         }
     },
     credits: {
@@ -29,8 +31,11 @@ const grid = Grid.grid('container', {
             format: 'ID'
         },
         cells: {
-            editable: false
-        }
+            editMode: {
+                enabled: false
+            }
+        },
+        width: 60
     }, {
         id: 'product',
         header: {

@@ -25,13 +25,19 @@ let dashboard;
 const topicMap = {
     'highcharts/topic1': {
         chart: 'column-chart-1',
-        dataGrid: 'data-grid-1'
+        grid: 'grid-1'
     },
     'highcharts/topic2': {
         chart: 'column-chart-2',
-        dataGrid: 'data-grid-2'
+        grid: 'grid-2'
     }
 };
+
+Highcharts.setOptions({
+    chart: {
+        styledMode: true
+    }
+});
 
 // Options for chart
 const chartOptions = {
@@ -61,8 +67,8 @@ const chartOptions = {
     }
 };
 
-// Options for datagrid
-const dataGridOptions = {
+// Options for grid
+const gridOptions = {
     cellHeight: 30,
     editable: false,
     credits: {
@@ -94,7 +100,7 @@ const dataGridOptions = {
 const connConfig = {
     autoSubscribe: true,
     maxRows: 10,
-    columnNames: [
+    columnIds: [
         'time',
         'value'
     ],
@@ -156,17 +162,13 @@ async function createDashboard() {
             connectors: [{
                 type: 'MQTT',
                 id: 'mqtt-data-1',
-                options: {
-                    topic: Object.keys(topicMap)[0],
-                    ...connConfig
-                }
+                topic: Object.keys(topicMap)[0],
+                ...connConfig
             }, {
                 type: 'MQTT',
                 id: 'mqtt-data-2',
-                options: {
-                    topic: Object.keys(topicMap)[1],
-                    ...connConfig
-                }
+                topic: Object.keys(topicMap)[1],
+                ...connConfig
             }]
         },
         components: [{
@@ -189,8 +191,8 @@ async function createDashboard() {
                 }
             }
         }, {
-            renderTo: 'data-grid-1',
-            type: 'DataGrid',
+            renderTo: 'grid-1',
+            type: 'Grid',
             connector: {
                 id: 'mqtt-data-1'
             },
@@ -200,7 +202,7 @@ async function createDashboard() {
                     autoScroll: true
                 }
             },
-            dataGridOptions
+            gridOptions
         }, {
             renderTo: 'column-chart-2',
             type: 'Highcharts',
@@ -221,8 +223,8 @@ async function createDashboard() {
                 }
             }
         }, {
-            renderTo: 'data-grid-2',
-            type: 'DataGrid',
+            renderTo: 'grid-2',
+            type: 'Grid',
             connector: {
                 id: 'mqtt-data-2'
             },
@@ -232,7 +234,7 @@ async function createDashboard() {
                     autoScroll: true
                 }
             },
-            dataGridOptions: dataGridOptions
+            gridOptions: gridOptions
         }],
         gui: {
             layouts: [{
@@ -241,14 +243,14 @@ async function createDashboard() {
                     cells: [{
                         id: 'column-chart-1'
                     }, {
-                        id: 'data-grid-1'
+                        id: 'grid-1'
                     }]
                 }, {
                     // For topic 2
                     cells: [{
                         id: 'column-chart-2'
                     }, {
-                        id: 'data-grid-2'
+                        id: 'grid-2'
                     }]
                 }]
             }]
@@ -421,7 +423,7 @@ class MQTTConnector extends DataConnector {
      **/
     async reset() {
         const connector = this,
-            table = connector.table;
+            table = connector.getTable();
 
         connector.packetCount = 0;
         await table.deleteColumns();
@@ -543,7 +545,7 @@ class MQTTConnector extends DataConnector {
         // Executes in Paho.Client context
         const connector = connectorTable[this.clientId],
             converter = connector.converter,
-            connTable = connector.table;
+            connTable = connector.getTable();
 
         // Parse the packets
         let data;
@@ -562,36 +564,21 @@ class MQTTConnector extends DataConnector {
             return; // Skip invalid packets
         }
 
-        converter.parse({ data });
-        const convTable = converter.getTable();
+        const columns = converter.parse({ data });
         const nRowsCurrent = connTable.getRowCount();
 
         if (nRowsCurrent === 0) {
             // Initialize the table on first packet
-            connTable.setColumns(convTable.getColumns());
+            connTable.setColumns(columns);
         } else {
-            const maxRows = connector.options.maxRows;
-            const nRowsParsed = convTable.getRowCount();
-
-            if (nRowsParsed === 1) {
-                const rows = convTable.getRows();
-                // One row, append to table
-                if (nRowsCurrent === maxRows) {
-                    // Remove the oldest row
-                    connTable.deleteRows(0, 1);
-                }
-                connTable.setRows(rows);
-            } else {
-                // Multiple rows, replace table content
-                const rows = convTable.getRows();
-
-                if (nRowsParsed >= maxRows) {
-                    // Get the newest 'maxRows' rows
-                    rows.splice(0, nRowsParsed - maxRows);
-                    connTable.deleteRows();
-                }
-                connTable.setRows(rows);
+            // Remove the oldest row if at max capacity
+            if (nRowsCurrent >= connector.options.maxRows) {
+                connTable.deleteRows(0, 1);
             }
+
+            // Add a new row from parsed columns
+            const newRow = Object.values(columns).map(col => col[0]);
+            connTable.setRows([newRow], connTable.getRowCount());
         }
         connector.packetCount++;
 

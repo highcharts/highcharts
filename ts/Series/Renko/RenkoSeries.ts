@@ -68,7 +68,7 @@ class RenkoSeries extends ColumnSeries {
     public setData(
         data: (PointOptions | PointShortOptions)[],
         redraw?: boolean,
-        animation?: boolean | Partial<AnimationOptions> | undefined
+        animation?: boolean | Partial<AnimationOptions>
     ): void {
         this.renkoData = [];
         super.setData(data, redraw, animation, false);
@@ -85,7 +85,7 @@ class RenkoSeries extends ColumnSeries {
     }
 
     public getProcessedData(): Series.ProcessedDataObject {
-        const modified = this.dataTable.modified;
+        const modified = this.dataTable.getModified();
         const processedXData: number[] = [];
         const processedYData: number[] = [];
         const processedLowData: number[] = [];

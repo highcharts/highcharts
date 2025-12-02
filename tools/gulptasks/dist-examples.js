@@ -67,7 +67,6 @@ function indexTemplate(options) {
             }
             ul.nav > li {
                 list-style: none;
-                display: black
             }
             div > ul > li {
                 padding-bottom: 0.5em;
@@ -90,6 +89,18 @@ function indexTemplate(options) {
             }
             li a:hover {
                 text-decoration: underline;
+            }
+            @media (prefers-color-scheme: dark) {
+                body {
+                    background-color: #141414;
+                    color: #ddd;
+                }
+                li a {
+                    color: #2caffe;
+                }
+                button span {
+                    color: #fff
+                }
             }
         </style>
     </head>
@@ -176,10 +187,11 @@ async function createExamples(title, sourcePath, targetPath, template) {
         );
 
         if (content.ts) {
-            content.js = Babel.transformSync(content.ts, {
-                presets: ['@babel/preset-typescript'],
-                filename: Path.join(directoryPath, 'demo.ts')
-            }).code;
+            content.js = '/* eslint-disable */\n' +
+                Babel.transformSync(content.ts, {
+                    presets: ['@babel/preset-typescript'],
+                    filename: Path.join(directoryPath, 'demo.ts')
+                }).code;
         }
 
         const sample = assembleSample(template, content);
@@ -315,11 +327,18 @@ function distExamples() {
                 'grid-lite': {
                     path: ['grid', 'demo'],
                     title: 'Highcharts Grid Lite'
-                }/* ,
+                },
                 'grid-pro': {
                     path: ['grid', 'demo'],
                     title: 'Highcharts Grid Pro'
-                }*/
+                }
+            };
+        } else if (distProduct === 'Dashboards') {
+            samplesSubfolder = {
+                dashboards: {
+                    path: ['dashboards', 'demo'],
+                    title: 'Highcharts Dashboards'
+                }
             };
         }
 

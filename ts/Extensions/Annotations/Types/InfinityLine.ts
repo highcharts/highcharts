@@ -18,9 +18,27 @@ import type PositionObject from '../../../Core/Renderer/PositionObject';
 
 import Annotation from '../Annotation.js';
 import CrookedLine from './CrookedLine.js';
+import D from '../../../Core/Defaults.js';
+const { defaultOptions } = D;
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
 const { merge } = U;
+
+if (defaultOptions.annotations) {
+    /**
+     * Options for the infinity line annotation type.
+     *
+     * @sample highcharts/annotations-advanced/infinity-line/
+     *         Infinity line
+     *
+     * @extends      annotations.types.crookedLine
+     * @product      highstock
+     * @optionparent annotations.types.infinityLine
+     */
+    defaultOptions.annotations.types.infinityLine = merge(
+        defaultOptions.annotations.types.crookedLine
+    );
+}
 
 /* *
  *
@@ -204,10 +222,6 @@ class InfinityLine extends CrookedLine {
 interface InfinityLine {
     defaultOptions: CrookedLine['defaultOptions'];
 }
-InfinityLine.prototype.defaultOptions = merge(
-    CrookedLine.prototype.defaultOptions,
-    {}
-);
 
 /* *
  *
@@ -258,9 +272,9 @@ export default InfinityLine;
  * @sample highcharts/annotations-advanced/infinity-line/
  *         Infinity Line
  *
- * @extends   annotations.crookedLine
+ * @extends   annotations.types.crookedLine
  * @product   highstock
- * @apioption annotations.infinityLine
+ * @apioption annotations.types.infinityLine
  */
 
 (''); // Keeps doclets above in transpiled file

@@ -1,5 +1,5 @@
 @import url("https://code.highcharts.com/css/highcharts.css");
-@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 
 /* *
@@ -8,9 +8,10 @@
  *
  * */
 
-:root {
+:root,
+.highcharts-light {
     /* Dashboards container */
-    --container-background: var(--highcharts-neutral-color-0);
+    --container-background: var(--highcharts-background-color);
 
     /* Dashboards components */
     --component-background: #ebf1f4;
@@ -41,7 +42,7 @@
 }
 
 #el-info {
-    --color-table-td: var(--highcharts-neutral-color-0);
+    --color-table-td: var(--highcharts-background-color);
     --color-table-bg: var(--highcharts-neutral-color-20);
     --color-header: var(--highcharts-neutral-color-80);
     --color-unit: green;
@@ -61,12 +62,13 @@
 }
 
 @media (prefers-color-scheme: dark) {
-    /* dark mode */
+    /* System dark mode */
     :root {
+        --container-background: var(--highcharts-background-color);
         --color-text: #dadae2;
         --component-background: var(--highcharts-neutral-color-20);
         --component-title-text: rgb(148, 183, 212);
-        --color-tooltip-background: #c0d8ec;
+        --color-tooltip-background: var(--highcharts-neutral-color-5);
         --color-tooltip-border: #ccc;
     }
 
@@ -86,6 +88,31 @@
     }
 }
 
+/* Explicit dark mode */
+.highcharts-dark {
+    --container-background: var(--highcharts-background-color);
+    --color-text: #dadae2;
+    --component-background: var(--highcharts-background-color);
+    --component-title-text: rgb(148, 183, 212);
+    --color-tooltip-background: var(--highcharts-neutral-color-5);
+    --color-tooltip-border: #ccc;
+}
+
+.highcharts-dark #el-info {
+    --color-unit: #f0f0f0;
+    --color-table-caption: rgb(148, 183, 212);
+}
+
+.highcharts-dark #el-kpi {
+    --color-axis-labels: #dfdfde;
+    --color-pane: #20202c;
+    --color-pane-line: #838394;
+}
+
+.highcharts-dark #el-map {
+    --color-tooltip-border: #666;
+}
+
 /* *
  *
  *  Common styles
@@ -93,7 +120,6 @@
  * */
 
 body {
-    background-color: var(--container-background);
     font-family:
         -apple-system,
         BlinkMacSystemFont,
@@ -105,6 +131,8 @@ body {
         "Segoe UI Emoji",
         "Segoe UI Symbol",
         sans-serif;
+    background: var(--container-background);
+    color: var(--highcharts-neutral-color-100);
 }
 
 #container {
@@ -203,7 +231,7 @@ body {
 }
 
 #el-kpi,
-#el-datagrid {
+#el-grid {
     flex: 1 1 30%;
     height: var(--chart-row-height);
 }
@@ -421,7 +449,7 @@ div#control-cell button:hover {
  *
  * */
 
-#el-datagrid {
+#el-grid {
     font-size: var(--text-font-size);
 }
 
@@ -624,7 +652,7 @@ div#control-cell button:hover {
 
     #el-kpi,
     #el-chart,
-    #el-datagrid,
+    #el-grid,
     .el-info,
     .el-info > div,
     .el-aggr {

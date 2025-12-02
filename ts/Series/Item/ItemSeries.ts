@@ -289,7 +289,7 @@ class ItemSeries extends PieSeries {
 
             if (ratio > 1) {
                 rows = Math.ceil(rows);
-                while (rows > 0) {
+                while (rows > 1) {
                     cols = total / rows;
                     if (cols / rows > ratio) {
                         break;

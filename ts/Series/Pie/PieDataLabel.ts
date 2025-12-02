@@ -38,6 +38,7 @@ const {
     arrayMax,
     clamp,
     defined,
+    isNumber,
     pick,
     pushUnique,
     relativeLength
@@ -49,8 +50,8 @@ const {
  *
  * */
 
-declare module '../../Core/Renderer/SVG/SVGElementLike' {
-    interface SVGElementLike {
+declare module '../../Core/Renderer/SVG/SVGElementBase' {
+    interface SVGElementBase {
         connector?: SVGElement;
         dataLabelPosition?: DataLabel.LabelPositionObject;
     }
@@ -618,7 +619,7 @@ namespace ColumnDataLabel {
 
 
             this.points.forEach((point): void => {
-                (point.dataLabels || []).forEach((dataLabel): void => {
+                point.dataLabels?.forEach((dataLabel, i): void => {
                     // #8864: every connector can have individual options
                     const {
                             connectorColor,
@@ -627,7 +628,7 @@ namespace ColumnDataLabel {
                         labelPosition = dataLabel.dataLabelPosition;
 
                     // Draw the connector
-                    if (connectorWidth) {
+                    if (isNumber(connectorWidth)) {
                         let isNew;
 
                         connector = dataLabel.connector;
@@ -648,7 +649,7 @@ namespace ColumnDataLabel {
                                                 ''
                                         )
                                     )
-                                    .add(series.dataLabelsGroup);
+                                    .add(series.dataLabelsGroups?.[i]);
                             }
 
                             if (!chart.styledMode) {

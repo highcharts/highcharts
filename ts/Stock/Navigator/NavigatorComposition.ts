@@ -21,7 +21,7 @@ import type Series from '../../Core/Series/Series';
 
 import Chart from '../../Core/Chart/Chart.js';
 import D from '../../Core/Defaults.js';
-const { setOptions } = D;
+const { defaultOptions } = D;
 import H from '../../Core/Globals.js';
 const {
     composed
@@ -52,8 +52,8 @@ declare module '../../Core/Renderer/SVG/SymbolType' {
     }
 }
 
-declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase {
         baseSeries?: Series;
         navigatorSeries?: Series;
     }
@@ -86,10 +86,9 @@ function compose(
         ChartClass.prototype.setFixedRange = setFixedRange;
 
         extend(getRendererType().prototype.symbols, NavigatorSymbols);
+        extend(defaultOptions, { navigator: NavigatorDefaults });
 
         addEvent(SeriesClass, 'afterUpdate', onSeriesAfterUpdate);
-
-        setOptions({ navigator: NavigatorDefaults });
     }
 
 }

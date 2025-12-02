@@ -36,7 +36,6 @@ Highcharts.chart('container', {
             format: '{value} gr'
         },
         plotLines: [{
-            color: 'black',
             dashStyle: 'dot',
             width: 2,
             value: 65,
@@ -66,7 +65,6 @@ Highcharts.chart('container', {
         },
         maxPadding: 0.2,
         plotLines: [{
-            color: 'black',
             dashStyle: 'dot',
             width: 2,
             value: 50,

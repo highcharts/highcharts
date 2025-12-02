@@ -21,9 +21,9 @@ Highcharts.chart('container', {
     yAxis: [{
         min: 0,
         max: 200,
-        lineColor: '#339',
-        tickColor: '#339',
-        minorTickColor: '#339',
+        lineColor: '#2caffe',
+        tickColor: '#2caffe',
+        minorTickColor: '#2caffe',
         offset: -25,
         lineWidth: 2,
         labels: {
@@ -37,11 +37,11 @@ Highcharts.chart('container', {
         min: 0,
         max: 124,
         tickPosition: 'outside',
-        lineColor: '#933',
+        lineColor: '#d66',
         lineWidth: 2,
         minorTickPosition: 'outside',
-        tickColor: '#933',
-        minorTickColor: '#933',
+        tickColor: '#d66',
+        minorTickColor: '#d66',
         tickLength: 5,
         minorTickLength: 5,
         labels: {
@@ -56,8 +56,8 @@ Highcharts.chart('container', {
         name: 'Speed',
         data: [80],
         dataLabels: {
-            format: '<span style="color:#339">{y} km/h</span><br/>' +
-                '<span style="color:#933">{(multiply y 0.621):.0f} mph</span>',
+            format: '<span style="color:#2caffe">{y} km/h</span><br/>' +
+                '<span style="color:#d66">{(multiply y 0.621):.0f} mph</span>',
             backgroundColor: {
                 linearGradient: {
                     x1: 0,
@@ -66,9 +66,12 @@ Highcharts.chart('container', {
                     y2: 1
                 },
                 stops: [
-                    [0, '#DDD'],
-                    [1, '#FFF']
+                    [0, 'var(--highcharts-neutral-color-20, #ddd)'],
+                    [1, 'var(--highcharts-background-color, #fff)']
                 ]
+            },
+            style: {
+                textOutline: 'none'
             }
         },
         tooltip: {

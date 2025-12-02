@@ -102,7 +102,7 @@ radioButtons.forEach(el => {
         });
 
         board.mountedComponents[1].component.update({
-            dataGridOptions: {
+            gridOptions: {
                 rendering: {
                     rows: {
                         virtualization: isVirtualized

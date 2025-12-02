@@ -90,7 +90,7 @@ You can also test your knowledge on the TypeScript
 If a type is created by multiple files, it should go into its own `*.d.ts` file.
 That way multiple files can add properties to an interface in an `*.d.ts` file.
 A good example for this kind of type interface extension is the
-[`SeriesLike`](./Core/Series/SeriesLike.d.ts) interface.
+[`SeriesBase`](./Core/Series/SeriesBase.d.ts) interface.
 
 
 ### Combine the class pattern with class types
@@ -154,6 +154,10 @@ You can run `npm test` to test code changes with automated unit tests.
 
 For tests in a browser, run `npx gulp` and use then the `highcharts-utils`
 repository for a local test server.
+
+The default test browser is `FirefoxHeadless`, but you can also other browser
+except `ChromeHeadless`, which is since version 109 not suitable as it lacks a
+WebGL context as required by boost.
 
 For tests in a local npm-based project, run `npx gulp --dts` and then install in
 your project the local Highcharts repository with `npm i ../highcharts/code`.

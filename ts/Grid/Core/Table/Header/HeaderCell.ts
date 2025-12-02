@@ -16,6 +16,7 @@
 
 'use strict';
 
+
 /* *
  *
  *  Imports
@@ -31,14 +32,16 @@ import GridUtils from '../../GridUtils.js';
 import ColumnSorting from '../Actions/ColumnSorting.js';
 import Globals from '../../Globals.js';
 import Utilities from '../../../../Core/Utilities.js';
+import TableHeader from './TableHeader.js';
+import ColumnToolbar from './ColumnToolbar/ColumnToolbar.js';
 
 const {
     makeHTMLElement,
-    setHTMLContent
+    setHTMLContent,
+    createOptionsProxy
 } = GridUtils;
 const {
     fireEvent,
-    merge,
     isString
 } = Utilities;
 
@@ -66,9 +69,16 @@ class HeaderCell extends Cell {
     public headerContent?: HTMLElement;
 
     /**
-     * Reference to options in settings header.
+     * The container element of the header cell.
      */
-    public readonly options: Partial<Column.Options> = {};
+    public container?: HTMLDivElement;
+
+    /**
+     * Reference to options taken from the header settings, that will override
+     * the column options.
+     * @internal
+     */
+    public readonly superColumnOptions: Partial<Column.Options> = {};
 
     /**
      * List of columns that are subordinated to the header cell.
@@ -79,6 +89,16 @@ class HeaderCell extends Cell {
      * Content value of the header cell.
      */
     public override value: string = '';
+
+    /**
+     * The table header that this header cell belongs to.
+     */
+    public tableHeader: TableHeader;
+
+    /**
+     * The toolbar of the header cell.
+     */
+    toolbar?: ColumnToolbar;
 
 
     /* *
@@ -106,6 +126,11 @@ class HeaderCell extends Cell {
         columnsTree?: GroupedHeaderOptions[]
     ) {
         super(row, column);
+        const header = this.row.viewport.header;
+        if (!header) {
+            throw new Error('No header found.');
+        }
+        this.tableHeader = header;
 
         if (column) {
             column.header = this;
@@ -134,6 +159,7 @@ class HeaderCell extends Cell {
     public override init(): HTMLTableCellElement {
         const elem = document.createElement('th', {});
         elem.classList.add(Globals.getClassName('headerCell'));
+        elem.setAttribute('role', 'columnheader');
         return elem;
     }
 
@@ -142,9 +168,12 @@ class HeaderCell extends Cell {
      */
     public override render(): void {
         const { column } = this;
-        const options = merge(column?.options || {}, this.options);
+        const options = createOptionsProxy(
+            this.superColumnOptions,
+            column?.options
+        );
         const headerCellOptions = options.header || {};
-        const isSortableData = options.sorting?.sortable && column?.data;
+
 
         if (headerCellOptions.formatter) {
             this.value = headerCellOptions.formatter.call(this).toString();
@@ -159,29 +188,29 @@ class HeaderCell extends Cell {
         // Render content of th element
         this.row.htmlElement.appendChild(this.htmlElement);
 
+        // Create flex container for header content and icons
+        const container = this.container = makeHTMLElement('div', {
+            className: Globals.getClassName('headerCellContainer')
+        }, this.htmlElement);
+
         this.headerContent = makeHTMLElement('span', {
             className: Globals.getClassName('headerCellContent')
-        }, this.htmlElement);
+        }, container);
 
         // Render the header cell element content.
         setHTMLContent(this.headerContent, this.value);
 
         this.htmlElement.setAttribute('scope', 'col');
 
-        if (this.options.className) {
+        if (this.superColumnOptions.className) {
             this.htmlElement.classList.add(
-                ...this.options.className.split(/\s+/g)
+                ...this.superColumnOptions.className.split(/\s+/g)
             );
         }
 
         if (column) {
             this.htmlElement.setAttribute('data-column-id', column.id);
-
-            if (isSortableData) {
-                column.viewport.grid.accessibility?.addSortableColumnHint(
-                    this.headerContent
-                );
-            }
+            this.htmlElement.setAttribute('aria-label', column.id);
 
             // Add user column classname
             if (column.options.className) {
@@ -196,11 +225,23 @@ class HeaderCell extends Cell {
                 this
             );
 
+            // Add toolbar
+            this.toolbar = new ColumnToolbar(column);
+            this.toolbar.add();
+
             // Add sorting
             this.initColumnSorting();
         }
 
+        // Set alignment in column cells based on column data type
+        this.htmlElement.classList[
+            column?.dataType === 'number' ? 'add' : 'remove'
+        ](Globals.getClassName('rightAlign'));
+
+        // Add custom class name from column options
         this.setCustomClassName(options.header?.className);
+
+        fireEvent(this, 'afterRender', { column });
     }
 
     public override reflow(): void {
@@ -219,6 +260,7 @@ class HeaderCell extends Cell {
         // Set the width of the column. Max width is needed for the
         // overflow: hidden to work.
         th.style.width = th.style.maxWidth = width + 'px';
+        this.toolbar?.reflow();
     }
 
     protected override onKeyDown(e: KeyboardEvent): void {
@@ -227,9 +269,8 @@ class HeaderCell extends Cell {
         }
 
         if (e.key === 'Enter') {
-            if (this.column.options.sorting?.sortable) {
-                this.column.sorting?.toggle();
-            }
+            this.toolbar?.focus();
+            e.preventDefault();
             return;
         }
 
@@ -243,7 +284,7 @@ class HeaderCell extends Cell {
             !column || (
                 e.target !== this.htmlElement &&
                 e.target !== column.header?.headerContent
-            )
+            ) || column.viewport.columnsResizer?.isResizing
         ) {
             return;
         }
@@ -254,7 +295,7 @@ class HeaderCell extends Cell {
 
         fireEvent(this, 'click', {
             originalEvent: e,
-            target: this.column
+            column: this.column
         });
     }
 
@@ -284,17 +325,11 @@ class HeaderCell extends Cell {
 
         return lastViewportColumn === lastCellColumn;
     }
-}
 
-
-/* *
- *
- *  Class Namespace
- *
- * */
-
-namespace HeaderCell {
-
+    public override destroy(): void {
+        this.toolbar?.destroy();
+        super.destroy();
+    }
 }
 
 

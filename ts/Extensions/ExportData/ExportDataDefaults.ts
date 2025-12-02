@@ -42,7 +42,7 @@ const exporting: ExportingOptions = {
      * @sample highcharts/export-data/multilevel-table
      *         Multiple table headers
      *
-     * @type      {boolean|string}
+     * @type      {boolean | string}
      * @since     6.0.4
      * @requires  modules/export-data
      * @apioption exporting.tableCaption
@@ -53,8 +53,8 @@ const exporting: ExportingOptions = {
      * in a HTML table or a JavaScript structure.
      *
      * This module adds data export options to the export menu and provides
-     * functions like `Chart.getCSV`, `Chart.getTable`, `Chart.getDataRows`
-     * and `Chart.viewData`.
+     * functions like `Exporting.getCSV`, `Exporting.getTable`,
+     * `Exporting.getDataRows` and `Exporting.viewData`.
      *
      * The XLS converter is limited and only creates a HTML string that is
      * passed for download, which works but creates a warning before
@@ -75,7 +75,7 @@ const exporting: ExportingOptions = {
          *
          * Options for annotations in the export-data table.
          *
-         * @since 8.2.0
+         * @since    8.2.0
          * @requires modules/export-data
          * @requires modules/annotations
          *
@@ -86,7 +86,7 @@ const exporting: ExportingOptions = {
             * The way to mark the separator for annotations
             * combined in one export-data table cell.
             *
-            * @since 8.2.0
+            * @since    8.2.0
             * @requires modules/annotations
             */
             itemDelimiter: '; ',
@@ -98,7 +98,7 @@ const exporting: ExportingOptions = {
             * @sample highcharts/export-data/join-annotations/
             *         Concatenate point annotations with itemDelimiter set.
             *
-            * @since 8.2.0
+            * @since    8.2.0
             * @requires modules/annotations
             */
             join: false
@@ -130,7 +130,7 @@ const exporting: ExportingOptions = {
          * @sample highcharts/export-data/multilevel-table
          *         Multiple table headers
          *
-         * @type {Function|null}
+         * @type {Function | null}
          */
         columnHeaderFormatter: null,
 
@@ -145,7 +145,7 @@ const exporting: ExportingOptions = {
          * as the browser locale, typically `.` (English) or `,` (German,
          * French etc).
          *
-         * @type  {string|null}
+         * @type  {string | null}
          * @since 6.0.4
          */
         decimalPoint: null,
@@ -156,7 +156,7 @@ const exporting: ExportingOptions = {
          * locale. If the locale _decimal point_ is `,`, the `itemDelimiter`
          * defaults to `;`, otherwise the `itemDelimiter` defaults to `,`.
          *
-         * @type {string|null}
+         * @type {string | null}
          */
         itemDelimiter: null,
 
@@ -164,6 +164,65 @@ const exporting: ExportingOptions = {
          * The line delimiter in the exported data, defaults to a newline.
          */
         lineDelimiter: '\n'
+
+    },
+
+    /**
+     * An object consisting of definitions for the menu items in the context
+     * menu. Each key value pair has a `key` that is referenced in the
+     * [menuItems](#exporting.buttons.contextButton.menuItems) setting,
+     * and a `value`, which is an object with the following properties:
+     *
+     * - **onclick:** The click handler for the menu item
+     *
+     * - **text:** The text for the menu item
+     *
+     * - **textKey:** If internationalization is required, the key to a language
+     *   string
+     *
+     * Custom text for the "exitFullScreen" can be set only in lang options
+     * (it is not a separate button).
+     *
+     * @sample highcharts/exporting/menuitemdefinitions/
+     *         Menu item definitions
+     * @sample highcharts/exporting/menuitemdefinitions-webp/
+     *         Adding a custom menu item for WebP export
+     *
+     * @type     {Highcharts.Dictionary<Highcharts.ExportingMenuObject>}
+     * @default  {"downloadCSV": {}, "downloadXLS": {}, "viewData": {}}
+     * @requires modules/export-data
+     */
+    menuItemDefinitions: {
+
+        /**
+         * @ignore
+         */
+        downloadCSV: {
+            textKey: 'downloadCSV',
+            onclick: function (): void {
+                this.exporting?.downloadCSV();
+            }
+        },
+
+        /**
+         * @ignore
+         */
+        downloadXLS: {
+            textKey: 'downloadXLS',
+            onclick: function (): void {
+                this.exporting?.downloadXLS();
+            }
+        },
+
+        /**
+         * @ignore
+         */
+        viewData: {
+            textKey: 'viewData',
+            onclick: function (): void {
+                this.exporting?.wrapLoading(this.exporting.toggleDataTable);
+            }
+        }
 
     },
 
@@ -212,7 +271,7 @@ const exporting: ExportingOptions = {
      *
      * The message can be altered by changing [](#lang.exporting.exportInProgress)
      *
-     * @since 11.3.0
+     * @since    11.3.0
      * @requires modules/export-data
      */
     showExportInProgress: true
@@ -243,7 +302,7 @@ const lang: LangOptions = {
     /**
      * The text for exported table.
      *
-     * @since 8.1.0
+     * @since    8.1.0
      * @requires modules/export-data
      */
     exportData: {
@@ -273,14 +332,14 @@ const lang: LangOptions = {
     /**
      * The text for the menu item.
      *
-     * @since 8.2.0
+     * @since    8.2.0
      * @requires modules/export-data
      */
     hideData: 'Hide data table',
     /**
      * Text to show when export is in progress.
      *
-     * @since 11.3.0
+     * @since    11.3.0
      * @requires modules/export-data
      */
     exportInProgress: 'Exporting...'

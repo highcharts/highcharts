@@ -26,6 +26,7 @@
             tooltip: {
                 valueDecimals: 2
             },
+            color: '#2caffe',
             fillColor: {
                 linearGradient: {
                     x1: 0,
@@ -34,13 +35,8 @@
                     y2: 1
                 },
                 stops: [
-                    [0, Highcharts.getOptions().colors[0]],
-                    [
-                        1,
-                        Highcharts.color(
-                            Highcharts.getOptions().colors[0]
-                        ).setOpacity(0).get('rgba')
-                    ]
+                    [0, '#2caffe'],
+                    [1, '#2caffe00']
                 ]
             },
             lastPrice: {
@@ -48,11 +44,9 @@
                 color: 'transparent',
                 label: {
                     enabled: true,
-                    backgroundColor: '#ffffff',
-                    borderColor: '#2caffe',
-                    borderWidth: 1,
+                    backgroundColor: '#2caffe',
                     style: {
-                        color: '#000000'
+                        color: '#fff'
                     }
                 }
             }

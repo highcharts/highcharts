@@ -35,7 +35,9 @@ function test_grid() {
         }, 'hidden'],
         rendering: {
             columns: {
-                distribution: 'fixed'
+                resizing: {
+                    mode: 'distributed'
+                }
             }
         },
         columns: [{

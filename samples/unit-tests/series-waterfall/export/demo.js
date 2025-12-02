@@ -31,7 +31,7 @@ QUnit.test(
         });
 
         chart.series[0].hide();
-        chart.getSVG();
+        chart.exporting.getSVG();
 
         assert.ok(true, 'It should not throw');
     });

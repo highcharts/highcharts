@@ -21,6 +21,7 @@ import type {
  *
  * */
 
+/** @internal */
 class USGS implements ProviderDefinition {
 
     /* *
@@ -66,4 +67,5 @@ class USGS implements ProviderDefinition {
  *
  * */
 
+/** @internal */
 export default USGS;

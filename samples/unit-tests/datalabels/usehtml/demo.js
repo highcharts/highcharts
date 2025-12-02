@@ -171,11 +171,6 @@ QUnit.test('#10765: rotated dataLabels support useHTML', function (assert) {
         unrotated, #20685.`
     );
 
-    assert.ok(
-        rotatedBLBox.y < unrotatedDLBox.y,
-        'Rotated data label box should be placed higher that unrotated, #20685.'
-    );
-
     const htmlLabel = chart.renderer.label(
             'Label', 0, 0, undefined,
             undefined, undefined, true

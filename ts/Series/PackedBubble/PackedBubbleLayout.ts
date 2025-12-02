@@ -39,8 +39,8 @@ const {
  *
  * */
 
-declare module '../../Core/Chart/ChartLike' {
-    interface ChartLike {
+declare module '../../Core/Chart/ChartBase' {
+    interface ChartBase {
         allDataPoints?: Array<PackedBubbleSeries.Data>;
         allParentNodes: Array<PackedBubblePoint>;
         getSelectedParentNodes(): Array<PackedBubblePoint>;

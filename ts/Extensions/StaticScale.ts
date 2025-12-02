@@ -24,8 +24,7 @@ import U from '../Core/Utilities.js';
 const {
     addEvent,
     defined,
-    isNumber,
-    pick
+    isNumber
 } = U;
 
 /* *
@@ -40,8 +39,8 @@ declare module '../Core/Axis/AxisOptions' {
     }
 }
 
-declare module '../Core/Chart/ChartLike'{
-    interface ChartLike {
+declare module '../Core/Chart/ChartBase'{
+    interface ChartBase {
         redrawTrigger?: string;
         initiatedScale?: boolean;
         /** @requires modules/static-scale */
@@ -76,16 +75,13 @@ function compose(
 function onAxisAfterSetOptions(
     this: Axis
 ): void {
-    const chartOptions = this.chart.options.chart;
+    const chartOptions = this.chart.userOptions.chart;
     if (
         !this.horiz &&
         isNumber(this.options.staticScale) &&
         (
-            !(chartOptions as any).height ||
-            (
-                (chartOptions as any).scrollablePlotArea &&
-                (chartOptions as any).scrollablePlotArea.minHeight
-            )
+            !chartOptions?.height ||
+            chartOptions.scrollablePlotArea?.minHeight
         )
     ) {
         this.staticScale = this.options.staticScale;
@@ -101,27 +97,30 @@ function chartAdjustHeight(
     if (chart.redrawTrigger !== 'adjustHeight') {
         for (const axis of (chart.axes || [])) {
             const chart = axis.chart,
-                animate =
-                    !!chart.initiatedScale &&
-                    (chart.options as any).animation,
                 staticScale = axis.options.staticScale;
 
-            if (axis.staticScale && defined(axis.min)) {
-                let height = pick(
-                    axis.brokenAxis && axis.brokenAxis.unitLength,
-                    (axis.max as any) + axis.tickInterval - axis.min
-                ) * (staticScale as any);
-
+            if (
+                axis.staticScale &&
+                staticScale &&
+                defined(axis.min) &&
+                defined(axis.max)
+            ) {
+                let height = (axis.brokenAxis?.unitLength ??
+                    (axis.max + axis.tickInterval - axis.min)) * (staticScale);
 
                 // Minimum height is 1 x staticScale.
-                height = Math.max(height, staticScale as any);
+                height = Math.max(height, staticScale);
 
                 const diff = height - chart.plotHeight;
 
                 if (!chart.scrollablePixelsY && Math.abs(diff) >= 1) {
                     chart.plotHeight = height;
                     chart.redrawTrigger = 'adjustHeight';
-                    chart.setSize(void 0, chart.chartHeight + diff, animate);
+                    chart.setSize(
+                        void 0,
+                        chart.chartHeight + diff,
+                        chart.initiatedScale ? void 0 : false
+                    );
                 }
 
                 // Make sure clip rects have the right height before initial
@@ -142,7 +141,7 @@ function chartAdjustHeight(
         }
         this.initiatedScale = true;
     }
-    this.redrawTrigger = null as any;
+    this.redrawTrigger = void 0;
 }
 
 /* *

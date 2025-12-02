@@ -40,9 +40,9 @@ This example sets a base font family and size for the entire grid, and caption u
 
 ```css
 .theme-custom {
-  --hcg-font-family: Arial, sans-serif;
-  --hcg-font-size: 14px;
-  --hcg-caption-font-size: 20px;
+    --hcg-font-family: Arial, sans-serif;
+    --hcg-font-size: 14px;
+    --hcg-caption-font-size: 20px;
 }
 ```
 
@@ -72,10 +72,10 @@ This example sets a base background color for the entire grid. Header and even r
 
 ```css
 .theme-custom {
-  --hcg-background: #dedede;
-  --hcg-header-background: #505050;
-  --hcg-row-even-background: #cbcbcb;
-  --hcg-header-color: #dedede;
+    --hcg-background: #dedede;
+    --hcg-header-background: #505050;
+    --hcg-row-even-background: #cbcbcb;
+    --hcg-header-color: #dedede;
 }
 ```
 
@@ -111,12 +111,12 @@ This example starts with a 3px global border. Rows and columns have narrower bor
 
 ```css
 .theme-custom {
-  --hcg-border-width: 3px;
-  --hcg-border-color: #000000;
-  --hcg-row-border-width: 1px;
-  --hcg-column-border-width: 2px;
-  --hcg-header-column-border-color: #eeeeee;
-  --hcg-header-column-border-style: dashed;
+    --hcg-border-width: 3px;
+    --hcg-border-color: #000000;
+    --hcg-row-border-width: 1px;
+    --hcg-column-border-width: 2px;
+    --hcg-header-column-border-color: #eeeeee;
+    --hcg-header-column-border-style: dashed;
 }
 ```
 
@@ -148,9 +148,9 @@ This example sets global padding to 8px, reduces vertical padding for headers, a
 
 ```css
 .theme-custom {
-  --hcg-padding: 8px;
-  --hcg-header-vertical-padding: 4px;
-  --hcg-caption-horizontal-padding: 0;
+    --hcg-padding: 8px;
+    --hcg-header-vertical-padding: 4px;
+    --hcg-caption-horizontal-padding: 0;
 }
 ```
 
@@ -184,13 +184,13 @@ This example starts with a global table background color. It adds a darker backg
 
 ```css
 .theme-custom {
-  --hcg-background: #aaaaaa;
-  --hcg-header-background: #888888;
-  --hcg-row-even-background: #aeaeae;
-  --hcg-cell-hovered-row-background: #999999;
-  --hcg-cell-hovered-column-background: #999999;
-  --hcg-cell-hovered-column-border-width: 1px;
-  --hcg-cell-hovered-column-border-color: #d27676;
+    --hcg-background: #aaaaaa;
+    --hcg-header-background: #888888;
+    --hcg-row-even-background: #aeaeae;
+    --hcg-cell-hovered-row-background: #999999;
+    --hcg-cell-hovered-column-background: #999999;
+    --hcg-cell-hovered-column-border-width: 1px;
+    --hcg-cell-hovered-column-border-color: #d27676;
 }
 ```
 
@@ -214,13 +214,13 @@ This example starts with a global table background color. It adds a darker backg
 
 ```css
 .theme-custom {
-  --hcg-background: #aaaaaa;
-  --hcg-header-background: #888888;
-  --hcg-row-even-background: #aeaeae;
-  --hcg-cell-hovered-row-background: #999999;
-  --hcg-cell-hovered-column-background: #999999;
-  --hcg-cell-hovered-column-border-width: 1px;
-  --hcg-cell-hovered-column-border-color: #d27676;
+    --hcg-background: #aaaaaa;
+    --hcg-header-background: #888888;
+    --hcg-row-even-background: #aeaeae;
+    --hcg-cell-hovered-row-background: #999999;
+    --hcg-cell-hovered-column-background: #999999;
+    --hcg-cell-hovered-column-border-width: 1px;
+    --hcg-cell-hovered-column-border-color: #d27676;
 }
 ```
 
@@ -242,25 +242,25 @@ Define a few global variables for a consistent base style. Use section-specific 
 
 ```css
 .my-theme {
-  --my-hover-color: #ff0000;
+    --my-hover-color: #ff0000;
 
-  --hcg-font-size: 15px;
-  --hcg-color: #666666;
-  --hcg-header-color: #ffffff;
-  --hcg-background: #ffffff;
-  --hcg-padding: 10px;
-  --hcg-header-background: #002933;
-  --hcg-row-even-background: #e9faff;
-  --hcg-cell-hovered-header-background: #1a3f48;
-  --hcg-cell-hovered-border-width: 1px;
-  --hcg-cell-hovered-column-border-width: 1px;
-  --hcg-cell-hovered-column-border-color: #f2f2f2;
-  --hcg-header-hovered-background: #1a3f48;
-  --hcg-cell-hovered-border-color: var(--my-hover-color);
-  --hcg-cell-hovered-header-color: var(--my-hover-color);
-  --hcg-cell-hovered-row-color: var(--my-hover-color);
-  --hcg-cell-hovered-column-color: var(--my-hover-color);
-  --hcg-header-hovered-color: var(--my-hover-color);
+    --hcg-font-size: 15px;
+    --hcg-color: #666666;
+    --hcg-header-color: #ffffff;
+    --hcg-background: #ffffff;
+    --hcg-padding: 10px;
+    --hcg-header-background: #002933;
+    --hcg-row-even-background: #e9faff;
+    --hcg-cell-hovered-header-background: #1a3f48;
+    --hcg-cell-hovered-border-width: 1px;
+    --hcg-cell-hovered-column-border-width: 1px;
+    --hcg-cell-hovered-column-border-color: #f2f2f2;
+    --hcg-header-hovered-background: #1a3f48;
+    --hcg-cell-hovered-border-color: var(--my-hover-color);
+    --hcg-cell-hovered-header-color: var(--my-hover-color);
+    --hcg-cell-hovered-row-color: var(--my-hover-color);
+    --hcg-cell-hovered-column-color: var(--my-hover-color);
+    --hcg-header-hovered-color: var(--my-hover-color);
 }
 ```
 
@@ -268,8 +268,9 @@ Check our [theming demo](https://www.highcharts.com/demo/grid/grid-theming) to s
 
 ## Summary
 
-1. Define global variables for fonts, borders, padding, and backgrounds.
+1. Define global variables for fonts, borders, padding, backgrounds, and pagination.
 2. Use section-specific prefixes to refine specific areas.
-3. The DataGrid falls back to global values when no section-specific variable is defined.
+3. The Grid falls back to global values when no section-specific variable is defined.
+4. Pagination variables automatically adapt to light and dark modes for optimal contrast.
 
-This system ensures flexible, maintainable, and consistent theming.
+This system ensures flexible, maintainable, and consistent theming across all grid components.

@@ -44,7 +44,7 @@
 }
 
 .highcharts-data-table thead tr,
-.highcharts-data-table tr:nth-child(even) {
+.highcharts-data-table tbody tr:nth-child(even) {
     background: #f8f8f8;
 }
 

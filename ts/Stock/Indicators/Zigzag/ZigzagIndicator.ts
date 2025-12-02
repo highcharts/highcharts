@@ -16,7 +16,7 @@
  *
  * */
 
-import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -123,7 +123,7 @@ class ZigzagIndicator extends SMAIndicator {
      * */
 
     getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries&IndicatorLinkedSeriesLike,
+        series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: ZigzagParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const lowIndex: number = params.lowIndex as any,

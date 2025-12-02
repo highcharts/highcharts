@@ -14,7 +14,9 @@ Grid.grid('container', {
     },
     columnDefaults: {
         cells: {
-            editable: true
+            editMode: {
+                enabled: true
+            }
         }
     },
     columns: [{
@@ -30,8 +32,8 @@ Grid.grid('container', {
     }],
     events: {
         column: {
-            afterSorting: function () {
-                const { sorting } = this.viewport.dataGrid.querying;
+            afterSort: function () {
+                const { sorting } = this.viewport.grid.querying;
 
                 columnSelectEl.value = this.id;
                 orderSelectEl.value = sorting.currentSorting.order || '';

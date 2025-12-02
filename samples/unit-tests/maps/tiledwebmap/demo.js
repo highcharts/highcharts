@@ -1,12 +1,16 @@
 QUnit.test('Tiled Web Map on the chart', assert => {
     // Adding fake-provider only for testing purposes
     (function (H) {
+        const testimage =
+            location.host.substr(0, 12) === 'localhost:98' ?
+                'base/test/testimage.png' : // karma
+                'testimage.png'; // utils
         class TestProviderDefinition {
             constructor() {
                 this.subdomains = [''];
                 this.themes = {
                     Standard: {
-                        url: 'testimage.png',
+                        url: testimage,
                         minZoom: 0,
                         maxZoom: 19
                     },

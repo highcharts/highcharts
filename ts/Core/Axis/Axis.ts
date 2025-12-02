@@ -30,10 +30,11 @@ import type {
     XAxisOptions,
     YAxisOptions
 } from './AxisOptions';
-import type AxisLike from './AxisLike';
+import type AxisBase from './AxisBase';
 import type { AxisType, AxisTypeOptions } from './AxisType';
 import type Chart from '../Chart/Chart';
 import type CSSObject from '../Renderer/CSSObject';
+import type { DeepPartial } from '../../Shared/Types';
 import type { EventCallback } from '../Callback';
 import type FontMetricsObject from '../Renderer/FontMetricsObject';
 import type PlotLineOrBand from './PlotLineOrBand/PlotLineOrBand';
@@ -875,7 +876,7 @@ class Axis {
                 axis.isOrdinal ||
                 axis.brokenAxis?.hasBreaks ||
                 (axis.logarithmic && handleLog)
-            ) && axis.lin2val;
+            ) && !!axis.lin2val;
 
         let sign = 1,
             cvsOffset = 0,
@@ -2348,9 +2349,10 @@ class Axis {
             !isNumber(this.dataMin) ||
             (
                 this !== callerAxis &&
-                this.series.some((s): boolean|undefined => (
-                    s.isDirty || s.isDirtyData
-                ))
+                this.series.some((s): boolean|undefined =>
+                    // The xAxis.isDirty check is for setExtremes (#23677)
+                    s.isDirty || s.isDirtyData || s.xAxis?.isDirty
+                )
             )
         ) {
             this.getSeriesExtremes();
@@ -2459,10 +2461,17 @@ class Axis {
         // tick index. Unless `thresholdAlignment` is exactly 0 or 1, avoid the
         // first or last tick because that would lead to series being clipped.
         if (isNumber(thresholdAlignment)) {
-            thresholdTickIndex = thresholdAlignment < 0.5 ?
-                Math.ceil(thresholdAlignment * (tickAmount - 1)) :
-                Math.floor(thresholdAlignment * (tickAmount - 1));
-
+            thresholdTickIndex = thresholdAlignment === 0 ? 0 :
+                thresholdAlignment === 1 ? tickAmount - 1 :
+                    // Get the closest integer between 1 and
+                    // `tickAmount - 2` (#23787)
+                    Math.round(
+                        clamp(
+                            thresholdAlignment * (tickAmount - 1),
+                            1,
+                            tickAmount - 2
+                        )
+                    );
             if (options.reversed) {
                 thresholdTickIndex = tickAmount - 1 - thresholdTickIndex;
             }
@@ -2866,7 +2875,7 @@ class Axis {
      * Can be `"center"`, `"left"` or `"right"`.
      */
     public autoLabelAlign(rotation: number): AlignValue {
-        const angle = (pick(rotation, 0) - (this.side * 90) + 720) % 360,
+        const angle = ((rotation - this.side * 90) % 360 + 360) % 360,
             evt = { align: 'center' as AlignValue };
 
         fireEvent(this, 'autoLabelAlign', evt, function (
@@ -3088,7 +3097,8 @@ class Axis {
                 return parseInt(String(cssWidth), 10);
             }
 
-            if (marginLeft) {
+            // Skip marginLeft for opposite axis to avoid label cutoff, #22821
+            if (!this.opposite && marginLeft) {
                 return marginLeft - chart.spacing[3];
             }
         }
@@ -3190,7 +3200,7 @@ class Axis {
 
         // Set the explicit or automatic label alignment
         this.labelAlign = labelOptions.align ||
-            this.autoLabelAlign(this.labelRotation as any);
+            this.autoLabelAlign(this.labelRotation || 0);
         if (this.labelAlign) {
             attr.align = this.labelAlign;
         }
@@ -4121,7 +4131,7 @@ class Axis {
         }
 
         // Delete all properties and fall back to the prototype.
-        objectEach(axis, function (val: any, key: string): void {
+        objectEach(axis, function (_val: any, key: string): void {
             if (axis.getKeepProps().indexOf(key) === -1) {
                 delete (axis as any)[key];
             }
@@ -4412,7 +4422,7 @@ class Axis {
  *
  * */
 
-interface Axis extends AxisComposition, AxisLike {
+interface Axis extends AxisComposition, AxisBase {
     // Nothing here yet
 }
 

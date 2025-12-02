@@ -73,8 +73,8 @@ import DataTableCore from '../../Data/DataTableCore.js';
  *
  * */
 
-declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike extends BoostTargetObject {
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase extends BoostTargetObject {
         boosted?: boolean;
         boost?: BoostSeriesAdditions;
         fill?: boolean;
@@ -504,19 +504,27 @@ function createAndAttachRenderer(
     boost.canvas.height = height;
 
     if (boost.clipRect) {
-        const box = getBoostClipRect(chart, target),
-
-            // When using panes, the image itself must be clipped. When not
-            // using panes, it is better to clip the target group, because then
-            // we preserve clipping on touch- and mousewheel zoom preview.
-            clippedElement = (
-                box.width === chart.clipBox.width &&
-                box.height === chart.clipBox.height
-            ) ? targetGroup :
-                (boost.targetFo || boost.target);
+        const box = getBoostClipRect(chart, target);
 
         boost.clipRect.attr(box);
-        clippedElement?.clip(boost.clipRect);
+
+        // When using panes, the image itself must be clipped. When not
+        // using panes, it is better to clip the target group, because then
+        // we preserve clipping on touch- and mousewheel zoom preview.
+        if (
+            !chart.navigator &&
+            box.width === chart.clipBox.width &&
+            box.height === chart.clipBox.height
+        ) {
+            targetGroup?.clip(chart.renderer.clipRect(
+                box.x - 4,
+                box.y,
+                box.width + 4,
+                box.height + 4
+            )); // #9799
+        } else {
+            (boost.targetFo || boost.target).clip(boost.clipRect);
+        }
     }
 
     boost.resize();
@@ -766,12 +774,12 @@ function hasExtremes(
     checkX?: boolean
 ): boolean {
     const options = series.options,
-        dataLength = series.dataTable.modified.rowCount,
+        dataLength = series.dataTable.getModified().rowCount,
         xAxis = series.xAxis && series.xAxis.options,
         yAxis = series.yAxis && series.yAxis.options,
         colorAxis = series.colorAxis && series.colorAxis.options;
 
-    return dataLength > (options.boostThreshold || Number.MAX_VALUE) &&
+    return dataLength > pick(options.boostThreshold, Number.MAX_VALUE) &&
             // Defined yAxis extremes
             isNumber(yAxis.min) &&
             isNumber(yAxis.max) &&
@@ -803,7 +811,7 @@ const getSeriesBoosting = (
         isChartSeriesBoosting(series.chart) ||
         (
             (data ? data.length : 0) >=
-            (series.options.boostThreshold || Number.MAX_VALUE)
+            pick(series.options.boostThreshold, Number.MAX_VALUE)
         )
     );
 };
@@ -824,7 +832,7 @@ function onSeriesDestroy(
         chart.boost &&
         chart.boost.markerGroup === series.markerGroup
     ) {
-        series.markerGroup = null as any;
+        series.markerGroup = void 0;
     }
 
     if (chart.hoverPoints) {
@@ -836,7 +844,7 @@ function onSeriesDestroy(
     }
 
     if (chart.hoverPoint && chart.hoverPoint.series === series) {
-        chart.hoverPoint = null as any;
+        chart.hoverPoint = void 0;
     }
 }
 
@@ -898,7 +906,8 @@ function getPoint(
         return boostPoint as BoostPointComposition;
     }
 
-    const isScatter = series.is('scatter'),
+    const data = seriesOptions.data,
+        isScatter = series.is('scatter'),
         xData = (
             (isScatter && series.getColumn('x', true).length ?
                 series.getColumn('x', true) :
@@ -913,15 +922,35 @@ function getPoint(
             seriesOptions.yData ||
             false
         ),
+        pointIndex = boostPoint.i,
+        pointColor = (data?.[pointIndex] as { color?: string } | undefined)
+            ?.color,
         point = new PointClass(
             series as BoostSeriesComposition,
             (isScatter && xData && yData) ?
-                [xData[boostPoint.i], yData[boostPoint.i]] :
+                [xData[pointIndex], yData[pointIndex]] :
                 (
-                    isArray(series.options.data) ? series.options.data : []
-                )[boostPoint.i],
-            xData ? xData[boostPoint.i] : void 0
+                    isArray(data) ? data : []
+                )[pointIndex],
+            xData ? xData[pointIndex] : void 0
         ) as BoostPointComposition;
+
+    if (
+        isScatter &&
+        seriesOptions?.keys?.length
+    ) {
+        const keys = seriesOptions.keys;
+
+        // Don't reassign X and Y properties as they're already handled above
+        for (
+            let keysIndex = keys.length - 1;
+            keysIndex > -1;
+            keysIndex--
+        ) {
+            (point as any)[keys[keysIndex]] =
+                (data as any)[pointIndex][keysIndex];
+        }
+    }
 
     point.category = pick(
         xAxis.categories ?
@@ -935,9 +964,12 @@ function getPoint(
     point.distX = boostPoint.distX;
     point.plotX = boostPoint.plotX;
     point.plotY = boostPoint.plotY;
-    point.index = boostPoint.i;
+    point.index = pointIndex;
     point.percentage = boostPoint.percentage;
     point.isInside = series.isPointInside(point);
+    if (pointColor) {
+        point.color = pointColor; // Set color for hover effect #23370
+    }
     return point;
 }
 
@@ -990,7 +1022,7 @@ function scatterProcessData(
         yMin >= (yAxis.old.min ?? -Number.MAX_VALUE) &&
         yMax <= (yAxis.old.max ?? Number.MAX_VALUE)
     ) {
-        series.dataTable.modified.setColumns({
+        series.dataTable.getModified().setColumns({
             x: xData,
             y: yData
         });
@@ -1010,7 +1042,7 @@ function scatterProcessData(
             dataLength < cropThreshold
         )
     ) {
-        series.dataTable.modified.setColumns({
+        series.dataTable.getModified().setColumns({
             x: xData,
             y: yData
         });
@@ -1069,12 +1101,12 @@ function scatterProcessData(
     series.cropped = cropped;
     series.cropStart = 0;
     // For boosted points rendering
-    if (cropped && series.dataTable.modified === series.dataTable) {
+    if (cropped && !series.dataTable.modified) {
         // Calling setColumns with cropped data must be done on a new instance
         // to avoid modification of the original (complete) data
         series.dataTable.modified = new DataTableCore();
     }
-    series.dataTable.modified.setColumns({
+    series.dataTable.getModified().setColumns({
         x: processedXData,
         y: processedYData
     });
@@ -1130,7 +1162,8 @@ function seriesRenderCanvas(this: Series): void {
             this.getColumn('x', true)
         ),
         lineWidth = pick(options.lineWidth, 1),
-        nullYSubstitute = options.nullInteraction && yMin;
+        nullYSubstitute = options.nullInteraction && yMin,
+        tooltip = chart.tooltip;
 
     let renderer: WGLRenderer = false as any,
         lastClientX: (number|undefined),
@@ -1140,6 +1173,32 @@ function seriesRenderCanvas(this: Series): void {
         minI: (number|undefined),
         maxI: (number|undefined);
 
+    // Clear mock points and tooltip after zoom (#20330)
+    if (!this.boosted) {
+        return;
+    }
+
+    this.points?.forEach((point: Point): void => {
+        point?.destroyElements?.();
+    });
+    this.points = [];
+
+    if (tooltip && !tooltip.isHidden) {
+        const isSeriesHovered =
+            chart.hoverPoint?.series === this ||
+            chart.hoverPoints?.some(
+                (point: Point): boolean => point.series === this
+            );
+
+        if (isSeriesHovered) {
+            chart.hoverPoint = chart.hoverPoints = void 0;
+            tooltip.hide(0);
+        }
+    } else if (chart.hoverPoints) {
+        chart.hoverPoints = chart.hoverPoints.filter(
+            (point: Point): boolean => point.series !== this
+        );
+    }
 
     // When touch-zooming or mouse-panning, re-rendering the canvas would not
     // perform fast enough. Instead, let the axes redraw, but not the series.
@@ -1254,13 +1313,8 @@ function seriesRenderCanvas(this: Series): void {
 
     fireEvent(this, 'renderCanvas');
 
-    if (
-        this.is('line') &&
-        lineWidth > 1 &&
-        seriesBoost?.target &&
-        chartBoost &&
-        !chartBoost.lineWidthFilter
-    ) {
+    if (chartBoost && seriesBoost?.target && lineWidth > 1 && this.is('line')) {
+        chartBoost.lineWidthFilter?.remove();
         chartBoost.lineWidthFilter = chart.renderer.definition({
             tagName: 'filter',
             children: [

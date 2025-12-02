@@ -19,7 +19,7 @@
  *
  * */
 
-import type Globals from '../Globals';
+import type { AnyRecord } from '../../Shared/Types';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type JSON from '../JSON';
 import type GoogleSheetsConnectorOptions from '../../Data/Connectors/GoogleSheetsConnectorOptions';
@@ -64,7 +64,7 @@ function fromJSON(
  * false.
  */
 function jsonSupportFor(
-    obj: Globals.AnyRecord
+    obj: AnyRecord
 ): obj is GoogleSheetsConnector {
     return obj instanceof GoogleSheetsConnector;
 }
@@ -84,7 +84,7 @@ function toJSON(
     const options =
         merge(obj.options) as GoogleSheetsConnectorHelper.OptionsJSON;
 
-    options.dataTable = DataTableHelper.toJSON(obj.table);
+    options.dataTable = DataTableHelper.toJSON(obj.getTable());
 
     return {
         $class: 'Data.GoogleSheetsConnector',

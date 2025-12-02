@@ -3,7 +3,7 @@ Radial (or Circular) bar chart
 
 A radial (or circular) bar series visualizes columns on a polar coordinate system. Since the `xAxis` is vertical and `yAxis` is circular, as opposed to non-inverted variant, the shape of the columns is circular.
 
-<iframe style="width: 100%; height: 600px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/polar-radial-bar allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 600px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/demo/polar-radial-bar" allow="fullscreen"></iframe>
 
 
 Getting started
@@ -45,22 +45,22 @@ Examples of use
 
 Just as any normal column series on a non-inverted chart, the radial bar series can also be stacked.
 
-<iframe style="width: 100%; height: 600px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/series-polar/column-inverted-stacking allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 600px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/series-polar/column-inverted-stacking" allow="fullscreen"></iframe>
 
 **Custom thresholds for the same set of data**
 
 Setting a different `threshold` will set a new starting point for the series.
 
-<iframe style="width: 100%; height: 600px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/series-polar/column-inverted-threshold allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 600px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/series-polar/column-inverted-threshold" allow="fullscreen"></iframe>
 
 **Different start and end angles of a pane**
 
 A custom `startAngle` and `endAngle`.
 
-<iframe style="width: 100%; height: 600px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/series-polar/column-inverted-endangle allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 600px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/series-polar/column-inverted-endangle" allow="fullscreen"></iframe>
 
 **Constantly updating series (with color axis)**
 
 Updating points.
 
-<iframe style="width: 100%; height: 600px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/series-polar/column-inverted-update allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 600px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/series-polar/column-inverted-update" allow="fullscreen"></iframe>

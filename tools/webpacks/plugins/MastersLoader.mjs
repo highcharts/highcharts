@@ -20,6 +20,7 @@
 import * as PPath from 'node:path/posix';
 
 import FSLib from '../../libs/fs.js';
+import { debugLog } from '../utilities.mjs';
 
 
 /* *
@@ -42,9 +43,6 @@ import FSLib from '../../libs/fs.js';
  * Decorated master content.
  */
 function decorateImports(content, masterImports) {
-    if (typeof content !== 'string') {
-        return `\n// @OOPS ${typeof content}\nexport const oops = 343;`;
-    }
     try {
         const importsMatches = content.matchAll(
             /(?:\n|\r\n)import.*?from.*?(['"])(.*?)\1.*?(?:\n|\r\n)/gsu
@@ -99,6 +97,7 @@ function decorateImports(content, masterImports) {
 
         }
     } catch (error) {
+        debugLog(error);
         content = `/* ERROR: ${error} */\n${content}`;
     }
 

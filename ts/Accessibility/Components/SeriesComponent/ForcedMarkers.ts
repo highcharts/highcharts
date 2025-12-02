@@ -261,8 +261,12 @@ namespace ForcedMarkersComposition {
 
         } else if (series.a11yMarkersForced) {
             delete series.a11yMarkersForced;
+            // Mark series dirty to ensure marker graphics are cleaned up
+            series.isDirty = true;
             unforceSeriesMarkerOptions(series);
-            delete series.resetA11yMarkerOptions;
+            if (options.marker && options.marker.enabled === false) { // #23329
+                delete series.resetA11yMarkerOptions; // #16624
+            }
         }
     }
 

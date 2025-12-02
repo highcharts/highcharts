@@ -1,5 +1,14 @@
 /* *
- * Lambert Conformal Conic projection
+ *
+ *  Lambert Conformal Conic projection
+ *
+ *  (c) 2021-2025 Highsoft AS
+ *
+ *  License: www.highcharts.com/license
+ *
+ *  Authors:
+ *  - Torstein Honsi
+ *
  * */
 
 'use strict';
@@ -38,6 +47,26 @@ const sign = Math.sign ||
  *
  * */
 
+/**
+ * The Lambert conformal conic projection (LCC) is a conic map projection used
+ * for many national and regional mapping systems.
+ *
+ * Its advantage lies in mapping smaller areas like countries or continents.
+ * Two standard parallels are given, and between these, the distortion is
+ * minimal.
+ *
+ * In Highcharts, LCC is the default projection when loading a map smaller than
+ * 180 degrees width and 90 degrees height.
+ *
+ * For custom use, `rotation` should be set to adjust the reference longitude,
+ * in addition to the `parallels` option.
+ *
+ * @class
+ * @name Highcharts.LambertConformalConic
+ *
+ * @param {Highcharts.MapViewProjectionOptions} options
+ * The projection options, with support for `parallels`.
+ */
 class LambertConformalConic implements ProjectionDefinition {
 
     /* *
@@ -74,7 +103,6 @@ class LambertConformalConic implements ProjectionDefinition {
 
         this.n = n;
         this.c = cosLat1 * Math.pow(tany(lat1), n) / n;
-
     }
 
     /* *
@@ -83,8 +111,13 @@ class LambertConformalConic implements ProjectionDefinition {
      *
      * */
 
+    /** @internal */
     private c: number;
+
+    /** @internal */
     private n: number;
+
+    /** @internal */
     private projectedBounds: (MapBounds|undefined);
 
     /* *
@@ -149,7 +182,6 @@ class LambertConformalConic implements ProjectionDefinition {
             (2 * Math.atan(Math.pow(c / rho, 1 / n)) - halfPI) / deg2rad
         ];
     }
-
 }
 
 /* *

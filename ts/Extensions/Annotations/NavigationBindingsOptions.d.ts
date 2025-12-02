@@ -15,6 +15,7 @@
  * */
 
 import type AnnotationOptions from './AnnotationOptions';
+import type { DeepPartial } from '../../Shared/Types';
 
 /* *
  *
@@ -51,6 +52,7 @@ export interface LangOptions {
 }
 
 interface NavigationBindingsOptions {
+    annotationsOptions?: DeepPartial<AnnotationOptions>;
     noDataState?: 'normal' | 'disabled';
     className: string;
     end?: Function;

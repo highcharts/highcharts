@@ -1,4 +1,6 @@
-@import url("https://code.highcharts.com/css/highcharts.css");
+html {
+    overflow: hidden;
+}
 
 body {
     margin: 0;
@@ -120,18 +122,23 @@ body {
     aspect-ratio: 1 / 1;
     max-width: 800px;
     border-radius: 4px;
-    background-color: #2f2b38;
-    border: 1px solid #46465c;
+    background-color: var(--highcharts-background-color);
+    border: none;
 }
+
+/* #charts {
+    width: 500px;
+    height: 500px;
+} */
 
 #charts .highcharts-plot-background,
 #charts .highcharts-background {
-    fill: #201836;
+    fill: var(--highcharts-background-color);
     stroke: transparent;
 }
 
 #charts .berg-tip {
-    width: 150px;
+    width: 200px;
     color: #fff;
     white-space: normal;
     font-size: 0.9em;
@@ -140,29 +147,6 @@ body {
 
 #charts .berg-tip span {
     font-weight: 700;
-}
-
-#charts .wall {
-    fill: #46445d;
-    stroke: transparent;
-}
-
-#charts .cover {
-    fill: #201836;
-    stroke: transparent;
-    transition: fill 2s;
-}
-
-#charts .green-line .highcharts-graph {
-    fill: transparent;
-    stroke-width: 1px;
-    stroke: #8bf2b6;
-}
-
-#charts .white-line .highcharts-graph {
-    fill: transparent;
-    stroke-width: 0;
-    stroke: rgb(255 255 255 / 50%);
 }
 
 #charts .particles {
@@ -214,7 +198,7 @@ body {
 }
 
 #charts .highcharts-data-labels.iceberg-types {
-    color: #000;
+    color: var(--text-primary);
     transition: color 300ms;
 }
 
@@ -225,18 +209,6 @@ body {
     width: 100px;
     height: 146px;
     position: absolute;
-}
-
-#charts #particle-1.rotate {
-    top: -14px;
-    left: 74px;
-}
-
-#charts #particle-1.morph {
-    transform: translate(40px, 0) scale(3) rotate(-5deg);
-    filter: hue-rotate(70deg) brightness(0.9) saturate(2);
-    opacity: 50%;
-    clip-path: polygon(-56.22% 0.81%, 147.26% 0%, 19.38% 167.4%);
 }
 
 #charts #particle-1.iceberg {
@@ -258,18 +230,6 @@ body {
     left: 284px;
 }
 
-#charts #particle-2.rotate {
-    top: 122px;
-    left: 204px;
-}
-
-#charts #particle-2.iceberg {
-    top: -260px;
-    left: 200px;
-    transform: rotate(90deg) scale(1.8, 2.5);
-    opacity: 80%;
-}
-
 #charts #particle-2.iceberg.clip {
     clip-path: polygon(0% 82.17%, 0% 0%, 101.48% 0%, 98.3% 81.98%);
 }
@@ -280,18 +240,6 @@ body {
     height: 86px;
     top: 154px;
     left: -20px;
-}
-
-#charts #particle-3.rotate {
-    top: 230px;
-    left: 30px;
-}
-
-#charts #particle-3.morph {
-    transform: rotate(-40deg) scale(3) translate(25px, 50px);
-    filter: hue-rotate(10deg) brightness(1.3) saturate(2.3);
-    opacity: 70%;
-    clip-path: rotate(-40deg) scale(3) translate(25px, 50px);
 }
 
 #charts #particle-3.iceberg {
@@ -311,18 +259,6 @@ body {
     height: 48px;
     top: 268px;
     left: 80px;
-}
-
-#charts #particle-4.rotate {
-    top: 242px;
-    left: 84px;
-}
-
-#charts #particle-4.morph {
-    transform: scale(5) translate(10px, 30px);
-    filter: hue-rotate(353deg) saturate(2) brightness(300%);
-    opacity: 50%;
-    clip-path: polygon(-316.67% 1.49%, 117.86% 1.28%, 119.63% 135.71%);
 }
 
 #charts #particle-4.iceberg {
@@ -345,18 +281,6 @@ body {
     left: 90px;
 }
 
-#charts #particle-5.rotate {
-    top: 190px;
-    left: 170px;
-}
-
-#charts #particle-5.morph {
-    transform: scale(3, 5) rotate(30deg) translate(-36px, 0);
-    filter: hue-rotate(10deg) brightness(1.3) saturate(2);
-    clip-path: polygon(-4.64% 87.43%, -1.17% -4.8%, 129.77% 97.17%);
-    opacity: 50%;
-}
-
 #charts #particle-5.iceberg {
     top: 15px;
     left: 90px;
@@ -375,19 +299,6 @@ body {
     height: 114px;
     top: -60px;
     left: -40px;
-}
-
-#charts #particle-6.rotate {
-    top: 88px;
-    left: 40px;
-}
-
-#charts #particle-6.iceberg {
-    top: 240px;
-    left: 110px;
-    transform: scale(0.8) rotate(-24deg);
-    opacity: 80%;
-    clip-path: ellipse(72px 53px at 6.43% 42.69%);
 }
 
 #charts .highcharts-halo {
@@ -424,7 +335,7 @@ body {
 #charts .berg-depth-18 {
     opacity: 1;
     stroke-dasharray: 0;
-    stroke-width: 1px;
+    stroke-width: 0;
     cursor: pointer;
 }
 
@@ -480,37 +391,6 @@ body {
     fill-opacity: 1;
 }
 
-#charts .highcharts-plot-band.water {
-    fill: #211836;
-    fill-opacity: 1;
-}
-
-#charts .highcharts-plot-line {
-    stroke: #f0f0f0;
-    opacity: 1;
-    transition: all 2s;
-}
-
-#charts .highcharts-plot-line:nth-of-type(5) {
-    transform: translateY(-13px);
-}
-
-#charts .highcharts-plot-line:nth-of-type(4) {
-    transform: translateY(-38px);
-}
-
-#charts .highcharts-plot-line:nth-of-type(3) {
-    transform: translateY(-88px);
-}
-
-#charts .highcharts-plot-line:nth-of-type(2) {
-    transform: translateY(-125px);
-}
-
-#charts .highcharts-plot-line:nth-of-type(1) {
-    transform: translateY(-188px);
-}
-
 #charts .highcharts-yaxis-labels {
     position: absolute;
     left: -10px !important;
@@ -522,7 +402,7 @@ body {
 }
 
 #charts .highcharts-axis-title {
-    fill: #000;
+    fill: var(--text-primary);
     font-size: 0.5em;
     width: 100%;
     opacity: 1;
@@ -532,27 +412,17 @@ body {
 }
 
 #charts .highcharts-title {
-    font-size: 1em;
-
-    /* transform: translateY(20px); */
-    font-weight: 700;
-    opacity: 0;
-    transition: opacity 1s;
+    font-size: 0.9em;
 }
 
 #charts .highcharts-subtitle {
-    font-size: 0.9em;
-
-    /* transform: translateY(-20px); */
-    font-weight: 400;
-    transition: opacity 300ms;
-    color: #fff;
-    width: 150px;
+    color: var(--highcharts-neutral-color-80);
     white-space: normal !important;
+    font-size: 0.8em;
 }
 
 #charts .highcharts-subtitle .iceberg-subtitle {
-    opacity: 0;
+    opacity: 1;
 }
 
 #charts .highcharts-subtitle .iceberg-subtitle.show {
@@ -560,12 +430,13 @@ body {
 }
 
 #charts .label-title {
-    font-size: 0.8em;
+    font-size: 1em;
+    color: var(--highcharts-neutral-color-80);
     margin: 0;
 }
 
 #charts .label-percent {
-    color: #000;
+    color: var(--highcharts-neutral-color-100);
     font-size: 0.9em;
     font-weight: 300;
     margin: 0;
@@ -578,165 +449,4 @@ body {
 
 #charts .highcharts-data-label-color-5 .berg-label {
     transform: translateY(-10px);
-}
-
-@media screen  and (min-width: 300px) {
-    /* #charts {
-        width: 300px;
-        height: 300px;
-    } */
-
-    #charts .highcharts-axis-title {
-        /* transform: translateY(-10px); */
-    }
-
-    #charts .highcharts-subtitle {
-        width: 180px;
-    }
-
-    #charts .berg-tip {
-        width: 200px;
-    }
-}
-
-@media screen  and (min-width: 400px) {
-    /* #charts {
-        width: 400px;
-        height: 400px;
-    } */
-
-    #charts .particles {
-        position: absolute;
-        width: 300px;
-        height: 300px;
-        left: -198px;
-        top: -85px;
-        transform: scale(1);
-    }
-
-    #charts .highcharts-title {
-        font-size: 1.2em;
-
-        /* transform: translateY(20px); */
-        font-weight: 700;
-        opacity: 0;
-        transition: opacity 1s;
-    }
-
-    #charts .highcharts-subtitle {
-        font-size: 1.1em;
-        line-height: 1.5em;
-
-        /* transform: translateY(20px); */
-        font-weight: 400;
-        color: #fff;
-        transition: opacity 1s;
-        width: 300px;
-    }
-
-    #charts .highcharts-subtitle .iceberg-subtitle {
-        color: #fff;
-        width: 300px;
-        white-space: normal;
-        font-size: 1.1em;
-        opacity: 0;
-    }
-
-    #charts .label-title {
-        font-size: 1em;
-        text-align: left;
-    }
-
-    #charts .berg-tip {
-        width: 300px;
-        color: #fff;
-        white-space: normal;
-        font-size: 1.1em;
-        font-weight: 500;
-    }
-
-    #charts .highcharts-data-label-color-5 .berg-label {
-        transform: translate(5px, 0);
-    }
-}
-
-@media screen  and (min-width: 500px) {
-    #charts .label-percent {
-        font-size: 1.4em;
-    }
-
-    #charts .highcharts-title {
-        font-size: 1.4em;
-    }
-
-    #charts .particles {
-        position: absolute;
-        width: 300px;
-        height: 300px;
-        left: -208px;
-        top: -70px;
-        transform: scale(1);
-    }
-
-    #charts #particle-1.iceberg {
-        top: -94px;
-        left: 94px;
-    }
-
-    #charts #particle-2.iceberg {
-        top: -210px;
-        left: 204px;
-        transform: rotate(90deg) scale(1.5, 2.5);
-        opacity: 80%;
-    }
-
-    #charts #particle-3.iceberg {
-        left: 140px;
-    }
-
-    #charts #particle-4.iceberg {
-        top: 372px;
-        left: 120px;
-    }
-
-    #charts #particle-5.iceberg {
-        top: 28px;
-        left: 96px;
-    }
-
-    #charts #particle-6.iceberg {
-        top: 220px;
-        left: 112px;
-    }
-
-    #charts .particles div.iceberg:hover {
-        cursor: pointer;
-    }
-
-    #charts .particles.rotate {
-        transform: scale(0.7) rotate(-90deg);
-    }
-
-    #charts .particles .particle {
-        background-repeat: no-repeat;
-        transition: all 3s;
-        position: absolute;
-        transform: rotate(90deg) scale(0.8);
-    }
-
-    #charts .particles .particle.rotate {
-        background-repeat: no-repeat;
-        transition: all 3s;
-        position: absolute;
-        transform: rotate(90deg) scale(1.5);
-    }
-
-    #charts .highcharts-axis-labels {
-        font-size: 0.8em;
-    }
-
-    #charts .highcharts-axis-title {
-        /* transform: translate(-10px, -70px); */
-        font-size: 0.8em;
-    }
 }

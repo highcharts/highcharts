@@ -1,7 +1,5 @@
 import * as Highcharts from 'highcharts';
-import DraggablePointsModule from "highcharts/modules/draggable-points";
-
-DraggablePointsModule(Highcharts);
+import "highcharts/modules/draggable-points";
 
 function test_options() {
     Highcharts.chart('container', {

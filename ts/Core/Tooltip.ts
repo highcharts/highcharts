@@ -49,6 +49,7 @@ const {
     addEvent,
     clamp,
     css,
+    clearTimeout,
     discardElement,
     extend,
     fireEvent,
@@ -70,21 +71,20 @@ const {
  *
  * */
 
-declare module './Chart/ChartLike' {
-    interface ChartLike {
+declare module './Chart/ChartBase' {
+    interface ChartBase {
         tooltip?: Tooltip;
     }
 }
 
-declare module './Series/PointLike' {
-    interface PointLike {
+declare module './Series/PointBase' {
+    interface PointBase {
         isHeader?: boolean;
-        tooltipPos?: Array<number>;
     }
 }
 
-declare module './Series/SeriesLike' {
-    interface SeriesLike {
+declare module './Series/SeriesBase' {
+    interface SeriesBase {
         noSharedTooltip?: boolean;
         tt?: SVGElement;
     }
@@ -297,7 +297,7 @@ class Tooltip {
             this.renderer = this.renderer.destroy() as any;
             discardElement(this.container);
         }
-        U.clearTimeout(this.hideTimer as any);
+        clearTimeout(this.hideTimer);
     }
 
     /**
@@ -371,7 +371,12 @@ class Tooltip {
             ret = [chartX - plotLeft, chartY - plotTop];
 
         }
-        return ret.map(Math.round);
+
+        const params = { point: points[0], ret };
+
+        fireEvent(this, 'getAnchor', params);
+
+        return params.ret.map(Math.round);
 
     }
 
@@ -839,7 +844,7 @@ class Tooltip {
         const tooltip = this;
 
         // Disallow duplicate timers (#1728, #1766)
-        U.clearTimeout(this.hideTimer as any);
+        clearTimeout(this.hideTimer);
         delay = pick(delay, this.options.hideDelay);
         if (!this.isHidden) {
             this.hideTimer = syncTimeout(function (): void {
@@ -1039,7 +1044,7 @@ class Tooltip {
             return;
         }
 
-        U.clearTimeout(this.hideTimer);
+        clearTimeout(this.hideTimer);
 
         // A switch saying if this specific tooltip configuration allows shared
         // or split modes
@@ -1692,6 +1697,12 @@ class Tooltip {
                 .rect(box)
                 .addClass('highcharts-tracker')
                 .add(label);
+
+            // For a rapid move going outside of the elements keeping the
+            // tooltip visible, cancel the hide (#23512).
+            addEvent(tooltip.tracker.element, 'mouseenter', (): void => {
+                clearTimeout(tooltip.hideTimer);
+            });
 
             if (!chart.styledMode) {
                 tooltip.tracker.attr({

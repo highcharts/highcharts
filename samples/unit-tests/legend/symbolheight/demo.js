@@ -16,7 +16,7 @@ QUnit.test(
                     {
                         data: [2, 4, 3, 5],
                         marker: {
-                            symbol: url.replace(')', '?' + Date.now() + ')')
+                            symbol: url.replace(')', '?l_' + Date.now() + ')')
                         }
                     }
                 ]

@@ -46,8 +46,8 @@ const {
  *
  * */
 
-declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase {
         redrawPoints?(): void;
         updateTotals?(): void;
     }
@@ -274,11 +274,11 @@ class PieSeries extends Series {
 
     /**
      * Define hasData function for non-cartesian series. Returns true if the
-     * series has points at all.
+     * series has at least one visible point (#23235)
      * @private
      */
     public hasData(): boolean {
-        return !!this.dataTable.rowCount;
+        return this.points.some((point): boolean => point.visible);
     }
 
     /**

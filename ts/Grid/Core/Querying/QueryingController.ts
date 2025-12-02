@@ -22,9 +22,14 @@
  *
  * */
 
+import type DataTable from '../../../Data/DataTable.js';
+import type DataModifier from '../../../Data/Modifiers/DataModifier.js';
+import type Grid from '../Grid.js';
+
 import ChainModifier from '../../../Data/Modifiers/ChainModifier.js';
-import Grid from '../Grid.js';
 import SortingController from './SortingController.js';
+import FilteringController from './FilteringController.js';
+import PaginationController from './PaginationController.js';
 
 /* *
  *
@@ -47,12 +52,28 @@ class QueryingController {
     /**
      * The data grid instance.
      */
-    private grid: Grid;
+    public grid: Grid;
 
     /**
-     * Sorting controller instance
+     * Sorting controller instance.
      */
     public sorting: SortingController;
+
+    /**
+     * Filtering controller instance.
+     */
+    public filtering: FilteringController;
+
+    /**
+     * Pagination controller instance
+     */
+    public pagination: PaginationController;
+
+    /**
+     * This flag should be set to `true` if the modifiers should reapply to the
+     * data table due to some data change or other important reason.
+     */
+    public shouldBeUpdated: boolean = false;
 
 
     /* *
@@ -63,8 +84,10 @@ class QueryingController {
 
     constructor(grid: Grid) {
         this.grid = grid;
-        this.sorting = new SortingController(grid);
-        /// this.filtering = new FilteringController(grid);
+
+        this.filtering = new FilteringController(this);
+        this.sorting = new SortingController(this);
+        this.pagination = new PaginationController(this);
     }
 
 
@@ -82,11 +105,7 @@ class QueryingController {
      * changed.
      */
     public async proceed(force: boolean = false): Promise<void> {
-        if (
-            force ||
-            this.sorting.shouldBeUpdated // ||
-            // this.filtering.shouldBeUpdated
-        ) {
+        if (force || this.shouldBeUpdated) {
             await this.modifyData();
         }
     }
@@ -95,17 +114,36 @@ class QueryingController {
      * Load all options needed to generate the modifiers.
      */
     public loadOptions(): void {
+        this.filtering.loadOptions();
         this.sorting.loadOptions();
+        this.pagination.loadOptions();
     }
 
     /**
-     * Check if the data table does not need to be modified.
+     * Creates a list of modifiers that should be applied to the data table.
      */
     public willNotModify(): boolean {
         return (
-            !this.sorting.modifier
-            // && !this.filtering.modifier
+            !this.sorting.modifier &&
+            !this.filtering.modifier
         );
+    }
+
+    /**
+     * Returns a list of modifiers that should be applied to the data table.
+     */
+    public getGroupedModifiers(): DataModifier[] {
+        const modifiers: DataModifier[] = [];
+
+        if (this.sorting.modifier) {
+            modifiers.push(this.sorting.modifier);
+        }
+
+        if (this.filtering.modifier) {
+            modifiers.push(this.filtering.modifier);
+        }
+
+        return modifiers;
     }
 
     /**
@@ -117,40 +155,31 @@ class QueryingController {
             return;
         }
 
-        const modifiers = [];
+        const groupedModifiers = this.getGroupedModifiers();
+        let interTable: DataTable;
 
-        // TODO: Implement filtering
-        // if (this.filtering.modifier) {
-        //     modifiers.push(this.filtering.modifier);
-        // }
-
-        if (this.sorting.modifier) {
-            modifiers.push(this.sorting.modifier);
-        }
-
-        if (modifiers.length > 0) {
-            const chainModifier = new ChainModifier({}, ...modifiers);
+        // Grouped modifiers
+        if (groupedModifiers.length > 0) {
+            const chainModifier = new ChainModifier({}, ...groupedModifiers);
             const dataTableCopy = originalDataTable.clone();
-            await chainModifier.modify(dataTableCopy.modified);
-            this.grid.presentationTable = dataTableCopy.modified;
+            await chainModifier.modify(dataTableCopy.getModified());
+            interTable = dataTableCopy.getModified();
         } else {
-            this.grid.presentationTable = originalDataTable.modified;
+            interTable = originalDataTable.getModified();
         }
 
-        this.sorting.shouldBeUpdated = false;
-        /// this.filtering.shouldBeUpdated = false;
+        // Pagination modifier
+        const paginationModifier =
+            this.pagination.createModifier(interTable.rowCount);
+        if (paginationModifier) {
+            interTable = interTable.clone();
+            await paginationModifier.modify(interTable);
+            interTable = interTable.getModified();
+        }
+
+        this.grid.presentationTable = interTable;
+        this.shouldBeUpdated = false;
     }
-}
-
-
-/* *
- *
- *  Class Namespace
- *
- * */
-
-namespace QueryingController {
-
 }
 
 

@@ -1,4 +1,2 @@
 import * as Highcharts from 'highcharts';
-import WindbarbModule from 'highcharts/modules/windbarb';
-
-WindbarbModule(Highcharts);
+import 'highcharts/modules/windbarb';

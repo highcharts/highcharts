@@ -1,8 +1,8 @@
 /**
- * @license Highmaps JS v@product.version@ (@product.date@)
+ * @license Highcharts Maps v@product.version@ (@product.date@)
  * @module highcharts/highmaps
  *
- * (c) 2011-2025 Torstein Honsi
+ * (c) 2011-2025 Highsoft AS
  *
  * License: www.highcharts.com/license
  */

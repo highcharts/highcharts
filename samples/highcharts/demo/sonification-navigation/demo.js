@@ -41,7 +41,6 @@ const chart = Highcharts.chart('container', {
             pointDescriptionEnabledThreshold: false
         }
     },
-    colors: ['#3d3f51', '#42858C', '#AD343E'],
     plotOptions: {
         series: {
             label: {

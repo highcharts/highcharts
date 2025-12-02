@@ -16,6 +16,7 @@
 
 import type ColorType from '../Color/ColorType';
 import type DashStyleValue from '../Renderer/DashStyleValue';
+import type { DeepPartial } from '../../Shared/Types';
 
 /* *
  *

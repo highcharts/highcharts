@@ -52,14 +52,14 @@ const {
  *
  * */
 
-declare module '../../../Core/Chart/ChartLike'{
-    interface ChartLike {
+declare module '../../../Core/Chart/ChartBase'{
+    interface ChartBase {
         highlightedPoint?: Point;
     }
 }
 
-declare module '../../../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../../../Core/Series/SeriesBase' {
+    interface SeriesBase {
         /** @requires modules/accessibility */
         keyboardMoveVertical?: boolean;
     }

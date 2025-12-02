@@ -35,6 +35,8 @@ import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
 
 import Annotation from '../Annotation.js';
 import ControlPoint from '../ControlPoint.js';
+import D from '../../../Core/Defaults.js';
+const { defaultOptions } = D;
 import U from '../../../Core/Utilities.js';
 const {
     defined,
@@ -44,6 +46,274 @@ const {
     pick
 } = U;
 import { Palette } from '../../../Core/Color/Palettes.js';
+
+if (defaultOptions.annotations) {
+    /**
+     * Options for the measure annotation type.
+     *
+     * @extends annotations.types.crookedLine
+     * @excluding labels, labelOptions, shapes, shapeOptions
+     * @sample highcharts/annotations-advanced/measure/
+     *         Measure
+     * @product highstock
+     * @optionparent annotations.types.measure
+     */
+    defaultOptions.annotations.types.measure = {
+        typeOptions: {
+            /**
+             * Decides in what dimensions the user can resize by dragging the
+             * mouse. Can be one of x, y or xy.
+             */
+            selectType: 'xy',
+            /**
+             * This number defines which xAxis the point is connected to.
+             * It refers to either the axis id or the index of the axis
+             * in the xAxis array.
+             */
+            xAxis: 0,
+            /**
+             * This number defines which yAxis the point is connected to.
+             * It refers to either the axis id or the index of the axis
+             * in the yAxis array.
+             */
+            yAxis: 0,
+            background: {
+                /**
+                 * The color of the rectangle.
+                 */
+                fill: 'rgba(130, 170, 255, 0.4)',
+                /**
+                 * The width of border.
+                 */
+                strokeWidth: 0,
+                /**
+                 * The color of border.
+                 */
+                stroke: void 0
+            },
+            /**
+             * Configure a crosshair that is horizontally placed in middle of
+             * rectangle.
+             *
+             */
+            crosshairX: {
+                /**
+                 * Enable or disable the horizontal crosshair.
+                 *
+                 */
+                enabled: true,
+                /**
+                 * The Z index of the crosshair in annotation.
+                 */
+                zIndex: 6,
+                /**
+                 * The dash or dot style of the crosshair's line. For possible
+                 * values, see
+                 * [this demonstration](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-dashstyle-all/).
+                 *
+                 * @type    {Highcharts.DashStyleValue}
+                 * @default Dash
+                 */
+                dashStyle: 'Dash',
+                /**
+                 * The marker-end defines the arrowhead that will be drawn
+                 * at the final vertex of the given crosshair's path.
+                 *
+                 * @type       {string}
+                 * @default    arrow
+                 */
+                markerEnd: 'arrow'
+            },
+            /**
+             * Configure a crosshair that is vertically placed in middle of
+             * rectangle.
+             */
+            crosshairY: {
+                /**
+                 * Enable or disable the vertical crosshair.
+                 *
+                 */
+                enabled: true,
+                /**
+                 * The Z index of the crosshair in annotation.
+                 */
+                zIndex: 6,
+                /**
+                 * The dash or dot style of the crosshair's line. For possible
+                 * values, see
+                 * [this demonstration](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-dashstyle-all/).
+                 *
+                 * @type      {Highcharts.DashStyleValue}
+                 * @default   Dash
+                 * @apioption annotations.types.measure.typeOptions.crosshairY.dashStyle
+                 *
+                 */
+                dashStyle: 'Dash',
+                /**
+                 * The marker-end defines the arrowhead that will be drawn
+                 * at the final vertex of the given crosshair's path.
+                 *
+                 * @type       {string}
+                 * @default    arrow
+                 * @validvalue ["none", "arrow"]
+                 *
+                 */
+                markerEnd: 'arrow'
+            },
+            label: {
+                /**
+                 * Enable or disable the label text (min, max, average,
+                 * bins values).
+                 *
+                 * Defaults to true.
+                 */
+                enabled: true,
+                /**
+                 * CSS styles for the measure label.
+                 *
+                 * @type    {Highcharts.CSSObject}
+                 * @default {"color": "#666666", "fontSize": "11px"}
+                 */
+                style: {
+                    fontSize: '0.7em',
+                    color: Palette.neutralColor80
+                },
+                /**
+                 * Formatter function for the label text.
+                 *
+                 * Available data are:
+                 *
+                 * <table>
+                 *
+                 * <tbody>
+                 *
+                 * <tr>
+                 *
+                 * <td>`this.min`</td>
+                 *
+                 * <td>The minimum value of the points in the selected
+                 * range.</td>
+                 *
+                 * </tr>
+                 *
+                 * <tr>
+                 *
+                 * <td>`this.max`</td>
+                 *
+                 * <td>The maximum value of the points in the selected
+                 * range.</td>
+                 *
+                 * </tr>
+                 *
+                 * <tr>
+                 *
+                 * <td>`this.average`</td>
+                 *
+                 * <td>The average value of the points in the selected
+                 * range.</td>
+                 *
+                 * </tr>
+                 *
+                 * <tr>
+                 *
+                 * <td>`this.bins`</td>
+                 *
+                 * <td>The amount of the points in the selected range.</td>
+                 *
+                 * </tr>
+                 *
+                 * </table>
+                 *
+                 * @type {Function}
+                 *
+                 */
+                formatter: void 0
+            }
+        } as Measure.MeasureTypeOptions,
+        controlPointOptions: {
+            positioner: function (
+                this: Controllable,
+                target: Measure
+            ): PositionObject {
+                const cpIndex = this.index,
+                    chart = target.chart,
+                    options = target.options,
+                    typeOptions = options.typeOptions,
+                    selectType = typeOptions.selectType,
+                    controlPointOptions = options.controlPointOptions,
+                    inverted = chart.inverted,
+                    xAxis = chart.xAxis[typeOptions.xAxis],
+                    yAxis = chart.yAxis[typeOptions.yAxis],
+                    ext = getExtremes(
+                        target.xAxisMin,
+                        target.xAxisMax,
+                        target.yAxisMin,
+                        target.yAxisMax
+                    );
+
+                let targetX = target.xAxisMax,
+                    targetY = target.yAxisMax,
+                    x, y;
+
+                if (selectType === 'x') {
+                    targetY = (ext.yAxisMax + ext.yAxisMin) / 2;
+
+                    // First control point
+                    if (cpIndex === 0) {
+                        targetX = target.xAxisMin;
+                    }
+                }
+
+                if (selectType === 'y') {
+                    targetX = ext.xAxisMin +
+                                        ((ext.xAxisMax - ext.xAxisMin) / 2);
+
+                    // First control point
+                    if (cpIndex === 0) {
+                        targetY = target.yAxisMin;
+                    }
+                }
+
+                if (inverted) {
+                    x = yAxis.toPixels(targetY);
+                    y = xAxis.toPixels(targetX);
+                } else {
+                    x = xAxis.toPixels(targetX);
+                    y = yAxis.toPixels(targetY);
+                }
+
+                return {
+                    x: x - (controlPointOptions.width / 2),
+                    y: y - (controlPointOptions.height / 2)
+                };
+            },
+            events: {
+                drag: function (
+                    this: Measure,
+                    e: AnnotationEventObject,
+                    target: Measure
+                ): void {
+                    const translation = this.mouseMoveToTranslation(e),
+                        selectType = target.options.typeOptions.selectType,
+                        index = this.index,
+                        x = selectType === 'y' ? 0 : translation.x,
+                        y = selectType === 'x' ? 0 : translation.y;
+
+                    target.resize(
+                        x,
+                        y,
+                        index,
+                        selectType
+                    );
+
+                    target.resizeX += x;
+                    target.resizeY += y;
+                    target.redraw(false, true);
+                }
+            }
+        }
+    };
+}
 
 /* *
  *
@@ -154,7 +424,7 @@ function defaultFormatter(
 ): string {
     return 'Min: ' + this.min +
         '<br>Max: ' + this.max +
-        '<br>Average: ' + this.average +
+        '<br>Average: ' + this.average.toFixed(2) +
         '<br>Bins: ' + this.bins;
 }
 
@@ -928,275 +1198,6 @@ interface Measure {
     yAxisMin: number;
     yAxisMax: number;
 }
-
-Measure.prototype.defaultOptions = merge(
-    Annotation.prototype.defaultOptions,
-    /**
-     * A measure annotation.
-     *
-     * @extends annotations.crookedLine
-     * @excluding labels, labelOptions, shapes, shapeOptions
-     * @sample highcharts/annotations-advanced/measure/
-     *         Measure
-     * @product highstock
-     * @optionparent annotations.measure
-     */
-    {
-        typeOptions: {
-            /**
-             * Decides in what dimensions the user can resize by dragging the
-             * mouse. Can be one of x, y or xy.
-             */
-            selectType: 'xy',
-            /**
-             * This number defines which xAxis the point is connected to.
-             * It refers to either the axis id or the index of the axis
-             * in the xAxis array.
-             */
-            xAxis: 0,
-            /**
-             * This number defines which yAxis the point is connected to.
-             * It refers to either the axis id or the index of the axis
-             * in the yAxis array.
-             */
-            yAxis: 0,
-            background: {
-                /**
-                 * The color of the rectangle.
-                 */
-                fill: 'rgba(130, 170, 255, 0.4)',
-                /**
-                 * The width of border.
-                 */
-                strokeWidth: 0,
-                /**
-                 * The color of border.
-                 */
-                stroke: void 0
-            },
-            /**
-             * Configure a crosshair that is horizontally placed in middle of
-             * rectangle.
-             *
-             */
-            crosshairX: {
-                /**
-                 * Enable or disable the horizontal crosshair.
-                 *
-                 */
-                enabled: true,
-                /**
-                 * The Z index of the crosshair in annotation.
-                 */
-                zIndex: 6,
-                /**
-                 * The dash or dot style of the crosshair's line. For possible
-                 * values, see
-                 * [this demonstration](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-dashstyle-all/).
-                 *
-                 * @type    {Highcharts.DashStyleValue}
-                 * @default Dash
-                 */
-                dashStyle: 'Dash',
-                /**
-                 * The marker-end defines the arrowhead that will be drawn
-                 * at the final vertex of the given crosshair's path.
-                 *
-                 * @type       {string}
-                 * @default    arrow
-                 */
-                markerEnd: 'arrow'
-            },
-            /**
-             * Configure a crosshair that is vertically placed in middle of
-             * rectangle.
-             */
-            crosshairY: {
-                /**
-                 * Enable or disable the vertical crosshair.
-                 *
-                 */
-                enabled: true,
-                /**
-                 * The Z index of the crosshair in annotation.
-                 */
-                zIndex: 6,
-                /**
-                 * The dash or dot style of the crosshair's line. For possible
-                 * values, see
-                 * [this demonstration](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-dashstyle-all/).
-                 *
-                 * @type      {Highcharts.DashStyleValue}
-                 * @default   Dash
-                 * @apioption annotations.measure.typeOptions.crosshairY.dashStyle
-                 *
-                 */
-                dashStyle: 'Dash',
-                /**
-                 * The marker-end defines the arrowhead that will be drawn
-                 * at the final vertex of the given crosshair's path.
-                 *
-                 * @type       {string}
-                 * @default    arrow
-                 * @validvalue ["none", "arrow"]
-                 *
-                 */
-                markerEnd: 'arrow'
-            },
-            label: {
-                /**
-                 * Enable or disable the label text (min, max, average,
-                 * bins values).
-                 *
-                 * Defaults to true.
-                 */
-                enabled: true,
-                /**
-                 * CSS styles for the measure label.
-                 *
-                 * @type    {Highcharts.CSSObject}
-                 * @default {"color": "#666666", "fontSize": "11px"}
-                 */
-                style: {
-                    fontSize: '0.7em',
-                    color: Palette.neutralColor60
-                },
-                /**
-                 * Formatter function for the label text.
-                 *
-                 * Available data are:
-                 *
-                 * <table>
-                 *
-                 * <tbody>
-                 *
-                 * <tr>
-                 *
-                 * <td>`this.min`</td>
-                 *
-                 * <td>The minimum value of the points in the selected
-                 * range.</td>
-                 *
-                 * </tr>
-                 *
-                 * <tr>
-                 *
-                 * <td>`this.max`</td>
-                 *
-                 * <td>The maximum value of the points in the selected
-                 * range.</td>
-                 *
-                 * </tr>
-                 *
-                 * <tr>
-                 *
-                 * <td>`this.average`</td>
-                 *
-                 * <td>The average value of the points in the selected
-                 * range.</td>
-                 *
-                 * </tr>
-                 *
-                 * <tr>
-                 *
-                 * <td>`this.bins`</td>
-                 *
-                 * <td>The amount of the points in the selected range.</td>
-                 *
-                 * </tr>
-                 *
-                 * </table>
-                 *
-                 * @type {Function}
-                 *
-                 */
-                formatter: void 0
-            }
-        },
-        controlPointOptions: {
-            positioner: function (
-                this: Controllable,
-                target: Measure
-            ): PositionObject {
-                const cpIndex = this.index,
-                    chart = target.chart,
-                    options = target.options,
-                    typeOptions = options.typeOptions,
-                    selectType = typeOptions.selectType,
-                    controlPointOptions = options.controlPointOptions,
-                    inverted = chart.inverted,
-                    xAxis = chart.xAxis[typeOptions.xAxis],
-                    yAxis = chart.yAxis[typeOptions.yAxis],
-                    ext = getExtremes(
-                        target.xAxisMin,
-                        target.xAxisMax,
-                        target.yAxisMin,
-                        target.yAxisMax
-                    );
-
-                let targetX = target.xAxisMax,
-                    targetY = target.yAxisMax,
-                    x, y;
-
-                if (selectType === 'x') {
-                    targetY = (ext.yAxisMax + ext.yAxisMin) / 2;
-
-                    // First control point
-                    if (cpIndex === 0) {
-                        targetX = target.xAxisMin;
-                    }
-                }
-
-                if (selectType === 'y') {
-                    targetX = ext.xAxisMin +
-                                        ((ext.xAxisMax - ext.xAxisMin) / 2);
-
-                    // First control point
-                    if (cpIndex === 0) {
-                        targetY = target.yAxisMin;
-                    }
-                }
-
-                if (inverted) {
-                    x = yAxis.toPixels(targetY);
-                    y = xAxis.toPixels(targetX);
-                } else {
-                    x = xAxis.toPixels(targetX);
-                    y = yAxis.toPixels(targetY);
-                }
-
-                return {
-                    x: x - (controlPointOptions.width / 2),
-                    y: y - (controlPointOptions.height / 2)
-                };
-            },
-            events: {
-                drag: function (
-                    this: Measure,
-                    e: AnnotationEventObject,
-                    target: Measure
-                ): void {
-                    const translation = this.mouseMoveToTranslation(e),
-                        selectType = target.options.typeOptions.selectType,
-                        index = this.index,
-                        x = selectType === 'y' ? 0 : translation.x,
-                        y = selectType === 'x' ? 0 : translation.y;
-
-                    target.resize(
-                        x,
-                        y,
-                        index,
-                        selectType
-                    );
-
-                    target.resizeX += x;
-                    target.resizeY += y;
-                    target.redraw(false, true);
-                }
-            }
-        }
-    }
-);
 
 /* *
  *

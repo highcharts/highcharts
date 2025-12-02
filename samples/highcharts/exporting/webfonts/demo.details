@@ -1,0 +1,8 @@
+---
+ name: Highcharts Demo
+ applyCSP: false
+ authors:
+   - Gøran Slettemark
+ requiresManualTesting: true
+ js_wrap: b
+...

@@ -3,15 +3,11 @@ Dashboards.board('container', {
         connectors: [{
             id: 'csv-1',
             type: 'CSV',
-            options: {
-                csv: document.getElementById('csv1').innerText
-            }
+            csv: document.getElementById('csv1').innerText
         }, {
             id: 'csv-2',
             type: 'CSV',
-            options: {
-                csv: document.getElementById('csv2').innerText
-            }
+            csv: document.getElementById('csv2').innerText
         }]
     },
     gui: {
@@ -96,7 +92,7 @@ Dashboards.board('container', {
         }
     }, {
         renderTo: 'dashboard-col-1',
-        type: 'DataGrid',
+        type: 'Grid',
         title: {
             text: 'csv 1'
         },
@@ -106,16 +102,18 @@ Dashboards.board('container', {
         sync: {
             highlight: true
         },
-        dataGridOptions: {
+        gridOptions: {
             columnDefaults: {
                 cells: {
-                    editable: true
+                    editMode: {
+                        enabled: true
+                    }
                 }
             }
         }
     }, {
         renderTo: 'dashboard-col-2',
-        type: 'DataGrid',
+        type: 'Grid',
         title: {
             text: 'csv 2'
         },
@@ -125,10 +123,12 @@ Dashboards.board('container', {
         sync: {
             highlight: true
         },
-        dataGridOptions: {
+        gridOptions: {
             columnDefaults: {
                 cells: {
-                    editable: true
+                    editMode: {
+                        enabled: true
+                    }
                 }
             }
         }

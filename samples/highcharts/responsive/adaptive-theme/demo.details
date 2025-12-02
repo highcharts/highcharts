@@ -1,0 +1,6 @@
+---
+ name: Dark mode (prefers-color-scheme)
+ authors:
+   - Torstein Hønsi
+ js_wrap: b
+...

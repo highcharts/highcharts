@@ -35,8 +35,8 @@ const {
  *
  * */
 
-declare module './Chart/ChartLike' {
-    interface ChartLike {
+declare module './Chart/ChartBase' {
+    interface ChartBase {
         /** @requires Core/Responsive */
         setResponsive(redraw?: boolean, reset?: boolean): void;
     }

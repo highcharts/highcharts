@@ -1,15 +1,15 @@
 import Dashboards from '../../../../code/dashboards/es-modules/masters/dashboards.src.js';
 import EditMode from '../../../../code/dashboards/es-modules/masters/modules/layout.src.js';
-import DataGrid from '../../../../code/datagrid/es-modules/masters/datagrid.src.js';
 import Highcharts from '../../../../code/es-modules/masters/highcharts.src.js';
+import Grid from '../../../../code/grid/es-modules/masters/grid-pro.src.js';
 
 Highcharts.win.Highcharts = Highcharts;
 
 Dashboards.HighchartsPlugin.custom.connectHighcharts(Highcharts);
-Dashboards.DataGridPlugin.custom.connectDataGrid(DataGrid);
+Dashboards.GridPlugin.custom.connectGrid(Grid);
 
 Dashboards.PluginHandler.addPlugin(Dashboards.HighchartsPlugin);
-Dashboards.PluginHandler.addPlugin(Dashboards.DataGridPlugin);
+Dashboards.PluginHandler.addPlugin(Dashboards.GridPlugin);
 
 Dashboards.board(
     'container',
@@ -50,7 +50,7 @@ Dashboards.board(
             },
             {
                 renderTo: 'dashboard-col-2',
-                type: 'DataGrid'
+                type: 'Grid'
             }
         ]
     },
@@ -61,14 +61,12 @@ Dashboards.board(
     await dataPool.loadConnector({
         id: 'updatedData',
         type: 'CSV',
-        options: {
-            csv: `Food,Vitamin A
+        csv: `Food,Vitamin A
             Beef Liver,6421
             Lamb Liver,2122
             Cod Liver Oil,1350
             Mackerel,388
             Tuna,214`
-        }
     });
 
     await dash.mountedComponents[0].component.update({

@@ -14,6 +14,10 @@
  * */
 
 import AST from '../../Core/Renderer/HTML/AST.js';
+import U from '../../Core/Utilities.js';
+const {
+    isObject
+} = U;
 
 AST.allowedAttributes.push(
     'srcset',
@@ -43,6 +47,14 @@ export interface GridEvent<T, E extends Event = Event> {
      * The target of the event.
      */
     target: T;
+}
+
+/**
+ * The event listener for the grid.
+ */
+export interface GridEventListener {
+    eventName: keyof HTMLElementEventMap;
+    listener: EventListener;
 }
 
 /* *
@@ -159,7 +171,7 @@ namespace GridUtils {
         try {
             return new DOMParser().parseFromString(text, 'text/html')
                 .body.textContent || '';
-        } catch (error) {
+        } catch {
             return '';
         }
     }
@@ -179,11 +191,76 @@ namespace GridUtils {
         content: string
     ): void {
         if (isHTML(content)) {
+            element.innerHTML = AST.emptyHTML;
             const formattedNodes = new AST(content);
             formattedNodes.addToDOM(element);
         } else {
             element.innerText = content;
         }
+    }
+
+    /**
+     * Creates a proxy that, when reading a property, first returns the value
+     * from the original options of a given entity; if it is not defined, it
+     * falls back to the value from the defaults (default options), recursively
+     * for nested objects. Setting values on the proxy will change the original
+     * options object (1st argument), not the defaults (2nd argument).
+     *
+     * @param options
+     * The specific options object.
+     *
+     * @param defaultOptions
+     * The default options to fall back to.
+     *
+     * @returns
+     * A proxy that provides merged access to options and defaults.
+     */
+    export function createOptionsProxy<T extends object>(
+        options: T,
+        defaultOptions: Partial<T> = {}
+    ): T {
+        const handler = <U extends object>(
+            defaults: Partial<U> = {}
+        ): ProxyHandler<U> => ({
+            get(target: U, prop: string): unknown {
+                const targetValue = target[prop as keyof U];
+                const defaultValue = defaults[prop as keyof U];
+
+                if (isObject(targetValue, true)) {
+                    return new Proxy(
+                        targetValue,
+                        handler(defaultValue ?? {})
+                    );
+                }
+                return targetValue ?? defaultValue;
+            },
+            set(target: U, prop: string, value: U[keyof U]): boolean {
+                target[prop as keyof U] = value;
+                return true;
+            },
+            deleteProperty(target: U, prop: string): boolean {
+                delete target[prop as keyof U];
+                return true;
+            }
+        });
+
+        return new Proxy(options, handler(defaultOptions));
+    }
+
+    /**
+     * Format text with placeholders. Used for lang texts.
+     *
+     * @param template The text template with placeholders
+     * @param values Object containing values to replace placeholders
+     * @returns Formatted text
+     */
+    export function formatText(
+        template: string,
+        values: Record<string, string | number>
+    ): string {
+        return template.replace(/\{(\w+)\}/g, (match, key): string => (
+            values[key] !== void 0 ? String(values[key]) : match
+        ));
     }
 }
 

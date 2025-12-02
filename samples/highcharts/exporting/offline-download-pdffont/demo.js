@@ -25,6 +25,7 @@ Highcharts.chart('container', {
     }],
 
     exporting: {
+        fallbackToExportServer: false,
         pdfFont: {
             normal: 'https://www.highcharts.com/samples/data/fonts/NotoSans-Regular.ttf',
             bold: 'https://www.highcharts.com/samples/data/fonts/NotoSans-Bold.ttf',

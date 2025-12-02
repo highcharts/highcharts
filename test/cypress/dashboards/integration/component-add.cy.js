@@ -4,8 +4,12 @@ describe('Add components through UI', () => {
         cy.viewport(1200, 1000);
         cy.toggleEditMode();
 
-        Cypress.on('uncaught:exception', () => {
-            cy.log('Uncaught exception. Check the console for more details.');
+        Cypress.on('uncaught:exception', (err) => {
+            // Avoid using cy.* commands inside this handler; keep it synchronous
+            // to not interfere with Cypress command queue.
+            // Log to console for debugging and prevent test failure.
+            // eslint-disable-next-line no-console
+            console.warn('Uncaught exception in test:', err);
             return false;
         })
     });
@@ -89,6 +93,22 @@ describe('Add components through UI', () => {
         cy.get('.highcharts-dashboards-edit-menu.highcharts-dashboards-edit-toolbar-cell').children().should('be.visible')
     });
 
+    it('Board should not crash when removing added component', function() {
+        // Act- add HTML component
+        cy.grabComponent('HTML');
+        cy.dropComponent('#dashboard-col-2');
+        cy.hideSidebar();
+        // Remove HTML component
+        cy.get('.highcharts-dashboards-edit-menu-destroy').first().click();
+        cy.get('.highcharts-dashboards-edit-confirmation-popup-confirm-btn').click({ force: true, multiple: true });
+        // Act- add HTML component again
+        cy.grabComponent('HTML');
+        cy.dropComponent('#dashboard-col-1');
+
+        // Assert
+        cy.get('.highcharts-dashboards-edit-sidebar').should('exist');
+    });
+
     it('should be able to add a chart component and resize it', function() {
         // Act
         cy.grabComponent('chart');
@@ -155,8 +175,8 @@ describe('Add components through UI', () => {
 
             // check values connector
             assert.deepEqual(
-                m[m.length - 2].component.grid.columnNames,
-                component.grid.columnNames,
+                m[m.length - 2].component.grid.columnIds,
+                component.grid.columnIds,
                 `Grid should display values from CSV data table.`
             );
         });

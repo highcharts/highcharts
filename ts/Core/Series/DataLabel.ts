@@ -58,8 +58,8 @@ const {
  *
  * */
 
-declare module './PointLike' {
-    interface PointLike {
+declare module './PointBase' {
+    interface PointBase {
         bottom?: number;
         contrastColor?: ColorString;
         dataLabel?: SVGElement|SVGLabel;
@@ -69,7 +69,7 @@ declare module './PointLike' {
         dataLabels?: Array<SVGElement>;
         distributeBox?: R.BoxObject;
         dlBox?: BBoxObject;
-        dlOptions?: DataLabelOptions;
+        dlOptions?: DataLabelOptions & { zIndex?: undefined };
         top?: number;
         getDataLabelPath(dataLabel: SVGElement): SVGElement;
     }
@@ -82,14 +82,20 @@ declare module './PointOptions' {
     }
 }
 
-declare module './SeriesLike' {
-    interface SeriesLike {
+declare module './SeriesBase' {
+    interface SeriesBase {
         dataLabelPositioners?: DataLabel.PositionersObject;
         dataLabelsGroup?: SVGElement;
+        dataLabelsGroups?: Array<SVGElement|undefined>;
         hasDataLabels?(): boolean;
-        initDataLabelsGroup(): SVGElement;
+        initDataLabelsGroup(
+            index: number,
+            dataLabelsOptions?: DataLabelOptions
+        ): SVGElement;
         initDataLabels(
-            animationConfig?: Partial<AnimationOptions>
+            index: number,
+            animationConfig?: Partial<AnimationOptions>,
+            dataLabelsOptions?: DataLabelOptions
         ): SVGElement;
         alignDataLabel(
             point: Point,
@@ -133,8 +139,8 @@ declare module './SeriesOptions' {
     }
 }
 
-declare module '../../Core/Renderer/SVG/SVGElementLike' {
-    interface SVGElementLike {
+declare module '../../Core/Renderer/SVG/SVGElementBase' {
+    interface SVGElementBase {
         options?: DataLabelOptions;
     }
 }
@@ -467,8 +473,17 @@ namespace DataLabel {
         return true;
     }
 
+
     /**
+     * Compose the data label composition onto a series class.
+     *
      * @private
+     * @function compose
+     *
+     * @param {Highcharts.Series} SeriesClass
+     * The series class to compose onto.
+     *
+     * @return {void}
      */
     export function compose(
         SeriesClass: typeof Series
@@ -490,31 +505,81 @@ namespace DataLabel {
 
     /**
      * Create the SVGElement group for dataLabels
+     *
      * @private
+     * @function initDataLabelsGroup
+     *
+     * @param {number} index
+     * The index of the data labels group.
+     * @param {Highcharts.DataLabelOptions} [dataLabelsOptions]
+     * Data label options for the group.
+     *
+     * @return {Highcharts.SVGElement}
+     * The SVGElement group.
      */
-    function initDataLabelsGroup(this: Series): SVGElement {
-        return this.plotGroup(
+    function initDataLabelsGroup(
+        this: Series,
+        index: number,
+        dataLabelsOptions?: DataLabelOptions
+    ): SVGElement {
+        fireEvent(
+            this,
+            'initDataLabelsGroup',
+            {
+                index,
+                zIndex: dataLabelsOptions?.zIndex ?? 6
+            }
+        );
+
+        // Existing group or first time
+        this.dataLabelsGroup = this.dataLabelsGroups?.[index];
+
+        const group = this.plotGroup(
             'dataLabelsGroup',
             'data-labels',
             this.hasRendered ? 'inherit' : 'hidden', // #5133, #10220
-            (this.options.dataLabels as any).zIndex || 6
+            dataLabelsOptions?.zIndex ?? 6,
+            this.dataLabelsParentGroups?.[index]
         );
+
+        this.dataLabelsGroups ||= [];
+        this.dataLabelsGroups[index] = group;
+
+        // Keep reference to the 1st group
+        this.dataLabelsGroup = this.dataLabelsGroups[0];
+
+        return group;
     }
 
     /**
-     * Init the data labels with the correct animation
+     * Init the data labels with the correct animation.
+     *
      * @private
+     * @function initDataLabels
+     *
+     * @param {number} index
+     * The index of the data labels group.
+     * @param {Highcharts.AnimationOptions} animationConfig
+     * The animation options.
+     * @param {Highcharts.DataLabelOptions} [dataLabelsOptions]
+     * Data label options for the group.
+     *
+     * @return {Highcharts.SVGElement}
+     * The SVGElement group.
      */
     function initDataLabels(
         this: Series,
-        animationConfig: Partial<AnimationOptions>
+        index: number,
+        animationConfig: Partial<AnimationOptions>,
+        dataLabelsOptions?: DataLabelOptions
     ): SVGElement {
         const series = this,
-            hasRendered = series.hasRendered || 0;
+            hasRendered = !!series.hasRendered;
 
         // Create a separate group for the data labels to avoid rotation
-        const dataLabelsGroup = this.initDataLabelsGroup()
-            .attr({ opacity: +hasRendered }); // #3300
+        const dataLabelsGroup =
+            this.initDataLabelsGroup(index, dataLabelsOptions)
+                .attr({ opacity: +hasRendered }); // #3300
 
         if (!hasRendered && dataLabelsGroup) {
             if (series.visible) { // #2597, #3023, #3024
@@ -564,8 +629,6 @@ namespace DataLabel {
         fireEvent(this, 'drawDataLabels');
 
         if (series.hasDataLabels?.()) {
-            dataLabelsGroup = this.initDataLabels(animationConfig);
-
             // Make the labels for each point
             points.forEach((point): void => {
 
@@ -585,6 +648,11 @@ namespace DataLabel {
 
                 // Handle each individual data label for this point
                 pointOptions.forEach((labelOptions, i): void => {
+                    // Create dataLabelsGroup for each data labels config
+                    // (can be multiple)
+                    dataLabelsGroup =
+                        this.initDataLabels(i, animationConfig, labelOptions);
+
                     // Options for one datalabel
                     const labelEnabled = (
                             labelOptions.enabled &&
@@ -600,8 +668,8 @@ namespace DataLabel {
                             style = {}
                         } = labelOptions;
 
-                    let formatString,
-                        labelText,
+                    let formatString: string|undefined,
+                        labelText: string|undefined,
                         rotation,
                         attr: SVGAttributes = {},
                         dataLabel: SVGElement|undefined =
@@ -728,7 +796,11 @@ namespace DataLabel {
                     // Individual labels are disabled if the are explicitly
                     // disabled in the point options, or if they fall outside
                     // the plot area.
-                    if (labelEnabled && defined(labelText)) {
+                    if (
+                        labelEnabled &&
+                        defined(labelText) &&
+                        labelText !== ''
+                    ) {
                         if (!dataLabel) {
                             // Create new label element
                             dataLabel = renderer.label(

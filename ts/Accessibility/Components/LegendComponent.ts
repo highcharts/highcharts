@@ -22,6 +22,7 @@
 
 import type Accessibility from '../Accessibility';
 import type Chart from '../../Core/Chart/Chart.js';
+import type { DeepPartial } from '../../Shared/Types';
 import type { LegendAccessibilityOptions } from '../Options/A11yOptions';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type ProxyElement from '../ProxyElement';
@@ -66,14 +67,14 @@ declare module '../../Core/Legend/LegendItem' {
     }
 }
 
-declare module '../../Core/Series/PointLike' {
-    interface PointLike {
+declare module '../../Core/Series/PointBase' {
+    interface PointBase {
         a11yProxyElement?: ProxyElement;
     }
 }
 
-declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase {
         a11yProxyElement?: ProxyElement;
     }
 }
@@ -431,6 +432,11 @@ class LegendComponent extends AccessibilityComponent {
         item: Legend.Item
     ): void {
         const legendItem = item.legendItem || {};
+        const legendItemLabel = item.legendItem?.label;
+        const legendLabelEl = legendItemLabel?.element;
+        const ellipsis = Boolean(
+            legendItem.label?.styles?.textOverflow === 'ellipsis'
+        );
 
         if (!legendItem.label || !legendItem.group) {
             return;
@@ -450,8 +456,18 @@ class LegendComponent extends AccessibilityComponent {
         const attribs = {
             tabindex: -1,
             'aria-pressed': item.visible,
-            'aria-label': itemLabel
+            'aria-label': itemLabel,
+            title: ''
         };
+
+        // Check if label contains an ellipsis character (\u2026) #22397
+        if (
+            ellipsis &&
+            (legendLabelEl.textContent || '').indexOf('\u2026') !== -1
+        ) {
+            attribs.title = legendItemLabel?.textStr;
+        }
+
         // Considers useHTML
         const proxyPositioningElement = legendItem.group.div ?
             legendItem.label :
@@ -505,7 +521,7 @@ class LegendComponent extends AccessibilityComponent {
                 ]
             ],
 
-            validate: function (): (boolean) {
+            validate: function (): boolean {
                 return component.shouldHaveLegendNavigation();
             },
 
@@ -576,7 +592,7 @@ class LegendComponent extends AccessibilityComponent {
     /**
      * @private
      */
-    public shouldHaveLegendNavigation(): (boolean) {
+    public shouldHaveLegendNavigation(): boolean {
         if (!shouldDoLegendA11y(this.chart)) {
             return false;
         }

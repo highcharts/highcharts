@@ -1,3 +1,41 @@
+const createChart = data => Highcharts.chart('container', {
+    title: {
+        text: 'Bell curve'
+    },
+    subtitle: {
+        text:
+        'Source:<a href="https://www.openintro.org/data/index.php?data=gpa_iq" target="_blank"> openintro</a> '
+    },
+
+    xAxis: {
+        alignTicks: false
+    },
+
+    yAxis: {
+        title: { text: null }
+    },
+    legend: {
+        enabled: false
+    },
+    series: [
+        {
+            name: 'Bell curve',
+            type: 'bellcurve',
+            pointsInInterval: 5,
+            intervals: 4,
+            baseSeries: 1,
+            zIndex: -1,
+            marker: {
+                enabled: false
+            }
+        },
+        {
+            data: data,
+            visible: false
+        }
+    ]
+});
+
 const data = [
     111,
     107,
@@ -79,70 +117,51 @@ const data = [
     106
 ];
 
-const pointsInInterval = 5;
+// Plugin to add bell curve zones and labels
+(({ addEvent, seriesTypes }) => {
+    const decoratedSeries = [];
+    addEvent(seriesTypes.bellcurve, 'render', function () {
 
-Highcharts.chart('container', {
-    chart: {
-        margin: [50, 0, 50, 50],
-        events: {
-            load: function () {
-                this.series[0].data.forEach(function (point, i) {
-                    const labels = [
-                        '4σ', '3σ', '2σ', 'σ', 'μ', 'σ', '2σ', '3σ', '4σ'
-                    ];
-                    if (i % pointsInInterval === 0) {
-                        point.update({
-                            color: 'black',
-                            dataLabels: {
-                                enabled: true,
-                                // eslint-disable-next-line max-len
-                                format: labels[Math.floor(i / pointsInInterval)],
-                                overflow: 'none',
-                                crop: false,
-                                y: -2,
-                                style: {
-                                    fontSize: '13px'
-                                }
-                            }
-                        });
+        if (decoratedSeries.includes(this)) {
+            return;
+        }
+
+        decoratedSeries.push(this);
+        const pointsInInterval = this.options.pointsInInterval,
+            labels = ['4σ', '3σ', '2σ', 'σ', 'μ', 'σ', '2σ', '3σ', '4σ'],
+            opacities = [0, 0.1, 0.2, 0.6, 1, 1, 0.6, 0.2, 0.1, 0];
+
+        const zones = this.points
+            .filter((point, i) => i % pointsInInterval === 0)
+            .map((point, i) => ({
+                value: point.x,
+                fillColor: `rgba(44, 175, 254, ${opacities[i]})`
+            }));
+
+        this.update({
+            zoneAxis: 'x',
+            zones
+        });
+
+        this.points
+            .filter(
+                (point, i) => i % pointsInInterval === 0
+            ).forEach((point, i) => {
+                point.update({
+                    color: 'black',
+                    dataLabels: {
+                        enabled: true,
+                        format: labels[i],
+                        overflow: 'none',
+                        crop: false,
+                        y: -2,
+                        style: {
+                            fontSize: '13px'
+                        }
                     }
                 });
-            }
-        }
-    },
-    title: {
-        text: 'Bell curve'
-    },
-    subtitle: {
-        text:
-        'Source:<a href="https://www.openintro.org/data/index.php?data=gpa_iq" target="_blank"> openintro</a> '
-    },
+            });
+    });
+})(Highcharts);
 
-    xAxis: {
-        alignTicks: false
-    },
-
-    yAxis: {
-        title: { text: null }
-    },
-    legend: {
-        enabled: false
-    },
-    series: [
-        {
-            name: 'Bell curve',
-            type: 'bellcurve',
-            pointsInInterval: pointsInInterval,
-            intervals: 4,
-            baseSeries: 1,
-            zIndex: -1,
-            marker: {
-                enabled: false
-            }
-        },
-        {
-            data: data,
-            visible: false
-        }
-    ]
-});
+createChart(data);

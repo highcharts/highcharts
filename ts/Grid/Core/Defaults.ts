@@ -8,7 +8,7 @@
  *
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
-*  Authors:
+ *  Authors:
  *  - Dawid Dragula
  *  - Sebastian Bochan
  *
@@ -23,7 +23,7 @@
  * */
 
 import type Options from './Options';
-import type Globals from './Globals';
+import type { DeepPartial } from '../../Shared/Types';
 
 import Utils from '../../Core/Utilities.js';
 
@@ -37,14 +37,14 @@ namespace Defaults {
 
     /**
      * Default options for the Grid.
-     * @internal
      */
-    export const defaultOptions: Globals.DeepPartial<Options> = {
+    export const defaultOptions: DeepPartial<Options> = {
         accessibility: {
             enabled: true,
             highContrastMode: 'auto',
             announcements: {
-                sorting: true
+                sorting: true,
+                filtering: true
             }
         },
         lang: {
@@ -56,18 +56,66 @@ namespace Defaults {
                         descending: 'Sorted descending.',
                         none: 'Not sorted.'
                     }
+                },
+                pagination: {
+                    announcements: {
+                        pageSizeChange: 'Page size changed to',
+                        pageChange: 'Page changed to'
+                    }
+                },
+                filtering: {
+                    announcements: {
+                        filterApplied: 'Filter applied for {columnId}, ' +
+                            '{condition} {value}. {rowsCount} results found.',
+                        emptyFilterApplied: 'Filter applied for {columnId}, ' +
+                            '{condition} values. {rowsCount} results found.',
+                        filterCleared: 'Filter cleared for {columnId}. ' +
+                            '{rowsCount} results found.'
+                    }
                 }
             },
             loading: 'Loading...',
-            noData: 'No data to display'
+            noData: 'No data to display',
+            filter: 'Filter',
+            sortAscending: 'Sort ascending',
+            sortDescending: 'Sort descending',
+            column: 'Column',
+            setFilter: 'Set filter',
+            pagination: {
+                pageInfo: 'Showing {start} - {end} of {total} ' +
+                    '(page {currentPage} of {totalPages})',
+                pageSizeLabel: 'rows per page',
+                firstPage: 'First page',
+                previousPage: 'Previous page',
+                nextPage: 'Next page',
+                lastPage: 'Last page',
+                pageNumber: 'Page {page}',
+                ellipsis: 'More pages'
+            },
+            columnFilteringConditions: {
+                contains: 'Contains',
+                doesNotContain: 'Does not contain',
+                equals: 'Equals',
+                doesNotEqual: 'Does not equal',
+                beginsWith: 'Begins with',
+                endsWith: 'Ends with',
+                empty: 'Empty',
+                notEmpty: 'Not empty',
+                greaterThan: 'Greater than',
+                greaterThanOrEqualTo: 'Greater than or equal to',
+                lessThan: 'Less than',
+                lessThanOrEqualTo: 'Less than or equal to',
+                before: 'Before',
+                after: 'After',
+                all: 'All',
+                'true': 'True',
+                'false': 'False'
+            }
         },
         time: {
             timezone: 'UTC'
         },
         rendering: {
-            columns: {
-                distribution: 'full'
-            },
             rows: {
                 bufferSize: 10,
                 minVisibleRows: 2,
@@ -77,13 +125,21 @@ namespace Defaults {
             header: {
                 enabled: true
             },
+            columns: {
+                resizing: {
+                    enabled: true,
+                    mode: 'adjacent'
+                }
+            },
             theme: 'hcg-theme-default'
         },
         columnDefaults: {
             sorting: {
                 sortable: true
             },
-            resizing: true
+            filtering: {
+                inline: false
+            }
         }
     };
 
@@ -92,10 +148,10 @@ namespace Defaults {
      * reusable templates.
      *
      * @param options
-     * The new custom chart options.
+     * The new custom grid options.
      */
     export function setOptions(
-        options: Globals.DeepPartial<Options>
+        options: DeepPartial<Options>
     ): void {
         merge(true, Defaults.defaultOptions, options);
     }

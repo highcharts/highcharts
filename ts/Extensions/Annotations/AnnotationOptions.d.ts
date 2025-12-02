@@ -23,6 +23,7 @@ import type {
 } from './Controllables/ControllableOptions';
 import type ControlPointOptions from './ControlPointOptions';
 import type ControlTargetOptions from './ControlTargetOptions';
+import type { DeepPartial } from '../../Shared/Types';
 import type EventCallback from '../../Core/EventCallback';
 import type MockPointOptions from './MockPointOptions';
 import type NavigationOptions from '../Exporting/NavigationOptions';
@@ -47,6 +48,7 @@ export interface AnnotationEventsOptions {
 
 export interface AnnotationOptions extends ControlTargetOptions {
     animation: Partial<AnimationOptions>;
+    className?: string;
     controlPointOptions: ControlPointOptions;
     crop: boolean;
     draggable: AnnotationDraggableValue;
@@ -60,6 +62,7 @@ export interface AnnotationOptions extends ControlTargetOptions {
     shapes?: Array<ControllableShapeOptions>;
     type?: string;
     typeOptions: AnnotationTypeOptions;
+    types: Record<string, DeepPartial<AnnotationOptions>>;
     visible: boolean;
     zIndex: number;
 }
@@ -70,6 +73,7 @@ export interface AnnotationTypeOptions {
     line?: Partial<ControllableShapeOptions>;
     point: MockPointOptions;
     points?: Array<AnnotationTypePointsOptions>;
+    type?: string;
     xAxis?: number;
     yAxis?: number;
 }

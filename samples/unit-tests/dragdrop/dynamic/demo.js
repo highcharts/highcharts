@@ -232,6 +232,40 @@ QUnit.test('Dragdrop enabled in dynamic chart', function (assert) {
         `DragHandles should be visible - dragging should work on the first
         column in a categorized xAxis, (#16596)`
     );
+
+    chart.addSeries({
+        type: 'xrange',
+        data: [{
+            x: 0,
+            x2: 3,
+            y: 3
+        }],
+        dragDrop: {
+            draggableX: true
+        }
+    });
+
+    const xrange = chart.series[1];
+
+    chart.hideDragHandles();
+    xrange.points[0].showDragHandles();
+
+    assert.strictEqual(
+        document.querySelectorAll('.highcharts-drag-handle').length,
+        2,
+        'Both resize handles should be visible.'
+    );
+
+    chart.xAxis[0].setExtremes(1, 4);
+
+    chart.hideDragHandles();
+    xrange.points[0].showDragHandles();
+
+    assert.strictEqual(
+        document.querySelectorAll('.highcharts-drag-handle').length,
+        1,
+        '1 resize handle (that is in the visible range) should be visible.'
+    );
 });
 
 QUnit.test('Dragdrop and logarithmic axes', function (assert) {

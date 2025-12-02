@@ -1,123 +1,127 @@
-QUnit.skip('Exported chart sourceWidth and sourceHeight', function (assert) {
-    var chart = Highcharts.chart('container', {
-            title: {
-                text: 'Highcharts sourceWidth and sourceHeight demo'
-            },
-            subtitle: {
-                text:
-                    'The on-screen chart is 600x400.<br/>The exported chart ' +
-                    'is 800x400<br/>(sourceWidth and sourceHeight multiplied ' +
-                    'by scale)',
-                floating: true,
-                align: 'left',
-                x: 60,
-                y: 50
-            },
-            xAxis: {
-                categories: [
-                    'Jan',
-                    'Feb',
-                    'Mar',
-                    'Apr',
-                    'May',
-                    'Jun',
-                    'Jul',
-                    'Aug',
-                    'Sep',
-                    'Oct',
-                    'Nov',
-                    'Dec'
-                ]
-            },
-            series: [
-                {
-                    data: [
-                        29.9,
-                        71.5,
-                        106.4,
-                        129.2,
-                        144.0,
-                        176.0,
-                        135.6,
-                        148.5,
-                        216.4,
-                        194.1,
-                        95.6,
-                        54.4
+QUnit.skip(
+    'Exported chart sourceWidth and sourceHeight',
+    async function (assert) {
+        var chart = Highcharts.chart('container', {
+                title: {
+                    text: 'Highcharts sourceWidth and sourceHeight demo'
+                },
+                subtitle: {
+                    text:
+                        'The on-screen chart is 600x400.<br/>The exported ' +
+                        'chart is 800x400<br/>(sourceWidth and sourceHeight ' +
+                        'multiplied by scale)',
+                    floating: true,
+                    align: 'left',
+                    x: 60,
+                    y: 50
+                },
+                xAxis: {
+                    categories: [
+                        'Jan',
+                        'Feb',
+                        'Mar',
+                        'Apr',
+                        'May',
+                        'Jun',
+                        'Jul',
+                        'Aug',
+                        'Sep',
+                        'Oct',
+                        'Nov',
+                        'Dec'
                     ]
+                },
+                series: [
+                    {
+                        data: [
+                            29.9,
+                            71.5,
+                            106.4,
+                            129.2,
+                            144.0,
+                            176.0,
+                            135.6,
+                            148.5,
+                            216.4,
+                            194.1,
+                            95.6,
+                            54.4
+                        ]
+                    }
+                ],
+                exporting: {
+                    sourceWidth: 400,
+                    sourceHeight: 200,
+                    // scale: 2 (default)
+                    chartOptions: {
+                        subtitle: null
+                    }
                 }
-            ],
-            exporting: {
-                sourceWidth: 400,
-                sourceHeight: 200,
-                // scale: 2 (default)
-                chartOptions: {
-                    subtitle: null
+            }),
+            done = assert.async();
+
+        var originalPost = Highcharts.HttpUtilities.post;
+
+        Highcharts.HttpUtilities.post = function (url, data) {
+            function serialize(obj) {
+                var str = [];
+
+                for (var p in obj) {
+                    if (Object.hasOwnProperty.call(obj, p)) {
+                        str.push(
+                            encodeURIComponent(p) +
+                            '=' +
+                            encodeURIComponent(obj[p])
+                        );
+                    }
                 }
+                return str.join('&');
             }
-        }),
-        done = assert.async();
 
-    var originalPost = Highcharts.HttpUtilities.post;
+            data.async = true;
+            $.ajax({
+                type: 'POST',
+                data: serialize(data),
+                url: url,
+                success: function (result) {
+                    var img = new Image();
 
-    Highcharts.HttpUtilities.post = function (url, data) {
-        function serialize(obj) {
-            var str = [];
+                    img.src = url + result;
+                    img.onload = function () {
+                        // Since the default scale is 2 and the sourceWidth is
+                        // 400, we
+                        // expect the exported width to be 800px.
+                        assert.strictEqual(
+                            this.width,
+                            800,
+                            'Generated image width is 800px'
+                        );
 
-            for (var p in obj) {
-                if (Object.hasOwnProperty.call(obj, p)) {
-                    str.push(
-                        encodeURIComponent(p) + '=' + encodeURIComponent(obj[p])
-                    );
-                }
-            }
-            return str.join('&');
-        }
+                        assert.strictEqual(
+                            this.height,
+                            400,
+                            'Generated image height is 400px'
+                        );
 
-        data.async = true;
-        $.ajax({
-            type: 'POST',
-            data: serialize(data),
-            url: url,
-            success: function (result) {
-                var img = new Image();
+                        document.body.appendChild(img);
 
-                img.src = url + result;
-                img.onload = function () {
-                    // Since the default scale is 2 and the sourceWidth is
-                    // 400, we
-                    // expect the exported width to be 800px.
-                    assert.strictEqual(
-                        this.width,
-                        800,
-                        'Generated image width is 800px'
-                    );
-
-                    assert.strictEqual(
-                        this.height,
-                        400,
-                        'Generated image height is 400px'
-                    );
-
-                    document.body.appendChild(img);
-
+                        Highcharts.HttpUtilities.post = originalPost;
+                        done();
+                    };
+                },
+                error: function () {
                     Highcharts.HttpUtilities.post = originalPost;
+
+                    console.log(
+                        assert.test.testName,
+                        'Export server XHR error or timeout'
+                    );
+                    assert.expect(0);
                     done();
-                };
-            },
-            error: function () {
-                Highcharts.HttpUtilities.post = originalPost;
+                },
+                timeout: 1000
+            });
+        };
 
-                console.log(
-                    assert.test.testName,
-                    'Export server XHR error or timeout'
-                );
-                assert.expect(0);
-                done();
-            },
-            timeout: 1000
-        });
-    };
-
-    chart.exportChart();
-});
+        await chart.exporting.exportChart();
+    });

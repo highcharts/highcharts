@@ -56,7 +56,7 @@ Highcharts.chart('container', {
             printButton: {
                 text: '<i class="fa fa-print"></i>',
                 onclick: function () {
-                    this.print();
+                    this.exporting.print();
                 }
             }
         }

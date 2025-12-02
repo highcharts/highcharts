@@ -28,7 +28,7 @@ Then, import the package and the dedicated plug to connect it to the Dashboards.
 ```typescript
 import Highcharts from 'highcharts/es-modules/masters/highcharts.src.js';
 import Dashboards from '@highcharts/dashboards/es-modules/masters/dashboards.src.js';
-import Grid from '@highcharts/dashboards/es-modules/masters/datagrid.src.js';
+import Grid from '@highcharts/grid/es-modules/masters/grid-pro.src.js';
 
 Dashboards.HighchartsPlugin.custom.connectHighcharts(Highcharts);
 Dashboards.GridPlugin.custom.connectGrid(Grid);

@@ -1,4 +1,4 @@
-QUnit.skip('Exported chart width', function (assert) {
+QUnit.skip('Exported chart width', async function (assert) {
     var chart = Highcharts.chart('container', {
             title: {
                 text: 'Highcharts export width test'
@@ -96,7 +96,7 @@ QUnit.skip('Exported chart width', function (assert) {
         });
     };
 
-    chart.exportChart({
+    await chart.exporting.exportChart({
         width: 200
     });
 });

@@ -1,0 +1,11 @@
+---
+name: Reactive wordcloud
+authors:
+  - Gøran Slettemark
+js_wrap: b
+applyCSP: false
+resources:
+  - https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4
+alt_text: >-
+  Highcharts React sample showing a wordcloud diagram connected to a textarea.
+...

@@ -137,3 +137,63 @@ QUnit.test('Marker group zooming and visibility', function (assert) {
         'Second series markerGroup should be hidden'
     );
 });
+
+QUnit.test(
+    'Hovered points are cleared after zoom, (#20330)',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+            chart: {
+                zoomType: 'xy'
+            },
+            boost: {
+                enabled: true
+            },
+            plotOptions: {
+                series: {
+                    boostThreshold: 1,
+                    cropThreshold: 1
+                }
+            },
+            tooltip: {
+                shared: true
+            },
+            series: [{
+                data: [1, 2, 3]
+            }, {
+                data: [4, 5, 6]
+            }]
+        });
+
+        const controller = new TestController(chart);
+
+        // Simulate hover on both series
+        const x = chart.xAxis[0].toPixels(1),
+            y = chart.plotTop + chart.plotHeight / 2;
+
+        chart.pointer.runPointActions({
+            type: 'mousemove',
+            chartX: x,
+            chartY: y
+        });
+
+        assert.strictEqual(
+            chart.hoverPoints.length,
+            2,
+            'Two points hovered'
+        );
+
+        // Simulate zoom
+        controller.pan([x, y], [x + 100, y + 100]);
+
+        assert.deepEqual(
+            chart.hoverPoints,
+            undefined,
+            'Hover points are cleared after zoom'
+        );
+
+        assert.strictEqual(
+            chart.tooltip.isHidden,
+            true,
+            'Tooltip is hidden after zoom'
+        );
+    });

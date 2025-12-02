@@ -1,7 +1,7 @@
 import Dashboards from '../../../../code/dashboards/es-modules/masters/dashboards.src.js';
-import Grid from '../../../../code/datagrid/es-modules/masters/datagrid.src.js';
 import Highcharts from '../../../../code/es-modules/masters/highcharts.src.js';
 import '../../../../code/es-modules/masters/modules/draggable-points.src.js';
+import Grid from '../../../../code/grid/es-modules/masters/grid-pro.src.js';
 
 Highcharts.win.Highcharts = Highcharts;
 
@@ -20,9 +20,7 @@ Dashboards.board('container', {
         connectors: [{
             id: 'connector-1',
             type: 'CSV',
-            options: {
-                csv: csvData
-            }
+            csv: csvData
         }]
     },
     components: [
@@ -61,7 +59,7 @@ Dashboards.board('container', {
                 }
             }
         }, {
-            renderTo: 'dashboard-col-datagrid',
+            renderTo: 'dashboard-col-grid',
             type: 'Grid',
             connector: {
                 id: 'connector-1'
@@ -76,7 +74,9 @@ Dashboards.board('container', {
                 header: ['Food', 'Vitamin A'],
                 columnDefaults: {
                     cells: {
-                        editable: true
+                        editMode: {
+                            enabled: true
+                        }
                     }
                 },
                 columns: [{

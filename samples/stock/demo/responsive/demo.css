@@ -1,12 +1,24 @@
+body {
+    background: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
+}
+
 #container {
     min-width: 310px;
     max-width: 800px;
+    margin: 0.5em auto;
+}
+
+.button-row {
+    max-width: 800px;
+    margin: 0.5em auto;
 }
 
 .highcharts-demo-button {
-    background: #f2f2f2;
+    background: var(--highcharts-neutral-color-5, #f2f2f2);
     border: none;
     border-radius: 4px;
+    color: var(--highcharts-neutral-color-100, #000);
     cursor: pointer;
     display: inline-block;
     font-size: 0.8rem;
@@ -16,5 +28,5 @@
 }
 
 .highcharts-demo-button:hover {
-    background: #e6e6e6;
+    background: var(--highcharts-neutral-color-10, #e6e6e6);
 }

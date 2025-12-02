@@ -17,6 +17,7 @@
  * */
 
 import type ColumnRangeSeriesOptions from './ColumnRangeSeriesOptions';
+import type { DeepPartial } from '../../Shared/Types';
 import type RadialAxis from '../../Core/Axis/RadialAxis';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 

@@ -45,14 +45,15 @@ export interface CSSObject {
     '-webkit-transform'?: string;
     background?: string;
     backgroundColor?: ColorString;
-    borderRadius?: number|string;
+    backgroundImage?: string;
+    borderRadius?: string;
     borderWidth?: number;
     border?: string|0;
     'border-radius'?: string;
     bottom?: string;
     boxShadow?: string;
     clip?: string;
-    color?: ('contrast'|ColorString);
+    color?: ColorString; // @todo ('contrast'|ColorString);
     cursor?: CursorValue;
     direction?: string;
     display?: string;

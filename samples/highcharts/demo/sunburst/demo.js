@@ -48,13 +48,13 @@ const createChart = data => Highcharts.chart('container', {
             level: 3,
             colorVariation: {
                 key: 'brightness',
-                to: -0.5
+                to: -1
             }
         }, {
             level: 4,
             colorVariation: {
                 key: 'brightness',
-                to: 0.5
+                to: 1
             }
         }]
 

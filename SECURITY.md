@@ -29,6 +29,8 @@ We utilize GitHubs workflow for managing security vulnerabilities. This means th
 
 As part of our security workflow, we also employ Static Application Security Testing (SAST) codescanning. This helps us identify potential security vulnerabilities and weaknesses in our codebase. We regularly run SAST codescans to ensure the overall security of our products.
 
+If a security vulnerability is confirmed that could compromise the confidentiality, integrity, or availability of our libraries or any application that incorporates them we will email a security advisory to every customer contact listed in our licensing records within 24 hours of confirmation. If deemed useful, we will also publish the advisories on our official X (Twitter) and LinkedIn accounts
+
 ## Bounties
 
 We do not have a bounty system for bugs or security issues for the time being.

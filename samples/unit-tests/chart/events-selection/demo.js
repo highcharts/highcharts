@@ -1,40 +1,51 @@
 QUnit.test('Selection event', function (assert) {
     const chart = Highcharts.chart('container', {
-            chart: {
-                zoomType: 'x',
-                events: {
-                    selection: evt => {
-                        assert.ok(
-                            evt.xAxis[0].min > 3.65 && evt.xAxis[0].min < 3.75,
-                            `Min extreme from selection event should be lower
-                            than 4 and in correct scope (#20784).`
-                        );
-                        assert.ok(
-                            evt.xAxis[0].max < 4.5 && evt.xAxis[0].max > 4.4,
-                            `Max extreme from selection event should be higher
-                            than 4 and in correct scope (#20784).`
-                        );
-                        return false;
-                    }
-                }
-            },
-            series: [{
-                type: 'column',
-                data: [{
-                    x: 3,
-                    y: 1
-                }, {
-                    x: 4,
-                    y: 2
-                }, {
-                    x: 5,
-                    y: 3
-                }]
-            }]
-        }),
-        controller = new TestController(chart);
+        chart: {
+            zoomType: 'x',
+            events: {
+                selection: evt => {
+                    const xAxis = evt.xAxis[0].axis,
+                        chart = xAxis.chart,
+                        series = chart.series[0],
+                        pointWidth = series.options.pointWidth,
+                        minPx = xAxis.toPixels(evt.xAxis[0].min),
+                        maxPx = xAxis.toPixels(evt.xAxis[0].max),
+                        firstColStart = xAxis.toPixels(series.data[0].x) -
+                            pointWidth / 2,
+                        lastColEnd = xAxis.toPixels(series.data.at(-1).x) +
+                            pointWidth / 2;
 
-    controller.pan([270, 100], [400, 100], void 0, true);
+                    assert.ok(
+                        minPx < firstColStart,
+                        'Selection starts outside first column bounds (#22945)'
+                    );
+                    assert.ok(
+                        maxPx > lastColEnd,
+                        'Selection ends outside last column bounds (#22945)'
+                    );
+
+                    return false;
+                }
+            }
+        },
+        series: [{
+            type: 'column',
+            pointWidth: 50,
+            data: [{
+                x: 0,
+                y: 1
+            }, {
+                x: 1,
+                y: 2
+            }]
+        }]
+    });
+
+    const controller = new TestController(chart),
+        startX = chart.plotLeft,
+        endX = chart.plotLeft + chart.xAxis[0].len;
+
+    controller.pan([startX + 1, 100], [endX - 1, 100], void 0, true);
 
     chart.series[0].update({
         type: 'column',
@@ -55,6 +66,7 @@ QUnit.test('Selection event', function (assert) {
 
     // Pan
     controller.pan([200, 100], [150, 100], { shiftKey: true });
+
     assert.strictEqual(
         chart.index,
         undefined,

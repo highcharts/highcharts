@@ -69,7 +69,7 @@ const lang = {
     /**
      * The default text for the rangeselector buttons.
      *
-     * @since next
+     * @since 12.2.0
      */
     rangeSelector: {
         allText: 'All',

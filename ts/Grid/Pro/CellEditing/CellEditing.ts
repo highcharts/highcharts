@@ -23,15 +23,16 @@
  *
  * */
 
-import AST from '../../../Core/Renderer/HTML/AST.js';
-import TableCell from '../../Core/Table/Content/TableCell.js';
-import GridUtils from '../../Core/Table/../GridUtils.js';
+import { EditModeContent } from './CellEditMode.js';
+
+import TableCell from '../../Core/Table/Body/TableCell.js';
 import Table from '../../Core/Table/Table.js';
 import Globals from '../../Core/Globals.js';
 import U from '../../../Core/Utilities.js';
 
-const { makeHTMLElement } = GridUtils;
-const { fireEvent } = U;
+const {
+    fireEvent
+} = U;
 
 
 /* *
@@ -62,9 +63,17 @@ class CellEditing {
     public editedCell?: TableCell;
 
     /**
-     * Input element for the cell.
+     * The content of the cell edit mode, which represents a context containing
+     * the input field or similar element for applying changes to the cell
+     * value.
      */
-    private inputElement?: HTMLInputElement;
+    public editModeContent?: EditModeContent;
+
+    /**
+     * The container element for the cell edit mode, which is used to
+     * position the edit mode content correctly within the cell.
+     */
+    private containerElement?: HTMLDivElement;
 
 
     /* *
@@ -91,21 +100,19 @@ class CellEditing {
      * The cell that is to be edited.
      */
     public startEditing(cell: TableCell): void {
-        if (this.editedCell === cell) {
+        if (
+            this.editedCell === cell || (
+                // If value is invalid, do not start new editing
+                this.editedCell && !this.stopEditing()
+            )
+        ) {
             return;
         }
 
-        if (this.editedCell) {
-            this.stopEditing();
-        }
-
         this.editedCell = cell;
-        const cellElement = cell.htmlElement;
+        cell.htmlElement.classList.add(Globals.getClassName('editedCell'));
 
-        cellElement.innerHTML = AST.emptyHTML;
-        cellElement.classList.add(Globals.getClassName('editedCell'));
-
-        this.renderInput();
+        this.render();
         fireEvent(cell, 'startedEditing');
     }
 
@@ -114,44 +121,100 @@ class CellEditing {
      *
      * @param submit
      * Whether to save the value of the input to the cell. Defaults to true.
+     *
+     * @return
+     * Returns `true` if the cell was successfully stopped editing.
      */
-    public stopEditing(submit = true): void {
+    public stopEditing(submit = true): boolean {
         const cell = this.editedCell;
-        const input = this.inputElement;
+        const emContent = this.editModeContent;
 
-        if (!cell || !input) {
-            return;
+        if (!cell || !emContent) {
+            return false;
         }
 
-        let newValue: string | number = input.value;
+        const { column } = cell;
+        const vp = column.viewport;
+        const newValue = emContent.value;
 
-        this.destroyInput();
+        if (submit) {
+            const validationErrors: string[] = [];
+            if (!vp.validator.validate(cell, validationErrors)) {
+                vp.validator.initErrorBox(cell, validationErrors);
+                this.setA11yAttributes(false);
+
+                return false;
+            }
+
+            this.setA11yAttributes(true);
+
+            vp.validator.hide();
+            vp.validator.errorCell = void 0;
+        }
+
+        // Hide notification
+        this.viewport.validator.hide();
+
+        // Hide input
+        this.destroy();
         cell.htmlElement.classList.remove(
             Globals.getClassName('editedCell')
         );
 
         cell.htmlElement.focus();
 
-        // Convert to number if possible
-        if (!isNaN(+newValue)) {
-            newValue = +newValue;
-        }
-
+        const isValueChanged = cell.value !== newValue;
         void cell.setValue(
             submit ? newValue : cell.value,
-            submit && cell.value !== newValue
+            submit && isValueChanged
         );
 
-        fireEvent(cell, 'stoppedEditing', { submit });
+        if (isValueChanged) {
+            fireEvent(cell, 'stoppedEditing', { submit });
+        }
 
         delete this.editedCell;
+
+        return true;
+    }
+
+    public setA11yAttributes(valid: boolean): void {
+        const mainElement = this.editModeContent?.getMainElement();
+        if (!mainElement) {
+            return;
+        }
+
+        if (!valid) {
+            mainElement.setAttribute('aria-invalid', 'true');
+            mainElement.setAttribute(
+                'aria-errormessage',
+                'notification-error'
+            );
+        } else {
+            mainElement.setAttribute('aria-invalid', 'false');
+            mainElement.setAttribute('aria-errormessage', '');
+        }
     }
 
     /**
      * Handles the blur event on the input field.
      */
-    private onInputBlur = (): void => {
-        this.stopEditing();
+    private readonly onInputBlur = (): void => {
+        if (!this.stopEditing()) {
+            this.editModeContent?.getMainElement().focus();
+        }
+    };
+
+    /**
+     * Handles the change event on the input field.
+     */
+    private readonly onInputChange = (): void => {
+        if (
+            this.editModeContent?.finishAfterChange &&
+            !this.stopEditing()
+        ) {
+            this.editModeContent?.getMainElement().focus();
+        }
     };
 
     /**
@@ -161,13 +224,24 @@ class CellEditing {
      * @param e
      * The keyboard event.
      */
-    private onInputKeyDown = (e: KeyboardEvent): void => {
-        const { keyCode } = e;
+    private readonly onInputKeyDown = (e: KeyboardEvent): void => {
+        const { key } = e;
+        e.stopPropagation();
 
-        // Enter / Escape
-        if (keyCode === 13 || keyCode === 27) {
-            // Cancel editing on escape
-            this.stopEditing(keyCode === 13);
+        if (key === 'Escape') {
+            this.stopEditing(false);
+            return;
+        }
+
+        if (key === 'Enter') {
+            if (
+                this.editModeContent?.finishAfterChange
+            ) {
+                this.onInputChange();
+                return;
+            }
+
+            this.stopEditing();
         }
     };
 
@@ -175,37 +249,68 @@ class CellEditing {
      * Renders the input field for the cell, focuses it and sets up event
      * listeners.
      */
-    private renderInput(): void {
+    private render(): void {
         const cell = this.editedCell;
-        if (!cell) {
+        if (!cell || !cell.column.editModeRenderer) {
             return;
         }
 
-        const cellEl = cell.htmlElement;
-        const input = this.inputElement = makeHTMLElement('input', {}, cellEl);
+        this.containerElement = this.containerElement ||
+            document.createElement('div');
+        this.containerElement.className =
+            CellEditing.classNames.cellEditingContainer;
+        this.editedCell?.htmlElement.appendChild(this.containerElement);
 
-        input.value = '' + cell.value;
-        input.focus();
+        this.editModeContent = cell.column.editModeRenderer?.render(
+            cell, this.containerElement
+        );
+        this.editModeContent.getMainElement().focus();
 
-        input.addEventListener('blur', this.onInputBlur);
-        input.addEventListener('keydown', this.onInputKeyDown);
+        this.editModeContent.blurHandler = this.onInputBlur;
+        this.editModeContent.changeHandler = this.onInputChange;
+        this.editModeContent.keyDownHandler = this.onInputKeyDown;
+
+        const rules = cell.column.options?.cells?.editMode?.validationRules ||
+            [];
+        if (rules.includes('notEmpty')) {
+            this.editModeContent.getMainElement().setAttribute(
+                'aria-required',
+                'true'
+            );
+        }
     }
 
     /**
      * Removes event listeners and the input element.
      */
-    private destroyInput(): void {
-        const input = this.inputElement;
-        if (!input) {
+    private destroy(): void {
+        if (!this.editModeContent) {
             return;
         }
 
-        input.removeEventListener('keydown', this.onInputKeyDown);
-        input.removeEventListener('blur', this.onInputBlur);
-
-        input.remove();
-        delete this.inputElement;
+        this.editModeContent.destroy();
+        this.containerElement?.remove();
+        delete this.editModeContent;
+        delete this.containerElement;
     }
+}
+
+/* *
+ *
+ *  Namespace
+ *
+ * */
+
+
+namespace CellEditing {
+
+    /**
+     * The class names used by the CellEditing functionality.
+     */
+    export const classNames = {
+        cellEditingContainer: Globals.classNamePrefix + 'cell-editing-container'
+    } as const;
+
 }
 
 

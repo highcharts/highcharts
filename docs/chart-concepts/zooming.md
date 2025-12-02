@@ -28,9 +28,23 @@ and
 [endOnTick](https://api.highcharts.com/highcharts/yAxis.endOnTick)
 are set to `false`.
 
-Since v11.1, mouse wheel zooming is available through the [zooming.mouseWheel](https://api.highcharts.com/highcharts/chart.zooming.mouseWheel) option set. It requires a [separate module
+#### Mouse wheel zooming
+Mouse wheel zooming is available through the
+[zooming.mouseWheel](https://api.highcharts.com/highcharts/chart.zooming.mouseWheel)
+option set (since v11.1). It requires a [separate module
 file](https://code.highcharts.com/modules/mouse-wheel-zoom.js) for Highcharts Core,
 but is bundled in Highcharts Stock.
+
+#### Non-cartesian zooming
+Zooming is also available for non-cartesian series, such as pie, treegraph,
+sankey amongst others (since v12.3). To enable zooming for non-cartesian series,
+you need to include an [additional module
+file](https://code.highcharts.com/modules/non-cartesian-zoom.js). The panning
+and zooming behavior for non-cartesian series mirrors that of cartesian series,
+with support for mouse drag, touch gestures, and mouse wheel zooming (when
+enabled). The zoom rectangle in non-cartesian zooming has a fixed aspect ratio
+that matches the chart's width-to-height ratio, as this ensures consistent and
+meaningful zoom behavior for these types of series.
 
 ### Highcharts Stock
 

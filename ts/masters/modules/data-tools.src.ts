@@ -27,6 +27,7 @@ import '../../Data/Modifiers/InvertModifier.js';
 import '../../Data/Modifiers/MathModifier.js';
 import '../../Data/Modifiers/RangeModifier.js';
 import '../../Data/Modifiers/SortModifier.js';
+import '../../Data/Modifiers/FilterModifier.js';
 const G: AnyRecord = Highcharts;
 G.DataConnector = G.DataConnector || DataConnector;
 G.DataConverter = G.DataConverter || DataConverter;

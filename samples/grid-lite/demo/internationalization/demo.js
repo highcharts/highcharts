@@ -11,9 +11,9 @@ const languages = {
                     }
                 }
             },
-            decimalPoint: '.'
+            locale: 'en'
         },
-        header: ['id', 'productEN', 'weight', 'price'],
+        header: ['id', 'productEN', 'weight', 'price', 'updated'],
         columns: [{
             id: 'productEN',
             header: {
@@ -28,6 +28,11 @@ const languages = {
             id: 'price',
             header: {
                 format: 'Price'
+            }
+        }, {
+            id: 'updated',
+            header: {
+                format: 'Updated'
             }
         }],
         caption: {
@@ -44,11 +49,23 @@ const languages = {
                         descending: 'Sortert synkende.',
                         none: 'Ikke sortert.'
                     }
+                },
+                filtering: {
+                    announcements: {
+                        filterApplied: 'Filter brukt for {columnId}, ' +
+                            '{condition} {value}. {rowsCount} resultater ' +
+                            'funnet.',
+                        emptyFilterApplied: 'Filter brukt for {columnId}, ' +
+                            '{condition} verdier. {rowsCount} resultater ' +
+                            'funnet.',
+                        filterCleared: 'Filter fjernet for {columnId}. ' +
+                            '{rowsCount} resultater funnet.'
+                    }
                 }
             },
-            decimalPoint: ','
+            locale: 'no'
         },
-        header: ['id', 'productNO', 'weight', 'price'],
+        header: ['id', 'productNO', 'weight', 'price', 'updated'],
         columns: [{
             id: 'productNO',
             header: {
@@ -63,6 +80,11 @@ const languages = {
             id: 'price',
             header: {
                 format: 'Pris'
+            }
+        }, {
+            id: 'updated',
+            header: {
+                format: 'Oppdatert'
             }
         }],
         caption: {
@@ -79,11 +101,23 @@ const languages = {
                         descending: 'Posortowano malejąco.',
                         none: 'Nie posortowano.'
                     }
+                },
+                filtering: {
+                    announcements: {
+                        filterApplied: 'Zastosowano filtr dla {columnId}, ' +
+                            '{condition} {value}. Znaleziono {rowsCount} ' +
+                            'wyników.',
+                        emptyFilterApplied: 'Zastosowano filtr dla ' +
+                            '{columnId}, {condition} wartości. Znaleziono ' +
+                            '{rowsCount} wyników.',
+                        filterCleared: 'Wyczyszczono filtr dla {columnId}.' +
+                            'Znaleziono {rowsCount} wyników.'
+                    }
                 }
             },
-            decimalPoint: ','
+            locale: 'pl'
         },
-        header: ['id', 'productPL', 'weight', 'price'],
+        header: ['id', 'productPL', 'weight', 'price', 'updated'],
         columns: [{
             id: 'productPL',
             header: {
@@ -98,6 +132,11 @@ const languages = {
             id: 'price',
             header: {
                 format: 'Cena'
+            }
+        }, {
+            id: 'updated',
+            header: {
+                format: 'Zaktualizowano'
             }
         }],
         caption: {
@@ -114,11 +153,21 @@ const languages = {
                         descending: '已按降序排序。',
                         none: '未排序。'
                     }
+                },
+                filtering: {
+                    announcements: {
+                        filterApplied: '已为 {columnId} 应用筛选器,' +
+                            '{condition} {value}。找到 {rowsCount} 个结果。',
+                        emptyFilterApplied: '已为 {columnId} 应用筛选器,' +
+                            '{condition} 值。找到 {rowsCount} 个结果。',
+                        filterCleared: '已清除 {columnId} 的筛选器。' +
+                            '找到 {rowsCount} 个结果。'
+                    }
                 }
             },
-            decimalPoint: '.'
+            locale: 'zh'
         },
-        header: ['id', 'productZH', 'weight', 'price'],
+        header: ['id', 'productZH', 'weight', 'price', 'updated'],
         columns: [{
             id: 'productZH',
             header: {
@@ -134,6 +183,11 @@ const languages = {
             header: {
                 format: '价格'
             }
+        }, {
+            id: 'updated',
+            header: {
+                format: '最新的'
+            }
         }],
         caption: {
             text: '水果的重量和价格'
@@ -147,20 +201,25 @@ const grid = Grid.grid('container', {
     header: languages.en.header,
     dataTable: {
         columns: {
-            id: ['1', '2', '3', '4'],
+            id: [1, 2, 3, 4],
             productEN: ['Apple', 'Pear', 'Plum', 'Banana'],
             productNO: ['Eple', 'Pære', 'Plomme', 'Banan'],
             productPL: ['Jabłko', 'Gruszka', 'Śliwka', 'Banan'],
             productZH: ['苹果', '梨', '李子', '香蕉'],
             weight: [100, 60, 30, 200],
-            price: [1.5, 2.53, 5, 4.5]
+            price: [1.5, 2.53, 5, 4.5],
+            updated: [
+                Date.UTC(2025, 2, 15), Date.UTC(2025, 5, 23),
+                Date.UTC(2025, 4, 16), Date.UTC(2025, 6, 5)
+            ]
         }
     },
     columns: [{
         id: 'id',
         header: {
             format: 'ID'
-        }
+        },
+        width: 60
     }, {
         id: 'productEN',
         header: {
@@ -181,6 +240,14 @@ const grid = Grid.grid('container', {
         },
         header: {
             format: 'Price'
+        }
+    }, {
+        id: 'updated',
+        cells: {
+            format: '{value:%[ebY]}'
+        },
+        header: {
+            format: 'Updated'
         }
     }]
 });

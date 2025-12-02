@@ -10,7 +10,6 @@ Highcharts.chart('container', {
                 textOutline: 'none'
             }
         },
-        borderColor: '#ffffff',
         borderRadius: 3,
         nodeSizeBy: 'leaf',
         levels: [{
@@ -23,7 +22,8 @@ Highcharts.chart('container', {
                 style: {
                     fontSize: '0.6em',
                     fontWeight: 'normal',
-                    textTransform: 'uppercase'
+                    textTransform: 'uppercase',
+                    color: 'var(--highcharts-neutral-color-100, #000)'
                 }
             },
             borderRadius: 3,
@@ -116,8 +116,7 @@ Highcharts.chart('container', {
         align: 'left'
     },
     tooltip: {
-        useHTML: true,
         pointFormat: 'The area of <b>{point.name}</b> is \
-            <b>{point.value} km<sup>2</sup></b>'
+            <b>{point.value} km²</b>'
     }
 });

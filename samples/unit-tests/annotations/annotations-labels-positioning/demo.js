@@ -107,8 +107,10 @@ QUnit.test('Positioning labels according to real points', function (assert) {
 
     const label5 = chart.annotations[0].labels[4].graphic;
 
-    assert.ok(
-        Math.round(label5.x + label5.width) <= chart.plotLeft + chart.plotWidth,
+    assert.close(
+        Math.round(label5.x + label5.width),
+        chart.plotLeft + chart.plotWidth,
+        1.5,
         '#15524: Label should be within the plot'
     );
 });

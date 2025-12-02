@@ -19,6 +19,7 @@
 import type AxisType from './Axis/AxisType';
 import type Chart from './Chart/Chart';
 import type CSSObject from './Renderer/CSSObject';
+import type { DeepPartial } from '../Shared/Types';
 import type {
     DOMElementType,
     HTMLDOMElement
@@ -2135,7 +2136,7 @@ namespace Utilities {
         (
             this: TContext,
             value: TObject[keyof TObject],
-            key: keyof TObject,
+            key: Extract<keyof TObject, string>,
             obj: TObject
         ): void;
     }

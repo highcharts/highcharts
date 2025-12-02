@@ -11,14 +11,19 @@
  * License: www.highcharts.com/license
  */
 'use strict';
+
 import Highcharts from '../../Core/Globals.js';
-import DownloadURL from '../../Extensions/DownloadURL.js';
+import DownloadURL from '../../Shared/DownloadURL.js';
 import OfflineExporting from '../../Extensions/OfflineExporting/OfflineExporting.js';
+
 const G: AnyRecord = Highcharts;
+
 // Compatibility
 G.dataURLtoBlob = G.dataURLtoBlob || DownloadURL.dataURLtoBlob;
 G.downloadSVGLocal = OfflineExporting.downloadSVGLocal;
 G.downloadURL = G.downloadURL || DownloadURL.downloadURL;
+
 // Compose
-OfflineExporting.compose(G.Chart);
+OfflineExporting.compose(G.Exporting);
+
 export default Highcharts;

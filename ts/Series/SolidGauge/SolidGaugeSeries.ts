@@ -177,7 +177,8 @@ class SolidGaugeSeries extends GaugeSeries {
                         )),
                     shapeArgs: (SVGAttributes | undefined),
                     d: (string | SVGPath | undefined),
-                    toColor = yAxis.toColor(point.y as any, point);
+                    toColor = yAxis.toColor(point.y as any, point),
+                    className = point.getClassName();
 
                 if (toColor === 'none') { // #3708
                     toColor = point.color || series.color || 'none';
@@ -254,10 +255,14 @@ class SolidGaugeSeries extends GaugeSeries {
                         stroke: options.borderColor || 'none',
                         'stroke-width': options.borderWidth || 0
                     });
+                } else if (series.yAxis?.stops) {
+                    className = className
+                        .replace(/highcharts-color-\d/gm, '')
+                        .trim();
                 }
 
                 if (graphic) {
-                    graphic.addClass(point.getClassName(), true);
+                    graphic.addClass(className);
                 }
             }
         }
@@ -269,8 +274,8 @@ class SolidGaugeSeries extends GaugeSeries {
             this.startAngleRad = this.thresholdAngleRad;
             PieSeries.prototype.animate.call(this, init);
         }
-    }
 
+    }
 }
 
 /* *

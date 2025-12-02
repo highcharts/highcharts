@@ -2,7 +2,7 @@ name: Linting
 
 on:
   pull_request:
-    branches: [ 'master' ]
+    branches: [ 'master', 'dash/**', 'grid/**' ]
     paths:
       - 'ts/**'
       - 'samples/**'
@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [lts/iron]
+        node-version: [lts/*]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -47,7 +47,7 @@ jobs:
     needs: lint_hc
     strategy:
       matrix:
-        node-version: [lts/iron]
+        node-version: [lts/*]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -72,7 +72,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [lts/iron]
+        node-version: [lts/*]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -86,8 +86,8 @@ jobs:
       - name: Install Dependencies
         run: npm i
 
-      - name: Lint samples JS
-        run: npx eslint -c samples/.eslintrc "samples/**/*.js"
+      - name: Lint samples TS and JS
+        run: npx eslint -c samples/.eslintrc "samples/**/*.{js,ts}"
 
       - name: Lint samples CSS
         run: npx stylelint --config .stylelintrc.json "samples/**/*.css"

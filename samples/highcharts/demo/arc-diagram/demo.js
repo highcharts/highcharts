@@ -26,7 +26,7 @@ Highcharts.chart('container', {
             rotation: 90,
             y: 30,
             verticalAlign: 'top',
-            color: 'black',
+            color: 'var(--highcharts-neutral-color-100, black)',
             padding: 0
         },
         offset: '65%',

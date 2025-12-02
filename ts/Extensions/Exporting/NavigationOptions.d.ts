@@ -25,6 +25,12 @@ import type { ExportingButtonOptions } from './ExportingOptions';
  *
  * */
 
+declare module '../../Core/Options' {
+    interface Options {
+        navigation?: NavigationOptions;
+    }
+}
+
 export interface NavigationOptions {
     bindingsClassName?: string;
     buttonOptions?: ExportingButtonOptions;

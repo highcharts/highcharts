@@ -29,7 +29,6 @@ function scriptsCompile(filePaths, config = {}, product = 'highcharts') {
     const fs = require('fs'),
         fsLib = require('../libs/fs'),
         logLib = require('../libs/log'),
-        path = require('path'),
         swc = require('@swc/core'),
         argv = require('yargs').argv;
     let esModulesFolder,
@@ -38,15 +37,16 @@ function scriptsCompile(filePaths, config = {}, product = 'highcharts') {
     if (argv.product === 'Grid') {
         esModulesFolder = fsLib.path(['code', 'grid', 'es-modules']);
         targetFolder = fsLib.path(['code', 'grid']);
+    } else if (argv.product === 'Dashboards') {
+        const dashCfg = require('./scripts-dts/dashboards/_config.json');
+        esModulesFolder = dashCfg.esModulesFolder;
+        targetFolder = dashCfg.bundleTargetFolder;
     } else if (product === 'highcharts') {
         esModulesFolder = '/es-modules/';
         targetFolder = 'code';
     } else if (product === 'dashboards') {
         esModulesFolder = config.esModulesFolder;
         targetFolder = config.bundleTargetFolder;
-    } else if (product === 'datagrid') {
-        esModulesFolder = config.esModulesFolderDataGrid;
-        targetFolder = config.bundleTargetFolderDataGrid;
     }
 
 
@@ -92,6 +92,9 @@ function scriptsCompile(filePaths, config = {}, product = 'highcharts') {
                 compress: {
                     // conditionals: false
                     // hoist_funs: true
+                },
+                format: {
+                    comments: 'some'
                 },
                 mangle: true,
                 module: isModule,

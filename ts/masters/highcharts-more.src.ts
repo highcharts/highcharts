@@ -3,7 +3,7 @@
  * @module highcharts/highcharts-more
  * @requires highcharts
  *
- * (c) 2009-2025 Torstein Honsi
+ * (c) 2009-2025 Highsoft AS
  *
  * License: www.highcharts.com/license
  */
@@ -28,7 +28,7 @@ const G: AnyRecord = Highcharts;
 G.RadialAxis = RadialAxis;
 BubbleSeries.compose(G.Axis, G.Chart, G.Legend);
 PackedBubbleSeries.compose(G.Axis, G.Chart, G.Legend);
-Pane.compose(G.Chart, G.Pointer);
+Pane.compose(G.Chart, G.Pointer, G.Series);
 PolarAdditions.compose(
     G.Axis,
     G.Chart,

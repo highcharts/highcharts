@@ -5,6 +5,8 @@
  *
  * 3D features for Highcharts JS
  *
+ * (c) 2009-2025 Highsoft AS
+ *
  * License: www.highcharts.com/license
  */
 'use strict';

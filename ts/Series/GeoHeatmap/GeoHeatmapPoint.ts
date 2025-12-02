@@ -42,15 +42,15 @@ const {
  *
  * */
 
-declare module '../../Core/Series/KDPointSearchObjectLike' {
-    interface KDPointSearchObjectLike {
+declare module '../../Core/Series/KDPointSearchObjectBase' {
+    interface KDPointSearchObjectBase {
         lat?: number;
         lon?: number;
     }
 }
 
-declare module '../../Core/Series/PointLike' {
-    interface PointLike {
+declare module '../../Core/Series/PointBase' {
+    interface PointBase {
         lat?: number;
         lon?: number;
     }

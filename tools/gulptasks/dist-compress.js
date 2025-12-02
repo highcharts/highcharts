@@ -7,6 +7,7 @@ const fs = require('fs');
 const libFS = require('../libs/fs');
 const zlib = require('zlib');
 const glob = require('glob');
+const path = require('path');
 const log = require('../libs/log');
 const yargs = require('yargs');
 const zip = require('gulp-zip');
@@ -23,6 +24,8 @@ function getProperties() {
     switch (distProduct) {
         case 'Grid':
             return require('./grid/build-properties.json');
+        case 'Dashboards':
+            return require('./dashboards/build-properties.json');
         default:
             return require('../../build-properties.json');
     }
@@ -73,18 +76,28 @@ function distZip() {
 function distGZip() {
     const { products } = getProperties();
 
-    const gzipDirs = glob.sync(`${DIST_DIR}/**/js-gzip`);
-    gzipDirs.forEach(dir => {
-        log.message('Deleting dir ', dir);
-        libFS.deleteDirectory(dir, true);
-    });
+    Object
+        .keys(products)
+        .forEach(key => {
+            const { distpath } = products[key];
+            const jsGzipDir = path.join(
+                DIST_DIR,
+                distpath.replace(/^\//u, ''),
+                'js-gzip'
+            );
+
+            if (libFS.isDirectory(jsGzipDir)) {
+                log.message('Deleting dir ', jsGzipDir);
+                libFS.deleteDirectory(jsGzipDir);
+            }
+        });
 
     log.starting('GZipping files..');
 
     let streams = [];
     Object.keys(products).forEach(key => {
         const dirToZip = `${DIST_DIR}${products[key].distpath}/code`;
-        const files = glob.sync(`${dirToZip}/**/*+(.js|.css|.map)`);
+        const files = glob.sync(`${dirToZip}/**/*+(.js|.json|.css|.map)`);
 
         log.message(`Gzipping files for ${key}... `);
         streams = files.map(filename => {
