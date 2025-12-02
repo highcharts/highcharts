@@ -102,8 +102,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *         Map bubble
      *
      * @since 1.2.0
-     *
-     * @internal
      */
     allowPointSelect: false,
 
@@ -120,8 +118,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *
      * @since   5.0.10
      * @product highcharts highstock gantt
-     *
-     * @internal
      */
     crisp: true,
 
@@ -138,8 +134,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *         Show select box
      *
      * @since 1.2.0
-     *
-     * @internal
      */
     showCheckbox: false,
 
@@ -182,8 +176,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @default {highcharts} true
      * @default {highstock} true
      * @default {highmaps} false
-     *
-     * @internal
      */
     animation: {
         /** @ignore-option */
@@ -918,8 +910,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * `Highcharts.addEvent` function.
      *
      * @declare Highcharts.SeriesEventsOptionsObject
-     *
-     * @internal
      */
     events: {},
 
@@ -1058,8 +1048,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *
      * @sample {highmaps} maps/demo/mappoint-mapmarker
      *         Using the mapmarker symbol for points
-     *
-     * @internal
      */
     marker: {
 
@@ -1228,7 +1216,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
                  * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
                  */
                 animation: {
-                    /** @internal */
                     duration: 150
                 },
 
@@ -1379,8 +1366,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * Properties for each single point.
      *
      * @declare Highcharts.PlotSeriesPointOptions
-     *
-     * @internal
      */
     point: {
 
@@ -2001,6 +1986,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          *
          * @type      {Highcharts.CSSObject}
          * @since     4.1.0
+         * @default   { fontSize: '0.7em', fontWeight: 'bold', color: 'contrast', textOutline: '1px contrast' }
          * @apioption plotOptions.series.dataLabels.style
          */
         style: {
@@ -2111,8 +2097,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *
      * @since   2.2
      * @product highcharts highstock
-     *
-     * @internal
      */
     cropThreshold: 300,
 
@@ -2122,8 +2106,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @see [states.inactive.opacity](#plotOptions.series.states.inactive.opacity)
      *
      * @since 7.1.0
-     *
-     * @internal
      */
     opacity: 1,
 
@@ -2134,8 +2116,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * this option can be used to override the automatic value.
      *
      * @product highstock
-     *
-     * @internal
      */
     pointRange: 0,
 
@@ -2151,15 +2131,11 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *
      * @since   4.1.9
      * @product highcharts highstock
-     *
-     * @internal
      */
     softThreshold: true,
 
     /**
      * @declare Highcharts.SeriesStatesOptionsObject
-     *
-     * @internal
      */
     states: {
 
@@ -2218,8 +2194,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
                  * The duration of the hover animation in milliseconds. By
                  * default the hover state animates quickly in, and slowly
                  * back to normal.
-                 *
-                 * @internal
                  */
                 duration: 150
             },
@@ -2340,7 +2314,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          */
         select: {
             animation: {
-                /** @internal */
                 duration: 0
             }
         },
@@ -2371,7 +2344,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
              * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
              */
             animation: {
-                /** @internal */
                 duration: 150
             },
             /**
@@ -2405,8 +2377,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @default {highstock} true
      * @default {highmaps} false
      * @since   2.0
-     *
-     * @internal
      */
     stickyTracking: true,
 
@@ -2444,8 +2414,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *
      * @since   2.2
      * @product highcharts highstock gantt
-     *
-     * @internal
      */
     turboThreshold: 1000,
 
@@ -2623,8 +2591,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *
      * @since      5.0.10
      * @validvalue ["x", "xy"]
-     *
-     * @internal
      */
     findNearestPointBy: 'x'
 

@@ -119,8 +119,10 @@ export interface SeriesOptions {
     id?: string;
     index?: number;
     inactiveOtherPoints?: boolean;
+
     /** @internal */
     isInternal?: boolean;
+
     joinBy?: (string|Array<string>);
     kdNow?: boolean;
     keys?: Array<string>;

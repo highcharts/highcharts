@@ -561,7 +561,7 @@ namespace DataLabel {
     }
 
     /**
-     * Create the SVGElement group for dataLabels
+     * Create the SVGElement group for dataLabels.
      *
      * @internal
      * @function initDataLabelsGroup
@@ -653,7 +653,7 @@ namespace DataLabel {
     }
 
     /**
-     * Draw the data labels
+     * Draw the data labels.
      * @internal
      */
     function drawDataLabels(

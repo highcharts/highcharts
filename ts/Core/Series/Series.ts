@@ -774,6 +774,7 @@ class Series {
      * Set the series options by merging from the options tree. Called
      * internally on initializing and updating series. This function will
      * not redraw the series. For API usage, use {@link Series#update}.
+     *
      * @internal
      * @function Highcharts.Series#setOptions
      * @param {Highcharts.SeriesOptionsType} itemOptions
@@ -3535,6 +3536,7 @@ class Series {
     /**
      * Redraw the series. This function is called internally from
      * `chart.redraw` and normally shouldn't be called directly.
+     *
      * @internal
      * @function Highcharts.Series#redraw
      */
