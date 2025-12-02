@@ -145,25 +145,27 @@ PaginationComposition.compose(G.Pagination);
  *
  * */
 
-export { default as AST } from '../Core/Renderer/HTML/AST.js';
-export { default as CellContentPro } from '../Grid/Pro/CellRendering/CellContentPro.js';
-export { default as CellRenderer } from '../Grid/Pro/CellRendering/CellRenderer.js';
-export { default as CellRendererRegistry } from '../Grid/Pro/CellRendering/CellRendererRegistry.js';
-export { default as Column } from '../Grid/Core/Table/Column.js';
-export { default as ColumnResizing } from '../Grid/Core/Table/ColumnResizing/ColumnResizing.js';
-export { default as DataConnector } from '../Data/Connectors/DataConnector.js';
-export { default as DataConverter } from '../Data/Converters/DataConverter.js';
-export { default as DataCursor } from '../Data/DataCursor.js';
-export { default as DataModifier } from '../Data/Modifiers/DataModifier.js';
-export { default as DataPool } from '../Data/DataPool.js';
-export { default as DataTable } from '../Data/DataTable.js';
-export { default as HeaderCell } from '../Grid/Core/Table/Header/HeaderCell.js';
-export { default as Pagination } from '../Grid/Core/Pagination/Pagination.js';
-export { default as Popup } from '../Grid/Core/UI/Popup.js';
-export { default as SvgIcons } from '../Grid/Core/UI/SvgIcons.js';
-export { default as Table } from '../Grid/Core/Table/Table.js';
-export { default as TableCell } from '../Grid/Core/Table/Body/TableCell.js';
-export { default as Templating } from '../Core/Templating.js';
+export {
+    AST,
+    CellContentPro,
+    CellRenderer,
+    CellRendererRegistry,
+    Column,
+    ColumnResizing,
+    DataConnector,
+    DataConverter,
+    DataCursor,
+    DataModifier,
+    DataPool,
+    DataTable,
+    HeaderCell,
+    Pagination,
+    Popup,
+    SvgIcons,
+    Table,
+    TableCell,
+    Templating
+};
 
 export const {
     classNamePrefix,
@@ -182,7 +184,7 @@ export const {
 
 /* *
  *
- *  Classic Export
+ *  Classic Extensions
  *
  * */
 

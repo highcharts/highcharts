@@ -87,18 +87,20 @@ CreditsLiteComposition.compose(G.Grid, G.Table);
  *
  * */
 
-export { default as AST } from '../Core/Renderer/HTML/AST.js';
-export { default as ColumnResizing } from '../Grid/Core/Table/ColumnResizing/ColumnResizing.js';
-export { default as DataConnector } from '../Data/Connectors/DataConnector.js';
-export { default as DataConverter } from '../Data/Converters/DataConverter.js';
-export { default as DataCursor } from '../Data/DataCursor.js';
-export { default as DataModifier } from '../Data/Modifiers/DataModifier.js';
-export { default as DataPool } from '../Data/DataPool.js';
-export { default as DataTable } from '../Data/DataTable.js';
-export { default as Pagination } from '../Grid/Core/Pagination/Pagination.js';
-export { default as SvgIcons } from '../Grid/Core/UI/SvgIcons.js';
-export { default as Table } from '../Grid/Core/Table/Table.js';
-export { default as Templating } from '../Core/Templating.js';
+export {
+    AST,
+    ColumnResizing,
+    DataConnector,
+    DataConverter,
+    DataCursor,
+    DataModifier,
+    DataPool,
+    DataTable,
+    Pagination,
+    SvgIcons,
+    Table,
+    Templating
+};
 
 export const {
     defaultOptions,
