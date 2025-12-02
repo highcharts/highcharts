@@ -798,28 +798,6 @@ const defaultOptions: DefaultOptions = {
          */
 
         /**
-         * CSS styles for the title.
-         *
-         * In styled mode, the subtitle style is given in the
-         * `.highcharts-subtitle` class.
-         *
-         * @sample {highcharts} highcharts/subtitle/style/
-         *         Custom color and weight
-         * @sample {highcharts} highcharts/css/titles/
-         *         Styled mode
-         * @sample {highstock} stock/chart/subtitle-style
-         *         Custom color and weight
-         * @sample {highstock} highcharts/css/titles/
-         *         Styled mode
-         * @sample {highmaps} highcharts/css/titles/
-         *         Styled mode
-         *
-         * @type      {Highcharts.CSSObject}
-         * @default   {"color": "#666666"}
-         * @apioption subtitle.style
-         */
-
-        /**
          * Whether to
          * [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
          * to render the text.

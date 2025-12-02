@@ -131,6 +131,14 @@ declare module '../Axis/AxisBase' {
     }
 }
 
+/** @internal */
+declare module '../Renderer/SVG/SVGRendererBase' {
+    interface SVGRendererBase {
+        plotBox: BBoxObject;
+        spacingBox: BBoxObject;
+    }
+}
+
 declare module './ChartBase' {
     interface ChartBase {
         /** @internal */
@@ -166,12 +174,61 @@ declare module './ChartOptions' {
 
 declare module '../Options' {
     interface Options {
+
+        /**
+         * General options for the chart.
+         */
         chart: ChartOptions;
+
+        /**
+         * The chart's caption, which will render below the chart and will be
+         * part of exported charts. The caption can be updated after chart
+         * initialization through the `Chart.update` or `Chart.caption.update`
+         * methods.
+         *
+         * @sample highcharts/caption/text/
+         *         A chart with a caption
+         *
+         * @since 7.2.0
+         */
         caption?: Chart.CaptionOptions;
+
+        /**
+         * Highchart by default puts a credits label in the lower right corner
+         * of the chart. This can be changed using these options.
+         */
         credits?: Chart.CreditsOptions;
+
+        /**
+         * The chart's subtitle. This can be used both to display a subtitle
+         * below the main title, and to display random text anywhere in the
+         * chart. The subtitle can be updated after chart initialization through
+         * the `Chart.setTitle` method.
+         *
+         * @sample {highcharts} highcharts/title/align-auto/
+         *         Default title alignment
+         * @sample {highmaps} maps/title/subtitle/
+         *         Subtitle options demonstrated
+         */
         subtitle?: Chart.SubtitleOptions;
+
+        /**
+         * Series options for specific data and the data itself. In TypeScript
+         * you have to cast the series options to specific series types, to get
+         * all possible options for a series.
+         */
         series?: Array<SeriesTypeOptions>;
+
+        /**
+         * The chart's main title.
+         *
+         * @sample {highmaps} maps/title/title/
+         *         Title options demonstrated
+         * @sample {highcharts} highcharts/title/align-auto/
+         *         Default title alignment
+         */
         title?: Chart.TitleOptions;
+
     }
 }
 
@@ -555,7 +612,7 @@ class Chart {
      * @name Highcharts.Chart#renderer
      * @type {Highcharts.SVGRenderer}
      */
-    public renderer!: Chart.Renderer;
+    public renderer!: SVGRenderer;
 
     /** @internal */
     public renderTo!: globalThis.HTMLElement;
@@ -2077,7 +2134,7 @@ class Chart {
             optionsChart.forExport,
             options.exporting?.allowHTML,
             chart.styledMode
-        ) as Chart.Renderer;
+        );
 
         // Set the initial animation from the options
         setAnimation(void 0, chart);
@@ -4342,11 +4399,17 @@ class Chart {
  * */
 
 interface Chart extends ChartBase {
+    /** @internal */
     callbacks: Array<Chart.CallbackFunction>;
+    /** @internal */
     collectionsWithInit: Record<string, [Function, Array<any>?]>;
+    /** @internal */
     collectionsWithUpdate: Array<string>;
+    /** @internal */
     propsRequireDirtyBox: Array<string>;
+    /** @internal */
     propsRequireReflow: Array<string>;
+    /** @internal */
     propsRequireUpdateSeries: Array<string>;
 }
 extend(Chart.prototype, {
@@ -4442,30 +4505,114 @@ extend(Chart.prototype, {
 
 namespace Chart {
 
+    /** @internal */
     export interface AfterUpdateEventObject {
         animation: (boolean|Partial<AnimationOptions>);
         options: Options;
         redraw: boolean;
     }
 
+    /**
+     * Callback for chart constructors.
+     *
+     * @param {Highcharts.Chart} chart
+     *        Created chart.
+     */
     export interface CallbackFunction {
         (this: Chart, chart: Chart): void;
     }
 
+    /**
+     * The chart's caption, which will render below the chart and will be part
+     * of exported charts. The caption can be updated after chart initialization
+     * through the `Chart.update` or `Chart.caption.update` methods.
+     *
+     * @sample highcharts/caption/text/
+     *         A chart with a caption
+     *
+     * @since 7.2.0
+     */
     export interface CaptionOptions {
+
+        /**
+         * The horizontal alignment of the caption. Can be one of "left",
+         *  "center" and "right".
+         */
         align?: AlignValue;
+
+        /**
+         * When the caption is floating, the plot area will not move to make
+         * space for it.
+         *
+         * @default false
+         */
         floating?: boolean;
+
+        /**
+         * The margin between the caption and the plot area.
+         */
         margin?: number;
+
+        /**
+         * CSS styles for the caption.
+         *
+         * In styled mode, the caption style is given in the
+         * `.highcharts-caption` class.
+         *
+         * @sample {highcharts} highcharts/css/titles/
+         *         Styled mode
+         *
+         * @default {"color": "#666666"}
+         */
         style: CSSObject;
+
+        /**
+         * The caption text of the chart.
+         *
+         * @sample {highcharts} highcharts/caption/text/
+         *         Custom caption
+         */
         text?: string;
+
+        /**
+         * Whether to
+         * [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
+         * to render the text.
+         *
+         * @default false
+         */
         useHTML?: boolean;
+
+        /**
+         * The vertical alignment of the caption. Can be one of `"top"`,
+         * `"middle"` and `"bottom"`. When middle, the caption behaves as
+         * floating.
+         */
         verticalAlign?: VerticalAlignValue;
+
+        /** @internal */
         width?: number;
+
+        /**
+         * The x position of the caption relative to the alignment within
+         * `chart.spacingLeft` and `chart.spacingRight`.
+         *
+         * @default 0
+         */
         x?: number;
+
+        /**
+         * The y position of the caption relative to the alignment within
+         * `chart.spacingTop` and `chart.spacingBottom`.
+         */
         y?: number;
+
+        /** @internal */
         zIndex?: number;
+
     }
 
+    /** @internal */
     export interface ChartTransformParams {
         axes?: Array<Axis>;
         event?: PointerEvent;
@@ -4478,28 +4625,123 @@ namespace Chart {
         hasZoomed?: boolean;
     }
 
+    /** @internal */
     export interface CreateAxisOptionsObject {
         animation: (undefined|boolean|Partial<AnimationOptions>);
         axis: (DeepPartial<AxisOptions>|DeepPartial<ColorAxisOptions>);
         redraw: (undefined|boolean);
     }
 
+    /**
+     * Highchart by default puts a credits label in the lower right corner
+     * of the chart. This can be changed using these options.
+     */
     export interface CreditsOptions {
+
+        /**
+         * Whether to show the credits text.
+         *
+         * @sample {highcharts} highcharts/credits/enabled-false/
+         *         Credits disabled
+         * @sample {highstock} stock/credits/enabled/
+         *         Credits disabled
+         * @sample {highmaps} maps/credits/enabled-false/
+         *         Credits disabled
+         */
         enabled?: boolean;
+
+        /**
+         * The URL for the credits label.
+         *
+         * @sample {highcharts} highcharts/credits/href/
+         *         Custom URL and text
+         * @sample {highmaps} maps/credits/customized/
+         *         Custom URL and text
+         *
+         * @default https://www.highcharts.com?credits
+         */
         href?: string;
+
+        /**
+         * Credits for map source to be concatenated with conventional credit
+         * text. By default this is a format string that collects copyright
+         * information from the map if available.
+         *
+         * @see [mapTextFull](#credits.mapTextFull)
+         * @see [text](#credits.text)
+         *
+         * @default   \u00a9 <a href="{geojson.copyrightUrl}">{geojson.copyrightShort}</a>
+         * @since     4.2.2
+         * @product   highmaps
+         */
         mapText?: string;
+
+        /**
+         * Detailed credits for map source to be displayed on hover of credits
+         * text. By default this is a format string that collects copyright
+         * information from the map if available.
+         *
+         * @see [mapText](#credits.mapText)
+         * @see [text](#credits.text)
+         *
+         * @default {geojson.copyright}
+         * @since   4.2.2
+         * @product highmaps
+         */
         mapTextFull?: string;
+
+        /**
+         * Position configuration for the credits label.
+         *
+         * @sample {highcharts} highcharts/credits/position-left/
+         *         Left aligned
+         * @sample {highcharts} highcharts/credits/position-left/
+         *         Left aligned
+         * @sample {highmaps} maps/credits/customized/
+         *         Left aligned
+         * @sample {highmaps} maps/credits/customized/
+         *         Left aligned
+         *
+         * @since 2.1
+         */
         position?: AlignObject;
+
+        /**
+         * CSS styles for the credits label.
+         *
+         * @see In styled mode, credits styles can be set with the
+         *      `.highcharts-credits` class.
+         */
         style: CSSObject;
+
+        /**
+         * The text for the credits label.
+         *
+         * @productdesc {highmaps}
+         * If a map is loaded as GeoJSON, the text defaults to
+         * `Highcharts @ {map-credits}`. Otherwise, it defaults to
+         * `Highcharts.com`.
+         *
+         * @sample {highcharts} highcharts/credits/href/
+         *         Custom URL and text
+         * @sample {highmaps} maps/credits/customized/
+         *         Custom URL and text
+         */
         text?: string;
+
     }
 
+    /** @internal */
     export type DescriptionOptionsType = (
         TitleOptions|SubtitleOptions|CaptionOptions
     );
 
+    /** @internal */
     export type DescriptionKey = 'title'|'subtitle'|'caption';
 
+    /**
+     * Options for the Chart.isInsidePlot function.
+     */
     export interface IsInsideOptionsObject {
         axis?: Axis;
         ignoreX?: boolean;
@@ -4510,47 +4752,331 @@ namespace Chart {
         visiblePlotOnly?: boolean;
     }
 
+    /** @internal */
     export interface LabelCollectorFunction {
         (): (Array<(SVGElement|undefined)>|undefined);
     }
 
+    /** @internal */
     export interface LayoutTitleEventObject {
         alignTo: BBoxObject;
         key: Chart.DescriptionKey;
         textPxLength: number;
     }
-    export interface Renderer extends SVGRenderer {
-        plotBox: BBoxObject;
-        spacingBox: BBoxObject;
-    }
 
+    /**
+     * The chart's subtitle. This can be used both to display a subtitle below
+     * the main title, and to display random text anywhere in the chart. The
+     * subtitle can be updated after chart initialization through the
+     * `Chart.setTitle` method.
+     *
+     * @sample {highcharts} highcharts/title/align-auto/
+     *         Default title alignment
+     * @sample {highmaps} maps/title/subtitle/
+     *         Subtitle options demonstrated
+     */
     export interface SubtitleOptions {
+
+        /**
+         * The horizontal alignment of the subtitle. Can be one of "left",
+         * "center" and "right". Since v12, it defaults to `undefined`, meaning
+         * the actual alignment is inherited from the alignment of the main
+         * title.
+         *
+         * @sample {highcharts} highcharts/title/align-auto/
+         *         Default title and subtitle alignment, dynamic
+         * @sample {highcharts} highcharts/subtitle/align/
+         *         Footnote at right of plot area
+         * @sample {highstock} stock/chart/subtitle-footnote
+         *         Footnote at bottom right of plot area
+         *
+         * @since 2.0
+         */
         align?: AlignValue;
+
+        /**
+         * When the subtitle is floating, the plot area will not move to make
+         * space for it.
+         *
+         * @sample {highcharts} highcharts/subtitle/floating/
+         *         Floating title and subtitle
+         * @sample {highstock} stock/chart/subtitle-footnote
+         *         Footnote floating at bottom right of plot area
+         *
+         * @default false
+         * @since   2.1
+         */
         floating?: boolean;
+
+        /**
+         * CSS styles for the title.
+         *
+         * In styled mode, the subtitle style is given in the
+         * `.highcharts-subtitle` class.
+         *
+         * @sample {highcharts} highcharts/subtitle/style/
+         *         Custom color and weight
+         * @sample {highcharts} highcharts/css/titles/
+         *         Styled mode
+         * @sample {highstock} stock/chart/subtitle-style
+         *         Custom color and weight
+         * @sample {highstock} highcharts/css/titles/
+         *         Styled mode
+         * @sample {highmaps} highcharts/css/titles/
+         *         Styled mode
+         *
+         * @default {"color": "#666666"}
+         */
         style: CSSObject;
+
+        /**
+         * The subtitle of the chart.
+         *
+         * @sample {highcharts|highstock} highcharts/subtitle/text/
+         *         Custom subtitle
+         * @sample {highcharts|highstock} highcharts/subtitle/text-formatted/
+         *         Formatted and linked text.
+         */
         text?: string;
+
+        /**
+         * Whether to
+         * [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
+         * to render the text.
+         *
+         * @default false
+         */
         useHTML?: boolean;
+
+        /**
+         * The vertical alignment of the title. Can be one of `"top"`,
+         * `"middle"` and `"bottom"`. When middle, the subtitle behaves as
+         * floating.
+         *
+         * @sample {highcharts} highcharts/subtitle/verticalalign/
+         *         Footnote at the bottom right of plot area
+         * @sample {highstock} stock/chart/subtitle-footnote
+         *         Footnote at the bottom right of plot area
+         *
+         * @since 2.1
+         */
         verticalAlign?: VerticalAlignValue;
+
+        /** @internal */
         width?: number;
+
+        /**
+         * The x position of the subtitle relative to the alignment within
+         * `chart.spacingLeft` and `chart.spacingRight`.
+         *
+         * @sample {highcharts} highcharts/subtitle/align/
+         *         Footnote at right of plot area
+         * @sample {highstock} stock/chart/subtitle-footnote
+         *         Footnote at the bottom right of plot area
+         *
+         * @default 0
+         * @since   2.0
+         */
         x?: number;
+
+        /**
+         * The y position of the subtitle relative to the alignment within
+         * `chart.spacingTop` and `chart.spacingBottom`. By default the subtitle
+         * is laid out below the title unless the title is floating.
+         *
+         * @sample {highcharts} highcharts/subtitle/verticalalign/
+         *         Footnote at the bottom right of plot area
+         * @sample {highstock} stock/chart/subtitle-footnote
+         *         Footnote at the bottom right of plot area
+         *
+         * @since 2.0
+         */
         y?: number;
+
+        /** @internal */
         zIndex?: number;
+
     }
 
+    /**
+     * The chart's main title.
+     *
+     * @sample {highmaps} maps/title/title/
+     *         Title options demonstrated
+     * @sample {highcharts} highcharts/title/align-auto/
+     *         Default title alignment
+     */
     export interface TitleOptions {
+
+        /**
+         * The horizontal alignment of the title. Can be one of "left", "center"
+         * and "right".
+         *
+         * Since v12 it defaults to `undefined`, meaning the alignment is
+         * computed for best fit. If the text fits in one line, it aligned to
+         * the center, but if it is wrapped into multiple lines, it is aligned
+         * to the left.
+         *
+         * @sample {highcharts} highcharts/title/align-auto/
+         *         Default alignment, dynamic
+         * @sample {highcharts} highcharts/title/align/
+         *         Aligned to the plot area (x = 70px = margin left - spacing
+         *         left)
+         * @sample {highstock} stock/chart/title-align/
+         *         Aligned to the plot area (x = 50px = margin left - spacing
+         *         left)
+         *
+         * @since 2.0
+         */
         align?: AlignValue;
+
+        /**
+         * When the title is floating, the plot area will not move to make space
+         * for it.
+         *
+         * @sample {highcharts} highcharts/chart/zoomtype-none/
+         *         False by default
+         * @sample {highcharts} highcharts/title/floating/
+         *         True - title on top of the plot area
+         * @sample {highstock} stock/chart/title-floating/
+         *         True - title on top of the plot area
+         *
+         * @default false
+         * @since   2.1
+         */
         floating?: boolean;
+
+        /**
+         * The margin between the title and the plot area, or if a subtitle
+         * is present, the margin between the subtitle and the plot area.
+         *
+         * @sample {highcharts} highcharts/title/margin-50/
+         *         A chart title margin of 50
+         * @sample {highcharts} highcharts/title/margin-subtitle/
+         *         The same margin applied with a subtitle
+         * @sample {highstock} stock/chart/title-margin/
+         *         A chart title margin of 50
+         *
+         * @since 2.1
+         */
         margin?: number;
+
+        /**
+         * When the title is too wide to fit in the chart, the default behavior
+         * is to scale it down to fit, or apply word wrap if it is scaled down
+         * to `minScale` and still doesn't fit.
+         *
+         * The default value reflects the scale, when using default font sizes,
+         * when the title font size matches that of the subtitle. The title
+         * still stands out as it is bold by default.
+         *
+         * Set `minScale` to 1 to avoid downscaling.
+         *
+         * @sample {highcharts} highcharts/title/align-auto/
+         *         Downscaling demonstrated
+         *
+         * @since 12.0.0
+         */
         minScale?: number;
+
+        /**
+         * CSS styles for the title. Use this for font styling, but use `align`,
+         * `x` and `y` for text alignment.
+         *
+         * Note that the default [title.minScale](#title.minScale) option also
+         * affects the rendered font size. In order to keep the font size fixed
+         * regardless of title length, set `minScale` to 1.
+         *
+         * In styled mode, the title style is given in the `.highcharts-title`
+         * class.
+         *
+         * @sample {highcharts} highcharts/title/style/
+         *         Custom color and weight
+         * @sample {highstock} stock/chart/title-style/
+         *         Custom color and weight
+         * @sample highcharts/css/titles/
+         *         Styled mode
+         *
+         * @default {highcharts|highmaps} { "color": "#333333", "fontSize": "18px" }
+         * @default {highstock} { "color": "#333333", "fontSize": "16px" }
+         */
         style: CSSObject;
+
+        /**
+         * The title of the chart. To disable the title, set the `text` to
+         * `undefined`.
+         *
+         * @sample {highcharts} highcharts/title/text/
+         *         Custom title
+         * @sample {highstock} stock/chart/title-text/
+         *         Custom title
+         *
+         * @default {highcharts|highmaps} Chart title
+         * @default {highstock} undefined
+         */
         text?: string;
+
+        /**
+         * Whether to
+         * [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
+         * to render the text.
+         *
+         * @default false
+         */
         useHTML?: boolean;
+
+        /**
+         * The vertical alignment of the title. Can be one of `"top"`,
+         * `"middle"` and `"bottom"`. When a value is given, the title behaves
+         * as if [floating](#title.floating) were `true`.
+         *
+         * @sample {highcharts} highcharts/title/verticalalign/
+         *         Chart title in bottom right corner
+         * @sample {highstock} stock/chart/title-verticalalign/
+         *         Chart title in bottom right corner
+         *
+         * @since 2.1
+         */
         verticalAlign?: VerticalAlignValue;
+
+        /** @internal */
         width?: number;
+
+        /**
+         * The x position of the title relative to the alignment within
+         * `chart.spacingLeft` and `chart.spacingRight`.
+         *
+         * @sample {highcharts} highcharts/title/align/
+         *         Aligned to the plot area (x = 70px = margin left - spacing
+         *         left)
+         * @sample {highstock} stock/chart/title-align/
+         *         Aligned to the plot area (x = 50px = margin left - spacing
+         *         left)
+         *
+         * @default 0
+         * @since   2.0
+         */
         x?: number;
+
+        /**
+         * The y position of the title relative to the alignment within
+         * [chart.spacingTop](#chart.spacingTop) and [chart.spacingBottom](
+         * #chart.spacingBottom). By default it depends on the font size.
+         *
+         * @sample {highcharts} highcharts/title/y/
+         *         Title inside the plot area
+         * @sample {highstock} stock/chart/title-verticalalign/
+         *         Chart title in bottom right corner
+         *
+         * @since 2.0
+         */
         y?: number;
+
+        /** @internal */
         zIndex?: number;
+
     }
+
 }
 
 /* *
