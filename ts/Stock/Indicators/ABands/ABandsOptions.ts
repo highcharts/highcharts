@@ -37,8 +37,13 @@ import type {
  * @extends      Highcharts.SMAOptions
  * @since        7.0.0
  * @product      highstock
+ * @excluding    allAreas, colorAxis, compare, compareBase, joinBy, keys,
+ *               navigatorOptions, pointInterval, pointIntervalUnit,
+ *               pointPlacement, pointRange, pointStart, showInNavigator,
+ *               stacking
  * @requires     stock/indicators/indicators
  * @requires     stock/indicators/acceleration-bands
+ * @optionparent plotOptions.abands
  * @interface Highcharts.ABandsOptions
  */
 export interface ABandsOptions extends SMAOptions, MultipleLinesComposition.IndicatorOptions {
