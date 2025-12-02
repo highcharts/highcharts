@@ -27,14 +27,30 @@ import type {
  * */
 
 /**
- * Options for the acceleration bands (ABANDS) indicator.
+ * Acceleration bands (ABANDS). This series requires the `linkedTo` option
+ * to be set and should be loaded after the
+ * `stock/indicators/indicators.js`.
  *
+ * @sample {highstock} stock/indicators/acceleration-bands
+ *         Acceleration Bands
+ *
+ * @extends      Highcharts.SMAOptions
+ * @since        7.0.0
+ * @product      highstock
+ * @requires     stock/indicators/indicators
+ * @requires     stock/indicators/acceleration-bands
  * @interface Highcharts.ABandsOptions
- * @extends Highcharts.SMAOptions
  */
 export interface ABandsOptions extends SMAOptions, MultipleLinesComposition.IndicatorOptions {
     /**
-     * Option for fill color between lines in Acceleration bands indicator.
+     * Option for fill color between lines in Acceleration bands Indicator.
+     *
+     * @sample {highstock} stock/indicators/indicator-area-fill
+     *      Background fill between lines.
+     *
+     * @type {Highcharts.Color}
+     * @since 9.3.2
+     * @apioption plotOptions.abands.fillColor
      */
     fillColor?: ColorType;
 
@@ -67,13 +83,17 @@ export interface ABandsOptions extends SMAOptions, MultipleLinesComposition.Indi
  */
 export interface ABandsParamsOptions extends SMAParamsOptions {
     /**
-     * The algorithm factor value used to calculate bands.
+     * The algorithms factor value used to calculate bands.
+     *
+     * @product highstock
      */
     factor?: number;
 }
 
 /**
  * Options for the top or bottom line.
+ *
+ * @interface Highcharts.ABandsLineOptions
  */
 export interface ABandsLineOptions {
     /**
@@ -84,6 +104,8 @@ export interface ABandsLineOptions {
 
 /**
  * CSS properties for acceleration bands lines.
+ *
+ * @interface Highcharts.ABandsLineStyleOptions
  */
 export interface ABandsLineStyleOptions extends CSSObject {
     /**
