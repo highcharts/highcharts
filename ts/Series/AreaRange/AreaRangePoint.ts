@@ -96,18 +96,6 @@ class AreaRangePoint extends AreaPoint {
 
     public series!: AreaRangeSeries;
 
-    /**
-     * Range series only. The high or maximum value for each data point.
-     * @name Highcharts.Point#high
-     * @type {number|undefined}
-     */
-
-    /**
-     * Range series only. The low or minimum value for each data point.
-     * @name Highcharts.Point#low
-     * @type {number|undefined}
-     */
-
     /* *
      *
      *  Functions

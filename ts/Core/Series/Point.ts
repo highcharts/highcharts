@@ -232,6 +232,14 @@ class Point {
     /** @internal */
     public hiddenInDataClass?: boolean;
 
+    /**
+     * Range series only. The high or maximum value for each data point.
+     *
+     * @name Highcharts.Point#high
+     * @type {number|undefined}
+     */
+    public high?: number;
+
     /** @internal */
     public id!: string;
 
@@ -249,6 +257,14 @@ class Point {
      * @type {number|string}
      */
     public key?: string|number;
+
+    /**
+     * Range series only. The low or minimum value for each data point.
+     *
+     * @name Highcharts.Point#low
+     * @type {number|undefined}
+     */
+    public low?: number;
 
     /** @internal */
     public marker?: PointMarkerOptions;
@@ -388,6 +404,7 @@ class Point {
 
     /**
      * The x value of the point.
+     *
      * @name Highcharts.Point#x
      * @type {number}
      */
@@ -395,6 +412,7 @@ class Point {
 
     /**
      * The y value of the point.
+     *
      * @name Highcharts.Point#y
      * @type {number|undefined}
      */
