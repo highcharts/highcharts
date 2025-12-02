@@ -275,7 +275,8 @@ class Axis {
     public ordinal?: AxisComposition['ordinal'];
     public overlap!: boolean;
     public paddedTicks!: Array<number>;
-    public plotLinesAndBands!: Array<PlotLineOrBand>;
+    public plotBands!: Array<PlotLineOrBand>;
+    public plotLines!: Array<PlotLineOrBand>;
     public plotLinesAndBandsGroups!: Record<string, SVGElement>;
     public pointRange!: number;
     public pointRangePadding!: number;
@@ -3934,9 +3935,11 @@ class Axis {
                 });
             }
 
-            this.plotLinesAndBands.forEach((plotLine): void => {
-                plotLine.render();
-            });
+            for (const coll of ['plotBands', 'plotLines'] as const) {
+                for (const plotItem of this[coll]) {
+                    plotItem.render();
+                }
+            }
 
         } // End if hasData
 
@@ -4034,9 +4037,11 @@ class Axis {
             this.render();
 
             // Move plot lines and bands
-            this.plotLinesAndBands.forEach(function (plotLine): void {
-                plotLine.render();
-            });
+            for (const coll of ['plotBands', 'plotLines'] as const) {
+                for (const plotItem of this[coll]) {
+                    plotItem.render();
+                }
+            }
         }
 
         // Mark associated series as dirty and ready for redraw
@@ -4069,7 +4074,6 @@ class Axis {
      */
     public destroy(keepEvents?: boolean): void {
         const axis = this,
-            plotLinesAndBands = axis.plotLinesAndBands,
             eventOptions = this.eventOptions;
 
         fireEvent(this, 'destroy', { keepEvents: keepEvents });
@@ -4079,11 +4083,13 @@ class Axis {
             removeEvent(axis);
         }
 
-
-        if (plotLinesAndBands) {
-            let i = plotLinesAndBands.length;
-            while (i--) { // #1975
-                plotLinesAndBands[i].destroy();
+        for (const coll of ['plotBands', 'plotLines'] as const) {
+            const plotLinesAndBands = axis[coll];
+            if (plotLinesAndBands) {
+                let i = plotLinesAndBands.length;
+                while (i--) { // #1975
+                    plotLinesAndBands[i].destroy();
+                }
             }
         }
 
@@ -4321,6 +4327,8 @@ class Axis {
             /// unit-tests/3d/column-crop, unit-tests/axis/type-logarithmic
             'type' in options
         );
+
+        fireEvent(this, 'update', { options });
 
         options = merge(this.userOptions, options);
 

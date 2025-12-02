@@ -22,8 +22,8 @@ QUnit.test('Missing plotband when range is small (#4964)', function (assert) {
     });
 
     assert.strictEqual(
-        chart.xAxis[0].plotLinesAndBands[1].svgElem.d.split(' ')[1] !==
-            chart.xAxis[0].plotLinesAndBands[1].svgElem.d.split(' ')[6],
+        chart.xAxis[0].plotBands[1].svgElem.d.split(' ')[1] !==
+            chart.xAxis[0].plotBands[1].svgElem.d.split(' ')[6],
         true,
         'Second plotband is visible'
     );
@@ -202,7 +202,7 @@ QUnit.test('Defaults', assert => {
     });
 
     assert.strictEqual(
-        chart.xAxis[0].plotLinesAndBands[0].svgElem.element.getAttribute(
+        chart.xAxis[0].plotLines[0].svgElem.element.getAttribute(
             'stroke-width'
         ),
         '1',
@@ -210,7 +210,7 @@ QUnit.test('Defaults', assert => {
     );
     assert.ok(
         /^#[0-9a-f]{6}$/.test(
-            chart.xAxis[0].plotLinesAndBands[0].svgElem.element.getAttribute(
+            chart.xAxis[0].plotLines[0].svgElem.element.getAttribute(
                 'stroke'
             )
         ),
@@ -219,7 +219,7 @@ QUnit.test('Defaults', assert => {
 
     assert.ok(
         /^#[0-9a-f]{6}$/.test(
-            chart.yAxis[0].plotLinesAndBands[0].svgElem.element.getAttribute(
+            chart.yAxis[0].plotBands[0].svgElem.element.getAttribute(
                 'fill'
             )
         ),
@@ -298,14 +298,14 @@ QUnit.test('General tests', function (assert) {
     });
 
     assert.ok(
-        chart.yAxis[0].plotLinesAndBands[0].svgElem.element
+        chart.yAxis[0].plotLines[0].svgElem.element
             .classList
             .contains('my-custom-class'),
         'Class name should be applied to plot lines (#8415, #20586)'
     );
 
-    var plPath = chart.xAxis[0].plotLinesAndBands[0].svgElem.d.split(' '),
-        pbPath = chart.xAxis[0].plotLinesAndBands[1].svgElem.d.split(' ');
+    var plPath = chart.xAxis[0].plotLines[0].svgElem.d.split(' '),
+        pbPath = chart.xAxis[0].plotBands[0].svgElem.d.split(' ');
 
     assert.strictEqual(
         pbPath[pbPath.length - 1],
@@ -328,12 +328,12 @@ QUnit.test('General tests', function (assert) {
     );
 
     assert.ok(
-        chart.yAxis[0].plotLinesAndBands[0].label.actualWidth > 0,
+        chart.yAxis[0].plotLines[0].label.actualWidth > 0,
         'Plot line label should be able to render outside plot area #17888.'
     );
 
     assert.strictEqual(
-        chart.yAxis[0].plotLinesAndBands[1].label.actualWidth,
+        chart.yAxis[0].plotLines[1].label.actualWidth,
         0,
         `Plot label with clip: true should not be able to render outside plot
         area #15777.`
@@ -390,7 +390,7 @@ QUnit.test('General tests', function (assert) {
     });
 
     axis = chart.yAxis[0];
-    plotLine = axis.plotLinesAndBands[0];
+    plotLine = axis.plotLines[0];
     bBox = plotLine.svgElem.getBBox();
     center = chart.pane[0].center;
     end = axis.getPosition(plotLineValue);
@@ -422,7 +422,7 @@ QUnit.test('General tests', function (assert) {
         }
     });
 
-    plotLine = chart.yAxis[0].plotLinesAndBands[0];
+    plotLine = chart.yAxis[0].plotLines[0];
     bBox = plotLine.svgElem.getBBox();
     plotLineLength = Math.sqrt(
         Math.pow(bBox.width, 2) + Math.pow(bBox.height, 2)
@@ -558,26 +558,26 @@ QUnit.test('#6521 - missing labels for narrow bands', function (assert) {
     });
 
     assert.strictEqual(
-        chart.xAxis[0].plotLinesAndBands[0].label.element.textContent,
+        chart.xAxis[0].plotBands[0].label.element.textContent,
         'Wide Enough',
         'First label set'
     );
     assert.strictEqual(
-        chart.xAxis[0].plotLinesAndBands[1].label.element.textContent,
+        chart.xAxis[0].plotBands[1].label.element.textContent,
         'Too Narrow',
         'Second label set'
     );
 
     chart.xAxis[0].setExtremes(null, Date.UTC(2016, 0, 20));
     assert.strictEqual(
-        chart.xAxis[0].plotLinesAndBands[1].label.attr('visibility'),
+        chart.xAxis[0].plotBands[1].label.attr('visibility'),
         'hidden',
         'Outside range, label hidden'
     );
 
     chart.xAxis[0].setExtremes(null, Date.UTC(2016, 0, 30));
     assert.notEqual(
-        chart.xAxis[0].plotLinesAndBands[1].label.attr('visibility'),
+        chart.xAxis[0].plotBands[1].label.attr('visibility'),
         'hidden',
         'Inside range, label shown'
     );
@@ -615,20 +615,20 @@ QUnit.test('Plotbands clip (#2361)', function (assert) {
         ]
     });
     assert.notEqual(
-        chart.xAxis[0].plotLinesAndBands[0].label,
+        chart.xAxis[0].plotBands[0].label,
         null,
         'Plotbands should be visible after zooming '
     );
     $('#container').highcharts().xAxis[0].setExtremes(2, 5);
 
     assert.notEqual(
-        chart.xAxis[0].plotLinesAndBands[0].label,
+        chart.xAxis[0].plotBands[0].label,
         null,
         'Plotbands should be visible after zooming'
     );
     $('#container').highcharts().xAxis[0].setExtremes(4, 5);
     assert.equal(
-        chart.xAxis[0].plotLinesAndBands[0].label.visibility,
+        chart.xAxis[0].plotBands[0].label.visibility,
         'hidden',
         'Plotbands should be hidden after zooming'
     );
@@ -673,8 +673,8 @@ QUnit.test(
                 ]
             });
 
-        plotLine = chart.xAxis[0].plotLinesAndBands[0];
-        plotBand = chart.xAxis[0].plotLinesAndBands[1];
+        plotLine = chart.xAxis[0].plotLines[0];
+        plotBand = chart.xAxis[0].plotBands[0];
 
         assert.ok(
             plotLine.label &&
@@ -784,7 +784,7 @@ QUnit.test('Dynamically added plotbands', function (assert) {
     });
 
     assert.ok(
-        !chart.xAxis[0].plotLinesAndBands[0].svgElem,
+        !chart.xAxis[0].plotBands[0].svgElem,
         '#14310: plotBand should not render when axis is not visible'
     );
 
@@ -795,7 +795,7 @@ QUnit.test('Dynamically added plotbands', function (assert) {
     });
 
     assert.ok(
-        !!chart.xAxis[0].plotLinesAndBands[0].svgElem,
+        !!chart.xAxis[0].plotBands[0].svgElem,
         '#14310: plotBand should render when axis visibility gets ' +
         'dynamically updated'
     );
@@ -809,7 +809,7 @@ QUnit.test('Dynamically added plotbands', function (assert) {
     chart.redraw();
 
     assert.strictEqual(
-        chart.xAxis[0].plotLinesAndBands.length,
+        chart.xAxis[0].plotBands.length,
         2,
         '#14053: plotBands from before update with redraw=false should also ' +
         'be added'
@@ -818,7 +818,7 @@ QUnit.test('Dynamically added plotbands', function (assert) {
     chart.series[0].hide();
 
     assert.ok(
-        chart.xAxis[0].plotLinesAndBands[0].svgElem.pathArray.isFlat,
+        chart.xAxis[0].plotBands[0].svgElem.pathArray.isFlat,
         '#15434: plotBand should be hidden series is hidden'
     );
 });
@@ -868,8 +868,8 @@ QUnit.test('#14254: plotBands.acrossPanes', function (assert) {
     });
 
     var bands = [
-        chart.xAxis[0].plotLinesAndBands[0].svgElem.getBBox(),
-        chart.xAxis[0].plotLinesAndBands[1].svgElem.getBBox()
+        chart.xAxis[0].plotBands[0].svgElem.getBBox(),
+        chart.xAxis[0].plotBands[1].svgElem.getBBox()
     ];
 
     assert.ok(
@@ -912,11 +912,11 @@ QUnit.test(
             }),
             xAxis = chart.series[0].xAxis,
             opacityTester = vals => {
-                const plotLinesAndBands = xAxis.plotLinesAndBands;
+                const plotBands = xAxis.plotBands;
 
                 for (let i = 0; i < 3; i++) {
                     assert.strictEqual(
-                        plotLinesAndBands[i].label.opacity,
+                        plotBands[i].label.opacity,
                         vals[i],
                         `Opacity of label number ${i} should be ${vals[i]}`
                     );

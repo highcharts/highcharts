@@ -82,12 +82,15 @@ class PlotLineOrBand {
                 const labels: SVGElement[] = [];
 
                 for (const axis of this.axes) {
-
-                    for (const { label, options } of axis.plotLinesAndBands) {
-                        if (label && !(
-                            options as PlotBandOptions)?.label?.allowOverlap
-                        ) {
-                            labels.push(label);
+                    for (const coll of ['plotBands', 'plotLines'] as const) {
+                        for (const { label, options } of axis[coll]) {
+                            if (
+                                label && !(
+                                    options as PlotBandOptions
+                                )?.label?.allowOverlap
+                            ) {
+                                labels.push(label);
+                            }
                         }
                     }
                 }
@@ -181,16 +184,13 @@ class PlotLineOrBand {
 
         let optionsLabel = options.label,
             { label, svgElem } = this,
-            path: SVGPath|undefined = [],
             group;
 
         const isBand = this.coll === 'plotBands',
             shortKey = isBand ? 'band' : 'line',
             groupName = `${shortKey}s-${zIndex}`,
             isNew = !svgElem,
-            attribs: SVGAttributes = {
-                'class': `highcharts-plot-${shortKey} ${options.className || ''}`
-            };
+            attribs: SVGAttributes = {};
 
         // Set the presentational attributes
         if (!axis.chart.styledMode) {
@@ -231,11 +231,14 @@ class PlotLineOrBand {
              */
             this.svgElem = svgElem = renderer
                 .path()
-                .attr(attribs)
+                .addClass(
+                    `highcharts-plot-${shortKey} ${options.className || ''}`
+                )
                 .add(group);
         }
 
         // Set the path or return
+        let path: SVGPath | undefined;
         if (defined(value)) { // Plot line
             path = axis.getPlotLinePath({
                 value: logarithmic?.log2lin(value) ?? value,
@@ -248,6 +251,10 @@ class PlotLineOrBand {
                 logarithmic?.log2lin(to) ?? to,
                 options
             );
+        }
+
+        if (path) {
+            attribs.d = path;
         }
 
         // Common for lines and bands. Add events only if they were not added
@@ -264,11 +271,11 @@ class PlotLineOrBand {
         }
 
         if ((isNew || !svgElem.d) && path?.length) {
-            svgElem.attr({ d: path });
+            svgElem.attr(attribs);
         } else if (svgElem) {
             if (path) {
                 svgElem.show();
-                svgElem.animate({ d: path });
+                svgElem.animate(attribs);
             } else if (svgElem.d) {
                 svgElem.hide();
                 if (label) {
@@ -429,16 +436,26 @@ class PlotLineOrBand {
     }
 
     /**
-     * Remove the plot line or band.
-     *
-     * @function Highcharts.PlotLineOrBand#destroy
+     * Destroy the item's elements
      */
     public destroy(): void {
-        // Remove it from the lookup
-        erase(this.axis.plotLinesAndBands, this);
-
         delete (this as Partial<this>).axis;
         destroyObjectProperties(this);
+    }
+
+    /**
+     * Remove the plot line or band and destroy its elements.
+     *
+     * @function Highcharts.PlotLineOrBand#remove
+     */
+    public remove(): void {
+        // Remove it from the lookup
+        erase(this.axis[this.coll], this);
+
+        // Remove from options
+        erase(this.axis.options[this.coll] || [], this.options);
+
+        this.destroy();
     }
 
     /* eslint-enable no-invalid-this, valid-jsdoc */

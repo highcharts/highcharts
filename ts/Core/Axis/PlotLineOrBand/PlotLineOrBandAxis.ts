@@ -25,7 +25,6 @@ import type SVGPath from '../../Renderer/SVG/SVGPath';
 import U from '../../Utilities.js';
 const {
     addEvent,
-    erase,
     extend,
     isNumber
 } = U;
@@ -108,23 +107,23 @@ namespace PlotLineOrBandAxis {
         options: T
     ): PlotLineOrBand {
 
-        const plotGuide = new PlotLineOrBandClass(this, options),
-            coll = plotGuide.coll;
+        const plotItem = new PlotLineOrBandClass(this, options),
+            coll = plotItem.coll;
 
         if (this.visible) {
-            plotGuide.render();
+            plotItem.render();
         }
 
-        // Add it to the user options for exporting and Axis.update
+        // Add it to the user options for exporting and Axis.update.
         // Axis.options[coll] and Axis.userOptions[coll] are always the same
-        // object, because there are no default options for plot lines and
-        // plot bands.
+        // object, because there are no default options for plot lines and plot
+        // bands.
         this.options[coll] ||= this.userOptions[coll] = [];
         this.options[coll].push(options);
 
-        this.plotLinesAndBands.push(plotGuide);
+        this[coll].push(plotItem);
 
-        return plotGuide;
+        return plotItem;
     }
 
     /**
@@ -213,27 +212,63 @@ namespace PlotLineOrBandAxis {
             addEvent(AxisClass, 'afterInit', function (): void {
 
                 // First time only, not on Axis.update()
-                if (!this.plotLinesAndBands) {
+                if (!this.plotBands) {
 
                     // Placeholder for plotlines and plotbands groups
                     this.plotLinesAndBandsGroups = {};
 
-                    // List of plotLines/Bands
-                    this.plotLinesAndBands = [];
-
                     // Plot lines and bands from options
-                    (this.options.plotLines || [])
-                        .concat((this.options.plotBands as any) || [])
-                        .forEach((plotLineOptions): void => {
-                            this.plotLinesAndBands.push(
-                                new PlotLineOrBandClass(
-                                    this as Composition,
-                                    plotLineOptions
-                                )
-                            );
-                        });
+                    for (const coll of ['plotBands', 'plotLines'] as const) {
+                        this[coll] = [];
+                        for (const pOptions of this.options[coll] || []) {
+                            this[coll].push(new PlotLineOrBandClass(
+                                this as Composition,
+                                pOptions
+                            ));
+                        }
+                    }
                 }
             });
+
+            // Update plot bands and lines one to one
+            /*
+            addEvent(AxisClass, 'update', function ({ options }): void {
+
+                const { plotBands = [], plotLines = [] } = this.options;
+
+                (options.plotBands || []).forEach(
+                    (pOptions, i): void => {
+                        // Match by id
+                        let pItem: PlotLineOrBand | undefined;
+                        if (pOptions.id) {
+                            pItem = plotBands.find(
+                                (pb): boolean => pb.id === pOptions.id
+                            );
+                        }
+
+                        // Match by index
+                        pItem ||= plotBands[i];
+
+                        // Update
+                        if (pItem) {
+                            merge(true, pItem, pOptions);
+                            pItem.touched = true;
+
+                        // Add
+                        } else {
+                            this.addPlotBandOrLine(pOptions);
+                        }
+                    }
+                );
+                for (const pItem of plotBands) {
+                    if (!pItem.touched) {
+                        this.removePlotBandOrLine(pItem.id as string);
+                    } else {
+                        delete pItem.touched;
+                    }
+                }
+            });
+            */
         }
 
         return AxisClass as (T&typeof Composition);
@@ -344,27 +379,9 @@ namespace PlotLineOrBandAxis {
         this: Composition,
         id: string
     ): void {
-        const plotLinesAndBands = this.plotLinesAndBands,
-            options = this.options;
-
-        if (plotLinesAndBands) { // #15639
-            let i = plotLinesAndBands.length;
-            while (i--) {
-                if (plotLinesAndBands[i].id === id) {
-
-                    const plotGuideOptions = plotLinesAndBands[i].options;
-
-                    // Destroy
-                    plotLinesAndBands[i].destroy();
-
-                    // Remove from options
-                    ([options.plotLines, options.plotBands])
-                        .forEach((arr = []): void => {
-                            erase(arr, plotGuideOptions);
-                        });
-                }
-            }
-        }
+        [...this.plotBands || [], ...this.plotLines || []].find(
+            (plotItem): boolean => plotItem.id === id
+        )?.remove();
     }
 
 }
