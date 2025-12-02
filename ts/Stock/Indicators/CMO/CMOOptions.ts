@@ -24,24 +24,25 @@ import type {
  * */
 
 /**
- * Options for the CMO indicator.
+ * Chande Momentum Oscilator (CMO) technical indicator. This series
+ * requires the `linkedTo` option to be set and should be loaded after
+ * the `stock/indicators/indicators.js` file.
  *
+ * @sample stock/indicators/cmo
+ *         CMO indicator
+ *
+ * @extends      plotOptions.sma
+ * @since 9.1.0
+ * @product      highstock
+ * @requires     stock/indicators/indicators
+ * @requires     stock/indicators/cmo
+ * @optionparent plotOptions.cmo
  * @interface Highcharts.CMOOptions
- * @extends Highcharts.SMAOptions
  */
 export interface CMOOptions extends SMAOptions {
-    /**
-     * Parameters used in calculation of CMO values.
-     */
     params?: CMOParamsOptions;
 }
 
-/**
- * Parameters used in calculation of CMO values.
- *
- * @interface Highcharts.CMOParamsOptions
- * @extends Highcharts.SMAParamsOptions
- */
 export interface CMOParamsOptions extends SMAParamsOptions {
     // For inheritance
 }
