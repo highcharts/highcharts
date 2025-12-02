@@ -2718,25 +2718,6 @@ class Series {
                         isInside &&
                         ((markerAttribs.width || 0) > 0 || point.hasImage)
                     ) {
-
-                        /**
-                         * SVG graphic representing the point in the chart. In
-                         * some cases it may be a hidden graphic to improve
-                         * accessibility.
-                         *
-                         * Typically this is a simple shape, like a `rect`
-                         * for column charts or `path` for line markers, but
-                         * for some complex series types like boxplot or 3D
-                         * charts, the graphic may be a `g` element
-                         * containing other shapes. The graphic is generated
-                         * the first time {@link Series#drawPoints} runs,
-                         * and updated and moved on subsequent runs.
-                         *
-                         * @see Highcharts.Point#graphics
-                         *
-                         * @name Highcharts.Point#graphic
-                         * @type {Highcharts.SVGElement|undefined}
-                         */
                         point.graphic = graphic = chart.renderer
                             .symbol(
                                 symbol,

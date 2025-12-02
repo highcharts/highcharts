@@ -616,16 +616,6 @@ class AreaRangeSeries extends AreaSeries {
         while (i < pointLength) {
             point = series.points[i];
 
-            /**
-             * Array for multiple SVG graphics representing the point in the
-             * chart. Only used in cases where the point can not be represented
-             * by a single graphic.
-             *
-             * @see Highcharts.Point#graphic
-             *
-             * @name Highcharts.Point#graphics
-             * @type {Array<Highcharts.SVGElement>|undefined}
-             */
             point.graphics = point.graphics || [];
 
             // Save original props to be overridden by temporary props for top
