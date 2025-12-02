@@ -53,7 +53,7 @@ import '../Data/Modifiers/FilterModifier.js';
  *
  * */
 
-export const G = {
+const G = {
     AST,
     ColumnResizing,
     DataConnector,
@@ -76,7 +76,7 @@ export const G = {
     Templating,
     version: Globals.version,
     win: Globals.win
-} as const;
+};
 
 CreditsLiteComposition.compose(G.Grid, G.Table);
 
