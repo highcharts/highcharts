@@ -2135,6 +2135,8 @@ const seriesDefaults: PlotOptionsOf<Series> = {
     softThreshold: true,
 
     /**
+     * A collection of options for different series states.
+     *
      * @declare Highcharts.SeriesStatesOptionsObject
      */
     states: {
@@ -2150,7 +2152,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
             /**
              * Animation when returning to normal state after hovering.
              *
-                 * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
+             * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
              */
             animation: true
         },
