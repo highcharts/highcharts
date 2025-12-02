@@ -311,6 +311,7 @@ class DataSeriesConverter {
  *
  * */
 
+/** @internal */
 namespace DataSeriesConverter {
 
     /* *
@@ -337,4 +338,5 @@ namespace DataSeriesConverter {
  *
  * */
 
+/** @internal */
 export default DataSeriesConverter;

@@ -45,18 +45,29 @@ const {
  *
  * */
 
+/** @internal */
 declare module './SeriesBase' {
     interface SeriesBase {
         datas?: DataSeriesAdditions;
     }
 }
 
+// Unmark as internal when in the future.
+/** @internal */
 declare module './SeriesOptions' {
     interface SeriesOptions {
+        /* *
+        * Indicates data is structured as columns instead of rows.
+        *
+        * @type      {boolean}
+        * @since     Future
+        * @apioption plotOptions.series.dataAsColumns
+        */
         dataAsColumns?: boolean;
     }
 }
 
+/** @internal */
 export declare class DataSeriesComposition extends Series {
     datas: DataSeriesAdditions;
 }
@@ -165,6 +176,7 @@ function wrapSeriesSetData(
  *
  * */
 
+/** @internal */
 class DataSeriesAdditions {
 
     /* *
@@ -377,7 +389,7 @@ class DataSeriesAdditions {
     }
 
     /**
-     * Stops synchronisation of table changes with series.
+     * Stops synchronization of table changes with series.
      * @internal
      */
     public syncOff(): void {
@@ -460,6 +472,7 @@ class DataSeriesAdditions {
  *
  * */
 
+/** @internal */
 export default DataSeriesAdditions;
 
 /* *
