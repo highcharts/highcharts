@@ -36,10 +36,10 @@ import type ContourSeriesOptions from './ContourSeriesOptions';
  *
  * @extends      plotOptions.scatter
  * @excluding    animationLimit, cluster, connectEnds, connectNulls,
- *               cropThreshold, dashStyle, dragDrop, findNearestPointBy,
- *               getExtremesFromAll, jitter, legendSymbolColor, linecap,
- *               lineWidth, pointInterval, pointIntervalUnit, pointRange,
- *               pointStart, shadow, softThreshold, stacking, step, threshold
+ *               cropThreshold, dashStyle, dragDrop, getExtremesFromAll,
+ *               jitter, legendSymbolColor, linecap, lineWidth, pointInterval,
+ *               pointIntervalUnit, pointRange, pointStart, shadow,
+ *               softThreshold, stacking, step, threshold
  *
  * @product      highcharts highmaps
  * @optionparent plotOptions.contour
