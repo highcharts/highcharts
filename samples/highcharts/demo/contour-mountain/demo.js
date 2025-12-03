@@ -1,4 +1,3 @@
-console.time();
 const data = (() => {
     const rawData = JSON.parse(document.getElementById('data').textContent);
 
@@ -69,6 +68,11 @@ const chart = Highcharts.chart('container', {
                     lineColor: 'white',
                     lineWidth: 2
                 }
+            }
+        },
+        states: {
+            hover: {
+                opacity: 1
             }
         }
     }, {
