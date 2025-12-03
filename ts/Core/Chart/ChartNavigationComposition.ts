@@ -25,6 +25,7 @@ import type NavigationOptions from '../../Extensions/Exporting/NavigationOptions
  *
  * */
 
+/** @internal */
 declare module './ChartBase'{
     interface ChartBase {
         navigation?: ChartNavigationComposition.Additions;
@@ -37,6 +38,7 @@ declare module './ChartBase'{
  *
  * */
 
+/** @internal */
 namespace ChartNavigationComposition {
 
     /* *
@@ -45,23 +47,17 @@ namespace ChartNavigationComposition {
      *
      * */
 
-    /**
-     * @internal
-     */
+    /** @internal */
     export interface Composition extends Chart {
         navigation: Additions;
     }
 
-    /**
-     * @internal
-     */
+    /** @internal */
     export interface UpdateFunction {
         (this: Composition, options: NavigationOptions, redraw?: boolean): void;
     }
 
-    /**
-     * @internal
-     */
+    /** @internal */
     export interface UpdateObject {
         context: Composition;
         update: UpdateFunction;
@@ -75,9 +71,7 @@ namespace ChartNavigationComposition {
 
     /* eslint-disable valid-jsdoc */
 
-    /**
-     * @internal
-     */
+    /** @internal */
     export function compose<T extends Chart>(
         chart: T
     ): (T&Composition) {
@@ -107,9 +101,7 @@ namespace ChartNavigationComposition {
          *
          * */
 
-        /**
-         * @internal
-         */
+        /** @internal */
         constructor(chart: Composition) {
             this.chart = chart;
         }
@@ -122,9 +114,7 @@ namespace ChartNavigationComposition {
 
         private chart: Composition;
 
-        /**
-         * @internal
-         */
+        /** @internal */
         public updates: Array<UpdateFunction> = [];
 
         /* *
@@ -144,9 +134,7 @@ namespace ChartNavigationComposition {
             this.chart.navigation.updates.push(updateFn);
         }
 
-        /**
-         * @internal
-         */
+        /** @internal */
         public update(
             options: NavigationOptions,
             redraw?: boolean
@@ -168,4 +156,5 @@ namespace ChartNavigationComposition {
  *
  * */
 
+/** @internal */
 export default ChartNavigationComposition;
