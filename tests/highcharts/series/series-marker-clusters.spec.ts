@@ -1,6 +1,4 @@
-import type Highcharts from '../../code/esm/highcharts.src';
-
-import { test, expect, createChart } from '../fixtures.ts';
+import { test, expect, createChart } from '../../fixtures.ts';
 
 test.describe('series/marker-clusters', {
     annotation: [

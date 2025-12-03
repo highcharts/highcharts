@@ -1,5 +1,4 @@
-import { test, expect } from '../fixtures.ts';
-import type Highcharts from '../../code/esm/highcharts.src';
+import { test, expect } from '../../fixtures.ts';
 
 test('Disabling and enabling stock tools buttons, when series are invisible (#14192)',
     {
