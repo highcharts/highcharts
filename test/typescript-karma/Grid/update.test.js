@@ -31,7 +31,7 @@ test('Grid partial update: columns[].sorting.order', async function (assert) {
         columns: [{
             id: 'product',
             sorting: {
-                order: 'asc',
+                order: 'asc'
             }
         }]
     });
@@ -225,6 +225,11 @@ test('Grid full update: pagination.enabled', async function (assert) {
         'The pagination instance should be created.'
     );
 
+    assert.ok(
+        parentElement.querySelector('.hcg-pagination-wrapper'),
+        "The pagination element should be in the DOM."
+    );
+
     await grid.update({
         pagination: {
             enabled: false
@@ -234,6 +239,11 @@ test('Grid full update: pagination.enabled', async function (assert) {
     assert.notOk(
         'pagination' in grid,
         'The pagination instance should be completely destroyed.'
+    );
+
+    assert.notOk(
+        parentElement.querySelector('.hcg-pagination-wrapper'),
+        "The pagination element shouldn't be in the DOM."
     );
 
     grid.viewport.resizeObserver?.disconnect();

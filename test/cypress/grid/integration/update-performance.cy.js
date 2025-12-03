@@ -13,7 +13,7 @@ describe('Update performance.', () => {
                 columns: [{
                     id: 'product',
                     sorting: {
-                        order: 'asc',
+                        order: 'asc'
                     }
                 }]
             });
@@ -83,7 +83,7 @@ describe('Update performance.', () => {
         cy.grid().then(async grid => {
             await grid.update({
                 pagination: {
-                    enabled: true,
+                    enabled: true
                 }
             });
 
