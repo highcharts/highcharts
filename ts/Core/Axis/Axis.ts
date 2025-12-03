@@ -4303,9 +4303,7 @@ class Axis {
             // Wait for data sorting refactor
             'labels' in options ||
             // Wait for #23894
-            'overscroll' in options ||
-            /// unit-tests/3d/column-crop, unit-tests/axis/type-logarithmic
-            'type' in options
+            'overscroll' in options
         );
 
         fireEvent(this, 'update', { options });

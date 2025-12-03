@@ -668,7 +668,7 @@ class Tick {
                 axis.labelAlign || (label as any).attr('align')
             ),
             labelWidth = (label as any).getBBox().width,
-            slotWidth = axis.getSlotWidth(tick as any),
+            slotWidth = axis.getSlotWidth(tick),
             xCorrection = factor,
             css: CSSObject = {};
 
@@ -967,10 +967,10 @@ class Tick {
 
         const isNewMark = !mark;
 
-        if (tickSize) {
+        if (tickSize || mark) {
 
             // Negate the length
-            if (axis.opposite) {
+            if (axis.opposite && tickSize) {
                 tickSize[0] = -tickSize[0];
             }
 
@@ -997,12 +997,12 @@ class Tick {
                 d: tick.getMarkPath(
                     x,
                     y,
-                    tickSize[0],
+                    tickSize?.[0] || 0,
                     mark.strokeWidth(),
                     axis.horiz,
                     renderer
                 ),
-                opacity: opacity
+                opacity: tickSize ? opacity : 0
             });
         }
     }
