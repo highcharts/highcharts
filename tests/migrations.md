@@ -1,16 +1,15 @@
-# Karma Test Migration to Node.js / Playwright
+# Test Migration Reference
 
-This document tracks the migration of tests from `test/typescript-karma/` to:
-- **Node.js native** (`test/ts-node-unit-tests/tests/`) - for pure unit tests
-- **Playwright** (`tests/`) - for browser-dependent tests
+This document provides reference patterns for test migrations and documents the current test counts.
 
 ## Current Status
 
 - **Node.js tests**: 324 passing
 - **Playwright tests**: 56 passing, 1 skipped
-- **Karma tests**: 116 (to be removed after migration)
 
 ## Completed Migrations (Node.js)
+
+These tests were migrated from QUnit/Karma to Node.js native `node:test`:
 
 ### Data Tests
 
@@ -74,6 +73,8 @@ This document tracks the migration of tests from `test/typescript-karma/` to:
 
 ## Completed Migrations (Playwright)
 
+These tests were migrated from QUnit/Karma to Playwright:
+
 ### Data/Connectors (2 files)
 - `tests/dashboards/html-table-connector.spec.ts` - HTMLTableConnector and HTMLTableConverter tests
 - `tests/dashboards/google-sheets-connector.spec.ts` - GoogleSheetsConnector tests (with mocked API)
@@ -116,16 +117,9 @@ This document tracks the migration of tests from `test/typescript-karma/` to:
 - `Highcharts object is available via script tag` test
 - Note: ESM loading test removed (fixture doesn't handle ESM paths correctly)
 
-### Masters/Modules (migrated to `tests/highcharts/boost.spec.ts`)
+### Masters/Modules (migrated to `tests/highcharts/boost/boost.spec.ts`)
 - `Highcharts boost composition` test
 - `Boost module creates chart with large data` test
-
-## Remaining Migrations (Need Playwright)
-
-All browser-dependent tests have been migrated to Playwright. The remaining Karma tests
-are either:
-- Already migrated to Node.js (pure unit tests)
-- Duplicates of tests already migrated
 
 ## Migration Patterns
 
@@ -299,9 +293,6 @@ npm run test-node
 
 # Run Playwright tests
 npx playwright test --project=dashboards --project=highcharts
-
-# Run Karma tests (legacy)
-npx karma start test/typescript-karma/karma-conf.js
 ```
 
 ## File Structure

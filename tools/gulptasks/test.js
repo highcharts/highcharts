@@ -350,10 +350,13 @@ specified by config.imageCapture.resultsOutputPath.
 
         logLib.message('Run `gulp test --help` for available options');
 
-        // Use TypeScript karma for Grid/Dashboards, regular karma for others
+        // Use Playwright for Grid/Dashboards, regular karma for others
         if (argv.product === 'Grid' || argv.product === 'Dashboards') {
-            const { testKarma } = require('./test-karma');
-            await testKarma(argv);
+            const processLib = require('../libs/process');
+            const project = argv.product === 'Grid' ? 'dashboards' : 'dashboards';
+            await processLib.exec(
+                `npx playwright test --project=setup-dashboards --project=${project}`
+            );
         } else {
             // Conditionally build required code
             await gulp.task('scripts')(gulpback);
