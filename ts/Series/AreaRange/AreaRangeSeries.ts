@@ -615,7 +615,6 @@ class AreaRangeSeries extends AreaSeries {
         i = 0;
         while (i < pointLength) {
             point = series.points[i];
-
             point.graphics = point.graphics || [];
 
             // Save original props to be overridden by temporary props for top

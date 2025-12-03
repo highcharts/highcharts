@@ -198,16 +198,13 @@ class Point {
     public formattedValue?: string;
 
     /**
-     * SVG graphic representing the point in the chart. In
-     * some cases it may be a hidden graphic to improve
-     * accessibility.
+     * SVG graphic representing the point in the chart. In some cases it may be
+     * a hidden graphic to improve accessibility.
      *
-     * Typically this is a simple shape, like a `rect`
-     * for column charts or `path` for line markers, but
-     * for some complex series types like boxplot or 3D
-     * charts, the graphic may be a `g` element
-     * containing other shapes. The graphic is generated
-     * the first time {@link Series#drawPoints} runs,
+     * Typically this is a simple shape, like a `rect` for column charts or
+     * `path` for line markers, but for some complex series types like boxplot
+     * or 3D charts, the graphic may be a `g` element containing other shapes.
+     * The graphic is generated the first time {@link Series#drawPoints} runs,
      * and updated and moved on subsequent runs.
      *
      * @see Highcharts.Point#graphics
@@ -242,6 +239,15 @@ class Point {
 
     /** @internal */
     public id!: string;
+
+    /**
+     * Contains the point's index in the `Series.points` array.
+     *
+     * @name Highcharts.Point#index
+     * @type {number}
+     * @readonly
+     */
+    public index!: number;
 
     /** @internal */
     public isNew?: boolean;
@@ -323,6 +329,38 @@ class Point {
      */
     public percentage?: number;
 
+    /**
+     * The translated X value for the point in terms of pixels. Relative
+     * to the X axis position if the series has one, otherwise relative
+     * to the plot area. Depending on the series type this value might
+     * not be defined.
+     *
+     * In an inverted chart the x-axis is going from the bottom to the
+     * top so the `plotX` value is the number of pixels from the bottom
+     * of the axis.
+     *
+     * @see Highcharts.Point#pos
+     * @name Highcharts.Point#plotX
+     * @type {number|undefined}
+     */
+    public plotX?: number;
+
+    /**
+     * The translated Y value for the point in terms of pixels. Relative
+     * to the Y axis position if the series has one, otherwise relative
+     * to the plot area. Depending on the series type this value might
+     * not be defined.
+     *
+     * In an inverted chart the y-axis is going from right to left
+     * so the `plotY` value is the number of pixels from the right
+     * of the `yAxis`.
+     *
+     * @see Highcharts.Point#pos
+     * @name Highcharts.Point#plotY
+     * @type {number|undefined}
+     */
+    public plotY?: number;
+
     /** @internal */
     public point: Point;
 
@@ -365,6 +403,14 @@ class Point {
 
     /** @internal */
     public shapeType?: string;
+
+    /**
+     * Pie series only. Whether to display a slice offset from the center.
+     *
+     * @name Highcharts.Point#sliced
+     * @type {boolean|undefined}
+     */
+    public sliced?: boolean;
 
     /** @internal */
     public startXPos?: number;
@@ -417,6 +463,220 @@ class Point {
      * @type {number|undefined}
      */
     public y?: (number|null);
+
+    /* *
+     *
+     *  API JSDoc doclet copies for uninitialized properties
+     *
+     * */
+
+    /**
+     * For categorized axes this property holds the category name for the
+     * point. For other axes it holds the X value.
+     *
+     * @name Highcharts.Point#category
+     * @type {number|string}
+     */
+    /**
+     * The point's current color.
+     *
+     * @name Highcharts.Point#color
+     * @type {Highcharts.ColorType|undefined}
+     */
+    /**
+     * The point's current color index, used in styled mode instead of
+     * `color`. The color index is inserted in class names used for styling.
+     *
+     * @name Highcharts.Point#colorIndex
+     * @type {number|undefined}
+     */
+    /**
+     * SVG graphic representing the point in the chart. In some cases it may be
+     * a hidden graphic to improve accessibility.
+     *
+     * Typically this is a simple shape, like a `rect` for column charts or
+     * `path` for line markers, but for some complex series types like boxplot
+     * or 3D charts, the graphic may be a `g` element containing other shapes.
+     * The graphic is generated the first time {@link Series#drawPoints} runs,
+     * and updated and moved on subsequent runs.
+     *
+     * @see Highcharts.Point#graphics
+     *
+     * @name Highcharts.Point#graphic
+     * @type {Highcharts.SVGElement|undefined}
+     */
+    /**
+     * Array for multiple SVG graphics representing the point in the
+     * chart. Only used in cases where the point can not be represented
+     * by a single graphic.
+     *
+     * @see Highcharts.Point#graphic
+     *
+     * @name Highcharts.Point#graphics
+     * @type {Array<Highcharts.SVGElement>|undefined}
+     */
+    /**
+     * Range series only. The high or maximum value for each data point.
+     *
+     * @name Highcharts.Point#high
+     * @type {number|undefined}
+     */
+    /**
+     * Contains the point's index in the `Series.points` array.
+     *
+     * @name Highcharts.Point#index
+     * @type {number}
+     * @readonly
+     */
+    /**
+     * The point's name if it is defined, or its category in case of a category,
+     * otherwise the x value. Convenient for tooltip and data label formatting.
+     *
+     * @name Highcharts.Point#key
+     * @type {number|string}
+     */
+    /**
+     * Range series only. The low or minimum value for each data point.
+     *
+     * @name Highcharts.Point#low
+     * @type {number|undefined}
+     */
+    /**
+     * The name of the point. The name can be given as the first position of the
+     * point configuration array, or as a `name` property in the configuration:
+     *
+     * @example
+     * // Array config
+     * data: [
+     *     ['John', 1],
+     *     ['Jane', 2]
+     * ]
+     *
+     * // Object config
+     * data: [{
+     *        name: 'John',
+     *        y: 1
+     * }, {
+     *     name: 'Jane',
+     *     y: 2
+     * }]
+     *
+     * @name Highcharts.Point#name
+     * @type {string}
+     */
+    /**
+     * The point's options as applied in the initial configuration, or
+     * extended through `Point.update`.
+     *
+     * In TypeScript you have to extend `PointOptionsObject` via an
+     * additional interface to allow custom data options:
+     *
+     * ```
+     * declare interface PointOptionsObject {
+     *     customProperty: string;
+     * }
+     * ```
+     *
+     * @name Highcharts.Point#options
+     * @type {Highcharts.PointOptionsObject}
+     */
+    /**
+     * The percentage for points in a stacked series, pies or gauges.
+     *
+     * @name Highcharts.Point#percentage
+     * @type {number|undefined}
+     */
+    /**
+     * The translated X value for the point in terms of pixels. Relative
+     * to the X axis position if the series has one, otherwise relative
+     * to the plot area. Depending on the series type this value might
+     * not be defined.
+     *
+     * In an inverted chart the x-axis is going from the bottom to the
+     * top so the `plotX` value is the number of pixels from the bottom
+     * of the axis.
+     *
+     * @see Highcharts.Point#pos
+     * @name Highcharts.Point#plotX
+     * @type {number|undefined}
+     */
+    /**
+     * The translated Y value for the point in terms of pixels. Relative
+     * to the Y axis position if the series has one, otherwise relative
+     * to the plot area. Depending on the series type this value might
+     * not be defined.
+     *
+     * In an inverted chart the y-axis is going from right to left
+     * so the `plotY` value is the number of pixels from the right
+     * of the `yAxis`.
+     *
+     * @see Highcharts.Point#pos
+     * @name Highcharts.Point#plotY
+     * @type {number|undefined}
+     */
+    /**
+     * Array of all hovered points when using shared tooltips.
+     *
+     * @name Highcharts.Point#points
+     * @type {Array<Highcharts.Point>|undefined}
+     */
+    /**
+     * Whether the point is selected or not.
+     *
+     * @see Point#select
+     * @see Chart#getSelectedPoints
+     *
+     * @name Highcharts.Point#selected
+     * @type {boolean}
+     */
+    /**
+     * The series object associated with the point.
+     *
+     * @name Highcharts.Point#series
+     * @type {Highcharts.Series}
+     */
+    /**
+     * The attributes of the rendered SVG shape like in `column` or `pie`
+     * series.
+     *
+     * @readonly
+     * @name Highcharts.Point#shapeArgs
+     * @type {Readonly<Highcharts.SVGAttributes>|undefined}
+     */
+    /**
+     * Pie series only. Whether to display a slice offset from the center.
+     *
+     * @name Highcharts.Point#sliced
+     * @type {boolean|undefined}
+     */
+    /**
+     * Defines the tooltip's position for a data point in a chart. It is an
+     * array of numbers representing the coordinates for the tooltip's
+     * placement, allowing for precise control over its location.
+     *
+     * @readonly
+     * @name Highcharts.Point#tooltipPos
+     * @type {Readonly<Array<number>>|undefined}
+     */
+    /**
+     * The total of values in either a stack for stacked series, or a pie in a
+     * pie series.
+     *
+     * @name Highcharts.Point#total
+     * @type {number|undefined}
+     */
+    /**
+     * The x value of the point.
+     *
+     * @name Highcharts.Point#x
+     * @type {number}
+     */
+    /**
+     * The y value of the point.
+     *
+     * @name Highcharts.Point#y
+     * @type {number|undefined}
+     */
 
     /* *
      *
