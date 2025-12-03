@@ -99,4 +99,4 @@ components: [{
 ## View the result
 With the above configuration, your dashboard should look like this:
 
-<iframe src="https://www.highcharts.com/samples/embed/dashboards/basic/your-first-dashboard"></iframe>
+<iframe src="https://www.highcharts.com/samples/embed/dashboards/basic/your-first-dashboard?force-light-theme"></iframe>

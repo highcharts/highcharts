@@ -10,25 +10,27 @@ Basic Speech Tracks
 
 To define a speech track, set the track `type` to `"speech"`:
 
-    series: [{
-        data: [1, 2, 3, 4, 5],
-        sonification: {
-            tracks: [{
-                // This is an instrument track
-                instrument: 'flute',
-                mapping: {
-                    volume: 0.8
-                }
-            }, {
-                // This is a speech track
-                type: 'speech',
-                mapping: {
-                    volume: 0.4,
-                    text: 'Hello world'
-                }
-            }]
-        }
-    }]
+```js
+series: [{
+    data: [1, 2, 3, 4, 5],
+    sonification: {
+        tracks: [{
+            // This is an instrument track
+            instrument: 'flute',
+            mapping: {
+                volume: 0.8
+            }
+        }, {
+            // This is a speech track
+            type: 'speech',
+            mapping: {
+                volume: 0.4,
+                text: 'Hello world'
+            }
+        }]
+    }
+}]
+```
 
 Speech Mapping
 --------------
@@ -37,7 +39,7 @@ The [text](https://api.highcharts.com/highcharts/sonification.defaultSpeechOptio
 
 The below demo illustrates using a format string to map the speech to announce Y-values. It also maps the [speech pitch](https://api.highcharts.com/highcharts/sonification.defaultSpeechOptions.mapping.pitch) to Y-values, meaning the voice speaks at a higher pitch at higher values, and lower at lower values.
 
-<iframe style="width: 100%; height: 490px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/sonification/speak-values allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 490px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/sonification/speak-values" allow="fullscreen"></iframe>
 
 
 Next Steps

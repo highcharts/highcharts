@@ -21,14 +21,14 @@ Here is an example for loading lollipop modules into a webpage:
 
 _The demo below represents a simple lollipop plot_
 
-<iframe width="100%" height="470" style="null" src=https://www.highcharts.com/samples/embed/highcharts/demo/lollipop allow="fullscreen"></iframe>
+<iframe width="100%" height="470" style="null" src="https://www.highcharts.com/samples/embed/highcharts/demo/lollipop" allow="fullscreen"></iframe>
 
 Vertical lollipop chart
 -----------------------
 
 To display a vertical lollipops, set `chart.inverted` to `true`.
 
-<iframe style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/series-lollipop/inverted-lollipop allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 450px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/series-lollipop/inverted-lollipop" allow="fullscreen"></iframe>
 
 Configuring options
 -------------------

@@ -1,6 +1,8 @@
 module.exports = {
     docs: {
-        Highcharts: ['index'],
+        Highcharts: [
+            'public-index'
+        ],
         'Getting started': [
             'getting-started/system-requirements',
             'getting-started/installation',
@@ -31,7 +33,8 @@ module.exports = {
             'chart-concepts/3d-charts',
             'chart-concepts/responsive',
             'chart-concepts/security',
-            'chart-concepts/dataviz-glossary'
+            'chart-concepts/dataviz-glossary',
+            'chart-concepts/common-events'
         ],
         'Stock': [
             'stock/getting-started-stock',
@@ -87,14 +90,19 @@ module.exports = {
         'Dashboards': [
             'dashboards/installation',
             'dashboards/your-first-dashboard',
-            'dashboards/dashboards-with-angular',
-            'dashboards/dashboards-with-react',
-            'dashboards/dashboards-with-vue',
+            {
+                'Wrappers': [
+                    'dashboards/wrappers/dashboards-with-angular',
+                    'dashboards/wrappers/dashboards-with-react',
+                    'dashboards/wrappers/dashboards-with-vue',
+                ]
+            },
             'dashboards/layout-description',
             'dashboards/style-by-css',
             'dashboards/edit-mode',
             'dashboards/types-of-components',
-            'dashboards/datagrid-component',
+            'dashboards/grid-component',
+            'dashboards/grid-migration',
             'dashboards/kpi-component',
             'dashboards/highcharts-component',
             'dashboards/html-component',
@@ -111,21 +119,34 @@ module.exports = {
             'dashboards/get-options',
             'dashboards/frequently-asked-questions',
         ],
-        'DataGrid': [
-            'datagrid/general',
-            'datagrid/installation',
-            'datagrid/understanding-datagrid',
-            'datagrid/columns',
-            'datagrid/header',
-            'datagrid/events',
-            'datagrid/performance',
-            'datagrid/style-by-css',
-            'datagrid/accessibility',
-            'datagrid/datagrid-v2-migration',
-            'datagrid/datagrid-with-angular',
-            'datagrid/datagrid-with-react',
-            'datagrid/datagrid-with-vue'
-            
+        'Grid': [
+            'grid/general',
+            'grid/installation',
+            'grid/understanding-grid',
+            'grid/columns',
+            'grid/header',
+            'grid/cell-editing',
+            'grid/cell-renderers',
+            'grid/sparklines',
+            'grid/column-filtering',
+            'grid/events',
+            'grid/exporting',
+            'grid/pagination',
+            {
+                'Theming': [
+                    'grid/theming/theming',
+                    'grid/theming/theming-variables',
+                ]
+            },
+            'grid/performance',
+            'grid/accessibility',
+            {
+                'Wrappers': [
+                    'grid/wrappers/grid-with-angular',
+                    'grid/wrappers/grid-with-react',
+                    'grid/wrappers/grid-with-vue'
+                ]
+            }
         ],
         'Chart and series types': [
             'chart-and-series-types/chart-types',
@@ -184,7 +205,7 @@ module.exports = {
         'Advanced chart features': [
             'advanced-chart-features/renderer',
             'advanced-chart-features/annotations-module',
-            'advanced-chart-features/annotations-and-fibonacci-retracements',
+            'advanced-chart-features/creating-advanced-annotations',
             'advanced-chart-features/annotations-gui',
             'advanced-chart-features/boost-module',
             'advanced-chart-features/breadcrumbs',
@@ -221,7 +242,10 @@ module.exports = {
                     'morningstar/risk-score',
                     'morningstar/regulatory-news-announcements',
                     'morningstar/security-details',
+                    'morningstar/security-compare',
                     'morningstar/x-ray',
+                    'morningstar/performance',
+                    'morningstar/hypo-performance',
                     {
                         'Time Series': [
                             'morningstar/time-series/time-series',
@@ -274,6 +298,20 @@ module.exports = {
         ],
         'Extending Highcharts': [
             'extending-highcharts/extending-highcharts'
+        ],
+        'Flutter': [
+            'flutter/getting-started',
+            'flutter/your-first-chart',
+            'flutter/highcharts-bundling'
+        ],
+        'React integration': [
+            'react/getting-started',
+            'react/series-and-chart-types',
+            'react/options',
+            'react/options-component-format',
+            'react/nextjs',
+            'react/component-children',
+            'react/v4-migration-guide'
         ]
     }
 };

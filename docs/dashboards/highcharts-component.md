@@ -2,7 +2,7 @@
 
 The **Highcharts** Component allows the end-user to define a chart in the dashboard. Charts are generally used to visualize changing data.
 
-<iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/dashboards/components/component-highcharts allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 470px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/components/component-highcharts?force-light-theme" allow="fullscreen"></iframe>
 
 ## How to start
 We need to load the JavaScript and CSS files in the following order to get started.
@@ -27,9 +27,7 @@ Then, import the package and the dedicated plugin to connect it to the dashboard
 ```typescript
     import * as Highcharts from 'highcharts';
     import * as Dashboards from '@highcharts/dashboards';
-    import LayoutModule from '@highcharts/dashboards/modules/layout';
-
-    LayoutModule(Dashboards);
+    import '@highcharts/dashboards/modules/layout';
 
     Dashboards.HighchartsPlugin.custom.connectHighcharts(Highcharts);
     Dashboards.PluginHandler.addPlugin(Dashboards.HighchartsPlugin);
@@ -101,14 +99,12 @@ Dashboards.board('container', {
         connectors: [{
             id: 'Vitamin',
             type: 'CSV',
-            options: {
-                csv: `Food,Vitamin A,Iron
-                Beef Liver,6421,6.5
-                Lamb Liver,2122,6.5
-                Cod Liver Oil,1350,0.9
-                Mackerel,388,1
-                Tuna,214,0.6`,
-            },
+            csv: `Food,Vitamin A,Iron
+            Beef Liver,6421,6.5
+            Lamb Liver,2122,6.5
+            Cod Liver Oil,1350,0.9
+            Mackerel,388,1
+            Tuna,214,0.6`,
         }]
     },
     gui: {
@@ -151,7 +147,7 @@ columnAssignment: [{
     data: 'myData'
 }]
 ```
-<iframe style="width: 100%; height: 600px; border: none;" src=https://www.highcharts.com/samples/embed/dashboards/components/highcharts-column-assignment-1d-data allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 600px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/components/highcharts-column-assignment-1d-data?force-light-theme" allow="fullscreen"></iframe>
 
 ### 2. `string[]` two-dimensional
 Names of the columns that data will be used in the two-dimensional format.
@@ -161,7 +157,7 @@ columnAssignment: [{
     data: ['myX', 'myY']
 }]
 ```
-<iframe style="width: 100%; height: 600px; border: none;" src=https://www.highcharts.com/samples/embed/dashboards/components/highcharts-column-assignment-2d-data allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 600px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/components/highcharts-column-assignment-2d-data?force-light-theme" allow="fullscreen"></iframe>
 
 ### 3. `Record<string, string>`
 Object with the keys as series data key names and column names that will be used for the key-defined two-dimensional series data.
@@ -184,7 +180,7 @@ columnAssignment: [{
     }
 }]
 ```
-<iframe style="width: 100%; height: 600px; border: none;" src=https://www.highcharts.com/samples/embed/dashboards/components/highcharts-column-assignment-keys-data allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 600px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/components/highcharts-column-assignment-keys-data?force-light-theme" allow="fullscreen"></iframe>
 
 ### Multiple connectors
 
@@ -205,14 +201,14 @@ components: [{
 ```
 
 Example:
-<iframe style="width: 100%; height: 470px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/highcharts-components/multiple-connectors" allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 470px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/highcharts-components/multiple-connectors?force-light-theme" allow="fullscreen"></iframe>
 
 
 ## Components synchronization
 
 One of the many available options for the Highcharts Component is the [`sync` option](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_HighchartsComponent_HighchartsComponentOptions.Options#sync), which allows setting the synchronization of component states with each other. You can find more information about it in the [sync article](https://www.highcharts.com/docs/dashboards/synchronize-components).
 
-<iframe style="width: 100%; height: 470px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/component-options/sync-highlight" allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 470px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/component-options/sync-highlight?force-light-theme" allow="fullscreen"></iframe>
 
 The sync can be an object configuration containing: `highlight`, `visibility` and `extremes`, which allow enabling or disabling the types of synchronization by passing the value `true` or `false`.
 
@@ -240,12 +236,12 @@ sync: {
 If you want to force highlight sync to always affect one specific series, use the [`affectedSeriesId`](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_HighchartsComponent_HighchartsComponentOptions.HighchartsHighlightSyncOptions#affectedSeriesId) option in the argument specifying the ID of that series. When undefined, empty or set to null, option assignment works by default based on the hovered column and column assignment.
 
 Demo:
-<iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/dashboards/sync/highcharts-highlight-affected-series allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 470px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/sync/highcharts-highlight-affected-series?force-light-theme" allow="fullscreen"></iframe>
 
 If you want to determine how the highlight of points on the chart should work (i.e. whether the hover state should be set for a marker, whether the crosshair should be synced and whether the tooltip should be shown), use the `highlightPoint`, `showCrosshair` and `showTooltip` options. Read more in the [API docs](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_HighchartsComponent_HighchartsComponentOptions.HighchartsHighlightSyncOptions#affectedSeriesId).
 
 Demo:
-<iframe style="width: 100%; height: 470px; border: none;" src=https://www.highcharts.com/samples/embed/dashboards/sync/sync-highlight-options allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 470px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/sync/sync-highlight-options?force-light-theme" allow="fullscreen"></iframe>
 
 
 

@@ -47,13 +47,29 @@ By default the tooltip only allows a subset of HTML because the HTML is parsed a
 
 ```js
 tooltip: {
-    formatter: function() {
-        return 'The value for <b>' + this.x + '</b> is <b>' + this.y + '</b>, in series '+ this.series.name;
-    }
+    format: 'The value for <b>{x}</b> is <b>{y}</b>, in series {series.name}'
 }
 ```
 
-For more info about formatting see [Labels and string formatting](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+For more info about formatting see [Labels and string
+formatting](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+
+Positioning
+-----------
+Highcharts offers several options to tailor tooltip positioning to your needs,
+improving both functionality and design.
+
+* **Shared** tooltips are great for charts with multiple series. A single tooltip
+displays information for all series at a specific x-axis value, reducing clutter
+and making comparisons easier. See
+[tooltip.shared](https://api.highcharts.com/highcharts/tooltip.shared).
+* **Split** tooltips display separate tooltips for each series point, which can
+  be useful when detailed information for each data point is needed. See
+  [tooltip.split](https://api.highcharts.com/highcharts/tooltip.split).
+* **Fixed** tooltips (since v12.2) display the tooltips in a fixed position on
+  the chart - by default the top left corner of the data pane. Fixed tooltips
+  can be combined with `shared` or `split`. See
+  [tooltip.fixed](https://api.highcharts.com/highcharts/tooltip.fixed).
 
 Crosshairs
 ----------

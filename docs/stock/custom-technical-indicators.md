@@ -311,8 +311,8 @@ Example configuration should look like:
 Highcharts.seriesType('customIndicator', 'sma', {}, {
     getValues: function (series) {
         return this.getSum(
-            series.processedXData || series.xData,
-            series.processedYData || series.yData
+            series.getColumn('x', true) || series.xData,
+            series.getColumn('y', true) || series.yData
         );
     },
     calculateOn: {

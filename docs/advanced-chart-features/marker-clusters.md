@@ -9,7 +9,7 @@ For more map related info, see the [marker-clusters in Highcharts Maps](https://
 
 **Scatter demo**
 
-<iframe style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/marker-clusters/basic allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 450px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/marker-clusters/basic" allow="fullscreen"></iframe>
 
 Installation
 ------------
