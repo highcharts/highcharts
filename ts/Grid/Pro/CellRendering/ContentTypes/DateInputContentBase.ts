@@ -21,7 +21,9 @@
  *
  * */
 
-import type DateInputRendererBase from '../Renderers/DateInputRendererBase';
+import type {
+    DateInputRendererBaseOptions
+} from '../Renderers/DateInputRendererBase';
 import type { EditModeContent } from '../../CellEditing/CellEditMode';
 import type TableCell from '../../../Core/Table/Body/TableCell';
 
@@ -55,7 +57,7 @@ abstract class DateInputContentBase extends CellContentPro implements EditModeCo
     /**
      * Options of the renderer.
      */
-    public options: DateInputRendererBase.Options;
+    public options: DateInputRendererBaseOptions;
 
     /**
      * The HTML input element representing the date input.
@@ -75,7 +77,7 @@ abstract class DateInputContentBase extends CellContentPro implements EditModeCo
         parentElement?: HTMLElement
     ) {
         super(cell, renderer);
-        this.options = renderer.options as DateInputRendererBase.Options;
+        this.options = renderer.options as DateInputRendererBaseOptions;
         this.input = this.add(parentElement);
     }
 

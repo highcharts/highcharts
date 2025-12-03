@@ -24,7 +24,7 @@
  *
  * */
 
-import type Column from '../../Column';
+import type { Column, ColumnDataType } from '../../Column';
 import type { Condition } from './FilteringTypes';
 import type FilterCell from './FilterCell.js';
 import type { FilteringCondition } from '../../../Options';
@@ -307,7 +307,7 @@ class ColumnFiltering {
      */
     private renderFilteringInput(
         inputWrapper: HTMLElement,
-        columnType: Exclude<Column.DataType, 'boolean'>
+        columnType: Exclude<ColumnDataType, 'boolean'>
     ): void {
         // Render the input element.
         this.filterInput = makeHTMLElement('input', {
