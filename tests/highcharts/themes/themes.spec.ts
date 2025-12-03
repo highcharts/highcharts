@@ -1,6 +1,6 @@
-import type Highcharts from '../../code/esm/highcharts.src';
+import type Highcharts from '../../../code/esm/highcharts.src';
 
-import { test, expect, createChart } from '../fixtures.ts';
+import { test, expect, createChart } from '../../fixtures.ts';
 
 type ThemeDetails = {
     themeType: string;

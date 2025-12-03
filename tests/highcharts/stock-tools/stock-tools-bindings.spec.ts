@@ -1,5 +1,5 @@
-import type Highcharts from '../../code/esm/highcharts.src';
-import { test, expect, createChart } from '../fixtures.ts';
+import type Highcharts from '../../../code/esm/highcharts.src';
+import { test, expect, createChart } from '../../fixtures.ts';
 
 const css = `
 
