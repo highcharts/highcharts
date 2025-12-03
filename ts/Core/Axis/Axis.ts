@@ -4090,18 +4090,20 @@ class Axis {
             axis.alternateBands,
             axis.plotBands,
             axis.plotLines,
-            axis.plotLinesAndBandsGroups,
-            // Direct elements
-            [
-                axis.axisLine,
-                axis.axisTitle,
-                axis.axisGroup,
-                axis.gridGroup,
-                axis.labelGroup,
-                axis.cross,
-                axis.scrollbar
-            ]
+            axis.plotLinesAndBandsGroups
         ].forEach(destroyObjectProperties as any);
+
+        // Destroy elements and clear reference
+        [
+            'axisLine', 'axisTitle', 'axisGroup',
+            'gridGroup', 'labelGroup', 'cross', 'scrollbar'
+        ].forEach(
+            function (prop: string): void {
+                if ((axis as any)[prop]) {
+                    (axis as any)[prop] = (axis as any)[prop].destroy();
+                }
+            }
+        );
 
         // Delete all properties and fall back to the prototype.
         objectEach(axis, function (_val: any, key: string): void {

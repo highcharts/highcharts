@@ -413,18 +413,13 @@ class Annotation extends EventEmitter implements ControlTarget {
      * @private
      */
     public destroy(): void {
-        const chart = this.chart,
-            destroyItem = function (
-                item: ControllableType
-            ): void {
-                item.destroy();
-            };
+        const chart = this.chart;
 
-        this.labels.forEach(destroyItem);
-        this.shapes.forEach(destroyItem);
+        destroyObjectProperties(this.labels);
+        destroyObjectProperties(this.shapes);
 
-        this.clipXAxis = null as any;
-        this.clipYAxis = null as any;
+        delete this.clipXAxis;
+        delete this.clipYAxis;
 
         erase(chart.labelCollectors, this.labelCollector);
 
