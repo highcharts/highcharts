@@ -79,7 +79,7 @@ const syncPair: Sync.SyncPair = {
             }
 
             const presTable = table?.getModified();
-            const colAssignment = connectorHandler.columnAssignment?.find(
+            const colAssignment = connectorHandler?.columnAssignment?.find(
                 (s): boolean => s.seriesId === seriesId
             );
             // TODO: Better way to recognize the column name.
@@ -188,8 +188,11 @@ const syncPair: Sync.SyncPair = {
                         const seriesId = seriesIds[i];
                         const connectorHandler: HCComponent.HCConnectorHandler =
                                 component.seriesFromConnector[seriesId];
+                        const dataTableKey =
+                            connectorHandler?.options.dataTableKey;
 
-                        if (this.getDataTable() !== table) {
+                        if (
+                            connectorHandler?.connector?.getTable(dataTableKey) !== table) {
                             continue;
                         }
 
