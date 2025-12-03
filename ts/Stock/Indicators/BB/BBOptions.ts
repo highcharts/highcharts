@@ -12,7 +12,10 @@
  *
  * */
 
+import type ColorType from '../../../Core/Color/ColorType';
+import type CSSObject from '../../../Core/Renderer/CSSObject';
 import type MultipleLinesComposition from '../MultipleLinesComposition';
+import type TooltipOptions from '../../../Core/TooltipOptions';
 import type {
     SMAOptions,
     SMAParamsOptions
@@ -50,7 +53,7 @@ export interface BBOptions extends SMAOptions, MultipleLinesComposition.Indicato
      * @since     9.3.2
      * @apioption plotOptions.bb.fillColor
      */
-    fillColor?: import('../../../Core/Color/ColorType').default;
+    fillColor?: ColorType;
 
     /**
      * Parameters used in calculation of the regression points.
@@ -60,14 +63,16 @@ export interface BBOptions extends SMAOptions, MultipleLinesComposition.Indicato
     /**
      * Bottom line options.
      */
-    bottomLine?: Record<string, import('../../../Core/Renderer/CSSObject').default>;
+    bottomLine?: Record<string, CSSObject>;
 
     /**
      * Top line options.
      *
      * @extends plotOptions.bb.bottomLine
      */
-    topLine?: Record<string, import('../../../Core/Renderer/CSSObject').default>;
+    topLine?: Record<string, CSSObject>;
+
+    tooltip?: Partial<TooltipOptions>;
 }
 
 export interface BBParamsOptions extends SMAParamsOptions {

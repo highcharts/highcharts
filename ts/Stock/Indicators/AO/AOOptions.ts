@@ -73,6 +73,8 @@ export interface AOOptions extends SMAOptions {
 
     pointPadding?: number;
 
+    crisp?: boolean;
+
     states?: SeriesStatesOptions<AOIndicator>;
 
     threshold?: number;

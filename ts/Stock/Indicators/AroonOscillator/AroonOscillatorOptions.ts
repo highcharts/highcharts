@@ -11,6 +11,7 @@
  *
  * */
 
+import type TooltipOptions from '../../../Core/TooltipOptions';
 import type {
     AroonOptions,
     AroonParamsOptions
@@ -46,6 +47,8 @@ import type {
 export interface AroonOscillatorOptions
     extends AroonOptions {
     params?: AroonOscillatorParamsOptions;
+
+    tooltip?: Partial<TooltipOptions>;
 }
 
 export interface AroonOscillatorParamsOptions extends AroonParamsOptions {

@@ -14,6 +14,7 @@
 
 import type CSSObject from '../../../Core/Renderer/CSSObject';
 import type ColorType from '../../../Core/Color/ColorType';
+import type DataGroupingOptions from '../../../Extensions/DataGrouping/DataGroupingOptions';
 import type MultipleLinesComposition from '../MultipleLinesComposition';
 import type {
     SMAOptions,
@@ -66,6 +67,8 @@ export interface ABandsOptions extends SMAOptions, MultipleLinesComposition.Indi
     bottomLine?: ABandsLineOptions;
 
     topLine?: ABandsLineOptions;
+
+    dataGrouping?: DataGroupingOptions;
 }
 
 export interface ABandsParamsOptions extends SMAParamsOptions {
