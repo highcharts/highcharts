@@ -23,15 +23,15 @@
  * */
 
 import type Column from '../../../Core/Table/Column';
-import type DateInputRendererBase from './DateInputRendererBase';
+import type { DateInputRendererBaseOptions } from './DateInputRendererBase';
 import type TableCell from '../../../Core/Table/Body/TableCell';
 import type { EditModeRenderer } from '../../CellEditing/CellEditMode';
 import type {
     EditModeRendererTypeName
 } from '../../CellEditing/CellEditingComposition';
 
-import CellRenderer from '../CellRenderer.js';
-import CellRendererRegistry from '../CellRendererRegistry.js';
+import { CellRenderer, CellRendererOptions } from '../CellRenderer.js';
+import { registerRenderer } from '../CellRendererRegistry.js';
 import DateTimeInputContent from '../ContentTypes/DateTimeInputContent.js';
 
 import U from '../../../../Core/Utilities.js';
@@ -60,11 +60,11 @@ class DateTimeInputRenderer extends CellRenderer implements EditModeRenderer {
     /**
      * Default options for the date input renderer.
      */
-    public static defaultOptions: DateTimeInputRenderer.Options = {
+    public static defaultOptions: DateTimeInputRendererOptions = {
         type: 'dateTimeInput'
     };
 
-    public override options: DateTimeInputRenderer.Options;
+    public override options: DateTimeInputRendererOptions;
 
 
     /* *
@@ -73,7 +73,7 @@ class DateTimeInputRenderer extends CellRenderer implements EditModeRenderer {
      *
      * */
 
-    public constructor(column: Column, options: Partial<CellRenderer.Options>) {
+    public constructor(column: Column, options: Partial<CellRendererOptions>) {
         super(column);
         this.options = merge(DateTimeInputRenderer.defaultOptions, options);
     }
@@ -97,18 +97,17 @@ class DateTimeInputRenderer extends CellRenderer implements EditModeRenderer {
 
 /* *
  *
- *  Namespace
+ *  Declarations
  *
  * */
 
-namespace DateTimeInputRenderer {
+/**
+ * Options to control the date time input renderer content.
+ */
+export interface DateTimeInputRendererOptions
+    extends DateInputRendererBaseOptions {
 
-    /**
-     * Options to control the date input renderer content.
-     */
-    export interface Options extends DateInputRendererBase.Options {
-        type: 'dateTimeInput';
-    }
+    type: 'dateTimeInput';
 }
 
 
@@ -124,7 +123,7 @@ declare module '../CellRendererType' {
     }
 }
 
-CellRendererRegistry.registerRenderer('dateTimeInput', DateTimeInputRenderer);
+registerRenderer('dateTimeInput', DateTimeInputRenderer);
 
 
 /* *

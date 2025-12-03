@@ -334,17 +334,15 @@ class TableCell extends Cell {
 
 /* *
  *
- *  Class Namespace
+ *  Declarations
  *
  * */
 
-namespace TableCell {
-    /**
-     * Event interface for table cell events.
-     */
-    export interface TableCellEvent {
-        target: TableCell;
-    }
+/**
+ * Event interface for table cell events.
+ */
+export interface TableCellEvent {
+    target: TableCell;
 }
 
 

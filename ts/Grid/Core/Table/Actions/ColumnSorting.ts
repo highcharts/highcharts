@@ -228,15 +228,13 @@ class ColumnSorting {
 
 /* *
  *
- *  Interface
+ *  Declarations
  *
  * */
 
-namespace ColumnSorting {
-    export interface Event {
-        target: Column;
-        order: ColumnSortingOrder;
-    }
+export interface ColumnSortingEvent {
+    target: Column;
+    order: ColumnSortingOrder;
 }
 
 
