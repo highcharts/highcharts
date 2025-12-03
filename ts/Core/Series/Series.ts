@@ -1957,7 +1957,7 @@ class Series {
                     table.getRow(i, dataColumnKeys) as Array<number> || []
                 );
 
-                point.dataGroup = (series.groupMap as any)[
+                point.dataGroup = series.groupMap?.[
                     groupCropStartIndex + i
                 ];
                 if (point.dataGroup?.options) {
@@ -1965,6 +1965,9 @@ class Series {
                     extend(point, (point.dataGroup as any).options);
                     // Collision of props and options (#9770)
                     delete point.dataLabels;
+
+                    // Update key in case name changed
+                    point.key = point.name ?? point.category;
                 }
             }
             if (point) { // #6279
