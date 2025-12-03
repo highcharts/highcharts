@@ -1,26 +1,20 @@
-# Agent Instructions for Test Migration
+# Agent Instructions for Highcharts Tests
 
 This document provides context for AI agents working on the Highcharts tests.
 
-## Migration Overview
+## Test System Overview
 
-We are migrating tests from the legacy Karma-based test system (`test/typescript-karma/`) to:
+Highcharts uses two test systems for TypeScript/modern tests:
 
 1. **Node.js native tests** (`test/ts-node-unit-tests/tests/`) - For pure unit tests that don't require a browser
 2. **Playwright tests** (`tests/`) - For browser-dependent tests that require DOM access
-
-## Progress Tracking
-
-See the detailed migration progress and patterns in:
-- **[Migration Status](./migrations.md)** - Complete list of migrated tests, remaining work, and migration patterns
 
 ## Key Directories
 
 | Directory | Purpose |
 |-----------|---------|
-| `test/typescript-karma/` | Legacy Karma tests (source for migration) |
-| `test/ts-node-unit-tests/tests/` | Node.js native tests (destination for unit tests) |
-| `tests/` | Playwright tests (destination for browser tests) |
+| `test/ts-node-unit-tests/tests/` | Node.js native tests (unit tests) |
+| `tests/` | Playwright tests (browser tests) |
 
 ## Decision Criteria: Node.js vs Playwright
 
@@ -48,9 +42,6 @@ npx playwright test --project=<project-name>
 
 # Lint tests (run from repo root)
 npx --workspace tests eslint
-
-# Legacy Karma tests (for reference)
-npx karma start test/typescript-karma/karma-conf.js
 ```
 
 ## File Organization
@@ -98,15 +89,14 @@ See the [migrations.md](./migrations.md) file for detailed patterns including:
 
 ## Keeping Documentation Updated
 
-**Important:** When working on test migrations, always keep these documentation files up to date:
+**Important:** When working on tests, always keep these documentation files up to date:
 
-### After migrating a test file:
-1. Update `tests/migrations.md`:
-   - Move the test from "Remaining Migrations" to "Completed Migrations"
-   - Update the test counts in "Current Status"
-   - Add any new migration patterns discovered
+### After adding a new test file:
+1. Update `tests/migrations.md` if you discover new patterns or pitfalls
 
-2. If you discover new patterns or pitfalls, add them to the "Migration Patterns" section
+2. Ensure tests are properly organized:
+   - `tests/highcharts/` must use subfolders
+   - `tests/dashboards/` can stay flat until >8 files
 
 ### After completing a major milestone:
 1. Update this file (`tests/agents.md`) if:
@@ -114,10 +104,9 @@ See the [migrations.md](./migrations.md) file for detailed patterns including:
    - New directories are added
    - New commands are needed
 
-### Example update workflow:
+### Example workflow:
 ```bash
-# After migrating HTMLTableStore.test.js to Playwright
-# 1. Update migrations.md - move from "Remaining" to "Completed"
-# 2. Update test counts
-# 3. Run tests to verify: npm run test-node && npx playwright test
+# After adding a new test
+# 1. Run tests to verify: npm run test-node && npx playwright test
+# 2. Update migrations.md if new patterns discovered
 ```
