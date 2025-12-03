@@ -57,17 +57,6 @@ const chart = Highcharts.chart('container', {
         `
     },
     series: [{
-        /*
-            +------------+
-            | NEW OPTIONS:
-            +------------+
-
-                - smoothColoring,
-                - contourInterval,
-                - contourOffset,
-                - showContourLines,
-                - renderOnBackground
-        */
         type: 'contour',
         name: 'Elevation',
         renderOnBackground: true,
@@ -94,43 +83,13 @@ const chart = Highcharts.chart('container', {
     }]
 });
 
-const invertedCbx = document.getElementById('inverted');
-const xReversedCbx = document.getElementById('x-reversed');
-const yReversedCbx = document.getElementById('y-reversed');
-const bgRenderCbx = document.getElementById('bg-render');
 const contourIntervalRange = document.getElementById('contour-interval');
 const contourOffsetRange = document.getElementById('contour-offset');
 const showLinesCbx = document.getElementById('show-lines');
 const smoothColoringCbx = document.getElementById('smooth-coloring');
-
+const bgRenderCbx = document.getElementById('bg-render');
 const contourIntervalSpan = document.getElementById('contour-interval-span');
 const contourOffsetSpan = document.getElementById('contour-offset-span');
-
-invertedCbx.addEventListener('click', () => {
-    chart.update({
-        chart: {
-            inverted: invertedCbx.checked
-        }
-    });
-});
-
-xReversedCbx.addEventListener('click', () => {
-    chart.xAxis[0].update({
-        reversed: xReversedCbx.checked
-    });
-});
-
-yReversedCbx.addEventListener('click', () => {
-    chart.yAxis[0].update({
-        reversed: yReversedCbx.checked
-    });
-});
-
-bgRenderCbx.addEventListener('click', () => {
-    chart.series[0].update({
-        renderOnBackground: bgRenderCbx.checked
-    });
-});
 
 contourIntervalRange.addEventListener('input', () => {
     chart.series[0].update({
@@ -155,5 +114,11 @@ showLinesCbx.addEventListener('click', () => {
 smoothColoringCbx.addEventListener('click', () => {
     chart.series[0].update({
         smoothColoring: smoothColoringCbx.checked
+    });
+});
+
+bgRenderCbx.addEventListener('click', () => {
+    chart.series[0].update({
+        renderOnBackground: bgRenderCbx.checked
     });
 });

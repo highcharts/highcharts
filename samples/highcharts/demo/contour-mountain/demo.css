@@ -8,7 +8,7 @@
     display: none;
 }
 
-.controls {
-    padding: 5px 20px;
+#sliders {
+    margin: 0.3rem 10px;
     user-select: none;
 }
