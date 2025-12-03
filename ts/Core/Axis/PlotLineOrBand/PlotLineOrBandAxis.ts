@@ -27,7 +27,8 @@ import U from '../../Utilities.js';
 const {
     addEvent,
     extend,
-    isNumber
+    isNumber,
+    splat
 } = U;
 
 /* *
@@ -221,7 +222,9 @@ namespace PlotLineOrBandAxis {
                     // Plot lines and bands from options
                     for (const coll of ['plotBands', 'plotLines'] as const) {
                         this[coll] = [];
-                        for (const pOptions of this.options[coll] || []) {
+                        for (
+                            const pOptions of splat(this.options[coll] || [])
+                        ) {
                             this[coll].push(new PlotLineOrBandClass(
                                 this as Composition,
                                 pOptions
@@ -243,7 +246,7 @@ namespace PlotLineOrBandAxis {
                     if (options[coll]) {
 
                         const plotItems = this[coll];
-                        options[coll].forEach(
+                        splat(options[coll]).forEach(
                             (pOptions = {}, i): void => {
                                 // Match by id
                                 let pItem: PlotLineOrBand | undefined;

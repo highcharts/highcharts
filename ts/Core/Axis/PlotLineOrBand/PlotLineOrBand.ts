@@ -457,8 +457,7 @@ class PlotLineOrBand {
      * Destroy the item's elements
      */
     public destroy(): void {
-        delete (this as Partial<this>).axis;
-        destroyObjectProperties(this);
+        destroyObjectProperties(this, (this as Partial<this>).axis);
     }
 
     /**

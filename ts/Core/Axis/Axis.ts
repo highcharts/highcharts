@@ -4083,45 +4083,25 @@ class Axis {
             removeEvent(axis);
         }
 
-        for (const coll of ['plotBands', 'plotLines'] as const) {
-            const plotLinesAndBands = axis[coll];
-            if (plotLinesAndBands) {
-                let i = plotLinesAndBands.length;
-                while (i--) { // #1975
-                    plotLinesAndBands[i].destroy();
-                }
-            }
-        }
-
         // Destroy collections
         [
             axis.ticks,
             axis.minorTicks,
             axis.alternateBands,
-            axis.plotLinesAndBandsGroups
-        ].forEach(
-            function (
-                coll: (
-                    Record<string, PlotLineOrBand>|
-                    Record<string, Tick>|
-                    Record<string, SVGElement>
-                )
-            ): void {
-                destroyObjectProperties(coll);
-            }
-        );
-
-        // Destroy elements
-        [
-            'axisLine', 'axisTitle', 'axisGroup',
-            'gridGroup', 'labelGroup', 'cross', 'scrollbar'
-        ].forEach(
-            function (prop: string): void {
-                if ((axis as any)[prop]) {
-                    (axis as any)[prop] = (axis as any)[prop].destroy();
-                }
-            }
-        );
+            axis.plotBands,
+            axis.plotLines,
+            axis.plotLinesAndBandsGroups,
+            // Direct elements
+            [
+                axis.axisLine,
+                axis.axisTitle,
+                axis.axisGroup,
+                axis.gridGroup,
+                axis.labelGroup,
+                axis.cross,
+                axis.scrollbar
+            ]
+        ].forEach(destroyObjectProperties as any);
 
         // Delete all properties and fall back to the prototype.
         objectEach(axis, function (_val: any, key: string): void {

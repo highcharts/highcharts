@@ -1265,34 +1265,41 @@ function arrayMax(data: Array<any>|Types.TypedArray): number {
 
 /**
  * Utility method that destroys any SVGElement instances that are properties on
- * the given object. It loops all properties and invokes destroy if there is a
- * destroy method. The property is then delete.
+ * the given object or items in an array. It loops all properties and invokes
+ * destroy if there is a destroy method. The property is then deleted, or arrays
+ * emptied.
  *
  * @function Highcharts.destroyObjectProperties
  *
- * @param {*} obj
- *        The object to destroy properties on.
+ * @param {*} obj The object to destroy properties on.
  *
- * @param {*} [except]
- *        Exception, do not destroy this property, only delete it.
+ * @param {*} [except] Exception, do not destroy this property, only delete it.
  */
 function destroyObjectProperties(
-    obj: any,
+    obj: Array<any>|Record<string, any>,
     except?: any,
     destructablesOnly?: boolean
 ): void {
-    objectEach(obj, function (val, n): void {
-        // If the object is non-null and destroy is defined
-        if (val !== except && val?.destroy) {
-            // Invoke the destroy
-            val.destroy();
+    if (isArray(obj)) {
+        let i = obj.length;
+        while (i--) {
+            (obj[i] as any)?.destroy?.();
         }
+        obj.length = 0;
+    } else {
+        objectEach(obj, function (val, n): void {
+            // If the object is non-null and destroy is defined
+            if (val !== except) {
+                // Invoke the destroy
+                val?.destroy?.();
+            }
 
-        // Delete the property from the object
-        if (val?.destroy || !destructablesOnly) {
-            delete obj[n];
-        }
-    });
+            // Delete the property from the object
+            if (val?.destroy || !destructablesOnly) {
+                delete obj[n];
+            }
+        });
+    }
 }
 
 
