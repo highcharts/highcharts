@@ -1632,7 +1632,7 @@ class Series {
 
         data.forEach(function (pointOptions, i): void {
             data[i] = getPointOptionsObject(series, pointOptions);
-            data[i].index = i;
+            (data[i] as any).index = i;
         }, this);
 
         // Sorting
@@ -1943,6 +1943,12 @@ class Series {
                         pOptions,
                         xData[i]
                     );
+                } else if (point) {
+                    // Point properties for convenient access in tooltip and
+                    // data labels might need to be updated.
+                    point.category = series.xAxis?.categories?.[point.x] ??
+                        point.x;
+                    point.key = point.name ?? point.category;
                 }
             } else {
                 // Splat the y data in case of ohlc data array
