@@ -40,6 +40,24 @@ const {
 
 /* *
  *
+ *  Declarations
+ *
+ * */
+
+declare module '../../Core/Series/PointBase' {
+    interface PointBase {
+        /**
+         * Pie series only. Whether to display a slice offset from the center.
+         *
+         * @name Highcharts.Point#sliced
+         * @type {boolean|undefined}
+         */
+        sliced?: boolean;
+    }
+}
+
+/* *
+ *
  *  Class
  *
  * */
@@ -366,3 +384,18 @@ namespace PiePoint {
  * */
 
 export default PiePoint;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
+
+/**
+ * Pie series only. Whether to display a slice offset from the center.
+ *
+ * @name Highcharts.Point#sliced
+ * @type {boolean|undefined}
+ */
+
+''; // Keeps doclets above in JS file

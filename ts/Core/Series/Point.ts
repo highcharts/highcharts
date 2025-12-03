@@ -146,6 +146,10 @@ class Point {
 
         series.chart.pointCount++;
 
+        // Set point properties for convenient access in tooltip and data labels
+        this.category = series.xAxis?.categories?.[this.x] ?? this.x;
+        this.key = this.name ?? this.category;
+
         fireEvent(this, 'afterInit');
 
     }
@@ -163,7 +167,7 @@ class Point {
      * @name Highcharts.Point#category
      * @type {number|string}
      */
-    public category!: (number|string);
+    public category: (number|string);
 
     /**
      * The point's current color.
@@ -229,25 +233,8 @@ class Point {
     /** @internal */
     public hiddenInDataClass?: boolean;
 
-    /**
-     * Range series only. The high or maximum value for each data point.
-     *
-     * @name Highcharts.Point#high
-     * @type {number|undefined}
-     */
-    public high?: number;
-
     /** @internal */
-    public id!: string;
-
-    /**
-     * Contains the point's index in the `Series.points` array.
-     *
-     * @name Highcharts.Point#index
-     * @type {number}
-     * @readonly
-     */
-    public index!: number;
+    public id: string;
 
     /** @internal */
     public isNew?: boolean;
@@ -262,15 +249,7 @@ class Point {
      * @name Highcharts.Point#key
      * @type {number|string}
      */
-    public key?: string|number;
-
-    /**
-     * Range series only. The low or minimum value for each data point.
-     *
-     * @name Highcharts.Point#low
-     * @type {number|undefined}
-     */
-    public low?: number;
+    public key: string|number;
 
     /** @internal */
     public marker?: PointMarkerOptions;
@@ -329,38 +308,6 @@ class Point {
      */
     public percentage?: number;
 
-    /**
-     * The translated X value for the point in terms of pixels. Relative
-     * to the X axis position if the series has one, otherwise relative
-     * to the plot area. Depending on the series type this value might
-     * not be defined.
-     *
-     * In an inverted chart the x-axis is going from the bottom to the
-     * top so the `plotX` value is the number of pixels from the bottom
-     * of the axis.
-     *
-     * @see Highcharts.Point#pos
-     * @name Highcharts.Point#plotX
-     * @type {number|undefined}
-     */
-    public plotX?: number;
-
-    /**
-     * The translated Y value for the point in terms of pixels. Relative
-     * to the Y axis position if the series has one, otherwise relative
-     * to the plot area. Depending on the series type this value might
-     * not be defined.
-     *
-     * In an inverted chart the y-axis is going from right to left
-     * so the `plotY` value is the number of pixels from the right
-     * of the `yAxis`.
-     *
-     * @see Highcharts.Point#pos
-     * @name Highcharts.Point#plotY
-     * @type {number|undefined}
-     */
-    public plotY?: number;
-
     /** @internal */
     public point: Point;
 
@@ -403,14 +350,6 @@ class Point {
 
     /** @internal */
     public shapeType?: string;
-
-    /**
-     * Pie series only. Whether to display a slice offset from the center.
-     *
-     * @name Highcharts.Point#sliced
-     * @type {boolean|undefined}
-     */
-    public sliced?: boolean;
 
     /** @internal */
     public startXPos?: number;
@@ -516,30 +455,11 @@ class Point {
      * @type {Array<Highcharts.SVGElement>|undefined}
      */
     /**
-     * Range series only. The high or maximum value for each data point.
-     *
-     * @name Highcharts.Point#high
-     * @type {number|undefined}
-     */
-    /**
-     * Contains the point's index in the `Series.points` array.
-     *
-     * @name Highcharts.Point#index
-     * @type {number}
-     * @readonly
-     */
-    /**
      * The point's name if it is defined, or its category in case of a category,
      * otherwise the x value. Convenient for tooltip and data label formatting.
      *
      * @name Highcharts.Point#key
      * @type {number|string}
-     */
-    /**
-     * Range series only. The low or minimum value for each data point.
-     *
-     * @name Highcharts.Point#low
-     * @type {number|undefined}
      */
     /**
      * The name of the point. The name can be given as the first position of the
@@ -587,34 +507,6 @@ class Point {
      * @type {number|undefined}
      */
     /**
-     * The translated X value for the point in terms of pixels. Relative
-     * to the X axis position if the series has one, otherwise relative
-     * to the plot area. Depending on the series type this value might
-     * not be defined.
-     *
-     * In an inverted chart the x-axis is going from the bottom to the
-     * top so the `plotX` value is the number of pixels from the bottom
-     * of the axis.
-     *
-     * @see Highcharts.Point#pos
-     * @name Highcharts.Point#plotX
-     * @type {number|undefined}
-     */
-    /**
-     * The translated Y value for the point in terms of pixels. Relative
-     * to the Y axis position if the series has one, otherwise relative
-     * to the plot area. Depending on the series type this value might
-     * not be defined.
-     *
-     * In an inverted chart the y-axis is going from right to left
-     * so the `plotY` value is the number of pixels from the right
-     * of the `yAxis`.
-     *
-     * @see Highcharts.Point#pos
-     * @name Highcharts.Point#plotY
-     * @type {number|undefined}
-     */
-    /**
      * Array of all hovered points when using shared tooltips.
      *
      * @name Highcharts.Point#points
@@ -642,12 +534,6 @@ class Point {
      * @readonly
      * @name Highcharts.Point#shapeArgs
      * @type {Readonly<Highcharts.SVGAttributes>|undefined}
-     */
-    /**
-     * Pie series only. Whether to display a slice offset from the center.
-     *
-     * @name Highcharts.Point#sliced
-     * @type {boolean|undefined}
      */
     /**
      * Defines the tooltip's position for a data point in a chart. It is an
