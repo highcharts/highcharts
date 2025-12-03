@@ -20,7 +20,8 @@ export default tseslint.config(
                     code: 80,
                     ignoreTemplateLiterals: true,
                     ignoreStrings: true,
-                    ignoreComments: true
+                    ignoreComments: true,
+                    ignorePattern: "^\\s*(const|let|var|return)?\\s*\\w+:.*\\.(component|chart|series|options|dataTable)\\."
                 }
             ],
             "@stylistic/quotes": ["error", "single"],
