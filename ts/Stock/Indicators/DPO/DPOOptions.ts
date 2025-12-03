@@ -24,26 +24,37 @@ import type {
  * */
 
 /**
- * Options for the DPO indicator.
+ * Detrended Price Oscillator. This series requires the `linkedTo` option to
+ * be set and should be loaded after the `stock/indicators/indicators.js`.
  *
+ * @sample {highstock} stock/indicators/dpo
+ *         Detrended Price Oscillator
+ *
+ * @extends      plotOptions.sma
+ * @since        7.0.0
+ * @product      highstock
+ * @excluding    allAreas, colorAxis, compare, compareBase, joinBy, keys,
+ *               navigatorOptions, pointInterval, pointIntervalUnit,
+ *               pointPlacement, pointRange, pointStart, showInNavigator,
+ *               stacking
+ * @requires     stock/indicators/indicators
+ * @requires     stock/indicators/dpo
+ * @optionparent plotOptions.dpo
  * @interface Highcharts.DPOOptions
- * @extends Highcharts.SMAOptions
  */
 export interface DPOOptions extends SMAOptions {
     /**
-     * Parameters used in calculation of DPO values.
+     * Parameters used in calculation of Detrended Price Oscillator series
+     * points.
      */
     params?: DPOParamsOptions;
 }
 
-/**
- * Parameters used in calculation of DPO values.
- *
- * @interface Highcharts.DPOParamsOptions
- * @extends Highcharts.SMAParamsOptions
- */
 export interface DPOParamsOptions extends SMAParamsOptions {
-    // For inheritance
+    /**
+     * Period for Detrended Price Oscillator
+     */
+    period?: number;
 }
 
 /* *

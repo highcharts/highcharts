@@ -24,24 +24,29 @@ import type {
  * */
 
 /**
- * Options for the DEMA indicator.
+ * Double exponential moving average (DEMA) indicator. This series requires
+ * `linkedTo` option to be set and should be loaded after the
+ * `stock/indicators/indicators.js`.
  *
+ * @sample {highstock} stock/indicators/dema
+ *         DEMA indicator
+ *
+ * @extends      plotOptions.ema
+ * @since        7.0.0
+ * @product      highstock
+ * @excluding    allAreas, colorAxis, compare, compareBase, joinBy, keys,
+ *               navigatorOptions, pointInterval, pointIntervalUnit,
+ *               pointPlacement, pointRange, pointStart, showInNavigator,
+ *               stacking
+ * @requires     stock/indicators/indicators
+ * @requires     stock/indicators/dema
+ * @optionparent plotOptions.dema
  * @interface Highcharts.DEMAOptions
- * @extends Highcharts.EMAOptions
  */
 export interface DEMAOptions extends EMAOptions {
-    /**
-     * Parameters used in calculation of the DEMA values.
-     */
     params?: DEMAParamsOptions;
 }
 
-/**
- * Parameters used in calculation of the DEMA values.
- *
- * @interface Highcharts.DEMAParamsOptions
- * @extends Highcharts.EMAParamsOptions
- */
 export interface DEMAParamsOptions extends EMAParamsOptions {
     // For inheritance
 }
