@@ -22,7 +22,7 @@
  *
  * */
 
-import type { ColumnResizingMode } from '../../Options';
+import type { ColumnResizingMode } from './ColumnResizing';
 import type Table from '../Table';
 import type Column from '../Column.js';
 import type ColumnsResizer from '../Actions/ColumnsResizer';

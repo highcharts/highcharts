@@ -516,7 +516,7 @@ class Table {
      * @returns
      * The viewport state metadata.
      */
-    public getStateMeta(): Table.ViewportStateMetadata {
+    public getStateMeta(): ViewportStateMetadata {
         return {
             scrollTop: this.tbodyElement.scrollTop,
             scrollLeft: this.tbodyElement.scrollLeft,
@@ -533,7 +533,7 @@ class Table {
      * The viewport state metadata.
      */
     public applyStateMeta(
-        meta: Table.ViewportStateMetadata
+        meta: ViewportStateMetadata
     ): void {
         this.tbodyElement.scrollTop = meta.scrollTop;
         this.tbodyElement.scrollLeft = meta.scrollLeft;
@@ -591,18 +591,15 @@ class Table {
     }
 }
 
-namespace Table {
-
-    /**
-     * Represents the metadata of the viewport state. It is used to save the
-     * state of the viewport and restore it when the data grid is re-rendered.
-     */
-    export interface ViewportStateMetadata {
-        scrollTop: number;
-        scrollLeft: number;
-        columnResizing: ColumnResizingMode;
-        focusCursor?: [number, number];
-    }
+/**
+ * Represents the metadata of the viewport state. It is used to save the
+ * state of the viewport and restore it when the data grid is re-rendered.
+ */
+export interface ViewportStateMetadata {
+    scrollTop: number;
+    scrollLeft: number;
+    columnResizing: ColumnResizingMode;
+    focusCursor?: [number, number];
 }
 
 

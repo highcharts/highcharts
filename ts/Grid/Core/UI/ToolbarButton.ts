@@ -26,8 +26,8 @@ import type Toolbar from './Toolbar';
 import type Button from './Button';
 import type Popup from './Popup';
 
-import SvgIcons from './SvgIcons.js';
-import Globals from '../Globals.js';
+import { GridIconName, createGridIcon } from './SvgIcons.js';
+import Globals, { ClassNameKey } from '../Globals.js';
 import GridUtils from '../GridUtils.js';
 
 const { makeHTMLElement } = GridUtils;
@@ -72,7 +72,7 @@ class ToolbarButton implements Button {
     /**
      * The options for the toolbar button.
      */
-    private options: ToolbarButton.Options;
+    private options: ToolbarButtonOptions;
 
     /**
      * The default icon for the toolbar button.
@@ -96,7 +96,7 @@ class ToolbarButton implements Button {
      *
      * */
 
-    constructor(options: ToolbarButton.Options) {
+    constructor(options: ToolbarButtonOptions) {
         this.options = options;
     }
 
@@ -181,9 +181,9 @@ class ToolbarButton implements Button {
      * @param icon
      * The icon to set.
      */
-    public setIcon(icon: SvgIcons.GridIconName): void {
+    public setIcon(icon: GridIconName): void {
         this.icon?.remove();
-        this.icon = SvgIcons.createGridIcon(icon);
+        this.icon = createGridIcon(icon);
         this.buttonEl?.appendChild(this.icon);
     }
 
@@ -284,64 +284,60 @@ class ToolbarButton implements Button {
 
 /* *
  *
- *  Namespace
+ *  Declarations
  *
  * */
 
-namespace ToolbarButton {
+/**
+ * Options for the toolbar button.
+ */
+export interface ToolbarButtonOptions {
+    /**
+     * The icon for the button.
+     */
+    icon: GridIconName;
 
     /**
-     * Options for the toolbar button.
+     * The class name key for the button.
      */
-    export interface Options {
-        /**
-         * The icon for the button.
-         */
-        icon: SvgIcons.GridIconName;
+    classNameKey?: ClassNameKey;
 
-        /**
-         * The class name key for the button.
-         */
-        classNameKey?: Globals.ClassNameKey;
+    /**
+     * The tooltip string for the button.
+     */
+    tooltip?: string;
 
-        /**
-         * The tooltip string for the button.
-         */
-        tooltip?: string;
+    /**
+     * Whether the button should be always visible.
+     */
+    alwaysVisible?: boolean;
 
-        /**
-         * Whether the button should be always visible.
-         */
-        alwaysVisible?: boolean;
+    /**
+     * The accessibility options for the button.
+     */
+    accessibility?: ToolbarButtonA11yOptions;
 
-        /**
-         * The accessibility options for the button.
-         */
-        accessibility?: ToolbarButtonA11yOptions;
+    /**
+     * The click handler for the button.
+     */
+    onClick?: (event: MouseEvent, button: ToolbarButton) => void;
+}
 
-        /**
-         * The click handler for the button.
-         */
-        onClick?: (event: MouseEvent, button: ToolbarButton) => void;
-    }
+export interface ToolbarButtonA11yOptions {
+    /**
+     * The aria label attribute for the button.
+     */
+    ariaLabel?: string;
 
-    export interface ToolbarButtonA11yOptions {
-        /**
-         * The aria label attribute for the button.
-         */
-        ariaLabel?: string;
+    /**
+     * The aria expanded attribute for the button.
+     */
+    ariaExpanded?: boolean;
 
-        /**
-         * The aria expanded attribute for the button.
-         */
-        ariaExpanded?: boolean;
-
-        /**
-         * The aria controls attribute for the button.
-         */
-        ariaControls?: string;
-    }
-
+    /**
+     * The aria controls attribute for the button.
+     */
+    ariaControls?: string;
 }
 
 

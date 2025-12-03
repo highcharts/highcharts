@@ -1207,12 +1207,17 @@ class Pagination {
     }
 }
 
-namespace Pagination {
-    export type PaginationState = {
-        currentPage?: number;
-        currentPageSize?: number;
-    };
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+export interface PaginationState {
+    currentPage?: number;
+    currentPageSize?: number;
 }
+
 
 /* *
  *

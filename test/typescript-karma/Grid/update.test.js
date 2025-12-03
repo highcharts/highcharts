@@ -1,8 +1,7 @@
-import '/base/code/grid/es-modules/masters/grid-pro.src.js';
+import Grid from '/base/code/grid/es-modules/masters/grid-pro.src.js';
 import SortToolbarButton from '/base/code/grid/es-modules/Grid/Core/Table/Header/ColumnToolbar/ToolbarButtons/SortToolbarButton.js';
 import FilterToolbarButton from '/base/code/grid/es-modules/Grid/Core/Table/Header/ColumnToolbar/ToolbarButtons/FilterToolbarButton.js';
 
-const Grid = window.Grid;
 const { test } = QUnit;
 
 const dataTableOptions = {

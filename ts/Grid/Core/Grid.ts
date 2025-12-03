@@ -29,13 +29,13 @@ import type {
     IndividualColumnOptions
 } from './Options';
 import type DataTableOptions from '../../Data/DataTableOptions';
-import type Column from './Table/Column';
+import type { ColumnDataType, NoIdColumnOptions } from './Table/Column';
 import type Popup from './UI/Popup.js';
 import type { DeepPartial } from '../../Shared/Types';
 
 import Accessibility from './Accessibility/Accessibility.js';
 import AST from '../../Core/Renderer/HTML/AST.js';
-import Defaults from './Defaults.js';
+import { defaultOptions } from './Defaults.js';
 import GridUtils from './GridUtils.js';
 import DataTable from '../../Data/DataTable.js';
 import Table from './Table/Table.js';
@@ -66,7 +66,7 @@ const {
 /**
  * A base class for the Grid.
  */
-class Grid {
+export class Grid {
 
     /* *
     *
@@ -168,7 +168,7 @@ class Grid {
      * column options.
      * @internal
      */
-    public columnOptionsMap: Record<string, Grid.ColumnOptionsMapItem> = {};
+    public columnOptionsMap: Record<string, ColumnOptionsMapItem> = {};
 
     /**
      * The container of the grid.
@@ -308,7 +308,7 @@ class Grid {
      * re-rendered.
      * @internal
      */
-    public readonly dirtyFlags: Set<Grid.DirtyFlags> = new Set();
+    public readonly dirtyFlags: Set<GridDirtyFlags> = new Set();
 
 
     /* *
@@ -435,10 +435,10 @@ class Grid {
     private loadUserOptions(
         newOptions: Partial<Options>,
         oneToOne = false
-    ): DeepPartial<Grid.NonArrayOptions> {
+    ): DeepPartial<NonArrayOptions> {
         // Operate on a copy of the options argument
         newOptions = merge(newOptions);
-        const diff: DeepPartial<Grid.NonArrayOptions> = {};
+        const diff: DeepPartial<NonArrayOptions> = {};
 
         if (newOptions.columns) {
             if (oneToOne) {
@@ -460,7 +460,7 @@ class Grid {
 
         this.userOptions = merge(this.userOptions, newOptions);
         this.options = merge(
-            this.options ?? Defaults.defaultOptions,
+            this.options ?? defaultOptions,
             this.userOptions
         );
 
@@ -485,7 +485,7 @@ class Grid {
             return;
         }
 
-        const columnOptionsMap: Record<string, Grid.ColumnOptionsMapItem> = {};
+        const columnOptionsMap: Record<string, ColumnOptionsMapItem> = {};
         for (let i = 0, iEnd = colOptions.length; i < iEnd; ++i) {
             columnOptionsMap[colOptions[i].id] = {
                 index: i,
@@ -515,8 +515,8 @@ class Grid {
     public setColumnOptions(
         newColumnOptions: IndividualColumnOptions[],
         overwrite = false
-    ): DeepPartial<Grid.NonArrayColumnOptions> {
-        const columnDiffOptions: DeepPartial<Grid.NonArrayColumnOptions> = {};
+    ): DeepPartial<NonArrayColumnOptions> {
+        const columnDiffOptions: DeepPartial<NonArrayColumnOptions> = {};
 
         if (!this.userOptions.columns) {
             this.userOptions.columns = this.options?.columns ?? [];
@@ -583,10 +583,10 @@ class Grid {
      */
     private setColumnOptionsOneToOne(
         newColumnOptions: IndividualColumnOptions[]
-    ): DeepPartial<Grid.NonArrayColumnOptions> {
+    ): DeepPartial<NonArrayColumnOptions> {
         const prevColumnOptions = this.userOptions.columns;
         const columnOptions = [];
-        const columnDiffOptions: DeepPartial<Grid.NonArrayColumnOptions> = {};
+        const columnDiffOptions: DeepPartial<NonArrayColumnOptions> = {};
 
         let prevOptions: IndividualColumnOptions | undefined;
         for (let i = 0, iEnd = newColumnOptions.length; i < iEnd; ++i) {
@@ -926,14 +926,14 @@ class Grid {
 
     public updateColumn(
         columnId: string,
-        options: Column.Options,
+        options: NoIdColumnOptions,
         render?: boolean,
         overwrite?: boolean
     ): Promise<void>;
 
     public updateColumn(
         columnId: string,
-        options: Column.Options,
+        options: NoIdColumnOptions,
         render?: false,
         overwrite?: boolean
     ): void;
@@ -957,7 +957,7 @@ class Grid {
      */
     public async updateColumn(
         columnId: string,
-        options: Column.Options,
+        options: NoIdColumnOptions,
         redraw = true,
         overwrite = false
     ): Promise<void> {
@@ -1479,9 +1479,9 @@ class Grid {
             return '{}';
         }
 
-        const typeParser = (type: Column.DataType) => {
+        const typeParser = (type: ColumnDataType) => {
             const TypeMap: Record<
-                Column.DataType,
+                ColumnDataType,
                 (value: DataTable.CellType) => DataTable.CellType
             > = {
                 number: Number,
@@ -1540,36 +1540,41 @@ class Grid {
 
 /* *
  *
- *  Class Namespace
+ *  Declarations
  *
  * */
-namespace Grid {
-    /**
-     * @internal
-     * An item in the column options map.
-     */
-    export interface ColumnOptionsMapItem {
-        index: number;
-        options: Column.Options
-    }
 
-    /**
-     * Column options as a record of column IDs to column options.
-     */
-    export type NonArrayColumnOptions = {
-        [x: string]: Omit<IndividualColumnOptions, 'id'>;
-    };
+/**
+ * Column options as a record of column IDs to column options.
+ * @internal
+ */
+export type NonArrayColumnOptions = {
+    [x: string]: NoIdColumnOptions;
+};
 
-    /**
-     * Options with columns as a record of column IDs to column options.
-     */
-    export type NonArrayOptions = Omit<Options, 'columns'> & {
-        columns?: NonArrayColumnOptions;
-    };
+/**
+ * Options with columns as a record of column IDs to column options.
+ * @internal
+ */
+export type NonArrayOptions = Omit<Options, 'columns'> & {
+    columns?: NonArrayColumnOptions;
+};
 
-    export type DirtyFlags = (
-        'grid' | 'rows' | 'sorting' | 'filtering' | 'reflow'
-    );
+/**
+ * Dirty flags used to mark the parts of the Grid that need to be updated.
+ * @internal
+ */
+export type GridDirtyFlags = (
+    'grid' | 'rows' | 'sorting' | 'filtering' | 'reflow'
+);
+
+/**
+ * @internal
+ * An item in the column options map.
+ */
+export interface ColumnOptionsMapItem {
+    index: number;
+    options: NoIdColumnOptions
 }
 
 

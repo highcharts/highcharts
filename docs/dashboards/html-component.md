@@ -23,9 +23,7 @@ npm install @highcharts/dashboards
 and import it in your project like:
 ```js
 import * as Dashboards from '@highcharts/dashboards';
-import LayoutModule from '@highcharts/dashboards/modules/layout';
-
-LayoutModule(Dashboards);
+import '@highcharts/dashboards/modules/layout';
 ```
 
 ### 2. Layout
