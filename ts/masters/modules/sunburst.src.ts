@@ -3,7 +3,7 @@
  * @module highcharts/modules/sunburst
  * @requires highcharts
  *
- * (c) 2016-2024 Highsoft AS
+ * (c) 2016-2025 Highsoft AS
  * Authors: Jon Arild Nygard
  *
  * License: www.highcharts.com/license

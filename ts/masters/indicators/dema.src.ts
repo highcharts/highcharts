@@ -6,7 +6,7 @@
  *
  * Indicator series type for Highcharts Stock
  *
- * (c) 2010-2024 Rafał Sebestjański
+ * (c) 2010-2025 Rafał Sebestjański
  *
  * License: www.highcharts.com/license
  */

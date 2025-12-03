@@ -5,7 +5,7 @@
 *
 * zh-CN language pack
 *
-* (c) 2009-2024 Torstein Honsi
+* (c) 2009-2025 Highsoft AS
 *
 * License: www.highcharts.com/license
 *
@@ -172,7 +172,12 @@ const languageOptions = {
             "timeRangeMinutes": "数据范围：{range} 分钟。",
             "timeRangeSeconds": "数据范围：{range} 秒。",
             "rangeFromTo": "数据范围从 {rangeFrom} 到 {rangeTo}。",
-            "rangeCategories": "数据范围：{numCategories} 个类别。"
+            "rangeCategories": "数据范围：{numCategories} 个类别。",
+            "defaultAxisNames": {
+                "categories": "类别",
+                "time": "时间",
+                "values": "值"
+            }
         },
         "exporting": {
             "chartMenuLabel": "图表菜单",

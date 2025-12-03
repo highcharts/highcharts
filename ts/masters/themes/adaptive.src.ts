@@ -1,6 +1,6 @@
 /**
  * @license Highcharts JS v@product.version@ (@product.date@)
- * @module highcharts/themes/gray
+ * @module highcharts/themes/adaptive
  * @requires highcharts
  *
  * (c) 2009-2025 Torstein Honsi
@@ -9,7 +9,7 @@
  */
 'use strict';
 import H from '../../Core/Globals.js';
-import GrayTheme from '../../Extensions/Themes/Gray.js';
-H.theme = GrayTheme.options;
-GrayTheme.apply();
+import Adaptive from '../../Extensions/Themes/Adaptive.js';
+H.theme = Adaptive.options;
+Adaptive.apply();
 export default H;

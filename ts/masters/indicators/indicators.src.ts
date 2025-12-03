@@ -6,7 +6,7 @@
  *
  * Indicator series type for Highcharts Stock
  *
- * (c) 2010-2024 Pawel Fus, Sebastian Bochan
+ * (c) 2010-2025 Pawel Fus, Sebastian Bochan
  *
  * License: www.highcharts.com/license
  */

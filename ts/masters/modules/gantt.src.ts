@@ -5,7 +5,7 @@
  *
  * Gantt series
  *
- * (c) 2016-2024 Lars A. V. Cabrera
+ * (c) 2016-2025 Lars A. V. Cabrera
  *
  * License: www.highcharts.com/license
  */

@@ -5,7 +5,7 @@
  *
  * Module for adding patterns and images as point fills.
  *
- * (c) 2010-2024 Highsoft AS
+ * (c) 2010-2025 Highsoft AS
  * Author: Torstein Hønsi, Øystein Moseng
  *
  * License: www.highcharts.com/license

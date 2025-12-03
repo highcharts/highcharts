@@ -6,7 +6,7 @@
  *
  * Advanced Highcharts Stock tools
  *
- * (c) 2010-2024 Highsoft AS
+ * (c) 2010-2025 Highsoft AS
  * Author: Torstein Honsi
  *
  * License: www.highcharts.com/license

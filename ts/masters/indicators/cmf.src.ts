@@ -4,7 +4,7 @@
  * @requires highcharts
  * @requires highcharts/modules/stock
  *
- * (c) 2010-2024 Highsoft AS
+ * (c) 2010-2025 Highsoft AS
  * Author: Sebastian Domas
  *
  * License: www.highcharts.com/license

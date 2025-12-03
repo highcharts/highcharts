@@ -6,7 +6,7 @@
  *
  * Point and figure series type for Highcharts Stock
  *
- * (c) 2010-2024 Kamil Musialowski
+ * (c) 2010-2025 Kamil Musialowski
  *
  * License: www.highcharts.com/license
  */

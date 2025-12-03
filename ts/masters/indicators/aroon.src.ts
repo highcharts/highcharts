@@ -6,7 +6,7 @@
  *
  * Indicator series type for Highcharts Stock
  *
- * (c) 2010-2024 Wojciech Chmiel
+ * (c) 2010-2025 Wojciech Chmiel
  *
  * License: www.highcharts.com/license
  */

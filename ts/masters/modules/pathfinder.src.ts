@@ -5,7 +5,7 @@
  *
  * Pathfinder
  *
- * (c) 2016-2024 Øystein Moseng
+ * (c) 2016-2025 Øystein Moseng
  *
  * License: www.highcharts.com/license
  */
