@@ -1,3 +1,4 @@
+console.time();
 const data = (() => {
     const rawData = JSON.parse(document.getElementById('data').textContent);
 
@@ -61,7 +62,15 @@ const chart = Highcharts.chart('container', {
         name: 'Elevation',
         renderOnBackground: true,
         contourInterval: 50,
-        data
+        data,
+        marker: {
+            states: {
+                hover: {
+                    lineColor: 'white',
+                    lineWidth: 2
+                }
+            }
+        }
     }, {
         type: 'scatter',
         name: 'Peaks',
