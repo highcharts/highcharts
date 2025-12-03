@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -21,7 +21,7 @@
  * */
 
 import type Sync from '../../Sync/Sync';
-import type DataGridComponent from '../DataGridComponent.js';
+import type GridComponent from '../GridComponent.js';
 
 import Component from '../../Component';
 import DataCursor from '../../../../Data/DataCursor';
@@ -37,10 +37,12 @@ const defaultOptions: Sync.OptionsEntry = {};
 const syncPair: Sync.SyncPair = {
     emitter: void 0,
     handler: function (this: Component): (() => void) | void {
-        if (this.type !== 'DataGrid') {
+        if (
+            this.type !== 'Grid'
+        ) {
             return;
         }
-        const component = this as DataGridComponent;
+        const component = this as GridComponent;
         const syncOptions = this.sync.syncConfig.extremes;
         const groupKey = syncOptions.group ?
             ':' + syncOptions.group : '';
@@ -51,15 +53,15 @@ const syncPair: Sync.SyncPair = {
             const cursor = e.cursor;
             if (
                 cursor.type === 'position' &&
-                component.dataGrid &&
+                component.grid &&
                 typeof cursor?.row === 'number'
             ) {
                 const { row } = cursor;
-                const { viewport } = component.dataGrid;
+                const { viewport } = component.grid;
                 const rowIndex = viewport?.dataTable?.getLocalRowIndex(row);
 
                 if (rowIndex !== void 0) {
-                    component.dataGrid.viewport?.scrollToRow(rowIndex);
+                    component.grid.viewport?.scrollToRow(rowIndex);
                 }
             }
 
@@ -71,7 +73,8 @@ const syncPair: Sync.SyncPair = {
             if (!cursor) {
                 return;
             }
-            const table = component.connectorHandlers?.[0]?.connector?.table;
+            const table =
+                component.connectorHandlers?.[0]?.connector?.getTable();
 
             if (!table) {
                 return;
@@ -85,7 +88,8 @@ const syncPair: Sync.SyncPair = {
         };
 
         const unregisterCursorListeners = (): void => {
-            const table = component.connectorHandlers?.[0]?.connector?.table;
+            const table =
+                component.connectorHandlers?.[0]?.connector?.getTable();
             const { dataCursor: cursor } = board;
 
             if (!table) {

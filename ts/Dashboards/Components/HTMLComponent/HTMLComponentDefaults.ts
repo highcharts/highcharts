@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -21,7 +21,7 @@
  * */
 
 
-import type Globals from '../../Globals';
+import type { DeepPartial } from '../../../Shared/Types';
 import type Options from './HTMLComponentOptions';
 
 import Component from '../Component.js';
@@ -32,7 +32,7 @@ import Component from '../Component.js';
  *
  * */
 
-const HTMLComponentDefaults: Globals.DeepPartial<Options> = {
+const HTMLComponentDefaults: DeepPartial<Options> = {
     type: 'HTML',
     className: [
         Component.defaultOptions.className,

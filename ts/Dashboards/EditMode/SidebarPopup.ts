@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -57,22 +57,23 @@ class SidebarPopup extends BaseForm {
         text: EditGlobals.lang.sidebar.row,
         onDrop: function (
             sidebar: SidebarPopup,
-            dropContext: Cell|Row
-        ): Cell|void {
+            dropContext: Cell | Row
+        ): Cell | void {
 
             if (!dropContext) {
                 return;
             }
 
-            const row = (
-                    dropContext.getType() === 'cell' ?
-                        (dropContext as Cell).row :
-                        (dropContext as Row)
-                ),
+            const isCellType = dropContext.getType() === 'cell',
+                row = isCellType ? (dropContext as Cell).row :
+                    (dropContext as Row),
                 board = row.layout.board,
-                newLayoutId = GUIElement.getElementId('layout'),
-                cellId = GUIElement.getElementId('cell'),
-                layout = new Layout(board, {
+                cellId = GUIElement.getElementId('cell');
+
+            if (isCellType) {
+                const newLayoutId = GUIElement.getElementId('layout');
+
+                const layout = new Layout(board, {
                     id: newLayoutId,
                     copyId: '',
                     parentContainerId: board.container.id,
@@ -84,7 +85,6 @@ class SidebarPopup extends BaseForm {
                     style: {}
                 });
 
-            if (layout) {
                 board.layouts.push(layout);
 
                 fireEvent(
@@ -96,11 +96,15 @@ class SidebarPopup extends BaseForm {
                         board
                     }
                 );
+            } else {
+                (dropContext as Row).layout.rows[0].addCell({
+                    id: cellId
+                });
             }
 
             void Bindings.addComponent({
                 type: 'HTML',
-                cell: cellId,
+                renderTo: cellId,
                 className: 'highcharts-dashboards-component-placeholder',
                 html: `
                     <h2> Placeholder </h2>
@@ -175,7 +179,7 @@ class SidebarPopup extends BaseForm {
      * Options used in the sidebar.
      */
     public options: SidebarPopup.Options = {
-        components: ['HTML', 'row', 'Highcharts', 'DataGrid', 'KPI']
+        components: ['HTML', 'row', 'Highcharts', 'Grid', 'KPI']
     };
 
     /**
@@ -260,7 +264,7 @@ class SidebarPopup extends BaseForm {
             );
         }
 
-        setTimeout(():void => {
+        setTimeout((): void => {
             classList.add(EditGlobals.classNames[
                 isRightSidebar ? 'editSidebarRightShow' : 'editSidebarShow'
             ]
@@ -331,7 +335,7 @@ class SidebarPopup extends BaseForm {
         this.type = context.getType();
 
         if (this.type === 'cell-html' || this.type === 'cell') {
-            const component = (context as Cell|CellHTML).mountedComponent;
+            const component = (context as Cell | CellHTML).mountedComponent;
             if (!component) {
                 return;
             }
@@ -399,7 +403,8 @@ class SidebarPopup extends BaseForm {
                     dragDrop.onDragStart(
                         e as PointerEvent,
                         void 0,
-                        (dropContext: Cell|Row): void => {
+                        (dropContext: Cell | Row): void => {
+
                             // Add component if there is no layout yet.
                             if (this.editMode.board.layouts.length === 0) {
                                 const board = this.editMode.board,
@@ -419,8 +424,9 @@ class SidebarPopup extends BaseForm {
                                 dropContext = layout.rows[0];
                             }
 
-                            if (!dropContext) {
+                            if (!dropContext?.type) {
                                 const layouts = sidebar.editMode.board.layouts;
+
                                 dragDrop.dropContext = dropContext =
                                     layouts[layouts.length - 1].addRow(
                                         {},
@@ -431,39 +437,43 @@ class SidebarPopup extends BaseForm {
                             const newCell =
                                 components[i].onDrop(sidebar, dropContext);
 
+                            /* eslint-disable max-len */
                             const unbindLayoutChanged = addEvent(
                                 this.editMode,
                                 'layoutChanged',
                                 (e): void => {
                                     if (newCell && e.type === 'newComponent') {
+                                        const chart = newCell.mountedComponent?.chart;
+                                        const settingsEnabled = this.editMode.options.settings?.enabled;
 
-                                        if (newCell.mountedComponent.chart) {
+                                        if (chart?.isDirtyBox) {
                                             const unbind = addEvent(
-                                                newCell.mountedComponent.chart,
+                                                chart,
                                                 'render',
                                                 (): void => {
-                                                    sidebar.editMode
-                                                        .setEditCellContext(
-                                                            newCell
-                                                        );
-                                                    sidebar.show(newCell);
-                                                    newCell.setHighlight();
+                                                    sidebar.editMode.setEditCellContext(newCell);
+
+                                                    if (settingsEnabled) {
+                                                        sidebar.show(newCell);
+                                                        newCell.setHighlight();
+                                                    }
 
                                                     unbind();
                                                     unbindLayoutChanged();
                                                 }
                                             );
                                         } else {
-                                            sidebar.editMode.setEditCellContext(
-                                                newCell
-                                            );
-                                            sidebar.show(newCell);
-                                            newCell.setHighlight();
+                                            sidebar.editMode.setEditCellContext(newCell);
+                                            if (settingsEnabled) {
+                                                sidebar.show(newCell);
+                                                newCell.setHighlight();
+                                            }
+                                            unbindLayoutChanged();
                                         }
-
                                     }
                                 }
                             );
+                            /* eslint-enable max-len */
 
                             // Clean up event listener after drop is complete
                             document.removeEventListener(
@@ -480,7 +490,7 @@ class SidebarPopup extends BaseForm {
     }
 
     public onDropNewComponent(
-        dropContext: Cell|Row,
+        dropContext: Cell | Row,
         componentOptions: Partial<ComponentType['options']>
     ): Cell | void {
         const sidebar = this,
@@ -500,12 +510,15 @@ class SidebarPopup extends BaseForm {
 
         dragDrop.onCellDragEnd(newCell);
         const options = merge(componentOptions, {
-            cell: newCell.id
+            renderTo: newCell.id
         });
 
         const componentPromise =
             Bindings.addComponent(options, sidebar.editMode.board, newCell);
-        sidebar.editMode.setEditOverlay();
+
+        sidebar.editMode.setEditOverlay(
+            !this.editMode.options.settings?.enabled
+        );
 
         void (async (): Promise<void> => {
             const component = await componentPromise;
@@ -543,8 +556,13 @@ class SidebarPopup extends BaseForm {
 
         if (Cell.isCell(editCellContext) && editCellContext.row) {
             editMode.showToolbars(['cell', 'row'], editCellContext);
-            editCellContext.row.setHighlight();
+            editCellContext.row.setHighlight(true);
             editCellContext.setHighlight(true);
+            if (editMode.resizer) {
+                editMode.resizer.setSnapPositions(
+                    editMode.editCellContext as Cell
+                );
+            }
         } else if (
             CellHTML.isCellHTML(editCellContext) && editMode.cellToolbar
         ) {
@@ -625,8 +643,8 @@ class SidebarPopup extends BaseForm {
                         component.name,
                     onDrop: function (
                         sidebar: SidebarPopup,
-                        dropContext: Cell|Row
-                    ): Cell|void {
+                        dropContext: Cell | Row
+                    ): Cell | void {
                         const options =
                             component.prototype.getOptionsOnDrop(sidebar);
 

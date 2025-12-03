@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -14,13 +14,10 @@
  *
  * */
 
-import type CSSJSONObject from '../CSSJSONObject';
 import type Board from '../Board.js';
-import type JSON from '../JSON';
-import type Serializable from '../Serializable';
+import type CSSJSONObject from '../CSSJSONObject';
+import type { DeepPartial } from '../../Shared/Types';
 
-import DU from '../Utilities.js';
-const { uniqueKey } = DU;
 import U from '../../Core/Utilities.js';
 const {
     pick,
@@ -36,60 +33,6 @@ import Globals from '../Globals.js';
  * @internal
  **/
 class Layout extends GUIElement {
-    /* *
-    *
-    *  Static Properties
-    *
-    * */
-
-    /** @internal */
-    public static fromJSON(
-        json: Layout.JSON,
-        board: Board,
-        parentCell?: Cell
-    ): Layout|undefined {
-        const options = json.options,
-            // Check if layout container exists.
-            container = document.getElementById(json.options.containerId),
-            layout = new Layout(
-                board,
-                {
-                    id: options.containerId,
-                    copyId: container ? uniqueKey() : '',
-                    parentContainerId:
-                        options.parentContainerId || board.container.id,
-                    rowsJSON: options.rows,
-                    style: options.style
-                },
-                parentCell
-            );
-
-        // Save layout in the dashboard.
-        if (layout && !parentCell) {
-            board.layouts.push(layout);
-        }
-
-        return layout;
-    }
-
-    /** @internal */
-    public static importLocal(
-        id: string,
-        board: Board
-    ): Layout|undefined {
-        const layoutOptions = localStorage.getItem(
-            Globals.classNamePrefix + id
-        );
-
-        let layout;
-
-        if (layoutOptions) {
-            layout = Layout.fromJSON(JSON.parse(layoutOptions), board);
-        }
-
-        return layout;
-    }
-
     /* *
     *
     *  Constructor
@@ -154,11 +97,6 @@ class Layout extends GUIElement {
         // Init rows from options.
         if (this.options.rows) {
             this.setRows();
-        }
-
-        // Init rows from JSON.
-        if (options.rowsJSON && !this.rows.length) {
-            this.setRowsFromJSON(options.rowsJSON);
         }
     }
 
@@ -228,23 +166,6 @@ class Layout extends GUIElement {
         }
     }
 
-    /** @internal */
-    public setRowsFromJSON(
-        json: Array<Row.JSON>
-    ): void {
-        const layout = this;
-
-        let row;
-
-        for (let i = 0, iEnd = json.length; i < iEnd; ++i) {
-            row = Row.fromJSON(json[i], layout);
-
-            if (row) {
-                layout.rows.push(row);
-            }
-        }
-    }
-
     /**
      * Add a new Row instance to the layout rows array.
      *
@@ -306,17 +227,6 @@ class Layout extends GUIElement {
         }
 
         super.destroy();
-    }
-
-    /**
-     * Export layout's options and save in the local storage
-     * @internal
-     */
-    public exportLocal(): void {
-        localStorage.setItem(
-            Globals.classNamePrefix + this.options.id,
-            JSON.stringify(this.toJSON())
-        );
     }
 
     // Get row index from the layout.rows array.
@@ -397,42 +307,14 @@ class Layout extends GUIElement {
     }
 
     /**
-     * Converts the class instance to a class JSON.
-     * @internal
-     *
-     * @return {Layout.JSON}
-     * Class JSON of this Layout instance.
-     */
-    public toJSON(): Layout.JSON {
-        const layout = this,
-            dashboardContainerId = (layout.board.container || {}).id || '',
-            rows = [];
-
-        // Get rows JSON.
-        for (let i = 0, iEnd = layout.rows.length; i < iEnd; ++i) {
-            rows.push(layout.rows[i].toJSON());
-        }
-
-        return {
-            $class: 'Dashboards.Layout',
-            options: {
-                containerId: (layout.container as HTMLElement).id,
-                parentContainerId: dashboardContainerId,
-                rows: rows,
-                style: layout.options.style
-            }
-        };
-    }
-
-    /**
      * Get the layout's options.
      * @returns
-     * The JSON of layout's options.
+     * Layout's options.
      *
      * @internal
      *
      */
-    public getOptions(): Globals.DeepPartial<Layout.Options> {
+    public getOptions(): DeepPartial<Layout.Options> {
         const layout = this,
             rows = [];
 
@@ -458,13 +340,6 @@ interface Layout {
 
 
 namespace Layout {
-    /**
-     * @internal
-     **/
-    export interface JSON extends Serializable.JSON<'Dashboards.Layout'> {
-        options: OptionsJSON;
-    }
-
     /**
      * Each layout's options.
      **/
@@ -507,20 +382,6 @@ namespace Layout {
         /**
          * CSS styles of the layout.
          **/
-        style?: CSSJSONObject;
-        /**
-         * @internal
-         **/
-        rowsJSON?: Array<Row.JSON>;
-    }
-
-    /**
-     * @internal
-     **/
-    export interface OptionsJSON extends JSON.Object {
-        containerId: string;
-        parentContainerId: string;
-        rows: Array<Row.JSON>;
         style?: CSSJSONObject;
     }
 }

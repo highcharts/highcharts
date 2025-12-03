@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -8,6 +8,7 @@
  *
  *  Authors:
  *  - Karol Kolodziej
+ *  - Dawid Dragula
  *
  * */
 
@@ -19,10 +20,10 @@
  *
  * */
 
-import type { DataGridNamespace } from './DataGridTypes';
+import type { GridNamespace } from './GridTypes';
 import type PluginHandler from '../PluginHandler';
+import GridComponent from '../Components/GridComponent/GridComponent.js';
 
-import DataGridComponent from '../Components/DataGridComponent/DataGridComponent.js';
 
 /* *
  *
@@ -32,9 +33,10 @@ import DataGridComponent from '../Components/DataGridComponent/DataGridComponent
 
 declare module '../Components/ComponentType' {
     interface ComponentTypeRegistry {
-        DataGrid: typeof DataGridComponent;
+        Grid: typeof GridComponent;
     }
 }
+
 
 /* *
  *
@@ -43,14 +45,13 @@ declare module '../Components/ComponentType' {
  * */
 
 /**
- * Connects DataGrid with the Dashboard plugin.
+ * Connects Grid with the Dashboard plugin.
  *
- * @param {Dashboards.DataGrid} dataGrid DataGrid core to connect.
+ * @param GridNS
+ * Grid core to connect.
  */
-function connectDataGrid(
-    DataGridNS: DataGridNamespace
-): void {
-    DataGridComponent.DataGridNamespace = DataGridNS;
+function connectGrid(GridNS: GridNamespace): void {
+    GridComponent.GridNamespace = GridNS;
 }
 
 /**
@@ -63,7 +64,7 @@ function onRegister(
     e: PluginHandler.Event
 ): void {
     const { ComponentRegistry } = e;
-    ComponentRegistry.registerComponent('DataGrid', DataGridComponent);
+    ComponentRegistry.registerComponent('Grid', GridComponent);
 }
 
 
@@ -75,7 +76,7 @@ function onRegister(
 function onUnregister(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     e: PluginHandler.Event
-): void {}
+): void { }
 
 /* *
  *
@@ -83,15 +84,15 @@ function onUnregister(
  *
  * */
 
-const DataGridCustom = {
-    connectDataGrid
+const GridCustom = {
+    connectGrid
 };
 
-const DataGridPlugin: PluginHandler.DashboardsPlugin<typeof DataGridCustom> = {
-    custom: DataGridCustom,
-    name: 'DataGrid.DashboardsPlugin',
+const GridPlugin: PluginHandler.DashboardsPlugin<typeof GridCustom> = {
+    custom: GridCustom,
+    name: 'Grid.DashboardsPlugin',
     onRegister,
     onUnregister
 };
 
-export default DataGridPlugin;
+export default GridPlugin;

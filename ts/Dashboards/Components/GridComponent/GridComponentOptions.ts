@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -20,7 +20,7 @@
  *
  * */
 
-import type { DataGridOptions } from '../../Plugins/DataGridTypes';
+import type { GridOptions } from '../../Plugins/GridTypes';
 import type Component from '../Component';
 import type Sync from '../Sync/Sync';
 
@@ -31,7 +31,7 @@ import type Sync from '../Sync/Sync';
  * */
 
 /**
- * Options to control the DataGrid component.
+ * Options to control the Grid component.
  */
 export interface Options extends Component.Options {
     /**
@@ -41,13 +41,14 @@ export interface Options extends Component.Options {
 
     /**
      * The style class to add to the rendered data grid container.
+     *
      */
-    dataGridClassName?: string;
+    gridClassName?: string;
 
     /**
      * The identifier for the rendered data grid container.
      */
-    dataGridID?: string;
+    gridID?: string;
 
     /**
      * Callback to use when a change in the data grid occurs.
@@ -62,12 +63,12 @@ export interface Options extends Component.Options {
      */
     onUpdate(e: KeyboardEvent, connector: Component.ConnectorTypes): void
 
-    type: 'DataGrid';
+    type: 'Grid';
     /**
      * Generic options to adjust behavior and styling of the rendered data
      * grid.
      */
-    dataGridOptions?: DataGridOptions;
+    gridOptions?: GridOptions;
 
     /** @private */
     tableAxisMap?: Record<string, string | null>;
@@ -98,7 +99,7 @@ export interface Options extends Component.Options {
 }
 
 /**
- * Sync options available for the DataGrid component.
+ * Sync options available for the Grid component.
  *
  * Example:
  * ```
@@ -109,7 +110,7 @@ export interface Options extends Component.Options {
  */
 export interface SyncOptions extends Sync.RawOptionsRecord {
     /**
-     * Extremes sync is available for Highcharts, KPI, DataGrid and
+     * Extremes sync is available for Highcharts, KPI, Grid and
      * Navigator components. Sets a common range of displayed data. For the
      * KPI Component sets the last value.
      *
@@ -119,9 +120,9 @@ export interface SyncOptions extends Sync.RawOptionsRecord {
      *
      * @default false
      */
-    extremes?: boolean|Sync.OptionsEntry;
+    extremes?: boolean | Sync.OptionsEntry;
     /**
-     * Highlight sync is available for Highcharts and DataGrid components.
+     * Highlight sync is available for Highcharts and Grid components.
      * It allows to highlight hovered corresponding rows in the table and
      * chart points.
      *
@@ -131,9 +132,9 @@ export interface SyncOptions extends Sync.RawOptionsRecord {
      *
      * @default false
      */
-    highlight?: boolean|Sync.OptionsEntry;
+    highlight?: boolean | Sync.OptionsEntry;
     /**
-     * Visibility sync is available for Highcharts and DataGrid components.
+     * Visibility sync is available for Highcharts and Grid components.
      * Synchronizes the visibility of data from a hidden/shown series.
      *
      * Try it:
@@ -142,11 +143,11 @@ export interface SyncOptions extends Sync.RawOptionsRecord {
      *
      * @default false
      */
-    visibility?: boolean|Sync.OptionsEntry;
+    visibility?: boolean | Sync.OptionsEntry;
 }
 
 /**
- * Datagrid component highlight sync options.
+ * Grid component highlight sync options.
  *
  * Example:
  * ```
@@ -156,7 +157,7 @@ export interface SyncOptions extends Sync.RawOptionsRecord {
  * }
  * ```
  */
-export interface DataGridHighlightSyncOptions extends Sync.OptionsEntry {
+export interface GridHighlightSyncOptions extends Sync.OptionsEntry {
     /**
      * Whether to scroll the data grid to the highlighted row automatically.
      *

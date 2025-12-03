@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -74,7 +74,7 @@ namespace ComponentUtilities {
     ): string[] {
         const elementStyles = window.getComputedStyle(element);
         return styles.map(
-            (style: string): string => elementStyles[style as any]
+            (style): string => elementStyles[style as any]
         ); // Cannot use getPropertyValue?
     }
 

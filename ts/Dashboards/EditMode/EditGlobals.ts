@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -73,6 +73,7 @@ const EditGlobals: EditGlobals = {
         editToolsBtn: PREFIX + 'tools-btn',
         editTools: PREFIX + 'tools',
         editGridItems: PREFIX + 'grid-items',
+        editStandaloneToggle: PREFIX + 'standalone-toggle',
 
         // Confirmation popup
         confirmationPopup: PREFIX + 'confirmation-popup',
@@ -156,7 +157,7 @@ const EditGlobals: EditGlobals = {
             HTML: 'HTML',
             row: 'Row',
             Highcharts: 'Highcharts',
-            DataGrid: 'DataGrid',
+            Grid: 'Grid',
             KPI: 'KPI'
         }
     }
@@ -202,6 +203,7 @@ namespace EditGlobals {
         dropdownIcon: string;
         editGridItems: string;
         editModeEnabled: string;
+        editStandaloneToggle: string;
         editOverlay: string;
         editOverlayActive: string;
         editSidebar: string;
@@ -353,7 +355,7 @@ namespace EditGlobals {
         /**
          * Options for the sidebar and its components.
          */
-        sidebar:SidebarLangOptions
+        sidebar: SidebarLangOptions
         /**
          * @default 'Styles'
          */
@@ -384,9 +386,9 @@ namespace EditGlobals {
          */
         Highcharts: string;
         /**
-         * @default 'DataGrid'
+         * @default 'Grid'
          */
-        DataGrid: string;
+        Grid: string;
         /**
          * @default 'KPI'
          */

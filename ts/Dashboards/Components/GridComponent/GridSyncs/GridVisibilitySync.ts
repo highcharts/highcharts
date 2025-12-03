@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -21,7 +21,7 @@
  * */
 
 import type Sync from '../../Sync/Sync';
-import type DataGridComponent from '../DataGridComponent.js';
+import type GridComponent from '../GridComponent.js';
 
 import Component from '../../Component';
 import DataCursor from '../../../../Data/DataCursor';
@@ -38,10 +38,12 @@ const defaultOptions: Sync.OptionsEntry = {};
 const syncPair: Sync.SyncPair = {
     emitter: void 0,
     handler: function (this: Component): (() => void) | void {
-        if (this.type !== 'DataGrid') {
+        if (
+            this.type !== 'Grid'
+        ) {
             return;
         }
-        const component = this as DataGridComponent;
+        const component = this as GridComponent;
         const syncOptions = this.sync.syncConfig.visibility;
         const groupKey = syncOptions.group ?
             ':' + syncOptions.group : '';
@@ -50,12 +52,12 @@ const syncPair: Sync.SyncPair = {
 
         const handleVisibilityChange = (e: DataCursor.Event): void => {
             const cursor = e.cursor,
-                dataGrid = component.dataGrid;
-            if (!(dataGrid && cursor.type === 'position' && cursor.column)) {
+                grid = component.grid;
+            if (!(grid && cursor.type === 'position' && cursor.column)) {
                 return;
             }
 
-            void dataGrid.updateColumn(cursor.column, {
+            void grid.updateColumn(cursor.column, {
                 enabled: cursor.state !== 'series.hide' + groupKey
             });
         };
@@ -66,7 +68,8 @@ const syncPair: Sync.SyncPair = {
             if (!cursor) {
                 return;
             }
-            const table = component.connectorHandlers?.[0]?.connector?.table;
+
+            const table = component.connectorHandlers?.[0]?.presentationTable;
 
             if (!table) {
                 return;
@@ -85,7 +88,7 @@ const syncPair: Sync.SyncPair = {
         };
 
         const unregisterCursorListeners = (): void => {
-            const table = component.connectorHandlers?.[0]?.connector?.table;
+            const table = component.connectorHandlers?.[0]?.presentationTable;
             const { dataCursor: cursor } = board;
 
             if (!table) {

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -93,61 +93,6 @@ class HTMLComponent extends Component {
      * Predefined sync config for HTML component.
      */
     public static predefinedSyncConfig = HTMLSyncs;
-
-    /* *
-     *
-     *  Static functions
-     *
-     * */
-
-    /**
-     * Creates component from JSON.
-     *
-     * @param json
-     * Set of component options, used for creating the HTML component.
-     *
-     * @param cell
-     * Instance of cell, where component is attached.
-     *
-     * @returns
-     * HTML component based on config from JSON.
-     *
-     * @internal
-     */
-    public static fromJSON(
-        json: HTMLComponent.ClassJSON,
-        cell: Cell
-    ): HTMLComponent {
-        const options = json.options;
-        const elements = (
-            json.elements ?
-                json.elements.map((el): AST.Node => JSON.parse(el)) :
-                []
-        );
-        /// const connector = (
-        //     json.connector ? DataJSON.fromJSON(json.connector) : void 0
-        // );
-
-        const component = new HTMLComponent(
-            cell,
-            merge(
-                options as any,
-                {
-                    elements
-                    /// connector: (
-                    //   connector instanceof DataConnector ? connector : void 0
-                    // )
-                }
-            )
-        );
-
-        component.emit({
-            type: 'fromJSON',
-            json
-        });
-
-        return component;
-    }
 
     /* *
      *
@@ -289,7 +234,6 @@ class HTMLComponent extends Component {
 
     public getOptionsOnDrop(): Partial<Options> {
         return {
-            cell: '',
             type: 'HTML',
             elements: [{
                 tagName: 'span',
@@ -299,6 +243,7 @@ class HTMLComponent extends Component {
     }
 
     /**
+     * Constructs the HTML tree.
      * @internal
      */
     private constructTree(): void {
@@ -321,37 +266,9 @@ class HTMLComponent extends Component {
     }
 
     /**
-     * Converts the class instance to a class JSON.
-     *
-     * @returns
-     * Class JSON of this Component instance.
-     *
-     * @internal
-     */
-    public toJSON(): HTMLComponent.ClassJSON {
-        const elements = (this.options.elements || [])
-            .map((el): string => JSON.stringify(el));
-
-        const json = merge(
-            super.toJSON() as HTMLComponent.ClassJSON,
-            {
-                elements,
-                options: this.options
-            }
-        );
-
-        this.emit({
-            type: 'toJSON',
-            json
-        });
-
-        return json;
-    }
-
-    /**
      * Get the HTML component's options.
      * @returns
-     * The JSON of HTML component's options.
+     * HTML component's options.
      *
      * @internal
      *
@@ -479,26 +396,8 @@ namespace HTMLComponent {
     /** @internal */
     export type ComponentType = HTMLComponent;
 
-
     /** @internal */
-    export interface HTMLComponentOptionsJSON extends Component.ComponentOptionsJSON {
-        type: 'HTML'
-    }
-
-    /** @internal */
-    export type HTMLComponentEvents =
-        Component.EventTypes | JSONEvent;
-
-    /** @internal */
-    export type JSONEvent = Component.Event<'toJSON' | 'fromJSON', {
-        json: HTMLComponent.ClassJSON;
-    }>;
-    /** @internal */
-    export interface ClassJSON extends Component.JSON {
-        elements?: string[];
-        events?: string[];
-        options: HTMLComponentOptionsJSON;
-    }
+    export type HTMLComponentEvents = Component.EventTypes;
 }
 
 declare module '../ComponentType' {

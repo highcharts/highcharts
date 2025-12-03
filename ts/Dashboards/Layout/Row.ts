@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -17,11 +17,8 @@
 'use strict';
 
 import type CSSJSONObject from '../CSSJSONObject';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import type JSON from '../JSON';
+import type { DeepPartial } from '../../Shared/Types';
 import type Layout from './Layout';
-import type Serializable from '../Serializable';
-
 
 import Globals from '../Globals.js';
 import Cell from './Cell.js';
@@ -47,36 +44,6 @@ class Row extends GUIElement {
     *  Static Properties
     *
     * */
-
-    /** @internal */
-    public static fromJSON(
-        json: Row.JSON,
-        layout?: Layout
-    ): (Row|undefined) {
-        if (layout) {
-            const options = json.options;
-
-            let id = options.containerId || '';
-
-            if (id && layout.copyId) {
-                id = id + '_' + layout.copyId;
-            }
-
-            return new Row(
-                layout,
-                {
-                    id: id,
-                    parentContainerId:
-                        (layout.container && layout.container.id) ||
-                        options.parentContainerId,
-                    cellsJSON: options.cells,
-                    style: options.style
-                }
-            );
-        }
-
-        return void 0;
-    }
 
     public static setContainerHeight(
         rowContainer: HTMLDOMElement,
@@ -142,11 +109,6 @@ class Row extends GUIElement {
         if (this.options.cells) {
             this.setCells();
         }
-
-        // Init rows from JSON.
-        if (options.cellsJSON && !this.cells.length) {
-            this.setCellsFromJSON(options.cellsJSON);
-        }
     }
 
     /* *
@@ -207,53 +169,6 @@ class Row extends GUIElement {
             row.addCell(
                 row.layout.board.guiEnabled ? cellElement : { id: '' },
                 cellElement instanceof HTMLElement ? cellElement : void 0
-            );
-        }
-    }
-
-    /** @internal */
-    public setCellsFromJSON(
-        json: Array<Cell.JSON>
-    ): void {
-        const row = this,
-            componentsToMount = [];
-
-        let cell,
-            cellJSON;
-
-        // Set cells.
-        for (let i = 0, iEnd = json.length; i < iEnd; ++i) {
-            cellJSON = json[i];
-            cell = Cell.fromJSON({
-                $class: cellJSON.$class,
-                options: {
-                    containerId: cellJSON.options.containerId,
-                    parentContainerId: cellJSON.options.parentContainerId,
-                    width: cellJSON.options.width,
-                    height: cellJSON.options.height,
-                    style: cellJSON.options.style,
-                    layoutJSON: cellJSON.options.layoutJSON,
-                    mountedComponentJSON: void 0 // Will be mounted later.
-                }
-            }, row);
-
-            if (cell) {
-                row.cells.push(cell);
-
-                if (cellJSON.options.mountedComponentJSON) {
-                    componentsToMount.push({
-                        cell: cell,
-                        // eslint-disable-next-line
-                        mountedComponentJSON: cellJSON.options.mountedComponentJSON
-                    });
-                }
-            }
-        }
-
-        // Mount components.
-        for (let i = 0, iEnd = componentsToMount.length; i < iEnd; ++i) {
-            componentsToMount[i].cell.mountComponentFromJSON(
-                componentsToMount[i].mountedComponentJSON
             );
         }
     }
@@ -322,34 +237,6 @@ class Row extends GUIElement {
     }
 
     /**
-     * Converts the class instance to a class JSON.
-     * @internal
-     *
-     * @return {Row.JSON}
-     * Class JSON of this Row instance.
-     */
-    public toJSON(): Row.JSON {
-        const row = this,
-            layoutContainerId = (row.layout.container || {}).id || '',
-            cells = [];
-
-        // Get cells JSON.
-        for (let i = 0, iEnd = row.cells.length; i < iEnd; ++i) {
-            cells.push(row.cells[i].toJSON());
-        }
-
-        return {
-            $class: 'Dashboards.Layout.Row',
-            options: {
-                containerId: (row.container as HTMLElement).id,
-                parentContainerId: layoutContainerId,
-                cells: cells,
-                style: row.options.style
-            }
-        };
-    }
-
-    /**
      * Get the row's options.
      * @returns
      * The JSON of row's options.
@@ -357,7 +244,7 @@ class Row extends GUIElement {
      * @internal
      *
      */
-    public getOptions(): Globals.DeepPartial<Row.Options> {
+    public getOptions(): DeepPartial<Row.Options> {
         const row = this,
             cells = [];
 
@@ -471,10 +358,14 @@ class Row extends GUIElement {
         this.changeVisibility(true, 'flex');
     }
 
-    public setHighlight(): void {
-        const container = this.container;
-
-        container.classList.toggle(EditGlobals.classNames.rowContextHighlight);
+    public setHighlight(remove?: boolean): void {
+        const classList = this.container.classList;
+        const highlightClass = EditGlobals.classNames.rowContextHighlight;
+        if (remove === true) {
+            classList.remove(highlightClass);
+        } else {
+            classList.toggle(highlightClass, !remove);
+        }
     }
 
     // Row can have cells below each others.
@@ -540,13 +431,6 @@ class Row extends GUIElement {
 
 namespace Row {
     /**
-     * @internal
-     **/
-    export interface JSON extends Serializable.JSON<'Dashboards.Layout.Row'> {
-        options: OptionsJSON;
-    }
-
-    /**
      * Options for the row.
      **/
     export interface Options {
@@ -593,20 +477,6 @@ namespace Row {
         /**
          * CSS styles for the row.
          **/
-        style?: CSSJSONObject;
-        /**
-         * @internal
-         **/
-        cellsJSON?: Array<Cell.JSON>;
-    }
-
-    /**
-     * @internal
-     **/
-    export interface OptionsJSON extends JSON.Object {
-        containerId: string;
-        parentContainerId: string;
-        cells: Array<Cell.JSON>;
         style?: CSSJSONObject;
     }
 

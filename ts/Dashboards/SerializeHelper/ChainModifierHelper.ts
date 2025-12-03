@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -19,10 +19,10 @@
  *
  * */
 
+import type { AnyRecord } from '../../Shared/Types';
 import type ChainModifierOptions from '../../Data/Modifiers/ChainModifierOptions';
 import type DataModifier from '../../Data/Modifiers/DataModifier';
 import type { DataModifierTypeOptions } from '../../Data/Modifiers/DataModifierType';
-import type Globals from '../Globals';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type JSON from '../JSON';
 
@@ -81,7 +81,7 @@ function fromJSON(
  * false.
  */
 function jsonSupportFor(
-    obj: Globals.AnyRecord
+    obj: AnyRecord
 ): obj is ChainModifier {
     return obj instanceof ChainModifier;
 }

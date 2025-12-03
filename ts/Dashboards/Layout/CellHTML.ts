@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -170,7 +170,7 @@ namespace CellHTML {
                     enabled?: boolean;
                 };
                 /**
-                 * Options for the `settings` toolbar item.
+                 * Options for the `drag` toolbar item.
                  */
                 drag: {
                     enabled?: boolean;
@@ -179,6 +179,12 @@ namespace CellHTML {
                  * Options for the `settings` toolbar item.
                  */
                 settings: {
+                    enabled?: boolean;
+                };
+                /**
+                 * Options for the `viewFullscreen` toolbar item.
+                 */
+                viewFullscreen: {
                     enabled?: boolean;
                 };
             }

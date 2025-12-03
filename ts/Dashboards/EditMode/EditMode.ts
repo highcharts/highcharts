@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -60,7 +60,7 @@ class EditMode {
     /**
      * Edit mode constructor.
      * @internal
-      *
+     *
      * @param board
      * Board instance
      *
@@ -86,6 +86,9 @@ class EditMode {
                     icon: this.iconsURLPrefix + 'menu.svg'
                 },
                 dragDrop: {
+                    enabled: true
+                },
+                viewFullscreen: {
                     enabled: true
                 },
                 enabled: true,
@@ -190,7 +193,7 @@ class EditMode {
     /**
      * URL from which the icons will be fetched.
      */
-    public iconsURLPrefix: string = '@product.assetPrefix@/gfx/dashboards-icons/';
+    public iconsURLPrefix: string = 'https://code.highcharts.com/dashboards/@product.version@/gfx/dashboards-icons/';
     /**
      * Dashboards' board instance.
      */
@@ -245,7 +248,7 @@ class EditMode {
     /**
      * @internal
      */
-    public mouseCellContext?: Cell|CellHTML;
+    public mouseCellContext?: Cell | CellHTML;
     /**
      * @internal
      */
@@ -253,11 +256,11 @@ class EditMode {
     /**
      * @internal
      */
-    public potentialCellContext?: Cell|CellHTML;
+    public potentialCellContext?: Cell | CellHTML;
     /**
      * @internal
      */
-    public editCellContext?: Cell|CellHTML;
+    public editCellContext?: Cell | CellHTML;
     /**
      * @internal
      */
@@ -372,6 +375,14 @@ class EditMode {
             }
         }
 
+        addEvent(document, 'keydown', (e: KeyboardEvent): void => {
+            if (e.key === 'Escape' && editMode.isActive()) {
+                editMode.hideToolbars(['cell', 'row']);
+                editMode.editCellContext = void 0;
+                editMode.resizer?.disableResizer();
+            }
+        });
+
         if (editMode.cellToolbar) {
             // Stop context detection when mouse on cell toolbar.
             addEvent(
@@ -389,6 +400,7 @@ class EditMode {
                     editMode.isContextDetectionActive = true;
                 }
             );
+
         }
 
         if (editMode.rowToolbar) {
@@ -462,10 +474,6 @@ class EditMode {
         if (board.options.gui) {
             this.setLayouts(board.options.gui);
         }
-
-        if (board.options.layoutsJSON && !board.layouts.length) {
-            this.setLayoutsFromJSON(board.options.layoutsJSON);
-        }
     }
 
     /**
@@ -489,27 +497,7 @@ class EditMode {
             );
         }
     }
-    /**
-     * Set the layouts from JSON.
-     * @internal
-     *
-     * @param json
-     * An array of layout JSON objects.
-     *
-     */
-    private setLayoutsFromJSON(json: Array<Layout.JSON>): void {
-        const board = this.board;
 
-        let layout;
-
-        for (let i = 0, iEnd = json.length; i < iEnd; ++i) {
-            layout = Layout.fromJSON(json[i], board);
-
-            if (layout) {
-                board.layouts.push(layout);
-            }
-        }
-    }
     /**
      * Set events for the layout.
      * @internal
@@ -575,7 +563,7 @@ class EditMode {
      * Set events for the cell.
      * @internal
      */
-    public setCellEvents(cell: Cell|CellHTML): void {
+    public setCellEvents(cell: Cell | CellHTML): void {
         const editMode = this;
 
         if (CellHTML.isCellHTML(cell)) {
@@ -838,20 +826,37 @@ class EditMode {
             );
         }
 
-        // Create context menu button
+        // Create context a menu button or edit mode toggle
         if (options.contextMenu && options.contextMenu.enabled) {
-            tools.contextButtonElement = EditRenderer.renderContextButton(
-                tools.container,
-                editMode
-            );
-
-            // Init contextMenu if doesn't exist.
-            if (!editMode.tools.contextMenu) {
-                editMode.tools.contextMenu = new EditContextMenu(
-                    editMode.board.container,
-                    editMode.options.contextMenu || {},
+            if (options.contextMenu.items?.length) {
+                tools.contextButtonElement = EditRenderer.renderContextButton(
+                    tools.container,
                     editMode
                 );
+
+                // Init contextMenu if doesn't exist.
+                if (!editMode.tools.contextMenu) {
+                    editMode.tools.contextMenu = new EditContextMenu(
+                        editMode.board.container,
+                        editMode.options.contextMenu || {},
+                        editMode
+                    );
+                }
+            } else {
+                // Render the edit mode toggle when no items are provided
+                tools.standaloneEditToggle =
+                    EditRenderer.renderToggle(tools.container, {
+                        id: EditContextMenu.items.editMode.id,
+                        name: EditContextMenu.items.editMode.id,
+                        className: EditGlobals.classNames.editStandaloneToggle,
+                        title: editMode.lang.editMode,
+                        value: editMode.isActive(),
+                        lang: editMode.lang,
+                        langKey: 'editMode',
+                        onchange(): void {
+                            editMode.toggleEditMode();
+                        }
+                    });
             }
         }
 
@@ -899,8 +904,8 @@ class EditMode {
             return;
         }
 
-        let cellContext: Cell|CellHTML|undefined;
-        let rowContext: Row|undefined;
+        let cellContext: Cell | CellHTML | undefined;
+        let rowContext: Row | undefined;
 
         if (editMode.mouseCellContext) {
             cellContext = editMode.mouseCellContext;
@@ -960,8 +965,8 @@ class EditMode {
      * @internal
      */
     public setEditCellContext(
-        editCellContext: Cell|CellHTML,
-        oldEditCellContext?: Cell|CellHTML
+        editCellContext: Cell | CellHTML,
+        oldEditCellContext?: Cell | CellHTML
     ): void {
         const editMode = this;
         const oldContext = oldEditCellContext;
@@ -982,7 +987,7 @@ class EditMode {
             if (!oldContextRow || oldContextRow !== editCellContext.row) {
                 if (oldContextRow) {
                     // Remove highlight from the previous row.
-                    oldContextRow.setHighlight();
+                    oldContextRow.setHighlight(true);
                 }
 
                 // Add highlight to the context row.
@@ -1042,9 +1047,7 @@ class EditMode {
      * @param remove
      * Whether the edit overlay should be removed.
      */
-    public setEditOverlay(
-        remove?: boolean
-    ): void {
+    public setEditOverlay(remove?: boolean): void {
         const editMode = this,
             cnt = editMode.editOverlay,
             isSet = cnt?.classList.contains(
@@ -1126,6 +1129,10 @@ namespace EditMode {
          * Tools options.
          */
         tools?: Tools;
+        /**
+         * Fullscreen options.
+         */
+        viewFullscreen?: ViewFullscreenOptions;
     }
 
     /**
@@ -1134,6 +1141,15 @@ namespace EditMode {
     export interface SettingsOptions {
         /**
          * Whether the toolbar settings buttons should be enabled.
+         *
+         * @default true
+         */
+        enabled?: boolean;
+    }
+
+    export interface ViewFullscreenOptions {
+        /**
+         * Whether the view fullscreen button should be enabled.
          *
          * @default true
          */
@@ -1170,15 +1186,6 @@ namespace EditMode {
         */
         addComponentBtn?: AddComponentBtn;
         /**
-         * RWD buttons options.
-         *
-         * RWD buttons are permanently disabled since the change from
-         * options-managed responsiveness to fully CSS-managed.
-         *
-         * @deprecated
-         */
-        rwdButtons?: RwdButtons;
-        /**
         * @internal
         */
         contextMenu?: EditContextMenu;
@@ -1186,6 +1193,10 @@ namespace EditMode {
         * @internal
         */
         contextButtonElement?: HTMLDOMElement;
+        /**
+        * @internal
+        */
+        standaloneEditToggle?: HTMLDOMElement;
         /**
         * @internal
         */
@@ -1210,55 +1221,6 @@ namespace EditMode {
          * URL to the Add Component button icon.
          */
         icon: string;
-    }
-
-    /**
-     * Deprecated RWD buttons options.
-     *
-     * RWD buttons are permanently disabled since the change from
-     * options-managed responsiveness to fully CSS-managed.
-     *
-     * @deprecated
-     */
-    export interface RwdButtons {
-        /**
-         * Whether the RWD buttons should be visible.
-         *
-         * @deprecated
-         */
-        enabled?: boolean;
-        /**
-         * RWD buttons icons options.
-         *
-         * @deprecated
-         */
-        icons: RwdIcons;
-    }
-
-    /**
-     * RWD Buttons icons options.
-     *
-     * @deprecated
-     */
-    export interface RwdIcons {
-        /**
-         * URL to small RWD button icon.
-         *
-         * @deprecated
-         */
-        small: string;
-        /**
-         * URL to medium RWD button icon.
-         *
-         * @deprecated
-         */
-        medium: string;
-        /**
-         * URL to large RWD button icon.
-         *
-         * @deprecated
-         */
-        large: string;
     }
 
     /**

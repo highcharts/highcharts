@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -44,15 +44,14 @@ import type MathModifierOptions from '../../../Data/Modifiers/MathModifierOption
 import type SidebarPopup from '../../EditMode/SidebarPopup';
 
 import Component from '../Component.js';
-import DataConnector from '../../../Data/Connectors/DataConnector.js';
 import DataConverter from '../../../Data/Converters/DataConverter.js';
 import DataTable from '../../../Data/DataTable.js';
 import Globals from '../../Globals.js';
 import HighchartsSyncs from './HighchartsSyncs/HighchartsSyncs.js';
 import HighchartsComponentDefaults from './HighchartsComponentDefaults.js';
-import DU from '../../Utilities.js';
-import U from '../../../Core/Utilities.js';
 import ConnectorHandler from '../../Components/ConnectorHandler';
+import DataConverterUtils from '../../../Data/Converters/DataConverterUtils.js';
+import U from '../../../Core/Utilities.js';
 const {
     createElement,
     diffObjects,
@@ -60,6 +59,7 @@ const {
     merge,
     splat
 } = U;
+import DU from '../../Utilities.js';
 const { deepClone } = DU;
 
 /* *
@@ -96,51 +96,6 @@ class HighchartsComponent extends Component {
         Component.defaultOptions,
         HighchartsComponentDefaults
     );
-
-    /* *
-     *
-     *  Static functions
-     *
-     * */
-
-    /**
-     * Creates component from JSON.
-     *
-     * @param json
-     * Set of component options, used for creating the Highcharts component.
-     *
-     * @returns
-     * Highcharts component based on config from JSON.
-     *
-     * @private
-     */
-    public static fromJSON(
-        json: HighchartsComponent.ClassJSON,
-        cell: Cell
-    ): HighchartsComponent {
-        const options = json.options;
-        const chartOptions = JSON.parse(json.options.chartOptions || '{}');
-        /// const store = json.store ? DataJSON.fromJSON(json.store) : void 0;
-
-        const component = new HighchartsComponent(
-            cell,
-            merge<Options>(
-                options as any,
-                {
-                    chartOptions
-                    // Highcharts, // TODO: Find a solution
-                    // store: store instanceof DataConnector ? store : void 0,
-                }
-            )
-        );
-
-        component.emit({
-            type: 'fromJSON',
-            json
-        });
-
-        return component;
-    }
 
     /* *
      *
@@ -239,17 +194,6 @@ class HighchartsComponent extends Component {
         ), {
             tooltip: {} // Temporary fix for #18876
         });
-
-        for (const connectorHandler of this.connectorHandlers) {
-            const connector = connectorHandler.connector;
-            if (connector) {
-                connector.on('afterLoad', (e: DataConnector.Event): void => {
-                    if (e.table) {
-                        connector.table.setColumns(e.table.getColumns());
-                    }
-                });
-            }
-        }
 
         this.innerResizeTimeouts = [];
     }
@@ -359,36 +303,37 @@ class HighchartsComponent extends Component {
         point: Point,
         connectorHandler: HighchartsComponent.HCConnectorHandler
     ): void {
-        const table = connectorHandler.connector?.table;
+        const table = connectorHandler.presentationTable;
         const columnAssignment = connectorHandler.columnAssignment;
         const seriesId = point.series.options.id;
         const converter = new DataConverter();
-        const valueToSet = converter.asNumber(point.y);
+        const valueToSet =
+            DataConverterUtils.asNumber(point.y, converter.decimalRegExp);
 
         if (!table) {
             return;
         }
 
-        let columnName: string | undefined;
+        let columnId: string | undefined;
         if (columnAssignment && seriesId) {
             const data = columnAssignment.find(
                 (s): boolean => s.seriesId === seriesId
             )?.data;
 
             if (isString(data)) {
-                columnName = data;
+                columnId = data;
             } else if (Array.isArray(data)) {
-                columnName = data[1];
+                columnId = data[1];
             } else if (data) {
-                columnName = data.y ?? data.value;
+                columnId = data.y ?? data.value;
             }
         }
 
-        if (!columnName) {
-            columnName = seriesId ?? point.series.name;
+        if (!columnId) {
+            columnId = seriesId ?? point.series.name;
         }
 
-        table.setCell(columnName, point.index, valueToSet);
+        table.setCell(columnId, point.index, valueToSet);
     }
 
     /**
@@ -452,9 +397,16 @@ class HighchartsComponent extends Component {
             const options: ConnectorOptions = connectorHandler.options;
             let columnAssignment = options.columnAssignment;
 
+            // Set the new data table based on the data table key.
+            const connector = connectorHandler.connector;
+            const dataTableKey = connectorHandler.options.dataTableKey;
+            if (connector && dataTableKey) {
+                connectorHandler.setTable(connector.dataTables[dataTableKey]);
+            }
+
             if (!columnAssignment && connectorHandler.presentationTable) {
                 columnAssignment = this.getDefaultColumnAssignment(
-                    connectorHandler.presentationTable.getColumnNames(),
+                    connectorHandler.presentationTable.getColumnIds(),
                     connectorHandler.presentationTable
                 );
             }
@@ -513,7 +465,7 @@ class HighchartsComponent extends Component {
             return;
         }
 
-        const table = connectorHandler.presentationTable.modified;
+        const table = connectorHandler.presentationTable.getModified();
         const modifierOptions =
             connectorHandler.presentationTable.getModifier()?.options;
 
@@ -552,8 +504,8 @@ class HighchartsComponent extends Component {
                     seriesOptions.data = column.slice() as [];
                 }
 
-                adjustDraggableOptions((columnName): boolean => (
-                    columnName === dataStructure
+                adjustDraggableOptions((columnId): boolean => (
+                    columnId === dataStructure
                 ));
             } else if (Array.isArray(dataStructure)) {
                 const seriesTable = new DataTable({
@@ -561,25 +513,25 @@ class HighchartsComponent extends Component {
                 });
                 seriesOptions.data = seriesTable.getRows() as [][];
 
-                adjustDraggableOptions((columnName): boolean => (
-                    dataStructure.some((name): boolean => name === columnName)
+                adjustDraggableOptions((columnId): boolean => (
+                    dataStructure.some((name): boolean => name === columnId)
                 ));
             } else {
                 const keys = Object.keys(dataStructure);
-                const columnNames: string[] = [];
+                const columnIds: string[] = [];
                 for (let j = 0, jEnd = keys.length; j < jEnd; ++j) {
-                    columnNames.push(dataStructure[keys[j]]);
+                    columnIds.push(dataStructure[keys[j]]);
                 }
 
                 const seriesTable = new DataTable({
-                    columns: table.getColumns(columnNames)
+                    columns: table.getColumns(columnIds)
                 });
 
                 seriesOptions.keys = keys;
                 seriesOptions.data = seriesTable.getRows() as [][];
 
-                adjustDraggableOptions((columnName): boolean => (
-                    columnNames.some((name): boolean => name === columnName)
+                adjustDraggableOptions((columnId): boolean => (
+                    columnIds.some((name): boolean => name === columnId)
                 ));
             }
 
@@ -621,7 +573,7 @@ class HighchartsComponent extends Component {
 
     /**
      * Creates default mapping when columnAssignment is not declared.
-     * @param  { Array<string>} columnNames all columns returned from dataTable.
+     * @param  { Array<string>} columnIds all columns returned from dataTable.
      *
      * @returns
      * The record of mapping
@@ -630,27 +582,27 @@ class HighchartsComponent extends Component {
      *
      */
     private getDefaultColumnAssignment(
-        columnNames: Array<string> = [],
+        columnIds: Array<string> = [],
         presentationTable: DataTable
     ): ColumnAssignmentOptions[] {
         const result: ColumnAssignmentOptions[] = [];
 
-        const firstColumn = presentationTable.getColumn(columnNames[0]);
+        const firstColumn = presentationTable.getColumn(columnIds[0]);
 
         if (firstColumn && isString(firstColumn[0])) {
-            for (let i = 1, iEnd = columnNames.length; i < iEnd; ++i) {
+            for (let i = 1, iEnd = columnIds.length; i < iEnd; ++i) {
                 result.push({
-                    seriesId: columnNames[i],
-                    data: [columnNames[0], columnNames[i]]
+                    seriesId: columnIds[i],
+                    data: [columnIds[0], columnIds[i]]
                 });
             }
             return result;
         }
 
-        for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
+        for (let i = 0, iEnd = columnIds.length; i < iEnd; ++i) {
             result.push({
-                seriesId: columnNames[i],
-                data: columnNames[i]
+                seriesId: columnIds[i],
+                data: columnIds[i]
             });
         }
         return result;
@@ -763,7 +715,6 @@ class HighchartsComponent extends Component {
             sidebar.editMode.board.dataPool.getConnectorIds();
 
         let options: Partial<Options> = {
-            cell: '',
             type: 'Highcharts',
             chartOptions: {
                 chart: {
@@ -786,44 +737,11 @@ class HighchartsComponent extends Component {
         return options;
     }
 
-    /**
-     * Converts the class instance to a class JSON.
-     *
-     * @returns
-     * Class JSON of this Component instance.
-     *
-     * @private
-     */
-    public toJSON(): HighchartsComponent.ClassJSON {
-        const chartOptions = JSON.stringify(this.options.chartOptions),
-            chartConstructor = this.options.chartConstructor || 'chart';
-
-        this.registerChartEvents();
-
-        const base = super.toJSON();
-
-        const json: HighchartsComponent.ClassJSON = {
-            ...base,
-            type: 'Highcharts',
-            options: {
-                ...base.options,
-                chartOptions,
-                chartConstructor,
-                // TODO: may need to handle callback functions
-                // Maybe have a sync.toJSON()
-                type: 'Highcharts',
-                sync: {}
-            }
-        };
-
-        this.emit({ type: 'toJSON', json });
-        return json;
-    }
 
     /**
      * Get the HighchartsComponent component's options.
      * @returns
-     * The JSON of HighchartsComponent component's options.
+     * HighchartsComponent component's options.
      *
      * @internal
      *
@@ -901,33 +819,12 @@ namespace HighchartsComponent {
     export type ComponentType = HighchartsComponent;
 
     /** @private */
-    export type ChartComponentEvents =
-        JSONEvent |
-        Component.EventTypes;
-
-    /** @private */
-    export type JSONEvent = Component.Event<'toJSON' | 'fromJSON', {
-        json: ClassJSON;
-    }>;
+    export type ChartComponentEvents = Component.EventTypes;
 
     /** @private */
     export interface HCConnectorHandler extends ConnectorHandler {
         columnAssignment?: ColumnAssignmentOptions[];
     }
-
-    /** @private */
-    export interface OptionsJSON extends Component.ComponentOptionsJSON {
-        chartOptions?: string;
-        chartClassName?: string;
-        chartID?: string;
-        chartConstructor: ConstructorType;
-        type: 'Highcharts'
-    }
-    /** @private */
-    export interface ClassJSON extends Component.JSON {
-        options: OptionsJSON;
-    }
-
 }
 
 /* *

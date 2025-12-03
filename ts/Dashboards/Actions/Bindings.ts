@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -22,10 +22,7 @@
  *
  * */
 
-import type {
-    ComponentType,
-    ComponentTypeRegistry
-} from '../Components/ComponentType';
+import type { ComponentType } from '../Components/ComponentType';
 import type Board from '../Board';
 import type GUIElement from '../Layout/GUIElement';
 import type Cell from '../Layout/Cell';
@@ -108,7 +105,7 @@ namespace Bindings {
     ): Promise<(Component|void)> {
         const optionsStates = options.states;
         const optionsEvents = options.events;
-        const renderTo = options.renderTo || options.cell;
+        const renderTo = options.renderTo;
 
         if (!renderTo) {
             // eslint-disable-next-line no-console
@@ -122,8 +119,7 @@ namespace Bindings {
 
         if (
             board.mountedComponents.filter(
-                (el): boolean => (
-                    (el.options.renderTo || el.options.cell) === renderTo)
+                (el): boolean => el.options.renderTo === renderTo
             ).length > 0
         ) {
             // eslint-disable-next-line no-console
@@ -247,31 +243,6 @@ namespace Bindings {
         fireEvent(component, 'afterLoad');
 
         return promise;
-    }
-
-    /** @internal */
-    export function componentFromJSON(
-        json: Component.JSON
-    ): (Component|undefined) {
-        const componentClass = ComponentRegistry.types[
-            json.$class as keyof ComponentTypeRegistry
-        ];
-
-        if (!componentClass) {
-            return;
-        }
-
-        const cell = Bindings.getCell(json.options.renderTo || '');
-        if (!cell) {
-            return;
-        }
-        const component = componentClass.fromJSON(json as any, cell);
-
-        if (component) {
-            component.render();
-        }
-
-        return component;
     }
 
     export function getCell(

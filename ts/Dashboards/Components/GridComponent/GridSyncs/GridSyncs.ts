@@ -21,21 +21,25 @@
  * */
 
 import type Sync from '../../Sync/Sync';
-import KPIExtremesSync from './KPIExtremesSync.js';
-
+import GridExtremesSync from './GridExtremesSync.js';
+import GridHighlightSync from './GridHighlightSync.js';
+import GridVisibilitySync from './GridVisibilitySync.js';
 
 /* *
 *
-*  Constants
+*  Namespace
 *
 * */
-
 const predefinedSyncConfig: Sync.PredefinedSyncConfig = {
     defaultSyncPairs: {
-        extremes: KPIExtremesSync.syncPair
+        extremes: GridExtremesSync.syncPair,
+        highlight: GridHighlightSync.syncPair,
+        visibility: GridVisibilitySync.syncPair
     },
     defaultSyncOptions: {
-        extremes: KPIExtremesSync.defaultOptions
+        extremes: GridExtremesSync.defaultOptions,
+        highlight: GridHighlightSync.defaultOptions,
+        visibility: GridVisibilitySync.defaultOptions
     }
 };
 
