@@ -27,7 +27,7 @@ import type Grid from '../../Core/Grid';
 import CreditsPro from './CreditsPro.js';
 import Globals from '../../Core/Globals.js';
 import U from '../../../Core/Utilities.js';
-import Defaults from '../../Core/Defaults.js';
+import { defaultOptions } from '../../Core/Defaults.js';
 
 const {
     addEvent,
@@ -35,44 +35,44 @@ const {
     pushUnique
 } = U;
 
+
 /* *
  *
- *  Class Namespace
+ *  Composition
  *
  * */
 
-namespace CreditsProComposition {
-    /**
-     * Extends the grid classes with customizable credits.
-     *
-     * @param GridClass
-     * The class to extend.
-     *
-     */
-    export function compose(
-        GridClass: typeof Grid
-    ): void {
-        if (!pushUnique(Globals.composed, 'CreditsPro')) {
-            return;
-        }
-
-        merge(true, Defaults.defaultOptions, {
-            credits: CreditsPro.defaultOptions
-        });
-
-        // TODO: Change to `beforeLoad` after upgrading grid update.
-        addEvent(GridClass, 'afterRenderViewport', initCredits);
+/**
+ * Extends the grid classes with customizable credits.
+ *
+ * @param GridClass
+ * The class to extend.
+ *
+ */
+export function compose(
+    GridClass: typeof Grid
+): void {
+    if (!pushUnique(Globals.composed, 'CreditsPro')) {
+        return;
     }
 
-    /**
-     * Init configurable credits.
-     * @param this
-     * Reference to Grid.
-     */
-    function initCredits(this: Grid): void {
-        this.credits = new CreditsPro(this, this.options?.credits);
-    }
+    merge(true, defaultOptions, {
+        credits: CreditsPro.defaultOptions
+    });
+
+    // TODO: Change to `beforeLoad` after upgrading grid update.
+    addEvent(GridClass, 'afterRenderViewport', initCredits);
 }
+
+/**
+ * Init configurable credits.
+ * @param this
+ * Reference to Grid.
+ */
+function initCredits(this: Grid): void {
+    this.credits = new CreditsPro(this, this.options?.credits);
+}
+
 
 /* *
  *
@@ -104,4 +104,6 @@ declare module '../../Core/Grid' {
  *
  * */
 
-export default CreditsProComposition;
+export default {
+    compose
+} as const;

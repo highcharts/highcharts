@@ -57,7 +57,7 @@ const {
 /**
  * Represents a column in the data grid.
  */
-class Column {
+export class Column {
 
     /* *
     *
@@ -73,7 +73,7 @@ class Column {
     /**
      * Type of the data in the column.
      */
-    public readonly dataType: Column.DataType;
+    public readonly dataType: ColumnDataType;
 
     /**
      * The cells of the column.
@@ -94,7 +94,7 @@ class Column {
      * The options of the column as a proxy that provides merged access to
      * original options and defaults if not defined in the individual options.
      */
-    public readonly options: Column.Options;
+    public readonly options: NoIdColumnOptions;
 
     /**
      * The index of the column in the viewport.
@@ -202,7 +202,7 @@ class Column {
      * Assumes the data type of the column based on the options or data in the
      * column if not specified.
      */
-    private assumeDataType(): Column.DataType {
+    private assumeDataType(): ColumnDataType {
         const { grid } = this.viewport;
 
         const type = grid.columnOptionsMap?.[this.id]?.options.dataType ??
@@ -339,9 +339,9 @@ class Column {
         return Templating.format(template, this, this.viewport.grid);
     }
 
-    public update(options: Column.Options, render?: boolean): void;
+    public update(options: NoIdColumnOptions, render?: boolean): void;
 
-    public update(options: Column.Options, render?: true): Promise<void>;
+    public update(options: NoIdColumnOptions, render?: true): Promise<void>;
 
     /**
      * Updates the column with new options.
@@ -354,7 +354,7 @@ class Column {
      * extend the options object. Defaults to `true`.
      */
     public async update(
-        newOptions: Column.Options,
+        newOptions: NoIdColumnOptions,
         render: boolean = true
     ): Promise<void> {
         await this.viewport.grid.updateColumn(this.id, newOptions, render);
@@ -364,15 +364,13 @@ class Column {
 
 /* *
  *
- *  Class Namespace
+ *  Declarations
  *
  * */
 
-namespace Column {
-    export type Options = Omit<IndividualColumnOptions, 'id'>;
+export type NoIdColumnOptions = Omit<IndividualColumnOptions, 'id'>;
 
-    export type DataType = 'string' | 'number' | 'boolean' | 'datetime';
-}
+export type ColumnDataType = 'string' | 'number' | 'boolean' | 'datetime';
 
 
 /* *

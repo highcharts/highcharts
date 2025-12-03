@@ -51,14 +51,14 @@ class SortingController {
     /**
      * The current sorting options: column ID and sorting order.
      */
-    public currentSorting?: SortingController.SortingState;
+    public currentSorting?: SortingState;
 
     /**
      * The initial sorting options: column ID and sorting order.
      * This is the sorting that is applied when the data grid is created or
      * after the whole viewport is reloaded with changed sorting options.
      */
-    private initialSorting?: SortingController.SortingState;
+    private initialSorting?: SortingState;
 
     /**
      * The modifier that is applied to the data table.
@@ -118,7 +118,7 @@ class SortingController {
     /**
      * Returns the sorting options from the data grid options.
      */
-    private getSortingOptions(): SortingController.SortingState {
+    private getSortingOptions(): SortingState {
         const grid = this.querying.grid,
             { columnOptionsMap } = grid;
 
@@ -201,20 +201,16 @@ class SortingController {
 
 /* *
  *
- *  Class Namespace
+ *  Declarations
  *
  * */
 
-namespace SortingController {
-
-    /**
-     * The sorting state interface.
-     */
-    export interface SortingState {
-        columnId?: string;
-        order: ColumnSortingOrder;
-    }
-
+/**
+ * The sorting state interface.
+ */
+export interface SortingState {
+    columnId?: string;
+    order: ColumnSortingOrder;
 }
 
 

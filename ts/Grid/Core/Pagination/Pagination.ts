@@ -30,7 +30,7 @@ import type {
 } from './PaginationOptions';
 
 import Icons from './Icons.js';
-import Defaults from '../Defaults.js';
+import { defaultOptions } from '../Defaults.js';
 import Globals from '../Globals.js';
 import GridUtils from '../GridUtils.js';
 import Utilities from '../../../Core/Utilities.js';
@@ -193,7 +193,7 @@ class Pagination {
     constructor(
         grid: Grid,
         options: PaginationOptions,
-        state: Pagination.PaginationState = {}
+        state: PaginationState = {}
     ) {
         this.grid = grid;
         this.options = merge(Pagination.defaultOptions, options);
@@ -210,7 +210,7 @@ class Pagination {
 
         // Lang pack
         this.lang = merge(
-            Defaults.defaultOptions.pagination,
+            defaultOptions.pagination,
             this.grid.options?.lang?.pagination
         );
 
@@ -1165,12 +1165,17 @@ class Pagination {
     }
 }
 
-namespace Pagination {
-    export type PaginationState = {
-        currentPage?: number;
-        currentPageSize?: number;
-    };
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+export interface PaginationState {
+    currentPage?: number;
+    currentPageSize?: number;
 }
+
 
 /* *
  *

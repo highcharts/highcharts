@@ -25,12 +25,13 @@
 
 import type { Options, GroupedHeaderOptions, IndividualColumnOptions } from './Options';
 import type DataTableOptions from '../../Data/DataTableOptions';
-import type Column from './Table/Column';
+import type { ColumnDataType, NoIdColumnOptions } from './Table/Column';
 import type Popup from './UI/Popup.js';
+import type { PaginationState } from './Pagination/Pagination.js';
 
 import Accessibility from './Accessibility/Accessibility.js';
 import AST from '../../Core/Renderer/HTML/AST.js';
-import Defaults from './Defaults.js';
+import { defaultOptions } from './Defaults.js';
 import GridUtils from './GridUtils.js';
 import DataTable from '../../Data/DataTable.js';
 import Table from './Table/Table.js';
@@ -61,7 +62,7 @@ const {
 /**
  * A base class for the Grid.
  */
-class Grid {
+export class Grid {
 
     /* *
     *
@@ -163,7 +164,7 @@ class Grid {
      * column options.
      * @internal
      */
-    public columnOptionsMap: Record<string, Grid.ColumnOptionsMapItem> = {};
+    public columnOptionsMap: Record<string, ColumnOptionsMapItem> = {};
 
     /**
      * The container of the grid.
@@ -361,7 +362,7 @@ class Grid {
      * Initializes the pagination.
      */
     private initPagination(): void {
-        let state: Pagination.PaginationState | undefined;
+        let state: PaginationState | undefined;
 
         if (this.pagination) {
             const {
@@ -448,7 +449,7 @@ class Grid {
 
         this.userOptions = merge(this.userOptions, newOptions);
         this.options = merge(
-            this.options ?? Defaults.defaultOptions,
+            this.options ?? defaultOptions,
             this.userOptions
         );
 
@@ -457,7 +458,7 @@ class Grid {
         if (!columnOptionsArray) {
             return;
         }
-        const columnOptionsMap: Record<string, Grid.ColumnOptionsMapItem> = {};
+        const columnOptionsMap: Record<string, ColumnOptionsMapItem> = {};
         for (let i = 0, iEnd = columnOptionsArray?.length ?? 0; i < iEnd; ++i) {
             columnOptionsMap[columnOptionsArray[i].id] = {
                 index: i,
@@ -615,14 +616,14 @@ class Grid {
 
     public updateColumn(
         columnId: string,
-        options: Column.Options,
+        options: NoIdColumnOptions,
         render?: boolean,
         overwrite?: boolean
     ): Promise<void>;
 
     public updateColumn(
         columnId: string,
-        options: Column.Options,
+        options: NoIdColumnOptions,
         render?: false,
         overwrite?: boolean
     ): void;
@@ -646,7 +647,7 @@ class Grid {
      */
     public async updateColumn(
         columnId: string,
-        options: Column.Options,
+        options: NoIdColumnOptions,
         render: boolean = true,
         overwrite = false
     ): Promise<void> {
@@ -1116,9 +1117,9 @@ class Grid {
             return '{}';
         }
 
-        const typeParser = (type: Column.DataType) => {
+        const typeParser = (type: ColumnDataType) => {
             const TypeMap: Record<
-                Column.DataType,
+                ColumnDataType,
                 (value: DataTable.CellType) => DataTable.CellType
             > = {
                 number: Number,
@@ -1177,18 +1178,17 @@ class Grid {
 
 /* *
  *
- *  Class Namespace
+ *  Declarations
  *
  * */
-namespace Grid {
-    /**
-     * @internal
-     * An item in the column options map.
-     */
-    export interface ColumnOptionsMapItem {
-        index: number;
-        options: Column.Options
-    }
+
+/**
+ * @internal
+ * An item in the column options map.
+ */
+export interface ColumnOptionsMapItem {
+    index: number;
+    options: NoIdColumnOptions
 }
 
 

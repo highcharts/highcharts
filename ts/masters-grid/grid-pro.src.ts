@@ -8,9 +8,6 @@
  */
 
 
-'use strict';
-
-
 /* *
  *
  *  Imports
@@ -96,84 +93,42 @@ import '../Grid/Pro/CellRendering/Renderers/NumberInputRenderer.js';
 
 /* *
  *
- *  Declarations
- *
- * */
-
-
-declare global {
-    interface GridNamespace {
-        win: typeof Globals.win;
-        product: 'Grid Lite' | 'Grid Pro';
-        version: typeof Globals.version;
-        AST: typeof AST;
-        classNamePrefix: typeof Globals.classNamePrefix;
-        Grid: typeof _Grid;
-        grid: typeof _Grid.grid;
-        grids: Array<(_Grid | undefined)>;
-        ColumnResizing: typeof ColumnResizing;
-        DataConverter: typeof DataConverter;
-        DataCursor: typeof DataCursor;
-        DataModifier: typeof DataModifier;
-        DataConnector: typeof DataConnector;
-        DataPool: typeof DataPool;
-        DataTable: typeof DataTable;
-        isHighContrastModeActive: typeof whcm.isHighContrastModeActive;
-        defaultOptions: typeof Defaults.defaultOptions;
-        setOptions: typeof Defaults.setOptions;
-        Table: typeof Table;
-        Column: typeof Column;
-        HeaderCell: typeof HeaderCell;
-        TableCell: typeof TableCell;
-        Pagination: typeof Pagination;
-        Templating: typeof Templating;
-        CellContentPro: typeof CellContentPro;
-        merge: typeof Utilities.merge;
-        CellRendererRegistry: typeof CellRendererRegistry;
-        CellRenderer: typeof CellRenderer;
-        SvgIcons: typeof SvgIcons;
-        Popup: typeof Popup;
-    }
-    interface Window {
-        Grid: GridNamespace;
-        Highcharts?: typeof H;
-    }
-}
-
-
-/* *
- *
  *  Namespace
  *
  * */
 
-
-const G = Globals as unknown as GridNamespace;
-
-G.AST = AST;
-G.classNamePrefix = 'hcg-';
-G.DataConnector = DataConnector;
-G.DataCursor = DataCursor;
-G.DataConverter = DataConverter;
-G.Grid = _Grid;
-G.grid = _Grid.grid;
-G.grids = _Grid.grids;
-G.DataModifier = DataModifier;
-G.DataPool = DataPool;
-G.DataTable = DataTable;
-G.ColumnResizing = ColumnResizing;
-G.defaultOptions = Defaults.defaultOptions;
-G.isHighContrastModeActive = whcm.isHighContrastModeActive;
-G.setOptions = Defaults.setOptions;
-G.Templating = Templating;
-G.product = 'Grid Pro';
-G.merge = Utilities.merge;
-
-G.Table = G.Table || Table;
-G.Column = G.Column || Column;
-G.HeaderCell = G.HeaderCell || HeaderCell;
-G.TableCell = G.TableCell || TableCell;
-G.Pagination = G.Pagination || Pagination;
+const G = {
+    AST,
+    CellContentPro,
+    CellRenderer,
+    CellRendererRegistry,
+    classNamePrefix: Globals.classNamePrefix,
+    Column,
+    ColumnResizing,
+    DataConnector,
+    DataConverter,
+    DataCursor,
+    DataModifier,
+    DataPool,
+    DataTable,
+    defaultOptions: Defaults.defaultOptions,
+    Grid: _Grid,
+    grid: _Grid.grid,
+    grids: _Grid.grids,
+    HeaderCell,
+    isHighContrastModeActive: whcm.isHighContrastModeActive,
+    merge: Utilities.merge,
+    Pagination,
+    Popup,
+    product: 'Grid Pro',
+    setOptions: Defaults.setOptions,
+    SvgIcons,
+    Table,
+    TableCell,
+    Templating,
+    version: Globals.version,
+    win: Globals.win
+} as const;
 
 GridEvents.compose(G.Grid, G.Column, G.HeaderCell, G.TableCell);
 CellEditingComposition.compose(G.Table, G.TableCell, G.Column);
@@ -183,33 +138,60 @@ ValidatorComposition.compose(G.Table);
 CellRenderersComposition.compose(G.Column);
 PaginationComposition.compose(G.Pagination);
 
-G.CellRendererRegistry = G.CellRendererRegistry || CellRendererRegistry;
-G.CellContentPro = CellContentPro;
-G.CellRenderer = CellRenderer;
-G.SvgIcons = SvgIcons;
-G.Popup = Popup;
+
+/* *
+ *
+ * Named Exports
+ *
+ * */
+
+export {
+    AST,
+    CellContentPro,
+    CellRenderer,
+    CellRendererRegistry,
+    Column,
+    ColumnResizing,
+    DataConnector,
+    DataConverter,
+    DataCursor,
+    DataModifier,
+    DataPool,
+    DataTable,
+    HeaderCell,
+    Pagination,
+    Popup,
+    SvgIcons,
+    Table,
+    TableCell,
+    Templating
+};
+
+export const {
+    classNamePrefix,
+    defaultOptions,
+    Grid,
+    grid,
+    grids,
+    isHighContrastModeActive,
+    merge,
+    product,
+    setOptions,
+    version,
+    win
+} = G;
 
 
 /* *
  *
- *  Export types
+ *  Classic Extensions
  *
  * */
 
-namespace G {
-    export type Options = _Options;
-}
-
-
-/* *
- *
- *  Classic Export
- *
- * */
-
-
-if (!G.win.Grid) {
-    G.win.Grid = G;
+declare global {
+    interface Window {
+        Highcharts?: typeof H;
+    }
 }
 
 if (G.win.Highcharts) {
@@ -223,5 +205,8 @@ if (G.win.Highcharts) {
  *
  * */
 
+namespace G {
+    export type Options = _Options;
+}
 
 export default G;
