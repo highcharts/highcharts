@@ -153,12 +153,12 @@ class PaginationController {
             this.querying.shouldBeUpdated = true;
         }
 
-        if (this.currentPage !== options.page) {
-            this.setPage(options.page ?? this.currentPage);
-        }
-
         if (this.currentPageSize !== options.pageSize) {
             this.setPageSize(options.pageSize ?? this.currentPageSize);
+        }
+
+        if (this.currentPage !== options.page) {
+            this.setPage(options.page ?? this.currentPage);
         }
     }
 
