@@ -81,8 +81,6 @@ export default class ContourSeries extends ScatterSeries {
 
     public renderPromise?: Promise<void>;
 
-    public dataMax?: number;
-
     private foreignObject?: SVGForeignObjectElement;
 
     private canvas?: HTMLCanvasElement;
@@ -167,16 +165,10 @@ export default class ContourSeries extends ScatterSeries {
                 10e6 :
                 1;
 
-        let foundMax = 0;
-
         for (let i = 0; i < len; i++) {
             const { x, y = 0, value } = points[i],
                 index2d = i * 2,
                 index3d = i * 3;
-
-            if (foundMax < (value ?? 0)) {
-                foundMax = value ?? 0;
-            }
 
             points2d[index2d] = x / xDivider;
             points2d[index2d + 1] = y && (y / yDivider) || 0;
@@ -185,7 +177,6 @@ export default class ContourSeries extends ScatterSeries {
             points3d[index3d + 1] = y;
             points3d[index3d + 2] = value ?? 0;
         }
-        this.dataMax = foundMax ?? 0;
 
         return [new Delaunay(points2d).triangles, points3d];
     }
