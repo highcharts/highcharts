@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -45,6 +45,11 @@ const {
     isReference,
     isValue
 } = FormulaTypes;
+
+import U from '../../Core/Utilities.js';
+const {
+    defined
+} = U;
 
 
 /* *
@@ -357,19 +362,19 @@ function getRangeValues(
     range: Range,
     table: DataTable
 ): Array<Value> {
-    const columnNames = table
-            .getColumnNames()
+    const columnIds = table
+            .getColumnIds()
             .slice(range.beginColumn, range.endColumn + 1),
         values: Array<Value> = [];
 
     for (
         let i = 0,
-            iEnd = columnNames.length,
+            iEnd = columnIds.length,
             cell: DataTable.CellType;
         i < iEnd;
         ++i
     ) {
-        const cells = table.getColumn(columnNames[i], true) || [];
+        const cells = table.getColumn(columnIds[i], true) || [];
 
         for (
             let j = range.beginRow,
@@ -382,10 +387,10 @@ function getRangeValues(
             if (
                 typeof cell === 'string' &&
                 cell[0] === '=' &&
-                table !== table.modified
+                table !== table.getModified()
             ) {
                 // Look in the modified table for formula result
-                cell = table.modified.getCell(columnNames[i], j);
+                cell = table.getModified().getCell(columnIds[i], j);
             }
 
             values.push(isValue(cell) ? cell : NaN);
@@ -414,31 +419,76 @@ function getReferenceValue(
     reference: Reference,
     table: DataTable
 ): Value {
-    const columnName = table.getColumnNames()[reference.column];
+    const columnId = table.getColumnIds()[reference.column];
 
-    if (columnName) {
-        const cell = table.getCell(columnName, reference.row);
+    if (columnId) {
+        const cell = table.getCell(columnId, reference.row);
 
         if (
             typeof cell === 'string' &&
             cell[0] === '=' &&
-            table !== table.modified
+            table !== table.getModified()
         ) {
             // Look in the modified table for formula result
-            const result = table.modified.getCell(columnName, reference.row);
+            const result = table.getModified().getCell(columnId, reference.row);
             return isValue(result) ? result : NaN;
         }
 
-        return isValue(cell) ? cell : NaN;
+        if (isValue(cell)) {
+            return reference.isNegative ? -(cell as number) : cell;
+        }
+
+        return NaN;
     }
 
     return NaN;
 }
 
+/**
+ * Calculates a value based on the two top values and the related operator.
+ *
+ * Used to properly process the formula's values based on its operators.
+ *
+ * @private
+ * @function Highcharts.applyOperator
+ *
+ * @param {Array<Highcharts.Value>} values
+ * Processed formula values.
+ *
+ * @param {Array<Highcharts.Operator>} operators
+ * Processed formula operators.
+ */
+function applyOperator(values: Array<Value>, operators: Array<Operator>): void {
+    if (values.length < 2 || operators.length < 1) {
+        values.push(NaN);
+    }
+
+    const secondValue = values.pop();
+    const firstValue = values.pop();
+    const operator = operators.pop();
+
+    if (!defined(secondValue) || !defined(firstValue) || !defined(operator)) {
+        values.push(NaN);
+    } else {
+        values.push(basicOperation(operator, firstValue, secondValue));
+    }
+}
 
 /**
  * Processes a formula array on the given table. If the formula does not contain
  * references or ranges, then no table has to be provided.
+ *
+ * Performs formulas considering the operators precedence.
+ *
+ * // Example of the `2 * 3 + 4` formula:
+ * 2 -> values: [2], operators: []
+ * * -> values: [2], operators: [*]
+ * 3 -> values: [2, 3], operators: [*]
+ * // Since the higher precedence operator exists (* > +), perform it first.
+ * + -> values: [6], operators: [+]
+ * 4 -> values: [6, 4], operators: [+]
+ * // When non-higher precedence operators remain, perform rest calculations.
+ * -> values: [10], operators: []
  *
  * @private
  * @function Highcharts.processFormula
@@ -452,89 +502,77 @@ function getReferenceValue(
  * @return {Highcharts.FormulaValue}
  * Result value of the process. `NaN` indicates an error.
  */
-function processFormula(
-    formula: Formula,
-    table?: DataTable
-): Value {
-    let x: (Value|undefined);
+function processFormula(formula: Formula, table?: DataTable): Value {
+    // Keeps all the values to calculate them in a proper priority, based on the
+    // given operators.
+    const values: Array<Value> = [];
+    // Keeps all the operators to calculate the values above, following the
+    // proper priority.
+    const operators: Array<Operator> = [];
 
-    for (
-        let i = 0,
-            iEnd = formula.length,
-            item: Item,
-            operator: (Operator|undefined),
-            result: (Value|Array<Value>),
-            y: (Value|undefined);
-        i < iEnd;
-        ++i
-    ) {
-        item = formula[i];
+    // Indicates if the next item is a value (not an operator).
+    let expectingValue = true;
 
-        // Remember operator for operation on next item
+    for (let i = 0, iEnd = formula.length; i < iEnd; ++i) {
+        const item = formula[i];
+
         if (isOperator(item)) {
-            operator = item;
+            if (expectingValue && item === '-') {
+                // Split the negative values to be handled as a binary
+                // operation if the next item is a value.
+                values.push(0);
+                operators.push('-');
+                expectingValue = true;
+            } else {
+                // Perform if the higher precedence operator exist.
+                while (
+                    operators.length &&
+                    operatorPriority[operators[operators.length - 1]] >=
+                    operatorPriority[item]
+                ) {
+                    applyOperator(values, operators);
+                }
+                operators.push(item);
+                expectingValue = true;
+            }
             continue;
         }
 
-        // Next item is a value
+        let value: Value | undefined;
+
+        // Assign the proper value, starting from the most common types.
         if (isValue(item)) {
-            y = item;
+            value = item;
 
-        // Next item is a formula and needs to get processed first
-        } else if (isFormula(item)) {
-            y = processFormula(formula, table);
-
-        // Next item is a function call and needs to get processed first
-        } else if (isFunction(item)) {
-            result = processFunction(item, table);
-            y = (isValue(result) ? result : NaN); // Arrays are not allowed here
-
-        // Next item is a reference and needs to get resolved
         } else if (isReference(item)) {
-            y = (table && getReferenceValue(item, table));
+            value = table ? getReferenceValue(item, table) : NaN;
 
+        } else if (isFunction(item)) {
+            const result = processFunction(item, table);
+            value = isValue(result) ? result : NaN;
+
+        } else if (isFormula(item)) {
+            value = processFormula(item, table);
         }
 
-        // If we have a next value, lets do the operation
-        if (typeof y !== 'undefined') {
-
-            // Next value is our first value
-            if (typeof x === 'undefined') {
-                if (operator) {
-                    x = basicOperation(operator, 0, y);
-                } else {
-                    x = y;
-                }
-
-            // Fail fast if no operator available
-            } else if (!operator) {
-                return NaN;
-
-            // Regular next value
-            } else {
-                const operator2 = formula[i + 1];
-
-                if (
-                    isOperator(operator2) &&
-                    operatorPriority[operator2] > operatorPriority[operator]
-                ) {
-                    y = basicOperation(
-                        operator2,
-                        y,
-                        processFormula(formula.slice(i + 2))
-                    );
-                    i = iEnd;
-                }
-
-                x = basicOperation(operator, x, y);
-            }
-
-            operator = void 0;
-            y = void 0;
+        if (typeof value !== 'undefined') {
+            values.push(value);
+            expectingValue = false;
+        } else {
+            return NaN;
         }
     }
 
-    return isValue(x) ? x : NaN;
+    // Handle the remaining operators that weren't taken into consideration, due
+    // to non-higher precedence.
+    while (operators.length) {
+        applyOperator(values, operators);
+    }
+
+    if (values.length !== 1) {
+        return NaN;
+    }
+    return values[0];
 }
 
 
@@ -627,7 +665,7 @@ function translateReferences<T extends Arguments|Formula>(
 
     for (let i = 0, iEnd = formula.length, item: Item; i < iEnd; ++i) {
         item = formula[i];
-        if (item instanceof Array) {
+        if (Array.isArray(item)) {
             translateReferences(item, columnDelta, rowDelta);
         } else if (isFunction(item)) {
             translateReferences(item.args, columnDelta, rowDelta);

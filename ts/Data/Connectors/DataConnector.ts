@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -10,6 +10,8 @@
  *  - Sophie Bremer
  *  - Wojciech Chmiel
  *  - Gøran Slettemark
+ *  - Dawid Dragula
+ *  - Kamil Kubik
  *
  * */
 
@@ -22,9 +24,13 @@
  * */
 
 import type { DataConnectorTypes } from './DataConnectorType';
-import type { DataConnectorOptions, MetaColumn, Metadata } from './DataConnectorOptions';
+import type {
+    DataConnectorOptions,
+    MetaColumn,
+    Metadata
+} from './DataConnectorOptions';
 import type DataEvent from '../DataEvent';
-import type { DataModifierTypeOptions } from '../Modifiers/DataModifierType';
+import type DataConverterType from '../Converters/DataConverterType';
 
 import DataConverter from '../Converters/DataConverter.js';
 import DataModifier from '../Modifiers/DataModifier.js';
@@ -45,29 +51,8 @@ const {
 
 /**
  * Abstract class providing an interface for managing a DataConnector.
- *
- * @private
  */
-abstract class DataConnector implements DataEvent.Emitter {
-
-    /* *
-     *
-     *  Constructor
-     *
-     * */
-
-    /**
-     * Constructor for the connector class.
-     *
-     * @param {DataConnector.UserOptions} [options]
-     * Options to use in the connector.
-     */
-    public constructor(
-        options: DataConnector.UserOptions = {}
-    ) {
-        this.table = new DataTable(options.dataTable);
-        this.metadata = options.metadata || { columns: {} };
-    }
+abstract class DataConnector implements DataEvent.Emitter<DataConnector.Event> {
 
     /* *
      *
@@ -79,33 +64,114 @@ abstract class DataConnector implements DataEvent.Emitter {
      * The DataConverter responsible for handling conversion of provided data to
      * a DataConnector.
      */
-    public abstract readonly converter: DataConverter;
+    public converter?: DataConverter;
 
     /**
      * Metadata to describe the connector and the content of columns.
      */
     public readonly metadata: Metadata;
 
+    /**
+     * Tables managed by this DataConnector instance.
+     */
+    public readonly dataTables: Record<string, DataTable> = {};
+
+    /**
+     * The options of the connector.
+     */
+    public readonly options: DataConnectorOptions;
+
+    /**
+     * ID of the polling timeout.
+     */
     private _polling?: number;
 
     /**
-     * Poll timer ID, if active.
+     * Whether the connector is currently polling for new data.
      */
     public get polling(): boolean {
         return !!this._polling;
     }
 
     /**
-     * Table managed by this DataConnector instance.
+     * The polling controller used to abort the request when data polling stops.
+     * It gets assigned when data polling starts.
      */
-    public readonly table: DataTable;
+    public pollingController?: AbortController;
 
+    /**
+     * Helper flag for detecting whether the data connector is loaded.
+     * @internal
+     */
+    public loaded: boolean = false;
 
     /* *
      *
-     *  Functions
+     *  Constructor
      *
      * */
+
+    /**
+     * Constructor for the connector class.
+     *
+     * @param {DataConnectorOptions} [options]
+     * Options to use in the connector.
+     */
+    public constructor(options: DataConnectorOptions) {
+        this.metadata = options.metadata || { columns: {} };
+        this.options = options;
+
+        // Create a data table for each defined in the dataTables user options.
+        const dataTables = options?.dataTables;
+        let dataTableIndex = 0;
+
+        if (options.options) {
+            // eslint-disable-next-line no-console
+            console.error('The `DataConnectorOptions.options` property was removed in Dashboards v4.0.0. Check how to upgrade your connector to use the new options structure here: https://api.highcharts.com/dashboards/#interfaces/Data_DataTableOptions.DataTableOptions');
+        }
+
+        if (dataTables && dataTables?.length > 0) {
+            for (let i = 0, iEnd = dataTables.length; i < iEnd; ++i) {
+                const dataTable = dataTables[i];
+                const key = dataTable?.key;
+                this.dataTables[key ?? dataTableIndex] =
+                    new DataTable(dataTable);
+
+                if (!key) {
+                    dataTableIndex++;
+                }
+            }
+        } else {
+            // If user options dataTables is not defined, generate a default
+            // table.
+            this.dataTables[0] = new DataTable({
+                id: options.id // Required by DataTableCore
+            });
+        }
+    }
+
+    /* *
+     *
+     *  Methods
+     *
+     * */
+
+    /**
+     * Returns a single data table instance based on the provided key.
+     * Otherwise, returns the first data table.
+     *
+     * @param {string} [key]
+     * The data table key.
+     *
+     * @return {DataTable}
+     * The data table instance.
+     */
+    public getTable(key?: string): DataTable {
+        if (key) {
+            return this.dataTables[key];
+        }
+        return Object.values(this.dataTables)[0];
+    }
 
     /**
      * Method for adding metadata for a single column.
@@ -116,12 +182,9 @@ abstract class DataConnector implements DataEvent.Emitter {
      * @param {DataConnector.MetaColumn} columnMeta
      * The metadata to apply to the column.
      */
-    public describeColumn(
-        name: string,
-        columnMeta: MetaColumn
-    ): void {
-        const connector = this,
-            columns = connector.metadata.columns;
+    public describeColumn(name: string, columnMeta: MetaColumn): void {
+        const connector = this;
+        const columns = connector.metadata.columns;
 
         columns[name] = merge(columns[name] || {}, columnMeta);
     }
@@ -132,43 +195,24 @@ abstract class DataConnector implements DataEvent.Emitter {
      * @param {Highcharts.Dictionary<DataConnector.MetaColumn>} columns
      * Pairs of column names and MetaColumn objects.
      */
-    public describeColumns(
-        columns: Record<string, MetaColumn>
-    ): void {
-        const connector = this,
-            columnNames = Object.keys(columns);
+    public describeColumns(columns: Record<string, MetaColumn>): void {
+        const connector = this;
+        const columnIds = Object.keys(columns);
 
-        let columnName: (string|undefined);
+        let columnId: (string | undefined);
 
-        while (typeof (columnName = columnNames.pop()) === 'string') {
-            connector.describeColumn(columnName, columns[columnName]);
+        while (typeof (columnId = columnIds.pop()) === 'string') {
+            connector.describeColumn(columnId, columns[columnId]);
         }
-    }
-
-    /**
-     * Emits an event on the connector to all registered callbacks of this
-     * event.
-     *
-     * @param {DataConnector.Event} [e]
-     * Event object containing additional event information.
-     */
-    public emit<E extends DataEvent>(e: E): void {
-        fireEvent(this, e.type, e);
     }
 
     /**
      * Returns the order of columns.
      *
-     * @param {boolean} [usePresentationState]
-     * Whether to use the column order of the presentation state of the table.
-     *
-     * @return {Array<string>|undefined}
+     * @return {string[] | undefined}
      * Order of columns.
      */
-    public getColumnOrder(
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        usePresentationState?: boolean
-    ): (Array<string>|undefined) {
+    public getColumnOrder(): (string[] | undefined) {
         const connector = this,
             columns = connector.metadata.columns,
             names = Object.keys(columns || {});
@@ -184,18 +228,25 @@ abstract class DataConnector implements DataEvent.Emitter {
      * Retrieves the columns of the dataTable,
      * applies column order from meta.
      *
-     * @param {boolean} [usePresentationOrder]
-     * Whether to use the column order of the presentation state of the table.
-     *
      * @return {Highcharts.DataTableColumnCollection}
-     * An object with the properties `columnNames` and `columnValues`
+     * An object with the properties `columnIds` and `columnValues`
      */
-    public getSortedColumns(
-        usePresentationOrder?: boolean
-    ): DataTable.ColumnCollection {
-        return this.table.getColumns(
-            this.getColumnOrder(usePresentationOrder)
-        );
+    public getSortedColumns(): DataTable.ColumnCollection {
+        return this.getTable().getColumns(this.getColumnOrder());
+    }
+
+    /**
+     * Sets the index and order of columns.
+     *
+     * @param {Array<string>} columnIds
+     * Order of columns.
+     */
+    public setColumnOrder(columnIds: Array<string>): void {
+        const connector = this;
+
+        for (let i = 0, iEnd = columnIds.length; i < iEnd; ++i) {
+            connector.describeColumn(columnIds[i], { index: i });
+        }
     }
 
     /**
@@ -207,72 +258,38 @@ abstract class DataConnector implements DataEvent.Emitter {
      * @emits DataConnector#afterLoad
      */
     public load(): Promise<this> {
-        fireEvent(this, 'afterLoad', { table: this.table });
+        this.emit({ type: 'afterLoad' });
         return Promise.resolve(this);
     }
 
     /**
-     * Registers a callback for a specific connector event.
-     *
-     * @param {string} type
-     * Event type as a string.
-     *
-     * @param {DataEventEmitter.Callback} callback
-     * Function to register for the connector callback.
-     *
-     * @return {Function}
-     * Function to unregister callback from the connector event.
+     * Applies the data modifiers to the data tables according to the
+     * connector data tables options.
      */
-    public on<E extends DataEvent>(
-        type: E['type'],
-        callback: DataEvent.Callback<this, E>
-    ): Function {
-        return addEvent(this, type, callback);
-    }
+    public async applyTableModifiers(): Promise<this> {
+        const tableOptionsArray = this.options?.dataTables;
 
-    /**
-     * The default save method, which fires the `afterSave` event.
-     *
-     * @return {Promise<DataConnector>}
-     * The saved connector.
-     *
-     * @emits DataConnector#afterSave
-     * @emits DataConnector#saveError
-     */
-    public save(): Promise<this> {
-        fireEvent(this, 'saveError', { table: this.table });
-        return Promise.reject(new Error('Not implemented'));
-    }
+        for (const [key, table] of Object.entries(this.dataTables)) {
+            // Take data modifier options from the corresponsing data table
+            // options, otherwise take the data modifier options from the
+            // connector options.
+            const dataModifierOptions = tableOptionsArray?.find(
+                (dataTable): boolean => dataTable.key === key
+            )?.dataModifier ?? this.options?.dataModifier;
 
-    /**
-     * Sets the index and order of columns.
-     *
-     * @param {Array<string>} columnNames
-     * Order of columns.
-     */
-    public setColumnOrder(columnNames: Array<string>): void {
-        const connector = this;
+            const ModifierClass = (
+                dataModifierOptions &&
+                DataModifier.types[dataModifierOptions.type]
+            );
 
-        for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
-            connector.describeColumn(columnNames[i], { index: i });
-        }
-    }
-
-    public setModifierOptions(
-        modifierOptions?: DataModifierTypeOptions
-    ): Promise<this> {
-        const ModifierClass = (
-            modifierOptions &&
-            DataModifier.types[modifierOptions.type]
-        );
-
-        return this.table
-            .setModifier(
+            await table.setModifier(
                 ModifierClass ?
-                    new ModifierClass(modifierOptions as AnyRecord) :
+                    new ModifierClass(dataModifierOptions as AnyRecord) :
                     void 0
-            )
-            .then((): this => this);
+            );
+        }
+
+        return this;
     }
 
     /**
@@ -286,15 +303,18 @@ abstract class DataConnector implements DataEvent.Emitter {
     ): void {
         const connector = this;
 
+        // Assign a new abort controller.
+        this.pollingController = new AbortController();
+
+        // Clear the polling timeout.
         window.clearTimeout(connector._polling);
 
         connector._polling = window.setTimeout(
             (): Promise<void> => connector
                 .load()['catch'](
-                    (error): void => connector.emit<DataConnector.ErrorEvent>({
+                    (error): void => connector.emit({
                         type: 'loadError',
-                        error,
-                        table: connector.table
+                        error
                     })
                 )
                 .then((): void => {
@@ -307,27 +327,88 @@ abstract class DataConnector implements DataEvent.Emitter {
     }
 
     /**
-     * Stops polling data.
+     * Stops polling data. Shouldn't be performed if polling is already stopped.
      */
     public stopPolling(): void {
         const connector = this;
+        if (!connector.polling) {
+            return;
+        }
 
+        // Abort the existing request.
+        connector?.pollingController?.abort();
+
+        // Clear the polling timeout.
         window.clearTimeout(connector._polling);
-
         delete connector._polling;
     }
 
     /**
-     * Retrieves metadata from a single column.
+     * Emits an event on the connector to all registered callbacks of this
+     * event.
      *
-     * @param {string} name
-     * The identifier for the column that should be described
-     *
-     * @return {DataConnector.MetaColumn|undefined}
-     * Returns a MetaColumn object if found.
+     * @param {DataConnector.Event} e
+     * Event object containing additional event information.
      */
-    public whatIs(name: string): (MetaColumn | undefined) {
-        return this.metadata.columns[name];
+    public emit(e: DataConnector.Event): void {
+        fireEvent(this, e.type, e);
+    }
+
+    /**
+     * Registers a callback for a specific connector event.
+     *
+     * @param type
+     * Event type.
+     *
+     * @param callback
+     * Function to register for the connector callback.
+     *
+     * @return {Function}
+     * Function to unregister callback from the connector event.
+     */
+    public on<T extends DataConnector.Event['type']>(
+        type: T,
+        callback: DataEvent.Callback<this, Extract<DataConnector.Event, {
+            type: T
+        }>>
+    ): Function {
+        return addEvent(this, type, callback);
+    }
+
+    /**
+     * Iterates over the dataTables and initiates the corresponding converters.
+     * Updates the dataTables and assigns the first converter.
+     *
+     * @param {T}[data]
+     * Data specific to the corresponding converter.
+     *
+     * @param {DataConnector.CreateConverterFunction}[createConverter]
+     * Creates a specific converter combining the dataTable options.
+     *
+     * @param {DataConnector.ParseDataFunction<T>}[parseData]
+     * Runs the converter parse method with the specific data type.
+     */
+    public initConverters<T>(
+        data: T,
+        createConverter: DataConnector.CreateConverterFunction,
+        parseData: DataConnector.ParseDataFunction<T>
+    ): void {
+        let index = 0;
+        for (const [key, table] of Object.entries(this.dataTables)) {
+            // Create a proper converter and parse its data.
+            const converter = createConverter(key);
+            const columns = parseData(converter, data);
+
+            // Update the dataTable.
+            table.deleteColumns();
+            table.setColumns(columns);
+
+            // Assign the first converter.
+            if (index === 0) {
+                this.converter = converter;
+            }
+            index++;
+        }
     }
 
 }
@@ -347,31 +428,26 @@ namespace DataConnector {
      * */
 
     /**
-     * The event object that is provided on errors within DataConnector.
-     */
-    export interface ErrorEvent extends Event {
-        type: ('loadError');
-        error: (string|Error);
-    }
-
-    /**
-     * The default event object for a DataConnector.
+     * The event type that is provided on events within DataConnector.
      */
     export interface Event extends DataEvent {
-        readonly table: DataTable;
+        readonly type: 'loadError' | 'load' | 'afterLoad';
+        readonly error?: string | Error;
     }
 
     /**
-     * The event object that is provided on load events within DataConnector.
+     * Creates a specific converter combining the dataTable options.
      */
-    export interface LoadEvent extends Event {
-        type: ('load'|'afterLoad');
+    export interface CreateConverterFunction {
+        (key: string): DataConverterType
     }
 
     /**
-     * Option of the DataConnector.
+     * Runs the converter parse method with the specific data type.
      */
-    export type UserOptions = Partial<DataConnectorOptions>;
+    export interface ParseDataFunction<T> {
+        (converter: DataConverterType, data: T): DataTable.ColumnCollection
+    }
 
     /* *
      *

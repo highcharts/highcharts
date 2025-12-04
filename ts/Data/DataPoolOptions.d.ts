@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -8,10 +8,10 @@
  *
  *  Authors:
  *  - Sophie Bremer
+ *  - Kamil Kubik
  *
  * */
 
-'use strict';
 
 /* *
  *
@@ -19,12 +19,16 @@
  *
  * */
 
-import type { DataConnectorTypes } from './Connectors/DataConnectorType';
+import type { DataConnectorTypeOptions } from './Connectors/DataConnectorType';
+
 /* eslint-disable @typescript-eslint/no-unused-vars */
+/* API docs */
 import type CSVConnectorOptions from './Connectors/CSVConnectorOptions';
 import type GoogleSheetsConnectorOptions from './Connectors/GoogleSheetsConnectorOptions';
 import type HTMLTableConnectorOptions from './Connectors/HTMLTableConnectorOptions';
+import type JSONConnectorOptions from './Connectors/JSONConnectorOptions';
 /* eslint-enable @typescript-eslint/no-unused-vars */
+
 
 /* *
  *
@@ -36,7 +40,6 @@ import type HTMLTableConnectorOptions from './Connectors/HTMLTableConnectorOptio
  * Options to initialize a data pool.
  */
 export interface DataPoolOptions {
-
     /**
      * The connectors to use for loading data. Available connectors and its
      * options:
@@ -50,49 +53,9 @@ export interface DataPoolOptions {
      * {@link JSONConnectorOptions | JSONConnector}
      *
      **/
-    connectors: Array<DataPoolConnectorOptions>;
-
+    connectors: DataConnectorTypeOptions[];
 }
 
-/**
- * Options for a connector in the data pool. Available options depend on the
- * type of the `DataConnector.types` registry.
- */
-export interface DataPoolConnectorOptions
-<T extends keyof DataConnectorTypes = keyof DataConnectorTypes> {
-
-    /**
-     * The unique identifier of the connector. Used later when referencing
-     * the connector in the component where it is used.
-     **/
-    id: string;
-
-    /**
-     * The options of the given connector type.
-     * @example
-     * dataPool: {
-     *      connectors: [{
-     *      id: 'my-csv-connector',
-     *      type: 'CSV',
-     *      options: {
-     *          csv: csvData
-     *          }
-     *       }]
-     * },
-     **/
-    options: DataConnectorTypes[T]['prototype']['options'];
-
-    /**
-     * The type of the connector, depends on your data source.
-     * Possible values are:
-     * - `CSV`
-     * - `GoogleSheets`
-     * - `HTMLTable`
-     * - `JSON`
-     **/
-    type: T;
-
-}
 
 /* *
  *

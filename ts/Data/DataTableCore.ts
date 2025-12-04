@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -93,14 +93,13 @@ class DataTableCore {
          * @type {string}
          */
         this.id = (options.id || uniqueKey());
-        this.modified = this;
         this.rowCount = 0;
         this.versionTag = uniqueKey();
 
         let rowCount = 0;
 
-        objectEach(options.columns || {}, (column, columnName): void => {
-            this.columns[columnName] = column.slice();
+        objectEach(options.columns || {}, (column, columnId): void => {
+            this.columns[columnId] = column.slice();
             rowCount = Math.max(rowCount, column.length);
         });
 
@@ -120,11 +119,12 @@ class DataTableCore {
 
     public readonly id: string;
 
-    public modified: DataTableCore;
+    public modified?: this;
 
     public rowCount: number;
 
     protected versionTag: string;
+
 
     /* *
      *
@@ -144,9 +144,9 @@ class DataTableCore {
         rowCount: number
     ): void {
         this.rowCount = rowCount;
-        objectEach(this.columns, (column, columnName): void => {
+        objectEach(this.columns, (column, columnId): void => {
             if (column.length !== rowCount) {
-                this.columns[columnName] = setLength(column, rowCount);
+                this.columns[columnId] = setLength(column, rowCount);
             }
         });
     }
@@ -171,8 +171,8 @@ class DataTableCore {
     ): void {
         if (rowCount > 0 && rowIndex < this.rowCount) {
             let length = 0;
-            objectEach(this.columns, (column, columnName): void => {
-                this.columns[columnName] =
+            objectEach(this.columns, (column, columnId): void => {
+                this.columns[columnId] =
                     splice(column, rowIndex, rowCount).array;
                 length = column.length;
             });
@@ -187,39 +187,39 @@ class DataTableCore {
      * Fetches the given column by the canonical column name. Simplified version
      * of the full `DataTable.getRow` method, always returning by reference.
      *
-     * @param {string} columnName
+     * @param {string} columnId
      * Name of the column to get.
      *
      * @return {Highcharts.DataTableColumn|undefined}
      * A copy of the column, or `undefined` if not found.
      */
     public getColumn(
-        columnName: string,
+        columnId: string,
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         asReference?: true
     ): (DataTable.Column|undefined) {
-        return this.columns[columnName];
+        return this.columns[columnId];
     }
 
     /**
      * Retrieves all or the given columns. Simplified version of the full
      * `DataTable.getColumns` method, always returning by reference.
      *
-     * @param {Array<string>} [columnNames]
-     * Column names to retrieve.
+     * @param {Array<string>} [columnIds]
+     * Column ids to retrieve.
      *
      * @return {Highcharts.DataTableColumnCollection}
      * Collection of columns. If a requested column was not found, it is
      * `undefined`.
      */
     public getColumns(
-        columnNames?: Array<string>,
+        columnIds?: Array<string>,
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         asReference?: true
     ): DataTable.ColumnCollection {
-        return (columnNames || Object.keys(this.columns)).reduce(
-            (columns, columnName): DataTable.ColumnCollection => {
-                columns[columnName] = this.columns[columnName];
+        return (columnIds || Object.keys(this.columns)).reduce(
+            (columns, columnId): DataTable.ColumnCollection => {
+                columns[columnId] = this.columns[columnId];
                 return columns;
             },
             {} as DataTable.ColumnCollection
@@ -232,7 +232,7 @@ class DataTableCore {
      * @param {number} rowIndex
      * Row index to retrieve. First row has index 0.
      *
-     * @param {Array<string>} [columnNames]
+     * @param {Array<string>} [columnIds]
      * Column names to retrieve.
      *
      * @return {Record<string, number|string|undefined>|undefined}
@@ -240,9 +240,9 @@ class DataTableCore {
      */
     public getRow(
         rowIndex: number,
-        columnNames?: Array<string>
+        columnIds?: Array<string>
     ): (DataTable.Row|undefined) {
-        return (columnNames || Object.keys(this.columns)).map(
+        return (columnIds || Object.keys(this.columns)).map(
             (key): DataTable.CellType => this.columns[key]?.[rowIndex]
         );
     }
@@ -250,7 +250,7 @@ class DataTableCore {
     /**
      * Sets cell values for a column. Will insert a new column, if not found.
      *
-     * @param {string} columnName
+     * @param {string} columnId
      * Column name to set.
      *
      * @param {Highcharts.DataTableColumn} [column]
@@ -266,12 +266,12 @@ class DataTableCore {
      * @emits #afterSetColumns
      */
     public setColumn(
-        columnName: string,
+        columnId: string,
         column: DataTable.Column = [],
         rowIndex: number = 0,
         eventDetail?: DataEvent.Detail
     ): void {
-        this.setColumns({ [columnName]: column }, rowIndex, eventDetail);
+        this.setColumns({ [columnId]: column }, rowIndex, eventDetail);
     }
 
     /**
@@ -298,8 +298,8 @@ class DataTableCore {
         eventDetail?: DataEvent.Detail
     ): void {
         let rowCount = this.rowCount;
-        objectEach(columns, (column, columnName): void => {
-            this.columns[columnName] = column.slice();
+        objectEach(columns, (column, columnId): void => {
+            this.columns[columnId] = column.slice();
             rowCount = column.length;
         });
         this.applyRowCount(rowCount);
@@ -336,11 +336,24 @@ class DataTableCore {
         eventDetail?: DataEvent.Detail
     ): void {
         const { columns } = this,
-            indexRowCount = insert ? this.rowCount + 1 : rowIndex + 1;
+            indexRowCount = insert ? this.rowCount + 1 : rowIndex + 1,
+            rowKeys = Object.keys(row);
 
-        objectEach(row, (cellValue, columnName): void => {
-            let column = columns[columnName] ||
-                eventDetail?.addColumns !== false && new Array(indexRowCount);
+        if (eventDetail?.addColumns !== false) {
+            for (let i = 0, iEnd = rowKeys.length; i < iEnd; i++) {
+                const key = rowKeys[i];
+
+                if (!columns[key]) {
+                    columns[key] = [];
+                }
+            }
+        }
+
+        objectEach(columns, (column, columnId): void => {
+            if (!column && eventDetail?.addColumns !== false) {
+                column = new Array(indexRowCount);
+            }
+
             if (column) {
                 if (insert) {
                     column = splice(
@@ -348,12 +361,12 @@ class DataTableCore {
                         rowIndex,
                         0,
                         true,
-                        [cellValue]
+                        [row[columnId] ?? null]
                     ).array;
                 } else {
-                    column[rowIndex] = cellValue;
+                    column[rowIndex] = row[columnId] ?? null;
                 }
-                columns[columnName] = column;
+                columns[columnId] = column;
             }
         });
 
@@ -365,6 +378,17 @@ class DataTableCore {
             fireEvent(this, 'afterSetRows');
             this.versionTag = uniqueKey();
         }
+    }
+
+    /**
+     * Returns the medified (clone) or the original data table if the modified
+     * one does not exist.
+     *
+     * @return {Highcharts.DataTableCore}
+     * The medified (clone) or the original data table.
+     */
+    public getModified(): this {
+        return this.modified || this;
     }
 }
 

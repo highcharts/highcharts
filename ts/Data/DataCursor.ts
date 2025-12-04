@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2020-2024 Highsoft AS
+ *  (c) 2020-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -47,14 +47,6 @@ class DataCursor {
      *  Static Properties
      *
      * */
-
-
-    /**
-     * Semantic version string of the DataCursor class.
-     * @internal
-     */
-    public static readonly version: string = '1.0.0';
-
 
     /* *
      *
@@ -382,6 +374,7 @@ namespace DataCursor {
         column?: string;
         row?: number;
         state: State;
+        sourceId?: string;
     }
 
     export interface Range {
@@ -390,6 +383,7 @@ namespace DataCursor {
         firstRow: number;
         lastRow: number;
         state: State;
+        sourceId?: string;
     }
 
     export interface Event {

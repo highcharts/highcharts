@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -30,6 +30,11 @@ export interface DataConnectorTypes {
  */
 export type DataConnectorType =
     DataConnectorTypes[keyof DataConnectorTypes]['prototype'];
+
+/**
+ * Options for specific data connector type.
+ */
+export type DataConnectorTypeOptions = DataConnectorType['options'];
 
 /* *
  *

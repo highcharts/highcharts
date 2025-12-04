@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -8,6 +8,7 @@
  *
  *  Authors:
  *  - Karol Kolodziej
+ *  - Kamil Kubik
  *
  * */
 
@@ -18,6 +19,7 @@
  * */
 
 import type DataConnectorOptions from './DataConnectorOptions';
+import type { DataTableConnectorOptions } from './DataConnectorOptions';
 
 
 /* *
@@ -30,6 +32,10 @@ import type DataConnectorOptions from './DataConnectorOptions';
  * Options of the CSVConnector.
  */
 export interface CSVConnectorOptions extends DataConnectorOptions {
+    /**
+     * The corresponding connector type.
+     */
+    type: 'CSV';
     /**
      * Data in CSV format passed directly to connector as a string.
      */
@@ -64,13 +70,73 @@ export interface CSVConnectorOptions extends DataConnectorOptions {
      * @default ','
      */
     itemDelimiter?: string;
+
+    /**
+     * Allows defining multiple data tables within a single connector to adjust
+     * options or data parsing in various ways based on the same data source.
+     *
+     * @example
+     * dataPool: {
+     *     connectors: [{
+     *         id: 'data-connector',
+     *         type: 'JSON',
+     *         data: {
+     *             kpis: { a: 1, b: 2 },
+     *             more: {
+     *                 alpha: [1, 2, 3, 4, 5],
+     *                 beta: [10, 20, 30, 40, 50]
+     *             }
+     *         },
+     *         dataTables: [{
+     *             key: 'more',
+     *             beforeParse: function ({ more }) {
+     *                 const keys = Object.keys(more);
+     *                 return [
+     *                     keys,
+     *                     ...more[keys[0]].map((_, index) =>
+     *                         keys.map(key => more[key][index])
+     *                     )
+     *                 ];
+     *             }
+     *         }, {
+     *             key: 'kpis',
+     *             firstRowAsNames: false,
+     *             columnIds: ['a', 'b'],
+     *             beforeParse: function ({ kpis }) {
+     *                 return [[kpis.a, kpis.b]];
+     *             },
+     *             dataModifier: {
+     *                 type: 'Math',
+     *                 columnFormulas: [{
+     *                     column: 'c',
+     *                     formula: 'A1+B1'
+     *                 }]
+     *             }
+     *         }]
+     *     }]
+     * }
+     **/
+    dataTables?: CSVDataTableConnectorOptions[];
+
+    /**
+     * A custom callback function that parses the data before it's being parsed
+     * to the data table format inside the converter.
+     */
+    beforeParse?: CSVBeforeParseCallbackFunction;
+}
+
+/**
+ * Options of the CSVConnector dataTable.
+ */
+export interface CSVDataTableConnectorOptions extends DataTableConnectorOptions {
+    beforeParse?: CSVBeforeParseCallbackFunction;
 }
 
 /**
  * Callback function allowing modification of the data before parsing it.
  * Must return a valid CSV structure.
  */
-export interface BeforeParseCallbackFunction {
+export interface CSVBeforeParseCallbackFunction {
     (csv: string): string;
 }
 

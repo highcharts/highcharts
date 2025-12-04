@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -8,6 +8,7 @@
  *
  *  Authors:
  *  - Sophie Bremer
+ *  - Dawid Dragula
  *
  * */
 
@@ -45,12 +46,6 @@ interface DataEvent {
  */
 namespace DataEvent {
 
-    /* *
-     *
-     *  Declarations
-     *
-     * */
-
     /**
      * Describes the callbacks expected types. This generic interface can be
      * extended by implementing classes.
@@ -75,7 +70,7 @@ namespace DataEvent {
     /**
      * Describes methods to attach callbacks to events of a class instance.
      */
-    export interface Emitter {
+    export interface Emitter<E extends DataEvent> {
 
         /* *
          *
@@ -98,10 +93,10 @@ namespace DataEvent {
          * Emits an event on the class instance to all registered callbacks of
          * this event.
          *
-         * @param {DataEvent} detail
-         * Detail object containing event information.
+         * @param e
+         * Event object containing additional event information.
          */
-        emit<E extends DataEvent>(e: E): void;
+        emit(e: E): void;
 
         /**
          * Registers a callback for a specific event.
@@ -115,20 +110,24 @@ namespace DataEvent {
          * @return {Function}
          * Function to unregister callback from the event.
          */
-        on<E extends DataEvent>(
-            type: E['type'],
-            callback: Callback<this, E>
+        on<T extends E['type']>(
+            type: T,
+            callback: Callback<this, Extract<E, { type: T }>>
         ): Function;
 
     }
 
-    /** @internal */
+    /**
+     * Object to manage an event.
+     */
     export interface HCEventObject {
         fn: Callback<unknown, DataEvent>;
         order?: number;
     }
 
-    /** @internal */
+    /**
+     * Collection of events managed by Highcharts utility functions.
+     */
     export type HCEventsCollection = (
         Record<string, Array<HCEventObject>>
     );
