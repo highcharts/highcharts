@@ -1,9 +1,9 @@
-describe('Highlight sync after sorting datagrid column.', () => {
+describe('Highlight sync after sorting grid column.', () => {
     before(()=>{
-        cy.visit('/dashboards/cypress/component-datagrid');
+        cy.visit('/dashboards/cypress/component-grid');
     });
 
-    it('Sorted datagrid should synchronize correct rows with chart\'s points.', () => {
+    it('Sorted grid should synchronize correct rows with chart\'s points.', () => {
         cy.get('th[data-column-id="Vitamin A"]').click();
         cy.get('tr[data-row-index="0"] td[data-column-id="Vitamin A"]').trigger('mouseover');
 

@@ -1,6 +1,6 @@
 describe('Remove the dashboard.', () => {
     before(() => {
-        cy.visit('/dashboards/cypress/component-datagrid');
+        cy.visit('/dashboards/cypress/component-grid');
     });
 
     it('Dashboard should be removed without errors', () => {
@@ -11,3 +11,4 @@ describe('Remove the dashboard.', () => {
         });
     });
 });
+

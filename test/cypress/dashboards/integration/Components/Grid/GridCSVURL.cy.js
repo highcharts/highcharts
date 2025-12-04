@@ -1,4 +1,4 @@
-describe('DataGrid and data csvURL.', () => {
+describe('Grid Component and data csvURL.', () => {
     const staticResponse = `X,Y
         0,1
         1,2
@@ -18,12 +18,12 @@ describe('DataGrid and data csvURL.', () => {
             });
         }).as('request');
 
-        cy.visit('/dashboards/cypress/component-datagrid-csv-url');
+        cy.visit('/dashboards/cypress/component-grid-csv-url');
     });
 
-    it('Should render the DataGrid when data provided through csvURL.', () => {
+    it('Should render the Grid when data provided through csvURL.', () => {
         cy.wait('@request');
-        cy.get('.highcharts-datagrid-table').should('exist');
+        cy.get('.hcg-table').should('exist');
     });
 
     it('Cells should display a loading indicator when loading connectors.', () => {
