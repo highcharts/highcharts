@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2019-2024 Highsoft AS
+ *  (c) 2019-2025 Highsoft AS
  *
  *  Boost module: stripped-down renderer for higher performance
  *
@@ -29,7 +29,7 @@ import type Pointer from '../../Core/Pointer';
 import type Series from '../../Core/Series/Series';
 import type SeriesOptions from '../../Core/Series/SeriesOptions';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import type { TypedArray } from '../../Core/Series/SeriesOptions';
+import type Types from '../../Shared/Types';
 
 import BoostableMap from './BoostableMap.js';
 import H from '../../Core/Globals.js';
@@ -59,8 +59,8 @@ export declare class BoostChartComposition extends Chart {
     series: Array<BoostSeriesComposition>;
 }
 
-declare module '../../Core/Chart/ChartLike'{
-    interface ChartLike extends BoostTargetObject {
+declare module '../../Core/Chart/ChartBase'{
+    interface ChartBase extends BoostTargetObject {
         boosted?: boolean;
         boost?: BoostChartAdditions;
     }
@@ -119,9 +119,9 @@ function getBoostClipRect(
     }
 
     // Clipping of individual series (#11906, #19039).
-    if ((target as Series).getClipBox) {
+    if ((target as Series).is) {
         const { xAxis, yAxis } = target as Series;
-        clipBox = (target as Series).getClipBox();
+        clipBox = chart.getClipBox(target as Series);
         if (chart.inverted) {
             const lateral = clipBox.width;
             clipBox.width = clipBox.height;
@@ -369,7 +369,7 @@ function onChartCallback(
  * @return {number}
  * Max value
  */
-function patientMax(...args: Array<Array<unknown>|TypedArray>): number {
+function patientMax(...args: Array<Array<unknown>|Types.TypedArray>): number {
     let r = -Number.MAX_VALUE;
 
     args.forEach((t): boolean|undefined => {

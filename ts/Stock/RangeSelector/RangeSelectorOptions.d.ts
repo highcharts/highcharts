@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -23,6 +23,7 @@ import type ColorString from '../../Core/Color/ColorString';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type DataGroupingOptions from
     '../../Extensions/DataGrouping/DataGroupingOptions';
+import type { DeepPartial } from '../../Shared/Types';
 import type Time from '../../Core/Time';
 
 /* *

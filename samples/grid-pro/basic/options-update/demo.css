@@ -1,0 +1,35 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
+
+body {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
+}
+
+#demo {
+    padding: 8px;
+}
+
+#container {
+    height: 250px;
+}
+
+#update label {
+    margin-top: 8px;
+    display: block;
+}
+
+#update textarea {
+    display: block;
+    min-height: 250px;
+    min-width: 400px;
+    margin: 4px 0;
+}

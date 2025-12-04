@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -98,7 +98,7 @@ const MapViewDefaults: MapViewOptions = {
      * @sample {highmaps} maps/demo/mappoint-mapmarker
      *         Padding for individual sides
      *
-     * @type  {number|string|Array<number|string>}
+     * @type  {Highcharts.MapViewPaddingType}
      */
     padding: 0,
 
@@ -118,7 +118,6 @@ const MapViewDefaults: MapViewOptions = {
      * @type   {object}
      */
     projection: {
-
         /**
          * Projection name. Built-in projections are `EqualEarth`,
          * `LambertConformalConic`, `Miller`, `Orthographic` and `WebMercator`.
@@ -164,6 +163,7 @@ const MapViewDefaults: MapViewOptions = {
          *         Projection explorer
          * @sample maps/mapview/projection-america-centric
          *         America-centric world map
+         * @type   {Highcharts.ProjectionRotationOption}
          */
         rotation: void 0
     },

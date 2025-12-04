@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Øystein Moseng
+ *  (c) 2009-2025 Øystein Moseng
  *
  *  Default theme for Windows High Contrast Mode.
  *
@@ -19,6 +19,7 @@
  * */
 
 import type ColorType from '../Core/Color/ColorType';
+import type { DeepPartial } from '../Shared/Types';
 import type Options from '../Core/Options';
 
 /* *

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -31,8 +31,8 @@ const { pick } = U;
  *
  * */
 
-declare module './Chart/ChartLike'{
-    interface ChartLike {
+declare module './Chart/ChartBase'{
+    interface ChartBase {
         scale3d?: number;
     }
 }

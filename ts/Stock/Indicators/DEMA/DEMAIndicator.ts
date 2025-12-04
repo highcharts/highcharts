@@ -19,7 +19,7 @@ import type {
     DEMAParamsOptions
 } from './DEMAOptions';
 import type DEMAPoint from './DEMAPoint';
-import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
@@ -116,7 +116,7 @@ class DEMAIndicator extends EMAIndicator {
     }
 
     public getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries&IndicatorLinkedSeriesLike,
+        series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: DEMAParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const period: number = (params.period as any),

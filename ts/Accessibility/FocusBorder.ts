@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Øystein Moseng
+ *  (c) 2009-2025 Øystein Moseng
  *
  *  Extend SVG and Chart classes with focus border capabilities.
  *
@@ -39,8 +39,8 @@ const {
  *
  * */
 
-declare module '../Core/Chart/ChartLike'{
-    interface ChartLike {
+declare module '../Core/Chart/ChartBase'{
+    interface ChartBase {
         focusElement?: SVGElement;
         /** @requires modules/accessibility */
         renderFocusBorder(): void;
@@ -52,8 +52,8 @@ declare module '../Core/Chart/ChartLike'{
     }
 }
 
-declare module '../Core/Renderer/SVG/SVGElementLike' {
-    interface SVGElementLike {
+declare module '../Core/Renderer/SVG/SVGElementBase' {
+    interface SVGElementBase {
         focusBorder?: SVGElement;
         /** @requires modules/accessibility */
         addFocusBorder(margin: number, attribs: SVGAttributes): void;
@@ -215,6 +215,12 @@ namespace FocusBorderComposition {
         }
 
         this.focusElement = svgElement;
+
+        // #22122, focus border should re-render after window is resized
+        addEvent(this, 'endResize', function (): void {
+            this.renderFocusBorder();
+        });
+
         this.renderFocusBorder();
     }
 

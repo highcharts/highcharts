@@ -1,5 +1,5 @@
 /**
- * (c) 2009-2024 Sebastian Bochann
+ * (c) 2009-2025 Sebastian Bochann
  *
  * Price indicator for Highcharts
  *
@@ -36,8 +36,8 @@ const {
  *
  * */
 
-declare module '../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../Core/Series/SeriesBase' {
+    interface SeriesBase {
         lastPrice?: SVGElement;
         lastPriceLabel?: SVGElement;
         lastVisiblePrice?: SVGElement;
@@ -79,9 +79,36 @@ function compose(
 
     if (pushUnique(composed, 'PriceIndication')) {
         addEvent(SeriesClass, 'afterRender', onSeriesAfterRender);
+        addEvent(SeriesClass, 'hide', onSeriesHide);
     }
 
 }
+
+
+/**
+ * Hides price indication when parent series is hidden. Showing the indicator is
+ * handled by the `onSeriesAfterRender` function.
+ *
+ * @private
+ *
+ */
+function onSeriesHide(
+    this: Series
+): void {
+    const series = this;
+    (
+        [
+            'lastPrice',
+            'lastPriceLabel',
+            'lastVisiblePrice',
+            'lastVisiblePriceLabel'
+        ] as ('lastPrice'|'lastPriceLabel'|'lastVisiblePrice'|
+            'lastVisiblePriceLabel')[]
+    ).forEach((key): void => {
+        series[key]?.hide();
+    });
+}
+
 
 /** @private */
 function onSeriesAfterRender(
@@ -94,7 +121,8 @@ function onSeriesAfterRender(
 
     if (
         (lastVisiblePrice || lastPrice) &&
-         seriesOptions.id !== 'highcharts-navigator-series'
+         seriesOptions.id !== 'highcharts-navigator-series' &&
+         series.visible
     ) {
         const xAxis = series.xAxis,
             yAxis = series.yAxis,

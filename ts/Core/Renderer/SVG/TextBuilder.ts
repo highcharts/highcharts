@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -400,7 +400,7 @@ class TextBuilder {
     /**
      * Get the rendered line height of a <text>, <tspan> or pure text node.
      * @private
-     * @param {DOMElementType|Text} node The node to check for
+     * @param {Highcharts.DOMElementType|Text} node The node to check for
      * @return {number} The rendered line height
      */
     private getLineHeight(node: DOMElementType|Text): number {
@@ -553,8 +553,8 @@ class TextBuilder {
                                 words ? end + 1 : end
                             );
 
-                    } catch (e) {
-                        '';
+                    } catch {
+                        // Ignore error
                     }
                 }
             }

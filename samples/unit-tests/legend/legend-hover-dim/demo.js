@@ -1,7 +1,8 @@
 QUnit.test('Legend item hover - series dimming behavior.', function (assert) {
     var chart = Highcharts.chart('container', {
             chart: {
-                styledMode: true
+                styledMode: true,
+                width: 600
             },
 
             series: [
@@ -27,16 +28,29 @@ QUnit.test('Legend item hover - series dimming behavior.', function (assert) {
             '.highcharts-series.highcharts-series-0'
         ),
         legend = chart.legend,
-        legendBBox = legend.group.element.getBBox(),
         classes = legend.chart.renderer.boxWrapper.element
             .getAttribute('class')
             .split(/\s/g);
 
+    const getLegendItemCenter = seriesIndex => {
+        const legendItem = chart.series[seriesIndex].legendItem,
+            labelBBox = legendItem.label.getBBox();
+        return [
+            legend.group.translateX +
+                legendItem.group.translateX +
+                legendItem.label.attr('x') +
+                labelBBox.width / 2,
+            legend.group.translateY +
+                legendItem.group.translateY +
+                4 +
+                labelBBox.height / 2,
+            void 0,
+            true
+        ];
+    };
+
     // Simulate mouse over the middle legend's element.
-    controller.mouseOver(
-        legend.group.translateX + legendBBox.width / 2,
-        legend.group.translateY + legendBBox.height / 2
-    );
+    controller.mouseOver.apply(controller, getLegendItemCenter(1));
 
     assert.deepEqual(
         Number(window.getComputedStyle(firstSeries).opacity),
@@ -52,10 +66,7 @@ QUnit.test('Legend item hover - series dimming behavior.', function (assert) {
         'class.'
     );
 
-    controller.mouseOver(
-        legend.group.translateX + legendBBox.width / 2 - 80,
-        legend.group.translateY + legendBBox.height / 2
-    );
+    controller.mouseOver.apply(controller, getLegendItemCenter(0));
 
     assert.strictEqual(
         chart.series[3].state,

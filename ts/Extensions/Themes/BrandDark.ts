@@ -1,6 +1,6 @@
 /* *
  *
- *   (c) 2010-2024 Highsoft AS
+ *   (c) 2010-2025 Highsoft AS
  *
  *  Author: Nancy Dillon
  *
@@ -20,6 +20,7 @@
  *
  * */
 
+import type { DeepPartial } from '../../Shared/Types';
 import type { DefaultOptions } from '../../Core/Options';
 import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
 

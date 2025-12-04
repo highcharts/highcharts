@@ -1,12 +1,13 @@
-name: Dashboards lighthouse tests
+name: Dashboards Lighthouse tests
 on:
   pull_request:
     branches:
       - 'master'
+      - 'dash/**'
     paths:
       - '.github/workflows/dashboards-lighthouse-test.yml'
       - 'css/dashboards*'
-      - 'css/datagrid*'
+      - 'css/grid*'
       - 'samples/dashboards/**'
       - 'test/cypress/dashboards/performance/**'
       - 'ts/Dashboards/**'
@@ -25,28 +26,39 @@ jobs:
     continue-on-error: true
     strategy:
       matrix:
-        node-version: [lts/iron]
+        node-version: [lts/*]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: master
+          path: highcharts
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
+          cache-dependency-path: highcharts/package-lock.json
 
-      - name: Install dependencies
-        uses: cypress-io/github-action@v5
-        with:
-          browser: chrome
-          runTests: false
+      - name: Install Highcharts dependencies
+        run: |
+          cd highcharts
+          npm ci
 
       - name: Build Highcharts
-        run: npx gulp scripts
+        run: |
+          cd highcharts
+          npx gulp scripts
+
+      - name: Build Grid
+        run: |
+          cd highcharts
+          npx gulp scripts --product Grid
+
       - name: Build Dashboards
-        run: npx gulp dashboards/scripts
+        run: |
+          cd highcharts
+          npx gulp scripts --product Dashboards
 
       - name: Checkout utils
         uses: actions/checkout@v4
@@ -65,9 +77,10 @@ jobs:
         continue-on-error: true
         with:
           browser: chrome
-          start: node utils/server --localOnly
+          start: node ../utils/server --localOnly
           wait-on: 'http://localhost:3031/dashboards.js'
           env: type=base
+          working-directory: highcharts
           config-file: test/cypress/dashboards/lighthouse.config.mjs
           install: false
 
@@ -75,29 +88,39 @@ jobs:
         run: kill $(lsof -t -i:3030)
 
       - name: Checkout current branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
-           clean: false # do not remove files from previous run
+          path: highcharts
+          clean: false # do not remove files from previous run
 
-      - name: Install dependencies
-        uses: cypress-io/github-action@v5
-        with:
-          browser: chrome
-          runTests: false
+      - name: Install Highcharts dependencies
+        run: |
+          cd highcharts
+          npm ci
 
       - name: Build Highcharts
-        run: npx gulp scripts
+        run: |
+          cd highcharts
+          npx gulp scripts
+
+      - name: Build Grid
+        run: |
+          cd highcharts
+          npx gulp scripts --product Grid
 
       - name: Build Dashboards
-        run: npx gulp dashboards/scripts
+        run: |
+          cd highcharts
+          npx gulp scripts --product Dashboards
 
       - name: Run cypress via action
         uses: cypress-io/github-action@v5
         with:
           browser: chrome
-          start: node utils/server --localOnly
+          start: node ../utils/server --localOnly
           wait-on: 'http://localhost:3031/dashboards.js'
           env: type=actual
+          working-directory: highcharts
           config-file: test/cypress/dashboards/lighthouse.config.mjs
           install: false
 
@@ -106,28 +129,28 @@ jobs:
         with:
           name: tmp-files
           path: |
-            tmp
+            highcharts/tmp
 
       - name: Write markdown to file
         if: ${{ always() }}
         run: |
-          node test/cypress/lighthouseCompare.mjs  --reportsDir ./tmp/lighthouseReports > ./tmp/lighthousetable.md
+          node highcharts/test/cypress/lighthouseCompare.mjs  --reportsDir ./highcharts/tmp/lighthouseReports > ./highcharts/tmp/lighthousetable.md
 
       - name: Add to summary
         if: ${{ always() }}
         run: |
           echo "## Lighthouse metrics" >> $GITHUB_STEP_SUMMARY
-          cat ./tmp/lighthousetable.md >> $GITHUB_STEP_SUMMARY
+          cat highcharts/tmp/lighthousetable.md >> $GITHUB_STEP_SUMMARY
 
       - name: Comment on PR
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         if: ${{ always() }}
         with:
           github-token: ${{secrets.PR_COMMENT_TOKEN}}
           script: |
-            const { createOrUpdateComment } = require('./.github/scripts/commentOnPR');
+            const { createOrUpdateComment } = require('./highcharts/.github/scripts/commentOnPR');
             const { readFileSync } = require('node:fs')
 
-            const markdown = readFileSync('./tmp/lighthousetable.md');
+            const markdown = readFileSync('./highcharts/tmp/lighthousetable.md');
 
             await createOrUpdateComment(github, context, 'Lighthouse report', markdown || 'No table to show');

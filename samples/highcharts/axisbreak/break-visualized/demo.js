@@ -15,6 +15,10 @@ Highcharts.wrap(
             y = start[2];
 
         (brokenAxis.breakArray || []).forEach(function (brk) {
+            if (brk.to <= axis.min || brk.from >= axis.max) {
+                // Skip breaks outside the view.
+                return;
+            }
             if (axis.horiz) {
                 x = axis.toPixels(brk.from);
                 path.splice(
@@ -40,7 +44,8 @@ Highcharts.wrap(
             }
         });
         return path;
-    });
+    }
+);
 
 /**
  * On top of each column, draw a zigzag line where the axis break is.
@@ -74,20 +79,6 @@ function pointBreakColumn(e) {
     }
 }
 
-/**
- * Remove the zigzag line after the column is no longer on the break.
- */
-function pointOutsideOfBreak(e) {
-    const point = e.point,
-        brk = e.brk,
-        key = ['brk', brk.from, brk.to];
-
-    if (point[key]) {
-        point[key].destroy();
-        delete point[key];
-    }
-}
-
 Highcharts.chart('container', {
     chart: {
         type: 'column',
@@ -114,8 +105,7 @@ Highcharts.chart('container', {
             to: 3000
         }],
         events: {
-            pointBreak: pointBreakColumn,
-            pointOutsideOfBreak: pointOutsideOfBreak
+            pointBreak: pointBreakColumn
         }
     },
     series: [{

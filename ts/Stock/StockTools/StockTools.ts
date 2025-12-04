@@ -2,7 +2,7 @@
  *
  *  Events generator for Stock tools
  *
- *  (c) 2009-2024 Paweł Fus
+ *  (c) 2009-2025 Paweł Fus
  *
  *  License: www.highcharts.com/license
  *
@@ -47,8 +47,8 @@ const {
  *
  * */
 
-declare module '../../Extensions/Annotations/NavigationBindingsLike' {
-    interface NavigationBindingsLike {
+declare module '../../Extensions/Annotations/NavigationBindingsBase' {
+    interface NavigationBindingsBase {
         /** @requires modules/stock-tools */
         utils: Partial<typeof STU>;
         /** @requires modules/stock-tools */

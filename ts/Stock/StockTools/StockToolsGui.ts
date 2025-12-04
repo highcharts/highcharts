@@ -2,7 +2,7 @@
  *
  *  GUI generator for Stock tools
  *
- *  (c) 2009-2024 Sebastian Bochan
+ *  (c) 2009-2025 Sebastian Bochan
  *
  *  License: www.highcharts.com/license
  *
@@ -46,8 +46,8 @@ const {
  *
  * */
 
-declare module '../../Core/Chart/ChartLike'{
-    interface ChartLike {
+declare module '../../Core/Chart/ChartBase'{
+    interface ChartBase {
         stockTools?: Toolbar;
         /** @requires modules/stock-tools */
         setStockTools(options?: StockToolsOptions): void;

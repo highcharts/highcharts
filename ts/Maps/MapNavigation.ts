@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -52,8 +52,9 @@ const {
  *
  * */
 
-declare module '../Core/Chart/ChartLike' {
-    interface ChartLike {
+/** @internal */
+declare module '../Core/Chart/ChartBase' {
+    interface ChartBase {
         mapNavigation: MapNavigation;
     }
 }
@@ -64,9 +65,7 @@ declare module '../Core/Chart/ChartLike' {
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 function stopEvent(e: Event): void {
     if (e) {
         e.preventDefault?.();
@@ -85,7 +84,7 @@ function stopEvent(e: Event): void {
  * The MapNavigation handles buttons for navigation in addition to mousewheel
  * and doubleclick handlers for chart zooming.
  *
- * @private
+ * @internal
  * @class
  * @name MapNavigation
  *
@@ -328,7 +327,7 @@ class MapNavigation {
             // Check the mapNavigation buttons collision with exporting button
             // and translate the mapNavigation button if they overlap.
             const adjustMapNavBtn = function (): void {
-                const expBtnBBox = chart.exportingGroup?.getBBox();
+                const expBtnBBox = chart.exporting?.group?.getBBox();
 
                 if (expBtnBBox) {
                     const navBtnsBBox = mapNav.navButtonsGroup.getBBox();
@@ -438,4 +437,5 @@ class MapNavigation {
  *
  * */
 
+/** @internal */
 export default MapNavigation;

@@ -1,5 +1,5 @@
 /* *
- *  (c) 2010-2024 Rafal Sebestjanski
+ *  (c) 2010-2025 Rafal Sebestjanski
  *
  *  Directional Movement Index (DMI) indicator for Highcharts Stock
  *
@@ -22,7 +22,7 @@ import type {
     DMIParamsOptions
 } from './DMIOptions';
 import type DMIPoint from './DMIPoint';
-import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
@@ -227,7 +227,7 @@ class DMIIndicator extends SMAIndicator {
     }
 
     public getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries&IndicatorLinkedSeriesLike,
+        series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: DMIParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const period: number = (params.period as any),

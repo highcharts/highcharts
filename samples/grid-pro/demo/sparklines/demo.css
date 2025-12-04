@@ -1,0 +1,46 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
+
+body {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
+    background: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
+}
+
+.demo {
+    padding: 8px 12px;
+}
+
+.highcharts-description {
+    padding: 0 8px;
+}
+
+.status {
+    border-radius: 10px;
+    padding: 4px 8px;
+    width: min-content;
+    text-transform: uppercase;
+    font-size: 0.8em;
+    color: #fff;
+}
+
+.running {
+    background-color: #4caf5080;
+}
+
+.stopped {
+    background-color: #f4433680;
+}
+
+.spark-label {
+    color: var(--hcg-color);
+}

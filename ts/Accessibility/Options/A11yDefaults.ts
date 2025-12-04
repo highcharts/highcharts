@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Øystein Moseng
+ *  (c) 2009-2025 Øystein Moseng
  *
  *  Default options for accessibility.
  *
@@ -19,6 +19,7 @@
  * */
 
 import type A11yOptions from './A11yOptions';
+import type { DeepPartial } from '../../Shared/Types';
 
 import { Palette } from '../../Core/Color/Palettes.js';
 
@@ -188,6 +189,9 @@ const Options: DeepPartial<A11yOptions> = {
              *
              * Set to empty string to remove the region altogether.
              *
+             * @sample highcharts/accessibility/before-chart-format
+             *         beforeChartFormat
+             *
              * @since 8.0.0
              */
             beforeChartFormat:
@@ -302,6 +306,9 @@ const Options: DeepPartial<A11yOptions> = {
              * won't have accessible descriptions unless handled separately.
              *
              * Set to `false` to disable.
+             *
+             * @sample highcharts/accessibility/point-description-enabled-threshold
+             *         pointDescriptionEnabledThreshold
              *
              * @type  {boolean|number}
              * @since 8.0.0
@@ -533,6 +540,9 @@ const Options: DeepPartial<A11yOptions> = {
          * The default option is `auto`, which applies the high contrast theme
          * the user's system has a high contrast theme active.
          *
+         * @sample highcharts/accessibility/high-contrast-mode
+         *         High contrast mode enabled
+         *
          * @since 11.4.0
          */
         highContrastMode: 'auto',
@@ -657,6 +667,9 @@ const Options: DeepPartial<A11yOptions> = {
              * the chart container first, requiring the user to tab again to
              * enter the chart.
              *
+             * @sample highcharts/accessibility/custom-component
+             *         Custom order is set
+             *
              * @type  {Array<string>}
              * @since 7.1.0
              */
@@ -702,11 +715,12 @@ const Options: DeepPartial<A11yOptions> = {
 
                 /**
                  * Skip null points when navigating through points with the
-                 * keyboard.
+                 * keyboard. By default this is the opposite of
+                 * [series.nullInteraction](https://api.highcharts.com/highcharts/plotOptions.series.nullInteraction).
                  *
                  * @since 8.0.0
                  */
-                skipNullPoints: true,
+                skipNullPoints: void 0,
 
                 /**
                  * When a series contains more points than this, we no longer

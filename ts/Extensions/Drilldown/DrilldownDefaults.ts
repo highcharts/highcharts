@@ -163,13 +163,12 @@ const DrilldownDefaults: DrilldownOptions = {
     },
 
     /**
+     * Drill up button is deprecated since Highcharts v9.3.2. Use
+     * [drilldown.breadcrumbs](#drilldown.breadcrumbs) instead.
      *
      * Options for the drill up button that appears when drilling down on a
      * series. The text for the button is defined in
      * [lang.drillUpText](#lang.drillUpText).
-     *
-     * This option is deprecated since 9.3.2, use `drilldown.breadcrumbs`
-     * instead.
      *
      * @sample highcharts/breadcrumbs/single-button
      *         Breadcrumbs set up like a legacy button
@@ -179,7 +178,7 @@ const DrilldownDefaults: DrilldownOptions = {
      * @since   3.0.8
      * @product highcharts highmaps
      *
-     * @deprecated
+     * @deprecated 9.3.2
      */
     drillUpButton: {
         /**
@@ -340,11 +339,14 @@ const DrilldownDefaults: DrilldownOptions = {
  */
 
 /**
+ * Drill up button is deprecated since Highcharts v9.3.2. Use
+ * [drilldown.breadcrumbs](#drilldown.breadcrumbs) instead.
+ *
  * The text for the button that appears when drilling down, linking back
  * to the parent series. The parent series' name is inserted for
  * `{series.name}`.
  *
- * @deprecated
+ * @deprecated 9.3.2
  * @since    3.0.8
  * @product  highcharts highmaps
  * @requires modules/drilldown

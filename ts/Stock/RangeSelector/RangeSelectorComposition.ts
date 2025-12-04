@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -244,6 +244,10 @@ function onChartBeforeRender(
     }
 
 }
+/**
+ * Redraw rangeSelector on chart redraw event
+ * @private
+ */
 function redrawRangeSelector(this: Chart): void {
     const chart = this;
     const rangeSelector = this.rangeSelector;
@@ -299,7 +303,8 @@ function onChartDestroy(
 }
 
 /**
- *
+ * Reflow rangeSelector and adjust chart layout
+ * @private
  */
 function onChartGetMargins(
     this: Chart
@@ -307,6 +312,17 @@ function onChartGetMargins(
     const rangeSelector = this.rangeSelector;
 
     if (rangeSelector?.options?.enabled) {
+
+        // Rerender rangeSelector in order to return correct plotHeight, #23058
+        const { min, max } = this.xAxis[0].getExtremes();
+        if (
+            isNumber(min) &&
+            rangeSelector.inputGroup &&
+            rangeSelector.inputGroup.getBBox().width < 20
+        ) {
+            rangeSelector.render(min, max);
+        }
+
         const rangeSelectorHeight = rangeSelector.getHeight();
 
         const verticalAlign = rangeSelector.options.verticalAlign;

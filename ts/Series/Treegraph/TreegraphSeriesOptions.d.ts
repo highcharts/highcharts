@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Pawel Lysy Grzegorz Blachlinski
+ *  (c) 2010-2025 Pawel Lysy Grzegorz Blachlinski
  *
  *  License: www.highcharts.com/license
  *

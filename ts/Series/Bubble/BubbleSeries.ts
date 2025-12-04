@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -23,12 +23,10 @@ import type Legend from '../../Core/Legend/Legend';
 import type Point from '../../Core/Series/Point';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type KDPointSearchObjectLike from '../../Core/Series/KDPointSearchObjectLike';
+import type KDPointSearchObjectBase from '../../Core/Series/KDPointSearchObjectBase';
 import type PointerEvent from '../../Core/PointerEvent';
 import BubbleLegendComposition from './BubbleLegendComposition.js';
 import BubblePoint from './BubblePoint.js';
-import Color from '../../Core/Color/Color.js';
-const { parse: color } = Color;
 import H from '../../Core/Globals.js';
 const {
     composed,
@@ -61,14 +59,14 @@ const {
  *
  * */
 
-declare module '../../Core/Chart/ChartLike'{
-    interface ChartLike {
+declare module '../../Core/Chart/ChartBase'{
+    interface ChartBase {
         bubbleZExtremes?: BubbleZExtremes;
     }
 }
 
-declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase {
         bubblePadding?: BubbleSeries['bubblePadding'];
         radii?: BubbleSeries['radii'];
         specialGroup?: BubbleSeries['specialGroup'];
@@ -80,7 +78,7 @@ type BubblePxExtremes = { minPxSize: number; maxPxSize: number };
 
 type BubbleZExtremes = { zMin: number; zMax: number };
 
-interface KDPointSearchObject extends KDPointSearchObjectLike {
+interface KDPointSearchObject extends KDPointSearchObjectBase {
 }
 
 /* *
@@ -664,7 +662,7 @@ class BubbleSeries extends ScatterSeries {
         minSize: number,
         maxSize: number,
         value: (number|null|undefined),
-        yValue?: (number|null|undefined)
+        yValue?: (number|null)
     ): (number|null) {
         const options = this.options,
             sizeByArea = options.sizeBy !== 'width',
@@ -744,14 +742,10 @@ class BubbleSeries extends ScatterSeries {
         state?: StatesOptionsKey
     ): SVGAttributes {
         const markerOptions = this.options.marker,
-            fillOpacity = (markerOptions as any).fillOpacity,
+            fillOpacity = markerOptions?.fillOpacity,
             attr = Series.prototype.pointAttribs.call(this, point, state);
 
-        if (fillOpacity !== 1) {
-            attr.fill = color(attr.fill as any)
-                .setOpacity(fillOpacity)
-                .get('rgba');
-        }
+        attr['fill-opacity'] = fillOpacity ?? 1;
 
         return attr;
     }

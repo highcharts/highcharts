@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -123,9 +123,9 @@ class AST {
         'cx',
         'cy',
         'd',
+        'disabled',
         'dx',
         'dy',
-        'disabled',
         'fill',
         'filterUnits',
         'flood-color',
@@ -149,22 +149,22 @@ class AST {
         'radius',
         'refX',
         'refY',
+        'result',
         'role',
+        'rowspan',
         'scope',
         'slope',
         'src',
         'startOffset',
         'stdDeviation',
-        'stroke',
         'stroke-linecap',
         'stroke-width',
+        'stroke',
         'style',
-        'tableValues',
-        'result',
-        'rowspan',
         'summary',
-        'target',
         'tabindex',
+        'tableValues',
+        'target',
         'text-align',
         'text-anchor',
         'textAnchor',
@@ -223,6 +223,7 @@ class AST {
      * @type    {Array<string>}
      */
     public static allowedTags = [
+        '#text',
         'a',
         'abbr',
         'b',
@@ -247,10 +248,10 @@ class AST {
         'feFuncG',
         'feFuncR',
         'feGaussianBlur',
-        'feMorphology',
-        'feOffset',
         'feMerge',
         'feMergeNode',
+        'feMorphology',
+        'feOffset',
         'filter',
         'h1',
         'h2',
@@ -279,18 +280,17 @@ class AST {
         'sup',
         'svg',
         'table',
+        'tbody',
+        'td',
         'text',
         'textPath',
+        'th',
         'thead',
         'title',
-        'tbody',
-        'tspan',
-        'td',
-        'th',
         'tr',
+        'tspan',
         'u',
-        'ul',
-        '#text'
+        'ul'
     ];
 
     public static emptyHTML = emptyHTML;
@@ -589,7 +589,7 @@ class AST {
                     markup,
                 'text/html'
             );
-        } catch (e) {
+        } catch {
             // There are two cases where this fails:
             // 1. IE9 and PhantomJS, where the DOMParser only supports parsing
             //    XML

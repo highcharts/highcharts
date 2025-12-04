@@ -19,7 +19,14 @@ const chart = Highcharts.chart('container', {
                     .add();
 
                 setTimeout(() => {
-                    label.fadeOut();
+                    label.animate(
+                        {
+                            opacity: 0
+                        },
+                        {
+                            complete: label.destroy
+                        }
+                    );
                 }, 1000);
             }
         }

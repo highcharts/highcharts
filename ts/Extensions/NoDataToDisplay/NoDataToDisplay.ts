@@ -2,7 +2,7 @@
  *
  *  Plugin for displaying a message when there is no data visible in chart.
  *
- *  (c) 2010-2024 Highsoft AS
+ *  (c) 2010-2025 Highsoft AS
  *
  *  Author: Oystein Moseng
  *
@@ -40,8 +40,8 @@ const {
  *
  * */
 
-declare module '../../Core/Chart/ChartLike' {
-    interface ChartLike {
+declare module '../../Core/Chart/ChartBase' {
+    interface ChartBase {
         noDataLabel?: SVGElement;
         /** @requires modules/no-data-to-display */
         showNoData(str?: string): void;

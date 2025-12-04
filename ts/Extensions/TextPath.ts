@@ -2,7 +2,7 @@
  *
  *  Highcharts module with textPath functionality.
  *
- *  (c) 2009-2024 Torstein Honsi
+ *  (c) 2009-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -46,8 +46,8 @@ interface TextPathObject {
 /**
  * @private
  */
-declare module '../Core/Renderer/SVG/SVGElementLike' {
-    interface SVGElementLike {
+declare module '../Core/Renderer/SVG/SVGElementBase' {
+    interface SVGElementBase {
         setTextPath(
             path: SVGElement|undefined,
             textPathOptions: AnyRecord
@@ -269,7 +269,7 @@ function setPolygon(this: SVGElement, event: any): BBoxObject {
                             polygon.push(lower);
                         }
                     }
-                } catch (e) {
+                } catch {
                     // Safari fails on getStartPositionOfChar even if the
                     // character is within the `textContent.length`
                     break;
@@ -287,7 +287,7 @@ function setPolygon(this: SVGElement, event: any): BBoxObject {
                     );
                 polygon.unshift(upper);
                 polygon.unshift(lower);
-            } catch (e) {
+            } catch {
                 // Safari fails on getStartPositionOfChar even if the character
                 // is within the `textContent.length`
                 break;

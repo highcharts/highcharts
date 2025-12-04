@@ -35,7 +35,7 @@ import type {
     PointOptions,
     PointShortOptions
 } from '../Core/Series/PointOptions';
-import type { TypedArray } from '../Core/Series/SeriesOptions';
+import type Types from '../Shared/Types';
 import type ScatterSeries from '../Series/Scatter/ScatterSeries';
 import type Series from '../Core/Series/Series';
 import type SeriesRegistry from '../Core/Series/SeriesRegistry';
@@ -80,8 +80,8 @@ declare module './Boost/BoostOptions' {
     }
 }
 
-declare module '../Core/Series/SeriesLike' {
-    interface SeriesLike extends BoostTargetObject {
+declare module '../Core/Series/SeriesBase' {
+    interface SeriesBase extends BoostTargetObject {
         cvsStrokeBatch?: number;
         /** @requires modules/boost-canvas */
         canvasToSVG(): void;
@@ -148,8 +148,6 @@ namespace BoostCanvas {
      *  Variables
      *
      * */
-
-    let ChartConstructor: typeof Chart;
 
     let destroyLoadingDiv: number;
 
@@ -232,7 +230,6 @@ namespace BoostCanvas {
                 scatter: ScatterSeries
             } = seriesTypes;
 
-            ChartConstructor = ChartClass;
             ChartClass.prototype.callbacks.push((chart): void => {
                 addEvent(chart, 'predraw', onChartClear);
                 addEvent(chart, 'render', onChartCanvasToSVG);
@@ -430,9 +427,6 @@ namespace BoostCanvas {
 
             boost.clipRect = chart.renderer.clipRect();
             boost.target.clip(boost.clipRect);
-
-        } else if (!(target instanceof ChartConstructor)) {
-            ///  ctx.clearRect(0, 0, width, height);
         }
 
         if (boost.canvas.width !== width) {
@@ -505,7 +499,7 @@ namespace BoostCanvas {
             requireSorting = series.requireSorting,
             connectNulls = options.connectNulls,
             useRaw = !xData,
-            sdata: Array<any>|TypedArray = (
+            sdata: Array<any>|Types.TypedArray = (
                 isStacked ?
                     series.data :
                     (xData || rawData)

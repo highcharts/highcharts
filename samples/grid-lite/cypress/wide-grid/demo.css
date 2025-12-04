@@ -1,0 +1,17 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid-lite.css");
+
+.content {
+    background-color: var(--hcg-background);
+}
+
+#container {
+    height: 450px;
+    width: 250px;
+    padding: 8px;
+}
+
+.highcharts-grid-table thead th .highcharts-grid-header-cell-content {
+    padding: 0;
+    width: 100%;
+    font-size: 0.8em;
+}

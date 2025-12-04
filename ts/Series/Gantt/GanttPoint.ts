@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2016-2024 Highsoft AS
+ *  (c) 2016-2025 Highsoft AS
  *
  *  Author: Lars A. V. Cabrera
  *
@@ -109,6 +109,7 @@ class GanttPoint extends XRangePoint {
         GanttPoint.setGanttPointAliases(ganttPoint, ganttPoint.series.chart);
 
         this.isNull = !this.isValid?.();
+        this.formatPrefix = this.isNull ? 'null' : 'point'; // #23605
 
         return ganttPoint;
     }

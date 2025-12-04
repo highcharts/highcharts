@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Øystein Moseng
+ *  (c) 2009-2025 Øystein Moseng
  *
  *  Accessibility module for Highcharts
  *
@@ -70,8 +70,8 @@ import copyDeprecatedOptions from './Options/DeprecatedOptions.js';
  *
  * */
 
-declare module '../Core/Chart/ChartLike' {
-    interface ChartLike {
+declare module '../Core/Chart/ChartBase' {
+    interface ChartBase {
         a11yDirty?: boolean;
         accessibility?: Accessibility;
         types?: Array<string>;
@@ -146,7 +146,7 @@ class Accessibility {
         this.chart = chart as Accessibility.ChartComposition;
 
         // Abort on old browsers
-        if (!doc.addEventListener) {
+        if (!doc?.addEventListener) {
             this.zombie = true;
             this.components = {} as Accessibility.ComponentsObject;
             chart.renderTo.setAttribute('aria-hidden', true);

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -87,7 +87,7 @@ class SVGLabel extends SVGElement {
         str: string,
         x: number,
         y?: number,
-        shape?: (SymbolKey|string),
+        shape?: string, // @todo (SymbolKey|string),
         anchorX?: number,
         anchorY?: number,
         useHTML?: boolean,
@@ -269,7 +269,11 @@ class SVGLabel extends SVGElement {
         // If we have a text string and the DOM bBox was 0, it typically means
         // that the label was first rendered hidden, so we need to update the
         // bBox (#15246)
-        if (this.textStr && this.bBox.width === 0 && this.bBox.height === 0) {
+        if (
+            (
+                this.textStr && this.bBox.width === 0 && this.bBox.height === 0
+            ) || this.rotation
+        ) {
             this.updateBoxSize();
         }
         const {
@@ -549,17 +553,29 @@ class SVGLabel extends SVGElement {
 
     public xSetter(value: number): void {
         this.x = value; // For animation getter
+
         if (this.alignFactor) {
             value -= this.alignFactor * this.getPaddedWidth();
 
             // Force animation even when setting to the same value (#7898)
             this['forceAnimate:x'] = true;
         }
+
+        if (this.anchorX) {
+            // #22907, force anchorX to animate after x set
+            this['forceAnimate:anchorX'] = true;
+        }
+
         this.xSetting = Math.round(value);
         this.attr('translateX', this.xSetting);
     }
 
     public ySetter(value: number): void {
+        if (this.anchorY) {
+            // #22907, force anchorY to animate after y set
+            this['forceAnimate:anchorY'] = true;
+        }
+
         this.ySetting = this.y = Math.round(value);
         this.attr('translateY', this.ySetting);
     }

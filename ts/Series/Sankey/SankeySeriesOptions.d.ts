@@ -2,7 +2,7 @@
  *
  *  Sankey diagram module
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -19,7 +19,6 @@
 import type ColorString from '../../Core/Color/ColorString';
 import type ColorType from '../../Core/Color/ColorType';
 import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
-import type Templating from '../../Core/Templating';
 import type NodesComposition from '../NodesComposition';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type SankeyDataLabelOptions from './SankeyDataLabelOptions';
@@ -27,6 +26,7 @@ import type SankeyPoint from './SankeyPoint';
 import type SankeyPointOptions from './SankeyPointOptions';
 import type SankeySeries from './SankeySeries';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type Templating from '../../Core/Templating';
 import type TooltipOptions from '../../Core/TooltipOptions';
 
 /* *

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft, Black Label
+ *  (c) 2009-2025 Highsoft, Black Label
  *
  *  License: www.highcharts.com/license
  *
@@ -32,6 +32,7 @@ import type {
     ControllableLabelOptions,
     ControllableShapeOptions
 } from './Controllables/ControllableOptions';
+import type { DeepPartial } from '../../Shared/Types';
 import type MockPointOptions from './MockPointOptions';
 import type NavigationBindings from './NavigationBindings.js';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
@@ -49,6 +50,8 @@ import ControllableImage from './Controllables/ControllableImage.js';
 import ControllableLabel from './Controllables/ControllableLabel.js';
 import ControlPoint from './ControlPoint.js';
 import ControlTarget from './ControlTarget.js';
+import D from '../../Core/Defaults.js';
+const { defaultOptions } = D;
 import EventEmitter from './EventEmitter.js';
 import MockPoint from './MockPoint.js';
 import Pointer from '../../Core/Pointer.js';
@@ -70,6 +73,9 @@ const {
  * */
 
 declare module '../../Core/Options'{
+    interface DefaultOptions {
+        annotations?: AnnotationOptions;
+    }
     interface Options {
         annotations?: (AnnotationOptions|Array<AnnotationOptions>);
     }
@@ -161,12 +167,6 @@ function getLabelsAndShapesOptions(
  *        The annotation options
  */
 class Annotation extends EventEmitter implements ControlTarget {
-
-    /* *
-     *
-     *  Static Properties
-     *
-     * */
 
     /**
      * @private
@@ -282,7 +282,7 @@ class Annotation extends EventEmitter implements ControlTarget {
          * @name Highcharts.Annotation#options
          * @type {Highcharts.AnnotationsOptions}
          */
-        this.options = merge(this.defaultOptions, userOptions);
+        this.setOptions(userOptions);
 
         /**
          * The user options for the annotations.
@@ -302,7 +302,7 @@ class Annotation extends EventEmitter implements ControlTarget {
         this.options.shapes = labelsAndShapes.shapes;
 
         /**
-         * The callback that reports to the overlapping-labels module which
+         * The callback that reports to the overlapping labels logic which
          * labels it should account for.
          * @private
          * @name Highcharts.Annotation#labelCollector
@@ -352,7 +352,7 @@ class Annotation extends EventEmitter implements ControlTarget {
     public labelCollector!: Chart.LabelCollectorFunction;
     public labels: Array<ControllableLabelType>;
     public labelsGroup!: SVGElement;
-    public options: AnnotationOptions;
+    public options!: AnnotationOptions;
     public shapes: Array<ControllableShapeType>;
     public shapesGroup!: SVGElement;
     public userOptions: AnnotationOptions;
@@ -650,6 +650,7 @@ class Annotation extends EventEmitter implements ControlTarget {
 
         this.graphic = renderer
             .g('annotation')
+            .addClass(this.options.className || '')
             .attr({
                 opacity: 0,
                 zIndex: this.options.zIndex,
@@ -797,7 +798,16 @@ class Annotation extends EventEmitter implements ControlTarget {
      *        User options for an annotation
      */
     public setOptions(userOptions: AnnotationOptions): void {
-        this.options = merge(this.defaultOptions, userOptions);
+        this.options = merge(
+            // Shared for all annotation types
+            this.defaultOptions,
+            // The static typeOptions from the class
+            (
+                userOptions.type &&
+                this.defaultOptions.types[userOptions.type]
+            ) || {},
+            userOptions
+        );
     }
 
     /**
@@ -896,6 +906,7 @@ interface Annotation extends ControlTarget {
 }
 
 Annotation.prototype.defaultOptions = AnnotationDefaults;
+defaultOptions.annotations = AnnotationDefaults;
 
 /**
  * List of events for `annotation.options.events` that should not be

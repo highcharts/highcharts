@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Øystein Moseng
+ *  (c) 2009-2025 Øystein Moseng
  *
  *  Handle keyboard navigation for series.
  *
@@ -52,14 +52,14 @@ const {
  *
  * */
 
-declare module '../../../Core/Chart/ChartLike'{
-    interface ChartLike {
+declare module '../../../Core/Chart/ChartBase'{
+    interface ChartBase {
         highlightedPoint?: Point;
     }
 }
 
-declare module '../../../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../../../Core/Series/SeriesBase' {
+    interface SeriesBase {
         /** @requires modules/accessibility */
         keyboardMoveVertical?: boolean;
     }
@@ -134,18 +134,23 @@ function isSkipSeries(
 function isSkipPoint(
     point: Accessibility.PointComposition
 ): (boolean|number|undefined) {
-    const a11yOptions = point.series.chart.options.accessibility;
-    const pointA11yDisabled = (
-        point.options.accessibility &&
-        point.options.accessibility.enabled === false
-    );
+    const series = point.series,
+        nullInteraction = series.options.nullInteraction,
+        pointOptions = point.options,
+        pointA11yOptions = pointOptions.accessibility,
+        a11yOptions = series.chart.options.accessibility,
+        pointA11yDisabled = pointA11yOptions?.enabled === false;
 
-    return point.isNull &&
-        a11yOptions.keyboardNavigation.seriesNavigation.skipNullPoints ||
-        point.visible === false ||
-        point.isInside === false ||
-        pointA11yDisabled ||
-        isSkipSeries(point.series);
+    return a11yOptions
+        .keyboardNavigation
+        .seriesNavigation
+        .skipNullPoints ?? (
+        !(!point.isNull || nullInteraction) &&
+                point.visible === false ||
+                point.isInside === false ||
+                pointA11yDisabled ||
+                isSkipSeries(series)
+    );
 }
 
 
@@ -1019,7 +1024,12 @@ namespace SeriesKeyboardNavigation {
         const chart = this.series.chart,
             tooltipElement = chart.tooltip?.label?.element;
 
-        if (!this.isNull && highlightVisually) {
+        if (
+            (
+                !this.isNull ||
+                this.series.options?.nullInteraction
+            ) && highlightVisually
+        ) {
             this.onMouseOver(); // Show the hover marker and tooltip
         } else {
             if (chart.tooltip) {

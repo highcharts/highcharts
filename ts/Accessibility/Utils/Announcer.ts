@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Øystein Moseng
+ *  (c) 2009-2025 Øystein Moseng
  *
  *  Create announcer to speak messages to screen readers and other AT.
  *
@@ -43,8 +43,8 @@ const { attr } = U;
  * Internal types.
  * @private
  */
-declare module '../../Core/Chart/ChartLike'{
-    interface ChartLike {
+declare module '../../Core/Chart/ChartBase'{
+    interface ChartBase {
         announcerContainer?: HTMLDOMElement;
     }
 }

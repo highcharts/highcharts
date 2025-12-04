@@ -1,0 +1,13 @@
+---
+name: Grid Accessibility
+authors:
+  - Dawid Dragula
+js_wrap: b
+tags:
+  - Highcharts Grid demo
+categories:
+  - General:
+        priority: 80
+use_png_thumbnail: true
+is_pro: true
+...

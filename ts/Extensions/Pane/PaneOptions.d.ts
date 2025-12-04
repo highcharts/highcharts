@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -44,7 +44,7 @@ export interface PaneBackgroundOptions {
 export type PaneBackgroundShapeValue = ('arc'|'circle'|'solid');
 
 export interface PaneOptions {
-    background?: Array<PaneBackgroundOptions>;
+    background?: PaneBackgroundOptions|Array<PaneBackgroundOptions>;
     center?: Array<(string|number)>;
     endAngle?: number;
     id?: string;

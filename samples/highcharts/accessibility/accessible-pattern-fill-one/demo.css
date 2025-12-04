@@ -1,4 +1,4 @@
-* {
+body {
     font-family:
         -apple-system,
         BlinkMacSystemFont,
@@ -12,8 +12,7 @@
         sans-serif;
 }
 
-.highcharts-figure,
-.highcharts-data-table table {
+.highcharts-figure {
     min-width: 360px;
     max-width: 820px;
     margin: 1em auto;

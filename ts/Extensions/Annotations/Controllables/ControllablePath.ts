@@ -40,8 +40,8 @@ const {
  *
  * */
 
-declare module './ControllableLike' {
-    interface ControllableLike {
+declare module './ControllableBase' {
+    interface ControllableBase {
         markerEnd?: SVGElement;
         markerStart?: SVGElement;
     }
@@ -52,8 +52,8 @@ declare module '../../../Core/Options'{
     }
 }
 
-declare module '../../../Core/Renderer/SVG/SVGRendererLike' {
-    interface SVGRendererLike {
+declare module '../../../Core/Renderer/SVG/SVGRendererBase' {
+    interface SVGRendererBase {
         addMarker(id: string, markerOptions: AST.Node): SVGElement;
     }
 }
@@ -254,7 +254,7 @@ class ControllablePath extends Controllable {
      * @return {Highcharts.SVGPathArray|null}
      * A path's d attribute.
      */
-    public toD(): (SVGPath|null) {
+    public toD(): (SVGPath|string|null) {
         const dOption = this.options.d;
 
         if (dOption) {

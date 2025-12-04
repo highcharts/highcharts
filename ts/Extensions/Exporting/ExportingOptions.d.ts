@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -30,7 +30,24 @@ import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType';
  *
  * */
 
-interface PdfFontOptions {
+declare module '../../Core/Options' {
+    interface LangOptions {
+        contextButtonTitle?: string;
+        exitFullscreen?: string;
+        downloadJPEG?: string;
+        downloadPDF?: string;
+        downloadPNG?: string;
+        downloadSVG?: string;
+        printChart?: string;
+        viewFullscreen?: string;
+    }
+
+    interface Options {
+        exporting?: ExportingOptions;
+    }
+}
+
+export interface PdfFontOptions {
     bold?: string;
     bolditalic?: string;
     italic?: string;
@@ -49,6 +66,7 @@ export interface ExportingOptions {
     filename?: string;
     fetchOptions?: RequestInit;
     libURL?: string;
+    local?: boolean;
     menuItemDefinitions?: Record<string, Exporting.MenuObject>;
     pdfFont?: PdfFontOptions;
     printMaxWidth?: number;
@@ -72,7 +90,7 @@ export interface ExportingButtonOptions {
     menuClassName?: string;
     menuItems?: Array<string>;
     onclick?: Function;
-    symbol?: ('menu'|'menuball'|SymbolKey);
+    symbol?: ('menu' | 'menuball' | SymbolKey);
     symbolFill?: ColorString;
     symbolSize?: number;
     symbolStroke?: ColorString;

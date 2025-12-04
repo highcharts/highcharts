@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -18,6 +18,7 @@
  *
  * */
 
+import type { DeepPartial } from '../../Shared/Types';
 import type { DefaultOptions } from '../../Core/Options';
 
 import D from '../../Core/Defaults.js';

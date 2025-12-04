@@ -35,7 +35,7 @@ const NVIDIAPriceConnector =
         [`${NVIDIACorpId}_Close`]: close,
         [`${NVIDIACorpId}_Volume`]: volume,
         Date: date
-    } = NVIDIAPriceConnector.table.getColumns();
+    } = NVIDIAPriceConnector.getTable().getColumns();
 
     const ohlc = [],
         volumeSeriesData = [],
@@ -81,29 +81,7 @@ const NVIDIAPriceConnector =
             headerShape: 'callout',
             borderWidth: 0,
             shadow: false,
-            positioner: function (width, height, point) {
-                const chart = this.chart;
-
-                if (point.formatPrefix === 'point') {
-                    return {
-                        x: point.series.chart.plotLeft,
-                        y: point.series.yAxis.top - chart.plotTop
-                    };
-                }
-
-                return {
-                    x: Math.max(
-                        // Left side limit
-                        chart.plotLeft,
-                        Math.min(
-                            point.plotX + chart.plotLeft - width / 2,
-                            // Right side limit
-                            chart.chartWidth - width - chart.marginRight
-                        )
-                    ),
-                    y: point.plotY
-                };
-            }
+            fixed: true
         },
         series: [{
             type: 'candlestick',

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -25,6 +25,7 @@ const { composed } = H;
 import U from '../Utilities.js';
 const {
     addEvent,
+    correctFloat,
     defined,
     pick,
     pushUnique
@@ -118,17 +119,20 @@ namespace ScrollbarAxis {
             scrollMin: defined(axis.dataMin) ?
                 Math.min(
                     axisMin,
-                    axis.min as any,
+                    axis.min ?? Infinity,
                     axis.dataMin,
-                    pick(axis.threshold, Infinity)
+                    axis.threshold ?? Infinity
                 ) : axisMin,
-            scrollMax: defined(axis.dataMax) ?
-                Math.max(
-                    axisMax,
-                    axis.max as any,
-                    axis.dataMax,
-                    pick(axis.threshold, -Infinity)
-                ) : axisMax
+            scrollMax: axis.treeGrid?.adjustedMax ?? (
+                defined(axis.dataMax) ?
+                    Math.max(
+                        axisMax,
+                        axis.max ?? -Infinity,
+                        axis.dataMax,
+                        axis.threshold ?? -Infinity
+                    ) :
+                    axisMax
+            )
         };
     }
 
@@ -181,10 +185,12 @@ namespace ScrollbarAxis {
                         scrollMin: unitedMin,
                         scrollMax: unitedMax
                     } = getExtremes(axis),
-                    range = unitedMax - unitedMin;
+                    minPX = axis.toPixels(unitedMin),
+                    maxPX = axis.toPixels(unitedMax),
+                    rangePX = maxPX - minPX;
 
-                let to: (number|undefined),
-                    from: (number|undefined);
+                let to: number,
+                    from: number;
 
                 // #12834, scroll when show/hide series, wrong extremes
                 if (!defined(axisMin) || !defined(axisMax)) {
@@ -195,13 +201,25 @@ namespace ScrollbarAxis {
                     (axis.horiz && !axis.reversed) ||
                     (!axis.horiz && axis.reversed)
                 ) {
-                    to = unitedMin + range * (this.to as any);
-                    from = unitedMin + range * (this.from as any);
+                    to = Math.min(
+                        unitedMax,
+                        axis.toValue(minPX + rangePX * this.to)
+                    );
+                    from = Math.max(
+                        unitedMin,
+                        axis.toValue(minPX + rangePX * this.from)
+                    );
                 } else {
                     // Y-values in browser are reversed, but this also
                     // applies for reversed horizontal axis:
-                    to = unitedMin + range * (1 - (this.from as any));
-                    from = unitedMin + range * (1 - (this.to as any));
+                    to = Math.min(
+                        unitedMax,
+                        axis.toValue(minPX + rangePX * (1 - this.from))
+                    );
+                    from = Math.max(
+                        unitedMin,
+                        axis.toValue(minPX + rangePX * (1 - this.to))
+                    );
                 }
 
                 if (this.shouldUpdateExtremes(e.DOMType)) {
@@ -210,8 +228,8 @@ namespace ScrollbarAxis {
                         e.DOMType === 'touchmove' ? false : void 0;
 
                     axis.setExtremes(
-                        from,
-                        to,
+                        correctFloat(from),
+                        correctFloat(to),
                         true,
                         animate,
                         e
@@ -219,7 +237,7 @@ namespace ScrollbarAxis {
                 } else {
                     // When live redraw is disabled, don't change extremes
                     // Only change the position of the scrollbar thumb
-                    this.setRange(this.from as any, this.to as any);
+                    this.setRange(this.from, this.to);
                 }
             });
         }
@@ -238,23 +256,20 @@ namespace ScrollbarAxis {
                 scrollMax
             } = getExtremes(axis),
             scrollbar = axis.scrollbar,
-            offset = (
-                (axis.axisTitleMargin as any) + (axis.titleOffset || 0)
-            ),
+            offset = (axis.axisTitleMargin || 0) + (axis.titleOffset || 0),
             scrollbarsOffsets = axis.chart.scrollbarsOffsets,
             axisMargin = axis.options.margin || 0;
 
-        let offsetsIndex: (number|undefined),
-            from: (number|undefined),
-            to: (number|undefined);
+        let offsetsIndex: number,
+            from: number,
+            to: number;
 
         if (scrollbar && scrollbarsOffsets) {
-
             if (axis.horiz) {
 
                 // Reserve space for labels/title
                 if (!axis.opposite) {
-                    (scrollbarsOffsets as any)[1] += offset;
+                    scrollbarsOffsets[1] += offset;
                 }
 
                 scrollbar.position(
@@ -263,7 +278,7 @@ namespace ScrollbarAxis {
                         axis.top +
                         axis.height +
                         2 +
-                        (scrollbarsOffsets as any)[1] -
+                        scrollbarsOffsets[1] -
                         (axis.opposite ? axisMargin : 0)
                     ),
                     axis.width,
@@ -272,7 +287,7 @@ namespace ScrollbarAxis {
 
                 // Next scrollbar should reserve space for margin (if set)
                 if (!axis.opposite) {
-                    (scrollbarsOffsets as any)[1] += axisMargin;
+                    scrollbarsOffsets[1] += axisMargin;
                 }
 
                 offsetsIndex = 1;
@@ -280,7 +295,7 @@ namespace ScrollbarAxis {
 
                 // Reserve space for labels/title
                 if (axis.opposite) {
-                    (scrollbarsOffsets as any)[0] += offset;
+                    scrollbarsOffsets[0] += offset;
                 }
 
                 let xPosition;
@@ -290,7 +305,7 @@ namespace ScrollbarAxis {
                     xPosition = axis.left +
                         axis.width +
                         2 +
-                        (scrollbarsOffsets as any)[0] -
+                        scrollbarsOffsets[0] -
                         (axis.opposite ? 0 : axisMargin);
                 }
 
@@ -303,7 +318,7 @@ namespace ScrollbarAxis {
 
                 // Next scrollbar should reserve space for margin (if set)
                 if (axis.opposite) {
-                    (scrollbarsOffsets as any)[0] += axisMargin;
+                    scrollbarsOffsets[0] += axisMargin;
                 }
 
                 offsetsIndex = 0;
@@ -317,7 +332,10 @@ namespace ScrollbarAxis {
                 isNaN(scrollMax) ||
                 !defined(axis.min) ||
                 !defined(axis.max) ||
-                axis.dataMin === axis.dataMax // #10733
+                (
+                    defined(axis.dataMin) && // #23335
+                    axis.dataMin === axis.dataMax // #10733
+                )
             ) {
                 // Default action: when data extremes are the same or there is
                 // not extremes on the axis, but scrollbar exists, make it
@@ -338,14 +356,10 @@ namespace ScrollbarAxis {
 
                 scrollbar.setRange(from, to);
             } else {
-                from = (
-                    ((axis.min as any) - scrollMin) /
-                    (scrollMax - scrollMin)
-                );
-                to = (
-                    ((axis.max as any) - scrollMin) /
-                    (scrollMax - scrollMin)
-                );
+                from = (axis.toPixels(axis.min) - axis.toPixels(scrollMin)) /
+                    (axis.toPixels(scrollMax) - axis.toPixels(scrollMin));
+                to = (axis.toPixels(axis.max) - axis.toPixels(scrollMin)) /
+                    (axis.toPixels(scrollMax) - axis.toPixels(scrollMin));
 
                 if (
                     (axis.horiz && !axis.reversed) ||

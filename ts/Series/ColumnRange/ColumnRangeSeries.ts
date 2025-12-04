@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -17,6 +17,7 @@
  * */
 
 import type ColumnRangeSeriesOptions from './ColumnRangeSeriesOptions';
+import type { DeepPartial } from '../../Shared/Types';
 import type RadialAxis from '../../Core/Axis/RadialAxis';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 

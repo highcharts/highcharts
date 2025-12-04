@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Sebastian Bochan, Rafal Sebestjanski
+ *  (c) 2010-2025 Sebastian Bochan, Rafal Sebestjanski
  *
  *  License: www.highcharts.com/license
  *
@@ -322,7 +322,10 @@ class DumbbellSeries extends AreaRangeSeries {
                 (upperGraphic.element as any).point = point;
                 upperGraphic.addClass('highcharts-lollipop-high');
             }
-            (point.connector?.element as any).point = point;
+
+            if (point.connector) {
+                (point.connector.element as any).point = point;
+            }
 
             if (lowerGraphic) {
                 zoneColor = point.zone && point.zone.color;

@@ -26,8 +26,10 @@ QUnit.test(
 
         assert.strictEqual(
             series.points[0].plotX,
-            0,
-            'The point A should be X positioned on 0 (#19038)'
+            // Previously 0, now 0.5 because link.lineWidth is taken into
+            // account when calculating the left side of the chart.
+            0.5,
+            'The point A should be X positioned on 0.5 (#19038)'
         );
 
         series.update({
@@ -193,7 +195,7 @@ QUnit.test(
             'Multiple nodes should collapse simultaneously (#19552).'
         );
 
-        const exportedSVG = chart.getSVGForExport(),
+        const exportedSVG = chart.exporting.getSVGForExport(),
             selector = '#container .highcharts-series-1' +
                 ' .highcharts-level-group-3 path',
             inChartPos = +document.querySelectorAll(selector)[0]

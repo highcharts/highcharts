@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Highsoft AS
+ *  (c) 2010-2025 Highsoft AS
  *  Author: Sebastian Domas
  *
  *  License: www.highcharts.com/license
@@ -19,6 +19,8 @@ import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
 import type HistogramSeries from './HistogramSeries';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type TooltipOptions from '../../Core/TooltipOptions';
+import HistogramPointOptions from './HistogramPointOptions';
+import { PointShortOptions } from '../../Core/Series/PointOptions';
 
 /* *
  *
@@ -44,7 +46,7 @@ import type TooltipOptions from '../../Core/TooltipOptions';
  * @excluding boostThreshold, dragDrop, pointInterval, pointIntervalUnit,
  *            stacking, boostBlending
  *
- * @excluding data, dataParser, dataURL, boostThreshold, boostBlending
+ * @excluding dataParser, dataURL, boostThreshold, boostBlending
  *
  * @product highcharts
  *
@@ -79,7 +81,30 @@ export interface HistogramSeriesOptions extends ColumnSeriesOptions {
      */
     binWidth?: number;
 
-    data?: undefined;
+    /**
+     * An array of data points for the series. For the `histogram` series type,
+     * points can be given in the following way:
+     *
+     * An array of numerical values. In this case, the numerical values will
+     *  be
+     *    used to calculate the `x` and `y` values.
+     * Example:
+     *    ```js
+     *    data: [0, 5, 3, 5]
+     *    ```
+     *
+     * Data can also be passed in the form of a derived series.
+     *
+     * @sample {highcharts} highcharts/chart/reflow-true/
+     *         Numerical values
+     *
+     * @extends series.line.data
+     *
+     * @type {Array<number|null>|null|*}
+     *
+     * @product highcharts
+     */
+    data?: Array<(HistogramPointOptions|PointShortOptions)>;
 
     grouping?: boolean;
 

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Øystein Moseng
+ *  (c) 2009-2025 Øystein Moseng
  *
  *  Handle forcing series markers.
  *
@@ -261,8 +261,12 @@ namespace ForcedMarkersComposition {
 
         } else if (series.a11yMarkersForced) {
             delete series.a11yMarkersForced;
+            // Mark series dirty to ensure marker graphics are cleaned up
+            series.isDirty = true;
             unforceSeriesMarkerOptions(series);
-            delete series.resetA11yMarkerOptions;
+            if (options.marker && options.marker.enabled === false) { // #23329
+                delete series.resetA11yMarkerOptions; // #16624
+            }
         }
     }
 

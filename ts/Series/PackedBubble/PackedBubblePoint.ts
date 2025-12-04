@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Grzegorz Blachlinski, Sebastian Bochan
+ *  (c) 2010-2025 Grzegorz Blachlinski, Sebastian Bochan
  *
  *  License: www.highcharts.com/license
  *
@@ -21,6 +21,7 @@ import type { DragNodesPoint } from '../DragNodesComposition';
 import type NetworkgraphPoint from '../Networkgraph/NetworkgraphPoint';
 import type PackedBubblePointOptions from './PackedBubblePointOptions';
 import type PackedBubbleSeries from './PackedBubbleSeries';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 
 import Chart from '../../Core/Chart/Chart.js';
 import Point from '../../Core/Series/Point.js';
@@ -41,8 +42,8 @@ const {
  *
  * */
 
-declare module '../../Core/Series/PointLike' {
-    interface PointLike {
+declare module '../../Core/Series/PointBase' {
+    interface PointBase {
         degree?: number;
     }
 }
@@ -144,6 +145,15 @@ class PackedBubblePoint extends BubblePoint implements DragNodesPoint {
             chart.getSelectedPoints = Chart.prototype.getSelectedPoints;
         } else {
             Point.prototype.select.apply(this, arguments);
+        }
+    }
+
+    public setState(
+        state?: StatesOptionsKey,
+        move?: boolean
+    ): void {
+        if (this?.graphic?.parentGroup?.element) {
+            super.setState(state, move);
         }
     }
 

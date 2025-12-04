@@ -134,11 +134,11 @@ function getSubtitle() {
             align: 'left'
         },
         subtitle: {
-            useHTML: true,
             text: getSubtitle(),
             floating: true,
             align: 'right',
             verticalAlign: 'middle',
+            useHTML: true,
             y: -80,
             x: -100
         },

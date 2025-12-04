@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Øystein Moseng
+ *  (c) 2009-2025 Øystein Moseng
  *
  *  Default options for sonification.
  *
@@ -12,10 +12,11 @@
 
 'use strict';
 
+import type Chart from '../../Core/Chart/Chart';
+import type { DeepPartial } from '../../Shared/Types';
 import type OptionsType from '../../Core/Options';
 import type Point from '../../Core/Series/Point';
 import type Series from '../../Core/Series/Series';
-import type Chart from '../../Core/Chart/Chart';
 import type SonificationTimeline from './SonificationTimeline';
 import type SynthPatch from './SynthPatch';
 

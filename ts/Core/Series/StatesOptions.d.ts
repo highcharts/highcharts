@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -16,6 +16,7 @@
 
 import type ColorType from '../Color/ColorType';
 import type DashStyleValue from '../Renderer/DashStyleValue';
+import type { DeepPartial } from '../../Shared/Types';
 
 /* *
  *

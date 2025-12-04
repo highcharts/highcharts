@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Øystein Moseng
+ *  (c) 2009-2025 Øystein Moseng
  *
  *  Default lang/i18n options for accessibility.
  *
@@ -43,6 +43,11 @@ export interface LangAccessibilityAxisOptions {
     xAxisDescriptionSingular: string;
     yAxisDescriptionPlural: string;
     yAxisDescriptionSingular: string;
+    defaultAxisNames?: {
+        categories: string;
+        time: string;
+        values: string;
+    };
 }
 
 export interface LangAccessibilityChartTypesOptions {

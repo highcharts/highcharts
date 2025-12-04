@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Mateusz Bernacik
+ *  (c) 2010-2025 Mateusz Bernacik
  *
  *  License: www.highcharts.com/license
  *
@@ -32,8 +32,8 @@ const {
     pick
 } = U;
 
-declare module '../../Core/GlobalsLike.d.ts' {
-    interface GlobalsLike {
+declare module '../../Core/GlobalsBase.d.ts' {
+    interface GlobalsBase {
         navigators: Array<StandaloneNavigator>;
     }
 }
@@ -180,7 +180,9 @@ class StandaloneNavigator {
                     if (
                         e.trigger === 'pan' ||
                         e.trigger === 'zoom' ||
-                        e.trigger === 'mousewheel'
+                        e.trigger === 'mousewheel' ||
+                        e.trigger === 'rangeSelectorButton' ||
+                        e.trigger === 'rangeSelectorInput'
                     ) {
                         nav.setRange(
                             e.min,

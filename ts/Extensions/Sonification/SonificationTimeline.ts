@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Øystein Moseng
+ *  (c) 2009-2025 Øystein Moseng
  *
  *  Class representing a Timeline with sonification events to play.
  *
@@ -18,7 +18,7 @@ import type Point from '../../Core/Series/Point';
 import TimelineChannel from './TimelineChannel.js';
 import SonificationInstrument from './SonificationInstrument.js';
 import toMIDI from './MIDI.js';
-import DU from '../DownloadURL.js';
+import DU from '../../Shared/DownloadURL.js';
 const { downloadURL } = DU;
 import U from '../../Core/Utilities.js';
 const {

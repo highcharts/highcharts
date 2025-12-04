@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -42,8 +42,8 @@ import '../../Maps/MapSymbols.js';
  *
  * */
 
-declare module './ChartLike'{
-    interface ChartLike {
+declare module './ChartBase'{
+    interface ChartBase {
         mapView?: MapView;
     }
 }

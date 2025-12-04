@@ -2,7 +2,7 @@
  *
  *  Highcharts cylinder - a 3D series
  *
- *  (c) 2010-2024 Highsoft AS
+ *  (c) 2010-2025 Highsoft AS
  *
  *  Author: Kacper Madej
  *
@@ -50,8 +50,8 @@ const {
  *
  * */
 
-declare module '../../Core/Renderer/SVG/SVGRendererLike' {
-    interface SVGRendererLike {
+declare module '../../Core/Renderer/SVG/SVGRendererBase' {
+    interface SVGRendererBase {
         /** @requires CylinderComposition */
         cylinder(shapeArgs: SVGAttributes): SVGElement;
         /** @requires CylinderComposition */

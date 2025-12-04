@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  Extension to the Series object in 3D charts.
  *
@@ -42,15 +42,15 @@ const {
  *
  * */
 
-declare module './PointLike' {
-    interface PointLike {
+declare module './PointBase' {
+    interface PointBase {
         plotZ?: number;
         z?: number;
     }
 }
 
-declare module './SeriesLike' {
-    interface SeriesLike {
+declare module './SeriesBase' {
+    interface SeriesBase {
         zAxis?: ZAxis;
         rawPointsX?: Array<number>;
         zPadding?: number;

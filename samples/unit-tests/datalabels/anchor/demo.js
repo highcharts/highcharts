@@ -53,7 +53,7 @@ QUnit.test(
 QUnit.test(
     '#6781: Inverted chart dataLabels placement with Axis.height',
     function (assert) {
-        var chart = Highcharts.chart('container', {
+        const chart = Highcharts.chart('container', {
             chart: {
                 inverted: true,
                 style: {
@@ -75,7 +75,8 @@ QUnit.test(
             series: [
                 {
                     dataLabels: {
-                        enabled: true
+                        enabled: true,
+                        allowOverlap: true
                     },
                     data: [0, 1]
                 }
@@ -83,11 +84,13 @@ QUnit.test(
         });
 
         chart.series[0].points.forEach(point => {
+            // marker radius and dataLabel font size - it's translated,
+            // thus the magic 10 & 22
             if (point.dataLabel) {
                 assert.close(
-                    chart.yAxis[0].toPixels(point.x, true),
+                    chart.yAxis[0].toPixels(point.x, true) - 10,
                     point.dataLabel.translateX,
-                    10,
+                    5,
                     'Point: [' +
                         point.x +
                         ', ' +
@@ -96,11 +99,9 @@ QUnit.test(
                 );
 
                 assert.close(
-                    chart.xAxis[0].toPixels(point.y, true),
+                    chart.xAxis[0].toPixels(point.y, true) - 22,
                     point.dataLabel.translateY,
-                    // marker radius and dataLabel font size - it's translated
-                    // to the top
-                    30,
+                    5,
                     'Point: [' +
                         point.x +
                         ', ' +

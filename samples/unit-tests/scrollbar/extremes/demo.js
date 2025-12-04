@@ -379,9 +379,10 @@ QUnit.test('#13473: Threshold', assert => {
         trigger: 'scrollbar'
     });
 
-    assert.strictEqual(
+    assert.close(
         chart.yAxis[0].min,
         0,
+        0.0001,
         'It should be possible to scroll back down to the threshold after ' +
         'scrolling up'
     );

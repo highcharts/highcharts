@@ -1,3 +1,73 @@
+const createChart = data => Highcharts.chart('container', {
+
+    chart: {
+        height: '100%'
+    },
+
+    // Let the center circle be white transparent
+    colors: ['#ffffff01'].concat(Highcharts.getOptions().colors),
+
+    title: {
+        text: 'World population 2023'
+    },
+
+    subtitle: {
+        text: 'Source <a href="https://en.wikipedia.org/wiki/List_of_countries_by_population_(United_Nations)">Wikipedia</a>'
+    },
+
+    series: [{
+        type: 'sunburst',
+        data: data,
+        name: 'Root',
+        allowTraversingTree: true,
+        borderRadius: 3,
+        cursor: 'pointer',
+        dataLabels: {
+            format: '{point.name}',
+            filter: {
+                property: 'innerArcLength',
+                operator: '>',
+                value: 16
+            }
+        },
+        levels: [{
+            level: 1,
+            levelIsConstant: false,
+            dataLabels: {
+                filter: {
+                    property: 'outerArcLength',
+                    operator: '>',
+                    value: 64
+                }
+            }
+        }, {
+            level: 2,
+            colorByPoint: true
+        },
+        {
+            level: 3,
+            colorVariation: {
+                key: 'brightness',
+                to: -1
+            }
+        }, {
+            level: 4,
+            colorVariation: {
+                key: 'brightness',
+                to: 1
+            }
+        }]
+
+    }],
+
+    tooltip: {
+        headerFormat: '',
+        pointFormat: 'The population of <b>{point.name}</b> is <b>' +
+            '{point.value}</b>'
+    }
+});
+
+// Define the data
 const data = [{
     id: '0.0',
     parent: '',
@@ -1400,72 +1470,4 @@ const data = [{
     value: 45
 }];
 
-
-Highcharts.chart('container', {
-
-    chart: {
-        height: '100%'
-    },
-
-    // Let the center circle be transparent
-    colors: ['transparent'].concat(Highcharts.getOptions().colors),
-
-    title: {
-        text: 'World population 2023'
-    },
-
-    subtitle: {
-        text: 'Source <a href="https://en.wikipedia.org/wiki/List_of_countries_by_population_(United_Nations)">Wikipedia</a>'
-    },
-
-    series: [{
-        type: 'sunburst',
-        data: data,
-        name: 'Root',
-        allowTraversingTree: true,
-        borderRadius: 3,
-        cursor: 'pointer',
-        dataLabels: {
-            format: '{point.name}',
-            filter: {
-                property: 'innerArcLength',
-                operator: '>',
-                value: 16
-            }
-        },
-        levels: [{
-            level: 1,
-            levelIsConstant: false,
-            dataLabels: {
-                filter: {
-                    property: 'outerArcLength',
-                    operator: '>',
-                    value: 64
-                }
-            }
-        }, {
-            level: 2,
-            colorByPoint: true
-        },
-        {
-            level: 3,
-            colorVariation: {
-                key: 'brightness',
-                to: -0.5
-            }
-        }, {
-            level: 4,
-            colorVariation: {
-                key: 'brightness',
-                to: 0.5
-            }
-        }]
-
-    }],
-
-    tooltip: {
-        headerFormat: '',
-        pointFormat: 'The population of <b>{point.name}</b> is <b>' +
-            '{point.value}</b>'
-    }
-});
+createChart(data);

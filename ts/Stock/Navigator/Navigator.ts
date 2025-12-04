@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -19,6 +19,7 @@
 import type AxisOptions from '../../Core/Axis/AxisOptions';
 import type Chart from '../../Core/Chart/Chart.js';
 import type CSSObject from '../../Core/Renderer/CSSObject';
+import type { DeepPartial } from '../../Shared/Types';
 import type { NavigatorAxisComposition } from '../../Core/Axis/NavigatorAxisComposition';
 import type {
     NavigatorHandlesOptions,
@@ -1452,7 +1453,7 @@ class Navigator {
                 navigatorAxis: {
                     fake: true
                 },
-                translate: function (value: number, reverse?: boolean): void {
+                translate: function (value: number, reverse?: boolean): number {
                     const axis = chart.xAxis[0],
                         ext = axis.getExtremes(),
                         scrollTrackWidth = axis.len - 2 * scrollButtonSize,

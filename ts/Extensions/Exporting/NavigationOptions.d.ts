@@ -2,7 +2,7 @@
  *
  *  Exporting module
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -24,6 +24,12 @@ import type { ExportingButtonOptions } from './ExportingOptions';
  *  Declarations
  *
  * */
+
+declare module '../../Core/Options' {
+    interface Options {
+        navigation?: NavigationOptions;
+    }
+}
 
 export interface NavigationOptions {
     bindingsClassName?: string;

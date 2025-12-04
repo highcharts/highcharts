@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -20,6 +20,7 @@ export interface HTMLAttributes {
     'aria-label'?: string;
     'aria-live'?: string;
     'aria-atomic'?: boolean;
+    'aria-rowindex'?: number;
     checked?: boolean;
     class?: string;
     className?: string;

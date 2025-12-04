@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -15,7 +15,11 @@ import type {
 } from './MapViewOptions';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 
-// Compute bounds from a path element
+/**
+ * Compute bounds from a path element.
+ *
+ * @internal
+ */
 const boundsFromPath = function (
     path: SVGPath
 ): MapBounds|undefined {
@@ -51,8 +55,10 @@ const boundsFromPath = function (
  *
  * */
 
+/** @internal */
 const MapUtilities = {
     boundsFromPath
 };
 
+/** @internal */
 export default MapUtilities;

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -15,10 +15,11 @@
  * */
 
 import type AnimationOptions from '../Animation/AnimationOptions';
-import type { EventCallback } from '../Callback';
 import type ColorType from '../Color/ColorType';
 import type { CursorValue } from '../Renderer/CSSObject';
 import type DashStyleValue from '../Renderer/DashStyleValue';
+import type { DeepPartial } from '../../Shared/Types';
+import type { EventCallback } from '../Callback';
 import type Point from './Point';
 import type {
     PointEventsOptions,
@@ -51,11 +52,6 @@ export type NonPlotOptions = (
 
 export type PlotOptionsOf<T extends Series = Series> = (
     Omit<T['options'], NonPlotOptions>
-);
-
-export type TypedArray = (
-  Int8Array|Uint8Array|Uint8ClampedArray|Int16Array|Uint16Array|Int32Array|
-  Uint32Array|Float32Array|Float64Array
 );
 
 export interface SeriesAfterAnimateEvent {
@@ -135,6 +131,7 @@ export interface SeriesOptions {
     marker?: PointMarkerOptions;
     name?: string;
     negativeColor?: ColorType;
+    nullInteraction?: boolean;
     opacity?: number;
     point?: SeriesPointOptions;
     pointPlacement?: (number|string);
@@ -152,6 +149,7 @@ export interface SeriesOptions {
     xAxis?: (number|string);
     yAxis?: (number|string);
     zIndex?: number;
+    zoomEnabled?: boolean;
     zoneAxis?: 'x'|'y'|'z';
     zones?: Array<SeriesZonesOptions>;
     legendSymbol?: LegendSymbolType;
@@ -190,7 +188,7 @@ export interface SeriesStateNormalOptions extends StateNormalOptions {
 }
 
 export interface SeriesStateSelectOptions extends StateSelectOptions {
-    // Nothing here yet
+    enabled?: boolean;
 }
 
 export interface SeriesStatesOptions<T extends { options: AnyRecord }> extends StatesOptions {

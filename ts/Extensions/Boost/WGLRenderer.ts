@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2019-2024 Highsoft AS
+ *  (c) 2019-2025 Highsoft AS
  *
  *  Boost module: stripped-down renderer for higher performance
  *
@@ -29,6 +29,8 @@ import type { SeriesZonesOptions } from '../../Core/Series/SeriesOptions';
 import type { WGLDrawModeValue } from './WGLDrawMode';
 import type WGLOptions from './WGLOptions';
 
+import BoostChart from './BoostChart.js';
+const { getBoostClipRect } = BoostChart;
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import H from '../../Core/Globals.js';
@@ -411,10 +413,9 @@ class WGLRenderer {
             /// threshold = options.threshold,
             // yBottom = chart.yAxis[0].getThreshold(threshold),
             // hasThreshold = isNumber(threshold),
-            // colorByPoint = series.options.colorByPoint,
+            colorByPoint = series.options.colorByPoint,
             // This is required for color by point, so make sure this is
             // uncommented if enabling that
-            // colorIndex = 0,
             // Required for color axis support
             // caxis,
             connectNulls = options.connectNulls,
@@ -454,14 +455,15 @@ class WGLRenderer {
             low: number|undefined|null,
             nextInside = false,
             prevInside = false,
-            pcolor: Color.RGBA = false as any,
+            pcolor: Color.RGBA | undefined = void 0,
             isXInside = false,
             isYInside = true,
             firstPoint = true,
             zoneColors: Array<Color.RGBA>,
             zoneDefColor: (Color.RGBA|undefined) = false as any,
             gapSize: number = false as any,
-            vlen = 0;
+            vlen = 0,
+            colorIndex = 0;
 
         if (options.boostData && options.boostData.length > 0) {
             return;
@@ -473,7 +475,7 @@ class WGLRenderer {
                 options.gapSize;
         }
 
-        if (zones) {
+        if (zones && zones.length) { // #23571
             zoneColors = [];
 
             zones.forEach((zone, i): void => {
@@ -679,7 +681,7 @@ class WGLRenderer {
                     swidth = pointAttr['stroke-width'] || 0;
 
                     // Handle point colors
-                    pcolor = color(pointAttr.fill).rgba as any;
+                    pcolor = color(pointAttr.fill).rgba;
                     pcolor[0] /= 255.0;
                     pcolor[1] /= 255.0;
                     pcolor[2] /= 255.0;
@@ -758,28 +760,34 @@ class WGLRenderer {
                 break;
             }
 
-            // Uncomment this to enable color by point.
-            // This currently left disabled as the charts look really ugly
-            // when enabled and there's a lot of points.
-            // Leaving in for the future (tm).
-            // if (colorByPoint) {
-            //     colorIndex = ++colorIndex %
-            //         series.chart.options.colors.length;
-            //     pcolor = toRGBAFast(series.chart.options.colors[colorIndex]);
-            //     pcolor[0] /= 255.0;
-            //     pcolor[1] /= 255.0;
-            //     pcolor[2] /= 255.0;
-            // }
-
             // Handle the point.color option (#5999)
             const pointOptions = rawData && rawData[i];
-            if (!useRaw && isObject(pointOptions, true)) {
-                if (pointOptions.color) {
-                    pcolor = color(pointOptions.color).rgba as any;
+            if (!useRaw) {
+                if (isObject(pointOptions, true) && pointOptions.color) {
+                    pcolor = color(pointOptions.color).rgba;
+                }
+
+                const colorKeyIndex = series.options.keys?.indexOf('color');
+                if (
+                    Array.isArray(pointOptions) &&
+                    colorKeyIndex &&
+                    typeof pointOptions[colorKeyIndex] === 'string'
+                ) {
+                    pcolor = color(pointOptions[colorKeyIndex]).rgba;
+                } else if (colorByPoint && chart.options.colors) {
+                    colorIndex = colorIndex %
+                        chart.options.colors.length;
+
+                    pcolor = color(chart.options.colors[colorIndex]).rgba;
+                }
+
+                if (pcolor) {
                     pcolor[0] /= 255.0;
                     pcolor[1] /= 255.0;
                     pcolor[2] /= 255.0;
                 }
+
+                colorIndex++;
             }
 
             if (useRaw) {
@@ -924,7 +932,7 @@ class WGLRenderer {
             }
 
             // Note: Boost requires that zones are sorted!
-            if (zones) {
+            if (zones && zones.length) { // #23571
                 let zoneColor: Color.RGBA|undefined;
                 zones.some(( // eslint-disable-line no-loop-func
                     zone: SeriesZonesOptions,
@@ -1058,7 +1066,7 @@ class WGLRenderer {
                 }
 
                 // Need to add an extra point here
-                vertice(x, minVal as any, 0 as any, 0, pcolor);
+                vertice(x, minVal as any, false, 0, pcolor);
             }
 
             // Do step line if enabled.
@@ -1069,7 +1077,7 @@ class WGLRenderer {
                 vertice(
                     x,
                     lastY,
-                    0 as any,
+                    false,
                     2,
                     pcolor
                 );
@@ -1078,7 +1086,7 @@ class WGLRenderer {
             vertice(
                 x,
                 y,
-                0 as any,
+                false,
                 series.type === 'bubble' ? (z || 1) : 2,
                 pcolor
             );
@@ -1236,6 +1244,7 @@ class WGLRenderer {
 
         shader.setUniform('xAxisTrans', axis.transA * pixelRatio);
         shader.setUniform('xAxisMin', axis.min as any);
+        shader.setUniform('xAxisMax', axis.max as any);
         shader.setUniform('xAxisMinPad', axis.minPixelPadding * pixelRatio);
         shader.setUniform('xAxisPointRange', axis.pointRange);
         shader.setUniform('xAxisLen', axis.len * pixelRatio);
@@ -1262,6 +1271,7 @@ class WGLRenderer {
 
         shader.setUniform('yAxisTrans', axis.transA * pixelRatio);
         shader.setUniform('yAxisMin', axis.min as any);
+        shader.setUniform('yAxisMax', axis.max as any);
         shader.setUniform('yAxisMinPad', axis.minPixelPadding * pixelRatio);
         shader.setUniform('yAxisPointRange', axis.pointRange);
         shader.setUniform('yAxisLen', axis.len * pixelRatio);
@@ -1521,6 +1531,11 @@ class WGLRenderer {
             // Do the actual rendering
             // If the line width is < 0, skip rendering of the lines. See #7833.
             if (lineWidth > 0 || s.drawMode !== 'LINE_STRIP') {
+                const { x: cx, y: cy, width: cw, height: ch } =
+                    getBoostClipRect(chart, s.series);
+
+                gl.enable(gl.SCISSOR_TEST);
+                gl.scissor(cx, height - cy - ch, cw, ch);
                 for (sindex = 0; sindex < s.segments.length; sindex++) {
                     vbuffer.render(
                         s.segments[sindex].from,
@@ -1528,6 +1543,7 @@ class WGLRenderer {
                         s.drawMode
                     );
                 }
+                gl.disable(gl.SCISSOR_TEST);
             }
 
             if (s.hasMarkers && showMarkers) {
@@ -1721,7 +1737,7 @@ class WGLRenderer {
                 gl.bindTexture(gl.TEXTURE_2D, null);
 
                 props.isReady = true;
-            } catch (e) {
+            } catch {
                 // Silent error
             }
         };

@@ -26,7 +26,7 @@ QUnit.test('Data label alignment and x/y options (#13580)', assert => {
     // Overflow left
     chart.update({
         xAxis: {
-            left: -40
+            left: -30
         }
     });
     assert.close(

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -45,6 +45,10 @@ import type Tick from '../Core/Axis/Tick';
 
 import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
+import BorderRadius from '../Extensions/BorderRadius.js';
+const { optionsToObject } = BorderRadius;
+import D from '../Core/Defaults.js';
+const { defaultOptions } = D;
 import H from '../Core/Globals.js';
 const { composed } = H;
 import Series from '../Core/Series/Series.js';
@@ -56,6 +60,7 @@ const {
     defined,
     find,
     isNumber,
+    isObject,
     merge,
     pick,
     pushUnique,
@@ -71,14 +76,14 @@ const {
  *
  * */
 
-declare module '../Core/Axis/AxisLike' {
-    interface AxisLike {
+declare module '../Core/Axis/AxisBase' {
+    interface AxisBase {
         center?: Array<number>;
     }
 }
 
-declare module '../Core/Chart/ChartLike' {
-    interface ChartLike {
+declare module '../Core/Chart/ChartBase' {
+    interface ChartBase {
         polar: ChartOptions['polar'];
     }
 }
@@ -89,16 +94,16 @@ declare module '../Core/Chart/ChartOptions' {
     }
 }
 
-declare module '../Core/Series/PointLike' {
-    interface PointLike {
+declare module '../Core/Series/PointBase' {
+    interface PointBase {
         rectPlotX?: PolarPoint['rectPlotX'];
         rectPlotY?: PolarPoint['rectPlotY'];
         ttBelow?: boolean;
     }
 }
 
-declare module '../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../Core/Series/SeriesBase' {
+    interface SeriesBase {
         hasClipCircleSetter?: boolean;
         /** @requires Series/Polar */
         polar?: PolarAdditions;
@@ -374,8 +379,10 @@ function onChartCreateAxes(
     if (!this.pane) {
         this.pane = [];
     }
+
     this.options.pane = splat(this.options.pane || {});
-    this.options.pane.forEach((paneOptions): void => {
+
+    splat(this.userOptions.pane || {}).forEach((paneOptions): void => {
         new Pane( // eslint-disable-line no-new
             paneOptions,
             this as any
@@ -646,6 +653,48 @@ function onSeriesAfterInit(
             this.isRadialSeries = true;
             if (this.is('column')) {
                 this.isRadialBar = true;
+            }
+        }
+    }
+}
+
+/**
+ * Apply conditional rounding to polar bars
+ */
+function onSeriesAfterColumnTranslate(
+    this: Series
+): void {
+    const { chart, options, yAxis } = this;
+    if (
+        options.borderRadius &&
+        chart.polar &&
+        chart.inverted
+    ) {
+        const seriesDefault = defaultOptions.plotOptions
+                ?.[this.type]
+                ?.borderRadius,
+            { scope, where = 'end' } = optionsToObject(
+                options.borderRadius,
+                isObject(seriesDefault) ? seriesDefault : {}
+            );
+
+        for (const point of this.points) {
+            const { shapeArgs } = point;
+            if (point.shapeType === 'arc' && shapeArgs) {
+                let brStart = where === 'all',
+                    brEnd = true;
+
+                if (options.stacking && scope === 'stack') {
+                    brStart = point.stackY === point.y && where === 'all',
+                    brEnd = point.stackY === point.stackTotal;
+                }
+
+                if (yAxis.reversed) {
+                    [brStart, brEnd] = [brEnd, brStart];
+                }
+
+                shapeArgs.brStart = brStart;
+                shapeArgs.brEnd = brEnd;
             }
         }
     }
@@ -1485,7 +1534,7 @@ class PolarAdditions {
         LineSeriesClass: typeof LineSeries,
         SplineSeriesClass: typeof SplineSeries
     ): void {
-        Pane.compose(ChartClass, PointerClass);
+        Pane.compose(ChartClass, PointerClass, SeriesClass);
         RadialAxis.compose(AxisClass, TickClass);
 
         if (pushUnique(composed, 'Polar')) {
@@ -1516,6 +1565,15 @@ class PolarAdditions {
             );
 
             addEvent(SeriesClass, 'afterInit', onSeriesAfterInit);
+            addEvent(
+                SeriesClass,
+                'afterColumnTranslate',
+                onSeriesAfterColumnTranslate,
+                {
+                    // After columnrange and polar column modifications
+                    order: 9
+                }
+            );
             addEvent(
                 SeriesClass,
                 'afterTranslate',

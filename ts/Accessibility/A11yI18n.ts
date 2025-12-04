@@ -2,7 +2,7 @@
  *
  *  Accessibility module - internationalization support
  *
- *  (c) 2010-2024 Highsoft AS
+ *  (c) 2010-2025 Highsoft AS
  *  Author: Øystein Moseng
  *
  *  License: www.highcharts.com/license
@@ -36,8 +36,8 @@ const {
  *
  * */
 
-declare module '../Core/Chart/ChartLike' {
-    interface ChartLike extends A11yI18nComposition.ChartComposition {
+declare module '../Core/Chart/ChartBase' {
+    interface ChartBase extends A11yI18nComposition.ChartComposition {
         // Nothing to add
     }
 }

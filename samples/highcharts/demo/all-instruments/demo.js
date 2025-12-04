@@ -67,7 +67,7 @@ const chart = Highcharts.chart('container', {
         plotBands: [{
             from: 0,
             to: 30,
-            color: '#f6f7f8'
+            color: 'var(--highcharts-neutral-color-3, #f6f7f8)'
         }]
     }],
     xAxis: {

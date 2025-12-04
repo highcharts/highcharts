@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Pawel Lysy Grzegorz Blachlinski
+ *  (c) 2010-2025 Pawel Lysy Grzegorz Blachlinski
  *
  *  License: www.highcharts.com/license
  *
@@ -49,10 +49,20 @@ const {
 
 export interface TreegraphLinkOptions extends OrganizationLinkOptions {
 
+    /**
+     * For the orthogonal link type, this defines how far down the link bends.
+     * A number defines the pixel offset from the start of the link, and a
+     * percentage defines the relative position on the link. For example, a
+     * `bendAt` of `50%` means that the link bends in the middle.
+     *
+     * @since next
+     * @default '50%'
+     */
+    bendAt?: number|string;
 
     /**
      * Radius for the rounded corners of the links between nodes. Works for
-     * `default` link type.
+     * `orthogonal` link type.
      */
     radius?: number;
 
@@ -87,7 +97,7 @@ export interface TreegraphLinkOptions extends OrganizationLinkOptions {
      *
      * @product highcharts
      */
-    type?: ('curved'|'default'|'straight');
+    type?: 'curved' | 'orthogonal' | 'straight';
 
 }
 

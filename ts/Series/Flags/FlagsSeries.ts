@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -54,8 +54,8 @@ const {
  *
  * */
 
-declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase {
         allowDG?: boolean;
     }
 }
@@ -211,7 +211,7 @@ class FlagsSeries extends ColumnSeries {
                         void 0,
                         options.useHTML
                     )
-                        .addClass('highcharts-point')
+                        .addClass(point.getClassName())
                         .add(series.markerGroup);
 
                     // Add reference to the point for tracker (#6303)

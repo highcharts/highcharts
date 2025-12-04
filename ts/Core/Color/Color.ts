@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -17,17 +17,32 @@
  * */
 
 import type ColorString from './ColorString';
-import type { ColorLike, ColorType } from './ColorType';
+import type { ColorBase, ColorType } from './ColorType';
 import type GradientColor from './GradientColor';
 
 import H from '../Globals.js';
+const {
+    win
+} = H;
 import U from '../Utilities.js';
 const {
     isNumber,
+    isString,
     merge,
     pInt,
     defined
 } = U;
+
+/* *
+ *
+ *  Helpers
+ *
+ * */
+const colorMix = (color1: string, color2: string, weight: number): string =>
+    `color-mix(in srgb,${color1},${color2} ${weight * 100}%)`;
+
+const isStringColor = (color: ColorType): color is ColorString =>
+    isString(color) && !!color && color !== 'none';
 
 /* *
  *
@@ -44,9 +59,9 @@ const {
  * @name Highcharts.Color
  *
  * @param {Highcharts.ColorType} input
- * The input color in either rgba or hex format
+ * The input color.
  */
-class Color implements ColorLike {
+class Color implements ColorBase {
 
     /* *
      *
@@ -118,6 +133,16 @@ class Color implements ColorLike {
         }
     }];
 
+    /**
+     * Whether to use CSS `color-mix` for color handling (brightening,
+     * tweening). This can be disabled from the outside.
+     * @private
+     */
+    public static useColorMix = win.CSS?.supports(
+        'color',
+        'color-mix(in srgb,red,blue 9%)'
+    );
+
     // Must be last static member for init cycle
     public static readonly None = new Color('');
 
@@ -133,7 +158,7 @@ class Color implements ColorLike {
      * @function Highcharts.Color.parse
      *
      * @param {Highcharts.ColorType} [input]
-     * The input color in either rgba or hex format.
+     * The input color.
      *
      * @return {Highcharts.Color}
      * Color instance.
@@ -200,6 +225,7 @@ class Color implements ColorLike {
      * */
 
     public input: ColorType;
+    public output?: string;
     public rgba: Color.RGBA = [NaN, NaN, NaN, NaN];
     public stops?: Array<Color>;
 
@@ -223,6 +249,10 @@ class Color implements ColorLike {
     public get(format?: ('a'|'rgb'|'rgba')): ColorType {
         const input = this.input,
             rgba = this.rgba;
+
+        if (this.output) {
+            return this.output;
+        }
 
         if (
             typeof input === 'object' &&
@@ -273,15 +303,23 @@ class Color implements ColorLike {
             });
 
         } else if (isNumber(alpha) && alpha !== 0) {
-            for (let i = 0; i < 3; i++) {
-                rgba[i] += pInt(alpha * 255);
+            if (isNumber(rgba[0])) {
+                for (let i = 0; i < 3; i++) {
+                    rgba[i] += pInt(alpha * 255);
 
-                if (rgba[i] < 0) {
-                    rgba[i] = 0;
+                    if (rgba[i] < 0) {
+                        rgba[i] = 0;
+                    }
+                    if (rgba[i] > 255) {
+                        rgba[i] = 255;
+                    }
                 }
-                if (rgba[i] > 255) {
-                    rgba[i] = 255;
-                }
+            } else if (Color.useColorMix && isStringColor(this.input)) {
+                this.output = colorMix(
+                    this.input,
+                    alpha > 0 ? 'white' : 'black',
+                    Math.abs(alpha)
+                );
             }
         }
 
@@ -325,6 +363,14 @@ class Color implements ColorLike {
 
         // Unsupported color, return to-color (#3920, #7034)
         if (!isNumber(fromRgba[0]) || !isNumber(toRgba[0])) {
+            if (
+                Color.useColorMix &&
+                isStringColor(this.input) &&
+                isStringColor(to.input) &&
+                pos < 0.99
+            ) {
+                return colorMix(this.input, to.input, pos);
+            }
             return to.input || 'none';
         }
 
@@ -377,11 +423,7 @@ export default Color;
  * */
 
 /**
- * A valid color to be parsed and handled by Highcharts. Highcharts internally
- * supports hex colors like `#ffffff`, rgb colors like `rgb(255,255,255)` and
- * rgba colors like `rgba(255,255,255,1)`. Other colors may be supported by the
- * browsers and displayed correctly, but Highcharts is not able to process them
- * and apply concepts like opacity and brightening.
+ * A valid color to be parsed and handled by Highcharts.
  *
  * @typedef {string} Highcharts.ColorString
  */
@@ -491,7 +533,7 @@ export default Color;
  * @function Highcharts.color
  *
  * @param {Highcharts.ColorType} input
- *        The input color in either rgba or hex format
+ *        The input color.
  *
  * @return {Highcharts.Color}
  *         Color instance

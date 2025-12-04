@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -23,9 +23,10 @@ import type { EventCallback } from '../Callback';
 import type Chart from '../Chart/Chart';
 import type ColorAxis from '../Axis/Color/ColorAxis';
 import type CSSObject from '../Renderer/CSSObject';
+import type { DeepPartial } from '../../Shared/Types';
 import type FontMetricsObject from '../Renderer/FontMetricsObject';
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
-import type LegendLike from './LegendLike';
+import type LegendBase from './LegendBase';
 import type { LegendItemObject } from './LegendItem';
 import type LegendOptions from './LegendOptions';
 import type { StatesOptionsKey } from '../Series/StatesOptions';
@@ -75,8 +76,8 @@ const {
  *
  * */
 
-declare module '../Chart/ChartLike' {
-    interface ChartLike {
+declare module '../Chart/ChartBase' {
+    interface ChartBase {
         legend: Legend;
     }
 }
@@ -478,8 +479,7 @@ class Legend {
             Series|Point
         )
     ): void {
-        const checkbox = item.checkbox,
-            legendItem = item.legendItem || {};
+        const legendItem = item.legendItem || {};
 
         // Destroy SVG elements
         for (const key of ['group', 'label', 'line', 'symbol'] as const) {
@@ -488,9 +488,7 @@ class Legend {
             }
         }
 
-        if (checkbox) {
-            discardElement(checkbox);
-        }
+        item.checkbox = discardElement(item.checkbox);
 
         item.legendItem = void 0;
     }
@@ -779,11 +777,17 @@ class Legend {
         // Take care of max width and text overflow (#6659)
         if (chart.styledMode || !(itemStyle as any).width) {
             label.css({
-                width: ((
-                    options.itemWidth ||
-                    legend.widthOption ||
-                    chart.spacingBox.width
-                ) - itemExtraWidth) + 'px'
+                width: (
+                    Math.min(
+                        options.itemWidth ||
+                        legend.widthOption ||
+                        chart.spacingBox.width,
+                        options.maxWidth ? relativeLength(
+                            options.maxWidth,
+                            chart.chartWidth
+                        ) : Infinity
+                    ) - itemExtraWidth
+                ) + 'px'
             });
         }
 
@@ -976,21 +980,21 @@ class Legend {
                 /(rtv|rm|rbv)/,
                 /(rbh|cb|lbh)/,
                 /(lbv|lm|ltv)/
-            ]).forEach(function (alignments: RegExp, side: number): void {
+            ]).forEach((alignments: RegExp, side): void => {
                 if (alignments.test(alignment) && !defined(margin[side])) {
 
                     // Now we have detected on which side of the chart we should
                     // reserve space for the legend
-                    (chart as any)[marginNames[side]] = Math.max(
-                        (chart as any)[marginNames[side]],
+                    chart[marginNames[side]] = Math.max(
+                        chart[marginNames[side]] as number,
                         (
                             chart.legend[
                                 (side + 1) % 2 ? 'legendHeight' : 'legendWidth'
                             ] +
                             [1, -1, -1, 1][side] * (options[
                                 (side % 2) ? 'x' : 'y'
-                            ] as any) +
-                            pick(options.margin as any, 12) +
+                            ]) +
+                            (options.margin ?? 12) +
                             spacing[side] +
                             (chart.titleOffset[side] || 0)
                         )
@@ -1077,6 +1081,7 @@ class Legend {
     public render(): void {
         const legend = this,
             chart = legend.chart,
+            chartSpacingBoxWidth = chart.spacingBox.width,
             renderer = chart.renderer,
             options = legend.options,
             padding = legend.padding,
@@ -1095,14 +1100,15 @@ class Legend {
         legend.lastItemY = 0;
         legend.widthOption = relativeLength(
             options.width as any,
-            chart.spacingBox.width - padding
+            chartSpacingBoxWidth - padding
         );
 
         // Compute how wide the legend is allowed to be
-        allowedWidth = chart.spacingBox.width - 2 * padding - options.x;
+        allowedWidth = chartSpacingBoxWidth - 2 * padding - options.x;
         if (['rm', 'lm'].indexOf(legend.getAlignment().substring(0, 2)) > -1) {
             allowedWidth /= 2;
         }
+
         legend.maxLegendWidth = legend.widthOption || allowedWidth;
 
         if (!legendGroup) {
@@ -1162,7 +1168,19 @@ class Legend {
         allItems.forEach(legend.layoutItem, legend);
 
         // Get the box
-        legendWidth = (legend.widthOption || legend.offsetWidth) + padding;
+        legendWidth = (
+            options.maxWidth ?
+                Math.min(
+                    legend.widthOption ||
+                    allowedWidth,
+                    relativeLength(
+                        options.maxWidth,
+                        chart.chartWidth
+                    ) ||
+                Infinity
+                ) :
+                (legend.widthOption || legend.offsetWidth)
+        ) + padding;
         legendHeight = legend.lastItemY + legend.lastLineHeight +
             legend.titleHeight;
         legendHeight = legend.handleOverflow(legendHeight);
@@ -1265,6 +1283,7 @@ class Legend {
             // colorAxis label layout
             this.group.placed = false;
         }
+
         this.group.align(merge(options, {
             width: this.legendWidth,
             height: this.legendHeight,
@@ -1754,7 +1773,7 @@ class Legend {
  *
  * */
 
-interface Legend extends LegendLike {
+interface Legend extends LegendBase {
     // Use declare module pattern to add
 }
 
@@ -1837,6 +1856,9 @@ export default Legend;
  *//**
  * @name Highcharts.LegendItemObject#symbol
  * @type {Highcharts.SVGElement|undefined}
+ *//**
+ * @name Highcharts.LegendItemObject#label
+ * @type {Highcharts.SVGElement|undefined}
  */
 
 /**
@@ -1911,6 +1933,10 @@ export default Legend;
  * @name Highcharts.PointLegendItemClickEventObject#browserEvent
  * @type {Highcharts.PointerEvent}
  *//**
+ * Whether the default action has been prevented (`true`) or not.
+ * @name Highcharts.PointLegendItemClickEventObject#defaultPrevented
+ * @type {boolean|undefined}
+ *//**
  * Prevent the default action of toggle the visibility of the point.
  * @name Highcharts.PointLegendItemClickEventObject#preventDefault
  * @type {Function}
@@ -1965,6 +1991,10 @@ export default Legend;
  * Related browser event.
  * @name Highcharts.SeriesLegendItemClickEventObject#browserEvent
  * @type {Highcharts.PointerEvent}
+ *//**
+ * Whether the default action has been prevented (`true`) or not.
+ * @name Highcharts.SeriesLegendItemClickEventObject#defaultPrevented
+ * @type {boolean|undefined}
  *//**
  * Prevent the default action of toggle the visibility of the series.
  * @name Highcharts.SeriesLegendItemClickEventObject#preventDefault

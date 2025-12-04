@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Rafal Sebestjanski, Piotr Madej
+ *  (c) 2010-2025 Rafal Sebestjanski, Piotr Madej
  *
  *  License: www.highcharts.com/license
  *
@@ -46,8 +46,8 @@ const {
 type CenterObject = { positions: Array<number> };
 type zData = Array<number|null>;
 
-declare module '../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../Core/Series/SeriesBase' {
+    interface SeriesBase {
         onPoint?: SeriesOnPointComposition.Additions;
         onPointSupported?: boolean;
     }

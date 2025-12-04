@@ -20,7 +20,8 @@ const log = {
     'Highcharts Stock': {},
     'Highcharts Maps': {},
     'Highcharts Gantt': {},
-    'Highcharts Dashboards': {}
+    'Highcharts Dashboards': {},
+    'Highcharts Grid': {}
 };
 
 // Whenever the string 'Upgrade note' appears, the next paragraph is interpreted
@@ -51,54 +52,60 @@ const parseUpgradeNotes = p => {
 const loadPulls = async (
     since,
     branches = 'master',
-    isDashboards = false
+    product = 'Highcharts'
 ) => {
+    const owner = 'highcharts';
+    const repo = 'highcharts';
     let page = 1;
     let pulls = [];
     let lastTagSha;
 
-    const tags = await octokit.repos.listTags({
-        owner: 'highcharts',
-        repo: 'highcharts'
-    }).catch(error);
+    const tags = await octokit.repos.listTags({ owner, repo }).catch(error);
 
     lastTagSha = tags.data[0].commit.sha;
 
-    if (isDashboards) {
-        const dashboardsTags = await octokit.request(
-            'GET /repos/highcharts/highcharts/git/matching-refs/tags/dash',
-            {
-                owner: 'highcharts',
-                repo: 'highcharts'
-            }
+    if (product === 'Grid' || product === 'Dashboards') {
+        const productTags = await octokit.request(
+            `GET /repos/highcharts/highcharts/git/matching-refs/tags/${product === 'Dashboards' ? 'dash' : 'grid'}`,
+            { owner, repo }
         );
 
-        lastTagSha =
-            dashboardsTags.data[dashboardsTags.data.length - 1].object.sha;
+        if (productTags.data.length) {
+            const { object } = productTags.data[productTags.data.length - 1];
+
+            if (object.type === 'tag') {
+                const tagCommit = await octokit.rest.git.getTag({
+                    owner,
+                    repo,
+                    tag_sha: object.sha
+                });
+                lastTagSha = tagCommit.data.object.sha;
+            } else {
+                // Lightweight tags point directly to the commit
+                lastTagSha = object.sha;
+            }
+        }
     }
 
-    const ref = since || lastTagSha,
-        commit = await octokit.repos.getCommit({
-            owner: 'highcharts',
-            repo: 'highcharts',
-            ref
-        }).catch(error);
+    const ref = since || lastTagSha;
+    const commit = await octokit.repos.getCommit({ owner, repo, ref }).catch(error);
 
     console.log(
         `Generating log since tag: ${ref}`.green,
         commit.headers['last-modified']
     );
-    const after = Date.parse(commit.headers['last-modified']);
 
+    const after = Date.parse(commit.headers['last-modified']);
     const branchesArr = branches.split(',');
     let emptyPageCount = 0;
+
     while (page < 20) {
         const pageData = [];
         for (const base of branchesArr) {
 
             let { data } = await octokit.pulls.list({
-                owner: 'highcharts',
-                repo: 'highcharts',
+                owner,
+                repo,
                 state: 'closed',
                 base,
                 page,
@@ -136,8 +143,7 @@ const loadPulls = async (
     return pulls;
 };
 
-module.exports = async (since, fromCache, branches, isDashboards) => {
-
+module.exports = async (since, fromCache, branches, productName) => {
     const included = [],
         tmpFileName = path.join(os.tmpdir(), 'pulls.json');
 
@@ -146,7 +152,7 @@ module.exports = async (since, fromCache, branches, isDashboards) => {
         pulls = await fs.readFile(tmpFileName);
         pulls = JSON.parse(pulls);
     } else {
-        pulls = await loadPulls(since, branches, isDashboards);
+        pulls = await loadPulls(since, branches, productName);
         await fs.writeFile(tmpFileName, JSON.stringify(pulls));
     }
 

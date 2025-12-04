@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -16,9 +16,10 @@
  *
  * */
 
-import type AxisLike from './AxisLike';
+import type AxisBase from './AxisBase';
 import type AxisOptions from './AxisOptions';
 import type Chart from '../Chart/Chart.js';
+import type { DeepPartial } from '../../Shared/Types';
 
 import Axis from './Axis.js';
 import D from '../Defaults.js';
@@ -43,8 +44,8 @@ declare module './AxisType' {
     }
 }
 
-declare module '../Chart/ChartLike'{
-    interface ChartLike {
+declare module '../Chart/ChartBase'{
+    interface ChartBase {
         zAxis?: Array<ZAxis>;
         addZAxis(options: DeepPartial<AxisOptions>): Axis;
     }
@@ -103,7 +104,7 @@ function onChartAfterCreateAxes(this: Chart): void {
  * 3D axis for z coordinates.
  * @private
  */
-class ZAxis extends Axis implements AxisLike {
+class ZAxis extends Axis implements AxisBase {
 
     /* *
      *

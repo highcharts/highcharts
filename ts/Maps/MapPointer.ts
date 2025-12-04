@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -35,6 +35,7 @@ const {
  *
  * */
 
+/** @internal */
 declare module '../Core/PointerEvent' {
     interface PointerEvent {
         deltaY?: number;
@@ -43,6 +44,7 @@ declare module '../Core/PointerEvent' {
     }
 }
 
+/** @internal */
 interface MapPointer extends Pointer {
     chart: MapChart;
     mapNavigation: MapNavigation;
@@ -56,6 +58,7 @@ interface MapPointer extends Pointer {
  *
  * */
 
+/** @internal */
 namespace MapPointer {
 
     /* *
@@ -75,7 +78,7 @@ namespace MapPointer {
 
     /**
      * Extend the Pointer.
-     * @private
+     * @internal
      */
     export function compose(
         PointerClass: typeof Pointer
@@ -95,7 +98,7 @@ namespace MapPointer {
 
     /**
      * The event handler for the doubleclick event.
-     * @private
+     * @internal
      */
     function onContainerDblClick(
         this: MapPointer,
@@ -130,7 +133,7 @@ namespace MapPointer {
 
     /**
      * The event handler for the mouse scroll event.
-     * @private
+     * @internal
      */
     function onContainerMouseWheel(
         this: MapPointer,
@@ -181,7 +184,7 @@ namespace MapPointer {
 
     /**
      * Add lon and lat information to pointer events
-     * @private
+     * @internal
      */
     function wrapNormalize(
         this: MapPointer,
@@ -208,7 +211,7 @@ namespace MapPointer {
 
     /**
      * The pinchType is inferred from mapNavigation options.
-     * @private
+     * @internal
      */
     function wrapZoomOption(
         this: Pointer,
@@ -235,4 +238,5 @@ namespace MapPointer {
  *
  * */
 
+/** @internal */
 export default MapPointer;

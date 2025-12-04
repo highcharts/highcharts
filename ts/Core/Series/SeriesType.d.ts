@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -40,8 +40,8 @@ export type SeriesTypeOptions = SeriesType['options'];
  */
 export type SeriesTypePlotOptions = {
     [K in keyof SeriesTypeRegistry]?: Omit<
-    SeriesTypeRegistry[K]['prototype']['options'],
-    NonPlotOptions
+        SeriesTypeRegistry[K]['prototype']['options'],
+        NonPlotOptions
     >;
 };
 

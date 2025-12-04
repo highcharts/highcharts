@@ -5,20 +5,17 @@
         "declaration": true,
         "baseUrl": "./",
         "moduleResolution": "node",
-        "outDir": "../../js/",
+        "outDir": "../../code/dashboards/es-modules",
         "rootDir": "../",
         "paths": {
             "highcharts": [
                 "../Dashboards/highcharts"
-            ],
-            "@highcharts/dashboards/datagrid": [
-                "../Dashboards/datagrid"
             ]
         }
     },
     "exclude": [
         "../masters/**/*.ts",
-        "../masters-datagrid/**/*.ts",
+        "../masters-grid/**/*.ts",
         "../masters-es5/**/*.ts"
     ],
     "include": [

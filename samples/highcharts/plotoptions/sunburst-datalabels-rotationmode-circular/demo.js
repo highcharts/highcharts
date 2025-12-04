@@ -794,8 +794,8 @@ const data = [{
 }
 ];
 
-// Splice in transparent for the center circle
-Highcharts.getOptions().colors.splice(0, 0, 'transparent');
+// Splice in transparent white for the center circle
+Highcharts.getOptions().colors.splice(0, 0, '#ffffff01');
 
 
 Highcharts.chart('container', {

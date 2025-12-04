@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Paweł Dalek
+ *  (c) 2010-2025 Paweł Dalek
  *
  *  Volume By Price (VBP) indicator for Highcharts Stock
  *
@@ -23,7 +23,7 @@ import type Chart from '../../../Core/Chart/Chart';
 import type ColumnSeries from '../../../Series/Column/ColumnSeries';
 import type CSSObject from '../../../Core/Renderer/CSSObject';
 import type DataExtremesObject from '../../../Core/Series/DataExtremesObject';
-import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type SVGAttributes from '../../../Core/Renderer/SVG/SVGAttributes';
@@ -561,7 +561,7 @@ class VBPIndicator extends SMAIndicator {
     }
 
     public getValues <TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries&IndicatorLinkedSeriesLike,
+        series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: VBPParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const indicator = this,

@@ -14,6 +14,10 @@
             text: 'AAPL Stock Price'
         },
 
+        xAxis: {
+            overscroll: '40px'
+        },
+
         series: [{
             name: 'AAPL Stock Price',
             data: data,
@@ -22,6 +26,7 @@
             tooltip: {
                 valueDecimals: 2
             },
+            color: '#2caffe',
             fillColor: {
                 linearGradient: {
                     x1: 0,
@@ -30,14 +35,20 @@
                     y2: 1
                 },
                 stops: [
-                    [0, Highcharts.getOptions().colors[0]],
-                    [
-                        1,
-                        Highcharts.color(
-                            Highcharts.getOptions().colors[0]
-                        ).setOpacity(0).get('rgba')
-                    ]
+                    [0, '#2caffe'],
+                    [1, '#2caffe00']
                 ]
+            },
+            lastPrice: {
+                enabled: true,
+                color: 'transparent',
+                label: {
+                    enabled: true,
+                    backgroundColor: '#2caffe',
+                    style: {
+                        color: '#fff'
+                    }
+                }
             }
         }]
     });

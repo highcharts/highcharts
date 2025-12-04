@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2025 Highsoft AS
  *
  *  Authors: Øystein Moseng, Torstein Hønsi, Jon A. Nygård
  *
@@ -58,8 +58,8 @@ const {
  *
  * */
 
-declare module '../../Core/Series/PointLike' {
-    interface PointLike {
+declare module '../../Core/Series/PointBase' {
+    interface PointBase {
         /** @requires modules/draggable-points */
         getDropValues(
             origin: DragDropPositionObject,
@@ -77,8 +77,8 @@ declare module '../../Core/Series/PointOptions' {
     }
 }
 
-declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase {
         /** @requires modules/draggable-points */
         dragDropProps?: (Record<string, Partial<SeriesDragDropPropsObject>>|null);
         /** @requires modules/draggable-points */
@@ -708,7 +708,7 @@ function pointShowDragHandles(
             // Correct left edge value depending on the xAxis' type, #16596
             const minEdge = point.series.xAxis.categories ? -0.5 : 0;
             if (!path || pos.x < minEdge || pos.y < 0) {
-                return;
+                continue;
             }
 
             // If cursor is not set explicitly, use axis direction

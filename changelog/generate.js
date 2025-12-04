@@ -13,6 +13,8 @@ consistent-return: 0 */
  * --review        Create a review page with edit links and a list of all PRs
  *                 that are not used in the changelog.
  * --fromCache     Re-format pulls from cache, do not load new from GitHub.
+ * --product       The product to generate the changelog for (defaults to
+ *                 Highcharts) for example --product Grid.
  */
 const https = require('https');
 const marked = require('marked');
@@ -39,6 +41,7 @@ const getFile = url => new Promise((resolve, reject) => {
         reject(err);
     });
 });
+
 
 (function () {
     'use strict';
@@ -87,11 +90,13 @@ const getFile = url => new Promise((resolve, reject) => {
      * Get the log from Git
      */
     async function getLog(callback) {
+        const product = params.product || 'Highcharts';
+
         var log = await prLog(
             params.since,
             params.fromCache,
             params.branches,
-            params.highchartsDashboards
+            product
         ).catch(e => console.error(e));
         callback(log);
     }
@@ -181,7 +186,7 @@ const getFile = url => new Promise((resolve, reject) => {
     /**
      * Build the output
      */
-    function buildMarkdown(name, version, date, log, products) {
+    function buildMarkdown(name, version, date, log, products, productName) {
         var outputString,
             filename = path.join(
                 __dirname,
@@ -193,7 +198,8 @@ const getFile = url => new Promise((resolve, reject) => {
                 'Highcharts Stock': 'highstock',
                 'Highcharts Maps': 'highmaps',
                 'Highcharts Gantt': 'gantt',
-                'Highcharts Dashboards': 'dashboards'
+                'Highcharts Dashboards': 'dashboards',
+                'Highcharts Grid': 'grid'
             }[name];
 
         log = log || [];
@@ -211,7 +217,8 @@ const getFile = url => new Promise((resolve, reject) => {
         // Start the output string
         outputString = '# Changelog for ' + name + ' v' + version + ' (' + date + ')\n\n';
 
-        if (name !== 'Highcharts Dashboards') {
+        // Only add changes for Highcharts
+        if (!['Highcharts Dashboards', 'Highcharts Grid'].includes(name)) {
             if (name !== 'Highcharts') {
                 outputString += `- Most changes listed under Highcharts ${products.Highcharts.nr} above also apply to ${name} ${version}.\n`;
             } else if (log.length === 0) {
@@ -220,9 +227,15 @@ const getFile = url => new Promise((resolve, reject) => {
         }
 
         log.forEach((change, i) => {
+            let desc = addLinks(change.description || change, apiFolder);
 
-            const desc = addLinks(change.description || change, apiFolder);
-
+            if (productName === 'Grid') {
+                if (change.labels.find(l => l.name === 'Grid Pro')) {
+                    desc = '**Grid Pro:** ' + desc;
+                } else {
+                    desc = '**Grid:** ' + desc;
+                }
+            }
 
             // Start fixes
             if (i === log.startFixes) {
@@ -301,35 +314,35 @@ const getFile = url => new Promise((resolve, reject) => {
 
     // Get the Git log
     getLog(function (log) {
-
+        const product = params.product || 'Highcharts';
         const pack = require(path.join(__dirname, '/../package.json'));
         const d = new Date();
         const review = [];
+        const productPaths = {
+            Grid: '../tools/gulptasks/grid/build-properties.json',
+            Dashboards: '../tools/gulptasks/dashboards/build-properties.json'
+        };
 
-        if (params.highchartsDashboards && params.release) {
-            const version = params.release;
-            if (!/^\d+\.\d+\.\d+(?:-\w+)?$/su.test(version)) {
-                throw new Error('No valid `--release x.x.x` provided.');
+        if (productPaths[product]) {
+            const { version } = require(productPaths[product]);
+
+            if (!version) {
+                throw new Error('Check `build-properties.json` for `version` property.');
             }
-            const dashboardsName = 'Highcharts Dashboards';
-            const dashboardsProduct = {
-                'Highcharts Dashboards': {
-                    nr: version,
-                    date: d.getFullYear() + '-' +
-                pad(d.getMonth() + 1, 2) + '-' +
-                pad(d.getDate(), 2)
-                }
-            };
 
+            if (!/^\d+\.\d+\.\d+(?:-\w+)?$/su.test(version)) {
+                throw new Error('No valid release version provided.');
+            }
 
             review.push(buildMarkdown(
-                dashboardsName,
+                `Highcharts ${product}`,
                 version,
-                dashboardsProduct[dashboardsName].date,
+                `${d.getFullYear()}-${pad(d.getMonth() + 1, 2)}-${pad(d.getDate(), 2)}`,
                 log,
                 void 0,
-                optionKeys
+                product
             ));
+
             if (params.review) {
                 saveReview(review.join('\n\n___\n'));
             }
@@ -361,8 +374,7 @@ const getFile = url => new Promise((resolve, reject) => {
                                     products[name].nr || version,
                                     products[name].date,
                                     log,
-                                    products,
-                                    optionKeys
+                                    products
                                 ));
                             }
                         }

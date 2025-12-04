@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2020-2024 Highsoft AS
+ *  (c) 2020-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -27,6 +27,10 @@ import type PointOptions from './PointOptions';
 import type SeriesOptions from './SeriesOptions';
 
 import DataTable from '../../Data/DataTable.js';
+import ColumnUtils from '../../Data/ColumnUtils.js';
+const {
+    convertToNumber
+} = ColumnUtils;
 import U from '../Utilities.js';
 const {
     defined,
@@ -126,7 +130,7 @@ class DataSeriesConverter {
             for (let i = 0, iEnd = table.getRowCount(); i < iEnd; i++) {
                 isCellFound = false;
                 pointOptions = {
-                    x: table.getCellAsNumber('x', i, true)
+                    x: convertToNumber(table.getCell('x', i), true)
                 };
 
                 for (let j = 0, jEnd = pointArrayMap.length; j < jEnd; j++) {
@@ -135,10 +139,8 @@ class DataSeriesConverter {
 
                     if (typeof cell !== 'undefined') {
                         isCellFound = true;
-                        pointOptions[pointArrayMap[j]] = table.getCellAsNumber(
-                            cellName,
-                            i
-                        );
+                        pointOptions[pointArrayMap[j]] =
+                            convertToNumber(table.getCell(cellName, i));
                     }
                 }
 

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2014-2024 Highsoft AS
+ *  (c) 2014-2025 Highsoft AS
  *
  *  Authors: Jon Arild Nygard / Oystein Moseng
  *
@@ -40,10 +40,10 @@ export interface TreemapPointOptions extends ScatterPointOptions {
     name?: string;
 
     /**
-     * Only for treemap. Use this option to build a tree structure. The
-     * value should be the id of the point which is the parent. If no points
-     * has a matching id, or this option is undefined, then the parent will
-     * be set to the root.
+     * Only for trees. Use this option to build a tree structure. The value
+     * should be the id of the point which is the parent. If no points has a
+     * matching id, or this option is undefined, then the parent will be set to
+     * the root.
      *
      * @sample {highcharts} highcharts/point/parent/
      *         Point parent

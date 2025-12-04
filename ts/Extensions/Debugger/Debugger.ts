@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -17,7 +17,7 @@
  * */
 
 import type Chart from '../../Core/Chart/Chart';
-import type GlobalsLike from '../../Core/GlobalsLike';
+import type GlobalsBase from '../../Core/GlobalsBase';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import D from '../../Core/Defaults.js';
@@ -39,8 +39,8 @@ const {
  *
  * */
 
-declare module '../../Core/Chart/ChartLike'{
-    interface ChartLike {
+declare module '../../Core/Chart/ChartBase'{
+    interface ChartBase {
         errorElements?: Array<SVGElement>;
     }
 }
@@ -120,7 +120,7 @@ function onChartBeforeRedraw(
  * @private
  */
 function onHighchartsDisplayError(
-    this: GlobalsLike,
+    this: GlobalsBase,
     e: U.ErrorMessageEventObject
 ): void {
     // Display error on the chart causing the error or the last created chart.

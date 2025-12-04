@@ -2,7 +2,7 @@
  *
  *  Variable Pie module for Highcharts
  *
- *  (c) 2010-2024 Grzegorz Blachliński
+ *  (c) 2010-2025 Grzegorz Blachliński
  *
  *  License: www.highcharts.com/license
  *
@@ -179,6 +179,16 @@ const VariablePieSeriesDefaults: VariablePieSeriesOptions = {
  * @product   highcharts
  * @apioption series.variablepie.data
  */
+
+/**
+* The z value of the point.
+*
+* @type {(number| null)}
+*
+* @product highcharts
+*
+* @apioption series.variablepie.data.z
+*/
 
 ''; // Keeps doclets above separate
 

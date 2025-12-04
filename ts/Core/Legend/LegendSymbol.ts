@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -37,20 +37,20 @@ const {
  *
  * */
 
-declare module '../Axis/AxisLike' {
-    interface AxisLike extends LegendItem {
+declare module '../Axis/AxisBase' {
+    interface AxisBase extends LegendItem {
         // Nothing to add
     }
 }
 
-declare module '../Series/PointLike' {
-    interface PointLike extends LegendItem {
+declare module '../Series/PointBase' {
+    interface PointBase extends LegendItem {
         // Nothing to add
     }
 }
 
-declare module '../Series/SeriesLike' {
-    interface SeriesLike extends LegendItem {
+declare module '../Series/SeriesBase' {
+    interface SeriesBase extends LegendItem {
         drawLegendSymbol: (
             legend: Legend,
             item: (Point|Series)

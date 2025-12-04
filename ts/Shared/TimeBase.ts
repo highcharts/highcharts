@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -201,7 +201,7 @@ class TimeBase {
         this.dTLCache = {};
         this.options = options = merge(true, this.options, options);
 
-        const { timezoneOffset, useUTC } = options;
+        const { timezoneOffset, useUTC, locale } = options;
 
         // Allow using a different Date class
         this.Date = options.Date || win.Date || Date;
@@ -228,6 +228,11 @@ class TimeBase {
             timezone?.indexOf('Etc/GMT') !== 0;
 
         this.timezone = timezone;
+
+        // Update locale.
+        if (this.lang && locale) {
+            this.lang.locale = locale;
+        }
 
         // Assign default time formats from locale strings
         (

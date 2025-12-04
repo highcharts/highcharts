@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -70,7 +70,7 @@ export interface StackLabelOptions {
 }
 
 export type StackOverflowValue = (
-    'normal'|'overlap'|'percent'|'stream'|'group'
+    'normal'|'overlap'|'percent'|'stream'|'group' | null
 );
 
 /* *

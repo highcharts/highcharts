@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -139,13 +139,11 @@ const mapNavigation: MapNavigationOptions = {
     /**
      * The individual buttons for the map navigation. This usually includes
      * the zoom in and zoom out buttons. Properties for each button is
-     * inherited from
-     * [mapNavigation.buttonOptions](#mapNavigation.buttonOptions), while
-     * individual options can be overridden. But default, the `onclick`, `text`
-     * and `y` options are individual.
+     * inherited from [mapNavigation.buttonOptions](#mapNavigation.buttonOptions),
+     * while individual options can be overridden. But default, the `onclick`,
+     * `text` and `y` options are individual.
      */
     buttons: {
-
         /**
          * Options for the zoom in button. Properties for the zoom in and zoom
          * out buttons are inherited from

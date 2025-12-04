@@ -1,0 +1,69 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
+
+body {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
+    background: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
+}
+
+:root,
+.highcharts-light {
+    --code-background: #f7f7f7;
+    --code-border: #e1e1e1;
+    --anchor-color: #007bff;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --code-background: #2a2a2a;
+        --code-border: #4a4a4a;
+        --anchor-color: #8ec3fc;
+    }
+}
+
+.highcharts-dark {
+    --code-background: #2a2a2a;
+    --code-border: #4a4a4a;
+    --anchor-color: #8ec3fc;
+}
+
+.demo {
+    padding: 8px 12px;
+}
+
+.highcharts-description {
+    padding: 0 8px;
+}
+
+.highcharts-description a {
+    color: var(--anchor-color);
+}
+
+#changelog:not(:empty) {
+    border-radius: 5px;
+    padding: 10px 15px;
+    border: 1px solid #aaa;
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+code {
+    font-family: Consolas, "courier new", monospace;
+    line-height: 1em;
+    background: var(--code-background);
+    border: 1px solid var(--code-border);
+    color: var(--highcharts-neutral-color-100);
+    padding: 2px 4px;
+    border-radius: 5px;
+    display: inline-block;
+}

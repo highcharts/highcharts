@@ -14,9 +14,9 @@ QUnit.skip(
 
         totalTime = (new Date()).getTime();
 
-        for (var i = 0, ie = ROUNDS; i < ie; ++i) {
+        for (let i = 0, ie = ROUNDS; i < ie; ++i) {
 
-            var chart = Highcharts.chart(
+            const chart = Highcharts.chart(
                 'container',
                 {
                     series: [{
@@ -36,8 +36,7 @@ QUnit.skip(
                 totalTime = ((new Date()).getTime() - totalTime);
                 console.log(
                     'performance/highcharts-chart: ' +
-                    totalCount + ' tests, ' +
-                    totalTime + 'ms'
+                    `${totalCount} tests, ${totalTime} ms`
                 );
             }
         }

@@ -2,7 +2,7 @@
  *
  *  Dependency wheel module
  *
- *  (c) 2018-2024 Torstein Honsi
+ *  (c) 2018-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *

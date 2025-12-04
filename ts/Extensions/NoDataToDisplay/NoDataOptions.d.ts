@@ -2,7 +2,7 @@
  *
  *  Plugin for displaying a message when there is no data visible in chart.
  *
- *  (c) 2010-2024 Highsoft AS
+ *  (c) 2010-2025 Highsoft AS
  *
  *  Author: Oystein Moseng
  *

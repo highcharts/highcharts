@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -23,7 +23,7 @@ import type GradientColor from './GradientColor';
  *
  * */
 
-export interface ColorLike {
+export interface ColorBase {
     // Nothing here yet
 }
 

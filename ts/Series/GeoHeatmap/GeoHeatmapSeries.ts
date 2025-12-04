@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Highsoft AS
+ *  (c) 2010-2025 Highsoft AS
  *
  *  Authors: Magdalena Gut, Piotr Madej
  *
@@ -51,6 +51,7 @@ const {
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
+    error,
     extend,
     isNumber,
     isObject,
@@ -340,12 +341,16 @@ class GeoHeatmapSeries extends MapSeries {
                 });
 
             if (canvas && ctx && colorAxis && topLeft && bottomRight) {
-                const dimensions = {
-                    x: topLeft.x,
-                    y: topLeft.y,
-                    width: bottomRight.x - topLeft.x,
-                    height: bottomRight.y - topLeft.y
-                };
+                const
+                    { x, y } = topLeft,
+                    width = bottomRight.x - x,
+                    height = bottomRight.y - y,
+                    dimensions = {
+                        x,
+                        y,
+                        width,
+                        height
+                    };
 
                 if (
                     // Do not calculate new canvas if not necessary
@@ -355,27 +360,62 @@ class GeoHeatmapSeries extends MapSeries {
                     // Always calculate new canvas for Orthographic projection
                     mapView.projection.options.name === 'Orthographic'
                 ) {
-                    series.isDirtyCanvas = true;
                     const canvasWidth = canvas.width = ~~(360 / colsize) + 1,
                         canvasHeight = canvas.height = ~~(180 / rowsize) + 1,
                         canvasArea = canvasWidth * canvasHeight,
-                        pixelData = new Uint8ClampedArray(canvasArea * 4);
-                    series.directTouch = false; // Needed for tooltip
+                        pixelData = new Uint8ClampedArray(canvasArea * 4),
+                        // Guess if we have to round lon/lat with this data
+                        { lat = 0, lon = 0 } = points[0].options,
+                        unEvenLon = lon % rowsize !== 0,
+                        unEvenLat = lat % colsize !== 0,
+                        getAdjustedLon = (
+                            unEvenLon ?
+                                (lon: number): number => (
+                                    Math.round(lon / rowsize) * rowsize
+                                ) :
+                                (lon: number): number => lon
+                        ),
+                        getAdjustedLat = (
+                            unEvenLat ?
+                                (lat: number): number => (
+                                    Math.round(lat / colsize) * colsize
+                                ) :
+                                (lat: number): number => lat
+                        ),
+                        pointsLen = points.length;
+
+                    if (unEvenLon || unEvenLat) {
+                        error(
+                            'Highcharts Warning: For best performance,' +
+                            ' lon/lat datapoints should spaced by a single ' +
+                            'colsize/rowsize',
+                            false,
+                            series.chart,
+                            {
+                                colsize: String(colsize),
+                                rowsize: String(rowsize)
+                            }
+                        );
+                    }
+
+                    // Needed for tooltip
+                    series.directTouch = false;
+                    series.isDirtyCanvas = true;
 
                     // First pixelData represents the geo coordinates
-                    for (let i = 0; i < points.length; i++) {
+                    for (let i = 0; i < pointsLen; i++) {
                         const p = points[i],
-                            sourceArr = new Uint8ClampedArray(
-                                colorFromPoint(p.value, p)
-                            ),
                             { lon, lat } = p.options;
-
                         if (isNumber(lon) && isNumber(lat)) {
                             pixelData.set(
-                                sourceArr,
+                                colorFromPoint(p.value, p),
                                 scaledPointPos(
-                                    lon, lat, canvasWidth, canvasHeight,
-                                    colsize, rowsize
+                                    getAdjustedLon(lon),
+                                    getAdjustedLat(lat),
+                                    canvasWidth,
+                                    canvasHeight,
+                                    colsize,
+                                    rowsize
                                 ) * 4
                             );
                         }
@@ -385,8 +425,8 @@ class GeoHeatmapSeries extends MapSeries {
                         blurFactor = blur === 0 ? 1 : blur * 11,
                         upscaledWidth = ~~(canvasWidth * blurFactor),
                         upscaledHeight = ~~(canvasHeight * blurFactor),
-                        projectedWidth = ~~dimensions.width,
-                        projectedHeight = ~~dimensions.height,
+                        projectedWidth = ~~width,
+                        projectedHeight = ~~height,
                         img =
                             new ImageData(pixelData, canvasWidth, canvasHeight);
 
@@ -405,32 +445,35 @@ class GeoHeatmapSeries extends MapSeries {
                     ctx.drawImage(
                         canvas,
                         0, 0, img.width, img.height, // Grab the ImageData
-                        0, 0, canvas.width, canvas.height // Scale it
+                        0, 0, upscaledWidth, upscaledHeight // Scale it
                     );
 
                     // Add projection to upscaled ImageData
-                    const cartesianImageData = ctx.getImageData(
-                            0, 0, canvas.width, canvas.height
-                        ),
+                    const
                         projectedPixelData = this.getProjectedImageData(
                             mapView,
                             projectedWidth,
                             projectedHeight,
-                            cartesianImageData,
+                            ctx.getImageData(
+                                0, 0, upscaledWidth, upscaledHeight
+                            ),
                             canvas,
-                            dimensions.x,
-                            dimensions.y
-                        ),
-                        projectedImg = new ImageData(
+                            x,
+                            y
+                        );
+
+                    canvas.width = projectedWidth;
+                    canvas.height = projectedHeight;
+
+                    ctx.putImageData(
+                        new ImageData(
                             projectedPixelData,
                             projectedWidth,
                             projectedHeight
-                        );
-
-                    ctx.globalCompositeOperation = 'copy';
-                    canvas.width = projectedWidth;
-                    canvas.height = projectedHeight;
-                    ctx.putImageData(projectedImg, 0, 0);
+                        ),
+                        0,
+                        0
+                    );
                 }
 
                 if (image) {
@@ -452,26 +495,27 @@ class GeoHeatmapSeries extends MapSeries {
                             now,
                             fx
                         ): void => {
+                            const pos = fx.pos;
                             image.attr({
                                 x: (
                                     startX + (
-                                        dimensions.x - startX
-                                    ) * fx.pos
+                                        x - startX
+                                    ) * pos
                                 ),
                                 y: (
                                     startY + (
-                                        dimensions.y - startY
-                                    ) * fx.pos
+                                        y - startY
+                                    ) * pos
                                 ),
                                 width: (
                                     startWidth + (
-                                        dimensions.width - startWidth
-                                    ) * fx.pos
+                                        width - startWidth
+                                    ) * pos
                                 ),
                                 height: (
                                     startHeight + (
-                                        dimensions.height - startHeight
-                                    ) * fx.pos
+                                        height - startHeight
+                                    ) * pos
                                 )
                             });
                         };
@@ -612,7 +656,7 @@ class GeoHeatmapSeries extends MapSeries {
 
     public searchPoint(
         e: PointerEvent,
-        compareX?: boolean | undefined
+        compareX?: boolean
     ): Point | undefined {
         const series = this,
             chart = this.chart,

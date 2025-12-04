@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2019-2024 Highsoft AS
+ *  (c) 2019-2025 Highsoft AS
  *
  *  Boost module: stripped-down renderer for higher performance
  *

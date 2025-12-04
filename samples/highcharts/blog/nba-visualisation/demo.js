@@ -25,7 +25,6 @@ Highcharts.chart('container', {
         dataLabels: {
             enabled: true,
             allowOverlap: true,
-            useHTML: true,
             y: 38,
             formatter: function () {
                 return '<span style="color:' + this.point.color + '">' +

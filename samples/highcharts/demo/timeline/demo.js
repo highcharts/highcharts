@@ -27,14 +27,7 @@ Highcharts.chart('container', {
     subtitle: {
         text: 'Info source: <a href="https://en.wikipedia.org/wiki/Timeline_of_space_exploration">www.wikipedia.org</a>'
     },
-    colors: [
-        '#4185F3',
-        '#427CDD',
-        '#406AB2',
-        '#3E5A8E',
-        '#3B4A68',
-        '#363C46'
-    ],
+    colors: ['#2caffe', '#33a6f3', '#3a9dea', '#4194e0', '#488bd7', '#406ab2'],
     series: [{
         data: [{
             name: '2000: Orbiting of an asteroid',

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Øystein Moseng
+ *  (c) 2009-2025 Øystein Moseng
  *
  *  Default lang/i18n options for accessibility.
  *
@@ -18,6 +18,7 @@
  *
  * */
 
+import type { DeepPartial } from '../../Shared/Types';
 import type LangOptions from './LangOptions';
 
 /* *
@@ -370,7 +371,12 @@ const langOptions: DeepPartial<LangOptions> = {
             timeRangeMinutes: 'Data range: {range} minutes.',
             timeRangeSeconds: 'Data range: {range} seconds.',
             rangeFromTo: 'Data ranges from {rangeFrom} to {rangeTo}.',
-            rangeCategories: 'Data range: {numCategories} categories.'
+            rangeCategories: 'Data range: {numCategories} categories.',
+            defaultAxisNames: {
+                categories: 'categories',
+                time: 'Time',
+                values: 'values'
+            }
         }, /* eslint-enable max-len */
 
         /**

@@ -220,7 +220,7 @@
             },
             fillOpacity: 1,
             width: 0.2,
-            color: '#550d6566',
+            color: 'var(--highcharts-highlight-color-60, #2caffe)',
             data: [
                 ['Ecuador', 'Qatar'],
                 ['Senegal', 'Qatar'],

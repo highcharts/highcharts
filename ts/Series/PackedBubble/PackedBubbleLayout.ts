@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Grzegorz Blachlinski, Sebastian Bochan
+ *  (c) 2010-2025 Grzegorz Blachlinski, Sebastian Bochan
  *
  *  License: www.highcharts.com/license
  *
@@ -39,8 +39,8 @@ const {
  *
  * */
 
-declare module '../../Core/Chart/ChartLike' {
-    interface ChartLike {
+declare module '../../Core/Chart/ChartBase' {
+    interface ChartBase {
         allDataPoints?: Array<PackedBubbleSeries.Data>;
         allParentNodes: Array<PackedBubblePoint>;
         getSelectedParentNodes(): Array<PackedBubblePoint>;

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -20,7 +20,7 @@ import type AnimationOptions from '../Animation/AnimationOptions';
 import type ColorType from '../Color/ColorType';
 import type DataTable from '../../Data/DataTable';
 import type { EventCallback } from '../Callback';
-import type PointLike from './PointLike';
+import type PointBase from './PointBase';
 import type {
     PointEventsOptions,
     PointMarkerOptions,
@@ -68,8 +68,8 @@ const {
  *
  * */
 
-declare module './PointLike' {
-    interface PointLike {
+declare module './PointBase' {
+    interface PointBase {
         className?: string;
         events?: PointEventsOptions;
         importedUserEvent?: Function;
@@ -141,6 +141,7 @@ class Point {
     public shapeType?: string;
     public startXPos?: number;
     public state?: StatesOptionsKey;
+    public tooltipPos?: Array<number>;
     public total?: number;
     public visible: boolean = true;
     public x!: number;
@@ -231,6 +232,16 @@ class Point {
      * @readonly
      * @name Highcharts.Point#shapeArgs
      * @type {Readonly<Highcharts.SVGAttributes>|undefined}
+     */
+
+    /**
+     * Defines the tooltip's position for a data point in a chart. It is an
+     * array of numbers representing the coordinates for the tooltip's
+     * placement, allowing for precise control over its location.
+     *
+     * @readonly
+     * @name Highcharts.Point#tooltipPos
+     * @type {Readonly<Array<number>>|undefined}
      */
 
     /**
@@ -466,7 +477,9 @@ class Point {
      *
      * @private
      * @function Highcharts.Point#destroyElements
+     *
      * @param {Highcharts.Dictionary<number>} [kinds]
+     * Kinds of elements to destroy
      */
     public destroyElements(kinds?: Record<string, number>): void {
         const point = this,
@@ -710,6 +723,8 @@ class Point {
 
         this.resolveColor();
 
+        this.dataLabelOnNull ??= series.options.nullInteraction;
+
         series.chart.pointCount++;
 
         fireEvent(this, 'afterInit');
@@ -857,6 +872,8 @@ class Point {
     }
 
     /**
+     * Resolve the color of a point.
+     *
      * @private
      * @function Highcharts.Point#resolveColor
      */
@@ -871,7 +888,7 @@ class Point {
             colorIndex: number;
 
         // Remove points nonZonedColor for later recalculation
-        delete (this as any).nonZonedColor;
+        delete this.nonZonedColor;
 
         if (series.options.colorByPoint) {
             if (!styledMode) {
@@ -1058,6 +1075,8 @@ class Point {
         redraw = pick(redraw, true);
 
         /**
+         * Perform the actual update of the point.
+         *
          * @private
          */
         function update(): void {
@@ -1374,7 +1393,7 @@ class Point {
      * @emits Highcharts.Point#event:afterSetState
      */
     public setState(
-        state?: (StatesOptionsKey|''),
+        state?: StatesOptionsKey,
         move?: boolean
     ): void {
         const point = this,
@@ -1653,11 +1672,11 @@ class Point {
  *
  * */
 
-interface Point extends PointLike {
+interface Point extends PointBase {
     // Merge extensions with point class
     hcEvents?: Record<
-    string,
-    Array<U.EventWrapperObject<Series>> & { userEvent?: boolean }
+        string,
+        Array<U.EventWrapperObject<Series>> & { userEvent?: boolean }
     >;
 }
 

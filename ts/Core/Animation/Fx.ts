@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -17,7 +17,7 @@
  * */
 
 import type AnimationOptions from './AnimationOptions';
-import type FxLike from './FxLike';
+import type FxBase from './FxBase';
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type HTMLElement from '../Renderer/HTML/HTMLElement';
 import type SVGElement from '../Renderer/SVG/SVGElement';
@@ -531,7 +531,7 @@ class Fx {
  *
  * */
 
-interface Fx extends FxLike {
+interface Fx extends FxBase {
     // Nothing here yet
 }
 

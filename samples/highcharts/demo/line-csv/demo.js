@@ -106,6 +106,7 @@ Highcharts.chart('container', {
     },
 
     tooltip: {
+        fixed: true,
         shared: true,
         crosshairs: true
     },

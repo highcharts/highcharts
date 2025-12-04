@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2016-2024 Highsoft AS
+ *  (c) 2016-2025 Highsoft AS
  *
  *  Author: Lars A. V. Cabrera
  *
@@ -22,6 +22,7 @@ import type {
     AxisOptions,
     YAxisOptions
 } from '../Axis/AxisOptions';
+import type { DeepPartial } from '../../Shared/Types';
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type Options from '../Options';
 
@@ -150,7 +151,8 @@ class GanttChart extends Chart {
                 // Defaults
                 {
                     grid: {
-                        borderColor: Palette.neutralColor20,
+                        borderColor: defaultOptions.xAxis?.grid?.borderColor ||
+                            Palette.neutralColor20,
                         enabled: true
                     },
                     opposite: defaultOptions.xAxis?.opposite ??
@@ -174,7 +176,8 @@ class GanttChart extends Chart {
             // Defaults
             {
                 grid: {
-                    borderColor: Palette.neutralColor20,
+                    borderColor: defaultOptions.yAxis?.grid?.borderColor ||
+                        Palette.neutralColor20,
                     enabled: true
                 },
 

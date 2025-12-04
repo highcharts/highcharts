@@ -29,8 +29,7 @@ Highcharts.chart('container', {
                         style: {
                             textOutline: false,
                             fontSize: 18
-                        },
-                        zIndex: 9
+                        }
                     },
                     borderWidth: 3
                 }
@@ -162,7 +161,6 @@ Highcharts.chart('container', {
       'Source:<a href="https://en.wikipedia.org/wiki/Local_government_in_Fiji">Wikipedia</a>'
     },
     tooltip: {
-        useHTML: true,
         pointFormat: '<b>{point.name}</b>: Population is <b>{point.value}</b>'
     }
 });

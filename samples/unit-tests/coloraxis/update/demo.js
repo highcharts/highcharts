@@ -263,7 +263,7 @@ QUnit.test('Color axis update (#3207)', function (assert) {
     });
 
     // Test the SVG
-    var svg = chart.getSVG();
+    var svg = chart.exporting.getSVG();
     chart.destroy();
     $('#container').html(svg);
 

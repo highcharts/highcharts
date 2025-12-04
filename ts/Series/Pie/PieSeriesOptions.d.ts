@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -298,7 +298,7 @@ export interface PieSeriesOptions extends LineSeriesOptions {
      *
      * @product highcharts highmaps
      */
-    events?: SeriesEventsOptions;
+    events?: PieSeriesEventsOptions;
 
     /**
      * If the total sum of the pie's values is 0, the series is represented

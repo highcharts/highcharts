@@ -133,7 +133,7 @@ QUnit.test(
         });
 
         // Export it
-        $('#output').html(chart.getSVG());
+        $('#output').html(chart.exporting.getSVG());
 
         assert.strictEqual(
             $('#output path[fill="#abcdef"]').length,

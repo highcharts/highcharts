@@ -1,4 +1,58 @@
 @import url("https://code.highcharts.com/css/highcharts.css");
+@import url("https://www.highcharts.com/demo/_next/static/css/pages/_app.css");
+
+html {
+    overflow: hidden;
+}
+
+:root,
+.highcharts-light {
+    --illo-green: var(--primitives-success-200);
+    --illo-purple: var(--primitives-brand-500);
+    --illo-accent-0: var(--primitives-neutral-0);
+    --illo-accent-50: var(--primitives-neutral-50);
+    --illo-accent-200: var(--primitives-neutral-200);
+    --illo-accent-800: var(--primitives-neutral-800);
+    --illo-brand-200: var(--primitives-brand-200);
+    --illo-brand-800: var(--primitives-brand-800);
+    --illo-background: var(--primitives-neutral-0);
+    --illo-lines: var(--primitives-neutral-100);
+    --illo-just-white: #fff;
+    --illo-just-black: #000;
+    --illo-accent-teal: #6699a1;
+}
+
+.highcharts-dark {
+    --illo-green: var(--primitives-success-300);
+    --illo-purple: var(--primitives-brand-500);
+    --illo-accent-0: var(--primitives-neutral-1000);
+    --illo-accent-50: var(--primitives-neutral-700);
+    --illo-accent-200: var(--primitives-neutral-500);
+    --illo-accent-800: var(--primitives-neutral-0);
+    --illo-brand-200: var(--primitives-brand-500);
+    --illo-brand-800: var(--primitives-brand-200);
+    --illo-background: var(--primitives-neutral-1000);
+    --illo-lines: var(--primitives-neutral-500);
+    --illo-just-white: #fff;
+    --illo-just-black: #000;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --illo-green: var(--primitives-success-300);
+        --illo-purple: var(--primitives-brand-500);
+        --illo-accent-0: var(--primitives-neutral-1000);
+        --illo-accent-50: var(--primitives-neutral-700);
+        --illo-accent-200: var(--primitives-neutral-500);
+        --illo-accent-800: var(--primitives-neutral-0);
+        --illo-brand-200: var(--primitives-brand-500);
+        --illo-brand-800: var(--primitives-brand-200);
+        --illo-background: var(--primitives-neutral-1000);
+        --illo-lines: var(--primitives-neutral-500);
+        --illo-just-white: #fff;
+        --illo-just-black: #000;
+    }
+}
 
 body {
     margin: 0;
@@ -31,7 +85,7 @@ body {
 
 .chart-container .highcharts-plot-band,
 .highcharts-pane {
-    fill: #30426b;
+    fill: var(--illo-background);
     fill-opacity: 1;
     z-index: 30;
 }
@@ -83,12 +137,17 @@ body {
     height: 100%;
     aspect-ratio: 1 / 1;
     border-radius: 4px;
-    background-color: #2f2b38;
-    border: 1px solid #46465c;
+    background-color: var(--illo-background);
+    border: none;
 }
 
+/* #maps {
+    width: 500px;
+    height: 500px;
+} */
+
 #maps .highcharts-background {
-    fill: #1f1836;
+    fill: var(--illo-background);
 }
 
 #maps .highcharts-map-series {
@@ -96,7 +155,7 @@ body {
 }
 
 #maps .highcharts-plot-background {
-    fill: #46445d;
+    fill: var(--illo-accent-50);
     stroke: transparent;
 }
 
@@ -106,27 +165,31 @@ body {
     stroke: transparent;
 }
 
-#maps .foreground,
+#maps .foreground {
+    fill: var(--illo-accent-0);
+    stroke: transparent;
+}
+
 #maps .map-point-center .highcharts-color-5 {
-    fill: #201836;
+    fill: var(--illo-just-black);
     stroke: transparent;
 }
 
 #maps .map-point-point,
 #maps .map-point-top,
 #maps .map-point-top .highcharts-color-4 {
-    fill: #8bf2b6;
-    stroke: #8bf2b6;
+    fill: var(--illo-green);
+    stroke: var(--illo-green);
     transition: all 3s;
 }
 
 #maps .top {
-    fill: #79758d;
+    fill: var(--illo-accent-200);
     stroke: transparent;
 }
 
 #maps .bottom {
-    fill: #fff;
+    fill: var(--illo-accent-50);
     stroke: transparent;
 }
 
@@ -152,7 +215,7 @@ body {
 
 #maps .left,
 #maps .right {
-    fill: #8087e8;
+    fill: var(--illo-purple);
     stroke: transparent;
     transition: all 3s;
 }
@@ -163,8 +226,8 @@ body {
 }
 
 #maps .green {
-    fill: #8bf2b6;
-    stroke: #8bf2b6;
+    fill: var(--illo-green);
+    stroke: var(--illo-lines);
 }
 
 #maps .particle {

@@ -14,7 +14,7 @@
         chart: {
             plotBorderWidth: 1,
             plotBorderColor: '#000000',
-            marginRight: 30
+            marginRight: 35
         },
         navigator: {
             maskInside: false,
@@ -29,15 +29,13 @@
                     enabled: false
                 },
                 gridLineWidth: 0
+            },
+            series: {
+                color: 'var(--highcharts-neutral-color-100, #000)'
             }
         },
         scrollbar: {
             height: 0
-        },
-        tooltip: {
-            shadow: false,
-            borderWidth: 0,
-            backgroundColor: 'transparent'
         },
         xAxis: {
             gridLineWidth: 1,
@@ -164,6 +162,7 @@
             type: 'candlestick',
             data: data,
             color: '#000000',
+            upColor: '#ffffff',
             lastPrice: {
                 enabled: true,
                 color: '#c0c0c0',
@@ -177,12 +176,7 @@
             }
         }],
         tooltip: {
-            positioner: function () {
-                return {
-                    x: 10,
-                    y: 0
-                };
-            },
+            fixed: true,
             format: '{series.name} {point.open:.2f} {point.high:.2f} ' +
                 '{point.low:.2f} {point.close:.2f}'
         },
@@ -221,9 +215,12 @@
                     format: '{value:.2f}'
                 }
             },
-            left: 35,
+            labels: {
+                align: 'left',
+                x: 2
+            },
             title: {
-                text: 'Price'
+                text: ''
             }
         }
     });

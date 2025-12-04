@@ -379,16 +379,21 @@
         },
 
         colorAxis: {
-            min: -25,
-            max: 40,
+            min: -20,
+            max: 20,
             labels: {
                 format: '{value}°C'
             },
             stops: [
-                [0, '#0000ff'],
-                [0.3, '#6da5ff'],
-                [0.6, '#ffff00'],
-                [1, '#ff0000']
+                [0.00, 'rgb(14,   14, 120)'],
+                [0.17, 'rgb(62,  117, 207)'],
+                [0.30, 'rgb(91,  190, 243)'],
+                [0.43, 'rgb(175, 237, 234)'],
+                [0.50, 'rgb(229, 241, 196)'],
+                [0.59, 'rgb(244, 213, 130)'],
+                [0.71, 'rgb(237, 158,  80)'],
+                [0.85, 'rgb(204,  90,  41)'],
+                [1.00, 'rgb(150,  20,  30)']
             ]
         },
 
@@ -397,7 +402,11 @@
                 text: 'Degrees Celsius'
             },
             floating: true,
-            backgroundColor: '#ffffffcc'
+            backgroundColor: `color-mix(
+                in srgb,
+                var(--highcharts-background-color, white),
+                transparent 15%
+            )`
         },
 
         tooltip: {
@@ -425,7 +434,8 @@
             dataLabels: {
                 enabled: false
             },
-            enableMouseTracking: false
+            enableMouseTracking: false,
+            borderColor: 'var(--highcharts-neutral-color-20, #ccc)'
         }, {
             name: 'Capitals of Europe',
             keys: ['id', 'lat', 'lon', 'name', 'y'],

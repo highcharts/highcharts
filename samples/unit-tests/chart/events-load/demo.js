@@ -3,7 +3,7 @@
 (function () {
     var url =
         location.host.substr(0, 12) === 'localhost:98' ?
-            `url(base/test/testimage.png?${Date.now()})` : // karma
+            `url(base/test/testimage.png?el_${Date.now()})` : // karma
             'url(testimage.png)'; // utils
 
     QUnit.test('Load event without images', function (assert) {

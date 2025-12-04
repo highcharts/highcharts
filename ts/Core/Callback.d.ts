@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -22,11 +22,11 @@ export interface CallbackLike {
     (this: any): any;
 }
 
-export interface EventCallback<TScope, TEvent extends object> extends EventCallbackLike {
+export interface EventCallback<TScope, TEvent extends object> extends EventCallbackBase {
     (this: TScope, e: TEvent): (boolean|void);
 }
 
-export interface EventCallbackLike {
+export interface EventCallbackBase {
     (this: any, e: object): (boolean|void);
 }
 

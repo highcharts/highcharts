@@ -1,0 +1,23 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
+
+#container {
+    background-color: var(--hcg-background);
+    height: 250px;
+}
+
+.custom-column-class-name {
+    color: #f00 !important;
+}
+
+.greater-than-100 {
+    text-decoration: underline;
+    color: #0f0 !important;
+}
+
+.header-cell-custom-class-price {
+    color: #f0f !important;
+}
+
+.custom-table-class-name {
+    border: 10px solid #533 !important;
+}

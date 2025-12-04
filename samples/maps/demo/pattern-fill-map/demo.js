@@ -112,7 +112,7 @@
             borderColor: '#aaa',
             headerFormat: '<b>{point.point.name}</b><br>',
             pointFormat: '<img style="width: 150px; height: 100px;" ' +
-                'src=\'{point.options.color.pattern.image}\'>'
+                'src="{point.options.color.pattern.image}">'
         },
 
         // Define the series

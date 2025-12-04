@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2024 Torstein Honsi
+ *  (c) 2009-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -78,8 +78,8 @@ const {
  *
  * */
 
-declare module '../../Core/Chart/ChartLike'{
-    interface ChartLike {
+declare module '../../Core/Chart/ChartBase'{
+    interface ChartBase {
         boxesToAvoid?: Array<LabelIntersectBoxObject>;
         labelSeries?: Array<Series>;
         labelSeriesMaxSum?: number;
@@ -87,8 +87,8 @@ declare module '../../Core/Chart/ChartLike'{
     }
 }
 
-declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase {
         interpolatedPoints?: Array<ControlPoint>;
         labelBySeries?: SVGElement;
         sum?: number;

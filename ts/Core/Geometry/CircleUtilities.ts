@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Highsoft AS
+ *  (c) 2010-2025 Highsoft AS
  *
  *  License: www.highcharts.com/license
  *
@@ -23,11 +23,15 @@ import type PositionObject from '../Renderer/PositionObject';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 
 import Geometry from './GeometryUtilities.js';
+import Utilities from '../Utilities';
 const {
     getAngleBetweenPoints,
     getCenterOfPoints,
     getDistanceBetweenPoints
 } = Geometry;
+const {
+    correctFloat
+} = Utilities;
 
 /* *
  *
@@ -75,7 +79,7 @@ namespace CircleUtilities {
         if (r <= 0) {
             throw new Error('radius of circle must be a positive number.');
         }
-        return Math.PI * r * r;
+        return correctFloat(Math.PI * r * r);
     }
 
     /**

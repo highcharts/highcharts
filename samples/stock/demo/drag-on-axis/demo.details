@@ -5,8 +5,10 @@ authors:
 js_wrap: b
 new_until: 2025-05-01
 requiresManualTesting: true
+is_morningstar: true
 tags:
   - Highcharts Stock demo
+  - Morningstar
 categories:
   - Various features
 ...

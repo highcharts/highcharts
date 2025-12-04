@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -15,7 +15,6 @@
  * */
 
 import type Point from './Point';
-import type PointOptions from './PointOptions';
 
 /* *
  *
@@ -31,7 +30,8 @@ export type PointType = PointTypeRegistry[keyof PointTypeRegistry]['prototype'];
 /**
  * All possible options of series types.
  */
-export type PointTypeOptions = (PointOptions&PointType['options']);
+export type PointTypeOptions = PointType['options']; /* @todo
+    (PointOptions&PointType['options']); */
 
 /**
  * Helper interface to add series point types to `PointType`.

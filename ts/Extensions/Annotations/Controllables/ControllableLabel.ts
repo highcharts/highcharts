@@ -360,7 +360,10 @@ class ControllableLabel extends Controllable {
     public render(parent: SVGElement): void {
         const options = this.options,
             attrs = this.attrsFromOptions(options),
-            style = options.style;
+            style = options.style,
+            optionsChart = this.annotation.chart.options.chart,
+            chartBackground = optionsChart.plotBackgroundColor ||
+                optionsChart.backgroundColor;
 
         this.graphic = this.annotation.chart.renderer
             .label(
@@ -368,10 +371,10 @@ class ControllableLabel extends Controllable {
                 0,
                 -9999, // #10055
                 options.shape,
-                null as any,
-                null as any,
+                void 0,
+                void 0,
                 options.useHTML,
-                null as any,
+                void 0,
                 'annotation-label'
             )
             .attr(attrs)
@@ -379,10 +382,19 @@ class ControllableLabel extends Controllable {
 
         if (!this.annotation.chart.styledMode) {
             if (style.color === 'contrast') {
-                style.color = this.annotation.chart.renderer.getContrast(
+                const background = (
                     ControllableLabel.shapesWithoutBackground.indexOf(
                         options.shape
-                    ) > -1 ? '#FFFFFF' : options.backgroundColor as any
+                    ) > -1 ||
+                    options.backgroundColor === 'none'
+                ) ?
+                    chartBackground :
+                    options.backgroundColor;
+
+                style.color = this.annotation.chart.renderer.getContrast(
+                    typeof background === 'string' ? background :
+                        typeof chartBackground === 'string' ? chartBackground :
+                            '#ffffff'
                 );
             }
             this.graphic

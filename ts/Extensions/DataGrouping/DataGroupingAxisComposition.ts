@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -35,8 +35,8 @@ const {
  *
  * */
 
-declare module '../../Core/Axis/AxisLike' {
-    interface AxisLike {
+declare module '../../Core/Axis/AxisBase' {
+    interface AxisBase {
         applyGrouping(e: PostProcessDataEvent): void;
         getGroupPixelWidth(): number;
         setDataGrouping(
@@ -158,7 +158,7 @@ function getGroupPixelWidth(
             );
 
             dataLength = (
-                series[i].dataTable.modified ||
+                series[i].dataTable.getModified() ||
                 series[i].dataTable
             ).rowCount;
 

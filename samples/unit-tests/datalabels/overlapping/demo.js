@@ -86,7 +86,12 @@ QUnit.test('Overlapping dataLabels should be hidden', function (assert) {
     });
 
     assert.strictEqual(
-        chart.series[1].points[0].dataLabel.div.style['pointer-events'],
+        (
+            // Parallel HTML
+            chart.series[1].points[0].dataLabel.div ||
+            // Foreign object
+            chart.series[1].points[0].dataLabel.element
+        ).style['pointer-events'],
         'none',
         'Pointer events for overlapped labels should be disabled (#18821)'
     );
@@ -222,3 +227,61 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test('Overlapping labels with responsive rotation (#23564)', assert => {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            width: 120,
+            margin: 0
+        },
+        title: {
+            text: ''
+        },
+        yAxis: {
+            visible: false
+        },
+        xAxis: {
+            categories: [
+                'Apples',
+                'Pears',
+                'Oranges',
+                'Bananas',
+                'Avocados',
+                'Grapes'
+            ],
+            visible: false
+        },
+        series: [{
+            data: [3, 4, 3, 5, 4, 5],
+            type: 'column',
+            dataLabels: {
+                enabled: true,
+                format: '{point.category}',
+                align: 'right',
+                inside: true,
+                padding: 0
+            }
+        }],
+        responsive: {
+            rules: [{
+                condition: {
+                    maxWidth: 500
+                },
+                chartOptions: {
+                    series: [{
+                        dataLabels: {
+                            rotation: 90
+                        }
+                    }]
+                }
+            }]
+        }
+    });
+
+    assert.ok(
+        chart.series[0].points.every(
+            point => point.dataLabel.opacity === 1
+        ),
+        'All dataLabels should be visible (#23564).'
+    );
+});

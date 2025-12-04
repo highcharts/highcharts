@@ -29,32 +29,24 @@ Highcharts.chart('container', {
         {
             // Primary yAxis
             labels: {
-                format: '{value} °C',
-                style: {
-                    color: '#DF8500'
-                }
+                format: '{value} °C'
             },
             title: {
-                text: 'Temperature',
-                style: {
-                    color: '#DF8500'
-                }
-            }
+                text: 'Temperature'
+            },
+            lineColor: '#CC8800',
+            lineWidth: 2
         },
         {
             // Secondary yAxis
             title: {
-                text: 'Rainfall',
-                style: {
-                    color: '#6b8abc'
-                }
+                text: 'Rainfall'
             },
             labels: {
-                format: '{value} mm',
-                style: {
-                    color: '#6b8abc'
-                }
+                format: '{value} mm'
             },
+            lineColor: '#6b8abc',
+            lineWidth: 2,
             opposite: true
         }
     ],
@@ -99,39 +91,14 @@ Highcharts.chart('container', {
             ],
             tooltip: {
                 pointFormat: '(error range: {point.low}-{point.high} mm)<br/>'
-            }
+            },
+            pointPlacement: -0.2
         },
         {
             name: 'Temperature',
             type: 'spline',
-            color: '#DF8500',
+            color: '#CC8800',
             lineWidth: 2,
-            zones: [
-                {
-                    value: 0,
-                    color: '#00ffff'
-                },
-                {
-                    value: 10,
-                    color: '#90EE90'
-                },
-                {
-                    value: 15,
-                    color: '#FFD700'
-                },
-                {
-                    value: 20,
-                    color: '#FFA500'
-                },
-                {
-                    value: 25,
-                    color: '#FF8C00'
-                },
-                {
-                    value: 30,
-                    color: '#FF5733'
-                }
-            ],
 
             data: [
                 7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9,
@@ -162,7 +129,8 @@ Highcharts.chart('container', {
             ],
             tooltip: {
                 pointFormat: '(error range: {point.low}-{point.high}°C)<br/>'
-            }
+            },
+            pointPlacement: 0.1
         }
     ]
 });

@@ -2,7 +2,7 @@
  *
  *  Events generator for Stock tools
  *
- *  (c) 2009-2024 Paweł Fus
+ *  (c) 2009-2025 Paweł Fus
  *
  *  License: www.highcharts.com/license
  *
@@ -597,8 +597,8 @@ function updateRectSize(
  *          Return `true` if the arrays are equal, otherwise `false`.
  */
 function shallowArraysEqual(
-    a: String[] | undefined,
-    b: String[] | undefined
+    a: Array<string> | undefined,
+    b: Array<string> | undefined
 ): boolean {
     if (!defined(a) || !defined(b)) {
         return false;

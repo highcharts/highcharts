@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -69,7 +69,7 @@ const lang = {
     /**
      * The default text for the rangeselector buttons.
      *
-     * @since next
+     * @since 12.2.0
      */
     rangeSelector: {
         allText: 'All',

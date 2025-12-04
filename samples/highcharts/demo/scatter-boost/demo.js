@@ -47,10 +47,12 @@ Highcharts.chart('container', {
     xAxis: {
         min: 0,
         max: 100,
-        gridLineWidth: 1
+        gridLineWidth: 1,
+        tickWidth: 0
     },
 
     yAxis: {
+        lineWidth: 1,
         // Renders faster when we don't have to compute min and max
         min: 0,
         max: 100,
@@ -72,7 +74,7 @@ Highcharts.chart('container', {
 
     series: [{
         type: 'scatter',
-        color: 'rgba(152,0,67,0.1)',
+        color: 'rgba(222, 73, 138, 0.1)',
         data: data,
         marker: {
             radius: 0.5

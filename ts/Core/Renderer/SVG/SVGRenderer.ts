@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -32,7 +32,7 @@ import type PositionObject from '../PositionObject';
 import type ShadowOptionsObject from '../ShadowOptionsObject';
 import type SVGAttributes from './SVGAttributes';
 import type SVGPath from './SVGPath';
-import type SVGRendererLike from './SVGRendererLike';
+import type SVGRendererBase from './SVGRendererBase';
 import type SymbolOptions from './SymbolOptions';
 import type { SymbolKey } from './SymbolType';
 
@@ -145,7 +145,7 @@ let hasInternalReferenceBug: (boolean|undefined);
  *        some cases, but not when set explicitly through `.attr` and `.css`
  *        etc.
  */
-class SVGRenderer implements SVGRendererLike {
+class SVGRenderer implements SVGRendererBase {
 
     /**
      * The root `svg` node of the renderer.
@@ -320,6 +320,8 @@ class SVGRenderer implements SVGRendererLike {
     public unSubPixelFix?: Function;
     public url: string;
     public width!: number;
+    public x = 0;
+    public y = 0;
 
     /* *
      *
@@ -662,20 +664,45 @@ class SVGRenderer implements SVGRendererLike {
      * The contrast color, either `#000000` or `#FFFFFF`.
      */
     public getContrast(color: ColorString): ColorString {
+
+        if (color === 'transparent') {
+            return '#000000';
+        }
         // #6216, #17273
-        const rgba = Color.parse(color).rgba
-            .map((b8): number => {
-                const c = b8 / 255;
-                return c <= 0.03928 ?
-                    c / 12.92 :
-                    Math.pow((c + 0.055) / 1.055, 2.4);
-            });
+        const rgba256 = Color.parse(color).rgba,
+            // For each rgb channel, compute the luminosity based on all
+            // channels. Subtract this from 0.5 and multiply by a huge number,
+            // so that all colors with luminosity < 0.5 result in a negative
+            // number, and all colors > 0.5 end up very high. This is then
+            // clamped into the range 0-1, to result in either black or white.
+            // The subtraction of 0.5, multiplication by 9e9, and clamping are
+            // workarounds for lack of support for the round() function. As of
+            // 2025, it is too fresh in Chrome, and doesn't work in Safari.
+            channelFunc =
+            ' clamp(0,calc(9e9*(0.5 - (0.2126*r + 0.7152*g + 0.0722*b))),1)';
 
-        // Relative luminance
-        const l = 0.2126 * rgba[0] + 0.7152 * rgba[1] + 0.0722 * rgba[2];
+        // The color is parsable by the Color class parsers
+        if (isNumber(rgba256[0]) || !Color.useColorMix) {
+            const rgba = rgba256.map((b8): number => {
+                    const c = b8 / 255;
+                    return c <= 0.04 ?
+                        c / 12.92 :
+                        Math.pow((c + 0.055) / 1.055, 2.4);
+                }),
+                // Relative luminance
+                l = 0.2126 * rgba[0] + 0.7152 * rgba[1] + 0.0722 * rgba[2];
 
-        // Use white or black based on which provides more contrast
-        return 1.05 / (l + 0.05) > (l + 0.05) / 0.05 ? '#FFFFFF' : '#000000';
+            // Use white or black based on which provides more contrast
+            return 1.05 / (l + 0.05) > (l + 0.05) / 0.05 ?
+                '#FFFFFF' :
+                '#000000';
+        }
+
+        // Not parsable, use CSS functions instead
+        return 'color(' +
+            'from ' + color + ' srgb' +
+            channelFunc + channelFunc + channelFunc +
+        ')';
     }
 
     /**
@@ -1699,18 +1726,18 @@ class SVGRenderer implements SVGRendererLike {
      *
      * @function Highcharts.SVGRenderer#fontMetrics
      *
-     * @param {Highcharts.SVGElement|Highcharts.SVGDOMElement|number} [element]
-     *        The element to inspect for a current font size. If a number is
-     *        given, it's used as a fall back for direct font size in pixels.
+     * @param {Highcharts.SVGElement|Highcharts.SVGDOMElement|number} ref
+     * The element to inspect for a current font size. If a number is given,
+     * it's used as a fall back for direct font size in pixels.
      *
      * @return {Highcharts.FontMetricsObject}
-     *         The font metrics.
+     * The font metrics.
      */
     public fontMetrics(
-        element: (DOMElementType|SVGElement)
+        ref: (DOMElementType|SVGElement|number)
     ): FontMetricsObject {
-        const f = pInt(
-            SVGElement.prototype.getStyle.call(element, 'font-size') || 0
+        const f = isNumber(ref) ? ref : pInt(
+            (SVGElement.prototype.getStyle.call(ref, 'font-size') || 0)
         );
 
         // Empirical values found by comparing font size and bounding box
@@ -2091,7 +2118,7 @@ class SVGRenderer implements SVGRendererLike {
  *
  * */
 
-interface SVGRenderer extends SVGRendererLike {
+interface SVGRenderer extends SVGRendererBase {
     Element: typeof SVGElement;
     SVG_NS: string;
     escapes: Record<string, string>;

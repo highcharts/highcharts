@@ -4,6 +4,9 @@
         'https://code.highcharts.com/mapdata/countries/us/us-all.topo.json'
     ).then(response => response.json());
 
+    // Custom template helper
+    Highcharts.Templating.helpers.abs = value => Math.abs(value);
+
     // Load the data from a Google Spreadsheet
     Highcharts.data({
         googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk',
@@ -124,11 +127,11 @@
                         floating: true,
                         layout: 'vertical',
                         valueDecimals: 0,
-                        backgroundColor: ( // theme
-                            Highcharts.defaultOptions &&
-                            Highcharts.defaultOptions.legend &&
-                            Highcharts.defaultOptions.legend.backgroundColor
-                        ) || 'rgba(255, 255, 255, 0.85)'
+                        backgroundColor: `color-mix(
+                            in srgb,
+                            var(--highcharts-background-color, white),
+                            transparent 15%
+                        )`
                     },
 
                     mapNavigation: {
@@ -161,14 +164,14 @@
                                 textTransform: 'uppercase'
                             }
                         },
-                        name: 'Republicans margin',
+                        name: 'Margin',
                         point: {
                             events: {
                                 click: pointClick
                             }
                         },
                         tooltip: {
-                            ySuffix: ' %'
+                            pointFormat: '{series.name}: {abs point.value}%'
                         },
                         cursor: 'pointer'
                     }, {

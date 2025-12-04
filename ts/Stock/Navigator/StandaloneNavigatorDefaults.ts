@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Mateusz Bernacik
+ *  (c) 2010-2025 Mateusz Bernacik
  *
  *  License: www.highcharts.com/license
  *
@@ -16,6 +16,7 @@
  *
  * */
 
+import type { DeepPartial } from '../../Shared/Types';
 import type { Options } from '../../Core/Options';
 
 /* *

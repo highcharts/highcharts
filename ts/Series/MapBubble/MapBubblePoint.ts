@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -38,8 +38,8 @@ const { extend } = U;
  *
  * */
 
-declare module '../../Core/Series/KDPointSearchObjectLike' {
-    interface KDPointSearchObjectLike {
+declare module '../../Core/Series/KDPointSearchObjectBase' {
+    interface KDPointSearchObjectBase {
         plotX?: number;
         plotY?: number;
     }

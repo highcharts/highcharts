@@ -1,0 +1,13 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
+
+#container {
+    padding: 8px;
+}
+
+.content {
+    padding: 8px;
+}
+
+.content > div {
+    margin-bottom: 5px;
+}

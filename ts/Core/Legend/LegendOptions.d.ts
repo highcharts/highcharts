@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -75,6 +75,7 @@ export interface LegendOptions {
     /** @deprecated */
     lineHeight?: number;
     margin?: number;
+    maxWidth?: number|string;
     maxHeight?: number;
     navigation: LegendNavigationOptions;
     padding?: number;

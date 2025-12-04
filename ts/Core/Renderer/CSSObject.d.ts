@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -45,14 +45,15 @@ export interface CSSObject {
     '-webkit-transform'?: string;
     background?: string;
     backgroundColor?: ColorString;
-    borderRadius?: number|string;
+    backgroundImage?: string;
+    borderRadius?: string;
     borderWidth?: number;
     border?: string|0;
     'border-radius'?: string;
     bottom?: string;
     boxShadow?: string;
     clip?: string;
-    color?: ('contrast'|ColorString);
+    color?: ColorString; // @todo ('contrast'|ColorString);
     cursor?: CursorValue;
     direction?: string;
     display?: string;
@@ -88,7 +89,7 @@ export interface CSSObject {
     padding?: number|string;
     'pointer-events'?: string;
     pointerEvents?: CSSObject['pointer-events'];
-    position?: 'absolute'|'fixed'|'relative';
+    position?: 'absolute'|'fixed'|'relative'|'static';
     right?: string;
     rotation?: number;
     stroke?: ColorType;
@@ -106,6 +107,7 @@ export interface CSSObject {
     transformOrigin?: string;
     transition?: string;
     userSelect?: string;
+    verticalAlign?: 'bottom'|'middle'|'top';
     visibility?: 'hidden'|'inherit'|'visible';
     'white-space'?: string;
     whiteSpace?: CSSObject['white-space'];

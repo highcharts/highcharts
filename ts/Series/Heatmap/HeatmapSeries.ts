@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -67,8 +67,8 @@ declare module '../../Core/Renderer/SVG/SymbolType' {
     }
 }
 
-declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase {
         valueMax?: number;
         valueMin?: number;
     }
@@ -531,6 +531,9 @@ class HeatmapSeries extends ScatterSeries {
 addEvent(HeatmapSeries, 'afterDataClassLegendClick', function (): void {
     this.isDirtyCanvas = true;
     this.drawPoints();
+    if (this.options.enableMouseTracking) {
+        this.drawTracker(); // #23162, set tracker again after points redraw
+    }
 });
 
 /* *

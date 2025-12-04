@@ -1,4 +1,14 @@
 Highcharts.chart('container', {
+    chart: {
+        zooming: {
+            type: 'xy'
+        },
+        panning: {
+            enabled: true,
+            type: 'xy'
+        },
+        panKey: 'shift'
+    },
 
     title: {
         text: 'Highcharts Sankey diagram'

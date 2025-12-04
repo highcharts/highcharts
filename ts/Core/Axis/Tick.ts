@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -23,8 +23,9 @@ import type {
     AxisOptions
 } from './AxisOptions';
 import type CSSObject from '../Renderer/CSSObject';
+import type { DeepPartial } from '../../Shared/Types';
 import type PositionObject from '../Renderer/PositionObject';
-import type TickLike from './TickLike';
+import type TickBase from './TickBase';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
@@ -241,7 +242,7 @@ class Tick {
                 dateTimeLabelFormats = chart.time.resolveDTLFormat(
                     (options.dateTimeLabelFormats as any)[
                         (
-                            !options.grid &&
+                            !options.grid?.enabled &&
                             tickPositionInfo.higherRanks[pos]
                         ) ||
                         tickPositionInfo.unitName
@@ -387,6 +388,7 @@ class Tick {
     ): (SVGElement|undefined) {
         const axis = this.axis,
             { renderer, styledMode } = axis.chart,
+            whiteSpace = labelOptions.style.whiteSpace,
             label = defined(str) && labelOptions.enabled ?
                 renderer
                     .text(
@@ -400,13 +402,13 @@ class Tick {
 
         // Un-rotated length
         if (label) {
-            const whiteSpace = labelOptions.style.whiteSpace || 'normal';
-            // Without position absolute, IE export sometimes is wrong
             if (!styledMode) {
-                label.css(merge(labelOptions.style, { whiteSpace: 'nowrap' }));
+                label.css(merge(labelOptions.style));
             }
             label.textPxLength = label.getBBox().width;
-            if (!styledMode) {
+
+            // Apply the white-space setting after we read the full text width
+            if (!styledMode && whiteSpace) {
                 label.css({ whiteSpace });
             }
         }
@@ -1132,7 +1134,7 @@ class Tick {
  *
  * */
 
-interface Tick extends TickLike {
+interface Tick extends TickBase {
     // Nothing here yet
 }
 

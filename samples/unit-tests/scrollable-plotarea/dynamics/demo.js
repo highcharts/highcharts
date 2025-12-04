@@ -78,8 +78,8 @@ QUnit.test('Test dynamic behaviour of Scrollable PlotArea', function (assert) {
     */
 });
 
-QUnit.test('Responsive scrollable plot area (#12991)', function (assert) {
-    var chart = Highcharts.chart('container', {
+QUnit.test('Responsive scrollable plot area.', function (assert) {
+    let chart = Highcharts.chart('container', {
         chart: {
             scrollablePlotArea: {
                 minHeight: 400,
@@ -87,11 +87,9 @@ QUnit.test('Responsive scrollable plot area (#12991)', function (assert) {
             },
             height: 300
         },
-        series: [
-            {
-                data: [0, 1, 2, 3, 4]
-            }
-        ]
+        series: [{
+            data: [0, 1, 2, 3, 4]
+        }]
     });
 
     chart.setSize(null, 500);
@@ -100,7 +98,7 @@ QUnit.test('Responsive scrollable plot area (#12991)', function (assert) {
         document.getElementsByClassName('highcharts-scrolling')[0]
             .clientHeight > 300,
         'The scrollbar should disasppear after increasing the height of the ' +
-        'chart (#12991)'
+            'chart (#12991)'
     );
 
     document.getElementById('container').style.height = '190px';
@@ -113,8 +111,42 @@ QUnit.test('Responsive scrollable plot area (#12991)', function (assert) {
 
     assert.notOk(
         chart.tooltip.isHidden,
-        `After updating the scrollablePlotArea, the tooltip should be still
-        visible, #17352.`
+        'After updating the scrollablePlotArea, the tooltip should be still ' +
+            'visible, #17352.'
+    );
+
+    chart = Highcharts.chart('container', {
+        chart: {
+            scrollablePlotArea: {
+                minWidth: 500
+            },
+            width: 550
+        },
+        series: [
+            {
+                type: 'column',
+                data: [0, 1, 2, 3, 4]
+            }
+        ]
+    });
+
+    // Show and hide the scrollbar (#22489)
+    chart.setSize(350, 350);
+    chart.setSize(null, null);
+
+    const controller = new TestController(chart);
+    controller.mouseOver(chart.chartWidth - 66, chart.chartHeight - 150);
+
+    assert.ok(
+        chart.hoverPoint === chart.series[0].points[4],
+        'The last point should be hovered.'
+    );
+
+    assert.notStrictEqual(
+        chart.tooltip.visibility,
+        'hidden',
+        'Tooltip should be visible for point previously outside of ' +
+            'horizontalscrollablePlotArea\'s box.'
     );
 });
 
@@ -298,27 +330,50 @@ QUnit.test('Navigator grid line height in scrollablePlotArea chart', assert => {
     );
 });
 
-QUnit.test(
-    'Pointer events on points outside of plotArea, #21136', assert => {
-        const chart = Highcharts.chart('container', {
-                chart: {
-                    type: 'bar',
-                    scrollablePlotArea: {
-                        minHeight: 500
+QUnit.test('Pointer events', assert => {
+    let hasHovered;
+    const chart = Highcharts.chart('container', {
+            chart: {
+                type: 'bar',
+                scrollablePlotArea: {
+                    minHeight: 500,
+                    minWidth: 300
+                }
+            },
+            plotOptions: {
+                series: {
+                    events: {
+                        mouseOver: function () {
+                            hasHovered = true;
+                        }
                     }
-                },
-                series: [{
-                    data: [1, 2, 3]
-                }]
-            }),
-            controller = new TestController(chart);
+                }
+            },
+            series: [{
+                data: [1, 2, 3]
+            }]
+        }),
+        controller = new TestController(chart);
 
-        controller.mouseOver(60, 330, undefined, true);
+    controller.mouseOver(60, 330);
 
-        assert.ok(
-            chart.tooltip.isHidden,
-            `Tooltip should be hidden when pointer appears on point outside of
+    assert.ok(
+        chart.tooltip.isHidden,
+        `Tooltip should be hidden when pointer appears on point outside of
             visible plot area, #21136.`
-        );
+    );
+
+    // Trigger scrollbar
+    for (const width of [200, 600]) {
+        chart.update({ chart: { width } });
     }
-);
+
+    // Hover the first point
+    controller.mouseOver(50, 80);
+
+    assert.strictEqual(
+        hasHovered,
+        true,
+        'Toggling scrollbars should not remove events (#22489)'
+    );
+});

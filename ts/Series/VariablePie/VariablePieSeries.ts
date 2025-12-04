@@ -2,7 +2,7 @@
  *
  *  Variable Pie module for Highcharts
  *
- *  (c) 2010-2024 Grzegorz Blachliński
+ *  (c) 2010-2025 Grzegorz Blachliński
  *
  *  License: www.highcharts.com/license
  *
@@ -43,8 +43,8 @@ import VariablePieSeriesDefaults from './VariablePieSeriesDefaults.js';
  *
  * */
 
-declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase {
         maxPxSize?: number;
         minPxSize?: number;
     }

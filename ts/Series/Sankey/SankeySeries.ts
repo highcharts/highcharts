@@ -2,7 +2,7 @@
  *
  *  Sankey diagram module
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2025 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -110,7 +110,10 @@ class SankeySeries extends ColumnSeries {
             ),
             options = merge({
                 style: {}
-            }, optionsLevel, optionsPoint);
+            }, optionsLevel, optionsPoint, {
+                // Not a point option. zIndex is set for the data labels group.
+                zIndex: optionsLevel?.zIndex
+            });
         return options;
     }
 
@@ -309,7 +312,8 @@ class SankeySeries extends ColumnSeries {
 
         // Link attributes
         return {
-            fill: Color.parse(color).setOpacity(values.linkOpacity).get()
+            fill: color,
+            'fill-opacity': values.linkOpacity
         };
 
     }
@@ -674,10 +678,13 @@ class SankeySeries extends ColumnSeries {
             }
 
             // Calculate data label options for the point
-            node.dlOptions = SankeySeries.getDLOptions({
-                level: (this.mapOptionsToLevel as any)[node.level],
-                optionsPoint: node.options
-            });
+            node.dlOptions = {
+                ...SankeySeries.getDLOptions({
+                    level: (this.mapOptionsToLevel as any)[node.level],
+                    optionsPoint: node.options
+                }),
+                zIndex: void 0
+            };
 
             // Pass test in drawPoints
             node.plotX = 1;

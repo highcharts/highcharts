@@ -1,6 +1,6 @@
 /**
  *
- *  (c) 2010-2024 Paweł Fus
+ *  (c) 2010-2025 Paweł Fus
  *
  *  License: www.highcharts.com/license
  *
@@ -25,8 +25,8 @@ import type NavigationOptions from '../../Extensions/Exporting/NavigationOptions
  *
  * */
 
-declare module './ChartLike'{
-    interface ChartLike {
+declare module './ChartBase'{
+    interface ChartBase {
         navigation?: ChartNavigationComposition.Additions;
     }
 }
