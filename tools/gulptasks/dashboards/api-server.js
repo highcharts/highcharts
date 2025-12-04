@@ -136,6 +136,9 @@ function apiServer() {
                     case '/gantt':
                         response302(response, '/gantt/');
                         return;
+                    case '/grid':
+                        response302(response, '/grid/');
+                        return;
                     default:
                         break;
                 }

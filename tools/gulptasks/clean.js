@@ -45,7 +45,7 @@ async function clean() {
 
     for (const folderToDelete of FOLDERS_TO_DELETE) {
         LogLib.message('./' + folderToDelete);
-        FSLib.deleteDirectory(folderToDelete, true);
+        FSLib.deleteDirectory(folderToDelete);
     }
 
 }

@@ -29,30 +29,36 @@ function scriptsCompile(filePaths, config = {}, product = 'highcharts') {
     const fs = require('fs'),
         fsLib = require('../libs/fs'),
         logLib = require('../libs/log'),
-        path = require('path'),
         swc = require('@swc/core'),
         argv = require('yargs').argv;
     let esModulesFolder,
         targetFolder;
 
-    if (product === 'highcharts') {
+    if (argv.product === 'Grid') {
+        esModulesFolder = fsLib.path(['code', 'grid', 'es-modules']);
+        targetFolder = fsLib.path(['code', 'grid']);
+    } else if (argv.product === 'Dashboards') {
+        const dashCfg = require('./scripts-dts/dashboards/_config.json');
+        esModulesFolder = dashCfg.esModulesFolder;
+        targetFolder = dashCfg.bundleTargetFolder;
+    } else if (product === 'highcharts') {
         esModulesFolder = '/es-modules/';
         targetFolder = 'code';
     } else if (product === 'dashboards') {
         esModulesFolder = config.esModulesFolder;
         targetFolder = config.bundleTargetFolder;
-    } else if (product === 'datagrid') {
-        esModulesFolder = config.esModulesFolderDataGrid;
-        targetFolder = config.bundleTargetFolderDataGrid;
     }
+
 
     filePaths = filePaths instanceof Array ?
         filePaths :
         typeof argv.files === 'string' ?
             argv.files
                 .split(',')
-                .map(filePath => path.join(targetFolder, filePath)) :
-            fsLib.getFilePaths(targetFolder, true);
+                .map(filePath => fsLib.path([targetFolder, filePath], true)) :
+            fsLib
+                .getFilePaths(targetFolder, true)
+                .map(filePath => fsLib.path(filePath, true));
 
     let promiseChain1 = Promise.resolve(),
         promiseChain2 = Promise.resolve();
@@ -67,7 +73,10 @@ function scriptsCompile(filePaths, config = {}, product = 'highcharts') {
     ) {
         inputPath = filePaths[i];
 
-        if (inputPath.includes(esModulesFolder) || !inputPath.endsWith('.src.js')) {
+        if (
+            inputPath.includes(esModulesFolder) ||
+            !inputPath.endsWith('.src.js')
+        ) {
             continue;
         }
 
@@ -76,23 +85,36 @@ function scriptsCompile(filePaths, config = {}, product = 'highcharts') {
 
         // Compile file, https://swc.rs/docs/usage/core
         const code = fs.readFileSync(inputPath, 'utf-8');
-        promise = swc.minify(code, {
-            compress: {
-                // hoist_funs: true
-            },
-            mangle: true,
-            sourceMap: true
-        })
+        const isModule = inputPath.includes('/esm/');
 
+        promise = swc
+            .minify(code, {
+                compress: {
+                    // conditionals: false
+                    // hoist_funs: true
+                },
+                format: {
+                    comments: 'some'
+                },
+                mangle: true,
+                module: isModule,
+                sourceMap: true
+            })
             .then(result => {
                 // Write compiled file
                 fs.writeFileSync(
                     outputPath,
-                    result.code.replace('@license ', '')
+                    result.code
+                        .replace('@license ', '')
+                        .replace(/\.src\.js\b/gsu, '.js')
                 );
 
                 // Write source map
-                fs.writeFileSync(outputMapPath, result.map);
+                fs.writeFileSync(
+                    outputMapPath,
+                    result.map
+                        .replace(/\.src\.js\b/gsu, '.js')
+                );
 
                 logLib.success(
                     `Compiled ${inputPath} => ${outputPath}`,
@@ -100,6 +122,10 @@ function scriptsCompile(filePaths, config = {}, product = 'highcharts') {
                 );
 
                 return result;
+            })
+            .catch(error => {
+                logLib.failure('ERROR:', inputPath, '=>', outputPath);
+                throw error;
             });
 
         if (i % 2 || argv.CI) {

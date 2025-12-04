@@ -34,6 +34,7 @@ function getProducts(logPaths) {
         products = [
             'Core',
             'Dashboards',
+            'Grid',
             'Gantt',
             'Maps',
             'Stock',
@@ -69,7 +70,7 @@ function getProducts(logPaths) {
             if (['Shared', 'Data'].indexOf(pathParts[1]) !== -1) {
                 mark('Core');
                 mark('Dashboards');
-            } else if (pathParts[1] === 'DataGrid') {
+            } else if (pathParts[1] === 'Grid') {
                 mark('Dashboards');
             }
         }
@@ -286,7 +287,7 @@ Runs tests for products affected by modified files staged for commit.
 
 --product
 Comma separated list of products to test.
-Available products are Core, Gantt, Maps, Stock and Dashboards.
+Available products are Core, Gantt, Maps, Stock, Dashboards and Grid.
 
 --speak
 Says if tests failed or succeeded.

@@ -15,6 +15,18 @@ async function checkDocsConsistency() {
     const glob = require('glob');
     const LogLib = require('../libs/log');
 
+    function checkSample(sample, file, error404s, reason) {
+        let rewrite;
+
+        if (sample.startsWith('grid/')) {
+            rewrite = sample.replace(/^grid\//, 'grid*/');
+        }
+        const files = glob.globSync(`samples/${rewrite ?? sample}/demo.{js,mjs,ts}`);
+        if (files.length < 1) {
+            error404s.push({ file, sample, reason, rewrite });
+        }
+    }
+
     // Check links and references to samples
     LogLib.message('Checking links to samples in *.ts files...');
     const tsFiles = glob.sync('./ts/**/*.ts');
@@ -34,11 +46,8 @@ async function checkDocsConsistency() {
         let match;
         while ((match = demoPattern.exec(md))) {
             const sample = match[2].replace(/\/$/u, '');
-            try {
-                FS.statSync(`samples/${sample}/demo.js`);
-            } catch (error) {
-                error404s.push({ file, sample });
-            }
+
+            checkSample(sample, file, error404s, 'demo');
         }
 
         while ((match = requiresPattern.exec(md))) {
@@ -71,11 +80,7 @@ async function checkDocsConsistency() {
 
         while ((match = samplePattern.exec(md))) {
             const sample = match[3].replace(/\/$/u, '');
-            try {
-                FS.statSync(`samples/${sample}/demo.js`);
-            } catch (error) {
-                error404s.push({ file, sample });
-            }
+            checkSample(sample, file, error404s, '@sample');
         }
         if (error404s.length) {
             throw new Error(
@@ -103,11 +108,7 @@ async function checkDocsConsistency() {
         let match;
         while ((match = demoPattern.exec(md))) {
             const sample = match[2].replace(/\/$/u, '');
-            try {
-                FS.statSync(`samples/${sample}/demo.js`);
-            } catch (error) {
-                error404s.push({ file, sample });
-            }
+            checkSample(sample, file, error404s, 'demo');
         }
 
         while ((match = docsPattern.exec(md))) {

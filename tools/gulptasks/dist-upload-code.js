@@ -119,9 +119,9 @@ function uploadProductPackage(productProps, options = {}) {
     ];
 
     // For testing cache purging without uploading:
-    /*
-    const uploadFiles = () => console.log('@uploadFiles overridden');
-    zipFilePaths[0] = '';
+    // /*
+    // const uploadFiles = (obj) => console.log(obj);
+    // zipFilePaths[0] = '';
     // */
 
     if (zipFilePaths.length < 1) {
@@ -168,67 +168,71 @@ function uploadProductPackage(productProps, options = {}) {
         name: prettyName
     }));
 
-    const rootJSFiles = gzippedFilesToRootDir.filter(
-        path => !isDirectory(path.from) && !isDotEntry(path.from)
-    );
-    cdnFiles.push.apply(cdnFiles, rootJSFiles);
-    promises.push(uploadFiles({
-        bucket: options.bucket,
-        files: rootJSFiles,
-        name: prettyName,
-        s3Params: {
-            ...options.s3Params,
-            CacheControl: `public, max-age=${HTTP_MAX_AGE.oneDay}`,
-            Expires: HTTP_EXPIRES.oneDay,
-            ContentEncoding: 'gzip'
-        }
-    }));
+    if (cdnpath || cdnpath === '') {
+        const rootJSFiles = gzippedFilesToRootDir.filter(
+            path => !isDirectory(path.from) && !isDotEntry(path.from)
+        );
+        cdnFiles.push.apply(cdnFiles, rootJSFiles);
+        promises.push(uploadFiles({
+            bucket: options.bucket,
+            files: rootJSFiles,
+            name: prettyName,
+            s3Params: {
+                ...options.s3Params,
+                CacheControl: `public, max-age=${HTTP_MAX_AGE.oneDay}`,
+                Expires: HTTP_EXPIRES.oneDay,
+                ContentEncoding: 'gzip'
+            }
+        }));
 
-    const rootGfxFiles = gfxFilesToRootDir.filter(
-        path => !isDirectory(path.from) && !isDotEntry(path.from)
-    );
-    cdnFiles.push.apply(cdnFiles, rootGfxFiles);
-    promises.push(uploadFiles({
-        bucket: options.bucket,
-        files: rootGfxFiles,
-        name: prettyName,
-        s3Params: {
-            ...options.s3Params,
-            CacheControl: `public, max-age=${HTTP_MAX_AGE.oneDay}`,
-            Expires: HTTP_EXPIRES.oneDay
-        }
-    }));
+        const rootGfxFiles = gfxFilesToRootDir.filter(
+            path => !isDirectory(path.from) && !isDotEntry(path.from)
+        );
+        cdnFiles.push.apply(cdnFiles, rootGfxFiles);
+        promises.push(uploadFiles({
+            bucket: options.bucket,
+            files: rootGfxFiles,
+            name: prettyName,
+            s3Params: {
+                ...options.s3Params,
+                CacheControl: `public, max-age=${HTTP_MAX_AGE.oneDay}`,
+                Expires: HTTP_EXPIRES.oneDay
+            }
+        }));
 
-    const versionJSFiles = gzippedFilesToVersionDir.filter(
-        path => !isDirectory(path.from) && !isDotEntry(path.from)
-    );
-    cdnFiles.push.apply(cdnFiles, versionJSFiles);
-    promises.push(uploadFiles({
-        bucket: options.bucket,
-        files: versionJSFiles,
-        name: prettyName,
-        s3Params: {
-            ...options.s3Params,
-            CacheControl: `public, max-age=${HTTP_MAX_AGE.fiveYears}`,
-            Expires: HTTP_EXPIRES.fiveYears,
-            ContentEncoding: 'gzip'
-        }
-    }));
+        const versionJSFiles = gzippedFilesToVersionDir.filter(
+            path => !isDirectory(path.from) && !isDotEntry(path.from)
+        );
+        cdnFiles.push.apply(cdnFiles, versionJSFiles);
+        promises.push(uploadFiles({
+            bucket: options.bucket,
+            files: versionJSFiles,
+            name: prettyName,
+            s3Params: {
+                ...options.s3Params,
+                CacheControl: `public, max-age=${HTTP_MAX_AGE.fiveYears}`,
+                Expires: HTTP_EXPIRES.fiveYears,
+                ContentEncoding: 'gzip'
+            }
+        }));
 
-    const versionGfxFiles = gfxFilesToVersionedDir.filter(
-        path => !isDirectory(path.from) && !isDotEntry(path.from)
-    );
-    cdnFiles.push.apply(cdnFiles, versionGfxFiles);
-    promises.push(uploadFiles({
-        bucket: options.bucket,
-        files: versionGfxFiles,
-        name: prettyName,
-        s3Params: {
-            ...options.s3Params,
-            CacheControl: `public, max-age=${HTTP_MAX_AGE.fiveYears}`,
-            Expires: HTTP_EXPIRES.fiveYears
-        }
-    }));
+        const versionGfxFiles = gfxFilesToVersionedDir.filter(
+            path => !isDirectory(path.from) && !isDotEntry(path.from)
+        );
+        cdnFiles.push.apply(cdnFiles, versionGfxFiles);
+        promises.push(uploadFiles({
+            bucket: options.bucket,
+            files: versionGfxFiles,
+            name: prettyName,
+            s3Params: {
+                ...options.s3Params,
+                CacheControl: `public, max-age=${HTTP_MAX_AGE.fiveYears}`,
+                Expires: HTTP_EXPIRES.fiveYears
+            }
+        }));
+    } else {
+        log.warn('No cdnpath specified, skipping upload of js and gfx files.');
+    }
 
     // Purge CloudFlare cache POC. Currently stopped by rate limiting?
     const cloudflarePaths = cdnFiles.reduce((paths, f) => {
@@ -258,7 +262,16 @@ function uploadProductPackage(productProps, options = {}) {
  */
 function distUploadCode() {
     const argv = require('yargs').argv;
-    const properties = require('../../build-properties.json');
+    const properties = (() => {
+        switch (argv.product) {
+            case 'Grid':
+                return require('./grid/build-properties.json');
+            case 'Dashboards':
+                return require('./dashboards/build-properties.json');
+            default:
+                return require('../../build-properties.json');
+        }
+    })();
     const products = ((argv.products && argv.products.split(',')) || properties.products); // one or more of 'highcharts', 'highstock', 'highmaps', 'gantt', ...
 
     console.log(products);
@@ -299,7 +312,9 @@ function distUploadCode() {
 distUploadCode.description = 'Uploads distribution files (zipped/binary) to code bucket.';
 distUploadCode.flags = {
     '--bucket': 'S3 bucket to upload to. Is overridden if --use-git-ignore-me is defined.',
-    '--products': 'Comma-separated list of products to upload. E.g highcharts,highmaps (optional - default is all products defined in build-properties.json).',
+    '--product': 'Product to upload. E.g. Highcharts, Grid. (optional - default is Highcharts)',
+    '--products': 'Comma-separated list of products to upload, according to the selected product. For ' +
+        'product=Highcharts, e.g highcharts,highmaps (optional - default is all products defined in proper build-properties.json).',
     '--profile': 'AWS profile to load from AWS credentials file. If no profile is provided the default profile or ' +
         'standard AWS environment variables for credentials will be used. (optional)',
     '--use-git-ignore-me': 'Will look for bucket in git-ignore-me.properties file (fallback as previously used by ant build). Required if ---bucket not specified.'

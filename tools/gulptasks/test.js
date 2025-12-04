@@ -50,7 +50,7 @@ function checkJSWrap() {
         process.cwd() + '/samples/+(highcharts|stock|maps|gantt)/**/demo.html'
     ).forEach(f => {
 
-        const detailsFile = f.replace(/\.html$/, '.details');
+        const detailsFile = f.replace(/\.html$/u, '.details');
 
         try {
             const details = yaml.safeLoad(
@@ -60,7 +60,7 @@ function checkJSWrap() {
                 LogLib.failure('js_wrap not found:', detailsFile);
                 errors++;
             }
-        } catch (e) {
+        } catch {
             LogLib.failure('File not found:', detailsFile);
             errors++;
         }
@@ -71,8 +71,46 @@ function checkJSWrap() {
     }
 }
 
+function checkSamplesConsistency() {
+    const FSLib = require('../libs/fs.js');
+    const { existsSync } = require('node:fs');
+    const glob = require('glob');
+    const LogLib = require('../libs/log');
+
+    let errors = 0;
+
+    // Avoid double-commit of demo.js and demo.ts
+    glob.sync(
+        FSLib.path(process.cwd() + '/samples/*/demo/*', true)
+    ).forEach(p => {
+        if (existsSync(FSLib.path(p + '/demo.ts'))) {
+            const gitignore = FSLib.path(p + '/.gitignore');
+            if (!existsSync(gitignore)) {
+                LogLib.failure(
+                    'Should have a .gitignore file when demo.ts exists',
+                    p
+                );
+                errors++;
+            } else {
+                const content = FSLib.getFile(gitignore);
+                if (!content.includes('demo.js')) {
+                    LogLib.failure(
+                        'Should list demo.js in .gitignore file when demo.ts exists',
+                        p
+                    );
+                    errors++;
+                }
+            }
+        }
+    });
+
+    if (errors) {
+        throw new Error('Samples validation failed');
+    }
+}
+
 /**
- * Checks if demos has valid configuration
+ * Checks if demos (public ones for the website) have valid configuration
  * @return {void}
  */
 function checkDemosConsistency() {
@@ -125,7 +163,7 @@ function checkDemosConsistency() {
                 }
 
                 const { name, categories: demoCategories, tags: demoTags } = details;
-                if (!name || /High.*demo/.test(name)) {
+                if (!name || /High.*demo/u.test(name)) {
                     LogLib.failure('no name set, or default name used:', detailsFile);
                     errors++;
                 }
@@ -233,18 +271,23 @@ function checkDocsConsistency() {
 /**
  * Run the test suite.
  *
+ * @param {Function} gulpback
+ * Internal async function by Gulp.js.
+ *
  * @return {Promise<void>}
  *         Promise to keep
  */
-async function test() {
-    const fs = require('fs');
+async function test(gulpback) {
     const argv = require('yargs').argv;
-    const log = require('../libs/log');
+    const childProcess = require('node:child_process');
+    const fs = require('node:fs');
+    const logLib = require('../libs/log');
+    const PluginError = require('plugin-error');
 
     const { shouldRun, saveRun, HELP_TEXT_COMMON } = require('./lib/test');
 
     if (argv.help || argv.helpme) {
-        log.message(
+        logLib.message(
             `HIGHCHARTS TYPESCRIPT TEST RUNNER
 
 Available arguments for 'gulp test':` +
@@ -259,6 +302,7 @@ specified by config.imageCapture.resultsOutputPath.
     }
 
     checkDocsConsistency();
+    checkSamplesConsistency();
     checkDemosConsistency();
     checkJSWrap();
 
@@ -282,18 +326,15 @@ specified by config.imageCapture.resultsOutputPath.
     // If false, there's no modified products
     // If undefined, there's no product argument, so fall back to karma config
     if (productTests === false) {
-        log.message('No tests to run, exiting early');
+        logLib.message('No tests to run, exiting early');
         return;
     }
 
-    // Conditionally build required code
-    await gulp.task('scripts')();
-
     const shouldRunTests = forceRun ||
         (await shouldRun(runConfig).catch(error => {
-            log.failure(error.message);
+            logLib.failure(error.message);
 
-            log.failure(
+            logLib.failure(
                 '✖ The files have not been built' +
                 ' since the last source code changes.' +
                 ' Run `npx gulp` and try again.' +
@@ -307,63 +348,50 @@ specified by config.imageCapture.resultsOutputPath.
 
     if (shouldRunTests) {
 
-        log.message('Run `gulp test --help` for available options');
+        logLib.message('Run `gulp test --help` for available options');
 
-        const KarmaServer = require('karma').Server;
-        const { parseConfig } = require('karma').config;
+        // Use TypeScript karma for Grid/Dashboards, regular karma for others
+        if (argv.product === 'Grid' || argv.product === 'Dashboards') {
+            const { testKarma } = require('./test-karma');
+            await testKarma(argv);
+        } else {
+            // Conditionally build required code
+            await gulp.task('scripts')(gulpback);
 
-        const PluginError = require('plugin-error');
-        const {
-            reporters: defaultReporters,
-            browserDisconnectTimeout: defaultTimeout
-        } = require(KARMA_CONFIG_FILE);
+            const testArgumentParts = [];
 
-        const karmaConfig = parseConfig(KARMA_CONFIG_FILE, {
-            reporters: argv.dots ? ['dots'] : defaultReporters,
-            browserDisconnectTimeout: typeof argv.timeout === 'number' ? argv.timeout : defaultTimeout,
-            singleRun: true,
-            tests: Array.isArray(productTests) ?
-                productTests.map(testPath => `samples/unit-tests/${testPath}/**/demo.js`) :
-                void 0,
-            client: {
-                cliArgs: argv
+            if (Array.isArray(productTests)) {
+                testArgumentParts.push('--tests');
+                productTests.forEach(testPath =>
+                    testArgumentParts.push(`unit-tests/${testPath}/**/demo.js`));
             }
-        });
 
-        await new Promise((resolve, reject) => new KarmaServer(
-            karmaConfig,
-            err => {
+            const result = childProcess.spawnSync('npx', [
+                'karma', 'start', KARMA_CONFIG_FILE,
+                testArgumentParts.join(' '),
+                ...process.argv
+            ], {
+                cwd: process.cwd(),
+                stdio: ['ignore', process.stdout, process.stderr],
+                timeout: 1800000,
+                shell: path.sep === path.win32.sep
+            });
 
-                // Force exit in BrowserStack GitHub Action
-                // eslint-disable-next-line node/no-process-exit
-                setTimeout(() => process.exit(err), 3000);
-
-                if (err !== 0) {
-
-                    if (argv.speak) {
-                        log.say('Tests failed!');
-                    }
-
-                    reject(new PluginError('karma', {
-                        message: 'Tests failed'
-                    }));
-
-                    return;
-                }
-
-                try {
-                    saveRun(runConfig);
-                } catch (catchedError) {
-                    log.warn(catchedError);
-                }
-
+            if (result.error || result.status !== 0) {
                 if (argv.speak) {
-                    log.say('Tests succeeded!');
+                    logLib.say('Tests failed!');
                 }
-
-                resolve();
+                throw new PluginError('karma', {
+                    message: 'Tests failed'
+                });
             }
-        ).start());
+        }
+
+        if (argv.speak) {
+            logLib.say('Tests succeeded!');
+        }
+
+        saveRun(runConfig);
 
         // Capture console.error, console.warn and console.log
         const consoleLogPath = `${BASE}/test/console.log`;
@@ -372,9 +400,9 @@ specified by config.imageCapture.resultsOutputPath.
             'utf-8'
         ).catch(() => {});
         if (consoleLog) {
-            const errors = (consoleLog.match(/ ERROR:/g) || []).length,
-                warnings = (consoleLog.match(/ WARN:/g) || []).length,
-                logs = (consoleLog.match(/ LOG:/g) || []).length;
+            const errors = (consoleLog.match(/ ERROR:/gu) || []).length,
+                warnings = (consoleLog.match(/ WARN:/gu) || []).length,
+                logs = (consoleLog.match(/ LOG:/gu) || []).length;
 
             const message = [];
             if (errors) {
@@ -387,12 +415,11 @@ specified by config.imageCapture.resultsOutputPath.
                 message.push(`${logs} logs`);
             }
 
-            log.message(
+            logLib.message(
                 `The browser console logged ${message.join(', ')}.\n` +
                 'They can be reviewed in ' + consoleLogPath.cyan + '.'
             );
         }
-
     }
 }
 

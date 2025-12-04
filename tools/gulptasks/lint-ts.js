@@ -30,17 +30,20 @@ const SOURCE_GLOB = './**/*.ts';
 function lintTS(argv) {
     const logLib = require('../libs/log');
     const processLib = require('../libs/process');
+    const utils = require('./utils');
+
+    const product = argv.product || 'Highcharts';
+    let productTSFolder = './ts';
+
+    if (!utils.validateProduct(product)) {
+        return Promise.resolve();
+    }
 
     return new Promise((resolve, reject) => {
-        let product = 'highcharts';
-        let productTSFolder = './ts';
-
-        if (argv.dashboards) {
-            product = 'dashboards';
+        if (product === 'Dashboards') {
             productTSFolder = './ts/Dashboards';
-        } else if (argv.datagrid) {
-            product = 'datagrid';
-            productTSFolder = './ts/DataGrid';
+        } else if (product === 'Grid') {
+            productTSFolder = './ts/Grid';
         }
 
         logLib.message(`Linting TS files (.ts) for ${product} ...`);
@@ -57,8 +60,7 @@ function lintTS(argv) {
 
 lintTS.description = 'Run eslint on TypeScript files (.ts) in the ts folder';
 lintTS.flags = {
-    '--dashboards': 'Lint dashboards TypeScript files only',
-    '--datagrid': 'Lint datagrid TypeScript files only'
+    '--product': 'Lint project Typescript files only: Highcharts (default), Grid, Dashboards'
 };
 gulp.task('lint-ts', () => lintTS(require('yargs').argv));
 

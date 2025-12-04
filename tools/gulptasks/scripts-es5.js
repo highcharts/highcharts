@@ -32,12 +32,12 @@ async function task() {
     try {
         processLib.isRunning('scripts-es5', true);
 
-        fsLib.deleteDirectory('js/', true);
+        fsLib.deleteDirectory('js/');
 
         await processLib.exec('npx tsc -p ts/masters-es5 --outDir js/');
 
-        fsLib.deleteDirectory('js/Dashboards/', true);
-        fsLib.deleteDirectory('js/DataGrid/', true);
+        fsLib.deleteDirectory('js/Dashboards/');
+        fsLib.deleteDirectory('js/Grid/');
 
         await buildTool
             .getBuildScripts({
@@ -66,7 +66,7 @@ async function task() {
             })
             .fnFirstBuild();
 
-        fsLib.deleteDirectory('code/es5/es-modules', true);
+        fsLib.deleteDirectory('code/es5/es-modules');
 
         logLib.success('Created ES5 code');
     } finally {
