@@ -1,5 +1,9 @@
-@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+
+.highcharts-grid-container {
+    height: 250px;
+}
 
 h1#title {
     padding: 10px;
@@ -42,6 +46,10 @@ pre#data {
 #controls,
 #times {
     flex: 1 1 50%;
+}
+
+.highcharts-grid-container {
+    max-height: 260px;
 }
 
 /* SMALL */

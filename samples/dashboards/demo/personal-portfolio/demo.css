@@ -1,6 +1,22 @@
 @import url("https://code.highcharts.com/css/highcharts.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
-@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
+
+body {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
+    background: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
+}
 
 /* Dashboards */
 
@@ -24,7 +40,11 @@
     stroke-width: 0;
 }
 
-.highcharts-datagrid-table {
+.highcharts-solidgauge-series.highcharts-color-0 path.highcharts-point {
+    fill: var(--highcharts-color-0);
+}
+
+.highcharts-grid-table {
     border: 0;
 }
 
@@ -51,7 +71,7 @@
     font-weight: 500;
 }
 
-.highcharts-datagrid-table tbody td {
+.highcharts-grid-table tbody td {
     padding-left: 14px;
 }
 
@@ -86,7 +106,7 @@
 }
 
 @media (max-width: 800px) {
-    #data-grid,
+    #grid,
     #kpi-gauge-risk {
         flex: 1 1 100%;
     }

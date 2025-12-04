@@ -1,6 +1,20 @@
 @import url("https://code.highcharts.com/css/highcharts.css");
-@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+
+body {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
+}
 
 /* *
  *
@@ -162,7 +176,7 @@
     content: "";
     width: 18px;
     height: 18px;
-    background-color: var(--highcharts-neutral-color-0);
+    background-color: var(--highcharts-background-color);
     border-radius: 50%;
     position: absolute;
     top: 1px;
@@ -230,7 +244,7 @@
  * */
 
 #kpi-layout .highcharts-dashboards-component {
-    background-color: var(--highcharts-neutral-color-0);
+    background-color: var(--highcharts-background-color);
     color: var(--highcharts-neutral-color-100);
     cursor: pointer;
 }
@@ -303,7 +317,7 @@
 }
 
 #kpi-data .highcharts-dashboards-component-kpi-value::before {
-    content: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzMiIHZpZXdCb3g9IjAgMCAzMiAzMyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTMxLjc0NTggMjkuNDE4OEwxNy4zNDYgMS40MTg3NUMxNy4wNTE1IDAuODQ2MjUgMTYuNTQ0NSAwLjUgMTYgMC41QzE1LjQ1NTUgMC41IDE0Ljk0ODUgMC44NDYyNSAxNC42NTQgMS40MTg3NUwwLjI1NDE1NSAyOS40MTg4QzAuMDk4NzU4MSAyOS43MjA5IDAuMDExMzIwOCAzMC4wNjk4IDAuMDAxMDI3MTcgMzAuNDI4N0MtMC4wMDkyNjY0NiAzMC43ODc3IDAuMDU3OTYzNSAzMS4xNDM1IDAuMTk1NjU1IDMxLjQ1ODdDMC4zMzM0MTEgMzEuNzczOSAwLjUzNjUxOCAzMi4wMzcgMC43ODM2NDggMzIuMjIwMkMxLjAzMDc4IDMyLjQwMzQgMS4zMTI4MSAzMi41IDEuNjAwMTQgMzIuNUgzMC4zOTk5QzMwLjk4NTQgMzIuNSAzMS41MjM4IDMyLjEwMDYgMzEuODA0MyAzMS40NTgxQzMxLjk0MiAzMS4xNDMgMzIuMDA5MyAzMC43ODczIDMxLjk5OSAzMC40Mjg0QzMxLjk4ODcgMzAuMDY5NSAzMS45MDEyIDI5LjcyMDggMzEuNzQ1OCAyOS40MTg4Wk0xNiA2LjE5ODc1TDIwLjI2OTUgMTQuNUgxNkwxMi44IDE4LjVMMTAuODk3MSAxNi4xMjEzTDE2IDYuMTk4NzVaIiBmaWxsPSIjOUE5MkNFIi8+Cjwvc3ZnPgo=);
+    content: url(data:image/svg+xml;base64,PsuHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzMiIHZpZXdCb3g9IjAgMCAzMiAzMyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTMxLjc0NTggMjkuNDE4OEwxNy4zNDYgMS40MTg3NUMxNy4wNTE1IDAuODQ2MjUgMTYuNTQ0NSAwLjUgMTYgMC41QzE1LjQ1NTUgMC41IDE0Ljk0ODUgMC44NDYyNSAxNC42NTQgMS40MTg3NUwwLjI1NDE1NSAyOS40MTg4QzAuMDk4NzU4MSAyOS43MjA5IDAuMDExMzIwOCAzMC4wNjk4IDAuMDAxMDI3MTcgMzAuNDI4N0MtMC4wMDkyNjY0NiAzMC43ODc3IDAuMDU3OTYzNSAzMS4xNDM1IDAuMTk1NjU1IDMxLjQ1ODdDMC4zMzM0MTEgMzEuNzczOSAwLjUzNjUxOCAzMi4wMzcgMC43ODM2NDggMzIuMjIwMkMxLjAzMDc4IDMyLjQwMzQgMS4zMTI4MSAzMi41IDEuNjAwMTQgMzIuNUgzMC4zOTk5QzMwLjk4NTQgMzIuNSAzMS41MjM4IDMyLjEwMDYgMzEuODA0MyAzMS40NTgxQzMxLjk0MiAzMS4xNDMgMzIuMDA5MyAzMC43ODczIDMxLjk5OSAzMC40Mjg0QzMxLjk4ODcgMzAuMDY5NSAzMS45MDEyIDI5LjcyMDggMzEuNzQ1OCAyOS40MTg4Wk0xNiA2LjE5ODc1TDIwLjI2OTUgMTQuNUgxNkwxMi44IDE4LjVMMTAuODk3MSAxNi4xMjEzTDE2IDYuMTk4NzVaIiBmaWxsPSIjOUE5MkNFIi8+Cjwvc3ZnPgo=);
     display: inline-block;
     margin-right: 0.25em;
     vertical-align: middle;
@@ -315,21 +329,15 @@
  *
  * */
 
-#selection-grid .highcharts-dashboards-component {
-    background-color: var(--color-background);
+.hcg-theme-default {
+    --hcg-font-size: 0.95em;
+    --hcg-padding: 8px 10px;
+    --hcg-header-padding: 15px;
+    --hcg-cell-hovered-row-background: var(--color-hover-background);
 }
 
-#selection-grid .highcharts-datagrid-table thead {
-    font-size: 12px;
-}
-
-#selection-grid .highcharts-datagrid-hovered-row {
-    background-color: var(--color-hover-background);
-    color: var(--color-hover-text);
-}
-
-#selection-grid .highcharts-datagrid-hovered-column {
-    background: none;
+.highcharts-grid-container {
+    min-height: 260px;
 }
 
 /* *
@@ -339,7 +347,7 @@
  * */
 
 #time-range-selector .highcharts-background {
-    fill: var(--highcharts-neutral-color-0);
+    fill: var(--highcharts-background-color);
 }
 
 #time-range-selector .highcharts-grid-line {
