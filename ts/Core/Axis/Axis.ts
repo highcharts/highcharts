@@ -3935,13 +3935,14 @@ class Axis {
                 });
             }
 
-            for (const coll of ['plotBands', 'plotLines'] as const) {
-                for (const plotItem of this[coll]) {
-                    plotItem.render();
-                }
-            }
-
         } // End if hasData
+
+        // Render or update rendering of plot lines and bands
+        for (const coll of ['plotBands', 'plotLines'] as const) {
+            for (const plotItem of this[coll]) {
+                plotItem.render();
+            }
+        }
 
         // Remove inactive ticks
         [ticks, minorTicks, alternateBands].forEach(function (
@@ -4035,13 +4036,6 @@ class Axis {
         if (this.visible) {
             // Render the axis
             this.render();
-
-            // Move plot lines and bands
-            for (const coll of ['plotBands', 'plotLines'] as const) {
-                for (const plotItem of this[coll]) {
-                    plotItem.render();
-                }
-            }
         }
 
         // Mark associated series as dirty and ready for redraw
