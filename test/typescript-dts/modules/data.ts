@@ -1,7 +1,5 @@
 import * as Highcharts from 'highcharts';
-import DataModule from 'highcharts/modules/data';
-
-DataModule(Highcharts);
+import 'highcharts/modules/data';
 
 function test_beforeParse() {
     const options: Highcharts.Options = {

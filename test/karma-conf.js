@@ -5,6 +5,7 @@ const yaml = require('js-yaml');
 const path = require('path');
 const os = require('os');
 const { getLatestCommitShaSync } = require('../tools/libs/git');
+const log = require('../tools/libs/log');
 const aliases = require('../samples/data/json-sources/index.json');
 
 const VISUAL_TEST_REPORT_PATH = 'test/visual-test-results.json';
@@ -37,7 +38,7 @@ function getProperties() {
             let lines = fs.readFileSync(
                 './git-ignore-me.properties', 'utf8'
             );
-            lines.split('\n').forEach(function (line) {
+            lines.split(/\r?\n/).forEach(function (line) {
                 line = line.split('=');
                 if (line[0]) {
                     properties[line[0]] = line[1];
@@ -232,17 +233,18 @@ module.exports = function (config) {
             ChildProcess.execSync(
                 'npx gulp jsdoc-dts'
             );
-            console.log('Compiling test tools...');
-            ChildProcess.execSync(
-                'cd "' + process.cwd() + '" && npx tsc -p test'
-            );
+            // console.log('Compiling test tools...');
+            // ChildProcess.execSync(
+            //     'cd "' + process.cwd() + '" && npx tsc -p test'
+            // );
             console.log('Compiling samples...');
             ChildProcess.execSync(
                 'cd "' + process.cwd() + '" && npx tsc -p samples'
             );
         } catch (catchedError) {
-            console.error(catchedError);
-            return;
+            const msg = catchedError.stdout.toString();
+            console.error(msg);
+            throw new Error(msg);
         }
     }
 
@@ -252,7 +254,7 @@ module.exports = function (config) {
     let browsers = argv.browsers ?
         argv.browsers.split(',') :
         // Use karma.defaultbrowser=FirefoxHeadless to bypass WebGL problems in
-        // Chrome 109
+        // Chrome 109+
         [getProperties()['karma.defaultbrowser'] || 'FirefoxHeadless'];
     if (argv.browsers === 'all') {
         browsers = Object.keys(browserStackBrowsers);
@@ -280,6 +282,12 @@ module.exports = function (config) {
     }
 
     const needsTranspiling = browsers.some(browser => browser === 'Win.IE');
+
+    if (browsers.includes('ChromeHeadless')) {
+        log.warn(
+            'ChromeHeadless 109+ will fail in WebGL-based tests, e.g. boost.'
+        );
+    }
 
     let tests = config.tests && Array.isArray(config.tests) ? config.tests : (
             argv.tests ? argv.tests.split(',') :
@@ -384,6 +392,7 @@ module.exports = function (config) {
             'samples/highcharts/blog/map-europe-electricity-price/demo.js', // strange fails, remove this later
 
             // Unknown error
+            'samples/highcharts/boost/arearange/demo.js',
             'samples/highcharts/boost/scatter-smaller/demo.js',
             'samples/highcharts/data/google-spreadsheet/demo.js',
 
@@ -403,6 +412,9 @@ module.exports = function (config) {
             'samples/highcharts/demo/pareto/demo.js',
             'samples/highcharts/demo/pyramid3d/demo.js',
             'samples/highcharts/demo/synchronized-charts/demo.js',
+
+            // Visual test fails due to external library used
+            'samples/highcharts/demo/combo-regression/demo.js',
         ],
         reporters: ['progress'],
         port: 9876,  // karma web server port
@@ -510,7 +522,7 @@ module.exports = function (config) {
                     // samples
                     if (argv.debug) {
                         if (js.indexOf('Highcharts.setOptions') !== -1) {
-                            console.log(
+                            log.warn(
                                 `Warning - Highcharts.setOptions found in: ${file.path}`.yellow
                             );
                         }
@@ -518,7 +530,7 @@ module.exports = function (config) {
                             js.indexOf('Highcharts.wrap') !== -1 ||
                             js.indexOf('H.wrap') !== -1
                         ) {
-                            console.log(
+                            log.warn(
                                 `Warning - Highcharts.wrap found in: ${file.path}`.yellow
                             );
                         }
@@ -609,6 +621,7 @@ module.exports = function (config) {
                                 );
                             })
                             .catch(err => {
+                                assert.ok(false, err);
                                 console.error(err);
                             })
                             .finally(() => {

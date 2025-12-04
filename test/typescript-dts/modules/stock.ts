@@ -1,7 +1,5 @@
 import * as Highcharts from 'highcharts';
-import StockModule from 'highcharts/modules/stock';
-
-StockModule(Highcharts);
+import 'highcharts/modules/stock';
 
 function test_seriesLine() {
     Highcharts.stockChart('container', {

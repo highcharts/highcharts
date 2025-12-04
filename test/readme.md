@@ -35,6 +35,9 @@ limit the number of charts in the test suite.
   `Color` object, data parsing directly against the `Data` object.
 
 #### Troubleshooting
+- The default test browser is `FirefoxHeadless`, but you can also other browser
+  except `ChromeHeadless`, which is since version 109 not suitable as it lacks a
+  WebGL context as required by boost.
 - All the Highcharts files, including modules and indicators, are loaded in the
   test runner. A badly written module can cause errors downstream. If you
   can't pinpoint an error, try removing files from `test/karma-files.json`.

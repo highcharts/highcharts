@@ -121,7 +121,7 @@ function ImageCaptureReporter(baseReporterDecorator, config, logger, emitter) {
             diffResults[testResult.description] = 0;
         } else if (!success && log.length > 0) {
             const matches = log[0].match(/Actual: (\d+)/);
-            if (matches[1]) {
+            if (matches && matches[1]) {
                 LOG.info(`Test ${testResult.description} differs with ${matches[1]} pixels`);
                 diffResults[testResult.description] = parseInt(matches[1], 10);
             } else {

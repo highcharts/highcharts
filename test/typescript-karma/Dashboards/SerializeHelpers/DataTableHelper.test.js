@@ -1,28 +1,29 @@
 import DataTable from '/base/code/es-modules/Data/DataTable.js';
 import DataTableHelper from '/base/code/dashboards/es-modules/Dashboards/SerializeHelper/DataTableHelper.js';
 
-QUnit.skip('JSON serializer for DataTable', function (assert) {
-
-    const customID = 'myCustomID',
-        table = new DataTable(
-            {
-                values: [
-                    null,
-                    void 0,
-                    NaN,
-                    1,
-                    '',
-                    'a',
-                    new DataTable({
+QUnit.test('JSON serializer for DataTable', function (assert) {
+    const customID = 'myCustomID';
+    const table = new DataTable({
+        columns: {
+            values: [
+                null,
+                void 0,
+                NaN,
+                1,
+                '',
+                'a',
+                new DataTable({
+                    columns: {
                         works: [true]
-                    })
-                ]
-            },
-            customID
-        ),
-        columns = table.getColumns(),
-        json = DataTableHelper.toJSON(table),
-        table2 = DataTableHelper.fromJSON(json);
+                    }
+                })
+            ]
+        },
+        id: customID
+    });
+    const columns = table.getColumns();
+    const json = DataTableHelper.toJSON(table);
+    const table2 = DataTableHelper.fromJSON(json);
 
     // columns
 
@@ -62,7 +63,7 @@ QUnit.skip('JSON serializer for DataTable', function (assert) {
 
     assert.strictEqual(
         table2.getCell('values', 6),
-        column[6],
+        columns['values'][6],
         'Sub table should be deserialized.'
     );
 
@@ -71,5 +72,4 @@ QUnit.skip('JSON serializer for DataTable', function (assert) {
         true,
         'Sub table should contain one boolean cell.'
     );
-
 });

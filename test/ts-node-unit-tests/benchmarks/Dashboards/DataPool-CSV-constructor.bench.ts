@@ -2,7 +2,7 @@ import type { BenchmarkContext, BenchmarkResult } from '../../benchmark';
 import { performance } from 'node:perf_hooks';
 import { join } from 'node:path';
 import { generateCSV } from '../../data-generators';
-import { setupDOM } from '../../test-utils';
+import { getHighchartsJSDOM, setupDOM } from '../../test-utils';
 
 
 export const config = {
@@ -25,26 +25,20 @@ export default async function benchmarkTest(
     }: BenchmarkContext
 ): Promise<BenchmarkResult> {
     const { win } = setupDOM();
-    const hc = require(join(CODE_PATH, '/highcharts.src.js'))(win);
+    const { Highcharts: hc, el } = getHighchartsJSDOM('highcharts', ['modules/data-tools']);
     global.window = win;
-    require(join(CODE_PATH, '/modules/data-tools.src.js'))(hc);
 
     const { DataPool } = hc;
-
     const csv = data;
 
     performance.mark('Start');
 
     new DataPool({
-        connectors: [
-            {
-                id: size,
-                type: 'CSV',
-                options: {
-                    csv
-                }
-            }
-        ]
+        connectors: [{
+            id: size,
+            type: 'CSV',
+            csv
+        }]
     });
 
     performance.mark('End');

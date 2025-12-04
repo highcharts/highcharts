@@ -19,9 +19,7 @@ function test_board() {
             connectors: [{
                 id: "My Data",
                 type: "CSV",
-                options: {
-                    csv: ''
-                }
+                csv: ''
             }]
         },
         gui: {
@@ -53,3 +51,11 @@ function test_board() {
 function test_HighchartsPlugin() {
     Dashboards.HighchartsPlugin.custom.connectHighcharts((Dashboards.win as any).Highcharts);
 }
+
+/**
+ * Tests GridPlugin.
+ */
+function test_GridPlugin() {
+    Dashboards.GridPlugin.custom.connectGrid((Dashboards.win as any).Grid);
+}
+
