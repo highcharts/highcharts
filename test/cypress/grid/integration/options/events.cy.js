@@ -10,6 +10,34 @@ describe('Grid Pro - grid events.', () => {
     it('Grid afterLoad event.', () => {
         cy.get('#afterLoad').should('have.value', 'afterLoad');
     });
+
+    it('Grid beforeUpdate event.', () => {
+        cy.get('#beforeUpdate').should('have.value', 'beforeUpdate');
+    });
+
+    it('Grid afterUpdate event.', () => {
+        cy.get('#afterUpdate').should('have.value', 'afterUpdate');
+    });
+    
+    it('Grid beforeUpdateColumn event.', () => {
+        cy.get('#beforeUpdateColumn').should('have.value', 'beforeUpdateColumn');
+    });
+
+    it('Grid afterUpdateColumn event.', () => {
+        cy.get('#afterUpdateColumn').should('have.value', 'afterUpdateColumn');
+
+        cy.get('th[data-column-id="weight"] input').should('have.value', '50');
+        cy.get('th[data-column-id="weight"] select').should('have.value', 'greaterThan');
+        cy.get('th[data-column-id="weight"] button').should('not.be.disabled');
+    });
+
+    it('Grid beforeRedraw event.', () => {
+        cy.get('#beforeRedraw').should('have.value', 'beforeRedraw');
+    });
+
+    it('Grid afterRedraw event.', () => {
+        cy.get('#afterRedraw').should('have.value', 'afterRedraw');
+    });
 });
 
 describe('Grid Pro - cell and column events.', () => {
