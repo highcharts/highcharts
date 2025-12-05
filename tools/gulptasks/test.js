@@ -280,7 +280,6 @@ function checkDocsConsistency() {
 async function test(gulpback) {
     const argv = require('yargs').argv;
     const childProcess = require('node:child_process');
-    const fs = require('node:fs');
     const logLib = require('../libs/log');
     const PluginError = require('plugin-error');
 
@@ -350,15 +349,11 @@ specified by config.imageCapture.resultsOutputPath.
 
         logLib.message('Run `gulp test --help` for available options');
 
-        // Use Playwright for Grid/Dashboards, regular karma for others
-        if (argv.product === 'Grid' || argv.product === 'Dashboards') {
-            const processLib = require('../libs/process');
-            const project = argv.product === 'Grid' ? 'dashboards' : 'dashboards';
-            await processLib.exec(
-                `npx playwright test --project=setup-dashboards --project=${project}`
-            );
-        } else {
-            // Conditionally build required code
+        // Visual tests use Karma, unit tests use Playwright
+        const isVisualTest = argv.visualcompare || argv.reference;
+
+        if (isVisualTest) {
+            // Visual comparison tests - keep using Karma
             await gulp.task('scripts')(gulpback);
 
             const testArgumentParts = [];
@@ -388,6 +383,48 @@ specified by config.imageCapture.resultsOutputPath.
                     message: 'Tests failed'
                 });
             }
+        } else {
+            // Unit tests - use Playwright
+            const processLib = require('../libs/process');
+
+            // Conditionally build required code
+            await gulp.task('scripts')(gulpback);
+
+            // Determine which Playwright projects to run
+            const playwrightProjects = [];
+
+            if (argv.product === 'Grid' || argv.product === 'Dashboards') {
+                playwrightProjects.push('setup-dashboards', 'dashboards');
+            } else {
+                playwrightProjects.push('setup-highcharts', 'qunit');
+            }
+
+            // Build grep pattern for product-specific tests
+            let grepArg = '';
+            if (Array.isArray(productTests) && productTests.length > 0) {
+                // Convert product test paths to grep pattern
+                // e.g., ['axis', 'chart'] -> '--grep "unit-tests/(axis|chart)"'
+                const pattern = productTests.join('|');
+                grepArg = `--grep "unit-tests/(${pattern})"`;
+            }
+
+            const projectArgs = playwrightProjects
+                .map(p => `--project=${p}`)
+                .join(' ');
+
+            const command = `npx playwright test ${projectArgs} ${grepArg}`.trim();
+            logLib.message(`Running: ${command}`);
+
+            try {
+                await processLib.exec(command);
+            } catch (error) {
+                if (argv.speak) {
+                    logLib.say('Tests failed!');
+                }
+                throw new PluginError('playwright', {
+                    message: 'Tests failed'
+                });
+            }
         }
 
         if (argv.speak) {
@@ -395,34 +432,6 @@ specified by config.imageCapture.resultsOutputPath.
         }
 
         saveRun(runConfig);
-
-        // Capture console.error, console.warn and console.log
-        const consoleLogPath = `${BASE}/test/console.log`;
-        const consoleLog = await fs.promises.readFile(
-            consoleLogPath,
-            'utf-8'
-        ).catch(() => {});
-        if (consoleLog) {
-            const errors = (consoleLog.match(/ ERROR:/gu) || []).length,
-                warnings = (consoleLog.match(/ WARN:/gu) || []).length,
-                logs = (consoleLog.match(/ LOG:/gu) || []).length;
-
-            const message = [];
-            if (errors) {
-                message.push(`${errors} errors`.red);
-            }
-            if (warnings) {
-                message.push(`${warnings} warnings`.yellow);
-            }
-            if (logs) {
-                message.push(`${logs} logs`);
-            }
-
-            logLib.message(
-                `The browser console logged ${message.join(', ')}.\n` +
-                'They can be reviewed in ' + consoleLogPath.cyan + '.'
-            );
-        }
     }
 }
 

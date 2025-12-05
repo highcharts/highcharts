@@ -5,7 +5,10 @@ This document provides reference patterns for test migrations and documents the 
 ## Current Status
 
 - **Node.js tests**: 324 passing
-- **Playwright tests**: 56 passing, 1 skipped
+- **Playwright tests**: 
+  - QUnit bridge: 652 passing
+  - Native Playwright (highcharts): 78 passing (includes 56 timezone tests across 8 browser timezones)
+  - Native Playwright (dashboards): 34 passing, 1 skipped
 
 ## Completed Migrations (Node.js)
 
@@ -291,9 +294,52 @@ The "Crossfilter with string values" test in `tests/dashboards/components.spec.t
 # Run Node.js tests
 npm run test-node
 
-# Run Playwright tests
-npx playwright test --project=dashboards --project=highcharts
+# Run Playwright tests (unit tests via QUnit bridge)
+npx playwright test --project=setup-highcharts --project=qunit
+
+# Run Playwright tests (native Playwright tests, includes timezone tests)
+npx playwright test --project=setup-highcharts --project=highcharts
+
+# Run Playwright tests (dashboards)
+npx playwright test --project=setup-dashboards --project=dashboards
+
+# Run all tests
+npm test
 ```
+
+## Karma to Playwright Migration (Partial)
+
+As of this migration, unit tests (`samples/unit-tests/`) now run through
+Playwright's QUnit bridge instead of Karma directly. Visual comparison tests
+still use Karma.
+
+### What Changed
+
+1. **`gulp test` command** - Now routes unit tests to Playwright (via QUnit
+   runner) instead of Karma. Visual tests (`--visualcompare`, `--reference`)
+   still use Karma.
+
+2. **npm scripts** - Updated to use Playwright:
+   - `npm test` - Runs all Playwright tests
+   - `npm run testall` - Runs all Playwright tests
+
+3. **Timezone tests** - Now use Playwright's browser timezone emulation instead
+   of changing system timezone. See `tests/qunit/timezone.spec.ts`.
+
+4. **BrowserStack** - Removed. Playwright's built-in Chromium, Firefox, and
+   WebKit browsers provide cross-browser coverage.
+
+### What Still Uses Karma
+
+- Visual comparison tests (SVG reference/candidate generation)
+- The visual comparison CI workflows (`visual-compare.yml`, `nightly.yml`)
+
+### Removed Karma Features
+
+- **Console log capture** - The Karma test runner wrote browser console output
+  to `test/console.log`, which was read and summarized after tests completed.
+  This has been removed from `gulp test` since Playwright doesn't use this file.
+  Playwright captures console output differently (via `page.on('console')`).
 
 ## File Structure
 
@@ -327,26 +373,30 @@ tests/
 │   ├── html-table-connector.spec.ts
 │   ├── layout.spec.ts
 │   └── synchronization.spec.ts
-└── highcharts/
-    ├── boost/
-    │   └── boost.spec.ts
-    ├── chart/
-    │   └── chart.spec.ts
-    ├── globals/
-    │   └── globals.spec.ts
-    ├── pointer/
-    │   └── pointer-members.spec.ts
-    ├── polar/
-    │   └── polar.spec.ts
-    ├── series/
-    │   └── series-marker-clusters.spec.ts
-    ├── sonification/
-    │   └── sonification.spec.ts
-    ├── stock-tools/
-    │   ├── stock-tools-bindings.spec.ts
-    │   └── stock-tools-gui.spec.ts
-    ├── svgrenderer/
-    │   └── symbols.spec.ts
-    └── themes/
-        └── themes.spec.ts
+├── highcharts/
+│   ├── boost/
+│   │   └── boost.spec.ts
+│   ├── chart/
+│   │   └── chart.spec.ts
+│   ├── globals/
+│   │   └── globals.spec.ts
+│   ├── pointer/
+│   │   └── pointer-members.spec.ts
+│   ├── polar/
+│   │   └── polar.spec.ts
+│   ├── series/
+│   │   └── series-marker-clusters.spec.ts
+│   ├── sonification/
+│   │   └── sonification.spec.ts
+│   ├── stock-tools/
+│   │   ├── stock-tools-bindings.spec.ts
+│   │   └── stock-tools-gui.spec.ts
+│   ├── svgrenderer/
+│   │   └── symbols.spec.ts
+│   ├── themes/
+│   │   └── themes.spec.ts
+│   └── time/
+│       └── timezone.spec.ts    # Timezone tests across multiple browser timezones
+└── qunit/
+    └── qunit.spec.ts           # QUnit bridge for samples/unit-tests
 ```
