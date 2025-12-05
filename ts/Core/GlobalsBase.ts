@@ -68,6 +68,7 @@ export interface GlobalsBase {
     readonly dateFormats: Record<string, Time.TimeFormatCallbackFunction>;
     /** @internal */
     readonly deg2rad: number;
+    /** @internal */
     readonly doc: Document;
     /** @internal */
     readonly isChrome: boolean;
@@ -85,10 +86,15 @@ export interface GlobalsBase {
     readonly marginNames: ReadonlyArray<
     'plotTop'|'marginRight'|'marginBottom'|'plotLeft'
     >;
+    /** @internal */
     readonly nav: Navigator;
+    /** @internal */
     readonly noop: (this: any, ...args: Array<any>) => any;
+    /** @internal */
     readonly pageLang?: string,
+    /** @internal */
     readonly product: string;
+    /** @internal */
     readonly seriesTypes: SeriesTypeRegistry;
     /** @internal */
     readonly supportsPassiveEvents: boolean;
@@ -96,11 +102,13 @@ export interface GlobalsBase {
     readonly svg: boolean;
     /** @internal */
     readonly symbolSizes: Record<string, SizeObject>;
+    /** @internal */
     theme?: DeepPartial<Options>;
     /** @internal */
     readonly userAgent: string;
+    /** @internal */
     readonly version: string;
-    // eslint-disable-next-line node/no-unsupported-features/es-builtins
+    /** @internal */
     readonly win: (Window&typeof globalThis);
 }
 
