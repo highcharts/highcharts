@@ -36,7 +36,7 @@ const { error } = U;
 
 /**
  * Deprecated types
- * @private
+ * @internal
  */
 declare global {
     interface HTMLCanvasElement {
@@ -77,7 +77,7 @@ const domurl = win.URL || win.webkitURL || win;
 /**
  * Convert base64 dataURL to Blob if supported, otherwise returns undefined.
  *
- * @private
+ * @internal
  * @function Highcharts.dataURLtoBlob
  *
  * @param {string} dataURL
@@ -119,7 +119,7 @@ function dataURLtoBlob(
 /**
  * Download a data URL in the browser. Can also take a blob as first param.
  *
- * @private
+ * @internal
  * @function Highcharts.downloadURL
  *
  * @param {string | global.URL} dataURL
@@ -190,7 +190,7 @@ function downloadURL(
 /**
  * Asynchronously downloads a script from a provided location.
  *
- * @private
+ * @internal
  * @function Highcharts.getScript
  *
  * @param {string} scriptLocation
@@ -227,7 +227,7 @@ function getScript(
 /**
  * Get a blob object from content, if blob is supported.
  *
- * @private
+ * @internal
  * @function Highcharts.getBlobFromContent
  *
  * @param {string} content
