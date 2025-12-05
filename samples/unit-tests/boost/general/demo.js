@@ -79,6 +79,7 @@ async function sampleImagePixelAtSVGPoint(svg, imageEl, svgX, svgY) {
 QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
     'Set extremes when boosted',
     async function (assert) {
+        const done = assert.async();
         const chart = Highcharts.chart('container', {
             chart: {
                 type: 'column',
@@ -177,6 +178,7 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
                     `After updating to empty zones the color should be
                     remained, #23571.`
                 );
+                done();
 
                 TestUtilities.lolexRunAndUninstall(clock);
             })();
