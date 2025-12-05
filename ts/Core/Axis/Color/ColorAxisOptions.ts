@@ -27,6 +27,7 @@ import type LegendOptions from '../../Legend/LegendOptions';
  * */
 
 export interface ColorAxisDataClassOptions {
+
     /**
      * The color of each data class. If not set, the color is pulled
      * from the global or chart-specific [colors](#colors) array. In
@@ -39,8 +40,10 @@ export interface ColorAxisDataClassOptions {
      * @product highcharts highstock highmaps
      */
     color?: ColorType;
+
     /** @internal */
     colorIndex?: number;
+
     /**
      * The start of the value range that the data class represents,
      * relating to the point value.
@@ -51,6 +54,7 @@ export interface ColorAxisDataClassOptions {
      * @product highcharts highstock highmaps
      */
     from?: number;
+
     /**
      * The name of the data class as it appears in the legend.
      * If no name is given, it is automatically created based on the
@@ -67,6 +71,7 @@ export interface ColorAxisDataClassOptions {
      * @product highcharts highstock highmaps
      */
     name?: string;
+
     /**
      * The end of the value range that the data class represents,
      * relating to the point value.
@@ -77,9 +82,11 @@ export interface ColorAxisDataClassOptions {
      * @product highcharts highstock highmaps
      */
     to?: number;
+
 }
 
 export interface ColorAxisMarkerOptions {
+
     /**
      * Animation for the marker as it moves between values. Set to
      * `false` to disable animation. Defaults to `{ duration: 50 }`.
@@ -102,6 +109,7 @@ export interface ColorAxisMarkerOptions {
      * @product highcharts highstock highmaps
      */
     width?: number;
+
 }
 
 /**
@@ -150,6 +158,7 @@ export interface ColorAxisMarkerOptions {
  * @product highcharts highstock highmaps
  */
 export interface ColorAxisOptions extends AxisOptions {
+
     // TODO alignTicks?: undefined;
     allowDecimals?: undefined;
     alternateGridColor?: undefined;
@@ -308,6 +317,7 @@ export interface ColorAxisOptions extends AxisOptions {
      * @product highcharts highstock highmaps
      */
     stops?: GradientColor['stops'];
+
 }
 
 /* *

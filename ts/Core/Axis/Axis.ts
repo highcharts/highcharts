@@ -337,64 +337,108 @@ class Axis {
 
     /** @internal */
     public isDirty?: boolean;
+
     /** @internal */
     public isLinked!: boolean;
+
     /** @internal */
     public isOrdinal?: boolean;
+
     /** @internal */
     public isPanning?: boolean;
+
     /** @internal */
     public isRadial?: boolean;
-    /** @internal */
+
+    /**
+     * Whether the axis is the x-axis.
+     */
     public isXAxis?: boolean;
+
     /** @internal */
     public isZAxis?: boolean;
+
     /** @internal */
     public keepProps?: Array<string>;
+
     /** @internal */
     public labelAlign?: AlignValue;
+
     /** @internal */
     public labelEdge!: Array<null>; // @todo
+
     /** @internal */
     public labelFormatter!: AxisLabelFormatterCallback;
+
     /** @internal */
     public labelGroup?: SVGElement;
+
     /** @internal */
     public labelOffset?: number;
+
     /** @internal */
     public labelRotation?: number;
+
     /** @internal */
     public left!: number;
-    /** @internal */
+
+    /**
+     * The length of the axis in terms of pixels.
+     */
     public len!: number;
+
     /** @internal */
     public linkedParent?: Axis;
-    /** @internal */
+
+    /**
+     * The maximum value of the axis. In a logarithmic axis, this is the
+     * logarithm of the real value, and the real value can be obtained from
+     * {@link Axis#getExtremes}.
+     */
     public max?: number;
+
     /** @internal */
     public maxLabelDimensions?: SizeObject;
+
     /** @internal */
     public maxLabelLength?: number;
-    /** @internal */
+
+    /**
+     * The minimum value of the axis. In a logarithmic axis, this is the
+     * logarithm of the real value, and the real value can be obtained from
+     * {@link Axis#getExtremes}.
+     */
     public min?: number;
+
     /** @internal */
     public minorTickInterval!: number;
-    /** @internal */
+
+    /**
+     * List of minor ticks mapped by position on the axis.
+     *
+     * @see {@link Highcharts.Tick}
+     */
     public minorTicks!: Record<string, Tick>;
+
     /** @internal */
     public minPixelPadding!: number;
+
     /** @internal */
     public minPointOffset?: number;
+
     /**
      * When the minRange is undefined, it is not yet evaluated. When it is null,
      * it is deliberately not a number because we have user extremes.
      * @internal
      */
     public minRange?: null|number;
+
     /** @internal */
     public names!: Array<string>;
+
     /** @internal */
     public offset!: number;
+
     /** @internal */
     public old?: { // @todo create a type
         len: number;
@@ -404,92 +448,168 @@ class Axis {
         userMax?: number;
         userMin?: number;
     };
+
     /** @internal */
     public opposite?: boolean;
-    /** @internal */
+
+    /**
+     * Current options for the axis after merge of defaults and user's
+     * options.
+     */
     public options!: (AxisOptions|XAxisOptions|YAxisOptions);
+
     /** @internal */
     public ordinal?: AxisComposition['ordinal'];
+
     /** @internal */
     public overlap!: boolean;
+
     /** @internal */
     public paddedTicks!: Array<number>;
+
     /** @internal */
     public plotLinesAndBands!: Array<PlotLineOrBand>;
+
     /** @internal */
     public plotLinesAndBandsGroups!: Record<string, SVGElement>;
+
     /** @internal */
     public pointRange!: number;
+
     /** @internal */
     public pointRangePadding!: number;
-    /** @internal */
+
+    /**
+     * The position of the axis in terms of pixels, compared to the chart
+     * edge. In a horizontal axis it is the same as `chart.plotLeft` unless
+     * the axis is explicitly positioned, and in a default vertical axis it
+     * is the same as `chart.plotTop`.
+     */
     public pos!: number;
+
     /** @internal */
     public positiveValuesOnly!: boolean;
+
     /** @internal */
     public reserveSpaceDefault?: boolean;
-    /** @internal */
+
+    /**
+     * Whether the axis is reversed. Based on the `axis.reversed`,
+     * option, but inverted charts have reversed xAxis by default.
+     */
     public reversed?: boolean;
+
     /** @internal */
     public right!: number;
+
     /** @internal */
     public sector?: number;
-    /** @internal */
+
+    /**
+     * All series associated to the axis.
+     */
     public series!: Array<Series>;
+
     /** @internal */
     public showAxis?: boolean;
-    /** @internal */
+
+    /**
+     * The side on which the axis is rendered. 0 is top, 1 is right, 2
+     * is bottom and 3 is left.
+     */
     public side!: number;
+
     /** @internal */
     public single?: boolean;
+
     /** @internal */
     public softThreshold?: boolean;
+
     /** @internal */
     public staggerLines?: number;
+
     /** @internal */
     public staticScale?: number;
+
     /** @internal */
     public threshold?: number;
+
     /** @internal */
     public thresholdAlignment?: number;
+
     /** @internal */
     public tickAmount!: number;
+
     /** @internal */
     public tickInterval!: number;
+
     /** @internal */
     public tickmarkOffset!: number;
-    /** @internal */
+
+    /**
+     * Contains the current positions that are laid out on the axis. The
+     * positions are numbers in terms of axis values. In a category axis
+     * they are integers, in a datetime axis they are also integers, but
+     * designating milliseconds.
+     *
+     * This property is read only - for modifying the tick positions, use
+     * the `tickPositioner` callback or [axis.tickPositions](
+     * https://api.highcharts.com/highcharts/xAxis.tickPositions) option
+     * instead.
+     */
     public tickPositions!: TickPositionsArray;
+
     /** @internal */
     public tickRotCorr!: PositionObject;
-    /** @internal */
+
+    /**
+     * List of major ticks mapped by position on axis.
+     *
+     * @see {@link Highcharts.Tick}
+     */
     public ticks!: Record<string, Tick>;
+
     /** @internal */
     public titleOffset?: number;
+
     /** @internal */
     public top!: number;
+
     /** @internal */
     public transA!: number;
+
     /** @internal */
     public transB!: number;
+
     /** @internal */
     public translationSlope!: number;
+
     /** @internal */
     public type?: AxisOptions['type'];
+
     /** @internal */
     public uniqueNames?: boolean;
+
     /** @internal */
     public userMax?: number;
+
     /** @internal */
     public userMin?: number;
+
     /** @internal */
     public userMinRange?: number;
-    /** @internal */
+
+    /**
+     * User's options for this axis without defaults.
+     */
     public userOptions!: DeepPartial<AxisOptions>;
+
     /** @internal */
     public visible!: boolean;
+
     /** @internal */
     public width!: number;
+
     /** @internal */
     public zoomEnabled!: boolean;
 

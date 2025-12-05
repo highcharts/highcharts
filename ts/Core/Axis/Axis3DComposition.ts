@@ -59,7 +59,6 @@ declare module './AxisComposition' {
     }
 }
 
-/** @internal */
 declare module './AxisOptions' {
     interface AxisLabelOptions {
         position3d?: OptionsPosition3dValue;

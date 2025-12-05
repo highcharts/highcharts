@@ -90,6 +90,7 @@ namespace PlotLineOrBandAxis {
             options: PlotBandOptions,
             coll?: 'plotBands'
         ): (PlotLineOrBand|undefined);
+        /** @internal */
         addPlotBandOrLine(
             options: PlotLineOptions,
             coll?: 'plotLines'

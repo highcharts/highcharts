@@ -519,7 +519,6 @@ namespace PlotLineOrBand {
  *
  * */
 
-/** @internal */
 export default PlotLineOrBand;
 
 /* *
