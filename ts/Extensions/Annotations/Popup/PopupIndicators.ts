@@ -903,7 +903,10 @@ function filterSeries(
         }
     });
 
-    return filteredSeriesArray;
+    // Filter out depricated duplicates
+    return filteredSeriesArray.filter(
+        (x): boolean => x.indicatorType === x.indicatorType.toLowerCase()
+    );
 }
 
 /**
