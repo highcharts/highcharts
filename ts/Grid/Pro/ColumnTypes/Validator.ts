@@ -21,7 +21,7 @@
  *
  * */
 
-import type Column from '../../Core/Table/Column';
+import type { ColumnDataType } from '../../Core/Table/Column';
 import type { EditModeContent } from '../CellEditing/CellEditMode';
 import type Table from '../../Core/Table/Table';
 import type TableCell from '../../Core/Table/Body/TableCell';
@@ -48,6 +48,94 @@ const { defined } = U;
  * Class for validating cell content.
  */
 class Validator {
+
+    /**
+     * The class names used by the validator functionality.
+     */
+    public static readonly classNames = {
+        notifContainer: Globals.classNamePrefix + 'notification',
+        notifError: Globals.classNamePrefix + 'notification-error',
+        notifAnimation: Globals.classNamePrefix + 'notification-animation',
+        editedCellError: Globals.classNamePrefix + 'edited-cell-error'
+    } as const;
+
+
+    /**
+     * Definition of default validation rules.
+     */
+    public static readonly rulesRegistry: RulesRegistryType = {
+        notEmpty: {
+            validate: ({ value, rawValue }): boolean => (
+                defined(value) && rawValue.length > 0
+            ),
+            notification: 'Value cannot be empty.'
+        },
+        number: {
+            validate: ({ rawValue }): boolean => !isNaN(+rawValue),
+            notification: 'Value has to be a number.'
+        },
+        datetime: {
+            validate: ({ value }): boolean => !defined(value) || !isNaN(+value),
+            notification: 'Value has to be parsed to a valid timestamp.'
+        },
+        'boolean': {
+            validate: ({ rawValue }): boolean => (
+                rawValue === 'true' || rawValue === 'false' ||
+                Number(rawValue) === 1 || Number(rawValue) === 0
+            ),
+            notification: 'Value has to be a boolean.'
+        },
+        ignoreCaseUnique: {
+            validate: function ({ rawValue }): boolean {
+                const oldValue = String(this.value).toLowerCase();
+                const rowValueString = rawValue.toLowerCase();
+
+                if (oldValue === rowValueString) {
+                    return true;
+                }
+
+                const columnData = this.column.data;
+                const isDuplicate = columnData?.some(
+                    (value): boolean => String(value).toLowerCase() ===
+                        rowValueString
+                );
+
+                return !isDuplicate;
+
+            },
+            notification:
+                'Value must be unique within this column (case-insensitive).'
+        },
+        unique: {
+            validate: function ({ rawValue }): boolean {
+                const oldValue = this.value;
+
+                if (oldValue === rawValue) {
+                    return true;
+                }
+
+                const columnData = this.column.data;
+                const isDuplicate = columnData?.some(
+                    (value): boolean => value === rawValue
+                );
+
+                return !isDuplicate;
+            },
+            notification:
+                'Value must be unique within this column (case-sensitive).'
+        }
+    };
+
+    /**
+     * Default validation rules for each dataType.
+     */
+    public static readonly predefinedRules: Record<ColumnDataType, RuleKey[]> = {
+        'boolean': ['boolean'],
+        datetime: ['datetime'],
+        number: ['number'],
+        string: []
+    };
+
     /* *
      *
      *  Properties
@@ -132,7 +220,7 @@ class Validator {
         }
 
         for (const rule of rules) {
-            let ruleDef: Validator.RuleDefinition;
+            let ruleDef: RuleDefinition;
             let err;
 
             if (typeof rule === 'string') {
@@ -142,16 +230,16 @@ class Validator {
                 ruleDef = rule;
             }
 
-            let validateFn: Validator.ValidateFunction;
+            let validateFn: ValidateFunction;
 
             if (typeof ruleDef.validate === 'string') {
                 const predefinedRules = (
                     Validator.rulesRegistry[ruleDef.validate]
-                ) as Validator.RuleDefinition;
+                ) as RuleDefinition;
                 validateFn =
-                    predefinedRules?.validate as Validator.ValidateFunction;
+                    predefinedRules?.validate as ValidateFunction;
             } else {
-                validateFn = ruleDef.validate as Validator.ValidateFunction;
+                validateFn = ruleDef.validate as ValidateFunction;
             }
 
             const { editModeContent } = cell.column.viewport.cellEditing || {};
@@ -288,157 +376,54 @@ class Validator {
     }
 }
 
+
 /* *
  *
- *  Namespace
+ *  Declarations
  *
  * */
 
 /**
- * Namespace for Validation functionality.
+ * Callback function that checks if field is valid.
  */
-namespace Validator {
+export type ValidateFunction = (
+    this: TableCell,
+    content: EditModeContent
+) => boolean;
 
-    /**
-     * The class names used by the validator functionality.
-     */
-    export const classNames = {
-        notifContainer: Globals.classNamePrefix + 'notification',
-        notifError: Globals.classNamePrefix + 'notification-error',
-        notifAnimation: Globals.classNamePrefix + 'notification-animation',
-        editedCellError: Globals.classNamePrefix + 'edited-cell-error'
-    } as const;
+/**
+ * Callback function that returns a error message.
+ */
+export type ValidationErrorFunction = (
+    this: TableCell,
+    content?: EditModeContent
+) => string;
 
-    /* *
-     *
-     *  Declarations
-     *
-     * */
-
-    /**
-     * Callback function that checks if field is valid.
-     */
-    export type ValidateFunction = (
-        this: TableCell,
-        content: EditModeContent
-    ) => boolean;
-
-    /**
-     * Callback function that returns a error message.
-     */
-    export type ValidationErrorFunction = (
-        this: TableCell,
-        content?: EditModeContent
-    ) => string;
-
-    /**
-     * Definition of the validation rule that should container validate method
-     * and error message displayed in notification.
-     */
-    export interface RuleDefinition {
-        validate: RulesRegistryType|ValidateFunction;
-        notification: string|ValidationErrorFunction;
-    }
-
-    /**
-     *  Definition of default validation rules.
-     */
-    export interface RulesRegistryType {
-        boolean: RuleDefinition;
-        datetime: RuleDefinition;
-        notEmpty: RuleDefinition;
-        number: RuleDefinition;
-        ignoreCaseUnique: RuleDefinition;
-        unique: RuleDefinition;
-    }
-
-    /**
-     * Type of rule: `notEmpty`, `number` or `boolean`.
-     */
-    export type RuleKey = keyof RulesRegistryType;
-
-    /* *
-     *
-     *  Variables
-     *
-     * */
-
-    /**
-     * Definition of default validation rules.
-     */
-    export const rulesRegistry: RulesRegistryType = {
-        notEmpty: {
-            validate: ({ value, rawValue }): boolean => (
-                defined(value) && rawValue.length > 0
-            ),
-            notification: 'Value cannot be empty.'
-        },
-        number: {
-            validate: ({ rawValue }): boolean => !isNaN(+rawValue),
-            notification: 'Value has to be a number.'
-        },
-        datetime: {
-            validate: ({ value }): boolean => !defined(value) || !isNaN(+value),
-            notification: 'Value has to be parsed to a valid timestamp.'
-        },
-        'boolean': {
-            validate: ({ rawValue }): boolean => (
-                rawValue === 'true' || rawValue === 'false' ||
-                Number(rawValue) === 1 || Number(rawValue) === 0
-            ),
-            notification: 'Value has to be a boolean.'
-        },
-        ignoreCaseUnique: {
-            validate: function ({ rawValue }): boolean {
-                const oldValue = String(this.value).toLowerCase();
-                const rowValueString = rawValue.toLowerCase();
-
-                if (oldValue === rowValueString) {
-                    return true;
-                }
-
-                const columnData = this.column.data;
-                const isDuplicate = columnData?.some(
-                    (value): boolean => String(value).toLowerCase() ===
-                        rowValueString
-                );
-
-                return !isDuplicate;
-
-            },
-            notification:
-                'Value must be unique within this column (case-insensitive).'
-        },
-        unique: {
-            validate: function ({ rawValue }): boolean {
-                const oldValue = this.value;
-
-                if (oldValue === rawValue) {
-                    return true;
-                }
-
-                const columnData = this.column.data;
-                const isDuplicate = columnData?.some(
-                    (value): boolean => value === rawValue
-                );
-
-                return !isDuplicate;
-            },
-            notification:
-                'Value must be unique within this column (case-sensitive).'
-        }
-    };
-
-    /**
-     * Default validation rules for each dataType.
-     */
-    export const predefinedRules: Record<Column.DataType, RuleKey[]> = {
-        'boolean': ['boolean'],
-        datetime: ['datetime'],
-        number: ['number'],
-        string: []
-    };
+/**
+ * Definition of the validation rule that should container validate method
+ * and error message displayed in notification.
+ */
+export interface RuleDefinition {
+    validate: RulesRegistryType|ValidateFunction;
+    notification: string|ValidationErrorFunction;
 }
+
+/**
+ *  Definition of default validation rules.
+ */
+export interface RulesRegistryType {
+    boolean: RuleDefinition;
+    datetime: RuleDefinition;
+    notEmpty: RuleDefinition;
+    number: RuleDefinition;
+    ignoreCaseUnique: RuleDefinition;
+    unique: RuleDefinition;
+}
+
+/**
+ * Type of rule: `notEmpty`, `number` or `boolean`.
+ */
+export type RuleKey = keyof RulesRegistryType;
 
 
 /* *

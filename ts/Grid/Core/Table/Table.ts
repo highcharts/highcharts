@@ -282,11 +282,12 @@ class Table {
         // instead of the original data table row count.
         const rowCount = Number(grid.dataTable?.rowCount);
         const threshold = rows?.virtualizationThreshold ?? 50;
-        const paginationPageSize = grid.pagination?.currentPageSize;
 
-        return paginationPageSize ?
-            paginationPageSize >= threshold :
-            rowCount >= threshold;
+        if (grid.pagination) {
+            return grid.querying.pagination.currentPageSize >= threshold;
+        }
+
+        return rowCount >= threshold;
     }
 
     /**
@@ -319,7 +320,7 @@ class Table {
             focusedRowId = vp.dataTable.getOriginalRowIndex(vp.focusCursor[0]);
         }
 
-        vp.grid.pagination?.clampCurrentPage();
+        vp.grid.querying.pagination.clampPage();
 
         // Update data
         const oldRowsCount = (vp.rows[vp.rows.length - 1]?.index ?? -1) + 1;
@@ -373,12 +374,17 @@ class Table {
                 });
             }
         }
+
+        vp.grid.dirtyFlags.delete('rows');
     }
 
     /**
      * Reflows the table's content dimensions.
      */
     public reflow(): void {
+        // TODO: More `needsReflow` logic can be added in the future to avoid
+        // unnecessary reflows of the table parts.
+
         this.columnResizing.reflow();
 
         // Reflow the head
@@ -394,6 +400,8 @@ class Table {
         this.grid.popups.forEach((popup): void => {
             popup.reflow();
         });
+
+        this.grid.dirtyFlags.delete('reflow');
     }
 
     /**
@@ -508,7 +516,7 @@ class Table {
      * @returns
      * The viewport state metadata.
      */
-    public getStateMeta(): Table.ViewportStateMetadata {
+    public getStateMeta(): ViewportStateMetadata {
         return {
             scrollTop: this.tbodyElement.scrollTop,
             scrollLeft: this.tbodyElement.scrollLeft,
@@ -525,7 +533,7 @@ class Table {
      * The viewport state metadata.
      */
     public applyStateMeta(
-        meta: Table.ViewportStateMetadata
+        meta: ViewportStateMetadata
     ): void {
         this.tbodyElement.scrollTop = meta.scrollTop;
         this.tbodyElement.scrollLeft = meta.scrollLeft;
@@ -583,18 +591,15 @@ class Table {
     }
 }
 
-namespace Table {
-
-    /**
-     * Represents the metadata of the viewport state. It is used to save the
-     * state of the viewport and restore it when the data grid is re-rendered.
-     */
-    export interface ViewportStateMetadata {
-        scrollTop: number;
-        scrollLeft: number;
-        columnResizing: ColumnResizingMode;
-        focusCursor?: [number, number];
-    }
+/**
+ * Represents the metadata of the viewport state. It is used to save the
+ * state of the viewport and restore it when the data grid is re-rendered.
+ */
+export interface ViewportStateMetadata {
+    scrollTop: number;
+    scrollLeft: number;
+    columnResizing: ColumnResizingMode;
+    focusCursor?: [number, number];
 }
 
 
