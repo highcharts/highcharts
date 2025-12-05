@@ -72,7 +72,6 @@ const {
     win
 } = H;
 import LegendSymbol from '../Legend/LegendSymbol.js';
-import { Palette } from '../Color/Palettes.js';
 import Point from './Point.js';
 import SeriesDefaults from './SeriesDefaults.js';
 import SeriesRegistry from './SeriesRegistry.js';
@@ -988,7 +987,7 @@ class Series {
             this.getCyclic('color');
 
         } else if (this.options.colorByPoint) {
-            this.color = Palette.neutralColor20;
+            this.color = '{palette.neutralColor20}';
 
         } else {
             this.getCyclic(

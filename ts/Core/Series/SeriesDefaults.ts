@@ -20,8 +20,6 @@ import type Point from './Point';
 import type Series from './Series';
 import type { PlotOptionsOf } from './SeriesOptions';
 
-import { Palette } from '../Color/Palettes.js';
-
 /* *
  *
  *  API Options
@@ -1130,7 +1128,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        lineColor: Palette.backgroundColor,
+        lineColor: '{palette.backgroundColor}',
 
         /**
          * The width of the point marker's outline.
@@ -1351,7 +1349,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
                  *
                  * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                  */
-                fillColor: Palette.neutralColor20,
+                fillColor: '{palette.neutralColor20}',
 
                 /**
                  * The color of the point marker's outline. When
@@ -1362,7 +1360,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
                  *
                  * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                  */
-                lineColor: Palette.neutralColor100,
+                lineColor: '{palette.neutralColor100}',
 
                 /**
                  * The width of the point marker's outline.

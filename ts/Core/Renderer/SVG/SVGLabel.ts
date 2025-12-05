@@ -30,6 +30,7 @@ const {
     extend,
     getAlignFactor,
     isNumber,
+    isString,
     merge,
     pick,
     removeEvent
@@ -256,6 +257,9 @@ class SVGLabel extends SVGElement {
     public fillSetter(value: ColorType, key: string): void {
         if (value) {
             this.needsBox = true;
+            if (isString(value)) {
+                value = this.renderer.applyPalette(value);
+            }
         }
         // For animation getter (#6776)
         this.fill = value;
