@@ -10,6 +10,7 @@
  *
  *  Authors:
  *  - Dawid Dragula
+ *  - Sebastian Bochan
  *
  * */
 
@@ -29,8 +30,8 @@ import type {
     EditModeRendererTypeName
 } from '../../CellEditing/CellEditingComposition';
 
-import CellRenderer from '../CellRenderer.js';
-import CellRendererRegistry from '../CellRendererRegistry.js';
+import { CellRenderer, CellRendererOptions } from '../CellRenderer.js';
+import { registerRenderer } from '../CellRendererRegistry.js';
 import CheckboxContent from '../ContentTypes/CheckboxContent.js';
 
 import U from '../../../../Core/Utilities.js';
@@ -58,11 +59,11 @@ class CheckboxRenderer extends CellRenderer implements EditModeRenderer {
     /**
      * Default options for the checkbox renderer.
      */
-    public static defaultOptions: CheckboxRenderer.Options = {
+    public static defaultOptions: CheckboxRendererOptions = {
         type: 'checkbox'
     };
 
-    public override options: CheckboxRenderer.Options;
+    public override options: CheckboxRendererOptions;
 
 
     /* *
@@ -71,7 +72,7 @@ class CheckboxRenderer extends CellRenderer implements EditModeRenderer {
      *
      * */
 
-    public constructor(column: Column, options: Partial<CellRenderer.Options>) {
+    public constructor(column: Column, options: Partial<CellRendererOptions>) {
         super(column);
         this.options = merge(CheckboxRenderer.defaultOptions, options);
     }
@@ -94,23 +95,32 @@ class CheckboxRenderer extends CellRenderer implements EditModeRenderer {
 
 /* *
  *
- *  Namespace
+ *  Declarations
  *
  * */
 
-namespace CheckboxRenderer {
+/**
+ * Options to control the checkbox renderer content.
+ */
+export interface CheckboxRendererOptions extends CellRendererOptions {
+    type: 'checkbox';
 
     /**
-     * Options to control the checkbox renderer content.
+     * Whether the checkbox is disabled.
      */
-    export interface Options extends CellRenderer.Options {
-        type: 'checkbox';
+    disabled?: boolean;
 
-        /**
-         * Whether the checkbox is disabled.
-         */
-        disabled?: boolean;
-    }
+    /**
+     * Attributes to control the checkbox.
+     */
+    attributes?: CheckboxAttributes;
+}
+
+/**
+ * Attributes to control the checkbox.
+ */
+export interface CheckboxAttributes {
+    checked?: boolean;
 }
 
 
@@ -126,7 +136,7 @@ declare module '../CellRendererType' {
     }
 }
 
-CellRendererRegistry.registerRenderer('checkbox', CheckboxRenderer);
+registerRenderer('checkbox', CheckboxRenderer);
 
 
 /* *

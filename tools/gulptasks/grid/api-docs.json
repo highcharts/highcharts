@@ -13,6 +13,8 @@
         "../../../ts/Grid/Core/Table/Actions/ColumnSorting.ts",
         "../../../ts/Grid/Core/Table/Actions/ColumnsResizer.ts",
         "../../../ts/Grid/Core/Table/Actions/RowsVirtualizer.ts",
+        "../../../ts/Grid/Core/Table/Actions/ColumnFiltering/ColumnFiltering.ts",
+        "../../../ts/Grid/Core/Table/Actions/ColumnFiltering/FilteringTypes.d.ts",
         "../../../ts/Grid/Core/Table/Body/TableCell.ts",
         "../../../ts/Grid/Core/Table/Body/TableRow.ts",
         "../../../ts/Grid/Core/Table/Header/HeaderCell.ts",
@@ -27,17 +29,17 @@
         "../../../ts/Grid/Core/GridUtils.ts",
         "../../../ts/Grid/Core/Options.ts",
 
-        "../../../ts/Grid/Core/Table/ColumnDistribution/ColumnDistribution.ts",
-        "../../../ts/Grid/Core/Table/ColumnDistribution/ColumnDistributionStrategy.ts",
-        "../../../ts/Grid/Core/Table/ColumnDistribution/FixedDistributionStrategy.ts",
-        "../../../ts/Grid/Core/Table/ColumnDistribution/FullDistributionStrategy.ts",
-        "../../../ts/Grid/Core/Table/ColumnDistribution/MixedDistributionStrategy.ts",
+        "../../../ts/Grid/Core/Table/ColumnResizing/ColumnResizing.ts",
+        "../../../ts/Grid/Core/Table/ColumnResizing/ResizingMode.ts",
+        "../../../ts/Grid/Core/Table/ColumnResizing/AdjacentResizingMode.ts",
+        "../../../ts/Grid/Core/Table/ColumnResizing/IndependentResizingMode.ts",
 
         "../../../ts/Grid/Core/Table/CellContent/CellContent.ts",
         "../../../ts/Grid/Core/Table/CellContent/TextContent.ts",
 
         "../../../ts/Grid/Pro/CellEditing/CellEditing.ts",
         "../../../ts/Grid/Pro/CellEditing/CellEditMode.d.ts",
+        "../../../ts/Grid/Pro/CellEditing/CellEditingComposition.ts",
         "../../../ts/Grid/Pro/Credits/CreditsPro.ts",
         "../../../ts/Grid/Pro/GridEvents.ts",
 
@@ -51,6 +53,9 @@
 
         "../../../ts/Grid/Pro/CellRendering/Renderers/CheckboxRenderer.ts",
         "../../../ts/Grid/Pro/CellRendering/Renderers/DateInputRenderer.ts",
+        "../../../ts/Grid/Pro/CellRendering/Renderers/DateTimeInputRenderer.ts",
+        "../../../ts/Grid/Pro/CellRendering/Renderers/TimeInputRenderer.ts",
+        "../../../ts/Grid/Pro/CellRendering/Renderers/NumberInputRenderer.ts",
         "../../../ts/Grid/Pro/CellRendering/Renderers/SelectRenderer.ts",
         "../../../ts/Grid/Pro/CellRendering/Renderers/SparklineRenderer.ts",
         "../../../ts/Grid/Pro/CellRendering/Renderers/TextInputRenderer.ts",
@@ -58,15 +63,21 @@
 
         "../../../ts/Grid/Pro/CellRendering/ContentTypes/CheckboxContent.ts",
         "../../../ts/Grid/Pro/CellRendering/ContentTypes/DateInputContent.ts",
+        "../../../ts/Grid/Pro/CellRendering/ContentTypes/DateTimeInputContent.ts",
+        "../../../ts/Grid/Pro/CellRendering/ContentTypes/TimeInputContent.ts",
+        "../../../ts/Grid/Pro/CellRendering/ContentTypes/NumberInputContent.ts",
         "../../../ts/Grid/Pro/CellRendering/ContentTypes/SelectContent.ts",
         "../../../ts/Grid/Pro/CellRendering/ContentTypes/SparklineContent.ts",
         "../../../ts/Grid/Pro/CellRendering/ContentTypes/TextInputContent.ts",
+
+        "../../../ts/Grid/Core/Pagination/PaginationOptions.d.ts",
+        "../../../ts/Grid/Core/Pagination/Pagination.ts"
     ],
     "entryPointStrategy": "expand",
     "excludeInternal": true,
     "excludePrivate": true,
     "hideGenerator": true,
-    "htmlLang": "en",
+    "lang": "en",
     "name": "Highcharts Grid",
     "out": "../../../build/api/grid/typedoc/",
     "plugin": [

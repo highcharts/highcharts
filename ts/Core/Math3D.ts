@@ -31,8 +31,8 @@ const { pick } = U;
  *
  * */
 
-declare module './Chart/ChartLike'{
-    interface ChartLike {
+declare module './Chart/ChartBase'{
+    interface ChartBase {
         scale3d?: number;
     }
 }

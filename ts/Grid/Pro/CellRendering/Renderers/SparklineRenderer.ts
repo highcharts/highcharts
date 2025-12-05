@@ -10,6 +10,7 @@
  *
  *  Authors:
  *  - Dawid Dragula
+ *  - Sebastian Bochan
  *
  * */
 
@@ -30,8 +31,8 @@ import type {
     EditModeRendererTypeName
 } from '../../CellEditing/CellEditingComposition';
 
-import CellRenderer from '../CellRenderer.js';
-import CellRendererRegistry from '../CellRendererRegistry.js';
+import { CellRenderer, CellRendererOptions } from '../CellRenderer.js';
+import { registerRenderer } from '../CellRendererRegistry.js';
 import SparklineContent from '../ContentTypes/SparklineContent.js';
 
 import U from '../../../../Core/Utilities.js';
@@ -52,6 +53,18 @@ const {
 class SparklineRenderer extends CellRenderer {
 
     /**
+     * Imports the Highcharts namespace to be used by the Sparkline Renderer.
+     *
+     * @param H
+     * Highcharts namespace.
+     */
+    public static useHighcharts(H: typeof HighchartsNamespace): void {
+        if (H && !SparklineContent.H) {
+            SparklineContent.H = H;
+        }
+    }
+
+    /**
      * The default edit mode renderer type names for this view renderer.
      */
     public static defaultEditingRenderer: EditModeRendererTypeName =
@@ -60,11 +73,11 @@ class SparklineRenderer extends CellRenderer {
     /**
      * Default options for the sparkline renderer.
      */
-    public static defaultOptions: SparklineRenderer.Options = {
+    public static defaultOptions: SparklineRendererOptions = {
         type: 'sparkline'
     };
 
-    public override options: SparklineRenderer.Options;
+    public override options: SparklineRendererOptions;
 
 
     /* *
@@ -105,35 +118,19 @@ class SparklineRenderer extends CellRenderer {
 
 /* *
  *
- *  Namespace
+ *  Declarations
  *
  * */
 
-namespace SparklineRenderer {
-
-    /**
-     * Imports the Highcharts namespace to be used by the Sparkline Renderer.
-     *
-     * @param H
-     * Highcharts namespace.
-     */
-    export function useHighcharts(H: typeof HighchartsNamespace): void {
-        if (H && !SparklineContent.H) {
-            SparklineContent.H = H;
-        }
-    }
-
-    /**
-     * Options to control the sparkline renderer content.
-     */
-    export interface Options extends CellRenderer.Options {
-        type: 'sparkline';
-        chartOptions?: (
-            ((data: DataTable.CellType) => HighchartsNamespace.Options) |
-            HighchartsNamespace.Options
-        );
-    }
-
+/**
+ * Options to control the sparkline renderer content.
+ */
+export interface SparklineRendererOptions extends CellRendererOptions {
+    type: 'sparkline';
+    chartOptions?: (
+        ((data: DataTable.CellType) => HighchartsNamespace.Options) |
+        HighchartsNamespace.Options
+    );
 }
 
 
@@ -150,7 +147,7 @@ declare module '../CellRendererType' {
     }
 }
 
-CellRendererRegistry.registerRenderer('sparkline', SparklineRenderer);
+registerRenderer('sparkline', SparklineRenderer);
 
 
 /* *

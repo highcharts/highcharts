@@ -14,7 +14,7 @@
         chart: {
             plotBorderWidth: 1,
             plotBorderColor: '#000000',
-            marginRight: 30
+            marginRight: 35
         },
         navigator: {
             maskInside: false,
@@ -215,9 +215,12 @@
                     format: '{value:.2f}'
                 }
             },
-            left: 35,
+            labels: {
+                align: 'left',
+                x: 2
+            },
             title: {
-                text: 'Price'
+                text: ''
             }
         }
     });

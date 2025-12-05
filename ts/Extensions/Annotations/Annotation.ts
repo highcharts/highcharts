@@ -32,6 +32,7 @@ import type {
     ControllableLabelOptions,
     ControllableShapeOptions
 } from './Controllables/ControllableOptions';
+import type { DeepPartial } from '../../Shared/Types';
 import type MockPointOptions from './MockPointOptions';
 import type NavigationBindings from './NavigationBindings.js';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
@@ -649,6 +650,7 @@ class Annotation extends EventEmitter implements ControlTarget {
 
         this.graphic = renderer
             .g('annotation')
+            .addClass(this.options.className || '')
             .attr({
                 opacity: 0,
                 zIndex: this.options.zIndex,

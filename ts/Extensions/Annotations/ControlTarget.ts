@@ -233,7 +233,7 @@ namespace ControlTarget {
     /**
      * Find point-like objects based on points options.
      * @private
-     * @return {Array<Annotation.PointLike>}
+     * @return {Array<Annotation.PointBase>}
      *         An array of point-like objects.
      */
     function linkPoints(

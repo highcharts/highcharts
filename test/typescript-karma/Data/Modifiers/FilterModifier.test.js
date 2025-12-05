@@ -13,18 +13,18 @@ QUnit.test('FilterModifier queries', async function (assert) {
         modifier = new FilterModifier();
         await modifier.modify(table);
         assert.deepEqual(
-            table.modified.getColumns(),
+            table.getModified().getColumns(),
             { x: [1, 2, 3], name: ['A', 'B', 'C'] },
             'With no condition, all rows are kept.'
         );
     }
 
-    // Numeric comparisons (ne, lt)
+    // Numeric comparisons (!==, <)
     {
         const base = [1, 2, 3, 4, 5];
         let table, modifier;
 
-        // x != 3
+        // x !== 3
         table = new DataTable({
             columns: {
                 x: base.slice()
@@ -33,13 +33,13 @@ QUnit.test('FilterModifier queries', async function (assert) {
         modifier = new FilterModifier({
             condition: {
                 operator: '!==',
-                columnName: 'x',
+                columnId: 'x',
                 value: 3
             }
         });
         await modifier.modify(table);
         assert.deepEqual(
-            table.modified.getColumns(),
+            table.getModified().getColumns(),
             { x: [1, 2, 4, 5] },
             'Operator ne filters out 3.'
         );
@@ -49,15 +49,58 @@ QUnit.test('FilterModifier queries', async function (assert) {
         modifier = new FilterModifier({
             condition: {
                 operator: '<',
-                columnName: 'x',
+                columnId: 'x',
                 value: 4
             }
         });
         await modifier.modify(table);
         assert.deepEqual(
-            table.modified.getColumns(),
+            table.getModified().getColumns(),
             { x: [1, 2, 3] },
             'Operator lt keeps values less than 4.'
+        );
+    }
+
+    // Number comparison (empty)
+    {
+        const data = [12, null, '', 30];
+        const table = new DataTable({ columns: { name: data } });
+        const modifier = new FilterModifier({
+            condition: {
+                operator: 'empty',
+                columnId: 'name',
+                value: null
+            }
+        });
+        await modifier.modify(table);
+        assert.deepEqual(
+            table.modified.getColumns(),
+            { name: [null, ''] },
+            'Only empty strings and nulls are kept.'
+        );
+    }
+
+    // Date comparisons
+    {
+        const table = new DataTable({
+            columns: {
+                x: [new Date(2020, 0, 1), new Date(2020, 0, 2), new Date(2020, 0, 3)]
+            }
+        });
+        const modifier = new FilterModifier({
+            condition: {
+                operator: '<=',
+                columnId: 'x',
+                value: new Date(2020, 0, 2)
+            }
+        });
+        await modifier.modify(table);
+        assert.deepEqual(
+            table.modified.getColumns(),
+            {
+                x: [new Date(2020, 0, 1), new Date(2020, 0, 2)]
+            },
+            'Dates are compared as numbers.'
         );
     }
 
@@ -66,18 +109,39 @@ QUnit.test('FilterModifier queries', async function (assert) {
         const data = ['Apple', 'banana', 'Cherry', 'date', 'apricot'];
         const table = new DataTable({ columns: { name: data } });
         const modifier = new FilterModifier({
-            condition:{
+            condition: {
                 operator: 'contains',
-                columnName: 'name',
+                columnId: 'name',
                 value: 'ap',
                 ignoreCase: false
             }
         });
         await modifier.modify(table);
         assert.deepEqual(
-            table.modified.getColumns(),
+            table.getModified().getColumns(),
             { name: ['apricot'] },
             'contains "ap" (ignoreCase false) matches only apricot.'
+        );
+    }
+
+    // String comparison (not empty)
+    {
+        const data = ['Apple', 'banana', '', 'date', null];
+        const table = new DataTable({ columns: { name: data } });
+        const modifier = new FilterModifier({
+            condition: {
+                operator: 'not',
+                condition: {
+                    operator: 'empty',
+                    columnId: 'name'
+                }
+            }
+        });
+        await modifier.modify(table);
+        assert.deepEqual(
+            table.modified.getColumns(),
+            { name: ['Apple', 'banana', 'date'] },
+            'Only empty strings and nulls are kept.'
         );
     }
 
@@ -86,17 +150,77 @@ QUnit.test('FilterModifier queries', async function (assert) {
         const data = ['Apple', 'banana', 'Cherry', 'date', 'apricot'];
         const table = new DataTable({ columns: { name: data } });
         const modifier = new FilterModifier({
-            condition:{
+            condition: {
                 operator: 'contains',
-                columnName: 'name',
+                columnId: 'name',
                 value: 'ap'
             }
         });
         await modifier.modify(table);
         assert.deepEqual(
-            table.modified.getColumns(),
+            table.getModified().getColumns(),
             { name: ['Apple', 'apricot'] },
             'contains "ap" (ignoreCase true) matches Apple & apricot.'
+        );
+    }
+
+    // String comparison (not contains with default ignoreCase - true)
+    {
+        const data = ['Apple', 'banana', 'Cherry', 'date', 'apricot'];
+        const table = new DataTable({ columns: { name: data } });
+        const modifier = new FilterModifier({
+            condition: {
+                operator: 'not',
+                condition: {
+                    operator: 'contains',
+                    columnId: 'name',
+                    value: 'TK'
+                }
+            }
+        });
+        await modifier.modify(table);
+        assert.deepEqual(
+            table.modified.getColumns(),
+            { name: data },
+            'Table should not contain "TK" and should return all rows.'
+        );
+    }
+
+    // String comparison (startsWith)
+    {
+        const data = ['Apple', 'banana', 'Cherry', 'date', 'apricot'];
+        const table = new DataTable({ columns: { name: data } });
+        const modifier = new FilterModifier({
+            condition: {
+                operator: 'startsWith',
+                columnId: 'name',
+                value: 'ban'
+            }
+        });
+        await modifier.modify(table);
+        assert.deepEqual(
+            table.modified.getColumns(),
+            { name: ['banana'] },
+            'startsWith "ban" matches only banana.'
+        );
+    }
+
+    // String comparison (endsWith)
+    {
+        const data = ['Apple', 'banana', 'Cherry', 'date', 'apricot'];
+        const table = new DataTable({ columns: { name: data } });
+        const modifier = new FilterModifier({
+            condition: {
+                operator: 'endsWith',
+                columnId: 'name',
+                value: 'na'
+            }
+        });
+        await modifier.modify(table);
+        assert.deepEqual(
+            table.modified.getColumns(),
+            { name: ['banana'] },
+            'endsWith "na" matches only banana and date.'
         );
     }
 
@@ -115,15 +239,15 @@ QUnit.test('FilterModifier queries', async function (assert) {
             condition: {
                 operator: 'and',
                 conditions: [
-                    { operator: '<', columnName: 'x', value: 0 },
-                    { operator: '>', columnName: 'z', value: 1000 }
+                    { operator: '<', columnId: 'x', value: 0 },
+                    { operator: '>', columnId: 'z', value: 1000 }
                 ]
             }
         };
 
         await modifier.modify(table);
         assert.deepEqual(
-            table.modified.getColumns(),
+            table.getModified().getColumns(),
             {
                 x: [-5, 0, 5],
                 z: [100, 500, 3000]
@@ -139,19 +263,19 @@ QUnit.test('FilterModifier queries', async function (assert) {
                 conditions: [{
                     operator: 'or',
                     conditions: [
-                        { operator: '>=', columnName: 'x', value: 0 },
-                        { operator: '<=', columnName: 'z', value: 500 }
+                        { operator: '>=', columnId: 'x', value: 0 },
+                        { operator: '<=', columnId: 'z', value: 500 }
                     ]
                 }, {
                     operator: 'not',
-                    condition: { operator: '===', columnName: 'x', value: 5 }
+                    condition: { operator: '===', columnId: 'x', value: 5 }
                 }]
             }
         });
 
         await modifier.modify(table);
         assert.deepEqual(
-            table.modified.getColumns(),
+            table.getModified().getColumns(),
             {
                 x: [-5, 0],
                 z: [100, 500]
@@ -171,12 +295,12 @@ QUnit.test('FilterModifier queries', async function (assert) {
             condition: {
                 operator: 'and',
                 conditions: [
-                    { operator: '>=', columnName: 'age', value: 18 },
+                    { operator: '>=', columnId: 'age', value: 18 },
                     {
                         operator: 'or',
                         conditions: [
-                            { operator: '===', columnName: 'country', value: 'US' },
-                            { operator: '===', columnName: 'country', value: 'CA' }
+                            { operator: '===', columnId: 'country', value: 'US' },
+                            { operator: '===', columnId: 'country', value: 'CA' }
                         ]
                     }
                 ]
@@ -184,7 +308,7 @@ QUnit.test('FilterModifier queries', async function (assert) {
         });
         await modifier.modify(table);
         assert.deepEqual(
-            table.modified.getColumns(),
+            table.getModified().getColumns(),
             {
                 age: [30, 45],
                 country: ['CA', 'US']
@@ -201,26 +325,26 @@ QUnit.test('FilterModifier index mappings', async function (assert) {
             }
         }),
         modifier = new FilterModifier({
-            condition: { operator: '>', columnName: 'x', value: 25 }
+            condition: { operator: '>', columnId: 'x', value: 25 }
         });
 
     await modifier.modify(table);
 
     // Sanity check: only values > 25 are kept
     assert.deepEqual(
-        table.modified.getColumn('x'),
+        table.getModified().getColumn('x'),
         [30, 40, 50],
         'Only values > 25 are kept.'
     );
 
     assert.deepEqual(
-        table.modified.originalRowIndexes,
+        table.getModified().originalRowIndexes,
         [2, 3, 4],
         'originalRowIndexes map to the original indices of the filtered rows.'
     );
 
     assert.deepEqual(
-        table.modified.localRowIndexes,
+        table.getModified().localRowIndexes,
         [void 0, void 0, 0, 1, 2],
         'localRowIndexes map original indices to local positions (undefined for filtered-out rows).'
     );

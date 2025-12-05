@@ -109,4 +109,44 @@ describe('Rendering types.', () => {
             .should('exist')
             .select('R');
     });
+
+    // Number
+    it('Number as a string.', () => {
+        cy.get('tr[data-row-index="2"] td[data-column-id="text_numberInput"]')
+            .eq(0)
+            .should('be.visible')
+            .find('input')
+            .should('not.exist');
+
+        cy.get('tr[data-row-index="2"] td[data-column-id="text_numberInput"]')
+            .eq(0)
+            .contains('3');
+    });
+
+    it('Number as a input, when renderer is used.', () => {
+        cy.get('tr[data-row-index="2"] td[data-column-id="numberInput_numberInput"]')
+            .eq(0)
+            .should('be.visible')
+            .find('input')
+            .should('exist');
+    });
+
+    it('Number as a input, when editing.', () => {
+        cy.get('tr[data-row-index="2"] td[data-column-id="text_numberInput"]')
+            .eq(0)
+            .dblclick()
+            .find('input')
+            .should('exist');
+    });
+
+    it('Number input attributes.', () => {
+        cy.get('tr[data-row-index="2"] td[data-column-id="text_numberInput"]')
+            .eq(0)
+            .dblclick()
+            .find('input')
+            .should('exist')
+            .should('have.attr', 'step', '1')
+            .should('have.attr', 'min', '0')
+            .should('have.attr', 'max', '10');
+    });
 });

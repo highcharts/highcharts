@@ -15,6 +15,7 @@
  * */
 
 import type AnnotationOptions from './AnnotationOptions';
+import type { DeepPartial } from '../../Shared/Types';
 
 /* *
  *

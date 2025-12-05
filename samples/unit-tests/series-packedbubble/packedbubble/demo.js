@@ -1,5 +1,30 @@
 QUnit.test('Packed Bubble layouts operations', function (assert) {
-    const chart = Highcharts.chart('container', {
+    let chart = Highcharts.chart('container', {
+        chart: {
+            type: 'packedbubble',
+            height: '100%'
+        },
+        plotOptions: {
+            packedbubble: {
+                useSimulation: false,
+                dataLabels: {
+                    enabled: true
+                }
+            }
+        },
+        series: [{
+            data: [7]
+        }]
+    });
+
+    assert.notEqual(
+        chart.series[0].dataLabelsGroup.opacity,
+        0,
+        `Series data labels groups is visible from the start, at init of the
+        chart #19663.`
+    );
+
+    chart = Highcharts.chart('container', {
         chart: {
             type: 'packedbubble',
             height: '100%'

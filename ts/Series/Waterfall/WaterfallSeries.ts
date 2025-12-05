@@ -53,8 +53,8 @@ import WaterfallSeriesDefaults from './WaterfallSeriesDefaults.js';
  *
  * */
 
-declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase {
         showLine?: WaterfallSeries['showLine'];
     }
 }
@@ -254,7 +254,7 @@ class WaterfallSeries extends ColumnSeries {
     public getGraphPath(
         this: WaterfallSeries
     ): SVGPath {
-        return [['M', 0, 0]];
+        return this.graph?.pathArray || [['M', 0, 0]];
     }
 
     // Draw columns' connector lines
@@ -262,7 +262,7 @@ class WaterfallSeries extends ColumnSeries {
         this: WaterfallSeries
     ): SVGPath {
         const // Skip points where Y is not a number (#18636)
-            data = this.data.filter((d): boolean => isNumber(d.y)),
+            data = this.points.filter((d): boolean => isNumber(d.y)),
             yAxis = this.yAxis,
             length = data.length,
             graphLineWidth = this.graph?.strokeWidth() || 0,
@@ -292,18 +292,16 @@ class WaterfallSeries extends ColumnSeries {
                 isPos = prevY > 0 ? -prevBox.height : 0;
 
             if (prevStack && prevBox && box) {
-                const prevStackX = (prevStack as any)[i - 1];
+                const prevStackX = prevStack[i - 1];
 
                 // Y position of the connector is different when series are
                 // stacked, yAxis is reversed and it also depends on point's
                 // value
                 let yPos: number;
                 if (stacking) {
-                    const connectorThreshold = prevStackX.connectorThreshold;
-
                     yPos = crisp(
                         yAxis.translate(
-                            connectorThreshold,
+                            prevStackX.connectorThreshold || 0,
                             false,
                             true,
                             false,
@@ -362,11 +360,9 @@ class WaterfallSeries extends ColumnSeries {
     // crisp rendering.
     public drawGraph(): void {
         LineSeries.prototype.drawGraph.call(this);
-        if (this.graph) {
-            this.graph.attr({
-                d: this.getCrispPath()
-            });
-        }
+        this.graph?.animate({
+            d: this.getCrispPath()
+        });
     }
 
     // Waterfall has stacking along the x-values too.

@@ -9,4 +9,5 @@ categories:
   - General:
         priority: 90
 use_png_thumbnail: true
+is_pro: true
 ...

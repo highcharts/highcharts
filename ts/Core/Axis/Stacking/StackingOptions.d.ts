@@ -70,7 +70,7 @@ export interface StackLabelOptions {
 }
 
 export type StackOverflowValue = (
-    'normal'|'overlap'|'percent'|'stream'|'group'
+    'normal'|'overlap'|'percent'|'stream'|'group' | null
 );
 
 /* *

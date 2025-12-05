@@ -197,7 +197,8 @@ class TableRow extends Row {
      * lifecycle.
      */
     public updateRowAttributes(): void {
-        const a11y = this.viewport.grid.accessibility;
+        const vp = this.viewport;
+        const a11y = vp.grid.accessibility;
         const idx = this.index;
         const el = this.htmlElement;
 
@@ -207,7 +208,7 @@ class TableRow extends Row {
         }
 
         // Calculate levels of header, 1 to avoid indexing from 0
-        a11y?.setRowIndex(el, idx + (this.viewport.header?.levels ?? 1) + 1);
+        a11y?.setRowIndex(el, idx + (vp.header?.rows.length ?? 0) + 1);
     }
 
     /**
@@ -228,17 +229,6 @@ class TableRow extends Row {
     public getDefaultTopOffset(): number {
         return this.index * this.viewport.rowsVirtualizer.defaultRowHeight;
     }
-}
-
-
-/* *
- *
- *  Class Namespace
- *
- * */
-
-namespace TableRow {
-
 }
 
 

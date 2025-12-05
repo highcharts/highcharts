@@ -39,8 +39,8 @@ const {
  *
  * */
 
-declare module '../Core/Series/PointLike' {
-    interface PointLike {
+declare module '../Core/Series/PointBase' {
+    interface PointBase {
         dataLabelOnNull?: boolean;
     }
 }

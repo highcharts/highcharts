@@ -32,27 +32,27 @@ The point option
 In our first annotation, the label was attached to the chart’s pixel coordinates. That means that label will stay at the same place even if the chart is zoomed or panned. The index or the `id` of the axis needs to be specified to attach the label to a point in the chart’s axes coordinates. Check the demo below:
 
 ```js
-      annotations: [{
-            labels: [{
-                point: {
-                    x: 3,
-                    y: 129.2,
-                    xAxis: 0,
-                    yAxis: 0
-                }
-            }, {
-                point: {
-                    x: 0,
-                    y: 0
-                }
-            }, {
-                point: {
-                    x: 5,
-                    y: 100,
-                    xAxis: 0
-                }
-            }],
-
+annotations: [{
+    labels: [{
+        point: {
+            x: 3,
+            y: 129.2,
+            xAxis: 0,
+            yAxis: 0
+        }
+    }, {
+        point: {
+            x: 0,
+            y: 0
+        }
+    }, {
+        point: {
+            x: 5,
+            y: 100,
+            xAxis: 0
+        }
+    }],
+```
 
 Both annotation configurations are represented on this chart (see below). Try to zoom in and out to see the differences:
 
@@ -75,37 +75,37 @@ The shapes option
 
 Similar to the labels option, the shapes option defines a shape object. The object requires the `type` property such as `rect`, `circle` or `path`.
 
-
-        annotations: [{
-            shapes: [{
-                point: '0',
-                type: 'circle',
-                r: 10
-            }, {
-                point: '3',
-                type: 'rect',
-                width: 20,
-                height: 20
-            }]
-        }]
-
+```js
+annotations: [{
+    shapes: [{
+        point: '0',
+        type: 'circle',
+        r: 10
+    }, {
+        point: '3',
+        type: 'rect',
+        width: 20,
+        height: 20
+    }]
+}]
+```
 
 The path type allows to define points property that takes an array of points.
 
-
-     annotations: [{
-            shapes: [{
-                type: 'path',
-                points: ['0', '3', {
-                    x: 6,
-                    y: 195,
-                    xAxis: 0,
-                    yAxis: 0
-                }],
-                markerEnd: 'arrow'
-            }]
-        }]
-
+```js
+annotations: [{
+    shapes: [{
+        type: 'path',
+        points: ['0', '3', {
+            x: 6,
+            y: 195,
+            xAxis: 0,
+            yAxis: 0
+        }],
+        markerEnd: 'arrow'
+    }]
+}]
+```
 
 Defining markers for the path
 -----------------------------

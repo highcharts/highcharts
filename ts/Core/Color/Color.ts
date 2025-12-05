@@ -17,7 +17,7 @@
  * */
 
 import type ColorString from './ColorString';
-import type { ColorLike, ColorType } from './ColorType';
+import type { ColorBase, ColorType } from './ColorType';
 import type GradientColor from './GradientColor';
 
 import H from '../Globals.js';
@@ -61,7 +61,7 @@ const isStringColor = (color: ColorType): color is ColorString =>
  * @param {Highcharts.ColorType} input
  * The input color.
  */
-class Color implements ColorLike {
+class Color implements ColorBase {
 
     /* *
      *

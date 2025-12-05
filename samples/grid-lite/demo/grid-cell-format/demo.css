@@ -1,6 +1,6 @@
-@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid.css");
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid-lite.css");
 
-* {
+body {
     font-family:
         -apple-system,
         BlinkMacSystemFont,
@@ -12,15 +12,22 @@
         "Segoe UI Emoji",
         "Segoe UI Symbol",
         sans-serif;
+    background: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
 }
 
-#container {
-    margin: 8px;
-    padding: 20px;
+:root,
+.highcharts-light {
+    --code-background: #f7f7f7;
+    --code-border: #e1e1e1;
+}
+
+.demo {
+    padding: 8px 12px;
 }
 
 .highcharts-description {
-    padding-left: 10px;
+    padding: 0 8px;
 }
 
 .custom-theme,
@@ -40,15 +47,41 @@
     --hcg-cell-hovered-background: var(--highlight-color);
     --hcg-cell-hovered-column-border-width: 1px;
     --hcg-cell-hovered-column-border-color: var(--highlight-color);
+
+    /* Button styles */
+    --hcg-button-color: #333;
+    --hcg-button-border-radius: 6px;
+    --hcg-button-hover-color: #000;
+    --hcg-button-hover-background: var(--highlight-color);
+
+    /* Icon styles */
+    --hcg-icon-hover-color: #000;
 }
 
 @media (prefers-color-scheme: dark) {
+    :root {
+        --code-background: #2a2a2a;
+        --code-border: #4a4a4a;
+    }
+
     .custom-theme {
         --highlight-color: #4c4c4c;
         --highlight-border-color: #7d754c;
         --high-color: #98d76a;
         --low-color: #ffa8a8;
+
+        /* Button styles */
+        --hcg-button-color: #ddd;
+        --hcg-button-hover-color: #fff;
+
+        /* Icon styles */
+        --hcg-icon-hover-color: #fff;
     }
+}
+
+.highcharts-dark {
+    --code-background: #2a2a2a;
+    --code-border: #4a4a4a;
 }
 
 .highcharts-dark .custom-theme {
@@ -56,6 +89,13 @@
     --highlight-border-color: #7d754c;
     --high-color: #98d76a;
     --low-color: #ffa8a8;
+
+    /* Button styles */
+    --hcg-button-color: #ddd;
+    --hcg-button-hover-color: #fff;
+
+    /* Icon styles */
+    --hcg-icon-hover-color: #fff;
 }
 
 .hcg-table th.bold span,
@@ -90,4 +130,15 @@ formatting is kept regardless of any hover states etc. */
 .hcg-table span.highlight {
     background: var(--highlight-color);
     border-color: var(--highlight-border-color);
+}
+
+code {
+    font-family: Consolas, "courier new", monospace;
+    line-height: 1em;
+    background: var(--code-background);
+    border: 1px solid var(--code-border);
+    color: var(--highcharts-neutral-color-100);
+    padding: 2px 4px;
+    border-radius: 5px;
+    display: inline-block;
 }

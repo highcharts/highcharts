@@ -22,9 +22,11 @@ import type AxisType from '../Axis/AxisType';
 import type Chart from '../Chart/Chart';
 import type ColorType from '../Color/ColorType';
 import type DataExtremesObject from './DataExtremesObject';
+import type DataLabelOptions from './DataLabelOptions';
 import type DataTable from '../../Data/DataTable';
+import type { DeepPartial } from '../../Shared/Types';
 import type { EventCallback } from '../Callback';
-import type KDPointSearchObjectLike from './KDPointSearchObjectLike';
+import type KDPointSearchObjectBase from './KDPointSearchObjectBase';
 import type Legend from '../Legend/Legend';
 import type LineSeries from '../../Series/Line/LineSeries';
 import type PointerEvent from '../PointerEvent';
@@ -34,7 +36,7 @@ import type {
     PointStateHoverOptions
 } from './PointOptions';
 import type RangeSelector from '../../Stock/RangeSelector/RangeSelector';
-import type SeriesLike from './SeriesLike';
+import type SeriesBase from './SeriesBase';
 import type {
     NonPlotOptions,
     SeriesDataSortingOptions,
@@ -112,27 +114,27 @@ const {
  *
  * */
 
-declare module '../Chart/ChartLike'{
-    interface ChartLike {
+declare module '../Chart/ChartBase'{
+    interface ChartBase {
         runTrackerClick?: boolean;
     }
 }
 
-declare module '../Renderer/SVG/SVGElementLike' {
-    interface SVGElementLike {
+declare module '../Renderer/SVG/SVGElementBase' {
+    interface SVGElementBase {
         survive?: boolean;
     }
 }
 
-declare module './PointLike' {
-    interface PointLike {
+declare module './PointBase' {
+    interface PointBase {
         plotX?: number;
         plotY?: number;
     }
 }
 
-declare module './SeriesLike' {
-    interface SeriesLike {
+declare module './SeriesBase' {
+    interface SeriesBase {
         _hasPointMarkers?: boolean;
         keysAffectYAxis?: Array<string>;
         pointArrayMap?: Array<string>;
@@ -148,7 +150,7 @@ interface KDNode {
     right?: KDNode;
 }
 
-interface KDPointSearchObject extends KDPointSearchObjectLike {
+interface KDPointSearchObject extends KDPointSearchObjectBase {
 }
 
 /* *
@@ -916,8 +918,18 @@ class Series {
     }
 
     /**
+     * Set series-specific properties for color and symbol. Called internally
+     * from Series.update().
+     *
      * @private
      * @function Highcharts.Series#getCyclic
+     *
+     * @param {'color'|'symbol'} prop
+     *        The property to set, either `color` or `symbol`.
+     * @param {*} [value]
+     *        The value to set. If not given, the next available value is used.
+     * @param {Highcharts.Dictionary<*>} [defaults]
+     *        The default values.
      */
     public getCyclic(
         prop: 'color'|'symbol',
@@ -1021,13 +1033,10 @@ class Series {
      * @private
      * @function Highcharts.Series#getColumn
      */
-    public getColumn(
-        columnName: string,
-        modified?: boolean
-    ): Array<number> {
+    public getColumn(columnId: string, modified?: boolean): Array<number> {
         return (
-            (modified ? this.dataTable.modified : this.dataTable)
-                .getColumn(columnName, true) as Array<number>
+            (modified ? this.dataTable.getModified() : this.dataTable)
+                .getColumn(columnId, true) as Array<number>
         ) || [];
     }
 
@@ -1140,7 +1149,8 @@ class Series {
             dataSorting = options.dataSorting,
             oldData = this.points,
             pointsToAdd = [] as Array<(PointOptions|PointShortOptions)>,
-            equalLength = data.length === oldData.length;
+            equalLength = data.length === oldData.length,
+            oldXIncrement = this.xIncrement;
         let hasUpdatedByKey,
             i,
             point,
@@ -1264,6 +1274,7 @@ class Series {
 
         const xData = this.getColumn('x');
         if (
+            oldXIncrement !== null &&
             this.xIncrement === null &&
             xData.length
         ) {
@@ -1452,9 +1463,9 @@ class Series {
                         }
 
                         table.setColumns(dataColumnKeys.reduce(
-                            (columns, columnName, i):
+                            (columns, columnId, i):
                             DataTable.ColumnCollection => {
-                                columns[columnName] = colArray[i];
+                                columns[columnId] = colArray[i];
                                 return columns;
                             }, {} as DataTable.ColumnCollection));
 
@@ -1499,9 +1510,9 @@ class Series {
 
             if (!runTurbo) {
                 const columns = dataColumnKeys.reduce(
-                    (columns, columnName):
+                    (columns, columnId):
                     DataTable.ColumnCollection => {
-                        columns[columnName] = [];
+                        columns[columnId] = [];
                         return columns;
                     }, {} as DataTable.ColumnCollection);
                 for (i = 0; i < dataLength; i++) {
@@ -1839,7 +1850,7 @@ class Series {
         const series = this,
             options = series.options,
             dataOptions = series.processedData || options.data,
-            table = series.dataTable.modified,
+            table = series.dataTable.getModified(),
             xData = series.getColumn('x', true),
             PointClass = series.pointClass,
             processedDataLength = table.rowCount,
@@ -2038,7 +2049,7 @@ class Series {
                 this.options.getExtremesFromAll, // #4599, #21003
             table = getExtremesFromAll && this.cropped ?
                 this.dataTable :
-                this.dataTable.modified,
+                this.dataTable.getModified(),
             rowCount = table.rowCount,
             customData = yData || this.stackedYData,
             yAxisData = customData ?
@@ -2470,6 +2481,8 @@ class Series {
             sharedClipKey = this.getSharedClipKey(); // #4526
 
         let clipRect = sharedClips[sharedClipKey];
+
+        fireEvent(this, 'setClip', { clipBox });
 
         // If a clipping rectangle for the same set of axes does not exist,
         // create it
@@ -3306,7 +3319,6 @@ class Series {
 
         // Generate it on first call
         if (!group) {
-
             this[prop] = group = this.chart.renderer
                 .g()
                 .add(parent);
@@ -3672,8 +3684,24 @@ class Series {
     }
 
     /**
+     * Search the k-d-tree for the point closest to the given point.
+     *
      * @private
      * @function Highcharts.Series#searchKDTree
+     *
+     * @param {Highcharts.KDPointSearchObject} point
+     *        The point to search for.
+     * @param {boolean} [compareX=false]
+     *        Search only by the X value, not Y.
+     * @param {Highcharts.PointerEvent} [e]
+     *        The normalized pointer event.
+     * @param {Function} [suppliedPointEvaluator]
+     *        A custom point evaluator function.
+     * @param {Function} [suppliedBSideCheckEvaluator]
+     *        A custom b-side check evaluator function.
+     *
+     * @return {Highcharts.Point|undefined}
+     *         The closest point found.
      */
     public searchKDTree(
         point: KDPointSearchObject,
@@ -3732,7 +3760,22 @@ class Series {
         }
 
         /**
+         * Search the kd-tree.
+         *
          * @private
+         * @function doSearch
+         *
+         * @param {Highcharts.KDPointSearchObject} search
+         *        The point to search for.
+         * @param {Highcharts.KDNode} tree
+         *        The kd-tree structure to search.
+         * @param {number} depth
+         *        The depth in the tree.
+         * @param {number} dimensions
+         *        The dimensions in the tree.
+         *
+         * @return {Highcharts.Point}
+         *         The closest point found.
          */
         function doSearch(
             search: KDPointSearchObject,
@@ -3802,6 +3845,8 @@ class Series {
     }
 
     /**
+     * Return the value of pointPlacement relative to the point's x value.
+     *
      * @private
      * @function Highcharts.Series#pointPlacementToXValue
      */
@@ -3820,8 +3865,16 @@ class Series {
     }
 
     /**
+     * Check whether a point is inside the plot area.
+     *
      * @private
      * @function Highcharts.Series#isPointInside
+     *
+     * @param {Highcharts.Dictionary<number>|Highcharts.Point} point
+     * A point-like object with `plotX` and `plotY` properties.
+     *
+     * @return {boolean}
+     * True if the point is inside the plot area.
      */
     public isPointInside(point: (Record<string, number>|Point)): boolean {
         const { chart, xAxis, yAxis } = this,
@@ -3910,7 +3963,7 @@ class Series {
             [
                 series.tracker,
                 series.markerGroup,
-                series.dataLabelsGroup
+                ...(series.dataLabelsGroups || [])
             ].forEach((tracker?: SVGElement): void => {
                 if (tracker) {
                     tracker.addClass('highcharts-tracker')
@@ -4168,6 +4221,8 @@ class Series {
             chart = series.chart;
 
         /**
+         * Remove the series.
+         *
          * @private
          */
         function remove(): void {
@@ -4236,9 +4291,11 @@ class Series {
             plotOptions = chart.options.plotOptions,
             initialSeriesProto = seriesTypes[initialType].prototype,
             groups = [
+                'dataLabelsGroup',
+                'dataLabelsGroups',
+                'dataLabelsParentGroups',
                 'group',
                 'markerGroup',
-                'dataLabelsGroup',
                 'transformGroup'
             ],
             optionsToCheck = [
@@ -4263,7 +4320,7 @@ class Series {
                 chart.options.chart.type
             );
         const keepPoints = !(
-            // Indicators, histograms etc recalculate the data. It should be
+            // Indicators etc recalculate the data. It should be
             // possible to omit this.
             this.hasDerivedData ||
             // New type requires new point classes
@@ -4303,6 +4360,14 @@ class Series {
             }
         } else {
             this.dataTable.modified = this.dataTable;
+        }
+
+        // Merge in multiple data label options (#23560)
+        if (options.dataLabels && oldOptions.dataLabels) {
+            options.dataLabels = this.mergeArrays(
+                oldOptions.dataLabels as DataLabelOptions,
+                options.dataLabels as DataLabelOptions
+            );
         }
 
         // Do the merge, with some forced options
@@ -4593,25 +4658,19 @@ class Series {
      *        Determines if state should be inherited by points too.
      */
     public setState(
-        state?: (StatesOptionsKey|''),
+        state?: StatesOptionsKey,
         inherit?: boolean
     ): void {
         const series = this,
-            options = series.options,
-            graph = series.graph,
-            inactiveOtherPoints = options.inactiveOtherPoints,
-            stateOptions = options.states,
+            { graph, options } = series,
+            { inactiveOtherPoints, states: stateOptions } = options,
             // By default a quick animation to hover/inactive,
             // slower to un-hover
             stateAnimation = pick(
-                (
-                    (stateOptions as any)[state || 'normal'] &&
-                    (stateOptions as any)[state || 'normal'].animation
-                ),
+                stateOptions?.[state || 'normal']?.animation,
                 series.chart.options.chart.animation
             );
-        let lineWidth = options.lineWidth,
-            opacity = options.opacity;
+        let { lineWidth, opacity } = options;
 
         state = state || '';
 
@@ -4621,9 +4680,9 @@ class Series {
             [
                 series.group,
                 series.markerGroup,
-                series.dataLabelsGroup
+                ...(series.dataLabelsGroups || [])
             ].forEach(function (
-                group: (SVGElement|undefined)
+                group?: SVGElement
             ): void {
                 if (group) {
                     // Old state
@@ -4641,10 +4700,7 @@ class Series {
 
             if (!series.chart.styledMode) {
 
-                if (
-                    (stateOptions as any)[state] &&
-                    (stateOptions as any)[state].enabled === false
-                ) {
+                if ((stateOptions as any)[state]?.enabled === false) {
                     return;
                 }
 
@@ -4684,19 +4740,10 @@ class Series {
                     [
                         series.group,
                         series.markerGroup,
-                        series.dataLabelsGroup,
+                        ...(series.dataLabelsGroups || []),
                         series.labelBySeries
-                    ].forEach(function (
-                        group: (SVGElement|undefined)
-                    ): void {
-                        if (group) {
-                            group.animate(
-                                {
-                                    opacity: opacity
-                                },
-                                stateAnimation
-                            );
-                        }
+                    ].forEach(function (group?: SVGElement): void {
+                        group?.animate({ opacity }, stateAnimation);
                     });
                 }
             }
@@ -4745,7 +4792,7 @@ class Series {
      * @emits Highcharts.Series#event:show
      */
     public setVisible(
-        vis?: boolean,
+        visible?: boolean,
         redraw?: boolean
     ): void {
         const series = this,
@@ -4755,26 +4802,24 @@ class Series {
 
         // If called without an argument, toggle visibility
         series.visible =
-            vis =
+            visible =
             series.options.visible =
             series.userOptions.visible =
-            typeof vis === 'undefined' ? !oldVisibility : vis; // #5618
+            typeof visible === 'undefined' ? !oldVisibility : visible; // #5618
 
-        const showOrHide = vis ? 'show' : 'hide';
+        const showOrHide = visible ? 'show' : 'hide';
 
-        // Show or hide elements
-        (
-            [
-                'group',
-                'dataLabelsGroup',
-                'markerGroup',
-                'tracker',
-                'tt'
-            ] as ('group'|'dataLabelsGroup'|'markerGroup'|'tracker'|'tt')[]
-        ).forEach((key): void => {
+        ([
+            'group',
+            'markerGroup',
+            'tracker',
+            'tt'
+        ] as const).forEach((key): void => {
             series[key]?.[showOrHide]();
         });
-
+        series.dataLabelsGroups?.forEach((g): void => {
+            g?.[showOrHide]();
+        });
 
         // Hide tooltip (#1361)
         if (
@@ -4786,7 +4831,7 @@ class Series {
 
 
         if (series.legendItem) {
-            chart.legend.colorizeItem(series, vis);
+            chart.legend.colorizeItem(series, visible);
         }
 
         // Rescale or adapt to resized chart
@@ -4803,7 +4848,7 @@ class Series {
 
         // Show or hide linked series
         series.linkedSeries.forEach((otherSeries): void => {
-            otherSeries.setVisible(vis, false);
+            otherSeries.setVisible(visible, false);
         });
 
         if (ignoreHiddenSeries) {
@@ -4918,7 +4963,7 @@ class Series {
  *
  * */
 
-interface Series extends SeriesLike {
+interface Series extends SeriesBase {
     axisTypes: Array<'xAxis'|'yAxis'|'colorAxis'|'zAxis'>;
     coll: 'series';
     colorCounter: number;
@@ -5182,6 +5227,10 @@ export default Series;
  * Related browser event.
  * @name Highcharts.SeriesLegendItemClickEventObject#browserEvent
  * @type {global.PointerEvent}
+ *//**
+ * Whether the default action has been prevented (`true`) or not.
+ * @name Highcharts.SeriesLegendItemClickEventObject#defaultPrevented
+ * @type {boolean|undefined}
  *//**
  * Prevent the default action of toggle the visibility of the series.
  * @name Highcharts.SeriesLegendItemClickEventObject#preventDefault

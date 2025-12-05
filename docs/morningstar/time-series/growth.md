@@ -16,8 +16,10 @@ the Time Series Connector options.
 
 ```js
 const growthConnector = new HighchartsConnectors.Morningstar.TimeSeriesConnector({
-    postman: {
-        environmentJSON: postmanJSON
+    api: {
+        access: {
+            token: 'your_access_token'
+        }
     },
     series: {
         type: 'Growth'

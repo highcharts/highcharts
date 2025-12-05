@@ -34,20 +34,21 @@ import type {
     NumberFormatterCallbackFunction,
     Options
 } from '../Options';
-import type ChartLike from './ChartLike';
+import type ChartBase from './ChartBase';
 import type ChartOptions from './ChartOptions';
 import type {
     ChartPanningOptions,
     ChartZoomingOptions
 } from './ChartOptions';
 import type ColorAxis from '../Axis/Color/ColorAxis';
+import type { DeepPartial } from '../../Shared/Types';
+import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type Point from '../Series/Point';
 import type PointerEvent from '../PointerEvent';
 import type SeriesOptions from '../Series/SeriesOptions';
 import type {
     SeriesTypeOptions
 } from '../Series/SeriesType';
-import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 
 import A from '../Animation/AnimationUtilities.js';
@@ -121,16 +122,16 @@ const {
  *
  * */
 
-declare module '../Axis/AxisLike' {
-    interface AxisLike {
+declare module '../Axis/AxisBase' {
+    interface AxisBase {
         extKey?: string;
         index?: number;
         touched?: boolean;
     }
 }
 
-declare module './ChartLike' {
-    interface ChartLike {
+declare module './ChartBase' {
+    interface ChartBase {
         resetZoomButton?: SVGElement;
         pan(e: PointerEvent, panning: boolean|ChartPanningOptions): void;
         showResetZoom(): void;
@@ -157,14 +158,14 @@ declare module '../Options' {
     }
 }
 
-declare module '../Series/PointLike' {
-    interface PointLike {
+declare module '../Series/PointBase' {
+    interface PointBase {
         touched?: boolean;
     }
 }
 
-declare module '../Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../Series/SeriesBase' {
+    interface SeriesBase {
         index?: number;
         touched?: boolean;
     }
@@ -321,7 +322,6 @@ class Chart {
     public containerBox?: { height: number, width: number };
     public credits?: SVGElement;
     public caption?: SVGElement;
-    public dataLabelsGroup?: SVGElement;
     public eventOptions!: Record<string, EventCallback<Series, Event>>;
     public hasCartesianSeries?: boolean;
     public hasLoaded?: boolean;
@@ -601,7 +601,7 @@ class Chart {
     }
 
     /**
-     * Internal function to unitialize an individual series.
+     * Internal function to initialize an individual series.
      *
      * @private
      * @function Highcharts.Chart#initSeries
@@ -617,7 +617,7 @@ class Chart {
 
         // No such series type
         if (!SeriesClass) {
-            error(17, true, chart as any, { missingModuleFor: type });
+            error(17, true, chart, { missingModuleFor: type });
         }
 
         const series = new SeriesClass();
@@ -1847,8 +1847,8 @@ class Chart {
             axisOffset = chart.axisOffset = [0, 0, 0, 0],
             colorAxis = chart.colorAxis,
             margin = chart.margin,
-            getOffset = function (axes: Array<Axis>): void {
-                axes.forEach(function (axis): void {
+            getOffset = (axes: Array<Axis>): void => {
+                axes.forEach((axis): void => {
                     if (axis.visible) {
                         axis.getOffset();
                     }
@@ -1864,9 +1864,9 @@ class Chart {
         }
 
         // Add the axis offsets
-        marginNames.forEach(function (m: string, side: number): void {
+        marginNames.forEach((marginName, side): void => {
             if (!defined(margin[side])) {
-                (chart as any)[m] += axisOffset[side];
+                chart[marginName] += axisOffset[side];
             }
         });
 
@@ -2205,29 +2205,30 @@ class Chart {
             halfWidth = Math.round(plotBorderWidth) / 2;
 
         // Create margin and spacing array
-        ['margin', 'spacing'].forEach(function splashArrays(
-            target: string
-        ): void {
-            const value = (chartOptions as any)[target],
+        (['margin', 'spacing'] as ('margin'|'spacing')[]).forEach((
+            target
+        ): void => {
+            const value = chartOptions[target],
                 values = isObject(value) ? value : [value, value, value, value];
 
-            [
+            ([
                 'Top',
                 'Right',
                 'Bottom',
                 'Left'
-            ].forEach(function (sideName: string, side: number): void {
-                (chart as any)[target][side] = pick(
-                    (chartOptions as any)[target + sideName],
+            ] as ('Top'|'Right'|'Bottom'|'Left')[]
+            ).forEach((sideName, side): void => {
+                chart[target][side] = (
+                    chartOptions[`${target}${sideName}`] ??
                     values[side]
-                );
+                ) as any;
             });
         });
 
         // Set margin names like chart.plotTop, chart.plotLeft,
         // chart.marginRight, chart.marginBottom.
-        marginNames.forEach(function (m: string, side: number): void {
-            (chart as any)[m] = pick(chart.margin[side], chart.spacing[side]);
+        marginNames.forEach((marginName, side): void => {
+            chart[marginName] = chart.margin[side] ?? chart.spacing[side];
         });
         chart.axisOffset = [0, 0, 0, 0]; // Top, right, bottom, left
         chart.clipOffset = [
@@ -2466,42 +2467,39 @@ class Chart {
 
         // Apply new links
         chartSeries.forEach(function (series): void {
-            const { linkedTo } = series.options;
+            const { linkedTo } = series.options,
+                linkedParent = isString(linkedTo) && (
+                    linkedTo === ':previous' ?
+                        chartSeries[series.index - 1] :
+                        chart.get(linkedTo) as Series | undefined
+                );
 
-            if (isString(linkedTo)) {
-                let linkedParent: Series | undefined;
-                if (linkedTo === ':previous') {
-                    linkedParent = chart.series[series.index - 1];
-                } else {
-                    linkedParent = chart.get(linkedTo) as Series | undefined;
-                }
+            if (
+                linkedParent &&
                 // #3341 avoid mutual linking
-                if (
-                    linkedParent &&
-                    linkedParent.linkedParent !== series
-                ) {
-                    linkedParent.linkedSeries.push(series);
-                    /**
-                     * The parent series of the current series, if the current
-                     * series has a [linkedTo](https://api.highcharts.com/highcharts/series.line.linkedTo)
-                     * setting.
-                     *
-                     * @name Highcharts.Series#linkedParent
-                     * @type {Highcharts.Series}
-                     * @readonly
-                     */
-                    series.linkedParent = linkedParent;
+                linkedParent.linkedParent !== series
+            ) {
+                linkedParent.linkedSeries.push(series);
+                /**
+                 * The parent series of the current series, if the current
+                 * series has a [linkedTo](https://api.highcharts.com/highcharts/series.line.linkedTo)
+                 * setting.
+                 *
+                 * @name Highcharts.Series#linkedParent
+                 * @type {Highcharts.Series}
+                 * @readonly
+                 */
+                series.linkedParent = linkedParent;
 
-                    if (linkedParent.enabledDataSorting) {
-                        series.setDataSortingOptions();
-                    }
-
-                    series.visible = pick(
-                        series.options.visible,
-                        linkedParent.options.visible,
-                        series.visible
-                    ); // #3879
+                if (linkedParent.enabledDataSorting) {
+                    series.setDataSortingOptions();
                 }
+
+                series.visible = (
+                    series.options.visible ??
+                    linkedParent.options.visible ??
+                    series.visible
+                ); // #3879
             }
         });
 
@@ -2654,10 +2652,6 @@ class Chart {
         chart.seriesGroup ||= renderer.g('series-group')
             .attr({ zIndex: 3 })
             .shadow(chart.options.chart.seriesGroupShadow)
-            .add();
-
-        chart.dataLabelsGroup ||= renderer.g('datalabels-group')
-            .attr({ zIndex: 6 })
             .add();
 
         chart.renderSeries();
@@ -2905,6 +2899,7 @@ class Chart {
         }
 
         this.warnIfA11yModuleNotLoaded();
+        this.warnIfCSSNotLoaded();
 
         // Don't run again
         this.hasLoaded = true;
@@ -2938,6 +2933,20 @@ class Chart {
                     'warning. See https://www.highcharts.com/docs/accessibility/accessibility-module.',
                     false, this
                 );
+            }
+        }
+    }
+
+    /**
+     * Emit console warning if the highcharts.css file is not loaded.
+     * @private
+     */
+    public warnIfCSSNotLoaded(): void {
+        if (this.styledMode) {
+            const containerStyle = win.getComputedStyle(this.container);
+
+            if (containerStyle.zIndex !== '0') {
+                error(35, false, this);
             }
         }
     }
@@ -3752,7 +3761,8 @@ class Chart {
                 reset,
                 selection,
                 to = {},
-                trigger
+                trigger,
+                allowResetButton = true
             } = params,
             { inverted, time } = this;
 
@@ -3834,7 +3844,9 @@ class Chart {
                 for (const series of axis.series) {
                     const seriesExtremes = series.getExtremes(
                         series.getProcessedData(true).modified
-                            .getColumn('y') as Array<number> || [],
+                            .getColumn(
+                                series.pointValKey || 'y'
+                            ) as Array<number> || [],
                         true
                     );
 
@@ -3946,7 +3958,7 @@ class Chart {
                         // operation has finished.
                         axis.isPanning = trigger !== 'zoom';
 
-                        if (axis.isPanning) {
+                        if (axis.isPanning && trigger !== 'mousewheel') {
                             isAnyAxisPanning = true; // #21319
                         }
 
@@ -3960,24 +3972,21 @@ class Chart {
 
                         if (
                             !reset &&
-                            (newMin > floor || newMax < ceiling) &&
-                            trigger !== 'mousewheel'
+                            (newMin > floor || newMax < ceiling)
                         ) {
-                            displayButton = true;
+                            displayButton = allowResetButton;
                         }
                     }
 
                     hasZoomed = true;
                 }
 
-                // Show the resetZoom button for non-cartesian series,
-                // except when triggered by mouse wheel zoom
+                // Show the resetZoom button for non-cartesian series.
                 if (
                     !this.hasCartesianSeries &&
-                    !reset &&
-                    trigger !== 'mousewheel'
+                    !reset
                 ) {
-                    displayButton = true;
+                    displayButton = allowResetButton;
                 }
 
                 if (event) {
@@ -4031,7 +4040,7 @@ class Chart {
  *
  * */
 
-interface Chart extends ChartLike {
+interface Chart extends ChartBase {
     callbacks: Array<Chart.CallbackFunction>;
     collectionsWithInit: Record<string, [Function, Array<any>?]>;
     collectionsWithUpdate: Array<string>;
@@ -4164,6 +4173,7 @@ namespace Chart {
         selection?: Pointer.SelectEventObject;
         from?: Partial<BBoxObject>;
         trigger?: string;
+        allowResetButton?: boolean;
         hasZoomed?: boolean;
     }
 

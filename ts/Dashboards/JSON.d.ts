@@ -48,7 +48,6 @@ export namespace JSON {
     /**
      * All object types, that are supported in JSON.
      */
-    // eslint-disable-next-line @typescript-eslint/ban-types
     export type Type = (Array|Object);
 
 }

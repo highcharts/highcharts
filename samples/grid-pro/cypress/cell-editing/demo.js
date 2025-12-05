@@ -58,7 +58,7 @@ Grid.grid('container', {
         cells: {
             editMode: {
                 // Gets default error message text or from lang (if defined)
-                validationRules: ['notEmpty', 'notEmpty', 'notEmpty']
+                validationRules: ['notEmpty', 'ignoreCaseUnique']
             }
         }
     }, {

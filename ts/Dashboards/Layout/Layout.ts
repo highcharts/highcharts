@@ -14,8 +14,9 @@
  *
  * */
 
-import type CSSJSONObject from '../CSSJSONObject';
 import type Board from '../Board.js';
+import type CSSJSONObject from '../CSSJSONObject';
+import type { DeepPartial } from '../../Shared/Types';
 
 import U from '../../Core/Utilities.js';
 const {
@@ -313,7 +314,7 @@ class Layout extends GUIElement {
      * @internal
      *
      */
-    public getOptions(): Globals.DeepPartial<Layout.Options> {
+    public getOptions(): DeepPartial<Layout.Options> {
         const layout = this,
             rows = [];
 

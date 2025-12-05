@@ -18,9 +18,10 @@ const { removeFile } = require('@highcharts/highcharts-assembler/src/utilities.j
 const releaseRepos = {
     Highcharts: 'highcharts-dist',
     Grid: {
-        lite: 'grid-lite-dist'
-        // pro: 'grid-pro-dist'
-    }
+        lite: 'grid-lite-dist',
+        pro: 'grid-pro-dist'
+    },
+    Dashboards: 'dashboards-dist'
 };
 
 /**
@@ -50,8 +51,10 @@ async function askUser(question) {
  * @param {string} productName The product name.
  */
 function getHandledRepos(productName) {
-    return productName === 'Grid' ?
-        Object.values(releaseRepos.Grid) : [releaseRepos.Highcharts];
+    const repos = releaseRepos[productName];
+    // Grid has multiple repos (lite and pro), others have single repo
+    return typeof repos === 'object' && !Array.isArray(repos) ?
+        Object.values(repos) : [repos];
 }
 
 /**
@@ -225,7 +228,6 @@ function copyFiles() {
 
     const pathsToIgnore = [
         'dashboards',
-        'datagrid',
         'grid',
         'es5'
     ];
@@ -272,11 +274,11 @@ function copyGridFiles() {
         {
             from: join('build', 'dist', 'grid-lite', 'code'),
             to: join('..', releaseRepos.Grid.lite)
+        },
+        {
+            from: join('build', 'dist', 'grid-pro', 'code'),
+            to: join('..', releaseRepos.Grid.pro)
         }
-        // {
-        //     from: join('build', 'dist', 'grid-pro', 'code'),
-        //     to: join('..', releaseRepos.Grid.pro)
-        // }
     ];
 
     const filesToIgnore = [
@@ -300,6 +302,43 @@ function copyGridFiles() {
     Object.keys(mapFromTo).forEach(from => {
         const to = mapFromTo[from];
         // libFS.copyAllFiles(from, to);
+        fs.copySync(from, to);
+    });
+    log.message('Files copied successfully!');
+}
+
+/**
+ * Copy the Dashboards JavaScript and CSS files over.
+ */
+function copyDashboardsFiles() {
+    const mapFromTo = {};
+    const folders = [
+        {
+            from: join('build', 'dist', 'dashboards', 'code'),
+            to: join('..', releaseRepos.Dashboards)
+        }
+    ];
+
+    const filesToIgnore = [
+        'package.json'
+    ];
+
+    // Copy all the files in the code folder
+    folders.forEach(folder => {
+        const {
+            from,
+            to
+        } = folder;
+        getFilesInFolder(from, true)
+            .filter(path => !filesToIgnore.some(pattern => path.endsWith(pattern)))
+            .forEach(filename => {
+                mapFromTo[join(from, filename)] = join(to, filename);
+            });
+    });
+
+    // Copy all the files to release repository
+    Object.keys(mapFromTo).forEach(from => {
+        const to = mapFromTo[from];
         fs.copySync(from, to);
     });
     log.message('Files copied successfully!');
@@ -403,6 +442,9 @@ async function checkIfCodeExists(productName) {
         Grid: [
             join('build', 'dist', 'grid-lite', 'code', 'grid-lite.js')
             // join('build', 'dist', 'grid-pro', 'code', 'grid-pro.js')
+        ],
+        Dashboards: [
+            join('build', 'dist', 'dashboards', 'code', 'dashboards.js')
         ]
     };
 
@@ -464,6 +506,9 @@ async function release() {
         updateJSONFiles(version, ['bower', 'package'], productName);
     } else if (productName === 'Grid') {
         copyGridFiles();
+        updateJSONFiles(version, ['package'], productName);
+    } else if (productName === 'Dashboards') {
+        copyDashboardsFiles();
         updateJSONFiles(version, ['package'], productName);
     }
 

@@ -25,12 +25,19 @@ import type {
     HeaderCellA11yOptions,
     LangAccessibilityOptions
 } from './Accessibility/A11yOptions';
-import type ColumnDistribution from './Table/ColumnDistribution/ColumnDistribution';
+import type {
+    PaginationLangOptions,
+    PaginationOptions
+} from './Pagination/PaginationOptions';
+import type { ColumnResizingMode } from './Table/ColumnResizing/ColumnResizing';
+import type { ColumnDataType } from './Table/Column';
 import type DataTable from '../../Data/DataTable';
 import type DataTableOptions from '../../Data/DataTableOptions';
 import type Cell from './Table/Cell';
-import type Column from './Table/Column';
 import type { LangOptionsCore } from '../../Shared/LangOptionsCore';
+import type {
+    Condition as ColumnFilteringCondition
+} from './Table/Actions/ColumnFiltering/FilteringTypes';
 
 
 /* *
@@ -38,11 +45,6 @@ import type { LangOptionsCore } from '../../Shared/LangOptionsCore';
  *  Declarations
  *
  * */
-
-/**
- * The resizing strategy of the columns in the grid structure.
- */
-export type ColumnDistributionType = ColumnDistribution.StrategyType;
 
 /**
  * Callback function to be called when a header event is triggered. Returns a
@@ -65,6 +67,11 @@ export interface Options {
      * Accessibility options for the grid.
      */
     accessibility?: A11yOptions;
+
+    /**
+     * Pagination options for the grid.
+     */
+    pagination?: PaginationOptions;
 
     /**
      * Options for the table caption.
@@ -158,11 +165,6 @@ export interface RenderingSettings {
  * Options to control the columns rendering.
  */
 export interface ColumnsSettings {
-    /**
-     * @deprecated
-     * Use `resizing.mode` instead.
-     */
-    distribution?: ColumnDistributionType;
 
     /**
      * Columns included in the grid structure - contains the columns IDs.
@@ -197,21 +199,21 @@ export interface ResizingOptions {
     enabled?: boolean;
 
     /**
-     * Resizing mode of the columns. If `full`, the columns will be
-     * distributed so that the first and the last column are at the edges of
-     * the grid. If `fixed`, the columns will have a fixed width, only the
-     * resized column will be affected. If `mixed`, resizing will change the
-     * width of the neighboring columns, but the rest will remain in the same
-     * place.
+     * Determines how column widths are adjusted when resizing.
+     * - `'adjacent'`: Resizing a column will also adjust the width of its
+     *   immediate neighbor, keeping the rest of the columns in the same place.
+     *   This is the default mode.
+     * - `'independent'`: Only the resized column is changed; all columns to
+     *   its right retain their current pixel widths, effectively "freezing"
+     *   their widths.
+     * - `'distributed'`: Only the resized column is affected; other column
+     *   width settings will not be changed.
      *
-     * If `undefined`, the default column rensizing strategy will be used, which
-     * is `mixed`, if `width` is set for any column, otherwise `full`.
+     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-lite/basic/column-resizing | Resizing overview}
      *
-     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-lite/basic/column-distribution | Resizing overview}
-     *
-     * @default undefined
+     * @default 'adjacent'
      */
-    mode?: ColumnDistributionType;
+    mode?: ColumnResizingMode;
 }
 
 /**
@@ -322,7 +324,7 @@ export interface ColumnOptions {
      * If not set, the data type is inferred from the first cell in the
      * column.
      */
-    dataType?: Column.DataType;
+    dataType?: ColumnDataType;
 
     /**
      * Options for all the header cells in the column.
@@ -337,12 +339,6 @@ export interface ColumnOptions {
     sorting?: ColumnSortingOptions;
 
     /**
-     * @deprecated
-     * Use `rendering.columns.resizing.enabled` instead.
-     */
-    resizing?: boolean;
-
-    /**
      * The width of the column. It can be set in pixels or as a percentage of
      * the table width. If unset, the width is distributed evenly between all
      * columns.
@@ -353,6 +349,11 @@ export interface ColumnOptions {
      * `width` option is used to set the width of the column.
      */
     width?: number | string;
+
+    /**
+     * Filtering options for the column.
+     */
+    filtering?: ColumnFilteringOptions;
 }
 
 /**
@@ -426,7 +427,7 @@ export interface ColumnHeaderOptions {
 }
 
 /**
- * Column sorting options avalable for applying to all columns at once.
+ * Column sorting options available for applying to all columns at once.
  */
 export interface ColumnSortingOptions {
     /**
@@ -509,14 +510,6 @@ export interface IndividualColumnOptions extends ColumnOptions {
     id: string;
 
     sorting?: IndividualColumnSortingOptions;
-
-    /**
-     * @internal
-     * @private
-     * @deprecated
-     * It will be removed in the next major release.
-     */
-    resizing?: boolean;
 }
 
 export interface CaptionOptions {
@@ -617,6 +610,7 @@ export interface CreditsOptions {
     position?: 'bottom' | 'top';
 }
 
+
 /**
  * Language options for the grid.
  */
@@ -640,7 +634,55 @@ export interface LangOptions extends LangOptionsCore {
      * @default 'No data to display'
      */
     noData?: string;
+
+    /**
+     * `Filter` translation.
+     *
+     * @default 'Filter'
+     */
+    filter?: string;
+
+    /**
+     * `Sort ascending` translation.
+     *
+     * @default 'Sort ascending'
+     */
+    sortAscending?: string;
+
+    /**
+     * `Sort descending` translation.
+     *
+     * @default 'Sort descending'
+     */
+    sortDescending?: string;
+
+    /**
+     * `Column` translation.
+     *
+     * @default 'Column'
+     */
+    column?: string;
+
+    /**
+     * `Set filter` translation.
+     *
+     * @default 'Set filter'
+     */
+    setFilter?: string;
+
+    /**
+     * Language options for column filtering conditions.
+     */
+    columnFilteringConditions?: Partial<
+        Record<ColumnFilteringCondition, string>
+    >;
+
+    /**
+     * Language options for pagination text values.
+     */
+    pagination?: PaginationLangOptions;
 }
+
 
 /**
  * Options for the time settings.
@@ -655,6 +697,35 @@ export interface TimeOptions {
     timezone?: string;
 }
 
+/**
+ * Column filtering options.
+ */
+export interface FilteringCondition {
+    /**
+     * The condition to use for filtering the column.
+     */
+    condition?: ColumnFilteringCondition;
+
+    /**
+     * The value that is used with the condition to filter the column.
+     */
+    value?: string | number | boolean | null;
+}
+
+export interface ColumnFilteringOptions extends FilteringCondition {
+    /**
+     * Whether the filtering is enabled or not.
+     */
+    enabled?: boolean;
+
+    /**
+     * Whether the filtering inputs should be rendered inline in the special
+     * table header row (`true`), or should be accessed via a popup (`false`).
+     *
+     * @default false
+     */
+    inline?: boolean;
+}
 
 /* *
  *

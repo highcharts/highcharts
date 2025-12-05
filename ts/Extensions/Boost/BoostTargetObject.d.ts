@@ -17,7 +17,7 @@ import type WGLRenderer from './WGLRenderer';
 export interface BoostTargetAdditions {
     canvas?: HTMLCanvasElement;
     clipRect?: SVGElement;
-    target?: (HTMLElement|SVGElement);
+    target?: SVGElement;
     targetCtx?: CanvasRenderingContext2D;
     targetFo?: SVGElement;
     wgl?: WGLRenderer;

@@ -352,6 +352,7 @@ function wrapRenderLabel(
         removeEvent(labelElement);
         label?.css({ cursor: 'default' });
         icon.destroy();
+        tickGrid.labelIcon = void 0;
     }
 }
 
@@ -524,7 +525,7 @@ class TreeGridTickAdditions {
 
             brokenAxis.setBreaks(
                 treeGrid.toggleCollapse(treeGrid.mapOfPosToGridNode[pos]),
-                !scrollMode && redraw
+                scrollMode && redraw
             );
 
             if (scrollMode) {

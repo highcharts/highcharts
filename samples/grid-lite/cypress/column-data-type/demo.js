@@ -15,6 +15,22 @@ Grid.grid('container', {
         }
     },
     columns: [{
+        id: 'string',
+        cells: {
+            className: 'highlight_green',
+            formatter: function () {
+                return '';
+            }
+        }
+    }, {
+        id: 'booleans',
+        cells: {
+            className: 'highlight_green',
+            formatter: function () {
+                return null;
+            }
+        }
+    }, {
         id: 'boolNumber',
         dataType: 'boolean'
     }, {

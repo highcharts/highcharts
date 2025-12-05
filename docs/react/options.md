@@ -19,7 +19,10 @@ import {
     Tooltip,
     Legend
 } from '@highcharts/react';
+
 ```
+
+<iframe src="https://www.highcharts.com/samples/embed/highcharts/react/complex" style="width: 100%; height: 800px; border: 0;"></iframe>
 
 Here's an example of adding a custom title:
 
@@ -100,7 +103,7 @@ function RefExample(){
 }
 ```
 
-## Setting a custom Highcharts instance
+## Loading modules and setting a custom Highcharts instance
 If you need to load additional modules or use a specific Highcharts version, you can provide a
 custom Highcharts instance. This can be accomplished via the `setHighcharts` function:
 
@@ -125,3 +128,35 @@ export function ChartWithCustomHC () {
 }
 ```
 
+
+## Reactive updates
+
+Charts re-render automatically when their React props or children change. Control the chart from component state and update in event handlers.
+
+```jsx
+// Pattern: state → props → rerender
+import React, { useState } from 'react';
+import { Chart, Series, Title } from '@highcharts/react';
+
+export default function Demo() {
+  const [points, setPoints] = useState([1, 2, 3]);
+  const [title, setTitle] = useState('Initial title');
+
+  return (
+    <div>
+      <button onClick={() => setPoints(p => p.map(x => x + 1))}>Shift data</button>
+      <button onClick={() => setTitle('Updated title')}>Change title</button>
+
+      <Chart>
+        <Title>{title}</Title>
+        <Series type="line" data={points} />
+      </Chart>
+    </div>
+  );
+}
+```
+
+**Live demos:**
+
+- <a href="https://www.highcharts.com/samples/embed/highcharts/react/reactive" target="_blank" rel="noreferrer">reactive</a>  
+- <a href="https://www.highcharts.com/samples/embed/highcharts/react/reactive-title" target="_blank" rel="noreferrer">reactive-title</a>

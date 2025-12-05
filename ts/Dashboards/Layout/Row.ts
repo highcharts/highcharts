@@ -17,6 +17,7 @@
 'use strict';
 
 import type CSSJSONObject from '../CSSJSONObject';
+import type { DeepPartial } from '../../Shared/Types';
 import type Layout from './Layout';
 
 import Globals from '../Globals.js';
@@ -243,7 +244,7 @@ class Row extends GUIElement {
      * @internal
      *
      */
-    public getOptions(): Globals.DeepPartial<Row.Options> {
+    public getOptions(): DeepPartial<Row.Options> {
         const row = this,
             cells = [];
 

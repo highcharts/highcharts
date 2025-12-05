@@ -20,6 +20,7 @@ import type Chart from '../Chart/Chart';
 import type ColorType from '../Color/ColorType';
 import type CSSObject from '../Renderer/CSSObject';
 import type DashStyleValue from '../Renderer/DashStyleValue';
+import type { DeepPartial } from '../../Shared/Types';
 import type EventCallback from '../EventCallback';
 import type FormatterCallback from '../FormatterCallback';
 import type GradientColor from '../Color/GradientColor';
@@ -85,8 +86,8 @@ export interface AxisEventsOptions {
 }
 
 export type AxisLabelFormatterCallback = FormatterCallback<
-AxisLabelFormatterContextObject,
-AxisLabelFormatterContextObject
+    AxisLabelFormatterContextObject,
+    AxisLabelFormatterContextObject
 >;
 
 export interface AxisLabelFormatterContextObject {

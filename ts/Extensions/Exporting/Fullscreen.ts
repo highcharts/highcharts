@@ -42,8 +42,8 @@ const {
  *
  * */
 
-declare module '../../Core/Chart/ChartLike' {
-    interface ChartLike {
+declare module '../../Core/Chart/ChartBase' {
+    interface ChartBase {
         /** @requires Extensions/Fullscreen */
         fullscreen?: Fullscreen;
     }

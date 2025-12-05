@@ -34,8 +34,8 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
  *
  * */
 
-declare module './ChartLike'{
-    interface ChartLike {
+declare module './ChartBase'{
+    interface ChartBase {
         marginRight: ChartOptions['marginRight'];
         polar: ChartOptions['polar'];
     }

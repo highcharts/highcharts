@@ -19,7 +19,7 @@
  *
  * */
 
-import type Globals from './Globals';
+import type { AnyRecord } from '../Shared/Types';
 
 import Board from './Board.js';
 import Sync from './Components/Sync/Sync.js';
@@ -39,8 +39,10 @@ namespace PluginHandler {
      *
      * */
 
-    export interface DashboardsPlugin<T = (Globals.AnyRecord|undefined)> {
-        /** @internal */
+    export interface DashboardsPlugin<T = (AnyRecord|undefined)> {
+        /**
+         * Custom properties of the plugin
+         */
         custom: T;
         /**
          * Maximal version of plugin that is compatible with dashboard

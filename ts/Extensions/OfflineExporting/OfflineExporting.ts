@@ -35,7 +35,7 @@ const {
     getOptions,
     setOptions
 } = D;
-import DownloadURL from '../DownloadURL.js';
+import DownloadURL from '../../Shared/DownloadURL.js';
 const {
     downloadURL,
     getScript
@@ -60,8 +60,8 @@ const {
  *
  * */
 
-declare module '../../Core/Chart/ChartLike' {
-    interface ChartLike {
+declare module '../../Core/Chart/ChartBase' {
+    interface ChartBase {
         /**
          * Deprecated in favor of [Exporting.exportChart](https://api.highcharts.com/class-reference/Highcharts.Exporting#exportChart).
          *
@@ -73,8 +73,8 @@ declare module '../../Core/Chart/ChartLike' {
     }
 }
 
-declare module '../../Core/GlobalsLike.d.ts' {
-    interface GlobalsLike {
+declare module '../../Core/GlobalsBase.d.ts' {
+    interface GlobalsBase {
         Exporting: typeof Exporting
     }
 }
@@ -371,7 +371,7 @@ namespace OfflineExporting {
                     if (variant === 'normal') {
                         normalBase64 = base64;
                     }
-                } catch (e) {
+                } catch {
                     // If fetch or reading fails, fallback to next variant
                 }
             } else {

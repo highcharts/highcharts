@@ -26,11 +26,12 @@ async function transpileJSXSamples() {
             <script type="importmap">
             {
                 "imports": {
-                    "react": "https://esm.sh/react",
-                    "react-dom": "https://esm.sh/react-dom/client",
-                    "highcharts/": "https://code.highcharts.com/",
-                    "@highcharts/react": "https://esm.sh/@highcharts/react@next/index.js",
-                    "@highcharts/react/": "https://esm.sh/@highcharts/react@next/"
+                    "react": "https://esm.sh/react@19.1.0",
+                    "react-dom": "https://esm.sh/react-dom@19.1.0/client",
+                    "react-dom/": "https://esm.sh/react-dom@19.1.0/",
+                    "@highcharts/react": "https://unpkg.com/@highcharts/react@next/index.js",
+                    "@highcharts/react/": "https://unpkg.com/@highcharts/react@next/",
+                    "highcharts/": "https://unpkg.com/highcharts@12.2.0/"
                 }
             }
             </script>
@@ -103,7 +104,7 @@ details {
 
         await writeFile(
             adjecentHTMLFile,
-            html`<style>${styles}</style><details><summary>Code</summary><pre><code>${hljs.highlight(originalCode, { language: 'javascript' }).value}</code></pre></details>`,
+            html`<style nonce="highcharts">${styles}</style><details><summary>Code</summary><pre><code>${hljs.highlight(originalCode, { language: 'javascript' }).value}</code></pre></details>`,
             { force: true }
         );
 

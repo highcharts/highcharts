@@ -234,7 +234,6 @@ class HTMLComponent extends Component {
 
     public getOptionsOnDrop(): Partial<Options> {
         return {
-            cell: '',
             type: 'HTML',
             elements: [{
                 tagName: 'span',
@@ -244,6 +243,7 @@ class HTMLComponent extends Component {
     }
 
     /**
+     * Constructs the HTML tree.
      * @internal
      */
     private constructTree(): void {

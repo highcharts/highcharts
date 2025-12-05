@@ -23,6 +23,7 @@ import type {
     BreadcrumbsOptions
 } from './BreadcrumbsOptions';
 import type Chart from '../../Core/Chart/Chart.js';
+import type { DeepPartial } from '../../Shared/Types';
 import type Options from '../../Core/Options';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
@@ -51,8 +52,8 @@ const {
  *
  * */
 
-declare module '../../Core/Chart/ChartLike' {
-    interface ChartLike {
+declare module '../../Core/Chart/ChartBase' {
+    interface ChartBase {
         breadcrumbsBottomMargin?: boolean;
         breadcrumbsTopMargin?: boolean;
         breadcrumbs?: Breadcrumbs;
@@ -567,7 +568,7 @@ class Breadcrumbs {
                 breadcrumbs.getButtonText(breadcrumb),
                 posX,
                 posY,
-                function (e: (Event|any)): void {
+                function (e: any /* @todo (Event|any) */): void {
                     // Extract events from button object and call
                     const buttonEvents = breadcrumbsOptions.events &&
                         breadcrumbsOptions.events.click;

@@ -63,8 +63,8 @@ const {
  *
  * */
 
-declare module './Chart/ChartLike'{
-    interface ChartLike {
+declare module './Chart/ChartBase'{
+    interface ChartBase {
         cancelClick?: boolean;
         hoverPoint?: Point;
         hoverPoints?: Array<Point>;
@@ -132,6 +132,12 @@ class Pointer {
 
     public hasPinched?: boolean;
 
+    /**
+     * Indicates if there has beeen a movement larger than ~4px during
+     * a pinch event
+     */
+    public hasPinchMoved?: boolean;
+
     public hasPointerCapture?: boolean;
 
     public hasZoom?: boolean;
@@ -153,8 +159,6 @@ class Pointer {
     public runChartClick?: boolean;
 
     public selectionMarker?: SVGElement;
-
-    public tooltipTimeout?: number;
 
     public eventsToUnbind: Array<Function> = [];
 
@@ -260,9 +264,6 @@ class Pointer {
                 );
             }
         }
-
-        // Memory and CPU leak
-        clearInterval(pointer.tooltipTimeout);
 
         objectEach(pointer, function (_val, prop): void {
             pointer[prop] = void 0 as any;
@@ -539,6 +540,7 @@ class Pointer {
             chart.mouseIsDown = false;
             this.hasDragged = 0;
             this.pinchDown = [];
+            this.hasPinchMoved = false;
         }
     }
 
@@ -1259,6 +1261,12 @@ class Pointer {
      * @function Highcharts.Pointer#onDocumentMouseUp
      */
     public onDocumentMouseUp(e: PointerEvent): void {
+        // #17852, IOS devices sometimes reverts back to previous point when
+        // dragging between points
+        if (e?.touches && this.hasPinchMoved) {
+            e?.preventDefault?.();
+        }
+
         charts[pick(Pointer.hoverChartIndex, -1)]
             ?.pointer
             ?.drop(e);
@@ -1803,7 +1811,12 @@ class Pointer {
      */
     public setDOMEvents(): void {
         const container = this.chart.container,
-            ownerDoc = container.ownerDocument;
+            ownerDoc = container.ownerDocument,
+            // Get the parent element, including handling Shadow DOM (#23450)
+            getParent = (el: HTMLElement): HTMLElement|null|undefined =>
+                el.parentElement || (
+                    el.getRootNode() as ShadowRoot|undefined
+                )?.host?.parentElement;
 
         container.onmousedown = this.onContainerMouseDown.bind(this);
         container.onmousemove = this.onContainerMouseMove.bind(this);
@@ -1836,12 +1849,12 @@ class Pointer {
 
         // In case we are dealing with overflow, reset the chart position when
         // scrolling parent elements
-        let parent = this.chart.renderTo.parentElement;
+        let parent = getParent(this.chart.renderTo);
         while (parent && parent.tagName !== 'BODY') {
             this.eventsToUnbind.push(addEvent(parent, 'scroll', (): void => {
                 delete this.chartPosition;
             }));
-            parent = parent.parentElement;
+            parent = getParent(parent);
         }
 
         this.eventsToUnbind.push(
@@ -2027,7 +2040,7 @@ class Pointer {
                 // checking how much it moved, and cancelling on small
                 // distances. #3450. Tested and still relevant as of 2024.
                 if (e.type === 'touchmove') {
-                    hasMoved = pinchDown[0] ? // #5266
+                    this.hasPinchMoved = hasMoved = pinchDown[0] ? // #5266
                         (
                             Math.pow(pinchDown[0].chartX - e.chartX, 2) +
                             Math.pow(pinchDown[0].chartY - e.chartY, 2)

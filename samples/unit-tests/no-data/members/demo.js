@@ -9,7 +9,11 @@ QUnit.test('defaultOptions', assert => {
 });
 
 QUnit.test('Updating no-data element.', assert => {
-    const chart = Highcharts.chart('container', {});
+    const chart = Highcharts.chart('container', {
+        lang: {
+            noData: 'No data'
+        }
+    });
 
     chart.update({
         noData: {
@@ -23,5 +27,18 @@ QUnit.test('Updating no-data element.', assert => {
         chart.noDataLabel.text.styles.color,
         '#ff0000',
         'Updated color should be red (#13982)'
+    );
+
+    chart.addSeries({
+        type: 'pie',
+        data: [
+            { y: 5, visible: false },
+            { y: 3, visible: false }
+        ]
+    });
+
+    assert.ok(
+        chart.noDataLabel && chart.noDataLabel.textStr === 'No data',
+        '`noData` label should be shown for hidden pie data (#23235)'
     );
 });

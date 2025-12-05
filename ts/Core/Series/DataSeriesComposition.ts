@@ -45,8 +45,8 @@ const {
  *
  * */
 
-declare module './SeriesLike' {
-    interface SeriesLike {
+declare module './SeriesBase' {
+    interface SeriesBase {
         datas?: DataSeriesAdditions;
     }
 }
@@ -331,14 +331,14 @@ class DataSeriesAdditions {
 
         if (failure) {
             // Fallback to index
-            const columnNames = table.getColumnNames(),
+            const columnIds = table.getColumnIds(),
                 emptyColumn: DataTable.Column = [];
 
             emptyColumn.length = rowCount;
 
             let columnOffset = 0;
 
-            if (columnNames.length === keys.length - 1) {
+            if (columnIds.length === keys.length - 1) {
                 // Table index becomes x
                 columnOffset = 1;
                 indexAsX = true;
@@ -350,7 +350,7 @@ class DataSeriesAdditions {
                 i < iEnd;
                 ++i
             ) {
-                column = table.getColumn(columnNames[i], true);
+                column = table.getColumn(columnIds[i], true);
                 key = keys[i];
 
                 anySeries[`${key}Data`] = column || emptyColumn.slice();
