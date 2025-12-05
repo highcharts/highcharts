@@ -32,9 +32,11 @@ import ColumnFiltering from '../Table/Actions/ColumnFiltering/ColumnFiltering.js
 import GridUtils from '../GridUtils.js';
 import AST from '../../../Core/Renderer/HTML/AST.js';
 import U from '../../../Core/Utilities.js';
+import HTMLU from '../../../Accessibility/Utils/HTMLUtilities.js';
 
 const { formatText } = GridUtils;
 const { replaceNested } = U;
+const { getHeadingTagNameForElement } = HTMLU;
 
 
 /**
@@ -427,17 +429,20 @@ class Accessibility {
      */
     private defaultBeforeFormatter(): string {
         const grid = this.grid;
-        const options = grid.options;
+        const { container, dataTable, options } = grid;
         const format =
             options?.accessibility?.screenReaderSection?.beforeGridFormat;
 
-        if (!format) {
+        if (!format || !container) {
             return '';
         }
 
-        const dataTable = grid.dataTable;
+        const gridTitle = options?.caption?.text;
+        const headingTag = getHeadingTagNameForElement(container);
+
         const context = {
-            gridTitle: options?.caption?.text || '',
+            gridTitle:
+                gridTitle ? `<${headingTag}>${gridTitle}</${headingTag}>` : '',
             gridDescription: options?.description?.text || '',
             rowCount: dataTable?.rowCount || 0,
             columnCount: (dataTable?.getColumnIds() || []).length

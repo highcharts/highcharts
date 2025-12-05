@@ -267,14 +267,14 @@ export interface ScreenReaderSectionLangOptions {
     /**
      * Text for the aria-label attribute of the before screen reader region.
      *
-     * @default 'Before Grid information.'
+     * @default ''
      */
     beforeRegionLabel?: string;
 
     /**
      * Text for the aria-label attribute of the after screen reader region.
      *
-     * @default 'After Grid information.'
+     * @default ''
      */
     afterRegionLabel?: string;
 }

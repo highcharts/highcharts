@@ -48,7 +48,7 @@ namespace Defaults {
             },
             screenReaderSection: {
                 beforeGridFormat:
-                    '<div>{gridTitle}</div>' +
+                    '{gridTitle}' +
                     '<div>{gridDescription}</div>' +
                     '<div>Grid with {rowCount} rows and {columnCount}' +
                     ' columns.</div>',
@@ -82,8 +82,8 @@ namespace Defaults {
                     }
                 },
                 screenReaderSection: {
-                    beforeRegionLabel: 'Before Grid information.',
-                    afterRegionLabel: 'After Grid information.'
+                    beforeRegionLabel: '',
+                    afterRegionLabel: ''
                 }
             },
             loading: 'Loading...',
