@@ -329,7 +329,7 @@
 }
 
 .highcharts-tooltip text,
-.highcharts-tooltip foreignObject span {
+.highcharts-tooltip foreignObject div {
     fill: var(--highcharts-neutral-color-80);
     font-size: 0.8em;
 }
@@ -485,7 +485,7 @@ g.highcharts-series,
 }
 
 .highcharts-data-label text,
-.highcharts-data-label span,
+.highcharts-data-label div,
 text.highcharts-data-label {
     font-size: 0.7em;
     font-weight: bold;
@@ -644,7 +644,7 @@ text.highcharts-data-label {
 }
 
 .highcharts-legend-item > text,
-.highcharts-legend-item span {
+.highcharts-legend-item div {
     fill: var(--highcharts-neutral-color-80);
     font-size: 0.8em;
     cursor: pointer;
