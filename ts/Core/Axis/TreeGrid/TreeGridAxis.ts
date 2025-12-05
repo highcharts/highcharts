@@ -589,6 +589,7 @@ function wrapGenerateTick(
             tick.parameters.category = gridNode.name;
             tick.options = options;
             tick.addLabel();
+            axis.isDirty = true;
         }
     } else {
         proceed.apply(axis, Array.prototype.slice.call(arguments, 1));
@@ -746,9 +747,9 @@ function wrapInit(
                      */
                     type: 'triangle',
                     x: -5,
-                    y: -5,
-                    height: 10,
-                    width: 10
+                    y: -3,
+                    height: 6,
+                    width: 8
                 }
             },
             uniqueNames: false
