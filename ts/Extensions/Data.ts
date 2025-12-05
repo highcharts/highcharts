@@ -987,7 +987,7 @@ class Data {
         }
 
         if (csv && options.beforeParse) {
-            csv = options.beforeParse.call(this, csv);
+            csv = (options.beforeParse as any).call(this, csv, this);
         }
 
         if (csv) {
@@ -1699,7 +1699,7 @@ class Data {
             match;
 
         if (parseDate) {
-            ret = parseDate(val);
+            ret = (parseDate as any)(val, this);
 
         } else if (typeof val === 'string') {
             // Auto-detect the date format the first time
@@ -1791,7 +1791,11 @@ class Data {
      */
     public parsed(): (boolean|undefined) {
         if (this.options.parsed) {
-            return this.options.parsed.call(this, this.columns as any);
+            return (this.options.parsed as any).call(
+                this,
+                this.columns as any,
+                this
+            );
         }
     }
 
@@ -1977,7 +1981,7 @@ class Data {
                 merge(true, chartOptions, { xAxis: this.xAxisOptions || {} });
             }
 
-            options.complete?.(chartOptions);
+            (options.complete as any)?.(chartOptions, this);
 
             // The afterComplete hook is used internally to avoid conflict with
             // the externally available complete option.

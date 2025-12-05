@@ -39,6 +39,7 @@ const {
     defined,
     extend,
     fireEvent,
+    isArrow,
     isString,
     merge,
     objectEach,
@@ -575,11 +576,18 @@ class Breadcrumbs {
                     let callDefaultEvent;
 
                     if (buttonEvents) {
-                        callDefaultEvent = buttonEvents.call(
-                            breadcrumbs,
-                            e as any,
-                            breadcrumb
-                        );
+
+                        callDefaultEvent = isArrow(buttonEvents) ?
+                            (buttonEvents as any)(
+                                e as any,
+                                breadcrumb,
+                                breadcrumbs
+                            ) :
+                            buttonEvents.call(
+                                breadcrumbs,
+                                e as any,
+                                breadcrumb
+                            );
                     }
 
                     // (difference in behaviour of showFullPath and drillUp)

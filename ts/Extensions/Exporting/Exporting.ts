@@ -84,6 +84,7 @@ const {
     extend,
     find,
     fireEvent,
+    isArrow,
     isObject,
     merge,
     objectEach,
@@ -743,7 +744,13 @@ class Exporting {
                 if (e) {
                     e.stopPropagation();
                 }
-                onclick.call(chart, e);
+
+                if (!isArrow(onclick)) {
+                    (onclick as any).call(chart, e);
+                } else {
+                    (onclick as any)(e, chart);
+                }
+
             };
         } else if (menuItems) {
             callback = function (
