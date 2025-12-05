@@ -123,7 +123,7 @@ class SonificationSpeaker {
 
     /**
      * Stop speech and release any used resources
-     * @private
+     * @internal
      */
     destroy(): void {
         // Ran on TimelineChannel.destroy
@@ -147,7 +147,7 @@ class SonificationSpeaker {
 
     /**
      * Set the active synthesis voice for the speaker.
-     * @private
+     * @internal
      */
     private setVoice(): void {
         if (this.synthesis) {

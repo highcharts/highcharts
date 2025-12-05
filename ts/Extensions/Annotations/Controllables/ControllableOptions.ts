@@ -97,4 +97,5 @@ export interface ControllableShapeOptions extends ControllableOptions {
  *
  * */
 
+/** @internal */
 export default ControllableOptions;

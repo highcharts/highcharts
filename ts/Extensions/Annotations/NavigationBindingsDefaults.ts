@@ -109,6 +109,7 @@ const navigation: NavigationOptions = {
      * @type      {string}
      */
     bindingsClassName: 'highcharts-bindings-container',
+
     /**
      * Bindings definitions for custom HTML buttons. Each binding implements
      * simple event-driven interface:
@@ -148,6 +149,7 @@ const navigation: NavigationOptions = {
         circleAnnotation: {
             /** @ignore-option */
             className: 'highcharts-circle-annotation',
+
             /**
              * Options to customize the bindings' annotation shapes and labels.
              * @type      {Highcharts.AnnotationsOptions}

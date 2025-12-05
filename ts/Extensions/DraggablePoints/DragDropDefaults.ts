@@ -425,4 +425,5 @@ const DragDropDefaults: DragDropDefaults = {
  *
  * */
 
+/** @internal */
 export default DragDropDefaults;

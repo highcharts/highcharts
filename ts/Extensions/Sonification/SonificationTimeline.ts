@@ -50,7 +50,7 @@ interface SonificationTimelineOptions {
 /**
  * Get filtered channels. Timestamps are compensated, so that the first
  * event starts immediately.
- * @private
+ * @internal
  */
 function filterChannels(
     filter: Sonification.TimelineFilterCallback,
@@ -90,7 +90,7 @@ function filterChannels(
  * The SonificationTimeline class. This class represents a timeline of
  * audio events scheduled to play. It provides functionality for manipulating
  * and navigating the timeline.
- * @private
+ * @internal
  */
 class SonificationTimeline {
     isPaused = false;
