@@ -87,5 +87,11 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
-      - name: Run Playwright tests
-        run: npx gulp test
+      - name: Build Highcharts
+        run: npx gulp scripts
+
+      - name: Run Highcharts Playwright tests
+        run: npx playwright test --project=setup-highcharts --project=highcharts
+
+      - name: Run QUnit Playwright tests
+        run: npx playwright test --project=qunit
