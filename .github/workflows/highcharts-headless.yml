@@ -70,77 +70,22 @@ jobs:
           config-file: test/cypress/highcharts/config.mjs
           install: false
 
-  ### HEADLESS LINUX ###
-  test_headless:
-    name: Test with headless browsers
+  test_playwright:
+    name: Playwright tests
     timeout-minutes: 15
     runs-on: ubuntu-latest
     steps:
-      ### SETUP ###
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 'lts/*'
           cache: 'npm'
-      - uses: browser-actions/setup-chrome@v2
-        id: setup-chrome
-        with:
-          install-chromedriver: true
 
-      - run: |
-          export CHROME_BIN=${{ steps.setup-chrome.outputs.chrome-path }}
-          echo $CHROME_BIN
-          $CHROME_BIN --version
-
-      - uses: browser-actions/setup-firefox@latest
-        with:
-          firefox-version: latest-esr
-      - uses: browser-actions/setup-geckodriver@latest
-        with:
-            token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Setup Display
-        run: |
-          chromedriver --url-base=/wd/hub &
-          sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 &
       - name: Install Dependencies
         run: npm i
-      ### TASKS ###
-      - name: Build Highcharts
-        run: npx gulp scripts
 
-      - name: Run Tests (Chrome)
-        run: |
-          export DISPLAY=:99
-          npx gulp test --single-run --ts --splitbrowsers ChromeHeadless
-      - name: Output logged errors
-        run: cat ./test/console.log
-      - name: Check Firefox
-        run: |
-          firefox --version
-          whereis firefox
-      - name: Run Tests (Firefox)
-        run: |
-          export DISPLAY=:99
-          npx gulp test --single-run --splitbrowsers Firefox --force
-      - name: Output logged errors
-        run: cat ./test/console.log
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
 
-  # ### HEADLESS MACOS ###
-  # test_macos:
-  #   name: Test with MacOS
-  #   timeout-minutes: 10
-  #   runs-on: macos-latest
-  #   steps:
-  #     ### SETUP ###
-  #     - uses: actions/checkout@v3
-  #     - uses: actions/setup-node@v4
-  #       with:
-  #         node-version: 'lts/*'
-  #         cache: 'npm'
-  #     - name: Install Dependencies
-  #       run: npm i
-  #     ### TASKS ###
-  #     - name: Build Highcharts
-  #       run: npx gulp scripts
-  #     - name: Run Tests (Safari)
-  #       run: npx gulp test --single-run --splitbrowsers Safari
+      - name: Run Playwright tests
+        run: npx gulp test
