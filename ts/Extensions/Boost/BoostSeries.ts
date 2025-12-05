@@ -573,26 +573,15 @@ function destroyGraphics(
 ): void {
     const points = series.points;
 
-    if (points) {
-        let point: Point,
-            i: number;
-
-        for (i = 0; i < points.length; i = i + 1) {
-            point = points[i];
-            if (point && point.destroyElements) {
-                point.destroyElements(); // #7557
-            }
-        }
-    }
+    points?.forEach((point): void => {
+        point?.destroyElements?.(); // #7557
+    });
 
     (
         ['graph', 'area', 'tracker'] as
         Array<('graph'|'area'|'tracker')>
     ).forEach((prop): void => {
-        const seriesProp = series[prop];
-        if (seriesProp) {
-            series[prop] = seriesProp.destroy();
-        }
+        series[prop] = series[prop]?.destroy();
     });
 
     for (const zone of series.zones) {

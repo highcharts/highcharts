@@ -64,9 +64,15 @@ QUnit.test(
         )[1];
         var x = text.getBBox().x;
 
+        assert.strictEqual(
+            chart.xAxis[0].type,
+            'datetime',
+            'xAxis type should be datetime'
+        );
+
         assert.ok(
             /^[0-9]{1,2}:00$/.test(text.textContent),
-            'Initial time should be set - actual time varies with timezone'
+            'Initial time should be set (actual time varies with timezone)'
         );
 
         chart.update({
@@ -134,18 +140,28 @@ QUnit.test(
                 type: void 0
             }]
         });
+
+        assert.strictEqual(
+            chart.xAxis[0].options.type,
+            undefined,
+            'xAxis.options.type should be undefined before data update'
+        );
+
         chart.update({
             data: {
                 csv: csv2
             }
         });
 
-        assert.ok(
-            chart.xAxis[0].type === 'datetime',
+        assert.strictEqual(
+            chart.xAxis[0].type,
+            'datetime',
             'xAxis type=linear should be changed by data module to datetime'
         );
-        assert.ok(
-            chart.xAxis[0].options.type !== 'datetime',
+
+        assert.notEqual(
+            chart.xAxis[0].options.type,
+            'datetime',
             'xAxis type should NOT be changed by data module in options'
         );
 
@@ -155,12 +171,14 @@ QUnit.test(
             }
         });
 
-        assert.ok(
-            chart.xAxis[0].type === 'linear',
-            'xAxis type=datetime should be changed by data module to liear'
+        assert.strictEqual(
+            chart.xAxis[0].type,
+            'linear',
+            'xAxis type=datetime should be changed by data module to linear'
         );
-        assert.ok(
-            chart.xAxis[0].options.type !== 'linear',
+        assert.notEqual(
+            chart.xAxis[0].options.type,
+            'linear',
             'xAxis type should NOT be changed by data module in options'
         );
     }

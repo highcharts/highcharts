@@ -20,9 +20,10 @@ if (!Highcharts.HTMLElement.useForeignObject) {
             'DIV',
             'The data labels group has a HTML counterpart'
         );
-        assert.strictEqual(
-            chart.series[0].dataLabelsGroup.div.style.opacity,
-            '0',
+        assert.close(
+            Number(chart.series[0].dataLabelsGroup.div.style.opacity),
+            0,
+            0.0000001,
             'And that div is hidden'
         );
     });

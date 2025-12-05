@@ -74,23 +74,23 @@ QUnit.test('Plot band labels', function (assert) {
     chart = Highcharts.chart('container', options);
 
     assert.equal(
-        typeof chart.xAxis[0].plotLinesAndBands[0].label,
+        typeof chart.xAxis[0].plotBands[0].label,
         'undefined',
         'Highcharts - before'
     );
     assert.equal(
-        typeof chart.xAxis[0].plotLinesAndBands[1].label,
+        typeof chart.xAxis[0].plotBands[1].label,
         'object',
         'Highcharts - within'
     );
     assert.equal(
-        typeof chart.xAxis[0].plotLinesAndBands[2].label,
+        typeof chart.xAxis[0].plotBands[2].label,
         'undefined',
         'Highcharts - after'
     );
 
-    const line = chart.xAxis[0].plotLinesAndBands[3].svgElem.getBBox(),
-        label = chart.xAxis[0].plotLinesAndBands[3].label;
+    const line = chart.xAxis[0].plotBands[3].svgElem.getBBox(),
+        label = chart.xAxis[0].plotBands[3].label;
 
     assert.close(
         line.x,
@@ -103,26 +103,26 @@ QUnit.test('Plot band labels', function (assert) {
     chart = Highcharts.stockChart('container', options);
 
     assert.equal(
-        typeof chart.xAxis[0].plotLinesAndBands[0].label,
+        typeof chart.xAxis[0].plotBands[0].label,
         'undefined',
         'Label less than x axis should not be rendered'
     );
     assert.equal(
-        typeof chart.xAxis[0].plotLinesAndBands[1].label,
+        typeof chart.xAxis[0].plotBands[1].label,
         'object',
         'Label within x axis should be rendered'
     );
     assert.equal(
-        typeof chart.xAxis[0].plotLinesAndBands[2].label,
+        typeof chart.xAxis[0].plotBands[2].label,
         'undefined',
         'Label greater than x axis should not be rendered'
     );
 
     assert.close(
-        chart.yAxis[0].plotLinesAndBands[0].label.element
+        chart.yAxis[0].plotLines[0].label.element
             .getBoundingClientRect()
             .right,
-        chart.yAxis[0].plotLinesAndBands[1].label.element
+        chart.yAxis[0].plotLines[1].label.element
             .getBoundingClientRect()
             .right,
         1,
@@ -251,11 +251,9 @@ QUnit.test(
 
         assert.deepEqual(clicked, 'plotLine', 'Click event fired on plot line');
 
-        assert.strictEqual(
-            plotLineReference,
-            chart.xAxis[0].plotLinesAndBands[0],
-            '\"this\" in plotline event should refer to the corresponding ' +
-            'plotline object.'
+        assert.ok(
+            plotLineReference === chart.xAxis[0].plotLines[0],
+            'Plot line event context should be corresponding plot line object.'
         );
     }
 );
@@ -285,7 +283,7 @@ QUnit.test('Plotbands in stock', assert => {
     });
     const xAxis = chart.xAxis[1];
     assert.strictEqual(
-        xAxis.plotLinesAndBands[0].svgElem.pathArray[0][2],
+        xAxis.plotBands[0].svgElem.pathArray[0][2],
         xAxis.top,
         'The plotBand on navigator should be positioned on corresponding yAxis'
     );
@@ -314,7 +312,7 @@ QUnit.test('PlotBand on main axis when navigator yAxis has id', assert => {
     const xAxis = chart.xAxis[0];
 
     assert.strictEqual(
-        xAxis.plotLinesAndBands[0].svgElem.pathArray.length,
+        xAxis.plotBands[0].svgElem.pathArray.length,
         5,
         'The plotband should only have 1 box'
     );

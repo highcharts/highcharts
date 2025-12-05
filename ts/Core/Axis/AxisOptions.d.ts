@@ -107,7 +107,7 @@ export interface AxisLabelOptions {
     allowOverlap?: boolean;
     autoRotation?: Array<number>;
     autoRotationLimit: number;
-    distance: number;
+    distance?: number;
     enabled: boolean;
     format?: string;
     formatter?: FormatterCallback<AxisLabelFormatterContextObject, AxisLabelFormatterContextObject>;

@@ -246,6 +246,8 @@ namespace ColorAxisComposition {
                         }
                     }
                 });
+            } else {
+                colorAxis.destroyItems();
             }
         });
 

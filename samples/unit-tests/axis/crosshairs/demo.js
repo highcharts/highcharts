@@ -461,8 +461,8 @@ QUnit.test('Show only one crosshair at the same time', function (assert) {
         'Crosshair should be visible for the first series (#12298)'
     );
     assert.strictEqual(
-        typeof series2.yAxis.crossLabel,
-        'undefined',
+        series2.yAxis.crossLabel.attr('visibility'),
+        'hidden',
         'Crosshair should not be visible for the second series  (#12298)'
     );
 });

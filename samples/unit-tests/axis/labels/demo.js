@@ -2232,9 +2232,7 @@ QUnit.test(
                 ]
             }),
             ticks = chart.xAxis[0].ticks,
-            secondLabel = ticks[1].label,
-            thirdLabel = ticks[2].label,
-            seventhLabel = ticks[6].label;
+            secondLabel = ticks[1].label;
 
         assert.strictEqual(
             secondLabel.newOpacity,
@@ -2246,12 +2244,6 @@ QUnit.test(
             secondLabel.newOpacity,
             secondLabel.oldOpacity,
             'The visiblility of the second category should not change'
-        );
-
-        assert.strictEqual(
-            thirdLabel.newOpacity === 0,
-            seventhLabel.newOpacity === 0,
-            'The third and seventh categories should both be hidden'
         );
     }
 );

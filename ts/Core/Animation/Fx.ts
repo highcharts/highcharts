@@ -327,7 +327,7 @@ class Fx {
     /**
      * Prepare start and end values so that the path can be animated one to one.
      *
-     * @function Highcharts.Fx#initPath
+     * @function Highcharts.Fx#
      *
      * @param {Highcharts.SVGElement} elem
      *        The SVGElement item.

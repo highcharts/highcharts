@@ -498,28 +498,28 @@ QUnit.test('Stack labels various', function (assert) {
 
     assert.strictEqual(
         stackLabel.label.fill,
-        stackLabel.options.backgroundColor,
+        chart.yAxis[0].options.stackLabels.backgroundColor,
         'This stack-label fill atribute should be same as ' +
             'set in options #13330'
     );
 
     assert.strictEqual(
         stackLabel.label.attr('stroke'),
-        stackLabel.options.borderColor,
+        chart.yAxis[0].options.stackLabels.borderColor,
         'This stack-label stroke atribute should be same as ' +
             'set in options #13330'
     );
 
     assert.strictEqual(
         stackLabel.label['stroke-width'],
-        stackLabel.options.borderWidth,
+        chart.yAxis[0].options.stackLabels.borderWidth,
         'This stack-label stroke-width atribute should be same as ' +
             'set in options #13330'
     );
 
     assert.strictEqual(
         stackLabel.label.box.r,
-        stackLabel.options.borderRadius,
+        chart.yAxis[0].options.stackLabels.borderRadius,
         'This stack-label box r atribute should be same as ' +
             'set in options #13330'
     );
@@ -916,10 +916,14 @@ QUnit.test('Stack labels - reverse axis/inverted chart - #8843.', assert => {
     });
 
     const chart = Highcharts.chart('container', getOptions(false, true));
-    let alignOptions1 = chart.yAxis[0].stacking.stacks[
-        'column,,,'][0].alignOptions;
-    let alignOptions2 = chart.yAxis[0].stacking.stacks[
-        '-column,,,'][3].alignOptions;
+    let alignOptions1 = chart.yAxis[0].stacking
+        .stacks['column,,,'][0]
+        .label
+        .alignOptions;
+    let alignOptions2 = chart.yAxis[0].stacking
+        .stacks['-column,,,'][3]
+        .label
+        .alignOptions;
 
     assert.equal(
         alignOptions1.align,
@@ -942,9 +946,14 @@ QUnit.test('Stack labels - reverse axis/inverted chart - #8843.', assert => {
         'negative value not inverted chart, reversed axis'
     );
     chart.update(getOptions(true, true));
-    alignOptions1 = chart.yAxis[0].stacking.stacks['column,,,'][0].alignOptions;
-    alignOptions2 = chart.yAxis[0].stacking.stacks[
-        '-column,,,'][3].alignOptions;
+    alignOptions1 = chart.yAxis[0].stacking
+        .stacks['column,,,'][0]
+        .label
+        .alignOptions;
+    alignOptions2 = chart.yAxis[0].stacking
+        .stacks['-column,,,'][3]
+        .label
+        .alignOptions;
 
     assert.equal(
         alignOptions1.align,
@@ -967,9 +976,14 @@ QUnit.test('Stack labels - reverse axis/inverted chart - #8843.', assert => {
         'negative value inverted chart, reversed axis'
     );
     chart.update(getOptions(true, false));
-    alignOptions1 = chart.yAxis[0].stacking.stacks['column,,,'][0].alignOptions;
-    alignOptions2 = chart.yAxis[0].stacking.stacks[
-        '-column,,,'][3].alignOptions;
+    alignOptions1 = chart.yAxis[0].stacking
+        .stacks['column,,,'][0]
+        .label
+        .alignOptions;
+    alignOptions2 = chart.yAxis[0].stacking
+        .stacks['-column,,,'][3]
+        .label
+        .alignOptions;
 
     assert.equal(
         alignOptions1.align,

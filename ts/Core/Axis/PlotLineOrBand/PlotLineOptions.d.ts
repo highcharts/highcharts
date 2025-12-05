@@ -18,7 +18,7 @@ import type {
     AlignValue,
     VerticalAlignValue
 } from '../../Renderer/AlignObject';
-import type ColorString from '../../Color/ColorString';
+import type ColorType from '../../Color/ColorType';
 import type CSSObject from '../../Renderer/CSSObject';
 import type DashStyleValue from '../../Renderer/DashStyleValue';
 import type Templating from '../../Templating';
@@ -48,7 +48,7 @@ export interface PlotLineLabelOptions {
 export interface PlotLineOptions {
     acrossPanes?: boolean;
     className?: string;
-    color?: ColorString;
+    color?: ColorType;
     dashStyle?: DashStyleValue;
     events?: any;
     id?: string;
