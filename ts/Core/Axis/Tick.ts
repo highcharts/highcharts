@@ -828,9 +828,9 @@ class Tick {
             axisEnd = axisStart + axis.len,
             pxPos = horiz ? x : y;
 
-        const labelOpacity = pick(
-            opacity,
-            tick.label?.newOpacity, // #15528
+        let labelOpacity = (
+            opacity ??
+            tick.label?.newOpacity ?? // #15528
             1
         );
 
@@ -844,7 +844,11 @@ class Tick {
             opacity = 0;
         }
 
+        if (!axis.visible) {
+            opacity = labelOpacity = 0;
+        }
         opacity ??= 1;
+
         this.isActive = true;
 
         // Create the grid line

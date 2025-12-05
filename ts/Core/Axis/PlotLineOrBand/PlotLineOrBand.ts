@@ -175,7 +175,6 @@ class PlotLineOrBand {
             { horiz, logarithmic } = axis,
             { color, events, zIndex = 0 } = options,
             { renderer, time } = axis.chart,
-            groupAttribs: SVGAttributes = {},
 
             // These properties only exist on either band or line
             to = time.parse((options as PlotBandOptions).to),
@@ -214,13 +213,13 @@ class PlotLineOrBand {
         }
 
         // Grouping and zIndex
-        groupAttribs.zIndex = zIndex;
         group = axis.plotLinesAndBandsGroups[groupName];
         if (!group) {
             axis.plotLinesAndBandsGroups[groupName] = group =
                 renderer.g('plot-' + groupName)
-                    .attr(groupAttribs).add();
+                    .attr({ zIndex }).add();
         }
+        group[isNew ? 'attr' : 'animate']({ opacity: +axis.visible });
 
         // Create the path
         if (!svgElem) {
@@ -304,7 +303,7 @@ class PlotLineOrBand {
                 ...(isBand ? { inside: true } : {})
             } as PlotLineLabelOptions, optionsLabel);
 
-            this.renderLabel(optionsLabel, path, isBand, zIndex);
+            this.renderLabel(optionsLabel, path, isBand, zIndex, group);
 
         // Move out of sight
         } else if (label) {
@@ -324,7 +323,8 @@ class PlotLineOrBand {
         optionsLabel: (PlotBandLabelOptions|PlotLineLabelOptions),
         path: SVGPath,
         isBand?: boolean,
-        zIndex?: number
+        zIndex?: number,
+        group?: SVGElement
     ): void {
         const plotLine = this,
             axis = plotLine.axis,
@@ -343,7 +343,7 @@ class PlotLineOrBand {
              */
             plotLine.label = label = renderer
                 .text('', 0, 0, optionsLabel.useHTML)
-                .add();
+                .add(group);
         }
 
         label.attr({

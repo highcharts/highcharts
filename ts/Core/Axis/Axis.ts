@@ -3834,6 +3834,7 @@ class Axis {
             tickmarkOffset = axis.tickmarkOffset,
             axisLine = axis.axisLine,
             showAxis = axis.showAxis,
+            opacity = +axis.visible,
             animation = animObject(renderer.globalAnimation);
 
         let from: number,
@@ -3990,7 +3991,8 @@ class Axis {
         // Set the axis line path
         if (axisLine) {
             axisLine[axisLine.isPlaced ? 'animate' : 'attr']({
-                d: this.getLinePath(axisLine.strokeWidth())
+                d: this.getLinePath(axisLine.strokeWidth()),
+                opacity
             });
             axisLine.isPlaced = true;
 
@@ -3999,9 +4001,10 @@ class Axis {
         }
 
         if (axisTitle && showAxis) {
-            axisTitle[axisTitle.isNew ? 'attr' : 'animate'](
-                axis.getTitlePosition(axisTitle)
-            );
+            axisTitle[axisTitle.isNew ? 'attr' : 'animate']({
+                opacity,
+                ...axis.getTitlePosition(axisTitle)
+            });
             axisTitle.isNew = false;
         }
 
@@ -4033,7 +4036,9 @@ class Axis {
      */
     public redraw(): void {
 
-        if (this.visible) {
+        // If it was initially visible, but dynamically hidden, `this.axisGroup`
+        // exists. Then render with opacity 0.
+        if (this.visible || this.axisGroup) {
             // Render the axis
             this.render();
         }
