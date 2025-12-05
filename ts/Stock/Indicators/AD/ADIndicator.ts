@@ -42,7 +42,7 @@ const {
 /**
  * The AD series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.ad
  *
@@ -229,6 +229,7 @@ SeriesRegistry.registerSeriesType('ad', ADIndicator);
  *
  * */
 
+/** @internal */
 export default ADIndicator;
 
 /* *

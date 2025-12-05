@@ -42,7 +42,7 @@ const {
 /**
  * The Williams %R series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.williamsr
  *
@@ -199,6 +199,7 @@ SeriesRegistry.registerSeriesType('williamsr', WilliamsRIndicator);
  *
  * */
 
+/** @internal */
 export default WilliamsRIndicator;
 
 /* *

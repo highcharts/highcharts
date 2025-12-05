@@ -44,7 +44,7 @@ const {
 /**
  * The Chaikin series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.chaikin
  *
@@ -227,6 +227,7 @@ SeriesRegistry.registerSeriesType('chaikin', ChaikinIndicator);
  *  Default Export
  *
  * */
+/** @internal */
 export default ChaikinIndicator;
 
 /* *

@@ -63,7 +63,7 @@ let RangeSelectorConstructor: typeof RangeSelector;
  * selected range is a multiple of months or years, it is compensated for
  * various month lengths.
  *
- * @private
+ * @internal
  * @function Highcharts.Axis#minFromRange
  * @return {number|undefined}
  *         The new minimum value.
@@ -157,16 +157,12 @@ function axisMinFromRange(
     return min;
 }
 
-/**
- * @private
- */
+/** @internal */
 function updateRangeSelectorButtons(this: Chart): void {
     this.rangeSelector?.redrawElements();
 }
 
-/**
- * @private
- */
+/** @internal */
 function compose(
     AxisClass: typeof Axis,
     ChartClass: typeof Chart,
@@ -204,7 +200,7 @@ function compose(
 
 /**
  * Initialize rangeselector for stock charts
- * @private
+ * @internal
  */
 function createRangeSelector(
     this: Chart
@@ -217,9 +213,7 @@ function createRangeSelector(
     }
 }
 
-/**
- * @private
- */
+/** @internal */
 function onChartBeforeRender(
     this: Chart
 ): void {
@@ -246,7 +240,7 @@ function onChartBeforeRender(
 }
 /**
  * Redraw rangeSelector on chart redraw event
- * @private
+ * @internal
  */
 function redrawRangeSelector(this: Chart): void {
     const chart = this;
@@ -287,7 +281,7 @@ function redrawRangeSelector(this: Chart): void {
 
 /**
  * Remove resize/afterSetExtremes at chart destroy.
- * @private
+ * @internal
  */
 function onChartDestroy(
     this: Chart
@@ -304,7 +298,7 @@ function onChartDestroy(
 
 /**
  * Reflow rangeSelector and adjust chart layout
- * @private
+ * @internal
  */
 function onChartGetMargins(
     this: Chart
@@ -337,9 +331,7 @@ function onChartGetMargins(
     }
 }
 
-/**
- * @private
- */
+/** @internal */
 function onChartUpdate(
     this: Chart,
     e: Chart
@@ -399,8 +391,10 @@ function onChartUpdate(
  *
  * */
 
+/** @internal */
 const RangeSelectorComposition = {
     compose
 };
 
+/** @internal */
 export default RangeSelectorComposition;

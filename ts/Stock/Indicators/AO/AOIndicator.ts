@@ -47,7 +47,7 @@ const {
 /**
  * The AO series type
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.ao
  *
@@ -295,6 +295,7 @@ SeriesRegistry.registerSeriesType('ao', AOIndicator);
  *
  * */
 
+/** @internal */
 export default AOIndicator;
 
 /* *

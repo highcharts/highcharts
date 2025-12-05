@@ -88,7 +88,7 @@ function populateAverage(
 /**
  * The ROC series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.roc
  *
@@ -227,6 +227,7 @@ SeriesRegistry.registerSeriesType('roc', ROCIndicator);
  *
  * */
 
+/** @internal */
 export default ROCIndicator;
 
 /* *

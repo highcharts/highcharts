@@ -43,7 +43,7 @@ const {
 /**
  * The Price Channel series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.pc
  *
@@ -236,6 +236,7 @@ SeriesRegistry.registerSeriesType('pc', PCIndicator);
  *
  * */
 
+/** @internal */
 export default PCIndicator;
 
 /* *

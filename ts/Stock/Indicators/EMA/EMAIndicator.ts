@@ -43,7 +43,7 @@ const {
 /**
  * The EMA series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.ema
  *
@@ -239,6 +239,7 @@ SeriesRegistry.registerSeriesType('ema', EMAIndicator);
  *
  * */
 
+/** @internal */
 export default EMAIndicator;
 
 /* *

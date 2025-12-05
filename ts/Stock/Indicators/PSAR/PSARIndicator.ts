@@ -181,7 +181,7 @@ function getPSAR(
 /**
  * The Parabolic SAR series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.psar
  *
@@ -447,6 +447,7 @@ SeriesRegistry.registerSeriesType('psar', PSARIndicator);
  *
  * */
 
+/** @internal */
 export default PSARIndicator;
 
 /* *
