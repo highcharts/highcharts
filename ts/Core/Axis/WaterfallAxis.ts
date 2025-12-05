@@ -117,9 +117,7 @@ namespace WaterfallAxis {
      *
      * */
 
-    /**
-     * @internal
-     */
+    /** @internal */
     export function compose(
         AxisClass: typeof Axis,
         ChartClass: typeof Chart
@@ -135,9 +133,7 @@ namespace WaterfallAxis {
 
     }
 
-    /**
-     * @internal
-     */
+    /** @internal */
     function onAxisAfterBuildStacks(this: Axis): void {
         const axis = this as WaterfallAxis,
             stacks = axis.waterfall?.stacks;
@@ -148,9 +144,7 @@ namespace WaterfallAxis {
         }
     }
 
-    /**
-     * @internal
-     */
+    /** @internal */
     function onAxisAfterRender(this: Axis): void {
         const axis = this as WaterfallAxis,
             stackLabelOptions = axis.options.stackLabels;
@@ -163,9 +157,7 @@ namespace WaterfallAxis {
         }
     }
 
-    /**
-     * @internal
-     */
+    /** @internal */
     function onAxisInit(this: Axis): void {
         const axis = this;
 
@@ -174,9 +166,7 @@ namespace WaterfallAxis {
         }
     }
 
-    /**
-     * @internal
-     */
+    /** @internal */
     function onChartBeforeRedraw(this: Chart): void {
         const axes = this.axes as Array<WaterfallAxis>,
             series = this.series;

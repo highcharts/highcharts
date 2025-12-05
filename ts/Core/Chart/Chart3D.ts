@@ -495,9 +495,7 @@ namespace Chart3D {
      *
      * */
 
-    /**
-     * @internal
-     */
+    /** @internal */
     export function compose(
         ChartClass: typeof Chart,
         FxClass: typeof Fx
@@ -589,9 +587,7 @@ namespace Chart3D {
         }
     }
 
-    /**
-     * @internal
-     */
+    /** @internal */
     function onAfterDrawChartBox(this: Chart): void {
 
         if (
@@ -1480,9 +1476,7 @@ namespace Chart3D {
         }
     }
 
-    /**
-     * @internal
-     */
+    /** @internal */
     function onAfterSetChartSize(this: Chart): void {
         const chart = this,
             options3d = chart.options.chart.options3d as any;
@@ -1530,9 +1524,7 @@ namespace Chart3D {
         }
     }
 
-    /**
-     * @internal
-     */
+    /** @internal */
     function onBeforeRedraw(this: Chart): void {
         if (this.is3d()) {
             // Set to force a redraw of all elements
@@ -1540,18 +1532,14 @@ namespace Chart3D {
         }
     }
 
-    /**
-     * @internal
-     */
+    /** @internal */
     function onBeforeRender(this: Chart): void {
         if (this.chart3d && this.is3d()) {
             this.chart3d.frame3d = this.chart3d.get3dFrame();
         }
     }
 
-    /**
-     * @internal
-     */
+    /** @internal */
     function onInit(this: Chart): void {
 
         if (!this.chart3d) {
@@ -1559,9 +1547,7 @@ namespace Chart3D {
         }
     }
 
-    /**
-     * @internal
-     */
+    /** @internal */
     function wrapIsInsidePlot(
         this: Chart,
         proceed: Function
@@ -1591,9 +1577,7 @@ namespace Chart3D {
         }
     }
 
-    /**
-     * @internal
-     */
+    /** @internal */
     function wrapSetClassName(
         this: Chart,
         proceed: Function
@@ -1619,9 +1603,7 @@ namespace Chart3D {
          *
          * */
 
-        /**
-         * @internal
-         */
+        /** @internal */
         public constructor(chart: Chart) {
             this.chart = chart as Composition;
         }
@@ -1632,14 +1614,10 @@ namespace Chart3D {
          *
          * */
 
-        /**
-         * @internal
-         */
+        /** @internal */
         public chart: Composition;
 
-        /**
-         * @internal
-         */
+        /** @internal */
         public frame3d!: FrameObject;
 
         /* *
@@ -1648,9 +1626,7 @@ namespace Chart3D {
          *
          * */
 
-        /**
-         * @internal
-         */
+        /** @internal */
         public get3dFrame(): Chart3D.FrameObject {
             const chart = this.chart,
                 options3d = chart.options.chart.options3d as any,

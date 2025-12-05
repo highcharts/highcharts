@@ -102,9 +102,7 @@ export declare class Axis3DComposition extends RadialAxis.AxisComposition {
  *
  * */
 
-/**
- * @internal
- */
+/** @internal */
 function onAxisAfterSetOptions(
     this: Axis
 ): void {
@@ -118,9 +116,7 @@ function onAxisAfterSetOptions(
     }
 }
 
-/**
- * @internal
- */
+/** @internal */
 function onAxisDrawCrosshair(
     this: Axis,
     e: {
@@ -142,9 +138,7 @@ function onAxisDrawCrosshair(
     }
 }
 
-/**
- * @internal
- */
+/** @internal */
 function onAxisInit(this: Axis): void {
     const axis = this as Axis3DComposition;
 
@@ -171,9 +165,7 @@ function wrapAxisGetLinePath(
     return [];
 }
 
-/**
- * @internal
- */
+/** @internal */
 function wrapAxisGetPlotBandPath(
     this: Axis3DComposition,
     proceed: Function
@@ -217,9 +209,7 @@ function wrapAxisGetPlotBandPath(
     return path;
 }
 
-/**
- * @internal
- */
+/** @internal */
 function wrapAxisGetPlotLinePath(
     this: Axis3DComposition,
     proceed: Function
@@ -393,9 +383,7 @@ function wrapAxisGetSlotWidth(
     return proceed.apply(axis, [].slice.call(arguments, 1));
 }
 
-/**
- * @internal
- */
+/** @internal */
 function wrapAxisGetTitlePosition(
     this: Axis3DComposition,
     proceed: Function
@@ -464,9 +452,7 @@ class Axis3DAdditions {
      *
      * */
 
-    /**
-     * @internal
-     */
+    /** @internal */
     public constructor(
         axis: Axis3DComposition
     ) {
@@ -701,9 +687,7 @@ class Axis3DAdditions {
         return projected;
     }
 
-    /**
-     * @internal
-     */
+    /** @internal */
     public swapZ(
         p: Position3DObject,
         insidePlotArea?: boolean

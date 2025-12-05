@@ -66,9 +66,7 @@ declare module '../Options' {
  *
  * */
 
-/**
- * @internal
- */
+/** @internal */
 function chartAddZAxis(
     this: Chart,
     options: DeepPartial<AxisOptions>

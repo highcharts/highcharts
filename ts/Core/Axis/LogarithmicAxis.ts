@@ -88,9 +88,7 @@ namespace LogarithmicAxis {
         return AxisClass as (T&typeof Composition);
     }
 
-    /**
-     * @internal
-     */
+    /** @internal */
     function onAfterSetType(
         this: Axis
     ): void {
@@ -103,9 +101,7 @@ namespace LogarithmicAxis {
         }
     }
 
-    /**
-     * @internal
-     */
+    /** @internal */
     function onAfterInit(
         this: Axis
     ): void {

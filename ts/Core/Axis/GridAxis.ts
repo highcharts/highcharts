@@ -194,24 +194,18 @@ enum GridAxisSide {
  *
  * */
 
-/**
- * @internal
- */
+/** @internal */
 function argsToArray(args: IArguments): Array<any> {
     return Array.prototype.slice.call(args, 1);
 }
 
-/**
- * @internal
- */
+/** @internal */
 function isObject(x: unknown): x is object {
     // Always use strict mode
     return U.isObject(x, true);
 }
 
-/**
- * @internal
- */
+/** @internal */
 function applyGridOptions(axis: Axis): void {
     const options = axis.options;
 
@@ -404,9 +398,7 @@ function wrapGetOffset(this: Axis, proceed: Function): void {
 
 }
 
-/**
- * @internal
- */
+/** @internal */
 function onAfterGetTitlePosition(
     this: Axis,
     e: { titlePosition: PositionObject }
@@ -463,9 +455,7 @@ function onAfterGetTitlePosition(
     }
 }
 
-/**
- * @internal
- */
+/** @internal */
 function onAfterInit(this: Axis): void {
     const axis = this as GridAxisComposition;
     const {
@@ -743,9 +733,7 @@ function onAfterRender(this: Axis): void {
     }
 }
 
-/**
- * @internal
- */
+/** @internal */
 function onAfterSetAxisTranslation(this: Axis): void {
     const axis = this;
     const tickInfo = axis.tickPositions?.info;
@@ -996,9 +984,7 @@ function onAfterSetOptions(
     }
 }
 
-/**
- * @internal
- */
+/** @internal */
 function onAfterSetOptions2(
     this: Axis,
     e: { userOptions?: AxisOptions }
@@ -1057,9 +1043,7 @@ function onAfterTickSize(
     }
 }
 
-/**
- * @internal
- */
+/** @internal */
 function onChartAfterSetChartSize(this: Chart): void {
     this.axes.forEach((axis): void => {
         (axis.grid?.columns || []).forEach((column): void => {
@@ -1069,9 +1053,7 @@ function onChartAfterSetChartSize(this: Chart): void {
     });
 }
 
-/**
- * @internal
- */
+/** @internal */
 function onDestroy(
     this: Axis,
     e: { keepEvents: boolean }
@@ -1238,9 +1220,7 @@ function onTickAfterGetLabelPosition(
     }
 }
 
-/**
- * @internal
- */
+/** @internal */
 function onTickLabelFormat(ctx: AxisLabelFormatterContextObject): void {
     const {
         axis,

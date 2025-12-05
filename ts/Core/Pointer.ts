@@ -2317,9 +2317,7 @@ namespace Pointer {
      *
      * */
 
-    /**
-     * @internal
-     */
+    /** @internal */
     export function compose(ChartClass: typeof Chart): void {
 
         if (pushUnique(composed, 'Core.Pointer')) {

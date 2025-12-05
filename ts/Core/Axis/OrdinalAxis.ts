@@ -514,9 +514,7 @@ namespace OrdinalAxis {
         return index + percent;
     }
 
-    /**
-    * @internal
-    */
+    /** @internal */
     function onAxisAfterInit(this: Axis): void {
         const axis = this;
 
@@ -525,9 +523,7 @@ namespace OrdinalAxis {
         }
     }
 
-    /**
-     * @internal
-     */
+    /** @internal */
     function onAxisFoundExtremes(this: Composition): void {
         const axis = this as Composition,
             { eventArgs, options } = axis;
@@ -592,9 +588,7 @@ namespace OrdinalAxis {
         }
     }
 
-    /**
-     * @internal
-     */
+    /** @internal */
     function onAxisInitialAxisTranslation(this: Axis): void {
         const axis = this;
 
@@ -759,9 +753,7 @@ namespace OrdinalAxis {
             e.preventDefault();
         }
     }
-    /**
-     * @internal
-     */
+    /** @internal */
     function onSeriesUpdatedData(this: Series): void {
         const xAxis = this.xAxis as Composition;
         // Destroy the extended ordinal index on updated data
@@ -885,9 +877,7 @@ namespace OrdinalAxis {
      *
      * */
 
-    /**
-     * @internal
-     */
+    /** @internal */
     export class Additions {
 
         /* *
@@ -896,9 +886,7 @@ namespace OrdinalAxis {
          *
          * */
 
-        /**
-         * @internal
-         */
+        /** @internal */
         public constructor(axis: Composition) {
             this.axis = axis;
         }

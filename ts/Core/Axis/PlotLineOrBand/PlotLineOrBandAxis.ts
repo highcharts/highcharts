@@ -291,9 +291,7 @@ namespace PlotLineOrBandAxis {
         return this.addPlotBandOrLine(options, 'plotLines');
     }
 
-    /**
-     * @internal
-     */
+    /** @internal */
     export function compose<T extends typeof Axis>(
         PlotLineOrBandType: typeof PlotLineOrBand,
         AxisClass: T

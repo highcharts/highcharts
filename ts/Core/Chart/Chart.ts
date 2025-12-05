@@ -1440,9 +1440,7 @@ class Chart {
     public get(id: string): (Axis|Series|Point|undefined) {
         const series = this.series;
 
-        /**
-         * @internal
-         */
+        /** @internal */
         function itemById(item: (Axis|Series)): boolean {
             return (
                 (item as Series).id === id ||

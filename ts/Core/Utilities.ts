@@ -1784,9 +1784,7 @@ function removeEvent<T>(
 ): void {
     /* eslint-enable valid-jsdoc */
 
-    /**
-     * @internal
-     */
+    /** @internal */
     function removeOneEvent(
         type: string,
         fn: (EventCallback<T>|Function)
@@ -1798,9 +1796,7 @@ function removeEvent<T>(
         }
     }
 
-    /**
-     * @internal
-     */
+    /** @internal */
     function removeAllEvents(eventCollection: any): void {
         let types: Record<string, boolean>,
             len;

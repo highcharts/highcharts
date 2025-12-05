@@ -275,9 +275,7 @@ namespace Globals {
      */
     export const seriesTypes = {} as GlobalsBase['seriesTypes'];
 
-    /**
-     * @internal
-     */
+    /** @internal */
     export const symbolSizes: GlobalsBase['symbolSizes'] = {};
 
     /* *

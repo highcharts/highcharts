@@ -230,9 +230,7 @@ namespace BrokenAxis {
         return AxisClass as (T&typeof BrokenAxis);
     }
 
-    /**
-     * @internal
-     */
+    /** @internal */
     function onAxisAfterInit(this: Axis): void {
         if (typeof this.brokenAxis !== 'undefined') {
             this.brokenAxis.setBreaks(this.options.breaks, false);
@@ -251,9 +249,7 @@ namespace BrokenAxis {
         }
     }
 
-    /**
-     * @internal
-     */
+    /** @internal */
     function onAxisAfterSetTickPositions(this: Axis): void {
         const axis = this,
             brokenAxis = axis.brokenAxis;
@@ -274,9 +270,7 @@ namespace BrokenAxis {
         }
     }
 
-    /**
-     * @internal
-     */
+    /** @internal */
     function onAxisInit(this: Axis): void {
         const axis = this;
 
@@ -285,9 +279,7 @@ namespace BrokenAxis {
         }
     }
 
-    /**
-     * @internal
-     */
+    /** @internal */
     function onSeriesAfterGeneratePoints(this: Series): void {
         const {
             isDirty,
@@ -321,17 +313,13 @@ namespace BrokenAxis {
         }
     }
 
-    /**
-     * @internal
-     */
+    /** @internal */
     function onSeriesAfterRender(this: Series): void {
         this.drawBreaks(this.xAxis, ['x']);
         this.drawBreaks(this.yAxis, pick(this.pointArrayMap, ['y']));
     }
 
-    /**
-     * @internal
-     */
+    /** @internal */
     function seriesDrawBreaks(
         this: Series,
         axis: (Axis|undefined),
@@ -552,9 +540,7 @@ namespace BrokenAxis {
          *
          * */
 
-        /**
-         * @internal
-         */
+        /** @internal */
         public static isInBreak(
             brk: AxisBreakOptions,
             val: number
@@ -578,9 +564,7 @@ namespace BrokenAxis {
             return ret;
         }
 
-        /**
-         * @internal
-         */
+        /** @internal */
         public static lin2Val(
             this: Axis,
             val: (number|null)
@@ -625,9 +609,7 @@ namespace BrokenAxis {
             return nval;
         }
 
-        /**
-         * @internal
-         */
+        /** @internal */
         public static val2Lin(
             this: Axis,
             val: (number|null)
@@ -732,9 +714,7 @@ namespace BrokenAxis {
             });
         }
 
-        /**
-         * @internal
-         */
+        /** @internal */
         public isInAnyBreak(
             val: (number|null|undefined),
             testKeep?: boolean

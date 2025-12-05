@@ -1793,9 +1793,7 @@ class Tooltip {
         }
     }
 
-    /**
-     * @internal
-     */
+    /** @internal */
     public styledModeFormat(formatString: string): string {
         return formatString
             .replace(
@@ -2040,9 +2038,7 @@ namespace Tooltip {
      *
      * */
 
-    /**
-     * @internal
-     */
+    /** @internal */
     export function compose(
         PointerClass: typeof Pointer
     ): void {
