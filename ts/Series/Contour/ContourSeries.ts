@@ -130,8 +130,6 @@ export default class ContourSeries extends ScatterSeries {
      * */
 
     public override init(chart: Chart, options: ContourSeriesOptions): void {
-        super.init(chart, options);
-
         const props = {
             minPadding: 0,
             maxPadding: 0,
@@ -143,10 +141,18 @@ export default class ContourSeries extends ScatterSeries {
             lineWidth: 1
         };
 
+        merge(chart.yAxis[0].userOptions, props);
+        merge(chart.yAxis[0].options, props);
+
+        super.init(chart, options);
+
+
         for (const axis of [this.xAxis, this.yAxis]) {
             for (const [key, val] of Object.entries(props)) {
                 if (axis.userOptions[key as keyof typeof props] === void 0) {
-                    (axis.options as any)[key] = val;
+                    (axis.userOptions as any)[key] = (
+                        (axis.options as any)[key] = val
+                    );
                 }
             }
         }
