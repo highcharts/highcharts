@@ -274,14 +274,17 @@ class VBPIndicator extends SMAIndicator {
                 // Protection for a case where the indicator is being updated,
                 // for a brief moment the indicator is deleted.
                 if (indicator.options) {
-                    const params: VBPParamsOptions =
-                            (indicator.options.params as any),
-                        baseSeries: LineSeries = indicator.linkedParent,
-                        volumeSeries: LineSeries = (
-                            chart.get((params.volumeSeriesID as any)) as any
-                        );
+                    const params = indicator.options.params,
+                        baseSeries = indicator.linkedParent,
+                        volumeSeries = params?.volumeSeriesID ?
+                            chart.get(
+                                params?.volumeSeriesID
+                            ) as LineSeries|undefined :
+                            void 0;
 
-                    indicator.addCustomEvents(baseSeries, volumeSeries);
+                    if (baseSeries && volumeSeries) {
+                        indicator.addCustomEvents(baseSeries, volumeSeries);
+                    }
 
                 }
                 unbinder();
