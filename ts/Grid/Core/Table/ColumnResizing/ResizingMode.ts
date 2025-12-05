@@ -93,6 +93,12 @@ abstract class ResizingMode {
      */
     public invalidated?: boolean;
 
+    /**
+     * Whether the column distribution strategy is dirty. This flag is used to
+     * determine whether the column widths should be re-loaded.
+     */
+    public isDirty?: boolean;
+
 
     /* *
     *
@@ -216,7 +222,6 @@ abstract class ResizingMode {
 
         vp.rowsWidth = rowsWidth;
     }
-
 
     /* *
      *

@@ -163,7 +163,7 @@ test('Grid update methods', async function (assert) {
                 format: 'New One!'
             }
         }],
-        'Varations of updateColumn method should work correctly.'
+        'Variations of updateColumn method should work correctly.'
     );
 
     assert.strictEqual(

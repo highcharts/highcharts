@@ -54,13 +54,6 @@ class SortingController {
     public currentSorting?: SortingState;
 
     /**
-     * The initial sorting options: column ID and sorting order.
-     * This is the sorting that is applied when the data grid is created or
-     * after the whole viewport is reloaded with changed sorting options.
-     */
-    private initialSorting?: SortingState;
-
-    /**
      * The modifier that is applied to the data table.
      */
     public modifier?: SortModifier;
@@ -164,12 +157,10 @@ class SortingController {
      */
     public loadOptions(): void {
         const stateFromOptions = this.getSortingOptions();
-
         if (
-            stateFromOptions.columnId !== this.initialSorting?.columnId ||
-            stateFromOptions.order !== this.initialSorting?.order
+            stateFromOptions.columnId !== this.currentSorting?.columnId ||
+            stateFromOptions.order !== this.currentSorting?.order
         ) {
-            this.initialSorting = stateFromOptions;
             this.setSorting(stateFromOptions.order, stateFromOptions.columnId);
         }
     }

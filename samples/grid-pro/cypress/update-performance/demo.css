@@ -1,6 +1,5 @@
 @import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
 
 #container {
-    background-color: var(--hcg-background);
-    padding: 8px;
+    height: 400px;
 }
