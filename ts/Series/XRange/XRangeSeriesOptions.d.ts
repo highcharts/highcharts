@@ -22,7 +22,6 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type TooltipOptions from '../../Core/TooltipOptions';
 import type XRangePointOptions from './XRangePointOptions';
 import type { XRangePointPartialFillOptions } from './XRangePointOptions';
-import type XRangeSeries from './XRangeSeries';
 
 /* *
  *
@@ -132,7 +131,7 @@ export interface XRangeSeriesOptions extends ColumnSeriesOptions {
 
     pointRange?: number;
 
-    states?: SeriesStatesOptions<XRangeSeries>;
+    states?: SeriesStatesOptions<XRangeSeriesOptions>;
 
     tooltip?: Partial<TooltipOptions>;
 

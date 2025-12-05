@@ -25,7 +25,6 @@ import type {
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type TooltipOptions from '../../Core/TooltipOptions';
 import type WordcloudPointOptions from './WordcloudPointOptions';
-import type WordcloudSeries from './WordcloudSeries';
 
 /* *
  *
@@ -172,7 +171,7 @@ export interface WordcloudSeriesOptions extends ColumnSeriesOptions {
      */
     spiral?: string;
 
-    states?: SeriesStatesOptions<WordcloudSeries>;
+    states?: SeriesStatesOptions<WordcloudSeriesOptions>;
 
     /**
      * CSS styles for the words.

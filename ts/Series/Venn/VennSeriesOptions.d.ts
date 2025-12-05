@@ -32,7 +32,6 @@ import type {
 } from '../../Core/Series/SeriesOptions';
 import type TooltipOptions from '../../Core/TooltipOptions';
 import type VennPointOptions from './VennPointOptions';
-import type VennSeries from './VennSeries';
 
 /* *
  *
@@ -136,7 +135,7 @@ export interface VennSeriesOptions extends ScatterSeriesOptions {
 
     showInLegend?: boolean;
 
-    states?: SeriesStatesOptions<VennSeries>;
+    states?: SeriesStatesOptions<VennSeriesOptions>;
 
     /**
      * @excluding halo

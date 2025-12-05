@@ -5,7 +5,6 @@
  * */
 
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
-import type MapPointSeries from './MapPointSeries';
 import type MapPointPointOptions from './MapPointPointOptions';
 import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
 import type {
@@ -111,7 +110,7 @@ export interface MapPointSeriesOptions extends ScatterSeriesOptions {
 
     legendSymbol?: LegendSymbolType;
 
-    states?: SeriesStatesOptions<MapPointSeries>;
+    states?: SeriesStatesOptions<MapPointSeriesOptions>;
 
 }
 

@@ -17,7 +17,6 @@
 import type BoxPlotSeriesOptions from '../BoxPlot/BoxPlotSeriesOptions';
 import type ColorType from '../../Core/Color/ColorType';
 import type ErrorBarPointOptions from './ErrorBarPointOptions';
-import type ErrorBarSeries from './ErrorBarSeries';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type TooltipOptions from '../../Core/TooltipOptions';
@@ -160,7 +159,7 @@ export interface ErrorBarSeriesOptions extends BoxPlotSeriesOptions {
      */
     linkedTo?: string;
 
-    states?: SeriesStatesOptions<ErrorBarSeries>;
+    states?: SeriesStatesOptions<ErrorBarSeriesOptions>;
 
     tooltip?: Partial<TooltipOptions>;
 

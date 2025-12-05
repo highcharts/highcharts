@@ -1718,3 +1718,18 @@ class MapViewInset extends MapView {
  * */
 
 export default MapView;
+
+
+/* *
+ *
+ *  API Declarations
+ *
+ * */
+
+/**
+ * Possible values for the specific `relativeTo` option.
+ *
+ * @typedef {"mapBoundingBox"|"plotBox"} Highcharts.MapViewInsetOptionsRelativeToValue
+ */
+
+''; // Keeps doclets above in JS file

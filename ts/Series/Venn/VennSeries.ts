@@ -690,7 +690,7 @@ addEvent(VennSeries, 'afterSetOptions', function (
     e: { options: VennSeriesOptions }
 ): void {
     const options = e.options,
-        states: SeriesStatesOptions<VennSeries> = options.states || {};
+        states: SeriesStatesOptions<VennSeriesOptions> = options.states || {};
 
     if (this.is('venn')) {
         // Explicitly disable all halo options.
