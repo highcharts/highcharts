@@ -19,6 +19,8 @@ flag.
 
 Since v9.3.2 Highcharts supports [Trusted Types](https://web.dev/trusted-types/) under the built-in policy name `highcharts`. Our Cypress tests and developer tools are set up with Trusted Types enabled, which enforces an added layer of security and greatly reduces the risk for one of our developers to accidentally introduce a DOM XSS vulnerability.
 
+*Important*: While Highcharts applies strict internal security measures, we cannot take responsibility for the security of external third-party libraries (including [optional dependencies](https://www.highcharts.com/docs/getting-started/optional-dependencies)). Such libraries are not covered by the Highcharts license and come without any guarantees or warranties from Highcharts.
+
 ### Scope
 Chart _configuration options_ that are valid JSON are filtered for known XSS vectors. JSON support types of object, strings, numbers, arrays, boolean or null. This implies that function callbacks and event handlers in the chart options structure is not covered by our scope. Functions are inherently unsafe because they by nature allow scripting towards the web page.
 
