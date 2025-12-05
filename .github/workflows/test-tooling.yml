@@ -2,11 +2,15 @@ name: Test tooling
 
 on:
   pull_request:
-    branches: [ 'master' ]
+    branches: [
+      'master',
+      'tools/*'
+    ]
     paths:
       - 'package.json'
       - 'tools/**/*'
       - '.github/workflows/test-tooling.yml'
+      - 'tests/internal/*'
   workflow_dispatch:
 
 permissions:
