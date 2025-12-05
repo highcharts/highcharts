@@ -50,16 +50,6 @@ export default interface ContourSeriesOptions extends ScatterSeriesOptions {
     showContourLines?: boolean;
 
     /**
-     * Whether to render the series on the background, so that it is visible
-     * behind axes and grid lines. It will be also visible behind series that
-     * are rendered before it.
-     *
-     * @sample {highcharts} highcharts/series-contour/contour-simple/
-     *         Contour plot rendered on background
-     */
-    renderOnBackground?: boolean;
-
-    /**
      * The interval between contour lines. Determines the spacing of value
      * levels where lines are drawn on the plot.
      *

@@ -57,9 +57,9 @@ const chart = Highcharts.chart('container', {
         `
     },
     series: [{
+        clip: true,
         type: 'contour',
         name: 'Elevation',
-        renderOnBackground: true,
         contourInterval: 50,
         data,
         marker: {

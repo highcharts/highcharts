@@ -94,16 +94,6 @@ const ContourSeriesDefaults: ContourSeriesOptions = {
      */
 
     /**
-     * Whether to render the series on the background, so that it is visible
-     * behind axes and grid lines. It will be also visible behind series that
-     * are rendered before it.
-     *
-     * @type      {boolean}
-     * @default   true
-     * @apioption plotOptions.contour.renderOnBackground
-     */
-
-    /**
      * The offset for contour line positioning. Shifts where lines are drawn
      * relative to the data values.
      *
@@ -155,19 +145,6 @@ const ContourSeriesDefaults: ContourSeriesOptions = {
             }
         }
     },
-
-    /**
-     * Whether to render the series on the background, so that it is visible
-     * behind axes and grid lines. It will be also visible behind series that
-     * are rendered before it.
-     *
-     * @type      {boolean}
-     *
-     * @default   true
-     *
-     * @apioption plotOptions.contour.renderOnBackground
-     */
-    renderOnBackground: true,
 
     states: {
         hover: {

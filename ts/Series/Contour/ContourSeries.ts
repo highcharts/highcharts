@@ -193,18 +193,7 @@ export default class ContourSeries extends ScatterSeries {
                 'inherit' : 'hidden',
             zIndex = options.zIndex;
 
-        let targetGroup: SVGElement | undefined;
-        if (options.renderOnBackground) {
-            if (!chart.backgroundSeriesGroup) {
-                chart.backgroundSeriesGroup = chart.renderer
-                    .g('background-series-group')
-                    .attr({ zIndex: 0 })
-                    .add();
-            }
-            targetGroup = chart.backgroundSeriesGroup;
-        } else {
-            targetGroup = chart.seriesGroup;
-        }
+        const targetGroup = chart.seriesGroup;
 
         this.plotGroup(
             'group',
