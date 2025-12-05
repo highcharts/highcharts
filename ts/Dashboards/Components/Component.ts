@@ -428,6 +428,16 @@ abstract class Component {
     }
 
     /**
+     * Returns the first connector of the component if it exists.
+     *
+     * @internal
+     * @deprecated
+     */
+    public getFirstConnector(): Component.ConnectorTypes | undefined {
+        return this.connectorHandlers[0]?.connector;
+    }
+
+    /**
      * Returns the data table connected to the component by the `connectorId`
      * and `dataTableKey`. If both args are undefined, the first data table is
      * returned.
