@@ -87,7 +87,7 @@ class MenuToolbarButton extends ToolbarButton {
         this.popup.toggle(this.wrapper);
     }
 
-    protected override refreshState(): void {
+    public override refreshState(): void {
         const column = this.toolbar?.column;
         if (!column) {
             return;
