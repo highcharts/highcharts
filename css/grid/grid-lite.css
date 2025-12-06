@@ -109,7 +109,7 @@
 
 /* ==== Start Grid Variables ==== */
 .hcg-container {
-    /* Fonts */
+    --ig-hover-opacity: var(--hcg-hover-opacity, 100%);
 
     /* Global fonts */
     --ig-default-font-family: -apple-system, "BlinkMacSystemFont", "Segoe UI", "Roboto", "Helvetica", "Arial", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
@@ -488,12 +488,26 @@
 }
 
 .hcg-table thead th {
+    --ig-header-column-background: var(--hcg-column-background);
+    --ig-header-background: var(--hcg-header-background, var(--ig-header-column-background, transparent));
+    --ig-header-column-color: var(--hcg-column-color, var(--ig-color, inherit));
+    --ig-header-base-color: var(--hcg-header-color, var(--ig-header-column-color));
+    --ig-header-current-color: var(--ig-header-base-color);
+
     position: relative;
     border-right: var(--ig-header-column-border);
     border-bottom: var(--ig-header-row-border);
-    background: var(--ig-header-background);
     padding: var(--ig-header-padding);
-    color: var(--ig-header-color);
+    background: var(--ig-header-background);
+    color: var(--ig-header-current-color);
+}
+
+.hcg-table thead th:nth-child(even) {
+    --ig-header-column-background: var(--hcg-column-even-background, var(--hcg-column-background));
+    --ig-header-background: var(--hcg-header-even-background, var(--hcg-header-background, var(--ig-header-column-background, transparent)));
+    --ig-header-column-color: var(--hcg-column-even-color, var(--hcg-column-color, var(--ig-color, inherit)));
+    --ig-header-base-color: var(--hcg-header-even-color, var(--hcg-header-color, var(--ig-header-column-color)));
+    --ig-header-current-color: var(--ig-header-base-color);
 }
 
 .hcg-table thead th .hcg-header-cell-content {
@@ -749,17 +763,39 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
 }
 
 .hcg-table tbody tr {
+    --ig-row-background-current: var(--hcg-row-background);
+    --ig-row-color-current: var(--hcg-row-color, var(--ig-color, inherit));
+
     overflow: hidden;
     width: 100%;
 }
 
+.hcg-table tbody tr.hcg-row-even {
+    --ig-row-background-current: var(--hcg-row-even-background, var(--hcg-row-background));
+    --ig-row-color-current: var(--hcg-row-even-color, var(--hcg-row-color, var(--ig-color, inherit)));
+}
+
 .hcg-table tbody tr td,
 .hcg-table tbody tr.hcg-mocked-row td {
+    --ig-cell-column-background: var(--hcg-column-background);
+    --ig-cell-column-color: var(--hcg-column-color, var(--ig-row-color-current));
+    --ig-cell-base-background: var(--hcg-cell-background, var(--ig-row-background-current, var(--ig-cell-column-background, transparent)));
+    --ig-column-layer: var(--ig-cell-base-background);
+    --ig-cell-hover-background-helper: var(--hcg-cell-hovered-background, var(--hcg-cell-hover-background));
+    --ig-cell-hover-background: var(--ig-cell-hover-background-helper, var(--ig-row-hover-color, var(--ig-column-layer)));
+    --ig-cell-hover-opacity-helper: var(--hcg-cell-hover-opacity);
+    --ig-cell-hover-opacity: var(--ig-cell-hover-opacity-helper, var(--ig-hover-opacity));
+    --ig-cell-base-color: var(--hcg-cell-color, var(--ig-row-color-current, var(--ig-cell-column-color, var(--ig-color, inherit))));
+    --ig-column-text-layer: var(--ig-cell-base-color);
+    --ig-row-hover-text-color: var(--ig-column-text-layer);
+    --ig-cell-hover-text-color: var(--ig-row-hover-text-color);
+
+    background: var(--ig-column-layer);
+    color: var(--ig-cell-hover-text-color);
     border-right: var(--ig-column-border);
     border-bottom: var(--ig-row-border);
     text-align: var(--ig-text-align);
     padding: var(--ig-padding);
-    color: var(--ig-color);
     font: var(--ig-font);
     line-height: 1em;
     overflow: hidden;
@@ -798,193 +834,92 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     box-shadow: inset var(--ig-focus-ring);
 }
 
-/* Header hovered background and color */
-.hcg-table thead tr th.hcg-column-sortable:hover {
-    background: var(--ig-header-hovered-background);
+/* ----------------------------------------------------------
+  COLUMN HOVER
+------------------------------------------------------------ */
+.hcg-container .hcg-table td.hcg-hovered-column {
+    --ig-column-layer:
+        color-mix(
+            in srgb,
+            var(--hcg-cell-hovered-column-background, var(--hcg-column-hover-background, var(--ig-cell-base-background))) var(--hcg-column-hover-opacity, var(--ig-hover-opacity)),
+            var(--ig-cell-base-background) calc(100% - var(--hcg-column-hover-opacity, var(--ig-hover-opacity)))
+        );
+    --ig-column-text-layer: var(--hcg-cell-hovered-column-color, var(--hcg-column-hover-color, var(--ig-cell-base-color)));
 }
 
-.hcg-table thead th.hcg-column-sortable:hover .hcg-header-cell-content {
-    color: var(--ig-header-hovered-color);
+.hcg-container .hcg-table th.hcg-hovered-column:not(:hover) {
+    --ig-header-column-hover-color:
+        color-mix(
+            in srgb,
+            var(--hcg-cell-hovered-header-background, var(--hcg-column-hover-header-background, var(--hcg-column-hover-background, var(--ig-header-background)))) var(--hcg-column-hover-header-opacity, var(--hcg-column-hover-opacity, var(--ig-hover-opacity))),
+            var(--ig-header-background) calc(100% - var(--hcg-column-hover-header-opacity, var(--hcg-column-hover-opacity, var(--ig-hover-opacity))))
+        );
+    --ig-header-color: var(--hcg-cell-hovered-header-color, var(--hcg-column-hover-header-color, var(--hcg-column-hover-color, var(--ig-header-base-color))));
+    --ig-header-current-color: var(--ig-header-color);
+
+    background: var(--ig-header-column-hover-color);
+    color: var(--ig-header-current-color);
 }
 
-/* Row backgrounds */
-.hcg-table tbody tr td {
-    background: var(--ig-row-background);
-    position: relative;
+/* ----------------------------------------------------------
+  ROW HOVER
+------------------------------------------------------------ */
+.hcg-container .hcg-table tr:hover td {
+    --ig-row-hover-color:
+        color-mix(
+            in srgb,
+            var(--hcg-cell-hovered-row-background, var(--hcg-row-hover-background, var(--ig-column-layer))) var(--hcg-row-hover-opacity, var(--ig-hover-opacity)),
+            var(--ig-column-layer) calc(100% - var(--hcg-row-hover-opacity, var(--ig-hover-opacity)))
+        );
+    --ig-row-hover-text-color: var(--hcg-cell-hovered-row-color, var(--hcg-row-hover-color, var(--ig-column-text-layer)));
+    --ig-cell-hover-text-color: var(--ig-row-hover-text-color);
+
+    background: var(--ig-row-hover-color);
+    color: var(--ig-cell-hover-text-color);
 }
 
-.hcg-table tbody tr.hcg-row-even td {
-    background: var(--ig-row-even-background);
-    color: var(--ig-row-even-color);
+/* ----------------------------------------------------------
+  HEADER HOVER
+------------------------------------------------------------ */
+.hcg-container .hcg-table th:hover {
+    --ig-header-hover-opacity: var(--hcg-header-hover-opacity, var(--hcg-column-hover-header-opacity, var(--hcg-column-hover-opacity, var(--ig-hover-opacity))));
+    --ig-header-hover-color:
+        color-mix(
+            in srgb,
+            var(--hcg-header-hovered-background, var(--hcg-header-hover-background, var(--hcg-column-hover-header-background, var(--hcg-column-hover-background, var(--ig-header-background))))) var(--ig-header-hover-opacity),
+            var(--ig-header-background) calc(100% - var(--ig-header-hover-opacity))
+        );
+
+    background: var(--ig-header-hover-color);
+    --ig-header-color:
+        var(
+            --hcg-header-hovered-color,
+            var(
+                --hcg-header-hover-color,
+                var(--hcg-column-hover-header-color, var(--hcg-column-hover-color, var(--ig-header-base-color)))
+            )
+        );
+    --ig-header-current-color: var(--ig-header-color);
+
+    color: var(--ig-header-current-color);
 }
 
-/* Cell hovered and synced shared styles */
-.hcg-table thead th.hcg-hovered-column::before,
-.hcg-table tbody tr:hover td:hover::before,
-.hcg-table tbody tr:hover td::before,
-.hcg-table tbody tr td.hcg-hovered-column::before,
-.hcg-table thead th.hcg-synced-column::before,
-.hcg-table tbody tr.hcg-synced-row td.hcg-synced-cell::before,
-.hcg-table tbody tr.hcg-synced-row td::before,
-.hcg-table tbody tr td.hcg-synced-column::before {
-    content: "";
-    display: block;
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    pointer-events: none;
-}
+/* ----------------------------------------------------------
+  CELL HOVER
+------------------------------------------------------------ */
+.hcg-container .hcg-table td:hover,
+.hcg-container .hcg-table tr:hover td:hover,
+.hcg-container .hcg-table td.hcg-hovered-column:hover {
+    --ig-cell-hover-layer:
+        color-mix(
+            in srgb,
+            var(--ig-cell-hover-background) var(--ig-cell-hover-opacity),
+            var(--ig-row-hover-color, var(--ig-column-layer)) calc(100% - var(--ig-cell-hover-opacity))
+        );
+    --ig-cell-hover-text-color: var(--hcg-cell-hovered-color, var(--hcg-cell-hover-color, var(--ig-row-hover-text-color)));
 
-/* Cell hovered background and color */
-.hcg-table tbody tr:hover td:hover {
-    background: var(--ig-cell-hovered-background);
-    color: var(--ig-cell-hovered-color);
-}
-
-/* Cell hovered border */
-.hcg-table tbody tr:hover td:hover::before {
-    border-top: var(--ig-cell-hovered-vertical-border);
-    border-right: var(--ig-cell-hovered-horizontal-border);
-    border-bottom: var(--ig-cell-hovered-vertical-border);
-    border-left: var(--ig-cell-hovered-horizontal-border);
-}
-
-/* Cell hovered background and color */
-.hcg-table tbody tr.hcg-row-even:hover td:hover {
-    background: var(--ig-cell-even-hovered-background);
-    color: var(--ig-cell-even-hovered-color);
-}
-
-/* Cell hovered row background and color */
-.hcg-table tbody tr:hover td {
-    background: var(--ig-cell-hovered-row-background);
-    color: var(--ig-cell-hovered-row-color);
-}
-
-/* Cell hovered row border */
-.hcg-table tbody tr:hover td::before {
-    border-top: var(--ig-cell-hovered-row-border);
-    border-bottom: var(--ig-cell-hovered-row-border);
-}
-
-/* Cell hovered row background and color */
-.hcg-table tbody tr.hcg-row-even:hover td {
-    background: var(--ig-cell-hovered-row-even-background);
-    color: var(--ig-cell-hovered-row-even-color);
-}
-
-/* Cell hovered column background and color */
-.hcg-table tbody tr td.hcg-hovered-column {
-    background: var(--ig-cell-hovered-column-background);
-    color: var(--ig-cell-hovered-column-color);
-}
-
-/* Cell hovered column border */
-.hcg-table tbody tr td.hcg-hovered-column::before {
-    border-left: var(--ig-cell-hovered-column-border);
-    border-right: var(--ig-cell-hovered-column-border);
-}
-
-/* Cell hovered column background and color */
-.hcg-table tbody tr.hcg-row-even td.hcg-hovered-column {
-    background: var(--ig-cell-hovered-column-even-background);
-    color: var(--ig-cell-hovered-column-even-color);
-}
-
-/* Cell hovered header background */
-.hcg-table thead th.hcg-hovered-column {
-    background: var(--ig-cell-hovered-header-background);
-}
-
-/* Cell hovered header border */
-.hcg-table thead th.hcg-hovered-column::before {
-    border-left: var(--ig-cell-hovered-header-border);
-    border-right: var(--ig-cell-hovered-header-border);
-}
-
-/* Cell hovered header color */
-.hcg-table thead th.hcg-hovered-column .hcg-header-cell-content {
-    color: var(--ig-cell-hovered-header-color);
-}
-
-/* Cell synced background and color */
-.hcg-table tbody tr.hcg-synced-row td.hcg-synced-column {
-    background: var(--ig-cell-synced-background);
-    color: var(--ig-cell-synced-color);
-}
-
-/* Cell synced border */
-.hcg-table tbody tr.hcg-synced-row td.hcg-synced-column::before {
-    border-top: var(--ig-cell-synced-vertical-border);
-    border-right: var(--ig-cell-synced-horizontal-border);
-    border-bottom: var(--ig-cell-synced-vertical-border);
-    border-left: var(--ig-cell-synced-horizontal-border);
-}
-
-/* Cell synced background and color */
-.hcg-table tbody tr.hcg-row-even.hcg-synced-row td.hcg-synced-column {
-    background: var(--ig-cell-even-synced-background);
-    color: var(--ig-cell-even-synced-color);
-}
-
-/* Cell synced row background and color */
-.hcg-table tbody tr.hcg-synced-row td {
-    background: var(--ig-cell-synced-row-background);
-    color: var(--ig-cell-synced-row-color);
-}
-
-/* Cell synced row border */
-.hcg-table tbody tr.hcg-synced-row td::before {
-    border-top: var(--ig-cell-synced-row-border);
-    border-bottom: var(--ig-cell-synced-row-border);
-}
-
-/* Cell synced row background and color */
-.hcg-table tbody tr.hcg-row-even.hcg-synced-row td {
-    background: var(--ig-cell-synced-row-even-background);
-    color: var(--ig-cell-synced-row-even-color);
-}
-
-/* Cell synced column background and color */
-.hcg-table tbody tr td.hcg-synced-column {
-    background: var(--ig-cell-synced-column-background);
-    color: var(--ig-cell-synced-column-color);
-}
-
-/* Cell synced column border */
-.hcg-table tbody tr td.hcg-synced-column::before {
-    border-left: var(--ig-cell-synced-column-border);
-    border-right: var(--ig-cell-synced-column-border);
-}
-
-/* Cell synced column background and color */
-.hcg-table tbody tr.hcg-row-even td.hcg-synced-column {
-    background: var(--ig-cell-synced-column-even-background);
-    color: var(--ig-cell-synced-column-even-color);
-}
-
-/* Cell synced header background */
-.hcg-table thead th.hcg-synced-column {
-    background: var(--ig-cell-synced-header-background);
-}
-
-/* Cell synced header border */
-.hcg-table thead th.hcg-synced-column::before {
-    border-left: var(--ig-cell-synced-header-border);
-    border-right: var(--ig-cell-synced-header-border);
-}
-
-/* Cell synced header color */
-.hcg-table thead th.hcg-synced-column .hcg-header-cell-content {
-    color: var(--ig-cell-synced-header-color);
-}
-
-.hcg-table td:first-child,
-.hcg-table thead th.hcg-column-first,
-.hcg-table thead tr:first-child th:first-child {
-    border-left: none;
+    background: var(--ig-cell-hover-layer);
+    color: var(--ig-cell-hover-text-color);
 }
 
 /* Accessibility */
