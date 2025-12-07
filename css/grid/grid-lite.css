@@ -219,17 +219,20 @@
 
     /* Default backgrounds and colors */
     --ig-background: var(--hcg-background, transparent);
-    --ig-row-background: var(--hcg-row-background, transparent);
+
+    /* --ig-row-background: var(--hcg-row-background, transparent);
     --ig-row-even-background: var(--hcg-row-even-background, var(--ig-row-background));
-    --ig-header-background: var(--hcg-header-background, var(--ig-row-background));
+    --ig-header-background: var(--hcg-header-background, var(--ig-row-background)); */
     --ig-pagination-background: var(--hcg-pagination-background, transparent);
-    --ig-row-even-color: var(--hcg-row-even-color, var(--ig-color));
+
+    /* --ig-row-even-color: var(--hcg-row-even-color, var(--ig-color)); */
 
     /* Cell hovered backgrounds and colors */
-    --ig-cell-hovered-background: var(--hcg-cell-hovered-background, var(--hcg-cell-hovered-column-background, var(--ig-cell-hovered-row-background)));
+
+    /* --ig-cell-hovered-background: var(--hcg-cell-hovered-background, var(--hcg-cell-hovered-column-background, var(--ig-cell-hovered-row-background)));
     --ig-cell-hovered-color: var(--hcg-cell-hovered-color, var(--hcg-cell-hovered-column-color, var(--ig-cell-hovered-row-color, var(--hcg-color))));
     --ig-cell-even-hovered-background: var(--hcg-cell-hovered-even-background, var(--hcg-cell-hovered-background, var(--hcg-cell-hovered-column-background, var(--ig-cell-hovered-row-even-background))));
-    --ig-cell-even-hovered-color: var(--hcg-cell-even-hovered-color, var(--hcg-cell-hovered-color, var(--hcg-cell-hovered-column-color, var(--ig-cell-hovered-row-even-color))));
+    --ig-cell-even-hovered-color: var(--hcg-cell-even-hovered-color, var(--hcg-cell-hovered-color, var(--hcg-cell-hovered-column-color, var(--ig-cell-hovered-row-even-color)))); */
 
     /* Cell hovered horizontal border */
     --ig-cell-hovered-horizontal-border-width: var(--hcg-cell-hovered-border-width, var(--ig-cell-hovered-column-border-width));
@@ -244,10 +247,11 @@
     --ig-cell-hovered-vertical-border: var(--ig-cell-hovered-vertical-border-width) var(--ig-cell-hovered-vertical-border-style) var(--ig-cell-hovered-vertical-border-color);
 
     /* Cell hovered row backgrounds and colors */
-    --ig-cell-hovered-row-background: var(--hcg-cell-hovered-row-background, var(--ig-row-background));
+
+    /* --ig-cell-hovered-row-background: var(--hcg-cell-hovered-row-background, var(--ig-row-background));
     --ig-cell-hovered-row-color: var(--hcg-cell-hovered-row-color, var(--ig-color));
     --ig-cell-hovered-row-even-background: var(--hcg-cell-hovered-row-even-background, var(--hcg-cell-hovered-row-background, var(--ig-row-even-background)));
-    --ig-cell-hovered-row-even-color: var(--hcg-cell-hovered-row-even-color, var(--hcg-cell-hovered-row-color, var(--ig-row-even-color)));
+    --ig-cell-hovered-row-even-color: var(--hcg-cell-hovered-row-even-color, var(--hcg-cell-hovered-row-color, var(--ig-row-even-color))); */
 
     /* Cell hovered row border */
     --ig-cell-hovered-row-border-width: var(--hcg-cell-hovered-row-border-width, 0);
@@ -256,10 +260,11 @@
     --ig-cell-hovered-row-border: var(--ig-cell-hovered-row-border-width) var(--ig-cell-hovered-row-border-style) var(--ig-cell-hovered-row-border-color);
 
     /* Cell hovered column backgrounds and colors */
-    --ig-cell-hovered-column-background: var(--hcg-cell-hovered-column-background, var(--ig-row-background));
+
+    /* --ig-cell-hovered-column-background: var(--hcg-cell-hovered-column-background, var(--ig-row-background));
     --ig-cell-hovered-column-color: var(--hcg-cell-hovered-column-color, var(--ig-color));
     --ig-cell-hovered-column-even-background: var(--hcg-cell-hovered-column-even-background, var(--hcg-cell-hovered-column-background, var(--ig-row-even-background)));
-    --ig-cell-hovered-column-even-color: var(--hcg-cell-hovered-column-even-color, var(--hcg-cell-hovered-column-color, var(--ig-row-even-color)));
+    --ig-cell-hovered-column-even-color: var(--hcg-cell-hovered-column-even-color, var(--hcg-cell-hovered-column-color, var(--ig-row-even-color))); */
 
     /* Cell hovered column border */
     --ig-cell-hovered-column-border-width: var(--hcg-cell-hovered-column-border-width, 0);
@@ -268,8 +273,9 @@
     --ig-cell-hovered-column-border: var(--ig-cell-hovered-column-border-width) var(--ig-cell-hovered-column-border-style) var(--ig-cell-hovered-column-border-color);
 
     /* Cell hovered header background and color */
-    --ig-cell-hovered-header-background: var(--hcg-cell-hovered-header-background, var(--ig-header-background));
-    --ig-cell-hovered-header-color: var(--hcg-cell-hovered-header-color, var(--ig-header-color));
+
+    /* --ig-cell-hovered-header-background: var(--hcg-cell-hovered-header-background, var(--ig-header-background));
+    --ig-cell-hovered-header-color: var(--hcg-cell-hovered-header-color, var(--ig-header-color)); */
 
     /* Cell hovered header border */
     --ig-cell-hovered-header-border-width: var(--hcg-cell-hovered-header-border-width, 0);
@@ -278,8 +284,9 @@
     --ig-cell-hovered-header-border: var(--ig-cell-hovered-header-border-width) var(--ig-cell-hovered-header-border-style) var(--ig-cell-hovered-header-border-color);
 
     /* Header hovered background and color */
-    --ig-header-hovered-background: var(--hcg-header-hovered-background, var(--ig-header-background));
-    --ig-header-hovered-color: var(--hcg-header-hovered-color, var(--ig-header-color));
+
+    /* --ig-header-hovered-background: var(--hcg-header-hovered-background, var(--ig-header-background));
+    --ig-header-hovered-color: var(--hcg-header-hovered-color, var(--ig-header-color)); */
 
     /* Cell synced backgrounds and colors */
     --ig-cell-synced-background: var(--hcg-cell-synced-background, var(--ig-cell-hovered-background));
@@ -419,6 +426,7 @@
 
 /* Grid container */
 .hcg-container {
+    all: revert;
     container-type: inline-size;
     container-name: hcg;
     position: relative;
@@ -790,6 +798,7 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     --ig-row-hover-text-color: var(--ig-column-text-layer);
     --ig-cell-hover-text-color: var(--ig-row-hover-text-color);
 
+    position: relative;
     background: var(--ig-column-layer);
     color: var(--ig-cell-hover-text-color);
     border-right: var(--ig-column-border);
