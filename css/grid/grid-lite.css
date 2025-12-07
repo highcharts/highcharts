@@ -451,10 +451,6 @@
     box-sizing: border-box;
 }
 
-.hcg-column {
-    width: 0;
-}
-
 /* Links */
 .hcg-container a {
     color: var(--ig-link-color);
