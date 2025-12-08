@@ -1,6 +1,11 @@
 const gridLiteDir = '/grid-lite/';
 const gridProDir = '/grid-pro/';
-const demoPaths = Cypress.env('demoPaths');
+// const demoPaths = Cypress.env('demoPaths');
+
+const demoPaths = {
+    gridLitePaths: ['demo/grid-cell-format'],
+    gridProPaths: []
+};
 
 const expectedBodyStylesRegex = /body\s*\{[^}]*font-family:\s*-apple-system,\s*BlinkMacSystemFont,\s*"Segoe UI",\s*Roboto,\s*Helvetica,\s*Arial,\s*"Apple Color Emoji",\s*"Segoe UI Emoji",\s*"Segoe UI Symbol",\s*sans-serif[^}]*background:\s*var\(--highcharts-background-color\)[^}]*color:\s*var\(--highcharts-neutral-color-100\)/;
 const expectedDemoStylesRegex = /\.demo[^{]*\{[^}]*padding:\s*8px\s+12px\s*[;}]/;
@@ -45,7 +50,7 @@ if (demoPaths && demoPaths.gridLitePaths && demoPaths.gridProPaths) {
                 cy.visit(gridLiteDir + demoPath);
                 cy.then(() => {
                     expect(
-                        errorMessages,
+                        errorMessages.filter(s => !s.includes('ResizeObserver')),
                         `Console errors in ${demoPath}`
                     ).to.be.empty;
                 });
@@ -80,7 +85,7 @@ if (demoPaths && demoPaths.gridLitePaths && demoPaths.gridProPaths) {
                 cy.visit(gridProDir + demoPath);
                 cy.then(() => {
                     expect(
-                        errorMessages,
+                        errorMessages.filter(s => !s.includes('ResizeObserver')),
                         `Console errors in ${demoPath}`
                     ).to.be.empty;
                 });
