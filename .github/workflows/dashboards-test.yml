@@ -38,7 +38,7 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Run Dashboards Tests
-        run: npx playwright test --project=setup-dashboards --project=dashboards
+        run: npx playwright test --project=setup-highcharts --project=setup-dashboards --project=dashboards
 
   dashboards_cypress:
     runs-on: ubuntu-latest
