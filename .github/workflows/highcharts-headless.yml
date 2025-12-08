@@ -74,6 +74,8 @@ jobs:
     name: Playwright tests
     timeout-minutes: 15
     runs-on: ubuntu-latest
+    env:
+      DISPLAY: :99
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -86,6 +88,9 @@ jobs:
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
+
+      - name: Setup Display
+        run: sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 &
 
       - name: Build Highcharts
         run: npx gulp scripts
