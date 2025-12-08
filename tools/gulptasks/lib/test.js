@@ -205,6 +205,12 @@ function handleProductArgs() {
         log.message(argv);
     }
 
+    // Override to run all tests
+    // $ TEST_ALL=1 git commit -am "My commit message"
+    if (process.env.TEST_ALL) {
+        return false;
+    }
+
     if (argv.product) {
         return argv.product.split(',');
     }
