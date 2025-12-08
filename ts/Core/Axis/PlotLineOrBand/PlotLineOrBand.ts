@@ -43,8 +43,7 @@ const {
     erase,
     fireEvent,
     merge,
-    objectEach,
-    pick
+    objectEach
 } = U;
 
 /* *
@@ -174,7 +173,7 @@ class PlotLineOrBand {
         const { axis, options } = this,
             { horiz, logarithmic } = axis,
             { color, events, zIndex = 0 } = options,
-            { renderer, time } = axis.chart,
+            { renderer, styledMode, time } = axis.chart,
 
             // These properties only exist on either band or line
             to = time.parse((options as PlotBandOptions).to),
@@ -190,26 +189,16 @@ class PlotLineOrBand {
             shortKey = isBand ? 'band' : 'line',
             groupName = `${shortKey}s-${zIndex}`,
             isNew = !svgElem,
-            attribs: SVGAttributes = {};
+            attribs: SVGAttributes = {
+                'class': `highcharts-plot-${shortKey} ${options.className || ''}`
+            },
+            strokeWidth = isBand ?
+                (borderWidth || 0) :
+                ((options as PlotLineOptions).width ?? 1);
 
-        // Set the presentational attributes
-        if (!axis.chart.styledMode) {
-            if (isBand) { // Plot band
-                attribs.fill = color || Palette.highlightColor10;
-                if (borderWidth) {
-                    attribs.stroke = (options as PlotBandOptions).borderColor;
-                    attribs['stroke-width'] = borderWidth;
-                }
-            } else {
-                attribs.stroke = color || Palette.neutralColor40;
-                attribs['stroke-width'] = pick(
-                    (options as PlotLineOptions).width,
-                    1
-                );
-                if ((options as PlotLineOptions).dashStyle) {
-                    attribs.dashstyle = (options as PlotLineOptions).dashStyle;
-                }
-            }
+        // Set the stroke width before the path is calculated
+        if (!styledMode) {
+            attribs['stroke-width'] = strokeWidth;
         }
 
         // Grouping and zIndex
@@ -231,9 +220,7 @@ class PlotLineOrBand {
              */
             this.svgElem = svgElem = renderer
                 .path()
-                .addClass(
-                    `highcharts-plot-${shortKey} ${options.className || ''}`
-                )
+                .attr(attribs)
                 .add(group);
         }
 
@@ -255,6 +242,21 @@ class PlotLineOrBand {
 
         if (path) {
             attribs.d = path;
+        }
+
+        // Apply the styling
+        if (!styledMode) {
+            if (isBand) { // Plot band
+                attribs.fill = color || Palette.highlightColor10;
+                if (borderWidth) {
+                    attribs.stroke = (options as PlotBandOptions).borderColor;
+                }
+            } else {
+                attribs.stroke = color || Palette.neutralColor40;
+                if ((options as PlotLineOptions).dashStyle) {
+                    attribs.dashstyle = (options as PlotLineOptions).dashStyle;
+                }
+            }
         }
 
         // Common for lines and bands. Add events only if they were not added
