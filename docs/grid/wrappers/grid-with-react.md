@@ -139,6 +139,6 @@ function App() {
 export default App;
 ```
 
-## 4. View the Result
+## 5. View the Result
 
 See the live example [here](https://stackblitz.com/edit/highcharts-grid-react-ts-mbvpgi2q).
