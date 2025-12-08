@@ -1,5 +1,5 @@
 ---
- name: Highcharts Dashboards Demo
+ name: Highcharts Dashboards Sample
  authors:
    - Sebastian Bochan
  js_wrap: b
