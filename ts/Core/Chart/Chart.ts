@@ -608,12 +608,20 @@ class Chart {
      */
     public initSeries(options: SeriesOptions): Series {
         const chart = this,
-            optionsChart = chart.options.chart,
-            type = (
-                options.type ||
-                optionsChart.type
-            ) as string,
-            SeriesClass = seriesTypes[type];
+            optionsChart = chart.options.chart;
+        let type = (
+            options.type || optionsChart.type
+        ) as string;
+
+        switch (type) {
+            case 'linearRegression':
+            case 'linearRegressionAngle':
+            case 'linearRegressionIntercept':
+            case 'linearRegressionSlope':
+                type = type.toLowerCase();
+        }
+
+        const SeriesClass = seriesTypes[type];
 
         // No such series type
         if (!SeriesClass) {

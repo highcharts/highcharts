@@ -904,9 +904,7 @@ function filterSeries(
     });
 
     // Filter out depricated duplicates
-    return filteredSeriesArray.filter(
-        (x): boolean => x.indicatorType === x.indicatorType.toLowerCase()
-    );
+    return filteredSeriesArray;
 }
 
 /**
