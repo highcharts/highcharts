@@ -350,8 +350,6 @@ export class Grid {
         fireEvent(this, 'beforeLoad');
 
         Grid.grids.push(this);
-        this.loadDataTable();
-
         void this.render().then((): void => {
             afterLoadCallback?.(this);
             fireEvent(this, 'afterLoad');
@@ -661,78 +659,76 @@ export class Grid {
         const diff = this.loadUserOptions(options, oneToOne);
         const flags = this.dirtyFlags;
 
-        if (!viewport) {
-            flags.add('grid');
-            if (redraw) {
-                await this.redraw();
-            }
-            return;
-        }
+        if (viewport) {
+            if (!this.dataTable || 'dataTable' in diff) {
+                this.userOptions.dataTable = options.dataTable;
+                (this.options ?? {}).dataTable = options.dataTable;
 
-        if (!this.dataTable || 'dataTable' in diff) {
-            this.userOptions.dataTable = options.dataTable;
-            (this.options ?? {}).dataTable = options.dataTable;
+                this.loadDataTable();
 
-            this.loadDataTable();
-            this.querying.shouldBeUpdated = true;
-
-            // TODO: Sometimes it can be too much, so we need to check if the
-            // columns have changed or just their data. If just their data, we
-            // can just mark the grid.table as dirty instead of the whole grid.
-            flags.add('grid');
-        }
-
-        if ('columns' in diff) {
-            const ids = Object.keys(diff.columns ?? {});
-
-            for (const id of ids) {
-                // TODO: Move this to the column update method.
-                this.loadColumnOptionDiffs(viewport, id, diff.columns?.[id]);
-                delete diff.columns?.[id];
-            }
-            delete diff.columns;
-        }
-
-        if ('columnDefaults' in diff) {
-            this.loadColumnOptionDiffs(viewport, null, diff.columnDefaults);
-            delete diff.columnDefaults;
-        }
-
-        if (diff.lang) {
-            const langDiff = diff.lang;
-            if ('locale' in langDiff) {
-                this.locale = langDiff.locale as typeof this.locale;
-                this.time.update({ locale: this.locale });
-            }
-            delete langDiff.locale;
-
-            // TODO: Add more lang diff checks here.
-
-            if (Object.keys(langDiff).length > 0) {
+                // TODO: Sometimes it can be too much, so we need to check if
+                // the columns have changed or just their data. If just their
+                // data, we can just mark the grid.table as dirty instead of the
+                // whole grid.
                 flags.add('grid');
             }
-        }
-        delete diff.lang;
 
-        if ('time' in diff) {
-            this.time.update(diff.time);
-            delete diff.time;
-        }
+            if ('columns' in diff) {
+                const ids = Object.keys(diff.columns ?? {});
 
-        if (diff.pagination) {
-            const paginationDiff = diff.pagination;
-            if ('enabled' in paginationDiff) {
-                if (!this.pagination && paginationDiff.enabled) {
-                    this.pagination = new Pagination(this);
+                for (const id of ids) {
+                    // TODO: Move this to the column update method.
+                    this.loadColumnOptionDiffs(
+                        viewport, id, diff.columns?.[id]
+                    );
+                    delete diff.columns?.[id];
+                }
+                delete diff.columns;
+            }
+
+            if ('columnDefaults' in diff) {
+                this.loadColumnOptionDiffs(viewport, null, diff.columnDefaults);
+                delete diff.columnDefaults;
+            }
+
+            if (diff.lang) {
+                const langDiff = diff.lang;
+                if ('locale' in langDiff) {
+                    this.locale = langDiff.locale as typeof this.locale;
+                    this.time.update({ locale: this.locale });
+                }
+                delete langDiff.locale;
+
+                // TODO: Add more lang diff checks here.
+
+                if (Object.keys(langDiff).length > 0) {
+                    flags.add('grid');
                 }
             }
-            this.pagination?.update(paginationDiff);
-        }
-        delete diff.pagination;
+            delete diff.lang;
 
-        // TODO: Add more options that can be optimized here.
+            if ('time' in diff) {
+                this.time.update(diff.time);
+                delete diff.time;
+            }
 
-        if (Object.keys(diff).length > 0) {
+            if (diff.pagination) {
+                const paginationDiff = diff.pagination;
+                if ('enabled' in paginationDiff) {
+                    if (!this.pagination && paginationDiff.enabled) {
+                        this.pagination = new Pagination(this);
+                    }
+                }
+                this.pagination?.update(paginationDiff);
+            }
+            delete diff.pagination;
+
+            // TODO: Add more options that can be optimized here.
+
+            if (Object.keys(diff).length > 0) {
+                flags.add('grid');
+            }
+        } else {
             flags.add('grid');
         }
 
@@ -997,6 +993,8 @@ export class Grid {
         if (this.isRendered) {
             this.destroy(true);
         }
+
+        this.loadDataTable();
 
         this.initContainer(this.renderTo);
         this.initAccessibility();
@@ -1302,6 +1300,8 @@ export class Grid {
      * reference, it should be used instead of creating a new one.
      */
     private loadDataTable(): void {
+        this.querying.shouldBeUpdated = true;
+
         // Unregister all events attached to the previous data table.
         this.dataTableEventDestructors.forEach((fn): void => fn());
         const tableOptions = this.options?.dataTable;
