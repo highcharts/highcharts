@@ -32,7 +32,8 @@ const chart = Highcharts.chart('container', {
         title: {
             text: 'longitude'
         },
-        gridLineColor: '#fff4'
+        gridLineColor: '#fff4',
+        gridZIndex: 4
     },
     yAxis: {
         tickInterval: 0.01,
@@ -40,7 +41,8 @@ const chart = Highcharts.chart('container', {
         title: {
             text: 'latitude'
         },
-        gridLineColor: '#fff4'
+        gridLineColor: '#fff4',
+        gridZIndex: 4
     },
     colorAxis: {
         stops: [
@@ -100,7 +102,6 @@ const contourIntervalRange = document.getElementById('contour-interval');
 const contourOffsetRange = document.getElementById('contour-offset');
 const showLinesCbx = document.getElementById('show-lines');
 const smoothColoringCbx = document.getElementById('smooth-coloring');
-const bgRenderCbx = document.getElementById('bg-render');
 const contourIntervalSpan = document.getElementById('contour-interval-span');
 const contourOffsetSpan = document.getElementById('contour-offset-span');
 
@@ -127,11 +128,5 @@ showLinesCbx.addEventListener('click', () => {
 smoothColoringCbx.addEventListener('click', () => {
     chart.series[0].update({
         smoothColoring: smoothColoringCbx.checked
-    });
-});
-
-bgRenderCbx.addEventListener('click', () => {
-    chart.series[0].update({
-        renderOnBackground: bgRenderCbx.checked
     });
 });
