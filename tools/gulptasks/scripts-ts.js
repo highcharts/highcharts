@@ -252,7 +252,9 @@ async function scriptsTS(argv) {
             [ // Copy dts files from the folders to the grid es-modules:
                 'Data',
                 'Grid',
-                'Shared'
+                'Shared',
+                fsLib.path(['Core', 'Renderer']),
+                fsLib.path(['Core', 'Color'])
             ].forEach(dtsFolder => {
                 fsLib.copyAllFiles(
                     fsLib.path(['ts', dtsFolder]),
