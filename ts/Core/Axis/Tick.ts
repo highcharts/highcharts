@@ -880,10 +880,11 @@ class Tick {
         const tick = this,
             axis = tick.axis,
             options = axis.options,
+            attribs: SVGAttributes = {},
             pos = tick.pos,
             type = tick.type,
             tickmarkOffset = pick(tick.tickmarkOffset, axis.tickmarkOffset),
-            renderer = axis.chart.renderer;
+            { renderer, styledMode } = axis.chart;
 
         let gridLine = tick.gridLine,
             gridLineWidth = options.gridLineWidth,
@@ -896,14 +897,22 @@ class Tick {
             dashStyle = options.minorGridLineDashStyle;
         }
 
+        // Apply the stroke width initially so the crisping works
+        if (!styledMode) {
+            attribs['stroke-width'] = gridLineWidth || 0;
+        }
+
         if (!gridLine) {
+            if (!type) {
+                attribs.zIndex = 1;
+            }
             /**
              * The rendered grid line of the tick.
              * @name Highcharts.Tick#gridLine
              * @type {Highcharts.SVGElement|undefined}
              */
             tick.gridLine = gridLine = renderer.path()
-                .attr(type ? {} : { zIndex: 1 })
+                .attr(attribs)
                 .addClass(
                     'highcharts-' + (type ? type + '-' : '') + 'grid-line'
                 )
@@ -923,13 +932,10 @@ class Tick {
         );
 
         if (d) {
-            const attribs: SVGAttributes = {
-                d,
-                opacity: old ? 0 : opacity
-            };
-            if (!axis.chart.styledMode) {
+            attribs.d = d;
+            attribs.opacity = old ? 0 : opacity;
+            if (!styledMode) {
                 attribs.stroke = gridLineColor;
-                attribs['stroke-width'] = gridLineWidth || 0;
                 attribs.dashstyle = dashStyle;
             }
 
