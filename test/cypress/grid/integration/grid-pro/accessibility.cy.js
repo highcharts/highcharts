@@ -4,10 +4,22 @@ describe('Screen reader sections.', () => {
     });
 
   it('Before-Grid screen reader section should be rendered.', () => {
-      cy.get('[id^="grid-screen-reader-region-before-"]')
-          .should('exist')
-          .and('have.attr', 'role', 'region')
-          .and('have.attr', 'aria-label');
+      cy.grid().then((grid) => {
+          grid.update({
+              lang: {
+                  accessibility: {
+                      screenReaderSection: {
+                          beforeRegionLabel: 'Before Grid information.'
+                      }
+                  }
+              }
+          });
+
+          cy.get('[id^="grid-screen-reader-region-before-"]')
+              .should('exist')
+              .and('have.attr', 'role', 'region')
+              .and('have.attr', 'aria-label');
+      });
   });
 
   it('Before-Grid section should contain visually hidden content.', () => {
@@ -16,10 +28,22 @@ describe('Screen reader sections.', () => {
   });
 
   it('After-Grid screen reader section should be rendered.', () => {
-      cy.get('[id^="grid-screen-reader-region-after-"]')
-          .should('exist')
-          .and('have.attr', 'role', 'region')
-          .and('have.attr', 'aria-label');
+      cy.grid().then((grid) => {
+          grid.update({
+              lang: {
+                  accessibility: {
+                      screenReaderSection: {
+                          afterRegionLabel: 'After Grid information.'
+                      }
+                  }
+              }
+          });
+
+          cy.get('[id^="grid-screen-reader-region-after-"]')
+              .should('exist')
+              .and('have.attr', 'role', 'region')
+              .and('have.attr', 'aria-label');
+      });
   });
 
   it('After-Grid section should contain visually hidden content.', () => {
@@ -43,7 +67,7 @@ describe('Screen reader sections.', () => {
           const expectedColumnCount = dataTable.getColumnIds().length;
 
           cy.get(
-            '[id^="grid-screen-reader-region-before-"] .hcg-visually-hidden'
+              '[id^="grid-screen-reader-region-before-"] .hcg-visually-hidden'
           )
           .should('exist')
               .invoke('text')
