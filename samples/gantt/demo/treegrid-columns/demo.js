@@ -103,27 +103,29 @@ const options = {
 
 // Plug-in to render plot bands for the weekends
 Highcharts.addEvent(Highcharts.Axis, 'foundExtremes', e => {
-    if (e.target.options.custom && e.target.options.custom.weekendPlotBands) {
+    if (e.target.options.custom?.weekendPlotBands) {
         const axis = e.target,
             chart = axis.chart,
             day = 24 * 36e5,
-            isWeekend = t => /[06]/.test(chart.time.dateFormat('%w', t)),
-            plotBands = [];
+            isWeekend = t => /[06]/.test(chart.time.dateFormat('%w', t));
 
-        let inWeekend = false;
+        let inWeekend = false,
+            last;
 
         for (
             let x = Math.floor(axis.min / day) * day;
             x <= Math.ceil(axis.max / day) * day;
             x += day
         ) {
-            const last = plotBands.at(-1);
             if (isWeekend(x) && !inWeekend) {
-                plotBands.push({
+                const plotBand = {
                     from: x,
                     color: 'rgba(128,128,128,0.05)'
-                });
+                };
+                axis.addPlotBand(plotBand);
                 inWeekend = true;
+
+                last = plotBand;
             }
 
             if (!isWeekend(x) && inWeekend && last) {
@@ -131,7 +133,6 @@ Highcharts.addEvent(Highcharts.Axis, 'foundExtremes', e => {
                 inWeekend = false;
             }
         }
-        axis.options.plotBands = plotBands;
     }
 });
 
