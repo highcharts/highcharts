@@ -15,7 +15,7 @@ Internet Explorer requires the [canvg](https://code.google.com/p/canvg/) library
 
 PDF does not support exporting with images and will fall back to the export server.
 
-*Note*: The client-side export module relies on external third-party libraries. Highcharts cannot take responsibility for the security of these libraries, which are not licensed or warrantied under the Highcharts license.
+*Note*: PDF export in the client-side export module is an opt-in feature. Enabling PDF export (for example, by adding `downloadPDF` to `contextButton.menuItems`) requires external third-party libraries. These libraries are not provided, licensed, or warrantied under the Highcharts license and Highcharts cannot take responsibility for their security or maintenance.
 
 To use the module, simply include it after the exporting module. The exporting module is a required dependency even if fallback is disabled.
 
