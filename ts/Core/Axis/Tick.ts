@@ -525,7 +525,6 @@ class Tick {
         const axis = this.axis,
             {
                 labelAlign,
-                reserveSpaceDefault,
                 side,
                 staggerLines,
                 transA
@@ -539,7 +538,7 @@ class Tick {
 
             // Adjust for label alignment if we use reserveSpace: true (#5286)
             labelOffsetCorrection = (
-                !horiz && !reserveSpaceDefault ?
+                !horiz && !axis.reserveSpaceDefault ?
                     -(axis.labelOffset || 0) * (
                         axis.labelAlign === 'center' ? 0.5 : 1
                     ) :
@@ -551,12 +550,12 @@ class Tick {
                 (
                     side === 1 &&
                     labelAlign === 'right' &&
-                    reserveSpaceDefault
+                    !labelOptions.reserveSpace
                 ) ? 0 :
                     (
                         side === 3 &&
                         labelAlign === 'left' &&
-                        reserveSpaceDefault
+                        !labelOptions.reserveSpace
                     ) ? 0 : 15
             ),
             pos = {} as PositionObject;
