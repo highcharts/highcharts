@@ -52,13 +52,31 @@ export interface IKHOptions extends SMAOptions {
      */
     params?: IKHParamsOptions;
 
+    /**
+     * The styles for Chikou line
+     */
     chikouLine?: Record<string, CSSObject>;
     gapSize?: number;
+    /**
+     * The styles for Kijun line
+     */
     kijunLine?: Record<string, CSSObject>;
     marker?: PointMarkerOptions;
+    /**
+     * The styles for area between Senkou Span A and B.
+     */
     senkouSpan?: IKHSenkouSpanOptions;
+    /**
+     * The styles for Senkou Span A line
+     */
     senkouSpanA?: Record<string, CSSObject>;
+    /**
+     * The styles for Senkou Span B line
+     */
     senkouSpanB?: Record<string, CSSObject>;
+    /**
+     * The styles for Tenkan line
+     */
     tenkanLine?: Record<string, CSSObject>;
 
     tooltip?: Partial<TooltipOptions>;
@@ -67,7 +85,13 @@ export interface IKHOptions extends SMAOptions {
 }
 
 export interface IKHParamsOptions extends SMAParamsOptions {
+    /**
+     * The base period for Tenkan calculations.
+     */
     periodTenkan?: number;
+    /**
+     * The base period for Senkou Span B calculations
+     */
     periodSenkouSpanB?: number;
 }
 
@@ -82,9 +106,43 @@ export interface IKHDrawSenkouSpanObject {
 }
 
 export interface IKHSenkouSpanOptions {
+    /**
+     * Color of the area between Senkou Span A and B,
+     * when Senkou Span A is above Senkou Span B. Note that if
+     * a `style.fill` is defined, the `color` takes precedence and
+     * the `style.fill` is ignored.
+     *
+     * @see [senkouSpan.styles.fill](#series.ikh.senkouSpan.styles.fill)
+     *
+     * @sample stock/indicators/ichimoku-kinko-hyo
+     *         Ichimoku Kinko Hyo color
+     *
+     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @since     7.0.0
+     * @apioption plotOptions.ikh.senkouSpan.color
+     */
     color?: ColorType;
+    /**
+     * Color of the area between Senkou Span A and B,
+     * when Senkou Span A is under Senkou Span B.
+     *
+     * @sample stock/indicators/ikh-negative-color
+     *         Ichimoku Kinko Hyo negativeColor
+     *
+     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @since     7.0.0
+     * @apioption plotOptions.ikh.senkouSpan.negativeColor
+     */
     negativeColor?: ColorType;
-    styles?: CSSObject & { fill: ColorType };
+    styles?: CSSObject & {
+        /**
+         * Color of the area between Senkou Span A and B.
+         *
+         * @deprecated
+         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         */
+        fill: ColorType;
+    };
 }
 
 export interface IKHGapExtensionObject {
