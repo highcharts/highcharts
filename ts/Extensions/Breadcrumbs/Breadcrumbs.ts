@@ -910,9 +910,6 @@ export default Breadcrumbs;
  *
  * @param {Highcharts.BreadcrumbOptions} options
  * Breadcrumb options.
- *
- * @param {Highcharts.Breadcrumbs} ctx
- * Context (for Es6 callbacks)
  */
 
 /**
