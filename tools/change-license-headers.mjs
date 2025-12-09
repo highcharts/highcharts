@@ -1,9 +1,23 @@
-import { readdirSync, readFileSync, writeFileSync, statSync } from 'fs';
-import { join } from 'path';
+import {
+    readdirSync,
+    readFileSync,
+    writeFileSync,
+    statSync,
+    existsSync
+} from 'fs';
+import { join, extname } from 'path';
 
-const ROOT = 'ts';
+const ROOTS = ['ts', 'css'];
 
 function processFile(path) {
+    const ext = extname(path);
+    const isTs = ext === '.ts';
+    const isCss = ext === '.css';
+
+    if (!isTs && !isCss) {
+        return;
+    }
+
     let txt = readFileSync(path, 'utf8');
     const original = txt;
 
@@ -13,12 +27,19 @@ function processFile(path) {
     // add SPDX line before @license header if it is missing
     if (
         !txt.includes('SPDX-License-Identifier: LicenseRef-Highcharts') &&
-        txt.includes('@license Highcharts JS')
+        txt.includes('@license Highcharts')
     ) {
-        txt = txt.replace(
-            '/**\n * @license Highcharts JS',
-            '// SPDX-License-Identifier: LicenseRef-Highcharts\n/**\n * @license Highcharts JS'
-        );
+        if (isTs) {
+            txt = txt.replace(
+                '/**\n * @license',
+                '// SPDX-License-Identifier: LicenseRef-Highcharts\n/**\n * @license'
+            );
+        } else if (isCss) {
+            txt = txt.replace(
+                '/**\n * @license',
+                '/* SPDX-License-Identifier: LicenseRef-Highcharts */\n/**\n * @license'
+            );
+        }
     }
 
     // add SPDX line at the top for files that have a License line
@@ -28,14 +49,23 @@ function processFile(path) {
         /License: www\.highcharts\.com\/license/u.test(txt)
     ) {
         // insert SPDX before the first block comment in the file
-        txt = txt.replace(
-            /^(\s*\/\*[\*!])/u,
-            '// SPDX-License-Identifier: LicenseRef-Highcharts\n$1'
-        );
+        if (isTs) {
+            txt = txt.replace(
+                /^(\s*\/\*[\*!])/u,
+                '// SPDX-License-Identifier: LicenseRef-Highcharts\n$1'
+            );
+        } else if (isCss) {
+            txt = txt.replace(
+                /^(\s*\/\*[\*!])/u,
+                '/* SPDX-License-Identifier: LicenseRef-Highcharts */\n$1'
+            );
+        }
     }
 
     // replace "(c) YEAR[-YEAR] Name" with "(c) YEAR[-YEAR] Highsoft AS"
     // and optionally add an "Author: Name" line below.
+    const canAddAuthor = isTs; // TS only, no Author in CSS
+
     txt = txt.replace(
         /^(\s*\*\s*)\(c\) (\d{4}(?:-\d{4})?) ([^\n]+)$/gmu,
         (match, prefix, years, name) => {
@@ -48,7 +78,7 @@ function processFile(path) {
             let result = `${prefix}(c) ${years} Highsoft AS`;
 
             // add Author line only if the file does not already contain any Author line
-            if (!hasAuthorLine) {
+            if (canAddAuthor && !hasAuthorLine) {
                 result += `\n${prefix}Author: ${name}`;
             }
 
@@ -75,10 +105,14 @@ function walk(dir) {
 
         if (stats.isDirectory()) {
             walk(fullPath);
-        } else if (fullPath.endsWith('.ts')) {
+        } else {
             processFile(fullPath);
         }
     }
 }
 
-walk(ROOT);
+for (const root of ROOTS) {
+    if (existsSync(root)) {
+        walk(root);
+    }
+}
