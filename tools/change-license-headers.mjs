@@ -37,7 +37,7 @@ function processFile(path) {
         } else if (isCss) {
             txt = txt.replace(
                 '/**\n * @license',
-                '/* SPDX-License-Identifier: LicenseRef-Highcharts */\n/**\n * @license'
+                '/* SPDX-License-Identifier: LicenseRef-Highcharts */\n\n/**\n * @license'
             );
         }
     }
@@ -57,7 +57,7 @@ function processFile(path) {
         } else if (isCss) {
             txt = txt.replace(
                 /^(\s*\/\*[\*!])/u,
-                '/* SPDX-License-Identifier: LicenseRef-Highcharts */\n$1'
+                '/* SPDX-License-Identifier: LicenseRef-Highcharts */\n\n$1'
             );
         }
     }
