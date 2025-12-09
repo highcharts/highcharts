@@ -26,7 +26,6 @@ import type {
 } from '../AxisOptions';
 import type Chart from '../../Chart/Chart';
 import type { ChartAddSeriesEventObject } from '../../Chart/ChartOptions';
-import type ColorType from '../../Color/ColorType';
 import type { DeepPartial } from '../../../Shared/Types';
 import type GanttPoint from '../../../Series/Gantt/GanttPoint';
 import type GanttPointOptions from '../../../Series/Gantt/GanttPointOptions';
@@ -126,7 +125,7 @@ export declare class TreeGridAxisComposition extends Axis {
     dataMin: number;
     max: number;
     min: number;
-    options: TreeGridCompositionOptions;
+    options: AxisOptions;
     series: Array<GanttSeries>;
     treeGrid: TreeGridAxisAdditions;
 }
@@ -150,29 +149,6 @@ interface TreeGridObject {
     mapOfPosToGridNode: Record<string, GridNode>;
     collapsedNodes: Array<GridNode>;
     tree: TreeNode;
-}
-
-/** @internal */
-export interface TreeGridCompositionLabelIconOptions {
-    height?: number;
-    lineColor?: ColorType;
-    lineWidth?: number;
-    padding?: number;
-    type?: number;
-    width?: number;
-    x?: number;
-    y?: number;
-}
-
-/** @internal */
-export interface TreeGridCompositionLabelOptions extends AxisLabelOptions {
-    levels?: number;
-    symbol?: TreeGridCompositionLabelIconOptions;
-}
-
-/** @internal */
-export interface TreeGridCompositionOptions extends AxisOptions {
-    labels: TreeGridCompositionLabelOptions;
 }
 
 /* *
@@ -592,7 +568,7 @@ function wrapGenerateTick(
         ticks = axis.ticks;
     let tick = ticks[pos],
         levelOptions,
-        options: (DeepPartial<TreeGridCompositionOptions> | undefined),
+        options: (DeepPartial<AxisOptions> | undefined),
         gridNode;
 
     if (
@@ -634,7 +610,7 @@ function wrapInit(
     this: TreeGridAxisComposition,
     proceed: Function,
     chart: Chart,
-    userOptions: TreeGridCompositionOptions,
+    userOptions: AxisOptions,
     coll: AxisCollectionKey
 ): void {
     const axis = this,
@@ -961,7 +937,7 @@ class TreeGridAxisAdditions {
     public mapOfPosToGridNode?: Record<string, GridNode>;
 
     /** @internal */
-    public mapOptionsToLevel?: Record<string, TreeGridCompositionLabelOptions>;
+    public mapOptionsToLevel?: Record<string, AxisLabelOptions>;
 
     /** @internal */
     public pendingSizeAdjustment: number = 0;

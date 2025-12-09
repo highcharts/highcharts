@@ -17,6 +17,10 @@
  *
  * */
 
+import type {
+    AxisLabelOptions,
+    AxisOptions
+} from '../AxisOptions';
 import type ColorType from '../../Color/ColorType';
 import type CSSObject from '../../Renderer/CSSObject';
 import type PositionObject from '../../Renderer/PositionObject';
@@ -26,11 +30,7 @@ import type SVGRenderer from '../../Renderer/SVG/SVGRenderer';
 import type { SymbolKey } from '../../Renderer/SVG/SymbolType';
 import type Tick from '../Tick';
 import type { TreeGridAxisComposition } from './TreeGridAxis';
-import type {
-    TreeGridCompositionLabelIconOptions,
-    TreeGridCompositionLabelOptions,
-    TreeGridCompositionOptions
-} from './TreeGridAxis';
+import type { TreeGridAxisLabelIconOptions } from './TreeGridAxisOptions';
 
 import { Palette } from '../../Color/Palettes.js';
 import U from '../../Utilities.js';
@@ -55,7 +55,7 @@ interface LabelIconObject {
     collapsed?: boolean;
     color: ColorType;
     group?: SVGElement;
-    options: TreeGridCompositionLabelIconOptions;
+    options: TreeGridAxisLabelIconOptions;
     renderer: SVGRenderer;
     show: boolean;
     xy: PositionObject;
@@ -68,7 +68,7 @@ interface TreeGridTick extends Tick {
     axis: TreeGridAxisComposition;
 
     /** @internal */
-    options: TreeGridCompositionOptions;
+    options: AxisOptions;
 
     /** @internal */
     treeGrid: TreeGridTickAdditions;
@@ -189,7 +189,7 @@ function wrapGetLabelPosition(
     y: number,
     label: SVGElement,
     horiz: boolean,
-    labelOptions: TreeGridCompositionLabelOptions,
+    labelOptions: AxisLabelOptions,
     tickmarkOffset: number,
     index: number,
     step: number

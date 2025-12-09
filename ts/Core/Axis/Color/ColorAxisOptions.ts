@@ -318,6 +318,19 @@ export interface ColorAxisOptions extends AxisOptions {
      */
     stops?: GradientColor['stops'];
 
+    /**
+     * The type of interpolation to use for the color axis. Can be
+     * `linear` or `logarithmic`.
+     *
+     * @sample highcharts/coloraxis/logarithmic-with-emulate-negative-values/
+     *         Logarithmic color axis with extension to emulate negative
+     *         values
+     *
+     * @default linear
+     * @product highcharts highstock highmaps
+     */
+    type?: AxisOptions['type'];
+
 }
 
 /* *

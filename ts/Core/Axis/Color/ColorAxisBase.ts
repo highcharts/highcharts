@@ -72,6 +72,7 @@ interface ColorAxisBase extends AxisComposition {
  *
  * */
 
+/** @internal */
 namespace ColorAxisBase {
 
     /* *
