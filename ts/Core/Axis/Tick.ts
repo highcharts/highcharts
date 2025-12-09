@@ -523,7 +523,13 @@ class Tick {
         step: number
     ): PositionObject {
         const axis = this.axis,
-            { labelAlign, side, staggerLines, transA } = axis,
+            {
+                labelAlign,
+                reserveSpaceDefault,
+                side,
+                staggerLines,
+                transA
+            } = axis,
             reversed = ( // #7911
                 axis.isLinked && axis.linkedParent ?
                     axis.linkedParent.reversed :
@@ -533,8 +539,8 @@ class Tick {
 
             // Adjust for label alignment if we use reserveSpace: true (#5286)
             labelOffsetCorrection = (
-                !horiz && !axis.reserveSpaceDefault ?
-                    -(axis.labelOffset as any) * (
+                !horiz && !reserveSpaceDefault ?
+                    -(axis.labelOffset || 0) * (
                         axis.labelAlign === 'center' ? 0.5 : 1
                     ) :
                     0
@@ -542,8 +548,16 @@ class Tick {
             distance = labelOptions.distance ?? (
                 // If the label is aligned inside the plot area, default to 0.
                 // This is default behavior or Stock y-axis labels.
-                (side === 1 && labelAlign === 'right') ? 0 :
-                    (side === 3 && labelAlign === 'left') ? 0 : 15
+                (
+                    side === 1 &&
+                    labelAlign === 'right' &&
+                    reserveSpaceDefault
+                ) ? 0 :
+                    (
+                        side === 3 &&
+                        labelAlign === 'left' &&
+                        reserveSpaceDefault
+                    ) ? 0 : 15
             ),
             pos = {} as PositionObject;
 
