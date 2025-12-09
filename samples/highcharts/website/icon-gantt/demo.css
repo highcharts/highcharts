@@ -1,4 +1,54 @@
 @import url("https://code.highcharts.com/css/highcharts.css");
+@import url("https://www.highcharts.com/demo/_next/static/css/pages/_app.css");
+
+:root,
+.highcharts-light {
+    --illo-green: var(--primitives-success-200);
+    --illo-purple: var(--primitives-brand-500);
+    --illo-accent-0: var(--primitives-neutral-0);
+    --illo-accent-50: var(--primitives-neutral-50);
+    --illo-accent-200: var(--primitives-neutral-200);
+    --illo-accent-800: var(--primitives-neutral-800);
+    --illo-brand-200: var(--primitives-brand-200);
+    --illo-brand-800: var(--primitives-brand-800);
+    --illo-background: var(--primitives-neutral-0);
+    --illo-lines: var(--primitives-neutral-100);
+    --illo-just-white: #fff;
+    --illo-just-black: #000;
+    --illo-accent-teal: #6699a1;
+}
+
+.highcharts-dark {
+    --illo-green: var(--primitives-success-300);
+    --illo-purple: var(--primitives-brand-500);
+    --illo-accent-0: var(--primitives-neutral-1000);
+    --illo-accent-50: var(--primitives-neutral-700);
+    --illo-accent-200: var(--primitives-neutral-500);
+    --illo-accent-800: var(--primitives-neutral-0);
+    --illo-brand-200: var(--primitives-brand-500);
+    --illo-brand-800: var(--primitives-brand-200);
+    --illo-background: var(--primitives-neutral-1000);
+    --illo-lines: var(--primitives-neutral-500);
+    --illo-just-white: #fff;
+    --illo-just-black: #000;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --illo-green: var(--primitives-success-300);
+        --illo-purple: var(--primitives-brand-500);
+        --illo-accent-0: var(--primitives-neutral-1000);
+        --illo-accent-50: var(--primitives-neutral-700);
+        --illo-accent-200: var(--primitives-neutral-500);
+        --illo-accent-800: var(--primitives-neutral-0);
+        --illo-brand-200: var(--primitives-brand-500);
+        --illo-brand-800: var(--primitives-brand-200);
+        --illo-background: var(--primitives-neutral-1000);
+        --illo-lines: var(--primitives-neutral-500);
+        --illo-just-white: #fff;
+        --illo-just-black: #000;
+    }
+}
 
 html {
     overflow: hidden;
@@ -264,23 +314,23 @@ textarea {
 
 .chart-container .thick {
     stroke-width: 1;
-    stroke: white;
-    color: white;
+    stroke: var(--illo-lines);
+    color: var(--illo-lines);
     transition: all 2s;
 }
 
 .chart-container .thin {
     stroke-width: 1;
-    stroke: white;
-    color: white;
+    stroke: var(--illo-lines);
+    color: var(--illo-lines);
     transition: all 2s;
 }
 
 .chart-container .transparent {
     opacity: 1;
     stroke-width: 1;
-    stroke: white;
-    color: white;
+    stroke: var(--illo-lines);
+    color: var(--illo-lines);
     transition: all 2s;
 }
 
@@ -309,8 +359,8 @@ textarea {
 }
 
 .chart-container .line {
-    color: #fff;
-    stroke: #fff;
+    color: var(--illo-lines);
+    stroke: var(--illo-lines);
     stroke-width: 1px;
 }
 
@@ -354,8 +404,8 @@ textarea {
 }
 
 .chart-container .highcharts-color-0 {
-    fill: #8087e8;
-    stroke: #fff;
+    fill: var(--illo-purple);
+    stroke: var(--illo-lines);
 }
 
 .chart-container .highcharts-point-connecting-path.highcharts-color-0,
@@ -390,12 +440,12 @@ textarea {
 }
 
 .chart-container .highcharts-background {
-    fill: #211836;
+    fill: var(--illo-background);
     transition: all 1s;
 }
 
 .chart-container .highcharts-background.on {
-    fill: #211836;
+    fill: var(--illo-background);
 }
 
 .chart-container .highcharts-grid-line {
@@ -410,7 +460,7 @@ textarea {
 
 .chart-container .highcharts-plot-band,
 .highcharts-pane {
-    fill: #30426b;
+    fill: var(--illo-accent-50);
     fill-opacity: 1;
     z-index: 30;
 }
@@ -468,9 +518,14 @@ textarea {
     height: 100%;
     aspect-ratio: 1 / 1;
     border-radius: 4px;
-    background-color: #2f2b38;
+    background-color: var(--illo-background);
     border: none;
 }
+
+/* #gantt {
+    width: 500px;
+    height: 500px;
+} */
 
 #gantt .hide {
     opacity: 0;
@@ -481,28 +536,32 @@ textarea {
 }
 
 #gantt .highcharts-plot-background {
-    fill: #45445d;
+    fill: var(--illo-accent-50);
     stroke: transparent;
 }
 
 #gantt .cover {
-    fill: #46445d;
+    fill: var(--illo-accent-50);
     stroke: transparent;
 }
 
 #gantt .foreground {
-    fill: #201836;
+    fill: var(--illo-background);
     stroke: transparent;
 }
 
-#gantt .step-w,
+#gantt .step-w {
+    fill: var(--illo-accent-50);
+    stroke: transparent;
+}
+
 #gantt .pole {
-    fill: #fff;
+    fill: var(--illo-just-white);
     stroke: transparent;
 }
 
 #gantt .step-p {
-    fill: #8087e8;
+    fill: var(--illo-purple);
     stroke: transparent;
 }
 
@@ -512,7 +571,7 @@ textarea {
 }
 
 #gantt .flag.show {
-    fill: #8bf2b6;
+    fill: var(--illo-green);
     stroke: transparent;
     transition: fill 1s 50ms;
 }
@@ -523,8 +582,8 @@ textarea {
 }
 
 #gantt .green {
-    fill: #8bf2b6;
-    stroke: #8bf2b6;
+    fill: var(--illo-green);
+    stroke: var(--illo-lines);
 }
 
 #gantt .particle-2 {

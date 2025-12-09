@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: Dashboards and Grid Test
+name: Dashboards Test
 
 # Controls when the workflow will run
 on:
@@ -12,14 +12,10 @@ on:
     paths:
       - '.github/workflows/dashboards-test.yml'
       - 'css/dashboards*'
-      - 'css/grid*'
       - 'samples/dashboards/**'
-      - 'samples/grid-lite/**'
-      - 'samples/grid-pro/**'
       - 'test/cypress/dashboards/visual/**'
       - 'ts/Dashboards/**'
       - 'ts/Data/**'
-      - 'ts/Grid/**'
 
 permissions:
   contents: read # to fetch code (actions/checkout)

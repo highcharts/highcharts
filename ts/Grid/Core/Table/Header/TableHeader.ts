@@ -208,17 +208,6 @@ class TableHeader {
 
 /* *
  *
- *  Class Namespace
- *
- * */
-
-namespace TableHeader {
-
-}
-
-
-/* *
- *
  *  Default Export
  *
  * */

@@ -29,6 +29,7 @@ import type TextInputRenderer from '../Renderers/TextInputRenderer';
 
 import CellContentPro from '../CellContentPro.js';
 import U from '../../../../Core/Utilities.js';
+import Globals from '../../../Core/Globals.js';
 
 const {
     defined
@@ -99,9 +100,10 @@ class TextInputContent extends CellContentPro implements EditModeContent {
 
         input.tabIndex = -1;
         input.name = cell.column.id + '-' + cell.row.id;
+        input.classList.add(Globals.getClassName('input'));
 
         if (options.attributes) {
-            Object.entries(options.attributes).forEach(([key, value]):void => {
+            Object.entries(options.attributes).forEach(([key, value]): void => {
                 input.setAttribute(key, value);
             });
         }
@@ -195,7 +197,7 @@ class TextInputContent extends CellContentPro implements EditModeContent {
             return;
         }
 
-        void this.cell.setValue((e.target as HTMLSelectElement).value, true);
+        void this.cell.editValue((e.target as HTMLSelectElement).value);
     };
 
     private readonly onKeyDown = (e: KeyboardEvent): void => {

@@ -15451,7 +15451,7 @@ import &#39;highcharts/modules/accessibility&#39;;
             <ul>
               <li>Added the possibility of setting toolbar visibility for individual components, closes <a href="https://github.com/highcharts/highcharts/issues/20907">#20907</a>.</li>
               <li>Removed column aliases from <code>DataTable</code>, API documentation, and affected samples. Closes <a href="https://github.com/highcharts/highcharts/issues/21485">#21485</a>.</li>
-              <li>Added methods (<a href="https://api.highcharts.com/dashboards/#classes/Data_DataTable.DataTable-1#getLocalRowIndex">getLocalRowIndex</a> &amp; <a href="https://api.highcharts.com/dashboards/#classes/Data_DataTable.DataTable-1#getOriginalRowIndex">getOriginalRowIndex</a>) for referencing between rows of original and modified data tables.</li>
+              <li>Added methods (<a href="https://api.highcharts.com/dashboards/#classes/Data_DataTable.DataTable#getLocalRowIndex">getLocalRowIndex</a> &amp; <a href="https://api.highcharts.com/dashboards/#classes/Data_DataTable.DataTable#getOriginalRowIndex">getOriginalRowIndex</a>) for referencing between rows of original and modified data tables.</li>
               <li>Changed the <code>layout</code> element in the Add component sidebar to a <code>row</code> and improved the look when added.</li>
               <li>Added an <code>HTML</code> text field in the sidebar to control and edit the content of the HTML component.</li>
               <li>Added support for the <a href="https://api.highcharts.com/dashboards/data.beforeParse">beforeParse</a> callback in the <code>GoogleSheetsConnector</code> options. Closes <a href="https://github.com/highcharts/highcharts/issues/21235">#21235</a>.</li>
@@ -15921,6 +15921,40 @@ import &#39;highcharts/modules/accessibility&#39;;
             <h2 id="highcharts-grid">Highcharts Grid</h2>
           </div>
           <div class="changelog-container">
+            <h3 class="release-header">
+              <a id="highcharts-grid-v2.1.0"></a>
+              <span>Highcharts Grid v2.1.0 (2025-12-09)</span>
+              <a class="release-header-hashtag" href="#highcharts-grid-v2.1.0">#</a>
+              <span class="download-link" ><a href="https://code.highcharts.com/grid/zips/Highcharts-Grid-2.1.0.zip" title="Download the zip archive for Highcharts Grid v2.1.0"><i class="fas fa-download"></i></a></span>
+            </h3>
+            <ul>
+              <li><strong>Grid:</strong> Optimized <code>grid.update()</code> so that it now re-renders only the relevant elements in the DOM for the options being changed, rather than the entire container.</li>
+              <li><strong>Grid:</strong> Refactored and cleaned up CSS for greater consistency across elements.</li>
+              <li><strong>Grid:</strong> <code>@highcharts/grid-lite</code> and <code>@highcharts/grid-pro</code> npm libraries now export ES modules for client-side bundling on the default import path, instead of UMD bundles.</li>
+              <li><strong>Grid:</strong> Added column hover trigger on header cell mouseover.</li>
+            </ul>
+            <div class="accordion card-group">
+              <div class="card">
+
+                <div id="hGrid-heading-2-1-0-bug-fixes" class="card-header">
+                  <h4 class="card-title" aria-label="Bug Fixes Highcharts-grid v2.1.0">
+                    <button aria-label="Bug Fixes Highcharts-grid v2.1.0" aria-expanded="false" class="btn btn-link collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#bug-fixes-hGrid-2-1-0"><span> Bug fixes </span></button>
+                  </h4>
+                </div>
+                <div id="bug-fixes-hGrid-2-1-0" class="collapse" aria-labelledby="hGrid-heading-2-1-0-bug-fixes" data-parent=".accordion">
+                  <div class="card-body">
+                    <ul>
+                      <li><strong>Grid:</strong> Fixed export methods so they respect column <code>dataType</code> settings.</li>
+                      <li><strong>Grid:</strong> Fixed, the <code>insert</code> argument in the <code>dataTable.setRow()</code> method was not respected.</li>
+                      <li><strong>Grid:</strong> Fixed, the custom cell <code>className</code> was missing when the cell <code>formatter</code> returned null.</li>
+                      <li><strong>Grid Pro:</strong> Fixed sparkline cell update when previous value was <code>null</code>.</li>
+                      <li><strong>Grid Pro:</strong> Fixed issue where the <code>afterEdit</code> event was not triggered when editing cells using view renderer content.</li>
+                    </ul>
+
+                  </div>
+                </div>
+              </div>
+            </div>
             <h3 class="release-header">
               <a id="highcharts-grid-v2.0.1"></a>
               <span>Highcharts Grid v2.0.1 (2025-11-03)</span>

@@ -258,17 +258,6 @@ class HeaderRow extends Row {
 
 /* *
  *
- *  Class Namespace
- *
- * */
-
-namespace HeaderRow {
-
-}
-
-
-/* *
- *
  *  Default Export
  *
  * */

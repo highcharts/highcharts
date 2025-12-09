@@ -24,69 +24,83 @@ const {
     addEvent,
     pushUnique
 } = U;
-namespace CreditsLiteComposition {
 
-    let creditsObserver: MutationObserver;
 
-    /**
-     * Extends the grid classes with credits.
-     *
-     * @param GridClass
-     * The class to extend.
-     *
-     * @param TableClass
-     * The class to extend.
-     *
-     */
-    export function compose(
-        GridClass: typeof Grid,
-        TableClass: typeof Table
-    ): void {
-        if (!pushUnique(Globals.composed, 'CreditsLite')) {
-            return;
-        }
+/* *
+ *
+ *  Definitions
+ *
+ * */
 
-        addEvent(GridClass, 'afterRenderViewport', initCredits);
-        addEvent(TableClass, 'afterDestroy', destroyCredits);
+let creditsObserver: MutationObserver | undefined;
+
+/**
+ * Extends the grid classes with credits.
+ *
+ * @param GridClass
+ * The class to extend.
+ *
+ * @param TableClass
+ * The class to extend.
+ *
+ */
+export function compose(
+    GridClass: typeof Grid,
+    TableClass: typeof Table
+): void {
+    if (!pushUnique(Globals.composed, 'CreditsLite')) {
+        return;
     }
 
-    /**
-     * Callback function called before table initialization.
-     */
-    function initCredits(this: Grid): Credits {
-        const credits = new Credits(this);
-        const containerStyle = credits.containerElement.style;
-
-        // Apply static styles
-        containerStyle.setProperty('display', 'flex', 'important');
-        containerStyle.setProperty('padding', '5px 5px 0px 5px', 'important');
-        containerStyle.setProperty(
-            'flex-direction', 'row-reverse', 'important'
-        );
-
-        // Create an observer that check credits modifications
-        creditsObserver = new MutationObserver((): void => {
-            if (!credits.containerElement.querySelector('.hcg-credits')) {
-                credits.render();
-            }
-        });
-
-        // Start observing the credits
-        creditsObserver.observe(credits.containerElement, {
-            attributes: true,
-            childList: true,
-            subtree: true
-        });
-
-        return credits;
-    }
-
-    /**
-     * Callback function called after credits destroy.
-     */
-    function destroyCredits(this: Table): void {
-        creditsObserver.disconnect();
-    }
+    addEvent(GridClass, 'afterRenderViewport', initCredits);
+    addEvent(TableClass, 'afterDestroy', destroyCredits);
 }
 
-export default CreditsLiteComposition;
+/**
+ * Callback function called before table initialization.
+ */
+function initCredits(this: Grid): Credits {
+    const credits = new Credits(this);
+    const containerStyle = credits.containerElement.style;
+
+    // Apply static styles
+    containerStyle.setProperty('display', 'flex', 'important');
+    containerStyle.setProperty('padding', '5px 5px 0px 5px', 'important');
+    containerStyle.setProperty(
+        'flex-direction', 'row-reverse', 'important'
+    );
+
+    // Create an observer that check credits modifications
+    creditsObserver = new MutationObserver((): void => {
+        if (!credits.containerElement.querySelector('.hcg-credits')) {
+            credits.render();
+        }
+    });
+
+    // Start observing the credits
+    creditsObserver.observe(credits.containerElement, {
+        attributes: true,
+        childList: true,
+        subtree: true
+    });
+
+    return credits;
+}
+
+/**
+ * Callback function called after credits destroy.
+ */
+function destroyCredits(this: Table): void {
+    creditsObserver?.disconnect();
+}
+
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default {
+    compose
+};

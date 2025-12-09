@@ -77,7 +77,7 @@ class FilterToolbarButton extends ToolbarButton {
      *
      * */
 
-    protected override refreshState(): void {
+    public override refreshState(): void {
         const column = this.toolbar?.column;
         if (column) {
             this.setActive(StateHelpers.isFiltered(column));

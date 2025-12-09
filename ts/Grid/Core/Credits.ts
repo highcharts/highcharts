@@ -185,17 +185,6 @@ class Credits {
 
 /* *
  *
- *  Class Namespace
- *
- * */
-
-namespace Credits {
-
-}
-
-
-/* *
- *
  *  Default Export
  *
  * */

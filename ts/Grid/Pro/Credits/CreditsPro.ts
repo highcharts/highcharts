@@ -141,16 +141,6 @@ class CreditsPro extends Credits {
 
 /* *
  *
- *  Class Namespace
- *
- * */
-
-namespace CreditsPro {
-}
-
-
-/* *
- *
  *  Default Export
  *
  * */

@@ -24,6 +24,7 @@
  * */
 
 import type { GroupedHeaderOptions } from '../../Options';
+import type { NoIdColumnOptions } from '../Column';
 
 import Cell from '../Cell.js';
 import Column from '../Column';
@@ -78,7 +79,7 @@ class HeaderCell extends Cell {
      * the column options.
      * @internal
      */
-    public readonly superColumnOptions: Partial<Column.Options> = {};
+    public readonly superColumnOptions: Partial<NoIdColumnOptions> = {};
 
     /**
      * List of columns that are subordinated to the header cell.

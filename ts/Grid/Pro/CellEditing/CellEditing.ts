@@ -257,8 +257,7 @@ class CellEditing {
 
         this.containerElement = this.containerElement ||
             document.createElement('div');
-        this.containerElement.className =
-            CellEditing.classNames.cellEditingContainer;
+        this.containerElement.className = classNames.cellEditingContainer;
         this.editedCell?.htmlElement.appendChild(this.containerElement);
 
         this.editModeContent = cell.column.editModeRenderer?.render(
@@ -295,23 +294,19 @@ class CellEditing {
     }
 }
 
+
 /* *
  *
- *  Namespace
+ *  Declarations
  *
  * */
 
-
-namespace CellEditing {
-
-    /**
-     * The class names used by the CellEditing functionality.
-     */
-    export const classNames = {
-        cellEditingContainer: Globals.classNamePrefix + 'cell-editing-container'
-    } as const;
-
-}
+/**
+ * The class names used by the CellEditing functionality.
+ */
+export const classNames = {
+    cellEditingContainer: Globals.classNamePrefix + 'cell-editing-container'
+} as const;
 
 
 /* *

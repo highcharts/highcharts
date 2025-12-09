@@ -21,12 +21,15 @@
  *
  * */
 
-import type DateInputRendererBase from '../Renderers/DateInputRendererBase';
+import type {
+    DateInputRendererBaseOptions
+} from '../Renderers/DateInputRendererBase';
 import type { EditModeContent } from '../../CellEditing/CellEditMode';
 import type TableCell from '../../../Core/Table/Body/TableCell';
 
 import CellContentPro from '../CellContentPro.js';
 import CellRenderer from '../CellRenderer';
+import Globals from '../../../Core/Globals.js';
 
 
 /* *
@@ -54,7 +57,7 @@ abstract class DateInputContentBase extends CellContentPro implements EditModeCo
     /**
      * Options of the renderer.
      */
-    public options: DateInputRendererBase.Options;
+    public options: DateInputRendererBaseOptions;
 
     /**
      * The HTML input element representing the date input.
@@ -74,7 +77,7 @@ abstract class DateInputContentBase extends CellContentPro implements EditModeCo
         parentElement?: HTMLElement
     ) {
         super(cell, renderer);
-        this.options = renderer.options as DateInputRendererBase.Options;
+        this.options = renderer.options as DateInputRendererBaseOptions;
         this.input = this.add(parentElement);
     }
 
@@ -99,6 +102,7 @@ abstract class DateInputContentBase extends CellContentPro implements EditModeCo
         input.tabIndex = -1;
         input.type = this.getInputType();
         input.name = cell.column.id + '-' + cell.row.id;
+        input.classList.add(Globals.getClassName('input'));
 
         if (options.attributes) {
             Object.entries(options.attributes).forEach(([key, value]): void => {
@@ -197,7 +201,7 @@ abstract class DateInputContentBase extends CellContentPro implements EditModeCo
 
         if (e.key === 'Enter') {
             this.cell.htmlElement.focus();
-            void this.cell.setValue(this.value, true);
+            void this.cell.editValue(this.value);
         }
     };
 
@@ -207,7 +211,7 @@ abstract class DateInputContentBase extends CellContentPro implements EditModeCo
             return;
         }
 
-        void this.cell.setValue(this.value, true);
+        void this.cell.editValue(this.value);
     };
 
     private readonly onCellKeyDown = (e: KeyboardEvent): void => {

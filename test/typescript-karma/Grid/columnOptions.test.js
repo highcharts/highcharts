@@ -1,6 +1,4 @@
-import '/base/code/grid/es-modules/masters/grid-pro.src.js';
-
-const Grid = window.Grid;
+import Grid from '/base/code/grid/es-modules/masters/grid-pro.src.js';
 
 const { test } = QUnit;
 

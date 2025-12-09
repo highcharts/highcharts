@@ -1,262 +1,28 @@
 @import url("https://code.highcharts.com/css/highcharts.css");
 
+:root,
+.highcharts-light {
+    --illo-green: #a7f3d0;
+    --illo-purple: #8791ff;
+    --illo-accent-teal: #6699a1;
+}
+
+.highcharts-dark {
+    --illo-green: #6ee7b7;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --illo-green: #6ee7b7;
+    }
+}
+
 html {
     overflow: hidden;
 }
 
 body {
-    margin: 0 !important;
-    font-size: 1rem;
-}
-
-/* BUTTONS OUTSIDE CHART */
-
-.main-container button,
-input,
-optgroup,
-select,
-textarea {
     margin: 0;
-    font-family: inherit;
-    font-size: inherit;
-    line-height: inherit;
-}
-
-.main-container .btn {
-    display: inline-block;
-    font-weight: 400;
-    line-height: 1.5;
-    color: #fff;
-    text-align: center;
-    text-decoration: none;
-    vertical-align: middle;
-    cursor: pointer;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    user-select: none;
-    background-color: transparent;
-    border: 1px solid transparent;
-    padding: 0.375rem 0.75rem;
-    font-size: 1rem;
-    border-radius: 0.25rem;
-}
-
-.main-container .modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 1055;
-    display: none;
-    width: 100%;
-    height: 100%;
-    overflow-x: hidden;
-    overflow-y: auto;
-    outline: 0;
-}
-
-.main-container .modal-dialog {
-    position: relative;
-    width: auto;
-    margin: 0.5rem;
-    pointer-events: none;
-}
-
-.main-container .fade {
-    transition: opacity 0.15s linear;
-    display: block;
-    visibility: visible;
-}
-
-.main-container .fade:not(.show) {
-    opacity: 0;
-    visibility: hidden;
-}
-
-.main-container .modal.fade .modal-dialog {
-    transition: transform 0.3s ease-out;
-    transform: translate(0, -50px);
-}
-
-.main-container .modal.show .modal-dialog {
-    transform: none;
-}
-
-.main-container .modal-body {
-    position: relative;
-    flex: 1 1 auto;
-    padding: 1rem;
-}
-
-.main-container .modal-content {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    pointer-events: auto;
-    background-color: #fff;
-    background-clip: padding-box;
-    border: 1px solid rgb(0 0 0 / 20%);
-    border-radius: 0.3rem;
-    outline: 0;
-}
-
-.main-container .modal-header {
-    display: flex;
-    flex-shrink: 0;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem;
-    border-bottom: 1px solid #dee2e6;
-    border-top-left-radius: calc(0.3rem - 1px);
-    border-top-right-radius: calc(0.3rem - 1px);
-}
-
-.main-container .modal-title {
-    margin-bottom: 0;
-    line-height: 1.5;
-    font-size: 1.2em;
-}
-
-.modal-footer .btn:first-child {
-    margin-right: 10px;
-}
-
-.main-container .btn-close {
-    box-sizing: content-box;
-    width: 1em;
-    height: 1em;
-    padding: 0.25em;
-    color: #000;
-    background: transparent url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000'%3e%3cpath d='M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z'/%3e%3c/svg%3e") center/1em auto no-repeat;
-    border: 0;
-    border-radius: 0.25rem;
-    opacity: 50%;
-}
-
-.main-container .modal-header .btn-close {
-    padding: 0.5rem;
-    margin: -0.5rem -0.5rem -0.5rem auto;
-    cursor: pointer;
-}
-
-.main-container .modal-footer {
-    display: flex;
-    flex-wrap: wrap;
-    flex-shrink: 0;
-    align-items: center;
-    justify-content: flex-end;
-    padding: 0.75rem;
-    border-top: 1px solid #dee2e6;
-    border-bottom-right-radius: calc(0.3rem - 1px);
-    border-bottom-left-radius: calc(0.3rem - 1px);
-}
-
-#modal-backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 1050;
-    width: 100vw;
-    height: 100vh;
-    background-color: #000;
-    visibility: hidden;
-}
-
-#modal-backdrop.show {
-    opacity: 50%;
-    visibility: visible;
-}
-
-.main-container .mb-3 {
-    margin-bottom: 1rem !important;
-}
-
-.main-container .form-label {
-    margin-bottom: 0.5rem;
-}
-
-.main-container .form-control {
-    display: block;
-    width: 90%;
-    padding: 0.375rem 0.75rem;
-    font-size: 1rem;
-    font-weight: 400;
-    line-height: 1.5;
-    color: #212529;
-    background-color: #fff;
-    background-clip: padding-box;
-    border: 1px solid #ced4da;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    border-radius: 0.25rem;
-    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-}
-
-.main-container .form-select {
-    display: block;
-    width: 100%;
-    padding: 0.375rem 2.25rem 0.375rem 0.75rem;
-    -moz-padding-start: calc(0.75rem - 3px);
-    font-size: 1rem;
-    font-weight: 400;
-    line-height: 1.5;
-    color: #212529;
-    background-color: #fff;
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
-    background-repeat: no-repeat;
-    background-position: right 0.75rem center;
-    background-size: 16px 12px;
-    border: 1px solid #ced4da;
-    border-radius: 0.25rem;
-    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-}
-
-.main-container #button-group {
-    width: 250px;
-    text-align: center;
-    margin-top: 10px;
-    opacity: 0;
-    transition: opacity 1s;
-}
-
-.main-container #button-group.on {
-    opacity: 1;
-}
-
-.main-container .btn {
-    background-color: #2f2b38;
-    border-color: #2f2b38;
-}
-
-.main-container .btn:hover {
-    background-color: #2f2b38;
-    border-color: #2f2b38;
-    opacity: 80%;
-}
-
-.main-container .btn.disabled,
-.main-container .btn:disabled {
-    color: #fff;
-    opacity: 40%;
-}
-
-.main-container .btn:focus,
-.main-container .btn-check:focus + .btn {
-    color: #fff;
-    background-color: #2f2b38;
-    border-color: #2f2b38;
-    box-shadow: 0 0 0 0.25rem rgb(49 132 253 / 50%);
-}
-
-.highcharts-tooltip.highcharts-color-0,
-.highcharts-tooltip.highcharts-color-1,
-.highcharts-tooltip.highcharts-color-2 {
-    fill: #f0f0f0;
-    stroke: #f0f0f0;
 }
 
 /* CHART */
@@ -291,8 +57,8 @@ textarea {
 
 .chart-container .highcharts-title,
 .chart-container .highcharts-subtitle {
-    fill: #fff;
-    stroke: #fff;
+    fill: var(--highcharts-neutral-color-100);
+    stroke: var(--highcharts-neutral-color-100);
     opacity: 1;
     font-size: 0.9rem;
     font-weight: 400;
@@ -308,18 +74,18 @@ textarea {
 }
 
 .chart-container .line {
-    color: #fff;
-    stroke: #fff;
+    color: var(--highcharts-neutral-color-10);
+    stroke: var(--highcharts-neutral-color-10);
     stroke-width: 1px;
 }
 
 .chart-container .highcharts-tick,
 .chart-container .highcharts-axis-line {
-    stroke: #ebebeb;
+    stroke: var(--highcharts-neutral-color-20);
 }
 
 .chart-container .highcharts-minor-grid-line {
-    stroke: #f2f2f2;
+    stroke: var(--highcharts-neutral-color-20);
     opacity: 20%;
     stroke-dasharray: 2px;
 }
@@ -330,18 +96,18 @@ textarea {
 }
 
 .chart-container .highcharts-point-connecting-path-start-marker {
-    fill: #fff;
+    fill: var(--highcharts-neutral-color-100);
 }
 
 .chart-container .highcharts-axis-labels {
-    fill: #fff;
+    fill: var(--highcharts-neutral-color-100);
     cursor: default;
     font-size: 0.7rem;
 }
 
 .chart-container .highcharts-data-label text,
 .chart-container text.highcharts-data-label {
-    fill: #fff;
+    fill: var(--highcharts-neutral-color-100);
     font-weight: 400;
 }
 
@@ -349,12 +115,13 @@ textarea {
 .chart-container .highcharts-color-0.highcharts-point-select,
 .chart-container .highcharts-point-select .highcharts-color-1,
 .chart-container .highcharts-point-select .highcharts-color-2 {
-    fill: #f0f0f0 !important;
+    fill: var(--highcharts-background-color) !important;
+    stroke-width: 2px !important;
 }
 
 .chart-container .highcharts-color-0 {
-    fill: #8087e8;
-    stroke: #fff;
+    fill: var(--illo-purple);
+    stroke: var(--illo-purple);
 }
 
 .chart-container .highcharts-point-connecting-path.highcharts-color-0,
@@ -365,12 +132,12 @@ textarea {
 
 .chart-container .highcharts-color-1 {
     fill: #e2a13f;
-    stroke: #fff;
+    stroke: #e2a13f;
 }
 
 .chart-container .highcharts-color-2 {
-    fill: #82d2a6;
-    stroke: #fff;
+    fill: var(--illo-green);
+    stroke: var(--illo-green);
 }
 
 .chart-container .highcharts-container {
@@ -388,12 +155,12 @@ textarea {
 }
 
 .chart-container .highcharts-background {
-    fill: #211836;
+    fill: var(--highcharts-neutral-color-3);
     transition: all 1s;
 }
 
 .chart-container .highcharts-background.on {
-    fill: #211836;
+    fill: var(--highcharts-neutral-color-3);
 }
 
 .chart-container .highcharts-grid-line {
@@ -408,7 +175,7 @@ textarea {
 
 .chart-container .highcharts-plot-band,
 .highcharts-pane {
-    fill: #30426b;
+    fill: var(--highcharts-highlight-color-10);
     fill-opacity: 1;
     z-index: 30;
 }
@@ -434,19 +201,18 @@ textarea {
 .highcharts-tooltip-container .highcharts-tooltip.tip .highcharts-label-box {
     stroke-width: 1;
     border: none;
-    stroke: #fff;
-    fill: #fff;
+    stroke: var(--highcharts-neutral-color-100);
+    fill: var(--highcharts-background-color);
     fill-opacity: 1;
-    filter: drop-shadow(0 8px 24px rgb(0 0 0 / 20%));
 }
 
 .chart-container .highcharts-data-label-box {
-    fill: #2f2b38;
+    fill: var(--highcharts-background-color);
     stroke-width: 0;
 }
 
 .chart-container .highcharts-tooltip text {
-    fill: #333;
+    fill: var(--highcharts-neutral-color-100);
 }
 
 .chart-container .highcharts-tooltip {
@@ -467,8 +233,13 @@ textarea {
     font-size: 1rem;
     aspect-ratio: 1 / 1;
     border-radius: 4px;
-    background-color: #2f2b38;
+    background-color: var(--highcharts-neutral-color-10);
 }
+
+/* #gantt {
+    width: 500px;
+    height: 500px;
+} */
 
 #gantt .hide {
     opacity: 0;
@@ -479,106 +250,18 @@ textarea {
 }
 
 #gantt .highcharts-plot-background {
-    fill: #45445d;
+    fill: var(--highcharts-background-color);
     stroke: transparent;
 }
 
 #gantt .cover {
-    fill: #46445d;
+    fill: var(--illo-accent-50);
     stroke: transparent;
 }
 
 #gantt .foreground {
-    fill: #201836;
+    fill: var(--highcharts-neutral-color-10);
     stroke: transparent;
-}
-
-#gantt .step-w,
-#gantt .pole {
-    fill: #fff;
-    stroke: transparent;
-}
-
-#gantt .step-p {
-    fill: #8087e8;
-    stroke: transparent;
-}
-
-#gantt .flag {
-    fill: transparent;
-    stroke: transparent;
-}
-
-#gantt .flag.show {
-    fill: #8bf2b6;
-    stroke: transparent;
-    transition: fill 1s 50ms;
-}
-
-#gantt .transparent {
-    fill: transparent;
-    stroke: transparent;
-}
-
-#gantt .green {
-    fill: #8bf2b6;
-    stroke: #8bf2b6;
-}
-
-#gantt .particle-2 {
-    transform-origin: center;
-    opacity: 0;
-    transform: translate(-10px, -30px) scale(0.2);
-    transition: all 1s;
-}
-
-#gantt .particle-2.grow {
-    transform: translate(-10px, -10px) scale(0.5);
-    opacity: 1;
-    transform-origin: center;
-}
-
-#gantt .particle-3 {
-    transform-origin: center;
-    opacity: 0;
-    transform: translate(0, -70px) scale(0.2);
-    transition: all 1s;
-}
-
-#gantt .particle-3.grow {
-    transform: translate(0, -40px) scale(0.6);
-    opacity: 1;
-    transform-origin: center;
-}
-
-#gantt .particle-5 {
-    transform-origin: center;
-    opacity: 0;
-    transform: translate(-20px, -68px) scale(0.2);
-    transition: all 1s;
-}
-
-#gantt .particle-5.grow {
-    transform: translate(-20px, -38px) scale(0.6);
-    opacity: 1;
-    transform-origin: center;
-}
-
-#gantt .particle-6 {
-    transform-origin: center;
-    opacity: 0;
-    transform: translate(-20px, -45px) scale(0.2);
-    transition: all 1s;
-}
-
-#gantt .particle-6.grow {
-    transform: translate(-20px, -15px) scale(0.6);
-    opacity: 1;
-    transform-origin: center;
-}
-
-#gantt #clip {
-    transform: scale(0.6);
 }
 
 #gantt .gantt-label {
@@ -588,7 +271,7 @@ textarea {
     position: absolute;
     left: 15px;
     top: -25px;
-    color: #fff;
+    color: var(--text-secondary);
 }
 
 #gantt .day-label {
@@ -596,148 +279,10 @@ textarea {
     top: -8px;
     text-align: center;
     background-color: transparent;
-    color: #fff;
+    color: var(--text-primary);
     font-size: 0.7rem;
 }
 
 .highcharts-tooltip-container {
     font-family: "IBM Plex Sans", sans-serif;
-}
-
-@media screen  and (min-width: 300px) {
-    /* #gantt {
-        width: 300px;
-        height: 300px;
-    } */
-
-    #gantt .particle-3.grow {
-        transform: translate(0, -50px) scale(0.6);
-    }
-}
-
-@media screen  and (min-width: 400px) {
-    /* #gantt {
-        width: 400px;
-        height: 400px;
-    } */
-
-    #gantt .particle-2 {
-        transform: translate(-10px, -60px) scale(0.2);
-    }
-
-    #gantt .particle-2.grow {
-        transform: translate(-10px, -30px) scale(0.5);
-    }
-
-    #gantt .particle-3 {
-        transform: translate(0, -80px) scale(0.2);
-    }
-
-    #gantt .particle-3.grow {
-        transform: translate(0, -60px) scale(0.6);
-    }
-
-    #gantt .particle-5 {
-        transform: translate(-20px, -88px) scale(0.2);
-    }
-
-    #gantt .particle-5.grow {
-        transform: translate(-20px, -58px) scale(0.6);
-    }
-
-    #gantt .particle-6 {
-        transform: translate(-20px, -55px) scale(0.2);
-    }
-
-    #gantt .particle-6.grow {
-        transform: translate(-20px, -35px) scale(0.6);
-    }
-}
-
-@media screen  and (min-width: 500px) {
-    /* #gantt {
-        width: 500px;
-        height: 500px;
-    } */
-
-    .main-container .form-control {
-        width: 95%;
-    }
-
-    .main-container .modal-dialog {
-        max-width: 500px;
-        margin: 1.75rem auto;
-    }
-
-    #gantt .highcharts-title {
-        font-size: 1.4em;
-    }
-
-    #gantt .highcharts-subtitle {
-        font-size: 1em;
-        opacity: 1;
-    }
-
-    .main-container #button-group {
-        width: 500px;
-    }
-
-    #gantt .particle-2 {
-        transform-origin: center;
-        opacity: 0;
-        transform: translate(-20px, -60px) scale(0.2);
-        transition: all 1s;
-    }
-
-    #gantt .particle-2.grow {
-        transform: none;
-        opacity: 1;
-    }
-
-    #gantt .particle-3 {
-        transform-origin: center;
-        opacity: 0;
-        transform: translate(10px, -150px) scale(0.2);
-        transition: all 1s;
-    }
-
-    #gantt .particle-3.grow {
-        transform: none;
-        opacity: 1;
-    }
-
-    #gantt .particle-5 {
-        transform-origin: center;
-        opacity: 0;
-        transform: translate(-40px, -150px) scale(0.2);
-        transition: all 1s;
-    }
-
-    #gantt .particle-5.grow {
-        transform: none;
-        opacity: 1;
-    }
-
-    #gantt .particle-6 {
-        transform-origin: center;
-        opacity: 0;
-        transform: translate(-40px, -100px) scale(0.2);
-        transition: all 1s;
-    }
-
-    #gantt .particle-6.grow {
-        transform: none;
-        opacity: 1;
-    }
-
-    #gantt .gantt-label {
-        width: 100px;
-        padding: 2px;
-        font-weight: bold;
-        font-size: 1.2em;
-        position: absolute;
-        left: 20px;
-        top: -50px;
-        color: #fff;
-    }
 }

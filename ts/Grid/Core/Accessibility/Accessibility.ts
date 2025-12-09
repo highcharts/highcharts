@@ -190,7 +190,7 @@ class Accessibility {
      */
     public setColumnSortState(
         thElement: HTMLElement,
-        state: Accessibility.AriaSortState
+        state: AriaSortState
     ): void {
         thElement?.setAttribute('aria-sort', state);
     }
@@ -206,7 +206,7 @@ class Accessibility {
      * Whether the filtering was applied or cleared.
      */
     public userFilteredColumn(
-        filteredColumnValues: Accessibility.FilteredColumnValues,
+        filteredColumnValues: FilteredColumnValues,
         filteringApplied: boolean
     ): void {
         const { columnId, condition, value, rowsCount } = filteredColumnValues;
@@ -331,24 +331,22 @@ class Accessibility {
 
 /* *
  *
- *  Class Namespace
+ *  Declarations
  *
  * */
 
-namespace Accessibility {
-    /**
-     * The possible states of the aria-sort attribute.
-     */
-    export type AriaSortState = 'ascending' | 'descending' | 'none';
+/**
+ * The possible states of the aria-sort attribute.
+ */
+export type AriaSortState = 'ascending' | 'descending' | 'none';
 
-    /**
-     * The values of the filtered column.
-     */
-    export type FilteredColumnValues = FilteringCondition & {
-        columnId: string;
-        rowsCount: number;
-    };
-}
+/**
+ * The values of the filtered column.
+ */
+export type FilteredColumnValues = FilteringCondition & {
+    columnId: string;
+    rowsCount: number;
+};
 
 
 /* *

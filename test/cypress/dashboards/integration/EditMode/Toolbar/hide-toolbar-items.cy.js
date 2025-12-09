@@ -29,7 +29,7 @@ describe('Toolbar when dashboard declared with custom HTML.', () => {
         cy.get('.highcharts-dashboards-edit-menu.highcharts-dashboards-edit-toolbar-cell').should('be.visible');
         cy.get('.highcharts-dashboards-edit-menu.highcharts-dashboards-edit-toolbar-cell')
             .children(':visible')
-            .should('have.length', 3);
+            .should('have.length', 4);
         cy.get('.highcharts-dashboards-edit-menu.highcharts-dashboards-edit-toolbar-row').should('be.visible');
         cy.get('.highcharts-dashboards-edit-menu.highcharts-dashboards-edit-toolbar-row')
             .children(':visible')
