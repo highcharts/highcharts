@@ -23,22 +23,31 @@ const chart1desc = `
 
 // Stacked column
 const chart2desc = `
-    <p>Tokyo leads in both Espresso consumption and overall total.</p>
+    <p>
+      The chart compares how often four accessibility features are provided
+      for video content across the sectors: Government, Education,
+      Entertainment and Corporate.
+    </p>
+    <p>
+      Government and education sectors provide captions and transcripts
+      more often than entertainment and corporate, while audio description
+      and sign language remain rare in every sector, with only modestly
+      higher levels in entertainment and government.
+    </p>
     <ul>
-        <li>X-axis: Sydney, Berlin, New York, Tokyo</li>
-        <li>Y-axis: Cups of Coffee, range 0–400</li>
-        <li>Highest value: 370 total cups in Tokyo</li>
-        <li>Lowest value: 260 total cups in Berlin</li>
+        <li>X-axis: Sector (Government, Education, Entertainment, 
+        Corporate)</li>
+        <li>Y-axis: Share of video content that provides each feature (%)</li>
+        <li>Most common feature in all sectors: Captions; rarest everywhere: 
+        Sign language</li>
     </ul>
 `;
 
 const chart2visualdesc = `
     <p>Four vertical bars side by side. Each bar is stacked in
-    colored layers, like a cake. The layers show coffee types,
-    and each bar represents an office to show overall coffee
-    consumption.</p>
+    colored layers, like a cake. The layers show sectors,
+    and each bar represents an sector to show video accessibility features.</p>
 `;
-
 
 // Big heatmap
 const chart3desc = `
@@ -225,7 +234,7 @@ const HC_CONFIGS = {
     },
 
 
-    chart2: { // Stacked column
+    chart2: { // Stacked column – Video accessibility features by sector
         credits: {
             enabled: false
         },
@@ -239,74 +248,99 @@ const HC_CONFIGS = {
         custom: {
             autoDesc: chart2desc,
             visualDesc: chart2visualdesc,
-            hasDataTable: true,  // Enable data table button
+            hasDataTable: true,
             tableConfig: {
                 columnHeaderFormatter: function (item, key) {
                     if (key === 'x') {
-                        return 'Office Location';
+                        return 'Sector';
                     }
                     if (key === 'y') {
-                        return item.name + ' (Cups)';
+                        return item.name + ' (% of video content)';
                     }
-                    return item.name || 'Coffee Type';
+                    return item.name || 'Accessibility feature';
                 }
             }
         },
+
         chart: {
             type: 'column'
         },
+
         title: {
-            text: 'Coffee Consumption by Office',
+            text: 'Video Accessibility Features by Sector',
             align: 'left'
         },
+
         xAxis: {
-            categories: ['Sydney', 'Berlin', 'New York', 'Tokyo']
+            categories: [
+                'Government',
+                'Education',
+                'Entertainment',
+                'Corporate'
+            ]
         },
+
         yAxis: {
             min: 0,
+            max: 200, // enough room for stacked totals
             title: {
-                text: 'Cups of Coffee'
+                text: '% of video content with each feature'
             },
             stackLabels: {
-                enabled: true
+                enabled: true,
+                formatter: function () {
+                    return this.total.toFixed(0) + '%';
+                }
             }
         },
+
         tooltip: {
             headerFormat: '{category}<br/>',
             pointFormat:
-                '{series.name}: {point.y}<br/>Total: {point.stackTotal}'
+            '{series.name}: {point.y}%<br/>' +
+            'Sum of shown features: {point.stackTotal}%<br/>' +
+            '<span style="font-size: 11px">(A single video can have multiple ' +
+            'features, so totals can exceed 100%.)</span>'
         },
+
         plotOptions: {
             column: {
                 stacking: 'normal',
                 dataLabels: {
-                    enabled: true
+                    enabled: true,
+                    format: '{point.y}%',
+                    style: {
+                        textOutline: 'none'
+                    }
                 }
             }
         },
+
         series: [
             {
-                name: 'Espresso',
-                data: [120, 90, 80, 160],
+                name: 'Captions',
+                data: [85, 70, 60, 50],
                 color: '#014CE5'
             },
             {
-                name: 'Latte',
-                data: [100, 70, 60, 90],
+                name: 'Transcripts',
+                data: [60, 55, 35, 30],
                 color: '#10B981'
             },
             {
-                name: 'Cappuccino',
-                data: [80, 60, 75, 50],
+                name: 'Audio descriptions',
+                data: [25, 15, 40, 10],
                 color: '#EAB308'
             },
             {
-                name: 'Americano',
-                data: [60, 40, 55, 70],
+                name: 'Sign language',
+                data: [10, 5, 2, 1],
                 color: '#EA293C'
             }
         ]
     },
+
+
     chart3: { // Big heatmap
         credits: {
             enabled: false
@@ -494,7 +528,6 @@ const HC_CONFIGS = {
             pivot: { backgroundColor: 'gray', radius: 6 }
         }]
     },
-
     chart5: { // Bubble
         credits: {
             enabled: false
@@ -948,7 +981,6 @@ const HC_CONFIGS = {
             }
         }
     }
-
 };
 
 
@@ -2051,8 +2083,10 @@ function basicSummary(chart) {
         })(),
 
         () => hasType(chart, 'column') && (() => `Bar chart showing 4 series
-        stacked on top of each other per bar: Espresso, Latte, Cappuccino, 
-        and Americano.`)(),
+        stacked on top of each other per bar. One bar for each sector. 
+        Each sector consists of Captions, Transcripts, Audio descriptions 
+        and Sign language.`)(),
+
 
         // Heatmap / tilemap (grid)
         () => (hasType(chart, 'heatmap') ||
