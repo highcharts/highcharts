@@ -1,0 +1,77 @@
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/grid-pro.js"></script>
+
+
+
+
+<div class="demo">
+    <label>
+        <input type="checkbox" id="hcg-sync-toggle">
+        Enable sync hover states
+    </label>
+    <div id="table_0" class="table-wrapper"></div>
+    <div id="table_1" class="table-wrapper"></div>
+    <div id="table_2" class="table-wrapper"></div>
+    <div id="table_3" class="table-wrapper"></div>
+</div>
+
+
+
+<script>
+    (function () {
+        const ROW_CLASS = 'hcg-synced-row';
+        const COL_CLASS = 'hcg-synced-column';
+        const toggle = () => document.getElementById('hcg-sync-toggle')?.checked !== false;
+
+        function clearSyncClasses() {
+            document.querySelectorAll('tr.' + ROW_CLASS).forEach(r => r.classList.remove(ROW_CLASS));
+            document.querySelectorAll('td.' + COL_CLASS + ', th.' + COL_CLASS).forEach(c => c.classList.remove(COL_CLASS));
+        }
+
+        function applySyncFromCell(cell) {
+            if (!toggle()) return; // sync disabled
+
+            const row = cell.closest('tr');
+            if (!row) return;
+
+            const sourceTable = row.closest('table');
+            if (!sourceTable) return;
+
+            const rowId = row.getAttribute('data-row-id');
+            const colId = cell.getAttribute('data-column-id');
+
+            if (!rowId && !colId) return;
+
+            clearSyncClasses();
+
+            document.querySelectorAll('table').forEach(function (tbl) {
+                if (tbl === sourceTable) return;
+
+                if (rowId) {
+                    tbl.querySelectorAll('tr[data-row-id="' + rowId + '"]').forEach(r => r.classList.add(ROW_CLASS));
+                }
+
+                if (colId) {
+                    tbl.querySelectorAll(
+                        'td[data-column-id="' + colId + '"], th[data-column-id="' + colId + '"]'
+                    ).forEach(c => c.classList.add(COL_CLASS));
+                }
+            });
+        }
+
+        document.addEventListener('mouseover', function (event) {
+            const td = event.target.closest('td[data-column-id]');
+            if (!td || !td.closest('table')) return;
+            applySyncFromCell(td);
+        });
+
+        document.addEventListener('mouseout', function (event) {
+            const fromTd = event.target.closest('td[data-column-id]');
+            if (!fromTd) return;
+
+            const toEl = event.relatedTarget;
+            if (toEl && fromTd.contains(toEl)) return;
+
+            clearSyncClasses();
+        });
+    })();
+</script>

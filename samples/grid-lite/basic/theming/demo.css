@@ -1,0 +1,72 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
+
+:root,
+.highcharts-light {
+    --code-background: #f7f7f7;
+    --code-border: #e1e1e1;
+}
+
+.demo {
+    padding: 8px 12px;
+}
+
+.hcg-description {
+    line-height: 1.5em;
+}
+
+label {
+    display: block;
+}
+
+.table-wrapper {
+    margin-top: 50px;
+    background: #fcfcfc;
+    border: 1px solid #e8e8e8;
+    border-radius: 12px;
+    padding: 12px;
+}
+
+.highcharts-light .hcg-description code {
+    font-family: Consolas, "courier new", monospace;
+    line-height: 1em;
+    background: var(--code-background);
+    border: 1px solid var(--code-border);
+    color: var(--highcharts-neutral-color-100);
+    padding: 2px 4px;
+    border-radius: 5px;
+    display: inline-block;
+}
+
+.highcharts-light .theme-more-hover-states,
+.theme-more-hover-states {
+    --hcg-hover-opacity: 50%;
+
+    /* --hcg-column-hover-header-background: green;
+    --hcg-header-hover-background: yellow;
+    --hcg-cell-hover-background: yellow;
+    --hcg-column-hover-header-opacity: 20%;
+    --hcg-cell-hover-opacity: 20%;
+    --hcg-cell-sync-opacity: 50%;
+    --hcg-column-hover-background: blue; */
+}
+
+.theme-sync-opacity {
+    --hcg-sync-opacity: 50%;
+}
+
+.my-theme-2 {
+    --hcg-color: #4f4f4f;
+    --hcg-padding: 15px;
+    --hcg-border-width: 1px;
+    --hcg-row-even-background: #f5f5f5;
+    --hcg-row-hover-background: blue;
+    --hcg-column-hover-background: blue;
+    --hcg-cell-hover-background: blue;
+    --hcg-cell-hover-color: white;
+    --hcg-hover-opacity: 5%;
+    --hcg-cell-hover-opacity: 50%;
+    --hcg-sync-opacity: 50%;
+    --hcg-cell-sync-color: black;
+    --hcg-column-sync-header-color: red;
+    --hcg-column-hover-header-color: green;
+}
