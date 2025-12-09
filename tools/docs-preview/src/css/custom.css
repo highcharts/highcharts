@@ -1,5 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap");
 @import url("highsoft-design-tokens/dist/css/tokens.css");
+@import url("./highsoft-ui-variables.css");
 
 :root {
     color-scheme: light;
