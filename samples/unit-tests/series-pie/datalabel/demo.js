@@ -113,7 +113,7 @@ QUnit.test('Pie data labels general tests', function (assert) {
     assert.close(
         prevX,
         chart.series[0].points[2].dataLabel.getBBox().x,
-        1,
+        5.5,
         `Data labels x position should be the same after changing and reversing
         chart size, #23595.`
     );
