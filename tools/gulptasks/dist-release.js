@@ -171,7 +171,6 @@ async function removeFilesInFolder(folder, exceptions) {
  * To replace with
  * @param {Array<string>} files The files to update.
  * @param {string} [productName] The product name.
- * Files which should be updated.
  */
 function updateJSONFiles(version, files, productName) {
     log.message('Updating bower.json and package.json for ' + productName + '...');
