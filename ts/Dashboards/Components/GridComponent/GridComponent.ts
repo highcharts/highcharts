@@ -135,7 +135,7 @@ class GridComponent extends Component {
                 }, false);
             }
 
-            this.grid.renderViewport();
+            await this.grid.redraw();
         }
 
         this.emit({ type: 'afterUpdate' });
