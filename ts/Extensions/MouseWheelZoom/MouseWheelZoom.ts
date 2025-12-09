@@ -1,8 +1,10 @@
 /* *
  *
- *  (c) 2023 Torstein Honsi, Askel Eirik Johansson
+ *  (c) 2023 Highsoft AS
+ *  Author: Torstein Honsi, Askel Eirik Johansson
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *

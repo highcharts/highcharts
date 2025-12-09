@@ -4,7 +4,8 @@
  *
  *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
  *  Dynamic light/dark theme based on CSS variables
  *

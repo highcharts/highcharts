@@ -4,7 +4,8 @@
  *
  *  Author: Øystein Moseng
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
  *  Accessible high-contrast theme for Highcharts. Specifically tailored
  *  towards 3:1 contrast against white/off-white backgrounds. Neighboring
