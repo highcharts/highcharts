@@ -60,7 +60,7 @@ export interface NumberFormatterCallbackFunction {
         decimals: number,
         decimalPoint?: string,
         thousandsSep?: string,
-        ctx?: Chart|Object|void
+        ctx?: Chart|object|void
     ): string;
 }
 
