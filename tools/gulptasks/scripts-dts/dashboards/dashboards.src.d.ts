@@ -6,6 +6,7 @@
 
 import Board from "./es-modules/Dashboards/Board";
 import Globals from "./es-modules/Dashboards/Globals";
+import Defaults from "./es-modules/Dashboards/Defaults";
 import Utilities from "./es-modules/Dashboards/Utilities";
 
 import "./es-modules/Dashboards/Components/HTMLComponent/HTMLComponent";
@@ -38,10 +39,12 @@ export { default as DataTable } from "./es-modules/Data/DataTable";
 export const addEvent: typeof Utilities.addEvent;
 export const board: typeof Board.board;
 export const boards: typeof Globals.boards;
+export const defaultOptions: typeof Defaults.defaultOptions;
 export const error: typeof Utilities.error;
 export const fireEvent: typeof Utilities.fireEvent;
 export const merge: typeof Utilities.merge;
 export const removeEvent: typeof Utilities.removeEvent;
+export const setOptions: typeof Defaults.setOptions;
 export const uniqueKey: typeof Utilities.uniqueKey;
 export const win: typeof Globals.win;
 

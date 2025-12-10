@@ -396,7 +396,7 @@ class RangeSelector {
                 xAxis.options.min = baseXAxisOptions.min;
                 axisRangeUpdateEvent(); // Remove event
             });
-        } else if (isNumber(newMin) && isNumber(newMax)) {
+        } else if (isNumber(newMin) || isNumber(newMax)) {
             // Existing axis object. Set extremes after render time.
             baseAxis.setExtremes(
                 newMin,

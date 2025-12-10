@@ -682,6 +682,7 @@ class ColumnSeries extends Series {
             p2o = (this as any).pointAttrToOptions || {},
             strokeOption = p2o.stroke || 'borderColor',
             strokeWidthOption = p2o['stroke-width'] || 'borderWidth';
+
         let stateOptions: SeriesStateHoverOptions,
             zone,
             brightness,

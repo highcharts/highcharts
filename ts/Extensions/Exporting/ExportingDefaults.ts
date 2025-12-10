@@ -200,6 +200,11 @@ const exporting: ExportingOptions = {
      * [svg2pdf.js](https://github.com/yWorks/svg2pdf.js), required for client
      * side export in certain browsers.
      *
+     * Note: Highcharts cannot take responsibility for the security of any
+     * external libraries (including [optional dependencies](https://www.highcharts.com/docs/getting-started/optional-dependencies))
+     * loaded through `exporting.libURL`. These libraries are not licensed or
+     * warrantied under the Highcharts license.
+     *
      * @type      {string}
      * @default   https://code.highcharts.com/{version}/lib
      * @since     5.0.0

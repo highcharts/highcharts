@@ -187,7 +187,7 @@ class NumberInputContent extends CellContentPro implements EditModeContent {
             return;
         }
 
-        void this.cell.setValue(this.value, true);
+        void this.cell.editValue(this.value);
     };
 
     private readonly onKeyDown = (e: KeyboardEvent): void => {

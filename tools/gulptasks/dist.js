@@ -55,7 +55,11 @@ async function runDashboardsAll() {
 
     for (const { product, command, env, cleanupDist } of steps) {
         const start = LogLib.starting(`${product} build`);
-        await ProcessLib.exec(`npx gulp ${command} --product ${product}`, { env });
+        const skipFlag = cleanupDist ? '--skip-dist-compress' : '';
+        await ProcessLib.exec(
+            `npx gulp ${command} --product ${product} ${skipFlag}`,
+            { env }
+        );
         LogLib.finished(`${product} build`, start);
 
         // Remove dist artifacts for HC and Grid, keep only for Dashboards
@@ -73,7 +77,7 @@ async function runDashboardsAll() {
 
 function dist(callback) {
     const argv = require('yargs').argv;
-    if (argv.dashboardsAll) {
+    if (argv.withDeps) {
         return runDashboardsAll();
     }
     const product = argv.product || 'Highcharts';
@@ -106,7 +110,11 @@ function dist(callback) {
         default:
     }
 
-    tasks.push('lint-dts', 'dist-compress');
+    tasks.push('lint-dts');
+
+    if (!argv.skipDistCompress) {
+        tasks.push('dist-compress');
+    }
 
     return Gulp.series(tasks)(callback);
 }
@@ -114,6 +122,7 @@ function dist(callback) {
 dist.description = 'Builds distribution files for the specified product.';
 dist.flags = {
     '--product': 'Product name. Available products: Highcharts, Grid, Dashboards. Defaults to Highcharts.',
-    '--dashboards-all': 'Builds Highcharts and Grid before Dashboards, keeping their code outputs for Dashboards testing.'
+    '--with-deps': 'Builds Highcharts and Grid before Dashboards, keeping their code outputs for Dashboards testing.',
+    '--skip-dist-compress': 'Skip zip/gzip creation (used by --with-deps to avoid extra archives).'
 };
 Gulp.task('dist', dist);

@@ -124,12 +124,11 @@
     justify-content: center;
 }
 
-.hcg-cell-editing-container:has(input[type="checkbox"]) {
+.hcg-cell-editing-container:has(.hcg-input[type="checkbox"]) {
     padding: var(--ig-padding);
 }
 
-.hcg-table tbody td.hcg-edited-cell input:not([type="checkbox"]),
-.hcg-table tbody td.hcg-edited-cell select {
+.hcg-table tbody td.hcg-edited-cell .hcg-input:not([type="checkbox"]) {
     border-width: 0;
     position: absolute;
     top: 0;
@@ -145,15 +144,14 @@
     max-height: unset;
     height: unset;
     border-radius: unset;
-    line-height: inherit;
+    line-height: 1.2em;
 }
 
 .hcg-table tbody td.hcg-edited-cell select {
     appearance: none;
 }
 
-.hcg-table tbody td.hcg-edited-cell-error input,
-.hcg-table tbody td.hcg-edited-cell-error select {
+.hcg-table tbody td.hcg-edited-cell-error .hcg-input {
     color: var(--ig-color);
     box-shadow: inset 0 0 0 var(--ig-focus-ring-width) var(--ig-negative-border-color) !important;
     background-color: var(--ig-negative-background) !important;

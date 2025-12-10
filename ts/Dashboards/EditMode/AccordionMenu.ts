@@ -317,6 +317,7 @@ class AccordionMenu {
         }
 
         const renderFunction = EditRenderer.getRendererFunction(options.type);
+        const lang = (component.board?.editMode || EditGlobals).lang;
 
         if (!renderFunction) {
             return;
@@ -327,6 +328,7 @@ class AccordionMenu {
             iconsURLPrefix: this.iconsURLPrefix,
             value: component.getEditableOptionValue(options.propertyPath),
             enabledOnOffLabels: options.type === 'toggle',
+            lang,
             onchange: (
                 value: boolean | string | number
             ): void => this.updateOptions(options.propertyPath || [], value)
