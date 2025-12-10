@@ -1403,7 +1403,6 @@ class SVGElement implements SVGElementBase {
     public getBBox(reload?: boolean, rot?: number): BBoxObject {
         const wrapper = this,
             {
-                alignValue,
                 element,
                 renderer,
                 styles,
@@ -1420,40 +1419,21 @@ class SVGElement implements SVGElementBase {
                 SVGElement.prototype.getStyle.call(element, 'font-size')
             ) : (
                 styles.fontSize
-            );
+            ),
+            cacheKey = this.getBBoxCacheKey([
+                renderer.rootFontSize,
+                this.textWidth, // #7874, also useHTML
+                this.alignValue,
+                styles.fontWeight, // #12163
+                styles.lineClamp,
+                styles.textOverflow, // #5968
+                fontSize,
+                rotation
+            ]);
 
         let bBox: BBoxObject|undefined,
             height,
-            toggleTextShadowShim,
-            cacheKey;
-
-        // Avoid undefined and null (#7316)
-        if (defined(textStr)) {
-
-            cacheKey = textStr.toString();
-
-            // Since numbers are monospaced, and numerical labels appear a lot
-            // in a chart, we assume that a label of n characters has the same
-            // bounding box as others of the same length. Unless there is inner
-            // HTML in the label. In that case, leave the numbers as is (#5899).
-            if (cacheKey.indexOf('<') === -1) {
-                cacheKey = cacheKey.replace(/\d/g, '0');
-            }
-
-            // Properties that affect bounding box
-            cacheKey += [
-                '',
-                renderer.rootFontSize,
-                fontSize,
-                rotation,
-                wrapper.textWidth, // #7874, also useHTML
-                alignValue,
-                styles.lineClamp,
-                styles.textOverflow, // #5968
-                styles.fontWeight // #12163
-            ].join(',');
-
-        }
+            toggleTextShadowShim;
 
         if (cacheKey && !reload) {
             bBox = cache[cacheKey];
@@ -1575,6 +1555,49 @@ class SVGElement implements SVGElementBase {
         }
 
         return bBox;
+    }
+
+    /**
+     * Overridable method to get a cache key for the bounding box of this
+     * element.
+     *
+     * @example
+     * // Plugin to let the getBBox function respond to font family changes
+     * (({ SVGElement }) => {
+     * const getBBoxCacheKey = SVGElement.prototype.getBBoxCacheKey;
+     *   SVGElement.prototype.getBBoxCacheKey = function (keys) {
+     *     const key = getBBoxCacheKey.call(this, keys);
+     *     const fontFamily = this.styles.fontFamily;
+     *     return key + (fontFamily ? `,${fontFamily}` : '');
+     *   };
+     * })(Highcharts);
+     *
+     * @function Highcharts.SVGElement#getBBoxCacheKey
+     *
+     * @return {string|void} The cache key based on the text properties.
+     */
+    public getBBoxCacheKey(keys: Array<any>): string|void {
+
+        let textStr = this.textStr;
+
+        // Avoid undefined and null (#7316)
+        if (!defined(textStr)) {
+            return;
+        }
+
+        // Since numerical labels appear a lot in a chart, we approximate that a
+        // label of n characters has the same bounding box as others of the same
+        // length. Unless there is inner HTML in the label. In that case, leave
+        // the numbers as is (#5899).
+        if (isString(textStr) && textStr.indexOf('<') === -1) {
+            textStr = textStr.replace(/\d/g, '0');
+        }
+
+        // Properties that affect bounding box
+        return [
+            textStr,
+            ...keys
+        ].join(',');
     }
 
     /**
