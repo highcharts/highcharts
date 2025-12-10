@@ -3,7 +3,7 @@ const languages = {
         lang: {
             accessibility: {
                 sorting: {
-                    sortable: 'Sortable.',
+                    enabled: 'Enabled.',
                     announcements: {
                         ascending: 'Sorted ascending.',
                         descending: 'Sorted descending.',

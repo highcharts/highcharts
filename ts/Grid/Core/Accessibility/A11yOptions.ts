@@ -101,9 +101,9 @@ export interface SortingLangA11yOptions {
      * An additional hint (a visually hidden span) read by the voice over
      * after the column name.
      *
-     * @default 'Sortable.'
+     * @default 'Enabled.'
      */
-    sortable?: string;
+    enabled?: string;
 
     /**
      * Accessibility lang options for the sorting announcements.
