@@ -305,7 +305,7 @@ class PlotLineOrBand {
                 ...(isBand ? { inside: true } : {})
             } as PlotLineLabelOptions, optionsLabel);
 
-            this.renderLabel(optionsLabel, path, isBand, zIndex, group);
+            this.renderLabel(optionsLabel, path, isBand, zIndex);
 
         // Move out of sight
         } else if (label) {
@@ -325,8 +325,7 @@ class PlotLineOrBand {
         optionsLabel: (PlotBandLabelOptions|PlotLineLabelOptions),
         path: SVGPath,
         isBand?: boolean,
-        zIndex?: number,
-        group?: SVGElement
+        zIndex?: number
     ): void {
         const plotLine = this,
             axis = plotLine.axis,
@@ -345,7 +344,7 @@ class PlotLineOrBand {
              */
             plotLine.label = label = renderer
                 .text('', 0, 0, optionsLabel.useHTML)
-                .add(group);
+                .attr({ zIndex });
         }
 
         label.attr({
@@ -354,8 +353,7 @@ class PlotLineOrBand {
             align: optionsLabel.textAlign || optionsLabel.align,
             rotation: optionsLabel.rotation,
             'class': 'highcharts-plot-' + (isBand ? 'band' : 'line') +
-                '-label ' + (optionsLabel.className || ''),
-            zIndex
+                '-label ' + (optionsLabel.className || '')
         });
 
         if (!axis.chart.styledMode) {
@@ -368,6 +366,10 @@ class PlotLineOrBand {
                 fontSize: '0.8em',
                 textOverflow: (isBand && !inside) ? '' : 'ellipsis'
             }, optionsLabel.style));
+        }
+
+        if (!label.added) {
+            label.add();
         }
 
         // Get the bounding box and align the label
