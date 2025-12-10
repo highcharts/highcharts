@@ -177,7 +177,14 @@ const options = {
         max: today + 18 * day,
         custom: {
             today,
-            weekendPlotBands: true
+            weekendBackground: {
+                pattern: {
+                    path: 'M 0 10 L 10 0 M -1 1 L 1 -1 M 9 11 L 11 9',
+                    width: 10,
+                    height: 10,
+                    color: 'rgba(128,128,128,0.15)'
+                }
+            }
         }
     }],
     yAxis: {
@@ -238,7 +245,7 @@ const options = {
 
 // Plug-in to render plot bands for the weekends
 Highcharts.addEvent(Highcharts.Axis, 'foundExtremes', e => {
-    if (e.target.options.custom?.weekendPlotBands) {
+    if (e.target.options.custom?.weekendBackground) {
         const axis = e.target,
             chart = axis.chart,
             day = 24 * 36e5,
@@ -255,16 +262,15 @@ Highcharts.addEvent(Highcharts.Axis, 'foundExtremes', e => {
             if (isWeekend(x) && !inWeekend) {
                 const plotBand = {
                     from: x,
-                    color: {
-                        pattern: {
-                            path: 'M 0 10 L 10 0 M -1 1 L 1 -1 M 9 11 L 11 9',
-                            width: 10,
-                            height: 10,
-                            color: 'rgba(128,128,128,0.15)'
-                        }
-                    }
+                    color: axis.options.custom.weekendBackground
                 };
-                axis.addPlotBand(plotBand);
+
+                if (!axis.plotBands.find(
+                    pb => pb.options.from === plotBand.from
+                )) {
+                    axis.addPlotBand(plotBand);
+                }
+
                 inWeekend = true;
 
                 last = plotBand;
