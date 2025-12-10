@@ -111,14 +111,18 @@ const loadFile = async (file: string): Promise<undefined> => {
         return;
     }
 
+    const isCss = file.endsWith('.css');
+
     // Relative root => ES modules
     if (root === '' || root.charAt(0) === '.') {
         try {
-            await import(
-                // eslint-disable-next-line capitalized-comments
-                /* webpackIgnore: true */ `${root}${file}${extension}`
-            );
-            pushUnique(loaded, file);
+            if (!isCss) {
+                await import(
+                    // eslint-disable-next-line capitalized-comments
+                    /* webpackIgnore: true */ `${root}${file}${extension}`
+                );
+                pushUnique(loaded, file);
+            }
         } catch (e) {
             /* eslint-disable-next-line no-console */
             console.error(e);
@@ -132,8 +136,7 @@ const loadFile = async (file: string): Promise<undefined> => {
             resolve(void 0);
         };
 
-        const isCss = file.endsWith('.css'),
-            el = document.createElement(isCss ? 'link' : 'script');
+        const el = document.createElement(isCss ? 'link' : 'script');
         if (isCss) {
             (el as HTMLLinkElement).rel = 'stylesheet';
             (el as HTMLLinkElement).href = `${root}${file}`;
@@ -153,9 +156,11 @@ const loadFile = async (file: string): Promise<undefined> => {
  *
  * The Loader analyzes the chart options for features that require additional
  * modules. The Loader will load the required modules asynchronously before
- * instanciating the chart.
+ * instantiating the chart.
  *
  * For styled mode and Stock Tools, the Loader also adds the required CSS files.
+ * An exception is when using ESM modules, where you need to define the CSS in
+ * link tags.
  *
  * No extra configuration is required to use the Loader, the static class
  * methods below are for advanced use cases.
