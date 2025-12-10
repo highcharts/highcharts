@@ -14,13 +14,19 @@ QUnit.test('Setting graphic attributes for a label', function (assert) {
         chart = Highcharts.chart('container', {
             series: [
                 {
-                    data: [{ y: 29.9, id: 'max' }]
+                    data: [
+                        { y: 29.9, id: 'max' },
+                        { y: 20, id: 'ANNO' }
+                    ]
                 }
             ],
 
             annotations: [
                 {
-                    labels: [Highcharts.merge(expected, { point: 'max' })]
+                    labels: [
+                        Highcharts.merge(expected, { point: 'max' }),
+                        { point: 'ANNO' }
+                    ]
                 }
             ]
         }),
@@ -48,12 +54,19 @@ QUnit.test('Setting graphic attributes for a label', function (assert) {
 
     annotation.update({
         labelOptions: {
-            useHTML: true
+            useHTML: true,
+            formatter: ctx => (ctx ? '###' : '')
         }
     });
 
     assert.deepEqual(
         actual(), expected, 'The attributes should be as ' +
         'expected for label with useHTML: true (#19200)'
+    );
+
+    assert.strictEqual(
+        annotation.labels[1].graphic.text.textStr,
+        '###',
+        'Formatter arrow function should work and receive context argument.'
     );
 });
