@@ -81,6 +81,9 @@ const DependencyMapping: Record<string, Array<string>> = {
     'chart.zooming.mouseWheel': [
         'modules/mouse-wheel-zoom'
     ],
+    'colorAxis': [
+        'modules/coloraxis'
+    ],
     'data': [
         'modules/data'
     ],
