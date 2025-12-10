@@ -14,7 +14,7 @@
 
 import type ColorString from '../../../Core/Color/ColorString';
 import type Controllable from '../Controllables/Controllable';
-import type MockPointOptions from '../MockPointOptions';
+import type MockPointOptions from '../AnnotationMockPointOptionsObject';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
 
 import Annotation from '../Annotation.js';
@@ -27,7 +27,7 @@ import Tunnel from './Tunnel.js';
 import U from '../../../Core/Utilities.js';
 const { merge } = U;
 
-if (defaultOptions.annotations) {
+if (defaultOptions.annotations?.types) {
     defaultOptions.annotations.types.fibonacci = merge(
         defaultOptions.annotations.types.tunnel,
         /**

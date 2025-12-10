@@ -18,7 +18,11 @@
 
 import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import type { AnnotationPointType } from './AnnotationSeries';
-import type AnnotationOptions from './AnnotationOptions';
+import type {
+    AnnotationLabelOptions,
+    AnnotationOptions,
+    AnnotationShapeOptions
+} from './AnnotationOptions';
 import type { AnnotationTypeRegistry } from './Types/AnnotationType';
 import type AxisType from '../../Core/Axis/AxisType';
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
@@ -32,8 +36,9 @@ import type {
     ControllableLabelOptions,
     ControllableShapeOptions
 } from './Controllables/ControllableOptions';
-import type { DeepPartial } from '../../Shared/Types';
-import type MockPointOptions from './MockPointOptions';
+import type {
+    AnnotationMockPointOptionsObject
+} from './AnnotationMockPointOptionsObject';
 import type NavigationBindings from './NavigationBindings.js';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
@@ -141,19 +146,19 @@ function adjustVisibility(
 /** @internal */
 function getLabelsAndShapesOptions(
     baseOptions: AnnotationOptions,
-    newOptions: DeepPartial<AnnotationOptions>
+    newOptions: AnnotationOptions
 ): AnnotationOptions {
     const mergedOptions = {} as AnnotationOptions;
 
-    (['labels', 'shapes'] as Array<('labels'|'shapes')>).forEach((
+    (['labels', 'shapes'] as const).forEach((
         name
     ): void => {
         const someBaseOptions = baseOptions[name],
             newOptionsValue = newOptions[name];
 
         type ControllableOptions = (
-            ControllableLabelOptions|
-            ControllableShapeOptions
+            AnnotationLabelOptions|
+            AnnotationShapeOptions
         );
 
         if (someBaseOptions) {
@@ -206,13 +211,15 @@ class Annotation extends EventEmitter implements ControlTarget {
      *
      * @internal
      */
-    public static readonly shapesMap: Record<string, Function> = {
-        'rect': ControllableRect,
-        'circle': ControllableCircle,
-        'ellipse': ControllableEllipse,
-        'path': ControllablePath,
-        'image': ControllableImage
-    };
+    public static readonly shapesMap: Record<
+        string, Class<ControllableShapeType>
+    > = {
+            'rect': ControllableRect,
+            'circle': ControllableCircle,
+            'ellipse': ControllableEllipse,
+            'path': ControllablePath,
+            'image': ControllableImage
+        };
 
     /** @internal */
     public static readonly types = {} as AnnotationTypeRegistry;
@@ -480,7 +487,11 @@ class Annotation extends EventEmitter implements ControlTarget {
         labelsOptions.forEach((labelOptions, i): void => {
             const label = this.initLabel(labelOptions, i);
 
-            merge(true, labelsOptions[i], label.options);
+            merge(
+                true,
+                labelsOptions[i],
+                label.options as AnnotationLabelOptions
+            );
         });
     }
 
@@ -600,10 +611,12 @@ class Annotation extends EventEmitter implements ControlTarget {
      * @internal
      */
     public initLabel(
-        labelOptions: Partial<ControllableLabelOptions>,
+        labelOptions: AnnotationLabelOptions | ControllableLabelOptions,
         index: number
     ): ControllableLabelType {
-        const options = merge<ControllableLabelOptions>(
+        this.options.labelOptions?.align;
+
+        const options = merge(
                 this.options.labelOptions,
                 {
                     controlPointOptions: this.options.controlPointOptions
@@ -634,7 +647,7 @@ class Annotation extends EventEmitter implements ControlTarget {
      * shapes.index.
      */
     public initShape(
-        shapeOptions: Partial<ControllableShapeOptions>,
+        shapeOptions: AnnotationShapeOptions | ControllableShapeOptions,
         index: number
     ): ControllableShapeType {
         const options = merge(
@@ -644,7 +657,7 @@ class Annotation extends EventEmitter implements ControlTarget {
                 },
                 shapeOptions
             ),
-            shape = new ((Annotation as any).shapesMap[options.type as any])(
+            shape = new Annotation.shapesMap[options.type || 'rect'](
                 this,
                 options,
                 index
@@ -799,25 +812,27 @@ class Annotation extends EventEmitter implements ControlTarget {
     public setClipAxes(): void {
         const xAxes = this.chart.xAxis,
             yAxes = this.chart.yAxis,
-            linkedAxes: Array<AxisType> = ((
-                this.options.labels || []
-            ) as Array<(ControllableLabelOptions|ControllableShapeOptions)>)
-                .concat(this.options.shapes || [])
-                .reduce((
-                    axes: Array<AxisType>,
-                    labelOrShape
-                ): Array<AxisType> => {
-                    const point = labelOrShape &&
+            linkedAxes: Array<AxisType> = [
+                ...(this.options.labels ?? []),
+                ...(this.options.shapes ?? [])
+            ].reduce((
+                axes: Array<AxisType>,
+                labelOrShape
+            ): Array<AxisType> => {
+                const point = labelOrShape &&
+                    (
+                        labelOrShape.point ||
                         (
-                            labelOrShape.point ||
-                            (labelOrShape.points && labelOrShape.points[0])
-                        );
+                            ('points' in labelOrShape) &&
+                            labelOrShape.points?.[0]
+                        )
+                    );
 
-                    return [
-                        xAxes[point && (point as any).xAxis] || axes[0],
-                        yAxes[point && (point as any).yAxis] || axes[1]
-                    ];
-                }, []);
+                return [
+                    xAxes[point && (point as any).xAxis] || axes[0],
+                    yAxes[point && (point as any).yAxis] || axes[1]
+                ];
+            }, []);
 
         this.clipXAxis = linkedAxes[0];
         this.clipYAxis = linkedAxes[1];
@@ -878,10 +893,13 @@ class Annotation extends EventEmitter implements ControlTarget {
             // The static typeOptions from the class
             (
                 userOptions.type &&
-                this.defaultOptions.types[userOptions.type]
+                this.defaultOptions.types?.[userOptions.type]
             ) || {},
             userOptions
         );
+
+        // Safe access for `.typeOptions!`
+        this.options.typeOptions ||= {};
     }
 
     /**
@@ -931,11 +949,11 @@ class Annotation extends EventEmitter implements ControlTarget {
      *
      * @function Highcharts.Annotation#update
      *
-     * @param {Partial<Highcharts.AnnotationsOptions>} userOptions
+     * @param {Highcharts.AnnotationOptions} userOptions
      *        New user options for the annotation.
      */
     public update(
-        userOptions: DeepPartial<AnnotationOptions>,
+        userOptions: AnnotationOptions,
         redraw? : boolean
     ): void {
         const chart = this.chart,
@@ -976,7 +994,7 @@ class Annotation extends EventEmitter implements ControlTarget {
 interface Annotation extends ControlTarget {
     defaultOptions: AnnotationOptions;
     nonDOMEvents: Array<string>;
-    getPointsOptions(): Array<MockPointOptions>;
+    getPointsOptions(): Array<(string | AnnotationMockPointOptionsObject)>;
     linkPoints(): (Array<AnnotationPointType>|undefined);
 }
 
@@ -1045,15 +1063,18 @@ export default Annotation;
  * @requires modules/annotations
  */
 
-// TODO: Unable to copy into native due to type mismatch between TS and Docs.
 /**
- * Shape point as string, object or function.
+ * Annotation point, which can be:
+ * - a string: the ID of an existing series point,
+ * - an object: mock point options,
+ * - a function: returning either mock point options object or a point.
  *
+ * @requires modules/annotations
  * @typedef {
  *          string|
  *          Highcharts.AnnotationMockPointOptionsObject|
  *          Highcharts.AnnotationMockPointFunction
- *     } Highcharts.AnnotationShapePointOptions
+ *     } Highcharts.AnnotationMockPointOptions
  */
 
 (''); // Keeps doclets above in JS file

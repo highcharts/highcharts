@@ -30,7 +30,7 @@ import type {
  *
  * @interface Highcharts.AnnotationMockPointOptionsObject
  */
-export interface MockPointOptions {
+export interface AnnotationMockPointOptionsObject {
     /** @internal */
     label?: ControllableLabelOptions;
 
@@ -41,7 +41,7 @@ export interface MockPointOptions {
      * @type      {number}
      * @name      Highcharts.AnnotationMockPointOptionsObject.x
      */
-    x: number;
+    x?: number;
 
     /**
      * This number defines which xAxis the point is connected to.
@@ -59,10 +59,10 @@ export interface MockPointOptions {
      * The y position of the point. Units can be either in axis
      * or chart pixel coordinates.
      *
-     * @type      {number}
+     * @type      {number|null}
      * @name      Highcharts.AnnotationMockPointOptionsObject.y
      */
-    y: number;
+    y?: number|null;
 
     /**
      * This number defines which yAxis the point is connected to.
@@ -83,4 +83,4 @@ export interface MockPointOptions {
  *
  * */
 
-export default MockPointOptions;
+export default AnnotationMockPointOptionsObject;

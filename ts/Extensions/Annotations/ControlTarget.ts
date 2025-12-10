@@ -14,11 +14,14 @@
 
 import type Annotation from './Annotation';
 import type AnnotationChart from './AnnotationChart';
+import type { AnnotationMockPointOptions } from './AnnotationOptions';
 import type { AnnotationPointType } from './AnnotationSeries';
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type Controllable from './Controllables/Controllable';
 import type ControlTargetOptions from './ControlTargetOptions';
-import type MockPointOptions from './MockPointOptions';
+import type {
+    AnnotationMockPointOptionsObject
+} from './AnnotationMockPointOptionsObject';
 
 import ControlPoint from './ControlPoint.js';
 import MockPoint from './MockPoint.js';
@@ -59,14 +62,14 @@ interface ControlTarget {
     destroyControlTarget(): void;
 
     /** @internal */
-    getPointsOptions(): Array<MockPointOptions>;
+    getPointsOptions(): Array<AnnotationMockPointOptions>;
 
     /** @internal */
     linkPoints(): (Array<AnnotationPointType>|undefined);
 
     /** @internal */
     point(
-        pointOptions: (string|Function|MockPoint|MockPointOptions),
+        pointOptions: AnnotationMockPointOptions | MockPoint,
         point: (AnnotationPointType|null)
     ): (AnnotationPointType|null);
 
@@ -283,7 +286,7 @@ namespace ControlTarget {
      */
     function getPointsOptions(
         this: ControlTarget
-    ): Array<MockPointOptions> {
+    ): Array<AnnotationMockPointOptionsObject> {
         const options = this.options;
 
         return (
@@ -304,7 +307,7 @@ namespace ControlTarget {
     ): (Array<AnnotationPointType>|undefined) {
         const pointsOptions = this.getPointsOptions(),
             points = this.points,
-            len = (pointsOptions && pointsOptions.length) || 0;
+            len = pointsOptions?.length || 0;
 
         let i: number,
             point: (AnnotationPointType|null);
@@ -341,10 +344,12 @@ namespace ControlTarget {
      */
     function point(
         this: ControlTarget,
-        pointOptions: (string|Function|MockPoint|MockPointOptions),
+        pointOptions: (
+            string|Function|MockPoint|AnnotationMockPointOptionsObject
+        ),
         point: (AnnotationPointType|null)
     ): (AnnotationPointType|null) {
-        if (pointOptions && (pointOptions as MockPointOptions).series) {
+        if (pointOptions && (pointOptions as any).series) {
             return pointOptions as any;
         }
 
@@ -353,16 +358,17 @@ namespace ControlTarget {
                 point = new MockPoint(
                     this.chart,
                     this,
-                    pointOptions as MockPointOptions
+                    pointOptions as AnnotationMockPointOptionsObject
                 );
             } else if (U.isString(pointOptions)) {
                 point = (this.chart.get(pointOptions) as any) || null;
             } else if (typeof pointOptions === 'function') {
-                const pointConfig: (MockPoint|MockPointOptions) =
-                    pointOptions.call(point, this);
+                const pointConfigOrPoint: (
+                    MockPoint | AnnotationMockPointOptionsObject
+                ) = pointOptions.call(point, this);
 
-                point = pointConfig.series ?
-                    pointConfig :
+                point = pointConfigOrPoint.series ?
+                    pointConfigOrPoint :
                     new MockPoint(
                         this.chart,
                         this,

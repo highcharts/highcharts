@@ -349,6 +349,8 @@ class ControllableLabel extends Controllable {
         }
 
         // Local options:
+        this.options.x ||= 0;
+        this.options.y ||= 0;
         this.options.x += dx;
         this.options.y += dy;
 
@@ -384,12 +386,14 @@ class ControllableLabel extends Controllable {
             .add(parent);
 
         if (!this.annotation.chart.styledMode) {
-            if (style.color === 'contrast') {
+            if (style?.color === 'contrast') {
                 const background = (
-                    ControllableLabel.shapesWithoutBackground.indexOf(
-                        options.shape
-                    ) > -1 ||
-                    options.backgroundColor === 'none'
+                    (
+                        !options.shape ||
+                        ControllableLabel.shapesWithoutBackground.indexOf(
+                            options.shape
+                        ) > -1
+                    ) || options.backgroundColor === 'none'
                 ) ?
                     chartBackground :
                     options.backgroundColor;
@@ -401,7 +405,7 @@ class ControllableLabel extends Controllable {
                 );
             }
             this.graphic
-                .css(options.style)
+                .css(options.style || {})
                 .shadow(options.shadow);
         }
 

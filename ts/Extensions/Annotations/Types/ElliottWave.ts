@@ -12,9 +12,6 @@
  *
  * */
 
-import type {
-    ControllableLabelOptions
-} from '../Controllables/ControllableOptions';
 import type ColorType from '../../../Core/Color/ColorType';
 
 import Annotation from '../Annotation.js';
@@ -23,9 +20,10 @@ import D from '../../../Core/Defaults.js';
 const { defaultOptions } = D;
 import U from '../../../Core/Utilities.js';
 import { Palette } from '../../../Core/Color/Palettes';
+import { AnnotationLabelOptionsOptions } from '../AnnotationOptions';
 const { merge } = U;
 
-if (defaultOptions.annotations) {
+if (defaultOptions.annotations?.types) {
     defaultOptions.annotations.types.elliottWave = merge(
         defaultOptions.annotations.types.crookedLine,
         /**
@@ -92,14 +90,18 @@ class ElliottWave extends CrookedLine {
             const typeOptions = (
                     this.options.typeOptions as ElliottWave.TypeOptions
                 ),
-                label = this.initLabel(merge(
-                    point.label, {
-                        text: typeOptions.labels[i],
-                        point: function (target: any): any {
-                            return target.annotation.points[i];
+                label = this.initLabel(
+                    merge(
+                        point.label,
+                        {
+                            text: typeOptions.labels[i],
+                            point: function (target: any): any {
+                                return target.annotation.points[i];
+                            }
                         }
-                    }
-                ), false as any);
+                    ),
+                    false as any
+                );
 
             point.label = label.options;
         });
@@ -124,7 +126,7 @@ interface ElliottWave {
  * */
 
 namespace ElliottWave {
-    export interface LabelOptions extends ControllableLabelOptions {
+    export interface LabelOptions extends AnnotationLabelOptionsOptions {
         backgroundColor: ColorType;
         borderWidth: number;
         y: number;

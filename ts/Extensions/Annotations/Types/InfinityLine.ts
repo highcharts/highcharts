@@ -22,9 +22,10 @@ import D from '../../../Core/Defaults.js';
 const { defaultOptions } = D;
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
+import { AnnotationMockPointFunction } from '../AnnotationOptions';
 const { merge } = U;
 
-if (defaultOptions.annotations) {
+if (defaultOptions.annotations?.types) {
     /**
      * Options for the infinity line annotation type.
      *
@@ -64,7 +65,10 @@ class InfinityLine extends CrookedLine {
      *
      * */
 
-    private static edgePoint(startIndex: number, endIndex: number): Function {
+    private static edgePoint(
+        startIndex: number,
+        endIndex: number
+    ): AnnotationMockPointFunction {
         return function (target: any): PositionObject {
             const annotation = target.annotation,
                 type = annotation.options.typeOptions.type;
@@ -203,8 +207,8 @@ class InfinityLine extends CrookedLine {
         const line = this.initShape(
             merge(typeOptions.line, {
                 type: 'path',
-                points: points,
-                className: 'highcharts-infinity-lines'
+                className: 'highcharts-infinity-lines',
+                points: points as any
             }),
             0
         );

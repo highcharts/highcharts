@@ -30,8 +30,9 @@ const {
  *
  * */
 
-declare module './MockPointOptions' {
-    interface MockPointOptions {
+/** @internal */
+declare module './AnnotationMockPointOptionsObject' {
+    interface AnnotationMockPointOptionsObject {
         controlPoint?: ControlPointOptions;
     }
 }

@@ -13,9 +13,11 @@
  * */
 
 import type { AnnotationPointType } from '../AnnotationSeries';
-import type { ControllableShapeOptions } from '../Controllables/ControllableOptions';
+import type {
+    AnnotationShapeOptionsOptions
+} from '../AnnotationOptions';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
-import type MockPointOptions from '../MockPointOptions';
+import type MockPointOptions from '../AnnotationMockPointOptionsObject';
 
 import Annotation from '../Annotation.js';
 import D from '../../../Core/Defaults.js';
@@ -25,7 +27,7 @@ import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
 const { merge } = U;
 
-if (defaultOptions.annotations) {
+if (defaultOptions.annotations?.types) {
     defaultOptions.annotations.types.pitchfork = merge(
         defaultOptions.annotations.types.infinityLine,
         /**
@@ -286,7 +288,7 @@ namespace Pitchfork {
          * @extends   annotations.shapeOptions
          * @excluding height, r, type, width
          */
-        innerBackground: ControllableShapeOptions;
+        innerBackground: AnnotationShapeOptionsOptions;
 
         /**
          * Outer background options.
@@ -294,7 +296,7 @@ namespace Pitchfork {
          * @extends   annotations.shapeOptions
          * @excluding height, r, type, width
          */
-        outerBackground: ControllableShapeOptions;
+        outerBackground: AnnotationShapeOptionsOptions;
     }
 }
 

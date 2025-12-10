@@ -14,21 +14,35 @@
  *
  * */
 
+import type {
+    AlignValue,
+    VerticalAlignValue
+} from '../../Core/Renderer/AlignObject';
 import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import type Annotation from './Annotation';
-import type AST from '../../Core/Renderer/HTML/AST';
 import type {
-    ControllableLabelOptions,
-    ControllableShapeOptions
-} from './Controllables/ControllableOptions';
+    AnnotationMockPointOptionsObject
+} from './AnnotationMockPointOptionsObject';
+import type { AnnotationPointType } from './AnnotationSeries';
+import type AST from '../../Core/Renderer/HTML/AST';
+import type ColorType from '../../Core/Color/ColorType';
+import type Controllable from './Controllables/Controllable';
 import type ControlPointOptions from './ControlPointOptions';
 import type ControlTargetOptions from './ControlTargetOptions';
+import type CoreOptions from '../../Core/Options';
+import type CSSObject from '../../Core/Renderer/CSSObject';
+import type {
+    DataLabelOverflowValue
+} from '../../Core/Series/DataLabelOptions';
 import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
 import type { DeepPartial } from '../../Shared/Types';
 import type EventCallback from '../../Core/EventCallback';
-import type MockPointOptions from './MockPointOptions';
 import type NavigationOptions from '../Exporting/NavigationOptions';
-import type CoreOptions from '../../Core/Options';
+import type {
+    ShadowOptionsObject
+} from '../../Core/Renderer/ShadowOptionsObject';
+import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType';
+import type Templating from '../../Core/Templating';
 
 /* *
  *
@@ -141,7 +155,7 @@ export interface AnnotationOptions extends ControlTargetOptions {
      * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
      * @since 8.2.0
      */
-    animation: Partial<AnimationOptions>;
+    animation?: Partial<AnimationOptions>;
 
     /**
      * A class name for styling by CSS.
@@ -161,7 +175,7 @@ export interface AnnotationOptions extends ControlTargetOptions {
      * @declare  Highcharts.AnnotationControlPointOptionsObject
      * @requires modules/annotations
      */
-    controlPointOptions: ControlPointOptions;
+    controlPointOptions?: ControlPointOptions;
 
     /**
      * Whether to hide the part of the annotation
@@ -172,7 +186,7 @@ export interface AnnotationOptions extends ControlTargetOptions {
      * @type  {boolean}
      * @since 9.3.0
      */
-    crop: boolean;
+    crop?: boolean;
 
     /**
      * Allow an annotation to be draggable by a user. Possible
@@ -183,14 +197,14 @@ export interface AnnotationOptions extends ControlTargetOptions {
      *
      * @type {Highcharts.AnnotationDraggableValue}
      */
-    draggable: AnnotationDraggableValue;
+    draggable?: AnnotationDraggableValue;
 
     /**
      * Events available in annotations.
      *
      * @requires modules/annotations
      */
-    events: AnnotationEventsOptions;
+    events?: AnnotationEventsOptions;
 
     /**
      * Sets an ID for an annotation. Can be user later when
@@ -212,240 +226,7 @@ export interface AnnotationOptions extends ControlTargetOptions {
      *
      * @requires modules/annotations
      */
-    labelOptions?: ControllableLabelOptions & {
-        /**
-         * The alignment of the annotation's label. If right,
-         * the right side of the label should be touching the point.
-         *
-         * @sample highcharts/annotations/label-position/
-         *         Set labels position
-         *
-         * @type {Highcharts.AlignValue}
-         */
-        align: ControllableLabelOptions['align'];
-
-        /**
-         * Whether to allow the annotation's labels to overlap.
-         * To make the labels less sensitive for overlapping,
-         * the can be set to 0.
-         *
-         * @sample highcharts/annotations/tooltip-like/
-         *         Hide overlapping labels
-         */
-        allowOverlap: ControllableLabelOptions['allowOverlap'];
-
-        /**
-         * The background color or gradient for the annotation's
-         * label.
-         *
-         * @sample highcharts/annotations/label-presentation/
-         *         Set labels graphic options
-         *
-         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-         */
-        backgroundColor?: ControllableLabelOptions['backgroundColor'];
-
-        /**
-         * The border color for the annotation's label.
-         *
-         * @sample highcharts/annotations/label-presentation/
-         *         Set labels graphic options
-         *
-         * @type {Highcharts.ColorString}
-         */
-        borderColor?: ControllableLabelOptions['borderColor'];
-
-        /**
-         * The border radius in pixels for the annotation's label.
-         *
-         * @sample highcharts/annotations/label-presentation/
-         *         Set labels graphic options
-         */
-        borderRadius?: ControllableLabelOptions['borderRadius'];
-
-        /**
-         * The border width in pixels for the annotation's label
-         *
-         * @sample highcharts/annotations/label-presentation/
-         *         Set labels graphic options
-         */
-        borderWidth?: ControllableLabelOptions['borderWidth'];
-
-        /**
-         * A class name for styling by CSS.
-         *
-         * @sample highcharts/css/annotations
-         *         Styled mode annotations
-         *
-         * @since 6.0.5
-         */
-        className?: ControllableLabelOptions['className'];
-
-        /**
-         * Whether to hide the annotation's label
-         * that is outside the plot area.
-         *
-         * @sample highcharts/annotations/label-crop-overflow/
-         *         Crop or justify labels
-         */
-        crop: ControllableLabelOptions['crop'],
-
-        /**
-         * The label's pixel distance from the point.
-         *
-         * @sample highcharts/annotations/label-position/
-         *         Set labels position
-         *
-         * @type      {number}
-         * @apioption annotations.labelOptions.distance
-         */
-        distance?: ControllableLabelOptions['distance'];
-
-        /**
-         * A
-         * [format](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
-         * string for the data label.
-         *
-         * @see [plotOptions.series.dataLabels.format](plotOptions.series.dataLabels.format.html)
-         *
-         * @sample highcharts/annotations/label-text/
-         *         Set labels text
-         *
-         * @type      {string}
-         * @apioption annotations.labelOptions.format
-         */
-        format?: ControllableLabelOptions['format']
-
-        /**
-         * Alias for the format option.
-         *
-         * @see [format](annotations.labelOptions.format.html)
-         *
-         * @sample highcharts/annotations/label-text/
-         *         Set labels text
-         *
-         * @type      {string}
-         * @apioption annotations.labelOptions.text
-         */
-        text?: ControllableLabelOptions['text'];
-
-        /**
-         * Callback JavaScript function to format the annotation's
-         * label. Note that if a `format` or `text` are defined,
-         * the format or text take precedence and the formatter is
-         * ignored. `This` refers to a point object.
-         *
-         * @sample highcharts/annotations/label-text/
-         *         Set labels text
-         *
-         * @type    {Highcharts.FormatterCallbackFunction<Highcharts.Point>}
-         * @default function () { return defined(this.y) ? this.y : 'Annotation label'; }
-         */
-        formatter: ControllableLabelOptions['formatter'];
-
-        /**
-         * Whether the annotation is visible in the exported data
-         * table.
-         *
-         * @sample highcharts/annotations/include-in-data-export/
-         *         Do not include in the data export
-         *
-         * @since 8.2.0
-         * @requires modules/export-data
-         */
-        includeInDataExport: ControllableLabelOptions['includeInDataExport'];
-
-        /**
-         * How to handle the annotation's label that flow outside
-         * the plot area. The justify option aligns the label inside
-         * the plot area.
-         *
-         * @sample highcharts/annotations/label-crop-overflow/
-         *         Crop or justify labels
-         *
-         * @validvalue ["allow", "justify"]
-         */
-        overflow: ControllableLabelOptions['overflow'];
-
-        /**
-         * When either the borderWidth or the backgroundColor is
-         * set, this is the padding within the box.
-         *
-         * @sample highcharts/annotations/label-presentation/
-         *         Set labels graphic options
-         */
-        padding?: ControllableLabelOptions['padding'];
-
-        /**
-         * The shadow of the box. The shadow can be an object
-         * configuration containing `color`, `offsetX`, `offsetY`,
-         * `opacity` and `width`.
-         *
-         * @sample highcharts/annotations/label-presentation/
-         *         Set labels graphic options
-         *
-         * @type {boolean|Highcharts.ShadowOptionsObject}
-         */
-        shadow: ControllableLabelOptions['shadow'];
-
-        /**
-         * The name of a symbol to use for the border around the
-         * label. Symbols are predefined functions on the Renderer
-         * object.
-         *
-         * @sample highcharts/annotations/shapes/
-         *         Available shapes for labels
-         */
-        shape: ControllableLabelOptions['shape'];
-
-        /**
-         * Styles for the annotation's label.
-         *
-         * @see [plotOptions.series.dataLabels.style](plotOptions.series.dataLabels.style.html)
-         *
-         * @sample highcharts/annotations/label-presentation/
-         *         Set labels graphic options
-         *
-         * @type {Highcharts.CSSObject}
-         */
-        style: ControllableLabelOptions['style'];
-
-        /**
-         * Whether to [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
-         * to render the annotation's label.
-         */
-        useHTML: ControllableLabelOptions['useHTML'];
-
-        /**
-         * The vertical alignment of the annotation's label.
-         *
-         * @sample highcharts/annotations/label-position/
-         *         Set labels position
-         *
-         * @type {Highcharts.VerticalAlignValue}
-         */
-        verticalAlign: ControllableLabelOptions['verticalAlign'];
-
-        /**
-         * The x position offset of the label relative to the point.
-         * Note that if a `distance` is defined, the distance takes
-         * precedence over `x` and `y` options.
-         *
-         * @sample highcharts/annotations/label-position/
-         *         Set labels position
-         */
-        x: ControllableLabelOptions['x'];
-
-        /**
-         * The y position offset of the label relative to the point.
-         * Note that if a `distance` is defined, the distance takes
-         * precedence over `x` and `y` options.
-         *
-         * @sample highcharts/annotations/label-position/
-         *         Set labels position
-         */
-        y: ControllableLabelOptions['y'];
-    };
+    labelOptions?: AnnotationLabelOptionsOptions;
 
     /**
      * An array of labels for the annotation. For options that apply
@@ -456,41 +237,7 @@ export interface AnnotationOptions extends ControlTargetOptions {
      * @extends   annotations.labelOptions
      * @apioption annotations.labels
      */
-    labels?: Array<ControllableLabelOptions & {
-        /**
-         * The array of control points.
-         *
-         * @sample highcharts/annotations/ellipse
-         *         Ellipse annotation
-         *
-         * @extends annotations.controlPointOptions
-         * @type {Array<AnnotationControlPointOptionsObject>}
-         * @apioption annotations.labels.controlPoints
-         */
-        controlPoints?: ControllableLabelOptions['controlPoints'];
-
-        /**
-         * This option defines the point to which the label will be
-         * connected. It can be either the point which exists in the
-         * series - it is referenced by the point's id - or a new point
-         * with defined x, y properties and optionally axes.
-         *
-         * @sample highcharts/annotations/mock-point/
-         *         Attach annotation to a mock point
-         * @sample highcharts/annotations/mock-points/
-         *         Attach annotation to a mock point with different ways
-         *
-         * @declare   Highcharts.AnnotationMockPointOptionsObject
-         * @type      {
-         *               string|
-         *               Highcharts.AnnotationMockPointOptionsObject|
-         *               Highcharts.AnnotationMockPointFunction
-         *            }
-         * @requires  modules/annotations
-         * @apioption annotations.labels.point
-         */
-        point?: ControllableLabelOptions['point'];
-    }>;
+    labels?: Array<AnnotationLabelOptions>;
 
     /** @internal */
     langKey?: string;
@@ -502,142 +249,7 @@ export interface AnnotationOptions extends ControlTargetOptions {
      *
      * @requires  modules/annotations
      */
-    shapeOptions: ControllableShapeOptions & {
-        /**
-         *
-         * The radius of the shape in y direction.
-         * Used for the ellipse.
-         *
-         * @sample highcharts/annotations/ellipse/
-         *         Ellipse annotation
-         *
-         * @type      {number}
-         * @apioption annotations.shapeOptions.ry
-         **/
-        ry?: ControllableShapeOptions['ry'];
-
-        /**
-         * The xAxis index to which the points should be attached.
-         * Used for the ellipse.
-         *
-         * @type      {number}
-         * @apioption annotations.shapeOptions.xAxis
-         **/
-        xAxis?: number;
-
-        /**
-         * The yAxis index to which the points should be attached.
-         * Used for the ellipse.
-         *
-         * @type      {number}
-         * @apioption annotations.shapeOptions.yAxis
-         **/
-        yAxis?: number;
-
-        /**
-         * The width of the shape.
-         *
-         * @sample highcharts/annotations/shape/
-         *         Basic shape annotation
-         *
-         * @type      {number}
-         * @apioption annotations.shapeOptions.width
-         **/
-        width?: ControllableShapeOptions['width']
-
-        /**
-         * The height of the shape.
-         *
-         * @sample highcharts/annotations/shape/
-         *         Basic shape annotation
-         *
-         * @type      {number}
-         * @apioption annotations.shapeOptions.height
-         */
-        height?: ControllableShapeOptions['height'];
-
-        /**
-         * The type of the shape.
-         * Available options are circle, rect and ellipse.
-         *
-         * @sample highcharts/annotations/shape/
-         *         Basic shape annotation
-         *
-         * @sample highcharts/annotations/ellipse/
-         *         Ellipse annotation
-         *
-         * @type      {string}
-         * @default   rect
-         * @apioption annotations.shapeOptions.type
-         */
-        type?: ControllableShapeOptions['type'];
-
-        /**
-         * The URL for an image to use as the annotation shape.
-         * Note, type has to be set to `'image'`.
-         *
-         * @see [annotations.shapeOptions.type](annotations.shapeOptions.type)
-         * @sample highcharts/annotations/shape-src/
-         *         Define a marker image url for annotations
-         *
-         * @type      {string}
-         * @apioption annotations.shapeOptions.src
-         */
-        src?: ControllableShapeOptions['src'];
-
-        /**
-         * Name of the dash style to use for the shape's stroke.
-         *
-         * @sample {highcharts} highcharts/plotoptions/series-dashstyle-all/
-         *         Possible values demonstrated
-         *
-         * @type      {Highcharts.DashStyleValue}
-         * @apioption annotations.shapeOptions.dashStyle
-         */
-        dashStyle?: DashStyleValue;
-
-        /**
-         * The color of the shape's stroke.
-         *
-         * @sample highcharts/annotations/shape/
-         *         Basic shape annotation
-         *
-         * @type {Highcharts.ColorString}
-         */
-        stroke?: ControllableShapeOptions['stroke']
-
-        /**
-         * The pixel stroke width of the shape.
-         *
-         * @sample highcharts/annotations/shape/
-         *         Basic shape annotation
-         */
-        strokeWidth?: ControllableShapeOptions['strokeWidth'];
-
-        /**
-         * The color of the shape's fill.
-         *
-         * @sample highcharts/annotations/shape/
-         *         Basic shape annotation
-         *
-         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-         */
-        fill?: ControllableShapeOptions['fill'];
-
-        /**
-         * The radius of the shape.
-         *
-         * @sample highcharts/annotations/shape/
-         *         Basic shape annotation
-         */
-        r?: ControllableShapeOptions['r'];
-
-        /**
-         * Defines additional snapping area around an annotation
-         * making this annotation to focus. Defined in pixels.
-         */
-        snap?: ControllableShapeOptions['snap'];
-    };
+    shapeOptions?: AnnotationShapeOptionsOptions;
 
     /**
      * An array of shapes for the annotation. For options that apply
@@ -648,97 +260,7 @@ export interface AnnotationOptions extends ControlTargetOptions {
      * @extends   annotations.shapeOptions
      * @apioption annotations.shapes
      */
-    shapes?: Array<ControllableShapeOptions & {
-        /**
-         * The array of control points.
-         *
-         * @sample highcharts/annotations-advanced/controllable-image
-         *         Controllable image annotation
-         *
-         * @extends annotations.controlPointOptions
-         * @type {Array<AnnotationControlPointOptionsObject>}
-         * @apioption annotations.shapes.controlPoints
-         */
-        controlPoints?: ControllableShapeOptions['controlPoints'];
-
-        /**
-         * This option defines the point to which the shape will be
-         * connected. It can be either the point which exists in the
-         * series - it is referenced by the point's id - or a new point
-         * with defined x, y properties and optionally axes.
-         *
-         * @sample highcharts/annotations/mock-points/
-         *         Attach annotation to a mock point with different ways
-         *
-         * @declare   Highcharts.AnnotationMockPointOptionsObject
-         * @type      {
-         *               string|
-         *               Highcharts.AnnotationMockPointOptionsObject|
-         *               Highcharts.AnnotationMockPointFunction
-         *            }
-         * @extends   annotations.labels.point
-         * @requires  modules/annotations
-         * @apioption annotations.shapes.point
-         */
-        point?: ControllableShapeOptions['point'];
-
-        /**
-         * An array of points for the shape
-         * or a callback function that returns that shape point.
-         *
-         * This option is available
-         * for shapes which can use multiple points such as path. A
-         * point can be either a point object or a point's id.
-         *
-         * @see [annotations.shapes.point](annotations.shapes.point.html)
-         *
-         * @type      {Array<Highcharts.AnnotationShapePointOptions>}
-         * @extends   annotations.labels.point
-         * @apioption annotations.shapes.points
-         */
-        points?: ControllableShapeOptions['points'];
-
-        /**
-         * The URL for an image to use as the annotation shape. Note,
-         * type has to be set to `'image'`.
-         *
-         * @see [annotations.shapes.type](annotations.shapes.type)
-         * @sample highcharts/annotations/shape-src/
-         *         Define a marker image url for annotations
-         *
-         * @type      {string}
-         * @apioption annotations.shapes.src
-         */
-        src?: ControllableShapeOptions['src'];
-
-        /**
-         * Id of the marker which will be drawn at the final vertex of
-         * the path. Custom markers can be defined in defs property.
-         *
-         * @see [defs.markers](defs.markers.html)
-         *
-         * @sample highcharts/annotations/custom-markers/
-         *         Define a custom marker for annotations
-         *
-         * @type      {string}
-         * @apioption annotations.shapes.markerEnd
-         */
-        markerEnd?: ControllableShapeOptions['markerEnd'];
-
-        /**
-         * Id of the marker which will be drawn at the first vertex of
-         * the path. Custom markers can be defined in defs property.
-         *
-         * @see [defs.markers](defs.markers.html)
-         *
-         * @sample {highcharts} highcharts/annotations/custom-markers/
-         *         Define a custom marker for annotations
-         *
-         * @type      {string}
-         * @apioption annotations.shapes.markerStart
-         */
-        markerStart?: ControllableShapeOptions['markerStart'];
-    }>;
+    shapes?: Array<AnnotationShapeOptions>;
 
     /**
      * For advanced annotations, this option defines the type of annotation. Can
@@ -760,7 +282,7 @@ export interface AnnotationOptions extends ControlTargetOptions {
      * @requires  modules/annotations
      * @apioption annotations.typeOptions
      */
-    typeOptions: AnnotationTypeOptions;
+    typeOptions?: AnnotationTypeOptions;
 
     /**
      * Option override for specific advanced annotation types. This collection
@@ -771,7 +293,7 @@ export interface AnnotationOptions extends ControlTargetOptions {
      * @product highstock
      * @requires modules/annotations-advanced
      */
-    types: Record<string, DeepPartial<AnnotationOptions>>;
+    types?: Record<string, DeepPartial<AnnotationOptions>>;
 
     /**
      * Whether the annotation is visible.
@@ -779,12 +301,511 @@ export interface AnnotationOptions extends ControlTargetOptions {
      * @sample highcharts/annotations/visible/
      *         Set annotation visibility
      */
-    visible: boolean;
+    visible?: boolean;
 
     /**
      * The Z index of the annotation.
      */
-    zIndex: number;
+    zIndex?: number;
+}
+
+export interface AnnotationLabelOptionsOptions {
+    /**
+     * The alignment of the annotation's label. If right,
+     * the right side of the label should be touching the point.
+     *
+     * @sample highcharts/annotations/label-position/
+     *         Set labels position
+     *
+     * @default center
+     */
+    align?: AlignValue;
+
+    /**
+     * Whether to allow the annotation's labels to overlap.
+     * To make the labels less sensitive for overlapping,
+     * the can be set to 0.
+     *
+     * @sample highcharts/annotations/tooltip-like/
+     *         Hide overlapping labels
+     *
+     * @default false
+     */
+    allowOverlap?: boolean;
+
+    /**
+     * The background color or gradient for the annotation's label.
+     *
+     * @sample highcharts/annotations/label-presentation/
+     *         Set labels graphic options
+     *
+     * @default rgba(0, 0, 0, 0.75)
+     */
+    backgroundColor?: ColorType;
+
+    /**
+     * The border color for the annotation's label.
+     *
+     * @sample highcharts/annotations/label-presentation/
+     *         Set labels graphic options
+     *
+     * @default ${palette.neutralColor100}
+     */
+    borderColor?: ColorType;
+
+    /**
+     * The border radius in pixels for the annotation's label.
+     *
+     * @sample highcharts/annotations/label-presentation/
+     *         Set labels graphic options
+     *
+     * @default 3
+     */
+    borderRadius?: number;
+
+    /**
+     * The border width in pixels for the annotation's label.
+     *
+     * @sample highcharts/annotations/label-presentation/
+     *         Set labels graphic options
+     *
+     * @default 1
+     */
+    borderWidth?: number;
+
+    /**
+     * A class name for styling by CSS.
+     *
+     * @sample highcharts/css/annotations
+     *         Styled mode annotations
+     *
+     * @since 6.0.5
+     * @default highcharts-no-tooltip
+     */
+    className?: string;
+
+    /**
+     * Whether to hide the annotation's label that is outside the plot area.
+     *
+     * @sample highcharts/annotations/label-crop-overflow/
+     *         Crop or justify labels
+     *
+     * @default false
+     */
+    crop?: boolean,
+
+    /**
+     * The label's pixel distance from the point.
+     *
+     * @sample highcharts/annotations/label-position/
+     *         Set labels position
+     *
+     * @default 16
+     */
+    distance?: number;
+
+    /**
+     * A
+     * [format](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+     * string for the data label.
+     *
+     * @see [plotOptions.series.dataLabels.format](#plotOptions.series.dataLabels.format)
+     *
+     * @sample highcharts/annotations/label-text/
+     *         Set labels text
+     */
+    format?: string;
+
+    /**
+     * Alias for the format option.
+     *
+     * @see [format](#annotations.labelOptions.format)
+     *
+     * @sample highcharts/annotations/label-text/
+     *         Set labels text
+     */
+    text?: string;
+
+    /**
+     * Callback JavaScript function to format the annotation's
+     * label. Note that if a `format` or `text` are defined,
+     * the format or text take precedence and the formatter is
+     * ignored. `This` refers to a point object.
+     *
+     * @sample highcharts/annotations/label-text/
+     *         Set labels text
+     *
+     * @type    {Highcharts.FormatterCallbackFunction<Highcharts.Point>}
+     * @default function () { return defined(this.y) ? this.y : 'Annotation label'; }
+     */
+    formatter?: Templating.FormatterCallback<AnnotationPointType>;
+
+    /**
+     * Whether all the labels for an annotation are visible in the exported data
+     * table.
+     *
+     * @sample highcharts/annotations/include-in-data-export/
+     *         Do not include in the data export
+     *
+     * @since 8.2.0
+     * @requires modules/export-data
+     */
+    includeInDataExport?: boolean;
+
+    /**
+     * How to handle the annotation's label that flow outside
+     * the plot area. The justify option aligns the label inside
+     * the plot area.
+     *
+     * @sample highcharts/annotations/label-crop-overflow/
+     *         Crop or justify labels
+     *
+     * @default justify
+     */
+    overflow?: DataLabelOverflowValue;
+
+    /**
+     * When either the borderWidth or the backgroundColor is
+     * set, this is the padding within the box.
+     *
+     * @sample highcharts/annotations/label-presentation/
+     *         Set labels graphic options
+     *
+     * @default 5
+     */
+    padding?: number;
+
+    /**
+     * The shadow of the box. The shadow can be an object
+     * configuration containing `color`, `offsetX`, `offsetY`,
+     * `opacity` and `width`.
+     *
+     * @sample highcharts/annotations/label-presentation/
+     *         Set labels graphic options
+     *
+     * @default false
+     */
+    shadow?: (boolean | ShadowOptionsObject);
+
+    /**
+     * The name of a symbol to use for the border around the
+     * label. Symbols are predefined functions on the Renderer
+     * object.
+     *
+     * @sample highcharts/annotations/shapes/
+     *         Available shapes for labels
+     *
+     * @default callout
+     */
+    shape?: SymbolKey;
+
+    /**
+     * Styles for the annotation's label.
+     *
+     * @see [plotOptions.series.dataLabels.style](plotOptions.series.dataLabels.style.html)
+     *
+     * @sample highcharts/annotations/label-presentation/
+     *         Set labels graphic options
+     *
+     * @default {"fontSize": "0.7em", "fontWeight": "normal", "color": "contrast"}
+     */
+    style?: CSSObject;
+
+    /**
+     * Whether to [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
+     * to render the annotation's label.
+     *
+     * @default false
+     */
+    useHTML?: boolean;
+
+    /**
+     * The vertical alignment of the annotation's label.
+     *
+     * @sample highcharts/annotations/label-position/
+     *         Set labels position
+     *
+     * @default bottom
+     */
+    verticalAlign?: VerticalAlignValue;
+
+    /**
+     * The x position offset of the label relative to the point.
+     * Note that if a `distance` is defined, the distance takes
+     * precedence over `x` and `y` options.
+     *
+     * @sample highcharts/annotations/label-position/
+     *         Set labels position
+     *
+     * @default 0
+     */
+    x?: number;
+
+    /**
+     * The y position offset of the label relative to the point.
+     * Note that if a `distance` is defined, the distance takes
+     * precedence over `x` and `y` options.
+     *
+     * @sample highcharts/annotations/label-position/
+     *         Set labels position
+     *
+     * @default -16
+     */
+    y?: number;
+}
+
+export interface AnnotationLabelOptions extends AnnotationLabelOptionsOptions {
+    /* *
+    *
+    *  Excluded properties. Not omitted for ancestor type matching.
+    *
+    * */
+
+    includeInDataExport?: undefined;
+
+    /**
+     * The array of control points.
+     *
+     * @sample highcharts/annotations/ellipse
+     *         Ellipse annotation
+     *
+     * @extends annotations.controlPointOptions
+     * @type {Array<AnnotationControlPointOptionsObject>}
+     */
+    controlPoints?: Array<ControlPointOptions>;
+
+    /**
+     * This option defines the point to which the label will be
+     * connected. It can be either the point which exists in the
+     * series - it is referenced by the point's id - or a new point
+     * with defined x, y properties and optionally axes.
+     *
+     * @sample highcharts/annotations/mock-point/
+     *         Attach annotation to a mock point
+     * @sample highcharts/annotations/mock-points/
+     *         Attach annotation to a mock point with different ways
+     */
+    point?: AnnotationMockPointOptions;
+}
+
+/**
+ * Annotation point, which can be:
+ * - a string: the ID of an existing series point,
+ * - an object: mock point options,
+ * - a function: returning either mock point options object or a point.
+ *
+ * Internally, this can also be a point or a mock point.
+ *
+ * @requires modules/annotations
+ */
+export type AnnotationMockPointOptions = (
+    string | AnnotationMockPointOptionsObject | AnnotationMockPointFunction
+);
+
+/**
+ * Callback function that returns the annotation shape point or it's options.
+ *
+ * @callback Highcharts.AnnotationMockPointFunction
+ *
+ * @param {Highcharts.AnnotationControllable} controllable
+ *        Controllable shape or label.
+ *
+ * @return {
+ *     Highcharts.AnnotationMockPointOptionsObject |
+ *     Highcharts.AnnotationPointType
+ * }
+ *         Annotations shape point or it's options.
+ */
+export interface AnnotationMockPointFunction {
+    (controllable: Controllable):
+        AnnotationMockPointOptionsObject | AnnotationPointType;
+}
+
+export interface AnnotationShapeOptionsOptions {
+    /**
+     * The radius of the shape in y direction. Used for the ellipse.
+     *
+     * @sample highcharts/annotations/ellipse/
+     *         Ellipse annotation
+     **/
+    ry?: number;
+
+    /**
+     * The xAxis index to which the points should be attached.
+     * Used for the ellipse.
+     **/
+    xAxis?: number;
+
+    /**
+     * The yAxis index to which the points should be attached.
+     * Used for the ellipse.
+     **/
+    yAxis?: number;
+
+    /**
+     * The width of the shape.
+     *
+     * @sample highcharts/annotations/shape/
+     *         Basic shape annotation
+     **/
+    width?: number;
+
+    /**
+     * The height of the shape.
+     *
+     * @sample highcharts/annotations/shape/
+     *         Basic shape annotation
+     */
+    height?: number;
+
+    /**
+     * The type of the shape.
+     * Available options are circle, rect and ellipse.
+     *
+     * @sample highcharts/annotations/shape/
+     *         Basic shape annotation
+     *
+     * @sample highcharts/annotations/ellipse/
+     *         Ellipse annotation
+     *
+     * @default rect
+     */
+    type?: string;
+
+    /**
+     * The URL for an image to use as the annotation shape.
+     * Note, type has to be set to `'image'`.
+     *
+     * @see [annotations.shapeOptions.type](#annotations.shapeOptions.type)
+     *
+     * @sample highcharts/annotations/shape-src/
+     *         Define a marker image url for annotations
+     */
+    src?: string;
+
+    /**
+     * Name of the dash style to use for the shape's stroke.
+     *
+     * @sample {highcharts} highcharts/plotoptions/series-dashstyle-all/
+     *         Possible values demonstrated
+     */
+    dashStyle?: DashStyleValue;
+
+    /**
+     * The color of the shape's stroke.
+     *
+     * @sample highcharts/annotations/shape/
+     *         Basic shape annotation
+     *
+     * @default rgba(0, 0, 0, 0.75)
+     */
+    stroke?: ColorType;
+
+    /**
+     * The pixel stroke width of the shape.
+     *
+     * @sample highcharts/annotations/shape/
+     *         Basic shape annotation
+     *
+     * @default 1
+     */
+    strokeWidth?: number;
+
+    /**
+     * The color of the shape's fill.
+     *
+     * @sample highcharts/annotations/shape/
+     *         Basic shape annotation
+     *
+     * @default rgba(0, 0, 0, 0.75)
+     */
+    fill?: ColorType;
+
+    /**
+     * The radius of the shape.
+     *
+     * @sample highcharts/annotations/shape/
+     *         Basic shape annotation
+     *
+     * @default 0
+     */
+    r?: number;
+
+    /**
+     * Defines additional snapping area around an annotation
+     * making this annotation to focus. Defined in pixels.
+     *
+     * @default 2
+     */
+    snap?: number;
+}
+
+export interface AnnotationShapeOptions extends AnnotationShapeOptionsOptions {
+    /**
+     * The array of control points.
+     *
+     * @sample highcharts/annotations-advanced/controllable-image
+     *         Controllable image annotation
+     *
+     * @extends annotations.controlPointOptions
+     * @type {Array<AnnotationControlPointOptionsObject>}
+     * @apioption annotations.shapes.controlPoints
+     */
+    controlPoints?: Array<ControlPointOptions>;
+
+    /**
+     * Id of the marker which will be drawn at the final vertex of
+     * the path. Custom markers can be defined in defs property.
+     *
+     * @see [defs.markers](#defs.markers)
+     *
+     * @sample highcharts/annotations/custom-markers/
+     *         Define a custom marker for annotations
+     */
+    markerEnd?: string;
+
+    /**
+     * Id of the marker which will be drawn at the first vertex of
+     * the path. Custom markers can be defined in defs property.
+     *
+     * @see [defs.markers](#defs.markers)
+     *
+     * @sample {highcharts} highcharts/annotations/custom-markers/
+     *         Define a custom marker for annotations
+     */
+    markerStart?: string;
+
+    /**
+     * This option defines the point to which the shape will be
+     * connected. It can be either the point which exists in the
+     * series - it is referenced by the point's id - or a new point
+     * with defined x, y properties and optionally axes.
+     *
+     * @sample highcharts/annotations/mock-points/
+     *         Attach annotation to a mock point with different ways
+     *
+     * @type      {Highcharts.AnnotationMockPointOptions}
+     * @extends   annotations.labels.point
+     * @requires  modules/annotations
+     * @apioption annotations.shapes.point
+     */
+    point?: AnnotationMockPointOptions;
+
+    /**
+     * An array of points for the shape
+     * or a callback function that returns that shape point.
+     *
+     * This option is available
+     * for shapes which can use multiple points such as path. A
+     * point can be either a point object or a point's id.
+     *
+     * @see [annotations.shapes.point](#annotations.shapes.point)
+     *
+     * @type      {Array<Highcharts.AnnotationMockPointOptions>}
+     * @extends   annotations.labels.point
+     * @apioption annotations.shapes.points
+     */
+    points?: Array<AnnotationMockPointOptions>;
 }
 
 export interface AnnotationTypeOptions {
@@ -794,7 +815,7 @@ export interface AnnotationTypeOptions {
      * @extends annotations.shapeOptions
      * @apioption annotations.typeOptions.background
      */
-    background?: Partial<ControllableShapeOptions>;
+    background?: AnnotationShapeOptionsOptions;
 
     /**
      * Height of the annotation in pixels.
@@ -810,7 +831,7 @@ export interface AnnotationTypeOptions {
      * @extends annotations.shapeOptions
      * @apioption annotations.typeOptions.line
      */
-    line?: Partial<ControllableShapeOptions>;
+    line?: AnnotationShapeOptionsOptions;
 
     /**
      * A single point that the annotation is attached to. It can be either
@@ -818,10 +839,10 @@ export interface AnnotationTypeOptions {
      * point's id - or a new point with defined x, y properties
      * and optionally axes.
      *
-     * @type {string|AnnotationMockPointFunction|AnnotationMockPointOptionsObject}
+     * @type {string | Highcharts.AnnotationMockPointOptionsObject}
      * @apioption annotations.typeOptions.point
      */
-    point: MockPointOptions;
+    point?: (string | AnnotationMockPointOptionsObject);
 
     /**
      * An array of points that the annotation is attached to. Each point can
@@ -829,10 +850,10 @@ export interface AnnotationTypeOptions {
      * point's id - or a new point with defined x, y properties
      * and optionally axes.
      *
-     * @type {Array<*>}
+     * @type {Array<(string | Highcharts.AnnotationMockPointOptionsObject)>}
      * @apioption annotations.typeOptions.points
      */
-    points?: Array<AnnotationTypePointsOptions>;
+    points?: Array<(string | AnnotationMockPointOptionsObject)>;
 
     /**
      * The annotation type identifier.
@@ -861,6 +882,9 @@ export interface AnnotationTypeOptions {
      * @apioption annotations.typeOptions.yAxis
      */
     yAxis?: number;
+
+    /** @internal */
+    yOffset?: number;
 }
 
 export interface AnnotationTypePointsOptions {

@@ -212,25 +212,13 @@ function chartCallback(
                 return s;
             },
             startRowLength = event.dataRows[0].length,
-            annotationSeparator = (
-                chart.options.exporting &&
-                chart.options.exporting.csv &&
-                chart.options.exporting.csv.annotations &&
-                chart.options.exporting.csv.annotations.itemDelimiter
-            ),
-            joinAnnotations = (
-                chart.options.exporting &&
-                chart.options.exporting.csv &&
-                chart.options.exporting.csv.annotations &&
-                chart.options.exporting.csv.annotations.join
-            );
+            annotationSeparator = chart.options.exporting?.csv?.annotations
+                ?.itemDelimiter,
+            joinAnnotations = chart.options.exporting?.csv?.annotations?.join;
 
         annotations.forEach((annotation): void => {
 
-            if (
-                annotation.options.labelOptions &&
-                annotation.options.labelOptions.includeInDataExport
-            ) {
+            if (annotation.options.labelOptions?.includeInDataExport) {
 
                 annotation.labels.forEach((label): void => {
                     if (label.options.text) {

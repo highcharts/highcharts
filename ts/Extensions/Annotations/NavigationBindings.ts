@@ -950,10 +950,8 @@ class NavigationBindings {
             nestedEditables = editables.nestedOptions,
             type = pick(
                 options.type,
-                options.shapes && options.shapes[0] &&
-                    options.shapes[0].type,
-                options.labels && options.labels[0] &&
-                    options.labels[0].type,
+                options.shapes?.[0].type,
+                (options.labels?.[0] as any).type,
                 'label'
             ),
             nonEditables = (

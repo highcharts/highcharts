@@ -16,7 +16,7 @@
 
 import type { AnnotationEventObject } from '../EventEmitter';
 import type { ControlPointOptionsObject } from '../ControlPointOptions';
-import type MockPointOptions from '../MockPointOptions';
+import type MockPointOptions from '../AnnotationMockPointOptionsObject';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
 
@@ -44,7 +44,7 @@ interface TimeCyclesOptions extends CrookedLine.Options {
     yAxis: number;
 }
 
-if (defaultOptions.annotations) {
+if (defaultOptions.annotations?.types) {
     defaultOptions.annotations.types.timeCycles = merge(
         defaultOptions.annotations.types.crookedLine,
         /**
@@ -231,7 +231,7 @@ class TimeCycles extends CrookedLine {
     }
 
     public addShapes(): void {
-        const typeOptions = this.options.typeOptions;
+        const typeOptions = this.options.typeOptions!;
         this.setPathProperties();
         const shape = this.initShape(
             merge(typeOptions.line, {
@@ -249,7 +249,7 @@ class TimeCycles extends CrookedLine {
     public addControlPoints(): void {
         const options = this.options,
             typeOptions = options.typeOptions as TimeCycles.TypeOptions;
-        options.controlPointOptions.style.cursor = this.chart.inverted ?
+        options.controlPointOptions!.style.cursor = this.chart.inverted ?
             'ns-resize' :
             'ew-resize';
 
@@ -270,15 +270,15 @@ class TimeCycles extends CrookedLine {
     }
 
     public setPathProperties(): void {
-        const options = this.options.typeOptions,
+        const options = this.options.typeOptions!,
             points = options.points;
 
         if (!points) {
             return;
         }
 
-        const point1 = points[0],
-            point2 = points[1],
+        const point1 = points[0] as any,
+            point2 = points[1] as any,
             xAxisNumber = options.xAxis || 0,
             yAxisNumber = options.yAxis || 0,
             xAxis = this.chart.xAxis[xAxisNumber],

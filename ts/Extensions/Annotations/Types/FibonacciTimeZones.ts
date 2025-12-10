@@ -27,9 +27,10 @@ import InfinityLine from './InfinityLine.js';
 import MockPoint from '../MockPoint.js';
 import { Palette } from '../../../Core/Color/Palettes';
 import U from '../../../Core/Utilities.js';
+import { AnnotationMockPointFunction } from '../AnnotationOptions';
 const { merge } = U;
 
-if (defaultOptions.annotations) {
+if (defaultOptions.annotations?.types) {
     defaultOptions.annotations.types.fibonacciTimeZones = merge(
         defaultOptions.annotations.types.crookedLine,
         /**
@@ -170,7 +171,7 @@ function edgePoint(
     startIndex: number,
     endIndex: number,
     fibonacciIndex: number
-): Function {
+): AnnotationMockPointFunction {
     return function (target: any): PositionObject {
         const chart = target.annotation.chart,
             plotLeftOrTop = chart.inverted ? chart.plotTop : chart.plotLeft;
@@ -257,11 +258,11 @@ class FibonacciTimeZones extends CrookedLine {
 
             this.initShape(
                 merge(
-                    this.options.typeOptions.line,
+                    this.options.typeOptions?.line,
                     {
                         type: 'path',
-                        points: points,
-                        className: 'highcharts-fibonacci-timezones-lines'
+                        className: 'highcharts-fibonacci-timezones-lines',
+                        points
                     }
                 ),
                 i // Shape's index. Can be found in annotation.shapes[i].index

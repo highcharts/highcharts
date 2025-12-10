@@ -19,7 +19,9 @@ import type {
 } from './AnnotationSeries';
 import type Axis from '../../Core/Axis/Axis';
 import type ControlTarget from './ControlTarget';
-import type MockPointOptions from './MockPointOptions';
+import type {
+    AnnotationMockPointOptionsObject
+} from './AnnotationMockPointOptionsObject';
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import type Series from '../../Core/Series/Series';
 
@@ -37,6 +39,7 @@ const {
  *
  * */
 
+/** @internal */
 declare module './AnnotationSeries' {
     interface AnnotationPoint {
         /** @internal */
@@ -45,6 +48,7 @@ declare module './AnnotationSeries' {
         /**
          * Indicates if this is a mock point for an annotation.
          *
+         * @internal
          * @name Highcharts.Point#mock
          * @type {boolean|undefined}
          */
@@ -53,8 +57,8 @@ declare module './AnnotationSeries' {
 }
 
 /** @internal */
-declare module './MockPointOptions' {
-    interface MockPointOptions {
+declare module './AnnotationMockPointOptionsObject' {
+    interface AnnotationMockPointOptionsObject {
         command?: string;
         series?: undefined;
     }
@@ -67,7 +71,8 @@ export interface MockLabelConfigObject {
     point: MockPoint;
 }
 
-interface MockSeries {
+/** @internal */
+export interface MockSeries {
     chart: AnnotationChart;
     getPlotBox: Series['getPlotBox'];
     xAxis?: (Axis|null);
@@ -192,7 +197,7 @@ class MockPoint {
      */
     public static pointToOptions(
         point: AnnotationPointType
-    ): MockPointOptions {
+    ): AnnotationMockPointOptionsObject {
 
         return {
             x: point.x as any,
@@ -211,7 +216,7 @@ class MockPoint {
     public constructor(
         chart: AnnotationChart,
         target: (ControlTarget|null),
-        options: (MockPointOptions|Function)
+        options: (AnnotationMockPointOptionsObject|Function)
     ) {
         // Circular reference for formats and formatters
         this.point = this;
@@ -292,7 +297,7 @@ class MockPoint {
     public command?: string;
     public isInside?: boolean;
     public negative?: boolean;
-    public options: (MockPointOptions|Function);
+    public options: (AnnotationMockPointOptionsObject|Function);
     public plotX!: number;
     public plotY!: number;
     public series: MockSeries;
@@ -322,7 +327,7 @@ class MockPoint {
      * @internal
      * @param {Highcharts.AnnotationMockPointOptionsObject} options
      */
-    public applyOptions(options: MockPointOptions): void {
+    public applyOptions(options: AnnotationMockPointOptionsObject): void {
         this.command = options.command;
 
         this.setAxis(options, 'x');
@@ -338,14 +343,14 @@ class MockPoint {
      * @return {Highcharts.AnnotationMockPointOptionsObject}
      * The mock point's options.
      */
-    public getOptions(): MockPointOptions {
+    public getOptions(): AnnotationMockPointOptionsObject {
         if (this.hasDynamicOptions()) {
             if (typeof this.options === 'function') {
                 return (this.options as (target: any) =>
-                MockPointOptions)(this.target);
+                AnnotationMockPointOptionsObject)(this.target);
             }
         }
-        return this.options as MockPointOptions;
+        return this.options as AnnotationMockPointOptionsObject;
     }
 
     /**
@@ -405,18 +410,18 @@ class MockPoint {
 
         if (xAxis) {
             this.x = options.x;
-            this.plotX = xAxis.toPixels(options.x, true);
+            this.plotX = xAxis.toPixels(options.x as number, true);
         } else {
             this.x = void 0;
-            this.plotX = options.x;
+            this.plotX = options.x as number;
         }
 
         if (yAxis) {
             this.y = options.y;
-            this.plotY = yAxis.toPixels(options.y, true);
+            this.plotY = yAxis.toPixels(options.y as number, true);
         } else {
             this.y = null;
-            this.plotY = options.y;
+            this.plotY = options.y as number;
         }
 
         this.isInside = this.isInsidePlot();
@@ -509,7 +514,7 @@ class MockPoint {
      * 'x' or 'y' string literal
      */
     public setAxis(
-        options: MockPointOptions,
+        options: AnnotationMockPointOptionsObject,
         xOrY: ('x'|'y')
     ): void {
         const axisName: ('xAxis'|'yAxis') = (xOrY + 'Axis') as any,
@@ -651,18 +656,19 @@ export default MockPoint;
  * @name      Highcharts.AnnotationMockPointOptionsObject.yAxis
  */
 
-// TODO: Unable to copy into native due to type mismatch between TS and Docs.
-// TODO: Start with no casting to any in ControlTarget's point function.
 /**
- * Callback function that returns the annotation shape point.
+ * Callback function that returns the annotation shape point or it's options.
  *
  * @callback Highcharts.AnnotationMockPointFunction
  *
  * @param {Highcharts.AnnotationControllable} controllable
  *        Controllable shape or label.
  *
- * @return {Highcharts.AnnotationMockPointOptionsObject}
- *         Annotations shape point.
+ * @return {
+ *     Highcharts.AnnotationMockPointOptionsObject |
+ *     Highcharts.AnnotationPointType
+ * }
+ *         Annotations shape point or it's options.
  */
 
 /**

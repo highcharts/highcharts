@@ -23,7 +23,7 @@ import AxisType from '../../../Core/Axis/AxisType';
 import BBoxObject from '../../../Core/Renderer/BBoxObject';
 import Controllable from './Controllable.js';
 import ControllablePath from './ControllablePath.js';
-import MockPointOptions from '../MockPointOptions';
+import MockPointOptions from '../AnnotationMockPointOptionsObject';
 import U from '../../../Core/Utilities.js';
 const {
     merge,

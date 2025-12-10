@@ -16,6 +16,7 @@ import type AnnotationChart from '../AnnotationChart';
 import type {
     AnnotationDraggableValue,
     AnnotationOptions,
+    AnnotationShapeOptionsOptions,
     AnnotationTypeOptions
 } from '../AnnotationOptions';
 import type { AnnotationEventObject } from '../EventEmitter';
@@ -28,7 +29,7 @@ import type {
 import type CSSObject from '../../../Core/Renderer/CSSObject';
 import type DashStyleValue from '../../../Core/Renderer/DashStyleValue';
 import type Templating from '../../../Core/Templating';
-import type MockPointOptions from '../MockPointOptions';
+import type MockPointOptions from '../AnnotationMockPointOptionsObject';
 import type Point from '../../../Core/Series/Point';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
@@ -47,7 +48,7 @@ const {
 } = U;
 import { Palette } from '../../../Core/Color/Palettes.js';
 
-if (defaultOptions.annotations) {
+if (defaultOptions.annotations?.types) {
     /**
      * Options for the measure annotation type.
      *
@@ -266,7 +267,7 @@ if (defaultOptions.annotations) {
 
                 if (selectType === 'y') {
                     targetX = ext.xAxisMin +
-                                        ((ext.xAxisMax - ext.xAxisMin) / 2);
+                        ((ext.xAxisMax - ext.xAxisMin) / 2);
 
                     // First control point
                     if (cpIndex === 0) {
@@ -283,8 +284,8 @@ if (defaultOptions.annotations) {
                 }
 
                 return {
-                    x: x - (controlPointOptions.width / 2),
-                    y: y - (controlPointOptions.height / 2)
+                    x: x - ((controlPointOptions?.width || 0) / 2),
+                    y: y - ((controlPointOptions?.height || 0) / 2)
                 };
             },
             events: {
@@ -480,8 +481,8 @@ function init(
         top = inverted ? xAxis.left : yAxis.top, // #13664
         left = inverted ? yAxis.top : xAxis.left; // #13664
 
-    this.startXMin = options.point.x;
-    this.startYMin = options.point.y;
+    this.startXMin = (options.point as any).x;
+    this.startYMin = (options.point as any).y;
 
     if (isNumber(width)) {
         this.startXMax = this.startXMin + width;
@@ -697,7 +698,7 @@ function updateStartPoints(
 
     // We need to update userOptions as well as they are used in
     // the Annotation.update() method to initialize the annotation, #19121.
-    this.userOptions.typeOptions.point = {
+    (this.userOptions.typeOptions ||= {}).point = {
         x: this.startXMin,
         y: this.startYMin
     };
@@ -788,7 +789,7 @@ class Measure extends Annotation {
 
     public addControlPoints(): void {
         const inverted = this.chart.inverted,
-            options = this.options.controlPointOptions,
+            options = this.options.controlPointOptions!,
             selectType = this.options.typeOptions.selectType;
 
         if (!defined(this.userOptions.controlPointOptions?.style?.cursor)) {
@@ -802,7 +803,7 @@ class Measure extends Annotation {
         let controlPoint = new ControlPoint(
             this.chart,
             this,
-            this.options.controlPointOptions,
+            this.options.controlPointOptions!,
             0
         );
 
@@ -813,7 +814,7 @@ class Measure extends Annotation {
             controlPoint = new ControlPoint(
                 this.chart,
                 this,
-                this.options.controlPointOptions,
+                this.options.controlPointOptions!,
                 1
             );
 
@@ -897,7 +898,7 @@ class Measure extends Annotation {
         }
 
         this.initShape(
-            extend<Partial<ControllableShapeOptions>>(
+            extend(
                 {
                     type: 'path',
                     points: shapePoints,
@@ -1083,6 +1084,7 @@ class Measure extends Annotation {
      * Redraw event which render elements and update start points if needed.
      *
      * @param {boolean} animation
+     * flag if redraw with animation
      * @param {boolean} [resize]
      * flag if resized
      * @param {boolean} [setStartPoints]
@@ -1336,7 +1338,7 @@ namespace Measure {
         style: CSSObject;
     }
     export interface MeasureTypeOptions extends AnnotationTypeOptions {
-        background: ControllableShapeOptions;
+        background: AnnotationShapeOptionsOptions;
 
         /**
          * Configure a crosshair that is horizontally placed in middle of
@@ -1350,6 +1352,7 @@ namespace Measure {
          * rectangle.
          */
         crosshairY: MeasureTypeCrosshairOptions;
+
         label: MeasureTypeLabelOptions;
 
         /**

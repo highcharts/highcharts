@@ -11,7 +11,10 @@
  * */
 
 import type ControlPointOptions from './ControlPointOptions';
-import type MockPointOptions from './MockPointOptions';
+import type {
+    AnnotationMockPointOptions
+} from './AnnotationOptions';
+import { AnnotationPointType } from './AnnotationSeries';
 
 /* *
  *
@@ -23,17 +26,23 @@ export interface ControlTargetOptions {
     /** @internal */
     controlPointOptions?: ControlPointOptions;
 
+    /** @internal */
     controlPoints?: Array<ControlPointOptions>;
 
-    point?: (string|MockPointOptions);
+    /** @internal */
+    point?: AnnotationMockPointOptions | AnnotationPointType;
 
-    points?: Array<(string|MockPointOptions)>;
+    /** @internal */
+    points?: Array<AnnotationMockPointOptions | AnnotationPointType>;
 
     /** @internal */
     x?: number;
 
     /** @internal */
     y?: number;
+
+    /** @internal */
+    className?: string;
 }
 
 /* *

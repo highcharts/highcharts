@@ -39,34 +39,36 @@ import type { SymbolKey } from '../../../Core/Renderer/SVG/SymbolType';
  *
  * */
 
+/** @internal */
 export interface ControllableLabelOptions extends ControllableOptions {
-    align: AlignValue;
-    allowOverlap: boolean;
+    align?: AlignValue;
+    allowOverlap?: boolean;
     backgroundColor?: ColorType;
     color?: ColorType;
     borderColor?: ColorType;
     borderRadius?: number;
     borderWidth?: number;
-    crop: boolean;
+    crop?: boolean;
     dashStyle?: DashStyleValue;
     distance?: number;
     format?: string;
-    formatter: Templating.FormatterCallback<AnnotationPoint>;
-    includeInDataExport: boolean;
-    overflow: DataLabelOverflowValue;
+    formatter?: Templating.FormatterCallback<AnnotationPoint>;
+    includeInDataExport?: boolean;
+    overflow?: DataLabelOverflowValue;
     padding?: number;
-    shadow: (boolean|Partial<ShadowOptionsObject>);
-    shape: SymbolKey;
-    style: CSSObject;
+    shadow?: (boolean|Partial<ShadowOptionsObject>);
+    shape?: SymbolKey;
+    style?: CSSObject;
     text?: string;
-    useHTML: boolean;
-    verticalAlign: VerticalAlignValue;
-    x: number;
+    useHTML?: boolean;
+    verticalAlign?: VerticalAlignValue;
+    x?: number;
     xAxis?: number|string;
-    y: number;
+    y?: number;
     yAxis?: number|string;
 }
 
+/** @internal */
 export interface ControllableOptions extends ControlTargetOptions {
     className?: string;
     id?: (number|string);
@@ -78,11 +80,12 @@ export interface ControllableOptions extends ControlTargetOptions {
     type?: string;
 }
 
+/** @internal */
 export interface ControllableShapeOptions extends ControllableOptions {
     d?: (string|Function|SVGPath);
     fill?: ColorType;
     height?: number;
-    r: number;
+    r?: number;
     snap?: number;
     src?: string;
     stroke?: ColorType;
