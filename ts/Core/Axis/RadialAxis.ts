@@ -168,6 +168,7 @@ declare module './PlotLineOrBand/PlotBandOptions' {
     }
 }
 
+/** @internal */
 declare module './PlotLineOrBand/PlotLineOptions' {
     interface PlotLineOptions {
         chartX?: number;
@@ -184,6 +185,7 @@ declare module './PlotLineOrBand/PlotLineOptions' {
  *
  * */
 
+/** @internal */
 namespace RadialAxis {
 
     /* *
@@ -1691,4 +1693,5 @@ namespace RadialAxis {
  *
  * */
 
+/** @internal */
 export default RadialAxis;

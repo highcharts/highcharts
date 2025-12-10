@@ -22,9 +22,9 @@ import type { DeepPartial } from '../../Shared/Types';
 import type RadialAxisOptions from './RadialAxisOptions';
 
 /**
-     * Circular axis around the perimeter of a polar chart.
-     * @internal
-     */
+ * Circular axis around the perimeter of a polar chart.
+ * @internal
+ */
 const defaultCircularOptions: DeepPartial<RadialAxisOptions> = {
     gridLineWidth: 1, // Spokes
     labels: {
@@ -183,8 +183,10 @@ const defaultRadialOptions: DeepPartial<RadialAxisOptions> = {
  * */
 
 const RadialAxisDefaults = {
+    /** @internal */
     circular: defaultCircularOptions,
     radial: defaultRadialOptions,
+    /** @internal */
     radialGauge: defaultRadialGaugeOptions
 };
 

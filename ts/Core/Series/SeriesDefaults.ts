@@ -806,6 +806,22 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      */
 
     /**
+     * This option allows grouping series in a stacked chart. The stack option
+     * can be a string or anything else, as long as the grouped series' stack
+     * options match each other after conversion into a string.
+     *
+     * @sample {highcharts} highcharts/series/stack/
+     *         Stacked and grouped columns
+     * @sample {highcharts} highcharts/series/stack-centerincategory/
+     *         Stacked and grouped, centered in category
+     *
+     * @type      {number|string}
+     * @since     2.1
+     * @product   highcharts highstock
+     * @apioption series.stack
+     */
+
+    /**
      * Whether to stack the values of each series on top of each other.
      * Possible values are null to disable, `"normal"` to stack by
      * value or `"percent"`.
