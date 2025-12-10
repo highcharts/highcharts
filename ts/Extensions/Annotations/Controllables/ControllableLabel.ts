@@ -517,7 +517,10 @@ class ControllableLabel extends Controllable {
                     } as any
                 );
             } else if ((itemOptions as any).positioner) {
-                itemPosition = (itemOptions as any).positioner.call(this);
+                itemPosition = (itemOptions as any).positioner.call(
+                    this,
+                    this
+                );
             } else {
                 alignTo = {
                     x: anchorAbsolutePosition.x,

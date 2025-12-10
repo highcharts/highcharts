@@ -113,6 +113,33 @@ QUnit.test('Positioning labels according to real points', function (assert) {
         1.5,
         '#15524: Label should be within the plot'
     );
+
+    chart.update({
+        annotations: [{
+            labels: [{
+                point: 'id1',
+                text: 'Center positioned',
+                positioner: ctx => (
+                    ctx ? {
+                        x: 100,
+                        y: 100
+                    } : {
+                        x: 0,
+                        y: 0
+                    }
+                )
+            }]
+        }]
+    });
+
+    const label6 = chart.annotations[0].labels[0].graphic;
+
+    assert.close(
+        Math.round(label6.x + label6.width),
+        200,
+        10,
+        'Arrow function positioner should work.'
+    );
 });
 
 QUnit.test(
