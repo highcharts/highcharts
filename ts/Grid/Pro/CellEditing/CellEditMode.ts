@@ -21,8 +21,8 @@
  *
  * */
 
-import DataTable from '../../../Data/DataTable';
-import TableCell from '../../Core/Table/Body/TableCell';
+import type DataTable from '../../../Data/DataTable';
+import type TableCell from '../../Core/Table/Body/TableCell';
 
 
 /* *
