@@ -120,7 +120,7 @@ export default function Page() {
 
 ## 4. Accessing the Grid instance with refs
 
-You can access the Grid instance using a ref to programmatically interact with the grid:
+You can access the Grid instance programmatically by passing a ref through the `gridRef` prop.
 
 ```tsx
 // app/page.tsx
