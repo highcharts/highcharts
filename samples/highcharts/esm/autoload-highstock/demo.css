@@ -1,0 +1,46 @@
+* {
+    font-family: sans-serif;
+}
+
+h1 {
+    text-align: center;
+}
+
+p {
+    text-align: center;
+}
+
+code {
+    font-family: monospace;
+    background-color: #eee;
+    padding: 2px 4px;
+    border-radius: 2px;
+}
+
+#results {
+    margin: 1em;
+    border-radius: 4px;
+}
+
+#results span {
+    font-size: 2em;
+}
+
+.test-container {
+    width: 400px;
+    height: 300px;
+    float: left;
+    border: 1px solid silver;
+    border-radius: 4px;
+    margin: 5px;
+}
+
+.failed {
+    border-color: red;
+    background-color: #f003;
+    color: red;
+    font-weight: bold;
+    text-align: center;
+    line-height: 300px;
+    white-space: pre-wrap;
+}
