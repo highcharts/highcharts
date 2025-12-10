@@ -353,7 +353,6 @@
     background-color: var(--highcharts-background-color);
     background-clip: border-box;
     border-radius: var(--highcharts-dashboards-border-radius);
-    overflow: hidden;
 }
 
 .highcharts-dashboards-cell > .highcharts-dashboards-component .highcharts-dashboards-component-kpi-chart-container {

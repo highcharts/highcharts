@@ -137,7 +137,7 @@ class GridComponent extends Component {
                 }, false);
             }
 
-            this.grid.renderViewport();
+            await this.grid.redraw();
         }
 
         this.emit({ type: 'afterUpdate' });
@@ -186,7 +186,7 @@ class GridComponent extends Component {
 
         const dataTable = this.connectorHandlers[0]?.presentationTable;
         if (!dataTable?.getModified()) {
-            grid.update({ dataTable: void 0 });
+            void grid.update({ dataTable: void 0 });
             return;
         }
 

@@ -268,6 +268,7 @@ Before hunting for the bug, take a minute to understand our plugins.
 * `externals.mjs`: This Webpack callback decides, whether a file should be bundled or can be expected on the namespace.
   In `externals.json` can you map imports to the namespace and modules.
   If a file is not mentioned in `externals.mjs` it gets always bundled as an import.
+  **Note:** Changes in this file affect all webpack configurations, means all product teams have to review these changes.
 
 * `plugins/MastersLoader.mjs`: This is a Webpack loader to prepare masters files for ESM bundling.
   It adds all `@requires` modules of a master file as imports to auto-resolve.

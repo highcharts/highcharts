@@ -16,9 +16,14 @@ body {
     color: var(--highcharts-neutral-color-100);
 }
 
+:root,
+.highcharts-light {
+    --anchor-color: #007bff;
+}
+
 .hcg-theme-default,
 .highcharts-light .hcg-theme-default {
-    --anchor-color: #007bff;
+    --hcg-link-color: #007bff;
 }
 
 .highcharts-description {
@@ -26,13 +31,21 @@ body {
 }
 
 @media (prefers-color-scheme: dark) {
-    .hcg-theme-default {
+    :root {
         --anchor-color: #8ec3fc;
+    }
+
+    .hcg-theme-default {
+        --hcg-link-color: #8ec3fc;
     }
 }
 
-.highcharts-dark .hcg-theme-default {
+.highcharts-dark {
     --anchor-color: #8ec3fc;
+}
+
+.highcharts-dark .hcg-theme-default {
+    --hcg-link-color: #8ec3fc;
 }
 
 .demo {
@@ -53,7 +66,7 @@ td {
     text-align: center;
 }
 
-.hcg-theme-default a {
+.highcharts-description a {
     color: var(--anchor-color);
 }
 

@@ -21,7 +21,7 @@
  *
  * */
 
-import type Column from '../Column';
+import type { ColumnDataType } from '../Column';
 
 import AST from '../../../../Core/Renderer/HTML/AST.js';
 import CellContent from './CellContent.js';
@@ -34,7 +34,8 @@ const {
 
 import Utils from '../../../../Core/Utilities.js';
 const {
-    defined
+    defined,
+    isString
 } = Utils;
 
 
@@ -49,10 +50,37 @@ const {
  */
 class TextContent extends CellContent {
 
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
+    public static readonly defaultFormatsForDataTypes: Record<ColumnDataType, string> = {
+        string: '{value}',
+        number: '{value}',
+        'boolean': '{value}',
+        datetime: '{value:%Y-%m-%d %H:%M:%S}'
+    };
+
+
+    /* *
+     *
+     *  Constructor
+     *
+     * */
+
     constructor(cell: TableCell) {
         super(cell);
         this.add();
     }
+
+
+    /* *
+     *
+     *  Methods
+     *
+     * */
 
     protected override add(): void {
         this.update();
@@ -100,7 +128,14 @@ class TextContent extends CellContent {
                     format ? cell.format(format) : value + ''
                 );
         } else if (isDefaultFormat) {
-            cellContent = formatter?.call(cell).toString() || value + '';
+            const formattedValue = formatter?.call(cell);
+
+            if (isString(formattedValue)) {
+                cellContent = formattedValue;
+            } else {
+                cellContent = value + '';
+            }
+
         } else if (isDefaultFormatter) {
             cellContent = format ? cell.format(format) : value + '';
         }
@@ -110,25 +145,6 @@ class TextContent extends CellContent {
 
 }
 
-
-/* *
- *
- *  Namespace
- *
- * */
-
-namespace TextContent {
-
-    /**
-     * Default formats for data types.
-     */
-    export const defaultFormatsForDataTypes: Record<Column.DataType, string> = {
-        string: '{value}',
-        number: '{value}',
-        'boolean': '{value}',
-        datetime: '{value:%Y-%m-%d %H:%M:%S}'
-    };
-}
 
 /* *
  *

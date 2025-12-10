@@ -1,0 +1,7 @@
+---
+ name: Highcharts Homepage Smart Defaults Demo
+ authors:
+   - Nancy Dillon
+ requiresManualTesting: true
+ js_wrap: b
+...
