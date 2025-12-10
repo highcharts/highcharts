@@ -238,11 +238,16 @@ export default class Loader {
         // Advanced annotations
         if (options.annotations) {
             splat(options.annotations).forEach((annotation): void => {
-                if (annotation.type && mapping[`annotations.${annotation.type}`]) {
-                    mapping[`annotations.${annotation.type}`].forEach(
-                        (file): boolean => pushUnique(files, file)
-                    );
-                }
+                (
+                    (
+                        annotation.type && (
+                            mapping[`annotations.${annotation.type}`] ||
+                            mapping['annotations.type']
+                        )
+                    ) || []
+                ).forEach(
+                    (file): boolean => pushUnique(files, file)
+                );
             });
         }
 
