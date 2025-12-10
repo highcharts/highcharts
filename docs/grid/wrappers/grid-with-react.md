@@ -4,7 +4,7 @@ sidebar_label: "React"
 
 # Highcharts Grid with React
 
-Highcharts Grid provides official React wrappers for both **Grid Lite** and **Grid Pro**. These packages provide ready-to-use React components that handle the integration with Highcharts Grid, making it easy to add data grids to your React applications.
+Highcharts Grid provides official React integrations for both **Grid Lite** and **Grid Pro**. These packages provide ready-to-use React components that handle the integration with Highcharts Grid, making it easy to add data grids to your React applications.
 
 Two React packages are available:
 - **`@highcharts/grid-lite-react`** - React wrapper for Highcharts Grid Lite
