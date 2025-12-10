@@ -62,7 +62,6 @@ import dynamic from 'next/dynamic';
 import {
   type GridOptions
 } from '@highcharts/grid-lite-react';
-import '@highcharts/grid-lite/css/grid-lite.css';
 
 // Dynamically import Grid with SSR disabled
 const GridLite = dynamic(
@@ -97,7 +96,6 @@ import dynamic from 'next/dynamic';
 import {
   type GridOptions
 } from '@highcharts/grid-pro-react';
-import '@highcharts/grid-pro/css/grid-pro.css';
 
 // Dynamically import Grid with SSR disabled
 const GridPro = dynamic(
@@ -136,7 +134,6 @@ import {
   type GridInstance,
   type GridRefHandle
 } from '@highcharts/grid-pro-react';
-import '@highcharts/grid-pro/css/grid-pro.css';
 
 // Dynamically import Grid with SSR disabled
 const GridPro = dynamic(
@@ -145,16 +142,7 @@ const GridPro = dynamic(
 );
 
 export default function Page() {
-  const [options] = useState<GridOptions>({
-    dataTable: {
-      columns: {
-        name: ['Alice', 'Bob', 'Charlie', 'David'],
-        age: [23, 34, 45, 56],
-        city: ['New York', 'Oslo', 'Paris', 'Tokyo']
-      }
-    }
-  });
-
+  
   const grid = useRef<GridRefHandle<GridOptions> | null>(null);
 
   const onButtonClick = () => {
@@ -182,16 +170,6 @@ The same pattern works with `GridLite` as well. The `gridRef` and `callback` pro
 
 - **SSR is disabled**: The Grid components require browser APIs and cannot be rendered on the server. They are dynamically imported with `ssr: false` to ensure client-side only rendering.
 - **Client Component**: The page or component using the Grid must be marked with the `'use client'` directive.
-
-### CSS Import
-
-Don't forget to import the required CSS file for the Grid component:
-
-```tsx
-import '@highcharts/grid-lite/css/grid-lite.css';
-// or
-import '@highcharts/grid-pro/css/grid-pro.css';
-```
 
 ### Dynamic Import
 
