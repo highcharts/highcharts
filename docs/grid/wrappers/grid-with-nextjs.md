@@ -1,19 +1,20 @@
 ---
-sidebar_label: "React"
+sidebar_label: "Next.js"
 ---
 
-# Highcharts Grid with React
+# Highcharts Grid with Next.js
 
-Highcharts Grid provides official React integrations for both **Grid Lite** and **Grid Pro**. These packages provide ready-to-use React components that handle the integration with Highcharts Grid, making it easy to add data grids to your React applications.
+Highcharts Grid provides official React integrations for both **Grid Lite** and **Grid Pro** that work seamlessly with Next.js applications. These packages provide ready-to-use React components that handle the integration with Highcharts Grid, making it easy to add data grids to your Next.js applications.
 
 Two React packages are available:
 - **`@highcharts/grid-lite-react`** - React integration for Highcharts Grid Lite
 - **`@highcharts/grid-pro-react`** - React integration for Highcharts Grid Pro
 
-To create a Grid with React, please follow the steps below:
+To create a Grid with Next.js, please follow the steps below:
 
 ## 1. Install the Grid React package
-Install the Grid React package of your choice:
+
+Install the Grid React package of your choice along with the base Grid package:
 
 For Grid Lite:
 ```bash
@@ -45,19 +46,31 @@ import type { GridOptions, GridInstance, GridRefHandle } from '@highcharts/grid-
 import type { GridOptions, GridInstance, GridRefHandle } from '@highcharts/grid-pro-react';
 ```
 
-## 3. Use the component in your application:
+## 3. Use the component in your Next.js application
+
+Since Grid components require browser APIs, they need to be rendered on the client side only. Use Next.js dynamic imports with SSR disabled.
 
 ### Using Grid Lite:
+
 ```tsx
-// App.tsx
+// app/page.tsx
+
+'use client';
 
 import { useState } from 'react';
+import dynamic from 'next/dynamic';
 import {
-  GridLite,
   type GridOptions
 } from '@highcharts/grid-lite-react';
+import '@highcharts/grid-lite/css/grid-lite.css';
 
-function App() {
+// Dynamically import Grid with SSR disabled
+const GridLite = dynamic(
+  () => import('@highcharts/grid-lite-react').then((mod) => mod.GridLite),
+  { ssr: false }
+);
+
+export default function Page() {
   const [options] = useState<GridOptions>({
     dataTable: {
       columns: {
@@ -70,21 +83,29 @@ function App() {
 
   return <GridLite options={options} />;
 }
-
-export default App;
 ```
 
 ### Using Grid Pro:
+
 ```tsx
-// App.tsx
+// app/page.tsx
+
+'use client';
 
 import { useState } from 'react';
+import dynamic from 'next/dynamic';
 import {
-  GridPro,
   type GridOptions
 } from '@highcharts/grid-pro-react';
+import '@highcharts/grid-pro/css/grid-pro.css';
 
-function App() {
+// Dynamically import Grid with SSR disabled
+const GridPro = dynamic(
+  () => import('@highcharts/grid-pro-react').then((mod) => mod.GridPro),
+  { ssr: false }
+);
+
+export default function Page() {
   const [options] = useState<GridOptions>({
     dataTable: {
       columns: {
@@ -97,8 +118,6 @@ function App() {
 
   return <GridPro options={options} />;
 }
-
-export default App;
 ```
 
 ## 4. Accessing the Grid instance with refs
@@ -106,17 +125,26 @@ export default App;
 You can access the Grid instance using a ref to programmatically interact with the grid:
 
 ```tsx
-// App.tsx
+// app/page.tsx
+
+'use client';
 
 import { useState, useRef } from 'react';
+import dynamic from 'next/dynamic';
 import {
-  GridPro,
   type GridOptions,
   type GridInstance,
   type GridRefHandle
 } from '@highcharts/grid-pro-react';
+import '@highcharts/grid-pro/css/grid-pro.css';
 
-function App() {
+// Dynamically import Grid with SSR disabled
+const GridPro = dynamic(
+  () => import('@highcharts/grid-pro-react').then((mod) => mod.GridPro),
+  { ssr: false }
+);
+
+export default function Page() {
   const [options] = useState<GridOptions>({
     dataTable: {
       columns: {
@@ -144,13 +172,35 @@ function App() {
     </>
   );
 }
-
-export default App;
 ```
 
-## 5. Next.js Integration
+The same pattern works with `GridLite` as well. The `gridRef` and `callback` props are optional and allow you to access the underlying Grid instance for advanced use cases.
 
-For Next.js applications, see the dedicated [Next.js integration guide](https://www.highcharts.com/docs/grid/wrappers/grid-with-nextjs.md).
-## 6. View the Result
+## 5. Important Notes
 
-See the live example [here](https://stackblitz.com/edit/highcharts-grid-react-ts-mbvpgi2q).
+### Server-Side Rendering (SSR)
+
+- **SSR is disabled**: The Grid components require browser APIs and cannot be rendered on the server. They are dynamically imported with `ssr: false` to ensure client-side only rendering.
+- **Client Component**: The page or component using the Grid must be marked with the `'use client'` directive.
+
+### CSS Import
+
+Don't forget to import the required CSS file for the Grid component:
+
+```tsx
+import '@highcharts/grid-lite/css/grid-lite.css';
+// or
+import '@highcharts/grid-pro/css/grid-pro.css';
+```
+
+### Dynamic Import
+
+Always use Next.js `dynamic` import with `ssr: false` since Grid components require browser APIs that are not available during server-side rendering:
+
+```tsx
+const GridLite = dynamic(
+  () => import('@highcharts/grid-lite-react').then((mod) => mod.GridLite),
+  { ssr: false }
+);
+```
+

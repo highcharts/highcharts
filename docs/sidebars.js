@@ -144,6 +144,7 @@ module.exports = {
                 'Wrappers': [
                     'grid/wrappers/grid-with-angular',
                     'grid/wrappers/grid-with-react',
+                    'grid/wrappers/grid-with-nextjs',
                     'grid/wrappers/grid-with-vue'
                 ]
             }
