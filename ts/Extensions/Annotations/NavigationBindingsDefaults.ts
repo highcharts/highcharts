@@ -18,10 +18,9 @@
 
 import type Annotation from './Annotation';
 import type ControllableEllipse from './Controllables/ControllableEllipse';
-import type {
-    LangOptions,
-    NavigationOptions
-} from './NavigationBindingsOptions';
+import type { DeepPartial } from '../../Shared/Types';
+import type { LangOptions } from '../../Core/Options';
+import type { NavigationOptions } from '../Exporting/NavigationOptions';
 import type MockPointOptions from './AnnotationMockPointOptionsObject';
 import type NavigationBindings from './NavigationBindings';
 import type PointerEvent from '../../Core/PointerEvent';
@@ -43,7 +42,7 @@ const {
 /**
  * @optionparent lang
  */
-const lang: LangOptions = {
+const lang: DeepPartial<LangOptions> = {
 
     /**
      * Configure the Popup strings in the chart. Requires the
@@ -592,9 +591,11 @@ const navigation: NavigationOptions = {
  *
  * */
 
+/** @internal */
 const NavigationBindingDefaults = {
     lang,
     navigation
 };
 
+/** @internal */
 export default NavigationBindingDefaults;
