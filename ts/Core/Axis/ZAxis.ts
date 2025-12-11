@@ -17,7 +17,7 @@
  * */
 
 import type AxisBase from './AxisBase';
-import type AxisOptions from './AxisOptions';
+import type { XAxisOptions } from './AxisOptions';
 import type Chart from '../Chart/Chart.js';
 import type { DeepPartial } from '../../Shared/Types';
 
@@ -47,16 +47,29 @@ declare module './AxisType' {
 declare module '../Chart/ChartBase'{
     interface ChartBase {
         zAxis?: Array<ZAxis>;
-        addZAxis(options: DeepPartial<AxisOptions>): Axis;
+        addZAxis(options: DeepPartial<XAxisOptions>): Axis;
     }
 }
 
 declare module '../Options' {
     interface Options {
-        zAxis?: (
-            DeepPartial<AxisOptions>|
-            Array<DeepPartial<AxisOptions>>
-        );
+        /**
+         * The Z axis or depth axis for 3D plots.
+         *
+         * See the [Axis class](/class-reference/Highcharts.Axis) for
+         * programmatic access to the axis.
+         *
+         * @sample {highcharts} highcharts/3d/scatter-zaxis-categories/
+         *         Z-Axis with Categories
+         * @sample {highcharts} highcharts/3d/scatter-zaxis-grid/
+         *         Z-Axis with styling
+         *
+         * @since     5.0.0
+         * @product   highcharts
+         * @excluding breaks, crosshair, height, left, lineColor, lineWidth,
+         *            nameToX, showEmpty, top, width
+         */
+        zAxis?: (DeepPartial<XAxisOptions>|Array<DeepPartial<XAxisOptions>>);
     }
 }
 
@@ -69,7 +82,7 @@ declare module '../Options' {
 /** @internal */
 function chartAddZAxis(
     this: Chart,
-    options: DeepPartial<AxisOptions>
+    options: DeepPartial<XAxisOptions>
 ): Axis {
     return new ZAxis(this, options);
 }
@@ -139,7 +152,7 @@ class ZAxis extends Axis implements AxisBase {
 
     public init(
         chart: Chart,
-        userOptions: AxisOptions
+        userOptions: XAxisOptions
     ):void {
         // #14793, this used to be set on the prototype
         this.isZAxis = true;
