@@ -25,12 +25,15 @@ import type {
     HeaderCellA11yOptions,
     LangAccessibilityOptions
 } from './Accessibility/A11yOptions';
-import type { PaginationLangOptions, PaginationOptions } from './Pagination/PaginationOptions';
-import type ColumnResizing from './Table/ColumnResizing/ColumnResizing';
+import type {
+    PaginationLangOptions,
+    PaginationOptions
+} from './Pagination/PaginationOptions';
+import type { ColumnResizingMode } from './Table/ColumnResizing/ColumnResizing';
+import type { ColumnDataType } from './Table/Column';
 import type DataTable from '../../Data/DataTable';
 import type DataTableOptions from '../../Data/DataTableOptions';
 import type Cell from './Table/Cell';
-import type Column from './Table/Column';
 import type { LangOptionsCore } from '../../Shared/LangOptionsCore';
 import type {
     Condition as ColumnFilteringCondition
@@ -42,11 +45,6 @@ import type {
  *  Declarations
  *
  * */
-
-/**
- * The resizing strategy of the columns in the grid structure.
- */
-export type ColumnResizingMode = ColumnResizing.ModeType;
 
 /**
  * Callback function to be called when a header event is triggered. Returns a
@@ -326,7 +324,7 @@ export interface ColumnOptions {
      * If not set, the data type is inferred from the first cell in the
      * column.
      */
-    dataType?: Column.DataType;
+    dataType?: ColumnDataType;
 
     /**
      * Options for all the header cells in the column.

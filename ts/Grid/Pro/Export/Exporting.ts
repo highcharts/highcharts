@@ -24,7 +24,7 @@
 import type Grid from '../../Core/Grid';
 import type { ExportingOptions } from '../../Core/Options';
 import type DataTable from '../../../Data/DataTable';
-import type Column from '../../Core/Table/Column';
+import type { ColumnDataType } from '../../Core/Table/Column';
 
 import DownloadURL from '../../../Shared/DownloadURL.js';
 import U from '../../../Core/Utilities.js';
@@ -176,7 +176,7 @@ class Exporting {
         }
 
         const typeParser = (
-            type: Column.DataType
+            type: ColumnDataType
         ): ((val: DataTable.CellType) => string) => {
             switch (type) {
                 case 'number':

@@ -234,17 +234,6 @@ class TableRow extends Row {
 
 /* *
  *
- *  Class Namespace
- *
- * */
-
-namespace TableRow {
-
-}
-
-
-/* *
- *
  *  Default Export
  *
  * */
