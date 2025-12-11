@@ -106,6 +106,12 @@ export interface SortingLangA11yOptions {
     enabled?: string;
 
     /**
+     * @deprecated
+     * Use `enabled` instead. Kept for backwards compatibility.
+     */
+    sortable?: string;
+
+    /**
      * Accessibility lang options for the sorting announcements.
      */
     announcements?: {

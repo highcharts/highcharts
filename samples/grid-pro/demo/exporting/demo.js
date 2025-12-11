@@ -26,13 +26,7 @@ const grid = Grid.grid('container', {
         filtering: {
             enabled: true
         }
-    },
-    columns: [
-        {
-            id: 'price',
-            enabled: false
-        }
-    ]
+    }
 });
 
 csvExport.addEventListener('click', () => {
