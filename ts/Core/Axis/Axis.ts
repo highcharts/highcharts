@@ -3224,8 +3224,6 @@ class Axis {
                 } else if (label.styles.width && !css.width && !widthOption) {
                     label.css({ width: 'auto' });
                 }
-
-                tick.rotation = attr.rotation;
             }
         }, this);
 

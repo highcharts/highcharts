@@ -174,8 +174,6 @@ class Tick {
 
     public pos: number;
 
-    public rotation?: number;
-
     public shortenLabel?: Function;
 
     public slotWidth?: number;
@@ -341,9 +339,6 @@ class Tick {
              * @type {Highcharts.SVGElement|undefined}
              */
             tick.label = label = tick.createLabel(text, labelOptions);
-
-            // Base value to detect change for new calls to getBBox
-            tick.rotation = 0;
 
         // Update
         } else if (label.textStr !== text) {
@@ -664,7 +659,7 @@ class Tick {
                 )
             ),
             label = this.label,
-            rotation = this.rotation,
+            rotation = label?.rotation,
             factor = getAlignFactor(
                 axis.labelAlign || (label as any).attr('align')
             ),
