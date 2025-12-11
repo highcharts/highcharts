@@ -691,6 +691,51 @@ QUnit.test(
                 ) > -1,
             'Plot band label is visible.'
         );
+
+        chart.update({
+            xAxis: {
+                plotLines: [
+                    {
+                        value: 1,
+                        color: '#f00',
+                        width: 1,
+                        label: {
+                            formatter: ctx => (
+                                (ctx && '###') || ''
+                            )
+                        }
+                    }
+                ],
+                plotBands: [
+                    {
+                        from: 2,
+                        to: 5,
+                        color: 'rgba(255, 255, 0, 0.2)',
+                        width: 1,
+                        label: {
+                            formatter: ctx => (
+                                (ctx && '###') || ''
+                            )
+                        }
+                    }
+                ]
+            }
+        });
+
+        plotLine = chart.xAxis[0].plotLinesAndBands[0];
+        plotBand = chart.xAxis[0].plotLinesAndBands[1];
+
+        assert.strictEqual(
+            '###',
+            plotLine.label.element.textContent,
+            'ES6 arrow function formatter works for plot line.'
+        );
+
+        assert.strictEqual(
+            '###',
+            plotBand.label.element.textContent,
+            'ES6 arrow function formatter works for plot band.'
+        );
     }
 );
 
