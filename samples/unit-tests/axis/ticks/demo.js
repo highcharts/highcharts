@@ -336,8 +336,23 @@ QUnit.test('Ticks for a single point.', function (assert) {
     );
 
     chart.yAxis[0].update({
+        tickPositioner: (min, max, axis) => (
+            (min && max && axis) ?
+                [16, 32, 48] :
+                []
+        )
+    });
+
+    assert.strictEqual(
+        chart.yAxis[0].min,
+        16,
+        'Arrow-function tickPositioner should work.'
+    );
+
+    chart.yAxis[0].update({
         tickPositioner: function () {}
     });
+
 
     assert.strictEqual(
         chart.yAxis[0].min,
