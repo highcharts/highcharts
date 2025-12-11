@@ -392,7 +392,8 @@ function format(
                             replacement,
                             decimals,
                             lang.decimalPoint,
-                            segment.indexOf(',') > -1 ? lang.thousandsSep : ''
+                            segment.indexOf(',') > -1 ? lang.thousandsSep : '',
+                            owner
                         );
                     }
                 } else {

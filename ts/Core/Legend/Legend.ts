@@ -60,6 +60,7 @@ const {
     discardElement,
     find,
     fireEvent,
+    isArrow,
     isNumber,
     merge,
     pick,
@@ -635,7 +636,11 @@ class Legend {
         (item.legendItem as any).label.attr({
             text: options.labelFormat ?
                 format(options.labelFormat, item, this.chart) :
-                options.labelFormatter.call(item)
+                (
+                    !isArrow(options.labelFormatter) ?
+                        options.labelFormatter.call(item) :
+                        (options.labelFormatter as any)(item)
+                )
         });
     }
 
@@ -1696,7 +1701,9 @@ class Legend {
                             {
                                 // Pass over the click/touch event. #4.
                                 browserEvent: event,
-                                legendItem: item
+                                legendItem: item,
+                                // Provide context in case user arrow function
+                                context: legend
                             },
                             defaultItemClick
                         );
