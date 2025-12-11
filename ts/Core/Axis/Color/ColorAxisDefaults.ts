@@ -79,6 +79,7 @@ import { Palette } from '../../Color/Palettes.js';
  *               tickPlacement, title, top, uniqueNames, units,
  *               zoomEnabled
  * @product      highcharts highstock highmaps
+ * @requires     modules/coloraxis
  * @type         {*|Array<*>}
  * @optionparent colorAxis
  */

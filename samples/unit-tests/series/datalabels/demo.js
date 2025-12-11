@@ -508,7 +508,7 @@ QUnit.test('defer:true and exporting (#10661)', assert => {
     chart.series[0].points[0].onMouseOut();
     assert.strictEqual(
         chart.series[0].points[0].dataLabel.element.getAttribute('opacity'),
-        null,
+        '1',
         `Hovering over points without markers should not set labels opacity,
         #17957.`
     );

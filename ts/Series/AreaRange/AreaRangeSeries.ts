@@ -750,8 +750,8 @@ addEvent(AreaRangeSeries, 'afterTranslate', function (): void {
 
         // Put the tooltip in the middle of the range
         } else {
-            const tooltipPos = point.pos(false, point.plotLow),
-                posHigh = point.pos(false, point.plotHigh);
+            const tooltipPos = point.pos(false, void 0, point.plotLow),
+                posHigh = point.pos(false, void 0, point.plotHigh);
 
             if (tooltipPos && posHigh) {
                 tooltipPos[0] = (tooltipPos[0] + posHigh[0]) / 2;

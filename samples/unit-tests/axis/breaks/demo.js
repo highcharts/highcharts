@@ -830,8 +830,8 @@ QUnit.test(
 
         chart.xAxis[0].setExtremes();
 
-        const point1 = chart.series[0].points[0].shapeArgs,
-            point2 = chart.series[0].points[1].shapeArgs;
+        const point1 = chart.series[0].points[0].graphic.getBBox(),
+            point2 = chart.series[0].points[1].graphic.getBBox();
         assert.ok(
             point1.x + point2.width < point2.x,
             'Points should not overlap after applying breaks property, #16368.'

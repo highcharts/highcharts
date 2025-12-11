@@ -36,6 +36,7 @@ import type SolidGaugeSeriesOptions from './SolidGaugeSeriesOptions';
  * @extends      plotOptions.gauge
  * @excluding    dial, pivot, wrap
  * @product      highcharts
+ * @requires     highcharts-more
  * @requires     modules/solid-gauge
  * @optionparent plotOptions.solidgauge
  */
@@ -162,6 +163,7 @@ const SolidGaugeSeriesDefaults: SolidGaugeSeriesOptions = {
  *            states, step, threshold, turboThreshold, wrap, zoneAxis, zones,
  *            dataSorting, boostBlending
  * @product   highcharts
+ * @requires  highcharts-more
  * @requires  modules/solid-gauge
  * @apioption series.solidgauge
  */

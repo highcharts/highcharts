@@ -37,6 +37,7 @@ import Axis from './Axis.js';
 import Chart from '../Chart/Chart.js';
 import H from '../Globals.js';
 const { dateFormats } = H;
+import { Palette } from '../Color/Palettes';
 import Tick from './Tick.js';
 import U from '../Utilities.js';
 const {
@@ -1052,7 +1053,10 @@ function onInit(
 ): void {
     const axis = this;
     const userOptions = e.userOptions || {};
-    const gridOptions = userOptions.grid || {};
+    const gridOptions = merge(
+        { borderColor: Palette.neutralColor20 },
+        userOptions.grid || {}
+    );
 
     if (gridOptions.enabled && defined(gridOptions.borderColor)) {
         userOptions.tickColor = userOptions.lineColor = (
@@ -1571,7 +1575,7 @@ export default GridAxis;
  * Set border color for the label grid lines.
  *
  * @type      {Highcharts.ColorString}
- * @default   #e6e6e6
+ * @default   #cccccc
  * @apioption xAxis.grid.borderColor
  */
 

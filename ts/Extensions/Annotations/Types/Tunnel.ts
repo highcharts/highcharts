@@ -37,6 +37,7 @@ if (defaultOptions.annotations) {
          * @sample highcharts/annotations-advanced/tunnel/
          *         Tunnel
          * @product highstock
+         * @requires modules/annotations-advanced
          * @optionparent annotations.types.tunnel
          */
         {

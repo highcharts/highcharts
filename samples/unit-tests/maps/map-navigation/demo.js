@@ -409,13 +409,13 @@ QUnit.test('Orthographic map rotation and panning.', assert => {
         'Data labels on the near side should not be hidden'
     );
     assert.strictEqual(
-        chart.get('B').graphic.attr('visibility'),
-        'hidden',
+        chart.get('B').graphic.element.getAttribute('opacity'),
+        '0',
         'Point graphics behind the horizon on an Ortho map should be hidden'
     );
     assert.notStrictEqual(
-        chart.get('A').graphic.attr('visibility'),
-        'hidden',
+        chart.get('A').graphic.element.getAttribute('opacity'),
+        '0',
         'Point graphics on the near side should not be hidden'
     );
 

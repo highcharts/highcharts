@@ -172,8 +172,9 @@ without any bundling tools by using `<script type="module">` ([demo](https://jsf
 The following example shows dynamic import with lazy-loading:
 ```js
 const loadHighchartsAndCreateChart = async () => {
-    const { default: Highcharts } =
-        await import('https://code.highcharts.com/esm/highcharts.js');
+    const { default: Highcharts } = await import(
+        'https://code.highcharts.com/esm/highcharts.js'
+    );
     await import('https://code.highcharts.com/esm/highcharts-more.js');
     await import('https://code.highcharts.com/esm/modules/exporting.js');
     await import('https://code.highcharts.com/esm/modules/export-data.js');
@@ -181,8 +182,27 @@ const loadHighchartsAndCreateChart = async () => {
     Highcharts.chart('container', { /* options */ });
 };
 ```
-View it live on jsFiddle in our [async loading demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/esm/async-await/);
+View it live on jsFiddle in our [async loading demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/esm/async-await/).
 
+**Autoload** is an experimental feature that was added in version 13. The
+`highcharts-autoload.js` script dynamically loads the required modules based on
+the chart configuration options alone. It is intended for situations where the
+implementer doesn't control the configuration, like when the chart is built by
+an LLM or other dynamic processes.
+
+```js
+const loadHighchartsAndCreateChart = async () => {
+    const { default: Highcharts } = await import(
+        'https://code.highcharts.com/esm/highcharts-autoload.js'
+    );
+
+    await Highcharts.chart('container', { /* options */ });
+};
+```
+
+Read more in the [API
+docs](https://api.highcharts.com/class-reference/Highcharts.Loader), or view it
+live on jsFiddle in our [ESM autload demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/global/autoload-esm/).
 
 
 ## Load Highcharts as a transpiled ES6/UMD module

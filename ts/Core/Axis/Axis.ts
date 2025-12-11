@@ -261,11 +261,13 @@ class Axis {
     // it is deliberately not a number because we have user extremes.
     public minRange?: null|number;
     public names!: Array<string>;
+    public namesMap!: Record<string, number>;
     public offset!: number;
     public old?: { // @todo create a type
         len: number;
         max?: number;
         min?: number;
+        names: Array<string>;
         transA: number;
         userMax?: number;
         userMin?: number;
@@ -459,10 +461,8 @@ class Axis {
          */
         axis.categories = (isArray(options.categories) && options.categories) ||
             (axis.hasNames ? [] : void 0);
-        if (!axis.names) { // Preserve on update (#3830)
-            axis.names = [];
-            (axis.names as any).keys = {};
-        }
+        axis.names ||= []; // Preserve on update (#3830)
+        axis.namesMap ||= {};
 
         // Shorthand types
         axis.positiveValuesOnly = !!axis.logarithmic;
@@ -1435,7 +1435,8 @@ class Axis {
      */
     public nameToX(point: Point): number {
         const explicitCategories = isArray(this.options.categories),
-            names = explicitCategories ? this.categories : this.names;
+            names = explicitCategories ? this.categories : this.names,
+            namesMap = this.namesMap;
 
         let nameX = point.options.x,
             x: (number|undefined);
@@ -1447,7 +1448,7 @@ class Axis {
                 (
                     explicitCategories ?
                         names.indexOf(point.name) :
-                        pick((names as any).keys[point.name], -1)
+                        (namesMap[point.name] ?? -1)
 
                 ) :
                 point.series.autoIncrement();
@@ -1463,8 +1464,8 @@ class Axis {
         // Write the last point's name to the names array
         if (typeof x !== 'undefined') {
             this.names[x] = point.name;
-            // Backwards mapping is much faster than array searching (#7725)
-            (this.names as any).keys[point.name as any] = x;
+            namesMap[point.name] = x;
+
         } else if (point.x) {
             x = point.x; // #17438
         }
@@ -1480,14 +1481,14 @@ class Axis {
      */
     public updateNames(): void {
         const axis = this,
-            names = this.names,
+            { names, namesMap } = this,
             i = names.length;
 
         if (i > 0) {
-            Object.keys((names as any).keys).forEach(function (
+            Object.keys(namesMap).forEach(function (
                 key: string
             ): void {
-                delete ((names as any).keys)[key];
+                delete namesMap[key];
             });
             names.length = 0;
 
@@ -2936,7 +2937,6 @@ class Axis {
 
         return this.chart.renderer.fontMetrics(
             tick.label ||
-            tick.movedLabel ||
             renderer.box
         );
     }
@@ -3141,17 +3141,10 @@ class Axis {
 
         // Get the longest label length
         tickPositions.forEach(function (tickPosition): void {
-            const tick = ticks[tickPosition];
-
-            // Replace label - sorting animation
-            if (tick.movedLabel) {
-                tick.replaceMovedLabel();
-            }
-
-            const textPxLength = tick.label?.textPxLength || 0;
-            if (textPxLength > maxLabelLength) {
-                maxLabelLength = textPxLength;
-            }
+            maxLabelLength = Math.max(
+                maxLabelLength,
+                ticks[tickPosition].label?.textPxLength || 0
+            );
         });
         this.maxLabelLength = maxLabelLength;
 
@@ -3416,6 +3409,48 @@ class Axis {
     }
 
     /**
+     * Shuffle existing category ticks, like in bar race chart
+     *
+     * @private
+     */
+    public shuffleTicks(): void {
+        const ticks = this.ticks,
+            oldNames = this.old?.names;
+        if (this.type === 'category' && oldNames) {
+            oldNames.forEach((name, oldPos): void => {
+                const pos = this.namesMap[name];
+                if (defined(pos) && oldPos !== pos) {
+                    // Move tick instance
+                    if (ticks[oldPos]) {
+                        ticks[oldPos].pos = pos;
+                    }
+                    // Check if the existing tick in the new position has a
+                    // new place to go
+                    if (
+                        ticks[pos] &&
+                        this.names.indexOf(oldNames[pos]) === -1
+                    ) {
+                        // Mark for destruction below
+                        ticks[pos].pos = NaN;
+                    }
+                }
+            });
+            // Remap ticks to new positions
+            const values = Object.values(ticks);
+            Object.keys(ticks).forEach((key): void => {
+                delete ticks[key];
+            });
+            values.forEach((tick): void => {
+                if (!isNaN(tick.pos)) {
+                    ticks[tick.pos] = tick;
+                } else {
+                    tick.destroy();
+                }
+            });
+        }
+    }
+
+    /**
      * Render the tick labels to a preliminary position to get their sizes
      *
      * @private
@@ -3466,10 +3501,11 @@ class Axis {
 
         if (hasData || axis.isLinked) {
 
-            // Generate ticks
-            tickPositions.forEach(function (pos: number): void {
-                axis.generateTick(pos);
-            });
+            // Shuffle existing category ticks
+            axis.shuffleTicks();
+
+            // Generate new ticks
+            tickPositions.forEach(axis.generateTick.bind(axis));
 
             axis.renderUnsquish();
 
@@ -4009,19 +4045,14 @@ class Axis {
         }
 
 
-        // Stacked total labels
+        // Stacked totals
         axis.stacking?.renderStackTotals();
 
-        // Record old scaling for updating/animation. Pinch base must be
-        // preserved until the pinch ends.
-        axis.old = {
-            len: axis.len,
-            max: axis.max,
-            min: axis.min,
-            transA: axis.transA,
-            userMax: axis.userMax,
-            userMin: axis.userMin
-        };
+        // First time, save the existing state
+        if (!this.old) {
+            this.saveOld();
+        }
+
         axis.isDirty = false;
 
         fireEvent(this, 'afterRender');
@@ -4048,6 +4079,23 @@ class Axis {
             series.isDirty = true;
         });
 
+    }
+
+    /**
+     * Record old scaling for updating/animation.
+     *
+     * @private
+     */
+    public saveOld(): void {
+        this.old = {
+            len: this.len,
+            max: this.max,
+            min: this.min,
+            names: this.names.slice(),
+            transA: this.transA,
+            userMax: this.userMax,
+            userMin: this.userMin
+        };
     }
 
     /**

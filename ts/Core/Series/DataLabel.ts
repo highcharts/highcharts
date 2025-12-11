@@ -16,10 +16,9 @@
  *
  * */
 
-import type { AlignObject, AlignValue } from '../Renderer/AlignObject';
+import type { AlignValue } from '../Renderer/AlignObject';
 import type BBoxObject from '../Renderer/BBoxObject';
 import type ColorString from '../Color/ColorString';
-import type ColumnPoint from '../../Series/Column/ColumnPoint';
 import type CorePositionObject from '../../Core/Renderer/PositionObject';
 import type DataLabelOptions from './DataLabelOptions';
 import type PiePoint from '../../Series/Pie/PiePoint';
@@ -122,13 +121,6 @@ declare module './SeriesBase' {
             two: (DataLabelOptions|Array<DataLabelOptions>|undefined)
         ): (DataLabelOptions|Array<DataLabelOptions>);
         placeDataLabels?(): void;
-        setDataLabelStartPos(
-            point: ColumnPoint,
-            dataLabel: SVGElement,
-            isNew: boolean|undefined,
-            isInside: boolean,
-            alignOptions: AlignObject
-        ): void;
         verifyDataLabelOverflow?(overflow: Array<number>): boolean;
     }
 }
@@ -250,11 +242,12 @@ namespace DataLabel {
         isNew?: boolean
     ): void {
         const series = this,
-            { chart, enabledDataSorting } = this,
+            { chart } = this,
             inverted = this.isCartesian && chart.inverted,
-            plotX = point.plotX,
-            plotY = point.plotY,
-            rotation = options.rotation || 0,
+            { condemned, origin, plotX, plotY } = point,
+            { crop = true, overflow = 'justify', rotation = 0 } = options,
+            justify = rotation === 0 && !condemned && overflow === 'justify',
+            pos = point.pos(),
             isInsidePlot = defined(plotX) &&
                 defined(plotY) &&
                 chart.isInsidePlot(
@@ -265,33 +258,17 @@ namespace DataLabel {
                         paneCoordinates: true,
                         series
                     }
-                ),
-            setStartPos = (alignOptions: AlignObject): void => {
-                if (enabledDataSorting && series.xAxis && !justify) {
-                    series.setDataLabelStartPos(
-                        point as ColumnPoint,
-                        dataLabel,
-                        isNew,
-                        isInsidePlot,
-                        alignOptions
-                    );
-                }
-            },
-            justify = rotation === 0 ? pick(
-                options.overflow,
-                (enabledDataSorting ? 'none' : 'justify'
-                )
-            ) === 'justify' : false;
+                );
 
         // Math.round for rounding errors (#2683), alignTo to allow column
         // labels (#2700)
         let visible =
             this.visible &&
-            point.visible !== false &&
+            point.visible &&
             defined(plotX) &&
             (
-                point.series.forceDL ||
-                (enabledDataSorting && !justify) ||
+                series.forceDL ||
+                condemned || // Allow it to fade out
                 isInsidePlot ||
                 (
                     // If the data label is inside the align box, it is enough
@@ -314,8 +291,7 @@ namespace DataLabel {
                 )
             );
 
-        const pos = point.pos();
-        if (visible && pos) {
+        if (pos) {
             const bBox = dataLabel.getBBox(),
                 unrotatedbBox = dataLabel.getBBox(void 0, 0);
 
@@ -339,8 +315,6 @@ namespace DataLabel {
                 height: bBox.height
             });
 
-            setStartPos(alignTo); // Data sorting
-
             // Align the label to the adjusted box with for unrotated bBox due
             // to rotationOrigin, which is based on unrotated label
             dataLabel.align(merge(
@@ -355,15 +329,51 @@ namespace DataLabel {
             dataLabel.alignAttr.y += getAlignFactor(options.verticalAlign) *
                 (unrotatedbBox.height - bBox.height);
 
-            dataLabel[dataLabel.placed ? 'animate' : 'attr']({
-                'text-align': dataLabel.alignAttr['text-align'] || 'center',
-                x: dataLabel.alignAttr.x +
+            // The placement attributes before justifyDataLabel correction
+            const x = dataLabel.alignAttr.x +
                     (bBox.width - unrotatedbBox.width) / 2,
-                y: dataLabel.alignAttr.y +
-                    (bBox.height - unrotatedbBox.height) / 2,
+                y = dataLabel.alignAttr.y +
+                    (bBox.height - unrotatedbBox.height) / 2;
+
+            // Handle the data label position for entrance animation. Simply
+            // offset the computed position by the difference between current
+            // position and the origin.
+            if (origin) {
+                const originPos = point.pos(false, origin.x, origin.y);
+
+                if (originPos) {
+                    const offset = [
+                        originPos[0] - pos[0],
+                        originPos[1] - pos[1]
+                    ];
+
+                    if (series.is('column') || point.plotHigh) {
+                        offset[inverted ? 0 : 1] = 0;
+                    }
+                    dataLabel.attr({
+                        x: x + offset[0],
+                        y: y + offset[1],
+                        // Start at non-zero to avoid overlapping logic treating
+                        // it as hidden
+                        opacity: 0.01
+                    });
+                    dataLabel.placed = true;
+                    isNew = false;
+                }
+            }
+
+            // Set the position before potential justification
+            const placeAttribs: SVGAttributes = {
+                'text-align': dataLabel.alignAttr['text-align'] || 'center',
+                x,
+                y,
                 rotationOriginX: (dataLabel.width || 0) / 2,
                 rotationOriginY: (dataLabel.height || 0) / 2
-            });
+            };
+            if (condemned || !visible) {
+                placeAttribs.opacity = 0;
+            }
+            dataLabel[dataLabel.placed ? 'animate' : 'attr'](placeAttribs);
 
             // Uncomment this block to visualize the bounding boxes used for
             // determining visibility
@@ -386,7 +396,7 @@ namespace DataLabel {
             //     zIndex: 20
             // }).add();
 
-            if (justify && alignTo.height >= 0) { // #8830
+            if (justify && visible && alignTo.height >= 0) { // #8830
                 this.justifyDataLabel(
                     dataLabel,
                     options,
@@ -395,7 +405,7 @@ namespace DataLabel {
                     alignTo,
                     isNew
                 );
-            } else if (pick(options.crop, true)) {
+            } else if (crop && !condemned) {
                 const { x, y } = dataLabel.alignAttr,
                     correction = 1;
 
@@ -428,18 +438,12 @@ namespace DataLabel {
                 });
             }
         }
-        // To use alignAttr property in hideOverlappingLabels
-        if (isNew && enabledDataSorting) {
-            dataLabel.placed = false;
-        }
+
         // Show or hide based on the final aligned position
-        if (!visible && (!enabledDataSorting || justify)) {
-            dataLabel.hide();
-            dataLabel.placed = false; // Don't animate back in
-        } else {
-            dataLabel.show();
-            dataLabel.placed = true; // Flag for overlapping logic
-        }
+        dataLabel[isNew ? 'attr' : 'animate']({
+            visibility: visible ? 'inherit' : 'hidden'
+        });
+        dataLabel.placed = visible;
     }
 
     /**
@@ -497,7 +501,6 @@ namespace DataLabel {
             seriesProto.drawDataLabels = drawDataLabels;
             seriesProto.justifyDataLabel = justifyDataLabel;
             seriesProto.mergeArrays = mergeArrays;
-            seriesProto.setDataLabelStartPos = setDataLabelStartPos;
             seriesProto.hasDataLabels = hasDataLabels;
         }
 
@@ -630,7 +633,7 @@ namespace DataLabel {
 
         if (series.hasDataLabels?.()) {
             // Make the labels for each point
-            points.forEach((point): void => {
+            points.concat(series.condemnedPoints).forEach((point): void => {
 
                 const dataLabels = point.dataLabels || [],
                     pointColor = point.color || series.color;
@@ -1049,70 +1052,6 @@ namespace DataLabel {
             )
         );
     }
-
-    /**
-     * Set starting position for data label sorting animation.
-     * @private
-     */
-    function setDataLabelStartPos(
-        this: Series,
-        point: ColumnPoint,
-        dataLabel: SVGElement,
-        isNew: boolean,
-        isInside: boolean,
-        alignOptions: AlignObject
-    ): void {
-        const chart = this.chart,
-            inverted = chart.inverted,
-            xAxis = this.xAxis,
-            reversed = xAxis.reversed,
-            labelCenter = (
-                (inverted ? dataLabel.height : dataLabel.width) || 0
-            ) / 2,
-            pointWidth = point.pointWidth,
-            halfWidth = pointWidth ? pointWidth / 2 : 0;
-
-        dataLabel.startXPos = inverted ?
-            alignOptions.x :
-            (reversed ?
-                -labelCenter - halfWidth :
-                xAxis.width - labelCenter + halfWidth
-            );
-        dataLabel.startYPos = inverted ?
-            (reversed ?
-                this.yAxis.height - labelCenter + halfWidth :
-                -labelCenter - halfWidth
-            ) : alignOptions.y;
-
-        // We need to handle visibility in case of sorting point outside plot
-        // area
-        if (!isInside) {
-            dataLabel
-                .attr({ opacity: 1 })
-                .animate(
-                    { opacity: 0 },
-                    void 0,
-                    dataLabel.hide
-                );
-
-        } else if (dataLabel.visibility === 'hidden') {
-            dataLabel.show();
-            dataLabel
-                .attr({ opacity: 0 })
-                .animate({ opacity: 1 });
-        }
-        // Save start position on first render, but do not change position
-        if (!chart.hasRendered) {
-            return;
-        }
-        // Set start position
-        if (isNew) {
-            dataLabel.attr({ x: dataLabel.startXPos, y: dataLabel.startYPos });
-        }
-
-        dataLabel.placed = true;
-    }
-
 }
 
 /* *

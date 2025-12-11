@@ -147,35 +147,65 @@ declare module '../../Extensions/Exporting/ExportingBase' {
         ascendingOrderInTable?: boolean
         dataTableDiv?: HTMLDivElement;
         isDataTableVisible?: boolean;
-        /** @requires modules/export-data */
+        /**
+         * @requires modules/exporting
+         * @requires modules/export-data
+         */
         downloadCSV(): void;
-        /** @requires modules/export-data */
+        /**
+         * @requires modules/exporting
+         * @requires modules/export-data
+         */
         downloadXLS(): void;
-        /** @requires modules/export-data */
+        /**
+         * @requires modules/exporting
+         * @requires modules/export-data
+         */
         getCSV(
             useLocalDecimalPoint?: boolean
         ): string;
-        /** @requires modules/export-data */
+        /**
+         * @requires modules/exporting
+         * @requires modules/export-data
+         */
         getDataRows(
             multiLevelHeaders?: boolean
         ): Array<Array<(number | string)>>;
-        /** @requires modules/export-data */
+        /**
+         * @requires modules/exporting
+         * @requires modules/export-data
+         */
         getTable(
             useLocalDecimalPoint?: boolean
         ): string;
-        /** @requires modules/export-data */
+        /**
+         * @requires modules/exporting
+         * @requires modules/export-data
+         */
         getTableAST(
             useLocalDecimalPoint?: boolean
         ): AST.Node;
-        /** @requires modules/export-data */
+        /**
+         * @requires modules/exporting
+         * @requires modules/export-data
+         */
         hideData(): void;
-        /** @requires modules/export-data */
+        /**
+         * @requires modules/exporting
+         * @requires modules/export-data
+         */
         toggleDataTable(
             show?: boolean
         ): void;
-        /** @requires modules/export-data */
+        /**
+         * @requires modules/exporting
+         * @requires modules/export-data
+         */
         viewData(): void;
-        /** @requires modules/export-data */
+        /**
+         * @requires modules/exporting
+         * @requires modules/export-data
+         */
         wrapLoading(
             fn: Function
         ): void
