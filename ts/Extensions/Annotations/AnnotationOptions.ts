@@ -23,7 +23,6 @@ import type Annotation from './Annotation';
 import type {
     AnnotationMockPointOptionsObject
 } from './AnnotationMockPointOptionsObject';
-import type { AnnotationPointType } from './AnnotationSeries';
 import type AST from '../../Core/Renderer/HTML/AST';
 import type ColorType from '../../Core/Color/ColorType';
 import type Controllable from './Controllables/Controllable';
