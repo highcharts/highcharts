@@ -212,8 +212,7 @@ class Tick {
             isLast = pos === tickPositions[tickPositions.length - 1],
             tickPositionInfo = tickPositions.info;
 
-        let label = tick.label,
-            dateTimeLabelFormat,
+        let dateTimeLabelFormat,
             dateTimeLabelFormats,
             i: number;
 
@@ -300,61 +299,40 @@ class Tick {
             }
             return axis.defaultLabelFormatter.call(ctx);
         };
-        const text = labelFormatter.call(ctx, ctx);
+
+        // Create or update the label
+        tick.label = tick.createLabel(
+            labelFormatter.call(ctx, ctx),
+            labelOptions
+        );
 
         // Set up conditional formatting based on the format list if existing.
-        const list = dateTimeLabelFormats?.list;
-        if (list) {
+        const list = dateTimeLabelFormats?.list,
+            label = tick.label;
+        if (list && label) {
             tick.shortenLabel = function (): void {
                 for (i = 0; i < list.length; i++) {
                     extend(
                         ctx,
                         { dateTimeLabelFormat: list[i] }
                     );
-                    (label as any).attr({
+                    label.attr({
                         text: labelFormatter.call(ctx, ctx)
                     });
                     if (
-                        (label as any).getBBox().width <
-                        axis.getSlotWidth(tick as any) - 2 *
-                            (labelOptions.padding || 0)
+                        label.getBBox().width <
+                        axis.getSlotWidth(tick) - 2 * (
+                            labelOptions.padding || 0
+                        )
                     ) {
                         return;
                     }
                 }
-                (label as any).attr({
-                    text: ''
-                });
+                label.attr({ text: '' });
             };
         } else {
             // #15692
             tick.shortenLabel = void 0;
-        }
-
-        // First call
-        if (!label) {
-            /**
-             * The rendered text label of the tick.
-             * @name Highcharts.Tick#label
-             * @type {Highcharts.SVGElement|undefined}
-             */
-            tick.label = label = tick.createLabel(text, labelOptions);
-
-        // Update
-        } else if (label.textStr !== text) {
-            // When resetting text, also reset the width if dynamically set
-            // (#8809)
-            if (
-                label.textWidth &&
-                !labelOptions.style.width &&
-                !label.styles.width
-            ) {
-                label.css({ width: void 0 });
-            }
-
-            label.attr({ text });
-
-            label.textPxLength = label.getBBox().width;
         }
     }
 
@@ -365,30 +343,41 @@ class Tick {
      * @function Highcharts.Tick#createLabel
      */
     public createLabel(
-        str: string,
+        text: string,
         labelOptions: AxisLabelOptions,
         xy?: PositionObject
     ): (SVGElement|undefined) {
         const axis = this.axis,
             { renderer, styledMode } = axis.chart,
-            whiteSpace = labelOptions.style.whiteSpace,
-            label = defined(str) && labelOptions.enabled ?
-                renderer
-                    .text(
-                        str,
-                        xy?.x,
-                        xy?.y,
-                        labelOptions.useHTML
-                    )
-                    .add(axis.labelGroup) :
-                void 0;
+            whiteSpace = labelOptions.style.whiteSpace;
+
+        let label = this.label;
+
+        if (defined(text) && labelOptions.enabled) {
+            label ||= renderer
+                .text(
+                    text,
+                    xy?.x,
+                    xy?.y,
+                    labelOptions.useHTML
+                )
+                .add(axis.labelGroup);
+        } else if (label) {
+            label = label.destroy();
+        }
 
         // Un-rotated length
         if (label) {
+            if (text !== label.textStr) {
+                label.attr({ text });
+                delete label.textPxLength;
+            }
+
             if (!styledMode) {
                 label.css(merge(labelOptions.style));
             }
-            label.textPxLength = label.getBBox().width;
+
+            label.textPxLength ??= label.getBBox().width;
 
             // Apply the white-space setting after we read the full text width
             if (!styledMode && whiteSpace) {
