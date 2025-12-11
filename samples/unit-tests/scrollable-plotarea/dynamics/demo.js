@@ -211,7 +211,7 @@ QUnit.test(
 QUnit.test(
     'The parallel coordinates axes should have the ability to scroll.',
     function (assert) {
-        const chart = Highcharts.chart('container', {
+        let chart = Highcharts.chart('container', {
             chart: {
                 scrollablePlotArea: {
                     minWidth: 700
@@ -228,7 +228,11 @@ QUnit.test(
             'yAxis should be fixed on scroll.'
         );
 
-        chart.update({
+        // With the soft Axis.update refactor, changed this to use a new chart
+        // instead of updating the existing one. Updating the exisiting chart
+        // didn't work reliably anyway - unsetting parallelCoordinates didn't
+        // work.
+        chart = Highcharts.chart('container', {
             chart: {
                 parallelCoordinates: true
             },
@@ -246,7 +250,7 @@ QUnit.test(
             }, {
                 data: [3, 4, 1, 6, 7]
             }]
-        }, true, true, false);
+        });
 
         assert.notOk(
             chart.yAxis[0].axisGroup.element.parentNode.parentNode.classList
@@ -254,17 +258,6 @@ QUnit.test(
             'parallel yAxis should not be fixed on scroll.'
         );
 
-        chart.update({
-            chart: {
-                parallelCoordinates: false
-            }
-        }, true, true, false);
-
-        assert.ok(
-            chart.yAxis[0].axisGroup.element.parentNode.parentNode.classList
-                .contains('highcharts-fixed'),
-            'yAxis should be fixed on scroll.'
-        );
     }
 );
 

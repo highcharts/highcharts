@@ -20,7 +20,6 @@ import type Chart from '../../Chart/Chart';
 import type Series from '../../Series/Series';
 import type { StackOverflowValue } from './StackingOptions';
 import type SVGElement from '../../Renderer/SVG/SVGElement';
-import type { YAxisOptions } from '../AxisOptions';
 
 import A from '../../Animation/AnimationUtilities.js';
 const { getDeferredAnimation } = A;
@@ -402,7 +401,6 @@ function seriesSetStackedPoints(
             } else {
                 stacks[key][x] = new StackItem(
                     axis,
-                    (axis.options as YAxisOptions).stackLabels as any,
                     !!isNegative,
                     x,
                     stackOption
@@ -620,36 +618,46 @@ class AxisAdditions {
             chart = axis.chart,
             renderer = chart.renderer,
             stacks = stacking.stacks,
-            stackLabelsAnim = axis.options.stackLabels?.animation,
+            { animation, enabled } = axis.options.stackLabels || {},
             animationConfig = getDeferredAnimation(
                 chart,
-                stackLabelsAnim || false
+                animation || false
             ),
             stackTotalGroup = stacking.stackTotalGroup = (
                 stacking.stackTotalGroup ||
-                renderer
-                    .g('stack-labels')
-                    .attr({
-                        zIndex: 6,
-                        opacity: 0
-                    })
-                    .add()
+                (
+                    enabled ?
+                        renderer
+                            .g('stack-labels')
+                            .attr({
+                                zIndex: 6,
+                                opacity: 0
+                            })
+                            .add() :
+                        void 0
+                )
             );
 
-        // The plotLeft/Top will change when y axis gets wider so we need to
-        // translate the stackTotalGroup at every render call. See bug #506
-        // and #516
-        stackTotalGroup.translate(chart.plotLeft, chart.plotTop);
+        if (stackTotalGroup) {
+            // The plotLeft/Top will change when y axis gets wider so we need to
+            // translate the stackTotalGroup at every render call. See bug #506
+            // and #516
+            stackTotalGroup.translate(chart.plotLeft, chart.plotTop);
 
-        // Render each stack total
-        objectEach(stacks, (type): void => {
-            objectEach(type, (stack): void => {
-                stack.render(stackTotalGroup);
+            // Render each stack total
+            objectEach(stacks, (type): void => {
+                objectEach(type, (stack): void => {
+                    if (enabled) {
+                        stack.render(stackTotalGroup);
+                    } else {
+                        stack.label = stack.label?.destroy();
+                    }
+                });
             });
-        });
-        stackTotalGroup.animate({
-            opacity: 1
-        }, animationConfig);
+            stackTotalGroup.animate({
+                opacity: 1
+            }, animationConfig);
+        }
     }
 }
 

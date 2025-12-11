@@ -78,7 +78,6 @@ declare module '../Axis/AxisBase' {
 
 declare module './ChartBase' {
     interface ChartBase {
-        _labelPanes?: Record<string, Axis>;
         fixedRange?: number;
         setFixedRange(range: number|undefined): void;
     }
@@ -399,7 +398,6 @@ namespace StockChart {
             addEvent(AxisClass, 'afterDrawCrosshair', onAxisAfterDrawCrosshair);
             addEvent(AxisClass, 'afterHideCrosshair', onAxisAfterHideCrosshair);
             addEvent(AxisClass, 'autoLabelAlign', onAxisAutoLabelAlign);
-            addEvent(AxisClass, 'destroy', onAxisDestroy);
             addEvent(AxisClass, 'getPlotLinePath', onAxisGetPlotLinePath);
 
             ChartClass.prototype.setFixedRange = setFixedRange;
@@ -636,46 +634,34 @@ namespace StockChart {
         const axis = this,
             chart = axis.chart,
             options = axis.options,
-            panes = chart._labelPanes = chart._labelPanes || {},
             labelOptions = options.labels;
 
-        if (chart.options.isStock && axis.coll === 'yAxis') {
-            const key = options.top + ',' + options.height;
-            // Do it only for the first Y axis of each pane
-            if (!panes[key] && labelOptions.enabled) {
+        // Returns true if this is the first yAxis in the pane
+        const isFirstYAxisInPane = () : boolean => {
+            let foundOther = false;
+            for (const otherAxis of chart.yAxis) {
+                if (otherAxis === axis && !foundOther) {
+                    return true;
+                }
                 if (
-                    labelOptions.distance === 15 && // Default
-                    axis.side === 1
+                    otherAxis !== axis &&
+                    otherAxis.options.top === options.top &&
+                    otherAxis.options.height === options.height
                 ) {
-                    labelOptions.distance = 0;
+                    foundOther = true;
                 }
-                if (typeof labelOptions.align === 'undefined') {
-                    labelOptions.align = 'right';
-                }
-                panes[key] = axis;
-                e.align = 'right';
-
-                e.preventDefault();
             }
-        }
-    }
+            return false;
+        };
 
-    /**
-     * Clear axis from label panes. (#6071)
-     * @private
-     */
-    function onAxisDestroy(
-        this: Axis
-    ): void {
-        const axis = this,
-            chart = axis.chart,
-            key = (
-                axis.options &&
-                (axis.options.top + ',' + axis.options.height)
-            );
-
-        if (key && chart._labelPanes && chart._labelPanes[key] === axis) {
-            delete chart._labelPanes[key];
+        if (
+            chart.options.isStock &&
+            axis.coll === 'yAxis' &&
+            isFirstYAxisInPane() &&
+            labelOptions.enabled
+        ) {
+            e.align = 'right';
+            e.preventDefault();
         }
     }
 

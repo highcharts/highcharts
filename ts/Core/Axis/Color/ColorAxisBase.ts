@@ -36,7 +36,7 @@ const { merge } = U;
 
 interface ColorAxisBase extends AxisComposition {
     chart: Chart;
-    dataClasses: Array<ColorAxisBase.DataClassOptions>;
+    dataClasses?: Array<ColorAxisBase.DataClassOptions>;
     index: number;
     options: ColorAxisBase.Options;
     stops: Array<GradientColorStop>;

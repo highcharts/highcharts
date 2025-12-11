@@ -2580,7 +2580,7 @@ class Chart {
                     )
                 ) {
                     expectedSpace = label.getBBox().height +
-                        labels.distance +
+                        (labels.distance ?? 15) +
                         Math.max(options.offset || 0, 0);
                 }
 

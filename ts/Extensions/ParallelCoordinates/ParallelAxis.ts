@@ -273,6 +273,8 @@ namespace ParallelAxis {
         this: Composition
     ): void {
         const axis = this;
+
+        delete this.type; // After Axis.update
         if (!axis.parallelCoordinates) {
             axis.parallelCoordinates = new ParallelAxisAdditions(axis);
         }

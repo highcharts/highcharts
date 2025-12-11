@@ -432,7 +432,14 @@ function onAfterInit(this: Axis): void {
     }
 
     if (gridOptions.columns) {
-        const columns = axis.grid.columns = [] as Array<GridAxisComposition>;
+        axis.grid.columns ||= [];
+
+        const columns = axis.grid.columns;
+
+        // Destroy existing columns. In a future update we could consider
+        // matching and updating existing columns instead of recreating all.
+        columns.forEach((column): void => column.destroy());
+        columns.length = 0;
 
         let columnIndex = axis.grid.columnIndex = 0;
 
@@ -986,20 +993,19 @@ function onAfterTickSize(
     e: { tickSize?: [number, number] }
 ): void {
     const {
-        horiz,
-        maxLabelDimensions,
-        options: {
-            grid: gridOptions = {}
-        }
-    } = this;
-    if (gridOptions.enabled && maxLabelDimensions) {
-        const labelPadding = this.options.labels.distance * 2;
-        const distance = horiz ?
-            (
-                gridOptions.cellHeight ||
-                labelPadding + maxLabelDimensions.height
-            ) :
-            labelPadding + maxLabelDimensions.width;
+            horiz,
+            maxLabelDimensions,
+            options
+        } = this,
+        { labels, grid = {} } = options;
+    if (grid.enabled && maxLabelDimensions) {
+        const labelPadding = (labels.distance ?? 15) * 2,
+            distance = horiz ?
+                (
+                    grid.cellHeight ||
+                    labelPadding + maxLabelDimensions.height
+                ) :
+                labelPadding + maxLabelDimensions.width;
         if (isArray(e.tickSize)) {
             e.tickSize[0] = distance;
         } else {
