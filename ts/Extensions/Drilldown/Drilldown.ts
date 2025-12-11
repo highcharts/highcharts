@@ -172,8 +172,6 @@ declare module '../../Core/Chart/ChartBase' {
          * When the chart is drilled down to a child series, calling
          * `chart.drillUp()` will drill up to the parent series.
          *
-         * @requires  modules/drilldown
-         *
          * @function Highcharts.Chart#drillUp
          *
          * @sample highcharts/drilldown/programmatic
@@ -756,8 +754,6 @@ class ChartAdditions {
     /**
      * When the chart is drilled down to a child series, calling
      * `chart.drillUp()` will drill up to the parent series.
-     *
-     * @requires  modules/drilldown
      *
      * @function Highcharts.Chart#drillUp
      *

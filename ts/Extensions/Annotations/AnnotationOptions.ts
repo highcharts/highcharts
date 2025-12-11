@@ -38,6 +38,7 @@ import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
 import type { DeepPartial } from '../../Shared/Types';
 import type EventCallback from '../../Core/EventCallback';
 import type NavigationOptions from '../Exporting/NavigationOptions';
+import type Point from '../../Core/Series/Point';
 import type {
     ShadowOptionsObject
 } from '../../Core/Renderer/ShadowOptionsObject';
@@ -412,7 +413,7 @@ export interface AnnotationLabelOptionsOptions {
      * @type    {Highcharts.FormatterCallbackFunction<Highcharts.Point>}
      * @default function () { return defined(this.y) ? this.y : 'Annotation label'; }
      */
-    formatter?: Templating.FormatterCallback<AnnotationPointType>;
+    formatter?: Templating.FormatterCallback<Point>;
 
     /**
      * Whether all the labels for an annotation are visible in the exported data
@@ -592,7 +593,7 @@ export type AnnotationMockPointOptions = (
  */
 export interface AnnotationMockPointFunction {
     (controllable: Controllable):
-        AnnotationMockPointOptionsObject | AnnotationPointType;
+        AnnotationMockPointOptionsObject | Point;
 }
 
 export interface AnnotationShapeOptionsOptions {
@@ -861,6 +862,7 @@ export interface AnnotationTypeOptions {
     yOffset?: number;
 }
 
+/** @internal */
 export interface ChartOptions extends CoreOptions {
     annotations: Array<AnnotationOptions>;
     defs: Record<string, AST.Node>;

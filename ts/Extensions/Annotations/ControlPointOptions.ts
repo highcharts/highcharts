@@ -30,7 +30,6 @@ export interface ControlPointDragEventFunction {
 /**
  * Callback to modify annotation's positioner controls.
  *
- * @internal
  * @callback Highcharts.AnnotationControlPointPositionerFunction
  * @param {Highcharts.AnnotationControlPoint} this
  * @param {Highcharts.AnnotationControllable} target

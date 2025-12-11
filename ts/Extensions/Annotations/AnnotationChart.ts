@@ -46,6 +46,74 @@ const {
  *
  * */
 
+declare module '../../Core/Chart/ChartBase'{
+    interface ChartBase {
+
+        /* *
+        *
+        *  Properties
+        *
+        * */
+
+        /** @internal */
+        annotations?: Array<Annotation>;
+
+        /** @internal */
+        controlPointsGroup?: SVGElement;
+
+        /** @internal */
+        navigationBindings?: NavigationBindings;
+
+        /** @internal */
+        plotBoxClip?: SVGElement;
+
+        /* *
+        *
+        *  Functions
+        *
+        * */
+
+        /**
+         * Add an annotation to the chart after render time.
+         *
+         * @sample highcharts/annotations/add-annotation/
+         *         Add annotation
+         *
+         * @function Highcharts.Chart#addAnnotation
+         *
+         * @param  {Highcharts.AnnotationsOptions} options
+         *         The annotation options for the new, detailed annotation.
+         *
+         * @param {boolean} [redraw]
+         *
+         * @return {Highcharts.Annotation}
+         *         The newly generated annotation.
+         *
+         * @requires modules/annotations
+         */
+        addAnnotation(
+            userOptions: DeepPartial<AnnotationOptions>,
+            redraw?: boolean
+        ): Annotation;
+
+        /** @internal */
+        drawAnnotations(): void;
+
+        /** @internal */
+        initAnnotation(userOptions: AnnotationOptions): Annotation;
+
+        /**
+         * Remove an annotation from the chart.
+         *
+         * @function Highcharts.Chart#removeAnnotation
+         *
+         * @param {number|string|Highcharts.Annotation} idOrAnnotation
+         *        The annotation's id or direct annotation object.
+         */
+        removeAnnotation(idOrAnnotation: (number|string|Annotation)): void;
+    }
+}
+
 declare class AnnotationChart extends Chart {
     /** @internal */
     annotations: Array<Annotation>;
@@ -64,43 +132,6 @@ declare class AnnotationChart extends Chart {
 
     /** @internal */
     series: Array<AnnotationSeries>;
-
-    /**
-     * Add an annotation to the chart after render time.
-     *
-     * @sample highcharts/annotations/add-annotation/
-     *         Add annotation
-     *
-     * @function Highcharts.Chart#addAnnotation
-     *
-     * @param  {Highcharts.AnnotationsOptions} options
-     *         The annotation options for the new, detailed annotation.
-     *
-     * @param {boolean} [redraw]
-     *
-     * @return {Highcharts.Annotation}
-     *         The newly generated annotation.
-     */
-    addAnnotation(
-        userOptions: DeepPartial<AnnotationOptions>,
-        redraw?: boolean
-    ): Annotation;
-
-    /** @internal */
-    drawAnnotations(): void;
-
-    /** @internal */
-    initAnnotation(userOptions: AnnotationOptions): Annotation;
-
-    /**
-     * Remove an annotation from the chart.
-     *
-     * @function Highcharts.Chart#removeAnnotation
-     *
-     * @param {number|string|Highcharts.Annotation} idOrAnnotation
-     *        The annotation's id or direct annotation object.
-     */
-    removeAnnotation(idOrAnnotation: (number|string|Annotation)): void;
 }
 
 /* *

@@ -14,6 +14,7 @@
 
 import type Annotation from '../Annotation';
 import type AnnotationChart from '../AnnotationChart';
+import type { AnnotationPoint } from '../AnnotationSeries';
 import type ControllableBase from './ControllableBase';
 import type ControllableOptions from './ControllableOptions';
 import type { DeepPartial } from '../../../Shared/Types';
@@ -363,7 +364,7 @@ interface Controllable extends ControllableBase, ControlTarget {
      * @name Highcharts.AnnotationControllable#points
      * @type {Array<Highcharts.Point>}
      */
-    points: ControlTarget['points'];
+    points: Array<AnnotationPoint>;
 }
 
 ControlTarget.compose(Controllable);

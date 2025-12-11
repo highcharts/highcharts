@@ -16,7 +16,14 @@ import type Series from '../../Core/Series/Series';
  * */
 
 /** @internal */
+declare module '../../Core/Series/PointBase' {
+    interface PointBase {
+        mock?: boolean;
+    }
+}
+
 export interface AnnotationPoint extends Point {
+    /** @internal */
     series: AnnotationSeries;
 }
 

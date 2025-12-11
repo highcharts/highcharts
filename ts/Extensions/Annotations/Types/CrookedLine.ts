@@ -241,7 +241,7 @@ class CrookedLine extends Annotation {
                             ): AnnotationPointType {
                                 return target.annotation.points[i];
                             }
-                        )
+                        ) as AnnotationMockPointFunction
                     )
                 }),
                 0
