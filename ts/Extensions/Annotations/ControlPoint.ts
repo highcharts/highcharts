@@ -47,6 +47,7 @@ declare module './AnnotationMockPointOptionsObject' {
  * A control point class which is a connection between controllable
  * transform methods and a user actions.
  *
+ * @internal
  * @requires modules/annotations
  *
  * @class
@@ -221,6 +222,7 @@ class ControlPoint extends EventEmitter {
  *
  * */
 
+/** @internal */
 export default ControlPoint;
 
 /* *
