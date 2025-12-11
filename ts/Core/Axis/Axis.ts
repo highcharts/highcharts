@@ -4345,8 +4345,6 @@ class Axis {
 
         // @todo: Look for update for each case
         const fullRebuild = options && (
-            // Wait for data sorting refactor
-            'labels' in options ||
             // Wait for #23894
             'overscroll' in options
         );

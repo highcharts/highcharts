@@ -378,6 +378,7 @@ class Tick {
             }
 
             label.textPxLength ??= label.getBBox().width;
+            label.opacity = 1; // Reset for overlap logic
 
             // Apply the white-space setting after we read the full text width
             if (!styledMode && whiteSpace) {
@@ -761,11 +762,11 @@ class Tick {
             axisEnd = axisStart + axis.len,
             pxPos = horiz ? x : y;
 
-        let labelOpacity = (
-            opacity ??
-            tick.label?.newOpacity ?? // #15528
-            1
-        );
+        if (!axis.visible) {
+            opacity = 0;
+        }
+
+        const labelOpacity = opacity ?? 1;
 
         // Anything that is not between `axis.pos` and `axis.pos + axis.length`
         // should not be visible (#20166). The `correctFloat` is for reversed
@@ -777,9 +778,6 @@ class Tick {
             opacity = 0;
         }
 
-        if (!axis.visible) {
-            opacity = labelOpacity = 0;
-        }
         opacity ??= 1;
 
         this.isActive = true;
