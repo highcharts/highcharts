@@ -112,32 +112,6 @@ export interface AnnotationEventsOptions {
     touchend?: EventCallback<Annotation>;
 }
 
-/**
- * A collection of annotations to add to the chart. The basic annotation allows
- * adding custom labels or shapes. The items can be tied to points, axis
- * coordinates or chart pixel coordinates.
- *
- * General options for all annotations can be set using the
- * `Highcharts.setOptions` function. In this case only single objects are
- * supported, because it alters the defaults for all items. For initialization
- * in the chart constructors however, arrays of annotations are supported.
- *
- * See more in the [general docs](https://www.highcharts.com/docs/advanced-chart-features/annotations).
- *
- * @sample highcharts/annotations/basic/ Basic annotations
- * @sample highcharts/demo/annotations/ Annotated chart
- * @sample highcharts/css/annotations Styled mode
- * @sample highcharts/annotations-advanced/controllable Controllable items
- * @sample {highstock} stock/annotations/fibonacci-retracements
- *         Custom annotation, Fibonacci retracement
- * @sample highcharts/annotations/shape/
- *         Themed crooked line annotation
- *
- * @type         {Array<*>}
- * @since        6.0.0
- * @requires     modules/annotations
- * @optionparent annotations
- */
 export interface AnnotationOptions extends ControlTargetOptions {
     /**
      * Enable or disable the initial animation when a series is
@@ -612,7 +586,7 @@ export type AnnotationMockPointOptions = (
  *
  * @return {
  *     Highcharts.AnnotationMockPointOptionsObject |
- *     Highcharts.AnnotationPointType
+ *     Highcharts.Point
  * }
  *         Annotations shape point or it's options.
  */
@@ -885,22 +859,6 @@ export interface AnnotationTypeOptions {
 
     /** @internal */
     yOffset?: number;
-}
-
-export interface AnnotationTypePointsOptions {
-    controlPoint?: number;
-
-    /**
-     * The x position of the point.
-     */
-    x?: number;
-    xAxis?: number;
-
-    /**
-     * The y position of the point.
-     */
-    y?: (number|null);
-    yAxis?: number;
 }
 
 export interface ChartOptions extends CoreOptions {

@@ -432,6 +432,7 @@ class Annotation extends EventEmitter implements ControlTarget {
     /**
      * The array of points which defines the annotation.
      *
+     * @internal
      * @name Highcharts.Annotation#points
      * @type {Array<Highcharts.AnnotationPointType>}
      */
@@ -949,8 +950,10 @@ class Annotation extends EventEmitter implements ControlTarget {
      *
      * @function Highcharts.Annotation#update
      *
-     * @param {Highcharts.AnnotationOptions} userOptions
+     * @param {Highcharts.AnnotationsOptions} userOptions
      *        New user options for the annotation.
+     * @param {boolean} [redraw]
+     *        Whether to redraw the chart's annotations.
      */
     public update(
         userOptions: AnnotationOptions,

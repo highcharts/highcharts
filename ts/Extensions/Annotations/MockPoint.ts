@@ -666,7 +666,7 @@ export default MockPoint;
  *
  * @return {
  *     Highcharts.AnnotationMockPointOptionsObject |
- *     Highcharts.AnnotationPointType
+ *     Highcharts.Point
  * }
  *         Annotations shape point or it's options.
  */
