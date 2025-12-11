@@ -1,4 +1,10 @@
 // Spline w/Plotlines
+const chart1typedesc = `
+<p>
+    Line chart with 2 series: JAWS (primary screen reader) 
+    and NVDA (primary screen reader).
+</p>
+`;
 const chart1desc = `
     <p>
       JAWS usage starts very high in 2009 and gradually declines before rising
@@ -22,6 +28,13 @@ const chart1desc = `
 `;
 
 // Stacked column
+const chart2typedesc = `
+<p>
+    Bar chart showing 4 series stacked on top of each other per bar. 
+    One bar for each sector. Each sector consists of Captions, 
+    Transcripts, Audio descriptions and Sign language.
+</p>
+`;
 const chart2desc = `
     <p>
       The chart compares how often four accessibility features are provided
@@ -42,7 +55,6 @@ const chart2desc = `
         Sign language</li>
     </ul>
 `;
-
 const chart2visualdesc = `
     <p>Four vertical bars side by side. Each bar is stacked in
     colored layers, like a cake. The layers show sectors,
@@ -50,6 +62,11 @@ const chart2visualdesc = `
 `;
 
 // Big heatmap
+const chart3typedesc = `
+<p>
+    Heatmap with 8759 cells, showing temperature per hour over a year.
+</p>
+`;
 const chart3desc = `
     <p>Temperatures vary by both season and time of day, with the 
     warmest conditions in July and cooler periods at the start and 
@@ -65,13 +82,24 @@ const chart3desc = `
         <li>Lowest temperature: January, dropping to –10°C</li> 
     </ul>
 `;
-
 const chart3visualdesc = `
     <p> A broad grid of color fades from blues on the edges to
     yellows and reds in the center to indicate temperature shifts
     from January to December.</p>
 `;
 
+// Gauge
+const chart4typedesc = `
+<p>
+    Gauge scale showing budget used, current value 92%
+</p>
+`;
+
+const chart4desc = `
+  <p>The gauge scale goes from 0-120%, and is divided into the
+  following zones: Healthy (up to 80%), Watch (80-100%),
+  Overspend (above 100%). Current value 92% is in the Watch zone.</p>
+`;
 const chart4visualdesc = `
     <p>The gauge displays a semicircular meter from 0% to 120%.
       The gauge has three zones:</p>
@@ -82,15 +110,12 @@ const chart4visualdesc = `
       </ul>
 `;
 
-// Gauge
-const chart4desc = `
-  <p>The gauge scale goes from 0-120%, and is divided into the
-  following zones: Healthy (up to 80%), Watch (80-100%),
-  Overspend (above 100%). Current value 92% is in the Watch zone.</p>
-`;
-
-
 // Bubble
+const chart5typedesc = `
+<p>
+    Bubble chart with 15 points: Belgium, Germany, Finland, and 12 more.
+</p>
+`;
 const chart5desc = `
     <p>Almost all countries exceed safe sugar and fat levels, 
     with the U.S. the clear outlier</p>
@@ -114,7 +139,6 @@ const chart5desc = `
         (65g fat, 51g sugar), Russia (69g fat, 20g sugar)</li>
     </ul>
 `;
-
 const chart5visualdesc = `
   <p>A grid-like plot with colored circles of different sizes scattered 
   across it. Most circles appear in the upper-right area, above both 
@@ -124,8 +148,17 @@ const chart5visualdesc = `
   the lower-left.</p>
 `;
 
-
 // Sunburst
+const chart6typedesc = `
+<p>
+    Sunburst chart with 62 nodes in a hierarchy with 
+    4 levels. Chart shows budget (USD) in 2025. Hierarchy 
+    structure: The first node is "Company". Below that, 
+    the second level of nodes has Engineering, Sales & Marketing, 
+    Operations and two more. The third level shows teams, and the 
+    fourth level shows expense types.
+</p>
+`;
 const chart6desc = `
     <p>Engineering receives the largest share of the 2025 company budget,
     followed by Sales & Marketing; notable cost centers include Sales,
@@ -141,7 +174,6 @@ const chart6desc = `
         low-cost tools/training items</li>
     </ul>
 `;
-
 const chart6visualdesc = `
   <p>A circular “sun-like” graphic with a bright center and several colored
   rings radiating outward like beams. Each ring is divided into segments of
@@ -165,6 +197,7 @@ const HC_CONFIGS = {
             }
         },
         custom: {
+            typeDesc: chart1typedesc,
             autoDesc: chart1desc,
             hasDataTable: true,
             tableConfig: {
@@ -246,6 +279,7 @@ const HC_CONFIGS = {
             }
         },
         custom: {
+            typeDesc: chart2typedesc,
             autoDesc: chart2desc,
             visualDesc: chart2visualdesc,
             hasDataTable: true,
@@ -349,6 +383,7 @@ const HC_CONFIGS = {
             enabled: false
         },
         custom: {
+            typeDesc: chart3typedesc,
             autoDesc: chart3desc,
             visualDesc: chart3visualdesc
         },
@@ -445,6 +480,7 @@ const HC_CONFIGS = {
             enabled: false
         },
         custom: {
+            typeDesc: chart4typedesc,
             autoDesc: chart4desc,
             visualDesc: chart4visualdesc
         },
@@ -540,6 +576,7 @@ const HC_CONFIGS = {
             }
         },
         custom: {
+            typeDesc: chart5typedesc,
             autoDesc: chart5desc,
             visualDesc: chart5visualdesc,
             hasDataTable: true,  // Enable data table button
@@ -783,6 +820,7 @@ const HC_CONFIGS = {
             enabled: false
         },
         custom: {
+            typeDesc: chart6typedesc,
             autoDesc: chart6desc,
             visualDesc: chart6visualdesc
         },
@@ -984,27 +1022,6 @@ const HC_CONFIGS = {
 };
 
 
-const AUTO_DESCS = {
-    chart1: chart1desc,
-    chart2: chart2desc,
-    chart3: chart3desc,
-    chart4: chart4desc,
-    chart5: chart5desc,
-    chart6: chart6desc
-};
-
-// Inject custom.autoDesc for every chart (do not override if already set)
-Object.keys(AUTO_DESCS).forEach(id => {
-    const cfg = HC_CONFIGS[id];
-    if (!cfg) {
-        return;
-    }
-    cfg.custom = cfg.custom || {};
-    if (cfg.custom.autoDesc === null) {
-        cfg.custom.autoDesc = AUTO_DESCS[id];
-    }
-});
-
 // Custom table generation function with better headers
 function generateCustomTable(chart, config) {
     if (!chart.series || !chart.series.length) {
@@ -1099,7 +1116,7 @@ function generateCustomTable(chart, config) {
             return;
         }
 
-        const basic  = `<p>${basicSummary(this)}</p>`;
+        const basic  = getCustomTypeDesc(this);
         const custom = getCustomAutoDesc(this);
         const visual = getCustomVisualDesc(this);
         const hasTable = this.options?.custom?.hasDataTable === true;
@@ -1727,9 +1744,6 @@ function updateA11yDescPanel(
         wrapper.appendChild(panel);
     }
 
-    // IMPORTANT: read persisted state from the chart instance (default: false)
-    const expanded = chart.gaugeDescExpanded === true;
-
     // Rebuild panel content
     panel.innerHTML = `
       <div class="a11y-debug__title">Auto-description:</div>
@@ -1747,13 +1761,16 @@ function updateA11yDescPanel(
 
         if (btn && content) {
             // Apply the persisted state
-            btn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
-            content.className = expanded ?
+            const visualExpanded = chart.visualDescVisible === true;
+            btn.setAttribute(
+                'aria-expanded', visualExpanded ? 'true' : 'false'
+            );
+            content.className = visualExpanded ?
                 'visual-desc-content visible' :
                 'visual-desc-content hidden';
             const btnTextSpan = btn.querySelector('span');
             if (btnTextSpan) {
-                btnTextSpan.textContent = expanded ?
+                btnTextSpan.textContent = visualExpanded ?
                     'Hide Visual Description' : 'Show Visual Description';
             }
 
@@ -1906,252 +1923,37 @@ function updateA11yDescPanel(
             };
         }
     }
-
-    // Find old gauge description button (backward compatibility)
-    const btn = panel.querySelector('#gauge-description-btn-sr');
-    const content = panel.querySelector('#gauge-description-sr');
-
-    if (btn && content) {
-        // Apply the persisted state
-        btn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
-        content.className = expanded ?
-            'visual-desc-content visible' :
-            'visual-desc-content hidden';
-        btn.textContent = expanded ? 'Hide Description' : 'Visual Description';
-
-        // Bind a fresh, stateless click handler that
-        // reads/writes from the chart
-        btn.onclick = ev => {
-            ev.preventDefault();
-            ev.stopPropagation();
-
-            const currentlyExpanded =
-                btn.getAttribute('aria-expanded') === 'true';
-
-            const next = !currentlyExpanded;
-
-            // Update ARIA + visibility
-            btn.setAttribute('aria-expanded', next ? 'true' : 'false');
-            content.className = next ?
-                'visual-desc-content visible' :
-                'visual-desc-content hidden';
-            btn.textContent = next ? 'Hide Description' : 'Visual Description';
-
-            // 🔐 Persist for the next render
-            chart.gaugeDescExpanded = next;
-        };
-    }
 }
 
 
-const NAME_LIMIT = 3;
-
-const getTypeLabel = (rawType, isPolar) => {
-    const map = {
-        area: 'Area chart',
-        arearange: 'Area Range chart',
-        bar: 'Bar chart',
-        boxplot: 'Box plot',
-        bubble: 'Bubble chart',
-        column: 'Column chart',
-        dependencywheel: 'Dependency wheel chart',
-        dumbbell: 'Dumbbell chart',
-        funnel: 'Funnel chart',
-        gauge: 'Gauge chart',
-        heatmap: 'Heatmap',
-        histogram: 'Histogram',
-        line: 'Line chart',
-        networkgraph: 'Network graph',
-        organization: 'Organization chart',
-        packedbubble: 'Packed bubble chart',
-        pie: 'Pie chart',
-        pyramid: 'Pyramid chart',
-        sankey: 'Sankey diagram',
-        scatter: 'Scatter plot',
-        solidgauge: 'Gauge',
-        spline: 'Line chart',
-        sunburst: 'Sunburst chart',
-        tilemap: 'Tilemap chart',
-        timeline: 'Timeline chart',
-        treemap: 'Treemap',
-        waterfall: 'Waterfall chart',
-        wordcloud: 'Word cloud'
-    };
-    return isPolar ? 'Radar chart' : (map[rawType] || 'Chart');
-};
-
-const visibleSeries = chart =>
-    (chart.series || []).filter(s => s.visible !== false);
-
-const seriesType = s => (s.type || s.options?.type || '').toLowerCase();
-
-const hasType = (chart, t) =>
-    visibleSeries(chart).some(s => seriesType(s) === t);
-
-const firstSeriesOfType = (chart, t) =>
-    visibleSeries(chart).find(s => seriesType(s) === t) ||
-    visibleSeries(chart)[0];
-
-const visiblePoints = s =>
-    (s?.points || []).filter(p => p.visible !== false);
-
-const plural = (n, sing, plural) => (n === 1 ? sing : (plural || sing + 's'));
-
-const listWithMore = (names, limit) => {
-    const show = names.slice(0, limit);
-    const remaining = Math.max(0, names.length - show.length);
-    return names.length ?
-        show.join(', ') + (remaining > 0 ? `, and ${remaining} more` : '') :
-        '';
-};
-
-const seriesNamesSnippet = ss => {
-    const names = ss.map(s => s.name || 'Unnamed');
-    if (!names.length) {
-        return '';
-    }
-    if (names.length === 1) {
-        return names[0];
-    }
-    if (names.length === 2) {
-        return names.join(' and ');
-    }
-    return names.slice(0, -1).join(', ') + ', and ' + names.slice(-1);
-};
-
-
-/* Create a basic start of the summary for all charts */
-function basicSummary(chart) {
-    const rawType = (chart.options?.chart?.type ||
-        chart.series?.[0]?.type || '').toLowerCase();
-    const typeLabel = getTypeLabel(rawType, !!chart.options?.chart?.polar);
-    const vs = visibleSeries(chart);
-
-    const strategies = [
-        () => hasType(chart, 'line') && (() =>
-            'Line chart showing temperatures for Helsinki and Oslo.')(),
-        () => hasType(chart, 'gauge') && (() =>
-            'Gauge scale showing budget used, current value 92%')(),
-
-        // Sunburst (root + top-level children)
-        () => hasType(chart, 'sunburst') && (() =>
-            // const s = firstSeriesOfType(chart, 'sunburst');
-            // const src = (Array.isArray(s?.points) && s.points.length) ?
-            //     s.points :
-            //     (Array.isArray(s?.options?.data) ? s.options.data : []);
-            // const norm = src.map((p, i) => ({
-            //     id: (p.id ?? p.name ?? `node-${i}`).toString(),
-            //     parent: (p.parent ?? '').toString(),
-            //     name: (p.name ?? p.id ?? `Node ${i + 1}`).toString(),
-            //     visible: (p.visible !== false)
-            // }));
-            // const vis = norm.filter(n => n.visible);
-            // if (!vis.length) {
-            //     return `${typeLabel}.`;
-            // }
-            // const idSet = new Set(norm.map(n => n.id));
-            // const root = vis.find(n => !n.parent || !idSet.has(n.parent)) ||
-            //     vis[0];
-            // const topNames = vis.filter(n => n.parent === root.id)
-            //     .map(n => n.name);
-            // const namesSnippet = listWithMore(topNames, NAME_LIMIT);
-            // return `${typeLabel} with ${vis.length} nodes (root: ${
-            //     root.name
-            // })${namesSnippet ? `: ${namesSnippet}` : ''}.`;
-            `Sunburst chart with 62 nodes in a hierarchy with 4 levels. 
-            Chart shows budget (USD) in 2025. Hierarchy structure: The 
-            first node is "Company". Below that, the second level of nodes 
-            has Engineering, Sales & Marketing, Operations and two more. 
-            The third level shows teams, and the fourth level shows expense 
-            types.`
-        )(),
-
-        // Bubble (points by friendly name)
-        () => hasType(chart, 'bubble') && (() => {
-            const s = firstSeriesOfType(chart, 'bubble');
-            const pts = visiblePoints(s);
-            const names = pts.map((p, i) => {
-                const cat = chart.xAxis?.[0]?.categories?.[p.x];
-                return p.country || p.name ||
-                    (typeof cat === 'string' && cat) || `Point ${i + 1}`;
-            });
-            const namesSnippet = listWithMore(names, NAME_LIMIT);
-            const count = pts.length;
-            return `${typeLabel} with ${count} ${plural(count, 'point')}${
-                namesSnippet ? `: ${namesSnippet}` : ''
-            }.`;
-        })(),
-
-        () => hasType(chart, 'column') && (() => `Bar chart showing 4 series
-        stacked on top of each other per bar. One bar for each sector. 
-        Each sector consists of Captions, Transcripts, Audio descriptions 
-        and Sign language.`)(),
-
-
-        // Heatmap / tilemap (grid)
-        () => (hasType(chart, 'heatmap') ||
-            hasType(chart, 'tilemap')) && (() =>
-            // const s = vs[0];
-            // const xCats = chart.xAxis?.[0]?.categories || [];
-            // const yCats = chart.yAxis?.[0]?.categories || [];
-            // const dimension = xCats.length && yCats.length ?
-            //     `${xCats.length}×${yCats.length} cells` :
-            //     `${s?.points?.length || 0} cells`;
-            // return `${typeLabel} with ${dimension}${
-            //     s?.name ? ` (${s.name})` : ''
-            // }.`;
-            `
-            Heatmap with 8759 cells, showing temperature per hour over a year.`
-        )()
-    ];
-
-    for (const strat of strategies) {
-        const out = typeof strat === 'function' ? strat() : null;
-        if (out) {
-            return out;
+// Generic helper function to get custom descriptions
+function getCustomDesc(chart, propName) {
+    const fromOpts = chart.options?.custom?.[propName] ??
+        chart.options?.chart?.custom?.[propName];
+    if (typeof fromOpts === 'function') {
+        try {
+            return fromOpts.call(chart, chart);
+        } catch {
+            // ignore error
         }
     }
-
-    // Default: series summary
-    const formatted = seriesNamesSnippet(vs);
-    return `${typeLabel} with ${vs.length} series${
-        formatted ? `: ${formatted}` : ''
-    }.`;
+    if (typeof fromOpts === 'string') {
+        return fromOpts;
+    }
+    return null;
 }
 
+// Convenience functions using the generic helper
+function getCustomTypeDesc(chart) {
+    return getCustomDesc(chart, 'typeDesc');
+}
 
 function getCustomAutoDesc(chart) {
-    const fromOpts = chart.options?.custom?.autoDesc ??
-        chart.options?.chart?.custom?.autoDesc;
-    if (typeof fromOpts === 'function') {
-        try {
-            return fromOpts.call(chart, chart);
-        } catch {
-            // ignore error
-        }
-    }
-    if (typeof fromOpts === 'string') {
-        return fromOpts;
-    }
-    return null;
+    return getCustomDesc(chart, 'autoDesc');
 }
 
-
 function getCustomVisualDesc(chart) {
-    const fromOpts = chart.options?.custom?.visualDesc ??
-        chart.options?.chart?.custom?.visualDesc;
-
-    if (typeof fromOpts === 'function') {
-        try {
-            return fromOpts.call(chart, chart);
-        } catch {
-            // ignore error
-        }
-    }
-    if (typeof fromOpts === 'string') {
-        return fromOpts;
-    }
-    return null;
+    return getCustomDesc(chart, 'visualDesc');
 }
 
 
