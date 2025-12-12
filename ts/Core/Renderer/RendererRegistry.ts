@@ -26,6 +26,7 @@ import H from '../Globals.js';
  *
  * */
 
+/** @internal */
 namespace RendererRegistry {
 
     /* *
@@ -98,4 +99,5 @@ namespace RendererRegistry {
  *
  * */
 
+/** @internal */
 export default RendererRegistry;
