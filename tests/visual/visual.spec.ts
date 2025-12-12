@@ -2,8 +2,8 @@
 /* eslint-disable playwright/no-conditional-in-test */
 import type { Page, BrowserContext } from '@playwright/test';
 import { test, expect} from '@playwright/test';
-import { setupRoutes } from '../fixtures.ts';
-import { getKarmaScripts, getSample, setTestingOptions } from '../utils.ts';
+import { setupRoutes } from '~/fixtures.ts';
+import { getKarmaScripts, getSample, setTestingOptions } from '~/utils.ts';
 import { join, dirname, relative } from 'node:path';
 import { glob } from 'glob';
 

@@ -1,4 +1,4 @@
-import { test, expect } from '../fixtures.ts';
+import { test, expect } from '~/fixtures.ts';
 
 // HTML setup for Dashboards with Highcharts plugin and Edit Mode
 // Note: HighchartsPlugin is included in dashboards.src.js, no separate file needed

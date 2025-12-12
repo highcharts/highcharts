@@ -1,16 +1,16 @@
 /* eslint-disable playwright/no-conditional-in-test */
 import { Page } from '@playwright/test';
-import { test, expect, setupRoutes } from '../fixtures.ts';
-import { getKarmaScripts, getSample } from '../utils.ts';
+import { test, expect, setupRoutes } from '~/fixtures.ts';
+import { getKarmaScripts, getSample } from '~/utils.ts';
 import { join, dirname } from 'node:path';
 import { glob } from 'glob';
 
-import './types.ts'; // Import for global type declarations
-import { setupErrorCapture, setupEnhancedQUnitCallbacks, captureQUnitErrorDetails, clearErrorCapture } from './utils/error-capture.ts';
-import { formatQUnitErrorDetails, createErrorSummary } from './utils/error-formatter.ts';
-import { setupConsoleCapture } from './utils/console-capture.ts';
-import { waitForQUnitWithTimeout, waitForScriptLoadWithTimeout, attemptTimeoutRecovery, type TimeoutError } from './utils/timeout-handler.ts';
-import { getOutputConfig, createProgressIndicator, createVerbosePassedOutput } from './utils/output-config.ts';
+import '~/qunit/types.ts'; // Import for global type declarations
+import { setupErrorCapture, setupEnhancedQUnitCallbacks, captureQUnitErrorDetails, clearErrorCapture } from '~/qunit/utils/error-capture.ts';
+import { formatQUnitErrorDetails, createErrorSummary } from '~/qunit/utils/error-formatter.ts';
+import { setupConsoleCapture } from '~/qunit/utils/console-capture.ts';
+import { waitForQUnitWithTimeout, waitForScriptLoadWithTimeout, attemptTimeoutRecovery, type TimeoutError } from '~/qunit/utils/timeout-handler.ts';
+import { getOutputConfig, createProgressIndicator, createVerbosePassedOutput } from '~/qunit/utils/output-config.ts';
 
 const QUNIT_VERSION = '2.4.0';
 const QUNIT_SCRIPT = join('tests', 'qunit', 'vendor', `qunit-${QUNIT_VERSION}.js`);

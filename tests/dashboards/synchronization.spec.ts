@@ -1,4 +1,4 @@
-import { test, expect } from '../fixtures.ts';
+import { test, expect } from '~/fixtures.ts';
 
 // HTML setup for Dashboards with Highcharts and Grid plugins
 // Note: Using grid-pro.js (not .src.js) to match the fixtures routing pattern

@@ -1,4 +1,4 @@
-import { test, expect } from '../../fixtures.ts';
+import { test, expect } from '~/fixtures.ts';
 
 // Equivalent of test/typescript-karma/Core/Globals.test.js
 // The original test is for AMD loading of Highcharts package. This is a Playwright equivalent

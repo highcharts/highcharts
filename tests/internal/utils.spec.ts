@@ -1,5 +1,5 @@
-import { test, expect } from '../fixtures.ts';
-import { getKarmaScripts, getSample } from '../utils.ts';
+import { test, expect } from '~/fixtures.ts';
+import { getKarmaScripts, getSample } from '~/utils.ts';
 
 test('Karma scripts', async () => {
     const scripts = await getKarmaScripts();

@@ -1,4 +1,4 @@
-import { test, expect } from '../fixtures.ts';
+import { test, expect } from '~/fixtures.ts';
 
 /**
  * Equivalent of test/typescript-karma/Data/Connectors/GoogleSheetsStore.test.js

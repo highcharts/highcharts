@@ -1,4 +1,4 @@
-import { createChart, expect, test } from '../../fixtures';
+import { createChart, expect, test } from '~/fixtures';
 
 test.describe('samples/unit-tests/polar/polar-zoom equivalent', () => {
     test('Arc shape', async ({ page }) => {

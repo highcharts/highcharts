@@ -4,12 +4,13 @@
         "module": "nodenext",
         "resolveJsonModule": true,
         "allowImportingTsExtensions": true,
-        "allowJs": true
+        "allowJs": true,
+        "baseUrl": ".",
+        "paths": {
+            "~/*": ["./*"],
+            "~code/*": ["../code/*"],
+            "~ts/*": ["../ts/*"]
+        }
     },
-    "paths": {
-        "highcharts": [
-            "../"
-        ]
-    },
-    "include": ["./**/*.ts", "./**/*.mts", "./**/*.js" ]
+    "include": ["./**/*.ts", "./**/*.mts", "./**/*.js"]
 }

@@ -1,4 +1,4 @@
-import { test, expect } from '../../fixtures.ts';
+import { test, expect } from '~/fixtures.ts';
 
 test.describe('Pointer', {
     annotation: [
