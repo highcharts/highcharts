@@ -328,10 +328,11 @@ class HTMLElement extends SVGElement {
             foreignObject.attr({
                 x: x + (this.xCorr || 0),
                 y: y + (this.yCorr || 0),
-                // Add 4 px to avoid ellipsis, since the body adds 3 px right
+                // Add 4px to avoid ellipsis, since the body adds 3 px right
                 // margin. We need one more because of rounding.
                 width: element.offsetWidth + 4,
-                height: element.offsetHeight,
+                // Add 1px to account for subpixel bounding boxes
+                height: element.offsetHeight + 1,
                 'transform-origin': element
                     .getAttribute('transform-origin') || '0 0'
             });
