@@ -81,7 +81,10 @@ class ColumnSorting {
 
         this.addHeaderElementAttributes();
 
-        if (column.options.sorting?.sortable) {
+        if (
+            column.options.sorting?.sortable ||
+            column.options.sorting?.enabled
+        ) {
             headerCellElement.classList.add(
                 Globals.getClassName('columnSortable')
             );
@@ -112,7 +115,7 @@ class ColumnSorting {
             el.classList.remove(sortedAscClassName);
             el.classList.remove(sortedDescClassName);
 
-            if (sortingOptions?.sortable) {
+            if (sortingOptions?.sortable || sortingOptions?.enabled) {
                 a11y?.setColumnSortState(el, 'none');
             }
 

@@ -290,7 +290,10 @@ class HeaderCell extends Cell {
             return;
         }
 
-        if (column.options.sorting?.sortable) {
+        if (
+            column.options.sorting?.sortable ||
+            column.options.sorting?.enabled
+        ) {
             column.sorting?.toggle();
         }
 

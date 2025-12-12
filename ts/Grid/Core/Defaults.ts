@@ -36,7 +36,7 @@ const { merge } = Utils;
 export const defaultLangOptions: DeepPartial<LangOptions> = {
     accessibility: {
         sorting: {
-            sortable: 'Sortable.',
+            enabled: 'Enabled.',
             announcements: {
                 ascending: 'Sorted ascending.',
                 descending: 'Sorted descending.',
@@ -134,7 +134,7 @@ export const defaultOptions: DeepPartial<Options> = {
     },
     columnDefaults: {
         sorting: {
-            sortable: true
+            enabled: true
         },
         filtering: {
             inline: false
@@ -154,6 +154,15 @@ export const defaultOptions: DeepPartial<Options> = {
 export function setOptions(
     options: DeepPartial<Options>
 ): void {
+    const sortingLang = options.lang?.accessibility?.sorting;
+    if (
+        sortingLang &&
+        sortingLang.enabled === void 0 &&
+        sortingLang.sortable !== void 0
+    ) {
+        sortingLang.enabled = sortingLang.sortable;
+    }
+
     merge(true, defaultOptions, options);
 }
 

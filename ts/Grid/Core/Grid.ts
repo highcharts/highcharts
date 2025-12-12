@@ -91,7 +91,7 @@ export class Grid {
      * The new Grid.
      */
     public static grid(
-        renderTo: string|HTMLElement,
+        renderTo: string | HTMLElement,
         options: Options,
         async?: boolean
     ): Grid;
@@ -113,14 +113,14 @@ export class Grid {
      * Promise that resolves with the new Grid.
      */
     public static grid(
-        renderTo: string|HTMLElement,
+        renderTo: string | HTMLElement,
         options: Options,
         async: true
     ): Promise<Grid>;
 
     // Implementation
     public static grid(
-        renderTo: string|HTMLElement,
+        renderTo: string | HTMLElement,
         options: Options,
         async?: boolean
     ): (Grid | Promise<Grid>) {
@@ -146,7 +146,7 @@ export class Grid {
      * An array containing the current Grid objects in the page.
      * @private
      */
-    public static readonly grids: Array<(Grid|undefined)> = [];
+    public static readonly grids: Array<(Grid | undefined)> = [];
 
     /**
      * The accessibility controller.
@@ -296,7 +296,7 @@ export class Grid {
     /**
      * The render target (container) of the Grid.
      */
-    private renderTo: string|HTMLElement;
+    private renderTo: string | HTMLElement;
 
     /**
      * Whether the Grid is rendered.
@@ -340,7 +340,7 @@ export class Grid {
         this.id = this.options?.id || U.uniqueKey();
         this.querying = new QueryingController(this);
         this.locale = this.options?.lang?.locale || (
-            (this.container?.closest('[lang]') as HTMLElement|null)?.lang
+            (this.container?.closest('[lang]') as HTMLElement | null)?.lang
         );
         this.time = new TimeBase(extend<TimeBase.TimeOptions>(
             this.options?.time,
@@ -394,7 +394,7 @@ export class Grid {
      * The render target (html element or id) of the Grid.
      *
      */
-    private initContainer(renderTo: string|HTMLElement): void {
+    private initContainer(renderTo: string | HTMLElement): void {
         const container = (typeof renderTo === 'string') ?
             Globals.win.document.getElementById(renderTo) : renderTo;
 
@@ -436,6 +436,19 @@ export class Grid {
     ): DeepPartial<NonArrayOptions> {
         // Operate on a copy of the options argument
         newOptions = merge(newOptions);
+
+        // Backwards compatibility: map deprecated
+        // lang.accessibility.sorting.sortable
+        // to the new lang.accessibility.sorting.enabled option.
+        const sortingLang = newOptions.lang?.accessibility?.sorting;
+        if (
+            sortingLang &&
+            sortingLang.enabled === void 0 &&
+            sortingLang.sortable !== void 0
+        ) {
+            sortingLang.enabled = sortingLang.sortable;
+        }
+
         const diff: DeepPartial<NonArrayOptions> = {};
 
         if (newOptions.columns) {
@@ -1344,7 +1357,7 @@ export class Grid {
      * @returns
      */
     public getColumnIds(
-        columnsTree: Array<GroupedHeaderOptions|string>,
+        columnsTree: Array<GroupedHeaderOptions | string>,
         onlyEnabledColumns: boolean = true
     ): string[] {
         let columnIds: string[] = [];
