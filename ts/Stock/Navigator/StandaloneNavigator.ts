@@ -334,7 +334,7 @@ class StandaloneNavigator {
     /**
      * Adds a series to the standalone navigator.
      *
-     * @private
+     * @internal
      *
      * @param {SeriesOptions} seriesOptions
      *        Options for the series to be added to the navigator.
@@ -351,7 +351,7 @@ class StandaloneNavigator {
     /**
      * Initialize the standalone navigator.
      *
-     * @private
+     * @internal
      */
     public initNavigator(): void {
         const nav = this.navigator;
@@ -439,7 +439,7 @@ class StandaloneNavigator {
     /**
      * Get the initial, options based extremes for the standalone navigator.
      *
-     * @private
+     * @internal
      *
      * @return {{ min: number, max: number }}
      *         The initial minimum and maximum extremes values.

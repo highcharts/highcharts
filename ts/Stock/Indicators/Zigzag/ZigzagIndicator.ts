@@ -42,7 +42,7 @@ const {
 /**
  * The Zig Zag series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.zigzag
  *
@@ -301,6 +301,7 @@ SeriesRegistry.registerSeriesType('zigzag', ZigzagIndicator);
  *
  * */
 
+/** @internal */
 export default ZigzagIndicator;
 
 /* *

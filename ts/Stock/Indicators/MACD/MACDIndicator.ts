@@ -62,7 +62,7 @@ interface MACDZonesObject {
 /**
  * The MACD series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.macd
  *
@@ -545,6 +545,7 @@ SeriesRegistry.registerSeriesType('macd', MACDIndicator);
  *
  * */
 
+/** @internal */
 export default MACDIndicator;
 
 /* *

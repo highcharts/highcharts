@@ -39,7 +39,7 @@ const { merge } = U;
 /**
  * The NATR series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.natr
  *
@@ -155,6 +155,7 @@ SeriesRegistry.registerSeriesType('natr', NATRIndicator);
  *
  * */
 
+/** @internal */
 export default NATRIndicator;
 
 /* *

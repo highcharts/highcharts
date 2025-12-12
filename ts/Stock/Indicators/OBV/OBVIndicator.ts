@@ -45,7 +45,7 @@ const {
 /**
  * The OBV series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.obv
  *
@@ -226,6 +226,7 @@ SeriesRegistry.registerSeriesType('obv', OBVIndicator);
  *
  * */
 
+/** @internal */
 export default OBVIndicator;
 
 /* *

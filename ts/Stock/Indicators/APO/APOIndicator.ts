@@ -42,7 +42,7 @@ const {
 /**
  * The APO series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.apo
  *
@@ -208,6 +208,7 @@ SeriesRegistry.registerSeriesType('apo', APOIndicator);
  *
  * */
 
+/** @internal */
 export default APOIndicator;
 
 /* *
