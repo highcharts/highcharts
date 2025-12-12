@@ -709,6 +709,14 @@ const defaultOptions: DefaultOptions = {
          */
 
         /**
+         * A CSS class name to apply to the title's container div,
+         * allowing unique CSS styling for each chart.
+         *
+         * @type      {string}
+         * @apioption title.className
+         */
+
+        /**
          * The margin between the title and the plot area, or if a subtitle
          * is present, the margin between the subtitle and the plot area.
          *
@@ -773,6 +781,14 @@ const defaultOptions: DefaultOptions = {
          * @default undefined
          * @since 2.0
          * @apioption subtitle.align
+         */
+
+        /**
+         * A CSS class name to apply to the subtitle's container div,
+         * allowing unique CSS styling for each chart.
+         *
+         * @type      {string}
+         * @apioption subtitle.className
          */
 
         /**
