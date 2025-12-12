@@ -929,7 +929,7 @@ namespace TimeBase {
 
     export interface DateTimeFormatOptions extends Intl.DateTimeFormatOptions {
         dateStyle?: 'full'|'long'|'medium'|'short';
-        fractionalSecondDigits?: number;
+        fractionalSecondDigits?: 1|2|3;
         prefix?: string;
         suffix?: string;
         timeStyle?: 'full'|'long'|'medium'|'short';
@@ -1129,7 +1129,7 @@ export default TimeBase;
  * The number of fractional digits to use. 3 means milliseconds.
  *
  * @name Highcharts.DateTimeFormatOptions#fractionalSecondDigits
- * @type {number|undefined}
+ * @type {1|2|3|undefined}
  *//**
  * The representation of the time zone name.
  *
