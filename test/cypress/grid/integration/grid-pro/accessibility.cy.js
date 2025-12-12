@@ -1,0 +1,91 @@
+describe('Screen reader sections.', () => {
+    before(() => {
+        cy.visit('/grid-lite/demo/your-first-grid');
+    });
+
+  it('Before-Grid screen reader section should be rendered.', () => {
+      cy.grid().then((grid) => {
+          grid.update({
+              lang: {
+                  accessibility: {
+                      screenReaderSection: {
+                          beforeRegionLabel: 'Before Grid information.'
+                      }
+                  }
+              }
+          });
+
+          cy.get('[id^="grid-screen-reader-region-before-"]')
+              .should('exist')
+              .and('have.attr', 'role', 'region')
+              .and('have.attr', 'aria-label');
+      });
+  });
+
+  it('Before-Grid section should contain visually hidden content.', () => {
+      cy.get('[id^="grid-screen-reader-region-before-"] .hcg-visually-hidden')
+          .should('exist');
+  });
+
+  it('After-Grid screen reader section should be rendered.', () => {
+      cy.grid().then((grid) => {
+          grid.update({
+              lang: {
+                  accessibility: {
+                      screenReaderSection: {
+                          afterRegionLabel: 'After Grid information.'
+                      }
+                  }
+              }
+          });
+
+          cy.get('[id^="grid-screen-reader-region-after-"]')
+              .should('exist')
+              .and('have.attr', 'role', 'region')
+              .and('have.attr', 'aria-label');
+      });
+  });
+
+  it('After-Grid section should contain visually hidden content.', () => {
+      cy.get('[id^="grid-screen-reader-region-after-"] .hcg-visually-hidden')
+          .should('exist');
+  });
+
+  it('Format contexts should render correctly.', () => {
+      cy.grid().then((grid) => {
+          grid.update({
+              accessibility: {
+                  screenReaderSection: {
+                      beforeGridFormat: 
+                        'Custom text: {rowCount} rows and {columnCount} columns'
+                  }
+              }
+          });
+
+          const dataTable = grid.dataTable;
+          const expectedRowCount = dataTable.rowCount;
+          const expectedColumnCount = dataTable.getColumnIds().length;
+
+          cy.get(
+              '[id^="grid-screen-reader-region-before-"] .hcg-visually-hidden'
+          )
+          .should('exist')
+              .invoke('text')
+              .should(
+                'include', 
+                `Custom text: ${expectedRowCount} rows and` +
+                    ` ${expectedColumnCount} columns`
+            );
+      });
+  });
+
+  it('Screen reader sections should be properly destroyed.', () => {
+      cy.grid().then((grid) => {
+          grid.accessibility.destroy();
+          cy.get('[id^="grid-screen-reader-region-before-"]')
+              .should('not.exist');
+          cy.get('[id^="grid-screen-reader-region-after-"]')
+              .should('not.exist');
+      });
+  });
+});
