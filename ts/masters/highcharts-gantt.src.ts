@@ -1,10 +1,12 @@
+// SPDX-License-Identifier: LicenseRef-Highcharts
 /**
  * @license Highcharts Gantt JS v@product.version@ (@product.date@)
  * @module highcharts/highcharts-gantt
  *
  * (c) 2017-2025 Highsoft AS
  *
- * License: www.highcharts.com/license
+ * A commercial license may be required depending on use.
+ * See www.highcharts.com/license
  *
  * Authors:
  * - Lars Cabrera

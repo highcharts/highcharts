@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LicenseRef-Highcharts
 /**
  * @license Highstock JS v@product.version@ (@product.date@)
  * @module highcharts/indicators/indicators-all
@@ -6,9 +7,11 @@
  *
  * All technical indicators for Highcharts Stock
  *
- * (c) 2010-2025 Pawel Fus
+ * (c) 2010-2025 Highsoft AS
+ * Author: Pawel Fus
  *
- * License: www.highcharts.com/license
+ * A commercial license may be required depending on use.
+ * See www.highcharts.com/license
  */
 
 'use strict';
