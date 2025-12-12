@@ -45,6 +45,7 @@ if (defaultOptions.annotations) {
      * @extends      annotations.types.crookedLine
      * @excluding    labels, shapes, controlPointOptions
      * @product      highstock
+     * @requires     modules/annotations-advanced
      * @optionparent annotations.types.verticalLine
      */
     defaultOptions.annotations.types.verticalLine = {

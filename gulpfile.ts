@@ -34,6 +34,7 @@ Gulp.registry(new GulpForwardReference());
     'dashboards/api-server',
     'dashboards/cypress',
     'default',
+    'dependency-mapping',
     'dist',
     'dist-clean',
     'dist-compress',
