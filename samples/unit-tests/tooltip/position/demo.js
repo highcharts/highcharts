@@ -85,6 +85,29 @@ QUnit.test(
         );
 
         chart.renderTo.style.transform = '';
+
+        chart.update({
+            tooltip: {
+                positioner: (width, size, point, tt) => (
+                    width && size && point && tt ? {
+                        x: 100,
+                        y: 100
+                    } : {
+                        x: 0,
+                        y: 0
+                    }
+                )
+            }
+        });
+
+        chart.tooltip.refresh(chart.series[1].points[1]);
+
+        assert.close(
+            chart.tooltip.label.translateX,
+            100,
+            20,
+            'Arrow function should work for tooltip.positioner.'
+        );
     }
 );
 // Highcharts v4.0.3, Issue #424

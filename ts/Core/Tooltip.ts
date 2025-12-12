@@ -1464,7 +1464,7 @@ class Tooltip {
                             boxWidth,
                             size,
                             point,
-                            void 0,
+                            tooltip,
                             [anchorX, anchorY]
                         );
 
