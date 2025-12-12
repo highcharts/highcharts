@@ -12,9 +12,6 @@
  *
  * */
 
-import type {
-    ControllableLabelOptions
-} from '../Controllables/ControllableOptions';
 import type ColorType from '../../../Core/Color/ColorType';
 
 import Annotation from '../Annotation.js';
@@ -23,9 +20,10 @@ import D from '../../../Core/Defaults.js';
 const { defaultOptions } = D;
 import U from '../../../Core/Utilities.js';
 import { Palette } from '../../../Core/Color/Palettes';
+import { AnnotationLabelOptionsOptions } from '../AnnotationOptions';
 const { merge } = U;
 
-if (defaultOptions.annotations) {
+if (defaultOptions.annotations?.types) {
     defaultOptions.annotations.types.elliottWave = merge(
         defaultOptions.annotations.types.crookedLine,
         /**
@@ -59,7 +57,7 @@ if (defaultOptions.annotations) {
                 align: 'center',
                 allowOverlap: true,
                 crop: true,
-                overflow: 'none' as any,
+                overflow: 'none',
                 type: 'rect',
                 backgroundColor: 'none',
                 borderWidth: 0,
@@ -67,7 +65,7 @@ if (defaultOptions.annotations) {
                 style: {
                     color: Palette.neutralColor80
                 }
-            } as any
+            }
         }
     );
 }
@@ -78,6 +76,7 @@ if (defaultOptions.annotations) {
  *
  * */
 
+/** @internal */
 class ElliottWave extends CrookedLine {
 
     /* *
@@ -91,14 +90,18 @@ class ElliottWave extends CrookedLine {
             const typeOptions = (
                     this.options.typeOptions as ElliottWave.TypeOptions
                 ),
-                label = this.initLabel(merge(
-                    point.label, {
-                        text: typeOptions.labels[i],
-                        point: function (target: any): any {
-                            return target.annotation.points[i];
+                label = this.initLabel(
+                    merge(
+                        point.label,
+                        {
+                            text: typeOptions.labels[i],
+                            point: function (target: any): any {
+                                return target.annotation.points[i];
+                            }
                         }
-                    }
-                ), false as any);
+                    ),
+                    false as any
+                );
 
             point.label = label.options;
         });
@@ -111,6 +114,7 @@ class ElliottWave extends CrookedLine {
  *
  * */
 
+/** @internal */
 interface ElliottWave {
 
 }
@@ -122,16 +126,28 @@ interface ElliottWave {
  * */
 
 namespace ElliottWave {
-    export interface LabelOptions extends ControllableLabelOptions {
+    export interface LabelOptions extends AnnotationLabelOptionsOptions {
         backgroundColor: ColorType;
         borderWidth: number;
         y: number;
     }
+
+    /**
+     * Options for the elliott wave annotation type.
+     *
+     * @sample highcharts/annotations-advanced/elliott-wave/
+     *         Elliott wave
+     *
+     * @extends      annotations.types.crookedLine
+     * @product      highstock
+     * @optionparent annotations.types.elliottWave
+     */
     export interface Options extends CrookedLine.Options {
         labelOptions: LabelOptions;
         typeOptions: TypeOptions;
     }
     export interface TypeOptions extends CrookedLine.TypeOptions {
+        /** @internal */
         labels: Array<string>;
     }
 }
@@ -142,6 +158,7 @@ namespace ElliottWave {
  *
  * */
 
+/** @internal */
 declare module './AnnotationType' {
     interface AnnotationTypeRegistry {
         elliottWave: typeof ElliottWave;

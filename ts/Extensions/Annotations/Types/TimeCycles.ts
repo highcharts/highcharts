@@ -16,7 +16,7 @@
 
 import type { AnnotationEventObject } from '../EventEmitter';
 import type { ControlPointOptionsObject } from '../ControlPointOptions';
-import type MockPointOptions from '../MockPointOptions';
+import type MockPointOptions from '../AnnotationMockPointOptionsObject';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
 
@@ -38,16 +38,17 @@ const {
  *
  * */
 
+/** @internal */
 interface TimeCyclesOptions extends CrookedLine.Options {
     xAxis: number;
     yAxis: number;
 }
 
-if (defaultOptions.annotations) {
+if (defaultOptions.annotations?.types) {
     defaultOptions.annotations.types.timeCycles = merge(
         defaultOptions.annotations.types.crookedLine,
         /**
-         * Options for the  time cycles annotation type.
+         * Options for the time cycles annotation type.
          *
          * @sample highcharts/annotations-advanced/time-cycles/
          *         Time Cycles annotation
@@ -131,6 +132,8 @@ if (defaultOptions.annotations) {
 
 /**
  * Function to create start of the path.
+ *
+ * @internal
  * @param {number} x x position of the TimeCycles
  * @param {number} y y position of the TimeCycles
  * @return {string} path
@@ -140,14 +143,14 @@ function getStartingPath(x: number, y: number): SVGPath.MoveTo {
 }
 
 /**
- * Function which generates the path of the halfcircle.
+ * Function which generates the path of the semicircle.
  *
+ * @internal
  * @param {number} pixelInterval diameter of the circle in pixels
- * @param {number} numberOfCircles number of cricles
+ * @param {number} numberOfCircles number of circles
  * @param {number} startX x position of the first circle
  * @param {number} y y position of the bottom of the timeCycles
  * @return {string} path
- *
  */
 function getCirclePath(
     pixelInterval: number,
@@ -179,6 +182,7 @@ function getCirclePath(
  *
  * */
 
+/** @internal */
 class TimeCycles extends CrookedLine {
 
     /* *
@@ -227,7 +231,7 @@ class TimeCycles extends CrookedLine {
     }
 
     public addShapes(): void {
-        const typeOptions = this.options.typeOptions;
+        const typeOptions = this.options.typeOptions!;
         this.setPathProperties();
         const shape = this.initShape(
             merge(typeOptions.line, {
@@ -245,7 +249,7 @@ class TimeCycles extends CrookedLine {
     public addControlPoints(): void {
         const options = this.options,
             typeOptions = options.typeOptions as TimeCycles.TypeOptions;
-        options.controlPointOptions.style.cursor = this.chart.inverted ?
+        options.controlPointOptions!.style.cursor = this.chart.inverted ?
             'ns-resize' :
             'ew-resize';
 
@@ -266,15 +270,15 @@ class TimeCycles extends CrookedLine {
     }
 
     public setPathProperties(): void {
-        const options = this.options.typeOptions,
+        const options = this.options.typeOptions!,
             points = options.points;
 
         if (!points) {
             return;
         }
 
-        const point1 = points[0],
-            point2 = points[1],
+        const point1 = points[0] as any,
+            point2 = points[1] as any,
             xAxisNumber = options.xAxis || 0,
             yAxisNumber = options.yAxis || 0,
             xAxis = this.chart.xAxis[xAxisNumber],
@@ -322,6 +326,7 @@ class TimeCycles extends CrookedLine {
  *
  * */
 
+/** @internal */
 interface TimeCycles {
     defaultOptions: CrookedLine['defaultOptions'];
     startX: number;
@@ -337,6 +342,17 @@ interface TimeCycles {
  * */
 
 namespace TimeCycles {
+    /**
+     * Options for the time cycles annotation type.
+     *
+     * @sample highcharts/annotations-advanced/time-cycles/
+     *         Time Cycles annotation
+     *
+     * @extends      annotations.types.crookedLine
+     * @product      highstock
+     * @exclude      labelOptions
+     * @optionparent annotations.types.timeCycles
+     */
     export interface Options extends CrookedLine.Options {
         typeOptions: TypeOptions;
     }
@@ -352,6 +368,7 @@ namespace TimeCycles {
  *
  * */
 
+/** @internal */
 declare module './AnnotationType' {
     interface AnnotationTypeRegistry {
         timeCycles: typeof TimeCycles;

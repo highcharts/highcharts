@@ -63,9 +63,7 @@ export interface AnnotationEventObject extends PointerEvent {
  *
  * */
 
-/**
- * @private
- */
+// Internal class, but made public because Annotation extends it.
 abstract class EventEmitter {
 
     /* *
@@ -76,7 +74,7 @@ abstract class EventEmitter {
 
     /**
      * Add emitter events.
-     * @private
+     * @internal
      */
     public addEvents(): void {
         const emitter = this,
@@ -175,6 +173,7 @@ abstract class EventEmitter {
 
     /**
      * Destroy the event emitter.
+     * @internal
      */
     public destroy(): void {
         this.removeDocEvents();
@@ -186,7 +185,7 @@ abstract class EventEmitter {
 
     /**
      * Map mouse move event to the radians.
-     * @private
+     * @internal
      */
     public mouseMoveToRadians(
         e: AnnotationEventObject,
@@ -214,7 +213,7 @@ abstract class EventEmitter {
 
     /**
      * Map mouse move to the scale factors.
-     * @private
+     * @internal
      */
     public mouseMoveToScale(
         e: AnnotationEventObject,
@@ -243,7 +242,7 @@ abstract class EventEmitter {
 
     /**
      * Map mouse move event to the distance between two following events.
-     * @private
+     * @internal
      */
     public mouseMoveToTranslation(
         e: AnnotationEventObject
@@ -267,7 +266,7 @@ abstract class EventEmitter {
     /**
      * Drag and drop event. All basic annotations should share this
      * capability as well as the extended ones.
-     * @private
+     * @internal
      */
     public onDrag(
         e: AnnotationEventObject
@@ -310,7 +309,7 @@ abstract class EventEmitter {
 
     /**
      * Mouse down handler.
-     * @private
+     * @internal
      */
     public onMouseDown(
         e: AnnotationEventObject
@@ -390,16 +389,18 @@ abstract class EventEmitter {
 
     /**
      * Mouse up handler.
+     * @internal
      */
     public onMouseUp(): void {
         this.removeDocEvents();
     }
 
+    /** @internal */
     abstract redraw(animation?: boolean): void;
 
     /**
      * Remove emitter document events.
-     * @private
+     * @internal
      */
     public removeDocEvents(): void {
         if (this.removeDrag) {
@@ -419,19 +420,45 @@ abstract class EventEmitter {
  *
  * */
 
+/** @internal */
 interface EventEmitter {
+    /** @internal */
     cancelClick?: boolean;
+
+    /** @internal */
     chart: AnnotationChart;
+
+    /** @internal */
     graphic: SVGElement;
+
+    /** @internal */
     hasDragged?: boolean;
+
+    /** @internal */
     hcEvents?: unknown;
+
+    /** @internal */
     isUpdating?: boolean;
+
+    /** @internal */
     labels?: Array<ControllableLabelType>;
+
+    /** @internal */
     nonDOMEvents?: Array<string>;
+
+    /** @internal */
     options: Partial<(ControlPointOptionsObject|AnnotationOptions)>;
+
+    /** @internal */
     removeDrag?: Function;
+
+    /** @internal */
     removeMouseUp?: Function;
+
+    /** @internal */
     shapes?: Array<ControllableShapeType>;
+
+    /** @internal */
     target?: ControlTarget;
 }
 
