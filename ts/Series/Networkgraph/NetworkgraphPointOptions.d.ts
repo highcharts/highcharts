@@ -33,7 +33,7 @@ import type {
  * */
 
 declare module '../../Core/Series/PointOptions' {
-    interface PointStateInactiveOptions
+    interface PointMarkerStateInactiveOptions
     {
         animation?: (boolean|Partial<AnimationOptions>);
     }

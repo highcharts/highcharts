@@ -17,7 +17,6 @@
  * */
 
 import type ArcDiagramPointOptions from './ArcDiagramPointOptions';
-import type ArcDiagramSeries from './ArcDiagramSeries';
 import type { NetworkgraphDataLabelsOptions } from '../Networkgraph/NetworkgraphSeriesOptions';
 import type {
     SankeySeriesNodeOptions,
@@ -33,7 +32,15 @@ import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
  * */
 
 export interface ArcDiagramSeriesNodeOptions extends SankeySeriesNodeOptions {
-    // Nothing to add
+    /**
+     * Individual data label for each node. The options are the same as the ones
+     * for [series.arcdiagram.dataLabels](#series.arcdiagram.dataLabels).
+     *
+     * @type {Highcharts.SeriesArcDiagramDataLabelsOptionsObject|Array<Highcharts.SeriesArcDiagramDataLabelsOptionsObject>}
+     *
+     * @apioption series.arcdiagram.nodes.dataLabels
+     */
+    dataLabels?: SankeySeriesNodeOptions['dataLabels'];
 }
 
 /**
@@ -61,19 +68,11 @@ export interface ArcDiagramSeriesNodeOptions extends SankeySeriesNodeOptions {
  *
  * @requires modules/sankey
  *
- * @exclude curveFactor, connectEnds, connectNulls, colorAxis, colorKey,
- *          dataSorting, dragDrop, getExtremesFromAll, nodeAlignment,
- *          nodePadding, centerInCategory, pointInterval,
- *          pointIntervalUnit, pointPlacement, pointStart,
- *          relativeXValue, softThreshold, stack, stacking, step,
- *          xAxis, yAxis
- *
- * @exclude dataSorting, boostThreshold, boostBlending, curveFactor,
- *          connectEnds, connectNulls, colorAxis, colorKey, dataSorting,
- *          dragDrop, getExtremesFromAll, nodePadding, centerInCategory,
- *          pointInterval, pointIntervalUnit, pointPlacement,
- *          pointStart, relativeXValue, softThreshold, stack,
- *          stacking, step, xAxis, yAxis
+ * @exclude boostBlending, boostThreshold, centerInCategory, colorAxis,
+ * colorKey, connectEnds, connectNulls, curveFactor, dataSorting, dragDrop,
+ * getExtremesFromAll, nodeAlignment, nodePadding, pointInterval,
+ * pointIntervalUnit, pointPlacement, pointStart, relativeXValue, scale,
+ * softThreshold, stack, stacking, step, xAxis, yAxis
  */
 export interface ArcDiagramSeriesOptions extends SankeySeriesOptions {
 
@@ -243,9 +242,10 @@ export interface ArcDiagramSeriesOptions extends SankeySeriesOptions {
      */
     reversed: boolean;
 
+    /** @internal */
     scale?: number;
 
-    states?: SeriesStatesOptions<ArcDiagramSeries>;
+    states?: SeriesStatesOptions<ArcDiagramSeriesOptions>;
 
 }
 

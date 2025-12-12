@@ -406,7 +406,6 @@ const NavigatorDefaults: NavigatorOptions = {
          *
          * In Highcharts Stock version < 8, defaults to 0.
          *
-         * @extends plotOptions.series.pointRange
          * @type {number|null}
          * @apioption navigator.series.pointRange
          */

@@ -107,7 +107,7 @@ class Series3D extends Series {
 
     /**
      * Translate the plotX, plotY properties and add plotZ.
-     * @private
+     * @internal
      */
     public translate3dPoints(): void {
         const series = this,

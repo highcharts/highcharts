@@ -723,9 +723,7 @@ class ColumnSeries extends Series {
             stateOptions = merge(
                 (options.states as any)[state],
                 // #6401
-                point.options.states &&
-                (point.options.states as any)[state] ||
-                {}
+                point.options.states?.[state] || {}
             );
             brightness = stateOptions.brightness;
             fill =

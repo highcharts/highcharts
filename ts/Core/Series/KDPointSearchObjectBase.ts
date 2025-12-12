@@ -20,6 +20,8 @@
  *
  * Use the `declare module './PointBase'` pattern to overload the interface in
  * this definition file.
+ *
+ * @internal
  */
 export interface KDPointSearchObjectBase {
     clientX?: number;
@@ -32,4 +34,5 @@ export interface KDPointSearchObjectBase {
  *
  * */
 
+/** @internal */
 export default KDPointSearchObjectBase;

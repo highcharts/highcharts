@@ -58,7 +58,10 @@ declare module '../../Core/Series/SeriesOptions' {
 }
 
 export interface NetworkgraphDataLabelsFormatterCallbackFunction {
-    (this: Point|NetworkgraphPoint): (number|string|null|undefined);
+    (
+        this: Point|NetworkgraphPoint,
+        options: DataLabelOptions
+    ): (number|string|null|undefined);
 }
 
 export interface NetworkgraphDataLabelsOptions
@@ -250,7 +253,7 @@ export interface NetworkgraphSeriesOptions
      */
     nodes?: Array<NetworkgraphPointOptions>;
 
-    states?: SeriesStatesOptions<NetworkgraphSeries>;
+    states?: SeriesStatesOptions<NetworkgraphSeriesOptions>;
 
     /**
      * The opposite state of a hover for a single point link. Applied

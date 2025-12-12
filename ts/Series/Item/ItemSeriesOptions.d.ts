@@ -20,7 +20,6 @@ import type {
     ItemPointOptions,
     ItemPointMarkerOptions
 } from './ItemPointOptions';
-import type ItemSeries from './ItemSeries';
 import type PieSeriesOptions from '../Pie/PieSeriesOptions';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type {
@@ -208,7 +207,7 @@ export interface ItemSeriesOptions extends PieSeriesOptions {
      */
     startAngle?: number;
 
-    states?: SeriesStatesOptions<ItemSeries>;
+    states?: SeriesStatesOptions<ItemSeriesOptions>;
 
 }
 
