@@ -198,21 +198,171 @@ export interface AxisCrosshairLabelOptions {
 }
 
 export interface AxisCrosshairOptions {
+
+    /**
+     * A class name for the crosshair, especially as a hook for styling.
+     *
+     * @since 5.0.0
+     */
     className?: string;
+
+    /**
+     * The color of the crosshair. Defaults to `#cccccc` for numeric and
+     * datetime axes, and `rgba(204,214,235,0.25)` for category axes, where
+     * the crosshair by default highlights the whole category.
+     *
+     * @sample {highcharts|highstock|highmaps} highcharts/xaxis/crosshair-customized/
+     *         Customized crosshairs
+     *
+     * @default #cccccc
+     * @since   4.1
+     */
     color?: ColorType;
+
+    /**
+     * The dash style for the crosshair. See
+     * [plotOptions.series.dashStyle](#plotOptions.series.dashStyle)
+     * for possible values.
+     *
+     * @sample {highcharts|highmaps} highcharts/xaxis/crosshair-dotted/
+     *         Dotted crosshair
+     * @sample {highstock} stock/xaxis/crosshair-dashed/
+     *         Dashed X axis crosshair
+     *
+     * @default Solid
+     * @since   4.1
+     */
     dashStyle?: DashStyleValue;
+
+    /**
+     * A label on the axis next to the crosshair.
+     *
+     * In styled mode, the label is styled with the
+     * `.highcharts-crosshair-label` class.
+     *
+     * @sample {highstock} stock/xaxis/crosshair-label/
+     *         Crosshair labels
+     * @sample {highstock} highcharts/css/crosshair-label/
+     *         Style mode
+     *
+     * @since   2.1
+     * @product highstock
+     */
     label?: AxisCrosshairLabelOptions;
+
+    /**
+     * Whether the crosshair should snap to the point or follow the pointer
+     * independent of points.
+     *
+     * @sample {highcharts|highstock} highcharts/xaxis/crosshair-snap-false/
+     *         True by default
+     * @sample {highmaps} maps/demo/latlon-advanced/
+     *         Snap is false
+     *
+     * @default true
+     * @since   4.1
+     */
     snap?: boolean;
+
+    /**
+     * The pixel width of the crosshair. Defaults to 1 for numeric or
+     * datetime axes, and for one category width for category axes.
+     *
+     * @sample {highcharts} highcharts/xaxis/crosshair-customized/
+     *         Customized crosshairs
+     * @sample {highstock} highcharts/xaxis/crosshair-customized/
+     *         Customized crosshairs
+     * @sample {highmaps} highcharts/xaxis/crosshair-customized/
+     *         Customized crosshairs
+     *
+     * @default 1
+     * @since   4.1
+     */
     width?: number;
+
+    /**
+     * The Z index of the crosshair. Higher Z indices allow drawing the
+     * crosshair on top of the series or behind the grid lines.
+     *
+     * @default 2
+     * @since   4.1
+     */
     zIndex?: number;
+
 }
 
 export interface AxisEventsOptions {
+
+    /**
+     * An event fired after the breaks have rendered.
+     *
+     * @see [breaks](#xAxis.breaks)
+     *
+     * @sample {highcharts} highcharts/axisbreak/break-event/
+     *         AfterBreak Event
+     *
+     * @since   4.1.0
+     * @product highcharts gantt
+     */
     afterBreaks?: EventCallback<Axis>;
+
+    /**
+     * As opposed to the `setExtremes` event, this event fires after the
+     * final min and max values are computed and corrected for `minRange`.
+     *
+     * Fires when the minimum and maximum is set for the axis, either by
+     * calling the `.setExtremes()` method or by selecting an area in the
+     * chart. One parameter, `event`, is passed to the function, containing
+     * common event information.
+     *
+     * The new user set minimum and maximum values can be found by
+     * `event.min` and `event.max`. These reflect the axis minimum and
+     * maximum in axis values. The actual data extremes are found in
+     * `event.dataMin` and `event.dataMax`.
+     *
+     * @since 2.3
+     */
     afterSetExtremes?: AxisSetExtremesEventCallback;
+
+    /**
+     * An event fired when a break from this axis occurs on a point.
+     *
+     * @see [breaks](#xAxis.breaks)
+     *
+     * @sample {highcharts} highcharts/axisbreak/break-visualized/
+     *         Visualization of a Break
+     *
+     * @since   4.1.0
+     * @product highcharts gantt
+     */
     pointBreak?: AxisPointBreakEventCallback;
+
+    /**
+     * An event fired when a point falls inside a break from this axis.
+     *
+     * @product highcharts highstock gantt
+     */
     pointInBreak?: AxisPointBreakEventCallback;
+
+    /**
+     * Fires when the minimum and maximum is set for the axis, either by
+     * calling the `.setExtremes()` method or by selecting an area in the
+     * chart. One parameter, `event`, is passed to the function,
+     * containing common event information.
+     *
+     * The new user set minimum and maximum values can be found by
+     * `event.min` and `event.max`. These reflect the axis minimum and
+     * maximum in data values. When an axis is zoomed all the way out from
+     * the "Reset zoom" button, `event.min` and `event.max` are null, and
+     * the new extremes are set based on `this.dataMin` and `this.dataMax`.
+     *
+     * @sample {highstock} stock/xaxis/events-setextremes/
+     *         Log new extremes on x axis
+     *
+     * @since   1.2.0
+     */
     setExtremes?: AxisSetExtremesEventCallback;
+
 }
 
 export type AxisLabelFormatterCallback = FormatterCallback<
@@ -221,38 +371,344 @@ export type AxisLabelFormatterCallback = FormatterCallback<
 >;
 
 export interface AxisLabelFormatterContextObject {
+
+    /**
+     * The axis item of the label
+     */
     axis: Axis;
+
+    /**
+     * The chart instance.
+     */
     chart: Chart;
+
+    /**
+     * Default formatting of date/time labels.
+     */
     dateTimeLabelFormat?: Time.DateTimeFormat;
+
+    /**
+     * Whether the label belongs to the first tick on the axis.
+     */
     isFirst: boolean;
+
+    /**
+     * Whether the label belongs to the last tick on the axis.
+     */
     isLast: boolean;
+
+    /**
+     * The position on the axis in terms of axis values. For category axes, a
+     * zero-based index. For datetime axes, the JavaScript time in milliseconds
+     * since 1970.
+     */
     pos: number;
+
+    /**
+     * The preformatted text as the result of the default formatting. For
+     * example dates will be formatted as strings, and numbers with
+     * language-specific comma separators, thousands separators and numeric
+     * symbols like `k` or `M`.
+     */
     text?: string;
+
+    /**
+     * The Tick instance.
+     */
     tick: Tick;
+
+    /**
+     * This can be either a numeric value or a category string.
+     */
     value: number|string;
+
 }
 
 export interface AxisLabelOptions {
+
+    /**
+     * What part of the string the given position is anchored to.
+     * If `left`, the left side of the string is at the axis position.
+     * Can be one of `"left"`, `"center"` or `"right"`. Defaults to
+     * an intelligent guess based on which side of the chart the axis
+     * is on and the rotation of the label.
+     *
+     * @see [reserveSpace](#xAxis.labels.reserveSpace)
+     *
+     * @sample {highcharts} highcharts/xaxis/labels-align-left/
+     *         Left
+     * @sample {highcharts} highcharts/xaxis/labels-align-right/
+     *         Right
+     * @sample {highcharts} highcharts/xaxis/labels-reservespace-true/
+     *         Left-aligned labels on a vertical category axis
+     */
     align?: AlignValue;
+
+    /**
+     * Whether to allow the axis labels to overlap. When false,
+     * overlapping labels are hidden.
+     *
+     * @sample {highcharts} highcharts/xaxis/labels-allowoverlap-true/
+     *         X axis labels overlap enabled
+     *
+     * @default false
+     */
     allowOverlap?: boolean;
+
+    /**
+     * For horizontal axes, the allowed degrees of label rotation
+     * to prevent overlapping labels. If there is enough space,
+     * labels are not rotated. As the chart gets narrower, it
+     * will start rotating the labels -45 degrees, then remove
+     * every second label and try again with rotations 0 and -45 etc.
+     * Set it to `undefined` to disable rotation, which will
+     * cause the labels to word-wrap if possible. Defaults to `[-45]``
+     * on bottom and top axes, `undefined` on left and right axes.
+     *
+     * @sample {highcharts|highstock} highcharts/xaxis/labels-autorotation-default/
+     *         Default auto rotation of 0 or -45
+     * @sample {highcharts|highstock} highcharts/xaxis/labels-autorotation-0-90/
+     *         Custom graded auto rotation
+     *
+     * @since   4.1.0
+     * @product highcharts highstock gantt
+     */
     autoRotation?: Array<number>;
+
+    /**
+     * When each category width is more than this many pixels, we don't
+     * apply auto rotation. Instead, we lay out the axis label with word
+     * wrap. A lower limit makes sense when the label contains multiple
+     * short words that don't extend the available horizontal space for
+     * each label.
+     *
+     * @sample {highcharts} highcharts/xaxis/labels-autorotationlimit/
+     *         Lower limit
+     *
+     * @default 80
+     * @since   4.1.5
+     * @product highcharts gantt
+     */
     autoRotationLimit: number;
+
+    /**
+     * The label's pixel distance from the perimeter of the plot area.
+     * On cartesian charts, this is overridden if the `labels.y` setting
+     * is set.
+     *
+     * @sample {highcharts} highcharts/yaxis/labels-distance/
+     *         Polar chart, labels centered under the arc
+     *
+     * @default 15
+     * @product highcharts gantt
+     */
     distance: number;
+
+    /**
+     * Enable or disable the axis labels.
+     *
+     * @sample {highcharts} highcharts/xaxis/labels-enabled/
+     *         X axis labels disabled
+     * @sample {highstock} stock/xaxis/labels-enabled/
+     *         X axis labels disabled
+     */
     enabled: boolean;
+
+    /**
+     * A format string for the axis label. The context is available as
+     * format string variables. For example, you can use `{text}` to
+     * insert the default formatted text. The recommended way of adding
+     * units for the label is using `text`, for example `{text} km`.
+     *
+     * To add custom numeric or datetime formatting, use `{value}` with
+     * formatting, for example `{value:.1f}` or `{value:%Y-%m-%d}`.
+     *
+     * See
+     * [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+     * for more examples of formatting.
+     *
+     * The default value is not specified due to the dynamic
+     * nature of the default implementation.
+     *
+     * @sample {highcharts|highstock} highcharts/yaxis/labels-format/
+     *         Add units to Y axis label
+     * @sample {highcharts} highcharts/xaxis/labels-format-linked/
+     *         Linked category names
+     * @sample {highcharts} highcharts/xaxis/labels-format-custom/
+     *         Custom number format
+     *
+     * @since 3.0
+     */
     format?: string;
+
+    /**
+     * Callback JavaScript function to format the label. The value
+     * is given by `this.value`. Additional properties for `this` are
+     * `axis`, `chart`, `isFirst`, `isLast` and `text` which holds the
+     * value of the default formatter.
+     *
+     * Defaults to a built in function returning a formatted string
+     * depending on whether the axis is `category`, `datetime`,
+     * `numeric` or other.
+     *
+     * @sample {highcharts} highcharts/xaxis/labels-formatter-linked/
+     *         Linked category names
+     * @sample {highcharts} highcharts/xaxis/labels-formatter-extended/
+     *         Modified numeric labels
+     * @sample {highstock} stock/xaxis/labels-formatter/
+     *         Added units on Y axis
+     */
     formatter?: FormatterCallback<AxisLabelFormatterContextObject, AxisLabelFormatterContextObject>;
+
+    /**
+     * The number of pixels to indent the labels per level in a treegrid
+     * axis.
+     *
+     * @sample gantt/treegrid-axis/demo
+     *         Indentation 10px by default.
+     * @sample gantt/treegrid-axis/indentation-0px
+     *         Indentation set to 0px.
+     *
+     * @default 10
+     * @product gantt
+     */
     indentation: number;
+
+    /**
+     * How to handle overflowing labels on horizontal axis. If set to
+     * `"allow"`, it will not be aligned at all. By default it
+     * `"justify"` labels inside the chart area. If there is room to
+     * move it, it will be aligned to the edge, else it will be removed.
+     *
+     * @default justify
+     * @since   2.2.5
+     */
     overflow: OptionsOverflowValue;
+
+    /**
+     * The pixel padding for axis labels, to ensure white space between
+     * them. Defaults to 4 for horizontal axes, 1 for vertical.
+     *
+     * @default undefined
+     * @product highcharts gantt
+     */
     padding?: number;
+
+    /**
+     * Whether to reserve space for the labels. By default, space is
+     * reserved for the labels in these cases:
+     *
+     * * On all horizontal axes.
+     * * On vertical axes if `label.align` is `right` on a left-side
+     * axis or `left` on a right-side axis.
+     * * On vertical axes if `label.align` is `center`.
+     *
+     * This can be turned off when for example the labels are rendered
+     * inside the plot area instead of outside.
+     *
+     * @see [labels.align](#xAxis.labels.align)
+     *
+     * @sample {highcharts} highcharts/xaxis/labels-reservespace/
+     *         No reserved space, labels inside plot
+     * @sample {highcharts} highcharts/xaxis/labels-reservespace-true/
+     *         Left-aligned labels on a vertical category axis
+     *
+     * @since   4.1.10
+     * @product highcharts highstock gantt
+     */
     reserveSpace?: boolean;
+
+    /**
+     * Rotation of the labels in degrees. When `undefined`, the
+     * `autoRotation` option takes precedence.
+     *
+     * @sample {highcharts} highcharts/xaxis/labels-rotation/
+     *         X axis labels rotated 90°
+     *
+     * @default 0
+     */
     rotation?: number|'auto';
+
+    /**
+     * Horizontal axes only. The number of lines to spread the labels
+     * over to make room or tighter labels. 0 disables staggering.
+     *
+     * @sample {highcharts} highcharts/xaxis/labels-staggerlines/
+     *         Show labels over two lines
+     * @sample {highstock} stock/xaxis/labels-staggerlines/
+     *         Show labels over two lines
+     *
+     * @since 2.1
+     */
     staggerLines: number;
+
+    /**
+     * To show only every _n_'th label on the axis, set the step to _n_.
+     * Setting the step to 2 shows every other label.
+     *
+     * By default, when 0, the step is calculated automatically to avoid
+     * overlap. To prevent this, set it to 1\. This usually only
+     * happens on a category axis, and is often a sign that you have
+     * chosen the wrong axis type.
+     *
+     * Read more at
+     * [Axis docs](https://www.highcharts.com/docs/chart-concepts/axes)
+     * => What axis should I use?
+     *
+     * @sample {highcharts} highcharts/xaxis/labels-step/
+     *         Showing only every other axis label on a categorized
+     *         x-axis
+     * @sample {highcharts} highcharts/xaxis/labels-step-auto/
+     *         Auto steps on a category axis
+     *
+     * @since 2.1
+     */
     step: number;
+
+    /**
+     * CSS styles for the label. Use `lineClamp` to control wrapping of
+     * category labels. Use `textOverflow: 'none'` to prevent ellipsis
+     * (dots).
+     *
+     * In styled mode, the labels are styled with the
+     * `.highcharts-axis-labels` class.
+     *
+     * @sample {highcharts} highcharts/xaxis/labels-style/
+     *         Red X axis labels
+     */
     style: CSSObject;
+
+    /**
+     * Whether to [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
+     * to render the labels.
+     */
     useHTML: boolean;
+
+    /**
+     * The x position offset of all labels relative to the tick
+     * positions on the axis. Overrides the `labels.distance` option.
+     */
     x?: number;
+
+    /**
+     * The y position offset of all labels relative to the tick
+     * positions on the axis. Overrides the `labels.distance` option.
+     *
+     * @sample {highcharts} highcharts/xaxis/labels-x/
+     *         X axis labels placed on grid lines
+     */
     y?: number;
+
+    /**
+     * The Z index for the axis labels.
+     *
+     * @see [axis.zIndex](#xAxis.zIndex)
+     * @see [axis.gridZIndex](#xAxis.gridZIndex)
+     *
+     * @default 7
+     */
     zIndex: number;
+
 }
 
 export interface AxisOptions {
@@ -1650,11 +2106,58 @@ export interface XAxisOptions extends AxisOptions {
 }
 
 export interface YAxisOptions extends AxisOptions {
+
+    /**
+     * Solid gauge only. Unless [stops](#yAxis.stops) are set, the color
+     * to represent the maximum value of the Y axis.
+     *
+     * @sample {highcharts} highcharts/yaxis/mincolor-maxcolor/
+     *         Min and max colors
+     *
+     * @default #003399
+     * @since   4.0
+     * @product highcharts
+     */
     maxColor?: ColorType;
+
+    /**
+     * Solid gauge only. Unless [stops](#yAxis.stops) are set, the color
+     * to represent the minimum value of the Y axis.
+     *
+     * @sample {highcharts} highcharts/yaxis/mincolor-maxcolor/
+     *         Min and max color
+     *
+     * @default #e6ebf5
+     * @since   4.0
+     * @product highcharts
+     */
     minColor?: ColorType;
+
+    /** @internal */
     staticScale?: number;
+
+    /**
+     * Solid gauge series only. Color stops for the solid gauge. Use this
+     * in cases where a linear gradient between a `minColor` and `maxColor`
+     * is not sufficient. The stops is an array of tuples, where the first
+     * item is a float between 0 and 1 assigning the relative position in
+     * the gradient, and the second item is the color.
+     *
+     * For solid gauges, the Y axis also inherits the concept of
+     * [data classes](https://api.highcharts.com/highmaps#colorAxis.dataClasses)
+     * from the Highmaps color axis.
+     *
+     * @sample {highcharts} highcharts/demo/gauge-solid/
+     *         Gauge with stops
+     *
+     * @see [minColor](#yAxis.minColor)
+     * @see [maxColor](#yAxis.maxColor)
+     *
+     * @since   4.0
+     * @product highcharts
+     */
     stops?: GradientColor['stops'];
-    tooltipValueFormat?: string;
+
 }
 
 /* *
