@@ -60,8 +60,8 @@ const {
  *
  * */
 
-declare module './SVGElementLike' {
-    interface SVGElementLike {
+declare module './SVGElementBase' {
+    interface SVGElementBase {
         attribs?: SVGAttributes;
         parts?: Array<string>;
         pathType?: string;
@@ -70,8 +70,8 @@ declare module './SVGElementLike' {
     }
 }
 
-declare module './SVGRendererLike' {
-    interface SVGRendererLike {
+declare module './SVGRendererBase' {
+    interface SVGRendererBase {
         Element3D: typeof SVGElement3D;
         arc3d(attribs: SVGAttributes): SVGElement;
         arc3dPath(shapeArgs: SVGAttributes): SVGArc3D;

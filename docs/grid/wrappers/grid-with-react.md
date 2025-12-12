@@ -18,7 +18,7 @@ npm install @highcharts/grid-lite
 
 import { useEffect, useRef } from 'react';
 import Grid from '@highcharts/grid-lite/es-modules/masters/grid-lite.src.js';
-import '@highcharts/grid-lite/css/grid.css';
+import '@highcharts/grid-lite/css/grid-lite.css';
 
 export default function GridComponent(props: { config: Grid.Options }) {
     const { config } = props;

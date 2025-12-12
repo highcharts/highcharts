@@ -19,6 +19,7 @@
 import type AnimationOptions from './AnimationOptions';
 import type Chart from '../Chart/Chart';
 import type CSSObject from '../Renderer/CSSObject';
+import type { DeepPartial } from '../../Shared/Types';
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type Series from '../Series/Series';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';

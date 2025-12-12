@@ -2,7 +2,7 @@ name: Linting
 
 on:
   pull_request:
-    branches: [ 'master' ]
+    branches: [ 'master', 'dash/**', 'grid/**' ]
     paths:
       - 'ts/**'
       - 'samples/**'
@@ -86,8 +86,8 @@ jobs:
       - name: Install Dependencies
         run: npm i
 
-      - name: Lint samples JS
-        run: npx eslint -c samples/.eslintrc "samples/**/*.js"
+      - name: Lint samples TS and JS
+        run: npx eslint -c samples/.eslintrc "samples/**/*.{js,ts}"
 
       - name: Lint samples CSS
         run: npx stylelint --config .stylelintrc.json "samples/**/*.css"

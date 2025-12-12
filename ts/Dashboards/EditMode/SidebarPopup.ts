@@ -57,8 +57,8 @@ class SidebarPopup extends BaseForm {
         text: EditGlobals.lang.sidebar.row,
         onDrop: function (
             sidebar: SidebarPopup,
-            dropContext: Cell|Row
-        ): Cell|void {
+            dropContext: Cell | Row
+        ): Cell | void {
 
             if (!dropContext) {
                 return;
@@ -104,7 +104,7 @@ class SidebarPopup extends BaseForm {
 
             void Bindings.addComponent({
                 type: 'HTML',
-                cell: cellId,
+                renderTo: cellId,
                 className: 'highcharts-dashboards-component-placeholder',
                 html: `
                     <h2> Placeholder </h2>
@@ -179,7 +179,7 @@ class SidebarPopup extends BaseForm {
      * Options used in the sidebar.
      */
     public options: SidebarPopup.Options = {
-        components: ['HTML', 'row', 'Highcharts', 'DataGrid', 'KPI']
+        components: ['HTML', 'row', 'Highcharts', 'Grid', 'KPI']
     };
 
     /**
@@ -264,7 +264,7 @@ class SidebarPopup extends BaseForm {
             );
         }
 
-        setTimeout(():void => {
+        setTimeout((): void => {
             classList.add(EditGlobals.classNames[
                 isRightSidebar ? 'editSidebarRightShow' : 'editSidebarShow'
             ]
@@ -335,7 +335,7 @@ class SidebarPopup extends BaseForm {
         this.type = context.getType();
 
         if (this.type === 'cell-html' || this.type === 'cell') {
-            const component = (context as Cell|CellHTML).mountedComponent;
+            const component = (context as Cell | CellHTML).mountedComponent;
             if (!component) {
                 return;
             }
@@ -403,7 +403,7 @@ class SidebarPopup extends BaseForm {
                     dragDrop.onDragStart(
                         e as PointerEvent,
                         void 0,
-                        (dropContext: Cell|Row): void => {
+                        (dropContext: Cell | Row): void => {
 
                             // Add component if there is no layout yet.
                             if (this.editMode.board.layouts.length === 0) {
@@ -490,7 +490,7 @@ class SidebarPopup extends BaseForm {
     }
 
     public onDropNewComponent(
-        dropContext: Cell|Row,
+        dropContext: Cell | Row,
         componentOptions: Partial<ComponentType['options']>
     ): Cell | void {
         const sidebar = this,
@@ -510,7 +510,7 @@ class SidebarPopup extends BaseForm {
 
         dragDrop.onCellDragEnd(newCell);
         const options = merge(componentOptions, {
-            cell: newCell.id
+            renderTo: newCell.id
         });
 
         const componentPromise =
@@ -643,8 +643,8 @@ class SidebarPopup extends BaseForm {
                         component.name,
                     onDrop: function (
                         sidebar: SidebarPopup,
-                        dropContext: Cell|Row
-                    ): Cell|void {
+                        dropContext: Cell | Row
+                    ): Cell | void {
                         const options =
                             component.prototype.getOptionsOnDrop(sidebar);
 

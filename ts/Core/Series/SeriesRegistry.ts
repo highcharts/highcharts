@@ -16,8 +16,9 @@
  *
  * */
 
-import Series from './Series.js';
+import type { DeepPartial } from '../../Shared/Types';
 import type { SeriesTypeRegistry } from './SeriesType';
+import type Series from './Series.js';
 
 import H from '../Globals.js';
 import D from '../Defaults.js';
@@ -137,9 +138,11 @@ namespace SeriesRegistry {
 
         // Create the class
         delete seriesTypes[type];
-        const parentClass = seriesTypes[parent] as typeof Series || Series,
-            childClass =
-                extendClass(parentClass, seriesProto) as typeof Series;
+        const parentClass = (
+                seriesTypes[parent] as typeof Series ||
+                (H as unknown as { Series: typeof Series }).Series
+            ),
+            childClass = extendClass(parentClass, seriesProto) as typeof Series;
 
         registerSeriesType(type, childClass);
         seriesTypes[type].prototype.type = type;

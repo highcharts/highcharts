@@ -597,8 +597,8 @@ function updateRectSize(
  *          Return `true` if the arrays are equal, otherwise `false`.
  */
 function shallowArraysEqual(
-    a: String[] | undefined,
-    b: String[] | undefined
+    a: Array<string> | undefined,
+    b: Array<string> | undefined
 ): boolean {
     if (!defined(a) || !defined(b)) {
         return false;

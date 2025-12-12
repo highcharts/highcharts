@@ -31,6 +31,11 @@ export interface DataConnectorTypes {
 export type DataConnectorType =
     DataConnectorTypes[keyof DataConnectorTypes]['prototype'];
 
+/**
+ * Options for specific data connector type.
+ */
+export type DataConnectorTypeOptions = DataConnectorType['options'];
+
 /* *
  *
  *  Default Export

@@ -19,6 +19,7 @@
 import type AxisOptions from '../../Core/Axis/AxisOptions';
 import type Chart from '../../Core/Chart/Chart.js';
 import type CSSObject from '../../Core/Renderer/CSSObject';
+import type { DeepPartial } from '../../Shared/Types';
 import type { NavigatorAxisComposition } from '../../Core/Axis/NavigatorAxisComposition';
 import type {
     NavigatorHandlesOptions,

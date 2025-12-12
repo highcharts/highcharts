@@ -25,12 +25,12 @@
 import type { ColumnSortingOrder } from '../../Options.js';
 
 import Column from '../Column.js';
-import GridUtils from '../../GridUtils.js';
 import Globals from '../../Globals.js';
 import U from '../../../../Core/Utilities.js';
 
-const { makeHTMLElement } = GridUtils;
-const { fireEvent } = U;
+const {
+    fireEvent
+} = U;
 
 /* *
  *
@@ -82,15 +82,6 @@ class ColumnSorting {
         this.addHeaderElementAttributes();
 
         if (column.options.sorting?.sortable) {
-            makeHTMLElement(
-                'span',
-                {
-                    className: Globals.getClassName('columnSortableIcon'),
-                    innerText: '▲'
-                },
-                headerCellElement
-            ).setAttribute('aria-hidden', true);
-
             headerCellElement.classList.add(
                 Globals.getClassName('columnSortable')
             );
@@ -143,6 +134,28 @@ class ColumnSorting {
     }
 
     /**
+     * Updates the column options with the new sorting state.
+     *
+     * @param col
+     * The column to update.
+     */
+    private updateColumnOptions(col: Column): void {
+        const order = col.viewport.grid.querying.sorting.currentSorting?.order;
+
+        if (col.id === this.column.id && order) {
+            col.setOptions({ sorting: { order } });
+        } else {
+            delete col.options.sorting?.order;
+            if (
+                col.options.sorting &&
+                Object.keys(col.options.sorting).length < 1
+            ) {
+                delete col.options.sorting;
+            }
+        }
+    }
+
+    /**
      * Set sorting order for the column. It will modify the presentation data
      * and rerender the rows.
      *
@@ -152,21 +165,38 @@ class ColumnSorting {
      */
     public async setOrder(order: ColumnSortingOrder): Promise<void> {
         const viewport = this.column.viewport;
+
+        // Do not call sorting when cell is currently edited and validated.
+        if (viewport.validator?.errorCell) {
+            return;
+        }
+
         const querying = viewport.grid.querying;
         const sortingController = querying.sorting;
         const a11y = viewport.grid.accessibility;
+
+        [this.column, viewport.grid].forEach((source): void => {
+            fireEvent(source, 'beforeSort', {
+                target: this.column,
+                order
+            });
+        });
 
         sortingController.setSorting(order, this.column.id);
         await viewport.updateRows();
 
         for (const col of viewport.columns) {
+            this.updateColumnOptions(col);
             col.sorting?.addHeaderElementAttributes();
         }
 
         a11y?.userSortedColumn(order);
 
-        fireEvent(this.column, 'afterSorting', {
-            target: this.column
+        [this.column, viewport.grid].forEach((source): void => {
+            fireEvent(source, 'afterSort', {
+                target: this.column,
+                order
+            });
         });
     }
 
@@ -177,11 +207,6 @@ class ColumnSorting {
         const viewport = this.column.viewport;
         const querying = viewport.grid.querying;
         const sortingController = querying.sorting;
-
-        // Do not call sorting when cell is currently edited and validated.
-        if (viewport.validator?.errorCell) {
-            return;
-        }
 
         const currentOrder = (
             sortingController.currentSorting?.columnId === this.column.id ?
@@ -196,6 +221,18 @@ class ColumnSorting {
 
         void this.setOrder(consequents[currentOrder]);
     };
+}
+
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+export interface ColumnSortingEvent {
+    target: Column;
+    order: ColumnSortingOrder;
 }
 
 

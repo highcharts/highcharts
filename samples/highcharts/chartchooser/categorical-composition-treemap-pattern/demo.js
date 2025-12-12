@@ -31,8 +31,7 @@ Highcharts.chart('container', {
                         style: {
                             textOutline: false,
                             fontSize: 18
-                        },
-                        zIndex: 9
+                        }
                     },
                     borderWidth: 3
                 }
@@ -146,8 +145,7 @@ Highcharts.chart('container', {
       'Source:<a href="https://en.wikipedia.org/wiki/List_of_Canadian_provinces_and_territories_by_area">Wikipedia</a>'
     },
     tooltip: {
-        useHTML: true,
         pointFormat:
-      'The area of <b>{point.name}</b> is <b>{point.value}km<sup>2</sup></b>'
+            'The area of <b>{point.name}</b> is <b>{point.value}km²</b>'
     }
 });

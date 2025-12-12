@@ -131,7 +131,7 @@ class PointAndFigureSeries extends ScatterSeries {
     public getProcessedData(): Series.ProcessedDataObject {
         if (!this.pnfDataGroups) {
             return {
-                modified: this.dataTable.modified,
+                modified: this.dataTable.getModified(),
                 cropped: false,
                 cropStart: 0,
                 closestPointRange: 1
@@ -139,7 +139,7 @@ class PointAndFigureSeries extends ScatterSeries {
         }
 
         const series = this,
-            modified = this.dataTable.modified,
+            modified = this.dataTable.getModified(),
             options = series.options,
             xData = series.getColumn('x', true),
             yData = series.getColumn('y', true),

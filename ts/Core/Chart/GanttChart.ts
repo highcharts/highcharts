@@ -22,6 +22,7 @@ import type {
     AxisOptions,
     YAxisOptions
 } from '../Axis/AxisOptions';
+import type { DeepPartial } from '../../Shared/Types';
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type Options from '../Options';
 

@@ -45,12 +45,11 @@ const syncPair: Sync.SyncPair = {
         const groupKey = syncOptions.group ? ':' + syncOptions.group : '';
 
         const { chart, board } = component;
-        const connector = this.getFirstConnector();
         if (!board || !chart) {
             return;
         }
 
-        const table = connector?.table;
+        const table = this.getDataTable();
         if (table) { // Has a connector
             const { dataCursor: cursor } = board;
             const { series } = chart;
@@ -147,11 +146,11 @@ const syncPair: Sync.SyncPair = {
             if (!dataCursor) {
                 return;
             }
-            const table = component.connectorHandlers?.[0]?.connector?.table;
-
+            const table = component.getDataTable();
             if (!table) {
                 return;
             }
+
             dataCursor.addListener(
                 table.id, 'series.show' + groupKey, handleShow
             );
@@ -161,7 +160,7 @@ const syncPair: Sync.SyncPair = {
         };
 
         const unregisterCursorListeners = (): void => {
-            const table = component.connectorHandlers?.[0]?.connector?.table;
+            const table = component.getDataTable();
             if (table) {
                 board.dataCursor.removeListener(
                     table.id, 'series.show' + groupKey, handleShow

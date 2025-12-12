@@ -5,7 +5,7 @@
     --highcharts-neutral-color-3: rgba(0, 0, 0, 0);
 }
 
-* {
+body {
     font-family:
         -apple-system,
         BlinkMacSystemFont,
@@ -17,6 +17,8 @@
         "Segoe UI Emoji",
         "Segoe UI Symbol",
         sans-serif;
+    background: #0a0a0a;
+    color: #fff;
 }
 
 #container {

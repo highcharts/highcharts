@@ -19,6 +19,7 @@
 import type AxisType from './Axis/AxisType';
 import type Chart from './Chart/Chart';
 import type CSSObject from './Renderer/CSSObject';
+import type { DeepPartial } from '../Shared/Types';
 import type {
     DOMElementType,
     HTMLDOMElement

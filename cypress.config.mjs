@@ -7,7 +7,9 @@ for (const product of getProducts()) {
     switch (product) {
         case 'Dashboards':
             products.add('dashboards');
-            products.add('data-grid');
+            continue;
+        case 'Grid':
+            products.add('grid');
             continue;
         default:
             products.add('highcharts');

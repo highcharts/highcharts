@@ -22,6 +22,8 @@
  *
  * */
 
+import type { AnyRecord } from '../Shared/Types';
+
 import D from './Globals.js';
 const {
     doc,
@@ -160,7 +162,7 @@ function addEvent<T>(
  *         The merged object. If the first argument is true, the return is the
  *         same as the second argument.
  */
-function merge<T extends Object>(
+function merge<T extends object>(
     a: (true|T|undefined),
     ...n: Array<unknown>
 ) : T {
@@ -350,7 +352,7 @@ function extend<T extends object>(a: (T|undefined), b: Partial<T>): T {
 function fireEvent<T>(
     el: T,
     type: string,
-    eventArguments?: (D.AnyRecord|Event),
+    eventArguments?: (AnyRecord|Event),
     defaultFunction?: (Utilities.EventCallback<T>|Function)
 ): void {
     /* eslint-enable valid-jsdoc */
@@ -542,7 +544,7 @@ function removeEvent<T>(
 
 namespace Utilities {
     export interface EventCallback<T> {
-        (this: T, eventArguments: (D.AnyRecord|Event)): (boolean|void);
+        (this: T, eventArguments: (AnyRecord|Event)): (boolean|void);
     }
     export interface EventWrapperObject<T> {
         fn: EventCallback<T>;

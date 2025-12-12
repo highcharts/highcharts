@@ -105,7 +105,7 @@ namespace Bindings {
     ): Promise<(Component|void)> {
         const optionsStates = options.states;
         const optionsEvents = options.events;
-        const renderTo = options.renderTo || options.cell;
+        const renderTo = options.renderTo;
 
         if (!renderTo) {
             // eslint-disable-next-line no-console
@@ -119,8 +119,7 @@ namespace Bindings {
 
         if (
             board.mountedComponents.filter(
-                (el): boolean => (
-                    (el.options.renderTo || el.options.cell) === renderTo)
+                (el): boolean => el.options.renderTo === renderTo
             ).length > 0
         ) {
             // eslint-disable-next-line no-console

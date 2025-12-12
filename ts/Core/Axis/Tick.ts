@@ -23,8 +23,9 @@ import type {
     AxisOptions
 } from './AxisOptions';
 import type CSSObject from '../Renderer/CSSObject';
+import type { DeepPartial } from '../../Shared/Types';
 import type PositionObject from '../Renderer/PositionObject';
-import type TickLike from './TickLike';
+import type TickBase from './TickBase';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
@@ -1133,7 +1134,7 @@ class Tick {
  *
  * */
 
-interface Tick extends TickLike {
+interface Tick extends TickBase {
     // Nothing here yet
 }
 

@@ -31,8 +31,7 @@ export type Arguments = Array<(Range|Term)>;
 /**
  * Formula array with terms and operators.
  */
-export type Formula = Array<(Operator|Term)>;
-
+export type Formula = Array<(Operator|Term)>; // eslint-disable-line @typescript-eslint/no-redundant-type-constituents
 
 /**
  * Formula function with an arguments array.
@@ -47,7 +46,7 @@ export interface Function {
 /**
  * Item in arguments and formulas.
  */
-export type Item = (Operator|Range|Term);
+export type Item = (Operator|Range|Term); // eslint-disable-line @typescript-eslint/no-redundant-type-constituents
 
 
 /**
@@ -133,7 +132,7 @@ const operators: Array<string> =
 function isFormula(
     item: Item
 ): item is Formula {
-    return item instanceof Array;
+    return Array.isArray(item);
 }
 
 
@@ -153,7 +152,7 @@ function isFunction(
 ): item is Function {
     return (
         typeof item === 'object' &&
-        !(item instanceof Array) &&
+        !(Array.isArray(item)) &&
         item.type === 'function'
     );
 }
@@ -196,7 +195,7 @@ function isRange(
 ): item is Range {
     return (
         typeof item === 'object' &&
-        !(item instanceof Array) &&
+        !(Array.isArray(item)) &&
         item.type === 'range'
     );
 }
@@ -218,7 +217,7 @@ function isReference(
 ): item is Reference {
     return (
         typeof item === 'object' &&
-        !(item instanceof Array) &&
+        !(Array.isArray(item)) &&
         item.type === 'reference'
     );
 }

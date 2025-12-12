@@ -398,9 +398,8 @@ class KPIComponent extends Component {
      */
     private getFormulaValue(): string|number|undefined {
         const formula = this.options.formula;
-        const connector = this.getFirstConnector();
-        const table = connector?.table.modified;
-        const column = table?.getColumn(this.options.columnName);
+        const table = this.getDataTable();
+        const column = table?.getColumn(this.options.columnId);
 
         if (!column || !formula) {
             return;
@@ -444,18 +443,16 @@ class KPIComponent extends Component {
             return this.options.value;
         }
 
-        const connector = this.getFirstConnector();
-
-        if (connector && this.options.columnName) {
+        const dataTable = this.getDataTable()?.getModified();
+        if (dataTable && this.options.columnId) {
             if (defined(this.options.formula)) {
                 return this.getFormulaValue();
             }
 
-            const table = connector.table.modified,
-                column = table.getColumn(this.options.columnName),
+            const column = dataTable.getColumn(this.options.columnId),
                 length = column?.length || 0;
 
-            return table.getCellAsString(this.options.columnName, length - 1);
+            return String(dataTable.getCell(this.options.columnId, length - 1));
         }
     }
 
@@ -668,7 +665,6 @@ class KPIComponent extends Component {
         const connectorsIds =
             sidebar.editMode.board.dataPool.getConnectorIds();
         let options: Partial<Options> = {
-            cell: '',
             type: 'KPI'
         };
 

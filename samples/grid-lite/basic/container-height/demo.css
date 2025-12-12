@@ -1,6 +1,6 @@
-@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid.css");
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid-lite.css");
 
-* {
+body {
     font-family:
         -apple-system,
         BlinkMacSystemFont,

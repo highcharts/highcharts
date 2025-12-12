@@ -22,6 +22,7 @@ import type BBoxObject from '../BBoxObject';
 import type ColorString from '../../Color/ColorString';
 import type ColorType from '../../Color/ColorType';
 import type CSSObject from '../CSSObject';
+import type { DeepPartial } from '../../../Shared/Types';
 import type {
     DOMElementType,
     HTMLDOMElement,
@@ -32,7 +33,7 @@ import type GradientColor from '../../Color/GradientColor';
 import type RectangleObject from '../RectangleObject';
 import type ShadowOptionsObject from '../ShadowOptionsObject';
 import type SVGAttributes from './SVGAttributes';
-import type SVGElementLike from './SVGElementLike';
+import type SVGElementBase from './SVGElementBase';
 import type SVGPath from './SVGPath';
 import type SVGRenderer from './SVGRenderer';
 
@@ -128,7 +129,7 @@ declare module '../CSSObject' {
  * @class
  * @name Highcharts.SVGElement
  */
-class SVGElement implements SVGElementLike {
+class SVGElement implements SVGElementBase {
 
     /* *
      *
@@ -453,9 +454,12 @@ class SVGElement implements SVGElementLike {
             y = (alignToBox.y || 0) + (alignOptions.y || 0) +
                 ((alignToBox.height || 0) - (alignOptions.height || 0)) *
                 getAlignFactor(alignOptions.verticalAlign),
-            attribs: SVGAttributes = {
-                'text-align': alignOptions?.align
-            };
+            attribs: SVGAttributes = {};
+
+        // Add text-align attribute only if option is defined, #22698
+        if (alignOptions.align) {
+            attribs['text-align'] = alignOptions.align;
+        }
 
         attribs[alignByTranslate ? 'translateX' : 'x'] = Math.round(x);
         attribs[alignByTranslate ? 'translateY' : 'y'] = Math.round(y);
@@ -1399,7 +1403,6 @@ class SVGElement implements SVGElementLike {
     public getBBox(reload?: boolean, rot?: number): BBoxObject {
         const wrapper = this,
             {
-                alignValue,
                 element,
                 renderer,
                 styles,
@@ -1416,40 +1419,21 @@ class SVGElement implements SVGElementLike {
                 SVGElement.prototype.getStyle.call(element, 'font-size')
             ) : (
                 styles.fontSize
-            );
+            ),
+            cacheKey = this.getBBoxCacheKey([
+                renderer.rootFontSize,
+                this.textWidth, // #7874, also useHTML
+                this.alignValue,
+                styles.fontWeight, // #12163
+                styles.lineClamp,
+                styles.textOverflow, // #5968
+                fontSize,
+                rotation
+            ]);
 
         let bBox: BBoxObject|undefined,
             height,
-            toggleTextShadowShim,
-            cacheKey;
-
-        // Avoid undefined and null (#7316)
-        if (defined(textStr)) {
-
-            cacheKey = textStr.toString();
-
-            // Since numbers are monospaced, and numerical labels appear a lot
-            // in a chart, we assume that a label of n characters has the same
-            // bounding box as others of the same length. Unless there is inner
-            // HTML in the label. In that case, leave the numbers as is (#5899).
-            if (cacheKey.indexOf('<') === -1) {
-                cacheKey = cacheKey.replace(/\d/g, '0');
-            }
-
-            // Properties that affect bounding box
-            cacheKey += [
-                '',
-                renderer.rootFontSize,
-                fontSize,
-                rotation,
-                wrapper.textWidth, // #7874, also useHTML
-                alignValue,
-                styles.lineClamp,
-                styles.textOverflow, // #5968
-                styles.fontWeight // #12163
-            ].join(',');
-
-        }
+            toggleTextShadowShim;
 
         if (cacheKey && !reload) {
             bBox = cache[cacheKey];
@@ -1499,8 +1483,8 @@ class SVGElement implements SVGElementLike {
                     if (isFunction(toggleTextShadowShim)) {
                         toggleTextShadowShim('');
                     }
-                } catch (e) {
-                    '';
+                } catch {
+                    // Ignore error
                 }
 
                 // If the bBox is not set, the try-catch block above failed. The
@@ -1574,6 +1558,49 @@ class SVGElement implements SVGElementLike {
     }
 
     /**
+     * Overridable method to get a cache key for the bounding box of this
+     * element.
+     *
+     * @example
+     * // Plugin to let the getBBox function respond to font family changes
+     * (({ SVGElement }) => {
+     * const getBBoxCacheKey = SVGElement.prototype.getBBoxCacheKey;
+     *   SVGElement.prototype.getBBoxCacheKey = function (keys) {
+     *     const key = getBBoxCacheKey.call(this, keys);
+     *     const fontFamily = this.styles.fontFamily;
+     *     return key + (fontFamily ? `,${fontFamily}` : '');
+     *   };
+     * })(Highcharts);
+     *
+     * @function Highcharts.SVGElement#getBBoxCacheKey
+     *
+     * @return {string|void} The cache key based on the text properties.
+     */
+    public getBBoxCacheKey(keys: Array<any>): string|void {
+
+        let textStr = this.textStr;
+
+        // Avoid undefined and null (#7316)
+        if (!defined(textStr)) {
+            return;
+        }
+
+        // Since numerical labels appear a lot in a chart, we approximate that a
+        // label of n characters has the same bounding box as others of the same
+        // length. Unless there is inner HTML in the label. In that case, leave
+        // the numbers as is (#5899).
+        if (isString(textStr) && textStr.indexOf('<') === -1) {
+            textStr = textStr.replace(/\d/g, '0');
+        }
+
+        // Properties that affect bounding box
+        return [
+            textStr,
+            ...keys
+        ].join(',');
+    }
+
+    /**
      * Get the rotated box.
      * @private
      */
@@ -1644,19 +1671,21 @@ class SVGElement implements SVGElementLike {
             boxWidth = Math.max(aX, bX, cX, dX) - x,
             boxHeight = Math.max(aY, bY, cY, dY) - y;
 
-        /* Uncomment to debug boxes
-        this.renderer.path([
+        /* Uncomment to visualize boxes
+        this.bBoxViz ??= this.renderer.path()
+            .attr({
+                stroke: 'red',
+                'stroke-width': 1,
+                zIndex: 20
+            })
+            .add();
+        this.bBoxViz.attr('d', [
             ['M', aX, aY],
             ['L', bX, bY],
             ['L', cX, cY],
             ['L', dX, dY],
             ['Z']
-        ])
-            .attr({
-                stroke: 'red',
-                'stroke-width': 1
-            })
-            .add();
+        ]);
         // */
 
         return {
@@ -2393,7 +2422,7 @@ class SVGElement implements SVGElementLike {
  *
  * */
 
-interface SVGElement extends SVGElementLike {
+interface SVGElement extends SVGElementBase {
     // Takes interfaces from shared interface and internal namespace
     matrixSetter: SVGElement.SetterFunction<(number|string|null)>;
     rotationOriginXSetter(value: number|null, key?: string): void;

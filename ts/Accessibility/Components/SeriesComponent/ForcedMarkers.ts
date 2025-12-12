@@ -261,6 +261,8 @@ namespace ForcedMarkersComposition {
 
         } else if (series.a11yMarkersForced) {
             delete series.a11yMarkersForced;
+            // Mark series dirty to ensure marker graphics are cleaned up
+            series.isDirty = true;
             unforceSeriesMarkerOptions(series);
             if (options.marker && options.marker.enabled === false) { // #23329
                 delete series.resetA11yMarkerOptions; // #16624
@@ -312,6 +314,19 @@ namespace ForcedMarkersComposition {
             const originalOpacity = resetMarkerOptions.states &&
                 resetMarkerOptions.states.normal &&
                 resetMarkerOptions.states.normal.opacity;
+
+            // Prevent ghost markers when zooming out (#23878).
+            if (
+                series.chart.styledMode &&
+                resetMarkerOptions.enabled === false &&
+                series.points
+            ) {
+                series.points.forEach((point): void => {
+                    if (point.graphic) {
+                        point.graphic = point.graphic.destroy();
+                    }
+                });
+            }
 
             // Temporarily set the old marker options to enabled in order to
             // trigger destruction of the markers in Series.update.

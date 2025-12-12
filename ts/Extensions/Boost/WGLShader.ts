@@ -41,7 +41,7 @@ type WGLProgramType = ('fragment'|'vertex');
  * */
 
 const fragmentShader = [
-    /* eslint-disable max-len, @typescript-eslint/indent */
+    /* eslint-disable max-len, @stylistic/indent */
     'precision highp float;',
     'uniform vec4 fillColor;',
     'varying highp vec2 position;',
@@ -73,11 +73,11 @@ const fragmentShader = [
             'gl_FragColor = col;',
         '}',
     '}'
-    /* eslint-enable max-len, @typescript-eslint/indent */
+    /* eslint-enable max-len, @stylistic/indent */
 ].join('\n');
 
 const vertexShader = [
-    /* eslint-disable max-len, @typescript-eslint/indent */
+    /* eslint-disable max-len, @stylistic/indent */
     '#version 100',
     '#define LN10 2.302585092994046',
     'precision highp float;',
@@ -251,7 +251,7 @@ const vertexShader = [
         '}',
         // 'gl_Position = uPMatrix * vec4(aVertexPosition.x, aVertexPosition.y, 0.0, 1.0);',
     '}'
-    /* eslint-enable max-len, @typescript-eslint/indent */
+    /* eslint-enable max-len, @stylistic/indent */
 ].join('\n');
 
 /* *

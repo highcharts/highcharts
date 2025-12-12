@@ -47,8 +47,8 @@ const {
  *
  * */
 
-declare module '../SVG/SVGRendererLike' {
-    interface SVGRendererLike {
+declare module '../SVG/SVGRendererBase' {
+    interface SVGRendererBase {
         /** @requires Core/Renderer/HTML/HTMLElement */
         html(str: string, x: number, y: number): HTMLElement;
     }

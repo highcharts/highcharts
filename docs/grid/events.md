@@ -4,11 +4,18 @@ tags: ["grid-pro"]
 
 # Events
 
-The Grid supports event listeners that can be added to the [columnDefaults.events](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.Options-1#columnDefaults) object or a particular column. These listeners will call functions when interacting with the Grid.
+**Highcharts Grid Pro** supports event listeners that can be added to the [columnDefaults.events](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.Options#columnDefaults) object or a particular column. These listeners will call functions when interacting with the grid.
 
-Please note that the [events](https://api.highcharts.com/dashboards/#interfaces/Grid_Options.IndividualColumnOptions.html#events) has been deprecated.
+Please note that the root [events property](https://api.highcharts.com/dashboards/#interfaces/Grid_Options.IndividualColumnOptions.html#events) has been deprecated.
 
 The available events are:
+
+## grid
+
+| **Event Name**         | **Description**                                               | **Function Context**  |
+|------------------------|---------------------------------------------------------------|-----------------------|
+| `beforeLoad`           | Triggered before the grid is fully loaded for the first time. | `this: Grid`          |
+| `afterLoad`            | Triggered after the grid is fully loaded for the first time.  | `this: Grid`          |
 
 ## cell
 
@@ -16,7 +23,6 @@ The available events are:
 |--------------------|----------------------------------------------------------|-----------------------|
 | `afterEdit`        | Triggered after a cell's value is edited.                | `this: Cell`          |
 | `afterRender`      | Triggered after setting a cell's value (init/edit)       | `this: Cell`          |
-| ~~`afterSetValue`~~ | Deprecated. Use `afterRender` instead.                   | `this: Cell`          |
 | `click`            | Triggered after clicking on a cell.                      | `this: Cell`          |
 | `dblClick`         | Triggered after double-clicking on a cell.               | `this: Cell`          |
 | `mouseOver`        | Triggered when the mouse is hovered over a cell.         | `this: Cell`          |
@@ -27,7 +33,10 @@ The available events are:
 | **Event Name**     | **Description**                                          | **Function Context** |
 |--------------------|----------------------------------------------------------|-----------------------|
 | `afterResize`      | Triggered after resizing a column.                       | `this: Column`        |
-| `afterSorting`     | Triggered after sorting a column.                        | `this: Column`        |
+| `beforeSort`       | Triggered before sorting a column.                       | `this: Column`        |
+| `afterSort`        | Triggered after sorting a column.                        | `this: Column`        |
+| `beforeFilter`     | Triggered before filtering a column.                     | `this: Column`        |
+| `afterFilter`      | Triggered after filtering a column.                      | `this: Column`        |
 
 ## header
 
@@ -36,46 +45,74 @@ The available events are:
 | `click`            | Triggered after clicking on a column header.             | `this: Column`        |
 | `afterRender`      | Triggered after init of a column header.                 | `this: Column`        |
 
+## pagination
+
+| **Event Name**     | **Description**                                          | **Function Context** |
+|--------------------|----------------------------------------------------------|-----------------------|
+| `beforePageChange` | Triggered before a page change occurs.                   | `this: Pagination`    |
+| `afterPageChange`  | Triggered after a page change occurs.                    | `this: Pagination`    |
+| `beforePageSizeChange` | Triggered before the page size setting changes.      | `this: Pagination`    |
+| `afterPageSizeChange`  | Triggered after the page size setting changes.       | `this: Pagination`    |
+
 # Example
 
 Here is a sample code that demonstrates how to use these event callbacks in the `events` object:
 
 ```js
-columnDefaults: {
+{
     events: {
-        afterResize: function () {
-            console.log('Column resized:', this);
+        beforeLoad: function () {
+            console.log('Grid loading started.');
         },
-        afterSorting: function () {
-            console.log('Column sorted:', this);
+        afterLoad: function () {
+            console.log('Grid finished loading and is ready to use.');
         }
     },
-    cells: {
+    columnDefaults: {
         events: {
-            afterEdit: function () {
-                console.log('Cell value set:', this);
+            afterResize: function () {
+                console.log('Column resized:', this);
             },
-            afterRender: function () {
-                console.log('Cell value:', this);
+            beforeSort: function () {
+                console.log('Before sorting column:', this.id);
             },
-            click: function () {
-                console.log('Cell clicked:', this);
+            afterSort: function () {
+                console.log('After sorting column:', this.id);
             },
-            dblClick: function () {
-                console.log('Cell double-clicked:', this);
+            beforeFilter: function () {
+                console.log('Before filtering column:', this.id);
             },
-            mouseOver: function () {
-                console.log('Mouse over cell:', this);
-            },
-            mouseOut: function () {
-                console.log('Mouse out of cell:', this);
+            afterFilter: function () {
+                console.log('After filtering column:', this.id);
             }
-        }
-    },
-    header: {
-        events: {
-            click: function () {
-                console.log('Header clicked:', this);
+        },
+        cells: {
+            events: {
+                afterEdit: function () {
+                    console.log('Cell value set:', this);
+                },
+                afterRender: function () {
+                    console.log('Cell value:', this);
+                },
+                click: function () {
+                    console.log('Cell clicked:', this);
+                },
+                dblClick: function () {
+                    console.log('Cell double-clicked:', this);
+                },
+                mouseOver: function () {
+                    console.log('Mouse over cell:', this);
+                },
+                mouseOut: function () {
+                    console.log('Mouse out of cell:', this);
+                }
+            }
+        },
+        header: {
+            events: {
+                click: function () {
+                    console.log('Header clicked:', this);
+                }
             }
         }
     }
@@ -109,5 +146,27 @@ columns: [{
 }]
 ```
 
+Pagination events are configured at the grid level:
+
+```js
+pagination: {
+    enabled: true,
+    events: {
+        beforePageChange: function (e) {
+            // callback
+        },
+        afterPageChange: function (e) {
+            // callback
+        },
+        beforePageSizeChange: function (e) {
+            // callback
+        },
+        afterPageSizeChange: function (e) {
+            // callback
+        }
+    }
+}
+```
+
 Live example:
-<iframe src="https://www.highcharts.com/samples/embed/grid-pro/basic/cell-events?force-light-theme" allow="fullscreen"></iframe>
+<iframe src="https://www.highcharts.com/samples/embed/grid/basic/cell-events?force-light-theme" allow="fullscreen"></iframe>

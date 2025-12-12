@@ -18,6 +18,7 @@
 
 import type Axis from '../../Core/Axis/Axis';
 import type Chart from '../../Core/Chart/Chart';
+import type { DeepPartial } from '../../Shared/Types';
 import type PointerEvent from '../../Core/PointerEvent';
 import type ScrollbarOptions from './ScrollbarOptions';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
@@ -53,8 +54,8 @@ const {
  *
  * */
 
-declare module '../../Core/Chart/ChartLike'{
-    interface ChartLike {
+declare module '../../Core/Chart/ChartBase'{
+    interface ChartBase {
         scrollbarsOffsets?: [number, number];
     }
 }

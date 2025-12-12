@@ -23,7 +23,6 @@
  * */
 
 import type { RowsSettings } from '../../Options';
-import type Cell from '../Cell';
 
 import Table from '../Table.js';
 import TableRow from '../Body/TableRow.js';
@@ -80,12 +79,6 @@ class RowsVirtualizer {
     private preventScroll = false;
 
     /**
-     * The only cell that is to be focusable using tab key - a table focus
-     * entry point.
-     */
-    public focusAnchorCell?: Cell;
-
-    /**
      * Rendering row settings.
      */
     public rowSettings?: RowsSettings;
@@ -131,7 +124,7 @@ class RowsVirtualizer {
      */
     public initialRender(): void {
         // Initial reflow to set the viewport height
-        if (this.rowSettings?.virtualization) {
+        if (this.viewport.virtualRows) {
             this.viewport.reflow();
         }
 
@@ -161,7 +154,7 @@ class RowsVirtualizer {
 
         this.renderRows(this.rowCursor);
 
-        if (this.rowSettings?.virtualization) {
+        if (this.viewport.virtualRows) {
 
             if (oldScrollTop !== void 0) {
                 tbody.scrollTop = oldScrollTop;
@@ -266,7 +259,7 @@ class RowsVirtualizer {
             return;
         }
 
-        const isVirtualization = this.rowSettings?.virtualization;
+        const isVirtualization = this.viewport.virtualRows;
         const rowsPerPage = isVirtualization ? Math.ceil(
             (vp.grid.tableElement?.clientHeight || 0) /
             this.defaultRowHeight
@@ -363,11 +356,16 @@ class RowsVirtualizer {
             }
         }
 
-        // Reset the focus anchor cell
-        this.focusAnchorCell?.htmlElement.setAttribute('tabindex', '-1');
-        const firstVisibleRow = rows[rowCursor - rows[0].index];
-        this.focusAnchorCell = firstVisibleRow?.cells[0];
-        this.focusAnchorCell?.htmlElement.setAttribute('tabindex', '0');
+        // Set the focus anchor cell
+        if (
+            (!vp.focusCursor || !vp.focusAnchorCell?.row.rendered) &&
+            rows.length > 0
+        ) {
+            const rowIndex = rowCursor - rows[0].index;
+            if (rows[rowIndex]) {
+                vp.setFocusAnchorCell(rows[rowIndex].cells[0]);
+            }
+        }
     }
 
     /**
@@ -378,7 +376,7 @@ class RowsVirtualizer {
     public adjustRowHeights(): void {
         if (
             this.strictRowHeights ||
-            !this.rowSettings?.virtualization
+            !this.viewport.virtualRows
         ) {
             return;
         }
@@ -386,6 +384,9 @@ class RowsVirtualizer {
         const { rowCursor: cursor, defaultRowHeight: defaultH } = this;
         const { rows, tbodyElement } = this.viewport;
         const rowsLn = rows.length;
+        if (rowsLn < 1) {
+            return;
+        }
 
         let translateBuffer = rows[0].getDefaultTopOffset();
 

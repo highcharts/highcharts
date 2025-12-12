@@ -1,7 +1,0 @@
----
- name: Custom column distribution Demo
- authors:
-   - Dawid Dragula
-   - Sebastian Bochan
- js_wrap: b
-...

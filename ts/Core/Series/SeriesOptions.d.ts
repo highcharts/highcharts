@@ -15,10 +15,11 @@
  * */
 
 import type AnimationOptions from '../Animation/AnimationOptions';
-import type { EventCallback } from '../Callback';
 import type ColorType from '../Color/ColorType';
 import type { CursorValue } from '../Renderer/CSSObject';
 import type DashStyleValue from '../Renderer/DashStyleValue';
+import type { DeepPartial } from '../../Shared/Types';
+import type { EventCallback } from '../Callback';
 import type Point from './Point';
 import type {
     PointEventsOptions,
@@ -187,7 +188,7 @@ export interface SeriesStateNormalOptions extends StateNormalOptions {
 }
 
 export interface SeriesStateSelectOptions extends StateSelectOptions {
-    // Nothing here yet
+    enabled?: boolean;
 }
 
 export interface SeriesStatesOptions<T extends { options: AnyRecord }> extends StatesOptions {

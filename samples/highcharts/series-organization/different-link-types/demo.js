@@ -12,7 +12,7 @@ Highcharts.chart('container', {
         type: 'organization',
         keys: ['from', 'to', 'link.type'],
         data: [
-            ['A', 'B', 'default'],
+            ['A', 'B', 'orthogonal'],
             ['B', 'C'],
             ['B', 'E', 'curved'],
             ['A', 'D']

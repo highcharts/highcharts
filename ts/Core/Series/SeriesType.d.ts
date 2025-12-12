@@ -40,8 +40,8 @@ export type SeriesTypeOptions = SeriesType['options'];
  */
 export type SeriesTypePlotOptions = {
     [K in keyof SeriesTypeRegistry]?: Omit<
-    SeriesTypeRegistry[K]['prototype']['options'],
-    NonPlotOptions
+        SeriesTypeRegistry[K]['prototype']['options'],
+        NonPlotOptions
     >;
 };
 

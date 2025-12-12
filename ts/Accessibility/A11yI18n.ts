@@ -36,8 +36,8 @@ const {
  *
  * */
 
-declare module '../Core/Chart/ChartLike' {
-    interface ChartLike extends A11yI18nComposition.ChartComposition {
+declare module '../Core/Chart/ChartBase' {
+    interface ChartBase extends A11yI18nComposition.ChartComposition {
         // Nothing to add
     }
 }

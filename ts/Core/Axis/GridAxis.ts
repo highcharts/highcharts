@@ -24,6 +24,7 @@ import type {
 import type { AxisTypeOptions } from './AxisType';
 import type ChartOptions from '../Chart/ChartOptions';
 import type ColorType from '../Color/ColorType';
+import type { DeepPartial } from '../../Shared/Types';
 import type Point from '../Series/Point';
 import type PositionObject from '../Renderer/PositionObject';
 import type SizeObject from '../Renderer/SizeObject';
@@ -63,8 +64,8 @@ declare module './AxisComposition' {
     }
 }
 
-declare module './AxisLike' {
-    interface AxisLike {
+declare module './AxisBase' {
+    interface AxisBase {
         axisBorder?: SVGElement;
         hiddenLabels: Array<SVGElement>;
         hiddenMarks: Array<SVGElement>;
@@ -89,14 +90,14 @@ declare module './AxisOptions' {
     }
 }
 
-declare module '../Chart/ChartLike'{
-    interface ChartLike {
+declare module '../Chart/ChartBase'{
+    interface ChartBase {
         marginRight: ChartOptions['marginRight'];
     }
 }
 
-declare module './TickLike' {
-    interface TickLike {
+declare module './TickBase' {
+    interface TickBase {
         slotWidth?: number;
     }
 }

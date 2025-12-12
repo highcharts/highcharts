@@ -1,7 +1,8 @@
 import DataConverter from '/base/code/es-modules/Data/Converters/DataConverter.js';
 import DataTable from '/base/code/es-modules/Data/DataTable.js';
+import DataConverterUtils from '/base/code/es-modules/Data/Converters/DataConverterUtils.js'
 
-const {test, only} = QUnit;
+const { test } = QUnit;
 
 test('guessType', function (assert) {
     const testCases = [
@@ -21,13 +22,13 @@ test('guessType', function (assert) {
     let converter = new DataConverter();
 
     assert.deepEqual(
-        testCases.map(value => converter.guessType(value)),
+        testCases.map(value => DataConverterUtils.guessType(value, converter)),
         expectations
     );
 
     assert.deepEqual(
         testCases.map(function (value) {
-            const type = typeof converter.asGuessedType(value);
+            const type = typeof converter.convertByType(value);
             return type === 'object' ? 'Date' : type;
         }),
         expectations,
@@ -36,7 +37,7 @@ test('guessType', function (assert) {
 
     converter = new DataConverter({ decimalPoint: ',' });
     assert.strictEqual(
-        converter.guessType('-5,9'),
+        DataConverterUtils.guessType('-5,9', converter),
         'number',
         'Should guess number when decimal point is set by a user.'
     );
@@ -71,7 +72,7 @@ test('asBoolean', function (assert) {
     let converter = new DataConverter();
 
     assert.deepEqual(
-        testCases.map(value => converter.asBoolean(value)),
+        testCases.map(value => DataConverterUtils.asBoolean(value)),
         [false, true, true, true, false, true, false, false, false, true],
         'Should convert all values properly.'
     );
@@ -81,19 +82,19 @@ test('asNumber', function (assert) {
     let converter = new DataConverter();
 
     assert.strictEqual(
-        converter.asNumber('-3.1'),
+        DataConverterUtils.asNumber('-3.1', converter.decimalRegExp),
         -3.1,
         'Should handle negative numbers'
     );
 
     assert.ok(
-        isNaN(converter.asNumber('')),
+        isNaN(DataConverterUtils.asNumber('')),
         'Should handle empty strings'
     );
 
     converter = new DataConverter({ decimalPoint: ',' });
     assert.strictEqual(
-        converter.asNumber('-5,9'),
+        DataConverterUtils.asNumber('-5,9', converter.decimalRegExp),
         -5.9,
         'Should handle decimal point set by a user.'
     );
@@ -107,13 +108,13 @@ test('asDate', function (assert) {
     });
 
     assert.strictEqual(
-        converter.asDate('2020-01-01').getTime(),
+        DataConverterUtils.asDate('2020-01-01', converter).getTime(),
         new Date('2009-01-01').getTime(),
         'Should use parseDate function defined by a user.'
     );
 
     converter = new DataConverter({ dateFormat: 'mm/dd/YYYY' });
-    let timestamp = converter.asDate('1/9/2020').getTime();
+    let timestamp = DataConverterUtils.asDate('1/9/2020', converter).getTime();
     assert.strictEqual(
         timestamp,
         new Date('2020-01-09').getTime(),
@@ -123,24 +124,24 @@ test('asDate', function (assert) {
     converter = new DataConverter();
     timestamp = new Date('2020-01-09').getTime();
     assert.strictEqual(
-        converter.asDate(timestamp).getTime(),
+        DataConverterUtils.asDate(timestamp, converter).getTime(),
         timestamp,
         'Should return a correct date when value is number.'
     );
 
     assert.strictEqual(
-        converter.asDate(new Date('2020-01-09')).getTime(),
+        DataConverterUtils.asDate(new Date('2020-01-09'), converter).getTime(),
         new Date('2020-01-09').getTime(),
         'Should return a correct date when value is date.'
     );
 
     assert.ok(
-        isNaN(converter.asDate('string').getTime()),
+        isNaN(DataConverterUtils.asDate('string', converter).getTime()),
         'Should return date for NaN timestamp when value does not fit any format.'
     );
 
     converter.deduceDateFormat(['10/08/2020', '10/12/2020', '10/22/2020'], null, true);
-    timestamp = converter.asDate('10/14/2020').getTime();
+    timestamp = DataConverterUtils.asDate('10/14/2020', converter).getTime();
     assert.strictEqual(
         timestamp,
         new Date('2020-10-14').getTime(),
@@ -148,7 +149,7 @@ test('asDate', function (assert) {
     );
 
     converter.deduceDateFormat(['9/1/19', '9/22/19', '9/26/19'], null, true);
-    timestamp = converter.asDate('9/10/19').getTime();
+    timestamp = DataConverterUtils.asDate('9/10/19', converter).getTime();
     assert.strictEqual(
         timestamp,
         new Date('2019-09-10').getTime(),

@@ -16,6 +16,7 @@
  *
  * */
 
+import type { DeepPartial } from '../Shared/Types';
 import type { DefaultOptions, Options } from './Options';
 import type Legend from './Legend/Legend';
 
@@ -39,8 +40,8 @@ const {
  *
  * */
 
-declare module './GlobalsLike' {
-    interface GlobalsLike {
+declare module './GlobalsBase' {
+    interface GlobalsBase {
         defaultOptions: DefaultOptions;
         time: Time;
     }
@@ -1313,6 +1314,17 @@ const defaultOptions: DefaultOptions = {
          * @default   12
          * @since     2.1
          * @apioption legend.margin
+         */
+
+        /**
+         * Maximum width for the legend. Can be a percentage of the chart width,
+         * or an integer representing how many pixels wide the legend can be.
+         *
+         * @sample {highcharts} highcharts/legend/maxwidth/
+         *         Max width set to 7%
+         *
+         * @type      {number|string}
+         * @apioption legend.maxWidth
          */
 
         /**

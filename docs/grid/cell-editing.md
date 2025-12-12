@@ -4,8 +4,6 @@ tags: ["grid-pro"]
 
 # Cell editing
 
-**Note:** Cell editing is only available in [Highcharts Grid Pro](https://www.highcharts.com/docs/dashboards/grid-standalone).
-
 ## Enable editMode
 
 End users can edit data in cells if `editMode` is enabled by setting the `columnDefaults.cells.editMode.enabled` and/or `columns[].cells.editMode.enabled` API options:
@@ -55,7 +53,6 @@ columns: [{
 }]
 ```
 
-
 ## Validation
 
 ### Predefined Validation Rules
@@ -64,12 +61,14 @@ Each column has a specific `dataType`, which can be set explicitly or inferred f
 
 In addition to `dataType` you can extend a selection of predefined validation rules:
 
-- `notEmpty`
-- `boolean`
-- `number`
-- `datetime`
+- `notEmpty`- Only accepts non-empty values.
+- `boolean`- Only accepts `true`, `false`, `1` and `0` as valid values.
+- `number`- Only accepts numbers.
+- `datetime`- Only accepts valid timestamps in milliseconds.
+- `ignoreCaseUnique`- Only accepts unique values within the column (case-insensitive).
+- `unique`- Only accepts unique values within the column (case-sensitive).
 
-To prevent users from entering `null` or empty string values in any column, add the `notEmpty` validation rule:
+See how adding the `notEmpty` validation rule prevents users from entering `null` or empty string values in any column:
 
 ```ts
 columns: [{
@@ -109,7 +108,7 @@ columns: [{
     cells: {
         editMode: {
             validationRules: ['notEmpty', {
-                validator: function({ value }) {
+                validate: function({ value }) {
                     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
                 },
                 notification: 'Value must be a valid email address.'
@@ -119,7 +118,7 @@ columns: [{
 }]
 ```
 
-Note that a validator is a callback function that receives an object as its first argument. This object represents the cell content and contains two important properties: `value` and `rawValue`. 
+Note that a validator is a callback function that receives an object as its first argument. This object represents the cell content and contains two important properties: `value` and `rawValue`.
 
 - `value`: Returns the parsed value according to the specified `dataType`.
 - `rawValue`: Always returns the original string entered by the user in the input field, regardless of the column's `dataType`.
@@ -132,7 +131,7 @@ You can also register custom validators globally in the `Validator.rulesRegistry
 
 ```ts
 Validator.rulesRegistry['email'] = {
-    validator: function({ value }) {
+    validate: function({ value }) {
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
     },
     notification: 'Value must be a valid email address.'

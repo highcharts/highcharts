@@ -38,14 +38,14 @@ const {
  *
  * */
 
-declare module '../Core/Chart/ChartLike' {
-    interface ChartLike {
+declare module '../Core/Chart/ChartBase' {
+    interface ChartBase {
         graphLayoutsLookup?: Array<GraphLayoutType>;
     }
 }
 
-declare module '../Core/Series/PointLike' {
-    interface PointLike {
+declare module '../Core/Series/PointBase' {
+    interface PointBase {
         dispX?: number;
         dispY?: number;
         fromNode?: Point;
@@ -58,8 +58,8 @@ declare module '../Core/Series/PointLike' {
     }
 }
 
-declare module '../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../Core/Series/SeriesBase' {
+    interface SeriesBase {
         forces?: Array<string>;
     }
 }

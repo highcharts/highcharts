@@ -27,6 +27,7 @@
 import type Component from './Components/Component';
 import type ComponentType from './Components/ComponentType';
 import type DataPoolOptions from '../Data/DataPoolOptions';
+import type { DeepPartial } from '../Shared/Types';
 import type EditMode from './EditMode/EditMode';
 import type Fullscreen from './EditMode/Fullscreen';
 
@@ -35,6 +36,7 @@ import ComponentRegistry from './Components/ComponentRegistry.js';
 import DashboardsAccessibility from './Accessibility/DashboardsAccessibility.js';
 import DataCursor from '../Data/DataCursor.js';
 import DataPool from '../Data/DataPool.js';
+import Defaults from './Defaults.js';
 import Globals from './Globals.js';
 import Layout from './Layout/Layout.js';
 import HTMLComponent from './Components/HTMLComponent/HTMLComponent.js';
@@ -69,7 +71,7 @@ const {
  *          }]
  *      },
  *      components: [{
- *          cell: 'dashboard-col-0',
+ *          renderTo: 'dashboard-col-0',
  *          type: 'Highcharts',
  *          chartOptions: {
  *              series: [{
@@ -155,7 +157,7 @@ class Board {
         renderTo: (string | HTMLElement),
         options: Board.Options
     ) {
-        this.options = merge(Board.defaultOptions, options);
+        this.options = merge(Defaults.defaultOptions, options);
         this.dataPool = new DataPool(options.dataPool);
         this.id = uniqueKey();
         this.guiEnabled = !options.gui ?
@@ -187,20 +189,20 @@ class Board {
     /**
      * The accessibility module for the dashboard.
      * @internal
-     * */
+     */
     public a11y: DashboardsAccessibility;
 
     /**
      * The container referenced by the `renderTo` option when creating the
      * dashboard.
      * @internal
-     * */
+     */
     public boardWrapper!: HTMLElement;
 
     /**
      * The main container for the dashboard. Created inside the element
      * specified by user when creating the dashboard.
-     * */
+     */
     public container!: HTMLElement;
 
     /**
@@ -210,75 +212,73 @@ class Board {
     public componentTypes = ComponentRegistry.types;
 
     /**
-     * The data cursor instance used for interacting with the data.
-     * @internal
-     * */
+     * The data cursor instance used for emitting events on the data.
+     */
     public dataCursor: DataCursor;
 
     /**
      * The data pool instance with all the connectors.
-     * */
+     */
     public dataPool: DataPool;
 
     /**
      * The edit mode instance. Used to handle editing the dashboard.
      * @internal
-     * */
+     */
     public editMode?: EditMode;
 
     /**
      * The fullscreen instance. Controls the fullscreen mode.
      * @internal
-     * */
+     */
     public fullscreen?: Fullscreen;
 
     /**
      * Flag to determine if the GUI is enabled.
      * @internal
-     * */
+     */
     public guiEnabled?: boolean;
 
     /**
      * Flag to determine if the EditMode is enabled.
      * @internal
-     * */
+     */
     public editModeEnabled?: boolean;
 
     /**
      * The unique id of the dashboard, it is generated automatically.
-     * */
+     */
     public readonly id: string;
 
     /**
      * Index of the board in the global boards array. Allows to access the
      * specific one when having multiple dashboards.
-     * */
+     */
     public readonly index: number;
 
     /**
      * An array of generated layouts.
-     * */
+     */
     public layouts: Array<Layout>;
 
     /**
      * The wrapper for the layouts.
      * @internal
-     * */
+     */
     public layoutsWrapper?: globalThis.HTMLElement;
 
     /**
      * An array of mounted components on the dashboard.
-     * */
+     */
     public mountedComponents: Array<Bindings.MountedComponent>;
 
     /**
      * The options for the dashboard.
-     * */
+     */
     public options: Board.Options;
 
     /**
      * Reference to ResizeObserver, which allows running 'unobserve'.
-     * @internal
      */
     private resizeObserver?: ResizeObserver;
 
@@ -383,7 +383,7 @@ class Board {
      * @internal
      *
      */
-    private initEditMode():void {
+    private initEditMode(): void {
         if (Dashboards.EditMode) {
             this.editMode = new Dashboards.EditMode(
                 this,
@@ -481,9 +481,9 @@ class Board {
      * @returns
      * Dashboards options.
      */
-    public getOptions(): Globals.DeepPartial<Board.Options> {
+    public getOptions(): DeepPartial<Board.Options> {
         const board = this,
-            options: Globals.DeepPartial<Board.Options> = {
+            options: DeepPartial<Board.Options> = {
                 ...this.options,
                 components: []
             };
@@ -591,7 +591,7 @@ namespace Board {
          *
          * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/custom-component | Custom component}
          *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/grid-component/grid-options | Datagrid component}
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/grid-component/grid-options | grid component}
          *
          **/
         components?: Array<Partial<ComponentType['options']>>;
@@ -646,22 +646,6 @@ namespace Board {
      *  Constants
      *
      * */
-
-    /**
-     * Global dashboard settings.
-     */
-    export const defaultOptions: Board.Options = {
-        gui: {
-            enabled: true,
-            layoutOptions: {
-                rowClassName: void 0,
-                cellClassName: void 0
-            },
-            layouts: []
-        },
-        components: []
-    };
-
 }
 
 /* *

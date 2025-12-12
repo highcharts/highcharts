@@ -1,20 +1,17 @@
-name: Dashboards and Grid lighthouse tests
+name: Dashboards Lighthouse tests
 on:
   pull_request:
     branches:
       - 'master'
+      - 'dash/**'
     paths:
       - '.github/workflows/dashboards-lighthouse-test.yml'
       - 'css/dashboards*'
-      - 'css/datagrid*'
       - 'css/grid*'
       - 'samples/dashboards/**'
-      - 'samples/grid-lite/**'
-      - 'samples/grid-pro/**'
       - 'test/cypress/dashboards/performance/**'
       - 'ts/Dashboards/**'
       - 'ts/Data/**'
-      - 'ts/Grid/**'
 
 permissions:
   contents: read # to fetch code (actions/checkout)
@@ -61,7 +58,7 @@ jobs:
       - name: Build Dashboards
         run: |
           cd highcharts
-          npx gulp dashboards/scripts
+          npx gulp scripts --product Dashboards
 
       - name: Checkout utils
         uses: actions/checkout@v4
@@ -114,7 +111,7 @@ jobs:
       - name: Build Dashboards
         run: |
           cd highcharts
-          npx gulp dashboards/scripts
+          npx gulp scripts --product Dashboards
 
       - name: Run cypress via action
         uses: cypress-io/github-action@v5
@@ -132,7 +129,7 @@ jobs:
         with:
           name: tmp-files
           path: |
-            tmp
+            highcharts/tmp
 
       - name: Write markdown to file
         if: ${{ always() }}
