@@ -1,0 +1,6 @@
+---
+ name: Highcharts data label backgrounds
+ authors:
+   - Torstein Hønsi
+ js_wrap: b
+...

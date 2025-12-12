@@ -156,6 +156,8 @@ Rendering labels against a mixed color background requires that readability is e
 * Text outline. By default, the `dataLabels.style.textOutline` is set to `1px contrast`, which provides a contrast outline around the text. With this setting, a white text label will get a 1x black contour around it. The text outline can be disabled by setting it to `none`.
 * Contrast background. In addition, implementers can opt to set the `backgroundColor` to `contrast`. This will provide a background fill that contrasts the text, with just enough opacity to ensure the accessibility contrast requirements are always met. The text outline can be enabled or disabled independently.
 
+[Try out the two data label contrast strategies](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-datalabels-background-options/)
+
 Code example showing how to enable datalabels:
 
 ```js
