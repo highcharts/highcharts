@@ -173,6 +173,8 @@ class SVGLabel extends SVGElement {
             if (this.bBox && isNumber(this.xSetting)) {
                 this.attr({ x: this.xSetting }); // #5134
             }
+
+            this.updateTextPadding(); // #23595
         }
     }
 
@@ -222,10 +224,14 @@ class SVGLabel extends SVGElement {
             });
             this.text.css(textStyles);
 
-            // Update existing text, box (#9400, #12163, #18212)
-            if ('fontSize' in textStyles || 'fontWeight' in textStyles) {
+            // Update existing text, box (#9400, #12163, #18212, #23595)
+            if (
+                'fontSize' in textStyles ||
+                    'fontWeight' in textStyles ||
+                    'width' in textStyles
+            ) {
                 this.updateTextPadding();
-            } else if ('width' in textStyles || 'textOverflow' in textStyles) {
+            } else if ('textOverflow' in textStyles) {
                 this.updateBoxSize();
             }
 

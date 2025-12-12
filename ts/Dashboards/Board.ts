@@ -381,11 +381,11 @@ class Board {
     /**
      * Inits creating a layouts and setup the EditMode tools.
      * @internal
-     *
      */
     private initEditMode(): void {
-        if (Dashboards.EditMode) {
-            this.editMode = new Dashboards.EditMode(
+        const { EditMode } = Globals.win.Dashboards;
+        if (EditMode) {
+            this.editMode = new EditMode(
                 this,
                 this.options.editMode
             );

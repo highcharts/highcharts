@@ -11,6 +11,7 @@
  *  - Wojciech Chmiel
  *  - Gøran Slettemark
  *  - Sophie Bremer
+ *  - Dawid Dragula
  *
  * */
 
@@ -77,16 +78,7 @@ const {
  * */
 
 /**
- *
- * Abstract Class of component.
- *
- * @internal
- *
- */
-
-/**
- * Abstract Class of component.
- * @internal
+ * Abstract class of component.
  */
 abstract class Component {
 
@@ -97,15 +89,17 @@ abstract class Component {
      * */
 
     /**
-     *
      * Creates HTML text element like header or title
      *
      * @param tagName
      * HTML tag name used as wrapper of text like `h2` or `p`.
+     *
      * @param elementName
      * Name of element
+     *
      * @param textOptions
      * The options for the component
+     *
      * @returns
      * HTML object when title is created, otherwise undefined
      *
@@ -140,14 +134,16 @@ abstract class Component {
         }
     }
 
+
     /* *
      *
-     *  Properties
+     *  Static Properties
      *
      * */
 
     /** @internal */
     public static Sync = Sync;
+
     /**
      * Predefined sync config for component.
      */
@@ -155,6 +151,7 @@ abstract class Component {
         defaultSyncOptions: {},
         defaultSyncPairs: {}
     };
+
     /**
      * Default options of the component.
      */
@@ -174,80 +171,97 @@ abstract class Component {
             type: 'input'
         }]
     };
+
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
     /**
      * The HTML element or id of HTML element that is used for appending
      * a component.
-     *
      * @internal
      */
     public parentElement: HTMLElement;
+
     /**
      * Instance of cell, where component is attached.
-     *
      * @internal
      */
     public cell: Cell|CellHTML;
+
     /**
-     * The connector handlers for the component.
+     * The connector handlers for the component. They are used to handle the
+     * connector options and data tables.
      */
     public connectorHandlers: ConnectorHandler[] = [];
+
     /**
-     * @internal
      * The board the component belongs to
-     * */
+     * @internal
+     */
     public board: Board;
+
     /**
      * Size of the component (width and height).
      */
     protected dimensions: { width: number | null; height: number | null };
+
     /**
      * The HTML element where the component is.
-     *
      * @internal
      */
     public element: HTMLElement;
+
     /**
      * The HTML element where the title is.
+     * @internal
      */
     public titleElement?: HTMLElement;
+
     /**
      * Whether the component state is active.
      */
     public isActive?: boolean;
+
     /**
      * The HTML element where the caption is.
      */
     public captionElement?: HTMLElement;
+
     /**
      * The HTML element where the component's content is.
-     *
      * @internal
      */
     public contentElement: HTMLElement;
+
     /**
      * The options for the component.
-     * */
+     */
     public options: Component.Options;
+
     /**
      * Sets an ID for the component's `div`.
      */
     public id: string;
+
     /**
      * An array of options marked as editable by the UI.
-     *
      */
     public editableOptions: EditableOptions;
+
     /**
      * Registry of callbacks registered on the component. Used in the Highcharts
      * component to keep track of chart events.
-     *
      * @internal
      */
     public callbackRegistry = new CallbackRegistry();
+
     /**
      * Event listeners tied to the parent cell. Used for rendering/resizing the
      * component on interactions.
-     *
      * @internal
      */
     private cellListeners: Function[] = [];
@@ -259,27 +273,28 @@ abstract class Component {
     private resizeObserver?: ResizeObserver;
 
     /**
-     * @internal
+     * The sync handlers for the component.
      */
     protected syncHandlers?: Sync.OptionsRecord;
 
-    /** @internal */
+    /**
+     * The sync handler for the component.
+     * @internal
+     */
     public sync: Sync;
 
     /**
      * Timeouts for calls to `Component.resizeTo()`.
-     *
      * @internal
-    /* *
      */
     protected resizeTimeouts: number[] = [];
 
     /**
      * Timeouts for resizing the content. I.e. `chart.setSize()`.
-     *
      * @internal
-     * */
+     */
     protected innerResizeTimeouts: number[] = [];
+
 
     /* *
      *
@@ -416,14 +431,45 @@ abstract class Component {
      * Returns the first connector of the component if it exists.
      *
      * @internal
+     * @deprecated
      */
     public getFirstConnector(): Component.ConnectorTypes | undefined {
         return this.connectorHandlers[0]?.connector;
     }
 
     /**
-     * Setup listeners on cell/other things up the chain
+     * Returns the data table connected to the component by the `connectorId`
+     * and `dataTableKey`. If both args are undefined, the first data table is
+     * returned.
      *
+     * @param connectorId
+     * The id of the connector.
+     *
+     * @param dataTableKey
+     * The key of the data table within the connector.
+     *
+     * @returns
+     * The data table, or undefined if no matching handler is found.
+     */
+    public getDataTable(
+        connectorId?: string,
+        dataTableKey?: string
+    ): DataTable | undefined {
+        for (const handler of this.connectorHandlers) {
+            if ((
+                !connectorId ||
+                handler.options.id === connectorId
+            ) && (
+                !dataTableKey ||
+                handler.options.dataTableKey === dataTableKey
+            )) {
+                return handler.dataTable;
+            }
+        }
+    }
+
+    /**
+     * Setup listeners on cell/other things up the chain
      * @internal
      */
     private attachCellListeners(): void {
@@ -470,8 +516,10 @@ abstract class Component {
 
     /**
      * Set a parent cell.
+     *
      * @param cell
      * Instance of a cell.
+     *
      * @param resize
      * Flag that allow to resize the component.
      *
@@ -511,6 +559,7 @@ abstract class Component {
      *
      * @returns
      * Current height as number.
+     *
      * @internal
      */
     private getContentHeight(): number {
@@ -527,10 +576,12 @@ abstract class Component {
 
     /**
      * Resize the component
+     *
      * @param width
      * The width to set the component to.
      * Can be pixels, a percentage string or null.
      * Null will unset the style
+     *
      * @param height
      * The height to set the component to.
      * Can be pixels, a percentage string or null.
@@ -562,8 +613,10 @@ abstract class Component {
      * It's a temporary alternative for the `resize` method. It sets the strict
      * pixel height for the component so that the content can be distributed in
      * the right way, without looping the resizers in the content and container.
+     *
      * @param width
      * The width to set the component to.
+     *
      * @param height
      * The height to set the component to.
      */
@@ -598,6 +651,7 @@ abstract class Component {
 
     /**
      * Adjusts size of component to parent's cell size when animation is done.
+     *
      * @param element
      * HTML element that is resized.
      */
@@ -623,6 +677,7 @@ abstract class Component {
 
     /**
      * Handles updating via options.
+     *
      * @param newOptions
      * The options to apply.
      *
@@ -658,18 +713,22 @@ abstract class Component {
 
         if (!connectorsHaveChanged) {
             for (let i = 0, iEnd = connectorOptions.length; i < iEnd; i++) {
-                const oldOpt = this.connectorHandlers[i]?.options;
-                const newOpt = connectorOptions[i];
+                const oldOptions = this.connectorHandlers[i]?.options;
+                const newOptions = connectorOptions[i];
 
-                if (
-                    newOpt?.id !== oldOpt?.id ||
-                    newOpt?.dataTableKey !== oldOpt?.dataTableKey
-                ) {
+                // Check if the connector id has changed.
+                if (oldOptions.id !== newOptions.id) {
                     connectorsHaveChanged = true;
                     break;
                 }
 
-                this.connectorHandlers[i].updateOptions(connectorOptions[i]);
+                // Check if the data table key has changed.
+                if (oldOptions.dataTableKey !== newOptions.dataTableKey) {
+                    connectorsHaveChanged = true;
+                    break;
+                }
+
+                this.connectorHandlers[i].updateOptions(newOptions);
             }
         }
 
@@ -869,7 +928,20 @@ abstract class Component {
         this.element.remove();
     }
 
-    /** @internal */
+    /**
+     * Adds an event listener to the component.
+     *
+     * @param type
+     * The type of event to listen for.
+     *
+     * @param callback
+     * The callback to call when the event is triggered.
+     *
+     * @returns
+     * The function to remove the event listener.
+     *
+     * @internal
+     */
     public on<TEvent extends Component.EventTypes>(
         type: TEvent['type'],
         callback: (this: this, e: TEvent) => void

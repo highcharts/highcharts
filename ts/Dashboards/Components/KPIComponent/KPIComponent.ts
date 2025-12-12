@@ -398,8 +398,7 @@ class KPIComponent extends Component {
      */
     private getFormulaValue(): string|number|undefined {
         const formula = this.options.formula;
-        const connector = this.getFirstConnector();
-        const table = connector?.getTable().getModified();
+        const table = this.getDataTable();
         const column = table?.getColumn(this.options.columnId);
 
         if (!column || !formula) {
@@ -444,18 +443,16 @@ class KPIComponent extends Component {
             return this.options.value;
         }
 
-        const connector = this.getFirstConnector();
-
-        if (connector && this.options.columnId) {
+        const dataTable = this.getDataTable()?.getModified();
+        if (dataTable && this.options.columnId) {
             if (defined(this.options.formula)) {
                 return this.getFormulaValue();
             }
 
-            const table = connector.getTable().getModified(),
-                column = table.getColumn(this.options.columnId),
+            const column = dataTable.getColumn(this.options.columnId),
                 length = column?.length || 0;
 
-            return String(table.getCell(this.options.columnId, length - 1));
+            return String(dataTable.getCell(this.options.columnId, length - 1));
         }
     }
 
