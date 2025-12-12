@@ -421,7 +421,8 @@ class ControllableLabel extends Controllable {
         label.attr({
             text: text ?
                 format(String(text), point, this.annotation.chart) :
-                (options.formatter as any).call(point, this)
+                // Temporary cast until a good type extension is implemented
+                (options.formatter as any).call(point, this, point)
         });
 
         const anchor = this.anchor(point);
@@ -516,7 +517,10 @@ class ControllableLabel extends Controllable {
                     } as any
                 );
             } else if ((itemOptions as any).positioner) {
-                itemPosition = (itemOptions as any).positioner.call(this);
+                itemPosition = (itemOptions as any).positioner.call(
+                    this,
+                    this
+                );
             } else {
                 alignTo = {
                     x: anchorAbsolutePosition.x,
