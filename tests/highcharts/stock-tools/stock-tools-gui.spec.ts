@@ -1,4 +1,4 @@
-import { test, expect } from '../../fixtures.ts';
+import { test, expect } from '~/fixtures.ts';
 
 test('Disabling and enabling stock tools buttons, when series are invisible (#14192)',
     {

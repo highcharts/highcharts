@@ -1,5 +1,5 @@
-import { test, expect, createChart } from '../fixtures.ts';
-import { getSample } from '../utils.ts';
+import { test, expect, createChart } from '~/fixtures.ts';
+import { getSample } from '~/utils.ts';
 
 test.describe('getSample', () => {
     test('should get sample with Windows-style path', () => {

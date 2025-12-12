@@ -1,5 +1,5 @@
 import type { Page } from '@playwright/test';
-import { test, expect, setupRoutes } from '../../fixtures.ts';
+import { test, expect, setupRoutes } from '~/fixtures.ts';
 
 test.describe('unit-tests/chart/renderto equivalent', () => {
     test.describe.configure({ mode: 'serial'});

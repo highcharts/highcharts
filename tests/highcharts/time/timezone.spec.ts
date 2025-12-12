@@ -7,7 +7,7 @@
  *
  * This replaces the previous QUnit-based approach with native Playwright tests.
  */
-import { test, expect } from '../../fixtures.ts';
+import { test, expect } from '~/fixtures.ts';
 import { join } from 'node:path';
 
 // Paths relative to repo root (where Playwright runs from)

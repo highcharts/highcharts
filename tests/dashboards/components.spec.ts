@@ -1,4 +1,4 @@
-import { test, expect } from '../fixtures.ts';
+import { test, expect } from '~/fixtures.ts';
 
 // Common HTML setup for Dashboards with Highcharts plugin
 // Note: HighchartsPlugin is included in dashboards.src.js, but we need layout module for GUI

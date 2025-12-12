@@ -8,7 +8,7 @@ import type {
     ElementHandle,
 } from '@playwright/test';
 
-import type Highcharts from '../code/esm/highcharts.src';
+import type Highcharts from '~code/esm/highcharts.src';
 
 import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
@@ -716,6 +716,7 @@ export async function createChart(
                 } :
                 undefined;
 
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             return HCInstance[chartConstructor](
                 container,
                 cc,

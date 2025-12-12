@@ -1,5 +1,5 @@
-import { createChart, expect, test } from '../../fixtures';
-import { testImageDataURL } from '../../testContent';
+import { createChart, expect, test } from '~/fixtures';
+import { testImageDataURL } from '~/testContent';
 
 test.describe('SVGRenderer', () => {
     test('Symbol tests', {

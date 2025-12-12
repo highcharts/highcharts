@@ -2,7 +2,7 @@
  * Enhanced error formatting utilities for QUnit test failures
  */
 
-import type { QUnitFailedTest, QUnitFailedAssertion, QUnitErrorDetails } from '../types.ts';
+import type { QUnitFailedTest, QUnitFailedAssertion, QUnitErrorDetails } from '~/qunit/types.ts';
 
 /**
  * Formats a failed test with enhanced error information

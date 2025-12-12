@@ -1,8 +1,31 @@
-# Playwright Testing Quick Start
+# Playwright Testing
+
+This directory contains the Playwright test suite for Highcharts products.
+
+## Table of Contents
+
+- [Installation](#installation)
+- [Your First Test](#your-first-test)
+- [Running Tests](#running-tests)
+- [Viewing Results](#viewing-results)
+- [Writing Tests](#writing-tests)
+  - [Using createChart](#using-createchart)
+  - [Testing with Modules](#testing-with-modules)
+  - [Testing Stock Charts](#testing-stock-charts)
+  - [Testing Map Charts](#testing-map-charts)
+  - [Manual Page Setup](#manual-page-setup)
+  - [Using ESM Modules](#using-esm-modules)
+  - [Custom Container Element](#custom-container-element)
+  - [Adding Custom CSS](#adding-custom-css)
+- [Best Practices](#best-practices)
+- [Route Rewrites](#route-rewrites)
+- [Path Aliases](#path-aliases)
+- [Debugging](#debugging)
+- [Environment Variables](#environment-variables)
+- [Common Issues](#common-issues)
+- [Resources](#resources)
 
 ## Installation
-
-Check out the `tools/playwright` branch
 
 ```sh
 npm i
@@ -13,24 +36,100 @@ npm i
 npx playwright install
 ```
 
-## Running Tests
+## Your First Test
+
+This section walks you through creating and running a simple test.
+
+### 1. Create the Test File
+
+Create a new file at `tests/highcharts/my-first-test.spec.ts`:
+
+```typescript
+import { test, expect, createChart } from '../fixtures.ts';
+
+test('chart renders with correct title', async ({ page }) => {
+    // Create a chart with some basic options
+    const chart = await createChart(page, {
+        title: { text: 'Hello Highcharts' },
+        series: [{
+            type: 'line',
+            data: [1, 3, 2, 4]
+        }]
+    });
+
+    // Verify the title rendered correctly
+    const title = await chart.evaluate(c => c.title.textStr);
+    expect(title).toBe('Hello Highcharts');
+});
+```
+
+### 2. Run the Test
 
 ```sh
-# Run specific project
+npx playwright test tests/highcharts/my-first-test.spec.ts
+```
+
+You should see output indicating the test passed.
+
+### 3. Understanding the Code
+
+- **`test('...', async ({ page }) => { ... })`** - Defines a test. The `page` object is Playwright's representation of a browser tab.
+
+- **`createChart(page, options)`** - A helper function that loads Highcharts in the browser and creates a chart with the given options. It returns a handle to the chart object.
+
+- **`chart.evaluate(c => ...)`** - Runs a function inside the browser and returns the result. The `c` parameter is the actual Highcharts chart instance. Use this to inspect chart properties or call chart methods.
+
+- **`expect(...).toBe(...)`** - Playwright's assertion syntax. If the values don't match, the test fails.
+
+### 4. Try Interactive Mode
+
+Run your test with the UI to see what's happening:
+
+```sh
+npx playwright test tests/highcharts/my-first-test.spec.ts --ui
+```
+
+Or run in headed mode to watch the browser:
+
+```sh
+npx playwright test tests/highcharts/my-first-test.spec.ts --headed
+```
+
+## Running Tests
+
+### By Project
+
+```sh
 npx playwright test --project=highcharts
 npx playwright test --project=dashboards
 npx playwright test --project=qunit
 npx playwright test --project=internal
 npx playwright test --project=visual [--update-snapshots]
+```
 
-# Run a specific test file
+Available projects include browser variants:
+
+- `highcharts`, `highcharts-firefox`, `highcharts-webkit`
+- `dashboards`, `dashboards-firefox`, `dashboards-webkit`
+- `qunit`, `qunit-firefox`
+- `visual`, `internal`
+
+### By File
+
+```sh
 npx playwright test tests/highcharts/themes.spec.ts
+```
 
-# Run tests in UI mode (interactive)
+### Interactive Modes
+
+```sh
+# UI mode (interactive test explorer)
 npx playwright test --ui
 
-# Run tests in headed or debug mode (see browser)
+# Headed mode (see browser)
 npx playwright test --project=highcharts --headed
+
+# Debug mode (step through tests)
 npx playwright test --project=highcharts --debug
 ```
 
@@ -41,45 +140,32 @@ npx playwright test --project=highcharts --debug
 npx playwright show-report
 ```
 
-## Writing Your First Test
+## Writing Tests
 
-Create a new file `tests/highcharts/my-test.spec.ts`:
+### Using createChart
+
+The `createChart` utility from `fixtures` creates a chart with sensible defaults for testing:
 
 ```typescript
-import { test, expect, createChart } from '../fixtures.ts';
-
-test('my first chart test', async ({ page }) => {
-    // Create a chart
-    const chart = await createChart(
-        page,
-        {
-            title: { text: 'My Test Chart' },
-            series: [{
-                type: 'line',
-                data: [1, 3, 2, 4, 5]
-            }]
-        }
-    );
-
-    // Test chart properties
-    const title = await chart.evaluate(c => c.title.textStr);
-    expect(title).toBe('My Test Chart');
-
-    const seriesLength = await chart.evaluate(c => c.series.length);
-    expect(seriesLength).toBe(1);
-
-    const dataLength = await chart.evaluate(c => c.series[0].data.length);
-    expect(dataLength).toBe(5);
-});
+const chart = await createChart(
+    page,
+    { /* Highcharts options */ },
+    { /* Options for chart creation */ }
+);
 ```
 
-Run your test:
+Available options for `createChart`:
 
-```sh
-npx playwright test tests/highcharts/my-test.spec.ts
-```
-
-## Common Test Patterns
+| Option | Default | Description |
+|--------|---------|-------------|
+| `container` | `'container'` | Container element ID or `ElementHandle` |
+| `modules` | `[]` | Highcharts modules to load (e.g., `['modules/exporting.js']`) |
+| `chartConstructor` | `'chart'` | Constructor method: `'chart'`, `'stockChart'`, `'ganttChart'`, `'mapChart'` |
+| `HC` | `undefined` | Custom Highcharts instance (for ESM usage) |
+| `css` | `''` | Custom CSS to inject |
+| `applyTestOptions` | `true` | Disable animations and certain features for testing |
+| `emulateKarma` | `false` | Load all scripts from karma-files.json |
+| `chartCallback` | `undefined` | Callback function passed to the chart constructor |
 
 ### Testing with Modules
 
@@ -119,72 +205,23 @@ const chart = await createChart(
 );
 ```
 
-## Debugging Failed Tests
-
-### View trace for failed tests
-
-```sh
-# Traces are automatically captured on first retry
-npx playwright show-trace playwright-report/data/<trace-id>.zip
-```
-
-### Debug interactively
-
-```sh
-# Run with debugger
-npx playwright test --debug
-
-# Run specific test with debugger
-npx playwright test tests/highcharts/my-test.spec.ts --debug
-```
-
-### Check console output
-
-Add `--reporter=list` for detailed console output:
-
-```sh
-npx playwright test --reporter=list
-```
-
-## Environment Variables
-
-```sh
-# Run single test path (for visual tests)
-VISUAL_TEST_PATH=samples/highcharts/demo/line-basic npx playwright test --project=visual
-
-# Skip route rewrites (test against live CDN)
-NO_REWRITES=1 npx playwright test
-```
-
-## Next Steps
-
-Once you're comfortable with the basics, explore:
-
-- **Code examples**: `docs/playwright-setup-summary.md` - Detailed examples of utilities and advanced patterns
-- **Example tests**: `tests/highcharts/themes.spec.ts` - Real-world test implementations
-- **Fixture source**: `tests/fixtures.ts` - Understanding `createChart` and route handling
-- **Utils source**: `tests/utils.ts` - Karma emulation and sample loading
-
-## Getting Help
-
-- Playwright documentation: https://playwright.dev
-- Project setup details: `docs/playwright-setup-summary.md`
-
-## Setting Up a Page from Scratch
+### Manual Page Setup
 
 When you need full control over the page setup (custom HTML, ESM modules, or manual Highcharts loading), you can set up a page manually instead of using `createChart`.
 
-### Basic Manual Setup
+There are two main approaches:
+
+#### Using `page.setContent()`
+
+Inject HTML directly into the page:
 
 ```typescript
-import { test, expect } from '../fixtures.ts';
-import { setupRoutes } from '../fixtures.ts';
+import { test, expect, setupRoutes } from '../fixtures.ts';
 
 test('manual page setup', async ({ page }) => {
-    // Routes are already set up via the fixture, but you can also call setupRoutes manually
-    // if using base test: await setupRoutes(page);
+    // Routes are already set up via the fixture, but you can also call
+    // setupRoutes manually if using base test: await setupRoutes(page);
 
-    // Set custom HTML content
     await page.setContent(`
         <!DOCTYPE html>
         <html>
@@ -215,6 +252,33 @@ test('manual page setup', async ({ page }) => {
     expect(pointCount).toBe(3);
 });
 ```
+
+#### Using `page.goto()`
+
+Navigate to an existing HTML file or URL:
+
+```typescript
+import { test, expect } from '../fixtures.ts';
+
+test('test existing sample', async ({ page }) => {
+    // Navigate to a sample page
+    await page.goto('/samples/highcharts/demo/line-basic/index.html');
+
+    // Wait for Highcharts to be available
+    await page.waitForFunction(() => !!window.Highcharts);
+
+    // Get the chart instance
+    const chart = await page.evaluateHandle(() => {
+        return window.Highcharts.charts[0];
+    });
+
+    // Run assertions
+    const title = await chart.evaluate(c => c.title.textStr);
+    expect(title).toBeTruthy();
+});
+```
+
+This is useful when testing existing demos or samples in the repository.
 
 ### Using ESM Modules
 
@@ -258,8 +322,6 @@ test('ESM module setup', async ({ page }) => {
     expect(title).toBe('ESM Chart');
 });
 ```
-
-### Using ESM with createChart
 
 You can also pass a pre-loaded Highcharts instance to `createChart`:
 
@@ -346,6 +408,303 @@ test('chart with custom CSS', async ({ page }) => {
 });
 ```
 
+## Best Practices
+
+### Keep Tests Isolated
+
+By default, each test gets a fresh browser context. This ensures tests don't affect each other and can run in parallel. Prefer this approach for most tests:
+
+```typescript
+test('first test', async ({ page }) => {
+    // Fresh browser context
+});
+
+test('second test', async ({ page }) => {
+    // Another fresh browser context
+});
+```
+
+### Use Deterministic Data
+
+Avoid `Math.random()` or time-dependent data in tests. Use fixed datasets for reproducible results:
+
+```typescript
+// Good - deterministic
+const chart = await createChart(page, {
+    series: [{ data: [1, 2, 3, 4, 5] }]
+});
+
+// Bad - non-deterministic
+const chart = await createChart(page, {
+    series: [{ data: Array.from({ length: 5 }, () => Math.random() * 100) }]
+});
+```
+
+### Wait for Async Operations
+
+When testing features that involve async operations (data loading, animations), use explicit waits:
+
+```typescript
+// Wait for a condition
+await page.waitForFunction(() => {
+    const chart = window.Highcharts?.charts[0];
+    return chart?.series[0]?.data.length > 0;
+});
+
+// Or use expect.poll for assertions that may take time
+await expect.poll(async () => {
+    return await chart.evaluate(c => c.series[0].data.length);
+}).toBeGreaterThan(0);
+```
+
+### Write Focused Assertions
+
+Test one thing per assertion for clearer failure messages:
+
+```typescript
+// Good - clear what failed
+const title = await chart.evaluate(c => c.title.textStr);
+expect(title).toBe('My Chart');
+
+const seriesCount = await chart.evaluate(c => c.series.length);
+expect(seriesCount).toBe(2);
+
+// Less clear - combines multiple checks
+const result = await chart.evaluate(c => ({
+    title: c.title.textStr,
+    seriesCount: c.series.length
+}));
+expect(result).toEqual({ title: 'My Chart', seriesCount: 2 });
+```
+
+If you need to group related assertions, use `test.step` for better reporting:
+
+```typescript
+test('chart configuration', async ({ page }) => {
+    const chart = await createChart(page, { /* options */ });
+
+    await test.step('verify title', async () => {
+        const title = await chart.evaluate(c => c.title.textStr);
+        expect(title).toBe('My Chart');
+    });
+
+    await test.step('verify series', async () => {
+        const seriesCount = await chart.evaluate(c => c.series.length);
+        expect(seriesCount).toBe(2);
+
+        const firstSeriesType = await chart.evaluate(c => c.series[0].type);
+        expect(firstSeriesType).toBe('line');
+    });
+});
+```
+
+## Route Rewrites
+
+Tests run offline by default using route rewrites. The test fixture intercepts network requests and serves local files instead, enabling:
+
+- **Offline testing**: No network dependency for faster, more reliable tests
+- **Local code testing**: Tests run against your local build in `code/`
+- **Consistent data**: Sample data is served from `samples/data/`
+
+### How It Works
+
+When a test requests `https://code.highcharts.com/highcharts.src.js`, the fixture intercepts it and serves `code/highcharts.src.js` from your local repository instead.
+
+### Default Rewrites
+
+The following URL patterns are automatically rewritten:
+
+| Pattern | Local Path | Description |
+|---------|------------|-------------|
+| `**/code.highcharts.com/**` | `code/` | Highcharts library files |
+| `**/**/mapdata/**` | `node_modules/@highcharts/map-collection/` | Map data files |
+| `**/{samples/data}/**` | `samples/data/` | Sample data files |
+| `https://demo-live-data.highcharts.com/**` | `samples/data/` | Demo live data |
+| `https://fonts.googleapis.com/**` | Empty stylesheet | Google Fonts |
+| `**/font-awesome/**` | Empty stylesheet | Font Awesome |
+| `**/grid-lite.js`, `**/grid-pro.js` | `code/grid/` | Grid modules |
+| `**/grid-lite.css`, `**/grid-pro.css` | `css/grid/` | Grid styles |
+| `**/{samples/graphics}/**` | `samples/graphics/` | Sample graphics |
+| JSON sources from `samples/data/json-sources/index.json` | Various | External API mocks |
+
+### Adding New Rewrites
+
+To add a new rewrite, edit `fixtures.ts` and add a route to the `routes` array in `setupRoutes()`:
+
+```typescript
+// In fixtures.ts, inside setupRoutes()
+const routes: RouteType[] = [
+    // ... existing routes ...
+    {
+        pattern: '**/my-custom-api.com/**',
+        handler: async (route) => {
+            const url = route.request().url();
+            const localPath = 'samples/data/my-local-data.json';
+
+            try {
+                const body = await readFile(join(__dirname, '..', localPath));
+
+                test.info().annotations.push({
+                    type: 'redirect',
+                    description: `${url} --> ${localPath}`
+                });
+
+                await route.fulfill({
+                    status: 200,
+                    body,
+                    contentType: 'application/json'
+                });
+            } catch {
+                await route.abort();
+                throw new Error(`Missing local file for ${localPath}`);
+            }
+        }
+    }
+];
+```
+
+Route handlers receive a `Route` object and should either:
+- Call `route.fulfill()` with the response
+- Call `route.abort()` to block the request
+
+Always add an annotation to track rewrites in test reports:
+
+```typescript
+test.info().annotations.push({
+    type: 'redirect',
+    description: `${url} --> ${localPath}`
+});
+```
+
+### Mocking Routes in a Single Test
+
+To mock a route for a specific test without modifying `fixtures.ts`, use Playwright's `page.route()` directly:
+
+```typescript
+import { test, expect, createChart } from '~/fixtures.ts';
+
+test('chart with mocked API data', async ({ page }) => {
+    // Mock the API endpoint for this test only
+    await page.route('**/api.example.com/data.csv', async (route) => {
+        await route.fulfill({
+            status: 200,
+            contentType: 'text/csv',
+            body: 'x,y\n1,10\n2,20\n3,15'
+        });
+    });
+
+    const chart = await createChart(page, {
+        data: {
+            csvURL: 'https://api.example.com/data.csv'
+        },
+        series: [{ type: 'line' }]
+    });
+
+    const pointCount = await chart.evaluate(c => c.series[0].data.length);
+    expect(pointCount).toBe(3);
+});
+```
+
+To share a mock across multiple tests, use `test.beforeEach()` in a `describe` block:
+
+```typescript
+import { test, expect, createChart } from '~/fixtures.ts';
+
+test.describe('charts with mocked API', () => {
+    test.beforeEach(async ({ page }) => {
+        await page.route('**/api.example.com/data', async (route) => {
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify([{ x: 1, y: 10 }])
+            });
+        });
+    });
+
+    test('first test', async ({ page }) => {
+        // Mock is active here
+    });
+
+    test('second test', async ({ page }) => {
+        // Mock is active here too
+    });
+});
+```
+
+## Path Aliases
+
+The test suite uses TypeScript path aliases for cleaner imports. These are configured in `tsconfig.json`:
+
+| Alias | Maps To | Example |
+|-------|---------|---------|
+| `~/` | `tests/` (this folder) | `import { test } from '~/fixtures.ts'` |
+| `~code/` | `code/` (build output) | `import type Highcharts from '~code/esm/highcharts.src'` |
+| `~ts/` | `ts/` (source files) | `import type Grid from '~ts/Grid/Core/Grid'` |
+
+### Usage Examples
+
+```typescript
+// Import from test utilities
+import { test, expect, createChart } from '~/fixtures.ts';
+import { captureError } from '~/qunit/utils/error-capture.ts';
+
+// Import types from built code
+import type Highcharts from '~code/esm/highcharts.src';
+
+// Import types from source
+import type Grid from '~ts/Grid/Core/Grid';
+```
+
+### Benefits
+
+- **Cleaner imports**: No more `../../` chains
+- **Refactoring-friendly**: Moving files doesn't break imports
+- **Explicit paths**: Clear where imports come from
+
+## Debugging
+
+### Check console output
+
+Add `--reporter=list` for detailed console output:
+
+```sh
+npx playwright test --reporter=list
+```
+
+### Debug interactively
+
+```sh
+# Run with debugger
+npx playwright test --debug
+
+# Run specific test with debugger
+npx playwright test tests/highcharts/my-test.spec.ts --debug
+```
+
+### View trace for failed tests
+
+```sh
+# Traces are automatically captured on first retry
+npx playwright show-trace playwright-report/data/<trace-id>.zip
+```
+
+## Environment Variables
+
+| Variable | Description |
+|----------|-------------|
+| `VISUAL_TEST_PATH` | Run single visual test path (e.g., `samples/highcharts/demo/line-basic`) |
+| `NO_REWRITES` | Skip route rewrites, test against live CDN |
+
+Examples:
+
+```sh
+# Run single visual test
+VISUAL_TEST_PATH=samples/highcharts/demo/line-basic npx playwright test --project=visual
+
+# Test against live CDN
+NO_REWRITES=1 npx playwright test
+```
+
 ## Common Issues
 
 ### "Browser not installed"
@@ -354,18 +713,26 @@ test('chart with custom CSS', async ({ page }) => {
 npx playwright install
 ```
 
-### "Local file missing" errors
-
-Make sure you've built the project first:
-
-```sh
-npm run gulp
-```
-
-
 ### Flaky tests
 
 Tests run offline by default. If you see flaky behavior, check:
+
 - Animations are disabled (automatic with `createChart`)
 - Data is deterministic (avoid `Math.random()`)
 - Timing-sensitive operations use `waitForFunction` or `expect.poll`
+
+### Missing local files
+
+If you see errors about missing local files, ensure you have built the project:
+
+```sh
+npx gulp
+```
+
+## Resources
+
+- [Playwright Documentation](https://playwright.dev)
+- [Playwright Test API](https://playwright.dev/docs/api/class-test)
+- [Playwright Assertions](https://playwright.dev/docs/api/class-genericassertions)
+- [Playwright Locators](https://playwright.dev/docs/locators)
+- [Highcharts API Reference](https://api.highcharts.com)

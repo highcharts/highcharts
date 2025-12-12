@@ -3,8 +3,8 @@
  */
 
 import type { Page } from '@playwright/test';
-import type { QUnitErrorDetails } from '../types.ts';
-import { getCapturedConsoleLogs, filterRelevantLogs } from './console-capture.ts';
+import type { QUnitErrorDetails } from '~/qunit/types.ts';
+import { getCapturedConsoleLogs, filterRelevantLogs } from '~/qunit/utils/console-capture.ts';
 
 /**
  * Captures comprehensive error details from a QUnit test execution

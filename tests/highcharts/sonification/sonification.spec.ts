@@ -1,4 +1,4 @@
-import { test, expect, createChart } from '../../fixtures.ts';
+import { test, expect, createChart } from '~/fixtures.ts';
 
 test('Sonification: mapping functions', async ({ page }) => {
     const chart = await test.step('Setup chart', async () => {
