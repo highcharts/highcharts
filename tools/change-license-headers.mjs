@@ -93,6 +93,12 @@ function processFile(path) {
         '$1See www.highcharts.com/license'
     );
 
+    // remove "SOURCE GETS TRANSPILED BY TYPESCRIPT" warning line
+    txt = txt.replace(
+        /^\s*\*\s*!+ SOURCE GETS TRANSPILED BY TYPESCRIPT\. EDIT TS FILE ONLY\. !+\s*\r?\n/gmu,
+        ''
+    );
+
     if (txt !== original) {
         writeFileSync(path, txt);
     }

@@ -9,7 +9,6 @@
  *
  *  Dark theme based on Highcharts brand system
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 

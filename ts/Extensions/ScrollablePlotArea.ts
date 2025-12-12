@@ -6,7 +6,6 @@
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Highcharts feature to make the Y axis stay fixed when scrolling the chart
  *  horizontally on mobile devices. Supports left and right side axes.

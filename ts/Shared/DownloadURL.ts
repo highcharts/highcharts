@@ -6,7 +6,6 @@
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Mixin for downloading content in the browser
  *

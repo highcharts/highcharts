@@ -10,7 +10,6 @@
  *  Accessible high-contrast theme for Highcharts. Considers colorblindness and
  *  monochrome rendering.
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 

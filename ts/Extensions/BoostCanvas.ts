@@ -10,7 +10,6 @@
  *  It is recommended to include this module in conditional comments targeting
  *  IE9 and IE10.
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 

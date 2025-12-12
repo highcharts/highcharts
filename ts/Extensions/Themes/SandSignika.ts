@@ -8,7 +8,6 @@
  *
  *  Sand-Signika theme for Highcharts JS
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 

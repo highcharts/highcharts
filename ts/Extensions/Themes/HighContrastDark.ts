@@ -11,7 +11,6 @@
  *  towards 3:1 contrast against black/off-black backgrounds. Neighboring
  *  colors are tested for color blindness.
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
