@@ -170,7 +170,10 @@ plotOptions: {
 },
 ```
 
-The text displayed on data labels may also be customized by using the formatter option. See [API reference](https://api.highcharts.com/highcharts/plotOptions.series.dataLabels) for the full set of options.
+The text displayed on data labels may also be customized by using the `format`
+or `formatter` options. See [API
+reference](https://api.highcharts.com/highcharts/plotOptions.series.dataLabels)
+for the full set of options.
 
 ### Dash style
 
