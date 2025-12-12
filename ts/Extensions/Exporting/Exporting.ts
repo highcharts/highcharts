@@ -552,6 +552,30 @@ class Exporting {
     }
 
     /**
+     * Prepare the SVG DOM for exporting
+     *
+     * @private
+     */
+    public static sanitizeDOM(
+        svg: SVGDOMElement
+    ): void {
+        // Increase the size of foreignObjects to avoid clipping when the
+        // applied font size in the export is larger than the on-screen font
+        // size.
+        svg.querySelectorAll('foreignObject').forEach((fo): void => {
+            ['width', 'height'].forEach((attr): void => {
+                const value = fo.getAttribute(attr);
+                if (value) {
+                    fo.setAttribute(
+                        attr,
+                        Math.ceil(parseInt(value, 10) * 1.15)
+                    );
+                }
+            });
+        });
+    }
+
+    /**
      * A collection of fixes on the produced SVG to account for expand
      * properties and browser bugs. Returns a cleaned SVG.
      *
@@ -1539,6 +1563,8 @@ class Exporting {
             this.inlineStyles();
         }
         this.resolveCSSVariables();
+
+        Exporting.sanitizeDOM(chart.renderer.box);
         return chart.container.innerHTML;
     }
 
