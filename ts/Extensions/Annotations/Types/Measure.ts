@@ -45,7 +45,6 @@ const {
     merge,
     pick
 } = U;
-import { Palette } from '../../../Core/Color/Palettes.js';
 
 if (defaultOptions.annotations) {
     /**
@@ -176,7 +175,7 @@ if (defaultOptions.annotations) {
                  */
                 style: {
                     fontSize: '0.7em',
-                    color: Palette.neutralColor80
+                    color: '{palette.neutralColor80}'
                 },
                 /**
                  * Formatter function for the label text.

@@ -21,7 +21,6 @@ import type NavigationOptions from './NavigationOptions';
 
 import H from '../../Core/Globals.js';
 const { isTouchDevice } = H;
-import { Palette } from '../../Core/Color/Palettes.js';
 
 /* *
  *
@@ -836,7 +835,7 @@ const navigation: NavigationOptions = {
          * @type  {Highcharts.ColorString | Highcharts.GradientColorObject | Highcharts.PatternObject}
          * @since 2.0
          */
-        symbolFill: Palette.neutralColor60,
+        symbolFill: '{palette.neutralColor60}',
 
         /**
          * The color of the symbol's stroke or line.
@@ -847,7 +846,7 @@ const navigation: NavigationOptions = {
          * @type  {Highcharts.ColorString}
          * @since 2.0
          */
-        symbolStroke: Palette.neutralColor60,
+        symbolStroke: '{palette.neutralColor60}',
 
         /**
          * The pixel stroke width of the symbol on the button.
@@ -879,7 +878,7 @@ const navigation: NavigationOptions = {
              *
              * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              */
-            fill: Palette.backgroundColor,
+            fill: '{palette.backgroundColor}',
 
             /**
              * Padding for the button.
@@ -922,7 +921,7 @@ const navigation: NavigationOptions = {
         /** @ignore-option */
         borderRadius: '3px',
         /** @ignore-option */
-        background: Palette.backgroundColor,
+        background: '{palette.backgroundColor}',
         /** @ignore-option */
         padding: '0.5em'
     },
@@ -949,7 +948,7 @@ const navigation: NavigationOptions = {
         /** @ignore-option */
         borderRadius: '3px',
         /** @ignore-option */
-        color: Palette.neutralColor80,
+        color: '{palette.neutralColor80}',
         /** @ignore-option */
         padding: '0.5em',
         /** @ignore-option */
@@ -975,7 +974,7 @@ const navigation: NavigationOptions = {
      */
     menuItemHoverStyle: {
         /** @ignore-option */
-        background: Palette.neutralColor5
+        background: '{palette.neutralColor5}'
     }
 
 };
