@@ -75,8 +75,7 @@ import { Palette } from '../../Color/Palettes.js';
  *               categories, crosshair, dateTimeLabelFormats, left,
  *               lineWidth, linkedTo, maxZoom, minRange, minTickInterval,
  *               offset, opposite, pane, plotBands, plotLines,
- *               reversedStacks, scrollbar, showEmpty, title, top,
- *               zoomEnabled
+ *               reversedStacks, scrollbar, showEmpty, top, zoomEnabled
  * @product      highcharts highstock highmaps
  * @type         {*|Array<*>}
  * @optionparent colorAxis
@@ -428,6 +427,18 @@ const colorAxisDefaults: DeepPartial<ColorAxis.Options> = {
      * The pixel length of the main tick marks on the color axis.
      */
     tickLength: 5,
+
+    /**
+     * The color axis title. Displayed alongside the color axis. When the
+     * legend is vertical the title is rotated accordingly.
+     *
+     * @sample highcharts/coloraxis/coloraxis-title/
+     *         Color axis with title
+     *
+     * @type      {Highcharts.AxisTitleOptions}
+     * @product   highcharts highstock highmaps
+     * @apioption colorAxis.title
+     */
 
     /**
      * The type of interpolation to use for the color axis. Can be
