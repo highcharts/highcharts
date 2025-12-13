@@ -43,12 +43,12 @@ function generateRandomData(rows) {
 
 const config = {
     dataTable: {
-        columns: generateRandomData(100000)
+        columns: generateRandomData(100)
     },
     rendering: {
         rows: {
             strictHeights: true,
-            minVisibleRows: 5
+            minVisibleRows: 7
         }
     },
     credits: {
@@ -58,10 +58,14 @@ const config = {
         text: 'hcg-theme-default'
     },
     description: {
-        text: 'If the <code>theme</code> API option is not specified the grid is ' +
-            'rendered using the default theme, <code>hcg-theme-default</code>.',
-        position: 'top'
-    }
+        text: 'Default theme with no bells and whistles.'
+    },
+    columns: [
+        {
+            id: 'ID',
+            width: 80
+        }
+    ]
 };
 
 Grid.grid('table_0', config);
@@ -74,40 +78,66 @@ Grid.grid('table_1', merge(config, {
         text: 'hcg-theme-default theme-more-hover-states'
     },
     description: {
-        text: 'Extend the default theme by adding new and/or ' +
-            'overriding the default variables inside a custom CSS selector. ' +
-            'In this case <code>theme-compact</code> by setting ' +
-            '<code>theme: \'hcg-theme-default theme-compact\'</code>.'
+        text: 'Default theme extended with more hover states for cell, column and header. Also includes special sync state for cell, and utilizes opacity.'
     }
 }));
 
 Grid.grid('table_2', merge(config, {
     rendering: {
-        theme: 'my-theme-2'
+        theme: 'theme-columns'
     },
     caption: {
-        text: 'Custom theme with more hover states'
+        text: 'theme-columns'
     },
     description: {
-        text: 'To create a completely custom theme omit ' +
-            '<code>hcg-theme-default</code> and only specify the custom theme, ' +
-            'in this case <code>theme: \'my-theme\'</code>. When starting from ' +
-            'scratch remember to also include a dark variant for dark mode, ' +
-            'and also high contrast if needed.'
+        text: 'Theme with a column layout focus. No opacity, so only solid colors.'
     }
 }));
 
 Grid.grid('table_3', merge(config, {
     rendering: {
-        theme: 'opacity-theme'
+        theme: 'theme-columns theme-opacity'
     },
     caption: {
-        text: 'Theme using opacity on hover states'
+        text: 'theme-columns theme-opacity'
     },
     description: {
-        text: 'By using RGBA opacity on hover states instead of ' +
-            'solid colors the overall color scheme can be set using only a base set ' +
-            'of custom variables, and hover states etc. can be tweaked by adjusting ' +
-            'the opacity.'
+        text: 'Same as above, but with opacity on hover states, so a much subtler effect.'
+    }
+}));
+
+Grid.grid('table_4', merge(config, {
+    rendering: {
+        theme: 'hcg-theme-default theme-conditional-cells'
+    },
+    caption: {
+        text: 'hcg-theme-default theme-conditional-cells'
+    },
+    description: {
+        text: 'sdfgsdfg'
+    }
+}));
+
+Grid.grid('table_5', merge(config, {
+    rendering: {
+        theme: 'hcg-theme-default theme-conditional-rows'
+    },
+    caption: {
+        text: 'hcg-theme-default theme-conditional-rows'
+    },
+    description: {
+        text: 'sdfgsdfg'
+    }
+}));
+
+Grid.grid('table_6', merge(config, {
+    rendering: {
+        theme: 'hcg-theme-default theme-conditional-columns'
+    },
+    caption: {
+        text: 'hcg-theme-default theme-conditional-columns'
+    },
+    description: {
+        text: 'sdfgsdfg'
     }
 }));
