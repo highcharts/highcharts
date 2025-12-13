@@ -16,28 +16,26 @@ import Dashboards from '@highcharts/dashboards/es-modules/masters/dashboards.src
 
 ## 3. Additional packages
 
-Consider additional packages like **Highcharts** or **Grid** to fully utilize the **Dashboards** potential.
+If you need charts or data grids in your dashboard you need to install the  **Highcharts Core** and **Highcharts Grid Pro** NPM packages.
 
-First, install the package.
+First, install the packages you need:
+
 ```bash
 npm install highcharts
+npm install @highcharts/grid-pro
 ```
 
-Then, import the package and the dedicated plug to connect it to the Dashboards.
+Then, import the packages and the dedicated plugin to connect it to the dashboard:
 
 ```typescript
 import Dashboards from '@highcharts/dashboards/es-modules/masters/dashboards.src.js';
-
-// To use Highcharts Core, install `highcharts` npm library.
 import Highcharts from 'highcharts/es-modules/masters/highcharts.src.js';
-// To use Grid Pro, install `@highcharts/grid-pro` npm library.
 import Grid from '@highcharts/grid-pro';
 
 Dashboards.HighchartsPlugin.custom.connectHighcharts(Highcharts);
 Dashboards.GridPlugin.custom.connectGrid(Grid);
 Dashboards.PluginHandler.addPlugin(Dashboards.HighchartsPlugin);
 Dashboards.PluginHandler.addPlugin(Dashboards.GridPlugin);
-
 ```
 
 __Please Note:__ If you are using the **Visual Studio Code** editor with the
