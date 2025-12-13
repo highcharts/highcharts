@@ -58,7 +58,7 @@ class TextContent extends CellContent {
 
     public static readonly defaultFormatsForDataTypes: Record<ColumnDataType, string> = {
         string: '{value}',
-        number: '{value}',
+        number: '{value:,.f}',
         'boolean': '{value}',
         datetime: '{value:%Y-%m-%d %H:%M:%S}'
     };
