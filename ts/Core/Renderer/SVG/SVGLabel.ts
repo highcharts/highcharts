@@ -147,6 +147,8 @@ class SVGLabel extends SVGElement {
     public bBox: BBoxObject;
     public box?: SVGElement;
     public deferredAttr: (SVGAttributes&AnyRecord);
+    public distX?: number; /* For the resolved data label distance */
+    public distY?: number;
     public heightSetting?: number;
     public needsBox?: boolean;
     public padding: number;
@@ -232,6 +234,9 @@ class SVGLabel extends SVGElement {
                 this.updateTextPadding();
             } else if ('textOverflow' in textStyles) {
                 this.updateBoxSize();
+            }
+            if ('color' in textStyles) {
+                this.updateBackground();
             }
 
         }
@@ -340,6 +345,7 @@ class SVGLabel extends SVGElement {
             this.updateBoxSize();
             this.doUpdate = false;
         }
+        this.updateBackground();
     }
 
     /*
@@ -418,6 +424,17 @@ class SVGLabel extends SVGElement {
         this.updateTextPadding();
 
         this.reAlign();
+    }
+
+    private updateBackground(): void {
+        if (this.fill === 'contrast') {
+            this.box?.attr({
+                fill: this.renderer.getContrast(
+                    this.text.styles.color || '#000'
+                ),
+                'fill-opacity': 0.65
+            });
+        }
     }
 
     /*
