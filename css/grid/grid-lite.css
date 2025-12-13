@@ -529,18 +529,18 @@
 
 .hcg-table tbody tr {
     --ig-row-background-current: var(--hcg-row-background);
-    --ig-row-color-current: var(--hcg-row-color, var(--ig-color, inherit));
+    --ig-row-color-current: var(--hcg-row-color);
 }
 
 .hcg-table tbody tr.hcg-row-even {
     --ig-row-background-current: var(--hcg-row-even-background, var(--hcg-row-background));
-    --ig-row-color-current: var(--hcg-row-even-color, var(--hcg-row-color, var(--ig-color, inherit)));
+    --ig-row-color-current: var(--hcg-row-even-color, var(--hcg-row-color));
 }
 
 .hcg-table tbody tr.hcg-mocked-row td,
 .hcg-table tbody tr td {
     --ig-cell-column-background: var(--hcg-column-background);
-    --ig-cell-column-color: var(--hcg-column-color, var(--ig-row-color-current));
+    --ig-cell-column-color: var(--hcg-column-color);
     --ig-cell-base-background: var(--hcg-cell-background, var(--ig-row-background-current, var(--ig-cell-column-background, transparent)));
     --ig-column-layer: var(--ig-cell-base-background);
     --ig-cell-hover-background-helper: var(--hcg-cell-hovered-background, var(--hcg-cell-hover-background));
@@ -565,7 +565,7 @@
 
 .hcg-table tbody tr td:nth-child(even) {
     --ig-cell-column-background: var(--hcg-column-even-background, var(--hcg-column-background));
-    --ig-cell-column-color: var(--hcg-column-even-color, var(--hcg-column-color, var(--ig-row-color-current)));
+    --ig-cell-column-color: var(--hcg-column-even-color, var(--hcg-column-color));
 }
 
 .hcg-table tbody td:focus {
