@@ -128,14 +128,6 @@
     --ig-link-hovered-text-decoration: var(--hcg-link-hovered-text-decoration, none);
     --ig-link-font-weight: var(--hcg-link-font-weight, inherit);
 
-    /* Header fonts */
-    --ig-header-font-weight: var(--hcg-header-font-weight, var(--ig-font-weight));
-    --ig-header-font-size: var(--hcg-header-font-size, var(--ig-font-size));
-    --ig-header-font-family: var(--hcg-header-font-family, var(--ig-font-family));
-    --ig-header-color: var(--hcg-header-color, var(--ig-color));
-    --ig-header-font: var(--ig-header-font-weight) var(--ig-header-font-size) var(--ig-header-font-family);
-    --ig-header-text-align: var(--hcg-header-text-align, var(--ig-text-align));
-
     /* Caption fonts */
     --ig-caption-font-weight: var(--hcg-caption-font-weight, var(--ig-font-weight));
     --ig-caption-font-size: var(--hcg-caption-font-size, var(--ig-font-size));
@@ -454,8 +446,8 @@
 
 .hcg-table thead th {
     --ig-header-column-background: var(--hcg-column-background);
-    --ig-header-background: var(--hcg-header-background, var(--ig-header-column-background, transparent));
-    --ig-header-column-color: var(--hcg-column-color, var(--ig-color, inherit));
+    --ig-header-background: var(--hcg-header-background, var(--hcg-cell-background, var(--ig-header-column-background, transparent)));
+    --ig-header-column-color: var(--hcg-column-color, var(--hcg-cell-color, var(--ig-color, inherit)));
     --ig-header-base-color: var(--hcg-header-color, var(--ig-header-column-color));
     --ig-header-current-color: var(--ig-header-base-color);
 
@@ -468,10 +460,21 @@
 
 .hcg-table thead th:nth-child(even) {
     --ig-header-column-background: var(--hcg-column-even-background, var(--hcg-column-background));
-    --ig-header-background: var(--hcg-header-even-background, var(--hcg-header-background, var(--ig-header-column-background, transparent)));
-    --ig-header-column-color: var(--hcg-column-even-color, var(--hcg-column-color, var(--ig-color, inherit)));
+    --ig-header-background: var(--hcg-header-even-background, var(--hcg-header-background, var(--hcg-cell-background, var(--ig-header-column-background, transparent))));
+    --ig-header-column-color: var(--hcg-column-even-color, var(--hcg-column-color, var(--hcg-cell-color, var(--ig-color, inherit))));
     --ig-header-base-color: var(--hcg-header-even-color, var(--hcg-header-color, var(--ig-header-column-color)));
     --ig-header-current-color: var(--ig-header-base-color);
+}
+
+.hcg-table thead th .hcg-header-cell-content {
+    --ig-header-font-weight: var(--hcg-header-font-weight, var(--hcg-cell-font-weight, var(--ig-font-weight)));
+    --ig-header-font-size: var(--hcg-header-font-size, var(--hcg-cell-font-size, var(--ig-font-size)));
+    --ig-header-font-family: var(--hcg-header-font-family, var(--hcg-cell-font-family, var(--ig-font-family)));
+    --ig-header-font: var(--ig-header-font-weight) var(--ig-header-font-size) var(--ig-header-font-family);
+    --ig-header-text-align: var(--hcg-header-text-align, var(--hcg-cell-text-align, var(--ig-text-align)));
+
+    font: var(--ig-header-font);
+    text-align: var(--ig-header-text-align);
 }
 
 .hcg-table thead tr:first-of-type th:first-child {
@@ -553,14 +556,19 @@
     --ig-column-text-layer: var(--ig-cell-base-color);
     --ig-row-hover-text-color: var(--ig-column-text-layer);
     --ig-cell-hover-text-color: var(--ig-row-hover-text-color);
+    --ig-cell-font-weight: var(--hcg-cell-font-weight, var(--ig-font-weight));
+    --ig-cell-font-size: var(--hcg-cell-font-size, var(--ig-font-size));
+    --ig-cell-font-family: var(--hcg-cell-font-family, var(--ig-font-family));
+    --ig-cell-font: var(--ig-cell-font-weight) var(--ig-cell-font-size) var(--ig-cell-font-family);
+    --ig-cell-text-align: var(--hcg-cell-text-align, var(--ig-text-align));
 
     background: var(--ig-column-layer);
     color: var(--ig-cell-hover-text-color);
     border-right: var(--ig-column-border);
     border-bottom: var(--ig-row-border);
-    text-align: var(--ig-text-align);
     padding: var(--ig-padding);
-    font: var(--ig-font);
+    font: var(--ig-cell-font);
+    text-align: var(--ig-cell-text-align);
 }
 
 .hcg-table tbody tr td:nth-child(even) {
@@ -748,8 +756,6 @@
 
 .hcg-table thead th .hcg-header-cell-content {
     width: 100%;
-    font: var(--ig-header-font);
-    text-align: var(--ig-header-text-align);
     display: block;
     overflow: hidden;
     text-overflow: ellipsis;
