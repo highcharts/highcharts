@@ -180,6 +180,7 @@ export default function App() {
 
   useEffect(() => {
     const board = Dashboards.board('dashboard', config);
+
     return () => board?.destroy();
   }, []);
 
