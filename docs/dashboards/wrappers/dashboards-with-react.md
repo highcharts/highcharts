@@ -40,7 +40,7 @@ Dashboards.PluginHandler.addPlugin(Dashboards.GridPlugin);
 
 ## 4. Prepare the structure and layout
 
-Dashboards can use the built-in layout system (rows and cells based on Flexbox) or your own HTML. The built-in layout:
+Dashboards can use the built-in layout system or your own custom HTML.
 - requires the `layout` module,
 - works with rows and cells that you can nest,
 - responds to container resizing (easy responsiveness),
