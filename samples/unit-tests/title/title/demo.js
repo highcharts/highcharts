@@ -192,13 +192,13 @@ QUnit.test('Title alignment', function (assert) {
     assert.strictEqual(
         chart.title.element.getAttribute('class'),
         'title-example highcharts-title',
-        'Title should have custom and default classNames'
+        'Title should have custom and default classNames.'
     );
 
     assert.strictEqual(
         chart.subtitle.element.getAttribute('class'),
         'subtitle-example highcharts-subtitle',
-        'Subtitle should have custom and default classNames'
+        'Subtitle should have custom and default classNames.'
     );
 
 });
