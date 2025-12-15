@@ -55,9 +55,6 @@ Then define a simple Angular component that creates the dashboard:
 
 ```typescript
 // dashboard.component.ts
-import { Component, ElementRef, OnInit } from '@angular/core';
-import Dashboards from '@highcharts/dashboards/es-modules/masters/dashboards.src.js';
-
 @Component({
   selector: 'my-app',
   templateUrl: './app.component.html',
@@ -107,9 +104,6 @@ When you need [full markup control](https://www.highcharts.com/docs/dashboards/l
 
 ```typescript
 // dashboard.component.ts
-import { Component, AfterViewInit, OnDestroy } from '@angular/core';
-import Dashboards from '@highcharts/dashboards/es-modules/masters/dashboards.src.js';
-
 @Component({
   selector: 'app-root',
   standalone: true,
