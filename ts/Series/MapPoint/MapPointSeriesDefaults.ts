@@ -59,7 +59,10 @@ const MapPointSeriesDefaults: MapPointSeriesOptions = {
         }
     },
     legendSymbol: 'lineMarker',
-    stickyTracking: true
+    stickyTracking: true,
+    tooltip: { // #23883
+        pointFormat: '<b>{point.name}</b>'
+    }
 };
 
 /* *
