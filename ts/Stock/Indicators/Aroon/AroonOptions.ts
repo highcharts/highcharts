@@ -12,10 +12,8 @@
  * */
 
 import type CSSObject from '../../../Core/Renderer/CSSObject';
-import type DataGroupingOptions from '../../../Extensions/DataGrouping/DataGroupingOptions';
 import type MultipleLinesComposition from '../MultipleLinesComposition';
 import type { PointMarkerOptions } from '../../../Core/Series/PointOptions';
-import type TooltipOptions from '../../../Core/TooltipOptions';
 import type {
     SMAOptions,
     SMAParamsOptions
@@ -60,13 +58,11 @@ export interface AroonOptions extends SMAOptions, MultipleLinesComposition.Indic
      * @excluding index
      */
     params?: AroonParamsOptions;
-
-    tooltip?: Partial<TooltipOptions>;
-
-    dataGrouping?: DataGroupingOptions;
 }
 
 export interface AroonParamsOptions extends SMAParamsOptions {
+    index?: undefined;
+
     period?: number;
 }
 

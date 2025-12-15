@@ -14,8 +14,6 @@
 
 import type CSSObject from '../../../Core/Renderer/CSSObject';
 import type MultipleLinesComposition from '../MultipleLinesComposition';
-import type { PointMarkerOptions } from '../../../Core/Series/PointOptions';
-import type TooltipOptions from '../../../Core/TooltipOptions';
 import type {
     SMAOptions,
     SMAParamsOptions
@@ -52,23 +50,23 @@ export interface DMIOptions extends SMAOptions, MultipleLinesComposition.Indicat
      */
     params?: DMIParamsOptions;
 
-    marker?: PointMarkerOptions;
-
-    tooltip?: Partial<TooltipOptions>;
-
     /**
      * +DI line options.
      */
-    plusDILine?: Record<string, CSSObject>;
+    plusDILine?: DMILineOptions;
 
     /**
      * -DI line options.
      */
-    minusDILine?: Record<string, CSSObject>;
+    minusDILine?: DMILineOptions;
+}
+
+export interface DMILineOptions {
+    styles?: CSSObject;
 }
 
 export interface DMIParamsOptions extends SMAParamsOptions {
-    // For inheritance
+    index?: undefined;
 }
 
 export default DMIOptions;

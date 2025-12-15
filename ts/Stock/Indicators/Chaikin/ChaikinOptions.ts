@@ -52,6 +52,8 @@ export interface ChaikinOptions extends EMAOptions {
 }
 
 export interface ChaikinParamsOptions extends EMAParamsOptions {
+    index?: undefined;
+
     /**
      * The id of volume series which is mandatory.
      * For example using OHLC data, volumeSeriesID='volume' means

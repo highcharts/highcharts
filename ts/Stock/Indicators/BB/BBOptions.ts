@@ -15,7 +15,6 @@
 import type ColorType from '../../../Core/Color/ColorType';
 import type CSSObject from '../../../Core/Renderer/CSSObject';
 import type MultipleLinesComposition from '../MultipleLinesComposition';
-import type TooltipOptions from '../../../Core/TooltipOptions';
 import type {
     SMAOptions,
     SMAParamsOptions
@@ -71,8 +70,6 @@ export interface BBOptions extends SMAOptions, MultipleLinesComposition.Indicato
      * @extends plotOptions.bb.bottomLine
      */
     topLine?: Record<string, CSSObject>;
-
-    tooltip?: Partial<TooltipOptions>;
 }
 
 export interface BBParamsOptions extends SMAParamsOptions {

@@ -56,8 +56,6 @@ export interface AOOptions extends SMAOptions {
      */
     greaterBarColor?: ColorString;
 
-    groupPadding?: number;
-
     /**
      * Color of the Awesome oscillator series bar that is lower than the
      * previous one. Note that if a `color` is defined, the `color`
@@ -71,13 +69,13 @@ export interface AOOptions extends SMAOptions {
      */
     lowerBarColor?: ColorString;
 
+    threshold?: number;
+
+    groupPadding?: number;
+
     pointPadding?: number;
 
-    crisp?: boolean;
-
     states?: SeriesStatesOptions<AOIndicator>;
-
-    threshold?: number;
 }
 
 /* *

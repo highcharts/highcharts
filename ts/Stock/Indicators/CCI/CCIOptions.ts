@@ -46,7 +46,7 @@ export interface CCIOptions extends SMAOptions {
 }
 
 export interface CCIParamsOptions extends SMAParamsOptions {
-    // For inheritance
+    index?: undefined;
 }
 
 /* *

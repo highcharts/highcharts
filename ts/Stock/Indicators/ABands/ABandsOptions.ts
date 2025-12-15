@@ -14,7 +14,6 @@
 
 import type CSSObject from '../../../Core/Renderer/CSSObject';
 import type ColorType from '../../../Core/Color/ColorType';
-import type DataGroupingOptions from '../../../Extensions/DataGrouping/DataGroupingOptions';
 import type MultipleLinesComposition from '../MultipleLinesComposition';
 import type {
     SMAOptions,
@@ -60,15 +59,13 @@ export interface ABandsOptions extends SMAOptions, MultipleLinesComposition.Indi
      */
     fillColor?: ColorType;
 
+    bottomLine?: Record<string, CSSObject>;
+
     lineWidth?: number;
 
     params?: ABandsParamsOptions;
 
-    bottomLine?: ABandsLineOptions;
-
-    topLine?: ABandsLineOptions;
-
-    dataGrouping?: DataGroupingOptions;
+    topLine?: Record<string, CSSObject>;
 }
 
 export interface ABandsParamsOptions extends SMAParamsOptions {
@@ -78,17 +75,6 @@ export interface ABandsParamsOptions extends SMAParamsOptions {
      * @product highstock
      */
     factor?: number;
-}
-
-export interface ABandsLineOptions {
-    styles?: ABandsLineStyleOptions;
-}
-
-export interface ABandsLineStyleOptions extends CSSObject {
-    /**
-     * Pixel width of the line.
-     */
-    lineWidth?: number;
 }
 
 /* *

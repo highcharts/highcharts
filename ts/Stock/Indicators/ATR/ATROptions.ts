@@ -46,7 +46,7 @@ export interface ATROptions extends SMAOptions {
 }
 
 export interface ATRParamsOptions extends SMAParamsOptions {
-    // For inheritance
+    index?: undefined;
 }
 
 /* *

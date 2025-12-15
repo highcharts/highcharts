@@ -51,6 +51,8 @@ export interface APOOptions extends EMAOptions {
 }
 
 export interface APOParamsOptions extends EMAParamsOptions {
+    period?: undefined;
+
     /**
      * Periods for Absolute Price Oscillator calculations.
      *

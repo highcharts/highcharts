@@ -12,8 +12,6 @@
  *
  * */
 
-import type DataGroupingOptions from '../../../Extensions/DataGrouping/DataGroupingOptions';
-import type { PointMarkerOptions } from '../../../Core/Series/PointOptions';
 import type {
     SMAOptions,
     SMAParamsOptions
@@ -46,10 +44,6 @@ import type {
  */
 export interface DisparityIndexOptions extends SMAOptions {
     params?: DisparityIndexParamsOptions;
-
-    marker?: PointMarkerOptions;
-
-    dataGrouping?: DataGroupingOptions;
 }
 
 export interface DisparityIndexParamsOptions extends SMAParamsOptions {

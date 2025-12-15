@@ -46,6 +46,8 @@ export interface CMFOptions extends SMAOptions {
 }
 
 export interface CMFParamsOptions extends SMAParamsOptions {
+    index?: undefined;
+
     /**
      * The id of volume series which is mandatory.
      * For example using OHLC data, volumeSeriesID='volume' means

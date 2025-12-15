@@ -45,6 +45,8 @@ export interface ADOptions extends SMAOptions {
 }
 
 export interface ADParamsOptions extends SMAParamsOptions {
+    index?: undefined;
+
     /**
      * The id of volume series which is mandatory.
      * For example using OHLC data, volumeSeriesID='volume' means

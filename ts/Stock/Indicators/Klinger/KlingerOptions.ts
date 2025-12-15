@@ -12,9 +12,7 @@
  *
  * */
 
-import CSSObject from '../../../Core/Renderer/CSSObject';
-import type DataGroupingOptions from '../../../Extensions/DataGrouping/DataGroupingOptions';
-import type TooltipOptions from '../../../Core/TooltipOptions';
+import type CSSObject from '../../../Core/Renderer/CSSObject';
 import type {
     SMAOptions,
     SMAParamsOptions
@@ -49,14 +47,21 @@ export interface KlingerOptions extends SMAOptions {
      */
     params?: KlingerParamsOptions;
 
-    signalLine?: Record<string, CSSObject>;
+    /**
+     * Styles for a signal line.
+     */
+    signalLine?: KlingerSignalOptions;
+}
 
-    dataGrouping?: DataGroupingOptions;
-
-    tooltip?: Partial<TooltipOptions>;
+export interface KlingerSignalOptions {
+    styles?: CSSObject;
 }
 
 export interface KlingerParamsOptions extends SMAParamsOptions {
+    index?: undefined;
+
+    period?: undefined;
+
     /**
      * The fast period for indicator calculations.
      */
@@ -78,5 +83,11 @@ export interface KlingerParamsOptions extends SMAParamsOptions {
      */
     volumeSeriesID?: string;
 }
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default KlingerOptions;
