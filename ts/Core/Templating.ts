@@ -384,15 +384,10 @@ function format(
             replacement = resolveProperty(valueAndFormat.shift() || '');
 
             // Format the replacement
-            const isFloat = replacement % 1 !== 0;
-            if (
-                typeof replacement === 'number' &&
-                (valueAndFormat.length || isFloat)
-            ) {
-
+            if (valueAndFormat.length && typeof replacement === 'number') {
                 const segment = valueAndFormat.join(':');
 
-                if (floatRegex.test(segment) || isFloat) { // Float
+                if (floatRegex.test(segment)) { // Float
                     const decimals = parseInt(
                         (segment.match(decRegex) || ['', '-1'])[1],
                         10

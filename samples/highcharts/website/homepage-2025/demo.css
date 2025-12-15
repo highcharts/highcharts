@@ -1031,6 +1031,10 @@ button.dot {
 
 /* Grid theme */
 
+#grid-container .highcharts-background {
+    fill: transparent;
+}
+
 .hcg-custom-theme {
     --hcg-padding: 10px;
     --hcg-row-border-width: 1px;

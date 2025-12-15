@@ -23,11 +23,15 @@
  *
  * */
 
-import type { Options, GroupedHeaderOptions, IndividualColumnOptions } from './Options';
+import type {
+    Options,
+    GroupedHeaderOptions,
+    IndividualColumnOptions
+} from './Options';
 import type DataTableOptions from '../../Data/DataTableOptions';
 import type { ColumnDataType, NoIdColumnOptions } from './Table/Column';
 import type Popup from './UI/Popup.js';
-import type { PaginationState } from './Pagination/Pagination.js';
+import type { DeepPartial } from '../../Shared/Types';
 
 import Accessibility from './Accessibility/Accessibility.js';
 import AST from '../../Core/Renderer/HTML/AST.js';
@@ -44,12 +48,12 @@ import Pagination from './Pagination/Pagination.js';
 const { makeHTMLElement, setHTMLContent } = GridUtils;
 const {
     defined,
+    diffObjects,
     extend,
     fireEvent,
     getStyle,
     merge,
-    pick,
-    isObject
+    pick
 } = U;
 
 
@@ -289,6 +293,23 @@ export class Grid {
      */
     private dataTableEventDestructors: Function[] = [];
 
+    /**
+     * The render target (container) of the Grid.
+     */
+    private renderTo: string|HTMLElement;
+
+    /**
+     * Whether the Grid is rendered.
+     */
+    private isRendered: boolean = false;
+
+    /**
+     * The flags that indicate which parts of the Grid are dirty and need to be
+     * re-rendered.
+     * @internal
+     */
+    public readonly dirtyFlags: Set<GridDirtyFlags> = new Set();
+
 
     /* *
     *
@@ -313,6 +334,8 @@ export class Grid {
         options: Options,
         afterLoadCallback?: (grid: Grid) => void
     ) {
+        this.renderTo = renderTo;
+
         this.loadUserOptions(options);
         this.id = this.options?.id || U.uniqueKey();
         this.querying = new QueryingController(this);
@@ -327,13 +350,7 @@ export class Grid {
         fireEvent(this, 'beforeLoad');
 
         Grid.grids.push(this);
-        this.initContainers(renderTo);
-        this.initAccessibility();
-        this.initPagination();
-        this.loadDataTable();
-        this.querying.loadOptions();
-        void this.querying.proceed().then((): void => {
-            this.renderViewport();
+        void this.render().then((): void => {
             afterLoadCallback?.(this);
             fireEvent(this, 'afterLoad');
         });
@@ -362,30 +379,11 @@ export class Grid {
      * Initializes the pagination.
      */
     private initPagination(): void {
-        let state: PaginationState | undefined;
-
-        if (this.pagination) {
-            const {
-                currentPageSize,
-                currentPage
-            } = this.pagination || {};
-
-            state = {
-                currentPageSize,
-                currentPage
-            };
-        }
-
         this.pagination?.destroy();
         delete this.pagination;
 
-        const rawOptions = this.options?.pagination;
-        const options = isObject(rawOptions) ? rawOptions : {
-            enabled: rawOptions
-        };
-
-        if (options?.enabled) {
-            this.pagination = new Pagination(this, options, state);
+        if (this.options?.pagination?.enabled) {
+            this.pagination = new Pagination(this);
         }
     }
 
@@ -396,18 +394,16 @@ export class Grid {
      * The render target (html element or id) of the Grid.
      *
      */
-    private initContainers(renderTo: string|HTMLElement): void {
+    private initContainer(renderTo: string|HTMLElement): void {
         const container = (typeof renderTo === 'string') ?
             Globals.win.document.getElementById(renderTo) : renderTo;
 
         // Display an error if the renderTo is wrong
         if (!container) {
-            // eslint-disable-next-line no-console
-            console.error(`
-                Rendering div not found. It is unable to find the HTML element
-                to render the Grid in.
-            `);
-            return;
+            throw new Error(
+                'Rendering div not found. It is unable to find the HTML ' +
+                'element to render the Grid in.'
+            );
         }
 
         this.initialContainerHeight = getStyle(container, 'height', true) || 0;
@@ -430,22 +426,35 @@ export class Grid {
      * When `false` (default), the existing column options will be merged with
      * the ones that are currently defined in the user options. When `true`,
      * the columns not defined in the new options will be removed.
+     *
+     * @returns
+     * An object of the changed options.
      */
     private loadUserOptions(
         newOptions: Partial<Options>,
         oneToOne = false
-    ): void {
+    ): DeepPartial<NonArrayOptions> {
         // Operate on a copy of the options argument
         newOptions = merge(newOptions);
+        const diff: DeepPartial<NonArrayOptions> = {};
 
         if (newOptions.columns) {
             if (oneToOne) {
-                this.setColumnOptionsOneToOne(newOptions.columns);
+                diff.columns = this.setColumnOptionsOneToOne(
+                    newOptions.columns
+                );
             } else {
-                this.setColumnOptions(newOptions.columns);
+                diff.columns = this.setColumnOptions(newOptions.columns);
             }
             delete newOptions.columns;
         }
+
+        if (diff.columns && Object.keys(diff.columns).length < 1) {
+            // Remove the columns property if it is empty object
+            delete diff.columns;
+        }
+
+        merge(true, diff, diffObjects(newOptions, this.userOptions));
 
         this.userOptions = merge(this.userOptions, newOptions);
         this.options = merge(
@@ -453,18 +462,35 @@ export class Grid {
             this.userOptions
         );
 
-        // Generate column options map
-        const columnOptionsArray = this.options?.columns;
-        if (!columnOptionsArray) {
+        return diff;
+    }
+
+    /**
+     * Cleans up and reloads the column options from the `userOptions.columns`.
+     * Generates the internal column options map from the options.columns array.
+     */
+    private reloadColumnOptions(): void {
+        const colOptions = this.userOptions.columns;
+
+        if (!colOptions) {
+            this.columnOptionsMap = {};
             return;
         }
+
+        if (colOptions.length < 1) {
+            delete this.userOptions.columns;
+            this.columnOptionsMap = {};
+            return;
+        }
+
         const columnOptionsMap: Record<string, ColumnOptionsMapItem> = {};
-        for (let i = 0, iEnd = columnOptionsArray?.length ?? 0; i < iEnd; ++i) {
-            columnOptionsMap[columnOptionsArray[i].id] = {
+        for (let i = 0, iEnd = colOptions.length; i < iEnd; ++i) {
+            columnOptionsMap[colOptions[i].id] = {
                 index: i,
-                options: columnOptionsArray[i]
+                options: colOptions[i]
             };
         }
+
         this.columnOptionsMap = columnOptionsMap;
     }
 
@@ -477,11 +503,19 @@ export class Grid {
      * @param overwrite
      * Whether to overwrite the existing column options with the new ones.
      * Default is `false`.
+     *
+     * @returns
+     * An object of the changed column options in form of a record of
+     * `[column.id]: column.options`.
+     *
+     * @internal
      */
-    private setColumnOptions(
+    public setColumnOptions(
         newColumnOptions: IndividualColumnOptions[],
         overwrite = false
-    ): void {
+    ): DeepPartial<NonArrayColumnOptions> {
+        const columnDiffOptions: DeepPartial<NonArrayColumnOptions> = {};
+
         if (!this.userOptions.columns) {
             this.userOptions.columns = this.options?.columns ?? [];
         }
@@ -495,23 +529,42 @@ export class Grid {
             // If the new column options contain only the id.
             if (Object.keys(newOptions).length < 2) {
                 if (overwrite && colOptionsIndex !== -1) {
+                    columnDiffOptions[newOptions.id] = diffObjects(
+                        columnOptions[colOptionsIndex],
+                        { id: newOptions.id },
+                        true
+                    );
                     columnOptions.splice(colOptionsIndex, 1);
                 }
                 continue;
             }
 
+            let diff: DeepPartial<IndividualColumnOptions>;
             if (colOptionsIndex === -1) {
+                diff = merge(newOptions);
                 columnOptions.push(newOptions);
             } else if (overwrite) {
+                const prevOptions = columnOptions[colOptionsIndex];
+                diff = merge(
+                    diffObjects(prevOptions, newOptions, true),
+                    diffObjects(newOptions, prevOptions)
+                );
                 columnOptions[colOptionsIndex] = newOptions;
             } else {
-                merge(true, columnOptions[colOptionsIndex], newOptions);
+                const prevOptions = columnOptions[colOptionsIndex];
+                diff = diffObjects(newOptions, prevOptions);
+                merge(true, prevOptions, newOptions);
+            }
+
+            delete diff.id;
+            if (Object.keys(diff).length > 0) {
+                columnDiffOptions[newOptions.id] = diff;
             }
         }
 
-        if (columnOptions.length < 1) {
-            delete this.userOptions.columns;
-        }
+        this.reloadColumnOptions();
+
+        return columnDiffOptions;
     }
 
     /**
@@ -521,12 +574,17 @@ export class Grid {
      *
      * @param newColumnOptions
      * The new column options that should be loaded.
+     *
+     * @returns
+     * The difference between the previous and the new column options in form
+     * of a record of `[column.id]: column.options`.
      */
     private setColumnOptionsOneToOne(
         newColumnOptions: IndividualColumnOptions[]
-    ): void {
+    ): DeepPartial<NonArrayColumnOptions> {
         const prevColumnOptions = this.userOptions.columns;
         const columnOptions = [];
+        const columnDiffOptions: DeepPartial<NonArrayColumnOptions> = {};
 
         let prevOptions: IndividualColumnOptions | undefined;
         for (let i = 0, iEnd = newColumnOptions.length; i < iEnd; ++i) {
@@ -539,6 +597,12 @@ export class Grid {
                 prevOptions = prevColumnOptions?.[indexInPrevOptions];
             }
 
+            const diffOptions = diffObjects(newOptions, prevOptions ?? {});
+            if (Object.keys(diffOptions).length > 0) {
+                delete diffOptions.id;
+                columnDiffOptions[newOptions.id] = diffOptions;
+            }
+
             const resultOptions = merge(prevOptions ?? {}, newOptions);
             if (Object.keys(resultOptions).length > 1) {
                 columnOptions.push(resultOptions);
@@ -546,6 +610,9 @@ export class Grid {
         }
 
         this.userOptions.columns = columnOptions;
+        this.reloadColumnOptions();
+
+        return columnDiffOptions;
     }
 
     public update(
@@ -568,8 +635,8 @@ export class Grid {
      * the update will be proceeded based on the `this.userOptions` property.
      * The `column` options are merged using the `id` property as a key.
      *
-     * @param render
-     * Whether to re-render the Grid after updating the options.
+     * @param redraw
+     * Whether to redraw the Grid after updating the options.
      *
      * @param oneToOne
      * When `false` (default), the existing column options will be merged with
@@ -577,41 +644,280 @@ export class Grid {
      * the columns not defined in the new options will be removed.
      */
     public async update(
-        options: Options = {},
-        render = true,
+        options: Omit<Options, 'id'> = {},
+        redraw = true,
         oneToOne = false
     ): Promise<void> {
-        this.loadUserOptions(options, oneToOne);
+        fireEvent(this, 'beforeUpdate', {
+            scope: 'grid',
+            options,
+            redraw,
+            oneToOne
+        });
 
-        if (!this.dataTable || options.dataTable) {
-            this.userOptions.dataTable = options.dataTable;
-            (this.options ?? {}).dataTable = options.dataTable;
+        const { viewport } = this;
+        const diff = this.loadUserOptions(options, oneToOne);
+        const flags = this.dirtyFlags;
 
-            this.loadDataTable();
-            this.querying.shouldBeUpdated = true;
+        if (viewport) {
+            if (!this.dataTable || 'dataTable' in diff) {
+                this.userOptions.dataTable = options.dataTable;
+                (this.options ?? {}).dataTable = options.dataTable;
+
+                this.loadDataTable();
+
+                // TODO: Sometimes it can be too much, so we need to check if
+                // the columns have changed or just their data. If just their
+                // data, we can just mark the grid.table as dirty instead of the
+                // whole grid.
+                flags.add('grid');
+            }
+
+            if ('columns' in diff) {
+                const ids = Object.keys(diff.columns ?? {});
+
+                for (const id of ids) {
+                    // TODO: Move this to the column update method.
+                    this.loadColumnOptionDiffs(
+                        viewport, id, diff.columns?.[id]
+                    );
+                    delete diff.columns?.[id];
+                }
+                delete diff.columns;
+            }
+
+            if ('columnDefaults' in diff) {
+                this.loadColumnOptionDiffs(viewport, null, diff.columnDefaults);
+                delete diff.columnDefaults;
+            }
+
+            if (diff.lang) {
+                const langDiff = diff.lang;
+                if ('locale' in langDiff) {
+                    this.locale = langDiff.locale as typeof this.locale;
+                    this.time.update({ locale: this.locale });
+                }
+                delete langDiff.locale;
+
+                // TODO: Add more lang diff checks here.
+
+                if (Object.keys(langDiff).length > 0) {
+                    flags.add('grid');
+                }
+            }
+            delete diff.lang;
+
+            if ('time' in diff) {
+                this.time.update(diff.time);
+                delete diff.time;
+            }
+
+            if (diff.pagination) {
+                const paginationDiff = diff.pagination;
+                if ('enabled' in paginationDiff) {
+                    if (!this.pagination && paginationDiff.enabled) {
+                        this.pagination = new Pagination(this);
+                    }
+                }
+                this.pagination?.update(paginationDiff);
+            }
+            delete diff.pagination;
+
+            // TODO: Add more options that can be optimized here.
+
+            if (Object.keys(diff).length > 0) {
+                flags.add('grid');
+            }
+        } else {
+            flags.add('grid');
         }
 
-        if (!render) {
+        if (redraw) {
+            await this.redraw();
+        }
+
+        fireEvent(this, 'afterUpdate', {
+            scope: 'grid',
+            options,
+            redraw,
+            oneToOne
+        });
+    }
+
+    /**
+     * Loads the column option diffs by updating the dirty flags.
+     *
+     * @param vp
+     * The viewport that the column option diffs should be loaded for.
+     *
+     * @param columnId
+     * The ID of the column that should be updated.
+     *
+     * @param columnDiff
+     * The difference between the previous and the new column options in form
+     * of a record of `[column.id]: column.options`. If `null`, assume that
+     * it refers to the column defaults.
+     */
+    private loadColumnOptionDiffs(
+        vp: Table,
+        columnId: string | null,
+        columnDiff: DeepPartial<IndividualColumnOptions> = {}
+    ): void {
+        if (Object.keys(columnDiff).length < 1) {
             return;
         }
 
-        this.initAccessibility();
-        this.initPagination();
+        const flags = this.dirtyFlags;
+        const column = columnId ? this.viewport?.getColumn(columnId) : null;
 
-        this.querying.loadOptions();
+        if (
+            column !== null && ( // Column null = column defaults
+                (!column && columnDiff.enabled !== false) ||
+                (column && columnDiff.enabled === false)
+            )
+        ) {
+            flags.add('grid');
+        }
+        delete columnDiff.enabled;
 
-        // Update locale.
-        const locale = options.lang?.locale;
-        if (locale) {
-            this.locale = locale;
-            this.time.update(extend<TimeBase.TimeOptions>(
-                options.time || {},
-                { locale: this.locale }
-            ));
+        if ('cells' in columnDiff) {
+            const cellsDiff = columnDiff.cells ?? {};
+
+            if (
+                'format' in cellsDiff ||
+                'formatter' in cellsDiff ||
+                'className' in cellsDiff // TODO: check if this too
+            ) {
+                // Optimization idea: list of columns to update
+                flags.add('rows');
+            }
+            delete cellsDiff.format;
+            delete cellsDiff.formatter;
+            delete cellsDiff.className;
+
+            if (Object.keys(cellsDiff).length > 0) {
+                flags.add('rows');
+            }
+        }
+        delete columnDiff.cells;
+
+        if ('width' in columnDiff) {
+            vp.columnResizing.isDirty = true;
+        }
+        delete columnDiff.width;
+
+        if ('sorting' in columnDiff) {
+            const sortingDiff = columnDiff.sorting ?? {};
+
+            if (
+                'compare' in sortingDiff ||
+                'order' in sortingDiff
+            ) {
+                flags.add('sorting');
+            }
+            delete sortingDiff.compare;
+            delete sortingDiff.order;
+
+            // Idea: sortable - redraw only header cell
+
+            if (Object.keys(sortingDiff).length > 0) {
+                flags.add('grid');
+            }
+        }
+        delete columnDiff.sorting;
+
+        if ('filtering' in columnDiff) {
+            const filteringDiff = columnDiff.filtering ?? {};
+
+            if (
+                'condition' in filteringDiff ||
+                'value' in filteringDiff
+            ) {
+                flags.add('filtering');
+            }
+            delete filteringDiff.condition;
+            delete filteringDiff.value;
+
+            if (Object.keys(filteringDiff).length > 0) {
+                flags.add('grid');
+            }
+        }
+        delete columnDiff.filtering;
+
+        if (Object.keys(columnDiff).length > 0) {
+            flags.add('grid');
+        }
+    }
+
+    /**
+     * Redraws the Grid in more optimized way than the regular render method.
+     * It checks what parts of the Grid are marked as dirty and redraws only
+     * them minimizing the number of DOM operations.
+     */
+    public async redraw(): Promise<void> {
+        fireEvent(this, 'beforeRedraw');
+
+        const flags = this.dirtyFlags;
+
+        if (flags.has('grid')) {
+            return await this.render();
         }
 
-        await this.querying.proceed();
-        this.renderViewport();
+        const { viewport: vp, pagination } = this;
+        const colResizing = vp?.columnResizing;
+
+        if (
+            flags.has('sorting') ||
+            flags.has('filtering') ||
+            pagination?.isDirtyQuerying
+        ) {
+            this.querying.loadOptions();
+        }
+
+        if (colResizing?.isDirty) {
+            colResizing.loadColumns();
+        }
+
+        if (
+            flags.has('rows') ||
+            flags.has('sorting') ||
+            flags.has('filtering') ||
+            pagination?.isDirtyQuerying
+        ) {
+            await vp?.updateRows();
+        } else if (
+            flags.has('reflow') ||
+            colResizing?.isDirty
+        ) {
+            vp?.reflow();
+        }
+
+        const columns = vp?.columns ?? [];
+
+        if (
+            flags.has('sorting') ||
+            flags.has('filtering')
+        ) {
+            for (const column of columns) {
+                column.header?.toolbar?.refreshState();
+            }
+        }
+
+        if (flags.has('filtering')) {
+            for (const column of columns) {
+                column.filtering?.refreshState();
+            }
+        }
+
+        if (pagination?.isDirtyQuerying) {
+            pagination.updateControls(true);
+        }
+
+        delete pagination?.isDirtyQuerying;
+        delete colResizing?.isDirty;
+        flags.clear();
+
+        fireEvent(this, 'afterRedraw');
     }
 
     public updateColumn(
@@ -638,8 +944,8 @@ export class Grid {
      * The options of the columns that should be updated. If null,
      * column options for this column ID will be removed.
      *
-     * @param render
-     * Whether to re-render the Grid after updating the columns.
+     * @param redraw
+     * Whether to redraw the Grid after updating the columns.
      *
      * @param overwrite
      * If true, the column options will be updated by replacing the existing
@@ -648,15 +954,59 @@ export class Grid {
     public async updateColumn(
         columnId: string,
         options: NoIdColumnOptions,
-        render: boolean = true,
+        redraw = true,
         overwrite = false
     ): Promise<void> {
-        this.setColumnOptions([{
+        fireEvent(this, 'beforeUpdate', {
+            scope: 'column',
+            options,
+            redraw,
+            overwrite,
+            columnId
+        });
+
+        const vp = this.viewport;
+        const diffs = this.setColumnOptions([{
             id: columnId,
             ...options
         }], overwrite);
+        const diff = diffs?.[columnId];
 
-        await this.update(void 0, render);
+        if (diff && vp) {
+            this.loadColumnOptionDiffs(vp, columnId, diff);
+        }
+
+        if (redraw) {
+            await this.redraw();
+        }
+
+        fireEvent(this, 'afterUpdate', {
+            scope: 'column',
+            options,
+            redraw,
+            overwrite,
+            columnId
+        });
+    }
+
+    private async render(): Promise<void> {
+        if (this.isRendered) {
+            this.destroy(true);
+        }
+
+        this.loadDataTable();
+
+        this.initContainer(this.renderTo);
+        this.initAccessibility();
+        this.initPagination();
+
+        this.querying.loadOptions();
+        await this.querying.proceed();
+
+        this.renderViewport();
+
+        this.isRendered = true;
+        this.dirtyFlags.clear();
     }
 
     /**
@@ -842,7 +1192,7 @@ export class Grid {
     public renderViewport(): void {
         const viewportMeta = this.viewport?.getStateMeta();
         const pagination = this.pagination;
-        const paginationPosition = pagination?.options.position;
+        const paginationPosition = pagination?.options?.position;
 
         this.enabledColumns = this.getEnabledColumnIDs();
 
@@ -950,6 +1300,8 @@ export class Grid {
      * reference, it should be used instead of creating a new one.
      */
     private loadDataTable(): void {
+        this.querying.shouldBeUpdated = true;
+
         // Unregister all events attached to the previous data table.
         this.dataTableEventDestructors.forEach((fn): void => fn());
         const tableOptions = this.options?.dataTable;
@@ -1021,13 +1373,19 @@ export class Grid {
 
     /**
      * Destroys the Grid.
+     *
+     * @param onlyDOM
+     * Whether to destroy the Grid instance completely (`false` - default) or
+     * just the DOM elements (`true`). If `true`, the Grid can be re-rendered
+     * after destruction by calling the `render` method.
      */
-    public destroy(): void {
-        const dgIndex = Grid.grids.findIndex(
-            (dg): boolean => dg === this
-        );
+    public destroy(onlyDOM = false): void {
+        this.isRendered = false;
+        const dgIndex = Grid.grids.findIndex((dg): boolean => dg === this);
 
         this.dataTableEventDestructors.forEach((fn): void => fn());
+        this.accessibility?.destroy();
+        this.pagination?.destroy();
         this.viewport?.destroy();
 
         if (this.container) {
@@ -1035,6 +1393,10 @@ export class Grid {
             this.container.classList.remove(
                 Globals.getClassName('container')
             );
+        }
+
+        if (onlyDOM) {
+            return;
         }
 
         // Clear all properties
@@ -1181,6 +1543,30 @@ export class Grid {
  *  Declarations
  *
  * */
+
+/**
+ * Column options as a record of column IDs to column options.
+ * @internal
+ */
+export type NonArrayColumnOptions = {
+    [x: string]: NoIdColumnOptions;
+};
+
+/**
+ * Options with columns as a record of column IDs to column options.
+ * @internal
+ */
+export type NonArrayOptions = Omit<Options, 'columns'> & {
+    columns?: NonArrayColumnOptions;
+};
+
+/**
+ * Dirty flags used to mark the parts of the Grid that need to be updated.
+ * @internal
+ */
+export type GridDirtyFlags = (
+    'grid' | 'rows' | 'sorting' | 'filtering' | 'reflow'
+);
 
 /**
  * @internal

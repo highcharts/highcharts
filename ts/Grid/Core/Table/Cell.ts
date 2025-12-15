@@ -29,6 +29,11 @@ import type HeaderRow from './Header/HeaderRow';
 import Column from './Column';
 import Row from './Row';
 import Templating from '../../../Core/Templating.js';
+import U from '../../../Core/Utilities.js';
+
+const {
+    fireEvent
+} = U;
 
 
 /* *
@@ -140,6 +145,12 @@ abstract class Cell {
         this.cellEvents.push(['keydown', (e): void => {
             this.onKeyDown(e as KeyboardEvent);
         }]);
+        this.cellEvents.push(['mouseout', (): void => {
+            this.onMouseOut();
+        }]);
+        this.cellEvents.push(['mouseover', (): void => {
+            this.onMouseOver();
+        }]);
 
         this.cellEvents.forEach((pair): void => {
             this.htmlElement.addEventListener(pair[0], pair[1]);
@@ -237,6 +248,32 @@ abstract class Cell {
                 nextRow.cells[column.index + dir[1]]?.htmlElement.focus();
             }
         }
+    }
+
+    /**
+     * Handles the mouse over event on the cell.
+     * @internal
+     */
+    protected onMouseOver(): void {
+        const { grid } = this.row.viewport;
+        grid.hoverColumn(this.column?.id);
+
+        fireEvent(this, 'mouseOver', {
+            target: this
+        });
+    }
+
+    /**
+     * Handles the mouse out event on the cell.
+     * @internal
+     */
+    protected onMouseOut(): void {
+        const { grid } = this.row.viewport;
+        grid.hoverColumn();
+
+        fireEvent(this, 'mouseOut', {
+            target: this
+        });
     }
 
     /**
