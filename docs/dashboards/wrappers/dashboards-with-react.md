@@ -89,7 +89,7 @@ export default function App() {
 ```
 
 ### Option B: Custom layout
-When you need full markup control, disable the GUI and point components to your own element ids.
+When you need [full markup control](https://www.highcharts.com/docs/dashboards/layout-description#custom-layout), disable `gui` and point components to your own element ids.
 ```tsx
 // App.tsx
 export default function App() {
