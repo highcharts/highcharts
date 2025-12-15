@@ -15,10 +15,10 @@ Highcharts.chart('container', {
             colorByPoint: true
         }
     ],
-    yAxis: {
+    xAxis: {
         visible: true,
         lineColor: '#333333',
-        lineWidth: 0
+        lineWidth: 5
     }
 });
 
@@ -28,19 +28,19 @@ DemoKit.setupArrayHandler(
     '.highcharts-demo-button[data-path="title.align"]'
 );
 DemoKit.setupBooleanHandler(
-    'yAxis.visible',
-    'toggle-checkbox-yAxis-visible', true
+    'xAxis.visible',
+    'toggle-checkbox-xAxis-visible', true
 );
 DemoKit.setupColorHandler(
-    'yAxis.lineColor',
-    'yAxis-lineColor',
-    'yAxis-lineColor-opacity',
-    'yAxis-lineColor-value'
+    'xAxis.lineColor',
+    'xAxis-lineColor',
+    'xAxis-lineColor-opacity',
+    'xAxis-lineColor-value', '#333333'
 );
 DemoKit.setupNumberHandler(
-    'yAxis.lineWidth',
-    'range-input-yAxis-lineWidth',
-    'range-value-yAxis-lineWidth'
+    'xAxis.lineWidth',
+    'range-input-xAxis-lineWidth',
+    'range-value-xAxis-lineWidth', 5
 );
 
 DemoKit.updateOptionsPreview();

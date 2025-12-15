@@ -24,9 +24,9 @@ const types = await loadExportedTypes('code/highcharts.d.ts');
 
 const paths = [
     'title.align=center',
-    'yAxis.visible=true',
-    'yAxis.lineColor',
-    'yAxis.lineWidth'
+    'xAxis.visible',
+    'xAxis.lineColor',
+    'xAxis.lineWidth=5'
 ];
 /*
 const paths = [
@@ -360,7 +360,10 @@ export async function getDemoTS(metaList: Array<{
         }
 
         // Add call for this specific path
-        handlerCalls.push(handler.mod.getTSCall(meta.path, meta.overrideValue));
+        handlerCalls.push(handler.mod.getTSCall(
+            meta.path,
+            meta.overrideValue ?? meta.defaultValue
+        ));
     }
 
     // Add all the calls
