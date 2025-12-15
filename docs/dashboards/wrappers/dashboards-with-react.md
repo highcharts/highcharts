@@ -212,6 +212,6 @@ export default function App() {
 - `isAsync` – async rendering (useful for external data).
 
 ## Demos
-- [Basic live example](https://stackblitz.com/edit/stackblitz-starters-3aaelrn5)
+- [Example using built-in layout](https://stackblitz.com/edit/stackblitz-starters-3aaelrn5)
 - [Custom layout live example](https://stackblitz.com/edit/stackblitz-starters-ljqhy6cw)
 - [Component live example](https://stackblitz.com/edit/stackblitz-starters-xjeut4dq)
