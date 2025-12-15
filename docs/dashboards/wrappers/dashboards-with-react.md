@@ -41,11 +41,6 @@ Dashboards.PluginHandler.addPlugin(Dashboards.GridPlugin);
 ## 4. Prepare the structure and layout
 
 Dashboards can use the built-in layout system or your own custom HTML.
-- requires the `layout` module,
-- works with rows and cells that you can nest,
-- responds to container resizing (easy responsiveness),
-- lets you disable the GUI and use your own structure when you need full control.
-Read more in the [Layout docs](https://www.highcharts.com/docs/dashboards/layout-description).
 
 ### Option A: Built-in layout
 
@@ -61,10 +56,11 @@ Define the dashboard in a small React app and pass the config to `Dashboards.boa
 // App.tsx
 export default function App() {
   const config = {
-    gui: { enabled: true },
-    layout: {
-      rows: [{
-        cells: [{ id: 'cell-0' }, { id: 'cell-1' }]
+    gui: {
+      layout: [{
+        rows: [{
+          cells: [{ id: 'cell-0' }, { id: 'cell-1' }]
+        }]
       }]
     },
     components: [{
@@ -204,12 +200,6 @@ export default function App() {
   );
 }
 ```
-
-## 5. Create a dashboard
-`Dashboards.board(container, options, isAsync?)` expects:
-- `container` – element id or DOM reference,
-- `options` – dashboard config (layout, components, gui, etc.),
-- `isAsync` – async rendering (useful for external data).
 
 ## Demos
 - [Example using built-in layout](https://stackblitz.com/edit/stackblitz-starters-3aaelrn5)
