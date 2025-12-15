@@ -12,7 +12,7 @@
 
 import { promises as fs } from 'fs';
 import { loadExportedTypes } from './load-types.ts';
-// import prettier from 'prettier';
+import { exec } from 'child_process';
 
 // Type handlers
 import * as booleanHandler from './type-handlers/boolean.ts';
@@ -351,24 +351,22 @@ export async function getDemoTS(metaList: Array<{
 
     // Add all the calls
     if (handlerCalls.length > 0) {
-        ts += '\n// Initialize handlers\n';
+        ts += `
+// GUI components for demo purpose
+`;
         ts += handlerCalls.join('\n');
     }
 
     // Initialize the preview
     ts += `
 
-// Initialize options preview
 DemoKit.updateOptionsPreview();
-Highcharts.addEvent(Highcharts.Chart, 'render', DemoKit.updateOptionsPreview);`;
+Highcharts.addEvent(
+    Highcharts.Chart,
+    'render',
+    DemoKit.updateOptionsPreview
+);`;
 
-    // Format with Prettier for clean TS output
-    /*
-  ts = await prettier.format(
-    ts,
-    { parser: 'typescript', singleQuote: true, tabWidth: 4 }
-  );
-  */
     return ts;
 }
 
@@ -456,6 +454,30 @@ export async function saveDemoFile() {
             details
         )
     ]);
+
+    // Format the generated demo.ts file with ESLint
+    await new Promise((resolve, reject) => {
+        exec(
+            [
+                'npx',
+                'eslint',
+                '--fix',
+                '../highcharts/samples/highcharts/studies/sample-gen/demo.ts'
+            ].join(' '),
+            (error, stdout, stderr) => {
+                if (error) {
+                    console.error(`Error formatting demo.ts: ${error.message}`);
+                    reject(error);
+                    return;
+                }
+                if (stderr) {
+                    console.error(`ESLint stderr: ${stderr}`);
+                }
+                console.log(`ESLint stdout: ${stdout}`);
+                resolve(null);
+            }
+        );
+    });
 }
 
 await saveDemoFile();
