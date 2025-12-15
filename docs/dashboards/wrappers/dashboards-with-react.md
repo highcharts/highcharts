@@ -47,7 +47,7 @@ Dashboards can use the built-in layout system (rows and cells based on Flexbox) 
 - lets you disable the GUI and use your own structure when you need full control.
 Read more in the [Layout docs](https://www.highcharts.com/docs/dashboards/layout-description).
 
-### A. Built-in layout – quick start (full demo)
+### Option A: Built-in layout
 
 The layout module is required to use the built-in rows/cells system:
 
