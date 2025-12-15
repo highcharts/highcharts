@@ -13,37 +13,10 @@ export function getHTML(path: string) {
     </tr>`;
 }
 
-// Generate a reusable function for boolean handlers
-export function getTSFunction() {
-    return `
-function setupBooleanHandler(
-  path: string,
-  elementId: string,
-  overrideValue?: boolean
-) {
-  const input = document.getElementById(elementId) as HTMLInputElement;
-  if (input) {
-
-    // Use override value if provided, otherwise get current value from chart
-    const currentValue = overrideValue !== undefined ?
-      overrideValue :
-      getNestedValue(Highcharts.charts[0]!.options, path);
-    input.checked = currentValue;
-
-    input.addEventListener('change', function () {
-      const value = this.checked;
-      setNestedValue(Highcharts.charts[0]!, path, value);
-    });
- }
-}
-
-  `;
-}
-
 export function getTSCall(path: string, overrideValue?: any) {
     const rid = path.replace(/[^a-z0-9_-]/gui, '-');
     const valueParam = overrideValue !== void 0 ? `, ${overrideValue}` : '';
-    return `setupBooleanHandler(
+    return `DemoKit.setupBooleanHandler(
     '${path}',
     'toggle-checkbox-${rid}'${valueParam}
 );`;

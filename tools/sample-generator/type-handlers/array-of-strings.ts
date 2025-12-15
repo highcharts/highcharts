@@ -23,27 +23,8 @@ export function getHTML(path: string, options: string[], defaultValue?: any) {
     return html;
 }
 
-export function getTSFunction() {
-    return `
-function setupArrayHandler(path: string, selector: string) {
-  document.querySelectorAll(selector).forEach((btn) => {
-    btn.addEventListener('click', function(this: HTMLElement) {
-      const value = this.getAttribute('data-value');
-      setNestedValue(Highcharts.charts[0]!, path, value);
-
-      // Update active state for all buttons in this group
-      const allButtons = document.querySelectorAll(\`[data-path="\${path}"]\`);
-      allButtons.forEach(b => b.classList.remove('active'));
-      this.classList.add('active');
-    });
-  });
-}
-
-  `;
-}
-
 export function getTSCall(path: string) {
-    return `setupArrayHandler(
+    return `DemoKit.setupArrayHandler(
     '${path}',
     '.highcharts-demo-button[data-path="${path}"]'
 );`;

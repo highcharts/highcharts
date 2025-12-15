@@ -21,56 +21,10 @@ export function getHTML(path: string) {
     </tr>`;
 }
 
-export function getTSFunction() {
-    return `
-function setupColorHandler(
-  path: string,
-  colorId: string,
-  opacityId: string,
-  valueId: string,
-  overrideValue?: string
-) {
-  const colorEl = document.getElementById(colorId) as HTMLInputElement;
-  const opacityEl = document.getElementById(opacityId) as HTMLInputElement;
-  const valueEl = document.getElementById(valueId) as HTMLElement;
-
-  if (colorEl && opacityEl) {
-
-    function update() {
-      const chart = Highcharts.charts[0]!;
-      const rgba = colorEl.value; // e.g. #RRGGBB
-      const opacity = parseFloat(opacityEl.value);
-      // Use Highcharts.color to apply opacity and produce rgba()/hex
-      const hcColor = (Highcharts as any).color(rgba).setOpacity(opacity).get();
-      setNestedValue(chart, path, hcColor, false);
-      if (valueEl) valueEl.textContent = hcColor;
-    }
-
-    // Use override value if provided, otherwise get current chart value
-    const chart = Highcharts.charts[0]!;
-    const currentValue = overrideValue !== undefined ?
-      overrideValue :
-      (getNestedValue(chart.options, path) || '#00000000');
-    const hcColor = (Highcharts as any).color(currentValue);
-    const rgba = hcColor.get('rgba');
-    const opacity = hcColor.rgba[3] || 0;
-
-    colorEl.value = currentValue;
-    opacityEl.value = String(opacity);
-    if (valueEl) valueEl.textContent = rgba;
-
-    colorEl.addEventListener('input', update);
-    opacityEl.addEventListener('input', update);
-  }
-}
-
-  `;
-}
-
 export function getTSCall(path: string, overrideValue?: any) {
     const id = toId(path);
     const valueParam = overrideValue !== void 0 ? `, '${overrideValue}'` : '';
-    return `setupColorHandler(
+    return `DemoKit.setupColorHandler(
     '${path}',
     '${id}',
     '${id}-opacity',

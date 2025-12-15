@@ -23,41 +23,10 @@ export function getHTML(path: string) {
     </tr>`;
 }
 
-export function getTSFunction() {
-    return `
-function setupNumberHandler(
-  path: string,
-  inputId: string,
-  valueId: string,
-  overrideValue?: number
-) {
-  const input = document.getElementById(inputId) as HTMLInputElement;
-  const valueEl = document.getElementById(valueId);
-
-  if (input && valueEl) {
-
-    // Use override value if provided, otherwise get current value from chart
-    const currentValue = overrideValue !== undefined ?
-      overrideValue :
-      (getNestedValue(Highcharts.charts[0]!.options, path) ?? 0);
-    input.value = String(currentValue);
-    valueEl.textContent = String(currentValue);
-
-    input.addEventListener('input', function () {
-      const value = parseFloat(this.value);
-      valueEl.textContent = String(value);
-      setNestedValue(Highcharts.charts[0]!, path, value, false);
-    });
-  }
-}
-
-  `;
-}
-
 export function getTSCall(path: string, overrideValue?: any) {
     const rid = path.replace(/[^a-z0-9_-]/gui, '-');
     const valueParam = overrideValue !== void 0 ? `, ${overrideValue}` : '';
-    return `setupNumberHandler(
+    return `DemoKit.setupNumberHandler(
     '${path}',
     'range-input-${rid}',
     'range-value-${rid}'${valueParam}

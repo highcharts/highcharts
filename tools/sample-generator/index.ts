@@ -23,7 +23,8 @@ import * as colorHandler from './type-handlers/color.ts';
 const types = await loadExportedTypes('code/highcharts.d.ts');
 
 const paths = [
-    'yAxis.tickPixelInterval=72'
+    'yAxis.opposite',
+    'yAxis.lineWidth'
 ];
 /*
 const paths = [
@@ -328,49 +329,6 @@ export async function getDemoTS(metaList: Array<{
     // "undefined" in tree.json
         .replace(/"undefined"/gu, 'undefined');
 
-    // Generate helper functions once
-    ts += `
-// Helper functions
-function getNestedValue(obj: any, path: string) {
-  return path.split('.').reduce((current, key) => current?.[key], obj);
-}
-
-function setNestedValue(
-    chart: Highcharts.Chart,
-    path: string,
-    value: any,
-    animation?: boolean
-) {
-  const keys = path.split('.');
-  const updateObj: any = {};
-  let cur = updateObj;
-  for (let i = 0; i < keys.length; i++) {
-    const k = keys[i];
-    if (i === keys.length - 1) {
-      cur[k] = value;
-    } else {
-      cur[k] = {};
-      cur = cur[k];
-    }
-  }
-  chart.update(updateObj, true, true, animation);
-}
-
-function updateOptionsPreview() {
-  const previewEl = document.getElementById('options-preview');
-  if (previewEl && Highcharts.charts[0]) {
-    const options = Highcharts.charts[0].getOptions();
-    // Empty xAxis and yAxis structures
-    Object.keys(options).forEach(key => {
-      if (JSON.stringify(options[key]) === '[{}]') {
-        delete options[key];
-      }
-    });
-    previewEl.textContent = JSON.stringify(options, null, 2);
-  }
-}
-`;
-
     // Collect unique handler types and generate functions once
     const handlerTypes = new Set<string>();
     const handlerCalls: string[] = [];
@@ -384,7 +342,7 @@ function updateOptionsPreview() {
         // Add function if not already added
         if (!handlerTypes.has(handler.kind)) {
             handlerTypes.add(handler.kind);
-            ts += handler.mod.getTSFunction();
+            // ts += handler.mod.getTSFunction();
         }
 
         // Add call for this specific path
@@ -400,9 +358,9 @@ function updateOptionsPreview() {
     // Initialize the preview
     ts += `
 
-    // Initialize options preview
-    updateOptionsPreview();
-    Highcharts.addEvent(Highcharts.Chart, 'render', updateOptionsPreview);`;
+// Initialize options preview
+DemoKit.updateOptionsPreview();
+Highcharts.addEvent(Highcharts.Chart, 'render', DemoKit.updateOptionsPreview);`;
 
     // Format with Prettier for clean TS output
     /*
