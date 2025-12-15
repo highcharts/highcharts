@@ -88,7 +88,7 @@ export default function App() {
 }
 ```
 
-### B. Custom layout (manual rows/cells, full demo)
+### Option B: Custom layout
 When you need full markup control, disable the GUI and point components to your own element ids.
 ```tsx
 // App.tsx
