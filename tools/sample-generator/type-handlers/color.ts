@@ -62,11 +62,11 @@ input[type="color"]::-webkit-color-swatch {
 }
 
 input[type="color"]::-moz-color-swatch {
-  border-radius: 50%;
+    border-radius: 50%;
 }
 
 input.opacity-input {
-  width: 80px;
+    width: 80px;
 }
 `;
 }

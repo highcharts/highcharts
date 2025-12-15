@@ -1,0 +1,65 @@
+<!-- script src="https://code.highcharts.com/highcharts-autoload.js"></script
+-->
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/demo-kit/demo-kit.js"></script>
+<figure class="highcharts-figure">
+  <div id="container"></div>
+
+</figure>
+
+<div class="control-section">
+<table>
+<tr><td><label>title.align</label></td><td>
+      <button
+        class="highcharts-demo-button"
+        data-path="title.align"
+        data-value="left"
+      >left</button>
+    
+      <button
+        class="highcharts-demo-button"
+        data-path="title.align"
+        data-value="center"
+      >center</button>
+    
+      <button
+        class="highcharts-demo-button"
+        data-path="title.align"
+        data-value="right"
+      >right</button>
+    </td></tr>
+    <tr>
+      <td><label for="toggle-checkbox-yAxis-visible">yAxis.visible</label></td>
+      <td>
+        <label class="hc-toggle">
+          <input type="checkbox" id="toggle-checkbox-yAxis-visible" />
+          <span class="hc-toggle-slider" aria-hidden="true"></span>
+        </label>
+      </td>
+    </tr>
+    <tr>
+      <td><label for="yAxis-lineColor">yAxis.lineColor</label></td>
+      <td>
+        <input type="color" id="yAxis-lineColor" name="yAxis-lineColor" />
+        <label for="yAxis-lineColor-opacity" class="opacity-label">Opacity</label>
+        <input type="range" id="yAxis-lineColor-opacity" name="yAxis-lineColor-opacity" min="0"
+          class="opacity-input" max="1" step="0.01" />
+        <span class="value" id="yAxis-lineColor-value"></span>
+      </td>
+    </tr>
+    <tr>
+      <td><label for="range-input-yAxis-lineWidth">yAxis.lineWidth</label></td>
+      <td>
+        <input type="range" id="range-input-yAxis-lineWidth"
+          min="0" max="5" step="1" />
+        <span id="range-value-yAxis-lineWidth" class="hc-range-value"></span>
+      </td>
+    </tr>
+</table>
+
+</div>
+
+<div class="preview-section">
+  <h3>Chart Options Preview</h3>
+  <pre id="options-preview"></pre>
+</div>

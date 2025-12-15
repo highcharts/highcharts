@@ -44,20 +44,25 @@ export function getCSS() {
 .hc-toggle-slider {
     position: absolute;
     cursor: pointer;
-    top: 0; left: 0; right: 0; bottom: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     background: #cfcfcf;
     border-radius: 9999px;
     transition: background 200ms, box-shadow 200ms;
 }
 
 .hc-toggle-slider::before {
-    content: '';
+    content: "";
     position: absolute;
-    height: 20px; width: 20px;
-    left: 3px; top: 3px;
+    height: 20px;
+    width: 20px;
+    left: 3px;
+    top: 3px;
     background: #fff;
     border-radius: 50%;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
     transition: transform 200ms;
 }
 

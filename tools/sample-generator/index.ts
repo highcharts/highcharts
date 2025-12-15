@@ -23,7 +23,9 @@ import * as colorHandler from './type-handlers/color.ts';
 const types = await loadExportedTypes('code/highcharts.d.ts');
 
 const paths = [
-    'yAxis.opposite',
+    'title.align',
+    'yAxis.visible',
+    'yAxis.lineColor',
     'yAxis.lineWidth'
 ];
 /*
@@ -342,7 +344,6 @@ export async function getDemoTS(metaList: Array<{
         // Add function if not already added
         if (!handlerTypes.has(handler.kind)) {
             handlerTypes.add(handler.kind);
-            // ts += handler.mod.getTSFunction();
         }
 
         // Add call for this specific path
@@ -402,7 +403,7 @@ export async function getDemoCSS(
 
     // If the placeholder exists, replace it; otherwise append
     if (css.includes(PLACEHOLDER)) {
-        css = css.replace(PLACEHOLDER, handlersCSS);
+        css = css.replace(PLACEHOLDER, handlersCSS.trim());
     } else {
         css += `\n${handlersCSS}`;
     }

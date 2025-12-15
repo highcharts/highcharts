@@ -42,7 +42,7 @@ export function getCSS() {
     margin-left: 8px;
 }
 
-input[id^='range-input-'] {
+input[id^="range-input-"] {
     vertical-align: middle;
     margin-left: 10px;
     width: 180px;
