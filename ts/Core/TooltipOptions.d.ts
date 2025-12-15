@@ -50,6 +50,7 @@ export interface TooltipOptions {
     borderWidth?: number;
     className?: string;
     changeDecimals?: number;
+    containerNode?: HTMLElement;
     /** @deprecated */
     crosshairs?: any;
     dateTimeLabelFormats: Time.DateTimeLabelFormatsOption;
