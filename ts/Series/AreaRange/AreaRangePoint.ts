@@ -49,17 +49,11 @@ declare module '../../Core/Series/PointBase' {
     interface PointBase {
         /**
          * Range series only. The high or maximum value for each data point.
-         *
-         * @name Highcharts.Point#high
-         * @type {number|undefined}
          */
         high?: AreaRangePoint['high'];
 
         /**
          * Range series only. The low or minimum value for each data point.
-         *
-         * @name Highcharts.Point#low
-         * @type {number|undefined}
          */
         low?: AreaRangePoint['low'];
 

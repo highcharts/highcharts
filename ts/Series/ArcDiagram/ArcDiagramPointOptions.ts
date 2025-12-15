@@ -47,7 +47,6 @@ export interface ArcDiagramPointOptions extends SankeyPointOptions {
      * @since 10.0.0
      * @default undefined
      * @product highcharts
-     * @apioption series.arcdiagram.data.linkWeight
      */
     linkWeight?: number;
 

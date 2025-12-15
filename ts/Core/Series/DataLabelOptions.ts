@@ -47,10 +47,6 @@ export interface DataLabelsFilterOptionsObject {
     /**
      * The operator to compare by. Can be one of `>`, `<`, `>=`, `<=`,
      * `==`, `===`, `!=` and `!==`.
-     *
-     * @type       {string}
-     * @validvalue [">", "<", ">=", "<=", "==", "===", "!=", "!=="]
-     * @apioption  plotOptions.series.dataLabels.filter.operator
      */
     operator: DataLabelsFilterOperatorValue;
 
