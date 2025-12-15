@@ -75,8 +75,8 @@ class MenuPopup extends ContextMenu {
             columnOptions.filtering?.enabled &&
             !columnOptions.filtering.inline
         );
-        const sortingEnabled = columnOptions.sorting?.sortable ||
-            columnOptions.sorting?.enabled;
+        const sortingEnabled = columnOptions.sorting?.enabled ??
+            columnOptions.sorting?.sortable;
 
         this.addHeader(
             this.button.toolbar?.column.header?.value || '',
