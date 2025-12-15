@@ -145,13 +145,6 @@ export interface DrillupCallbackFunction {
     (this: Chart, event: Drilldown.DrillupEventObject): void;
 }
 
-export interface DrilldownActiveDataLabelStyleOptions {
-    color?: string;
-    cursor?: string;
-    fontWeight?: string;
-    textDecoration?: string;
-}
-
 export interface DrilldownOptions {
     /**
      * Additional styles to apply to the X axis label for a point that
@@ -187,7 +180,7 @@ export interface DrilldownOptions {
      * @since   3.0.8
      * @product highcharts highmaps
      */
-    activeDataLabelStyle?: (CSSObject|DrilldownActiveDataLabelStyleOptions);
+    activeDataLabelStyle?: CSSObject;
 
     /**
      * When this option is false, clicking a single point will drill down
