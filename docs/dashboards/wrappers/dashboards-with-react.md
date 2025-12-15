@@ -214,4 +214,4 @@ export default function App() {
 ## Demos
 - [Example using built-in layout](https://stackblitz.com/edit/stackblitz-starters-3aaelrn5)
 - [Custom layout live example](https://stackblitz.com/edit/stackblitz-starters-ljqhy6cw)
-- [Component live example](https://stackblitz.com/edit/stackblitz-starters-xjeut4dq)
+- [Example using dedicated component](https://stackblitz.com/edit/stackblitz-starters-xjeut4dq)
