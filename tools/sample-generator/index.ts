@@ -9,7 +9,7 @@
  * - `node tools/sample-generator/index.ts`
  */
 
-
+import colors from 'colors/safe.js';
 import { promises as fs } from 'fs';
 import { loadExportedTypes } from './load-types.ts';
 import { exec } from 'child_process';
@@ -23,8 +23,8 @@ import * as colorHandler from './type-handlers/color.ts';
 const types = await loadExportedTypes('code/highcharts.d.ts');
 
 const paths = [
-    'title.align',
-    'yAxis.visible',
+    'title.align=center',
+    'yAxis.visible=true',
     'yAxis.lineColor',
     'yAxis.lineWidth'
 ];
@@ -230,6 +230,19 @@ async function getPathMeta(inPaths: string[]) {
             options = types[mainType];
         }
         const defaultValue = node.doclet.defaultValue ?? node.meta.default;
+
+        if (overrideValue !== void 0) {
+            console.log(colors.green(
+                `Using override for ${path}: ${overrideValue}`
+            ));
+        } else if (defaultValue !== void 0) {
+            console.log(colors.green(
+                `Found default for ${path}: ${defaultValue}`
+            ));
+        } else {
+            console.warn(colors.yellow(`No default value for path: ${path}`));
+        }
+
         list.push({
             path,
             node,
@@ -372,42 +385,8 @@ Highcharts.addEvent(
 }
 
 // Function to get CSS from template
-export async function getDemoCSS(
-    metaList: Array<{
-        path: string;
-        mainType: string;
-        options?: string[];
-        defaultValue?: any;
-        overrideValue?: any
-    }>
-) {
-    const PLACEHOLDER = '/* HANDLER_CSS */';
-    let css = await loadTemplate('demo.css');
-
-    // Collect unique handler types and generate CSS once per type
-    const handlerTypes = new Set<string>();
-    let handlersCSS = '';
-
-    for (const meta of metaList) {
-        const handler = pickHandler(meta);
-        if (!handler) {
-            continue;
-        }
-
-        // Add CSS if not already added for this handler type
-        if (!handlerTypes.has(handler.kind)) {
-            handlerTypes.add(handler.kind);
-            handlersCSS += handler.mod.getCSS();
-        }
-    }
-
-    // If the placeholder exists, replace it; otherwise append
-    if (css.includes(PLACEHOLDER)) {
-        css = css.replace(PLACEHOLDER, handlersCSS.trim());
-    } else {
-        css += `\n${handlersCSS}`;
-    }
-
+export async function getDemoCSS() {
+    const css = await loadTemplate('demo.css');
     return css;
 }
 
@@ -426,7 +405,7 @@ export async function saveDemoFile() {
     // Build all assets in parallel based on per-path mainTypes
     const [html, css, ts, details] = await Promise.all([
         getDemoHTML(metaList),
-        getDemoCSS(metaList),
+        getDemoCSS(),
         getDemoTS(metaList),
         getDemoDetails()
     ]);
@@ -474,7 +453,9 @@ export async function saveDemoFile() {
                 if (stderr) {
                     console.error(`ESLint stderr: ${stderr}`);
                 }
-                console.log(`ESLint stdout: ${stdout}`);
+                if (stdout) {
+                    console.log(`ESLint stdout: ${stdout}`);
+                }
                 resolve(null);
             }
         );

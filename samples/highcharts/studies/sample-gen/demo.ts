@@ -1,6 +1,7 @@
 Highcharts.chart('container', {
     title: {
-        text: 'Demo of various chart options'
+        text: 'Demo of various chart options',
+        align: 'center'
     },
     series: [
         {
@@ -28,7 +29,7 @@ DemoKit.setupArrayHandler(
 );
 DemoKit.setupBooleanHandler(
     'yAxis.visible',
-    'toggle-checkbox-yAxis-visible'
+    'toggle-checkbox-yAxis-visible', true
 );
 DemoKit.setupColorHandler(
     'yAxis.lineColor',

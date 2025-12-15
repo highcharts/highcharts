@@ -32,20 +32,3 @@ export function getTSCall(path: string, overrideValue?: any) {
     'range-value-${rid}'${valueParam}
   );`;
 }
-
-export function getCSS() {
-    return `
-/* Range (number) styles */
-.hc-range-value {
-    display: inline-block;
-    min-width: 2ch;
-    margin-left: 8px;
-}
-
-input[id^="range-input-"] {
-    vertical-align: middle;
-    margin-left: 10px;
-    width: 180px;
-}
-`;
-}
