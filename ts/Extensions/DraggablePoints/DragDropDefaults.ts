@@ -18,23 +18,7 @@
  *
  * */
 
-import type {
-    DragDropGuideBoxOptions,
-    DragDropHandleOptions,
-    DragDropOptions
-} from './DragDropOptions';
-
-/* *
- *
- *  Declarations
- *
- * */
-
-interface DragDropDefaults extends DragDropOptions {
-    dragSensitivity: number;
-    dragHandle: DragDropHandleOptions;
-    guideBox: Record<string, DragDropGuideBoxOptions>;
-}
+import type DragDropOptions from './DragDropOptions';
 
 /* *
  *
@@ -74,7 +58,7 @@ interface DragDropDefaults extends DragDropOptions {
  * @requires     modules/draggable-points
  * @optionparent plotOptions.series.dragDrop
  */
-const DragDropDefaults: DragDropDefaults = {
+const DragDropDefaults: DragDropOptions = {
 
     /**
      * Set the minimum X value the points can be moved to.

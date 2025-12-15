@@ -51,8 +51,7 @@ import U from '../../Core/Utilities.js';
 const {
     addEvent,
     isArray,
-    merge,
-    pick
+    merge
 } = U;
 
 /* *
@@ -382,7 +381,7 @@ function dragMove(
 
     // If we have liveRedraw enabled, update the points immediately. Otherwise
     // update the guideBox.
-    if (pick(options.liveRedraw, true)) {
+    if (options.liveRedraw ?? true) {
         updatePoints(chart, false);
 
         // Update drag handles
@@ -689,15 +688,12 @@ function initDragDrop(
     let guideBox;
 
     // If liveRedraw is disabled, show the guide box with the default state
-    if (!pick(
-        series.options.dragDrop && series.options.dragDrop.liveRedraw,
-        true
-    )) {
+    if (!(series.options.dragDrop?.liveRedraw ?? true)) {
         chart.dragGuideBox = guideBox = series.getGuideBox(groupedPoints);
         chart
             .setGuideBoxState(
                 'default',
-                (series.options.dragDrop as any).guideBox
+                series.options.dragDrop?.guideBox
             )
             .add(series.group);
     }
@@ -919,13 +915,11 @@ function mouseMove(
         // Update sensitivity test if not passed yet
         if (!dragDropData.draggedPastSensitivity) {
             dragDropData.draggedPastSensitivity = hasDraggedPastSensitivity(
-                e, chart, pick(
-                    point.options.dragDrop &&
-                        point.options.dragDrop.dragSensitivity,
-                    seriesDragDropOpts &&
-                        seriesDragDropOpts.dragSensitivity,
-                    DragDropDefaults.dragSensitivity
-                )
+                e,
+                chart,
+                point.options.dragDrop?.dragSensitivity ??
+                    seriesDragDropOpts?.dragSensitivity ??
+                    DragDropDefaults.dragSensitivity ?? 2
             );
         }
 
