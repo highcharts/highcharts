@@ -22,6 +22,7 @@ import type G from '../../Core/Globals';
  *
  * */
 
+/** @internal */
 declare global {
     interface Canvg {
         fromString(
