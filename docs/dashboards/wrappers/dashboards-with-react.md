@@ -57,7 +57,7 @@ Define the dashboard in a small React app and pass the config to `Dashboards.boa
 export default function App() {
   const config = {
     gui: {
-      layout: [{
+      layouts: [{
         rows: [{
           cells: [{ id: 'cell-0' }, { id: 'cell-1' }]
         }]
