@@ -49,7 +49,7 @@ Read more in the [Layout docs](https://www.highcharts.com/docs/dashboards/layout
 
 ### Option A: Built-in layout
 
-The layout module is required to use the built-in rows/cells system:
+The layout module is required to use the built-in [layout system](https://www.highcharts.com/docs/dashboards/layout-description):
 
 ```tsx
 import '@highcharts/dashboards/es-modules/masters/modules/layout.src.js';
