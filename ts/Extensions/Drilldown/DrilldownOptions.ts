@@ -22,7 +22,6 @@ import type {
     VerticalAlignValue
 } from '../../Core/Renderer/AlignObject';
 import type AnimationOptions from '../../Core/Animation/AnimationOptions';
-import type { BreadcrumbsOptions } from '../Breadcrumbs/BreadcrumbsOptions';
 import type { ButtonRelativeToValue } from '../../Maps/MapNavigationOptions';
 import type Chart from '../../Core/Chart/Chart';
 import type { CSSObject } from '../../Core/Renderer/CSSObject';
@@ -229,17 +228,6 @@ export interface DrilldownOptions {
      * @product highcharts highmaps
      */
     animation?: (boolean|Partial<AnimationOptions>);
-
-    /**
-     * Options for the breadcrumbs, the navigation at the top leading the way
-     * up through the drilldown levels.
-     *
-     * @since 10.0.0
-     * @product   highcharts highmaps
-     * @extends   navigation.breadcrumbs
-     * @optionparent drilldown.breadcrumbs
-     */
-    breadcrumbs?: BreadcrumbsOptions;
 
     /**
      * Drill up button is deprecated since Highcharts v9.3.2. Use

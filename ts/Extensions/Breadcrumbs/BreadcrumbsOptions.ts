@@ -35,8 +35,33 @@ import type SeriesOptions from '../../Core/Series/SeriesOptions';
  *
  * */
 
-declare module '../../Series/Treemap/TreemapSeriesOptions' {
+declare module '../Drilldown/DrilldownOptions' {
     interface DrilldownOptions {
+        /**
+         * Options for the breadcrumbs, the navigation at the top leading the
+         * way up through the drilldown levels.
+         *
+         * @since 10.0.0
+         * @product   highcharts highmaps
+         * @extends   navigation.breadcrumbs
+         * @optionparent drilldown.breadcrumbs
+         */
+        breadcrumbs?: BreadcrumbsOptions;
+    }
+}
+
+declare module '../../Series/Treemap/TreemapSeriesOptions' {
+    interface TreemapSeriesOptions {
+        /**
+         * Options for the breadcrumbs, the navigation at the top leading the
+         * way up through the traversed levels.
+         *
+         * @since 10.0.0
+         *
+         * @product highcharts
+         *
+         * @extends navigation.breadcrumbs
+         */
         breadcrumbs?: BreadcrumbsOptions;
     }
 }
