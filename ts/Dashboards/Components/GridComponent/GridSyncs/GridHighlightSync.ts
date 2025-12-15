@@ -24,7 +24,7 @@ import type Sync from '../../Sync/Sync';
 import type DataCursor from '../../../../Data/DataCursor';
 import type GridComponent from '../GridComponent.js';
 import type { GridHighlightSyncOptions } from '../GridComponentOptions';
-import type { TableCell } from '../../../Plugins/GridTypes';
+import type { TableCellEvent } from '../../../Plugins/GridTypes';
 
 import Component from '../../Component';
 import U from '../../../../Core/Utilities.js';
@@ -59,9 +59,9 @@ const syncPair: Sync.SyncPair = {
         }
 
         const { dataCursor: cursor } = board;
-        const table = this.connectorHandlers[0]?.presentationTable;
+        const table = this.getDataTable();
 
-        const onCellHover = (e: TableCell.TableCellEvent): void => {
+        const onCellHover = (e: TableCellEvent): void => {
             if (table) {
                 const cell = e.target;
 
@@ -75,7 +75,7 @@ const syncPair: Sync.SyncPair = {
             }
         };
 
-        const onCellMouseOut = (e: TableCell.TableCellEvent): void => {
+        const onCellMouseOut = (e: TableCellEvent): void => {
             if (table) {
                 const cell = e.target;
 
@@ -124,7 +124,7 @@ const syncPair: Sync.SyncPair = {
             return;
         }
 
-        const table = component.connectorHandlers[0]?.presentationTable;
+        const table = component.getDataTable();
 
         const handleCursor = (e: DataCursor.Event): void => {
             const cursor = e.cursor;

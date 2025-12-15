@@ -23,7 +23,9 @@
  * */
 
 import type { EditModeContent } from '../../CellEditing/CellEditMode.js';
-import type DateInputRenderer from '../Renderers/DateInputRenderer.js';
+import type {
+    DateInputRendererOptions
+} from '../Renderers/DateInputRenderer.js';
 
 import DateInputContentBase from './DateInputContentBase.js';
 
@@ -39,7 +41,7 @@ import DateInputContentBase from './DateInputContentBase.js';
  */
 class DateInputContent extends DateInputContentBase implements EditModeContent {
 
-    public override options!: DateInputRenderer.Options;
+    public override options!: DateInputRendererOptions;
 
     protected override getInputType(): 'date' {
         return 'date';

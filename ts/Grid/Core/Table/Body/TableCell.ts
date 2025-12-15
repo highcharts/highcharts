@@ -211,8 +211,6 @@ class TableCell extends Cell {
         this.cellEvents.push(['dblclick', (e): void => (
             this.onDblClick(e as MouseEvent)
         )]);
-        this.cellEvents.push(['mouseout', (): void => this.onMouseOut()]);
-        this.cellEvents.push(['mouseover', (): void => this.onMouseOver()]);
         this.cellEvents.push(['mousedown', (e): void => {
             this.onMouseDown(e as MouseEvent);
         }]);
@@ -253,31 +251,14 @@ class TableCell extends Cell {
         });
     }
 
-    /**
-     * Handles the mouse over event on the cell.
-     * @internal
-     */
-    protected onMouseOver(): void {
-        const { grid } = this.row.viewport;
-        grid.hoverRow(this.row.index);
-        grid.hoverColumn(this.column.id);
-
-        fireEvent(this, 'mouseOver', {
-            target: this
-        });
+    protected override onMouseOver(): void {
+        this.row.viewport.grid.hoverRow(this.row.index);
+        super.onMouseOver();
     }
 
-    /**
-     * Handles the mouse out event on the cell.
-     */
-    protected onMouseOut(): void {
-        const { grid } = this.row.viewport;
-        grid.hoverRow();
-        grid.hoverColumn();
-
-        fireEvent(this, 'mouseOut', {
-            target: this
-        });
+    protected override onMouseOut(): void {
+        this.row.viewport.grid.hoverRow();
+        super.onMouseOut();
     }
 
     /**
@@ -334,17 +315,15 @@ class TableCell extends Cell {
 
 /* *
  *
- *  Class Namespace
+ *  Declarations
  *
  * */
 
-namespace TableCell {
-    /**
-     * Event interface for table cell events.
-     */
-    export interface TableCellEvent {
-        target: TableCell;
-    }
+/**
+ * Event interface for table cell events.
+ */
+export interface TableCellEvent {
+    target: TableCell;
 }
 
 
