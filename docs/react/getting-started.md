@@ -75,4 +75,4 @@ and [how to set options](https://www.highcharts.com/docs/react/options).
 
 The result should look like this:
 
-<iframe src="https://www.highcharts.com/samples/embed/highcharts/react/basic"></iframe>
+<iframe src="https://www.highcharts.com/samples/embed/highcharts/react/basic" title="Basic Highcharts React chart example"></iframe>

@@ -22,7 +22,7 @@ import {
 
 ```
 
-<iframe src="https://www.highcharts.com/samples/embed/highcharts/react/complex"></iframe>
+<iframe src="https://www.highcharts.com/samples/embed/highcharts/react/complex" title="Complex Highcharts React chart example with option components"></iframe>
 
 Here's an example of adding a custom title:
 

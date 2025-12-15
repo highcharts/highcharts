@@ -100,4 +100,4 @@ Not all option components supports child components. See [Appendix A](https://ww
 
 A complete example combining multiple option components:
 
-<iframe src="https://www.highcharts.com/samples/embed/highcharts/react/complex"></iframe>
+<iframe src="https://www.highcharts.com/samples/embed/highcharts/react/complex" title="Complex Highcharts React chart example with multiple option components"></iframe>
