@@ -1382,6 +1382,8 @@ export interface AxisOptions {
      *         Y axis offset by 70 px
      */
     offset?: number;
+
+    /** @internal */
     offsets?: [number, number, number, number];
 
     /**
@@ -1466,6 +1468,11 @@ export interface AxisOptions {
      * @product highcharts
      */
     pane?: number;
+
+    /**
+     * Whether to pan axis. If `chart.panning` is enabled, the option
+     * allows to disable panning on an individual axis.
+     */
     panningEnabled: boolean;
 
     /**
@@ -1479,7 +1486,6 @@ export interface AxisOptions {
      * @product highstock
      */
     range?: number;
-
 
     /**
      * Whether to reverse the axis so that the highest number is closest
@@ -1922,10 +1928,10 @@ export interface AxisSetExtremesEventCallback {
     (this: Axis, evt: AxisSetExtremesEventObject): void;
 }
 
-export interface AxisSetExtremesEventObject {
+export interface AxisSetExtremesEventObject extends Axis.ExtremesObject {
     DOMEvent?: any;
-    max?: number;
-    min?: number;
+    max: number;
+    min: number;
     move?: number;
     preventDefault: Function;
     rangeSelectorButton?: RangeSelectorButtonOptions;

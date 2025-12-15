@@ -116,8 +116,8 @@ function onAxisSetExtremes(
 
             // Minimum undefined, resetting zoom
             } else if (previousZoom) {
-                e.min = previousZoom[0];
-                e.max = previousZoom[1];
+                e.min = previousZoom[0]!;
+                e.max = previousZoom[1]!;
                 navigatorAxis.previousZoom = void 0;
             }
         }

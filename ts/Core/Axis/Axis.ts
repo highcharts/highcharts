@@ -4730,19 +4730,57 @@ interface Axis extends AxisComposition, AxisBase {
  * */
 
 namespace Axis {
+
+    /**
+     * The returned object literal from the {@link Highcharts.Axis#getExtremes}
+     * function.
+     */
     export interface ExtremesObject {
+
+        /**
+         * The maximum value of the axis' associated series.
+         */
         dataMax: number;
+
+        /**
+         * The minimum value of the axis' associated series.
+         */
         dataMin: number;
+
+        /**
+         * The maximum axis value, either automatic or set manually. If the `max` option
+         * is not set, `maxPadding` is 0 and `endOnTick` is false, this value will be
+         * the same as `dataMax`.
+         */
         max: number;
+
+        /**
+         * The minimum axis value, either automatic or set manually. If the `min` option
+         * is not set, `minPadding` is 0 and `startOnTick` is false, this value will be
+         * the same as `dataMin`.
+         */
         min: number;
+
+        /**
+         * The user defined maximum, either from the `max` option or from a zoom or
+         * `setExtremes` action.
+         */
         userMax?: number;
+
+        /**
+         * The user defined minimum, either from the `min` option or from a zoom or
+         * `setExtremes` action.
+         */
         userMin?: number;
+
     }
+
     /** @internal */
     export interface AllExtremes {
         dataMin: number;
         dataMax: number;
     }
+    /** @internal */
     export interface PlotLinePathOptions {
         acrossPanes?: boolean;
         force?: (boolean|string);
