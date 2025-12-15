@@ -130,7 +130,7 @@ export default function App() {
 }
 ```
 
-You can also wrap rows/cells into small React helpers to keep JSX tidy:
+Optionally you can wrap rows/cells into small React helpers to keep the JSX tidy:
 ```tsx
 // Row.tsx
 type RowProps = React.PropsWithChildren<{ id?: string; className?: string }>;
