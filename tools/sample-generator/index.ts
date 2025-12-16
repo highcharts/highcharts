@@ -22,18 +22,11 @@ import * as colorHandler from './type-handlers/color.ts';
 
 const types = await loadExportedTypes('code/highcharts.d.ts');
 
-/*
 const paths = [
     'chart.backgroundColor=#FFFFFF',
     'title.align=center',
     'title.floating',
     'title.x'
-];
-*/
-const paths = [
-  'plotOptions.column.borderColor=#333333',
-  'plotOptions.column.borderWidth',
-  'plotOptions.column.borderRadius'
 ];
 
 // --- Template helpers -------------------------------------------------------

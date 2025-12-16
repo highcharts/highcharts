@@ -26,11 +26,20 @@
     .highcharts-controls-key,
     .highcharts-controls-value {
         height: 2.5em;
+        line-height: 2em;
     }
 
     .control-section td:first-child,
     .highcharts-controls-key {
         text-align: right;
+        padding-right: 1em;
+    }
+
+    .highcharts-controls-value-inner {
+        border: 1px solid #dddddd;
+        border-radius: 4px;
+        height: 2.2em;
+        max-width: 300px;
     }
 
     .control-section tr:not(:last-child) td {
@@ -126,16 +135,22 @@
         box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.35);
     }
 
+    .hc-color-value {
+        display: inline-block;
+        min-width: 6ch;
+        margin: 0 10px;
+    }
+
     /* Button styles */
     .highcharts-demo-button {
         background: #f2f2f2;
-        border: none;
+        border: 1px solid #cccccc;
         border-radius: 4px;
         cursor: pointer;
         display: inline-block;
         font-size: 0.8rem;
-        padding: 0.5rem 1.5rem;
-        margin: 0.5rem -5px 0.5rem 10px;
+        padding: 0.3rem 1.5rem;
+        margin: 0.1rem -5px 0.5rem 10px;
         transition: background 250ms;
     }
 
@@ -185,19 +200,30 @@
     }
 
     input.opacity-input {
-        width: 80px;
+        text-align: right;
+        background: none;
+        width: 5ch;
+        height: 2em;
+        border-radius: 0;
+        border-color: #dddddd;
+        border-width: 0 0 0 1px;
+        padding-left: 8px;
+    }
+
+    .opacity-input-label {
+        opacity: 0.5;
     }
 
     /* Range (number) styles */
     .hc-range-value {
         display: inline-block;
-        min-width: 2ch;
+        min-width: 3ch;
         margin-left: 8px;
     }
 
     input[id^="range-input-"] {
         vertical-align: middle;
         margin-left: 10px;
-        width: 180px;
+        width: calc(100% - 60px);
     }
 }

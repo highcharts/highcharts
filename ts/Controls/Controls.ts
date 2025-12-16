@@ -303,29 +303,65 @@ class Controls {
             )
         );
 
-        const opacityInput = valueDiv.appendChild(
+        const valueEl = valueDiv.appendChild(
             Object.assign(
-                document.createElement('input'),
+                document.createElement('label'),
                 {
-                    type: 'range',
-                    id: `opacity-input-${rid}`,
-                    min: '0',
-                    max: '1',
-                    step: '0.01',
-                    value: '1'
+                    id: `color-value-${rid}`,
+                    className: 'hc-color-value',
+                    htmlFor: `color-input-${rid}`
                 }
             )
         );
 
-        const valueEl = valueDiv.appendChild(
+        const opacityInput = valueDiv.appendChild(
             Object.assign(
-                document.createElement('span'),
+                document.createElement('input'),
                 {
-                    id: `color-value-${rid}`,
-                    className: 'hc-color-value'
+                    type: 'text',
+                    id: `opacity-input-${rid}`,
+                    className: 'opacity-input'
                 }
             )
         );
+
+        valueDiv.appendChild(
+            Object.assign(
+                document.createElement('span'),
+                {
+                    textContent: '%',
+                    className: 'opacity-input-label'
+                }
+            )
+        );
+
+        const getHex = (color: { rgba: number[] }): string => {
+            const rgba = color.rgba;
+            return (`#${(
+                ((1 << 24) +
+                (rgba[0] << 16) +
+                (rgba[1] << 8) +
+                rgba[2]
+                )
+                    .toString(16)
+                    .slice(1)
+            ).toLowerCase()}`);
+        };
+
+        // Add a validator for the opacity input. It should be a number between
+        // 0 and 100.
+        opacityInput.addEventListener('input', (): void => {
+            let value = parseFloat(opacityInput.value);
+            if (isNaN(value)) {
+                value = 100;
+            }
+            if (value < 0) {
+                value = 0;
+            } else if (value > 100) {
+                value = 100;
+            }
+            opacityInput.value = String(value);
+        });
 
         // Use override value if provided, otherwise get current value from
         // chart
@@ -333,20 +369,19 @@ class Controls {
             params.value :
             (getNestedValue(this.target.options, params.path) || '#000000');
         const hcColor = (Highcharts as any).color(currentValue);
-        const rgba = hcColor.get('rgba');
-        const opacity = hcColor.rgba[3] || 1;
+        const opacity = (hcColor.rgba[3] || 1) * 100;
         colorInput.value = currentValue;
         opacityInput.value = String(opacity);
-        valueEl.textContent = rgba;
+        valueEl.textContent = getHex(hcColor);
 
         const update = (): void => {
             const rgba = colorInput.value; // E.g. #RRGGBB
-            const opacity = parseFloat(opacityInput.value);
+            const opacity = parseFloat(opacityInput.value) / 100;
             // Use Highcharts.color to apply opacity and produce rgba()/hex
             const hcColor = (Highcharts as any).color(rgba)
-                .setOpacity(opacity).get();
-            setNestedValue(this.target, params.path, hcColor, false);
-            valueEl.textContent = hcColor;
+                .setOpacity(opacity);
+            setNestedValue(this.target, params.path, hcColor.get(), false);
+            valueEl.textContent = getHex(hcColor);
         };
 
         colorInput.addEventListener('input', update);
@@ -373,6 +408,16 @@ class Controls {
             )
         );
 
+        const valueEl = valueDiv.appendChild(
+            Object.assign(
+                document.createElement('span'),
+                {
+                    id: `range-value-${rid}`,
+                    className: 'hc-range-value'
+                }
+            )
+        );
+
         const input = valueDiv.appendChild(
             Object.assign(
                 document.createElement('input'),
@@ -382,16 +427,6 @@ class Controls {
                     min: String(params.range ? params.range[0] : 0),
                     max: String(params.range ? params.range[1] : 100),
                     step: String(params.step || 1)
-                }
-            )
-        );
-
-        const valueEl = valueDiv.appendChild(
-            Object.assign(
-                document.createElement('span'),
-                {
-                    id: `range-value-${rid}`,
-                    className: 'hc-range-value'
                 }
             )
         );
@@ -441,14 +476,21 @@ class Controls {
             )
         );
 
+        const valueDivInner = valueDiv.appendChild(
+            Object.assign(
+                document.createElement('div'),
+                { className: 'highcharts-controls-value-inner' }
+            )
+        );
+
         if (isArrayControlParams(params)) {
-            this.addArrayControl(params, keyDiv, valueDiv);
+            this.addArrayControl(params, keyDiv, valueDivInner);
         } else if (isBooleanControlParams(params)) {
-            this.addBooleanControl(params, keyDiv, valueDiv);
+            this.addBooleanControl(params, keyDiv, valueDivInner);
         } else if (isColorControlParams(params)) {
-            this.addColorControl(params, keyDiv, valueDiv);
+            this.addColorControl(params, keyDiv, valueDivInner);
         } else if (isNumberControlParams(params)) {
-            this.addNumberControl(params, keyDiv, valueDiv);
+            this.addNumberControl(params, keyDiv, valueDivInner);
         }
     }
 

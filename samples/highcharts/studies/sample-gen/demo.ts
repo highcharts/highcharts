@@ -1,6 +1,7 @@
 Highcharts.chart('container', {
     title: {
-        text: 'Demo of <em>plotOptions.column</em> options'
+        text: 'Demo of various chart options',
+        align: 'center'
     },
     series: [
         {
@@ -14,11 +15,8 @@ Highcharts.chart('container', {
             colorByPoint: true
         }
     ],
-    plotOptions: {
-        column: {
-            borderColor: '#333333',
-            borderRadius: 3
-        }
+    chart: {
+        backgroundColor: '#FFFFFF'
     }
 });
 
@@ -27,24 +25,29 @@ HighchartsControls.controls('highcharts-controls', {
     target: Highcharts.charts[0],
     controls: [{
         type: 'color',
-        path: 'plotOptions.column.borderColor',
-        value: '#333333'
+        path: 'chart.backgroundColor',
+        value: '#FFFFFF'
     },
     {
-        type: 'number',
-        path: 'plotOptions.column.borderWidth',
-        range: [
-            0,
-            5
+        type: 'array-of-strings',
+        path: 'title.align',
+        value: 'center',
+        options: [
+            'left',
+            'center',
+            'right'
         ]
     },
     {
+        type: 'boolean',
+        path: 'title.floating'
+    },
+    {
         type: 'number',
-        path: 'plotOptions.column.borderRadius',
+        path: 'title.x',
         range: [
-            0,
+            -100,
             100
-        ],
-        value: 3
+        ]
     }]
 });
