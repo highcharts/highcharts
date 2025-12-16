@@ -25,17 +25,6 @@ import type SankeyPointOptions from '../Sankey/SankeyPointOptions';
  * */
 
 export interface ArcDiagramPointOptions extends SankeyPointOptions {
-
-    /**
-     *
-     * @type {Highcharts.SeriesArcDiagramDataLabelsOptionsObject|Array<Highcharts.SeriesArcDiagramDataLabelsOptionsObject>}
-     *
-     * @product highcharts
-     *
-     * @apioption series.arcdiagram.data.dataLabels
-     */
-    dataLabels?: SankeyPointOptions['dataLabels'];
-
     /**
      * The link weight, in pixels. If not set, width is calculated per link,
      * depending on the weight value.
@@ -43,13 +32,20 @@ export interface ArcDiagramPointOptions extends SankeyPointOptions {
      * @sample highcharts/series-arcdiagram/link-weight
      *         Link weight set on series
      *
-     * @type {number}
      * @since 10.0.0
      * @default undefined
      * @product highcharts
      */
     linkWeight?: number;
 
+    /* *
+     *
+     *  Excluded
+     *
+     * */
+
+    dataLabels?: undefined;
+    outgoing?: undefined;
 }
 
 export default ArcDiagramPointOptions;

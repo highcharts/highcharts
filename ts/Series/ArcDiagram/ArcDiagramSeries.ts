@@ -401,7 +401,7 @@ class ArcDiagramSeries extends SankeySeries {
             markerOptions = merge(options.marker, node.options.marker),
             symbol = markerOptions.symbol,
             markerRadius = markerOptions.radius,
-            top = parseInt(options.offset, 10) *
+            top = parseInt(options.offset ?? '100', 10) *
                 (
                     (
                         chart.inverted ?

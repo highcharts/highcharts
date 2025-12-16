@@ -32,15 +32,32 @@ import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
  * */
 
 export interface ArcDiagramSeriesNodeOptions extends SankeySeriesNodeOptions {
-    /**
-     * Individual data label for each node. The options are the same as the ones
-     * for [series.arcdiagram.dataLabels](#series.arcdiagram.dataLabels).
+    // Nothing to add
+
+    /* *
      *
-     * @type {Highcharts.SeriesArcDiagramDataLabelsOptionsObject|Array<Highcharts.SeriesArcDiagramDataLabelsOptionsObject>}
+     *  Excluded
      *
-     * @apioption series.arcdiagram.nodes.dataLabels
-     */
-    dataLabels?: SankeySeriesNodeOptions['dataLabels'];
+     * */
+
+    column?: undefined;
+    level?: undefined;
+}
+
+export interface ArcDiagramSeriesMarkerOptions extends PointMarkerOptions {
+    // Nothing to add
+
+    /* *
+     *
+     *  Excluded
+     *
+     * */
+
+    enabled?: undefined;
+    enabledThreshold?: undefined;
+    height?: undefined;
+    radius?: undefined;
+    width?: undefined;
 }
 
 /**
@@ -75,17 +92,11 @@ export interface ArcDiagramSeriesNodeOptions extends SankeySeriesNodeOptions {
  * softThreshold, stack, stacking, step, xAxis, yAxis
  */
 export interface ArcDiagramSeriesOptions extends SankeySeriesOptions {
-
     /**
-     * The option to center links rather than position them one after
-     * another
-     *
-     * @type {boolean}
+     * The option to center links rather than position them one after another.
      *
      * @since 10.0.0
-     *
      * @default false
-     *
      * @product highcharts
      */
     centeredLinks?: boolean;
@@ -112,15 +123,7 @@ export interface ArcDiagramSeriesOptions extends SankeySeriesOptions {
      *     }]
      *  ```
      *
-     * @type {Array<*>}
-     *
-     * @extends series.sankey.data
-     *
      * @product highcharts
-     *
-     * @excluding outgoing, dataLabels
-     *
-     * @apioption series.arcdiagram.data
      */
     data?: Array<ArcDiagramPointOptions>;
 
@@ -141,12 +144,8 @@ export interface ArcDiagramSeriesOptions extends SankeySeriesOptions {
      * current `plotArea`. It is possible to override it using the
      * `marker.radius` option.
      *
-     * @type {boolean}
-     *
      * @since 10.0.0
-     *
      * @default false
-     *
      * @product highcharts
      */
     equalNodes?: boolean;
@@ -157,12 +156,7 @@ export interface ArcDiagramSeriesOptions extends SankeySeriesOptions {
      * in which case an arc touching the edge is rendered. If `linkRadius`
      * is set, an arc extending to the given value is rendered.
      *
-     * @type {number}
-     *
      * @since 10.0.0
-     *
-     * @default undefined
-     *
      * @product highcharts
      */
     linkRadius?: number;
@@ -174,27 +168,20 @@ export interface ArcDiagramSeriesOptions extends SankeySeriesOptions {
      * @sample highcharts/series-arcdiagram/link-weight
      *         Link weight
      *
-     * @type {number}
-     *
      * @since 10.0.0
-     *
-     * @default undefined
-     *
      * @product highcharts
      */
     linkWeight?: number;
 
     /**
+     * Options for the point markers of arc diagram series. Properties like
+     * `fillColor`, `lineColor` and `lineWidth` define the visual appearance of
+     * the markers, while the `symbol` option defines their shape.
      *
-     * @extends plotOptions.series.marker
-     *
-     * @excluding enabled, enabledThreshold, height, width
-     *
-     * @excluding enabled, enabledThreshold, height, radius, width
-     *
-     * @apioption series.arcdiagram.marker
+     * In styled mode, the markers can be styled with the `.highcharts-point`,
+     * `.highcharts-point-hover` and `.highcharts-point-select` class names.
      */
-    marker?: PointMarkerOptions;
+    marker?: ArcDiagramSeriesMarkerOptions;
 
     /**
      * A collection of options for the individual nodes. The nodes in an arc
@@ -202,13 +189,7 @@ export interface ArcDiagramSeriesOptions extends SankeySeriesOptions {
      * are auto-generated instances of `Highcharts.Point`, but options can be
      * applied here and linked by the `id`.
      *
-     * @extends series.sankey.nodes
-     *
-     * @type {Array<*>}
-     *
      * @product highcharts
-     *
-     * @excluding column, level
      */
     nodes?: Array<ArcDiagramSeriesNodeOptions>;
 
@@ -218,35 +199,26 @@ export interface ArcDiagramSeriesOptions extends SankeySeriesOptions {
      * chart. By default the series is placed so that the biggest node is
      * touching the bottom border of the `plotArea`.
      *
-     * @type {string}
-     *
      * @since 10.0.0
-     *
      * @default '100%'
-     *
      * @product highcharts
      */
-    offset: string;
+    offset?: string;
 
     /**
      * Whether the series should be placed on the other side of the
      * `plotArea`.
      *
-     * @type {boolean}
-     *
      * @since 10.0.0
-     *
      * @default false
-     *
      * @product highcharts
      */
-    reversed: boolean;
+    reversed?: boolean;
 
     /** @internal */
     scale?: number;
 
     states?: SeriesStatesOptions<ArcDiagramSeriesOptions>;
-
 }
 
 /* *

@@ -147,6 +147,13 @@ const ArcDiagramSeriesDefaults: ArcDiagramSeriesOptions = {
      */
 
     /**
+     * Options for the point markers of arc diagram series. Properties like
+     * `fillColor`, `lineColor` and `lineWidth` define the visual appearance of
+     * the markers, while the `symbol` option defines their shape.
+     *
+     * In styled mode, the markers can be styled with the `.highcharts-point`,
+     * `.highcharts-point-hover` and `.highcharts-point-select` class names.
+     *
      * @extends   plotOptions.series.marker
      * @excluding enabled, enabledThreshold, height, width
      */

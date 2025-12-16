@@ -87,12 +87,10 @@ declare module './PointOptions' {
          * @sample highcharts/point/datalabels/
          *         Show a label for the last value
          *
-         * @type      {*|Array<*>}
          * @declare   Highcharts.DataLabelsOptions
          * @extends   plotOptions.line.dataLabels
          * @excluding zIndex
          * @product   highcharts highstock gantt
-         * @apioption series.line.data.dataLabels
          */
         dataLabels?: (DataLabelOptions | Array<DataLabelOptions>);
 
@@ -103,9 +101,6 @@ declare module './PointOptions' {
          *
          * The `labelrank` set on `series.dataLabels` takes precedence over
          * this.
-         *
-         * @type      {number}
-         * @apioption series.line.data.labelrank
          */
         labelrank?: number;
     }
@@ -187,7 +182,6 @@ declare module './SeriesOptions' {
          * @sample {highmaps} maps/demo/mappoint-datalabels-mapmarker
          *         Using data labels as map markers
          *
-         * @type    {*|Array<*>}
          * @product highcharts highstock highmaps gantt
          */
         dataLabels?: (DataLabelOptions|Array<DataLabelOptions>);
