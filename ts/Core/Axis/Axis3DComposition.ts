@@ -19,7 +19,6 @@
  * */
 
 import type Axis from './Axis';
-import type { OptionsPosition3dValue } from '../Options';
 import type Point from '../Series/Point';
 import type Position3DObject from '../Renderer/Position3DObject';
 import type RadialAxis from './RadialAxis';
@@ -56,17 +55,6 @@ const {
 declare module './AxisComposition' {
     interface AxisComposition {
         axis3D?: Axis3DAdditions;
-    }
-}
-
-declare module './AxisOptions' {
-    interface AxisLabelOptions {
-        position3d?: OptionsPosition3dValue;
-        skew3d?: boolean;
-    }
-    interface AxisTitleOptions {
-        position3d?: ('chart'|'flap'|'offset'|'ortho'|null);
-        skew3d?: (boolean|null);
     }
 }
 

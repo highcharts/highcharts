@@ -71,6 +71,12 @@ export interface StackBoxProps {
     xAxis?: Axis;
 }
 
+/**
+ * Use StackItem instead.
+ * @deprecated
+ */
+export type StackItemObject = StackItem;
+
 /* *
  *
  *  Class

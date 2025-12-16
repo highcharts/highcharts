@@ -16,11 +16,7 @@
  *
  * */
 
-import type {
-    AxisLabelOptions,
-    AxisOptions,
-    AxisTitleOptions
-} from './AxisOptions';
+import type AxisOptions from './AxisOptions';
 
 /* *
  *
@@ -28,7 +24,18 @@ import type {
  *
  * */
 
-export interface Axis3DLabelOptions extends AxisLabelOptions {
+
+declare module './AxisOptions' {
+    interface AxisLabelOptions extends Axis3DLabelOptions {
+        // Nothing to add
+    }
+    interface AxisTitleOptions extends Axis3DTitleOptions {
+        // Nothing to add
+    }
+}
+
+export interface Axis3DLabelOptions {
+
     /**
      * Defines how the labels are be repositioned according to the 3D
      * chart orientation.
@@ -54,11 +61,11 @@ export interface Axis3DLabelOptions extends AxisLabelOptions {
      *         Skewed labels
      *
      * @since      5.0.15
-     * @validvalue ['offset', 'chart', 'flap', 'ortho']
      * @product    highcharts
      * @requires   highcharts-3d
      */
-    position3d: Axis3DPositionValue;
+    position3d?: Axis3DPositionValue;
+
     /**
      * If enabled, the axis labels will skewed to follow the
      * perspective.
@@ -75,20 +82,14 @@ export interface Axis3DLabelOptions extends AxisLabelOptions {
      * @product  highcharts
      * @requires highcharts-3d
      */
-    skew3d: boolean;
-}
+    skew3d?: boolean;
 
-/**
- * @optionparent xAxis
- */
-export interface Axis3DOptions extends AxisOptions {
-    labels: Axis3DLabelOptions;
-    title: Axis3DTitleOptions;
 }
 
 export type Axis3DPositionValue = ('chart'|'flap'|'offset'|'ortho');
 
-export interface Axis3DTitleOptions extends AxisTitleOptions {
+export interface Axis3DTitleOptions {
+
     /**
      * Defines how the title is repositioned according to the 3D chart
      * orientation.
@@ -115,12 +116,12 @@ export interface Axis3DTitleOptions extends AxisTitleOptions {
      * @sample highcharts/3d/skewed-labels/
      *         Skewed labels
      *
-     * @type     {"offset"|"chart"|"flap"|"ortho"|null}
      * @since    5.0.15
      * @product  highcharts
      * @requires highcharts-3d
      */
     position3d: (Axis3DPositionValue|null);
+
     /**
      * If enabled, the axis title will skewed to follow the perspective.
      *
@@ -134,12 +135,12 @@ export interface Axis3DTitleOptions extends AxisTitleOptions {
      * @sample highcharts/3d/skewed-labels/
      *         Skewed labels
      *
-     * @type     {boolean|null}
      * @since    5.0.15
      * @product  highcharts
      * @requires highcharts-3d
      */
     skew3d: (boolean|null);
+
 }
 
 /* *
@@ -148,4 +149,4 @@ export interface Axis3DTitleOptions extends AxisTitleOptions {
  *
  * */
 
-export default Axis3DOptions;
+export default AxisOptions;

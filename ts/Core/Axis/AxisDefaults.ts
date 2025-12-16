@@ -18,6 +18,7 @@
 
 import type { DeepPartial } from '../../Shared/Types';
 import type {
+    AxisTitleOptions,
     XAxisOptions,
     YAxisOptions
 } from './AxisOptions';
@@ -2106,7 +2107,7 @@ namespace AxisDefaults {
                  */
                 fontSize: '0.8em'
             }
-        },
+        } as AxisTitleOptions,
 
         /**
          * The type of axis. Can be one of `linear`, `logarithmic`, `datetime`
