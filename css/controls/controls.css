@@ -57,7 +57,7 @@
         font-size: 1.1rem;
     }
 
-    #options-preview {
+    .options-preview {
         background: #ffffff;
         border: 1px solid #dee2e6;
         border-radius: 4px;

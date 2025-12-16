@@ -302,7 +302,7 @@ export async function getDemoTS(metaList: Array<{
 
     // Collect unique handler types and generate functions once
     const handlerTypes = new Set<string>();
-    const handlerCalls: string[] = [];
+    const controls: string[] = [];
 
     for (const meta of metaList) {
         const handler = pickHandler(meta);
@@ -316,30 +316,23 @@ export async function getDemoTS(metaList: Array<{
         }
 
         // Add call for this specific path
-        handlerCalls.push(handler.mod.getTSCall(
+        controls.push(handler.mod.getTSCall(
             meta.path,
             meta.overrideValue ?? meta.defaultValue,
             meta.options
         ));
     }
 
-    // Add all the calls
-    if (handlerCalls.length > 0) {
+    // Add the config
+    if (controls.length > 0) {
         ts += `
-// GUI components for demo purpose
+// Highcharts Controls for demo purpose
+HighchartsControls.controls('highcharts-controls', {
+    target: Highcharts.charts[0],
+    controls: [${controls.join(',\n')}]
+});
 `;
-        ts += handlerCalls.join('\n');
     }
-
-    // Initialize the preview
-    ts += `
-
-HighchartsControls.updateOptionsPreview();
-Highcharts.addEvent(
-    Highcharts.Chart,
-    'render',
-    HighchartsControls.updateOptionsPreview
-);`;
 
     return ts;
 }

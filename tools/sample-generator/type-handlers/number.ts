@@ -10,13 +10,14 @@ function getRange(p: string): [number, number] {
 }
 
 export function getTSCall(path: string, overrideValue?: any) {
-    const valueParam = overrideValue !== void 0 ?
-        `, value: ${overrideValue}` :
-        '';
     const [min, max] = getRange(path);
-    return `HighchartsControls.addControl({
-    type: 'number',
-    path: '${path}',
-    range: [${min}, ${max}]${valueParam}
-});`;
+    const obj: Record<string, any> = {
+        type: 'number',
+        path,
+        range: [min, max]
+    };
+    if (overrideValue !== void 0) {
+        obj.value = overrideValue;
+    }
+    return JSON.stringify(obj, null, 4);
 }

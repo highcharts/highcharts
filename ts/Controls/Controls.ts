@@ -41,6 +41,16 @@ interface NumberControlParams extends ControlParams {
     value?: number;
 }
 
+interface ControlsOptionsObject {
+    target: Chart;
+    controls: Array<
+        ArrayControlParams|
+        BooleanControlParams|
+        ColorControlParams|
+        NumberControlParams
+    >;
+}
+
 /**
  * Type guard for ArrayControlParams
  */
@@ -108,304 +118,354 @@ function setNestedValue(
     chart.update(updateObj, true, true, animation);
 }
 
-/**
- * Update the options preview element with the current chart options.
- */
-export function updateOptionsPreview(): void {
-    const previewEl = document.getElementById('options-preview');
-    if (previewEl && Highcharts.charts[0]) {
-        const options = Highcharts.charts[0].getOptions();
-        // Empty xAxis and yAxis structures
-        Object.keys(options).forEach((key): void => {
-            if (JSON.stringify((options as any)[key]) === '[{}]') {
-                delete (options as any)[key];
-            }
+class Controls {
+    public container: HTMLElement;
+    public target: Chart;
+
+    constructor(container: string|HTMLElement, options: ControlsOptionsObject) {
+        this.container = (
+            typeof container === 'string' &&
+            document.getElementById(container)
+        ) ||
+            (
+                typeof container === 'object' && container
+            ) ||
+            document.body.appendChild(Object.assign(
+                document.createElement('div'),
+                { className: 'highcharts-controls' }
+            ));
+
+        this.target = options.target;
+
+        options.controls?.forEach((control): void => {
+            this.addControl(control);
         });
-        previewEl.textContent = JSON.stringify(options, null, 2);
+
+        // Keep the options preview updated
+        this.updateOptionsPreview();
+        (Highcharts as any).addEvent(
+            this.target,
+            'render',
+            this.updateOptionsPreview.bind(this)
+        );
     }
-}
 
-/**
- * Add an array of strings control
- */
-function addArrayControl(
-    params: ArrayControlParams,
-    keyDiv: HTMLElement,
-    valueDiv: HTMLElement
-): void {
-    keyDiv.appendChild(
-        Object.assign(
-            document.createElement('label'),
-            {
-                innerText: params.path
-            }
-        )
-    );
-
-    params.options.forEach((option): void => {
-        const button = valueDiv.appendChild(
+    /**
+     * Add an array of strings control
+     */
+    private addArrayControl(
+        params: ArrayControlParams,
+        keyDiv: HTMLElement,
+        valueDiv: HTMLElement
+    ): void {
+        keyDiv.appendChild(
             Object.assign(
-                document.createElement('button'),
+                document.createElement('label'),
                 {
-                    className: 'highcharts-demo-button' +
-                        (params.value === option ? ' active' : ''),
-                    innerText: option
+                    innerText: params.path
                 }
             )
         );
-        button.dataset.path = params.path;
-        button.dataset.value = option;
 
-        button.addEventListener('click', function (this: HTMLElement): void {
-            const value = this.getAttribute('data-value');
-            setNestedValue(Highcharts.charts[0]!, params.path, value);
-
-            // Update active state for all buttons in this group
-            const allButtons = document.querySelectorAll(
-                `[data-path="${params.path}"]`
+        params.options.forEach((option): void => {
+            const button = valueDiv.appendChild(
+                Object.assign(
+                    document.createElement('button'),
+                    {
+                        className: 'highcharts-demo-button' +
+                            (params.value === option ? ' active' : ''),
+                        innerText: option
+                    }
+                )
             );
-            allButtons.forEach((b): void => b.classList.remove('active'));
-            this.classList.add('active');
+            button.dataset.path = params.path;
+            button.dataset.value = option;
+
+            button.addEventListener(
+                'click',
+                function (this: HTMLElement): void {
+                    const value = this.getAttribute('data-value');
+                    setNestedValue(Highcharts.charts[0]!, params.path, value);
+
+                    // Update active state for all buttons in this group
+                    const allButtons = document.querySelectorAll(
+                        `[data-path="${params.path}"]`
+                    );
+                    allButtons.forEach(
+                        (b): void => b.classList.remove('active')
+                    );
+                    this.classList.add('active');
+                }
+            );
         });
-    });
-}
-
-/**
- * Add a boolean control
- */
-function addBooleanControl(
-    params: BooleanControlParams,
-    keyDiv: HTMLElement,
-    valueDiv: HTMLElement
-): void {
-
-    const rid = params.path.replace(/[^a-z0-9_-]/gi, '-');
-    keyDiv.appendChild(
-        Object.assign(
-            document.createElement('label'),
-            {
-                htmlFor: `toggle-checkbox-${rid}`,
-                innerText: params.path
-            }
-        )
-    );
-
-    const labelToggle = valueDiv.appendChild(
-        Object.assign(
-            document.createElement('label'),
-            { className: 'hc-toggle' }
-        )
-    );
-
-    const input = labelToggle.appendChild(
-        Object.assign(
-            document.createElement('input'),
-            {
-                type: 'checkbox',
-                id: `toggle-checkbox-${rid}`
-            }
-        )
-    );
-
-    labelToggle.appendChild(
-        Object.assign(
-            document.createElement('span'),
-            {
-                className: 'hc-toggle-slider',
-                'aria-hidden': 'true'
-            }
-        )
-    );
-
-    // Use override value if provided, otherwise get current value from
-    // chart
-    const currentValue = params.value !== void 0 ?
-        params.value :
-        getNestedValue(Highcharts.charts[0]!.options, params.path);
-    input.checked = currentValue;
-
-    input.addEventListener('change', function (): void {
-        const value = this.checked;
-        setNestedValue(Highcharts.charts[0]!, params.path, value);
-    });
-}
-
-/**
- * Add a color control
- */
-function addColorControl(
-    params: ColorControlParams,
-    keyDiv: HTMLElement,
-    valueDiv: HTMLElement
-): void {
-
-    const rid = params.path.replace(/[^a-z0-9_-]/gi, '-');
-    keyDiv.appendChild(
-        Object.assign(
-            document.createElement('label'),
-            {
-                htmlFor: `color-input-${rid}`,
-                innerText: params.path
-            }
-        )
-    );
-
-    const colorInput = valueDiv.appendChild(
-        Object.assign(
-            document.createElement('input'),
-            {
-                type: 'color',
-                id: `color-input-${rid}`
-            }
-        )
-    );
-
-    const opacityInput = valueDiv.appendChild(
-        Object.assign(
-            document.createElement('input'),
-            {
-                type: 'range',
-                id: `opacity-input-${rid}`,
-                min: '0',
-                max: '1',
-                step: '0.01',
-                value: '1'
-            }
-        )
-    );
-
-    const valueEl = valueDiv.appendChild(
-        Object.assign(
-            document.createElement('span'),
-            {
-                id: `color-value-${rid}`,
-                className: 'hc-color-value'
-            }
-        )
-    );
-
-    // Use override value if provided, otherwise get current value from
-    // chart
-    const chart = Highcharts.charts[0]!;
-    const currentValue = params.value !== void 0 ?
-        params.value :
-        (getNestedValue(chart.options, params.path) || '#000000');
-    const hcColor = (Highcharts as any).color(currentValue);
-    const rgba = hcColor.get('rgba');
-    const opacity = hcColor.rgba[3] || 1;
-    colorInput.value = currentValue;
-    opacityInput.value = String(opacity);
-    valueEl.textContent = rgba;
-
-    const update = (): void => {
-        const rgba = colorInput.value; // E.g. #RRGGBB
-        const opacity = parseFloat(opacityInput.value);
-        // Use Highcharts.color to apply opacity and produce rgba()/hex
-        const hcColor = (Highcharts as any).color(rgba)
-            .setOpacity(opacity).get();
-        setNestedValue(chart, params.path, hcColor, false);
-        valueEl.textContent = hcColor;
-    };
-
-    colorInput.addEventListener('input', update);
-    opacityInput.addEventListener('input', update);
-}
-
-/**
- * Add a number control
- */
-function addNumberControl(
-    params: NumberControlParams,
-    keyDiv: HTMLElement,
-    valueDiv: HTMLElement
-): void {
-
-    const rid = params.path.replace(/[^a-z0-9_-]/gi, '-');
-    keyDiv.appendChild(
-        Object.assign(
-            document.createElement('label'),
-            {
-                htmlFor: `range-input-${rid}`,
-                innerText: params.path
-            }
-        )
-    );
-
-    const input = valueDiv.appendChild(
-        Object.assign(
-            document.createElement('input'),
-            {
-                type: 'range',
-                id: `range-input-${rid}`,
-                min: String(params.range ? params.range[0] : 0),
-                max: String(params.range ? params.range[1] : 100),
-                step: String(params.step || 1)
-            }
-        )
-    );
-
-    const valueEl = valueDiv.appendChild(
-        Object.assign(
-            document.createElement('span'),
-            {
-                id: `range-value-${rid}`,
-                className: 'hc-range-value'
-            }
-        )
-    );
-
-    // Use override value if provided, otherwise get current value from
-    // chart
-    const currentValue = params.value !== void 0 ?
-        params.value :
-        (getNestedValue(Highcharts.charts[0]!.options, params.path) ?? 0);
-    input.value = String(currentValue);
-    valueEl.textContent = String(currentValue);
-
-    input.addEventListener('input', function (): void {
-        const value = parseFloat(this.value);
-        valueEl.textContent = String(value);
-        setNestedValue(Highcharts.charts[0]!, params.path, value, false);
-    });
-}
-
-/**
- * Add a control
- */
-export function addControl(params: ControlParams): void {
-
-    const container = document.getElementById('highcharts-controls');
-
-    if (!container) {
-        throw new Error('Container for controls not found');
     }
 
-    const div = container.appendChild(
-        Object.assign(
-            document.createElement('div'),
-            { className: 'highcharts-controls-control' }
-        )
-    );
-    const keyDiv = div.appendChild(
-        Object.assign(
-            document.createElement('div'),
-            { className: 'highcharts-controls-key' }
-        )
-    );
-    const valueDiv = div.appendChild(
-        Object.assign(
-            document.createElement('div'),
-            { className: 'highcharts-controls-value' }
-        )
-    );
+    /**
+     * Add a boolean control
+     */
+    private addBooleanControl(
+        params: BooleanControlParams,
+        keyDiv: HTMLElement,
+        valueDiv: HTMLElement
+    ): void {
 
-    if (isArrayControlParams(params)) {
-        addArrayControl(params, keyDiv, valueDiv);
-    } else if (isBooleanControlParams(params)) {
-        addBooleanControl(params, keyDiv, valueDiv);
-    } else if (isColorControlParams(params)) {
-        addColorControl(params, keyDiv, valueDiv);
-    } else if (isNumberControlParams(params)) {
-        addNumberControl(params, keyDiv, valueDiv);
+        const rid = params.path.replace(/[^a-z0-9_-]/gi, '-');
+        keyDiv.appendChild(
+            Object.assign(
+                document.createElement('label'),
+                {
+                    htmlFor: `toggle-checkbox-${rid}`,
+                    innerText: params.path
+                }
+            )
+        );
+
+        const labelToggle = valueDiv.appendChild(
+            Object.assign(
+                document.createElement('label'),
+                { className: 'hc-toggle' }
+            )
+        );
+
+        const input = labelToggle.appendChild(
+            Object.assign(
+                document.createElement('input'),
+                {
+                    type: 'checkbox',
+                    id: `toggle-checkbox-${rid}`
+                }
+            )
+        );
+
+        labelToggle.appendChild(
+            Object.assign(
+                document.createElement('span'),
+                {
+                    className: 'hc-toggle-slider',
+                    'aria-hidden': 'true'
+                }
+            )
+        );
+
+        // Use override value if provided, otherwise get current value from
+        // chart
+        const currentValue = params.value !== void 0 ?
+            params.value :
+            getNestedValue(Highcharts.charts[0]!.options, params.path);
+        input.checked = currentValue;
+
+        input.addEventListener('change', function (): void {
+            const value = this.checked;
+            setNestedValue(Highcharts.charts[0]!, params.path, value);
+        });
     }
+
+    /**
+     * Add a color control
+     */
+    private addColorControl(
+        params: ColorControlParams,
+        keyDiv: HTMLElement,
+        valueDiv: HTMLElement
+    ): void {
+
+        const rid = params.path.replace(/[^a-z0-9_-]/gi, '-');
+        keyDiv.appendChild(
+            Object.assign(
+                document.createElement('label'),
+                {
+                    htmlFor: `color-input-${rid}`,
+                    innerText: params.path
+                }
+            )
+        );
+
+        const colorInput = valueDiv.appendChild(
+            Object.assign(
+                document.createElement('input'),
+                {
+                    type: 'color',
+                    id: `color-input-${rid}`
+                }
+            )
+        );
+
+        const opacityInput = valueDiv.appendChild(
+            Object.assign(
+                document.createElement('input'),
+                {
+                    type: 'range',
+                    id: `opacity-input-${rid}`,
+                    min: '0',
+                    max: '1',
+                    step: '0.01',
+                    value: '1'
+                }
+            )
+        );
+
+        const valueEl = valueDiv.appendChild(
+            Object.assign(
+                document.createElement('span'),
+                {
+                    id: `color-value-${rid}`,
+                    className: 'hc-color-value'
+                }
+            )
+        );
+
+        // Use override value if provided, otherwise get current value from
+        // chart
+        const chart = Highcharts.charts[0]!;
+        const currentValue = params.value !== void 0 ?
+            params.value :
+            (getNestedValue(chart.options, params.path) || '#000000');
+        const hcColor = (Highcharts as any).color(currentValue);
+        const rgba = hcColor.get('rgba');
+        const opacity = hcColor.rgba[3] || 1;
+        colorInput.value = currentValue;
+        opacityInput.value = String(opacity);
+        valueEl.textContent = rgba;
+
+        const update = (): void => {
+            const rgba = colorInput.value; // E.g. #RRGGBB
+            const opacity = parseFloat(opacityInput.value);
+            // Use Highcharts.color to apply opacity and produce rgba()/hex
+            const hcColor = (Highcharts as any).color(rgba)
+                .setOpacity(opacity).get();
+            setNestedValue(chart, params.path, hcColor, false);
+            valueEl.textContent = hcColor;
+        };
+
+        colorInput.addEventListener('input', update);
+        opacityInput.addEventListener('input', update);
+    }
+
+    /**
+     * Add a number control
+     */
+    private addNumberControl(
+        params: NumberControlParams,
+        keyDiv: HTMLElement,
+        valueDiv: HTMLElement
+    ): void {
+
+        const rid = params.path.replace(/[^a-z0-9_-]/gi, '-');
+        keyDiv.appendChild(
+            Object.assign(
+                document.createElement('label'),
+                {
+                    htmlFor: `range-input-${rid}`,
+                    innerText: params.path
+                }
+            )
+        );
+
+        const input = valueDiv.appendChild(
+            Object.assign(
+                document.createElement('input'),
+                {
+                    type: 'range',
+                    id: `range-input-${rid}`,
+                    min: String(params.range ? params.range[0] : 0),
+                    max: String(params.range ? params.range[1] : 100),
+                    step: String(params.step || 1)
+                }
+            )
+        );
+
+        const valueEl = valueDiv.appendChild(
+            Object.assign(
+                document.createElement('span'),
+                {
+                    id: `range-value-${rid}`,
+                    className: 'hc-range-value'
+                }
+            )
+        );
+
+        // Use override value if provided, otherwise get current value from
+        // chart
+        const currentValue = params.value !== void 0 ?
+            params.value :
+            (getNestedValue(Highcharts.charts[0]!.options, params.path) ?? 0);
+        input.value = String(currentValue);
+        valueEl.textContent = String(currentValue);
+
+        input.addEventListener('input', function (): void {
+            const value = parseFloat(this.value);
+            valueEl.textContent = String(value);
+            setNestedValue(Highcharts.charts[0]!, params.path, value, false);
+        });
+    }
+
+    /**
+     * Add a control
+     */
+    public addControl(params: ControlParams): void {
+
+        const container = document.getElementById('highcharts-controls');
+
+        if (!container) {
+            throw new Error('Container for controls not found');
+        }
+
+        const div = container.appendChild(
+            Object.assign(
+                document.createElement('div'),
+                { className: 'highcharts-controls-control' }
+            )
+        );
+        const keyDiv = div.appendChild(
+            Object.assign(
+                document.createElement('div'),
+                { className: 'highcharts-controls-key' }
+            )
+        );
+        const valueDiv = div.appendChild(
+            Object.assign(
+                document.createElement('div'),
+                { className: 'highcharts-controls-value' }
+            )
+        );
+
+        if (isArrayControlParams(params)) {
+            this.addArrayControl(params, keyDiv, valueDiv);
+        } else if (isBooleanControlParams(params)) {
+            this.addBooleanControl(params, keyDiv, valueDiv);
+        } else if (isColorControlParams(params)) {
+            this.addColorControl(params, keyDiv, valueDiv);
+        } else if (isNumberControlParams(params)) {
+            this.addNumberControl(params, keyDiv, valueDiv);
+        }
+    }
+
+
+    /**
+     * Update the options preview element with the current chart options.
+     */
+    private updateOptionsPreview(): void {
+        const previewEl = this.container.parentElement
+            ?.querySelector('.options-preview');
+        if (previewEl) {
+            const options = this.target.getOptions();
+            // Empty xAxis and yAxis structures
+            Object.keys(options).forEach((key): void => {
+                if (JSON.stringify((options as any)[key]) === '[{}]') {
+                    delete (options as any)[key];
+                }
+            });
+            previewEl.textContent = JSON.stringify(options, null, 2);
+        }
+    }
+}
+
+/**
+ * Export the factory function
+ */
+export function controls(
+    container: HTMLElement|string,
+    options: ControlsOptionsObject
+): Controls {
+    return new Controls(container, options);
 }

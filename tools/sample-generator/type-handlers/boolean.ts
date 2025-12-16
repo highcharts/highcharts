@@ -1,10 +1,13 @@
 // Handler for boolean options
 export function getTSCall(path: string, overrideValue?: any) {
-    const valueParam = overrideValue !== void 0 ?
-        `, value: ${overrideValue}` :
-        '';
-    return `HighchartsControls.addControl({
-    type: 'boolean',
-    path: '${path}'${valueParam}
-});`;
+
+    const obj: Record<string, any> = {
+        type: 'boolean',
+        path
+    };
+
+    if (overrideValue !== void 0) {
+        obj.value = overrideValue;
+    }
+    return JSON.stringify(obj, null, 4);
 }

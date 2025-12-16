@@ -10,14 +10,17 @@ export function getTSCall(
     } else if (options.toString() === 'bottom,middle,top') {
         options = ['top', 'middle', 'bottom'];
     }
-    const valueParam = overrideValue !== void 0 ?
-        `, value: '${overrideValue}'` :
-        '';
-    const optionsParam = options !== void 0 ?
-        `, options: [${options.map((v): string => `'${v}'`).join(', ')}]` :
-        '';
-    return `HighchartsControls.addControl({
-    type: 'array-of-strings',
-    path: '${path}'${valueParam}${optionsParam}
-});`;
+
+    const obj: Record<string, any> = {
+        type: 'array-of-strings',
+        path
+    };
+
+    if (overrideValue !== void 0) {
+        obj.value = overrideValue;
+    }
+    if (options !== void 0) {
+        obj.options = options;
+    }
+    return JSON.stringify(obj, null, 4);
 }
