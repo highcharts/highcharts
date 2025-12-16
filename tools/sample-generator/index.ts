@@ -344,7 +344,13 @@ export async function getDemoCSS() {
 }
 
 export async function getDemoDetails() {
-    const details = await loadTemplate('demo.details');
+    let details = await loadTemplate('demo.details');
+
+    details = details
+        .replace('Highcharts Demo', generateTitle(paths))
+        .replace('<em>', '')
+        .replace('</em>', '');
+
     return details;
 }
 
@@ -357,7 +363,7 @@ export async function saveDemoFile() {
 
     // Build all assets in parallel based on per-path mainTypes
     const [html, css, ts, details] = await Promise.all([
-        getDemoHTML(metaList),
+        getDemoHTML(),
         getDemoCSS(),
         getDemoTS(metaList),
         getDemoDetails()
