@@ -121,6 +121,7 @@ const config = {
     chartOptions: { title: { text: 'Series B' }, series: [{ data: [3, 2, 1] }] }
   }]
 };
+</script>
 ```
 
 ### Option B: Custom layout
@@ -187,6 +188,7 @@ const config = {
     chartOptions: { title: { text: 'Profit' }, series: [{ data: [2, 2, 5] }] }
   }]
 };
+</script>
 ```
 
 ## Demos
