@@ -61,7 +61,7 @@ const MapPointSeriesDefaults: MapPointSeriesOptions = {
     legendSymbol: 'lineMarker',
     stickyTracking: true,
     tooltip: { // #23883
-        pointFormat: '<b>{point.name}</b>'
+        pointFormat: '{#if point.name}{point.name}{/if}'
     }
 };
 
