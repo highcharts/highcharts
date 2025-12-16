@@ -55,17 +55,11 @@ export interface DataLabelsFilterOptionsObject {
      * directly to properties, additionally there are `y` value,
      * `percentage` and others listed under {@link Highcharts.Point}
      * members.
-     *
-     * @type      {string}
-     * @apioption plotOptions.series.dataLabels.filter.property
      */
     property: string;
 
     /**
      * The value to compare against.
-     *
-     * @type      {number}
-     * @apioption plotOptions.series.dataLabels.filter.value
      */
     value: (null|number);
 }
@@ -106,9 +100,7 @@ export interface DataLabelOptions {
      * @sample {highcharts} highcharts/plotoptions/animation-defer/
      *          Animation defer settings
      *
-     * @type      {boolean|Partial<Highcharts.AnimationOptionsObject>}
-     * @since     8.2.0
-     * @apioption plotOptions.series.dataLabels.animation
+     * @since 8.2.0
      */
     animation?: (boolean|Partial<AnimationOptions>);
 
@@ -120,14 +112,10 @@ export interface DataLabelOptions {
      * [inside](#plotOptions.column.dataLabels.inside) option. Can be one of
      * `left`, `center` or `right`.
      *
-     * @sample {highcharts}
-     *         highcharts/plotoptions/series-datalabels-align-left/ Left
-     *         aligned
-     * @sample {highcharts}
-     *         highcharts/plotoptions/bar-datalabels-align-inside-bar/ Data
-     *         labels inside the bar
-     *
-     * @type {Highcharts.AlignValue|null}
+     * @sample {highcharts} highcharts/plotoptions/series-datalabels-align-left/
+     *         Left aligned
+     * @sample {highcharts} highcharts/plotoptions/bar-datalabels-align-inside-bar/
+     *         Data labels inside the bar
      */
     align?: AlignValue;
 
@@ -142,11 +130,9 @@ export interface DataLabelOptions {
      * @sample {highcharts} highcharts/series-bar/datalabels-alignto/
      *         Align to plot edges
      *
-     * @type      {string}
      * @since 11.4.2
-     * @apioption plotOptions.series.dataLabels.alignTo
      */
-    alignTo?: 'connectors'|'plotEdges';
+    alignTo?: 'connectors' | 'plotEdges';
 
     /**
      * Whether to allow data labels to overlap. To make the labels less
@@ -157,10 +143,8 @@ export interface DataLabelOptions {
      * @sample {highcharts} highcharts/plotoptions/series-datalabels-allowoverlap-false/
      *         Don't allow overlap
      *
-     * @type      {boolean}
      * @default   false
      * @since     4.1.0
-     * @apioption plotOptions.series.dataLabels.allowOverlap
      */
     allowOverlap?: boolean;
 
@@ -175,9 +159,7 @@ export interface DataLabelOptions {
      * @sample {highmaps} maps/demo/mappoint-datalabels-mapmarker
      *         Data labels as map markers
      *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @since     2.2.1
-     * @apioption plotOptions.series.dataLabels.backgroundColor
      */
     backgroundColor?: ColorType;
 
@@ -188,9 +170,7 @@ export interface DataLabelOptions {
      * @sample {highcharts} highcharts/plotoptions/series-datalabels-box/
      *         Data labels box options
      *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @since     2.2.1
-     * @apioption plotOptions.series.dataLabels.borderColor
      */
     borderColor?: ColorType;
 
@@ -202,10 +182,8 @@ export interface DataLabelOptions {
      * @sample {highmaps} maps/plotoptions/series-datalabels-box/
      *         Data labels box options
      *
-     * @type      {number}
      * @default   0
      * @since     2.2.1
-     * @apioption plotOptions.series.dataLabels.borderRadius
      */
     borderRadius?: number;
 
@@ -215,10 +193,8 @@ export interface DataLabelOptions {
      * @sample {highcharts} highcharts/plotoptions/series-datalabels-box/
      *         Data labels box options
      *
-     * @type      {number}
      * @default   0
      * @since     2.2.1
-     * @apioption plotOptions.series.dataLabels.borderWidth
      */
     borderWidth?: number;
 
@@ -234,9 +210,7 @@ export interface DataLabelOptions {
      * @sample {highcharts} highcharts/css/series-datalabels/
      *         Styling by CSS
      *
-     * @type      {string}
      * @since     5.0.0
-     * @apioption plotOptions.series.dataLabels.className
      */
     className?: string;
 
@@ -259,9 +233,7 @@ export interface DataLabelOptions {
      *
      * @see [style.color](#plotOptions.series.dataLabels.style)
      *
-     * @type       {Highcharts.ColorType}
      * @deprecated 10.3
-     * @apioption  plotOptions.series.dataLabels.color
      */
     color?: ColorString;
 
@@ -272,10 +244,8 @@ export interface DataLabelOptions {
      * [overflow](#plotOptions.series.dataLabels.overflow)
      * option.
      *
-     * @type      {boolean}
      * @default   true
      * @since     2.3.3
-     * @apioption plotOptions.series.dataLabels.crop
      */
     crop?: boolean;
 
@@ -286,7 +256,6 @@ export interface DataLabelOptions {
      * time set in [plotOptions.series.animation](#plotOptions.series.animation).
      *
      * @since     4.0.0
-     * @type      {boolean}
      * @default   true
      * @product   highcharts highstock gantt
      */
@@ -308,9 +277,7 @@ export interface DataLabelOptions {
      * @sample {highmaps} maps/demo/color-axis/
      *         Data labels enabled
      *
-     * @type      {boolean}
      * @default   false
-     * @apioption plotOptions.series.dataLabels.enabled
      */
     enabled?: boolean;
 
@@ -332,9 +299,8 @@ export interface DataLabelOptions {
      * @sample {highcharts} highcharts/demo/pie-monochrome
      *         Data labels filtered by percentage
      *
-     * @declare   Highcharts.DataLabelsFilterOptionsObject
-     * @since     6.0.3
-     * @apioption plotOptions.series.dataLabels.filter
+     * @declare Highcharts.DataLabelsFilterOptionsObject
+     * @since 6.0.3
      */
     filter?: DataLabelsFilterOptionsObject;
 
@@ -351,11 +317,8 @@ export interface DataLabelOptions {
      * @sample {highmaps} maps/plotoptions/series-datalabels-format/
      *         Formatted value in the data label
      *
-     * @type      {string}
-     * @default   y
-     * @default   point.value
-     * @since     3.0
-     * @apioption plotOptions.series.dataLabels.format
+     * @default 'point.value'
+     * @since 3.0
      */
     format?: string;
 
@@ -366,8 +329,6 @@ export interface DataLabelOptions {
      *
      * @sample {highmaps} maps/plotoptions/series-datalabels-format/
      *         Formatted value
-     *
-     * @type {Highcharts.DataLabelsFormatterCallbackFunction}
      */
     formatter?: DataLabelsFormatterCallbackFunction;
 
@@ -376,9 +337,7 @@ export interface DataLabelOptions {
      * align the data label inside the box or to the actual value point.
      * Defaults to `false` in most cases, `true` in stacked columns.
      *
-     * @type      {boolean}
-     * @since     3.0
-     * @apioption plotOptions.series.dataLabels.inside
+     * @since 3.0
      */
     inside?: boolean;
 
@@ -386,8 +345,6 @@ export interface DataLabelOptions {
      * The rank for this point's data label in case of collision. If two
      * data labels are about to overlap, only the one with the highest
      * `labelrank` will be drawn.
-     *
-     * @type      {number}
      */
     labelrank?: number;
 
@@ -406,9 +363,7 @@ export interface DataLabelOptions {
      * @sample {highcharts} highcharts/plotoptions/series-datalabels-nullformat/
      *         Heatmap with null interaction
      *
-     * @type      {boolean|string}
-     * @since     7.1.0
-     * @apioption plotOptions.series.dataLabels.nullFormat
+     * @since 7.1.0
      */
     nullFormat?: (boolean|string);
 
@@ -427,9 +382,7 @@ export interface DataLabelOptions {
      * @sample {highcharts} highcharts/plotoptions/series-datalabels-nullformat/
      *         Format data label for null points in heat map
      *
-     * @type      {Highcharts.DataLabelsFormatterCallbackFunction}
-     * @since     7.1.0
-     * @apioption plotOptions.series.dataLabels.nullFormatter
+     * @since 7.1.0
      */
     nullFormatter?: DataLabelsFormatterCallbackFunction;
 
@@ -440,10 +393,8 @@ export interface DataLabelOptions {
      * To display data labels outside the plot area, set `crop` to
      * `false` and `overflow` to `"allow"`.
      *
-     * @type       {Highcharts.DataLabelsOverflowValue}
-     * @default    justify
-     * @since      3.0.6
-     * @apioption  plotOptions.series.dataLabels.overflow
+     * @default 'justify'
+     * @since 3.0.6
      */
     overflow?: DataLabelsOverflowValue;
 
@@ -464,9 +415,7 @@ export interface DataLabelOptions {
      * Aligns data labels relative to points. If `center` alignment is
      * not possible, it defaults to `right`.
      *
-     * @type      {Highcharts.AlignValue}
-     * @default   center
-     * @apioption plotOptions.series.dataLabels.position
+     * @default center
      */
     position?: AlignValue;
 
@@ -478,9 +427,7 @@ export interface DataLabelOptions {
      * @sample {highcharts} highcharts/plotoptions/series-datalabels-rotation/
      *         Vertical labels
      *
-     * @type      {number}
-     * @default   0
-     * @apioption plotOptions.series.dataLabels.rotation
+     * @default 0
      */
     rotation?: number;
 
@@ -493,10 +440,8 @@ export interface DataLabelOptions {
      * @sample {highcharts} highcharts/plotoptions/series-datalabels-box/
      *         Data labels box options
      *
-     * @type      {boolean|Highcharts.ShadowOptionsObject}
      * @default   false
      * @since     2.2.1
-     * @apioption plotOptions.series.dataLabels.shadow
      */
     shadow?: (boolean|Partial<ShadowOptionsObject>);
 
@@ -507,10 +452,8 @@ export interface DataLabelOptions {
      * @sample {highcharts} highcharts/plotoptions/series-datalabels-shape/
      *         A callout for annotations
      *
-     * @type      {string}
      * @default   square
      * @since     4.1.2
-     * @apioption plotOptions.series.dataLabels.shape
      */
     shape?: keyof SymbolTypeRegistry;
 
@@ -528,7 +471,7 @@ export interface DataLabelOptions {
      * text outline doesn't work well, in which cases it can be disabled
      * by setting it to `"none"`. When `useHTML` is true, the
      * `textOutline` will not be picked up. In this, case, the same
-     * effect can be acheived through the `text-shadow` CSS property.
+     * effect can be achieved through the `text-shadow` CSS property.
      *
      * For some series types, where each point has an extent, like for
      * example tree maps, the data label may overflow the point. There
@@ -546,9 +489,7 @@ export interface DataLabelOptions {
      * @sample {highmaps} maps/demo/color-axis/
      *         Bold labels
      *
-     * @type      {Highcharts.CSSObject}
      * @since     4.1.0
-     * @apioption plotOptions.series.dataLabels.style
      */
     style?: CSSObject;
 
@@ -562,7 +503,6 @@ export interface DataLabelOptions {
      *
      * @declare   Highcharts.DataLabelsTextPathOptionsObject
      * @since     7.1.0
-     * @apioption plotOptions.series.dataLabels.textPath
      */
     textPath?: DataLabelTextPathOptions;
 
@@ -571,9 +511,7 @@ export interface DataLabelOptions {
      * [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
      * to render the labels.
      *
-     * @type      {boolean}
-     * @default   false
-     * @apioption plotOptions.series.dataLabels.useHTML
+     * @default false
      */
     useHTML?: boolean;
 
@@ -583,7 +521,6 @@ export interface DataLabelOptions {
      * instance in a column chart, the label is above positive values
      * and below negative values.
      *
-     * @type  {Highcharts.VerticalAlignValue|null}
      * @default bottom
      * @since 2.3.3
      */
@@ -597,6 +534,7 @@ export interface DataLabelOptions {
      *         Vertical and positioned
      * @sample {highcharts} highcharts/plotoptions/bar-datalabels-align-inside-bar/
      *         Data labels inside the bar
+     *
      * @default 0
      */
     x?: number;
@@ -617,10 +555,8 @@ export interface DataLabelOptions {
      * Use a `zIndex` of 6 to display it above the series,
      * or use a `zIndex` of 2 to display it behind the series.
      *
-     * @type      {number}
      * @default   6
      * @since     2.3.5
-     * @apioption plotOptions.series.dataLabels.zIndex
      */
     zIndex?: number;
 }
@@ -636,9 +572,7 @@ export interface DataLabelTextPathOptions {
     /**
      * Presentation attributes for the text path.
      *
-     * @type      {Highcharts.SVGAttributes}
      * @since     7.1.0
-     * @apioption plotOptions.series.dataLabels.textPath.attributes
      */
     attributes?: TextPathAttributes;
 
@@ -646,9 +580,7 @@ export interface DataLabelTextPathOptions {
      * Enable or disable `textPath` option for link's or marker's data
      * labels.
      *
-     * @type      {boolean}
      * @since     7.1.0
-     * @apioption plotOptions.series.dataLabels.textPath.enabled
      */
     enabled?: boolean;
 }
