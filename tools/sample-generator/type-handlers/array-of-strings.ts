@@ -16,7 +16,7 @@ export function getTSCall(
     const optionsParam = options !== void 0 ?
         `, options: [${options.map((v): string => `'${v}'`).join(', ')}]` :
         '';
-    return `DemoKit.addControl({
+    return `HighchartsControls.addControl({
     type: 'array-of-strings',
     path: '${path}'${valueParam}${optionsParam}
 });`;

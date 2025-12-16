@@ -14,7 +14,7 @@ export function getTSCall(path: string, overrideValue?: any) {
         `, value: ${overrideValue}` :
         '';
     const [min, max] = getRange(path);
-    return `DemoKit.addControl({
+    return `HighchartsControls.addControl({
     type: 'number',
     path: '${path}',
     range: [${min}, ${max}]${valueParam}

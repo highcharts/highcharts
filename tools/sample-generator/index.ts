@@ -334,11 +334,11 @@ export async function getDemoTS(metaList: Array<{
     // Initialize the preview
     ts += `
 
-DemoKit.updateOptionsPreview();
+HighchartsControls.updateOptionsPreview();
 Highcharts.addEvent(
     Highcharts.Chart,
     'render',
-    DemoKit.updateOptionsPreview
+    HighchartsControls.updateOptionsPreview
 );`;
 
     return ts;

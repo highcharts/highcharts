@@ -3,7 +3,7 @@
 export function getTSCall(path: string, overrideValue?: any) {
     const valueParam = overrideValue !== void 0 ?
         `, value: '${overrideValue}'` : '';
-    return `DemoKit.addControl({
+    return `HighchartsControls.addControl({
     type: 'color',
     path: '${path}'${valueParam}
 });`;

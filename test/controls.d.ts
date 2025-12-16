@@ -6,7 +6,7 @@
 /**
  * DemoKit class, temporarily declared literally for samples.
  */
-declare class DemoKit {
+declare class HighchartsControls {
     static setupBooleanHandler(
         path: string,
         rid: string,

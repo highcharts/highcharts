@@ -21,30 +21,30 @@ Highcharts.chart('container', {
 });
 
 // GUI components for demo purpose
-DemoKit.addControl({
+HighchartsControls.addControl({
     type: 'color',
     path: 'chart.backgroundColor',
     value: '#FFFFFF'
 });
-DemoKit.addControl({
+HighchartsControls.addControl({
     type: 'array-of-strings',
     path: 'title.align',
     value: 'center',
     options: ['left', 'center', 'right']
 });
-DemoKit.addControl({
+HighchartsControls.addControl({
     type: 'boolean',
     path: 'title.floating'
 });
-DemoKit.addControl({
+HighchartsControls.addControl({
     type: 'number',
     path: 'title.x',
     range: [-100, 100]
 });
 
-DemoKit.updateOptionsPreview();
+HighchartsControls.updateOptionsPreview();
 Highcharts.addEvent(
     Highcharts.Chart,
     'render',
-    DemoKit.updateOptionsPreview
+    HighchartsControls.updateOptionsPreview
 );
