@@ -9,9 +9,21 @@
 
 /* eslint-disable @highcharts/highcharts/no-highcharts-object */
 
-import type Chart from '../Core/Chart/Chart';
-
 declare const Highcharts: typeof import('../Core/Globals').default;
+
+interface GenericOptionsObject {
+    [key: string]: any;
+}
+interface ControlTarget {
+    options: GenericOptionsObject;
+    getOptions(): GenericOptionsObject|void;
+    update(
+        options: GenericOptionsObject,
+        redraw?: boolean,
+        oneToOne?: boolean,
+        animation?: boolean
+    ): void;
+}
 
 interface ControlParams {
     type: 'boolean'|'color'|'number'|'array-of-strings';
@@ -42,7 +54,7 @@ interface NumberControlParams extends ControlParams {
 }
 
 interface ControlsOptionsObject {
-    target: Chart;
+    target: ControlTarget;
     controls: Array<
         ArrayControlParams|
         BooleanControlParams|
@@ -98,7 +110,7 @@ function getNestedValue(obj: any, path: string): any {
  * Set a nested value on the chart given a dot-separated path.
  */
 function setNestedValue(
-    chart: Chart,
+    chart: ControlTarget,
     path: string,
     value: any,
     animation?: boolean
@@ -120,7 +132,7 @@ function setNestedValue(
 
 class Controls {
     public container: HTMLElement;
-    public target: Chart;
+    public target: ControlTarget;
 
     constructor(container: string|HTMLElement, options: ControlsOptionsObject) {
         this.container = (
@@ -158,6 +170,7 @@ class Controls {
         keyDiv: HTMLElement,
         valueDiv: HTMLElement
     ): void {
+        const { target } = this;
         keyDiv.appendChild(
             Object.assign(
                 document.createElement('label'),
@@ -185,7 +198,7 @@ class Controls {
                 'click',
                 function (this: HTMLElement): void {
                     const value = this.getAttribute('data-value');
-                    setNestedValue(Highcharts.charts[0]!, params.path, value);
+                    setNestedValue(target, params.path, value);
 
                     // Update active state for all buttons in this group
                     const allButtons = document.querySelectorAll(
@@ -251,12 +264,12 @@ class Controls {
         // chart
         const currentValue = params.value !== void 0 ?
             params.value :
-            getNestedValue(Highcharts.charts[0]!.options, params.path);
+            getNestedValue(this.target.options, params.path);
         input.checked = currentValue;
 
-        input.addEventListener('change', function (): void {
-            const value = this.checked;
-            setNestedValue(Highcharts.charts[0]!, params.path, value);
+        input.addEventListener('change', (): void => {
+            const value = input.checked;
+            setNestedValue(this.target, params.path, value);
         });
     }
 
@@ -316,10 +329,9 @@ class Controls {
 
         // Use override value if provided, otherwise get current value from
         // chart
-        const chart = Highcharts.charts[0]!;
         const currentValue = params.value !== void 0 ?
             params.value :
-            (getNestedValue(chart.options, params.path) || '#000000');
+            (getNestedValue(this.target.options, params.path) || '#000000');
         const hcColor = (Highcharts as any).color(currentValue);
         const rgba = hcColor.get('rgba');
         const opacity = hcColor.rgba[3] || 1;
@@ -333,7 +345,7 @@ class Controls {
             // Use Highcharts.color to apply opacity and produce rgba()/hex
             const hcColor = (Highcharts as any).color(rgba)
                 .setOpacity(opacity).get();
-            setNestedValue(chart, params.path, hcColor, false);
+            setNestedValue(this.target, params.path, hcColor, false);
             valueEl.textContent = hcColor;
         };
 
@@ -388,14 +400,14 @@ class Controls {
         // chart
         const currentValue = params.value !== void 0 ?
             params.value :
-            (getNestedValue(Highcharts.charts[0]!.options, params.path) ?? 0);
+            (getNestedValue(this.target.options, params.path) ?? 0);
         input.value = String(currentValue);
         valueEl.textContent = String(currentValue);
 
-        input.addEventListener('input', function (): void {
-            const value = parseFloat(this.value);
+        input.addEventListener('input', (): void => {
+            const value = parseFloat(input.value);
             valueEl.textContent = String(value);
-            setNestedValue(Highcharts.charts[0]!, params.path, value, false);
+            setNestedValue(this.target, params.path, value, false);
         });
     }
 
@@ -448,7 +460,7 @@ class Controls {
         const previewEl = this.container.parentElement
             ?.querySelector('.options-preview');
         if (previewEl) {
-            const options = this.target.getOptions();
+            const options = this.target.getOptions() || {};
             // Empty xAxis and yAxis structures
             Object.keys(options).forEach((key): void => {
                 if (JSON.stringify((options as any)[key]) === '[{}]') {

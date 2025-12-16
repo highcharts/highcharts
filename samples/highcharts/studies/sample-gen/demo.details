@@ -1,4 +1,4 @@
 ---
- name: Demo of various chart options
+ name: Demo of plotOptions.column options
  js_wrap: b
 ...
