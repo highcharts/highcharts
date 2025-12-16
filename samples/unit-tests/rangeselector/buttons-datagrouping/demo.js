@@ -154,6 +154,29 @@ QUnit.test('getUnionExtremes', function (assert) {
         2419200000,
         'Correct button selected when preserveDataGrouping=true (#8433).'
     );
+
+    // #23911
+    chart.update({
+        rangeSelector: {
+            buttons: [{
+                text: 'M1',
+                title: 'Set timeframe to 1 minute',
+                dataGrouping: {
+                    forced: true,
+                    units: [
+                        ['minute', [1]]
+                    ]
+                }
+            }]
+        }
+    });
+    chart.rangeSelector.clickButton(0);
+
+    assert.strictEqual(
+        chart.series[0].points?.length,
+        18,
+        'All points should be present when dataGrouping is 1 min (#23911)'
+    );
 });
 
 (async () => {
