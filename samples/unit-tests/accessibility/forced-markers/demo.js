@@ -272,6 +272,17 @@ QUnit.test('Hover after disabling a11y', function (assert) {
         hasVisibleMarker(point0) || hasMarker(point0), false,
         'Point should not have marker after hovering series'
     );
+
+    // #23878
+    chart.update({
+        styledMode: true
+    });
+    chart.xAxis[0].setExtremes(1, 2);
+    chart.xAxis[0].setExtremes(null, null);
+    assert.strictEqual(
+        hasVisibleMarker(point0) || hasMarker(point0), false,
+        'Point should not have marker after zoom in and zoom out'
+    );
 });
 
 QUnit.test(
@@ -330,5 +341,4 @@ QUnit.test(
             hasMarker(point), false, 'Markers should not ' +
             'exist again'
         );
-
     });
