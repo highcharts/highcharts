@@ -79,6 +79,7 @@ async function sampleImagePixelAtSVGPoint(svg, imageEl, svgX, svgY) {
 QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
     'Set extremes when boosted',
     async function (assert) {
+
         const chart = Highcharts.chart('container', {
             chart: {
                 type: 'column',
@@ -161,28 +162,18 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
             desiredColor = chart.series[0].color,
             point = chart.series[0].points[2];
 
-        let clock = null;
-        try {
-            clock = TestUtilities.lolexInstall();
-            await (async () => {
-                const x = point.plotX + chart.plotLeft,
-                    y = point.plotY + chart.plotTop;
+        const x = point.plotX + chart.plotLeft,
+            y = point.plotY + chart.plotTop;
 
-                const { hex } =
-                    await sampleImagePixelAtSVGPoint(svg, imageEl, x, y);
+        const { hex } =
+            await sampleImagePixelAtSVGPoint(svg, imageEl, x, y);
 
-                assert.strictEqual(
-                    hex,
-                    desiredColor,
-                    `After updating to empty zones the color should be
-                    remained, #23571.`
-                );
-
-                TestUtilities.lolexRunAndUninstall(clock);
-            })();
-        } finally {
-            TestUtilities.lolexUninstall(clock);
-        }
+        assert.strictEqual(
+            hex,
+            desiredColor,
+            `After updating to empty zones the color should be
+            remained, #23571.`
+        );
     }
 );
 

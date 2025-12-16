@@ -34,6 +34,7 @@ import type { ColumnDataType } from './Table/Column';
 import type DataTable from '../../Data/DataTable';
 import type DataTableOptions from '../../Data/DataTableOptions';
 import type Cell from './Table/Cell';
+import type Column from './Table/Column';
 import type { LangOptionsCore } from '../../Shared/LangOptionsCore';
 import type {
     Condition as ColumnFilteringCondition
@@ -51,6 +52,12 @@ import type {
  * formatted cell's string.
  */
 export type CellFormatterCallback = (this: Cell) => string;
+
+/**
+ * Callback function to be called when a header event is triggered. Returns a
+ * formatted header's string.
+ */
+export type HeaderFormatterCallback = (this: Column) => string;
 
 /**
  * Column sorting order type.
@@ -423,7 +430,7 @@ export interface ColumnHeaderOptions {
      * @return
      * A string to be set as a header cell's content.
      */
-    formatter?: CellFormatterCallback;
+    formatter?: HeaderFormatterCallback;
 }
 
 /**
