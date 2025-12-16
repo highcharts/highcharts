@@ -4780,21 +4780,69 @@ namespace Axis {
         dataMin: number;
         dataMax: number;
     }
-    /** @internal */
+
+    /**
+     * Options for the path on the Axis to be calculated.
+     */
     export interface PlotLinePathOptions {
+        /**
+         * Used in Highcharts Stock. When `true`, plot paths (crosshair,
+         * plotLines, gridLines) will be rendered on all axes when defined on
+         * the first axis.
+         */
         acrossPanes?: boolean;
+
+        /**
+         * If `false`, the function will return null when it falls outside the
+         * axis bounds. If `true`, the function will return a path aligned to
+         * the plot area sides if it falls outside. If `pass`, it will return a
+         * path outside.
+         */
         force?: (boolean|string);
+
+        /**
+         * Line width used for calculation crisp line coordinates.
+         * Defaults to 1.
+         */
         lineWidth?: number;
+
+        /**
+         * Use old coordinates (for resizing and rescaling). If not set,
+         * defaults to `false`.
+         */
         old?: boolean;
+
         /** @internal */
         chartX?: number;
+
+        /** @internal */
         chartY?: number;
+
+        /** @internal */
         isCrosshair?: boolean;
+
+        /** @internal */
         path?: SVGPath;
+
+        /** @internal */
         point?: Point;
+
+        /**
+         * Used in Polar axes. Reverse the positions for concatenation of
+         * polygonal plot bands.
+         */
         reverse?: boolean;
+
+        /**
+         * If given, return the plot line path of a pixel position on the axis.
+         */
         translatedValue?: number;
+
+        /**
+         * Axis value.
+         */
         value?: number;
+
     }
 }
 
