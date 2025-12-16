@@ -424,6 +424,24 @@ test('second test', async ({ page }) => {
 });
 ```
 
+Use `test.describe` blocks to group related tests and share setup logic via `beforeEach`/`afterEach` hooks:
+
+```typescript
+test.describe('axis formatting', () => {
+    test.beforeEach(async ({ page }) => {
+        // Common setup for all tests in this block
+    });
+
+    test('formats date axis correctly', async ({ page }) => {
+        // Test code
+    });
+
+    test('formats numeric axis correctly', async ({ page }) => {
+        // Test code
+    });
+});
+```
+
 ### Use Deterministic Data
 
 Avoid `Math.random()` or time-dependent data in tests. Use fixed datasets for reproducible results:
