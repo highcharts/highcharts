@@ -1,7 +1,6 @@
 Highcharts.chart('container', {
     title: {
-        text: 'Demo of various chart options',
-        align: 'center'
+        text: 'Demo of <em>legend.enabled</em>'
     },
     series: [
         {
@@ -15,8 +14,8 @@ Highcharts.chart('container', {
             colorByPoint: true
         }
     ],
-    chart: {
-        backgroundColor: '#FFFFFF'
+    legend: {
+        enabled: true
     }
 });
 
@@ -24,30 +23,8 @@ Highcharts.chart('container', {
 HighchartsControls.controls('highcharts-controls', {
     target: Highcharts.charts[0],
     controls: [{
-        type: 'color',
-        path: 'chart.backgroundColor',
-        value: '#FFFFFF'
-    },
-    {
-        type: 'array-of-strings',
-        path: 'title.align',
-        value: 'center',
-        options: [
-            'left',
-            'center',
-            'right'
-        ]
-    },
-    {
         type: 'boolean',
-        path: 'title.floating'
-    },
-    {
-        type: 'number',
-        path: 'title.x',
-        range: [
-            -100,
-            100
-        ]
+        path: 'legend.enabled',
+        value: true
     }]
 });

@@ -23,10 +23,7 @@ import * as colorHandler from './type-handlers/color.ts';
 const types = await loadExportedTypes('code/highcharts.d.ts');
 
 const paths = [
-    'chart.backgroundColor=#FFFFFF',
-    'title.align=center',
-    'title.floating',
-    'title.x'
+    'legend.enabled=true'
 ];
 
 // --- Template helpers -------------------------------------------------------

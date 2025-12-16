@@ -134,24 +134,33 @@ class Controls {
     public container: HTMLElement;
     public target: ControlTarget;
 
-    constructor(container: string|HTMLElement, options: ControlsOptionsObject) {
-        this.container = (
-            typeof container === 'string' &&
-            document.getElementById(container)
+    constructor(renderTo: string|HTMLElement, options: ControlsOptionsObject) {
+        renderTo = (
+            typeof renderTo === 'string' &&
+            document.getElementById(renderTo)
         ) ||
             (
-                typeof container === 'object' && container
+                typeof renderTo === 'object' && renderTo
             ) ||
             document.body.appendChild(Object.assign(
+                document.createElement('div')
+            ));
+
+        this.container = (renderTo as HTMLElement).appendChild(
+            Object.assign(
                 document.createElement('div'),
                 { className: 'highcharts-controls' }
-            ));
+            )
+        );
 
         this.target = options.target;
 
+        // Add the controls
         options.controls?.forEach((control): void => {
             this.addControl(control);
         });
+
+        this.addPreview();
 
         // Keep the options preview updated
         this.updateOptionsPreview();
@@ -159,6 +168,73 @@ class Controls {
             this.target,
             'render',
             this.updateOptionsPreview.bind(this)
+        );
+    }
+
+    private addPreview(): void {
+
+        const div = this.container.appendChild(
+            Object.assign(
+                document.createElement('div'),
+                {
+                    className: 'highcharts-controls-control button-control'
+                }
+            )
+        );
+        div.appendChild(
+            Object.assign(
+                document.createElement('div'),
+                { className: 'highcharts-controls-key' }
+            )
+        );
+        const valueDiv = div.appendChild(
+            Object.assign(
+                document.createElement('div'),
+                { className: 'highcharts-controls-value' }
+            )
+        );
+        const valueDivInner = valueDiv.appendChild(
+            Object.assign(
+                document.createElement('div'),
+                { className: 'highcharts-controls-value-inner' }
+            )
+        );
+
+        // Add the button
+        const button = valueDivInner.appendChild(
+            Object.assign(
+                document.createElement('button'),
+                {
+                    className: 'highcharts-demo-button show-preview-button',
+                    innerText: 'Show Options Preview'
+                }
+            )
+        );
+
+        button.addEventListener('click', (): void => {
+            const previewSection = this.container.querySelector(
+                '.preview-section'
+            ) as HTMLElement;
+            if (previewSection) {
+                const isHidden = previewSection.classList.contains('hidden');
+                previewSection.classList.toggle('hidden');
+                button.innerText = isHidden ?
+                    'Hide Options Preview' :
+                    'Show Options Preview';
+            }
+        });
+
+        // Add the preview element
+        this.container.appendChild(
+            Object.assign(
+                document.createElement('div'),
+                {
+                    className: 'preview-section hidden',
+                    innerHTML:
+                        '<h3>Chart Options Preview</h3>' +
+                        '<pre class="options-preview"></pre>'
+                }
+            )
         );
     }
 
@@ -451,13 +527,11 @@ class Controls {
      */
     public addControl(params: ControlParams): void {
 
-        const container = document.getElementById('highcharts-controls');
-
-        if (!container) {
+        if (!this.container) {
             throw new Error('Container for controls not found');
         }
 
-        const div = container.appendChild(
+        const div = this.container.appendChild(
             Object.assign(
                 document.createElement('div'),
                 { className: 'highcharts-controls-control' }
