@@ -14,11 +14,22 @@
         margin: 0 auto;
     }
 
+    .highcharts-controls-control {
+        display: grid;
+        grid-template-columns: 50% 50%;
+    }
+
     .control-section td {
         height: 2.5em;
     }
 
-    .control-section td:first-child {
+    .highcharts-controls-key,
+    .highcharts-controls-value {
+        height: 2.5em;
+    }
+
+    .control-section td:first-child,
+    .highcharts-controls-key {
         text-align: right;
     }
 

@@ -23,10 +23,10 @@ import * as colorHandler from './type-handlers/color.ts';
 const types = await loadExportedTypes('code/highcharts.d.ts');
 
 const paths = [
+    'chart.backgroundColor=#FFFFFF',
     'title.align=center',
-    'xAxis.visible',
-    'xAxis.lineColor',
-    'xAxis.lineWidth=5'
+    'title.floating',
+    'title.x'
 ];
 /*
 const paths = [
@@ -279,52 +279,8 @@ function pickHandler(meta: { mainType: string; options?: string[] }) {
 }
 
 // Function to get HTML (one row per path) from template
-export async function getDemoHTML(
-    metaList: Array<{
-        path: string;
-        mainType: string;
-        options?: string[];
-        defaultValue?: any;
-        overrideValue?: any
-    }>
-) {
-    const PLACEHOLDER = '<!--CONTROLS-->';
-    let template = await loadTemplate('demo.html');
-
-    let controlsHTML = '';
-    for (const meta of metaList) {
-        const handler = pickHandler(meta);
-        if (!handler) {
-            continue;
-        }
-
-        // Pass default value for array handlers (use override value if
-        // available)
-        if (handler.kind === 'array') {
-            const valueToUse = meta.overrideValue !== void 0 ?
-                meta.overrideValue :
-                meta.defaultValue;
-            controlsHTML += handler.mod.getHTML(
-                meta.path,
-                meta.options,
-                valueToUse
-            );
-        } else {
-            controlsHTML += handler.mod.getHTML(meta.path);
-        }
-    }
-
-    // If the placeholder exists, replace it; otherwise append controls at the
-    // end
-    if (controlsHTML !== '') {
-        controlsHTML = `<table>\n${controlsHTML}\n</table>\n`;
-    }
-    if (template.includes(PLACEHOLDER)) {
-        template = template.replace(PLACEHOLDER, controlsHTML);
-    } else {
-        template += controlsHTML;
-    }
-
+export async function getDemoHTML() {
+    const template = await loadTemplate('demo.html');
     return template;
 }
 
@@ -362,7 +318,8 @@ export async function getDemoTS(metaList: Array<{
         // Add call for this specific path
         handlerCalls.push(handler.mod.getTSCall(
             meta.path,
-            meta.overrideValue ?? meta.defaultValue
+            meta.overrideValue ?? meta.defaultValue,
+            meta.options
         ));
     }
 

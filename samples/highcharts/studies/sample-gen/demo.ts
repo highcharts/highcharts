@@ -15,33 +15,32 @@ Highcharts.chart('container', {
             colorByPoint: true
         }
     ],
-    xAxis: {
-        visible: true,
-        lineColor: '#333333',
-        lineWidth: 5
+    chart: {
+        backgroundColor: '#FFFFFF'
     }
 });
 
 // GUI components for demo purpose
-DemoKit.setupArrayHandler(
-    'title.align',
-    '.highcharts-demo-button[data-path="title.align"]'
-);
-DemoKit.setupBooleanHandler(
-    'xAxis.visible',
-    'toggle-checkbox-xAxis-visible', true
-);
-DemoKit.setupColorHandler(
-    'xAxis.lineColor',
-    'xAxis-lineColor',
-    'xAxis-lineColor-opacity',
-    'xAxis-lineColor-value', '#333333'
-);
-DemoKit.setupNumberHandler(
-    'xAxis.lineWidth',
-    'range-input-xAxis-lineWidth',
-    'range-value-xAxis-lineWidth', 5
-);
+DemoKit.addControl({
+    type: 'color',
+    path: 'chart.backgroundColor',
+    value: '#FFFFFF'
+});
+DemoKit.addControl({
+    type: 'array-of-strings',
+    path: 'title.align',
+    value: 'center',
+    options: ['left', 'center', 'right']
+});
+DemoKit.addControl({
+    type: 'boolean',
+    path: 'title.floating'
+});
+DemoKit.addControl({
+    type: 'number',
+    path: 'title.x',
+    range: [-100, 100]
+});
 
 DemoKit.updateOptionsPreview();
 Highcharts.addEvent(

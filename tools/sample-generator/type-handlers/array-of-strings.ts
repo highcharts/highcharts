@@ -1,31 +1,23 @@
 // Handler for discrete string options (array of string literals)
-export function getHTML(path: string, options: string[], defaultValue?: any) {
+export function getTSCall(
+    path: string,
+    overrideValue?: any,
+    options?: string[]
+): string {
     // Reorder so that the UI makes more sense
     if (options.toString() === 'center,left,right') {
         options = ['left', 'center', 'right'];
     } else if (options.toString() === 'bottom,middle,top') {
         options = ['top', 'middle', 'bottom'];
     }
-
-    let html = `<tr><td><label>${path}</label></td><td>`;
-    for (const option of options) {
-        const isActive = defaultValue !== void 0 && defaultValue === option;
-        const activeClass = isActive ? ' active' : '';
-        html += `
-      <button
-        class="highcharts-demo-button${activeClass}"
-        data-path="${path}"
-        data-value="${option}"
-      >${option}</button>
-    `;
-    }
-    html += '</td></tr>';
-    return html;
-}
-
-export function getTSCall(path: string) {
-    return `DemoKit.setupArrayHandler(
-    '${path}',
-    '.highcharts-demo-button[data-path="${path}"]'
-);`;
+    const valueParam = overrideValue !== void 0 ?
+        `, value: '${overrideValue}'` :
+        '';
+    const optionsParam = options !== void 0 ?
+        `, options: [${options.map((v): string => `'${v}'`).join(', ')}]` :
+        '';
+    return `DemoKit.addControl({
+    type: 'array-of-strings',
+    path: '${path}'${valueParam}${optionsParam}
+});`;
 }
