@@ -23,7 +23,9 @@ import * as colorHandler from './type-handlers/color.ts';
 const types = await loadExportedTypes('code/highcharts.d.ts');
 
 const paths = [
-    'legend.enabled=true'
+    'chart.borderWidth=2',
+    'chart.borderColor',
+    'chart.borderRadius=4'
 ];
 
 // --- Template helpers -------------------------------------------------------

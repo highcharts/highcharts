@@ -1,8 +1,16 @@
+.highcharts-dark {
+    color-scheme: dark;
+}
+
+.highcharts-light {
+    color-scheme: light;
+}
+
 .highcharts-controls {
     padding: 1rem;
-    background: #f8f9fa;
+    background: light-dark(#f8f9fa, #212529);
     border-radius: 8px;
-    border: 1px solid #e9ecef;
+    border: 1px solid light-dark(#e9ecef, #495057);
     box-sizing: border-box;
 
     .control-section table {
@@ -33,7 +41,7 @@
     }
 
     .highcharts-controls-value-inner {
-        border: 1px solid #dddddd;
+        border: 1px solid light-dark(#dddddd, #555555);
         border-radius: 4px;
         height: 2.2em;
         max-width: 300px;
@@ -45,7 +53,7 @@
     }
 
     .control-section tr:not(:last-child) td {
-        border-bottom: 1px solid #aaaaaa88;
+        border-bottom: 1px solid light-dark(#aaaaaa88, #66666688);
     }
 
     .control-section label:not(.hc-toggle, .opacity-label) {
@@ -57,30 +65,35 @@
         margin-top: 2rem;
         max-height: 600px;
         overflow: auto;
-        transition: max-height 250ms ease-in-out, margin-top 250ms ease-in-out;
+        opacity: 1;
+        transition:
+            max-height 250ms ease-in-out,
+            margin-top 250ms ease-in-out,
+            opacity 250ms ease-in-out;
     }
 
     .preview-section.hidden {
         max-height: 0;
         margin-top: 0;
+        opacity: 0;
     }
 
     .preview-section h3 {
         margin: 0 0 1rem;
-        color: #495057;
+        color: light-dark(#495057, #adb5bd);
         font-size: 1.1rem;
     }
 
     .options-preview {
-        background: #ffffff;
-        border: 1px solid #dee2e6;
+        background: light-dark(#ffffff, #1a1d20);
+        border: 1px solid light-dark(#dee2e6, #495057);
         border-radius: 4px;
         padding: 1rem;
         margin: 0;
         font-family: "Courier New", Courier, monospace;
         font-size: 0.85rem;
         line-height: 1.4;
-        color: #495057;
+        color: light-dark(#495057, #adb5bd);
         overflow-x: auto;
         white-space: pre-wrap;
         word-wrap: break-word;
@@ -110,7 +123,7 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background: #cfcfcf;
+        background: light-dark(#cfcfcf, #555555);
         border-radius: 9999px;
         transition: background 200ms, box-shadow 200ms;
     }
@@ -122,14 +135,14 @@
         width: 20px;
         left: 3px;
         top: 3px;
-        background: #ffffff;
+        background: light-dark(#ffffff, #e9ecef);
         border-radius: 50%;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+        box-shadow: 0 1px 3px light-dark(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.5));
         transition: transform 200ms;
     }
 
     .hc-toggle input:checked + .hc-toggle-slider {
-        background: #2caffe;
+        background: light-dark(#2caffe, #1e8cc7);
     }
 
     .hc-toggle input:checked + .hc-toggle-slider::before {
@@ -137,7 +150,7 @@
     }
 
     .hc-toggle input:focus + .hc-toggle-slider {
-        box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.35);
+        box-shadow: 0 0 0 3px light-dark(rgba(76, 175, 80, 0.35), rgba(76, 175, 80, 0.5));
     }
 
     .hc-color-value {
@@ -148,8 +161,8 @@
 
     /* Button styles */
     .highcharts-demo-button {
-        background: #f2f2f2;
-        border: 1px solid #cccccc;
+        background: light-dark(#f2f2f2, #343a40);
+        border: 1px solid light-dark(#cccccc, #555555);
         border-radius: 4px;
         cursor: pointer;
         display: inline-block;
@@ -160,16 +173,16 @@
     }
 
     .highcharts-demo-button:hover {
-        background: #e6e6e6;
+        background: light-dark(#e6e6e6, #495057);
     }
 
     .highcharts-demo-button.active {
-        background: #2caffe;
-        color: white;
+        background: light-dark(#2caffe, #1e8cc7);
+        color: light-dark(white, #f8f9fa);
     }
 
     .highcharts-demo-button.active:hover {
-        background: #1fb8e6;
+        background: light-dark(#1fb8e6, #1a7db3);
     }
 
     /* Color input styles */
@@ -210,7 +223,7 @@
         width: 5ch;
         height: 2em;
         border-radius: 0;
-        border-color: #dddddd;
+        border-color: light-dark(#dddddd, #555555);
         border-style: solid;
         border-width: 0 0 0 1px;
         padding-left: 8px;
