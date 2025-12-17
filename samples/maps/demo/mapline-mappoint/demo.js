@@ -94,9 +94,6 @@
                     color: 'var(--highcharts-neutral-color-100, black)',
                     opacity: 0.5
                 }
-            },
-            tooltip: {
-                pointFormat: '{point.name}'
             }
         }, {
             name: 'Rivers',
