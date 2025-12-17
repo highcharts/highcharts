@@ -320,7 +320,6 @@ export async function getDemoTS(metaList: Array<{
         ts += `
 // Highcharts Controls for demo purpose
 HighchartsControls.controls('highcharts-controls', {
-    target: Highcharts.charts[0],
     controls: [${controls.join(',\n')}]
 });
 `;

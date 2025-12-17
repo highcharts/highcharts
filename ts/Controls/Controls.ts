@@ -54,7 +54,7 @@ interface NumberControlParams extends ControlParams {
 }
 
 interface ControlsOptionsObject {
-    target: ControlTarget;
+    target?: ControlTarget;
     controls: Array<
         ArrayControlParams|
         BooleanControlParams|
@@ -153,7 +153,10 @@ class Controls {
             )
         );
 
-        this.target = options.target;
+        this.target = (options.target || Highcharts.charts[0]) as ControlTarget;
+        if (!this.target) {
+            throw new Error('No target chart found for Highcharts Controls');
+        }
 
         // Add the controls
         options.controls?.forEach((control): void => {
@@ -474,6 +477,17 @@ class Controls {
     ): void {
 
         const rid = params.path.replace(/[^a-z0-9_-]/gi, '-');
+
+        if (!params.range) {
+            if (/(lineWidth|borderWidth)$/i.test(params.path)) {
+                params.range = [0, 5];
+
+            } else if (/\.(x|y|offsetX|offsetY|offset)$/i.test(params.path)) {
+                params.range = [-100, 100];
+            }
+        }
+
+
         keyDiv.appendChild(
             Object.assign(
                 document.createElement('label'),

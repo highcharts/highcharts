@@ -23,14 +23,9 @@ Highcharts.chart('container', {
 
 // Highcharts Controls for demo purpose
 HighchartsControls.controls('highcharts-controls', {
-    target: Highcharts.charts[0],
     controls: [{
         type: 'number',
         path: 'chart.borderWidth',
-        range: [
-            0,
-            5
-        ],
         value: 2
     },
     {
@@ -41,10 +36,6 @@ HighchartsControls.controls('highcharts-controls', {
     {
         type: 'number',
         path: 'chart.borderRadius',
-        range: [
-            0,
-            100
-        ],
         value: 4
     }]
 });
