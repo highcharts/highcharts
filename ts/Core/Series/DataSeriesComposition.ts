@@ -407,23 +407,29 @@ class DataSeriesAdditions {
             table = this.table,
             anySeries: AnyRecord = series,
             onChange = (e: DataTable.Event): void => {
-                if (e.type === 'afterDeleteColumns') {
+                const type = e.type;
+                if (type === 'afterDeleteColumns') {
                     // Deletion affects all points
                     this.setTable(table, true);
                     return;
                 }
-                if (e.type === 'afterDeleteRows') {
+                if (type === 'afterDeleteRows') {
+                    const { rowIndex, rowCount } = e;
+
                     if (
-                        e.rowIndex > 0 &&
-                        e.rowIndex + e.rowCount < series.points.length
+                        Array.isArray(rowIndex) ||
+                        (
+                            rowIndex > 0 &&
+                            rowIndex + rowCount < series.points.length
+                        )
                     ) {
                         // Deletion affects trailing points
                         this.setTable(table, true);
                         return;
                     }
                     for (
-                        let i = e.rowIndex,
-                            iEnd = i + e.rowCount;
+                        let i = rowIndex,
+                            iEnd = i + rowCount;
                         i < iEnd;
                         ++i
                     ) {
@@ -431,9 +437,12 @@ class DataSeriesAdditions {
                     }
                 }
                 if (this.indexAsX) {
-                    if (e.type === 'afterSetCell') {
+                    if (type === 'afterSetCell') {
                         anySeries.xData[e.rowIndex] = e.rowIndex;
-                    } else if (e.type === 'afterSetRows') {
+                    } else if (
+                        type === 'afterSetRows' &&
+                        isNumber(e.rowIndex)
+                    ) {
                         for (
                             let i = e.rowIndex,
                                 iEnd = i + e.rowCount;
