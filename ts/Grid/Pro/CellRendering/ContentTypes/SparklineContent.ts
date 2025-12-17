@@ -4,9 +4,9 @@
  *
  *  (c) 2020-2025 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -25,7 +25,7 @@
 import type { DeepPartial } from '../../../../Shared/Types';
 import type SparklineRenderer from '../Renderers/SparklineRenderer';
 import type TableCell from '../../../Core/Table/Body/TableCell';
-import * as HighchartsNamespace from '../../highcharts';
+import type * as HighchartsNamespace from '../../highcharts';
 
 import CellContentPro from '../CellContentPro.js';
 import Globals from '../../../Core/Globals.js';

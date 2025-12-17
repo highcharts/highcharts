@@ -4,9 +4,9 @@
  *
  *  (c) 2020-2025 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -91,7 +91,7 @@ export class Grid {
      * The new Grid.
      */
     public static grid(
-        renderTo: string|HTMLElement,
+        renderTo: string | HTMLElement,
         options: Options,
         async?: boolean
     ): Grid;
@@ -113,14 +113,14 @@ export class Grid {
      * Promise that resolves with the new Grid.
      */
     public static grid(
-        renderTo: string|HTMLElement,
+        renderTo: string | HTMLElement,
         options: Options,
         async: true
     ): Promise<Grid>;
 
     // Implementation
     public static grid(
-        renderTo: string|HTMLElement,
+        renderTo: string | HTMLElement,
         options: Options,
         async?: boolean
     ): (Grid | Promise<Grid>) {
@@ -146,7 +146,7 @@ export class Grid {
      * An array containing the current Grid objects in the page.
      * @private
      */
-    public static readonly grids: Array<(Grid|undefined)> = [];
+    public static readonly grids: Array<(Grid | undefined)> = [];
 
     /**
      * The accessibility controller.
@@ -296,7 +296,7 @@ export class Grid {
     /**
      * The render target (container) of the Grid.
      */
-    private renderTo: string|HTMLElement;
+    private renderTo: string | HTMLElement;
 
     /**
      * Whether the Grid is rendered.
@@ -340,7 +340,7 @@ export class Grid {
         this.id = this.options?.id || U.uniqueKey();
         this.querying = new QueryingController(this);
         this.locale = this.options?.lang?.locale || (
-            (this.container?.closest('[lang]') as HTMLElement|null)?.lang
+            (this.container?.closest('[lang]') as HTMLElement | null)?.lang
         );
         this.time = new TimeBase(extend<TimeBase.TimeOptions>(
             this.options?.time,
@@ -350,8 +350,6 @@ export class Grid {
         fireEvent(this, 'beforeLoad');
 
         Grid.grids.push(this);
-        this.loadDataTable();
-
         void this.render().then((): void => {
             afterLoadCallback?.(this);
             fireEvent(this, 'afterLoad');
@@ -396,7 +394,7 @@ export class Grid {
      * The render target (html element or id) of the Grid.
      *
      */
-    private initContainer(renderTo: string|HTMLElement): void {
+    private initContainer(renderTo: string | HTMLElement): void {
         const container = (typeof renderTo === 'string') ?
             Globals.win.document.getElementById(renderTo) : renderTo;
 
@@ -438,6 +436,7 @@ export class Grid {
     ): DeepPartial<NonArrayOptions> {
         // Operate on a copy of the options argument
         newOptions = merge(newOptions);
+
         const diff: DeepPartial<NonArrayOptions> = {};
 
         if (newOptions.columns) {
@@ -661,78 +660,76 @@ export class Grid {
         const diff = this.loadUserOptions(options, oneToOne);
         const flags = this.dirtyFlags;
 
-        if (!viewport) {
-            flags.add('grid');
-            if (redraw) {
-                await this.redraw();
-            }
-            return;
-        }
+        if (viewport) {
+            if (!this.dataTable || 'dataTable' in diff) {
+                this.userOptions.dataTable = options.dataTable;
+                (this.options ?? {}).dataTable = options.dataTable;
 
-        if (!this.dataTable || 'dataTable' in diff) {
-            this.userOptions.dataTable = options.dataTable;
-            (this.options ?? {}).dataTable = options.dataTable;
+                this.loadDataTable();
 
-            this.loadDataTable();
-            this.querying.shouldBeUpdated = true;
-
-            // TODO: Sometimes it can be too much, so we need to check if the
-            // columns have changed or just their data. If just their data, we
-            // can just mark the grid.table as dirty instead of the whole grid.
-            flags.add('grid');
-        }
-
-        if ('columns' in diff) {
-            const ids = Object.keys(diff.columns ?? {});
-
-            for (const id of ids) {
-                // TODO: Move this to the column update method.
-                this.loadColumnOptionDiffs(viewport, id, diff.columns?.[id]);
-                delete diff.columns?.[id];
-            }
-            delete diff.columns;
-        }
-
-        if ('columnDefaults' in diff) {
-            this.loadColumnOptionDiffs(viewport, null, diff.columnDefaults);
-            delete diff.columnDefaults;
-        }
-
-        if (diff.lang) {
-            const langDiff = diff.lang;
-            if ('locale' in langDiff) {
-                this.locale = langDiff.locale as typeof this.locale;
-                this.time.update({ locale: this.locale });
-            }
-            delete langDiff.locale;
-
-            // TODO: Add more lang diff checks here.
-
-            if (Object.keys(langDiff).length > 0) {
+                // TODO: Sometimes it can be too much, so we need to check if
+                // the columns have changed or just their data. If just their
+                // data, we can just mark the grid.table as dirty instead of the
+                // whole grid.
                 flags.add('grid');
             }
-        }
-        delete diff.lang;
 
-        if ('time' in diff) {
-            this.time.update(diff.time);
-            delete diff.time;
-        }
+            if ('columns' in diff) {
+                const ids = Object.keys(diff.columns ?? {});
 
-        if (diff.pagination) {
-            const paginationDiff = diff.pagination;
-            if ('enabled' in paginationDiff) {
-                if (!this.pagination && paginationDiff.enabled) {
-                    this.pagination = new Pagination(this);
+                for (const id of ids) {
+                    // TODO: Move this to the column update method.
+                    this.loadColumnOptionDiffs(
+                        viewport, id, diff.columns?.[id]
+                    );
+                    delete diff.columns?.[id];
+                }
+                delete diff.columns;
+            }
+
+            if ('columnDefaults' in diff) {
+                this.loadColumnOptionDiffs(viewport, null, diff.columnDefaults);
+                delete diff.columnDefaults;
+            }
+
+            if (diff.lang) {
+                const langDiff = diff.lang;
+                if ('locale' in langDiff) {
+                    this.locale = langDiff.locale as typeof this.locale;
+                    this.time.update({ locale: this.locale });
+                }
+                delete langDiff.locale;
+
+                // TODO: Add more lang diff checks here.
+
+                if (Object.keys(langDiff).length > 0) {
+                    flags.add('grid');
                 }
             }
-            this.pagination?.update(paginationDiff);
-        }
-        delete diff.pagination;
+            delete diff.lang;
 
-        // TODO: Add more options that can be optimized here.
+            if ('time' in diff) {
+                this.time.update(diff.time);
+                delete diff.time;
+            }
 
-        if (Object.keys(diff).length > 0) {
+            if (diff.pagination) {
+                const paginationDiff = diff.pagination;
+                if ('enabled' in paginationDiff) {
+                    if (!this.pagination && paginationDiff.enabled) {
+                        this.pagination = new Pagination(this);
+                    }
+                }
+                this.pagination?.update(paginationDiff);
+            }
+            delete diff.pagination;
+
+            // TODO: Add more options that can be optimized here.
+
+            if (Object.keys(diff).length > 0) {
+                flags.add('grid');
+            }
+        } else {
             flags.add('grid');
         }
 
@@ -997,6 +994,8 @@ export class Grid {
         if (this.isRendered) {
             this.destroy(true);
         }
+
+        this.loadDataTable();
 
         this.initContainer(this.renderTo);
         this.initAccessibility();
@@ -1302,6 +1301,8 @@ export class Grid {
      * reference, it should be used instead of creating a new one.
      */
     private loadDataTable(): void {
+        this.querying.shouldBeUpdated = true;
+
         // Unregister all events attached to the previous data table.
         this.dataTableEventDestructors.forEach((fn): void => fn());
         const tableOptions = this.options?.dataTable;
@@ -1344,7 +1345,7 @@ export class Grid {
      * @returns
      */
     public getColumnIds(
-        columnsTree: Array<GroupedHeaderOptions|string>,
+        columnsTree: Array<GroupedHeaderOptions | string>,
         onlyEnabledColumns: boolean = true
     ): string[] {
         let columnIds: string[] = [];
