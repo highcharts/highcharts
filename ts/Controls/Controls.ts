@@ -9,7 +9,7 @@
 
 /* eslint-disable @highcharts/highcharts/no-highcharts-object */
 
-declare const Highcharts: typeof import('../Core/Globals').default;
+const Global = (window as any).Highcharts || (window as any).Grid;
 
 interface GenericOptionsObject {
     [key: string]: any;
@@ -161,7 +161,11 @@ class Controls {
             )
         );
 
-        this.target = (options.target || Highcharts.charts[0]) as ControlTarget;
+        this.target = (
+            options.target ||
+            Global?.charts?.[0] ||
+            Global?.grids?.[0]
+        ) as ControlTarget;
         if (!this.target) {
             throw new Error('No target chart found for Highcharts Controls');
         }
@@ -175,7 +179,7 @@ class Controls {
 
         // Keep the options preview updated
         this.updateOptionsPreview();
-        (Highcharts as any).addEvent(
+        Global.addEvent?.(
             this.target,
             'render',
             this.updateOptionsPreview.bind(this)
@@ -457,7 +461,7 @@ class Controls {
         const currentValue = params.value !== void 0 ?
             params.value :
             (getNestedValue(this.target.options, params.path) || '#000000');
-        const hcColor = (Highcharts as any).color(currentValue);
+        const hcColor = Global.color(currentValue);
         const opacity = (hcColor.rgba[3] || 1) * 100;
         colorInput.value = currentValue;
         opacityInput.value = String(opacity);
@@ -467,7 +471,7 @@ class Controls {
             const rgba = colorInput.value; // E.g. #RRGGBB
             const opacity = parseFloat(opacityInput.value) / 100;
             // Use Highcharts.color to apply opacity and produce rgba()/hex
-            const hcColor = (Highcharts as any).color(rgba)
+            const hcColor = Global.color(rgba)
                 .setOpacity(opacity);
             setNestedValue(this.target, params.path, hcColor.get(), false);
             valueEl.textContent = getHex(hcColor);
@@ -558,7 +562,7 @@ class Controls {
         if (!('value' in params)) {
             // Set default value from chart options
             params.value = getNestedValue(
-                (Highcharts as any).getOptions(),
+                Global.defaultOptions,
                 params.path
             );
         }

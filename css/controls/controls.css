@@ -22,8 +22,10 @@
 
     .highcharts-controls-container {
         max-width: 400px;
-        margin: 0 auto;
         display: table;
+        margin: 0 auto;
+        table-layout: fixed;
+        width: 100%;
     }
 
     .highcharts-controls-control {
@@ -40,11 +42,12 @@
     .control-section td:first-child,
     .highcharts-controls-key {
         text-align: left;
-        padding-right: 1em;
+        padding-right: 0.5em;
     }
 
     .highcharts-controls-value {
         text-align: right;
+        padding-left: 0.5em;
     }
 
     .highcharts-controls-value-inner {
