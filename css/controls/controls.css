@@ -20,17 +20,21 @@
         font-style: normal;
     }
 
-    .highcharts-controls-control {
-        display: grid;
-        grid-template-columns: 50% 50%;
+    .highcharts-controls-container {
         max-width: 400px;
         margin: 0 auto;
+        display: table;
+    }
+
+    .highcharts-controls-control {
+        display: table-row;
     }
 
     .highcharts-controls-key,
     .highcharts-controls-value {
-        min-height: 2.9em;
+        display: table-cell;
         line-height: 2em;
+        padding: 0.3em 0;
     }
 
     .control-section td:first-child,
@@ -56,10 +60,6 @@
     .highcharts-controls-value-inner:has(.hc-toggle) {
         border: none;
         background: none;
-    }
-
-    .button-control {
-        margin-top: 1.5em;
     }
 
     .button-control .highcharts-controls-value-inner {
@@ -219,6 +219,10 @@
     .button-group .highcharts-controls-button:last-child {
         border-top-right-radius: 7px;
         border-bottom-right-radius: 7px;
+    }
+
+    .show-preview-button {
+        margin-top: 1.5em;
     }
 
     /* Color input styles */

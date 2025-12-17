@@ -147,10 +147,17 @@ class Controls {
                 document.createElement('div')
             ));
 
-        this.container = (renderTo as HTMLElement).appendChild(
+        const outerContainer = (renderTo as HTMLElement).appendChild(
             Object.assign(
                 document.createElement('div'),
                 { className: 'highcharts-controls' }
+            )
+        );
+
+        this.container = outerContainer.appendChild(
+            Object.assign(
+                document.createElement('div'),
+                { className: 'highcharts-controls-container' }
             )
         );
 
