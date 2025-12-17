@@ -1479,7 +1479,7 @@ class RangeSelector {
                 rangeOptions.text ?? '',
                 0,
                 0,
-                (e: (Event | AnyRecord)): void => {
+                (e): void => {
 
                     // Extract events from button object and call
                     const buttonEvents = (
