@@ -45,6 +45,7 @@ const {
     fireEvent,
     getAlignFactor,
     isArray,
+    isNumber,
     isString,
     merge,
     objectEach,
@@ -255,7 +256,9 @@ namespace DataLabel {
             inverted = this.isCartesian && chart.inverted,
             plotX = point.plotX,
             plotY = point.plotY,
-            rotation = options.rotation || 0,
+            { distance, rotation = 0 } = options,
+            alignFactor = getAlignFactor(options.align),
+            verticalAlignFactor = getAlignFactor(options.verticalAlign),
             isInsidePlot = defined(plotX) &&
                 defined(plotY) &&
                 chart.isInsidePlot(
@@ -342,18 +345,33 @@ namespace DataLabel {
 
             setStartPos(alignTo); // Data sorting
 
+            // Apply the distance
+            let distX = 0,
+                distY = 0;
+            if (isNumber(distance) && !options.inside) {
+                distX = distance * (1 - 2 * alignFactor);
+                distY = distance * (1 - 2 * verticalAlignFactor);
+            }
+
             // Align the label to the adjusted box with for unrotated bBox due
             // to rotationOrigin, which is based on unrotated label
             dataLabel.align(merge(
                 options, {
+                    x: (options.x || 0) + distX,
+                    y: (options.y || 0) + distY,
                     width: unrotatedbBox.width,
                     height: unrotatedbBox.height
                 }
             ), false, alignTo, false);
 
-            dataLabel.alignAttr.x += getAlignFactor(options.align) *
+            // Record for later use in justifyDataLabel
+            dataLabel.distX = distX;
+            dataLabel.distY = distY;
+
+            // Modify for rotation
+            dataLabel.alignAttr.x += alignFactor *
                 (unrotatedbBox.width - bBox.width);
-            dataLabel.alignAttr.y += getAlignFactor(options.verticalAlign) *
+            dataLabel.alignAttr.y += verticalAlignFactor *
                 (unrotatedbBox.height - bBox.height);
 
             dataLabel[dataLabel.placed ? 'animate' : 'attr']({
@@ -667,7 +685,10 @@ namespace DataLabel {
                             borderColor,
                             distance,
                             style = {}
-                        } = labelOptions;
+                        } = labelOptions,
+                        padding: Array<number> = splat(
+                            labelOptions.padding || 0
+                        );
 
                     let formatString: string|undefined,
                         labelText: string|undefined,
@@ -716,6 +737,7 @@ namespace DataLabel {
                                 point.contrastColor = renderer.getContrast(
                                     (
                                         labelBgColor !== 'auto' &&
+                                        labelBgColor !== 'contrast' &&
                                         isString(labelBgColor) &&
                                         labelBgColor
                                     ) ||
@@ -723,11 +745,11 @@ namespace DataLabel {
                                 );
 
                                 style.color = (
-                                    labelBgColor || // #20007
                                     (
-                                        !defined(distance) &&
-                                        labelOptions.inside
-                                    ) ||
+                                        labelBgColor &&
+                                        labelBgColor !== 'contrast'
+                                    ) || // #20007
+                                    labelOptions.inside ||
                                     pInt(distance || 0) < 0 ||
                                     seriesOptions.stacking
                                 ) ?
@@ -742,9 +764,11 @@ namespace DataLabel {
                         }
 
                         attr = {
-                            r: labelOptions.borderRadius || 0,
+                            r: labelOptions.borderRadius ?? 3,
                             rotation,
-                            padding: labelOptions.padding,
+                            padding: padding[0],
+                            paddingLeft: padding[3 % padding.length],
+                            paddingRight: padding[1 % padding.length],
                             zIndex: 1
                         };
 
@@ -914,7 +938,7 @@ namespace DataLabel {
      */
     function justifyDataLabel(
         this: Series,
-        dataLabel: SVGElement,
+        dataLabel: SVGLabel,
         options: DataLabelOptions,
         alignAttr: SVGAttributes,
         bBox: BBoxObject,
@@ -922,8 +946,8 @@ namespace DataLabel {
         isNew?: boolean
     ): (boolean|undefined) {
         const chart = this.chart,
-            align = options.align,
-            verticalAlign = options.verticalAlign,
+            { align, verticalAlign } = options,
+            { distX = 0, distY = 0 } = dataLabel,
             padding = dataLabel.box ? 0 : (dataLabel.padding || 0),
             horizontalAxis = chart.inverted ? this.yAxis : this.xAxis,
             horizontalAxisShift = horizontalAxis ?
@@ -934,64 +958,71 @@ namespace DataLabel {
 
         let { x = 0, y = 0 } = options,
             off,
-            justified;
+            justifiedX,
+            justifiedY;
 
         // Off left
-        off = (alignAttr.x || 0) + padding + horizontalAxisShift;
+        off = (alignAttr.x || 0) - distX + padding + horizontalAxisShift;
         if (off < 0) {
             if (align === 'right' && x >= 0) {
                 options.align = 'left';
                 options.inside = true;
+                x -= distX;
             } else {
                 x -= off;
             }
-            justified = true;
+            justifiedX = true;
         }
 
         // Off right
-        off = (alignAttr.x || 0) + bBox.width - padding + horizontalAxisShift;
+        off = (alignAttr.x || 0) + bBox.width - distX - padding +
+            horizontalAxisShift;
         if (off > chart.plotWidth) {
             if (align === 'left' && x <= 0) {
                 options.align = 'right';
                 options.inside = true;
+                x -= distX;
             } else {
                 x += chart.plotWidth - off;
             }
-            justified = true;
+            justifiedX = true;
         }
 
         // Off top
-        off = alignAttr.y + padding + verticalAxisShift;
+        off = (alignAttr.y || 0) - distY + padding + verticalAxisShift;
         if (off < 0) {
             if (verticalAlign === 'bottom' && y >= 0) {
                 options.verticalAlign = 'top';
                 options.inside = true;
+                y -= distY;
             } else {
                 y -= off;
             }
-            justified = true;
+            justifiedY = true;
         }
 
         // Off bottom
-        off = (alignAttr.y || 0) + bBox.height - padding + verticalAxisShift;
+        off = (alignAttr.y || 0) + bBox.height - distY - padding +
+            verticalAxisShift;
         if (off > chart.plotHeight) {
             if (verticalAlign === 'top' && y <= 0) {
                 options.verticalAlign = 'bottom';
                 options.inside = true;
+                y -= distY;
             } else {
                 y += chart.plotHeight - off;
             }
-            justified = true;
+            justifiedY = true;
         }
 
-        if (justified) {
-            options.x = x;
-            options.y = y;
+        if (justifiedX || justifiedY) {
+            options.x = justifiedX ? x : x + distX;
+            options.y = justifiedY ? y : y + distY;
             dataLabel.placed = !isNew;
             dataLabel.align(options, void 0, alignTo);
         }
 
-        return justified;
+        return justifiedX || justifiedY;
     }
 
     /**

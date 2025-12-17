@@ -221,6 +221,7 @@ class VBPIndicator extends SMAIndicator {
         dataLabels: {
             align: 'left',
             allowOverlap: true,
+            distance: 0,
             enabled: true,
             format: 'P: {point.volumePos:.2f} | N: {point.volumeNeg:.2f}',
             padding: 0,
