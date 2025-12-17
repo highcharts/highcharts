@@ -894,7 +894,7 @@ export default class ContourSeries extends ScatterSeries {
 
 extend(ContourSeries.prototype, {
     pointClass: ContourPoint,
-    pointArrayMap: ['x', 'y', 'value'],
+    pointArrayMap: ['y', 'value'],
     keysAffectYAxis: ['y'],
     invertible: false
 });

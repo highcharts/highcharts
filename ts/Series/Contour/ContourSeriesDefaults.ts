@@ -153,10 +153,6 @@ const ContourSeriesDefaults: ContourSeriesOptions = {
         }
     },
 
-    tooltip: {
-        pointFormat: '{point.x}, {point.y}: {point.value}<br/>'
-    },
-
     zIndex: 0
 
 };
