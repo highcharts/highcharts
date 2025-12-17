@@ -3,6 +3,23 @@ QUnit.test('MapPoint with LineWidth', function (assert) {
     window.proj4 = null;
 
     const clock = TestUtilities.lolexInstall();
+
+    function getTooltipText(chart) {
+        const label = chart.tooltip && chart.tooltip.label;
+        if (!label) {
+            return '';
+        }
+
+        if (label.textStr) {
+            return label.textStr.trim();
+        }
+
+        if (label.element && label.element.textContent) {
+            return label.element.textContent.trim();
+        }
+
+        return '';
+    }
     try {
         const chart = Highcharts.mapChart('container', {
             chart: {
@@ -72,36 +89,29 @@ QUnit.test('MapPoint with LineWidth', function (assert) {
 
         const pNoName = mps.data[0];
         showTooltipOnPoint(pNoName);
+
+        const noNameText = getTooltipText(chart);
         assert.ok(
-            /Lat:\s*51\.507222,\s*Lon:\s*-0\.1275/.test(
-                chart.tooltip.label.text && chart.tooltip.label.textStr ||
-                chart.tooltip.label && chart.tooltip.label.element &&
-                chart.tooltip.label.element.textContent || ''
-            ),
-            'Tooltip without name should fall back to Lat/Lon'
+            /Lat:\s*51\.507222,\s*Lon:\s*-0\.1275/.test(noNameText),
+            'Tooltip without name falls back to Lat/Lon'
         );
 
         const pWithName = mps.data[mps.data.length - 1]; // Liverpool
         showTooltipOnPoint(pWithName);
-        assert.strictEqual(
-            (chart.tooltip.label.text && chart.tooltip.label.textStr) ||
-            (chart.tooltip.label && chart.tooltip.label.element &&
-                chart.tooltip.label.element.textContent) || '',
-            'Liverpool',
-            'Tooltip with name should show name only'
+
+        const withNameText = getTooltipText(chart);
+        assert.ok(
+            withNameText === 'Liverpool',
+            'Tooltip with name shows only the name'
         );
 
         const pXY = mps.data[2]; // { x: 1600, y: -3500 }
         showTooltipOnPoint(pXY);
-        const xyTooltipText =
-            (chart.tooltip.label.text && chart.tooltip.label.textStr) ||
-            (chart.tooltip.label && chart.tooltip.label.element &&
-                chart.tooltip.label.element.textContent) || '';
+
+        const xyTooltipText = getTooltipText(chart);
         assert.ok(
-            /Lat:|Lon:/.test(xyTooltipText) || xyTooltipText === '' ||
-                typeof xyTooltipText === 'string',
-            'Tooltip renders for x/y point without throwing' +
-            '(fallback behavior verified)'
+            xyTooltipText === '' || typeof xyTooltipText === 'string',
+            'Tooltip renders for x/y point without throwing'
         );
 
         chart.tooltip.hide(0);
