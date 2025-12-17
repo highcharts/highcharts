@@ -38,30 +38,80 @@ export interface MACDGappedExtensionOptions {
     gapSize?: number;
 }
 
-export interface MACDParamsOptions extends SMAParamsOptions {
-    period?: number;
-    shortPeriod?: number;
-    longPeriod?: number;
-    signalPeriod?: number;
-}
-
+/**
+ * Moving Average Convergence Divergence (MACD). This series requires
+ * `linkedTo` option to be set and should be loaded after the
+ * `stock/indicators/indicators.js`.
+ *
+ * @sample {highstock} stock/indicators/macd
+ *         MACD indicator
+ *
+ * @extends      plotOptions.sma
+ * @since        6.0.0
+ * @product      highstock
+ * @requires     stock/indicators/indicators
+ * @requires     stock/indicators/macd
+ * @optionparent plotOptions.macd
+ * @interface Highcharts.MACDOptions
+ */
 export interface MACDOptions extends SMAOptions {
     params?: MACDParamsOptions;
     states?: SeriesStatesOptions<MACDIndicator>;
+    /**
+     * @type {number|null}
+     */
     threshold?: number;
     groupPadding?: number;
     pointPadding?: number;
     minPointLength?: number;
+    /**
+     * The styles for signal line
+     */
     signalLine?: MACDLineOptions;
+    /**
+     * The styles for macd line
+     */
     macdLine?: MACDLineOptions;
 }
 
-export interface MACDLineOptions {
-    styles?: MACDLineStyleOptions;
-    zones?: Array<SeriesZonesOptions>;
+export interface MACDParamsOptions extends SMAParamsOptions {
+    period?: number;
+    /**
+     * The short period for indicator calculations.
+     */
+    shortPeriod?: number;
+    /**
+     * The long period for indicator calculations.
+     */
+    longPeriod?: number;
+    /**
+     * The base period for signal calculations.
+     */
+    signalPeriod?: number;
 }
+
+export interface MACDLineOptions {
+    /**
+     * @sample {highstock} stock/indicators/macd-zones
+     *         Zones in MACD
+     *
+     * @extends plotOptions.macd.zones
+     */
+    zones?: Array<SeriesZonesOptions>;
+    styles?: MACDLineStyleOptions;
+}
+
 export interface MACDLineStyleOptions extends CSSObject {
-    lineColor?: ColorString
+    /**
+     * Pixel width of the line.
+     */
+    lineWidth?: number;
+    /**
+     * Color of the line.
+     *
+     * @type  {Highcharts.ColorString}
+     */
+    lineColor?: ColorString;
 }
 
 /* *

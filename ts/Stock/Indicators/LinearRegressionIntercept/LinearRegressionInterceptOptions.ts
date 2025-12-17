@@ -26,13 +26,13 @@ import type LinearRegressionOptions from
  * option to be set.
  *
  * @sample {highstock} stock/indicators/linear-regression-intercept
- *         Linear intercept slope indicator
+ *         Linear regression intercept indicator
  *
  * @extends      plotOptions.linearregression
  * @since        7.0.0
  * @product      highstock
  * @requires     stock/indicators/indicators
- * @requires  stock/indicators/regressions
+ * @requires     stock/indicators/regressions
  * @optionparent plotOptions.linearregressionintercept
  * @interface Highcharts.LinearRegressionInterceptOptions
  */

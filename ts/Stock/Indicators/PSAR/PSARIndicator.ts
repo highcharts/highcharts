@@ -44,16 +44,12 @@ const {
 
 // Utils:
 
-/**
- *
- */
+/** @internal */
 function toFixed(a: number, n: number): number {
     return parseFloat(a.toFixed(n));
 }
 
-/**
- *
- */
+/** @internal */
 function calculateDirection(
     previousDirection: number, low: number, high: number, PSAR: number
 ): number {
@@ -76,9 +72,7 @@ function calculateDirection(
  * maxAcc - maximum acceleration factor
  * initAcc - initial acceleration factor
  */
-/**
- *
- */
+/** @internal */
 function getAccelerationFactor(
     dir: number,
     pDir: number,
@@ -101,9 +95,7 @@ function getAccelerationFactor(
     return initAcc;
 }
 
-/**
- *
- */
+/** @internal */
 function getExtremePoint(
     high: number,
     low: number,
@@ -116,16 +108,12 @@ function getExtremePoint(
     return (low < previousExtremePoint) ? low : previousExtremePoint;
 }
 
-/**
- *
- */
+/** @internal */
 function getEPMinusPSAR(EP: number, PSAR: number): number {
     return EP - PSAR;
 }
 
-/**
- *
- */
+/** @internal */
 function getAccelerationFactorMultiply(
     accelerationFactor: number,
     EPMinusSAR: number
@@ -145,9 +133,7 @@ function getAccelerationFactorMultiply(
  * pHigh - previous high
  * pEP - previous extreme point
  */
-/**
- *
- */
+/** @internal */
 function getPSAR(
     pdir: number,
     sDir: number,
@@ -200,7 +186,7 @@ class PSARIndicator extends SMAIndicator {
      * option to be set and should be loaded
      * after `stock/indicators/indicators.js` file.
      *
-     * @sample stock/indicators/psar
+     * @sample {highstock} stock/indicators/psar
      *         Parabolic SAR Indicator
      *
      * @extends      plotOptions.sma

@@ -66,7 +66,7 @@ class LinearRegressionSlopesIndicator extends LinearRegressionIndicator {
      * @since        7.0.0
      * @product      highstock
      * @requires     stock/indicators/indicators
-     * @requires  stock/indicators/regressions
+     * @requires     stock/indicators/regressions
      * @optionparent plotOptions.linearregressionslope
      */
     public static defaultOptions: LinearRegressionOptions = merge(
@@ -144,7 +144,7 @@ export default LinearRegressionSlopesIndicator;
  * */
 
 /**
- * A linear regression intercept series. If the
+ * A linear regression slope series. If the
  * [type](#series.linearregressionslope.type) option is not specified, it is
  * inherited from [chart.type](#chart.type).
  *

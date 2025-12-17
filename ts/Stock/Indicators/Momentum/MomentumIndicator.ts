@@ -75,7 +75,7 @@ class MomentumIndicator extends SMAIndicator {
     /**
      * Momentum. This series requires `linkedTo` option to be set.
      *
-     * @sample stock/indicators/momentum
+     * @sample {highstock} stock/indicators/momentum
      *         Momentum indicator
      *
      * @extends      plotOptions.sma

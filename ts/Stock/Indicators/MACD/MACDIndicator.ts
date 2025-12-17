@@ -81,7 +81,7 @@ class MACDIndicator extends SMAIndicator {
      * `linkedTo` option to be set and should be loaded after the
      * `stock/indicators/indicators.js`.
      *
-     * @sample stock/indicators/macd
+     * @sample {highstock} stock/indicators/macd
      *         MACD indicator
      *
      * @extends      plotOptions.sma
@@ -112,7 +112,7 @@ class MACDIndicator extends SMAIndicator {
          */
         signalLine: {
             /**
-             * @sample stock/indicators/macd-zones
+             * @sample {highstock} stock/indicators/macd-zones
              *         Zones in MACD
              *
              * @extends plotOptions.macd.zones
@@ -136,7 +136,7 @@ class MACDIndicator extends SMAIndicator {
          */
         macdLine: {
             /**
-             * @sample stock/indicators/macd-zones
+             * @sample {highstock} stock/indicators/macd-zones
              *         Zones in MACD
              *
              * @extends plotOptions.macd.zones

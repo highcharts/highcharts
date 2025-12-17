@@ -45,10 +45,10 @@ export interface LinearRegressionOptions extends SMAOptions {
 export interface LinearRegressionParamsOptions extends SMAParamsOptions {
     /**
      * Unit (in milliseconds) for the x axis distances used to
-     * compute the regression line parameters (slope & intercept) for
-     * every range. In Highcharts Stock the x axis values are always
-     * represented in milliseconds which may cause that distances
-     * between points are "big" integer numbers.
+     * compute the regression line parameters (slope & intercept)
+     * for every range. In Highcharts Stock the x axis values are
+     * always represented in milliseconds which may cause that
+     * distances between points are "big" integer numbers.
      *
      * Highcharts Stock's linear regression algorithm (least squares
      * method) will utilize these "big" integers for finding the
@@ -56,26 +56,38 @@ export interface LinearRegressionParamsOptions extends SMAParamsOptions {
      * period. In consequence, this value may be a very "small"
      * decimal number that's hard to interpret by a human.
      *
-     * For instance: `xAxisUnit` equals `86400000` ms (1 day)
-     * and the `period` is `7` (7 days). There are 6 calculated
-     * regression lines in total (based on points P0, P1, ...
-     * P6 with dates being `7 days apart from each other).
-     * The first regression line is fitted to: `{x:0, y: P0_Y}`
-     * , `{x:1, y: P1_Y}`, `{x:2, y: P2_Y}`, `{x:3, y: P3_Y}`,
-     * `{x:4, y: P4_Y}`, `{x:5, y: P5_Y}`, `{x:6, y: P6_Y}`. For
-     * the first point in the series we also need to obtain the
-     * parameters for the regression line by eliminating the oldest
-     * point (P0): `{x:1, y: P1_Y}`, `{x:2, y: P2_Y}`, ..., `{x:7,
-     * y: P7_Y}`. This approach is not good because for a big set of
-     * points the calculations would not take into consideration all
-     * of them.
+     * For instance: `xAxisUnit` equaled to `86400000` ms (1 day)
+     * forces the algorithm to treat `86400000` as `1` while
+     * computing the slope and the intercept. This may enhance the
+     * legibility of the indicator's values.
      *
-     * By default `xAxisUnit` is undefined. When this is the case
-     * the distances between the points can be calculated correctly
-     * and the slope and intercept values are scaled reasonably.
+     * Default value is the closest distance between two data
+     * points.
      *
-     * @default undefined
-     * @type    {number}
+     * In `v9.0.2`, the default value has been changed
+     * from `undefined` to `null`.
+     *
+     * @sample {highstock} stock/plotoptions/linear-regression-xaxisunit
+     *         xAxisUnit set to 1 minute
+     *
+     * @example
+     * // In Linear Regression Slope Indicator series `xAxisUnit` is
+     * // `86400000` (1 day) and period is `3`. There're 3 points in
+     * // the base series:
+     *
+     * data: [
+     *   [Date.UTC(2020, 0, 1), 1],
+     *   [Date.UTC(2020, 0, 2), 3],
+     *   [Date.UTC(2020, 0, 3), 5]
+     * ]
+     *
+     * // This will produce one point in the indicator series that
+     * // has a `y` value of `2` (slope of the regression line). If
+     * // we change the `xAxisUnit` to `1` (ms) the value of the
+     * // indicator's point will be `2.3148148148148148e-8` which is
+     * // harder to interpret for a human.
+     *
+     * @type    {null|number}
      * @product highstock
      */
     xAxisUnit?: null|number;

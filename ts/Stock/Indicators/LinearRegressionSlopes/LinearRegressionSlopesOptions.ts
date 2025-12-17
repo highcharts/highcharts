@@ -32,7 +32,7 @@ import type LinearRegressionOptions from
  * @since        7.0.0
  * @product      highstock
  * @requires     stock/indicators/indicators
- * @requires  stock/indicators/regressions
+ * @requires     stock/indicators/regressions
  * @optionparent plotOptions.linearregressionslope
  * @interface Highcharts.LinearRegressionSlopesOptions
  */

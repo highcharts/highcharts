@@ -80,11 +80,10 @@ class PCIndicator extends SMAIndicator {
          * Option for fill color between lines in Price channel Indicator.
          *
          * @sample {highstock} stock/indicators/indicator-area-fill
-         *      background fill between lines
+         *      Background fill between lines.
          *
          * @type {Highcharts.Color}
          * @apioption plotOptions.pc.fillColor
-         *
          */
         /**
          * @excluding index

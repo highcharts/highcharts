@@ -60,13 +60,13 @@ class LinearRegressionAngleIndicator extends LinearRegressionIndicator {
      * option to be set.
      *
      * @sample {highstock} stock/indicators/linear-regression-angle
-     *         Linear intercept angle indicator
+     *         Linear regression angle indicator
      *
      * @extends      plotOptions.linearregression
      * @since        7.0.0
      * @product      highstock
      * @requires     stock/indicators/indicators
-     * @requires  stock/indicators/regressions
+     * @requires     stock/indicators/regressions
      * @optionparent plotOptions.linearregressionangle
      */
     public static defaultOptions: LinearRegressionOptions = merge(
@@ -158,7 +158,7 @@ SeriesRegistry.registerSeriesType(
 export default LinearRegressionAngleIndicator;
 
 /**
- * A linear regression intercept series. If the
+ * A linear regression angle series. If the
  * [type](#series.linearregressionangle.type) option is not specified, it is
  * inherited from [chart.type](#chart.type).
  *

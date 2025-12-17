@@ -65,11 +65,11 @@ class OBVIndicator extends SMAIndicator {
      * the `stock/indicators/indicators.js` file. Through the `volumeSeriesID`
      * there also should be linked the volume series.
      *
-     * @sample stock/indicators/obv
+     * @sample {highstock} stock/indicators/obv
      *         OBV indicator
      *
      * @extends      plotOptions.sma
-     * @since 9.1.0
+     * @since        9.1.0
      * @product      highstock
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/obv
@@ -240,7 +240,7 @@ export default OBVIndicator;
  * specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.obv
- * @since 9.1.0
+ * @since     9.1.0
  * @product   highstock
  * @excluding dataParser, dataURL
  * @requires  stock/indicators/indicators
