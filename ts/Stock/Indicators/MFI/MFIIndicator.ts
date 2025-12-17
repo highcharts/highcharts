@@ -94,7 +94,7 @@ class MFIIndicator extends SMAIndicator {
      * Money Flow Index. This series requires `linkedTo` option to be set and
      * should be loaded after the `stock/indicators/indicators.js` file.
      *
-     * @sample stock/indicators/mfi
+     * @sample {highstock} stock/indicators/mfi
      *         Money Flow Index Indicator
      *
      * @extends      plotOptions.sma

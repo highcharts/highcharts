@@ -90,7 +90,7 @@ class BBIndicator extends SMAIndicator {
      * Bollinger bands (BB). This series requires the `linkedTo` option to be
      * set and should be loaded after the `stock/indicators/indicators.js` file.
      *
-     * @sample stock/indicators/bollinger-bands
+     * @sample {highstock} stock/indicators/bollinger-bands
      *         Bollinger bands
      *
      * @extends      plotOptions.sma

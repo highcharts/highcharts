@@ -24,7 +24,7 @@ import type {
 /**
  * Chaikin Money Flow indicator (cmf).
  *
- * @sample stock/indicators/cmf/
+ * @sample {highstock} stock/indicators/cmf/
  *         Chaikin Money Flow indicator
  *
  * @extends      plotOptions.sma

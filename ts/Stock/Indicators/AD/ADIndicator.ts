@@ -59,7 +59,7 @@ class ADIndicator extends SMAIndicator {
      * Accumulation Distribution (AD). This series requires `linkedTo` option to
      * be set.
      *
-     * @sample stock/indicators/accumulation-distribution
+     * @sample {highstock} stock/indicators/accumulation-distribution
      *         Accumulation/Distribution indicator
      *
      * @extends      plotOptions.sma

@@ -25,7 +25,7 @@ import type {
  * Average true range indicator (ATR). This series requires `linkedTo`
  * option to be set.
  *
- * @sample stock/indicators/atr
+ * @sample {highstock} stock/indicators/atr
  *         ATR indicator
  *
  * @extends      plotOptions.sma

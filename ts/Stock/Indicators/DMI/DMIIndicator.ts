@@ -66,7 +66,7 @@ class DMIIndicator extends SMAIndicator {
      * This series requires the `linkedTo` option to be set and should
      * be loaded after the `stock/indicators/indicators.js` file.
      *
-     * @sample stock/indicators/dmi
+     * @sample {highstock} stock/indicators/dmi
      *         DMI indicator
      *
      * @extends      plotOptions.sma

@@ -27,7 +27,7 @@ import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
  * Ichimoku Kinko Hyo (IKH). This series requires `linkedTo` option to be
  * set.
  *
- * @sample stock/indicators/ichimoku-kinko-hyo
+ * @sample {highstock} stock/indicators/ichimoku-kinko-hyo
  *         Ichimoku Kinko Hyo indicator
  *
  * @extends      plotOptions.sma
@@ -115,7 +115,7 @@ export interface IKHSenkouSpanOptions {
      *
      * @see [senkouSpan.styles.fill](#series.ikh.senkouSpan.styles.fill)
      *
-     * @sample stock/indicators/ichimoku-kinko-hyo
+     * @sample {highstock} stock/indicators/ichimoku-kinko-hyo
      *         Ichimoku Kinko Hyo color
      *
      * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
@@ -127,7 +127,7 @@ export interface IKHSenkouSpanOptions {
      * Color of the area between Senkou Span A and B,
      * when Senkou Span A is under Senkou Span B.
      *
-     * @sample stock/indicators/ikh-negative-color
+     * @sample {highstock} stock/indicators/ikh-negative-color
      *         Ichimoku Kinko Hyo negativeColor
      *
      * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}

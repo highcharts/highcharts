@@ -63,7 +63,7 @@ class KlingerIndicator extends SMAIndicator {
      * Klinger oscillator. This series requires the `linkedTo` option to be set
      * and should be loaded after the `stock/indicators/indicators.js` file.
      *
-     * @sample stock/indicators/klinger
+     * @sample {highstock} stock/indicators/klinger
      *         Klinger oscillator
      *
      * @extends      plotOptions.sma
