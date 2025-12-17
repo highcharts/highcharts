@@ -42,8 +42,11 @@ interface MetaData {
 type MetaList = Array<MetaData>;
 
 const paths = [
-    'xAxis.lineWidth',
-    'yAxis.lineWidth'
+    'title.align=center',
+    'title.x',
+    'title.y',
+    'title.floating',
+    'chart.backgroundColor=#ffefc1'
 ];
 
 const defaultOptions = Highcharts.getOptions();

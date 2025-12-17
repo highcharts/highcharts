@@ -209,8 +209,8 @@ class Controls {
             Object.assign(
                 document.createElement('button'),
                 {
-                    className: 'highcharts-demo-button show-preview-button',
-                    innerText: 'Show Options Preview'
+                    className: 'highcharts-controls-button show-preview-button',
+                    innerText: 'Preview Options'
                 }
             )
         );
@@ -260,12 +260,14 @@ class Controls {
             )
         );
 
+        valueDiv.classList.add('button-group');
+
         params.options.forEach((option): void => {
             const button = valueDiv.appendChild(
                 Object.assign(
                     document.createElement('button'),
                     {
-                        className: 'highcharts-demo-button' +
+                        className: 'highcharts-controls-button' +
                             (params.value === option ? ' active' : ''),
                         innerText: option
                     }

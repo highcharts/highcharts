@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap");
+
 .highcharts-dark {
     color-scheme: dark;
 }
@@ -8,47 +10,61 @@
 
 .highcharts-controls {
     padding: 1rem;
-    background: light-dark(#f8f9fa, #212529);
     border-radius: 8px;
     border: 1px solid light-dark(#e9ecef, #495057);
     box-sizing: border-box;
 
-    .control-section table {
-        border-collapse: collapse;
-        border-spacing: 0;
-        margin: 0 auto;
+    * {
+        font-family: "IBM Plex Sans Var", sans-serif;
+        font-size: 13px;
+        font-style: normal;
     }
 
     .highcharts-controls-control {
         display: grid;
         grid-template-columns: 50% 50%;
-    }
-
-    .control-section td {
-        height: 2.5em;
+        max-width: 400px;
+        margin: 0 auto;
     }
 
     .highcharts-controls-key,
     .highcharts-controls-value {
-        height: 2.5em;
+        min-height: 2.9em;
         line-height: 2em;
     }
 
     .control-section td:first-child,
     .highcharts-controls-key {
-        text-align: right;
+        text-align: left;
         padding-right: 1em;
+    }
+
+    .highcharts-controls-value {
+        text-align: right;
     }
 
     .highcharts-controls-value-inner {
         border: 1px solid light-dark(#dddddd, #555555);
         border-radius: 4px;
-        height: 2.2em;
-        max-width: 300px;
+        background: light-dark(#f8f9fa, #212529);
+        font-weight: 600;
+        min-height: 2.2em;
+        display: inline-block;
+        text-align: center;
+    }
+
+    .highcharts-controls-value-inner:has(.hc-toggle) {
+        border: none;
+        background: none;
+    }
+
+    .button-control {
+        margin-top: 1.5em;
     }
 
     .button-control .highcharts-controls-value-inner {
         border: none;
+        background: none;
         text-align: right;
     }
 
@@ -157,13 +173,15 @@
         display: inline-block;
         min-width: 6ch;
         margin: 0 10px;
+        text-transform: uppercase;
     }
 
     /* Button styles */
-    .highcharts-demo-button {
-        background: light-dark(#f2f2f2, #343a40);
+    .highcharts-controls-button {
+        background: light-dark(#ffffff, #141414);
         border: 1px solid light-dark(#cccccc, #555555);
         border-radius: 4px;
+        color: light-dark(#444444, #dddddd);
         cursor: pointer;
         display: inline-block;
         font-size: 0.8rem;
@@ -172,17 +190,35 @@
         transition: background 250ms;
     }
 
-    .highcharts-demo-button:hover {
-        background: light-dark(#e6e6e6, #495057);
+    .highcharts-controls-button:hover {
+        background: light-dark(#e1e3ff, #3f4699);
     }
 
-    .highcharts-demo-button.active {
-        background: light-dark(#2caffe, #1e8cc7);
-        color: light-dark(white, #f8f9fa);
+    .highcharts-controls-button.active {
+        background: light-dark(#e1e3ff, #3f4699);
     }
 
-    .highcharts-demo-button.active:hover {
-        background: light-dark(#1fb8e6, #1a7db3);
+    .button-group {
+        white-space: nowrap;
+        border: none;
+        background: none;
+    }
+
+    .button-group .highcharts-controls-button {
+        border-radius: 0;
+        height: 2.5em;
+        margin: 0 0 0 -1px;
+        padding: 0.3em 1.2em;
+    }
+
+    .button-group .highcharts-controls-button:first-child {
+        border-top-left-radius: 4px;
+        border-bottom-left-radius: 4px;
+    }
+
+    .button-group .highcharts-controls-button:last-child {
+        border-top-right-radius: 4px;
+        border-bottom-right-radius: 4px;
     }
 
     /* Color input styles */
@@ -195,13 +231,17 @@
         opacity: 0.5;
     }
 
+    input {
+        font-weight: 600;
+    }
+
     input[type="color"] {
         -webkit-appearance: none;
         -moz-appearance: none;
         appearance: none;
         background-color: transparent;
-        width: 2.5em;
-        height: 2.5em;
+        width: 2em;
+        height: 2.2em;
         border: none;
         cursor: pointer;
         vertical-align: middle;
@@ -211,16 +251,18 @@
 
     input[type="color"]::-webkit-color-swatch {
         border-radius: 50%;
+        border-width: 2px;
     }
 
     input[type="color"]::-moz-color-swatch {
         border-radius: 50%;
+        border-width: 2px;
     }
 
     input.opacity-input {
         text-align: right;
         background: none;
-        width: 5ch;
+        width: 3ch;
         height: 2em;
         border-radius: 0;
         border-color: light-dark(#dddddd, #555555);
@@ -231,18 +273,18 @@
 
     .opacity-input-label {
         opacity: 0.5;
+        margin-right: 0.5em;
     }
 
     /* Range (number) styles */
     .hc-range-value {
         display: inline-block;
         min-width: 3ch;
-        margin-left: 8px;
+        text-align: left;
     }
 
     input[id^="range-input-"] {
         vertical-align: middle;
-        margin-left: 10px;
         width: calc(100% - 60px);
     }
 }

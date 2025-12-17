@@ -1,6 +1,7 @@
 Highcharts.chart('container', {
     title: {
-        text: 'Demo of various chart options'
+        text: 'Demo of various chart options',
+        align: 'center'
     },
     series: [
         {
@@ -14,18 +15,38 @@ Highcharts.chart('container', {
             colorByPoint: true
         }
     ],
-    xAxis: {},
-    yAxis: {}
+    chart: {
+        backgroundColor: '#ffefc1'
+    }
 });
 
-// Highcharts Controls for demo purpose
+// GUI elements for demo purposes
 HighchartsControls.controls('highcharts-controls', {
     controls: [{
-        type: 'number',
-        path: 'xAxis.lineWidth'
+        type: 'array-of-strings',
+        path: 'title.align',
+        value: 'center',
+        options: [
+            'left',
+            'center',
+            'right'
+        ]
     },
     {
         type: 'number',
-        path: 'yAxis.lineWidth'
+        path: 'title.x'
+    },
+    {
+        type: 'number',
+        path: 'title.y'
+    },
+    {
+        type: 'boolean',
+        path: 'title.floating'
+    },
+    {
+        type: 'color',
+        path: 'chart.backgroundColor',
+        value: '#ffefc1'
     }]
 });
