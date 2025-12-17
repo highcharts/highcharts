@@ -39,6 +39,7 @@ import { Palette } from '../../Core/Color/Palettes.js';
  * @product      highcharts highmaps
  * @requires     modules/drilldown
  * @optionparent drilldown
+ * @internal
  */
 const DrilldownDefaults: DrilldownOptions = {
 

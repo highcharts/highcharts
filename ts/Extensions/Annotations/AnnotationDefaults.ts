@@ -43,8 +43,8 @@ const { defined } = U;
  * @since        6.0.0
  * @requires     modules/annotations
  * @optionparent annotations
+ * @internal
  */
-
 const AnnotationDefaults: AnnotationOptions = {
     /**
      * A class name for styling by CSS.

@@ -57,6 +57,7 @@ import type DragDropOptions from './DragDropOptions';
  * @since        6.2.0
  * @requires     modules/draggable-points
  * @optionparent plotOptions.series.dragDrop
+ * @internal
  */
 const DragDropDefaults: DragDropOptions = {
 
