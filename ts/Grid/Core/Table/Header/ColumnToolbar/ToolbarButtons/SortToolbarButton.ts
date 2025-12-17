@@ -4,9 +4,9 @@
  *
  *  (c) 2020-2025 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -77,7 +77,7 @@ class SortToolbarButton extends ToolbarButton {
         this.toolbar?.column.sorting?.toggle();
     }
 
-    protected override refreshState(): void {
+    public override refreshState(): void {
         const column = this.toolbar?.column;
         if (!column) {
             return;

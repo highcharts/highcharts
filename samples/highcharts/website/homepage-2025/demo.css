@@ -218,9 +218,9 @@
     --data-label-text-0: #fff;
     --data-label-text-1000: #fff;
     --dot-color: var(--primitives-neutral-300);
-    --dot-border: var(--primitives-neutral-500);
-    --dot-active-color: var(--primitives-brand-400);
-    --dot-active-border: var(--primitives-brand-400);
+    --dot-border: transparent;
+    --dot-active-color: var(--primitives-neutral-0);
+    --dot-active-border: transparent;
     --range-button-bg: var(--primitives-neutral-800);
     --range-button-border: var(--primitives-neutral-700);
     --range-button-text: var(--primitives-neutral-50);
@@ -301,9 +301,9 @@
         --data-label-text-0: #fff;
         --data-label-text-1000: #fff;
         --dot-color: var(--primitives-neutral-300);
-        --dot-border: var(--primitives-neutral-500);
-        --dot-active-color: var(--primitives-brand-400);
-        --dot-active-border: var(--primitives-brand-400);
+        --dot-border: transparent;
+        --dot-active-color: var(--primitives-neutral-0);
+        --dot-active-border: transparent;
         --range-button-bg: var(--primitives-neutral-800);
         --range-button-border: var(--primitives-neutral-700);
         --range-button-text: var(--primitives-neutral-50);
@@ -603,7 +603,7 @@ button.dot {
     background-color: var(--dot-color, #ddd);
     cursor: pointer;
     transition: background-color 0.2s, width 0.2s;
-    vertical-align: middle;   /* keeps alignment tidy in flex/inline contexts */
+    vertical-align: middle;
 }
 
 .dot:hover:not(.active) {
@@ -1030,6 +1030,10 @@ button.dot {
 }
 
 /* Grid theme */
+
+#grid-container .highcharts-background {
+    fill: transparent;
+}
 
 .hcg-custom-theme {
     --hcg-padding: 10px;

@@ -4,9 +4,9 @@
  *
  *  (c) 2020-2025 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -21,7 +21,7 @@
  *
  * */
 
-import type Column from '../Column';
+import type { ColumnDataType } from '../Column';
 
 import AST from '../../../../Core/Renderer/HTML/AST.js';
 import CellContent from './CellContent.js';
@@ -50,10 +50,37 @@ const {
  */
 class TextContent extends CellContent {
 
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
+    public static readonly defaultFormatsForDataTypes: Record<ColumnDataType, string> = {
+        string: '{value}',
+        number: '{value}',
+        'boolean': '{value}',
+        datetime: '{value:%Y-%m-%d %H:%M:%S}'
+    };
+
+
+    /* *
+     *
+     *  Constructor
+     *
+     * */
+
     constructor(cell: TableCell) {
         super(cell);
         this.add();
     }
+
+
+    /* *
+     *
+     *  Methods
+     *
+     * */
 
     protected override add(): void {
         this.update();
@@ -118,25 +145,6 @@ class TextContent extends CellContent {
 
 }
 
-
-/* *
- *
- *  Namespace
- *
- * */
-
-namespace TextContent {
-
-    /**
-     * Default formats for data types.
-     */
-    export const defaultFormatsForDataTypes: Record<Column.DataType, string> = {
-        string: '{value}',
-        number: '{value}',
-        'boolean': '{value}',
-        datetime: '{value:%Y-%m-%d %H:%M:%S}'
-    };
-}
 
 /* *
  *

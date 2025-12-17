@@ -4,9 +4,9 @@
  *
  *  (c) 2020-2025 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -136,16 +136,6 @@ class CreditsPro extends Credits {
         super.destroy();
         delete this.grid.credits;
     }
-}
-
-
-/* *
- *
- *  Class Namespace
- *
- * */
-
-namespace CreditsPro {
 }
 
 

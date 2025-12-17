@@ -4,9 +4,9 @@
  *
  *  (c) 2020-2025 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -25,7 +25,7 @@
 import type Button from '../../../UI/Button';
 
 import ColumnFiltering from '../../Actions/ColumnFiltering/ColumnFiltering.js';
-import Popup from '../../../UI/Popup.js';
+import Popup, { PopupOptions } from '../../../UI/Popup.js';
 import U from '../../../../../Core/Utilities.js';
 
 const { merge } = U;
@@ -76,7 +76,7 @@ class FilterPopup extends Popup {
     constructor(
         filtering: ColumnFiltering,
         button: Button,
-        options?: Popup.Options
+        options?: PopupOptions
     ) {
         const grid = filtering.column.viewport.grid;
         super(grid, button, merge({

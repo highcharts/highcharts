@@ -14,6 +14,7 @@ const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matc
 
 let isPaused = false;
 let gridControls = null;
+let currentChart = null;
 
 // Track per-chart animation states (true = running)
 const chartAnimationState = {
@@ -68,7 +69,8 @@ const coreChart = {
         pointFormat: `<span style="color:{point.color}">\u25CF</span>
         <span style="font-weight:bold;
         font-size:14px;">{point.name}: {point.y}%</span>`,
-        useHTML: true
+        useHTML: true,
+        outside: true
     },
     series: [
         {
@@ -330,8 +332,8 @@ function cs() {
         animation: false,
         events: {
             load() {
-                const chart = this;
-                csSeries = chart.series[0];
+                currentChart = this;
+                csSeries = currentChart.series[0];
             }
         },
         margin: [50, 20, 0, 20]
@@ -1317,7 +1319,12 @@ function animatedMap() {
                 }
             },
             chart: {
-                map: topology
+                map: topology,
+                events: {
+                    load: function () {
+                        currentChart = this;
+                    }
+                }
             },
 
             title: {
@@ -2066,16 +2073,16 @@ function grid() {
                 '10.123.789.116', '203.234.890.117', '198.123.789.118',
                 '172.234.890.119'
             ],
-            diskOperationsIn: [
-                10, 20, 1, 30, 40, 0, 25, 60, 0, 70,
-                15, 0, 35, 45, 50, 55, 0, 40, 65, 0,
-                12, 28, 0, 38, 48, 52, 58, 0, 42, 68
-            ],
-            diskOperationsOut: [
-                80, 70, 36, 60, 50, 0, 36, 30, 0, 20,
-                75, 0, 55, 65, 45, 40, 0, 50, 35, 0,
-                78, 72, 0, 62, 48, 42, 38, 0, 52, 25
-            ],
+            // diskOperationsIn: [
+            //     10, 20, 1, 30, 40, 0, 25, 60, 0, 70,
+            //     15, 0, 35, 45, 50, 55, 0, 40, 65, 0,
+            //     12, 28, 0, 38, 48, 52, 58, 0, 42, 68
+            // ],
+            // diskOperationsOut: [
+            //     80, 70, 36, 60, 50, 0, 36, 30, 0, 20,
+            //     75, 0, 55, 65, 45, 40, 0, 50, 35, 0,
+            //     78, 72, 0, 62, 48, 42, 38, 0, 52, 25
+            // ],
             diskUsage: [
                 4, 9, 80, 30, 95, 0, 15, 8, 0, 90,
                 12, 0, 65, 45, 88, 75, 0, 22, 55, 0,
@@ -2207,74 +2214,78 @@ function grid() {
                 format: 'Public IP'
             },
             width: 110
-        }, {
-            id: 'diskOperationsIn',
-            header: {
-                format: 'Disk Operations'
-            },
-            cells: {
-                renderer: {
-                    type: 'sparkline',
-                    // This sparkline uses two columns of
-                    // data to render a bar chart
-                    // with two bars, one for disk
-                    // operations in and one for disk
-                    // operations out. That's why the `chartOptions` is a
-                    // function that returns the options based on the row data.
-                    // The context of the function is the cell, so we can
-                    // access the row data using `this.row.data`.
-                    chartOptions: function () {
-                        return {
-                            chart: {
-                                type: 'bar',
-                                marginLeft: 35
-                            },
-                            yAxis: {
-                                min: 0,
-                                max: 100
-                            },
-                            xAxis: {
-                            // Axes are not rendered on sparklines, by default,
-                            // but we can turn them on in the chart options.
-                                visible: true,
-                                categories: ['in', 'out'],
-                                lineColor: '#999',
-                                labels: {
-                                    enabled: true,
-                                    allowOverlap: true,
-                                    distance: 3,
-                                    style: {
-                                        color: '#999'
-                                    }
-                                }
-                            },
-                            series: [{
-                                colorByPoint: true,
-                                label: {
-                                    enabled: false
-                                },
-                                data: [
-                                    this.row.data.diskOperationsIn,
-                                    this.row.data.diskOperationsOut
-                                ],
-                                dataLabels: {
-                                    enabled: true,
-                                    allowOverlap: true,
-                                    useHTML: true,
-                                    // eslint-disable-next-line max-len
-                                    format: '<span class="spark-label">{y}</span>'
-                                }
-                            }]
-                        };
-                    }
-                }
-            }
-        }, {
-            id: 'diskOperationsOut',
-            // This column is not rendered, but it is used by the
-            // `diskOperationsIn` column to render the sparkline.
-            enabled: false
-        }, {
+        },
+        // {
+        //     id: 'diskOperationsIn',
+        //     header: {
+        //         format: 'Disk Operations'
+        //     },
+        //     cells: {
+        //         renderer: {
+        //             type: 'sparkline',
+        //             // This sparkline uses two columns of
+        //             // data to render a bar chart
+        //             // with two bars, one for disk
+        //             // operations in and one for disk
+        //             // operations out. That's why the `chartOptions` is a
+        // eslint-disable-next-line max-len
+        //             // function that returns the options based on the row data.
+        //             // The context of the function is the cell, so we can
+        //             // access the row data using `this.row.data`.
+        //             chartOptions: function () {
+        //                 return {
+        //                     chart: {
+        //                         type: 'bar',
+        //                         marginLeft: 35
+        //                     },
+        //                     yAxis: {
+        //                         min: 0,
+        //                         max: 100
+        //                     },
+        //                     xAxis: {
+        // eslint-disable-next-line max-len
+        //                     // Axes are not rendered on sparklines, by default,
+        //                     // but we can turn them on in the chart options.
+        //                         visible: true,
+        //                         categories: ['in', 'out'],
+        //                         lineColor: '#999',
+        //                         labels: {
+        //                             enabled: true,
+        //                             allowOverlap: true,
+        //                             distance: 3,
+        //                             style: {
+        //                                 color: '#999'
+        //                             }
+        //                         }
+        //                     },
+        //                     series: [{
+        //                         colorByPoint: true,
+        //                         label: {
+        //                             enabled: false
+        //                         },
+        //                         data: [
+        //                             this.row.data.diskOperationsIn,
+        //                             this.row.data.diskOperationsOut
+        //                         ],
+        //                         dataLabels: {
+        //                             enabled: true,
+        //                             allowOverlap: true,
+        //                             useHTML: true,
+        // eslint-disable-next-line max-len, max-len
+        //                             format: '<span class="spark-label">{y}</span>'
+        //                         }
+        //                     }]
+        //                 };
+        //             }
+        //         }
+        //     }
+        // }, {
+        //     id: 'diskOperationsOut',
+        //     // This column is not rendered, but it is used by the
+        //     // `diskOperationsIn` column to render the sparkline.
+        //     enabled: false
+        // },
+        {
             id: 'diskUsage',
             width: 120,
             header: {
@@ -2392,9 +2403,9 @@ function grid() {
         // eslint-disable-next-line max-len
         data.setCell('memoryUtilization', rowIndex, generateArrayFlow(memoryUtilization));
         // eslint-disable-next-line max-len
-        data.setCell('diskOperationsIn', rowIndex, Math.round(Math.random() * 100));
+        // data.setCell('diskOperationsIn', rowIndex, Math.round(Math.random() * 100));
         // eslint-disable-next-line max-len
-        data.setCell('diskOperationsOut', rowIndex, Math.round(Math.random() * 100));
+        // data.setCell('diskOperationsOut', rowIndex, Math.round(Math.random() * 100));
         data.setCell('diskUsage', rowIndex, Math.round(Math.random() * 100));
 
         const row = grid?.viewport.getRow(rowIndex);
@@ -2920,7 +2931,14 @@ function updateChart(i) {
     chartWrapper.classList.add('fade-out');
 
     setTimeout(() => {
-    // once faded out, swap charts
+
+        // destroy current chart
+        if (currentChart !== null) {
+            currentChart.destroy();
+            currentChart = null;
+        }
+
+        // once faded out, swap charts
         if (p.chart) {
             // clear interval for stock chart
             clearInterval(csInterval);
@@ -2939,7 +2957,6 @@ function updateChart(i) {
                     document.getElementById('dash-container').style.display = 'none';
                     // eslint-disable-next-line max-len
                     document.getElementById('grid-container').style.display = 'block';
-                    gridControls = grid();
                 } else {
                     // eslint-disable-next-line max-len
                     document.getElementById('dash-container').style.display = 'none';
@@ -2955,7 +2972,7 @@ function updateChart(i) {
                 // eslint-disable-next-line max-len
                 document.getElementById('grid-container').style.display = 'none';
                 document.getElementById('container').style.display = 'block';
-                Highcharts.chart('container', p.chart);
+                currentChart = Highcharts.chart('container', p.chart);
             }
         }
 

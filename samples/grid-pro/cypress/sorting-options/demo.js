@@ -22,7 +22,7 @@ Grid.grid('container', {
     columns: [{
         id: 'icon',
         sorting: {
-            sortable: false
+            enabled: false
         }
     }, {
         id: 'price',

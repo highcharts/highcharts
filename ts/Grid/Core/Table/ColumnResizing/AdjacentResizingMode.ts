@@ -4,9 +4,9 @@
  *
  *  (c) 2020-2025 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -65,7 +65,7 @@ class AdjacentResizingMode extends ResizingMode {
 
         this.columnWidths[column.id] = newW;
         this.columnWidthUnits[column.id] = 0; // Always save in px
-        column.update({ width: newW }, false);
+        column.setOptions({ width: newW });
 
         if (nextCol) {
             const newNextW = this.columnWidths[nextCol.id] = Math.round(
@@ -75,7 +75,7 @@ class AdjacentResizingMode extends ResizingMode {
                 ) * 10
             ) / 10;
             this.columnWidthUnits[nextCol.id] = 0; // Always save in px
-            nextCol.update({ width: newNextW }, false);
+            nextCol.setOptions({ width: newNextW });
         }
     }
 

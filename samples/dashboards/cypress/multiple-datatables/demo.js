@@ -49,6 +49,12 @@ Dashboards.board('container', {
                 }, {
                     id: 'dashboard-col-1'
                 }]
+            }, {
+                cells: [{
+                    id: 'dashboard-col-2'
+                }, {
+                    id: 'dashboard-col-3'
+                }]
             }]
         }]
     },
@@ -58,13 +64,43 @@ Dashboards.board('container', {
         connector: [{
             id: 'data-connector',
             dataTableKey: 'more'
-        }]
+        }],
+        sync: {
+            highlight: true,
+            visibility: true
+        }
     }, {
         renderTo: 'dashboard-col-1',
         type: 'Grid',
         connector: [{
             id: 'data-connector',
             dataTableKey: 'kpis'
-        }]
+        }],
+        sync: {
+            highlight: true,
+            visibility: true
+        }
+    }, {
+        renderTo: 'dashboard-col-2',
+        type: 'Highcharts',
+        connector: [{
+            id: 'data-connector',
+            dataTableKey: 'more'
+        }],
+        sync: {
+            highlight: true,
+            visibility: true
+        }
+    }, {
+        renderTo: 'dashboard-col-3',
+        type: 'Highcharts',
+        connector: [{
+            id: 'data-connector',
+            dataTableKey: 'kpis'
+        }],
+        sync: {
+            highlight: true,
+            visibility: true
+        }
     }]
 });
