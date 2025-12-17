@@ -936,7 +936,6 @@ class SVGElement implements SVGElementBase {
             radAttr: SVGAttributes,
             gradients: Record<string, SVGElement>,
             stops: (GradientColor['stops']|undefined),
-            stopColor: ColorString,
             stopOpacity,
             radialReference: Array<number>,
             id,
@@ -945,7 +944,7 @@ class SVGElement implements SVGElementBase {
 
         fireEvent(this.renderer, 'complexColor', {
             args: arguments
-        }, function (): void {
+        }, (): void => {
             // Apply linear or radial gradients
             if ((colorOptions as GradientColor).radialGradient) {
                 gradName = 'radialGradient';
@@ -1016,19 +1015,19 @@ class SVGElement implements SVGElementBase {
                     // The gradient needs to keep a list of stops to be able to
                     // destroy them
                     gradientObject.stops = [];
-                    (stops as any).forEach(function (
-                        stop: [number, ColorString]
-                    ): void {
-                        if (stop[1].indexOf('rgba') === 0) {
-                            colorObject = Color.parse(stop[1]);
+                    (stops as any).forEach((
+                        [offset, stopColor]: [number, ColorString]
+                    ): void => {
+                        stopColor = renderer.applyPalette(stopColor);
+                        if (stopColor.indexOf('rgba') === 0) {
+                            colorObject = Color.parse(stopColor);
                             stopColor = colorObject.get('rgb') as any;
                             stopOpacity = colorObject.get('a') as any;
                         } else {
-                            stopColor = stop[1];
                             stopOpacity = 1;
                         }
                         const stopObject = renderer.createElement('stop').attr({
-                            offset: stop[0],
+                            offset,
                             'stop-color': stopColor,
                             'stop-opacity': stopOpacity
                         }).add(gradientObject as any);
@@ -1072,7 +1071,8 @@ class SVGElement implements SVGElementBase {
     public css(styles: CSSObject): this {
         const oldStyles = this.styles,
             newStyles: CSSObject = {},
-            elem = this.element;
+            elem = this.element,
+            renderer = this.renderer;
 
         let textWidth,
             hasNew = !oldStyles;
@@ -1114,7 +1114,7 @@ class SVGElement implements SVGElementBase {
             // Store object
             extend(this.styles, styles);
 
-            if (textWidth && (!svg && this.renderer.forExport)) {
+            if (textWidth && (!svg && renderer.forExport)) {
                 delete styles.width;
             }
 
@@ -1152,6 +1152,9 @@ class SVGElement implements SVGElementBase {
                     stylesToApply.fill = stylesToApply.color;
                     delete stylesToApply.color;
                 }
+
+                // Apply palette
+                renderer.applyPalette(stylesToApply);
             }
             css(elem, stylesToApply);
         }
@@ -1161,7 +1164,7 @@ class SVGElement implements SVGElementBase {
             // Rebuild text after added. Cache mechanisms in the buildText will
             // prevent building if there are no significant changes.
             if (this.element.nodeName === 'text') {
-                this.renderer.buildText(this);
+                renderer.buildText(this);
             }
 
             // Apply text outline after added
@@ -1333,7 +1336,7 @@ class SVGElement implements SVGElementBase {
         element: SVGDOMElement
     ): void {
         if (typeof value === 'string') {
-            element.setAttribute(key, value);
+            element.setAttribute(key, this.renderer.applyPalette(value));
         } else if (value) {
             this.complexColor(value as any, key, element);
         }

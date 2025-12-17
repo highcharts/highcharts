@@ -19,9 +19,6 @@
 
 import type NavigatorOptions from './NavigatorOptions';
 
-import Color from '../../Core/Color/Color.js';
-const { parse: color } = Color;
-import { Palette } from '../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 
@@ -201,14 +198,14 @@ const NavigatorDefaults: NavigatorOptions = {
          *
          * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        backgroundColor: Palette.neutralColor5,
+        backgroundColor: '{palette.neutralColor5}',
 
         /**
          * The stroke for the handle border and the stripes inside.
          *
          * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        borderColor: Palette.neutralColor40
+        borderColor: '{palette.neutralColor40}'
     },
 
     /**
@@ -225,8 +222,8 @@ const NavigatorDefaults: NavigatorOptions = {
      *
      * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @default rgba(102,133,194,0.3)
+     * @apioption navigator.maskFill
      */
-    maskFill: color(Palette.highlightColor60).setOpacity(0.3).get(),
 
     /**
      * The color of the line marking the currently zoomed area in the
@@ -238,7 +235,7 @@ const NavigatorDefaults: NavigatorOptions = {
      * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @default #cccccc
      */
-    outlineColor: Palette.neutralColor40,
+    outlineColor: '{palette.neutralColor40}',
 
     /**
      * The width of the line marking the currently zoomed area in the
@@ -488,7 +485,7 @@ const NavigatorDefaults: NavigatorOptions = {
 
         lineWidth: 0,
 
-        gridLineColor: Palette.neutralColor10,
+        gridLineColor: '{palette.neutralColor10}',
 
         id: 'navigator-x-axis',
 
@@ -505,7 +502,7 @@ const NavigatorDefaults: NavigatorOptions = {
              */
             style: {
                 /** @ignore */
-                color: Palette.neutralColor100,
+                color: '{palette.neutralColor100}',
                 /** @ignore */
                 fontSize: '0.7em',
                 /** @ignore */

@@ -24,7 +24,6 @@ import D from '../../../Core/Defaults.js';
 const { defaultOptions } = D;
 import InfinityLine from './InfinityLine.js';
 import MockPoint from '../MockPoint.js';
-import { Palette } from '../../../Core/Color/Palettes';
 import U from '../../../Core/Utilities.js';
 const { merge } = U;
 
@@ -60,7 +59,7 @@ if (defaultOptions.annotations) {
                      * @since     9.3.0
                      * @apioption annotations.types.fibonacciTimeZones.typeOptions.line.stroke
                      */
-                    stroke: Palette.neutralColor80,
+                    stroke: '{palette.neutralColor80}',
                     /**
                      * The width of the lines.
                      *

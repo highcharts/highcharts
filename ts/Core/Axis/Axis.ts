@@ -61,7 +61,6 @@ import F from '../Foundation.js';
 const { registerEventOptions } = F;
 import H from '../Globals.js';
 const { deg2rad } = H;
-import { Palette } from '../Color/Palettes.js';
 import Tick from './Tick.js';
 import U from '../Utilities.js';
 const {
@@ -4159,7 +4158,8 @@ class Axis {
 
         const options = this.crosshair,
             snap = options?.snap ?? true,
-            chart = this.chart;
+            chart = this.chart,
+            palette = chart.options.palette;
 
         let path,
             pos,
@@ -4256,10 +4256,10 @@ class Axis {
                             (
                                 categorized ?
                                     Color
-                                        .parse(Palette.highlightColor20)
+                                        .parse(palette.highlightColor20)
                                         .setOpacity(0.25)
                                         .get() :
-                                    Palette.neutralColor20
+                                    palette.neutralColor20
                             ),
                         'stroke-width': pick(options.width, 1)
                     }).css({

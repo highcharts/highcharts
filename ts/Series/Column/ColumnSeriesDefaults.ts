@@ -20,8 +20,6 @@
 import type ColumnSeries from './ColumnSeries';
 import type { PlotOptionsOf } from '../../Core/Series/SeriesOptions';
 
-import { Palette } from '../../Core/Color/Palettes.js';
-
 /* *
  *
  *  API Options
@@ -324,7 +322,7 @@ const ColumnSeriesDefaults: PlotOptionsOf<ColumnSeries> = {
              * @default #cccccc
              * @product highcharts highstock gantt
              */
-            color: Palette.neutralColor20,
+            color: '{palette.neutralColor20}',
 
             /**
              * A specific border color for the selected point.
@@ -333,7 +331,7 @@ const ColumnSeriesDefaults: PlotOptionsOf<ColumnSeries> = {
              * @default #000000
              * @product highcharts highstock gantt
              */
-            borderColor: Palette.neutralColor100
+            borderColor: '{palette.neutralColor100}'
         }
     },
 
@@ -401,7 +399,7 @@ const ColumnSeriesDefaults: PlotOptionsOf<ColumnSeries> = {
      * @default   #ffffff
      * @product   highcharts highstock gantt
      */
-    borderColor: Palette.backgroundColor
+    borderColor: '{palette.backgroundColor}'
 
 };
 

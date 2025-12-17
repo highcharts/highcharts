@@ -26,8 +26,10 @@ import type Point from '../../Series/Point';
 
 import Color from '../../Color/Color.js';
 const { parse: color } = Color;
+import Palette from '../../Color/Palettes.js';
+const { applyPalette } = Palette;
 import U from '../../Utilities.js';
-const { merge } = U;
+const { isString, merge } = U;
 
 /* *
  *
@@ -154,7 +156,12 @@ namespace ColorAxisBase {
             ];
 
         for (let i = 0, iEnd = stops.length; i < iEnd; ++i) {
-            stops[i].color = color(stops[i][1]);
+            const colorValue = stops[i][1];
+            stops[i].color = color(
+                isString(colorValue) ?
+                    applyPalette(colorValue, axis.chart) :
+                    colorValue
+            );
         }
     }
 

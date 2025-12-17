@@ -20,7 +20,6 @@
 import type MapPoint from './MapPoint';
 import type MapSeriesOptions from './MapSeriesOptions';
 
-import { Palette } from '../../Core/Color/Palettes.js';
 import U from '../../Core/Utilities.js';
 const { isNumber } = U;
 
@@ -109,7 +108,7 @@ const MapSeriesDefaults: MapSeriesOptions = {
      *
      * @private
      */
-    nullColor: Palette.neutralColor3,
+    nullColor: '{palette.neutralColor3}',
 
     /**
      * Whether to allow pointer interaction like tooltips and mouse events
@@ -169,7 +168,7 @@ const MapSeriesDefaults: MapSeriesOptions = {
      *
      * @private
      */
-    borderColor: Palette.neutralColor10,
+    borderColor: '{palette.neutralColor10}',
 
     /**
      * The border width of each map area.
@@ -268,7 +267,7 @@ const MapSeriesDefaults: MapSeriesOptions = {
              * @product   highmaps
              * @apioption plotOptions.series.states.hover.borderColor
              */
-            borderColor: Palette.neutralColor60,
+            borderColor: '{palette.neutralColor60}',
 
             /**
              * The border width of the point in this state
@@ -320,7 +319,7 @@ const MapSeriesDefaults: MapSeriesOptions = {
              * @product   highmaps
              * @apioption plotOptions.series.states.select.color
              */
-            color: Palette.neutralColor20
+            color: '{palette.neutralColor20}'
         }
     },
 

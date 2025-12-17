@@ -34,6 +34,7 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import Axis from '../../Core/Axis/Axis.js';
+import Color from '../../Core/Color/Color.js';
 import ChartNavigatorComposition from './ChartNavigatorComposition.js';
 import D from '../../Core/Defaults.js';
 const { defaultOptions } = D;
@@ -437,6 +438,7 @@ class Navigator {
             navigatorOptions = navigator.navigatorOptions,
             maskInside = navigatorOptions.maskInside,
             chart = navigator.chart,
+            palette = chart.options.palette,
             inverted = chart.inverted,
             renderer = chart.renderer,
             mouseCursor: CSSObject = {
@@ -468,7 +470,14 @@ class Navigator {
 
             if (!chart.styledMode) {
                 shade.attr({
-                    fill: hasMask ? navigatorOptions.maskFill : 'rgba(0,0,0,0)'
+                    fill: hasMask ?
+                        (
+                            navigatorOptions.maskFill ||
+                            (new Color(palette.highlightColor60))
+                                .setOpacity(0.3)
+                                .get()
+                        ) :
+                        'rgba(0,0,0,0)'
                 });
 
                 if (index === 1) {

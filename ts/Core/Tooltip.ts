@@ -41,7 +41,6 @@ const {
     doc,
     isSafari
 } = H;
-import { Palette } from './Color/Palettes.js';
 import R from './Renderer/RendererUtilities.js';
 const { distribute } = R;
 import RendererRegistry from './Renderer/RendererRegistry.js';
@@ -1158,7 +1157,7 @@ class Tooltip {
                                 options.borderColor ||
                                 point.color ||
                                 currentSeries.color ||
-                                Palette.neutralColor60
+                                '{palette.neutralColor60}'
                             )
                         });
                     }
@@ -1407,7 +1406,7 @@ class Tooltip {
                             ttOptions.borderColor ||
                             point.color ||
                             series.color ||
-                            Palette.neutralColor80
+                            '{palette.neutralColor80}'
                         )
                     });
             }

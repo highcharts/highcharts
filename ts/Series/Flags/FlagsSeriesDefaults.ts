@@ -19,8 +19,6 @@
 
 import type FlagsSeriesOptions from './FlagsSeriesOptions';
 
-import { Palette } from '../../Core/Color/Palettes.js';
-
 /* *
  *
  *  API Options
@@ -204,7 +202,7 @@ const FlagsSeriesDefaults: FlagsSeriesOptions = {
      * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @product highstock
      */
-    fillColor: Palette.backgroundColor,
+    fillColor: '{palette.backgroundColor}',
 
     /**
      * The color of the line/border of the flag.
@@ -239,7 +237,7 @@ const FlagsSeriesDefaults: FlagsSeriesOptions = {
              * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              * @product highstock
              */
-            lineColor: Palette.neutralColor100,
+            lineColor: '{palette.neutralColor100}',
 
             /**
              * The fill or background color of the flag.
@@ -247,7 +245,7 @@ const FlagsSeriesDefaults: FlagsSeriesOptions = {
              * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              * @product highstock
              */
-            fillColor: Palette.highlightColor20
+            fillColor: '{palette.highlightColor20}'
         }
     },
 
@@ -263,7 +261,7 @@ const FlagsSeriesDefaults: FlagsSeriesOptions = {
      */
     style: {
         /** @ignore-option */
-        color: Palette.neutralColor100,
+        color: '{palette.neutralColor100}',
         /** @ignore-option */
         fontSize: '0.7em',
         /** @ignore-option */

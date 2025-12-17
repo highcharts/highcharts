@@ -18,6 +18,7 @@
 import type Chart from './Chart/Chart';
 import type ColorString from './Color/ColorString';
 import type CSSObject from './Renderer/CSSObject';
+import type Palette from './Color/Palettes';
 import type { SeriesTypePlotOptions } from './Series/SeriesType';
 import type { SymbolKey } from './Renderer/SVG/SymbolType';
 import type { LangOptionsCore } from '../Shared/LangOptionsCore';
@@ -68,6 +69,7 @@ export interface Options {
     colors?: Array<ColorString>;
     lang: LangOptions;
     loading?: LoadingOptions;
+    palette: typeof Palette['palette'];
     plotOptions: SeriesTypePlotOptions;
     symbols?: Array<SymbolKey>;
     global: GlobalOptions;

@@ -25,6 +25,8 @@ import H from '../Globals.js';
 const {
     win
 } = H;
+import Palette from './Palettes.js';
+const { applyPalette } = Palette;
 import U from '../Utilities.js';
 const {
     isNumber,
@@ -177,6 +179,11 @@ class Color implements ColorBase {
     public constructor(
         input: ColorType
     ) {
+
+        if (typeof input === 'string') {
+            input = applyPalette(input);
+        }
+
         this.input = input;
 
         const GlobalColor = (H as AnyRecord).Color;

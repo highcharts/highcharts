@@ -435,7 +435,7 @@ class Chart {
         // Fire the event with a default function
         fireEvent(this, 'init', { args: arguments }, function (): void {
 
-            const options = merge(defaultOptions, userOptions), // Do the merge
+            const options = merge(defaultOptions, userOptions),
                 optionsChart = options.chart,
                 renderTo = this.renderTo || optionsChart.renderTo;
 
