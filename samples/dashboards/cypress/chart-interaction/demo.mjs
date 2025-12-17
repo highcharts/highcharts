@@ -7,7 +7,6 @@ import HighchartsPlugin from '../../../../code/dashboards/es-modules/Dashboards/
 HighchartsPlugin.custom.connectHighcharts(Highcharts);
 PluginHandler.addPlugin(HighchartsPlugin);
 
-
 Dashboards.board('container', {
     editMode: {
         enabled: true,
@@ -106,4 +105,17 @@ Dashboards.board('container', {
             highlight: true
         }
     }]
-}, true);
+}, true).then(board => {
+    const editMode = board.editMode,
+        addEvent = Dashboards.addEvent;
+
+    addEvent(editMode, 'cellDestroyed', e => {
+        console.log('cellDestroyed', e);
+        document.getElementById('cellDestroyed').value = 'cellDestroyed';
+    });
+
+    addEvent(editMode, 'rowDestroyed', e => {
+        console.log('rowDestroyed', e);
+        document.getElementById('rowDestroyed').value = 'rowDestroyed';
+    });
+});
