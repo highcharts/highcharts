@@ -1,6 +1,6 @@
 Highcharts.chart('container', {
     title: {
-        text: 'Demo of <em>chart</em> options'
+        text: 'Demo of various chart options'
     },
     series: [
         {
@@ -14,28 +14,18 @@ Highcharts.chart('container', {
             colorByPoint: true
         }
     ],
-    chart: {
-        borderWidth: 2,
-        borderColor: '#334eff',
-        borderRadius: 4
-    }
+    xAxis: {},
+    yAxis: {}
 });
 
 // Highcharts Controls for demo purpose
 HighchartsControls.controls('highcharts-controls', {
     controls: [{
         type: 'number',
-        path: 'chart.borderWidth',
-        value: 2
-    },
-    {
-        type: 'color',
-        path: 'chart.borderColor',
-        value: '#334eff'
+        path: 'xAxis.lineWidth'
     },
     {
         type: 'number',
-        path: 'chart.borderRadius',
-        value: 4
+        path: 'yAxis.lineWidth'
     }]
 });

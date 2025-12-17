@@ -14,6 +14,14 @@ import { promises as fs } from 'fs';
 import { loadExportedTypes } from './load-types.ts';
 import { exec } from 'child_process';
 
+// Import Highcharts and modules so that we can read default options
+import Highcharts from '../../code/esm/highcharts.src.js';
+import '../../code/esm/highcharts-more.src.js';
+import '../../code/esm/highcharts-3d.src.js';
+import '../../code/esm/modules/stock.src.js';
+import '../../code/esm/modules/map.src.js';
+import '../../code/esm/modules/gantt.src.js';
+
 // Type handlers
 import * as booleanHandler from './type-handlers/boolean.ts';
 import * as numberHandler from './type-handlers/number.ts';
@@ -22,17 +30,34 @@ import * as colorHandler from './type-handlers/color.ts';
 
 const types = await loadExportedTypes('code/highcharts.d.ts');
 
+interface MetaData {
+    path: string;
+    node: any;
+    mainType: string;
+    options?: string[];
+    defaultValue?: any;
+    overrideValue?: any;
+}
+
+type MetaList = Array<MetaData>;
+
 const paths = [
-    'chart.borderWidth=2',
-    'chart.borderColor',
-    'chart.borderRadius=4'
+    'xAxis.lineWidth',
+    'yAxis.lineWidth'
 ];
+
+const defaultOptions = Highcharts.getOptions();
 
 // --- Template helpers -------------------------------------------------------
 async function loadTemplate(fileName: string) {
     // Templates live in ./tpl relative to this file
     const path = new URL(`./tpl/${fileName}`, import.meta.url);
     return await fs.readFile(path, 'utf-8');
+}
+
+// Get a nested value from an object given a dot-separated path.
+function getNestedValue(obj: any, path: string): any {
+    return path.split('.').reduce((current, key): any => current?.[key], obj);
 }
 
 // Parse override values from path definitions
@@ -162,9 +187,7 @@ function extendObject(base: any, path: string, nodeValue: any) {
 }
 
 // Generate the chart configuration with the specified paths
-function generateChartConfig(
-    metaList: Array<{ path: string; node: any; overrideValue?: any }>
-) {
+function generateChartConfig(metaList: MetaList) {
     if (!metaList.length) {
         throw new Error(`No nodes found for paths: ${paths.join(', ')}`);
     }
@@ -180,11 +203,12 @@ function generateChartConfig(
         ]
     };
 
-    for (const { path, node, overrideValue } of metaList) {
+    for (const { defaultValue, path, overrideValue } of metaList) {
         // Use override value if provided, otherwise use default from tree
         const value = overrideValue !== void 0 ?
             overrideValue :
-            (node.doclet.defaultValue ?? node.meta.default);
+            defaultValue;
+
         extendObject(chartOptions, path, value);
     }
 
@@ -198,14 +222,7 @@ function getMainType(node: any) {
 
 // Build a list of metadata for each path
 async function getPathMeta(inPaths: string[]) {
-    const list: Array<{
-        path: string;
-        node: any;
-        mainType: string;
-        options?: string[];
-        defaultValue?: any;
-        overrideValue?: any
-    }> = [];
+    const list: MetaList = [];
     for (const pathDef of inPaths) {
         const { path, overrideValue } = parsePathOverride(pathDef);
         const node = await findNodeByPath(path);
@@ -221,15 +238,29 @@ async function getPathMeta(inPaths: string[]) {
         ) {
             options = types[mainType];
         }
-        const defaultValue = node.doclet.defaultValue ?? node.meta.default;
+        const defaultFromDocs = node.doclet.defaultValue ?? node.meta.default,
+            defaultFromCode = getNestedValue(defaultOptions, path),
+            // If the two defaults are the same, we skip setting it explicitly
+            // because the Controls will pick it up from Highcharts defaults
+            defaultValue = (
+                defaultFromCode === defaultFromDocs &&
+                // Except for ColorString, where CSS variables complicate things
+                mainType !== 'ColorString'
+            ) ?
+                void 0 :
+                defaultFromDocs;
 
         if (overrideValue !== void 0) {
             console.log(colors.green(
                 `Using override for ${path}: ${overrideValue}`
             ));
-        } else if (defaultValue !== void 0) {
+        } else if (defaultFromCode !== void 0) {
             console.log(colors.green(
-                `Found default for ${path}: ${defaultValue}`
+                `Found default from code for ${path}: ${defaultFromCode}`
+            ));
+        } else if (defaultFromDocs !== void 0) {
+            console.log(colors.green(
+                `Found default from docs for ${path}: ${defaultFromDocs}`
             ));
         } else {
             console.warn(colors.yellow(`No default value for path: ${path}`));
@@ -277,13 +308,7 @@ export async function getDemoHTML() {
 }
 
 // Function to get TS (one listener per path)
-export async function getDemoTS(metaList: Array<{
-        path: string;
-        mainType: string;
-        options?: string[];
-        defaultValue?: any;
-        overrideValue?: any
-    }>) {
+export async function getDemoTS(metaList: MetaList) {
     let ts = `Highcharts.chart('container', ${JSON.stringify(
         await generateChartConfig(metaList as any),
         null,
@@ -318,7 +343,7 @@ export async function getDemoTS(metaList: Array<{
     // Add the config
     if (controls.length > 0) {
         ts += `
-// Highcharts Controls for demo purpose
+// GUI elements for demo purposes
 HighchartsControls.controls('highcharts-controls', {
     controls: [${controls.join(',\n')}]
 });

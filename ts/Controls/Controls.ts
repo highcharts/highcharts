@@ -28,6 +28,7 @@ interface ControlTarget {
 interface ControlParams {
     type: 'boolean'|'color'|'number'|'array-of-strings';
     path: string;
+    value?: any;
 }
 
 interface ArrayControlParams extends ControlParams {
@@ -543,6 +544,14 @@ class Controls {
 
         if (!this.container) {
             throw new Error('Container for controls not found');
+        }
+
+        if (!('value' in params)) {
+            // Set default value from chart options
+            params.value = getNestedValue(
+                (Highcharts as any).getOptions(),
+                params.path
+            );
         }
 
         const div = this.container.appendChild(
