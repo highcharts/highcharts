@@ -27,12 +27,31 @@ import type VBPIndicator from './VBPIndicator';
  *
  * */
 
+/**
+ * Volume By Price indicator.
+ *
+ * This series requires `linkedTo` option to be set.
+ *
+ * @sample {highstock} stock/indicators/volume-by-price
+ *         Volume By Price indicator
+ *
+ * @extends      plotOptions.sma
+ * @since        6.0.0
+ * @product      highstock
+ * @requires     stock/indicators/indicators
+ * @requires     stock/indicators/volume-by-price
+ * @optionparent plotOptions.vbp
+ * @interface Highcharts.VBPOptions
+ */
 export interface VBPOptions extends SMAOptions {
     animationLimit?: number;
     crisp?: boolean;
     dataGrouping?: DataGroupingOptions;
     dataLabels?: DataLabelOptions;
     enableMouseTracking?: boolean;
+    /**
+     * @excluding index, period
+     */
     params?: VBPParamsOptions;
     pointPadding?: number;
     volumeDivision?: VBPIndicator.VBPIndicatorStyleOptions;
@@ -41,7 +60,21 @@ export interface VBPOptions extends SMAOptions {
 }
 
 export interface VBPParamsOptions extends SMAParamsOptions {
-    ranges?: number;
+    index?: undefined;
+    period?: undefined;
+    /**
+     * The number of price zones.
+     *
+     * @default 12
+     */
+    ranges: number;
+    /**
+     * The id of volume series which is mandatory. For example using
+     * OHLC data, volumeSeriesID='volume' means the indicator will be
+     * calculated using OHLC and volume values.
+     *
+     * @default volume
+     */
     volumeSeriesID: string;
 }
 

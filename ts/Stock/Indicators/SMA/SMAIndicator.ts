@@ -125,7 +125,7 @@ class SMAIndicator extends LineSeries {
      * Simple moving average indicator (SMA). This series requires `linkedTo`
      * option to be set.
      *
-     * @sample stock/indicators/sma
+     * @sample {highstock} stock/indicators/sma
      *         Simple moving average indicator
      *
      * @extends      plotOptions.line

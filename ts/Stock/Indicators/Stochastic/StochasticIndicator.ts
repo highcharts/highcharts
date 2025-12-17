@@ -61,7 +61,7 @@ class StochasticIndicator extends SMAIndicator {
      * Stochastic oscillator. This series requires the `linkedTo` option to be
      * set and should be loaded after the `stock/indicators/indicators.js` file.
      *
-     * @sample stock/indicators/stochastic
+     * @sample {highstock} stock/indicators/stochastic
      *         Stochastic oscillator
      *
      * @extends      plotOptions.sma

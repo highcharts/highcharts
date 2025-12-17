@@ -62,7 +62,7 @@ class ZigzagIndicator extends SMAIndicator {
      *
      * This series requires `linkedTo` option to be set.
      *
-     * @sample stock/indicators/zigzag
+     * @sample {highstock} stock/indicators/zigzag
      *         Zig Zag indicator
      *
      * @extends      plotOptions.sma

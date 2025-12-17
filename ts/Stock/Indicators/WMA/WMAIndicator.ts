@@ -118,7 +118,7 @@ class WMAIndicator extends SMAIndicator {
      * Weighted moving average indicator (WMA). This series requires `linkedTo`
      * option to be set.
      *
-     * @sample stock/indicators/wma
+     * @sample {highstock} stock/indicators/wma
      *         Weighted moving average indicator
      *
      * @extends      plotOptions.sma

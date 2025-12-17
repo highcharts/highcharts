@@ -75,7 +75,11 @@ const abs = Math.abs;
  * */
 
 // Utils
-/** @internal */
+/**
+ * Calculate extremes for OHLC data.
+ *
+ * @internal
+ */
 function arrayExtremesOHLC(
     data: Array<Array<number>>
 ): Record<string, number> {
@@ -131,7 +135,7 @@ class VBPIndicator extends SMAIndicator {
      *
      * This series requires `linkedTo` option to be set.
      *
-     * @sample stock/indicators/volume-by-price
+     * @sample {highstock} stock/indicators/volume-by-price
      *         Volume By Price indicator
      *
      * @extends      plotOptions.sma

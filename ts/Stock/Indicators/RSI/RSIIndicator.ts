@@ -40,9 +40,7 @@ const {
  * */
 
 // Utils:
-/**
- *
- */
+/** @internal */
 function toFixed(a: number, n: number): number {
     return parseFloat(a.toFixed(n));
 }
@@ -75,7 +73,7 @@ class RSIIndicator extends SMAIndicator {
      * requires the `linkedTo` option to be set and should be loaded after
      * the `stock/indicators/indicators.js` file.
      *
-     * @sample stock/indicators/rsi
+     * @sample {highstock} stock/indicators/rsi
      *         RSI indicator
      *
      * @extends      plotOptions.sma

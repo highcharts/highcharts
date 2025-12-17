@@ -23,20 +23,75 @@ import type {
 import type SupertrendPoint from './SupertrendPoint';
 
 /* *
-*
-*  Declarations
-*
-* */
+ *
+ *  Declarations
+ *
+ * */
 
+/**
+ * Supertrend indicator. This series requires the `linkedTo` option to be
+ * set and should be loaded after the `stock/indicators/indicators.js` and
+ * `stock/indicators/sma.js`.
+ *
+ * @sample {highstock} stock/indicators/supertrend
+ *         Supertrend indicator
+ *
+ * @extends      plotOptions.sma
+ * @since        7.0.0
+ * @product      highstock
+ * @excluding    allAreas, cropThreshold, negativeColor, colorAxis, joinBy,
+ *               keys, navigatorOptions, pointInterval, pointIntervalUnit,
+ *               pointPlacement, pointRange, pointStart, showInNavigator,
+ *               stacking, threshold
+ * @requires     stock/indicators/indicators
+ * @requires     stock/indicators/supertrend
+ * @optionparent plotOptions.supertrend
+ * @interface Highcharts.SupertrendOptions
+ */
 export interface SupertrendOptions extends SMAOptions {
+    /**
+     * The styles for the Supertrend line that intersect main series.
+     *
+     * @sample {highstock} stock/indicators/supertrend/
+     *         Example with changeTrendLine
+     */
     changeTrendLine?: Record<string, CSSObject>;
+    /**
+     * Color of the Supertrend series line that is above the main series.
+     *
+     * @sample {highstock} stock/indicators/supertrend/
+     *         Example with fallingTrendColor
+     *
+     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     */
     fallingTrendColor?: ColorType;
+    /**
+     * @excluding index
+     */
     params?: SupertrendParamsOptions;
+    /**
+     * Color of the Supertrend series line that is beneath the main series.
+     *
+     * @sample {highstock} stock/indicators/supertrend/
+     *         Example with risingTrendColor
+     *
+     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     */
     risingTrendColor?: ColorType;
 }
 
 export interface SupertrendParamsOptions extends SMAParamsOptions {
+    index?: undefined;
+    /**
+     * Multiplier for Supertrend Indicator.
+     */
     multiplier?: number;
+    /**
+     * The base period for indicator Supertrend Indicator calculations.
+     * This is the number of data points which are taken into account
+     * for the indicator calculations.
+     */
+    period?: number;
 }
 
 export interface SupertrendLinkedParentPointObject extends LinePoint {

@@ -61,7 +61,7 @@ class SlowStochasticIndicator extends StochasticIndicator {
      * to be set and should be loaded after `stock/indicators/indicators.js`
      * and `stock/indicators/stochastic.js` files.
      *
-     * @sample stock/indicators/slow-stochastic
+     * @sample {highstock} stock/indicators/slow-stochastic
      *         Slow Stochastic oscillator
      *
      * @extends      plotOptions.stochastic

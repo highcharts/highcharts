@@ -24,12 +24,35 @@ import type {
  *
  * */
 
+/**
+ * Slow Stochastic oscillator. This series requires the `linkedTo` option
+ * to be set and should be loaded after `stock/indicators/indicators.js`
+ * and `stock/indicators/stochastic.js` files.
+ *
+ * @sample {highstock} stock/indicators/slow-stochastic
+ *         Slow Stochastic oscillator
+ *
+ * @extends      plotOptions.stochastic
+ * @since        8.0.0
+ * @product      highstock
+ * @requires     stock/indicators/indicators
+ * @requires     stock/indicators/stochastic
+ * @requires     stock/indicators/slow-stochastic
+ * @optionparent plotOptions.slowstochastic
+ * @interface Highcharts.SlowStochasticOptions
+ */
 export interface SlowStochasticOptions extends StochasticOptions, MultipleLinesComposition.IndicatorOptions {
     params?: SlowStochasticParamsOptions;
 }
 
 export interface SlowStochasticParamsOptions extends StochasticParamsOptions {
-    // For inheritance
+    /**
+     * Periods for Slow Stochastic oscillator: [%K, %D, SMA(%D)].
+     *
+     * @type    {Array<number,number,number>}
+     * @default [14, 3, 3]
+     */
+    periods?: Array<number>;
 }
 
 /* *

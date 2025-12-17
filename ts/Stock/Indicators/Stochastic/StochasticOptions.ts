@@ -30,34 +30,41 @@ import type {
  * */
 
 /**
- * Options for the stochastic indicator.
+ * Stochastic oscillator. This series requires the `linkedTo` option to be
+ * set and should be loaded after the `stock/indicators/indicators.js` file.
  *
+ * @sample {highstock} stock/indicators/stochastic
+ *         Stochastic oscillator
+ *
+ * @extends      plotOptions.sma
+ * @since        6.0.0
+ * @product      highstock
+ * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
+ *               pointInterval, pointIntervalUnit, pointPlacement,
+ *               pointRange, pointStart, showInNavigator, stacking
+ * @requires     stock/indicators/indicators
+ * @requires     stock/indicators/stochastic
+ * @optionparent plotOptions.stochastic
  * @interface Highcharts.StochasticOptions
- * @extends Highcharts.SMAOptions
  */
 export interface StochasticOptions extends SMAOptions, MultipleLinesComposition.IndicatorOptions {
-    /**
-     * Set options for data grouping.
-     */
     dataGrouping?: DataGroupingOptions;
-
     marker?: PointMarkerOptions;
-
-    params?: StochasticParamsOptions;
-
     /**
-     * Smoothed line options.
+     * @excluding index, period
      */
+    params?: StochasticParamsOptions;
     smoothedLine?: StochasticSmoothedLineOptions;
 }
 
-/**
- * Parameters used in calculation of stochastic values.
- */
 export interface StochasticParamsOptions extends SMAParamsOptions {
+    index?: undefined;
+    period?: undefined;
     /**
-     * Periods for stochastic oscillator. First period value for %K, second
-     * period value for %D.
+     * Periods for Stochastic oscillator: [%K, %D].
+     *
+     * @type    {Array<number,number>}
+     * @default [14, 3]
      */
     periods?: Array<number>;
 }

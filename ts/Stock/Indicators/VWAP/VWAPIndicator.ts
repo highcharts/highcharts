@@ -65,7 +65,7 @@ class VWAPIndicator extends SMAIndicator {
      *
      * This series requires `linkedTo` option to be set.
      *
-     * @sample stock/indicators/vwap
+     * @sample {highstock} stock/indicators/vwap
      *         Volume Weighted Average Price indicator
      *
      * @extends      plotOptions.sma
