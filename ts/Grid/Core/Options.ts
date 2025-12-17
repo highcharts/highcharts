@@ -4,9 +4,9 @@
  *
  *  (c) 2020-2025 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -34,6 +34,7 @@ import type { ColumnDataType } from './Table/Column';
 import type DataTable from '../../Data/DataTable';
 import type DataTableOptions from '../../Data/DataTableOptions';
 import type Cell from './Table/Cell';
+import type Column from './Table/Column';
 import type { LangOptionsCore } from '../../Shared/LangOptionsCore';
 import type {
     Condition as ColumnFilteringCondition
@@ -51,6 +52,12 @@ import type {
  * formatted cell's string.
  */
 export type CellFormatterCallback = (this: Cell) => string;
+
+/**
+ * Callback function to be called when a header event is triggered. Returns a
+ * formatted header's string.
+ */
+export type HeaderFormatterCallback = (this: Column) => string;
 
 /**
  * Column sorting order type.
@@ -105,7 +112,7 @@ export interface Options {
      *
      * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-lite/basic/grouped-headers | Grouped headers}
      */
-    header?: Array<GroupedHeaderOptions|string>;
+    header?: Array<GroupedHeaderOptions | string>;
 
     /**
      * The unique id of the grid. It is generated automatically, if not set.
@@ -423,7 +430,7 @@ export interface ColumnHeaderOptions {
      * @return
      * A string to be set as a header cell's content.
      */
-    formatter?: CellFormatterCallback;
+    formatter?: HeaderFormatterCallback;
 }
 
 /**
@@ -441,6 +448,12 @@ export interface ColumnSortingOptions {
      * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-pro/basic/sorting-options | Sorting options}
      *
      * @default true
+     */
+    enabled?: boolean;
+
+    /**
+     * @deprecated
+     * Use `enabled` instead
      */
     sortable?: boolean;
 

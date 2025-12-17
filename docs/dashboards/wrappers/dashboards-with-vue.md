@@ -45,30 +45,153 @@ full editor support for all Highcharts modules. You will find it in the menu
 `File` -> `Preferences` -> `Settings`, where you have to scroll to the
 `Vue: Max File Size` value.
 
-## 4. Create an HTML structure for the dashboard
+## 4. Prepare the structure and layout
 
-There are two ways to do it:
+Dashboards can use the built-in layout system or your own custom HTML.
 
-### Use the Dashboards layout system
-To do that, first import the `layout` module and initialize it:
+### Option A: Built-in layout
+
+The layout module is required to use the built-in [layout system](https://www.highcharts.com/docs/dashboards/layout-description):
 
 ```typescript
 import '@highcharts/dashboards/es-modules/masters/modules/layout.src.js';
 ```
-Then add a div where you want to render the dashboard:
-```html
-<div ref="dashboardContainer"></div>
-```
-### Declare your HTML structure.
-Read more in the [documentation](https://www.highcharts.com/docs/dashboards/layout-description).
 
-## 5. Create a dashboard
-The dashboard is created using the factory function `Dashboards.board`. The function takes three arguments:
-- `container` - the element where the dashboard will be rendered, can be an id of the element or the direct reference to the element
-- `options` - the options object for the dashboard
-- `isAsync` - whether the dashboard should be rendered asynchronously or not- functional when using external data resources
+Then create a Vue component that mounts the dashboard:
+
+```vue
+<!-- Dashboard.vue -->
+<template>
+  <div ref="dashboardContainer"></div>
+</template>
+
+<script setup>
+// Import necessary Vue functions
+import { watch, ref } from 'vue';
+
+// Import Highcharts, Dashboards and Dashboard Plugins
+import Highcharts from 'highcharts';
+import Dashboards from '@highcharts/dashboards/es-modules/masters/dashboards.src.js';
+import '@highcharts/dashboards/es-modules/masters/modules/layout.src.js';
+
+Dashboards.HighchartsPlugin.custom.connectHighcharts(Highcharts);
+Dashboards.PluginHandler.addPlugin(Dashboards.HighchartsPlugin);
+
+// Define props and the Dashboards container
+const props = defineProps(['config']);
+const dashboardsContainer = ref(null);
+
+// Once the container is added to the DOM, render the Dashboard
+// with the config given in props
+watch(dashboardsContainer, () => {
+  if (dashboardsContainer.value) {
+    Dashboards.board(dashboardsContainer.value, props.config, true);
+  }
+});
+</script>
+```
+
+```vue
+<!-- App.vue -->
+<template>
+  <div id="app">
+    <Dashboard :config="config"></Dashboard>
+  </div>
+</template>
+
+<script setup>
+import Dashboard from './Dashboard.vue';
+import '../src/style.css';
+
+const config = {
+  gui: {
+    layouts: [{
+      rows: [{
+        cells: [{ id: 'cell-0' }, { id: 'cell-1' }]
+      }]
+    }]
+  },
+  components: [{
+    renderTo: 'cell-0',
+    type: 'Highcharts',
+    chartOptions: { title: { text: 'Series A' }, series: [{ data: [1, 2, 3] }] }
+  }, {
+    renderTo: 'cell-1',
+    type: 'Highcharts',
+    chartOptions: { title: { text: 'Series B' }, series: [{ data: [3, 2, 1] }] }
+  }]
+};
+</script>
+```
+
+### Option B: Custom layout
+
+When you need [full markup control](https://www.highcharts.com/docs/dashboards/layout-description#custom-layout), disable `gui` and point components to your own element ids.
+
+```vue
+<!-- Dashboard.vue -->
+<template>
+  <div id="container" ref="dashboardsContainer">
+    <div class="row">
+      <div class="cell" id="cell-0" />
+      <div class="cell" id="cell-1" />
+    </div>
+  </div>
+</template>
+
+<script setup>
+// Import necessary Vue functions
+import { watch, ref } from 'vue';
+
+// Import Highcharts, Dashboards and Dashboard Plugins
+import Highcharts from 'highcharts';
+import Dashboards from '@highcharts/dashboards/es-modules/masters/dashboards.src.js';
+import '@highcharts/dashboards/es-modules/masters/modules/layout.src.js';
+
+Dashboards.HighchartsPlugin.custom.connectHighcharts(Highcharts);
+Dashboards.PluginHandler.addPlugin(Dashboards.HighchartsPlugin);
+
+// Define props and the Dashboards container
+const props = defineProps(['config']);
+const dashboardsContainer = ref(null);
+
+// Watch for changes in config prop and reinitialize if necessary
+watch([props.config, dashboardsContainer], () => {
+  if (dashboardsContainer.value) {
+    Dashboards.board(dashboardsContainer.value, props.config);
+  }
+});
+</script>
+```
+
+```vue
+<!-- App.vue -->
+<template>
+  <div id="app">
+    <Dashboard :config="config"></Dashboard>
+  </div>
+</template>
+
+<script setup>
+import Dashboard from './Dashboard.vue';
+import '../src/style.css';
+
+const config = {
+  gui: { enabled: false },
+  components: [{
+    renderTo: 'cell-0',
+    type: 'Highcharts',
+    chartOptions: { title: { text: 'Sales' }, series: [{ data: [5, 3, 4] }] }
+  }, {
+    renderTo: 'cell-1',
+    type: 'Highcharts',
+    chartOptions: { title: { text: 'Profit' }, series: [{ data: [2, 2, 5] }] }
+  }]
+};
+</script>
+```
 
 ## Demos
 See how it works in the following demos:
-- [Basic live example](https://stackblitz.com/edit/dashboards-vue3-rvlfu5f6)
-- [Custom layout live example](https://stackblitz.com/edit/dashboards-vue3-j7wsgkjr)
+- [Example using built-in layout](https://stackblitz.com/edit/dashboards-vue3-rvlfu5f6)
+- [Example using custom layout](https://stackblitz.com/edit/dashboards-vue3-j7wsgkjr)
