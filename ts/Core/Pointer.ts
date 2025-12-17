@@ -2171,6 +2171,9 @@ namespace Pointer {
      *
      * */
 
+    /**
+     * Chart position and scale.
+     */
     export interface ChartPositionObject {
         /**
          * Left offset of the chart container.
@@ -2189,16 +2192,10 @@ namespace Pointer {
          */
         top: number;
     }
-    export interface AxesCoordinatesObject {
-        /**
-         * Positions on the x-axis.
-         */
-        xAxis: Array<AxisCoordinateObject>;
-        /**
-         * Positions on the y-axis.
-         */
-        yAxis: Array<AxisCoordinateObject>;
-    }
+
+    /**
+     * One position in relation to an axis.
+     */
     export interface AxisCoordinateObject {
         /**
          * Related axis.
@@ -2209,106 +2206,160 @@ namespace Pointer {
          */
         value: number;
     }
+
+    /**
+     * Positions in terms of axis values.
+     */
+    export interface AxesCoordinatesObject {
+        /**
+         * Positions on the x-axis.
+         */
+        xAxis: Array<AxisCoordinateObject>;
+        /**
+         * Positions on the y-axis.
+         */
+        yAxis: Array<AxisCoordinateObject>;
+    }
+
     /** @internal */
     export interface CoordinatesObject {
+
         /**
          * The X coordinate of the pointer interaction relative to the chart.
          */
         chartX: number;
+
         /**
          * The Y coordinate of the pointer interaction relative to the chart.
          */
         chartY: number;
+
     }
+
     /** @internal */
     export interface EventArgsObject {
+
         /**
          * Chart X position of the pointer.
          */
         chartX?: number;
+
         /**
          * Chart Y position of the pointer.
          */
         chartY?: number;
+
         /**
          * Filter to apply to the series.
          */
         filter?: Function;
+
         /**
          * The point currently being hovered.
          */
         hoverPoint?: Point;
+
         /**
          * Whether the tooltip is shared.
          */
         shared?: boolean;
+
     }
+
     /** @internal */
     export interface HoverDataObject {
+
         /**
          * The hovered point.
          */
         hoverPoint?: Point;
+
         /**
          * All hovered points.
          */
         hoverPoints: Array<Point>;
+
         /**
          * The hovered series.
          */
         hoverSeries: Series;
+
     }
+
     /**
      * Axis-specific data of a selection.
-     *
-     * @interface Highcharts.SelectDataObject
      */
     export interface SelectDataObject {
+
         /**
          * The selected Axis.
          */
         axis: Axis;
+
         /**
          * The maximum axis value, either automatic or set manually.
          */
         max: number;
+
         /**
          * The minimum axis value, either automatic or set manually.
          */
         min: number;
+
     }
+
     /**
      * Object for select events.
      * The primary axes are `xAxis[0]` and `yAxis[0]`. Remember the unit of a
      * datetime axis is milliseconds since 1970-01-01 00:00:00.
-     *
-     * @interface Highcharts.SelectEventObject
      */
     export interface SelectEventObject {
+
+        /** @internal */
         animation?: boolean,
+
+        /** @internal */
         height?: number;
+
         /**
          * The related browser event.
          */
         originalEvent: Event;
+
+        /**
+         * Prevent default action.
+         */
+        preventDefault: Event['preventDefault'];
+
         /**
          * Indicates a reset event to restore default state.
          */
         resetSelection?: boolean;
+
+        /** @internal */
         trigger?: string;
+
+        /** @internal */
         width?: number;
+
+        /** @internal */
         x?: number;
+
         /**
          * Arrays containing the axes of each dimension and each axis' min and
          * max values.
          */
         xAxis: Array<SelectDataObject>;
+
+        /** @internal */
         y?: number;
+
         /**
          * Arrays containing the axes of each dimension and each axis' min and
          * max values.
          */
         yAxis: Array<SelectDataObject>;
+
     }
 
     /* *

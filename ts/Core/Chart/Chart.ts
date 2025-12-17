@@ -4177,7 +4177,7 @@ class Chart {
                 allExtremes = axis.allExtremes;
 
             if (selection) {
-                selection[axis.coll as 'xAxis' | 'yAxis'].push({
+                selection[axis.coll as 'xAxis' | 'yAxis']!.push({
                     axis,
                     min: Math.min(eventMin, eventMax),
                     max: Math.max(eventMin, eventMax)
@@ -4301,7 +4301,7 @@ class Chart {
                     )
                 ) {
                     if (selection) {
-                        selection[axis.coll as 'xAxis'|'yAxis'].push({
+                        selection[axis.coll as 'xAxis'|'yAxis']!.push({
                             axis,
                             min: newMin,
                             max: newMax
@@ -4616,7 +4616,7 @@ namespace Chart {
         event?: PointerEvent;
         to?: Partial<BBoxObject>;
         reset?: boolean;
-        selection?: Pointer.SelectEventObject;
+        selection?: Partial<Pointer.SelectEventObject>;
         from?: Partial<BBoxObject>;
         trigger?: string;
         allowResetButton?: boolean;
