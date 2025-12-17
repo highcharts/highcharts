@@ -80,8 +80,8 @@ describe('Component events', () => {
 
   it('Cell destroyed event triggered when its the last cell in the row', () => {
     cy.get('.highcharts-title').first().click({ force: true });
-    cy.get('.highcharts-dashboards-edit-toolbar-cell > .highcharts-dashboards-edit-toolbar-item:nth-child(3)').click({force: true});
-    cy.contains('Confirm').click({force: true});
+    cy.get('.highcharts-dashboards-edit-toolbar-cell > .highcharts-dashboards-edit-toolbar-item:nth-child(3)').click({ force: true });
+    cy.contains('Confirm').click({ force: true });
 
     cy.get('#cellDestroyed').should('have.value', 'cellDestroyed');
     cy.get('#rowDestroyed').should('have.value', 'rowDestroyed');
