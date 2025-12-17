@@ -1,7 +1,6 @@
 Highcharts.chart('container', {
     title: {
-        text: 'Demo of various chart options',
-        align: 'center'
+        text: 'Demo of <em>legend</em> options'
     },
     series: [
         {
@@ -15,18 +14,14 @@ Highcharts.chart('container', {
             colorByPoint: true
         }
     ],
-    legend: {},
-    chart: {
-        backgroundColor: '#ffefc1'
-    }
+    legend: {}
 });
 
 // GUI elements for demo purposes
 HighchartsControls.controls('highcharts-controls', {
     controls: [{
         type: 'array-of-strings',
-        path: 'title.align',
-        value: 'center',
+        path: 'legend.align',
         options: [
             'left',
             'center',
@@ -34,20 +29,21 @@ HighchartsControls.controls('highcharts-controls', {
         ]
     },
     {
-        type: 'number',
-        path: 'title.x'
+        type: 'array-of-strings',
+        path: 'legend.verticalAlign',
+        options: [
+            'top',
+            'middle',
+            'bottom'
+        ]
     },
     {
-        type: 'number',
-        path: 'title.y'
-    },
-    {
-        type: 'boolean',
-        path: 'legend.enabled'
-    },
-    {
-        type: 'color',
-        path: 'chart.backgroundColor',
-        value: '#ffefc1'
+        type: 'array-of-strings',
+        path: 'legend.layout',
+        options: [
+            'horizontal',
+            'vertical',
+            'proximate'
+        ]
     }]
 });

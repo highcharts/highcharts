@@ -42,11 +42,9 @@ interface MetaData {
 type MetaList = Array<MetaData>;
 
 const paths = [
-    'title.align=center',
-    'title.x',
-    'title.y',
-    'legend.enabled',
-    'chart.backgroundColor=#ffefc1'
+    'legend.align',
+    'legend.verticalAlign',
+    'legend.layout'
 ];
 
 const defaultOptions = Highcharts.getOptions();
@@ -230,17 +228,22 @@ async function getPathMeta(inPaths: string[]) {
         const { path, overrideValue } = parsePathOverride(pathDef);
         const node = await findNodeByPath(path);
         if (!node) {
+            console.error(colors.red(`No node found for path: ${path}`));
             continue;
         }
+
         const mainType = getMainType(node);
         let options: string[] | undefined;
-        if (
+        if (node.doclet.values) {
+            options = JSON.parse(node.doclet.values);
+        } else if (
             types[mainType] &&
             Array.isArray(types[mainType]) &&
             types[mainType].length < 4
         ) {
             options = types[mainType];
         }
+
         const defaultFromDocs = node.doclet.defaultValue ?? node.meta.default,
             defaultFromCode = getNestedValue(defaultOptions, path),
             // If the two defaults are the same, we skip setting it explicitly
@@ -327,6 +330,11 @@ export async function getDemoTS(metaList: MetaList) {
     for (const meta of metaList) {
         const handler = pickHandler(meta);
         if (!handler) {
+            console.error(
+                colors.red(
+                    `No handler for type: ${meta.mainType} (path: ${meta.path})`
+                )
+            );
             continue;
         }
 
