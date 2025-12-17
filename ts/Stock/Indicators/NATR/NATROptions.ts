@@ -13,9 +13,9 @@
  * */
 
 import type {
-    ATROptions,
-    ATRParamsOptions
-} from '../ATR/ATROptions';
+    SMAOptions,
+    SMAParamsOptions
+} from '../SMA/SMAOptions';
 
 /* *
  *
@@ -39,12 +39,12 @@ import type {
  * @optionparent plotOptions.natr
  * @interface Highcharts.NATROptions
  */
-export interface NATROptions extends ATROptions {
+export interface NATROptions extends SMAOptions {
     params?: NATRParamsOptions;
 }
 
-export interface NATRParamsOptions extends ATRParamsOptions {
-    // For inheritance
+export interface NATRParamsOptions extends SMAParamsOptions {
+    index?: undefined;
 }
 
 /* *
