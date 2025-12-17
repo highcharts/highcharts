@@ -110,12 +110,10 @@ Dashboards.board('container', {
         addEvent = Dashboards.addEvent;
 
     addEvent(editMode, 'cellDestroyed', e => {
-        console.log('cellDestroyed', e);
         document.getElementById('cellDestroyed').value = 'cellDestroyed';
     });
 
     addEvent(editMode, 'rowDestroyed', e => {
-        console.log('rowDestroyed', e);
         document.getElementById('rowDestroyed').value = 'rowDestroyed';
     });
 });
