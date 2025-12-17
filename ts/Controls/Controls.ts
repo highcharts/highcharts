@@ -407,6 +407,8 @@ class Controls {
             )
         );
 
+        valueDiv.classList.add('color-control');
+
         const opacityInput = valueDiv.appendChild(
             Object.assign(
                 document.createElement('input'),

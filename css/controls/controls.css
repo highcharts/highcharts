@@ -22,19 +22,20 @@
 
     .highcharts-controls-container {
         max-width: 400px;
-        display: table;
+        display: flex;
+        flex-direction: column;
         margin: 0 auto;
-        table-layout: fixed;
         width: 100%;
     }
 
     .highcharts-controls-control {
-        display: table-row;
+        display: flex;
+        align-items: center;
+        gap: 1em;
     }
 
     .highcharts-controls-key,
     .highcharts-controls-value {
-        display: table-cell;
         line-height: 2em;
         padding: 0.3em 0;
     }
@@ -42,12 +43,18 @@
     .control-section td:first-child,
     .highcharts-controls-key {
         text-align: left;
-        padding-right: 0.5em;
+        flex: 0 1 auto;
+    }
+
+    .highcharts-controls-key {
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .highcharts-controls-value {
         text-align: right;
-        padding-left: 0.5em;
+        flex: 1 1 auto;
+        min-width: 0;
     }
 
     .highcharts-controls-value-inner {
@@ -69,6 +76,10 @@
         border: none;
         background: none;
         text-align: right;
+    }
+
+    .highcharts-controls-value-inner.color-control {
+        white-space: nowrap;
     }
 
     .control-section tr:not(:last-child) td {
