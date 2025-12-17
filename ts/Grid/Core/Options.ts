@@ -446,7 +446,7 @@ export interface ColumnSortingOptions {
 
     /**
      * @deprecated
-     * Use enabled instead
+     * Use `enabled` instead
      */
     sortable?: boolean;
 

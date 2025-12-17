@@ -437,18 +437,6 @@ export class Grid {
         // Operate on a copy of the options argument
         newOptions = merge(newOptions);
 
-        // Backwards compatibility: map deprecated
-        // lang.accessibility.sorting.sortable
-        // to the new lang.accessibility.sorting.enabled option.
-        const sortingLang = newOptions.lang?.accessibility?.sorting;
-        if (
-            sortingLang &&
-            sortingLang.enabled === void 0 &&
-            sortingLang.sortable !== void 0
-        ) {
-            sortingLang.enabled = sortingLang.sortable;
-        }
-
         const diff: DeepPartial<NonArrayOptions> = {};
 
         if (newOptions.columns) {
