@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LicenseRef-Highcharts
 /**
  * @license Highcharts JS v@product.version@ (@product.date@)
  * @module highcharts/modules/offline-exporting
@@ -6,9 +7,11 @@
  *
  * Client side exporting module
  *
- * (c) 2015-2025 Torstein Honsi / Oystein Moseng
+ * (c) 2015-2025 Highsoft AS
+ * Author: Torstein Honsi / Oystein Moseng
  *
- * License: www.highcharts.com/license
+ * A commercial license may be required depending on use.
+ * See www.highcharts.com/license
  */
 'use strict';
 

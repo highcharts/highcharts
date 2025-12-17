@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LicenseRef-Highcharts
 /**
  * @license Highcharts JS v@product.version@ (@product.date@)
  * @module modules/arc-diagram
@@ -5,9 +6,11 @@
  *
  * Arc diagram module
  *
- * (c) 2021 Piotr Madej
+ * (c) 2021 Highsoft AS
+ * Author: Piotr Madej
  *
- * License: www.highcharts.com/license
+ * A commercial license may be required depending on use.
+ * See www.highcharts.com/license
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';
