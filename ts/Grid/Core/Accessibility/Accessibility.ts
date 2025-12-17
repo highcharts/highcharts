@@ -438,11 +438,20 @@ class Accessibility {
         }
 
         const gridTitle = options?.caption?.text;
-        const headingTag = getHeadingTagNameForElement(container);
+
+        let formattedGridTitle = '';
+        if (gridTitle) {
+            if (this.isWrappedInHeadingTag(gridTitle)) {
+                formattedGridTitle = gridTitle;
+            } else {
+                const headingTag = getHeadingTagNameForElement(container);
+                formattedGridTitle =
+                    `<${headingTag}>${gridTitle}</${headingTag}>`;
+            }
+        }
 
         const context = {
-            gridTitle:
-                gridTitle ? `<${headingTag}>${gridTitle}</${headingTag}>` : '',
+            gridTitle: formattedGridTitle,
             gridDescription: options?.description?.text || '',
             rowCount: dataTable?.rowCount || 0,
             columnCount: (dataTable?.getColumnIds() || []).length
@@ -450,6 +459,20 @@ class Accessibility {
 
         const formattedString = this.formatTemplateString(format, context);
         return this.stripEmptyHTMLTags(formattedString);
+    }
+
+    /**
+     * Checks if a string is already wrapped in a heading tag (h1-h6).
+     * @private
+     *
+     * @param text
+     * The text to check.
+     *
+     * @returns
+     * True if the text is wrapped in a heading tag.
+     */
+    private isWrappedInHeadingTag(text: string): boolean {
+        return /^<h([1-6])[^>]*>[\s\S]*<\/h\1>$/i.test(text.trim());
     }
 
     /**
