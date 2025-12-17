@@ -2046,7 +2046,8 @@ Highcharts.mapChart('container', {
     plotOptions: {
         series: {
             tooltip: {
-                headerFormat: ''
+                headerFormat: '',
+                pointFormat: '{point.name}'
             }
         }
     },
