@@ -10,7 +10,7 @@
 
 .highcharts-controls {
     padding: 1rem;
-    border-radius: 8px;
+    border-radius: 7px;
     border: 1px solid light-dark(#e9ecef, #495057);
     box-sizing: border-box;
 
@@ -45,7 +45,7 @@
 
     .highcharts-controls-value-inner {
         border: 1px solid light-dark(#dddddd, #555555);
-        border-radius: 4px;
+        border-radius: 7px;
         background: light-dark(#f8f9fa, #212529);
         font-weight: 600;
         min-height: 2.2em;
@@ -103,7 +103,7 @@
     .options-preview {
         background: light-dark(#ffffff, #1a1d20);
         border: 1px solid light-dark(#dee2e6, #495057);
-        border-radius: 4px;
+        border-radius: 7px;
         padding: 1rem;
         margin: 0;
         font-family: "Courier New", Courier, monospace;
@@ -158,7 +158,7 @@
     }
 
     .hc-toggle input:checked + .hc-toggle-slider {
-        background: light-dark(#2caffe, #1e8cc7);
+        background: light-dark(#141414, #ffffff);
     }
 
     .hc-toggle input:checked + .hc-toggle-slider::before {
@@ -180,7 +180,7 @@
     .highcharts-controls-button {
         background: light-dark(#ffffff, #141414);
         border: 1px solid light-dark(#cccccc, #555555);
-        border-radius: 4px;
+        border-radius: 7px;
         color: light-dark(#444444, #dddddd);
         cursor: pointer;
         display: inline-block;
@@ -212,13 +212,13 @@
     }
 
     .button-group .highcharts-controls-button:first-child {
-        border-top-left-radius: 4px;
-        border-bottom-left-radius: 4px;
+        border-top-left-radius: 7px;
+        border-bottom-left-radius: 7px;
     }
 
     .button-group .highcharts-controls-button:last-child {
-        border-top-right-radius: 4px;
-        border-bottom-right-radius: 4px;
+        border-top-right-radius: 7px;
+        border-bottom-right-radius: 7px;
     }
 
     /* Color input styles */
@@ -286,5 +286,6 @@
     input[id^="range-input-"] {
         vertical-align: middle;
         width: calc(100% - 60px);
+        accent-color: light-dark(#141414, #ffffff);
     }
 }

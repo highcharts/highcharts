@@ -45,7 +45,7 @@ const paths = [
     'title.align=center',
     'title.x',
     'title.y',
-    'title.floating',
+    'legend.enabled',
     'chart.backgroundColor=#ffefc1'
 ];
 

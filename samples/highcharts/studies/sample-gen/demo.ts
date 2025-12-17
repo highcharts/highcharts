@@ -15,6 +15,7 @@ Highcharts.chart('container', {
             colorByPoint: true
         }
     ],
+    legend: {},
     chart: {
         backgroundColor: '#ffefc1'
     }
@@ -42,7 +43,7 @@ HighchartsControls.controls('highcharts-controls', {
     },
     {
         type: 'boolean',
-        path: 'title.floating'
+        path: 'legend.enabled'
     },
     {
         type: 'color',
