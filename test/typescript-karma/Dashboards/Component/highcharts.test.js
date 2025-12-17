@@ -1,6 +1,7 @@
 //@ts-check
 import Highcharts from '../../../../code/es-modules/masters/highstock.src.js';
 import Dashboards from '../../../../code/dashboards/es-modules/masters/dashboards.src.js';
+import '../../../../code/es-modules/masters/highcharts-more.src.js';
 
 Dashboards.HighchartsPlugin.custom.connectHighcharts(Highcharts);
 
@@ -887,4 +888,103 @@ test('Crossfilter with string values', async function (assert) {
 
     numbersNavigator.chart.xAxis[0].setExtremes(2300, 3000);
     stringsNavigator.chart.xAxis[0].setExtremes(0, 1);
+});
+
+test('HighchartsComponent data mutation', async function (assert) {
+    const parentElement = document.getElementById('container');
+    if (!parentElement) {
+        return;
+    }
+
+    const board = await Dashboards.board('container', {
+        gui: {
+            layouts: [{
+                id: 'layout-1',
+                rows: [{
+                    cells: [{
+                        id: 'dashboard-col-0'
+                    }]
+                }]
+            }]
+        },
+        dataPool: {
+            connectors: [{
+                id: 'boxplot',
+                type: 'JSON',
+                firstRowAsNames: false,
+                columnIds: ['A', 'B'],
+                data: [[{
+                    low: 0.2,
+                    q1: 1.4,
+                    median: 2.5,
+                    q3: 4,
+                    high: 5,
+                    name: 'A'
+                }, {
+                    low: 1.4,
+                    q1: 1.8,
+                    median: 2.2,
+                    q3: 2.6,
+                    high: 5,
+                    name: 'B'
+                }]]
+            }]
+        },
+        components: [{
+            type: 'Highcharts',
+            renderTo: 'dashboard-col-0',
+            connector: [{
+                id: 'boxplot',
+                columnAssignment: [{
+                    seriesId: 'series-id-0',
+                    data: 'A'
+                }, {
+                    seriesId: 'series-id-1',
+                    data: 'B'
+                }]
+            }],
+            chartOptions: {
+                chart: {
+                    type: 'boxplot'
+                },
+                series: [{
+                    id: 'series-id-0'
+                }, {
+                    id: 'series-id-1'
+                }]
+            }
+        }]
+    }, true);
+
+    await board.mountedComponents[0].component.update({
+        connector: [{
+            id: 'boxplot',
+            columnAssignment: [{
+                seriesId: 'series-id-0',
+                data: 'B'
+            }, {
+                seriesId: 'series-id-1',
+                data: 'A'
+            }]
+        }]
+    });
+    assert.deepEqual(
+        board.dataPool.options.connectors[0].data[0],
+        [{
+            low: 0.2,
+            q1: 1.4,
+            median: 2.5,
+            q3: 4,
+            high: 5,
+            name: 'A'
+        }, {
+            low: 1.4,
+            q1: 1.8,
+            median: 2.2,
+            q3: 2.6,
+            high: 5,
+            name: 'B'
+        }],
+        "Data shouldn't be mutated after update."
+    );
 });

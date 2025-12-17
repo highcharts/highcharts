@@ -115,6 +115,15 @@ export interface Options extends Component.Options {
     * Sync options for the component.
     */
     syncHandlers?: Sync.OptionsRecord;
+
+    /**
+     * Controls data mutation behavior. When false (default), the component
+     * creates a data copy. When true, the component mutates the original data
+     * directly, preserving its reference.
+     *
+     * @default false
+     */
+    allowMutatingData?: boolean;
 }
 
 /**

@@ -41,7 +41,10 @@ const {
     extend,
     fireEvent,
     isNumber,
-    uniqueKey
+    uniqueKey,
+    isObject,
+    isClass,
+    merge
 } = U;
 
 
@@ -477,6 +480,15 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
                     columns[columnId] = column;
                 } else if (asBasicColumns && !Array.isArray(column)) {
                     columns[columnId] = Array.from(column);
+                } else if (Array.isArray(column)) {
+                    columns[columnId] = column.map(
+                        (item): DataTable.CellType =>
+                            (
+                                isObject(item) && !isClass(item) ?
+                                    merge({}, item) :
+                                    item
+                            )
+                    );
                 } else {
                     columns[columnId] = column.slice();
                 }

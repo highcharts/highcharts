@@ -490,11 +490,13 @@ class HighchartsComponent extends Component {
                     };
                 }
             };
+            const allowMutatingData = this.options.allowMutatingData;
 
             // Set the series data based on the column assignment data structure
             // type.
             if (isString(dataStructure)) {
-                const column = table.getColumn(dataStructure);
+                const column =
+                    table.getColumn(dataStructure, allowMutatingData);
                 if (column) {
                     seriesOptions.data = column.slice() as [];
                 }
@@ -504,7 +506,7 @@ class HighchartsComponent extends Component {
                 ));
             } else if (Array.isArray(dataStructure)) {
                 const seriesTable = new DataTable({
-                    columns: table.getColumns(dataStructure)
+                    columns: table.getColumns(dataStructure, allowMutatingData)
                 });
                 seriesOptions.data = seriesTable.getRows() as [][];
 
@@ -519,7 +521,7 @@ class HighchartsComponent extends Component {
                 }
 
                 const seriesTable = new DataTable({
-                    columns: table.getColumns(columnIds)
+                    columns: table.getColumns(columnIds, allowMutatingData)
                 });
 
                 seriesOptions.keys = keys;

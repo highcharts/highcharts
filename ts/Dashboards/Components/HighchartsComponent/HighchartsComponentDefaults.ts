@@ -49,6 +49,7 @@ const HighchartsComponentDefaults: DeepPartial<Options> = {
         series: []
     },
     chartConstructor: 'chart',
+    allowMutatingData: false,
     editableOptions: [
         {
             name: 'connectorName',
