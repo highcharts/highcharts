@@ -252,7 +252,10 @@ const AnnotationDefaults: AnnotationOptions = {
          * Callback JavaScript function to format the annotation's
          * label. Note that if a `format` or `text` are defined,
          * the format or text take precedence and the formatter is
-         * ignored. `This` refers to a point object.
+         * ignored. `This` refers to a point object. The callback also receives
+         * an argument `ctx` so that arrow-functions can access the same
+         * context (the point in this case) as normal functions can using
+         * `this`.
          *
          * @sample highcharts/annotations/label-text/
          *         Set labels text
