@@ -36,7 +36,7 @@ export interface PlotBandLabelOptions {
     allowOverlap?: boolean,
     className?: string;
     clip?: boolean;
-    formatter?: Templating.FormatterCallback<PlotLineOrBand>;
+    formatter?: Templating.Es6FormatterCallback<PlotLineOrBand>;
     inside?: boolean;
     rotation?: number;
     style?: CSSObject;

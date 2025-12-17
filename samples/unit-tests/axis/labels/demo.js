@@ -672,6 +672,20 @@ QUnit.test('Label formatting(#4291)', function (assert) {
         '79,962.57',
         'Preserved decimals'
     );
+
+    chart.update({
+        yAxis: {
+            labels: {
+                formatter: ctx => (ctx ? '###' : '')
+            }
+        }
+    });
+
+    assert.strictEqual(
+        chart.yAxis[0].ticks['79962.57'].label.textStr,
+        '###',
+        'Es6 formatter works for axis labels.'
+    );
 });
 
 QUnit.test('Label height and ellipsis on update(#4070)', function (assert) {

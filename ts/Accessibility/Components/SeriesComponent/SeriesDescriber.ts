@@ -351,7 +351,7 @@ function getPointA11yTimeDescription(
             ),
             dateFormat = seriesA11yOptions.dateFormatter &&
                 seriesA11yOptions.dateFormatter(point) ||
-                a11yOptions.dateFormatter && a11yOptions.dateFormatter(point) ||
+                a11yOptions.dateFormatter?.(point) ||
                 seriesA11yOptions.dateFormat ||
                 a11yOptions.dateFormat ||
                 tooltipDateFormat;

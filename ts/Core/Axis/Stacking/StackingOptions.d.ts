@@ -57,7 +57,7 @@ export interface StackLabelOptions {
     crop?: boolean;
     enabled?: boolean;
     format?: string;
-    formatter?: Templating.FormatterCallback<StackItem>;
+    formatter?: Templating.Es6FormatterCallback<StackItem>;
     overflow?: DataLabelOverflowValue;
     padding?: number;
     rotation?: number;

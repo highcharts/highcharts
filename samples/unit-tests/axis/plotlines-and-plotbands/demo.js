@@ -691,6 +691,51 @@ QUnit.test(
                 ) > -1,
             'Plot band label is visible.'
         );
+
+        chart.update({
+            xAxis: {
+                plotLines: [
+                    {
+                        value: 1,
+                        color: '#f00',
+                        width: 1,
+                        label: {
+                            formatter: ctx => (
+                                (ctx && '###') || ''
+                            )
+                        }
+                    }
+                ],
+                plotBands: [
+                    {
+                        from: 2,
+                        to: 5,
+                        color: 'rgba(255, 255, 0, 0.2)',
+                        width: 1,
+                        label: {
+                            formatter: ctx => (
+                                (ctx && '###') || ''
+                            )
+                        }
+                    }
+                ]
+            }
+        });
+
+        plotLine = chart.xAxis[0].plotLinesAndBands[0];
+        plotBand = chart.xAxis[0].plotLinesAndBands[1];
+
+        assert.strictEqual(
+            '###',
+            plotLine.label.element.textContent,
+            'ES6 arrow function formatter works for plot line.'
+        );
+
+        assert.strictEqual(
+            '###',
+            plotBand.label.element.textContent,
+            'ES6 arrow function formatter works for plot band.'
+        );
     }
 );
 
@@ -714,7 +759,7 @@ QUnit.test(
         });
 
         chart.addSeries({
-            data: [1, 2, 3, 4]
+            data: [1, 2, 3, 4, 5, 6]
         });
 
         const controller = new TestController(chart);
@@ -735,6 +780,40 @@ QUnit.test(
         assert.ok(
             plotBandClicked,
             'Plot band click event was correctly triggered.'
+        );
+
+        let es6CallbackCalled = false;
+
+        chart.xAxis[0].addPlotBand({
+            from: 3,
+            to: 6,
+            id: 'plotband',
+            events: {
+                click: (e, ctx) => {
+                    es6CallbackCalled = (
+                        e && ctx && true
+                    ) || false;
+                }
+            }
+        });
+
+        controller.triggerEvent(
+            'mouseover',
+            chart.series[0].data[4].plotX + chart.plotLeft - 20,
+            chart.series[0].data[4].plotY + chart.plotTop - 20,
+            {},
+            false
+        );
+        controller.click(
+            chart.series[0].data[4].plotX + chart.plotLeft - 20,
+            chart.series[0].data[4].plotY + chart.plotTop - 20,
+            {},
+            false
+        );
+
+        assert.ok(
+            es6CallbackCalled,
+            'Es6 arrow function callback was correctly triggered.'
         );
     }
 );

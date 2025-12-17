@@ -240,7 +240,8 @@ export interface AxisTickPositionerCallback {
     (
         this: Axis,
         min: number,
-        max: number
+        max: number,
+        ctx: Axis
     ): (TickPositionsArray|undefined);
 }
 
