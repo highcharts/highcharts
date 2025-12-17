@@ -110,7 +110,7 @@ const GridComponentDefaults: DeepPartial<Options> = {
                                 'gridOptions',
                                 'columnDefaults',
                                 'sorting',
-                                'sortable'
+                                'enabled'
                             ],
                         type: 'toggle'
                     }, {

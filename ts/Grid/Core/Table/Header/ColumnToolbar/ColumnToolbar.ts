@@ -112,8 +112,10 @@ class HeaderCellToolbar implements Toolbar {
      */
     private renderFull(): void {
         const columnOptions = this.column.options;
+        const sortingEnabled = columnOptions.sorting?.enabled ??
+            columnOptions.sorting?.sortable;
 
-        if (columnOptions.sorting?.sortable) {
+        if (sortingEnabled) {
             new SortToolbarButton().add(this);
         }
 
@@ -127,8 +129,11 @@ class HeaderCellToolbar implements Toolbar {
 
     private renderMinimized(): void {
         const columnOptions = this.column.options;
+        const sortingEnabled = columnOptions.sorting?.enabled ??
+            columnOptions.sorting?.sortable;
+
         if (
-            columnOptions.sorting?.sortable || (
+            sortingEnabled || (
                 columnOptions.filtering?.enabled &&
                 !columnOptions.filtering.inline
             )

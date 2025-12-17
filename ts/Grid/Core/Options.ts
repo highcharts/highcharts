@@ -112,7 +112,7 @@ export interface Options {
      *
      * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-lite/basic/grouped-headers | Grouped headers}
      */
-    header?: Array<GroupedHeaderOptions|string>;
+    header?: Array<GroupedHeaderOptions | string>;
 
     /**
      * The unique id of the grid. It is generated automatically, if not set.
@@ -448,6 +448,12 @@ export interface ColumnSortingOptions {
      * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-pro/basic/sorting-options | Sorting options}
      *
      * @default true
+     */
+    enabled?: boolean;
+
+    /**
+     * @deprecated
+     * Use `enabled` instead
      */
     sortable?: boolean;
 

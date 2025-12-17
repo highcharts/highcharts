@@ -134,7 +134,7 @@ export const defaultOptions: DeepPartial<Options> = {
     },
     columnDefaults: {
         sorting: {
-            sortable: true
+            enabled: true
         },
         filtering: {
             inline: false

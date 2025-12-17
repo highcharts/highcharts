@@ -11,14 +11,14 @@ Many of the available configuration options in Grid apply to the columns and the
             format: "<span>{value}</span>"
         },
         sorting: {
-            sortable: false
+            enabled: false
         }
     },
     columns: [
         {
             id: "product",
             sorting: {
-                sortable: true
+                enabled: true
             }
         }
     ]
@@ -113,7 +113,7 @@ Try out [this interactive sample](https://jsfiddle.net/gh/get/library/pure/highc
 columns: [{
     id: "weight",
     sorting: {
-        sortable: true,
+        enabled: true,
         order: "desc",
         compare: (a, b) => ... // optionally, custom sorting logic
     }
@@ -122,7 +122,7 @@ columns: [{
 
 The optional `sorting` object consists of three configuration options:
 
-- **`sortable`**: A boolean that determines whether the end user can sort a column by clicking on the column header.
+- **`enabled`**: A boolean that determines whether the end user can sort a column by clicking on the column header.
 
 - **`order`**: Specifies the initial sorting order for a column. It can be set to `'asc'` (ascending) or `'desc'` (descending). Only the last one will be considered if `order` is defined in multiple columns.
 
@@ -130,11 +130,11 @@ The optional `sorting` object consists of three configuration options:
 
 See the [API reference](https://api.highcharts.com/dashboards/#interfaces/Grid_Options.ColumnOptions#sorting).
 
-When the `sortable` option is enabled, clicking the header will toggle the sorting order.
+When the `enabled` option is `true`, clicking the header will toggle the sorting order.
 
-The sorting options are available for individual columns, but the default value for `sortable` can also be set in `columnDefaults.sorting.sortable`.
+The sorting options are available for individual columns, but the default value for `enabled` can also be set in `columnDefaults.sorting.enabled`.
 
-Alternatively, you can programmatically sort a column using the `column.sorting.setOrder` method, even if the sortable option is turned off.
+Alternatively, you can programmatically sort a column using the `column.sorting.setOrder` method, even when `enabled=false`.
 
 ## Filtering
 Column filtering in Highcharts Grid allows users to filter data based on specific conditions and values for each column. This feature enhances data exploration and helps users focus on relevant information within large datasets.
