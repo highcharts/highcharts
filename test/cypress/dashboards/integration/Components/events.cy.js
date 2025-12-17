@@ -78,6 +78,15 @@ describe('Component events', () => {
     cy.get('#unmount').should('have.value', 'unmount');
   });
 
+  it('Cell destroyed event triggered when its the last cell in the row', () => {
+    cy.get('.highcharts-title').first().click({ force: true });
+    cy.get('.highcharts-dashboards-edit-toolbar-cell > .highcharts-dashboards-edit-toolbar-item:nth-child(3)').click({force: true});
+    cy.contains('Confirm').click({force: true});
+
+    cy.get('#cellDestroyed').should('have.value', 'cellDestroyed');
+    cy.get('#rowDestroyed').should('have.value', 'rowDestroyed');
+  });
+
   it('Disabling edit mode should be possible after removing component', () => {
     cy.toggleEditMode();
     cy.get('.highcharts-dashboards-edit-toggle-container')

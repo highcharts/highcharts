@@ -294,6 +294,8 @@ class CellEditToolbar extends EditToolbar {
 
         if (toolbar.cell && Cell.isCell(toolbar.cell)) {
             const row = toolbar.cell.row;
+            const board = toolbar.editMode.board;
+            const editMode = toolbar.editMode;
             const cellId = toolbar.cell.id;
 
             // Disable row highlight.
@@ -304,23 +306,23 @@ class CellEditToolbar extends EditToolbar {
             toolbar.cell = void 0;
 
             // Hide row and cell toolbars.
-            toolbar.editMode.hideToolbars(['cell', 'row']);
+            editMode.hideToolbars(['cell', 'row']);
 
             // Disable resizer.
-            toolbar.editMode.resizer?.disableResizer();
+            editMode.resizer?.disableResizer();
 
             // Call cellResize dashboard event.
             if (row && row.cells && row.cells.length) {
-                fireEvent(toolbar.editMode.board, 'cellResize', {
+                fireEvent(board, 'cellResize', {
                     cell: row.cells[0]
                 });
                 fireEvent(row, 'cellChange', { cell: row.cells[0], row });
-                fireEvent(toolbar.editMode, 'layoutChanged', {
-                    type: 'cellDestroyed',
-                    target: cellId,
-                    board: toolbar.editMode.board
-                });
             }
+
+            fireEvent(editMode, 'cellDestroyed', {
+                target: cellId,
+                board: board
+            });
         }
     }
 
