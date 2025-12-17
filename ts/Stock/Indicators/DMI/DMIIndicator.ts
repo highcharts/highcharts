@@ -49,7 +49,7 @@ const {
 /**
  * The Directional Movement Index (DMI) series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.dmi
  *
@@ -390,6 +390,7 @@ SeriesRegistry.registerSeriesType('dmi', DMIIndicator);
  *
  * */
 
+/** @internal */
 export default DMIIndicator;
 
 /* *

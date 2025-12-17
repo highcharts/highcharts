@@ -1,0 +1,65 @@
+/* *
+ *
+ *  License: www.highcharts.com/license
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ * */
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type {
+    SMAOptions,
+    SMAParamsOptions
+} from '../SMA/SMAOptions';
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+/**
+ * Chaikin Money Flow indicator (cmf).
+ *
+ * @sample stock/indicators/cmf/
+ *         Chaikin Money Flow indicator
+ *
+ * @extends      plotOptions.sma
+ * @since        6.0.0
+ * @excluding    animationLimit
+ * @product      highstock
+ * @requires     stock/indicators/indicators
+ * @requires     stock/indicators/cmf
+ * @optionparent plotOptions.cmf
+ * @interface Highcharts.CMFOptions
+ */
+export interface CMFOptions extends SMAOptions {
+    /**
+     * @excluding index
+     */
+    params?: CMFParamsOptions;
+}
+
+export interface CMFParamsOptions extends SMAParamsOptions {
+    index?: undefined;
+
+    /**
+     * The id of volume series which is mandatory.
+     * For example using OHLC data, volumeSeriesID='volume' means
+     * the indicator will be calculated using OHLC and volume values.
+     */
+    volumeSeriesID?: string;
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default CMFOptions;

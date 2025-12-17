@@ -39,7 +39,7 @@ const { merge } = U;
 /**
  * The NATR series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.natr
  *
@@ -73,10 +73,6 @@ class NATRIndicator extends ATRIndicator {
             valueSuffix: '%'
         }
     } as NATROptions);
-
-    /**
-     * @lends Highcharts.Series#
-     */
 
     /* *
      *
@@ -155,6 +151,7 @@ SeriesRegistry.registerSeriesType('natr', NATRIndicator);
  *
  * */
 
+/** @internal */
 export default NATRIndicator;
 
 /* *
@@ -177,4 +174,4 @@ export default NATRIndicator;
  * @apioption series.natr
  */
 
-''; // To include the above in the js output'
+''; // To include the above in the js output

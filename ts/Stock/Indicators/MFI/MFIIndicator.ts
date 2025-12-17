@@ -46,9 +46,7 @@ const {
  * */
 
 // Utils:
-/**
- *
- */
+/** @internal */
 function sumArray(array: Array<number>): number {
 
     return array.reduce(function (prev: number, cur: number): number {
@@ -56,23 +54,17 @@ function sumArray(array: Array<number>): number {
     });
 }
 
-/**
- *
- */
+/** @internal */
 function toFixed(a: number, n: number): number {
     return parseFloat(a.toFixed(n));
 }
 
-/**
- *
- */
+/** @internal */
 function calculateTypicalPrice(point: Array<number>): number {
     return (point[1] + point[2] + point[3]) / 3;
 }
 
-/**
- *
- */
+/** @internal */
 function calculateRawMoneyFlow(typicalPrice: number, volume: number): number {
     return typicalPrice * volume;
 }
@@ -86,7 +78,7 @@ function calculateRawMoneyFlow(typicalPrice: number, volume: number): number {
 /**
  * The MFI series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.mfi
  *
@@ -297,6 +289,7 @@ SeriesRegistry.registerSeriesType('mfi', MFIIndicator);
  *
  * */
 
+/** @internal */
 export default MFIIndicator;
 
 /* *

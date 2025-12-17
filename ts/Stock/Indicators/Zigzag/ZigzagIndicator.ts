@@ -42,7 +42,7 @@ const {
 /**
  * The Zig Zag series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.zigzag
  *
@@ -62,7 +62,7 @@ class ZigzagIndicator extends SMAIndicator {
      *
      * This series requires `linkedTo` option to be set.
      *
-     * @sample stock/indicators/zigzag
+     * @sample {highstock} stock/indicators/zigzag
      *         Zig Zag indicator
      *
      * @extends      plotOptions.sma
@@ -301,6 +301,7 @@ SeriesRegistry.registerSeriesType('zigzag', ZigzagIndicator);
  *
  * */
 
+/** @internal */
 export default ZigzagIndicator;
 
 /* *

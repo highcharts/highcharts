@@ -41,7 +41,7 @@ const {
 /**
  * The Linear Regression Angle series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.linearRegressionAngle
  *
@@ -60,13 +60,13 @@ class LinearRegressionAngleIndicator extends LinearRegressionIndicator {
      * option to be set.
      *
      * @sample {highstock} stock/indicators/linear-regression-angle
-     *         Linear intercept angle indicator
+     *         Linear regression angle indicator
      *
      * @extends      plotOptions.linearregression
      * @since        7.0.0
      * @product      highstock
      * @requires     stock/indicators/indicators
-     * @requires  stock/indicators/regressions
+     * @requires     stock/indicators/regressions
      * @optionparent plotOptions.linearregressionangle
      */
     public static defaultOptions: LinearRegressionOptions = merge(
@@ -98,7 +98,7 @@ class LinearRegressionAngleIndicator extends LinearRegressionIndicator {
     /**
      * Convert a slope of a line to angle (in degrees) between
      * the line and x axis
-     * @private
+     * @internal
      * @param {number} slope of the straight line function
      * @return {number} angle in degrees
      */
@@ -154,10 +154,11 @@ SeriesRegistry.registerSeriesType(
  *
  * */
 
+/** @internal */
 export default LinearRegressionAngleIndicator;
 
 /**
- * A linear regression intercept series. If the
+ * A linear regression angle series. If the
  * [type](#series.linearregressionangle.type) option is not specified, it is
  * inherited from [chart.type](#chart.type).
  *
