@@ -41,8 +41,7 @@ const {
     extend,
     fireEvent,
     isNumber,
-    uniqueKey,
-    isArray
+    uniqueKey
 } = U;
 
 
@@ -277,7 +276,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
             // No index provided - delete all rows.
             indices = [0];
             actualRowCount = this.rowCount;
-        } else if (isArray(rowIndex)) {
+        } else if (Array.isArray(rowIndex)) {
             // Array of indices provided - delete the specified rows.
             indices = rowIndex
                 // Remove negative indices, and indices beyond the row count,
@@ -496,7 +495,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
             if (column) {
                 if (asReference) {
                     columns[columnId] = column;
-                } else if (asBasicColumns && !isArray(column)) {
+                } else if (asBasicColumns && !Array.isArray(column)) {
                     columns[columnId] = Array.from(column);
                 } else {
                     columns[columnId] = column.slice();
@@ -624,7 +623,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
         if (column) {
             let rowIndex = -1;
 
-            if (isArray(column)) {
+            if (Array.isArray(column)) {
                 // Normal array
                 rowIndex = column.indexOf(cellValue, rowIndexOffset);
             } else if (isNumber(cellValue)) {
@@ -829,7 +828,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
         const column = table.columns[columnId];
 
         // Normal array
-        if (isArray(column)) {
+        if (Array.isArray(column)) {
             return (column.indexOf(cellValue) !== -1);
         }
 
@@ -1046,7 +1045,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
                 if (!tableColumn) {
                     tableColumn = new ArrayConstructor(rowCount);
                 } else if (ArrayConstructor === Array) {
-                    if (!isArray(tableColumn)) {
+                    if (!Array.isArray(tableColumn)) {
                         tableColumn = Array.from(tableColumn);
                     }
                 } else if (tableColumn.length < rowCount) {
@@ -1277,7 +1276,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
                         column[i2] = null;
                     }
                 }
-            } else if (isArray(row)) {
+            } else if (Array.isArray(row)) {
                 for (let j = 0, jEnd = columnIds.length; j < jEnd; ++j) {
                     columns[columnIds[j]][i2] = row[j];
                 }

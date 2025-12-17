@@ -36,8 +36,7 @@ const {
     isNumber,
     merge,
     pushUnique,
-    wrap,
-    isArray
+    wrap
 } = U;
 
 /* *
@@ -418,7 +417,7 @@ class DataSeriesAdditions {
                     const { rowIndex, rowCount } = e;
 
                     if (
-                        isArray(rowIndex) ||
+                        Array.isArray(rowIndex) ||
                         (
                             rowIndex > 0 &&
                             rowIndex + rowCount < series.points.length
