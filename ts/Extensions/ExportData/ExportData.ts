@@ -41,8 +41,10 @@ const {
     getOptions,
     setOptions
 } = D;
-import DownloadURL from '../../Shared/DownloadURL.js';
-const { downloadURL, getBlobFromContent } = DownloadURL;
+import {
+    downloadURL,
+    getBlobFromContent
+} from '../../Shared/DownloadURL.js';
 import ExportDataDefaults from './ExportDataDefaults.js';
 import G from '../../Core/Globals.js';
 const {

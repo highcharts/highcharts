@@ -86,7 +86,7 @@ const domurl = win.URL || win.webkitURL || win;
  * @return {string | undefined}
  * Blob.
  */
-function dataURLtoBlob(
+export function dataURLtoBlob(
     dataURL: string
 ): (string | undefined) {
     const parts = dataURL
@@ -127,7 +127,7 @@ function dataURLtoBlob(
  * @param {string} filename
  * The name of the resulting file (w/extension).
  */
-function downloadURL(
+export function downloadURL(
     dataURL: (string | URL),
     filename: string
 ): void {
@@ -196,7 +196,7 @@ function downloadURL(
  * @param {string} scriptLocation
  * The location for the script to fetch.
  */
-function getScript(
+export function getScript(
     scriptLocation: string
 ): Promise<void> {
     return new Promise((resolve, reject): void => {
@@ -241,7 +241,7 @@ function getScript(
  * @requires modules/exporting
  * @requires modules/export-data
  */
-function getBlobFromContent(
+export function getBlobFromContent(
     content: string,
     type: string
 ): (string | undefined) {
@@ -272,6 +272,7 @@ function getBlobFromContent(
  *
  * */
 
+/** @internal */
 const DownloadURL = {
     dataURLtoBlob,
     downloadURL,
@@ -279,4 +280,5 @@ const DownloadURL = {
     getScript
 };
 
+/** @internal */
 export default DownloadURL;

@@ -35,11 +35,10 @@ const {
     getOptions,
     setOptions
 } = D;
-import DownloadURL from '../../Shared/DownloadURL.js';
-const {
+import {
     downloadURL,
     getScript
-} = DownloadURL;
+} from '../../Shared/DownloadURL.js';
 import G from '../../Core/Globals.js';
 const {
     composed,

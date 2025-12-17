@@ -53,11 +53,10 @@ const {
     defaultOptions,
     setOptions
 } = D;
-import DownloadURL from '../../Shared/DownloadURL.js';
-const {
+import {
     downloadURL,
     getScript
-} = DownloadURL;
+} from '../../Shared/DownloadURL.js';
 import ExportingDefaults from './ExportingDefaults.js';
 import ExportingSymbols from './ExportingSymbols.js';
 import Fullscreen from './Fullscreen.js';
