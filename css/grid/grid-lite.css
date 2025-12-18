@@ -1454,8 +1454,8 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     --hcg-button-color: #141414;
     --hcg-button-hover-color: #141414;
     --hcg-pagination-vertical-padding: 10px;
-    --hcg-pagination-button-active-background: #000000;
-    --hcg-pagination-button-active-color: #ffffff;
+    --hcg-pagination-button-selected-background: #000000;
+    --hcg-pagination-button-selected-color: #ffffff;
     --hcg-icon-color: #626262;
     --hcg-icon-hover-color: #141414;
 }
@@ -1469,8 +1469,8 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
         --hcg-button-hover-background: #3b3b3b;
         --hcg-button-color: #ffffff;
         --hcg-button-hover-color: #ffffff;
-        --hcg-pagination-button-active-background: #ffffff;
-        --hcg-pagination-button-active-color: #000000;
+        --hcg-pagination-button-selected-background: #ffffff;
+        --hcg-pagination-button-selected-color: #000000;
         --hcg-icon-hover-color: #ffffff;
     }
 }
@@ -1483,8 +1483,8 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     --hcg-button-hover-background: #3b3b3b;
     --hcg-button-color: #ffffff;
     --hcg-button-hover-color: #ffffff;
-    --hcg-pagination-button-active-background: #ffffff;
-    --hcg-pagination-button-active-color: #000000;
+    --hcg-pagination-button-selected-background: #ffffff;
+    --hcg-pagination-button-selected-color: #000000;
     --hcg-icon-hover-color: #ffffff;
 }
 
