@@ -111,6 +111,9 @@ export const defaultOptions: DeepPartial<Options> = {
             filtering: true
         }
     },
+    data: {
+        type: 'local'
+    },
     time: {
         timezone: 'UTC'
     },

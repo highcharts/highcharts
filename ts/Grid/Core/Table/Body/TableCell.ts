@@ -32,6 +32,7 @@ import CellContent from '../CellContent/CellContent.js';
 
 import Utils from '../../../../Core/Utilities.js';
 const {
+    defined,
     fireEvent
 } = Utils;
 
@@ -137,9 +138,16 @@ class TableCell extends Cell {
      * `false`, meaning the table will not be updated.
      */
     public async setValue(
-        value: DataTable.CellType = this.column.data?.[this.row.index],
+        value?: DataTable.CellType,
         updateTable: boolean = false
     ): Promise<void> {
+        if (!defined(value)) {
+            value = await this.column.viewport.grid.dataProvider?.getValue(
+                this.column.id,
+                this.row.index
+            );
+        }
+
         this.value = value;
 
         if (updateTable && await this.updateDataTable()) {
@@ -175,33 +183,39 @@ class TableCell extends Cell {
      * the cell's content.
      */
     private async updateDataTable(): Promise<boolean> {
-        if (this.column.data?.[this.row.index] === this.value) {
+        const oldValue = await this.column.viewport.grid.dataProvider?.getValue(
+            this.column.id,
+            this.row.index
+        );
+
+        if (oldValue === this.value) {
             // Abort if the value is the same as in the data table.
             return false;
         }
 
         const vp = this.column.viewport;
-        const { dataTable: originalDataTable } = vp.grid;
+        const { dataProvider: dp } = vp.grid;
 
         const rowTableIndex =
             this.row.id &&
-            originalDataTable?.getLocalRowIndex(this.row.id);
+            await dp?.getRowIndex(this.row.id);
 
-        if (!originalDataTable || rowTableIndex === void 0) {
+        if (!dp || rowTableIndex === void 0) {
             return false;
         }
 
         this.row.data[this.column.id] = this.value;
-        originalDataTable.setCell(
+        await dp.setValue(
+            this.value,
             this.column.id,
-            rowTableIndex,
-            this.value
+            rowTableIndex
         );
 
         // If no modifiers, don't update all rows
-        if (vp.grid.dataTable === vp.grid.presentationTable) {
-            return false;
-        }
+        // TODO: Handle this differently
+        // if (vp.grid.dataTable === vp.grid.presentationTable) {
+        //     return false;
+        // }
 
         await vp.updateRows();
         return true;

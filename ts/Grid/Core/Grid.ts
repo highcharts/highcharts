@@ -28,16 +28,18 @@ import type {
     GroupedHeaderOptions,
     IndividualColumnOptions
 } from './Options';
-import type DataTableOptions from '../../Data/DataTableOptions';
-import type { ColumnDataType, NoIdColumnOptions } from './Table/Column';
+import type { DataProviderType } from './Data/DataProviderType';
+/// import type DataTableOptions from '../../Data/DataTableOptions';
+import type { NoIdColumnOptions } from './Table/Column';
 import type Popup from './UI/Popup.js';
 import type { DeepPartial } from '../../Shared/Types';
 
 import Accessibility from './Accessibility/Accessibility.js';
 import AST from '../../Core/Renderer/HTML/AST.js';
+import * as DataProviderRegistry from './Data/DataProviderRegistry.js';
 import { defaultOptions } from './Defaults.js';
 import GridUtils from './GridUtils.js';
-import DataTable from '../../Data/DataTable.js';
+/// import DataTable from '../../Data/DataTable.js';
 import Table from './Table/Table.js';
 import U from '../../Core/Utilities.js';
 import QueryingController from './Querying/QueryingController.js';
@@ -47,7 +49,6 @@ import Pagination from './Pagination/Pagination.js';
 
 const { makeHTMLElement, setHTMLContent } = GridUtils;
 const {
-    defined,
     diffObjects,
     extend,
     fireEvent,
@@ -181,12 +182,6 @@ export class Grid {
     public contentWrapper?: HTMLElement;
 
     /**
-     * The data source of the Grid. It contains the original data table
-     * that was passed to the Grid.
-     */
-    public dataTable?: DataTable;
-
-    /**
      * The description element of the Grid.
      */
     public descriptionElement?: HTMLElement;
@@ -195,13 +190,6 @@ export class Grid {
      * The container element of the loading indicator overlaying the Grid.
      */
     public loadingWrapper?: HTMLElement;
-
-    /**
-     * The presentation table of the Grid. It contains a modified version
-     * of the data table that is used for rendering the Grid content. If
-     * not modified, just a reference to the original data table.
-     */
-    public presentationTable?: DataTable;
 
     /**
      * The HTML element of the table.
@@ -288,12 +276,6 @@ export class Grid {
     public popups: Set<Popup> = new Set();
 
     /**
-     * Functions that unregister events attached to the grid's data table,
-     * that need to be removed when the grid is destroyed.
-     */
-    private dataTableEventDestructors: Function[] = [];
-
-    /**
      * The render target (container) of the Grid.
      */
     private renderTo: string | HTMLElement;
@@ -309,6 +291,8 @@ export class Grid {
      * @internal
      */
     public readonly dirtyFlags: Set<GridDirtyFlags> = new Set();
+
+    public dataProvider?: DataProviderType;
 
 
     /* *
@@ -362,6 +346,19 @@ export class Grid {
      *  Methods
      *
      * */
+
+    // /**
+    //  * The data source of the Grid. It contains the original data table
+    //  * that was passed to the Grid.
+    //  */
+    // public dataTable?: DataTable;
+
+    // /**
+    //  * The presentation table of the Grid. It contains a modified version
+    //  * of the data table that is used for rendering the Grid content. If
+    //  * not modified, just a reference to the original data table.
+    //  */
+    // public presentationTable?: DataTable;
 
     /*
      * Initializes the accessibility controller.
@@ -661,11 +658,8 @@ export class Grid {
         const flags = this.dirtyFlags;
 
         if (viewport) {
-            if (!this.dataTable || 'dataTable' in diff) {
-                this.userOptions.dataTable = options.dataTable;
-                (this.options ?? {}).dataTable = options.dataTable;
-
-                this.loadDataTable();
+            if (!this.dataProvider || 'data' in diff || 'dataTable' in diff) {
+                this.loadDataProvider();
 
                 // TODO: Sometimes it can be too much, so we need to check if
                 // the columns have changed or just their data. If just their
@@ -995,7 +989,7 @@ export class Grid {
             this.destroy(true);
         }
 
-        this.loadDataTable();
+        this.loadDataProvider();
 
         this.initContainer(this.renderTo);
         this.initAccessibility();
@@ -1004,7 +998,7 @@ export class Grid {
         this.querying.loadOptions();
         await this.querying.proceed();
 
-        this.renderViewport();
+        await this.renderViewport();
 
         this.isRendered = true;
         this.dirtyFlags.clear();
@@ -1190,12 +1184,12 @@ export class Grid {
      * rendered, it will be destroyed and re-rendered with the new data.
      * @internal
      */
-    public renderViewport(): void {
+    public async renderViewport(): Promise<void> {
         const viewportMeta = this.viewport?.getStateMeta();
         const pagination = this.pagination;
         const paginationPosition = pagination?.options?.position;
 
-        this.enabledColumns = this.getEnabledColumnIDs();
+        this.enabledColumns = await this.getEnabledColumnIDs();
 
         this.credits?.destroy();
 
@@ -1222,7 +1216,7 @@ export class Grid {
             this.renderNoData();
         }
 
-        this.accessibility?.setA11yOptions();
+        await this.accessibility?.setA11yOptions();
 
         // Render bottom pagination, footer pagination,
         // or custom container pagination (after table).
@@ -1267,13 +1261,13 @@ export class Grid {
      * Returns the array of IDs of columns that should be displayed in the data
      * grid, in the correct order.
      */
-    private getEnabledColumnIDs(): string[] {
+    private async getEnabledColumnIDs(): Promise<string[]> {
         const { columnOptionsMap } = this;
         const header = this.options?.header;
         const headerColumns = this.getColumnIds(header || [], false);
         const columnsIncluded = this.options?.rendering?.columns?.included || (
             headerColumns && headerColumns.length > 0 ?
-                headerColumns : this.dataTable?.getColumnIds()
+                headerColumns : await this.dataProvider?.getColumnIds()
         );
 
         if (!columnsIncluded?.length) {
@@ -1296,41 +1290,24 @@ export class Grid {
         return result;
     }
 
-    /**
-     * Loads the data table of the Grid. If the data table is passed as a
-     * reference, it should be used instead of creating a new one.
-     */
-    private loadDataTable(): void {
+    private loadDataProvider(): void {
+        this.dataProvider?.destroy();
         this.querying.shouldBeUpdated = true;
 
-        // Unregister all events attached to the previous data table.
-        this.dataTableEventDestructors.forEach((fn): void => fn());
-        const tableOptions = this.options?.dataTable;
-
-        // If the table is passed as a reference, it should be used instead of
-        // creating a new one.
-        if ((tableOptions as DataTable)?.clone) {
-            this.dataTable = tableOptions as DataTable;
-            this.presentationTable = this.dataTable.getModified();
+        const dataOptions = this.options?.data;
+        if (!dataOptions) {
             return;
         }
 
-        const dt = this.dataTable = this.presentationTable =
-            new DataTable(tableOptions as DataTableOptions);
+        const DataProviderConstructor =
+            DataProviderRegistry.types[dataOptions.type] ??
+            DataProviderRegistry.types.local;
 
-        // If the data table is modified, mark the querying controller to be
-        // updated on the next proceed.
-        ([
-            'afterDeleteColumns',
-            'afterDeleteRows',
-            'afterSetCell',
-            'afterSetColumns',
-            'afterSetRows'
-        ] as const).forEach((eventName): void => {
-            this.dataTableEventDestructors.push(dt.on(eventName, (): void => {
-                this.querying.shouldBeUpdated = true;
-            }));
-        });
+        this.dataProvider = new DataProviderConstructor(
+            this.querying,
+            dataOptions,
+            this // Just for the backward compatibility, remove in the future
+        );
     }
 
     /**
@@ -1384,7 +1361,7 @@ export class Grid {
         this.isRendered = false;
         const dgIndex = Grid.grids.findIndex((dg): boolean => dg === this);
 
-        this.dataTableEventDestructors.forEach((fn): void => fn());
+        this.dataProvider?.destroy();
         this.accessibility?.destroy();
         this.pagination?.destroy();
         this.viewport?.destroy();
@@ -1472,6 +1449,8 @@ export class Grid {
      * JSON representation of the data
      */
     public getData(modified: boolean = true): string {
+        throw new Error('TODO: Use new data provider here: ' + modified);
+        /* TODO: Use new data provider here
         const dataTable = modified ? this.presentationTable : this.dataTable;
         const tableColumns = dataTable?.columns;
         const outputColumns: Record<string, DataTable.Column> = {};
@@ -1512,6 +1491,7 @@ export class Grid {
         }
 
         return JSON.stringify(outputColumns, null, 2);
+        */
     }
 
     /**
@@ -1528,11 +1508,12 @@ export class Grid {
         const options =
             onlyUserOptions ? merge(this.userOptions) : merge(this.options);
 
-        if (options.dataTable?.id) {
-            options.dataTable = {
-                columns: options.dataTable.columns
-            };
-        }
+        throw new Error('TODO: Use new options here');
+        /// if (options.data.dataTable?.clone) {
+        //     options.dataTable = {
+        //         columns: options.dataTable.columns
+        //     };
+        // }
 
         return options;
     }

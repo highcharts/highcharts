@@ -90,6 +90,8 @@ import '../Grid/Pro/CellRendering/Renderers/TimeInputRenderer.js';
 import '../Grid/Pro/CellRendering/Renderers/SparklineRenderer.js';
 import '../Grid/Pro/CellRendering/Renderers/NumberInputRenderer.js';
 
+import '../Grid/Core/Data/LocalDataProvider.js';
+
 
 /* *
  *

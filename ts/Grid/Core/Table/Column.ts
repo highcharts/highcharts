@@ -30,7 +30,6 @@ import type { DeepPartial } from '../../../Shared/Types';
 import type { NonArrayColumnOptions } from '../Grid';
 
 import Table from './Table.js';
-import DataTable from '../../../Data/DataTable.js';
 import Utils from '../../../Core/Utilities.js';
 import ColumnSorting from './Actions/ColumnSorting';
 import ColumnFiltering from './Actions/ColumnFiltering/ColumnFiltering.js';
@@ -41,7 +40,6 @@ import TableCell from './Body/TableCell';
 import GridUtils from '../GridUtils.js';
 
 const {
-    defined,
     fireEvent
 } = Utils;
 
@@ -87,10 +85,12 @@ export class Column {
      */
     public id: string;
 
-    /**
-     * The data of the column.
-     */
-    public data?: DataTable.Column;
+    // TODO: Decide how and whether to handle this when the data can be
+    // not fully loaded. Maybe proxy?
+    // /**
+    //  * The data of the column.
+    //  */
+    // public data?: DataTable.Column;
 
     /**
      * The options of the column as a proxy that provides merged access to
@@ -186,7 +186,9 @@ export class Column {
      * Loads the data of the column from the viewport's data table.
      */
     public loadData(): void {
-        this.data = this.viewport.dataTable.getColumn(this.id, true);
+        // TODO: Decide how and whether to handle this when the data can be
+        // not fully loaded.
+        // this.data = this.viewport.dataTable.getColumn(this.id, true);
     }
 
     /**
@@ -213,6 +215,10 @@ export class Column {
             return type;
         }
 
+        /// temp
+        return 'string';
+
+        /* TODO: Handle this when the data can be not fully loaded.
         if (!this.data) {
             return 'string';
         }
@@ -247,6 +253,7 @@ export class Column {
         );
 
         return 'string';
+        */
     }
 
     /**
