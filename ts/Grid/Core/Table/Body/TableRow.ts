@@ -88,10 +88,7 @@ class TableRow extends Row {
     constructor(viewport: Table, index: number) {
         super(viewport);
         this.index = index;
-        this.id = viewport.dataTable.getOriginalRowIndex(index);
-
-        this.loadData();
-        this.setRowAttributes();
+        void this.init();
     }
 
     /* *
@@ -100,6 +97,12 @@ class TableRow extends Row {
     *
     * */
 
+    private async init(): Promise<void> {
+        this.id = await this.viewport.grid.dataProvider?.getRowId(this.index);
+        await this.loadData();
+        this.setRowAttributes();
+    }
+
     public override createCell(column: Column): Cell {
         return new TableCell(this, column);
     }
@@ -107,8 +110,10 @@ class TableRow extends Row {
     /**
      * Loads the row data from the data table.
      */
-    private loadData(): void {
-        const data = this.viewport.dataTable.getRowObject(this.index);
+    private async loadData(): Promise<void> {
+        const data = await this.viewport.grid.dataProvider?.getRowObject(
+            this.index
+        );
         if (!data) {
             return;
         }
@@ -120,11 +125,11 @@ class TableRow extends Row {
      * Updates the row data and its cells with the latest values from the data
      * table.
      */
-    public update(): void {
-        this.id = this.viewport.dataTable.getOriginalRowIndex(this.index);
+    public async update(): Promise<void> {
+        this.id = await this.viewport.grid.dataProvider?.getRowId(this.index);
         this.updateRowAttributes();
 
-        this.loadData();
+        await this.loadData();
 
         for (let i = 0, iEnd = this.cells.length; i < iEnd; ++i) {
             const cell = this.cells[i] as TableCell;

@@ -122,14 +122,14 @@ class RowsVirtualizer {
     /**
      * Renders the rows in the viewport for the first time.
      */
-    public initialRender(): void {
+    public async initialRender(): Promise<void> {
         // Initial reflow to set the viewport height
         if (this.viewport.virtualRows) {
             this.viewport.reflow();
         }
 
         // Load & render rows
-        this.renderRows(this.rowCursor);
+        await this.renderRows(this.rowCursor);
         this.adjustRowHeights();
     }
 
@@ -137,7 +137,7 @@ class RowsVirtualizer {
      * Renders the rows in the viewport. It is called when the rows need to be
      * re-rendered, e.g., after a sort or filter operation.
      */
-    public rerender(): void {
+    public async rerender(): Promise<void> {
         const tbody = this.viewport.tbodyElement;
         let rows = this.viewport.rows;
 
@@ -152,7 +152,7 @@ class RowsVirtualizer {
             rows.length = 0;
         }
 
-        this.renderRows(this.rowCursor);
+        await this.renderRows(this.rowCursor);
 
         if (this.viewport.virtualRows) {
 
@@ -160,7 +160,7 @@ class RowsVirtualizer {
                 tbody.scrollTop = oldScrollTop;
             }
 
-            this.scroll();
+            await this.scroll();
         }
 
         rows = this.viewport.rows;
@@ -177,7 +177,7 @@ class RowsVirtualizer {
      * Method called on the viewport scroll event, only when the virtualization
      * is enabled.
      */
-    public scroll(): void {
+    public async scroll(): Promise<void> {
         const target = this.viewport.tbodyElement;
         const { defaultRowHeight: rowHeight } = this;
         const lastScrollTop = target.scrollTop;
@@ -193,7 +193,7 @@ class RowsVirtualizer {
         // Do vertical virtual scrolling
         const rowCursor = Math.floor(target.scrollTop / rowHeight);
         if (this.rowCursor !== rowCursor) {
-            this.renderRows(rowCursor);
+            await this.renderRows(rowCursor);
         }
         this.rowCursor = rowCursor;
 
@@ -250,9 +250,12 @@ class RowsVirtualizer {
      * @param rowCursor
      * The index of the first visible row.
      */
-    private renderRows(rowCursor: number): void {
+    private async renderRows(rowCursor: number): Promise<void> {
         const { viewport: vp, buffer } = this;
-        const rowCount = vp.dataTable.getRowCount();
+        const rowCount = await vp.grid.dataProvider?.getRowCount();
+        if (!rowCount) {
+            return;
+        }
 
         // Stop rendering if there are no rows to render.
         if (rowCount < 1) {

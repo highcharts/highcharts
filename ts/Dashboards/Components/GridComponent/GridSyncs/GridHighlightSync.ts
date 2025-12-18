@@ -143,7 +143,7 @@ const syncPair: Sync.SyncPair = {
                 return;
             }
 
-            const rowIndex = viewport.dataTable.getLocalRowIndex(row);
+            const rowIndex = viewport.dataTable?.getLocalRowIndex(row);
             if (rowIndex === void 0) {
                 return;
             }
