@@ -210,7 +210,7 @@ const initGrid = data => {
                                     overflow: 'allow',
                                     useHTML: true,
                                     enabled: true,
-                                    format: '{y:.2f}%'
+                                    format: '<span class="spark-label">{y:.2f}%</span>'
                                 },
                                 negativeColor: '#f00'
                             }
