@@ -62,6 +62,13 @@ export interface StatesOptions {
 
 export type StatesOptionsKey = (''|keyof StatesOptions);
 
+/**
+ * Possible key values for the point state options.
+ *
+ * @typedef {"hover"|"inactive"|"normal"|"select"} Highcharts.PointStateValue
+ */
+export type PointStateValue = StatesOptionsKey;
+
 /* *
  *
  *  Default Export

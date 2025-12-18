@@ -1919,17 +1919,41 @@ interface Point extends PointBase {
  * */
 
 namespace Point {
+    /** @internal */
     export interface GraphicalProps {
         singular: Array<string>;
         plural: Array<string>;
     }
-    export interface SeriesPointsOptions {
-        events?: PointEventsOptions;
-    }
+
+    /**
+     * Gets fired when the point is updated programmatically through the
+     * `.update()` method.
+     *
+     * @callback Highcharts.PointUpdateCallbackFunction
+     *
+     * @param {Highcharts.Point} this
+     *        Point where the event occurred.
+     *
+     * @param {Highcharts.PointUpdateEventObject} event
+     *        Event that occurred.
+     */
     export interface UpdateCallbackFunction {
         (this: Point, event: UpdateEventObject): void;
     }
+
+    /**
+     * Information about the update event.
+     *
+     * @interface Highcharts.PointUpdateEventObject
+     * @extends global.Event
+     */
     export interface UpdateEventObject {
+        /**
+         * Options data of the update event.
+         *
+         * @name Highcharts.PointUpdateEventObject#options
+         * @type {Highcharts.PointOptionsType}
+         */
         options?: PointTypeOptions;
     }
 }
