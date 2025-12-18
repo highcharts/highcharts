@@ -41,6 +41,36 @@ class RowsVirtualizer {
 
     /* *
     *
+    *  Static Methods
+    *
+    * */
+
+    /**
+     * Returns the default height of a row. This method should be called only
+     * once on initialization.
+     *
+     * @param viewport
+     * The viewport of the data grid to render rows in.
+     *
+     * @returns
+     * The default height of a row.
+     */
+    static getDefaultRowHeight(viewport: Table): number {
+        const vp = viewport;
+        const mockRow = new TableRow(vp, 0);
+
+        mockRow.htmlElement.style.position = 'absolute';
+        mockRow.htmlElement.classList.add(Globals.getClassName('mockedRow'));
+        viewport.tbodyElement.appendChild(mockRow.htmlElement);
+        mockRow.render();
+
+        const defaultRowHeight = mockRow.htmlElement.offsetHeight;
+        mockRow.destroy();
+        return defaultRowHeight;
+    }
+
+    /* *
+    *
     *  Properties
     *
     * */
@@ -103,7 +133,8 @@ class RowsVirtualizer {
         this.viewport = viewport;
         this.strictRowHeights = this.rowSettings.strictHeights as boolean;
         this.buffer = Math.max(this.rowSettings.bufferSize as number, 0);
-        this.defaultRowHeight = this.getDefaultRowHeight();
+        this.defaultRowHeight =
+            RowsVirtualizer.getDefaultRowHeight(this.viewport);
 
         if (this.strictRowHeights) {
             viewport.tbodyElement.classList.add(
@@ -466,27 +497,6 @@ class RowsVirtualizer {
         }
 
         this.adjustRowHeights();
-    }
-
-    /**
-     * Returns the default height of a row. This method should be called only
-     * once on initialization.
-     */
-    private getDefaultRowHeight(): number {
-        const vp = this.viewport;
-        const mockRow = new TableRow(vp, 0);
-
-        mockRow.htmlElement.style.position = 'absolute';
-        mockRow.htmlElement.classList.add(Globals.getClassName('mockedRow'));
-
-        this.viewport.tbodyElement.appendChild(mockRow.htmlElement);
-        mockRow.render();
-
-        const defaultRowHeight = mockRow.htmlElement.offsetHeight;
-
-        mockRow.destroy();
-
-        return defaultRowHeight;
     }
 }
 

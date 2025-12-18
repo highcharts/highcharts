@@ -181,17 +181,11 @@ class Table {
         const customClassName = dgOptions?.rendering?.table?.className;
 
         this.columnResizing = ColumnResizing.initMode(this);
-        this.virtualRows = this.shouldVirtualizeRows();
 
         if (dgOptions?.rendering?.header?.enabled) {
             this.theadElement = makeHTMLElement('thead', {}, tableElement);
         }
         this.tbodyElement = makeHTMLElement('tbody', {}, tableElement);
-        if (this.virtualRows) {
-            tableElement.classList.add(
-                Globals.getClassName('virtualization')
-            );
-        }
 
         if (dgOptions?.rendering?.columns?.resizing?.enabled) {
             this.columnsResizer = new ColumnsResizer(this);
@@ -206,6 +200,12 @@ class Table {
         this.loadColumns();
 
         // Virtualization
+        this.virtualRows = this.shouldVirtualizeRows();
+        if (this.virtualRows) {
+            tableElement.classList.add(
+                Globals.getClassName('virtualization')
+            );
+        }
         this.rowsVirtualizer = new RowsVirtualizer(this);
 
         // Init Table
@@ -282,6 +282,16 @@ class Table {
         // instead of the original data table row count.
         const rowCount = Number(grid.dataTable?.rowCount);
         const threshold = rows?.virtualizationThreshold ?? 50;
+        const defaultRowHeight = RowsVirtualizer.getDefaultRowHeight(this);
+        const parentContainerHeight =
+            this.grid.container?.parentElement?.clientHeight;
+
+        if (
+            parentContainerHeight &&
+            ((rowCount * defaultRowHeight) > parentContainerHeight)
+        ) {
+            return true;
+        }
 
         if (grid.pagination) {
             return grid.querying.pagination.currentPageSize >= threshold;
