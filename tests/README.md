@@ -539,11 +539,14 @@ The following URL patterns are automatically rewritten:
 | `**/**/mapdata/**` | `node_modules/@highcharts/map-collection/` | Map data files |
 | `**/{samples/data}/**` | `samples/data/` | Sample data files |
 | `https://demo-live-data.highcharts.com/**` | `samples/data/` | Demo live data |
+| `https://code.jquery.com/qunit/**` | `tests/qunit/vendor/` | QUnit assets |
 | `https://fonts.googleapis.com/**` | Empty stylesheet | Google Fonts |
 | `**/font-awesome/**` | Empty stylesheet | Font Awesome |
 | `**/grid-lite.js`, `**/grid-pro.js` | `code/grid/` | Grid modules |
 | `**/grid-lite.css`, `**/grid-pro.css` | `css/grid/` | Grid styles |
 | `**/{samples/graphics}/**` | `samples/graphics/` | Sample graphics |
+| `**/testimage.png` | `test/testimage.png` | Test image |
+| `**/shim.html` | Empty HTML page | Shim page |
 | JSON sources from `samples/data/json-sources/index.json` | Various | External API mocks |
 
 ### Adding New Rewrites

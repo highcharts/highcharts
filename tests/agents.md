@@ -98,6 +98,9 @@ See the [migrations.md](./migrations.md) file for detailed patterns including:
    - `tests/highcharts/` must use subfolders
    - `tests/dashboards/` can stay flat until >8 files
 
+### After adding a new route to fixtures.ts:
+1. Update the "Default Rewrites" table in `tests/README.md` to document the new route pattern
+
 ### After completing a major milestone:
 1. Update this file (`tests/agents.md`) if:
    - Decision criteria change
