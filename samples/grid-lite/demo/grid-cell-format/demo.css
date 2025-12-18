@@ -48,6 +48,7 @@ code {
     --highlight-border-color: #cec184;
     --high-color: #348700;
     --low-color: #d8003a;
+    --row-highlight-color: #e7ffe7;
 
     /* The custom variables are then applied to the included theming --hcg variables */
     --hcg-hover-opacity: 50%;
@@ -73,6 +74,7 @@ code {
         --highlight-border-color: #7d754c;
         --high-color: #98d76a;
         --low-color: #ffa8a8;
+        --row-highlight-color: #292e29;
         --hcg-button-color: #ddd;
         --hcg-button-hover-color: #fff;
         --hcg-icon-hover-color: #fff;
@@ -89,6 +91,7 @@ code {
     --highlight-border-color: #7d754c;
     --high-color: #98d76a;
     --low-color: #ffa8a8;
+    --row-highlight-color: #292e29;
     --hcg-button-color: #ddd;
     --hcg-button-hover-color: #fff;
     --hcg-icon-hover-color: #fff;
@@ -100,7 +103,7 @@ code {
 
 /* It is recommended to use CSS variables when styling table elements such as tr and td */
 .custom-theme tr:has(.highlight-color) {
-    --hcg-row-background: rgb(231, 255, 231);
+    --hcg-row-background: var(--row-highlight-color);
 }
 
 .custom-theme td.high-color {
