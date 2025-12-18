@@ -212,6 +212,8 @@ export default class ContourSeries extends ScatterSeries {
         }
 
         super.render();
+        this.renderFrame = void 0;
+        this.drawPoints();
     }
 
     public override update(
