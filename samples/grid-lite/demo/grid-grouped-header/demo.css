@@ -40,8 +40,7 @@ body {
     }
 }
 
-.highcharts-dark .opacity-theme,
-.opacity-theme {
+.highcharts-dark .opacity-theme {
     --hcg-header-background: #131343;
     --hcg-hover-opacity: 20%;
 }
