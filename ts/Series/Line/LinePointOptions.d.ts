@@ -27,7 +27,7 @@ declare module '../../Core/Series/PointOptions' {
     interface PointOptions {
         keys?: Array<string>;
     }
-    interface PointStateHoverOptions {
+    interface PointMarkerStateHoverOptions {
         radius?: number;
         radiusPlus?: number;
     }

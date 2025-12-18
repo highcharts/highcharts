@@ -612,6 +612,12 @@ const MapSeriesDefaults: MapSeriesOptions = {
  * @apioption series.map.data.events
  */
 
+/**
+ * @extends   plotOptions.map.states
+ * @product   highmaps
+ * @apioption series.map.data.states
+ */
+
 /* *
  *
  *  Default Export

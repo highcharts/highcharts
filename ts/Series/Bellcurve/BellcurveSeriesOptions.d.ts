@@ -17,7 +17,6 @@
  * */
 
 import type AreaSplineSeriesOptions from '../AreaSpline/AreaSplineSeriesOptions';
-import type BellcurveSeries from './BellcurveSeries';
 import type DerivedComposition from '../DerivedComposition';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type { PointMarkerOptions, PointShortOptions } from '../../Core/Series/PointOptions';
@@ -114,7 +113,7 @@ export interface BellcurveSeriesOptions extends AreaSplineSeriesOptions, Derived
      *         Intervals and points in interval
      */
     pointsInInterval: number;
-    states?: SeriesStatesOptions<BellcurveSeries>;
+    states?: SeriesStatesOptions<BellcurveSeriesOptions>;
 
     marker?: PointMarkerOptions;
 

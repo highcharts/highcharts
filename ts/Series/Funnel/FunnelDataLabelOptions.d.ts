@@ -26,7 +26,7 @@ import type PieDataLabelOptions from '../Pie/PieDataLabelOptions';
  * */
 
 export interface FunnelDataLabelOptions extends PieDataLabelOptions {
-    position?: string;
+    // Nothing yet
 }
 
 /* *

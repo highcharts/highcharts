@@ -29,7 +29,10 @@ import type Point from '../../Core/Series/Point';
  * */
 
 export interface PackedBubbleDataLabelsFormatterCallbackFunction {
-    (this: (Point|PackedBubblePoint)): (number|string|null|undefined);
+    (
+        this: (Point|PackedBubblePoint),
+        options: PackedBubbleDataLabelOptions
+    ): (number|string|null|undefined);
 }
 
 export interface PackedBubbleDataLabelOptions extends DataLabelOptions {

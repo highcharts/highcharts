@@ -25,7 +25,7 @@ import type CSSObject from '../../../Core/Renderer/CSSObject';
 import type ControlTargetOptions from '../ControlTargetOptions';
 import type DashStyleValue from '../../../Core/Renderer/DashStyleValue';
 import type {
-    DataLabelOverflowValue
+    DataLabelsOverflowValue
 } from '../../../Core/Series/DataLabelOptions';
 import type Templating from '../../../Core/Templating';
 import type {
@@ -54,7 +54,7 @@ export interface ControllableLabelOptions extends ControllableOptions {
     format?: string;
     formatter: Templating.FormatterCallback<AnnotationPoint>;
     includeInDataExport: boolean;
-    overflow: DataLabelOverflowValue;
+    overflow: DataLabelsOverflowValue;
     padding?: number;
     shadow: (boolean|Partial<ShadowOptionsObject>);
     shape: SymbolKey;
