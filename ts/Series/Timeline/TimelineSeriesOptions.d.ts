@@ -6,9 +6,9 @@
  *
  *  Author: Daniel Studencki
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -26,7 +26,6 @@ import type LineSeriesOptions from '../Line/LineSeriesOptions';
 import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
 import type TimelineDataLabelOptions from './TimelineDataLabelOptions';
 import type TimelinePointOptions from './TimelinePointOptions';
-import type TimelineSeries from './TimelineSeries';
 import type TooltipOptions from '../../Core/TooltipOptions';
 
 /* *
@@ -141,7 +140,7 @@ export interface TimelineSeriesOptions extends LineSeriesOptions {
 
     showInLegend?: boolean;
 
-    states?: SeriesStatesOptions<TimelineSeries>;
+    states?: SeriesStatesOptions<TimelineSeriesOptions>;
 
     stickyTracking?: boolean;
 
