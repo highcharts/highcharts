@@ -1,16 +1,16 @@
 /* eslint-disable playwright/no-conditional-in-test */
 import { Page } from '@playwright/test';
-import { test, expect, setupRoutes } from '~/fixtures.ts';
+import { test, setupRoutes } from '~/fixtures.ts';
 import { getKarmaScripts, getSample } from '~/utils.ts';
 import { join, dirname } from 'node:path';
 import { glob } from 'glob';
 
 import '~/qunit/types.ts'; // Import for global type declarations
 import { setupErrorCapture, setupEnhancedQUnitCallbacks, captureQUnitErrorDetails, clearErrorCapture } from '~/qunit/utils/error-capture.ts';
-import { formatQUnitErrorDetails, createErrorSummary } from '~/qunit/utils/error-formatter.ts';
+import { formatQUnitErrorDetails } from '~/qunit/utils/error-formatter.ts';
 import { setupConsoleCapture } from '~/qunit/utils/console-capture.ts';
 import { waitForQUnitWithTimeout, waitForScriptLoadWithTimeout, attemptTimeoutRecovery, type TimeoutError } from '~/qunit/utils/timeout-handler.ts';
-import { getOutputConfig, createProgressIndicator, createVerbosePassedOutput } from '~/qunit/utils/output-config.ts';
+import { getOutputConfig, createVerbosePassedOutput } from '~/qunit/utils/output-config.ts';
 
 const QUNIT_VERSION = '2.4.0';
 const QUNIT_SCRIPT = join('tests', 'qunit', 'vendor', `qunit-${QUNIT_VERSION}.js`);
@@ -167,22 +167,18 @@ test.describe('QUnit tests', () => {
                     errorDetails.timing.total = Date.now() - testStartTime;
                     
                     // Create formatted error output
-                    const errorSummary = createErrorSummary(errorDetails);
                     const detailedError = formatQUnitErrorDetails(errorDetails);
                     
-                    console.log(errorSummary);
-                    console.log(detailedError);
-                    
-                    // Fail the Playwright test with enhanced error message
-                    expect(Number(failed), detailedError).toBe(0);
+                    // Fail the Playwright test with the detailed error message
+                    // Don't use expect() to avoid duplicated output
+                    throw new Error(detailedError);
                 } else {
                     // Track passed test
                     testResults.passed++;
                     
-                    // Log success output based on verbose configuration
+                    // Log success output only in verbose mode
                     const outputConfig = getOutputConfig();
                     if (outputConfig.verbose) {
-                        // Verbose mode: show detailed information
                         const testExecutionTime = Date.now() - testStartTime;
                         const verboseOutput = createVerbosePassedOutput(
                             qunitTest, 
@@ -190,14 +186,8 @@ test.describe('QUnit tests', () => {
                             testExecutionTime
                         );
                         console.log(verboseOutput);
-                    } else {
-                        // Non-verbose mode: show concise progress indicator
-                        const progressOutput = createProgressIndicator(
-                            qunitTest, 
-                            Number(total)
-                        );
-                        console.log(progressOutput);
                     }
+                    // Non-verbose mode: no output for passing tests
                 }
                 
             } catch (error) {
@@ -240,15 +230,8 @@ test.describe('QUnit tests', () => {
                                         );
                                     const recoveredMsg = `🔄 Recovered: ${verboseOutput}`;
                                     console.log(recoveredMsg);
-                                } else {
-                                    const progressOutput = 
-                                        createProgressIndicator(
-                                            qunitTest, 
-                                            results.total
-                                        );
-                                    const msg = `🔄 ${progressOutput}`;
-                                    console.log(msg);
                                 }
+                                // Non-verbose mode: no output for recovered tests
                                 return;
                             }
                         } catch {
@@ -260,10 +243,14 @@ test.describe('QUnit tests', () => {
                     testResults.failed++;
                     throw new Error(errorMessage);
                 } else {
+                    // Re-throw the error as-is if it's already an Error
+                    // (e.g., from QUnit test failures above - count already incremented)
+                    if (error instanceof Error) {
+                        throw error;
+                    }
                     // Handle other types of errors
                     testResults.failed++;
                     const errorMessage = `❌ Test execution error: ${error}\nTest: ${qunitTest}`;
-                    console.error(errorMessage);
                     throw new Error(errorMessage);
                 }
             }

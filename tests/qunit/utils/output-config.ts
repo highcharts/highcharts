@@ -4,8 +4,6 @@
 
 export interface OutputConfig {
     verbose: boolean;
-    showPassedDetails: boolean;
-    showProgressIndicators: boolean;
 }
 
 /**
@@ -23,16 +21,14 @@ export function getOutputConfig(): OutputConfig {
         process.env.PLAYWRIGHT_VERBOSE === 'true';
 
     return {
-        verbose: isVerbose,
-        showPassedDetails: isVerbose,
-        showProgressIndicators: !isVerbose
+        verbose: isVerbose
     };
 }
 
 /**
  * Format test name for display
  */
-export function formatTestName(testPath: string): string {
+function formatTestName(testPath: string): string {
     const parts = testPath.split('/');
     const fileName = parts.pop() || testPath;
     const parentDir = parts.length > 0 ? parts[parts.length - 1] : '';
@@ -42,17 +38,6 @@ export function formatTestName(testPath: string): string {
     }
 
     return fileName;
-}
-
-/**
- * Create a concise progress indicator for passed tests
- */
-export function createProgressIndicator(
-    testPath: string, 
-    total: number
-): string {
-    const testName = formatTestName(testPath);
-    return `✓ ${testName} (${total})`;
 }
 
 /**
@@ -71,19 +56,4 @@ export function createVerbosePassedOutput(
     }
 
     return output;
-}
-
-/**
- * Create summary output for test run
- */
-export function createTestSummary(
-    passed: number, 
-    failed: number, 
-    total: number
-): string {
-    if (failed === 0) {
-        return `\n🎉 All ${total} test files passed! (${passed} total tests)`;
-    } else {
-        return `\n❌ ${failed} test files failed, ${passed} passed (${total} total files)`;
-    }
 }

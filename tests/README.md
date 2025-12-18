@@ -22,6 +22,7 @@ This directory contains the Playwright test suite for Highcharts products.
 - [Path Aliases](#path-aliases)
 - [Debugging](#debugging)
 - [Environment Variables](#environment-variables)
+- [FAQ](#faq)
 - [Common Issues](#common-issues)
 - [Resources](#resources)
 
@@ -712,6 +713,7 @@ npx playwright show-trace playwright-report/data/<trace-id>.zip
 |----------|-------------|
 | `VISUAL_TEST_PATH` | Run single visual test path (e.g., `samples/highcharts/demo/line-basic`) |
 | `NO_REWRITES` | Skip route rewrites, test against live CDN |
+| `QUNIT_VERBOSE` | Show detailed output for passing QUnit tests |
 
 Examples:
 
@@ -722,6 +724,70 @@ VISUAL_TEST_PATH=samples/highcharts/demo/line-basic npx playwright test --projec
 # Test against live CDN
 NO_REWRITES=1 npx playwright test
 ```
+
+## FAQ
+
+### How do I stop tests after the first failure?
+
+Use the `-x` flag to stop immediately after the first test failure:
+
+```sh
+npx playwright test -x
+```
+
+For more control, use `--max-failures` to stop after N failures:
+
+```sh
+# Stop after 3 failures
+npx playwright test --max-failures=3
+```
+
+### What reporters are available?
+
+Playwright supports multiple reporters. Use `--reporter` to specify one or more (comma-separated):
+
+```sh
+# List reporter - shows each test on its own line
+npx playwright test --reporter=list
+
+# Dot reporter - minimal output, one dot per test
+npx playwright test --reporter=dot
+
+# Line reporter - shows currently running test
+npx playwright test --reporter=line
+
+# HTML reporter - generates an interactive HTML report
+npx playwright test --reporter=html
+
+# JSON reporter - outputs results as JSON
+npx playwright test --reporter=json
+
+# JUnit reporter - outputs JUnit XML format
+npx playwright test --reporter=junit
+```
+
+You can combine reporters:
+
+```sh
+# Show list output and generate HTML report
+npx playwright test --reporter=list,html
+```
+
+The default configuration uses the HTML reporter with results in `playwright-report/`. View the report with:
+
+```sh
+npx playwright show-report
+```
+
+### How do I get verbose output for QUnit tests?
+
+By default, QUnit tests only output details for failing tests. To see output for each passing test, set the `QUNIT_VERBOSE` environment variable:
+
+```sh
+QUNIT_VERBOSE=true npx playwright test --project=qunit
+```
+
+This shows timing information and test counts for each passing test file.
 
 ## Common Issues
 
