@@ -25,6 +25,7 @@
 
 import type DataEvent from '../DataEvent';
 import type SortModifierOptions from './SortModifierOptions';
+import type { SortModifierOrderByOption } from './SortModifierOptions';
 
 import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
@@ -200,15 +201,57 @@ class SortModifier extends DataModifier {
                 orderInColumn,
                 compare: customCompare
             } = modifier.options,
-            compare = SortModifier.compareFactory(direction, customCompare),
-            orderByColumnIndex = columnIds.indexOf(orderByColumn),
             modified = table.getModified();
 
-        if (orderByColumnIndex !== -1) {
-            rowReferences.sort((a, b): number => compare(
-                a.row[orderByColumnIndex],
-                b.row[orderByColumnIndex]
-            ));
+        const orderBy: Array<(string|SortModifierOrderByOption)> = (
+            Array.isArray(orderByColumn) ?
+                orderByColumn :
+                [orderByColumn]
+        );
+
+        const orderByIndexes: Array<{
+            columnIndex: number;
+            compare: (
+                a: DataTable.CellType,
+                b: DataTable.CellType
+            ) => number;
+        }> = [];
+
+        for (let i = 0, iEnd = orderBy.length; i < iEnd; ++i) {
+            const sort = orderBy[i];
+            const column = (typeof sort === 'string' ? sort : sort.column);
+            const columnIndex = columnIds.indexOf(column);
+            if (columnIndex === -1) {
+                continue;
+            }
+
+            orderByIndexes.push({
+                columnIndex,
+                compare: SortModifier.compareFactory(
+                    typeof sort === 'string' ?
+                        direction :
+                        (sort.direction || direction),
+                    typeof sort === 'string' ?
+                        customCompare :
+                        (sort.compare || customCompare)
+                )
+            });
+        }
+
+        if (orderByIndexes.length) {
+            rowReferences.sort((a, b): number => {
+                for (let i = 0, iEnd = orderByIndexes.length; i < iEnd; ++i) {
+                    const { columnIndex, compare } = orderByIndexes[i];
+                    const result = compare(
+                        a.row[columnIndex],
+                        b.row[columnIndex]
+                    );
+                    if (result) {
+                        return result;
+                    }
+                }
+                return a.index - b.index;
+            });
         }
 
         if (orderInColumn) {

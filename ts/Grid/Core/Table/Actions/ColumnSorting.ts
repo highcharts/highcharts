@@ -106,7 +106,8 @@ class ColumnSorting {
         const col = this.column;
         const a11y = col.viewport.grid.accessibility;
         const sortingOptions = col.options.sorting;
-        const { currentSorting } = col.viewport.grid.querying.sorting;
+        const { currentSorting, currentSortings } =
+            col.viewport.grid.querying.sorting;
         const sortedAscClassName = Globals.getClassName('columnSortedAsc');
         const sortedDescClassName = Globals.getClassName('columnSortedDesc');
 
@@ -114,7 +115,18 @@ class ColumnSorting {
         const sortingEnabled = sortingOptions?.enabled ??
             sortingOptions?.sortable;
 
-        if (currentSorting?.columnId !== col.id || !currentSorting?.order) {
+        const columnSorting = (
+            currentSortings?.find((sorting): boolean =>
+                sorting.columnId === col.id
+            ) ||
+            (
+                currentSorting?.columnId === col.id ?
+                    currentSorting :
+                    void 0
+            )
+        );
+
+        if (!columnSorting?.order) {
             el.classList.remove(sortedAscClassName);
             el.classList.remove(sortedDescClassName);
 
@@ -125,7 +137,7 @@ class ColumnSorting {
             return;
         }
 
-        switch (currentSorting?.order) {
+        switch (columnSorting.order) {
             case 'asc':
                 el.classList.add(sortedAscClassName);
                 el.classList.remove(sortedDescClassName);
@@ -146,10 +158,12 @@ class ColumnSorting {
      * The column to update.
      */
     private updateColumnOptions(col: Column): void {
-        const order = col.viewport.grid.querying.sorting.currentSorting?.order;
+        const sortings =
+            col.viewport.grid.querying.sorting.currentSortings || [];
+        const sorting = sortings.find((s): boolean => s.columnId === col.id);
 
-        if (col.id === this.column.id && order) {
-            col.setOptions({ sorting: { order } });
+        if (sorting?.order) {
+            col.setOptions({ sorting: { order: sorting.order } });
         } else {
             delete col.options.sorting?.order;
             if (
@@ -168,8 +182,14 @@ class ColumnSorting {
      * @param order
      * The order of sorting. It can be `'asc'`, `'desc'` or `null` if the
      * sorting should be disabled.
+     *
+     * @param additive
+     * Whether to add this sort to existing sorts or replace them.
      */
-    public async setOrder(order: ColumnSortingOrder): Promise<void> {
+    public async setOrder(
+        order: ColumnSortingOrder,
+        additive: boolean = false
+    ): Promise<void> {
         const viewport = this.column.viewport;
 
         // Do not call sorting when cell is currently edited and validated.
@@ -188,7 +208,44 @@ class ColumnSorting {
             });
         });
 
-        sortingController.setSorting(order, this.column.id);
+        if (additive) {
+            const baseSortings = (
+                sortingController.currentSortings ||
+                (
+                    sortingController.currentSorting?.columnId &&
+                    sortingController.currentSorting.order ?
+                        [sortingController.currentSorting] :
+                        []
+                )
+            ).filter(
+                (sorting): boolean => !!(sorting.columnId && sorting.order)
+            );
+
+            const sortings = baseSortings.slice();
+            const index = sortings.findIndex((sorting): boolean =>
+                sorting.columnId === this.column.id
+            );
+
+            if (!order) {
+                if (index !== -1) {
+                    sortings.splice(index, 1);
+                }
+            } else if (index !== -1) {
+                sortings[index] = {
+                    columnId: this.column.id,
+                    order
+                };
+            } else {
+                sortings.push({
+                    columnId: this.column.id,
+                    order
+                });
+            }
+
+            sortingController.setSorting(sortings);
+        } else {
+            sortingController.setSorting(order, this.column.id);
+        }
         await viewport.updateRows();
 
         for (const col of viewport.columns) {
@@ -208,15 +265,28 @@ class ColumnSorting {
 
     /**
      * Toggle sorting order for the column in the order: asc -> desc -> none
+     *
+     * @param e
+     * Optional mouse or keyboard event.
      */
-    public toggle = (): void => {
+    public toggle = (e?: MouseEvent|KeyboardEvent): void => {
         const viewport = this.column.viewport;
         const querying = viewport.grid.querying;
         const sortingController = querying.sorting;
 
+        const additive = !!e?.shiftKey;
+
         const currentOrder = (
-            sortingController.currentSorting?.columnId === this.column.id ?
-                sortingController.currentSorting.order : null
+            additive ?
+                sortingController.currentSortings?.find((sorting): boolean =>
+                    sorting.columnId === this.column.id
+                )?.order :
+                (
+                    sortingController.currentSorting?.columnId ===
+                    this.column.id ?
+                        sortingController.currentSorting.order :
+                        null
+                )
         ) || 'none';
 
         const consequents = {
@@ -225,7 +295,7 @@ class ColumnSorting {
             desc: null
         } as const;
 
-        void this.setOrder(consequents[currentOrder]);
+        void this.setOrder(consequents[currentOrder], additive);
     };
 }
 

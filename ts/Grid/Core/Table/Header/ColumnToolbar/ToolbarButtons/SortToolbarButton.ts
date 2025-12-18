@@ -25,6 +25,7 @@
 import type ColumnToolbar from '../ColumnToolbar.js';
 
 import ToolbarButton from '../../../../UI/ToolbarButton.js';
+import Globals from '../../../../Globals.js';
 import StateHelpers from '../StateHelpers.js';
 import U from '../../../../../../Core/Utilities.js';
 
@@ -47,6 +48,8 @@ class SortToolbarButton extends ToolbarButton {
      * */
 
     public override toolbar?: ColumnToolbar;
+
+    private sortPriorityIndicator?: HTMLElement;
 
 
     /* *
@@ -74,7 +77,36 @@ class SortToolbarButton extends ToolbarButton {
 
     protected override clickHandler(event: MouseEvent): void {
         super.clickHandler(event);
-        this.toolbar?.column.sorting?.toggle();
+        this.toolbar?.column.sorting?.toggle(event);
+    }
+
+    private renderSortPriorityIndicator(priority?: number): void {
+        const wrapper = this.wrapper;
+        if (!wrapper) {
+            return;
+        }
+
+        const button = wrapper.querySelector('button');
+        if (!button) {
+            return;
+        }
+
+        if (!priority) {
+            this.sortPriorityIndicator?.remove();
+            delete this.sortPriorityIndicator;
+            return;
+        }
+
+        if (!this.sortPriorityIndicator) {
+            this.sortPriorityIndicator = document.createElement('span');
+            this.sortPriorityIndicator.className = Globals.getClassName(
+                'sortPriorityIndicator'
+            );
+        }
+
+        // Ensure the indicator is rendered to the right of the icon.
+        button.appendChild(this.sortPriorityIndicator);
+        this.sortPriorityIndicator.textContent = String(priority);
     }
 
     public override refreshState(): void {
@@ -83,17 +115,39 @@ class SortToolbarButton extends ToolbarButton {
             return;
         }
 
-        if (!StateHelpers.isSorted(column)) {
+        const { currentSortings, currentSorting } =
+            column.viewport.grid.querying.sorting;
+        const sortings = currentSortings || [];
+        const columnSorting = (
+            sortings.find(
+                (sorting): boolean => sorting.columnId === column.id
+            ) ||
+            (
+                currentSorting?.columnId === column.id ?
+                    currentSorting :
+                    void 0
+            )
+        );
+
+        if (!StateHelpers.isSorted(column) || !columnSorting?.order) {
             this.setActive(false);
             this.setIcon('upDownArrows');
+            this.renderSortPriorityIndicator();
             return;
         }
 
-        const { currentSorting } = column.viewport.grid.querying.sorting;
-
         this.setActive(true);
         this.setIcon(
-            currentSorting?.order === 'asc' ? 'sortAsc' : 'sortDesc'
+            columnSorting.order === 'asc' ? 'sortAsc' : 'sortDesc'
+        );
+
+        const sortIndex = sortings.findIndex((sorting): boolean =>
+            sorting.columnId === column.id
+        );
+        this.renderSortPriorityIndicator(
+            sortings.length > 1 && sortIndex !== -1 ?
+                sortIndex + 1 :
+                void 0
         );
     }
 
@@ -115,8 +169,11 @@ class SortToolbarButton extends ToolbarButton {
         );
     }
 
-    protected override renderActiveIndicator(): void {
-        // Do nothing
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    protected override renderActiveIndicator(render: boolean): void {
+        // Sorting uses directional icons + priority indicators
+        // (for multi-sort), not the generic active dot indicator
+        // (reserved for filtering).
     }
 }
 

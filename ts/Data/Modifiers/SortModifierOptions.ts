@@ -32,6 +32,28 @@ import type DataTable from '../DataTable';
  *
  * */
 
+/**
+ * Definition of a sorting level when sorting by multiple columns.
+ */
+export interface SortModifierOrderByOption {
+    /**
+     * Column ID with values to order by.
+     */
+    column: string;
+
+    /**
+     * Direction of sorting for this level. If not set, the modifier-level
+     * `direction` is used.
+     */
+    direction?: ('asc'|'desc');
+
+    /**
+     * Custom compare function for this level. If not set, the modifier-level
+     * `compare` is used.
+     */
+    compare?: (a: DataTable.CellType, b: DataTable.CellType) => number;
+}
+
 
 /**
  * Options to configure the modifier.
@@ -72,7 +94,10 @@ export interface SortModifierOptions extends DataModifierOptions {
      *
      * @default "y"
      */
-    orderByColumn: string;
+    orderByColumn: (
+        string |
+        Array<(string|SortModifierOrderByOption)>
+    );
 
     /**
      * Column to update with order index instead of change order of rows.

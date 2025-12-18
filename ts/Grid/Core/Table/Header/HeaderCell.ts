@@ -293,7 +293,7 @@ class HeaderCell extends Cell {
             column.options.sorting?.enabled ??
             column.options.sorting?.sortable
         )) {
-            column.sorting?.toggle();
+            column.sorting?.toggle(e);
         }
 
         fireEvent(this, 'click', {
