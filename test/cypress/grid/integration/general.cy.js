@@ -43,10 +43,7 @@ describe('Rendering size.', () => {
     });
 
     it('Max height inside fixed container.', () => {
-        cy.get('#grid3').invoke('css', 'height').then((height) => {
-            const heightValue = parseFloat(height);
-            expect(heightValue).to.be.lessThan(180);
-        });
+        cy.get('#grid3').should('have.css', 'height', '180px');
     });
 
     it('Flex grow inside fixed flexbox.', () => {

@@ -51,7 +51,6 @@ const {
     diffObjects,
     extend,
     fireEvent,
-    getStyle,
     merge,
     pick
 } = U;
@@ -406,10 +405,10 @@ export class Grid {
             );
         }
 
-        this.initialContainerHeight = getStyle(container, 'height', true) || 0;
-
         this.container = container;
+        this.container.style.minHeight = 0 + 'px';
         this.container.innerHTML = AST.emptyHTML;
+
         this.contentWrapper = makeHTMLElement('div', {
             className: Globals.getClassName('container')
         }, this.container);

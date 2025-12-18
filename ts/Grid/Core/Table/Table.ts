@@ -282,16 +282,6 @@ class Table {
         // instead of the original data table row count.
         const rowCount = Number(grid.dataTable?.rowCount);
         const threshold = rows?.virtualizationThreshold ?? 50;
-        const defaultRowHeight = RowsVirtualizer.getDefaultRowHeight(this);
-        const parentContainerHeight =
-            this.grid.container?.parentElement?.clientHeight;
-
-        if (
-            parentContainerHeight &&
-            ((rowCount * defaultRowHeight) > parentContainerHeight)
-        ) {
-            return true;
-        }
 
         if (grid.pagination) {
             return grid.querying.pagination.currentPageSize >= threshold;
