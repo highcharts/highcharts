@@ -85,45 +85,56 @@ class Validator {
             ),
             notification: 'Value has to be a boolean.'
         },
+        // Temporarily disabled rules.
         ignoreCaseUnique: {
-            validate: function ({ rawValue }): boolean {
-                const oldValue = String(this.value).toLowerCase();
-                const rowValueString = rawValue.toLowerCase();
-
-                if (oldValue === rowValueString) {
-                    return true;
-                }
-
-                const columnData = this.column.data;
-                const isDuplicate = columnData?.some(
-                    (value): boolean => String(value).toLowerCase() ===
-                        rowValueString
-                );
-
-                return !isDuplicate;
-
-            },
-            notification:
-                'Value must be unique within this column (case-insensitive).'
+            validate: (): boolean => true,
+            notification: 'This rule is disabled for now.'
         },
         unique: {
-            validate: function ({ rawValue }): boolean {
-                const oldValue = this.value;
-
-                if (oldValue === rawValue) {
-                    return true;
-                }
-
-                const columnData = this.column.data;
-                const isDuplicate = columnData?.some(
-                    (value): boolean => value === rawValue
-                );
-
-                return !isDuplicate;
-            },
-            notification:
-                'Value must be unique within this column (case-sensitive).'
+            validate: (): boolean => true,
+            notification: 'This rule is disabled for now.'
         }
+        // TODO: Decide what to do with this rule.
+        // ignoreCaseUnique: {
+        //     validate: function ({ rawValue }): boolean {
+        //         const oldValue = String(this.value).toLowerCase();
+        //         const rowValueString = rawValue.toLowerCase();
+
+        //         if (oldValue === rowValueString) {
+        //             return true;
+        //         }
+
+        //         const columnData = this.column.data;
+        //         const isDuplicate = columnData?.some(
+        //             (value): boolean => String(value).toLowerCase() ===
+        //                 rowValueString
+        //         );
+
+        //         return !isDuplicate;
+
+        //     },
+        //     notification:
+        //         'Value must be unique within this column (case-insensitive).'
+        // },
+        // TODO: Decide what to do with this rule.
+        // unique: {
+        //     validate: function ({ rawValue }): boolean {
+        //         const oldValue = this.value;
+
+        //         if (oldValue === rawValue) {
+        //             return true;
+        //         }
+
+        //         const columnData = this.column.data;
+        //         const isDuplicate = columnData?.some(
+        //             (value): boolean => value === rawValue
+        //         );
+
+        //         return !isDuplicate;
+        //     },
+        //     notification:
+        //         'Value must be unique within this column (case-sensitive).'
+        // }
     };
 
     /**

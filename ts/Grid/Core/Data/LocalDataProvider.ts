@@ -26,7 +26,7 @@ import Grid from '../Grid';
 
 export class LocalDataProvider extends DataProvider {
 
-    protected readonly options!: LocalDataProviderOptions;
+    public readonly options!: LocalDataProviderOptions;
     private dataTable?: DataTable;
     private presentationTable?: DataTable;
     private rowCount?: number;
@@ -166,8 +166,10 @@ export class LocalDataProvider extends DataProvider {
     public override destroy(): void {
         this.dataTableEventDestructors.forEach((fn): void => fn());
         this.dataTableEventDestructors.length = 0;
+    }
 
-        // TODO: Implement destroy
+    public getDataTable(presentation: boolean = false): DataTable | undefined {
+        return presentation ? this.presentationTable : this.dataTable;
     }
 }
 

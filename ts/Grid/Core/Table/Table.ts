@@ -23,6 +23,7 @@
  * */
 
 import type TableRow from './Body/TableRow';
+import type DataTable from '../../../Data/DataTable';
 
 import GridUtils from '../GridUtils.js';
 import Utils from '../../../Core/Utilities.js';
@@ -64,15 +65,6 @@ class Table {
      * The data grid instance which the table (viewport) belongs to.
      */
     public readonly grid: Grid;
-
-    // /**
-    //  * The presentation version of the data table. It has applied modifiers
-    //  * and is ready to be rendered.
-    //  *
-    //  * If you want to modify the data table, you should use the original
-    //  * instance that is stored in the `grid.dataTable` property.
-    //  */
-    // public dataTable: DataTable;
 
     /**
      * The HTML element of the table.
@@ -200,6 +192,16 @@ class Table {
     *  Methods
     *
     * */
+
+    /**
+     * The presentation version of the data table. It has applied modifiers
+     * and is ready to be rendered.
+     *
+     * @deprecated Use `grid.dataProvider` instead.
+     */
+    public get dataTable(): DataTable | undefined {
+        return this.grid.dataProvider?.getDataTable();
+    }
 
     private async preInit(): Promise<void> {
         const { tableElement } = this;

@@ -184,7 +184,7 @@ class GridComponent extends Component {
 
         const dataTable = this.getDataTable()?.getModified();
         if (!dataTable) {
-            grid.update({ dataTable: void 0 });
+            void grid.update({ dataTable: void 0 });
             return;
         }
 
@@ -205,7 +205,7 @@ class GridComponent extends Component {
                 if (enabledColumns?.[index] !== newColumn) {
                     // If the visible columns have changed,
                     // update the whole grid.
-                    grid.update({ dataTable });
+                    void grid.update({ dataTable });
                     return;
                 }
 
@@ -213,14 +213,15 @@ class GridComponent extends Component {
             }
         }
 
-        grid.dataTable = dataTable;
+        // TODO: Decide what to do with this when data provider is used instead.
+        // grid.dataTable = dataTable;
 
         // Data has changed and the whole grid is not re-rendered, so mark in
         // the querying that data table was modified.
         grid.querying.shouldBeUpdated = true;
 
         // If the column names have not changed, just update the rows.
-        grid.viewport?.updateRows();
+        void grid.viewport?.updateRows();
     }
 
     public getEditableOptions(): Options {

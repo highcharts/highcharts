@@ -29,7 +29,7 @@ import type {
     IndividualColumnOptions
 } from './Options';
 import type { DataProviderType } from './Data/DataProviderType';
-/// import type DataTableOptions from '../../Data/DataTableOptions';
+import type DataTable from '../../Data/DataTable.js';
 import type { NoIdColumnOptions } from './Table/Column';
 import type Popup from './UI/Popup.js';
 import type { DeepPartial } from '../../Shared/Types';
@@ -39,7 +39,6 @@ import AST from '../../Core/Renderer/HTML/AST.js';
 import * as DataProviderRegistry from './Data/DataProviderRegistry.js';
 import { defaultOptions } from './Defaults.js';
 import GridUtils from './GridUtils.js';
-/// import DataTable from '../../Data/DataTable.js';
 import Table from './Table/Table.js';
 import U from '../../Core/Utilities.js';
 import QueryingController from './Querying/QueryingController.js';
@@ -347,18 +346,32 @@ export class Grid {
      *
      * */
 
-    // /**
-    //  * The data source of the Grid. It contains the original data table
-    //  * that was passed to the Grid.
-    //  */
-    // public dataTable?: DataTable;
+    /**
+     * The data source of the Grid. It contains the original data table
+     * that was passed to the Grid.
+     *
+     * @deprecated Use `dataProvider` instead.
+     */
+    public get dataTable(): DataTable | undefined {
+        const dp = this.dataProvider;
+        if (dp && 'getDataTable' in dp) {
+            return dp.getDataTable();
+        }
+    }
 
-    // /**
-    //  * The presentation table of the Grid. It contains a modified version
-    //  * of the data table that is used for rendering the Grid content. If
-    //  * not modified, just a reference to the original data table.
-    //  */
-    // public presentationTable?: DataTable;
+    /**
+     * The presentation table of the Grid. It contains a modified version
+     * of the data table that is used for rendering the Grid content. If
+     * not modified, just a reference to the original data table.
+     *
+     * @deprecated Use `dataProvider` instead.
+     */
+    public get presentationTable(): DataTable | undefined {
+        const dp = this.dataProvider;
+        if (dp && 'getDataTable' in dp) {
+            return dp.getDataTable(true);
+        }
+    }
 
     /*
      * Initializes the accessibility controller.
