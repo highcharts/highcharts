@@ -42,9 +42,10 @@ interface MetaData {
 type MetaList = Array<MetaData>;
 
 const paths = [
-    'legend.align',
-    'legend.verticalAlign',
-    'legend.layout'
+    'legend.enabled=true',
+    'legend.align=center',
+    'legend.x',
+    'legend.backgroundColor=#efefef',
 ];
 
 const defaultOptions = Highcharts.getOptions();
@@ -308,20 +309,8 @@ function pickHandler(meta: { mainType: string; options?: string[] }) {
 }
 
 // Function to get HTML (one row per path) from template
-export async function getDemoHTML() {
-    const template = await loadTemplate('demo.html');
-    return template;
-}
-
-// Function to get TS (one listener per path)
-export async function getDemoTS(metaList: MetaList) {
-    let ts = `Highcharts.chart('container', ${JSON.stringify(
-        await generateChartConfig(metaList as any),
-        null,
-        2
-    )});\n` // Some cases, for example tooltip.borderWidth, have defaultValue as
-    // "undefined" in tree.json
-        .replace(/"undefined"/gu, 'undefined');
+export async function getDemoHTML(metaList?: MetaList) {
+    let html = await loadTemplate('demo.html');
 
     // Collect unique handler types and generate functions once
     const handlerTypes = new Set<string>();
@@ -344,7 +333,7 @@ export async function getDemoTS(metaList: MetaList) {
         }
 
         // Add call for this specific path
-        controls.push(handler.mod.getTSCall(
+        controls.push(handler.mod.getHTML(
             meta.path,
             meta.overrideValue ?? meta.defaultValue,
             meta.options
@@ -353,13 +342,24 @@ export async function getDemoTS(metaList: MetaList) {
 
     // Add the config
     if (controls.length > 0) {
-        ts += `
-// GUI elements for demo purposes
-HighchartsControls.controls('highcharts-controls', {
-    controls: [${controls.join(',\n')}]
-});
+        html += `
+<highcharts-controls target="#container">
+  ${controls.join('\n  ')}
+</highcharts-controls>
 `;
     }
+    return html;
+}
+
+// Function to get TS (one listener per path)
+export async function getDemoTS(metaList: MetaList) {
+    const ts = `Highcharts.chart('container', ${JSON.stringify(
+        await generateChartConfig(metaList),
+        null,
+        2
+    )});\n` // Some cases, for example tooltip.borderWidth, have defaultValue as
+    // "undefined" in tree.json
+        .replace(/"undefined"/gu, 'undefined');
 
     return ts;
 }
@@ -390,7 +390,7 @@ export async function saveDemoFile() {
 
     // Build all assets in parallel based on per-path mainTypes
     const [html, css, ts, details] = await Promise.all([
-        getDemoHTML(),
+        getDemoHTML(metaList),
         getDemoCSS(),
         getDemoTS(metaList),
         getDemoDetails()

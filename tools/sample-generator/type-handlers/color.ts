@@ -1,12 +1,12 @@
 // Handler for Highcharts ColorType (alias for hex string). Uses native color
-// picker with a separate opacity slider.
-export function getTSCall(path: string, overrideValue?: any) {
-    const object: Record<string, any> = {
-        type: 'color',
-        path
-    };
+// picker with a separate opacity input.
+export function getHTML(path: string, overrideValue?: any): string {
+    let html = `<highcharts-control type="color" path="${path}"`;
+
     if (overrideValue !== void 0) {
-        object.value = overrideValue;
+        html += ` value="${overrideValue}"`;
     }
-    return JSON.stringify(object, null, 4);
+    html += '></highcharts-control>';
+
+    return html;
 }

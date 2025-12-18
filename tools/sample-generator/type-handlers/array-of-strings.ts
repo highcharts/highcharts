@@ -1,5 +1,5 @@
 // Handler for discrete string options (array of string literals)
-export function getTSCall(
+export function getHTML(
     path: string,
     overrideValue?: any,
     options?: string[]
@@ -11,16 +11,15 @@ export function getTSCall(
         options = ['top', 'middle', 'bottom'];
     }
 
-    const obj: Record<string, any> = {
-        type: 'array-of-strings',
-        path
-    };
+    let html = `<highcharts-control type="array-of-strings" path="${path}"`;
 
     if (overrideValue !== void 0) {
-        obj.value = overrideValue;
+        html += ` value="${overrideValue}"`;
     }
     if (options !== void 0) {
-        obj.options = options;
+        html += ` options="${options.join(',')}"`;
     }
-    return JSON.stringify(obj, null, 4);
+    html += '></highcharts-control>';
+
+    return html;
 }

@@ -1,11 +1,11 @@
 // Handler for number options
-export function getTSCall(path: string, overrideValue?: any) {
-    const obj: Record<string, any> = {
-        type: 'number',
-        path
-    };
+export function getHTML(path: string, overrideValue?: any): string {
+    let html = `<highcharts-control type="number" path="${path}"`;
+
     if (overrideValue !== void 0) {
-        obj.value = overrideValue;
+        html += ` value="${overrideValue}"`;
     }
-    return JSON.stringify(obj, null, 4);
+    html += '></highcharts-control>';
+
+    return html;
 }

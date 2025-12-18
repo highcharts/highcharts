@@ -14,36 +14,9 @@ Highcharts.chart('container', {
             colorByPoint: true
         }
     ],
-    legend: {}
-});
-
-// GUI elements for demo purposes
-HighchartsControls.controls('highcharts-controls', {
-    controls: [{
-        type: 'array-of-strings',
-        path: 'legend.align',
-        options: [
-            'left',
-            'center',
-            'right'
-        ]
-    },
-    {
-        type: 'array-of-strings',
-        path: 'legend.verticalAlign',
-        options: [
-            'top',
-            'middle',
-            'bottom'
-        ]
-    },
-    {
-        type: 'array-of-strings',
-        path: 'legend.layout',
-        options: [
-            'horizontal',
-            'vertical',
-            'proximate'
-        ]
-    }]
+    legend: {
+        enabled: true,
+        align: 'center',
+        backgroundColor: '#efefef'
+    }
 });
