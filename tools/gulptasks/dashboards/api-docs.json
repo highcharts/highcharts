@@ -72,7 +72,7 @@
         "../../../ts/Data/Modifiers/FilterModifierOptions.ts",
         // DataLayer
         "../../../ts/Data/DataPool.ts",
-        "../../../ts/Data/DataPoolOptions.d.ts",
+        "../../../ts/Data/DataPoolTypes.ts",
         "../../../ts/Data/DataTable.ts",
         "../../../ts/Data/DataTableOptions.ts"
     ],

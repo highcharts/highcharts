@@ -23,9 +23,9 @@
  * */
 
 import type CheckboxRenderer from '../Renderers/CheckboxRenderer';
-import type DataTable from '../../../../Data/DataTable';
 import type { EditModeContent } from '../../CellEditing/CellEditMode';
 import type TableCell from '../../../Core/Table/Body/TableCell';
+import type { DataTableCellType } from '../../../../Data/DataTableTypes';
 
 import CellContentPro from '../CellContentPro.js';
 import Globals from '../../../Core/Globals.js';
@@ -121,7 +121,7 @@ class CheckboxContent extends CellContentPro implements EditModeContent {
         return this.input.checked ? 'true' : 'false';
     }
 
-    public get value(): DataTable.CellType {
+    public get value(): DataTableCellType {
         const val = this.input.checked;
         switch (this.cell.column.dataType) {
             case 'datetime':

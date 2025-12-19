@@ -26,7 +26,7 @@
 
 import type Component from './Components/Component';
 import type ComponentType from './Components/ComponentType';
-import type DataPoolOptions from '../Data/DataPoolOptions';
+import type DataPoolOptions from '../Data/DataPoolTypes';
 import type { DeepPartial } from '../Shared/Types';
 import type EditMode from './EditMode/EditMode';
 import type Fullscreen from './EditMode/Fullscreen';

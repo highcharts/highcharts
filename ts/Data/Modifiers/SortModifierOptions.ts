@@ -23,7 +23,7 @@
 
 
 import type DataModifierOptions from './DataModifierOptions';
-import type DataTable from '../DataTable';
+import type { DataTableCellType } from '../DataTableTypes';
 
 
 /* *
@@ -65,7 +65,7 @@ export interface SortModifierOptions extends DataModifierOptions {
      * A number indicating whether the first value (`a`) is less than (`-1`),
      * equal to (`0`), or greater than (`1`) the second value (`b`).
      */
-    compare?: (a: DataTable.CellType, b: DataTable.CellType) => number;
+    compare?: (a: DataTableCellType, b: DataTableCellType) => number;
 
     /**
      * Column with values to order.

@@ -56,6 +56,17 @@ export interface DataPoolOptions {
     connectors: DataConnectorTypeOptions[];
 }
 
+/**
+ * The event type that is provided on events within DataPool.
+ */
+export interface DataPoolEvent {
+    type: (
+        'load' | 'afterLoad' | 'setConnectorOptions' |
+        'afterSetConnectorOptions'
+    );
+    options: DataConnectorTypeOptions;
+}
+
 
 /* *
  *

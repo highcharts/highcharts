@@ -24,10 +24,10 @@
  *
  * */
 
-import type DataEvent from '../DataEvent';
+import type { DataEventDetail } from '../DataEvent';
 import type GoogleSheetsConnectorOptions from './GoogleSheetsConnectorOptions';
 import type { GoogleSpreadsheetJSON } from '../Converters/GoogleSheetsConverterOptions';
-import type DataTable from '../DataTable';
+import type { DataTableColumnCollection } from '../DataTableTypes';
 
 import DataConnector from './DataConnector.js';
 import GoogleSheetsConverter from '../Converters/GoogleSheetsConverter.js';
@@ -158,13 +158,13 @@ class GoogleSheetsConnector extends DataConnector {
     /**
      * Loads data from a Google Spreadsheet.
      *
-     * @param {DataEvent.Detail} [eventDetail]
+     * @param {DataEventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {Promise<this>}
      * Same connector instance with modified table.
      */
-    public load(eventDetail?: DataEvent.Detail): Promise<this> {
+    public load(eventDetail?: DataEventDetail): Promise<this> {
         const connector = this;
         const options = connector.options;
         const {
@@ -220,7 +220,7 @@ class GoogleSheetsConnector extends DataConnector {
                         };
                         return new GoogleSheetsConverter(converterOptions);
                     },
-                    (converter, data): DataTable.ColumnCollection =>
+                    (converter, data): DataTableColumnCollection =>
                         converter.parse({ json: data })
                 );
                 return connector.applyTableModifiers();

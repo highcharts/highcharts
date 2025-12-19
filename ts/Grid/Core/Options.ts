@@ -32,13 +32,14 @@ import type {
 import type { ColumnResizingMode } from './Table/ColumnResizing/ColumnResizing';
 import type { ColumnDataType } from './Table/Column';
 import type DataTable from '../../Data/DataTable';
-import type DataTableOptions from '../../Data/DataTableOptions';
+import type DataTableOptions from '../../Data/DataTableTypes';
 import type Cell from './Table/Cell';
 import type Column from './Table/Column';
 import type { LangOptionsCore } from '../../Shared/LangOptionsCore';
 import type {
     Condition as ColumnFilteringCondition
 } from './Table/Actions/ColumnFiltering/FilteringTypes';
+import type { DataTableCellType } from '../../Data/DataTableTypes';
 
 
 /* *
@@ -472,7 +473,7 @@ export interface ColumnSortingOptions {
      * A number indicating whether the first value (`a`) is less than (`-1`),
      * equal to (`0`), or greater than (`1`) the second value (`b`).
      */
-    compare?: (a: DataTable.CellType, b: DataTable.CellType) => number;
+    compare?: (a: DataTableCellType, b: DataTableCellType) => number;
 }
 
 /**

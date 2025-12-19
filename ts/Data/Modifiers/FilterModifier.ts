@@ -22,12 +22,13 @@
  * */
 
 
-import type DataEvent from '../DataEvent';
+import type { DataEventDetail } from '../DataEvent';
 import type {
     CallbackCondition,
     FilterCondition,
     FilterModifierOptions
 } from './FilterModifierOptions';
+import type { DataTableRowObject, DataTableCellType } from '../DataTableTypes';
 
 import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
@@ -130,7 +131,7 @@ class FilterModifier extends DataModifier {
         }
 
         const { ignoreCase } = condition;
-        const str = (val: DataTable.CellType): string => {
+        const str = (val: DataTableCellType): string => {
             const s = '' + val;
             return (ignoreCase ?? true) ? s.toLowerCase() : s;
         };
@@ -191,7 +192,7 @@ class FilterModifier extends DataModifier {
      * @param {DataTable} table
      * Table to modify.
      *
-     * @param {DataEvent.Detail} [eventDetail]
+     * @param {DataEventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {DataTable}
@@ -200,7 +201,7 @@ class FilterModifier extends DataModifier {
      */
     public override modifyTable(
         table: DataTable,
-        eventDetail?: DataEvent.Detail
+        eventDetail?: DataEventDetail
     ): DataTable {
         const modifier = this;
 
@@ -216,7 +217,7 @@ class FilterModifier extends DataModifier {
 
         const modified = table.getModified();
 
-        const rows: DataTable.RowObject[] = [];
+        const rows: DataTableRowObject[] = [];
         const indexes: Array<number|undefined> = [];
 
         for (

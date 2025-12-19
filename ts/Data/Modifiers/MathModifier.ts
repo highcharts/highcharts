@@ -22,13 +22,14 @@
  * */
 
 
-import type DataEvent from '../DataEvent';
+import type { DataEventDetail } from '../DataEvent';
 import type DataTable from '../DataTable';
 import type { Formula } from '../Formula/Formula';
 import type {
     MathModifierColumnFormulaOptions,
     MathModifierOptions
 } from './MathModifierOptions';
+import type { DataTableColumn, DataTableCellType } from '../DataTableTypes';
 
 
 import DataModifier from './DataModifier.js';
@@ -107,7 +108,7 @@ class MathModifier extends DataModifier {
 
     public override modifyTable(
         table: DataTable,
-        eventDetail?: DataEvent.Detail
+        eventDetail?: DataEventDetail
     ): DataTable {
         const modifier = this;
 
@@ -190,7 +191,7 @@ class MathModifier extends DataModifier {
         table: DataTable,
         columnId: string,
         rowIndex: number = 0
-    ): DataTable.Column {
+    ): DataTableColumn {
         const alternativeSeparators = this.options.alternativeSeparators,
             column = (table.getColumn(columnId, true) || [])
                 .slice(rowIndex > 0 ? rowIndex : 0);
@@ -200,7 +201,7 @@ class MathModifier extends DataModifier {
                 iEnd = column.length,
                 cacheFormula: Formula = [],
                 cacheString: string = '',
-                cell: DataTable.CellType;
+                cell: DataTableCellType;
             i < iEnd;
             ++i
         ) {
@@ -259,7 +260,7 @@ class MathModifier extends DataModifier {
         table: DataTable,
         rowStart: number = 0,
         rowEnd: number = table.getRowCount()
-    ): DataTable.Column {
+    ): DataTableColumn {
         rowStart = rowStart >= 0 ? rowStart : 0;
         rowEnd = rowEnd >= 0 ? rowEnd : table.getRowCount() + rowEnd;
 

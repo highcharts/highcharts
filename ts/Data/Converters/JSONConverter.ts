@@ -20,13 +20,16 @@
  *
  * */
 
-import type DataEvent from '../DataEvent';
+import type { DataEventDetail } from '../DataEvent';
 import type { ColumnIdsOptions } from '../Connectors/JSONConnectorOptions';
 import type JSONConverterOptions from './JSONConverterOptions';
+import type {
+    DataTableBasicColumn,
+    DataTableColumnCollection
+} from '../DataTableTypes';
 
 import DataConverter from './DataConverter.js';
 import DataConverterUtils from './DataConverterUtils.js';
-import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
 const {
     error,
@@ -108,7 +111,7 @@ class JSONConverter extends DataConverter {
      * @param {Partial<JSONConverterOptions>}[options]
      * Options for the parser
      *
-     * @param {DataEvent.Detail} [eventDetail]
+     * @param {DataEventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @emits JSONConverter#parse
@@ -116,8 +119,8 @@ class JSONConverter extends DataConverter {
      */
     public parse(
         options: Partial<JSONConverterOptions>,
-        eventDetail?: DataEvent.Detail
-    ): DataTable.ColumnCollection {
+        eventDetail?: DataEventDetail
+    ): DataTableColumnCollection {
         const converter = this;
 
         options = merge(converter.options, options);
@@ -136,7 +139,7 @@ class JSONConverter extends DataConverter {
         }
 
         converter.headers = [];
-        const columnsArray: DataTable.BasicColumn[] = [];
+        const columnsArray: DataTableBasicColumn[] = [];
 
         converter.emit({
             type: 'parse',
@@ -182,7 +185,7 @@ class JSONConverter extends DataConverter {
     /**
      * Helper for parsing data in 'columns' orientation.
      *
-     * @param {DataTable.BasicColumn[]} [columnsArray]
+     * @param {DataTableBasicColumn[]} [columnsArray]
      * Array of columns.
      *
      * @param {unknown[]} [data]
@@ -197,7 +200,7 @@ class JSONConverter extends DataConverter {
      * @return {void}
      */
     private parseColumnsOrientation(
-        columnsArray: DataTable.BasicColumn[],
+        columnsArray: DataTableBasicColumn[],
         data: unknown[],
         firstRowAsNames?: boolean,
         columnIds?: string[] | ColumnIdsOptions
@@ -227,7 +230,7 @@ class JSONConverter extends DataConverter {
     /**
      * Helper for parsing data in 'rows' orientation.
      *
-     * @param {DataTable.BasicColumn[]} [columnsArray]
+     * @param {DataTableBasicColumn[]} [columnsArray]
      * Array of columns.
      *
      * Helper for parsing data in 'rows' orientation.
@@ -241,11 +244,11 @@ class JSONConverter extends DataConverter {
      * @param {Array<string>} [columnIds]
      * Column ids to retrieve.
      *
-     * @return {DataTable.BasicColumn[]}
+     * @return {DataTableBasicColumn[]}
      * Parsed columns.
      */
     private parseRowsOrientation(
-        columnsArray: DataTable.BasicColumn[],
+        columnsArray: DataTableBasicColumn[],
         data: unknown[],
         firstRowAsNames?: boolean,
         columnIds?: string[] | ColumnIdsOptions

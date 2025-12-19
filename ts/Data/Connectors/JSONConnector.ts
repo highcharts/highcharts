@@ -20,10 +20,10 @@
  *
  * */
 
-import type DataEvent from '../DataEvent';
+import type { DataEventDetail } from '../DataEvent';
 import type JSONConnectorOptions from './JSONConnectorOptions';
 import type { JSONData } from '../Converters/JSONConverterOptions';
-import type DataTable from '../DataTable';
+import type { DataTableColumnCollection } from '../DataTableTypes';
 
 import DataConnector from './DataConnector.js';
 import JSONConverter from '../Converters/JSONConverter.js';
@@ -121,13 +121,13 @@ class JSONConnector extends DataConnector {
     /**
      * Initiates the loading of the JSON source to the connector
      *
-     * @param {DataEvent.Detail} [eventDetail]
+     * @param {DataEventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @emits JSONConnector#load
      * @emits JSONConnector#afterLoad
      */
-    public load(eventDetail?: DataEvent.Detail): Promise<this> {
+    public load(eventDetail?: DataEventDetail): Promise<this> {
         const connector = this;
         const options = connector.options;
         const { data, dataUrl, dataTables } = options;
@@ -181,7 +181,7 @@ class JSONConnector extends DataConnector {
                             };
                             return new JSONConverter(converterOptions);
                         },
-                        (converter, data): DataTable.ColumnCollection =>
+                        (converter, data): DataTableColumnCollection =>
                             converter.parse({ data })
                     );
                 }

@@ -24,7 +24,10 @@ import type Chart from '../Chart/Chart';
 import type ColorType from '../Color/ColorType';
 import type DataExtremesObject from './DataExtremesObject';
 import type DataLabelOptions from './DataLabelOptions';
-import type DataTable from '../../Data/DataTable';
+import type {
+    DataTableColumn,
+    DataTableColumnCollection
+} from '../../Data/DataTableTypes';
 import type { DeepPartial } from '../../Shared/Types';
 import type { EventCallback } from '../Callback';
 import type KDPointSearchObjectBase from './KDPointSearchObjectBase';
@@ -1504,10 +1507,10 @@ class Series {
 
                         table.setColumns(dataColumnKeys.reduce(
                             (columns, columnId, i):
-                            DataTable.ColumnCollection => {
+                            DataTableColumnCollection => {
                                 columns[columnId] = colArray[i];
                                 return columns;
-                            }, {} as DataTable.ColumnCollection));
+                            }, {} as DataTableColumnCollection));
 
                     } else { // [x, y]
                         if (keys) {
@@ -1551,10 +1554,10 @@ class Series {
             if (!runTurbo) {
                 const columns = dataColumnKeys.reduce(
                     (columns, columnId):
-                    DataTable.ColumnCollection => {
+                    DataTableColumnCollection => {
                         columns[columnId] = [];
                         return columns;
-                    }, {} as DataTable.ColumnCollection);
+                    }, {} as DataTableColumnCollection);
                 for (i = 0; i < dataLength; i++) {
                     const pt = series.pointClass.prototype.applyOptions.apply(
                         { series },
@@ -1843,7 +1846,7 @@ class Series {
     ): Series.CropDataObject {
         const xData = table.getColumn('x', true) as Array<number> || [],
             dataLength = xData.length,
-            columns: DataTable.ColumnCollection = {};
+            columns: DataTableColumnCollection = {};
 
         let i,
             j,
@@ -2090,7 +2093,7 @@ class Series {
             yAxisData = customData ?
                 [customData] :
                 (this.keysAffectYAxis || this.pointArrayMap || ['y'])?.map(
-                    (key): DataTable.Column => table.getColumn(key, true) || []
+                    (key): DataTableColumn => table.getColumn(key, true) || []
                 ) || [],
             xData = this.getColumn('x', true),
             activeYData: number[] = [],

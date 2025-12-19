@@ -21,7 +21,11 @@
  *
  * */
 
-import type DataEvent from '../DataEvent';
+import type {
+    DataEventCallback,
+    DataEventDetail,
+    DataEventEmitter
+} from '../DataEvent';
 import type DataModifierEvent from './DataModifierEvent';
 import type DataModifierOptions from './DataModifierOptions';
 import type DataTable from '../DataTable';
@@ -43,7 +47,7 @@ const {
 /**
  * Abstract class to provide an interface for modifying a table.
  */
-abstract class DataModifier implements DataEvent.Emitter<DataModifierEvent> {
+abstract class DataModifier implements DataEventEmitter<DataModifierEvent> {
 
     /* *
      *
@@ -150,7 +154,7 @@ abstract class DataModifier implements DataEvent.Emitter<DataModifierEvent> {
      * @param {Highcharts.DataTable} table
      * Table to modify.
      *
-     * @param {DataEvent.Detail} [eventDetail]
+     * @param {DataEventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {Promise<Highcharts.DataTable>}
@@ -158,7 +162,7 @@ abstract class DataModifier implements DataEvent.Emitter<DataModifierEvent> {
      */
     public modify(
         table: DataTable,
-        eventDetail?: DataEvent.Detail
+        eventDetail?: DataEventDetail
     ): Promise<DataTable> {
         const modifier = this;
         return new Promise((resolve, reject): void => {
@@ -186,7 +190,7 @@ abstract class DataModifier implements DataEvent.Emitter<DataModifierEvent> {
      * @param {Highcharts.DataTable} table
      * Table to modify.
      *
-     * @param {DataEvent.Detail} [eventDetail]
+     * @param {DataEventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {Highcharts.DataTable}
@@ -195,7 +199,7 @@ abstract class DataModifier implements DataEvent.Emitter<DataModifierEvent> {
      */
     public abstract modifyTable(
         table: DataTable,
-        eventDetail?: DataEvent.Detail
+        eventDetail?: DataEventDetail
     ): DataTable;
 
     /**
@@ -212,7 +216,7 @@ abstract class DataModifier implements DataEvent.Emitter<DataModifierEvent> {
      */
     public on<T extends DataModifierEvent['type']>(
         type: T,
-        callback: DataEvent.Callback<this, Extract<DataModifierEvent, {
+        callback: DataEventCallback<this, Extract<DataModifierEvent, {
             type: T
         }>>
     ): Function {

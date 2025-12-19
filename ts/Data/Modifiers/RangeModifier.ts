@@ -23,7 +23,7 @@
  * */
 
 
-import type DataEvent from '../DataEvent';
+import type { DataEventDetail } from '../DataEvent';
 import type { RangeModifierOptions } from './RangeModifierOptions';
 
 import DataModifier from './DataModifier.js';
@@ -114,7 +114,7 @@ class RangeModifier extends DataModifier {
      * @param {DataTable} table
      * Table to modify.
      *
-     * @param {DataEvent.Detail} [eventDetail]
+     * @param {DataEventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {DataTable}
@@ -123,7 +123,7 @@ class RangeModifier extends DataModifier {
      */
     public override modifyTable(
         table: DataTable,
-        eventDetail?: DataEvent.Detail
+        eventDetail?: DataEventDetail
     ): DataTable {
         const modifier = this;
 

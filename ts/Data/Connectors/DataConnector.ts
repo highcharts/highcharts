@@ -30,7 +30,9 @@ import type {
     Metadata
 } from './DataConnectorOptions';
 import type DataEvent from '../DataEvent';
+import type { DataEventEmitter, DataEventCallback } from '../DataEvent';
 import type DataConverterType from '../Converters/DataConverterType';
+import type { DataTableColumnCollection } from '../DataTableTypes';
 
 import DataConverter from '../Converters/DataConverter.js';
 import DataModifier from '../Modifiers/DataModifier.js';
@@ -52,7 +54,7 @@ const {
 /**
  * Abstract class providing an interface for managing a DataConnector.
  */
-abstract class DataConnector implements DataEvent.Emitter<DataConnector.Event> {
+abstract class DataConnector implements DataEventEmitter<DataConnector.Event> {
 
     /* *
      *
@@ -231,7 +233,7 @@ abstract class DataConnector implements DataEvent.Emitter<DataConnector.Event> {
      * @return {Highcharts.DataTableColumnCollection}
      * An object with the properties `columnIds` and `columnValues`
      */
-    public getSortedColumns(): DataTable.ColumnCollection {
+    public getSortedColumns(): DataTableColumnCollection {
         return this.getTable().getColumns(this.getColumnOrder());
     }
 
@@ -368,7 +370,7 @@ abstract class DataConnector implements DataEvent.Emitter<DataConnector.Event> {
      */
     public on<T extends DataConnector.Event['type']>(
         type: T,
-        callback: DataEvent.Callback<this, Extract<DataConnector.Event, {
+        callback: DataEventCallback<this, Extract<DataConnector.Event, {
             type: T
         }>>
     ): Function {
@@ -446,7 +448,7 @@ namespace DataConnector {
      * Runs the converter parse method with the specific data type.
      */
     export interface ParseDataFunction<T> {
-        (converter: DataConverterType, data: T): DataTable.ColumnCollection
+        (converter: DataConverterType, data: T): DataTableColumnCollection
     }
 
     /* *
