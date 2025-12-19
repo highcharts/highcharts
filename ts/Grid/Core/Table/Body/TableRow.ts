@@ -88,7 +88,6 @@ class TableRow extends Row {
     constructor(viewport: Table, index: number) {
         super(viewport);
         this.index = index;
-        void this.init();
     }
 
     /* *
@@ -97,7 +96,7 @@ class TableRow extends Row {
     *
     * */
 
-    private async init(): Promise<void> {
+    public async init(): Promise<void> {
         this.id = await this.viewport.grid.dataProvider?.getRowId(this.index);
         await this.loadData();
         this.setRowAttributes();

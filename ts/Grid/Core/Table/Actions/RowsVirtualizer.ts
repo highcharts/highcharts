@@ -281,6 +281,7 @@ class RowsVirtualizer {
 
         if (!rows.length) {
             const last = new TableRow(vp, rowCount - 1);
+            await last.init();
             vp.tbodyElement.appendChild(last.htmlElement);
             last.render();
             rows.push(last);
@@ -387,7 +388,7 @@ class RowsVirtualizer {
         const { rowCursor: cursor, defaultRowHeight: defaultH } = this;
         const { rows, tbodyElement } = this.viewport;
         const rowsLn = rows.length;
-        if (rowsLn < 1) {
+        if (rowsLn < 1 || !defaultH) {
             return;
         }
 
@@ -476,20 +477,26 @@ class RowsVirtualizer {
      * once on initialization.
      */
     private getDefaultRowHeight(): number {
-        const vp = this.viewport;
-        const mockRow = new TableRow(vp, 0);
+        // TODO: It requires first row of data to be available, so it needs to
+        // be async.
 
-        mockRow.htmlElement.style.position = 'absolute';
-        mockRow.htmlElement.classList.add(Globals.getClassName('mockedRow'));
+        // const vp = this.viewport;
+        // const mockRow = new TableRow(vp, 0);
 
-        this.viewport.tbodyElement.appendChild(mockRow.htmlElement);
-        mockRow.render();
+        // mockRow.htmlElement.style.position = 'absolute';
+        // mockRow.htmlElement.classList.add(Globals.getClassName('mockedRow'));
 
-        const defaultRowHeight = mockRow.htmlElement.offsetHeight;
+        // this.viewport.tbodyElement.appendChild(mockRow.htmlElement);
+        // mockRow.render();
 
-        mockRow.destroy();
+        // const defaultRowHeight = mockRow.htmlElement.offsetHeight;
 
-        return defaultRowHeight;
+        // mockRow.destroy();
+
+        // return defaultRowHeight;
+
+        // Temporary fallback.
+        return 31;
     }
 }
 

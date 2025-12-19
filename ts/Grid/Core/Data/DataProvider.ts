@@ -15,7 +15,6 @@
 
 import type DT from '../../../Data/DataTable';
 import type QueryingController from '../Querying/QueryingController';
-import type Grid from '../Grid';
 export abstract class DataProvider {
 
     protected readonly querying: QueryingController;
@@ -23,9 +22,7 @@ export abstract class DataProvider {
 
     constructor(
         queryingController: QueryingController,
-        options: DataProviderOptions,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        grid?: Grid // Backward compatibility, remove in the future
+        options: DataProviderOptions
     ) {
         this.querying = queryingController;
         this.options = options;
@@ -43,7 +40,6 @@ export abstract class DataProvider {
 
     public abstract getRowCount(): Promise<number>;
 
-    public abstract getRenderedRowCount(): Promise<number>;
 
     public abstract getValue(
         columnId: string,
@@ -60,8 +56,14 @@ export abstract class DataProvider {
 
     public abstract destroy(): void;
 
+    public async getPrePaginationRowCount(): Promise<number> {
+        return await this.getRowCount();
+    }
 }
 
+/**
+ * A base interface for the data provider options (`grid.options.data`).
+ */
 export interface DataProviderOptions {
-    type: string;
+    providerType: string;
 }

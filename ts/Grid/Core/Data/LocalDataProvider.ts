@@ -21,7 +21,6 @@ import { DataProvider } from './DataProvider.js';
 import DataTable from '../../../Data/DataTable.js';
 import ChainModifier from '../../../Data/Modifiers/ChainModifier.js';
 import { registerDataProvider } from './DataProviderRegistry';
-import Grid from '../Grid';
 
 
 export class LocalDataProvider extends DataProvider {
@@ -29,22 +28,14 @@ export class LocalDataProvider extends DataProvider {
     public readonly options!: LocalDataProviderOptions;
     private dataTable?: DataTable;
     private presentationTable?: DataTable;
-    private rowCount?: number;
+    private prePaginationRowCount?: number;
     private dataTableEventDestructors: Function[] = [];
 
     constructor(
         queryingController: QueryingController,
-        options: LocalDataProviderOptions,
-        grid?: Grid // Backward compatibility, remove in the future
+        options: LocalDataProviderOptions
     ) {
-        super(queryingController, options, grid);
-
-        // Backward compatibility snippet, remove in the future
-        if (grid?.options?.dataTable && !options.dataTable) {
-            options.dataTable = grid.options.dataTable;
-        }
-        // End of backward compatibility snippet
-
+        super(queryingController, options);
         this.initDataTable();
     }
 
@@ -64,6 +55,7 @@ export class LocalDataProvider extends DataProvider {
         }
 
         this.presentationTable = this.dataTable?.getModified();
+        this.prePaginationRowCount = this.presentationTable?.rowCount ?? 0;
 
         for (const eventName of [
             'afterDeleteColumns',
@@ -101,11 +93,11 @@ export class LocalDataProvider extends DataProvider {
         return Promise.resolve(this.presentationTable?.getRowObject(rowIndex));
     }
 
-    public override getRowCount(): Promise<number> {
-        return Promise.resolve(this.rowCount ?? 0);
+    public override getPrePaginationRowCount(): Promise<number> {
+        return Promise.resolve(this.prePaginationRowCount ?? 0);
     }
 
-    public override getRenderedRowCount(): Promise<number> {
+    public override getRowCount(): Promise<number> {
         return Promise.resolve(this.presentationTable?.getRowCount() ?? 0);
     }
 
@@ -113,8 +105,17 @@ export class LocalDataProvider extends DataProvider {
         columnId: string,
         rowIndex: number
     ): Promise<DataTable.CellType> {
+        // Debugging:
+        // return new Promise((resolve): void => {
+        //     setTimeout((): void => {
+        //         resolve(
+        //             this.presentationTable?.getCell(columnId, rowIndex)
+        //         );
+        //     }, 1000);
+        // });
+
         return Promise.resolve(
-            this.presentationTable?.getCell(columnId, rowIndex) ?? null
+            this.presentationTable?.getCell(columnId, rowIndex)
         );
     }
 
@@ -149,7 +150,7 @@ export class LocalDataProvider extends DataProvider {
             interTable = originalDataTable.getModified();
         }
 
-        this.rowCount = interTable.rowCount;
+        this.prePaginationRowCount = interTable.rowCount;
 
         // Pagination modifier
         const paginationModifier =
@@ -174,7 +175,7 @@ export class LocalDataProvider extends DataProvider {
 }
 
 export interface LocalDataProviderOptions extends DataProviderOptions {
-    type: 'local';
+    providerType: 'local';
     dataTable: DataTable | DataTableOptions;
 }
 

@@ -112,7 +112,7 @@ export const defaultOptions: DeepPartial<Options> = {
         }
     },
     data: {
-        type: 'local'
+        providerType: 'local'
     },
     time: {
         timezone: 'UTC'

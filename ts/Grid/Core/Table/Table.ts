@@ -200,7 +200,10 @@ class Table {
      * @deprecated Use `grid.dataProvider` instead.
      */
     public get dataTable(): DataTable | undefined {
-        return this.grid.dataProvider?.getDataTable();
+        const dp = this.grid.dataProvider;
+        if (dp && 'getDataTable' in dp) {
+            return dp.getDataTable();
+        }
     }
 
     private async preInit(): Promise<void> {
@@ -355,7 +358,7 @@ class Table {
             shouldRerender = true;
         }
 
-        if (shouldRerender || oldRowsCount !== await dp.getRenderedRowCount()) {
+        if (shouldRerender || oldRowsCount !== await dp.getRowCount()) {
             // Rerender all rows
             await vp.rowsVirtualizer.rerender();
         } else {

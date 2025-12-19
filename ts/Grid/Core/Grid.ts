@@ -1307,19 +1307,27 @@ export class Grid {
         this.dataProvider?.destroy();
         this.querying.shouldBeUpdated = true;
 
-        const dataOptions = this.options?.data;
-        if (!dataOptions) {
-            return;
+        const dataOptions = this.options?.data ?? {
+            providerType: 'local',
+            dataTable: this.options?.dataTable ?? {}
+        };
+
+        // Just for the backward compatibility, remove in the future
+        if (
+            dataOptions.providerType === 'local' &&
+            !dataOptions.dataTable && this.options?.dataTable
+        ) {
+            dataOptions.dataTable = this.options?.dataTable;
         }
+        // End of backward compatibility snippet
 
         const DataProviderConstructor =
-            DataProviderRegistry.types[dataOptions.type] ??
+            DataProviderRegistry.types[dataOptions.providerType] ??
             DataProviderRegistry.types.local;
 
         this.dataProvider = new DataProviderConstructor(
             this.querying,
-            dataOptions,
-            this // Just for the backward compatibility, remove in the future
+            dataOptions as never
         );
     }
 
