@@ -264,7 +264,7 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
      */
     public deleteRows(
         rowIndex?: number | number[],
-        rowCount?: number,
+        rowCount: number = 1,
         eventDetail?: DataEvent.Detail
     ): Array<DataTable.Row> {
         const { columns, modifier } = this;
@@ -292,9 +292,9 @@ class DataTable extends DataTableCore implements DataEvent.Emitter<DataTable.Eve
                 .sort((a, b): number => b - a);
             actualRowCount = indices.length;
         } else {
-            // Single index provided - delete the specified row.
+            // Single index provided - delete the specified range of rows.
             indices = [rowIndex];
-            actualRowCount = rowCount ?? 1;
+            actualRowCount = rowCount;
         }
 
         this.emit({
