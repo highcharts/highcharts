@@ -1,0 +1,436 @@
+const ROW_COUNT = 100000;
+const COLUMN_COUNT = 20;
+const DEFAULT_ROWS_PER_SECOND = 5000;
+
+function createSeededRandom(seed) {
+    let value = seed % 2147483647;
+    if (value <= 0) {
+        value += 2147483646;
+    }
+    return function () {
+        value = value * 16807 % 2147483647;
+        return (value - 1) / 2147483646;
+    };
+}
+
+function generateColumns(rowCount, colCount) {
+    const random = createSeededRandom(1337);
+    const columns = {};
+
+    for (let c = 0; c < colCount; c++) {
+        columns[`Col ${c + 1}`] = new Array(rowCount);
+    }
+
+    for (let r = 0; r < rowCount; r++) {
+        columns['Col 1'][r] = r + 1;
+        columns['Col 2'][r] = `Row ${r + 1}`;
+        for (let c = 2; c < colCount; c++) {
+            columns[`Col ${c + 1}`][r] = Math.floor(random() * 1000);
+        }
+    }
+
+    return columns;
+}
+
+const els = {
+    run: document.getElementById('run'),
+    stop: document.getElementById('stop'),
+    reset: document.getElementById('reset'),
+    rowsPerSec: document.getElementById('rows-per-sec'),
+    status: document.getElementById('status'),
+    visibleRows: document.getElementById('visible-rows'),
+    rowHeight: document.getElementById('row-height'),
+    bufferSize: document.getElementById('buffer-size'),
+    renderCount: document.getElementById('render-count'),
+    avgRender: document.getElementById('avg-render'),
+    p95Render: document.getElementById('p95-render'),
+    maxRender: document.getElementById('max-render'),
+    totalRender: document.getElementById('total-render'),
+    rowsAdvanced: document.getElementById('rows-advanced'),
+    rendersPerSec: document.getElementById('renders-per-sec'),
+    rowsPerSecOut: document.getElementById('rows-per-sec-out'),
+    runTime: document.getElementById('run-time')
+};
+
+const stats = {
+    durations: [],
+    renderCount: 0,
+    totalDuration: 0,
+    maxDuration: 0,
+    rowsAdvanced: 0,
+    startTime: 0,
+    endTime: 0,
+    p95: null
+};
+
+let grid;
+let rowsVirtualizer;
+let tbodyElement;
+let rowHeight;
+let isRunning = false;
+let isMeasuring = false;
+let rafId;
+let lastFrameTime;
+let lastRowCursor;
+let readyResolve;
+const readyPromise = new Promise(resolve => {
+    readyResolve = resolve;
+});
+
+const benchmark = {
+    ready: false,
+    status: 'Idle',
+    whenReady: readyPromise
+};
+
+function formatMs(value) {
+    if (!Number.isFinite(value)) {
+        return '-';
+    }
+    return `${value.toFixed(2)} ms`;
+}
+
+function formatNumber(value) {
+    if (!Number.isFinite(value)) {
+        return '-';
+    }
+    return value.toFixed(1);
+}
+
+function resetStats() {
+    stats.durations = [];
+    stats.renderCount = 0;
+    stats.totalDuration = 0;
+    stats.maxDuration = 0;
+    stats.rowsAdvanced = 0;
+    stats.startTime = 0;
+    stats.endTime = 0;
+    stats.p95 = null;
+    lastRowCursor = void 0;
+    updateStats();
+}
+
+function updateStats() {
+    let totalTime = 0;
+    if (stats.endTime) {
+        totalTime = stats.endTime - stats.startTime;
+    } else if (stats.startTime) {
+        totalTime = performance.now() - stats.startTime;
+    }
+
+    const average = stats.renderCount ?
+        stats.totalDuration / stats.renderCount :
+        0;
+
+    const rendersPerSec = totalTime ?
+        stats.renderCount / (totalTime / 1000) :
+        0;
+
+    const rowsPerSec = totalTime ?
+        stats.rowsAdvanced / (totalTime / 1000) :
+        0;
+
+    els.renderCount.textContent = stats.renderCount.toString();
+    els.avgRender.textContent = stats.renderCount ?
+        formatMs(average) :
+        '-';
+    els.p95Render.textContent = stats.p95 === null ?
+        '-' :
+        formatMs(stats.p95);
+    els.maxRender.textContent = stats.renderCount ?
+        formatMs(stats.maxDuration) :
+        '-';
+    els.totalRender.textContent = stats.renderCount ?
+        formatMs(stats.totalDuration) :
+        '-';
+    els.rowsAdvanced.textContent = stats.rowsAdvanced.toString();
+    els.rendersPerSec.textContent = stats.renderCount ?
+        formatNumber(rendersPerSec) :
+        '-';
+    els.rowsPerSecOut.textContent = stats.renderCount ?
+        formatNumber(rowsPerSec) :
+        '-';
+    els.runTime.textContent = totalTime ?
+        formatMs(totalTime) :
+        '-';
+}
+
+function updateGridMeta() {
+    const visibleRows = grid?.viewport?.rows?.length || 0;
+    const bufferSize = grid?.options?.rendering?.rows?.bufferSize ?? 10;
+    els.visibleRows.textContent = visibleRows.toString();
+    els.rowHeight.textContent = rowHeight ?
+        `${rowHeight}px` :
+        '-';
+    els.bufferSize.textContent = bufferSize.toString();
+}
+
+function setStatus(text) {
+    els.status.textContent = text;
+    benchmark.status = text;
+}
+
+function percentile(values, ratio) {
+    if (!values.length) {
+        return 0;
+    }
+    const sorted = values.slice().sort((a, b) => a - b);
+    const index = Math.min(
+        sorted.length - 1,
+        Math.max(0, Math.ceil(sorted.length * ratio) - 1)
+    );
+    return sorted[index];
+}
+
+function startBenchmark() {
+    if (!tbodyElement || !rowHeight) {
+        return;
+    }
+
+    stopBenchmark();
+    resetStats();
+
+    isRunning = true;
+    isMeasuring = true;
+    stats.startTime = performance.now();
+    lastFrameTime = stats.startTime;
+
+    tbodyElement.scrollTop = 0;
+
+    els.run.disabled = true;
+    els.stop.disabled = false;
+    setStatus('Running');
+
+    rafId = requestAnimationFrame(tick);
+}
+
+function startManualBenchmark() {
+    if (!tbodyElement || !rowHeight) {
+        return;
+    }
+
+    stopBenchmark();
+    resetStats();
+
+    isRunning = true;
+    isMeasuring = true;
+    stats.startTime = performance.now();
+
+    tbodyElement.scrollTop = 0;
+
+    els.run.disabled = true;
+    els.stop.disabled = false;
+    setStatus('Running');
+}
+
+function stopBenchmark() {
+    if (!isRunning) {
+        setStatus('Idle');
+        return;
+    }
+
+    isRunning = false;
+    isMeasuring = false;
+    stats.endTime = performance.now();
+    stats.p95 = percentile(stats.durations, 0.95);
+
+    if (rafId) {
+        cancelAnimationFrame(rafId);
+        rafId = void 0;
+    }
+
+    els.run.disabled = false;
+    els.stop.disabled = true;
+    setStatus('Done');
+    updateStats();
+}
+
+function stepBenchmark(deltaMs) {
+    if (!isRunning || !rowHeight) {
+        return true;
+    }
+
+    const rowsPerSecond = Number(els.rowsPerSec.value) ||
+        DEFAULT_ROWS_PER_SECOND;
+    const pixelsPerSecond = rowsPerSecond * rowHeight;
+    const delta = pixelsPerSecond * (deltaMs / 1000);
+
+    const maxScrollTop = tbodyElement.scrollHeight -
+        tbodyElement.clientHeight;
+    const nextScrollTop = Math.min(
+        maxScrollTop,
+        tbodyElement.scrollTop + delta
+    );
+
+    tbodyElement.scrollTop = nextScrollTop;
+    const virtualizer = grid?.viewport?.rowsVirtualizer;
+    if (virtualizer) {
+        const applyScroll = virtualizer.applyScroll;
+        if (typeof applyScroll === 'function') {
+            applyScroll.call(virtualizer);
+        } else {
+            virtualizer.scroll();
+        }
+    }
+
+    if (nextScrollTop >= maxScrollTop) {
+        stopBenchmark();
+        return true;
+    }
+
+    updateStats();
+    return false;
+}
+
+function tick(timestamp) {
+    if (!isRunning) {
+        return;
+    }
+
+    const elapsed = timestamp - lastFrameTime;
+    const rowsPerSecond = Number(els.rowsPerSec.value) ||
+        DEFAULT_ROWS_PER_SECOND;
+    const pixelsPerSecond = rowsPerSecond * rowHeight;
+    const delta = pixelsPerSecond * (elapsed / 1000);
+
+    lastFrameTime = timestamp;
+
+    const maxScrollTop = tbodyElement.scrollHeight -
+        tbodyElement.clientHeight;
+    const nextScrollTop = Math.min(
+        maxScrollTop,
+        tbodyElement.scrollTop + delta
+    );
+
+    tbodyElement.scrollTop = nextScrollTop;
+
+    if (nextScrollTop >= maxScrollTop) {
+        stopBenchmark();
+        return;
+    }
+
+    updateStats();
+    rafId = requestAnimationFrame(tick);
+}
+
+function patchVirtualizer() {
+    const originalRenderRows = rowsVirtualizer.renderRows.bind(rowsVirtualizer);
+
+    rowsVirtualizer.renderRows = function (rowCursor) {
+        if (!isMeasuring) {
+            return originalRenderRows(rowCursor);
+        }
+
+        const start = performance.now();
+        const result = originalRenderRows(rowCursor);
+        const duration = performance.now() - start;
+
+        stats.durations.push(duration);
+        stats.renderCount += 1;
+        stats.totalDuration += duration;
+        stats.maxDuration = Math.max(stats.maxDuration, duration);
+
+        if (lastRowCursor !== void 0) {
+            stats.rowsAdvanced += Math.abs(rowCursor - lastRowCursor);
+        }
+        lastRowCursor = rowCursor;
+
+        return result;
+    };
+
+    benchmark.isPatched = true;
+}
+
+function init() {
+    els.rowsPerSec.value = DEFAULT_ROWS_PER_SECOND.toString();
+
+    grid = Grid.grid('container', {
+        dataTable: {
+            columns: generateColumns(ROW_COUNT, COLUMN_COUNT)
+        },
+        rendering: {
+            rows: {
+                bufferSize: 10,
+                minVisibleRows: 20,
+                strictHeights: true,
+                virtualization: true
+            }
+        },
+        columnDefaults: {
+            width: 120
+        }
+    }, true);
+
+    Promise.resolve(grid).then(gridInstance => {
+        grid = gridInstance;
+        window.grid = grid;
+
+        rowsVirtualizer = grid.viewport.rowsVirtualizer;
+        tbodyElement = grid.viewport.tbodyElement;
+        rowHeight = rowsVirtualizer.defaultRowHeight;
+
+        patchVirtualizer();
+        updateGridMeta();
+
+        benchmark.ready = true;
+        readyResolve();
+    });
+}
+
+els.run.addEventListener('click', startBenchmark);
+els.stop.addEventListener('click', stopBenchmark);
+els.reset.addEventListener('click', () => {
+    stopBenchmark();
+    resetStats();
+    setStatus('Idle');
+});
+
+benchmark.start = startBenchmark;
+benchmark.startManual = startManualBenchmark;
+benchmark.stop = stopBenchmark;
+benchmark.reset = resetStats;
+benchmark.step = stepBenchmark;
+benchmark.setRowsPerSecond = value => {
+    els.rowsPerSec.value = String(value);
+};
+benchmark.getStats = () => {
+    let totalTime = 0;
+    if (stats.endTime) {
+        totalTime = stats.endTime - stats.startTime;
+    } else if (stats.startTime) {
+        totalTime = performance.now() - stats.startTime;
+    }
+
+    const average = stats.renderCount ?
+        stats.totalDuration / stats.renderCount :
+        0;
+    const rendersPerSec = totalTime ?
+        stats.renderCount / (totalTime / 1000) :
+        0;
+    const rowsPerSec = totalTime ?
+        stats.rowsAdvanced / (totalTime / 1000) :
+        0;
+
+    return {
+        status: benchmark.status,
+        rowCount: ROW_COUNT,
+        columnCount: COLUMN_COUNT,
+        visibleRows: grid?.viewport?.rows?.length || 0,
+        rowHeight,
+        bufferSize: grid?.options?.rendering?.rows?.bufferSize ?? 10,
+        renderCount: stats.renderCount,
+        totalDuration: stats.totalDuration,
+        averageDuration: average,
+        p95Duration: stats.p95 ??
+            percentile(stats.durations, 0.95),
+        maxDuration: stats.maxDuration,
+        rowsAdvanced: stats.rowsAdvanced,
+        rendersPerSec,
+        rowsPerSec,
+        runTime: totalTime
+    };
+};
+
+window.gridBenchmark = benchmark;
+
+init();

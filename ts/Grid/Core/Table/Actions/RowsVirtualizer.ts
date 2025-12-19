@@ -83,6 +83,17 @@ class RowsVirtualizer {
      */
     public rowSettings?: RowsSettings;
 
+    /**
+     * Reuse pool for rows that are currently out of viewport.
+     */
+    private rowPool: TableRow[] = [];
+
+    /**
+     * Flag indicating if a scroll update is queued for the next animation
+     * frame.
+     */
+    private scrollQueued = false;
+
 
     /* *
     *
@@ -144,6 +155,13 @@ class RowsVirtualizer {
         const oldScrollLeft = tbody.scrollLeft;
         let oldScrollTop: number | undefined;
 
+        if (this.rowPool.length) {
+            for (let i = this.rowPool.length - 1; i >= 0; --i) {
+                this.rowPool[i].destroy();
+            }
+            this.rowPool.length = 0;
+        }
+
         if (rows.length) {
             oldScrollTop = tbody.scrollTop;
             for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
@@ -178,6 +196,21 @@ class RowsVirtualizer {
      * is enabled.
      */
     public scroll(): void {
+        if (this.scrollQueued) {
+            return;
+        }
+
+        this.scrollQueued = true;
+        requestAnimationFrame((): void => {
+            this.scrollQueued = false;
+            this.applyScroll();
+        });
+    }
+
+    /**
+     * Applies the scroll logic for virtualized rows.
+     */
+    private applyScroll(): void {
         const target = this.viewport.tbodyElement;
         const { defaultRowHeight: rowHeight } = this;
         const lastScrollTop = target.scrollTop;
@@ -305,7 +338,8 @@ class RowsVirtualizer {
             const rowIndex = row.index;
 
             if (rowIndex < from || rowIndex > to) {
-                row.destroy();
+                row.htmlElement.remove();
+                this.rowPool.push(row);
             } else {
                 tempRows.push(row);
             }
@@ -319,11 +353,22 @@ class RowsVirtualizer {
 
             // Recreate row when it is destroyed and it is in the range.
             if (!row) {
-                const newRow = new TableRow(vp, i);
-                rows.push(newRow);
-                newRow.rendered = false;
-                if (isVirtualization) {
-                    newRow.setTranslateY(newRow.getDefaultTopOffset());
+                const pooledRow = this.rowPool.pop();
+                if (pooledRow) {
+                    pooledRow.reuse(i);
+                    rows.push(pooledRow);
+                    if (isVirtualization) {
+                        pooledRow.setTranslateY(
+                            pooledRow.getDefaultTopOffset()
+                        );
+                    }
+                } else {
+                    const newRow = new TableRow(vp, i);
+                    rows.push(newRow);
+                    newRow.rendered = false;
+                    if (isVirtualization) {
+                        newRow.setTranslateY(newRow.getDefaultTopOffset());
+                    }
                 }
             }
         }
@@ -331,12 +376,21 @@ class RowsVirtualizer {
         rows.sort((a, b): number => a.index - b.index);
 
         for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
-            if (!rows[i].rendered) {
+            const row = rows[i];
+            if (!row.rendered) {
                 vp.tbodyElement.insertBefore(
-                    rows[i].htmlElement,
+                    row.htmlElement,
                     vp.tbodyElement.lastChild
                 );
-                rows[i].render();
+                row.render();
+                continue;
+            }
+
+            if (!row.htmlElement.isConnected) {
+                vp.tbodyElement.insertBefore(
+                    row.htmlElement,
+                    vp.tbodyElement.lastChild
+                );
             }
         }
 
