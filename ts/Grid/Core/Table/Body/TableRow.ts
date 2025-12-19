@@ -139,8 +139,11 @@ class TableRow extends Row {
      *
      * @param index
      * The index of the row in the data table.
+     *
+     * @param doReflow
+     * Whether to reflow the row after updating the cells.
      */
-    public reuse(index: number): void {
+    public reuse(index: number, doReflow: boolean = true): void {
         if (this.index === index) {
             this.update();
             return;
@@ -161,7 +164,9 @@ class TableRow extends Row {
             void cell.setValue();
         }
 
-        this.reflow();
+        if (doReflow) {
+            this.reflow();
+        }
     }
 
     /**

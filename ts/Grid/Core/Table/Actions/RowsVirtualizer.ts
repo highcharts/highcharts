@@ -332,48 +332,139 @@ class RowsVirtualizer {
         const alwaysLastRow = rows.pop();
         const tempRows: TableRow[] = [];
 
-        // Remove rows that are out of the range except the last row.
-        for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
-            const row = rows[i];
-            const rowIndex = row.index;
+        const currentFrom = rows[0]?.index;
+        const currentTo = rows[rows.length - 1]?.index;
+        const hasOverlap = (
+            rows.length > 0 &&
+            currentFrom !== void 0 &&
+            currentTo !== void 0 &&
+            !(to < currentFrom || from > currentTo)
+        );
 
-            if (rowIndex < from || rowIndex > to) {
-                row.htmlElement.remove();
-                this.rowPool.push(row);
-            } else {
-                tempRows.push(row);
-            }
-        }
+        if (!hasOverlap) {
+            // Remove rows that are out of the range except the last row.
+            for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
+                const row = rows[i];
+                const rowIndex = row.index;
 
-        rows = tempRows;
-        vp.rows = rows;
-
-        for (let i = from; i <= to; ++i) {
-            const row = rows[i - (rows[0]?.index || 0)];
-
-            // Recreate row when it is destroyed and it is in the range.
-            if (!row) {
-                const pooledRow = this.rowPool.pop();
-                if (pooledRow) {
-                    pooledRow.reuse(i);
-                    rows.push(pooledRow);
-                    if (isVirtualization) {
-                        pooledRow.setTranslateY(
-                            pooledRow.getDefaultTopOffset()
-                        );
-                    }
+                if (rowIndex < from || rowIndex > to) {
+                    row.htmlElement.remove();
+                    this.rowPool.push(row);
                 } else {
-                    const newRow = new TableRow(vp, i);
-                    rows.push(newRow);
-                    newRow.rendered = false;
-                    if (isVirtualization) {
-                        newRow.setTranslateY(newRow.getDefaultTopOffset());
+                    tempRows.push(row);
+                }
+            }
+
+            rows = tempRows;
+            vp.rows = rows;
+
+            for (let i = from; i <= to; ++i) {
+                const row = rows[i - (rows[0]?.index || 0)];
+
+                // Recreate row when it is destroyed and it is in the range.
+                if (!row) {
+                    const pooledRow = this.rowPool.pop();
+                    if (pooledRow) {
+                        pooledRow.reuse(i, false);
+                        rows.push(pooledRow);
+                        if (isVirtualization) {
+                            pooledRow.setTranslateY(
+                                pooledRow.getDefaultTopOffset()
+                            );
+                        }
+                    } else {
+                        const newRow = new TableRow(vp, i);
+                        rows.push(newRow);
+                        newRow.rendered = false;
+                        if (isVirtualization) {
+                            newRow.setTranslateY(newRow.getDefaultTopOffset());
+                        }
                     }
                 }
             }
-        }
 
-        rows.sort((a, b): number => a.index - b.index);
+            rows.sort((a, b): number => a.index - b.index);
+        } else {
+            // Remove rows outside the range from the start.
+            while (rows.length && rows[0].index < from) {
+                const row = rows.shift() as TableRow;
+                row.htmlElement.remove();
+                this.rowPool.push(row);
+            }
+
+            // Remove rows outside the range from the end.
+            while (rows.length && rows[rows.length - 1].index > to) {
+                const row = rows.pop() as TableRow;
+                row.htmlElement.remove();
+                this.rowPool.push(row);
+            }
+
+            if (!rows.length) {
+                for (let i = from; i <= to; ++i) {
+                    const pooledRow = this.rowPool.pop();
+                    if (pooledRow) {
+                        pooledRow.reuse(i, false);
+                        rows.push(pooledRow);
+                        if (isVirtualization) {
+                            pooledRow.setTranslateY(
+                                pooledRow.getDefaultTopOffset()
+                            );
+                        }
+                    } else {
+                        const newRow = new TableRow(vp, i);
+                        rows.push(newRow);
+                        newRow.rendered = false;
+                        if (isVirtualization) {
+                            newRow.setTranslateY(newRow.getDefaultTopOffset());
+                        }
+                    }
+                }
+            } else {
+                // Add rows before the current range.
+                for (let i = rows[0].index - 1; i >= from; --i) {
+                    const pooledRow = this.rowPool.pop();
+                    if (pooledRow) {
+                        pooledRow.reuse(i, false);
+                        rows.unshift(pooledRow);
+                        if (isVirtualization) {
+                            pooledRow.setTranslateY(
+                                pooledRow.getDefaultTopOffset()
+                            );
+                        }
+                    } else {
+                        const newRow = new TableRow(vp, i);
+                        rows.unshift(newRow);
+                        newRow.rendered = false;
+                        if (isVirtualization) {
+                            newRow.setTranslateY(newRow.getDefaultTopOffset());
+                        }
+                    }
+                }
+
+                // Add rows after the current range.
+                for (let i = rows[rows.length - 1].index + 1; i <= to; ++i) {
+                    const pooledRow = this.rowPool.pop();
+                    if (pooledRow) {
+                        pooledRow.reuse(i, false);
+                        rows.push(pooledRow);
+                        if (isVirtualization) {
+                            pooledRow.setTranslateY(
+                                pooledRow.getDefaultTopOffset()
+                            );
+                        }
+                    } else {
+                        const newRow = new TableRow(vp, i);
+                        rows.push(newRow);
+                        newRow.rendered = false;
+                        if (isVirtualization) {
+                            newRow.setTranslateY(newRow.getDefaultTopOffset());
+                        }
+                    }
+                }
+            }
+
+            vp.rows = rows;
+        }
 
         for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
             const row = rows[i];
