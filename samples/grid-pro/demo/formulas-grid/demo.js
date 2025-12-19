@@ -210,6 +210,7 @@ const initGrid = data => {
                                     overflow: 'allow',
                                     useHTML: true,
                                     enabled: true,
+                                    // eslint-disable-next-line max-len
                                     format: '<span class="spark-label">{y:.2f}%</span>'
                                 },
                                 negativeColor: '#f00'
