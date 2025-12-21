@@ -16,6 +16,8 @@ The available events are:
 |------------------------|---------------------------------------------------------------|-----------------------|
 | `beforeLoad`           | Triggered before the grid is fully loaded for the first time. | `this: Grid`          |
 | `afterLoad`            | Triggered after the grid is fully loaded for the first time.  | `this: Grid`          |
+| `beforeUpdate`         | Triggered before the grid is updated.                         | `this: Grid`          |
+| `afterUpdate`          | Triggered after the grid is updated.                          | `this: Grid`          |
 
 ## cell
 
@@ -66,7 +68,13 @@ Here is a sample code that demonstrates how to use these event callbacks in the 
         },
         afterLoad: function () {
             console.log('Grid finished loading and is ready to use.');
-        }
+        },
+        beforeUpdate: function () {
+            console.log('Grid update started.');
+        },
+        afterUpdate: function () {
+            console.log('Grid update finished.');
+        },
     },
     columnDefaults: {
         events: {
