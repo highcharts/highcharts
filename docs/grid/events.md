@@ -74,7 +74,7 @@ Here is a sample code that demonstrates how to use these event callbacks in the 
         },
         afterUpdate: function () {
             console.log('Grid update finished.');
-        },
+        }
     },
     columnDefaults: {
         events: {
