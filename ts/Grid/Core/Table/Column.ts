@@ -117,6 +117,8 @@ export class Column {
      * Filtering column module.
      */
     public filtering?: ColumnFiltering;
+
+
     /* *
     *
     *  Constructor
