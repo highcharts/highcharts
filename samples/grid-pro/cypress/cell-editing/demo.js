@@ -18,7 +18,9 @@ Grid.grid('container', {
             country: [
                 'PL', 'NL', 'RO', 'EC', 'ES', 'IT', 'DE', 'PL', 'TR', 'BR'
             ],
-            wrongName: [34, 4, 51, 2, 3]
+            wrongName: [34, 4, 51, 2, 3],
+            csvString: ['1,2,3', '1,2,3', '1,2,3', '1,2,3', '1,2,3'],
+            csvArray: [[1, 2, 3], [1, 2, 3], [1, 2, 3], [1, 2, 3]]
         }
     },
     lang: {
@@ -149,6 +151,26 @@ Grid.grid('container', {
         cells: {
             renderer: {
                 type: 'wrong-render-type'
+            }
+        }
+    }, {
+        id: 'csvString',
+        cells: {
+            renderer: {
+                type: 'sparkline'
+            },
+            editMode: {
+                validationRules: ['arrayNumber']
+            }
+        }
+    }, {
+        id: 'csvArray',
+        cells: {
+            renderer: {
+                type: 'sparkline'
+            },
+            editMode: {
+                validationRules: ['arrayNumber']
             }
         }
     }]

@@ -123,6 +123,21 @@ class Validator {
             },
             notification:
                 'Value must be unique within this column (case-sensitive).'
+        },
+        arrayNumber: {
+            validate: function ({ rawValue }): boolean {
+                if (typeof rawValue !== 'string') {
+                    return false;
+                }
+
+                return rawValue
+                    .split(',')
+                    .every(
+                        (item): boolean => !Number.isNaN(Number(item.trim()))
+                    );
+            },
+            notification:
+                'Value should be a list of numbers separated by commas.'
         }
     };
 
@@ -418,6 +433,7 @@ export interface RulesRegistryType {
     number: RuleDefinition;
     ignoreCaseUnique: RuleDefinition;
     unique: RuleDefinition;
+    arrayNumber: RuleDefinition;
 }
 
 /**

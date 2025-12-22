@@ -82,4 +82,36 @@ describe('Grid Pro - validation.', () => {
             .should('be.visible')
             .should('contain', 'Value must be unique within this column (case-insensitive).');
     });
+
+    it('Array number validation.', () => {
+        // Act
+        cy.editGridCell(1, 'csvString', '2,5,5something');
+
+        // Assert
+        cy.get('.hcg-notification-error')
+            .eq(0)
+            .should('be.visible')
+            .should('contain', 'Value should be a list of numbers separated by commas.');
+
+        // Act
+        cy.editGridCell(1, 'csvString', '2,5,6');
+
+        // Assert
+        cy.get('.hcg-notification-error').should('not.exist');
+
+        // Act
+        cy.editGridCell(1, 'csvArray', '2,5something,6');
+
+        // Assert
+        cy.get('.hcg-notification-error')
+            .eq(0)
+            .should('be.visible')
+            .should('contain', 'Value should be a list of numbers separated by commas.');
+
+        // Act
+        cy.editGridCell(1, 'csvArray', '2,5,6');
+
+        // Assert
+        cy.get('.hcg-notification-error').should('not.exist');
+    });
 });
