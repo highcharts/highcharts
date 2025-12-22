@@ -17,7 +17,11 @@
     margin: 1em auto;
 }
 
-.highcharts-controls {
+.highcharts-controls-wrapper {
     max-width: 800px;
     margin: 1em auto;
+}
+
+highcharts-controls {
+    display: inline-block;
 }

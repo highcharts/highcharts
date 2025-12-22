@@ -25,7 +25,7 @@ import '../../code/esm/modules/gantt.src.js';
 // Type handlers
 import * as booleanHandler from './type-handlers/boolean.ts';
 import * as numberHandler from './type-handlers/number.ts';
-import * as arrayHandler from './type-handlers/array-of-strings.ts';
+import * as selectHandler from './type-handlers/select.ts';
 import * as colorHandler from './type-handlers/color.ts';
 
 const types = await loadExportedTypes('code/highcharts.d.ts');
@@ -303,7 +303,7 @@ function pickHandler(meta: { mainType: string; options?: string[] }) {
         meta.options = ['linear', 'logarithmic', 'datetime', 'category'];
     }
     if (meta.options) {
-        return { kind: 'array', mod: arrayHandler } as const;
+        return { kind: 'select', mod: selectHandler } as const;
     }
     return null;
 }
@@ -342,11 +342,12 @@ export async function getDemoHTML(metaList?: MetaList) {
 
     // Add the config
     if (controls.length > 0) {
-        html += `
-<highcharts-controls target="#container">
-  ${controls.join('\n  ')}
-</highcharts-controls>
-`;
+        html = html.replace(
+            '<!-- CONTROLS_PLACEHOLDER -->',
+            `<highcharts-controls>
+    ${controls.join('\n  ')}
+  </highcharts-controls>`
+        );
     }
     return html;
 }
