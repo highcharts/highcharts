@@ -649,8 +649,7 @@ async function buildStructure() {
  */
 function descriptionFromTags(
     tags: Record<string,Array<string>>,
-    paramsNames: Array<string> = [],
-    x?: any
+    paramsNames: Array<string> = []
 ): Array<string> {
     const description: Array<string> = [];
 
