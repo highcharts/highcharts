@@ -17,7 +17,6 @@
 
 import type ColorType from '../../Core/Color/ColorType';
 import type ColumnPointOptions from './ColumnPointOptions';
-import type ColumnSeries from './ColumnSeries';
 import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type LineSeriesOptions from '../Line/LineSeriesOptions';
@@ -412,7 +411,7 @@ export interface ColumnSeriesOptions extends LineSeriesOptions {
 
     startFromThreshold?: boolean;
 
-    states?: SeriesStatesOptions<ColumnSeries>;
+    states?: SeriesStatesOptions<ColumnSeriesOptions>;
 
     /**
      * Options for the hovered point. These settings override the normal

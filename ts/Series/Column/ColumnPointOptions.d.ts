@@ -18,6 +18,7 @@
 import type ColorType from '../../Core/Color/ColorType';
 import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
 import type LinePointOptions from '../Line/LinePointOptions';
+import type { PointMarkerStatesOptions } from '../../Core/Series/PointOptions';
 
 /* *
  *
@@ -92,6 +93,7 @@ export interface ColumnPointOptions extends LinePointOptions {
      */
     pointWidth?: number;
 
+    states?: PointMarkerStatesOptions<ColumnPointOptions>
 }
 
 /* *

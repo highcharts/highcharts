@@ -24,7 +24,7 @@ import type Point from '../../Core/Series/Point';
 import type {
     PointClickEvent,
     PointMarkerOptions,
-    PointStatesOptions
+    PointMarkerStatesOptions
 } from '../../Core/Series/PointOptions';
 
 /* *
@@ -87,7 +87,7 @@ export interface MarkerClusterOptions {
     layoutAlgorithm: MarkerClusterLayoutAlgorithmOptions;
     marker: MarkerClusterMarkerOptions;
     minimumClusterSize?: number;
-    states?: PointStatesOptions<Point>;
+    states?: PointMarkerStatesOptions<MarkerClusterOptions>;
     zones?: Array<MarkerClusterZonesOptions>;
 }
 

@@ -15,6 +15,7 @@
  *
  * */
 
+/** @internal */
 export interface DataExtremesObject {
     activeYData?: Array<number>;
     dataMin?: number;
@@ -27,4 +28,5 @@ export interface DataExtremesObject {
  *
  * */
 
+/** @internal */
 export default DataExtremesObject;

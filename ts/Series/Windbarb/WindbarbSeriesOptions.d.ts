@@ -22,7 +22,6 @@ import type PointShortOptions from '../../Core/Series/PointOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type TooltipOptions from '../../Core/TooltipOptions';
 import type WindbarbPointOptions from './WindbarbPointOptions';
-import type WindbarbSeries from './WindbarbSeries';
 
 /* *
  *
@@ -157,7 +156,7 @@ export interface WindbarbSeriesOptions extends ColumnSeriesOptions {
      */
     onSeries?: (string|null);
 
-    states?: SeriesStatesOptions<WindbarbSeries>;
+    states?: SeriesStatesOptions<WindbarbSeriesOptions>;
 
     tooltip?: Partial<TooltipOptions>;
 

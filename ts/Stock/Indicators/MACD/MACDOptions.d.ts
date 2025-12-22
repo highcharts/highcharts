@@ -13,7 +13,6 @@
  * */
 
 import type ColorString from '../../../Core/Color/ColorString';
-import type MACDIndicator from './MACDIndicator';
 import type CSSObject from '../../../Core/Renderer/CSSObject';
 import type {
     SMAOptions,
@@ -47,7 +46,7 @@ export interface MACDParamsOptions extends SMAParamsOptions {
 
 export interface MACDOptions extends SMAOptions {
     params?: MACDParamsOptions;
-    states?: SeriesStatesOptions<MACDIndicator>;
+    states?: SeriesStatesOptions<MACDOptions>;
     threshold?: number;
     groupPadding?: number;
     pointPadding?: number;

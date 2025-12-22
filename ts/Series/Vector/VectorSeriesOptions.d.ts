@@ -25,7 +25,6 @@ import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type TooltipOptions from '../../Core/TooltipOptions';
 import type VectorPointOptions from './VectorPointOptions';
-import type VectorSeries from './VectorSeries';
 
 /* *
  *
@@ -143,7 +142,7 @@ export interface VectorSeriesOptions extends ScatterSeriesOptions {
      */
     rotationOrigin?: VectorRotationOriginValue;
 
-    states?: SeriesStatesOptions<VectorSeries>;
+    states?: SeriesStatesOptions<VectorSeriesOptions>;
 
     tooltip?: Partial<TooltipOptions>;
 
