@@ -10,6 +10,18 @@
             Rows/sec
             <input id="rows-per-sec" type="number" min="500" step="500" value="5000">
         </label>
+        <label>
+            Adaptive
+            <input id="adaptive-mode" type="checkbox">
+        </label>
+        <label>
+            Target FPS
+            <input id="target-fps" type="number" min="10" step="5" value="30">
+        </label>
+        <label>
+            Step Rows/sec
+            <input id="step-rows-per-sec" type="number" min="100" step="100" value="1000">
+        </label>
     </div>
 
     <div class="bench-stats">
@@ -28,6 +40,12 @@
         <div><span class="bench-label">P95 scroll</span><span id="p95-scroll">-</span></div>
         <div><span class="bench-label">Max scroll</span><span id="max-scroll">-</span></div>
         <div><span class="bench-label">Total scroll</span><span id="total-scroll">-</span></div>
+        <div><span class="bench-label">Avg FPS</span><span id="avg-fps">-</span></div>
+        <div><span class="bench-label">P95 FPS</span><span id="p95-fps">-</span></div>
+        <div><span class="bench-label">Median FPS</span><span id="median-fps">-</span></div>
+        <div><span class="bench-label">P5 FPS</span><span id="p5-fps">-</span></div>
+        <div><span class="bench-label">Min FPS</span><span id="min-fps">-</span></div>
+        <div><span class="bench-label">Max stable Rows/sec</span><span id="max-stable-rows">-</span></div>
         <div><span class="bench-label">Rows advanced</span><span id="rows-advanced">0</span></div>
         <div><span class="bench-label">Renders/sec</span><span id="renders-per-sec">-</span></div>
         <div><span class="bench-label">Rows/sec</span><span id="rows-per-sec-out">-</span></div>

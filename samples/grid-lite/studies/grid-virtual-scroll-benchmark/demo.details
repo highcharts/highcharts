@@ -1,7 +1,7 @@
 ---
 name: Grid virtual scroll benchmark
 authors:
-  - Highsoft
+  - Mikkel Espolin Birkeland
 js_wrap: b
 tags:
   - Highcharts Grid demo

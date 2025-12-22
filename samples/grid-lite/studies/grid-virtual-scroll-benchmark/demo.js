@@ -37,6 +37,9 @@ const els = {
     stop: document.getElementById('stop'),
     reset: document.getElementById('reset'),
     rowsPerSec: document.getElementById('rows-per-sec'),
+    adaptiveMode: document.getElementById('adaptive-mode'),
+    targetFps: document.getElementById('target-fps'),
+    stepRowsPerSec: document.getElementById('step-rows-per-sec'),
     status: document.getElementById('status'),
     visibleRows: document.getElementById('visible-rows'),
     rowHeight: document.getElementById('row-height'),
@@ -50,6 +53,12 @@ const els = {
     p95Scroll: document.getElementById('p95-scroll'),
     maxScroll: document.getElementById('max-scroll'),
     totalScroll: document.getElementById('total-scroll'),
+    avgFps: document.getElementById('avg-fps'),
+    p95Fps: document.getElementById('p95-fps'),
+    medianFps: document.getElementById('median-fps'),
+    p5Fps: document.getElementById('p5-fps'),
+    minFps: document.getElementById('min-fps'),
+    maxStableRows: document.getElementById('max-stable-rows'),
     rowsAdvanced: document.getElementById('rows-advanced'),
     rendersPerSec: document.getElementById('renders-per-sec'),
     rowsPerSecOut: document.getElementById('rows-per-sec-out'),
@@ -65,6 +74,13 @@ const stats = {
     totalScrollDuration: 0,
     maxDuration: 0,
     maxScrollDuration: 0,
+    fpsSamples: [],
+    avgFps: null,
+    p95Fps: null,
+    medianFps: null,
+    p5Fps: null,
+    minFps: null,
+    maxStableRowsPerSec: null,
     rowsAdvanced: 0,
     startTime: 0,
     endTime: 0,
@@ -79,8 +95,13 @@ let rowHeight;
 let isRunning = false;
 let isMeasuring = false;
 let rafId;
+let fpsRafId;
 let lastFrameTime;
 let lastRowCursor;
+let lastFpsTime;
+let fpsFrameCount = 0;
+let adaptiveLastChangeTime = 0;
+let adaptiveRowsPerSec = 0;
 let readyResolve;
 const readyPromise = new Promise(resolve => {
     readyResolve = resolve;
@@ -115,6 +136,13 @@ function resetStats() {
     stats.totalScrollDuration = 0;
     stats.maxDuration = 0;
     stats.maxScrollDuration = 0;
+    stats.fpsSamples = [];
+    stats.avgFps = null;
+    stats.p95Fps = null;
+    stats.medianFps = null;
+    stats.p5Fps = null;
+    stats.minFps = null;
+    stats.maxStableRowsPerSec = null;
     stats.rowsAdvanced = 0;
     stats.startTime = 0;
     stats.endTime = 0;
@@ -145,6 +173,12 @@ function updateStats() {
     const averageScroll = stats.scrollCount ?
         stats.totalScrollDuration / stats.scrollCount :
         0;
+    const avgFps = stats.avgFps;
+    const p95Fps = stats.p95Fps;
+    const medianFps = stats.medianFps;
+    const p5Fps = stats.p5Fps;
+    const minFps = stats.minFps;
+    const maxStableRows = stats.maxStableRowsPerSec;
 
     els.renderCount.textContent = stats.renderCount.toString();
     els.avgRender.textContent = stats.renderCount ?
@@ -171,6 +205,24 @@ function updateStats() {
     els.totalScroll.textContent = stats.scrollCount ?
         formatMs(stats.totalScrollDuration) :
         '-';
+    els.avgFps.textContent = avgFps === null ?
+        '-' :
+        avgFps.toFixed(1);
+    els.p95Fps.textContent = p95Fps === null ?
+        '-' :
+        p95Fps.toFixed(1);
+    els.medianFps.textContent = medianFps === null ?
+        '-' :
+        medianFps.toFixed(1);
+    els.p5Fps.textContent = p5Fps === null ?
+        '-' :
+        p5Fps.toFixed(1);
+    els.minFps.textContent = minFps === null ?
+        '-' :
+        minFps.toFixed(1);
+    els.maxStableRows.textContent = maxStableRows === null ?
+        '-' :
+        String(Math.max(0, Math.round(maxStableRows)));
     els.rowsAdvanced.textContent = stats.rowsAdvanced.toString();
     els.rendersPerSec.textContent = stats.renderCount ?
         formatNumber(rendersPerSec) :
@@ -222,6 +274,8 @@ function startBenchmark() {
     isMeasuring = true;
     stats.startTime = performance.now();
     lastFrameTime = stats.startTime;
+    startFpsTracking();
+    startAdaptiveMode();
 
     tbodyElement.scrollTop = 0;
 
@@ -262,10 +316,16 @@ function stopBenchmark() {
     stats.endTime = performance.now();
     stats.p95 = percentile(stats.durations, 0.95);
     stats.p95Scroll = percentile(stats.scrollDurations, 0.95);
+    finalizeFps();
 
     if (rafId) {
         cancelAnimationFrame(rafId);
         rafId = void 0;
+    }
+
+    if (fpsRafId) {
+        cancelAnimationFrame(fpsRafId);
+        fpsRafId = void 0;
     }
 
     els.run.disabled = false;
@@ -345,7 +405,92 @@ function tick(timestamp) {
     }
 
     updateStats();
+    updateAdaptiveMode();
     rafId = requestAnimationFrame(tick);
+}
+
+function startFpsTracking() {
+    lastFpsTime = performance.now();
+    fpsFrameCount = 0;
+
+    const track = () => {
+        if (!isRunning) {
+            return;
+        }
+
+        fpsFrameCount += 1;
+        const now = performance.now();
+        const elapsed = now - lastFpsTime;
+        if (elapsed >= 1000) {
+            const fps = fpsFrameCount / (elapsed / 1000);
+            stats.fpsSamples.push(fps);
+            lastFpsTime = now;
+            fpsFrameCount = 0;
+        }
+
+        fpsRafId = requestAnimationFrame(track);
+    };
+
+    fpsRafId = requestAnimationFrame(track);
+}
+
+function startAdaptiveMode() {
+    if (!els.adaptiveMode.checked) {
+        return;
+    }
+
+    adaptiveLastChangeTime = performance.now();
+    adaptiveRowsPerSec = Number(els.rowsPerSec.value) ||
+        DEFAULT_ROWS_PER_SECOND;
+}
+
+function updateAdaptiveMode() {
+    if (!els.adaptiveMode.checked) {
+        return;
+    }
+
+    const now = performance.now();
+    if (now - adaptiveLastChangeTime < 1000) {
+        return;
+    }
+
+    const targetFps = Number(els.targetFps.value) || 30;
+    const stepRows = Number(els.stepRowsPerSec.value) || 1000;
+    const samples = stats.fpsSamples;
+    const windowSize = 3;
+    if (samples.length < windowSize) {
+        adaptiveLastChangeTime = now;
+        return;
+    }
+
+    const recent = samples.slice(-windowSize);
+    const avgRecent = recent.reduce((sum, value) => sum + value, 0) /
+        recent.length;
+
+    if (avgRecent < targetFps) {
+        stats.maxStableRowsPerSec = adaptiveRowsPerSec - stepRows;
+        stopBenchmark();
+        return;
+    }
+
+    adaptiveRowsPerSec += stepRows;
+    els.rowsPerSec.value = String(adaptiveRowsPerSec);
+    adaptiveLastChangeTime = now;
+}
+
+function finalizeFps() {
+    if (!stats.fpsSamples.length) {
+        stats.avgFps = null;
+        stats.p95Fps = null;
+        return;
+    }
+
+    const total = stats.fpsSamples.reduce((sum, value) => sum + value, 0);
+    stats.avgFps = total / stats.fpsSamples.length;
+    stats.p95Fps = percentile(stats.fpsSamples, 0.95);
+    stats.medianFps = percentile(stats.fpsSamples, 0.5);
+    stats.p5Fps = percentile(stats.fpsSamples, 0.05);
+    stats.minFps = Math.min.apply(null, stats.fpsSamples);
 }
 
 function patchVirtualizer() {
@@ -453,6 +598,12 @@ benchmark.getStats = () => {
     const averageScroll = stats.scrollCount ?
         stats.totalScrollDuration / stats.scrollCount :
         0;
+    const avgFps = stats.avgFps;
+    const p95Fps = stats.p95Fps;
+    const medianFps = stats.medianFps;
+    const p5Fps = stats.p5Fps;
+    const minFps = stats.minFps;
+    const maxStableRowsPerSec = stats.maxStableRowsPerSec;
 
     return {
         status: benchmark.status,
@@ -472,6 +623,12 @@ benchmark.getStats = () => {
         p95ScrollDuration: stats.p95Scroll ??
             percentile(stats.scrollDurations, 0.95),
         maxScrollDuration: stats.maxScrollDuration,
+        averageFps: avgFps,
+        p95Fps,
+        medianFps,
+        p5Fps,
+        minFps,
+        maxStableRowsPerSec,
         rowsAdvanced: stats.rowsAdvanced,
         rendersPerSec,
         rowsPerSec,
