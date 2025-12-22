@@ -4,6 +4,8 @@ sidebar_label: "Conditional theming"
 
 # Conditional theming with CSS selectors
 
+![An illustration showing conditional theming concept](ill_conditional_theming.png)
+
 Highcharts Grid can be themed/styled conditionally in two main ways:
 
 * **JavaScript-driven styling**, using the `className` and `formatter` API properties to apply classes or inline styles based on data at runtime.
