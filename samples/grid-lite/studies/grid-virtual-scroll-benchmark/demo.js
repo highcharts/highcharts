@@ -46,6 +46,10 @@ const els = {
     p95Render: document.getElementById('p95-render'),
     maxRender: document.getElementById('max-render'),
     totalRender: document.getElementById('total-render'),
+    avgScroll: document.getElementById('avg-scroll'),
+    p95Scroll: document.getElementById('p95-scroll'),
+    maxScroll: document.getElementById('max-scroll'),
+    totalScroll: document.getElementById('total-scroll'),
     rowsAdvanced: document.getElementById('rows-advanced'),
     rendersPerSec: document.getElementById('renders-per-sec'),
     rowsPerSecOut: document.getElementById('rows-per-sec-out'),
@@ -54,13 +58,18 @@ const els = {
 
 const stats = {
     durations: [],
+    scrollDurations: [],
     renderCount: 0,
+    scrollCount: 0,
     totalDuration: 0,
+    totalScrollDuration: 0,
     maxDuration: 0,
+    maxScrollDuration: 0,
     rowsAdvanced: 0,
     startTime: 0,
     endTime: 0,
-    p95: null
+    p95: null,
+    p95Scroll: null
 };
 
 let grid;
@@ -99,13 +108,18 @@ function formatNumber(value) {
 
 function resetStats() {
     stats.durations = [];
+    stats.scrollDurations = [];
     stats.renderCount = 0;
+    stats.scrollCount = 0;
     stats.totalDuration = 0;
+    stats.totalScrollDuration = 0;
     stats.maxDuration = 0;
+    stats.maxScrollDuration = 0;
     stats.rowsAdvanced = 0;
     stats.startTime = 0;
     stats.endTime = 0;
     stats.p95 = null;
+    stats.p95Scroll = null;
     lastRowCursor = void 0;
     updateStats();
 }
@@ -121,7 +135,6 @@ function updateStats() {
     const average = stats.renderCount ?
         stats.totalDuration / stats.renderCount :
         0;
-
     const rendersPerSec = totalTime ?
         stats.renderCount / (totalTime / 1000) :
         0;
@@ -129,19 +142,34 @@ function updateStats() {
     const rowsPerSec = totalTime ?
         stats.rowsAdvanced / (totalTime / 1000) :
         0;
+    const averageScroll = stats.scrollCount ?
+        stats.totalScrollDuration / stats.scrollCount :
+        0;
 
     els.renderCount.textContent = stats.renderCount.toString();
     els.avgRender.textContent = stats.renderCount ?
         formatMs(average) :
         '-';
+    els.avgScroll.textContent = stats.scrollCount ?
+        formatMs(averageScroll) :
+        '-';
     els.p95Render.textContent = stats.p95 === null ?
         '-' :
         formatMs(stats.p95);
+    els.p95Scroll.textContent = stats.p95Scroll === null ?
+        '-' :
+        formatMs(stats.p95Scroll);
     els.maxRender.textContent = stats.renderCount ?
         formatMs(stats.maxDuration) :
         '-';
+    els.maxScroll.textContent = stats.scrollCount ?
+        formatMs(stats.maxScrollDuration) :
+        '-';
     els.totalRender.textContent = stats.renderCount ?
         formatMs(stats.totalDuration) :
+        '-';
+    els.totalScroll.textContent = stats.scrollCount ?
+        formatMs(stats.totalScrollDuration) :
         '-';
     els.rowsAdvanced.textContent = stats.rowsAdvanced.toString();
     els.rendersPerSec.textContent = stats.renderCount ?
@@ -233,6 +261,7 @@ function stopBenchmark() {
     isMeasuring = false;
     stats.endTime = performance.now();
     stats.p95 = percentile(stats.durations, 0.95);
+    stats.p95Scroll = percentile(stats.scrollDurations, 0.95);
 
     if (rafId) {
         cancelAnimationFrame(rafId);
@@ -265,12 +294,18 @@ function stepBenchmark(deltaMs) {
     tbodyElement.scrollTop = nextScrollTop;
     const virtualizer = grid?.viewport?.rowsVirtualizer;
     if (virtualizer) {
+        const start = performance.now();
         const applyScroll = virtualizer.applyScroll;
         if (typeof applyScroll === 'function') {
             applyScroll.call(virtualizer);
         } else {
             virtualizer.scroll();
         }
+        const duration = performance.now() - start;
+        stats.scrollDurations.push(duration);
+        stats.scrollCount += 1;
+        stats.totalScrollDuration += duration;
+        stats.maxScrollDuration = Math.max(stats.maxScrollDuration, duration);
     }
 
     if (nextScrollTop >= maxScrollTop) {
@@ -351,9 +386,14 @@ function init() {
         rendering: {
             rows: {
                 bufferSize: 10,
-                minVisibleRows: 20,
-                strictHeights: true,
+                minVisibleRows: null,
+                strictHeights: false,
                 virtualization: true
+            },
+            columns: {
+                resizing: {
+                    mode: 'independent'
+                }
             }
         },
         columnDefaults: {
@@ -410,6 +450,9 @@ benchmark.getStats = () => {
     const rowsPerSec = totalTime ?
         stats.rowsAdvanced / (totalTime / 1000) :
         0;
+    const averageScroll = stats.scrollCount ?
+        stats.totalScrollDuration / stats.scrollCount :
+        0;
 
     return {
         status: benchmark.status,
@@ -424,6 +467,11 @@ benchmark.getStats = () => {
         p95Duration: stats.p95 ??
             percentile(stats.durations, 0.95),
         maxDuration: stats.maxDuration,
+        totalScrollDuration: stats.totalScrollDuration,
+        averageScrollDuration: averageScroll,
+        p95ScrollDuration: stats.p95Scroll ??
+            percentile(stats.scrollDurations, 0.95),
+        maxScrollDuration: stats.maxScrollDuration,
         rowsAdvanced: stats.rowsAdvanced,
         rendersPerSec,
         rowsPerSec,

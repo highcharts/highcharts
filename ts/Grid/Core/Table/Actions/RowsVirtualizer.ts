@@ -86,7 +86,7 @@ class RowsVirtualizer {
     /**
      * Reuse pool for rows that are currently out of viewport.
      */
-    private rowPool: TableRow[] = [];
+    private readonly rowPool: TableRow[] = [];
 
     /**
      * Flag indicating if a scroll update is queued for the next animation
