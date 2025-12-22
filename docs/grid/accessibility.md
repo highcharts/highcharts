@@ -98,3 +98,62 @@ caption: {
     text: "<h3>This is the caption</h3>";
 }
 ```
+
+## Screen reader regions
+
+There is full support for screen reader regions that are placed before and after the Grid. These regions provide additional context to screen reader users before or after the Grid content.
+
+### Before-Grid screen reader region
+
+You can configure the information text that is exposed to screen readers before the Grid using the `accessibility.screenReaderSection.beforeGridFormat` option. The format string is used to generate HTML with the information text.
+
+```js
+caption: {
+    text: '<h2>Sales Data</h2>'
+},
+description: {
+    text: 'Monthly sales data for different products.'
+},
+accessibility: {
+    screenReaderSection: {
+        beforeGridFormat:
+            '<div>{gridTitle}</div>' +
+            '<div>{gridDescription}</div>' +
+            '<div>This Grid contains {rowCount} rows and {columnCount} columns.</div>'
+    }
+}
+```
+
+Available template variables:
+- `{gridTitle}`: The Grid caption/title (stripped of HTML tags).
+- `{gridDescription}`: The Grid description (stripped of HTML tags).
+- `{rowCount}`: Number of rows in the Grid.
+- `{columnCount}`: Number of columns in the Grid.
+
+If more detailed control is required, the `accessibility.screenReaderSection.beforeGridFormatter` option allows you to define a function that returns the HTML string, receiving the Grid instance as an argument.
+
+```js
+accessibility: {
+    screenReaderSection: {
+        beforeGridFormatter: function (grid) {
+            const rowCount = grid.dataTable?.rowCount || 0;
+            const colCount = grid.dataTable?.getColumnIds().length || 0;
+            return `<div>Custom Grid information: ${rowCount} rows, ${colCount} columns</div>`;
+        }
+    }
+}
+```
+
+### After-Grid screen reader region
+
+Similarly, you can configure content after the Grid using `accessibility.screenReaderSection.afterGridFormat` or `accessibility.screenReaderSection.afterGridFormatter`.
+
+```js
+accessibility: {
+    screenReaderSection: {
+        afterGridFormat: '<div>End of Grid.</div>'
+    }
+}
+```
+
+To remove the region altogether, set the format to an empty string.
