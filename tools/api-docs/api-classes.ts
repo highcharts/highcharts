@@ -75,12 +75,12 @@ async function main() {
                 classes[path].code.forEach((code: TSLib.CodeInfo): void => {
                     if (
                         code.kind === 'Class' &&
-                        // Must have doclet
-                        code.doclet &&
-                        // Must have description
-                        code.doclet.tags.description &&
+                        // Must have doclet & description
+                        code.doclet?.tags.description &&
                         // Ignore private
-                        code.doclet.tags.private === void 0
+                        code.doclet.tags.private === void 0 &&
+                        // Ignore internal
+                        code.doclet.tags.internal === void 0
                     ) {
                         filteredClassCodeInfo.push(code);
                         (code as any).parentPath = path;
@@ -323,8 +323,12 @@ async function main() {
                         memberDescription.push(
                             sanitize(member.doclet.tags.return.reduce(
                                 (acc, currVal) => {
-                                    return acc + (acc ? '\n\n': '') +
-                                        currVal.split('}')[1].trim();
+                                    return acc + (acc ? '\n\n': '') + (
+                                        currVal.split('}')[1] ?
+                                            currVal.split('}')[1].trim() :
+                                            // No {type} - just description
+                                            currVal.trim()
+                                    );
                                 },
                                 ''
                             ))
@@ -586,7 +590,9 @@ function filterMembers(code: TSLib.ClassInfo): void {
             // Allow if has doclet
             (member as any).doclet &&
             // Ignore private
-            (member as any).doclet.tags?.private === void 0
+            (member as any).doclet.tags?.private === void 0 &&
+            // Ignore internal
+            (member as any).doclet.tags?.internal === void 0
         ) {
             filteredMembers.push(member);
         }
@@ -610,8 +616,8 @@ function getMembersFromBody(
 ): Array<TSLib.FunctionInfo|TSLib.PropertyInfo> {
     const members: Array<TSLib.FunctionInfo|TSLib.PropertyInfo> = [];
     for (const doclet of body) {
-        // Skip private
-        if (doclet.tags.private) {
+        // Skip private & internal
+        if (doclet.tags.private || doclet.tags.internal) {
             continue;
         }
 
@@ -643,7 +649,8 @@ async function buildStructure() {
  */
 function descriptionFromTags(
     tags: Record<string,Array<string>>,
-    paramsNames: Array<string> = []
+    paramsNames: Array<string> = [],
+    x?: any
 ): Array<string> {
     const description: Array<string> = [];
 
@@ -654,20 +661,46 @@ function descriptionFromTags(
     if (tags.param) {
         const params = [];
         tags.param.forEach((param: string) => {
-            const paramRegex = /{([^}]+)}\s+(\S+)\s*(.*)/,
-                parts = param.match(paramRegex) || [],
-                paramInfo = parts.length < 2 ? void 0 :
-                    [
-                        '| `' + parts[2] + '`', // Name
-                        linkAndFormat(parts[1]), // Type
-                        parts[3] // Description
-                    ].join(' | ') + ' |';
+            // @param {Highcharts.type} name Description.
+            let paramPattern = /{([^}]+)}\s+(\S+)\s*(.*)/,
+                parts = param.match(paramPattern),
+                name: string;
 
-            if (!paramInfo) {
-                console.warn('Regex failed for param: ', param);
+            if (!parts) {
+                // @param name Description.
+                paramPattern = /(\S+)\s*(.*)/;
+                parts = param.match(paramPattern);
+
+                // Remap for consistency
+                parts = [
+                    parts[0],
+                    'any', // TODO: get via TS AST
+                    parts[1],
+                    parts[2]
+                ];
             }
-            paramsNames.push(parts[2]);
-            params.push(paramInfo || sanitize(param));
+            name = parts[2];
+
+            const paramInfo = [
+                '| `' + name + '`',
+                linkAndFormat(parts[1]), // Type
+                parts[3] // Description
+            ].join(' | ') + ' |';
+
+            // Debug help. (In case of a failure the code fails earlier anyway.)
+            // if (!paramInfo) {
+            //     console.warn(
+            //         `Regex failed for param (${parts.length} parts): `,
+            //         '\x1b[32m',
+            //         param,
+            //         '\x1b[42m',
+            //         JSON.stringify(parts),
+            //         '\x1b[0m'
+            //     );
+            // }
+
+            paramsNames.push(name);
+            params.push(paramInfo);
         });
         description.push(
             '**Parameters:**\n',
@@ -676,6 +709,7 @@ function descriptionFromTags(
             params.join('\n')
         );
     }
+
     if (tags.example) {
         tags.example.forEach((example: string) => {
             description.push(
@@ -684,6 +718,7 @@ function descriptionFromTags(
             );
         });
     }
+
     if (tags.since) {
         tags.since.forEach((since: string) => {
             description.push(
