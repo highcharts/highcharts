@@ -4,24 +4,42 @@ tags: ["grid-pro"]
 
 # Events
 
-**Highcharts Grid Pro** supports event listeners that can be added to the [columnDefaults.events](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.Options#columnDefaults) object or a particular column. These listeners will call functions when interacting with the grid.
+**Highcharts Grid Pro** supports event listeners that are triggered when interacting with the grid. Events are configured at different levels depending on their scope:
 
-Please note that the root [events property](https://api.highcharts.com/dashboards/#interfaces/Grid_Options.IndividualColumnOptions.html#events) has been deprecated.
+- **Grid-level events** are configured in the `events` property at the root of grid options
+- **Column-level events** are configured in `columnDefaults.events` or `columns[].events`
+- **Cell events** are configured in `columnDefaults.cells.events` or `columns[].cells.events`
+- **Header events** are configured in `columnDefaults.header.events` or `columns[].header.events`
+- **Pagination events** are configured in `pagination.events`
 
-The available events are:
+## Grid-level events
 
-## grid
+Configured in `events` at the root of grid options:
 
 | **Event Name**         | **Description**                                               | **Function Context**  |
 |------------------------|---------------------------------------------------------------|-----------------------|
 | `beforeLoad`           | Triggered before the grid is fully loaded for the first time. | `this: Grid`          |
 | `afterLoad`            | Triggered after the grid is fully loaded for the first time.  | `this: Grid`          |
-| `beforeUpdate`         | Triggered before the grid is updated.                         | `this: Grid`          |
-| `afterUpdate`          | Triggered after the grid is updated.                          | `this: Grid`          |
-| `beforeRedraw`         | Triggered before the grid is redrawn after an update.         | `this: Grid`          |
-| `afterRedraw`          | Triggered after the grid is redrawn after an update.          | `this: Grid`          |
+| `beforeUpdate`         | Triggered before grid options are updated. | `this: Grid`          |
+| `afterUpdate`          | Triggered after grid options are updated. | `this: Grid`          |
+| `beforeRedraw`         | Triggered before the grid DOM is redrawn. Only fired when `update()` is called with `redraw = true` or when `redraw()` is called directly. | `this: Grid`          |
+| `afterRedraw`          | Triggered after the grid DOM is redrawn. Only fired when `update()` is called with `redraw = true` or when `redraw()` is called directly. | `this: Grid`          |
 
-## cell
+## Column-level events
+
+Configured in `columnDefaults.events` or `columns[].events`:
+
+| **Event Name**     | **Description**                                          | **Function Context** |
+|--------------------|----------------------------------------------------------|-----------------------|
+| `afterResize`      | Triggered after resizing a column.                       | `this: Column`        |
+| `beforeSort`       | Triggered before sorting a column.                       | `this: Column`        |
+| `afterSort`        | Triggered after sorting a column.                        | `this: Column`        |
+| `beforeFilter`     | Triggered before filtering a column.                     | `this: Column`        |
+| `afterFilter`      | Triggered after filtering a column.                      | `this: Column`        |
+
+## Cell events
+
+Configured in `columnDefaults.cells.events` or `columns[].cells.events`:
 
 | **Event Name**     | **Description**                                          | **Function Context** |
 |--------------------|----------------------------------------------------------|-----------------------|
@@ -32,24 +50,18 @@ The available events are:
 | `mouseOver`        | Triggered when the mouse is hovered over a cell.         | `this: Cell`          |
 | `mouseOut`         | Triggered when the mouse leaves a cell.                  | `this: Cell`          |
 
-## column
+## Header events
 
-| **Event Name**     | **Description**                                          | **Function Context** |
-|--------------------|----------------------------------------------------------|-----------------------|
-| `afterResize`      | Triggered after resizing a column.                       | `this: Column`        |
-| `beforeSort`       | Triggered before sorting a column.                       | `this: Column`        |
-| `afterSort`        | Triggered after sorting a column.                        | `this: Column`        |
-| `beforeFilter`     | Triggered before filtering a column.                     | `this: Column`        |
-| `afterFilter`      | Triggered after filtering a column.                      | `this: Column`        |
-
-## header
+Configured in `columnDefaults.header.events` or `columns[].header.events`:
 
 | **Event Name**     | **Description**                                          | **Function Context** |
 |--------------------|----------------------------------------------------------|-----------------------|
 | `click`            | Triggered after clicking on a column header.             | `this: Column`        |
 | `afterRender`      | Triggered after init of a column header.                 | `this: Column`        |
 
-## pagination
+## Pagination events
+
+Configured in `pagination.events`:
 
 | **Event Name**     | **Description**                                          | **Function Context** |
 |--------------------|----------------------------------------------------------|-----------------------|
@@ -58,9 +70,11 @@ The available events are:
 | `beforePageSizeChange` | Triggered before the page size setting changes.      | `this: Pagination`    |
 | `afterPageSizeChange`  | Triggered after the page size setting changes.       | `this: Pagination`    |
 
-# Example
+# Examples
 
-Here is a sample code that demonstrates how to use these event callbacks in the `events` object:
+## Grid-level events
+
+Grid-level events are configured at the root `events` property:
 
 ```js
 {
@@ -71,23 +85,32 @@ Here is a sample code that demonstrates how to use these event callbacks in the 
         afterLoad: function () {
             console.log('Grid finished loading and is ready to use.');
         },
-        beforeUpdate: function () {
-            console.log('Grid update started.');
+        beforeUpdate: function (e) {
+            console.log('Grid update started with options:', e.options);
         },
-        afterUpdate: function () {
-            console.log('Grid update finished.');
+        afterUpdate: function (e) {
+            console.log('Grid update finished with options:', e.options);
         },
         beforeRedraw: function () {
-            console.log('Grid redraw started.');
+            console.log('Grid DOM redraw started.');
         },
         afterRedraw: function () {
-            console.log('Grid redraw finished.');
+            console.log('Grid DOM redraw finished.');
         }
-    },
+    }
+}
+```
+
+## Column-level events
+
+Column-level events can be configured in `columnDefaults.events` (applies to all columns) or in individual column definitions:
+
+```js
+{
     columnDefaults: {
         events: {
             afterResize: function () {
-                console.log('Column resized:', this);
+                console.log('Column resized:', this.id);
             },
             beforeSort: function () {
                 console.log('Before sorting column:', this.id);
@@ -101,11 +124,30 @@ Here is a sample code that demonstrates how to use these event callbacks in the 
             afterFilter: function () {
                 console.log('After filtering column:', this.id);
             }
-        },
+        }
+    },
+    columns: [{
+        id: 'columnId',
+        events: {
+            afterResize: function () {
+                // Override default for this specific column
+            }
+        }
+    }]
+}
+```
+
+## Cell events
+
+Cell events can be configured in `columnDefaults.cells.events` (applies to all cells in all columns) or in individual column definitions:
+
+```js
+{
+    columnDefaults: {
         cells: {
             events: {
                 afterEdit: function () {
-                    console.log('Cell value set:', this);
+                    console.log('Cell value edited:', this);
                 },
                 afterRender: function () {
                     console.log('Cell value:', this);
@@ -123,62 +165,73 @@ Here is a sample code that demonstrates how to use these event callbacks in the 
                     console.log('Mouse out of cell:', this);
                 }
             }
-        },
-        header: {
+        }
+    },
+    columns: [{
+        id: 'columnId',
+        cells: {
             events: {
                 click: function () {
-                    console.log('Header clicked:', this);
+                    // Override default for this specific column's cells
                 }
             }
         }
-    }
+    }]
 }
 ```
 
-You can also declare all events to the dedicated column:
+## Header events
+
+Header events can be configured in `columnDefaults.header.events` (applies to all headers) or in individual column definitions:
 
 ```js
-columns: [{
-    id: 'columnId',
-    events: {
-        afterResize: function () {
-            // callback
-        }
-    },
-    cells: {
-        events: {
-            click: function () {
-                // callback
+{
+    columnDefaults: {
+        header: {
+            events: {
+                click: function () {
+                    console.log('Header clicked:', this.id);
+                },
+                afterRender: function () {
+                    console.log('Header rendered:', this.id);
+                }
             }
         }
     },
-    header: {
-        events: {
-            click: function () {
-                // callback
+    columns: [{
+        id: 'columnId',
+        header: {
+            events: {
+                click: function () {
+                    // Override default for this specific column's header
+                }
             }
         }
-    }
-}]
+    }]
+}
 ```
 
-Pagination events are configured at the grid level:
+## Pagination events
+
+Pagination events are configured in `pagination.events`:
 
 ```js
-pagination: {
-    enabled: true,
-    events: {
-        beforePageChange: function (e) {
-            // callback
-        },
-        afterPageChange: function (e) {
-            // callback
-        },
-        beforePageSizeChange: function (e) {
-            // callback
-        },
-        afterPageSizeChange: function (e) {
-            // callback
+{
+    pagination: {
+        enabled: true,
+        events: {
+            beforePageChange: function (e) {
+                console.log('Page changing from', e.currentPage, 'to', e.nextPage);
+            },
+            afterPageChange: function (e) {
+                console.log('Page changed to', e.currentPage);
+            },
+            beforePageSizeChange: function (e) {
+                console.log('Page size changing from', e.pageSize, 'to', e.newPageSize);
+            },
+            afterPageSizeChange: function (e) {
+                console.log('Page size changed to', e.pageSize);
+            }
         }
     }
 }
