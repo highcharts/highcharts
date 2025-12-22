@@ -51,6 +51,43 @@ class SortToolbarButton extends ToolbarButton {
 
     private sortPriorityIndicator?: HTMLElement;
 
+    private getColumnLabel(): string {
+        const column = this.toolbar?.column;
+        const label = (
+            column?.header?.headerContent?.textContent ||
+            column?.header?.value ||
+            column?.id ||
+            ''
+        ).trim();
+        return label || column?.id || '';
+    }
+
+    private updateA11yLabel(
+        order?: ('asc'|'desc'),
+        priority?: number
+    ): void {
+        const button = this.wrapper?.querySelector('button');
+        if (!button) {
+            return;
+        }
+
+        const columnLabel = this.getColumnLabel();
+        let label = 'Sort';
+        if (columnLabel) {
+            label += ` ${columnLabel}`;
+        }
+
+        if (order) {
+            label += `, ${order === 'asc' ? 'ascending' : 'descending'}`;
+        }
+
+        if (priority) {
+            label += `, priority ${priority}`;
+        }
+
+        button.setAttribute('aria-label', label);
+    }
+
 
     /* *
      *
@@ -133,6 +170,7 @@ class SortToolbarButton extends ToolbarButton {
             this.setActive(false);
             this.setIcon('upDownArrows');
             this.renderSortPriorityIndicator();
+            this.updateA11yLabel();
             return;
         }
 
@@ -144,11 +182,13 @@ class SortToolbarButton extends ToolbarButton {
         const sortIndex = sortings.findIndex((sorting): boolean =>
             sorting.columnId === column.id
         );
-        this.renderSortPriorityIndicator(
+        const priority = (
             sortings.length > 1 && sortIndex !== -1 ?
                 sortIndex + 1 :
                 void 0
         );
+        this.renderSortPriorityIndicator(priority);
+        this.updateA11yLabel(columnSorting.order, priority);
     }
 
     protected override addEventListeners(): void {

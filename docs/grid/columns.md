@@ -124,13 +124,22 @@ The optional `sorting` object consists of three configuration options:
 
 - **`enabled`**: A boolean that determines whether the end user can sort a column by clicking on the column header.
 
-- **`order`**: Specifies the initial sorting order for a column. It can be set to `'asc'` (ascending) or `'desc'` (descending). Only the last one will be considered if `order` is defined in multiple columns.
+- **`order`**: Specifies the initial sorting order for a column. It can be set to `'asc'` (ascending) or `'desc'` (descending). If `order` is defined in multiple columns, the last column with an order becomes the primary sort, and earlier columns become secondary.
 
 - **`compare`**: Custom compare function to sort the column values. If not set, the default sorting behavior is used. It should return a number indicating whether the first value (`a`) is less than (`-1`), equal to (`0`), or greater than (`1`) the second value (`b`).
 
 See the [API reference](https://api.highcharts.com/dashboards/#interfaces/Grid_Options.ColumnOptions#sorting).
 
 When the `enabled` option is `true`, clicking the header will toggle the sorting order.
+
+To build a multi-column sort, hold Shift while clicking additional headers. The order is shown as a priority indicator when more than one column is active. You can also set multi-column sorting programmatically:
+
+```js
+grid.querying.sorting.setSorting([
+    { columnId: "group", order: "asc" },
+    { columnId: "score", order: "asc" }
+]);
+```
 
 The sorting options are available for individual columns, but the default value for `enabled` can also be set in `columnDefaults.sorting.enabled`.
 
