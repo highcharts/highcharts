@@ -32,7 +32,7 @@ import type ControlTargetOptions from './ControlTargetOptions';
 import type CoreOptions from '../../Core/Options';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type {
-    DataLabelOverflowValue
+    DataLabelsOverflowValue
 } from '../../Core/Series/DataLabelOptions';
 import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
 import type { DeepPartial } from '../../Shared/Types';
@@ -437,7 +437,7 @@ export interface AnnotationLabelOptionsOptions {
      *
      * @default justify
      */
-    overflow?: DataLabelOverflowValue;
+    overflow?: DataLabelsOverflowValue;
 
     /**
      * When either the borderWidth or the backgroundColor is
