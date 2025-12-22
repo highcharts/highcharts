@@ -469,10 +469,10 @@ export class Grid {
             this.userOptions
         );
 
-        this.viewport?.columns.forEach((column: Column):void => {
+        this.viewport?.columns.forEach((column: Column): void => {
             column.options = createOptionsProxy(
-                grid.columnOptionsMap?.[column.id]?.options ?? {},
-                grid.options?.columnDefaults
+                this.columnOptionsMap?.[column.id]?.options ?? {},
+                this.options?.columnDefaults
             );
         });
 
