@@ -6,11 +6,11 @@ tags: ["grid-pro"]
 
 **Highcharts Grid Pro** supports event listeners that are triggered when interacting with the grid. Events are configured at different levels depending on their scope:
 
-- **Grid-level events** are configured in the `events` property at the root of grid options
-- **Column-level events** are configured in `columnDefaults.events` or `columns[].events`
-- **Cell events** are configured in `columnDefaults.cells.events` or `columns[].cells.events`
-- **Header events** are configured in `columnDefaults.header.events` or `columns[].header.events`
-- **Pagination events** are configured in `pagination.events`
+- **Grid-level events** are configured in the [events](https://api.highcharts.com/grid/#interfaces/Grid_Pro_GridEvents.GridEvents) property at the root of grid options
+- **Column-level events** are configured in [columnDefaults.events](https://api.highcharts.com/grid/#interfaces/Grid_Pro_GridEvents.ColumnEvents) or [columns[].events](https://api.highcharts.com/grid/#interfaces/Grid_Pro_GridEvents.ColumnEvents)
+- **Cell events** are configured in [columnDefaults.cells.events](https://api.highcharts.com/grid/#interfaces/Grid_Pro_GridEvents.CellEvents) or [columns[].cells.events](https://api.highcharts.com/grid/#interfaces/Grid_Pro_GridEvents.CellEvents)
+- **Header events** are configured in [columnDefaults.header.events](https://api.highcharts.com/grid/#interfaces/Grid_Pro_GridEvents.HeaderEvents) or [columns[].header.events](https://api.highcharts.com/grid/#interfaces/Grid_Pro_GridEvents.HeaderEvents)
+- **Pagination events** are configured in [pagination.events](https://api.highcharts.com/grid/#interfaces/Grid_Core_Pagination_PaginationOptions.PaginationOptions#events)
 
 ## Grid-level events
 
