@@ -160,7 +160,7 @@ export class Column {
                 options: columnOptions
             };
         }
-        
+
         this.options = createOptionsProxy(
             grid.columnOptionsMap?.[id]?.options ?? {},
             grid.options?.columnDefaults

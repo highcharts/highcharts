@@ -32,6 +32,7 @@ import type DataTableOptions from '../../Data/DataTableOptions';
 import type { ColumnDataType, NoIdColumnOptions } from './Table/Column';
 import type Popup from './UI/Popup.js';
 import type { DeepPartial } from '../../Shared/Types';
+import type Column from './Table/Column';
 
 import Accessibility from './Accessibility/Accessibility.js';
 import AST from '../../Core/Renderer/HTML/AST.js';
@@ -468,7 +469,7 @@ export class Grid {
             this.userOptions
         );
 
-        this.viewport?.columns.forEach((column) => {
+        this.viewport?.columns.forEach((column: Column):void => {
             column.options = createOptionsProxy(
                 grid.columnOptionsMap?.[column.id]?.options ?? {},
                 grid.options?.columnDefaults
