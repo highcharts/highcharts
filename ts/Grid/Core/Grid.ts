@@ -45,7 +45,12 @@ import Globals from './Globals.js';
 import TimeBase from '../../Shared/TimeBase.js';
 import Pagination from './Pagination/Pagination.js';
 
-const { makeHTMLElement, setHTMLContent } = GridUtils;
+const {
+    makeHTMLElement,
+    setHTMLContent,
+    createOptionsProxy
+} = GridUtils;
+
 const {
     defined,
     diffObjects,
@@ -433,6 +438,7 @@ export class Grid {
         newOptions: Partial<Options>,
         oneToOne = false
     ): DeepPartial<NonArrayOptions> {
+        const grid = this;
         // Operate on a copy of the options argument
         newOptions = merge(newOptions);
 
@@ -461,6 +467,13 @@ export class Grid {
             this.options ?? defaultOptions,
             this.userOptions
         );
+
+        this.viewport?.columns.forEach((column) => {
+            column.options = createOptionsProxy(
+                grid.columnOptionsMap?.[column.id]?.options ?? {},
+                grid.options?.columnDefaults
+            );
+        });
 
         return diff;
     }
@@ -803,15 +816,6 @@ export class Grid {
 
         if ('width' in columnDiff) {
             vp.columnResizing.isDirty = true;
-
-            // Update width before deleting new width option in columnDiff
-            if (column) {
-                column.options.width = columnDiff.width;
-            } else {
-                for (const col of vp.columns) {
-                    col.options.width = columnDiff.width;
-                }
-            }
         }
         delete columnDiff.width;
 

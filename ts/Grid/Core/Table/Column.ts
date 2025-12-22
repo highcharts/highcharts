@@ -96,7 +96,7 @@ export class Column {
      * The options of the column as a proxy that provides merged access to
      * original options and defaults if not defined in the individual options.
      */
-    public readonly options: NoIdColumnOptions;
+    public options: NoIdColumnOptions;
 
     /**
      * The index of the column in the viewport.
@@ -117,8 +117,6 @@ export class Column {
      * Filtering column module.
      */
     public filtering?: ColumnFiltering;
-
-
     /* *
     *
     *  Constructor
@@ -162,7 +160,7 @@ export class Column {
                 options: columnOptions
             };
         }
-
+        
         this.options = createOptionsProxy(
             grid.columnOptionsMap?.[id]?.options ?? {},
             grid.options?.columnDefaults
