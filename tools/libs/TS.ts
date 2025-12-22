@@ -1555,7 +1555,8 @@ function getDocletInfosBetween (
                     '}'
                 );
             case TS.SyntaxKind.JSDocText:
-                return tag.getText();
+                // Text is already cleaned. getText keeps comment's '*'.
+                return (tag as TS.JSDocText).text;
             default:
                 return tag
                     .getText()
