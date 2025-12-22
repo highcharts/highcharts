@@ -439,7 +439,6 @@ export class Grid {
         newOptions: Partial<Options>,
         oneToOne = false
     ): DeepPartial<NonArrayOptions> {
-        const grid = this;
         // Operate on a copy of the options argument
         newOptions = merge(newOptions);
 
