@@ -803,6 +803,15 @@ export class Grid {
 
         if ('width' in columnDiff) {
             vp.columnResizing.isDirty = true;
+
+            // Update width before deleting new width option in columnDiff
+            if (column) {
+                column.options.width = columnDiff.width;
+            } else {
+                for (const col of vp.columns) {
+                    col.options.width = columnDiff.width;
+                }
+            }
         }
         delete columnDiff.width;
 
