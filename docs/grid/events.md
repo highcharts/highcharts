@@ -18,6 +18,8 @@ The available events are:
 | `afterLoad`            | Triggered after the grid is fully loaded for the first time.  | `this: Grid`          |
 | `beforeUpdate`         | Triggered before the grid is updated.                         | `this: Grid`          |
 | `afterUpdate`          | Triggered after the grid is updated.                          | `this: Grid`          |
+| `beforeRedraw`         | Triggered before the grid is redrawn after an update.         | `this: Grid`          |
+| `afterRedraw`          | Triggered after the grid is redrawn after an update.          | `this: Grid`          |
 
 ## cell
 
@@ -74,6 +76,12 @@ Here is a sample code that demonstrates how to use these event callbacks in the 
         },
         afterUpdate: function () {
             console.log('Grid update finished.');
+        },
+        beforeRedraw: function () {
+            console.log('Grid redraw started.');
+        },
+        afterRedraw: function () {
+            console.log('Grid redraw finished.');
         }
     },
     columnDefaults: {
