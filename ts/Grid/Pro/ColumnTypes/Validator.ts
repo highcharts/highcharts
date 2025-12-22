@@ -138,6 +138,18 @@ class Validator {
             },
             notification:
                 'Value should be a list of numbers separated by commas.'
+        },
+        json: {
+            validate: function ({ rawValue }): boolean {
+                try {
+                    JSON.parse(rawValue);
+                    return true;
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                } catch (e) {
+                    return false;
+                }
+            },
+            notification: 'Value should be a valid JSON.'
         }
     };
 
@@ -434,6 +446,7 @@ export interface RulesRegistryType {
     ignoreCaseUnique: RuleDefinition;
     unique: RuleDefinition;
     arrayNumber: RuleDefinition;
+    json: RuleDefinition;
 }
 
 /**
