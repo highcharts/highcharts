@@ -20,7 +20,7 @@ Configured in `events` at the root of grid options:
 |------------------------|---------------------------------------------------------------|-----------------------|
 | `beforeLoad`           | Triggered before the grid is fully loaded for the first time. | `this: Grid`          |
 | `afterLoad`            | Triggered after the grid is fully loaded for the first time.  | `this: Grid`          |
-| `beforeUpdate`         | Triggered before grid options are updated. | `this: Grid`          |
+| `beforeUpdate`         | Triggered before grid options are updated via `update()`. | `this: Grid`          |
 | `afterUpdate`          | Triggered after grid options are updated via `update()`. | `this: Grid`          |
 | `beforeRedraw`         | Triggered before the grid DOM is redrawn. Fired by default when `update()` is called, unless `redraw` is set to `false`. | `this: Grid`          |
 | `afterRedraw`          | Triggered after the grid DOM is redrawn. Fired by default when `update()` is called, unless `redraw` is set to `false`. | `this: Grid`          |
