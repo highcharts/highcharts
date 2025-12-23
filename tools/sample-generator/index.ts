@@ -9,10 +9,13 @@
  * - `node tools/sample-generator/index.ts`
  */
 
+import type { SampleGeneratorConfig } from './config.ts';
+
 import colors from 'colors/safe.js';
 import { promises as fs } from 'fs';
 import { loadExportedTypes } from './load-types.ts';
 import { exec } from 'child_process';
+import config from './config.ts';
 
 // Import Highcharts and modules so that we can read default options
 import Highcharts from '../../code/esm/highcharts.src.js';
@@ -40,13 +43,6 @@ interface MetaData {
 }
 
 type MetaList = Array<MetaData>;
-
-const paths = [
-    'legend.enabled=true',
-    'legend.align=center',
-    'legend.x',
-    'legend.backgroundColor=#efefef',
-];
 
 const defaultOptions = Highcharts.getOptions();
 
@@ -190,6 +186,7 @@ function extendObject(base: any, path: string, nodeValue: any) {
 
 // Generate the chart configuration with the specified paths
 function generateChartConfig(metaList: MetaList) {
+    const paths = metaList.map(meta => meta.path);
     if (!metaList.length) {
         throw new Error(`No nodes found for paths: ${paths.join(', ')}`);
     }
@@ -340,12 +337,21 @@ export async function getDemoHTML(metaList?: MetaList) {
         ));
     }
 
+    /*
+    const header = generateTitle(paths)
+        .replace('Demo of ', '')
+        .replace('<em>', '')
+        .replace('</em>', '');
+    */
+
     // Add the config
     if (controls.length > 0) {
         html = html.replace(
             '<!-- CONTROLS_PLACEHOLDER -->',
             `<highcharts-controls>
-    ${controls.join('\n  ')}
+    <highcharts-group header="Update options">
+      ${controls.join('\n      ')}
+    </highcharts-group>
   </highcharts-controls>`
         );
     }
@@ -371,11 +377,11 @@ export async function getDemoCSS() {
     return css;
 }
 
-export async function getDemoDetails() {
+export async function getDemoDetails(config: SampleGeneratorConfig) {
     let details = await loadTemplate('demo.details');
 
     details = details
-        .replace('Highcharts Demo', generateTitle(paths))
+        .replace('Highcharts Demo', generateTitle(config.paths))
         .replace('<em>', '')
         .replace('</em>', '');
 
@@ -383,10 +389,10 @@ export async function getDemoDetails() {
 }
 
 // Function to save the generated configuration to Highcharts Samples
-export async function saveDemoFile() {
-    const metaList = await getPathMeta(paths);
+export async function saveDemoFile(config: SampleGeneratorConfig) {
+    const metaList = await getPathMeta(config.paths);
     if (!metaList.length) {
-        throw new Error(`No nodes found for paths: ${paths.join(', ')}`);
+        throw new Error(`No nodes found for paths: ${config.paths.join(', ')}`);
     }
 
     // Build all assets in parallel based on per-path mainTypes
@@ -394,7 +400,7 @@ export async function saveDemoFile() {
         getDemoHTML(metaList),
         getDemoCSS(),
         getDemoTS(metaList),
-        getDemoDetails()
+        getDemoDetails(config)
     ]);
 
     await fs.mkdir(
@@ -423,6 +429,7 @@ export async function saveDemoFile() {
     ]);
 
     // Format the generated demo.ts file with ESLint
+    console.log(colors.blue('Formatting demo.ts with ESLint...'));
     await new Promise((resolve, reject) => {
         exec(
             [
@@ -447,6 +454,14 @@ export async function saveDemoFile() {
             }
         );
     });
+    console.log(colors.green('Demo files generated successfully.'));
 }
 
-await saveDemoFile();
+// Run the sample generator with the specified config, but only when this
+// file is executed directly (not imported as a module)
+if (
+    import.meta.url === process.argv[1] ||
+    import.meta.url === `file://${process.argv[1]}`
+) {
+    await saveDemoFile(config);
+}
