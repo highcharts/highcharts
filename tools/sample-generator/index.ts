@@ -12,6 +12,7 @@
 import type { SampleGeneratorConfig } from './config.ts';
 
 import colors from 'colors/safe.js';
+import { ESLint } from 'eslint';
 import { promises as fs } from 'fs';
 import { loadExportedTypes } from './load-types.ts';
 import { exec } from 'child_process';
@@ -430,22 +431,9 @@ export async function saveDemoFile(config: SampleGeneratorConfig) {
 
     // Write all files in parallel
     await Promise.all([
-        fs.writeFile(
-            `${outputDir}/demo.html`,
-            html
-        ),
-        fs.writeFile(
-            `${outputDir}/demo.css`,
-            css
-        ),
-        fs.writeFile(
-            `${outputDir}/demo.ts`,
-            ts
-        ),
-        fs.writeFile(
-            `${outputDir}/demo.details`,
-            details
-        )
+        fs.writeFile(`${outputDir}/demo.html`, html),
+        fs.writeFile(`${outputDir}/demo.css`, css),
+        fs.writeFile(`${outputDir}/demo.details`, details)
     ]);
 
     // If demo.ts is successfully written, delete demo.js if it exists
@@ -462,30 +450,16 @@ export async function saveDemoFile(config: SampleGeneratorConfig) {
     if (executedDirectly) {
         console.log(colors.blue('Formatting demo.ts with ESLint...'));
     }
-    await new Promise((resolve, reject) => {
-        exec(
-            [
-                'npx',
-                'eslint',
-                '--fix',
-                `${outputDir}/demo.ts`
-            ].join(' '),
-            (error, stdout, stderr) => {
-                if (error) {
-                    console.error(`Error formatting demo.ts: ${error.message}`);
-                    reject(error);
-                    return;
-                }
-                if (stderr) {
-                    console.error(`ESLint stderr: ${stderr}`);
-                }
-                if (stdout) {
-                    console.log(`ESLint stdout: ${stdout}`);
-                }
-                resolve(null);
-            }
-        );
-    });
+
+    const eslint = new ESLint({ fix: true });
+    const results = await eslint.lintText(
+        ts, {
+            filePath: `${outputDir}/demo.ts`
+        }
+    );
+
+    await fs.writeFile(`${outputDir}/demo.ts`, results[0].output);
+
     if (executedDirectly) {
         console.log(colors.green('Demo files generated successfully.'));
     }
