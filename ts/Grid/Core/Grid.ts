@@ -860,7 +860,9 @@ export class Grid {
         const flags = this.dirtyFlags;
 
         if (flags.has('grid')) {
-            return await this.render();
+            await this.render();
+            fireEvent(this, 'afterRedraw');
+            return;
         }
 
         const { viewport: vp, pagination } = this;
