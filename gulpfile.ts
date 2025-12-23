@@ -49,6 +49,7 @@ Gulp.registry(new GulpForwardReference());
     'dist-upload-studies',
     'dist-upload-more',
     'dist-verify',
+    'generate-samples',
     'grid/api-docs',
     'grid/cypress',
     'jsdoc',

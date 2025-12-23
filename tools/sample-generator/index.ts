@@ -430,6 +430,14 @@ export async function saveDemoFile(config: SampleGeneratorConfig) {
         )
     ]);
 
+    // If demo.ts is successfully written, delete demo.js if it exists
+    try {
+        await fs.unlink(`${outputDir}/demo.js`);
+        console.log(colors.blue('Deleted obsolete demo.js file.'));
+    } catch {
+        // File does not exist, no action needed
+    }
+
     // Format the generated demo.ts file with ESLint
     console.log(colors.blue('Formatting demo.ts with ESLint...'));
     await new Promise((resolve, reject) => {
@@ -438,7 +446,7 @@ export async function saveDemoFile(config: SampleGeneratorConfig) {
                 'npx',
                 'eslint',
                 '--fix',
-                '../highcharts/samples/highcharts/studies/sample-gen/demo.ts'
+                `${outputDir}/demo.ts`
             ].join(' '),
             (error, stdout, stderr) => {
                 if (error) {
