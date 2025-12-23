@@ -291,7 +291,9 @@ class Series {
     public static readonly registerType = SeriesRegistry.registerSeriesType;
 
     /**
-     * Properties to keep after update
+     * Properties to keep after update.
+     *
+     * @internal
      */
     public static keepProps = [
         'colorIndex',
@@ -303,7 +305,9 @@ class Series {
 
     /**
      * Properties to keep after update if the point instances should be
-     * preserved
+     * preserved.
+     *
+     * @internal
      */
     public static keepPropsForPoints = [
         'data',

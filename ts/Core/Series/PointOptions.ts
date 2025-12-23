@@ -38,9 +38,7 @@ import type { SymbolKey } from '../Renderer/SVG/SymbolType';
  *
  * */
 
-export interface PointClickEvent extends PointerEvent {
-    point: Point;
-}
+// TODO: PointEventsOptions and its children seems big enough for its own file
 
 /**
  * Helper interface for series types to add options to all series events
@@ -50,16 +48,162 @@ export interface PointClickEvent extends PointerEvent {
  * file.
  */
 export interface PointEventsOptions {
-    click?: EventCallback<Point, PointClickEvent>;
+    click?: PointClickCallbackFunction;
     drag?: EventCallback<Point, AnyRecord>;
     dragStart?: EventCallback<Point, (MouseEvent&AnyRecord)>;
     drop?: EventCallback<Point, AnyRecord>;
-    mouseOut?: EventCallback<Point, PointerEvent>;
-    mouseOver?: EventCallback<Point, PointerEvent>;
-    remove?: EventCallback<Point, Event>;
-    select?: EventCallback<Point, PointSelectEvent>;
-    unselect?: EventCallback<Point, PointUnselectEvent>;
-    update?: EventCallback<Point, PointUpdateEvent>;
+    mouseOut?: PointMouseOutCallbackFunction;
+    mouseOver?: PointMouseOverCallbackFunction;
+    remove?: PointRemoveCallbackFunction;
+
+    /**
+     * Fires when the point is selected either programmatically or following a
+     * click on the point. One parameter, `event`, is passed to the function.
+     * Returning `false` cancels the operation.
+     */
+    select?: PointSelectCallbackFunction;
+
+    /**
+     * Fires when the point is unselected either programmatically or following a
+     * click on the point. One parameter, `event`, is passed to the function.
+     * Returning `false` cancels the operation.
+     */
+    unselect?: PointUnselectCallbackFunction;
+
+    update?: PointUpdateCallbackFunction;
+}
+
+/**
+ * Function callback when a series point is clicked. Return false to cancel the
+ * action.
+ *
+ * @callback Highcharts.PointClickCallbackFunction
+ *
+ * @param {Highcharts.Point} this
+ *        The point where the event occurred.
+ *
+ * @param {Highcharts.PointClickEvent} event
+ *        Event arguments.
+ */
+export type PointClickCallbackFunction = EventCallback<Point, PointClickEvent>;
+
+/**
+ * Gets fired when the mouse leaves the area close to the point.
+ *
+ * @callback Highcharts.PointMouseOutCallbackFunction
+ *
+ * @param {Highcharts.Point} this
+ *        Point where the event occurred.
+ *
+ * @param {global.PointerEvent} event
+ *        Event that occurred.
+ */
+export type PointMouseOutCallbackFunction = EventCallback<Point, PointerEvent>;
+
+/**
+ * Gets fired when the mouse enters the area close to the point.
+ *
+ * @callback Highcharts.PointMouseOverCallbackFunction
+ *
+ * @param {Highcharts.Point} this
+ *        Point where the event occurred.
+ *
+ * @param {global.Event} event
+ *        Event that occurred.
+ */
+export type PointMouseOverCallbackFunction = EventCallback<Point, PointerEvent>;
+
+/**
+ * Gets fired when the point is removed using the `.remove()` method.
+ *
+ * @callback Highcharts.PointRemoveCallbackFunction
+ *
+ * @param {Highcharts.Point} this
+ *        Point where the event occurred.
+ *
+ * @param {global.Event} event
+ *        Event that occurred.
+ */
+export type PointRemoveCallbackFunction = EventCallback<Point, Event>;
+
+/**
+ * Gets fired when the point is selected either programmatically or following a
+ * click on the point.
+ *
+ * @callback Highcharts.PointSelectCallbackFunction
+ *
+ * @param {Highcharts.Point} this
+ *        Point where the event occurred.
+ *
+ * @param {Highcharts.PointInteractionEventObject} event
+ *        Event that occurred.
+ */
+export type PointSelectCallbackFunction =
+    EventCallback<Point, PointInteractionEventObject>;
+
+/**
+ * Fires when the point is unselected either programmatically or following a
+ * click on the point.
+ *
+ * @callback Highcharts.PointUnselectCallbackFunction
+ *
+ * @param {Highcharts.Point} this
+ *        Point where the event occurred.
+ *
+ * @param {Highcharts.PointInteractionEventObject} event
+ *        Event that occurred.
+ */
+export type PointUnselectCallbackFunction =
+    EventCallback<Point, PointInteractionEventObject>;
+
+/**
+ * Gets fired when the point is updated programmatically through the `.update()`
+ * method.
+ *
+ * @callback Highcharts.PointUpdateCallbackFunction
+ *
+ * @param {Highcharts.Point} this
+ *        Point where the event occurred.
+ *
+ * @param {Highcharts.PointUpdateEventObject} event
+ *        Event that occurred.
+ */
+export type PointUpdateCallbackFunction =
+    EventCallback<Point, PointUpdateEvent>;
+
+/**
+ * Common information for a click event on a series point.
+ */
+export interface PointClickEvent extends PointerEvent {
+    /**
+     * Clicked point.
+     */
+    point: Point;
+}
+
+/**
+ * Information about the select/unselect event.
+ *
+ * @interface Highcharts.PointInteractionEventObject
+ * @extends global.Event
+ */
+export interface PointInteractionEventObject extends Event {
+    accumulate: boolean;
+}
+
+/**
+ * Information about the update event.
+ *
+ * @interface Highcharts.PointUpdateEventObject
+ * @extends global.Event
+ */
+export interface PointUpdateEvent {
+    /**
+     * Options data of the update event.
+     * @name Highcharts.PointUpdateEventObject#options
+     * @type {Highcharts.PointOptionsType}
+     */
+    options?: PointTypeOptions;
 }
 
 export interface PointMarkerOptions {
@@ -102,9 +246,26 @@ export interface PointOptions {
     legendSymbolColor?: ColorType;
 }
 
-export interface PointSelectEvent extends Event {
-    accumulate: boolean;
-}
+/**
+ * The generic point options for all series.
+ *
+ * In TypeScript you have to extend `PointOptionsObject` with an additional
+ * declaration to allow custom data options:
+ *
+ * ```
+ * declare interface PointOptionsObject {
+ *     customProperty: string;
+ * }
+ * ```
+ *
+ * @interface Highcharts.PointOptionsObject
+ */
+export type PointOptionsObject = PointOptions;
+
+/**
+ * Possible option types for a data point. Use `null` to indicate a gap.
+ */
+export type PointOptionsType = PointShortOptions | PointOptionsObject;
 
 export type PointShortOptions = (
     number|
@@ -146,14 +307,6 @@ export interface PointMarkerStateSelectOptions extends StateSelectOptions {
     lineWidth?: number;
     opacity?: number;
     radius?: number;
-}
-
-export interface PointUnselectEvent extends Event {
-    accumulate: boolean;
-}
-
-export interface PointUpdateEvent {
-    options?: PointTypeOptions;
 }
 
 /* *
