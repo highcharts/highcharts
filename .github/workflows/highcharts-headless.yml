@@ -100,3 +100,26 @@ jobs:
 
       - name: Run QUnit Playwright tests
         run: npx playwright test --project=qunit
+
+  test_playwright_windows:
+    name: Playwright QUnit tests (Windows)
+    timeout-minutes: 15
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm i
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Build Highcharts
+        run: npx gulp scripts
+
+      - name: Run QUnit Playwright tests
+        run: npx playwright test --project=setup-highcharts --project=qunit
