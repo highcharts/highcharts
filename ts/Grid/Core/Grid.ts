@@ -32,6 +32,7 @@ import type DataTableOptions from '../../Data/DataTableOptions';
 import type { ColumnDataType, NoIdColumnOptions } from './Table/Column';
 import type Popup from './UI/Popup.js';
 import type { DeepPartial } from '../../Shared/Types';
+import type Column from './Table/Column';
 
 import Accessibility from './Accessibility/Accessibility.js';
 import AST from '../../Core/Renderer/HTML/AST.js';
@@ -45,7 +46,12 @@ import Globals from './Globals.js';
 import TimeBase from '../../Shared/TimeBase.js';
 import Pagination from './Pagination/Pagination.js';
 
-const { makeHTMLElement, setHTMLContent } = GridUtils;
+const {
+    makeHTMLElement,
+    setHTMLContent,
+    createOptionsProxy
+} = GridUtils;
+
 const {
     defined,
     diffObjects,
@@ -461,6 +467,13 @@ export class Grid {
             this.options ?? defaultOptions,
             this.userOptions
         );
+
+        this.viewport?.columns.forEach((column: Column): void => {
+            column.options = createOptionsProxy(
+                this.columnOptionsMap?.[column.id]?.options ?? {},
+                this.options?.columnDefaults
+            );
+        });
 
         return diff;
     }
