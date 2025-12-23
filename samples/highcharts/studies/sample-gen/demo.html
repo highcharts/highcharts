@@ -11,11 +11,10 @@
 <div class="highcharts-controls-wrapper">
   <highcharts-controls>
     <highcharts-group header="Update options">
-      <highcharts-control type="select" path="legend.align" options="left,center,right"></highcharts-control>
-      <highcharts-control type="select" path="legend.verticalAlign" options="top,middle,bottom"></highcharts-control>
-      <highcharts-control type="select" path="legend.layout" options="horizontal,vertical,proximate"></highcharts-control>
+      <highcharts-control type="boolean" path="legend.enabled" value="true"></highcharts-control>
+      <highcharts-control type="select" path="legend.align" value="center" options="left,center,right"></highcharts-control>
       <highcharts-control type="number" path="legend.x"></highcharts-control>
-      <highcharts-control type="number" path="legend.y"></highcharts-control>
+      <highcharts-control type="color" path="legend.backgroundColor" value="#efefef"></highcharts-control>
     </highcharts-group>
   </highcharts-controls>
 </div>

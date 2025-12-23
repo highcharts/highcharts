@@ -1,5 +1,5 @@
 ---
- name: Demo of legend.backgroundColor
+ name: Highcharts Demo
  authors:
    - Torstein Hønsi
  js_wrap: b
