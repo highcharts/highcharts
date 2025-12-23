@@ -22,7 +22,10 @@
  *
  * */
 
-import type { ColumnSortingOrder } from '../../Options.js';
+import type {
+    ColumnSortingOrder,
+    IndividualColumnSortingOptions
+} from '../../Options.js';
 
 import Column from '../Column.js';
 import Globals from '../../Globals.js';
@@ -152,6 +155,13 @@ class ColumnSorting {
     }
 
     /**
+     * Refreshes the sorting-related header attributes and classes.
+     */
+    public refreshHeaderAttributes(): void {
+        this.addHeaderElementAttributes();
+    }
+
+    /**
      * Updates the column options with the new sorting state.
      *
      * @param col
@@ -160,12 +170,28 @@ class ColumnSorting {
     private updateColumnOptions(col: Column): void {
         const sortings =
             col.viewport.grid.querying.sorting.currentSortings || [];
-        const sorting = sortings.find((s): boolean => s.columnId === col.id);
+        const sortingIndex = sortings.findIndex((sorting): boolean =>
+            sorting.columnId === col.id
+        );
 
-        if (sorting?.order) {
-            col.setOptions({ sorting: { order: sorting.order } });
+        if (sortingIndex !== -1 && sortings[sortingIndex].order) {
+            const sorting = sortings[sortingIndex];
+            const sortingOptions: IndividualColumnSortingOptions = {
+                order: sorting.order
+            };
+
+            if (sortings.length > 1) {
+                sortingOptions.priority = sortingIndex + 1;
+            }
+
+            col.setOptions({ sorting: sortingOptions });
+
+            if (sortings.length < 2) {
+                delete col.options.sorting?.priority;
+            }
         } else {
             delete col.options.sorting?.order;
+            delete col.options.sorting?.priority;
             if (
                 col.options.sorting &&
                 Object.keys(col.options.sorting).length < 1
@@ -250,7 +276,7 @@ class ColumnSorting {
 
         for (const col of viewport.columns) {
             this.updateColumnOptions(col);
-            col.sorting?.addHeaderElementAttributes();
+            col.sorting?.refreshHeaderAttributes();
         }
 
         a11y?.userSortedColumn(order);

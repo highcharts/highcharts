@@ -197,16 +197,15 @@ class SortModifier extends DataModifier {
             rowReferences = this.getRowReferences(table),
             {
                 direction,
-                orderByColumn,
                 orderInColumn,
                 compare: customCompare
             } = modifier.options,
             modified = table.getModified();
 
         const orderBy: Array<(string|SortModifierOrderByOption)> = (
-            Array.isArray(orderByColumn) ?
-                orderByColumn :
-                [orderByColumn]
+            'columns' in modifier.options ?
+                modifier.options.columns :
+                [modifier.options.orderByColumn]
         );
 
         const orderByIndexes: Array<{

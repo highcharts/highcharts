@@ -16,9 +16,8 @@ QUnit.test('SortModifier.modify with multi-column', (assert) => {
     // y: 1, 3, 5, 2, 4
     // id: e, c, a, d, b
 
-    // Current implementation will likely fail to sort or sort incorrectly
     const modifier = new SortModifier({
-        orderByColumn: [
+        columns: [
             { column: 'x', direction: 'asc' },
             { column: 'y', direction: 'asc' }
         ]
@@ -32,6 +31,23 @@ QUnit.test('SortModifier.modify with multi-column', (assert) => {
                 columns.id,
                 ['e', 'c', 'a', 'd', 'b'],
                 'Table should be sorted by x (asc) then y (asc)'
+            );
+
+            assert.strictEqual(
+                modifiedTable.getModified().getOriginalRowIndex(0), 4,
+                'Sorted table should map local index 0 to original index 4'
+            );
+            assert.strictEqual(
+                modifiedTable.getModified().getOriginalRowIndex(2), 0,
+                'Sorted table should map local index 2 to original index 0'
+            );
+            assert.strictEqual(
+                modifiedTable.getModified().getLocalRowIndex(0), 2,
+                'Sorted table should map original index 0 to local index 2'
+            );
+            assert.strictEqual(
+                modifiedTable.getModified().getLocalRowIndex(4), 0,
+                'Sorted table should map original index 4 to local index 0'
             );
         })
         .catch((e) => {

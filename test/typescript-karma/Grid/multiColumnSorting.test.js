@@ -36,17 +36,54 @@ test('Grid multi-column sorting via querying API', async function (assert) {
     }, true);
     grid.viewport?.resizeObserver?.disconnect();
 
-    grid.querying.sorting.setSorting([
+    await grid.setSorting([
         { columnId: 'x', order: 'asc' },
         { columnId: 'y', order: 'asc' }
     ]);
-
-    await grid.viewport?.updateRows();
 
     assert.deepEqual(
         grid.viewport?.getColumn('id')?.data,
         ['e', 'c', 'a', 'd', 'b'],
         'Grid should be sorted by x (asc) then y (asc)'
+    );
+});
+
+test('Grid multi-column sorting with custom compare', async function (assert) {
+    const parentElement = document.getElementById('container');
+    if (!parentElement) {
+        return;
+    }
+
+    const grid = await Grid.grid(parentElement, {
+        dataTable: {
+            columns: {
+                x: [1, 1, 1, 2, 2],
+                y: [1, 2, 3, 4, 5],
+                id: ['a', 'b', 'c', 'd', 'e']
+            }
+        },
+        columns: [{
+            id: 'x'
+        }, {
+            id: 'y',
+            sorting: {
+                compare: (a, b) => (b || 0) - (a || 0)
+            }
+        }, {
+            id: 'id'
+        }]
+    }, true);
+    grid.viewport?.resizeObserver?.disconnect();
+
+    await grid.setSorting([
+        { columnId: 'x', order: 'asc' },
+        { columnId: 'y', order: 'asc' }
+    ]);
+
+    assert.deepEqual(
+        grid.viewport?.getColumn('id')?.data,
+        ['c', 'b', 'a', 'e', 'd'],
+        'Custom compare is applied to secondary sort'
     );
 });
 

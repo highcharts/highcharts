@@ -56,10 +56,9 @@ export interface SortModifierOrderByOption {
 
 
 /**
- * Options to configure the modifier.
+ * Base options shared by sorting modifiers.
  */
-export interface SortModifierOptions extends DataModifierOptions {
-
+export interface SortModifierBaseOptions extends DataModifierOptions {
     /**
      * Name of the related modifier for these options.
      */
@@ -90,21 +89,39 @@ export interface SortModifierOptions extends DataModifierOptions {
     compare?: (a: DataTable.CellType, b: DataTable.CellType) => number;
 
     /**
+     * Column to update with order index instead of change order of rows.
+     */
+    orderInColumn?: string;
+}
+
+/**
+ * Options to configure a single-column sort modifier.
+ */
+export interface SingleSortModifierOptions extends SortModifierBaseOptions {
+    /**
      * Column with values to order.
      *
      * @default "y"
      */
-    orderByColumn: (
-        string |
-        Array<(string|SortModifierOrderByOption)>
-    );
-
-    /**
-     * Column to update with order index instead of change order of rows.
-     */
-    orderInColumn?: string;
-
+    orderByColumn: string;
 }
+
+/**
+ * Options to configure a multi-column sort modifier.
+ */
+export interface MultiSortModifierOptions extends SortModifierBaseOptions {
+    /**
+     * Columns and directions to order by, in priority order.
+     */
+    columns: SortModifierOrderByOption[];
+}
+
+/**
+ * Options to configure the modifier.
+ */
+export type SortModifierOptions =
+    SingleSortModifierOptions |
+    MultiSortModifierOptions;
 
 
 /* *

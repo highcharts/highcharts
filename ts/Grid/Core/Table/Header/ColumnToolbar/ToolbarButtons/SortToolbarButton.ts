@@ -25,10 +25,12 @@
 import type ColumnToolbar from '../ColumnToolbar.js';
 
 import ToolbarButton from '../../../../UI/ToolbarButton.js';
+import GridUtils from '../../../../GridUtils.js';
 import Globals from '../../../../Globals.js';
 import StateHelpers from '../StateHelpers.js';
 import U from '../../../../../../Core/Utilities.js';
 
+const { formatText } = GridUtils;
 const { addEvent } = U;
 
 
@@ -63,7 +65,7 @@ class SortToolbarButton extends ToolbarButton {
     }
 
     private updateA11yLabel(
-        order?: ('asc'|'desc'),
+        order: ('asc'|'desc'|null),
         priority?: number
     ): void {
         const button = this.wrapper?.querySelector('button');
@@ -71,21 +73,40 @@ class SortToolbarButton extends ToolbarButton {
             return;
         }
 
+        const column = this.toolbar?.column;
+        const lang = column?.viewport.grid.options?.lang;
+        const sortingLang = lang?.accessibility?.sorting;
+        const announcements = sortingLang?.announcements;
+
         const columnLabel = this.getColumnLabel();
-        let label = 'Sort';
+        const labelParts: string[] = [];
         if (columnLabel) {
-            label += ` ${columnLabel}`;
+            labelParts.push(columnLabel);
         }
 
-        if (order) {
-            label += `, ${order === 'asc' ? 'ascending' : 'descending'}`;
+        let stateLabel: string | undefined;
+        if (order === 'asc') {
+            stateLabel = announcements?.ascending;
+        } else if (order === 'desc') {
+            stateLabel = announcements?.descending;
+        } else {
+            stateLabel = announcements?.none;
+        }
+
+        if (stateLabel) {
+            labelParts.push(stateLabel);
         }
 
         if (priority) {
-            label += `, priority ${priority}`;
+            labelParts.push(formatText(
+                sortingLang?.priority ?? 'Priority {priority}.',
+                { priority: String(priority) }
+            ));
         }
 
-        button.setAttribute('aria-label', label);
+        if (labelParts.length) {
+            button.setAttribute('aria-label', labelParts.join(' '));
+        }
     }
 
 
@@ -170,7 +191,7 @@ class SortToolbarButton extends ToolbarButton {
             this.setActive(false);
             this.setIcon('upDownArrows');
             this.renderSortPriorityIndicator();
-            this.updateA11yLabel();
+            this.updateA11yLabel(null);
             return;
         }
 

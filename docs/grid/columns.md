@@ -120,11 +120,13 @@ columns: [{
 }]
 ```
 
-The optional `sorting` object consists of three configuration options:
+The optional `sorting` object consists of four configuration options:
 
 - **`enabled`**: A boolean that determines whether the end user can sort a column by clicking on the column header.
 
-- **`order`**: Specifies the initial sorting order for a column. It can be set to `'asc'` (ascending) or `'desc'` (descending). If `order` is defined in multiple columns, the last column with an order becomes the primary sort, and earlier columns become secondary.
+- **`order`**: Specifies the initial sorting order for a column. It can be set to `'asc'` (ascending) or `'desc'` (descending). If `order` is defined in multiple columns, sort priority is determined by `sorting.priority`. When no priority is set, the last column with an order becomes the primary sort, and earlier columns become secondary.
+
+- **`priority`**: Sets the priority of the column when multiple columns are sorted. Lower numbers have higher priority.
 
 - **`compare`**: Custom compare function to sort the column values. If not set, the default sorting behavior is used. It should return a number indicating whether the first value (`a`) is less than (`-1`), equal to (`0`), or greater than (`1`) the second value (`b`).
 
@@ -135,7 +137,7 @@ When the `enabled` option is `true`, clicking the header will toggle the sorting
 To build a multi-column sort, hold Shift while clicking additional headers. The order is shown as a priority indicator when more than one column is active. You can also set multi-column sorting programmatically:
 
 ```js
-grid.querying.sorting.setSorting([
+grid.setSorting([
     { columnId: "group", order: "asc" },
     { columnId: "score", order: "asc" }
 ]);

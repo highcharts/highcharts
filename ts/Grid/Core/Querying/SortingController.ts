@@ -189,8 +189,11 @@ class SortingController {
 
         const columnIDs = Object.keys(columnOptionsMap);
 
-        const sortings: SortingState[] = [];
-        for (let i = columnIDs.length - 1; i > -1; --i) {
+        const sortings: Array<SortingState & {
+            priority?: number;
+            index: number;
+        }> = [];
+        for (let i = 0, iEnd = columnIDs.length; i < iEnd; ++i) {
             const columnId = columnIDs[i];
             const columnOptions = columnOptionsMap[columnId]?.options || {};
             const order = columnOptions.sorting?.order;
@@ -198,12 +201,42 @@ class SortingController {
             if (order) {
                 sortings.push({
                     columnId,
-                    order
+                    order,
+                    priority: columnOptions.sorting?.priority,
+                    index: i
                 });
             }
         }
 
-        return sortings;
+        if (sortings.some((sorting): boolean =>
+            typeof sorting.priority === 'number'
+        )) {
+            sortings.sort((a, b): number => {
+                const aPriority = (
+                    typeof a.priority === 'number' ?
+                        a.priority :
+                        Number.POSITIVE_INFINITY
+                );
+                const bPriority = (
+                    typeof b.priority === 'number' ?
+                        b.priority :
+                        Number.POSITIVE_INFINITY
+                );
+
+                if (aPriority !== bPriority) {
+                    return aPriority - bPriority;
+                }
+
+                return a.index - b.index;
+            });
+        } else {
+            sortings.reverse();
+        }
+
+        return sortings.map((sorting): SortingState => ({
+            columnId: sorting.columnId,
+            order: sorting.order
+        }));
     }
 
     /**
@@ -243,7 +276,7 @@ class SortingController {
 
         return new SortModifier({
             direction: sortings[0].order as ('asc'|'desc'),
-            orderByColumn: sortings.map((
+            columns: sortings.map((
                 sorting
             ): SortModifierOrderByOption => ({
                 column: sorting.columnId as string,
