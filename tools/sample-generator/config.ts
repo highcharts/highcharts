@@ -1,4 +1,6 @@
+import type { Options } from '../../ts/Core/Options.d.ts';
 export interface SampleGeneratorConfig {
+    chartOptionsExtra: Options;
     paths: string[];
     output: string;
 }

@@ -3,7 +3,7 @@ Highcharts.chart('container', {
         type: 'column'
     },
     title: {
-        text: 'Demo of <em>legend.enabled</em>'
+        text: 'Demo of <em>legend</em> options'
     },
     series: [
         {
@@ -16,6 +16,8 @@ Highcharts.chart('container', {
         }
     ],
     legend: {
-        enabled: false
+        borderColor: '#999999',
+        borderWidth: 2,
+        backgroundColor: '#aaaaaa40'
     }
 });

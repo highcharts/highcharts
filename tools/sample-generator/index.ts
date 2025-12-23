@@ -33,6 +33,9 @@ import * as colorHandler from './type-handlers/color.ts';
 
 const types = await loadExportedTypes('code/highcharts.d.ts');
 
+const executedDirectly = import.meta.url === process.argv[1] ||
+    import.meta.url === `file://${process.argv[1]}`;
+
 interface MetaData {
     path: string;
     node: any;
@@ -185,19 +188,24 @@ function extendObject(base: any, path: string, nodeValue: any) {
 }
 
 // Generate the chart configuration with the specified paths
-function generateChartConfig(metaList: MetaList) {
+function generateChartConfig(
+    config: SampleGeneratorConfig,
+    metaList: MetaList
+) {
+    const { chartOptionsExtra } = config;
     const paths = metaList.map(meta => meta.path);
     if (!metaList.length) {
         throw new Error(`No nodes found for paths: ${paths.join(', ')}`);
     }
 
     const chartOptions: any = {
+        chart: {
+            type: 'column'
+        },
         title: { text: generateTitle(paths) },
         series: [
             {
-                type: 'column',
-                data: [1, 3, 2, 4],
-                colorByPoint: true
+                data: [1, 3, 2, 4]
             }
         ]
     };
@@ -209,6 +217,9 @@ function generateChartConfig(metaList: MetaList) {
             defaultValue;
 
         extendObject(chartOptions, path, value);
+    }
+    if (chartOptionsExtra) {
+        Object.assign(chartOptions, chartOptionsExtra);
     }
 
     return chartOptions;
@@ -254,20 +265,24 @@ async function getPathMeta(inPaths: string[]) {
                 void 0 :
                 defaultFromDocs;
 
-        if (overrideValue !== void 0) {
-            console.log(colors.green(
-                `Using override for ${path}: ${overrideValue}`
-            ));
-        } else if (defaultFromCode !== void 0) {
-            console.log(colors.green(
-                `Found default from code for ${path}: ${defaultFromCode}`
-            ));
-        } else if (defaultFromDocs !== void 0) {
-            console.log(colors.green(
-                `Found default from docs for ${path}: ${defaultFromDocs}`
-            ));
-        } else {
-            console.warn(colors.yellow(`No default value for path: ${path}`));
+        if (executedDirectly) {
+            if (overrideValue !== void 0) {
+                console.log(colors.green(
+                    `Using override for ${path}: ${overrideValue}`
+                ));
+            } else if (defaultFromCode !== void 0) {
+                console.log(colors.green(
+                    `Found default from code for ${path}: ${defaultFromCode}`
+                ));
+            } else if (defaultFromDocs !== void 0) {
+                console.log(colors.green(
+                    `Found default from docs for ${path}: ${defaultFromDocs}`
+                ));
+            } else {
+                console.warn(colors.yellow(
+                    `No default value for path: ${path}`
+                ));
+            }
         }
 
         list.push({
@@ -359,9 +374,12 @@ export async function getDemoHTML(metaList?: MetaList) {
 }
 
 // Function to get TS (one listener per path)
-export async function getDemoTS(metaList: MetaList) {
+export async function getDemoTS(
+    config: SampleGeneratorConfig,
+    metaList: MetaList
+) {
     const ts = `Highcharts.chart('container', ${JSON.stringify(
-        await generateChartConfig(metaList),
+        await generateChartConfig(config, metaList),
         null,
         2
     )});\n` // Some cases, for example tooltip.borderWidth, have defaultValue as
@@ -399,7 +417,7 @@ export async function saveDemoFile(config: SampleGeneratorConfig) {
     const [html, css, ts, details] = await Promise.all([
         getDemoHTML(metaList),
         getDemoCSS(),
-        getDemoTS(metaList),
+        getDemoTS(config, metaList),
         getDemoDetails(config)
     ]);
 
@@ -433,13 +451,17 @@ export async function saveDemoFile(config: SampleGeneratorConfig) {
     // If demo.ts is successfully written, delete demo.js if it exists
     try {
         await fs.unlink(`${outputDir}/demo.js`);
-        console.log(colors.blue('Deleted obsolete demo.js file.'));
+        if (executedDirectly) {
+            console.log(colors.blue('Deleted obsolete demo.js file.'));
+        }
     } catch {
         // File does not exist, no action needed
     }
 
     // Format the generated demo.ts file with ESLint
-    console.log(colors.blue('Formatting demo.ts with ESLint...'));
+    if (executedDirectly) {
+        console.log(colors.blue('Formatting demo.ts with ESLint...'));
+    }
     await new Promise((resolve, reject) => {
         exec(
             [
@@ -464,14 +486,13 @@ export async function saveDemoFile(config: SampleGeneratorConfig) {
             }
         );
     });
-    console.log(colors.green('Demo files generated successfully.'));
+    if (executedDirectly) {
+        console.log(colors.green('Demo files generated successfully.'));
+    }
 }
 
 // Run the sample generator with the specified config, but only when this
 // file is executed directly (not imported as a module)
-if (
-    import.meta.url === process.argv[1] ||
-    import.meta.url === `file://${process.argv[1]}`
-) {
+if (executedDirectly) {
     await saveDemoFile(config);
 }

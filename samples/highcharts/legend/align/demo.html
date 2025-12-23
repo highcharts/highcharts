@@ -1,3 +1,21 @@
+<!-- script src="https://code.highcharts.com/highcharts-autoload.js"></script
+-->
 <script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/themes/adaptive.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/controls@0.4.0" type="module"></script>
 
-<div id="container"></div>
+<figure class="highcharts-figure">
+  <div id="container"></div>
+</figure>
+
+<div class="highcharts-controls-wrapper">
+  <highcharts-controls>
+    <highcharts-group header="Update options">
+      <highcharts-control type="select" path="legend.align" options="left,center,right"></highcharts-control>
+      <highcharts-control type="select" path="legend.verticalAlign" options="top,middle,bottom"></highcharts-control>
+      <highcharts-control type="select" path="legend.layout" options="horizontal,vertical,proximate"></highcharts-control>
+      <highcharts-control type="number" path="legend.x"></highcharts-control>
+      <highcharts-control type="number" path="legend.y"></highcharts-control>
+    </highcharts-group>
+  </highcharts-controls>
+</div>

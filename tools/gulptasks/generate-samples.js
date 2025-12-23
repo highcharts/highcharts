@@ -58,9 +58,9 @@ async function task() {
             // Call saveDemoFile
             await saveDemoFile(config);
 
-            log.success(`Generated sample in ${outputDir}`);
+            log.success(' ✔︎ Success');
         } catch (error) {
-            log.failure(`Error generating sample from ${configFile}: ${error.message}`);
+            log.failure(` ❌ Error: ${error.message}`);
         }
     }
 
