@@ -1,0 +1,1 @@
+/// <reference path="../../code/highstock.src.d.ts" />
