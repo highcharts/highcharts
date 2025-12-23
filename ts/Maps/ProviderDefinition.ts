@@ -4,7 +4,8 @@
  *
  *  (c) 2023-2025 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
  *  Authors:
  *  - Hubert Kozik

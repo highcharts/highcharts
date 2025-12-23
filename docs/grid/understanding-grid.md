@@ -177,7 +177,7 @@ When adding multiple grids to the same page, it is recommended to set default op
 Grid.setOptions({
     columnDefaults: {
         sorting: {
-            sortable: false
+            enabled: false
         }
     }
 })

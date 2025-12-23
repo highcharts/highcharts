@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Pawel Lysy
+ *  (c) 2010-2025 Highsoft AS
+ *  Author: Pawel Lysy
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -16,7 +17,6 @@
 
 import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
 import type HLCPointOptions from './HLCPointOptions';
-import type HLCSeries from './HLCSeries';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type TooltipOptions from '../../Core/TooltipOptions';
@@ -162,7 +162,7 @@ export interface HLCSeriesOptions extends ColumnSeriesOptions {
      */
     pointValKey?: string;
 
-    states?: SeriesStatesOptions<HLCSeries>;
+    states?: SeriesStatesOptions<HLCSeriesOptions>;
 
     threshold?: number|null;
 

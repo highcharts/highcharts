@@ -2,13 +2,13 @@
  *
  *  Marker clusters module.
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2025 Highsoft AS
  *
  *  Author: Wojciech Chmiel
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -24,7 +24,7 @@ import type Point from '../../Core/Series/Point';
 import type {
     PointClickEvent,
     PointMarkerOptions,
-    PointStatesOptions
+    PointMarkerStatesOptions
 } from '../../Core/Series/PointOptions';
 
 /* *
@@ -87,7 +87,7 @@ export interface MarkerClusterOptions {
     layoutAlgorithm: MarkerClusterLayoutAlgorithmOptions;
     marker: MarkerClusterMarkerOptions;
     minimumClusterSize?: number;
-    states?: PointStatesOptions<Point>;
+    states?: PointMarkerStatesOptions<MarkerClusterOptions>;
     zones?: Array<MarkerClusterZonesOptions>;
 }
 

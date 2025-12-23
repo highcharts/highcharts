@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2025 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -16,7 +17,6 @@
 
 import type BoxPlotPoint from './BoxPlotPoint';
 import type BoxPlotPointOptions from './BoxPlotPointOptions';
-import type BoxPlotSeries from './BoxPlotSeries';
 import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
@@ -177,7 +177,7 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      * @product highcharts
      */
     medianWidth?: BoxPlotPoint['medianWidth'];
-    states?: SeriesStatesOptions<BoxPlotSeries>;
+    states?: SeriesStatesOptions<BoxPlotSeriesOptions>;
 
     /**
      * The color of the stem, the vertical line extending from the box to
