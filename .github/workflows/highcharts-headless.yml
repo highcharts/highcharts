@@ -122,4 +122,4 @@ jobs:
         run: npx gulp scripts
 
       - name: Run QUnit Playwright tests
-        run: npx playwright test --project=setup-highcharts --project=qunit
+        run: npx playwright test --project=setup-highcharts --project=qunit-windows

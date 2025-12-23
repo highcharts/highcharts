@@ -88,6 +88,24 @@ export default defineConfig({
             dependencies: ['setup-highcharts'],
         },
         {
+            name: 'qunit-windows',
+            testDir: './tests/qunit',
+            use: {
+                ...devices['Desktop Chrome'],
+                headless: true,
+                launchOptions: {
+                    args: [
+                        '--enable-gpu',
+                        '--ignore-gpu-blocklist',
+                        '--use-angle=d3d11',
+                        '--enable-features=Vulkan',
+                        '--disable-vulkan-fallback-to-gl-for-testing'
+                    ]
+                }
+            },
+            dependencies: ['setup-highcharts'],
+        },
+        {
             name: 'setup-dashboards',
             testMatch: 'setup-dashboards.mts',
         },
