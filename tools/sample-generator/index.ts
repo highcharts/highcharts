@@ -403,27 +403,29 @@ export async function saveDemoFile(config: SampleGeneratorConfig) {
         getDemoDetails(config)
     ]);
 
+    const outputDir = `../highcharts/samples/${config.output}`;
+
     await fs.mkdir(
-        '../highcharts/samples/highcharts/studies/sample-gen',
+        outputDir,
         { recursive: true }
     );
 
     // Write all files in parallel
     await Promise.all([
         fs.writeFile(
-            '../highcharts/samples/highcharts/studies/sample-gen/demo.html',
+            `${outputDir}/demo.html`,
             html
         ),
         fs.writeFile(
-            '../highcharts/samples/highcharts/studies/sample-gen/demo.css',
+            `${outputDir}/demo.css`,
             css
         ),
         fs.writeFile(
-            '../highcharts/samples/highcharts/studies/sample-gen/demo.ts',
+            `${outputDir}/demo.ts`,
             ts
         ),
         fs.writeFile(
-            '../highcharts/samples/highcharts/studies/sample-gen/demo.details',
+            `${outputDir}/demo.details`,
             details
         )
     ]);

@@ -1,5 +1,6 @@
 export interface SampleGeneratorConfig {
     paths: string[];
+    output: string;
 }
 
 export default {
@@ -8,5 +9,6 @@ export default {
         'legend.align=center',
         'legend.x',
         'legend.backgroundColor=#efefef'
-    ]
+    ],
+    output: 'highcharts/studies/sample-gen'
 };
