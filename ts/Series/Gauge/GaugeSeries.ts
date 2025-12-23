@@ -119,13 +119,16 @@ class GaugeSeries extends Series {
             /**
              * When this option is `true`, the dial will wrap around the axes.
              * For instance, in a full-range gauge going from 0 to 360, a value
-             * of 400 will point to 40\. When `wrap` is `false`, the dial stops
+             * of 400 will point to 40. When `wrap` is `false`, the dial stops
              * at 360.
+             *
+             * Defaults to `undefined`, which is equivalent to `true` when
+             * the axis ranges over 360 degrees, and `false` when less.
              *
              * @see [overshoot](#plotOptions.gauge.overshoot)
              *
              * @type      {boolean}
-             * @default   true
+             * @default   undefined
              * @since     3.0
              * @product   highcharts
              * @apioption plotOptions.gauge.wrap
@@ -133,20 +136,20 @@ class GaugeSeries extends Series {
 
             /**
              * Data labels for the gauge. For gauges, the data labels are
-             * enabled by default and shown in a bordered box below the point.
+             * enabled by default and shown in the center.
              *
              * @since   2.3.0
              * @product highcharts
              */
             dataLabels: {
-                borderColor: Palette.neutralColor20,
-                borderRadius: 3,
-                borderWidth: 1,
                 crop: false,
                 defer: false,
                 enabled: true,
                 verticalAlign: 'top',
-                y: 15,
+                style: {
+                    fontSize: '1.4em'
+                },
+                y: 25,
                 zIndex: 2
             },
 
@@ -388,6 +391,8 @@ class GaugeSeries extends Series {
                 backgroundColor: Palette.neutralColor100
             },
 
+            threshold: 0,
+
             tooltip: {
                 headerFormat: ''
             },
@@ -439,6 +444,9 @@ class GaugeSeries extends Series {
         series.generatePoints();
 
         series.points.forEach((point): void => {
+            if (!isNumber(point.y)) {
+                return;
+            }
 
             const dialOptions: GaugeSeriesDialOptions =
                     merge(options.dial, point.dial) as any,
@@ -449,15 +457,18 @@ class GaugeSeries extends Series {
                 rearLength =
                     (pInt(dialOptions.rearLength) * radius) / 100,
                 baseWidth = dialOptions.baseWidth,
-                topWidth = dialOptions.topWidth;
+                topWidth = dialOptions.topWidth,
+                wrap = options.wrap ?? (
+                    yAxis.endAngleRad - yAxis.startAngleRad > 2 * Math.PI - 0.01
+                );
 
             let overshoot = options.overshoot,
                 rotation = yAxis.startAngleRad + yAxis.translate(
-                    point.y as any, void 0, void 0, void 0, true
+                    point.y, void 0, void 0, void 0, true
                 );
 
             // Handle the wrap and overshoot options
-            if (isNumber(overshoot) || options.wrap === false) {
+            if (isNumber(overshoot) || !wrap) {
                 overshoot = isNumber(overshoot) ?
                     (overshoot / 180 * Math.PI) : 0;
                 rotation = clamp(
@@ -513,28 +524,31 @@ class GaugeSeries extends Series {
 
         series.points.forEach((point): void => {
 
-            const graphic = point.graphic,
-                shapeArgs = point.shapeArgs,
-                d = shapeArgs.d,
-                dialOptions = merge(options.dial, point.dial); // #1233
+            if (isNumber(point.y)) {
 
-            if (graphic) {
-                graphic.animate(shapeArgs);
-                shapeArgs.d = d; // Animate alters it
-            } else {
-                point.graphic =
-                    (renderer as any)[point.shapeType as any](shapeArgs)
-                        .addClass('highcharts-dial')
-                        .add(series.group);
-            }
+                const graphic = point.graphic,
+                    shapeArgs = point.shapeArgs,
+                    d = shapeArgs.d,
+                    dialOptions = merge(options.dial, point.dial); // #1233
 
-            // Presentational attributes
-            if (!chart.styledMode) {
-                (point.graphic as any)[graphic ? 'animate' : 'attr']({
-                    stroke: dialOptions.borderColor,
-                    'stroke-width': dialOptions.borderWidth,
-                    fill: dialOptions.backgroundColor
-                });
+                if (graphic) {
+                    graphic.animate(shapeArgs);
+                    shapeArgs.d = d; // Animate alters it
+                } else {
+                    point.graphic =
+                        (renderer as any)[point.shapeType as any](shapeArgs)
+                            .addClass('highcharts-dial')
+                            .add(series.group);
+                }
+
+                // Presentational attributes
+                if (!chart.styledMode) {
+                    (point.graphic as any)[graphic ? 'animate' : 'attr']({
+                        stroke: dialOptions.borderColor,
+                        'stroke-width': dialOptions.borderWidth,
+                        fill: dialOptions.backgroundColor
+                    });
+                }
             }
         });
 

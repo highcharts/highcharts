@@ -11,13 +11,9 @@ Highcharts.chart('container', {
     pane: {
         startAngle: -90,
         endAngle: 90,
-        background: {
-            innerRadius: '80%',
-            outerRadius: '100%',
-            shape: 'arc',
-            borderRadius: '50%'
-        },
+        borderRadius: '50%',
         size: '120%',
+        innerSize: '80%',
         center: ['50%', '75%']
     },
 
@@ -34,8 +30,6 @@ Highcharts.chart('container', {
 
     series: [{
         data: [38],
-        innerRadius: '80%',
-        borderRadius: '50%',
         dataLabels: {
             borderWidth: 0,
             style: {
