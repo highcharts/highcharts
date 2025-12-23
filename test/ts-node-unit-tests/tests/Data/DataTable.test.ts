@@ -392,6 +392,104 @@ describe('DataTable', () => {
         });
     });
 
+    describe('deleteRows', () => {
+        const createTable = () => new DataTable({
+            columns: {
+                id: [3, 2, 1, 5, 3, 9, 0, 7, 6, 8, 4, 1, 7]
+            }
+        });
+
+        it('should delete all rows when called without arguments', () => {
+            const table = createTable();
+            table.deleteRows();
+            strictEqual(
+                table.getRowCount(),
+                0,
+                'deleteRows() should delete all rows.'
+            );
+        });
+
+        it('should delete row at specific index', () => {
+            const table = createTable();
+            table.deleteRows(5);
+            deepStrictEqual(
+                table.getColumn('id'),
+                [3, 2, 1, 5, 3, 0, 7, 6, 8, 4, 1, 7],
+                'deleteRows(5) should remove row at index 5.'
+            );
+        });
+
+        it('should delete multiple consecutive rows', () => {
+            const table = createTable();
+            table.deleteRows(5, 2);
+            deepStrictEqual(
+                table.getColumn('id'),
+                [3, 2, 1, 5, 3, 7, 6, 8, 4, 1, 7],
+                'deleteRows(5, 2) should remove rows at indices 5 and 6.'
+            );
+        });
+
+        it('should delete rows at multiple indices (array form)', () => {
+            const table = createTable();
+            table.deleteRows([2, 0, 3, 2]);
+            deepStrictEqual(
+                table.getColumn('id'),
+                [2, 3, 9, 0, 7, 6, 8, 4, 1, 7],
+                'deleteRows([2, 0, 3, 2]) should remove rows at indices 0, 2, 3.'
+            );
+        });
+
+        it('should not delete any rows for out-of-bounds index', () => {
+            const table = createTable();
+            table.deleteRows(999);
+            strictEqual(
+                table.getRowCount(),
+                13,
+                'deleteRows(999) should not delete any rows.'
+            );
+        });
+
+        it('should not delete any rows when count is 0', () => {
+            const table = createTable();
+            table.deleteRows(5, 0);
+            strictEqual(
+                table.getRowCount(),
+                13,
+                'deleteRows(5, 0) should not delete any rows.'
+            );
+        });
+
+        it('should not delete any rows for out-of-bounds array indices', () => {
+            const table = createTable();
+            table.deleteRows([999, 1000]);
+            strictEqual(
+                table.getRowCount(),
+                13,
+                'deleteRows([999, 1000]) should not delete any rows.'
+            );
+        });
+
+        it('should not delete any rows for negative indices', () => {
+            const table = createTable();
+            table.deleteRows([-5]);
+            strictEqual(
+                table.getRowCount(),
+                13,
+                'deleteRows([-5]) should not delete any rows.'
+            );
+        });
+
+        it('should not delete any rows for empty array', () => {
+            const table = createTable();
+            table.deleteRows([]);
+            strictEqual(
+                table.getRowCount(),
+                13,
+                'deleteRows([]) should not delete any rows.'
+            );
+        });
+    });
+
     describe('getRows', () => {
         it('should return row with non-existing column', () => {
             const table = new DataTable({ columns: { 'a': [0] } });
