@@ -28,8 +28,9 @@ Grid.grid('container', {
                 '[{ "x": 0, "y": 2, "color": "#91C8E4" }, { "x": 1, "y": 1, "color": "#749BC2" }, { "x": 2, "y": 5, "color": "#4682A9" }]',
                 '[{ "x": 0, "y": 10, "color": "#91C8E4" }, { "x": 1, "y": 1, "color": "#749BC2" }, { "x": 2, "y": 10, "color": "#4682A9" }]',
                 '[{ "x": 0, "y": 10, "color": "#91C8E4" }, { "x": 1, "y": 1, "color": "#749BC2" }, { "x": 2, "y": 10, "color": "#4682A9" }]'
-            ]
+            ],
             /* eslint-enable max-len */
+            defaultValidator: [[1, 2, 3], [1, 2, 3], [1, 2, 3], [1, 2, 3]]
         }
     },
     lang: {
@@ -195,6 +196,13 @@ Grid.grid('container', {
             },
             editMode: {
                 validationRules: ['json']
+            }
+        }
+    }, {
+        id: 'defaultValidator',
+        cells: {
+            renderer: {
+                type: 'sparkline'
             }
         }
     }]

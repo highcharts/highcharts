@@ -31,6 +31,7 @@ import Globals from '../../Core/Globals.js';
 import GridUtils from '../../Core/GridUtils.js';
 import Cell from '../../Core/Table/Cell.js';
 import U from '../../../Core/Utilities.js';
+import { CellRendererTypeRegistry } from '../CellRendering/CellRendererType';
 
 const {
     makeDiv,
@@ -150,18 +151,39 @@ class Validator {
                 }
             },
             notification: 'Value should be a valid JSON.'
+        },
+        sparkline: {
+            validate: function ({ rawValue }): boolean {
+                const arrayNumberValidate =
+                    Validator.rulesRegistry.arrayNumber.validate as
+                    (args: { rawValue: string }) => boolean;
+                const jsonValidate = Validator.rulesRegistry.json.validate as
+                    (args: { rawValue: string }) => boolean;
+
+                return arrayNumberValidate({ rawValue }) ||
+                    jsonValidate({ rawValue });
+            },
+            notification: 'Value should be a valid JSON or array of numbers.'
         }
     };
 
     /**
      * Default validation rules for each dataType.
      */
-    public static readonly predefinedRules: Record<ColumnDataType, RuleKey[]> = {
-        'boolean': ['boolean'],
-        datetime: ['datetime'],
-        number: ['number'],
-        string: []
-    };
+    public static readonly predefinedRules: {
+        dataType: Record<ColumnDataType, RuleKey[]>;
+        renderer: { [K in keyof CellRendererTypeRegistry]?: RuleKey[] };
+    } = {
+            dataType: {
+                'boolean': ['boolean'],
+                datetime: ['datetime'],
+                number: ['number'],
+                string: []
+            },
+            renderer: {
+                sparkline: ['sparkline']
+            }
+        };
 
     /* *
      *
@@ -222,6 +244,7 @@ class Validator {
         const { options, dataType } = cell.column;
         const validationErrors =
             cell.row.viewport.grid.options?.lang?.validationErrors;
+        const rendererType = cell.column.options?.cells?.renderer?.type;
         let rules = Array.from(options?.cells?.editMode?.validationRules || []);
 
         // Remove duplicates in validationRules
@@ -232,7 +255,15 @@ class Validator {
         if (rules.length > 0 && isArrayString) {
             rules = [...new Set(rules)];
         } else {
-            const predefined = Validator.predefinedRules[dataType] || [];
+            const predefined = [
+                ...(Validator.predefinedRules.dataType[dataType] ?? [])
+            ];
+
+            if (rendererType) {
+                predefined.push(
+                    ...Validator.predefinedRules.renderer[rendererType] ?? []
+                );
+            }
 
             const hasPredefined = rules.some(
                 (rule): boolean =>
@@ -447,6 +478,7 @@ export interface RulesRegistryType {
     unique: RuleDefinition;
     arrayNumber: RuleDefinition;
     json: RuleDefinition;
+    sparkline: RuleDefinition;
 }
 
 /**

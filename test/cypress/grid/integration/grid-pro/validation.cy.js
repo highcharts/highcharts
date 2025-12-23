@@ -131,4 +131,21 @@ describe('Grid Pro - validation.', () => {
         // Assert
         cy.get('.hcg-notification-error').should('not.exist');
     });
+
+    it('Default sparkline validator.', () => {
+        // Act
+        cy.editGridCell(1, 'defaultValidator', '[1, 2, 3re]');
+
+        // Assert
+        cy.get('.hcg-notification-error')
+            .eq(0)
+            .should('be.visible')
+            .should('contain', 'Value should be a valid JSON or array of numbers.');
+
+        // Act
+        cy.editGridCell(1, 'defaultValidator', '[1, 2, 3, 4]');
+
+        // Assert
+        cy.get('.hcg-notification-error').should('not.exist');
+    });
 });
