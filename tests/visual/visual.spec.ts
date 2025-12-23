@@ -195,7 +195,11 @@ test.describe('Visual tests', () => {
             'samples/grid-lite/**/demo.js', // TODO: Fails as Grid is not defined
             'samples/dashboards/**/demo.js' // TODO: Fails as Grid is not defined
         ],
-        absolute: true
+        absolute: true,
+        posix: true,
+        nodir: true,
+        follow: false,
+        windowsPathsNoEscape: true
     });
 
     const filteredSamples = pathFilters.length ?

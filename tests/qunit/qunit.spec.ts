@@ -107,7 +107,11 @@ test.describe('QUnit tests', () => {
     });
 
     const unitTests = glob.sync('samples/unit-tests/**/demo.js', {
-        absolute: true
+        absolute: true,
+        posix: true,
+        nodir: true,
+        follow: false,
+        windowsPathsNoEscape: true
     });
 
     for (const qunitTest of unitTests){
