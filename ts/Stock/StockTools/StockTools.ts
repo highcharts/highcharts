@@ -25,8 +25,6 @@ import type AxisType from '../../Core/Axis/AxisType';
 import D from '../../Core/Defaults.js';
 const { setOptions } = D;
 import NavigationBindings from '../../Extensions/Annotations/NavigationBindings.js';
-import NBU from '../../Extensions/Annotations/NavigationBindingsUtilities.js';
-const { getAssignedAxis } = NBU;
 import Series from '../../Core/Series/Series.js';
 import StockToolsBindings from './StockToolsBindings.js';
 import StockToolsDefaults from './StockToolsDefaults.js';
@@ -117,7 +115,7 @@ function compose(
         navigationProto.utils = navigationProto.utils || {};
         navigationProto.utils.indicatorsWithAxes = STU.indicatorsWithAxes;
         navigationProto.utils.indicatorsWithVolume = STU.indicatorsWithVolume;
-        navigationProto.utils.getAssignedAxis = getAssignedAxis;
+        navigationProto.utils.getAssignedAxis = STU.getAssignedAxis;
         navigationProto.utils.isPriceIndicatorEnabled = isPriceIndicatorEnabled;
         navigationProto.utils.manageIndicators = STU.manageIndicators;
 

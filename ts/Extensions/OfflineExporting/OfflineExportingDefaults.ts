@@ -27,7 +27,7 @@ import type ExportingOptions from '../Exporting/ExportingOptions';
 
 /**
  * @optionparent exporting
- * @private
+ * @internal
  */
 const exporting: ExportingOptions = {};
 

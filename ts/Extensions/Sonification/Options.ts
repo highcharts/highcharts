@@ -1201,7 +1201,7 @@ const Options: DeepPartial<OptionsType> = {
 
     /**
      * @optionparent lang
-     * @private
+     * @internal
      */
     lang: {
         /**

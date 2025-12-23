@@ -55,7 +55,7 @@ declare module '../Core/Chart/ChartBase'{
  *
  * */
 
-/** @private */
+/** @internal */
 function compose(
     AxisClass: typeof Axis,
     ChartClass: typeof Chart
@@ -72,7 +72,7 @@ function compose(
 
 }
 
-/** @private */
+/** @internal */
 function onAxisAfterSetOptions(
     this: Axis
 ): void {
@@ -89,7 +89,7 @@ function onAxisAfterSetOptions(
     }
 }
 
-/** @private */
+/** @internal */
 function chartAdjustHeight(
     this: Chart
 ): void {
