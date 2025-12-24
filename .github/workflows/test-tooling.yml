@@ -31,7 +31,7 @@ jobs:
           cache: 'npm'
 
       - name: Install Dependencies
-        run: npm i
+        run: npm ci
 
       - name: Run test
         run: node --test "./tools/gulptasks-tests/*.mjs"
