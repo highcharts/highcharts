@@ -19,7 +19,7 @@
  * */
 
 import type DataConnectorOptions from './DataConnectorOptions';
-import type DataTable from '../DataTable';
+import type { DataTableBasicColumn } from '../DataTableTypes';
 import type { DataTableConnectorOptions } from './DataConnectorOptions';
 
 /* *
@@ -155,7 +155,7 @@ export interface GoogleSheetsDataTableConnectorOptions extends DataTableConnecto
  *
  */
 export interface GoogleSheetsBeforeParseCallbackFunction {
-    (data: DataTable.BasicColumn[]): DataTable.BasicColumn[];
+    (data: DataTableBasicColumn[]): DataTableBasicColumn[];
 }
 
 /* *

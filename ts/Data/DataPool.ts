@@ -21,10 +21,11 @@
  * */
 
 
-import type DataEvent from './DataEvent';
+import type { DataEventEmitter, DataEventCallback } from './DataEvent';
 import type DataConnectorType from './Connectors/DataConnectorType';
 import type { DataConnectorTypeOptions } from './Connectors/DataConnectorType';
-import type DataPoolOptions from './DataPoolOptions';
+import type DataPoolOptions from './DataPoolTypes';
+import type { DataPoolEvent } from './DataPoolTypes';
 
 import DataConnector from './Connectors/DataConnector.js';
 import U from '../Core/Utilities.js';
@@ -51,7 +52,7 @@ const {
  * @param {DataPoolOptions} options
  * Pool options with all connectors.
  */
-class DataPool implements DataEvent.Emitter<DataPool.Event> {
+class DataPool implements DataEventEmitter<DataPoolEvent> {
 
     /* *
      *
@@ -110,10 +111,10 @@ class DataPool implements DataEvent.Emitter<DataPool.Event> {
      * Emits an event on this data pool to all registered callbacks of the given
      * event.
      *
-     * @param {DataTable.Event} e
+     * @param {DataPoolEvent} e
      * Event object with event information.
      */
-    public emit(e: DataPool.Event): void {
+    public emit(e: DataPoolEvent): void {
         fireEvent(this, e.type, e);
     }
 
@@ -304,9 +305,9 @@ class DataPool implements DataEvent.Emitter<DataPool.Event> {
      * @return {Function}
      * Function to unregister callback from the event.
      */
-    public on<T extends DataPool.Event['type']>(
+    public on<T extends DataPoolEvent['type']>(
         type: T,
-        callback: DataEvent.Callback<this, Extract<DataPool.Event, {
+        callback: DataEventCallback<this, Extract<DataPoolEvent, {
             type: T
         }>>
     ): Function {
@@ -362,20 +363,8 @@ class DataPool implements DataEvent.Emitter<DataPool.Event> {
 
 
 namespace DataPool {
-
-    /* *
-     *
-     *  Declarations
-     *
-     * */
-
-    export interface Event {
-        type: (
-            'load' | 'afterLoad' | 'setConnectorOptions' |
-            'afterSetConnectorOptions'
-        );
-        options: DataConnectorTypeOptions;
-    }
+    /** @deprecated */
+    export type Event = DataPoolEvent;
 
 }
 

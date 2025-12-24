@@ -27,7 +27,9 @@
 
 import type { DataConverterTypes } from './DataConverterType';
 import type DataEvent from '../DataEvent';
+import type { DataEventEmitter, DataEventCallback } from '../DataEvent';
 import type { ColumnIdsOptions } from '../Connectors/JSONConnectorOptions';
+import type { DataTableColumn } from '../DataTableTypes';
 
 import DataTable from '../DataTable.js';
 import DataConverterUtils from './DataConverterUtils.js';
@@ -49,7 +51,7 @@ const {
  *
  * @private
  */
-class DataConverter implements DataEvent.Emitter<DataConverter.Event> {
+class DataConverter implements DataEventEmitter<DataConverter.Event> {
 
     /* *
      *
@@ -375,7 +377,7 @@ class DataConverter implements DataEvent.Emitter<DataConverter.Event> {
      */
     public on<T extends DataConverter.Event['type']>(
         type: T,
-        callback: DataEvent.Callback<this, Extract<DataConverter.Event, {
+        callback: DataEventCallback<this, Extract<DataConverter.Event, {
             type: T
         }>>
     ): Function {
@@ -487,7 +489,7 @@ namespace DataConverter {
             'export' | 'afterExport' | 'exportError' |
             'parse' | 'afterParse' | 'parseError'
         );
-        readonly columns: DataTable.Column[];
+        readonly columns: DataTableColumn[];
         readonly error?: string | Error;
         readonly headers: string[] | ColumnIdsOptions;
     }

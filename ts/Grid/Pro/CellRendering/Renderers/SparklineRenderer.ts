@@ -25,7 +25,7 @@
 
 import type Column from '../../../Core/Table/Column';
 import type TableCell from '../../../Core/Table/Body/TableCell';
-import type DataTable from '../../../../Data/DataTable';
+import type { DataTableCellType } from '../../../../Data/DataTableTypes';
 import type * as HighchartsNamespace from '../../highcharts';
 import type {
     EditModeRendererTypeName
@@ -128,7 +128,7 @@ class SparklineRenderer extends CellRenderer {
 export interface SparklineRendererOptions extends CellRendererOptions {
     type: 'sparkline';
     chartOptions?: (
-        ((data: DataTable.CellType) => HighchartsNamespace.Options) |
+        ((data: DataTableCellType) => HighchartsNamespace.Options) |
         HighchartsNamespace.Options
     );
 }

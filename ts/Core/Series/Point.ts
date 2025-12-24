@@ -19,7 +19,7 @@
 
 import type AnimationOptions from '../Animation/AnimationOptions';
 import type ColorType from '../Color/ColorType';
-import type DataTable from '../../Data/DataTable';
+import type { DataTableRowObject } from '../../Data/DataTableTypes';
 import type { EventCallback } from '../Callback';
 import type PointBase from './PointBase';
 import type {
@@ -1354,7 +1354,7 @@ class Point {
 
             // Record changes in the data table
             i = point.index;
-            const row: DataTable.RowObject = {};
+            const row: DataTableRowObject = {};
             for (const key of series.dataColumnKeys()) {
                 row[key] = (point as any)[key];
             }

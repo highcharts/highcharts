@@ -23,8 +23,13 @@
  * */
 
 
-import type DataEvent from '../DataEvent';
+import type { DataEventDetail } from '../DataEvent';
 import type SortModifierOptions from './SortModifierOptions';
+import type {
+    DataTableCellType,
+    DataTableColumn,
+    DataTableRow
+} from '../DataTableTypes';
 
 import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
@@ -42,7 +47,7 @@ const { merge } = U;
 /** @private */
 interface SortRowReference {
     index: number;
-    row: DataTable.Row;
+    row: DataTableRow;
 }
 
 
@@ -80,8 +85,8 @@ class SortModifier extends DataModifier {
      * */
 
     private static ascending(
-        a: DataTable.CellType,
-        b: DataTable.CellType
+        a: DataTableCellType,
+        b: DataTableCellType
     ): number {
         return (
             (a || 0) < (b || 0) ? -1 :
@@ -91,8 +96,8 @@ class SortModifier extends DataModifier {
     }
 
     private static descending(
-        a: DataTable.CellType,
-        b: DataTable.CellType
+        a: DataTableCellType,
+        b: DataTableCellType
     ): number {
         return (
             (b || 0) < (a || 0) ? -1 :
@@ -103,13 +108,13 @@ class SortModifier extends DataModifier {
 
     private static compareFactory(
         direction: 'asc'|'desc',
-        customCompare?: (a: DataTable.CellType, b: DataTable.CellType) => number
-    ): ((a: DataTable.CellType, b: DataTable.CellType) => number) {
+        customCompare?: (a: DataTableCellType, b: DataTableCellType) => number
+    ): ((a: DataTableCellType, b: DataTableCellType) => number) {
         if (customCompare) {
             if (direction === 'desc') {
                 return (
-                    a: DataTable.CellType,
-                    b: DataTable.CellType
+                    a: DataTableCellType,
+                    b: DataTableCellType
                 ): number => -customCompare(a, b);
             }
             return customCompare;
@@ -185,7 +190,7 @@ class SortModifier extends DataModifier {
 
     public override modifyTable(
         table: DataTable,
-        eventDetail?: DataEvent.Detail
+        eventDetail?: DataEventDetail
     ): DataTable {
         const modifier = this;
 
@@ -212,14 +217,14 @@ class SortModifier extends DataModifier {
         }
 
         if (orderInColumn) {
-            const column: DataTable.Column = [];
+            const column: DataTableColumn = [];
             for (let i = 0; i < rowCount; ++i) {
                 column[rowReferences[i].index] = i;
             }
             modified.setColumns({ [orderInColumn]: column });
         } else {
             const originalIndexes: Array<number|undefined> = [];
-            const rows: Array<DataTable.Row> = [];
+            const rows: Array<DataTableRow> = [];
 
             let rowReference: SortRowReference;
             for (let i = 0; i < rowCount; ++i) {

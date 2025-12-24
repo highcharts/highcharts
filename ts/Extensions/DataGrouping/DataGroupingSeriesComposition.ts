@@ -23,7 +23,7 @@ import type {
 } from './ApproximationType';
 import type Axis from '../../Core/Axis/Axis';
 import type DataGroupingOptions from './DataGroupingOptions';
-import type DataTable from '../../Data/DataTable';
+import type { DataTableColumnCollection } from '../../Data/DataTableTypes';
 import type IndicatorBase from '../../Stock/Indicators/IndicatorBase';
 import type Point from '../../Core/Series/Point';
 import type {
@@ -762,7 +762,7 @@ function groupData(
         }
     }
 
-    const columns: DataTable.ColumnCollection = {
+    const columns: DataTableColumnCollection = {
         x: groupedXData
     };
     (pointArrayMap || ['y']).forEach((key, i): void => {

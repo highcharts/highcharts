@@ -21,7 +21,7 @@
  *
  * */
 
-import type DataTable from '../../../Data/DataTable';
+import type { DataTableCellType } from '../../../Data/DataTableTypes';
 import type TableCell from '../../Core/Table/Body/TableCell';
 
 
@@ -47,7 +47,7 @@ export interface EditModeContent<
     /**
      * Value of the edit mode cell content, parsed according to the column type.
      */
-    readonly value: DataTable.CellType;
+    readonly value: DataTableCellType;
 
     /**
      * Raw value of the edit mode cell content, in a string format.

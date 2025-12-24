@@ -23,12 +23,16 @@
  *
  * */
 
-import type DataEvent from '../DataEvent';
+import type { DataEventDetail } from '../DataEvent';
 import type DataConnector from '../Connectors/DataConnector';
 import type HTMLTableConverterOptions from './HTMLTableConverterOptions';
+import type {
+    DataTableBasicColumn,
+    DataTableColumnCollection,
+    DataTableRow
+} from '../DataTableTypes';
 
 import DataConverter from './DataConverter.js';
-import DataTable from '../DataTable.js';
 import DataConverterUtils from './DataConverterUtils.js';
 import U from '../../Core/Utilities.js';
 const { merge } = U;
@@ -166,7 +170,7 @@ class HTMLTableConverter extends DataConverter {
             htmlRows: string[] = [],
             columnsCount = columnIds.length;
 
-        const rowArray: DataTable.Row[] = [];
+        const rowArray: DataTableRow[] = [];
 
         let tableHead = '';
 
@@ -395,7 +399,7 @@ class HTMLTableConverter extends DataConverter {
      * @param {Partial<HTMLTableConverterOptions>}[options]
      * Options for the parser
      *
-     * @param {DataEvent.Detail} [eventDetail]
+     * @param {DataEventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @emits CSVDataParser#parse
@@ -404,10 +408,10 @@ class HTMLTableConverter extends DataConverter {
      */
     public parse(
         options: Partial<HTMLTableConverterOptions>,
-        eventDetail?: DataEvent.Detail
-    ): DataTable.ColumnCollection {
+        eventDetail?: DataEventDetail
+    ): DataTableColumnCollection {
         const converter = this,
-            columnsArray: DataTable.BasicColumn[] = [],
+            columnsArray: DataTableBasicColumn[] = [],
             headers: string[] = [],
             parseOptions = merge(converter.options, options),
             {

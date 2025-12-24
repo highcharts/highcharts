@@ -20,7 +20,7 @@
  * */
 
 import type { AnyRecord } from '../../Shared/Types';
-import type DataTableOptions from '../../Data/DataTableOptions';
+import type DataTableOptions from '../../Data/DataTableTypes';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type JSON from '../JSON';
 

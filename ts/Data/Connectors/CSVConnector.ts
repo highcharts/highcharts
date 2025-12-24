@@ -23,9 +23,9 @@
  *
  * */
 
-import type DataEvent from '../DataEvent';
+import type { DataEventDetail } from '../DataEvent';
 import type CSVConnectorOptions from './CSVConnectorOptions';
-import type DataTable from '../DataTable';
+import type { DataTableColumnCollection } from '../DataTableTypes';
 
 import CSVConverter from '../Converters/CSVConverter.js';
 import DataConnector from './DataConnector.js';
@@ -123,13 +123,13 @@ class CSVConnector extends DataConnector {
     /**
      * Initiates the loading of the CSV source to the connector
      *
-     * @param {DataEvent.Detail} [eventDetail]
+     * @param {DataEventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @emits CSVConnector#load
      * @emits CSVConnector#afterLoad
      */
-    public load(eventDetail?: DataEvent.Detail): Promise<this> {
+    public load(eventDetail?: DataEventDetail): Promise<this> {
         const connector = this;
         const options = connector.options;
         const { csv, csvURL, dataTables, decimalPoint } = options;
@@ -172,7 +172,7 @@ class CSVConnector extends DataConnector {
                             return new CSVConverter(
                                 merge(options, converterOptions));
                         },
-                        (converter, data): DataTable.ColumnCollection =>
+                        (converter, data): DataTableColumnCollection =>
                             converter.parse({ csv: data })
                     );
                 }

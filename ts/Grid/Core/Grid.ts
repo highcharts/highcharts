@@ -28,7 +28,11 @@ import type {
     GroupedHeaderOptions,
     IndividualColumnOptions
 } from './Options';
-import type DataTableOptions from '../../Data/DataTableOptions';
+import type DataTableOptions from '../../Data/DataTableTypes';
+import type {
+    DataTableColumn,
+    DataTableCellType
+} from '../../Data/DataTableTypes';
 import type { ColumnDataType, NoIdColumnOptions } from './Table/Column';
 import type Popup from './UI/Popup.js';
 import type { DeepPartial } from '../../Shared/Types';
@@ -1504,7 +1508,7 @@ export class Grid {
     public getData(modified: boolean = true): string {
         const dataTable = modified ? this.presentationTable : this.dataTable;
         const tableColumns = dataTable?.columns;
-        const outputColumns: Record<string, DataTable.Column> = {};
+        const outputColumns: Record<string, DataTableColumn> = {};
 
         if (!this.enabledColumns || !tableColumns) {
             return '{}';
@@ -1513,7 +1517,7 @@ export class Grid {
         const typeParser = (type: ColumnDataType) => {
             const TypeMap: Record<
                 ColumnDataType,
-                (value: DataTable.CellType) => DataTable.CellType
+                (value: DataTableCellType) => DataTableCellType
             > = {
                 number: Number,
                 datetime: Number,
@@ -1521,7 +1525,7 @@ export class Grid {
                 'boolean': Boolean
             };
 
-            return (value: DataTable.CellType): DataTable.CellType | null => (
+            return (value: DataTableCellType): DataTableCellType | null => (
                 defined(value) ? TypeMap[type](value) : null
             );
         };
@@ -1531,7 +1535,7 @@ export class Grid {
             if (column) {
                 const columnData = tableColumns[columnId];
                 const parser = typeParser(column.dataType);
-                outputColumns[columnId] = ((): DataTable.Column => {
+                outputColumns[columnId] = ((): DataTableColumn => {
                     const result = [];
                     for (let i = 0, iEnd = columnData.length; i < iEnd; ++i) {
                         result.push(parser(columnData[i]));

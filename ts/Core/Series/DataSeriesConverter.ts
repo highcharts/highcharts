@@ -25,6 +25,10 @@ import type DataEvent from '../../Data/DataEvent';
 import type LineSeries from '../../Series/Line/LineSeries';
 import type PointOptions from './PointOptions';
 import type SeriesOptions from './SeriesOptions';
+import type {
+    DataTableCellType,
+    DataTableRowObject
+} from '../../Data/DataTableTypes';
 
 import DataTable from '../../Data/DataTable.js';
 import ColumnUtils from '../../Data/ColumnUtils.js';
@@ -192,7 +196,7 @@ class DataSeriesConverter {
     ): void {
         const table = this.table;
 
-        let columns: DataTable.RowObject,
+        let columns: DataTableRowObject,
             series,
             seriesMeta,
             pointArrayMap,
@@ -275,7 +279,7 @@ class DataSeriesConverter {
 
                     } else if (elem instanceof Object) {
                         if (needsArrayMap) {
-                            const elemSet = elem as Record<string, DataTable.CellType>;
+                            const elemSet = elem as Record<string, DataTableCellType>;
 
                             for (let k = 0; k < pointArrayMapLength; k++) {
                                 yValueName = pointArrayMap[k];

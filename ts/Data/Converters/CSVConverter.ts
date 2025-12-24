@@ -23,11 +23,14 @@
  *
  * */
 
-import type DataEvent from '../DataEvent';
+import type { DataEventDetail } from '../DataEvent';
 import type CSVConverterOptions from './CSVConverterOptions';
+import type {
+    DataTableBasicColumn,
+    DataTableColumnCollection
+} from '../DataTableTypes';
 
 import DataConverter from './DataConverter.js';
-import DataTable from '../DataTable.js';
 import DataConverterUtils from './DataConverterUtils.js';
 import U from '../../Core/Utilities.js';
 const { merge } = U;
@@ -111,7 +114,7 @@ class CSVConverter extends DataConverter {
      *
      * @param {Partial<CSVConverterOptions>} [options]
      * Options for the parser.
-     * @param {DataEvent.Detail} [eventDetail]
+     * @param {DataEventDetail} [eventDetail]
      * Custom information for pending events.
      * @return {DataTable.ColumnCollection}
      * The parsed column collection.
@@ -121,8 +124,8 @@ class CSVConverter extends DataConverter {
      */
     public parse(
         options: Partial<CSVConverterOptions>,
-        eventDetail?: DataEvent.Detail
-    ): DataTable.ColumnCollection {
+        eventDetail?: DataEventDetail
+    ): DataTableColumnCollection {
         const converter = this,
             dataTypes = converter.dataTypes,
             parserOptions = merge(this.options, options),
@@ -142,7 +145,7 @@ class CSVConverter extends DataConverter {
             } = parserOptions,
             column;
 
-        const columnsArray: DataTable.BasicColumn[] = [];
+        const columnsArray: DataTableBasicColumn[] = [];
 
         converter.emit({
             type: 'parse',
@@ -255,7 +258,7 @@ class CSVConverter extends DataConverter {
      * quoted values, data type inference, and column range selection.
      */
     private parseCSVRow(
-        columns: DataTable.BasicColumn[],
+        columns: DataTableBasicColumn[],
         columnStr: string,
         rowNumber: number
     ): void {

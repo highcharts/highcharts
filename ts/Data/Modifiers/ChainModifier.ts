@@ -22,6 +22,7 @@
 
 import type ChainModifierOptions from './ChainModifierOptions';
 import type DataEvent from '../DataEvent';
+import type { DataEventCallback, DataEventDetail } from '../DataEvent';
 import type DataModifierEvent from './DataModifierEvent';
 import type {
     DataModifierType,
@@ -142,12 +143,12 @@ class ChainModifier extends DataModifier {
      * @param {DataModifier} modifier
      * Configured modifier to add.
      *
-     * @param {DataEvent.Detail} [eventDetail]
+     * @param {DataEventDetail} [eventDetail]
      * Custom information for pending events.
      */
     public add(
         modifier: DataModifier,
-        eventDetail?: DataEvent.Detail
+        eventDetail?: DataEventDetail
     ): void {
         this.emit({
             type: 'addModifier',
@@ -167,10 +168,10 @@ class ChainModifier extends DataModifier {
     /**
      * Clears all modifiers from the chain.
      *
-     * @param {DataEvent.Detail} [eventDetail]
+     * @param {DataEventDetail} [eventDetail]
      * Custom information for pending events.
      */
-    public clear(eventDetail?: DataEvent.Detail): void {
+    public clear(eventDetail?: DataEventDetail): void {
         this.emit({
             type: 'clearChain',
             detail: eventDetail
@@ -193,7 +194,7 @@ class ChainModifier extends DataModifier {
      * @param {Highcharts.DataTable} table
      * Table to modify.
      *
-     * @param {DataEvent.Detail} [eventDetail]
+     * @param {DataEventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {Promise<Highcharts.DataTable>}
@@ -201,7 +202,7 @@ class ChainModifier extends DataModifier {
      */
     public async modify(
         table: DataTable,
-        eventDetail?: DataEvent.Detail
+        eventDetail?: DataEventDetail
     ): Promise<DataTable> {
         const modifiers = (
             this.options.reverse ?
@@ -241,7 +242,7 @@ class ChainModifier extends DataModifier {
      * @param {DataTable} table
      * Table to modify.
      *
-     * @param {DataEvent.Detail} [eventDetail]
+     * @param {DataEventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {DataTable}
@@ -252,7 +253,7 @@ class ChainModifier extends DataModifier {
      */
     public modifyTable(
         table: DataTable,
-        eventDetail?: DataEvent.Detail
+        eventDetail?: DataEventDetail
     ): DataTable {
         const chain = this;
 
@@ -299,12 +300,12 @@ class ChainModifier extends DataModifier {
      * @param {DataModifier} modifier
      * Configured modifier to remove.
      *
-     * @param {DataEvent.Detail} [eventDetail]
+     * @param {DataEventDetail} [eventDetail]
      * Custom information for pending events.
      */
     public remove(
         modifier: DataModifier,
-        eventDetail?: DataEvent.Detail
+        eventDetail?: DataEventDetail
     ): void {
         const modifiers = this.chain;
 
@@ -329,7 +330,7 @@ class ChainModifier extends DataModifier {
 
     public override on<T extends ChainModifier.Event['type']>(
         type: T,
-        callback: DataEvent.Callback<this, Extract<DataModifierEvent, {
+        callback: DataEventCallback<this, Extract<DataModifierEvent, {
             type: T
         }>>
     ): Function {

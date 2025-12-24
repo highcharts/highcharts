@@ -20,7 +20,7 @@
  *
  * */
 
-import type { DataTableValue } from '../DataTableOptions';
+import type { DataTableValue } from '../DataTableTypes';
 import type { DataModifierTypeOptions } from '../Modifiers/DataModifierType';
 
 /* *

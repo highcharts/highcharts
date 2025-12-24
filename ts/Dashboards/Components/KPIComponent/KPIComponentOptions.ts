@@ -23,7 +23,7 @@
 
 import type Component from '../Component';
 import type CSSObject from '../../../Core/Renderer/CSSObject';
-import type DataTable from '../../../Data/DataTable';
+import type { DataTableColumn } from '../../../Data/DataTableTypes';
 import type TextOptions from '../TextOptions';
 import type KPIComponent from './KPIComponent';
 
@@ -213,7 +213,7 @@ export interface ValueFormatterCallbackFunction {
 export interface FormulaCallbackFunction {
     (
         this: KPIComponent,
-        values: DataTable.Column
+        values: DataTableColumn
     ): (string | number);
 }
 

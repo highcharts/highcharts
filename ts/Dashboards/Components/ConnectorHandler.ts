@@ -12,6 +12,7 @@
  * */
 
 import type DataModifier from '../../Data/Modifiers/DataModifier';
+import type { DataTableSetModifierEvent } from '../../Data/DataTableTypes';
 
 import Component from './Component';
 import DataTable from '../../Data/DataTable.js';
@@ -182,7 +183,7 @@ class ConnectorHandler {
         );
         table.on(
             'afterSetModifier',
-            (e: DataTable.SetModifierEvent): void => {
+            (e: DataTableSetModifierEvent): void => {
                 if (e.type === 'afterSetModifier' && e.modified) {
                     this.setupTableListeners(e.modified);
                     this.component.emit({
@@ -274,7 +275,7 @@ class ConnectorHandler {
         if (connector) {
             tableEvents.push(table.on(
                 'afterSetModifier',
-                (e: DataTable.SetModifierEvent): void => {
+                (e: DataTableSetModifierEvent): void => {
                     if (e.type === 'afterSetModifier') {
                         clearTimeout(this.tableEventTimeout);
                         this.tableEventTimeout = Globals.win.setTimeout(

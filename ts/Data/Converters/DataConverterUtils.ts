@@ -18,7 +18,10 @@
  * */
 
 import DataConverter from './DataConverter';
-import DataTable from '../DataTable.js';
+import type {
+    DataTableColumn,
+    DataTableColumnCollection
+} from '../DataTableTypes';
 import U from '../../Core/Utilities.js';
 const {
     isNumber
@@ -240,10 +243,10 @@ namespace DataConverterUtils {
      * Parsed columns.
      */
     export function getColumnsCollection(
-        columnsArray: DataTable.Column[] = [],
+        columnsArray: DataTableColumn[] = [],
         headers: string[]
-    ): DataTable.ColumnCollection {
-        const columns: DataTable.ColumnCollection = {};
+    ): DataTableColumnCollection {
+        const columns: DataTableColumnCollection = {};
         for (
             let i = 0,
                 iEnd = Math.max(headers.length, columnsArray.length);
