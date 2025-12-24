@@ -159,3 +159,39 @@ QUnit.test('Tooltip when markers are outside, #17929.', function (assert) {
         the tooltip still should be shown, #17929.`
     );
 });
+
+QUnit.test('Outside tooltip with custom container', function (assert) {
+    const customContainer = document.createElement('div');
+    customContainer.id = 'custom-tooltip-container';
+    customContainer.style.position = 'relative';
+    document.body.appendChild(customContainer);
+
+    try {
+        const chart = Highcharts.chart('container', {
+            chart: {
+                width: 400,
+                height: 400
+            },
+            tooltip: {
+                outside: true,
+                containerNode: customContainer
+            },
+            series: [{
+                data: [1, 3, 2, 4]
+            }]
+        });
+
+        const point = chart.series[0].points[0];
+        point.onMouseOver();
+
+        assert.strictEqual(
+            chart.tooltip.container.parentNode,
+            customContainer,
+            'Tooltip container should be appended to custom DOM element'
+        );
+
+        chart.destroy();
+    } finally {
+        customContainer.remove();
+    }
+});

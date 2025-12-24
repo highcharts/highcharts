@@ -2245,6 +2245,20 @@ const defaultOptions: DefaultOptions = {
          */
 
         /**
+         * Specifies a DOM node to which the tooltip container should be
+         * appended when [tooltip.outside](#tooltip.outside) is set to `true`.
+         * By default, the tooltip container is appended to `document.body`.
+
+         * @sample highcharts/tooltip/outside
+         *         Small charts with tooltips outside
+         *
+         * @type      {HTMLElement|undefined}
+         * @default   undefined
+         * @since     12.4.0
+         * @apioption tooltip.containerNode
+         */
+
+        /**
          * A callback function for formatting the HTML output for a single point
          * in the tooltip. Like the `pointFormat` string, but with more
          * flexibility.

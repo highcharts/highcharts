@@ -60,6 +60,7 @@ const {
     isObject,
     isString,
     merge,
+    offset,
     pick,
     pushUnique,
     splat,
@@ -563,7 +564,10 @@ class Tooltip {
         }
 
         if (container && !container.parentElement) {
-            H.doc.body.appendChild(container);
+            const { containerNode } = options;
+            const targetElement = containerNode ?? H.doc.body;
+
+            targetElement.appendChild(container);
         }
 
         return this.label;
@@ -1856,12 +1860,28 @@ class Tooltip {
         // Set the renderer size dynamically to prevent document size to change.
         // Renderer only exists when tooltip is outside.
         if (renderer && container) {
+            // When using a custom containerNode, we need to adjust
+            // positioning to be relative to that container
+            let containerOffsetLeft = 0,
+                containerOffsetTop = 0;
+
+            if (options.containerNode && container.parentElement) {
+                const containerPos = offset(container.parentElement);
+                containerOffsetLeft = containerPos.left;
+                containerOffsetTop = containerPos.top;
+            }
+
             // Corrects positions, occurs with tooltip positioner (#16944)
             if (positioner || fixed) {
                 const { scrollLeft = 0, scrollTop = 0 } = chart
                     .scrollablePlotArea?.scrollingContainer || {};
-                pos.x += scrollLeft + left - distance;
-                pos.y += scrollTop + top - distance;
+                pos.x += scrollLeft + left - containerOffsetLeft - distance;
+                pos.y += scrollTop + top - containerOffsetTop - distance;
+            } else if (options.containerNode) {
+                // For default positioning with custom container, adjust
+                // coordinates to be relative to container
+                pos.x -= containerOffsetLeft;
+                pos.y -= containerOffsetTop;
             }
 
             // Pad it by the border width and distance. Add 2 to make room for
@@ -1889,8 +1909,8 @@ class Tooltip {
                 anchorX *= scaleX;
                 anchorY *= scaleY;
             }
-            anchorX += left - pos.x;
-            anchorY += top - pos.y;
+            anchorX += left - containerOffsetLeft - pos.x;
+            anchorY += top - containerOffsetTop - pos.y;
 
         }
 
