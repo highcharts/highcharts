@@ -76,6 +76,7 @@ export interface TooltipOptions {
     shadow?: (boolean|Partial<ShadowOptionsObject>);
     shape?: Tooltip.ShapeValue;
     shared: boolean;
+    showDelay: number;
     snap: number;
     split?: boolean;
     stickOnContact: boolean;

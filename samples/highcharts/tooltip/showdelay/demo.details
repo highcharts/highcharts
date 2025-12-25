@@ -1,0 +1,6 @@
+---
+ name: Highcharts Demo
+ authors:
+   - Andrzej Bułeczka
+ js_wrap: b
+...

@@ -73,6 +73,7 @@ export interface AxisCrosshairOptions {
     color?: ColorType;
     dashStyle?: DashStyleValue;
     label?: AxisCrosshairLabelOptions;
+    showDelay?: number;
     snap?: boolean;
     width?: number;
     zIndex?: number;
