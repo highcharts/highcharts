@@ -4,7 +4,7 @@ sidebar_label: "Width"
 
 # Column width
 
-Column widths are configured using the `columns[].width` and/or `columnDefaults.width` option. Supported values are pixels (e.g. `150` or `'150px'`), percentages (e.g. `'20%'`), and `'auto'`.
+Column widths are configured using `columns[].width` and/or `columnDefaults.width`. Supported values are pixels (for example `150` or `'150px'`), percentages (for example `'20%'`), and `'auto'`.
 
 The default value is `'auto'`. An `'auto'` width, either explicitly set or implied by omitting the option, causes the column to participate in automatic width distribution.
 
@@ -28,7 +28,7 @@ The table always fills the width of its container. Column widths are resolved ac
 
 Columns with percentage or `'auto'` widths automatically adjust when the container is resized.
 
-For predictable layout and behavior, it is recommended to configure column widths using this API option rather than applying widths via CSS.
+For predictable layout and behavior, configure column widths using this API option rather than applying widths via CSS.
 
 ## Example 1
 

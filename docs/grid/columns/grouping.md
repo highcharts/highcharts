@@ -4,9 +4,9 @@ sidebar_label: "Grouping"
 
 # Column grouping
 
-Column grouping lets you organize columns under shared, higher-level headers. Grouped columns are defined using the root `header[]` option and can span multiple columns and multiple rows.
+Column grouping lets you organize columns under shared, higher-level headers. Grouped columns are defined using the root `header[]` option and can span multiple columns and rows.
 
-All general header configuration described in the [article on column headers](https://www.highcharts.com/docs/grid/column/headers), including formatting, classes, accessibility options, precedence rules etc., also applies when using grouped columns.
+All general header configuration described in the [article on column headers](https://www.highcharts.com/docs/grid/columns/headers), including formatting, classes, accessibility options, and precedence rules, also applies when using grouped columns.
 
 ![An illustration showing a header group](ill_header.png)
 
@@ -113,4 +113,3 @@ If the same column is configured in both places, the per-column configuration ta
 ## Demo
 
 <iframe src="https://www.highcharts.com/samples/embed/grid/basic/grouped-headers?force-light-theme" allow="fullscreen"></iframe>
-

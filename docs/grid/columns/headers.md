@@ -4,17 +4,17 @@ sidebar_label: "Headers"
 
 # Column headers
 
-Grid headers are generated from DataTable column IDs by default, and you can customize headers further in two places:
+Grid headers are generated from DataTable column IDs by default, and you can customize headers in two places:
 
 * **Per column:** `columns[].header` (and defaults in `columnDefaults.header`)
-* **At the root:** `header[]` (for order, inclusion/exclusion, grouping — and also per-header options)
+* **At the root:** `header[]` (for order, inclusion/exclusion, grouping, and per-header options)
 
 ## Two ways to configure a header
 
 You can configure individual header cells either:
 
 1. **Globally via `header[]`**
-   Each entry can be a string (column id) or an object (e.g. `columnId`, `format`, `className`, accessibility options, etc.). This is useful when you also want to control **order** and ensure you explicitly include all visible columns.
+   Each entry can be a string (column ID) or an object (for example `columnId`, `format`, `className`, accessibility options). This is useful when you also want to control **order** and ensure you explicitly include all visible columns.
 
 2. **Per column via `columns[].header`**
    This is useful when you want to keep header structure simple and attach header configuration directly to a column.
@@ -48,7 +48,7 @@ This example sets `format` and `className` for one column using `header[]`. The 
 
 ### Example B: Configure headers using `columns[].header`
 
-This does the same visual result as Example A, but moves the header configuration into `columns[].header`.
+This produces the same visual result as Example A, but moves the header configuration into `columns[].header`.
 
 ```js
 {
@@ -61,11 +61,11 @@ This does the same visual result as Example A, but moves the header configuratio
     }
   },
   columns: [{
-    id: 'price', 
+    id: 'price',
     header: {
       format: 'Price (NOK)',
       className: 'hc-price'
-    } 
+    }
   },{
     id: 'discount',
     enabled: false
@@ -77,7 +77,7 @@ This does the same visual result as Example A, but moves the header configuratio
 
 `className` and `format` support templating as described in [Templating](https://www.highcharts.com/docs/chart-concepts/templating), and `{id}` references the key in the DataTable.
 
-If you need more advanced formatting that is not supported through templating use the `formatter` callback function instead. As in Highcharts Core, we always recommend `format` if possible. [Read more here...](https://www.highcharts.com/docs/chart-concepts/)
+If you need more advanced formatting that is not supported through templating, use the `formatter` callback function instead. As in Highcharts Core, we recommend `format` when possible. [Read more here...](https://www.highcharts.com/docs/chart-concepts/)
 
 ## Disabling the header
 
@@ -122,7 +122,7 @@ This allows `header[]` to define the **overall structure** (order, inclusion, gr
 
 For example, if both specify a `format` for the same column, the value from `columns[].header` will be used.
 
-## Summary  
+## Summary
 
 * Use **`header[]`** when you want to control **order**, ensure explicit **inclusion**, or prepare for **grouping**, and still want to customize header text/classes inline.
 * Use **`columns[].header`** when you prefer header settings to live with the column definition (especially when column configuration is already centralized).

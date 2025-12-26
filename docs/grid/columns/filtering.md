@@ -4,7 +4,7 @@ sidebar_label: "Filtering"
 
 # Column filtering
 
-Column filtering allows end users to narrow down visible rows by applying filter conditions to individual columns.
+Column filtering lets end users narrow visible rows by applying filter conditions to individual columns.
 
 Each column filter operates independently. When multiple columns have active filters, only rows that satisfy **all** filter conditions are shown (logical **AND** across columns).
 
@@ -41,14 +41,14 @@ The Grid provides two user interface modes for column filtering.
 
 ### Popup mode (default)
 
-By default, a filter icon is shown in the column header. Clicking the icon opens a popup where users can select a condition and enter a value.
+By default, a filter icon appears in the column header. Clicking the icon opens a popup where users can select a condition and enter a value.
 
 This mode keeps the table compact and is suitable when filtering is used occasionally.
 
 ```js
 columnDefaults: {
     filtering: {
-        enabled: true,
+        enabled: true
     }
 }
 ```
@@ -150,8 +150,7 @@ columns: [{
     dataType: "boolean",
     filtering: {
         enabled: true,
-        condition: "equals",
-        value: true
+        condition: "true"
     }
 }]
 ```
@@ -281,4 +280,3 @@ These events can be used for logging, analytics, UI feedback etc.
 This example creates a grid with filtering enabled for all columns through `columnDefaults`. The grid displays various fruit data with different data types including strings, numbers, booleans, and dates. The weight column has an initial filter set to show only items weighing more than 1000 units, demonstrating how to pre-configure filtering conditions. The grouped header structure shows how filtering works with complex column layouts.
 
 <iframe src="https://www.highcharts.com/samples/embed/grid/basic/column-filtering?force-light-theme" allow="fullscreen"></iframe>
-
