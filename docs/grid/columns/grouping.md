@@ -81,7 +81,7 @@ In this example:
 
 * The **Nutrition** header spans multiple subgroups
 * **Vitamins** and **Minerals** form the second header row
-* The **Minerals** header have a custom CSS class name
+* The **Minerals** header has a custom CSS class name
 * **Vitamin A** and **Vitamin C** use object syntax to provide clearer labels
 * String entries (`'iron'`, `'calcium'`) use default header behavior
 
