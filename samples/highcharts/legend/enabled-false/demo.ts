@@ -2,9 +2,6 @@ Highcharts.chart('container', {
     chart: {
         type: 'column'
     },
-    title: {
-        text: 'Demo of <em>legend.enabled</em>'
-    },
     series: [
         {
             data: [
@@ -15,6 +12,9 @@ Highcharts.chart('container', {
             ]
         }
     ],
+    title: {
+        text: 'Demo of <em>legend.enabled</em>'
+    },
     legend: {
         enabled: false
     }

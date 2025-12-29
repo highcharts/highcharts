@@ -141,6 +141,25 @@ export async function findNodeByPath(path: string) {
 
 // Function to generate sophisticated titles based on path analysis
 function generateTitle(paths: string[]): string {
+
+    const findCommonParts = (paths: string[]): string[] => {
+        // Find common prefix parts
+        const pathParts = paths.map(path => path.split('.'));
+        const minLength = Math.min(...pathParts.map(parts => parts.length));
+
+        const commonParts: string[] = [];
+        for (let i = 0; i < minLength; i++) {
+            const part = pathParts[0][i];
+            if (pathParts.every(parts => parts[i] === part)) {
+                commonParts.push(part);
+            } else {
+                break;
+            }
+        }
+        return commonParts;
+    };
+
+
     if (paths.length === 0) {
         return 'Demo of various chart options';
     }
@@ -150,21 +169,23 @@ function generateTitle(paths: string[]): string {
     }
 
     // Find common prefix parts
-    const pathParts = paths.map(path => path.split('.'));
-    const minLength = Math.min(...pathParts.map(parts => parts.length));
-
-    const commonParts: string[] = [];
-    for (let i = 0; i < minLength; i++) {
-        const part = pathParts[0][i];
-        if (pathParts.every(parts => parts[i] === part)) {
-            commonParts.push(part);
-        } else {
-            break;
-        }
-    }
-
+    const commonParts = findCommonParts(paths);
     if (commonParts.length > 0) {
         return `Demo of <em>${commonParts.join('.')}</em> options`;
+    }
+
+    // Look for related parts, like xAxis, yAxis
+    const commonAxisParts = findCommonParts(
+        paths.map(path => path.replace(/^(xAxis|yAxis)/u, 'axis'))
+    );
+    if (commonAxisParts.length > 0) {
+        let commonPrefix = '';
+        if (commonAxisParts.length > 1) {
+            commonPrefix = commonAxisParts.shift() + ' ';
+        }
+        return `Demo of ${commonPrefix}<em>${
+            commonAxisParts.join('.')
+        }</em> options`;
     }
 
     return 'Demo of various chart options';

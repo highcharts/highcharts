@@ -2,9 +2,6 @@ Highcharts.chart('container', {
     chart: {
         type: 'column'
     },
-    title: {
-        text: 'Demo of <em>legend</em> options'
-    },
     series: [
         {
             data: [
@@ -31,5 +28,8 @@ Highcharts.chart('container', {
             ]
         }
     ],
+    title: {
+        text: 'Demo of <em>legend</em> options'
+    },
     legend: {}
 });
