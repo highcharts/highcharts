@@ -9,13 +9,14 @@
  * - `node tools/sample-generator/index.ts`
  */
 
+/* eslint-disable no-console */
+
 import type { SampleGeneratorConfig } from './config.ts';
 
 import colors from 'colors/safe.js';
 import { ESLint } from 'eslint';
 import { promises as fs } from 'fs';
 import { loadExportedTypes } from './load-types.ts';
-import { exec } from 'child_process';
 import config from './config.ts';
 
 // Import Highcharts and modules so that we can read default options
@@ -189,7 +190,7 @@ function extendObject(base: any, path: string, nodeValue: any) {
 }
 
 // Generate the chart configuration with the specified paths
-function generateChartConfig(
+async function generateChartConfig(
     config: SampleGeneratorConfig,
     metaList: MetaList
 ) {
@@ -199,17 +200,20 @@ function generateChartConfig(
         throw new Error(`No nodes found for paths: ${paths.join(', ')}`);
     }
 
-    const chartOptions: any = {
-        chart: {
-            type: 'column'
-        },
-        title: { text: generateTitle(paths) },
-        series: [
-            {
-                data: [1, 3, 2, 4]
-            }
-        ]
-    };
+    const chartOptions: any = {};
+    for (const optionsTpl of config.templates || ['column']) {
+        const tplModule = await import(`./tpl/chart-options/${optionsTpl}.ts`);
+        const tplOptions = tplModule.default;
+        Highcharts.merge(true, chartOptions, tplOptions);
+    }
+
+    if (chartOptionsExtra) {
+        Highcharts.merge(true, chartOptions, chartOptionsExtra);
+    }
+
+    Highcharts.merge(true, chartOptions, {
+        title: { text: generateTitle(paths) }
+    });
 
     for (const { defaultValue, path, overrideValue } of metaList) {
         // Use override value if provided, otherwise use default from tree
@@ -218,9 +222,6 @@ function generateChartConfig(
             defaultValue;
 
         extendObject(chartOptions, path, value);
-    }
-    if (chartOptionsExtra) {
-        Object.assign(chartOptions, chartOptionsExtra);
     }
 
     return chartOptions;
@@ -458,7 +459,14 @@ export async function saveDemoFile(config: SampleGeneratorConfig) {
         }
     );
 
-    await fs.writeFile(`${outputDir}/demo.ts`, results[0].output);
+    if (results[0].output) {
+        await fs.writeFile(`${outputDir}/demo.ts`, results[0].output);
+    } else {
+        await fs.writeFile(`${outputDir}/demo.ts`, results[0].source);
+        console.error(
+            colors.red(results[0].messages.map(msg => msg.message).join('\n'))
+        );
+    }
 
     if (executedDirectly) {
         console.log(colors.green('Demo files generated successfully.'));
