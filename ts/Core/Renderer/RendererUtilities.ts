@@ -97,8 +97,6 @@ namespace RendererUtilities {
             push = restBoxes.push;
 
         let i: number,
-            cursor: number,
-            step: number,
             overlapping = true,
             box: T & DistributedBoxObject,
             target: number,
@@ -116,25 +114,41 @@ namespace RendererUtilities {
         if (total > reducedLen) {
             stableSort(boxes, sortByRank);
             equalRank = boxes[0].rank === boxes[boxes.length - 1].rank;
-            step = equalRank ? boxesLength / 2 : -1;
-            cursor = equalRank ? step : boxesLength - 1;
 
             // When the boxes have equal rank (pie data labels, flags - #10073),
             // decimate the boxes by starting in the middle and gradually remove
             // more items inside the array. When they are sorted by rank, just
             // remove the ones with the lowest rank from the end.
-            while (step && total > reducedLen) {
-                i = Math.floor(cursor);
-                box = boxes[i];
-                if (pushUnique(forDeletion, i)) {
-                    total -= box.size;
-                }
-                cursor += step;
+            if (equalRank) {
+                const ranges: Array<[number, number]> = [[0, boxesLength - 1]];
 
-                // Start over the decimation with smaller steps
-                if (equalRank && cursor >= boxes.length) {
-                    step /= 2;
-                    cursor = step;
+                while (ranges.length && total > reducedLen) {
+                    const range = ranges.shift();
+                    if (!range) {
+                        break;
+                    }
+
+                    i = Math.floor((range[0] + range[1]) / 2);
+                    box = boxes[i];
+                    if (pushUnique(forDeletion, i)) {
+                        total -= box.size;
+                    }
+
+                    if (range[0] < i) {
+                        ranges.push([range[0], i - 1]);
+                    }
+                    if (i < range[1]) {
+                        ranges.push([i + 1, range[1]]);
+                    }
+                }
+            } else {
+                i = boxesLength - 1;
+                while (total > reducedLen && i >= 0) {
+                    box = boxes[i];
+                    if (pushUnique(forDeletion, i)) {
+                        total -= box.size;
+                    }
+                    i--;
                 }
             }
 
