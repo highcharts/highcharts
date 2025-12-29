@@ -16,17 +16,27 @@ const init = grid => {
             ]);
         });
 
+    document
+        .getElementById('sort-group-score-id')
+        .addEventListener('click', () => {
+            void grid.setSorting([
+                { columnId: 'Group', order: 'asc' },
+                { columnId: 'Score', order: 'asc' },
+                { columnId: 'ID', order: 'asc' }
+            ]);
+        });
+
     document.getElementById('reset').addEventListener('click', () => {
         void grid.setSorting(null);
     });
 };
 
-const grid = Grid.grid('container', {
+Grid.grid('container', {
     dataTable: {
         columns: {
-            Group: ['A', 'B', 'A', 'B', 'A'],
-            Score: [5, 4, 3, 2, 1],
-            ID: ['a', 'b', 'c', 'd', 'e']
+            Group: ['B', 'A', 'B', 'A', 'A', 'B', 'A', 'B'],
+            Score: [5, 3, 3, 5, 3, 5, 5, 3],
+            ID: ['f', 'd', 'h', 'a', 'c', 'e', 'b', 'g']
         }
     },
     columnDefaults: {
@@ -34,6 +44,4 @@ const grid = Grid.grid('container', {
             enabled: true
         }
     }
-}, true);
-
-init(grid);
+}, true).then(init);
