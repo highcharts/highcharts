@@ -1,3 +1,4 @@
+import type { DeepPartial } from '../../ts/Shared/Types.d.ts';
 import type { Options } from '../../ts/Core/Options.d.ts';
 
 export interface ControlOptions {
@@ -10,7 +11,7 @@ export interface ControlOptions {
     value?: number | string | boolean;
 }
 export interface SampleGeneratorConfig {
-    chartOptionsExtra?: Options;
+    chartOptionsExtra?: DeepPartial<Options>;
     controls?: ControlOptions[];
     /** The output directory for the generated samples */
     output?: string;
