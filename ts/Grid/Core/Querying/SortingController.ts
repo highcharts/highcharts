@@ -261,7 +261,9 @@ class SortingController {
         const sortings = (
             this.currentSortings ||
             (this.currentSorting ? [this.currentSorting] : [])
-        ).filter((sorting): boolean => !!(
+        ).filter((
+            sorting
+        ): sorting is SortingState & { columnId: string } => !!(
             sorting.columnId && sorting.order
         ));
 
@@ -279,9 +281,9 @@ class SortingController {
             columns: sortings.map((
                 sorting
             ): SortModifierOrderByOption => ({
-                column: sorting.columnId as string,
+                column: sorting.columnId,
                 direction: sorting.order as ('asc'|'desc'),
-                compare: grid.columnOptionsMap?.[sorting.columnId as string]
+                compare: grid.columnOptionsMap?.[sorting.columnId]
                     ?.options?.sorting?.compare || defaultCompare
             }))
         });

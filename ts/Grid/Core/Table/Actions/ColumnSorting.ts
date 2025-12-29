@@ -256,16 +256,17 @@ class ColumnSorting {
                 if (index !== -1) {
                     sortings.splice(index, 1);
                 }
-            } else if (index !== -1) {
-                sortings[index] = {
+            } else {
+                const sorting = {
                     columnId: this.column.id,
                     order
                 };
-            } else {
-                sortings.push({
-                    columnId: this.column.id,
-                    order
-                });
+
+                if (index !== -1) {
+                    sortings[index] = sorting;
+                } else {
+                    sortings.push(sorting);
+                }
             }
 
             sortingController.setSorting(sortings);
