@@ -8,9 +8,9 @@ export function getHTML(
     options?: string[]
 ): string {
     // Reorder so that the UI makes more sense
-    if (options.toString() === 'center,left,right') {
+    if (options?.toString() === 'center,left,right') {
         options = ['left', 'center', 'right'];
-    } else if (options.toString() === 'bottom,middle,top') {
+    } else if (options?.toString() === 'bottom,middle,top') {
         options = ['top', 'middle', 'bottom'];
     }
 

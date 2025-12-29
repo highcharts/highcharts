@@ -346,15 +346,7 @@ function pickHandler(meta: { mainType: string; options?: string[] }) {
     if (meta.mainType.toLowerCase() === 'axistypevalue') {
         meta.options = ['linear', 'logarithmic', 'datetime', 'category'];
     }
-    if (meta.mainType.toLowerCase() === 'dashstylevalue') {
-        meta.options = [
-            'Solid', 'ShortDash', 'ShortDot', 'ShortDashDot', 'ShortDashDotDot',
-            'Dot', 'Dash', 'LongDash', 'DashDot', 'LongDashDot',
-            'LongDashDotDot'
-        ];
-    }
-
-    if (meta.options) {
+    if (meta.options || meta.mainType.toLowerCase() === 'dashstylevalue') {
         return { kind: 'select', mod: selectHandler } as const;
     }
     return null;
