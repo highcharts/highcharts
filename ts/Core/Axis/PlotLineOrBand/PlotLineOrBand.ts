@@ -32,6 +32,7 @@ import type SVGPath from '../../Renderer/SVG/SVGPath';
 
 import Axis from '../Axis.js';
 import { Palette } from '../../Color/Palettes.js';
+import SeriesPalettes from '../../Color/Palettes.js';
 import PlotLineOrBandAxis from './PlotLineOrBandAxis.js';
 import U from '../../Utilities.js';
 const {
@@ -168,7 +169,7 @@ class PlotLineOrBand {
 
         const { axis, options } = this,
             { horiz, logarithmic } = axis,
-            { color, events, zIndex = 0 } = options,
+            { color, colorIndex, events, zIndex = 0 } = options,
             { renderer, time } = axis.chart,
             groupAttribs: SVGAttributes = {},
 
@@ -193,10 +194,32 @@ class PlotLineOrBand {
 
         let groupName = isBand ? 'bands' : 'lines';
 
+        let resolvedColor = color;
+        if (
+            typeof color === 'undefined' &&
+            typeof colorIndex !== 'undefined'
+        ) {
+            const chartColors = axis.chart.options.colors ||
+            SeriesPalettes;
+            if (Array.isArray(chartColors)) {
+                resolvedColor = chartColors[colorIndex % chartColors.length];
+            } else if (chartColors && Array.isArray(chartColors.colors)) {
+                resolvedColor =
+                chartColors.colors[colorIndex % chartColors.colors.length];
+            }
+        }
+
+        if (
+            typeof colorIndex !== 'undefined' &&
+            axis.chart.styledMode
+        ) {
+            attribs['class'] += ' highcharts-color-' + colorIndex;
+        }
+
         // Set the presentational attributes
         if (!axis.chart.styledMode) {
             if (isLine) {
-                attribs.stroke = color || Palette.neutralColor40;
+                attribs.stroke = resolvedColor || Palette.neutralColor40;
                 attribs['stroke-width'] = pick(
                     (options as PlotLineOptions).width,
                     1
@@ -206,7 +229,7 @@ class PlotLineOrBand {
                 }
 
             } else if (isBand) { // Plot band
-                attribs.fill = color || Palette.highlightColor10;
+                attribs.fill = resolvedColor || Palette.highlightColor10;
                 if (borderWidth) {
                     attribs.stroke = (options as PlotBandOptions).borderColor;
                     attribs['stroke-width'] = borderWidth;

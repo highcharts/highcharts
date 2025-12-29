@@ -54,6 +54,7 @@ export interface PlotBandOptions {
     borderWidth?: number;
     className?: string;
     color?: ColorType;
+    colorIndex?: number;
     events?: any;
     from?: number|string;
     id?: string;

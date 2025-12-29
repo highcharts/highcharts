@@ -50,6 +50,7 @@ export interface PlotLineOptions {
     acrossPanes?: boolean;
     className?: string;
     color?: ColorString;
+    colorIndex?: number;
     dashStyle?: DashStyleValue;
     events?: any;
     id?: string;
