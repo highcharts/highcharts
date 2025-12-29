@@ -124,9 +124,9 @@ The optional `sorting` object consists of four configuration options:
 
 - **`enabled`**: A boolean that determines whether the end user can sort a column by clicking on the column header.
 
-- **`order`**: Specifies the initial sorting order for a column. It can be set to `'asc'` (ascending) or `'desc'` (descending). If `order` is defined in multiple columns, sort priority is determined by `sorting.priority`. When no priority is set, the last column with an order becomes the primary sort, and earlier columns become secondary.
+- **`order`**: Specifies the initial sorting order for a column. It can be set to `'asc'` (ascending) or `'desc'` (descending).
 
-- **`priority`**: Sets the priority of the column when multiple columns are sorted. Lower numbers have higher priority.
+- **`priority`**: Sets the priority of the column when sorting is defined for multiple columns, where lower numbers have higher priority. When no priority is set, the last column with sorting defined becomes the primary sort, and earlier columns become secondary.
 
 - **`compare`**: Custom compare function to sort the column values. If not set, the default sorting behavior is used. It should return a number indicating whether the first value (`a`) is less than (`-1`), equal to (`0`), or greater than (`1`) the second value (`b`).
 
