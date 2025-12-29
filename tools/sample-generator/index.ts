@@ -11,7 +11,7 @@
 
 /* eslint-disable no-console */
 
-import type { SampleGeneratorConfig } from './config.ts';
+import type { ControlOptions, SampleGeneratorConfig } from './config.ts';
 
 import colors from 'colors/safe.js';
 import { ESLint } from 'eslint';
@@ -39,6 +39,7 @@ const executedDirectly = import.meta.url === process.argv[1] ||
     import.meta.url === `file://${process.argv[1]}`;
 
 interface MetaData {
+    controlOptions?: ControlOptions;
     path: string;
     node: any;
     mainType: string;
@@ -233,10 +234,16 @@ function getMainType(node: any) {
 }
 
 // Build a list of metadata for each path
-async function getPathMeta(inPaths: string[]) {
+async function getPathMeta(config: SampleGeneratorConfig): Promise<MetaList> {
     const list: MetaList = [];
-    for (const pathDef of inPaths) {
-        const { path, overrideValue } = parsePathOverride(pathDef);
+    for (const controlOptions of config.controls || config.paths || []) {
+        let path: string, overrideValue: any;
+        if (typeof controlOptions === 'string') {
+            ({ path, overrideValue } = parsePathOverride(controlOptions));
+        } else {
+            path = controlOptions.path;
+            overrideValue = controlOptions.value;
+        }
         const node = await findNodeByPath(path);
         if (!node) {
             console.error(colors.red(`No node found for path: ${path}`));
@@ -289,6 +296,8 @@ async function getPathMeta(inPaths: string[]) {
 
         list.push({
             path,
+            controlOptions: typeof controlOptions === 'object' ?
+                controlOptions : void 0,
             node,
             mainType,
             options,
@@ -348,7 +357,7 @@ export async function getDemoHTML(metaList?: MetaList) {
 
         // Add call for this specific path
         controls.push(handler.mod.getHTML(
-            meta.path,
+            meta.controlOptions || { path: meta.path },
             meta.overrideValue ?? meta.defaultValue,
             meta.options
         ));
@@ -400,8 +409,12 @@ export async function getDemoCSS() {
 export async function getDemoDetails(config: SampleGeneratorConfig) {
     let details = await loadTemplate('demo.details');
 
+    const paths = config.controls ?
+        config.controls.map(control => control.path) :
+        config.paths || [];
+
     details = details
-        .replace('Highcharts Demo', generateTitle(config.paths))
+        .replace('Highcharts Demo', generateTitle(paths))
         .replace('<em>', '')
         .replace('</em>', '');
 
@@ -410,7 +423,7 @@ export async function getDemoDetails(config: SampleGeneratorConfig) {
 
 // Function to save the generated configuration to Highcharts Samples
 export async function saveDemoFile(config: SampleGeneratorConfig) {
-    const metaList = await getPathMeta(config.paths);
+    const metaList = await getPathMeta(config);
     if (!metaList.length) {
         throw new Error(`No nodes found for paths: ${config.paths.join(', ')}`);
     }

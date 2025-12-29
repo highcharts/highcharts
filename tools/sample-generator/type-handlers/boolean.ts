@@ -1,6 +1,9 @@
 // Handler for boolean options
-export function getHTML(path: string, overrideValue?: any): string {
-    let html = `<highcharts-control type="boolean" path="${path}"`;
+
+import type { ControlOptions } from '../config.ts';
+
+export function getHTML(ctrlOpt: ControlOptions, overrideValue?: any): string {
+    let html = `<highcharts-control type="boolean" path="${ctrlOpt.path}"`;
 
     if (overrideValue !== void 0) {
         html += ` value="${overrideValue}"`;

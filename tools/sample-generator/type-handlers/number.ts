@@ -1,10 +1,21 @@
 // Handler for number options
-export function getHTML(path: string, overrideValue?: any): string {
-    let html = `<highcharts-control type="number" path="${path}"`;
+import type { ControlOptions } from '../config.ts';
+
+export function getHTML(ctrlOpt: ControlOptions, overrideValue?: any): string {
+    let html = `<highcharts-control type="number" path="${ctrlOpt.path}"`;
 
     if (overrideValue !== void 0) {
         html += ` value="${overrideValue}"`;
     }
+
+    if (typeof ctrlOpt.min === 'number') {
+        html += ` min="${ctrlOpt.min}"`;
+    }
+
+    if (typeof ctrlOpt.max === 'number') {
+        html += ` max="${ctrlOpt.max}"`;
+    }
+
     html += '></highcharts-control>';
 
     return html;

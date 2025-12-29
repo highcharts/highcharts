@@ -1,6 +1,9 @@
 // Handler for discrete string options (array of string literals)
+
+import type { ControlOptions } from '../config.ts';
+
 export function getHTML(
-    path: string,
+    ctrlOpt: ControlOptions,
     overrideValue?: any,
     options?: string[]
 ): string {
@@ -11,7 +14,7 @@ export function getHTML(
         options = ['top', 'middle', 'bottom'];
     }
 
-    let html = `<highcharts-control type="select" path="${path}"`;
+    let html = `<highcharts-control type="select" path="${ctrlOpt.path}"`;
 
     if (overrideValue !== void 0) {
         html += ` value="${overrideValue}"`;
