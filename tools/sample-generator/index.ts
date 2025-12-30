@@ -499,6 +499,83 @@ export async function getDemoTS(
         }
     );
 
+    // Similarly, for arrays of strings, put them on one line. If the total line
+    // width, including the indentation, exceeds 80 chars, break after commas.
+    // - Example input 1, single line:
+    //     categories: [
+    //         'Apples',
+    //         'Bananas',
+    //         'Oranges',
+    //         'Pears'
+    //     ]
+    // - Example output 1:
+    //     categories: ['Apples', 'Bananas', 'Oranges', 'Pears']
+    // - Example input 2, multiple lines:
+    //     categories: [
+    //         'January',
+    //         'February',
+    //         'March',
+    //         'April',
+    //         'May',
+    //         'June',
+    //         'July',
+    //         'August',
+    //         'September',
+    //         'October',
+    //         'November',
+    //         'December'
+    //     ]
+    // - Example output 2:
+    //     categories: [
+    //         'January', 'February', 'March', 'April', 'May', 'June',
+    //         'July', 'August', 'September', 'October', 'November', 'December'
+    //     ]
+    chartOptions = chartOptions.replace(
+        /\[\s*('(?:[^'\\]|\\.)*'\s*,\s*)*'(?:[^'\\]|\\.)*'\s*\]/gu,
+        (_match, _p1, offset, string) => {
+            const indentMatch = string
+                .substring(0, offset)
+                .match(/(^|\n)([ \t]*)[^\n]*$/u);
+            const indent = indentMatch ? indentMatch[2] : '';
+            const strings = _match
+                .slice(1, -1)
+                .split(',')
+                .map(s => s.trim());
+            const singleLine = `[${strings.join(', ')}]`;
+            if ((indent.length + singleLine.length) <= 80) {
+                return singleLine;
+            }
+
+            // Break into multiple lines
+            const maxLineLength = 80;
+            const lineIndent = indent + '    ';
+            let multiLine = '[\n' + lineIndent;
+            let currentLine = '';
+
+            for (let i = 0; i < strings.length; i++) {
+                const isLast = i === strings.length - 1;
+                const str = strings[i] + (isLast ? '' : ', ');
+                const testLine = currentLine + str;
+
+                if (
+                    lineIndent.length + testLine.length > maxLineLength &&
+                    currentLine
+                ) {
+                    multiLine += currentLine.trimEnd() + '\n' + lineIndent;
+                    currentLine = str;
+                } else {
+                    currentLine += str;
+                }
+            }
+
+            if (currentLine) {
+                multiLine += currentLine;
+            }
+            multiLine += '\n' + indent + ']';
+            return multiLine;
+        }
+    );
+
 
     const ts = `Highcharts.chart('container', ${chartOptions});\n`
         // Some cases, for example tooltip.borderWidth, have defaultValue as
