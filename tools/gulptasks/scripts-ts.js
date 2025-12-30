@@ -187,29 +187,7 @@ async function scriptsTS(argv) {
             logLib.success('Copied stand-alone DTS for Dashboards');
         }
 
-        if (product === 'Grid') {
-            const bundleDtsFolder = path.join(__dirname, 'scripts-dts/grid/');
-            const codeGridFolder = 'code/grid/';
-
-            fsLib.copyAllFiles(
-                bundleDtsFolder,
-                codeGridFolder,
-                true
-            );
-
-            fsLib.copyFile(
-                codeGridFolder + 'grid-lite.src.d.ts',
-                codeGridFolder + 'grid-lite.d.ts'
-            );
-
-            fsLib.copyFile(
-                codeGridFolder + 'grid-pro.src.d.ts',
-                codeGridFolder + 'grid-pro.d.ts'
-            );
-
-            logLib.success('Copied stand-alone DTS for Grid');
-
-        } else {
+        if (product !== 'Grid') {
             fsLib.copyAllFiles(
                 'ts',
                 argv.assembler ? 'js' : fsLib.path(['code', 'es-modules']),
@@ -252,6 +230,19 @@ async function scriptsTS(argv) {
                 );
             }
 
+            const dashboardsBuildPropertiesJSON =
+                fsLib.getFile(fsLib.path(['tools', 'gulptasks', 'dashboards', 'build-properties.json']), true);
+            const dashboardsEsmFiles =
+                fsLib.getFilePaths(fsLib.path(['code', 'dashboards', 'es-modules']), true);
+
+            for (const file of dashboardsEsmFiles) {
+                await replaceProductPlaceholders(
+                    file,
+                    'Dashboards',
+                    dashboardsBuildPropertiesJSON.version
+                );
+            }
+
             logLib.success('Completed Dashboards TypeScript compilation');
         } else if (product === 'Grid') {
             await processLib
@@ -261,7 +252,9 @@ async function scriptsTS(argv) {
             [ // Copy dts files from the folders to the grid es-modules:
                 'Data',
                 'Grid',
-                'Shared'
+                'Shared',
+                fsLib.path(['Core', 'Renderer']),
+                fsLib.path(['Core', 'Color'])
             ].forEach(dtsFolder => {
                 fsLib.copyAllFiles(
                     fsLib.path(['ts', dtsFolder]),
@@ -275,6 +268,52 @@ async function scriptsTS(argv) {
                 fsLib.path(['code', 'grid', 'es-modules', 'masters-grid']),
                 fsLib.path(['code', 'grid', 'es-modules', 'masters'])
             );
+
+            [ // Copy the master dts files to the umd bundles folder
+                'grid-lite.src.d.ts',
+                'grid-pro.src.d.ts'
+            ].forEach(dtsFile => {
+                const sourcePath = fsLib.path([
+                    'code',
+                    'grid',
+                    'es-modules',
+                    'masters',
+                    dtsFile
+                ]);
+                const destinationPath = fsLib.path([
+                    'code',
+                    'grid',
+                    dtsFile
+                ]);
+
+                // Update relative paths from '../' to './es-modules/'
+                if (FS.existsSync(sourcePath)) {
+                    const content = FS.readFileSync(sourcePath, 'utf8')
+                        .replace(/\.\.\//gu, './es-modules/');
+
+                    FS.writeFileSync(destinationPath, content, 'utf8');
+                }
+
+                // Copy the copied file to the same destination but with a
+                // .d.ts extension instead of .src.d.ts
+                FS.copyFileSync(
+                    destinationPath,
+                    destinationPath.replace(/\.src\.d\.ts$/u, '.d.ts')
+                );
+            });
+
+            const gridBuildPropertiesJSON =
+                fsLib.getFile(fsLib.path(['tools', 'gulptasks', 'grid', 'build-properties.json']), true);
+            const gridFiles =
+                fsLib.getFilePaths(fsLib.path(['code', 'grid']), true);
+
+            for (const file of gridFiles) {
+                await replaceProductPlaceholders(
+                    file,
+                    'Grid',
+                    gridBuildPropertiesJSON.version
+                );
+            }
         } else if (argv.assembler) {
             await processLib
                 .exec('npx tsc -p ts --outDir js');
@@ -292,9 +331,6 @@ async function scriptsTS(argv) {
                 fsLib.getFilePaths(fsLib.path(['code', 'es-modules']), true);
 
             for (const file of esmFiles) {
-                if (file.includes('dashboards')) {
-                    continue;
-                }
                 await replaceProductPlaceholders(
                     file,
                     'Highcharts',

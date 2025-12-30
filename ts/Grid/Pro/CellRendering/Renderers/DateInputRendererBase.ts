@@ -4,9 +4,9 @@
  *
  *  (c) 2020-2025 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -22,42 +22,37 @@
  *
  * */
 
-import type CellRenderer from '../CellRenderer.js';
+import type { CellRendererOptions } from '../CellRenderer.js';
 
 
 /* *
  *
- *  Namespace
+ *  Declarations
  *
  * */
 
-namespace DateInputRendererBase {
+/**
+ * Options to control the date input renderer content.
+ */
+export interface DateInputRendererBaseOptions extends CellRendererOptions {
+    type: 'dateInput' | 'dateTimeInput' | 'timeInput';
 
     /**
-     * Options to control the date input renderer content.
+     * Whether the date input is disabled.
      */
-    export interface Options extends CellRenderer.Options {
-        type: 'dateInput' | 'dateTimeInput' | 'timeInput';
-
-        /**
-         * Whether the date input is disabled.
-         */
-        disabled?: boolean;
-
-        /**
-         * Attributes to control the date input.
-         */
-        attributes?: DateInputAttributes;
-    }
+    disabled?: boolean;
 
     /**
      * Attributes to control the date input.
      */
-    export interface DateInputAttributes {
-        min?: string;
-        max?: string;
-        step?: string;
-    }
+    attributes?: DateInputAttributes;
 }
 
-export default DateInputRendererBase;
+/**
+ * Attributes to control the date input.
+ */
+export interface DateInputAttributes {
+    min?: string;
+    max?: string;
+    step?: string;
+}

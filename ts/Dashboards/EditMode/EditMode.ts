@@ -2,9 +2,9 @@
  *
  *  (c) 2009-2025 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sebastian Bochan
@@ -88,6 +88,9 @@ class EditMode {
                 dragDrop: {
                     enabled: true
                 },
+                viewFullscreen: {
+                    enabled: true
+                },
                 enabled: true,
                 resize: {
                     enabled: true
@@ -159,7 +162,7 @@ class EditMode {
             );
             this.isEditOverlayActive = false;
 
-            board.fullscreen = new Dashboards.Fullscreen(board);
+            board.fullscreen = new Globals.win.Dashboards.Fullscreen(board);
 
             if (this.customHTMLMode) {
                 board.container.classList.add(
@@ -190,7 +193,7 @@ class EditMode {
     /**
      * URL from which the icons will be fetched.
      */
-    public iconsURLPrefix: string = 'https://code.highcharts.com/dashboards/3.6.0/gfx/dashboards-icons/';
+    public iconsURLPrefix: string = 'https://code.highcharts.com/dashboards/@product.version@/gfx/dashboards-icons/';
     /**
      * Dashboards' board instance.
      */
@@ -1126,6 +1129,10 @@ namespace EditMode {
          * Tools options.
          */
         tools?: Tools;
+        /**
+         * Fullscreen options.
+         */
+        viewFullscreen?: ViewFullscreenOptions;
     }
 
     /**
@@ -1134,6 +1141,15 @@ namespace EditMode {
     export interface SettingsOptions {
         /**
          * Whether the toolbar settings buttons should be enabled.
+         *
+         * @default true
+         */
+        enabled?: boolean;
+    }
+
+    export interface ViewFullscreenOptions {
+        /**
+         * Whether the view fullscreen button should be enabled.
          *
          * @default true
          */

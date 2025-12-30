@@ -4,9 +4,9 @@
  *
  *  (c) 2020-2025 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sebastian Bochan
@@ -28,16 +28,17 @@ import type {
     PageSizeSelectorOptions,
     PageButtonsOptions
 } from './PaginationOptions';
+import type { DeepPartial } from '../../../Shared/Types';
 
 import Icons from './Icons.js';
-import Defaults from '../Defaults.js';
 import Globals from '../Globals.js';
 import GridUtils from '../GridUtils.js';
 import Utilities from '../../../Core/Utilities.js';
 import AST from '../../../Core/Renderer/HTML/AST.js';
+import PaginationController from '../Querying/PaginationController';
 
 const { makeHTMLElement, formatText } = GridUtils;
-const { merge, fireEvent, isObject, defined } = Utilities;
+const { defined, fireEvent, isObject, merge } = Utilities;
 
 /**
  *  Representing the pagination functionalities for the Grid.
@@ -55,6 +56,7 @@ class Pagination {
      */
     public static defaultOptions: PaginationOptions = {
         enabled: false,
+        page: 1,
         pageSize: 10,
         position: 'bottom',
         controls: {
@@ -78,6 +80,7 @@ class Pagination {
         }
     };
 
+
     /* *
     *
     *  Properties
@@ -91,14 +94,14 @@ class Pagination {
     private paginationContainer?: HTMLElement;
 
     /**
+     * The pagination controller instance.
+     */
+    private readonly controller: PaginationController;
+
+    /**
      * The Grid Table instance which the pagination belongs to.
      */
     public grid: Grid;
-
-    /**
-     * The options for the pagination.
-     */
-    public options: PaginationOptions;
 
     /**
      * The content container of the Pagination.
@@ -136,14 +139,9 @@ class Pagination {
     public pageSizeSelect?: HTMLSelectElement;
 
     /**
-     * Mobile page selector dropdown
+     * Page selector dropdown
      */
-    public mobilePageSelector?: HTMLSelectElement;
-
-    /**
-     * Mobile page size selector dropdown
-     */
-    public mobilePageSizeSelector?: HTMLSelectElement;
+    public dropdownPageSelector?: HTMLSelectElement;
 
     /**
      * Page info text element
@@ -151,29 +149,15 @@ class Pagination {
     public pageInfoElement?: HTMLElement;
 
     /**
-     * Current page number, starting from 1.
-     */
-    public currentPage: number = 1;
-
-    /**
-     * Available items per page options
-     */
-    public pageSizeOptions: Array<number>;
-
-    /**
-     * Current items per page setting
-     */
-    public currentPageSize: number;
-
-    /**
-     * Language options for pagination text
-     */
-    public lang: PaginationLangOptions;
-
-    /**
      * Old total number of items (rows) to compare with the current total items.
      */
     private oldTotalItems?: number;
+
+    /**
+     * Whether the pagination is dirty due to querying changes.
+     * @internal
+     */
+    public isDirtyQuerying?: boolean;
 
 
     /* *
@@ -187,43 +171,12 @@ class Pagination {
      *
      * @param grid
      * The Grid Table instance which the pagination controller belongs to.
-     *
-     * @param options
-     * The Pagination user options.
-     *
-     * @param state
-     * The Pagination state. Used to restore the previous state after the Grid
-     * is destroyed.
      */
-    constructor(
-        grid: Grid,
-        options: PaginationOptions,
-        state: Pagination.PaginationState = {}
-    ) {
+    constructor(grid: Grid) {
         this.grid = grid;
-        this.options = merge(Pagination.defaultOptions, options);
-
-        const pageSizeSelector = this.options.controls.pageSizeSelector;
-        this.pageSizeOptions = isObject(pageSizeSelector) ?
-            pageSizeSelector.options :
-            (Pagination.defaultOptions.controls.pageSizeSelector as PageSizeSelectorOptions).options; // eslint-disable-line
-
-        this.currentPageSize =
-            state.currentPageSize ||
-            this.options.pageSize ||
-            this.pageSizeOptions[0];
-
-        // Lang pack
-        this.lang = merge(
-            Defaults.defaultOptions.pagination,
-            this.grid.options?.lang?.pagination
-        );
-
-        // Set state
-        if (state.currentPage) {
-            this.currentPage = state.currentPage;
-        }
+        this.controller = grid.querying.pagination;
     }
+
 
     /* *
     *
@@ -232,17 +185,58 @@ class Pagination {
     * */
 
     /**
-     * Total number of items (rows)
+     * Returns the reference to the pagination options.
      */
-    public get totalItems(): number {
-        return this.grid.querying.pagination.totalItems || 0;
+    public get options(): PaginationOptions | undefined {
+        return this.grid.options?.pagination;
     }
 
     /**
-     * Total number of pages
+     * Returns the language options for pagination text.
      */
-    public get totalPages(): number {
-        return Math.ceil(this.totalItems / this.currentPageSize) || 1;
+    public get lang(): PaginationLangOptions | undefined {
+        return this.grid.options?.lang?.pagination;
+    }
+
+    /**
+     * Returns the page size selector options.
+     */
+    public get pageSizeSelectorOptions(): number[] {
+        const raw = this.options?.controls?.pageSizeSelector;
+        if (isObject(raw)) {
+            return raw.options ?? [];
+        }
+
+        return (
+            Pagination.defaultOptions
+                .controls?.pageSizeSelector as PageSizeSelectorOptions
+        ).options ?? [];
+    }
+
+    /**
+     * Internal method to set the dirty flags for the pagination based on the
+     * options differences.
+     *
+     * @param diff
+     * The differences between the previous and the new options.
+     *
+     * @internal
+     */
+    public update(diff: DeepPartial<PaginationOptions>): void {
+        if (
+            'page' in diff ||
+            'pageSize' in diff
+        ) {
+            this.isDirtyQuerying = true;
+            delete diff.page;
+            delete diff.pageSize;
+        }
+
+        // TODO: Optimize more options here.
+
+        if (Object.keys(diff).length > 0) {
+            this.grid.dirtyFlags.add('grid');
+        }
     }
 
     /**
@@ -256,14 +250,14 @@ class Pagination {
      * the specified ID.
      */
     public render(): void {
-        const position = this.options.position;
+        const position = this.options?.position;
         const grid = this.grid;
 
-        this.oldTotalItems = this.totalItems;
+        this.oldTotalItems = this.controller.totalItems;
 
         // Set row count for a11y
         grid.tableElement?.setAttribute('aria-current', 'page');
-        this.updateA11yRowsCount(this.currentPageSize);
+        this.updateA11yRowsCount(this.controller.currentPageSize);
 
         // Render pagination container
         if (typeof position === 'string' && position.startsWith('#')) {
@@ -287,9 +281,6 @@ class Pagination {
                 'Results pagination'
             );
         }
-
-        // Clamps the current page to the valid range
-        this.clampCurrentPage();
 
         // Render all components
         this.renderPageInfo();
@@ -351,7 +342,7 @@ class Pagination {
      * Render the page information text.
      */
     public renderPageInfo(): void {
-        const pageInfo = this.options.controls?.pageInfo;
+        const pageInfo = this.options?.controls?.pageInfo;
         if (
             pageInfo === false ||
             (isObject(pageInfo) && pageInfo.enabled === false)
@@ -374,18 +365,25 @@ class Pagination {
             return;
         }
 
-        const startItem = (this.currentPage - 1) * this.currentPageSize + 1;
+        const {
+            currentPage,
+            currentPageSize,
+            totalItems,
+            totalPages
+        } = this.controller;
+
+        const startItem = (currentPage - 1) * currentPageSize + 1;
         const endItem = Math.min(
-            this.currentPage * this.currentPageSize,
-            this.totalItems
+            currentPage * currentPageSize,
+            totalItems
         );
 
-        const pageInfoText = formatText(this.lang.pageInfo, {
+        const pageInfoText = formatText(this.lang?.pageInfo ?? '', {
             start: startItem,
             end: endItem,
-            total: this.totalItems,
-            currentPage: this.currentPage,
-            totalPages: this.totalPages
+            total: totalItems,
+            currentPage: currentPage,
+            totalPages: totalPages
         });
 
         this.pageInfoElement.innerHTML = pageInfoText;
@@ -396,52 +394,63 @@ class Pagination {
      */
     public renderControls(): void {
         const navContainer = makeHTMLElement('div', {
-            className: Globals.getClassName('paginationControls')
+            className: Globals.getClassName('paginationControlsContainer')
         }, this.contentWrapper);
+        const controls = this.options?.controls || {};
 
         // Render first/previous buttons
-        if (this.options.controls?.firstLastButtons) {
+        if (controls.firstLastButtons) {
             this.renderFirstButton(navContainer);
         }
 
         // Render previous button
-        if (this.options.controls?.previousNextButtons) {
+        if (controls.previousNextButtons) {
             this.renderPrevButton(navContainer);
         }
 
         // Render page numbers
-        if (this.options.controls?.pageButtons) {
+        if (controls.pageButtons) {
             this.renderPageNumbers(navContainer);
         }
 
-        // Render mobile page selector
-        this.renderMobilePageSelector(navContainer);
+        // Render dropdown page selector
+        this.renderDropdownPageSelector(navContainer);
 
         // Render next button
-        if (this.options.controls?.previousNextButtons) {
+        if (controls.previousNextButtons) {
             this.renderNextButton(navContainer);
         }
 
         // Render last/first buttons
-        if (this.options.controls?.firstLastButtons) {
+        if (controls.firstLastButtons) {
             this.renderLastButton(navContainer);
         }
     }
 
     /**
      * Update the pagination controls.
+     *
+     * @param force
+     * Whether to force update the controls.
+     *
+     * @internal
      */
-    public updateControls(): void {
-        if (this.oldTotalItems === this.totalItems) {
+    public updateControls(force: boolean = false): void {
+        const {
+            totalItems,
+            currentPageSize
+        } = this.controller;
+
+        if (this.oldTotalItems === this.controller.totalItems && !force) {
             return;
         }
 
         this.updatePageInfo();
         this.updatePageNumbers();
         this.updateButtonStates();
-        this.updateA11yRowsCount(this.currentPageSize);
+        this.updateA11yRowsCount(currentPageSize);
 
-        this.oldTotalItems = this.totalItems;
+        this.oldTotalItems = totalItems;
     }
 
     /**
@@ -452,7 +461,7 @@ class Pagination {
      *
      */
     public renderFirstButton(container: HTMLElement): void {
-        const firstLastButtons = this.options.controls?.firstLastButtons;
+        const firstLastButtons = this.options?.controls?.firstLastButtons;
         if (
             firstLastButtons === false ||
             (isObject(firstLastButtons) && firstLastButtons.enabled === false)
@@ -462,16 +471,15 @@ class Pagination {
 
         // Create first button
         this.firstButton = makeHTMLElement('button', {
-            innerHTML: Icons.first,
-            className: Globals.getClassName('paginationButton') + ' ' +
-                Globals.getClassName('paginationFirstButton')
+            className: Globals.getClassName('button'),
+            innerHTML: Icons.first
         }, container);
-        this.firstButton.title = this.lang.firstPage;
+        this.firstButton.title = this.lang?.firstPage ?? '';
 
         // Set aria-label for a11y
         this.firstButton.setAttribute(
             'aria-label',
-            this.lang.firstPage
+            this.lang?.firstPage ?? ''
         );
 
         // Add click event
@@ -479,7 +487,10 @@ class Pagination {
             void this.goToPage(1);
         });
 
-        this.setButtonState(this.firstButton, this.currentPage === 1);
+        this.setButtonState(
+            this.firstButton,
+            this.controller.currentPage === 1
+        );
     }
 
     /**
@@ -489,7 +500,7 @@ class Pagination {
      * The container element for the previous page button.
      */
     public renderPrevButton(container: HTMLElement): void {
-        const previousNextButtons = this.options.controls?.previousNextButtons;
+        const previousNextButtons = this.options?.controls?.previousNextButtons;
         if (
             previousNextButtons === false ||
             (
@@ -502,24 +513,26 @@ class Pagination {
 
         // Create previous button
         this.prevButton = makeHTMLElement('button', {
-            innerHTML: Icons.previous,
-            className: Globals.getClassName('paginationButton') + ' ' +
-                Globals.getClassName('paginationPrevButton')
+            className: Globals.getClassName('button'),
+            innerHTML: Icons.previous
         }, container);
-        this.prevButton.title = this.lang.previousPage;
+        this.prevButton.title = this.lang?.previousPage ?? '';
 
         // Set aria-label for a11y
         this.prevButton.setAttribute(
             'aria-label',
-            this.lang.previousPage
+            this.lang?.previousPage ?? ''
         );
 
         // Add click event
         this.prevButton.addEventListener('click', (): void => {
-            void this.goToPage(this.currentPage - 1);
+            void this.goToPage(this.controller.currentPage - 1);
         });
 
-        this.setButtonState(this.prevButton, this.currentPage === 1);
+        this.setButtonState(
+            this.prevButton,
+            this.controller.currentPage === 1
+        );
     }
 
     /**
@@ -529,7 +542,7 @@ class Pagination {
      * The container element for the next page button.
      */
     public renderNextButton(container: HTMLElement): void {
-        const previousNextButtons = this.options.controls?.previousNextButtons;
+        const previousNextButtons = this.options?.controls?.previousNextButtons;
         if (
             previousNextButtons === false ||
             (
@@ -542,26 +555,25 @@ class Pagination {
 
         // Create next button
         this.nextButton = makeHTMLElement('button', {
-            innerHTML: Icons.next,
-            className: Globals.getClassName('paginationButton') + ' ' +
-                Globals.getClassName('paginationNextButton')
+            className: Globals.getClassName('button'),
+            innerHTML: Icons.next
         }, container);
-        this.nextButton.title = this.lang.nextPage;
+        this.nextButton.title = this.lang?.nextPage ?? '';
 
         // Set aria-label for a11y
         this.nextButton.setAttribute(
             'aria-label',
-            this.lang.nextPage
+            this.lang?.nextPage ?? ''
         );
 
         // Add click event
         this.nextButton.addEventListener('click', (): void => {
-            void this.goToPage(this.currentPage + 1);
+            void this.goToPage(this.controller.currentPage + 1);
         });
 
         this.setButtonState(
             this.nextButton,
-            this.currentPage >= this.totalPages
+            this.controller.currentPage >= this.controller.totalPages
         );
     }
 
@@ -572,7 +584,7 @@ class Pagination {
      * The container element for the last page button.
      */
     public renderLastButton(container: HTMLElement): void {
-        const firstLastButtons = this.options.controls?.firstLastButtons;
+        const firstLastButtons = this.options?.controls?.firstLastButtons;
         if (
             firstLastButtons === false ||
             (isObject(firstLastButtons) && firstLastButtons.enabled === false)
@@ -582,26 +594,25 @@ class Pagination {
 
         // Create last button
         this.lastButton = makeHTMLElement('button', {
-            innerHTML: Icons.last,
-            className: Globals.getClassName('paginationButton') + ' ' +
-                Globals.getClassName('paginationLastButton')
+            className: Globals.getClassName('button'),
+            innerHTML: Icons.last
         }, container);
-        this.lastButton.title = this.lang.lastPage;
+        this.lastButton.title = this.lang?.lastPage ?? '';
 
         // Set aria-label for a11y
         this.lastButton.setAttribute(
             'aria-label',
-            this.lang.lastPage
+            this.lang?.lastPage ?? ''
         );
 
         // Add click event
         this.lastButton.addEventListener('click', (): void => {
-            void this.goToPage(this.totalPages);
+            void this.goToPage(this.controller.totalPages);
         });
 
         this.setButtonState(
             this.lastButton,
-            this.currentPage >= this.totalPages
+            this.controller.currentPage >= this.controller.totalPages
         );
     }
 
@@ -612,7 +623,7 @@ class Pagination {
      * The container element for the page number buttons.
      */
     public renderPageNumbers(container: HTMLElement): void {
-        const pageButtons = this.options.controls?.pageButtons;
+        const pageButtons = this.options?.controls?.pageButtons;
         if (
             pageButtons === false ||
             (isObject(pageButtons) && pageButtons.enabled === false)
@@ -621,7 +632,7 @@ class Pagination {
         }
 
         this.pageNumbersContainer = makeHTMLElement('div', {
-            className: Globals.getClassName('paginationPageButton')
+            className: Globals.getClassName('paginationNavButtonsContainer')
         }, container);
 
         this.updatePageNumbers();
@@ -638,13 +649,19 @@ class Pagination {
         // Clear existing page numbers
         this.pageNumbersContainer.innerHTML = AST.emptyHTML;
 
-        const pageButtons = this.options.controls?.pageButtons;
+        const pageButtons = this.options?.controls?.pageButtons;
         const maxPageNumbers = isObject(pageButtons) ?
             pageButtons.count :
-            (Pagination.defaultOptions.controls.pageButtons as PageButtonsOptions).count; // eslint-disable-line
+            (Pagination.defaultOptions.controls?.pageButtons as PageButtonsOptions).count; // eslint-disable-line
 
-        const totalPages = this.totalPages;
-        const currentPage = this.currentPage;
+        if (!maxPageNumbers) {
+            return;
+        }
+
+        const {
+            totalPages,
+            currentPage
+        } = this.controller;
 
         if (totalPages <= maxPageNumbers) {
             // Show all page numbers if total pages is less than max
@@ -766,10 +783,8 @@ class Pagination {
             });
         }
 
-        // Update mobile selector if it exists
-        if (this.mobilePageSelector) {
-            this.mobilePageSelector.value = this.currentPage.toString();
-        }
+        // Update dropdown selector if it exists
+        this.updateDropdownPageSelector();
     }
 
     /**
@@ -787,17 +802,24 @@ class Pagination {
         }
 
         const button = makeHTMLElement('button', {
-            innerHTML: pageNumber.toString(),
-            className: Globals.getClassName(
-                isActive ? 'paginationPageButtonActive' : 'paginationPageButton'
-            )
+            className: Globals.getClassName('button'),
+            innerHTML: pageNumber.toString()
         }, this.pageNumbersContainer);
-        button.title = formatText(this.lang.pageNumber, { page: pageNumber });
+
+        if (isActive) {
+            button.classList.add(Globals.getClassName('buttonSelected'));
+            button.setAttribute('aria-current', 'page');
+        }
+
+        button.title = formatText(
+            this.lang?.pageNumber ?? '',
+            { page: pageNumber }
+        );
 
         // Set aria-label for a11y
         button.setAttribute(
             'aria-label',
-            formatText(this.lang.pageNumber, { page: pageNumber })
+            formatText(this.lang?.pageNumber ?? '', { page: pageNumber })
         );
 
         // Add click event
@@ -815,10 +837,9 @@ class Pagination {
         }
 
         const ellipsisElement = makeHTMLElement('span', {
-            innerHTML: '...',
-            className: Globals.getClassName('paginationEllipsis')
+            innerHTML: '...'
         }, this.pageNumbersContainer);
-        ellipsisElement.title = this.lang.ellipsis;
+        ellipsisElement.title = this.lang?.ellipsis ?? '';
 
         // Set aria-label for a11y
         ellipsisElement.setAttribute('aria-hidden', true);
@@ -829,7 +850,7 @@ class Pagination {
      */
     public renderPageSizeSelector(): void {
 
-        const pageSizeSelector = this.options.controls.pageSizeSelector;
+        const pageSizeSelector = this.options?.controls?.pageSizeSelector;
         if (
             pageSizeSelector === false ||
             (
@@ -841,23 +862,24 @@ class Pagination {
         }
 
         const container = makeHTMLElement('div', {
-            className: Globals.getClassName('paginationPageSizeContainer')
+            className: Globals.getClassName('paginationPageSize')
         }, this.contentWrapper);
 
         makeHTMLElement('span', {
-            innerHTML: this.lang.pageSizeLabel
+            innerHTML: this.lang?.pageSizeLabel ?? ''
         }, container);
 
         this.pageSizeSelect = makeHTMLElement('select', {
-            className: Globals.getClassName('paginationPageSizeSelect')
+            className: Globals.getClassName('input'),
+            id: Globals.getClassName('paginationPageSize')
         }, container) as HTMLSelectElement;
 
-        this.pageSizeOptions.forEach((option: number): void => {
+        this.pageSizeSelectorOptions.forEach((option: number): void => {
             const optionElement = document.createElement('option');
             optionElement.value = option.toString();
             optionElement.innerHTML = option.toString();
 
-            if (option === this.currentPageSize) {
+            if (option === this.controller.currentPageSize) {
                 optionElement.selected = true;
             }
 
@@ -871,9 +893,20 @@ class Pagination {
 
             void this.setPageSize(parseInt(this.pageSizeSelect.value, 10));
         });
+    }
 
-        // Render mobile page size selector in the same container
-        this.renderMobilePageSizeSelector(container);
+    /**
+     * Sets the new options for the pagination.
+     *
+     * @param newOptions
+     * The new options to set.
+     */
+    private setOptions(newOptions: Partial<PaginationOptions>): void {
+        const userOptions = this.grid.userOptions.pagination ??= {};
+        const options = ((this.grid.options ??= {}).pagination ??= {});
+
+        merge(true, userOptions, newOptions);
+        merge(true, options, newOptions);
     }
 
     /**
@@ -883,21 +916,24 @@ class Pagination {
      * The new page size to set.
      */
     public async setPageSize(newPageSize: number): Promise<void> {
-        const pageSize = this.currentPageSize;
+        const oldPageSize = this.controller.currentPageSize;
         const langAccessibility = this.grid.options?.lang?.accessibility;
 
         fireEvent(
             this,
             'beforePageSizeChange',
             {
-                pageSize: pageSize,
+                pageSize: oldPageSize,
                 newPageSize: newPageSize
             }
         );
-        this.currentPageSize = newPageSize;
+        this.controller.setPageSize(newPageSize);
+        this.controller.setPage(1);
 
-        // Reset to first page when changing page size
-        this.currentPage = 1;
+        this.setOptions({
+            pageSize: newPageSize,
+            page: 1
+        });
 
         // Update the grid's pagination range
         await this.updateGridPagination();
@@ -908,25 +944,20 @@ class Pagination {
         this.updateButtonStates();
 
         // Update row count for a11y
-        this.updateA11yRowsCount(this.currentPageSize);
+        this.updateA11yRowsCount(this.controller.currentPageSize);
 
         // Announce the page size change
         this.grid.accessibility?.announce(
             langAccessibility?.pagination?.announcements?.pageSizeChange +
-                ' ' + newPageSize
+            ' ' + newPageSize
         );
-
-        // Update mobile page size selector if it exists
-        if (this.mobilePageSizeSelector) {
-            this.mobilePageSizeSelector.value = this.currentPageSize.toString();
-        }
 
         fireEvent(
             this,
             'afterPageSizeChange',
             {
                 pageSize: newPageSize,
-                previousPageSize: pageSize
+                previousPageSize: oldPageSize
             }
         );
     }
@@ -939,28 +970,38 @@ class Pagination {
      */
     public async goToPage(pageNumber: number): Promise<void> {
         const langAccessibility = this.grid.options?.lang?.accessibility;
+        const {
+            totalPages,
+            currentPage,
+            currentPageSize
+        } = this.controller;
 
         if (
             pageNumber < 1 ||
-            pageNumber > this.totalPages ||
-            pageNumber === this.currentPage
+            pageNumber > totalPages ||
+            pageNumber === currentPage
         ) {
             return;
         }
 
-        const previousPage = this.currentPage;
+        const previousPage = currentPage;
 
         fireEvent(
             this,
             'beforePageChange',
             {
-                currentPage: this.currentPage,
+                currentPage: currentPage,
                 nextPage: pageNumber,
-                pageSize: this.currentPageSize
+                pageSize: currentPageSize
             }
         );
 
-        this.currentPage = pageNumber;
+        this.controller.setPage(pageNumber);
+        const newPage = this.controller.currentPage; // Take clamped page
+
+        this.setOptions({
+            page: newPage
+        });
 
         await this.updateGridPagination();
         this.updatePageInfo();
@@ -971,49 +1012,26 @@ class Pagination {
         // Announce the page change
         this.grid.accessibility?.announce(
             langAccessibility?.pagination?.announcements?.pageChange +
-                ' ' + this.currentPage
+            ' ' + newPage
         );
 
         fireEvent(
             this,
             'afterPageChange',
             {
-                currentPage: this.currentPage,
+                currentPage: newPage,
                 previousPage: previousPage,
-                pageSize: this.currentPageSize
+                pageSize: currentPageSize
             }
         );
     }
 
     /**
      * Update the grid's pagination state.
-     *
-     * @param ignoreDataRange
-     * Whether to ignore the data range update. Used when updating the data
-     * range is not needed, for example when updating the data range from
-     * the server.
-     * @internal
      */
-    public async updateGridPagination(
-        ignoreDataRange: boolean = false
-    ): Promise<void> {
-        if (!this.grid.querying?.pagination) {
-            return;
-        }
-
-        this.grid.querying.pagination.setRange(
-            ignoreDataRange ? 1 : this.currentPage
-        );
-
-        // Trigger the grid to update its data and viewport
-        this.grid.querying.shouldBeUpdated = true;
-
-        // Force the querying controller to proceed with updates
-        await this.grid.querying.proceed(true);
-
+    public async updateGridPagination(): Promise<void> {
         // Update the viewport to reflect the new data
         await this.grid.viewport?.updateRows();
-        this.grid.viewport?.header?.reflow();
 
         // Scroll to top after page change
         const tBody = this.grid.viewport?.tbodyElement;
@@ -1023,35 +1041,30 @@ class Pagination {
     }
 
     /**
-     * Ensures the current page is within valid range.
-     */
-    public clampCurrentPage(): void {
-        if (this.currentPage > this.totalPages) {
-            this.currentPage = this.totalPages;
-            this.grid.querying.pagination.setRange(this.currentPage);
-        }
-    }
-
-    /**
      * Update button states based on current page.
      */
     public updateButtonStates(): void {
+        const {
+            currentPage,
+            totalPages
+        } = this.controller;
+
         if (this.firstButton) {
-            this.setButtonState(this.firstButton, this.currentPage === 1);
+            this.setButtonState(this.firstButton, currentPage === 1);
         }
         if (this.prevButton) {
-            this.setButtonState(this.prevButton, this.currentPage === 1);
+            this.setButtonState(this.prevButton, currentPage === 1);
         }
         if (this.nextButton) {
             this.setButtonState(
                 this.nextButton,
-                this.currentPage >= this.totalPages
+                currentPage >= totalPages
             );
         }
         if (this.lastButton) {
             this.setButtonState(
                 this.lastButton,
-                this.currentPage >= this.totalPages
+                currentPage >= totalPages
             );
         }
     }
@@ -1064,8 +1077,8 @@ class Pagination {
      * @returns
      */
     public async updatePage(isNextPage: boolean = true): Promise<void> {
-        const newPage =
-            isNextPage ? this.currentPage + 1 : this.currentPage - 1;
+        const { currentPage } = this.controller;
+        const newPage = isNextPage ? currentPage + 1 : currentPage - 1;
         await this.goToPage(newPage);
     }
 
@@ -1080,14 +1093,8 @@ class Pagination {
      */
     public setButtonState(button: HTMLElement, disabled?: boolean): void {
         if (disabled) {
-            button.classList.add(
-                Globals.getClassName('paginationButtonDisabled')
-            );
             button.setAttribute('disabled', 'disabled');
         } else {
-            button.classList.remove(
-                Globals.getClassName('paginationButtonDisabled')
-            );
             button.removeAttribute('disabled');
         }
     }
@@ -1096,7 +1103,7 @@ class Pagination {
      * Reflow the pagination container.
      */
     public reflow(): void {
-        const position = this.options.position;
+        const position = this.options?.position;
 
         if (!this.paginationContainer) {
             return;
@@ -1114,7 +1121,7 @@ class Pagination {
      * Destroy the pagination instance.
      */
     public destroy(): void {
-        const position = this.options.position;
+        const position = this.options?.position;
 
         if (position === 'footer') {
             // For footer position, remove the entire tfoot element.
@@ -1122,83 +1129,67 @@ class Pagination {
         } else {
             this.contentWrapper?.remove();
         }
-
-        this.grid.querying.pagination.reset();
     }
 
     /**
-     * Render the mobile page selector (select dropdown).
+     * Render the dropdown page selector (select dropdown).
      *
      * @param container
-     * The container element for the mobile page selector.
+     * The container element for the dropdown page selector.
      */
-    public renderMobilePageSelector(container: HTMLElement): void {
-        const totalPages = this.totalPages;
-        if (totalPages <= 1) {
+    public renderDropdownPageSelector(container: HTMLElement): void {
+        if (this.controller.totalPages <= 1) {
             return;
         }
 
-        const mobileSelect: HTMLSelectElement = makeHTMLElement('select', {
-            className: Globals.getClassName('paginationMobileSelector')
+        const wrapper: HTMLSelectElement = makeHTMLElement('div', {
+            className: Globals.getClassName('paginationNavDropdown')
         }, container);
 
-        // Add options for each page
-        for (let i = 1; i <= totalPages; i++) {
-            const option: HTMLOptionElement =
-                makeHTMLElement('option', {}, mobileSelect);
-            option.value = i.toString();
-            option.textContent = `Page ${i} of ${totalPages}`;
-        }
+        const select: HTMLSelectElement = makeHTMLElement('select', {
+            className: Globals.getClassName('input'),
+            id: Globals.getClassName('paginationNavDropdown')
+        }, wrapper);
 
-        // Set current page as selected
-        mobileSelect.value = this.currentPage.toString();
+        this.dropdownPageSelector = select;
 
-        this.mobilePageSelector = mobileSelect;
+        this.updateDropdownPageSelector();
 
         // Add event listener for page change
-        mobileSelect.addEventListener('change', (): void => {
-            const newPage = parseInt(mobileSelect.value, 10);
-            if (newPage !== this.currentPage) {
+        select.addEventListener('change', (): void => {
+            const newPage = parseInt(select.value, 10);
+            if (newPage !== this.controller.currentPage) {
                 void this.goToPage(newPage);
             }
         });
     }
 
     /**
-     * Render the mobile page size selector (select dropdown).
-     *
-     * @param container
-     * The container element for the mobile page size selector.
+     * Updates the dropdown page selector DOM elements.
      */
-    public renderMobilePageSizeSelector(container: HTMLElement): void {
-        const mobilePageSizeSelect: HTMLSelectElement =
-            makeHTMLElement('select', {
-                className:
-                    Globals.getClassName('paginationMobilePageSizeSelector')
-            }, container);
+    private updateDropdownPageSelector(): void {
+        const select = this.dropdownPageSelector;
+        if (!select) {
+            return;
+        }
 
-        this.pageSizeOptions.forEach((option: number): void => {
-            const optionElement: HTMLOptionElement =
-                makeHTMLElement('option', {}, mobilePageSizeSelect);
-            optionElement.value = option.toString();
-            optionElement.textContent = `${option} ${this.lang.pageSizeLabel}`;
+        const {
+            totalPages,
+            currentPage
+        } = this.controller;
 
-            if (option === this.currentPageSize) {
-                optionElement.selected = true;
-            }
-        });
+        select.innerHTML = AST.emptyHTML;
 
-        this.mobilePageSizeSelector = mobilePageSizeSelect;
+        // Add options for each page
+        for (let i = 1; i <= totalPages; i++) {
+            const option: HTMLOptionElement =
+                makeHTMLElement('option', {}, select);
+            option.value = i.toString();
+            option.textContent = `Page ${i} of ${totalPages}`;
+        }
 
-        mobilePageSizeSelect.addEventListener('change', (): void => {
-            if (!this.mobilePageSizeSelector) {
-                return;
-            }
-
-            void this.setPageSize(
-                parseInt(this.mobilePageSizeSelector.value, 10)
-            );
-        });
+        // Set current page as selected
+        select.value = currentPage.toString();
     }
 
     /**
@@ -1211,17 +1202,22 @@ class Pagination {
         const grid = this.grid;
         grid.tableElement?.setAttribute(
             'aria-rowcount',
-            currentPageSize || this.totalItems
+            currentPageSize || this.controller.totalItems
         );
     }
 }
 
-namespace Pagination {
-    export type PaginationState = {
-        currentPage?: number;
-        currentPageSize?: number;
-    };
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+export interface PaginationState {
+    currentPage?: number;
+    currentPageSize?: number;
 }
+
 
 /* *
  *

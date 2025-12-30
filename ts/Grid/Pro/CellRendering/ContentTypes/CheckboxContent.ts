@@ -4,9 +4,9 @@
  *
  *  (c) 2020-2025 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -88,9 +88,10 @@ class CheckboxContent extends CellContentPro implements EditModeContent {
         input.tabIndex = -1;
         input.type = 'checkbox';
         input.name = cell.column.id + '-' + cell.row.id;
+        input.classList.add(Globals.getClassName('input'));
 
         if (options.attributes) {
-            Object.entries(options.attributes).forEach(([key, value]):void => {
+            Object.entries(options.attributes).forEach(([key, value]): void => {
                 input.setAttribute(key, value);
             });
         }
@@ -98,7 +99,6 @@ class CheckboxContent extends CellContentPro implements EditModeContent {
         this.update();
 
         parentElement.appendChild(this.input);
-        input.classList.add(Globals.classNamePrefix + 'field-auto-width');
 
         input.addEventListener('change', this.onChange);
         input.addEventListener('keydown', this.onKeyDown);
@@ -156,7 +156,7 @@ class CheckboxContent extends CellContentPro implements EditModeContent {
         if (this.changeHandler) {
             this.changeHandler(e);
         } else {
-            void this.cell.setValue(this.value, true);
+            void this.cell.editValue(this.value);
         }
     };
 

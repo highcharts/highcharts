@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2025 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -672,12 +673,66 @@ class SVGElement implements SVGElementBase {
     }
 
     public attr(key: string): (number|string);
+    /** @internal */
     public attr(
         key: string,
         val: (number|string|ColorType|SVGPath),
         complete?: Function,
         continueAnimation?: boolean
     ): this;
+    /**
+     * Apply native and custom attributes to the SVG elements.
+     *
+     * In order to set the rotation center for rotation, set x and y to 0 and
+     * use `translateX` and `translateY` attributes to position the element
+     * instead.
+     *
+     * Attributes frequently used in Highcharts are `fill`, `stroke`,
+     * `stroke-width`.
+     *
+     * @sample highcharts/members/renderer-rect/
+     *         Setting some attributes
+     *
+     * @example
+     * // Set multiple attributes
+     * element.attr({
+     *     stroke: 'red',
+     *     fill: 'blue',
+     *     x: 10,
+     *     y: 10
+     * });
+     *
+     * // Set a single attribute
+     * element.attr('stroke', 'red');
+     *
+     * // Get an attribute
+     * element.attr('stroke'); // => 'red'
+     *
+     * @param hash
+     *        The native and custom SVG attributes.
+     *
+     * @param val
+     *        If the type of the first argument is `string`, the second can be a
+     *        value, which will serve as a single attribute setter. If the first
+     *        argument is a string and the second is undefined, the function
+     *        serves as a getter and the current value of the property is
+     *        returned.
+     *
+     * @param complete
+     *        A callback function to execute after setting the attributes. This
+     *        makes the function compliant and interchangeable with the
+     *        {@link SVGElement#animate} function.
+     *
+     * @param continueAnimation
+     *        Used internally when `.attr` is called as part of an animation
+     *        step. Otherwise, calling `.attr` for an attribute will stop
+     *        animation for that attribute.
+     *
+     * @return
+     *         If used as a setter, it returns the current
+     *         {@link Highcharts.SVGElement} so the calls can be chained. If
+     *         used as a getter, the current value of the attribute is returned.
+     */
     public attr(
         hash?: SVGAttributes,
         val?: undefined,
@@ -1216,22 +1271,13 @@ class SVGElement implements SVGElementBase {
      */
     public destroy(): undefined {
         const wrapper = this,
-            element = wrapper.element || {},
-            renderer = wrapper.renderer,
+            { element = {} as DOMElementType, renderer, stops } = wrapper,
             ownerSVGElement = (element as SVGDOMElement).ownerSVGElement;
-
-        let parentToClean: (SVGElement|undefined) = (
-                element.nodeName === 'SPAN' &&
-                wrapper.parentGroup ||
-                void 0
-            ),
-            grandParent: SVGElement,
-            i;
 
         // Remove events
         element.onclick = element.onmouseout = element.onmouseover =
             element.onmousemove = (element as any).point = null;
-        stop(wrapper as any); // Stop running animations
+        stop(wrapper); // Stop running animations
 
         if (wrapper.clipPath && ownerSVGElement) {
             const clipPath = wrapper.clipPath;
@@ -1252,28 +1298,15 @@ class SVGElement implements SVGElementBase {
         }
 
         // Destroy stops in case this is a gradient object @todo old code?
-        if (wrapper.stops) {
-            for (i = 0; i < wrapper.stops.length; i++) {
-                wrapper.stops[i].destroy();
+        if (stops) {
+            for (const stop of stops) {
+                stop.destroy();
             }
-            wrapper.stops.length = 0;
-            wrapper.stops = void 0;
+            stops.length = 0;
         }
 
         // Remove element
         wrapper.safeRemoveChild(element);
-
-        // In case of useHTML, clean up empty containers emulating SVG groups
-        // (#1960, #2393, #2697).
-        while (
-            parentToClean?.div &&
-            parentToClean.div.childNodes.length === 0
-        ) {
-            grandParent = (parentToClean as any).parentGroup;
-            wrapper.safeRemoveChild((parentToClean as any).div);
-            delete (parentToClean as any).div;
-            parentToClean = grandParent;
-        }
 
         // Remove from alignObjects
         if (wrapper.alignOptions) {
@@ -1403,7 +1436,6 @@ class SVGElement implements SVGElementBase {
     public getBBox(reload?: boolean, rot?: number): BBoxObject {
         const wrapper = this,
             {
-                alignValue,
                 element,
                 renderer,
                 styles,
@@ -1420,40 +1452,21 @@ class SVGElement implements SVGElementBase {
                 SVGElement.prototype.getStyle.call(element, 'font-size')
             ) : (
                 styles.fontSize
-            );
+            ),
+            cacheKey = this.getBBoxCacheKey([
+                renderer.rootFontSize,
+                this.textWidth, // #7874, also useHTML
+                this.alignValue,
+                styles.fontWeight, // #12163
+                styles.lineClamp,
+                styles.textOverflow, // #5968
+                fontSize,
+                rotation
+            ]);
 
         let bBox: BBoxObject|undefined,
             height,
-            toggleTextShadowShim,
-            cacheKey;
-
-        // Avoid undefined and null (#7316)
-        if (defined(textStr)) {
-
-            cacheKey = textStr.toString();
-
-            // Since numbers are monospaced, and numerical labels appear a lot
-            // in a chart, we assume that a label of n characters has the same
-            // bounding box as others of the same length. Unless there is inner
-            // HTML in the label. In that case, leave the numbers as is (#5899).
-            if (cacheKey.indexOf('<') === -1) {
-                cacheKey = cacheKey.replace(/\d/g, '0');
-            }
-
-            // Properties that affect bounding box
-            cacheKey += [
-                '',
-                renderer.rootFontSize,
-                fontSize,
-                rotation,
-                wrapper.textWidth, // #7874, also useHTML
-                alignValue,
-                styles.lineClamp,
-                styles.textOverflow, // #5968
-                styles.fontWeight // #12163
-            ].join(',');
-
-        }
+            toggleTextShadowShim;
 
         if (cacheKey && !reload) {
             bBox = cache[cacheKey];
@@ -1575,6 +1588,49 @@ class SVGElement implements SVGElementBase {
         }
 
         return bBox;
+    }
+
+    /**
+     * Overridable method to get a cache key for the bounding box of this
+     * element.
+     *
+     * @example
+     * // Plugin to let the getBBox function respond to font family changes
+     * (({ SVGElement }) => {
+     * const getBBoxCacheKey = SVGElement.prototype.getBBoxCacheKey;
+     *   SVGElement.prototype.getBBoxCacheKey = function (keys) {
+     *     const key = getBBoxCacheKey.call(this, keys);
+     *     const fontFamily = this.styles.fontFamily;
+     *     return key + (fontFamily ? `,${fontFamily}` : '');
+     *   };
+     * })(Highcharts);
+     *
+     * @function Highcharts.SVGElement#getBBoxCacheKey
+     *
+     * @return {string|void} The cache key based on the text properties.
+     */
+    public getBBoxCacheKey(keys: Array<any>): string|void {
+
+        let textStr = this.textStr;
+
+        // Avoid undefined and null (#7316)
+        if (!defined(textStr)) {
+            return;
+        }
+
+        // Since numerical labels appear a lot in a chart, we approximate that a
+        // label of n characters has the same bounding box as others of the same
+        // length. Unless there is inner HTML in the label. In that case, leave
+        // the numbers as is (#5899).
+        if (isString(textStr) && textStr.indexOf('<') === -1) {
+            textStr = textStr.replace(/\d/g, '0');
+        }
+
+        // Properties that affect bounding box
+        return [
+            textStr,
+            ...keys
+        ].join(',');
     }
 
     /**
@@ -1760,7 +1816,7 @@ class SVGElement implements SVGElementBase {
          * @name Highcharts.SVGElement#element
          * @type {Highcharts.SVGDOMElement|Highcharts.HTMLDOMElement}
          */
-        this.element = nodeName === 'span' || nodeName === 'body' ?
+        this.element = nodeName === 'div' || nodeName === 'body' ?
             createElement(nodeName) as HTMLDOMElement :
             doc.createElementNS(this.SVG_NS, nodeName) as SVGDOMElement;
 
@@ -2099,7 +2155,6 @@ class SVGElement implements SVGElementBase {
     public textSetter(value: string): void {
         if (value !== this.textStr) {
             // Delete size caches when the text changes
-            // delete this.bBox; // old code in series-label
             delete this.textPxLength;
 
             this.textStr = value;
@@ -2194,7 +2249,6 @@ class SVGElement implements SVGElementBase {
             element,
             foreignObject,
             matrix,
-            padding,
             rotation = 0,
             rotationOriginX,
             rotationOriginY,
@@ -2208,7 +2262,7 @@ class SVGElement implements SVGElementBase {
         // Apply translate. Nearly all transformed elements have translation,
         // so instead of checking for translate = 0, do it always (#1767,
         // #1846).
-        const transform = ['translate(' + translateX + ',' + translateY + ')'];
+        const transform = [`translate(${translateX},${translateY})`];
 
         // Apply matrix
         if (defined(matrix)) {
@@ -2226,25 +2280,11 @@ class SVGElement implements SVGElementBase {
                 (rotationOriginY ?? element.getAttribute('y') ?? this.y ?? 0) +
                 ')'
             );
-
-            // HTML labels rotation (#20685)
-            if (
-                text?.element.tagName === 'SPAN' &&
-                !text?.foreignObject
-            ) {
-                text.attr({
-                    rotation,
-                    rotationOriginX: (rotationOriginX || 0) - padding,
-                    rotationOriginY: (rotationOriginY || 0) - padding
-                });
-            }
         }
 
         // Apply scale
         if (defined(scaleX) || defined(scaleY)) {
-            transform.push(
-                'scale(' + pick(scaleX, 1) + ' ' + pick(scaleY, 1) + ')'
-            );
+            transform.push(`scale(${scaleX ?? 1} ${scaleY ?? 1})`);
         }
 
         if (transform.length && !(text || this).textPath) {

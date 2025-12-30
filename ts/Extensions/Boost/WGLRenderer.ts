@@ -6,7 +6,6 @@
  *
  *  License: highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -475,7 +474,7 @@ class WGLRenderer {
                 options.gapSize;
         }
 
-        if (zones) {
+        if (zones && zones.length) { // #23571
             zoneColors = [];
 
             zones.forEach((zone, i): void => {
@@ -932,7 +931,7 @@ class WGLRenderer {
             }
 
             // Note: Boost requires that zones are sorted!
-            if (zones) {
+            if (zones && zones.length) { // #23571
                 let zoneColor: Color.RGBA|undefined;
                 zones.some(( // eslint-disable-line no-loop-func
                     zone: SeriesZonesOptions,

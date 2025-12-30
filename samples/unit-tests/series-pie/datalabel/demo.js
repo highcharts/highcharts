@@ -86,6 +86,37 @@ QUnit.test('Pie data labels general tests', function (assert) {
         ['Slice 5', 'Slice 4', 'Slice 3', 'Slice 2', 'Slice 1'],
         'Data labels should be ordered by point index (#21336)'
     );
+
+    chart = Highcharts.chart('container', {
+        series: [{
+            type: 'pie',
+            data: [{
+                name: 'Some random text 1',
+                y: 30
+            }, {
+                name: 'Some random text 2',
+                y: 29
+            }, {
+                name: 'Some random text 5, plus a little bit more text',
+                y: 5
+            }]
+        }]
+    });
+
+    const prevX = chart.series[0].points[2].dataLabel.getBBox().x,
+        prevW = chart.chartWidth,
+        prevH = chart.chartHeight;
+
+    chart.setSize(1920, 1080);
+    chart.setSize(prevW, prevH);
+
+    assert.close(
+        prevX,
+        chart.series[0].points[2].dataLabel.getBBox().x,
+        5.5,
+        `Data labels x position should be the same after changing and reversing
+        chart size, #23595.`
+    );
 });
 
 QUnit.test(

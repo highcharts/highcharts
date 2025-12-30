@@ -22,7 +22,8 @@ Dashboards.board('container', {
     editMode: {
         enabled: true,
         contextMenu: {
-            enabled: true
+            enabled: true,
+            items: ['editMode', 'viewFullscreen']
         }
     },
     gui: {

@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2025 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -225,12 +226,14 @@ const MapViewDefaults: MapViewOptions = {
 
         /**
          * What coordinate system the `field` and `borderPath` should relate to.
-         * If `plotBox`, they will be fixed to the plot box and responsively
-         * move in relation to the main map. If `mapBoundingBox`, they will be
-         * fixed to the map bounding box, which is constant and centered in
-         * different chart sizes and ratios.
          *
-         * @validvalue ["plotBox", "mapBoundingBox"]
+         * If `plotBox`, they will be fixed to the plot box and responsively
+         * move in relation to the main map.
+         *
+         * If `mapBoundingBox`, they will be fixed to the map bounding box,
+         * which is constant and centered in different chart sizes and ratios.
+         *
+         * @type {Highcharts.MapViewInsetOptionsRelativeToValue}
          */
         relativeTo: 'mapBoundingBox',
 

@@ -2,9 +2,9 @@
  *
  *  (c) 2009-2025 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Pawel Lysy
@@ -317,6 +317,7 @@ class AccordionMenu {
         }
 
         const renderFunction = EditRenderer.getRendererFunction(options.type);
+        const lang = (component.board?.editMode || EditGlobals).lang;
 
         if (!renderFunction) {
             return;
@@ -327,6 +328,7 @@ class AccordionMenu {
             iconsURLPrefix: this.iconsURLPrefix,
             value: component.getEditableOptionValue(options.propertyPath),
             enabledOnOffLabels: options.type === 'toggle',
+            lang,
             onchange: (
                 value: boolean | string | number
             ): void => this.updateOptions(options.propertyPath || [], value)

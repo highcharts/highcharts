@@ -4,9 +4,9 @@
  *
  *  (c) 2020-2025 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -28,7 +28,9 @@ import Column from '../Column.js';
 import Globals from '../../Globals.js';
 import U from '../../../../Core/Utilities.js';
 
-const { fireEvent } = U;
+const {
+    fireEvent
+} = U;
 
 /* *
  *
@@ -79,7 +81,11 @@ class ColumnSorting {
 
         this.addHeaderElementAttributes();
 
-        if (column.options.sorting?.sortable) {
+        const sortingOptions = column.options.sorting;
+        const sortingEnabled = sortingOptions?.enabled ??
+            sortingOptions?.sortable;
+
+        if (sortingEnabled) {
             headerCellElement.classList.add(
                 Globals.getClassName('columnSortable')
             );
@@ -105,12 +111,14 @@ class ColumnSorting {
         const sortedDescClassName = Globals.getClassName('columnSortedDesc');
 
         const el = this.headerCellElement;
+        const sortingEnabled = sortingOptions?.enabled ??
+            sortingOptions?.sortable;
 
         if (currentSorting?.columnId !== col.id || !currentSorting?.order) {
             el.classList.remove(sortedAscClassName);
             el.classList.remove(sortedDescClassName);
 
-            if (sortingOptions?.sortable) {
+            if (sortingEnabled) {
                 a11y?.setColumnSortState(el, 'none');
             }
 
@@ -141,11 +149,7 @@ class ColumnSorting {
         const order = col.viewport.grid.querying.sorting.currentSorting?.order;
 
         if (col.id === this.column.id && order) {
-            col.update({
-                sorting: {
-                    order
-                }
-            }, false);
+            col.setOptions({ sorting: { order } });
         } else {
             delete col.options.sorting?.order;
             if (
@@ -228,15 +232,13 @@ class ColumnSorting {
 
 /* *
  *
- *  Interface
+ *  Declarations
  *
  * */
 
-namespace ColumnSorting {
-    export interface Event {
-        target: Column;
-        order: ColumnSortingOrder;
-    }
+export interface ColumnSortingEvent {
+    target: Column;
+    order: ColumnSortingOrder;
 }
 
 

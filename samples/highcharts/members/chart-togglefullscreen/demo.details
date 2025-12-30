@@ -3,5 +3,6 @@
  authors:
    - Rafal Sebestjanski
  requiresManualTesting: true
+ skipTest: true
  js_wrap: b
 ...

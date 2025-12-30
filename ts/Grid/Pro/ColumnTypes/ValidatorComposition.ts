@@ -4,9 +4,9 @@
  *
  *  (c) 2020-2024 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sebastian Bochan
@@ -23,6 +23,11 @@
  * */
 
 import type Table from '../../Core/Table/Table';
+import type {
+    RuleKey,
+    RuleDefinition,
+    RulesRegistryType
+} from './Validator';
 
 import Validator from './Validator.js';
 import Globals from '../../Core/Globals.js';
@@ -41,42 +46,37 @@ const {
  * */
 
 /**
- * @internal
+ * Extends the grid classes with cell editing functionality.
+ *
+ * @param TableClass
+ * The class to extend.
+ *
  */
-namespace ValidatorComposition {
-
-    /**
-     * Extends the grid classes with cell editing functionality.
-     *
-     * @param TableClass
-     * The class to extend.
-     *
-     */
-    export function compose(
-        TableClass: typeof Table
-    ): void {
-        if (!pushUnique(Globals.composed, 'Validator')) {
-            return;
-        }
-
-        addEvent(TableClass, 'afterInit', initValidatorComposition);
-        addEvent(TableClass, 'afterDestroy', destroy);
+export function compose(
+    TableClass: typeof Table
+): void {
+    if (!pushUnique(Globals.composed, 'Validator')) {
+        return;
     }
 
-    /**
-     * Callback function called after table initialization.
-     */
-    function initValidatorComposition(this: Table): void {
-        this.validator = new Validator(this);
-    }
-
-    /**
-     * Callback function called after table destroy.
-     */
-    function destroy(this: Table): void {
-        this.validator.destroy();
-    }
+    addEvent(TableClass, 'afterInit', initValidatorComposition);
+    addEvent(TableClass, 'afterDestroy', destroy);
 }
+
+/**
+ * Callback function called after table initialization.
+ */
+function initValidatorComposition(this: Table): void {
+    this.validator = new Validator(this);
+}
+
+/**
+ * Callback function called after table destroy.
+ */
+function destroy(this: Table): void {
+    this.validator.destroy();
+}
+
 
 /* *
  *
@@ -101,7 +101,7 @@ declare module '../../Pro/CellEditing/CellEditingComposition' {
          * If not set, the validation rules are applied according to the data
          * type.
          */
-        validationRules?: (Validator.RuleKey|Validator.RuleDefinition)[];
+        validationRules?: (RuleKey|RuleDefinition)[];
     }
 }
 
@@ -113,7 +113,7 @@ declare module '../../Core/Options' {
          * If not set, the validation rules are applied according to the data
          * type.
          */
-        validationErrors?: Validator.RulesRegistryType;
+        validationErrors?: RulesRegistryType;
     }
 }
 
@@ -123,4 +123,6 @@ declare module '../../Core/Options' {
  *
  * */
 
-export default ValidatorComposition;
+export default {
+    compose
+} as const;

@@ -2,9 +2,9 @@
  *
  *  (c) 2009-2025 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sebastian Bochan
@@ -226,7 +226,16 @@ class Cell extends GUIElement {
      *
      */
     public getOptions(): DeepPartial<Cell.Options> {
-        return this.options;
+        const cell = this;
+
+        if (cell.options.layout && cell.nestedLayout) {
+            return {
+                ...cell.options,
+                layout: cell.nestedLayout.getOptions()
+            };
+        }
+        
+        return cell.options;
     }
 
     protected changeVisibility(
@@ -479,7 +488,7 @@ namespace Cell {
                     enabled?: boolean;
                 };
                 /**
-                 * Options for the `settings` toolbar item.
+                 * Options for the `drag` toolbar item.
                  */
                 drag: {
                     enabled?: boolean;
@@ -488,6 +497,12 @@ namespace Cell {
                  * Options for the `settings` toolbar item.
                  */
                 settings: {
+                    enabled?: boolean;
+                };
+                /**
+                 * Options for the `viewFullscreen` toolbar item.
+                 */
+                viewFullscreen: {
                     enabled?: boolean;
                 };
             }

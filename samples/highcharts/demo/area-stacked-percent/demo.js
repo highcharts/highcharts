@@ -3,8 +3,7 @@ Highcharts.chart('container', {
         type: 'area'
     },
     title: {
-        useHTML: true,
-        text: 'Countries/regions with highest Gt CO<sub>2</sub>-emissions'
+        text: 'Countries/regions with highest Gt CO₂-emissions'
     },
     subtitle: {
         text: 'Source: ' +

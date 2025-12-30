@@ -4,9 +4,9 @@
  *
  *  (c) 2020-2025 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -109,6 +109,23 @@ class TableCell extends Cell {
     }
 
     /**
+     * Edits the cell value and updates the data table. Call this instead of
+     * `setValue` when you want it to trigger the cell value user change event.
+     *
+     * @param value
+     * The new value to set.
+     */
+    public async editValue(value: DataTable.CellType): Promise<void> {
+        if (this.value === value) {
+            return;
+        }
+
+        fireEvent(this, 'beforeEditValue');
+        await this.setValue(value, true);
+        fireEvent(this, 'afterEditValue');
+    }
+
+    /**
      * Sets the cell value and updates its content with it.
      *
      * @param value
@@ -194,8 +211,6 @@ class TableCell extends Cell {
         this.cellEvents.push(['dblclick', (e): void => (
             this.onDblClick(e as MouseEvent)
         )]);
-        this.cellEvents.push(['mouseout', (): void => this.onMouseOut()]);
-        this.cellEvents.push(['mouseover', (): void => this.onMouseOver()]);
         this.cellEvents.push(['mousedown', (e): void => {
             this.onMouseDown(e as MouseEvent);
         }]);
@@ -236,31 +251,14 @@ class TableCell extends Cell {
         });
     }
 
-    /**
-     * Handles the mouse over event on the cell.
-     * @internal
-     */
-    protected onMouseOver(): void {
-        const { grid } = this.row.viewport;
-        grid.hoverRow(this.row.index);
-        grid.hoverColumn(this.column.id);
-
-        fireEvent(this, 'mouseOver', {
-            target: this
-        });
+    protected override onMouseOver(): void {
+        this.row.viewport.grid.hoverRow(this.row.index);
+        super.onMouseOver();
     }
 
-    /**
-     * Handles the mouse out event on the cell.
-     */
-    protected onMouseOut(): void {
-        const { grid } = this.row.viewport;
-        grid.hoverRow();
-        grid.hoverColumn();
-
-        fireEvent(this, 'mouseOut', {
-            target: this
-        });
+    protected override onMouseOut(): void {
+        this.row.viewport.grid.hoverRow();
+        super.onMouseOut();
     }
 
     /**
@@ -317,17 +315,15 @@ class TableCell extends Cell {
 
 /* *
  *
- *  Class Namespace
+ *  Declarations
  *
  * */
 
-namespace TableCell {
-    /**
-     * Event interface for table cell events.
-     */
-    export interface TableCellEvent {
-        target: TableCell;
-    }
+/**
+ * Event interface for table cell events.
+ */
+export interface TableCellEvent {
+    target: TableCell;
 }
 
 
