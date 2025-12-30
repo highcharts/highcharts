@@ -410,12 +410,99 @@ export async function getDemoTS(
     config: SampleGeneratorConfig,
     metaList: MetaList
 ) {
-    const ts = `Highcharts.chart('container', ${JSON.stringify(
+    let chartOptions = JSON.stringify(
         await generateChartConfig(config, metaList),
         null,
-        2
-    )});\n` // Some cases, for example tooltip.borderWidth, have defaultValue as
-    // "undefined" in tree.json
+        4
+    );
+
+    // Replace double quotes with single quotes for strings
+    chartOptions = chartOptions.replace(/"([^"]+)":/gu, '$1:') // Keys
+        // eslint-disable-next-line quotes
+        .replace(/: "([^"]+)"/gu, ": '$1'") // String values
+        .replace(
+            /\[([^\]]*)"([^"]+)"([^\]]*)\]/gu,
+            // Array elements - replace all double quotes with single quotes
+            match => match.replace(/"/gu, '\'')
+        );
+
+    // For arrays of numbers, put them on one line. If the total line width,
+    // including the indentation, exceeds 80 chars, break after commas.
+    // - Example input 1, single line:
+    //     data: [
+    //         29.9,
+    //         71.5,
+    //         106.4,
+    //         129.2
+    //     ]
+    // - Example output 1:
+    //     data: [29.9, 71.5, 106.4, 129.2]
+    // - Example input 2, multiple lines:
+    //     data: [
+    //         29.9,
+    //         71.5,
+    //         106.4,
+    //         129.2,
+    //         144,
+    //         176,
+    //         135.6,
+    //         148.5,
+    //         216.4,
+    //         194.1,
+    //         95.6
+    //     ]
+    // - Example output 2:
+    //     data: [
+    //         29.9, 71.5, 106.4, 129.2, 144, 176,
+    //         135.6, 148.5, 216.4, 194.1, 95.6
+    //     ]
+    chartOptions = chartOptions.replace(
+        /\[\s*((?:-?\d+(?:\.\d+)?\s*,\s*)*-?\d+(?:\.\d+)?)\s*\]/gu,
+        (_match, p1, offset, string) => {
+            const indentMatch = string
+                .substring(0, offset)
+                .match(/(^|\n)([ \t]*)[^\n]*$/u);
+            const indent = indentMatch ? indentMatch[2] : '';
+            const numbers = p1.replace(/\s+/gu, ' ').split(', ');
+            const singleLine = `[${numbers.join(', ')}]`;
+            if ((indent.length + singleLine.length) <= 80) {
+                return singleLine;
+            }
+
+            // Break into multiple lines
+            const maxLineLength = 80;
+            const lineIndent = indent + '    ';
+            let multiLine = '[\n' + lineIndent;
+            let currentLine = '';
+
+            for (let i = 0; i < numbers.length; i++) {
+                const isLast = i === numbers.length - 1;
+                const numStr = numbers[i] + (isLast ? '' : ', ');
+                const testLine = currentLine + numStr;
+
+                if (
+                    lineIndent.length + testLine.length > maxLineLength &&
+                    currentLine
+                ) {
+                    multiLine += currentLine.trimEnd() + '\n' + lineIndent;
+                    currentLine = numStr;
+                } else {
+                    currentLine += numStr;
+                }
+            }
+
+            if (currentLine) {
+                multiLine += currentLine;
+            }
+            multiLine += '\n' + indent + ']';
+            return multiLine;
+        }
+    );
+
+
+    const ts = `Highcharts.chart('container', ${chartOptions});\n`
+        // Some cases, for example tooltip.borderWidth, have defaultValue as
+        // "undefined" in tree.json
         .replace(/"undefined"/gu, 'undefined');
 
     return ts;
@@ -486,6 +573,7 @@ export async function saveDemoFile(config: SampleGeneratorConfig) {
         console.log(colors.blue('Formatting demo.ts with ESLint...'));
     }
 
+    /*
     const eslint = new ESLint({ fix: true });
     const results = await eslint.lintText(
         ts, {
@@ -501,6 +589,9 @@ export async function saveDemoFile(config: SampleGeneratorConfig) {
             colors.red(results[0].messages.map(msg => msg.message).join('\n'))
         );
     }
+    */
+    await fs.writeFile(`${outputDir}/demo.ts`, ts);
+
 
     if (executedDirectly) {
         console.log(colors.green('Demo files generated successfully.'));
