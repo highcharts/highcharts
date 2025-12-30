@@ -125,7 +125,7 @@ describe('Grid Pro - validation.', () => {
         cy.get('.hcg-notification-error')
             .eq(0)
             .should('be.visible')
-            .should('contain', 'Value should be a valid JSON or array of numbers.');
+            .should('contain', 'Value should be a valid JSON or a list of numbers separated by commas.');
 
         // Act
         cy.editGridCell(1, 'defaultValidator', '[1, 2, 3, 4]');

@@ -163,7 +163,7 @@ class Validator {
                 return arrayNumberValidate({ rawValue }) ||
                     jsonValidate({ rawValue });
             },
-            notification: 'Value should be a valid JSON or array of numbers.'
+            notification: 'Value should be a valid JSON or a list of numbers separated by commas.'
         }
     };
 
