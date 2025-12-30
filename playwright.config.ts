@@ -110,6 +110,56 @@ export default defineConfig({
             dependencies: ['setup-dashboards'],
         },
         {
+            name: 'setup-grid-lite',
+            testMatch: 'setup-grid-lite.mts',
+        },
+        {
+            name: 'grid-lite',
+            testDir: './tests/grid',
+            testMatch: '**/grid-lite.spec.ts',
+            use: { ...devices['Desktop Chrome'] },
+            dependencies: ['setup-grid-lite'],
+        },
+        {
+            name: 'grid-lite-firefox',
+            testDir: './tests/grid',
+            testMatch: '**/grid-lite.spec.ts',
+            use: { ...devices['Desktop Firefox'] },
+            dependencies: ['setup-grid-lite'],
+        },
+        {
+            name: 'grid-lite-webkit',
+            testDir: './tests/grid',
+            testMatch: '**/grid-lite.spec.ts',
+            use: { ...devices['Desktop Safari'] },
+            dependencies: ['setup-grid-lite'],
+        },
+        {
+            name: 'setup-grid-pro',
+            testMatch: 'setup-grid-pro.mts',
+        },
+        {
+            name: 'grid-pro',
+            testDir: './tests/grid',
+            testMatch: '**/grid-pro.spec.ts',
+            use: { ...devices['Desktop Chrome'] },
+            dependencies: ['setup-grid-pro'],
+        },
+        {
+            name: 'grid-pro-firefox',
+            testDir: './tests/grid',
+            testMatch: '**/grid-pro.spec.ts',
+            use: { ...devices['Desktop Firefox'] },
+            dependencies: ['setup-grid-pro'],
+        },
+        {
+            name: 'grid-pro-webkit',
+            testDir: './tests/grid',
+            testMatch: '**/grid-pro.spec.ts',
+            use: { ...devices['Desktop Safari'] },
+            dependencies: ['setup-grid-pro'],
+        },
+        {
             // tests for mocking and utils and other playwright behaviour
             name: 'internal',
             testDir: './tests/internal',
