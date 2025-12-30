@@ -72,9 +72,6 @@ export interface PointEventsOptions {
      * Go to URL
      */
     click?: PointClickCallbackFunction;
-    drag?: EventCallback<Point, AnyRecord>;
-    dragStart?: EventCallback<Point, (MouseEvent&AnyRecord)>;
-    drop?: EventCallback<Point, AnyRecord>;
     mouseOut?: PointMouseOutCallbackFunction;
     mouseOver?: PointMouseOverCallbackFunction;
     remove?: PointRemoveCallbackFunction;
@@ -255,7 +252,6 @@ export interface PointOptions {
     color?: ColorType;
     colorIndex?: number;
     custom?: AnyRecord;
-    drilldown?: string;
 
     /**
      * The individual point events.
