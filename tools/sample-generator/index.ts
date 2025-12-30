@@ -426,6 +426,61 @@ export async function getDemoTS(
             match => match.replace(/"/gu, '\'')
         );
 
+    // For arrays of objects, put the open brace on the same line and reindent
+    // the inner properties. Make no distinction between single lines/objects
+    // and multiple lines/objects.
+    //
+    // Example:
+    // - Input:
+    //     series: [
+    //         {
+    //             type: 'line',
+    //             data: [1, 2, 3]
+    //         },
+    //         {
+    //             type: 'line',
+    //             data: [4, 5, 6]
+    //         }
+    //     ]
+    // - Output:
+    //     series: [{
+    //         type: 'line',
+    //         data: [1, 2, 3]
+    //     }, {
+    //         type: 'line',
+    //         data: [4, 5, 6]
+    //     }]
+    chartOptions = chartOptions.replace(
+        /\[\s*\{\s*([\s\S]*?)\s*\}\s*(,\s*\{\s*([\s\S]*?)\s*\}\s*)*\]/gu,
+        (match) => {
+            const indentMatch = match.match(/(^|\n)([ \t]*)[^\n]*$/u);
+            const indent = indentMatch ? indentMatch[2] : '';
+            const innerIndent = indent + '    ';
+            const objects = match
+                .slice(1, -1)
+                .split(/\},\s*\{\s*/u)
+                .map(objStr =>
+                    objStr
+                        .replace(/^\s*\{\s*/u, '')
+                        .replace(/\s*\}\s*$/u, '')
+                        .trim()
+                );
+
+            let result = '[{';
+            for (let i = 0; i < objects.length; i++) {
+                const objLines = objects[i]
+                    .split('\n')
+                    .map(line => innerIndent + line);
+                result += '\n' + objLines.join('\n') + '\n' + indent + '}';
+                if (i < objects.length - 1) {
+                    result += ', {';
+                }
+            }
+            result += ']';
+            return result;
+        }
+    );
+
     // For arrays of numbers, put them on one line. If the total line width,
     // including the indentation, exceeds 80 chars, break after commas.
     // - Example input 1, single line:
@@ -575,7 +630,6 @@ export async function getDemoTS(
             return multiLine;
         }
     );
-
 
     const ts = `Highcharts.chart('container', ${chartOptions});\n`
         // Some cases, for example tooltip.borderWidth, have defaultValue as
