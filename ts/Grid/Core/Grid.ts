@@ -31,7 +31,8 @@ import type {
     IndividualColumnOptions
 } from './Options';
 import type DataTableOptions from '../../Data/DataTableOptions';
-import type { Column, ColumnDataType, NoIdColumnOptions } from './Table/Column';
+import type Column from './Table/Column';
+import type { ColumnDataType, NoIdColumnOptions } from './Table/Column';
 import type Popup from './UI/Popup.js';
 import type { DeepPartial } from '../../Shared/Types';
 
