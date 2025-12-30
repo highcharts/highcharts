@@ -373,7 +373,7 @@ async function getPathMeta(config: SampleGeneratorConfig): Promise<MetaList> {
 }
 
 // Select handler for a given meta
-function pickHandler(meta: { mainType: string; options?: string[] }) {
+function pickHandler(meta: MetaData) {
     if (meta.mainType.toLowerCase() === 'boolean') {
         return { kind: 'boolean', mod: booleanHandler } as const;
     }
@@ -395,12 +395,37 @@ function pickHandler(meta: { mainType: string; options?: string[] }) {
     if (meta.mainType.toLowerCase() === 'string') {
         return { kind: 'text', mod: textHandler } as const;
     }
+
+    // Get it from validvalues. Case: xAxis.gridLineInterpolation.
+    if (meta.node.doclet.type.names.every(name => (
+        typeof name === 'string' &&
+        /^"[A-Za-z0-9_]*"$/u.test(name)
+    ))) {
+        meta.options = meta.node.doclet.type.names.map((name => (
+            name.slice(1, -1) // Remove quotes
+        )));
+        return { kind: 'select', mod: selectHandler } as const;
+    }
     return null;
 }
 
 // Function to get HTML (one row per path) from template
-export async function getDemoHTML(metaList?: MetaList) {
+export async function getDemoHTML(
+    config?: SampleGeneratorConfig,
+    metaList?: MetaList
+) {
     let html = await loadTemplate('demo.html');
+
+    if (config?.modules) {
+        const moduleScripts = config.modules.map(
+            moduleName => `<script src="https://code.highcharts.com/${moduleName}.js"></script>`
+        ).join('\n    ');
+        html = html.replace(
+            '<script src="https://code.highcharts.com/highcharts.js"></script>',
+            '<script src="https://code.highcharts.com/highcharts.js"></script>\n    ' +
+                moduleScripts
+        );
+    }
 
     // Collect unique handler types and generate functions once
     const handlerTypes = new Set<string>();
@@ -509,8 +534,7 @@ export async function getDemoTS(
                     objStr
                         .replace(/^\s*\{\s*/u, '')
                         .replace(/\s*\}\s*$/u, '')
-                        .trim()
-                );
+                        .trim());
 
             let result = '[{';
             for (let i = 0; i < objects.length; i++) {
@@ -715,7 +739,7 @@ export async function saveDemoFile(config: SampleGeneratorConfig) {
 
     // Build all assets in parallel based on per-path mainTypes
     const [html, css, ts, details] = await Promise.all([
-        getDemoHTML(metaList),
+        getDemoHTML(config, metaList),
         getDemoCSS(),
         getDemoTS(config, metaList),
         getDemoDetails(config)

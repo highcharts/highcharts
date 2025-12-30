@@ -12,6 +12,8 @@ export interface ControlOptions {
 export interface SampleGeneratorConfig {
     chartOptionsExtra?: Options;
     controls?: ControlOptions[];
+    /** Additional Highcharts module files */
+    modules?: string[];
     /** The output directory for the generated samples */
     output?: string;
     paths?: string[];
