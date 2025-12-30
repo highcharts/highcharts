@@ -48,6 +48,29 @@ import type { SymbolKey } from '../Renderer/SVG/SymbolType';
  * file.
  */
 export interface PointEventsOptions {
+    /**
+     * Fires when a point is clicked. One parameter, `event`, is passed
+     * to the function, containing common event information.
+     *
+     * If the `series.allowPointSelect` option is true, the default
+     * action for the point's click event is to toggle the point's
+     * select state. Returning `false` cancels this action.
+     *
+     * @sample {highcharts} highcharts/plotoptions/series-point-events-click/
+     * Click marker to alert values
+     *
+     * @sample {highcharts} highcharts/plotoptions/series-point-events-click-column/
+     * Click column
+     *
+     * @sample {highcharts} highcharts/plotoptions/series-point-events-click-url/
+     * Go to URL
+     *
+     * @sample {highmaps} maps/plotoptions/series-point-events-click/
+     * Click marker to display values
+     *
+     * @sample {highmaps} maps/plotoptions/series-point-events-click-url/
+     * Go to URL
+     */
     click?: PointClickCallbackFunction;
     drag?: EventCallback<Point, AnyRecord>;
     dragStart?: EventCallback<Point, (MouseEvent&AnyRecord)>;
@@ -233,6 +256,10 @@ export interface PointOptions {
     colorIndex?: number;
     custom?: AnyRecord;
     drilldown?: string;
+
+    /**
+     * The individual point events.
+     */
     events?: PointEventsOptions;
     id?: string;
     index?: number;

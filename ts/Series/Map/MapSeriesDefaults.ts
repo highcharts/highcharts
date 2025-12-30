@@ -604,6 +604,8 @@ const MapSeriesDefaults: MapSeriesOptions = {
  * @apioption series.map.data.value
  */
 
+// TODO: compare the doclet below for redundancy with line series
+
 /**
  * Individual point events
  *
