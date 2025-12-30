@@ -2694,6 +2694,9 @@ const defaultOptions: DefaultOptions = {
          * contains the category name, x value or datetime string depending on
          * the type of axis. For datetime axes, the `point.key` date format can
          * be set using `tooltip.xDateFormat`.
+         * In v12+, locale-aware date names follow the browser's casing and can
+         * be lower-case, so use the `ucfirst` helper (for example
+         * `{ucfirst point.key}`) if you want a capitalized header.
          *
          * @sample {highcharts} highcharts/tooltip/footerformat/
          *         An HTML table in the tooltip
