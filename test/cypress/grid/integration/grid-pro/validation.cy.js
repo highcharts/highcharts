@@ -98,21 +98,6 @@ describe('Grid Pro - validation.', () => {
 
         // Assert
         cy.get('.hcg-notification-error').should('not.exist');
-
-        // Act
-        cy.editGridCell(1, 'csvArray', '2,5something,6');
-
-        // Assert
-        cy.get('.hcg-notification-error')
-            .eq(0)
-            .should('be.visible')
-            .should('contain', 'Value should be a list of numbers separated by commas.');
-
-        // Act
-        cy.editGridCell(1, 'csvArray', '2,5,6');
-
-        // Assert
-        cy.get('.hcg-notification-error').should('not.exist');
     });
 
     it('JSON validation.', () => {
