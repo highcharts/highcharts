@@ -60,7 +60,11 @@ const MapPointSeriesDefaults: MapPointSeriesOptions = {
         }
     },
     legendSymbol: 'lineMarker',
-    stickyTracking: true
+    stickyTracking: true,
+    tooltip: {
+        pointFormat: '{#if point.name}{point.name}{else}Lat: {point.lat}, Lon: {point.lon}{/if}'
+    }
+
 };
 
 /* *

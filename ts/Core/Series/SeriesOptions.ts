@@ -120,8 +120,10 @@ export interface SeriesOptions {
     id?: string;
     index?: number;
     inactiveOtherPoints?: boolean;
-    /** @private */
+
+    /** @internal */
     isInternal?: boolean;
+
     joinBy?: (string|Array<string>);
     kdNow?: boolean;
     keys?: Array<string>;
@@ -141,7 +143,7 @@ export interface SeriesOptions {
     pointValKey?: string;
     selected?: boolean;
     shadow?: (boolean|Partial<ShadowOptionsObject>);
-    states?: SeriesStatesOptions<Series>;
+    states?: SeriesStatesOptions<SeriesOptions>;
     step?: SeriesStepValue;
     stickyTracking?: boolean;
     turboThreshold?: number;
@@ -192,11 +194,11 @@ export interface SeriesStateSelectOptions extends StateSelectOptions {
     enabled?: boolean;
 }
 
-export interface SeriesStatesOptions<T extends { options: AnyRecord }> extends StatesOptions {
-    hover?: SeriesStateHoverOptions&StateGenericOptions<T>;
-    inactive?: SeriesStateInactiveOptions&StateGenericOptions<T>;
-    normal?: SeriesStateNormalOptions&StateGenericOptions<T>;
-    select?: SeriesStateSelectOptions&StateGenericOptions<T>;
+export interface SeriesStatesOptions<T extends SeriesOptions> extends StatesOptions {
+    hover?: SeriesStateHoverOptions & StateGenericOptions<T>;
+    inactive?: SeriesStateInactiveOptions & StateGenericOptions<T>;
+    normal?: SeriesStateNormalOptions & StateGenericOptions<T>;
+    select?: SeriesStateSelectOptions & StateGenericOptions<T>;
 }
 
 export type SeriesStepValue = ('center'|'left'|'right');

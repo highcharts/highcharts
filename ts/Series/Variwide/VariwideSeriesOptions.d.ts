@@ -21,7 +21,6 @@ import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type VariwidePointOptions from './VariwidePointOptions';
-import type VariwideSeries from './VariwideSeries';
 
 /* *
  *
@@ -144,7 +143,7 @@ interface VariwideSeriesOptions extends ColumnSeriesOptions {
      */
     pointPadding?: number;
 
-    states?: SeriesStatesOptions<VariwideSeries>;
+    states?: SeriesStatesOptions<VariwideSeriesOptions>;
 
 }
 

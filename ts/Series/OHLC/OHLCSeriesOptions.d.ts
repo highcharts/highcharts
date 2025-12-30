@@ -18,7 +18,6 @@
 import type ColorType from '../../Core/Color/ColorType';
 import type HLCSeriesOptions from '../HLC/HLCSeriesOptions';
 import type OHLCPointOptions from './OHLCPointOptions';
-import type OHLCSeries from './OHLCSeries';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 
@@ -141,7 +140,7 @@ export interface OHLCSeriesOptions extends HLCSeriesOptions {
      */
     pointValKey?: string;
 
-    states?: SeriesStatesOptions<OHLCSeries>;
+    states?: SeriesStatesOptions<OHLCSeriesOptions>;
 
     /**
      * Line color for up points.

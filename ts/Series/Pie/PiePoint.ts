@@ -41,6 +41,24 @@ const {
 
 /* *
  *
+ *  Declarations
+ *
+ * */
+
+declare module '../../Core/Series/PointBase' {
+    interface PointBase {
+        /**
+         * Pie series only. Whether to display a slice offset from the center.
+         *
+         * @name Highcharts.Point#sliced
+         * @type {boolean|undefined}
+         */
+        sliced?: boolean;
+    }
+}
+
+/* *
+ *
  *  Class
  *
  * */
@@ -212,13 +230,7 @@ class PiePoint extends Point {
         // Redraw is true by default
         redraw = pick(redraw, true);
 
-        /**
-         * Pie series only. Whether to display a slice offset from the
-         * center.
-         * @name Highcharts.Point#sliced
-         * @type {boolean|undefined}
-         */
-        // if called without an argument, toggle
+        // If called without an argument, toggle
         this.sliced = this.options.sliced = sliced =
             defined(sliced) ? sliced : !this.sliced;
         // Update userOptions.data
@@ -373,3 +385,18 @@ namespace PiePoint {
  * */
 
 export default PiePoint;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
+
+/**
+ * Pie series only. Whether to display a slice offset from the center.
+ *
+ * @name Highcharts.Point#sliced
+ * @type {boolean|undefined}
+ */
+
+''; // Keeps doclets above in JS file

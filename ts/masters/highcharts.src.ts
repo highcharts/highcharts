@@ -49,7 +49,9 @@ import '../Series/Scatter/ScatterSeries.js';
 import '../Series/Pie/PieSeries.js';
 import PieDataLabel from '../Series/Pie/PieDataLabel.js';
 import DataLabel from '../Core/Series/DataLabel.js';
-import OverlappingDataLabels from '../Core/Series/OverlappingDataLabels.js';
+import {
+    composeOverlappingDataLabels
+} from '../Core/Series/OverlappingDataLabels.js';
 import BorderRadius from '../Extensions/BorderRadius.js';
 import Responsive from '../Core/Responsive.js';
 import Color from '../Core/Color/Color.js';
@@ -66,7 +68,6 @@ G.Fx = Fx;
 G.HTMLElement = HTMLElement;
 G.Legend = Legend;
 G.LegendSymbol = LegendSymbol;
-G.OverlappingDataLabels = G.OverlappingDataLabels || OverlappingDataLabels;
 G.PlotLineOrBand = PlotLineOrBand;
 G.Point = Point;
 G.Pointer = Pointer;
@@ -106,7 +107,7 @@ DateTimeAxis.compose(G.Axis);
 HTMLElement.compose(G.SVGRenderer);
 Legend.compose(G.Chart);
 LogarithmicAxis.compose(G.Axis);
-OverlappingDataLabels.compose(G.Chart);
+composeOverlappingDataLabels(G.Chart);
 PieDataLabel.compose(G.Series.types.pie);
 PlotLineOrBand.compose(G.Chart, G.Axis);
 Pointer.compose(G.Chart);

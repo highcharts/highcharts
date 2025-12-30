@@ -21,7 +21,7 @@ import type {
 import type AnimationOptions from '../../Animation/AnimationOptions';
 import type ColorType from '../../Color/ColorType';
 import type CSSObject from '../../Renderer/CSSObject';
-import type { DataLabelOverflowValue } from '../../Series/DataLabelOptions';
+import type { DataLabelsOverflowValue } from '../../Series/DataLabelOptions';
 import type StackItem from './StackItem';
 import type { SymbolKey } from '../../Renderer/SVG/SymbolType';
 import type Templating from '../../Templating';
@@ -262,7 +262,7 @@ export interface StackLabelOptions {
      *
      * @since 7.1.3
      */
-    overflow?: DataLabelOverflowValue;
+    overflow?: DataLabelsOverflowValue;
 
     /** @internal */
     padding?: number;

@@ -1075,7 +1075,45 @@ class SVGRenderer implements SVGRendererBase {
         return wrapper.attr(attribs);
     }
 
+    /**
+     * Draw and return an arc. Overloaded function that takes arguments object.
+     *
+     * @param attribs
+     * Initial SVG attributes.
+     *
+     * @return
+     * The generated wrapper element.
+     */
     public arc(attribs?: SVGAttributes): SVGElement;
+    /**
+     * Draw and return an arc.
+     *
+     * @sample highcharts/members/renderer-arc/
+     *         Drawing an arc
+     *
+     * @param x
+     * Center X position.
+     *
+     * @param y
+     * Center Y position.
+     *
+     * @param r
+     * The outer radius' of the arc.
+     *
+     * @param innerR
+     * Inner radius like used in donut charts.
+     *
+     * @param start
+     * The starting angle of the arc in radians, where 0 is to the right and
+     * `-Math.PI/2` is up.
+     *
+     * @param end
+     * The ending angle of the arc in radians, where 0 is to the right and
+     * `-Math.PI/2` is up.
+     *
+     * @return
+     * The generated wrapper element.
+     */
     public arc(
         x?: number,
         y?: number,
@@ -1656,7 +1694,38 @@ class SVGRenderer implements SVGRendererBase {
         return obj as any;
     }
 
+    /** @internal */
     public clipRect(attribs: SVGAttributes): SVGRenderer.ClipRectElement;
+    /**
+     * Define a clipping rectangle. The clipping rectangle is later applied
+     * to {@link SVGElement} objects through the {@link SVGElement#clip}
+     * function.
+     *
+     * This function is deprecated as of v11.2. Instead, use a regular shape
+     * (`rect`, `path` etc), and the `SVGElement.clipTo` function.
+     *
+     * @example
+     * let circle = renderer.circle(100, 100, 100)
+     *     .attr({ fill: 'red' })
+     *     .add();
+     * let clipRect = renderer.clipRect(100, 100, 100, 100);
+     *
+     * // Leave only the lower right quarter visible
+     * circle.clip(clipRect);
+     *
+     * @deprecated
+     *
+     * @param x
+     *
+     * @param y
+     *
+     * @param width
+     *
+     * @param height
+     *
+     * @return
+     * A clipping rectangle.
+     */
     public clipRect(
         x?: number,
         y?: number,

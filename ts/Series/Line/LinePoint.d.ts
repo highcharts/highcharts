@@ -35,7 +35,6 @@ declare module '../../Core/Series/PointBase' {
         dist?: number;
         distX?: number;
         hasImage?: boolean;
-        index: number;
         isInside?: boolean;
         low?: number;
         negative?: boolean;
