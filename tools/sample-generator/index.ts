@@ -246,7 +246,49 @@ async function generateChartConfig(
         extendObject(chartOptions, path, value);
     }
 
-    return chartOptions;
+    // Order the keys recursively for consistent output. For the top-level,
+    // we want 'chart', 'title', 'xAxis', 'yAxis', etc. first. After that,
+    // alphabetical order. For nested objects, always alphabetical order.
+    function orderKeys(obj: any): any {
+        if (Array.isArray(obj)) {
+            return obj.map(orderKeys);
+        }
+
+        if (obj !== null && typeof obj === 'object') {
+            const ordered: any = {};
+            const keys = Object.keys(obj);
+
+            // Top-level specific order
+            const topLevelOrder = [
+                'chart', 'title', 'subtitle', 'xAxis', 'yAxis'
+            ];
+
+            keys.sort((a, b) => {
+                const aIndex = topLevelOrder.indexOf(a);
+                const bIndex = topLevelOrder.indexOf(b);
+                if (aIndex !== -1 && bIndex !== -1) {
+                    return aIndex - bIndex;
+                }
+                if (aIndex !== -1) {
+                    return -1; // a comes first
+                }
+                if (bIndex !== -1) {
+                    return 1; // b comes first
+                }
+                return a.localeCompare(b); // Alphabetical order
+            });
+
+            for (const key of keys) {
+                ordered[key] = orderKeys(obj[key]);
+            }
+            return ordered;
+        }
+        return obj;
+    }
+
+    const orderedChartOptions = orderKeys(chartOptions);
+
+    return orderedChartOptions;
 }
 
 // Helper to compute mainType
@@ -452,7 +494,7 @@ export async function getDemoTS(
     //     }]
     chartOptions = chartOptions.replace(
         /\[\s*\{\s*([\s\S]*?)\s*\}\s*(,\s*\{\s*([\s\S]*?)\s*\}\s*)*\]/gu,
-        (match) => {
+        match => {
             const indentMatch = match.match(/(^|\n)([ \t]*)[^\n]*$/u);
             const indent = indentMatch ? indentMatch[2] : '';
             const innerIndent = indent + '    ';

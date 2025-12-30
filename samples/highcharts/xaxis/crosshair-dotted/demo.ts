@@ -2,12 +2,9 @@ Highcharts.chart('container', {
     chart: {
         type: 'line'
     },
-    series: [{
-        data: [
-            29.9, 71.5, 106.4, 129.2, 144, 176, 135.6, 148.5, 216.4, 194.1,
-            95.6, 54.4
-        ]
-    }],
+    title: {
+        text: 'Demo of <em>xAxis.crosshair.dashStyle</em>'
+    },
     xAxis: {
         categories: [
             'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
@@ -15,11 +12,14 @@ Highcharts.chart('container', {
         ],
         crosshair: {
             color: 'gray',
-            width: 2,
-            dashStyle: 'ShortDot'
+            dashStyle: 'ShortDot',
+            width: 2
         }
     },
-    title: {
-        text: 'Demo of <em>xAxis.crosshair.dashStyle</em>'
-    }
+    series: [{
+        data: [
+            29.9, 71.5, 106.4, 129.2, 144, 176, 135.6, 148.5, 216.4, 194.1,
+            95.6, 54.4
+        ]
+    }]
 });
