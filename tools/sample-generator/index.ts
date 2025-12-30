@@ -32,6 +32,7 @@ import * as booleanHandler from './type-handlers/boolean.ts';
 import * as numberHandler from './type-handlers/number.ts';
 import * as selectHandler from './type-handlers/select.ts';
 import * as colorHandler from './type-handlers/color.ts';
+import * as textHandler from './type-handlers/text.ts';
 
 const types = await loadExportedTypes('code/highcharts.d.ts');
 
@@ -390,6 +391,9 @@ function pickHandler(meta: { mainType: string; options?: string[] }) {
     }
     if (meta.options || meta.mainType.toLowerCase() === 'dashstylevalue') {
         return { kind: 'select', mod: selectHandler } as const;
+    }
+    if (meta.mainType.toLowerCase() === 'string') {
+        return { kind: 'text', mod: textHandler } as const;
     }
     return null;
 }
