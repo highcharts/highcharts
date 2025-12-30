@@ -1,5 +1,4 @@
-import type { DeepPartial } from '../../ts/Shared/Types.d.ts';
-import type { Options } from '../../ts/Core/Options.d.ts';
+import type { Options } from '../../code/highcharts.d.ts';
 
 export interface ControlOptions {
     /** The maximum value for number controls */
@@ -11,7 +10,7 @@ export interface ControlOptions {
     value?: number | string | boolean;
 }
 export interface SampleGeneratorConfig {
-    chartOptionsExtra?: DeepPartial<Options>;
+    chartOptionsExtra?: Options;
     controls?: ControlOptions[];
     /** The output directory for the generated samples */
     output?: string;

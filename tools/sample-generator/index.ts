@@ -516,7 +516,7 @@ export async function getDemoTS(
             for (let i = 0; i < objects.length; i++) {
                 const objLines = objects[i]
                     .split('\n')
-                    .map(line => innerIndent + line);
+                    .map(line => innerIndent + line.trim());
                 result += '\n' + objLines.join('\n') + '\n' + indent + '}';
                 if (i < objects.length - 1) {
                     result += ', {';
