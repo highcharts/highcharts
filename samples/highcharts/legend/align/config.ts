@@ -1,11 +1,16 @@
+import type {
+    SampleGeneratorConfig
+} from '../../../../tools/sample-generator/config.ts';
+
 export default {
     paths: [
-        'legend.align',
-        'legend.verticalAlign',
-        'legend.layout',
+        'legend.align=right',
+        'legend.verticalAlign=middle',
+        'legend.layout=vertical',
         'legend.x',
         'legend.y'
     ],
+    templates: ['line'],
     chartOptionsExtra: {
         series: [{
             data: [1, 3, 2, 4]
@@ -15,4 +20,4 @@ export default {
             data: [4, 2, 5, 3]
         }]
     }
-};
+} satisfies SampleGeneratorConfig;

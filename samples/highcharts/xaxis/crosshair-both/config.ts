@@ -1,3 +1,7 @@
+import type {
+    SampleGeneratorConfig
+} from '../../../../tools/sample-generator/config.ts';
+
 export default {
     paths: [
         'xAxis.crosshair=true',
@@ -14,4 +18,4 @@ export default {
             ]
         }]
     }
-};
+} satisfies SampleGeneratorConfig;

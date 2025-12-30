@@ -1,11 +1,21 @@
 Highcharts.chart('container', {
     chart: {
-        type: 'column'
+        type: 'line'
     },
     title: {
         text: 'Demo of <em>legend</em> options'
     },
-    legend: {},
+    xAxis: {
+        categories: [
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
+            'Oct', 'Nov', 'Dec'
+        ]
+    },
+    legend: {
+        align: 'right',
+        layout: 'vertical',
+        verticalAlign: 'middle'
+    },
     series: [{
         data: [1, 3, 2, 4]
     }, {
