@@ -41,6 +41,8 @@ import type { SymbolKey } from '../Renderer/SVG/SymbolType';
 // TODO: PointEventsOptions and its children seems big enough for its own file
 
 /**
+ * Events for each single point.
+ *
  * Helper interface for series types to add options to all series events
  * options.
  *
@@ -72,24 +74,83 @@ export interface PointEventsOptions {
      * Go to URL
      */
     click?: PointClickCallbackFunction;
+
+    /**
+     * Fires when the mouse leaves the area close to the point. One
+     * parameter, `event`, is passed to the function, containing common
+     * event information.
+     *
+     * @sample {highcharts} highcharts/plotoptions/series-point-events-mouseover/
+     * Show values in the chart's corner on mouse over
+     */
     mouseOut?: PointMouseOutCallbackFunction;
+
+    /**
+     * Fires when the mouse enters the area close to the point. One
+     * parameter, `event`, is passed to the function, containing common
+     * event information.
+     *
+     * Returning `false` cancels the default behavior, which is to show a
+     * tooltip for the point.
+     *
+     * @sample {highcharts} highcharts/plotoptions/series-point-events-mouseover/
+     * Show values in the chart's corner on mouse over
+     */
     mouseOver?: PointMouseOverCallbackFunction;
+
+    /**
+     * Fires when the point is removed using the `.remove()` method. One
+     * parameter, `event`, is passed to the function. Returning `false`
+     * cancels the operation.
+     *
+     * @sample {highcharts} highcharts/plotoptions/series-point-events-remove/
+     * Remove point and confirm
+     *
+     * @since 1.2.0
+     */
     remove?: PointRemoveCallbackFunction;
 
     /**
-     * Fires when the point is selected either programmatically or following a
-     * click on the point. One parameter, `event`, is passed to the function.
-     * Returning `false` cancels the operation.
+     * Fires when the point is selected either programmatically or
+     * following a click on the point. One parameter, `event`, is passed
+     * to the function. Returning `false` cancels the operation.
+     *
+     * @sample {highcharts} highcharts/plotoptions/series-point-events-select/
+     * Report the last selected point
+     *
+     * @sample {highmaps} maps/plotoptions/series-allowpointselect/
+     * Report select and unselect
+     *
+     * @since 1.2.0
      */
     select?: PointSelectCallbackFunction;
 
     /**
-     * Fires when the point is unselected either programmatically or following a
-     * click on the point. One parameter, `event`, is passed to the function.
-     * Returning `false` cancels the operation.
+     * Fires when the point is unselected either programmatically or
+     * following a click on the point. One parameter, `event`, is passed
+     * to the function. Returning `false` cancels the operation.
+     *
+     * @sample {highcharts} highcharts/plotoptions/series-point-events-unselect/
+     * Report the last unselected point
+     *
+     * @sample {highmaps} maps/plotoptions/series-allowpointselect/
+     * Report select and unselect
+     *
+     * @since 1.2.0
      */
     unselect?: PointUnselectCallbackFunction;
 
+    /**
+     * Fires when the point is updated programmatically through the
+     * `.update()` method. One parameter, `event`, is passed to the
+     * function. The new point options can be accessed through
+     * `event.options`. Returning `false` cancels the operation.
+     *
+     * @sample {highcharts} highcharts/plotoptions/series-point-events-update/
+     * Confirm point updating
+     *
+     * @since 1.2.0
+     */
     update?: PointUpdateCallbackFunction;
 }
 
