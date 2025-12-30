@@ -99,15 +99,6 @@ class MenuToolbarButton extends ToolbarButton {
         );
     }
 
-    protected override renderActiveIndicator(render: boolean): void {
-        const column = this.toolbar?.column;
-
-        // The active dot indicator is reserved for filtering, not sorting.
-        super.renderActiveIndicator(
-            render && !!(column && StateHelpers.isFiltered(column))
-        );
-    }
-
     protected override addEventListeners(): void {
         super.addEventListeners();
         const column = this.toolbar?.column;

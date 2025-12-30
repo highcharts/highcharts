@@ -38,10 +38,5 @@ Grid.grid('container', {
             Score: [5, 3, 3, 5, 3, 5, 5, 3],
             ID: ['f', 'd', 'h', 'a', 'c', 'e', 'b', 'g']
         }
-    },
-    columnDefaults: {
-        sorting: {
-            enabled: true
-        }
     }
 }, true).then(init);

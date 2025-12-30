@@ -25,14 +25,7 @@ test('Grid multi-column sorting via querying API', async function (assert) {
                 y: [5, 4, 3, 2, 1],
                 id: ['a', 'b', 'c', 'd', 'e']
             }
-        },
-        columns: [{
-            id: 'x'
-        }, {
-            id: 'y'
-        }, {
-            id: 'id'
-        }]
+        }
     }, true);
     grid.viewport?.resizeObserver?.disconnect();
 
@@ -63,14 +56,10 @@ test('Grid multi-column sorting with custom compare', async function (assert) {
             }
         },
         columns: [{
-            id: 'x'
-        }, {
             id: 'y',
             sorting: {
                 compare: (a, b) => (b || 0) - (a || 0)
             }
-        }, {
-            id: 'id'
         }]
     }, true);
     grid.viewport?.resizeObserver?.disconnect();
@@ -103,14 +92,7 @@ test('Grid multi-column sorting via shift-click', async function (assert) {
                 y: [3, 4, 5, 2, 1],
                 id: ['c', 'b', 'a', 'd', 'e']
             }
-        },
-        columns: [{
-            id: 'x'
-        }, {
-            id: 'y'
-        }, {
-            id: 'id'
-        }]
+        }
     }, true);
     grid.viewport?.resizeObserver?.disconnect();
 
@@ -132,12 +114,6 @@ test('Grid multi-column sorting via shift-click', async function (assert) {
         'Click sorts primary column'
     );
 
-    assert.strictEqual(
-        xHeader.querySelector('.hcg-active-indicator'),
-        null,
-        'Single-column sort does not show an active dot indicator'
-    );
-
     afterSortPromise = waitForAfterSort(grid);
     yHeader.dispatchEvent(new MouseEvent('click', { bubbles: true, shiftKey: true }));
     await afterSortPromise;
@@ -146,18 +122,6 @@ test('Grid multi-column sorting via shift-click', async function (assert) {
         grid.viewport?.getColumn('id')?.data,
         ['e', 'c', 'a', 'd', 'b'],
         'Shift-click adds a secondary sort'
-    );
-
-    assert.strictEqual(
-        xHeader.querySelector('.hcg-active-indicator'),
-        null,
-        'Sorting does not render an active dot indicator'
-    );
-
-    assert.strictEqual(
-        yHeader.querySelector('.hcg-active-indicator'),
-        null,
-        'Sorting does not render an active dot indicator'
     );
 
     const xPriority = xHeader.querySelector('.hcg-sort-priority-indicator');

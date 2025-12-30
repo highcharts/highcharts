@@ -103,7 +103,7 @@ class SortModifier extends DataModifier {
     }
 
     private static compareFactory(
-        direction: 'asc'|'desc',
+        direction: 'asc' | 'desc',
         customCompare?: (a: DataTable.CellType, b: DataTable.CellType) => number
     ): ((a: DataTable.CellType, b: DataTable.CellType) => number) {
         if (customCompare) {
@@ -202,7 +202,7 @@ class SortModifier extends DataModifier {
             } = modifier.options,
             modified = table.getModified();
 
-        const orderBy: Array<(string|SortModifierOrderByOption)> = (
+        const orderBy: Array<(string | SortModifierOrderByOption)> = (
             'columns' in modifier.options ?
                 modifier.options.columns :
                 [modifier.options.orderByColumn]
@@ -218,7 +218,8 @@ class SortModifier extends DataModifier {
 
         for (let i = 0, iEnd = orderBy.length; i < iEnd; ++i) {
             const sort = orderBy[i];
-            const column = (typeof sort === 'string' ? sort : sort.column);
+            const isString = typeof sort === 'string';
+            const column = isString ? sort : sort.column;
             const columnIndex = columnIds.indexOf(column);
             if (columnIndex === -1) {
                 continue;
@@ -227,12 +228,8 @@ class SortModifier extends DataModifier {
             orderByIndexes.push({
                 columnIndex,
                 compare: SortModifier.compareFactory(
-                    typeof sort === 'string' ?
-                        direction :
-                        (sort.direction || direction),
-                    typeof sort === 'string' ?
-                        customCompare :
-                        (sort.compare || customCompare)
+                    isString ? direction : (sort.direction || direction),
+                    isString ? customCompare : (sort.compare || customCompare)
                 )
             });
         }
@@ -260,7 +257,7 @@ class SortModifier extends DataModifier {
             }
             modified.setColumns({ [orderInColumn]: column });
         } else {
-            const originalIndexes: Array<number|undefined> = [];
+            const originalIndexes: Array<number | undefined> = [];
             const rows: Array<DataTable.Row> = [];
 
             let rowReference: SortRowReference;
