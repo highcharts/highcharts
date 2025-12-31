@@ -1,38 +1,33 @@
 Highcharts.chart('container', {
     chart: {
-        type: 'column',
-        borderWidth: 1
+        borderWidth: 1,
+        type: 'column'
     },
-
     title: {
-        text: 'No space reserved for X axis labels'
+        text: 'Demo of <em>xAxis.labels.reserveSpace</em>'
     },
-
-    credits: {
-        enabled: false
-    },
-
-    legend: {
-        enabled: false
-    },
-
     xAxis: {
         categories: ['Product 1', 'Product 2', 'Yet another product'],
         labels: {
-            rotation: -90,
             align: 'left',
             reserveSpace: false,
-            y: -5,
+            rotation: -90,
             style: {
                 color: '#FFFFFF',
                 fontSize: '12pt',
                 fontWeight: 'bold',
                 textOutline: '1px contrast'
-            }
+            },
+            y: -5
         },
         tickWidth: 0
     },
-
+    credits: {
+        enabled: false
+    },
+    legend: {
+        enabled: false
+    },
     series: [{
         data: [39.9, 71.5, 106.4],
         dataLabels: {

@@ -1,22 +1,21 @@
 Highcharts.chart('container', {
-
     chart: {
-        type: 'column'
+        type: 'column',
+        width: 500
     },
     title: {
-        text: 'Auto rotation limit'
+        text: 'Demo of <em>xAxis.labels.autoRotationLimit</em>'
     },
     subtitle: {
         text: 'Short words means word-wrap makes sense'
     },
     xAxis: {
-        type: 'category',
         labels: {
             autoRotationLimit: 40
-        }
+        },
+        type: 'category'
     },
     series: [{
-        showInLegend: false,
         data: [{
             name: 'Pasta (no gluten)',
             y: 77
@@ -38,6 +37,7 @@ Highcharts.chart('container', {
         }, {
             name: 'Fruits',
             y: 57
-        }]
+        }],
+        showInLegend: false
     }]
 });
