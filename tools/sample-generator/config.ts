@@ -6,6 +6,7 @@ export interface ControlOptions {
     /** The minimum value for number controls */
     min?: number;
     path: string;
+    step?: number;
     type?: 'number' | 'text' | 'boolean' | 'select' | 'color';
     value?: number | string | boolean;
 }

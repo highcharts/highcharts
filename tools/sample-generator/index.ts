@@ -230,13 +230,13 @@ async function generateChartConfig(
         Highcharts.merge(true, chartOptions, tplOptions);
     }
 
-    if (chartOptionsExtra) {
-        Highcharts.merge(true, chartOptions, chartOptionsExtra);
-    }
-
     Highcharts.merge(true, chartOptions, {
         title: { text: generateTitle(paths) }
     });
+
+    if (chartOptionsExtra) {
+        Highcharts.merge(true, chartOptions, chartOptionsExtra);
+    }
 
     for (const { defaultValue, path, overrideValue } of metaList) {
         // Use override value if provided, otherwise use default from tree
@@ -374,6 +374,9 @@ async function getPathMeta(config: SampleGeneratorConfig): Promise<MetaList> {
 
 // Select handler for a given meta
 function pickHandler(meta: MetaData) {
+
+    const value = meta.overrideValue ?? meta.defaultValue;
+
     if (meta.mainType.toLowerCase() === 'boolean') {
         return { kind: 'boolean', mod: booleanHandler } as const;
     }
@@ -405,6 +408,16 @@ function pickHandler(meta: MetaData) {
             name.slice(1, -1) // Remove quotes
         )));
         return { kind: 'select', mod: selectHandler } as const;
+    }
+
+    if (typeof value === 'number') {
+        return { kind: 'number', mod: numberHandler } as const;
+    }
+    if (typeof value === 'string') {
+        return { kind: 'text', mod: textHandler } as const;
+    }
+    if (typeof value === 'boolean') {
+        return { kind: 'boolean', mod: booleanHandler } as const;
     }
     return null;
 }

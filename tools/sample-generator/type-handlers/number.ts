@@ -16,6 +16,10 @@ export function getHTML(ctrlOpt: ControlOptions, overrideValue?: any): string {
         html += ` max="${ctrlOpt.max}"`;
     }
 
+    if (typeof ctrlOpt.step === 'number') {
+        html += ` step="${ctrlOpt.step}"`;
+    }
+
     html += '></highcharts-control>';
 
     return html;

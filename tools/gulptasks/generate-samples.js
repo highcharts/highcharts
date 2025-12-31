@@ -17,6 +17,15 @@ const { glob } = require('glob');
 /**
  * Gulp task to generate samples from config.ts files.
  *
+ * Supports filtering samples via --samples command line argument.
+ *
+ * @example
+ * // Generate all samples
+ * gulp generate-samples
+ *
+ * // Generate specific samples
+ * gulp generate-samples --samples "highcharts/xaxis/*"
+ *
  * @return {Promise<void>}
  *         Promise to keep
  */
@@ -26,15 +35,43 @@ async function task() {
     );
 
     const log = require('../libs/log');
+    const argv = require('yargs').argv;
 
-    // Find all config.ts files in the samples directory
-    const configFiles = await glob('samples/**/config.ts', {
+    let configFiles = await glob('samples/**/config.ts', {
         ignore: ['**/node_modules/**'],
         cwd: path.join(__dirname, '../../')
     });
 
+    // Filter based on --samples parameter if provided
+    if (argv.samples) {
+        const samplePatterns = argv.samples
+            .split(',')
+            .map(p => p.trim())
+            .filter(Boolean);
+
+        log.message(`Filtering samples by patterns: ${samplePatterns.join(', ')}`);
+
+        // eslint-disable-next-line node/no-extraneous-require
+        const { minimatch } = require('minimatch');
+
+        configFiles = configFiles.filter(configFile => {
+            // Remove 'samples/' prefix and '/config.ts' suffix for matching
+            const samplePath = configFile
+                .replace(/^samples\//u, '')
+                .replace(/\/config\.ts$/u, '');
+
+            return samplePatterns.some(pattern => {
+                // Remove trailing slash if present
+                const cleanPattern = pattern.replace(/\/$/u, '');
+                // Match exact path or as a glob pattern
+                return minimatch(samplePath, cleanPattern) ||
+                       samplePath === cleanPattern;
+            });
+        });
+    }
+
     if (configFiles.length === 0) {
-        log.warn('No config.ts files found in samples directory');
+        log.warn('No config.ts files found matching criteria');
         return;
     }
 
