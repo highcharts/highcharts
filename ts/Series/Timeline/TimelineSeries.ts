@@ -380,21 +380,19 @@ class TimelineSeries extends LineSeries {
         state?: StatesOptionsKey
     ): SVGAttributes {
         const series = this,
-            seriesMarkerOptions: PointMarkerOptions = (
-                series.options.marker as any
-            ),
+            seriesMarkerOptions = series.options.marker,
             pointMarkerOptions = point.marker || {},
             symbol = (
-                pointMarkerOptions.symbol || seriesMarkerOptions.symbol
+                pointMarkerOptions.symbol || seriesMarkerOptions?.symbol
             ),
             width = pick<number|undefined, number|undefined, number>(
                 pointMarkerOptions.width,
-                seriesMarkerOptions.width,
+                seriesMarkerOptions?.width,
                 series.closestPointRangePx as any
             ),
             height = pick<number|undefined, number>(
                 pointMarkerOptions.height,
-                seriesMarkerOptions.height as any
+                seriesMarkerOptions?.height as any
             );
 
         let seriesStateOptions,
@@ -409,7 +407,7 @@ class TimelineSeries extends LineSeries {
 
         // Handle hover and select states
         if (state) {
-            seriesStateOptions = seriesMarkerOptions.states?.[state];
+            seriesStateOptions = seriesMarkerOptions?.states?.[state];
             pointStateOptions = pointMarkerOptions.states?.[state];
 
             radius = pick(

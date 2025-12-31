@@ -117,6 +117,25 @@ declare module '../../Core/Options' {
     }
 }
 
+declare module '../../Core/Series/PointOptions' {
+    interface PointOptions {
+        /**
+         * The `id` of a series in the [drilldown.series](#drilldown.series)
+         * array to use for a drilldown for this point.
+         *
+         * @sample {highcharts} highcharts/drilldown/basic/
+         *         Basic drilldown
+         *
+         * @type      {string}
+         * @since     3.0.8
+         * @product   highcharts
+         * @requires  modules/drilldown
+         * @apioption series.line.data.drilldown
+         */
+        drilldown?: string;
+    }
+}
+
 declare module '../../Core/Renderer/SVG/SVGElementBase' {
     interface SVGElementBase {
         fadeIn(animation?: (boolean|Partial<AnimationOptions>)): void;

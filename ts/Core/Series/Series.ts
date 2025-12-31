@@ -2888,8 +2888,8 @@ class Series {
             ),
             attribs: SVGAttributes = {};
 
-        let seriesStateOptions: SeriesStateHoverOptions,
-            pointStateOptions: PointMarkerStateHoverOptions,
+        let seriesStateOptions,
+            pointStateOptions,
             radius: number|undefined = pick(
                 pointMarkerOptions.radius,
                 seriesMarkerOptions?.radius
@@ -2897,9 +2897,8 @@ class Series {
 
         // Handle hover and select states
         if (state) {
-            seriesStateOptions = (seriesMarkerOptions as any).states[state];
-            pointStateOptions = pointMarkerOptions.states &&
-                (pointMarkerOptions.states as any)[state];
+            seriesStateOptions = seriesMarkerOptions?.states?.[state];
+            pointStateOptions = pointMarkerOptions.states?.[state];
 
             radius = pick(
                 pointStateOptions?.radius,
