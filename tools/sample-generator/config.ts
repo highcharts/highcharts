@@ -5,6 +5,8 @@ export interface ControlOptions {
     max?: number;
     /** The minimum value for number controls */
     min?: number;
+    /** The option valid values for select controls */
+    options?: Array<string>;
     path: string;
     step?: number;
     type?: 'number' | 'text' | 'boolean' | 'select' | 'color';

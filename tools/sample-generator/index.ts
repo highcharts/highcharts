@@ -29,6 +29,7 @@ import '../../code/esm/modules/gantt.src.js';
 
 // Type handlers
 import * as booleanHandler from './type-handlers/boolean.ts';
+import * as genericHandler from './type-handlers/generic.ts';
 import * as numberHandler from './type-handlers/number.ts';
 import * as selectHandler from './type-handlers/select.ts';
 import * as colorHandler from './type-handlers/color.ts';
@@ -294,7 +295,7 @@ async function generateChartConfig(
 
 // Helper to compute mainType
 function getMainType(node: any) {
-    return node.doclet.type.names[0].replace('Highcharts.', '');
+    return node?.doclet.type.names[0].replace('Highcharts.', '');
 }
 
 // Build a list of metadata for each path
@@ -310,13 +311,16 @@ async function getPathMeta(config: SampleGeneratorConfig): Promise<MetaList> {
         }
         const node = await findNodeByPath(path);
         if (!node) {
-            console.error(colors.red(`No node found for path: ${path}`));
-            continue;
+            console.warn(colors.yellow(
+                `No node found for path: ${path}, ` +
+                'trying to build control anyway.'
+            ));
+            // continue;
         }
 
         const mainType = getMainType(node);
         let options: string[] | undefined;
-        if (node.doclet.values) {
+        if (node?.doclet.values) {
             options = JSON.parse(node.doclet.values);
         } else if (
             types[mainType] &&
@@ -326,7 +330,7 @@ async function getPathMeta(config: SampleGeneratorConfig): Promise<MetaList> {
             options = types[mainType];
         }
 
-        const defaultFromDocs = node.doclet.defaultValue ?? node.meta.default,
+        const defaultFromDocs = node?.doclet.defaultValue ?? node?.meta.default,
             defaultFromCode = getNestedValue(defaultOptions, path),
             // If the two defaults are the same, we skip setting it explicitly
             // because the Controls will pick it up from Highcharts defaults
@@ -375,32 +379,33 @@ async function getPathMeta(config: SampleGeneratorConfig): Promise<MetaList> {
 // Select handler for a given meta
 function pickHandler(meta: MetaData) {
 
-    const value = meta.overrideValue ?? meta.defaultValue;
+    const value = meta.overrideValue ?? meta.defaultValue,
+        mainType = meta.mainType || '';
 
-    if (meta.mainType.toLowerCase() === 'boolean') {
+    if (mainType.toLowerCase() === 'boolean') {
         return { kind: 'boolean', mod: booleanHandler } as const;
     }
-    if (meta.mainType.toLowerCase() === 'number') {
+    if (mainType.toLowerCase() === 'number') {
         return { kind: 'number', mod: numberHandler } as const;
     }
     if (
-        meta.mainType.toLowerCase() === 'colorstring' ||
-        meta.mainType.toLowerCase() === 'colortype'
+        mainType.toLowerCase() === 'colorstring' ||
+        mainType.toLowerCase() === 'colortype'
     ) {
         return { kind: 'color', mod: colorHandler } as const;
     }
-    if (meta.mainType.toLowerCase() === 'axistypevalue') {
+    if (mainType.toLowerCase() === 'axistypevalue') {
         meta.options = ['linear', 'logarithmic', 'datetime', 'category'];
     }
-    if (meta.options || meta.mainType.toLowerCase() === 'dashstylevalue') {
+    if (meta.options || mainType.toLowerCase() === 'dashstylevalue') {
         return { kind: 'select', mod: selectHandler } as const;
     }
-    if (meta.mainType.toLowerCase() === 'string') {
+    if (mainType.toLowerCase() === 'string') {
         return { kind: 'text', mod: textHandler } as const;
     }
 
     // Get it from validvalues. Case: xAxis.gridLineInterpolation.
-    if (meta.node.doclet.type.names.every(name => (
+    if (meta.node?.doclet.type.names.every(name => (
         typeof name === 'string' &&
         /^"[A-Za-z0-9_]*"$/u.test(name)
     ))) {
@@ -410,6 +415,7 @@ function pickHandler(meta: MetaData) {
         return { kind: 'select', mod: selectHandler } as const;
     }
 
+    /*
     if (typeof value === 'number') {
         return { kind: 'number', mod: numberHandler } as const;
     }
@@ -419,7 +425,8 @@ function pickHandler(meta: MetaData) {
     if (typeof value === 'boolean') {
         return { kind: 'boolean', mod: booleanHandler } as const;
     }
-    return null;
+        */
+    return { kind: 'generic', mod: genericHandler } as const;
 }
 
 // Function to get HTML (one row per path) from template
@@ -446,14 +453,6 @@ export async function getDemoHTML(
 
     for (const meta of metaList) {
         const handler = pickHandler(meta);
-        if (!handler) {
-            console.error(
-                colors.red(
-                    `No handler for type: ${meta.mainType} (path: ${meta.path})`
-                )
-            );
-            continue;
-        }
 
         // Add function if not already added
         if (!handlerTypes.has(handler.kind)) {
