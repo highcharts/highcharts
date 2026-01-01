@@ -1,7 +1,4 @@
 Highcharts.chart('container', {
-    chart: {
-        type: 'line'
-    },
     title: {
         text: 'Demo of axis <em>crosshair</em> options'
     },

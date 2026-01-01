@@ -10,7 +10,7 @@ export default {
         path: 'yAxis.crosshair.snap',
         value: false
     }],
-    templates: ['line'],
+    templates: ['categories-12'],
     chartOptionsExtra: {
         xAxis: {
             crosshair: {

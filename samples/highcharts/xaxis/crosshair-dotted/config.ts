@@ -7,7 +7,7 @@ export default {
         path: 'xAxis.crosshair.dashStyle',
         value: 'ShortDot'
     }],
-    templates: ['line'],
+    templates: ['categories-12'],
     chartOptionsExtra: {
         xAxis: {
             crosshair: {

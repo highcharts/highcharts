@@ -4,10 +4,11 @@ import type {
 
 export default {
     controls: [{
-        path: 'xAxis.labels.rotation',
-        value: -45,
-        min: -90,
-        max: 90
+        path: 'xAxis.opposite',
+        value: true
+    }, {
+        path: 'yAxis.opposite',
+        value: true
     }],
     templates: ['categories-12']
 } satisfies SampleGeneratorConfig;

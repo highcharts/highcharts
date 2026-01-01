@@ -10,7 +10,7 @@ export default {
         path: 'yAxis.labels.format',
         value: '${value:.2f} USD'
     }],
-    templates: ['line'],
+    templates: ['categories-12'],
     chartOptionsExtra: {
         chart: {
             type: 'column'

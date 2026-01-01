@@ -10,7 +10,7 @@ export default {
         'legend.x',
         'legend.y'
     ],
-    templates: ['line'],
+    templates: ['categories-12'],
     chartOptionsExtra: {
         series: [{
             data: [1, 3, 2, 4]

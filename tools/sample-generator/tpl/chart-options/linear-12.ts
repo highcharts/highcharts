@@ -1,7 +1,4 @@
 export default {
-    chart: {
-        type: 'line'
-    },
     series: [
         {
             data: [
@@ -19,11 +16,5 @@ export default {
                 54.4
             ]
         }
-    ],
-    xAxis: {
-        categories: [
-            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
-            'Oct', 'Nov', 'Dec'
-        ]
-    }
+    ]
 };

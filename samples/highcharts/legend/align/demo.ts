@@ -1,7 +1,4 @@
 Highcharts.chart('container', {
-    chart: {
-        type: 'line'
-    },
     title: {
         text: 'Demo of <em>legend</em> options'
     },

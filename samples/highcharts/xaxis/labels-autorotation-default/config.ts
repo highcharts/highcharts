@@ -9,7 +9,7 @@ export default {
         min: 100,
         max: 1000
     }],
-    templates: ['line'],
+    templates: ['categories-12'],
     chartOptionsExtra: {
         title: {
             text: 'Auto rotated X axis labels'

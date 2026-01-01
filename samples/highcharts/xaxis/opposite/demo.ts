@@ -1,17 +1,16 @@
 Highcharts.chart('container', {
     title: {
-        text: 'Demo of <em>xAxis.crosshair.dashStyle</em>'
+        text: 'Demo of axis <em>opposite</em> options'
     },
     xAxis: {
         categories: [
             'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
             'Oct', 'Nov', 'Dec'
         ],
-        crosshair: {
-            color: 'gray',
-            dashStyle: 'ShortDot',
-            width: 2
-        }
+        opposite: true
+    },
+    yAxis: {
+        opposite: true
     },
     series: [{
         data: [

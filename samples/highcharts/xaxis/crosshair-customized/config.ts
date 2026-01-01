@@ -20,5 +20,5 @@ export default {
         path: 'yAxis.crosshair.color',
         value: '#008800'
     }],
-    templates: ['line']
+    templates: ['categories-12']
 } satisfies SampleGeneratorConfig;

@@ -9,5 +9,5 @@ export default {
         min: 0,
         max: 5
     }],
-    templates: ['line']
+    templates: ['categories-12']
 } satisfies SampleGeneratorConfig;

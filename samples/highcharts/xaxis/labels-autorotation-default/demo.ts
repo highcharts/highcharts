@@ -1,6 +1,5 @@
 Highcharts.chart('container', {
     chart: {
-        type: 'line',
         width: 360
     },
     title: {

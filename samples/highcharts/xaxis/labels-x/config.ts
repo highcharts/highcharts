@@ -14,7 +14,7 @@ export default {
         min: -20,
         max: 20
     }],
-    templates: ['line'],
+    templates: ['categories-12'],
     chartOptionsExtra: {
         yAxis: {
             labels: {

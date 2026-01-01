@@ -18,5 +18,5 @@ export default {
         type: 'number',
         step: 0.1
     }],
-    templates: ['line']
+    templates: ['categories-12']
 } satisfies SampleGeneratorConfig;
