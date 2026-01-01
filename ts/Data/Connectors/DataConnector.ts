@@ -36,6 +36,7 @@ import DataConverter from '../Converters/DataConverter.js';
 import DataModifier from '../Modifiers/DataModifier.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
+import { DeepPartial } from '../../Shared/Types';
 const {
     addEvent,
     fireEvent,
@@ -250,6 +251,27 @@ abstract class DataConnector implements DataEvent.Emitter<DataConnector.Event> {
     }
 
     /**
+     * Updates the connector with new options.
+     *
+     * @param newOptions
+     * The new options to be applied to the connector.
+     *
+     * @param reload
+     * Whether to reload the connector after applying the new options.
+     */
+    public async update(
+        newOptions: DeepPartial<typeof this.options>,
+        reload: boolean = true
+    ): Promise<void> {
+        this.emit({ type: 'beforeUpdate' });
+        merge(true, this.options, newOptions);
+        if (reload) {
+            await this.load();
+        }
+        this.emit({ type: 'afterUpdate' });
+    }
+
+    /**
      * The default load method, which fires the `afterLoad` event
      *
      * @return {Promise<DataConnector>}
@@ -310,6 +332,7 @@ abstract class DataConnector implements DataEvent.Emitter<DataConnector.Event> {
         window.clearTimeout(connector._polling);
 
         connector._polling = window.setTimeout(
+            // eslint-disable-next-line @typescript-eslint/no-misused-promises
             (): Promise<void> => connector
                 .load()['catch'](
                     (error): void => connector.emit({
@@ -431,7 +454,9 @@ namespace DataConnector {
      * The event type that is provided on events within DataConnector.
      */
     export interface Event extends DataEvent {
-        readonly type: 'loadError' | 'load' | 'afterLoad';
+        readonly type: (
+            'loadError' | 'load' | 'afterLoad' | 'beforeUpdate' | 'afterUpdate'
+        );
         readonly error?: string | Error;
     }
 
