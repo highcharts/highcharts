@@ -379,8 +379,7 @@ async function getPathMeta(config: SampleGeneratorConfig): Promise<MetaList> {
 // Select handler for a given meta
 function pickHandler(meta: MetaData) {
 
-    const value = meta.overrideValue ?? meta.defaultValue,
-        mainType = meta.mainType || '';
+    const mainType = meta.mainType || '';
 
     if (mainType.toLowerCase() === 'boolean') {
         return { kind: 'boolean', mod: booleanHandler } as const;
@@ -533,6 +532,7 @@ export async function getDemoTS(
     //         type: 'line',
     //         data: [4, 5, 6]
     //     }]
+    const origChartOptions = chartOptions;
     chartOptions = chartOptions.replace(
         /\[\s*\{\s*([\s\S]*?)\s*\}\s*(,\s*\{\s*([\s\S]*?)\s*\}\s*)*\]/gu,
         match => {
@@ -552,7 +552,12 @@ export async function getDemoTS(
             for (let i = 0; i < objects.length; i++) {
                 const objLines = objects[i]
                     .split('\n')
-                    .map(line => innerIndent + line.trim());
+                    .map((line, i) => {
+                        if (!i) {
+                            return innerIndent + line.trim();
+                        }
+                        return line.replace(/^ {4}/u, '');
+                    });
                 result += '\n' + objLines.join('\n') + '\n' + indent + '}';
                 if (i < objects.length - 1) {
                     result += ', {';
@@ -562,6 +567,11 @@ export async function getDemoTS(
             return result;
         }
     );
+
+    // Failed to properly indent nested objects, revert to original
+    if (/\[\n\s*\{/u.test(chartOptions)) {
+        chartOptions = origChartOptions;
+    }
 
     // For arrays of numbers, put them on one line. If the total line width,
     // including the indentation, exceeds 80 chars, break after commas.
