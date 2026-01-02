@@ -51,6 +51,7 @@ const {
     defined,
     extend,
     fireEvent,
+    isNumber,
     isObject,
     merge,
     pick,
@@ -227,7 +228,7 @@ namespace RadialAxis {
             this.max++;
         }
 
-        if (this.autoConnect) {
+        if (this.autoConnect && isNumber(this.max)) {
             this.max += (
                 (this.categories && 1) ||
                 this.pointRange ||
@@ -426,15 +427,13 @@ namespace RadialAxis {
             top = this.top || 0;
 
         let end,
-            r = pick(radius, center[2] / 2 - this.offset),
-            path: SVGPath;
+            path: SVGPath,
+            r = pick(radius, center[2] / 2 - this.offset);
 
-        if (typeof innerRadius === 'undefined') {
-            innerRadius = this.horiz ? 0 : this.center && -this.center[3] / 2;
-        }
+        innerRadius ??= this.horiz ? 0 : this.center && -this.center[3] / 2;
 
         // In case when innerSize of pane is set, it must be included
-        if (innerRadius) {
+        if (innerRadius && innerRadius > 0) {
             r += innerRadius;
         }
 
@@ -514,8 +513,9 @@ namespace RadialAxis {
                 return radius;
             },
             center = this.center,
-            startAngleRad = this.startAngleRad,
-            borderRadius = options.borderRadius,
+            { endAngleRad, startAngleRad } = this,
+            borderRadius = options.borderRadius ??
+                this.pane.options.borderRadius,
             fullRadius = center[2] / 2,
             offset = Math.min(this.offset, 0),
             left = this.left || 0,
@@ -536,7 +536,7 @@ namespace RadialAxis {
                 fullRadius
             ),
             innerRadius = radiusToPixels(options.innerRadius),
-            thickness = pick(radiusToPixels(options.thickness), 10),
+            thickness = radiusToPixels(options.thickness),
             brStart = true,
             brEnd = true;
 
@@ -560,8 +560,12 @@ namespace RadialAxis {
         } else {
 
             // Keep within bounds
-            from = Math.max(from, this.min);
-            to = Math.min(to, this.max);
+            if (isNumber(this.min)) {
+                from = Math.max(from, this.min);
+            }
+            if (isNumber(this.max)) {
+                to = Math.min(to, this.max);
+            }
 
             const transFrom = this.translate(from),
                 transTo = this.translate(to);
@@ -573,8 +577,19 @@ namespace RadialAxis {
                 innerRadius = transTo || 0;
             }
 
+            // Allow background for empty axis
+            if (
+                !isNumber(this.min) &&
+                !isNumber(this.max) &&
+                // Not for plot bands
+                !options.color &&
+                !options.className
+            ) {
+                start = startAngleRad;
+                end = endAngleRad;
+
             // Handle full circle
-            if (options.shape === 'circle' || !isCircular) {
+            } else if (options.shape === 'circle' || !isCircular) {
                 start = -Math.PI / 2;
                 end = Math.PI * 1.5;
                 open = true;
@@ -584,7 +599,9 @@ namespace RadialAxis {
             }
 
             outerRadius -= offset; // #5283
-            thickness -= offset; // #5283
+            if (isNumber(thickness)) {
+                thickness -= offset; // #5283
+            }
 
             path = chart.renderer.symbols.arc(
                 left + center[0],
@@ -597,7 +614,8 @@ namespace RadialAxis {
                     end: Math.max(start, end),
                     innerR: pick(
                         innerRadius,
-                        outerRadius - thickness
+                        isNumber(thickness) ? outerRadius - thickness : void 0,
+                        this.center[3] / 2
                     ),
                     open,
                     borderRadius,
@@ -818,7 +836,7 @@ namespace RadialAxis {
             titleOptions = this.options.title;
 
         return {
-            x: chart.plotLeft + center[0] + ((titleOptions as any).x || 0),
+            x: chart.plotLeft + center[0] + (titleOptions.x || 0),
             y: (
                 chart.plotTop +
                 center[1] -
@@ -828,11 +846,11 @@ namespace RadialAxis {
                         middle: 0.25,
                         low: 0
                     } as Record<string, number>)[
-                        (titleOptions as any).align
+                        titleOptions.align
                     ] *
                     center[2]
                 ) +
-                ((titleOptions as any).y || 0)
+                (titleOptions.y || 0)
             )
         };
     }
@@ -873,7 +891,6 @@ namespace RadialAxis {
         radialAxis.getOffset = noop;
         radialAxis.redraw = renderHidden;
         radialAxis.render = renderHidden;
-        radialAxis.setScale = noop;
         radialAxis.setCategories = noop;
         radialAxis.setTitle = noop;
     }
@@ -891,14 +908,18 @@ namespace RadialAxis {
             paneOptions = pane?.options;
 
         if (!isHidden && pane && (chart.angular || chart.polar)) {
+
             const fullCircle = Math.PI * 2,
+                startAngle = paneOptions.startAngle ??
+                    // Gauges start at -120 by default
+                    (chart.angular ? -120 : 0),
                 // Start and end angle options are given in degrees relative to
                 // top, while internal computations are in radians relative to
                 // right (like SVG).
-                start = (pick(paneOptions.startAngle, 0) - 90) * Math.PI / 180,
+                start = (startAngle - 90) * Math.PI / 180,
                 end = (pick(
                     paneOptions.endAngle,
-                    pick(paneOptions.startAngle, 0) + 360
+                    startAngle + (chart.angular ? 240 : 360)
                 ) - 90) * Math.PI / 180;
 
             // Y axis in polar charts
@@ -1038,7 +1059,7 @@ namespace RadialAxis {
         this: AxisComposition
     ): void {
         if (this.isRadial) {
-            this.beforeSetTickPositions();
+            this.beforeSetTickPositions?.();
         }
     }
 
@@ -1311,6 +1332,10 @@ namespace RadialAxis {
             // translation of reversed axis points (#2570)
             if (this.isCircular) {
                 this.sector = this.endAngleRad - this.startAngleRad;
+
+                // Axis len is used to lay out the ticks
+                this.len = this.width = this.height =
+                    center[2] * this.sector / 2;
             } else {
                 // When the pane's startAngle or the axis' angle is set then
                 // new x and y values for vertical axis' center must be
@@ -1318,11 +1343,11 @@ namespace RadialAxis {
                 start = this.postTranslate(this.angleRad, center[3] / 2);
                 center[0] = start.x - this.chart.plotLeft;
                 center[1] = start.y - this.chart.plotTop;
-            }
 
-            // Axis len is used to lay out the ticks
-            this.len = this.width = this.height =
-                (center[2] - center[3]) * pick(this.sector, 1) / 2;
+                // Axis len is used to lay out the ticks
+                this.len = this.width = this.height =
+                    (center[2] - center[3]) / 2;
+            }
         }
     }
 

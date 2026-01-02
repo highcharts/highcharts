@@ -44,25 +44,16 @@ const defaultCircularOptions: DeepPartial<RadialAxisOptions> = {
  * @private
  */
 const defaultRadialGaugeOptions: DeepPartial<RadialAxisOptions> = {
-    endOnTick: false,
     gridLineWidth: 0,
     labels: {
         align: 'center',
-        distance: -25,
+        distance: 15,
         x: 0,
         y: void 0 // Auto
     },
-    lineWidth: 1,
     minorGridLineWidth: 0,
-    minorTickInterval: 'auto',
-    minorTickLength: 10,
-    minorTickPosition: 'inside',
-    minorTickWidth: 1,
-    startOnTick: false,
-    tickLength: 10,
     tickPixelInterval: 100,
     tickPosition: 'inside',
-    tickWidth: 2,
     title: {
         rotation: 0,
         text: ''

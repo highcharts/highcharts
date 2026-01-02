@@ -32,6 +32,9 @@ import PaneDefaults from './PaneDefaults.js';
 import U from '../../Core/Utilities.js';
 const {
     extend,
+    getAlignFactor,
+    isArray,
+    isNumber,
     merge,
     splat
 } = U;
@@ -144,10 +147,17 @@ class Pane {
      */
     public setOptions(options: PaneOptions): void {
 
+        const conditionalDefaults: PaneOptions = {};
+
+        if (this.chart.angular) {
+            conditionalDefaults.background = {};
+            conditionalDefaults.innerSize = '60%';
+        }
+
         // Set options. Angular charts have a default background (#3318)
         this.options = options = merge(
             PaneDefaults.pane,
-            { background: this.chart.angular ? {} : void 0 },
+            conditionalDefaults,
             options
         );
     }
@@ -188,6 +198,11 @@ class Pane {
                     this.renderBackground(
                         merge(
                             PaneDefaults.background,
+                            // Defaults inherited from the `pane` option
+                            {
+                                borderRadius: this.options.borderRadius,
+                                innerRadius: this.center[3] / 2
+                            },
                             backgroundOption[i]
                         ),
                         i
@@ -256,11 +271,93 @@ class Pane {
      * @param {Highcharts.Axis} [axis]
      */
     public updateCenter(axis?: RadialAxis.AxisComposition): void {
+
+        const { chart, options } = this,
+            centerY = options.center?.[1],
+            m = options.margin || 0,
+            margin = isArray(m) ? m : [m, m, m, m];
+
+        let size = options.size,
+            sizeFromAngle: number|undefined,
+            appliedCenterMargin = 0;
+
+        // Get the required margin in order to display the data label in or
+        // below the center
+        const centerMargin = chart.series
+            .filter((s): boolean => s.is('gauge') && s.yAxis?.pane === this)
+            .reduce((max, s): number => {
+                const dl = splat(s.options.dataLabels)[0];
+                let margin = 0;
+                if (dl) {
+                    // 30 is an approximation of the default data label height.
+                    // It is not yet rendered.
+                    margin = (1 - getAlignFactor(dl.verticalAlign)) * 30 +
+                        (dl.y || 0);
+                }
+                return Math.max(max, margin);
+            }, 0) + margin[2];
+
+        // Handle auto-positioning when size and center are undefined
+        if (size === void 0 || centerY === void 0) {
+            const { plotHeight, plotWidth } = chart,
+                { startAngle = 0, endAngle = 360 } = options,
+                deg2rad = Math.PI * 2 / 360,
+                crossingBottom = (startAngle < 180 && endAngle > 180) ||
+                    // Circle background should fill out the plot area
+                    splat(options.background).some(
+                        (b): boolean => b?.shape === 'circle'
+                    ),
+                angle = crossingBottom ? 180 : Math.max(
+                    Math.abs(startAngle),
+                    Math.abs(endAngle)
+                ),
+                sin = Math.sin(deg2rad * (angle - 90)),
+                // The size doesn't increase further to angles below this
+                // minimum. For linear gauges, this means that the pivot is kept
+                // visible.
+                minimumAngle = 90,
+                sizeRatio = 0.5 + 0.5 * Math.max(
+                    sin, Math.sin(deg2rad * (minimumAngle - 90))
+                );
+
+            sizeFromAngle = (plotHeight - margin[0] - margin[2]) /
+                sizeRatio;
+            if (size === void 0) {
+                size = Math.min(
+                    sizeFromAngle,
+                    plotWidth - margin[1] - margin[3]
+                );
+
+                // Make sure there is space for the data label (centerMargin)
+                const overflow = size + margin[0] + margin[2] +
+                    2 * (centerMargin - plotHeight);
+                if (overflow > 0) {
+                    appliedCenterMargin = overflow;
+                    size -= appliedCenterMargin;
+                }
+            }
+        }
+
+        // Run the standard centering
         this.center = (
             axis ||
             this.axis ||
             ({} as Record<string, Array<number>>)
         ).center = CU.getCenter.call(this as any);
+
+        if (!options.size) {
+            // Apply the auto-positioning
+            if (isNumber(size) && size >= 0) {
+                this.center[2] = size;
+            }
+            if (!isNumber(centerY) && isNumber(sizeFromAngle)) {
+                this.center[1] = (
+                    sizeFromAngle +
+                    this.center[2] -
+                    appliedCenterMargin
+                ) / 4 + margin[0];
+            }
+        }
     }
 
     /**

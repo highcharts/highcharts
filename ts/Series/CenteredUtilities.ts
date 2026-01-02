@@ -109,12 +109,6 @@ namespace CenteredUtilities {
             )
         ];
 
-        // No need for inner size in angular (gauges) series but still required
-        // for pie series
-        if (chart.angular && !(this instanceof Series)) {
-            positions[3] = 0;
-        }
-
         for (i = 0; i < 4; ++i) {
             value = positions[i];
             handleSlicingRoom = i < 2 || (i === 2 && /%$/.test(value as any));

@@ -18,7 +18,9 @@ Highcharts.chart('container', {
         endAngle: 89.9,
         background: null,
         center: ['50%', '75%'],
-        size: '110%'
+        size: '110%',
+        innerSize: '90%',
+        borderRadius: '50%'
     },
 
     // the value axis
@@ -26,11 +28,8 @@ Highcharts.chart('container', {
         min: 0,
         max: 200,
         tickPixelInterval: 72,
-        tickPosition: 'inside',
-        tickColor: 'var(--highcharts-background-color, #FFFFFF)',
-        tickLength: 20,
-        tickWidth: 2,
-        minorTickInterval: null,
+        gridLineColor: 'var(--highcharts-background-color, #FFFFFF)',
+        gridLineWidth: 2,
         labels: {
             distance: 20,
             style: {
@@ -41,21 +40,15 @@ Highcharts.chart('container', {
         plotBands: [{
             from: 0,
             to: 120,
-            color: '#55BF3B', // green
-            thickness: 20,
-            borderRadius: '50%'
+            color: '#55BF3B' // green
         }, {
             from: 120,
             to: 160,
-            color: '#DDDF0D', // yellow
-            thickness: 20,
-            borderRadius: '50%'
+            color: '#DDDF0D' // yellow
         }, {
             from: 160,
             to: 200,
-            color: '#DF5353', // red
-            thickness: 20,
-            borderRadius: '50%'
+            color: '#DF5353' // red
         }]
     },
 
