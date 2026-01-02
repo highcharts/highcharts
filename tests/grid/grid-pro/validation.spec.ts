@@ -22,12 +22,6 @@ async function editGridCell(
 test.describe('Grid Pro - validation', () => {
     test.beforeEach(async ({ page }) => {
         await page.goto('/grid-pro/cypress/cell-editing', { waitUntil: 'networkidle' });
-        // Wait for Grid to be initialized
-        await page.waitForFunction(() => {
-            return typeof (window as any).Grid !== 'undefined' &&
-                   (window as any).Grid.grids &&
-                   (window as any).Grid.grids.length > 0;
-        }, { timeout: 10000 });
     });
 
     test('Notification position', async ({ page }) => {
@@ -39,21 +33,25 @@ test.describe('Grid Pro - validation', () => {
         const top = await notification.evaluate((el: HTMLElement) => {
             return el.getBoundingClientRect().top;
         });
+        console.log('top', top);
         expect(top).toBeGreaterThan(200);
 
         await editGridCell(page, 2, 'numbers', '4');
 
         // Top position
-        await editGridCell(page, 2, 'numbers', '');
+        await editGridCell(page, 8, 'numbers', '');
 
         const notificationTop = page.locator('.hcg-notification-error').first();
         await expect(notificationTop).toBeVisible();
-        const topPosition = await notificationTop.evaluate((el: HTMLElement) => {
-            return el.getBoundingClientRect().top;
-        });
+        const topPosition = await notificationTop.evaluate(
+            (el: HTMLElement) => {
+                return el.getBoundingClientRect().top;
+            }
+        );
+        console.log('topPosition', topPosition);
         expect(topPosition).toBeLessThan(200);
 
-        await editGridCell(page, 2, 'numbers', '4');
+        await editGridCell(page, 8, 'numbers', '4');
     });
 
     test('Custom rule', async ({ page }) => {
@@ -68,9 +66,9 @@ test.describe('Grid Pro - validation', () => {
     test('Lang support', async ({ page }) => {
         await editGridCell(page, 2, 'product', '');
 
-        await expect(page.locator('.hcg-notification-error').first())
-            .toBeVisible()
-            .toContainText('New value'); // Lang rule
+        const notification = page.locator('.hcg-notification-error').first();
+        await expect(notification).toBeVisible();
+        await expect(notification).toContainText('New value'); // Lang rule
     });
 
     test('In case of wrong renderer type or dataType, it should default to string', async ({ page }) => {
@@ -82,15 +80,15 @@ test.describe('Grid Pro - validation', () => {
         await editGridCell(page, 1, 'product', 'apples');
 
         // Assert
-        await expect(page.locator('.hcg-notification-error').first())
-            .toBeVisible()
-            .toContainText('Value must be unique within this column (case-insensitive).');
+        const notification = page.locator('.hcg-notification-error').first();
+        await expect(notification).toBeVisible();
+        await expect(notification).toContainText('Value must be unique within this column (case-insensitive).');
 
         // Act
         await editGridCell(page, 1, 'product', 'Red Apples');
 
         // Assert
-        await expect(page.locator('.hcg-notification-error')).not.toBeVisible();
+        await expect(page.locator('.hcg-notification-error')).toBeHidden();
     });
 
     test('Case unique validation with no changes in value', async ({ page }) => {
@@ -98,15 +96,15 @@ test.describe('Grid Pro - validation', () => {
         await editGridCell(page, 0, 'product', 'apples');
 
         // Assert
-        await expect(page.locator('.hcg-notification-error')).not.toBeVisible();
+        await expect(page.locator('.hcg-notification-error')).toBeHidden();
 
         // Act
         await editGridCell(page, 1, 'product', 'Apples');
 
         // Assert
-        await expect(page.locator('.hcg-notification-error').first())
-            .toBeVisible()
-            .toContainText('Value must be unique within this column (case-insensitive).');
+        const notification = page.locator('.hcg-notification-error').first();
+        await expect(notification).toBeVisible();
+        await expect(notification).toContainText('Value must be unique within this column (case-insensitive).');
     });
 });
 
