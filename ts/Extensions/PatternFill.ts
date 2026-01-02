@@ -220,22 +220,14 @@ function createAnchoredPattern(
     const anchoredPattern = merge({}, pattern);
 
     // Get point's bounding box for anchoring
-    const bbox = element.getBBox ? element.getBBox() : {
+    const bbox = (element as any).getBBox ? (element as any).getBBox() : {
         x: 0, y: 0, width: 32, height: 32
     };
 
-    // Set pattern to use object bounding box coordinates (0-1 range)
-    anchoredPattern.patternContentUnits = 'objectBoundingBox';
-
-    // Reset position to anchor at point's origin
-    anchoredPattern._x = 0;
-    anchoredPattern._y = 0;
-
-    // For anchored patterns, ensure we have dimensions
-    if (!pattern.width || !pattern.height) {
-        anchoredPattern._width = bbox.width;
-        anchoredPattern._height = bbox.height;
-    }
+    // Position pattern at point's origin so each column has its own
+    // pattern instance starting from its top-left corner
+    anchoredPattern._x = bbox.x;
+    anchoredPattern._y = bbox.y;
 
     return anchoredPattern;
 }
@@ -470,19 +462,28 @@ function onRendererComplexColor(
         if (forceHashId || !pattern.id) {
             // Make a copy so we don't accidentally edit options when setting ID
             pattern = merge({}, pattern);
-
             let patternId = 'highcharts-pattern-' + chartIndex + '-' +
                 hashFromObject(pattern) + hashFromObject(pattern, true);
 
             // Handle anchored patterns - create unique ID per point
             if (pattern.anchorToPoint) {
                 // Get point identifier from element attributes or generate one
-                const pointIndex = element.getAttribute('data-z') ||
-                    element.getAttribute('class')?.match(/highcharts-point-(\d+)/)?.[1] ||
-                    Math.random().toString(36).substr(2, 9);
+                const elementClass = element.getAttribute('class') || '',
+                    pointIndex =
+                        elementClass.match(/highcharts-point-(\d+)/)?.[1] ||
+                        ((): string => {
+                            const bbox = (element as any).getBBox ?
+                                (element as any).getBBox() : null;
+                            return bbox ?
+                                String(
+                                    Math.round(bbox.x * 100) + '_' +
+                                    Math.round(bbox.y * 100) + '_' +
+                                    Math.round(bbox.width * 100) + '_' +
+                                    Math.round(bbox.height * 100)
+                                ) :
+                                Math.random().toString(36).substr(2, 9);
+                        })();
                 patternId += '-anchored-' + pointIndex;
-
-                // Create anchored pattern with proper positioning
                 pattern = createAnchoredPattern(pattern, element);
             }
 
@@ -646,7 +647,6 @@ function pointCalculatePatternDimensions(
         // For anchored patterns, always position at origin of the point
         pattern._x = 0;
         pattern._y = 0;
-
         // Ensure pattern dimensions match the point if not explicitly set
         if (!pattern.width) {
             pattern._width = bBox.width;
@@ -656,8 +656,8 @@ function pointCalculatePatternDimensions(
         }
     } else {
         // Original logic for global patterns
-        // Set x/y accordingly, centering if using aspect ratio, otherwise adjusting
-        // so bounding box corner is 0,0 of pattern.
+        // Set x/y accordingly, centering if using aspect ratio, otherwise
+        // adjusting so bounding box corner is 0,0 of pattern.
         if (!pattern.width) {
             pattern._x = pattern.x || 0;
             pattern._x += bBox.x - Math.round(
@@ -702,28 +702,17 @@ function rendererAddPattern(
     const animate = pick(animation, true),
         animationOptions = animObject(animate),
         color: ColorString = options.color || Palette.neutralColor80,
-        defaultSize = 32;
-
-    // Handle anchored patterns with different coordinate system
-    let height, width, patternUnits, patternContentUnits;
-
-    if (options.anchorToPoint) {
-        // For anchored patterns, use normalized coordinates
-        height = 1;
-        width = 1;
-        patternUnits = 'objectBoundingBox';
-        patternContentUnits = 'objectBoundingBox';
-    } else {
-        // Original logic for global patterns
+        defaultSize = 32,
         height = options.height ||
             (typeof options._height === 'number' ? options._height : 0) ||
-            defaultSize;
+            defaultSize,
         width = options.width ||
             (typeof options._width === 'number' ? options._width : 0) ||
-            defaultSize;
-        patternUnits = 'userSpaceOnUse';
-        patternContentUnits = options.patternContentUnits || 'userSpaceOnUse';
-    }
+            defaultSize,
+        patternUnits = 'userSpaceOnUse',
+        patternContentUnits = options.anchorToPoint ?
+            'userSpaceOnUse' :
+            (options.patternContentUnits || 'userSpaceOnUse');
 
     const rect = (fill: ColorString): SVGElement => this
         .rect(0, 0, width, height)
@@ -806,14 +795,6 @@ function rendererAddPattern(
         }
         if (path.transform) {
             attribs.transform = path.transform;
-        }
-
-        // Scale path for anchored patterns
-        if (options.anchorToPoint && options._width && options._height) {
-            const scaleX = 1 / (options._width / (options.width || defaultSize));
-            const scaleY = 1 / (options._height / (options.height || defaultSize));
-            const transform = `scale(${scaleX}, ${scaleY})` + (path.transform ? ` ${path.transform}` : '');
-            attribs.transform = transform;
         }
 
         this.createElement('path').attr(attribs).add(pattern);

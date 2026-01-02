@@ -83,7 +83,7 @@ export interface SVGAttributes {
     paddingRight?: number|'unset';
     patternContentUnits?: 'userSpaceOnUse'|'objectBoundingBox';
     patternTransform?: string;
-    patternUnits?: 'userSpaceOnUse';
+    patternUnits?: 'userSpaceOnUse'|'objectBoundingBox';
     preserveAspectRatio?: string;
     r?: number;
     radius?: number;
