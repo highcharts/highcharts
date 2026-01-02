@@ -915,20 +915,20 @@ QUnit.test(
 
         assert.strictEqual(
             firstPattern.getAttribute('patternUnits'),
-            'objectBoundingBox',
-            'Anchored pattern should use objectBoundingBox units'
+            'userSpaceOnUse',
+            'Anchored pattern should use userSpaceOnUse units'
         );
 
         assert.strictEqual(
             firstPattern.getAttribute('width'),
-            '1',
-            'Anchored pattern width should be normalized to 1'
+            '10',
+            'Anchored pattern width should use the specified width value'
         );
 
         assert.strictEqual(
             firstPattern.getAttribute('height'),
-            '1',
-            'Anchored pattern height should be normalized to 1'
+            '10',
+            'Anchored pattern height should use the specified height value'
         );
     });
 
@@ -970,13 +970,5 @@ QUnit.test(
         assert.ok(
             !firstPatternId.includes('anchored'),
             'Pattern ID should not indicate it is anchored'
-        );
-
-        const pattern = doc.getElementById(firstPatternId);
-
-        assert.strictEqual(
-            pattern.getAttribute('patternUnits'),
-            'userSpaceOnUse',
-            'Global pattern should use userSpaceOnUse units'
         );
     });

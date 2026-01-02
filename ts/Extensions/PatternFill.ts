@@ -709,7 +709,6 @@ function rendererAddPattern(
         width = options.width ||
             (typeof options._width === 'number' ? options._width : 0) ||
             defaultSize,
-        patternUnits = 'userSpaceOnUse',
         patternContentUnits = options.anchorToPoint ?
             'userSpaceOnUse' :
             (options.patternContentUnits || 'userSpaceOnUse');
@@ -749,7 +748,7 @@ function rendererAddPattern(
     // Calculate pattern element attributes
     const attrs: SVGAttributes = {
         id: id,
-        patternUnits: patternUnits,
+        patternUnits: 'userSpaceOnUse',
         patternContentUnits: patternContentUnits,
         width: width,
         height: height,
