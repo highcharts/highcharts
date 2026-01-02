@@ -1,3 +1,18 @@
+<!-- script src="https://code.highcharts.com/highcharts-autoload.js"></script
+-->
 <script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/themes/adaptive.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/controls@0.5.0" type="module"></script>
 
-<div id="container"></div>
+<figure class="highcharts-figure">
+  <div id="container"></div>
+</figure>
+
+<div class="highcharts-controls-wrapper">
+  <highcharts-controls>
+    <highcharts-group header="Update options">
+      <highcharts-control path="xAxis.plotBands[0].label.rotation" value="90" min="-90" max="90"></highcharts-control>
+      <highcharts-control path="xAxis.plotBands[0].label.textAlign" value="left" options="left,center,right"></highcharts-control>
+    </highcharts-group>
+  </highcharts-controls>
+</div>

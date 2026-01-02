@@ -205,6 +205,17 @@ function extendObject(base: any, path: string, nodeValue: any) {
         if (i === keys.length - 1) {
             value = nodeValue;
         }
+
+        // If the next key is a number, create an array
+        const nextKey = keys[i + 1];
+        if (
+            nextKey &&
+            !isNaN(Number(nextKey)) &&
+            !Array.isArray(current[key])
+        ) {
+            current[key] = [];
+        }
+
         /* eslint-disable-next-line eqeqeq */
         if (current[key] == null) {
             current[key] = value;

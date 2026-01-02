@@ -1,26 +1,25 @@
 Highcharts.chart('container', {
-
     chart: {
         type: 'gauge'
     },
-
-    pane: {
-        startAngle: -150,
-        endAngle: 150
+    title: {
+        text: 'Demo of gauge plot bands'
     },
-
     yAxis: {
-        min: 0,
         max: 100,
+        min: 0,
         plotBands: [{
-            from: 0,
-            to: 60,
             color: '#89A54E',
+            from: 0,
             outerRadius: '105%',
-            thickness: '5%'
+            thickness: '5%',
+            to: 60
         }]
     },
-
+    pane: {
+        endAngle: 150,
+        startAngle: -150
+    },
     series: [{
         data: [80]
     }]
