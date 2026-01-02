@@ -265,6 +265,22 @@ abstract class DataConnector implements DataEvent.Emitter<DataConnector.Event> {
     ): Promise<void> {
         this.emit({ type: 'beforeUpdate' });
         merge(true, this.options, newOptions);
+        const { options } = this;
+
+        if ('enablePolling' in newOptions || 'dataRefreshRate' in newOptions) {
+            if ('enablePolling' in options && options.enablePolling) {
+                this.stopPolling();
+                this.startPolling(
+                    (
+                        'dataRefreshRate' in options &&
+                        typeof options.dataRefreshRate === 'number'
+                    ) ? Math.max(options.dataRefreshRate, 1) * 1000 : 1000
+                );
+            } else {
+                this.stopPolling();
+            }
+        }
+
         if (reload) {
             await this.load();
         }
