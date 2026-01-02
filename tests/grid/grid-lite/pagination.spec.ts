@@ -4,12 +4,8 @@ test.describe('Pagination', () => {
     test.beforeEach(async ({ page }) => {
         await page.setViewportSize({ width: 1200, height: 800 });
         await page.goto('/grid-lite/cypress/pagination', { waitUntil: 'networkidle' });
-        // Wait for Grid to be initialized
-        await page.waitForFunction(() => {
-            return typeof (window as any).Grid !== 'undefined';
-        }, { timeout: 10000 });
         // Wait for pagination to be rendered
-        await expect(page.locator('.hcg-pagination-wrapper')).toBeVisible({ timeout: 10000 });
+        await expect(page.locator('.hcg-pagination-wrapper')).toBeVisible();
     });
 
     test('Render pagination container', async ({ page }) => {
@@ -105,7 +101,7 @@ test.describe('Pagination', () => {
             });
         });
 
-        await expect(page.locator('.hcg-pagination-wrapper')).not.toBeVisible();
+        await expect(page.locator('.hcg-pagination-wrapper')).toBeHidden();
 
         // Enable pagination
         await page.evaluate(() => {
