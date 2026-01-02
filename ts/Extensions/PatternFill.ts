@@ -224,7 +224,7 @@ function createAnchoredPattern(
         x: 0, y: 0, width: 32, height: 32
     };
 
-    // Position pattern at point's origin so each column has its own
+    // Position pattern at point's origin so each point has its own
     // pattern instance starting from its top-left corner
     anchoredPattern._x = bbox.x;
     anchoredPattern._y = bbox.y;
