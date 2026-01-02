@@ -19,11 +19,10 @@
 
 import type Annotation from './Annotation';
 import type ControllableEllipse from './Controllables/ControllableEllipse';
-import type {
-    LangOptions,
-    NavigationOptions
-} from './NavigationBindingsOptions';
-import type MockPointOptions from './MockPointOptions';
+import type { DeepPartial } from '../../Shared/Types';
+import type { LangOptions } from '../../Core/Options';
+import type { NavigationOptions } from '../Exporting/NavigationOptions';
+import type MockPointOptions from './AnnotationMockPointOptionsObject';
 import type NavigationBindings from './NavigationBindings';
 import type PointerEvent from '../../Core/PointerEvent';
 
@@ -44,7 +43,7 @@ const {
 /**
  * @optionparent lang
  */
-const lang: LangOptions = {
+const lang: DeepPartial<LangOptions> = {
 
     /**
      * Configure the Popup strings in the chart. Requires the
@@ -110,6 +109,7 @@ const navigation: NavigationOptions = {
      * @type      {string}
      */
     bindingsClassName: 'highcharts-bindings-container',
+
     /**
      * Bindings definitions for custom HTML buttons. Each binding implements
      * simple event-driven interface:
@@ -149,6 +149,7 @@ const navigation: NavigationOptions = {
         circleAnnotation: {
             /** @ignore-option */
             className: 'highcharts-circle-annotation',
+
             /**
              * Options to customize the bindings' annotation shapes and labels.
              * @type      {Highcharts.AnnotationsOptions}
@@ -214,9 +215,9 @@ const navigation: NavigationOptions = {
                     ) {
                         const inverted = this.chart.inverted,
                             x = this.chart.xAxis[mockPointOpts.xAxis]
-                                .toPixels(mockPointOpts.x),
+                                .toPixels(mockPointOpts.x as number),
                             y = this.chart.yAxis[mockPointOpts.yAxis]
-                                .toPixels(mockPointOpts.y);
+                                .toPixels(mockPointOpts.y as number);
 
                         distance = Math.max(
                             Math.sqrt(
@@ -591,9 +592,11 @@ const navigation: NavigationOptions = {
  *
  * */
 
+/** @internal */
 const NavigationBindingDefaults = {
     lang,
     navigation
 };
 
+/** @internal */
 export default NavigationBindingDefaults;

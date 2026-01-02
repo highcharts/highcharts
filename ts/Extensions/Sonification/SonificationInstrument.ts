@@ -236,7 +236,7 @@ class SonificationInstrument {
 
     /**
      * Schedule a pan value at a given time offset.
-     * @private
+     * @internal
      */
     private setPanAtTime(time: number, pan: number): void {
         if (this.panNode) {
@@ -250,7 +250,7 @@ class SonificationInstrument {
 
     /**
      * Schedule a filter configuration at a given time offset.
-     * @private
+     * @internal
      */
     private setFilterAtTime(
         filter: 'lowpass'|'highpass',
@@ -277,7 +277,7 @@ class SonificationInstrument {
 
     /**
      * Schedule a volume value at a given time offset.
-     * @private
+     * @internal
      */
     private setVolumeAtTime(time: number, volume: number): void {
         if (this.volumeNode) {
@@ -291,7 +291,7 @@ class SonificationInstrument {
 
     /**
      * Schedule a tremolo configuration at a given time offset.
-     * @private
+     * @internal
      */
     private setTremoloAtTime(
         time: number, depth?: number, speed?: number
@@ -312,7 +312,7 @@ class SonificationInstrument {
 
     /**
      * Create audio nodes according to instrument capabilities
-     * @private
+     * @internal
      */
     private createNodesFromCapabilities(
         capabilities: SonificationInstrumentCapabilitiesOptions
@@ -347,7 +347,7 @@ class SonificationInstrument {
     /**
      * Connect audio node chain from output down to input, depending on which
      * nodes exist.
-     * @private
+     * @internal
      */
     private connectCapabilityNodes(input: AudioNode, output: AudioNode): void {
         [
@@ -366,7 +366,7 @@ class SonificationInstrument {
     /**
      * Get number of notes from C0 from a string like "F#4"
      * @static
-     * @private
+     * @internal
      */
     static noteStringToC0Distance(note: string): number {
         const match = note.match(/^([a-g][#b]?)([0-8])$/i),

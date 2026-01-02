@@ -34,7 +34,7 @@ import type { ApproximationTypeRegistry } from './ApproximationType';
  *
  * @product highstock
  *
- * @private
+ * @internal
  */
 const ApproximationRegistry = {
     // Approximations added programmatically
@@ -46,4 +46,5 @@ const ApproximationRegistry = {
  *
  * */
 
+/** @internal */
 export default ApproximationRegistry;

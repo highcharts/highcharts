@@ -57,9 +57,7 @@ let wheelTimer: number;
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 const optionsToObject = (
     options?: boolean|MouseWheelZoomOptions
 ): MouseWheelZoomOptions => {
@@ -72,9 +70,7 @@ const optionsToObject = (
 };
 
 
-/**
- * @private
- */
+/** @internal */
 const zoomBy = function (
     chart: Chart,
     howMuch: number,
@@ -137,9 +133,7 @@ const zoomBy = function (
     return hasZoomed;
 };
 
-/**
- * @private
- */
+/** @internal */
 function onAfterGetContainer(this: Chart): void {
     const wheelZoomOptions = optionsToObject(this.zooming.mouseWheel);
 
@@ -193,9 +187,7 @@ function onAfterGetContainer(this: Chart): void {
 }
 
 
-/**
- * @private
- */
+/** @internal */
 function compose(
     ChartClass: typeof Chart
 ): void {

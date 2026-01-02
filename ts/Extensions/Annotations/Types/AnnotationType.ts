@@ -23,10 +23,12 @@ import type Annotation from '../Annotation';
  *
  * */
 
+/** @internal */
 export type AnnotationType = AnnotationTypeRegistry[
     keyof AnnotationTypeRegistry
 ]['prototype'];
 
+/** @internal */
 export interface AnnotationTypeRegistry {
     [key: string]: typeof Annotation;
 }
@@ -37,4 +39,5 @@ export interface AnnotationTypeRegistry {
  *
  * */
 
+/** @internal */
 export default AnnotationType;

@@ -1255,7 +1255,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
 
             this.verticalCounter++;
 
-            (annotation.options.events.click as any).call(annotation, {});
+            (annotation.options.events?.click as any).call(annotation, {});
         }
     },
     /**
@@ -1307,7 +1307,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                 ),
                 annotation = this.chart.addAnnotation(options);
 
-            (annotation.options.events.click as any).call(annotation, {});
+            (annotation.options.events?.click as any).call(annotation, {});
 
             return annotation;
         },
@@ -1361,7 +1361,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                 ),
                 annotation = this.chart.addAnnotation(options);
 
-            (annotation.options.events.click as any).call(annotation, {});
+            (annotation.options.events?.click as any).call(annotation, {});
         }
     },
     /**
@@ -1427,7 +1427,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                 ),
                 annotation = this.chart.addAnnotation(options);
 
-            (annotation.options.events.click as any).call(annotation, {});
+            (annotation.options.events?.click as any).call(annotation, {});
         }
     },
     /**
@@ -1489,8 +1489,8 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                 e: PointerEvent,
                 annotation: FibonacciTimeZones
             ): void {
-                const mockPointOpts = annotation.options.typeOptions.points,
-                    x = mockPointOpts && mockPointOpts[0].x,
+                const mockPointOpts = annotation.options.typeOptions?.points,
+                    x = (mockPointOpts?.[0] as any).x,
                     [coordsX, coordsY] = this.getCoords(e);
 
                 if (coordsX && coordsY) {

@@ -148,9 +148,7 @@ interface SeriesBuilderReaderObject {
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 function getFreeIndexes(
     numberOfColumns: number,
     seriesBuilders: Array<SeriesBuilder>
@@ -318,7 +316,7 @@ class Data {
     /**
      * Initialize the Data object with the given options
      *
-     * @private
+     * @internal
      * @function Highcharts.Data#init
      */
     public init(
@@ -524,7 +522,7 @@ class Data {
      * When the data is parsed into columns, either by CSV, table, GS or direct
      * input, continue with other operations.
      *
-     * @private
+     * @internal
      * @function Highcharts.Data#dataFound
      */
     public dataFound(): void {
@@ -614,7 +612,7 @@ class Data {
 
         /**
          * Parse a single row.
-         * @private
+         * @internal
          */
         function parseRow(
             columnStr: string,
@@ -631,7 +629,7 @@ class Data {
                 column = 0;
 
             /**
-             * @private
+             * @internal
              */
             function read(j: number): void {
                 c = columnStr[j];
@@ -640,7 +638,7 @@ class Data {
             }
 
             /**
-             * @private
+             * @internal
              */
             function pushType(type: string): void {
                 if (dataTypes.length < column + 1) {
@@ -652,7 +650,7 @@ class Data {
             }
 
             /**
-             * @private
+             * @internal
              */
             function push(): void {
                 if (startColumn > actualColumn || actualColumn > endColumn) {
@@ -741,7 +739,7 @@ class Data {
          * Attempt to guess the delimiter. We do a separate parse pass here
          * because we need to count potential delimiters softly without making
          * any assumptions.
-         * @private
+         * @internal
          */
         function guessDelimiter(lines: Array<string>): string {
             let points = 0,
@@ -863,7 +861,7 @@ class Data {
          *  - Check if a shortened year format is used (e.g. 1/1/99)
          *  - If no guess can be made, the user must be prompted
          * data is the data to deduce a format based on
-         * @private
+         * @internal
          */
         function deduceDateFormat(data: Array<string>, limit?: number): string {
             const format = 'YYYY/mm/dd',
@@ -1166,13 +1164,13 @@ class Data {
         delete options.columnsURL;
 
         /**
-         * @private
+         * @internal
          */
         function performFetch(initialFetch?: boolean): void {
 
             /**
              * Helper function for doing the data fetch + polling.
-             * @private
+             * @internal
              */
             function request(
                 url: (string|undefined),
@@ -1195,7 +1193,7 @@ class Data {
                 }
 
                 /**
-                 * @private
+                 * @internal
                  */
                 function poll(): void {
                     // Poll
@@ -1313,7 +1311,7 @@ class Data {
 
         /**
          * Fetch the actual spreadsheet using XMLHttpRequest.
-         * @private
+         * @internal
          */
         function fetchSheet(fn: Function): void {
             const url = [
@@ -1989,7 +1987,7 @@ class Data {
     /**
      * Sets properties directly on the xAxis object.
      *
-     * @private
+     * @internal
      */
     public xAxisUpdateHandler(axis: Axis): void {
         const options = this.xAxisOptions;
@@ -2186,7 +2184,7 @@ addEvent(
  * The name of the builder is taken from the second column. In the above
  * example it would be the column with index 7.
  *
- * @private
+ * @internal
  * @class
  * @name SeriesBuilder
  */

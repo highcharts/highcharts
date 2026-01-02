@@ -147,9 +147,7 @@ const defaultOptions: CurrentDateIndicatorOptions = {
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 function compose(
     AxisClass: typeof Axis,
     PlotLineOrBandClass: typeof PlotLineOrBand
@@ -169,9 +167,7 @@ function compose(
 
 }
 
-/**
- * @private
- */
+/** @internal */
 function onAxisAfterSetOptions(this: Axis): void {
     const options = this.options,
         cdiOptions = options.currentDateIndicator;
@@ -194,9 +190,7 @@ function onAxisAfterSetOptions(this: Axis): void {
     }
 }
 
-/**
- * @private
- */
+/** @internal */
 function onPlotLineOrBandRender(this: PlotLineOrBand): void {
     // If the label already exists, update its text
     if (this.label) {
@@ -206,9 +200,7 @@ function onPlotLineOrBandRender(this: PlotLineOrBand): void {
     }
 }
 
-/**
- * @private
- */
+/** @internal */
 function wrapPlotLineOrBandGetLabelText(
     this: PlotLineOrBand,
     defaultMethod: Function,
