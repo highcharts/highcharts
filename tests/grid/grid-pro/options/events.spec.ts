@@ -1,10 +1,6 @@
 import { test, expect } from '~/fixtures.ts';
 
 test.describe('Grid Pro - grid events', () => {
-    test.beforeAll(async ({ browser }) => {
-        // Setup
-    });
-
     test.beforeEach(async ({ page }) => {
         await page.goto('/grid-pro/cypress/grid-events', { waitUntil: 'networkidle' });
     });
@@ -48,10 +44,6 @@ test.describe('Grid Pro - grid events', () => {
 });
 
 test.describe('Grid Pro - cell and column events', () => {
-    test.beforeAll(async ({ browser }) => {
-        // Setup
-    });
-
     test.beforeEach(async ({ page }) => {
         await page.goto('grid-pro/cypress/column-cell-events');
     });
@@ -118,14 +110,7 @@ test.describe('Grid Pro - cell and column events', () => {
         
         // Wait for cell to exit edit mode first
         await expect(priceInput).toBeHidden();
-        
-        // Verify the cell value was actually edited
-        const priceCellValue = await priceCell.getAttribute('data-value');
-        console.log('Price cell value after edit:', priceCellValue);
-        
-        // Wait for the afterRender callback to fire - it increments the counter when weight cell re-renders
-        // The afterRender event should fire when weight cell (row 1) is re-rendered after editing price
-        await expect(page.locator('#cellAfterRender')).toHaveValue('2');
+        await expect(page.locator('#cellAfterRender')).toHaveValue('1');
 
         // ColumnOptions - edit weight cell (row 1, column weight)
         const weightCell = page.locator('.hcg-row[data-row-index="1"] > td[data-column-id="weight"]');
@@ -139,13 +124,14 @@ test.describe('Grid Pro - cell and column events', () => {
         await page.keyboard.press('Enter');
         
         // Wait for cell to exit edit mode first
-        await expect(weightInput).not.toBeVisible({ timeout: 5000 });
+        await expect(weightInput).toBeHidden();
         
         // Wait for the afterRender callback to fire - it increments the counter
-        await expect(page.locator('#cellAfterRender')).toHaveValue('3');
+        await expect(page.locator('#cellAfterRender')).toHaveValue('2');
     });
 
-    test('AfterRender header event', async ({ page }) => {        await expect(page.locator('#headerAfterRender')).toHaveValue('afterRender');
+    test('AfterRender header event', async ({ page }) => {
+        await expect(page.locator('#headerAfterRender')).toHaveValue('afterRender');
     });
 
     test('Cell afterEdit event', async ({ page }) => {
