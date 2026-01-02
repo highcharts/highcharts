@@ -19,7 +19,6 @@
 
 import type FunnelDataLabelOptions from './FunnelDataLabelOptions';
 import type FunnelPointOptions from './FunnelPointOptions';
-import type FunnelSeries from './FunnelSeries';
 import type PieSeriesOptions from '../Pie/PieSeriesOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 
@@ -186,7 +185,7 @@ export interface FunnelSeriesOptions extends PieSeriesOptions {
     /**
      * Options for the series states.
      */
-    states?: SeriesStatesOptions<FunnelSeries>;
+    states?: SeriesStatesOptions<FunnelSeriesOptions>;
 
     /**
      * @excluding halo, marker, lineWidth, lineWidthPlus

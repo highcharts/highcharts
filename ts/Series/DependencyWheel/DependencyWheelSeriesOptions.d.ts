@@ -19,7 +19,6 @@
 
 import { BorderRadiusOptionsObject } from '../../Extensions/BorderRadius';
 import type DependencyWheelPointOptions from './DependencyWheelPointOptions';
-import type DependencyWheelSeries from './DependencyWheelSeries';
 import type {
     SankeySeriesNodeOptions,
     SankeySeriesOptions
@@ -213,7 +212,7 @@ export interface DependencyWheelSeriesOptions extends SankeySeriesOptions {
      */
     startAngle?: number;
 
-    states?: SeriesStatesOptions<DependencyWheelSeries>;
+    states?: SeriesStatesOptions<DependencyWheelSeriesOptions>;
 
 }
 

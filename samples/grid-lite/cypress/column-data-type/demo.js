@@ -1,3 +1,11 @@
+Grid.setOptions({
+    lang: {
+        locale: 'en-US',
+        decimalPoint: '|',
+        thousandsSep: '_'
+    }
+});
+
 Grid.grid('container', {
     dataTable: {
         columns: {
@@ -11,7 +19,8 @@ Grid.grid('container', {
                 Date.UTC(2023, 0, 2),
                 null,
                 Date.UTC(2023, 0, 4)
-            ]
+            ],
+            thousands: [12452.4524, 6612.34444, 1234, 2345.6]
         }
     },
     columns: [{
@@ -36,5 +45,8 @@ Grid.grid('container', {
     }, {
         id: 'date',
         dataType: 'datetime'
+    }, {
+        id: 'thousands',
+        dataType: 'number'
     }]
 });

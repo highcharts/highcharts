@@ -16,7 +16,6 @@
  * */
 
 import type BubbleSeriesOptions from '../Bubble/BubbleSeriesOptions';
-import type MapBubbleSeries from './MapBubbleSeries';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 
 /* *
@@ -26,7 +25,7 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  * */
 
 export interface MapBubbleSeriesOptions extends BubbleSeriesOptions {
-    states?: SeriesStatesOptions<MapBubbleSeries>;
+    states?: SeriesStatesOptions<MapBubbleSeriesOptions>;
 }
 
 /* *

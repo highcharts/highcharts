@@ -59,6 +59,10 @@ export const defaultLangOptions: DeepPartial<LangOptions> = {
                 filterCleared: 'Filter cleared for {columnId}. ' +
                     '{rowsCount} results found.'
             }
+        },
+        screenReaderSection: {
+            beforeRegionLabel: '',
+            afterRegionLabel: ''
         }
     },
     loading: 'Loading...',
@@ -110,6 +114,14 @@ export const defaultOptions: DeepPartial<Options> = {
         announcements: {
             sorting: true,
             filtering: true
+        },
+        screenReaderSection: {
+            beforeGridFormat:
+                '{gridTitle}' +
+                '<div>{gridDescription}</div>' +
+                '<div>Grid with {rowCount} rows and {columnCount}' +
+                ' columns.</div>',
+            afterGridFormat: 'End of Grid.'
         }
     },
     time: {
