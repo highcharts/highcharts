@@ -370,7 +370,12 @@ class Series {
     /** @internal */
     public buildingKdTree?: boolean;
 
-    /** @internal */
+    /**
+     * Read only. The chart that the series belongs to.
+     *
+     * @name Highcharts.Series#chart
+     * @type {Highcharts.Chart}
+     */
     public chart!: Chart;
 
     /** @internal */
@@ -388,13 +393,43 @@ class Series {
     /** @internal */
     public cropped?: boolean;
 
-    /** @internal */
+    /**
+     * Read only. An array containing those values converted to points.
+     * In case the series data length exceeds the `cropThreshold`, or if
+     * the data is grouped, `series.data` doesn't contain all the
+     * points. Also, in case a series is hidden, the `data` array may be
+     * empty. In case of cropping, the `data` array may contain `undefined`
+     * values, instead of points. To access raw values,
+     * `series.options.data` will always be up to date. `Series.data` only
+     * contains the points that have been created on demand. To modify the
+     * data, use
+     * {@link Highcharts.Series#setData} or
+     * {@link Highcharts.Point#update}.
+     *
+     * @see Series.points
+     *
+     * @name Highcharts.Series#data
+     */
     public data!: Array<Point>;
 
-    /** @internal */
+    /**
+     * Contains the maximum value of the series' data point. Some series
+     * types like `networkgraph` do not support this property as they
+     * lack a `y`-value.
+     *
+     * @name Highcharts.Series#dataMax
+     * @readonly
+     */
     public dataMax?: number;
 
-    /** @internal */
+    /**
+     * Contains the minimum value of the series' data point. Some series
+     * types like `networkgraph` do not support this property as they
+     * lack a `y`-value.
+     *
+     * @name Highcharts.Series#dataMin
+     * @readonly
+     */
     public dataMin?: number;
 
     /** @internal */
@@ -457,11 +492,15 @@ class Series {
     /** @internal */
     public linkedParent?: Series;
 
-    /** @internal */
+    /**
+     * All child series that are linked to the current series through the
+     * [linkedTo](https://api.highcharts.com/highcharts/series.line.linkedTo)
+     * option.
+     *
+     * @name Highcharts.Series#linkedSeries
+     * @readonly
+     */
     public linkedSeries!: Array<Series>;
-
-    /** @internal */
-    public options!: SeriesOptions;
 
     /** @internal */
     public markerGroup?: SVGElement;
@@ -472,16 +511,40 @@ class Series {
     /** @internal */
     public optionalAxis?: string;
 
+    /**
+     * Read only. The series' current options. To update, use
+     * {@link Series#update}.
+     *
+     * @name Highcharts.Series#options
+     * @type {Highcharts.SeriesOptionsType}
+     */
+    public options!: SeriesOptions;
+
     /** @internal */
     public pointInterval?: number;
 
-    /** @internal */
+    /**
+     * An array containing all currently visible point objects. In case
+     * of cropping, the cropped-away points are not part of this array.
+     * The `series.points` array starts at `series.cropStart` compared
+     * to `series.data` and `series.options.data`. If however the series
+     * data is grouped, these can't be correlated one to one. To modify
+     * the data, use {@link Highcharts.Series#setData} or
+     * {@link Highcharts.Point#update}.
+     *
+     * @name Highcharts.Series#points
+     */
     public points!: Array<Point>;
 
     /** @internal */
     public pointValKey?: string;
 
-    /** @internal */
+    /**
+     * Read only. The series' selected state as set by {@link
+     * Highcharts.Series#select}.
+     *
+     * @name Highcharts.Series#selected
+     */
     public selected?: boolean;
 
     /** @internal */
@@ -511,16 +574,35 @@ class Series {
     /** @internal */
     public trackerGroups?: Array<string>;
 
+    /**
+     * Read only. The series' type, like "line", "area", "column" etc.
+     * The type in the series options anc can be altered using
+     * {@link Series#update}.
+     *
+     * @name Highcharts.Series#type
+     */
+    public type!: string;
+
     /** @internal */
     public userOptions!: DeepPartial<SeriesTypeOptions>;
 
-    /** @internal */
+    /**
+     * Read only. The unique xAxis object associated
+     * with the series.
+     *
+     * @name Highcharts.Series#xAxis
+     */
     public xAxis!: AxisType;
 
     /** @internal */
     public xIncrement?: (number|null);
 
-    /** @internal */
+    /**
+     * Read only. The unique yAxis object associated
+     * with the series.
+     *
+     * @name Highcharts.Series#yAxis
+     */
     public yAxis!: AxisType;
 
     /** @internal */
@@ -536,7 +618,7 @@ class Series {
      * */
 
     /* eslint-disable valid-jsdoc */
-
+    /** @internal */
     public init(
         chart: Chart,
         userOptions: DeepPartial<SeriesTypeOptions>
@@ -1403,7 +1485,7 @@ class Series {
      * `updatePoints`), and may later be mutated when updating the chart
      * data.
      *
-     * Note the difference in behaviour when setting the same amount of
+     * Note the difference in behavior when setting the same amount of
      * points, or a different amount of points, as handled by the
      * `updatePoints` parameter.
      *
@@ -5086,6 +5168,7 @@ namespace Series {
      *
      * */
 
+    /** @internal */
     export interface CropDataObject {
         end: number;
         modified: DataTableCore;
@@ -5099,6 +5182,7 @@ namespace Series {
         translateY: number;
     }
 
+    /** @internal */
     export interface ProcessedDataObject {
         cropped: (boolean|undefined);
         cropStart: number;
@@ -5106,6 +5190,7 @@ namespace Series {
         modified: DataTableCore
     }
 
+    /** @internal */
     export interface ZoneObject extends SeriesZonesOptions {
         area?: SVGElement;
         clip?: SVGElement;
@@ -5232,7 +5317,7 @@ export default Series;
  */
 
 /**
- * Function callback when a series is clicked. Return false to cancel toogle
+ * Function callback when a series is clicked. Return false to cancel toggle
  * actions.
  *
  * @callback Highcharts.SeriesClickCallbackFunction

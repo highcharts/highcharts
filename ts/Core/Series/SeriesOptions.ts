@@ -55,8 +55,22 @@ export type PlotOptionsOf<T extends Series = Series> = (
     Omit<T['options'], NonPlotOptions>
 );
 
+/**
+ * Event information regarding completed animation of a series.
+ *
+ * @interface Highcharts.SeriesAfterAnimateEventObject
+ */
 export interface SeriesAfterAnimateEvent {
+    /**
+     * Animated series.
+     * @name Highcharts.SeriesAfterAnimateEventObject#target
+     */
     target: Series;
+
+    /**
+     * Event type.
+     * @name Highcharts.SeriesAfterAnimateEventObject#type
+     */
     type: 'afterAnimate';
 }
 
@@ -64,9 +78,25 @@ export interface SeriesClickEvent {
     point: Point;
 }
 
+/**
+ * Options for `dataSorting`.
+ *
+ * @since 8.0.0
+ */
 export interface SeriesDataSortingOptions {
+    /**
+     * Enable or disable data sorting for the series.
+     */
     enabled?: boolean;
+
+    /**
+     * Whether to allow matching points by name in an update.
+     */
     matchByName?: boolean;
+
+    /**
+     * Determines what data value should be used to sort by.
+     */
     sortKey?: string;
 }
 
@@ -78,13 +108,27 @@ export interface SeriesDataSortingOptions {
  * file.
  */
 export interface SeriesEventsOptions {
-    afterAnimate?: EventCallback<Series, SeriesAfterAnimateEvent>;
+    afterAnimate?: SeriesAfterAnimateCallbackFunction;
     click?: EventCallback<Series, SeriesClickEvent>;
     hide?: EventCallback<Series, Event>;
     mouseOut?: EventCallback<Series, PointerEvent>;
     mouseOver?: EventCallback<Series, PointerEvent>;
     show?: EventCallback<Series, Event>;
 }
+
+/**
+ * Function callback when a series has been animated.
+ *
+ * @callback Highcharts.SeriesAfterAnimateCallbackFunction
+ *
+ * @param {Highcharts.Series} this
+ *        The series where the event occurred.
+ *
+ * @param {Highcharts.SeriesAfterAnimateEventObject} event
+ *        Event arguments.
+ */
+export type SeriesAfterAnimateCallbackFunction =
+    EventCallback<Series, SeriesAfterAnimateEvent>;
 
 export type SeriesFindNearestPointByValue = ('x'|'xy');
 

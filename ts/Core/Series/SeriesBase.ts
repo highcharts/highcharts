@@ -43,6 +43,13 @@ export interface SeriesBase {
     linkedParent?: SeriesBase;
     linkedSeries: Array<SeriesBase>;
     markerGroup?: SVGElement;
+
+    /**
+     * The series name as given in the options. Defaults to
+     * "Series {n}".
+     *
+     * @name Highcharts.Series#name
+     */
     name: string;
     opacity?: number;
     options: SeriesOptions;
@@ -50,6 +57,14 @@ export interface SeriesBase {
     state?: StatesOptionsKey;
     type: string;
     userOptions: DeepPartial<SeriesOptions>;
+
+    /**
+     * Read only. The series' visibility state as set by {@link
+     * Series#show}, {@link Series#hide}, or in the initial
+     * configuration.
+     *
+     * @name Highcharts.Series#visible
+     */
     visible: boolean;
     render(): void;
     translate(): void;

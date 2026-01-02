@@ -89,6 +89,61 @@ declare module '../Series/SeriesOptions' {
         showCheckbox?: boolean;
         showInLegend?: boolean;
     }
+    interface SeriesEventsOptions {
+        /**
+         * Fires when the checkbox next to the series' name in the legend is
+         * clicked. One parameter, `event`, is passed to the function. The state
+         * of the checkbox is found by `event.checked`. The checked item is
+         * found by `event.item`. Return `false` to prevent the default action
+         * which is to toggle the select state of the series.
+         *
+         * @sample {highcharts} highcharts/plotoptions/series-events-checkboxclick/
+         * Alert checkbox status
+         *
+         * @since 1.2.0
+         */
+        checkboxClick?: SeriesCheckboxClickCallbackFunction;
+    }
+}
+
+/**
+ * Function callback when the checkbox next to the series' name in the legend is
+ * clicked.
+ *
+ * @callback Highcharts.SeriesCheckboxClickCallbackFunction
+ *
+ * @param {Highcharts.Series} this
+ *        The series where the event occurred.
+ *
+ * @param {Highcharts.SeriesCheckboxClickEventObject} event
+ *        Event arguments.
+ */
+export type SeriesCheckboxClickCallbackFunction =
+    EventCallback<Series, SeriesCheckboxClickEventObject>;
+
+/**
+ * Event information regarding check of a series box.
+ */
+export interface SeriesCheckboxClickEventObject {
+    /**
+     * Whether the box has been checked.
+     */
+    checked: boolean;
+
+    /**
+     * Related series.
+     */
+    item: Series;
+
+    /**
+     * Related series.
+     */
+    target: Series;
+
+    /**
+     * Event type.
+     */
+    type: 'checkboxClick';
 }
 
 interface BoxObject extends R.BoxObject {
