@@ -403,6 +403,21 @@ function triangleDown(
     ];
 }
 
+function cross(
+    x: number,
+    y: number,
+    w: number,
+    h: number
+): SVGPath {
+    return [
+        ['M', x, y],
+        ['L', x + w, y + h],
+        ['M', x + w, y],
+        ['L', x, y + h],
+        ['z']
+    ];
+}
+
 /* *
  *
  *  Registry
@@ -420,6 +435,7 @@ declare module './SymbolType' {
         square: typeof rect;
         triangle: typeof triangle;
         'triangle-down': typeof triangleDown;
+        cross: SymbolFunction
     }
 }
 
@@ -432,7 +448,8 @@ const Symbols: SymbolTypeRegistry = {
     roundedRect,
     square: rect,
     triangle,
-    'triangle-down': triangleDown
+    'triangle-down': triangleDown,
+    cross
 } as SymbolTypeRegistry;
 
 /* *
