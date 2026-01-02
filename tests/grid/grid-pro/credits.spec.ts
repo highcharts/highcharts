@@ -48,7 +48,7 @@ test.describe('Credits', () => {
                 }
             });
         });
-        await expect(page.locator('.hcg-credits')).not.toBeVisible();
+        await expect(page.locator('.hcg-credits')).toBeHidden();
     });
 });
 

@@ -121,8 +121,8 @@ test.describe('Screen reader sections', () => {
             grid.accessibility.destroy();
         });
 
-        await expect(page.locator('[id^="grid-screen-reader-region-before-"]')).not.toBeVisible();
-        await expect(page.locator('[id^="grid-screen-reader-region-after-"]')).not.toBeVisible();
+        await expect(page.locator('[id^="grid-screen-reader-region-before-"]')).toBeHidden();
+        await expect(page.locator('[id^="grid-screen-reader-region-after-"]')).toBeHidden();
     });
 });
 

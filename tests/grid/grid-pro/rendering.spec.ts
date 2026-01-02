@@ -13,7 +13,7 @@ test.describe('Rendering types', () => {
     test('Boolean as a string', async ({ page }) => {
         const cell = page.locator('tr[data-row-index="2"] td[data-column-id="text_checkbox"]').first();
         await expect(cell).toBeVisible();
-        await expect(cell.locator('input[type="checkbox"]')).not.toBeVisible();
+        await expect(cell.locator('input[type="checkbox"]')).toBeHidden();
 
         await expect(cell).toContainText('true');
     });
@@ -34,7 +34,7 @@ test.describe('Rendering types', () => {
     test('Text as a string', async ({ page }) => {
         const cell = page.locator('tr[data-row-index="2"] td[data-column-id="text_textInput"]').first();
         await expect(cell).toBeVisible();
-        await expect(cell.locator('input')).not.toBeVisible();
+        await expect(cell.locator('input')).toBeHidden();
 
         await expect(cell).toContainText('Gamma');
     });
@@ -55,7 +55,7 @@ test.describe('Rendering types', () => {
     test('Date for datetime data type', async ({ page }) => {
         const cell = page.locator('tr[data-row-index="2"] td[data-column-id="text_date"]').first();
         await expect(cell).toBeVisible();
-        await expect(cell.locator('input[type="date"]')).not.toBeVisible();
+        await expect(cell.locator('input[type="date"]')).toBeHidden();
 
         await expect(cell).toContainText('2023');
     });
@@ -91,7 +91,7 @@ test.describe('Rendering types', () => {
     test('Number as a string', async ({ page }) => {
         const cell = page.locator('tr[data-row-index="2"] td[data-column-id="text_numberInput"]').first();
         await expect(cell).toBeVisible();
-        await expect(cell.locator('input')).not.toBeVisible();
+        await expect(cell.locator('input')).toBeHidden();
 
         await expect(cell).toContainText('3');
     });

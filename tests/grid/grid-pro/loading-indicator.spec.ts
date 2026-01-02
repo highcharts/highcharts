@@ -25,7 +25,7 @@ test.describe('Loading indicator', () => {
             grid.hideLoading();
         });
 
-        await expect(page.locator('.hcg-loading-wrapper')).not.toBeVisible();
+        await expect(page.locator('.hcg-loading-wrapper')).toBeHidden();
     });
 
     test('Only one indicator should be visible at a time', async ({ page }) => {
