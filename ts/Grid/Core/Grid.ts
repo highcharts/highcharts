@@ -35,7 +35,6 @@ import type Column from './Table/Column';
 import type { ColumnDataType, NoIdColumnOptions } from './Table/Column';
 import type Popup from './UI/Popup.js';
 import type { DeepPartial } from '../../Shared/Types';
-import type Column from './Table/Column';
 
 import Accessibility from './Accessibility/Accessibility.js';
 import AST from '../../Core/Renderer/HTML/AST.js';
