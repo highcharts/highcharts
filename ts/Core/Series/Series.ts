@@ -33,8 +33,7 @@ import type LineSeries from '../../Series/Line/LineSeries';
 import type PointerEvent from '../PointerEvent';
 import type {
     PointOptions,
-    PointShortOptions,
-    PointMarkerStateHoverOptions
+    PointShortOptions
 } from './PointOptions';
 import type RangeSelector from '../../Stock/RangeSelector/RangeSelector';
 import type SeriesBase from './SeriesBase';
@@ -42,7 +41,6 @@ import type {
     NonPlotOptions,
     SeriesDataSortingOptions,
     SeriesOptions,
-    SeriesStateHoverOptions,
     SeriesZonesOptions
 } from './SeriesOptions';
 import type {

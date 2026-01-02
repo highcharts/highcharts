@@ -28,7 +28,6 @@ import type {
     PointOptions,
     PointShortOptions
 } from './PointOptions';
-import type { PointTypeOptions } from './PointType';
 import type Series from './Series';
 import type { StatesOptionsKey } from './StatesOptions';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';

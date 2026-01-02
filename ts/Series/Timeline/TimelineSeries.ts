@@ -28,9 +28,6 @@ import type RangeSelector from '../../Stock/RangeSelector/RangeSelector';
 import type TimelineDataLabelOptions from './TimelineDataLabelOptions';
 import type TimelinePointOptions from './TimelinePointOptions';
 import type TimelineSeriesOptions from './TimelineSeriesOptions';
-import type {
-    PointMarkerOptions
-} from '../../Core/Series/PointOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
