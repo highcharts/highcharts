@@ -1084,7 +1084,7 @@ class Navigator {
         // In iOS, a mousemove event with e.pageX === 0 is fired when holding
         // the finger down in the center of the scrollbar. This should be
         // ignored.
-        if (!(e as any).touches || (e as any).touches[0].pageX !== 0) { // #4696
+        if (!e.touches || e.touches[0].pageX !== 0) { // #4696
 
             e = chart.pointer?.normalize(e) || e;
             chartX = e.chartX;
@@ -1114,23 +1114,23 @@ class Navigator {
                     chartX - left
                 );
             // Drag scrollbar or open area in navigator
-            } else if (navigator.grabbedCenter) {
+            } else if (navigator.grabbedCenter && dragOffset) {
                 navigator.hasDragged = true;
-                if (chartX < (dragOffset as any)) { // Outside left
+                if (chartX < dragOffset) { // Outside left
                     chartX = dragOffset;
                 // Outside right
                 } else if (
                     chartX >
-                    navigatorSize + (dragOffset as any) - range
+                    navigatorSize + dragOffset - range
                 ) {
-                    chartX = navigatorSize + (dragOffset as any) - range;
+                    chartX = navigatorSize + dragOffset - range;
                 }
 
                 navigator.render(
                     0,
                     0,
-                    (chartX as any) - (dragOffset as any),
-                    (chartX as any) - (dragOffset as any) + range
+                    chartX - dragOffset,
+                    chartX - dragOffset + range
                 );
             }
             if (
