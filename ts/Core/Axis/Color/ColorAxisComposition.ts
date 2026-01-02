@@ -20,6 +20,7 @@
 import type Axis from '../Axis';
 import type Chart from '../../Chart/Chart';
 import type ColorAxis from './ColorAxis';
+import type ColorAxisOptions from './ColorAxisOptions';
 import type ColorType from '../../Color/ColorType';
 import type Fx from '../../Animation/Fx';
 import type Legend from '../../Legend/Legend';
@@ -106,9 +107,7 @@ namespace ColorAxisComposition {
      *
      * */
 
-    /**
-     * @private
-     */
+    /** @internal */
     export function compose(
         ColorAxisClass: typeof ColorAxis,
         ChartClass: typeof Chart,
@@ -170,7 +169,7 @@ namespace ColorAxisComposition {
 
     /**
      * Extend the chart createAxes method to also make the color axis.
-     * @private
+     * @internal
      */
     function onChartAfterCreateAxes(
         this: Chart
@@ -186,7 +185,7 @@ namespace ColorAxisComposition {
             userOptions.colorAxis.map((axisOptions): ColorAxis => (
                 new ColorAxisConstructor(
                     this,
-                    axisOptions as Partial<ColorAxis.Options>
+                    axisOptions as Partial<ColorAxisOptions>
                 )
             ));
         }
@@ -195,7 +194,7 @@ namespace ColorAxisComposition {
     /**
      * Add the color axis. This also removes the axis' own series to prevent
      * them from showing up individually.
-     * @private
+     * @internal
      */
     function onLegendAfterGetAllItems(
         this: Legend,
@@ -214,7 +213,7 @@ namespace ColorAxisComposition {
             };
 
         let colorAxisItems = [] as Array<(ColorAxis|ColorAxis.LegendItemObject)>,
-            options: ColorAxis.Options,
+            options: ColorAxisOptions,
             i;
 
         colorAxes.forEach(function (colorAxis: ColorAxis): void {
@@ -256,9 +255,7 @@ namespace ColorAxisComposition {
         }
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     function onLegendAfterColorizeItem(
         this: Legend,
         e: {
@@ -275,7 +272,7 @@ namespace ColorAxisComposition {
 
     /**
      * Updates in the legend need to be reflected in the color axis. (#6888)
-     * @private
+     * @internal
      */
     function onLegendAfterUpdate(
         this: Legend,
@@ -288,7 +285,7 @@ namespace ColorAxisComposition {
 
     /**
      * Calculate and set colors for points.
-     * @private
+     * @internal
      */
     function onSeriesAfterTranslate(
         this: Series
@@ -303,7 +300,7 @@ namespace ColorAxisComposition {
 
     /**
      * Add colorAxis to series axisTypes.
-     * @private
+     * @internal
      */
     function onSeriesBindAxes(
         this: Series
@@ -320,7 +317,7 @@ namespace ColorAxisComposition {
 
     /**
      * Set the visibility of a single point
-     * @private
+     * @internal
      * @function Highcharts.colorPointMixin.setVisible
      * @param {boolean} visible
      */
@@ -345,7 +342,7 @@ namespace ColorAxisComposition {
     /**
      * In choropleth maps, the color is a result of the value, so this needs
      * translation too
-     * @private
+     * @internal
      * @function Highcharts.colorSeriesMixin.translateColors
      */
     function seriesTranslateColors(this: SeriesComposition): void {
@@ -379,9 +376,7 @@ namespace ColorAxisComposition {
         });
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     function wrapChartCreateAxis(
         ChartClass: typeof Chart
     ): void {
@@ -400,7 +395,7 @@ namespace ColorAxisComposition {
             const axis = new ColorAxisConstructor(
                 chart,
                 merge(
-                    options.axis as Partial<ColorAxis.Options>,
+                    options.axis as Partial<ColorAxisOptions>,
                     {
                         index: (chart as AnyRecord)[type].length,
                         isX: false
@@ -430,7 +425,7 @@ namespace ColorAxisComposition {
 
     /**
      * Handle animation of the color attributes directly.
-     * @private
+     * @internal
      */
     function wrapFxFillSetter(
         this: Fx
@@ -448,7 +443,7 @@ namespace ColorAxisComposition {
 
     /**
      * Handle animation of the color attributes directly.
-     * @private
+     * @internal
      */
     function wrapFxStrokeSetter(
         this: Fx

@@ -74,7 +74,7 @@ declare module '../../Core/Chart/ChartBase' {
     }
 }
 
-declare module '../../Core/GlobalsBase.d.ts' {
+declare module '../../Core/GlobalsBase' {
     interface GlobalsBase {
         Exporting: typeof Exporting
     }

@@ -1204,14 +1204,12 @@ const ChartDefaults: ChartOptions = {
              */
             position: {
 
-                /**
-                 * The horizontal alignment of the button.
-                 */
+
+                /** @internal */
                 align: 'right',
 
-                /**
-                 * The horizontal offset of the button.
-                 */
+
+                /** @internal */
                 x: -10,
 
                 /**
@@ -1222,9 +1220,8 @@ const ChartDefaults: ChartOptions = {
                  * @apioption  chart.zooming.resetButton.position.verticalAlign
                  */
 
-                /**
-                 * The vertical offset of the button.
-                 */
+
+                /** @internal */
                 y: 10
             }
         }

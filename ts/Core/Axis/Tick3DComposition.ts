@@ -39,9 +39,7 @@ const {
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 function compose(
     TickClass: typeof Tick
 ): void {
@@ -58,9 +56,7 @@ function compose(
 
 }
 
-/**
- * @private
- */
+/** @internal */
 function onTickAfterGetLabelPosition(
     this: Tick,
     e: {
@@ -76,9 +72,7 @@ function onTickAfterGetLabelPosition(
     }
 }
 
-/**
- * @private
- */
+/** @internal */
 function wrapTickGetMarkPath(
     this: Tick,
     proceed: Function
@@ -111,8 +105,10 @@ function wrapTickGetMarkPath(
  *
  * */
 
+/** @internal */
 const Tick3DAdditions = {
     compose
 };
 
+/** @internal */
 export default Tick3DAdditions;
