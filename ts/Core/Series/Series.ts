@@ -33,8 +33,7 @@ import type LineSeries from '../../Series/Line/LineSeries';
 import type PointerEvent from '../PointerEvent';
 import type {
     PointOptions,
-    PointShortOptions,
-    PointMarkerStateHoverOptions
+    PointShortOptions
 } from './PointOptions';
 import type RangeSelector from '../../Stock/RangeSelector/RangeSelector';
 import type SeriesBase from './SeriesBase';
@@ -42,7 +41,6 @@ import type {
     NonPlotOptions,
     SeriesDataSortingOptions,
     SeriesOptions,
-    SeriesStateHoverOptions,
     SeriesZonesOptions
 } from './SeriesOptions';
 import type {
@@ -115,12 +113,14 @@ const {
  *
  * */
 
+/** @internal */
 declare module '../Chart/ChartBase'{
     interface ChartBase {
         runTrackerClick?: boolean;
     }
 }
 
+/** @internal */
 declare module '../Renderer/SVG/SVGElementBase' {
     interface SVGElementBase {
         survive?: boolean;
@@ -172,6 +172,7 @@ declare module './PointBase' {
     }
 }
 
+/** @internal */
 declare module './SeriesBase' {
     interface SeriesBase {
         _hasPointMarkers?: boolean;
@@ -182,6 +183,7 @@ declare module './SeriesBase' {
     }
 }
 
+/** @internal */
 interface KDNode {
     [side: string]: (KDNode|Point|undefined);
     left?: KDNode;
@@ -189,6 +191,7 @@ interface KDNode {
     right?: KDNode;
 }
 
+/** @internal */
 interface KDPointSearchObject extends KDPointSearchObjectBase {
 }
 
@@ -260,6 +263,7 @@ class Series {
      *
      * */
 
+    /** @internal */
     public static readonly defaultOptions = SeriesDefaults;
 
     /**
@@ -291,7 +295,9 @@ class Series {
     public static readonly registerType = SeriesRegistry.registerSeriesType;
 
     /**
-     * Properties to keep after update
+     * Properties to keep after update.
+     *
+     * @internal
      */
     public static keepProps = [
         'colorIndex',
@@ -303,7 +309,9 @@ class Series {
 
     /**
      * Properties to keep after update if the point instances should be
-     * preserved
+     * preserved.
+     *
+     * @internal
      */
     public static keepPropsForPoints = [
         'data',
@@ -344,122 +352,181 @@ class Series {
      *
      * */
 
+    /** @internal */
     public _hasTracking?: boolean;
 
+    /** @internal */
     public _i!: number;
 
+    /** @internal */
     public animationTimeout?: number;
 
+    /** @internal */
     public area?: SVGElement;
 
+    /** @internal */
     public basePointRange?: number;
 
+    /** @internal */
     public buildingKdTree?: boolean;
 
+    /** @internal */
     public chart!: Chart;
 
+    /** @internal */
     public closestPointRange?: number;
 
+    /** @internal */
     public closestPointRangePx?: number;
 
+    /** @internal */
     public color?: (ColorType);
 
+    /** @internal */
     public colorIndex?: number;
 
+    /** @internal */
     public cropped?: boolean;
 
+    /** @internal */
     public data!: Array<Point>;
 
+    /** @internal */
     public dataMax?: number;
 
+    /** @internal */
     public dataMin?: number;
 
+    /** @internal */
     public enabledDataSorting?: boolean;
 
+    /** @internal */
     public fillColor?: ColorType;
 
+    /** @internal */
     public finishedAnimating?: boolean;
 
+    /** @internal */
     public getExtremesFromAll?: boolean;
 
+    /** @internal */
     public graph?: SVGElement;
 
+    /** @internal */
     public graphPath?: SVGPath;
 
+    /** @internal */
     public group?: SVGElement;
 
+    /** @internal */
     public eventOptions!: Record<string, EventCallback<Series, Event>>;
 
+    /** @internal */
     public eventsToUnbind!: Array<Function>;
 
+    /** @internal */
     public halo?: SVGElement;
 
+    /** @internal */
     public hasCartesianSeries?: Chart['hasCartesianSeries'];
 
+    /** @internal */
     public hasRendered?: boolean;
 
+    /** @internal */
     public id?: string;
 
+    /** @internal */
     public index!: number;
 
+    /** @internal */
     public initialType?: string;
 
+    /** @internal */
     public isDirty?: boolean;
 
+    /** @internal */
     public isDirtyData?: boolean;
 
+    /** @internal */
     public isRadialSeries?: boolean;
 
+    /** @internal */
     public kdTree?: KDNode;
 
+    /** @internal */
     public linkedParent?: Series;
 
+    /** @internal */
     public linkedSeries!: Array<Series>;
 
+    /** @internal */
     public options!: SeriesOptions;
 
+    /** @internal */
     public markerGroup?: SVGElement;
 
+    /** @internal */
     public opacity?: number;
 
+    /** @internal */
     public optionalAxis?: string;
 
+    /** @internal */
     public pointInterval?: number;
 
+    /** @internal */
     public points!: Array<Point>;
 
+    /** @internal */
     public pointValKey?: string;
 
+    /** @internal */
     public selected?: boolean;
 
+    /** @internal */
     public sharedClipKey?: string;
 
+    /** @internal */
     public stateMarkerGraphic?: SVGElement;
 
+    /** @internal */
     public stickyTracking?: boolean;
 
+    /** @internal */
     public symbol?: SymbolKey;
 
+    /** @internal */
     public symbolIndex?: number;
 
+    /** @internal */
     public dataTable!: DataTableCore;
 
+    /** @internal */
     public tooltipOptions!: TooltipOptions;
 
+    /** @internal */
     public tracker?: SVGElement;
 
+    /** @internal */
     public trackerGroups?: Array<string>;
 
+    /** @internal */
     public userOptions!: DeepPartial<SeriesTypeOptions>;
 
+    /** @internal */
     public xAxis!: AxisType;
 
+    /** @internal */
     public xIncrement?: (number|null);
 
+    /** @internal */
     public yAxis!: AxisType;
 
+    /** @internal */
     public zoneAxis: 'x'|'y'|'z' = 'y';
 
+    /** @internal */
     public zones!: Array<Series.ZoneObject>;
 
     /* *
@@ -1325,6 +1392,7 @@ class Series {
         return true;
     }
 
+    /** @internal */
     public dataColumnKeys(): Array<string> {
         return ['x', ...(this.pointArrayMap || ['y'])];
     }
@@ -2818,8 +2886,8 @@ class Series {
             ),
             attribs: SVGAttributes = {};
 
-        let seriesStateOptions: SeriesStateHoverOptions,
-            pointStateOptions: PointMarkerStateHoverOptions,
+        let seriesStateOptions,
+            pointStateOptions,
             radius: number|undefined = pick(
                 pointMarkerOptions.radius,
                 seriesMarkerOptions?.radius
@@ -2827,9 +2895,8 @@ class Series {
 
         // Handle hover and select states
         if (state) {
-            seriesStateOptions = (seriesMarkerOptions as any).states[state];
-            pointStateOptions = pointMarkerOptions.states &&
-                (pointMarkerOptions.states as any)[state];
+            seriesStateOptions = seriesMarkerOptions?.states?.[state];
+            pointStateOptions = pointMarkerOptions.states?.[state];
 
             radius = pick(
                 pointStateOptions?.radius,
@@ -4953,17 +5020,39 @@ class Series {
  * */
 
 interface Series extends SeriesBase {
+    /** @internal */
     axisTypes: Array<'xAxis'|'yAxis'|'colorAxis'|'zAxis'>;
+
+    /** @internal */
     coll: 'series';
+
+    /** @internal */
     colorCounter: number;
+
+    /** @internal */
     directTouch: boolean;
+
+    /** @internal */
     hcEvents?: Record<string, Array<U.EventWrapperObject<Series>>>;
+
+    /** @internal */
     invertible: boolean;
+
+    /** @internal */
     isCartesian: boolean;
+
+    /** @internal */
     kdAxisArray: Array<keyof KDPointSearchObject>;
+
+    /** @internal */
     parallelArrays: Array<string>;
+
     pointClass: typeof Point;
+
+    /** @internal */
     requireSorting: boolean;
+
+    /** @internal */
     sorted: boolean;
 }
 

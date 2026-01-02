@@ -28,7 +28,6 @@ import type {
     PointOptions,
     PointShortOptions
 } from './PointOptions';
-import type { PointTypeOptions } from './PointType';
 import type Series from './Series';
 import type { StatesOptionsKey } from './StatesOptions';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
@@ -1918,19 +1917,12 @@ interface Point extends PointBase {
  *
  * */
 
+/** @internal */
 namespace Point {
+    /** @internal */
     export interface GraphicalProps {
         singular: Array<string>;
         plural: Array<string>;
-    }
-    export interface SeriesPointsOptions {
-        events?: PointEventsOptions;
-    }
-    export interface UpdateCallbackFunction {
-        (this: Point, event: UpdateEventObject): void;
-    }
-    export interface UpdateEventObject {
-        options?: PointTypeOptions;
     }
 }
 
