@@ -1135,9 +1135,8 @@ class Navigator {
             }
             if (
                 navigator.hasDragged &&
-                navigator.scrollbar &&
                 pick(
-                    navigator.scrollbar.options.liveRedraw,
+                    navigator.scrollbarOptions?.liveRedraw,
 
                     // By default, don't run live redraw on touch
                     // devices or if the chart is in boost.
