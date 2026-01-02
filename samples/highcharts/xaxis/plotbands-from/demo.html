@@ -1,3 +1,18 @@
+<!-- script src="https://code.highcharts.com/highcharts-autoload.js"></script
+-->
 <script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/themes/adaptive.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/controls@0.5.0" type="module"></script>
 
-<div id="container"></div>
+<figure class="highcharts-figure">
+  <div id="container"></div>
+</figure>
+
+<div class="highcharts-controls-wrapper">
+  <highcharts-controls>
+    <highcharts-group header="Update options">
+      <highcharts-control path="xAxis.plotBands[0].from" value="4.5" min="-1" max="12" step="0.1"></highcharts-control>
+      <highcharts-control path="xAxis.plotBands[0].to" value="7.5" min="-1" max="12" step="0.1"></highcharts-control>
+    </highcharts-group>
+  </highcharts-controls>
+</div>

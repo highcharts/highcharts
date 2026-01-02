@@ -195,8 +195,9 @@ function generateTitle(paths: string[]): string {
 
 // Function to extend an object with a nested path
 function extendObject(base: any, path: string, nodeValue: any) {
-    // Merge the path node options into the chart configuration
-    const keys = path.split('.');
+    // Merge the path node options into the chart configuration. Support dot
+    // notation and bracket notation for arrays.
+    const keys = path.split(/\.|\[|\]/u).filter(key => key !== '');
     let current = base;
 
     keys.forEach((key, i) => {

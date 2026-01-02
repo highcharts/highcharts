@@ -1,5 +1,5 @@
 ---
- name: Highcharts Demo
+ name: Demo of xAxis.plotBands[0].color
  authors:
    - Torstein Hønsi
  js_wrap: b

@@ -10,6 +10,15 @@ export function getHTML(ctrlOpt: ControlOptions, overrideValue?: any): string {
         html += ` value="${overrideValue}"`;
     }
 
+    if (ctrlOpt.min !== void 0) {
+        html += ` min="${ctrlOpt.min}"`;
+    }
+    if (ctrlOpt.max !== void 0) {
+        html += ` max="${ctrlOpt.max}"`;
+    }
+    if (ctrlOpt.step !== void 0) {
+        html += ` step="${ctrlOpt.step}"`;
+    }
     if (ctrlOpt.options) {
         html += ` options="${ctrlOpt.options.join(',')}"`;
     }
