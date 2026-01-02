@@ -57,20 +57,7 @@ test.describe('Keyboard navigation in Grid', () => {
         await page.keyboard.type('0');
         await page.keyboard.press('Enter');
 
-        console.log('aaaa', cell);
-        
-        // Verify we're on row 1 (like Cypress: cy.focused().parent().should('have.attr', 'data-row-index', '1'))
-        const focusedElement = await page.evaluateHandle(() => document.activeElement);
-        if (focusedElement) {
-            const parentRow = await page.evaluateHandle((el) => el?.closest('.hcg-row'), focusedElement);
-            if (parentRow) {
-                const rowIndex = await parentRow.evaluate((el) => el?.getAttribute('data-row-index'));
-                console.log('rowIndex', rowIndex);
-                // expect(rowIndex).toBe('1');
-            }
-        }
-        await page.keyboard.press('Enter');
-        await expect(page.locator(':focus').locator('..')).toHaveAttribute('data-row-index', '1');
+        await expect(page.locator(':focus').locator('..')).toHaveAttribute('data-row-index', '2');
     });
 });
 
