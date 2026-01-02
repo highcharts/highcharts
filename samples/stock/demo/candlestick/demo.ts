@@ -1,9 +1,8 @@
-(async () => {
-
+(async (): Promise<void> => {
     const data = await fetch(
         'https://demo-live-data.highcharts.com/aapl-ohlc.json'
-    ).then(response => response.json());
-
+    ).then(response => response.json()) as
+        Highcharts.SeriesOptionsRegistry['SeriesOhlcOptions']['data'];
 
     // create the chart
     Highcharts.stockChart('container', {
@@ -32,4 +31,4 @@
             }
         }]
     });
-})();
+})().catch(console.error);
