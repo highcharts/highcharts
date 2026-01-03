@@ -1,5 +1,5 @@
 ---
- name: Demo of xAxis.plotLines[0].label options
+ name: Demo of xAxis.plotLines.label options
  authors:
    - Torstein Hønsi
  js_wrap: b

@@ -1,5 +1,5 @@
 ---
- name: Demo of xAxis.plotBands[0].color
+ name: Demo of xAxis.plotBands.color
  authors:
    - Torstein Hønsi
  js_wrap: b

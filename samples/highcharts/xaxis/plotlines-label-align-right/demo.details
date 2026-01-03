@@ -1,5 +1,5 @@
 ---
- name: Demo of yAxis.plotLines[0].label options
+ name: Demo of yAxis.plotLines.label options
  authors:
    - Torstein Hønsi
  js_wrap: b

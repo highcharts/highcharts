@@ -1,6 +1,6 @@
 Highcharts.chart('container', {
     title: {
-        text: 'Demo of <em>yAxis.plotLines[0].label.style</em> options'
+        text: 'Demo of <em>yAxis.plotLines.label.style</em> options'
     },
     xAxis: {
         type: 'datetime'

@@ -1,5 +1,5 @@
 ---
- name: Demo of xAxis.plotBands[0].zIndex
+ name: Demo of xAxis.plotBands.zIndex
  authors:
    - Torstein Hønsi
  js_wrap: b

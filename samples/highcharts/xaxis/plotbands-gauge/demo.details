@@ -1,5 +1,5 @@
 ---
- name: Demo of yAxis.plotBands[0] options
+ name: Demo of yAxis.plotBands options
  authors:
    - Torstein Hønsi
  js_wrap: b

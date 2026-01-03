@@ -1,5 +1,5 @@
 ---
- name: Demo of xAxis.plotBands[0].label.style options
+ name: Demo of xAxis.plotBands.label.style options
  authors:
    - Torstein Hønsi
  js_wrap: b

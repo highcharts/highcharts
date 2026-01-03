@@ -153,7 +153,9 @@ function generateTitle(paths: string[]): string {
         for (let i = 0; i < minLength; i++) {
             const part = pathParts[0][i];
             if (pathParts.every(parts => parts[i] === part)) {
-                commonParts.push(part);
+                // Remove array indices for title
+                const cleanedPart = part.replace(/\[\d+\]/gu, '');
+                commonParts.push(cleanedPart);
             } else {
                 break;
             }
@@ -167,7 +169,9 @@ function generateTitle(paths: string[]): string {
     }
 
     if (paths.length === 1) {
-        return `Demo of <em>${paths[0].split('=')[0]}</em>`;
+        return `Demo of <em>${
+            paths[0].split('=')[0].replace(/\[\d+\]/gu, '')
+        }</em>`;
     }
 
     // Find common prefix parts

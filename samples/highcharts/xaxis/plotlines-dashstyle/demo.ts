@@ -1,6 +1,6 @@
 Highcharts.chart('container', {
     title: {
-        text: 'Demo of <em>xAxis.plotLines[0].dashStyle</em>'
+        text: 'Demo of <em>xAxis.plotLines.dashStyle</em>'
     },
     xAxis: {
         plotLines: [{

@@ -1,5 +1,5 @@
 ---
- name: Demo of xAxis.plotLines[0].color
+ name: Demo of xAxis.plotLines.color
  authors:
    - Torstein Hønsi
  js_wrap: b

@@ -1,6 +1,6 @@
 Highcharts.chart('container', {
     title: {
-        text: 'Demo of <em>xAxis.plotBands[0].zIndex</em>'
+        text: 'Demo of <em>xAxis.plotBands.zIndex</em>'
     },
     xAxis: {
         categories: [
