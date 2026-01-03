@@ -1,5 +1,5 @@
 ---
- name: Highcharts Demo
+ name: Demo of yAxis.plotLines[0].label.style options
  authors:
    - Torstein Hønsi
  js_wrap: b

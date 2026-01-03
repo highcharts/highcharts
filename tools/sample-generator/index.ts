@@ -393,22 +393,33 @@ function pickHandler(meta: MetaData) {
 
     const mainType = meta.mainType || '';
 
-    if (mainType.toLowerCase() === 'boolean') {
+    if (
+        meta.controlOptions?.type === 'boolean' ||
+        mainType.toLowerCase() === 'boolean'
+    ) {
         return { kind: 'boolean', mod: booleanHandler } as const;
     }
-    if (mainType.toLowerCase() === 'number') {
+    if (
+        meta.controlOptions?.type === 'number' ||
+        mainType.toLowerCase() === 'number'
+    ) {
         return { kind: 'number', mod: numberHandler } as const;
     }
     if (
+        meta.controlOptions?.type === 'color' ||
         mainType.toLowerCase() === 'colorstring' ||
         mainType.toLowerCase() === 'colortype'
     ) {
         return { kind: 'color', mod: colorHandler } as const;
     }
     if (mainType.toLowerCase() === 'axistypevalue') {
-        meta.options = ['linear', 'logarithmic', 'datetime', 'category'];
+        meta.options ||= ['linear', 'logarithmic', 'datetime', 'category'];
     }
-    if (meta.options || mainType.toLowerCase() === 'dashstylevalue') {
+    if (
+        meta.controlOptions?.type === 'select' ||
+        meta.options ||
+        mainType.toLowerCase() === 'dashstylevalue'
+    ) {
         return { kind: 'select', mod: selectHandler } as const;
     }
     if (mainType.toLowerCase() === 'string') {

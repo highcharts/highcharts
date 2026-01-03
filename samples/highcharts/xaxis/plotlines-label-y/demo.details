@@ -1,5 +1,5 @@
 ---
- name: Highcharts Demo
+ name: Demo of yAxis.plotLines[0].label.y
  authors:
    - Torstein Hønsi
  js_wrap: b
