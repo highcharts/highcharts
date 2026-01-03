@@ -24,7 +24,13 @@ export interface SampleGeneratorConfig {
      * Templates for chart options, merged in the given order. Defined in
      * tools/sample-generator/tpl/chart-options
      */
-    templates?: ('categories-12' | 'column' | 'datetime' | 'linear-12')[];
+    templates?: (
+        'categories-4' |
+        'categories-12' |
+        'column' |
+        'datetime' |
+        'linear-12'
+    )[];
 }
 
 export default {
