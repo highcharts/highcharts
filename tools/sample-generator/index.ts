@@ -236,7 +236,7 @@ async function generateChartConfig(
 ) {
     const { chartOptionsExtra } = config;
     const paths = metaList.map(meta => meta.path);
-    if (!metaList.length) {
+    if (!metaList.length && paths) {
         throw new Error(`No nodes found for paths: ${paths.join(', ')}`);
     }
 
@@ -416,7 +416,10 @@ function pickHandler(meta: MetaData) {
     ) {
         return { kind: 'color', mod: colorHandler } as const;
     }
-    if (mainType.toLowerCase() === 'axistypevalue') {
+    if (
+        mainType.toLowerCase() === 'axistypevalue' &&
+        !meta.controlOptions?.options
+    ) {
         meta.options ||= ['linear', 'logarithmic', 'datetime', 'category'];
     }
     if (
@@ -782,7 +785,7 @@ export async function getDemoDetails(config: SampleGeneratorConfig) {
 // Function to save the generated configuration to Highcharts Samples
 export async function saveDemoFile(config: SampleGeneratorConfig) {
     const metaList = await getPathMeta(config);
-    if (!metaList.length) {
+    if (!metaList.length && config.paths) {
         throw new Error(`No nodes found for paths: ${config.paths.join(', ')}`);
     }
 

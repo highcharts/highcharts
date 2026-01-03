@@ -12,6 +12,8 @@ export function getHTML(
         options = ['left', 'center', 'right'];
     } else if (options?.toString() === 'bottom,middle,top') {
         options = ['top', 'middle', 'bottom'];
+    } else if (options?.toString() === 'high,low,middle') {
+        options = ['low', 'middle', 'high'];
     }
 
     let html = `<highcharts-control type="select" path="${ctrlOpt.path}"`;

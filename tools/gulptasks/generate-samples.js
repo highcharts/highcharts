@@ -97,7 +97,7 @@ async function task() {
 
             log.success(' ✔︎ Success');
         } catch (error) {
-            log.failure(` ❌ Error: ${error.message}`);
+            log.failure(` ❌ Error: ${error.message} in generate-samples task`);
         }
     }
 
