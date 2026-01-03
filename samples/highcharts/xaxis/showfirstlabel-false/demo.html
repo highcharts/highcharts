@@ -1,3 +1,17 @@
+<!-- script src="https://code.highcharts.com/highcharts-autoload.js"></script
+-->
 <script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/themes/adaptive.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/controls@0.5.0" type="module"></script>
 
-<div id="container"></div>
+<figure class="highcharts-figure">
+  <div id="container"></div>
+</figure>
+
+<div class="highcharts-controls-wrapper">
+  <highcharts-controls>
+    <highcharts-group header="Update options">
+      <highcharts-control type="boolean" path="xAxis.showFirstLabel" value="false"></highcharts-control>
+    </highcharts-group>
+  </highcharts-controls>
+</div>

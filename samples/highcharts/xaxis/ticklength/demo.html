@@ -1,3 +1,18 @@
+<!-- script src="https://code.highcharts.com/highcharts-autoload.js"></script
+-->
 <script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/themes/adaptive.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/controls@0.5.0" type="module"></script>
 
-<div id="container"></div>
+<figure class="highcharts-figure">
+  <div id="container"></div>
+</figure>
+
+<div class="highcharts-controls-wrapper">
+  <highcharts-controls>
+    <highcharts-group header="Update options">
+      <highcharts-control type="number" path="xAxis.tickLength" value="30" min="0" max="40"></highcharts-control>
+      <highcharts-control type="number" path="yAxis.tickLength" value="0" min="0" max="40"></highcharts-control>
+    </highcharts-group>
+  </highcharts-controls>
+</div>
