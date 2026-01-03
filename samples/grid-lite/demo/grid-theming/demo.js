@@ -72,7 +72,7 @@ Grid.grid('table_1', merge(config, {
 
 Grid.grid('table_2', merge(config, {
     rendering: {
-        theme: 'my-theme'
+        theme: 'theme-base my-theme'
     },
     caption: {
         text: 'Custom theme with more hover states'
@@ -80,23 +80,24 @@ Grid.grid('table_2', merge(config, {
     description: {
         text: 'To create a completely custom theme omit ' +
             '<code>hcg-theme-default</code> and only specify the custom theme, ' +
-            'in this case <code>theme: \'my-theme\'</code>. When starting from ' +
-            'scratch remember to also include a dark variant for dark mode, ' +
-            'and also high contrast if needed.'
+            'in this case <code>theme: \'theme-base my-theme\'</code>. ' +
+            'Here we also include a base theme that is shared between multiple ' +
+            'grids. When starting from scratch remember to also include a ' +
+            'dark variant for dark mode and also high contrast if needed.'
     }
 }));
 
 Grid.grid('table_3', merge(config, {
     rendering: {
-        theme: 'opacity-theme'
+        theme: 'theme-base opacity-theme'
     },
     caption: {
-        text: 'Theme using opacity on hover states'
+        text: 'Theme using --hcg-hover-opacity'
     },
     description: {
-        text: 'By using RGBA opacity on hover states instead of ' +
-            'solid colors the overall color scheme can be set using only a base set ' +
-            'of custom variables, and hover states etc. can be tweaked by adjusting ' +
-            'the opacity.'
+        text: 'By using the <code>--hcg-hover-opacity</code> variable ' +
+            'on row, column, header and cell hover states you can limit the ' +
+            'number of different colors needed to produce a nice, coherent theme. ' +
+            'Just use e.g. <code>#fff</code> and adjust opacity instead of color.'
     }
 }));
