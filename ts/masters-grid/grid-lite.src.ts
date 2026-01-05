@@ -98,6 +98,8 @@ export {
     DataModifier,
     DataPool,
     DataTable,
+    _Grid as Grid,
+    _Options as Options,
     Pagination,
     SvgIcons,
     Table,
@@ -106,7 +108,6 @@ export {
 
 export const {
     defaultOptions,
-    Grid,
     grid,
     grids,
     isHighContrastModeActive,
