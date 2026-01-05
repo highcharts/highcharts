@@ -4,21 +4,19 @@ import type {
 
 export default {
     controls: [{
-        path: 'xAxis.plotBands[0].label.verticalAlign',
-        value: 'middle',
-        options: ['top', 'middle', 'bottom']
-    }, {
         path: 'xAxis.plotBands[0].label.y',
         value: 16,
         min: -100,
         max: 100,
         step: 1
+    }, {
+        path: 'xAxis.plotBands[0].label.verticalAlign',
+        value: 'middle',
+        options: ['top', 'middle', 'bottom'],
+        inTitle: false
     }],
     templates: ['categories-12'],
     chartOptionsExtra: {
-        title: {
-            text: 'X-axis plot band label vertical alignment'
-        },
         xAxis: {
             plotBands: [{
                 color: '#00c00040',

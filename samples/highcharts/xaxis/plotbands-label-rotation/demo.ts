@@ -1,6 +1,6 @@
 Highcharts.chart('container', {
     title: {
-        text: 'Demo of plot band label rotation'
+        text: 'Demo of <em>xAxis.plotBands.label.rotation</em>'
     },
     xAxis: {
         categories: [

@@ -10,13 +10,11 @@ export default {
         path: 'yAxis.plotLines[0].label.x',
         value: -10,
         min: -10,
-        max: 10
+        max: 10,
+        inTitle: false
     }],
     templates: ['linear-12', 'datetime'],
     chartOptionsExtra: {
-        title: {
-            text: 'Demo of plot line label alignment'
-        },
         yAxis: {
             plotLines: [{
                 value: 100,

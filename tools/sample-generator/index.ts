@@ -247,8 +247,11 @@ async function generateChartConfig(
         Highcharts.merge(true, chartOptions, tplOptions);
     }
 
+    const titlePaths = metaList
+        .filter(meta => meta.controlOptions?.inTitle !== false)
+        .map(meta => meta.path);
     Highcharts.merge(true, chartOptions, {
-        title: { text: generateTitle(paths) }
+        title: { text: generateTitle(titlePaths) }
     });
 
     if (chartOptionsExtra) {
@@ -819,7 +822,9 @@ export async function getDemoDetails(config: SampleGeneratorConfig) {
     let details = await loadTemplate('demo.details');
 
     const paths = config.controls ?
-        config.controls.map(control => control.path) :
+        config.controls
+            .filter(control => control.inTitle !== false)
+            .map(control => control.path) :
         config.paths || [];
 
     details = details

@@ -1,5 +1,5 @@
 ---
- name: Demo of yAxis options
+ name: Demo of yAxis.minPadding
  authors:
    - Torstein Hønsi
  js_wrap: b

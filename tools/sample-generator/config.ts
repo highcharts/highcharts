@@ -1,6 +1,11 @@
 import type { Options } from '../../code/highcharts.d.ts';
 
 export interface ControlOptions {
+    /**
+     * Whether this control's path is considered when creating an automated
+     * chart title and sample name
+     */
+    inTitle?: boolean;
     /** The maximum value for number controls */
     max?: number;
     /** The minimum value for number controls */

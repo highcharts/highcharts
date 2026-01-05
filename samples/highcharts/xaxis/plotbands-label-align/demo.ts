@@ -1,6 +1,6 @@
 Highcharts.chart('container', {
     title: {
-        text: 'Demo of plot band label alignment'
+        text: 'Demo of <em>xAxis.plotBands.label.align</em>'
     },
     xAxis: {
         categories: [

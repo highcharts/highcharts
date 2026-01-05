@@ -10,13 +10,11 @@ export default {
         max: 300
     }, {
         path: 'yAxis.endOnTick',
-        value: true
+        value: true,
+        inTitle: false
     }],
     templates: ['categories-12'],
     chartOptionsExtra: {
-        title: {
-            text: 'Demo of <em>yAxis.max</em>'
-        },
         yAxis: {
             lineWidth: 1
         }

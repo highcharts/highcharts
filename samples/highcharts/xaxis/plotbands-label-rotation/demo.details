@@ -1,5 +1,5 @@
 ---
- name: Demo of xAxis.plotBands.label options
+ name: Demo of xAxis.plotBands.label.rotation
  authors:
    - Torstein Hønsi
  js_wrap: b

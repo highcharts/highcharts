@@ -12,13 +12,11 @@ export default {
         value: 16,
         min: -100,
         max: 100,
-        step: 1
+        step: 1,
+        inTitle: false
     }],
     templates: ['categories-12'],
     chartOptionsExtra: {
-        title: {
-            text: 'X-axis plot band label vertical alignment'
-        },
         xAxis: {
             plotBands: [{
                 color: '#00c00040',

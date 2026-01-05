@@ -8,18 +8,17 @@ export default {
         value: 'middle'
     }, {
         path: 'xAxis.plotLines[0].label.textAlign',
-        value: 'center'
+        value: 'center',
+        inTitle: false
     }, {
         path: 'xAxis.plotLines[0].label.y',
         value: 0,
         min: -10,
-        max: 10
+        max: 10,
+        inTitle: false
     }],
     templates: ['linear-12', 'datetime'],
     chartOptionsExtra: {
-        title: {
-            text: 'Demo of plot line label vertical alignment'
-        },
         xAxis: {
             plotLines: [{
                 value: '2026-06-15',

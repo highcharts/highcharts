@@ -6,7 +6,7 @@
 
     Highcharts.stockChart('container', {
         title: {
-            text: 'Demo of <em>yAxis</em> options'
+            text: 'Demo of <em>yAxis.offset</em>'
         },
         yAxis: {
             labels: {

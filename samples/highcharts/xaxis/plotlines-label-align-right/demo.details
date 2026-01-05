@@ -1,5 +1,5 @@
 ---
- name: Demo of yAxis.plotLines.label options
+ name: Demo of yAxis.plotLines.label.align
  authors:
    - Torstein Hønsi
  js_wrap: b

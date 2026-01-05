@@ -11,13 +11,11 @@ export default {
     }, {
         path: 'xAxis.plotBands[0].label.textAlign',
         value: 'left',
-        options: ['left', 'center', 'right']
+        options: ['left', 'center', 'right'],
+        inTitle: false
     }],
     templates: ['categories-12'],
     chartOptionsExtra: {
-        title: {
-            text: 'Demo of plot band label rotation'
-        },
         xAxis: {
             plotBands: [{ // mark the weekend
                 color: '#00c00040',

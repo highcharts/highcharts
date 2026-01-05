@@ -1,6 +1,6 @@
 Highcharts.chart('container', {
     title: {
-        text: 'Demo of plot line label vertical alignment'
+        text: 'Demo of <em>xAxis.plotLines.label.verticalAlign</em>'
     },
     xAxis: {
         plotLines: [{

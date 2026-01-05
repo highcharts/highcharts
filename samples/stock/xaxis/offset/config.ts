@@ -10,7 +10,8 @@ export default {
         max: 20
     }, {
         path: 'yAxis.opposite',
-        value: false
+        value: false,
+        inTitle: false
     }],
     dataFile: 'usdeur.json',
     templates: [],

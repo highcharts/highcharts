@@ -1,6 +1,6 @@
 Highcharts.chart('container', {
     title: {
-        text: 'Demo of plot line label alignment'
+        text: 'Demo of <em>yAxis.plotLines.label.align</em>'
     },
     xAxis: {
         type: 'datetime'

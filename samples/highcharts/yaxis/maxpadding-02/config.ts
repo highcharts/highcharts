@@ -11,13 +11,11 @@ export default {
         step: 0.01
     }, {
         path: 'yAxis.endOnTick',
-        value: false
+        value: false,
+        inTitle: false
     }],
     templates: ['categories-12'],
     chartOptionsExtra: {
-        title: {
-            text: 'Demo of <em>yAxis.maxPadding</em>'
-        },
         yAxis: {
             lineWidth: 1
         }

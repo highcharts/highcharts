@@ -11,13 +11,11 @@ export default {
         path: 'xAxis.plotBands[0].label.x',
         value: 0,
         min: -10,
-        max: 10
+        max: 10,
+        inTitle: false
     }],
     templates: ['categories-12'],
     chartOptionsExtra: {
-        title: {
-            text: 'Demo of plot band label alignment'
-        },
         xAxis: {
             plotBands: [{ // mark the weekend
                 color: '#00c00040',

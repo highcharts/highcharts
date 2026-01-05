@@ -1,6 +1,6 @@
 Highcharts.chart('container', {
     title: {
-        text: 'X-axis plot band label vertical alignment'
+        text: 'Demo of <em>xAxis.plotBands.label.verticalAlign</em>'
     },
     xAxis: {
         categories: [
