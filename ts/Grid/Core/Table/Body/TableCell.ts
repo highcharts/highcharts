@@ -221,11 +221,9 @@ class TableCell extends Cell {
         const vp = this.column.viewport;
         const { dataProvider: dp } = vp.grid;
 
-        const rowTableIndex =
-            this.row.id &&
-            await dp?.getRowIndex(this.row.id);
+        const rowId = this.row.id && await dp?.getRowIndex(this.row.id);
 
-        if (!dp || rowTableIndex === void 0) {
+        if (!dp || rowId === void 0) {
             return false;
         }
 
@@ -233,7 +231,7 @@ class TableCell extends Cell {
         await dp.setValue(
             this.value,
             this.column.id,
-            rowTableIndex
+            rowId
         );
 
         // If no modifiers, don't update all rows

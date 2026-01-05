@@ -49,7 +49,7 @@ export abstract class DataProvider {
     public abstract setValue(
         value: DT.CellType,
         columnId: string,
-        rowIndex: number
+        rowId: number
     ): Promise<void>;
 
     public abstract applyQuery(): Promise<void>;

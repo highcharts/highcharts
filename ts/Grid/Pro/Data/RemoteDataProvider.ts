@@ -20,7 +20,6 @@ import { DataProvider } from '../../Core/Data/DataProvider.js';
 import { registerDataProvider } from '../../Core/Data/DataProviderRegistry';
 import QueryingController from '../../Core/Querying/QueryingController';
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
 
 export class RemoteDataProvider extends DataProvider {
 
@@ -68,7 +67,7 @@ export class RemoteDataProvider extends DataProvider {
     public override setValue(
         value: DataTable.CellType,
         columnId: string,
-        rowIndex: number
+        rowId: number
     ): Promise<void> {
         throw new Error('Method not implemented.');
     }

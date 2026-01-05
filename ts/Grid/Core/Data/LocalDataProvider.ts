@@ -122,11 +122,11 @@ export class LocalDataProvider extends DataProvider {
     public override setValue(
         value: DataTable.CellType,
         columnId: string,
-        rowIndex: number
+        rowId: number
     ): Promise<void> {
         // TODO: Implement setValue
         // eslint-disable-next-line no-console
-        console.log('setValue', value, columnId, rowIndex);
+        this.dataTable?.setCell(columnId, rowId, value);
         return Promise.resolve();
     }
 
