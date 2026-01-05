@@ -5175,6 +5175,9 @@ namespace Series {
         start: number;
     }
 
+    /**
+     * Translation and scale for the plot area of a series.
+     */
     export interface PlotBoxTransform extends SVGAttributes {
         scaleX: number;
         scaleY: number;
@@ -5358,54 +5361,6 @@ export default Series;
  * graph.
  *
  * @typedef {"butt"|"round"|"square"|string} Highcharts.SeriesLinecapValue
- */
-
-/**
- * Gets fired when the legend item belonging to the series is clicked. The
- * default action is to toggle the visibility of the series. This can be
- * prevented by returning `false` or calling `event.preventDefault()`.
- *
- * **Note:** This option is deprecated in favor of
- * Highcharts.LegendItemClickCallbackFunction.
- *
- * @deprecated 11.4.4
- * @callback Highcharts.SeriesLegendItemClickCallbackFunction
- *
- * @param {Highcharts.Series} this
- *        The series where the event occurred.
- *
- * @param {Highcharts.SeriesLegendItemClickEventObject} event
- *        The event that occurred.
- */
-
-/**
- * Information about the event.
- *
- * **Note:** This option is deprecated in favor of
- * Highcharts.LegendItemClickEventObject.
- *
- * @deprecated 11.4.4
- * @interface Highcharts.SeriesLegendItemClickEventObject
- *//**
- * Related browser event.
- * @name Highcharts.SeriesLegendItemClickEventObject#browserEvent
- * @type {global.PointerEvent}
- *//**
- * Whether the default action has been prevented (`true`) or not.
- * @name Highcharts.SeriesLegendItemClickEventObject#defaultPrevented
- * @type {boolean|undefined}
- *//**
- * Prevent the default action of toggle the visibility of the series.
- * @name Highcharts.SeriesLegendItemClickEventObject#preventDefault
- * @type {Function}
- *//**
- * Related series.
- * @name Highcharts.SeriesCheckboxClickEventObject#target
- * @type {Highcharts.Series}
- *//**
- * Event type.
- * @name Highcharts.SeriesCheckboxClickEventObject#type
- * @type {"checkboxClick"}
  */
 
 /**

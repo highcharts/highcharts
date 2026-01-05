@@ -60,6 +60,9 @@ export interface StatesOptions {
     select?: StateSelectOptions;
 }
 
+/**
+ * Possible key values for the series state options.
+ */
 export type StatesOptionsKey = (''|keyof StatesOptions);
 
 /**

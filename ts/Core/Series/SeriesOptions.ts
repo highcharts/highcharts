@@ -56,29 +56,6 @@ export type PlotOptionsOf<T extends Series = Series> = (
 );
 
 /**
- * Event information regarding completed animation of a series.
- *
- * @interface Highcharts.SeriesAfterAnimateEventObject
- */
-export interface SeriesAfterAnimateEvent {
-    /**
-     * Animated series.
-     * @name Highcharts.SeriesAfterAnimateEventObject#target
-     */
-    target: Series;
-
-    /**
-     * Event type.
-     * @name Highcharts.SeriesAfterAnimateEventObject#type
-     */
-    type: 'afterAnimate';
-}
-
-export interface SeriesClickEvent {
-    point: Point;
-}
-
-/**
  * Options for `dataSorting`.
  *
  * @since 8.0.0
@@ -109,17 +86,15 @@ export interface SeriesDataSortingOptions {
  */
 export interface SeriesEventsOptions {
     afterAnimate?: SeriesAfterAnimateCallbackFunction;
-    click?: EventCallback<Series, SeriesClickEvent>;
-    hide?: EventCallback<Series, Event>;
-    mouseOut?: EventCallback<Series, PointerEvent>;
-    mouseOver?: EventCallback<Series, PointerEvent>;
-    show?: EventCallback<Series, Event>;
+    click?: SeriesClickCallbackFunction;
+    hide?: SeriesHideCallbackFunction;
+    mouseOut?: SeriesMouseOutCallbackFunction;
+    mouseOver?: SeriesMouseOverCallbackFunction;
+    show?: SeriesShowCallbackFunction;
 }
 
 /**
  * Function callback when a series has been animated.
- *
- * @callback Highcharts.SeriesAfterAnimateCallbackFunction
  *
  * @param {Highcharts.Series} this
  *        The series where the event occurred.
@@ -128,10 +103,108 @@ export interface SeriesEventsOptions {
  *        Event arguments.
  */
 export type SeriesAfterAnimateCallbackFunction =
-    EventCallback<Series, SeriesAfterAnimateEvent>;
+    EventCallback<Series, SeriesAfterAnimateEventObject>;
+
+/**
+ * Event information regarding completed animation of a series.
+ */
+export interface SeriesAfterAnimateEventObject {
+    /**
+     * Animated series.
+     */
+    target: Series;
+
+    /**
+     * Event type.
+     */
+    type: 'afterAnimate';
+}
+
+/**
+ * Function callback when a series is clicked. Return false to cancel toggle
+ * actions.
+ *
+ * @param {Highcharts.Series} this
+ *        The series where the event occurred.
+ *
+ * @param {Highcharts.SeriesClickEventObject} event
+ *        Event arguments.
+ */
+export type SeriesClickCallbackFunction =
+    EventCallback<Series, SeriesClickEventObject>;
+
+/**
+ * Common information for a click event on a series.
+ *
+ * @extends global.Event
+ */
+export interface SeriesClickEventObject {
+    /**
+     * Nearest point on the graph.
+     */
+    point: Point;
+}
+
+/**
+ * Gets fired when the series is hidden after chart generation time, either by
+ * clicking the legend item or by calling `.hide()`.
+ *
+ * @param {Highcharts.Series} this
+ *        The series where the event occurred.
+ *
+ * @param {global.Event} event
+ *        The event that occurred.
+ */
+export type SeriesHideCallbackFunction = EventCallback<Series, Event>;
+
+/**
+ * Gets fired when the mouse leaves the graph.
+ *
+ * @callback Highcharts.SeriesMouseOutCallbackFunction
+ *
+ * @param {Highcharts.Series} this
+ *        Series where the event occurred.
+ *
+ * @param {global.PointerEvent} event
+ *        Event that occurred.
+ */
+export type SeriesMouseOutCallbackFunction =
+    EventCallback<Series, PointerEvent>;
+
+/**
+ * Gets fired when the mouse enters the graph.
+ *
+ * @callback Highcharts.SeriesMouseOverCallbackFunction
+ *
+ * @param {Highcharts.Series} this
+ *        Series where the event occurred.
+ *
+ * @param {global.PointerEvent} event
+ *        Event that occurred.
+ */
+export type SeriesMouseOverCallbackFunction =
+    EventCallback<Series, PointerEvent>;
+
+/**
+ * Gets fired when the series is shown after chart generation time, either by
+ * clicking the legend item or by calling `.show()`.
+ *
+ * @callback Highcharts.SeriesShowCallbackFunction
+ *
+ * @param {Highcharts.Series} this
+ *        Series where the event occurred.
+ *
+ * @param {global.Event} event
+ *        Event that occurred.
+ */
+export type SeriesShowCallbackFunction = EventCallback<Series, Event>;
 
 export type SeriesFindNearestPointByValue = ('x'|'xy');
 
+/**
+ * The SVG value used for the `stroke-linecap` and `stroke-linejoin` of a line
+ * graph.
+ */
 export type SeriesLinecapValue = ('butt'|'round'|'square');
 
 export type LegendSymbolType = ('areaMarker' | 'lineMarker' | 'rectangle');
