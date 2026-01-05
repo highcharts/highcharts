@@ -1261,7 +1261,10 @@ class Chart {
             )
                 .attr({
                     align: options.align,
-                    'class': 'highcharts-' + key,
+                    'class': [
+                        options.className,
+                        'highcharts-' + key
+                    ].filter(isString).join(' '),
                     zIndex: options.zIndex || 4
                 })
                 .css({
@@ -4164,6 +4167,7 @@ namespace Chart {
         x?: number;
         y?: number;
         zIndex?: number;
+        className?: string;
     }
 
     export interface ChartTransformParams {
@@ -4235,6 +4239,7 @@ namespace Chart {
         x?: number;
         y?: number;
         zIndex?: number;
+        className?: string;
     }
 
     export interface TitleOptions {
@@ -4250,6 +4255,7 @@ namespace Chart {
         x?: number;
         y?: number;
         zIndex?: number;
+        className?: string;
     }
 }
 
