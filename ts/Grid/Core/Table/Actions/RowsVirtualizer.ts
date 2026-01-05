@@ -89,6 +89,11 @@ class RowsVirtualizer {
     private readonly rowPool: TableRow[] = [];
 
     /**
+     * Maximum number of rows to keep in the reuse pool.
+     */
+    private static readonly MAX_POOL_SIZE = 100;
+
+    /**
      * Flag indicating if a scroll update is queued for the next animation
      * frame.
      */
@@ -348,8 +353,7 @@ class RowsVirtualizer {
                 const rowIndex = row.index;
 
                 if (rowIndex < from || rowIndex > to) {
-                    row.htmlElement.remove();
-                    this.rowPool.push(row);
+                    this.poolRow(row);
                 } else {
                     tempRows.push(row);
                 }
@@ -363,23 +367,7 @@ class RowsVirtualizer {
 
                 // Recreate row when it is destroyed and it is in the range.
                 if (!row) {
-                    const pooledRow = this.rowPool.pop();
-                    if (pooledRow) {
-                        pooledRow.reuse(i, false);
-                        rows.push(pooledRow);
-                        if (isVirtualization) {
-                            pooledRow.setTranslateY(
-                                pooledRow.getDefaultTopOffset()
-                            );
-                        }
-                    } else {
-                        const newRow = new TableRow(vp, i);
-                        rows.push(newRow);
-                        newRow.rendered = false;
-                        if (isVirtualization) {
-                            newRow.setTranslateY(newRow.getDefaultTopOffset());
-                        }
-                    }
+                    rows.push(this.getOrCreateRow(i));
                 }
             }
 
@@ -387,79 +375,27 @@ class RowsVirtualizer {
         } else {
             // Remove rows outside the range from the start.
             while (rows.length && rows[0].index < from) {
-                const row = rows.shift() as TableRow;
-                row.htmlElement.remove();
-                this.rowPool.push(row);
+                this.poolRow(rows.shift() as TableRow);
             }
 
             // Remove rows outside the range from the end.
             while (rows.length && rows[rows.length - 1].index > to) {
-                const row = rows.pop() as TableRow;
-                row.htmlElement.remove();
-                this.rowPool.push(row);
+                this.poolRow(rows.pop() as TableRow);
             }
 
             if (!rows.length) {
                 for (let i = from; i <= to; ++i) {
-                    const pooledRow = this.rowPool.pop();
-                    if (pooledRow) {
-                        pooledRow.reuse(i, false);
-                        rows.push(pooledRow);
-                        if (isVirtualization) {
-                            pooledRow.setTranslateY(
-                                pooledRow.getDefaultTopOffset()
-                            );
-                        }
-                    } else {
-                        const newRow = new TableRow(vp, i);
-                        rows.push(newRow);
-                        newRow.rendered = false;
-                        if (isVirtualization) {
-                            newRow.setTranslateY(newRow.getDefaultTopOffset());
-                        }
-                    }
+                    rows.push(this.getOrCreateRow(i));
                 }
             } else {
                 // Add rows before the current range.
                 for (let i = rows[0].index - 1; i >= from; --i) {
-                    const pooledRow = this.rowPool.pop();
-                    if (pooledRow) {
-                        pooledRow.reuse(i, false);
-                        rows.unshift(pooledRow);
-                        if (isVirtualization) {
-                            pooledRow.setTranslateY(
-                                pooledRow.getDefaultTopOffset()
-                            );
-                        }
-                    } else {
-                        const newRow = new TableRow(vp, i);
-                        rows.unshift(newRow);
-                        newRow.rendered = false;
-                        if (isVirtualization) {
-                            newRow.setTranslateY(newRow.getDefaultTopOffset());
-                        }
-                    }
+                    rows.unshift(this.getOrCreateRow(i));
                 }
 
                 // Add rows after the current range.
                 for (let i = rows[rows.length - 1].index + 1; i <= to; ++i) {
-                    const pooledRow = this.rowPool.pop();
-                    if (pooledRow) {
-                        pooledRow.reuse(i, false);
-                        rows.push(pooledRow);
-                        if (isVirtualization) {
-                            pooledRow.setTranslateY(
-                                pooledRow.getDefaultTopOffset()
-                            );
-                        }
-                    } else {
-                        const newRow = new TableRow(vp, i);
-                        rows.push(newRow);
-                        newRow.rendered = false;
-                        if (isVirtualization) {
-                            newRow.setTranslateY(newRow.getDefaultTopOffset());
-                        }
-                    }
+                    rows.push(this.getOrCreateRow(i));
                 }
             }
 
@@ -611,6 +547,51 @@ class RowsVirtualizer {
         }
 
         this.adjustRowHeights();
+    }
+
+    /**
+     * Gets a row from the pool or creates a new one for the given index.
+     *
+     * @param index
+     * The row index in the data table.
+     *
+     * @returns
+     * A TableRow instance ready for use.
+     */
+    private getOrCreateRow(index: number): TableRow {
+        const vp = this.viewport;
+        const isVirtualization = vp.virtualRows;
+        const pooledRow = this.rowPool.pop();
+
+        if (pooledRow) {
+            pooledRow.reuse(index, false);
+            if (isVirtualization) {
+                pooledRow.setTranslateY(pooledRow.getDefaultTopOffset());
+            }
+            return pooledRow;
+        }
+
+        const newRow = new TableRow(vp, index);
+        newRow.rendered = false;
+        if (isVirtualization) {
+            newRow.setTranslateY(newRow.getDefaultTopOffset());
+        }
+        return newRow;
+    }
+
+    /**
+     * Adds a row to the reuse pool, or destroys it if the pool is full.
+     *
+     * @param row
+     * The row to pool.
+     */
+    private poolRow(row: TableRow): void {
+        row.htmlElement.remove();
+        if (this.rowPool.length < RowsVirtualizer.MAX_POOL_SIZE) {
+            this.rowPool.push(row);
+        } else {
+            row.destroy();
+        }
     }
 
     /**
