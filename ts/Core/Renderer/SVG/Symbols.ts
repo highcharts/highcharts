@@ -402,21 +402,6 @@ function triangleDown(
     ];
 }
 
-function cross(
-    x: number,
-    y: number,
-    w: number,
-    h: number
-): SVGPath {
-    return [
-        ['M', x, y],
-        ['L', x + w, y + h],
-        ['M', x + w, y],
-        ['L', x, y + h],
-        ['z']
-    ];
-}
-
 /* *
  *
  *  Registry
@@ -447,8 +432,7 @@ const Symbols: SymbolTypeRegistry = {
     roundedRect,
     square: rect,
     triangle,
-    'triangle-down': triangleDown,
-    cross
+    'triangle-down': triangleDown
 } as SymbolTypeRegistry;
 
 /* *
