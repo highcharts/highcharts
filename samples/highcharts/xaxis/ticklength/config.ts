@@ -6,12 +6,12 @@ export default {
     controls: [{
         path: 'xAxis.tickLength',
         value: 30,
-        min: 0,
+        min: -10,
         max: 40
     }, {
         path: 'yAxis.tickLength',
         value: 0,
-        min: 0,
+        min: -10,
         max: 40
     }],
     templates: ['categories-12'],

@@ -116,7 +116,7 @@ export async function loadTree() {
 export async function findNodeByPath(path: string) {
     const tree = await loadTree();
 
-    const keys = path.split('.');
+    const keys = path.split('.').map(key => key.replace(/\[(\d+)\]/gu, ''));
     let currentNode = tree;
 
     const extendNode = async (node: any) => {
@@ -241,7 +241,7 @@ async function generateChartConfig(
     }
 
     const chartOptions: any = {};
-    for (const optionsTpl of config.templates || ['column']) {
+    for (const optionsTpl of config.templates || ['column', 'categories-4']) {
         const tplModule = await import(`./tpl/chart-options/${optionsTpl}.ts`);
         const tplOptions = tplModule.default;
         Highcharts.merge(true, chartOptions, tplOptions);
@@ -311,7 +311,7 @@ async function generateChartConfig(
 
 // Helper to compute mainType
 function getMainType(node: any) {
-    return node?.doclet.type.names[0].replace('Highcharts.', '');
+    return node?.doclet.type?.names[0].replace('Highcharts.', '');
 }
 
 // Build a list of metadata for each path
@@ -434,7 +434,7 @@ function pickHandler(meta: MetaData) {
     }
 
     // Get it from validvalues. Case: xAxis.gridLineInterpolation.
-    if (meta.node?.doclet.type.names.every(name => (
+    if (meta.node?.doclet.type?.names.every(name => (
         typeof name === 'string' &&
         /^"[A-Za-z0-9_]*"$/u.test(name)
     ))) {

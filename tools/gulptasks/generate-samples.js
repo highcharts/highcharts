@@ -84,21 +84,17 @@ async function task() {
 
         log.message(`Generating sample from ${configFile}...`);
 
-        try {
-            // Dynamically import the config
-            const configModule = await import(configPath);
-            const config = configModule.default;
+        // Dynamically import the config
+        const configModule = await import(configPath);
+        const config = configModule.default;
 
-            // Set the output directory to the same location as the config file
-            config.output = outputDir.replace(/^samples\//u, '');
+        // Set the output directory to the same location as the config file
+        config.output = outputDir.replace(/^samples\//u, '');
 
-            // Call saveDemoFile
-            await saveDemoFile(config);
+        // Call saveDemoFile
+        await saveDemoFile(config);
 
-            log.success(' ✔︎ Success');
-        } catch (error) {
-            log.failure(` ❌ Error: ${error.message} in generate-samples task`);
-        }
+        log.success(' ✔︎ Success');
     }
 
     log.success('All samples generated successfully');
