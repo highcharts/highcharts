@@ -5,6 +5,9 @@ Highcharts.chart('container', {
     title: {
         text: 'Demo of gauge plot bands'
     },
+    xAxis: {
+        categories: ['Apples', 'Bananas', 'Oranges', 'Pears']
+    },
     yAxis: {
         max: 100,
         min: 0,

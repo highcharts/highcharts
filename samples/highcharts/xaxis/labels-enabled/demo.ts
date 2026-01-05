@@ -6,6 +6,7 @@ Highcharts.chart('container', {
         text: 'Demo of <em>xAxis.labels.enabled</em>'
     },
     xAxis: {
+        categories: ['Apples', 'Bananas', 'Oranges', 'Pears'],
         labels: {
             enabled: false
         }

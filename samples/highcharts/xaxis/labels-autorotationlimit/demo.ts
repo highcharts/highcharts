@@ -10,6 +10,7 @@ Highcharts.chart('container', {
         text: 'Short words means word-wrap makes sense'
     },
     xAxis: {
+        categories: ['Apples', 'Bananas', 'Oranges', 'Pears'],
         labels: {
             autoRotationLimit: 40
         },

@@ -6,6 +6,7 @@ Highcharts.chart('container', {
         text: 'Demo of axis <em>crosshair</em> options'
     },
     xAxis: {
+        categories: ['Apples', 'Bananas', 'Oranges', 'Pears'],
         crosshair: true
     },
     yAxis: {

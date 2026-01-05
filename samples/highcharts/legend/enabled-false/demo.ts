@@ -5,6 +5,9 @@ Highcharts.chart('container', {
     title: {
         text: 'Demo of <em>legend.enabled</em>'
     },
+    xAxis: {
+        categories: ['Apples', 'Bananas', 'Oranges', 'Pears']
+    },
     legend: {
         enabled: false
     },

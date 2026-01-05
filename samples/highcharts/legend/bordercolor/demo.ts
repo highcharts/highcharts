@@ -5,6 +5,9 @@ Highcharts.chart('container', {
     title: {
         text: 'Demo of <em>legend</em> options'
     },
+    xAxis: {
+        categories: ['Apples', 'Bananas', 'Oranges', 'Pears']
+    },
     legend: {
         backgroundColor: '#aaaaaa40',
         borderColor: '#999999',

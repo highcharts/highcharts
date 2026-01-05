@@ -8,6 +8,7 @@ Highcharts.chart('container', {
         text: 'Demo of <em>xAxis.gridLineInterpolation</em>'
     },
     xAxis: {
+        categories: ['Apples', 'Bananas', 'Oranges', 'Pears'],
         gridLineColor: '#888',
         gridLineInterpolation: 'circle',
         tickInterval: 1
