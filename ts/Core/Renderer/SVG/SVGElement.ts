@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2025 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -672,12 +673,66 @@ class SVGElement implements SVGElementBase {
     }
 
     public attr(key: string): (number|string);
+    /** @internal */
     public attr(
         key: string,
         val: (number|string|ColorType|SVGPath),
         complete?: Function,
         continueAnimation?: boolean
     ): this;
+    /**
+     * Apply native and custom attributes to the SVG elements.
+     *
+     * In order to set the rotation center for rotation, set x and y to 0 and
+     * use `translateX` and `translateY` attributes to position the element
+     * instead.
+     *
+     * Attributes frequently used in Highcharts are `fill`, `stroke`,
+     * `stroke-width`.
+     *
+     * @sample highcharts/members/renderer-rect/
+     *         Setting some attributes
+     *
+     * @example
+     * // Set multiple attributes
+     * element.attr({
+     *     stroke: 'red',
+     *     fill: 'blue',
+     *     x: 10,
+     *     y: 10
+     * });
+     *
+     * // Set a single attribute
+     * element.attr('stroke', 'red');
+     *
+     * // Get an attribute
+     * element.attr('stroke'); // => 'red'
+     *
+     * @param hash
+     *        The native and custom SVG attributes.
+     *
+     * @param val
+     *        If the type of the first argument is `string`, the second can be a
+     *        value, which will serve as a single attribute setter. If the first
+     *        argument is a string and the second is undefined, the function
+     *        serves as a getter and the current value of the property is
+     *        returned.
+     *
+     * @param complete
+     *        A callback function to execute after setting the attributes. This
+     *        makes the function compliant and interchangeable with the
+     *        {@link SVGElement#animate} function.
+     *
+     * @param continueAnimation
+     *        Used internally when `.attr` is called as part of an animation
+     *        step. Otherwise, calling `.attr` for an attribute will stop
+     *        animation for that attribute.
+     *
+     * @return
+     *         If used as a setter, it returns the current
+     *         {@link Highcharts.SVGElement} so the calls can be chained. If
+     *         used as a getter, the current value of the attribute is returned.
+     */
     public attr(
         hash?: SVGAttributes,
         val?: undefined,

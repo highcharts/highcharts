@@ -111,7 +111,7 @@ export class LocalDataProvider extends DataProvider {
         //         resolve(
         //             this.presentationTable?.getCell(columnId, rowIndex)
         //         );
-        //     }, 1000);
+        //     }, Math.random() * 1000);
         // });
 
         return Promise.resolve(

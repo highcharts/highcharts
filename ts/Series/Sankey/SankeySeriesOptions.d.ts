@@ -2,11 +2,12 @@
  *
  *  Sankey diagram module
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2025 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -24,7 +25,6 @@ import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type SankeyDataLabelOptions from './SankeyDataLabelOptions';
 import type SankeyPoint from './SankeyPoint';
 import type SankeyPointOptions from './SankeyPointOptions';
-import type SankeySeries from './SankeySeries';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type Templating from '../../Core/Templating';
 import type TooltipOptions from '../../Core/TooltipOptions';
@@ -91,7 +91,7 @@ export interface SankeySeriesLevelOptions {
      *
      * @apioption plotOptions.sankey.levels.states
      */
-    states?: SeriesStatesOptions<SankeySeries>;
+    states?: SeriesStatesOptions<SankeySeriesOptions>;
 
 }
 
@@ -502,7 +502,7 @@ export interface SankeySeriesOptions extends ColumnSeriesOptions, NodesCompositi
 
     showInLegend?: boolean;
 
-    states?: SeriesStatesOptions<SankeySeries>;
+    states?: SeriesStatesOptions<SankeySeriesOptions>;
 
     /**
      * The opposite state of a hover for a single point node/link.

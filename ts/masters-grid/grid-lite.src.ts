@@ -1,10 +1,12 @@
+// SPDX-License-Identifier: LicenseRef-Highcharts
 /**
  * @license Highcharts Grid v@product.version@ (@product.date@)
  * @module grid/grid-lite
  *
  * (c) 2009-2025 Highsoft AS
  *
- * License: www.highcharts.com/license
+ * A commercial license may be required depending on use.
+ * See www.highcharts.com/license
  */
 
 
@@ -98,6 +100,8 @@ export {
     DataModifier,
     DataPool,
     DataTable,
+    _Grid as Grid,
+    _Options as Options,
     Pagination,
     SvgIcons,
     Table,
@@ -106,7 +110,6 @@ export {
 
 export const {
     defaultOptions,
-    Grid,
     grid,
     grids,
     isHighContrastModeActive,

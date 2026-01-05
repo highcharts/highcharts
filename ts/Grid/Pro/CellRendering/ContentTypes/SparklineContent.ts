@@ -4,9 +4,9 @@
  *
  *  (c) 2020-2025 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -22,10 +22,9 @@
  *
  * */
 
-import type { DeepPartial } from '../../../../Shared/Types';
+import type { AnyRecord } from '../../../../Shared/Types';
 import type SparklineRenderer from '../Renderers/SparklineRenderer';
 import type TableCell from '../../../Core/Table/Body/TableCell';
-import type * as HighchartsNamespace from '../../highcharts';
 
 import CellContentPro from '../CellContentPro.js';
 import Globals from '../../../Core/Globals.js';
@@ -52,72 +51,78 @@ class SparklineContent extends CellContentPro {
      * This is set to `undefined` by default, and should be set to the
      * Highcharts namespace before using the Sparkline Renderer.
      */
-    public static H: undefined | typeof HighchartsNamespace;
+    public static H: undefined | AnyRecord;
 
     /**
      * The default chart options for the sparkline content.
      */
-    public static defaultChartOptions: DeepPartial<
-        HighchartsNamespace.Options
-    > = {
-            chart: {
-                height: 40,
-                margin: [5, 8, 5, 8],
-                backgroundColor: 'transparent',
-                skipClone: true
-            },
-            accessibility: {
-                enabled: false
-            },
-            tooltip: {
-                enabled: false
-            },
-            title: {
-                text: ''
-            },
-            credits: {
-                enabled: false
-            },
-            xAxis: {
-                visible: false
-            },
-            yAxis: {
-                visible: false
-            },
-            legend: {
-                enabled: false
-            },
-            plotOptions: {
-                series: {
-                    borderWidth: 0,
-                    marker: {
+    public static defaultChartOptions: AnyRecord = {
+        chart: {
+            height: 40,
+            margin: [5, 8, 5, 8],
+            backgroundColor: 'transparent',
+            skipClone: true
+        },
+        accessibility: {
+            enabled: false
+        },
+        tooltip: {
+            enabled: false
+        },
+        title: {
+            text: ''
+        },
+        credits: {
+            enabled: false
+        },
+        xAxis: {
+            visible: false
+        },
+        yAxis: {
+            visible: false
+        },
+        legend: {
+            enabled: false
+        },
+        plotOptions: {
+            series: {
+                borderWidth: 0,
+                marker: {
+                    enabled: false
+                },
+                states: {
+                    hover: {
                         enabled: false
                     },
-                    states: {
-                        hover: {
-                            enabled: false
-                        },
-                        inactive: {
-                            enabled: false
-                        }
-                    },
-                    animation: false,
-                    dataLabels: {
+                    inactive: {
                         enabled: false
                     }
                 },
-                pie: {
-                    slicedOffset: 0,
-                    borderRadius: 0
+                animation: false,
+                dataLabels: {
+                    enabled: false
                 }
+            },
+            pie: {
+                slicedOffset: 0,
+                borderRadius: 0
             }
-        };
+        }
+    };
 
 
     /**
      * The Highcharts chart instance.
      */
-    public chart?: HighchartsNamespace.Chart;
+    public chart?: {
+        update: (
+            options: AnyRecord,
+            force?: boolean,
+            redraw?: boolean,
+            animation?: boolean
+        ) => void;
+        destroy: () => void;
+    };
 
     /**
      * The parent element for the sparkline content.
@@ -204,13 +209,13 @@ class SparklineContent extends CellContentPro {
         );
     }
 
-    private getProcessedOptions(): Partial<HighchartsNamespace.Options> {
+    private getProcessedOptions(): Partial<AnyRecord> {
         const renderer = this.renderer as SparklineRenderer;
         const { chartOptions } = renderer.options;
 
-        let options: Partial<HighchartsNamespace.Options>;
+        let options: Partial<AnyRecord>;
         if (typeof chartOptions === 'function') {
-            options = chartOptions.call(
+            options = (chartOptions as Function).call(
                 this.cell,
                 this.cell.value
             );

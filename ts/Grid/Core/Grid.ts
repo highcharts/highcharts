@@ -4,9 +4,9 @@
  *
  *  (c) 2020-2025 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -33,6 +33,7 @@ import type DataTable from '../../Data/DataTable.js';
 import type { NoIdColumnOptions } from './Table/Column';
 import type Popup from './UI/Popup.js';
 import type { DeepPartial } from '../../Shared/Types';
+import type Column from './Table/Column';
 
 import Accessibility from './Accessibility/Accessibility.js';
 import AST from '../../Core/Renderer/HTML/AST.js';
@@ -46,12 +47,16 @@ import Globals from './Globals.js';
 import TimeBase from '../../Shared/TimeBase.js';
 import Pagination from './Pagination/Pagination.js';
 
-const { makeHTMLElement, setHTMLContent } = GridUtils;
+const {
+    makeHTMLElement,
+    setHTMLContent,
+    createOptionsProxy
+} = GridUtils;
+
 const {
     diffObjects,
     extend,
     fireEvent,
-    getStyle,
     merge,
     pick
 } = U;
@@ -416,10 +421,10 @@ export class Grid {
             );
         }
 
-        this.initialContainerHeight = getStyle(container, 'height', true) || 0;
-
         this.container = container;
+        this.container.style.minHeight = 0 + 'px';
         this.container.innerHTML = AST.emptyHTML;
+
         this.contentWrapper = makeHTMLElement('div', {
             className: Globals.getClassName('container')
         }, this.container);
@@ -472,6 +477,13 @@ export class Grid {
             this.options ?? defaultOptions,
             this.userOptions
         );
+
+        this.viewport?.columns.forEach((column: Column): void => {
+            column.options = createOptionsProxy(
+                this.columnOptionsMap?.[column.id]?.options ?? {},
+                this.options?.columnDefaults
+            );
+        });
 
         return diff;
     }
@@ -868,7 +880,9 @@ export class Grid {
         const flags = this.dirtyFlags;
 
         if (flags.has('grid')) {
-            return await this.render();
+            await this.render();
+            fireEvent(this, 'afterRedraw');
+            return;
         }
 
         const { viewport: vp, pagination } = this;
@@ -1229,7 +1243,7 @@ export class Grid {
             this.renderNoData();
         }
 
-        await this.accessibility?.setA11yOptions();
+        await this.renderAccessibility();
 
         // Render bottom pagination, footer pagination,
         // or custom container pagination (after table).
@@ -1242,6 +1256,22 @@ export class Grid {
         fireEvent(this, 'afterRenderViewport');
 
         this.viewport?.reflow();
+    }
+
+    /**
+     * Renders the Grid accessibility.
+     * @internal
+     */
+    private async renderAccessibility(): Promise<void> {
+        const accessibility = this.accessibility;
+
+        if (!accessibility) {
+            return;
+        }
+
+        await accessibility.setA11yOptions();
+        accessibility.addScreenReaderSection('before');
+        accessibility.addScreenReaderSection('after');
     }
 
     /**

@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2025 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -20,6 +21,8 @@
  *
  * Use the `declare module './PointBase'` pattern to overload the interface in
  * this definition file.
+ *
+ * @internal
  */
 export interface KDPointSearchObjectBase {
     clientX?: number;
@@ -32,4 +35,5 @@ export interface KDPointSearchObjectBase {
  *
  * */
 
+/** @internal */
 export default KDPointSearchObjectBase;

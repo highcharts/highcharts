@@ -4,9 +4,9 @@
  *
  *  (c) 2020-2025 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -141,6 +141,10 @@ class TableCell extends Cell {
         value?: DataTable.CellType,
         updateTable: boolean = false
     ): Promise<void> {
+
+        // TODO: Find a better way to show the cell value being updated.
+        this.htmlElement.style.opacity = '0.1';
+
         if (!defined(value)) {
             value = await this.column.viewport.grid.dataProvider?.getValue(
                 this.column.id,
@@ -169,6 +173,9 @@ class TableCell extends Cell {
 
         // Add custom class name from column options
         this.setCustomClassName(this.column.options.cells?.className);
+
+        // TODO: Remove this after the first part was implemented.
+        this.htmlElement.style.opacity = '';
 
         fireEvent(this, 'afterRender', { target: this });
     }
