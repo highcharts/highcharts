@@ -69,6 +69,17 @@ class TableCell extends Cell {
      */
     public content?: CellContent;
 
+    /**
+     * A token used to prevent stale async responses from overwriting cell
+     * data. In virtualized grids, cells are reused as rows scroll in/out of
+     * view. If a cell starts an async value fetch for row A, then gets reused
+     * for row B before the fetch completes, the stale response for row A
+     * could incorrectly overwrite row B's data. This token is incremented
+     * before each async fetch, and checked when the fetch completes - if the
+     * token has changed, the response is discarded as stale.
+     */
+    private asyncFetchToken: number = 0;
+
 
     /* *
     *
@@ -141,6 +152,7 @@ class TableCell extends Cell {
         value?: DataTable.CellType,
         updateTable: boolean = false
     ): Promise<void> {
+        const fetchToken = ++this.asyncFetchToken;
 
         // TODO: Find a better way to show the cell value being updated.
         this.htmlElement.style.opacity = '0.1';
@@ -150,6 +162,12 @@ class TableCell extends Cell {
                 this.column.id,
                 this.row.index
             );
+
+            // Discard stale response if cell was reused for a different row
+            if (fetchToken !== this.asyncFetchToken) {
+                this.htmlElement.style.opacity = '';
+                return;
+            }
         }
 
         this.value = value;
