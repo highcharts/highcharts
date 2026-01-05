@@ -27,16 +27,16 @@ test.describe('Cell class name formats', () => {
         await page.keyboard.press('Enter');
         await expect(cellA).toHaveClass(/greater-than-100/);
 
-        // await cellB.dblclick({ force: true });
-        // await cellB.locator('input').clear();
-        // await cellB.locator('input').fill('10');
-        // await page.keyboard.press('Enter');
-        // await expect(cellB).not.toHaveClass(/greater-than-100/);
-        // await expect(cellB).not.toHaveClass(/second-class/);
+        await cellB.dblclick({ force: true });
+        await cellB.locator('input').clear();
+        await cellB.locator('input').fill('10');
+        await page.keyboard.press('Enter');
+        await expect(cellB).not.toHaveClass(/greater-than-100/);
+        await expect(cellB).not.toHaveClass(/second-class/);
     });
 
-    // test('Custom class name should be assigned to the header cells', async ({ page }) => {
-    //     await expect(page.locator('.header-cell-custom-class-price')).toBeVisible();
-    // });
+    test('Custom class name should be assigned to the header cells', async ({ page }) => {
+        await expect(page.locator('.header-cell-custom-class-price')).toBeVisible();
+    });
 });
 

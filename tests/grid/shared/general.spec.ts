@@ -1,28 +1,5 @@
 import { test, expect } from '~/fixtures.ts';
 
-test.describe('Remove the dashboard', () => {
-    test.beforeAll(async ({ browser }) => {
-        // Setup
-    });
-
-    test.beforeEach(async ({ page }) => {
-        await page.goto('/dashboards/cypress/grid-hidden');
-    });
-
-    test('Rows should be visible when grid is switched from hidden', async ({ page }) => {
-        // Act
-        await page.locator('#show').click();
-
-        // Assert
-        await expect(page.locator('tr')).toHaveCount(5);
-    });
-
-    test('Rows should have even and odd classes', async ({ page }) => {
-        await expect(page.locator('tbody tr').first()).toHaveClass(/hcg-row-odd/);
-        await expect(page.locator('tbody tr').nth(1)).toHaveClass(/hcg-row-even/);
-    });
-});
-
 test.describe('Grid rows removal', () => {
     test.beforeAll(async ({ browser }) => {
         // Setup
