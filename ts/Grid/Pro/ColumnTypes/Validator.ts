@@ -25,13 +25,13 @@ import type { ColumnDataType } from '../../Core/Table/Column';
 import type { EditModeContent } from '../CellEditing/CellEditMode';
 import type Table from '../../Core/Table/Table';
 import type TableCell from '../../Core/Table/Body/TableCell';
+import type { CellRendererTypeRegistry } from '../CellRendering/CellRendererType';
 
 import AST from '../../../Core/Renderer/HTML/AST.js';
 import Globals from '../../Core/Globals.js';
 import GridUtils from '../../Core/GridUtils.js';
 import Cell from '../../Core/Table/Cell.js';
 import U from '../../../Core/Utilities.js';
-import { CellRendererTypeRegistry } from '../CellRendering/CellRendererType';
 
 const {
     makeDiv,
@@ -127,10 +127,6 @@ class Validator {
         },
         arrayNumber: {
             validate: function ({ rawValue }): boolean {
-                if (typeof rawValue !== 'string') {
-                    return false;
-                }
-
                 return rawValue
                     .split(',')
                     .every(
@@ -163,6 +159,7 @@ class Validator {
                 return arrayNumberValidate({ rawValue }) ||
                     jsonValidate({ rawValue });
             },
+            // eslint-disable-next-line max-len
             notification: 'Value should be a valid JSON or a list of numbers separated by commas.'
         }
     };

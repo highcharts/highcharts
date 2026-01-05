@@ -29,7 +29,13 @@ Grid.grid('container', {
                 '[{ "x": 0, "y": 10, "color": "#91C8E4" }, { "x": 1, "y": 1, "color": "#749BC2" }, { "x": 2, "y": 10, "color": "#4682A9" }]'
             ],
             /* eslint-enable max-len */
-            defaultValidator: [[1, 2, 3], [1, 2, 3], [1, 2, 3], [1, 2, 3]]
+            defaultValidator: [
+                '[1, 2, 3]',
+                '[1, 2, 3]',
+                '[1, 2, 3]',
+                '[1, 2, 3]',
+                '[1, 2, 3]'
+            ]
         }
     },
     lang: {
