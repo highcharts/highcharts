@@ -45,8 +45,7 @@ test.describe('Grid sorting', () => {
             return grid.presentationTable.columns.price;
         });
 
-        console.log(priceData);
-        // expect(priceData, 'Weight column should be sorted.').toEqual([1.5, 2.53, 5, 4.5]);
+        expect(priceData, 'Weight column should be sorted.').toEqual([1.5, 2.53, 5, 4.5]);
     });
 
     test('Clicking two times on the `weight` column header should sort the table in descending order', async ({ page }) => {
