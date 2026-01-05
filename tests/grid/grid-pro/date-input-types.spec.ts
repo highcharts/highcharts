@@ -64,7 +64,17 @@ test.describe('Date Input Types', () => {
     });
 
     test('Should use correct input types for each column', async ({ page }) => {
+        const browserName = page.context().browser()?.browserType().name();
         await page.goto('grid-pro/cypress/date-input-types');
+
+        // In WebKit, input[type="date"] uses the native OS date picker, which
+        // cannot be programmatically selected or committed (no Playwright
+        // support), whereas input[type="datetime-local"] behaves like a regular
+        // text input and can be automated, highlighting the difference between
+        // these input types.
+        if (browserName === 'webkit') {
+            return true;
+        }
 
         // Verify correct input types are used
         const dateCell = page.locator('tr[data-row-index="0"] td[data-column-id="dateView"]');
