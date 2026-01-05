@@ -84,6 +84,16 @@ declare module '../Chart/ChartBase' {
 
 declare module '../Series/SeriesOptions' {
     interface SeriesOptions {
+        /**
+         * The sequential index of the series in the legend.
+         *
+         * @see [legend.reversed](#legend.reversed)
+         *
+         * @see [yAxis.reversedStacks](#yAxis.reversedStacks)
+         *
+         * @sample {highcharts|highstock} highcharts/series/legendindex/
+         *         Legend in opposite order
+         */
         legendIndex?: number;
         legendType?: ('point'|'series');
         showCheckbox?: boolean;

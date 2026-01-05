@@ -163,26 +163,17 @@ class Point {
     /**
      * For categorized axes this property holds the category name for the
      * point. For other axes it holds the X value.
-     *
-     * @name Highcharts.Point#category
-     * @type {number|string}
      */
     public category: (number|string);
 
     /**
      * The point's current color.
-     *
-     * @name Highcharts.Point#color
-     * @type {Highcharts.ColorType|undefined}
      */
     public color?: ColorType;
 
     /**
      * The point's current color index, used in styled mode instead of
      * `color`. The color index is inserted in class names used for styling.
-     *
-     * @name Highcharts.Point#colorIndex
-     * @type {number|undefined}
      */
     public colorIndex?: number;
 

@@ -132,8 +132,6 @@ declare module './PointBase' {
         /**
          * Contains the point's index in the `Series.points` array.
          *
-         * @name Highcharts.Point#index
-         * @type {number}
          * @readonly
          */
         index: number;
@@ -149,8 +147,6 @@ declare module './PointBase' {
          * of the axis.
          *
          * @see Highcharts.Point#pos
-         * @name Highcharts.Point#plotX
-         * @type {number|undefined}
          */
         plotX?: number;
 
@@ -165,8 +161,6 @@ declare module './PointBase' {
          * of the `yAxis`.
          *
          * @see Highcharts.Point#pos
-         * @name Highcharts.Point#plotY
-         * @type {number|undefined}
          */
         plotY?: number;
     }

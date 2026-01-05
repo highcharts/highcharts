@@ -41,6 +41,21 @@ declare module '../AxisOptions' {
 
 declare module '../../Series/SeriesOptions' {
     interface SeriesOptions {
+        /**
+         * This option allows grouping series in a stacked chart. The stack
+         * option can be a string or anything else, as long as the grouped
+         * series' stack options match each other after conversion into a
+         * string.
+         *
+         * @sample {highcharts} highcharts/series/stack/
+         *         Stacked and grouped columns
+         *
+         * @sample {highcharts} highcharts/series/stack-centerincategory/
+         *         Stacked and grouped, centered in category
+         *
+         * @since     2.1
+         * @product   highcharts highstock
+         */
         stack?: (number|string);
         stacking?: StackOverflowValue;
     }
