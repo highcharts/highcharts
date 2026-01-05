@@ -15,6 +15,17 @@ export interface ControlOptions {
 export interface SampleGeneratorConfig {
     chartOptionsExtra?: Options;
     controls?: ControlOptions[];
+    /**
+     * The data file to use, located in samples/data
+     *
+     * @example 'usdeur.json'
+     */
+    dataFile?: string;
+    /**
+     * The chart factory function to use, for example `chart` in
+     * `Highcharts.chart()`
+     */
+    factory?: 'chart' | 'stockChart' | 'mapChart' | 'ganttChart';
     /** Additional Highcharts module files */
     modules?: string[];
     /** The output directory for the generated samples */

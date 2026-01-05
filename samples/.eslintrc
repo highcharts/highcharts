@@ -117,6 +117,7 @@
     },
     "rules": {
       "@typescript-eslint/no-explicit-any": 0,
+      "@typescript-eslint/no-floating-promises": 0,
       "@typescript-eslint/no-namespace": 0,
       "@typescript-eslint/no-unnecessary-type-assertion": 0,
       "@typescript-eslint/no-unsafe-assignment": 0,

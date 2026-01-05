@@ -1,22 +1,19 @@
 (async () => {
 
-    const usdeur = await fetch(
+    const data = await fetch(
         'https://www.highcharts.com/samples/data/usdeur.json'
     ).then(response => response.json());
 
     Highcharts.stockChart('container', {
-
+        title: {
+            text: 'Demo of <em>yAxis.alternateGridColor</em>'
+        },
         yAxis: {
-            alternateGridColor: '#FDFFD5'
+            alternateGridColor: '#2caffe19'
         },
-
-        rangeSelector: {
-            selected: 1
-        },
-
         series: [{
-            name: 'USD to EUR',
-            data: usdeur
+            data: data
         }]
     });
+
 })();

@@ -255,6 +255,12 @@ async function generateChartConfig(
         Highcharts.merge(true, chartOptions, chartOptionsExtra);
     }
 
+    if (config.dataFile) {
+        Highcharts.merge(true, chartOptions, {
+            series: [{ data: 'data' }]
+        });
+    }
+
     for (const { defaultValue, path, overrideValue } of metaList) {
         // Use override value if provided, otherwise use default from tree
         const value = overrideValue !== void 0 ?
@@ -465,8 +471,17 @@ export async function getDemoHTML(
 ) {
     let html = await loadTemplate('demo.html');
 
-    if (config?.modules) {
-        const moduleScripts = config.modules.map(
+    const { factory, modules = [] } = config || {};
+    if (factory === 'stockChart' && !modules.includes('modules/stock')) {
+        modules.unshift('modules/stock');
+    } else if (factory === 'mapChart' && !modules.includes('modules/map')) {
+        modules.unshift('modules/map');
+    } else if (factory === 'ganttChart' && !modules.includes('modules/gantt')) {
+        modules.unshift('modules/gantt');
+    }
+
+    if (modules.length > 0) {
+        const moduleScripts = modules.map(
             moduleName => `<script src="https://code.highcharts.com/${moduleName}.js"></script>`
         ).join('\n    ');
         html = html.replace(
@@ -522,11 +537,21 @@ export async function getDemoTS(
     config: SampleGeneratorConfig,
     metaList: MetaList
 ) {
+
+    const { dataFile, factory = 'chart' } = config;
+
     let chartOptions = JSON.stringify(
         await generateChartConfig(config, metaList),
         null,
         4
     );
+
+    // Fix data file reference
+    if (dataFile) {
+        chartOptions = chartOptions
+            .replace(/"data": "data"/u, '"data": data')
+            .replace(/\n/gu, '\n    ');
+    }
 
     // Replace double quotes with single quotes for strings
     chartOptions = chartOptions.replace(/"([^"]+)":/gu, '$1:') // Keys
@@ -757,10 +782,26 @@ export async function getDemoTS(
         }
     );
 
-    const ts = `Highcharts.chart('container', ${chartOptions});\n`
+    let ts = '';
+
+    if (dataFile) {
+        ts += [
+            '(async () => {',
+            '',
+            '    const data = await fetch(',
+            `        'https://www.highcharts.com/samples/data/${dataFile}'`,
+            '    ).then(response => response.json());'
+        ].join('\n') + '\n\n    ';
+    }
+
+    ts += `Highcharts.${factory}('container', ${chartOptions});\n`
         // Some cases, for example tooltip.borderWidth, have defaultValue as
         // "undefined" in tree.json
         .replace(/"undefined"/gu, 'undefined');
+
+    if (dataFile) {
+        ts += '\n})();\n';
+    }
 
     return ts;
 }

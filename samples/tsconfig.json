@@ -13,7 +13,7 @@
         "target": "ES2022",
         "lib": [
             "dom",
-            "es5"
+            "ES2015"
         ],
         "paths": {
             "highcharts": ["code/highcharts"],
