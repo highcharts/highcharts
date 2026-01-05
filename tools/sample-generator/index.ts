@@ -640,14 +640,18 @@ export async function getDemoTS(
                 .substring(0, offset)
                 .match(/(^|\n)([ \t]*)[^\n]*$/u);
             const indent = indentMatch ? indentMatch[2] : '';
+            const indentWithKey = (indentMatch?.[0] || '')
+                .replace(/^[\n\r]+/u, '');
             const numbers = p1.replace(/\s+/gu, ' ').split(', ');
             const singleLine = `[${numbers.join(', ')}]`;
-            if ((indent.length + singleLine.length) <= 80) {
+            const maxLineLength = 80;
+
+            // 79 because we want to allow for a comma after the array
+            if (indentWithKey.length + singleLine.length <= maxLineLength - 1) {
                 return singleLine;
             }
 
             // Break into multiple lines
-            const maxLineLength = 80;
             const lineIndent = indent + '    ';
             let multiLine = '[\n' + lineIndent;
             let currentLine = '';
