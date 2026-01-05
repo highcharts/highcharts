@@ -96,6 +96,7 @@ export interface IKHParamsOptions extends SMAParamsOptions {
     periodSenkouSpanB?: number;
 }
 
+/** @internal */
 export interface IKHDrawSenkouSpanObject {
     indicator: IKHIndicator;
     points: Array<IKHPoint>;
@@ -146,10 +147,12 @@ export interface IKHSenkouSpanOptions {
     };
 }
 
+/** @internal */
 export interface IKHGapExtensionObject {
     options?: IKHGapSizeOptions;
 }
 
+/** @internal */
 export interface IKHGapSizeOptions {
     gapSize?: IKHOptions['gapSize'];
 }

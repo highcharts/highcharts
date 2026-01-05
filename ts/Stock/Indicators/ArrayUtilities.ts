@@ -1,4 +1,4 @@
-/**
+/* *
  *
  *  (c) 2010-2025 Pawel Fus & Daniel Studencki
  *

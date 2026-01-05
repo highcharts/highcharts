@@ -51,9 +51,6 @@ export interface OBVOptions extends SMAOptions {
 }
 
 export interface OBVParamsOptions extends SMAParamsOptions {
-    /**
-     * @excluding index, period
-     */
     index?: undefined;
     period?: undefined;
     /**

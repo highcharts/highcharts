@@ -54,18 +54,12 @@ export interface PCOptions extends SMAOptions, MultipleLinesComposition.Indicato
      * @apioption plotOptions.pc.fillColor
      */
     fillColor?: ColorType;
-    /**
-     * @excluding index
-     */
     params?: PCParamsOptions;
     bottomLine?: Record<string, CSSObject>;
     topLine?: Record<string, CSSObject>;
 }
 
 export interface PCParamsOptions extends SMAParamsOptions {
-    /**
-     * @excluding index
-     */
     index?: undefined;
 }
 

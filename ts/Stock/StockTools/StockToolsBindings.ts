@@ -1,4 +1,4 @@
-/**
+/* *
  *
  *  Events generator for Stock tools
  *

@@ -91,6 +91,7 @@ export interface LinearRegressionParamsOptions extends SMAParamsOptions {
     xAxisUnit?: null|number;
 }
 
+/** @internal */
 export interface RegressionLineParametersObject {
     slope: number;
     intercept: number;
