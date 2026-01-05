@@ -523,6 +523,12 @@ export async function getDemoHTML(
         .replace('<em>', '')
         .replace('</em>', '');
     */
+    const description = config.controlsDescription ?
+        `<highcharts-group-description>
+            ${config.controlsDescription}
+        </highcharts-group-description>` :
+        '';
+
 
     // Add the config
     if (controls.length > 0) {
@@ -530,6 +536,7 @@ export async function getDemoHTML(
             '<!-- CONTROLS_PLACEHOLDER -->',
             `<highcharts-controls>
     <highcharts-group header="Update options">
+      ${description}
       ${controls.join('\n      ')}
     </highcharts-group>
   </highcharts-controls>`

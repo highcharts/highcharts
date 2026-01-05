@@ -1,30 +1,25 @@
 (async () => {
 
-    const usdeur = await fetch(
+    const data = await fetch(
         'https://www.highcharts.com/samples/data/usdeur.json'
     ).then(response => response.json());
 
     Highcharts.stockChart('container', {
-
-        chart: {
-            width: 800
+        title: {
+            text: 'Demo of <em>xAxis.startOfWeek</em>'
         },
-
         xAxis: {
             dateTimeLabelFormats: {
                 week: '%a,<br/>%e. %b'
             },
-            // startOfWeek: 1, // by default
-            tickPixelInterval: 70
+            startOfWeek: 1
         },
-
         rangeSelector: {
             selected: 1
         },
-
         series: [{
-            name: 'USD to EUR',
-            data: usdeur
+            data: data
         }]
     });
+
 })();

@@ -1,26 +1,19 @@
 (async () => {
 
-    const usdeur = await fetch(
+    const data = await fetch(
         'https://www.highcharts.com/samples/data/usdeur.json'
     ).then(response => response.json());
 
     Highcharts.stockChart('container', {
-
         title: {
-            text: 'Y axis is not opposite, renders on the left'
+            text: 'Demo of <em>yAxis.tickInterval</em>'
         },
-
         yAxis: {
-            opposite: false
+            tickInterval: 0.01
         },
-
-        rangeSelector: {
-            selected: 1
-        },
-
         series: [{
-            name: 'USD to EUR',
-            data: usdeur
+            data: data
         }]
     });
+
 })();

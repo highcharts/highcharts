@@ -21,6 +21,10 @@ export interface SampleGeneratorConfig {
     chartOptionsExtra?: Options;
     controls?: ControlOptions[];
     /**
+     * A descriptive text for the controls
+     */
+    controlsDescription?: string;
+    /**
      * The data file to use, located in samples/data
      *
      * @example 'usdeur.json'
