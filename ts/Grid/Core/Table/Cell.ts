@@ -166,7 +166,7 @@ abstract class Cell {
      *
      * @internal
      */
-    protected abstract onClick(e: MouseEvent|KeyboardEvent): void;
+    public abstract onClick(e: MouseEvent|KeyboardEvent): void;
 
     /**
      * Handles the focus event on the cell.
@@ -188,7 +188,7 @@ abstract class Cell {
      * @param e
      * Keyboard event object.
      */
-    protected onKeyDown(e: KeyboardEvent): void {
+    public onKeyDown(e: KeyboardEvent): void {
         const { row, column } = this;
         if (!column) {
             return;
@@ -254,7 +254,7 @@ abstract class Cell {
      * Handles the mouse over event on the cell.
      * @internal
      */
-    protected onMouseOver(): void {
+    public onMouseOver(): void {
         const { grid } = this.row.viewport;
         grid.hoverColumn(this.column?.id);
 
@@ -267,7 +267,7 @@ abstract class Cell {
      * Handles the mouse out event on the cell.
      * @internal
      */
-    protected onMouseOut(): void {
+    public onMouseOut(): void {
         const { grid } = this.row.viewport;
         grid.hoverColumn();
 

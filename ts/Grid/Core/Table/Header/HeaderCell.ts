@@ -263,7 +263,7 @@ class HeaderCell extends Cell {
         this.toolbar?.reflow();
     }
 
-    protected override onKeyDown(e: KeyboardEvent): void {
+    public override onKeyDown(e: KeyboardEvent): void {
         if (!this.column || e.target !== this.htmlElement) {
             return;
         }
@@ -277,7 +277,7 @@ class HeaderCell extends Cell {
         super.onKeyDown(e);
     }
 
-    protected override onClick(e: MouseEvent): void {
+    public override onClick(e: MouseEvent): void {
         const column = this.column;
 
         if (

@@ -217,6 +217,14 @@ class Table {
 
         this.tbodyElement.addEventListener('scroll', this.onScroll);
         this.tbodyElement.addEventListener('focus', this.onTBodyFocus);
+
+        // Delegated cell events
+        this.tbodyElement.addEventListener('click', this.onCellClick);
+        this.tbodyElement.addEventListener('dblclick', this.onCellDblClick);
+        this.tbodyElement.addEventListener('mousedown', this.onCellMouseDown);
+        this.tbodyElement.addEventListener('mouseover', this.onCellMouseOver);
+        this.tbodyElement.addEventListener('mouseout', this.onCellMouseOut);
+        this.tbodyElement.addEventListener('keydown', this.onCellKeyDown);
     }
 
     /* *
@@ -436,6 +444,67 @@ class Table {
     };
 
     /**
+     * Delegated click handler for cells.
+     */
+    private onCellClick = (e: MouseEvent): void => {
+        const cell = this.getCellFromElement(e.target);
+        if (cell) {
+            (cell as { onClick(e: MouseEvent | KeyboardEvent): void })
+                .onClick(e);
+        }
+    };
+
+    /**
+     * Delegated double-click handler for cells.
+     */
+    private onCellDblClick = (e: MouseEvent): void => {
+        const cell = this.getCellFromElement(e.target);
+        if (cell && 'onDblClick' in cell) {
+            (cell as { onDblClick(e: MouseEvent): void }).onDblClick(e);
+        }
+    };
+
+    /**
+     * Delegated mousedown handler for cells.
+     */
+    private onCellMouseDown = (e: MouseEvent): void => {
+        const cell = this.getCellFromElement(e.target);
+        if (cell && 'onMouseDown' in cell) {
+            (cell as { onMouseDown(e: MouseEvent): void }).onMouseDown(e);
+        }
+    };
+
+    /**
+     * Delegated mouseover handler for cells.
+     */
+    private onCellMouseOver = (e: MouseEvent): void => {
+        const cell = this.getCellFromElement(e.target);
+        if (cell) {
+            (cell as { onMouseOver(): void }).onMouseOver();
+        }
+    };
+
+    /**
+     * Delegated mouseout handler for cells.
+     */
+    private onCellMouseOut = (e: MouseEvent): void => {
+        const cell = this.getCellFromElement(e.target);
+        if (cell) {
+            (cell as { onMouseOut(): void }).onMouseOut();
+        }
+    };
+
+    /**
+     * Delegated keydown handler for cells.
+     */
+    private onCellKeyDown = (e: KeyboardEvent): void => {
+        const cell = this.getCellFromElement(e.target);
+        if (cell) {
+            (cell as { onKeyDown(e: KeyboardEvent): void }).onKeyDown(e);
+        }
+    };
+
+    /**
      * Scrolls the table to the specified row.
      *
      * @param index
@@ -493,11 +562,58 @@ class Table {
     }
 
     /**
+     * Finds a cell from a DOM element within the table body.
+     *
+     * @param element
+     * The DOM element to find the cell for (typically event.target).
+     *
+     * @returns
+     * The Cell instance or undefined if not found.
+     */
+    public getCellFromElement(element: EventTarget | null): Cell | undefined {
+        if (!(element instanceof HTMLElement)) {
+            return;
+        }
+
+        const td = element.closest('td');
+        if (!td) {
+            return;
+        }
+
+        const tr = td.parentElement;
+        if (!tr) {
+            return;
+        }
+
+        const rowIndexAttr = tr.getAttribute('data-row-index');
+        if (rowIndexAttr === null) {
+            return;
+        }
+
+        const rowIndex = parseInt(rowIndexAttr, 10);
+        const firstRowIndex = this.rows[0]?.index ?? 0;
+        const row = this.rows[rowIndex - firstRowIndex];
+        if (!row) {
+            return;
+        }
+
+        // Find cell index by position in row
+        const cellIndex = Array.prototype.indexOf.call(tr.children, td);
+        return row.cells[cellIndex];
+    }
+
+    /**
      * Destroys the grid table.
      */
     public destroy(): void {
         this.tbodyElement.removeEventListener('focus', this.onTBodyFocus);
         this.tbodyElement.removeEventListener('scroll', this.onScroll);
+        this.tbodyElement.removeEventListener('click', this.onCellClick);
+        this.tbodyElement.removeEventListener('dblclick', this.onCellDblClick);
+        this.tbodyElement.removeEventListener('mousedown', this.onCellMouseDown);
+        this.tbodyElement.removeEventListener('mouseover', this.onCellMouseOver);
+        this.tbodyElement.removeEventListener('mouseout', this.onCellMouseOut);
+        this.tbodyElement.removeEventListener('keydown', this.onCellKeyDown);
         this.resizeObserver.disconnect();
         this.columnsResizer?.removeEventListeners();
         this.header?.destroy();
