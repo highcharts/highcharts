@@ -1,22 +1,19 @@
 (async () => {
 
-    const usdeur = await fetch(
+    const data = await fetch(
         'https://www.highcharts.com/samples/data/usdeur.json'
     ).then(response => response.json());
 
     Highcharts.stockChart('container', {
-
-        rangeSelector: {
-            selected: 1
+        title: {
+            text: 'Demo of <em>yAxis.gridLineWidth</em>'
         },
-
         yAxis: {
-            gridLineColor: 'green'
+            gridLineWidth: 2
         },
-
         series: [{
-            name: 'USD to EUR',
-            data: usdeur
+            data: data
         }]
     });
+
 })();

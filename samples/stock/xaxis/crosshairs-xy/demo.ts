@@ -1,22 +1,22 @@
 (async () => {
 
-    const usdeur = await fetch(
+    const data = await fetch(
         'https://www.highcharts.com/samples/data/usdeur.json'
     ).then(response => response.json());
 
     Highcharts.stockChart('container', {
-
-        rangeSelector: {
-            selected: 1
+        title: {
+            text: 'Demo of axis <em>crosshair</em> options'
         },
-
         xAxis: {
-            lineColor: 'red'
+            crosshair: true
         },
-
+        yAxis: {
+            crosshair: true
+        },
         series: [{
-            name: 'USD to EUR',
-            data: usdeur
+            data: data
         }]
     });
+
 })();

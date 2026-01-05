@@ -964,6 +964,8 @@ namespace AxisDefaults {
              *         Linked category names
              * @sample {highcharts} highcharts/xaxis/labels-format-custom/
              *         Custom number format
+             * @sample {highstock} stock/xaxis/labels-format/
+             *         Added units on Y axis
              *
              * @type      {string}
              * @since     3.0

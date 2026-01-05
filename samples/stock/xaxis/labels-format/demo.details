@@ -1,0 +1,6 @@
+---
+ name: Demo of yAxis.labels.format
+ authors:
+   - Torstein Hønsi
+ js_wrap: b
+...

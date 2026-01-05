@@ -1,22 +1,21 @@
 (async () => {
 
-    const usdeur = await fetch(
+    const data = await fetch(
         'https://www.highcharts.com/samples/data/usdeur.json'
     ).then(response => response.json());
 
     Highcharts.stockChart('container', {
         title: {
-            text: 'xAxis.min = 2010-09-01, xAxis.max = 2014-09-01'
+            text: 'Demo of <em>xAxis.crosshair.dashStyle</em>'
         },
-
         xAxis: {
-            min: '2010-09-01',
-            max: '2014-09-01'
+            crosshair: {
+                dashStyle: 'Dash'
+            }
         },
-
         series: [{
-            name: 'USD to EUR',
-            data: usdeur
+            data: data
         }]
     });
+
 })();

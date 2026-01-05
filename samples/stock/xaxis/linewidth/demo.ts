@@ -1,23 +1,19 @@
 (async () => {
 
-    const usdeur = await fetch(
+    const data = await fetch(
         'https://www.highcharts.com/samples/data/usdeur.json'
     ).then(response => response.json());
 
     Highcharts.stockChart('container', {
-
-        yAxis: {
-            minPadding: 0.5,
-            maxPadding: 0.5
+        title: {
+            text: 'Demo of <em>xAxis.lineWidth</em>'
         },
-
-        rangeSelector: {
-            selected: 1
+        xAxis: {
+            lineWidth: 2
         },
-
         series: [{
-            name: 'USD to EUR',
-            data: usdeur
+            data: data
         }]
     });
+
 })();

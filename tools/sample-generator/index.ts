@@ -403,6 +403,9 @@ function pickHandler(meta: MetaData) {
 
     const mainType = meta.mainType || '';
 
+    if (meta.controlOptions?.type === 'text') {
+        return { kind: 'text', mod: textHandler } as const;
+    }
     if (
         meta.controlOptions?.type === 'boolean' ||
         mainType.toLowerCase() === 'boolean'

@@ -1,31 +1,27 @@
 (async () => {
 
-    const usdeur = await fetch(
+    const data = await fetch(
         'https://www.highcharts.com/samples/data/usdeur.json'
     ).then(response => response.json());
 
     Highcharts.stockChart('container', {
-
+        title: {
+            text: 'Demo of <em>xAxis.dateTimeLabelFormats</em> options'
+        },
         xAxis: {
-            type: 'datetime',
             dateTimeLabelFormats: {
-                second: '%Y-%m-%d<br/>%H:%M:%S',
-                minute: '%Y-%m-%d<br/>%H:%M',
-                hour: '%Y-%m-%d<br/>%H:%M',
                 day: '%Y<br/>%m-%d',
-                week: '%Y<br/>%m-%d',
+                hour: '%Y-%m-%d<br/>%H:%M',
+                minute: '%Y-%m-%d<br/>%H:%M',
                 month: '%Y-%m',
+                second: '%Y-%m-%d<br/>%H:%M:%S',
+                week: '%Y<br/>%m-%d',
                 year: '%Y'
             }
         },
-
-        rangeSelector: {
-            selected: 1
-        },
-
         series: [{
-            name: 'USD to EUR',
-            data: usdeur
+            data: data
         }]
     });
+
 })();
