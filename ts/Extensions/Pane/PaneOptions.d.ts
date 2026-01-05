@@ -46,10 +46,12 @@ export type PaneBackgroundShapeValue = ('arc'|'circle'|'solid');
 
 export interface PaneOptions {
     background?: PaneBackgroundOptions|Array<PaneBackgroundOptions>;
-    center?: Array<(string|number)>;
+    borderRadius?: number|string;
+    center?: [string|number|undefined, string|number|undefined];
     endAngle?: number;
     id?: string;
     innerSize?: (number|string);
+    margin?: number|Array<number>;
     size?: (number|string);
     startAngle?: number;
     zIndex?: number;

@@ -8,10 +8,6 @@ Highcharts.chart('container', {
     title: {
         text: 'Highcharts Polar Chart'
     },
-    pane: {
-        startAngle: 0,
-        endAngle: 360
-    },
     xAxis: {
         tickInterval: 45,
         min: 0,

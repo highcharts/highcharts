@@ -1184,17 +1184,14 @@ export default PlotLineOrBand;
  */
 
 /**
- * In a gauge chart, this option sets the width of the plot band
- * stretching along the perimeter. It can be given as a percentage
- * string, like `"10%"`, or as a pixel number, like `10`. The default
- * value 10 is the same as the default [tickLength](#yAxis.tickLength),
- * thus making the plot band act as a background for the tick markers.
+ * In a gauge chart, this option sets the width of the plot band stretching
+ * along the perimeter. It can be given as a percentage string, like `'10%'`, or
+ * as a pixel number, like `10`. If `undefined`, the plot band fills out the
+ * range between `pane.size` and `pane.innerSize`.
  *
- * @sample {highcharts} highcharts/xaxis/plotbands-gauge
- *         Gauge plot band
+ * @sample {highcharts} highcharts/xaxis/plotbands-gauge Gauge plot band
  *
  * @type      {number|string}
- * @default   10
  * @since     2.3
  * @product   highcharts
  * @apioption yAxis.plotBands.thickness

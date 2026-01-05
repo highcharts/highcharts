@@ -28,14 +28,9 @@
     fill: #f45b5b;
 }
 
-.highcharts-pane:nth-child(1) {
-    fill: #efffff;
+.highcharts-pane {
+    fill: #eee;
+    fill-opacity: 1;
     stroke-width: 1px;
-    stroke: gray;
-}
-
-.highcharts-pane:nth-child(2) {
-    fill: white;
-    stroke-width: 1px;
-    stroke: #eee;
+    stroke: #ddd;
 }

@@ -41,10 +41,11 @@ Highcharts.chart('container', {
         minorTickInterval: null,
         min: 0,
         max: 200,
-        tickPixelInterval: 400,
+        tickInterval: 200,
         tickWidth: 0,
         labels: {
-            y: 16
+            y: 16,
+            distance: -45
         }
     },
 

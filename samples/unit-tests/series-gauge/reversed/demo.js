@@ -29,7 +29,8 @@ QUnit.test('Reversed solid gauge(#4434)', function (assert) {
             series: [
                 {
                     name: 'Speed',
-                    data: [50]
+                    data: [50],
+                    threshold: null
                 }
             ]
         })

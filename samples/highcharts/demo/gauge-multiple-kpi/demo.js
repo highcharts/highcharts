@@ -66,7 +66,8 @@ Highcharts.chart('container', {
             verticalAlign: 'middle'
         },
         style: {
-            fontSize: '16px'
+            fontSize: '16px',
+            textAlign: 'center'
         },
         valueSuffix: '%'
     },
@@ -74,19 +75,20 @@ Highcharts.chart('container', {
     pane: {
         startAngle: 0,
         endAngle: 360,
+        margin: 0,
         background: [{ // Track for Conversion
-            outerRadius: '112%',
-            innerRadius: '88%',
+            outerRadius: '100%',
+            innerRadius: '78%',
             backgroundColor: trackColors[0],
             borderWidth: 0
         }, { // Track for Engagement
-            outerRadius: '87%',
-            innerRadius: '63%',
+            outerRadius: '77%',
+            innerRadius: '56%',
             backgroundColor: trackColors[1],
             borderWidth: 0
         }, { // Track for Feedback
-            outerRadius: '62%',
-            innerRadius: '38%',
+            outerRadius: '55%',
+            innerRadius: '34%',
             backgroundColor: trackColors[2],
             borderWidth: 0
         }]
@@ -114,8 +116,8 @@ Highcharts.chart('container', {
         name: 'Conversion',
         data: [{
             color: Highcharts.getOptions().colors[0],
-            radius: '112%',
-            innerRadius: '88%',
+            radius: '100%',
+            innerRadius: '78%',
             y: 80
         }],
         custom: {
@@ -126,8 +128,8 @@ Highcharts.chart('container', {
         name: 'Engagement',
         data: [{
             color: Highcharts.getOptions().colors[1],
-            radius: '87%',
-            innerRadius: '63%',
+            radius: '77%',
+            innerRadius: '56%',
             y: 65
         }],
         custom: {
@@ -138,8 +140,8 @@ Highcharts.chart('container', {
         name: 'Feedback',
         data: [{
             color: Highcharts.getOptions().colors[2],
-            radius: '62%',
-            innerRadius: '38%',
+            radius: '55%',
+            innerRadius: '34%',
             y: 50
         }],
         custom: {

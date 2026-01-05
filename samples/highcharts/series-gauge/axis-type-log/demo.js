@@ -14,7 +14,9 @@ Highcharts.chart('container', {
 
     pane: {
         startAngle: -150,
-        endAngle: 150
+        endAngle: 150,
+        innerSize: '90%',
+        borderRadius: 0
     },
 
     // the value axis
@@ -24,19 +26,12 @@ Highcharts.chart('container', {
         type: 'logarithmic',
 
         minorTickInterval: 'auto',
-        minorTickWidth: 1,
-        minorTickLength: 10,
-        minorTickPosition: 'inside',
-        minorTickColor: '#666',
+        minorGridLineWidth: 0.5,
 
         tickPixelInterval: 30,
-        tickWidth: 2,
-        tickPosition: 'inside',
-        tickLength: 10,
-        tickColor: '#666',
+        gridLineWidth: 2,
         labels: {
-            step: 2,
-            rotation: 'auto'
+            step: 2
         },
         title: {
             text: 'km/h'
