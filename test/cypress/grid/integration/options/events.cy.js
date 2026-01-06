@@ -91,6 +91,32 @@ describe('Grid Pro - cell and column events.', () => {
         cy.get('#cellDblClick').should('have.value', 'cellDblClickColumnOption');
     });
 
+    it('Cell events should fire from nested elements', () => {
+        const weightCell =
+            '.hcg-row[data-row-index="1"] > td[data-column-id="weight"]';
+
+        cy.get(weightCell)
+            .dblclick({force: true})
+            .find('input')
+            .as('weightEditor');
+
+        cy.get('#cellClick').invoke('val', 'reset');
+        cy.get('@weightEditor').click({force: true});
+        cy.get('#cellClick').should('have.value', 'cellClickColumnOption');
+
+        cy.get('#cellMouseOver').invoke('val', 'reset');
+        cy.get('@weightEditor').trigger('mouseover', {force: true});
+        cy.get('#cellMouseOver')
+            .should('have.value', 'cellMouseOverColumnOption');
+
+        cy.get('#cellMouseOut').invoke('val', 'reset');
+        cy.get('@weightEditor').trigger('mouseout', {force: true});
+        cy.get('#cellMouseOut')
+            .should('have.value', 'cellMouseOutColumnOption');
+
+        cy.get('body').click(0, 0);
+    });
+
     it('AfterRender event.', () => {
         // ColumnDefaults
         cy.get('#cellAfterRender').should('have.value', '1');
