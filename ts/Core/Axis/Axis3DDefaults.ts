@@ -19,7 +19,7 @@
  *
  * */
 
-import type Axis3DOptions from './Axis3DOptions';
+import type AxisOptions from './AxisOptions';
 
 /* *
  *
@@ -135,7 +135,7 @@ const Axis3DDefaults = {
          */
         skew3d: null
     }
-} as Axis3DOptions;
+} as AxisOptions;
 
 /* *
  *

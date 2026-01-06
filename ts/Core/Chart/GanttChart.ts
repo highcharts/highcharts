@@ -45,6 +45,8 @@ const {
 
 declare module '../Options' {
     interface Options {
+
+        /** @internal */
         isGantt?: boolean;
     }
 }
@@ -203,6 +205,7 @@ class GanttChart extends Chart {
  *
  * */
 
+/** @internal */
 namespace GanttChart {
 
     /* *

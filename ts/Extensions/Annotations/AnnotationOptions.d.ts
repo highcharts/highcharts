@@ -25,7 +25,7 @@ import type {
 import type ControlPointOptions from './ControlPointOptions';
 import type ControlTargetOptions from './ControlTargetOptions';
 import type { DeepPartial } from '../../Shared/Types';
-import type EventCallback from '../../Core/EventCallback';
+import type { EventCallback } from '../../Core/Callback';
 import type MockPointOptions from './MockPointOptions';
 import type NavigationOptions from '../Exporting/NavigationOptions';
 import type CoreOptions from '../../Core/Options';

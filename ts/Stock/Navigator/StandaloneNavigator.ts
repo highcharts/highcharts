@@ -33,7 +33,7 @@ const {
     pick
 } = U;
 
-declare module '../../Core/GlobalsBase.d.ts' {
+declare module '../../Core/GlobalsBase' {
     interface GlobalsBase {
         navigators: Array<StandaloneNavigator>;
     }
