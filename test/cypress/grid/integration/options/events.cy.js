@@ -93,7 +93,7 @@ describe('Grid Pro - cell and column events.', () => {
 
     it('Cell events should fire from nested elements', () => {
         const weightCell =
-            '.hcg-row[data-row-index="1"] > td[data-column-id="weight"]';
+            '.hcg-row[data-row-index="0"] > td[data-column-id="weight"]';
 
         cy.get(weightCell)
             .dblclick({force: true})
@@ -114,7 +114,7 @@ describe('Grid Pro - cell and column events.', () => {
         cy.get('#cellMouseOut')
             .should('have.value', 'cellMouseOutColumnOption');
 
-        cy.get('body').click(0, 0);
+        cy.get('@weightEditor').type('{enter}', {force: true});
     });
 
     it('AfterRender event.', () => {
@@ -144,7 +144,7 @@ describe('Grid Pro - cell and column events.', () => {
             .dblclick({force: true})
             .find('input')
             .clear()
-            .type('Strawberries');
+            .type('Strawberries{enter}');
 
         cy.get('#cellAfterEdit').should('have.value', 'cellAfterEdit');
 
@@ -153,7 +153,7 @@ describe('Grid Pro - cell and column events.', () => {
             .dblclick({force: true})
             .find('input')
             .clear()
-            .type('4');
+            .type('4{enter}');
 
         cy.get('#cellAfterEdit').should('have.value', 'cellAfterEdit');
     });
