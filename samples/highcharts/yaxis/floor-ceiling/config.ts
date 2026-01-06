@@ -10,7 +10,8 @@ export default {
         max: 300
     }, {
         path: 'yAxis.endOnTick',
-        value: false
+        value: false,
+        inTitle: false
     }, {
         path: 'yAxis.floor',
         value: 0,
@@ -18,12 +19,8 @@ export default {
         max: 100
     }, {
         path: 'yAxis.startOnTick',
-        value: false
+        value: false,
+        inTitle: false
     }],
-    templates: ['categories-12'],
-    chartOptionsExtra: {
-        title: {
-            text: 'Demo of Y-Axis Floor and Ceiling'
-        }
-    }
+    templates: ['categories-12']
 } satisfies SampleGeneratorConfig;

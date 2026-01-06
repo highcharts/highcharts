@@ -6,7 +6,7 @@
 
     Highcharts.stockChart('container', {
         title: {
-            text: 'Demo of <em>xAxis.title</em> options'
+            text: 'Demo of <em>xAxis.title.text</em> and <em>align</em>'
         },
         xAxis: {
             title: {

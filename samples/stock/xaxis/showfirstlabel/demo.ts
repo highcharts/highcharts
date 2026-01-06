@@ -6,7 +6,8 @@
 
     Highcharts.stockChart('container', {
         title: {
-            text: 'Demo of <em>yAxis</em> options'
+            text: 'Demo of <em>yAxis.showFirstLabel</em> and ' +
+                   '<em>showLastLabel</em>'
         },
         yAxis: {
             labels: {

@@ -12,10 +12,5 @@ export default {
         path: 'yAxis.startOnTick',
         value: false
     }],
-    templates: ['categories-12'],
-    chartOptionsExtra: {
-        title: {
-            text: 'Demo of <em>yAxis.min</em> and <em>startOnTick</em>'
-        }
-    }
+    templates: ['categories-12']
 } satisfies SampleGeneratorConfig;

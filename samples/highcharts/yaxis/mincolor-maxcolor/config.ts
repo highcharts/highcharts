@@ -11,16 +11,14 @@ export default {
         value: '#000000'
     }, {
         path: 'series[0].data[0]',
-        value: 30
+        value: 30,
+        inTitle: false
     }],
     modules: ['highcharts-more', 'modules/solid-gauge'],
     templates: [],
     chartOptionsExtra: {
         chart: {
             type: 'solidgauge'
-        },
-        title: {
-            text: 'Demo of <em>yAxis.minColor</em> and <em>yAxis.maxColor</em>'
         },
         pane: {
             center: ['50%', '85%'],

@@ -1,5 +1,5 @@
 ---
- name: Demo of yAxis.labels options
+ name: Demo of yAxis.labels.x and y
  authors:
    - Torstein Hønsi
  js_wrap: b

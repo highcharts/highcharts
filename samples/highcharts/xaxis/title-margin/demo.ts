@@ -1,6 +1,6 @@
 Highcharts.chart('container', {
     title: {
-        text: 'Demo of <em>yAxis.title</em> options'
+        text: 'Demo of <em>yAxis.title.margin</em> and <em>text</em>'
     },
     xAxis: {
         categories: [

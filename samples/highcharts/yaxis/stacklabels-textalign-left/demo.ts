@@ -3,7 +3,7 @@ Highcharts.chart('container', {
         type: 'column'
     },
     title: {
-        text: 'Demo of <em>yAxis.stackLabels</em> options'
+        text: 'Demo of <em>yAxis.stackLabels.textAlign</em> and <em>align</em>'
     },
     xAxis: {
         categories: [

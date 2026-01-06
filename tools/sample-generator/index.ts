@@ -177,7 +177,16 @@ function generateTitle(paths: string[]): string {
     // Find common prefix parts
     const commonParts = findCommonParts(paths);
     if (commonParts.length > 0) {
-        return `Demo of <em>${commonParts.join('.')}</em> options`;
+        const joined = commonParts.join('.');
+        if (paths.length === 2) {
+            const rests = paths.map(p => p
+                .replace(`${joined}`, '')
+                .replace(/^[.[\d\]]+/u, ''));
+            return `Demo of <em>${joined}.${rests[0]}</em> and <em>${
+                rests[1]
+            }</em>`.replace(/\[\d+\]/gu, '');
+        }
+        return `Demo of <em>${joined}</em> options`.replace(/\[\d+\]/gu, '');
     }
 
     // Look for related parts, like xAxis, yAxis
@@ -526,7 +535,8 @@ export async function getDemoHTML(
     const description = config.controlsDescription ?
         `<highcharts-group-description>
             ${config.controlsDescription}
-        </highcharts-group-description>` :
+        </highcharts-group-description>
+        ` :
         '';
 
 
@@ -536,8 +546,7 @@ export async function getDemoHTML(
             '<!-- CONTROLS_PLACEHOLDER -->',
             `<highcharts-controls>
     <highcharts-group header="Update options">
-      ${description}
-      ${controls.join('\n      ')}
+      ${description}${controls.join('\n      ')}
     </highcharts-group>
   </highcharts-controls>`
         );
@@ -795,6 +804,54 @@ export async function getDemoTS(
         }
     );
 
+    // For long strings, break into multiple lines at spaces
+    chartOptions = chartOptions.replace(
+        /: '([^']+)'/gu,
+        (_match, p1, offset, string) => {
+            const indentMatch = string
+                .substring(0, offset)
+                .match(/(^|\n)([ \t]*)[^\n]*$/u);
+            const indent = indentMatch ? indentMatch[2] : '';
+            const indentWithKey = (indentMatch?.[0] || '')
+                .replace(/^[\n\r]+/u, '');
+
+            // Check if the total line length exceeds 80 characters
+            if (indentWithKey.length + `: '${p1}'`.length <= 80) {
+                return _match;
+            }
+
+            const words = p1.split(' ');
+            /* eslint-disable-next-line quotes */
+            let result = ": '";
+            let currentLine = '';
+
+            for (let i = 0; i < words.length; i++) {
+                const isLast = i === words.length - 1;
+                const word = words[i] + (isLast ? '' : ' ');
+                const testLine = currentLine + word;
+
+                if (
+                    indentWithKey.length + result.length + testLine.length >
+                        80 &&
+                    currentLine
+                ) {
+                    /* eslint-disable-next-line quotes */
+                    result += currentLine + "' +\n" + indent + "       '";
+                    currentLine = word;
+                } else {
+                    currentLine += word;
+                }
+            }
+
+            if (currentLine) {
+                result += currentLine;
+            }
+            /* eslint-disable-next-line quotes */
+            result += "'";
+            return result;
+        }
+    );
+
     let ts = '';
 
     if (dataFile) {
@@ -836,8 +893,8 @@ export async function getDemoDetails(config: SampleGeneratorConfig) {
 
     details = details
         .replace('Highcharts Demo', generateTitle(paths))
-        .replace('<em>', '')
-        .replace('</em>', '');
+        .replace(/<em>/gu, '')
+        .replace(/<\/em>/gu, '');
 
     return details;
 }

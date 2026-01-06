@@ -1,5 +1,5 @@
 ---
- name: Demo of xAxis.plotBands options
+ name: Demo of xAxis.plotBands.from and to
  authors:
    - Torstein Hønsi
  js_wrap: b

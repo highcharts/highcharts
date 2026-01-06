@@ -25,7 +25,7 @@ export default {
     factory: 'stockChart',
     chartOptionsExtra: {
         title: {
-            text: 'Demo of <em>yAxis.minorTicks</em>'
+            text: 'Demo of minor tick options'
         },
         yAxis: {
             minorTicks: true,

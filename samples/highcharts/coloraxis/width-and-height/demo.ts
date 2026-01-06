@@ -3,7 +3,7 @@ Highcharts.chart('container', {
         type: 'column'
     },
     title: {
-        text: 'Demo of <em>colorAxis</em> options'
+        text: 'Demo of <em>colorAxis.width</em> and <em>height</em>'
     },
     xAxis: {
         categories: ['Apples', 'Bananas', 'Oranges', 'Pears']

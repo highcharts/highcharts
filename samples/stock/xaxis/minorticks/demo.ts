@@ -6,7 +6,7 @@
 
     Highcharts.stockChart('container', {
         title: {
-            text: 'Demo of <em>yAxis.minorTicks</em>'
+            text: 'Demo of minor tick options'
         },
         yAxis: {
             minorGridLineWidth: 0,

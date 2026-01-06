@@ -6,7 +6,7 @@
 
     Highcharts.stockChart('container', {
         title: {
-            text: 'Demo of <em>xAxis</em> options'
+            text: 'Demo of <em>xAxis.startOnTick</em> and <em>endOnTick</em>'
         },
         xAxis: {
             endOnTick: false,

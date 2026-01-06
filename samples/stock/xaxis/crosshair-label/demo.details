@@ -1,5 +1,5 @@
 ---
- name: Demo of yAxis.crosshair.label options
+ name: Demo of yAxis.crosshair.label.enabled and format
  authors:
    - Torstein Hønsi
  js_wrap: b

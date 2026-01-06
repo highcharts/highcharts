@@ -3,7 +3,7 @@ Highcharts.chart('container', {
         type: 'solidgauge'
     },
     title: {
-        text: 'Demo of <em>yAxis.minColor</em> and <em>yAxis.maxColor</em>'
+        text: 'Demo of <em>yAxis.minColor</em> and <em>maxColor</em>'
     },
     yAxis: {
         title: {

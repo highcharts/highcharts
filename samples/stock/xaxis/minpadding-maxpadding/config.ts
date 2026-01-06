@@ -11,7 +11,8 @@ export default {
         step: 0.01
     }, {
         path: 'yAxis.startOnTick',
-        value: true
+        value: true,
+        inTitle: false
     }, {
         path: 'yAxis.maxPadding',
         value: 0.5,
@@ -20,15 +21,13 @@ export default {
         step: 0.01
     }, {
         path: 'yAxis.endOnTick',
-        value: true
+        value: true,
+        inTitle: false
     }],
     dataFile: 'usdeur.json',
     templates: [],
     factory: 'stockChart',
     chartOptionsExtra: {
-        title: {
-            text: 'Demo of <em>yAxis.minPadding</em> and <em>maxPadding</em>'
-        },
         yAxis: {
             lineWidth: 1,
             labels: {

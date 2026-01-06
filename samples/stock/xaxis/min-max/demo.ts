@@ -6,7 +6,7 @@
 
     Highcharts.stockChart('container', {
         title: {
-            text: 'Demo of <em>xAxis</em> options'
+            text: 'Demo of <em>xAxis.min</em> and <em>max</em>'
         },
         xAxis: {
             max: '2020-12-31',

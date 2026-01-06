@@ -1,5 +1,5 @@
 ---
- name: Demo of yAxis.plotBands options
+ name: Demo of yAxis.plotBands.outerRadius and thickness
  authors:
    - Torstein Hønsi
  js_wrap: b
