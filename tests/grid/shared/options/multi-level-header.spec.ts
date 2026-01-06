@@ -1,9 +1,6 @@
 import { test, expect } from '~/fixtures.ts';
 
 test.describe('Grid events', () => {
-    test.beforeAll(async ({ browser }) => {
-        // Setup
-    });
 
     test.beforeEach(async ({ page }) => {
         await page.goto('grid-lite/cypress/grouped-headers');
@@ -31,14 +28,47 @@ test.describe('Grid events', () => {
     });
 
     test('All hidden columns in group, hide group header', async ({ page }) => {
+        // Wait for Grid to be initialized
+        await page.waitForFunction(() => {
+            return typeof (window as any).Grid !== 'undefined' &&
+                   (window as any).Grid.grids &&
+                   (window as any).Grid.grids.length > 0;
+        }, { timeout: 1000 });
+
+        // Hide 'icon' column - this is the only column in "Product info" > "Meta" group
+        // After hiding it, the entire "Product info" group should be hidden
         await page.evaluate(() => {
             (window as any).grid.update({
                 columns: [{
-                    id: 'url',
+                    id: 'icon',
                     enabled: false
                 }]
             });
         });
+
+        // Wait for update to complete - wait for header structure to change
+        // After hiding 'icon', the "Product info" group should be hidden
+        // because it only contains 'icon' column
+        await page.waitForFunction(
+            () => {
+                const row1 = document.querySelector(
+                    'table thead tr:nth-child(1)'
+                );
+                const row2 = document.querySelector(
+                    'table thead tr:nth-child(2)'
+                );
+                const row3 = document.querySelector(
+                    'table thead tr:nth-child(3)'
+                );
+                if (!row1 || !row2 || !row3) return false;
+                const row1Count = row1.querySelectorAll('th').length;
+                const row2Count = row2.querySelectorAll('th').length;
+                const row3Count = row3.querySelectorAll('th').length;
+                // After hiding icon, all rows should have fewer headers
+                return row1Count === 2 && row2Count === 2 && row3Count === 1;
+            },
+            { timeout: 1000 }
+        );
 
         // If all columns in group are hidden, hide the group.
         await expect(page.locator('table thead tr:nth-child(1) th')).toHaveCount(2);
@@ -52,10 +82,9 @@ test.describe('Grid events', () => {
         await idHeader.click();
         await expect(idHeader).toHaveClass(/hcg-column-sortable/);
 
-        // Click header that group columns
-        const productHeader = page.locator('th').filter({ hasText: 'Product' });
+        // Click header that group columns - use getByRole for precise selection
+        const productHeader = page.getByRole('columnheader', { name: 'Product', exact: true });
         await productHeader.click();
         await expect(productHeader).not.toHaveClass(/hcg-column-sortable/);
     });
 });
-
