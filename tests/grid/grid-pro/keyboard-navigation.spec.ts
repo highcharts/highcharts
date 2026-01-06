@@ -1,7 +1,7 @@
 import { test, expect } from '~/fixtures.ts';
 
 test.describe('Keyboard navigation in Grid', () => {
-    test.beforeAll(async ({ browser }) => {
+    test.beforeAll(async () => {
         // Setup
     });
 
@@ -38,11 +38,14 @@ test.describe('Keyboard navigation in Grid', () => {
         await page.keyboard.press('ArrowUp');
         await page.keyboard.press('ArrowRight');
         await page.keyboard.press('Enter');
-        // Test passes if no error is thrown
+        // Verify header has sorting class after Enter press
+        await expect(
+            page.locator(':focus')
+        ).toHaveClass(/hcg-column-sorted/);
     });
 
     test('Editing by pressing Enter key on a table cell should be possible', async ({ page }) => {
-        // Start from first cell (like Cypress test)
+
         // const cell = page.locator('td').first();
         // await cell.focus();
         

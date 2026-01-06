@@ -31,7 +31,9 @@ test.describe('Grid Pro - grid events', () => {
         await expect(page.locator('th[data-column-id="weight"] input')).toHaveValue('50');
         await expect(page.locator('th[data-column-id="weight"] select')).toHaveValue('greaterThan');
         // Use more specific selector for the clear filter button
-        await expect(page.locator('th[data-column-id="weight"] .hcg-clear-filter-button')).not.toBeDisabled();
+        await expect(
+            page.locator('th[data-column-id="weight"] .hcg-clear-filter-button')
+        ).toBeEnabled();
     });
 
     test('Grid beforeRedraw event', async ({ page }) => {
@@ -158,7 +160,10 @@ test.describe('Grid Pro - cell and column events', () => {
         const resizer = page.locator('th[data-column-id="product"] > .hcg-column-resizer');
         const box = await resizer.boundingBox();
         if (box) {
-            await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+            await page.mouse.move(
+                box.x + box.width / 2,
+                box.y + box.height / 2
+            );
             await page.mouse.down();
             await page.mouse.move(300, 300);
             await page.mouse.up();
@@ -169,7 +174,10 @@ test.describe('Grid Pro - cell and column events', () => {
         const weightResizer = page.locator('th[data-column-id="weight"] > .hcg-column-resizer');
         const weightBox = await weightResizer.boundingBox();
         if (weightBox) {
-            await page.mouse.move(weightBox.x + weightBox.width / 2, weightBox.y + weightBox.height / 2);
+            await page.mouse.move(
+                weightBox.x + weightBox.width / 2,
+                weightBox.y + weightBox.height / 2
+            );
             await page.mouse.down();
             await page.mouse.move(300, 300);
             await page.mouse.up();

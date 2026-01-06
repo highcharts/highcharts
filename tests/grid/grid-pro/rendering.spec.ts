@@ -1,7 +1,7 @@
 import { test, expect } from '~/fixtures.ts';
 
 test.describe('Rendering types', () => {
-    test.beforeAll(async ({ browser }) => {
+    test.beforeAll(async () => {
         // Setup
     });
 

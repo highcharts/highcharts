@@ -1,7 +1,7 @@
 import { test, expect } from '~/fixtures.ts';
 
 test.describe('Column distribution strategies', () => {
-    test.beforeAll(async ({ browser }) => {
+    test.beforeAll(async () => {
         // Setup
     });
 
@@ -43,7 +43,10 @@ test.describe('Column distribution strategies', () => {
 
         const box = await resizer.boundingBox();
         if (box) {
-            await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+            await page.mouse.move(
+                box.x + box.width / 2,
+                box.y + box.height / 2
+            );
             await page.mouse.down();
             await page.mouse.move(box.x - 100, box.y);
             await page.mouse.up();

@@ -1,7 +1,7 @@
 import { test, expect } from '~/fixtures.ts';
 
 test.describe('Formatting cells', () => {
-    test.beforeAll(async ({ browser }) => {
+    test.beforeAll(async () => {
         // Setup
     });
 
@@ -68,7 +68,9 @@ test.describe('Formatting cells', () => {
     test('The grid should adjust its width dynamically to the container width', async ({ page }) => {
         const table = page.locator('.hcg-table');
         await expect(table).toBeVisible();
-        const initialWidth = await table.evaluate((el: HTMLElement) => el.offsetWidth);
+        const initialWidth = await table.evaluate(
+            (el: HTMLElement) => el.offsetWidth
+        );
 
         await page.locator('#container').evaluate((el: HTMLElement) => {
             el.style.width = '200px';
@@ -76,16 +78,23 @@ test.describe('Formatting cells', () => {
 
         // Wait for table to resize
         await page.waitForFunction((initialWidth) => {
-            const table = document.querySelector('.hcg-table') as HTMLElement;
-            return table && table.offsetWidth !== initialWidth;
+            const table = document.querySelector('.hcg-table');
+            return table && (table as HTMLElement).offsetWidth !== initialWidth;
         }, initialWidth, { timeout: 5000 });
 
         await expect(table).toBeVisible();
-        const finalWidth = await table.evaluate((el: HTMLElement) => el.offsetWidth);
+        const finalWidth = await table.evaluate(
+            (el: HTMLElement) => el.offsetWidth
+        );
 
-        expect(finalWidth, 'The width should change when resizing the container.').not.toBe(initialWidth);
-        // Use same tolerance as Cypress test (10px)
-        expect(finalWidth, 'The width should be close to 200px.').toBeCloseTo(200, 0);
+        expect(
+            finalWidth,
+            'The width should change when resizing the container.'
+        ).not.toBe(initialWidth);
+        expect(
+            finalWidth,
+            'The width should be close to 200px.'
+        ).toBeCloseTo(200, 0);
     });
 
     test('Default formatter is not applied when column has own format or formatter', async ({ page }) => {

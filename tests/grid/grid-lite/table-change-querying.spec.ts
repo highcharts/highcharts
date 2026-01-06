@@ -1,7 +1,7 @@
 import { test, expect } from '~/fixtures.ts';
 
 test.describe('Querying on table change', () => {
-    test.beforeAll(async ({ browser }) => {
+    test.beforeAll(async () => {
         // Setup if needed
     });
 

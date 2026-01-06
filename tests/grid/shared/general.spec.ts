@@ -1,7 +1,7 @@
 import { test, expect } from '~/fixtures.ts';
 
 test.describe('Remove the dashboard', () => {
-    test.beforeAll(async ({ browser }) => {
+    test.beforeAll(async () => {
         // Setup
     });
 
@@ -44,7 +44,7 @@ test.describe('Remove the dashboard', () => {
 });
 
 test.describe('Grid rows removal', () => {
-    test.beforeAll(async ({ browser }) => {
+    test.beforeAll(async () => {
         // Setup
     });
 
@@ -60,7 +60,7 @@ test.describe('Grid rows removal', () => {
 });
 
 test.describe('Rendering size', () => {
-    test.beforeAll(async ({ browser }) => {
+    test.beforeAll(async () => {
         // Setup
     });
 

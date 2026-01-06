@@ -1,7 +1,7 @@
 import { test, expect } from '~/fixtures.ts';
 
 test.describe('Date Input Types', () => {
-    test.beforeAll(async ({ browser }) => {
+    test.beforeAll(async () => {
         // Setup
     });
 
@@ -22,7 +22,9 @@ test.describe('Date Input Types', () => {
         // text input and can be automated, highlighting the difference between
         // these input types.
         if (browserName === 'webkit') {
-            return true;
+            // Skip test in WebKit - native date picker cannot be automated
+            test.skip();
+            return;
         }
 
         await dateInput.fill('2023-12-25');
@@ -73,7 +75,9 @@ test.describe('Date Input Types', () => {
         // text input and can be automated, highlighting the difference between
         // these input types.
         if (browserName === 'webkit') {
-            return true;
+            // Skip test in WebKit - native date picker cannot be automated
+            test.skip();
+            return;
         }
 
         // Verify correct input types are used

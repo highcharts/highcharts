@@ -33,7 +33,7 @@ const expectedJSonResult = `{
 }`;
 
 test.describe('Exporting the Grid', () => {
-    test.beforeAll(async ({ browser }) => {
+    test.beforeAll(async () => {
         // Setup
     });
 

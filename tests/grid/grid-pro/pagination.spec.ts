@@ -5,7 +5,7 @@ test.describe('Pagination', () => {
         await page.setViewportSize({ width: 1200, height: 800 });
     });
 
-    test.beforeAll(async ({ browser }) => {
+    test.beforeAll(async () => {
         // Setup for all tests
     });
 
