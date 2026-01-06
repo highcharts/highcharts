@@ -37,6 +37,7 @@ const {
  *
  * */
 
+/** @internal */
 declare module './AxisComposition' {
     interface AxisComposition {
         dateTime?: DateTimeAxis.Composition['dateTime'];
@@ -52,6 +53,7 @@ declare module './AxisComposition' {
     }
 }
 
+/** @internal */
 declare module './AxisOptions' {
     interface AxisOptions {
         dateTimeLabelFormats?: Time.DateTimeLabelFormatsOption;
@@ -59,6 +61,7 @@ declare module './AxisOptions' {
     }
 }
 
+/** @internal */
 declare module './AxisType' {
     interface AxisTypeRegistry {
         DateTimeAxis: DateTimeAxis.Composition;
@@ -94,6 +97,7 @@ namespace DateTimeAxis{
      *
      * */
 
+    /** @internal */
     export declare class Composition extends Axis {
         dateTime: Additions;
     }
@@ -108,7 +112,7 @@ namespace DateTimeAxis{
 
     /**
      * Extends axis class with date and time support.
-     * @private
+     * @internal
      */
     export function compose<T extends typeof Axis>(
         AxisClass: T
@@ -133,7 +137,7 @@ namespace DateTimeAxis{
      * the time positions. Used in datetime axes as well as for grouping
      * data on a datetime axis.
      *
-     * @private
+     * @internal
      * @function Highcharts.Axis#getTimeTicks
      * @param {Highcharts.TimeNormalizeObject} normalizedInterval
      * The interval in axis values (ms) and the count.
@@ -150,9 +154,7 @@ namespace DateTimeAxis{
         );
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     function onAfterSetType(
         this: Axis
     ): void {
@@ -172,6 +174,7 @@ namespace DateTimeAxis{
      *
      * */
 
+    /** @internal */
     export class Additions {
 
         /* *
@@ -206,7 +209,7 @@ namespace DateTimeAxis{
          * charts, the normalizing logic was extracted in order to prevent it
          * for running over again for each segment having the same interval.
          * #662, #697.
-         * @private
+         * @internal
          */
         public normalizeTimeTickInterval(
             tickInterval: number,
@@ -296,7 +299,7 @@ namespace DateTimeAxis{
          * Get the best date format for a specific X value based on the closest
          * point range on the axis.
          *
-         * @private
+         * @internal
          */
         public getXDateFormat(
             x: number,

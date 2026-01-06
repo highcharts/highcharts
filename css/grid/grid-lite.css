@@ -432,6 +432,7 @@
     box-sizing: border-box;
     font: var(--ig-font);
     color-scheme: light dark;
+    max-height: inherit;
 }
 
 .highcharts-light .hcg-container {

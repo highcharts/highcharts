@@ -39,6 +39,7 @@ import Globals from '../../Globals.js';
  */
 class RowsVirtualizer {
 
+
     /* *
     *
     *  Properties
@@ -597,6 +598,9 @@ class RowsVirtualizer {
     /**
      * Returns the default height of a row. This method should be called only
      * once on initialization.
+     *
+     * @returns
+     * The default height of a row.
      */
     private getDefaultRowHeight(): number {
         const vp = this.viewport;
@@ -604,14 +608,11 @@ class RowsVirtualizer {
 
         mockRow.htmlElement.style.position = 'absolute';
         mockRow.htmlElement.classList.add(Globals.getClassName('mockedRow'));
-
         this.viewport.tbodyElement.appendChild(mockRow.htmlElement);
         mockRow.render();
 
         const defaultRowHeight = mockRow.htmlElement.offsetHeight;
-
         mockRow.destroy();
-
         return defaultRowHeight;
     }
 }

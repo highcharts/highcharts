@@ -42,6 +42,7 @@ const { extend } = U;
  *
  * */
 
+/** @internal */
 class ArcDiagramPoint extends SankeyPoint {
 
     /* *
@@ -92,6 +93,7 @@ class ArcDiagramPoint extends SankeyPoint {
  *
  * */
 
+/** @internal */
 interface ArcDiagramPoint {
     setState: typeof NodesComposition['setNodeState'];
 }
@@ -105,4 +107,5 @@ extend(ArcDiagramPoint.prototype, {
  *
  * */
 
+/** @internal */
 export default ArcDiagramPoint;

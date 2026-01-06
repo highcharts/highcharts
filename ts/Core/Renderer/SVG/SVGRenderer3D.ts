@@ -61,6 +61,7 @@ const {
  *
  * */
 
+/** @internal */
 declare module './SVGElementBase' {
     interface SVGElementBase {
         attribs?: SVGAttributes;
@@ -71,6 +72,7 @@ declare module './SVGElementBase' {
     }
 }
 
+/** @internal */
 declare module './SVGRendererBase' {
     interface SVGRendererBase {
         Element3D: typeof SVGElement3D;
@@ -95,6 +97,7 @@ declare module './SVGRendererBase' {
  *
  * */
 
+/** @internal */
 const cos = Math.cos,
     sin = Math.sin,
     PI = Math.PI,
@@ -109,7 +112,7 @@ const cos = Math.cos,
 /**
  * Method to construct a curved path. Can 'wrap' around more then 180
  * degrees.
- * @private
+ * @internal
  */
 function curveTo(
     cx: number,
@@ -169,6 +172,7 @@ function curveTo(
  *
  * */
 
+/** @internal */
 namespace SVGRenderer3D {
 
     /* *
@@ -199,7 +203,7 @@ namespace SVGRenderer3D {
      *
      * */
 
-    /** @private */
+    /** @internal */
     export function compose(
         SVGRendererClass: typeof SVGRenderer
     ): void {
@@ -228,7 +232,7 @@ namespace SVGRenderer3D {
      *
      * */
 
-    /** @private */
+    /** @internal */
     function toLinePath(
         points: Array<PositionObject>,
         closed?: boolean
@@ -253,7 +257,7 @@ namespace SVGRenderer3D {
         return result;
     }
 
-    /** @private */
+    /** @internal */
     function toLineSegments(
         points: Array<PositionObject>
     ): SVGPath {
@@ -273,7 +277,7 @@ namespace SVGRenderer3D {
      * A 3-D Face is defined by it's 3D vertexes, and is only visible if it's
      * vertexes are counter-clockwise (Back-face culling). It is used as a
      * polyhedron Element.
-     * @private
+     * @internal
      */
     function face3d(
         this: Composition,
@@ -377,7 +381,7 @@ namespace SVGRenderer3D {
      * A Polyhedron is a handy way of defining a group of 3-D faces. It's only
      * attribute is `faces`, an array of attributes of each one of it's Face3D
      * instances.
-     * @private
+     * @internal
      */
     function polyhedron(
         this: Composition,
@@ -464,7 +468,7 @@ namespace SVGRenderer3D {
 
     /**
      * Return result, generalization
-     * @private
+     * @internal
      * @requires highcharts-3d
      */
     function element3d(
@@ -480,7 +484,7 @@ namespace SVGRenderer3D {
 
     /**
      * Generalized, so now use simply
-     * @private
+     * @internal
      */
     function cuboid(
         this: Composition,
@@ -491,7 +495,7 @@ namespace SVGRenderer3D {
 
     /**
      * Generates a cuboid path and zIndexes
-     * @private
+     * @internal
      */
     function cuboidPath(
         this: Composition,
@@ -561,7 +565,7 @@ namespace SVGRenderer3D {
 
         /**
          * Helper method to decide which side is visible
-         * @private
+         * @internal
          */
         const mapSidePath = (i: number): Position3DObject => {
                 // Added support for 0 value in columns, where height is 0
@@ -607,7 +611,7 @@ namespace SVGRenderer3D {
             },
             /**
              * Method creating the final side
-             * @private
+             * @internal
              */
             mapPath = (i: number): Position3DObject => (pArr[i]),
 
@@ -618,7 +622,7 @@ namespace SVGRenderer3D {
              *                 path2 and -1 for no path chosen.
              * Third value - string containing information about current side of
              *               cuboid for forcing side rendering.
-             * @private
+             * @internal
              */
             pickShape = (
                 verticesIndex1: Array<number>,
@@ -725,7 +729,7 @@ namespace SVGRenderer3D {
         }; // #4774
     }
 
-    /** @private */
+    /** @internal */
     function arc3d(
         this: Composition,
         attribs: SVGAttributes3D
@@ -741,7 +745,7 @@ namespace SVGRenderer3D {
         /**
          * Get custom attributes. Don't mutate the original object and return an
          * object with only custom attr.
-         * @private
+         * @internal
          */
         function extractCustom(
             params: SVGAttributes3D
@@ -805,7 +809,7 @@ namespace SVGRenderer3D {
 
         /**
          * Compute the transformed paths and set them to the composite shapes
-         * @private
+         * @internal
          */
         wrapper.setPaths = function (attribs: SVGAttributes3D): void {
 
@@ -835,7 +839,7 @@ namespace SVGRenderer3D {
 
         /**
          * Apply the fill to the top and a darker shade to the sides
-         * @private
+         * @internal
          */
         wrapper.fillSetter = function (
             this: SVGElement,
@@ -1004,7 +1008,7 @@ namespace SVGRenderer3D {
 
     /**
      * Generate the paths required to draw a 3D arc.
-     * @private
+     * @internal
      */
     function arc3dPath(shapeArgs: SVGAttributes3D): SVGArc3D {
         const cx = shapeArgs.x || 0, // X coordinate of the center
@@ -1172,7 +1176,7 @@ namespace SVGRenderer3D {
 
         /**
          * Set to 0-PI range
-         * @private
+         * @internal
          */
         function toZeroPIRange(angle: number): number {
             angle = angle % (2 * Math.PI);
@@ -1214,4 +1218,5 @@ namespace SVGRenderer3D {
  *
  * */
 
+/** @internal */
 export default SVGRenderer3D;

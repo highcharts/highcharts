@@ -15,7 +15,6 @@
  *
  * */
 
-import type CandlestickSeries from './CandlestickSeries';
 import type CandlestickPointOptions from './CandlestickPointOptions';
 import type ColorType from '../../Core/Color/ColorType';
 import type OHLCSeriesOptions from '../OHLC/OHLCSeriesOptions';
@@ -68,7 +67,7 @@ export interface CandlestickSeriesOptions extends OHLCSeriesOptions {
      */
     lineColor?: ColorType;
 
-    states?: SeriesStatesOptions<CandlestickSeries>;
+    states?: SeriesStatesOptions<CandlestickSeriesOptions>;
 
     /**
      * The specific line color for up candle sticks. The default is to

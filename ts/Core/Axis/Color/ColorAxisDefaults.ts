@@ -17,7 +17,7 @@
  *
  * */
 
-import type ColorAxis from './ColorAxis';
+import type ColorAxisOptions from './ColorAxisOptions';
 import type { DeepPartial } from '../../../Shared/Types';
 
 import { Palette } from '../../Color/Palettes.js';
@@ -82,7 +82,7 @@ import { Palette } from '../../Color/Palettes.js';
  * @type         {*|Array<*>}
  * @optionparent colorAxis
  */
-const colorAxisDefaults: DeepPartial<ColorAxis.Options> = {
+const colorAxisDefaults: DeepPartial<ColorAxisOptions> = {
 
     /**
      * Whether to allow decimals on the color axis.
@@ -123,19 +123,6 @@ const colorAxisDefaults: DeepPartial<ColorAxis.Options> = {
      * @type      {Array<*>}
      * @product   highcharts highstock highmaps
      * @apioption colorAxis.dataClasses
-     */
-
-    /**
-     * The layout of the color axis. Can be `'horizontal'` or `'vertical'`.
-     * If none given, the color axis has the same layout as the legend.
-     *
-     * @sample highcharts/coloraxis/horizontal-layout/
-     *         Horizontal color axis layout with vertical legend
-     *
-     * @type      {string|undefined}
-     * @since     7.2.0
-     * @product   highcharts highstock highmaps
-     * @apioption colorAxis.layout
      */
 
     /**
@@ -192,6 +179,19 @@ const colorAxisDefaults: DeepPartial<ColorAxis.Options> = {
      * @type      {number}
      * @product   highcharts highstock highmaps
      * @apioption colorAxis.dataClasses.to
+     */
+
+    /**
+     * The layout of the color axis. Can be `'horizontal'` or `'vertical'`.
+     * If none given, the color axis has the same layout as the legend.
+     *
+     * @sample highcharts/coloraxis/horizontal-layout/
+     *         Horizontal color axis layout with vertical legend
+     *
+     * @type      {string|undefined}
+     * @since     7.2.0
+     * @product   highcharts highstock highmaps
+     * @apioption colorAxis.layout
      */
 
     /** @ignore-option */

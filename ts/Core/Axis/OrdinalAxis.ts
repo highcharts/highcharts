@@ -50,6 +50,7 @@ const {
 
 declare module './AxisComposition' {
     interface AxisComposition {
+        /** @internal */
         ordinal?: OrdinalAxis.Additions;
         /** @deprecated */
         lin2val(val: number): number;
@@ -58,18 +59,21 @@ declare module './AxisComposition' {
     }
 }
 
+/** @internal */
 declare module './AxisOptions' {
     interface AxisOptions {
         keepOrdinalPadding?: boolean;
     }
 }
 
+/** @internal */
 declare module './TimeTicksInfoObject' {
     interface TimeTicksInfoObject {
         segmentStarts?: Array<number>;
     }
 }
 
+/** @internal */
 declare module './AxisType' {
     interface AxisTypeRegistry {
         OrdinalAxis: OrdinalAxis.Composition;
@@ -84,7 +88,7 @@ declare module './AxisType' {
 
 /**
  * Extends the axis with ordinal support.
- * @private
+ * @internal
  */
 namespace OrdinalAxis {
 
@@ -95,9 +99,17 @@ namespace OrdinalAxis {
      * */
 
     export declare class Composition extends Axis {
+
+        /** @internal */
         forceOrdinal?: boolean;
+
+        /** @internal */
         isInternal?: boolean;
+
+        /** @internal */
         ordinal: Additions;
+
+        /** @internal */
         getTimeTicks(
             normalizedInterval: Time.TimeNormalizedObject,
             min: number,
@@ -107,10 +119,19 @@ namespace OrdinalAxis {
             closestDistance?: number,
             findHigherRanks?: boolean
         ): TickPositionsArray;
+
+        /** @internal */
         index2val(val: number): number;
+
+        /** @internal */
         lin2val(val: number): number;
+
+        /** @internal */
         ordinal2lin: Composition['val2lin'];
+
+        /** @internal */
         val2lin(val: number, toIndex?: boolean): number;
+
     }
 
     /* *
@@ -122,7 +143,7 @@ namespace OrdinalAxis {
     /**
      * Extends the axis with ordinal support.
      *
-     * @private
+     * @internal
      *
      * @param AxisClass
      * Axis class to extend.
@@ -177,7 +198,7 @@ namespace OrdinalAxis {
      * segments, find the tick positions for each segment then concatenize
      * them. This method is used from both data grouping logic and X axis
      * tick position logic.
-     * @private
+     * @internal
      */
     function getTimeTicks(
         this: Axis,
@@ -393,7 +414,7 @@ namespace OrdinalAxis {
      * Get axis position of given index of the extended ordinal positions.
      * Used only when panning an ordinal axis.
      *
-     * @private
+     * @internal
      * @function Highcharts.Axis#index2val
      * @param {number} index
      * The index value of searched point
@@ -436,7 +457,7 @@ namespace OrdinalAxis {
     /**
      * Translate from linear (internal) to axis value.
      *
-     * @private
+     * @internal
      * @function Highcharts.Axis#lin2val
      * @param {number} val
      * The linear abstracted value.
@@ -480,7 +501,7 @@ namespace OrdinalAxis {
     /**
      * Internal function to calculate the precise index in ordinalPositions
      * array.
-     * @private
+     * @internal
      */
     function getIndexInArray(ordinalPositions: Array<number>, val: number): number {
         const index =
@@ -494,9 +515,7 @@ namespace OrdinalAxis {
         return index + percent;
     }
 
-    /**
-    * @private
-    */
+    /** @internal */
     function onAxisAfterInit(this: Axis): void {
         const axis = this;
 
@@ -505,9 +524,7 @@ namespace OrdinalAxis {
         }
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     function onAxisFoundExtremes(this: Composition): void {
         const axis = this as Composition,
             { eventArgs, options } = axis;
@@ -560,7 +577,7 @@ namespace OrdinalAxis {
      * For ordinal axis, that loads data async, redraw axis after data is
      * loaded. If we don't do that, axis will have the same extremes as
      * previously, but ordinal positions won't be calculated. See #10290
-     * @private
+     * @internal
      */
     function onAxisAfterSetScale(this: Axis): void {
         const axis = this;
@@ -572,9 +589,7 @@ namespace OrdinalAxis {
         }
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     function onAxisInitialAxisTranslation(this: Axis): void {
         const axis = this;
 
@@ -588,7 +603,7 @@ namespace OrdinalAxis {
 
     /**
      * Extending the Chart.pan method for ordinal axes
-     * @private
+     * @internal
      */
     function onChartPan(
         this: Chart,
@@ -739,9 +754,7 @@ namespace OrdinalAxis {
             e.preventDefault();
         }
     }
-    /**
-     * @private
-     */
+    /** @internal */
     function onSeriesUpdatedData(this: Series): void {
         const xAxis = this.xAxis as Composition;
         // Destroy the extended ordinal index on updated data
@@ -758,7 +771,7 @@ namespace OrdinalAxis {
      * same. The translated value is the value that the point would have if
      * the axis was linear, using the same min and max.
      *
-     * @private
+     * @internal
      * @function Highcharts.Axis#val2lin
      * @param {number} val
      * The axis value.
@@ -865,9 +878,7 @@ namespace OrdinalAxis {
      *
      * */
 
-    /**
-     * @private
-     */
+    /** @internal */
     export class Additions {
 
         /* *
@@ -876,9 +887,7 @@ namespace OrdinalAxis {
          *
          * */
 
-        /**
-         * @private
-         */
+        /** @internal */
         public constructor(axis: Composition) {
             this.axis = axis;
         }
@@ -889,13 +898,29 @@ namespace OrdinalAxis {
          *
          * */
 
+
+        /** @internal */
         public axis: Composition;
+
+        /** @internal */
         public groupIntervalFactor?: number;
+
+        /** @internal */
         public index?: Record<string, Array<number>> = {};
+
+        /** @internal */
         public offset?: number;
+
+        /** @internal */
         public overscrollPointsRange?: number;
+
+        /** @internal */
         public positions?: Array<number>;
+
+        /** @internal */
         public slope?: number;
+
+        /** @internal */
         public originalOrdinalRange?: number;
 
         /* *
@@ -906,7 +931,7 @@ namespace OrdinalAxis {
 
         /**
          * Calculate the ordinal positions before tick positions are calculated.
-         * @private
+         * @internal
          */
         public beforeSetTickPositions(): void {
             const axis = this.axis,
@@ -1155,7 +1180,7 @@ namespace OrdinalAxis {
          * @param {boolean} indirectSearch
          *        In case of lack of the point in the array, should return
          *        value be equal to -1 or the closest smaller index.
-         *  @private
+         *  @internal
          */
         public static findIndexOf(
             sortedArray: Array<number>,
@@ -1192,7 +1217,7 @@ namespace OrdinalAxis {
          * operation starts, if an index for the given grouping does not exists,
          * it is created and cached. This index is deleted on updated data, so
          * it will be regenerated the next time a panning operation starts.
-         * @private
+         * @internal
          */
         public getExtendedPositions(withOverscroll = true): Array<number> {
             const ordinal = this,
@@ -1358,7 +1383,7 @@ namespace OrdinalAxis {
          * logic, where we do another run with a greater interval if the number
          * of data groups is more than a certain fraction of the desired group
          * count.
-         * @private
+         * @internal
          */
         public getGroupIntervalFactor(
             xMin: number,
@@ -1408,7 +1433,7 @@ namespace OrdinalAxis {
         /**
          * Get index of point inside the ordinal positions array.
          *
-         * @private
+         * @internal
          * @param {number} pixelVal
          * The pixel value of a point.
          *
@@ -1447,7 +1472,7 @@ namespace OrdinalAxis {
          * pointRange and generate these ticks between Axis.dataMax,
          * Axis.dataMax + Axis.overscroll evenly spaced. Used in panning and
          * navigator scrolling.
-         * @private
+         * @internal
          */
         public getOverscrollPositions(): Array<number> {
             const ordinal = this,
@@ -1477,7 +1502,7 @@ namespace OrdinalAxis {
         /**
          * Make the tick intervals closer because the ordinal gaps make the
          * ticks spread out or cluster.
-         * @private
+         * @internal
          */
         public postProcessTickInterval(tickInterval: number): number {
             // Problem: https://jsfiddle.net/highcharts/FQm4E/1/. This is a case
@@ -1510,7 +1535,7 @@ namespace OrdinalAxis {
         /**
          * If overscroll is pixel or percentage value, convert it to axis range.
          *
-         * @private
+         * @internal
          * @param {number | string} overscroll
          * Overscroll value in axis range, pixels or percentage value.
          * @return {number}
@@ -1586,4 +1611,5 @@ namespace OrdinalAxis {
  *
  * */
 
+/** @internal */
 export default OrdinalAxis;

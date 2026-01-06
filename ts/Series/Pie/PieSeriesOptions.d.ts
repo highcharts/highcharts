@@ -23,7 +23,6 @@ import type {
     PieSeriesPointOptions,
     PiePointOptions
 } from './PiePointOptions';
-import type PieSeries from './PieSeries';
 import type {
     PointMarkerOptions,
     PointShortOptions
@@ -452,7 +451,7 @@ export interface PieSeriesOptions extends LineSeriesOptions {
      */
     startAngle?: number;
 
-    states?: SeriesStatesOptions<PieSeries>;
+    states?: SeriesStatesOptions<PieSeriesOptions>;
 
     /**
      *

@@ -19,7 +19,6 @@
 
 import type Funnel3DSeriesOptions from '../Funnel3D/Funnel3DSeriesOptions';
 import type Pyramid3DPointOptions from './Pyramid3DPointOptions';
-import type Pyramid3DSeries from './Pyramid3DSeries';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 
 /* *
@@ -135,7 +134,7 @@ export interface Pyramid3DSeriesOptions extends Funnel3DSeriesOptions {
      */
     reversed?: boolean;
 
-    states?: SeriesStatesOptions<Pyramid3DSeries>;
+    states?: SeriesStatesOptions<Pyramid3DSeriesOptions>;
 
 }
 
