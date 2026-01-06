@@ -23,7 +23,8 @@ Grid.grid('container', {
                     doc.getElementById('lastClickedRow').value = this.row.index;
                 },
                 mouseOver: function () {
-                    doc.getElementById('cellMouseOver').value = 'row-' + this.row.index;
+                    doc.getElementById('cellMouseOver').value =
+                        'row-' + this.row.index;
                 }
             }
         }
