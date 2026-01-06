@@ -20,11 +20,10 @@
     "@docusaurus/preset-classic": "^3.9.1",
     "@mdx-js/react": "^3.0.0",
     "clsx": "^2.0.0",
-    "highsoft-ui": "^1.0.96",
+    "highsoft-ui": "^1.0.98",
     "prism-react-renderer": "^2.3.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-
     "unist-util-visit": "^5.0.0"
   },
   "devDependencies": {
