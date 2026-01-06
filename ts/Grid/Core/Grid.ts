@@ -4,9 +4,9 @@
  *
  *  (c) 2020-2025 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -32,6 +32,7 @@ import type DataTableOptions from '../../Data/DataTableOptions';
 import type { ColumnDataType, NoIdColumnOptions } from './Table/Column';
 import type Popup from './UI/Popup.js';
 import type { DeepPartial } from '../../Shared/Types';
+import type Column from './Table/Column';
 
 import Accessibility from './Accessibility/Accessibility.js';
 import AST from '../../Core/Renderer/HTML/AST.js';
@@ -45,13 +46,17 @@ import Globals from './Globals.js';
 import TimeBase from '../../Shared/TimeBase.js';
 import Pagination from './Pagination/Pagination.js';
 
-const { makeHTMLElement, setHTMLContent } = GridUtils;
+const {
+    makeHTMLElement,
+    setHTMLContent,
+    createOptionsProxy
+} = GridUtils;
+
 const {
     defined,
     diffObjects,
     extend,
     fireEvent,
-    getStyle,
     merge,
     pick
 } = U;
@@ -91,7 +96,7 @@ export class Grid {
      * The new Grid.
      */
     public static grid(
-        renderTo: string|HTMLElement,
+        renderTo: string | HTMLElement,
         options: Options,
         async?: boolean
     ): Grid;
@@ -113,14 +118,14 @@ export class Grid {
      * Promise that resolves with the new Grid.
      */
     public static grid(
-        renderTo: string|HTMLElement,
+        renderTo: string | HTMLElement,
         options: Options,
         async: true
     ): Promise<Grid>;
 
     // Implementation
     public static grid(
-        renderTo: string|HTMLElement,
+        renderTo: string | HTMLElement,
         options: Options,
         async?: boolean
     ): (Grid | Promise<Grid>) {
@@ -146,7 +151,7 @@ export class Grid {
      * An array containing the current Grid objects in the page.
      * @private
      */
-    public static readonly grids: Array<(Grid|undefined)> = [];
+    public static readonly grids: Array<(Grid | undefined)> = [];
 
     /**
      * The accessibility controller.
@@ -296,7 +301,7 @@ export class Grid {
     /**
      * The render target (container) of the Grid.
      */
-    private renderTo: string|HTMLElement;
+    private renderTo: string | HTMLElement;
 
     /**
      * Whether the Grid is rendered.
@@ -340,7 +345,7 @@ export class Grid {
         this.id = this.options?.id || U.uniqueKey();
         this.querying = new QueryingController(this);
         this.locale = this.options?.lang?.locale || (
-            (this.container?.closest('[lang]') as HTMLElement|null)?.lang
+            (this.container?.closest('[lang]') as HTMLElement | null)?.lang
         );
         this.time = new TimeBase(extend<TimeBase.TimeOptions>(
             this.options?.time,
@@ -394,7 +399,7 @@ export class Grid {
      * The render target (html element or id) of the Grid.
      *
      */
-    private initContainer(renderTo: string|HTMLElement): void {
+    private initContainer(renderTo: string | HTMLElement): void {
         const container = (typeof renderTo === 'string') ?
             Globals.win.document.getElementById(renderTo) : renderTo;
 
@@ -406,10 +411,10 @@ export class Grid {
             );
         }
 
-        this.initialContainerHeight = getStyle(container, 'height', true) || 0;
-
         this.container = container;
+        this.container.style.minHeight = 0 + 'px';
         this.container.innerHTML = AST.emptyHTML;
+
         this.contentWrapper = makeHTMLElement('div', {
             className: Globals.getClassName('container')
         }, this.container);
@@ -436,6 +441,7 @@ export class Grid {
     ): DeepPartial<NonArrayOptions> {
         // Operate on a copy of the options argument
         newOptions = merge(newOptions);
+
         const diff: DeepPartial<NonArrayOptions> = {};
 
         if (newOptions.columns) {
@@ -461,6 +467,13 @@ export class Grid {
             this.options ?? defaultOptions,
             this.userOptions
         );
+
+        this.viewport?.columns.forEach((column: Column): void => {
+            column.options = createOptionsProxy(
+                this.columnOptionsMap?.[column.id]?.options ?? {},
+                this.options?.columnDefaults
+            );
+        });
 
         return diff;
     }
@@ -860,7 +873,9 @@ export class Grid {
         const flags = this.dirtyFlags;
 
         if (flags.has('grid')) {
-            return await this.render();
+            await this.render();
+            fireEvent(this, 'afterRedraw');
+            return;
         }
 
         const { viewport: vp, pagination } = this;
@@ -1221,7 +1236,7 @@ export class Grid {
             this.renderNoData();
         }
 
-        this.accessibility?.setA11yOptions();
+        this.renderAccessibility();
 
         // Render bottom pagination, footer pagination,
         // or custom container pagination (after table).
@@ -1234,6 +1249,22 @@ export class Grid {
         fireEvent(this, 'afterRenderViewport');
 
         this.viewport?.reflow();
+    }
+
+    /**
+     * Renders the Grid accessibility.
+     * @internal
+     */
+    private renderAccessibility(): void {
+        const accessibility = this.accessibility;
+
+        if (!accessibility) {
+            return;
+        }
+
+        accessibility.setA11yOptions();
+        accessibility.addScreenReaderSection('before');
+        accessibility.addScreenReaderSection('after');
     }
 
     /**
@@ -1344,7 +1375,7 @@ export class Grid {
      * @returns
      */
     public getColumnIds(
-        columnsTree: Array<GroupedHeaderOptions|string>,
+        columnsTree: Array<GroupedHeaderOptions | string>,
         onlyEnabledColumns: boolean = true
     ): string[] {
         let columnIds: string[] = [];

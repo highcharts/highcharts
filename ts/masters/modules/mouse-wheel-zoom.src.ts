@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LicenseRef-Highcharts
 /**
  * @license Highcharts JS v@product.version@ (@product.date@)
  * @module highcharts/modules/mouse-wheel-zoom
@@ -5,9 +6,11 @@
  *
  * Mousewheel zoom module
  *
- * (c) 2023 Askel Eirik Johansson
+ * (c) 2023 Highsoft AS
+ * Author: Askel Eirik Johansson
  *
- * License: www.highcharts.com/license
+ * A commercial license may be required depending on use.
+ * See www.highcharts.com/license
  */
 
 'use strict';

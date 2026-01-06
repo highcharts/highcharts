@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2025 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -31,6 +32,21 @@ export interface PieDataLabelOptions extends DataLabelOptions {
     connectorWidth?: number;
     crookDistance?: string;
     softConnector?: boolean;
+
+    /**
+     * The distance of the data label from the pie's edge. Negative
+     * numbers put the data label on top of the pie slices. Can also be
+     * defined as a percentage of pie's radius. Connectors are only
+     * shown for data labels outside the pie.
+     *
+     * @sample {highcharts} highcharts/plotoptions/pie-datalabels-distance/
+     *         Data labels on top of the pie
+     *
+     * @type    {number|string}
+     * @since   2.1
+     * @product highcharts highmaps
+     */
+    distance?: number|string;
 }
 
 /* *

@@ -6,7 +6,6 @@
  *
  *  License: highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -1313,7 +1312,7 @@ function seriesRenderCanvas(this: Series): void {
 
     fireEvent(this, 'renderCanvas');
 
-    if (chartBoost && seriesBoost?.target && lineWidth > 1 && this.is('line')) {
+    if (chartBoost && chartBoost?.target && lineWidth > 1 && this.is('line')) {
         chartBoost.lineWidthFilter?.remove();
         chartBoost.lineWidthFilter = chart.renderer.definition({
             tagName: 'filter',
@@ -1329,7 +1328,7 @@ function seriesRenderCanvas(this: Series): void {
             attributes: { id: 'linewidth' }
         });
 
-        seriesBoost.target.attr({
+        chartBoost.target.attr({
             filter: 'url(#linewidth)'
         });
     }

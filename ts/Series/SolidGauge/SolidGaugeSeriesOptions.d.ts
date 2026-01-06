@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2025 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -17,7 +18,6 @@
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type GaugeSeriesOptions from '../Gauge/GaugeSeriesOptions';
 import type SolidGaugePointOptions from './SolidGaugePointOptions';
-import type SolidGaugeSeries from './SolidGaugeSeries';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 
 /* *
@@ -198,7 +198,7 @@ export interface SolidGaugeSeriesOptions extends GaugeSeriesOptions {
      */
     rounded?: boolean;
 
-    states?: SeriesStatesOptions<SolidGaugeSeries>;
+    states?: SeriesStatesOptions<SolidGaugeSeriesOptions>;
 
     /**
      * The threshold or base level for the gauge.

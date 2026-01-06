@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2025 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -17,7 +18,6 @@
 import type BoxPlotSeriesOptions from '../BoxPlot/BoxPlotSeriesOptions';
 import type ColorType from '../../Core/Color/ColorType';
 import type ErrorBarPointOptions from './ErrorBarPointOptions';
-import type ErrorBarSeries from './ErrorBarSeries';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type TooltipOptions from '../../Core/TooltipOptions';
@@ -160,7 +160,7 @@ export interface ErrorBarSeriesOptions extends BoxPlotSeriesOptions {
      */
     linkedTo?: string;
 
-    states?: SeriesStatesOptions<ErrorBarSeries>;
+    states?: SeriesStatesOptions<ErrorBarSeriesOptions>;
 
     tooltip?: Partial<TooltipOptions>;
 

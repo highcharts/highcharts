@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2025 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -41,22 +42,14 @@ import { Palette } from '../../Core/Color/Palettes.js';
 const exporting: ExportingOptions = {
 
     /**
-     * Experimental setting to allow HTML inside the chart (added through
-     * the `useHTML` options), directly in the exported image. This allows
-     * you to preserve complicated HTML structures like tables or bi-directional
-     * text in exported charts.
+     * Allow HTML inside the chart (added through the `useHTML` options),
+     * directly in the exported image. This allows you to preserve complicated
+     * HTML structures like tables or bi-directional text in exported charts.
      *
-     * Disclaimer: The HTML is rendered in a `foreignObject` tag in the
-     * generated SVG. The official export server is based on PhantomJS,
-     * which supports this, but other SVG clients, like Batik, does not
-     * support it. This also applies to downloaded SVG that you want to
-     * open in a desktop client.
-     *
-     * @type      {boolean}
-     * @default   false
      * @since     4.1.8
      * @apioption exporting.allowHTML
      */
+    allowHTML: true,
 
     /**
      * Allows the end user to sort the data table by clicking on column headers.
@@ -73,7 +66,8 @@ const exporting: ExportingOptions = {
      *
      * @see [styledMode](#chart.styledMode)
      *
-     * @sample {highcharts} highcharts/exporting/apply-stylesheets/
+     * @sample    {highcharts} highcharts/exporting/apply-stylesheets/
+     *            Export with custom stylesheet
      *
      * @type      {boolean}
      * @default   false
@@ -199,6 +193,11 @@ const exporting: ExportingOptions = {
      * [jsPDF](https://github.com/parallax/jsPDF) and
      * [svg2pdf.js](https://github.com/yWorks/svg2pdf.js), required for client
      * side export in certain browsers.
+     *
+     * Note: Highcharts cannot take responsibility for the security of any
+     * external libraries (including [optional dependencies](https://www.highcharts.com/docs/getting-started/optional-dependencies))
+     * loaded through `exporting.libURL`. These libraries are not licensed or
+     * warrantied under the Highcharts license.
      *
      * @type      {string}
      * @default   https://code.highcharts.com/{version}/lib

@@ -2,11 +2,12 @@
  *
  *  X-range series module
  *
- *  (c) 2010-2025 Torstein Honsi, Lars A. V. Cabrera
+ *  (c) 2010-2025 Highsoft AS
+ *  Author: Torstein Honsi, Lars A. V. Cabrera
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -22,7 +23,6 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type TooltipOptions from '../../Core/TooltipOptions';
 import type XRangePointOptions from './XRangePointOptions';
 import type { XRangePointPartialFillOptions } from './XRangePointOptions';
-import type XRangeSeries from './XRangeSeries';
 
 /* *
  *
@@ -132,7 +132,7 @@ export interface XRangeSeriesOptions extends ColumnSeriesOptions {
 
     pointRange?: number;
 
-    states?: SeriesStatesOptions<XRangeSeries>;
+    states?: SeriesStatesOptions<XRangeSeriesOptions>;
 
     tooltip?: Partial<TooltipOptions>;
 

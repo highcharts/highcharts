@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2025 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -16,7 +17,6 @@
  *
  * */
 
-import type ButtonThemeObject from './Renderer/SVG/ButtonThemeObject';
 import type { HTMLDOMElement } from './Renderer/DOMElementType';
 import type GlobalsBase from './GlobalsBase';
 
@@ -80,12 +80,12 @@ declare global {
 
     interface Element {
         /**
-         * @private
+         * @internal
          * @requires Core/Renderer/SVG/SVGElement
          */
         gradient?: string;
         /**
-         * @private
+         * @internal
          * @requires Core/Renderer/SVG/SVGElement
          */
         radialReference?: Array<number>;
@@ -113,12 +113,21 @@ declare global {
     }
 
     interface Math {
+        /**
+         * Easing definition
+         *
+         * @param pos
+         * Current position, ranging from 0 to 1.
+         *
+         * @return
+         * Ease result
+         */
         easeInOutSine(pos: number): number;
     }
 
     interface SVGElement {
         /**
-         * @private
+         * @internal
          * @requires Core/Renderer/SVG/SVGElement
          */
         cutHeight?: number;
@@ -137,22 +146,6 @@ declare global {
         webkitAudioContext?: typeof AudioContext;
         /** @deprecated */
         webkitURL?: typeof URL;
-    }
-
-    interface GlobalOptions {
-        buttonTheme: ButtonThemeObject;
-        /** @deprecated */
-        canvasToolsURL?: string;
-        /** @deprecated */
-        Date?: Function;
-        /** @deprecated */
-        getTimezoneOffset?: Function;
-        /** @deprecated */
-        timezone?: string;
-        /** @deprecated */
-        timezoneOffset?: number;
-        /** @deprecated */
-        useUTC?: boolean;
     }
 
     namespace Intl {
@@ -175,7 +168,7 @@ declare global {
 
 /**
  * Shared Highcharts properties.
- * @private
+ * @internal
  */
 namespace Globals {
 
@@ -250,7 +243,7 @@ namespace Globals {
     /**
      * A shared registry between all bundles to keep track of applied
      * compositions.
-     * @private
+     * @internal
      */
     export const composed: Array<string> = [];
 
@@ -277,15 +270,13 @@ namespace Globals {
     export const dateFormats: GlobalsBase['dateFormats'] = {};
 
     /**
-     * @private
+     * @internal
      * @deprecated
      * @todo Use only `Core/Series/SeriesRegistry.seriesTypes`
      */
     export const seriesTypes = {} as GlobalsBase['seriesTypes'];
 
-    /**
-     * @private
-     */
+    /** @internal */
     export const symbolSizes: GlobalsBase['symbolSizes'] = {};
 
     /* *

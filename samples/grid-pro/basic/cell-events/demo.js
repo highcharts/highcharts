@@ -100,7 +100,7 @@ Grid.grid('container', {
             format: 'MetaData (unsortable)'
         },
         sorting: {
-            sortable: false
+            enabled: false
         }
     }]
 });

@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2025 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -26,11 +27,15 @@ const {
     extend,
     timeUnits
 } = U;
+
+
 /* *
  *
  *  Declarations
  *
  * */
+
+
 declare module './Axis/TickPositionsArray'{
     interface TickPositionsArray {
         info?: TimeTicksInfoObject;
@@ -284,7 +289,7 @@ namespace Time {
 
     export interface DateTimeFormatOptions extends Intl.DateTimeFormatOptions {
         dateStyle?: 'full'|'long'|'medium'|'short';
-        fractionalSecondDigits?: number;
+        fractionalSecondDigits?: 1|2|3;
         prefix?: string;
         suffix?: string;
         timeStyle?: 'full'|'long'|'medium'|'short';
@@ -319,8 +324,17 @@ namespace Time {
         (this: Time, timestamp: number): string;
     }
     export interface TimeNormalizedObject {
+        /**
+         * The count of the interval.
+         */
         count: number;
+        /**
+         * The name of the time unit.
+         */
         unitName: TimeUnit;
+        /**
+         * The interval in axis values (ms).
+         */
         unitRange: number;
     }
     export type TimeUnit = (

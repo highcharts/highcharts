@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2025 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -19,7 +20,6 @@ import type {
     SeriesStatesOptions
 } from '../../Core/Series/SeriesOptions';
 import type PolygonPointOptions from './PolygonPointOptions';
-import type PolygonSeries from './PolygonSeries';
 import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
 import type TooltipOptions from '../../Core/TooltipOptions';
 import type {
@@ -144,7 +144,7 @@ interface PolygonSeriesOptions extends ScatterSeriesOptions {
 
     marker?: PointMarkerOptions;
 
-    states?: SeriesStatesOptions<PolygonSeries>;
+    states?: SeriesStatesOptions<PolygonSeriesOptions>;
 
     stickyTracking?: boolean;
 
