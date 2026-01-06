@@ -27,7 +27,7 @@ import Color from '../../Core/Color/Color.js';
 import ContourPoint from './ContourPoint.js';
 import contourShader from './contourShader.js';
 import ContourSeriesDefaults from './ContourSeriesDefaults.js';
-import Delaunay from '../../Shared/Delaunay.js';
+import Delaunay from '../../Core/Delaunay.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
 import SVGPath from '../../Core/Renderer/SVG/SVGPath.js';

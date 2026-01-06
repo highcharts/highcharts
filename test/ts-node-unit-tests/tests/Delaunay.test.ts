@@ -1,7 +1,7 @@
 import { describe, it } from 'node:test';
 import { deepStrictEqual, strictEqual } from 'node:assert';
 
-import Delaunay from '../../../ts/Shared/Delaunay';
+import Delaunay from '../../../ts/Core/Delaunay';
 
 describe('Delaunay triangulation', () => {
     it('less than 3 points should return empty array', () => {
