@@ -1,13 +1,16 @@
 import * as ts from "typescript";
 import * as fs from "fs";
 import * as path from "path";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
 
 /**
  * Loads a .d.ts file, analyzes it, and returns its exported types as a JavaScript record.
  * The record maps exported type names to their string representations.
  */
 export async function loadExportedTypes(dtsFilePath: string): Promise<Record<string, string[]>> {
-    const absPath = path.resolve(dtsFilePath);
+    const __dirname = dirname(fileURLToPath(import.meta.url));
+    const absPath = path.join(__dirname, '../../', dtsFilePath);
     const sourceText = await fs.promises.readFile(absPath, "utf-8");
     const sourceFile = ts.createSourceFile(absPath, sourceText, ts.ScriptTarget.Latest, true);
 

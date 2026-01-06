@@ -14,8 +14,10 @@
 import type { ControlOptions, SampleGeneratorConfig } from './config.ts';
 
 import colors from 'colors/safe.js';
-import { ESLint } from 'eslint';
+import { dirname, join } from 'path';
 import { promises as fs } from 'fs';
+import { fileURLToPath } from 'url';
+
 import { loadExportedTypes } from './load-types.ts';
 import config from './config.ts';
 
@@ -914,7 +916,11 @@ export async function saveDemoFile(config: SampleGeneratorConfig) {
         getDemoDetails(config)
     ]);
 
-    const outputDir = `../highcharts/samples/${config.output}`;
+    const outputDir = join(
+        dirname(fileURLToPath(import.meta.url)),
+        '../../samples/',
+        config.output
+    );
 
     await fs.mkdir(
         outputDir,
@@ -923,14 +929,14 @@ export async function saveDemoFile(config: SampleGeneratorConfig) {
 
     // Write all files in parallel
     await Promise.all([
-        fs.writeFile(`${outputDir}/demo.html`, html),
-        fs.writeFile(`${outputDir}/demo.css`, css),
-        fs.writeFile(`${outputDir}/demo.details`, details)
+        fs.writeFile(join(outputDir, 'demo.html'), html),
+        fs.writeFile(join(outputDir, 'demo.css'), css),
+        fs.writeFile(join(outputDir, 'demo.details'), details)
     ]);
 
     // If demo.ts is successfully written, delete demo.js if it exists
     try {
-        await fs.unlink(`${outputDir}/demo.js`);
+        await fs.unlink(join(outputDir, 'demo.js'));
         if (executedDirectly) {
             console.log(colors.blue('Deleted obsolete demo.js file.'));
         }
@@ -960,7 +966,7 @@ export async function saveDemoFile(config: SampleGeneratorConfig) {
         );
     }
     */
-    await fs.writeFile(`${outputDir}/demo.ts`, ts);
+    await fs.writeFile(join(outputDir, 'demo.ts'), ts);
 
 
     if (executedDirectly) {
