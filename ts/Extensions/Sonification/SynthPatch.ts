@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *  Author: Øystein Moseng
  *
  *  Class representing a Synth Patch, used by Instruments in the

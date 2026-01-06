@@ -2,7 +2,7 @@
  *
  *  Data module
  *
- *  (c) 2012-2025 Highsoft AS
+ *  (c) 2012-2026 Highsoft AS
  *  Author: Torstein Honsi
  *
  *  A commercial license may be required depending on use.
