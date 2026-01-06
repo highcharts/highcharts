@@ -1,8 +1,7 @@
 (async () => {
 
-    // Load the dataset
     const data = await fetch(
-        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/large-dataset.json'
+        'https://www.highcharts.com/samples/data/usdeur.json'
     ).then(response => response.json());
 
     Highcharts.stockChart('container', {
@@ -12,10 +11,8 @@
             }
         },
         title: {
-            text: 'Scrollbar on Y axis'
-        },
-        subtitle: {
-            text: 'Zoom in to see the scrollbar'
+            text: 'Demo of <em>yAxis.scrollbar.enabled</em> and ' +
+                   '<em>showFull</em>'
         },
         yAxis: {
             scrollbar: {
@@ -24,9 +21,8 @@
             }
         },
         series: [{
-            data: data.data,
-            pointStart: data.pointStart,
-            pointInterval: data.pointInterval
+            data: data
         }]
     });
+
 })();
