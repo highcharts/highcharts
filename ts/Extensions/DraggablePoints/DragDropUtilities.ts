@@ -19,7 +19,7 @@
  * */
 
 import type Chart from '../../Core/Chart/Chart';
-import type EventCallback from '../../Core/EventCallback';
+import type { EventCallback } from '../../Core/Callback';
 import type PointerEvent from '../../Core/PointerEvent';
 
 import U from '../../Core/Utilities.js';

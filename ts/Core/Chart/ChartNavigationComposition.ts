@@ -1,12 +1,10 @@
-// SPDX-License-Identifier: LicenseRef-Highcharts
-/**
+/* *
  *
  *  (c) 2010-2025 Highsoft AS
  *  Author: Paweł Fus
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
- *
  *
  * */
 
@@ -27,6 +25,7 @@ import type NavigationOptions from '../../Extensions/Exporting/NavigationOptions
  *
  * */
 
+/** @internal */
 declare module './ChartBase'{
     interface ChartBase {
         navigation?: ChartNavigationComposition.Additions;
@@ -39,6 +38,7 @@ declare module './ChartBase'{
  *
  * */
 
+/** @internal */
 namespace ChartNavigationComposition {
 
     /* *
@@ -47,14 +47,17 @@ namespace ChartNavigationComposition {
      *
      * */
 
+    /** @internal */
     export interface Composition extends Chart {
         navigation: Additions;
     }
 
+    /** @internal */
     export interface UpdateFunction {
         (this: Composition, options: NavigationOptions, redraw?: boolean): void;
     }
 
+    /** @internal */
     export interface UpdateObject {
         context: Composition;
         update: UpdateFunction;
@@ -68,9 +71,7 @@ namespace ChartNavigationComposition {
 
     /* eslint-disable valid-jsdoc */
 
-    /**
-     * @private
-     */
+    /** @internal */
     export function compose<T extends Chart>(
         chart: T
     ): (T&Composition) {
@@ -90,7 +91,7 @@ namespace ChartNavigationComposition {
     /**
      * Initializes `chart.navigation` object which delegates `update()` methods
      * to all other common classes (used in exporting and navigationBindings).
-     * @private
+     * @internal
      */
     export class Additions {
 
@@ -100,6 +101,7 @@ namespace ChartNavigationComposition {
          *
          * */
 
+        /** @internal */
         constructor(chart: Composition) {
             this.chart = chart;
         }
@@ -112,6 +114,7 @@ namespace ChartNavigationComposition {
 
         private chart: Composition;
 
+        /** @internal */
         public updates: Array<UpdateFunction> = [];
 
         /* *
@@ -123,7 +126,7 @@ namespace ChartNavigationComposition {
         /**
          * Registers an `update()` method in the `chart.navigation` object.
          *
-         * @private
+         * @internal
          * @param {UpdateFunction} updateFn
          * The `update()` method that will be called in `chart.update()`.
          */
@@ -131,9 +134,7 @@ namespace ChartNavigationComposition {
             this.chart.navigation.updates.push(updateFn);
         }
 
-        /**
-         * @private
-         */
+        /** @internal */
         public update(
             options: NavigationOptions,
             redraw?: boolean
@@ -155,4 +156,5 @@ namespace ChartNavigationComposition {
  *
  * */
 
+/** @internal */
 export default ChartNavigationComposition;

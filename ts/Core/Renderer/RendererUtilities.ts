@@ -31,6 +31,7 @@ const {
  *
  * */
 
+/** @internal */
 namespace RendererUtilities {
 
     /* *
@@ -71,7 +72,7 @@ namespace RendererUtilities {
      * of objects containing a size, a target and a rank. It will place the
      * labels as close as possible to their targets, skipping the lowest ranked
      * labels if necessary.
-     * @private
+     * @internal
      */
     export function distribute<T extends BoxObject>(
         boxes: DistributedBoxArray<T>,
@@ -262,4 +263,5 @@ namespace RendererUtilities {
  *
  * */
 
+/** @internal */
 export default RendererUtilities;

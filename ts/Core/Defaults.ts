@@ -43,6 +43,12 @@ const {
 
 declare module './GlobalsBase' {
     interface GlobalsBase {
+        /**
+         * Global default settings.
+         *
+         * @name Highcharts.defaultOptions
+         * @type {Highcharts.Options}
+         */
         defaultOptions: DefaultOptions;
         time: Time;
     }
@@ -61,7 +67,7 @@ declare module './GlobalsBase' {
  * @type {Highcharts.Options}
  *//**
  * @optionparent
- * @private
+ * @internal
  */
 const defaultOptions: DefaultOptions = {
 
@@ -320,16 +326,17 @@ const defaultOptions: DefaultOptions = {
         resetZoom: 'Reset zoom',
 
         /**
-         * The tooltip title for the label appearing when a chart is zoomed.
-         *
-         * @since 1.2.4
-         */
-        /**
          * The default title of the Y axis
          *
          * @since 12.2.0
          */
         yAxisTitle: 'Values',
+
+        /**
+         * The tooltip title for the label appearing when a chart is zoomed.
+         *
+         * @since 1.2.4
+         */
         resetZoomTitle: 'Reset zoom level 1:1'
     },
 
@@ -792,28 +799,6 @@ const defaultOptions: DefaultOptions = {
          */
 
         /**
-         * CSS styles for the title.
-         *
-         * In styled mode, the subtitle style is given in the
-         * `.highcharts-subtitle` class.
-         *
-         * @sample {highcharts} highcharts/subtitle/style/
-         *         Custom color and weight
-         * @sample {highcharts} highcharts/css/titles/
-         *         Styled mode
-         * @sample {highstock} stock/chart/subtitle-style
-         *         Custom color and weight
-         * @sample {highstock} highcharts/css/titles/
-         *         Styled mode
-         * @sample {highmaps} highcharts/css/titles/
-         *         Styled mode
-         *
-         * @type      {Highcharts.CSSObject}
-         * @default   {"color": "#666666"}
-         * @apioption subtitle.style
-         */
-
-        /**
          * Whether to
          * [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
          * to render the text.
@@ -1129,7 +1114,7 @@ const defaultOptions: DefaultOptions = {
          *
          * @declare Highcharts.LegendEventsOptionsObject
          *
-         * @private
+         * @internal
          */
         events: {},
 
@@ -2325,37 +2310,6 @@ const defaultOptions: DefaultOptions = {
          */
 
         /**
-         * Prevents the tooltip from switching or closing, when touched or
-         * pointed.
-         *
-         * @sample highcharts/tooltip/stickoncontact/
-         *         Tooltip sticks on pointer contact
-         *
-         * @type      {boolean}
-         * @since     8.0.1
-         * @apioption tooltip.stickOnContact
-         */
-
-        /**
-         * Use HTML to render the contents of the tooltip instead of SVG. Using
-         * HTML allows advanced formatting like tables and images in the
-         * tooltip. It is also recommended for rtl languages as it works around
-         * rtl bugs in early Firefox.
-         *
-         * @sample {highcharts|highstock} highcharts/tooltip/footerformat/
-         *         A table for value alignment
-         * @sample {highcharts|highstock} highcharts/tooltip/fullhtml/
-         *         Full HTML tooltip
-         * @sample {highmaps} maps/tooltip/usehtml/
-         *         Pure HTML tooltip
-         *
-         * @type      {boolean}
-         * @default   false
-         * @since     2.2
-         * @apioption tooltip.useHTML
-         */
-
-        /**
          * How many decimals to show in each series' y value. This is
          * overridable in each series' tooltip options object. The default is to
          * preserve all decimals.
@@ -2814,13 +2768,14 @@ const defaultOptions: DefaultOptions = {
          */
 
         /**
-         * Prevents the tooltip from switching or closing when touched or
+         * Prevents the tooltip from switching or closing, when touched or
          * pointed.
          *
          * @sample highcharts/tooltip/stickoncontact/
          *         Tooltip sticks on pointer contact
          *
-         * @since 8.0.1
+         * @type      {boolean}
+         * @since     8.0.1
          */
         stickOnContact: false,
 
@@ -2861,7 +2816,7 @@ const defaultOptions: DefaultOptions = {
          * @sample {highmaps} maps/tooltip/usehtml/
          *         Pure HTML tooltip
          *
-         * @since 2.2
+         * @since     2.2
          */
         useHTML: false
     },
