@@ -242,6 +242,7 @@ describe('Stock indicators module', () => {
             'gauge',
             'hlc',
             'ikh',
+            'indicate',
             'keltnerchannels',
             'klinger',
             'line',
