@@ -37,7 +37,13 @@ import * as selectHandler from './type-handlers/select.ts';
 import * as colorHandler from './type-handlers/color.ts';
 import * as textHandler from './type-handlers/text.ts';
 
-const types = await loadExportedTypes('code/highcharts.d.ts');
+const types = await loadExportedTypes('code/highcharts.d.ts')
+    .catch(() => {
+        console.error(colors.red(
+            'Failed to load exported types from code/highcharts.d.ts. ' +
+            'Run `gulp jsdoc-dts` first.'
+        ));
+    });
 
 const executedDirectly = import.meta.url === process.argv[1] ||
     import.meta.url === `file://${process.argv[1]}`;
@@ -500,10 +506,10 @@ export async function getDemoHTML(
     if (modules.length > 0) {
         const moduleScripts = modules.map(
             moduleName => `<script src="https://code.highcharts.com/${moduleName}.js"></script>`
-        ).join('\n    ');
+        ).join('\n');
         html = html.replace(
             '<script src="https://code.highcharts.com/highcharts.js"></script>',
-            '<script src="https://code.highcharts.com/highcharts.js"></script>\n    ' +
+            '<script src="https://code.highcharts.com/highcharts.js"></script>\n' +
                 moduleScripts
         );
     }
@@ -536,9 +542,9 @@ export async function getDemoHTML(
     */
     const description = config.controlsDescription ?
         `<highcharts-group-description>
-            ${config.controlsDescription}
-        </highcharts-group-description>
-        ` :
+        ${config.controlsDescription}
+      </highcharts-group-description>
+      ` :
         '';
 
 
