@@ -6,9 +6,9 @@
  *
  *  Author: Daniel Studencki
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -20,7 +20,7 @@
 
 import type ColorType from '../../Core/Color/ColorType';
 import type {
-    DataLabelFormatterCallback,
+    DataLabelsFormatterCallbackFunction,
     DataLabelOptions
 } from '../../Core/Series/DataLabelOptions';
 import type Point from '../../Core/Series/Point';
@@ -32,7 +32,7 @@ import type TimelinePoint from './TimelinePoint';
  *
  * */
 
-export interface TimelineDataLabelFormatterCallback extends DataLabelFormatterCallback {
+export interface TimelineDataLabelsFormatterCallbackFunction extends DataLabelsFormatterCallbackFunction {
     (this: (Point|TimelinePoint)): string;
 }
 
@@ -41,7 +41,7 @@ export interface TimelineDataLabelOptions extends DataLabelOptions {
     connectorColor?: ColorType;
     connectorWidth?: number;
     distance?: number;
-    formatter?: TimelineDataLabelFormatterCallback;
+    formatter?: TimelineDataLabelsFormatterCallbackFunction;
     width?: number;
 }
 

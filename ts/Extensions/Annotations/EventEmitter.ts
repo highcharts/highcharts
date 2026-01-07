@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft, Black Label
+ *  (c) 2009-2025 Highsoft AS
+ *  Author: Highsoft, Black Label
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -27,7 +28,7 @@ import type { ControlPointOptionsObject } from './ControlPointOptions';
 import type ControlTarget from './ControlTarget';
 import type { CursorValue } from '../../Core/Renderer/CSSObject';
 import type DOMElementType from '../../Core/Renderer/DOMElementType';
-import type EventCallback from '../../Core/EventCallback';
+import type { EventCallback } from '../../Core/Callback';
 import type PointerEvent from '../../Core/PointerEvent';
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';

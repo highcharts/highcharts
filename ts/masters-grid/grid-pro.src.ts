@@ -1,10 +1,12 @@
+// SPDX-License-Identifier: LicenseRef-Highcharts
 /**
  * @license Highcharts Grid Pro v@product.version@ (@product.date@)
  * @module grid/grid-pro
  *
  * (c) 2009-2025 Highsoft AS
  *
- * License: www.highcharts.com/license
+ * A commercial license may be required depending on use.
+ * See www.highcharts.com/license
  */
 
 
@@ -15,7 +17,6 @@
  * */
 
 import type _Options from '../Grid/Core/Options';
-import type * as H from '../Grid/Pro/highcharts';
 
 import AST from '../Core/Renderer/HTML/AST.js';
 import Templating from '../Core/Templating.js';
@@ -158,7 +159,9 @@ export {
     DataModifier,
     DataPool,
     DataTable,
+    _Grid as Grid,
     HeaderCell,
+    _Options as Options,
     Pagination,
     Popup,
     SvgIcons,
@@ -170,7 +173,6 @@ export {
 export const {
     classNamePrefix,
     defaultOptions,
-    Grid,
     grid,
     grids,
     isHighContrastModeActive,
@@ -188,14 +190,9 @@ export const {
  *
  * */
 
-declare global {
-    interface Window {
-        Highcharts?: typeof H;
-    }
-}
-
-if (G.win.Highcharts) {
-    G.CellRendererRegistry.types.sparkline.useHighcharts(G.win.Highcharts);
+const wnd = G.win as { Highcharts?: unknown };
+if (wnd.Highcharts) {
+    G.CellRendererRegistry.types.sparkline.useHighcharts(wnd.Highcharts);
 }
 
 

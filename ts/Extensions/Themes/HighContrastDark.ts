@@ -4,13 +4,13 @@
  *
  *  Author: Øystein Moseng
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
  *  Accessible high-contrast dark theme for Highcharts. Specifically tailored
  *  towards 3:1 contrast against black/off-black backgrounds. Neighboring
  *  colors are tested for color blindness.
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 

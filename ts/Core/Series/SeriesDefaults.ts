@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2025 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -102,8 +103,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *         Map bubble
      *
      * @since 1.2.0
-     *
-     * @private
      */
     allowPointSelect: false,
 
@@ -120,8 +119,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *
      * @since   5.0.10
      * @product highcharts highstock gantt
-     *
-     * @private
      */
     crisp: true,
 
@@ -138,8 +135,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *         Show select box
      *
      * @since 1.2.0
-     *
-     * @private
      */
     showCheckbox: false,
 
@@ -182,8 +177,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @default {highcharts} true
      * @default {highstock} true
      * @default {highmaps} false
-     *
-     * @private
      */
     animation: {
         /** @ignore-option */
@@ -806,6 +799,22 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      */
 
     /**
+     * This option allows grouping series in a stacked chart. The stack option
+     * can be a string or anything else, as long as the grouped series' stack
+     * options match each other after conversion into a string.
+     *
+     * @sample {highcharts} highcharts/series/stack/
+     *         Stacked and grouped columns
+     * @sample {highcharts} highcharts/series/stack-centerincategory/
+     *         Stacked and grouped, centered in category
+     *
+     * @type      {number|string}
+     * @since     2.1
+     * @product   highcharts highstock
+     * @apioption series.stack
+     */
+
+    /**
      * Whether to stack the values of each series on top of each other.
      * Possible values are null to disable, `"normal"` to stack by
      * value or `"percent"`.
@@ -918,8 +927,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * `Highcharts.addEvent` function.
      *
      * @declare Highcharts.SeriesEventsOptionsObject
-     *
-     * @private
      */
     events: {},
 
@@ -1058,8 +1065,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *
      * @sample {highmaps} maps/demo/mappoint-mapmarker
      *         Using the mapmarker symbol for points
-     *
-     * @private
      */
     marker: {
 
@@ -1228,7 +1233,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
                  * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
                  */
                 animation: {
-                    /** @internal */
                     duration: 150
                 },
 
@@ -1379,8 +1383,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * Properties for each single point.
      *
      * @declare Highcharts.PlotSeriesPointOptions
-     *
-     * @private
      */
     point: {
 
@@ -1531,8 +1533,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *
      * @type    {*|Array<*>}
      * @product highcharts highstock highmaps gantt
-     *
-     * @private
      */
     dataLabels: {
         /**
@@ -1818,7 +1818,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          * @apioption plotOptions.series.dataLabels.format
          */
 
-        // eslint-disable-next-line valid-jsdoc
         /**
          * Callback JavaScript function to format the data label. Note that if a
          * `format` is defined, the format takes precedence and the formatter is
@@ -1846,6 +1845,15 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          */
 
         /**
+         * The rank for this point's data label in case of collision. If two
+         * data labels are about to overlap, only the one with the highest
+         * `labelrank` will be drawn.
+         *
+         * @type      {number}
+         * @apioption plotOptions.series.dataLabels.labelrank
+         */
+
+        /**
          * Format for points with the value of null. Works analogously to
          * [format](#plotOptions.series.dataLabels.format). `nullFormat` can
          * be applied only to series which support displaying null points.
@@ -1867,14 +1875,16 @@ const seriesDefaults: PlotOptionsOf<Series> = {
 
         /**
          * Callback JavaScript function that defines formatting for points
-         * with the value of null. Works analogously to [formatter](#plotOptions.series.dataLabels.formatter).
+         * with the value of null. Works analogously to
+         * [formatter](#plotOptions.series.dataLabels.formatter).
          * `nullFormatter` can be applied only to series which support
          * displaying null points. `heatmap` and `tilemap` supports
-         * `nullFormatter` by default while the following series requires [#series.nullInteraction]
+         * `nullFormatter` by default while the following series requires
+         * (series.nullInteraction)[#series.nullInteraction]
          * set to `true`: `line`, `spline`, `area`, `area-spline`, `column`,
          * `bar`, and `timeline`. Does not work with series that don't display
          * null points, like `pie`.
-
+         *
          * @sample {highcharts} highcharts/plotoptions/series-datalabels-nullformat/
          *         Format data label for null points in heat map
          *
@@ -1993,6 +2003,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          *
          * @type      {Highcharts.CSSObject}
          * @since     4.1.0
+         * @default   { fontSize: '0.7em', fontWeight: 'bold', color: 'contrast', textOutline: '1px contrast' }
          * @apioption plotOptions.series.dataLabels.style
          */
         style: {
@@ -2103,8 +2114,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *
      * @since   2.2
      * @product highcharts highstock
-     *
-     * @private
      */
     cropThreshold: 300,
 
@@ -2114,8 +2123,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @see [states.inactive.opacity](#plotOptions.series.states.inactive.opacity)
      *
      * @since 7.1.0
-     *
-     * @private
      */
     opacity: 1,
 
@@ -2126,8 +2133,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * this option can be used to override the automatic value.
      *
      * @product highstock
-     *
-     * @private
      */
     pointRange: 0,
 
@@ -2143,15 +2148,13 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *
      * @since   4.1.9
      * @product highcharts highstock
-     *
-     * @private
      */
     softThreshold: true,
 
     /**
-     * @declare Highcharts.SeriesStatesOptionsObject
+     * A collection of options for different series states.
      *
-     * @private
+     * @declare Highcharts.SeriesStatesOptionsObject
      */
     states: {
 
@@ -2166,7 +2169,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
             /**
              * Animation when returning to normal state after hovering.
              *
-                 * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
+             * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
              */
             animation: true
         },
@@ -2210,8 +2213,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
                  * The duration of the hover animation in milliseconds. By
                  * default the hover state animates quickly in, and slowly
                  * back to normal.
-                 *
-                 * @internal
                  */
                 duration: 150
             },
@@ -2332,7 +2333,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          */
         select: {
             animation: {
-                /** @internal */
                 duration: 0
             }
         },
@@ -2363,7 +2363,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
              * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
              */
             animation: {
-                /** @internal */
                 duration: 150
             },
             /**
@@ -2397,8 +2396,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @default {highstock} true
      * @default {highmaps} false
      * @since   2.0
-     *
-     * @private
      */
     stickyTracking: true,
 
@@ -2436,8 +2433,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *
      * @since   2.2
      * @product highcharts highstock gantt
-     *
-     * @private
      */
     turboThreshold: 1000,
 
@@ -2615,8 +2610,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *
      * @since      5.0.10
      * @validvalue ["x", "xy"]
-     *
-     * @private
      */
     findNearestPointBy: 'x'
 

@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2025 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -19,6 +20,7 @@
 import type AxisComposition from '../AxisComposition';
 import type AxisOptions from '../AxisOptions';
 import type Chart from '../../Chart/Chart';
+import type { ColorAxisDataClassOptions } from './ColorAxisOptions';
 import type ColorType from '../../Color/ColorType';
 import type { GradientColorStop } from '../../Color/GradientColor';
 import type Point from '../../Series/Point';
@@ -35,15 +37,34 @@ const { merge } = U;
  * */
 
 interface ColorAxisBase extends AxisComposition {
+
+    /** @internal */
     chart: Chart;
-    dataClasses: Array<ColorAxisBase.DataClassOptions>;
+
+    /** @internal */
+    dataClasses: Array<ColorAxisDataClassOptions>;
+
+    /** @internal */
     index: number;
+
+    /** @internal */
     options: ColorAxisBase.Options;
+
+    /** @internal */
     stops: Array<GradientColorStop>;
+
+    /** @internal */
     initDataClasses(userOptions: Partial<ColorAxisBase.Options>): void;
+
+    /** @internal */
     initStops(): void;
+
+    /** @internal */
     normalizedValue(value: number): number;
+
+    /** @internal */
     toColor(value: number, point: Point): (ColorType|undefined);
+
 }
 
 /* *
@@ -52,6 +73,7 @@ interface ColorAxisBase extends AxisComposition {
  *
  * */
 
+/** @internal */
 namespace ColorAxisBase {
 
     /* *
@@ -62,18 +84,10 @@ namespace ColorAxisBase {
 
     export interface Options extends AxisOptions {
         dataClassColor?: string;
-        dataClasses?: Array<DataClassOptions>;
+        dataClasses?: Array<ColorAxisDataClassOptions>;
         maxColor?: ColorType;
         minColor?: ColorType;
         stops?: Array<GradientColorStop>;
-    }
-
-    export interface DataClassOptions {
-        color?: ColorType;
-        colorIndex?: number;
-        from?: number;
-        name?: string;
-        to?: number;
     }
 
     /* *
@@ -84,7 +98,7 @@ namespace ColorAxisBase {
 
     /**
      * Initialize defined data classes.
-     * @private
+     * @internal
      */
     export function initDataClasses(
         this: ColorAxisBase,
@@ -96,8 +110,8 @@ namespace ColorAxisBase {
             options = axis.options,
             userDataClasses = userOptions.dataClasses || [];
 
-        let dataClass: DataClassOptions,
-            dataClasses: Array<DataClassOptions>,
+        let dataClass: ColorAxisDataClassOptions,
+            dataClasses: Array<ColorAxisDataClassOptions>,
             colorCount = chart.options.chart.colorCount,
             colorCounter = 0,
             colors: (Array<string>|undefined);
@@ -140,7 +154,7 @@ namespace ColorAxisBase {
 
     /**
      * Create initial color stops.
-     * @private
+     * @internal
      */
     export function initStops(
         this: ColorAxisBase
@@ -159,7 +173,7 @@ namespace ColorAxisBase {
 
     /**
      * Normalize logarithmic values.
-     * @private
+     * @internal
      */
     export function normalizedValue(
         this: ColorAxisBase,
@@ -181,7 +195,7 @@ namespace ColorAxisBase {
 
     /**
      * Translate from a value to a color.
-     * @private
+     * @internal
      */
     export function toColor(
         this: ColorAxisBase,
