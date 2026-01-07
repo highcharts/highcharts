@@ -31,4 +31,4 @@ Highcharts.chart('container', {
     }, {
         data: [144, 176, 135.6, 148.5]
     }]
-});
+} satisfies Highcharts.Options);

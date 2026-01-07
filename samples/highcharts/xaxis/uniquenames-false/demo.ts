@@ -49,4 +49,4 @@ Highcharts.chart('container', {
             showInLegend: false
         }
     ]
-});
+} satisfies Highcharts.Options);

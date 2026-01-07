@@ -872,7 +872,9 @@ export async function getDemoTS(
         ].join('\n') + '\n\n    ';
     }
 
-    ts += `Highcharts.${factory}('container', ${chartOptions});\n`
+    ts += `Highcharts.${factory}('container', ${
+        chartOptions
+    } satisfies Highcharts.Options);\n`
         // Some cases, for example tooltip.borderWidth, have defaultValue as
         // "undefined" in tree.json
         .replace(/"undefined"/gu, 'undefined');

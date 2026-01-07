@@ -129,4 +129,4 @@ Highcharts.chart('container', {
         ],
         type: 'scatter'
     }]
-});
+} satisfies Highcharts.Options);

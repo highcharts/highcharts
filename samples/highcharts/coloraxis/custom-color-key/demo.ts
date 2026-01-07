@@ -26,4 +26,4 @@ Highcharts.chart('container', {
         ],
         keys: ['x', 'y', 'z', 'colorValue']
     }]
-});
+} satisfies Highcharts.Options);

@@ -20,4 +20,4 @@ Highcharts.chart('container', {
     }, {
         data: [4, 2, 5, 3]
     }]
-});
+} satisfies Highcharts.Options);
