@@ -1,12 +1,11 @@
 describe('Grid multi-column sorting.', () => {
     const expectedOrder = ['c', 'a', 'b', 'g', 'e', 'f', 'h', 'd'];
-
-    before(() => {
-        cy.viewport(1200, 800);
-        cy.visit('grid-lite/cypress/multi-column-sorting');
-    });
+    const demoPath = 'grid-lite/cypress/multi-column-sorting';
 
     it('Shift-click sorts three columns with custom compare.', () => {
+        cy.viewport(1200, 800);
+        cy.visit(demoPath);
+
         cy.get('th[data-column-id="group"]').click();
         cy.get('th[data-column-id="score"]').click({ shiftKey: true });
         cy.get('th[data-column-id="id"]').click({ shiftKey: true });
@@ -29,5 +28,35 @@ describe('Grid multi-column sorting.', () => {
             .should('have.text', '2');
         cy.get('th[data-column-id="id"] .hcg-sort-priority-indicator')
             .should('have.text', '3');
+    });
+
+    it('Shift-clicking menu sort adds a secondary priority.', () => {
+        cy.viewport(320, 800);
+        cy.visit(demoPath);
+
+        cy.get('th[data-column-id="group"]').click();
+
+        cy.get('th[data-column-id="score"] .hcg-header-cell-menu-icon .hcg-button')
+            .should('exist')
+            .click();
+
+        cy.contains('.hcg-menu-item', 'Sort descending')
+            .click({ shiftKey: true });
+
+        cy.grid().should(grid => {
+            const sortings = grid.querying.sorting.currentSortings || [];
+
+            expect(
+                sortings.map(sorting => sorting.columnId),
+                'Applied sorting priority'
+            ).to.deep.equal(['group', 'score']);
+            expect(
+                sortings.map(sorting => sorting.order),
+                'Applied sorting order'
+            ).to.deep.equal(['asc', 'desc']);
+        });
+
+        cy.contains('.hcg-menu-item-label', 'Sort descending')
+            .should('contain.text', '(2)');
     });
 });

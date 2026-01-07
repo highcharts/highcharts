@@ -153,7 +153,10 @@ class SortMenuButton extends ContextMenuButton {
             return;
         }
 
-        void sorting.setOrder(this.isActive ? null : this.direction);
+        void sorting.setOrder(
+            this.isActive ? null : this.direction,
+            !!event?.shiftKey
+        );
     }
 }
 
