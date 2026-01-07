@@ -282,7 +282,6 @@ export interface PointUpdateEvent {
     /**
      * Options data of the update event.
      * @name Highcharts.PointUpdateEventObject#options
-     * @type {Highcharts.PointOptionsType}
      */
     options?: PointTypeOptions;
 }
@@ -747,8 +746,6 @@ export interface PointMarkerStateSelectOptions extends StateSelectOptions {
      *
      * @sample {highcharts} highcharts/plotoptions/series-marker-states-select-radius/
      * 10px radius for selected points
-     *
-     * @type {number}
      */
     radius?: number;
 }
