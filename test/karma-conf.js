@@ -230,16 +230,11 @@ module.exports = function (config) {
         // Compile test tools and samples
         try {
             console.log('Compiling declarations...');
-            ChildProcess.execSync(
-                'npx gulp jsdoc-dts'
-            );
-            // console.log('Compiling test tools...');
-            // ChildProcess.execSync(
-            //     'cd "' + process.cwd() + '" && npx tsc -p test'
-            // );
+            ChildProcess.execSync('npx gulp jsdoc-dts');
+
             console.log('Compiling samples...');
             ChildProcess.execSync(
-                'cd "' + process.cwd() + '" && npx tsc -p samples'
+                `cd "${process.cwd()}" && npx tsc -p samples`
             );
         } catch (catchedError) {
             const msg = catchedError.stdout.toString();
