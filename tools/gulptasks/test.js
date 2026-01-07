@@ -2,6 +2,8 @@
  * Copyright (C) Highsoft AS
  */
 
+/* eslint-disable node/no-unsupported-features/es-syntax */
+
 const gulp = require('gulp');
 const path = require('path');
 
@@ -71,12 +73,12 @@ function checkJSWrap() {
     }
 }
 
-function checkSamplesConsistency() {
+async function checkSamplesConsistency() {
     const FSLib = require('../libs/fs.js');
     const { existsSync } = require('node:fs');
     const glob = require('glob');
     const LogLib = require('../libs/log');
-    const crypto = require('crypto');
+    const { calculateChecksum } = await import('../sample-generator/index.ts');
     const fs = require('fs');
 
     let errors = 0;
@@ -107,9 +109,11 @@ function checkSamplesConsistency() {
     });
 
     // Validate checksums for samples with config.ts
-    glob.sync(
+    const configPaths = glob.sync(
         FSLib.path(process.cwd() + '/samples/**/config.ts', true)
-    ).forEach(configPath => {
+    );
+
+    for (const configPath of configPaths) {
         const dir = path.dirname(configPath);
         const checksumPath = path.join(dir, '.generated-checksum');
 
@@ -133,16 +137,7 @@ function checkSamplesConsistency() {
         }
 
         // Calculate current checksum
-        const hash = crypto.createHash('sha256');
-        generatedFiles.forEach(file => {
-            const filePath = path.join(dir, file);
-            if (existsSync(filePath)) {
-                const content = fs.readFileSync(filePath, 'utf-8');
-                hash.update(file);
-                hash.update(content);
-            }
-        });
-        const currentChecksum = hash.digest('hex');
+        const currentChecksum = await calculateChecksum(dir);
 
         // Read saved checksum
         const savedChecksum = fs.readFileSync(checksumPath, 'utf-8').trim();
@@ -155,7 +150,7 @@ function checkSamplesConsistency() {
             );
             errors++;
         }
-    });
+    }
 
     if (errors) {
         throw new Error('Samples validation failed');
@@ -355,7 +350,7 @@ specified by config.imageCapture.resultsOutputPath.
     }
 
     checkDocsConsistency();
-    checkSamplesConsistency();
+    await checkSamplesConsistency();
     checkDemosConsistency();
     checkJSWrap();
 

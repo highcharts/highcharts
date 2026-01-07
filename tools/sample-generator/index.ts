@@ -922,7 +922,7 @@ export async function getDemoDetails(config: SampleGeneratorConfig) {
  * @return {Promise<string>}
  *         SHA256 checksum
  */
-async function calculateChecksum(outputDir: string): Promise<string> {
+export async function calculateChecksum(outputDir: string): Promise<string> {
     const files = ['demo.ts', 'demo.html', 'demo.css', 'demo.details'];
     const hash = crypto.createHash('sha256');
 
