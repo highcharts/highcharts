@@ -1,7 +1,7 @@
 // Generic handler. Highcharts Controls is often able to guess type based on
 // path or value.
 
-import type { ControlOptions } from '../config.ts';
+import type { ControlOptions } from '../config-example.js';
 
 export function getHTML(ctrlOpt: ControlOptions, overrideValue?: any): string {
     let html = `<highcharts-control path="${ctrlOpt.path}"`;

@@ -11,7 +11,10 @@
 
 /* eslint-disable no-console */
 
-import type { ControlOptions, SampleGeneratorConfig } from './config.ts';
+import type {
+    ControlOptions,
+    SampleGeneratorConfig
+} from './generator-config.d.ts';
 
 import colors from 'colors/safe.js';
 import { dirname, join } from 'path';
@@ -19,7 +22,7 @@ import { promises as fs } from 'fs';
 import { fileURLToPath } from 'url';
 
 import { loadExportedTypes } from './load-types.ts';
-import config from './config.ts';
+import config from './config-example.ts';
 
 // Import Highcharts and modules so that we can read default options
 import Highcharts from '../../code/esm/highcharts.src.js';

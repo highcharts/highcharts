@@ -1,3 +1,4 @@
+/* eslint-disable-next-line node/no-unpublished-import */
 import type { Options } from '../../code/highcharts.d.ts';
 
 export interface ControlOptions {
@@ -12,13 +13,32 @@ export interface ControlOptions {
     min?: number;
     /** The option valid values for select controls */
     options?: Array<string>;
+    /**
+     * The Highcharts option path, using dot notation
+     */
     path: string;
+    /** The step value for number controls */
     step?: number;
+    /**
+     * The control type. If not specified, the generator will try to infer it
+     * from the provided value or actual value in the chart or grid.
+     */
     type?: 'number' | 'text' | 'boolean' | 'select' | 'color';
+    /**
+     * The value for this control. If not specified, the generator will use
+     * the actual value in the chart or grid.
+     */
     value?: number | string | boolean;
 }
 export interface SampleGeneratorConfig {
+    /**
+     * Additional chart options to merge in, extending the options from
+     * templates
+     */
     chartOptionsExtra?: Options;
+    /**
+     * Controls to generate for this sample
+     */
     controls?: ControlOptions[];
     /**
      * A descriptive text for the controls
@@ -35,10 +55,17 @@ export interface SampleGeneratorConfig {
      * `Highcharts.chart()`
      */
     factory?: 'chart' | 'stockChart' | 'mapChart' | 'ganttChart';
-    /** Additional Highcharts module files */
+    /**
+     * Additional Highcharts module files
+     *
+     * @example ['highcharts-more', 'modules/exporting']
+     */
     modules?: string[];
     /** The output directory for the generated samples */
     output?: string;
+    /**
+     * Shorthand paths for controls, using `path=value` notation
+     */
     paths?: string[];
     /**
      * Templates for chart options, merged in the given order. Defined in
@@ -52,13 +79,3 @@ export interface SampleGeneratorConfig {
         'linear-12'
     )[];
 }
-
-export default {
-    paths: [
-        'legend.enabled=true',
-        'legend.align=center',
-        'legend.x',
-        'legend.backgroundColor=#efefef'
-    ],
-    output: 'highcharts/studies/sample-gen'
-};

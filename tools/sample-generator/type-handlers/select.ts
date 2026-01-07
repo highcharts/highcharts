@@ -1,6 +1,6 @@
 // Handler for discrete string options (array of string literals)
 
-import type { ControlOptions } from '../config.ts';
+import type { ControlOptions } from '../config-example.js';
 
 export function getHTML(
     ctrlOpt: ControlOptions,
