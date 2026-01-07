@@ -458,7 +458,7 @@ class WGLRenderer {
             isXInside = false,
             isYInside = true,
             firstPoint = true,
-            zoneColors: Array<Color.RGBA>,
+            zoneColors: Array<Color.RGBA> = [],
             zoneDefColor: (Color.RGBA|undefined) = false as any,
             gapSize: number = false as any,
             vlen = 0,
@@ -933,39 +933,29 @@ class WGLRenderer {
             // Note: Boost requires that zones are sorted!
             if (zones && zones.length) { // #23571
                 let zoneColor: Color.RGBA|undefined;
+                const pointValue = zoneAxis === 'x' ? x : y;
+                // Match getZone() logic: find zone where value > point value
+                let zoneIndex: number|undefined;
                 zones.some(( // eslint-disable-line no-loop-func
                     zone: SeriesZonesOptions,
                     i: number
                 ): boolean => {
-                    const last: SeriesZonesOptions = (zones as any)[i - 1];
-
-                    if (zoneAxis === 'x') {
-                        if (
-                            typeof zone.value !== 'undefined' &&
-                            x <= zone.value
-                        ) {
-                            if (
-                                zoneColors[i] &&
-                                (!last || x >= (last.value as any))
-                            ) {
-                                zoneColor = zoneColors[i];
-                            }
-                            return true;
-                        }
-                        return false;
-                    }
-
-                    if (typeof zone.value !== 'undefined' && y <= zone.value) {
-                        if (
-                            zoneColors[i] &&
-                            (!last || y >= (last.value as any))
-                        ) {
-                            zoneColor = zoneColors[i];
-                        }
+                    if (
+                        typeof zone.value !== 'undefined' &&
+                        pointValue < zone.value
+                    ) {
+                        zoneIndex = i;
                         return true;
                     }
                     return false;
                 });
+
+                if (
+                    typeof zoneIndex !== 'undefined' &&
+                    zoneColors[zoneIndex]
+                ) {
+                    zoneColor = zoneColors[zoneIndex];
+                }
 
                 pcolor = zoneColor || zoneDefColor || pcolor;
             }
