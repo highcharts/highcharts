@@ -1,1 +1,2 @@
-/// <reference path="../../code/highstock.src.d.ts" />
+/* eslint-disable node/no-unpublished-import */
+import '../../code/modules/stock';
