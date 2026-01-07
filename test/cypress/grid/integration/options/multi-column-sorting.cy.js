@@ -38,9 +38,12 @@ describe('Grid multi-column sorting.', () => {
 
         cy.get('th[data-column-id="score"] .hcg-header-cell-menu-icon .hcg-button')
             .should('exist')
-            .click();
+            .click({ force: true });
 
-        cy.contains('.hcg-menu-item', 'Sort descending')
+        cy.get('.hcg-popup').should('be.visible');
+
+        cy.contains('.hcg-menu-item-label', 'Sort descending')
+            .closest('button')
             .click({ shiftKey: true });
 
         cy.grid().should(grid => {
