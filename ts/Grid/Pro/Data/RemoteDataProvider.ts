@@ -27,20 +27,85 @@ export class RemoteDataProvider extends DataProvider {
 
     public readonly options!: RemoteDataProviderOptions;
 
+    /**
+     * Total row count before pagination (from API metadata `totalRowCount`).
+     */
+    private prePaginationRowCount: number | null = null;
+
+    /**
+     * Current row count after pagination (actual rows returned in the chunk).
+     * When pagination is disabled, this equals prePaginationRowCount.
+     */
     private rowCount: number | null = null;
+
     private columnIds: string[] | null = null;
     private dataChunks: Map<number, DataChunk> | null = null;
     private pendingChunks: Map<number, Promise<DataChunk>> | null = null;
 
+    /**
+     * Returns the effective chunk size.
+     * When pagination is enabled, uses the page size as chunk size,
+     * so that one chunk = one page.
+     */
     private get maxChunkSize(): number {
-        // TODO: Consider using the pagination page size if available as
-        // default instead of or before the hardcoded value.
+        const pagination = this.querying.pagination;
+
+        // When pagination is enabled, chunk size = page size
+        if (pagination.enabled) {
+            return pagination.currentPageSize;
+        }
+
         return this.options.chunkSize ?? RemoteDataProvider.DEFAULT_CHUNK_SIZE;
     }
 
     private async getChunkForRowIndex(rowIndex: number): Promise<DataChunk> {
+        // When pagination enabled, all rows for current page are in chunk 0
+        // When disabled, calculate chunk from global index
+        if (this.querying.pagination.enabled) {
+            return await this.fetchChunk(0);
+        }
+
         const chunkIndex = Math.floor(rowIndex / this.maxChunkSize);
         return await this.fetchChunk(chunkIndex);
+    }
+
+    /**
+     * Gets the chunk index for a given row index.
+     * When pagination is enabled, all rows are in chunk 0.
+     *
+     * @param rowIndex
+     * The row index passed from the grid.
+     *
+     * @returns
+     * The chunk index.
+     */
+    private getChunkIndexForRow(rowIndex: number): number {
+        if (this.querying.pagination.enabled) {
+            return 0;
+        }
+        return Math.floor(rowIndex / this.maxChunkSize);
+    }
+
+    /**
+     * Gets the local index within the cached chunk data.
+     * When pagination is enabled, rowIndex is already 0-based within the page.
+     * When disabled, need to calculate offset within the chunk.
+     *
+     * @param rowIndex
+     * The row index passed from the grid.
+     *
+     * @returns
+     * The local index within the chunk.
+     */
+    private getLocalIndexInChunk(rowIndex: number): number {
+        // When pagination enabled, rowIndex is already page-relative
+        if (this.querying.pagination.enabled) {
+            return rowIndex;
+        }
+
+        // Standard chunking: calculate local offset within chunk
+        const chunkIndex = Math.floor(rowIndex / this.maxChunkSize);
+        return rowIndex - (chunkIndex * this.maxChunkSize);
     }
 
     /**
@@ -78,8 +143,20 @@ export class RemoteDataProvider extends DataProvider {
         // Start a new fetch
         const fetchPromise = (async (): Promise<DataChunk> => {
             try {
-                const offset = chunkIndex * this.maxChunkSize;
-                const limit = this.maxChunkSize;
+                const pagination = this.querying.pagination;
+                let offset: number;
+                let limit: number;
+
+                if (pagination.enabled) {
+                    // When pagination is enabled, fetch the current page
+                    offset = (pagination.currentPage - 1) *
+                        pagination.currentPageSize;
+                    limit = pagination.currentPageSize;
+                } else {
+                    // Standard chunking
+                    offset = chunkIndex * this.maxChunkSize;
+                    limit = this.maxChunkSize;
+                }
 
                 const result = await this.options.fetchCallback.call(
                     this,
@@ -89,7 +166,19 @@ export class RemoteDataProvider extends DataProvider {
                 );
 
                 this.columnIds = Object.keys(result.columns);
-                this.rowCount = result.totalRowCount;
+                this.prePaginationRowCount = result.totalRowCount;
+
+                // Calculate actual row count from returned data
+                const firstColumn = result.columns[this.columnIds[0]];
+                const chunkRowCount = firstColumn ? firstColumn.length : 0;
+
+                // When pagination enabled: rowCount = actual rows on page
+                // When disabled: rowCount = prePaginationRowCount (same value)
+                if (this.querying.pagination.enabled) {
+                    this.rowCount = chunkRowCount;
+                } else {
+                    this.rowCount = result.totalRowCount;
+                }
 
                 const chunk: DataChunk = {
                     index: chunkIndex,
@@ -143,11 +232,29 @@ export class RemoteDataProvider extends DataProvider {
         return this.getRowObjectFromCache(rowIndex);
     }
 
+    /**
+     * Returns the total row count before pagination.
+     * Used by PaginationController to calculate total pages.
+     */
+    public override async getPrePaginationRowCount(): Promise<number> {
+        if (this.prePaginationRowCount !== null) {
+            return this.prePaginationRowCount;
+        }
+        // Fetch first chunk to get row count from API metadata
+        await this.fetchChunk(0);
+        return this.prePaginationRowCount ?? 0;
+    }
+
+    /**
+     * Returns the row count for the current view (after all modifiers).
+     * When pagination is enabled, returns actual rows on current page.
+     * Otherwise, returns total row count.
+     */
     public override async getRowCount(): Promise<number> {
         if (this.rowCount !== null) {
-            return Promise.resolve(this.rowCount);
+            return this.rowCount;
         }
-        // Fetch first chunk to get rowCount
+        // Fetch first chunk to get row count
         await this.fetchChunk(0);
         return this.rowCount ?? 0;
     }
@@ -159,9 +266,10 @@ export class RemoteDataProvider extends DataProvider {
         // Get the chunk containing this row
         const chunk = await this.getChunkForRowIndex(rowIndex);
 
-        // Calculate local index within the chunk
-        const chunkIndex = Math.floor(rowIndex / this.maxChunkSize);
-        const localIndex = rowIndex - (chunkIndex * this.maxChunkSize);
+        // Calculate local index within the chunk.
+        // When pagination is enabled, rowIndex is already page-relative.
+        // When disabled, need to calculate from global index.
+        const localIndex = this.getLocalIndexInChunk(rowIndex);
 
         // Get the column from chunk data
         const column = chunk.data[columnId];
@@ -202,7 +310,7 @@ export class RemoteDataProvider extends DataProvider {
      * Returns undefined if the row is not cached.
      *
      * @param rowIndex
-     * The row index.
+     * The row index as passed from the grid.
      *
      * @returns
      * The row object or undefined if not in cache.
@@ -212,14 +320,14 @@ export class RemoteDataProvider extends DataProvider {
             return;
         }
 
-        const chunkIndex = Math.floor(rowIndex / this.maxChunkSize);
+        const chunkIndex = this.getChunkIndexForRow(rowIndex);
         const chunk = this.dataChunks.get(chunkIndex);
 
         if (!chunk) {
             return;
         }
 
-        const localIndex = rowIndex - (chunkIndex * this.maxChunkSize);
+        const localIndex = this.getLocalIndexInChunk(rowIndex);
         const rowObject: DT.RowObject = {};
 
         for (const columnId of this.columnIds) {
@@ -239,7 +347,7 @@ export class RemoteDataProvider extends DataProvider {
      * The column ID.
      *
      * @param rowIndex
-     * The row index.
+     * The row index as passed from the grid.
      *
      * @param value
      * The new value.
@@ -253,14 +361,14 @@ export class RemoteDataProvider extends DataProvider {
             return;
         }
 
-        const chunkIndex = Math.floor(rowIndex / this.maxChunkSize);
+        const chunkIndex = this.getChunkIndexForRow(rowIndex);
         const chunk = this.dataChunks.get(chunkIndex);
 
         if (!chunk) {
             return;
         }
 
-        const localIndex = rowIndex - (chunkIndex * this.maxChunkSize);
+        const localIndex = this.getLocalIndexInChunk(rowIndex);
         const column = chunk.data[columnId];
 
         if (column && localIndex < column.length) {
@@ -268,7 +376,7 @@ export class RemoteDataProvider extends DataProvider {
         }
     }
 
-    public override applyQuery(): Promise<void> {
+    public override async applyQuery(): Promise<void> {
         // TODO: Check if the query fingerprint is the same as the previous one
         // If it is, do nothing. If not, do the following:
 
@@ -279,15 +387,22 @@ export class RemoteDataProvider extends DataProvider {
         this.dataChunks = null;
         this.pendingChunks = null;
         this.columnIds = null;
+        this.prePaginationRowCount = null;
         this.rowCount = null;
 
-        return Promise.resolve();
+        // When pagination is enabled, update the total items count
+        // for the pagination controller (used to calculate total pages).
+        if (this.querying.pagination.enabled) {
+            const totalCount = await this.getPrePaginationRowCount();
+            this.querying.pagination.totalItemsCount = totalCount;
+        }
     }
 
     public destroy(): void {
         this.dataChunks = null;
         this.pendingChunks = null;
         this.columnIds = null;
+        this.prePaginationRowCount = null;
         this.rowCount = null;
     }
 }

@@ -1,6 +1,6 @@
 const dataUrl = 'https://dataset-server-hc-production.up.railway.app/data';
 
-Grid.grid('container', {
+const grid = Grid.grid('container', {
     data: {
         providerType: 'remote',
         chunkSize: 50,
@@ -33,29 +33,40 @@ Grid.grid('container', {
         filtering: {
             enabled: true
         }
+    },
+    pagination: {
+        enabled: true,
+        pageSize: 10,
+        controls: {
+            pageSizeSelector: {
+                enabled: true,
+                options: [5, 10, 20, 50]
+            },
+            pageInfo: {
+                enabled: true
+            },
+            firstLastButtons: {
+                enabled: true
+            },
+            previousNextButtons: {
+                enabled: true
+            },
+            pageButtons: {
+                enabled: true,
+                count: 5
+            }
+        }
     }
-    // pagination: {
-    //     enabled: true,
-    //     pageSize: 22,
-    //     totalItems: 100,
-    //     controls: {
-    //         pageSizeSelector: { // boolean
-    //             enabled: true,
-    //             options: [10, 20, 50, 100]
-    //         },
-    //         pageInfo: {  // boolean
-    //             enabled: true
-    //         },
-    //         firstLastButtons: {  // boolean
-    //             enabled: true
-    //         },
-    //         previousNextButtons: {  // boolean
-    //             enabled: true
-    //         },
-    //         pageButtons: {  // boolean
-    //             enabled: true,
-    //             count: 5
-    //         }
-    //     }
-    // }
+});
+
+// Pagination toggle
+document.getElementById('pagination-toggle').addEventListener('change', e => {
+    const checked = e.target.checked;
+    grid.update({
+        pagination: {
+            enabled: checked
+        }
+    });
+
+    grid.container.style.minHeight = checked ? '' : '600px';
 });
