@@ -136,28 +136,11 @@ export class RemoteDataProvider extends DataProvider {
     public override async getRowObject(
         rowIndex: number
     ): Promise<DT.RowObject | undefined> {
-        // Get the chunk containing this row
-        const chunk = await this.getChunkForRowIndex(rowIndex);
-        // Calculate local index within the chunk
-        const chunkIndex = Math.floor(rowIndex / this.maxChunkSize);
-        const localIndex = rowIndex - (chunkIndex * this.maxChunkSize);
+        // Ensure the chunk is fetched and cached
+        await this.getChunkForRowIndex(rowIndex);
 
-        // Get column IDs (they should be cached, but fetch if needed)
-        const columnIds = await this.getColumnIds();
-        if (columnIds.length < 1) {
-            return;
-        }
-
-        // Build row object from chunk data
-        const rowObject: DT.RowObject = {};
-        for (const columnId of columnIds) {
-            const column = chunk.data[columnId];
-            rowObject[columnId] = (column && localIndex < column.length) ?
-                column[localIndex] :
-                (null as DT.CellType);
-        }
-
-        return rowObject;
+        // Return from cache
+        return this.getRowObjectFromCache(rowIndex);
     }
 
     public override async getRowCount(): Promise<number> {
@@ -189,12 +172,100 @@ export class RemoteDataProvider extends DataProvider {
         return column[localIndex];
     }
 
-    public override setValue(
+    public override async setValue(
         value: DT.CellType,
         columnId: string,
-        rowId: number
+        rowIndex: number
     ): Promise<void> {
-        throw new Error('Method not implemented.');
+        const { setValueCallback } = this.options;
+
+        // If callback is defined, call it to persist to the server
+        if (setValueCallback) {
+            // Get row object from cache for the callback
+            const rowObject = this.getRowObjectFromCache(rowIndex);
+
+            await setValueCallback.call(
+                this,
+                columnId,
+                rowIndex,
+                value,
+                rowObject
+            );
+        }
+
+        // Update the local cache
+        this.updateCachedValue(columnId, rowIndex, value);
+    }
+
+    /**
+     * Gets a row object from the local cache without fetching.
+     * Returns undefined if the row is not cached.
+     *
+     * @param rowIndex
+     * The row index.
+     *
+     * @returns
+     * The row object or undefined if not in cache.
+     */
+    private getRowObjectFromCache(rowIndex: number): DT.RowObject | undefined {
+        if (!this.dataChunks || !this.columnIds) {
+            return;
+        }
+
+        const chunkIndex = Math.floor(rowIndex / this.maxChunkSize);
+        const chunk = this.dataChunks.get(chunkIndex);
+
+        if (!chunk) {
+            return;
+        }
+
+        const localIndex = rowIndex - (chunkIndex * this.maxChunkSize);
+        const rowObject: DT.RowObject = {};
+
+        for (const columnId of this.columnIds) {
+            const column = chunk.data[columnId];
+            rowObject[columnId] = (column && localIndex < column.length) ?
+                column[localIndex] :
+                (null as DT.CellType);
+        }
+
+        return rowObject;
+    }
+
+    /**
+     * Updates a value in the local cache without sending to the server.
+     *
+     * @param columnId
+     * The column ID.
+     *
+     * @param rowIndex
+     * The row index.
+     *
+     * @param value
+     * The new value.
+     */
+    private updateCachedValue(
+        columnId: string,
+        rowIndex: number,
+        value: DT.CellType
+    ): void {
+        if (!this.dataChunks) {
+            return;
+        }
+
+        const chunkIndex = Math.floor(rowIndex / this.maxChunkSize);
+        const chunk = this.dataChunks.get(chunkIndex);
+
+        if (!chunk) {
+            return;
+        }
+
+        const localIndex = rowIndex - (chunkIndex * this.maxChunkSize);
+        const column = chunk.data[columnId];
+
+        if (column && localIndex < column.length) {
+            column[localIndex] = value;
+        }
     }
 
     public override applyQuery(): Promise<void> {
@@ -235,12 +306,35 @@ export interface DataChunk {
 
 export interface RemoteDataProviderOptions extends DataProviderOptions {
     providerType: 'remote';
+
+    /**
+     * Callback to fetch data from the remote server.
+     */
     fetchCallback: (
         this: RemoteDataProvider,
         query: QueryingController,
         offset: number,
         limit: number
     ) => Promise<RemoteFetchCallbackResult>;
+
+    /**
+     * Optional callback to persist value changes to the remote server.
+     * If not provided, changes will only be cached locally.
+     *
+     * The callback receives the full row object from cache, allowing you to
+     * extract any column value (e.g., a unique ID) for your API call.
+     */
+    setValueCallback?: (
+        this: RemoteDataProvider,
+        columnId: string,
+        rowIndex: number,
+        value: DT.CellType,
+        rowObject: DT.RowObject | undefined
+    ) => Promise<void>;
+
+    /**
+     * The number of rows to fetch per chunk.
+     */
     chunkSize: number;
 }
 
