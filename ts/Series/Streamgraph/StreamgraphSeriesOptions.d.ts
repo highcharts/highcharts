@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2025 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -23,7 +24,6 @@ import type {
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type { StackOverflowValue } from '../../Core/Axis/Stacking/StackingOptions';
 import type StreamgraphPointOptions from './StreamgraphPointOptions';
-import type StreamgraphSeries from './StreamgraphSeries';
 
 /* *
  *
@@ -167,7 +167,7 @@ export interface StreamgraphSeriesOptions extends AreaSplineSeriesOptions {
 
     stacking?: StackOverflowValue;
 
-    states?: SeriesStatesOptions<StreamgraphSeries>;
+    states?: SeriesStatesOptions<StreamgraphSeriesOptions>;
 
     marker?: PointMarkerOptions;
 

@@ -2,11 +2,12 @@
  *
  *  Client side exporting module
  *
- *  (c) 2015 Torstein Honsi / Oystein Moseng
+ *  (c) 2015 Highsoft AS
+ *  Author: Torstein Honsi / Oystein Moseng
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -73,7 +74,7 @@ declare module '../../Core/Chart/ChartBase' {
     }
 }
 
-declare module '../../Core/GlobalsBase.d.ts' {
+declare module '../../Core/GlobalsBase' {
     interface GlobalsBase {
         Exporting: typeof Exporting
     }

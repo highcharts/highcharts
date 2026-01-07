@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2025 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -17,6 +18,7 @@
 import type ColorType from '../../Core/Color/ColorType';
 import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
 import type LinePointOptions from '../Line/LinePointOptions';
+import type { PointMarkerStatesOptions } from '../../Core/Series/PointOptions';
 
 /* *
  *
@@ -91,6 +93,7 @@ export interface ColumnPointOptions extends LinePointOptions {
      */
     pointWidth?: number;
 
+    states?: PointMarkerStatesOptions<ColumnPointOptions>
 }
 
 /* *

@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2025 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -60,19 +61,15 @@ declare module '../SVG/SVGRendererBase' {
 class HTMLElement extends SVGElement {
     /**
      * Compose
-     * @private
+     * @internal
      */
     public static compose<T extends typeof SVGRenderer>(
         SVGRendererClass: T
     ): void {
 
         if (pushUnique(composed, this.compose)) {
-            /**
-             * Create a HTML text node. This is used by the SVG renderer `text`
-             * and `label` functions through the `useHTML` parameter.
-             *
-             * @private
-             */
+            // Create a HTML text node. This is used by the SVG renderer `text`
+            // and `label` functions through the `useHTML` parameter.
             SVGRendererClass.prototype.html = function (
                 str: string,
                 x: number,
@@ -89,23 +86,42 @@ class HTMLElement extends SVGElement {
         }
     }
 
+
     /* *
      *
-     *  Prototype
+     *  Properties
      *
      * */
 
+
+    /** @internal */
+    public div?: HTMLDOMElement;
+
+
+    /** @internal */
     public foreignObject: SVGElement;
+
+
+    /** @internal */
     public parentGroup?: SVGElement;
+
+
+    /** @internal */
     public xCorr?: number;
+
+
+    /** @internal */
     public yCorr?: number;
 
 
     /* *
      *
-     *  Functions
+     *  Constructor
      *
      * */
+
+
+    /** @internal */
     public constructor(
         renderer: SVGRenderer,
         nodeName: 'div'
@@ -120,9 +136,17 @@ class HTMLElement extends SVGElement {
         this.element.style.whiteSpace = 'nowrap';
     }
 
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+
     /**
      * Get the correction in X and Y positioning as the element is rotated.
-     * @private
+     * @internal
      */
     private getSpanCorrection(
         width: number,
@@ -135,7 +159,7 @@ class HTMLElement extends SVGElement {
 
     /**
      * Apply CSS to HTML elements. This is used in text within SVG rendering.
-     * @private
+     * @internal
      */
     public css(styles: CSSObject): this {
         const { element } = this,
@@ -186,7 +210,7 @@ class HTMLElement extends SVGElement {
      * Called internally from the `SVGElement.getBBox` function and subsequently
      * rotated.
      *
-     * @private
+     * @internal
      */
     public htmlGetBBox(): BBoxObject {
         const { element } = this;
@@ -202,7 +226,7 @@ class HTMLElement extends SVGElement {
     /**
      * Batch update styles and attributes related to transform
      *
-     * @private
+     * @internal
      */
     public updateTransform(): void {
         // Aligning non added elements is expensive
@@ -355,7 +379,7 @@ class HTMLElement extends SVGElement {
      * Add the element to a group wrapper. For HTML elements, a parallel div
      * will be created for each ancenstor SVG `g` element.
      *
-     * @private
+     * @internal
      */
     public add(parentGroup?: SVGElement): this {
         const { foreignObject, renderer } = this;
@@ -383,7 +407,7 @@ class HTMLElement extends SVGElement {
 
     /**
      * Text setter
-     * @private
+     * @internal
      */
     public textSetter(value: string): void {
         if (value !== this.textStr) {
@@ -396,24 +420,29 @@ class HTMLElement extends SVGElement {
         }
     }
 
+
     /**
      * Align setter
-     *
-     * @private
+     * @internal
      */
     public alignSetter(value: 'left'|'center'|'right'): void {
         this.alignValue = this.textAlign = value;
         this.doTransform = true;
     }
+
+
     /**
      * Various setters which rely on update transform
-     * @private
+     * @internal
      */
     public xSetter(value: number, key: string): void {
         this[key] = value;
         this.doTransform = true;
     }
+
+
 }
+
 
 // Some shared setters
 const proto = HTMLElement.prototype;
@@ -426,9 +455,11 @@ proto.ySetter = proto.xSetter;
  *
  * */
 
+
 interface HTMLElement {
     element: HTMLDOMElement;
 }
+
 
 /* *
  *
@@ -436,4 +467,6 @@ interface HTMLElement {
  *
  * */
 
+
+/** @internal */
 export default HTMLElement;

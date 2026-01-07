@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2025 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -1478,7 +1479,7 @@ class RangeSelector {
                 rangeOptions.text ?? '',
                 0,
                 0,
-                (e: (Event | AnyRecord)): void => {
+                (e): void => {
 
                     // Extract events from button object and call
                     const buttonEvents = (

@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Christer Vasseng, Torstein Honsi
+ *  (c) 2010-2025 Highsoft AS
+ *  Author: Christer Vasseng, Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -32,21 +33,67 @@ const {
  *
  * */
 
+/**
+ * Callback function for Ajax errors.
+ *
+ * @callback Highcharts.AjaxErrorCallbackFunction
+ *
+ * @param {XMLHttpRequest} request
+ * The XHR object.
+ *
+ * @param {string|Error} error
+ * The error message.
+ */
 export interface AjaxErrorCallbackFunction {
     (request: XMLHttpRequest, error: (string | Error)): void;
 }
 
 export interface AjaxSettingsObject {
+    /**
+     * The payload to send.
+     */
     data?: (string | JSON.Type | JSON.Builder | JSON);
+    /**
+     * The data type expected.
+     */
     dataType?: string; // @todo ('json' | 'text' | 'xml' | 'octet' | string);
+    /**
+     * Function to call on error.
+     */
     error?: AjaxErrorCallbackFunction;
+    /**
+     * The headers; keyed on header name.
+     */
     headers?: Record<string, string>;
+    /**
+     * The response type.
+     */
     responseType?: ('arraybuffer' | 'blob' | 'document' | 'json' | 'text');
+    /**
+     * Function to call on success.
+     */
     success?: AjaxSuccessCallbackFunction;
+    /**
+     * The HTTP method to use. For example GET or POST.
+     */
     type?: ('get' | 'post' | 'update' | 'delete');
+    /**
+     * The URL to call.
+     */
     url: string;
 }
 
+/**
+ * Callback function for Ajax success.
+ *
+ * @callback Highcharts.AjaxSuccessCallbackFunction
+ *
+ * @param {string|Highcharts.JSONType} response
+ * The response from the Ajax call.
+ *
+ * @param {XMLHttpRequest} xhr
+ * The XHR object.
+ */
 export interface AjaxSuccessCallbackFunction {
     (response: (string | JSON.Type), xhr: XMLHttpRequest): void;
 }
@@ -81,9 +128,7 @@ function ajax(
 
     /**
      * Private error handler.
-     *
-     * @private
-     *
+     * @internal
      * @param {XMLHttpRequest} xhr
      * Internal request object.
      * @param {string | Error} err
@@ -179,13 +224,15 @@ function getJSON(
 /**
  * The post utility.
  *
- * @private
+ * @internal
  * @function Highcharts.post
  *
  * @param {string} url
  * Post URL.
+ *
  * @param {Object} data
  * Post data.
+ *
  * @param {RequestInit} [fetchOptions]
  * Additional attributes for the post request.
  */
@@ -232,11 +279,24 @@ async function post(
  *
  * */
 
+interface HttpUtilities {
+    ajax: typeof ajax,
+    getJSON: typeof getJSON,
+    /** @internal */
+    post: typeof post
+}
+
+/**
+ * Utility functions for Ajax.
+ * @class
+ * @name Highcharts.HttpUtilities
+ */
 const HttpUtilities = {
     ajax,
-    getJSON,
-    post
-};
+    getJSON
+} as HttpUtilities;
+
+HttpUtilities.post = post;
 
 export default HttpUtilities;
 

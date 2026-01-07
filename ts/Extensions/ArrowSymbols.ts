@@ -3,9 +3,9 @@
  *  (c) 2017 Highsoft AS
  *  Authors: Lars A. V. Cabrera
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -131,7 +131,12 @@ function arrowHalf(
 }
 
 /**
+ * Adds the arrow symbols to the SVGRenderer.
+ *
  * @private
+ *
+ * @param SVGRendererClass
+ * The SVGRenderer class to extend.
  */
 function compose(
     SVGRendererClass: typeof SVGRenderer
