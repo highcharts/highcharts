@@ -37,7 +37,7 @@ import type ContourSeriesOptions from './ContourSeriesOptions';
  * @extends      plotOptions.scatter
  * @excluding    animationLimit, cluster, connectEnds, connectNulls,
  *               cropThreshold, dashStyle, dragDrop, getExtremesFromAll,
- *               jitter, legendSymbolColor, linecap, lineWidth, pointInterval,
+ *               jitter, legendSymbolColor, linecap, pointInterval,
  *               pointIntervalUnit, pointRange, pointStart, shadow,
  *               softThreshold, stacking, step, threshold
  *
@@ -65,20 +65,22 @@ const ContourSeriesDefaults: ContourSeriesOptions = {
      */
 
     /**
+     * This setting controls the visibility and size of contour lines. For now,
+     * only '1' and '0' are valid options, effectively controlling the
+     * visibility of the lines.
+     *
+     * @type      {number}
+     * @default   1
+     * @apioption plotOptions.contour.lineWidth
+     */
+
+    /**
      * The interval between contour lines. Determines the spacing of value
      * levels where lines are drawn on the plot.
      *
      * @type      {number}
      * @default   1
      * @apioption plotOptions.contour.contourInterval
-     */
-
-    /**
-     * Whether to display contour lines on the canvas. When enabled, lines are
-     * drawn along the boundaries between different values.
-     * @type      {boolean}
-     * @default   true
-     * @apioption plotOptions.contour.showContourLines
      */
 
     /**

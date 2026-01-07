@@ -782,11 +782,11 @@ export default class ContourSeries extends ScatterSeries {
     }
 
     /**
-     * Returns the show contour lines from the series options in format of the
-     * WebGPU uniform.
+     * Returns the lineWidth from the series options, which controlls the
+     * visibility of contour lines, in format of the WebGPU uniform.
      */
     private getShowContourLines(): number {
-        return this.options.showContourLines ? 1 : 0;
+        return this.options.lineWidth || 1;
     }
 
     /**
