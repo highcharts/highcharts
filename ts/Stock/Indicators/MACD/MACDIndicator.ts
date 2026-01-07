@@ -1,8 +1,8 @@
 /* *
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -16,7 +16,7 @@
 
 import type ColorString from '../../../Core/Color/ColorString';
 import type ColumnSeries from '../../../Series/Column/ColumnSeries';
-import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -204,17 +204,17 @@ class MACDIndicator extends SMAIndicator {
     public init(): void {
         SeriesRegistry.seriesTypes.sma.prototype.init.apply(this, arguments);
 
-        const originalColor = this.color;
+        const originalColor = this.color,
+            originalColorIndex = this.colorIndex;
 
         // Check whether series is initialized. It may be not initialized,
         // when any of required indicators is missing.
         if (this.options) {
-            // If the default colour doesn't set, get the next available from
+            // If the default color doesn't set, get the next available from
             // the array and apply it #15608.
             if (defined(this.colorIndex)) {
                 if (
-                    this.options.signalLine &&
-                    this.options.signalLine.styles &&
+                    this.options.signalLine?.styles &&
                     !this.options.signalLine.styles.lineColor
                 ) {
                     this.options.colorIndex = this.colorIndex + 1;
@@ -224,8 +224,7 @@ class MACDIndicator extends SMAIndicator {
                 }
 
                 if (
-                    this.options.macdLine &&
-                    this.options.macdLine.styles &&
+                    this.options.macdLine?.styles &&
                     !this.options.macdLine.styles.lineColor
                 ) {
                     this.options.colorIndex = this.colorIndex + 1;
@@ -239,19 +238,20 @@ class MACDIndicator extends SMAIndicator {
             // Zones have indexes automatically calculated, we need to
             // translate them to support multiple lines within one indicator
             this.macdZones = {
-                zones: (this.options.macdLine as any).zones,
+                zones: this.options.macdLine?.zones,
                 startIndex: 0
             };
             this.signalZones = {
-                zones: (this.macdZones.zones as any).concat(
+                zones: this.macdZones.zones?.concat(
                     (this.options.signalLine as any).zones
                 ),
-                startIndex: (this.macdZones.zones as any).length
+                startIndex: this.macdZones.zones?.length
             };
         }
 
         // Reset color and index #15608.
         this.color = originalColor;
+        this.colorIndex = originalColorIndex;
     }
 
     public toYData(
@@ -378,7 +378,7 @@ class MACDIndicator extends SMAIndicator {
     }
 
     public getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries&IndicatorLinkedSeriesLike,
+        series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: MACDParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const indexToShift: number = (

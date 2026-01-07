@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sebastian Bochan
@@ -14,8 +14,9 @@
  *
  * */
 
-import type CSSJSONObject from '../CSSJSONObject';
 import type Board from '../Board.js';
+import type CSSJSONObject from '../CSSJSONObject';
+import type { DeepPartial } from '../../Shared/Types';
 
 import U from '../../Core/Utilities.js';
 const {
@@ -313,7 +314,7 @@ class Layout extends GUIElement {
      * @internal
      *
      */
-    public getOptions(): Globals.DeepPartial<Layout.Options> {
+    public getOptions(): DeepPartial<Layout.Options> {
         const layout = this,
             rows = [];
 

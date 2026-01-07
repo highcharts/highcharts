@@ -3,115 +3,105 @@ Dashboards.board('container', {
         connectors: [{
             type: 'JSON',
             id: 'array-of-objects',
-            options: {
-                data: [{
-                    name: 'John',
-                    age: 23,
-                    weight: 70
-                }, {
-                    name: 'Jane',
-                    age: 25,
-                    weight: 65
-                }, {
-                    name: 'Joe',
-                    age: 21,
-                    weight: 68
-                }, {
-                    name: 'Jack',
-                    age: 26,
-                    weight: 72
-                }]
-            }
+            data: [{
+                name: 'John',
+                age: 23,
+                weight: 70
+            }, {
+                name: 'Jane',
+                age: 25,
+                weight: 65
+            }, {
+                name: 'Joe',
+                age: 21,
+                weight: 68
+            }, {
+                name: 'Jack',
+                age: 26,
+                weight: 72
+            }]
         }, {
             type: 'JSON',
             id: 'to-parse',
-            options: {
-                orientation: 'columns',
-                beforeParse: function (data) {
-                    const res = [],
-                        response = data[0].series;
-                    response.forEach(series => {
-                        res.push([series.name].concat(series.data));
-                    });
+            orientation: 'columns',
+            beforeParse: function (data) {
+                const res = [],
+                    response = data[0].series;
+                response.forEach(series => {
+                    res.push([series.name].concat(series.data));
+                });
 
-                    return res;
-                },
-                data: [{
-                    series: [{
-                        name: 'Series 1',
-                        data: [1, 2, 3, 4]
-                    }, {
-                        name: 'Series 2',
-                        data: [2, 3, 4, 5]
-                    }]
+                return res;
+            },
+            data: [{
+                series: [{
+                    name: 'Series 1',
+                    data: [1, 2, 3, 4]
+                }, {
+                    name: 'Series 2',
+                    data: [2, 3, 4, 5]
                 }]
-            }
+            }]
         }, {
             type: 'JSON',
             id: 'no-first-names',
-            options: {
-                firstRowAsNames: false,
-                columnNames: [
-                    'random name', 'second random name', 'third random name'
-                ],
-                data: [
-                    [1, 2, 3],
-                    [2, 3, 4]
-                ]
-            }
+            firstRowAsNames: false,
+            columnIds: [
+                'random name', 'second random name', 'third random name'
+            ],
+            data: [
+                [1, 2, 3],
+                [2, 3, 4]
+            ]
         }, {
             type: 'JSON',
             id: 'rows',
-            options: {
-                data: [
-                    ['a', 'b', 'c'],
-                    [1, 2, 3],
-                    [2, 3, 4]
-                ]
-            }
+            data: [
+                ['a', 'b', 'c'],
+                [1, 2, 3],
+                [2, 3, 4]
+            ]
         }, {
             type: 'JSON',
             id: 'columns',
-            options: {
-                orientation: 'columns',
-                data: [
-                    ['a', 1, 2],
-                    ['b', 2, 3],
-                    ['c', 3, 4],
-                    ['d', 4, 5],
-                    ['e', 5, 6]
-                ]
-            }
+            orientation: 'columns',
+            data: [
+                ['a', 1, 2],
+                ['b', 2, 3],
+                ['c', 3, 4],
+                ['d', 4, 5],
+                ['e', 5, 6]
+            ]
         }]
 
     },
     components: [{
         renderTo: 'dg-rows',
-        type: 'DataGrid',
+        type: 'Grid',
         connector: {
             id: 'rows'
         }
     }, {
         renderTo: 'dg-columns',
-        type: 'DataGrid',
+        type: 'Grid',
         connector: {
             id: 'columns'
         }
     }, {
         renderTo: 'dg-no-first-names',
-        type: 'DataGrid',
+        type: 'Grid',
         connector: {
             id: 'no-first-names'
         }
     }, {
         renderTo: 'dg-to-parse',
-        type: 'DataGrid',
+        type: 'Grid',
         connector: {
             id: 'to-parse'
         }
     }, {
         renderTo: 'dg-array-of-objects',
-        type: 'DataGrid',
+        type: 'Grid',
         connector: {
             id: 'array-of-objects'
         }

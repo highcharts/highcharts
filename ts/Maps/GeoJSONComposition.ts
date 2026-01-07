@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -46,34 +47,114 @@ const {
  *
  * */
 
-declare module '../Core/Chart/ChartLike'{
-    interface ChartLike {
-        /** @requires modules/map */
-        mapCredits?: string;
-        /** @requires modules/map */
-        mapCreditsFull?: string;
-        /** @requires modules/map */
-        mapTransforms?: any;
+declare module '../Core/Chart/ChartBase'{
+    interface ChartBase {
         /**
-         * @deprecated
          * @requires modules/map
+         * @internal
+         */
+        mapCredits?: string;
+
+        /**
+         * @requires modules/map
+         * @internal
+         */
+        mapCreditsFull?: string;
+
+        /**
+         * @requires modules/map
+         * @internal
+         */
+        mapTransforms?: any;
+
+        /**
+         * Deprecated. Use `MapView.lonLatToProjectedUnits` instead.
+         *
+         * @deprecated
+         *
+         * @requires modules/map
+         *
+         * @function Highcharts.Chart#fromLatLonToPoint
+         *
+         * @param {Highcharts.MapLonLatObject} lonLat
+         * Coordinates.
+         *
+         * @return {Highcharts.ProjectedXY}
+         * X and Y coordinates in terms of projected values
          */
         fromLatLonToPoint(
             latLon: MapLonLatObject
         ): (ProjectedXY|undefined);
+
         /**
+         * Deprecated. Use `MapView.projectedUnitsToLonLat` instead.
+         *
          * @deprecated
+         *
          * @requires modules/map
+         *
+         * @function Highcharts.Chart#fromPointToLatLon
+         *
+         * @param {Highcharts.Point|Highcharts.ProjectedXY} point
+         * A `Point` instance or anything containing `x` and `y` properties
+         * with numeric values.
+         *
+         * @return {Highcharts.MapLonLatObject|undefined}
+         * An object with `lat` and `lon` properties.
          */
         fromPointToLatLon(
             point: ProjectedXY
         ): (MapLonLatObject|undefined);
-        /** @requires modules/map */
+
+        /**
+         * Highcharts Maps only. Get point from latitude and longitude using
+         * specified transform definition.
+         *
+         * @requires modules/map
+         *
+         * @sample maps/series/latlon-transform/
+         * Use specific transformation for lat/lon
+         *
+         * @function Highcharts.Chart#transformFromLatLon
+         *
+         * @param {Highcharts.MapLonLatObject} latLon
+         * A latitude/longitude object.
+         *
+         * @param {*} transform
+         * The transform definition to use as explained in the
+         * {@link https://www.highcharts.com/docs/maps/latlon|documentation}.
+         *
+         * @return {ProjectedXY}
+         * An object with `x` and `y` properties.
+         */
         transformFromLatLon(
             latLon: MapLonLatObject,
             transform: any
         ): (ProjectedXY|undefined);
-        /** @requires modules/map */
+
+        /**
+         * Highcharts Maps only. Get latLon from point using specified transform
+         * definition. The method returns an object with the numeric properties
+         * `lat` and `lon`.
+         *
+         * @requires modules/map
+         *
+         * @sample maps/series/latlon-transform/
+         *         Use specific transformation for lat/lon
+         *
+         * @function Highcharts.Chart#transformToLatLon
+         *
+         * @param {Highcharts.Point|Highcharts.ProjectedXY} point
+         *        A `Point` instance, or any object containing the properties `x`
+         *        and `y` with numeric values.
+         *
+         * @param {*} transform
+         *        The transform definition to use as explained in the
+         *        {@link https://www.highcharts.com/docs/maps/latlon|documentation}.
+         *
+         * @return {Highcharts.MapLonLatObject|undefined}
+         * An object with `lat` and `lon` properties.
+         */
         transformToLatLon(
             point: ProjectedXY,
             transform: any
@@ -83,7 +164,17 @@ declare module '../Core/Chart/ChartLike'{
 
 declare module '../Core/Chart/ChartOptions'{
     interface ChartOptions {
-        /** @requires modules/map */
+        /**
+         * Allows to manually load the proj4 library from Highcharts options
+         * instead of the `window`.
+         * In case of loading the library from a `script` tag,
+         * this option is not needed, it will be loaded from there by default.
+         *
+         * @requires  modules/map
+         * @type      {Function}
+         * @product   highmaps
+         * @apioption chart.proj4
+         */
         proj4?: any;
     }
 }
@@ -121,7 +212,7 @@ namespace GeoJSONComposition {
         this: Chart,
         lonLat: MapLonLatObject
     ): (ProjectedXY|undefined) {
-        return this.mapView && this.mapView.lonLatToProjectedUnits(lonLat);
+        return this.mapView?.lonLatToProjectedUnits(lonLat);
     }
 
     /**
@@ -144,7 +235,7 @@ namespace GeoJSONComposition {
         this: Chart,
         point: ProjectedXY
     ): (MapLonLatObject|undefined) {
-        return this.mapView && this.mapView.projectedUnitsToLonLat(point);
+        return this.mapView?.projectedUnitsToLonLat(point);
     }
 
     /**
@@ -288,7 +379,7 @@ namespace GeoJSONComposition {
     }
 
 
-    /** @private */
+    /** @internal */
     export function compose(
         ChartClass: typeof Chart
     ): void {
@@ -425,6 +516,9 @@ namespace GeoJSONComposition {
      * Convert a TopoJSON topology to GeoJSON. By default the first object is
      * handled.
      * Based on https://github.com/topojson/topojson-specification
+     *
+     * @requires modules/map
+     * @internal
      */
     export function topo2geo(
         topology: TopoJSON,
@@ -538,7 +632,7 @@ namespace GeoJSONComposition {
 
     /**
      * Override addCredits to include map source by default.
-     * @private
+     * @internal
      */
     function wrapChartAddCredit(
         this: Chart,
@@ -718,7 +812,7 @@ export default GeoJSONComposition;
  * An array of GeoJSON or TopoJSON objects or strings used as map data for
  * series.
  *
- * @typedef {Array<*>|GeoJSON|TopoJSON|string} Highcharts.MapDataType
+ * @typedef {Array<*>|Highcharts.GeoJSON|Highcharts.TopoJSON|string} Highcharts.MapDataType
  */
 
 /**
@@ -726,6 +820,48 @@ export default GeoJSONComposition;
  * [project's GitHub page](https://github.com/topojson/topojson).
  *
  * @typedef {Object} Highcharts.TopoJSON
+ */
+
+/**
+ * Rotation of the projection in terms of degrees `[lambda, phi, gamma]`.
+ * 1st number is mandatory, while 2nd and 3rd are optional.
+ *
+ * @typedef {"TypeScript: [number]|[number,number]|[number,number,number]"} Highcharts.ProjectionRotationOption
+ */
+
+/**
+ * The padding of the map view. Can be either a number of pixels, a percentage
+ * string, or an array of either. If an array is given, it sets the top, right,
+ * bottom, left paddings respectively.
+ *
+ * @interface Highcharts.MapViewPaddingType
+ * @typedef {number|string|Array<number|string>} Highcharts.MapViewPaddingType
+ */
+
+
+/**
+ * Object containing the bounds of the map.
+ * All coordinates are in projected units.
+ *
+ * @interface Highcharts.MapBounds
+ *//**
+ * The center of the bounding box.
+ * @name Highcharts.MapBounds#midX
+ *//**
+ * The center of the bounding box.
+ * @name Highcharts.MapBounds#midY
+ *//**
+ * First point's X of the bounding box.
+ * @name Highcharts.MapBounds#x1
+ *//**
+ * First point's Y of the bounding box.
+ * @name Highcharts.MapBounds#y1
+ *//**
+ * Second point's X of the bounding box.
+ * @name Highcharts.MapBounds#x2
+ *//**
+ * Second point's Y of the bounding box.
+ * @name Highcharts.MapBounds#y2
  */
 
 ''; // Detach doclets above

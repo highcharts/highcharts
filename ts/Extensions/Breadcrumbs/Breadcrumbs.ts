@@ -4,9 +4,9 @@
  *
  *  Authors: Grzegorz Blachlinski, Karol Kolodziej
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -23,6 +23,7 @@ import type {
     BreadcrumbsOptions
 } from './BreadcrumbsOptions';
 import type Chart from '../../Core/Chart/Chart.js';
+import type { DeepPartial } from '../../Shared/Types';
 import type Options from '../../Core/Options';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
@@ -51,8 +52,8 @@ const {
  *
  * */
 
-declare module '../../Core/Chart/ChartLike' {
-    interface ChartLike {
+declare module '../../Core/Chart/ChartBase' {
+    interface ChartBase {
         breadcrumbsBottomMargin?: boolean;
         breadcrumbsTopMargin?: boolean;
         breadcrumbs?: Breadcrumbs;

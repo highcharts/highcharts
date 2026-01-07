@@ -2,11 +2,11 @@
  *
  *  Date Input Cell Renderer class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -24,14 +24,15 @@
  * */
 
 import type Column from '../../../Core/Table/Column';
+import type { DateInputRendererBaseOptions } from './DateInputRendererBase';
 import type TableCell from '../../../Core/Table/Body/TableCell';
 import type { EditModeRenderer } from '../../CellEditing/CellEditMode';
 import type {
     EditModeRendererTypeName
 } from '../../CellEditing/CellEditingComposition';
 
-import CellRenderer from '../CellRenderer.js';
-import CellRendererRegistry from '../CellRendererRegistry.js';
+import { CellRenderer, CellRendererOptions } from '../CellRenderer.js';
+import { registerRenderer } from '../CellRendererRegistry.js';
 import DateInputContent from '../ContentTypes/DateInputContent.js';
 
 import U from '../../../../Core/Utilities.js';
@@ -60,12 +61,11 @@ class DateInputRenderer extends CellRenderer implements EditModeRenderer {
     /**
      * Default options for the date input renderer.
      */
-    public static defaultOptions: DateInputRenderer.Options = {
-        type: 'dateInput',
-        inputType: 'date'
+    public static defaultOptions: DateInputRendererOptions = {
+        type: 'dateInput'
     };
 
-    public override options: DateInputRenderer.Options;
+    public override options: DateInputRendererOptions;
 
 
     /* *
@@ -74,7 +74,7 @@ class DateInputRenderer extends CellRenderer implements EditModeRenderer {
      *
      * */
 
-    public constructor(column: Column, options: Partial<CellRenderer.Options>) {
+    public constructor(column: Column, options: Partial<CellRendererOptions>) {
         super(column);
         this.options = merge(DateInputRenderer.defaultOptions, options);
     }
@@ -98,44 +98,15 @@ class DateInputRenderer extends CellRenderer implements EditModeRenderer {
 
 /* *
  *
- *  Namespace
+ *  Declarations
  *
  * */
 
-namespace DateInputRenderer {
-
-    /**
-     * Options to control the date input renderer content.
-     */
-    export interface Options extends CellRenderer.Options {
-        type: 'dateInput';
-
-        /**
-         * The type of the date input.
-         *
-         * @default 'date'
-         */
-        inputType?: 'date' | 'datetime' | 'time';
-
-        /**
-         * Whether the date input is disabled.
-         */
-        disabled?: boolean;
-
-        /**
-         * Attributes to control the date input.
-         */
-        attributes?: DateInputAttributes;
-    }
-
-    /**
-     * Attributes to control the date input.
-     */
-    export interface DateInputAttributes {
-        min?: string;
-        max?: string;
-        step?: string;
-    }
+/**
+ * Options to control the date input renderer content.
+ */
+export interface DateInputRendererOptions extends DateInputRendererBaseOptions {
+    type: 'dateInput';
 }
 
 
@@ -151,7 +122,7 @@ declare module '../CellRendererType' {
     }
 }
 
-CellRendererRegistry.registerRenderer('dateInput', DateInputRenderer);
+registerRenderer('dateInput', DateInputRenderer);
 
 
 /* *

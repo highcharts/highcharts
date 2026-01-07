@@ -4,10 +4,10 @@ describe('Credits.', () => {
     });
 
     it('Default credits should be displayed.', () => {
-        cy.get('.highcharts-datagrid-credits')
+        cy.get('.hcg-credits')
             .should('have.css', 'background-image')
             .then((bg) => {
-                expect(bg).to.contain('https://assets.highcharts.com/grid/logo_light.png');
+                expect(bg).to.contain('https://assets.highcharts.com/grid/logo');
             });
     });
 
@@ -23,8 +23,8 @@ describe('Credits.', () => {
             });
         });
 
-        cy.get('.highcharts-datagrid-credits').should('contain', 'overwriteText');
-        cy.get('.highcharts-datagrid-credits').should('have.css', 'background-image', 'none');
+        cy.get('.hcg-credits').should('contain', 'overwriteText');
+        cy.get('.hcg-credits').should('have.css', 'background-image', 'none');
     });
 
     it('Disabled credits should not be displayed.', () => {
@@ -35,6 +35,6 @@ describe('Credits.', () => {
                 }
             });
         });
-        cy.get('.highcharts-datagrid-credits').should('not.exist');
+        cy.get('.hcg-credits').should('not.exist');
     });
 });

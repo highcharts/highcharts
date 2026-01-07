@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sophie Bremer
@@ -13,6 +13,7 @@
  *  - Torstein Hønsi
  *  - Wojciech Chmiel
  *  - Jomar Hønsi
+ *  - Kamil Kubik
  *
  * */
 
@@ -26,16 +27,14 @@
 
 import type { DataConverterTypes } from './DataConverterType';
 import type DataEvent from '../DataEvent';
-import type DataConnector from '../Connectors/DataConnector';
-import type { ColumnNamesOptions } from '../Connectors/JSONConnectorOptions';
-
+import type { ColumnIdsOptions } from '../Connectors/JSONConnectorOptions';
 
 import DataTable from '../DataTable.js';
+import DataConverterUtils from './DataConverterUtils.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
     fireEvent,
-    isNumber,
     merge
 } = U;
 
@@ -50,7 +49,7 @@ const {
  *
  * @private
  */
-class DataConverter implements DataEvent.Emitter {
+class DataConverter implements DataEvent.Emitter<DataConverter.Event> {
 
     /* *
      *
@@ -63,13 +62,7 @@ class DataConverter implements DataEvent.Emitter {
      */
     protected static readonly defaultOptions: DataConverter.Options = {
         dateFormat: '',
-        alternativeFormat: '',
-        startColumn: 0,
-        endColumn: Number.MAX_VALUE,
-        startRow: 0,
-        endRow: Number.MAX_VALUE,
-        firstRowAsNames: true,
-        switchRowsAndColumns: false
+        firstRowAsNames: true
     };
 
     /* *
@@ -84,9 +77,7 @@ class DataConverter implements DataEvent.Emitter {
      * @param {DataConverter.UserOptions} [options]
      * Options for the DataConverter.
      */
-    public constructor(
-        options?: DataConverter.UserOptions
-    ) {
+    public constructor(options?: DataConverter.UserOptions) {
         const mergedOptions = merge(DataConverter.defaultOptions, options);
 
         let regExpPoint = mergedOptions.decimalPoint;
@@ -113,38 +104,47 @@ class DataConverter implements DataEvent.Emitter {
     public dateFormats: Record<string, DataConverter.DateFormatObject> = {
         'YYYY/mm/dd': {
             regex: /^(\d{4})([\-\.\/])(\d{1,2})\2(\d{1,2})$/,
-            parser: function (match: (RegExpMatchArray|null)): number {
+            parser: function (match: RegExpMatchArray | null): number {
                 return (
                     match ?
-                        Date.UTC(+match[1], (match[3] as any) - 1, +match[4]) :
-                        NaN
+                        Date.UTC(
+                            +match[1],
+                            +match[3] - 1,
+                            +match[4]
+                        ) : NaN
                 );
             }
         },
         'dd/mm/YYYY': {
             regex: /^(\d{1,2})([\-\.\/])(\d{1,2})\2(\d{4})$/,
-            parser: function (match: (RegExpMatchArray|null)): number {
+            parser: function (match: RegExpMatchArray | null): number {
                 return (
                     match ?
-                        Date.UTC(+match[4], (match[3] as any) - 1, +match[1]) :
-                        NaN
+                        Date.UTC(
+                            +match[4],
+                            +match[3] - 1,
+                            +match[1]
+                        ) : NaN
                 );
             },
             alternative: 'mm/dd/YYYY' // Different format with the same regex
         },
         'mm/dd/YYYY': {
             regex: /^(\d{1,2})([\-\.\/])(\d{1,2})\2(\d{4})$/,
-            parser: function (match: (RegExpMatchArray|null)): number {
+            parser: function (match: RegExpMatchArray | null): number {
                 return (
                     match ?
-                        Date.UTC(+match[4], (match[1] as any) - 1, +match[3]) :
-                        NaN
+                        Date.UTC(
+                            +match[4],
+                            +match[1] - 1,
+                            +match[3]
+                        ) : NaN
                 );
             }
         },
         'dd/mm/YY': {
             regex: /^(\d{1,2})([\-\.\/])(\d{1,2})\2(\d{2})$/,
-            parser: function (match: (RegExpMatchArray|null)): number {
+            parser: function (match: RegExpMatchArray | null): number {
                 const d = new Date();
 
                 if (!match) {
@@ -159,18 +159,18 @@ class DataConverter implements DataEvent.Emitter {
                     year += 2000;
                 }
 
-                return Date.UTC(year, (match[3] as any) - 1, +match[1]);
+                return Date.UTC(year, +match[3] - 1, +match[1]);
             },
             alternative: 'mm/dd/YY' // Different format with the same regex
         },
         'mm/dd/YY': {
             regex: /^(\d{1,2})([\-\.\/])(\d{1,2})\2(\d{2})$/,
-            parser: function (match: (RegExpMatchArray|null)): number {
+            parser: function (match: RegExpMatchArray | null): number {
                 return (
                     match ?
                         Date.UTC(
                             +match[4] + 2000,
-                            (match[1] as any) - 1,
+                            +match[1] - 1,
                             +match[3]
                         ) :
                         NaN
@@ -182,7 +182,7 @@ class DataConverter implements DataEvent.Emitter {
     /**
      * Regular expression used in the trim method to change a decimal point.
      */
-    protected decimalRegExp?: RegExp;
+    public decimalRegExp?: RegExp;
 
     /**
      * Options for the DataConverter.
@@ -196,124 +196,26 @@ class DataConverter implements DataEvent.Emitter {
      * */
 
     /**
-     * Converts a value to a boolean.
-     *
-     * @param {DataConverter.Type} value
-     * Value to convert.
-     *
-     * @return {boolean}
-     * Converted value as a boolean.
-     */
-    public asBoolean(value: DataConverter.Type): boolean {
-        if (typeof value === 'boolean') {
-            return value;
-        }
-        if (typeof value === 'string') {
-            return value !== '' && value !== '0' && value !== 'false';
-        }
-        return !!this.asNumber(value);
-    }
-
-    /**
-     * Converts a value to a Date.
-     *
-     * @param {DataConverter.Type} value
-     * Value to convert.
-     *
-     * @return {globalThis.Date}
-     * Converted value as a Date.
-     */
-    public asDate(value: DataConverter.Type): Date {
-        let timestamp;
-
-        if (typeof value === 'string') {
-            timestamp = this.parseDate(value);
-        } else if (typeof value === 'number') {
-            timestamp = value;
-        } else if (value instanceof Date) {
-            return value;
-        } else {
-            timestamp = this.parseDate(this.asString(value));
-        }
-
-        return new Date(timestamp);
-    }
-
-    /**
-     * Casts a string value to it's guessed type
+     * Converts a string value based on its guessed type.
      *
      * @param {*} value
      * The value to examine.
      *
-     * @return {number|string|Date}
+     * @return {number | string | Date}
      * The converted value.
      */
-    public asGuessedType(value: unknown): (number|string|Date) {
+    public convertByType(value: DataConverter.Type): number | string | Date {
         const converter = this,
-            typeMap: Record<ReturnType<DataConverter['guessType']>, Function> = {
-                'number': converter.asNumber,
-                'Date': converter.asDate,
-                'string': converter.asString
+            typeMap: Record<ReturnType<typeof DataConverterUtils.guessType>, Function> = {
+                'number': (value: DataConverter.Type): number =>
+                    DataConverterUtils.asNumber(value, converter.decimalRegExp),
+                'Date': (value: DataConverter.Type): Date =>
+                    DataConverterUtils.asDate(value, converter),
+                'string': DataConverterUtils.asString
             };
 
-        return typeMap[converter.guessType(value)].call(converter, value);
-    }
-
-    /**
-     * Converts a value to a number.
-     *
-     * @param {DataConverter.Type} value
-     * Value to convert.
-     *
-     * @return {number}
-     * Converted value as a number.
-     */
-    public asNumber(value: DataConverter.Type): number {
-        if (typeof value === 'number') {
-            return value;
-        }
-        if (typeof value === 'boolean') {
-            return value ? 1 : 0;
-        }
-
-        if (typeof value === 'string') {
-            const decimalRegex = this.decimalRegExp;
-
-            if (value.indexOf(' ') > -1) {
-                value = value.replace(/\s+/g, '');
-            }
-
-            if (decimalRegex) {
-                if (!decimalRegex.test(value)) {
-                    return NaN;
-                }
-                value = value.replace(decimalRegex, '$1.$2');
-            }
-
-            return parseFloat(value);
-        }
-
-        if (value instanceof Date) {
-            return value.getDate();
-        }
-        if (value) {
-            return value.getRowCount();
-        }
-
-        return NaN;
-    }
-
-    /**
-     * Converts a value to a string.
-     *
-     * @param {DataConverter.Type} value
-     * Value to convert.
-     *
-     * @return {string}
-     * Converted value as a string.
-     */
-    public asString(value: DataConverter.Type): string {
-        return '' + value;
+        return typeMap[DataConverterUtils.guessType(value, converter)]
+            .call(converter, value);
     }
 
     /**
@@ -325,7 +227,7 @@ class DataConverter implements DataEvent.Emitter {
      * data is the data to deduce a format based on
      * @private
      *
-     * @param {Array<string>} data
+     * @param {string[]} data
      * Data to check the format.
      *
      * @param {number} limit
@@ -335,20 +237,19 @@ class DataConverter implements DataEvent.Emitter {
      * Whether to save the date format in the converter options.
      */
     public deduceDateFormat(
-        data: Array<string>,
-        limit?: (number|null),
+        data: string[],
+        limit?: number | null,
         save?: boolean
     ): string {
         const parser = this,
             stable = [],
-            max: Array<number> = [];
+            max: number[] = [];
 
         let format = 'YYYY/mm/dd',
-            thing: Array<string>,
-            guessedFormat: Array<string> = [],
+            thing: string[],
+            guessedFormat: string[] = [],
             i = 0,
             madeDeduction = false,
-            /// candidates = {},
             elem,
             j;
 
@@ -394,7 +295,6 @@ class DataConverter implements DataEvent.Emitter {
                                 } else {
                                     guessedFormat[j] = 'YYYY';
                                 }
-                                /// madeDeduction = true;
                             } else if (
                                 elem > 12 &&
                                 elem <= 31
@@ -457,92 +357,8 @@ class DataConverter implements DataEvent.Emitter {
      * @param {DataConverter.Event} [e]
      * Event object containing additional event data
      */
-    public emit<E extends DataEvent>(e: E): void {
+    public emit(e: DataConverter.Event): void {
         fireEvent(this, e.type, e);
-    }
-
-    /**
-     * Initiates the data exporting. Should emit `exportError` on failure.
-     *
-     * @param {DataConnector} connector
-     * Connector to export from.
-     *
-     * @param {DataConverter.Options} [options]
-     * Options for the export.
-     */
-    public export(
-        /* eslint-disable @typescript-eslint/no-unused-vars */
-        connector: DataConnector,
-        options?: DataConverter.Options
-        /* eslint-enable @typescript-eslint/no-unused-vars */
-    ): string {
-        this.emit<DataConverter.Event>({
-            type: 'exportError',
-            columns: [],
-            headers: []
-        });
-        throw new Error('Not implemented');
-    }
-
-    /**
-     * Getter for the data table.
-     *
-     * @return {DataTable}
-     * Table of parsed data.
-     */
-    public getTable(): DataTable {
-        throw new Error('Not implemented');
-    }
-
-    /**
-     * Guesses the potential type of a string value for parsing CSV etc.
-     *
-     * @param {*} value
-     * The value to examine.
-     *
-     * @return {'number'|'string'|'Date'}
-     * Type string, either `string`, `Date`, or `number`.
-     */
-    public guessType(
-        value: unknown
-    ): ('number'|'string'|'Date') {
-        const converter = this;
-
-        let result: ('string' | 'Date' | 'number') = 'string';
-
-        if (typeof value === 'string') {
-            const trimedValue = converter.trim(`${value}`),
-                decimalRegExp = converter.decimalRegExp;
-
-            let innerTrimedValue = converter.trim(trimedValue, true);
-
-            if (decimalRegExp) {
-                innerTrimedValue = (
-                    decimalRegExp.test(innerTrimedValue) ?
-                        innerTrimedValue.replace(decimalRegExp, '$1.$2') :
-                        ''
-                );
-            }
-
-            const floatValue = parseFloat(innerTrimedValue);
-
-            if (+innerTrimedValue === floatValue) {
-                // String is numeric
-                value = floatValue;
-            } else {
-                // Determine if a date string
-                const dateValue = converter.parseDate(value);
-
-                result = isNumber(dateValue) ? 'Date' : 'string';
-            }
-        }
-
-        if (typeof value === 'number') {
-            // Greater than milliseconds in a year assumed timestamp
-            result = value > 365 * 24 * 3600 * 1000 ? 'Date' : 'number';
-        }
-
-        return result;
     }
 
     /**
@@ -557,29 +373,13 @@ class DataConverter implements DataEvent.Emitter {
      * @return {Function}
      * Function to unregister callback from the modifier event.
      */
-    public on<E extends DataEvent>(
-        type: E['type'],
-        callback: DataEvent.Callback<this, E>
+    public on<T extends DataConverter.Event['type']>(
+        type: T,
+        callback: DataEvent.Callback<this, Extract<DataConverter.Event, {
+            type: T
+        }>>
     ): Function {
         return addEvent(this, type, callback);
-    }
-
-    /**
-     * Initiates the data parsing. Should emit `parseError` on failure.
-     *
-     * @param {DataConverter.UserOptions} options
-     * Options of the DataConverter.
-     */
-    public parse(
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        options: DataConverter.UserOptions
-    ): void {
-        this.emit<DataConverter.Event>({
-            type: 'parseError',
-            columns: [],
-            headers: []
-        });
-        throw new Error('Not implemented');
     }
 
     /**
@@ -598,23 +398,26 @@ class DataConverter implements DataEvent.Emitter {
 
         let dateFormat = dateFormatProp || options.dateFormat,
             result = NaN,
-            key,
-            format,
-            match;
+            key: string,
+            match: RegExpMatchArray | null = null;
+
+        type DateFormat = {
+            regex: RegExp;
+            parser: (match: RegExpMatchArray) => number;
+        };
 
         if (options.parseDate) {
             result = options.parseDate(value);
         } else {
+            const dateFormats: Record<string, DateFormat> = converter.dateFormats;
+
             // Auto-detect the date format the first time
             if (!dateFormat) {
-                for (key in converter.dateFormats) { // eslint-disable-line guard-for-in
-                    format = converter.dateFormats[key];
+                for (key in dateFormats) { // eslint-disable-line guard-for-in
+                    const format = dateFormats[key];
                     match = value.match(format.regex);
                     if (match) {
-                        // `converter.options.dateFormat` = dateFormat = key;
                         dateFormat = key;
-                        // `converter.options.alternativeFormat` =
-                        // format.alternative || '';
                         result = format.parser(match);
                         break;
                     }
@@ -622,11 +425,11 @@ class DataConverter implements DataEvent.Emitter {
 
             // Next time, use the one previously found
             } else {
-                format = converter.dateFormats[dateFormat];
+                let format = dateFormats[dateFormat];
 
                 if (!format) {
                     // The selected format is invalid
-                    format = converter.dateFormats['YYYY/mm/dd'];
+                    format = dateFormats['YYYY/mm/dd'];
                 }
 
                 match = value.match(format.regex);
@@ -634,30 +437,19 @@ class DataConverter implements DataEvent.Emitter {
                     result = format.parser(match);
                 }
             }
+
             // Fall back to Date.parse
             if (!match) {
-                match = Date.parse(value);
-                // External tools like Date.js and MooTools extend Date object
-                // and returns a date.
-                if (
-                    typeof match === 'object' &&
-                        match !== null &&
-                        (match as any).getTime
-                ) {
-                    result = (
-                        (match as any).getTime() -
-                            (match as any).getTimezoneOffset() *
-                            60000
-                    );
+                const parsed = Date.parse(value);
 
-                    // Timestamp
-                } else if (isNumber(match)) {
-                    result = match - (
-                        new Date(match)
-                    ).getTimezoneOffset() * 60000;
-                    if (// Reset dates without year in Chrome
-                        value.indexOf('2001') === -1 &&
-                        (new Date(result)).getFullYear() === 2001
+                if (!isNaN(parsed)) {
+                    result =
+                        parsed - new Date(parsed).getTimezoneOffset() * 60000;
+
+                    // Reset dates without year in Chrome
+                    if (
+                        !value.includes('2001') &&
+                        new Date(result).getFullYear() === 2001
                     ) {
                         result = NaN;
                     }
@@ -667,35 +459,6 @@ class DataConverter implements DataEvent.Emitter {
 
         return result;
     }
-
-    /**
-     * Trim a string from whitespaces.
-     *
-     * @param {string} str
-     * String to trim.
-     *
-     * @param {boolean} [inside=false]
-     * Remove all spaces between numbers.
-     *
-     * @return {string}
-     * Trimed string
-     */
-    public trim(
-        str: string,
-        inside?: boolean
-    ): string {
-        if (typeof str === 'string') {
-            str = str.replace(/^\s+|\s+$/g, '');
-
-            // Clear white space insdie the string, like thousands separators
-            if (inside && /^[\d\s]+$/.test(str)) {
-                str = str.replace(/\s/g, '');
-            }
-        }
-
-        return str;
-    }
-
 }
 
 /* *
@@ -721,12 +484,12 @@ namespace DataConverter {
      */
     export interface Event extends DataEvent {
         readonly type: (
-            'export'|'afterExport'|'exportError'|
-            'parse'|'afterParse'|'parseError'
+            'export' | 'afterExport' | 'exportError' |
+            'parse' | 'afterParse' | 'parseError'
         );
-        readonly columns: Array<DataTable.Column>;
-        readonly error?: (string | Error);
-        readonly headers: string[]|ColumnNamesOptions;
+        readonly columns: DataTable.Column[];
+        readonly error?: string | Error;
+        readonly headers: string[] | ColumnIdsOptions;
     }
 
     export interface DateFormatCallbackFunction {
@@ -744,21 +507,13 @@ namespace DataConverter {
      */
     export interface Options {
         dateFormat?: string;
-        alternativeFormat?: string;
         decimalPoint?: string;
-        startRow: number;
-        endRow: number;
-        startColumn: number;
-        endColumn: number;
         firstRowAsNames: boolean;
-
         /**
          * A function to parse string representations of dates into JavaScript
          * timestamps. If not set, the default implementation will be used.
          */
         parseDate?: DataConverter.ParseDateFunction;
-
-        switchRowsAndColumns: boolean;
     }
 
     /**
@@ -772,7 +527,10 @@ namespace DataConverter {
     /**
      * Contains supported types to convert values from and to.
      */
-    export type Type = (boolean|null|number|string|DataTable|Date|undefined);
+    export type Type = (
+        boolean | null | number | string |
+        DataTable | Date | undefined
+    );
 
     /**
      * Options of the DataConverter.
@@ -821,41 +579,6 @@ namespace DataConverter {
             !!(types[key] = DataConverterClass)
         );
     }
-
-    /**
-     * Converts an array of columns to a table instance. Second dimension of the
-     * array are the row cells.
-     *
-     * @param {Array<DataTable.Column>} [columns]
-     * Array to convert.
-     *
-     * @param {Array<string>} [headers]
-     * Column names to use.
-     *
-     * @return {DataTable}
-     * Table instance from the arrays.
-     */
-    export function getTableFromColumns(
-        columns: Array<DataTable.Column> = [],
-        headers: Array<string> = []
-    ): DataTable {
-        const table = new DataTable();
-
-        for (
-            let i = 0,
-                iEnd = Math.max(headers.length, columns.length);
-            i < iEnd;
-            ++i
-        ) {
-            table.setColumn(
-                headers[i] || `${i}`,
-                columns[i]
-            );
-        }
-
-        return table;
-    }
-
 }
 
 /* *

@@ -4,9 +4,9 @@
  *
  *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -71,8 +71,8 @@ const {
  *
  * */
 
-declare module '../../Core/Axis/AxisLike' {
-    interface AxisLike {
+declare module '../../Core/Axis/AxisBase' {
+    interface AxisBase {
         ddPoints?: Record<string, Array<(false|Point)>>;
         oldPos?: number;
         drilldownCategory(x: number, e: MouseEvent): void;
@@ -80,14 +80,14 @@ declare module '../../Core/Axis/AxisLike' {
     }
 }
 
-declare module '../../Core/Axis/TickLike' {
-    interface TickLike {
+declare module '../../Core/Axis/TickBase' {
+    interface TickBase {
         drillable(): void;
     }
 }
 
-declare module '../../Core/Chart/ChartLike' {
-    interface ChartLike {
+declare module '../../Core/Chart/ChartBase' {
+    interface ChartBase {
         ddDupes?: Array<string>;
         drilldownLevels?: Array<Drilldown.LevelObject>;
         drillUpButton?: SVGElement;
@@ -117,8 +117,8 @@ declare module '../../Core/Options' {
     }
 }
 
-declare module '../../Core/Renderer/SVG/SVGElementLike' {
-    interface SVGElementLike {
+declare module '../../Core/Renderer/SVG/SVGElementBase' {
+    interface SVGElementBase {
         fadeIn(animation?: (boolean|Partial<AnimationOptions>)): void;
     }
 }
@@ -312,8 +312,8 @@ class ChartAdditions {
                 series.options.inactiveOtherPoints = true;
 
                 // Hide and disable dataLabels
-                series.dataLabelsGroup?.destroy();
-                delete series.dataLabelsGroup;
+                series.dataLabelsGroups?.forEach((g): void => g?.destroy());
+                series.dataLabelsGroups = [];
             });
 
             // #18925 map zooming is not working with geoJSON maps
@@ -805,10 +805,10 @@ class ChartAdditions {
                         oldSeries.remove(false);
                     } else {
                         // Hide and disable dataLabels
-                        if (oldSeries.dataLabelsGroup) {
-                            oldSeries.dataLabelsGroup.destroy();
-                            delete oldSeries.dataLabelsGroup;
-                        }
+                        oldSeries.dataLabelsGroups?.forEach((g): void => {
+                            g?.destroy();
+                        });
+                        oldSeries.dataLabelsGroups = [];
 
                         if (chart.mapView && newSeries) {
                             if (zoomingDrill) {
@@ -967,6 +967,7 @@ namespace Drilldown {
 
     export interface EventObject {
         category?: number;
+        defaultPrevented?: boolean;
         originalEvent?: Event;
         point: Point;
         points?: Array<(boolean|Point)>;

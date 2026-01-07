@@ -1,0 +1,107 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/data.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/export-data.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+<script src="https://code.highcharts.com/themes/adaptive.js"></script>
+
+<link href="https://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+
+<figure class="highcharts-figure">
+    <h1 id="custom-title">Electricity Generation by Fuel Type in New York State</h1>
+    <h3 id="custom-subtitle">Data source: <a style="color: #ddd" href="https://data.gov/">U.S. Government's Open Data</a></h3>
+    <div class="highcharts-wrapper">
+        <div id="container"></div>
+        <div id="custom-tooltip">
+            <div id="tooltip-header">
+                <span id="tooltip-header-label">FUEL TYPE</span>
+                <div id="tooltip-header-value"></div>
+            </div>
+            <div id="tooltip-values">
+                <div id="tooltip-series-name">- Electricity Generation</div>
+                <div id="tooltip-value">- GWh</div>
+            </div>
+            <div id="tooltip-stats">
+                <div class="tooltip-stat-row">
+                    <span>Last</span>
+                    <div id="tooltip-last-value">- <span>GWh</span></div>
+                </div>
+                <div class="tooltip-stat-row">
+                    <span>Min</span>
+                    <div id="tooltip-min-value">- <span>GWh</span></div>
+                </div>
+                <div class="tooltip-stat-row">
+                    <span>Max</span>
+                    <div id="tooltip-max-value">- <span>GWh</span></div>
+                </div>
+            </div>
+            <button id="tooltip-btn"><i class="icon-download"></i> Download data</button>
+        </div>
+    </div>
+
+    <div id="table-wrapper">
+        <table id="custom-legend">
+            <tr class="header-row">
+                <th>Name</th>
+                <th>Last</th>
+                <th>Min</th>
+                <th>Max</th>
+            </tr>
+        </table>
+    </div>
+
+    <p class="highcharts-description">
+        This line chart demonstrates how to create a fully custom HTML legend
+        and tooltip, displaying summary statistics for each series outside the
+        chart. Please note that the legend is not included in exports.
+    </p>
+    <p class="highcharts-description">
+        For a versatile tool for displaying and managing tabular data use
+        <a href="https://www.highcharts.com/products/grid/" target="_blank">Highcharts Grid</a>.
+    </p>
+</figure>
+
+
+<pre id="csv">Year,Coal,Gas,Petroleum,Hydro,Nuclear,Net Imports,Other,Renewables
+1980,19643,10766,37834,26241,19276,5575.37,0,0
+1981,19632,11566,36760,25658,17444,7136.55,0,0
+1982,20807,13974,32932,25329,14438,10196.18,0,0
+1983,20753,12428,34380,26162,16376,11888.3,0,0
+1984,21902,15395,28891,26586,21187,10812.07,0,0
+1985,24255,15995,25927,26956,24092,10154.53,0,0
+1986,20815,12471,31911,29480,22084,13203.53,0,0
+1987,25304,16385,31389,27546,22926,11372.67,0,0
+1988,28698,13936,39931,23901,24175,9993.72,0,0
+1989,31228,17141,40963,24697,22847,5538.57,0,0
+1990,25913,22724,33885,28188,23623,4519.21,0,0
+1991,26660,23074,28221,27172,28448,9411.23,0,0
+1992,27280,26850,18319,28057,24155,16450.43,0,0
+1993,24502,27075,15073,29443,26889,19509.27,2043,0
+1994,23291,32230,12030,27791,29231,18452.58,2149,0
+1995,22289,49057,8268,25993,26336,11776.71,2077,0
+1996,22672,37449,9717,28951,35226,9471.76,2177,0
+1997,24059,46281,8588,30618,29570,4913.2,2058,0
+1998,25265,42472,14901,29316,31314,3145.07,2211,0
+1999,23366,45999,13304,24752,37019,6904.06,2058,0
+2000,25010,39729,14945,24910,31508,15723.49,1843,10.35
+2001,23432,40915,17458,21486,40395,7464.31,4524,20.54
+2002,23239,42177,12652,24612,39617,12245.46,4363,81.63
+2003,23581,30402,20830,24207,40679,14378.87,4604,41.2
+2004,22853,30059,23353,26745,40640,12732.97,4606,116.45
+2005,20598,34005,25619,26204,42443,14375.79,4662,102.99
+2006,20968,46253,7441,27110,42224,16743.04,4797,655.37
+2007,21406,48893,8780,24184,42453,18904.43,4610,833.48
+2008,19154,46845,4001,25711,43209,23343.74,5257,1250.7
+2009,12759,44625,2829,26420,43485,23361.13,5778,2266.34
+2010,13583,51077,2094,24214,41870,24912.38,4809,2596.15
+2011,9426,52713,1234,27634,42695,24882.85,13923,2834.2
+2012,4551,62073,606,24572,40775,25516.2,14150,3044.67
+2013,4697,57039,1057,25631,44756,25901.59,14581,3591.5
+2014,4325,57507,2259,25974,43039,20789.06,14605,4036.83
+2015,2046,59919,1992,25879,44603,19809.05,13943,4035.13
+2016,1493,59698,676,26314,41571,22357.96,1871,3997
+2017,567,50270,636,29554,42167,24319.07,5992,4266.5
+2018,692,53593,1678,29045,42919,26765.95,5446,4033.9
+2019,426,49451,1994,30141,44865,23134,5138,4505.7
+2020,146,54094,2189,29521,38430,19990,2233,4211
+2021,0,59460,159,28675,31177,27394,2258,4159.5</pre>

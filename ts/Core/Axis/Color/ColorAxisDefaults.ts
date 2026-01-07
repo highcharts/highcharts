@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -16,7 +17,8 @@
  *
  * */
 
-import type ColorAxis from './ColorAxis';
+import type ColorAxisOptions from './ColorAxisOptions';
+import type { DeepPartial } from '../../../Shared/Types';
 
 import { Palette } from '../../Color/Palettes.js';
 
@@ -80,7 +82,7 @@ import { Palette } from '../../Color/Palettes.js';
  * @type         {*|Array<*>}
  * @optionparent colorAxis
  */
-const colorAxisDefaults: DeepPartial<ColorAxis.Options> = {
+const colorAxisDefaults: DeepPartial<ColorAxisOptions> = {
 
     /**
      * Whether to allow decimals on the color axis.
@@ -121,19 +123,6 @@ const colorAxisDefaults: DeepPartial<ColorAxis.Options> = {
      * @type      {Array<*>}
      * @product   highcharts highstock highmaps
      * @apioption colorAxis.dataClasses
-     */
-
-    /**
-     * The layout of the color axis. Can be `'horizontal'` or `'vertical'`.
-     * If none given, the color axis has the same layout as the legend.
-     *
-     * @sample highcharts/coloraxis/horizontal-layout/
-     *         Horizontal color axis layout with vertical legend
-     *
-     * @type      {string|undefined}
-     * @since     7.2.0
-     * @product   highcharts highstock highmaps
-     * @apioption colorAxis.layout
      */
 
     /**
@@ -190,6 +179,19 @@ const colorAxisDefaults: DeepPartial<ColorAxis.Options> = {
      * @type      {number}
      * @product   highcharts highstock highmaps
      * @apioption colorAxis.dataClasses.to
+     */
+
+    /**
+     * The layout of the color axis. Can be `'horizontal'` or `'vertical'`.
+     * If none given, the color axis has the same layout as the legend.
+     *
+     * @sample highcharts/coloraxis/horizontal-layout/
+     *         Horizontal color axis layout with vertical legend
+     *
+     * @type      {string|undefined}
+     * @since     7.2.0
+     * @product   highcharts highstock highmaps
+     * @apioption colorAxis.layout
      */
 
     /** @ignore-option */
@@ -444,11 +446,10 @@ const colorAxisDefaults: DeepPartial<ColorAxis.Options> = {
 
     /**
      * Whether to reverse the axis so that the highest number is closest
-     * to the origin. Defaults to `false` in a horizontal legend and
-     * `true` in a vertical legend, where the smallest value starts on
-     * top.
+     * to the origin. Defaults to `false`.
      *
      * @type      {boolean}
+     * @default   false
      * @product   highcharts highstock highmaps
      * @apioption colorAxis.reversed
      */

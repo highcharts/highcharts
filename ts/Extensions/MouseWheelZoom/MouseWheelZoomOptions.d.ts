@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2023 Askel Eirik Johansson
+ *  (c) 2023-2026 Highsoft AS
+ *  Author: Askel Eirik Johansson
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -38,7 +39,8 @@ declare module '../../Core/Chart/ChartOptions'{
 export interface MouseWheelZoomOptions {
     enabled?: boolean;
     sensitivity?: number;
-    type?: ChartZoomingOptions['type']
+    type?: ChartZoomingOptions['type'];
+    showResetButton?: boolean;
 }
 
 export default MouseWheelZoomOptions;

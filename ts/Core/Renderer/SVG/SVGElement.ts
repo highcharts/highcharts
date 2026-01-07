@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -22,6 +23,7 @@ import type BBoxObject from '../BBoxObject';
 import type ColorString from '../../Color/ColorString';
 import type ColorType from '../../Color/ColorType';
 import type CSSObject from '../CSSObject';
+import type { DeepPartial } from '../../../Shared/Types';
 import type {
     DOMElementType,
     HTMLDOMElement,
@@ -32,7 +34,7 @@ import type GradientColor from '../../Color/GradientColor';
 import type RectangleObject from '../RectangleObject';
 import type ShadowOptionsObject from '../ShadowOptionsObject';
 import type SVGAttributes from './SVGAttributes';
-import type SVGElementLike from './SVGElementLike';
+import type SVGElementBase from './SVGElementBase';
 import type SVGPath from './SVGPath';
 import type SVGRenderer from './SVGRenderer';
 
@@ -85,9 +87,6 @@ const {
  *
  * */
 
-/**
- * @private
- */
 declare module '../CSSObject' {
     interface CSSObject {
         strokeWidth?: (number|string);
@@ -128,7 +127,8 @@ declare module '../CSSObject' {
  * @class
  * @name Highcharts.SVGElement
  */
-class SVGElement implements SVGElementLike {
+class SVGElement implements SVGElementBase {
+
 
     /* *
      *
@@ -136,8 +136,12 @@ class SVGElement implements SVGElementLike {
      *
      * */
 
-    // Custom attributes used for symbols, these should be filtered out when
-    // setting SVGElement attributes (#9375).
+
+    /**
+     * Custom attributes used for symbols, these should be filtered out when
+     * setting SVGElement attributes (#9375).
+     * @internal
+     */
     public static symbolCustomAttribs: Array<string> = [
         'anchorX',
         'anchorY',
@@ -152,58 +156,150 @@ class SVGElement implements SVGElementLike {
         'y'
     ];
 
+    /** @internal */
     public added?: boolean;
+
     // @todo public alignAttr?: SVGAttributes;
+
+    /** @internal */
     public alignByTranslate?: boolean;
+
+    /** @internal */
     public alignOptions?: AlignObject;
+
+    /** @internal */
     public alignTo?: BBoxObject|string;
+
+    /** @internal */
     public alignValue?: ('left'|'center'|'right');
+
+    /** @internal */
     public clipPath?: SVGElement;
+
     // @todo public d?: number;
+
+    /** @internal */
     public div?: HTMLDOMElement;
+
+    /** @internal */
     public doTransform?: boolean;
+
     public element: DOMElementType;
+
+    /** @internal */
     public fakeTS?: boolean;
+
+    /** @internal */
     public firstLineMetrics?: FontMetricsObject;
+
+    /** @internal */
     public handleZ?: boolean;
+
+    /** @internal */
     public height?: number;
+
+    /** @internal */
     public imgwidth?: number;
+    /** @internal */
     public imgheight?: number;
+    /** @internal */
     public inverted: undefined;
+    /** @internal */
     public matrix?: Array<number>;
+    /** @internal */
     public onEvents: Record<string, Function> = {};
+
+    /** @internal */
     public opacity = 1; // Default base for animation
+
     // @todo public options?: AnyRecord;
+
+    /** @internal */
     public parentGroup?: SVGElement;
+
+    /** @internal */
     public pathArray?: SVGPath;
+
+    /** @internal */
     public placed?: boolean;
+
+    /** @internal */
     public r?: number;
+
+    /** @internal */
     public radAttr?: SVGAttributes;
+
     public renderer: SVGRenderer;
+
+    /** @internal */
     public rotation?: number;
+
+    /** @internal */
     public rotationOriginX?: number;
+
+    /** @internal */
     public rotationOriginY?: number;
+
+    /** @internal */
     public scaleX?: number;
+
+    /** @internal */
     public scaleY?: number;
+
+    /** @internal */
     public stops?: Array<SVGElement>;
+
+    /** @internal */
     public stroke?: ColorType;
+
     // @todo public 'stroke-width'?: number;
+
+    /** @internal */
     public styledMode?: boolean;
+
+    /** @internal */
     public styles: CSSObject;
+
+    /** @internal */
     public SVG_NS = SVG_NS;
+
+    /** @internal */
     public symbolName?: string;
+
+    /** @internal */
     public text?: SVGElement;
+
+    /** @internal */
     public textPxLength?: number;
+
+    /** @internal */
     public textStr?: string;
+
+    /** @internal */
     public textWidth?: number;
+
     // @todo public textPxLength?: number;
+
+    /** @internal */
     public translateX?: number;
+
+    /** @internal */
     public translateY?: number;
+
+    /** @internal */
     public visibility?: 'hidden'|'inherit'|'visible';
+
+    /** @internal */
     public width?: number;
+
+    /** @internal */
     public x?: number;
+
+    /** @internal */
     public y?: number;
+
     // @todo public zIndex?: number;
+
 
     /* *
      *
@@ -211,19 +307,20 @@ class SVGElement implements SVGElementLike {
      *
      * */
 
+
     /**
      * Get the current value of an attribute or pseudo attribute,
      * used mainly for animation. Called internally from
      * the {@link Highcharts.SVGRenderer#attr} function.
      *
-     * @private
+     * @internal
      * @function Highcharts.SVGElement#_defaultGetter
      *
      * @param {string} key
-     *        Property key.
+     * Property key.
      *
      * @return {number|string}
-     *         Property value.
+     * Property value.
      */
     private _defaultGetter(key: string): (number|string) {
         let ret = pick(
@@ -240,15 +337,11 @@ class SVGElement implements SVGElementLike {
     }
 
     /**
-     * @private
+     * @internal
      * @function Highcharts.SVGElement#_defaultSetter
-     *
      * @param {string} value
-     *
      * @param {string} key
-     *
      * @param {Highcharts.SVGDOMElement} element
-     *
      */
     public _defaultSetter(
         value: string,
@@ -267,11 +360,11 @@ class SVGElement implements SVGElementLike {
      * @function Highcharts.SVGElement#add
      *
      * @param {Highcharts.SVGElement} [parent]
-     *        The parent item to add it to. If undefined, the element is added
-     *        to the {@link Highcharts.SVGRenderer.box}.
+     * The parent item to add it to. If undefined, the element is added to the
+     * {@link Highcharts.SVGRenderer.box}.
      *
      * @return {Highcharts.SVGElement}
-     *         Returns the SVGElement for chaining.
+     * Returns the SVGElement for chaining.
      */
     public add(parent?: SVGElement): this {
         const renderer = this.renderer,
@@ -367,7 +460,7 @@ class SVGElement implements SVGElementLike {
      * multiple attributes in one SVG property -- e.g., translate, rotate and
      * scale are merged in one "transform" attribute in the SVG node.
      *
-     * @private
+     * @internal
      * @function Highcharts.SVGElement#afterSetters
      */
     public afterSetters(): void {
@@ -385,24 +478,24 @@ class SVGElement implements SVGElementLike {
      * @function Highcharts.SVGElement#align
      *
      * @param {Highcharts.AlignObject} [alignOptions]
-     *        The alignment options. The function can be called without this
-     *        parameter in order to re-align an element after the box has been
-     *        updated.
+     * The alignment options. The function can be called without this parameter
+     * in order to re-align an element after the box has been updated.
      *
      * @param {boolean} [alignByTranslate]
-     *        Align element by translation.
+     * Align element by translation.
      *
      * @param {string|Highcharts.BBoxObject} [alignTo]
-     *        The box to align to, needs a width and height. When the box is a
-     *        string, it refers to an object in the Renderer. For example, when
-     *        box is `spacingBox`, it refers to `Renderer.spacingBox` which
-     *        holds `width`, `height`, `x` and `y` properties.
+     * The box to align to, needs a width and height. When the box is a string,
+     * it refers to an object in the Renderer. For example, when box is
+     * `spacingBox`, it refers to `Renderer.spacingBox` which holds `width`,
+     * `height`, `x` and `y` properties.
      *
      * @param {boolean} [redraw]
-     *        Decide if SVGElement should be redrawn with new alignment or
-     *        just change its attributes.
+     * Decide if SVGElement should be redrawn with new alignment or just change
+     * its attributes.
      *
-     * @return {Highcharts.SVGElement} Returns the SVGElement for chaining.
+     * @return {Highcharts.SVGElement}
+     * Returns the SVGElement for chaining.
      */
     public align(
         alignOptions?: AlignObject,
@@ -453,9 +546,12 @@ class SVGElement implements SVGElementLike {
             y = (alignToBox.y || 0) + (alignOptions.y || 0) +
                 ((alignToBox.height || 0) - (alignOptions.height || 0)) *
                 getAlignFactor(alignOptions.verticalAlign),
-            attribs: SVGAttributes = {
-                'text-align': alignOptions?.align
-            };
+            attribs: SVGAttributes = {};
+
+        // Add text-align attribute only if option is defined, #22698
+        if (alignOptions.align) {
+            attribs['text-align'] = alignOptions.align;
+        }
 
         attribs[alignByTranslate ? 'translateX' : 'x'] = Math.round(x);
         attribs[alignByTranslate ? 'translateY' : 'y'] = Math.round(y);
@@ -470,7 +566,7 @@ class SVGElement implements SVGElementLike {
     }
 
     /**
-     * @private
+     * @internal
      * @function Highcharts.SVGElement#alignSetter
      * @param {"left"|"center"|"right"} value
      */
@@ -495,16 +591,16 @@ class SVGElement implements SVGElementLike {
      * @function Highcharts.SVGElement#animate
      *
      * @param {Highcharts.SVGAttributes} params
-     *        SVG attributes or CSS to animate.
+     * SVG attributes or CSS to animate.
      *
      * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [options]
-     *        Animation options.
+     * Animation options.
      *
      * @param {Function} [complete]
-     *        Function to perform at the end of animation.
+     * Function to perform at the end of animation.
      *
      * @return {Highcharts.SVGElement}
-     *         Returns the SVGElement for chaining.
+     * Returns the SVGElement for chaining.
      */
     public animate(
         params: SVGAttributes,
@@ -566,11 +662,11 @@ class SVGElement implements SVGElementLike {
      *    textOutline: '1px contrast' // => white outline
      * });
      *
-     * @private
+     * @internal
      * @function Highcharts.SVGElement#applyTextOutline
      *
      * @param {string} textOutline
-     *        A custom CSS `text-outline` setting, defined by `width color`.
+     * A custom CSS `text-outline` setting, defined by `width color`.
      */
     public applyTextOutline(textOutline: string): void {
         const elem = this.element,
@@ -668,12 +764,66 @@ class SVGElement implements SVGElementLike {
     }
 
     public attr(key: string): (number|string);
+    /** @internal */
     public attr(
         key: string,
         val: (number|string|ColorType|SVGPath),
         complete?: Function,
         continueAnimation?: boolean
     ): this;
+    /**
+     * Apply native and custom attributes to the SVG elements.
+     *
+     * In order to set the rotation center for rotation, set x and y to 0 and
+     * use `translateX` and `translateY` attributes to position the element
+     * instead.
+     *
+     * Attributes frequently used in Highcharts are `fill`, `stroke`,
+     * `stroke-width`.
+     *
+     * @sample highcharts/members/renderer-rect/
+     *         Setting some attributes
+     *
+     * @example
+     * // Set multiple attributes
+     * element.attr({
+     *     stroke: 'red',
+     *     fill: 'blue',
+     *     x: 10,
+     *     y: 10
+     * });
+     *
+     * // Set a single attribute
+     * element.attr('stroke', 'red');
+     *
+     * // Get an attribute
+     * element.attr('stroke'); // => 'red'
+     *
+     * @param hash
+     *        The native and custom SVG attributes.
+     *
+     * @param val
+     *        If the type of the first argument is `string`, the second can be a
+     *        value, which will serve as a single attribute setter. If the first
+     *        argument is a string and the second is undefined, the function
+     *        serves as a getter and the current value of the property is
+     *        returned.
+     *
+     * @param complete
+     *        A callback function to execute after setting the attributes. This
+     *        makes the function compliant and interchangeable with the
+     *        {@link SVGElement#animate} function.
+     *
+     * @param continueAnimation
+     *        Used internally when `.attr` is called as part of an animation
+     *        step. Otherwise, calling `.attr` for an attribute will stop
+     *        animation for that attribute.
+     *
+     * @return
+     *         If used as a setter, it returns the current
+     *         {@link Highcharts.SVGElement} so the calls can be chained. If
+     *         used as a getter, the current value of the attribute is returned.
+     */
     public attr(
         hash?: SVGAttributes,
         val?: undefined,
@@ -715,29 +865,28 @@ class SVGElement implements SVGElementLike {
      * @function Highcharts.SVGElement#attr
      *
      * @param {string|Highcharts.SVGAttributes} [hash]
-     *        The native and custom SVG attributes.
+     * The native and custom SVG attributes.
      *
      * @param {number|string|Highcharts.SVGPathArray} [val]
-     *        If the type of the first argument is `string`, the second can be a
-     *        value, which will serve as a single attribute setter. If the first
-     *        argument is a string and the second is undefined, the function
-     *        serves as a getter and the current value of the property is
-     *        returned.
+     * If the type of the first argument is `string`, the second can be a value,
+     * which will serve as a single attribute setter. If the first argument is a
+     * string and the second is undefined, the function serves as a getter and
+     * the current value of the property is returned.
      *
      * @param {Function} [complete]
-     *        A callback function to execute after setting the attributes. This
-     *        makes the function compliant and interchangeable with the
-     *        {@link SVGElement#animate} function.
+     * A callback function to execute after setting the attributes. This makes
+     * the function compliant and interchangeable with the
+     * {@link SVGElement#animate} function.
      *
      * @param {boolean} [continueAnimation=true]
-     *        Used internally when `.attr` is called as part of an animation
-     *        step. Otherwise, calling `.attr` for an attribute will stop
-     *        animation for that attribute.
+     * Used internally when `.attr` is called as part of an animation step.
+     * Otherwise, calling `.attr` for an attribute will stop animation for that
+     * attribute.
      *
      * @return {Highcharts.SVGElement}
-     *         If used as a setter, it returns the current
-     *         {@link Highcharts.SVGElement} so the calls can be chained. If
-     *         used as a getter, the current value of the attribute is returned.
+     * If used as a setter, it returns the current {@link Highcharts.SVGElement}
+     * so the calls can be chained. If used as a getter, the current value of
+     * the attribute is returned.
      */
     public attr(
         hash?: (string|SVGAttributes),
@@ -829,10 +978,10 @@ class SVGElement implements SVGElementLike {
      * @function Highcharts.SVGElement#clip
      *
      * @param {SVGElement} [clipElem]
-     *        The clipping shape. If skipped, the current clip is removed.
+     * The clipping shape. If skipped, the current clip is removed.
      *
      * @return {Highcharts.SVGElement}
-     *         Returns the SVG element to allow chaining.
+     * Returns the SVG element to allow chaining.
      */
     public clip(clipElem?: SVGElement): this {
         if (clipElem && !clipElem.clipPath) {
@@ -906,15 +1055,12 @@ class SVGElement implements SVGElementLike {
      * object. This function is called from the attribute setters. An event
      * hook is added for supporting other complex color types.
      *
-     * @private
+     * @internal
      * @function Highcharts.SVGElement#complexColor
-     *
      * @param {Highcharts.GradientColorObject|Highcharts.PatternObject} colorOptions
      * The gradient or pattern options structure.
-     *
      * @param {string} prop
      * The property to apply, can either be `fill` or `stroke`.
-     *
      * @param {Highcharts.SVGDOMElement} elem
      * SVG element to apply the gradient on.
      */
@@ -1059,10 +1205,10 @@ class SVGElement implements SVGElementLike {
      * @function Highcharts.SVGElement#css
      *
      * @param {Highcharts.CSSObject} styles
-     *        The new CSS styles.
+     * The new CSS styles.
      *
      * @return {Highcharts.SVGElement}
-     *         Return the SVG element for chaining.
+     * Return the SVG element for chaining.
      */
     public css(styles: CSSObject): this {
         const oldStyles = this.styles,
@@ -1169,7 +1315,7 @@ class SVGElement implements SVGElementLike {
     }
 
     /**
-     * @private
+     * @internal
      * @function Highcharts.SVGElement#dashstyleSetter
      * @param {string} value
      */
@@ -1212,22 +1358,13 @@ class SVGElement implements SVGElementLike {
      */
     public destroy(): undefined {
         const wrapper = this,
-            element = wrapper.element || {},
-            renderer = wrapper.renderer,
+            { element = {} as DOMElementType, renderer, stops } = wrapper,
             ownerSVGElement = (element as SVGDOMElement).ownerSVGElement;
-
-        let parentToClean: (SVGElement|undefined) = (
-                element.nodeName === 'SPAN' &&
-                wrapper.parentGroup ||
-                void 0
-            ),
-            grandParent: SVGElement,
-            i;
 
         // Remove events
         element.onclick = element.onmouseout = element.onmouseover =
             element.onmousemove = (element as any).point = null;
-        stop(wrapper as any); // Stop running animations
+        stop(wrapper); // Stop running animations
 
         if (wrapper.clipPath && ownerSVGElement) {
             const clipPath = wrapper.clipPath;
@@ -1248,28 +1385,15 @@ class SVGElement implements SVGElementLike {
         }
 
         // Destroy stops in case this is a gradient object @todo old code?
-        if (wrapper.stops) {
-            for (i = 0; i < wrapper.stops.length; i++) {
-                wrapper.stops[i].destroy();
+        if (stops) {
+            for (const stop of stops) {
+                stop.destroy();
             }
-            wrapper.stops.length = 0;
-            wrapper.stops = void 0;
+            stops.length = 0;
         }
 
         // Remove element
         wrapper.safeRemoveChild(element);
-
-        // In case of useHTML, clean up empty containers emulating SVG groups
-        // (#1960, #2393, #2697).
-        while (
-            parentToClean?.div &&
-            parentToClean.div.childNodes.length === 0
-        ) {
-            grandParent = (parentToClean as any).parentGroup;
-            wrapper.safeRemoveChild((parentToClean as any).div);
-            delete (parentToClean as any).div;
-            parentToClean = grandParent;
-        }
 
         // Remove from alignObjects
         if (wrapper.alignOptions) {
@@ -1295,7 +1419,7 @@ class SVGElement implements SVGElementLike {
     }
 
     /**
-     * @private
+     * @internal
      * @function Highcharts.SVGElement#dSettter
      * @param {number|string|Highcharts.SVGPathArray} value
      * @param {string} key
@@ -1338,7 +1462,7 @@ class SVGElement implements SVGElementLike {
     }
 
     /**
-     * @private
+     * @internal
      * @function Highcharts.SVGElement#fillSetter
      * @param {Highcharts.ColorType} value
      * @param {string} key
@@ -1357,7 +1481,7 @@ class SVGElement implements SVGElementLike {
     }
 
     /**
-     * @private
+     * @internal
      * @function Highcharts.SVGElement#hrefSetter
      * @param {Highcharts.ColorType} value
      * @param {string} key
@@ -1399,7 +1523,6 @@ class SVGElement implements SVGElementLike {
     public getBBox(reload?: boolean, rot?: number): BBoxObject {
         const wrapper = this,
             {
-                alignValue,
                 element,
                 renderer,
                 styles,
@@ -1416,40 +1539,21 @@ class SVGElement implements SVGElementLike {
                 SVGElement.prototype.getStyle.call(element, 'font-size')
             ) : (
                 styles.fontSize
-            );
+            ),
+            cacheKey = this.getBBoxCacheKey([
+                renderer.rootFontSize,
+                this.textWidth, // #7874, also useHTML
+                this.alignValue,
+                styles.fontWeight, // #12163
+                styles.lineClamp,
+                styles.textOverflow, // #5968
+                fontSize,
+                rotation
+            ]);
 
         let bBox: BBoxObject|undefined,
             height,
-            toggleTextShadowShim,
-            cacheKey;
-
-        // Avoid undefined and null (#7316)
-        if (defined(textStr)) {
-
-            cacheKey = textStr.toString();
-
-            // Since numbers are monospaced, and numerical labels appear a lot
-            // in a chart, we assume that a label of n characters has the same
-            // bounding box as others of the same length. Unless there is inner
-            // HTML in the label. In that case, leave the numbers as is (#5899).
-            if (cacheKey.indexOf('<') === -1) {
-                cacheKey = cacheKey.replace(/\d/g, '0');
-            }
-
-            // Properties that affect bounding box
-            cacheKey += [
-                '',
-                renderer.rootFontSize,
-                fontSize,
-                rotation,
-                wrapper.textWidth, // #7874, also useHTML
-                alignValue,
-                styles.lineClamp,
-                styles.textOverflow, // #5968
-                styles.fontWeight // #12163
-            ].join(',');
-
-        }
+            toggleTextShadowShim;
 
         if (cacheKey && !reload) {
             bBox = cache[cacheKey];
@@ -1574,8 +1678,51 @@ class SVGElement implements SVGElementLike {
     }
 
     /**
+     * Overridable method to get a cache key for the bounding box of this
+     * element.
+     *
+     * @example
+     * // Plugin to let the getBBox function respond to font family changes
+     * (({ SVGElement }) => {
+     * const getBBoxCacheKey = SVGElement.prototype.getBBoxCacheKey;
+     *   SVGElement.prototype.getBBoxCacheKey = function (keys) {
+     *     const key = getBBoxCacheKey.call(this, keys);
+     *     const fontFamily = this.styles.fontFamily;
+     *     return key + (fontFamily ? `,${fontFamily}` : '');
+     *   };
+     * })(Highcharts);
+     *
+     * @function Highcharts.SVGElement#getBBoxCacheKey
+     *
+     * @return {string|void} The cache key based on the text properties.
+     */
+    public getBBoxCacheKey(keys: Array<any>): string|void {
+
+        let textStr = this.textStr;
+
+        // Avoid undefined and null (#7316)
+        if (!defined(textStr)) {
+            return;
+        }
+
+        // Since numerical labels appear a lot in a chart, we approximate that a
+        // label of n characters has the same bounding box as others of the same
+        // length. Unless there is inner HTML in the label. In that case, leave
+        // the numbers as is (#5899).
+        if (isString(textStr) && textStr.indexOf('<') === -1) {
+            textStr = textStr.replace(/\d/g, '0');
+        }
+
+        // Properties that affect bounding box
+        return [
+            textStr,
+            ...keys
+        ].join(',');
+    }
+
+    /**
      * Get the rotated box.
-     * @private
+     * @internal
      */
     public getRotatedBox(
         box: BBoxObject,
@@ -1644,19 +1791,21 @@ class SVGElement implements SVGElementLike {
             boxWidth = Math.max(aX, bX, cX, dX) - x,
             boxHeight = Math.max(aY, bY, cY, dY) - y;
 
-        /* Uncomment to debug boxes
-        this.renderer.path([
+        /* Uncomment to visualize boxes
+        this.bBoxViz ??= this.renderer.path()
+            .attr({
+                stroke: 'red',
+                'stroke-width': 1,
+                zIndex: 20
+            })
+            .add();
+        this.bBoxViz.attr('d', [
             ['M', aX, aY],
             ['L', bX, bY],
             ['L', cX, cY],
             ['L', dX, dY],
             ['Z']
-        ])
-            .attr({
-                stroke: 'red',
-                'stroke-width': 1
-            })
-            .add();
+        ]);
         // */
 
         return {
@@ -1723,9 +1872,7 @@ class SVGElement implements SVGElementLike {
         return this.attr({ visibility: 'hidden' });
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     public htmlGetBBox(): BBoxObject {
         return { height: 0, width: 0, x: 0, y: 0 };
     }
@@ -1754,7 +1901,7 @@ class SVGElement implements SVGElementLike {
          * @name Highcharts.SVGElement#element
          * @type {Highcharts.SVGDOMElement|Highcharts.HTMLDOMElement}
          */
-        this.element = nodeName === 'span' || nodeName === 'body' ?
+        this.element = nodeName === 'div' || nodeName === 'body' ?
             createElement(nodeName) as HTMLDOMElement :
             doc.createElementNS(this.SVG_NS, nodeName) as SVGDOMElement;
 
@@ -1806,7 +1953,7 @@ class SVGElement implements SVGElementLike {
     }
 
     /**
-     * @private
+     * @internal
      * @function Highcharts.SVGElement#opacitySetter
      * @param {string} value
      * @param {string} key
@@ -1827,7 +1974,7 @@ class SVGElement implements SVGElementLike {
     /**
      * Re-align an aligned text or label after setting the text.
      *
-     * @private
+     * @internal
      * @function Highcharts.SVGElement#reAlign
      *
      */
@@ -1866,7 +2013,7 @@ class SVGElement implements SVGElementLike {
 
     /**
      *
-     * @private
+     * @internal
      */
     public removeTextOutline(): void {
         const outline = this.element
@@ -1880,7 +2027,7 @@ class SVGElement implements SVGElementLike {
     /**
      * Removes an element from the DOM.
      *
-     * @private
+     * @internal
      * @function Highcharts.SVGElement#safeRemoveChild
      *
      * @param {Highcharts.SVGDOMElement|Highcharts.HTMLDOMElement} element
@@ -1988,7 +2135,7 @@ class SVGElement implements SVGElementLike {
     /**
      * Set the stroke-width and record it on the SVGElement
      *
-     * @private
+     * @internal
      * @function Highcharts.SVGElement#strokeSetter
      * @param {number|string|ColorType} value
      * @param {string} key
@@ -2061,7 +2208,7 @@ class SVGElement implements SVGElementLike {
      * check all the others only once for each call to an element's
      * .attr() method
      *
-     * @private
+     * @internal
      * @function Highcharts.SVGElement#symbolAttr
      *
      * @param {Highcharts.SVGAttributes} hash
@@ -2086,14 +2233,13 @@ class SVGElement implements SVGElementLike {
     }
 
     /**
-     * @private
+     * @internal
      * @function Highcharts.SVGElement#textSetter
      * @param {string} value
      */
     public textSetter(value: string): void {
         if (value !== this.textStr) {
             // Delete size caches when the text changes
-            // delete this.bBox; // old code in series-label
             delete this.textPxLength;
 
             this.textStr = value;
@@ -2106,7 +2252,7 @@ class SVGElement implements SVGElementLike {
     }
 
     /**
-     * @private
+     * @internal
      * @function Highcharts.SVGElement#titleSetter
      * @param {string} value
      */
@@ -2178,7 +2324,7 @@ class SVGElement implements SVGElementLike {
      * the custom `translateX`, `translateY`, `rotation`, `scaleX` and `scaleY`
      * attributes and updates the SVG `transform` attribute.
      *
-     * @private
+     * @internal
      * @function Highcharts.SVGElement#updateTransform
      */
     public updateTransform(
@@ -2188,7 +2334,6 @@ class SVGElement implements SVGElementLike {
             element,
             foreignObject,
             matrix,
-            padding,
             rotation = 0,
             rotationOriginX,
             rotationOriginY,
@@ -2202,7 +2347,7 @@ class SVGElement implements SVGElementLike {
         // Apply translate. Nearly all transformed elements have translation,
         // so instead of checking for translate = 0, do it always (#1767,
         // #1846).
-        const transform = ['translate(' + translateX + ',' + translateY + ')'];
+        const transform = [`translate(${translateX},${translateY})`];
 
         // Apply matrix
         if (defined(matrix)) {
@@ -2220,25 +2365,11 @@ class SVGElement implements SVGElementLike {
                 (rotationOriginY ?? element.getAttribute('y') ?? this.y ?? 0) +
                 ')'
             );
-
-            // HTML labels rotation (#20685)
-            if (
-                text?.element.tagName === 'SPAN' &&
-                !text?.foreignObject
-            ) {
-                text.attr({
-                    rotation,
-                    rotationOriginX: (rotationOriginX || 0) - padding,
-                    rotationOriginY: (rotationOriginY || 0) - padding
-                });
-            }
         }
 
         // Apply scale
         if (defined(scaleX) || defined(scaleY)) {
-            transform.push(
-                'scale(' + pick(scaleX, 1) + ' ' + pick(scaleY, 1) + ')'
-            );
+            transform.push(`scale(${scaleX ?? 1} ${scaleY ?? 1})`);
         }
 
         if (transform.length && !(text || this).textPath) {
@@ -2248,7 +2379,7 @@ class SVGElement implements SVGElementLike {
     }
 
     /**
-     * @private
+     * @internal
      * @function Highcharts.SVGElement#visibilitySetter
      *
      * @param {string} value
@@ -2274,7 +2405,7 @@ class SVGElement implements SVGElementLike {
     }
 
     /**
-     * @private
+     * @internal
      * @function Highcharts.SVGElement#xGetter
      */
     public xGetter(key: string): (number|string|null) {
@@ -2289,7 +2420,7 @@ class SVGElement implements SVGElementLike {
     }
 
     /**
-     * @private
+     * @internal
      * @function Highcharts.SVGElement#zIndexSetter
      */
     public zIndexSetter(
@@ -2393,22 +2524,33 @@ class SVGElement implements SVGElementLike {
  *
  * */
 
-interface SVGElement extends SVGElementLike {
+interface SVGElement extends SVGElementBase {
     // Takes interfaces from shared interface and internal namespace
+    /** @internal */
     matrixSetter: SVGElement.SetterFunction<(number|string|null)>;
+    /** @internal */
     rotationOriginXSetter(value: number|null, key?: string): void;
+    /** @internal */
     rotationOriginYSetter(value: number|null, key?: string): void;
+    /** @internal */
     rotationSetter(value: number, key?: string): void;
+    /** @internal */
     scaleXSetter: SVGElement.SetterFunction<(number|string|null)>;
+    /** @internal */
     scaleYSetter: SVGElement.SetterFunction<(number|string|null)>;
+    /** @internal */
     'stroke-widthSetter'(
         value: (number|string),
         key: string,
         element: SVGDOMElement
     ): void;
+    /** @internal */
     translateXSetter: SVGElement.SetterFunction<(number|string|null)>;
+    /** @internal */
     translateYSetter: SVGElement.SetterFunction<(number|string|null)>;
+    /** @internal */
     verticalAlignSetter: SVGElement.SetterFunction<(number|string|null)>;
+    /** @internal */
     yGetter(key: string): (number|string|null);
 }
 
@@ -2437,16 +2579,20 @@ SVGElement.prototype.verticalAlignSetter = function (
  *
  * */
 
+/** @internal */
 namespace SVGElement {
 
+    /** @internal */
     export interface ElementSetterFunction<T> {
         (value: T, key: string, element: SVGDOMElement): void;
     }
 
+    /** @internal */
     export interface GetterFunction<T> {
         (key: string): T;
     }
 
+    /** @internal */
     export interface SetterFunction<T> {
         (value: T, key: string): void;
     }

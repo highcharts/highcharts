@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -17,23 +18,26 @@
  * */
 
 import type AnimationOptions from '../../Animation/AnimationOptions';
-import type AxisLike from '../AxisLike';
-import type Chart from '../../Chart/Chart.js';
+import type Chart from '../../Chart/Chart';
+import type {
+    ColorAxisDataClassOptions,
+    ColorAxisOptions
+} from './ColorAxisOptions';
 import type ColorType from '../../Color/ColorType';
+import type { DeepPartial } from '../../../Shared/Types';
 import type Fx from '../../Animation/Fx';
 import type GradientColor from '../../Color/GradientColor';
 import type Legend from '../../Legend/Legend';
 import type { LegendItemObject } from '../../Legend/LegendItem';
-import type LegendOptions from '../../Legend/LegendOptions';
-import type Point from '../../Series/Point.js';
+import type Point from '../../Series/Point';
 import type PointerEvent from '../../PointerEvent';
 import type { StatesOptionsKey } from '../../Series/StatesOptions';
 import type SVGPath from '../../Renderer/SVG/SVGPath';
 
 import Axis from '../Axis.js';
+import ColorAxisBase from './ColorAxisBase.js';
 import ColorAxisComposition from './ColorAxisComposition.js';
 import ColorAxisDefaults from './ColorAxisDefaults.js';
-import ColorAxisLike from './ColorAxisLike.js';
 import D from '../../Defaults.js';
 const { defaultOptions } = D;
 import LegendSymbol from '../../Legend/LegendSymbol.js';
@@ -58,15 +62,15 @@ const {
  *
  * */
 
-declare module '../../Axis/AxisLike' {
-    interface AxisLike {
+declare module '../../Axis/AxisBase' {
+    interface AxisBase {
         labelLeft?: number;
         labelRight?: number;
     }
 }
 
-declare module '../../Chart/ChartLike' {
-    interface ChartLike {
+declare module '../../Chart/ChartBase' {
+    interface ChartBase {
         colorAxis?: Array<ColorAxis>;
     }
 }
@@ -74,20 +78,20 @@ declare module '../../Chart/ChartLike' {
 declare module '../../../Core/Options'{
     interface Options {
         colorAxis?: (
-            DeepPartial<ColorAxis.Options>|
-            Array<DeepPartial<ColorAxis.Options>>
+            DeepPartial<ColorAxisOptions>|
+            Array<DeepPartial<ColorAxisOptions>>
         );
     }
 }
 
-declare module '../../Series/PointLike' {
-    interface PointLike {
+declare module '../../Series/PointBase' {
+    interface PointBase {
         dataClass?: number;
     }
 }
 
-declare module '../../Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../../Series/SeriesBase' {
+    interface SeriesBase {
         axisTypes?: Array<string>;
         colorAxis?: ColorAxis;
         colorKey?: string;
@@ -123,7 +127,7 @@ defaultOptions.colorAxis = merge(defaultOptions.xAxis, ColorAxisDefaults);
  * @param {Highcharts.ColorAxisOptions} userOptions
  * The color axis options for initialization.
  */
-class ColorAxis extends Axis implements AxisLike {
+class ColorAxis extends Axis implements ColorAxisBase {
 
     /* *
      *
@@ -131,11 +135,11 @@ class ColorAxis extends Axis implements AxisLike {
      *
      * */
 
+
+    /** @internal */
     public static defaultLegendLength: number = 200;
 
-    /**
-     * @private
-     */
+    /** @internal */
     public static keepProps: Array<string> = [
         'legendItem'
     ];
@@ -146,6 +150,8 @@ class ColorAxis extends Axis implements AxisLike {
      *
      * */
 
+
+    /** @internal */
     public static compose(
         ChartClass: typeof Chart,
         FxClass: typeof Fx,
@@ -167,12 +173,10 @@ class ColorAxis extends Axis implements AxisLike {
      *
      * */
 
-    /**
-     * @private
-     */
+    /** @internal */
     public constructor(
         chart: Chart,
-        userOptions: Partial<ColorAxis.Options>
+        userOptions: Partial<ColorAxisOptions>
     ) {
         super(chart, userOptions);
         this.init(chart, userOptions);
@@ -184,15 +188,35 @@ class ColorAxis extends Axis implements AxisLike {
      *
      * */
 
+
+    /** @internal */
     public added?: boolean;
+
+    /** @internal */
     public chart!: Chart;
+
+    /** @internal */
     public coll = 'colorAxis' as const;
-    public dataClasses!: Array<ColorAxis.DataClassesOptions>;
+
+    /** @internal */
+    public dataClasses!: Array<ColorAxisDataClassOptions>;
+
+    /** @internal */
     public legendColor?: GradientColor;
+
+    /** @internal */
     public legendItem?: LegendItemObject;
+
+    /** @internal */
     public name?: string;
-    public options!: ColorAxis.Options;
+
+    /** @internal */
+    public options!: ColorAxisOptions;
+
+    /** @internal */
     public stops!: GradientColor['stops'];
+
+    /** @internal */
     public visible: boolean = true;
 
     /* *
@@ -214,7 +238,7 @@ class ColorAxis extends Axis implements AxisLike {
      */
     public init(
         chart: Chart,
-        userOptions: Partial<ColorAxis.Options>
+        userOptions: Partial<ColorAxisOptions>
     ): void {
         const axis = this;
         const legend = chart.options.legend || {},
@@ -223,7 +247,7 @@ class ColorAxis extends Axis implements AxisLike {
                 legend.layout !== 'vertical';
 
         axis.side = userOptions.side || horiz ? 2 : 1;
-        axis.reversed = userOptions.reversed || !horiz;
+        axis.reversed = userOptions.reversed;
         axis.opposite = !horiz;
 
         super.init(chart, userOptions, 'colorAxis');
@@ -260,7 +284,7 @@ class ColorAxis extends Axis implements AxisLike {
 
     /**
      * Override so that ticks are not added in data class axes (#6914)
-     * @private
+     * @internal
      */
     public setTickPositions(): void {
         if (!this.dataClasses) {
@@ -270,12 +294,12 @@ class ColorAxis extends Axis implements AxisLike {
 
     /**
      * Extend the setOptions method to process extreme colors and color stops.
-     * @private
+     * @internal
      */
-    public setOptions(userOptions: DeepPartial<ColorAxis.Options>): void {
+    public setOptions(userOptions: DeepPartial<ColorAxisOptions>): void {
 
         const options = merge(
-            defaultOptions.colorAxis as ColorAxis.Options,
+            defaultOptions.colorAxis as ColorAxisOptions,
             userOptions,
             // Forced options
             {
@@ -291,9 +315,7 @@ class ColorAxis extends Axis implements AxisLike {
         this.options.crosshair = this.options.marker;
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     public setAxisSize(): void {
         const axis = this,
             chart = axis.chart,
@@ -323,7 +345,7 @@ class ColorAxis extends Axis implements AxisLike {
     /**
      * Override the getOffset method to add the whole axis groups inside the
      * legend.
-     * @private
+     * @internal
      */
     public getOffset(): void {
         const axis = this;
@@ -373,7 +395,7 @@ class ColorAxis extends Axis implements AxisLike {
 
     /**
      * Create the color gradient.
-     * @private
+     * @internal
      */
     public setLegendColor(): void {
         const axis = this;
@@ -396,7 +418,7 @@ class ColorAxis extends Axis implements AxisLike {
 
     /**
      * The color axis appears inside the legend and has its own legend symbol.
-     * @private
+     * @internal
      */
     public drawLegendSymbol(
         legend: Legend,
@@ -454,7 +476,7 @@ class ColorAxis extends Axis implements AxisLike {
 
     /**
      * Fool the legend.
-     * @private
+     * @internal
      */
     public setState(state?: StatesOptionsKey): void {
         this.series.forEach(function (series): void {
@@ -462,15 +484,11 @@ class ColorAxis extends Axis implements AxisLike {
         });
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     public setVisible(): void {
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     public getSeriesExtremes(): void {
         const axis = this;
         const series = axis.series;
@@ -607,9 +625,7 @@ class ColorAxis extends Axis implements AxisLike {
         }
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     public getPlotLinePath(
         options: Axis.PlotLinePathOptions
     ): (SVGPath|undefined) {
@@ -653,7 +669,7 @@ class ColorAxis extends Axis implements AxisLike {
      * and call {@link Highcharts.Chart#redraw} after.
      */
     public update(
-        newOptions: DeepPartial<ColorAxis.Options>,
+        newOptions: DeepPartial<ColorAxisOptions>,
         redraw?: boolean
     ): void {
         const axis = this,
@@ -681,7 +697,7 @@ class ColorAxis extends Axis implements AxisLike {
 
     /**
      * Destroy color axis legend items.
-     * @private
+     * @internal
      */
     public destroyItems(): void {
         const axis = this,
@@ -700,7 +716,10 @@ class ColorAxis extends Axis implements AxisLike {
         chart.isDirtyLegend = true;
     }
 
-    //   Removing the whole axis (#14283)
+    /**
+     * Removing the whole axis (#14283)
+     * @internal
+     */
     public destroy(): void {
         this.chart.isDirtyLegend = true;
 
@@ -723,7 +742,7 @@ class ColorAxis extends Axis implements AxisLike {
 
     /**
      * Get the legend item symbols for data classes.
-     * @private
+     * @internal
      */
     public getDataClassLegendSymbols(): Array<ColorAxis.LegendItemObject> {
         const axis = this,
@@ -821,7 +840,7 @@ class ColorAxis extends Axis implements AxisLike {
 
     /**
      * Get size of color axis symbol.
-     * @private
+     * @internal
      */
     public getSize(): ({
         width: number,
@@ -865,11 +884,12 @@ class ColorAxis extends Axis implements AxisLike {
  *
  * */
 
-interface ColorAxis extends ColorAxisLike {
-    // Nothing to add
+interface ColorAxis extends ColorAxisBase {
+    coll: 'colorAxis';
+    options: ColorAxisOptions;
 }
 
-extend(ColorAxis.prototype, ColorAxisLike);
+extend(ColorAxis.prototype, ColorAxisBase);
 
 /* *
  *
@@ -885,9 +905,7 @@ namespace ColorAxis {
      *
      * */
 
-    export type DataClassesOptions = ColorAxisLike.DataClassOptions;
-
-    export interface LegendItemObject extends DataClassesOptions {
+    export interface LegendItemObject extends ColorAxisDataClassOptions {
         [key: string]: any;
         chart: Chart;
         name: string;
@@ -903,15 +921,6 @@ namespace ColorAxis {
         animation?: (boolean|Partial<AnimationOptions>);
         color?: ColorType;
         width?: number;
-    }
-
-    export interface Options extends ColorAxisLike.Options {
-        dataClasses?: Array<DataClassesOptions>;
-        layout?: 'horizontal'|'vertical';
-        legend?: LegendOptions;
-        marker?: MarkerOptions;
-        showInLegend?: boolean;
-        labelRight?: number;
     }
 
 }

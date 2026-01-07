@@ -35,7 +35,7 @@ Grid.grid('container', this.options);
 ```ts
 import { Component, OnInit } from '@angular/core';
 import Grid from '@highcharts/grid-lite/es-modules/masters/grid-lite.src.js';
-import '@highcharts/grid-lite/css/grid.css';
+import '@highcharts/grid-lite/css/grid-lite.css';
 
 @Component({
     selector: 'app-root',

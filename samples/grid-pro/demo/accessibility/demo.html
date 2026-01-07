@@ -1,4 +1,4 @@
-<script src="https://code.highcharts.com/dashboards/datagrid.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/grid-pro.js"></script>
 
 <div class="demo">
     <div id="container"></div>
@@ -18,13 +18,23 @@
                         <div class="option-group">
                             <div class="option">
                                 <label for="sorting-enabled">sorting:</label>
-                                <input type="checkbox" id="sorting-enabled" name="accessibility.announcements.sorting" />
+                                <input type="checkbox" id="sorting-enabled"
+                                    name="accessibility.announcements.sorting" />
                                 <span class="description">[ Enable accessibility announcements for the sorting ]</span>
                             </div>
                             <div class="option">
+                                <label for="filtering-enabled">filtering:</label>
+                                <input type="checkbox" id="filtering-enabled"
+                                    name="accessibility.announcements.filtering" />
+                                <span class="description">[ Enable accessibility announcements for the filtering
+                                    ]</span>
+                            </div>
+                            <div class="option">
                                 <label for="editing-enabled">cellEditing:</label>
-                                <input type="checkbox" id="editing-enabled" name="accessibility.announcements.cellEditing" />
-                                <span class="description">[ Enable accessibility announcements for the cell editing ]</span>
+                                <input type="checkbox" id="editing-enabled"
+                                    name="accessibility.announcements.cellEditing" />
+                                <span class="description">[ Enable accessibility announcements for the cell editing
+                                    ]</span>
                             </div>
                         </div>
                     </details>
@@ -36,9 +46,10 @@
                     <summary>sorting</summary>
                     <div class="option-group">
                         <div class="option">
-                            <label for="sortable">sortable:</label>
-                            <input type="text" id="sortable" name="lang.accessibility.sorting.sortable"/>
-                            <span class="description">[ An additional hint read by the voice over after a sortable column name ]</span>
+                            <label for="enabled">enabled:</label>
+                            <input type="text" id="enabled" name="lang.accessibility.sorting.enabled" />
+                            <span class="description">[ An additional hint read by the voice over after a sort enabled
+                                column name ]</span>
                         </div>
                     </div>
                     <details>
@@ -46,18 +57,47 @@
                         <div class="option-group">
                             <div class="option">
                                 <label for="sort-ascending">ascending:</label>
-                                <input type="text" id="sort-ascending" name="lang.accessibility.sorting.announcements.ascending" />
+                                <input type="text" id="sort-ascending"
+                                    name="lang.accessibility.sorting.announcements.ascending" />
                                 <span class="description">[ Announcement for ascending sorting ]</span>
                             </div>
                             <div class="option">
                                 <label for="sort-descending">descending:</label>
-                                <input type="text" id="sort-descending" name="lang.accessibility.sorting.announcements.descending" />
+                                <input type="text" id="sort-descending"
+                                    name="lang.accessibility.sorting.announcements.descending" />
                                 <span class="description">[ Announcement for descending sorting ]</span>
                             </div>
                             <div class="option">
                                 <label for="sort-none">none:</label>
-                                <input type="text" id="sort-none" name="lang.accessibility.sorting.announcements.none" />
+                                <input type="text" id="sort-none"
+                                    name="lang.accessibility.sorting.announcements.none" />
                                 <span class="description">[ Announcement for no sorting ]</span>
+                            </div>
+                        </div>
+                    </details>
+                </details>
+                <details>
+                    <summary>filtering</summary>
+                    <details>
+                        <summary>announcements</summary>
+                        <div class="option-group">
+                            <div class="option">
+                                <label for="filter-applied">filterApplied:</label>
+                                <input type="text" id="filter-applied"
+                                    name="lang.accessibility.filtering.announcements.filterApplied" />
+                                <span class="description">[ Announcement for filter applied ]</span>
+                            </div>
+                            <div class="option">
+                                <label for="empty-filter-applied">emptyFilterApplied:</label>
+                                <input type="text" id="empty-filter-applied"
+                                    name="lang.accessibility.filtering.announcements.emptyFilterApplied" />
+                                <span class="description">[ Announcement for empty filter applied ]</span>
+                            </div>
+                            <div class="option">
+                                <label for="filter-cleared">filterCleared:</label>
+                                <input type="text" id="filter-cleared"
+                                    name="lang.accessibility.filtering.announcements.filterCleared" />
+                                <span class="description">[ Announcement for filter cleared ]</span>
                             </div>
                         </div>
                     </details>
@@ -68,7 +108,8 @@
                         <div class="option">
                             <label for="editable">editable:</label>
                             <input type="text" id="editable" name="lang.accessibility.cellEditing.editable" />
-                            <span class="description">[ An additional hint read by the voice over after an editable cell value ]</span>
+                            <span class="description">[ An additional hint read by the voice over after an editable cell
+                                value ]</span>
                         </div>
                     </div>
                     <details>
@@ -76,17 +117,20 @@
                         <div class="option-group">
                             <div class="option">
                                 <label for="editing-started">started:</label>
-                                <input type="text" id="editing-started" name="lang.accessibility.cellEditing.announcements.started" />
+                                <input type="text" id="editing-started"
+                                    name="lang.accessibility.cellEditing.announcements.started" />
                                 <span class="description">[ Announcement for starting editing ]</span>
                             </div>
                             <div class="option">
                                 <label for="editing-edited">edited:</label>
-                                <input type="text" id="editing-edited" name="lang.accessibility.cellEditing.announcements.edited" />
+                                <input type="text" id="editing-edited"
+                                    name="lang.accessibility.cellEditing.announcements.edited" />
                                 <span class="description">[ Announcement for edited cell value ]</span>
                             </div>
                             <div class="option">
                                 <label for="editing-cancelled">cancelled:</label>
-                                <input type="text" id="editing-cancelled" name="lang.accessibility.cellEditing.announcements.cancelled" />
+                                <input type="text" id="editing-cancelled"
+                                    name="lang.accessibility.cellEditing.announcements.cancelled" />
                                 <span class="description">[ Announcement for cancelled editing ]</span>
                             </div>
                         </div>
@@ -94,7 +138,8 @@
                 </details>
             </details>
         </form>
-        <div class="last description">Changes are applied as you type. Use a screen reader to observe updates in real time.</div>
+        <div class="last description">Changes are applied as you type. Use a screen reader to observe updates in real
+            time.</div>
     </div>
     <p class="highcharts-description">
         A demo demonstrating the Grid's accessible table.

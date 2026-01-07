@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -23,7 +24,7 @@ import type {
 import type Axis from '../../Core/Axis/Axis';
 import type DataGroupingOptions from './DataGroupingOptions';
 import type DataTable from '../../Data/DataTable';
-import type IndicatorLike from '../../Stock/Indicators/IndicatorLike';
+import type IndicatorBase from '../../Stock/Indicators/IndicatorBase';
 import type Point from '../../Core/Series/Point';
 import type {
     PointOptions,
@@ -69,14 +70,14 @@ declare module '../../Core/Axis/TimeTicksInfoObject' {
     }
 }
 
-declare module '../../Core/Series/PointLike' {
-    interface PointLike {
+declare module '../../Core/Series/PointBase' {
+    interface PointBase {
         dataGroup?: DataGroupingInfoObject;
     }
 }
 
-declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase {
         allGroupedTable?: DataTableCore;
         cropStart?: number;
         currentDataGrouping?: TimeTicksInfoObject;
@@ -325,7 +326,7 @@ function applyGrouping(
 
     const table = dataGroupingOptions.groupAll ?
             series.dataTable :
-            series.dataTable.modified || series.dataTable,
+            series.dataTable.getModified() || series.dataTable,
         processedXData = series.getColumn('x', !dataGroupingOptions.groupAll),
         xData = processedXData,
         plotSizeX = chart.plotSizeX,
@@ -790,7 +791,7 @@ function onAfterSetOptions(
         // External series, for example technical indicators should also inherit
         // commonOptions which are not available outside this module
         baseOptions = (
-            (this as IndicatorLike).useCommonDataGrouping &&
+            (this as IndicatorBase).useCommonDataGrouping &&
             DataGroupingDefaults.common
         ),
         seriesSpecific = DataGroupingDefaults.seriesSpecific;

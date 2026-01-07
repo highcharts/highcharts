@@ -17,6 +17,11 @@ Here is an example of how to use the Find Similar Screener connector:
 
 ```js
 const screenerConnector = new HighchartsConnectors.Morningstar.InvestmentScreenerConnector({
+    api: {
+        access: {
+            token: 'your_access_token'
+        }
+    },
     page: 1,
     pageSize: 20,
     languageId: 'en-GB',
@@ -40,10 +45,7 @@ const screenerConnector = new HighchartsConnectors.Morningstar.InvestmentScreene
         'ongoingCharge'
     ],
     sortOrder: 'Name+Asc',
-    universeIds: ['FOESP$$ALL'],
-    postman: {
-        environmentJSON: postmanJSON
-    }
+    universeIds: ['FOESP$$ALL']
 });
 ```
 

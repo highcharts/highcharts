@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LicenseRef-Highcharts
 /**
  * @license Highcharts JS v@product.version@ (@product.date@)
  * @module highcharts/modules/navigator
@@ -5,9 +6,11 @@
  *
  * Standalone navigator module
  *
- * (c) 2009-2025 Mateusz Bernacik
+ * (c) 2009-2026 Highsoft AS
+ * Author: Mateusz Bernacik
  *
- * License: www.highcharts.com/license
+ * A commercial license may be required depending on use.
+ * See www.highcharts.com/license
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';

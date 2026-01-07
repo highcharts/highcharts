@@ -10,9 +10,24 @@ Grid.grid('container', {
         }
     },
     columnDefaults: {
+        filtering: {
+            enabled: true,
+            inline: true
+        },
         events: {
-            afterSorting: function () {
-                doc.getElementById('columnSorting').value = 'afterSorting';
+            beforeSort: function () {
+                doc.getElementById('beforeColumnSorting').value = 'beforeSort';
+            },
+            afterSort: function () {
+                doc.getElementById('afterColumnSorting').value = 'afterSort';
+            },
+            beforeFilter: function () {
+                doc.getElementById('beforeColumnFiltering').value =
+                    'beforeFilter';
+            },
+            afterFilter: function () {
+                doc.getElementById('afterColumnFiltering').value =
+                    'afterFilter';
             },
             afterResize: function () {
                 doc.getElementById('columnResizing').value = 'columnResizing';
@@ -64,9 +79,21 @@ Grid.grid('container', {
     columns: [{
         id: 'weight',
         events: {
-            afterSorting: function () {
-                doc.getElementById('columnSorting').value =
-                    'afterSortingColumnOption';
+            beforeSort: function () {
+                doc.getElementById('beforeColumnSorting').value =
+                    'beforeSortColumnOption';
+            },
+            afterSort: function () {
+                doc.getElementById('afterColumnSorting').value =
+                    'afterSortColumnOption';
+            },
+            beforeFilter: function () {
+                doc.getElementById('beforeColumnFiltering').value =
+                    'beforeFilterColumnOption';
+            },
+            afterFilter: function () {
+                doc.getElementById('afterColumnFiltering').value =
+                    'afterFilterColumnOption';
             },
             afterResize: function () {
                 doc.getElementById('columnResizing').value =
@@ -140,8 +167,8 @@ Grid.grid('container', {
             }
         },
         column: {
-            afterSorting: function () {
-                doc.getElementById('columnSorting').value = 'afterSorting';
+            afterSort: function () {
+                doc.getElementById('columnSorting').value = 'afterSort';
             },
             afterResize: function () {
                 doc.getElementById('columnResizing').value = 'columnResizing';

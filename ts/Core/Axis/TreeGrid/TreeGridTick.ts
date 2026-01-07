@@ -1,11 +1,11 @@
 /* *
  *
- *  (c) 2016 Highsoft AS
+ *  (c) 2016-2026 Highsoft AS
  *  Authors: Jon Arild Nygard
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -17,6 +17,10 @@
  *
  * */
 
+import type {
+    AxisLabelOptions,
+    AxisOptions
+} from '../AxisOptions';
 import type ColorType from '../../Color/ColorType';
 import type CSSObject from '../../Renderer/CSSObject';
 import type PositionObject from '../../Renderer/PositionObject';
@@ -26,11 +30,7 @@ import type SVGRenderer from '../../Renderer/SVG/SVGRenderer';
 import type { SymbolKey } from '../../Renderer/SVG/SymbolType';
 import type Tick from '../Tick';
 import type { TreeGridAxisComposition } from './TreeGridAxis';
-import type {
-    TreeGridAxisLabelIconOptions,
-    TreeGridAxisLabelOptions,
-    TreeGridAxisOptions
-} from './TreeGridOptions';
+import type { TreeGridAxisLabelIconOptions } from './TreeGridAxisOptions';
 
 import { Palette } from '../../Color/Palettes.js';
 import U from '../../Utilities.js';
@@ -50,6 +50,7 @@ const {
  *
  * */
 
+/** @internal */
 interface LabelIconObject {
     collapsed?: boolean;
     color: ColorType;
@@ -60,13 +61,27 @@ interface LabelIconObject {
     xy: PositionObject;
 }
 
-export interface TreeGridTick extends Tick {
+/** @internal */
+interface TreeGridTick extends Tick {
+
+    /** @internal */
     axis: TreeGridAxisComposition;
-    options: TreeGridAxisOptions;
+
+    /** @internal */
+    options: AxisOptions;
+
+    /** @internal */
     treeGrid: TreeGridTickAdditions;
+
+    /** @internal */
     collapse(redraw?: boolean): void;
+
+    /** @internal */
     expand(redraw?: boolean): void;
+
+    /** @internal */
     toggleCollapse(redraw?: boolean): void;
+
 }
 
 /* *
@@ -75,9 +90,7 @@ export interface TreeGridTick extends Tick {
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 function onTickInit(this: Tick): void {
     const tick = this as TreeGridTick;
 
@@ -86,9 +99,7 @@ function onTickInit(this: Tick): void {
     }
 }
 
-/**
- * @private
- */
+/** @internal */
 function onTickHover(label: SVGElement): void {
     label.addClass('highcharts-treegrid-node-active');
 
@@ -99,9 +110,7 @@ function onTickHover(label: SVGElement): void {
     }
 }
 
-/**
- * @private
- */
+/** @internal */
 function onTickHoverExit(
     label: SVGElement,
     options: SVGAttributes
@@ -115,9 +124,7 @@ function onTickHoverExit(
     }
 }
 
-/**
- * @private
- */
+/** @internal */
 function renderLabelIcon(
     tick: TreeGridTick,
     params: LabelIconObject
@@ -174,9 +181,7 @@ function renderLabelIcon(
 
 }
 
-/**
- * @private
- */
+/** @internal */
 function wrapGetLabelPosition(
     this: TreeGridTick,
     proceed: Function,
@@ -184,7 +189,7 @@ function wrapGetLabelPosition(
     y: number,
     label: SVGElement,
     horiz: boolean,
-    labelOptions: TreeGridAxisLabelOptions,
+    labelOptions: AxisLabelOptions,
     tickmarkOffset: number,
     index: number,
     step: number
@@ -234,9 +239,7 @@ function wrapGetLabelPosition(
     return result;
 }
 
-/**
- * @private
- */
+/** @internal */
 function wrapRenderLabel(
     this: TreeGridTick,
     proceed: Function
@@ -363,7 +366,7 @@ function wrapRenderLabel(
  * */
 
 /**
- * @private
+ * @internal
  * @class
  */
 class TreeGridTickAdditions {
@@ -374,9 +377,7 @@ class TreeGridTickAdditions {
      *
      * */
 
-    /**
-     * @private
-     */
+    /** @internal */
     public static compose(
         TickClass: typeof Tick
     ): void {
@@ -417,9 +418,7 @@ class TreeGridTickAdditions {
      *
      * */
 
-    /**
-     * @private
-     */
+    /** @internal */
     public constructor(tick: TreeGridTick) {
         this.tick = tick;
     }
@@ -430,7 +429,10 @@ class TreeGridTickAdditions {
      *
      * */
 
+    /** @internal */
     public tick: TreeGridTick;
+
+    /** @internal */
     public labelIcon?: SVGElement;
 
     /* *
@@ -444,7 +446,7 @@ class TreeGridTickAdditions {
      *
      * @see gantt/treegrid-axis/collapsed-dynamically/demo.js
      *
-     * @private
+     * @internal
      * @function Highcharts.Tick#collapse
      *
      * @param {boolean} [redraw=true]
@@ -467,7 +469,7 @@ class TreeGridTickAdditions {
     /**
      * Destroy remaining labelIcon if exist.
      *
-     * @private
+     * @internal
      * @function Highcharts.Tick#destroy
      */
     public destroy(): void {
@@ -479,7 +481,7 @@ class TreeGridTickAdditions {
      *
      * @see gantt/treegrid-axis/collapsed-dynamically/demo.js
      *
-     * @private
+     * @internal
      * @function Highcharts.Tick#expand
      *
      * @param {boolean} [redraw=true]
@@ -505,7 +507,7 @@ class TreeGridTickAdditions {
      *
      * @see gantt/treegrid-axis/collapsed-dynamically/demo.js
      *
-     * @private
+     * @internal
      * @function Highcharts.Tick#toggleCollapse
      *
      * @param {boolean} [redraw=true]
@@ -570,6 +572,7 @@ class TreeGridTickAdditions {
             }
         }
     }
+
 }
 
 /* *
@@ -578,4 +581,5 @@ class TreeGridTickAdditions {
  *
  * */
 
+/** @internal */
 export default TreeGridTickAdditions;

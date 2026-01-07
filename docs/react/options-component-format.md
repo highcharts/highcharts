@@ -94,3 +94,10 @@ function ChartComponent() {
 As the components within the chart are parsed statically into Highcharts options, state changes within custom components will not be reflected.
 
 Not all option components supports child components. See [Appendix A](https://www.highcharts.com/docs/react/component-children) for an overview.
+
+
+## See also
+
+A complete example combining multiple option components:
+
+<iframe src="https://www.highcharts.com/samples/embed/highcharts/react/complex" title="Complex Highcharts React chart example with multiple option components"></iframe>

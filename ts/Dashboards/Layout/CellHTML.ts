@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sebastian Bochan
@@ -170,7 +170,7 @@ namespace CellHTML {
                     enabled?: boolean;
                 };
                 /**
-                 * Options for the `settings` toolbar item.
+                 * Options for the `drag` toolbar item.
                  */
                 drag: {
                     enabled?: boolean;
@@ -179,6 +179,12 @@ namespace CellHTML {
                  * Options for the `settings` toolbar item.
                  */
                 settings: {
+                    enabled?: boolean;
+                };
+                /**
+                 * Options for the `viewFullscreen` toolbar item.
+                 */
+                viewFullscreen: {
                     enabled?: boolean;
                 };
             }

@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sebastian Bochan
@@ -27,6 +27,10 @@ import type PointOptions from './PointOptions';
 import type SeriesOptions from './SeriesOptions';
 
 import DataTable from '../../Data/DataTable.js';
+import ColumnUtils from '../../Data/ColumnUtils.js';
+const {
+    convertToNumber
+} = ColumnUtils;
 import U from '../Utilities.js';
 const {
     defined,
@@ -43,7 +47,7 @@ const {
  * Class to convert Highcharts series data to table and get series data from the
  * table.
  *
- * @private
+ * @internal
  */
 class DataSeriesConverter {
 
@@ -126,7 +130,7 @@ class DataSeriesConverter {
             for (let i = 0, iEnd = table.getRowCount(); i < iEnd; i++) {
                 isCellFound = false;
                 pointOptions = {
-                    x: table.getCellAsNumber('x', i, true)
+                    x: convertToNumber(table.getCell('x', i), true)
                 };
 
                 for (let j = 0, jEnd = pointArrayMap.length; j < jEnd; j++) {
@@ -135,10 +139,8 @@ class DataSeriesConverter {
 
                     if (typeof cell !== 'undefined') {
                         isCellFound = true;
-                        pointOptions[pointArrayMap[j]] = table.getCellAsNumber(
-                            cellName,
-                            i
-                        );
+                        pointOptions[pointArrayMap[j]] =
+                            convertToNumber(table.getCell(cellName, i));
                     }
                 }
 
@@ -309,6 +311,7 @@ class DataSeriesConverter {
  *
  * */
 
+/** @internal */
 namespace DataSeriesConverter {
 
     /* *
@@ -335,4 +338,5 @@ namespace DataSeriesConverter {
  *
  * */
 
+/** @internal */
 export default DataSeriesConverter;

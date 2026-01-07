@@ -1,0 +1,6 @@
+---
+ name: Grid pagination events
+ authors:
+   - Sebastian Bochan
+ js_wrap: b
+...

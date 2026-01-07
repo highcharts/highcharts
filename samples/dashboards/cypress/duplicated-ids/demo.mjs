@@ -1,4 +1,3 @@
-
 // Bring in other forms of Highcharts
 import Dashboards from '../../../../code/dashboards/es-modules/masters/dashboards.src.js';
 import EditMode from '../../../../code/dashboards/es-modules/masters/modules/layout.src.js';
@@ -22,7 +21,7 @@ Dashboards.board('container', {
     },
     components: [{
         type: 'HTML',
-        cell: 'dashboard-col-0',
+        renderTo: 'dashboard-col-0',
         elements: [
             {
                 tagName: 'h1',
@@ -30,7 +29,7 @@ Dashboards.board('container', {
             }
         ]
     }, {
-        cell: 'dashboard-col-1',
+        renderTo: 'dashboard-col-1',
         type: 'Highcharts',
         chartOptions: {
             series: [{
@@ -41,7 +40,7 @@ Dashboards.board('container', {
 });
 
 Dashboards.board('container2', {
- gui: {
+    gui: {
         layouts: [{
             id: 'layout-1',
             rows: [{
@@ -55,7 +54,7 @@ Dashboards.board('container2', {
     },
     components: [{
         type: 'HTML',
-        cell: 'dashboard-col-0',
+        renderTo: 'dashboard-col-0',
         elements: [
             {
                 tagName: 'h1',
@@ -63,7 +62,7 @@ Dashboards.board('container2', {
             }
         ]
     }, {
-        cell: 'dashboard-col-1',
+        renderTo: 'dashboard-col-1',
         type: 'Highcharts',
         chartOptions: {
             series: [{

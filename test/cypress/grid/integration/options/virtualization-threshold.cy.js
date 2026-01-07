@@ -4,39 +4,30 @@ describe('Grid rows virtualizaion threshold', () => {
     });
 
     it('Should properly set rows virtualizaion based on row count.', () => {
-        cy.window().its('Grid').then(({ grids }) => {
+        cy.window().its('Grid').then(async ({ grids }) => {
             const grid = grids[0];
-            assert.isTrue(
-                grid.options.rendering.rows.virtualization,
-                'Virtualization should be active since the row count exceeds the default threshold.'
-            );
+            expect(grid.viewport.virtualRows).to.be.true;
 
             // Update data to lower the row count below the default
             // virtualization threshold.
-            grid.update({
+            await grid.update({
                 dataTable: {
                     columns: {
                         Data: grid.dataTable.columns.Data.slice(0, 40)
                     }
                 }
             });
-            assert.isFalse(
-                grid.options.rendering.rows.virtualization,
-                'Virtualization should be inactive since the row count is lower than the default threshold.'
-            );
+            expect(grid.viewport.virtualRows).to.be.false;
 
             // Update virtualization manually.
-            grid.update({
+            await grid.update({
                 rendering: {
                     rows: {
                         virtualization: true
                     }
                 }
             });
-            assert.isTrue(
-                grid.options.rendering.rows.virtualization,
-                'Virtualization should be active despite the lower row count than the default threshold.'
-            );
+            expect(grid.viewport.virtualRows).to.be.true;
         });
     });
 });
