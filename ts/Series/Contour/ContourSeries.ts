@@ -785,7 +785,7 @@ export default class ContourSeries extends ScatterSeries {
      * visibility of contour lines, in format of the WebGPU uniform.
      */
     private getShowContourLines(): number {
-        return this.options.lineWidth ?? 1;
+        return this.userOptions.lineWidth ?? 1;
     }
 
     /**

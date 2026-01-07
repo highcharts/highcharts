@@ -16,7 +16,6 @@ Highcharts.chart('container', {
         type: 'contour',
         smoothColoring: true,
         contourInterval: 1,
-        showContourLines: true,
         lineColor: '#000000',
         data: JSON.parse(
             document
