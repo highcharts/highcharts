@@ -76,6 +76,8 @@ function checkSamplesConsistency() {
     const { existsSync } = require('node:fs');
     const glob = require('glob');
     const LogLib = require('../libs/log');
+    const crypto = require('crypto');
+    const fs = require('fs');
 
     let errors = 0;
 
@@ -101,6 +103,57 @@ function checkSamplesConsistency() {
                     errors++;
                 }
             }
+        }
+    });
+
+    // Validate checksums for samples with config.ts
+    glob.sync(
+        FSLib.path(process.cwd() + '/samples/**/config.ts', true)
+    ).forEach(configPath => {
+        const dir = path.dirname(configPath);
+        const checksumPath = path.join(dir, '.generated-checksum');
+
+        // Check if any generated files exist
+        const generatedFiles = ['demo.ts', 'demo.html', 'demo.css', 'demo.details'];
+        const hasGeneratedFiles = generatedFiles.some(file =>
+            existsSync(path.join(dir, file)));
+
+        if (!hasGeneratedFiles) {
+            return; // Skip if no generated files
+        }
+
+        // Check if checksum file exists
+        if (!existsSync(checksumPath)) {
+            LogLib.failure(
+                'Sample has not been generated with gulp generate-samples:',
+                configPath
+            );
+            errors++;
+            return;
+        }
+
+        // Calculate current checksum
+        const hash = crypto.createHash('sha256');
+        generatedFiles.forEach(file => {
+            const filePath = path.join(dir, file);
+            if (existsSync(filePath)) {
+                const content = fs.readFileSync(filePath, 'utf-8');
+                hash.update(file);
+                hash.update(content);
+            }
+        });
+        const currentChecksum = hash.digest('hex');
+
+        // Read saved checksum
+        const savedChecksum = fs.readFileSync(checksumPath, 'utf-8').trim();
+
+        // Compare checksums
+        if (savedChecksum !== currentChecksum) {
+            LogLib.failure(
+                'Generated files have been manually edited instead of being regenerated from config.ts:',
+                configPath
+            );
+            errors++;
         }
     });
 

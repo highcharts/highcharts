@@ -17,6 +17,7 @@ import type {
 } from './generator-config.d.ts';
 
 import colors from 'colors/safe.js';
+import crypto from 'crypto';
 import { dirname, join } from 'path';
 import { promises as fs } from 'fs';
 import { fileURLToPath } from 'url';
@@ -913,6 +914,46 @@ export async function getDemoDetails(config: SampleGeneratorConfig) {
 }
 
 // Function to save the generated configuration to Highcharts Samples
+/**
+ * Calculate checksum for generated files
+ *
+ * @param {string} outputDir
+ *        Directory containing the generated files
+ * @return {Promise<string>}
+ *         SHA256 checksum
+ */
+async function calculateChecksum(outputDir: string): Promise<string> {
+    const files = ['demo.ts', 'demo.html', 'demo.css', 'demo.details'];
+    const hash = crypto.createHash('sha256');
+
+    for (const file of files) {
+        const filePath = join(outputDir, file);
+        try {
+            const content = await fs.readFile(filePath, 'utf-8');
+            hash.update(file);
+            hash.update(content);
+        } catch {
+            // File doesn't exist, skip it
+        }
+    }
+
+    return hash.digest('hex');
+}
+
+/**
+ * Save checksum file
+ *
+ * @param {string} outputDir
+ *        Directory containing the generated files
+ * @return {Promise<void>}
+ *         Promise to keep
+ */
+async function saveChecksum(outputDir: string): Promise<void> {
+    const checksum = await calculateChecksum(outputDir);
+    const checksumPath = join(outputDir, '.generated-checksum');
+    await fs.writeFile(checksumPath, checksum, 'utf-8');
+}
+
 export async function saveDemoFile(config: SampleGeneratorConfig) {
     const metaList = await getPathMeta(config);
     if (!metaList.length && config.paths) {
@@ -979,6 +1020,8 @@ export async function saveDemoFile(config: SampleGeneratorConfig) {
     */
     await fs.writeFile(join(outputDir, 'demo.ts'), ts);
 
+    // Calculate and save checksum for validation
+    await saveChecksum(outputDir);
 
     if (executedDirectly) {
         console.log(colors.green('Demo files generated successfully.'));

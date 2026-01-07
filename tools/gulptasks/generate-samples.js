@@ -45,7 +45,7 @@ async function generateSample(configFile, log) {
     // Set the output directory to the same location as the config file
     config.output = outputDir.replace(/^samples\//u, '');
 
-    // Call saveDemoFile
+    // Call saveDemoFile (checksum is calculated and saved inside)
     await saveDemoFile(config);
 
     log.success(' ✔︎ Success');
