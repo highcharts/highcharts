@@ -34,14 +34,25 @@ test.describe('Keyboard navigation in Grid', () => {
     });
 
     test('Sorting by pressing Enter key on a header cell should be possible', async ({ page }) => {
-        // await page.locator('td').first().focus();
+        // Navigate to header cell
         await page.keyboard.press('ArrowUp');
         await page.keyboard.press('ArrowRight');
+        
+        // Get the header cell that will be sorted
+        const focusedHeader = page.locator(':focus');
+        const columnId = await focusedHeader.getAttribute('data-column-id');
+        
+        // Press Enter to sort - this should trigger sorting
         await page.keyboard.press('Enter');
-        // Verify header has sorting class after Enter press
-        await expect(
-            page.locator(':focus')
-        ).toHaveClass(/hcg-column-sorted/);
+        
+        // After Enter, focus moves to toolbar button (sort button)
+        // Press Enter again on the sort button to trigger sorting
+        await page.keyboard.press('Enter');
+        
+        // Wait for sorting to complete and class to be added
+        const headerCell = page.locator(`th[data-column-id="${columnId}"]`);
+        // Verify header cell has sorting class after sorting
+        await expect(headerCell).toHaveClass(/hcg-column-sorted/);
     });
 
     test('Editing by pressing Enter key on a table cell should be possible', async ({ page }) => {
