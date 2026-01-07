@@ -28,7 +28,7 @@ jobs:
           cache: 'npm'
 
       - name: Install Dependencies
-        run: npm i
+        run: npm ci
 
       - name: Build Highcharts
         run: npx gulp scripts
@@ -70,7 +70,7 @@ jobs:
       - name: Install Highcharts Utils
         run: |
           cd utils
-          npm i
+          npm ci
 
       - name: Run Cypress test
         uses: cypress-io/github-action@v6
@@ -115,7 +115,7 @@ jobs:
           chromedriver --url-base=/wd/hub &
           sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 &
       - name: Install Dependencies
-        run: npm i
+        run: npm ci
       ### TASKS ###
       - name: Build Highcharts
         run: npx gulp scripts

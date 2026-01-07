@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Honsi
  *
  *  A commercial license may be required depending on use.
@@ -2022,8 +2022,17 @@ const defaultOptions: DefaultOptions = {
          */
 
         /**
-         * A CSS class name to apply to the tooltip's container div,
-         * allowing unique CSS styling for each chart.
+         * A CSS class name to apply to the tooltip, allowing unique CSS
+         * styling for each chart.
+         *
+         * **Note:** The class is applied to the SVG element of the tooltip
+         * (the tooltip label group), not to a container div. This allows you
+         * to style the tooltip using CSS applicable to SVG elements.
+         *
+         * When [tooltip.outside](#tooltip.outside) is `true`, a separate
+         * container div with class `highcharts-tooltip-container` is created
+         * as the parent to the SVG tooltip element, but the `className` option
+         * is still applied to the SVG element itself, not to the container.
          *
          * @type      {string}
          * @apioption tooltip.className
