@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LicenseRef-Highcharts
 /**
- * (c) 2009-2025 Highsoft AS
+ * (c) 2009-2026 Highsoft AS
  * Author: Sebastian Bochann
  *
  * Price indicator for Highcharts
@@ -40,32 +40,88 @@ const {
 
 declare module '../Core/Series/SeriesBase' {
     interface SeriesBase {
+
+        /** @internal */
         lastPrice?: SVGElement;
+
+        /** @internal */
         lastPriceLabel?: SVGElement;
+
+        /** @internal */
         lastVisiblePrice?: SVGElement;
+
+        /** @internal */
         lastVisiblePriceLabel?: SVGElement;
+
     }
 }
 
 declare module '../Core/Series/SeriesOptions' {
     interface SeriesOptions {
+
+        /**
+         * @see {@link plotOptions.series.lastPrice}
+         *
+         * @internal
+         */
         lastPrice?: LastPriceOptions;
+
+        /**
+         * @see {@link plotOptions.series.lastVisiblePrice}
+         *
+         * @internal
+         */
         lastVisiblePrice?: LastVisiblePriceOptions;
+
     }
 }
 
 export interface LastPriceOptions extends AxisCrosshairOptions {
+
+    /**
+     * Enable or disable the indicator.
+     *
+     * @product   highstock
+     * @default   false
+     */
     enabled?: boolean;
+
 }
 
 export interface LastVisiblePriceOptions {
+
+    /**
+     * Enable or disable the indicator.
+     *
+     * @product   highstock
+     * @default   false
+     */
     enabled?: boolean;
+
+    /**
+     * @since     7.0.0
+     */
     label?: LastVisiblePriceLabelOptions;
+
 }
 
 export interface LastVisiblePriceLabelOptions {
+
+    /**
+     * Flag to enable `lastVisiblePrice` label.
+     *
+     * @since     7.0
+     * @product   highstock
+     */
     enabled: true;
+
+    /**
+     * The color of the line of last visible price.
+     *
+     * @internal
+     */
     color?: ColorType;
+
 }
 
 /* *

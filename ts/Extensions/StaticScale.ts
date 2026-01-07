@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2016-2025 Highsoft AS
+ *  (c) 2016-2026 Highsoft AS
  *  Author: Torstein Honsi, Lars Cabrera
  *
  *  A commercial license may be required depending on use.
@@ -36,16 +36,40 @@ const {
 
 declare module '../Core/Axis/AxisOptions' {
     interface AxisOptions {
+
+        /**
+         * For vertical axes only. Setting the static scale ensures that each
+         * tick unit is translated into a fixed pixel height. For example,
+         * setting the static scale to 24 results in each Y axis category
+         * taking up 24 pixels, and the height of the chart adjusts. Adding or
+         * removing items will make the chart resize.
+         *
+         * @sample gantt/xrange-series/demo/
+         *         X-range series with static scale
+         *
+         * @type      {number}
+         * @default   50
+         * @since     6.2.0
+         * @product   gantt
+         * @apioption yAxis.staticScale
+         */
         staticScale?: number;
+
     }
 }
 
 declare module '../Core/Chart/ChartBase'{
     interface ChartBase {
+
+        /** @internal */
         redrawTrigger?: string;
+
+        /** @internal */
         initiatedScale?: boolean;
+
         /** @requires modules/static-scale */
         adjustHeight(): void;
+
     }
 }
 

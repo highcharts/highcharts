@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *  Author: Highsoft, Black Label
  *
  *  A commercial license may be required depending on use.
@@ -36,7 +36,7 @@ import type {
 } from '../../Core/Series/DataLabelOptions';
 import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
 import type { DeepPartial } from '../../Shared/Types';
-import type EventCallback from '../../Core/EventCallback';
+import type { EventCallback } from '../../Core/Callback';
 import type NavigationOptions from '../Exporting/NavigationOptions';
 import type Point from '../../Core/Series/Point';
 import type {

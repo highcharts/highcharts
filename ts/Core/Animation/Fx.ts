@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Honsi
  *
  *  A commercial license may be required depending on use.
@@ -51,7 +51,7 @@ const {
  * let rect = renderer.rect(0, 0, 10, 10).add();
  * rect.animate({ width: 100 });
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.Fx
  *
@@ -64,7 +64,6 @@ const {
  * @param {string} prop
  * The single attribute or CSS property to animate.
  */
-
 class Fx {
 
     /* *
@@ -73,6 +72,7 @@ class Fx {
      *
      * */
 
+    /** @internal */
     public static timers: Array<Fx.Timer> = [];
 
     /* *
@@ -97,17 +97,76 @@ class Fx {
      *
      * */
 
+    /**
+     * The element to animate.
+     * @internal
+     */
     public elem: (HTMLElement|SVGElement);
+
+    /**
+     * The end value, value to land on.
+     * @internal
+     */
     public end?: number;
+
+    /**
+     * The current value, value to start from.
+     * @internal
+     */
     public from?: number;
+
+    /**
+     * The current value of the animated property.
+     * @internal
+     */
     public now?: number;
+
+    /**
+     * Animation options.
+     * @internal
+     */
     public options: Partial<AnimationOptions>;
+
+    /**
+     * Start and end paths for path animation.
+     * @internal
+     */
     public paths?: [SVGPath, SVGPath];
+
+    /**
+     * Current position of the animation, a value between 0 and 1.
+     * @internal
+     */
     public pos: number = NaN;
+
+    /**
+     * The single attribute or CSS property to animate.
+     * @internal
+     */
     public prop: string;
+
+    /**
+     * The value to start from.
+     * @internal
+     */
     public start?: number;
+
+    /**
+     * Timestamp when the animation started.
+     * @internal
+     */
     public startTime?: number;
+
+    /**
+     * Target path definition.
+     * @internal
+     */
     public toD?: SVGPath;
+
+    /**
+     * The property unit, for example `px`.
+     * @internal
+     */
     public unit?: string;
 
     /* *
@@ -369,7 +428,7 @@ class Fx {
 
         /**
          * If shifting points, prepend a dummy point to the end path.
-         * @private
+         * @internal
          */
         function prepend(
             arr: SVGPath,
@@ -411,7 +470,7 @@ class Fx {
 
         /**
          * Copy and append last point until the length matches the end length.
-         * @private
+         * @internal
          */
         function append(arr: SVGPath): void {
             while (arr.length < fullLength) {
@@ -532,6 +591,7 @@ class Fx {
  *
  * */
 
+/** @internal */
 interface Fx extends FxBase {
     // Nothing here yet
 }
@@ -542,6 +602,7 @@ interface Fx extends FxBase {
  *
  * */
 
+/** @internal */
 namespace Fx {
     export interface Timer {
         (gotoEnd?: boolean): boolean;
@@ -557,4 +618,5 @@ namespace Fx {
  *
  * */
 
+/** @internal */
 export default Fx;

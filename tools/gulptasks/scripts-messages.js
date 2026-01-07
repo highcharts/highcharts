@@ -273,7 +273,7 @@ function writeErrorsJson(parsedErrors, jsonPath, modulePath) {
                 '/* eslint-disable */',
                 '/* *',
                 ' * Error information for the debugger module',
-                ' * (c) 2010-2021 Highsoft AS',
+                ' * (c) 2010-2026 Highsoft AS',
                 ' * Author: Torstein Honsi',
                 ' * A commercial license may be required depending on use.',
                 ' * See www.highcharts.com/license',

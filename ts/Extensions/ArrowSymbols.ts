@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2017 Highsoft AS
+ *  (c) 2017-2026 Highsoft AS
  *  Authors: Lars A. V. Cabrera
  *
  *  A commercial license may be required depending on use.
@@ -130,7 +130,14 @@ function arrowHalf(
     return arrow(x, y, w / 2, h);
 }
 
-/** @internal */
+/**
+ * Adds the arrow symbols to the SVGRenderer.
+ *
+ * @internal
+ *
+ * @param SVGRendererClass
+ * The SVGRenderer class to extend.
+ */
 function compose(
     SVGRendererClass: typeof SVGRenderer
 ): void {

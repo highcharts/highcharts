@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Honsi
  *
  *  A commercial license may be required depending on use.
@@ -87,9 +87,6 @@ const {
  *
  * */
 
-/**
- * @private
- */
 declare module '../CSSObject' {
     interface CSSObject {
         strokeWidth?: (number|string);
@@ -132,14 +129,19 @@ declare module '../CSSObject' {
  */
 class SVGElement implements SVGElementBase {
 
+
     /* *
      *
      *  Properties
      *
      * */
 
-    // Custom attributes used for symbols, these should be filtered out when
-    // setting SVGElement attributes (#9375).
+
+    /**
+     * Custom attributes used for symbols, these should be filtered out when
+     * setting SVGElement attributes (#9375).
+     * @internal
+     */
     public static symbolCustomAttribs: Array<string> = [
         'anchorX',
         'anchorY',
@@ -154,58 +156,150 @@ class SVGElement implements SVGElementBase {
         'y'
     ];
 
+    /** @internal */
     public added?: boolean;
+
     // @todo public alignAttr?: SVGAttributes;
+
+    /** @internal */
     public alignByTranslate?: boolean;
+
+    /** @internal */
     public alignOptions?: AlignObject;
+
+    /** @internal */
     public alignTo?: BBoxObject|string;
+
+    /** @internal */
     public alignValue?: ('left'|'center'|'right');
+
+    /** @internal */
     public clipPath?: SVGElement;
+
     // @todo public d?: number;
+
+    /** @internal */
     public div?: HTMLDOMElement;
+
+    /** @internal */
     public doTransform?: boolean;
+
     public element: DOMElementType;
+
+    /** @internal */
     public fakeTS?: boolean;
+
+    /** @internal */
     public firstLineMetrics?: FontMetricsObject;
+
+    /** @internal */
     public handleZ?: boolean;
+
+    /** @internal */
     public height?: number;
+
+    /** @internal */
     public imgwidth?: number;
+    /** @internal */
     public imgheight?: number;
+    /** @internal */
     public inverted: undefined;
+    /** @internal */
     public matrix?: Array<number>;
+    /** @internal */
     public onEvents: Record<string, Function> = {};
+
+    /** @internal */
     public opacity = 1; // Default base for animation
+
     // @todo public options?: AnyRecord;
+
+    /** @internal */
     public parentGroup?: SVGElement;
+
+    /** @internal */
     public pathArray?: SVGPath;
+
+    /** @internal */
     public placed?: boolean;
+
+    /** @internal */
     public r?: number;
+
+    /** @internal */
     public radAttr?: SVGAttributes;
+
     public renderer: SVGRenderer;
+
+    /** @internal */
     public rotation?: number;
+
+    /** @internal */
     public rotationOriginX?: number;
+
+    /** @internal */
     public rotationOriginY?: number;
+
+    /** @internal */
     public scaleX?: number;
+
+    /** @internal */
     public scaleY?: number;
+
+    /** @internal */
     public stops?: Array<SVGElement>;
+
+    /** @internal */
     public stroke?: ColorType;
+
     // @todo public 'stroke-width'?: number;
+
+    /** @internal */
     public styledMode?: boolean;
+
+    /** @internal */
     public styles: CSSObject;
+
+    /** @internal */
     public SVG_NS = SVG_NS;
+
+    /** @internal */
     public symbolName?: string;
+
+    /** @internal */
     public text?: SVGElement;
+
+    /** @internal */
     public textPxLength?: number;
+
+    /** @internal */
     public textStr?: string;
+
+    /** @internal */
     public textWidth?: number;
+
     // @todo public textPxLength?: number;
+
+    /** @internal */
     public translateX?: number;
+
+    /** @internal */
     public translateY?: number;
+
+    /** @internal */
     public visibility?: 'hidden'|'inherit'|'visible';
+
+    /** @internal */
     public width?: number;
+
+    /** @internal */
     public x?: number;
+
+    /** @internal */
     public y?: number;
+
     // @todo public zIndex?: number;
+
 
     /* *
      *
@@ -213,19 +307,20 @@ class SVGElement implements SVGElementBase {
      *
      * */
 
+
     /**
      * Get the current value of an attribute or pseudo attribute,
      * used mainly for animation. Called internally from
      * the {@link Highcharts.SVGRenderer#attr} function.
      *
-     * @private
+     * @internal
      * @function Highcharts.SVGElement#_defaultGetter
      *
      * @param {string} key
-     *        Property key.
+     * Property key.
      *
      * @return {number|string}
-     *         Property value.
+     * Property value.
      */
     private _defaultGetter(key: string): (number|string) {
         let ret = pick(
@@ -242,15 +337,11 @@ class SVGElement implements SVGElementBase {
     }
 
     /**
-     * @private
+     * @internal
      * @function Highcharts.SVGElement#_defaultSetter
-     *
      * @param {string} value
-     *
      * @param {string} key
-     *
      * @param {Highcharts.SVGDOMElement} element
-     *
      */
     public _defaultSetter(
         value: string,
@@ -269,11 +360,11 @@ class SVGElement implements SVGElementBase {
      * @function Highcharts.SVGElement#add
      *
      * @param {Highcharts.SVGElement} [parent]
-     *        The parent item to add it to. If undefined, the element is added
-     *        to the {@link Highcharts.SVGRenderer.box}.
+     * The parent item to add it to. If undefined, the element is added to the
+     * {@link Highcharts.SVGRenderer.box}.
      *
      * @return {Highcharts.SVGElement}
-     *         Returns the SVGElement for chaining.
+     * Returns the SVGElement for chaining.
      */
     public add(parent?: SVGElement): this {
         const renderer = this.renderer,
@@ -369,7 +460,7 @@ class SVGElement implements SVGElementBase {
      * multiple attributes in one SVG property -- e.g., translate, rotate and
      * scale are merged in one "transform" attribute in the SVG node.
      *
-     * @private
+     * @internal
      * @function Highcharts.SVGElement#afterSetters
      */
     public afterSetters(): void {
@@ -387,24 +478,24 @@ class SVGElement implements SVGElementBase {
      * @function Highcharts.SVGElement#align
      *
      * @param {Highcharts.AlignObject} [alignOptions]
-     *        The alignment options. The function can be called without this
-     *        parameter in order to re-align an element after the box has been
-     *        updated.
+     * The alignment options. The function can be called without this parameter
+     * in order to re-align an element after the box has been updated.
      *
      * @param {boolean} [alignByTranslate]
-     *        Align element by translation.
+     * Align element by translation.
      *
      * @param {string|Highcharts.BBoxObject} [alignTo]
-     *        The box to align to, needs a width and height. When the box is a
-     *        string, it refers to an object in the Renderer. For example, when
-     *        box is `spacingBox`, it refers to `Renderer.spacingBox` which
-     *        holds `width`, `height`, `x` and `y` properties.
+     * The box to align to, needs a width and height. When the box is a string,
+     * it refers to an object in the Renderer. For example, when box is
+     * `spacingBox`, it refers to `Renderer.spacingBox` which holds `width`,
+     * `height`, `x` and `y` properties.
      *
      * @param {boolean} [redraw]
-     *        Decide if SVGElement should be redrawn with new alignment or
-     *        just change its attributes.
+     * Decide if SVGElement should be redrawn with new alignment or just change
+     * its attributes.
      *
-     * @return {Highcharts.SVGElement} Returns the SVGElement for chaining.
+     * @return {Highcharts.SVGElement}
+     * Returns the SVGElement for chaining.
      */
     public align(
         alignOptions?: AlignObject,
@@ -475,7 +566,7 @@ class SVGElement implements SVGElementBase {
     }
 
     /**
-     * @private
+     * @internal
      * @function Highcharts.SVGElement#alignSetter
      * @param {"left"|"center"|"right"} value
      */
@@ -500,16 +591,16 @@ class SVGElement implements SVGElementBase {
      * @function Highcharts.SVGElement#animate
      *
      * @param {Highcharts.SVGAttributes} params
-     *        SVG attributes or CSS to animate.
+     * SVG attributes or CSS to animate.
      *
      * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [options]
-     *        Animation options.
+     * Animation options.
      *
      * @param {Function} [complete]
-     *        Function to perform at the end of animation.
+     * Function to perform at the end of animation.
      *
      * @return {Highcharts.SVGElement}
-     *         Returns the SVGElement for chaining.
+     * Returns the SVGElement for chaining.
      */
     public animate(
         params: SVGAttributes,
@@ -571,11 +662,11 @@ class SVGElement implements SVGElementBase {
      *    textOutline: '1px contrast' // => white outline
      * });
      *
-     * @private
+     * @internal
      * @function Highcharts.SVGElement#applyTextOutline
      *
      * @param {string} textOutline
-     *        A custom CSS `text-outline` setting, defined by `width color`.
+     * A custom CSS `text-outline` setting, defined by `width color`.
      */
     public applyTextOutline(textOutline: string): void {
         const elem = this.element,
@@ -774,29 +865,28 @@ class SVGElement implements SVGElementBase {
      * @function Highcharts.SVGElement#attr
      *
      * @param {string|Highcharts.SVGAttributes} [hash]
-     *        The native and custom SVG attributes.
+     * The native and custom SVG attributes.
      *
      * @param {number|string|Highcharts.SVGPathArray} [val]
-     *        If the type of the first argument is `string`, the second can be a
-     *        value, which will serve as a single attribute setter. If the first
-     *        argument is a string and the second is undefined, the function
-     *        serves as a getter and the current value of the property is
-     *        returned.
+     * If the type of the first argument is `string`, the second can be a value,
+     * which will serve as a single attribute setter. If the first argument is a
+     * string and the second is undefined, the function serves as a getter and
+     * the current value of the property is returned.
      *
      * @param {Function} [complete]
-     *        A callback function to execute after setting the attributes. This
-     *        makes the function compliant and interchangeable with the
-     *        {@link SVGElement#animate} function.
+     * A callback function to execute after setting the attributes. This makes
+     * the function compliant and interchangeable with the
+     * {@link SVGElement#animate} function.
      *
      * @param {boolean} [continueAnimation=true]
-     *        Used internally when `.attr` is called as part of an animation
-     *        step. Otherwise, calling `.attr` for an attribute will stop
-     *        animation for that attribute.
+     * Used internally when `.attr` is called as part of an animation step.
+     * Otherwise, calling `.attr` for an attribute will stop animation for that
+     * attribute.
      *
      * @return {Highcharts.SVGElement}
-     *         If used as a setter, it returns the current
-     *         {@link Highcharts.SVGElement} so the calls can be chained. If
-     *         used as a getter, the current value of the attribute is returned.
+     * If used as a setter, it returns the current {@link Highcharts.SVGElement}
+     * so the calls can be chained. If used as a getter, the current value of
+     * the attribute is returned.
      */
     public attr(
         hash?: (string|SVGAttributes),
@@ -888,10 +978,10 @@ class SVGElement implements SVGElementBase {
      * @function Highcharts.SVGElement#clip
      *
      * @param {SVGElement} [clipElem]
-     *        The clipping shape. If skipped, the current clip is removed.
+     * The clipping shape. If skipped, the current clip is removed.
      *
      * @return {Highcharts.SVGElement}
-     *         Returns the SVG element to allow chaining.
+     * Returns the SVG element to allow chaining.
      */
     public clip(clipElem?: SVGElement): this {
         if (clipElem && !clipElem.clipPath) {
@@ -965,15 +1055,12 @@ class SVGElement implements SVGElementBase {
      * object. This function is called from the attribute setters. An event
      * hook is added for supporting other complex color types.
      *
-     * @private
+     * @internal
      * @function Highcharts.SVGElement#complexColor
-     *
      * @param {Highcharts.GradientColorObject|Highcharts.PatternObject} colorOptions
      * The gradient or pattern options structure.
-     *
      * @param {string} prop
      * The property to apply, can either be `fill` or `stroke`.
-     *
      * @param {Highcharts.SVGDOMElement} elem
      * SVG element to apply the gradient on.
      */
@@ -1118,10 +1205,10 @@ class SVGElement implements SVGElementBase {
      * @function Highcharts.SVGElement#css
      *
      * @param {Highcharts.CSSObject} styles
-     *        The new CSS styles.
+     * The new CSS styles.
      *
      * @return {Highcharts.SVGElement}
-     *         Return the SVG element for chaining.
+     * Return the SVG element for chaining.
      */
     public css(styles: CSSObject): this {
         const oldStyles = this.styles,
@@ -1228,7 +1315,7 @@ class SVGElement implements SVGElementBase {
     }
 
     /**
-     * @private
+     * @internal
      * @function Highcharts.SVGElement#dashstyleSetter
      * @param {string} value
      */
@@ -1332,7 +1419,7 @@ class SVGElement implements SVGElementBase {
     }
 
     /**
-     * @private
+     * @internal
      * @function Highcharts.SVGElement#dSettter
      * @param {number|string|Highcharts.SVGPathArray} value
      * @param {string} key
@@ -1375,7 +1462,7 @@ class SVGElement implements SVGElementBase {
     }
 
     /**
-     * @private
+     * @internal
      * @function Highcharts.SVGElement#fillSetter
      * @param {Highcharts.ColorType} value
      * @param {string} key
@@ -1394,7 +1481,7 @@ class SVGElement implements SVGElementBase {
     }
 
     /**
-     * @private
+     * @internal
      * @function Highcharts.SVGElement#hrefSetter
      * @param {Highcharts.ColorType} value
      * @param {string} key
@@ -1635,7 +1722,7 @@ class SVGElement implements SVGElementBase {
 
     /**
      * Get the rotated box.
-     * @private
+     * @internal
      */
     public getRotatedBox(
         box: BBoxObject,
@@ -1785,9 +1872,7 @@ class SVGElement implements SVGElementBase {
         return this.attr({ visibility: 'hidden' });
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     public htmlGetBBox(): BBoxObject {
         return { height: 0, width: 0, x: 0, y: 0 };
     }
@@ -1868,7 +1953,7 @@ class SVGElement implements SVGElementBase {
     }
 
     /**
-     * @private
+     * @internal
      * @function Highcharts.SVGElement#opacitySetter
      * @param {string} value
      * @param {string} key
@@ -1889,7 +1974,7 @@ class SVGElement implements SVGElementBase {
     /**
      * Re-align an aligned text or label after setting the text.
      *
-     * @private
+     * @internal
      * @function Highcharts.SVGElement#reAlign
      *
      */
@@ -1928,7 +2013,7 @@ class SVGElement implements SVGElementBase {
 
     /**
      *
-     * @private
+     * @internal
      */
     public removeTextOutline(): void {
         const outline = this.element
@@ -1942,7 +2027,7 @@ class SVGElement implements SVGElementBase {
     /**
      * Removes an element from the DOM.
      *
-     * @private
+     * @internal
      * @function Highcharts.SVGElement#safeRemoveChild
      *
      * @param {Highcharts.SVGDOMElement|Highcharts.HTMLDOMElement} element
@@ -2050,7 +2135,7 @@ class SVGElement implements SVGElementBase {
     /**
      * Set the stroke-width and record it on the SVGElement
      *
-     * @private
+     * @internal
      * @function Highcharts.SVGElement#strokeSetter
      * @param {number|string|ColorType} value
      * @param {string} key
@@ -2123,7 +2208,7 @@ class SVGElement implements SVGElementBase {
      * check all the others only once for each call to an element's
      * .attr() method
      *
-     * @private
+     * @internal
      * @function Highcharts.SVGElement#symbolAttr
      *
      * @param {Highcharts.SVGAttributes} hash
@@ -2148,7 +2233,7 @@ class SVGElement implements SVGElementBase {
     }
 
     /**
-     * @private
+     * @internal
      * @function Highcharts.SVGElement#textSetter
      * @param {string} value
      */
@@ -2167,7 +2252,7 @@ class SVGElement implements SVGElementBase {
     }
 
     /**
-     * @private
+     * @internal
      * @function Highcharts.SVGElement#titleSetter
      * @param {string} value
      */
@@ -2239,7 +2324,7 @@ class SVGElement implements SVGElementBase {
      * the custom `translateX`, `translateY`, `rotation`, `scaleX` and `scaleY`
      * attributes and updates the SVG `transform` attribute.
      *
-     * @private
+     * @internal
      * @function Highcharts.SVGElement#updateTransform
      */
     public updateTransform(
@@ -2294,7 +2379,7 @@ class SVGElement implements SVGElementBase {
     }
 
     /**
-     * @private
+     * @internal
      * @function Highcharts.SVGElement#visibilitySetter
      *
      * @param {string} value
@@ -2320,7 +2405,7 @@ class SVGElement implements SVGElementBase {
     }
 
     /**
-     * @private
+     * @internal
      * @function Highcharts.SVGElement#xGetter
      */
     public xGetter(key: string): (number|string|null) {
@@ -2335,7 +2420,7 @@ class SVGElement implements SVGElementBase {
     }
 
     /**
-     * @private
+     * @internal
      * @function Highcharts.SVGElement#zIndexSetter
      */
     public zIndexSetter(
@@ -2441,20 +2526,31 @@ class SVGElement implements SVGElementBase {
 
 interface SVGElement extends SVGElementBase {
     // Takes interfaces from shared interface and internal namespace
+    /** @internal */
     matrixSetter: SVGElement.SetterFunction<(number|string|null)>;
+    /** @internal */
     rotationOriginXSetter(value: number|null, key?: string): void;
+    /** @internal */
     rotationOriginYSetter(value: number|null, key?: string): void;
+    /** @internal */
     rotationSetter(value: number, key?: string): void;
+    /** @internal */
     scaleXSetter: SVGElement.SetterFunction<(number|string|null)>;
+    /** @internal */
     scaleYSetter: SVGElement.SetterFunction<(number|string|null)>;
+    /** @internal */
     'stroke-widthSetter'(
         value: (number|string),
         key: string,
         element: SVGDOMElement
     ): void;
+    /** @internal */
     translateXSetter: SVGElement.SetterFunction<(number|string|null)>;
+    /** @internal */
     translateYSetter: SVGElement.SetterFunction<(number|string|null)>;
+    /** @internal */
     verticalAlignSetter: SVGElement.SetterFunction<(number|string|null)>;
+    /** @internal */
     yGetter(key: string): (number|string|null);
 }
 
@@ -2483,16 +2579,20 @@ SVGElement.prototype.verticalAlignSetter = function (
  *
  * */
 
+/** @internal */
 namespace SVGElement {
 
+    /** @internal */
     export interface ElementSetterFunction<T> {
         (value: T, key: string, element: SVGDOMElement): void;
     }
 
+    /** @internal */
     export interface GetterFunction<T> {
         (key: string): T;
     }
 
+    /** @internal */
     export interface SetterFunction<T> {
         (value: T, key: string): void;
     }

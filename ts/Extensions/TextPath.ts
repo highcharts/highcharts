@@ -2,7 +2,7 @@
  *
  *  Highcharts module with textPath functionality.
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *  Author: Torstein Honsi
  *
  *  A commercial license may be required depending on use.
@@ -38,18 +38,61 @@ const { addEvent, merge, uniqueKey, defined, extend } = U;
 
 /** @internal */
 interface TextPathObject {
+
+    /**
+     * The path that the text should follow.
+     * @internal
+     */
     path: SVGElement;
+
+    /**
+     * Function to undo the text path.
+     * @internal
+     */
     undo: Function;
+
 }
 
 /** @internal */
 declare module '../Core/Renderer/SVG/SVGElementBase' {
     interface SVGElementBase {
+
+        /**
+         * Set a text path for a `text` or `label` element, allowing the text to
+         * flow along a path.
+         *
+         * In order to unset the path for an existing element, call
+         * `setTextPath` with `{ enabled: false }` as the second argument.
+         *
+         * Text path support is not bundled into `highcharts.js`, and requires
+         * the `modules/textpath.js` file. However, it is included in the script
+         * files of those series types that use it by default.
+         *
+         * @sample highcharts/members/renderer-textpath/ Text path demonstrated
+         *
+         * @function Highcharts.SVGElement#setTextPath
+         *
+         * @param {Highcharts.SVGElement|undefined} path
+         * Path to follow. If undefined, it allows changing options for the
+         * existing path.
+         *
+         * @param {Highcharts.DataLabelsTextPathOptionsObject} textPathOptions
+         * Options.
+         *
+         * @return {Highcharts.SVGElement}
+         * Returns the SVGElement for chaining.
+         */
         setTextPath(
             path: SVGElement|undefined,
             textPathOptions: AnyRecord
         ): SVGElement,
+
+        /**
+         * Text path applied to the element.
+         * @internal
+         */
         textPath: TextPathObject
+
     }
 }
 

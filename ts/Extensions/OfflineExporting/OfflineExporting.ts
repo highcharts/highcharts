@@ -2,7 +2,7 @@
  *
  *  Client side exporting module
  *
- *  (c) 2015 Highsoft AS
+ *  (c) 2015-2026 Highsoft AS
  *  Author: Torstein Honsi / Oystein Moseng
  *
  *  A commercial license may be required depending on use.
@@ -73,7 +73,7 @@ declare module '../../Core/Chart/ChartBase' {
     }
 }
 
-declare module '../../Core/GlobalsBase.d.ts' {
+declare module '../../Core/GlobalsBase' {
     interface GlobalsBase {
         Exporting: typeof Exporting
     }

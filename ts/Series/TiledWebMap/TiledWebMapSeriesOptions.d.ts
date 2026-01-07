@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2025
+ *  (c) 2010-2026
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license

@@ -2,7 +2,7 @@
  *
  *  Data module
  *
- *  (c) 2012-2025 Highsoft AS
+ *  (c) 2012-2026 Highsoft AS
  *  Author: Torstein Honsi
  *
  *  A commercial license may be required depending on use.
@@ -290,18 +290,79 @@ class Data {
      *
      * */
 
+    /** @internal */
     public alternativeFormat?: string;
+
+    /**
+     * The chart instance.
+     * @internal
+     */
     public chart: Chart;
+
+    /**
+     * A copy of the chart options.
+     * @internal
+     */
     public chartOptions: Partial<Options>;
+
+    /**
+     * The final parsed columns.
+     * @internal
+     */
     public columns?: Array<DataColumnsArray>;
+
+    /**
+     * The detected date format for the data columns.
+     * @internal
+     */
     public dateFormat?: string;
+
+    /**
+     * The decimal point used for parsing numbers in the CSV.
+     * @internal
+     */
     public decimalRegex?: RegExp;
+
+    /**
+     * Whether to use the first row as names.
+     * @internal
+     */
     public firstRowAsNames?: boolean;
+
+    /**
+     * The timeout id for fetching live data.
+     * @internal
+     */
     public liveDataTimeout?: number;
+
+    /**
+     * Raw columns from the data source.
+     * @internal
+     */
     public rawColumns: Array<Array<string>>;
+
+    /**
+     * A collection of two-dimensional arrays.
+     * @internal
+     */
     public rowsToColumns = Data.rowsToColumns; // Backwards compatibility
+
+    /**
+     * The Data class' options.
+     * @internal
+     */
     public options: DataOptions;
+
+    /**
+     * An object containing columns by point value.
+     * @internal
+     */
     public valueCount?: DataValueCountObject;
+
+    /**
+     * The x-axis options.
+     * @internal
+     */
     public xAxisOptions?: {
         type?: XAxisOptions['type'];
         uniqueNames?: false;
@@ -2194,6 +2255,7 @@ class SeriesBuilder {
     public pointIsArray: boolean = true;
     /* eslint-enable no-invalid-this */
 
+    /** @internal */
     public name?: string;
 
     /**
