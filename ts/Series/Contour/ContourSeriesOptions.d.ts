@@ -39,17 +39,6 @@ export default interface ContourSeriesOptions extends ScatterSeriesOptions {
     smoothColoring?: boolean;
 
     /**
-     * Whether to display contour lines on the canvas. When enabled, lines are
-     * drawn along the boundaries between different values.
-     *
-     * @sample {highcharts} highcharts/series-contour/contour-simple/
-     *         Contour plot with lines
-     *
-     * @default true
-     */
-    showContourLines?: boolean;
-
-    /**
      * The interval between contour lines. Determines the spacing of value
      * levels where lines are drawn on the plot.
      *

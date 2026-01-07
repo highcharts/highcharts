@@ -133,7 +133,6 @@ export default class ContourSeries extends ScatterSeries {
         const props = {
             minPadding: 0,
             maxPadding: 0,
-            tickInterval: 1,
             gridLineWidth: 0,
             endOnTick: false,
             startOnTick: false,
@@ -786,7 +785,7 @@ export default class ContourSeries extends ScatterSeries {
      * visibility of contour lines, in format of the WebGPU uniform.
      */
     private getShowContourLines(): number {
-        return this.options.lineWidth || 1;
+        return this.options.lineWidth ?? 1;
     }
 
     /**
