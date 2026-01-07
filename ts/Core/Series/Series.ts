@@ -5187,7 +5187,6 @@ namespace Series {
         modified: DataTableCore
     }
 
-    /** @internal */
     export interface ZoneObject extends SeriesZonesOptions {
         area?: SVGElement;
         clip?: SVGElement;

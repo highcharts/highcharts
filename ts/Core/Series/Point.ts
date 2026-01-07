@@ -1893,9 +1893,12 @@ class Point {
  *
  * */
 
-/** @internal */
 interface Point extends PointBase {
-    // Merge extensions with point class
+    /**
+     * Merge extensions with point class.
+     *
+     * @internal
+     */
     hcEvents?: Record<
         string,
         Array<U.EventWrapperObject<Series>> & { userEvent?: boolean }
