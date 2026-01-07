@@ -106,6 +106,12 @@ class RowsVirtualizer {
      */
     private isRendering = false;
 
+    /**
+     * Pending row cursor to render after current render completes.
+     * Used to ensure the final scroll position is rendered.
+     */
+    private pendingRowCursor: number | null = null;
+
 
     /* *
     *
@@ -257,7 +263,20 @@ class RowsVirtualizer {
         const rows = this.viewport.rows;
         const rowsLn = rows.length;
 
+        if (rowsLn < 1) {
+            return;
+        }
+
         const lastRow = rows[rowsLn - 1];
+
+        // Skip if row is not fully rendered or has no cells
+        if (
+            !lastRow.rendered ||
+            !lastRow.cells.length ||
+            !lastRow.cells[0]?.htmlElement
+        ) {
+            return;
+        }
 
         let rowTop = lastRow.translateY;
         const rowBottom = rowTop + lastRow.htmlElement.offsetHeight;
@@ -267,11 +286,23 @@ class RowsVirtualizer {
         lastRow.htmlElement.style.height = newHeight + 'px';
         lastRow.setTranslateY(rowTop);
         for (let j = 0, jEnd = lastRow.cells.length; j < jEnd; ++j) {
-            lastRow.cells[j].htmlElement.style.transform = '';
+            const cell = lastRow.cells[j];
+            if (cell?.htmlElement) {
+                cell.htmlElement.style.transform = '';
+            }
         }
 
         for (let i = rowsLn - 2; i >= 0; i--) {
             const row = rows[i];
+
+            // Skip if row is not fully rendered or has no cells
+            if (
+                !row.rendered ||
+                !row.cells.length ||
+                !row.cells[0]?.htmlElement
+            ) {
+                continue;
+            }
 
             newHeight = row.cells[0].htmlElement.offsetHeight;
             rowTop -= newHeight;
@@ -280,7 +311,10 @@ class RowsVirtualizer {
 
             row.setTranslateY(rowTop);
             for (let j = 0, jEnd = row.cells.length; j < jEnd; ++j) {
-                row.cells[j].htmlElement.style.transform = '';
+                const cell = row.cells[j];
+                if (cell?.htmlElement) {
+                    cell.htmlElement.style.transform = '';
+                }
             }
         }
     }
@@ -293,8 +327,9 @@ class RowsVirtualizer {
      * The index of the first visible row.
      */
     private async renderRows(rowCursor: number): Promise<void> {
-        // Prevent concurrent render operations
+        // Prevent concurrent render operations - queue the latest cursor
         if (this.isRendering) {
+            this.pendingRowCursor = rowCursor;
             return;
         }
 
@@ -340,16 +375,19 @@ class RowsVirtualizer {
                 }
             }
 
+            // The last row is always kept rendered for bottom alignment
+            const alwaysLastRow = rows.length > 0 ? rows.pop() : void 0;
+
             const from = Math.max(0, Math.min(
                 rowCursor - buffer,
                 rowCount - rowsPerPage
             ));
+            // `to` should not include the alwaysLastRow index (rowCount - 1)
             const to = Math.min(
                 rowCursor + rowsPerPage + buffer,
-                rows.length > 0 ? rows[rows.length - 1].index - 1 : rowCount - 1
+                rowCount - 2 // -2 because alwaysLastRow is at rowCount - 1
             );
 
-            const alwaysLastRow = rows.length > 0 ? rows.pop() : void 0;
             const tempRows: TableRow[] = [];
 
             const currentFrom = rows[0]?.index;
@@ -466,12 +504,24 @@ class RowsVirtualizer {
                 rows.length > 0
             ) {
                 const rowIndex = rowCursor - rows[0].index;
-                if (rows[rowIndex]) {
-                    vp.setFocusAnchorCell(rows[rowIndex].cells[0]);
+                const targetRow = rows[rowIndex];
+                if (
+                    targetRow &&
+                    targetRow.cells.length > 0 &&
+                    targetRow.cells[0]
+                ) {
+                    vp.setFocusAnchorCell(targetRow.cells[0]);
                 }
             }
         } finally {
             this.isRendering = false;
+
+            // If there's a pending render request, process it
+            if (this.pendingRowCursor !== null) {
+                const pendingCursor = this.pendingRowCursor;
+                this.pendingRowCursor = null;
+                await this.renderRows(pendingCursor);
+            }
         }
     }
 
@@ -500,12 +550,24 @@ class RowsVirtualizer {
         for (let i = 0; i < rowsLn; ++i) {
             const row = rows[i];
 
+            // Skip if row is not fully rendered or has no cells
+            if (
+                !row.rendered ||
+                !row.cells.length ||
+                !row.cells[0]?.htmlElement
+            ) {
+                row.htmlElement.style.height = defaultH + 'px';
+                continue;
+            }
+
             // Reset row height and cell transforms
             row.htmlElement.style.height = '';
             if (row.cells[0].htmlElement.style.transform) {
                 for (let j = 0, jEnd = row.cells.length; j < jEnd; ++j) {
                     const cell = row.cells[j];
-                    cell.htmlElement.style.transform = '';
+                    if (cell?.htmlElement) {
+                        cell.htmlElement.style.transform = '';
+                    }
                 }
             }
 
@@ -535,9 +597,11 @@ class RowsVirtualizer {
 
                 for (let j = 0, jEnd = row.cells.length; j < jEnd; ++j) {
                     const cell = row.cells[j];
-                    cell.htmlElement.style.transform = `translateY(${
-                        newHeight - cellHeight
-                    }px)`;
+                    if (cell?.htmlElement) {
+                        cell.htmlElement.style.transform = `translateY(${
+                            newHeight - cellHeight
+                        }px)`;
+                    }
                 }
             }
         }
