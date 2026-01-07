@@ -13,8 +13,7 @@
         "target": "ES2022",
         "lib": [
             "dom",
-            "es5",
-            "ES2017.SharedMemory"
+            "es5"
         ],
         "paths": {
             "highcharts": ["code/highcharts"],
