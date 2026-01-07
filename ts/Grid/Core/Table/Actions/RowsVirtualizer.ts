@@ -322,7 +322,7 @@ class RowsVirtualizer {
             const last = new TableRow(vp, rowCount - 1);
             await last.init();
             vp.tbodyElement.appendChild(last.htmlElement);
-            last.render();
+            await last.render();
             rows.push(last);
 
             if (isVirtualization) {
@@ -414,7 +414,7 @@ class RowsVirtualizer {
                     row.htmlElement,
                     vp.tbodyElement.lastChild
                 );
-                row.render();
+                await row.render();
                 continue;
             }
 

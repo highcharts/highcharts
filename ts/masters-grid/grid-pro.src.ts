@@ -92,6 +92,7 @@ import '../Grid/Pro/CellRendering/Renderers/SparklineRenderer.js';
 import '../Grid/Pro/CellRendering/Renderers/NumberInputRenderer.js';
 
 import '../Grid/Core/Data/LocalDataProvider.js';
+import '../Grid/Pro/Data/RemoteDataProvider.js';
 
 
 /* *

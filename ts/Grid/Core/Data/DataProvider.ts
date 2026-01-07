@@ -38,6 +38,9 @@ export abstract class DataProvider {
         rowIndex: number
     ): Promise<DT.RowObject | undefined>;
 
+    /**
+     * Gets the total number of rows in the data source.
+     */
     public abstract getRowCount(): Promise<number>;
 
 

@@ -115,9 +115,9 @@ class TableCell extends Cell {
     /**
      * Renders the cell by appending it to the row and setting its value.
      */
-    public override render(): void {
-        super.render();
-        void this.setValue();
+    public override async render(): Promise<void> {
+        await super.render();
+        await this.setValue();
     }
 
     /**
@@ -288,12 +288,12 @@ class TableCell extends Cell {
         });
     }
 
-    protected override onMouseOver(): void {
+    public override onMouseOver(): void {
         this.row.viewport.grid.hoverRow(this.row.index);
         super.onMouseOver();
     }
 
-    protected override onMouseOut(): void {
+    public override onMouseOut(): void {
         this.row.viewport.grid.hoverRow();
         super.onMouseOut();
     }

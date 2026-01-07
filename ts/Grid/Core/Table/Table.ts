@@ -234,6 +234,7 @@ class Table {
 
         // Init Table
         await this.init();
+        this.reflow();
     }
 
     /**
