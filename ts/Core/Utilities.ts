@@ -20,17 +20,19 @@
 import type AxisType from './Axis/AxisType';
 import type Chart from './Chart/Chart';
 import type CSSObject from './Renderer/CSSObject';
-import type { DeepPartial } from '../Shared/Types';
+import type {
+    DeepPartial,
+    TypedArray
+} from '../Shared/Types';
 import type {
     DOMElementType,
     HTMLDOMElement
 } from './Renderer/DOMElementType';
-import type EventCallback from './EventCallback';
+import type { EventCallback } from './Callback';
 import type HTMLAttributes from './Renderer/HTML/HTMLAttributes';
 import type Series from './Series/Series';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import type Time from './Time';
-import type Types from '../Shared/Types';
 
 import H from './Globals.js';
 const {
@@ -240,7 +242,7 @@ function merge<T>(
 /**
  * Constrain a value to within a lower and upper threshold.
  *
- * @private
+ * @internal
  * @param {number} value The initial value
  * @param {number} min The lower threshold
  * @param {number} max The upper threshold
@@ -275,7 +277,7 @@ function crisp(
 /**
  * Return the deep difference between two objects. It can either return the new
  * properties, or optionally return the old values of new properties.
- * @private
+ * @internal
  */
 function diffObjects(
     newer: AnyRecord,
@@ -377,7 +379,7 @@ function diffObjects(
 /**
  * Shortcut for parseInt
  *
- * @private
+ * @internal
  * @function Highcharts.pInt
  *
  * @param {*} s
@@ -534,7 +536,7 @@ function erase(arr: Array<unknown>, item: unknown): void {
  * according to the index option and whether it is internal. Used internally
  * when adding series and axes.
  *
- * @private
+ * @internal
  * @function Highcharts.Chart#insertItem
  * @param  {Highcharts.Series|Highcharts.Axis} item
  *         The item to insert
@@ -1227,7 +1229,7 @@ function stableSort<T>(
  * @return {number}
  *         The lowest number.
  */
-function arrayMin(data: Array<any>|Types.TypedArray): number {
+function arrayMin(data: Array<any>|TypedArray): number {
     let i = data.length,
         min = data[0];
 
@@ -1252,7 +1254,7 @@ function arrayMin(data: Array<any>|Types.TypedArray): number {
  * @return {number}
  *         The highest number.
  */
-function arrayMax(data: Array<any>|Types.TypedArray): number {
+function arrayMax(data: Array<any>|TypedArray): number {
     let i = data.length,
         max = data[0];
 
@@ -1352,14 +1354,14 @@ const timeUnits: Record<Time.TimeUnit, number> = {
 /**
  * Easing definition
  *
- * @private
+ * @internal
  * @function Math.easeInOutSine
  *
  * @param {number} pos
- *        Current position, ranging from 0 to 1.
+ * Current position, ranging from 0 to 1.
  *
  * @return {number}
- *         Ease result
+ * Ease result
  */
 Math.easeInOutSine = function (pos: number): number {
     return -0.5 * (Math.cos(Math.PI * pos) - 1);
@@ -1368,7 +1370,7 @@ Math.easeInOutSine = function (pos: number): number {
 /**
  * Convenience function to get the align factor, used several places for
  * computing positions
- * @private
+ * @internal
  */
 const getAlignFactor = (align: string = ''): number => ({
     center: 0.5,
@@ -1379,7 +1381,7 @@ const getAlignFactor = (align: string = ''): number => ({
 
 /**
  * Find the closest distance between two values of a two-dimensional array
- * @private
+ * @internal
  * @function Highcharts.getClosestDistance
  *
  * @param {Array<Array<number>>} arrays
@@ -1389,7 +1391,7 @@ const getAlignFactor = (align: string = ''): number => ({
  *          The closest distance between values
  */
 function getClosestDistance(
-    arrays: (number[]|Types.TypedArray)[],
+    arrays: (number[]|TypedArray)[],
     onError?: Function
 ): (number|undefined) {
     const allowNegative = !onError;
@@ -1422,7 +1424,7 @@ function getClosestDistance(
 /**
  * Returns the value of a property path on a given object.
  *
- * @private
+ * @internal
  * @function getNestedProperty
  *
  * @param {string} path
@@ -1783,9 +1785,7 @@ function removeEvent<T>(
 ): void {
     /* eslint-enable valid-jsdoc */
 
-    /**
-     * @private
-     */
+    /** @internal */
     function removeOneEvent(
         type: string,
         fn: (EventCallback<T>|Function)
@@ -1797,9 +1797,7 @@ function removeEvent<T>(
         }
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     function removeAllEvents(eventCollection: any): void {
         let types: Record<string, boolean>,
             len;
@@ -2114,17 +2112,44 @@ if ((win as any).jQuery) {
 namespace Utilities {
     export type RelativeSize = (number|string);
     export interface ErrorMessageEventObject {
+        /**
+         * The chart that causes the error.
+         */
         chart?: Chart;
+        /**
+         * The error code.
+         */
         code: number;
+        /**
+         * The error message.
+         */
         message?: string;
+        /**
+         * Additional parameters for the generated message.
+         */
         params?: Record<string, string>;
     }
     export interface EventOptions {
+        /**
+         * The order the event handler should be called. This opens for having
+         * one handler be called before another, independent of in which order
+         * they were added.
+         */
         order?: number;
+        /**
+         * Whether an event should be passive or not. When set to `true`, the
+         * function specified by listener will never call `preventDefault()`.
+         */
         passive?: boolean;
     }
     export interface EventWrapperObject<T> {
+        /**
+         * The function callback to execute when the event is fired.
+         */
         fn: EventCallback<T>;
+        /**
+         * The order the event handler should be called.
+         */
         order: number;
     }
     export interface FindCallback<T> {
@@ -2142,9 +2167,21 @@ namespace Utilities {
         ): void;
     }
     export interface OffsetObject {
+        /**
+         * Height of the element.
+         */
         height: number;
+        /**
+         * Left distance to the page border.
+         */
         left: number;
+        /**
+         * Top distance to the page border.
+         */
         top: number;
+        /**
+         * Width of the element.
+         */
         width: number;
     }
     export interface WrapProceedFunction<T extends ArrowFunction> {
@@ -2159,8 +2196,73 @@ namespace Utilities {
  *
  * */
 
+interface Utilities {
+    addEvent: typeof addEvent;
+    arrayMax: typeof arrayMax;
+    arrayMin: typeof arrayMin;
+    attr: typeof attr;
+    /** @internal */
+    clamp: typeof clamp;
+    clearTimeout: typeof internalClearTimeout;
+    correctFloat: typeof correctFloat;
+    createElement: typeof createElement;
+    /** @internal */
+    crisp: typeof crisp;
+    css: typeof css;
+    defined: typeof defined;
+    destroyObjectProperties: typeof destroyObjectProperties;
+    /** @internal */
+    diffObjects: typeof diffObjects;
+    discardElement: typeof discardElement;
+    erase: typeof erase;
+    error: typeof error;
+    extend: typeof extend;
+    extendClass: typeof extendClass;
+    find: typeof find;
+    fireEvent: typeof fireEvent;
+    /** @internal */
+    getAlignFactor: typeof getAlignFactor;
+    /** @internal */
+    getClosestDistance: typeof getClosestDistance;
+    getMagnitude: typeof getMagnitude;
+    /** @internal */
+    getNestedProperty: typeof getNestedProperty;
+    getStyle: typeof getStyle;
+    /** @internal */
+    insertItem: typeof insertItem;
+    isArray: typeof isArray;
+    isClass: typeof isClass;
+    isDOMElement: typeof isDOMElement;
+    isFunction: typeof isFunction;
+    isNumber: typeof isNumber;
+    isObject: typeof isObject;
+    isString: typeof isString;
+    merge: typeof merge;
+    normalizeTickInterval: typeof normalizeTickInterval;
+    objectEach: typeof objectEach;
+    offset: typeof offset;
+    pad: typeof pad;
+    pick: typeof pick;
+    /** @internal */
+    pInt: typeof pInt;
+    pushUnique: typeof pushUnique;
+    relativeLength: typeof relativeLength;
+    removeEvent: typeof removeEvent;
+    replaceNested: typeof replaceNested;
+    splat: typeof splat;
+    stableSort: typeof stableSort;
+    syncTimeout: typeof syncTimeout;
+    /** @internal */
+    timeUnits: typeof timeUnits;
+    /** @internal */
+    ucfirst: typeof ucfirst;
+    uniqueKey: typeof uniqueKey;
+    useSerialIds: typeof useSerialIds;
+    wrap: typeof wrap;
+}
+
 // TODO use named exports when supported.
-const Utilities = {
+const Utilities: Utilities = {
     addEvent,
     arrayMax,
     arrayMin,
@@ -2213,7 +2315,7 @@ const Utilities = {
     uniqueKey,
     useSerialIds,
     wrap
-};
+} as Utilities;
 
 export default Utilities;
 
@@ -2223,36 +2325,6 @@ export default Utilities;
  *  API Declarations
  *
  * */
-
-/**
- * An animation configuration. Animation configurations can also be defined as
- * booleans, where `false` turns off animation and `true` defaults to a duration
- * of 500ms and defer of 0ms.
- *
- * @interface Highcharts.AnimationOptionsObject
- *//**
- * A callback function to execute when the animation finishes.
- * @name Highcharts.AnimationOptionsObject#complete
- * @type {Function|undefined}
- *//**
- * The animation defer in milliseconds.
- * @name Highcharts.AnimationOptionsObject#defer
- * @type {number|undefined}
- *//**
- * The animation duration in milliseconds.
- * @name Highcharts.AnimationOptionsObject#duration
- * @type {number|undefined}
- *//**
- * The name of an easing function as defined on the `Math` object.
- * @name Highcharts.AnimationOptionsObject#easing
- * @type {string|Function|undefined}
- *//**
- * A callback function to execute on each step of each attribute or CSS property
- * that's being animated. The first argument contains information about the
- * animation and progress.
- * @name Highcharts.AnimationOptionsObject#step
- * @type {Function|undefined}
- */
 
 /**
  * Creates a frame for the animated SVG element.
@@ -2418,6 +2490,10 @@ export default Utilities;
  *//**
  * @name Highcharts.Dictionary<T>#[key:string]
  * @type {T}
+ */
+
+/**
+ * @typedef {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement} Highcharts.DOMElementType
  */
 
 /**
