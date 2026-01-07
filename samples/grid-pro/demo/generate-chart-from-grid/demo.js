@@ -31,76 +31,99 @@ Grid.grid('grid', {
             ]
         }
     },
-    events: {
-        cell: {
-            click: function () {
-                const yearColumnId = 'Year';
-                const columnId = this.column.id;
+    columnDefaults: {
+        cells: {
+            events: {
+                click: function () {
+                    const grid = this.row.viewport.grid;
+                    const yearColumnId = 'Year';
+                    const columnId = this.column.id;
 
-                // Skip if clicked on Year column
-                if (columnId === yearColumnId) {
-                    return;
-                }
+                    // Skip if clicked on Year column
+                    if (columnId === yearColumnId) {
+                        return;
+                    }
 
-                // We get the x axis from the Year column
-                const years = this.row.viewport.grid.dataTable.getColumn(
-                    yearColumnId
-                );
+                    // We get the x axis from the Year column
+                    const years = grid.dataTable.getColumn(yearColumnId);
 
-                // Create chart if it doesn't exist
-                if (!chart) {
-                    chart = Highcharts.chart('chart', {
-                        title: {
-                            text: 'U.S Solar Employment Growth',
-                            align: 'center'
-                        },
-                        xAxis: {
-                            categories: years
-                        },
-                        yAxis: {
+                    // Create chart if it doesn't exist
+                    if (!chart) {
+                        chart = Highcharts.chart('chart', {
                             title: {
-                                text: 'Number of Employees'
+                                text: 'U.S Solar Employment Growth',
+                                align: 'center'
+                            },
+                            xAxis: {
+                                categories: years
+                            },
+                            yAxis: {
+                                title: {
+                                    text: 'Number of Employees'
+                                }
                             }
+                        });
+                    }
+
+                    // Check if series already exists in the chart
+                    const existingSeries = chart.series.find(
+                        s => s.name === columnId
+                    );
+
+                    const toggleColumnHighlight = () => {
+                        if (activeCols.has(columnId)) {
+                            activeCols.delete(columnId);
+                        } else {
+                            activeCols.add(columnId);
                         }
-                    });
-                }
+                    };
 
-                // Check if series already exists in the chart
-                const existingSeries = chart.series.find(
-                    s => s.name === columnId
-                );
+                    const accessibility = grid.accessibility;
 
-                const toggleColumnHighlight = () => {
-                    if (activeCols.has(columnId)) {
-                        activeCols.delete(columnId);
+                    if (existingSeries) {
+                        // Remove the series from chart
+                        existingSeries.remove();
+
+                        // Accessibility
+                        accessibility.announce(
+                            `Removed series ${columnId} from chart.`,
+                            true
+                        );
+
+                        // If no series left, destroy the chart
+                        if (chart.series.length === 0) {
+                            chart.destroy();
+                            chart = null;
+
+                            // Accessibility
+                            accessibility.announce('Destroyed chart.', true);
+                        }
                     } else {
-                        activeCols.add(columnId);
-                    }
-                };
+                        // Add new series to chart
+                        chart.addSeries({
+                            name: columnId,
+                            data: this.column.data
+                        });
 
-                if (existingSeries) {
-                    // Remove the series from chart
-                    existingSeries.remove();
-                    // If no series left, destroy the chart
-                    if (chart.series.length === 0) {
-                        chart.destroy();
-                        chart = null;
+                        // Accessibility
+                        accessibility.announce(
+                            `Added series ${columnId} to the chart.`,
+                            true
+                        );
                     }
-                } else {
-                    // Add new series to chart
-                    chart.addSeries({
-                        name: columnId,
-                        data: this.column.data
-                    });
+                    toggleColumnHighlight();
+                    setActiveColumnStyle(this);
+                },
+                afterSetValue: function () {
+                    setActiveColumnStyle(this);
                 }
-                toggleColumnHighlight();
-                setActiveColumnStyle(this);
-            },
-            afterSetValue: function () {
-                setActiveColumnStyle(this);
             }
         }
-    }
+    },
+    columns: [{
+        id: 'Year',
+        width: 65
+    }]
 });
 
 function setActiveColumnStyle(cell) {

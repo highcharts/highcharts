@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sophie Bremer
@@ -31,15 +31,19 @@ import type {
     CrossfilterSyncOptions,
     Options
 } from './NavigatorComponentOptions';
+import type { DeepPartial } from '../../../Shared/Types';
 import type {
-    RangeModifierOptions, RangeModifierRangeOptions
-} from '../../../Data/Modifiers/RangeModifierOptions';
+    FilterModifierOptions
+} from '../../../Data/Modifiers/FilterModifierOptions';
+
 
 import Component from '../Component.js';
 import Globals from '../../Globals.js';
 import NavigatorComponentDefaults from './NavigatorComponentDefaults.js';
 import DataTable from '../../../Data/DataTable.js';
 import NavigatorSyncs from './NavigatorSyncs/NavigatorSyncs.js';
+import NavigatorSyncUtils from './NavigatorSyncs/NavigatorSyncUtils.js';
+
 import U from '../../../Core/Utilities.js';
 const {
     diffObjects,
@@ -172,7 +176,7 @@ class NavigatorComponent extends Component {
                 this.contentElement.clientHeight
             ),
             width = this.contentElement.clientWidth,
-            chartUpdates: Globals.DeepPartial<HighchartsOptions> = {};
+            chartUpdates: DeepPartial<HighchartsOptions> = {};
 
         if (
             chart.chartHeight !== height ||
@@ -221,8 +225,7 @@ class NavigatorComponent extends Component {
      * Navigator column assignment.
      */
     public getColumnAssignment(): [string, string] {
-        const columnAssignment = this.options.columnAssignment ??
-            this.options.columnAssignments ?? {};
+        const columnAssignment = this.options.columnAssignment ?? {};
 
         let columnsAssignment: (string|null);
 
@@ -234,10 +237,9 @@ class NavigatorComponent extends Component {
             }
         }
 
-        const connector = this.getFirstConnector();
-
-        if (connector) {
-            const columns = connector.table.getColumnNames();
+        const table = this.getDataTable();
+        if (table) {
+            const columns = table.getColumnIds();
 
             if (columns.length) {
                 return [columns[0], 'y'];
@@ -345,11 +347,10 @@ class NavigatorComponent extends Component {
     /** @private */
     private renderNavigator(): void {
         const chart = this.chart;
-        const connector = this.getFirstConnector();
+        const table = this.getDataTable();
 
-        if (connector) {
-            const table = connector.table,
-                column = this.getColumnAssignment(),
+        if (table) {
+            const column = this.getColumnAssignment(),
                 columnValues = table.getColumn(column[0], true) || [];
 
             let data: (
@@ -380,7 +381,7 @@ class NavigatorComponent extends Component {
     private generateCrossfilterData(): [number, number | null][] {
         const crossfilterOptions =
             this.sync.syncConfig.crossfilter as CrossfilterSyncOptions;
-        const table = this.getFirstConnector()?.table;
+        const table = this.getDataTable();
         const columnValues = table?.getColumn(
             this.getColumnAssignment()[0], true
         ) || [];
@@ -423,16 +424,22 @@ class NavigatorComponent extends Component {
         let filteredValues: (number | string)[];
 
         const modifierOptions = table.getModifier()?.options;
-        if (crossfilterOptions.affectNavigator && modifierOptions) {
-            const appliedRanges: RangeModifierRangeOptions[] = [],
-                rangedColumns: DataTable.Column[] = [],
-                { ranges } = (modifierOptions as RangeModifierOptions);
+
+        if (
+            crossfilterOptions.affectNavigator &&
+            modifierOptions?.type === 'Filter'
+        ) {
+            const appliedRanges: NavigatorSyncUtils.Range[] = [];
+            const rangedColumns: DataTable.Column[] = [];
+            const ranges = NavigatorSyncUtils.toRange(
+                modifierOptions as FilterModifierOptions
+            );
 
             for (let i = 0, iEnd = ranges.length; i < iEnd; i++) {
-                if (ranges[i].column !== this.getColumnAssignment()[0]) {
+                if (ranges[i].columnId !== this.getColumnAssignment()[0]) {
                     appliedRanges.push(ranges[i]);
                     rangedColumns.push(table.getColumn(
-                        ranges[i].column, true
+                        ranges[i].columnId, true
                     ) || []);
                 }
             }

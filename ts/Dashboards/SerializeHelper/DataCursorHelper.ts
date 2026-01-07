@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sophie Bremer
@@ -19,7 +19,7 @@
  *
  * */
 
-import type Globals from '../Globals';
+import type { AnyRecord } from '../../Shared/Types';
 import type JSON from '../JSON';
 
 import DataCursor from '../../Data/DataCursor.js';
@@ -57,7 +57,7 @@ function fromJSON(
  * false.
  */
 function jsonSupportFor(
-    obj: Globals.AnyRecord
+    obj: AnyRecord
 ): obj is DataCursor {
     return obj instanceof DataCursor;
 }

@@ -3,6 +3,7 @@ on:
   pull_request:
     branches:
       - 'master'
+      - 'dash/**'
     paths:
       - 'ts/Dashboards/**'
       - 'ts/Data/**'
@@ -35,12 +36,16 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
 
-      - run: npm i
+      - run: npm ci
 
       - name: Build Highcharts
         run: npx gulp scripts
+
+      - name: Build Grid
+        run: npx gulp scripts --product Grid
+
       - name: Build Dashboards
-        run: npx gulp dashboards/scripts
+        run: npx gulp scripts --product Dashboards
 
       - name: Benchmark
         continue-on-error: true
@@ -50,13 +55,16 @@ jobs:
         uses: actions/checkout@v4
         with:
            clean: false # do not remove files from previous run
-      - run: npm i
+      - run: npm ci
 
       - name: Build Highcharts
         run: npx gulp scripts
 
+      - name: Build Grid
+        run: npx gulp scripts --product Grid
+
       - name: Build Dashboards
-        run: npx gulp dashboards/scripts
+        run: npx gulp scripts --product Dashboards
 
       - name: Benchmark
         run: cd test/ts-node-unit-tests && node --import tsx bench.ts --context actual --pattern Dashboards/

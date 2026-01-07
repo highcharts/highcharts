@@ -90,7 +90,7 @@ You can also test your knowledge on the TypeScript
 If a type is created by multiple files, it should go into its own `*.d.ts` file.
 That way multiple files can add properties to an interface in an `*.d.ts` file.
 A good example for this kind of type interface extension is the
-[`SeriesLike`](./Core/Series/SeriesLike.d.ts) interface.
+[`SeriesBase`](./Core/Series/SeriesBase.d.ts) interface.
 
 
 ### Combine the class pattern with class types

@@ -1,5 +1,5 @@
 QUnit.test('Inputs and buttons aligning.', function (assert) {
-    var align = ['left', 'center', 'right'],
+    const align = ['left', 'center', 'right'],
         series = [
             {
                 data: (function () {
@@ -11,8 +11,8 @@ QUnit.test('Inputs and buttons aligning.', function (assert) {
                 }()),
                 pointInterval: 24 * 36e5
             }
-        ],
-        chart,
+        ];
+    let chart,
         inputGroup,
         buttonGroup,
         inputPosition,
@@ -23,7 +23,7 @@ QUnit.test('Inputs and buttons aligning.', function (assert) {
         buttonGroupWidth,
         selectorGroupBBox;
 
-    for (var i = 0; i < align.length; i++) {
+    for (let i = 0; i < align.length; i++) {
         chart = Highcharts.stockChart('container', {
             chart: {
                 width: 400
@@ -64,7 +64,12 @@ QUnit.test('Inputs and buttons aligning.', function (assert) {
                 inputGroup.translateY > buttonGroup.translateY, // check if
             // input group is lower
             true,
-            'rangeSelector'
+            'Input group should move below buttons group with not enough space.'
+        );
+
+        assert.ok(
+            chart.plotTop > chart.rangeSelector.getHeight(),
+            'RangeSelector should not overlap into plotArea, #23058.'
         );
     }
 
@@ -153,6 +158,32 @@ QUnit.test('Inputs and buttons aligning.', function (assert) {
             1,
         'rangeSelector buttons should be right aligned correctly when ' +
         'exporting enabled (#13014).'
+    );
+
+    chart.update({
+        rangeSelector: {
+            inputEnabled: true,
+            buttonPosition: {
+                align: 'left'
+            },
+            dropdown: 'always'
+        },
+        chart: {
+            width: 400
+        }
+    });
+
+    assert.ok(
+        parseFloat(chart.rangeSelector.dropdown.style.width) > 1 &&
+        parseFloat(chart.rangeSelector.dropdown.style.height) > 1,
+        'Dropdown select should be clickable'
+    );
+
+    assert.close(
+        chart.rangeSelector.buttonGroup.translateY,
+        chart.rangeSelector.inputGroup.translateY,
+        1,
+        'Dropdown should be aligned with the button group'
     );
 });
 

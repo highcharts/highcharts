@@ -22,7 +22,7 @@ const table = new Highcharts.DataTable({
 table.setModifier(new MathModifier());
 
 renderTable(container1, table, true);
-renderTable(container2, table.modified);
+renderTable(container2, table.getModified());
 
 
 // Add Change Listener
@@ -42,13 +42,13 @@ function onChange(e) {
         td.blur();
 
         table.setCell(
-            table.getColumnNames()[column],
+            table.getColumnIds()[column],
             row,
             (isNaN(value) ? td.innerText : value
             )
         );
 
-        renderTable(container2, table.modified);
+        renderTable(container2, table.getModified());
 
         cursor.emitCursor(table, {
             column: Array
@@ -124,7 +124,7 @@ function renderTable(container, table, editable) {
     html.push('<table>');
     html.push('<thead>');
     html.push('<tr>');
-    for (const column of table.getColumnNames()) {
+    for (const column of table.getColumnIds()) {
         html.push(
             editable ? '<th contenteditable>' : '<th>',
             escapeStringForHTML(column),

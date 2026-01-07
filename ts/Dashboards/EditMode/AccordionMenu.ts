@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Pawel Lysy
@@ -20,9 +20,9 @@
  *
  * */
 
+import type { AnyRecord, DeepPartial } from '../../Shared/Types';
 import type Component from '../Components/Component';
 import type EditableOptions from '../Components/EditableOptions';
-import type Globals from '../Globals';
 import type { Options as HTMLOptions } from '../Components/HTMLComponent/HTMLComponentOptions';
 
 import EditRenderer from './EditRenderer.js';
@@ -194,11 +194,11 @@ class AccordionMenu {
     ): void {
         const pathLength = propertyPath.length - 1;
 
-        let currentLevel = this.changedOptions as Globals.AnyRecord;
+        let currentLevel = this.changedOptions as AnyRecord;
         let currentChartOptionsLevel;
         let currentOldChartOptionsBufferLevel;
-        let currentDataGridOptionsLevel;
-        let currentOldDataGridOptionsBufferLevel;
+        let currentGridOptionsLevel;
+        let currentOldGridOptionsBufferLevel;
 
         if (pathLength === 0 && propertyPath[0] === 'chartOptions') {
             try {
@@ -223,30 +223,30 @@ class AccordionMenu {
 
             if (key === 'gridOptions') {
                 const realGridOptions =
-                    (this.component as any).dataGrid?.options;
+                    (this.component as any).grid?.options;
 
                 if (realGridOptions) {
                     const oldOptionsBuffer =
-                        this.oldOptionsBuffer as Globals.AnyRecord;
+                        this.oldOptionsBuffer as AnyRecord;
                     if (!oldOptionsBuffer.gridOptions) {
                         oldOptionsBuffer.gridOptions = {};
                     }
-                    currentOldDataGridOptionsBufferLevel =
-                        oldOptionsBuffer.gridOptions as Globals.AnyRecord;
-                    currentDataGridOptionsLevel = realGridOptions;
+                    currentOldGridOptionsBufferLevel =
+                        oldOptionsBuffer.gridOptions as AnyRecord;
+                    currentGridOptionsLevel = realGridOptions;
                 }
             } else if (
-                currentDataGridOptionsLevel &&
-                currentOldDataGridOptionsBufferLevel
+                currentGridOptionsLevel &&
+                currentOldGridOptionsBufferLevel
             ) {
-                currentDataGridOptionsLevel = currentDataGridOptionsLevel[key];
+                currentGridOptionsLevel = currentGridOptionsLevel[key];
 
-                if (currentOldDataGridOptionsBufferLevel[key] === void 0) {
-                    currentOldDataGridOptionsBufferLevel[key] = {};
+                if (currentOldGridOptionsBufferLevel[key] === void 0) {
+                    currentOldGridOptionsBufferLevel[key] = {};
                 }
 
-                currentOldDataGridOptionsBufferLevel =
-                    currentOldDataGridOptionsBufferLevel[key];
+                currentOldGridOptionsBufferLevel =
+                    currentOldGridOptionsBufferLevel[key];
             }
 
             if (key === 'chartOptions') {
@@ -254,12 +254,12 @@ class AccordionMenu {
 
                 if (realChartOptions) {
                     const oldOptionsBuffer =
-                        this.oldOptionsBuffer as Globals.AnyRecord;
+                        this.oldOptionsBuffer as AnyRecord;
                     if (!oldOptionsBuffer.chartOptions) {
                         oldOptionsBuffer.chartOptions = {};
                     }
                     currentOldChartOptionsBufferLevel =
-                        oldOptionsBuffer.chartOptions as Globals.AnyRecord;
+                        oldOptionsBuffer.chartOptions as AnyRecord;
                     currentChartOptionsLevel = realChartOptions;
                 }
             } else if (
@@ -317,6 +317,7 @@ class AccordionMenu {
         }
 
         const renderFunction = EditRenderer.getRendererFunction(options.type);
+        const lang = (component.board?.editMode || EditGlobals).lang;
 
         if (!renderFunction) {
             return;
@@ -327,6 +328,7 @@ class AccordionMenu {
             iconsURLPrefix: this.iconsURLPrefix,
             value: component.getEditableOptionValue(options.propertyPath),
             enabledOnOffLabels: options.type === 'toggle',
+            lang,
             onchange: (
                 value: boolean | string | number
             ): void => this.updateOptions(options.propertyPath || [], value)

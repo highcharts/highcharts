@@ -51,7 +51,7 @@ QUnit.test('DataTable Column Rename', function (assert) {
 
     // Move
     assert.ok(
-        table.renameColumn('column1', 'newColumn'),
+        table.changeColumnId('column1', 'newColumn'),
         'Table should move cells of a column to a new column.'
     );
     assert.deepEqual(
@@ -62,7 +62,7 @@ QUnit.test('DataTable Column Rename', function (assert) {
 
     // Force move
     assert.ok(
-        table.renameColumn('newColumn', 'existingColumn'),
+        table.changeColumnId('newColumn', 'existingColumn'),
         'Table should move cell of a column to an existing column (with force).'
     );
     assert.deepEqual(
@@ -74,7 +74,7 @@ QUnit.test('DataTable Column Rename', function (assert) {
     table.setColumn('existingColumn', [ true ])
 
     assert.notOk(
-        table.renameColumn('nonexistant', 'existingColumn'),
+        table.changeColumnId('nonexistant', 'existingColumn'),
         'Table should fail when trying to move a non-existant column.'
     );
 
@@ -286,146 +286,6 @@ QUnit.test('DataTable Events', function (assert) {
 
 });
 
-QUnit.test('DataTable.getCellAsNumber', function (assert) {
-    const table = new DataTable({
-        columns: {
-            A: [false, true, -1, 0, 1, NaN, '', '0', 'a', null, ,void 0 ]
-        }
-    });
-
-    assert.strictEqual(
-        table.getRowCount(),
-        12,
-        'Table should contain 12 rows.'
-    );
-
-    assert.deepEqual(
-        [
-            table.getCellAsNumber('A', 0),
-            table.getCellAsNumber('A', 0, true),
-            table.getCellAsNumber('A', 1),
-            table.getCellAsNumber('A', 1, true)
-        ],
-        [0, 0, 1, 1],
-        'Table should return boolean as number.'
-    );
-
-    assert.deepEqual(
-        [
-            table.getCellAsNumber('A', 2),
-            table.getCellAsNumber('A', 2, true),
-            table.getCellAsNumber('A', 3),
-            table.getCellAsNumber('A', 3, true),
-            table.getCellAsNumber('A', 4),
-            table.getCellAsNumber('A', 4, true)
-        ],
-        [-1, -1, 0, 0, 1, 1],
-        'Table should return number.'
-    );
-
-    assert.strictEqual(
-        table.getCellAsNumber('A', 5),
-        null,
-        'Table should return NaN as null by default.'
-    );
-
-    assert.ok(
-        isNaN(table.getCellAsNumber('A', 5, true)),
-        'Table should return NaN on request.'
-    );
-
-    assert.deepEqual(
-        [
-            table.getCellAsNumber('A', 6),
-            table.getCellAsNumber('A', 6, true),
-            table.getCellAsNumber('A', 7),
-            table.getCellAsNumber('A', 7, true),
-            table.getCellAsNumber('A', 8),
-            table.getCellAsNumber('A', 8, true)
-        ],
-        [null, NaN, 0, 0, null, NaN],
-        'Table should return string as number or null.'
-    );
-
-    assert.ok(
-        isNaN(table.getCellAsNumber('A', 9, true)),
-        'Table should return null as NaN on request.'
-    );
-
-    assert.ok(
-        isNaN(table.getCellAsNumber('A', 10, true)),
-        'Table should return undefined cell as NaN on request.'
-    );
-
-    assert.ok(
-        isNaN(table.getCellAsNumber('A', 11, true)),
-        'Table should return undefined as NaN on request.'
-    );
-
-});
-
-QUnit.test('DataTable.getColumnAsNumbers', function (assert) {
-    const table = new DataTable({
-        columns: {
-            test1: [null, 1, 2],
-            test2: [void 0, 1, 2],
-            test3: [null, 1, '2'],
-            test4: [0, null, 2],
-            test5: ['0', 1, null],
-            test6: [null, '1', 2],
-            test7: [void 0, '1', 2]
-        }
-    });
-
-    assert.deepEqual(
-        table.getColumnAsNumbers('test1'),
-        [null, 1, 2],
-        'Table should return column "test1" without conversion.'
-    );
-
-    assert.deepEqual(
-        table.getColumnAsNumbers('test2'),
-        [void 0, 1, 2],
-        'Table should return column "test2" without conversion.'
-    );
-
-    assert.deepEqual(
-        table.getColumnAsNumbers('test3'),
-        [null, 1, '2'],
-        'Table should return column "test3" without conversion.'
-    );
-
-    assert.deepEqual(
-        table.getColumnAsNumbers('test4'),
-        [0, null, 2],
-        'Table should return column "test4" without conversion.'
-    );
-
-    assert.deepEqual(
-        table.getColumnAsNumbers('test5'),
-        [0, 1, null],
-        'Table should return column "test5" after conversion.'
-    );
-
-    assert.deepEqual(
-        table.getColumnAsNumbers('test6'),
-        [null, 1, 2],
-        'Table should return column "test6" after conversion.'
-    );
-
-    assert.deepEqual(
-        table.getColumnAsNumbers('test7'),
-        [null, 1, 2],
-        'Table should return column "test7" after conversion. (#1)'
-    );
-
-    assert.ok(
-        isNaN(table.getColumnAsNumbers('test7', true)[0]),
-        'Table should return column "test7" after conversion. (#2)'
-    );
-
-});
-
 QUnit.test('DataTable.getRows', function (assert) {
     const table = new DataTable({ columns: { 'a': [ 0 ] } });
 
@@ -479,7 +339,79 @@ QUnit.test('DataTable.setRows', function (assert) {
         table.getRow(0),
         'Row values are the same after clone.'
     );
+});
 
+QUnit.test('DataTable.deleteRows', function (assert) {
+    const createTable = () => new DataTable({
+        columns: {
+            id: [3, 2, 1, 5, 3, 9, 0, 7, 6, 8, 4, 1, 7]
+        }
+    });
+    let table = createTable();
+
+    table.deleteRows();
+    assert.strictEqual(
+        table.getRowCount(),
+        0,
+        'deleteRows() should delete all rows.'
+    );
+
+    table = createTable();
+    table.deleteRows(5);
+    assert.deepEqual(
+        table.getColumn('id'),
+        [3, 2, 1, 5, 3, 0, 7, 6, 8, 4, 1, 7],
+        'deleteRows(5) should remove row at index 5.'
+    );
+
+    table = createTable();
+    table.deleteRows(5, 2);
+    assert.deepEqual(
+        table.getColumn('id'),
+        [3, 2, 1, 5, 3,  7, 6, 8, 4, 1, 7],
+        'deleteRows(5, 2) should remove rows at indices 5 and 6.'
+    );
+
+
+    table = createTable();
+    table.deleteRows([2, 0, 3, 2]);
+    assert.deepEqual(
+        table.getColumn('id'),
+        [2, 3, 9, 0, 7, 6, 8, 4, 1, 7],
+        'deleteRows([2, 0, 3, 2]) should remove rows at indices 0, 2, 3.'
+    );
+
+    table = createTable();
+    table.deleteRows(999);
+    assert.strictEqual(
+        table.getRowCount(),
+        13,
+        'deleteRows(999) should not delete any rows.'
+    );
+    table.deleteRows(5, 0);
+    assert.strictEqual(
+        table.getRowCount(),
+        13,
+        'deleteRows(5, 0) should not delete any rows.'
+    );
+    table.deleteRows([999, 1000]);
+    assert.strictEqual(
+        table.getRowCount(),
+        13,
+        'deleteRows([999, 1000]) should not delete any rows.'
+    );
+    table.deleteRows([-5]);
+    assert.strictEqual(
+        table.getRowCount(),
+        13,
+        'deleteRows([-5]) should not delete any rows.'
+    );
+    table.deleteRows([]);
+    assert.strictEqual(
+        table.getRowCount(),
+        13,
+        'deleteRows([]) should not delete any rows.'
+    );
 });
 
 QUnit.test('DataTable.setColumns', function (assert) {
@@ -590,7 +522,7 @@ QUnit.test('DataTable.setModifier', function (assert) {
         });
 
     assert.deepEqual(
-        table.modified.getColumns(),
+        table.getModified().getColumns(),
         {
             x: [0, 1, 2],
             y: [3, 1, 2]
@@ -602,7 +534,7 @@ QUnit.test('DataTable.setModifier', function (assert) {
         .setModifier(modifier)
         .then((table) => {
             assert.deepEqual(
-                table.modified.getColumns(),
+                table.getModified().getColumns(),
                 {
                     x: [2, 0, 1],
                     y: [3, 1, 2] 
@@ -612,8 +544,8 @@ QUnit.test('DataTable.setModifier', function (assert) {
 
             assert.deepEqual(
                 [
-                    table.modified.originalRowIndexes,
-                    table.modified.localRowIndexes
+                    table.getModified().originalRowIndexes,
+                    table.getModified().localRowIndexes
                 ],
                 [void 0, void 0],
                 'Table sorted with `orderInColumn` option should not change ' +
@@ -629,7 +561,7 @@ QUnit.test('DataTable.setModifier', function (assert) {
         })
         .then((table) => {
             assert.deepEqual(
-                table.modified.getColumns(),
+                table.getModified().getColumns(),
                 {
                     x: [0, 2, 1],
                     y: [3, 2, 1] 
@@ -638,22 +570,22 @@ QUnit.test('DataTable.setModifier', function (assert) {
             );
 
             assert.strictEqual(
-                table.modified.getLocalRowIndex(1), 2,
+                table.getModified().getLocalRowIndex(1), 2,
                 'Sorted table should allow to retrieve the local row index' +
                 'from the original row index.'
             );
 
             assert.strictEqual(
-                table.modified.getOriginalRowIndex(2), 1,
+                table.getModified().getOriginalRowIndex(2), 1,
                 'Sorted table should allow to retrieve the original row index' +
                 'from the local row index.'
             );
 
-            table.modified.deleteRowIndexReferences();
+            table.getModified().deleteRowIndexReferences();
             assert.deepEqual(
                 [
-                    table.modified.originalRowIndexes,
-                    table.modified.localRowIndexes
+                    table.getModified().originalRowIndexes,
+                    table.getModified().localRowIndexes
                 ],
                 [void 0, void 0],
                 'The `deleteRowIndexReferences` method should remove row ' +
@@ -667,4 +599,68 @@ QUnit.test('DataTable.setModifier', function (assert) {
         .then(() =>
             done()
         );
+});
+
+QUnit.test('DataTable.setRow insert argument', function (assert) {
+    const table = new DataTable({
+        columns: {
+            ID: [1, 2, 3],
+            Name: ['John', 'Jane', 'Alice']
+        }
+    });
+
+    assert.deepEqual(
+        table.getColumn('ID'),
+        [1, 2, 3],
+        'Initial ID column values are correct.'
+    );
+
+    // Insert a new row at position 0 (beginning)
+    table.setRow({ ID: 99 }, 0, true);
+
+    assert.deepEqual(
+        table.getColumn('ID'),
+        [99, 1, 2, 3],
+        'New row inserted at the beginning when insert=true.'
+    );
+
+    assert.deepEqual(
+        table.getColumn('Name'),
+        [null, 'John', 'Jane', 'Alice'],
+        'If no value is provided, the new row is filled with `null`.'
+    );
+});
+
+QUnit.test('Metadata in a cloned table should be a shallow copy', function (assert) {
+    // Arrange
+    const table = new DataTable({
+        columns: {
+            ID: [1, 2, 3]
+        },
+        metadata: {
+            ID: {
+                dataType: 'number'
+            }
+        }
+    });
+
+    // Act
+    const tableClone = table.clone();
+
+    // Assert
+    assert.notStrictEqual(
+        tableClone.metadata,
+        table.metadata,
+        'Metadata object should be a new shallow copy.'
+    );
+    assert.strictEqual(
+        tableClone.metadata.ID,
+        table.metadata.ID,
+        'Nested metadata objects should still reference the same object.'
+    );
+    assert.deepEqual(
+        tableClone.metadata,
+        table.metadata,
+        'Cloned metadata should have equal structure and values.'
+    );
 });

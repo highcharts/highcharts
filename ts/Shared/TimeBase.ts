@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -929,7 +930,7 @@ namespace TimeBase {
 
     export interface DateTimeFormatOptions extends Intl.DateTimeFormatOptions {
         dateStyle?: 'full'|'long'|'medium'|'short';
-        fractionalSecondDigits?: number;
+        fractionalSecondDigits?: 1|2|3;
         prefix?: string;
         suffix?: string;
         timeStyle?: 'full'|'long'|'medium'|'short';
@@ -1129,7 +1130,7 @@ export default TimeBase;
  * The number of fractional digits to use. 3 means milliseconds.
  *
  * @name Highcharts.DateTimeFormatOptions#fractionalSecondDigits
- * @type {number|undefined}
+ * @type {1|2|3|undefined}
  *//**
  * The representation of the time zone name.
  *

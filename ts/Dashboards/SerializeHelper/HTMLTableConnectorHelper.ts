@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sophie Bremer
@@ -19,10 +19,11 @@
  *
  * */
 
-import type Globals from '../Globals';
+import type { AnyRecord } from '../../Shared/Types';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type JSON from '../JSON';
 import type HTMLTableConnectorOptions from '../../Data/Connectors/HTMLTableConnectorOptions';
+import type HTMLTableConverterOptions from '../../Data/Converters/HTMLTableConverterOptions';
 
 import DataTableHelper from './DataTableHelper.js';
 import HTMLTableConnector from '../../Data/Connectors/HTMLTableConnector.js';
@@ -62,7 +63,7 @@ function fromJSON(
  * false.
  */
 function jsonSupportFor(
-    obj: Globals.AnyRecord
+    obj: AnyRecord
 ): obj is HTMLTableConnector {
     return obj instanceof HTMLTableConnector;
 }
@@ -81,7 +82,7 @@ function toJSON(
 ): HTMLTableConnectorHelper.JSON {
     const options = merge(obj.options) as HTMLTableConnectorHelper.OptionsJSON;
 
-    options.dataTable = DataTableHelper.toJSON(obj.table);
+    options.dataTable = DataTableHelper.toJSON(obj.getTable());
 
     return {
         $class: 'Data.HTMLTableConnector',
@@ -107,7 +108,8 @@ namespace HTMLTableConnectorHelper {
         options: OptionsJSON;
     }
 
-    export type OptionsJSON = (JSON.Object&HTMLTableConnectorOptions);
+    export type OptionsJSON =
+        JSON.Object & HTMLTableConnectorOptions & HTMLTableConverterOptions;
 
 }
 

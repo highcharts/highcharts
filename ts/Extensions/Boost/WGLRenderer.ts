@@ -1,12 +1,11 @@
 /* *
  *
- *  (c) 2019-2025 Highsoft AS
+ *  (c) 2019-2026 Highsoft AS
  *
  *  Boost module: stripped-down renderer for higher performance
  *
  *  License: highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -413,10 +412,9 @@ class WGLRenderer {
             /// threshold = options.threshold,
             // yBottom = chart.yAxis[0].getThreshold(threshold),
             // hasThreshold = isNumber(threshold),
-            // colorByPoint = series.options.colorByPoint,
+            colorByPoint = series.options.colorByPoint,
             // This is required for color by point, so make sure this is
             // uncommented if enabling that
-            // colorIndex = 0,
             // Required for color axis support
             // caxis,
             connectNulls = options.connectNulls,
@@ -463,7 +461,8 @@ class WGLRenderer {
             zoneColors: Array<Color.RGBA>,
             zoneDefColor: (Color.RGBA|undefined) = false as any,
             gapSize: number = false as any,
-            vlen = 0;
+            vlen = 0,
+            colorIndex = 0;
 
         if (options.boostData && options.boostData.length > 0) {
             return;
@@ -475,7 +474,7 @@ class WGLRenderer {
                 options.gapSize;
         }
 
-        if (zones) {
+        if (zones && zones.length) { // #23571
             zoneColors = [];
 
             zones.forEach((zone, i): void => {
@@ -760,19 +759,6 @@ class WGLRenderer {
                 break;
             }
 
-            // Uncomment this to enable color by point.
-            // This currently left disabled as the charts look really ugly
-            // when enabled and there's a lot of points.
-            // Leaving in for the future (tm).
-            // if (colorByPoint) {
-            //     colorIndex = ++colorIndex %
-            //         series.chart.options.colors.length;
-            //     pcolor = toRGBAFast(series.chart.options.colors[colorIndex]);
-            //     pcolor[0] /= 255.0;
-            //     pcolor[1] /= 255.0;
-            //     pcolor[2] /= 255.0;
-            // }
-
             // Handle the point.color option (#5999)
             const pointOptions = rawData && rawData[i];
             if (!useRaw) {
@@ -787,6 +773,11 @@ class WGLRenderer {
                     typeof pointOptions[colorKeyIndex] === 'string'
                 ) {
                     pcolor = color(pointOptions[colorKeyIndex]).rgba;
+                } else if (colorByPoint && chart.options.colors) {
+                    colorIndex = colorIndex %
+                        chart.options.colors.length;
+
+                    pcolor = color(chart.options.colors[colorIndex]).rgba;
                 }
 
                 if (pcolor) {
@@ -794,6 +785,8 @@ class WGLRenderer {
                     pcolor[1] /= 255.0;
                     pcolor[2] /= 255.0;
                 }
+
+                colorIndex++;
             }
 
             if (useRaw) {
@@ -938,7 +931,7 @@ class WGLRenderer {
             }
 
             // Note: Boost requires that zones are sorted!
-            if (zones) {
+            if (zones && zones.length) { // #23571
                 let zoneColor: Color.RGBA|undefined;
                 zones.some(( // eslint-disable-line no-loop-func
                     zone: SeriesZonesOptions,

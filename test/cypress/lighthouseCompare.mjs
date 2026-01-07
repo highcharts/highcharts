@@ -1,7 +1,7 @@
 // @ts-check
 import process from 'node:process';
 import { join } from 'node:path';
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { readdir } from 'node:fs/promises';
 import yargs from 'yargs';
 
@@ -25,12 +25,15 @@ const valueTypes = ['score', 'numericValue', 'numericUnit'];
 /**
  * @param {string} path
  */
-async function loadJSON(path) {
-    const { default: jsonData } = await import(join(cwd(), path), {
-        assert: { type: 'json' },
-    }).catch(() => ({ default: null }));
-
-    return jsonData;
+function loadJSON(path) {
+    try {
+        const fullPath = join(cwd(), path);
+        const content = readFileSync(fullPath, 'utf-8');
+        return JSON.parse(content);
+    } catch (error) {
+        console.error(`Failed to load JSON from ${path}:`, error.message);
+        return null;
+    }
 }
 
 /**
@@ -116,7 +119,7 @@ for (const report of reportFiles) {
 
     for (const [context, fileName] of Object.entries(report)) {
         if (fileName) {
-            const reportData = await loadJSON(
+            const reportData = loadJSON(
                 join(reportsDir, context, fileName),
             );
 

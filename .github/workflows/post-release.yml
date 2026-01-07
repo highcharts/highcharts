@@ -33,7 +33,7 @@ jobs:
 
       - run: echo ${{github.ref_name}}
 
-      - run: npm i
+      - run: npm ci
       - run: npx gulp scripts
 
       - run: |

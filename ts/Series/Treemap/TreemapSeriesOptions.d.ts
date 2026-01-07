@@ -1,12 +1,12 @@
 /* *
  *
- *  (c) 2014-2025 Highsoft AS
+ *  (c) 2014-2026 Highsoft AS
  *
  *  Authors: Jon Arild Nygard / Oystein Moseng
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -37,7 +37,6 @@ import type {
 } from '../../Core/Series/SeriesOptions';
 import type TooltipOptions from '../../Core/TooltipOptions';
 import type TreemapPointOptions from './TreemapPointOptions';
-import type TreemapSeries from './TreemapSeries';
 import MarkerClusterOptions from '../../Extensions/MarkerClusters/MarkerClusterOptions';
 
 /* *
@@ -723,7 +722,7 @@ export interface TreemapSeriesOptions extends ScatterSeriesOptions {
      *
      * @extends plotOptions.heatmap.states
      */
-    states?: SeriesStatesOptions<TreemapSeries>;
+    states?: SeriesStatesOptions<TreemapSeriesOptions>;
 
     /**
      * Options for the hovered series

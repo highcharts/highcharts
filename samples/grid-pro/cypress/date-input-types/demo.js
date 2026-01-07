@@ -60,8 +60,7 @@ Grid.grid('container', {
             format: '{value:%Y-%m-%d %H:%M:%S}',
             editMode: {
                 renderer: {
-                    type: 'dateInput',
-                    inputType: 'datetime'
+                    type: 'dateTimeInput'
                 }
             }
         }
@@ -69,8 +68,7 @@ Grid.grid('container', {
         id: 'datetimeEdit',
         cells: {
             renderer: {
-                type: 'dateInput',
-                inputType: 'datetime'
+                type: 'dateTimeInput'
             }
         }
     }, {
@@ -79,8 +77,7 @@ Grid.grid('container', {
             format: '{value:%H:%M}',
             editMode: {
                 renderer: {
-                    type: 'dateInput',
-                    inputType: 'time'
+                    type: 'timeInput'
                 }
             }
         }
@@ -88,8 +85,7 @@ Grid.grid('container', {
         id: 'timeEdit',
         cells: {
             renderer: {
-                type: 'dateInput',
-                inputType: 'time'
+                type: 'timeInput'
             }
         }
     }]

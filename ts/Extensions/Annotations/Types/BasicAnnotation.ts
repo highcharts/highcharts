@@ -1,6 +1,5 @@
 /* *
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -23,6 +22,7 @@ import type {
 import type ControllableRect from '../Controllables/ControllableRect';
 import type ControlPoint from '../ControlPoint';
 import type ControlPointOptions from '../ControlPointOptions';
+import type { DeepPartial } from '../../../Shared/Types';
 import type MockPointOptions from '../MockPointOptions';
 import type PointerEvent from '../../../Core/PointerEvent';
 import type PositionObject from '../../../Core/Renderer/PositionObject';

@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -69,7 +69,7 @@ namespace ColumnUtils {
      * @param {boolean} asSubarray
      * If column is a typed array, return a subarray instead of a new array. It
      * is faster `O(1)`, but the entire buffer will be kept in memory until all
-     * views to it are destroyed. Default is `false`.
+     * views of it are destroyed. Default is `false`.
      *
      * @return {DataTable.Column}
      * Modified column.
@@ -152,6 +152,36 @@ namespace ColumnUtils {
             removed: removed,
             array: result
         };
+    }
+
+    /**
+     * Converts a cell value to a number.
+     *
+     * @param {DataTable.CellType} value
+     * Cell value to convert to a number.
+     *
+     * @param {boolean} useNaN
+     * If `true`, returns `NaN` for non-numeric values; if `false`,
+     * returns `null` instead.
+     *
+     * @return {number | null}
+     * Number or `null` if the value is not a number.
+     *
+     * @private
+     */
+    export function convertToNumber(
+        value?: DataTable.CellType,
+        useNaN?: boolean
+    ): number | null {
+        switch (typeof value) {
+            case 'boolean':
+                return (value ? 1 : 0);
+            case 'number':
+                return (isNaN(value) && !useNaN ? null : value);
+            default:
+                value = parseFloat(`${value ?? ''}`);
+                return (isNaN(value) && !useNaN ? null : value);
+        }
     }
 }
 

@@ -661,60 +661,60 @@
                             purpleArrow.classList.add('grow');
                         }, 3200);
 
-                        setTimeout(function () {
-                            chart.series[2].data[2].update({
-                                marker: {
-                                    enabled: false
-                                }
-                            });
-                            chart.series[3].data[2].update({
-                                marker: {
-                                    enabled: false
-                                }
-                            });
-                            greenArrow.classList.add('hide');
-                            purpleArrow.classList.add('hide');
-                            document.querySelector(
-                                '#stock .purple-line' +
-                                ' .highcharts-point:nth-of-type(3)'
-                            ).style.transition = '0s';
-                            document.querySelector(
-                                '#stock .green-line' +
-                                ' .highcharts-point:nth-of-type(3)'
-                            ).style.transition =
-                                '0s';
-                            // /set the x extremes to slide to the right
-                            chart.xAxis[1].setExtremes(0, 7);
-                        }, 5200);
-                        setTimeout(function () {
-                            // /hides all the earlier chart stuff and sets
-                            // the yAxis extremes so
-                            // /the lines part vertically
-                            chart.yAxis[2].setExtremes(10, 20);
-                            chart.yAxis[3].setExtremes(10, 20);
+                        // setTimeout(function () {
+                        //     chart.series[2].data[2].update({
+                        //         marker: {
+                        //             enabled: false
+                        //         }
+                        //     });
+                        //     chart.series[3].data[2].update({
+                        //         marker: {
+                        //             enabled: false
+                        //         }
+                        //     });
+                        //     greenArrow.classList.add('hide');
+                        //     purpleArrow.classList.add('hide');
+                        //     document.querySelector(
+                        //         '#stock .purple-line' +
+                        //         ' .highcharts-point:nth-of-type(3)'
+                        //     ).style.transition = '0s';
+                        //     document.querySelector(
+                        //         '#stock .green-line' +
+                        //         ' .highcharts-point:nth-of-type(3)'
+                        //     ).style.transition =
+                        //         '0s';
+                        //     // /set the x extremes to slide to the right
+                        //     chart.xAxis[1].setExtremes(0, 7);
+                        // }, 5200);
+                        // setTimeout(function () {
+                        //     // /hides all the earlier chart stuff and sets
+                        //     // the yAxis extremes so
+                        //     // /the lines part vertically
+                        //     chart.yAxis[2].setExtremes(10, 20);
+                        //     chart.yAxis[3].setExtremes(10, 20);
 
-                            bottomArea.classList.add('fade-out');
-                            topArea.classList.add('fade-out');
+                        //     bottomArea.classList.add('fade-out');
+                        //     topArea.classList.add('fade-out');
 
-                            purpleLine.classList.add('fade-out');
-                            greenLine.classList.add('fade-out');
-                        }, 6000);
-                        setTimeout(function () {
-                            bottomArea.classList.add('fade-out');
-                            topArea.classList.add('fade-out');
-                        }, 6300);
+                        //     purpleLine.classList.add('fade-out');
+                        //     greenLine.classList.add('fade-out');
+                        // }, 6000);
+                        // setTimeout(function () {
+                        //     bottomArea.classList.add('fade-out');
+                        //     topArea.classList.add('fade-out');
+                        // }, 6300);
 
-                        setTimeout(function () {
-                            bottomArea.classList.add('hide');
-                            topArea.classList.add('hide');
-                            chart.series[2].hide();
-                        }, 6500);
+                        // setTimeout(function () {
+                        //     bottomArea.classList.add('hide');
+                        //     topArea.classList.add('hide');
+                        //     chart.series[2].hide();
+                        // }, 6500);
 
-                        setTimeout(function () {
-                            chart.destroy();
-                            Highcharts.stockChart('stock', static);
+                        // setTimeout(function () {
+                        //     chart.destroy();
+                        //     Highcharts.stockChart('stock', static);
 
-                        }, 6800);
+                        // }, 6800);
                     }
                 }
             }
@@ -975,14 +975,14 @@
                 className: 'purple-line',
                 data: [{
                     x: 0,
-                    y: 8.25
+                    y: 8.4
                 }, {
                     x: 0,
-                    y: 8.25
+                    y: 8.4
                 },
                 {
                     x: 0,
-                    y: 8.25,
+                    y: 8.4,
                     marker: {
                         enabled: false,
                         radius: 70,
@@ -1238,33 +1238,33 @@
                 zIndex: 21,
                 yAxis: 3,
                 xAxis: 1
-            },
-            // 12 -- candlestick
-            {
-                type: 'candlestick',
-                name: 'AAPL',
-                className: 'stick',
-                data: ohlc,
-                zIndex: 300,
-                dataGrouping: {
-                    units: groupingUnits
-                },
-                visible: false
-
-            },
-            // 13 --column
-            {
-                type: 'column',
-                className: 'column',
-                name: 'Volume',
-                data: volume,
-                yAxis: 1,
-                zIndex: 300,
-                dataGrouping: {
-                    units: groupingUnits
-                },
-                visible: false
             }
+            // 12 -- candlestick
+            // {
+            //     type: 'candlestick',
+            //     name: 'AAPL',
+            //     className: 'stick',
+            //     data: ohlc,
+            //     zIndex: 300,
+            //     dataGrouping: {
+            //         units: groupingUnits
+            //     },
+            //     visible: false
+
+            // },
+            // 13 --column
+            // {
+            //     type: 'column',
+            //     className: 'column',
+            //     name: 'Volume',
+            //     data: volume,
+            //     yAxis: 1,
+            //     zIndex: 300,
+            //     dataGrouping: {
+            //         units: groupingUnits
+            //     },
+            //     visible: false
+            // }
 
 
         ],

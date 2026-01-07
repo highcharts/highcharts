@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft, Black Label
+ *  (c) 2009-2026 Highsoft AS
+ *  Author: Highsoft, Black Label
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -20,7 +21,7 @@ import type Annotation from './Annotation';
 import type AnnotationChart from './AnnotationChart';
 import type Chart from '../../Core/Chart/Chart';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
-import type NavigationBindingsLike from './NavigationBindingsLike';
+import type NavigationBindingsBase from './NavigationBindingsBase';
 import type NavigationBindingsOptions from './NavigationBindingsOptions';
 import type NavigationOptions from '../Exporting/NavigationOptions';
 import type Pointer from '../../Core/Pointer';
@@ -67,8 +68,8 @@ const {
  *
  * */
 
-declare module '../../Core/Chart/ChartLike'{
-    interface ChartLike {
+declare module '../../Core/Chart/ChartBase'{
+    interface ChartBase {
         navigationBindings?: NavigationBindings;
         /** @requires modules/annotations */
         initNavigationBindings(): void;
@@ -1082,7 +1083,10 @@ class NavigationBindings {
         }
 
         objectEach(options, (option, key): void => {
-            if (key === 'typeOptions') {
+            if (
+                key === 'typeOptions' &&
+                visualOptions['type'] !== 'basicAnnotation' // #23575
+            ) {
                 visualOptions[key] = {};
                 objectEach(
                     options[key],
@@ -1233,7 +1237,7 @@ class NavigationBindings {
  *
  * */
 
-interface NavigationBindings extends NavigationBindingsLike {
+interface NavigationBindings extends NavigationBindingsBase {
 }
 
 

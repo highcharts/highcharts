@@ -1,11 +1,11 @@
 /* *
  *
- *  (c) 2016 Highsoft AS
+ *  (c) 2016-2026 Highsoft AS
  *  Authors: Øystein Moseng, Lars A. V. Cabrera
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -59,7 +59,7 @@ const deg2rad = H.deg2rad,
  * The Connection class. Used internally to represent a connection between two
  * points.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.Connection
  *
@@ -73,6 +73,8 @@ const deg2rad = H.deg2rad,
  *        Connection options.
  */
 class Connection {
+
+    /** @internal */
     public constructor(
         from: Point,
         to: Point,
@@ -86,11 +88,23 @@ class Connection {
     * Properties
     *
     * */
+
+    /** @internal */
     public chart!: Chart;
+
+    /** @internal */
     public fromPoint!: Point;
+
+    /** @internal */
     public graphics!: Record<string, SVGElement>;
+
+    /** @internal */
     public options?: ConnectorsOptions;
+
+    /** @internal */
     public pathfinder!: Pathfinder;
+
+    /** @internal */
     public toPoint!: Point;
 
     /**
@@ -472,6 +486,7 @@ class Connection {
  *
  * */
 
+/** @internal */
 export default Connection;
 
 /* *

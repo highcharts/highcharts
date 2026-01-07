@@ -1,12 +1,14 @@
+// SPDX-License-Identifier: LicenseRef-Highcharts
 /**
  *
  *  Events generator for Stock tools
  *
- *  (c) 2009-2025 Paweł Fus
+ *  (c) 2009-2026 Highsoft AS
+ *  Author: Paweł Fus
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -47,8 +49,8 @@ const {
  *
  * */
 
-declare module '../../Extensions/Annotations/NavigationBindingsLike' {
-    interface NavigationBindingsLike {
+declare module '../../Extensions/Annotations/NavigationBindingsBase' {
+    interface NavigationBindingsBase {
         /** @requires modules/stock-tools */
         utils: Partial<typeof STU>;
         /** @requires modules/stock-tools */

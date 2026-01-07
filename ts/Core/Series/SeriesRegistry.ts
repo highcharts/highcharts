@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -16,8 +17,9 @@
  *
  * */
 
-import Series from './Series.js';
+import type { DeepPartial } from '../../Shared/Types';
 import type { SeriesTypeRegistry } from './SeriesType';
+import type Series from './Series.js';
 
 import H from '../Globals.js';
 import D from '../Defaults.js';
@@ -62,7 +64,7 @@ namespace SeriesRegistry {
     /**
      * Registers class pattern of a series.
      *
-     * @private
+     * @internal
      */
     export function registerSeriesType(
         seriesType: string,
@@ -137,9 +139,11 @@ namespace SeriesRegistry {
 
         // Create the class
         delete seriesTypes[type];
-        const parentClass = seriesTypes[parent] as typeof Series || Series,
-            childClass =
-                extendClass(parentClass, seriesProto) as typeof Series;
+        const parentClass = (
+                seriesTypes[parent] as typeof Series ||
+                (H as unknown as { Series: typeof Series }).Series
+            ),
+            childClass = extendClass(parentClass, seriesProto) as typeof Series;
 
         registerSeriesType(type, childClass);
         seriesTypes[type].prototype.type = type;

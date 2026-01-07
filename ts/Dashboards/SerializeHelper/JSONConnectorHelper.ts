@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Pawel Lysy
@@ -19,7 +19,7 @@
  *
  * */
 
-import type Globals from '../Globals';
+import type { AnyRecord } from '../../Shared/Types';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type JSON from '../JSON';
 import type JSONConnectorOptions from '../../Data/Connectors/JSONConnectorOptions';
@@ -61,7 +61,7 @@ function fromJSON(
  * Returns true, if the function set can convert the given object, otherwise
  * false.
  */
-function jsonSupportFor(obj: Globals.AnyRecord): obj is JSONConnector {
+function jsonSupportFor(obj: AnyRecord): obj is JSONConnector {
     return obj instanceof JSONConnector;
 }
 
@@ -79,7 +79,7 @@ function toJSON(
 ): JSONConnectorHelper.JSON {
     const options = merge(obj.options) as JSONConnectorHelper.OptionsJSON;
 
-    options.dataTable = DataTableHelper.toJSON(obj.table);
+    options.dataTable = DataTableHelper.toJSON(obj.getTable());
 
     return {
         $class: 'Data.JSONConnector',

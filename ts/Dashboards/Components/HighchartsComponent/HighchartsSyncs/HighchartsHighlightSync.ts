@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -70,30 +70,31 @@ const syncPair: Sync.SyncPair = {
             const seriesId = series.options.id ?? '';
             const connectorHandler: HCComponent.HCConnectorHandler =
                 component.seriesFromConnector[seriesId];
-            const table = connectorHandler?.connector?.table;
-            let columnName: string | undefined;
+            const connectorId = connectorHandler?.options.id;
+            const table = this.getDataTable(connectorId);
+            let columnId: string | undefined;
 
             if (!table) {
                 continue;
             }
 
-            const presTable = table?.modified;
-            const colAssignment = connectorHandler.columnAssignment?.find(
+            const presTable = table?.getModified();
+            const colAssignment = connectorHandler?.columnAssignment?.find(
                 (s): boolean => s.seriesId === seriesId
             );
             // TODO: Better way to recognize the column name.
             if (colAssignment) {
                 const { data } = colAssignment;
                 if (typeof data === 'string') {
-                    columnName = data;
+                    columnId = data;
                 } else if (Array.isArray(data)) {
-                    columnName = data[1];
+                    columnId = data[1];
                 } else {
-                    columnName = data.y ?? data.value;
+                    columnId = data.y ?? data.value;
                 }
             }
-            if (!columnName) {
-                columnName = series.name;
+            if (!columnId) {
+                columnId = series.name;
             }
 
             series.update({
@@ -104,7 +105,7 @@ const syncPair: Sync.SyncPair = {
                             cursor.emitCursor(table, {
                                 type: 'position',
                                 row: presTable.getOriginalRowIndex(this.index),
-                                column: columnName,
+                                column: columnId,
                                 state: 'point.mouseOver' + groupKey,
                                 sourceId: component.id
                             });
@@ -113,7 +114,7 @@ const syncPair: Sync.SyncPair = {
                             cursor.emitCursor(table, {
                                 type: 'position',
                                 row: presTable.getOriginalRowIndex(this.index),
-                                column: columnName,
+                                column: columnId,
                                 state: 'point.mouseOut' + groupKey,
                                 sourceId: component.id
                             });
@@ -187,8 +188,11 @@ const syncPair: Sync.SyncPair = {
                         const seriesId = seriesIds[i];
                         const connectorHandler: HCComponent.HCConnectorHandler =
                                 component.seriesFromConnector[seriesId];
+                        const dataTableKey =
+                            connectorHandler?.options.dataTableKey;
 
-                        if (connectorHandler?.connector?.table !== table) {
+                        if (
+                            connectorHandler?.connector?.getTable(dataTableKey) !== table) {
                             continue;
                         }
 
@@ -228,7 +232,7 @@ const syncPair: Sync.SyncPair = {
 
                 const row = cursor.row;
                 if (series?.visible && row !== void 0) {
-                    const rowIndex = table.modified.getLocalRowIndex(row);
+                    const rowIndex = table.getModified().getLocalRowIndex(row);
                     if (rowIndex === void 0) {
                         return;
                     }
@@ -389,12 +393,15 @@ const syncPair: Sync.SyncPair = {
         const registerCursorListeners = (): void => {
             const { dataCursor: cursor } = board;
             const { connectorHandlers } = this;
+
             if (!cursor) {
                 return;
             }
 
             for (let i = 0, iEnd = connectorHandlers.length; i < iEnd; ++i) {
-                const table = connectorHandlers[i]?.connector?.table;
+                const connectorId = connectorHandlers[i]?.options.id;
+                const table = this.getDataTable(connectorId);
+
                 if (!table) {
                     continue;
                 }
@@ -416,7 +423,7 @@ const syncPair: Sync.SyncPair = {
             }
 
             for (let i = 0, iEnd = connectorHandlers.length; i < iEnd; ++i) {
-                const table = connectorHandlers[i]?.connector?.table;
+                const table = connectorHandlers[i]?.connector?.getTable();
                 if (!table) {
                     continue;
                 }

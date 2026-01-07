@@ -2,11 +2,11 @@
  *
  *  Select Cell Content class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -29,6 +29,7 @@ import type TableCell from '../../../Core/Table/Body/TableCell';
 
 import CellContentPro from '../CellContentPro.js';
 import AST from '../../../../Core/Renderer/HTML/AST.js';
+import Globals from '../../../Core/Globals.js';
 
 
 /* *
@@ -100,9 +101,10 @@ class SelectContent extends CellContentPro implements EditModeContent {
 
         select.tabIndex = -1;
         select.name = cell.column.id + '-' + cell.row.id;
+        select.classList.add(Globals.getClassName('input'));
 
         if (options.attributes) {
-            Object.entries(options.attributes).forEach(([key, value]):void => {
+            Object.entries(options.attributes).forEach(([key, value]): void => {
                 select.setAttribute(key, value);
             });
         }
@@ -203,7 +205,7 @@ class SelectContent extends CellContentPro implements EditModeContent {
             this.changeHandler(e);
         } else {
             this.cell.htmlElement.focus();
-            void this.cell.setValue(this.value, true);
+            void this.cell.editValue(this.value);
         }
     };
 

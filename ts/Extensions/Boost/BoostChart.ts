@@ -1,12 +1,11 @@
 /* *
  *
- *  (c) 2019-2025 Highsoft AS
+ *  (c) 2019-2026 Highsoft AS
  *
  *  Boost module: stripped-down renderer for higher performance
  *
  *  License: highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -59,8 +58,8 @@ export declare class BoostChartComposition extends Chart {
     series: Array<BoostSeriesComposition>;
 }
 
-declare module '../../Core/Chart/ChartLike'{
-    interface ChartLike extends BoostTargetObject {
+declare module '../../Core/Chart/ChartBase'{
+    interface ChartBase extends BoostTargetObject {
         boosted?: boolean;
         boost?: BoostChartAdditions;
     }

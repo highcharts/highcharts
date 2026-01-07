@@ -1,13 +1,14 @@
 /* *
  *
- *  (c) 2009-2025 Øystein Moseng
+ *  (c) 2009-2026 Highsoft AS
+ *  Author: Øystein Moseng
  *
  *  Class representing a Synth Patch, used by Instruments in the
  *  sonification.js module.
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 

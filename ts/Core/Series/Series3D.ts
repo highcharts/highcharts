@@ -1,12 +1,13 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
  *  Extension to the Series object in 3D charts.
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -42,15 +43,15 @@ const {
  *
  * */
 
-declare module './PointLike' {
-    interface PointLike {
+declare module './PointBase' {
+    interface PointBase {
         plotZ?: number;
         z?: number;
     }
 }
 
-declare module './SeriesLike' {
-    interface SeriesLike {
+declare module './SeriesBase' {
+    interface SeriesBase {
         zAxis?: ZAxis;
         rawPointsX?: Array<number>;
         zPadding?: number;
@@ -107,7 +108,7 @@ class Series3D extends Series {
 
     /**
      * Translate the plotX, plotY properties and add plotZ.
-     * @private
+     * @internal
      */
     public translate3dPoints(): void {
         const series = this,

@@ -2,7 +2,7 @@
 This demos contains 4 small maps for the Highcharts Maps product page. They all use the same demo.html file and load the chart specified by the "charts" URL parameter (e.g. charts=spider)
 
 -[Spider Map](http://localhost:3030/samples/view?path=highcharts/website/small-demos-maps&charts=spider)    
--[Dynamic Temperatures](http://localhost:3030/samples/view?path=highcharts/website/small-demos-maps&charts=temps)    
+-[Map Markers](http://localhost:3030/samples/view?path=highcharts/website/small-demos-maps&charts=markers)    
 -[Marker Clusters](http://localhost:3030/samples/view?path=highcharts/website/small-demos-maps&charts=clusters)   
 -[Projection](http://localhost:3030/samples/view?path=highcharts/website/small-demos-maps&charts=projection)  
 

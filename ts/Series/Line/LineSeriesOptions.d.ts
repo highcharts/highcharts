@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -17,7 +18,7 @@
 import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import type ColorType from '../../Core/Color/ColorType';
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
-import type LineSeries from './LineSeries';
+import type { DeepPartial } from '../../Shared/Types';
 import type SeriesOptions from '../../Core/Series/SeriesOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 
@@ -42,7 +43,7 @@ export interface LineSeriesOptions extends SeriesOptions {
     pointDescriptionFormatter?: Function;
     pointStart?: number;
     skipKeyboardNavigation?: boolean;
-    states?: SeriesStatesOptions<LineSeries>;
+    states?: SeriesStatesOptions<LineSeriesOptions>;
     supportingColor?: ColorType;
 }
 

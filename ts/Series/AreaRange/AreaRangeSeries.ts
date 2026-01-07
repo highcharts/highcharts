@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -20,7 +21,8 @@ import type Axis from '../../Core/Axis/Axis';
 import type AreaRangeDataLabelOptions from './AreaRangeDataLabelOptions';
 import type AreaRangeSeriesOptions from './AreaRangeSeriesOptions';
 import type AreaPoint from '../Area/AreaPoint';
-import type PointMarkerOptions from '../../Core/Series/PointOptions';
+import type { DeepPartial } from '../../Shared/Types';
+import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
 import type RadialAxis from '../../Core/Axis/RadialAxis';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
@@ -614,17 +616,6 @@ class AreaRangeSeries extends AreaSeries {
         i = 0;
         while (i < pointLength) {
             point = series.points[i];
-
-            /**
-             * Array for multiple SVG graphics representing the point in the
-             * chart. Only used in cases where the point can not be represented
-             * by a single graphic.
-             *
-             * @see Highcharts.Point#graphic
-             *
-             * @name Highcharts.Point#graphics
-             * @type {Array<Highcharts.SVGElement>|undefined}
-             */
             point.graphics = point.graphics || [];
 
             // Save original props to be overridden by temporary props for top

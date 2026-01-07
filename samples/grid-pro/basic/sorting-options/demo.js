@@ -15,7 +15,7 @@ Grid.grid('container', {
     columns: [{
         id: 'product',
         sorting: {
-            sortable: false
+            enabled: false
         }
     }, {
         id: 'price',
@@ -25,7 +25,7 @@ Grid.grid('container', {
     }],
     events: {
         column: {
-            afterSorting: function () {
+            afterSort: function () {
                 const { sorting } = this.viewport.grid.querying;
 
                 columnSelectEl.value = this.id;

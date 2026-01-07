@@ -1,12 +1,13 @@
 /* *
  *
- *  (c) 2009-2025 Øystein Moseng
+ *  (c) 2009-2026 Highsoft AS
+ *  Author: Øystein Moseng
  *
  *  Class representing a Timeline with sonification events to play.
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -18,7 +19,7 @@ import type Point from '../../Core/Series/Point';
 import TimelineChannel from './TimelineChannel.js';
 import SonificationInstrument from './SonificationInstrument.js';
 import toMIDI from './MIDI.js';
-import DU from '../DownloadURL.js';
+import DU from '../../Shared/DownloadURL.js';
 const { downloadURL } = DU;
 import U from '../../Core/Utilities.js';
 const {

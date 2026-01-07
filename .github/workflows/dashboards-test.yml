@@ -1,26 +1,21 @@
 # This is a basic workflow to help you get started with Actions
 
-name: Dashboards and Grid Test
+name: Dashboards Test
 
 # Controls when the workflow will run
 on:
   # Triggers the workflow on push or pull request events but only for the default branch
   push:
-    branches: ['master']
+    branches: ['master', 'dash/**']
   pull_request:
-    branches: ['master']
+    branches: ['master', 'dash/**']
     paths:
       - '.github/workflows/dashboards-test.yml'
       - 'css/dashboards*'
-      - 'css/datagrid*'
-      - 'css/grid*'
       - 'samples/dashboards/**'
-      - 'samples/grid-lite/**'
-      - 'samples/grid-pro/**'
       - 'test/cypress/dashboards/visual/**'
       - 'ts/Dashboards/**'
       - 'ts/Data/**'
-      - 'ts/Grid/**'
 
 permissions:
   contents: read # to fetch code (actions/checkout)
@@ -31,7 +26,6 @@ concurrency:
 
 jobs:
   dashboards_test:
-    timeout-minutes: 10
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -52,12 +46,12 @@ jobs:
       - name: Install Dependencies
         run: |
           cd highcharts
-          npm i
+          npm ci
 
-      - name: Build Highcharts definitions
+      - name: Build Highcharts
         run: |
           cd highcharts
-          npx gulp jsdoc-dts
+          npx gulp scripts
 
       - name: Build Grid
         run: |
@@ -67,7 +61,7 @@ jobs:
       - name: Run Dashboards Tests
         run: |
           cd highcharts
-          npx gulp dashboards/test
+          npx gulp test --product Dashboards
 
       - name: Checkout utils
         uses: actions/checkout@v4
@@ -79,7 +73,7 @@ jobs:
       - name: Install Highcharts Utils
         run: |
           cd utils
-          npm i
+          npm ci
 
       - name: Run Cypress test
         uses: cypress-io/github-action@v6

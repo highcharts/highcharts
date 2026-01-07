@@ -37,7 +37,7 @@ const parseMarkdownCRLF = /\r\n|\r/;
 const parseMarkdownBlockCode = /(?:^|\n)```(\w*)([\s\S]+?)[\n]+```/;
 const parseMarkdownCode = /`([^`\s](?:[^`]|\s)*?)`/;
 const parseMarkdownHeadline = /(?:^|\n)(#{1,5})([^\n]*)\1?/;
-const parseMarkdownFormat = /(?:^| )(\*{1,3})(\w(?:[^\*]| )*?)\1/;
+const parseMarkdownFormat = /(^| )(\*{1,3})(\w[^\*]*?)\2/;
 const parseMarkdownLink = /\[([^\]]+?)\]\(((?:[^\)]|\s)+?)\)/;
 const parseMarkdownList =
     /(?:^|\n)[\t ]*[\-\+\*][\t ]+([\s\S]*?)(?=(?:\n)+|$)/;
@@ -176,7 +176,7 @@ function parseMarkdown(text, extractTitle) {
     if (extractTitle) {
         const titleMatch = text.match(new RegExp(parseMarkdownHeadline));
         if (titleMatch) {
-            title = (titleMatch[2] || '').trim();
+            title = (titleMatch[2] || '').replaceAll('*', '').trim();
         }
     }
 
@@ -205,14 +205,14 @@ function parseMarkdown(text, extractTitle) {
         .replace(new RegExp(parseListSpaces, 'g'), '</li><li>')
         .replace(
             new RegExp(parseMarkdownFormat, 'g'),
-            (match, pattern, content) => {
+            (match, prefix, pattern, content) => {
                 switch (pattern) {
                     case '*':
-                        return ('<i>' + content + '</i>');
+                        return (prefix + '<i>' + content + '</i>');
                     case '**':
-                        return ('<b>' + content + '</b>');
+                        return (prefix + '<b>' + content + '</b>');
                     case '***':
-                        return ('<b><i>' + content + '</i></b>');
+                        return (prefix + '<b><i>' + content + '</i></b>');
                     default:
                         return match;
                 }
@@ -273,8 +273,10 @@ function writeErrorsJson(parsedErrors, jsonPath, modulePath) {
                 '/* eslint-disable */',
                 '/* *',
                 ' * Error information for the debugger module',
-                ' * (c) 2010-2021 Torstein Honsi',
-                ' * License: www.highcharts.com/license',
+                ' * (c) 2010-2026 Highsoft AS',
+                ' * Author: Torstein Honsi',
+                ' * A commercial license may be required depending on use.',
+                ' * See www.highcharts.com/license',
                 ' */',
                 '',
                 '// DO NOT EDIT!',

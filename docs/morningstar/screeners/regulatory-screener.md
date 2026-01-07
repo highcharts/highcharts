@@ -24,6 +24,11 @@ Here is an example of how to use the Regulatory Screener connector:
 
 ```js
 const screenerConnector = new HighchartsConnectors.Morningstar.InvestmentScreenerConnector({
+    api: {
+        access: {
+            token: 'your_access_token'
+        }
+    },
     page: 1,
     pageSize: 20,
     languageId: 'en-AU',
@@ -43,10 +48,7 @@ const screenerConnector = new HighchartsConnectors.Morningstar.InvestmentScreene
         'EET_SustInv_A8',
     ],
     universeIds: ['FOEUR$$ALL_5791'],
-    sortOrder: 'name asc',
-    postman: {
-        environmentJSON: postmanJSON
-    }
+    sortOrder: 'name asc'
 });
 ```
 

@@ -2,11 +2,12 @@
  *
  *  Client side exporting module
  *
- *  (c) 2015 Torstein Honsi / Oystein Moseng
+ *  (c) 2015-2026 Highsoft AS
+ *  Author: Torstein Honsi / Oystein Moseng
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -35,7 +36,7 @@ const {
     getOptions,
     setOptions
 } = D;
-import DownloadURL from '../DownloadURL.js';
+import DownloadURL from '../../Shared/DownloadURL.js';
 const {
     downloadURL,
     getScript
@@ -60,8 +61,8 @@ const {
  *
  * */
 
-declare module '../../Core/Chart/ChartLike' {
-    interface ChartLike {
+declare module '../../Core/Chart/ChartBase' {
+    interface ChartBase {
         /**
          * Deprecated in favor of [Exporting.exportChart](https://api.highcharts.com/class-reference/Highcharts.Exporting#exportChart).
          *
@@ -73,8 +74,8 @@ declare module '../../Core/Chart/ChartLike' {
     }
 }
 
-declare module '../../Core/GlobalsLike.d.ts' {
-    interface GlobalsLike {
+declare module '../../Core/GlobalsBase' {
+    interface GlobalsBase {
         Exporting: typeof Exporting
     }
 }
