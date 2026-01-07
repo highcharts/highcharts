@@ -340,7 +340,9 @@ class Table {
         vp.grid.querying.pagination.clampPage();
 
         // Update data
-        const oldRowsCount = (vp.rows[vp.rows.length - 1]?.index ?? -1) + 1;
+        const oldRowsCount = vp.rows.length > 0 ?
+            (vp.rows[vp.rows.length - 1]?.index ?? -1) + 1 :
+            0;
         await vp.grid.querying.proceed();
         for (const column of vp.columns) {
             column.loadData();
@@ -358,13 +360,16 @@ class Table {
             shouldRerender = true;
         }
 
-        if (shouldRerender || oldRowsCount !== await dp.getRowCount()) {
+        const newRowCount = await dp.getRowCount();
+        if (shouldRerender || oldRowsCount !== newRowCount) {
             // Rerender all rows
             await vp.rowsVirtualizer.rerender();
         } else {
-            // Update existing rows
-            for (let i = 0, iEnd = vp.rows.length; i < iEnd; ++i) {
-                await vp.rows[i].update();
+            // Update existing rows - create a snapshot to avoid issues
+            // if array changes during iteration
+            const rowsToUpdate = [...vp.rows];
+            for (let i = 0, iEnd = rowsToUpdate.length; i < iEnd; ++i) {
+                await rowsToUpdate[i].update();
             }
         }
 

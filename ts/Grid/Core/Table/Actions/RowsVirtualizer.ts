@@ -100,6 +100,12 @@ class RowsVirtualizer {
      */
     private scrollQueued = false;
 
+    /**
+     * Flag indicating if rows are currently being rendered to prevent
+     * concurrent render operations.
+     */
+    private isRendering = false;
+
 
     /* *
     *
@@ -179,12 +185,9 @@ class RowsVirtualizer {
         await this.renderRows(this.rowCursor);
 
         if (this.viewport.virtualRows) {
-
             if (oldScrollTop !== void 0) {
                 tbody.scrollTop = oldScrollTop;
             }
-
-            this.scroll();
         }
 
         rows = this.viewport.rows;
@@ -290,167 +293,185 @@ class RowsVirtualizer {
      * The index of the first visible row.
      */
     private async renderRows(rowCursor: number): Promise<void> {
-        const { viewport: vp, buffer } = this;
-        const rowCount = await vp.grid.dataProvider?.getRowCount();
-        if (!rowCount) {
+        // Prevent concurrent render operations
+        if (this.isRendering) {
             return;
         }
 
-        // Stop rendering if there are no rows to render.
-        if (rowCount < 1) {
-            return;
-        }
-
-        const isVirtualization = this.viewport.virtualRows;
-        const rowsPerPage = isVirtualization ? Math.ceil(
-            (vp.grid.tableElement?.clientHeight || 0) /
-            this.defaultRowHeight
-        ) : Infinity; // Need to be refactored when add pagination
-
-        let rows = vp.rows;
-
-        if (!isVirtualization && rows.length > 50) {
-            // eslint-disable-next-line no-console
-            console.warn(
-                'Grid: a large dataset can cause performance issues when ' +
-                'virtualization is disabled. Consider enabling ' +
-                'virtualization in the rows settings.'
-            );
-        }
-
-        if (!rows.length) {
-            const last = new TableRow(vp, rowCount - 1);
-            await last.init();
-            vp.tbodyElement.appendChild(last.htmlElement);
-            await last.render();
-            rows.push(last);
-
-            if (isVirtualization) {
-                last.setTranslateY(last.getDefaultTopOffset());
+        this.isRendering = true;
+        try {
+            const { viewport: vp, buffer } = this;
+            const rowCount = await vp.grid.dataProvider?.getRowCount();
+            if (!rowCount) {
+                return;
             }
-        }
 
-        const from = Math.max(0, Math.min(
-            rowCursor - buffer,
-            rowCount - rowsPerPage
-        ));
-        const to = Math.min(
-            rowCursor + rowsPerPage + buffer,
-            rows[rows.length - 1].index - 1
-        );
+            // Stop rendering if there are no rows to render.
+            if (rowCount < 1) {
+                return;
+            }
 
-        const alwaysLastRow = rows.pop();
-        const tempRows: TableRow[] = [];
+            const isVirtualization = this.viewport.virtualRows;
+            const rowsPerPage = isVirtualization ? Math.ceil(
+                (vp.grid.tableElement?.clientHeight || 0) /
+                this.defaultRowHeight
+            ) : Infinity; // Need to be refactored when add pagination
 
-        const currentFrom = rows[0]?.index;
-        const currentTo = rows[rows.length - 1]?.index;
-        const hasOverlap = (
-            rows.length > 0 &&
-            currentFrom !== void 0 &&
-            currentTo !== void 0 &&
-            !(to < currentFrom || from > currentTo)
-        );
+            let rows = vp.rows;
 
-        if (!hasOverlap) {
-            // Remove rows that are out of the range except the last row.
+            if (!isVirtualization && rows.length > 50) {
+                // eslint-disable-next-line no-console
+                console.warn(
+                    'Grid: a large dataset can cause performance issues when ' +
+                    'virtualization is disabled. Consider enabling ' +
+                    'virtualization in the rows settings.'
+                );
+            }
+
+            if (!rows.length && rowCount > 0) {
+                const last = new TableRow(vp, rowCount - 1);
+                await last.init();
+                vp.tbodyElement.appendChild(last.htmlElement);
+                await last.render();
+                rows.push(last);
+
+                if (isVirtualization) {
+                    last.setTranslateY(last.getDefaultTopOffset());
+                }
+            }
+
+            const from = Math.max(0, Math.min(
+                rowCursor - buffer,
+                rowCount - rowsPerPage
+            ));
+            const to = Math.min(
+                rowCursor + rowsPerPage + buffer,
+                rows.length > 0 ? rows[rows.length - 1].index - 1 : rowCount - 1
+            );
+
+            const alwaysLastRow = rows.length > 0 ? rows.pop() : void 0;
+            const tempRows: TableRow[] = [];
+
+            const currentFrom = rows[0]?.index;
+            const currentTo = rows[rows.length - 1]?.index;
+            const hasOverlap = (
+                rows.length > 0 &&
+                currentFrom !== void 0 &&
+                currentTo !== void 0 &&
+                !(to < currentFrom || from > currentTo)
+            );
+
+            if (!hasOverlap) {
+                // Remove rows that are out of the range except the last row.
+                for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
+                    const row = rows[i];
+                    const rowIndex = row.index;
+
+                    if (rowIndex < from || rowIndex > to) {
+                        this.poolRow(row);
+                    } else {
+                        tempRows.push(row);
+                    }
+                }
+
+                rows = tempRows;
+                vp.rows = rows;
+
+                for (let i = from; i <= to; ++i) {
+                    const firstRowIndex =
+                        rows.length > 0 ? rows[0].index : from;
+                    const row = rows[i - firstRowIndex];
+
+                    // Recreate row when it is destroyed and it is in the range.
+                    if (!row) {
+                        const newRow = await this.getOrCreateRow(i);
+                        rows.push(newRow);
+                    }
+                }
+
+                rows.sort((a, b): number => a.index - b.index);
+            } else {
+                // Remove rows outside the range from the start.
+                while (rows.length && rows[0].index < from) {
+                    this.poolRow(rows.shift() as TableRow);
+                }
+
+                // Remove rows outside the range from the end.
+                while (rows.length && rows[rows.length - 1].index > to) {
+                    this.poolRow(rows.pop() as TableRow);
+                }
+
+                if (!rows.length) {
+                    for (let i = from; i <= to; ++i) {
+                        rows.push(await this.getOrCreateRow(i));
+                    }
+                } else {
+                    // Add rows before the current range.
+                    for (let i = rows[0].index - 1; i >= from; --i) {
+                        rows.unshift(await this.getOrCreateRow(i));
+                    }
+
+                    // Add rows after the current range.
+                    const lastRowIndex = rows[rows.length - 1].index + 1;
+                    for (let i = lastRowIndex; i <= to; ++i) {
+                        rows.push(await this.getOrCreateRow(i));
+                    }
+                }
+
+                vp.rows = rows;
+            }
+
             for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
                 const row = rows[i];
-                const rowIndex = row.index;
+                if (!row.rendered) {
+                    // Ensure row is initialized before rendering
+                    if (!row.htmlElement.hasAttribute('data-row-index')) {
+                        await row.init();
+                    }
+                    vp.tbodyElement.insertBefore(
+                        row.htmlElement,
+                        vp.tbodyElement.lastChild
+                    );
+                    await row.render();
+                    continue;
+                }
 
-                if (rowIndex < from || rowIndex > to) {
-                    this.poolRow(row);
-                } else {
-                    tempRows.push(row);
+                if (!row.htmlElement.isConnected) {
+                    vp.tbodyElement.insertBefore(
+                        row.htmlElement,
+                        vp.tbodyElement.lastChild
+                    );
                 }
             }
 
-            rows = tempRows;
-            vp.rows = rows;
+            if (alwaysLastRow) {
+                rows.push(alwaysLastRow);
+            }
 
-            for (let i = from; i <= to; ++i) {
-                const row = rows[i - (rows[0]?.index || 0)];
+            // Focus the cell if the focus cursor is set
+            if (vp.focusCursor) {
+                const [rowIndex, columnIndex] = vp.focusCursor;
+                const row = rows.find((row): boolean => row.index === rowIndex);
 
-                // Recreate row when it is destroyed and it is in the range.
-                if (!row) {
-                    rows.push(await this.getOrCreateRow(i));
+                if (row) {
+                    row.cells[columnIndex]?.htmlElement.focus({
+                        preventScroll: true
+                    });
                 }
             }
 
-            rows.sort((a, b): number => a.index - b.index);
-        } else {
-            // Remove rows outside the range from the start.
-            while (rows.length && rows[0].index < from) {
-                this.poolRow(rows.shift() as TableRow);
-            }
-
-            // Remove rows outside the range from the end.
-            while (rows.length && rows[rows.length - 1].index > to) {
-                this.poolRow(rows.pop() as TableRow);
-            }
-
-            if (!rows.length) {
-                for (let i = from; i <= to; ++i) {
-                    rows.push(await this.getOrCreateRow(i));
-                }
-            } else {
-                // Add rows before the current range.
-                for (let i = rows[0].index - 1; i >= from; --i) {
-                    rows.unshift(await this.getOrCreateRow(i));
-                }
-
-                // Add rows after the current range.
-                for (let i = rows[rows.length - 1].index + 1; i <= to; ++i) {
-                    rows.push(await this.getOrCreateRow(i));
+            // Set the focus anchor cell
+            if (
+                (!vp.focusCursor || !vp.focusAnchorCell?.row.rendered) &&
+                rows.length > 0
+            ) {
+                const rowIndex = rowCursor - rows[0].index;
+                if (rows[rowIndex]) {
+                    vp.setFocusAnchorCell(rows[rowIndex].cells[0]);
                 }
             }
-
-            vp.rows = rows;
-        }
-
-        for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
-            const row = rows[i];
-            if (!row.rendered) {
-                vp.tbodyElement.insertBefore(
-                    row.htmlElement,
-                    vp.tbodyElement.lastChild
-                );
-                await row.render();
-                continue;
-            }
-
-            if (!row.htmlElement.isConnected) {
-                vp.tbodyElement.insertBefore(
-                    row.htmlElement,
-                    vp.tbodyElement.lastChild
-                );
-            }
-        }
-
-        if (alwaysLastRow) {
-            rows.push(alwaysLastRow);
-        }
-
-        // Focus the cell if the focus cursor is set
-        if (vp.focusCursor) {
-            const [rowIndex, columnIndex] = vp.focusCursor;
-            const row = rows.find((row): boolean => row.index === rowIndex);
-
-            if (row) {
-                row.cells[columnIndex]?.htmlElement.focus({
-                    preventScroll: true
-                });
-            }
-        }
-
-        // Set the focus anchor cell
-        if (
-            (!vp.focusCursor || !vp.focusAnchorCell?.row.rendered) &&
-            rows.length > 0
-        ) {
-            const rowIndex = rowCursor - rows[0].index;
-            if (rows[rowIndex]) {
-                vp.setFocusAnchorCell(rows[rowIndex].cells[0]);
-            }
+        } finally {
+            this.isRendering = false;
         }
     }
 
@@ -578,6 +599,7 @@ class RowsVirtualizer {
 
         const newRow = new TableRow(vp, index);
         newRow.rendered = false;
+        await newRow.init();
         if (isVirtualization) {
             newRow.setTranslateY(newRow.getDefaultTopOffset());
         }

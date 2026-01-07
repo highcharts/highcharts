@@ -132,7 +132,7 @@ class TableRow extends Row {
 
         for (let i = 0, iEnd = this.cells.length; i < iEnd; ++i) {
             const cell = this.cells[i] as TableCell;
-            void cell.setValue();
+            await cell.setValue();
         }
 
         this.reflow();
@@ -165,7 +165,7 @@ class TableRow extends Row {
 
         for (let i = 0, iEnd = this.cells.length; i < iEnd; ++i) {
             const cell = this.cells[i] as TableCell;
-            void cell.setValue();
+            await cell.setValue();
         }
 
         if (doReflow) {
