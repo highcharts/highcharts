@@ -689,13 +689,6 @@
     padding-bottom: 2px;
 }
 
-.hcg-header-cell-sort-icon .hcg-button:hover .hcg-sort-priority-indicator,
-.hcg-header-cell-sort-icon .hcg-button:focus-visible .hcg-sort-priority-indicator,
-.hcg-header-cell-sort-icon .hcg-button.highlighted .hcg-sort-priority-indicator {
-    background: var(--ig-icon-header-hover-color);
-    color: var(--ig-default-background);
-}
-
 .hcg-resizable-content tr {
     width: 100%;
 }
