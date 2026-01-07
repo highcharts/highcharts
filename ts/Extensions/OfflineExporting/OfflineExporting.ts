@@ -2,7 +2,7 @@
  *
  *  Client side exporting module
  *
- *  (c) 2015 Highsoft AS
+ *  (c) 2015-2026 Highsoft AS
  *  Author: Torstein Honsi / Oystein Moseng
  *
  *  A commercial license may be required depending on use.

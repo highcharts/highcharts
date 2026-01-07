@@ -1,5 +1,5 @@
 /* *
- *  (c) 2016 Highsoft AS
+ *  (c) 2016-2026 Highsoft AS
  *  Authors: Jon Arild Nygard
  *
  *  A commercial license may be required depending on use.

@@ -3,7 +3,7 @@
  * @license Highcharts Maps v@product.version@ (@product.date@)
  * @module highcharts/highmaps
  *
- * (c) 2011-2025 Highsoft AS
+ * (c) 2011-2026 Highsoft AS
  *
  * A commercial license may be required depending on use.
  * See www.highcharts.com/license

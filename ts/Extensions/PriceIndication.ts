@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: LicenseRef-Highcharts
 /**
- * (c) 2009-2025 Highsoft AS
+ * (c) 2009-2026 Highsoft AS
  * Author: Sebastian Bochann
  *
  * Price indicator for Highcharts

@@ -6,7 +6,7 @@
  *
  * Highmaps as a plugin for Highcharts or Highcharts Stock.
  *
- * (c) 2011-2025 Highsoft AS
+ * (c) 2011-2026 Highsoft AS
  * Author: Torstein Honsi
  *
  * A commercial license may be required depending on use.
