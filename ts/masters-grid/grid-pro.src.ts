@@ -50,6 +50,7 @@ import PaginationComposition from '../Grid/Pro/Pagination/PaginationComposition.
 import Pagination from '../Grid/Core/Pagination/Pagination.js';
 import CellContentPro from '../Grid/Pro/CellRendering/CellContentPro.js';
 import CellRenderer from '../Grid/Pro/CellRendering/CellRenderer.js';
+import RemoteFetchHelper from '../Grid/Pro/Data/RemoteFetchHelper.js';
 
 import Popup from '../Grid/Core/UI/Popup.js';
 
@@ -125,6 +126,7 @@ const G = {
     Pagination,
     Popup,
     product: 'Grid Pro',
+    RemoteFetchHelper,
     setOptions: Defaults.setOptions,
     SvgIcons,
     Table,
@@ -167,6 +169,7 @@ export {
     _Options as Options,
     Pagination,
     Popup,
+    RemoteFetchHelper,
     SvgIcons,
     Table,
     TableCell,
