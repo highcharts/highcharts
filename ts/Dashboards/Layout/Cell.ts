@@ -226,7 +226,16 @@ class Cell extends GUIElement {
      *
      */
     public getOptions(): DeepPartial<Cell.Options> {
-        return this.options;
+        const cell = this;
+
+        if (cell.options.layout && cell.nestedLayout) {
+            return {
+                ...cell.options,
+                layout: cell.nestedLayout.getOptions()
+            };
+        }
+        
+        return cell.options;
     }
 
     protected changeVisibility(
