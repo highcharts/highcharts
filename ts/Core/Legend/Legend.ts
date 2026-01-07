@@ -93,11 +93,39 @@ declare module '../Series/SeriesOptions' {
          * @see [yAxis.reversedStacks](#yAxis.reversedStacks)
          *
          * @sample {highcharts|highstock} highcharts/series/legendindex/
-         *         Legend in opposite order
+         * Legend in opposite order
          */
         legendIndex?: number;
+
+        /** @internal */
         legendType?: ('point'|'series');
+
+        /**
+         * If true, a checkbox is displayed next to the legend item to allow
+         * selecting the series. The state of the checkbox is determined by
+         * the `selected` option.
+         *
+         * @productdesc {highmaps}
+         * Note that if a `colorAxis` is defined, the color axis is represented
+         * in the legend, not the series.
+         *
+         * @sample {highcharts} highcharts/plotoptions/series-showcheckbox-true/
+         * Show select box
+         *
+         * @since 1.2.0
+         * @default false
+         */
         showCheckbox?: boolean;
+
+        /**
+         * Whether to display this particular series or series type in the
+         * legend. Standalone series are shown in legend by default, and linked
+         * series are not. Since v7.2.0 it is possible to show series that use
+         * colorAxis by setting this option to `true`.
+         *
+         * @sample {highcharts} highcharts/plotoptions/series-showinlegend/
+         * One series in the legend, one hidden
+         */
         showInLegend?: boolean;
     }
     interface SeriesEventsOptions {

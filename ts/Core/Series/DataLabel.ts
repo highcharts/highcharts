@@ -102,7 +102,7 @@ declare module './PointOptions' {
     }
 }
 
-export interface PointDataLabelOptions extends DataLabelOptions {
+export interface PointDataLabelOptionsModifier {
     /* *
      *
      *  Excluded
@@ -111,6 +111,9 @@ export interface PointDataLabelOptions extends DataLabelOptions {
 
     zIndex?: undefined;
 }
+
+export type PointDataLabelOptions =
+    DataLabelOptions & PointDataLabelOptionsModifier;
 
 /** @internal */
 declare module './SeriesBase' {

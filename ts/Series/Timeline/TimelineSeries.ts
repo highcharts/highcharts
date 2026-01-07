@@ -212,7 +212,12 @@ class TimelineSeries extends LineSeries {
                         dataLabelsOptions.alternate && visibilityIndex % 2
                     ) ? 'right' : 'left';
                 }
-                point.options.dataLabels = merge(defaults, point.userDLOptions);
+                point.options.dataLabels = merge(
+                    defaults,
+                    point.userDLOptions,
+                    // Forced. Point level limitations.
+                    { zIndex: void 0 }
+                );
                 visibilityIndex++;
             }
         }

@@ -24,7 +24,10 @@ import type NodesComposition from '../NodesComposition';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type SankeyDataLabelOptions from './SankeyDataLabelOptions';
 import type SankeyPoint from './SankeyPoint';
-import type SankeyPointOptions from './SankeyPointOptions';
+import type {
+    SankeyPointOptions,
+    SankeyPointDataLabelOptions
+} from './SankeyPointOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type Templating from '../../Core/Templating';
 import type TooltipOptions from '../../Core/TooltipOptions';
@@ -138,7 +141,10 @@ export interface SankeySeriesNodeOptions {
      * Individual data label for each node. The options are the same as
      * the ones for [series.sankey.dataLabels](#series.sankey.dataLabels).
      */
-    dataLabels?: SankeyDataLabelOptions;
+    dataLabels?: (
+        SankeyPointDataLabelOptions |
+        Array<SankeyPointDataLabelOptions>
+    );
 
     /**
      * The height of the node.
