@@ -2,7 +2,7 @@
  *
  *  Marker clusters module.
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *
  *  Author: Wojciech Chmiel
  *
@@ -368,7 +368,7 @@ let baseGeneratePoints: ScatterSeries['generatePoints'],
     /**
      * Points that ids are included in the oldPointsStateId array are hidden
      * before animation. Other ones are destroyed.
-     * @private
+     * @internal
      */
     oldPointsStateId: Array<string> = [],
     stateIdCounter = 0;
@@ -379,7 +379,7 @@ let baseGeneratePoints: ScatterSeries['generatePoints'],
  *
  * */
 
-/** @private */
+/** @internal */
 function compose(
     highchartsDefaultOptions: Options,
     ScatterSeriesClass: typeof ScatterSeries
@@ -422,7 +422,7 @@ function compose(
 
 /**
  * Util function.
- * @private
+ * @internal
  */
 function destroyOldPoints(
     oldState: Record<string, MarkerClusterPointsState>
@@ -434,7 +434,7 @@ function destroyOldPoints(
 
 /**
  * Util function.
- * @private
+ * @internal
  */
 function fadeInElement(
     elem: SVGElement,
@@ -446,7 +446,7 @@ function fadeInElement(
 
 /**
  * Util function.
- * @private
+ * @internal
  */
 function fadeInNewPointAndDestoryOld(
     newPointObj: MarkerClusterPointsState,
@@ -465,7 +465,7 @@ function fadeInNewPointAndDestoryOld(
 
 /**
  * Util function.
- * @private
+ * @internal
  */
 function fadeInStatePoint(
     stateObj: MarkerClusterPointsState,
@@ -489,7 +489,7 @@ function fadeInStatePoint(
 
 /**
  * Util function.
- * @private
+ * @internal
  */
 function getClusterPosition(
     points: Array<PositionObject>
@@ -513,7 +513,7 @@ function getClusterPosition(
 /**
  * Util function.Prepare array with sorted data objects to be compared in
  * getPointsState method.
- * @private
+ * @internal
  */
 function getDataState(
     clusteredData: MarkerClusterInfoObject,
@@ -543,7 +543,7 @@ function getDataState(
 
 /**
  * Util function. Generate unique stateId for a state element.
- * @private
+ * @internal
  */
 function getStateId(): string {
     return Math.random().toString(36).substring(2, 7) + '-' + stateIdCounter++;
@@ -551,7 +551,7 @@ function getStateId(): string {
 
 /**
  * Util function.
- * @private
+ * @internal
  */
 function hideStatePoint(
     stateObj: MarkerClusterPointsState,
@@ -569,7 +569,7 @@ function hideStatePoint(
     }
 }
 
-/** @private */
+/** @internal */
 function onPointDrillToCluster(
     this: ScatterPoint,
     event: PointClickEvent
@@ -649,7 +649,7 @@ function onPointDrillToCluster(
 
 /**
  * Util function.
- * @private
+ * @internal
  */
 function pixelsToValues(
     series: Series,
@@ -665,7 +665,7 @@ function pixelsToValues(
     };
 }
 
-/** @private */
+/** @internal */
 function seriesAnimateClusterPoint(
     this: ScatterSeries,
     clusterObj: ClusterAndNoiseObject
@@ -821,7 +821,7 @@ function seriesAnimateClusterPoint(
 
 /**
  * Destroy clustered data points.
- * @private
+ * @internal
  */
 function seriesDestroyClusteredData(
     this: ScatterSeries
@@ -836,7 +836,7 @@ function seriesDestroyClusteredData(
 
 /**
  * Override the generatePoints method by adding a reference to grouped data.
- * @private
+ * @internal
  */
 function seriesGeneratePoints(
     this: ScatterSeries
@@ -1076,7 +1076,7 @@ function seriesGeneratePoints(
     }
 }
 
-/** @private */
+/** @internal */
 function seriesGetClusterDistancesFromPoint(
     this: ScatterSeries,
     clusters: Array<KmeansClusterObject>,
@@ -1104,7 +1104,7 @@ function seriesGetClusterDistancesFromPoint(
     );
 }
 
-/** @private */
+/** @internal */
 function seriesGetClusteredData(
     this: ScatterSeries,
     groupedData: Record<string, MarkerClusterSplitDataArray>,
@@ -1292,7 +1292,7 @@ function seriesGetClusteredData(
     };
 }
 
-/** @private */
+/** @internal */
 function seriesGetGridOffset(
     this: ScatterSeries
 ): Record<string, number> {
@@ -1322,7 +1322,7 @@ function seriesGetGridOffset(
 /**
  * Point state used when animation is enabled to compare and bind old points
  * with new ones.
- * @private
+ * @internal
  */
 function seriesGetPointsState(
     this: ScatterSeries,
@@ -1387,7 +1387,7 @@ function seriesGetPointsState(
     return state;
 }
 
-/** @private */
+/** @internal */
 function seriesGetRealExtremes(
     this: ScatterSeries
 ): Record<string, number> {
@@ -1415,7 +1415,7 @@ function seriesGetRealExtremes(
     };
 }
 
-/** @private */
+/** @internal */
 function seriesGetScaledGridSize(
     this: ScatterSeries,
     options: MarkerClusterLayoutAlgorithmOptions
@@ -1467,7 +1467,7 @@ function seriesGetScaledGridSize(
 
 /**
  * Hide clustered data points.
- * @private
+ * @internal
  */
 function seriesHideClusteredData(
     this: ScatterSeries
@@ -1499,7 +1499,7 @@ function seriesHideClusteredData(
 
 /**
  * Check if user algorithm result is valid groupedDataObject.
- * @private
+ * @internal
  */
 function seriesIsValidGroupedDataObject(
     groupedData: Record<string, MarkerClusterSplitDataArray>
@@ -1529,7 +1529,7 @@ function seriesIsValidGroupedDataObject(
     return result;
 }
 
-/** @private */
+/** @internal */
 function seriesPreventClusterCollisions(
     this: ScatterSeries,
     props: MarkerClusterPreventCollisionObject
@@ -1680,7 +1680,7 @@ function seriesPreventClusterCollisions(
 
 /**
  * Util function.
- * @private
+ * @internal
  */
 function valuesToPixels(
     series: Series,

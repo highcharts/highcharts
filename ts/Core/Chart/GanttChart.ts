@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2016-2025 Highsoft AS
+ *  (c) 2016-2026 Highsoft AS
  *
  *  Author: Lars A. V. Cabrera
  *
@@ -45,6 +45,8 @@ const {
 
 declare module '../Options' {
     interface Options {
+
+        /** @internal */
         isGantt?: boolean;
     }
 }
@@ -203,6 +205,7 @@ class GanttChart extends Chart {
  *
  * */
 
+/** @internal */
 namespace GanttChart {
 
     /* *

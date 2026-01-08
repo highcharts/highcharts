@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *  Author: Highsoft, Black Label
  *
  *  A commercial license may be required depending on use.
@@ -35,7 +35,7 @@ const {
 /**
  * Define types for editable fields per annotation. There is no need to define
  * numbers, because they won't change their type to string.
- * @private
+ * @internal
  */
 const annotationsFieldsTypes: Record<string, string> = {
     backgroundColor: 'string',
@@ -59,7 +59,7 @@ const annotationsFieldsTypes: Record<string, string> = {
 /**
  * Returns the first xAxis or yAxis that was clicked with its value.
  *
- * @private
+ * @internal
  *
  * @param {Array<Highcharts.PointerAxisCoordinateObject>} coords
  *        All the chart's x or y axes with a current pointer's axis value.
@@ -90,7 +90,7 @@ function getAssignedAxis(
 /**
  * Get field type according to value
  *
- * @private
+ * @internal
  *
  * @param {'boolean'|'number'|'string'} value
  * Atomic type (one of: string, number, boolean)
@@ -124,10 +124,12 @@ function getFieldType(
  *
  * */
 
+/** @internal */
 const NavigationBindingUtilities = {
     annotationsFieldsTypes,
     getAssignedAxis,
     getFieldType
 };
 
+/** @internal */
 export default NavigationBindingUtilities;

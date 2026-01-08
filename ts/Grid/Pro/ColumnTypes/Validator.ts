@@ -2,7 +2,7 @@
  *
  *  Grid cell content validator
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -25,6 +25,7 @@ import type { ColumnDataType } from '../../Core/Table/Column';
 import type { EditModeContent } from '../CellEditing/CellEditMode';
 import type Table from '../../Core/Table/Table';
 import type TableCell from '../../Core/Table/Body/TableCell';
+import type { CellRendererTypeRegistry } from '../CellRendering/CellRendererType';
 
 import AST from '../../../Core/Renderer/HTML/AST.js';
 import Globals from '../../Core/Globals.js';
@@ -93,6 +94,43 @@ class Validator {
         unique: {
             validate: (): boolean => true,
             notification: 'This rule is disabled for now.'
+        },
+        // ----------------------------
+        arrayNumber: {
+            validate: function ({ rawValue }): boolean {
+                return rawValue
+                    .split(',')
+                    .every(
+                        (item): boolean => !Number.isNaN(Number(item.trim()))
+                    );
+            },
+            notification:
+                'Value should be a list of numbers separated by commas.'
+        },
+        json: {
+            validate: function ({ rawValue }): boolean {
+                try {
+                    JSON.parse(rawValue);
+                    return true;
+                } catch {
+                    return false;
+                }
+            },
+            notification: 'Value should be a valid JSON.'
+        },
+        sparkline: {
+            validate: function ({ rawValue }): boolean {
+                const arrayNumberValidate =
+                    Validator.rulesRegistry.arrayNumber.validate as
+                    (args: { rawValue: string }) => boolean;
+                const jsonValidate = Validator.rulesRegistry.json.validate as
+                    (args: { rawValue: string }) => boolean;
+
+                return arrayNumberValidate({ rawValue }) ||
+                    jsonValidate({ rawValue });
+            },
+            notification: 'Value should be a valid JSON or a list of numbers ' +
+                'separated by commas.'
         }
         // TODO: Decide what to do with this rule.
         // ignoreCaseUnique: {
@@ -119,33 +157,40 @@ class Validator {
         // TODO: Decide what to do with this rule.
         // unique: {
         //     validate: function ({ rawValue }): boolean {
-        //         const oldValue = this.value;
+        //     const oldValue = this.value;
 
-        //         if (oldValue === rawValue) {
-        //             return true;
-        //         }
+        //     if (oldValue === rawValue) {
+        //         return true;
+        //     }
 
-        //         const columnData = this.column.data;
-        //         const isDuplicate = columnData?.some(
-        //             (value): boolean => value === rawValue
-        //         );
+        //     const columnData = this.column.data;
+        //     const isDuplicate = columnData?.some(
+        //         (value): boolean => value === rawValue
+        //     );
 
-        //         return !isDuplicate;
-        //     },
-        //     notification:
-        //         'Value must be unique within this column (case-sensitive).'
-        // }
+        //     return !isDuplicate;
+        // },
+        // notification:
+        //     'Value must be unique within this column (case-sensitive).'
     };
 
     /**
      * Default validation rules for each dataType.
      */
-    public static readonly predefinedRules: Record<ColumnDataType, RuleKey[]> = {
-        'boolean': ['boolean'],
-        datetime: ['datetime'],
-        number: ['number'],
-        string: []
-    };
+    public static readonly predefinedRules: {
+        dataType: Record<ColumnDataType, RuleKey[]>;
+        renderer: { [K in keyof CellRendererTypeRegistry]?: RuleKey[] };
+    } = {
+            dataType: {
+                'boolean': ['boolean'],
+                datetime: ['datetime'],
+                number: ['number'],
+                string: []
+            },
+            renderer: {
+                sparkline: ['sparkline']
+            }
+        };
 
     /* *
      *
@@ -206,6 +251,7 @@ class Validator {
         const { options, dataType } = cell.column;
         const validationErrors =
             cell.row.viewport.grid.options?.lang?.validationErrors;
+        const rendererType = cell.column.options?.cells?.renderer?.type;
         let rules = Array.from(options?.cells?.editMode?.validationRules || []);
 
         // Remove duplicates in validationRules
@@ -216,7 +262,15 @@ class Validator {
         if (rules.length > 0 && isArrayString) {
             rules = [...new Set(rules)];
         } else {
-            const predefined = Validator.predefinedRules[dataType] || [];
+            const predefined = [
+                ...(Validator.predefinedRules.dataType[dataType] ?? [])
+            ];
+
+            if (rendererType) {
+                predefined.push(
+                    ...Validator.predefinedRules.renderer[rendererType] ?? []
+                );
+            }
 
             const hasPredefined = rules.some(
                 (rule): boolean =>
@@ -429,6 +483,9 @@ export interface RulesRegistryType {
     number: RuleDefinition;
     ignoreCaseUnique: RuleDefinition;
     unique: RuleDefinition;
+    arrayNumber: RuleDefinition;
+    json: RuleDefinition;
+    sparkline: RuleDefinition;
 }
 
 /**

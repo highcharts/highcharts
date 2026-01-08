@@ -2,7 +2,7 @@
  *
  *  Plugin for displaying a message when there is no data visible in chart.
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *
  *  Author: Oystein Moseng
  *
@@ -70,7 +70,7 @@ declare module '../../Core/Options'{
 /**
  * Returns true if there are data points within the plot area now.
  *
- * @private
+ * @internal
  * @function Highcharts.Chart#hasData
  * @return {boolean|undefined}
  * True, if there are data points.
@@ -97,7 +97,7 @@ function chartHasData(
 /**
  * Hide no-data message.
  *
- * @private
+ * @internal
  * @function Highcharts.Chart#hideNoData
  * @return {void}
  * @requires modules/no-data-to-display
@@ -114,7 +114,7 @@ function chartHideNoData(
 
 /**
  * Display a no-data message.
- * @private
+ * @internal
  * @function Highcharts.Chart#showNoData
  * @param {string} [str]
  * An optional message to show in place of the default one
@@ -163,7 +163,7 @@ function chartShowNoData(
     }
 }
 
-/** @private */
+/** @internal */
 function compose(
     ChartClass: typeof Chart,
     highchartsDefaultOptions: Options
@@ -184,7 +184,7 @@ function compose(
 
 /**
  * Add event listener to handle automatic show or hide no-data message.
- * @private
+ * @internal
  */
 function onChartRender(
     this: Chart

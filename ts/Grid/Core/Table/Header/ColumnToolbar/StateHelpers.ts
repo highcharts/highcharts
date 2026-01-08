@@ -2,7 +2,7 @@
  *
  *  Grid Header Cell State Helpers namespace
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -61,16 +61,28 @@ export function isFiltered(column: Column): boolean {
  */
 export function isSorted(column: Column, order?: ('asc'|'desc')): boolean {
     const {
-        currentSorting
+        currentSorting,
+        currentSortings
     } = column.viewport.grid.querying.sorting || {};
 
-    if (currentSorting?.columnId !== column.id) {
+    const columnSorting = (
+        currentSortings?.find((sorting): boolean =>
+            sorting.columnId === column.id
+        ) ||
+        (
+            currentSorting?.columnId === column.id ?
+                currentSorting :
+                void 0
+        )
+    );
+
+    if (!columnSorting?.order) {
         return false;
     }
 
     return order ?
-        currentSorting?.order === order :
-        !!currentSorting?.order;
+        columnSorting.order === order :
+        !!columnSorting.order;
 }
 
 
