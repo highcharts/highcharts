@@ -36,6 +36,7 @@ const {
     getOptions,
     setOptions
 } = D;
+import ExportingDefaults from '../Exporting/ExportingDefaults.js';
 import DownloadURL from '../../Shared/DownloadURL.js';
 const {
     downloadURL,
@@ -51,6 +52,7 @@ import OfflineExportingDefaults from './OfflineExportingDefaults.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
+    error,
     extend,
     pushUnique
 } = U;
@@ -94,6 +96,55 @@ namespace OfflineExporting {
      *
      * */
 
+    const defaultLibURL = ExportingDefaults.exporting?.libURL;
+    const missingLibWarning = 'Warning: exporting.libURL not defined, PDF ' +
+        'client side export will not work';
+
+    /**
+     * Check if the PDF export dependencies are already loaded on window.
+     *
+     * @private
+     */
+    function hasPdfDependencies(): boolean {
+        return !!(
+            win &&
+            win.jspdf?.jsPDF &&
+            (win as any).svg2pdf
+        );
+    }
+
+    /**
+     * Resolve an explicit libURL opt-in from chart/exporting options.
+     *
+     * @private
+     */
+    function getOptInLibURL(
+        chart: Chart,
+        exportingOptions?: ExportingOptions
+    ): (string | undefined) {
+        const chartLibURL = chart.userOptions.exporting?.libURL;
+        if (chartLibURL) {
+            return chartLibURL;
+        }
+
+        const optionsLibURL = chart.options.exporting?.libURL;
+        if (
+            exportingOptions?.libURL &&
+            exportingOptions.libURL !== optionsLibURL
+        ) {
+            return exportingOptions.libURL;
+        }
+
+        if (
+            optionsLibURL &&
+            optionsLibURL !== defaultLibURL
+        ) {
+            return optionsLibURL;
+        }
+
+        return void 0;
+    }
+
     /**
      * Composition function.
      *
@@ -129,20 +180,42 @@ namespace OfflineExporting {
                         const {
                             type,
                             filename,
-                            scale,
-                            libURL
+                            scale
                         } = G.Exporting.prepareImageOptions(exportingOptions);
+                        const chart = exporting?.chart;
+                        const optInLibURL = chart ?
+                            getOptInLibURL(chart, exportingOptions) :
+                            void 0;
+                        const normalizedLibURL = optInLibURL ?
+                            (
+                                optInLibURL.slice(-1) !== '/' ?
+                                    optInLibURL + '/' :
+                                    optInLibURL
+                            ) :
+                            void 0;
 
                         // Local PDF download
                         if (type === 'application/pdf') {
-                            // Must load pdf libraries first if not found. Don't
-                            // destroy the object URL yet since we are doing
-                            // things asynchronously
-                            if (!win.jspdf?.jsPDF) {
-                                // Get jspdf
-                                await getScript(`${libURL}jspdf.js`);
-                                // Get svg2pdf
-                                await getScript(`${libURL}svg2pdf.js`);
+                            if (!hasPdfDependencies()) {
+                                if (!normalizedLibURL) {
+                                    throw new Error(
+                                        'PDF export requires jsPDF and svg2pdf.'
+                                    );
+                                }
+
+                                // Must load pdf libraries first if not found.
+                                // Don't destroy the object URL yet since we are
+                                // doing things asynchronously
+                                if (!win.jspdf?.jsPDF) {
+                                    await getScript(
+                                        `${normalizedLibURL}jspdf.js`
+                                    );
+                                }
+                                if (!(win as any).svg2pdf) {
+                                    await getScript(
+                                        `${normalizedLibURL}svg2pdf.js`
+                                    );
+                                }
                             }
 
                             // Call the PDF download if SVG element found
@@ -168,6 +241,16 @@ namespace OfflineExporting {
         if (!pushUnique(composed, 'OfflineExporting')) {
             return;
         }
+
+        addEvent(Chart, 'load', function (this: Chart): void {
+            if (hasPdfDependencies()) {
+                return;
+            }
+
+            if (!getOptInLibURL(this)) {
+                error(missingLibWarning, false, this);
+            }
+        });
 
         // Adding wrappers for the deprecated functions
         extend(Chart.prototype, {
