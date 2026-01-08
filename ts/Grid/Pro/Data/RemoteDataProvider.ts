@@ -15,6 +15,7 @@
 
 import type DT from '../../../Data/DataTable';
 import type { DataProviderOptions } from '../../Core/Data/DataProvider';
+import type { ColumnDataType } from '../../Core/Table/Column';
 
 import { DataProvider } from '../../Core/Data/DataProvider.js';
 import { registerDataProvider } from '../../Core/Data/DataProviderRegistry';
@@ -374,6 +375,23 @@ export class RemoteDataProvider extends DataProvider {
         if (column && localIndex < column.length) {
             column[localIndex] = value;
         }
+    }
+
+    public override async getColumnDataType(
+        columnId: string
+    ): Promise<ColumnDataType> {
+        const chunk = await this.getChunkForRowIndex(0);
+        const column = chunk.data[columnId];
+        if (!column) {
+            return 'string';
+        }
+
+        if (!Array.isArray(column)) {
+            // Typed array
+            return 'number';
+        }
+
+        return DataProvider.assumeColumnDataType(column.slice(0, 30), columnId);
     }
 
     public override async applyQuery(): Promise<void> {

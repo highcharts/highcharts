@@ -232,7 +232,7 @@ class Pagination {
             delete diff.pageSize;
         }
 
-        // TODO: Optimize more options here.
+        // TODO(update): Optimize more options here.
 
         if (Object.keys(diff).length > 0) {
             this.grid.dirtyFlags.add('grid');

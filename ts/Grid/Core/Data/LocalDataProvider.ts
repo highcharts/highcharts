@@ -16,6 +16,7 @@
 import type { DataProviderOptions } from './DataProvider';
 import type QueryingController from '../Querying/QueryingController';
 import type DataTableOptions from '../../../Data/DataTableOptions';
+import type { ColumnDataType } from '../Table/Column';
 
 import { DataProvider } from './DataProvider.js';
 import DataTable from '../../../Data/DataTable.js';
@@ -124,8 +125,6 @@ export class LocalDataProvider extends DataProvider {
         columnId: string,
         rowId: number
     ): Promise<void> {
-        // TODO: Implement setValue
-        // eslint-disable-next-line no-console
         this.dataTable?.setCell(columnId, rowId, value);
         return Promise.resolve();
     }
@@ -167,6 +166,25 @@ export class LocalDataProvider extends DataProvider {
     public override destroy(): void {
         this.dataTableEventDestructors.forEach((fn): void => fn());
         this.dataTableEventDestructors.length = 0;
+    }
+
+    public override getColumnDataType(
+        columnId: string
+    ): Promise<ColumnDataType> {
+        const column = this.dataTable?.getColumn(columnId);
+        if (!column) {
+            return Promise.resolve('string');
+        }
+
+        if (!Array.isArray(column)) {
+            // Typed array
+            return Promise.resolve('number');
+        }
+
+        return Promise.resolve(DataProvider.assumeColumnDataType(
+            column.slice(0, 30),
+            columnId
+        ));
     }
 
     public getDataTable(presentation: boolean = false): DataTable | undefined {

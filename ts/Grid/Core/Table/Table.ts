@@ -230,7 +230,7 @@ class Table {
         );
 
         // Load columns
-        this.loadColumns();
+        await this.loadColumns();
 
         // Init Table
         await this.init();
@@ -305,7 +305,7 @@ class Table {
     /**
      * Loads the columns of the table.
      */
-    private loadColumns(): void {
+    private async loadColumns(): Promise<void> {
         const { enabledColumns } = this.grid;
         if (!enabledColumns) {
             return;
@@ -314,9 +314,9 @@ class Table {
         let columnId: string;
         for (let i = 0, iEnd = enabledColumns.length; i < iEnd; ++i) {
             columnId = enabledColumns[i];
-            this.columns.push(
-                new Column(this, columnId, i)
-            );
+            const column = new Column(this, columnId, i);
+            await column.init();
+            this.columns.push(column);
         }
 
         this.columnResizing.loadColumns();
