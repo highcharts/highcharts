@@ -105,6 +105,20 @@ declare module '../../Core/Options'{
     }
 }
 
+declare module '../../Core/Series/SeriesOptions'{
+    interface SeriesOptions {
+        /**
+         * A description of the series to add to the screen reader information
+         * about the series.
+         *
+         * @since      5.0.0
+         * @requires   modules/accessibility
+         * @deprecated 8.0.0
+         */
+        description?: SeriesAccessibilityOptions['description'];
+    }
+}
+
 /* *
  *
  *  Functions
