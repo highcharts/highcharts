@@ -1689,15 +1689,37 @@ export class Grid {
      * Grid options.
      */
     public getOptions(onlyUserOptions = true): Partial<Options> {
-        const options =
-            onlyUserOptions ? merge(this.userOptions) : merge(this.options);
+        const options = onlyUserOptions ?
+            merge(this.userOptions) :
+            merge(this.options);
 
-        throw new Error('TODO: Use new options here');
-        /// if (options.data.dataTable?.clone) {
-        //     options.dataTable = {
-        //         columns: options.dataTable.columns
-        //     };
-        // }
+        // Keep `getOptions()` serializable:
+        if (options.dataTable && 'clone' in options.dataTable) {
+            options.dataTable = {
+                columns: options.dataTable.columns
+            };
+        }
+        if (
+            options.data &&
+            'dataTable' in options.data &&
+            'clone' in options.data.dataTable
+        ) {
+            options.data.dataTable = {
+                columns: options.data.dataTable.columns
+            };
+        }
+
+        // Clean up the column options by removing the ones that have no other
+        // options than `id`:
+        const oldColumnOptions = options.columns;
+        if (oldColumnOptions) {
+            options.columns = [];
+            for (const columnOption of oldColumnOptions) {
+                if (Object.keys(columnOption).length > 1) {
+                    options.columns.push(columnOption);
+                }
+            }
+        }
 
         return options;
     }
