@@ -33,7 +33,13 @@ const chart = Highcharts.chart('container', {
             text: 'longitude'
         },
         gridLineColor: '#fff4',
-        gridZIndex: 4
+        gridZIndex: 4,
+        minPadding: 0,
+        maxPadding: 0,
+        endOnTick: false,
+        startOnTick: false,
+        tickWidth: 1,
+        lineWidth: 1
     },
     yAxis: {
         tickInterval: 0.01,
@@ -42,7 +48,13 @@ const chart = Highcharts.chart('container', {
             text: 'latitude'
         },
         gridLineColor: '#fff4',
-        gridZIndex: 4
+        gridZIndex: 4,
+        minPadding: 0,
+        maxPadding: 0,
+        endOnTick: false,
+        startOnTick: false,
+        tickWidth: 1,
+        lineWidth: 1
     },
     colorAxis: {
         stops: [

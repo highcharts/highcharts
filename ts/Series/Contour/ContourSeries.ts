@@ -113,31 +113,7 @@ export default class ContourSeries extends ScatterSeries {
      * */
 
     public init(chart: Chart, options: ContourSeriesOptions): void {
-        const props = {
-            minPadding: 0,
-            maxPadding: 0,
-            gridLineWidth: 0,
-            endOnTick: false,
-            startOnTick: false,
-            tickWidth: 1,
-            lineWidth: 1
-        };
-
-        merge(chart.yAxis[0].userOptions, props);
-        merge(chart.yAxis[0].options, props);
-
         super.init(chart, options);
-
-
-        for (const axis of [this.xAxis, this.yAxis]) {
-            for (const [key, val] of Object.entries(props)) {
-                if (axis.userOptions[key as keyof typeof props] === void 0) {
-                    (axis.userOptions as any)[key] = (
-                        (axis.options as any)[key] = val
-                    );
-                }
-            }
-        }
     }
 
     public getContourData(): [Uint32Array, Float32Array] {

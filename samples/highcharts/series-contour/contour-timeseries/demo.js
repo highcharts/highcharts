@@ -23,6 +23,16 @@ Highcharts.chart('container', {
         x: 40
     },
 
+    xAxis: {
+        minPadding: 0,
+        maxPadding: 0,
+        gridLineWidth: 0,
+        endOnTick: false,
+        startOnTick: false,
+        tickWidth: 1,
+        lineWidth: 1
+    },
+
     yAxis: {
         title: {
             text: null
@@ -30,6 +40,8 @@ Highcharts.chart('container', {
         labels: {
             format: '{value}:00'
         },
+        gridLineWidth: 0,
+        lineWidth: 1,
         minPadding: 0,
         maxPadding: 0,
         startOnTick: false,

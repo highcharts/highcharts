@@ -3,7 +3,23 @@ Highcharts.chart('container', {
         text: 'Contour plot'
     },
     yAxis: {
-        title: null
+        title: null,
+        minPadding: 0,
+        maxPadding: 0,
+        gridLineWidth: 0,
+        endOnTick: false,
+        startOnTick: false,
+        tickWidth: 1,
+        lineWidth: 1
+    },
+    xAxis: {
+        minPadding: 0,
+        maxPadding: 0,
+        gridLineWidth: 0,
+        endOnTick: false,
+        startOnTick: false,
+        tickWidth: 1,
+        lineWidth: 1
     },
     colorAxis: {
         stops: [
