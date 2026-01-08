@@ -761,8 +761,9 @@ class WGLRenderer {
             // Handle the point.color option (#5999)
             const pointOptions = rawData && rawData[i];
             if (!useRaw) {
+                let rgba: Color.RGBA|undefined;
                 if (isObject(pointOptions, true) && pointOptions.color) {
-                    pcolor = color(pointOptions.color).rgba;
+                    rgba = color(pointOptions.color).rgba;
                 }
 
                 const colorKeyIndex = series.options.keys?.indexOf('color');
@@ -771,18 +772,20 @@ class WGLRenderer {
                     colorKeyIndex &&
                     typeof pointOptions[colorKeyIndex] === 'string'
                 ) {
-                    pcolor = color(pointOptions[colorKeyIndex]).rgba;
+                    rgba = color(pointOptions[colorKeyIndex]).rgba;
                 } else if (colorByPoint && chart.options.colors) {
                     colorIndex = colorIndex %
                         chart.options.colors.length;
 
-                    pcolor = color(chart.options.colors[colorIndex]).rgba;
+                    rgba = color(chart.options.colors[colorIndex]).rgba;
                 }
 
-                if (pcolor) {
-                    pcolor[0] /= 255.0;
-                    pcolor[1] /= 255.0;
-                    pcolor[2] /= 255.0;
+                if (rgba) {
+                    pcolor = rgba;
+                    pcolor[0] = rgba[0] / 255.0;
+                    pcolor[1] = rgba[1] / 255.0;
+                    pcolor[2] = rgba[2] / 255.0;
+                    pcolor[3] = rgba[3];
                 }
 
                 colorIndex++;
