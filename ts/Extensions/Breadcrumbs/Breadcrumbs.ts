@@ -23,7 +23,6 @@ import type {
     BreadcrumbsOptions
 } from './BreadcrumbsOptions';
 import type Chart from '../../Core/Chart/Chart.js';
-import type { DeepPartial } from '../../Shared/Types';
 import type Options from '../../Core/Options';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
@@ -52,16 +51,21 @@ const {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Chart/ChartBase' {
     interface ChartBase {
-        breadcrumbsBottomMargin?: boolean;
-        breadcrumbsTopMargin?: boolean;
         breadcrumbs?: Breadcrumbs;
     }
 }
+
 declare module '../../Core/Options' {
     interface LangOptions {
-        breadcrumbsToLabel?: string;
+        /**
+         * The text for the main breadcrumb.
+         *
+         * @since   10.0.0
+         * @product highcharts highmaps
+         */
         mainBreadcrumb?: string;
     }
 }
@@ -74,7 +78,7 @@ declare module '../../Core/Options' {
 
 /**
  * Shift the drillUpButton to make the space for resetZoomButton, #8095.
- * @private
+ * @internal
  */
 function onChartAfterShowResetZoom(
     this: Chart
@@ -99,7 +103,7 @@ function onChartAfterShowResetZoom(
 
 /**
  * Remove resize/afterSetExtremes at chart destroy.
- * @private
+ * @internal
  */
 function onChartDestroy(
     this: Chart
@@ -112,7 +116,7 @@ function onChartDestroy(
 
 /**
  * Logic for making space for the buttons above the plot area
- * @private
+ * @internal
  */
 function onChartGetMargins(
     this: Chart
@@ -147,9 +151,7 @@ function onChartGetMargins(
     }
 }
 
-/**
- * @private
- */
+/** @internal */
 function onChartRedraw(
     this: Chart
 ): void {
@@ -158,7 +160,7 @@ function onChartRedraw(
 
 /**
  * After zooming out, shift the drillUpButton to the previous position, #8095.
- * @private
+ * @internal
  */
 function onChartSelection(
     this: Chart,
@@ -181,7 +183,7 @@ function onChartSelection(
 /**
  * The Breadcrumbs class
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.Breadcrumbs
  *
@@ -238,7 +240,7 @@ class Breadcrumbs {
 
     public constructor(
         chart: Chart,
-        userOptions?: Partial<BreadcrumbsOptions>
+        userOptions?: BreadcrumbsOptions
     ) {
         const chartOptions = merge(
             chart.options.drilldown &&
@@ -290,12 +292,6 @@ class Breadcrumbs {
 
     /**
      * Set breadcrumbs list.
-     * @function Highcharts.Breadcrumbs#setList
-     *
-     * @param {Highcharts.Breadcrumbs} this
-     *        Breadcrumbs class.
-     * @param {Highcharts.BreadcrumbsOptions} list
-     *        Breadcrumbs list.
      */
     public setList(
         list: Array<BreadcrumbOptions>
@@ -647,19 +643,8 @@ class Breadcrumbs {
         return separator;
     }
 
-    /**
-     * Update.
-     * @function Highcharts.Breadcrumbs#update
-     *
-     * @param {Highcharts.Breadcrumbs} this
-     *        Breadcrumbs class.
-     * @param {Highcharts.BreadcrumbsOptions} options
-     *        Breadcrumbs class.
-     * @param {boolean} redraw
-     *        Redraw flag
-     */
     public update(
-        options: DeepPartial<BreadcrumbsOptions>
+        options: BreadcrumbsOptions
     ): void {
         merge(true, this.options, options);
         this.destroy();
@@ -876,6 +861,7 @@ class Breadcrumbs {
  *
  * */
 
+/** @internal */
 namespace Breadcrumbs {
     export type BreadcrumbElement = {
         button?: SVGElement,
@@ -891,6 +877,7 @@ namespace Breadcrumbs {
  *
  * */
 
+/** @internal */
 export default Breadcrumbs;
 
 /* *
@@ -974,18 +961,6 @@ export default Breadcrumbs;
  * Y offset of a Breadcrumbs group.
  * @name Highcharts.BreadcrumbsAlignOptions#y
  * @type {number}
- */
-
-/**
- * Options for all breadcrumbs.
- *
- * @interface Highcharts.BreadcrumbsOptions
- */
-
-/**
- * Button theme.
- * @name Highcharts.BreadcrumbsOptions#buttonTheme
- * @type { SVGAttributes | undefined }
  */
 
 (''); // Keeps doclets above in JS file

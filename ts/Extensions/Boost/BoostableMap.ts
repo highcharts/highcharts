@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2019-2025 Highsoft AS
+ *  (c) 2019-2026 Highsoft AS
  *
  *  Boost module: stripped-down renderer for higher performance
  *
@@ -25,7 +25,10 @@ import Boostables from './Boostables.js';
  *
  * */
 
-// These are the series we allow boosting for.
+/**
+ * These are the series we allow boosting for.
+ * @internal
+ */
 const BoostableMap: Record<string, boolean> = {};
 Boostables.forEach((item: string): void => {
     BoostableMap[item] = true;
@@ -37,4 +40,5 @@ Boostables.forEach((item: string): void => {
  *
  * */
 
+/** @internal */
 export default BoostableMap;

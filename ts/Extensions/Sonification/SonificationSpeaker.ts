@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *  Author: Øystein Moseng
  *
  *  Class representing a speech synthesis voice.
@@ -124,7 +124,7 @@ class SonificationSpeaker {
 
     /**
      * Stop speech and release any used resources
-     * @private
+     * @internal
      */
     destroy(): void {
         // Ran on TimelineChannel.destroy
@@ -148,7 +148,7 @@ class SonificationSpeaker {
 
     /**
      * Set the active synthesis voice for the speaker.
-     * @private
+     * @internal
      */
     private setVoice(): void {
         if (this.synthesis) {

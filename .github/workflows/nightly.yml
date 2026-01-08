@@ -97,7 +97,7 @@ jobs:
           cache: 'npm'
 
       - name: Install Dependencies
-        run: npm i
+        run: npm ci
 
       - name: Set application version env var
         run: |
@@ -184,7 +184,7 @@ jobs:
       - name: Install and build
         working-directory: ./highcharts
         run: |
-          npm i
+          npm ci
           npm run build -- --CI true
           npx gulp dist-verify
           npx gulp dist-release --force-yes
@@ -211,7 +211,7 @@ jobs:
         with:
           fetch-depth: 0 # get the full history
 
-      - run: npm i
+      - run: npm ci
 
       - name: Build tree.json
         run: |

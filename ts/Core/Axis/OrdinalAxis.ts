@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Honsi
  *
  *  A commercial license may be required depending on use.
@@ -102,6 +102,9 @@ namespace OrdinalAxis {
 
         /** @internal */
         forceOrdinal?: boolean;
+
+        /** @internal */
+        isFullRange?: boolean;
 
         /** @internal */
         isInternal?: boolean;
@@ -541,6 +544,13 @@ namespace OrdinalAxis {
                 // Calculate the original ordinal range
                 axis.ordinal.getExtendedPositions(false);
             }
+
+            // #22334
+            axis.isFullRange = (
+                defined(axis.dataMin) &&
+                defined(axis.dataMax) &&
+                axis.max - axis.min === axis.dataMax - axis.dataMin
+            );
 
             if (
                 axis.max === axis.dataMax &&
@@ -1558,19 +1568,14 @@ namespace OrdinalAxis {
 
             if (isString(overscroll)) {
                 const overscrollValue = parseInt(overscroll, 10);
-                let isFullRange;
 
                 // #22334
                 if (
-                    defined(axis.min) && defined(axis.max) &&
-                    defined(axis.dataMin) && defined(axis.dataMax)
+                    axis.isFullRange === false &&
+                    isNumber(axis.min) &&
+                    isNumber(axis.max)
                 ) {
-                    isFullRange =
-                        axis.max - axis.min === axis.dataMax - axis.dataMin;
-
-                    if (!isFullRange) {
-                        this.originalOrdinalRange = axis.max - axis.min;
-                    }
+                    this.originalOrdinalRange = axis.max - axis.min;
                 }
 
                 if (/%$/.test(overscroll)) {
@@ -1590,7 +1595,7 @@ namespace OrdinalAxis {
 
                     return calculateOverscroll(
                         pixelToPercent /
-                        (isFullRange ? (1 - pixelToPercent) : 1)
+                        (axis.isFullRange ? (1 - pixelToPercent) : 1)
                     );
                 }
 
