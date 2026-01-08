@@ -59,6 +59,7 @@ Highcharts.chart('container', {
 
     series: [{
         lineWidth: 0,
+        contourInterval: 1,
         tooltip: {
             headerFormat: 'Temperature<br/>',
             pointFormat: '{point.x:%e %b, %Y} {point.y}:00: <b>{point.value} ' +

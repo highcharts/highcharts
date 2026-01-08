@@ -59,10 +59,10 @@ const chart = Highcharts.chart('container', {
         `
     },
     series: [{
+        contourInterval: 50,
         clip: true,
         type: 'contour',
         name: 'Elevation',
-        contourInterval: 50,
         data,
         marker: {
             states: {

@@ -76,10 +76,10 @@ const ContourSeriesDefaults: ContourSeriesOptions = {
 
     /**
      * The interval between contour lines. Determines the spacing of value
-     * levels where lines are drawn on the plot.
+     * levels where lines are drawn on the plot. By default, the interval is
+     * calculated using the value range.
      *
      * @type      {number}
-     * @default   1
      * @apioption plotOptions.contour.contourInterval
      */
 

@@ -41,7 +41,8 @@ const {
 const {
     diffObjects,
     extend,
-    merge
+    merge,
+    normalizeTickInterval
 } = U;
 
 
@@ -387,7 +388,7 @@ export default class ContourSeries extends ScatterSeries {
                     vertices as GPUAllowSharedBufferSource
                 );
                 device.queue.writeBuffer(
-                    indexBuffer as GPUBuffer,
+                    indexBuffer,
                     0,
                     indices as GPUAllowSharedBufferSource
                 );
@@ -719,7 +720,14 @@ export default class ContourSeries extends ScatterSeries {
      * WebGPU uniform.
      */
     private getContourInterval(): number {
-        const interval = this.options.contourInterval ?? 1;
+
+        const interval = this.options.contourInterval ?? ((): number => {
+            const [min, max] = this.getValueAxisExtremes(),
+                range = max - min;
+
+            return normalizeTickInterval(range / 10);
+        })();
+
         if (isNaN(interval) || interval <= 0) {
             return -1;
         }
