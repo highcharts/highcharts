@@ -504,10 +504,9 @@ class Series {
     public markerGroup?: SVGElement;
 
     /**
-     * The series name as given in the options. Defaults to
-     * "Series {n}".
+     * The series name as given in the options. Defaults to "Series {n}".
      */
-    public name?: string;
+    public name!: string;
 
     /** @internal */
     public opacity?: number;
@@ -546,6 +545,9 @@ class Series {
 
     /** @internal */
     public sharedClipKey?: string;
+
+    /** @internal */
+    public state?: StatesOptionsKey;
 
     /** @internal */
     public stateMarkerGraphic?: SVGElement;
