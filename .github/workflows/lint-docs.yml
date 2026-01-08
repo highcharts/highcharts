@@ -34,7 +34,7 @@ jobs:
           cache: 'npm'
 
       - name: Install Dependencies
-        run: npm i
+        run: npm ci
 
       - name: Check spelling
         run: npm run lint-docs

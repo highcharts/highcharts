@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -41,22 +42,14 @@ import { Palette } from '../../Core/Color/Palettes.js';
 const exporting: ExportingOptions = {
 
     /**
-     * Experimental setting to allow HTML inside the chart (added through
-     * the `useHTML` options), directly in the exported image. This allows
-     * you to preserve complicated HTML structures like tables or bi-directional
-     * text in exported charts.
+     * Allow HTML inside the chart (added through the `useHTML` options),
+     * directly in the exported image. This allows you to preserve complicated
+     * HTML structures like tables or bi-directional text in exported charts.
      *
-     * Disclaimer: The HTML is rendered in a `foreignObject` tag in the
-     * generated SVG. The official export server is based on PhantomJS,
-     * which supports this, but other SVG clients, like Batik, does not
-     * support it. This also applies to downloaded SVG that you want to
-     * open in a desktop client.
-     *
-     * @type      {boolean}
-     * @default   false
      * @since     4.1.8
      * @apioption exporting.allowHTML
      */
+    allowHTML: true,
 
     /**
      * Allows the end user to sort the data table by clicking on column headers.
@@ -73,7 +66,8 @@ const exporting: ExportingOptions = {
      *
      * @see [styledMode](#chart.styledMode)
      *
-     * @sample {highcharts} highcharts/exporting/apply-stylesheets/
+     * @sample    {highcharts} highcharts/exporting/apply-stylesheets/
+     *            Export with custom stylesheet
      *
      * @type      {boolean}
      * @default   false
@@ -287,7 +281,7 @@ const exporting: ExportingOptions = {
 
     /**
      * The URL for the server module converting the SVG string to an image
-     * format. By default this points to Highchart's free web service.
+     * format. By default this points to Highcharts free web service.
      *
      * @since 2.0
      */
@@ -413,16 +407,6 @@ const exporting: ExportingOptions = {
              */
 
             /**
-             * See [navigation.buttonOptions.symbolFill](
-             * #navigation.buttonOptions.symbolFill).
-             *
-             * @type      {Highcharts.ColorString}
-             * @default   #666666
-             * @since     2.0
-             * @apioption exporting.buttons.contextButton.symbolFill
-             */
-
-            /**
              * The horizontal position of the button relative to the `align`
              * option.
              *
@@ -519,54 +503,52 @@ const exporting: ExportingOptions = {
      * @sample highcharts/exporting/menuitemdefinitions-webp/
      *         Adding a custom menu item for WebP export
      *
-     *
-     * @type    {Highcharts.Dictionary<Highcharts.ExportingMenuObject>}
-     * @default {"viewFullscreen": {}, "printChart": {}, "separator": {}, "downloadPNG": {}, "downloadJPEG": {}, "downloadPDF": {}, "downloadSVG": {}}
-     * @since   5.0.13
+     * @type     {Highcharts.Dictionary<Highcharts.ExportingMenuObject>}
+     * @since    5.0.13
      */
     menuItemDefinitions: {
-
-        /**
-         * @ignore
-         */
         viewFullscreen: {
+            /**
+             * @see [lang.viewFullscreen](#lang.viewFullscreen)
+             * @default viewFullscreen
+             */
             textKey: 'viewFullscreen',
             onclick: function (): void {
                 this.fullscreen?.toggle();
             }
         },
 
-        /**
-         * @ignore
-         */
         printChart: {
+            /**
+             * @see [lang.printChart](#lang.printChart)
+             * @default printChart
+             */
             textKey: 'printChart',
             onclick: function (): void {
                 this.exporting?.print();
             }
         },
 
-        /**
-         * @ignore
-         */
         separator: {
             separator: true
         },
 
-        /**
-         * @ignore
-         */
         downloadPNG: {
+            /**
+             * @see [lang.downloadPNG](#lang.downloadPNG)
+             * @default downloadPNG
+             */
             textKey: 'downloadPNG',
             onclick: async function (): Promise<void> {
                 await this.exporting?.exportChart();
             }
         },
 
-        /**
-         * @ignore
-         */
         downloadJPEG: {
+            /**
+             * @see [lang.downloadJPEG](#lang.downloadJPEG)
+             * @default downloadJPEG
+             */
             textKey: 'downloadJPEG',
             onclick: async function (): Promise<void> {
                 await this.exporting?.exportChart({
@@ -575,10 +557,11 @@ const exporting: ExportingOptions = {
             }
         },
 
-        /**
-         * @ignore
-         */
         downloadPDF: {
+            /**
+             * @see [lang.downloadPDF](#lang.downloadPDF)
+             * @default downloadPDF
+             */
             textKey: 'downloadPDF',
             onclick: async function (): Promise<void> {
                 await this.exporting?.exportChart({
@@ -587,10 +570,11 @@ const exporting: ExportingOptions = {
             }
         },
 
-        /**
-         * @ignore
-         */
         downloadSVG: {
+            /**
+             * @see [lang.downloadSVG](#lang.downloadSVG)
+             * @default downloadSVG
+             */
             textKey: 'downloadSVG',
             onclick: async function (): Promise<void> {
                 await this.exporting?.exportChart({
@@ -598,9 +582,7 @@ const exporting: ExportingOptions = {
                 });
             }
         }
-
     }
-
 };
 
 // Add language
@@ -614,6 +596,7 @@ const lang = {
      * in full screen.
      *
      * @since 8.0.1
+     * @requires modules/exporting
      */
     viewFullscreen: 'View in full screen',
 
@@ -622,6 +605,7 @@ const lang = {
      * from full screen.
      *
      * @since 8.0.1
+     * @requires modules/exporting
      */
     exitFullscreen: 'Exit from full screen',
 
@@ -904,9 +888,7 @@ const navigation: NavigationOptions = {
              * Default stroke linecap for the buttons.
              */
             'stroke-linecap': 'round'
-
         }
-
     },
 
     /**
@@ -993,10 +975,12 @@ const navigation: NavigationOptions = {
  *
  * */
 
+/** @internal */
 const ExportingDefaults = {
     exporting,
     lang,
     navigation
 };
 
+/** @internal */
 export default ExportingDefaults;

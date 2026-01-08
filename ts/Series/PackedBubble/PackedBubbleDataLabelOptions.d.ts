@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Grzegorz Blachlinski, Sebastian Bochan
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Grzegorz Blachlinski, Sebastian Bochan
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -28,7 +29,10 @@ import type Point from '../../Core/Series/Point';
  * */
 
 export interface PackedBubbleDataLabelsFormatterCallbackFunction {
-    (this: (Point|PackedBubblePoint)): (number|string|null|undefined);
+    (
+        this: (Point|PackedBubblePoint),
+        options: PackedBubbleDataLabelOptions
+    ): (number|string|null|undefined);
 }
 
 export interface PackedBubbleDataLabelOptions extends DataLabelOptions {

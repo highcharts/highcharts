@@ -1,12 +1,12 @@
 /* *
  *
- *  (c) 2014-2025 Highsoft AS
+ *  (c) 2014-2026 Highsoft AS
  *
  *  Authors: Jon Arild Nygard / Oystein Moseng
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -20,7 +20,6 @@ import type {
     AlignValue,
     VerticalAlignValue
 } from '../../Core/Renderer/AlignObject';
-import type BreadcrumbsOptions from '../../Extensions/Breadcrumbs/BreadcrumbsOptions';
 import type ButtonThemeObject from '../../Core/Renderer/SVG/ButtonThemeObject';
 import type ColorString from '../../Core/Color/ColorString';
 import type ColorType from '../../Core/Color/ColorType';
@@ -37,7 +36,6 @@ import type {
 } from '../../Core/Series/SeriesOptions';
 import type TooltipOptions from '../../Core/TooltipOptions';
 import type TreemapPointOptions from './TreemapPointOptions';
-import type TreemapSeries from './TreemapSeries';
 import MarkerClusterOptions from '../../Extensions/MarkerClusters/MarkerClusterOptions';
 
 /* *
@@ -425,18 +423,6 @@ export interface TreemapSeriesOptions extends ScatterSeriesOptions {
      */
     borderWidth?: number;
 
-    /**
-     * Options for the breadcrumbs, the navigation at the top leading the
-     * way up through the traversed levels.
-     *
-     * @since 10.0.0
-     *
-     * @product highcharts
-     *
-     * @extends navigation.breadcrumbs
-     */
-    breadcrumbs?: BreadcrumbsOptions;
-
     brightness?: number;
 
     /**
@@ -723,7 +709,7 @@ export interface TreemapSeriesOptions extends ScatterSeriesOptions {
      *
      * @extends plotOptions.heatmap.states
      */
-    states?: SeriesStatesOptions<TreemapSeries>;
+    states?: SeriesStatesOptions<TreemapSeriesOptions>;
 
     /**
      * Options for the hovered series

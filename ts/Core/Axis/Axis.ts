@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -169,8 +170,11 @@ class Axis {
      *
      * */
 
-    // Properties to survive after destroy, needed for Axis.update (#4317,
-    // #5773, #5881).
+    /**
+     * Properties to survive after destroy, needed for Axis.update (#4317,
+     * #5773, #5881).
+     * @internal
+     */
     public static keepProps = [
         'coll',
         'extKey',
@@ -202,67 +206,241 @@ class Axis {
      *
      * */
 
+
+    /** @internal */
     public _addedPlotLB?: boolean;
+
+    /** @internal */
     public allExtremes?: Axis.AllExtremes;
+
+    /** @internal */
     public allowZoomOutside?: boolean;
+
+    /** @internal */
     public alternateBands!: Record<string, PlotLineOrBand>;
+
+    /** @internal */
     public autoRotation?: Array<number>;
+
+    /** @internal */
     public axisGroup?: SVGElement;
+
+    /** @internal */
     public axisLine?: SVGElement;
+
+    /** @internal */
     public axisParent?: SVGElement;
+
+    /** @internal */
     public axisPointRange?: number;
+
+    /** @internal */
     public axisTitle?: SVGElement;
+
+    /** @internal */
     public axisTitleMargin?: number;
+
+    /** @internal */
     public bottom!: number;
+
+    /**
+     * If categories are present for the axis, names are used instead of
+     * numbers for that axis.
+     *
+     * Since Highcharts 3.0, categories can also be extracted by giving each
+     * point a name and setting axis type to `category`. However, if you
+     * have multiple series, best practice remains defining the `categories`
+     * array.
+     *
+     * @see [xAxis.categories](/highcharts/xAxis.categories)
+     *
+     * @name Highcharts.Axis#categories
+     * @type {Array<string>}
+     * @readonly
+     */
     public categories?: Array<string>;
+
+    /**
+     * The Chart that the axis belongs to.
+     *
+     * @name Highcharts.Axis#chart
+     * @type {Highcharts.Chart}
+     */
     public chart!: Chart;
+
+    /** @internal */
     public closestPointRange?: number;
+
+    /**
+     * The collection where the axis belongs, for example `xAxis`, `yAxis`
+     * or `colorAxis`. Corresponds to properties on Chart, for example
+     * {@link Chart.xAxis}.
+     *
+     * @name Highcharts.Axis#coll
+     * @type {string}
+     */
     public coll!: AxisCollectionKey;
+
+    /** @internal */
     public cross?: SVGElement;
+
+    /**
+     * The processed crosshair options.
+     *
+     * @name Highcharts.Axis#crosshair
+     * @type {boolean|Highcharts.AxisCrosshairOptions}
+     */
     public crosshair?: AxisCrosshairOptions;
+
+    /** @internal */
     public dataMax?: number;
+
+    /** @internal */
     public dataMin?: number;
+
+    /** @internal */
     public eventArgs?: AxisSetExtremesEventObject;
+
+    /** @internal */
     public eventOptions!: Record<string, EventCallback<Series, Event>>;
+
+    /** @internal */
     public expectedSpace: number|undefined;
+
+    /** @internal */
     public finalTickAmt?: number;
+
+    /** @internal */
     public forceRedraw?: boolean;
+
+    /** @internal */
     public gridGroup?: SVGElement;
+
+    /** @internal */
     public hasNames!: boolean;
+
+    /** @internal */
     public hasVisibleSeries!: boolean;
+
+    /** @internal */
     public height!: number;
+
+    /**
+     * Whether the axis is horizontal.
+     *
+     * @name Highcharts.Axis#horiz
+     * @type {boolean|undefined}
+     */
     public horiz?: boolean;
+
+    /** @internal */
     public index!: number;
+
+    /** @internal */
     public isDirty?: boolean;
+
+    /** @internal */
     public isLinked!: boolean;
+
+    /** @internal */
     public isOrdinal?: boolean;
+
+    /** @internal */
     public isPanning?: boolean;
+
+    /** @internal */
     public isRadial?: boolean;
+
+    /**
+     * Whether the axis is the x-axis.
+     */
     public isXAxis?: boolean;
+
+    /** @internal */
     public isZAxis?: boolean;
+
+    /** @internal */
     public keepProps?: Array<string>;
+
+    /** @internal */
     public labelAlign?: AlignValue;
+
+    /** @internal */
     public labelEdge!: Array<null>; // @todo
+
+    /** @internal */
     public labelFormatter!: AxisLabelFormatterCallback;
+
+    /** @internal */
     public labelGroup?: SVGElement;
+
+    /** @internal */
     public labelOffset?: number;
+
+    /** @internal */
     public labelRotation?: number;
+
+    /** @internal */
     public left!: number;
+
+    /**
+     * The length of the axis in terms of pixels.
+     */
     public len!: number;
+
+    /** @internal */
     public linkedParent?: Axis;
+
+    /**
+     * The maximum value of the axis. In a logarithmic axis, this is the
+     * logarithm of the real value, and the real value can be obtained from
+     * {@link Axis#getExtremes}.
+     */
     public max?: number;
+
+    /** @internal */
     public maxLabelDimensions?: SizeObject;
+
+    /** @internal */
     public maxLabelLength?: number;
+
+    /**
+     * The minimum value of the axis. In a logarithmic axis, this is the
+     * logarithm of the real value, and the real value can be obtained from
+     * {@link Axis#getExtremes}.
+     */
     public min?: number;
+
+    /** @internal */
     public minorTickInterval!: number;
+
+    /**
+     * List of minor ticks mapped by position on the axis.
+     *
+     * @see {@link Highcharts.Tick}
+     */
     public minorTicks!: Record<string, Tick>;
+
+    /** @internal */
     public minPixelPadding!: number;
+
+    /** @internal */
     public minPointOffset?: number;
-    // When the minRange is undefined, it is not yet evaluated. When it is null,
-    // it is deliberately not a number because we have user extremes.
+
+    /**
+     * When the minRange is undefined, it is not yet evaluated. When it is null,
+     * it is deliberately not a number because we have user extremes.
+     * @internal
+     */
     public minRange?: null|number;
+
+    /** @internal */
     public names!: Array<string>;
+
+    /** @internal */
     public offset!: number;
+
+    /** @internal */
     public old?: { // @todo create a type
         len: number;
         max?: number;
@@ -271,49 +449,169 @@ class Axis {
         userMax?: number;
         userMin?: number;
     };
+
+    /** @internal */
     public opposite?: boolean;
+
+    /**
+     * Current options for the axis after merge of defaults and user's
+     * options.
+     */
     public options!: (AxisOptions|XAxisOptions|YAxisOptions);
+
+    /** @internal */
     public ordinal?: AxisComposition['ordinal'];
+
+    /** @internal */
     public overlap!: boolean;
+
+    /** @internal */
     public paddedTicks!: Array<number>;
+
+    /** @internal */
     public plotLinesAndBands!: Array<PlotLineOrBand>;
+
+    /** @internal */
     public plotLinesAndBandsGroups!: Record<string, SVGElement>;
+
+    /** @internal */
     public pointRange!: number;
+
+    /** @internal */
     public pointRangePadding!: number;
+
+    /**
+     * The position of the axis in terms of pixels, compared to the chart
+     * edge. In a horizontal axis it is the same as `chart.plotLeft` unless
+     * the axis is explicitly positioned, and in a default vertical axis it
+     * is the same as `chart.plotTop`.
+     */
     public pos!: number;
+
+    /** @internal */
     public positiveValuesOnly!: boolean;
+
+    /** @internal */
     public reserveSpaceDefault?: boolean;
+
+    /**
+     * Whether the axis is reversed. Based on the `axis.reversed`,
+     * option, but inverted charts have reversed xAxis by default.
+     */
     public reversed?: boolean;
+
+    /** @internal */
     public right!: number;
+
+    /** @internal */
     public sector?: number;
+
+    /**
+     * All series associated to the axis.
+     */
     public series!: Array<Series>;
+
+    /** @internal */
     public showAxis?: boolean;
+
+    /**
+     * The side on which the axis is rendered. 0 is top, 1 is right, 2
+     * is bottom and 3 is left.
+     */
     public side!: number;
+
+    /** @internal */
     public single?: boolean;
+
+    /** @internal */
     public softThreshold?: boolean;
+
+    /** @internal */
     public staggerLines?: number;
+
+    /** @internal */
     public staticScale?: number;
+
+    /** @internal */
     public threshold?: number;
+
+    /** @internal */
     public thresholdAlignment?: number;
+
+    /** @internal */
     public tickAmount!: number;
+
+    /** @internal */
     public tickInterval!: number;
+
+    /** @internal */
     public tickmarkOffset!: number;
+
+    /**
+     * Contains the current positions that are laid out on the axis. The
+     * positions are numbers in terms of axis values. In a category axis
+     * they are integers, in a datetime axis they are also integers, but
+     * designating milliseconds.
+     *
+     * This property is read only - for modifying the tick positions, use
+     * the `tickPositioner` callback or [axis.tickPositions](
+     * https://api.highcharts.com/highcharts/xAxis.tickPositions) option
+     * instead.
+     */
     public tickPositions!: TickPositionsArray;
+
+    /** @internal */
     public tickRotCorr!: PositionObject;
+
+    /**
+     * List of major ticks mapped by position on axis.
+     *
+     * @see {@link Highcharts.Tick}
+     */
     public ticks!: Record<string, Tick>;
+
+    /** @internal */
     public titleOffset?: number;
+
+    /** @internal */
     public top!: number;
+
+    /** @internal */
     public transA!: number;
+
+    /** @internal */
     public transB!: number;
+
+    /** @internal */
     public translationSlope!: number;
+
+    /** @internal */
     public type?: AxisOptions['type'];
+
+    /** @internal */
     public uniqueNames?: boolean;
+
+    /** @internal */
     public userMax?: number;
+
+    /** @internal */
     public userMin?: number;
+
+    /** @internal */
     public userMinRange?: number;
+
+    /**
+     * User's options for this axis without defaults.
+     */
     public userOptions!: DeepPartial<AxisOptions>;
+
+    /** @internal */
     public visible!: boolean;
+
+    /** @internal */
     public width!: number;
+
+    /** @internal */
     public zoomEnabled!: boolean;
 
     /* *
@@ -590,7 +888,7 @@ class Axis {
     /**
      * Merge and set options.
      *
-     * @private
+     * @internal
      * @function Highcharts.Axis#setOptions
      *
      * @param {Highcharts.AxisOptions} userOptions
@@ -725,7 +1023,7 @@ class Axis {
      * Get the minimum and maximum for the series of each axis. The function
      * analyzes the axis series and updates `this.dataMin` and `this.dataMax`.
      *
-     * @private
+     * @internal
      * @function Highcharts.Axis#getSeriesExtremes
      *
      * @emits Highcharts.Axis#event:afterGetSeriesExtremes
@@ -853,7 +1151,7 @@ class Axis {
      * Translate from axis value to pixel position on the chart, or back. Use
      * the `toPixels` and `toValue` functions in applications.
      *
-     * @private
+     * @internal
      * @function Highcharts.Axis#translate
      */
     public translate(
@@ -1028,7 +1326,7 @@ class Axis {
         /**
          * Check if x is between a and b. If not, either move to a/b
          * or skip, depending on the force parameter.
-         * @private
+         * @internal
          */
         function between(x: number, a: number, b: number): number {
             if (force !== 'pass' && (x < a || x > b)) {
@@ -1278,7 +1576,7 @@ class Axis {
      * `series.pointRange`. The data can't be processed until we have finally
      * established min and max.
      *
-     * @private
+     * @internal
      * @function Highcharts.Axis#adjustForMinRange
      */
     public adjustForMinRange(): void {
@@ -1389,7 +1687,7 @@ class Axis {
      * Find the closestPointRange across all series, including the single data
      * series.
      *
-     * @private
+     * @internal
      * @function Highcharts.Axis#getClosest
      */
     public getClosest(): number | undefined {
@@ -1433,7 +1731,7 @@ class Axis {
      * categories, or if categories aren't provided, search names or create a
      * new category (#2522).
      *
-     * @private
+     * @internal
      * @function Highcharts.Axis#nameToX
      *
      * @param {Highcharts.Point} point
@@ -1484,7 +1782,7 @@ class Axis {
     /**
      * When changes have been done to series data, update the axis.names.
      *
-     * @private
+     * @internal
      * @function Highcharts.Axis#updateNames
      */
     public updateNames(): void {
@@ -1547,7 +1845,7 @@ class Axis {
     /**
      * Update translation information.
      *
-     * @private
+     * @internal
      * @function Highcharts.Axis#setAxisTranslation
      *
      * @emits Highcharts.Axis#event:afterSetAxisTranslation
@@ -1662,7 +1960,7 @@ class Axis {
     }
 
     /**
-     * @private
+     * @internal
      * @function Highcharts.Axis#minFromRange
      */
     public minFromRange(): (number|undefined) {
@@ -1674,7 +1972,7 @@ class Axis {
      * Set the tick positions to round values and optionally extend the extremes
      * to the nearest tick.
      *
-     * @private
+     * @internal
      * @function Highcharts.Axis#setTickInterval
      *
      * @param {boolean} secondPass
@@ -1992,7 +2290,7 @@ class Axis {
     /**
      * Now we have computed the normalized tickInterval, get the tick positions.
      *
-     * @private
+     * @internal
      * @function Highcharts.Axis#setTickPositions
      *
      * @emits Highcharts.Axis#event:afterSetTickPositions
@@ -2180,7 +2478,7 @@ class Axis {
      * Handle startOnTick and endOnTick by either adapting to padding min/max or
      * rounded min/max. Also handle single data points.
      *
-     * @private
+     * @internal
      * @function Highcharts.Axis#trimTicks
      *
      * @param {Array<number>} tickPositions
@@ -2243,7 +2541,7 @@ class Axis {
     /**
      * Check if there are multiple axes in the same pane.
      *
-     * @private
+     * @internal
      * @function Highcharts.Axis#alignToOthers
      *
      * @return {boolean|undefined}
@@ -2341,7 +2639,7 @@ class Axis {
      * Where the axis wants its threshold, from 0 which is on `axis.min`, to 1 which
      * is on `axis.max`.
      *
-     * @private
+     * @internal
      * @function Highcharts.Axis#getThresholdAlignment
      */
     public getThresholdAlignment(callerAxis: Axis): number|undefined {
@@ -2377,7 +2675,7 @@ class Axis {
      * Find the max ticks of either the x and y axis collection, and record it
      * in `this.tickAmount`.
      *
-     * @private
+     * @internal
      * @function Highcharts.Axis#getTickAmount
      */
     public getTickAmount(): void {
@@ -2420,7 +2718,7 @@ class Axis {
      * When using multiple axes, adjust the number of ticks to match the highest
      * number of ticks in that group.
      *
-     * @private
+     * @internal
      * @function Highcharts.Axis#adjustTickAmount
      */
     public adjustTickAmount(): void {
@@ -2579,7 +2877,7 @@ class Axis {
     /**
      * Set the scale based on data min and max, user set min and max or options.
      *
-     * @private
+     * @internal
      * @function Highcharts.Axis#setScale
      *
      * @emits Highcharts.Axis#event:afterSetScale
@@ -2741,7 +3039,7 @@ class Axis {
     /**
      * Update the axis metrics.
      *
-     * @private
+     * @internal
      * @function Highcharts.Axis#setAxisSize
      */
     public setAxisSize(): void {
@@ -2864,7 +3162,7 @@ class Axis {
      * Compute auto alignment for the axis label based on which side the axis is
      * on and the given rotation for the label.
      *
-     * @private
+     * @internal
      * @function Highcharts.Axis#autoLabelAlign
      *
      * @param {number} rotation
@@ -2895,7 +3193,7 @@ class Axis {
     /**
      * Get the tick length and width for the axis based on axis options.
      *
-     * @private
+     * @internal
      * @function Highcharts.Axis#tickSize
      *
      * @param {string} [prefix]
@@ -2935,7 +3233,7 @@ class Axis {
     /**
      * Return the size of the labels.
      *
-     * @private
+     * @internal
      * @function Highcharts.Axis#labelMetrics
      */
     public labelMetrics(): FontMetricsObject {
@@ -2955,7 +3253,7 @@ class Axis {
      * horizontal axis, this is handled by rotating the labels, removing ticks
      * and adding ellipsis. On a vertical axis remove ticks and add ellipsis.
      *
-     * @private
+     * @internal
      * @function Highcharts.Axis#unsquish
      */
     public unsquish(): number {
@@ -3057,7 +3355,7 @@ class Axis {
      * change between the pre-render (from Axis.getOffset) and the final tick
      * rendering and placement.
      *
-     * @private
+     * @internal
      * @function Highcharts.Axis#getSlotWidth
      *
      * @param {Highcharts.Tick} [tick] Optionally, calculate the slot width
@@ -3112,7 +3410,7 @@ class Axis {
      * Render the axis labels and determine whether ellipsis or rotation need to
      * be applied.
      *
-     * @private
+     * @internal
      * @function Highcharts.Axis#renderUnsquish
      */
     public renderUnsquish(): void {
@@ -3228,7 +3526,7 @@ class Axis {
                         // Speed optimizing, #7656
                         commonWidth < (label.textPxLength || 0) ||
                         // Resetting CSS, #4928
-                        label.element.tagName === 'SPAN'
+                        label.element.tagName === 'DIV'
                     )
                 ) {
                     label.css(extend(css, {
@@ -3348,7 +3646,7 @@ class Axis {
     /**
      * Generates a tick for initial positioning.
      *
-     * @private
+     * @internal
      * @function Highcharts.Axis#generateTick
      *
      * @param {number} pos
@@ -3371,7 +3669,7 @@ class Axis {
     /**
      * Create the axisGroup and gridGroup elements on first iteration.
      *
-     * @private
+     * @internal
      * @function Highcharts.Axis#getOffset
      *
      * @emits Highcharts.Axis#event:afterGetOffset
@@ -3420,7 +3718,7 @@ class Axis {
     /**
      * Render the tick labels to a preliminary position to get their sizes
      *
-     * @private
+     * @internal
      * @function Highcharts.Axis#getOffset
      *
      * @emits Highcharts.Axis#event:afterGetOffset
@@ -3676,7 +3974,7 @@ class Axis {
     /**
      * Position the axis title.
      *
-     * @private
+     * @internal
      * @function Highcharts.Axis#getTitlePosition
      *
      * @return {Highcharts.PositionObject}
@@ -3813,7 +4111,7 @@ class Axis {
     /**
      * Render the axis.
      *
-     * @private
+     * @internal
      * @function Highcharts.Axis#render
      *
      * @emits Highcharts.Axis#event:afterRender
@@ -4039,7 +4337,7 @@ class Axis {
      * Redraw the axis to reflect changes in the data or axis extremes. Called
      * internally from Highcharts.Chart#redraw.
      *
-     * @private
+     * @internal
      * @function Highcharts.Axis#redraw
      */
     public redraw(): void {
@@ -4065,7 +4363,7 @@ class Axis {
      * Returns an array of axis properties, that should be untouched during
      * reinitialization.
      *
-     * @private
+     * @internal
      * @function Highcharts.Axis#getKeepProps
      */
     public getKeepProps(): Array<string> {
@@ -4076,7 +4374,7 @@ class Axis {
      * Destroys an Axis instance. See {@link Axis#remove} for the API endpoint
      * to fully remove the axis.
      *
-     * @private
+     * @internal
      * @function Highcharts.Axis#destroy
      *
      * @param {boolean} [keepEvents]
@@ -4433,32 +4731,119 @@ interface Axis extends AxisComposition, AxisBase {
  * */
 
 namespace Axis {
+
+    /**
+     * The returned object literal from the {@link Highcharts.Axis#getExtremes}
+     * function.
+     */
     export interface ExtremesObject {
+
+        /**
+         * The maximum value of the axis' associated series.
+         */
         dataMax: number;
+
+        /**
+         * The minimum value of the axis' associated series.
+         */
         dataMin: number;
+
+        /**
+         * The maximum axis value, either automatic or set manually. If the `max` option
+         * is not set, `maxPadding` is 0 and `endOnTick` is false, this value will be
+         * the same as `dataMax`.
+         */
         max: number;
+
+        /**
+         * The minimum axis value, either automatic or set manually. If the `min` option
+         * is not set, `minPadding` is 0 and `startOnTick` is false, this value will be
+         * the same as `dataMin`.
+         */
         min: number;
+
+        /**
+         * The user defined maximum, either from the `max` option or from a zoom or
+         * `setExtremes` action.
+         */
         userMax?: number;
+
+        /**
+         * The user defined minimum, either from the `min` option or from a zoom or
+         * `setExtremes` action.
+         */
         userMin?: number;
+
     }
+
+    /** @internal */
     export interface AllExtremes {
         dataMin: number;
         dataMax: number;
     }
+
+    /**
+     * Options for the path on the Axis to be calculated.
+     */
     export interface PlotLinePathOptions {
+        /**
+         * Used in Highcharts Stock. When `true`, plot paths (crosshair,
+         * plotLines, gridLines) will be rendered on all axes when defined on
+         * the first axis.
+         */
         acrossPanes?: boolean;
+
+        /**
+         * If `false`, the function will return null when it falls outside the
+         * axis bounds. If `true`, the function will return a path aligned to
+         * the plot area sides if it falls outside. If `pass`, it will return a
+         * path outside.
+         */
         force?: (boolean|string);
+
+        /**
+         * Line width used for calculation crisp line coordinates.
+         * Defaults to 1.
+         */
         lineWidth?: number;
+
+        /**
+         * Use old coordinates (for resizing and rescaling). If not set,
+         * defaults to `false`.
+         */
         old?: boolean;
+
         /** @internal */
         chartX?: number;
+
+        /** @internal */
         chartY?: number;
+
+        /** @internal */
         isCrosshair?: boolean;
+
+        /** @internal */
         path?: SVGPath;
+
+        /** @internal */
         point?: Point;
+
+        /**
+         * Used in Polar axes. Reverse the positions for concatenation of
+         * polygonal plot bands.
+         */
         reverse?: boolean;
+
+        /**
+         * If given, return the plot line path of a pixel position on the axis.
+         */
         translatedValue?: number;
+
+        /**
+         * Axis value.
+         */
         value?: number;
+
     }
 }
 

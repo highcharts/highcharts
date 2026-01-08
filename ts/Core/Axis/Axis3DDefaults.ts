@@ -1,12 +1,13 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
  *  Extension for 3d axes
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -18,7 +19,7 @@
  *
  * */
 
-import type Axis3DOptions from './Axis3DOptions';
+import type AxisOptions from './AxisOptions';
 
 /* *
  *
@@ -134,7 +135,7 @@ const Axis3DDefaults = {
          */
         skew3d: null
     }
-} as Axis3DOptions;
+} as AxisOptions;
 
 /* *
  *

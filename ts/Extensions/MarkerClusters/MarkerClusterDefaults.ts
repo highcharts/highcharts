@@ -2,13 +2,13 @@
  *
  *  Marker clusters module.
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
  *
  *  Author: Wojciech Chmiel
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -55,7 +55,7 @@ import { Palette } from '../../Core/Color/Palettes.js';
  * @since 8.0.0
  * @optionparent plotOptions.scatter.cluster
  *
- * @private
+ * @internal
  */
 const cluster: MarkerClusterOptions = {
 

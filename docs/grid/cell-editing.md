@@ -67,6 +67,9 @@ In addition to `dataType` you can extend a selection of predefined validation ru
 - `datetime`- Only accepts valid timestamps in milliseconds.
 - `ignoreCaseUnique`- Only accepts unique values within the column (case-insensitive).
 - `unique`- Only accepts unique values within the column (case-sensitive).
+- `arrayNumber`- Only accepts an array of numbers (`1, 2, 3`).
+- `json`- Only accepts valid JSON strings.
+- `sparkline`- Only accepts valid JSON or array of numbers- default validator for `sparkline` renderer.
 
 See how adding the `notEmpty` validation rule prevents users from entering `null` or empty string values in any column:
 
