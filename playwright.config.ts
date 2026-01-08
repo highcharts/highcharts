@@ -136,13 +136,6 @@ export default defineConfig({
             dependencies: ['setup-grid-lite'],
         },
         {
-            name: 'grid-shared-lite',
-            testDir: './tests/grid/shared',
-            testMatch: '**/*.spec.ts',
-            use: { ...devices['Desktop Chrome'] },
-            dependencies: ['setup-grid-lite'],
-        },
-        {
             name: 'setup-grid-pro',
             testMatch: 'setup-grid-pro.mts',
         },
@@ -168,11 +161,11 @@ export default defineConfig({
             dependencies: ['setup-grid-pro'],
         },
         {
-            name: 'grid-shared-pro',
+            name: 'grid-shared',
             testDir: './tests/grid/shared',
             testMatch: '**/*.spec.ts',
             use: { ...devices['Desktop Chrome'] },
-            dependencies: ['setup-grid-pro'],
+            dependencies: ['setup-grid-lite', 'setup-grid-pro'],
         },
         {
             // tests for mocking and utils and other playwright behaviour
