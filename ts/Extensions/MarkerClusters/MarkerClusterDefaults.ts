@@ -55,7 +55,7 @@ import { Palette } from '../../Core/Color/Palettes.js';
  * @since 8.0.0
  * @optionparent plotOptions.scatter.cluster
  *
- * @private
+ * @internal
  */
 const cluster: MarkerClusterOptions = {
 

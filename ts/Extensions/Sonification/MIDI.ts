@@ -183,7 +183,7 @@ const freqToNote = (f: number): number => Math.round(
  *
  * Outputs multi-track MIDI for Timelines with multiple channels.
  *
- * @private
+ * @internal
  */
 function toMIDI(channels: TimelineChannel[]): Uint8Array {
     const channelsToAdd = channels.filter((c): boolean => !!c.events.length),

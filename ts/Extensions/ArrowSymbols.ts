@@ -61,7 +61,7 @@ declare module '../Core/Renderer/SVG/SymbolType' {
  *                   o
  * ```
  *
- * @private
+ * @internal
  * @function
  *
  * @param {number} x
@@ -103,7 +103,7 @@ function arrow(
  *       o
  * ```
  *
- * @private
+ * @internal
  * @function
  *
  * @param {number} x
@@ -133,7 +133,7 @@ function arrowHalf(
 /**
  * Adds the arrow symbols to the SVGRenderer.
  *
- * @private
+ * @internal
  *
  * @param SVGRendererClass
  * The SVGRenderer class to extend.
@@ -161,7 +161,7 @@ function compose(
  *             o
  * ```
  *
- * @private
+ * @internal
  * @function
  *
  * @param {number} x
@@ -203,7 +203,7 @@ function triangleLeft(
  *       o
  * ```
  *
- * @private
+ * @internal
  * @function
  *
  * @param {number} x

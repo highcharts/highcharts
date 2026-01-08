@@ -25,8 +25,11 @@ import type ColorString from '../../Core/Color/ColorString';
  *
  * */
 
-// Register color names since GL can't render those directly.
-// TODO: When supporting modern syntax, make this a named export
+/**
+ * Register color names since GL can't render those directly.
+ * @todo When supporting modern syntax, make this a named export
+ * @internal
+ */
 const defaultHTMLColorMap: Record<string, ColorString> = {
     aliceblue: '#f0f8ff',
     antiquewhite: '#faebd7',
@@ -178,8 +181,10 @@ const defaultHTMLColorMap: Record<string, ColorString> = {
  *
  * */
 
+/** @internal */
 const namedColors = {
     defaultHTMLColorMap
 };
 
+/** @internal */
 export default namedColors;

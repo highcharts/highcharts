@@ -27,6 +27,7 @@ import type ColorString from '../../Core/Color/ColorString';
  *
  * */
 
+/** @internal */
 interface WGLDebugOptions extends BoostDebugOptions {
     timeBufferCopy: boolean;
     timeKDTree: boolean;
@@ -36,6 +37,7 @@ interface WGLDebugOptions extends BoostDebugOptions {
     showSkipSummary: boolean;
 }
 
+/** @internal */
 interface WGLOptions extends BoostOptions {
     debug: WGLDebugOptions;
     fillColor: ColorString;
@@ -52,4 +54,5 @@ interface WGLOptions extends BoostOptions {
  *
  * */
 
+/** @internal */
 export default WGLOptions;

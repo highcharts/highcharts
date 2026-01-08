@@ -35,9 +35,6 @@ const {
  *
  * */
 
-/**
- * @private
- */
 function average(
     arr: ApproximationArray
 ): (null|number|undefined) {
@@ -56,7 +53,6 @@ function average(
 
 /**
  * The same as average, but for series with multiple values, like area ranges.
- * @private
  */
 function averages(): (Array<(null|number|undefined)>|undefined) { // #5479
     const ret = [] as Array<(null|number|undefined)>;
@@ -72,9 +68,6 @@ function averages(): (Array<(null|number|undefined)>|undefined) { // #5479
     return typeof ret[0] === 'undefined' ? void 0 : ret;
 }
 
-/**
- * @private
- */
 function close(
     arr: ApproximationArray
 ): (null|number|undefined) {
@@ -83,9 +76,6 @@ function close(
         (arr.hasNulls ? null : void 0);
 }
 
-/**
- * @private
- */
 function high(
     arr: ApproximationArray
 ): (null|number|undefined) {
@@ -97,7 +87,6 @@ function high(
 /**
  * HLC, OHLC and range are special cases where a multidimensional array is input
  * and an array is output.
- * @private
  */
 function hlc(
     high: ApproximationArray,
@@ -117,9 +106,6 @@ function hlc(
     }
 }
 
-/**
- * @private
- */
 function low(
     arr: ApproximationArray
 ): (null|number|undefined) {
@@ -128,9 +114,6 @@ function low(
         (arr.hasNulls ? null : void 0);
 }
 
-/**
- * @private
- */
 function ohlc(
     open: ApproximationArray,
     high: ApproximationArray,
@@ -152,18 +135,12 @@ function ohlc(
     }
 }
 
-/**
- * @private
- */
 function open(
     arr: ApproximationArray
 ): (null|number|undefined) {
     return arr.length ? arr[0] : ((arr as any).hasNulls ? null : void 0);
 }
 
-/**
- * @private
- */
 function range(
     low: ApproximationArray,
     high: ApproximationArray
@@ -179,9 +156,6 @@ function range(
     // Else, return is undefined
 }
 
-/**
- * @private
- */
 function sum(
     arr: ApproximationArray
 ): (null|number|undefined) {
@@ -231,6 +205,7 @@ declare module './ApproximationType' {
  *
  * */
 
+/** @internal */
 const ApproximationDefaults = {
     average,
     averages,
@@ -245,4 +220,5 @@ const ApproximationDefaults = {
 };
 extend(ApproximationRegistry, ApproximationDefaults);
 
+/** @internal */
 export default ApproximationDefaults;

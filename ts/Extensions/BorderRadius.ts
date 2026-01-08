@@ -163,9 +163,7 @@ let oldRoundedRect: SVGRenderer['symbols']['roundedRect'] = noop as any;
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 function applyBorderRadius(
     path: SVGPath,
     i: number,
@@ -273,7 +271,7 @@ function applyBorderRadius(
 
 /**
  * Extend arc with borderRadius.
- * @private
+ * @internal
  */
 function arc(
     x: number,
@@ -333,7 +331,7 @@ function arc(
     return path;
 }
 
-/** @private */
+/** @internal */
 function seriesOnAfterColumnTranslate(
     this: ColumnSeries
 ): void {
@@ -449,7 +447,7 @@ function seriesOnAfterColumnTranslate(
     }
 }
 
-/** @private */
+/** @internal */
 function compose(
     SeriesClass: typeof Series,
     SVGElementClass: typeof SVGElement,
@@ -489,7 +487,7 @@ function compose(
 
 }
 
-/** @private */
+/** @internal */
 function optionsToObject(
     options?: number|string|Partial<BorderRadiusOptionsObject>,
     seriesBROptions?: Partial<BorderRadiusOptionsObject>
@@ -500,7 +498,7 @@ function optionsToObject(
     return merge(defaultBorderRadiusOptions, seriesBROptions, options);
 }
 
-/** @private */
+/** @internal */
 function pieSeriesOnAfterTranslate(
     this: PieSeries
 ): void {
@@ -519,7 +517,7 @@ function pieSeriesOnAfterTranslate(
 
 /**
  * Extend roundedRect with individual cutting through rOffset.
- * @private
+ * @internal
  */
 function roundedRect(
     x: number,

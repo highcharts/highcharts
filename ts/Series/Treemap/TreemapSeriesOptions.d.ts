@@ -20,7 +20,6 @@ import type {
     AlignValue,
     VerticalAlignValue
 } from '../../Core/Renderer/AlignObject';
-import type BreadcrumbsOptions from '../../Extensions/Breadcrumbs/BreadcrumbsOptions';
 import type ButtonThemeObject from '../../Core/Renderer/SVG/ButtonThemeObject';
 import type ColorString from '../../Core/Color/ColorString';
 import type ColorType from '../../Core/Color/ColorType';
@@ -423,18 +422,6 @@ export interface TreemapSeriesOptions extends ScatterSeriesOptions {
      * The width of the border surrounding each tree map item.
      */
     borderWidth?: number;
-
-    /**
-     * Options for the breadcrumbs, the navigation at the top leading the
-     * way up through the traversed levels.
-     *
-     * @since 10.0.0
-     *
-     * @product highcharts
-     *
-     * @extends navigation.breadcrumbs
-     */
-    breadcrumbs?: BreadcrumbsOptions;
 
     brightness?: number;
 

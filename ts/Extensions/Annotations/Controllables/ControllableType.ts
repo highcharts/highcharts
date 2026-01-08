@@ -15,22 +15,27 @@
  *
  * */
 
+/** @internal */
 export type ControllableLabelType = ControllableLabelTypeRegistry[
     keyof ControllableLabelTypeRegistry
 ]['prototype'];
 
+/** @internal */
 export interface ControllableLabelTypeRegistry {
     // Placeholder to add class types
 }
 
+/** @internal */
 export type ControllableShapeType = ControllableShapeTypeRegistry[
     keyof ControllableShapeTypeRegistry
 ]['prototype'];
 
+/** @internal */
 export interface ControllableShapeTypeRegistry {
     // Placeholder to add class types
 }
 
+/** @internal */
 export type ControllableType = (ControllableLabelType|ControllableShapeType);
 
 /* *
@@ -39,4 +44,5 @@ export type ControllableType = (ControllableLabelType|ControllableShapeType);
  *
  * */
 
+/** @internal */
 export default ControllableType;

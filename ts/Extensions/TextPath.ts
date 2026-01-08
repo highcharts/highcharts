@@ -36,9 +36,7 @@ const { addEvent, merge, uniqueKey, defined, extend } = U;
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 interface TextPathObject {
 
     /**
@@ -55,9 +53,7 @@ interface TextPathObject {
 
 }
 
-/**
- * @private
- */
+/** @internal */
 declare module '../Core/Renderer/SVG/SVGElementBase' {
     interface SVGElementBase {
 
