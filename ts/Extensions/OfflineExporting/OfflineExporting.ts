@@ -36,11 +36,10 @@ const {
     getOptions,
     setOptions
 } = D;
-import DownloadURL from '../../Shared/DownloadURL.js';
-const {
+import {
     downloadURL,
     getScript
-} = DownloadURL;
+} from '../../Shared/DownloadURL.js';
 import G from '../../Core/Globals.js';
 const {
     composed,
@@ -97,7 +96,7 @@ namespace OfflineExporting {
     /**
      * Composition function.
      *
-     * @private
+     * @internal
      * @function compose
      *
      * @param {ExportingClass} ExportingClass
@@ -234,7 +233,7 @@ namespace OfflineExporting {
      * function processes the SVG, applies necessary font adjustments, converts
      * it to a PDF, and initiates the file download.
      *
-     * @private
+     * @internal
      * @async
      * @function downloadPDF
      *
@@ -282,7 +281,7 @@ namespace OfflineExporting {
      * It fetches font files (if provided in `pdfFont`), converts them to
      * base64, and registers them with jsPDF.
      *
-     * @private
+     * @internal
      * @function loadPdfFonts
      *
      * @param {SVGElement} svgElement
@@ -390,7 +389,7 @@ namespace OfflineExporting {
      * a given SVG string, applies font styles inherited from parent elements,
      * and removes text outlines and title elements to improve PDF rendering.
      *
-     * @private
+     * @internal
      * @function preparePDF
      *
      * @param {string} svg
@@ -485,7 +484,7 @@ namespace OfflineExporting {
      * Transform from PDF to SVG.
      *
      * @async
-     * @private
+     * @internal
      * @function svgToPdf
      *
      * @param {Highcharts.SVGElement} svgElement

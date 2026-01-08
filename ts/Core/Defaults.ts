@@ -554,7 +554,7 @@ const defaultOptions: DefaultOptions = {
          * `"UTC"`. Setting `useUTC` to false is equivalent to setting
          * `time.timezone` to `undefined`.
          *
-         * @see [time.timezone](#timezone)
+         * @see [timezone](#time.timezone)
          *
          * @sample {highcharts} highcharts/time/useutc-true/
          *         True by default

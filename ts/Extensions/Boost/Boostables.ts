@@ -17,7 +17,10 @@
  *
  * */
 
-// These are the series we allow boosting for.
+/**
+ * These are the series we allow boosting for.
+ * @internal
+ */
 const Boostables = [
     'area',
     'areaspline',
@@ -38,4 +41,5 @@ const Boostables = [
  *
  * */
 
+/** @internal */
 export default Boostables;

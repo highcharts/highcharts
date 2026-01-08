@@ -27,6 +27,14 @@ export interface ControlPointDragEventFunction {
     ): void;
 }
 
+/**
+ * Callback to modify annotation's positioner controls.
+ *
+ * @callback Highcharts.AnnotationControlPointPositionerFunction
+ * @param {Highcharts.AnnotationControlPoint} this
+ * @param {Highcharts.AnnotationControllable} target
+ * @return {Highcharts.PositionObject}
+ */
 export interface ControlPointPositionerFunction {
     (
         this: ControlPoint,
@@ -39,14 +47,34 @@ export interface ControlPointEventsOptionsObject {
 }
 
 export interface ControlPointOptionsObject {
+    /** @internal */
     draggable?: undefined;
+
+    /**
+     * @type {Highcharts.Dictionary<Function>}
+     */
     events: ControlPointEventsOptionsObject;
+
     height: number;
+
+    /** @internal */
     index?: number;
+
+    /**
+     * @type      {Highcharts.AnnotationControlPointPositionerFunction}
+     * @apioption annotations.controlPointOptions.positioner
+     */
     positioner: ControlPointPositionerFunction;
+
+    /**
+     * @type {Highcharts.SVGAttributes}
+     */
     style: CSSObject;
+
     symbol: SymbolKey;
+
     visible: boolean;
+
     width: number;
 }
 

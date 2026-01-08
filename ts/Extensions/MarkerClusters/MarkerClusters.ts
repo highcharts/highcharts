@@ -248,7 +248,7 @@ export interface MarkerClusterSplitDataObject {
  *
  * */
 
-/** @private */
+/** @internal */
 function compose(
     AxisClass: typeof Axis,
     ChartClass: typeof Chart,
@@ -279,7 +279,7 @@ function compose(
 
 /**
  * Destroy the old tooltip after zoom.
- * @private
+ * @internal
  */
 function onAxisSetExtremes(
     this: Axis
@@ -307,7 +307,7 @@ function onAxisSetExtremes(
 
 /**
  * Handle animation.
- * @private
+ * @internal
  */
 function onChartRender(
     this: Chart
@@ -340,7 +340,7 @@ function onChartRender(
 
 }
 
-/** @private */
+/** @internal */
 function onPointDrillToCluster(
     this: Point,
     event: PointClickEvent
@@ -358,7 +358,7 @@ function onPointDrillToCluster(
 /**
  * Override point prototype to throw a warning when trying to update
  * clustered point.
- * @private
+ * @internal
  */
 function onPointUpdate(
     this: Point
@@ -380,7 +380,7 @@ function onPointUpdate(
 
 /**
  * Add classes, change mouse cursor.
- * @private
+ * @internal
  */
 function onSeriesAfterRender(
     this: Series
