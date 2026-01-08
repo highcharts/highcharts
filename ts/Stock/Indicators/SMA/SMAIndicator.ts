@@ -511,7 +511,8 @@ class SMAIndicator extends LineSeries {
                 const croppedData = indicator.cropData(
                     table,
                     min as any,
-                    max as any
+                    max as any,
+                    this.cropShoulder
                 );
 
                 const keys = ['x', ...(indicator.pointArrayMap || ['y'])];
