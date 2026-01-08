@@ -276,14 +276,17 @@ class VBPIndicator extends SMAIndicator {
                 // Protection for a case where the indicator is being updated,
                 // for a brief moment the indicator is deleted.
                 if (indicator.options) {
-                    const params: VBPParamsOptions =
-                            (indicator.options.params as any),
-                        baseSeries: LineSeries = indicator.linkedParent,
-                        volumeSeries: LineSeries = (
-                            chart.get((params.volumeSeriesID as any)) as any
-                        );
+                    const params = indicator.options.params,
+                        baseSeries = indicator.linkedParent,
+                        volumeSeries = params?.volumeSeriesID ?
+                            chart.get(
+                                params?.volumeSeriesID
+                            ) as LineSeries|undefined :
+                            void 0;
 
-                    indicator.addCustomEvents(baseSeries, volumeSeries);
+                    if (baseSeries && volumeSeries) {
+                        indicator.addCustomEvents(baseSeries, volumeSeries);
+                    }
 
                 }
                 unbinder();
@@ -526,6 +529,12 @@ class VBPIndicator extends SMAIndicator {
                     point.volumeNeg = priceZones[index].negativeVolumeData;
                     point.volumePos = priceZones[index].positiveVolumeData;
                     point.volumeAll = priceZones[index].wholeVolumeData;
+
+                    // ColumnSeries.translate adds an origin if chart is already
+                    // rendered. Remove it to avoid issues with fading in data
+                    // labels from overlapping labels logic.
+                    delete point.origin;
+                    point.isInside = indicator.isPointInside(point);
                 }
             );
 

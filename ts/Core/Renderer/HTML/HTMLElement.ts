@@ -51,7 +51,6 @@ declare module '../SVG/SVGRendererBase' {
         html(str: string, x: number, y: number): HTMLElement;
     }
 }
-
 /* *
  *
  *  Class

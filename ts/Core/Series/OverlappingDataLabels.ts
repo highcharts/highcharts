@@ -280,7 +280,7 @@ function hideOrShow(label: SVGElement, chart: Chart): boolean {
                 isLabelAffected = true;
 
                 // Animate or set the opacity
-                label[label.isOld ? 'animate' : 'attr'](
+                label[label.isOld || label.placed ? 'animate' : 'attr'](
                     { opacity: newOpacity },
                     void 0,
                     complete

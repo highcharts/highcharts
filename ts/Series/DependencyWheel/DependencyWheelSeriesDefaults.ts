@@ -38,6 +38,7 @@ import type DependencyWheelSeriesOptions from './DependencyWheelSeriesOptions';
  * @exclude      dataSorting, nodeAlignment, nodeDistance
  * @since        7.1.0
  * @product      highcharts
+ * @requires     modules/sankey
  * @requires     modules/dependency-wheel
  * @optionparent plotOptions.dependencywheel
  */

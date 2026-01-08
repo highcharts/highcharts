@@ -119,113 +119,70 @@ class CandlestickSeries extends OHLCSeries {
     }
 
     /**
-     * Draw the data points.
-     *
+     * Create the SVGPath of the point based on the plot positions
      * @private
-     * @function Highcharts.seriesTypes.candlestick#drawPoints
      */
-    public drawPoints(): void {
-        const series = this,
-            points = series.points,
-            chart = series.chart,
-            reversedYAxis = series.yAxis.reversed;
+    protected getPointPath(point: CandlestickPoint): SVGPath {
+        // Crisp vector coordinates
+        const strokeWidth = this.borderWidth,
+            // #2596:
+            crispX = crisp(point.plotX || 0, strokeWidth),
+            plotOpen = point.plotOpen,
+            plotClose = point.plotClose,
+            topBoxFloat = Math.min(plotOpen, plotClose),
+            bottomBoxFloat = Math.max(plotOpen, plotClose),
+            halfWidth = Math.round((point.shapeArgs as any).width / 2),
+            reversedYAxis = this.yAxis.reversed,
+            hasTopWhisker = reversedYAxis ?
+                bottomBoxFloat !== point.yBottom :
+                Math.round(topBoxFloat) !==
+                Math.round(point.plotHigh || 0),
+            hasBottomWhisker = reversedYAxis ?
+                Math.round(topBoxFloat) !==
+                Math.round(point.plotHigh || 0) :
+                bottomBoxFloat !== point.yBottom,
+            topBox = crisp(topBoxFloat, strokeWidth),
+            bottomBox = crisp(bottomBoxFloat, strokeWidth);
 
-        for (const point of points) {
-            let graphic = point.graphic,
-                plotOpen,
-                plotClose,
-                topBox,
-                bottomBox,
-                hasTopWhisker,
-                hasBottomWhisker,
+        // Create the path. Due to a bug in Chrome 49, the path is
+        // first instantiated with no values, then the values
+        // pushed. For unknown reasons, instantiating the path array
+        // with all the values would lead to a crash when updating
+        // frequently (#5193).
+        const path: SVGPath = [];
+        path.push(
+            ['M', crispX - halfWidth, bottomBox],
+            ['L', crispX - halfWidth, topBox],
+            ['L', crispX + halfWidth, topBox],
+            ['L', crispX + halfWidth, bottomBox],
+            ['Z'], // Ensure a nice rectangle #2602
+            ['M', crispX, topBox],
+            [
+                'L',
+                // #460, #2094
                 crispX,
-                path: SVGPath,
-                halfWidth;
-
-            const isNew = !graphic;
-
-            if (typeof point.plotY !== 'undefined') {
-
-                if (!graphic) {
-                    point.graphic = graphic = chart.renderer.path()
-                        .add(series.group);
-                }
-
-                if (!series.chart.styledMode) {
-                    graphic
-                        .attr(
-                            series.pointAttribs(
-                                point,
-                                (point.selected && 'select') as any
-                            )
-                        ) // #3897
-                        .shadow(series.options.shadow);
-                }
-
-                // Crisp vector coordinates
-                const strokeWidth = graphic.strokeWidth();
-                // #2596:
-                crispX = crisp(point.plotX || 0, strokeWidth);
-                plotOpen = point.plotOpen;
-                plotClose = point.plotClose;
-                topBox = Math.min(plotOpen, plotClose);
-                bottomBox = Math.max(plotOpen, plotClose);
-                halfWidth = Math.round((point.shapeArgs as any).width / 2);
-                hasTopWhisker = reversedYAxis ?
-                    bottomBox !== point.yBottom :
-                    Math.round(topBox) !==
-                    Math.round(point.plotHigh || 0);
-                hasBottomWhisker = reversedYAxis ?
-                    Math.round(topBox) !==
-                    Math.round(point.plotHigh || 0) :
-                    bottomBox !== point.yBottom;
-                topBox = crisp(topBox, strokeWidth);
-                bottomBox = crisp(bottomBox, strokeWidth);
-
-                // Create the path. Due to a bug in Chrome 49, the path is
-                // first instantiated with no values, then the values
-                // pushed. For unknown reasons, instantiating the path array
-                // with all the values would lead to a crash when updating
-                // frequently (#5193).
-                path = [];
-                path.push(
-                    ['M', crispX - halfWidth, bottomBox],
-                    ['L', crispX - halfWidth, topBox],
-                    ['L', crispX + halfWidth, topBox],
-                    ['L', crispX + halfWidth, bottomBox],
-                    ['Z'], // Ensure a nice rectangle #2602
-                    ['M', crispX, topBox],
-                    [
-                        'L',
-                        // #460, #2094
-                        crispX,
-                        hasTopWhisker ?
-                            Math.round(
-                                reversedYAxis ?
-                                    point.yBottom :
-                                    (point.plotHigh as any)
-                            ) :
-                            topBox
-                    ],
-                    ['M', crispX, bottomBox],
-                    [
-                        'L',
-                        // #460, #2094
-                        crispX,
-                        hasBottomWhisker ?
-                            Math.round(
-                                reversedYAxis ?
-                                    (point.plotHigh as any) :
-                                    point.yBottom
-                            ) :
-                            bottomBox
-                    ]);
-
-                graphic[isNew ? 'attr' : 'animate']({ d: path })
-                    .addClass(point.getClassName(), true);
-
-            }
-        }
+                hasTopWhisker ?
+                    Math.round(
+                        reversedYAxis ?
+                            point.yBottom :
+                            (point.plotHigh as any)
+                    ) :
+                    topBox
+            ],
+            ['M', crispX, bottomBox],
+            [
+                'L',
+                // #460, #2094
+                crispX,
+                hasBottomWhisker ?
+                    Math.round(
+                        reversedYAxis ?
+                            (point.plotHigh as any) :
+                            point.yBottom
+                    ) :
+                    bottomBox
+            ]);
+        return path;
     }
 
 }
