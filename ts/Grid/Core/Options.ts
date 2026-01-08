@@ -106,8 +106,7 @@ export interface Options {
      * Data table with the data to display in the grid structure.
      *
      * @deprecated
-     * Use `data.dataTable` instead. Read more about the
-     * Data Provider structure (TODO).
+     * Use `data.dataTable` instead.
      */
     dataTable?: DataTable | DataTableOptions;
 
