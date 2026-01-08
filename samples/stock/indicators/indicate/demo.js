@@ -37,6 +37,7 @@
             params: {
                 period: 7
             },
+            indicateDistance: 30,
             indicateCallback: function (context) {
                 const { periodValues, x, y } = context;
                 const average = periodValues.reduce((sum, xy, i, array) => {
@@ -49,11 +50,11 @@
                 const delta = y / average;
 
                 if (delta < 0.92) {
-                    return { text: '❌', x, y };
+                    return { text: '🔻', x, y };
                 }
 
                 if (delta > 1.08) {
-                    return { text: '🟢', x, y };
+                    return { text: '🔺', x, y };
                 }
             }
         }]

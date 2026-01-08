@@ -164,13 +164,11 @@ class IndicateIndicator extends SMAIndicator {
             );
 
             if (isObject(result)) {
-                xData.push(result.x);
-                yData.push(result.y);
                 this.attachIndication(result.x, result.y, result.text);
-            } else {
-                xData.push(x);
-                yData.push(null);
             }
+
+            xData.push(x);
+            yData.push(null);
 
             periodValues.shift();
             periodValues.push([x, y]);
