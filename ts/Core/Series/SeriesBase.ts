@@ -65,16 +65,6 @@ export interface SeriesBase {
 
     /** @internal */
     state?: StatesOptionsKey;
-
-    /* *
-     *
-     *  Functions
-     *
-     * */
-
-    render(): void;
-    translate(): void;
-    update(options: DeepPartial<SeriesOptions>): void;
 }
 
 /* *

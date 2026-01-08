@@ -2822,10 +2822,10 @@ class Series {
 
     /**
      * Draw the markers for line-like series types, and columns or other
-     * graphical representation for {@link Point} objects for other series
-     * types. The resulting element is typically stored as
-     * {@link Point.graphic}, and is created on the first call and updated
-     * and moved on subsequent calls.
+     * graphical representation for {@link Highcharts.Point} objects for other
+     * series types. The resulting element is typically stored as
+     * {@link Highcharts.Point#graphic}, and is created on the first call and
+     * updated and moved on subsequent calls.
      *
      * @function Highcharts.Series#drawPoints
      */
