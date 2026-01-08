@@ -248,7 +248,7 @@ class Table {
         // Load & render head
         if (this.grid.options?.rendering?.header?.enabled) {
             this.header = new TableHeader(this);
-            this.header.render();
+            await this.header.render();
         }
 
         // TODO: Load & render footer
