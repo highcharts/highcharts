@@ -2,15 +2,7 @@
 // seed: tests/highcharts/seed.spec.ts
 
 import { test, expect } from '../fixtures';
-import { getSample, template } from '../utils';
-
-
-// TODO: WaitForResize utility function
-// * Maybe afterAnimate
-// * isResizing flag
-// * endResize event
-// * ResizeObserver
-
+import { getSample, template, waitForChartsResizeComplete } from '../utils';
 
 
 test.describe('Responsive Chart Behavior', () => {
@@ -29,6 +21,7 @@ test.describe('Responsive Chart Behavior', () => {
     test('4.1 Responsive Chart on Small Viewport (Portrait Phone)', async ({ page }) => {
         // Set viewport to iPhone SE size (375x667)
         await page.setViewportSize({ width: 375, height: 667 });
+        await waitForChartsResizeComplete(page);
 
         // 1. Load responsive chart demo on small phone viewport (done in beforeEach)
 
@@ -37,21 +30,18 @@ test.describe('Responsive Chart Behavior', () => {
         await expect(container).toBeVisible();
 
         // 3. Check that x-axis labels are abbreviated (single letter format: J, F, M, A)
-        // Use expect.poll to wait for responsive rules to apply
-        await expect.poll(async () => {
-            return await page.evaluate(() => {
-                const chart = (window as any).Highcharts.charts[0];
-                return (chart.xAxis[0].ticks[0]?.label)?.textStr || '';
-            });
-        }).toBe('J');
+        const xAxisLabel = await page.evaluate(() => {
+            const chart = (window as any).Highcharts.charts[0];
+            return (chart.xAxis[0].ticks[0]?.label)?.textStr || '';
+        });
+        expect(xAxisLabel).toBe('J');
 
         // 4. Verify y-axis title is hidden (empty text)
-        await expect.poll(async () => {
-            return await page.evaluate(() => {
-                const chart = (window as any).Highcharts.charts[0];
-                return (chart.yAxis[0]).axisTitle?.textStr || '';
-            });
-        }).toBe('');
+        const yAxisTitle = await page.evaluate(() => {
+            const chart = (window as any).Highcharts.charts[0];
+            return (chart.yAxis[0]).axisTitle?.textStr || '';
+        });
+        expect(yAxisTitle).toBe('');
 
         // 5. Confirm chart renders within viewport without horizontal overflow
         const chartWidth = await page.evaluate(() => {
@@ -64,6 +54,7 @@ test.describe('Responsive Chart Behavior', () => {
     test('4.2 Responsive Chart on Medium Viewport (Phablet/Small Tablet)', async ({ page }) => {
         // Set viewport to medium size (600x800)
         await page.setViewportSize({ width: 600, height: 800 });
+        await waitForChartsResizeComplete(page);
 
         // 1. Load responsive chart on medium viewport device (done in beforeEach)
 
@@ -72,20 +63,18 @@ test.describe('Responsive Chart Behavior', () => {
         await expect(container).toBeVisible();
 
         // 3. Check that x-axis labels show full month names
-        await expect.poll(async () => {
-            return await page.evaluate(() => {
-                const chart = (window as any).Highcharts.charts[0];
-                return (chart.xAxis[0].ticks[0]?.label)?.textStr || '';
-            });
-        }).toBe('January');
+        const xAxisLabel = await page.evaluate(() => {
+            const chart = (window as any).Highcharts.charts[0];
+            return (chart.xAxis[0].ticks[0]?.label)?.textStr || '';
+        });
+        expect(xAxisLabel).toBe('January');
 
         // 4. Verify y-axis title is visible with text "Items"
-        await expect.poll(async () => {
-            return await page.evaluate(() => {
-                const chart = (window as any).Highcharts.charts[0];
-                return (chart.yAxis[0]).axisTitle?.textStr || '';
-            });
-        }).toBe('Items');
+        const yAxisTitle = await page.evaluate(() => {
+            const chart = (window as any).Highcharts.charts[0];
+            return (chart.yAxis[0]).axisTitle?.textStr || '';
+        });
+        expect(yAxisTitle).toBe('Items');
 
         // 5. Confirm chart layout is optimized for medium screen
         const chartWidth = await page.evaluate(() => {
@@ -98,6 +87,7 @@ test.describe('Responsive Chart Behavior', () => {
     test('4.3 Responsive Chart on Tablet (Landscape)', async ({ page }) => {
         // Set viewport to iPad Air landscape (1180x820)
         await page.setViewportSize({ width: 1180, height: 820 });
+        await waitForChartsResizeComplete(page);
 
         // 1. Load responsive chart on tablet in landscape orientation (done in beforeEach)
 
@@ -106,12 +96,11 @@ test.describe('Responsive Chart Behavior', () => {
         await expect(container).toBeVisible();
 
         // 3. Check that all month names are displayed in full
-        await expect.poll(async () => {
-            return await page.evaluate(() => {
-                const chart = (window as any).Highcharts.charts[0];
-                return (chart.xAxis[0].ticks[0]?.label)?.textStr || '';
-            });
-        }).toBe('January');
+        const xAxisLabel = await page.evaluate(() => {
+            const chart = (window as any).Highcharts.charts[0];
+            return (chart.xAxis[0].ticks[0]?.label)?.textStr || '';
+        });
+        expect(xAxisLabel).toBe('January');
 
         const lastMonthLabel = await page.evaluate(() => {
             const chart = (window as any).Highcharts.charts[0];
@@ -121,12 +110,11 @@ test.describe('Responsive Chart Behavior', () => {
         expect(lastMonthLabel).toBe('December');
 
         // 4. Verify y-axis title "Items" is fully displayed
-        await expect.poll(async () => {
-            return await page.evaluate(() => {
-                const chart = (window as any).Highcharts.charts[0];
-                return (chart.yAxis[0]).axisTitle?.textStr || '';
-            });
-        }).toBe('Items');
+        const yAxisTitle = await page.evaluate(() => {
+            const chart = (window as any).Highcharts.charts[0];
+            return (chart.yAxis[0]).axisTitle?.textStr || '';
+        });
+        expect(yAxisTitle).toBe('Items');
 
         // 5. Confirm chart takes advantage of large viewport
         const chartWidth = await page.evaluate(() => {
@@ -140,170 +128,163 @@ test.describe('Responsive Chart Behavior', () => {
     test('4.4 Device Rotation: Portrait to Landscape', async ({ page }) => {
         // 1. Load responsive chart on phone in portrait mode (393x852)
         await page.setViewportSize({ width: 393, height: 852 });
+        await waitForChartsResizeComplete(page);
 
         // 2. Verify x-axis labels are abbreviated in narrow portrait mode (393px < 500px)
-        await expect.poll(async () => {
-            return await page.evaluate(() => {
-                const chart = (window as any).Highcharts.charts[0];
-                return (chart.xAxis[0].ticks[0]?.label)?.textStr || '';
-            });
-        }).toBe('J');
+        let xAxisLabel = await page.evaluate(() => {
+            const chart = (window as any).Highcharts.charts[0];
+            return (chart.xAxis[0].ticks[0]?.label)?.textStr || '';
+        });
+        expect(xAxisLabel).toBe('J');
 
         // 3. Change viewport to landscape orientation (852x393)
         await page.setViewportSize({ width: 852, height: 393 });
+        await waitForChartsResizeComplete(page);
 
         // 4. Verify chart reflows and x-axis labels show full names (852px > 500px, responsive rule doesn't apply)
-        await expect.poll(async () => {
-            return await page.evaluate(() => {
-                const chart = (window as any).Highcharts.charts[0];
-                return (chart.xAxis[0].ticks[0]?.label)?.textStr || '';
-            });
-        }).toBe('January');
+        xAxisLabel = await page.evaluate(() => {
+            const chart = (window as any).Highcharts.charts[0];
+            return (chart.xAxis[0].ticks[0]?.label)?.textStr || '';
+        });
+        expect(xAxisLabel).toBe('January');
 
         // 5. Change viewport back to portrait (393x852)
         await page.setViewportSize({ width: 393, height: 852 });
+        await waitForChartsResizeComplete(page);
 
         // 6. Verify chart returns to abbreviated labels (393px < 500px)
-        await expect.poll(async () => {
-            return await page.evaluate(() => {
-                const chart = (window as any).Highcharts.charts[0];
-                return (chart.xAxis[0].ticks[0]?.label)?.textStr || '';
-            });
-        }).toBe('J');
+        xAxisLabel = await page.evaluate(() => {
+            const chart = (window as any).Highcharts.charts[0];
+            return (chart.xAxis[0].ticks[0]?.label)?.textStr || '';
+        });
+        expect(xAxisLabel).toBe('J');
     });
 
     test('4.5 Dynamic Viewport Resize', async ({ page }) => {
         // 1. Load responsive chart with viewport 1200x800
         await page.setViewportSize({ width: 1200, height: 800 });
+        await waitForChartsResizeComplete(page);
 
         // 2. Verify x-axis shows full month names at 1200px width
-        await expect.poll(async () => {
-            return await page.evaluate(() => {
-                const chart = (window as any).Highcharts.charts[0];
-                return (chart.xAxis[0].ticks[0]?.label)?.textStr || '';
-            });
-        }).toBe('January');
+        let xAxisLabel = await page.evaluate(() => {
+            const chart = (window as any).Highcharts.charts[0];
+            return (chart.xAxis[0].ticks[0]?.label)?.textStr || '';
+        });
+        expect(xAxisLabel).toBe('January');
 
-        await expect.poll(async () => {
-            return await page.evaluate(() => {
-                const chart = (window as any).Highcharts.charts[0];
-                return (chart.yAxis[0]).axisTitle?.textStr || '';
-            });
-        }).toBe('Items');
+        let yAxisTitle = await page.evaluate(() => {
+            const chart = (window as any).Highcharts.charts[0];
+            return (chart.yAxis[0]).axisTitle?.textStr || '';
+        });
+        expect(yAxisTitle).toBe('Items');
 
         // 3-4. Resize viewport to 800x600
         await page.setViewportSize({ width: 800, height: 600 });
+        await waitForChartsResizeComplete(page);
 
         // Verify chart still shows full month names (width > 500)
-        await expect.poll(async () => {
-            return await page.evaluate(() => {
-                const chart = (window as any).Highcharts.charts[0];
-                return (chart.xAxis[0].ticks[0]?.label)?.textStr || '';
-            });
-        }).toBe('January');
+        xAxisLabel = await page.evaluate(() => {
+            const chart = (window as any).Highcharts.charts[0];
+            return (chart.xAxis[0].ticks[0]?.label)?.textStr || '';
+        });
+        expect(xAxisLabel).toBe('January');
 
-        await expect.poll(async () => {
-            return await page.evaluate(() => {
-                const chart = (window as any).Highcharts.charts[0];
-                return (chart.yAxis[0]).axisTitle?.textStr || '';
-            });
-        }).toBe('Items');
+        yAxisTitle = await page.evaluate(() => {
+            const chart = (window as any).Highcharts.charts[0];
+            return (chart.yAxis[0]).axisTitle?.textStr || '';
+        });
+        expect(yAxisTitle).toBe('Items');
 
         // 5-6. Resize viewport to 450x600
         await page.setViewportSize({ width: 450, height: 600 });
+        await waitForChartsResizeComplete(page);
 
         // Verify x-axis labels are abbreviated to single letters
-        await expect.poll(async () => {
-            return await page.evaluate(() => {
-                const chart = (window as any).Highcharts.charts[0];
-                return (chart.xAxis[0].ticks[0]?.label)?.textStr || '';
-            });
-        }).toBe('J');
+        xAxisLabel = await page.evaluate(() => {
+            const chart = (window as any).Highcharts.charts[0];
+            return (chart.xAxis[0].ticks[0]?.label)?.textStr || '';
+        });
+        expect(xAxisLabel).toBe('J');
 
-        await expect.poll(async () => {
-            return await page.evaluate(() => {
-                const chart = (window as any).Highcharts.charts[0];
-                return (chart.yAxis[0]).axisTitle?.textStr || '';
-            });
-        }).toBe(''); // Y-axis title should be hidden
+        yAxisTitle = await page.evaluate(() => {
+            const chart = (window as any).Highcharts.charts[0];
+            return (chart.yAxis[0]).axisTitle?.textStr || '';
+        });
+        expect(yAxisTitle).toBe(''); // Y-axis title should be hidden
 
         // 7-8. Resize viewport back to 1200x800
         await page.setViewportSize({ width: 1200, height: 800 });
+        await waitForChartsResizeComplete(page);
 
         // Verify chart returns to full month names
-        await expect.poll(async () => {
-            return await page.evaluate(() => {
-                const chart = (window as any).Highcharts.charts[0];
-                return (chart.xAxis[0].ticks[0]?.label)?.textStr || '';
-            });
-        }).toBe('January');
+        xAxisLabel = await page.evaluate(() => {
+            const chart = (window as any).Highcharts.charts[0];
+            return (chart.xAxis[0].ticks[0]?.label)?.textStr || '';
+        });
+        expect(xAxisLabel).toBe('January');
 
-        await expect.poll(async () => {
-            return await page.evaluate(() => {
-                const chart = (window as any).Highcharts.charts[0];
-                return (chart.yAxis[0]).axisTitle?.textStr || '';
-            });
-        }).toBe('Items');
+        yAxisTitle = await page.evaluate(() => {
+            const chart = (window as any).Highcharts.charts[0];
+            return (chart.yAxis[0]).axisTitle?.textStr || '';
+        });
+        expect(yAxisTitle).toBe('Items');
     });
 
     test('4.6 Programmatic Resize with setSize()', async ({ page }) => {
         // Set initial viewport
         await page.setViewportSize({ width: 1200, height: 800 });
+        await waitForChartsResizeComplete(page);
 
         // 1. Load responsive chart with size control buttons (done in beforeEach)
 
         // 2. Click "Small" button to resize to 400x300
         await page.click('#small');
+        await waitForChartsResizeComplete(page);
 
         // 3. Verify chart width is 400px
-        await expect.poll(async () => {
-            return await page.evaluate(() => {
-                const chart = (window as any).Highcharts.charts[0];
-                return chart.chartWidth;
-            });
-        }).toBe(400);
+        let chartWidth = await page.evaluate(() => {
+            const chart = (window as any).Highcharts.charts[0];
+            return chart.chartWidth;
+        });
+        expect(chartWidth).toBe(400);
 
         // 4. Verify x-axis labels are abbreviated to single letters
-        await expect.poll(async () => {
-            return await page.evaluate(() => {
-                const chart = (window as any).Highcharts.charts[0];
-                return (chart.xAxis[0].ticks[0]?.label)?.textStr || '';
-            });
-        }).toBe('J');
+        let xAxisLabel = await page.evaluate(() => {
+            const chart = (window as any).Highcharts.charts[0];
+            return (chart.xAxis[0].ticks[0]?.label)?.textStr || '';
+        });
+        expect(xAxisLabel).toBe('J');
 
         // 5. Verify y-axis title is hidden
-        await expect.poll(async () => {
-            return await page.evaluate(() => {
-                const chart = (window as any).Highcharts.charts[0];
-                return (chart.yAxis[0]).axisTitle?.textStr || '';
-            });
-        }).toBe('');
+        let yAxisTitle = await page.evaluate(() => {
+            const chart = (window as any).Highcharts.charts[0];
+            return (chart.yAxis[0]).axisTitle?.textStr || '';
+        });
+        expect(yAxisTitle).toBe('');
 
         // 6. Click "Large" button to resize to 800x300
         await page.click('#large');
+        await waitForChartsResizeComplete(page);
 
         // 7. Verify chart width is 800px
-        await expect.poll(async () => {
-            return await page.evaluate(() => {
-                const chart = (window as any).Highcharts.charts[0];
-                return chart.chartWidth;
-            });
-        }).toBe(800);
+        chartWidth = await page.evaluate(() => {
+            const chart = (window as any).Highcharts.charts[0];
+            return chart.chartWidth;
+        });
+        expect(chartWidth).toBe(800);
 
         // 8. Verify x-axis labels show full month names
-        await expect.poll(async () => {
-            return await page.evaluate(() => {
-                const chart = (window as any).Highcharts.charts[0];
-                return (chart.xAxis[0].ticks[0]?.label)?.textStr || '';
-            });
-        }).toBe('January');
+        xAxisLabel = await page.evaluate(() => {
+            const chart = (window as any).Highcharts.charts[0];
+            return (chart.xAxis[0].ticks[0]?.label)?.textStr || '';
+        });
+        expect(xAxisLabel).toBe('January');
 
         // 9. Verify y-axis title shows "Items"
-        await expect.poll(async () => {
-            return await page.evaluate(() => {
-                const chart = (window as any).Highcharts.charts[0];
-                return (chart.yAxis[0]).axisTitle?.textStr || '';
-            });
-        }).toBe('Items');
+        yAxisTitle = await page.evaluate(() => {
+            const chart = (window as any).Highcharts.charts[0];
+            return (chart.yAxis[0]).axisTitle?.textStr || '';
+        });
+        expect(yAxisTitle).toBe('Items');
     });
 });

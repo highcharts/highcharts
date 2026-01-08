@@ -301,3 +301,93 @@ ${obj.script}`;
 
     return obj;
 }
+
+/**
+ * Options for waiting for chart resize completion.
+ */
+export interface WaitForResizeOptions {
+    /** Maximum time to wait in milliseconds. Default: 5000 */
+    timeout?: number;
+}
+
+/**
+ * Waits until all Highcharts charts on the page have finished resizing.
+ *
+ * This function handles:
+ * - Charts currently in the middle of a resize (isResizing > 0)
+ * - Charts with pending reflows scheduled by ResizeObserver
+ *
+ * It uses a delay + polling approach:
+ * 1. First waits 150ms to allow ResizeObserver callbacks to fire and schedule
+ *    any pending reflows (which have a 100ms debounce)
+ * 2. Then polls until all charts have isResizing === 0
+ *
+ * @param page - Playwright Page object
+ * @param options - Configuration options
+ * @returns Promise that resolves when all charts have finished resizing
+ *
+ * @example
+ * ```ts
+ * await page.setViewportSize({ width: 375, height: 667 });
+ * await waitForChartsResizeComplete(page);
+ * // Now safe to assert on chart state
+ * ```
+ */
+export async function waitForChartsResizeComplete(
+    page: Page,
+    options: WaitForResizeOptions = {}
+): Promise<void> {
+    const { timeout = 5000 } = options;
+
+    await page.evaluate((timeoutMs) => {
+        return new Promise<void>((resolve, reject) => {
+            const Highcharts = (window as any).Highcharts;
+            if (!Highcharts) {
+                resolve();
+                return;
+            }
+
+            const charts = Highcharts.charts?.filter(Boolean) || [];
+            if (charts.length === 0) {
+                resolve();
+                return;
+            }
+
+            let resolved = false;
+            const timeoutId = setTimeout(() => {
+                if (!resolved) {
+                    reject(new Error('Timeout waiting for charts to finish resizing'));
+                }
+            }, timeoutMs);
+
+            const finish = (): void => {
+                if (!resolved) {
+                    resolved = true;
+                    clearTimeout(timeoutId);
+                    resolve();
+                }
+            };
+
+            // Check if all charts are done resizing (isResizing === 0)
+            const allChartsIdle = (): boolean => {
+                return charts.every((chart: any) => chart.isResizing === 0);
+            };
+
+            // Poll until all charts are idle
+            const pollUntilIdle = (): void => {
+                if (allChartsIdle()) {
+                    finish();
+                } else {
+                    requestAnimationFrame(pollUntilIdle);
+                }
+            };
+
+            // Wait for ResizeObserver debounce (100ms) plus a small buffer,
+            // then start polling for isResizing === 0
+            // This ensures any viewport-triggered reflows have started
+            setTimeout(() => {
+                pollUntilIdle();
+            }, 150);
+        });
+    }, timeout);
+}
