@@ -1,5 +1,5 @@
 /* *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Rafal Sebestjanski
  *
  *  Directional Movement Index (DMI) indicator for Highcharts Stock

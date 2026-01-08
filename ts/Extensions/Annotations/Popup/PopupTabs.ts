@@ -2,7 +2,7 @@
  *
  *  Popup generator for Stock tools
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *  Author: Sebastian Bochan
  *
  *  A commercial license may be required depending on use.
@@ -38,8 +38,9 @@ const {
  * */
 
 /**
- * Create tab content
- * @private
+ * Create tab content.
+ *
+ * @internal
  * @return {HTMLDOMElement} - created HTML tab-content element
  */
 function addContentItem(this: Popup): HTMLDOMElement {
@@ -57,8 +58,9 @@ function addContentItem(this: Popup): HTMLDOMElement {
 }
 
 /**
- * Create tab menu item
- * @private
+ * Create tab menu item.
+ *
+ * @internal
  * @param {string} tabName
  * `add` or `edit`
  * @param {number} [disableTab]
@@ -100,7 +102,7 @@ function addMenuItem(
 
 /**
  * Set all tabs as invisible.
- * @private
+ * @internal
  */
 function deselectAll(this: Popup): void {
     const popupDiv = this.container,
@@ -116,8 +118,9 @@ function deselectAll(this: Popup): void {
 }
 
 /**
- * Init tabs. Create tab menu items, tabs containers
- * @private
+ * Init tabs. Create tab menu items, tabs containers.
+ *
+ * @internal
  * @param {Highcharts.Chart} chart
  * Reference to current chart
  */
@@ -147,8 +150,9 @@ function init(
 }
 
 /**
- * Set tab as visible
- * @private
+ * Set tab as visible.
+ *
+ * @internal
  * @param {globals.Element} - current tab
  * @param {number} - Index of tab in menu
  */
@@ -165,8 +169,9 @@ function selectTab(
 }
 
 /**
- * Add click event to each tab
- * @private
+ * Add click event to each tab.
+ *
+ * @internal
  * @param {number} disableTab
  * Disable tab when 0
  */
@@ -206,8 +211,10 @@ function switchTabs(
  *
  * */
 
+/** @internal */
 const PopupTabs = {
     init
 };
 
+/** @internal */
 export default PopupTabs;

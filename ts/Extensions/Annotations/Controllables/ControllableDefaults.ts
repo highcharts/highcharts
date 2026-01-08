@@ -100,8 +100,10 @@ const defaultMarkers: Record<string, AST.Node> = {
  *
  * */
 
+/** @internal */
 const ControllableDefaults = {
     defaultMarkers
 };
 
+/** @internal */
 export default ControllableDefaults;

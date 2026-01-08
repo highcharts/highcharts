@@ -4,7 +4,7 @@
  * @module highcharts/modules/tiledwebmap
  * @requires highcharts
  *
- * (c) 2009-2025
+ * (c) 2009-2026
  *
  * A commercial license may be required depending on use.
  * See www.highcharts.com/license

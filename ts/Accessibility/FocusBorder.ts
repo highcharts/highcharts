@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *  Author: Øystein Moseng
  *
  *  Extend SVG and Chart classes with focus border capabilities.

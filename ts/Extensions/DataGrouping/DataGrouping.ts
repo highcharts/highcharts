@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Honsi
  *
  *  A commercial license may be required depending on use.
@@ -44,9 +44,6 @@ const {
  *
  * */
 
-/**
- * @private
- */
 function compose(
     AxisClass: typeof Axis,
     SeriesClass: typeof Series,
@@ -67,7 +64,7 @@ function compose(
 /**
  * Extend the original method, make the tooltip's header reflect the grouped
  * range.
- * @private
+ * @internal
  */
 function onTooltipHeaderFormatter(
     this: Tooltip,
@@ -168,11 +165,13 @@ function onTooltipHeaderFormatter(
  *
  * */
 
+/** @internal */
 const DataGroupingComposition = {
     compose,
     groupData: DataGroupingSeriesComposition.groupData
 };
 
+/** @internal */
 export default DataGroupingComposition;
 
 
@@ -183,7 +182,7 @@ export default DataGroupingComposition;
  * */
 
 /**
- * @typedef {"average"|"averages"|"open"|"high"|"low"|"close"|"sum"} Highcharts.DataGroupingApproximationValue
+ * @typedef {"average"|"averages"|"close"|"high"|"hlc"|"low"|"ohlc"|"open"|"range"|"sum"} Highcharts.DataGroupingApproximationValue
  */
 
 /**
@@ -220,11 +219,8 @@ export default DataGroupingComposition;
  * @product highstock
  * @interface Highcharts.DataGroupingResultObject
  *//**
- * @name Highcharts.DataGroupingResultObject#groupedXData
- * @type {Array<number>}
- *//**
- * @name Highcharts.DataGroupingResultObject#groupedYData
- * @type {Array<(number|null|undefined)>|Array<Array<(number|null|undefined)>>}
+ * @name Highcharts.DataGroupingResultObject#modified
+ * @type {Highcharts.DataTableCore}
  *//**
  * @name Highcharts.DataGroupingResultObject#groupMap
  * @type {Array<DataGroupingInfoObject>}
@@ -426,23 +422,6 @@ export default DataGroupingComposition;
  */
 
 /**
- * The approximate pixel width of each group. If for example a series
- * with 30 points is displayed over a 600 pixel wide plot area, no grouping
- * is performed. If however the series contains so many points that
- * the spacing is less than the groupPixelWidth, Highcharts will try
- * to group it into appropriate groups so that each is more or less
- * two pixels wide. If multiple series with different group pixel widths
- * are drawn on the same x axis, all series will take the greatest width.
- * For example, line series have 2px default group width, while column
- * series have 10px. If combined, both the line and the column will
- * have 10px by default.
- *
- * @type      {number}
- * @default   2
- * @apioption plotOptions.series.dataGrouping.groupPixelWidth
- */
-
-/**
  * By default only points within the visible range are grouped. Enabling this
  * option will force data grouping to calculate all grouped points for a given
  * dataset. That option prevents for example a column series from calculating
@@ -457,6 +436,23 @@ export default DataGroupingComposition;
  * @default   false
  * @since     6.1.0
  * @apioption plotOptions.series.dataGrouping.groupAll
+ */
+
+/**
+ * The approximate pixel width of each group. If for example a series
+ * with 30 points is displayed over a 600 pixel wide plot area, no grouping
+ * is performed. If however the series contains so many points that
+ * the spacing is less than the groupPixelWidth, Highcharts will try
+ * to group it into appropriate groups so that each is more or less
+ * two pixels wide. If multiple series with different group pixel widths
+ * are drawn on the same x axis, all series will take the greatest width.
+ * For example, line series have 2px default group width, while column
+ * series have 10px. If combined, both the line and the column will
+ * have 10px by default.
+ *
+ * @type      {number}
+ * @default   2
+ * @apioption plotOptions.series.dataGrouping.groupPixelWidth
  */
 
 /**

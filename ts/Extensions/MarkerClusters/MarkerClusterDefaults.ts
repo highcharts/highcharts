@@ -2,7 +2,7 @@
  *
  *  Marker clusters module.
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *
  *  Author: Wojciech Chmiel
  *
@@ -55,7 +55,7 @@ import { Palette } from '../../Core/Color/Palettes.js';
  * @since 8.0.0
  * @optionparent plotOptions.scatter.cluster
  *
- * @private
+ * @internal
  */
 const cluster: MarkerClusterOptions = {
 

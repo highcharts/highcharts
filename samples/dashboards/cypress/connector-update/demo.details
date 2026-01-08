@@ -1,0 +1,6 @@
+---
+ name: Connector update method
+ authors:
+   - Dawid Dragula
+ js_wrap: b
+...

@@ -3,7 +3,7 @@
  * @license Highcharts Gantt JS v@product.version@ (@product.date@)
  * @module highcharts/highcharts-gantt
  *
- * (c) 2017-2025 Highsoft AS
+ * (c) 2017-2026 Highsoft AS
  *
  * A commercial license may be required depending on use.
  * See www.highcharts.com/license

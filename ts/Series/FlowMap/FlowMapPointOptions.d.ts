@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2018-2025 Highsoft AS
+ *  (c) 2018-2026 Highsoft AS
  *  Author: Askel Eirik Johansson
  *
  *  A commercial license may be required depending on use.

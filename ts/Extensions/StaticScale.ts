@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2016-2025 Highsoft AS
+ *  (c) 2016-2026 Highsoft AS
  *  Author: Torstein Honsi, Lars Cabrera
  *
  *  A commercial license may be required depending on use.
@@ -79,7 +79,7 @@ declare module '../Core/Chart/ChartBase'{
  *
  * */
 
-/** @private */
+/** @internal */
 function compose(
     AxisClass: typeof Axis,
     ChartClass: typeof Chart
@@ -96,7 +96,7 @@ function compose(
 
 }
 
-/** @private */
+/** @internal */
 function onAxisAfterSetOptions(
     this: Axis
 ): void {
@@ -113,7 +113,7 @@ function onAxisAfterSetOptions(
     }
 }
 
-/** @private */
+/** @internal */
 function chartAdjustHeight(
     this: Chart
 ): void {

@@ -3,7 +3,7 @@
  * @license Highcharts JS v@product.version@ (@product.date@)
  * @module highcharts/highcharts
  *
- * (c) 2009-2025 Highsoft AS
+ * (c) 2009-2026 Highsoft AS
  * Author: Torstein Honsi
  *
  * A commercial license may be required depending on use.

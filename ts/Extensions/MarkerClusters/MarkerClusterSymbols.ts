@@ -2,7 +2,7 @@
  *
  *  Marker clusters module.
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *
  *  Author: Wojciech Chmiel
  *
@@ -53,7 +53,7 @@ let symbols: typeof Symbols;
 
 /**
  * Cluster symbol.
- * @private
+ * @internal
  */
 function cluster(
     x: number,
@@ -86,9 +86,7 @@ function cluster(
     return outer2.concat(outer1, inner);
 }
 
-/**
- * @private
- */
+/** @internal */
 function compose(
     SVGRendererClass: typeof SVGRenderer
 ): void {

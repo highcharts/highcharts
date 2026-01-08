@@ -2,7 +2,7 @@
  *
  *  X-range series module
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Honsi, Lars A. V. Cabrera
  *
  *  A commercial license may be required depending on use.

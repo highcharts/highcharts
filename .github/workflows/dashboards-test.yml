@@ -46,7 +46,7 @@ jobs:
       - name: Install Dependencies
         run: |
           cd highcharts
-          npm i
+          npm ci
 
       - name: Build Highcharts
         run: |
@@ -73,7 +73,7 @@ jobs:
       - name: Install Highcharts Utils
         run: |
           cd utils
-          npm i
+          npm ci
 
       - name: Run Cypress test
         uses: cypress-io/github-action@v6

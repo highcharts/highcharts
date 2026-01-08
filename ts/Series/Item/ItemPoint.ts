@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2019-2025 Highsoft AS
+ *  (c) 2019-2026 Highsoft AS
  *  Author: Torstein Honsi
  *
  *  Item series type for Highcharts
