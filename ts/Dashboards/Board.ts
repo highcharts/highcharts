@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sebastian Bochan
@@ -381,11 +381,11 @@ class Board {
     /**
      * Inits creating a layouts and setup the EditMode tools.
      * @internal
-     *
      */
     private initEditMode(): void {
-        if (Dashboards.EditMode) {
-            this.editMode = new Dashboards.EditMode(
+        const { EditMode } = Globals.win.Dashboards;
+        if (EditMode) {
+            this.editMode = new EditMode(
                 this,
                 this.options.editMode
             );

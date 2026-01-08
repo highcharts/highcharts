@@ -2,7 +2,6 @@
  *
  *  Author: Rafal Sebestjanski
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -27,9 +26,10 @@ import InfinityLine from './InfinityLine.js';
 import MockPoint from '../MockPoint.js';
 import { Palette } from '../../../Core/Color/Palettes';
 import U from '../../../Core/Utilities.js';
+import { AnnotationMockPointFunction } from '../AnnotationOptions';
 const { merge } = U;
 
-if (defaultOptions.annotations) {
+if (defaultOptions.annotations?.types) {
     defaultOptions.annotations.types.fibonacciTimeZones = merge(
         defaultOptions.annotations.types.crookedLine,
         /**
@@ -165,13 +165,13 @@ This is being done for each fibonacci time zone line.
     |---------*--------------------------------------------------------|
         and this point here is found (intersection with the plot area edge)
 
-* @private
+* @internal
 */
 function edgePoint(
     startIndex: number,
     endIndex: number,
     fibonacciIndex: number
-): Function {
+): AnnotationMockPointFunction {
     return function (target: any): PositionObject {
         const chart = target.annotation.chart,
             plotLeftOrTop = chart.inverted ? chart.plotTop : chart.plotLeft;
@@ -224,6 +224,7 @@ function edgePoint(
  *
  * */
 
+/** @internal */
 class FibonacciTimeZones extends CrookedLine {
 
     /* *
@@ -257,11 +258,11 @@ class FibonacciTimeZones extends CrookedLine {
 
             this.initShape(
                 merge(
-                    this.options.typeOptions.line,
+                    this.options.typeOptions?.line,
                     {
                         type: 'path',
-                        points: points,
-                        className: 'highcharts-fibonacci-timezones-lines'
+                        className: 'highcharts-fibonacci-timezones-lines',
+                        points
                     }
                 ),
                 i // Shape's index. Can be found in annotation.shapes[i].index
@@ -294,6 +295,7 @@ class FibonacciTimeZones extends CrookedLine {
  *
  * */
 
+/** @internal */
 interface FibonacciTimeZones {
     defaultOptions: CrookedLine['defaultOptions'];
     secondLineEdgePoints: [Function, Function];
@@ -306,6 +308,17 @@ interface FibonacciTimeZones {
  * */
 
 namespace FibonacciTimeZones {
+    /**
+     * Options for the fibonacci time zones annotation type.
+     *
+     * @sample highcharts/annotations-advanced/fibonacci-time-zones/
+     *         Fibonacci Time Zones
+     *
+     * @extends      annotations.types.crookedLine
+     * @since        9.3.0
+     * @product      highstock
+     * @optionparent annotations.types.fibonacciTimeZones
+     */
     export interface Options extends CrookedLine.Options{
         typeOptions: TypeOptions;
     }
@@ -321,6 +334,7 @@ namespace FibonacciTimeZones {
  *
  * */
 
+/** @internal */
 declare module './AnnotationType'{
     interface AnnotationTypeRegistry {
         fibonacciTimeZones: typeof FibonacciTimeZones;

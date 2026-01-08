@@ -345,7 +345,7 @@ async function setupDashboard() {
                 },
                 columnDefaults: {
                     sorting: {
-                        sortable: false
+                        enabled: false
                     }
                 },
                 columns: [{

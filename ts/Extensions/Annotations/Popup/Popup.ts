@@ -2,11 +2,12 @@
  *
  *  Popup generator for Stock tools
  *
- *  (c) 2009-2025 Sebastian Bochan
+ *  (c) 2009-2026 Highsoft AS
+ *  Author: Sebastian Bochan
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -46,6 +47,7 @@ const {
  *
  * */
 
+/** @internal */
 interface InputAttributes {
     value?: string;
     type?: string;
@@ -53,6 +55,7 @@ interface InputAttributes {
     labelClassName?: string;
 }
 
+/** @internal */
 export interface PopupFieldsObject {
     actionType: string;
     fields: PopupFieldsTree;
@@ -61,6 +64,7 @@ export interface PopupFieldsObject {
     type?: string;
 }
 
+/** @internal */
 export interface PopupFieldsTree {
     [key: string]: (string | PopupFieldsTree);
 }
@@ -74,7 +78,7 @@ export interface PopupFieldsTree {
 /**
  * Get values from all inputs and selections then create JSON.
  *
- * @private
+ * @internal
  *
  * @param {Highcharts.HTMLDOMElement} parentDiv
  * The container where inputs and selections are created.
@@ -146,6 +150,7 @@ function getFields(
  *
  * */
 
+/** @internal */
 class Popup extends BaseForm {
 
     /* *
@@ -200,8 +205,6 @@ class Popup extends BaseForm {
 
     /**
      * Create input with label.
-     *
-     * @private
      *
      * @param {string} option
      *        Chain of fields i.e params.styles.fontSize separated by the dot.
@@ -288,7 +291,7 @@ class Popup extends BaseForm {
 
     /**
      * Create button.
-     * @private
+     *
      * @param {Highcharts.HTMLDOMElement} parentDiv
      * Container where elements should be added
      * @param {string} label
@@ -329,7 +332,7 @@ class Popup extends BaseForm {
 
     /**
      * Create content and show popup.
-     * @private
+     *
      * @param {string} - type of popup i.e indicators
      * @param {Highcharts.Chart} - chart
      * @param {Highcharts.AnnotationsOptions} - options
@@ -382,6 +385,7 @@ class Popup extends BaseForm {
  *
  * */
 
+/** @internal */
 interface Popup {
     readonly annotations: typeof PopupAnnotations;
     readonly indicators: typeof PopupIndicators;
@@ -400,4 +404,5 @@ extend(Popup.prototype, {
  *
  * */
 
+/** @internal */
 export default Popup;

@@ -3,15 +3,15 @@
  *  Experimental Highcharts module which enables visualization of a Venn
  *  diagram.
  *
- *  (c) 2016-2025 Highsoft AS
+ *  (c) 2016-2026 Highsoft AS
  *  Authors: Jon Arild Nygard
  *
  *  Layout algorithm by Ben Frederickson:
  *  https://www.benfrederickson.com/better-venn-diagrams/
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -32,7 +32,6 @@ import type {
 } from '../../Core/Series/SeriesOptions';
 import type TooltipOptions from '../../Core/TooltipOptions';
 import type VennPointOptions from './VennPointOptions';
-import type VennSeries from './VennSeries';
 
 /* *
  *
@@ -136,7 +135,7 @@ export interface VennSeriesOptions extends ScatterSeriesOptions {
 
     showInLegend?: boolean;
 
-    states?: SeriesStatesOptions<VennSeries>;
+    states?: SeriesStatesOptions<VennSeriesOptions>;
 
     /**
      * @excluding halo

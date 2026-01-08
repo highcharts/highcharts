@@ -2,11 +2,11 @@
  *
  *  Grid ColumnSorting class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -81,7 +81,11 @@ class ColumnSorting {
 
         this.addHeaderElementAttributes();
 
-        if (column.options.sorting?.sortable) {
+        const sortingOptions = column.options.sorting;
+        const sortingEnabled = sortingOptions?.enabled ??
+            sortingOptions?.sortable;
+
+        if (sortingEnabled) {
             headerCellElement.classList.add(
                 Globals.getClassName('columnSortable')
             );
@@ -107,12 +111,14 @@ class ColumnSorting {
         const sortedDescClassName = Globals.getClassName('columnSortedDesc');
 
         const el = this.headerCellElement;
+        const sortingEnabled = sortingOptions?.enabled ??
+            sortingOptions?.sortable;
 
         if (currentSorting?.columnId !== col.id || !currentSorting?.order) {
             el.classList.remove(sortedAscClassName);
             el.classList.remove(sortedDescClassName);
 
-            if (sortingOptions?.sortable) {
+            if (sortingEnabled) {
                 a11y?.setColumnSortState(el, 'none');
             }
 

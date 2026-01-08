@@ -6,7 +6,6 @@
 
 import type ColorType from '../../Core/Color/ColorType';
 import type MapLinePointOptions from './MapLinePointOptions';
-import type MapLineSeries from './MapLineSeries';
 import type MapSeriesOptions from '../Map/MapSeriesOptions';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type {
@@ -144,7 +143,7 @@ export interface MapLineSeriesOptions extends MapSeriesOptions {
      * @apioption plotOptions.mapline.states.hover.lineWidth
      */
 
-    states?: SeriesStatesOptions<MapLineSeries>;
+    states?: SeriesStatesOptions<MapLineSeriesOptions>;
 
 }
 

@@ -2,11 +2,11 @@
  *
  *  Sparkline Cell Renderer class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -23,10 +23,10 @@
  *
  * */
 
+import type { AnyRecord } from '../../../../Shared/Types';
 import type Column from '../../../Core/Table/Column';
 import type TableCell from '../../../Core/Table/Body/TableCell';
 import type DataTable from '../../../../Data/DataTable';
-import type * as HighchartsNamespace from '../../highcharts';
 import type {
     EditModeRendererTypeName
 } from '../../CellEditing/CellEditingComposition';
@@ -58,7 +58,7 @@ class SparklineRenderer extends CellRenderer {
      * @param H
      * Highcharts namespace.
      */
-    public static useHighcharts(H: typeof HighchartsNamespace): void {
+    public static useHighcharts(H: AnyRecord): void {
         if (H && !SparklineContent.H) {
             SparklineContent.H = H;
         }
@@ -128,8 +128,8 @@ class SparklineRenderer extends CellRenderer {
 export interface SparklineRendererOptions extends CellRendererOptions {
     type: 'sparkline';
     chartOptions?: (
-        ((data: DataTable.CellType) => HighchartsNamespace.Options) |
-        HighchartsNamespace.Options
+        ((this: TableCell, data: DataTable.CellType) => AnyRecord) |
+        AnyRecord
     );
 }
 
