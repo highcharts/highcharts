@@ -2,13 +2,13 @@
  *
  *  Timeline Series.
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *
  *  Author: Daniel Studencki
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -179,6 +179,8 @@ const TimelineSeriesDefaults: TimelineSeriesOptions = {
                 ((this as TimelinePoint).label || '');
             return format;
         },
+
+        padding: 5,
 
         style: {
             /** @internal */

@@ -429,9 +429,10 @@ QUnit.test(
 
         assert.close(
             stackLabel.parentGroup.translateX + stackLabel.translateX,
-            dataLabel.parentGroup.translateX + dataLabel.x,
-            1.1,
-            'This stack-label should moved to the same ' +
+            dataLabel.parentGroup.translateX + dataLabel.x -
+                dataLabel.options.distance,
+            3.1,
+            'This stack-label should moved to the same x ' +
                 'position as dataLabel #11500'
         );
 
@@ -450,7 +451,7 @@ QUnit.test(
         assert.ok(
             stackLabel.parentGroup.translateY + stackLabel.translateY,
             dataLabel.parentGroup.translateY + dataLabel.y,
-            'This stack-label should moved to the same ' +
+            'This stack-label should moved to the same y ' +
                 'position as dataLabel #11500'
         );
     }
@@ -749,7 +750,7 @@ QUnit.test('Stack labels - scrollable plot Area #12133.', assert => {
 
     assert.close(
         stack.alignAttr.y,
-        dataLabel.alignAttr.y,
+        dataLabel.alignAttr.y - dataLabel.options.distance,
         1,
         'the `y` position should be the same for dataLabel and stackLabel'
     );
@@ -1006,8 +1007,9 @@ QUnit.test('Stack labels - reverse axis/inverted chart - #8843.', assert => {
         'negative value inverted chart not reversed axis'
     );
 
+    const dataLabel = chart.yAxis[0].series[0].points[1].dataLabel;
     assert.close(
-        chart.yAxis[0].series[0].points[1].dataLabel.y,
+        dataLabel.y - dataLabel.options.distance,
         chart.yAxis[0].stacking.stacks['column,,,'][1].label.y,
         2,
         'Stack label Y positions should be correct for inverted charts (#18617)'

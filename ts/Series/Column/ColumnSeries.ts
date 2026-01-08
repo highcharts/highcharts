@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -725,9 +726,7 @@ class ColumnSeries extends Series {
             stateOptions = merge(
                 (options.states as any)[state],
                 // #6401
-                point.options.states &&
-                (point.options.states as any)[state] ||
-                {}
+                point.options.states?.[state] || {}
             );
             brightness = stateOptions.brightness;
             fill =

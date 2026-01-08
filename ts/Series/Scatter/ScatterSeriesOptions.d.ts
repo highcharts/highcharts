@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -16,7 +17,6 @@
 
 import type LineSeriesOptions from '../Line/LineSeriesOptions';
 import type ScatterPointOptions from './ScatterPointOptions';
-import type ScatterSeries from './ScatterSeries';
 import type {
     SeriesStatesOptions,
     SeriesFindNearestPointByValue
@@ -220,7 +220,7 @@ export interface ScatterSeriesOptions extends LineSeriesOptions {
 
     marker?: PointMarkerOptions;
 
-    states?: SeriesStatesOptions<ScatterSeries>;
+    states?: SeriesStatesOptions<ScatterSeriesOptions>;
 
     /**
      * Sticky tracking of mouse events. When true, the `mouseOut` event

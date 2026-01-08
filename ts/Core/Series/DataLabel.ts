@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -43,6 +44,7 @@ const {
     fireEvent,
     getAlignFactor,
     isArray,
+    isNumber,
     isString,
     merge,
     objectEach,
@@ -57,6 +59,7 @@ const {
  *
  * */
 
+/** @internal */
 declare module './PointBase' {
     interface PointBase {
         bottom?: number;
@@ -76,11 +79,35 @@ declare module './PointBase' {
 
 declare module './PointOptions' {
     interface PointOptions {
-        dataLabels?: (DataLabelOptions|Array<DataLabelOptions>);
+        /**
+         * Individual data label for each point. The options are the same as
+         * the ones for [plotOptions.series.dataLabels](#plotOptions.series.dataLabels)
+         * with exception of `zIndex` which is applied on the data label's
+         * parent group.
+         *
+         * @sample highcharts/point/datalabels/
+         *         Show a label for the last value
+         *
+         * @declare   Highcharts.DataLabelsOptions
+         * @extends   plotOptions.line.dataLabels
+         * @excluding zIndex
+         * @product   highcharts highstock gantt
+         */
+        dataLabels?: (DataLabelOptions | Array<DataLabelOptions>);
+
+        /**
+         * The rank for all this point's data labels in case of collision. If
+         * two data labels are about to overlap, only the one with the highest
+         * `labelrank` will be drawn.
+         *
+         * The `labelrank` set on `series.dataLabels` takes precedence over
+         * this.
+         */
         labelrank?: number;
     }
 }
 
+/** @internal */
 declare module './SeriesBase' {
     interface SeriesBase {
         dataLabelPositioners?: DataLabel.PositionersObject;
@@ -127,10 +154,35 @@ declare module './SeriesBase' {
 
 declare module './SeriesOptions' {
     interface SeriesOptions {
+        /**
+         * Options for the series data labels, appearing next to each data
+         * point.
+         *
+         * Since v6.2.0, multiple data labels can be applied to each single
+         * point by defining them as an array of configs.
+         *
+         * In styled mode, the data labels can be styled with the
+         * `.highcharts-data-label-box` and `.highcharts-data-label` class names
+         * ([see example](https://www.highcharts.com/samples/highcharts/css/series-datalabels)).
+         *
+         * @sample {highcharts} highcharts/plotoptions/series-datalabels-enabled
+         *         Data labels enabled
+         * @sample {highcharts} highcharts/plotoptions/series-datalabels-multiple
+         *         Multiple data labels on a bar series
+         * @sample {highcharts} highcharts/css/series-datalabels
+         *         Styled mode example
+         * @sample {highmaps} maps/demo/color-axis
+         *         Choropleth map with data labels
+         * @sample {highmaps} maps/demo/mappoint-datalabels-mapmarker
+         *         Using data labels as map markers
+         *
+         * @product highcharts highstock highmaps gantt
+         */
         dataLabels?: (DataLabelOptions|Array<DataLabelOptions>);
     }
 }
 
+/** @internal */
 declare module '../../Core/Renderer/SVG/SVGElementBase' {
     interface SVGElementBase {
         options?: DataLabelOptions;
@@ -143,6 +195,7 @@ declare module '../../Core/Renderer/SVG/SVGElementBase' {
  *
  * */
 
+/** @internal */
 namespace DataLabel {
 
     /* *
@@ -220,7 +273,7 @@ namespace DataLabel {
      * Check if this series has data labels, either a series-level setting, or
      * individual. In case of individual point labels, this method is overridden
      * to always return true.
-     * @private
+     * @internal
      */
     function hasDataLabels(this: Series): boolean {
         return mergedDataLabelOptions(this)
@@ -231,7 +284,7 @@ namespace DataLabel {
 
     /**
      * Align each individual data label.
-     * @private
+     * @internal
      */
     function alignDataLabel(
         this: Series,
@@ -245,7 +298,14 @@ namespace DataLabel {
             { chart } = this,
             inverted = this.isCartesian && chart.inverted,
             { condemned, origin, plotX, plotY } = point,
-            { crop = true, overflow = 'justify', rotation = 0 } = options,
+            {
+                crop = true,
+                distance,
+                overflow = 'justify',
+                rotation = 0
+            } = options,
+            alignFactor = getAlignFactor(options.align),
+            verticalAlignFactor = getAlignFactor(options.verticalAlign),
             justify = rotation === 0 && !condemned && overflow === 'justify',
             pos = point.pos(),
             isInsidePlot = defined(plotX) &&
@@ -315,18 +375,33 @@ namespace DataLabel {
                 height: bBox.height
             });
 
+            // Apply the distance
+            let distX = 0,
+                distY = 0;
+            if (isNumber(distance) && !options.inside) {
+                distX = distance * (1 - 2 * alignFactor);
+                distY = distance * (1 - 2 * verticalAlignFactor);
+            }
+
             // Align the label to the adjusted box with for unrotated bBox due
             // to rotationOrigin, which is based on unrotated label
             dataLabel.align(merge(
                 options, {
+                    x: (options.x || 0) + distX,
+                    y: (options.y || 0) + distY,
                     width: unrotatedbBox.width,
                     height: unrotatedbBox.height
                 }
             ), false, alignTo, false);
 
-            dataLabel.alignAttr.x += getAlignFactor(options.align) *
+            // Record for later use in justifyDataLabel
+            dataLabel.distX = distX;
+            dataLabel.distY = distY;
+
+            // Modify for rotation
+            dataLabel.alignAttr.x += alignFactor *
                 (unrotatedbBox.width - bBox.width);
-            dataLabel.alignAttr.y += getAlignFactor(options.verticalAlign) *
+            dataLabel.alignAttr.y += verticalAlignFactor *
                 (unrotatedbBox.height - bBox.height);
 
             // The placement attributes before justifyDataLabel correction
@@ -448,7 +523,7 @@ namespace DataLabel {
 
     /**
      * Handle the dataLabels.filter option.
-     * @private
+     * @internal
      */
     function applyFilter(
         point: Point,
@@ -481,7 +556,7 @@ namespace DataLabel {
     /**
      * Compose the data label composition onto a series class.
      *
-     * @private
+     * @internal
      * @function compose
      *
      * @param {Highcharts.Series} SeriesClass
@@ -507,9 +582,9 @@ namespace DataLabel {
     }
 
     /**
-     * Create the SVGElement group for dataLabels
+     * Create the SVGElement group for dataLabels.
      *
-     * @private
+     * @internal
      * @function initDataLabelsGroup
      *
      * @param {number} index
@@ -557,7 +632,7 @@ namespace DataLabel {
     /**
      * Init the data labels with the correct animation.
      *
-     * @private
+     * @internal
      * @function initDataLabels
      *
      * @param {number} index
@@ -599,8 +674,8 @@ namespace DataLabel {
     }
 
     /**
-     * Draw the data labels
-     * @private
+     * Draw the data labels.
+     * @internal
      */
     function drawDataLabels(
         this: Series,
@@ -669,7 +744,10 @@ namespace DataLabel {
                             borderColor,
                             distance,
                             style = {}
-                        } = labelOptions;
+                        } = labelOptions,
+                        padding: Array<number> = splat(
+                            labelOptions.padding || 0
+                        );
 
                     let formatString: string|undefined,
                         labelText: string|undefined,
@@ -718,6 +796,7 @@ namespace DataLabel {
                                 point.contrastColor = renderer.getContrast(
                                     (
                                         labelBgColor !== 'auto' &&
+                                        labelBgColor !== 'contrast' &&
                                         isString(labelBgColor) &&
                                         labelBgColor
                                     ) ||
@@ -725,11 +804,11 @@ namespace DataLabel {
                                 );
 
                                 style.color = (
-                                    labelBgColor || // #20007
                                     (
-                                        !defined(distance) &&
-                                        labelOptions.inside
-                                    ) ||
+                                        labelBgColor &&
+                                        labelBgColor !== 'contrast'
+                                    ) || // #20007
+                                    labelOptions.inside ||
                                     pInt(distance || 0) < 0 ||
                                     seriesOptions.stacking
                                 ) ?
@@ -744,9 +823,11 @@ namespace DataLabel {
                         }
 
                         attr = {
-                            r: labelOptions.borderRadius || 0,
+                            r: labelOptions.borderRadius ?? 3,
                             rotation,
-                            padding: labelOptions.padding,
+                            padding: padding[0],
+                            paddingLeft: padding[3 % padding.length],
+                            paddingRight: padding[1 % padding.length],
                             zIndex: 1
                         };
 
@@ -912,11 +993,11 @@ namespace DataLabel {
     /**
      * If data labels fall partly outside the plot area, align them back in, in
      * a way that doesn't hide the point.
-     * @private
+     * @internal
      */
     function justifyDataLabel(
         this: Series,
-        dataLabel: SVGElement,
+        dataLabel: SVGLabel,
         options: DataLabelOptions,
         alignAttr: SVGAttributes,
         bBox: BBoxObject,
@@ -924,8 +1005,8 @@ namespace DataLabel {
         isNew?: boolean
     ): (boolean|undefined) {
         const chart = this.chart,
-            align = options.align,
-            verticalAlign = options.verticalAlign,
+            { align, verticalAlign } = options,
+            { distX = 0, distY = 0 } = dataLabel,
             padding = dataLabel.box ? 0 : (dataLabel.padding || 0),
             horizontalAxis = chart.inverted ? this.yAxis : this.xAxis,
             horizontalAxisShift = horizontalAxis ?
@@ -936,71 +1017,78 @@ namespace DataLabel {
 
         let { x = 0, y = 0 } = options,
             off,
-            justified;
+            justifiedX,
+            justifiedY;
 
         // Off left
-        off = (alignAttr.x || 0) + padding + horizontalAxisShift;
+        off = (alignAttr.x || 0) - distX + padding + horizontalAxisShift;
         if (off < 0) {
             if (align === 'right' && x >= 0) {
                 options.align = 'left';
                 options.inside = true;
+                x -= distX;
             } else {
                 x -= off;
             }
-            justified = true;
+            justifiedX = true;
         }
 
         // Off right
-        off = (alignAttr.x || 0) + bBox.width - padding + horizontalAxisShift;
+        off = (alignAttr.x || 0) + bBox.width - distX - padding +
+            horizontalAxisShift;
         if (off > chart.plotWidth) {
             if (align === 'left' && x <= 0) {
                 options.align = 'right';
                 options.inside = true;
+                x -= distX;
             } else {
                 x += chart.plotWidth - off;
             }
-            justified = true;
+            justifiedX = true;
         }
 
         // Off top
-        off = alignAttr.y + padding + verticalAxisShift;
+        off = (alignAttr.y || 0) - distY + padding + verticalAxisShift;
         if (off < 0) {
             if (verticalAlign === 'bottom' && y >= 0) {
                 options.verticalAlign = 'top';
                 options.inside = true;
+                y -= distY;
             } else {
                 y -= off;
             }
-            justified = true;
+            justifiedY = true;
         }
 
         // Off bottom
-        off = (alignAttr.y || 0) + bBox.height - padding + verticalAxisShift;
+        off = (alignAttr.y || 0) + bBox.height - distY - padding +
+            verticalAxisShift;
         if (off > chart.plotHeight) {
             if (verticalAlign === 'top' && y <= 0) {
                 options.verticalAlign = 'bottom';
                 options.inside = true;
+                y -= distY;
             } else {
                 y += chart.plotHeight - off;
             }
-            justified = true;
+            justifiedY = true;
         }
 
-        if (justified) {
-            options.x = x;
-            options.y = y;
+        if (justifiedX || justifiedY) {
+            options.x = justifiedX ? x : x + distX;
+            options.y = justifiedY ? y : y + distY;
             dataLabel.placed = !isNew;
             dataLabel.align(options, void 0, alignTo);
         }
 
-        return justified;
+        return justifiedX || justifiedY;
     }
 
     /**
      * Merge two objects that can be arrays. If one of them is an array, the
      * other is merged into each element. If both are arrays, each element is
      * merged by index. If neither are arrays, we use normal merge.
-     * @private
+     * @internal
      */
     function mergeArrays(
         one: (DataLabelOptions|Array<DataLabelOptions>|undefined),
@@ -1035,7 +1123,7 @@ namespace DataLabel {
 
     /**
      * Merge plotOptions and series options for dataLabels.
-     * @private
+     * @internal
      */
     function mergedDataLabelOptions(
         series: Series
@@ -1060,6 +1148,7 @@ namespace DataLabel {
  *
  * */
 
+/** @internal */
 export default DataLabel;
 
 /* *

@@ -1,12 +1,12 @@
 /* *
  *
- *  (c) 2014-2025 Highsoft AS
+ *  (c) 2014-2026 Highsoft AS
  *
  *  Authors: Jon Arild Nygard / Oystein Moseng
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -900,7 +900,9 @@ class TreemapSeries extends ScatterSeries {
                 const { height = 0, width = 0 } = point.shapeArgs;
                 if (width > 32 && height > 16 && point.shouldDraw()) {
                     const dataLabelWidth = width -
-                        2 * (options.padding || padding || 0);
+                        2 * (
+                            splat(options.padding)[0] || splat(padding)[0] || 0
+                        );
                     style.width = `${dataLabelWidth}px`;
                     style.lineClamp ??= Math.floor(height / 16);
                     style.visibility = 'inherit';

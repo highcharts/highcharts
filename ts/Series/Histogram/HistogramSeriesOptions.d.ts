@@ -1,11 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Sebastian Domas
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -16,7 +16,6 @@
  * */
 
 import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
-import type HistogramSeries from './HistogramSeries';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type TooltipOptions from '../../Core/TooltipOptions';
 import HistogramPointOptions from './HistogramPointOptions';
@@ -114,7 +113,7 @@ export interface HistogramSeriesOptions extends ColumnSeriesOptions {
 
     pointPlacement?: string;
 
-    states?: SeriesStatesOptions<HistogramSeries>;
+    states?: SeriesStatesOptions<HistogramSeriesOptions>;
 
     tooltip?: Partial<TooltipOptions>;
 

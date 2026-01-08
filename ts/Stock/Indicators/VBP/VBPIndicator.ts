@@ -1,12 +1,13 @@
 /* *
  *
- *  (c) 2010-2025 Paweł Dalek
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Paweł Dalek
  *
  *  Volume By Price (VBP) indicator for Highcharts Stock
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -220,6 +221,7 @@ class VBPIndicator extends SMAIndicator {
         dataLabels: {
             align: 'left',
             allowOverlap: true,
+            distance: 0,
             enabled: true,
             format: 'P: {point.volumePos:.2f} | N: {point.volumeNeg:.2f}',
             padding: 0,

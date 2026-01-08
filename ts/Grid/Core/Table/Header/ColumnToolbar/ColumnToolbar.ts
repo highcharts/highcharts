@@ -2,11 +2,11 @@
  *
  *  Grid Header Cell Toolbar class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -112,8 +112,10 @@ class HeaderCellToolbar implements Toolbar {
      */
     private renderFull(): void {
         const columnOptions = this.column.options;
+        const sortingEnabled = columnOptions.sorting?.enabled ??
+            columnOptions.sorting?.sortable;
 
-        if (columnOptions.sorting?.sortable) {
+        if (sortingEnabled) {
             new SortToolbarButton().add(this);
         }
 
@@ -127,8 +129,11 @@ class HeaderCellToolbar implements Toolbar {
 
     private renderMinimized(): void {
         const columnOptions = this.column.options;
+        const sortingEnabled = columnOptions.sorting?.enabled ??
+            columnOptions.sorting?.sortable;
+
         if (
-            columnOptions.sorting?.sortable || (
+            sortingEnabled || (
                 columnOptions.filtering?.enabled &&
                 !columnOptions.filtering.inline
             )

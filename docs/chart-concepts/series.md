@@ -150,11 +150,13 @@ Allows the cursor to change appearance to indicate that points and series are cl
 
 ### Data labels
 
-Allows data labels to be displayed for each point of data in a series on the chart.
+Allows data labels to be displayed for each point of data in a series.
 
-![datalabels_demo.png](datalabels_demo.png)
+Rendering labels against a mixed color background requires that readability is ensured. Highcharts handles this by letting the `dataLabels.style.color` default to `contrast`, which renders the label either as black or white depending on the background. In addition, the contrast is enhanced using two strategies:
+* Text outline. By default, the `dataLabels.style.textOutline` is set to `1px contrast`, which provides a contrast outline around the text. With this setting, a white text label will get a 1x black contour around it. The text outline can be disabled by setting it to `none`.
+* Contrast background. In addition, implementers can opt to set the `backgroundColor` to `contrast`. This will provide a background fill that contrasts the text, with just enough opacity to ensure the accessibility contrast requirements are always met. The text outline can be enabled or disabled independently.
 
-[Try it here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/line-labels/)
+[Try out the two data label contrast strategies](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-datalabels-background-options/)
 
 Code example showing how to enable datalabels:
 
@@ -168,10 +170,10 @@ plotOptions: {
 },
 ```
 
-
-Note: You may wish to disable mouse tracking, which highlights the series and points the mouse hovers over (tooltips will not show if mouse tracking is disabled).
-
-The text displayed on datalabels may also be customized by using the formatter option. See [API reference](https://api.highcharts.com/highcharts/plotOptions.series.dataLabels) for more options.
+The text displayed on data labels may also be customized by using the `format`
+or `formatter` options. See [API
+reference](https://api.highcharts.com/highcharts/plotOptions.series.dataLabels)
+for the full set of options.
 
 ### Dash style
 

@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -102,8 +103,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *         Map bubble
      *
      * @since 1.2.0
-     *
-     * @private
      */
     allowPointSelect: false,
 
@@ -120,8 +119,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *
      * @since   5.0.10
      * @product highcharts highstock gantt
-     *
-     * @private
      */
     crisp: true,
 
@@ -138,8 +135,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *         Show select box
      *
      * @since 1.2.0
-     *
-     * @private
      */
     showCheckbox: false,
 
@@ -182,8 +177,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @default {highcharts} true
      * @default {highstock} true
      * @default {highmaps} false
-     *
-     * @private
      */
     animation: {
         /** @ignore-option */
@@ -755,6 +748,22 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      */
 
     /**
+     * This option allows grouping series in a stacked chart. The stack option
+     * can be a string or anything else, as long as the grouped series' stack
+     * options match each other after conversion into a string.
+     *
+     * @sample {highcharts} highcharts/series/stack/
+     *         Stacked and grouped columns
+     * @sample {highcharts} highcharts/series/stack-centerincategory/
+     *         Stacked and grouped, centered in category
+     *
+     * @type      {number|string}
+     * @since     2.1
+     * @product   highcharts highstock
+     * @apioption series.stack
+     */
+
+    /**
      * Whether to stack the values of each series on top of each other.
      * Possible values are null to disable, `"normal"` to stack by
      * value or `"percent"`.
@@ -867,8 +876,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * `Highcharts.addEvent` function.
      *
      * @declare Highcharts.SeriesEventsOptionsObject
-     *
-     * @private
      */
     events: {},
 
@@ -1007,8 +1014,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *
      * @sample {highmaps} maps/demo/mappoint-mapmarker
      *         Using the mapmarker symbol for points
-     *
-     * @private
      */
     marker: {
 
@@ -1177,7 +1182,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
                  * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
                  */
                 animation: {
-                    /** @internal */
                     duration: 150
                 },
 
@@ -1328,8 +1332,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * Properties for each single point.
      *
      * @declare Highcharts.PlotSeriesPointOptions
-     *
-     * @private
      */
     point: {
 
@@ -1457,8 +1459,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
     },
 
     /**
-     * Options for the series data labels, appearing next to each data
-     * point.
+     * Options for the series data labels, appearing next to each data point.
      *
      * Since v6.2.0, multiple data labels can be applied to each single
      * point by defining them as an array of configs.
@@ -1480,8 +1481,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *
      * @type    {*|Array<*>}
      * @product highcharts highstock highmaps gantt
-     *
-     * @private
      */
     dataLabels: {
         /**
@@ -1565,11 +1564,20 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          */
 
         /**
-         * The background color or gradient for the data label. Setting it to
-         * `auto` will use the point's color.
+         * The background color or gradient for the data label. In addition to
+         * regular colors, there are two special setting for this option:
+         * - `auto` will set the background color the point's color.
+         * - `contrast` will set it to a contrast against the text color, with
+         *   an opacity allowing to see the underlying content. The contrast is
+         *   great enough to ensure readability for the text according to
+         *   accessibility standards.
          *
          * @sample {highcharts} highcharts/plotoptions/series-datalabels-box/
          *         Data labels box options
+         * @sample {highcharts} highcharts/plotoptions/series-datalabels-background-contrast/
+         *         Contrast background color in stacked column
+         * @sample {highcharts} highcharts/series-pie/datalabels-background-contrast/
+         *         Contrast background color in pie
          * @sample {highmaps} maps/plotoptions/series-datalabels-box/
          *         Data labels box options
          * @sample {highmaps} maps/demo/mappoint-datalabels-mapmarker
@@ -1601,7 +1609,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          *         Data labels box options
          *
          * @type      {number}
-         * @default   0
+         * @default   3
          * @since     2.2.1
          * @apioption plotOptions.series.dataLabels.borderRadius
          */
@@ -1686,6 +1694,16 @@ const seriesDefaults: PlotOptionsOf<Series> = {
         defer: true,
 
         /**
+         * The distance of the data label from the data point. Note that the
+         * `padding` setting also affects the rendered distance, but is not
+         * visible unless the data label has a border or background.
+         *
+         * @type      {number}
+         * @product   highcharts highstock gantt
+         */
+        distance: 4,
+
+        /**
          * Enable or disable the data labels.
          *
          * @sample {highcharts} highcharts/plotoptions/series-datalabels-enabled/
@@ -1767,7 +1785,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          * @apioption plotOptions.series.dataLabels.format
          */
 
-        // eslint-disable-next-line valid-jsdoc
         /**
          * Callback JavaScript function to format the data label. Note that if a
          * `format` is defined, the format takes precedence and the formatter is
@@ -1795,6 +1812,15 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          */
 
         /**
+         * The rank for this point's data label in case of collision. If two
+         * data labels are about to overlap, only the one with the highest
+         * `labelrank` will be drawn.
+         *
+         * @type      {number}
+         * @apioption plotOptions.series.dataLabels.labelrank
+         */
+
+        /**
          * Format for points with the value of null. Works analogously to
          * [format](#plotOptions.series.dataLabels.format). `nullFormat` can
          * be applied only to series which support displaying null points.
@@ -1816,14 +1842,16 @@ const seriesDefaults: PlotOptionsOf<Series> = {
 
         /**
          * Callback JavaScript function that defines formatting for points
-         * with the value of null. Works analogously to [formatter](#plotOptions.series.dataLabels.formatter).
+         * with the value of null. Works analogously to
+         * [formatter](#plotOptions.series.dataLabels.formatter).
          * `nullFormatter` can be applied only to series which support
          * displaying null points. `heatmap` and `tilemap` supports
-         * `nullFormatter` by default while the following series requires [#series.nullInteraction]
+         * `nullFormatter` by default while the following series requires
+         * (series.nullInteraction)[#series.nullInteraction]
          * set to `true`: `line`, `spline`, `area`, `area-spline`, `column`,
          * `bar`, and `timeline`. Does not work with series that don't display
          * null points, like `pie`.
-
+         *
          * @sample {highcharts} highcharts/plotoptions/series-datalabels-nullformat/
          *         Format data label for null points in heat map
          *
@@ -1849,6 +1877,10 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          * When either the `borderWidth` or the `backgroundColor` is set,
          * this is the padding within the box.
          *
+         * An array of numbers sets padding for the respective sides. An array
+         * of two numbers repeats the values for the horizontal and vertical
+         * sides.
+         *
          * @sample {highcharts} highcharts/plotoptions/series-datalabels-box/
          *         Data labels box options
          * @sample {highmaps} maps/plotoptions/series-datalabels-box/
@@ -1856,7 +1888,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          *
          * @since 2.2.1
          */
-        padding: 5,
+        padding: [1, 3],
 
         /**
          * Aligns data labels relative to points. If `center` alignment is
@@ -1922,7 +1954,11 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          * text outline doesn't work well, in which cases it can be disabled
          * by setting it to `"none"`. When `useHTML` is true, the
          * `textOutline` will not be picked up. In this, case, the same
-         * effect can be acheived through the `text-shadow` CSS property.
+         * effect can be acheived through the `text-shadow` CSS property. As a
+         * complementary or alternative to the `textOutline`, a
+         * `dataLabels.backgroundColor` can be used. It provides a more calm
+         * impression and ensures readable text label, at the cost of a risk of
+         * overshadowing the underlying chart elements.
          *
          * For some series types, where each point has an extent, like for
          * example tree maps, the data label may overflow the point. There
@@ -1937,11 +1973,14 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          *         Long labels truncated with an ellipsis in a pie
          * @sample {highcharts} highcharts/plotoptions/pie-datalabels-overflow-wrap/
          *         Long labels are wrapped in a pie
+         * @sample {highcharts} highcharts/plotoptions/series-datalabels-background-contrast/
+         *         Default text outline and contrast background color
          * @sample {highmaps} maps/demo/color-axis/
          *         Bold labels
          *
          * @type      {Highcharts.CSSObject}
          * @since     4.1.0
+         * @default   { fontSize: '0.7em', fontWeight: 'bold', color: 'contrast', textOutline: '1px contrast' }
          * @apioption plotOptions.series.dataLabels.style
          */
         style: {
@@ -2052,8 +2091,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *
      * @since   2.2
      * @product highcharts highstock
-     *
-     * @private
      */
     cropThreshold: 300,
 
@@ -2063,8 +2100,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @see [states.inactive.opacity](#plotOptions.series.states.inactive.opacity)
      *
      * @since 7.1.0
-     *
-     * @private
      */
     opacity: 1,
 
@@ -2075,8 +2110,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * this option can be used to override the automatic value.
      *
      * @product highstock
-     *
-     * @private
      */
     pointRange: 0,
 
@@ -2092,15 +2125,13 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *
      * @since   4.1.9
      * @product highcharts highstock
-     *
-     * @private
      */
     softThreshold: true,
 
     /**
-     * @declare Highcharts.SeriesStatesOptionsObject
+     * A collection of options for different series states.
      *
-     * @private
+     * @declare Highcharts.SeriesStatesOptionsObject
      */
     states: {
 
@@ -2115,7 +2146,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
             /**
              * Animation when returning to normal state after hovering.
              *
-                 * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
+             * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
              */
             animation: true
         },
@@ -2159,8 +2190,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
                  * The duration of the hover animation in milliseconds. By
                  * default the hover state animates quickly in, and slowly
                  * back to normal.
-                 *
-                 * @internal
                  */
                 duration: 150
             },
@@ -2281,7 +2310,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          */
         select: {
             animation: {
-                /** @internal */
                 duration: 0
             }
         },
@@ -2312,7 +2340,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
              * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
              */
             animation: {
-                /** @internal */
                 duration: 150
             },
             /**
@@ -2346,8 +2373,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @default {highstock} true
      * @default {highmaps} false
      * @since   2.0
-     *
-     * @private
      */
     stickyTracking: true,
 
@@ -2385,8 +2410,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *
      * @since   2.2
      * @product highcharts highstock gantt
-     *
-     * @private
      */
     turboThreshold: 1000,
 
@@ -2564,8 +2587,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *
      * @since      5.0.10
      * @validvalue ["x", "xy"]
-     *
-     * @private
      */
     findNearestPointBy: 'x'
 

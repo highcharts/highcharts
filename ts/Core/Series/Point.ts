@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -67,6 +68,7 @@ const {
  *
  * */
 
+/** @internal */
 declare module './PointBase' {
     interface PointBase {
         className?: string;
@@ -103,49 +105,60 @@ declare module './PointBase' {
  *
  * @class
  * @name Highcharts.Point
+ *
+ * @param {Highcharts.Series} series
+ *        The series object containing this point.
+ *
+ * @param {Highcharts.PointOptionsType} options
+ *        The data in either number, array or object format.
+ *
+ * @param {number} [x]
+ *        Optionally, the X value of the point.
+ *
+ * @emits Highcharts.Point#event:afterInit
  */
 class Point {
+
+    /* *
+     *
+     *  Constructor
+     *
+     * */
+
+    public constructor(
+        series: Series,
+        options: (PointOptions|PointShortOptions),
+        x?: number
+    ) {
+        // For tooltip and data label formatting
+        this.point = this;
+
+        this.series = series;
+
+        this.applyOptions(options, x);
+
+        // Add a unique ID to the point if none is assigned
+        this.id ??= uniqueKey();
+
+        this.resolveColor();
+
+        this.dataLabelOnNull ??= series.options.nullInteraction;
+
+        series.chart.pointCount++;
+
+        // Set point properties for convenient access in tooltip and data labels
+        this.category = series.xAxis?.categories?.[this.x] ?? this.x;
+        this.key = this.name ?? this.category;
+
+        fireEvent(this, 'afterInit');
+
+    }
 
     /* *
      *
      *  Properties
      *
      * */
-
-    public category!: (number|string);
-    public color?: ColorType;
-    public colorIndex?: number;
-    public condemned?: boolean;
-    public cumulativeSum?: number;
-    public dataLabels?: Array<SVGElement|SVGLabel>;
-    public formatPrefix: string = 'point';
-    public formattedValue?: string;
-    public graphic?: SVGElement;
-    public graphics?: Array<SVGElement|undefined>;
-    public hiddenInDataClass?: boolean;
-    public id!: string;
-    public isNew?: boolean;
-    public isNull?: boolean;
-    public key?: string|number;
-    public marker?: PointMarkerOptions;
-    public name!: string;
-    public nonZonedColor?: ColorType;
-    public options!: PointOptions;
-    /** The starting point when animating in new points */
-    public origin?: SVGAttributes|undefined;
-    public percentage?: number;
-    public point: Point;
-    public points?: Array<Point>;
-    public selected?: boolean;
-    public series!: Series;
-    public shapeArgs?: SVGAttributes;
-    public shapeType?: string;
-    public state?: StatesOptionsKey;
-    public tooltipPos?: Array<number>;
-    public total?: number;
-    public visible: boolean = true;
-    public x!: number;
-    public y?: (number|null);
 
     /**
      * For categorized axes this property holds the category name for the
@@ -154,7 +167,309 @@ class Point {
      * @name Highcharts.Point#category
      * @type {number|string}
      */
+    public category: (number|string);
 
+    /**
+     * The point's current color.
+     *
+     * @name Highcharts.Point#color
+     * @type {Highcharts.ColorType|undefined}
+     */
+    public color?: ColorType;
+
+    /**
+     * The point's current color index, used in styled mode instead of
+     * `color`. The color index is inserted in class names used for styling.
+     *
+     * @name Highcharts.Point#colorIndex
+     * @type {number|undefined}
+     */
+    public colorIndex?: number;
+
+    /** @internal */
+    public condemned?: boolean;
+
+    /** @internal */
+    public cumulativeSum?: number;
+
+    /** @internal */
+    public dataLabels?: Array<SVGElement|SVGLabel>;
+
+    /** @internal */
+    public destroyed?: boolean;
+
+    /** @internal */
+    public formatPrefix: string = 'point';
+
+    /** @internal */
+    public formattedValue?: string;
+
+    /**
+     * SVG graphic representing the point in the chart. In some cases it may be
+     * a hidden graphic to improve accessibility.
+     *
+     * Typically this is a simple shape, like a `rect` for column charts or
+     * `path` for line markers, but for some complex series types like boxplot
+     * or 3D charts, the graphic may be a `g` element containing other shapes.
+     * The graphic is generated the first time {@link Series#drawPoints} runs,
+     * and updated and moved on subsequent runs.
+     *
+     * @see Highcharts.Point#graphics
+     *
+     * @name Highcharts.Point#graphic
+     * @type {Highcharts.SVGElement|undefined}
+     */
+    public graphic?: SVGElement;
+
+    /**
+     * Array for multiple SVG graphics representing the point in the
+     * chart. Only used in cases where the point can not be represented
+     * by a single graphic.
+     *
+     * @see Highcharts.Point#graphic
+     *
+     * @name Highcharts.Point#graphics
+     * @type {Array<Highcharts.SVGElement>|undefined}
+     */
+    public graphics?: Array<SVGElement|undefined>;
+
+    /** @internal */
+    public hiddenInDataClass?: boolean;
+
+    /** @internal */
+    public id: string;
+
+    /** @internal */
+    public isNew?: boolean;
+
+    /** @internal */
+    public isNull?: boolean;
+
+    /**
+     * The point's name if it is defined, or its category in case of a category,
+     * otherwise the x value. Convenient for tooltip and data label formatting.
+     *
+     * @name Highcharts.Point#key
+     * @type {number|string}
+     */
+    public key: string|number;
+
+    /** @internal */
+    public marker?: PointMarkerOptions;
+
+    /**
+     * The name of the point. The name can be given as the first position of the
+     * point configuration array, or as a `name` property in the configuration:
+     *
+     * @example
+     * // Array config
+     * data: [
+     *     ['John', 1],
+     *     ['Jane', 2]
+     * ]
+     *
+     * // Object config
+     * data: [{
+     *        name: 'John',
+     *        y: 1
+     * }, {
+     *     name: 'Jane',
+     *     y: 2
+     * }]
+     *
+     * @name Highcharts.Point#name
+     * @type {string}
+     */
+    public name!: string;
+
+    /** @internal */
+    public nonZonedColor?: ColorType;
+
+    /**
+     * The point's options as applied in the initial configuration, or
+     * extended through `Point.update`.
+     *
+     * In TypeScript you have to extend `PointOptionsObject` via an
+     * additional interface to allow custom data options:
+     *
+     * ```
+     * declare interface PointOptionsObject {
+     *     customProperty: string;
+     * }
+     * ```
+     *
+     * @name Highcharts.Point#options
+     * @type {Highcharts.PointOptionsObject}
+     */
+    public options!: PointOptions;
+
+    /**
+     * The percentage for points in a stacked series, pies or gauges.
+     *
+     * @name Highcharts.Point#percentage
+     * @type {number|undefined}
+     */
+    public percentage?: number;
+
+    /**
+     * @internal
+     * The starting point when animating in new points
+     */
+    public origin?: SVGAttributes|undefined;
+
+    /** @internal */
+    public point: Point;
+
+    /**
+     * Array of all hovered points when using shared tooltips.
+     *
+     * @name Highcharts.Point#points
+     * @type {Array<Highcharts.Point>|undefined}
+     */
+    public points?: Array<Point>;
+
+    /**
+     * Whether the point is selected or not.
+     *
+     * @see Point#select
+     * @see Chart#getSelectedPoints
+     *
+     * @name Highcharts.Point#selected
+     * @type {boolean}
+     */
+    public selected?: boolean;
+
+    /**
+     * The series object associated with the point.
+     *
+     * @name Highcharts.Point#series
+     * @type {Highcharts.Series}
+     */
+    public series!: Series;
+
+    /**
+     * The attributes of the rendered SVG shape like in `column` or `pie`
+     * series.
+     *
+     * @readonly
+     * @name Highcharts.Point#shapeArgs
+     * @type {Readonly<Highcharts.SVGAttributes>|undefined}
+     */
+    public shapeArgs?: SVGAttributes;
+
+    /** @internal */
+    public shapeType?: string;
+
+    /** @internal */
+    public startXPos?: number;
+
+    /** @internal */
+    public state?: StatesOptionsKey;
+
+    /**
+     * Defines the tooltip's position for a data point in a chart. It is an
+     * array of numbers representing the coordinates for the tooltip's
+     * placement, allowing for precise control over its location.
+     *
+     * @readonly
+     * @name Highcharts.Point#tooltipPos
+     * @type {Readonly<Array<number>>|undefined}
+     */
+    public tooltipPos?: Array<number>;
+
+    /**
+     * The total of values in either a stack for stacked series, or a pie in a
+     * pie series.
+     *
+     * @name Highcharts.Point#total
+     * @type {number|undefined}
+     */
+    public total?: number;
+
+    /**
+     * For certain series types, like pie charts, where individual points can
+     * be shown or hidden.
+     *
+     * @name Highcharts.Point#visible
+     * @type {boolean}
+     * @default true
+     */
+    public visible: boolean = true;
+
+    /**
+     * The x value of the point.
+     *
+     * @name Highcharts.Point#x
+     * @type {number}
+     */
+    public x!: number;
+
+    /**
+     * The y value of the point.
+     *
+     * @name Highcharts.Point#y
+     * @type {number|undefined}
+     */
+    public y?: (number|null);
+
+    /* *
+     *
+     *  API JSDoc doclet copies for uninitialized properties
+     *
+     * */
+
+    /**
+     * For categorized axes this property holds the category name for the
+     * point. For other axes it holds the X value.
+     *
+     * @name Highcharts.Point#category
+     * @type {number|string}
+     */
+    /**
+     * The point's current color.
+     *
+     * @name Highcharts.Point#color
+     * @type {Highcharts.ColorType|undefined}
+     */
+    /**
+     * The point's current color index, used in styled mode instead of
+     * `color`. The color index is inserted in class names used for styling.
+     *
+     * @name Highcharts.Point#colorIndex
+     * @type {number|undefined}
+     */
+    /**
+     * SVG graphic representing the point in the chart. In some cases it may be
+     * a hidden graphic to improve accessibility.
+     *
+     * Typically this is a simple shape, like a `rect` for column charts or
+     * `path` for line markers, but for some complex series types like boxplot
+     * or 3D charts, the graphic may be a `g` element containing other shapes.
+     * The graphic is generated the first time {@link Series#drawPoints} runs,
+     * and updated and moved on subsequent runs.
+     *
+     * @see Highcharts.Point#graphics
+     *
+     * @name Highcharts.Point#graphic
+     * @type {Highcharts.SVGElement|undefined}
+     */
+    /**
+     * Array for multiple SVG graphics representing the point in the
+     * chart. Only used in cases where the point can not be represented
+     * by a single graphic.
+     *
+     * @see Highcharts.Point#graphic
+     *
+     * @name Highcharts.Point#graphics
+     * @type {Array<Highcharts.SVGElement>|undefined}
+     */
+    /**
+     * The point's name if it is defined, or its category in case of a category,
+     * otherwise the x value. Convenient for tooltip and data label formatting.
+     *
+     * @name Highcharts.Point#key
+     * @type {number|string}
+     */
     /**
      * The name of the point. The name can be given as the first position of the
      * point configuration array, or as a `name` property in the configuration:
@@ -178,15 +493,6 @@ class Point {
      * @name Highcharts.Point#name
      * @type {string}
      */
-
-    /**
-     * The point's name if it is defined, or its category in case of a category,
-     * otherwise the x value. Convenient for tooltip and data label formatting.
-     *
-     * @name Highcharts.Point#key
-     * @type {number|string}
-     */
-
     /**
      * The point's options as applied in the initial configuration, or
      * extended through `Point.update`.
@@ -203,28 +509,33 @@ class Point {
      * @name Highcharts.Point#options
      * @type {Highcharts.PointOptionsObject}
      */
-
     /**
      * The percentage for points in a stacked series, pies or gauges.
      *
      * @name Highcharts.Point#percentage
      * @type {number|undefined}
      */
-
     /**
      * Array of all hovered points when using shared tooltips.
      *
      * @name Highcharts.Point#points
      * @type {Array<Highcharts.Point>|undefined}
      */
-
+    /**
+     * Whether the point is selected or not.
+     *
+     * @see Point#select
+     * @see Chart#getSelectedPoints
+     *
+     * @name Highcharts.Point#selected
+     * @type {boolean}
+     */
     /**
      * The series object associated with the point.
      *
      * @name Highcharts.Point#series
      * @type {Highcharts.Series}
      */
-
     /**
      * The attributes of the rendered SVG shape like in `column` or `pie`
      * series.
@@ -233,7 +544,6 @@ class Point {
      * @name Highcharts.Point#shapeArgs
      * @type {Readonly<Highcharts.SVGAttributes>|undefined}
      */
-
     /**
      * Defines the tooltip's position for a data point in a chart. It is an
      * array of numbers representing the coordinates for the tooltip's
@@ -243,7 +553,6 @@ class Point {
      * @name Highcharts.Point#tooltipPos
      * @type {Readonly<Array<number>>|undefined}
      */
-
     /**
      * The total of values in either a stack for stacked series, or a pie in a
      * pie series.
@@ -251,14 +560,17 @@ class Point {
      * @name Highcharts.Point#total
      * @type {number|undefined}
      */
-
     /**
-     * For certain series types, like pie charts, where individual points can
-     * be shown or hidden.
+     * The x value of the point.
      *
-     * @name Highcharts.Point#visible
-     * @type {boolean}
-     * @default true
+     * @name Highcharts.Point#x
+     * @type {number}
+     */
+    /**
+     * The y value of the point.
+     *
+     * @name Highcharts.Point#y
+     * @type {number|undefined}
      */
 
     /* *
@@ -271,7 +583,7 @@ class Point {
      * Apply the options containing the x and y data and possible some extra
      * properties. Called on point init or from point.update.
      *
-     * @private
+     * @internal
      * @function Highcharts.Point#applyOptions
      *
      * @param {Highcharts.PointOptionsType} options
@@ -309,11 +621,6 @@ class Point {
             delete point.dataLabels;
         }
 
-        /**
-         * The y value of the point.
-         * @name Highcharts.Point#y
-         * @type {number|undefined}
-         */
         // For higher dimension series types. For instance, for ranges, point.y
         // is mapped to point.low.
         if (pointValKey) {
@@ -328,11 +635,6 @@ class Point {
             point.state = 'select';
         }
 
-        /**
-         * The x value of the point.
-         * @name Highcharts.Point#x
-         * @type {number}
-         */
         // If no x is set by now, get auto incremented value. All points must
         // have an x value, however the y value can be null to create a gap in
         // the series
@@ -415,7 +717,7 @@ class Point {
      * Destroy a point to clear memory. Its reference still stays in
      * `series.data`.
      *
-     * @private
+     * @internal
      * @function Highcharts.Point#destroy
      */
     public destroy(): void {
@@ -429,7 +731,7 @@ class Point {
 
             /**
              * Allow to call after animation.
-             * @private
+             * @internal
              */
             const destroyPoint = (): void => {
                 // Remove all events and elements
@@ -483,7 +785,7 @@ class Point {
     /**
      * Destroy SVG elements associated with the point.
      *
-     * @private
+     * @internal
      * @function Highcharts.Point#destroyElements
      *
      * @param {Highcharts.Dictionary<number>} [kinds]
@@ -527,7 +829,7 @@ class Point {
     /**
      * Fire an event on the Point object.
      *
-     * @private
+     * @internal
      * @function Highcharts.Point#firePointEvent
      *
      * @param {string} eventType
@@ -598,10 +900,9 @@ class Point {
                     ''
             );
     }
-
     /**
      * Returns the value of the point property for a given value.
-     * @private
+     * @internal
      */
     public getNestedProperty(key?: string): unknown {
         if (!key) {
@@ -650,7 +951,7 @@ class Point {
     /**
      * Utility to check if point has new shape type. Used in column series and
      * all others that are based on column series.
-     * @private
+     * @internal
      */
     public hasNewShapeType(): boolean|undefined {
         const point = this;
@@ -660,53 +961,9 @@ class Point {
     }
 
     /**
-     * Initialize the point. Called internally based on the `series.data`
-     * option.
-     *
-     * @function Highcharts.Point#init
-     *
-     * @param {Highcharts.Series} series
-     *        The series object containing this point.
-     *
-     * @param {Highcharts.PointOptionsType} options
-     *        The data in either number, array or object format.
-     *
-     * @param {number} [x]
-     *        Optionally, the X value of the point.
-     *
-     * @return {Highcharts.Point}
-     *         The Point instance.
-     *
-     * @emits Highcharts.Point#event:afterInit
-     */
-    public constructor(
-        series: Series,
-        options: (PointOptions|PointShortOptions),
-        x?: number
-    ) {
-        // For tooltip and data label formatting
-        this.point = this;
-
-        this.series = series;
-
-        this.applyOptions(options, x);
-
-        // Add a unique ID to the point if none is assigned
-        this.id ??= uniqueKey();
-
-        this.resolveColor();
-
-        this.dataLabelOnNull ??= series.options.nullInteraction;
-
-        series.chart.pointCount++;
-
-        fireEvent(this, 'afterInit');
-
-    }
-
-    /**
      * Determine if point is valid.
-     * @private
+     *
+     * @internal
      * @function Highcharts.Point#isValid
      */
     public isValid(): boolean {
@@ -802,6 +1059,7 @@ class Point {
 
     /**
      * Get the pixel position of the point relative to the plot area.
+     *
      * @function Highcharts.Point#pos
      *
      * @sample highcharts/point/position
@@ -850,7 +1108,7 @@ class Point {
     /**
      * Resolve the color of a point.
      *
-     * @private
+     * @internal
      * @function Highcharts.Point#resolveColor
      */
     public resolveColor(): void {
@@ -885,21 +1143,10 @@ class Point {
             colorIndex = series.colorIndex as any;
         }
 
-        /**
-         * The point's current color index, used in styled mode instead of
-         * `color`. The color index is inserted in class names used for styling.
-         *
-         * @name Highcharts.Point#colorIndex
-         * @type {number|undefined}
-         */
+
         this.colorIndex = pick(this.options.colorIndex, colorIndex);
 
-        /**
-         * The point's current color.
-         *
-         * @name Highcharts.Point#color
-         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
-         */
+
         this.color = pick(this.options.color, color);
     }
 
@@ -949,10 +1196,11 @@ class Point {
         return object;
     }
 
+    /** @internal */
     public shouldDraw(): boolean {
-
         return !this.isNull;
     }
+
     /**
      * Extendable method for formatting each point's tooltip line.
      *
@@ -1053,7 +1301,7 @@ class Point {
         /**
          * Perform the actual update of the point.
          *
-         * @private
+         * @internal
          */
         function update(): void {
 
@@ -1208,16 +1456,6 @@ class Point {
             selected ? 'select' : 'unselect',
             { accumulate: accumulate },
             function (): void {
-
-                /**
-                 * Whether the point is selected or not.
-                 *
-                 * @see Point#select
-                 * @see Chart#getSelectedPoints
-                 *
-                 * @name Highcharts.Point#selected
-                 * @type {boolean}
-                 */
                 point.selected = point.options.selected = selected;
                 (series.options.data as any)[series.data.indexOf(point)] =
                     point.options;
@@ -1308,7 +1546,7 @@ class Point {
      * Manage specific event from the series' and point's options. Only do it on
      * demand, to save processing time on hovering.
      *
-     * @private
+     * @internal
      * @function Highcharts.Point#importEvents
      */
     public manageEvent(eventType: string): void {
@@ -1648,6 +1886,7 @@ class Point {
  *
  * */
 
+/** @internal */
 interface Point extends PointBase {
     // Merge extensions with point class
     hcEvents?: Record<

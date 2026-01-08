@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -266,7 +267,10 @@ class PieSeries extends Series {
             (Math.cos(angle) * (radius + distance)) +
             (
                 distance > 0 ?
-                    (left ? -1 : 1) * (dataLabel.padding || 0) :
+                    // 5 is the horizontal part pointing out of the label. It
+                    // used to be the `padding` setting, but that doesn't make
+                    // sense
+                    (left ? -5 : 5) :
                     0
             );
         return x;

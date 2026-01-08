@@ -2,11 +2,12 @@
  *
  *  Parallel coordinates module
  *
- *  (c) 2010-2025 Pawel Fus
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Pawel Fus
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -60,7 +61,7 @@ declare module '../../Core/Axis/AxisComposition' {
 
 /**
  * Support for parallel axes.
- * @private
+ * @internal
  * @class
  */
 class ParallelAxisAdditions {
@@ -96,7 +97,7 @@ class ParallelAxisAdditions {
      * Set predefined left+width and top+height (inverted) for yAxes.
      * This method modifies options param.
      *
-     * @private
+     * @internal
      *
      * @param  {Array<string>} axisPosition
      * ['left', 'width', 'height', 'top'] or ['top', 'height', 'width', 'left']
@@ -145,7 +146,7 @@ namespace ParallelAxis {
 
     /**
      * Axis with parallel support.
-     * @private
+     * @internal
      */
     export declare class Composition extends Axis {
         chart: ParallelCoordinates.ChartComposition;
@@ -160,7 +161,7 @@ namespace ParallelAxis {
 
     /**
      * Adds support for parallel axes.
-     * @private
+     * @internal
      */
     export function compose(
         AxisClass: typeof Axis
@@ -181,7 +182,7 @@ namespace ParallelAxis {
 
     /**
      * Update default options with predefined for a parallel coords.
-     * @private
+     * @internal
      */
     function onAfterSetOptions(
         this: Composition,
@@ -227,7 +228,7 @@ namespace ParallelAxis {
      * series.data. Not like the default one, which gathers extremes from all
      * series bind to this axis. Consider using series.points instead of
      * series.yData.
-     * @private
+     * @internal
      */
     function onGetSeriesExtremes(
         this: Composition,
@@ -267,7 +268,7 @@ namespace ParallelAxis {
 
     /**
      * Add parallel addition
-     * @private
+     * @internal
      */
     function onInit(
         this: Composition

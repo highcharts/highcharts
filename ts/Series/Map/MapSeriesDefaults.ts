@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -62,6 +63,7 @@ const MapSeriesDefaults: MapSeriesOptions = {
 
     dataLabels: {
         crop: false,
+        distance: 0,
         formatter: function (): string { // #2945
             const { numberFormatter } = this.series.chart;
             const { value } = this.point as MapPoint;
@@ -71,7 +73,7 @@ const MapSeriesDefaults: MapSeriesOptions = {
         },
         inside: true, // For the color
         overflow: false as any,
-        padding: 0,
+        padding: [0, 2],
         verticalAlign: 'middle'
     },
 
@@ -609,6 +611,12 @@ const MapSeriesDefaults: MapSeriesOptions = {
  * @extends   plotOptions.series.point.events
  * @product   highmaps
  * @apioption series.map.data.events
+ */
+
+/**
+ * @extends   plotOptions.map.states
+ * @product   highmaps
+ * @apioption series.map.data.states
  */
 
 /* *
