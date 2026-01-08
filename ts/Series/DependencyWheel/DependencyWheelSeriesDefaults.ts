@@ -124,6 +124,7 @@ const DependencyWheelSeriesDefaults: DependencyWheelSeriesOptions = {
     startAngle: 0,
 
     dataLabels: {
+        allowOverlap: true,
         textPath: {
             /**
              * Enable or disable `textPath` option for link's or marker's data

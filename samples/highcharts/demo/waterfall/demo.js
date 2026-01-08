@@ -54,6 +54,7 @@ Highcharts.chart('container', {
         }],
         dataLabels: {
             enabled: true,
+            backgroundColor: 'contrast',
             format: '{divide y 1000}k'
         },
         pointPadding: 0
