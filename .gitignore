@@ -51,6 +51,7 @@ exporting-server/java/highcharts-export/highcharts-export-web/src/main/webapp/.e
 
 # Sample generator checksums
 samples/**/.generated-checksum
+samples/**/config.js
 nbproject/
 *.DS_Store
 /node_modules/

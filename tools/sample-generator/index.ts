@@ -983,7 +983,8 @@ export async function saveDemoFile(config: SampleGeneratorConfig) {
     await Promise.all([
         fs.writeFile(join(outputDir, 'demo.html'), html),
         fs.writeFile(join(outputDir, 'demo.css'), css),
-        fs.writeFile(join(outputDir, 'demo.details'), details)
+        fs.writeFile(join(outputDir, 'demo.details'), details),
+        fs.writeFile(join(outputDir, '.gitignore'), 'demo.js')
     ]);
 
     // If demo.ts is successfully written, delete demo.js if it exists

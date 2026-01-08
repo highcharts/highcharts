@@ -5,19 +5,15 @@ Highcharts.chart('container', {
     title: {
         text: 'Demo of <em>legend</em> options'
     },
-    series: [
-        {
-            data: [
-                1,
-                3,
-                2,
-                4
-            ]
-        }
-    ],
+    xAxis: {
+        categories: ['Apples', 'Bananas', 'Oranges', 'Pears']
+    },
     legend: {
-        enabled: true,
         align: 'center',
-        backgroundColor: '#efefef'
-    }
-});
+        backgroundColor: '#efefef',
+        enabled: true
+    },
+    series: [{
+        data: [1, 3, 2, 4]
+    }]
+} satisfies Highcharts.Options);
