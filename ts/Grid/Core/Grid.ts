@@ -33,7 +33,7 @@ import type {
 import type { DataProviderType } from './Data/DataProviderType';
 import type DataTable from '../../Data/DataTable.js';
 import type Column from './Table/Column';
-import type { NoIdColumnOptions } from './Table/Column';
+import type { ColumnDataType, NoIdColumnOptions } from './Table/Column';
 import type Popup from './UI/Popup.js';
 import type { DeepPartial } from '../../Shared/Types';
 
@@ -56,6 +56,7 @@ const {
 } = GridUtils;
 
 const {
+    defined,
     diffObjects,
     extend,
     fireEvent,
@@ -688,10 +689,10 @@ export class Grid {
             if (!this.dataProvider || 'data' in diff || 'dataTable' in diff) {
                 this.loadDataProvider();
 
-                // TODO: Sometimes it can be too much, so we need to check if
-                // the columns have changed or just their data. If just their
-                // data, we can just mark the grid.table as dirty instead of the
-                // whole grid.
+                // TODO(update): Sometimes it can be too much, so we need to
+                // check if the columns have changed or just their data. If just
+                // their data, we can just mark the grid.table as dirty instead
+                // of the whole grid.
                 flags.add('grid');
             }
 
@@ -699,7 +700,7 @@ export class Grid {
                 const ids = Object.keys(diff.columns ?? {});
 
                 for (const id of ids) {
-                    // TODO: Move this to the column update method.
+                    // TODO(update): Move this to the column update method.
                     this.loadColumnOptionDiffs(
                         viewport, id, diff.columns?.[id]
                     );
@@ -721,7 +722,7 @@ export class Grid {
                 }
                 delete langDiff.locale;
 
-                // TODO: Add more lang diff checks here.
+                // TODO(update): Add more lang diff checks here.
 
                 if (Object.keys(langDiff).length > 0) {
                     flags.add('grid');
@@ -745,7 +746,7 @@ export class Grid {
             }
             delete diff.pagination;
 
-            // TODO: Add more options that can be optimized here.
+            // TODO(update): Add more options that can be optimized here.
 
             if (Object.keys(diff).length > 0) {
                 flags.add('grid');
@@ -808,7 +809,7 @@ export class Grid {
             if (
                 'format' in cellsDiff ||
                 'formatter' in cellsDiff ||
-                'className' in cellsDiff // TODO: check if this too
+                'className' in cellsDiff
             ) {
                 // Optimization idea: list of columns to update
                 flags.add('rows');
@@ -1614,6 +1615,11 @@ export class Grid {
     /**
      * Returns the grid data as a JSON string.
      *
+     * **Note:** This method only works with `LocalDataProvider`.
+     * For other data providers, use your data source directly.
+     *
+     * @deprecated
+     *
      * @param modified
      * Whether to return the modified data table (after filtering/sorting/etc.)
      * or the unmodified, original one. Default value is set to `true`.
@@ -1622,9 +1628,15 @@ export class Grid {
      * JSON representation of the data
      */
     public getData(modified: boolean = true): string {
-        throw new Error('TODO: Use new data provider here: ' + modified);
-        /* TODO: Use new data provider here
-        const dataTable = modified ? this.presentationTable : this.dataTable;
+        if (!this.dataProvider || !('getDataTable' in this.dataProvider)) {
+            // eslint-disable-next-line no-console
+            console.warn('getData() works only with LocalDataProvider.');
+            return JSON.stringify({
+                error: 'getData() works only with LocalDataProvider.'
+            }, null, 2);
+        }
+
+        const dataTable = this.dataProvider.getDataTable(modified);
         const tableColumns = dataTable?.columns;
         const outputColumns: Record<string, DataTable.Column> = {};
 
@@ -1664,7 +1676,6 @@ export class Grid {
         }
 
         return JSON.stringify(outputColumns, null, 2);
-        */
     }
 
     /**
