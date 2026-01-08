@@ -54,6 +54,8 @@ import RemoteFetchHelper from '../Grid/Pro/Data/RemoteFetchHelper.js';
 
 import Popup from '../Grid/Core/UI/Popup.js';
 
+import * as DataProviderRegistry from '../Grid/Core/Data/DataProviderRegistry.js';
+
 
 /* *
  *
@@ -115,6 +117,7 @@ const G = {
     DataCursor,
     DataModifier,
     DataPool,
+    DataProviderRegistry,
     DataTable,
     defaultOptions: Defaults.defaultOptions,
     Grid: _Grid,
@@ -162,6 +165,7 @@ export {
     DataConverter,
     DataCursor,
     DataModifier,
+    DataProviderRegistry,
     DataPool,
     DataTable,
     _Grid as Grid,
