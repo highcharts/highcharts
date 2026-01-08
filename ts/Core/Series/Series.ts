@@ -503,6 +503,12 @@ class Series {
     /** @internal */
     public markerGroup?: SVGElement;
 
+    /**
+     * The series name as given in the options. Defaults to
+     * "Series {n}".
+     */
+    public name?: string;
+
     /** @internal */
     public opacity?: number;
 
@@ -533,8 +539,8 @@ class Series {
     public pointValKey?: string;
 
     /**
-     * Read only. The series' selected state as set by {@link
-     * Highcharts.Series#select}.
+     * Read only. The series' selected state as set by
+     * {@link Highcharts.Series#select}.
      */
     public selected?: boolean;
 
@@ -576,6 +582,15 @@ class Series {
      * Contains series options by the user without defaults.
      */
     public userOptions!: DeepPartial<SeriesTypeOptions>;
+
+    /**
+     * Read only. The series' visibility state as set by
+     * {@link Series#show}, {@link Series#hide}, or in the initial
+     * configuration. True by default.
+     *
+     * @default true
+     */
+    public visible!: boolean;
 
     /**
      * Read only. The unique xAxis object associated
@@ -675,6 +690,13 @@ class Series {
      * @readonly
      */
     /**
+     * The series name as given in the options. Defaults to
+     * "Series {n}".
+     *
+     * @name Highcharts.Series#name
+     * @type {string}
+     */
+    /**
      * Read only. The series' current options. To update, use
      * {@link Series#update}.
      *
@@ -707,6 +729,15 @@ class Series {
      *
      * @name Highcharts.Series#type
      * @type {string}
+     */
+    /**
+     * Read only. The series' visibility state as set by
+     * {@link Series#show}, {@link Series#hide}, or in the initial
+     * configuration. True by default.
+     *
+     * @name Highcharts.Series#visible
+     * @type {boolean}
+     * @default true
      */
     /**
      * Read only. The unique xAxis object associated
@@ -765,24 +796,9 @@ class Series {
         series.bindAxes();
 
         extend<Series>(series, {
-            /**
-             * The series name as given in the options. Defaults to
-             * "Series {n}".
-             *
-             * @name Highcharts.Series#name
-             * @type {string}
-             */
             name: options.name,
             state: '',
-            /**
-             * Read only. The series' visibility state as set by {@link
-             * Series#show}, {@link Series#hide}, or in the initial
-             * configuration.
-             *
-             * @name Highcharts.Series#visible
-             * @type {boolean}
-             */
-            visible, // True by default
+            visible,
             selected: options.selected === true // False by default
         });
 
