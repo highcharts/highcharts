@@ -22,9 +22,27 @@ describe('DataTable', () => {
             );
 
             strictEqual(
+                (table as any).converter,
+                (tableClone as any).converter,
+                'Cloned and original table should have the same converter reference.'
+            );
+
+            deepStrictEqual(
+                (table as any).hcEvents,
+                (tableClone as any).hcEvents,
+                'Cloned and original table should have the same events.'
+            );
+
+            strictEqual(
                 table.id,
                 tableClone.id,
                 'Cloned and original table should have the same id.'
+            );
+
+            strictEqual(
+                (table as any).versionTag,
+                (tableClone as any).versionTag,
+                'Cloned and original table should have the same versionTag.'
             );
         });
     });
@@ -874,12 +892,14 @@ describe('DataTable', () => {
 
     describe('Metadata in a cloned table', () => {
         it('should be a shallow copy', () => {
+            // Note: We use an object value in metadata to properly test shallow copy behavior
+            const metadataValue = { dataType: 'number' };
             const table = new DataTable({
                 columns: {
                     ID: [1, 2, 3]
                 },
                 metadata: {
-                    ID: 'number'  // Using string as metadata value, as DataTableValue is (boolean|null|number|string|undefined)
+                    ID: metadataValue as any
                 }
             });
 

@@ -35,7 +35,7 @@
     "gemini": "npm x -y --package=@google/gemini-cli gemini -- --approval-mode auto_edit --model gemini-2.5-flash",
     "glint": "cd ts/Grid && npx eslint .",
     "gtest": "gulp test --product Grid --force",
-    "test": "npx playwright test --project=setup-highcharts --project=setup-dashboards --project=highcharts --project=dashboards --project=qunit",
+    "test": "npx playwright test --project=setup-highcharts --project=setup-dashboards --project=setup-grid-lite --project=setup-grid-pro --project=highcharts --project=dashboards --project=grid-lite --project=grid-pro --project=grid-shared --project=qunit",
     "test-node": "tsx ./test/ts-node-unit-tests/index.ts",
     "test-node:watch": "tsx ./test/ts-node-unit-tests/index.ts --watch",
     "test:precommit": "npx playwright test --project=setup-highcharts --project=setup-dashboards --project=dashboards --project=highcharts && npx gulp test --modified && npm run test-node",

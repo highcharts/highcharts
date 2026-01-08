@@ -271,6 +271,58 @@ export async function setupRoutes(page: Page){
                 handler: replaceHCCode
             },
             {
+                pattern: '**/cdn.jsdelivr.net/npm/@highcharts/**',
+                handler: async (route) => {
+                    const url = new URL(route.request().url());
+                    const pathname = url.pathname;
+                    
+                    // Extract path after /npm/@highcharts/
+                    const match = pathname.match(/\/npm\/@highcharts\/(.+)/);
+                    if (!match) {
+                        await route.abort();
+                        return;
+                    }
+                    
+                    let relativePath = match[1];
+                    let localPath: string;
+                    
+                    // Handle grid-lite.js and grid-pro.js
+                    if (relativePath === 'grid-lite/grid-lite.js') {
+                        localPath = join('code', 'grid', 'grid-lite.src.js');
+                    } else if (relativePath === 'grid-pro/grid-pro.js') {
+                        localPath = join('code', 'grid', 'grid-pro.src.js');
+                    } else if (relativePath === 'grid-lite/grid-lite.css') {
+                        localPath = join('css', 'grid', 'grid-lite.css');
+                    } else if (relativePath === 'grid-pro/grid-pro.css') {
+                        localPath = join('css', 'grid', 'grid-pro.css');
+                    } else {
+                        await route.abort();
+                        return;
+                    }
+                    
+                    const ext = extname(localPath);
+                    
+                    try {
+                        const body = await readFile(join(__dirname, '..', localPath));
+                        
+                        test.info().annotations.push({
+                            type: 'redirect',
+                            description: `${url} --> ${localPath}`
+                        });
+                        
+                        await route.fulfill({
+                            status: 200,
+                            body,
+                            contentType: contentTypes[ext] ?? 'application/javascript'
+                        });
+                        return;
+                    } catch (error) {
+                        console.error(`Failed to load ${localPath}:`, error);
+                        await route.abort();
+                    }
+                }
+            },
+            {
                 pattern: 'https://code.jquery.com/qunit/**',
                 handler: async (route) => {
                     const url = new URL(route.request().url());
@@ -461,6 +513,381 @@ export async function setupRoutes(page: Page){
                     await route.fulfill({
                         path: filePath,
                     });
+                }
+            },
+            {
+                pattern: '**/grid-lite/**',
+                handler: async (route) => {
+                    const url = new URL(route.request().url());
+                    const pathMatch = url.pathname.match(/\/grid-lite\/(.+)/);
+                    if (pathMatch) {
+                        let relativePath = pathMatch[1];
+                        const ext = extname(relativePath);
+                        
+                        // If path doesn't have extension, try demo.html
+                        if (!ext) {
+                            relativePath = join(relativePath, 'demo.html');
+                        }
+                        
+                        // Handle demo.js requests
+                        if (relativePath.endsWith('demo.js')) {
+                            const filePath = join('samples/grid-lite', relativePath);
+                            try {
+                                const body = await readFile(join(__dirname, '..', filePath));
+                                test.info().annotations.push({
+                                    type: 'redirect',
+                                    description: `${url.pathname} --> ${filePath}`
+                                });
+                                await route.fulfill({
+                                    status: 200,
+                                    body,
+                                    contentType: 'application/javascript'
+                                });
+                                return;
+                            } catch {
+                                await route.abort();
+                                return;
+                            }
+                        }
+                        
+                        // Handle demo.html - inject demo.js if it exists
+                        if (relativePath.endsWith('demo.html')) {
+                            const htmlPath = join('samples/grid-lite', relativePath);
+                            const jsPath = htmlPath.replace('demo.html', 'demo.js');
+                            
+                            try {
+                                let htmlBody = await readFile(join(__dirname, '..', htmlPath), 'utf8');
+                                
+                                // Replace CDN URLs with code.highcharts.com URLs
+                                htmlBody = htmlBody.replace(
+                                    /https:\/\/cdn\.jsdelivr\.net\/npm\/@highcharts\/(grid-lite|grid-pro)\/(grid-lite|grid-pro)\.js/gu,
+                                    'https://code.highcharts.com/grid/$2.js'
+                                );
+                                htmlBody = htmlBody.replace(
+                                    /https:\/\/cdn\.jsdelivr\.net\/npm\/@highcharts\/(grid-lite|grid-pro)\/(grid-lite|grid-pro)\.css/gu,
+                                    'https://code.highcharts.com/grid/$2.css'
+                                );
+                                
+                                // Check if demo.css exists and inject it
+                                const cssPath = htmlPath.replace('demo.html', 'demo.css');
+                                if (existsSync(join(__dirname, '..', cssPath))) {
+                                    const cssContent = await readFile(join(__dirname, '..', cssPath), 'utf8');
+                                    // Replace CDN URLs in CSS @import
+                                    const cssWithReplacedUrls = cssContent.replace(
+                                        /https:\/\/cdn\.jsdelivr\.net\/npm\/@highcharts\/(grid-lite|grid-pro)\/css\/(grid-lite|grid-pro)\.css/gu,
+                                        'https://code.highcharts.com/grid/$2.css'
+                                    );
+                                    // Inject CSS in head or at the beginning
+                                    if (htmlBody.includes('</head>')) {
+                                        htmlBody = htmlBody.replace('</head>', `<style>${cssWithReplacedUrls}</style></head>`);
+                                    } else if (htmlBody.includes('<head>')) {
+                                        htmlBody = htmlBody.replace('<head>', `<head><style>${cssWithReplacedUrls}</style>`);
+                                    } else {
+                                        htmlBody = `<style>${cssWithReplacedUrls}</style>\n${htmlBody}`;
+                                    }
+                                }
+                                
+                                // Check if demo.js exists and inject it
+                                if (existsSync(join(__dirname, '..', jsPath))) {
+                                    const jsContent = await readFile(join(__dirname, '..', jsPath), 'utf8');
+                                    // Inject demo.js before closing body tag, or at the end if no body tag
+                                    if (htmlBody.includes('</body>')) {
+                                        htmlBody = htmlBody.replace('</body>', `<script>${jsContent}</script></body>`);
+                                    } else if (htmlBody.includes('</html>')) {
+                                        htmlBody = htmlBody.replace('</html>', `<script>${jsContent}</script></html>`);
+                                    } else {
+                                        htmlBody += `\n<script>${jsContent}</script>`;
+                                    }
+                                }
+                                
+                                test.info().annotations.push({
+                                    type: 'redirect',
+                                    description: `${url.pathname} --> ${htmlPath} (with demo.js injected)`
+                                });
+                                
+                                await route.fulfill({
+                                    status: 200,
+                                    body: htmlBody,
+                                    contentType: 'text/html'
+                                });
+                                return;
+                            } catch {
+                                // Fall through to abort
+                            }
+                        }
+                        
+                        // Handle other files (CSS, etc.)
+                        const filePath = join('samples/grid-lite', relativePath);
+                        try {
+                            const body = await readFile(join(__dirname, '..', filePath));
+                            const fileExt = extname(relativePath);
+
+                            test.info().annotations.push({
+                                type: 'redirect',
+                                description: `${url.pathname} --> ${filePath}`
+                            });
+
+                            await route.fulfill({
+                                status: 200,
+                                body,
+                                contentType: contentTypes[fileExt] ?? 'text/html'
+                            });
+                            return;
+                        } catch {
+                            // Fall through to abort
+                        }
+                    }
+                    await route.abort();
+                }
+            },
+            {
+                pattern: '**/grid-pro/**',
+                handler: async (route) => {
+                    const url = new URL(route.request().url());
+                    const pathMatch = url.pathname.match(/\/grid-pro\/(.+)/);
+                    if (pathMatch) {
+                        let relativePath = pathMatch[1];
+                        const ext = extname(relativePath);
+                        
+                        // If path doesn't have extension, try demo.html
+                        if (!ext) {
+                            relativePath = join(relativePath, 'demo.html');
+                        }
+                        
+                        // Handle demo.js requests
+                        if (relativePath.endsWith('demo.js')) {
+                            const filePath = join('samples/grid-pro', relativePath);
+                            try {
+                                const body = await readFile(join(__dirname, '..', filePath));
+                                test.info().annotations.push({
+                                    type: 'redirect',
+                                    description: `${url.pathname} --> ${filePath}`
+                                });
+                                await route.fulfill({
+                                    status: 200,
+                                    body,
+                                    contentType: 'application/javascript'
+                                });
+                                return;
+                            } catch {
+                                await route.abort();
+                                return;
+                            }
+                        }
+                        
+                        // Handle demo.html - inject demo.js if it exists
+                        if (relativePath.endsWith('demo.html')) {
+                            const htmlPath = join('samples/grid-pro', relativePath);
+                            const jsPath = htmlPath.replace('demo.html', 'demo.js');
+                            
+                            try {
+                                let htmlBody = await readFile(join(__dirname, '..', htmlPath), 'utf8');
+                                
+                                // Replace CDN URLs with code.highcharts.com URLs
+                                htmlBody = htmlBody.replace(
+                                    /https:\/\/cdn\.jsdelivr\.net\/npm\/@highcharts\/(grid-lite|grid-pro)\/(grid-lite|grid-pro)\.js/gu,
+                                    'https://code.highcharts.com/grid/$2.js'
+                                );
+                                htmlBody = htmlBody.replace(
+                                    /https:\/\/cdn\.jsdelivr\.net\/npm\/@highcharts\/(grid-lite|grid-pro)\/(grid-lite|grid-pro)\.css/gu,
+                                    'https://code.highcharts.com/grid/$2.css'
+                                );
+                                
+                                // Check if demo.css exists and inject it
+                                const cssPath = htmlPath.replace('demo.html', 'demo.css');
+                                if (existsSync(join(__dirname, '..', cssPath))) {
+                                    const cssContent = await readFile(join(__dirname, '..', cssPath), 'utf8');
+                                    // Replace CDN URLs in CSS @import
+                                    const cssWithReplacedUrls = cssContent.replace(
+                                        /https:\/\/cdn\.jsdelivr\.net\/npm\/@highcharts\/(grid-lite|grid-pro)\/css\/(grid-lite|grid-pro)\.css/gu,
+                                        'https://code.highcharts.com/grid/$2.css'
+                                    );
+                                    // Inject CSS in head or at the beginning
+                                    if (htmlBody.includes('</head>')) {
+                                        htmlBody = htmlBody.replace('</head>', `<style>${cssWithReplacedUrls}</style></head>`);
+                                    } else if (htmlBody.includes('<head>')) {
+                                        htmlBody = htmlBody.replace('<head>', `<head><style>${cssWithReplacedUrls}</style>`);
+                                    } else {
+                                        htmlBody = `<style>${cssWithReplacedUrls}</style>\n${htmlBody}`;
+                                    }
+                                }
+                                
+                                // Check if demo.js exists and inject it
+                                if (existsSync(join(__dirname, '..', jsPath))) {
+                                    const jsContent = await readFile(join(__dirname, '..', jsPath), 'utf8');
+                                    // Inject demo.js before closing body tag, or at the end if no body tag
+                                    if (htmlBody.includes('</body>')) {
+                                        htmlBody = htmlBody.replace('</body>', `<script>${jsContent}</script></body>`);
+                                    } else if (htmlBody.includes('</html>')) {
+                                        htmlBody = htmlBody.replace('</html>', `<script>${jsContent}</script></html>`);
+                                    } else {
+                                        htmlBody += `\n<script>${jsContent}</script>`;
+                                    }
+                                }
+                                
+                                test.info().annotations.push({
+                                    type: 'redirect',
+                                    description: `${url.pathname} --> ${htmlPath} (with demo.js injected)`
+                                });
+                                
+                                await route.fulfill({
+                                    status: 200,
+                                    body: htmlBody,
+                                    contentType: 'text/html'
+                                });
+                                return;
+                            } catch {
+                                // Fall through to abort
+                            }
+                        }
+                        
+                        // Handle other files (CSS, etc.)
+                        const filePath = join('samples/grid-pro', relativePath);
+                        try {
+                            const body = await readFile(join(__dirname, '..', filePath));
+                            const fileExt = extname(relativePath);
+
+                            test.info().annotations.push({
+                                type: 'redirect',
+                                description: `${url.pathname} --> ${filePath}`
+                            });
+
+                            await route.fulfill({
+                                status: 200,
+                                body,
+                                contentType: contentTypes[fileExt] ?? 'text/html'
+                            });
+                            return;
+                        } catch {
+                            // Fall through to abort
+                        }
+                    }
+                    await route.abort();
+                }
+            },
+            {
+                pattern: '**/dashboards/cypress/**',
+                handler: async (route) => {
+                    const url = new URL(route.request().url());
+                    const pathMatch = url.pathname.match(/\/dashboards\/cypress\/(.+)/);
+                    if (pathMatch) {
+                        let relativePath = pathMatch[1];
+                        const ext = extname(relativePath);
+                        
+                        // If path doesn't have extension, try demo.html
+                        if (!ext) {
+                            relativePath = join(relativePath, 'demo.html');
+                        }
+                        
+                        // Handle demo.js requests
+                        if (relativePath.endsWith('demo.js')) {
+                            const filePath = join('samples/dashboards/cypress', relativePath);
+                            try {
+                                const body = await readFile(join(__dirname, '..', filePath));
+                                test.info().annotations.push({
+                                    type: 'redirect',
+                                    description: `${url.pathname} --> ${filePath}`
+                                });
+                                await route.fulfill({
+                                    status: 200,
+                                    body,
+                                    contentType: 'application/javascript'
+                                });
+                                return;
+                            } catch {
+                                await route.abort();
+                                return;
+                            }
+                        }
+                        
+                        // Handle demo.html - inject demo.js and demo.css if they exist
+                        if (relativePath.endsWith('demo.html')) {
+                            const htmlPath = join('samples/dashboards/cypress', relativePath);
+                            const jsPath = htmlPath.replace('demo.html', 'demo.js');
+                            
+                            try {
+                                let htmlBody = await readFile(join(__dirname, '..', htmlPath), 'utf8');
+                                
+                                // Replace CDN URLs with code.highcharts.com URLs
+                                htmlBody = htmlBody.replace(
+                                    /https:\/\/cdn\.jsdelivr\.net\/npm\/@highcharts\/(grid-lite|grid-pro)\/(grid-lite|grid-pro)\.js/gu,
+                                    'https://code.highcharts.com/grid/$2.js'
+                                );
+                                htmlBody = htmlBody.replace(
+                                    /https:\/\/cdn\.jsdelivr\.net\/npm\/@highcharts\/(grid-lite|grid-pro)\/(grid-lite|grid-pro)\.css/gu,
+                                    'https://code.highcharts.com/grid/$2.css'
+                                );
+                                
+                                // Check if demo.css exists and inject it
+                                const cssPath = htmlPath.replace('demo.html', 'demo.css');
+                                if (existsSync(join(__dirname, '..', cssPath))) {
+                                    const cssContent = await readFile(join(__dirname, '..', cssPath), 'utf8');
+                                    // Replace CDN URLs in CSS @import
+                                    const cssWithReplacedUrls = cssContent.replace(
+                                        /https:\/\/cdn\.jsdelivr\.net\/npm\/@highcharts\/(grid-lite|grid-pro)\/css\/(grid-lite|grid-pro)\.css/gu,
+                                        'https://code.highcharts.com/grid/$2.css'
+                                    );
+                                    // Inject CSS in head or at the beginning
+                                    if (htmlBody.includes('</head>')) {
+                                        htmlBody = htmlBody.replace('</head>', `<style>${cssWithReplacedUrls}</style></head>`);
+                                    } else if (htmlBody.includes('<head>')) {
+                                        htmlBody = htmlBody.replace('<head>', `<head><style>${cssWithReplacedUrls}</style>`);
+                                    } else {
+                                        htmlBody = `<style>${cssWithReplacedUrls}</style>\n${htmlBody}`;
+                                    }
+                                }
+                                
+                                // Check if demo.js exists and inject it
+                                if (existsSync(join(__dirname, '..', jsPath))) {
+                                    const jsContent = await readFile(join(__dirname, '..', jsPath), 'utf8');
+                                    // Inject demo.js before closing body tag, or at the end if no body tag
+                                    if (htmlBody.includes('</body>')) {
+                                        htmlBody = htmlBody.replace('</body>', `<script>${jsContent}</script></body>`);
+                                    } else if (htmlBody.includes('</html>')) {
+                                        htmlBody = htmlBody.replace('</html>', `<script>${jsContent}</script></html>`);
+                                    } else {
+                                        htmlBody += `\n<script>${jsContent}</script>`;
+                                    }
+                                }
+                                
+                                test.info().annotations.push({
+                                    type: 'redirect',
+                                    description: `${url.pathname} --> ${htmlPath} (with demo.js and demo.css injected)`
+                                });
+                                
+                                await route.fulfill({
+                                    status: 200,
+                                    body: htmlBody,
+                                    contentType: 'text/html'
+                                });
+                                return;
+                            } catch {
+                                // Fall through to abort
+                            }
+                        }
+                        
+                        // Handle other files (CSS, etc.)
+                        const filePath = join('samples/dashboards/cypress', relativePath);
+                        try {
+                            const body = await readFile(join(__dirname, '..', filePath));
+                            const fileExt = extname(relativePath);
+
+                            test.info().annotations.push({
+                                type: 'redirect',
+                                description: `${url.pathname} --> ${filePath}`
+                            });
+
+                            await route.fulfill({
+                                status: 200,
+                                body,
+                                contentType: contentTypes[fileExt] ?? 'text/html'
+                            });
+                            return;
+                        } catch {
+                            // Fall through to abort
+                        }
+                    }
+                    await route.abort();
                 }
             },
             {
