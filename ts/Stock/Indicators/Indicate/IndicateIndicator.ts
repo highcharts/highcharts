@@ -73,28 +73,62 @@ class IndicateIndicator extends SMAIndicator {
      *
      * */
 
+    /**
+     * Attachs an indication to a given point.
+     *
+     * @param x
+     * X value of the point to attach to.
+     *
+     * @param y
+     * Y value of the point to attach to.
+     *
+     * @param text
+     * Indication content to attach.
+     */
+    public attachIndication(
+        x: number,
+        y: (number|null),
+        text: string
+    ): void {
+        const chart = this.chart as AnnotationChart,
+            distance = this.options.indicateDistance ?? 10,
+            xAxis = (
+                typeof this.options.xAxis === 'number' ?
+                    this.options.xAxis :
+                    0
+            ),
+            yAxis = (
+                typeof this.options.yAxis === 'number' ?
+                    this.options.yAxis :
+                    0
+            );
+
+        y = y || 0;
+
+        chart.addAnnotation({
+            labels: [{
+                distance,
+                point: { x, xAxis, y, yAxis },
+                text
+            }]
+        });
+    } 
+
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries & IndicatorLinkedSeriesBase,
         params: IndicateParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries> | undefined) {
         const indicateCallback = this.options.indicateCallback,
-            chart = this.chart as AnnotationChart,
             period = params.period || 0,
             index = params.index || 0,
             seriesXData = series.xData || [],
             seriesYData = series.yData || [],
-            xAxis = typeof this.options.xAxis === 'number' ?
-                this.options.xAxis :
-                0,
-            yAxis = typeof this.options.yAxis === 'number' ?
-                this.options.yAxis :
-                0,
             periodValues: Array<[(number | null), (number | null)]> = [],
             values: Array<[(number | null), (number | null)]> = [],
             xData: Array<number> = [],
             yData: Array<(number | null)> = [];
 
-        let result: IndicateResult,
+        let result: (IndicateResult|void),
             x: (number | null),
             y: (number | null | Array<(number | null)>);
 
@@ -132,18 +166,7 @@ class IndicateIndicator extends SMAIndicator {
             if (isObject(result)) {
                 xData.push(result.x);
                 yData.push(result.y);
-                chart.addAnnotation({
-                    labels: [{
-                        distance: 10,
-                        point: {
-                            x: result.x,
-                            xAxis,
-                            y: result.y || 0,
-                            yAxis
-                        },
-                        text: result.text
-                    }]
-                });
+                this.attachIndication(result.x, result.y, result.text);
             } else {
                 xData.push(x);
                 yData.push(null);
