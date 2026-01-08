@@ -35,13 +35,26 @@ import type SVGElement from '../Renderer/SVG/SVGElement';
  * definition file.
  */
 export interface SeriesBase {
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    /** @internal */
     colorIndex?: number;
+
+    /** @internal */
     finishedAnimating?: boolean;
-    index?: number;
+
+    /** @internal */
     isDirty?: boolean;
+
+    /** @internal */
     group?: SVGElement;
-    linkedParent?: SeriesBase;
-    linkedSeries: Array<SeriesBase>;
+
+    /** @internal */
     markerGroup?: SVGElement;
 
     /**
@@ -51,21 +64,30 @@ export interface SeriesBase {
      * @name Highcharts.Series#name
      */
     name: string;
+
+    /** @internal */
     opacity?: number;
-    options: SeriesOptions;
+
+    /** @internal */
     points: Array<PointBase>;
+
+    /** @internal */
     state?: StatesOptionsKey;
-    type: string;
-    userOptions: DeepPartial<SeriesOptions>;
 
     /**
-     * Read only. The series' visibility state as set by {@link
-     * Series#show}, {@link Series#hide}, or in the initial
-     * configuration.
+     * Read only. The series' visibility state as set by {@link Series#show},
+     * {@link Series#hide}, or in the initial configuration.
      *
      * @name Highcharts.Series#visible
      */
     visible: boolean;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
     render(): void;
     translate(): void;
     update(options: DeepPartial<SeriesOptions>): void;

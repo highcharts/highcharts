@@ -2079,10 +2079,6 @@ export default Legend;
  */
 
 /**
- * Series color as used by the legend and some series types.
- * @name Highcharts.Series#color
- * @type {Highcharts.ColorType|undefined}
- *//**
  * Legend data for the series.
  * @name Highcharts.Series#legendItem
  * @type {Highcharts.LegendItemObject|undefined}
