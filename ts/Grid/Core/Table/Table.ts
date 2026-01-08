@@ -575,6 +575,8 @@ class Table {
      *
      * @returns
      * The Cell instance or undefined if not found.
+     *
+     * @internal
      */
     public getCellFromElement(element: EventTarget | null): Cell | undefined {
         if (!(element instanceof Element)) {
