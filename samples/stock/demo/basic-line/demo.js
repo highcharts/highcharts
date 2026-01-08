@@ -15,7 +15,7 @@
         },
 
         xAxis: {
-            overscroll: '40px'
+            overscroll: '10px'
         },
 
         series: [{
