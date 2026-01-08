@@ -16,7 +16,7 @@ jobs:
           cache: 'npm'
 
       - name: Install Dependencies
-        run: npm i
+        run: npm ci
 
       - name: Build Highcharts
         run: npx gulp scripts
@@ -58,7 +58,7 @@ jobs:
       - name: Install Highcharts Utils
         run: |
           cd utils
-          npm i
+          npm ci
 
       - name: Run Cypress test
         uses: cypress-io/github-action@v6
@@ -84,7 +84,7 @@ jobs:
           cache: 'npm'
 
       - name: Install Dependencies
-        run: npm i
+        run: npm ci
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium

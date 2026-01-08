@@ -8,7 +8,7 @@
  *
  * Highcharts funnel module
  *
- * (c) 2010-2025 Highsoft AS
+ * (c) 2010-2026 Highsoft AS
  * Author: Kacper Madej
  *
  * A commercial license may be required depending on use.

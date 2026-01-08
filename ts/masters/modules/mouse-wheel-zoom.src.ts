@@ -6,7 +6,7 @@
  *
  * Mousewheel zoom module
  *
- * (c) 2023 Highsoft AS
+ * (c) 2023-2026 Highsoft AS
  * Author: Askel Eirik Johansson
  *
  * A commercial license may be required depending on use.

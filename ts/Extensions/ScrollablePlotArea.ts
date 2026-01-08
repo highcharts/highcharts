@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Honsi
  *
  *  A commercial license may be required depending on use.
@@ -153,7 +153,7 @@ declare module '../Core/Chart/ChartBase'{
  *  Functions
  *
  * */
-/** @private */
+/** @internal */
 function onChartRender(
     this: Chart
 ): void {
@@ -169,7 +169,7 @@ function onChartRender(
     scrollablePlotArea?.applyFixed();
 }
 
-/** @private */
+/** @internal */
 function markDirty(
     this: Axis|Series
 ): void {
@@ -519,7 +519,7 @@ class ScrollablePlotArea {
     /**
      * These elements are moved over to the fixed renderer and stay fixed when
      * the user scrolls the chart
-     * @private
+     * @internal
      */
     public moveFixedElements(): void {
         const {

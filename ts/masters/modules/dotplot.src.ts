@@ -6,7 +6,7 @@
  *
  * Dot plot series type for Highcharts
  *
- * (c) 2010-2025 Highsoft AS
+ * (c) 2010-2026 Highsoft AS
  * Author: Torstein Honsi
  *
  * A commercial license may be required depending on use.
