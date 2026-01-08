@@ -104,6 +104,9 @@ namespace OrdinalAxis {
         forceOrdinal?: boolean;
 
         /** @internal */
+        isFullRange?: boolean;
+
+        /** @internal */
         isInternal?: boolean;
 
         /** @internal */
@@ -541,6 +544,13 @@ namespace OrdinalAxis {
                 // Calculate the original ordinal range
                 axis.ordinal.getExtendedPositions(false);
             }
+
+            // #22334
+            axis.isFullRange = (
+                defined(axis.dataMin) &&
+                defined(axis.dataMax) &&
+                axis.max - axis.min === axis.dataMax - axis.dataMin
+            );
 
             if (
                 axis.max === axis.dataMax &&
@@ -1559,6 +1569,15 @@ namespace OrdinalAxis {
             if (isString(overscroll)) {
                 const overscrollValue = parseInt(overscroll, 10);
 
+                // #22334
+                if (
+                    axis.isFullRange === false &&
+                    isNumber(axis.min) &&
+                    isNumber(axis.max)
+                ) {
+                    this.originalOrdinalRange = axis.max - axis.min;
+                }
+
                 if (/%$/.test(overscroll)) {
                     // If overscroll is percentage
 
@@ -1575,7 +1594,8 @@ namespace OrdinalAxis {
                         pixelToPercent = limitedOverscrollValue / axis.len;
 
                     return calculateOverscroll(
-                        pixelToPercent / (1 - pixelToPercent)
+                        pixelToPercent /
+                        (axis.isFullRange ? (1 - pixelToPercent) : 1)
                     );
                 }
 
