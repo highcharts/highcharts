@@ -113,15 +113,19 @@ const DependencyMapping: Record<string, Array<string>> = {
         'modules/exporting',
         'modules/offline-exporting'
     ],
-    'exporting.menuItemDefinitions': [
-        'modules/exporting',
+    'exporting.menuItemDefinitions.downloadCSV': [
+        'modules/export-data'
+    ],
+    'exporting.menuItemDefinitions.downloadXLS': [
+        'modules/export-data'
+    ],
+    'exporting.menuItemDefinitions.viewData': [
         'modules/export-data'
     ],
     'exporting.pdfFont': [
         'modules/offline-exporting'
     ],
     'exporting.showExportInProgress': [
-        'modules/exporting',
         'modules/export-data'
     ],
     'exporting.showTable': [
