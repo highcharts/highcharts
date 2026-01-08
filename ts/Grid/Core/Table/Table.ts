@@ -251,7 +251,7 @@ class Table {
             await this.header.render();
         }
 
-        // TODO: Load & render footer
+        // TODO(footer): Load & render footer
         // this.footer = new TableFooter(this);
         // this.footer.render();
 
@@ -403,9 +403,6 @@ class Table {
      * Reflows the table's content dimensions.
      */
     public reflow(): void {
-        // TODO: More `needsReflow` logic can be added in the future to avoid
-        // unnecessary reflows of the table parts.
-
         this.columnResizing.reflow();
 
         // Reflow the head
@@ -605,7 +602,7 @@ class Table {
      * The ID of the row.
      */
     public getRow(id: number): TableRow | undefined {
-        // TODO: Change `find` to a method using `vp.dataTable.getLocalRowIndex`
+        // TODO(optim): Change `find` to a method using `getLocalRowIndex`
         // and rows[presentationRowIndex - firstRowIndex]. Needs more testing,
         // but it should be faster.
         return this.rows.find((row): boolean => row.id === id);

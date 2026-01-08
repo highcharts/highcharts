@@ -32,6 +32,11 @@ const grid = Grid.grid('container', {
     columnDefaults: {
         filtering: {
             enabled: true
+        },
+        cells: {
+            editMode: {
+                enabled: true
+            }
         }
     },
     pagination: {

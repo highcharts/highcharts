@@ -713,16 +713,6 @@ class RowsVirtualizer {
 
         // Temporary fallback.
         return 31;
-
-        // NOTE: Below code is the later version of the above code.
-        // mockRow.htmlElement.style.position = 'absolute';
-        // mockRow.htmlElement.classList.add(Globals.getClassName('mockedRow'));
-        // this.viewport.tbodyElement.appendChild(mockRow.htmlElement);
-        // mockRow.render();
-
-        // const defaultRowHeight = mockRow.htmlElement.offsetHeight;
-        // mockRow.destroy();
-        // return defaultRowHeight;
     }
 }
 
