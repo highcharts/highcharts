@@ -3,7 +3,7 @@
  * @license Highcharts JS v@product.version@ (@product.date@)
  * @module highcharts/polyfills
  *
- * (c) 2009-2025 Highsoft AS
+ * (c) 2009-2026 Highsoft AS
  * Author: Torstein Honsi
  *
  * A commercial license may be required depending on use.
@@ -161,7 +161,7 @@ if (typeof ElementPrototype.closest !== 'function') {
                 : typeof pattern !== 'string'
                     ? pattern.flags
                     : '';
-        
+
         if (source.indexOf('\\p{L}') !== -1) {
             source = source.replace(/\\p\{L\}/g, languages);
             if (finalFlags) {

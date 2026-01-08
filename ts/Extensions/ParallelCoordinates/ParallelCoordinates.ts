@@ -2,7 +2,7 @@
  *
  *  Parallel coordinates module
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Pawel Fus
  *
  *  A commercial license may be required depending on use.
@@ -97,7 +97,7 @@ class ChartAdditions {
      * - check only first series for number of points and assume the rest is the
      *   same
      *
-     * @private
+     * @internal
      * @function Highcharts.Chart#setParallelInfo
      * @param {Highcharts.Options} options
      * User options
@@ -159,7 +159,7 @@ namespace ParallelCoordinates {
      *
      * */
 
-    /** @private */
+    /** @internal */
     export function compose(
         AxisClass: typeof Axis,
         ChartClass: typeof Chart,
@@ -191,7 +191,7 @@ namespace ParallelCoordinates {
 
     /**
      * Initialize parallelCoordinates
-     * @private
+     * @internal
      */
     function onChartInit(
         this: ChartComposition,
@@ -263,7 +263,7 @@ namespace ParallelCoordinates {
 
     /**
      * Initialize parallelCoordinates
-     * @private
+     * @internal
      */
     function onChartUpdate(
         this: ChartComposition,
