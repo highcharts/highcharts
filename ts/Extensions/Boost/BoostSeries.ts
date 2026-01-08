@@ -148,6 +148,13 @@ export declare class BoostSeriesComposition extends Series {
 
 const CHUNK_SIZE = 3000;
 
+/**
+ * Default boost threshold.
+ *
+ * @internal
+ */
+const DEFAULT_BOOST_THRESHOLD = 5000;
+
 /* *
  *
  *  Variables
@@ -268,7 +275,7 @@ function compose<T extends typeof Series>(
         Boostables.forEach((type: string): void => {
             const typePlotOptions = plotOptions[type];
             if (typePlotOptions) {
-                typePlotOptions.boostThreshold = 5000;
+                typePlotOptions.boostThreshold = DEFAULT_BOOST_THRESHOLD;
                 typePlotOptions.boostData = [];
                 seriesTypes[type].prototype.fillOpacity = true;
             }
@@ -781,23 +788,32 @@ function hasExtremes(
     checkX?: boolean
 ): boolean {
     const options = series.options,
-        dataLength = series.dataTable.getModified().rowCount,
+        threshold = pick(options.boostThreshold, Number.MAX_VALUE);
+
+    // Return early if boost is disabled.
+    if (threshold === 0) {
+        return false;
+    }
+
+    const dataLength = series.dataTable.getModified().rowCount,
         xAxis = series.xAxis && series.xAxis.options,
         yAxis = series.yAxis && series.yAxis.options,
         colorAxis = series.colorAxis && series.colorAxis.options;
 
-    return dataLength > pick(options.boostThreshold, Number.MAX_VALUE) &&
-            // Defined yAxis extremes
-            isNumber(yAxis.min) &&
-            isNumber(yAxis.max) &&
-            // Defined (and required) xAxis extremes
-            (!checkX ||
-                (isNumber(xAxis.min) && isNumber(xAxis.max))
-            ) &&
-            // Defined (e.g. heatmap) colorAxis extremes
-            (!colorAxis ||
-                (isNumber(colorAxis.min) && isNumber(colorAxis.max))
-            );
+    return (
+        dataLength > threshold &&
+        // Defined yAxis extremes
+        isNumber(yAxis.min) &&
+        isNumber(yAxis.max) &&
+        // Defined (and required) xAxis extremes
+        (!checkX ||
+            (isNumber(xAxis.min) && isNumber(xAxis.max))
+        ) &&
+        // Defined (e.g. heatmap) colorAxis extremes
+        (!colorAxis ||
+            (isNumber(colorAxis.min) && isNumber(colorAxis.max))
+        )
+    );
 }
 
 /**
@@ -811,17 +827,15 @@ const getSeriesBoosting = (
     series: BoostSeriesComposition,
     data?: Array<(PointOptions|PointShortOptions)>|Types.TypedArray
 ): boolean => {
-    // Check if will be grouped.
-    if (series.forceCrop) {
+    const { options, forceCrop, chart } = series,
+        threshold = pick(options.boostThreshold, Number.MAX_VALUE);
+
+    // Return early if either will be grouped or boost is disabled.
+    if (forceCrop || threshold === 0) {
         return false;
     }
-    return (
-        isChartSeriesBoosting(series.chart) ||
-        (
-            (data ? data.length : 0) >=
-            pick(series.options.boostThreshold, Number.MAX_VALUE)
-        )
-    );
+
+    return isChartSeriesBoosting(chart) || (data?.length ?? 0) >= threshold;
 };
 
 /**
