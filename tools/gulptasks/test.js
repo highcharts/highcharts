@@ -127,28 +127,59 @@ async function checkSamplesConsistency() {
         }
 
         // Check if checksum file exists
-        if (!existsSync(checksumPath)) {
-            LogLib.failure(
-                'Sample has not been generated with gulp generate-samples:',
-                configPath
-            );
-            errors++;
-            return;
-        }
+        if (existsSync(checksumPath)) {
+            // Calculate current checksum
+            const currentChecksum = await calculateChecksum(dir);
 
-        // Calculate current checksum
-        const currentChecksum = await calculateChecksum(dir);
+            // Read saved checksum
+            const savedChecksum = fs.readFileSync(checksumPath, 'utf-8').trim();
 
-        // Read saved checksum
-        const savedChecksum = fs.readFileSync(checksumPath, 'utf-8').trim();
+            // Compare checksums
+            if (savedChecksum !== currentChecksum) {
+                LogLib.failure(
+                    'Generated files have been manually edited instead of being regenerated from config.ts:',
+                    configPath
+                );
+                errors++;
+            }
 
-        // Compare checksums
-        if (savedChecksum !== currentChecksum) {
-            LogLib.failure(
-                'Generated files have been manually edited instead of being regenerated from config.ts:',
-                configPath
-            );
-            errors++;
+        } else {
+            // Checksum file is missing. Check if this is a fresh checkout or
+            // if the user has manually edited the generated files.
+            // Compare modification times: if the most recent generated file is
+            // more than one minute newer than config.ts, assume manual edits.
+            const configMtime = fs.statSync(configPath).mtime.getTime();
+            let mostRecentGeneratedMtime = 0;
+
+            for (const file of generatedFiles) {
+                const filePath = path.join(dir, file);
+                if (existsSync(filePath)) {
+                    const mtime = fs.statSync(filePath).mtime.getTime();
+                    if (mtime > mostRecentGeneratedMtime) {
+                        mostRecentGeneratedMtime = mtime;
+                    }
+                }
+            }
+
+            // If generated files are more than 1 minute newer than config.ts,
+            // assume they were manually edited
+            const timeDiffMs = mostRecentGeneratedMtime - configMtime;
+            const oneMinuteMs = 60 * 1000;
+
+            if (timeDiffMs > oneMinuteMs) {
+                const relativePath = path.relative(process.cwd(), configPath),
+                    shortPath = relativePath
+                        .replace(/samples[\/\\]/u, '')
+                        .replace(/\/config\.ts$/u, '');
+                LogLib.failure(
+                    `Generated files have been manually edited instead of being regenerated from config.ts:
+                    - ${relativePath}
+                    - Run \`gulp generate-samples [--samples ${shortPath}]\`
+                      or view it in the Sample Viewer with compile-on-demand enabled`
+                );
+                errors++;
+            }
+            // Otherwise, assume fresh checkout without checksum files - OK
         }
     }
 
