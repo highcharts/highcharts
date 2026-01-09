@@ -19,7 +19,7 @@ import type { ColumnDataType } from '../../Core/Table/Column';
 import type QueryingController from '../../Core/Querying/QueryingController';
 
 import { DataProvider } from '../../Core/Data/DataProvider.js';
-import DataProviderRegistry from '../../Core/Data/DataProviderRegistry';
+import DataProviderRegistry from '../../Core/Data/DataProviderRegistry.js';
 
 
 export class RemoteDataProvider extends DataProvider {
