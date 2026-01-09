@@ -23,7 +23,6 @@ import type { AnyRecord } from '../../Shared/Types';
 import type ChainModifierOptions from '../../Data/Modifiers/ChainModifierOptions';
 import type DataModifier from '../../Data/Modifiers/DataModifier';
 import type { DataModifierTypeOptions } from '../../Data/Modifiers/DataModifierType';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type JSON from '../JSON';
 
 import ChainModifier from '../../Data/Modifiers/ChainModifier.js';

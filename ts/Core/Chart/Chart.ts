@@ -358,10 +358,8 @@ class Chart {
     // Implementation
     public constructor(
         a: (string|globalThis.HTMLElement|Partial<Options>),
-        /* eslint-disable @typescript-eslint/no-unused-vars */
         b?: (Chart.CallbackFunction|Partial<Options>),
         c?: Chart.CallbackFunction
-        /* eslint-enable @typescript-eslint/no-unused-vars */
     ) {
         const args = [
             // ES5 builds fail unless we cast it to an Array
@@ -1685,6 +1683,7 @@ class Chart {
      * @function Highcharts.Chart#layOutTitles
      *
      * @param {boolean} [redraw=true]
+     * Whether to redraw the chart or wait for an explicit call to
      *
      * @emits Highcharts.Chart#event:afterLayOutTitles
      */

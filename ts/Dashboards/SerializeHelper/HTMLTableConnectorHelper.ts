@@ -20,7 +20,6 @@
  * */
 
 import type { AnyRecord } from '../../Shared/Types';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type JSON from '../JSON';
 import type HTMLTableConnectorOptions from '../../Data/Connectors/HTMLTableConnectorOptions';
 import type HTMLTableConverterOptions from '../../Data/Converters/HTMLTableConverterOptions';

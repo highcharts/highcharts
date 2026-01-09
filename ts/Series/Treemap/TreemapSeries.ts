@@ -439,9 +439,7 @@ class TreemapSeries extends ScatterSeries {
      */
     public alignDataLabel(
         point: TreemapPoint,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         dataLabel: SVGLabel,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         labelOptions: DataLabelOptions
     ): void {
         ColumnSeries.prototype.alignDataLabel.apply(this, arguments);
@@ -1320,7 +1318,6 @@ class TreemapSeries extends ScatterSeries {
                 addEvent(
                     series,
                     'update',
-                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
                     function (e: any, redraw?: boolean): void {
                         const breadcrumbs = this.chart.breadcrumbs;
 

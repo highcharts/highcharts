@@ -215,7 +215,6 @@ class ColumnSeries extends Series {
      */
     public init(
         chart: Chart,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         options: ColumnSeriesOptions
     ): void {
         super.init.apply(this, arguments as any);

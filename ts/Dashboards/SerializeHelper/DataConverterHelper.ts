@@ -19,8 +19,7 @@
  *
  * */
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import JSON from '../JSON';
+import type JSON from '../JSON';
 
 import DataConverter from '../../Data/Converters/DataConverter.js';
 import Serializable from '../Serializable.js';

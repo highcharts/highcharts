@@ -21,7 +21,6 @@
 
 import type { AnyRecord } from '../../Shared/Types';
 import type DataTableOptions from '../../Data/DataTableOptions';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type JSON from '../JSON';
 
 import DataTable from '../../Data/DataTable.js';
