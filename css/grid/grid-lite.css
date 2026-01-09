@@ -1,9 +1,12 @@
+/* SPDX-License-Identifier: LicenseRef-Highcharts */
+
 /**
  * @license Highcharts Grid Lite v@product.version@
  *
  * (c) 2009-2025 Highsoft AS
  *
- * License: www.highcharts.com/license
+ * A commercial license may be required depending on use.
+ * See www.highcharts.com/license
  */
 
 /*  ==== Start Grid Color Scheme  ==== */
@@ -429,6 +432,7 @@
     box-sizing: border-box;
     font: var(--ig-font);
     color-scheme: light dark;
+    max-height: inherit;
 }
 
 .highcharts-light .hcg-container {
@@ -618,7 +622,7 @@
     display: flex;
     overflow: hidden;
     align-items: center;
-    gap: 2px;
+    gap: 0;
     max-width: 0;
     margin-left: 4px;
     opacity: 0;
@@ -643,6 +647,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
 }
 
 /* Active icon styling - icons that are in an active state */
@@ -650,7 +655,7 @@
     background: var(--ig-button-hover-background);
 }
 
-/* Active indicator dot - positioned at top right of button */
+/* Active indicator dot (filtering) - positioned at top right of button */
 .hcg-active-indicator {
     position: absolute;
     top: 2px;
@@ -662,9 +667,26 @@
     pointer-events: none;
 }
 
-/* Make button relative for absolute positioning of indicator */
-.hcg-header-cell-icons .hcg-button {
-    position: relative;
+.hcg-sort-priority-indicator {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 2px;
+    height: 20px;
+    padding: 0 2px;
+    border-radius: 4px;
+    background: transparent;
+    color: var(--ig-icon-header-hover-color);
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1;
+    pointer-events: none;
+}
+
+.hcg-header-cell-sort-icon .hcg-button:has(.hcg-sort-priority-indicator) {
+    /* Keep header height stable when showing the multi-sort indicator */
+    padding-top: 2px;
+    padding-bottom: 2px;
 }
 
 .hcg-resizable-content tr {

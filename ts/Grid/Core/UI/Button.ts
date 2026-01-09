@@ -2,11 +2,11 @@
  *
  *  Grid Button interface
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -36,7 +36,7 @@ import type Popup from './Popup.js';
  * `Toolbar`.
  * @private
  */
-interface Button {
+export interface Button {
     /**
      * Focuses the button.
      */

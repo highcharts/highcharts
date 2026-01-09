@@ -2,11 +2,11 @@
  *
  *  Grid Exporting class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Karol Kolodziej
@@ -24,14 +24,14 @@
 import type Grid from '../../Core/Grid';
 import type { ExportingOptions } from '../../Core/Options';
 import type DataTable from '../../../Data/DataTable';
-import type Column from '../../Core/Table/Column';
+import type { ColumnDataType } from '../../Core/Table/Column';
 
-import DownloadURL from '../../../Shared/DownloadURL.js';
+import {
+    downloadURL,
+    getBlobFromContent
+} from '../../../Shared/DownloadURL.js';
 import U from '../../../Core/Utilities.js';
-
-const { downloadURL, getBlobFromContent } = DownloadURL;
 const { defined } = U;
-
 
 /* *
  *
@@ -176,7 +176,7 @@ class Exporting {
         }
 
         const typeParser = (
-            type: Column.DataType
+            type: ColumnDataType
         ): ((val: DataTable.CellType) => string) => {
             switch (type) {
                 case 'number':

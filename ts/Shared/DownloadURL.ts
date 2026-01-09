@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2015-2025 Oystein Moseng
+ *  (c) 2015-2026 Highsoft AS
+ *  Author: Oystein Moseng
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Mixin for downloading content in the browser
  *
@@ -36,7 +37,7 @@ const { error } = U;
 
 /**
  * Deprecated types
- * @private
+ * @internal
  */
 declare global {
     interface HTMLCanvasElement {
@@ -77,7 +78,7 @@ const domurl = win.URL || win.webkitURL || win;
 /**
  * Convert base64 dataURL to Blob if supported, otherwise returns undefined.
  *
- * @private
+ * @internal
  * @function Highcharts.dataURLtoBlob
  *
  * @param {string} dataURL
@@ -86,7 +87,7 @@ const domurl = win.URL || win.webkitURL || win;
  * @return {string | undefined}
  * Blob.
  */
-function dataURLtoBlob(
+export function dataURLtoBlob(
     dataURL: string
 ): (string | undefined) {
     const parts = dataURL
@@ -119,7 +120,7 @@ function dataURLtoBlob(
 /**
  * Download a data URL in the browser. Can also take a blob as first param.
  *
- * @private
+ * @internal
  * @function Highcharts.downloadURL
  *
  * @param {string | global.URL} dataURL
@@ -127,7 +128,7 @@ function dataURLtoBlob(
  * @param {string} filename
  * The name of the resulting file (w/extension).
  */
-function downloadURL(
+export function downloadURL(
     dataURL: (string | URL),
     filename: string
 ): void {
@@ -190,13 +191,13 @@ function downloadURL(
 /**
  * Asynchronously downloads a script from a provided location.
  *
- * @private
+ * @internal
  * @function Highcharts.getScript
  *
  * @param {string} scriptLocation
  * The location for the script to fetch.
  */
-function getScript(
+export function getScript(
     scriptLocation: string
 ): Promise<void> {
     return new Promise((resolve, reject): void => {
@@ -227,7 +228,7 @@ function getScript(
 /**
  * Get a blob object from content, if blob is supported.
  *
- * @private
+ * @internal
  * @function Highcharts.getBlobFromContent
  *
  * @param {string} content
@@ -241,7 +242,7 @@ function getScript(
  * @requires modules/exporting
  * @requires modules/export-data
  */
-function getBlobFromContent(
+export function getBlobFromContent(
     content: string,
     type: string
 ): (string | undefined) {
@@ -272,6 +273,7 @@ function getBlobFromContent(
  *
  * */
 
+/** @internal */
 const DownloadURL = {
     dataURLtoBlob,
     downloadURL,
@@ -279,4 +281,5 @@ const DownloadURL = {
     getScript
 };
 
+/** @internal */
 export default DownloadURL;

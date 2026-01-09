@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -19,6 +19,7 @@
  *
  * */
 
+import type { AnyRecord } from '../../Shared/Types';
 import type Column from '../Core/Table/Column';
 import type TableCell from '../Core/Table/Body/TableCell';
 import type HeaderCell from '../Core/Table/Header/HeaderCell';
@@ -92,11 +93,15 @@ function compose(
 
     ([ // Grid Events
         'beforeLoad',
-        'afterLoad'
+        'afterLoad',
+        'beforeUpdate',
+        'afterUpdate',
+        'beforeRedraw',
+        'afterRedraw'
     ] as const).forEach((name): void => {
         addEvent(GridClass, name, (e: GridEvent<Grid>): void => {
             const grid = e.target;
-            grid.options?.events?.[name]?.call(grid);
+            grid.options?.events?.[name]?.call(grid, e);
         });
     });
 
@@ -162,7 +167,7 @@ export type ColumnEventCallback = (this: Column) => void;
 /**
  * Callback function to be called when a grid event is triggered.
  */
-export type GridEventCallback = (this: Grid) => void;
+export type GridEventCallback = (this: Grid, e: AnyRecord) => void;
 
 /**
  * Events related to the cells.
@@ -254,6 +259,28 @@ export interface GridEvents {
      * Callback function to be called after the grid is loaded.
      */
     afterLoad?: GridEventCallback;
+
+    /**
+     * Callback function to be called before the grid options are updated.
+     */
+    beforeUpdate?: GridEventCallback;
+
+    /**
+     * Callback function to be called after the grid options are updated.
+     */
+    afterUpdate?: GridEventCallback;
+
+    /**
+     * Callback function to be called before the grid is redrawn after an
+     * update.
+     */
+    beforeRedraw?: GridEventCallback;
+
+    /**
+     * Callback function to be called after the grid is redrawn after an
+     * update.
+     */
+    afterRedraw?: GridEventCallback;
 }
 
 declare module '../Core/Options' {
@@ -286,6 +313,7 @@ declare module '../Core/Options' {
         events?: HeaderEvents;
     }
 }
+
 
 /* *
  *
