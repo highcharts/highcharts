@@ -4,7 +4,7 @@ authors:
   - Jedrzej Ruta,
   - Askel Eirik Johansson
 js_wrap: b
-new_until: 2026-01-23
+new_until: 2026-04-09
 tags:
   - Highcharts Stock demo
 categories:
