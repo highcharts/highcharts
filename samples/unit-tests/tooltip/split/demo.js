@@ -219,7 +219,7 @@ QUnit.test('Split tooltip with useHTML and outside', function (assert) {
 
     assert.strictEqual(
         chart.series[0].tt.text.element.tagName,
-        'DIV',
+        'SPAN',
         '#7238: The label should be HTML'
     );
 
