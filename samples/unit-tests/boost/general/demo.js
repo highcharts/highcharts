@@ -1120,3 +1120,68 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
         );
     }
 );
+
+QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
+    'Boost with zones',
+    async function (assert) {
+        const chart = Highcharts.chart('container', {
+            chart: {
+                type: 'scatter'
+            },
+            title: {
+                text: 'Highcharts Zone Coloring with boost v12.4'
+            },
+            boost: {
+                enabled: true,
+                useGPUTranslations: true
+            },
+            plotOptions: {
+                series: {
+                    boostThreshold: 1,
+                    marker: { radius: 20 }
+                }
+            },
+            xAxis: { min: 0, max: 100 },
+            yAxis: { min: 0, max: 100 },
+            series: [{
+                name: 'Data',
+                data: [
+                    [10, 10], [20, 20], [30, 30], [40, 40], [50, 50],
+                    [60, 60], [70, 70], [80, 80], [90, 90]
+                ],
+                color: 'rgba(128, 128, 128, 0.5)',
+                zones: [{ // Red < 50
+                    value: 50,
+                    color: '#ff0000'
+                }, { // Blue >= 50
+                    color: '#0000ff'
+                }]
+            }]
+        });
+
+        const svg = chart.renderTo.querySelector('svg'),
+            imageEl = svg.querySelector('.highcharts-boost-canvas');
+
+        let x = chart.series[0].points[1].plotX + chart.plotLeft,
+            y = chart.series[0].points[1].plotY + chart.plotTop;
+        const { hex } =
+            await sampleImagePixelAtSVGPoint(svg, imageEl, x, y);
+
+        assert.strictEqual(
+            hex,
+            '#ff0000',
+            'The second point should be red.'
+        );
+
+        x = chart.series[0].points[8].plotX + chart.plotLeft;
+        y = chart.series[0].points[8].plotY + chart.plotTop;
+        const { hex: hex2 } =
+            await sampleImagePixelAtSVGPoint(svg, imageEl, x, y);
+
+        assert.strictEqual(
+            hex2,
+            '#0000ff',
+            'The last point should be blue.'
+        );
+    }
+);

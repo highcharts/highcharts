@@ -108,6 +108,7 @@ format: '{log}'
 * **multiply**. Multiply two numbers. For example `{multiply value 1000}`. [Demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-datalabels-format-subexpression).
 * **ne**. Not equal, JavaScript `!=`. Doubles as block helper and subexpression.
 * **subtract**. Subtract the second number from the first. Example `{subtract 5 2}` prints 3.
+* **ucfirst**. Uppercase the first character in a string. For example `{ucfirst point.key}`.
 * **#unless**. The inverse of `#if`. `{#unless point.isNull}The value is {point.y}{/unless}`.
 
 ## Limitations
