@@ -2079,6 +2079,15 @@ const seriesDefaults: PlotOptionsOf<Series> = {
         x: 0,
 
         /**
+         * The y position offset of the label relative to the point in
+         * pixels.
+         *
+         * @sample {highcharts} highcharts/plotoptions/series-datalabels-rotation/
+         *         Vertical and positioned
+         */
+        y: 0
+
+        /**
          * The z index of the data labels group. Does not apply below series
          * level options.
          *
@@ -2090,15 +2099,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          * @since     2.3.5
          * @apioption plotOptions.series.dataLabels.zIndex
          */
-
-        /**
-         * The y position offset of the label relative to the point in
-         * pixels.
-         *
-         * @sample {highcharts} highcharts/plotoptions/series-datalabels-rotation/
-         *         Vertical and positioned
-         */
-        y: 0
     },
 
     /**
@@ -2248,7 +2248,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
              * individual point, see
              * [marker.states.hover](#plotOptions.series.marker.states.hover).
              *
-             * @deprecated
+             * @deprecated 2
              *
              * @extends   plotOptions.series.marker
              * @excluding states, symbol

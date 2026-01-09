@@ -93,6 +93,21 @@ declare module './Series/SeriesBase' {
 
 declare module './Series/SeriesOptions' {
     interface SeriesOptions {
+        /**
+         * A configuration object for the tooltip rendering of each single
+         * series. Properties are inherited from [tooltip](#tooltip), but only
+         * the following properties can be defined on a series level.
+         *
+         * @declare   Highcharts.SeriesTooltipOptionsObject
+         * @since     2.3
+         * @extends   tooltip
+         * @excluding animation, backgroundColor, borderColor, borderRadius,
+         *            borderWidth, className, crosshairs, enabled, fixed,
+         *            formatter, headerShape, hideDelay, outside, padding,
+         *            positioner, shadow, shape, shared, snap, split,
+         *            stickOnContact, style, useHTML
+         * @apioption plotOptions.series.tooltip
+         */
         tooltip?: Partial<TooltipOptions>;
     }
 }

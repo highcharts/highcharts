@@ -51,9 +51,7 @@ import type {
  * */
 
 declare module '../../Core/Series/SeriesOptions' {
-    interface SeriesStateInactiveOptions
-    {
-        animation?: (boolean|Partial<AnimationOptions>);
+    interface SeriesStateInactiveOptions {
         linkOpacity?: number;
     }
 }

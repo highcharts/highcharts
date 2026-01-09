@@ -72,6 +72,13 @@ declare module '../../Core/Series/SeriesOptions' {
          */
         navigatorOptions?: SeriesOptions;
 
+        /**
+         * Whether or not to show the series in the navigator. Takes precedence
+         * over [navigator.baseSeries](#navigator.baseSeries) if defined.
+         *
+         * @since     5.0.0
+         * @product   highstock
+         */
         showInNavigator?: boolean;
     }
 }

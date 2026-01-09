@@ -44,12 +44,6 @@ import MarkerClusterOptions from '../../Extensions/MarkerClusters/MarkerClusterO
  *
  * */
 
-declare module '../../Core/Series/SeriesOptions' {
-    interface SeriesOptions {
-        cropThreshold?: number;
-    }
-}
-
 export interface TreemapDataLabelOptions extends DataLabelOptions {
     /**
      * Whether the data label should act as a group-level header. For leaf

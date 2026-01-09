@@ -109,11 +109,79 @@ export interface SeriesDataSortingOptions {
  * file.
  */
 export interface SeriesEventsOptions {
+    /**
+     * Fires after the series has finished its initial animation, or in case
+     * animation is disabled, immediately as the series is displayed.
+     *
+     * @sample {highcharts} highcharts/plotoptions/series-events-afteranimate/
+     *         Show label after animate
+     * @sample {highstock} highcharts/plotoptions/series-events-afteranimate/
+     *         Show label after animate
+     *
+     * @since   4.0
+     * @product highcharts highstock gantt
+     */
     afterAnimate?: SeriesAfterAnimateCallbackFunction;
+
+    /**
+     * Fires when the series is clicked. One parameter, `event`, is passed
+     * to the function, containing common event information. Additionally,
+     * `event.point` holds a pointer to the nearest point on the graph.
+     *
+     * @sample {highcharts} highcharts/plotoptions/series-events-click/
+     *         Alert click info
+     * @sample {highstock} stock/plotoptions/series-events-click/
+     *         Alert click info
+     * @sample {highmaps} maps/plotoptions/series-events-click/
+     *         Display click info in subtitle
+     */
     click?: SeriesClickCallbackFunction;
+
+    /**
+     * Fires when the series is hidden after chart generation time, either
+     * by clicking the legend item or by calling `.hide()`.
+     *
+     * @sample {highcharts} highcharts/plotoptions/series-events-hide/
+     *         Alert when the series is hidden by clicking the legend item
+     *
+     * @since 1.2.0
+     */
     hide?: SeriesHideCallbackFunction;
+
+    /**
+     * Fires when the mouse leaves the graph. One parameter, `event`, is
+     * passed to the function, containing common event information. If the
+     * [stickyTracking](#plotOptions.series) option is true, `mouseOut`
+     * doesn't happen before the mouse enters another graph or leaves the
+     * plot area.
+     *
+     * @sample {highcharts} highcharts/plotoptions/series-events-mouseover-sticky/
+     *         With sticky tracking by default
+     * @sample {highcharts} highcharts/plotoptions/series-events-mouseover-no-sticky/
+     *         Without sticky tracking
+     */
     mouseOut?: SeriesMouseOutCallbackFunction;
+
+    /**
+     * Fires when the mouse enters the graph. One parameter, `event`, is
+     * passed to the function, containing common event information.
+     *
+     * @sample {highcharts} highcharts/plotoptions/series-events-mouseover-sticky/
+     *         With sticky tracking by default
+     * @sample {highcharts} highcharts/plotoptions/series-events-mouseover-no-sticky/
+     *         Without sticky tracking
+     */
     mouseOver?: SeriesMouseOverCallbackFunction;
+
+    /**
+     * Fires when the series is shown after chart generation time, either
+     * by clicking the legend item or by calling `.show()`.
+     *
+     * @sample {highcharts} highcharts/plotoptions/series-events-show/
+     *         Alert when the series is shown by clicking the legend item.
+     *
+     * @since 1.2.0
+     */
     show?: SeriesShowCallbackFunction;
 }
 
@@ -421,6 +489,21 @@ export interface SeriesOptions {
     crisp?: boolean;
 
     /**
+     * When the series contains less points than the crop threshold, all
+     * points are drawn, even if the points fall outside the visible plot
+     * area at the current zoom. The advantage of drawing all points
+     * (including markers and columns), is that animation is performed on
+     * updates. On the other hand, when the series contains more points than
+     * the crop threshold, the series data is cropped to only contain points
+     * that fall within the plot area. The advantage of cropping away
+     * invisible points is to increase performance on large series.
+     *
+     * @since   2.2
+     * @product highcharts highstock
+     */
+    cropThreshold?: number;
+
+    /**
      * You can set the cursor to "pointer" if you have click events attached
      * to the series, to signal to the user that the points and lines can
      * be clicked.
@@ -501,7 +584,14 @@ export interface SeriesOptions {
      * @default true
      */
     enableMouseTracking?: boolean;
+
+    /**
+     * General event handlers for the series items. These event hooks can
+     * also be attached to the series at run time using the
+     * `Highcharts.addEvent` function.
+     */
     events?: SeriesEventsOptions;
+
     findNearestPointBy?: SeriesFindNearestPointByValue;
 
     /**
@@ -623,6 +713,19 @@ export interface SeriesOptions {
      */
     linkedTo?: string;
 
+    /**
+     * Options for the point markers of line and scatter-like series. Properties
+     * like `fillColor`, `lineColor` and `lineWidth` define the visual
+     * appearance of the markers. The `symbol` option defines the shape. Other
+     * series types, like column series, don't have markers, but have visual
+     * options on the series level instead.
+     *
+     * In styled mode, the markers can be styled with the `.highcharts-point`,
+     * `.highcharts-point-hover` and `.highcharts-point-select` class names.
+     *
+     * @sample {highmaps} maps/demo/mappoint-mapmarker
+     *         Using the mapmarker symbol for points
+     */
     marker?: PointMarkerOptions;
 
     /**
@@ -683,8 +786,18 @@ export interface SeriesOptions {
      */
     nullInteraction?: boolean;
 
+    /**
+     * Opacity of a series parts: line, fill (e.g. area) and dataLabels.
+     *
+     * @see [states.inactive.opacity](#plotOptions.series.states.inactive.opacity)
+     *
+     * @since 7.1.0
+     */
     opacity?: number;
 
+    /**
+     * Properties for each single point.
+     */
     point?: SeriesPointOptions;
 
     /**
@@ -808,9 +921,61 @@ export interface SeriesOptions {
      */
     shadow?: (boolean|Partial<ShadowOptionsObject>);
 
+    // TODO: mark as deprecated, add info for the new API, move to a11y dir
+    /**
+     * If set to `true`, the accessibility module will skip past the points
+     * in this series for keyboard navigation.
+     *
+     * @since 5.0.12
+     */
+    skipKeyboardNavigation?: boolean;
+
+    /**
+     * A collection of options for different series states.
+     */
     states?: SeriesStatesOptions<SeriesOptions>;
+
+    /**
+     * Whether to apply steps to the line. Possible values are `left`,
+     * `center` and `right`.
+     *
+     * @sample {highcharts} highcharts/plotoptions/line-step/
+     *         Different step line options
+     * @sample {highcharts} highcharts/plotoptions/area-step/
+     *         Stepped, stacked area
+     * @sample {highstock} stock/plotoptions/line-step/
+     *         Step line
+     *
+     * @since   1.2.5
+     * @product highcharts highstock
+     */
     step?: SeriesStepValue;
+
+    /**
+     * Sticky tracking of mouse events. When true, the `mouseOut` event on a
+     * series isn't triggered until the mouse moves over another series, or
+     * out of the plot area. When false, the `mouseOut` event on a series is
+     * triggered when the mouse leaves the area around the series' graph or
+     * markers. This also implies the tooltip when not shared. When
+     * `stickyTracking` is false and `tooltip.shared` is false, the tooltip
+     * will be hidden when moving the mouse between series. Defaults to true
+     * for line and area type series, but to false for columns, pies etc.
+     *
+     * **Note:** The boost module will force this option because of
+     * technical limitations.
+     *
+     * @sample {highcharts} highcharts/plotoptions/series-stickytracking-true/
+     *         True by default
+     * @sample {highcharts} highcharts/plotoptions/series-stickytracking-false/
+     *         False
+     *
+     * @default {highcharts} true
+     * @default {highstock} true
+     * @default {highmaps} false
+     * @since   2.0
+     */
     stickyTracking?: boolean;
+
     turboThreshold?: number;
 
     /**
@@ -829,6 +994,17 @@ export interface SeriesOptions {
      * Multiple types in the same map
      */
     type?: string;
+
+    /**
+     * Set the initial visibility of the series.
+     *
+     * @sample {highcharts} highcharts/plotoptions/series-visible/
+     *         Two series, one hidden and one visible
+     * @sample {highstock} stock/plotoptions/series-visibility/
+     *         Hidden series
+     *
+     * @default true
+     */
     visible?: boolean;
 
     /**
@@ -874,42 +1050,202 @@ export interface SeriesOptions {
      * @product highcharts highstock
      */
     zIndex?: number;
+
     zoomEnabled?: boolean;
+
+    /**
+     * Defines the Axis on which the zones are applied.
+     *
+     * @see [zones](#plotOptions.series.zones)
+     *
+     * @sample {highcharts} highcharts/series/color-zones-zoneaxis-x/
+     *         Zones on the X-Axis
+     * @sample {highstock} highcharts/series/color-zones-zoneaxis-x/
+     *         Zones on the X-Axis
+     *
+     * @default 'y'
+     * @since   4.1.0
+     * @product highcharts highstock
+     */
     zoneAxis?: 'x'|'y'|'z';
+
     zones?: Array<SeriesZonesOptions>;
     legendSymbol?: LegendSymbolType;
     legendSymbolColor?: ColorType;
 }
 
 export interface SeriesPointOptions {
+    /**
+     * Events for each single point.
+     */
     events?: PointEventsOptions;
 }
 
 export interface SeriesStateHoverHaloOptions {
+    /**
+     * A collection of SVG attributes to override the appearance
+     * of the halo, for example `fill`, `stroke` and
+     * `stroke-width`.
+     *
+     * @since   4.0
+     * @product highcharts highstock
+     */
     attributes?: SVGAttributes;
+
     brightness?: number;
+
+    /**
+     * Opacity for the halo unless a specific fill is overridden
+     * using the `attributes` setting.
+     *
+     * @since   4.0
+     * @product highcharts highstock
+     * @default 0.25
+     */
     opacity?: number;
+
+    /**
+     * The pixel size of the halo. For point markers this is the
+     * radius of the halo. For pie slices it is the width of the
+     * halo outside the slice. For bubbles it defaults to 5 and
+     * is the width of the halo outside the bubble.
+     *
+     * @since   4.0
+     * @product highcharts highstock
+     * @default 10
+     */
     size?: number;
 }
 
 export interface SeriesStateHoverOptions extends StateHoverOptions {
+    /**
+     * Animation setting for hovering the graph in line-type series.
+     *
+     * By default the hover state animates quickly in, and slowly back to
+     * normal.
+     *
+     * @since   5.0.8
+     * @product highcharts highstock
+     * @default {"duration":150}
+     */
     animation?: (boolean|DeepPartial<AnimationOptions>);
+
     brightness?: number;
+
+    /**
+     * Enable separate styles for the hovered series to visualize
+     * that the user hovers either the series itself or the legend.
+     *
+     * @sample {highcharts} highcharts/plotoptions/series-states-hover-enabled/
+     *         Line
+     * @sample {highcharts} highcharts/plotoptions/series-states-hover-enabled-column/
+     *         Column
+     * @sample {highcharts} highcharts/plotoptions/series-states-hover-enabled-pie/
+     *         Pie
+     *
+     * @default true
+     * @since   1.2
+     */
     enabled?: boolean;
+
+    /**
+     * Options for the halo appearing around the hovered point in
+     * line-type series as well as outside the hovered slice in pie
+     * charts. By default the halo is filled by the current point or
+     * series color with an opacity of 0.25\. The halo can be
+     * disabled by setting the `halo` option to `null`.
+     *
+     * In styled mode, the halo is styled with the
+     * `.highcharts-halo` class, with colors inherited from
+     * `.highcharts-color-{n}`.
+     *
+     * @sample {highcharts} highcharts/plotoptions/halo/
+     *         Halo options
+     * @sample {highstock} highcharts/plotoptions/halo/
+     *         Halo options
+     *
+     * @since   4.0
+     * @product highcharts highstock
+     */
     halo?: (boolean|SeriesStateHoverHaloOptions);
+
+    /**
+     * Pixel width of the graph line. By default this property is
+     * undefined, and the `lineWidthPlus` property dictates how much
+     * to increase the linewidth from normal state.
+     *
+     * @sample {highcharts} highcharts/plotoptions/series-states-hover-linewidth/
+     *         5px line on hover
+     *
+     * @product highcharts highstock
+     */
     lineWidth?: number;
+
+    /**
+     * The additional line width for the graph of a hovered series.
+     *
+     * @sample {highcharts} highcharts/plotoptions/series-states-hover-linewidthplus/
+     *         5 pixels wider
+     * @sample {highstock} highcharts/plotoptions/series-states-hover-linewidthplus/
+     *         5 pixels wider
+     *
+     * @since   4.0.3
+     * @product highcharts highstock
+     * @default 1
+     */
     lineWidthPlus?: number;
+
+    /**
+     * In Highcharts 1.0, the appearance of all markers belonging
+     * to the hovered series. For settings on the hover state of the
+     * individual point, see
+     * [marker.states.hover](#plotOptions.series.marker.states.hover).
+     *
+     * @deprecated
+     *
+     * @excluding states, symbol
+     * @product   highcharts highstock
+     */
+    marker?: PointMarkerOptions;
+
     radius?: number;
     radiusPlus?: number;
     opacity?: number;
 }
 
 export interface SeriesStateInactiveOptions extends StateInactiveOptions {
+    /**
+     * The animation for entering the inactive state.
+     *
+     * @default {"duration":150}
+     */
+    animation?: (boolean|DeepPartial<AnimationOptions>);
+
+    /**
+     * Enable or disable the inactive state for a series
+     *
+     * @sample highcharts/plotoptions/series-states-inactive-disabled
+     *         Disabled inactive state
+     *
+     * @default true
+     */
     enabled?: boolean;
+
+    /**
+     * Opacity of series elements (dataLabels, line, area).
+     *
+     * @default 0.2
+     */
+    opacity?: number;
 }
 
 export interface SeriesStateNormalOptions extends StateNormalOptions {
-    // Nothing here yet
+    /**
+     * Animation when returning to normal state after hovering.
+     *
+     * @default true
+     */
+    animation?: (boolean|DeepPartial<AnimationOptions>);
 }
 
 export interface SeriesStateSelectOptions extends StateSelectOptions {
@@ -917,9 +1253,42 @@ export interface SeriesStateSelectOptions extends StateSelectOptions {
 }
 
 export interface SeriesStatesOptions<T extends SeriesOptions> extends StatesOptions {
+    /**
+     * Options for the hovered series. These settings override the
+     * normal state options when a series is moused over or touched.
+     *
+     * @declare Highcharts.SeriesStatesHoverOptionsObject
+     */
     hover?: SeriesStateHoverOptions & StateGenericOptions<T>;
+
+    /**
+     * The opposite state of a hover for series.
+     *
+     * @sample highcharts/plotoptions/series-states-inactive-disabled
+     *         Disabled inactive state
+     */
     inactive?: SeriesStateInactiveOptions & StateGenericOptions<T>;
+
+    /**
+     * The normal state of a series, or for point items in column, pie
+     * and similar series. Currently only used for setting animation
+     * when returning to normal state from hover.
+     */
     normal?: SeriesStateNormalOptions & StateGenericOptions<T>;
+
+    /**
+     * Specific options for point in selected states, after being
+     * selected by
+     * [allowPointSelect](#plotOptions.series.allowPointSelect)
+     * or programmatically.
+     *
+     * @sample maps/plotoptions/series-allowpointselect/
+     *         Allow point select demo
+     *
+     * @extends   plotOptions.series.states.hover
+     * @excluding brightness
+     * @default   {"animation":{"duration":0}}
+     */
     select?: SeriesStateSelectOptions & StateGenericOptions<T>;
 }
 

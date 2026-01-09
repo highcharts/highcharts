@@ -54,7 +54,6 @@ export interface LineSeriesOptions extends SeriesOptions {
     linkedTo?: string;
     pointDescriptionFormatter?: Function;
     pointStart?: number;
-    skipKeyboardNavigation?: boolean;
     states?: SeriesStatesOptions<LineSeriesOptions>;
     supportingColor?: ColorType;
 }
