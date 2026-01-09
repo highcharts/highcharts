@@ -51,6 +51,7 @@ declare module '../SVG/SVGRendererBase' {
         html(str: string, x: number, y: number): HTMLElement;
     }
 }
+
 /* *
  *
  *  Class
@@ -67,8 +68,12 @@ class HTMLElement extends SVGElement {
     ): void {
 
         if (pushUnique(composed, this.compose)) {
-            // Create a HTML text node. This is used by the SVG renderer `text`
-            // and `label` functions through the `useHTML` parameter.
+            /**
+             * Create a HTML text node. This is used by the SVG renderer `text`
+             * and `label` functions through the `useHTML` parameter.
+             *
+             * @internal
+             */
             SVGRendererClass.prototype.html = function (
                 str: string,
                 x: number,
@@ -85,42 +90,23 @@ class HTMLElement extends SVGElement {
         }
     }
 
-
     /* *
      *
-     *  Properties
+     *  Prototype
      *
      * */
 
-
-    /** @internal */
-    public div?: HTMLDOMElement;
-
-
-    /** @internal */
     public foreignObject: SVGElement;
-
-
-    /** @internal */
     public parentGroup?: SVGElement;
-
-
-    /** @internal */
     public xCorr?: number;
-
-
-    /** @internal */
     public yCorr?: number;
 
 
     /* *
      *
-     *  Constructor
+     *  Functions
      *
      * */
-
-
-    /** @internal */
     public constructor(
         renderer: SVGRenderer,
         nodeName: 'div'
@@ -134,14 +120,6 @@ class HTMLElement extends SVGElement {
 
         this.element.style.whiteSpace = 'nowrap';
     }
-
-
-    /* *
-     *
-     *  Functions
-     *
-     * */
-
 
     /**
      * Get the correction in X and Y positioning as the element is rotated.
@@ -419,17 +397,15 @@ class HTMLElement extends SVGElement {
         }
     }
 
-
     /**
      * Align setter
+     *
      * @internal
      */
     public alignSetter(value: 'left'|'center'|'right'): void {
         this.alignValue = this.textAlign = value;
         this.doTransform = true;
     }
-
-
     /**
      * Various setters which rely on update transform
      * @internal
@@ -438,10 +414,7 @@ class HTMLElement extends SVGElement {
         this[key] = value;
         this.doTransform = true;
     }
-
-
 }
-
 
 // Some shared setters
 const proto = HTMLElement.prototype;
@@ -454,11 +427,9 @@ proto.ySetter = proto.xSetter;
  *
  * */
 
-
 interface HTMLElement {
     element: HTMLDOMElement;
 }
-
 
 /* *
  *
@@ -466,6 +437,4 @@ interface HTMLElement {
  *
  * */
 
-
-/** @internal */
 export default HTMLElement;

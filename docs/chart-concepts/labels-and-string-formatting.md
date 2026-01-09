@@ -17,8 +17,7 @@ charts, unless you use the experimental
 [exporting.allowHTML](https://api.highcharts.com/highcharts/exporting.allowHTML)
 option.
 
-See the
-[live demo of
+See the [live demo of
 `useHTML`](https://highcharts.com/samples/highcharts/members/renderer-usehtml)
 in some common elements.
 

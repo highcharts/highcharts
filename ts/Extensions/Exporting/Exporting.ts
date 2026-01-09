@@ -1644,8 +1644,8 @@ class Exporting {
             this.inlineStyles();
         }
         this.resolveCSSVariables();
-
         Exporting.sanitizeDOM(chart.renderer.box);
+
         return chart.container.innerHTML;
     }
 

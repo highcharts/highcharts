@@ -1698,26 +1698,24 @@ class SVGElement implements SVGElementBase {
      */
     public getBBoxCacheKey(keys: Array<any>): string|void {
 
-        let textStr = this.textStr;
-
         // Avoid undefined and null (#7316)
-        if (!defined(textStr)) {
-            return;
-        }
+        if (defined(this.textStr)) {
+            let textStr = '' + this.textStr;
 
-        // Since numerical labels appear a lot in a chart, we approximate that a
-        // label of n characters has the same bounding box as others of the same
-        // length. Unless there is inner HTML in the label. In that case, leave
-        // the numbers as is (#5899).
-        if (isString(textStr) && textStr.indexOf('<') === -1) {
-            textStr = textStr.replace(/\d/g, '0');
-        }
+            // Since numerical labels appear a lot in a chart, we approximate
+            // that a label of n characters has the same bounding box as others
+            // of the same length. Unless there is inner HTML in the label. In
+            // that case, leave the numbers as is (#5899).
+            if (textStr.indexOf('<') === -1) {
+                textStr = textStr.replace(/\d/g, '0');
+            }
 
-        // Properties that affect bounding box
-        return [
-            textStr,
-            ...keys
-        ].join(',');
+            // Properties that affect bounding box
+            return [
+                textStr,
+                ...keys
+            ].join(',');
+        }
     }
 
     /**
