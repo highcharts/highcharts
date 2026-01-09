@@ -246,6 +246,7 @@ module.exports = {
                     'morningstar/x-ray',
                     'morningstar/performance',
                     'morningstar/hypo-performance',
+                    'morningstar/dws-connector',
                     {
                         'Time Series': [
                             'morningstar/time-series/time-series',
