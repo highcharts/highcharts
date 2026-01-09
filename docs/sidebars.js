@@ -136,6 +136,7 @@ module.exports = {
                 'Theming': [
                     'grid/theming/theming',
                     'grid/theming/theming-variables',
+                    'grid/theming/conditional-theming',
                 ]
             },
             'grid/performance',
