@@ -2,7 +2,7 @@
  *
  *  Arc diagram module
  *
- *  (c) 2021 Highsoft AS
+ *  (c) 2021-2026 Highsoft AS
  *  Author: Piotr Madej, Grzegorz Blachliński
  *
  *  A commercial license may be required depending on use.
@@ -56,7 +56,7 @@ const {
  * */
 
 /**
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.arcdiagram
  *
@@ -98,7 +98,7 @@ class ArcDiagramSeries extends SankeySeries {
     /**
      * Create node columns by analyzing the nodes and the relations between
      * incoming and outgoing links.
-     * @private
+     * @internal
      */
     public createNodeColumns(): Array<SankeyColumnComposition.ArrayComposition<ArcDiagramPoint>> {
         const series = this,
@@ -232,7 +232,7 @@ class ArcDiagramSeries extends SankeySeries {
 
     /**
      * Run translation operations for one link.
-     * @private
+     * @internal
      */
     public translateLink(point: ArcDiagramPoint): void {
         const series = this,
@@ -365,7 +365,7 @@ class ArcDiagramSeries extends SankeySeries {
 
     /**
      * Run translation operations for one node.
-     * @private
+     * @internal
      */
     public translateNode(
         node: ArcDiagramPoint,
@@ -402,7 +402,7 @@ class ArcDiagramSeries extends SankeySeries {
             markerOptions = merge(options.marker, node.options.marker),
             symbol = markerOptions.symbol,
             markerRadius = markerOptions.radius,
-            top = parseInt(options.offset, 10) *
+            top = parseInt(options.offset ?? '100', 10) *
                 (
                     (
                         chart.inverted ?
@@ -536,8 +536,9 @@ class ArcDiagramSeries extends SankeySeries {
  *
  * */
 
+/** @internal */
 interface ArcDiagramSeries {
-    orderNodes: boolean;
+    orderNodes: false;
     pointClass: typeof ArcDiagramPoint;
 }
 extend(ArcDiagramSeries.prototype, {
@@ -550,6 +551,7 @@ extend(ArcDiagramSeries.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         arcdiagram: typeof ArcDiagramSeries;
@@ -564,4 +566,5 @@ SeriesRegistry.registerSeriesType('arcdiagram', ArcDiagramSeries);
  *
  * */
 
+/** @internal */
 export default ArcDiagramSeries;

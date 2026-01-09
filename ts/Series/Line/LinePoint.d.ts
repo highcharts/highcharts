@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Honsi
  *
  *  A commercial license may be required depending on use.
@@ -35,7 +35,6 @@ declare module '../../Core/Series/PointBase' {
         dist?: number;
         distX?: number;
         hasImage?: boolean;
-        index: number;
         isInside?: boolean;
         low?: number;
         negative?: boolean;

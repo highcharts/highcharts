@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -47,7 +47,7 @@ const {
  * Class to convert Highcharts series data to table and get series data from the
  * table.
  *
- * @private
+ * @internal
  */
 class DataSeriesConverter {
 
@@ -311,6 +311,7 @@ class DataSeriesConverter {
  *
  * */
 
+/** @internal */
 namespace DataSeriesConverter {
 
     /* *
@@ -337,4 +338,5 @@ namespace DataSeriesConverter {
  *
  * */
 
+/** @internal */
 export default DataSeriesConverter;

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -45,18 +45,29 @@ const {
  *
  * */
 
+/** @internal */
 declare module './SeriesBase' {
     interface SeriesBase {
         datas?: DataSeriesAdditions;
     }
 }
 
+// Unmark as internal when in the future.
+/** @internal */
 declare module './SeriesOptions' {
     interface SeriesOptions {
+        /* *
+        * Indicates data is structured as columns instead of rows.
+        *
+        * @type      {boolean}
+        * @since     Future
+        * @apioption plotOptions.series.dataAsColumns
+        */
         dataAsColumns?: boolean;
     }
 }
 
+/** @internal */
 export declare class DataSeriesComposition extends Series {
     datas: DataSeriesAdditions;
 }
@@ -67,9 +78,7 @@ export declare class DataSeriesComposition extends Series {
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 function wrapSeriesGeneratePoints(
     this: DataSeriesComposition,
     proceed: DataSeriesComposition['generatePoints']
@@ -108,9 +117,7 @@ function wrapSeriesGeneratePoints(
     fireEvent(this, 'afterGeneratePoints');
 }
 
-/**
- * @private
- */
+/** @internal */
 function wrapSeriesSetData(
     this: DataSeriesComposition,
     proceed: DataSeriesComposition['setData'],
@@ -169,6 +176,7 @@ function wrapSeriesSetData(
  *
  * */
 
+/** @internal */
 class DataSeriesAdditions {
 
     /* *
@@ -178,7 +186,7 @@ class DataSeriesAdditions {
      * */
 
     /**
-     * @private
+     * @internal
      */
     public static compose(
         SeriesClass: typeof Series
@@ -241,7 +249,7 @@ class DataSeriesAdditions {
 
     /**
      * Triggers processing and redrawing
-     * @private
+     * @internal
      */
     public processTable(
         redraw?: boolean,
@@ -266,7 +274,7 @@ class DataSeriesAdditions {
 
     /**
      * Experimental integration of the data layer
-     * @private
+     * @internal
      */
     public setTable(
         table: DataTable,
@@ -381,8 +389,8 @@ class DataSeriesAdditions {
     }
 
     /**
-     * Stops synchronisation of table changes with series.
-     * @private
+     * Stops synchronization of table changes with series.
+     * @internal
      */
     public syncOff(): void {
         const unlisteners = this.unlisteners;
@@ -396,7 +404,7 @@ class DataSeriesAdditions {
 
     /**
      * Activates synchronization of table changes with series.
-     * @private
+     * @internal
      */
     public syncOn(): void {
         if (this.unlisteners.length) {
@@ -407,23 +415,29 @@ class DataSeriesAdditions {
             table = this.table,
             anySeries: AnyRecord = series,
             onChange = (e: DataTable.Event): void => {
-                if (e.type === 'afterDeleteColumns') {
+                const type = e.type;
+                if (type === 'afterDeleteColumns') {
                     // Deletion affects all points
                     this.setTable(table, true);
                     return;
                 }
-                if (e.type === 'afterDeleteRows') {
+                if (type === 'afterDeleteRows') {
+                    const { rowIndex, rowCount } = e;
+
                     if (
-                        e.rowIndex > 0 &&
-                        e.rowIndex + e.rowCount < series.points.length
+                        Array.isArray(rowIndex) ||
+                        (
+                            rowIndex > 0 &&
+                            rowIndex + rowCount < series.points.length
+                        )
                     ) {
                         // Deletion affects trailing points
                         this.setTable(table, true);
                         return;
                     }
                     for (
-                        let i = e.rowIndex,
-                            iEnd = i + e.rowCount;
+                        let i = rowIndex,
+                            iEnd = i + rowCount;
                         i < iEnd;
                         ++i
                     ) {
@@ -431,9 +445,12 @@ class DataSeriesAdditions {
                     }
                 }
                 if (this.indexAsX) {
-                    if (e.type === 'afterSetCell') {
+                    if (type === 'afterSetCell') {
                         anySeries.xData[e.rowIndex] = e.rowIndex;
-                    } else if (e.type === 'afterSetRows') {
+                    } else if (
+                        type === 'afterSetRows' &&
+                        isNumber(e.rowIndex)
+                    ) {
                         for (
                             let i = e.rowIndex,
                                 iEnd = i + e.rowCount;
@@ -464,6 +481,7 @@ class DataSeriesAdditions {
  *
  * */
 
+/** @internal */
 export default DataSeriesAdditions;
 
 /* *

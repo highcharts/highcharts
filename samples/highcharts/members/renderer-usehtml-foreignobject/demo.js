@@ -1,3 +1,6 @@
+// Experimental support `foreignObject`. This will resolve all z-index issues.
+Highcharts.HTMLElement.useForeignObject = true;
+
 Highcharts.chart('container', {
 
     chart: {

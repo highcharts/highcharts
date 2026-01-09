@@ -2,7 +2,7 @@
  *
  *  Grid Table Viewport class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -181,17 +181,11 @@ class Table {
         const customClassName = dgOptions?.rendering?.table?.className;
 
         this.columnResizing = ColumnResizing.initMode(this);
-        this.virtualRows = this.shouldVirtualizeRows();
 
         if (dgOptions?.rendering?.header?.enabled) {
             this.theadElement = makeHTMLElement('thead', {}, tableElement);
         }
         this.tbodyElement = makeHTMLElement('tbody', {}, tableElement);
-        if (this.virtualRows) {
-            tableElement.classList.add(
-                Globals.getClassName('virtualization')
-            );
-        }
 
         if (dgOptions?.rendering?.columns?.resizing?.enabled) {
             this.columnsResizer = new ColumnsResizer(this);
@@ -206,6 +200,12 @@ class Table {
         this.loadColumns();
 
         // Virtualization
+        this.virtualRows = this.shouldVirtualizeRows();
+        if (this.virtualRows) {
+            tableElement.classList.add(
+                Globals.getClassName('virtualization')
+            );
+        }
         this.rowsVirtualizer = new RowsVirtualizer(this);
 
         // Init Table

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Sebastian Domas
  *
  *  A commercial license may be required depending on use.
@@ -16,7 +16,6 @@
  * */
 
 import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
-import type HistogramSeries from './HistogramSeries';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type TooltipOptions from '../../Core/TooltipOptions';
 import HistogramPointOptions from './HistogramPointOptions';
@@ -114,7 +113,7 @@ export interface HistogramSeriesOptions extends ColumnSeriesOptions {
 
     pointPlacement?: string;
 
-    states?: SeriesStatesOptions<HistogramSeries>;
+    states?: SeriesStatesOptions<HistogramSeriesOptions>;
 
     tooltip?: Partial<TooltipOptions>;
 

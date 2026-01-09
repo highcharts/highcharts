@@ -3,7 +3,7 @@
  *  Highcharts module which enables visualization of a Venn
  *  diagram.
  *
- *  (c) 2016-2025 Highsoft AS
+ *  (c) 2016-2026 Highsoft AS
  *  Authors: Jon Arild Nygard
  *
  *  Layout algorithm by Ben Frederickson:
@@ -690,7 +690,7 @@ addEvent(VennSeries, 'afterSetOptions', function (
     e: { options: VennSeriesOptions }
 ): void {
     const options = e.options,
-        states: SeriesStatesOptions<VennSeries> = options.states || {};
+        states: SeriesStatesOptions<VennSeriesOptions> = options.states || {};
 
     if (this.is('venn')) {
         // Explicitly disable all halo options.

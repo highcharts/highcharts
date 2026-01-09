@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Honsi
  *
  *  A commercial license may be required depending on use.
@@ -20,6 +20,7 @@ import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type ScatterPointOptions from '../Scatter/ScatterPointOptions';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import type { GeoJSONGeometryMultiPoint } from '../../Maps/GeoJSON';
+import type { PointMarkerStatesOptions } from '../../Core/Series/PointOptions';
 
 /* *
  *
@@ -39,6 +40,7 @@ export interface MapPointOptions extends ScatterPointOptions {
     name?: string;
     path?: (string|SVGPath);
     properties?: AnyRecord;
+    states?: PointMarkerStatesOptions<MapPointOptions>;
     value?: (number|null);
 }
 

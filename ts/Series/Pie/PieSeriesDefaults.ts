@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Honsi
  *
  *  A commercial license may be required depending on use.
@@ -341,9 +341,7 @@ const PieSeriesDefaults: PlotOptionsOf<PieSeries> = {
          * @type {Highcharts.DataLabelsFormatterCallbackFunction}
          * @default function () { return this.point.isNull ? void 0 : this.point.name; }
          */
-        formatter: function (
-            this: Point
-        ): (string|undefined) { // #2945
+        formatter: function (this: Point): (string|undefined) { // #2945
             return this.isNull ? void 0 : this.name;
         },
 

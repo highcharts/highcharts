@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Grzegorz Blachlinski, Sebastian Bochan
  *
  *  A commercial license may be required depending on use.
@@ -29,7 +29,10 @@ import type Point from '../../Core/Series/Point';
  * */
 
 export interface PackedBubbleDataLabelsFormatterCallbackFunction {
-    (this: (Point|PackedBubblePoint)): (number|string|null|undefined);
+    (
+        this: (Point|PackedBubblePoint),
+        options: PackedBubbleDataLabelOptions
+    ): (number|string|null|undefined);
 }
 
 export interface PackedBubbleDataLabelOptions extends DataLabelOptions {

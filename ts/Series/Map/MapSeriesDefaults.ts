@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Honsi
  *
  *  A commercial license may be required depending on use.
@@ -610,6 +610,12 @@ const MapSeriesDefaults: MapSeriesOptions = {
  * @extends   plotOptions.series.point.events
  * @product   highmaps
  * @apioption series.map.data.events
+ */
+
+/**
+ * @extends   plotOptions.map.states
+ * @product   highmaps
+ * @apioption series.map.data.states
  */
 
 /* *

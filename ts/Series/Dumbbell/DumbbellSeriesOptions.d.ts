@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Honsi
  *
  *  A commercial license may be required depending on use.
@@ -19,7 +19,6 @@ import type AreaRangeSeriesOptions from '../AreaRange/AreaRangeSeriesOptions';
 import type ColorString from '../../Core/Color/ColorString';
 import type ColorType from '../../Core/Color/ColorType';
 import type DumbbellPointOptions from './DumbbellPointOptions';
-import type DumbbellSeries from './DumbbellSeries';
 import type {
     LegendSymbolType,
     SeriesStatesOptions
@@ -69,7 +68,7 @@ import type {
  * @requires modules/dumbbell
  */
 interface DumbbellSeriesOptions extends AreaRangeSeriesOptions {
-    states?: SeriesStatesOptions<DumbbellSeries>;
+    states?: SeriesStatesOptions<DumbbellSeriesOptions>;
 
     /**
      * Color of the line that connects the dumbbell point's values.

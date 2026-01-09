@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Honsi
  *
  *  A commercial license may be required depending on use.
@@ -17,7 +17,6 @@
 
 import type ColorType from '../../Core/Color/ColorType';
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
-import type HeatmapSeries from './HeatmapSeries';
 import type {
     HeatmapPointMarkerOptions,
     HeatmapPointOptions
@@ -286,7 +285,7 @@ export interface HeatmapSeriesOptions extends ScatterSeriesOptions {
      */
     rowsize?: number;
 
-    states?: SeriesStatesOptions<HeatmapSeries>;
+    states?: SeriesStatesOptions<HeatmapSeriesOptions>;
 
     tooltip?: Partial<TooltipOptions>;
 

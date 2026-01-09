@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Honsi
  *
  *  A commercial license may be required depending on use.
@@ -23,7 +23,6 @@ import type {
     PieSeriesPointOptions,
     PiePointOptions
 } from './PiePointOptions';
-import type PieSeries from './PieSeries';
 import type {
     PointMarkerOptions,
     PointShortOptions
@@ -452,7 +451,7 @@ export interface PieSeriesOptions extends LineSeriesOptions {
      */
     startAngle?: number;
 
-    states?: SeriesStatesOptions<PieSeries>;
+    states?: SeriesStatesOptions<PieSeriesOptions>;
 
     /**
      *

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Honsi
  *
  *  A commercial license may be required depending on use.
@@ -638,11 +638,8 @@ class MapSeries extends ScatterSeries {
         // Handle state specific border or line width
         if (state) {
             const stateOptions = merge(
-                    this.options.states &&
-                    this.options.states[state] as MapSeriesOptions,
-                    point.options.states &&
-                    point.options.states[state] as MapPointOptions ||
-                    {}
+                    this.options.states?.[state] as MapSeriesOptions,
+                    point.options.states?.[state] || {}
                 ),
                 stateStrokeWidth = this.getStrokeWidth(stateOptions);
 

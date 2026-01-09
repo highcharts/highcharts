@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Honsi
  *
  *  A commercial license may be required depending on use.
@@ -16,7 +16,6 @@
  * */
 
 import type ColumnPyramidPointOptions from './ColumnPyramidPointOptions';
-import type ColumnPyramidSeries from './ColumnPyramidSeries';
 import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
@@ -65,7 +64,7 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  */
 export interface ColumnPyramidSeriesOptions extends ColumnSeriesOptions {
 
-    states?: SeriesStatesOptions<ColumnPyramidSeries>;
+    states?: SeriesStatesOptions<ColumnPyramidSeriesOptions>;
 
     /**
      *

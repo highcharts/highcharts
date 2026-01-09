@@ -2,7 +2,7 @@
  *
  *  Grid default options
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -41,7 +41,8 @@ export const defaultLangOptions: DeepPartial<LangOptions> = {
                 ascending: 'Sorted ascending.',
                 descending: 'Sorted descending.',
                 none: 'Not sorted.'
-            }
+            },
+            priority: 'Priority {priority}.'
         },
         pagination: {
             announcements: {
@@ -58,6 +59,10 @@ export const defaultLangOptions: DeepPartial<LangOptions> = {
                 filterCleared: 'Filter cleared for {columnId}. ' +
                     '{rowsCount} results found.'
             }
+        },
+        screenReaderSection: {
+            beforeRegionLabel: '',
+            afterRegionLabel: ''
         }
     },
     loading: 'Loading...',
@@ -109,6 +114,14 @@ export const defaultOptions: DeepPartial<Options> = {
         announcements: {
             sorting: true,
             filtering: true
+        },
+        screenReaderSection: {
+            beforeGridFormat:
+                '{gridTitle}' +
+                '<div>{gridDescription}</div>' +
+                '<div>Grid with {rowCount} rows and {columnCount}' +
+                ' columns.</div>',
+            afterGridFormat: 'End of Grid.'
         }
     },
     time: {

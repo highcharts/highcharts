@@ -2,7 +2,7 @@
  *
  *  X-range series module
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Honsi, Lars A. V. Cabrera
  *
  *  A commercial license may be required depending on use.
@@ -23,7 +23,6 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type TooltipOptions from '../../Core/TooltipOptions';
 import type XRangePointOptions from './XRangePointOptions';
 import type { XRangePointPartialFillOptions } from './XRangePointOptions';
-import type XRangeSeries from './XRangeSeries';
 
 /* *
  *
@@ -133,7 +132,7 @@ export interface XRangeSeriesOptions extends ColumnSeriesOptions {
 
     pointRange?: number;
 
-    states?: SeriesStatesOptions<XRangeSeries>;
+    states?: SeriesStatesOptions<XRangeSeriesOptions>;
 
     tooltip?: Partial<TooltipOptions>;
 

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Honsi
  *
  *  A commercial license may be required depending on use.
@@ -17,7 +17,6 @@
 
 import type LineSeriesOptions from '../Line/LineSeriesOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type SplineSeries from './SplineSeries';
 
 /* *
  *
@@ -26,7 +25,7 @@ import type SplineSeries from './SplineSeries';
  * */
 
 export interface SplineSeriesOptions extends LineSeriesOptions {
-    states?: SeriesStatesOptions<SplineSeries>;
+    states?: SeriesStatesOptions<SplineSeriesOptions>;
 }
 
 /* *

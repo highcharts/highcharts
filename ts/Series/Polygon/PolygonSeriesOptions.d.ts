@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Honsi
  *
  *  A commercial license may be required depending on use.
@@ -20,7 +20,6 @@ import type {
     SeriesStatesOptions
 } from '../../Core/Series/SeriesOptions';
 import type PolygonPointOptions from './PolygonPointOptions';
-import type PolygonSeries from './PolygonSeries';
 import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
 import type TooltipOptions from '../../Core/TooltipOptions';
 import type {
@@ -145,7 +144,7 @@ interface PolygonSeriesOptions extends ScatterSeriesOptions {
 
     marker?: PointMarkerOptions;
 
-    states?: SeriesStatesOptions<PolygonSeries>;
+    states?: SeriesStatesOptions<PolygonSeriesOptions>;
 
     stickyTracking?: boolean;
 

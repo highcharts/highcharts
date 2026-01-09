@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Honsi
  *
  *  A commercial license may be required depending on use.
@@ -15,7 +15,6 @@
  *
  * */
 
-import type LollipopSeries from './LollipopSeries';
 import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type ColorString from '../../Core/Color/ColorString';
@@ -34,7 +33,7 @@ export interface LollipopSeriesOptions extends ScatterSeriesOptions {
     /** @deprecated */
     lowColor?: ColorType;
     pointPadding?: number;
-    states?: SeriesStatesOptions<LollipopSeries>;
+    states?: SeriesStatesOptions<LollipopSeriesOptions>;
 }
 
 /* *

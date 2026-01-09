@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Honsi
  *
  *  A commercial license may be required depending on use.
@@ -539,6 +539,12 @@ const ColumnSeriesDefaults: PlotOptionsOf<ColumnSeries> = {
  * @excluding halo, lineWidth, lineWidthPlus, marker
  * @product   highcharts highstock
  * @apioption series.column.states.select
+ */
+
+/**
+ * @extends   series.column.states
+ * @product   highcharts highstock
+ * @apioption series.column.data.states
  */
 
 ''; // Keeps doclets above in JS file

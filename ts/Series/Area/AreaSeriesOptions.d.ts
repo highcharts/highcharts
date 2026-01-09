@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Honsi
  *
  *  A commercial license may be required depending on use.
@@ -16,7 +16,6 @@
  * */
 
 import type AreaPointOptions from './AreaPointOptions';
-import type AreaSeries from './AreaSeries';
 import type ColorType from '../../Core/Color/ColorType';
 import type LineSeriesOptions from '../Line/LineSeriesOptions';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
@@ -138,7 +137,7 @@ export interface AreaSeriesOptions extends LineSeriesOptions {
      */
     negativeFillColor?: ColorType;
 
-    states?: SeriesStatesOptions<AreaSeries>;
+    states?: SeriesStatesOptions<AreaSeriesOptions>;
 
     /**
      * An array of data points for the series. For the `area` series type,

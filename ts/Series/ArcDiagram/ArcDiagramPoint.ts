@@ -2,7 +2,7 @@
  *
  *  Arc diagram module
  *
- *  (c) 2018-2025 Highsoft AS
+ *  (c) 2018-2026 Highsoft AS
  *  Author: Torstein Honsi
  *
  *  A commercial license may be required depending on use.
@@ -42,6 +42,7 @@ const { extend } = U;
  *
  * */
 
+/** @internal */
 class ArcDiagramPoint extends SankeyPoint {
 
     /* *
@@ -92,6 +93,7 @@ class ArcDiagramPoint extends SankeyPoint {
  *
  * */
 
+/** @internal */
 interface ArcDiagramPoint {
     setState: typeof NodesComposition['setNodeState'];
 }
@@ -105,4 +107,5 @@ extend(ArcDiagramPoint.prototype, {
  *
  * */
 
+/** @internal */
 export default ArcDiagramPoint;

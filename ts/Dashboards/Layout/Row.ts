@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -214,14 +214,18 @@ class Row extends GUIElement {
     public destroy(): void {
         const row = this;
         const { layout } = row;
-        // Copy to avoid problem with index when shifting array of cells during
-        // the destroy.
-        const rowCells = [...row.cells];
+        const board = row.layout.board;
+        const editMode = board.editMode;
 
         // Destroy cells.
-        for (let i = 0, iEnd = rowCells?.length; i < iEnd; ++i) {
-            if (rowCells[i]) {
-                rowCells[i].destroy();
+        if (row.cells) {
+            // Copy to avoid problem with index when shifting array of cells during
+            // the destroy.
+            const rowCells = [...row.cells];
+            for (let i = 0, iEnd = rowCells.length; i < iEnd; ++i) {
+                if (rowCells[i]) {
+                    rowCells[i].destroy();
+                }
             }
         }
 
@@ -234,6 +238,11 @@ class Row extends GUIElement {
                 layout.destroy();
             }
         }
+
+        fireEvent(editMode, 'rowDestroyed', {
+            target: row,
+            board: board
+        });
     }
 
     /**

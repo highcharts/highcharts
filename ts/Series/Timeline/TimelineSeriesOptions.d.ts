@@ -2,7 +2,7 @@
  *
  *  Timeline Series.
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *
  *  Author: Daniel Studencki
  *
@@ -26,7 +26,6 @@ import type LineSeriesOptions from '../Line/LineSeriesOptions';
 import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
 import type TimelineDataLabelOptions from './TimelineDataLabelOptions';
 import type TimelinePointOptions from './TimelinePointOptions';
-import type TimelineSeries from './TimelineSeries';
 import type TooltipOptions from '../../Core/TooltipOptions';
 
 /* *
@@ -141,7 +140,7 @@ export interface TimelineSeriesOptions extends LineSeriesOptions {
 
     showInLegend?: boolean;
 
-    states?: SeriesStatesOptions<TimelineSeries>;
+    states?: SeriesStatesOptions<TimelineSeriesOptions>;
 
     stickyTracking?: boolean;
 

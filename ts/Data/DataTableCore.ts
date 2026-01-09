@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -381,11 +381,11 @@ class DataTableCore {
     }
 
     /**
-     * Returns the medified (clone) or the original data table if the modified
+     * Returns the modified (clone) or the original data table if the modified
      * one does not exist.
      *
      * @return {Highcharts.DataTableCore}
-     * The medified (clone) or the original data table.
+     * The modified (clone) or the original data table.
      */
     public getModified(): this {
         return this.modified || this;

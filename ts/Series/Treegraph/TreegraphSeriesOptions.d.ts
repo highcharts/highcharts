@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Pawel Lysy Grzegorz Blachlinski
  *
  *  A commercial license may be required depending on use.
@@ -98,7 +98,7 @@ export interface CollapseButtonOptions {
 
 }
 
-export interface TreegraphDataLabelFormatterCallback {
+export interface TreegraphDataLabelsFormatterCallbackFunction {
     (
         this: (TreegraphPoint|Point)
     ): (string|undefined);
@@ -110,7 +110,7 @@ export interface TreegraphDataLabelFormatterContext {
 
 export interface TreegraphDataLabelOptions extends DataLabelOptions {
     linkFormat?: string;
-    linkFormatter: TreegraphDataLabelFormatterCallback;
+    linkFormatter: TreegraphDataLabelsFormatterCallbackFunction;
     linkTextPath?: DataLabelTextPathOptions;
 }
 

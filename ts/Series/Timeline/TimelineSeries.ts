@@ -2,7 +2,7 @@
  *
  *  Timeline Series.
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *
  *  Author: Daniel Studencki
  *
@@ -29,10 +29,8 @@ import type TimelineDataLabelOptions from './TimelineDataLabelOptions';
 import type TimelinePointOptions from './TimelinePointOptions';
 import type TimelineSeriesOptions from './TimelineSeriesOptions';
 import type {
-    PointMarkerOptions,
-    PointStatesOptions
+    PointMarkerOptions
 } from '../../Core/Series/PointOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
@@ -399,8 +397,8 @@ class TimelineSeries extends LineSeries {
                 seriesMarkerOptions.height as any
             );
 
-        let seriesStateOptions: SeriesStatesOptions<TimelineSeries>,
-            pointStateOptions: PointStatesOptions<TimelinePoint>,
+        let seriesStateOptions,
+            pointStateOptions,
             radius = 0;
 
         // Call default markerAttribs method, when the xAxis type
@@ -411,19 +409,17 @@ class TimelineSeries extends LineSeries {
 
         // Handle hover and select states
         if (state) {
-            seriesStateOptions =
-                (seriesMarkerOptions.states as any)[state] || {};
-            pointStateOptions = pointMarkerOptions.states &&
-                (pointMarkerOptions.states as any)[state] || {};
+            seriesStateOptions = seriesMarkerOptions.states?.[state];
+            pointStateOptions = pointMarkerOptions.states?.[state];
 
             radius = pick(
-                (pointStateOptions as any).radius,
-                (seriesStateOptions as any).radius,
-                radius + ((seriesStateOptions as any).radiusPlus as any || 0)
+                pointStateOptions?.radius,
+                seriesStateOptions?.radius,
+                radius + (seriesStateOptions?.radiusPlus || 0)
             );
         }
 
-        point.hasImage = (symbol && symbol.indexOf('url') === 0) as any;
+        point.hasImage = !!(symbol && symbol.indexOf('url') === 0);
 
         const attribs = {
             x: Math.floor(point.plotX as any) - (width / 2) - (radius / 2),

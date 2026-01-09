@@ -2,7 +2,7 @@
  *
  *  Highcharts funnel module
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Honsi
  *
  *  A commercial license may be required depending on use.
@@ -19,7 +19,6 @@
 
 import type FunnelSeriesOptions from '../Funnel/FunnelSeriesOptions';
 import type PyramidPointOptions from './PyramidPointOptions';
-import type PyramidSeries from './PyramidSeries';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 
 /* *
@@ -114,7 +113,7 @@ export interface PyramidSeriesOptions extends FunnelSeriesOptions {
      */
     reversed?: boolean;
 
-    states?: SeriesStatesOptions<PyramidSeries>;
+    states?: SeriesStatesOptions<PyramidSeriesOptions>;
 
 }
 

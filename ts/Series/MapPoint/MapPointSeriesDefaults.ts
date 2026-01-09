@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Honsi
  *
  *  A commercial license may be required depending on use.
@@ -60,7 +60,11 @@ const MapPointSeriesDefaults: MapPointSeriesOptions = {
         }
     },
     legendSymbol: 'lineMarker',
-    stickyTracking: true
+    stickyTracking: true,
+    tooltip: {
+        pointFormat: '{#if point.name}{point.name}{else}Lat: {point.lat}, Lon: {point.lon}{/if}'
+    }
+
 };
 
 /* *

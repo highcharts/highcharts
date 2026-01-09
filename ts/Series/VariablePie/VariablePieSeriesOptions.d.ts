@@ -2,7 +2,7 @@
  *
  *  Variable Pie module for Highcharts
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Grzegorz Blachliński
  *
  *  A commercial license may be required depending on use.
@@ -22,7 +22,6 @@ import type PointShortOptions from '../../Core/Series/PointOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type TooltipOptions from '../../Core/TooltipOptions';
 import type VariablePiePointOptions from './VariablePiePointOptions';
-import type VariablePieSeries from './VariablePieSeries';
 
 /* *
  *
@@ -157,7 +156,7 @@ export interface VariablePieSeriesOptions extends PieSeriesOptions {
      */
     sizeBy?: VariablePieSizeByValue;
 
-    states?: SeriesStatesOptions<VariablePieSeries>;
+    states?: SeriesStatesOptions<VariablePieSeriesOptions>;
 
     tooltip?: Partial<TooltipOptions>;
 

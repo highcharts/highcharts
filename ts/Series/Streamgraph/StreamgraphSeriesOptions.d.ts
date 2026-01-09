@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Honsi
  *
  *  A commercial license may be required depending on use.
@@ -24,7 +24,6 @@ import type {
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type { StackOverflowValue } from '../../Core/Axis/Stacking/StackingOptions';
 import type StreamgraphPointOptions from './StreamgraphPointOptions';
-import type StreamgraphSeries from './StreamgraphSeries';
 
 /* *
  *
@@ -168,7 +167,7 @@ export interface StreamgraphSeriesOptions extends AreaSplineSeriesOptions {
 
     stacking?: StackOverflowValue;
 
-    states?: SeriesStatesOptions<StreamgraphSeries>;
+    states?: SeriesStatesOptions<StreamgraphSeriesOptions>;
 
     marker?: PointMarkerOptions;
 

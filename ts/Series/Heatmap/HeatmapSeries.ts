@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Honsi
  *
  *  A commercial license may be required depending on use.
@@ -445,7 +445,7 @@ class HeatmapSeries extends ScatterSeries {
             const stateOptions = merge(
                 seriesOptions.states?.[state],
                 seriesOptions.marker?.states?.[state],
-                point?.options.states?.[state] || {}
+                point?.options.marker?.states?.[state] || {}
             );
 
             attr.fill =

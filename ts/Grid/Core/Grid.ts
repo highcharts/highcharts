@@ -2,7 +2,7 @@
  *
  *  Highcharts Grid class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -24,11 +24,14 @@
  * */
 
 import type {
+    ColumnSortingOrder,
+    IndividualColumnSortingOptions,
     Options,
     GroupedHeaderOptions,
     IndividualColumnOptions
 } from './Options';
 import type DataTableOptions from '../../Data/DataTableOptions';
+import type Column from './Table/Column';
 import type { ColumnDataType, NoIdColumnOptions } from './Table/Column';
 import type Popup from './UI/Popup.js';
 import type { DeepPartial } from '../../Shared/Types';
@@ -45,13 +48,17 @@ import Globals from './Globals.js';
 import TimeBase from '../../Shared/TimeBase.js';
 import Pagination from './Pagination/Pagination.js';
 
-const { makeHTMLElement, setHTMLContent } = GridUtils;
+const {
+    makeHTMLElement,
+    setHTMLContent,
+    createOptionsProxy
+} = GridUtils;
+
 const {
     defined,
     diffObjects,
     extend,
     fireEvent,
-    getStyle,
     merge,
     pick
 } = U;
@@ -406,10 +413,10 @@ export class Grid {
             );
         }
 
-        this.initialContainerHeight = getStyle(container, 'height', true) || 0;
-
         this.container = container;
+        this.container.style.minHeight = 0 + 'px';
         this.container.innerHTML = AST.emptyHTML;
+
         this.contentWrapper = makeHTMLElement('div', {
             className: Globals.getClassName('container')
         }, this.container);
@@ -462,6 +469,13 @@ export class Grid {
             this.options ?? defaultOptions,
             this.userOptions
         );
+
+        this.viewport?.columns.forEach((column: Column): void => {
+            column.options = createOptionsProxy(
+                this.columnOptionsMap?.[column.id]?.options ?? {},
+                this.options?.columnDefaults
+            );
+        });
 
         return diff;
     }
@@ -861,7 +875,9 @@ export class Grid {
         const flags = this.dirtyFlags;
 
         if (flags.has('grid')) {
-            return await this.render();
+            await this.render();
+            fireEvent(this, 'afterRedraw');
+            return;
         }
 
         const { viewport: vp, pagination } = this;
@@ -988,6 +1004,126 @@ export class Grid {
             overwrite,
             columnId
         });
+    }
+
+    /**
+     * Sets the sorting order for one or more columns. Provide the sortings
+     * in priority order. Use `null` to clear sorting.
+     *
+     * @param sortings
+     * The sorting definition in priority order.
+     */
+    public async setSorting(
+        sortings: Array<{
+            columnId: string;
+            order: ColumnSortingOrder;
+        }> | null
+    ): Promise<void> {
+        const viewport = this.viewport;
+        if (!viewport) {
+            return;
+        }
+
+        if (viewport.validator?.errorCell) {
+            return;
+        }
+
+        const normalized = (sortings || []).filter((sorting): boolean => !!(
+            sorting.columnId && sorting.order
+        ));
+
+        const sortingController = this.querying.sorting;
+        const previousSortings = sortingController.currentSortings || [];
+        const eventColumnIds = new Set<string>();
+        for (const sorting of previousSortings) {
+            if (sorting.columnId) {
+                eventColumnIds.add(sorting.columnId);
+            }
+        }
+        for (const sorting of normalized) {
+            eventColumnIds.add(sorting.columnId);
+        }
+
+        const eventColumns = Array.from(eventColumnIds)
+            .map((
+                columnId
+            ): { column: Column; order: ColumnSortingOrder } | null => {
+                const column = viewport.getColumn(columnId);
+                if (!column) {
+                    return null;
+                }
+                const order = normalized.find((sorting): boolean =>
+                    sorting.columnId === columnId
+                )?.order || null;
+                return { column, order };
+            })
+            .filter((
+                item
+            ): item is { column: Column; order: ColumnSortingOrder } =>
+                !!item
+            );
+
+        for (const { column, order } of eventColumns) {
+            [column, this].forEach((source): void => {
+                fireEvent(source, 'beforeSort', {
+                    target: column,
+                    order
+                });
+            });
+        }
+
+        sortingController.setSorting(normalized);
+        await viewport.updateRows();
+
+        const currentSortings = sortingController.currentSortings || [];
+        const hasMultiple = currentSortings.length > 1;
+
+        for (const column of viewport.columns) {
+            const sortingIndex = currentSortings.findIndex((
+                sorting
+            ): boolean => sorting.columnId === column.id);
+
+            if (sortingIndex !== -1 && currentSortings[sortingIndex].order) {
+                const sorting = currentSortings[sortingIndex];
+                const sortingOptions: IndividualColumnSortingOptions = {
+                    order: sorting.order
+                };
+
+                if (hasMultiple) {
+                    sortingOptions.priority = sortingIndex + 1;
+                }
+
+                column.setOptions({ sorting: sortingOptions });
+
+                if (!hasMultiple) {
+                    delete column.options.sorting?.priority;
+                }
+            } else {
+                delete column.options.sorting?.order;
+                delete column.options.sorting?.priority;
+                if (
+                    column.options.sorting &&
+                    Object.keys(column.options.sorting).length < 1
+                ) {
+                    delete column.options.sorting;
+                }
+            }
+
+            column.sorting?.refreshHeaderAttributes();
+        }
+
+        this.accessibility?.userSortedColumn(
+            currentSortings[0]?.order || null
+        );
+
+        for (const { column, order } of eventColumns) {
+            [column, this].forEach((source): void => {
+                fireEvent(source, 'afterSort', {
+                    target: column,
+                    order
+                });
+            });
+        }
     }
 
     private async render(): Promise<void> {
@@ -1222,7 +1358,7 @@ export class Grid {
             this.renderNoData();
         }
 
-        this.accessibility?.setA11yOptions();
+        this.renderAccessibility();
 
         // Render bottom pagination, footer pagination,
         // or custom container pagination (after table).
@@ -1235,6 +1371,22 @@ export class Grid {
         fireEvent(this, 'afterRenderViewport');
 
         this.viewport?.reflow();
+    }
+
+    /**
+     * Renders the Grid accessibility.
+     * @internal
+     */
+    private renderAccessibility(): void {
+        const accessibility = this.accessibility;
+
+        if (!accessibility) {
+            return;
+        }
+
+        accessibility.setA11yOptions();
+        accessibility.addScreenReaderSection('before');
+        accessibility.addScreenReaderSection('after');
     }
 
     /**

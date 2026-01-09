@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Honsi
  *
  *  A commercial license may be required depending on use.
@@ -16,7 +16,6 @@
  * */
 
 import type AreaRangeSeriesOptions from '../AreaRange/AreaRangeSeriesOptions';
-import type ColumnRangeSeries from './ColumnRangeSeries';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 
 /* *
@@ -27,7 +26,7 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 
 interface ColumnRangeSeriesOptions extends AreaRangeSeriesOptions {
     minPointLength?: number;
-    states?: SeriesStatesOptions<ColumnRangeSeries>;
+    states?: SeriesStatesOptions<ColumnRangeSeriesOptions>;
 }
 
 /* *

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Grzegorz Blachlinski, Sebastian Bochan
  *
  *  A commercial license may be required depending on use.
@@ -23,7 +23,6 @@ import type NetworkgraphSeriesOptions from '../Networkgraph/NetworkgraphSeriesOp
 import type PackedBubbleDataLabelOptions from './PackedBubbleDataLabelOptions';
 import type PackedBubbleLayout from './PackedBubbleLayout';
 import type PackedBubblePointOptions from './PackedBubblePointOptions';
-import type PackedBubbleSeries from './PackedBubbleSeries';
 import type {
     SeriesEventsOptions,
     SeriesStatesOptions
@@ -204,7 +203,7 @@ export interface PackedBubbleSeriesOptions
 
     sizeBy?: BubbleSizeByValue;
 
-    states?: SeriesStatesOptions<PackedBubbleSeries>;
+    states?: SeriesStatesOptions<PackedBubbleSeriesOptions>;
     stickyTracking: false;
     tooltip?: Partial<TooltipOptions>;
 
