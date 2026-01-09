@@ -32,6 +32,7 @@ import CellContent from '../CellContent/CellContent.js';
 
 import Utils from '../../../../Core/Utilities.js';
 const {
+    defined,
     fireEvent
 } = Utils;
 
@@ -68,6 +69,17 @@ class TableCell extends Cell {
      */
     public content?: CellContent;
 
+    /**
+     * A token used to prevent stale async responses from overwriting cell
+     * data. In virtualized grids, cells are reused as rows scroll in/out of
+     * view. If a cell starts an async value fetch for row A, then gets reused
+     * for row B before the fetch completes, the stale response for row A
+     * could incorrectly overwrite row B's data. This token is incremented
+     * before each async fetch, and checked when the fetch completes - if the
+     * token has changed, the response is discarded as stale.
+     */
+    private asyncFetchToken: number = 0;
+
 
     /* *
     *
@@ -103,9 +115,9 @@ class TableCell extends Cell {
     /**
      * Renders the cell by appending it to the row and setting its value.
      */
-    public override render(): void {
-        super.render();
-        void this.setValue();
+    public override async render(): Promise<void> {
+        await super.render();
+        await this.setValue();
     }
 
     /**
@@ -137,9 +149,27 @@ class TableCell extends Cell {
      * `false`, meaning the table will not be updated.
      */
     public async setValue(
-        value: DataTable.CellType = this.column.data?.[this.row.index],
+        value?: DataTable.CellType,
         updateTable: boolean = false
     ): Promise<void> {
+        const fetchToken = ++this.asyncFetchToken;
+
+        // TODO: Find a better way to show the cell value being updated.
+        this.htmlElement.style.opacity = '0.1';
+
+        if (!defined(value)) {
+            value = await this.column.viewport.grid.dataProvider?.getValue(
+                this.column.id,
+                this.row.index
+            );
+
+            // Discard stale response if cell was reused for a different row
+            if (fetchToken !== this.asyncFetchToken) {
+                this.htmlElement.style.opacity = '';
+                return;
+            }
+        }
+
         this.value = value;
 
         if (updateTable && await this.updateDataTable()) {
@@ -162,6 +192,9 @@ class TableCell extends Cell {
         // Add custom class name from column options
         this.setCustomClassName(this.column.options.cells?.className);
 
+        // TODO: Remove this after the first part was implemented.
+        this.htmlElement.style.opacity = '';
+
         fireEvent(this, 'afterRender', { target: this });
     }
 
@@ -175,33 +208,37 @@ class TableCell extends Cell {
      * the cell's content.
      */
     private async updateDataTable(): Promise<boolean> {
-        if (this.column.data?.[this.row.index] === this.value) {
+        const oldValue = await this.column.viewport.grid.dataProvider?.getValue(
+            this.column.id,
+            this.row.index
+        );
+
+        if (oldValue === this.value) {
             // Abort if the value is the same as in the data table.
             return false;
         }
 
         const vp = this.column.viewport;
-        const { dataTable: originalDataTable } = vp.grid;
+        const { dataProvider: dp } = vp.grid;
 
-        const rowTableIndex =
-            this.row.id &&
-            originalDataTable?.getLocalRowIndex(this.row.id);
+        const rowId = this.row.id && await dp?.getRowIndex(this.row.id);
 
-        if (!originalDataTable || rowTableIndex === void 0) {
+        if (!dp || rowId === void 0) {
             return false;
         }
 
         this.row.data[this.column.id] = this.value;
-        originalDataTable.setCell(
+        await dp.setValue(
+            this.value,
             this.column.id,
-            rowTableIndex,
-            this.value
+            rowId
         );
 
         // If no modifiers, don't update all rows
-        if (vp.grid.dataTable === vp.grid.presentationTable) {
-            return false;
-        }
+        // TODO: Handle this differently
+        // if (vp.grid.dataTable === vp.grid.presentationTable) {
+        //     return false;
+        // }
 
         await vp.updateRows();
         return true;
@@ -251,12 +288,12 @@ class TableCell extends Cell {
         });
     }
 
-    protected override onMouseOver(): void {
+    public override onMouseOver(): void {
         this.row.viewport.grid.hoverRow(this.row.index);
         super.onMouseOver();
     }
 
-    protected override onMouseOut(): void {
+    public override onMouseOut(): void {
         this.row.viewport.grid.hoverRow();
         super.onMouseOut();
     }

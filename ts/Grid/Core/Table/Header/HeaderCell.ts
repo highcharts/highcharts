@@ -167,7 +167,7 @@ class HeaderCell extends Cell {
     /**
      * Render the cell container.
      */
-    public override render(): void {
+    public override async render(): Promise<void> {
         const { column } = this;
         const options = createOptionsProxy(
             this.superColumnOptions,
@@ -242,6 +242,8 @@ class HeaderCell extends Cell {
         this.setCustomClassName(options.header?.className);
 
         fireEvent(this, 'afterRender', { column });
+
+        return Promise.resolve();
     }
 
     public override reflow(): void {
@@ -263,7 +265,7 @@ class HeaderCell extends Cell {
         this.toolbar?.reflow();
     }
 
-    protected override onKeyDown(e: KeyboardEvent): void {
+    public override onKeyDown(e: KeyboardEvent): void {
         if (!this.column || e.target !== this.htmlElement) {
             return;
         }
@@ -277,7 +279,7 @@ class HeaderCell extends Cell {
         super.onKeyDown(e);
     }
 
-    protected override onClick(e: MouseEvent): void {
+    public override onClick(e: MouseEvent): void {
         const column = this.column;
 
         if (

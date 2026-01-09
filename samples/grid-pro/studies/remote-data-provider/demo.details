@@ -1,0 +1,6 @@
+---
+ name: Remote data provider
+ authors:
+   - Dawid Dragula
+ js_wrap: b
+...

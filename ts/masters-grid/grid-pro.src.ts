@@ -50,8 +50,11 @@ import PaginationComposition from '../Grid/Pro/Pagination/PaginationComposition.
 import Pagination from '../Grid/Core/Pagination/Pagination.js';
 import CellContentPro from '../Grid/Pro/CellRendering/CellContentPro.js';
 import CellRenderer from '../Grid/Pro/CellRendering/CellRenderer.js';
+import RemoteFetchHelper from '../Grid/Pro/Data/RemoteFetchHelper.js';
 
 import Popup from '../Grid/Core/UI/Popup.js';
+
+import DataProviderRegistry from '../Grid/Core/Data/DataProviderRegistry.js';
 
 
 /* *
@@ -91,6 +94,9 @@ import '../Grid/Pro/CellRendering/Renderers/TimeInputRenderer.js';
 import '../Grid/Pro/CellRendering/Renderers/SparklineRenderer.js';
 import '../Grid/Pro/CellRendering/Renderers/NumberInputRenderer.js';
 
+import '../Grid/Core/Data/LocalDataProvider.js';
+import '../Grid/Pro/Data/RemoteDataProvider.js';
+
 
 /* *
  *
@@ -111,6 +117,7 @@ const G = {
     DataCursor,
     DataModifier,
     DataPool,
+    DataProviderRegistry,
     DataTable,
     defaultOptions: Defaults.defaultOptions,
     Grid: _Grid,
@@ -122,6 +129,7 @@ const G = {
     Pagination,
     Popup,
     product: 'Grid Pro',
+    RemoteFetchHelper,
     setOptions: Defaults.setOptions,
     SvgIcons,
     Table,
@@ -157,6 +165,7 @@ export {
     DataConverter,
     DataCursor,
     DataModifier,
+    DataProviderRegistry,
     DataPool,
     DataTable,
     _Grid as Grid,
@@ -164,6 +173,7 @@ export {
     _Options as Options,
     Pagination,
     Popup,
+    RemoteFetchHelper,
     SvgIcons,
     Table,
     TableCell,
