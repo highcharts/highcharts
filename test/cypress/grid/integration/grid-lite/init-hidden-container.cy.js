@@ -6,7 +6,7 @@ describe('Grid init in a hidden container.', () => {
         cy.get('#outer').should('have.css', 'display', 'none');
 
         // Historically the header containers could end up with `hcg-no-width`
-        // when initialized in display:none.
+        // when initialized in display:none (#24002).
         cy.get('.hcg-header-cell-container.hcg-no-width').should('exist');
 
         // Wait until the sample shows the container and forces a reflow.
