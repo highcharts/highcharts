@@ -1053,13 +1053,6 @@ class Chart {
             for (let i = fromIndex, iEnd = collection.length; i < iEnd; ++i) {
                 const item = collection[i];
                 if (item) {
-                    /**
-                     * Contains the series' index in the `Chart.series` array.
-                     *
-                     * @name Highcharts.Series#index
-                     * @type {number}
-                     * @readonly
-                     */
                     item.index = i;
 
                     if (item instanceof Series) {
@@ -2839,15 +2832,7 @@ class Chart {
                 linkedParent.linkedParent !== series
             ) {
                 linkedParent.linkedSeries.push(series);
-                /**
-                 * The parent series of the current series, if the current
-                 * series has a [linkedTo](https://api.highcharts.com/highcharts/series.line.linkedTo)
-                 * setting.
-                 *
-                 * @name Highcharts.Series#linkedParent
-                 * @type {Highcharts.Series}
-                 * @readonly
-                 */
+
                 series.linkedParent = linkedParent;
 
                 if (linkedParent.enabledDataSorting) {

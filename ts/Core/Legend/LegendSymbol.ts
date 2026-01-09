@@ -52,6 +52,13 @@ declare module '../Series/PointBase' {
 
 declare module '../Series/SeriesBase' {
     interface SeriesBase extends LegendItem {
+        /**
+         * Legend data for the series.
+         *
+         * @since 10.3.0
+         */
+        legendItem?: LegendItem['legendItem'];
+
         /** @internal */
         drawLegendSymbol: (
             legend: Legend,

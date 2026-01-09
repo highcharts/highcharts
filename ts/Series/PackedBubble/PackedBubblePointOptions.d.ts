@@ -18,6 +18,7 @@
 import type BubblePointOptions from '../Bubble/BubblePointOptions';
 import type NetworkgraphPointOptions from '../Networkgraph/NetworkgraphPointOptions';
 import type PackedBubbleDataLabelOptions from './PackedBubbleDataLabelOptions';
+import type { PointDataLabelOptionsModifier } from '../../Core/Series/DataLabel';
 
 /* *
  *
@@ -33,11 +34,17 @@ export interface PackedBubblePointOptions
      *
      * @product highcharts
      */
-    dataLabels?: (PackedBubbleDataLabelOptions|Array<PackedBubbleDataLabelOptions>);
+    dataLabels?: (
+        PackedBubblePointDataLabelOptions |
+        Array<PackedBubblePointDataLabelOptions>
+    );
 
     mass?: number;
 
 }
+
+export type PackedBubblePointDataLabelOptions =
+    PackedBubbleDataLabelOptions & PointDataLabelOptionsModifier;
 
 /* *
  *
