@@ -195,7 +195,6 @@ class DataTableCore {
      */
     public getColumn(
         columnId: string,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         asReference?: true
     ): (DataTable.Column|undefined) {
         return this.columns[columnId];
@@ -214,7 +213,6 @@ class DataTableCore {
      */
     public getColumns(
         columnIds?: Array<string>,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         asReference?: true
     ): DataTable.ColumnCollection {
         return (columnIds || Object.keys(this.columns)).reduce(

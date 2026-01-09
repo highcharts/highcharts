@@ -50,6 +50,8 @@ declare module '../../Core/Axis/AxisBase' {
 
 declare module '../../Core/Axis/TickBase' {
     interface TickBase {
+        xOrig?: number;
+        yOrig?: number;
         postTranslate(
             xy: PositionObject,
             xOrY: keyof PositionObject,
@@ -140,10 +142,11 @@ function onTickAfterGetPosition(
     }
 ): void {
     const axis = this.axis,
-        xOrY: keyof PositionObject = axis.horiz ? 'x' : 'y';
+        xOrY: keyof PositionObject = axis.horiz ? 'x' : 'y',
+        origKey = xOrY ? 'xOrig' : 'yOrig';
 
     if (axis.variwide) {
-        (this as any)[xOrY + 'Orig'] = e.pos[xOrY];
+        this[origKey] = e.pos[xOrY];
         this.postTranslate(e.pos, xOrY, this.pos);
     }
 }
@@ -182,21 +185,20 @@ function wrapTickGetLabelPosition(
     _y: number,
     _label: SVGElement,
     horiz: boolean,
-    /* eslint-disable @typescript-eslint/no-unused-vars */
     _labelOptions: DataLabelOptions,
     _tickmarkOffset: number,
     _index: number
-    /* eslint-enable @typescript-eslint/no-unused-vars */
 ): PositionObject {
     const args = Array.prototype.slice.call(arguments, 1),
-        xOrY: keyof PositionObject = horiz ? 'x' : 'y';
+        xOrY: keyof PositionObject = horiz ? 'x' : 'y',
+        origKey = xOrY ? 'xOrig' : 'yOrig';
 
     // Replace the x with the original x
     if (
         this.axis.variwide &&
-        typeof (this as any)[xOrY + 'Orig'] === 'number'
+        typeof this[origKey] === 'number'
     ) {
-        args[horiz ? 0 : 1] = (this as any)[xOrY + 'Orig'];
+        args[horiz ? 0 : 1] = this[origKey];
     }
 
     const xy = proceed.apply(this, args);

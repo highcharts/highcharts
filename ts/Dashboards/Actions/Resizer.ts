@@ -16,7 +16,6 @@
 import type {
     HTMLDOMElement
 } from '../../Core/Renderer/DOMElementType';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type JSON from '../JSON';
 import type Cell from '../Layout/Cell.js';
 import type Serializable from '../Serializable';

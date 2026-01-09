@@ -421,7 +421,6 @@ abstract class Component {
      * The sidebar popup.
      */
     public getOptionsOnDrop(
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         sidebar: SidebarPopup
     ): Partial<ComponentType['options']> {
         return {};

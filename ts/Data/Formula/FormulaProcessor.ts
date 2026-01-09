@@ -597,7 +597,6 @@ function processFormula(formula: Formula, table?: DataTable): Value {
 function processFunction(
     formulaFunction: Function,
     table?: DataTable,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     reference?: Reference // @todo
 ): (Value|Array<Value>) {
     const processor = processorFunctions[formulaFunction.name];

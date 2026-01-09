@@ -28,7 +28,6 @@ const {
     },
     hlc: {
         prototype: {
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             pointClass: HLCPoint
         }
     }

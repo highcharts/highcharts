@@ -230,7 +230,6 @@ class SortToolbarButton extends ToolbarButton {
         );
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     protected override renderActiveIndicator(render: boolean): void {
         // Sorting uses directional icons + priority indicators
         // (for multi-sort), not the generic active dot indicator

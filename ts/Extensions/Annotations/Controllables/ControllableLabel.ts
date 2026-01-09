@@ -458,7 +458,6 @@ class ControllableLabel extends Controllable {
      * options.
      */
     public anchor(
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         _point: AnnotationPointType
     ): ControlTarget.Anchor {
         const anchor = super.anchor.apply(this, arguments),

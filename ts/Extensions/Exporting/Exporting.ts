@@ -637,7 +637,6 @@ class Exporting {
      */
     public static sanitizeSVG(
         svg: string,
-        /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
         options?: Options
     ): string {
         const split = svg.indexOf('</svg>') + 6,
