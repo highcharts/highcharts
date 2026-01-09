@@ -254,14 +254,13 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * Since v11, CSS variables on the form `--highcharts-color-{n}` make
      * changing the color scheme very convenient.
      *
-     * @sample    {highcharts} highcharts/css/colorindex/ Series and point color
-     *            index
+     * @sample    {highcharts} highcharts/css/colorindex/
+     *            Series and point color index
      *
      * @type      {number}
      * @since     5.0.0
      * @apioption plotOptions.series.colorIndex
      */
-
 
     /**
      * Whether to connect a graph line across null points, or render a gap
@@ -280,7 +279,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @product   highcharts highstock
      * @apioption plotOptions.series.connectNulls
      */
-
 
     /**
      * You can set the cursor to "pointer" if you have click events attached
@@ -353,6 +351,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @since     5.0.0
      * @requires  modules/accessibility
      * @apioption plotOptions.series.description
+     * @deprecated 8.0.0
      */
 
     /**
