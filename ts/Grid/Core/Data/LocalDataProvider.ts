@@ -21,7 +21,7 @@ import type { ColumnDataType } from '../Table/Column';
 import { DataProvider } from './DataProvider.js';
 import DataTable from '../../../Data/DataTable.js';
 import ChainModifier from '../../../Data/Modifiers/ChainModifier.js';
-import { registerDataProvider } from './DataProviderRegistry';
+import DataProviderRegistry from './DataProviderRegistry';
 
 
 export class LocalDataProvider extends DataProvider {
@@ -203,4 +203,4 @@ declare module './DataProviderType' {
     }
 }
 
-registerDataProvider('local', LocalDataProvider);
+DataProviderRegistry.registerDataProvider('local', LocalDataProvider);

@@ -39,7 +39,7 @@ import type { DeepPartial } from '../../Shared/Types';
 
 import Accessibility from './Accessibility/Accessibility.js';
 import AST from '../../Core/Renderer/HTML/AST.js';
-import * as DataProviderRegistry from './Data/DataProviderRegistry.js';
+import DataProviderRegistry from './Data/DataProviderRegistry.js';
 import { defaultOptions } from './Defaults.js';
 import GridUtils from './GridUtils.js';
 import Table from './Table/Table.js';

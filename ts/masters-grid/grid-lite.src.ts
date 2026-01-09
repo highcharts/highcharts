@@ -36,6 +36,7 @@ import CreditsLiteComposition from '../Grid/Lite/Credits/CreditsLiteComposition.
 import Utilities from '../Core/Utilities.js';
 import SvgIcons from '../Grid/Core/UI/SvgIcons.js';
 import Pagination from '../Grid/Core/Pagination/Pagination.js';
+import DataProviderRegistry from '../Grid/Core/Data/DataProviderRegistry.js';
 
 // Fill registries
 import '../Data/Connectors/CSVConnector.js';
@@ -65,6 +66,7 @@ const G = {
     DataCursor,
     DataModifier,
     DataPool,
+    DataProviderRegistry,
     DataTable,
     defaultOptions: Defaults.defaultOptions,
     Grid: _Grid,
@@ -99,6 +101,7 @@ export {
     DataCursor,
     DataModifier,
     DataPool,
+    DataProviderRegistry,
     DataTable,
     _Grid as Grid,
     _Options as Options,

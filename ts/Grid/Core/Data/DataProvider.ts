@@ -118,3 +118,12 @@ export abstract class DataProvider {
 export interface DataProviderOptions {
     providerType: string;
 }
+
+
+/* *
+ *
+ * Default Export
+ *
+ * */
+
+export default DataProvider;

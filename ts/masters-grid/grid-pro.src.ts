@@ -54,7 +54,7 @@ import RemoteFetchHelper from '../Grid/Pro/Data/RemoteFetchHelper.js';
 
 import Popup from '../Grid/Core/UI/Popup.js';
 
-import * as DataProviderRegistry from '../Grid/Core/Data/DataProviderRegistry.js';
+import DataProviderRegistry from '../Grid/Core/Data/DataProviderRegistry.js';
 
 
 /* *

@@ -16,10 +16,10 @@
 import type DT from '../../../Data/DataTable';
 import type { DataProviderOptions } from '../../Core/Data/DataProvider';
 import type { ColumnDataType } from '../../Core/Table/Column';
+import type QueryingController from '../../Core/Querying/QueryingController';
 
 import { DataProvider } from '../../Core/Data/DataProvider.js';
-import { registerDataProvider } from '../../Core/Data/DataProviderRegistry';
-import QueryingController from '../../Core/Querying/QueryingController';
+import DataProviderRegistry from '../../Core/Data/DataProviderRegistry';
 
 
 export class RemoteDataProvider extends DataProvider {
@@ -477,4 +477,4 @@ declare module '../../Core/Data/DataProviderType' {
     }
 }
 
-registerDataProvider('remote', RemoteDataProvider);
+DataProviderRegistry.registerDataProvider('remote', RemoteDataProvider);

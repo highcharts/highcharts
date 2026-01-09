@@ -62,3 +62,8 @@ export function registerDataProvider<T extends keyof DataProviderTypeRegistry>(
         !!(types[key] = DataProviderClass)
     );
 }
+
+export default {
+    registerDataProvider,
+    types
+} as const;
