@@ -891,8 +891,13 @@ export async function getDemoTS(
 }
 
 // Function to get CSS from template
-export async function getDemoCSS() {
-    const css = await loadTemplate('demo.css');
+export async function getDemoCSS(config: SampleGeneratorConfig) {
+    let css = await loadTemplate('demo.css');
+
+    if (config.chartOptionsExtra?.chart?.styledMode) {
+        css = '@import url("https://code.highcharts.com/css/highcharts.css");\n\n' + css;
+    }
+
     return css;
 }
 
@@ -963,7 +968,7 @@ export async function saveDemoFile(config: SampleGeneratorConfig) {
     // Build all assets in parallel based on per-path mainTypes
     const [html, css, ts, details] = await Promise.all([
         getDemoHTML(config, metaList),
-        getDemoCSS(),
+        getDemoCSS(config),
         getDemoTS(config, metaList),
         getDemoDetails(config)
     ]);
