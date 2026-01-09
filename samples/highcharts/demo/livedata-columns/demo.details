@@ -1,7 +1,11 @@
 ---
- name: Highcharts Demo
+ name: URL polling
  authors:
    - Torstein Hønsi
  requiresManualTesting: true
  js_wrap: b
+ tags:
+  - Highcharts demo
+ categories:
+  - Data
 ...

@@ -2897,7 +2897,7 @@ export default Data;
  * An URL to a remote CSV dataset. Will be fetched when the chart is created
  * using Ajax.
  *
- * @sample highcharts/data/livedata-columns
+ * @sample highcharts/demo/livedata-columns
  *         Categorized bar chart with CSV and live polling
  * @sample highcharts/data/livedata-csv
  *         Time based line chart with CSV and live polling
@@ -2921,7 +2921,7 @@ export default Data;
  * A URL to a remote JSON dataset, structured as a column array.
  * Will be fetched when the chart is created using Ajax.
  *
- * @sample highcharts/data/livedata-columns
+ * @sample highcharts/demo/livedata-columns
  *         Columns with live polling
  *
  * @type      {string}
@@ -2958,7 +2958,7 @@ export default Data;
  *
  * @sample highcharts/demo/live-data
  *         Live data
- * @sample highcharts/data/livedata-columns
+ * @sample highcharts/demo/livedata-columns
  *         Categorized bar chart with CSV and live polling
  *
  * @type      {boolean}
