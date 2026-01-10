@@ -65,6 +65,7 @@ class NATRIndicator extends ATRIndicator {
      * @since        7.0.0
      * @product      highstock
      * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/atr
      * @requires     stock/indicators/natr
      * @optionparent plotOptions.natr
      */

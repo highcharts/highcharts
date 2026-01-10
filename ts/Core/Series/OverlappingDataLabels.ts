@@ -280,7 +280,7 @@ function hideOrShow(label: SVGElement, chart: Chart): boolean {
                 isLabelAffected = true;
 
                 // Animate or set the opacity
-                label[label.isOld ? 'animate' : 'attr'](
+                label[label.isOld || label.placed ? 'animate' : 'attr'](
                     { opacity: newOpacity },
                     void 0,
                     complete
@@ -356,7 +356,10 @@ function onChartRender(
 
                                 // Pie labels outside have a separate placement
                                 // logic, skip the overlap logic
-                                Number(options.distance) > 0
+                                (
+                                    series.is('pie') &&
+                                    Number(options.distance) > 0
+                                )
                             ) {
                                 label.oldOpacity = label.opacity;
                                 label.newOpacity = 1;

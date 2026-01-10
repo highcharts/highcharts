@@ -20,7 +20,6 @@
 import type HLCSeriesOptions from './HLCSeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import HLCPoint from './HLCPoint.js';
@@ -120,14 +119,14 @@ class HLCSeries extends ColumnSeries {
     }
 
     /**
-     * Function to create SVGPath of the point based on the
-     * plot positions of this point.
+     * Function to create SVGPath of the point based on the plot positions of
+     * this point.
      * @private
      */
-    protected getPointPath(point: HLCPoint, graphic: SVGElement): SVGPath {
+    protected getPointPath(point: HLCPoint): SVGPath {
         // Crisp vector coordinates
-        const strokeWidth = graphic.strokeWidth(),
-            series = point.series,
+        const series = point.series,
+            strokeWidth = series.borderWidth,
             // #2596:
             crispX = crisp(point.plotX || 0, strokeWidth),
             halfWidth = Math.round((point.shapeArgs as any).width / 2);
@@ -149,51 +148,6 @@ class HLCSeries extends ColumnSeries {
             series.extendStem(path, strokeWidth / 2, plotClose);
         }
         return path;
-    }
-
-
-    /**
-     * Draw single point
-     * @private
-     */
-    public drawSinglePoint(point: HLCPoint): void {
-        const series = point.series,
-            chart = series.chart;
-
-        let path: SVGPath,
-            graphic = point.graphic;
-
-        if (typeof point.plotY !== 'undefined') {
-
-            // Create and/or update the graphic
-            if (!graphic) {
-                point.graphic = graphic = chart.renderer.path()
-                    .add(series.group);
-            }
-
-            if (!chart.styledMode) {
-                graphic.attr(
-                    series.pointAttribs(
-                        point,
-                        (point.selected && 'select') as any
-                    )
-                ); // #3897
-            }
-
-            // Crisp vector coordinates
-            path = series.getPointPath(point, graphic);
-            graphic[!graphic ? 'attr' : 'animate']({ d: path })
-                .addClass(point.getClassName(), true);
-
-        }
-    }
-
-    /**
-     * Draw the data points
-     * @private
-     */
-    public drawPoints(): void {
-        this.points.forEach(this.drawSinglePoint);
     }
 
     /**
@@ -243,13 +197,18 @@ class HLCSeries extends ColumnSeries {
             translated = names.map(
                 (name: string): string =>
                     `plot${name.charAt(0).toUpperCase() + name.slice(1)}`
-            );
+            ),
+            lineWidth = series.options.lineWidth ?? 1;
         translated.push('yBottom');
         names.push('low');
         super.translate.apply(series);
 
+        series.borderWidth = lineWidth;
+
         // Do the translation
-        series.points.forEach(function (point): void {
+        series.points.concat(
+            series.condemnedPoints as Array<HLCPoint>
+        ).forEach((point): void => {
             names.forEach(
                 function (name: string, i: number): void {
                     let value = (point as any)[name];
@@ -262,8 +221,20 @@ class HLCSeries extends ColumnSeries {
                     }
                 });
 
-            // Align the tooltip to the high value to avoid covering the
-            // point
+            // The data label box
+            const {
+                x = 0,
+                y = 0,
+                width = 0,
+                height = 0
+            } = point.shapeArgs || {};
+            point.dlBox = { x, y, width, height };
+
+            // The new shape args overwrite those of ColumnSeries
+            point.shapeType = 'path';
+            point.shapeArgs = { d: series.getPointPath(point) };
+
+            // Align the tooltip to the high value to avoid covering the point
             (point.tooltipPos as any)[1] =
                 (point.plotHigh as any) + yAxis.pos - series.chart.plotTop;
         });

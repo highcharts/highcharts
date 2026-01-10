@@ -276,11 +276,12 @@ declare module '../Series/SeriesBase' {
  * @param {Highcharts.Options} options
  *        The chart options structure.
  *
- * @param {Highcharts.ChartCallbackFunction} [callback]
+ * @param {Highcharts.ChartCallbackFunction|true} [callback]
  *        Function to run when the chart has loaded and all external images
  *        are loaded. Defining a
  *        [chart.events.load](https://api.highcharts.com/highcharts/chart.events.load)
- *        handler is equivalent.
+ *        handler is equivalent. Set to `true` to return a promise that resolves
+ *        when the chart is ready.
  */
 class Chart {
 
@@ -295,10 +296,19 @@ class Chart {
         callback?: Chart.CallbackFunction
     ): Chart;
     public static chart(
+        options: Partial<Options>,
+        callback: true
+    ): Promise<Chart>;
+    public static chart(
         renderTo: (string|globalThis.HTMLElement),
         options: Partial<Options>,
         callback?: Chart.CallbackFunction
     ): Chart;
+    public static chart(
+        renderTo: (string|globalThis.HTMLElement),
+        options: Partial<Options>,
+        callback: true
+    ): Promise<Chart>;
     /**
      * Factory function for basic charts.
      *
@@ -321,21 +331,23 @@ class Chart {
      * @param {Highcharts.Options} options
      * The chart options structure.
      *
-     * @param {Highcharts.ChartCallbackFunction} [callback]
+     * @param {Highcharts.ChartCallbackFunction|true} [callback]
      * Function to run when the chart has loaded and all external images are
      * loaded. Defining a
      * [chart.events.load](https://api.highcharts.com/highcharts/chart.events.load)
-     * handler is equivalent.
+     * handler is equivalent. Set to `true` to return a promise that resolves
+     * when the chart is ready.
      *
      * @return {Highcharts.Chart}
      * Returns the Chart object.
      */
     public static chart(
-        a: (string|globalThis.HTMLElement|Partial<Options>),
-        b?: (Chart.CallbackFunction|Partial<Options>),
-        c?: Chart.CallbackFunction
-    ): Chart {
-        return new Chart(a as any, b as any, c);
+        a: string|globalThis.HTMLElement|Partial<Options>,
+        b?: Chart.CallbackFunction|true|Partial<Options>,
+        c?: Chart.CallbackFunction|true
+    ): Chart|Promise<Chart> {
+        const chart = new Chart(a as any, b as any, c);
+        return chart.promise || chart;
     }
 
     /* *
@@ -347,20 +359,20 @@ class Chart {
     // Definitions
     public constructor(
         options: Partial<Options>,
-        callback?: Chart.CallbackFunction
+        callback?: Chart.CallbackFunction|true
     );
     public constructor(
         renderTo: (string|globalThis.HTMLElement),
         options: Partial<Options>,
-        callback?: Chart.CallbackFunction
+        callback?: Chart.CallbackFunction|true
     );
 
     // Implementation
     public constructor(
-        a: (string|globalThis.HTMLElement|Partial<Options>),
+        a: string|globalThis.HTMLElement|Partial<Options>,
         /* eslint-disable @typescript-eslint/no-unused-vars */
-        b?: (Chart.CallbackFunction|Partial<Options>),
-        c?: Chart.CallbackFunction
+        b?: Chart.CallbackFunction|true|Partial<Options>,
+        c?: Chart.CallbackFunction|true
         /* eslint-enable @typescript-eslint/no-unused-vars */
     ) {
         const args = [
@@ -604,6 +616,9 @@ class Chart {
     public pointer?: Pointer;
 
     /** @internal */
+    public promise?: Promise<Chart>;
+
+    /** @internal */
     public reflowTimeout?: number;
 
     /**
@@ -774,16 +789,17 @@ class Chart {
      * @param {Highcharts.Options} userOptions
      *        Custom options.
      *
-     * @param {Function} [callback]
+     * @param {Function|true} [callback]
      *        Function to run when the chart has loaded and all external
-     *        images are loaded.
+     *        images are loaded. Set to `true` to return a promise that
+     *        resolves when the chart is ready.
      *
      * @emits Highcharts.Chart#event:init
      * @emits Highcharts.Chart#event:afterInit
      */
     public init(
         userOptions: Partial<Options>,
-        callback?: Chart.CallbackFunction
+        callback?: Chart.CallbackFunction|true
     ): void {
 
         // Fire the event with a default function
@@ -829,7 +845,15 @@ class Chart {
             // considered for anti-collision
             this.labelCollectors = [];
 
-            this.callback = callback;
+            // Create a promise to be resolved later
+            if (callback === true) {
+                this.promise = new Promise<Chart>((resolve): void => {
+                    this.callback = resolve;
+                });
+            } else {
+                this.callback = callback;
+            }
+
             this.isResizing = 0;
 
             /**
@@ -981,37 +1005,6 @@ class Chart {
             series.init(chart, options);
         }
         return series;
-    }
-
-    /**
-     * Internal function to set data for all series with enabled sorting.
-     *
-     * @internal
-     * @function Highcharts.Chart#setSortedData
-     */
-    public setSortedData(): void {
-        this.getSeriesOrderByLinks().forEach(function (series): void {
-            // We need to set data for series with sorting after series init
-            if (!series.points && !series.data && series.enabledDataSorting) {
-                series.setData(series.options.data as any, false);
-            }
-        });
-    }
-
-    /**
-     * Sort and return chart series in order depending on the number of linked
-     * series.
-     *
-     * @internal
-     * @function Highcharts.Series#getSeriesOrderByLinks
-     */
-    public getSeriesOrderByLinks(): Array<Series> {
-        return this.series.concat().sort(function (a, b): number {
-            if (a.linkedSeries.length || b.linkedSeries.length) {
-                return b.linkedSeries.length - a.linkedSeries.length;
-            }
-            return 0;
-        });
     }
 
     /**
@@ -1408,6 +1401,11 @@ class Chart {
 
         // Redraw if canvas
         renderer.draw();
+
+        // Save the existing state
+        axes.forEach((axis): void => {
+            axis.saveOld();
+        });
 
         // Fire the events
         fireEvent(chart, 'redraw');
@@ -2850,10 +2848,6 @@ class Chart {
                  */
                 series.linkedParent = linkedParent;
 
-                if (linkedParent.enabledDataSorting) {
-                    series.setDataSortingOptions();
-                }
-
                 series.visible = (
                     series.options.visible ??
                     linkedParent.options.visible ??
@@ -3204,7 +3198,6 @@ class Chart {
         );
 
         chart.linkSeries();
-        chart.setSortedData();
 
         // Run an event after axes and series are initialized, but before
         // render. At this stage, the series data is indexed and cached in the
@@ -3363,11 +3356,6 @@ class Chart {
 
                     chart.isDirtyLegend = true;
                     chart.linkSeries();
-
-                    if (series.enabledDataSorting) {
-                        // We need to call `setData` after `linkSeries`
-                        series.setData(options.data as any, false);
-                    }
 
                     fireEvent(chart, 'afterAddSeries', { series: series });
 
@@ -3898,12 +3886,12 @@ class Chart {
         // Certain options require the whole series structure to be thrown away
         // and rebuilt
         if (updateAllSeries) {
-            chart.getSeriesOrderByLinks().forEach(function (series): void {
+            chart.series.forEach((series): void => {
                 // Avoid removed navigator series
                 if (series.chart) {
                     series.update({}, false);
                 }
-            }, this);
+            });
         }
 
         // Update size. Redraw is forced.

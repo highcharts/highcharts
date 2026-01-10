@@ -38,6 +38,7 @@ import type DependencyWheelSeriesOptions from './DependencyWheelSeriesOptions';
  * @exclude      dataSorting, nodeAlignment, nodeDistance
  * @since        7.1.0
  * @product      highcharts
+ * @requires     modules/sankey
  * @requires     modules/dependency-wheel
  * @optionparent plotOptions.dependencywheel
  */
@@ -123,6 +124,7 @@ const DependencyWheelSeriesDefaults: DependencyWheelSeriesOptions = {
     startAngle: 0,
 
     dataLabels: {
+        allowOverlap: true,
         textPath: {
             /**
              * Enable or disable `textPath` option for link's or marker's data

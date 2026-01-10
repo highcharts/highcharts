@@ -269,6 +269,14 @@ class HeatmapSeries extends ScatterSeries {
     }
 
     /**
+     * Override to use rectangle by default
+     * @private
+     */
+    getSymbol(): void {
+        this.symbol = this.options.marker?.symbol || 'rect';
+    }
+
+    /**
      * @private
      */
     getExtremes(): DataExtremesObject {
@@ -578,9 +586,7 @@ extend(HeatmapSeries.prototype, {
      */
     alignDataLabel: ColumnSeries.prototype.alignDataLabel,
 
-    colorAttribs: ColorMapComposition.seriesMembers.colorAttribs,
-
-    getSymbol: Series.prototype.getSymbol
+    colorAttribs: ColorMapComposition.seriesMembers.colorAttribs
 
 });
 ColorMapComposition.compose(HeatmapSeries);

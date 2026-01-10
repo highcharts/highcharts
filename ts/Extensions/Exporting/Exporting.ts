@@ -618,6 +618,30 @@ class Exporting {
     }
 
     /**
+     * Prepare the SVG DOM for exporting
+     *
+     * @private
+     */
+    public static sanitizeDOM(
+        svg: SVGDOMElement
+    ): void {
+        // Increase the size of foreignObjects to avoid clipping when the
+        // applied font size in the export is larger than the on-screen font
+        // size.
+        svg.querySelectorAll('foreignObject').forEach((fo): void => {
+            ['width', 'height'].forEach((attr): void => {
+                const value = fo.getAttribute(attr);
+                if (value) {
+                    fo.setAttribute(
+                        attr,
+                        Math.ceil(parseInt(value, 10) * 1.15)
+                    );
+                }
+            });
+        });
+    }
+
+    /**
      * A collection of fixes on the produced SVG to account for expand
      * properties and browser bugs. Returns a cleaned SVG.
      *
@@ -640,31 +664,9 @@ class Exporting {
         /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
         options?: Options
     ): string {
-        const split = svg.indexOf('</svg>') + 6,
-            useForeignObject = svg.indexOf('<foreignObject') > -1;
-        let html = svg.substr(split);
-
-        // Remove any HTML added to the container after the SVG (#894, #9087)
-        svg = svg.substr(0, split);
-
-        if (useForeignObject) {
-            // Some tags needs to be closed in xhtml (#13726)
-            svg = svg.replace(/(<(?:img|br).*?(?=\>))>/g, '$1 />');
-
-        // Move HTML into a foreignObject
-        } else if (html && options?.exporting?.allowHTML) {
-            html = '<foreignObject x="0" y="0" ' +
-                    'width="' + options.chart.width + '" ' +
-                    'height="' + options.chart.height + '">' +
-                '<body xmlns="http://www.w3.org/1999/xhtml">' +
-                // Some tags needs to be closed in xhtml (#13726)
-                html.replace(/(<(?:img|br).*?(?=\>))>/g, '$1 />') +
-                '</body>' +
-                '</foreignObject>';
-            svg = svg.replace('</svg>', html + '</svg>');
-        }
-
         svg = svg
+            // Some tags needs to be closed in xhtml (#13726)
+            .replace(/(<(?:img|br).*?(?=\>))>/g, '$1 />')
             .replace(/zIndex="[^"]+"/g, '')
             .replace(/symbolName="[^"]+"/g, '')
             .replace(/jQuery\d+="[^"]+"/g, '')
@@ -1642,6 +1644,7 @@ class Exporting {
             this.inlineStyles();
         }
         this.resolveCSSVariables();
+        Exporting.sanitizeDOM(chart.renderer.box);
 
         return chart.container.innerHTML;
     }

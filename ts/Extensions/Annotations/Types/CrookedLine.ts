@@ -40,6 +40,7 @@ if (defaultOptions.annotations?.types) {
     *         Crooked line
     *
     * @product      highstock
+    * @requires     modules/annotations-advanced
     * @optionparent annotations.types.crookedLine
     */
     defaultOptions.annotations.types.crookedLine = {

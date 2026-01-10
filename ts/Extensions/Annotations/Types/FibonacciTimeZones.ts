@@ -41,6 +41,7 @@ if (defaultOptions.annotations?.types) {
          * @extends      annotations.types.crookedLine
          * @since        9.3.0
          * @product      highstock
+         * @requires     modules/annotations-advanced
          * @optionparent annotations.types.fibonacciTimeZones
          */
         {
