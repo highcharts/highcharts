@@ -3043,6 +3043,10 @@ class Chart {
             creds = merge(
                 true, this.options.credits as Chart.CreditsOptions, credits
             );
+        // If href is empty and no click callback is defined, use default href
+        if (!creds.events?.click && (!creds.href || creds.href === '')) {
+            creds.href = 'https://www.highcharts.com?credits';
+        }
         if (creds.enabled && !this.credits) {
 
             /**
@@ -3059,8 +3063,16 @@ class Chart {
                 0
             )
                 .addClass('highcharts-credits')
-                .on('click', function (): void {
-                    if (creds.href) {
+                .on('click', function (e: PointerEvent): void {
+                    // Fire custom click event if provided
+                    fireEvent(
+                        chart,
+                        'creditsClick',
+                        e as Event,
+                        creds.events?.click || void 0
+                    );
+                    // Navigate to href if provided and not empty
+                    if (creds.href && creds.href !== '') {
                         win.location.href = creds.href;
                     }
                 })
@@ -4660,6 +4672,26 @@ namespace Chart {
          * @default https://www.highcharts.com?credits
          */
         href?: string;
+
+        /**
+         * Events for the credits label.
+         *
+         * @declare Highcharts.CreditsEventsOptionsObject
+         */
+        events?: {
+            /**
+             * Callback function to handle click events on the credits label.
+             * If `href` is empty or undefined, this callback will be called
+             * without performing navigation.
+             *
+             * @sample {highcharts} highcharts/credits/events-click/
+             *         Custom click handler
+             *
+             * @param {Event} event
+             *        The click event object.
+             */
+            click?: (event: Event) => void;
+        };
 
         /**
          * Credits for map source to be concatenated with conventional credit
