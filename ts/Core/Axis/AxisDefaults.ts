@@ -504,6 +504,9 @@ namespace AxisDefaults {
          * For an overview of the string or object configuration, see
          * [dateFormat](/class-reference/Highcharts.Time#dateFormat).
          *
+         * For easier data interpretation, day and month ticks can have a higher
+         * rank format, which can be customized on the corresponding time unit.
+         *
          * Defaults to:
          * ```js
          * {
@@ -616,7 +619,13 @@ namespace AxisDefaults {
                  * @type {string|Highcharts.DateTimeFormatOptions}
                  * @apioption xAxis.dateTimeLabelFormats.day.main
                  */
-                main: '%[eb]'
+                main: '%[eb]',
+                /**
+                 * @type {string|Highcharts.DateTimeFormatOptions}
+                 * @default undefined
+                 * @apioption xAxis.dateTimeLabelFormats.day.higherRank
+                 */
+                higherRank: void 0
             },
             /**
              * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
@@ -650,7 +659,13 @@ namespace AxisDefaults {
                  * @type {string|Highcharts.DateTimeFormatOptions}
                  * @apioption xAxis.dateTimeLabelFormats.month.main
                  */
-                main: '%[bY]'
+                main: '%[bY]',
+                /**
+                 * @type {string|Highcharts.DateTimeFormatOptions}
+                 * @default undefined
+                 * @apioption xAxis.dateTimeLabelFormats.month.higherRank
+                 */
+                higherRank: void 0
             },
             /**
              * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
