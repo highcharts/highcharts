@@ -16,7 +16,8 @@
         "lib": [
             "DOM",
             "ES2016",
-            "ES2017.Object"
+            "ES2017.Object",
+            "ES2017.sharedMemory"
         ],
         // "jsx": "preserve",                                /* Specify what JSX code is generated. */
         // "experimentalDecorators": true,                   /* Enable experimental support for legacy experimental decorators. */
@@ -41,7 +42,8 @@
         // "types": [],                                      /* Specify type package names to be included without being referenced in a source file. */
         "types": [
             "jquery",
-            "trusted-types"
+            "trusted-types",
+            "@webgpu/types"
         ],
         // "allowUmdGlobalAccess": true,                     /* Allow accessing UMD globals from modules. */
         // "moduleSuffixes": [],                             /* List of file name suffixes to search when resolving a module. */
