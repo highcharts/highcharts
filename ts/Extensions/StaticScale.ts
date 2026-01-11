@@ -44,9 +44,12 @@ declare module '../Core/Axis/AxisOptions' {
          * taking up 24 pixels, and the height of the chart adjusts. Adding or
          * removing items will make the chart resize.
          *
-         * @sample gantt/xrange-series/demo/
+         * @sample {gantt} gantt/xrange-series/demo/
          *         X-range series with static scale
+         * @sample {highcharts} highcharts/xaxis/staticscale
+         *         Static scale on X axis (horizontal bar chart)
          *
+         * @requires  modules/static-scale
          * @type      {number}
          * @default   50
          * @since     6.2.0
