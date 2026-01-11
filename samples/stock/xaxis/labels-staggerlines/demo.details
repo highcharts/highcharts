@@ -1,5 +1,5 @@
 ---
- name: Highcharts Stock Demo
+ name: Demo of xAxis.labels.staggerLines
  authors:
    - Torstein Hønsi
  js_wrap: b

@@ -1,6 +1,6 @@
 ---
- name: Highcharts Stock Demo
+ name: Demo of yAxis.crosshair options
  authors:
-   - Kamil Musialowski
+   - Torstein Hønsi
  js_wrap: b
 ...

@@ -1,6 +1,6 @@
 ---
- name: Highcharts Demo
+ name: Demo of yAxis.minorTicksPerMajor
  authors:
-   - Dawid Dragula
+   - Torstein Hønsi
  js_wrap: b
 ...
