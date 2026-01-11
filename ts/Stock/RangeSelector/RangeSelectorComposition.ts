@@ -269,7 +269,7 @@ function redrawRangeSelector(this: Chart): void {
 
     // Re-align the legend so that it's below the rangeselector
     if (
-        legend.display &&
+        legend?.display &&
             verticalAlign === 'top' &&
             verticalAlign === legend.options.verticalAlign
     ) {
