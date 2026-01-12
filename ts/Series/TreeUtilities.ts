@@ -27,8 +27,8 @@ import type ColorType from '../Core/Color/ColorType';
 
 import Color from '../Core/Color/Color.js';
 import U from '../Core/Utilities.js';
+import { extend } from '../Shared/Utilities';
 const {
-    extend,
     isArray,
     isNumber,
     isObject,

@@ -23,9 +23,9 @@ import type Pointer from '../Core/Pointer';
 import type PointerEvent from '../Core/PointerEvent';
 
 import U from '../Core/Utilities.js';
+import { extend } from '../Shared/Utilities';
 const {
     defined,
-    extend,
     pick,
     wrap
 } = U;

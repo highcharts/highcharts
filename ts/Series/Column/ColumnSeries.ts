@@ -40,11 +40,11 @@ const { noop } = H;
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
+import { extend } from '../../Shared/Utilities';
 const {
     clamp,
     crisp,
     defined,
-    extend,
     fireEvent,
     isArray,
     isNumber,

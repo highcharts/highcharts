@@ -48,9 +48,9 @@ const {
 } = G;
 import OfflineExportingDefaults from './OfflineExportingDefaults.js';
 import U from '../../Core/Utilities.js';
+import { extend } from '../../Shared/Utilities';
 const {
     addEvent,
-    extend,
     pushUnique
 } = U;
 

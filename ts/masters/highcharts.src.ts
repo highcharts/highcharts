@@ -56,6 +56,7 @@ import BorderRadius from '../Extensions/BorderRadius.js';
 import Responsive from '../Core/Responsive.js';
 import Color from '../Core/Color/Color.js';
 import Time from '../Core/Time.js';
+import { extend } from '../Shared/Utilities.js';
 const G: AnyRecord = Highcharts;
 // Classes
 G.AST = AST;
@@ -115,6 +116,6 @@ Responsive.compose(G.Chart);
 ScrollablePlotArea.compose(G.Axis, G.Chart, G.Series);
 StackingAxis.compose(G.Axis, G.Chart, G.Series);
 Tooltip.compose(G.Pointer);
-Utilities.extend(G, Utilities);
+extend(G, Utilities);
 // Default Export
 export default G;

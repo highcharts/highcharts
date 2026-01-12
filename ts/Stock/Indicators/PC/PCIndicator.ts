@@ -29,10 +29,8 @@ import Palettes from '../../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const { sma: SMAIndicator } = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
-const {
-    merge,
-    extend
-} = U;
+import { extend } from '../../../Shared/Utilities';
+const { merge } = U;
 
 /* *
  *

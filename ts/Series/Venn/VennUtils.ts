@@ -39,8 +39,8 @@ const {
 import GU from '../../Core/Geometry/GeometryUtilities.js';
 const { getDistanceBetweenPoints } = GU;
 import U from '../../Core/Utilities.js';
+import { extend } from '../../Shared/Utilities';
 const {
-    extend,
     isArray,
     isNumber,
     isObject,

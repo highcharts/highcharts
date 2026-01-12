@@ -37,7 +37,6 @@ const {
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../../Core/Utilities.js';
 const {
-    extend,
     fireEvent,
     isNumber,
     merge
@@ -45,6 +44,7 @@ const {
 
 import '../../Core/Defaults.js';
 import '../Scatter/ScatterSeries.js';
+import { extend } from '../../Shared/Utilities';
 
 /* *
  *

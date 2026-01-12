@@ -38,7 +38,6 @@ const {
     arrayMin,
     correctFloat,
     crisp,
-    extend,
     isNumber,
     merge,
     objectEach,
@@ -47,6 +46,7 @@ const {
 import WaterfallAxis from '../../Core/Axis/WaterfallAxis.js';
 import WaterfallPoint from './WaterfallPoint.js';
 import WaterfallSeriesDefaults from './WaterfallSeriesDefaults.js';
+import { extend } from '../../Shared/Utilities';
 
 /* *
  *

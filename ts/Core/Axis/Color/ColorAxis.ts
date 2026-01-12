@@ -44,10 +44,10 @@ import LegendSymbol from '../../Legend/LegendSymbol.js';
 import SeriesRegistry from '../../Series/SeriesRegistry.js';
 import SeriesClass from '../../Series/Series';
 const { series: Series } = SeriesRegistry;
+import { extend } from '../../../Shared/Utilities';
 import U from '../../Utilities.js';
 const {
     defined,
-    extend,
     fireEvent,
     isArray,
     isNumber,

@@ -54,10 +54,10 @@ const {
     win
 } = G;
 import U from '../../Core/Utilities.js';
+import { extend } from '../../Shared/Utilities';
 const {
     addEvent,
     defined,
-    extend,
     find,
     fireEvent,
     isNumber,

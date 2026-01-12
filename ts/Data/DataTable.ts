@@ -35,10 +35,10 @@ import ColumnUtils from './ColumnUtils.js';
 const { splice, setLength } = ColumnUtils;
 
 import U from '../Core/Utilities.js';
+import { extend } from '../Shared/Utilities';
 const {
     addEvent,
     defined,
-    extend,
     fireEvent,
     isNumber,
     uniqueKey

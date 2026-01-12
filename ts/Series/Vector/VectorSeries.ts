@@ -37,11 +37,11 @@ const {
 import U from '../../Core/Utilities.js';
 const {
     arrayMax,
-    extend,
     merge,
     pick
 } = U;
 import VectorSeriesDefaults from './VectorSeriesDefaults.js';
+import { extend } from '../../Shared/Utilities';
 
 /* *
  *

@@ -39,7 +39,6 @@ const {
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
-    extend,
     fireEvent,
     merge,
     pick
@@ -56,6 +55,7 @@ import SonificationSpeaker from './SonificationSpeaker.js';
 import SynthPatch from './SynthPatch.js';
 import InstrumentPresets from './InstrumentPresets.js';
 import timelineFromChart from './TimelineFromChart.js';
+import { extend } from '../../Shared/Utilities';
 
 
 declare module '../../Core/Chart/ChartBase' {

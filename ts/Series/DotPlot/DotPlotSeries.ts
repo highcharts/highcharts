@@ -38,8 +38,8 @@ const {
     column: ColumnSeries
 } = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
+import { extend } from '../../Shared/Utilities';
 const {
-    extend,
     isNumber,
     merge,
     pick

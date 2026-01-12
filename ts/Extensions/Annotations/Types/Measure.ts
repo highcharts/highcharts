@@ -40,12 +40,12 @@ const { defaultOptions } = D;
 import U from '../../../Core/Utilities.js';
 const {
     defined,
-    extend,
     isNumber,
     merge,
     pick
 } = U;
 import { Palette } from '../../../Core/Color/Palettes.js';
+import { extend } from '../../../Shared/Utilities';
 
 if (defaultOptions.annotations?.types) {
     /**

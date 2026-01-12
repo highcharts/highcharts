@@ -33,9 +33,9 @@ const {
 } = SeriesRegistry;
 import SunburstNode from './SunburstNode';
 import U from '../../Core/Utilities.js';
+import { extend } from '../../Shared/Utilities';
 const {
     correctFloat,
-    extend,
     pInt
 } = U;
 

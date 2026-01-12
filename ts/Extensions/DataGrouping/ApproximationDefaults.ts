@@ -21,11 +21,11 @@ import type { ApproximationArray } from './ApproximationType';
 
 import ApproximationRegistry from './ApproximationRegistry.js';
 import U from '../../Core/Utilities.js';
+import { extend } from '../../Shared/Utilities';
 const {
     arrayMax,
     arrayMin,
     correctFloat,
-    extend,
     isNumber
 } = U;
 

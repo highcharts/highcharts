@@ -28,10 +28,10 @@ import TreegraphPointOptions from './TreegraphPointOptions.js';
 import U from '../../Core/Utilities.js';
 
 const {
-    pick,
-    extend
+    pick
 } = U;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import { extend } from '../../Shared/Utilities';
 const {
     seriesTypes: {
         column: {

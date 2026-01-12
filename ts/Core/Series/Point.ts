@@ -45,11 +45,11 @@ const { defaultOptions } = D;
 import F from '../Templating.js';
 const { format } = F;
 import U from '../Utilities.js';
+import { extend } from '../../Shared/Utilities';
 const {
     addEvent,
     crisp,
     erase,
-    extend,
     fireEvent,
     getNestedProperty,
     isArray,

@@ -16,9 +16,9 @@
 import SynthPatch from './SynthPatch.js';
 import InstrumentPresets from './InstrumentPresets.js';
 import U from '../../Core/Utilities.js';
+import { extend } from '../../Shared/Utilities.js';
 const {
-    defined,
-    extend
+    defined
 } = U;
 
 interface SonificationInstrumentCapabilitiesOptions {

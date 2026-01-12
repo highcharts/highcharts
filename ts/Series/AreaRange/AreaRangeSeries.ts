@@ -42,11 +42,11 @@ const {
     }
 } = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
+import { extend } from '../../Shared/Utilities';
 
 const {
     addEvent,
     defined,
-    extend,
     isArray,
     isNumber,
     pick,

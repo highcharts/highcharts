@@ -60,6 +60,7 @@ import PluginHandler from '../Dashboards/PluginHandler.js';
 import Sync from '../Dashboards/Components/Sync/Sync.js';
 import Utilities from '../Dashboards/Utilities.js';
 import CoreUtilities from '../Core/Utilities.js';
+import { extend } from '../Shared/Utilities.js';
 
 
 /* *
@@ -139,7 +140,7 @@ G.PluginHandler = PluginHandler;
 G.Sync = Sync;
 
 // Extend with Core utilities
-CoreUtilities.extend(G, CoreUtilities);
+extend(G, CoreUtilities);
 
 
 /* *

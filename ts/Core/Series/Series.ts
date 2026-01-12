@@ -82,6 +82,7 @@ import SVGElement from '../Renderer/SVG/SVGElement.js';
 import T from '../Templating.js';
 const { format } = T;
 import U from '../Utilities.js';
+import { extend } from '../../Shared/Utilities';
 const {
     arrayMax,
     arrayMin,
@@ -93,7 +94,6 @@ const {
     diffObjects,
     erase,
     error,
-    extend,
     find,
     fireEvent,
     getClosestDistance,

@@ -30,8 +30,8 @@ import F from '../../../Core/Templating.js';
 const { format } = F;
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
+import { extend } from '../../../Shared/Utilities';
 const {
-    extend,
     getAlignFactor,
     isNumber,
     pick

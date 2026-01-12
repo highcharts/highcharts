@@ -63,9 +63,9 @@ const {
 } = SLU;
 import U from '../../Core/Utilities.js';
 import { Palette } from '../../Core/Color/Palettes';
+import { extend } from '../../Shared/Utilities';
 const {
     addEvent,
-    extend,
     fireEvent,
     isNumber,
     pick,

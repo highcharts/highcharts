@@ -28,9 +28,9 @@ import AST from '../../Core/Renderer/HTML/AST.js';
 import Chart from '../../Core/Chart/Chart.js';
 import NoDataDefaults from './NoDataDefaults.js';
 import U from '../../Core/Utilities.js';
+import { extend } from '../../Shared/Utilities';
 const {
     addEvent,
-    extend,
     merge
 } = U;
 

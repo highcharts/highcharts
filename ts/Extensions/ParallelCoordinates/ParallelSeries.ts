@@ -29,11 +29,11 @@ const { composed } = H;
 import T from '../../Core/Templating.js';
 const { format } = T;
 import U from '../../Core/Utilities.js';
+import { extend } from '../../Shared/Utilities';
 const {
     addEvent,
     defined,
     erase,
-    extend,
     insertItem,
     isArray,
     isNumber,

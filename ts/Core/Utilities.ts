@@ -35,6 +35,7 @@ import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import type Time from './Time';
 
 import H from './Globals.js';
+import { extend } from '../Shared/Utilities';
 const {
     charts,
     doc,
@@ -761,34 +762,6 @@ function internalClearTimeout(id: (number|undefined)): void {
     if (defined(id)) {
         clearTimeout(id);
     }
-}
-
-/* eslint-disable valid-jsdoc */
-/**
- * Utility function to extend an object with the members of another.
- *
- * @function Highcharts.extend<T>
- *
- * @param {T|undefined} a
- *        The object to be extended.
- *
- * @param {Partial<T>} b
- *        The object to add to the first one.
- *
- * @return {T}
- *         Object a, the original object.
- */
-function extend<T extends object>(a: (T|undefined), b: Partial<T>): T {
-    /* eslint-enable valid-jsdoc */
-    let n;
-
-    if (!a) {
-        a = {} as T;
-    }
-    for (n in b) { // eslint-disable-line guard-for-in
-        (a as any)[n] = (b as any)[n];
-    }
-    return a;
 }
 
 function pick<T1, T2, T3, T4, T5>(...args: [T1, T2, T3, T4, T5]):
@@ -2216,7 +2189,6 @@ interface Utilities {
     discardElement: typeof discardElement;
     erase: typeof erase;
     error: typeof error;
-    extend: typeof extend;
     extendClass: typeof extendClass;
     find: typeof find;
     fireEvent: typeof fireEvent;
@@ -2279,7 +2251,6 @@ const Utilities: Utilities = {
     discardElement,
     erase,
     error,
-    extend,
     extendClass,
     find,
     fireEvent,

@@ -38,8 +38,8 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
+import { extend } from '../../Shared/Utilities.js';
 const {
-    extend,
     isNumber
 } = U;
 

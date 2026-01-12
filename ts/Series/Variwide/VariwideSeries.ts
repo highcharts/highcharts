@@ -32,12 +32,12 @@ import VariwideComposition from './VariwideComposition.js';
 import VariwidePoint from './VariwidePoint.js';
 import VariwideSeriesDefaults from './VariwideSeriesDefaults.js';
 import U from '../../Core/Utilities.js';
+import { extend } from '../../Shared/Utilities';
 const {
     addEvent,
     arrayMin,
     arrayMax,
     crisp,
-    extend,
     merge,
     pick
 } = U;

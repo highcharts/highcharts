@@ -41,13 +41,13 @@ import U from '../../Core/Utilities.js';
 const {
     css,
     crisp,
-    extend,
     isNumber,
     merge,
     pick
 } = U;
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import TextPath from '../../Extensions/TextPath.js';
+import { extend } from '../../Shared/Utilities';
 TextPath.compose(SVGElement);
 
 /* *

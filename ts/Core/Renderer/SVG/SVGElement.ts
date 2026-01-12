@@ -55,6 +55,7 @@ const {
     isFirefox
 } = H;
 import U from '../../Utilities.js';
+import { extend } from '../../../Shared/Utilities';
 const {
     addEvent,
     attr,
@@ -63,7 +64,6 @@ const {
     css,
     defined,
     erase,
-    extend,
     fireEvent,
     getAlignFactor,
     isArray,

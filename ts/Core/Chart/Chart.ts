@@ -87,6 +87,7 @@ import U from '../Utilities.js';
 import AST from '../Renderer/HTML/AST.js';
 import { AxisCollectionKey } from '../Axis/AxisOptions';
 import Tick from '../Axis/Tick.js';
+import { extend } from '../../Shared/Utilities';
 const {
     addEvent,
     attr,
@@ -97,7 +98,6 @@ const {
     discardElement,
     erase,
     error,
-    extend,
     find,
     fireEvent,
     getAlignFactor,

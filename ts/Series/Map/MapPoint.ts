@@ -34,8 +34,8 @@ const { boundsFromPath } = MU;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const ScatterPoint = SeriesRegistry.seriesTypes.scatter.prototype.pointClass;
 import U from '../../Core/Utilities.js';
+import { extend } from '../../Shared/Utilities';
 const {
-    extend,
     isNumber,
     pick
 } = U;

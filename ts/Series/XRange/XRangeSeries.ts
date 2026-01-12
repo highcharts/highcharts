@@ -48,7 +48,6 @@ const {
     clamp,
     crisp,
     defined,
-    extend,
     find,
     isNumber,
     isObject,
@@ -59,6 +58,7 @@ const {
 } = U;
 import XRangeSeriesDefaults from './XRangeSeriesDefaults.js';
 import XRangePoint from './XRangePoint.js';
+import { extend } from '../../Shared/Utilities';
 
 /* *
  *

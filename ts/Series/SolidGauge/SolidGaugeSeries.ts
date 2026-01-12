@@ -33,9 +33,9 @@ const {
 import SolidGaugeAxis from '../../Core/Axis/SolidGaugeAxis.js';
 import SolidGaugeSeriesDefaults from './SolidGaugeSeriesDefaults.js';
 import U from '../../Core/Utilities.js';
+import { extend } from '../../Shared/Utilities';
 const {
     clamp,
-    extend,
     isNumber,
     merge,
     pick,

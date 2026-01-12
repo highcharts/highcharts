@@ -74,6 +74,7 @@ const {
 import HU from '../../Core/HttpUtilities.js';
 import RegexLimits from '../RegexLimits.js';
 import U from '../../Core/Utilities.js';
+import { extend } from '../../Shared/Utilities';
 const {
     addEvent,
     clearTimeout,
@@ -81,7 +82,6 @@ const {
     css,
     discardElement,
     error,
-    extend,
     find,
     fireEvent,
     isObject,

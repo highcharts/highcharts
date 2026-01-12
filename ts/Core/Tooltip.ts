@@ -46,13 +46,13 @@ import R from './Renderer/RendererUtilities.js';
 const { distribute } = R;
 import RendererRegistry from './Renderer/RendererRegistry.js';
 import U from './Utilities.js';
+import { extend } from '../Shared/Utilities';
 const {
     addEvent,
     clamp,
     css,
     clearTimeout,
     discardElement,
-    extend,
     fireEvent,
     getAlignFactor,
     isArray,

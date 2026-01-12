@@ -29,8 +29,8 @@ import Scatter3DSeriesDefaults from './Scatter3DSeriesDefaults.js';
 import ScatterSeries from '../Scatter/ScatterSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
+import { extend } from '../../Shared/Utilities';
 const {
-    extend,
     merge
 } = U;
 

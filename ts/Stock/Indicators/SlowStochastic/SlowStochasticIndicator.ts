@@ -28,8 +28,8 @@ const {
     stochastic: StochasticIndicator
 } = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
+import { extend } from '../../../Shared/Utilities';
 const {
-    extend,
     merge
 } = U;
 

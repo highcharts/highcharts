@@ -60,6 +60,7 @@ import SVGLabel from './SVGLabel.js';
 import Symbols from './Symbols.js';
 import TextBuilder from './TextBuilder.js';
 import U from '../../Utilities.js';
+import { extend } from '../../../Shared/Utilities';
 const {
     addEvent,
     attr,
@@ -68,7 +69,6 @@ const {
     css,
     defined,
     destroyObjectProperties,
-    extend,
     isArray,
     isNumber,
     isObject,

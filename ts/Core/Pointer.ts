@@ -42,11 +42,11 @@ const {
 import { Palette } from '../Core/Color/Palettes.js';
 import U from './Utilities.js';
 import SVGAttributes from './Renderer/SVG/SVGAttributes';
+import { extend } from '../Shared/Utilities';
 const {
     addEvent,
     attr,
     css,
-    extend,
     find,
     fireEvent,
     isNumber,

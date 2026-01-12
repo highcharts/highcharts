@@ -29,9 +29,9 @@ import type ZigzagPoint from './ZigzagPoint';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const { sma: SMAIndicator } = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
+import { extend } from '../../../Shared/Utilities';
 const {
-    merge,
-    extend
+    merge
 } = U;
 
 /* *

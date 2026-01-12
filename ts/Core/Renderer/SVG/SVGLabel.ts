@@ -26,9 +26,9 @@ import type { SymbolKey } from './SymbolType';
 
 import SVGElement from './SVGElement.js';
 import U from '../../Utilities.js';
+import { extend } from '../../../Shared/Utilities';
 const {
     defined,
-    extend,
     getAlignFactor,
     isNumber,
     merge,

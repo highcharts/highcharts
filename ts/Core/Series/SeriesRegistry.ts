@@ -26,8 +26,8 @@ import D from '../Defaults.js';
 const { defaultOptions } = D;
 import Point from './Point.js';
 import U from '../Utilities.js';
+import { extend } from '../../Shared/Utilities';
 const {
-    extend,
     extendClass,
     merge
 } = U;

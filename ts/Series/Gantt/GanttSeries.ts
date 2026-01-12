@@ -38,8 +38,8 @@ const {
 import StaticScale from '../../Extensions/StaticScale.js';
 import TreeGridAxis from '../../Core/Axis/TreeGrid/TreeGridAxis.js';
 import U from '../../Core/Utilities.js';
+import { extend } from '../../Shared/Utilities';
 const {
-    extend,
     isNumber,
     merge
 } = U;
