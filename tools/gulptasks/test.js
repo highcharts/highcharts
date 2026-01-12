@@ -312,11 +312,33 @@ specified by config.imageCapture.resultsOutputPath.
         argv.tests ||
         argv.testsAbsolutePath
     );
+
+    // Extract --project parameter from command line arguments
+    // This is passed directly to Playwright, not parsed by yargs
+    // Supports both --project value and --project=value formats
+    let projectParam = null;
+    for (let i = 0; i < process.argv.length; i++) {
+        const arg = process.argv[i];
+        if (arg === '--project' && i + 1 < process.argv.length) {
+            projectParam = process.argv[i + 1];
+            break;
+        } else if (arg.startsWith('--project=')) {
+            projectParam = arg.split('=')[1];
+            break;
+        }
+    }
+
+    // Use different config file for different projects to avoid cache conflicts
+    const configFile = projectParam ?
+        CONFIGURATION_FILE.replace('.json', `_${projectParam}.json`) :
+        CONFIGURATION_FILE;
+
     const runConfig = {
-        configFile: CONFIGURATION_FILE,
+        configFile,
         codeDirectory: CODE_DIRECTORY,
         jsDirectory: JS_DIRECTORY,
-        testsDirectory: TESTS_DIRECTORY
+        testsDirectory: TESTS_DIRECTORY,
+        project: projectParam
     };
 
     const { getProductTests } = require('./lib/test');
