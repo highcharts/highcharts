@@ -3,6 +3,8 @@ import { test, expect, createChart } from '~/fixtures.ts';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
+// Note: have to get the css this way, as it has to be passed to createChart
+// the right timing
 const css = readFileSync(
     join(__dirname, '../../../samples/unit-tests/stock-tools/bindings/demo.css'),
     'utf-8'
