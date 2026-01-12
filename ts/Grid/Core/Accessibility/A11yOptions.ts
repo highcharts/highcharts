@@ -144,6 +144,14 @@ export interface SortingLangA11yOptions {
          */
         none?: string;
     }
+
+    /**
+     * The message for multi-column sort priority. Use `{priority}` to insert
+     * the priority index.
+     *
+     * @default 'Priority {priority}.'
+     */
+    priority?: string;
 }
 
 /**

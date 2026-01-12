@@ -93,7 +93,6 @@ Gulp.registry(new GulpForwardReference());
     'unsorted/compare-filesizes',
     'unsorted/filesize',
     'unsorted/get-filesizes',
-    'unsorted/nightly',
     'unsorted/patch-ink-docstrap',
     'unsorted/update-vendor',
     'unsorted/upload-files',

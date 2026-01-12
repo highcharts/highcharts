@@ -88,7 +88,10 @@ Highcharts.chart('container', {
                     useHTML: true,
                     y: 10
                 }
-            ]
+            ],
+            collapseButton: {
+                enabled: false
+            }
         }
     ],
     responsive: {
