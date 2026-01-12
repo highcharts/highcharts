@@ -205,7 +205,7 @@ interface CurrentDateIndicatorOptions {
  * @apioption xAxis.currentDateIndicator
  */
 const defaultOptions: CurrentDateIndicatorOptions = {
-    color: 'var(--highcharts-highlightColor20)',
+    color: 'var(--highcharts-highlight-color-20)',
     width: 2,
     /**
      * @declare Highcharts.AxisCurrentDateIndicatorLabelOptions

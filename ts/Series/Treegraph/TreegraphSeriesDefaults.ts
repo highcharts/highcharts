@@ -109,7 +109,7 @@ const TreegraphSeriesDefaults = {
          * @type {Highcharts.ColorString}
          * @private
          */
-        color: 'var(--highcharts-neutralColor60)',
+        color: 'var(--highcharts-neutral-color-60)',
         /**
          * The line width of the links connecting nodes, in pixels.
          * @type {number}

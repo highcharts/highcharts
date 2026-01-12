@@ -725,7 +725,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         },
                         labelOptions: {
                             style: {
-                                color: 'var(--highcharts-neutralColor60)'
+                                color: 'var(--highcharts-neutral-color-60)'
                             }
                         }
                     },
@@ -1178,7 +1178,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                                 y: coordsY.value,
                                 controlPoint: {
                                     style: {
-                                        fill: 'var(--highcharts-negativeColor)'
+                                        fill: 'var(--highcharts-negative-color)'
                                     }
                                 }
                             },
@@ -1371,8 +1371,8 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
     /**
      * A vertical arrow annotation bindings. Includes `start` event. On click,
      * finds the closest point and marks it with an arrow.
-     * `$var(--highcharts-positiveColor)` is the color of the arrow when
-     * pointing from above and `$var(--highcharts-negativeColor)`
+     * `$var(--highcharts-positive-color)` is the color of the arrow when
+     * pointing from above and `$var(--highcharts-negative-color)`
      * when pointing from below the point.
      *
      * @type    {Highcharts.NavigationBindingsOptionsObject}
@@ -1421,8 +1421,8 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                             connector: {
                                 fill: 'none',
                                 stroke: closestPoint.below ?
-                                    'var(--highcharts-negativeColor)' :
-                                    'var(--highcharts-positiveColor)'
+                                    'var(--highcharts-negative-color)' :
+                                    'var(--highcharts-positive-color)'
                             }
                         }
                     },

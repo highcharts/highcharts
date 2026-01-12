@@ -517,7 +517,7 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
      *
      * @type {Highcharts.ColorString}
      */
-    borderColor: 'var(--highcharts-neutralColor10)',
+    borderColor: 'var(--highcharts-neutral-color-10)',
 
     /**
      * The width of the border surrounding each tree map item.
@@ -553,7 +553,7 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
             /**
              * The border color for the hovered state.
              */
-            borderColor: 'var(--highcharts-neutralColor40)',
+            borderColor: 'var(--highcharts-neutral-color-40)',
 
             /**
              * Brightness for the hovered point. Defaults to 0 if the

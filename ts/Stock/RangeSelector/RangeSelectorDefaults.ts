@@ -576,7 +576,7 @@ const rangeSelector: RangeSelectorOptions = {
      */
     inputStyle: {
         /** @ignore */
-        color: 'var(--highcharts-highlightColor80)',
+        color: 'var(--highcharts-highlight-color-80)',
         /** @ignore */
         cursor: 'pointer',
         /** @ignore */
@@ -596,7 +596,7 @@ const rangeSelector: RangeSelectorOptions = {
      */
     labelStyle: {
         /** @ignore */
-        color: 'var(--highcharts-neutralColor60)',
+        color: 'var(--highcharts-neutral-color-60)',
         /** @ignore */
         fontSize: '0.8em'
     }

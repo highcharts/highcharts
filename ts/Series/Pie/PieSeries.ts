@@ -195,7 +195,8 @@ class PieSeries extends Series {
                 this.graph.attr({
                     'stroke-width': options.borderWidth,
                     fill: options.fillColor || 'none',
-                    stroke: options.color || 'var(--highcharts-neutralColor20)'
+                    stroke: options.color ||
+                        'var(--highcharts-neutral-color-20)'
                 });
             }
 

@@ -175,7 +175,7 @@ if (defaultOptions.annotations?.types) {
                  */
                 style: {
                     fontSize: '0.7em',
-                    color: 'var(--highcharts-neutralColor80)'
+                    color: 'var(--highcharts-neutral-color-80)'
                 },
                 /**
                  * Formatter function for the label text.

@@ -145,7 +145,7 @@ const HeatmapSeriesDefaults: HeatmapSeriesOptions = {
      *
      * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
-    nullColor: 'var(--highcharts-neutralColor3)',
+    nullColor: 'var(--highcharts-neutral-color-3)',
 
     dataLabels: {
         formatter: function (): string { // #2945

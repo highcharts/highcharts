@@ -92,7 +92,7 @@ class HollowCandlestickSeries extends CandlestickSeries {
          * @type    {ColorType}
          * @product highstock
          */
-        color: 'var(--highcharts-negativeColor)',
+        color: 'var(--highcharts-negative-color)',
 
         dataGrouping: {
             groupAll: true,
@@ -111,7 +111,7 @@ class HollowCandlestickSeries extends CandlestickSeries {
          * @type    {ColorType}
          * @product highstock
          */
-        lineColor: 'var(--highcharts-negativeColor)',
+        lineColor: 'var(--highcharts-negative-color)',
 
         /**
          * The fill color of the candlestick when the current
@@ -125,7 +125,7 @@ class HollowCandlestickSeries extends CandlestickSeries {
          * @type    {ColorType}
          * @product highstock
          */
-        upColor: 'var(--highcharts-positiveColor)',
+        upColor: 'var(--highcharts-positive-color)',
 
         /**
          * The color of the line/border of the hollow candlestick when
@@ -139,7 +139,7 @@ class HollowCandlestickSeries extends CandlestickSeries {
          * @type    {ColorType}
          * @product highstock
          */
-        upLineColor: 'var(--highcharts-positiveColor)'
+        upLineColor: 'var(--highcharts-positive-color)'
 
     } as HollowCandlestickSeriesOptions);
 
@@ -212,8 +212,8 @@ class HollowCandlestickSeries extends CandlestickSeries {
 
         // Return line color based on trend direction
         return trendDirection === 'up' ?
-            series.options.upColor || 'var(--highcharts-positiveColor)' :
-            series.options.color || 'var(--highcharts-negativeColor)';
+            series.options.upColor || 'var(--highcharts-positive-color)' :
+            series.options.color || 'var(--highcharts-negative-color)';
     }
 
     /**
@@ -236,8 +236,8 @@ class HollowCandlestickSeries extends CandlestickSeries {
             return 'transparent';
         }
         return hollowcandleInfo.trendDirection === 'up' ?
-            series.options.upColor || 'var(--highcharts-positiveColor)' :
-            series.options.color || 'var(--highcharts-negativeColor)';
+            series.options.upColor || 'var(--highcharts-positive-color)' :
+            series.options.color || 'var(--highcharts-negative-color)';
     }
 
     /**

@@ -60,7 +60,7 @@ if (defaultOptions.annotations?.types) {
                      * @since     9.3.0
                      * @apioption annotations.types.fibonacciTimeZones.typeOptions.line.stroke
                      */
-                    stroke: 'var(--highcharts-neutralColor80)',
+                    stroke: 'var(--highcharts-neutral-color-80)',
                     /**
                      * The width of the lines.
                      *

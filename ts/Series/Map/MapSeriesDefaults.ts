@@ -108,7 +108,7 @@ const MapSeriesDefaults: MapSeriesOptions = {
      *
      * @private
      */
-    nullColor: 'var(--highcharts-neutralColor3)',
+    nullColor: 'var(--highcharts-neutral-color-3)',
 
     /**
      * Whether to allow pointer interaction like tooltips and mouse events
@@ -168,7 +168,7 @@ const MapSeriesDefaults: MapSeriesOptions = {
      *
      * @private
      */
-    borderColor: 'var(--highcharts-neutralColor10)',
+    borderColor: 'var(--highcharts-neutral-color-10)',
 
     /**
      * The border width of each map area.
@@ -267,7 +267,7 @@ const MapSeriesDefaults: MapSeriesOptions = {
              * @product   highmaps
              * @apioption plotOptions.series.states.hover.borderColor
              */
-            borderColor: 'var(--highcharts-neutralColor60)',
+            borderColor: 'var(--highcharts-neutral-color-60)',
 
             /**
              * The border width of the point in this state
@@ -315,11 +315,11 @@ const MapSeriesDefaults: MapSeriesOptions = {
 
             /**
              * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-             * @default   $var(--highcharts-neutralColor20)
+             * @default   $var(--highcharts-neutral-color-20)
              * @product   highmaps
              * @apioption plotOptions.series.states.select.color
              */
-            color: 'var(--highcharts-neutralColor20)'
+            color: 'var(--highcharts-neutral-color-20)'
         }
     },
 

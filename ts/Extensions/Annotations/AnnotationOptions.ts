@@ -324,7 +324,7 @@ export interface AnnotationLabelOptionsOptions {
      * @sample highcharts/annotations/label-presentation/
      *         Set labels graphic options
      *
-     * @default $var(--highcharts-neutralColor100)
+     * @default $var(--highcharts-neutral-color-100)
      */
     borderColor?: ColorType;
 

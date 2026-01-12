@@ -176,7 +176,7 @@ const BubbleLegendDefaults: BubbleLegendItem.Options = {
             /** @ignore-option */
             fontSize: '0.9em',
             /** @ignore-option */
-            color: 'var(--highcharts-neutralColor100)'
+            color: 'var(--highcharts-neutral-color-100)'
         },
         /**
          * The x position offset of the label relative to the

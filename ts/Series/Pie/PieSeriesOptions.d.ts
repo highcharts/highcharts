@@ -187,7 +187,7 @@ export interface PieSeriesOptions extends LineSeriesOptions {
      *
      * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      *
-     * @default $var(--highcharts-neutralColor20)
+     * @default $var(--highcharts-neutral-color-20)
      */
     color?: ColorType;
 

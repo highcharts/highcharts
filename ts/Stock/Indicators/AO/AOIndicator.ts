@@ -94,7 +94,7 @@ class AOIndicator extends SMAIndicator {
          * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @since 7.0.0
          */
-        greaterBarColor: 'var(--highcharts-positiveColor)',
+        greaterBarColor: 'var(--highcharts-positive-color)',
         /**
          * Color of the Awesome oscillator series bar that is lower than the
          * previous one. Note that if a `color` is defined, the `color`
@@ -106,7 +106,7 @@ class AOIndicator extends SMAIndicator {
          * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @since 7.0.0
          */
-        lowerBarColor: 'var(--highcharts-negativeColor)',
+        lowerBarColor: 'var(--highcharts-negative-color)',
         threshold: 0,
         groupPadding: 0.2,
         pointPadding: 0.2,

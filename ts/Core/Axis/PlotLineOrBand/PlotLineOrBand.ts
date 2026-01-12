@@ -238,7 +238,7 @@ class PlotLineOrBand {
         // Set the presentational attributes
         if (!axis.chart.styledMode) {
             if (isLine) {
-                attribs.stroke = color || 'var(--highcharts-neutralColor40)';
+                attribs.stroke = color || 'var(--highcharts-neutral-color-40)';
                 attribs['stroke-width'] = pick(
                     (options as PlotLineOptions).width,
                     1
@@ -248,7 +248,7 @@ class PlotLineOrBand {
                 }
 
             } else if (isBand) { // Plot band
-                attribs.fill = color || 'var(--highcharts-highlightColor10)';
+                attribs.fill = color || 'var(--highcharts-highlight-color-10)';
                 if (borderWidth) {
                     attribs.stroke = (options as PlotBandOptions).borderColor;
                     attribs['stroke-width'] = borderWidth;
@@ -629,7 +629,7 @@ export default PlotLineOrBand;
  *         Plot band on Y axis
  *
  * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
- * @default   $var(--highcharts-highlightColor10)
+ * @default   $var(--highcharts-highlight-color-10)
  * @apioption xAxis.plotBands.color
  */
 
@@ -929,7 +929,7 @@ export default PlotLineOrBand;
  *         Plot line on Y axis
  *
  * @type      {Highcharts.ColorString}
- * @default   $var(--highcharts-neutralColor40)
+ * @default   $var(--highcharts-neutral-color-40)
  * @apioption xAxis.plotLines.color
  */
 

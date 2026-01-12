@@ -97,9 +97,15 @@ const applyPalette = (color: string, chart?: Chart): string => {
     const p = chart?.options.palette || palette;
     return (color.indexOf('var(--highcharts-') !== -1) ?
         color.replace(
-            /var\(--highcharts-([a-zA-Z0-9]+)\)/g,
-            (match: string, name: string): string =>
-                (p as any)[name] as string
+            /var\(--highcharts-([a-z0-9\-]+)\)/g,
+            (_match: string, name: string): string => {
+                // Convert kebab-case to camelCase
+                const camelName = name.replace(
+                    /-([a-z0-9])/g,
+                    (_, char): string => char.toUpperCase()
+                ) as keyof typeof p;
+                return (p[camelName] || '#8888') as string;
+            }
         ) :
         color;
 };

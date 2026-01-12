@@ -119,7 +119,7 @@ class DMIIndicator extends SMAIndicator {
                  *
                  * @type {Highcharts.ColorString}
                  */
-                lineColor: 'var(--highcharts-positiveColor)' // Green-ish
+                lineColor: 'var(--highcharts-positive-color)' // Green-ish
             }
         },
         /**
@@ -139,7 +139,7 @@ class DMIIndicator extends SMAIndicator {
                  *
                  * @type {Highcharts.ColorString}
                  */
-                lineColor: 'var(--highcharts-negativeColor)' // Red-ish
+                lineColor: 'var(--highcharts-negative-color)' // Red-ish
             }
         },
         dataGrouping: {

@@ -658,7 +658,7 @@ namespace ColumnDataLabel {
                                     'stroke': (
                                         connectorColor ||
                                         point.color ||
-                                        'var(--highcharts-neutralColor60)'
+                                        'var(--highcharts-neutral-color-60)'
                                     )
                                 });
                             }

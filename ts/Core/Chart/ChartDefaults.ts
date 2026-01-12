@@ -1281,7 +1281,7 @@ const ChartDefaults: ChartOptions = {
      *
      * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
-    borderColor: 'var(--highcharts-highlightColor80)',
+    borderColor: 'var(--highcharts-highlight-color-80)',
 
     /**
      * The pixel width of the outer chart border.
@@ -1322,7 +1322,7 @@ const ChartDefaults: ChartOptions = {
      *
      * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
-    backgroundColor: 'var(--highcharts-backgroundColor)',
+    backgroundColor: 'var(--highcharts-background-color)',
 
     /**
      * The background color or gradient for the plot area.
@@ -1381,7 +1381,7 @@ const ChartDefaults: ChartOptions = {
      *
      * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
-    plotBorderColor: 'var(--highcharts-neutralColor20)'
+    plotBorderColor: 'var(--highcharts-neutral-color-20)'
 
 };
 

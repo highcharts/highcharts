@@ -532,7 +532,7 @@ function drawSeriesLabels(chart: Chart): void {
 
                 if (!chart.renderer.styledMode) {
                     const color = typeof series.color === 'string' ?
-                        series.color : 'var(--highcharts-neutralColor60)';
+                        series.color : 'var(--highcharts-neutral-color-60)';
                     label.css(extend<CSSObject>({
                         color: onArea ?
                             chart.renderer.getContrast(color) :

@@ -123,7 +123,7 @@ class TreegraphPoint extends TreemapPoint {
                 fill = (
                     btnOptions.fillColor ||
                     point.color ||
-                    'var(--highcharts-neutralColor20)'
+                    'var(--highcharts-neutral-color-20)'
                 );
             point.collapseButton = chart.renderer
                 .label(point.collapsed ? '+' : '-', x, y, shape)
@@ -136,7 +136,7 @@ class TreegraphPoint extends TreemapPoint {
                     rotationOriginX: width / 2,
                     rotationOriginY: height / 2,
                     stroke: btnOptions.lineColor ||
-                        'var(--highcharts-backgroundColor)',
+                        'var(--highcharts-background-color)',
                     'stroke-width': btnOptions.lineWidth,
                     'text-align': 'center',
                     align: 'center',
@@ -151,7 +151,7 @@ class TreegraphPoint extends TreemapPoint {
                     {
                         color: typeof fill === 'string' ?
                             chart.renderer.getContrast(fill) :
-                            'var(--highcharts-neutralColor80)'
+                            'var(--highcharts-neutral-color-80)'
                     },
                     style
                 ))

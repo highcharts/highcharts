@@ -488,7 +488,7 @@ function onRendererComplexColor(
         chartIndex = (this.chartIndex || 0);
 
     let pattern = color.pattern,
-        value: string = 'var(--highcharts-neutralColor80)';
+        value: string = 'var(--highcharts-neutral-color-80)';
 
     // Handle patternIndex
     if (typeof color.patternIndex !== 'undefined' && patterns) {
@@ -734,7 +734,7 @@ function rendererAddPattern(
     const animate = pick(animation, true),
         animationOptions = animObject(animate),
         color: ColorString = options.color ||
-            'var(--highcharts-neutralColor80)',
+            'var(--highcharts-neutral-color-80)',
         defaultSize = 32,
         height = options.height ||
             (typeof options._height === 'number' ? options._height : 0) ||

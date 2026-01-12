@@ -139,7 +139,7 @@ const AxisResizerDefaults: Partial<AxisOptions> = {
          * @type     {Highcharts.ColorString}
          * @requires modules/drag-panes
          */
-        lineColor: 'var(--highcharts-neutralColor20)',
+        lineColor: 'var(--highcharts-neutral-color-20)',
 
         /**
          * Dash style of the control line.

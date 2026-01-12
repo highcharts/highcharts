@@ -520,12 +520,12 @@ namespace StockChart {
                     .attr({
                         fill: options.backgroundColor ||
                             point?.series?.color || // #14888
-                            'var(--highcharts-neutralColor60)',
+                            'var(--highcharts-neutral-color-60)',
                         stroke: options.borderColor || '',
                         'stroke-width': options.borderWidth || 0
                     })
                     .css(extend<CSSObject>({
-                        color: 'var(--highcharts-backgroundColor)',
+                        color: 'var(--highcharts-background-color)',
                         fontWeight: 'normal',
                         fontSize: '0.7em',
                         textAlign: 'center'

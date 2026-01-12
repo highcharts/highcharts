@@ -151,7 +151,7 @@ const ScrollbarDefaults: ScrollbarOptions = {
      *
      * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
-    barBackgroundColor: 'var(--highcharts-neutralColor20)',
+    barBackgroundColor: 'var(--highcharts-neutral-color-20)',
 
     /**
      * The width of the bar's border.
@@ -166,7 +166,7 @@ const ScrollbarDefaults: ScrollbarOptions = {
      *
      * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
-    barBorderColor: 'var(--highcharts-neutralColor20)',
+    barBorderColor: 'var(--highcharts-neutral-color-20)',
 
     /**
      * The color of the small arrow inside the scrollbar buttons.
@@ -176,7 +176,7 @@ const ScrollbarDefaults: ScrollbarOptions = {
      *
      * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
-    buttonArrowColor: 'var(--highcharts-neutralColor80)',
+    buttonArrowColor: 'var(--highcharts-neutral-color-80)',
 
     /**
      * The color of scrollbar buttons.
@@ -186,7 +186,7 @@ const ScrollbarDefaults: ScrollbarOptions = {
      *
      * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
-    buttonBackgroundColor: 'var(--highcharts-neutralColor10)',
+    buttonBackgroundColor: 'var(--highcharts-neutral-color-10)',
 
     /**
      * The color of the border of the scrollbar buttons.
@@ -196,7 +196,7 @@ const ScrollbarDefaults: ScrollbarOptions = {
      *
      * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
-    buttonBorderColor: 'var(--highcharts-neutralColor20)',
+    buttonBorderColor: 'var(--highcharts-neutral-color-20)',
 
     /**
      * The border width of the scrollbar buttons.
@@ -231,7 +231,7 @@ const ScrollbarDefaults: ScrollbarOptions = {
      *
      * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
-    trackBorderColor: 'var(--highcharts-neutralColor20)',
+    trackBorderColor: 'var(--highcharts-neutral-color-20)',
 
     /**
      * The corner radius of the border of the scrollbar track.

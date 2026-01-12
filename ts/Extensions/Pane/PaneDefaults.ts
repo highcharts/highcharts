@@ -97,7 +97,7 @@ const background: PaneBackgroundOptions = {
      * @since   2.3.0
      * @product highcharts
      */
-    borderColor: 'var(--highcharts-neutralColor20)',
+    borderColor: 'var(--highcharts-neutral-color-20)',
 
     /**
      * The background color or gradient for the pane.
@@ -114,8 +114,8 @@ const background: PaneBackgroundOptions = {
 
         /** @ignore-option */
         stops: [
-            [0, 'var(--highcharts-backgroundColor)'],
-            [1, 'var(--highcharts-neutralColor10)']
+            [0, 'var(--highcharts-background-color)'],
+            [1, 'var(--highcharts-neutral-color-10)']
         ]
 
     },

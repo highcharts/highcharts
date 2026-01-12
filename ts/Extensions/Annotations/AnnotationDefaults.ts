@@ -180,7 +180,7 @@ const AnnotationDefaults: AnnotationOptions = {
          *
          * @type {Highcharts.ColorType}
          */
-        borderColor: 'var(--highcharts-neutralColor100)',
+        borderColor: 'var(--highcharts-neutral-color-100)',
 
         /**
          * The border radius in pixels for the annotation's label.
@@ -661,8 +661,8 @@ const AnnotationDefaults: AnnotationOptions = {
          */
         style: {
             cursor: 'pointer',
-            fill: 'var(--highcharts-backgroundColor)',
-            stroke: 'var(--highcharts-neutralColor100)',
+            fill: 'var(--highcharts-background-color)',
+            stroke: 'var(--highcharts-neutral-color-100)',
             'stroke-width': 2
         },
 

@@ -88,7 +88,7 @@ const DumbbellSeriesDefaults: DumbbellSeriesOptions = {
      * @since 8.0.0
      * @product   highcharts highstock
      */
-    lowColor: 'var(--highcharts-neutralColor80)',
+    lowColor: 'var(--highcharts-neutral-color-80)',
 
     /**
      * Color of the line that connects the dumbbell point's values.
@@ -260,7 +260,7 @@ const DumbbellSeriesDefaults: DumbbellSeriesOptions = {
  *
  * @type        {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
  * @since       8.0.0
- * @default     $var(--highcharts-neutralColor80)
+ * @default     $var(--highcharts-neutral-color-80)
  * @product     highcharts highstock
  * @apioption   series.dumbbell.data.lowColor
  */

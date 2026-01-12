@@ -84,7 +84,7 @@ if (defaultOptions.annotations?.types) {
         } as any,
         labelOptions: {
             style: {
-                color: 'var(--highcharts-neutralColor80)',
+                color: 'var(--highcharts-neutral-color-80)',
                 fontSize: '0.7em'
             }
         }

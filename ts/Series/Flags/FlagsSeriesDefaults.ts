@@ -202,7 +202,7 @@ const FlagsSeriesDefaults: FlagsSeriesOptions = {
      * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @product highstock
      */
-    fillColor: 'var(--highcharts-backgroundColor)',
+    fillColor: 'var(--highcharts-background-color)',
 
     /**
      * The color of the line/border of the flag.
@@ -237,7 +237,7 @@ const FlagsSeriesDefaults: FlagsSeriesOptions = {
              * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              * @product highstock
              */
-            lineColor: 'var(--highcharts-neutralColor100)',
+            lineColor: 'var(--highcharts-neutral-color-100)',
 
             /**
              * The fill or background color of the flag.
@@ -245,7 +245,7 @@ const FlagsSeriesDefaults: FlagsSeriesOptions = {
              * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              * @product highstock
              */
-            fillColor: 'var(--highcharts-highlightColor20)'
+            fillColor: 'var(--highcharts-highlight-color-20)'
         }
     },
 
@@ -261,7 +261,7 @@ const FlagsSeriesDefaults: FlagsSeriesOptions = {
      */
     style: {
         /** @ignore-option */
-        color: 'var(--highcharts-neutralColor100)',
+        color: 'var(--highcharts-neutral-color-100)',
         /** @ignore-option */
         fontSize: '0.7em',
         /** @ignore-option */
