@@ -99,7 +99,7 @@ const TreegraphSeriesDefaults = {
          * example, a `bendAt` of `50%` means that the link bends in the middle.
          *
          * @type      {number|string}
-         * @since     next
+         * @since 12.5.0
          * @product   highcharts
          * @default   50%
          * @apioption plotOptions.treegraph.link.bendAt
