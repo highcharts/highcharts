@@ -1525,16 +1525,19 @@ class Series {
                         const xData: Array<number> = [],
                             valueData: Array<number|null> = [];
 
-                        if (indexOfX === indexOfY) {
-                            for (const pt of data) {
+                        for (const pt of data) {
+                            if (indexOfX === indexOfY) {
                                 xData.push(this.autoIncrement());
-                                valueData.push((pt as any)[indexOfY]);
+                            } else {
+                                xData.push(
+                                    (pt as any)[indexOfX] ?? (pt as any).x ??
+                                        null
+                                );
                             }
-                        } else {
-                            for (const pt of data) {
-                                xData.push((pt as any)[indexOfX]);
-                                valueData.push((pt as any)[indexOfY]);
-                            }
+
+                            valueData.push(
+                                (pt as any)[indexOfY] ?? (pt as any).y ?? null
+                            );
                         }
                         table.setColumns({
                             x: xData,
