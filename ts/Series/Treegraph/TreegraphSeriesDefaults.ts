@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Pawel Lysy Grzegorz Blachlinski
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Pawel Lysy Grzegorz Blachlinski
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -96,7 +97,7 @@ const TreegraphSeriesDefaults = {
          * example, a `bendAt` of `50%` means that the link bends in the middle.
          *
          * @type      {number|string}
-         * @since     next
+         * @since 12.5.0
          * @product   highcharts
          * @default   50%
          * @apioption plotOptions.treegraph.link.bendAt

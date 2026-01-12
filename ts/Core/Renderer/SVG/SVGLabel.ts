@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -44,7 +45,7 @@ const {
 
 /**
  * SVG label to render text.
- * @private
+ *
  * @class
  * @name Highcharts.SVGLabel
  * @augments Highcharts.SVGElement
@@ -57,6 +58,7 @@ class SVGLabel extends SVGElement {
      *
      * */
 
+    /** @internal */
     public static readonly emptyBBox: BBoxObject = {
         width: 0,
         height: 0,
@@ -67,7 +69,7 @@ class SVGLabel extends SVGElement {
     /**
      * For labels, these CSS properties are applied to the `text` node directly.
      *
-     * @private
+     * @internal
      * @name Highcharts.SVGLabel#textProps
      * @type {Array<string>}
      */
@@ -143,19 +145,46 @@ class SVGLabel extends SVGElement {
      *
      * */
 
+    /** @internal */
     public alignFactor: number;
+
+    /** @internal */
     public baselineOffset: number;
+
+    /** @internal */
     public bBox: BBoxObject;
+
+    /** @internal */
     public box?: SVGElement;
+
+    /** @internal */
     public deferredAttr: (SVGAttributes&AnyRecord);
+
+    /** @internal */
     public heightSetting?: number;
+
+    /** @internal */
     public needsBox?: boolean;
+
+    /** @internal */
     public padding: number;
+
+    /** @internal */
     public paddingLeftSetter = this.paddingSetter;
+
+    /** @internal */
     public paddingRightSetter = this.paddingSetter;
+
+    /** @internal */
     public text: SVGElement;
+
+    /** @internal */
     public textStr: string;
+
+    /** @internal */
     public doUpdate = false;
+
+    /** @internal */
     public x: number;
 
     /* *
@@ -164,6 +193,7 @@ class SVGLabel extends SVGElement {
      *
      * */
 
+    /** @internal */
     public alignSetter(value: AlignValue): void {
         const alignFactor = getAlignFactor(value);
         this.textAlign = value;
@@ -173,9 +203,12 @@ class SVGLabel extends SVGElement {
             if (this.bBox && isNumber(this.xSetting)) {
                 this.attr({ x: this.xSetting }); // #5134
             }
+
+            this.updateTextPadding(); // #23595
         }
     }
 
+    /** @internal */
     public anchorXSetter(value: number, key: string): void {
         this.anchorX = value;
         this.boxAttr(
@@ -184,13 +217,15 @@ class SVGLabel extends SVGElement {
         );
     }
 
+    /** @internal */
     public anchorYSetter(value: number, key: string): void {
         this.anchorY = value;
         this.boxAttr(key, value - this.ySetting);
     }
 
-    /*
-     * Set a box attribute, or defer it if the box is not yet created
+    /**
+     * Set a box attribute, or defer it, if the box is not yet created.
+     * @internal
      */
     private boxAttr(
         key: string,
@@ -203,9 +238,10 @@ class SVGLabel extends SVGElement {
         }
     }
 
-    /*
+    /**
      * Pick up some properties and apply them to the text instead of the
      * wrapper.
+     * @internal
      */
     public css(styles: CSSObject): this {
         if (styles) {
@@ -222,10 +258,14 @@ class SVGLabel extends SVGElement {
             });
             this.text.css(textStyles);
 
-            // Update existing text, box (#9400, #12163, #18212)
-            if ('fontSize' in textStyles || 'fontWeight' in textStyles) {
+            // Update existing text, box (#9400, #12163, #18212, #23595)
+            if (
+                'fontSize' in textStyles ||
+                    'fontWeight' in textStyles ||
+                    'width' in textStyles
+            ) {
                 this.updateTextPadding();
-            } else if ('width' in textStyles || 'textOverflow' in textStyles) {
+            } else if ('textOverflow' in textStyles) {
                 this.updateBoxSize();
             }
 
@@ -233,8 +273,9 @@ class SVGLabel extends SVGElement {
         return SVGElement.prototype.css.call(this, styles) as this;
     }
 
-    /*
+    /**
      * Destroy and release memory.
+     * @internal
      */
     public destroy(): undefined {
 
@@ -254,6 +295,7 @@ class SVGLabel extends SVGElement {
         return void 0;
     }
 
+    /** @internal */
     public fillSetter(value: ColorType, key: string): void {
         if (value) {
             this.needsBox = true;
@@ -266,8 +308,9 @@ class SVGLabel extends SVGElement {
         this.boxAttr(key, value);
     }
 
-    /*
+    /**
      * Return the bounding box of the box, not the group.
+     * @internal
      */
     public getBBox(reload?: boolean, rot?: number): BBoxObject {
         // If we have a text string and the DOM bBox was 0, it typically means
@@ -304,6 +347,7 @@ class SVGLabel extends SVGElement {
         return bBox;
     }
 
+    /** @internal */
     private getCrispAdjust(): number {
         return (
             this.renderer.styledMode && this.box ?
@@ -316,6 +360,7 @@ class SVGLabel extends SVGElement {
         ) % 2 / 2;
     }
 
+    /** @internal */
     public heightSetter(value: number): void {
         this.heightSetting = value;
         this.doUpdate = true;
@@ -329,7 +374,7 @@ class SVGLabel extends SVGElement {
      * scale are merged in one "transform" attribute in the SVG node.
      * Also updating height or width should trigger update of the box size.
      *
-     * @private
+     * @internal
      * @function Highcharts.SVGLabel#afterSetters
      */
     public afterSetters(): void {
@@ -340,9 +385,10 @@ class SVGLabel extends SVGElement {
         }
     }
 
-    /*
+    /**
      * After the text element is added, get the desired size of the border
      * box and add it before the text in the DOM.
+     * @internal
      */
     public onAdd(): void {
         this.text.add(this);
@@ -362,6 +408,7 @@ class SVGLabel extends SVGElement {
         }
     }
 
+    /** @internal */
     public paddingSetter(
         value: (number|string),
         key: string
@@ -374,6 +421,7 @@ class SVGLabel extends SVGElement {
         }
     }
 
+    /** @internal */
     public rSetter(
         value: (number|string|ColorType|SVGPath),
         key: string
@@ -381,6 +429,7 @@ class SVGLabel extends SVGElement {
         this.boxAttr(key, value);
     }
 
+    /** @internal */
     public strokeSetter(
         value: ColorType,
         key: string
@@ -390,6 +439,7 @@ class SVGLabel extends SVGElement {
         this.boxAttr(key, value);
     }
 
+    /** @internal */
     public 'stroke-widthSetter'(
         value: string,
         key: string
@@ -401,6 +451,7 @@ class SVGLabel extends SVGElement {
         this.boxAttr(key, value);
     }
 
+    /** @internal */
     public 'text-alignSetter'(value: string): void {
         // The text-align variety is for the pre-animation getter. The code
         // should be unified to either textAlign or text-align.
@@ -408,6 +459,7 @@ class SVGLabel extends SVGElement {
         this.updateTextPadding();
     }
 
+    /** @internal */
     public textSetter(text?: string): void {
         if (typeof text !== 'undefined') {
             // Must use .attr to ensure transforms are done (#10009)
@@ -418,10 +470,11 @@ class SVGLabel extends SVGElement {
         this.reAlign();
     }
 
-    /*
+    /**
      * This function runs after the label is added to the DOM (when the bounding
      * box is available), and after the text of the label is updated to detect
      * the new bounding box and reflect it in the border box.
+     * @internal
      */
     private updateBoxSize(): void {
         const text = this.text,
@@ -500,9 +553,10 @@ class SVGLabel extends SVGElement {
         }
     }
 
-    /*
+    /**
      * This function runs after setting text or padding, but only if padding
      * is changed.
+     * @internal
      */
     public updateTextPadding(): void {
         const text = this.text,
@@ -538,12 +592,14 @@ class SVGLabel extends SVGElement {
         }
     }
 
+    /** @internal */
     public widthSetter(value: (number|string)): void {
         // `width:auto` => null
         this.widthSetting = isNumber(value) ? value : void 0;
         this.doUpdate = true;
     }
 
+    /** @internal */
     public getPaddedWidth(): number {
         const padding = this.padding;
         const paddingLeft = pick(this.paddingLeft, padding);
@@ -555,6 +611,7 @@ class SVGLabel extends SVGElement {
         );
     }
 
+    /** @internal */
     public xSetter(value: number): void {
         this.x = value; // For animation getter
 
@@ -574,6 +631,7 @@ class SVGLabel extends SVGElement {
         this.attr('translateX', this.xSetting);
     }
 
+    /** @internal */
     public ySetter(value: number): void {
         if (this.anchorY) {
             // #22907, force anchorY to animate after y set

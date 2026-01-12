@@ -1,6 +1,85 @@
+function toHex(r, g, b) {
+    const h = n => n.toString(16).padStart(2, '0');
+    return `#${h(r)}${h(g)}${h(b)}`;
+}
+
+async function sampleImagePixelAtSVGPoint(svg, imageEl, svgX, svgY) {
+    // 1) Map the SVG point into the <image>'s local coordinate space
+    const pt = svg.createSVGPoint();
+    pt.x = svgX;
+    pt.y = svgY;
+
+    const ctm = imageEl.getCTM();
+    if (!ctm) {
+        return null;
+    }
+    const inv = ctm.inverse();
+    const local = pt.matrixTransform(inv);
+
+    // 2) Convert local coordinates to 0..1 inside the image box
+    const ix = imageEl.x.baseVal.value;
+    const iy = imageEl.y.baseVal.value;
+    const iw = imageEl.width.baseVal.value;
+    const ih = imageEl.height.baseVal.value;
+
+    const u = (local.x - ix) / iw;
+    const v = (local.y - iy) / ih;
+
+    if (u < 0 || u > 1 || v < 0 || v > 1) {
+        return null; // outside the image
+    }
+
+    // 3) Load the embedded raster (data URL) into an HTMLImageElement
+    const href =
+        imageEl.getAttribute('href') ||
+            imageEl.getAttributeNS('http://www.w3.org/1999/xlink', 'href') ||
+            '';
+
+    if (!href || !href.startsWith('data:image')) {
+        return null; // expects a data URL
+    }
+
+    const img = await new Promise((resolve, reject) => {
+        const el = new Image();
+        el.onload = () => resolve(el);
+        el.onerror = reject;
+        el.src = href;
+    });
+
+    // 4) Sample the pixel on an offscreen canvas
+    const cw = img.naturalWidth;
+    const ch = img.naturalHeight;
+
+    // Map u,v (0..1) to exact pixel indices
+    const px = Math.floor(u * cw);
+    const py = Math.floor(v * ch);
+
+    if (px < 0 || py < 0 || px >= cw || py >= ch) {
+        return null;
+    }
+
+    const canvas = document.createElement('canvas');
+    canvas.width = cw;
+    canvas.height = ch;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) {
+        return null;
+    }
+
+    ctx.drawImage(img, 0, 0);
+    const data = ctx.getImageData(px, py, 1, 1).data;
+    const r = data[0],
+        g = data[1],
+        b = data[2],
+        a = data[3];
+
+    return { r, g, b, a, hex: toHex(r, g, b) };
+}
+
 QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
     'Set extremes when boosted',
-    function (assert) {
+    async function (assert) {
+
         const chart = Highcharts.chart('container', {
             chart: {
                 type: 'column',
@@ -72,6 +151,28 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
         assert.ok(
             chart.series[0].points.length === initialPointsLength,
             'After resetting zoom series should show all points.'
+        );
+
+        chart.series[0].update({
+            zones: []
+        });
+
+        const svg = chart.renderTo.querySelector('svg'),
+            imageEl = svg.querySelector('.highcharts-boost-canvas'),
+            desiredColor = chart.series[0].color,
+            point = chart.series[0].points[2];
+
+        const x = point.plotX + chart.plotLeft,
+            y = point.plotY + chart.plotTop;
+
+        const { hex } =
+            await sampleImagePixelAtSVGPoint(svg, imageEl, x, y);
+
+        assert.strictEqual(
+            hex,
+            desiredColor,
+            `After updating to empty zones the color should be
+            remained, #23571.`
         );
     }
 );
@@ -1016,6 +1117,71 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
             'hidden',
             `Halo shouldn't be rendered in wrong position between hovering
             points from multiple series on multiple y-axes, #21176.`
+        );
+    }
+);
+
+QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
+    'Boost with zones',
+    async function (assert) {
+        const chart = Highcharts.chart('container', {
+            chart: {
+                type: 'scatter'
+            },
+            title: {
+                text: 'Highcharts Zone Coloring with boost v12.4'
+            },
+            boost: {
+                enabled: true,
+                useGPUTranslations: true
+            },
+            plotOptions: {
+                series: {
+                    boostThreshold: 1,
+                    marker: { radius: 20 }
+                }
+            },
+            xAxis: { min: 0, max: 100 },
+            yAxis: { min: 0, max: 100 },
+            series: [{
+                name: 'Data',
+                data: [
+                    [10, 10], [20, 20], [30, 30], [40, 40], [50, 50],
+                    [60, 60], [70, 70], [80, 80], [90, 90]
+                ],
+                color: 'rgba(128, 128, 128, 0.5)',
+                zones: [{ // Red < 50
+                    value: 50,
+                    color: '#ff0000'
+                }, { // Blue >= 50
+                    color: '#0000ff'
+                }]
+            }]
+        });
+
+        const svg = chart.renderTo.querySelector('svg'),
+            imageEl = svg.querySelector('.highcharts-boost-canvas');
+
+        let x = chart.series[0].points[1].plotX + chart.plotLeft,
+            y = chart.series[0].points[1].plotY + chart.plotTop;
+        const { hex } =
+            await sampleImagePixelAtSVGPoint(svg, imageEl, x, y);
+
+        assert.strictEqual(
+            hex,
+            '#ff0000',
+            'The second point should be red.'
+        );
+
+        x = chart.series[0].points[8].plotX + chart.plotLeft;
+        y = chart.series[0].points[8].plotY + chart.plotTop;
+        const { hex: hex2 } =
+            await sampleImagePixelAtSVGPoint(svg, imageEl, x, y);
+
+        assert.strictEqual(
+            hex2,
+            '#0000ff',
+            'The last point should be blue.'
         );
     }
 );

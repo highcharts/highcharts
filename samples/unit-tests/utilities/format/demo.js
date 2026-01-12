@@ -622,6 +622,28 @@ QUnit.module('Format', () => {
 
     });
 
+    QUnit.test('Locale-based formatting', assert => {
+        const originalLocale = Highcharts.defaultOptions.lang.locale;
+        Highcharts.setOptions({
+            lang: {
+                locale: 'no'
+            }
+        });
+
+        assert.strictEqual(
+            format('{value:.2f}', { value: 1.5 }),
+            '1,50',
+            'Should format number with locale-based decimal separator.'
+        );
+
+        // Reset
+        Highcharts.setOptions({
+            lang: {
+                locale: originalLocale
+            }
+        });
+    });
+
     QUnit.test('Error handling', assert => {
         assert.strictEqual(
             format(

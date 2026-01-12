@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -70,7 +70,8 @@ const syncPair: Sync.SyncPair = {
             const seriesId = series.options.id ?? '';
             const connectorHandler: HCComponent.HCConnectorHandler =
                 component.seriesFromConnector[seriesId];
-            const table = connectorHandler?.connector?.getTable();
+            const connectorId = connectorHandler?.options.id;
+            const table = this.getDataTable(connectorId);
             let columnId: string | undefined;
 
             if (!table) {
@@ -78,7 +79,7 @@ const syncPair: Sync.SyncPair = {
             }
 
             const presTable = table?.getModified();
-            const colAssignment = connectorHandler.columnAssignment?.find(
+            const colAssignment = connectorHandler?.columnAssignment?.find(
                 (s): boolean => s.seriesId === seriesId
             );
             // TODO: Better way to recognize the column name.
@@ -187,8 +188,11 @@ const syncPair: Sync.SyncPair = {
                         const seriesId = seriesIds[i];
                         const connectorHandler: HCComponent.HCConnectorHandler =
                                 component.seriesFromConnector[seriesId];
+                        const dataTableKey =
+                            connectorHandler?.options.dataTableKey;
 
-                        if (connectorHandler?.connector?.getTable() !== table) {
+                        if (
+                            connectorHandler?.connector?.getTable(dataTableKey) !== table) {
                             continue;
                         }
 
@@ -389,12 +393,15 @@ const syncPair: Sync.SyncPair = {
         const registerCursorListeners = (): void => {
             const { dataCursor: cursor } = board;
             const { connectorHandlers } = this;
+
             if (!cursor) {
                 return;
             }
 
             for (let i = 0, iEnd = connectorHandlers.length; i < iEnd; ++i) {
-                const table = connectorHandlers[i]?.connector?.getTable();
+                const connectorId = connectorHandlers[i]?.options.id;
+                const table = this.getDataTable(connectorId);
+
                 if (!table) {
                     continue;
                 }

@@ -15,6 +15,7 @@ on:
       - 'samples/grid-lite/**'
       - 'samples/grid-pro/**'
       - 'test/cypress/grid/visual/**'
+      - 'test/cypress/grid/integration/**'
       - 'ts/Data/**'
       - 'ts/Grid/**'
 
@@ -47,7 +48,7 @@ jobs:
       - name: Install Dependencies
         run: |
           cd highcharts
-          npm i
+          npm ci
 
       - name: Build Highcharts
         run: |
@@ -74,7 +75,7 @@ jobs:
       - name: Install Highcharts Utils
         run: |
           cd utils
-          npm i
+          npm ci
 
       - name: Run Grid Cypress Tests
         uses: cypress-io/github-action@v6

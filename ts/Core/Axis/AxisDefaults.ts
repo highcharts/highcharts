@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -18,6 +19,7 @@
 
 import type { DeepPartial } from '../../Shared/Types';
 import type {
+    AxisTitleOptions,
     XAxisOptions,
     YAxisOptions
 } from './AxisOptions';
@@ -244,20 +246,6 @@ namespace AxisDefaults {
          */
 
         /**
-         * The value on a perpendicular axis where this axis should cross. This
-         * is typically used on mathematical plots where the axes cross at 0.
-         * When `crossing` is set, space will not be reserved at the sides of
-         * the chart for axis labels and title, so those may be clipped. In this
-         * case it is better to place the axes without the `crossing` option.
-         *
-         * @type      {number}
-         * @sample    highcharts/xaxis/crossing
-         *            Function plot with axes crossing at 0
-         * @since 11.0.1
-         * @apioption xAxis.crossing
-         */
-
-        /**
          * A class name for the crosshair, especially as a hook for styling.
          *
          * @type      {string}
@@ -464,6 +452,20 @@ namespace AxisDefaults {
          * @default   2
          * @since     4.1
          * @apioption xAxis.crosshair.zIndex
+         */
+
+        /**
+         * The value on a perpendicular axis where this axis should cross. This
+         * is typically used on mathematical plots where the axes cross at 0.
+         * When `crossing` is set, space will not be reserved at the sides of
+         * the chart for axis labels and title, so those may be clipped. In this
+         * case it is better to place the axes without the `crossing` option.
+         *
+         * @type      {number}
+         * @sample    highcharts/xaxis/crossing
+         *            Function plot with axes crossing at 0
+         * @since 11.0.1
+         * @apioption xAxis.crossing
          */
 
         /**
@@ -1517,7 +1519,7 @@ namespace AxisDefaults {
          *
          * @default   {highcharts|highstock|highmaps} false
          * @default   {gantt} true
-         * @type      Boolean
+         * @type      {boolean}
          * @apioption xAxis.opposite
          */
 
@@ -1590,7 +1592,6 @@ namespace AxisDefaults {
          * @product   highcharts
          * @apioption xAxis.pane
          */
-
 
         /**
          * The zoomed range to display when only defining one or none of `min`
@@ -1756,7 +1757,6 @@ namespace AxisDefaults {
          */
         startOnTick: false,
 
-
         /**
          * The amount of ticks to draw on the axis. This opens up for aligning
          * the ticks of multiple charts or panes within a chart. This option
@@ -1822,6 +1822,23 @@ namespace AxisDefaults {
         tickLength: 10,
 
         /**
+         * For categorized axes only. If `on` the tick mark is placed in the
+         * center of the category, if `between` the tick mark is placed between
+         * categories. The default is `between` if the `tickInterval` is 1, else
+         * `on`. In order to render tick marks on a category axis it is necessary
+         * to provide a [tickWidth](#xAxis.tickWidth).
+         *
+         * @sample {highcharts} highcharts/xaxis/tickmarkplacement-between/
+         *         "between" by default
+         * @sample {highcharts} highcharts/xaxis/tickmarkplacement-on/
+         *         "on"
+         *
+         * @product    highcharts gantt
+         * @validvalue ["on", "between"]
+         */
+        tickmarkPlacement: 'between',
+
+        /**
          * If tickInterval is `null` this option sets the approximate pixel
          * interval of the tick marks. Not applicable to categorized axis.
          *
@@ -1839,23 +1856,6 @@ namespace AxisDefaults {
          *         200 px on X axis
          */
         tickPixelInterval: 100,
-
-        /**
-         * For categorized axes only. If `on` the tick mark is placed in the
-         * center of the category, if `between` the tick mark is placed between
-         * categories. The default is `between` if the `tickInterval` is 1, else
-         * `on`. In order to render tick marks on a category axis it is necessary
-         * to provide a [tickWidth](#xAxis.tickWidth).
-         *
-         * @sample {highcharts} highcharts/xaxis/tickmarkplacement-between/
-         *         "between" by default
-         * @sample {highcharts} highcharts/xaxis/tickmarkplacement-on/
-         *         "on"
-         *
-         * @product    highcharts gantt
-         * @validvalue ["on", "between"]
-         */
-        tickmarkPlacement: 'between',
 
         /**
          * The position of the major tick marks relative to the axis line.
@@ -2106,7 +2106,7 @@ namespace AxisDefaults {
                  */
                 fontSize: '0.8em'
             }
-        },
+        } as AxisTitleOptions,
 
         /**
          * The type of axis. Can be one of `linear`, `logarithmic`, `datetime`
@@ -2894,124 +2894,6 @@ namespace AxisDefaults {
          */
 
         /**
-         * Defines the horizontal alignment of the stack total label. Can be one
-         * of `"left"`, `"center"` or `"right"`. The default value is calculated
-         * at runtime and depends on orientation and whether the stack is
-         * positive or negative.
-         *
-         * @sample {highcharts} highcharts/yaxis/stacklabels-align-left/
-         *         Aligned to the left
-         * @sample {highcharts} highcharts/yaxis/stacklabels-align-center/
-         *         Aligned in center
-         * @sample {highcharts} highcharts/yaxis/stacklabels-align-right/
-         *         Aligned to the right
-         *
-         * @type      {Highcharts.AlignValue}
-         * @since     2.1.5
-         * @product   highcharts
-         * @apioption yAxis.stackLabels.align
-         */
-
-        /**
-         * A format string for the data label. Available variables are the same
-         * as for `formatter`.
-         *
-         * @type      {string}
-         * @default   {total}
-         * @since     3.0.2
-         * @product   highcharts highstock
-         * @apioption yAxis.stackLabels.format
-         */
-
-        /**
-         * Rotation of the labels in degrees.
-         *
-         * @sample {highcharts} highcharts/yaxis/stacklabels-rotation/
-         *         Labels rotated 45°
-         *
-         * @type      {number}
-         * @default   0
-         * @since     2.1.5
-         * @product   highcharts
-         * @apioption yAxis.stackLabels.rotation
-         */
-
-        /**
-         * The text alignment for the label. While `align` determines where the
-         * texts anchor point is placed with regards to the stack, `textAlign`
-         * determines how the text is aligned against its anchor point. Possible
-         * values are `"left"`, `"center"` and `"right"`. The default value is
-         * calculated at runtime and depends on orientation and whether the
-         * stack is positive or negative.
-         *
-         * @sample {highcharts} highcharts/yaxis/stacklabels-textalign-left/
-         *         Label in center position but text-aligned left
-         *
-         * @type      {Highcharts.AlignValue}
-         * @since     2.1.5
-         * @product   highcharts
-         * @apioption yAxis.stackLabels.textAlign
-         */
-
-        /**
-         * Whether to [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
-         * to render the labels.
-         *
-         * @type      {boolean}
-         * @default   false
-         * @since     3.0
-         * @product   highcharts highstock
-         * @apioption yAxis.stackLabels.useHTML
-         */
-
-        /**
-         * Defines the vertical alignment of the stack total label. Can be one
-         * of `"top"`, `"middle"` or `"bottom"`. The default value is calculated
-         * at runtime and depends on orientation and whether the stack is
-         * positive or negative.
-         *
-         * @sample {highcharts} highcharts/yaxis/stacklabels-verticalalign-top/
-         *         Vertically aligned top
-         * @sample {highcharts} highcharts/yaxis/stacklabels-verticalalign-middle/
-         *         Vertically aligned middle
-         * @sample {highcharts} highcharts/yaxis/stacklabels-verticalalign-bottom/
-         *         Vertically aligned bottom
-         *
-         * @type      {Highcharts.VerticalAlignValue}
-         * @since     2.1.5
-         * @product   highcharts
-         * @apioption yAxis.stackLabels.verticalAlign
-         */
-
-        /**
-         * The x position offset of the label relative to the left of the
-         * stacked bar. The default value is calculated at runtime and depends
-         * on orientation and whether the stack is positive or negative.
-         *
-         * @sample {highcharts} highcharts/yaxis/stacklabels-x/
-         *         Stack total labels with x offset
-         *
-         * @type      {number}
-         * @since     2.1.5
-         * @product   highcharts
-         * @apioption yAxis.stackLabels.x
-         */
-
-        /**
-         * The y position offset of the label relative to the tick position
-         * on the axis. The default value is calculated at runtime and depends
-         * on orientation and whether the stack is positive or negative.
-         *
-         * @sample {highcharts} highcharts/yaxis/stacklabels-y/
-         *         Stack total labels with y offset
-         *
-         * @type      {number}
-         * @since     2.1.5
-         * @product   highcharts
-         * @apioption yAxis.stackLabels.y
-         */
-
-        /**
          * Whether to force the axis to start on a tick. Use this option with
          * the `maxPadding` option to control the axis start.
          *
@@ -3091,6 +2973,126 @@ namespace AxisDefaults {
          * @product highcharts
          */
         stackLabels: {
+            /**
+             * Defines the horizontal alignment of the stack total label. Can be
+             * one of `"left"`, `"center"` or `"right"`. The default value is
+             * calculated at runtime and depends on orientation and whether the
+             * stack is positive or negative.
+             *
+             * @sample {highcharts} highcharts/yaxis/stacklabels-align-left/
+             *         Aligned to the left
+             * @sample {highcharts} highcharts/yaxis/stacklabels-align-center/
+             *         Aligned in center
+             * @sample {highcharts} highcharts/yaxis/stacklabels-align-right/
+             *         Aligned to the right
+             *
+             * @type      {Highcharts.AlignValue}
+             * @since     2.1.5
+             * @product   highcharts
+             * @apioption yAxis.stackLabels.align
+             */
+
+            /**
+             * A format string for the data label. Available variables are the
+             * same as for `formatter`.
+             *
+             * @type      {string}
+             * @default   {total}
+             * @since     3.0.2
+             * @product   highcharts highstock
+             * @apioption yAxis.stackLabels.format
+             */
+
+            /**
+             * Rotation of the labels in degrees.
+             *
+             * @sample {highcharts} highcharts/yaxis/stacklabels-rotation/
+             *         Labels rotated 45°
+             *
+             * @type      {number}
+             * @default   0
+             * @since     2.1.5
+             * @product   highcharts
+             * @apioption yAxis.stackLabels.rotation
+             */
+
+            /**
+             * The text alignment for the label. While `align` determines where
+             * the texts anchor point is placed with regards to the stack,
+             * `textAlign` determines how the text is aligned against its anchor
+             * point. Possible values are `"left"`, `"center"` and `"right"`.
+             * The default value is calculated at runtime and depends on
+             * orientation and whether the stack is positive or negative.
+             *
+             * @sample {highcharts} highcharts/yaxis/stacklabels-textalign-left/
+             *         Label in center position but text-aligned left
+             *
+             * @type      {Highcharts.AlignValue}
+             * @since     2.1.5
+             * @product   highcharts
+             * @apioption yAxis.stackLabels.textAlign
+             */
+
+            /**
+             * Whether to [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
+             * to render the labels.
+             *
+             * @type      {boolean}
+             * @default   false
+             * @since     3.0
+             * @product   highcharts highstock
+             * @apioption yAxis.stackLabels.useHTML
+             */
+
+            /**
+             * Defines the vertical alignment of the stack total label. Can be
+             * one of `"top"`, `"middle"` or `"bottom"`. The default value is
+             * calculated at runtime and depends on orientation and whether the
+             * stack is positive or negative.
+             *
+             * @sample {highcharts} highcharts/yaxis/stacklabels-verticalalign-top/
+             *         Vertically aligned top
+             * @sample {highcharts} highcharts/yaxis/stacklabels-verticalalign-middle/
+             *         Vertically aligned middle
+             * @sample {highcharts} highcharts/yaxis/stacklabels-verticalalign-bottom/
+             *         Vertically aligned bottom
+             *
+             * @type      {Highcharts.VerticalAlignValue}
+             * @since     2.1.5
+             * @product   highcharts
+             * @apioption yAxis.stackLabels.verticalAlign
+             */
+
+            /**
+             * The x position offset of the label relative to the left of the
+             * stacked bar. The default value is calculated at runtime and
+             * depends on orientation and whether the stack is positive or
+             * negative.
+             *
+             * @sample {highcharts} highcharts/yaxis/stacklabels-x/
+             *         Stack total labels with x offset
+             *
+             * @type      {number}
+             * @since     2.1.5
+             * @product   highcharts
+             * @apioption yAxis.stackLabels.x
+             */
+
+            /**
+             * The y position offset of the label relative to the tick position
+             * on the axis. The default value is calculated at runtime and
+             * depends on orientation and whether the stack is positive or
+             * negative.
+             *
+             * @sample {highcharts} highcharts/yaxis/stacklabels-y/
+             *         Stack total labels with y offset
+             *
+             * @type      {number}
+             * @since     2.1.5
+             * @product   highcharts
+             * @apioption yAxis.stackLabels.y
+             */
+
             /**
              * Enable or disable the initial animation when a series is
              * displayed for the `stackLabels`. The animation can also be set as

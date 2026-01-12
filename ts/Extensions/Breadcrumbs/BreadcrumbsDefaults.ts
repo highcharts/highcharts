@@ -4,9 +4,9 @@
  *
  *  Authors: Grzegorz Blachlinski, Karol Kolodziej
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -32,10 +32,10 @@ import type { LangOptions } from '../../Core/Options';
  */
 const lang: Partial<LangOptions> = {
     /**
+     * The text for the main breadcrumb.
+     *
      * @since   10.0.0
      * @product highcharts highmaps
-     *
-     * @private
      */
     mainBreadcrumb: 'Main'
 };
@@ -51,6 +51,14 @@ const lang: Partial<LangOptions> = {
  * @optionparent navigation.breadcrumbs
  */
 const options: BreadcrumbsOptions = {
+    /**
+     * The default padding for each button and separator in each direction.
+     *
+     * @type  {number}
+     * @since 10.0.0
+     */
+    buttonSpacing: 5,
+
     /**
      * A collection of attributes for the buttons. The object takes SVG
      * attributes like `fill`, `stroke`, `stroke-width`, as well as `style`,
@@ -88,14 +96,6 @@ const options: BreadcrumbsOptions = {
             color: '{palette.highlightColor80}'
         }
     },
-
-    /**
-     * The default padding for each button and separator in each direction.
-     *
-     * @type  {number}
-     * @since 10.0.0
-     */
-    buttonSpacing: 5,
 
     /**
      * Fires when clicking on the breadcrumbs button. Two arguments are
@@ -231,11 +231,13 @@ const options: BreadcrumbsOptions = {
          * @product highcharts
          */
         text: '/',
+
         /**
          * CSS styles for the breadcrumbs separator.
          *
          * In styled mode, the breadcrumbs separators are styled by the
          * `.highcharts-separator` rule with its different states.
+         *
          *  @type  {Highcharts.CSSObject}
          *  @since 10.0.0
          */
@@ -291,9 +293,11 @@ const options: BreadcrumbsOptions = {
  *
  * */
 
+/** @internal */
 const BreadcrumbsDefaults = {
     lang,
     options
 };
 
+/** @internal */
 export default BreadcrumbsDefaults;

@@ -339,7 +339,79 @@ QUnit.test('DataTable.setRows', function (assert) {
         table.getRow(0),
         'Row values are the same after clone.'
     );
+});
 
+QUnit.test('DataTable.deleteRows', function (assert) {
+    const createTable = () => new DataTable({
+        columns: {
+            id: [3, 2, 1, 5, 3, 9, 0, 7, 6, 8, 4, 1, 7]
+        }
+    });
+    let table = createTable();
+
+    table.deleteRows();
+    assert.strictEqual(
+        table.getRowCount(),
+        0,
+        'deleteRows() should delete all rows.'
+    );
+
+    table = createTable();
+    table.deleteRows(5);
+    assert.deepEqual(
+        table.getColumn('id'),
+        [3, 2, 1, 5, 3, 0, 7, 6, 8, 4, 1, 7],
+        'deleteRows(5) should remove row at index 5.'
+    );
+
+    table = createTable();
+    table.deleteRows(5, 2);
+    assert.deepEqual(
+        table.getColumn('id'),
+        [3, 2, 1, 5, 3,  7, 6, 8, 4, 1, 7],
+        'deleteRows(5, 2) should remove rows at indices 5 and 6.'
+    );
+
+
+    table = createTable();
+    table.deleteRows([2, 0, 3, 2]);
+    assert.deepEqual(
+        table.getColumn('id'),
+        [2, 3, 9, 0, 7, 6, 8, 4, 1, 7],
+        'deleteRows([2, 0, 3, 2]) should remove rows at indices 0, 2, 3.'
+    );
+
+    table = createTable();
+    table.deleteRows(999);
+    assert.strictEqual(
+        table.getRowCount(),
+        13,
+        'deleteRows(999) should not delete any rows.'
+    );
+    table.deleteRows(5, 0);
+    assert.strictEqual(
+        table.getRowCount(),
+        13,
+        'deleteRows(5, 0) should not delete any rows.'
+    );
+    table.deleteRows([999, 1000]);
+    assert.strictEqual(
+        table.getRowCount(),
+        13,
+        'deleteRows([999, 1000]) should not delete any rows.'
+    );
+    table.deleteRows([-5]);
+    assert.strictEqual(
+        table.getRowCount(),
+        13,
+        'deleteRows([-5]) should not delete any rows.'
+    );
+    table.deleteRows([]);
+    assert.strictEqual(
+        table.getRowCount(),
+        13,
+        'deleteRows([]) should not delete any rows.'
+    );
 });
 
 QUnit.test('DataTable.setColumns', function (assert) {
@@ -527,4 +599,68 @@ QUnit.test('DataTable.setModifier', function (assert) {
         .then(() =>
             done()
         );
+});
+
+QUnit.test('DataTable.setRow insert argument', function (assert) {
+    const table = new DataTable({
+        columns: {
+            ID: [1, 2, 3],
+            Name: ['John', 'Jane', 'Alice']
+        }
+    });
+
+    assert.deepEqual(
+        table.getColumn('ID'),
+        [1, 2, 3],
+        'Initial ID column values are correct.'
+    );
+
+    // Insert a new row at position 0 (beginning)
+    table.setRow({ ID: 99 }, 0, true);
+
+    assert.deepEqual(
+        table.getColumn('ID'),
+        [99, 1, 2, 3],
+        'New row inserted at the beginning when insert=true.'
+    );
+
+    assert.deepEqual(
+        table.getColumn('Name'),
+        [null, 'John', 'Jane', 'Alice'],
+        'If no value is provided, the new row is filled with `null`.'
+    );
+});
+
+QUnit.test('Metadata in a cloned table should be a shallow copy', function (assert) {
+    // Arrange
+    const table = new DataTable({
+        columns: {
+            ID: [1, 2, 3]
+        },
+        metadata: {
+            ID: {
+                dataType: 'number'
+            }
+        }
+    });
+
+    // Act
+    const tableClone = table.clone();
+
+    // Assert
+    assert.notStrictEqual(
+        tableClone.metadata,
+        table.metadata,
+        'Metadata object should be a new shallow copy.'
+    );
+    assert.strictEqual(
+        tableClone.metadata.ID,
+        table.metadata.ID,
+        'Nested metadata objects should still reference the same object.'
+    );
+    assert.deepEqual(
+        tableClone.metadata,
+        table.metadata,
+        'Cloned metadata should have equal structure and values.'
+    );
 });

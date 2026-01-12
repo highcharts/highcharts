@@ -1,10 +1,6 @@
 //@ts-check
-import '../../../../code/dashboards/es-modules/masters/dashboards.src.js';
-import '../../../../code/grid/es-modules/masters/grid-pro.src.js';
-
-// Access the globals created by the UMD modules
-const Dashboards = window.Dashboards;
-const Grid = window.Grid;
+import Dashboards from '../../../../code/dashboards/es-modules/masters/dashboards.src.js';
+import Grid from '../../../../code/grid/es-modules/masters/grid-pro.src.js';
 
 Dashboards.GridPlugin.custom.connectGrid(Grid);
 Dashboards.PluginHandler.addPlugin(Dashboards.GridPlugin);
