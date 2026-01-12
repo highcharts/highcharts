@@ -49,7 +49,7 @@ class RowsVirtualizer {
     /**
      * The default height of a row.
      */
-    public readonly defaultRowHeight: number;
+    public defaultRowHeight: number = 49;
 
     /**
      * The index of the first visible row.
@@ -132,7 +132,6 @@ class RowsVirtualizer {
         this.viewport = viewport;
         this.strictRowHeights = this.rowSettings.strictHeights as boolean;
         this.buffer = Math.max(this.rowSettings.bufferSize as number, 0);
-        this.defaultRowHeight = this.getDefaultRowHeight();
 
         if (this.strictRowHeights) {
             viewport.tbodyElement.classList.add(
@@ -152,6 +151,8 @@ class RowsVirtualizer {
      * Renders the rows in the viewport for the first time.
      */
     public async initialRender(): Promise<void> {
+        this.defaultRowHeight = await this.getDefaultRowHeight();
+
         // Initial reflow to set the viewport height
         if (this.viewport.virtualRows) {
             this.viewport.reflow();
@@ -692,27 +693,19 @@ class RowsVirtualizer {
      * @returns
      * The default height of a row.
      */
-    private getDefaultRowHeight(): number {
-        // TODO: It requires first row of data to be available, so it needs to
-        // be async.
+    private async getDefaultRowHeight(): Promise<number> {
+        const vp = this.viewport;
+        const mockRow = new TableRow(vp, 0);
 
-        // const vp = this.viewport;
-        // const mockRow = new TableRow(vp, 0);
+        await mockRow.init();
+        mockRow.htmlElement.style.position = 'absolute';
+        mockRow.htmlElement.classList.add(Globals.getClassName('mockedRow'));
+        vp.tbodyElement.appendChild(mockRow.htmlElement);
+        await mockRow.render();
 
-        // mockRow.htmlElement.style.position = 'absolute';
-        // mockRow.htmlElement.classList.add(Globals.getClassName('mockedRow'));
-
-        // this.viewport.tbodyElement.appendChild(mockRow.htmlElement);
-        // mockRow.render();
-
-        // const defaultRowHeight = mockRow.htmlElement.offsetHeight;
-
-        // mockRow.destroy();
-
-        // return defaultRowHeight;
-
-        // Temporary fallback.
-        return 31;
+        const defaultRowHeight = mockRow.htmlElement.offsetHeight;
+        mockRow.destroy();
+        return defaultRowHeight;
     }
 }
 
