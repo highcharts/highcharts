@@ -91,21 +91,52 @@ describe('Grid Pro - cell and column events.', () => {
         cy.get('#cellDblClick').should('have.value', 'cellDblClickColumnOption');
     });
 
-    it('AfterRender event.', () => {
-        // ColumnDefaults
-        cy.get('#cellAfterRender').should('have.value', '1');
-        cy.get('.hcg-row[data-row-index="1"] > td[data-column-id="price"]')
-            .dblclick({force: true})
-            .find('input')
-            .type('1{enter}');
-        cy.get('#cellAfterRender').should('have.value', '2');
+    it('Cell events should fire from nested elements', () => {
+        const weightCell =
+            '.hcg-row[data-row-index="0"] > td[data-column-id="weight"]';
 
-        // ColumnOptions
-        cy.get('.hcg-row[data-row-index="1"] > td[data-column-id="weight"]')
+        cy.get(weightCell)
             .dblclick({force: true})
             .find('input')
-            .type('1{enter}');
-        cy.get('#cellAfterRender').should('have.value', '3');
+            .as('weightEditor');
+
+        cy.get('#cellClick').invoke('val', 'reset');
+        cy.get('@weightEditor').click({force: true});
+        cy.get('#cellClick').should('have.value', 'cellClickColumnOption');
+
+        cy.get('#cellMouseOver').invoke('val', 'reset');
+        cy.get('@weightEditor').trigger('mouseover', {force: true});
+        cy.get('#cellMouseOver')
+            .should('have.value', 'cellMouseOverColumnOption');
+
+        cy.get('#cellMouseOut').invoke('val', 'reset');
+        cy.get('@weightEditor').trigger('mouseout', {force: true});
+        cy.get('#cellMouseOut')
+            .should('have.value', 'cellMouseOutColumnOption');
+
+        cy.get('@weightEditor').type('{enter}', {force: true});
+    });
+
+    it('AfterRender event.', () => {
+        // Capture initial counter value - may vary due to prior tests
+        cy.get('#cellAfterRender').then(($el) => {
+            const initialCount = +$el.val();
+
+            // Edit the weight cell at row 1 - this should trigger afterRender
+            // for that specific cell (afterRender only counts row 1, weight column)
+            cy.get('.hcg-row[data-row-index="1"] > td[data-column-id="weight"]')
+                .dblclick({force: true})
+                .find('input')
+                .type('1{enter}');
+            cy.get('#cellAfterRender').should('have.value', String(initialCount + 1));
+
+            // Edit again to verify it increments
+            cy.get('.hcg-row[data-row-index="1"] > td[data-column-id="weight"]')
+                .dblclick({force: true})
+                .find('input')
+                .type('2{enter}');
+            cy.get('#cellAfterRender').should('have.value', String(initialCount + 2));
+        });
     });
 
     it('AfterRender header event.', () => {
@@ -118,7 +149,7 @@ describe('Grid Pro - cell and column events.', () => {
             .dblclick({force: true})
             .find('input')
             .clear()
-            .type('Strawberries');
+            .type('Strawberries{enter}');
 
         cy.get('#cellAfterEdit').should('have.value', 'cellAfterEdit');
 
@@ -127,7 +158,7 @@ describe('Grid Pro - cell and column events.', () => {
             .dblclick({force: true})
             .find('input')
             .clear()
-            .type('4');
+            .type('4{enter}');
 
         cy.get('#cellAfterEdit').should('have.value', 'cellAfterEdit');
     });
@@ -172,5 +203,65 @@ describe('Grid Pro - cell and column events.', () => {
         cy.get('th[data-column-id="weight"] input').first().type(100);
         cy.get('#beforeColumnFiltering').should('have.value', 'beforeFilterColumnOption');
         cy.get('#afterColumnFiltering').should('have.value', 'afterFilterColumnOption');
+    });
+});
+
+describe('Grid Pro - virtualization and delegated events.', () => {
+    before(() => {
+        cy.visit('grid-pro/cypress/virtualization-events');
+    });
+
+    it('Events work on initially visible rows', () => {
+        // Click a cell in the first visible row
+        cy.get('.hcg-row[data-row-index="0"] > td[data-column-id="product"]')
+            .click({force: true});
+        cy.get('#cellClick').should('have.value', 'clicked');
+        cy.get('#lastClickedRow').should('have.value', '0');
+
+        // Mouseover should work
+        cy.get('.hcg-row[data-row-index="2"] > td[data-column-id="product"]')
+            .trigger('mouseover');
+        cy.get('#cellMouseOver').should('have.value', 'row-2');
+    });
+
+    it('Events work after scrolling to new rows', () => {
+        // Scroll down to rows that weren't initially rendered
+        cy.get('#container tbody').scrollTo(0, 3000);
+
+        // Wait for virtualization to render new rows
+        cy.get('.hcg-row[data-row-index="80"]').should('exist');
+
+        // Reset the click tracker
+        cy.get('#cellClick').invoke('val', '');
+        cy.get('#lastClickedRow').invoke('val', '');
+
+        // Click a cell that was scrolled into view
+        cy.get('.hcg-row[data-row-index="80"] > td[data-column-id="product"]')
+            .click({force: true});
+        cy.get('#cellClick').should('have.value', 'clicked');
+        cy.get('#lastClickedRow').should('have.value', '80');
+
+        // Mouseover should work on scrolled rows
+        cy.get('.hcg-row[data-row-index="82"] > td[data-column-id="product"]')
+            .trigger('mouseover');
+        cy.get('#cellMouseOver').should('have.value', 'row-82');
+    });
+
+    it('Events work after scrolling back to top', () => {
+        // Scroll back to top
+        cy.get('#container tbody').scrollTo(0, 0);
+
+        // Wait for virtualization to render the rows again
+        cy.get('.hcg-row[data-row-index="0"]').should('exist');
+
+        // Reset trackers
+        cy.get('#cellClick').invoke('val', '');
+        cy.get('#lastClickedRow').invoke('val', '');
+
+        // Events should still work on re-rendered rows
+        cy.get('.hcg-row[data-row-index="1"] > td[data-column-id="product"]')
+            .click({force: true});
+        cy.get('#cellClick').should('have.value', 'clicked');
+        cy.get('#lastClickedRow').should('have.value', '1');
     });
 });

@@ -138,7 +138,7 @@ export interface ColorAxisMarkerOptions {
  * convenient to add each category to a separate series.
  *
  * Color axis does not work with: `sankey`, `sunburst`, `dependencywheel`,
- * `networkgraph`, `wordcloud`, `venn`, `gauge` and `solidgauge` series
+ * `networkgraph`, `venn`, `gauge` and `solidgauge` series
  * types.
  *
  * Since v7.2.0 `colorAxis` can also be an array of options objects.
