@@ -3,7 +3,7 @@ Client side export
 
 ### Local exports by default
 
-Starting from version 12.3.0, the [exporting.js](https://code.highcharts.com/modules/exporting.src.js) module handles exports to PNG, JPEG and SVG formats locally by default, without requiring the [offline-exporting.js](https://code.highcharts.com/modules/offline-exporting.src.js) module. This behavior is controlled by the newly introduced [exporting.local](https://api.highcharts.com/highcharts/exporting.local) option, which is set to `true` by default.
+Starting from version 12.3.0, the [exporting.js](https://code.highcharts.com/modules/exporting.src.js) module handles exports to PNG, JPEG and SVG formats locally by default, without requiring the [offline-exporting.js](https://code.highcharts.com/modules/offline-exporting.src.js) module. This behavior is controlled by the [exporting.local](https://api.highcharts.com/highcharts/exporting.local) option, which is set to `true` by default.
 
 Offline exporting logic allows for image export of charts without sending data to an external server. This is the solution if you:
 
@@ -13,11 +13,11 @@ Offline exporting logic allows for image export of charts without sending data t
 
 [View it live on jsFiddle](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/exporting/offline-download-demo/).
 
-Setting the [exporting.local](https://api.highcharts.com/highcharts/exporting.local) to `false` will still send export requests to the remote export server.
+Setting the [exporting.local](https://api.highcharts.com/highcharts/exporting.local) to `false` will send export requests to the remote export server.
 
 ### The offline-exporting module
 
-The only exception, which still requires the [offline-exporting.js](https://code.highcharts.com/modules/offline-exporting.js) module for local export, is the **PDF format**.
+The only exception, which requires the [offline-exporting.js](https://code.highcharts.com/modules/offline-exporting.js) module for local export, is the **PDF format**.
 
 The module makes use of modern browser technology to accomplish this, and therefore does not work flawlessly with older browsers. For a detailed table of supported browsers, see below. In the case of an unsupported browser, the module will by default fall back to the export server, but this can be disabled with the [exporting.fallbackToExportServer](https://api.highcharts.com/highcharts/exporting.fallbackToExportServer) option.
 
