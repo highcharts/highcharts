@@ -312,11 +312,33 @@ specified by config.imageCapture.resultsOutputPath.
         argv.tests ||
         argv.testsAbsolutePath
     );
+
+    // Extract --project parameter from command line arguments
+    // This is passed directly to Playwright, not parsed by yargs
+    // Supports both --project value and --project=value formats
+    let projectParam = null;
+    for (let i = 0; i < process.argv.length; i++) {
+        const arg = process.argv[i];
+        if (arg === '--project' && i + 1 < process.argv.length) {
+            projectParam = process.argv[i + 1];
+            break;
+        } else if (arg.startsWith('--project=')) {
+            projectParam = arg.split('=')[1];
+            break;
+        }
+    }
+
+    // Use different config file for different projects to avoid cache conflicts
+    const configFile = projectParam ?
+        CONFIGURATION_FILE.replace('.json', `_${projectParam}.json`) :
+        CONFIGURATION_FILE;
+
     const runConfig = {
-        configFile: CONFIGURATION_FILE,
+        configFile,
         codeDirectory: CODE_DIRECTORY,
         jsDirectory: JS_DIRECTORY,
-        testsDirectory: TESTS_DIRECTORY
+        testsDirectory: TESTS_DIRECTORY,
+        project: projectParam
     };
 
     const { getProductTests } = require('./lib/test');
@@ -393,19 +415,39 @@ specified by config.imageCapture.resultsOutputPath.
             // Determine which Playwright projects to run
             const playwrightProjects = [];
 
-            if (argv.product === 'Grid' || argv.product === 'Dashboards') {
+            if (argv.product === 'Grid') {
+                playwrightProjects.push('setup-grid-lite', 'setup-grid-pro', 'grid-lite', 'grid-pro', 'grid-shared');
+            } else if (argv.product === 'Dashboards') {
                 playwrightProjects.push('setup-dashboards', 'dashboards');
             } else {
                 playwrightProjects.push('setup-highcharts', 'qunit');
             }
 
+            // Always include grid-shared when running grid-lite or grid-pro individually
+            // Check if any grid project is in the list
+            const hasGridLite = playwrightProjects.includes('grid-lite');
+            const hasGridPro = playwrightProjects.includes('grid-pro');
+            if ((hasGridLite || hasGridPro) && !playwrightProjects.includes('grid-shared')) {
+                // Add required setups if not already present
+                if (hasGridLite && !playwrightProjects.includes('setup-grid-lite')) {
+                    playwrightProjects.push('setup-grid-lite');
+                }
+                if (hasGridPro && !playwrightProjects.includes('setup-grid-pro')) {
+                    playwrightProjects.push('setup-grid-pro');
+                }
+                playwrightProjects.push('grid-shared');
+            }
+
             // Build grep pattern for product-specific tests
+            // Skip grep for Grid/Dashboards as they use different test structure
             let grepArg = '';
-            if (Array.isArray(productTests) && productTests.length > 0) {
-                // Convert product test paths to grep pattern
-                // e.g., ['axis', 'chart'] -> '--grep "unit-tests/(axis|chart)"'
-                const pattern = productTests.join('|');
-                grepArg = `--grep "unit-tests/(${pattern})"`;
+            if (argv.product !== 'Grid' && argv.product !== 'Dashboards') {
+                if (Array.isArray(productTests) && productTests.length > 0) {
+                    // Convert product test paths to grep pattern
+                    // e.g., ['axis', 'chart'] -> '--grep "unit-tests/(axis|chart)"'
+                    const pattern = productTests.join('|');
+                    grepArg = `--grep "unit-tests/(${pattern})"`;
+                }
             }
 
             const projectArgs = playwrightProjects

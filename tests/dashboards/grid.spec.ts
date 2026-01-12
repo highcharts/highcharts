@@ -5,6 +5,7 @@ declare const Grid: any;
 // Equivalent of test/typescript-karma/Grid/grid.test.js - setOptions test
 test('Grid setOptions function', async ({ page }) => {
     await page.setContent(`
+        <!DOCTYPE html>
         <html>
             <head>
                 <script src="https://code.highcharts.com/datagrid/datagrid.src.js"></script>
@@ -37,6 +38,7 @@ test('Grid setOptions function', async ({ page }) => {
 // Equivalent of test/typescript-karma/Grid/grid.test.js - update methods test
 test('Grid update methods', async ({ page }) => {
     await page.setContent(`
+        <!DOCTYPE html>
         <html>
             <head>
                 <script src="https://code.highcharts.com/datagrid/datagrid.src.js"></script>
@@ -218,6 +220,7 @@ test('Grid update methods', async ({ page }) => {
 // Equivalent of test/typescript-karma/Grid/columnOptions.test.js - formatter options test
 test('Grid formatter options', async ({ page }) => {
     await page.setContent(`
+        <!DOCTYPE html>
         <html>
             <head>
                 <script src="https://code.highcharts.com/datagrid/datagrid.src.js"></script>
@@ -267,6 +270,7 @@ test('Grid formatter options', async ({ page }) => {
 // Equivalent of test/typescript-karma/Grid/credits.test.js - credits test
 test('Grid credits', async ({ page }) => {
     await page.setContent(`
+        <!DOCTYPE html>
         <html>
             <head>
                 <script src="https://code.highcharts.com/datagrid/datagrid.src.js"></script>
@@ -368,6 +372,7 @@ test('Grid credits', async ({ page }) => {
 // Equivalent of test/typescript-karma/Grid/grid.test.js - custom sorting test
 test('Grid custom sorting', async ({ page }) => {
     await page.setContent(`
+        <!DOCTYPE html>
         <html>
             <head>
                 <script src="https://code.highcharts.com/datagrid/datagrid.src.js"></script>
@@ -420,6 +425,7 @@ test('Grid custom sorting', async ({ page }) => {
 // Equivalent of test/typescript-karma/Grid/update.test.js - partial update: columns[].sorting.order
 test('Grid partial update: columns[].sorting.order', async ({ page }) => {
     await page.setContent(`
+        <!DOCTYPE html>
         <html>
             <head>
                 <script src="https://code.highcharts.com/grid/grid-pro.js"></script>
@@ -487,6 +493,7 @@ test('Grid partial update: columns[].sorting.order', async ({ page }) => {
 // Equivalent of test/typescript-karma/Grid/update.test.js - partial update: columns[].filtering.condition and value
 test('Grid partial update: columns[].filtering.condition and value', async ({ page }) => {
     await page.setContent(`
+        <!DOCTYPE html>
         <html>
             <head>
                 <script src="https://code.highcharts.com/grid/grid-pro.js"></script>
@@ -565,6 +572,7 @@ test('Grid partial update: columns[].filtering.condition and value', async ({ pa
 // Equivalent of test/typescript-karma/Grid/update.test.js - partial update: columns[].width
 test('Grid partial update: columns[].width', async ({ page }) => {
     await page.setContent(`
+        <!DOCTYPE html>
         <html>
             <head>
                 <script src="https://code.highcharts.com/grid/grid-pro.js"></script>
@@ -625,6 +633,7 @@ test('Grid partial update: columns[].width', async ({ page }) => {
 // Equivalent of test/typescript-karma/Grid/update.test.js - partial update: pagination.page and pageSize
 test('Grid partial update: pagination.page and pageSize', async ({ page }) => {
     await page.setContent(`
+        <!DOCTYPE html>
         <html>
             <head>
                 <script src="https://code.highcharts.com/grid/grid-pro.js"></script>
@@ -692,6 +701,7 @@ test('Grid partial update: pagination.page and pageSize', async ({ page }) => {
 // Equivalent of test/typescript-karma/Grid/update.test.js - full update: pagination.enabled
 test('Grid full update: pagination.enabled', async ({ page }) => {
     await page.setContent(`
+        <!DOCTYPE html>
         <html>
             <head>
                 <script src="https://code.highcharts.com/grid/grid-pro.js"></script>
