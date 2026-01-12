@@ -302,8 +302,7 @@ export class RemoteDataProvider extends DataProvider {
             );
         }
 
-        // Update the local cache
-        this.updateCachedValue(columnId, rowIndex, value);
+        await this.applyQuery();
     }
 
     /**
@@ -339,42 +338,6 @@ export class RemoteDataProvider extends DataProvider {
         }
 
         return rowObject;
-    }
-
-    /**
-     * Updates a value in the local cache without sending to the server.
-     *
-     * @param columnId
-     * The column ID.
-     *
-     * @param rowIndex
-     * The row index as passed from the grid.
-     *
-     * @param value
-     * The new value.
-     */
-    private updateCachedValue(
-        columnId: string,
-        rowIndex: number,
-        value: DT.CellType
-    ): void {
-        if (!this.dataChunks) {
-            return;
-        }
-
-        const chunkIndex = this.getChunkIndexForRow(rowIndex);
-        const chunk = this.dataChunks.get(chunkIndex);
-
-        if (!chunk) {
-            return;
-        }
-
-        const localIndex = this.getLocalIndexInChunk(rowIndex);
-        const column = chunk.data[columnId];
-
-        if (column && localIndex < column.length) {
-            column[localIndex] = value;
-        }
     }
 
     public override async getColumnDataType(

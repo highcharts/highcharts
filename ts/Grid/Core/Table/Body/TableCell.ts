@@ -121,7 +121,7 @@ class TableCell extends Cell {
     }
 
     /**
-     * Edits the cell value and updates the data table. Call this instead of
+     * Edits the cell value and updates the dataset. Call this instead of
      * `setValue` when you want it to trigger the cell value user change event.
      *
      * @param value
@@ -144,13 +144,13 @@ class TableCell extends Cell {
      * The raw value to set. If not provided, it will use the value from the
      * data table for the current row and column.
      *
-     * @param updateTable
-     * Whether to update the table after setting the content. Defaults to
-     * `false`, meaning the table will not be updated.
+     * @param updateDataset
+     * Whether to update the dataset after setting the content. Defaults to
+     * `false`, meaning the dataset will not be updated.
      */
     public async setValue(
         value?: DataTable.CellType,
-        updateTable: boolean = false
+        updateDataset: boolean = false
     ): Promise<void> {
         const fetchToken = ++this.asyncFetchToken;
 
@@ -172,7 +172,7 @@ class TableCell extends Cell {
 
         this.value = value;
 
-        if (updateTable && await this.updateDataTable()) {
+        if (updateDataset && await this.updateDataset()) {
             return;
         }
 
@@ -199,15 +199,15 @@ class TableCell extends Cell {
     }
 
     /**
-     * Updates the the data table so that it reflects the current state of
-     * the grid.
+     * Updates the the dataset so that it reflects the current state of the
+     * grid.
      *
      * @returns
      * A promise that resolves to `true` if the cell triggered all the whole
-     * viewport rows to be updated, or `false` if the only change should be
-     * the cell's content.
+     * viewport rows to be updated, or `false` if the only change was the cell's
+     * content.
      */
-    private async updateDataTable(): Promise<boolean> {
+    private async updateDataset(): Promise<boolean> {
         const oldValue = await this.column.viewport.grid.dataProvider?.getValue(
             this.column.id,
             this.row.index
@@ -234,10 +234,10 @@ class TableCell extends Cell {
             rowId
         );
 
-        // If no modifiers, don't update all rows
-        // TODO: Handle this differently
-        // if (vp.grid.dataTable === vp.grid.presentationTable) {
-        //     return false;
+        // TODO(optim): Handle cases where the whole viewport should not
+        // be updated (no sorting & filtering in the edited column). Then:
+        // if (shouldUpdateAllRows) {
+        //    return false;
         // }
 
         await vp.updateRows();
