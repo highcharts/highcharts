@@ -161,18 +161,25 @@ class LineSeries extends Series {
                         attribs['stroke-linejoin'] = 'round';
                 }
 
-                graph[verb](attribs)
-                    // Add shadow to normal series as well as zones
-                    .shadow(
-                        options.shadow &&
-                        // If shadow is defined, call function with
-                        // `filterUnits: 'userSpaceOnUse'` to avoid known
-                        // SVG filter bug (#19093)
+                graph[verb](attribs);
+
+                // Add shadow only to the main series (not zones)
+                // If shadow is defined, use `filterUnits: 'userSpaceOnUse'`
+                // to avoid known SVG filter bug (#19093)
+                if (!i && options.shadow) {
+                    const isInverted = this.chart.inverted;
+                    const shadowOptions = isObject(options.shadow) ?
                         merge(
-                            { filterUnits: 'userSpaceOnUse' },
-                            isObject(options.shadow) ? options.shadow : {}
-                        )
-                    );
+                            isInverted ? {} :
+                                { filterUnits: 'userSpaceOnUse' },
+                            options.shadow
+                        ) : (
+                            isInverted ? true :
+                                { filterUnits: 'userSpaceOnUse' }
+                        );
+
+                    graph.shadow(shadowOptions);
+                }
             }
 
             // Helpers for animation
