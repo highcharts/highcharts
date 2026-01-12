@@ -3043,10 +3043,7 @@ class Chart {
             creds = merge(
                 true, this.options.credits as Chart.CreditsOptions, credits
             );
-        // If href is empty and no click callback is defined, use default href
-        if (!creds.events?.click && (!creds.href || creds.href === '')) {
-            creds.href = 'https://www.highcharts.com?credits';
-        }
+
         if (creds.enabled && !this.credits) {
 
             /**
@@ -3064,23 +3061,27 @@ class Chart {
             )
                 .addClass('highcharts-credits')
                 .on('click', function (e: PointerEvent): void {
-                    // Fire custom click event if provided
+                    // Fire the event with browser redirect as default function
                     fireEvent(
                         chart,
                         'creditsClick',
                         e as Event,
-                        creds.events?.click || void 0
+                        (): void => {
+                            if (creds.href) {
+                                win.location.href = creds.href;
+                            }
+                        }
                     );
-                    // Navigate to href if provided and not empty
-                    if (creds.href && creds.href !== '') {
-                        win.location.href = creds.href;
-                    }
                 })
                 .attr({
                     align: (creds.position as any).align,
                     zIndex: 8
                 });
 
+            // If creds.events?.click exists, add it as an event listener
+            if (creds.events?.click) {
+                addEvent(chart, 'creditsClick', creds.events.click);
+            }
 
             if (!chart.styledMode) {
                 this.credits.css(creds.style);
@@ -4681,8 +4682,10 @@ namespace Chart {
         events?: {
             /**
              * Callback function to handle click events on the credits label.
-             * If `href` is empty or undefined, this callback will be called
-             * without performing navigation.
+             * The callback can call `event.preventDefault()` to prevent the
+             * default navigation behavior. Alternatively, you can add a general
+             * event handler using `Highcharts.addEvent(chart, 'creditsClick',
+             * callback)` instead of providing it in the options tree.
              *
              * @sample {highcharts} highcharts/credits/events-click/
              *         Custom click handler
