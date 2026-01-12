@@ -164,7 +164,7 @@ function renderLabelIcon(
         icon
             .attr({
                 cursor: 'pointer',
-                'fill': params.color || '{palette.neutralColor60}',
+                'fill': params.color || 'var(--highcharts-neutralColor60)',
                 'stroke-width': 1,
                 stroke: options.lineColor,
                 strokeWidth: options.lineWidth || 0

@@ -61,7 +61,7 @@ if (defaultOptions.annotations?.types) {
                 borderWidth: 0,
                 y: -5,
                 style: {
-                    color: '{palette.neutralColor80}'
+                    color: 'var(--highcharts-neutralColor80)'
                 }
             }
         }

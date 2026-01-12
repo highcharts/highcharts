@@ -83,7 +83,7 @@ if (defaultOptions.annotations?.types) {
                 /**
                  * The color of line.
                  */
-                lineColor: '{palette.neutralColor40}',
+                lineColor: 'var(--highcharts-neutralColor40)',
 
                 /**
                  * An array of colors for the lines.
@@ -109,7 +109,7 @@ if (defaultOptions.annotations?.types) {
                 overflow: 'none' as any,
                 shape: 'rect',
                 style: {
-                    color: '{palette.neutralColor80}'
+                    color: 'var(--highcharts-neutralColor80)'
                 },
                 verticalAlign: 'middle',
                 y: 0

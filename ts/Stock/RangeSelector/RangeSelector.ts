@@ -1051,7 +1051,7 @@ class RangeSelector {
             label.css(merge(chartStyle, options.labelStyle));
 
             dateBox.css(merge({
-                color: '{palette.neutralColor80}'
+                color: 'var(--highcharts-neutralColor80)'
             }, chartStyle, options.inputStyle));
 
             css(input, extend<CSSObject>({

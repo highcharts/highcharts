@@ -100,15 +100,15 @@ const TimelineSeriesDefaults: TimelineSeriesOptions = {
          */
         alternate: true,
 
-        backgroundColor: '{palette.backgroundColor}',
+        backgroundColor: 'var(--highcharts-backgroundColor)',
 
         borderWidth: 1,
 
-        borderColor: '{palette.neutralColor40}',
+        borderColor: 'var(--highcharts-neutralColor40)',
 
         borderRadius: 3,
 
-        color: '{palette.neutralColor80}',
+        color: 'var(--highcharts-neutralColor80)',
 
         /**
          * The color of the line connecting the data label to the point.

@@ -57,7 +57,7 @@ const ErrorBarSeriesDefaults: ErrorBarSeriesOptions = {
      * @since   3.0
      * @product highcharts
      */
-    color: '{palette.neutralColor100}',
+    color: 'var(--highcharts-neutralColor100)',
 
     grouping: false,
 

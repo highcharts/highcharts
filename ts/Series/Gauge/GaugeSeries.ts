@@ -138,7 +138,7 @@ class GaugeSeries extends Series {
              * @product highcharts
              */
             dataLabels: {
-                borderColor: '{palette.neutralColor20}',
+                borderColor: 'var(--highcharts-neutralColor20)',
                 borderRadius: 3,
                 borderWidth: 1,
                 crop: false,
@@ -175,7 +175,7 @@ class GaugeSeries extends Series {
                  * @product   highcharts
                  * @apioption plotOptions.gauge.dial.backgroundColor
                  */
-                backgroundColor: '{palette.neutralColor100}',
+                backgroundColor: 'var(--highcharts-neutralColor100)',
 
                 /**
                  * The length of the dial's base part, relative to the total
@@ -221,7 +221,7 @@ class GaugeSeries extends Series {
                  * @product   highcharts
                  * @apioption plotOptions.gauge.dial.borderColor
                  */
-                borderColor: '{palette.neutralColor20}',
+                borderColor: 'var(--highcharts-neutralColor20)',
 
                 /**
                  * The width of the gauge dial border in pixels.
@@ -370,7 +370,7 @@ class GaugeSeries extends Series {
                  * @product   highcharts
                  * @apioption plotOptions.gauge.pivot.borderColor
                  */
-                borderColor: '{palette.neutralColor20}',
+                borderColor: 'var(--highcharts-neutralColor20)',
 
                 /**
                  * The background color or fill of the pivot.
@@ -384,7 +384,7 @@ class GaugeSeries extends Series {
                  * @product   highcharts
                  * @apioption plotOptions.gauge.pivot.backgroundColor
                  */
-                backgroundColor: '{palette.neutralColor100}'
+                backgroundColor: 'var(--highcharts-neutralColor100)'
             },
 
             tooltip: {

@@ -54,7 +54,7 @@ const MapPointSeriesDefaults: MapPointSeriesOptions = {
         overflow: false as any,
         style: {
             /** @internal */
-            color: '{palette.neutralColor100}'
+            color: 'var(--highcharts-neutralColor100)'
         }
     },
     legendSymbol: 'lineMarker',

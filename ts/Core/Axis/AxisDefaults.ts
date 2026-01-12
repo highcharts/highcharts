@@ -1161,7 +1161,7 @@ namespace AxisDefaults {
              */
             style: {
                 /** @internal */
-                color: '{palette.neutralColor80}',
+                color: 'var(--highcharts-neutralColor80)',
                 /** @internal */
                 cursor: 'default',
                 /**
@@ -2100,7 +2100,7 @@ namespace AxisDefaults {
              */
             style: {
                 /** @internal */
-                color: '{palette.neutralColor60}',
+                color: 'var(--highcharts-neutralColor60)',
                 /**
                  * @type {number|string}
                  */
@@ -2233,7 +2233,7 @@ namespace AxisDefaults {
          * @type    {Highcharts.ColorType}
          * @default #f2f2f2
          */
-        minorGridLineColor: '{palette.neutralColor5}',
+        minorGridLineColor: 'var(--highcharts-neutralColor5)',
 
         /**
          * Width of the minor, secondary grid lines.
@@ -2261,7 +2261,7 @@ namespace AxisDefaults {
          * @type    {Highcharts.ColorType}
          * @default #999999
          */
-        minorTickColor: '{palette.neutralColor40}',
+        minorTickColor: 'var(--highcharts-neutralColor40)',
 
         /**
          * The color of the line marking the axis itself.
@@ -2278,7 +2278,7 @@ namespace AxisDefaults {
          *
          * @type    {Highcharts.ColorType}
          */
-        lineColor: '{palette.neutralColor80}',
+        lineColor: 'var(--highcharts-neutralColor80)',
 
         /**
          * The width of the line marking the axis itself.
@@ -2317,7 +2317,7 @@ namespace AxisDefaults {
          * @type    {Highcharts.ColorType}
          * @default #e6e6e6
          */
-        gridLineColor: '{palette.neutralColor10}',
+        gridLineColor: 'var(--highcharts-neutralColor10)',
 
         /**
          * The width of the grid lines extending the ticks across the plot area.
@@ -2384,7 +2384,7 @@ namespace AxisDefaults {
          *
          * @type    {Highcharts.ColorType}
          */
-        tickColor: '{palette.neutralColor80}'
+        tickColor: 'var(--highcharts-neutralColor80)'
 
         // `tickWidth: 1`
     };
@@ -3249,7 +3249,7 @@ namespace AxisDefaults {
              */
             style: {
                 /** @internal */
-                color: '{palette.neutralColor100}',
+                color: 'var(--highcharts-neutralColor100)',
                 /**
                  * @type {number|string}
                  */

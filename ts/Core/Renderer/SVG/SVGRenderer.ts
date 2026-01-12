@@ -2495,7 +2495,7 @@ export default SVGRenderer;
  * The shadow color.
  * @name    Highcharts.ShadowOptionsObject#color
  * @type    {Highcharts.ColorString|undefined}
- * @default ${palette.neutralColor100}
+ * @default $var(--highcharts-neutralColor100)
  *//**
  * The horizontal offset from the element.
  *

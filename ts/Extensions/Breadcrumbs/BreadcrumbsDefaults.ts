@@ -93,7 +93,7 @@ const options: BreadcrumbsOptions = {
             }
         },
         style: {
-            color: '{palette.highlightColor80}'
+            color: 'var(--highcharts-highlightColor80)'
         }
     },
 
@@ -242,7 +242,7 @@ const options: BreadcrumbsOptions = {
          *  @since 10.0.0
          */
         style: {
-            color: '{palette.neutralColor60}',
+            color: 'var(--highcharts-neutralColor60)',
             fontSize: '0.8em'
         }
     },

@@ -153,14 +153,14 @@ const FunnelSeriesDefaults: FunnelSeriesOptions = {
              *
              * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              */
-            color: '{palette.neutralColor20}',
+            color: 'var(--highcharts-neutralColor20)',
 
             /**
              * A specific border color for the selected point.
              *
              * @type {Highcharts.ColorString}
              */
-            borderColor: '{palette.neutralColor100}'
+            borderColor: 'var(--highcharts-neutralColor100)'
 
         }
 

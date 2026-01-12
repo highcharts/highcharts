@@ -99,7 +99,7 @@ const DrilldownDefaults: DrilldownOptions = {
         /** @ignore-option */
         cursor: 'pointer',
         /** @ignore-option */
-        color: '{palette.highlightColor100}',
+        color: 'var(--highcharts-highlightColor100)',
         /** @ignore-option */
         fontWeight: 'bold',
         /** @ignore-option */
@@ -124,7 +124,7 @@ const DrilldownDefaults: DrilldownOptions = {
      */
     activeDataLabelStyle: {
         cursor: 'pointer',
-        color: '{palette.highlightColor100}',
+        color: 'var(--highcharts-highlightColor100)',
         fontWeight: 'bold',
         textDecoration: 'underline'
     },

@@ -198,14 +198,14 @@ const NavigatorDefaults: NavigatorOptions = {
          *
          * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        backgroundColor: '{palette.neutralColor5}',
+        backgroundColor: 'var(--highcharts-neutralColor5)',
 
         /**
          * The stroke for the handle border and the stripes inside.
          *
          * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        borderColor: '{palette.neutralColor40}'
+        borderColor: 'var(--highcharts-neutralColor40)'
     },
 
     /**
@@ -235,7 +235,7 @@ const NavigatorDefaults: NavigatorOptions = {
      * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @default #cccccc
      */
-    outlineColor: '{palette.neutralColor40}',
+    outlineColor: 'var(--highcharts-neutralColor40)',
 
     /**
      * The width of the line marking the currently zoomed area in the
@@ -484,7 +484,7 @@ const NavigatorDefaults: NavigatorOptions = {
 
         lineWidth: 0,
 
-        gridLineColor: '{palette.neutralColor10}',
+        gridLineColor: 'var(--highcharts-neutralColor10)',
 
         id: 'navigator-x-axis',
 
@@ -501,7 +501,7 @@ const NavigatorDefaults: NavigatorOptions = {
              */
             style: {
                 /** @ignore */
-                color: '{palette.neutralColor100}',
+                color: 'var(--highcharts-neutralColor100)',
                 /** @ignore */
                 fontSize: '0.7em',
                 /** @ignore */

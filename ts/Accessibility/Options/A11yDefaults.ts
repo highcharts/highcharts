@@ -641,7 +641,7 @@ const Options: DeepPartial<A11yOptions> = {
                  */
                 style: {
                     /** @internal */
-                    color: '{palette.highlightColor80}',
+                    color: 'var(--highcharts-highlightColor80)',
                     /** @internal */
                     lineWidth: 2,
                     /** @internal */

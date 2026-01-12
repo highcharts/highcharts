@@ -1133,7 +1133,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        lineColor: '{palette.backgroundColor}',
+        lineColor: 'var(--highcharts-backgroundColor)',
 
         /**
          * The width of the point marker's outline.
@@ -1353,7 +1353,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
                  *
                  * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                  */
-                fillColor: '{palette.neutralColor20}',
+                fillColor: 'var(--highcharts-neutralColor20)',
 
                 /**
                  * The color of the point marker's outline. When
@@ -1364,7 +1364,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
                  *
                  * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                  */
-                lineColor: '{palette.neutralColor100}',
+                lineColor: 'var(--highcharts-neutralColor100)',
 
                 /**
                  * The width of the point marker's outline.

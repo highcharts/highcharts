@@ -136,7 +136,7 @@ class SupertrendIndicator extends SMAIndicator {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        risingTrendColor: '{palette.positiveColor}',
+        risingTrendColor: 'var(--highcharts-positiveColor)',
         /**
          * Color of the Supertrend series line that is above the main series.
          *
@@ -145,7 +145,7 @@ class SupertrendIndicator extends SMAIndicator {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        fallingTrendColor: '{palette.negativeColor}',
+        fallingTrendColor: 'var(--highcharts-negativeColor)',
         /**
          * The styles for the Supertrend line that intersect main series.
          *
@@ -164,7 +164,7 @@ class SupertrendIndicator extends SMAIndicator {
                  *
                  * @type {Highcharts.ColorString}
                  */
-                lineColor: '{palette.neutralColor80}',
+                lineColor: 'var(--highcharts-neutralColor80)',
 
                 /**
                  * The dash or dot style of the grid lines. For possible

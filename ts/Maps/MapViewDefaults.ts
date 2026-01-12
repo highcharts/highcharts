@@ -203,7 +203,7 @@ const MapViewDefaults: MapViewOptions = {
          *
          * @type {Highcharts.ColorType}
          */
-        borderColor: '{palette.neutralColor20}',
+        borderColor: 'var(--highcharts-neutralColor20)',
 
         /**
          * The pixel border width of the insets.

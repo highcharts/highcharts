@@ -1027,7 +1027,7 @@ class Series {
             this.getCyclic('color');
 
         } else if (this.options.colorByPoint) {
-            this.color = '{palette.neutralColor20}';
+            this.color = 'var(--highcharts-neutralColor20)';
 
         } else {
             this.getCyclic(

@@ -1238,7 +1238,7 @@ class Tooltip {
                                 options.borderColor ||
                                 point.color ||
                                 currentSeries.color ||
-                                '{palette.neutralColor60}'
+                                'var(--highcharts-neutralColor60)'
                             )
                         });
                     }
@@ -1487,7 +1487,7 @@ class Tooltip {
                             ttOptions.borderColor ||
                             point.color ||
                             series.color ||
-                            '{palette.neutralColor80}'
+                            'var(--highcharts-neutralColor80)'
                         )
                     });
             }

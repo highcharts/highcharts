@@ -134,7 +134,7 @@ const noData: NoDataOptions = {
         /** @ignore */
         fontSize: '0.8em',
         /** @ignore */
-        color: '{palette.neutralColor60}'
+        color: 'var(--highcharts-neutralColor60)'
     }
 
 };

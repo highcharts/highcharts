@@ -87,7 +87,7 @@ const CandlestickSeriesDefaults: CandlestickSeriesOptions = {
      * @default #000000
      * @product highstock
      */
-    lineColor: '{palette.neutralColor100}',
+    lineColor: 'var(--highcharts-neutralColor100)',
     /**
      * The pixel width of the candlestick line/border. Defaults to `1`.
      *
@@ -114,7 +114,7 @@ const CandlestickSeriesDefaults: CandlestickSeriesOptions = {
      * @product highstock
     */
 
-    upColor: '{palette.backgroundColor}',
+    upColor: 'var(--highcharts-backgroundColor)',
     /**
      * @product highstock
      */

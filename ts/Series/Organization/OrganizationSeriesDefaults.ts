@@ -59,7 +59,7 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
      *
      * @type {Highcharts.ColorString}
      */
-    borderColor: '{palette.neutralColor60}',
+    borderColor: 'var(--highcharts-neutralColor60)',
 
     /**
      * The border radius of the node cards.
@@ -103,7 +103,7 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
          *
          * @type {Highcharts.ColorString}
          */
-        color: '{palette.neutralColor60}',
+        color: 'var(--highcharts-neutralColor60)',
         /**
          * The line width of the links connecting nodes, in pixels.
          *

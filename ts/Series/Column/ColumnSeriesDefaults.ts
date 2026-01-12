@@ -322,7 +322,7 @@ const ColumnSeriesDefaults: PlotOptionsOf<ColumnSeries> = {
              * @default #cccccc
              * @product highcharts highstock gantt
              */
-            color: '{palette.neutralColor20}',
+            color: 'var(--highcharts-neutralColor20)',
 
             /**
              * A specific border color for the selected point.
@@ -331,7 +331,7 @@ const ColumnSeriesDefaults: PlotOptionsOf<ColumnSeries> = {
              * @default #000000
              * @product highcharts highstock gantt
              */
-            borderColor: '{palette.neutralColor100}'
+            borderColor: 'var(--highcharts-neutralColor100)'
         }
     },
 
@@ -399,7 +399,7 @@ const ColumnSeriesDefaults: PlotOptionsOf<ColumnSeries> = {
      * @default   #ffffff
      * @product   highcharts highstock gantt
      */
-    borderColor: '{palette.backgroundColor}'
+    borderColor: 'var(--highcharts-backgroundColor)'
 
 };
 

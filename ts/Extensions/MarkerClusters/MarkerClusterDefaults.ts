@@ -238,7 +238,7 @@ const cluster: MarkerClusterOptions = {
         /** @internal */
         lineWidth: 0,
         /** @internal */
-        lineColor: '{palette.backgroundColor}'
+        lineColor: 'var(--highcharts-backgroundColor)'
     },
 
     /**

@@ -141,7 +141,7 @@ class LineSeries extends Series {
                         owner.color ||
                         this.color ||
                         // When colorByPoint = true
-                        '{palette.neutralColor20}'
+                        'var(--highcharts-neutralColor20)'
                     ),
                     'stroke-width': options.lineWidth || 0,
                     // Polygon series use filled graph

@@ -725,7 +725,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                         },
                         labelOptions: {
                             style: {
-                                color: '{palette.neutralColor60}'
+                                color: 'var(--highcharts-neutralColor60)'
                             }
                         }
                     },
@@ -1178,7 +1178,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                                 y: coordsY.value,
                                 controlPoint: {
                                     style: {
-                                        fill: '{palette.negativeColor}'
+                                        fill: 'var(--highcharts-negativeColor)'
                                     }
                                 }
                             },
@@ -1371,8 +1371,8 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
     /**
      * A vertical arrow annotation bindings. Includes `start` event. On click,
      * finds the closest point and marks it with an arrow.
-     * `${palette.positiveColor}` is the color of the arrow when
-     * pointing from above and `${palette.negativeColor}`
+     * `$var(--highcharts-positiveColor)` is the color of the arrow when
+     * pointing from above and `$var(--highcharts-negativeColor)`
      * when pointing from below the point.
      *
      * @type    {Highcharts.NavigationBindingsOptionsObject}
@@ -1421,8 +1421,8 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                             connector: {
                                 fill: 'none',
                                 stroke: closestPoint.below ?
-                                    '{palette.negativeColor}' :
-                                    '{palette.positiveColor}'
+                                    'var(--highcharts-negativeColor)' :
+                                    'var(--highcharts-positiveColor)'
                             }
                         }
                     },

@@ -103,7 +103,7 @@ const mapNavigation: MapNavigationOptions = {
          */
         style: {
             /** @ignore */
-            color: '{palette.neutralColor60}',
+            color: 'var(--highcharts-neutralColor60)',
             /** @ignore */
             fontSize: '1em',
             /** @ignore */
@@ -124,9 +124,9 @@ const mapNavigation: MapNavigationOptions = {
          */
         theme: {
             /** @ignore */
-            fill: '{palette.backgroundColor}',
+            fill: 'var(--highcharts-backgroundColor)',
             /** @ignore */
-            stroke: '{palette.neutralColor10}',
+            stroke: 'var(--highcharts-neutralColor10)',
             /** @ignore */
             'stroke-width': 1,
             /** @ignore */

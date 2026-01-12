@@ -371,7 +371,7 @@ const defaultOptions: DefaultOptions = {
             /**
              * The fill color for buttons
              */
-            fill: '{palette.neutralColor3}',
+            fill: 'var(--highcharts-neutralColor3)',
             /**
              * The padding of buttons
              */
@@ -383,7 +383,7 @@ const defaultOptions: DefaultOptions = {
             /**
              * The stroke color for buttons
              */
-            stroke: '{palette.neutralColor20}',
+            stroke: 'var(--highcharts-neutralColor20)',
             /**
              * The stroke width for buttons
              */
@@ -392,7 +392,7 @@ const defaultOptions: DefaultOptions = {
              * CSS styling for the buttons' text
              */
             style: {
-                color: '{palette.neutralColor80}',
+                color: 'var(--highcharts-neutralColor80)',
                 cursor: 'pointer',
                 fontSize: '0.8em',
                 fontWeight: 'normal'
@@ -406,16 +406,16 @@ const defaultOptions: DefaultOptions = {
                  * to the normal state options
                  */
                 hover: {
-                    fill: '{palette.neutralColor10}'
+                    fill: 'var(--highcharts-neutralColor10)'
                 },
                 /**
                  * Select state overrides for the buttons are applied in
                  * addition to the normal state options
                  */
                 select: {
-                    fill: '{palette.highlightColor10}',
+                    fill: 'var(--highcharts-highlightColor10)',
                     style: {
-                        color: '{palette.neutralColor100}',
+                        color: 'var(--highcharts-neutralColor100)',
                         fontWeight: 'bold'
                     }
                 },
@@ -428,7 +428,7 @@ const defaultOptions: DefaultOptions = {
                      * Disabled state CSS style overrides for the buttons' text
                      */
                     style: {
-                        color: '{palette.neutralColor20}'
+                        color: 'var(--highcharts-neutralColor20)'
                     }
                 }
             }
@@ -677,7 +677,7 @@ const defaultOptions: DefaultOptions = {
          * @default   {highstock} { "color": "#333333", "fontSize": "16px" }
          */
         style: {
-            color: '{palette.neutralColor80}',
+            color: 'var(--highcharts-neutralColor80)',
             fontWeight: 'bold'
         },
 
@@ -876,7 +876,7 @@ const defaultOptions: DefaultOptions = {
          * @default   {"color": "#666666"}
          */
         style: {
-            color: '{palette.neutralColor60}',
+            color: 'var(--highcharts-neutralColor60)',
             /**
              * @type {number|string}
              */
@@ -959,7 +959,7 @@ const defaultOptions: DefaultOptions = {
          * @default   {"color": "#666666"}
          */
         style: {
-            color: '{palette.neutralColor60}',
+            color: 'var(--highcharts-neutralColor60)',
             /**
              * @type {number|string}
              */
@@ -1339,7 +1339,7 @@ const defaultOptions: DefaultOptions = {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        borderColor: '{palette.neutralColor40}',
+        borderColor: 'var(--highcharts-neutralColor40)',
 
         /**
          * The border corner radius of the legend.
@@ -1452,7 +1452,7 @@ const defaultOptions: DefaultOptions = {
              * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              * @since 2.2.4
              */
-            activeColor: '{palette.highlightColor100}',
+            activeColor: 'var(--highcharts-highlightColor100)',
 
             /**
              * The color of the inactive up or down arrow in the legend page
@@ -1469,7 +1469,7 @@ const defaultOptions: DefaultOptions = {
              * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              * @since 2.2.4
              */
-            inactiveColor: '{palette.neutralColor20}'
+            inactiveColor: 'var(--highcharts-neutralColor20)'
         },
 
         /**
@@ -1550,7 +1550,7 @@ const defaultOptions: DefaultOptions = {
             /**
              * @ignore
              */
-            color: '{palette.neutralColor80}',
+            color: 'var(--highcharts-neutralColor80)',
             /**
              * @ignore
              */
@@ -1589,7 +1589,7 @@ const defaultOptions: DefaultOptions = {
             /**
              * @ignore
              */
-            color: '{palette.neutralColor100}'
+            color: 'var(--highcharts-neutralColor100)'
         },
 
         /**
@@ -1611,7 +1611,7 @@ const defaultOptions: DefaultOptions = {
             /**
              * @ignore
              */
-            color: '{palette.neutralColor60}',
+            color: 'var(--highcharts-neutralColor60)',
             /**
              * @ignore
              */
@@ -1882,7 +1882,7 @@ const defaultOptions: DefaultOptions = {
                 /**
                  * @ignore
                  */
-                color: '{palette.neutralColor80}',
+                color: 'var(--highcharts-neutralColor80)',
                 /**
                  * @ignore
                  */
@@ -1984,7 +1984,7 @@ const defaultOptions: DefaultOptions = {
             /**
              * @ignore
              */
-            backgroundColor: '{palette.backgroundColor}',
+            backgroundColor: 'var(--highcharts-backgroundColor)',
             /**
              * @ignore
              */
@@ -2737,7 +2737,7 @@ const defaultOptions: DefaultOptions = {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        backgroundColor: '{palette.backgroundColor}',
+        backgroundColor: 'var(--highcharts-backgroundColor)',
 
         /**
          * The pixel width of the tooltip border. Defaults to 0 for single
@@ -2808,7 +2808,7 @@ const defaultOptions: DefaultOptions = {
          */
         style: {
             /** @internal */
-            color: '{palette.neutralColor80}',
+            color: 'var(--highcharts-neutralColor80)',
             /** @internal */
             cursor: 'default',
             /**
@@ -2931,7 +2931,7 @@ const defaultOptions: DefaultOptions = {
             /** @internal */
             cursor: 'pointer',
             /** @internal */
-            color: '{palette.neutralColor40}',
+            color: 'var(--highcharts-neutralColor40)',
             /**
              * @type {number|string}
              */

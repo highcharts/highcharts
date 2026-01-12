@@ -95,9 +95,9 @@ const palette = {
  */
 const applyPalette = (color: string, chart?: Chart): string => {
     const p = chart?.options.palette || palette;
-    return (color.indexOf('{palette.') !== -1) ?
+    return (color.indexOf('var(--highcharts-') !== -1) ?
         color.replace(
-            /{palette\.([a-zA-Z0-9]+)}/g,
+            /var\(--highcharts-([a-zA-Z0-9]+)\)/g,
             (match: string, name: string): string =>
                 (p as any)[name] as string
         ) :

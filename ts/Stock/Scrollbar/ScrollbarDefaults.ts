@@ -151,7 +151,7 @@ const ScrollbarDefaults: ScrollbarOptions = {
      *
      * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
-    barBackgroundColor: '{palette.neutralColor20}',
+    barBackgroundColor: 'var(--highcharts-neutralColor20)',
 
     /**
      * The width of the bar's border.
@@ -166,7 +166,7 @@ const ScrollbarDefaults: ScrollbarOptions = {
      *
      * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
-    barBorderColor: '{palette.neutralColor20}',
+    barBorderColor: 'var(--highcharts-neutralColor20)',
 
     /**
      * The color of the small arrow inside the scrollbar buttons.
@@ -176,7 +176,7 @@ const ScrollbarDefaults: ScrollbarOptions = {
      *
      * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
-    buttonArrowColor: '{palette.neutralColor80}',
+    buttonArrowColor: 'var(--highcharts-neutralColor80)',
 
     /**
      * The color of scrollbar buttons.
@@ -186,7 +186,7 @@ const ScrollbarDefaults: ScrollbarOptions = {
      *
      * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
-    buttonBackgroundColor: '{palette.neutralColor10}',
+    buttonBackgroundColor: 'var(--highcharts-neutralColor10)',
 
     /**
      * The color of the border of the scrollbar buttons.
@@ -196,7 +196,7 @@ const ScrollbarDefaults: ScrollbarOptions = {
      *
      * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
-    buttonBorderColor: '{palette.neutralColor20}',
+    buttonBorderColor: 'var(--highcharts-neutralColor20)',
 
     /**
      * The border width of the scrollbar buttons.
@@ -231,7 +231,7 @@ const ScrollbarDefaults: ScrollbarOptions = {
      *
      * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
-    trackBorderColor: '{palette.neutralColor20}',
+    trackBorderColor: 'var(--highcharts-neutralColor20)',
 
     /**
      * The corner radius of the border of the scrollbar track.

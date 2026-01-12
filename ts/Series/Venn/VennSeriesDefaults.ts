@@ -59,7 +59,7 @@ import type VennSeriesOptions from './VennSeriesOptions';
  */
 const VennSeriesDefaults: VennSeriesOptions = {
 
-    borderColor: '{palette.neutralColor20}',
+    borderColor: 'var(--highcharts-neutralColor20)',
 
     borderDashStyle: 'solid' as any,
 
@@ -116,7 +116,7 @@ const VennSeriesDefaults: VennSeriesOptions = {
 
             opacity: 1,
 
-            borderColor: '{palette.neutralColor80}'
+            borderColor: 'var(--highcharts-neutralColor80)'
 
         },
 
@@ -125,9 +125,9 @@ const VennSeriesDefaults: VennSeriesOptions = {
          */
         select: {
 
-            color: '{palette.neutralColor20}',
+            color: 'var(--highcharts-neutralColor20)',
 
-            borderColor: '{palette.neutralColor100}',
+            borderColor: 'var(--highcharts-neutralColor100)',
 
             animation: false
 

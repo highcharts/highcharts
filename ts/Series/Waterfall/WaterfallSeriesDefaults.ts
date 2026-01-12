@@ -88,7 +88,7 @@ const WaterfallSeriesDefaults: WaterfallSeriesOptions = {
      * @since   3.0
      * @product highcharts
      */
-    lineColor: '{palette.neutralColor80}',
+    lineColor: 'var(--highcharts-neutralColor80)',
 
     /**
      * A name for the dash style to use for the line connecting the columns
@@ -115,7 +115,7 @@ const WaterfallSeriesDefaults: WaterfallSeriesOptions = {
      * @since   3.0
      * @product highcharts
      */
-    borderColor: '{palette.neutralColor80}',
+    borderColor: 'var(--highcharts-neutralColor80)',
 
     states: {
 

@@ -91,7 +91,7 @@ const BoxPlotSeriesDefaults: BoxPlotSeriesOptions = {
      * @since   3.0
      * @product highcharts
      */
-    fillColor: '{palette.backgroundColor}',
+    fillColor: 'var(--highcharts-backgroundColor)',
 
     /**
      * The width of the line surrounding the box. If any of

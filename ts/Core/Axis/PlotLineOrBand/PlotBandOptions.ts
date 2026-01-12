@@ -258,7 +258,7 @@ export interface PlotBandOptions {
      * @sample {highstock} stock/xaxis/plotbands/
      *         Plot band on Y axis
      *
-     * @default ${palette.highlightColor10}
+     * @default $var(--highcharts-highlightColor10)
      */
     color?: ColorType;
 

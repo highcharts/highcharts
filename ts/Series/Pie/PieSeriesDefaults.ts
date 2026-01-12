@@ -137,7 +137,7 @@ const PieSeriesDefaults: PlotOptionsOf<PieSeries> = {
      *         Empty pie series
      *
      * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-     * @default   ${palette.neutralColor20}
+     * @default   $var(--highcharts-neutralColor20)
      * @apioption plotOptions.pie.color
      */
 
@@ -584,7 +584,7 @@ const PieSeriesDefaults: PlotOptionsOf<PieSeries> = {
      *
      * @private
      */
-    borderColor: '{palette.backgroundColor}',
+    borderColor: 'var(--highcharts-backgroundColor)',
 
     /**
      * The width of the border surrounding each slice.
