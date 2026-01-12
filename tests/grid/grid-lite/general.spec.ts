@@ -317,3 +317,107 @@ test('Grid custom sorting', async ({ page }) => {
     ).toStrictEqual(['B', 'D', 'C', 'A']);
 });
 
+// Equivalent of test/typescript-karma/Grid/grid.test.js - delegates cell events to tbody
+test('Grid delegates cell events to tbody', async ({ page }) => {
+    await page.setContent(`
+        <!DOCTYPE html>
+        <html>
+            <head>
+                <script src="https://code.highcharts.com/grid/grid-lite.js"></script>
+                <link rel="stylesheet" href="https://code.highcharts.com/grid/grid-lite.css"></link>
+            </head>
+            <body>
+                <div id="container"></div>
+            </body>
+        </html>
+    `, { waitUntil: 'networkidle' });
+
+    const result = await page.evaluate(async () => {
+        const parentElement = document.getElementById('container');
+        if (!parentElement) {
+            return null;
+        }
+
+        const added: { target: EventTarget; type: string }[] = [];
+        const originalAddEventListener =
+            EventTarget.prototype.addEventListener.bind(EventTarget.prototype);
+        EventTarget.prototype.addEventListener = function (
+            this: EventTarget,
+            type: string,
+            listener: EventListenerOrEventListenerObject,
+            options?: boolean | AddEventListenerOptions
+        ) {
+            added.push({ target: this, type });
+            return originalAddEventListener.call(this, type, listener, options);
+        };
+
+        let grid: any;
+        try {
+            grid = await (window as any).Grid.grid(
+                parentElement,
+                {
+                    dataTable: {
+                        columns: {
+                            product: ['Apples', 'Pears', 'Plums', 'Bananas'],
+                            weight: [100, 40, 0.5, 200],
+                            price: [1.5, 2.53, 5, 4.5]
+                        }
+                    }
+                },
+                true
+            );
+        } finally {
+            EventTarget.prototype.addEventListener = originalAddEventListener;
+        }
+
+        grid.viewport?.resizeObserver?.disconnect();
+
+        const tbody = grid.viewport?.tbodyElement;
+        if (!tbody) {
+            return { error: 'Table body element does not exist' };
+        }
+
+        const delegatedEvents = [
+            'click',
+            'dblclick',
+            'mousedown',
+            'mouseover',
+            'mouseout',
+            'keydown'
+        ];
+
+        const tbodyHasEvents = delegatedEvents.map((type) => ({
+            type,
+            attached: added.some(
+                (entry) => entry.target === tbody && entry.type === type
+            )
+        }));
+
+        const perCellDelegated = added.filter((entry) => (
+            entry.target instanceof HTMLTableCellElement &&
+            entry.target.tagName === 'TD' &&
+            delegatedEvents.includes(entry.type)
+        ));
+
+        grid?.destroy();
+
+        return {
+            tbodyHasEvents,
+            perCellDelegatedCount: perCellDelegated.length
+        };
+    });
+
+    expect(result?.error).toBeUndefined();
+
+    // Verify all delegated events are attached to tbody
+    expect(
+        result?.tbodyHasEvents?.every((event) => event.attached),
+        'All delegated event listeners should be attached to tbody.'
+    ).toBe(true);
+
+    expect(
+        result?.perCellDelegatedCount,
+        'Delegated events should not be bound to individual cells.'
+    ).toBe(0);
+});
+
