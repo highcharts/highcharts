@@ -3,6 +3,7 @@ import { test, expect } from '~/fixtures.ts';
 // Equivalent of test/typescript-karma/Grid/credits.test.js - credits test
 test('Grid credits', async ({ page }) => {
     await page.setContent(`
+        <!DOCTYPE html>
         <html>
             <head>
                 <script src="https://code.highcharts.com/grid/grid-lite.js"></script>

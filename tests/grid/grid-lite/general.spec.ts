@@ -5,6 +5,7 @@ declare const Grid: any;
 // Equivalent of test/typescript-karma/Grid/grid.test.js - setOptions test
 test('Grid setOptions function', async ({ page }) => {
     await page.setContent(`
+        <!DOCTYPE html>
         <html>
             <head>
                 <script src="https://code.highcharts.com/grid/grid-lite.js"></script>
@@ -34,6 +35,7 @@ test('Grid setOptions function', async ({ page }) => {
 // Equivalent of test/typescript-karma/Grid/grid.test.js - update methods test
 test('Grid update methods', async ({ page }) => {
     await page.setContent(`
+        <!DOCTYPE html>
         <html>
             <head>
                 <script src="https://code.highcharts.com/grid/grid-lite.js"></script>
@@ -215,6 +217,7 @@ test('Grid update methods', async ({ page }) => {
 // Equivalent of test/typescript-karma/Grid/columnOptions.test.js - formatter options test
 test('Grid formatter options', async ({ page }) => {
     await page.setContent(`
+        <!DOCTYPE html>
         <html>
             <head>
                 <script src="https://code.highcharts.com/grid/grid-lite.js"></script>
@@ -264,6 +267,7 @@ test('Grid formatter options', async ({ page }) => {
 // Equivalent of test/typescript-karma/Grid/grid.test.js - custom sorting test
 test('Grid custom sorting', async ({ page }) => {
     await page.setContent(`
+        <!DOCTYPE html>
         <html>
             <head>
                 <script src="https://code.highcharts.com/grid/grid-lite.js"></script>

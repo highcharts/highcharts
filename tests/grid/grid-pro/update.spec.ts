@@ -3,6 +3,7 @@ import { test, expect } from '~/fixtures.ts';
 // Equivalent of test/typescript-karma/Grid/update.test.js - partial update: columns[].sorting.order
 test('Grid partial update: columns[].sorting.order', async ({ page }) => {
     await page.setContent(`
+        <!DOCTYPE html>
         <html>
             <head>
                 <script src="https://code.highcharts.com/grid/grid-pro.js"></script>
@@ -70,6 +71,7 @@ test('Grid partial update: columns[].sorting.order', async ({ page }) => {
 // Equivalent of test/typescript-karma/Grid/update.test.js - partial update: columns[].filtering.condition and value
 test('Grid partial update: columns[].filtering.condition and value', async ({ page }) => {
     await page.setContent(`
+        <!DOCTYPE html>
         <html>
             <head>
                 <script src="https://code.highcharts.com/grid/grid-pro.js"></script>
@@ -148,6 +150,7 @@ test('Grid partial update: columns[].filtering.condition and value', async ({ pa
 // Equivalent of test/typescript-karma/Grid/update.test.js - partial update: columns[].width
 test('Grid partial update: columns[].width', async ({ page }) => {
     await page.setContent(`
+        <!DOCTYPE html>
         <html>
             <head>
                 <script src="https://code.highcharts.com/grid/grid-pro.js"></script>
@@ -208,6 +211,7 @@ test('Grid partial update: columns[].width', async ({ page }) => {
 // Equivalent of test/typescript-karma/Grid/update.test.js - partial update: pagination.page and pageSize
 test('Grid partial update: pagination.page and pageSize', async ({ page }) => {
     await page.setContent(`
+        <!DOCTYPE html>
         <html>
             <head>
                 <script src="https://code.highcharts.com/grid/grid-pro.js"></script>
@@ -275,6 +279,7 @@ test('Grid partial update: pagination.page and pageSize', async ({ page }) => {
 // Equivalent of test/typescript-karma/Grid/update.test.js - full update: pagination.enabled
 test('Grid full update: pagination.enabled', async ({ page }) => {
     await page.setContent(`
+        <!DOCTYPE html>
         <html>
             <head>
                 <script src="https://code.highcharts.com/grid/grid-pro.js"></script>
