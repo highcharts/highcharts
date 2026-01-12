@@ -83,19 +83,19 @@ describe('Grid sorting.', () => {
             .find('input')
             .type('000{enter}');
 
-        // cy.window().its('grid').then(grid => {
-        //     const { rows } = grid.viewport;
-        //     const lastRow = rows[rows.length - 1];
+        cy.window().its('grid').then(grid => {
+            const { rows } = grid.viewport;
+            const lastRow = rows[rows.length - 1];
 
-        //     expect(
-        //         lastRow.cells[0].value,
-        //         'Last rendered row should be `Pears`.',
-        //     ).to.equal('Pears');
+            expect(
+                lastRow.cells[0].value,
+                'Last rendered row should be `Pears`.',
+            ).to.equal('Pears');
 
-        //     expect(
-        //         grid.presentationTable.columns.weight,
-        //         'Weight column should be sorted.',
-        //     ).to.deep.equal([0.5, 100, 200, 40000]);
-        // });
+            expect(
+                grid.presentationTable.columns.weight,
+                'Weight column should be sorted.',
+            ).to.deep.equal([0.5, 100, 200, 40000]);
+        });
     });
 });
