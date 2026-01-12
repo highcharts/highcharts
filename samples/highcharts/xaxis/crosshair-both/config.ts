@@ -17,5 +17,6 @@ export default {
                 194.1, 95.6, 54.4
             ]
         }]
-    }
+    },
+    templates: ['linear-12']
 } satisfies SampleGeneratorConfig;

@@ -364,6 +364,12 @@ async function getPathMeta(config: SampleGeneratorConfig): Promise<MetaList> {
             // continue;
         }
 
+        if (!types) {
+            throw new Error(
+                'E2: Exported types not loaded. Run gulp jsdoc-dts first.'
+            );
+        }
+
         const mainType = getMainType(node);
         let options: string[] | undefined;
         if (node?.doclet.values) {
