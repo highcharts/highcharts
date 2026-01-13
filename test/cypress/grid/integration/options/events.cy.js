@@ -226,7 +226,7 @@ describe('Grid Pro - virtualization and delegated events.', () => {
 
     it('Events work after scrolling to new rows', () => {
         // Scroll down to rows that weren't initially rendered
-        cy.get('#container tbody').scrollTo(0, 3000);
+        cy.get('#container tbody').scrollTo(0, 4000);
 
         // Wait for virtualization to render new rows
         cy.get('.hcg-row[data-row-index="80"]').should('exist');
