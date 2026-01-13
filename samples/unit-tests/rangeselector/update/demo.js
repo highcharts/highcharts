@@ -106,7 +106,7 @@ QUnit.test('RangeSelector update', function (assert) {
             'rgb(255, 0, 255)',
             'rgb(255, 0, 255)',
             'rgb(255, 0, 255)',
-            'rgb(0, 0, 0)',
+            'var(--highcharts-neutral-color-100)',
             'rgb(255, 0, 255)',
             'rgb(255, 0, 255)'
         ],
@@ -129,7 +129,7 @@ QUnit.test('RangeSelector update hover', function (assert) {
 
     assert.strictEqual(
         chart.rangeSelector.buttons[1].fill,
-        '#e6e6e6',
+        'var(--highcharts-neutral-color-10)',
         'Color of the button should be correct'
     );
 });

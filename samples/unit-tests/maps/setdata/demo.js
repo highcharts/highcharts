@@ -948,10 +948,9 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
         'Making sure that picked point is actually ru.'
     );
 
-    assert.strictEqual(
-        ruPoint.graphic.attr('fill'),
-        'rgb(229,232,255)',
-        'The point\'s color should be correct.'
+    assert.ok(
+        /color-mix/.test(ruPoint.graphic.attr('fill')),
+        'The point\'s color should be a mix color'
     );
 
     mapView.update({
@@ -971,7 +970,7 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
 
     assert.strictEqual(
         ruPoint.graphic.attr('fill'),
-        chart.renderer.applyPalette(series.options.nullColor),
+        series.options.nullColor,
         'The ru null point\'s color should be correct.'
     );
 
@@ -993,9 +992,8 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
         'Making sure that picked point is actually ru.'
     );
 
-    assert.strictEqual(
-        ruPoint.graphic.attr('fill'),
-        'rgb(229,232,255)',
+    assert.ok(
+        /color-mix/.test(ruPoint.graphic.attr('fill')),
         'The ru point should be added correctly (no nullColor), #17057.'
     );
 

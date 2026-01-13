@@ -69,7 +69,7 @@ QUnit.test('Adapt height', function (assert) {
         chart.renderer.applyPalette(
             chart.options.chart.backgroundColor
         ),
-        '#ffffff',
+        'var(--highcharts-background-color)',
         'Chart should have default background'
     );
 });

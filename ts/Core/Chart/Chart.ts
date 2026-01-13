@@ -956,6 +956,37 @@ class Chart {
     }
 
     /**
+     * Internal function to add the palette colors as CSS variables to the
+     * DOM
+     *
+     * @internal
+     * @function Highcharts.Chart#setPalette
+     */
+    public setPalette(): void {
+        const palette = this.options.palette;
+        let css: string = '';
+
+        objectEach(palette, (value, key: string): void => {
+            // Kebab-case the key. Sequences of numbers should be kept but
+            // with a preceding dash.
+            key = key
+                .replace(/([0-9]+)/g, '-$1')
+                .replace(
+                    /[A-Z]/g,
+                    (match): string => `-${match.toLowerCase()}`
+                );
+            css += `--highcharts-${key}: ${value};\n`;
+        });
+        // Add a style tag to the chart renderer box
+        const style = this.renderer.defs.element.querySelector('style') ||
+            doc.createElementNS(H.SVG_NS, 'style');
+        if (!style.parentNode) {
+            this.renderer.defs.element.appendChild(style);
+        }
+        style.textContent = `:root {\n${css}}`;
+    }
+
+    /**
      * Internal function to initialize an individual series.
      *
      * @internal
@@ -2141,6 +2172,7 @@ class Chart {
 
         chart.setClassName(optionsChart.className);
         if (!chart.styledMode) {
+            chart.setPalette();
             chart.renderer.setStyle(optionsChart.style as any);
         } else {
             // Initialize definitions

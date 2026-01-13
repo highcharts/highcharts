@@ -90,10 +90,19 @@ const palette = {
     ] as Array<ColorString>
 };
 
+const useCSSVariables = true;
+
 /**
  * Apply the current palette to a color string containing palette templating.
  */
 const applyPalette = (color: string, chart?: Chart): string => {
+    if (useCSSVariables) {
+        return color;
+    }
+
+    // Programmatic replacement of palette variables
+    // @todo This should probably be removed, and supported only as a
+    // workaround snippet
     const p = chart?.options.palette || palette;
     return (color.indexOf('var(--highcharts-') !== -1) ?
         color.replace(

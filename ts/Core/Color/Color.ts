@@ -41,8 +41,12 @@ const {
  *  Helpers
  *
  * */
-const colorMix = (color1: string, color2: string, weight: number): string =>
-    `color-mix(in srgb,${color1},${color2} ${weight * 100}%)`;
+const colorMix = (color1: string, color2: string, weight: number): string => (
+    weight === 0 ? color1 :
+        weight === 1 ? color2 :
+            `color-mix(in srgb,${color1},${color2} ${weight * 100}%)`
+);
+
 
 const isStringColor = (color: ColorType): color is ColorString =>
     isString(color) && !!color && color !== 'none';
