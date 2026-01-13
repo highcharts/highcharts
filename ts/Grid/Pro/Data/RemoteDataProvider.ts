@@ -40,9 +40,31 @@ export class RemoteDataProvider extends DataProvider {
      */
     private rowCount: number | null = null;
 
+    /**
+     * Array of column IDs that have been fetched from the remote server.
+     */
     private columnIds: string[] | null = null;
+
+    /**
+     * Cached chunks are used to store the data for the chunks that have been
+     * fetched from the remote server.
+     */
     private dataChunks: Map<number, DataChunk> | null = null;
+
+    /**
+     * Pending chunks are used to deduplicate concurrent requests for the same
+     * chunk.
+     */
     private pendingChunks: Map<number, Promise<DataChunk>> | null = null;
+
+    /**
+     * Reverse lookup map from rowId to { chunkIndex, localIndex } for O(1)
+     * lookup in getRowIndex.
+     */
+    private rowIdToChunkInfo: Map<number, {
+        chunkIndex: number;
+        localIndex: number;
+    }> | null = null;
 
     /**
      * Fingerprint of the last applied query; used to avoid clearing caches
@@ -188,7 +210,7 @@ export class RemoteDataProvider extends DataProvider {
 
                 // When pagination enabled: rowCount = actual rows on page
                 // When disabled: rowCount = prePaginationRowCount (same value)
-                if (this.querying.pagination.enabled) {
+                if (pagination.enabled) {
                     this.rowCount = chunkRowCount;
                 } else {
                     this.rowCount = result.totalRowCount;
@@ -196,12 +218,25 @@ export class RemoteDataProvider extends DataProvider {
 
                 const chunk: DataChunk = {
                     index: chunkIndex,
-                    data: result.columns
+                    data: result.columns,
+                    rowIds: result.rowIds ?? Array.from(
+                        { length: chunkRowCount },
+                        (_, i): number => i + offset
+                    )
                 };
 
                 // DataChunks guaranteed to exist (checked at start)
-                if (this.dataChunks) {
-                    this.dataChunks.set(chunkIndex, chunk);
+                this.dataChunks?.set(chunkIndex, chunk);
+
+                // Populate reverse lookup map for getRowIndex
+                if (!this.rowIdToChunkInfo) {
+                    this.rowIdToChunkInfo = new Map();
+                }
+                for (let i = 0; i < chunk.rowIds.length; i++) {
+                    this.rowIdToChunkInfo.set(chunk.rowIds[i], {
+                        chunkIndex,
+                        localIndex: i
+                    });
                 }
 
                 return chunk;
@@ -210,7 +245,8 @@ export class RemoteDataProvider extends DataProvider {
                 console.error('Error fetching data from remote server.\n', err);
                 return {
                     index: chunkIndex,
-                    data: {}
+                    data: {},
+                    rowIds: []
                 };
             } finally {
                 // Remove from pending requests when done (success or error)
@@ -233,14 +269,38 @@ export class RemoteDataProvider extends DataProvider {
         return this.columnIds ?? [];
     }
 
-    public override getRowId(rowIndex: number): Promise<number | undefined> {
-        // TODO: Implement this.
-        return Promise.resolve(rowIndex);
+    public override async getRowId(
+        rowIndex: number
+    ): Promise<number | undefined> {
+        const chunk = await this.getChunkForRowIndex(rowIndex);
+        const localIndex = this.getLocalIndexInChunk(rowIndex);
+
+        if (localIndex < chunk.rowIds.length) {
+            return chunk.rowIds[localIndex];
+        }
+
+        return void 0;
     }
 
-    public override getRowIndex(rowId: number): Promise<number | undefined> {
-        // TODO: Implement this.
-        return Promise.resolve(rowId);
+    public override getRowIndex(
+        rowId: number
+    ): Promise<number | undefined> {
+        // Check reverse lookup map (O(1))
+        const info = this.rowIdToChunkInfo?.get(rowId);
+        if (info) {
+            if (this.querying.pagination.enabled) {
+                // When pagination is enabled, return page-relative index
+                return Promise.resolve(info.localIndex);
+            }
+            // Global index: chunk offset + local index
+            return Promise.resolve(
+                info.chunkIndex * this.maxChunkSize + info.localIndex
+            );
+        }
+
+        // Not found in cached chunks - return undefined
+        // (the chunk containing this rowId hasn't been fetched yet)
+        return Promise.resolve(void 0);
     }
 
     public override async getRowObject(
@@ -304,7 +364,7 @@ export class RemoteDataProvider extends DataProvider {
     public override async setValue(
         value: DT.CellType,
         columnId: string,
-        rowIndex: number
+        rowId: number
     ): Promise<void> {
         const { setValueCallback } = this.options;
 
@@ -318,7 +378,7 @@ export class RemoteDataProvider extends DataProvider {
             await setValueCallback.call(
                 this,
                 columnId,
-                rowIndex,
+                rowId,
                 value
             );
 
@@ -399,6 +459,7 @@ export class RemoteDataProvider extends DataProvider {
         // Clear cached chunks when query changes.
         this.dataChunks = null;
         this.pendingChunks = null;
+        this.rowIdToChunkInfo = null;
         this.columnIds = null;
         this.prePaginationRowCount = null;
         this.rowCount = null;
@@ -414,6 +475,7 @@ export class RemoteDataProvider extends DataProvider {
     public destroy(): void {
         this.dataChunks = null;
         this.pendingChunks = null;
+        this.rowIdToChunkInfo = null;
         this.columnIds = null;
         this.prePaginationRowCount = null;
         this.rowCount = null;
@@ -427,11 +489,13 @@ export interface RemoteFetchCallbackResult {
     currentPage: number;
     pageSize: number;
     totalRowCount: number;
+    rowIds?: number[];
 }
 
 export interface DataChunk {
     index: number;
     data: Record<string, DT.Column>;
+    rowIds: number[];
 }
 
 export interface RemoteDataProviderOptions extends DataProviderOptions {
@@ -448,15 +512,15 @@ export interface RemoteDataProviderOptions extends DataProviderOptions {
     ) => Promise<RemoteFetchCallbackResult>;
 
     /**
-     * Optional callback to persist value changes to the remote server.
-     * If not provided, changes will only be cached locally.
+     * Callback to persist value changes to the remote server. If not provided,
+     * cell value editing will not be possible.
      *
-     * The callback receives the column ID, row index and value to set.
+     * The callback receives the column ID, row ID and value to set.
      */
     setValueCallback?: (
         this: RemoteDataProvider,
         columnId: string,
-        rowIndex: number,
+        rowId: number,
         value: DT.CellType
     ) => Promise<void>;
 

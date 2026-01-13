@@ -155,7 +155,7 @@ class TableCell extends Cell {
         const fetchToken = ++this.asyncFetchToken;
         const { grid } = this.column.viewport;
 
-        // TODO: Find a better way to show the cell value being updated.
+        // TODO(design): Design a better way to show the cell val being updated.
         this.htmlElement.style.opacity = '0.5';
 
         if (!defined(value)) {
@@ -205,7 +205,7 @@ class TableCell extends Cell {
         // Add custom class name from column options
         this.setCustomClassName(this.column.options.cells?.className);
 
-        // TODO: Remove this after the first part was implemented.
+        // TODO(design): Remove this after the first part was implemented.
         this.htmlElement.style.opacity = '';
 
         fireEvent(this, 'afterRender', { target: this });
