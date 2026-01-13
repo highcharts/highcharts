@@ -257,24 +257,36 @@ export async function fetchData(
 ): Promise<RemoteFetchCallbackResult> {
     const url = buildUrl(options);
 
-    const response = await fetch(url);
-    if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const apiResponse: ApiResponse = await response.json();
+
+        // Convert API response to RemoteFetchCallbackResult format
+        const meta = apiResponse.meta || {};
+        const currentPage =
+            meta.currentPage || Math.floor(options.offset / options.limit) + 1;
+
+        return {
+            columns: apiResponse.data || {},
+            currentPage,
+            pageSize: meta.pageSize || options.limit,
+            totalRowCount: meta.totalRowCount || 0
+        };
+    } catch (err: unknown) {
+        // eslint-disable-next-line no-console
+        console.error('Error fetching data from remote server.\n', err);
+
+        return {
+            columns: {},
+            currentPage: 0,
+            pageSize: 0,
+            totalRowCount: 0
+        };
     }
-
-    const apiResponse: ApiResponse = await response.json();
-
-    // Convert API response to RemoteFetchCallbackResult format
-    const meta = apiResponse.meta || {};
-    const currentPage =
-        meta.currentPage || Math.floor(options.offset / options.limit) + 1;
-
-    return {
-        columns: apiResponse.data || {},
-        currentPage,
-        pageSize: meta.pageSize || options.limit,
-        totalRowCount: meta.totalRowCount || 0
-    };
 }
 
 

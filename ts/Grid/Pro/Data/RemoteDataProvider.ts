@@ -192,6 +192,13 @@ export class RemoteDataProvider extends DataProvider {
                 }
 
                 return chunk;
+            } catch (err: unknown) {
+                // eslint-disable-next-line no-console
+                console.error('Error fetching data from remote server.\n', err);
+                return {
+                    index: chunkIndex,
+                    data: {}
+                };
             } finally {
                 // Remove from pending requests when done (success or error)
                 this.pendingChunks?.delete(chunkIndex);
