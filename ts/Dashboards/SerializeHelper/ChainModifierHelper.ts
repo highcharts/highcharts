@@ -23,11 +23,11 @@ import type { AnyRecord } from '../../Shared/Types';
 import type ChainModifierOptions from '../../Data/Modifiers/ChainModifierOptions';
 import type DataModifier from '../../Data/Modifiers/DataModifier';
 import type { DataModifierTypeOptions } from '../../Data/Modifiers/DataModifierType';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import type JSON from '../JSON';
+import type { JSONArray, JSONObject } from '../JSON';
 
 import ChainModifier from '../../Data/Modifiers/ChainModifier.js';
 import Serializable from '../Serializable.js';
+import type { Helper as SerializableHelper, JSON as SerializableJSON } from '../Serializable';
 
 /* *
  *
@@ -38,14 +38,14 @@ import Serializable from '../Serializable.js';
 /**
  * Converts the given JSON to a class instance.
  *
- * @param {ChainModifierHelper.JSON} json
+ * @param {JSON} json
  * JSON to deserialize as a class instance or object.
  *
  * @return {ChainModifier}
  * Returns the class instance or object, or throws an exception.
  */
 function fromJSON(
-    json: ChainModifierHelper.JSON
+    json: JSON
 ): ChainModifier {
     const chainOptions = json.options.chain,
         jsonChain = json.chain,
@@ -92,14 +92,14 @@ function jsonSupportFor(
  * @param {ChainModifier} obj
  * Class instance or object to serialize as JSON.
  *
- * @return {ChainModifierHelper.JSON}
+ * @return {JSON}
  * Returns the JSON of the class instance or object.
  */
 function toJSON(
     obj: ChainModifier
-): ChainModifierHelper.JSON {
-    const chain: Array<ChainModifierHelper.ChainJSON> = [],
-        options = obj.options as ChainModifierHelper.OptionsJSON;
+): JSON {
+    const chain: Array<ChainJSON> = [],
+        options = obj.options as OptionsJSON;
 
     // Modifiers
 
@@ -107,7 +107,7 @@ function toJSON(
 
     for (let i = 0, iEnd = objChain.length; i < iEnd; ++i) {
         chain.push(
-            Serializable.toJSON(objChain[i]) as ChainModifierHelper.ChainJSON
+            Serializable.toJSON(objChain[i]) as ChainJSON
         );
     }
 
@@ -122,28 +122,18 @@ function toJSON(
 
 /* *
  *
- *  Namespace
+ *  Declarations
  *
  * */
 
-namespace ChainModifierHelper {
+export type ChainJSON = (SerializableJSON<string>&DataModifierTypeOptions);
 
-    /* *
-     *
-     *  Declarations
-     *
-     * */
-
-    export type ChainJSON = (Serializable.JSON<string>&DataModifierTypeOptions);
-
-    export interface JSON extends Serializable.JSON<'Data.ChainModifier'> {
-        chain: Array<ChainJSON>
-        options: OptionsJSON;
-    }
-
-    export type OptionsJSON = (JSON.Object&ChainModifierOptions);
-
+export interface JSON extends SerializableJSON<'Data.ChainModifier'> {
+    chain: Array<ChainJSON>
+    options: OptionsJSON;
 }
+
+export type OptionsJSON = (JSONObject&ChainModifierOptions);
 
 /* *
  *
@@ -151,7 +141,7 @@ namespace ChainModifierHelper {
  *
  * */
 
-const ChainModifierHelper: Serializable.Helper<ChainModifier, ChainModifierHelper.JSON> = {
+const ChainModifierHelper: SerializableHelper<ChainModifier, JSON> = {
     $class: 'Data.ChainModifier',
     fromJSON,
     jsonSupportFor,

@@ -20,13 +20,13 @@
  * */
 
 import type { AnyRecord } from '../../Shared/Types';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import type JSON from '../JSON';
+import type { JSONObject } from '../JSON';
 import type GoogleSheetsConnectorOptions from '../../Data/Connectors/GoogleSheetsConnectorOptions';
 
 import DataTableHelper from './DataTableHelper.js';
 import GoogleSheetsConnector from '../../Data/Connectors/GoogleSheetsConnector.js';
 import Serializable from '../Serializable.js';
+import type { Helper as SerializableHelper, JSON as SerializableJSON } from '../Serializable';
 import U from '../../Core/Utilities.js';
 const { merge } = U;
 
@@ -39,14 +39,14 @@ const { merge } = U;
 /**
  * Converts the given JSON to a class instance.
  *
- * @param {GoogleSheetsConnectorHelper.JSON} json
+ * @param {JSON} json
  * JSON to deserialize as a class instance or object.
  *
  * @return {GoogleSheetsConnector}
  * Returns the class instance or object, or throws an exception.
  */
 function fromJSON(
-    json: GoogleSheetsConnectorHelper.JSON
+    json: JSON
 ): GoogleSheetsConnector {
     return new GoogleSheetsConnector(
         json.options || { googleAPIKey: '', googleSpreadsheetKey: '' }
@@ -75,14 +75,14 @@ function jsonSupportFor(
  * @param {GoogleSheetsConnector} obj
  * Class instance or object to serialize as JSON.
  *
- * @return {GoogleSheetsConnectorHelper.JSON}
+ * @return {JSON}
  * Returns the JSON of the class instance or object.
  */
 function toJSON(
     obj: GoogleSheetsConnector
-): GoogleSheetsConnectorHelper.JSON {
+): JSON {
     const options =
-        merge(obj.options) as GoogleSheetsConnectorHelper.OptionsJSON;
+        merge(obj.options) as OptionsJSON;
 
     options.dataTable = DataTableHelper.toJSON(obj.getTable());
 
@@ -94,25 +94,15 @@ function toJSON(
 
 /* *
  *
- *  Namespace
+ *  Declarations
  *
  * */
 
-namespace GoogleSheetsConnectorHelper {
-
-    /* *
-     *
-     *  Declarations
-     *
-     * */
-
-    export interface JSON extends Serializable.JSON<'Data.GoogleSheetsConnector'> {
-        options: OptionsJSON;
-    }
-
-    export type OptionsJSON = (JSON.Object&GoogleSheetsConnectorOptions);
-
+export interface JSON extends SerializableJSON<'Data.GoogleSheetsConnector'> {
+    options: OptionsJSON;
 }
+
+export type OptionsJSON = (JSONObject&GoogleSheetsConnectorOptions);
 
 /* *
  *
@@ -120,7 +110,7 @@ namespace GoogleSheetsConnectorHelper {
  *
  * */
 
-const GoogleSheetsConnectorHelper: Serializable.Helper<GoogleSheetsConnector, GoogleSheetsConnectorHelper.JSON> = {
+const GoogleSheetsConnectorHelper: SerializableHelper<GoogleSheetsConnector, JSON> = {
     $class: 'Data.GoogleSheetsConnector',
     fromJSON,
     jsonSupportFor,

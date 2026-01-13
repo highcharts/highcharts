@@ -20,13 +20,14 @@
  *
  * */
 
-import type { Point } from '../../../Plugins/HighchartsTypes';
-import type Sync from '../../Sync/Sync';
-import type HCComponent from '../HighchartsComponent.js';
+import type { Point, Series } from '../../../Plugins/HighchartsTypes';
+import type { SyncPair } from '../../Sync/Sync';
+import type { Event as DataCursorEvent } from '../../../../Data/DataCursor';
+import type HighchartsComponent from '../HighchartsComponent.js';
+import type { HCConnectorHandler } from '../HighchartsComponent.js';
 import type {
     HighchartsHighlightSyncOptions
 } from '../HighchartsComponentOptions';
-import type { Series } from '../../../Plugins/HighchartsTypes';
 
 import Component from '../../Component.js';
 import DataCursor from '../../../../Data/DataCursor.js';
@@ -47,12 +48,12 @@ const defaultOptions: HighchartsHighlightSyncOptions = {
     showCrosshair: true
 };
 
-const syncPair: Sync.SyncPair = {
+const syncPair: SyncPair = {
     emitter: function (this: Component): (() => void) | void {
         if (this.type !== 'Highcharts') {
             return;
         }
-        const component = this as HCComponent;
+        const component = this as HighchartsComponent;
 
         const { chart, board } = component;
         const highlightOptions =
@@ -68,7 +69,7 @@ const syncPair: Sync.SyncPair = {
         for (let i = 0, iEnd = chart.series?.length ?? 0; i < iEnd; ++i) {
             const series = chart.series[i];
             const seriesId = series.options.id ?? '';
-            const connectorHandler: HCComponent.HCConnectorHandler =
+            const connectorHandler: HCConnectorHandler =
                 component.seriesFromConnector[seriesId];
             const connectorId = connectorHandler?.options.id;
             const table = this.getDataTable(connectorId);
@@ -146,14 +147,14 @@ const syncPair: Sync.SyncPair = {
         if (this.type !== 'Highcharts') {
             return;
         }
-        const component = this as HCComponent;
+        const component = this as HighchartsComponent;
         const groupKey = this.sync.syncConfig.highlight.group ?
             ':' + this.sync.syncConfig.highlight.group : '';
 
         const { chart, board } = component;
 
         const getHoveredPoint = (
-            e: DataCursor.Event
+            e: DataCursorEvent
         ): Point | undefined => {
             const { table, cursor } = e;
             const highlightOptions = this.sync
@@ -186,7 +187,7 @@ const syncPair: Sync.SyncPair = {
 
                     for (let i = 0, iEnd = seriesIds.length; i < iEnd; ++i) {
                         const seriesId = seriesIds[i];
-                        const connectorHandler: HCComponent.HCConnectorHandler =
+                        const connectorHandler: HCConnectorHandler =
                                 component.seriesFromConnector[seriesId];
                         const dataTableKey =
                             connectorHandler?.options.dataTableKey;
@@ -245,7 +246,7 @@ const syncPair: Sync.SyncPair = {
             }
         };
 
-        const handleCursor = (e: DataCursor.Event): void => {
+        const handleCursor = (e: DataCursorEvent): void => {
             const highlightOptions = this.sync
                 .syncConfig.highlight as HighchartsHighlightSyncOptions;
 
@@ -306,7 +307,7 @@ const syncPair: Sync.SyncPair = {
             }
         };
 
-        const handleCursorOut = (e: DataCursor.Event): void => {
+        const handleCursorOut = (e: DataCursorEvent): void => {
             const highlightOptions = this.sync
                 .syncConfig.highlight as HighchartsHighlightSyncOptions;
 

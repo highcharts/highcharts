@@ -34,12 +34,25 @@ import type Row from '../Layout/Row';
 import type SidebarPopup from '../EditMode/SidebarPopup';
 import type TextOptions from './TextOptions';
 
-import Cell from '../Layout/Cell.js';
+import Cell, { isCell } from '../Layout/Cell.js';
 import CellHTML from '../Layout/CellHTML.js';
 import CallbackRegistry from '../CallbackRegistry.js';
+import type { ConnectorOptions as ComponentConnectorOptions } from './ConnectorHandler';
+
 import ConnectorHandler from './ConnectorHandler.js';
 import DataTable from '../../Data/DataTable.js';
+import type {
+    Options as EditableOption,
+    OptionsBindings as EditableOptionsBindings
+} from './EditableOptions';
+
 import EditableOptions from './EditableOptions.js';
+import type {
+    OptionsRecord as SyncOptionsRecord,
+    PredefinedSyncConfig,
+    RawOptionsRecord as SyncRawOptionsRecord
+} from './Sync/Sync';
+
 import Sync from './Sync/Sync.js';
 
 import Globals from '../Globals.js';
@@ -108,7 +121,7 @@ abstract class Component {
     public static createTextElement(
         tagName: string,
         elementName: string,
-        textOptions: Component.TextOptionsType
+        textOptions: TextOptionsType
     ): HTMLElement | undefined {
         if (typeof textOptions === 'object') {
             const { className, text, style } = textOptions;
@@ -147,7 +160,7 @@ abstract class Component {
     /**
      * Predefined sync config for component.
      */
-    public static predefinedSyncConfig: Sync.PredefinedSyncConfig = {
+    public static predefinedSyncConfig: PredefinedSyncConfig = {
         defaultSyncOptions: {},
         defaultSyncPairs: {}
     };
@@ -155,7 +168,7 @@ abstract class Component {
     /**
      * Default options of the component.
      */
-    public static defaultOptions: Partial<Component.Options> = {
+    public static defaultOptions: Partial<Options> = {
         className: `${classNamePrefix}component`,
         id: '',
         title: false,
@@ -240,7 +253,7 @@ abstract class Component {
     /**
      * The options for the component.
      */
-    public options: Component.Options;
+    public options: Options;
 
     /**
      * Sets an ID for the component's `div`.
@@ -275,7 +288,7 @@ abstract class Component {
     /**
      * The sync handlers for the component.
      */
-    protected syncHandlers?: Sync.OptionsRecord;
+    protected syncHandlers?: SyncOptionsRecord;
 
     /**
      * The sync handler for the component.
@@ -313,7 +326,7 @@ abstract class Component {
      */
     constructor(
         cell: Cell,
-        options: Partial<Component.Options>,
+        options: Partial<Options>,
         board?: Board
     ) {
         const renderTo = options.renderTo;
@@ -323,7 +336,7 @@ abstract class Component {
         this.cell = cell;
 
         this.options = merge(
-            Component.defaultOptions as Required<Component.Options>,
+            Component.defaultOptions as Required<Options>,
             options
         );
 
@@ -385,13 +398,13 @@ abstract class Component {
             this.attachCellListeners();
 
             this.on('update', (): void => {
-                if (Cell.isCell(this.cell)) {
+                if (isCell(this.cell)) {
                     this.cell.setLoadingState();
                 }
             });
 
             this.on('afterRender', (): void => {
-                if (Cell.isCell(this.cell)) {
+                if (isCell(this.cell)) {
                     this.cell.setLoadingState(false);
                 }
             });
@@ -412,7 +425,7 @@ abstract class Component {
     /**
      * Function fired when component's data source's data is changed.
      */
-    public abstract onTableChanged(e?: Component.EventTypes): void;
+    public abstract onTableChanged(e?: EventTypes): void;
 
     /**
      * Returns the component's options when it is dropped from the sidebar.
@@ -433,7 +446,7 @@ abstract class Component {
      * @internal
      * @deprecated
      */
-    public getFirstConnector(): Component.ConnectorTypes | undefined {
+    public getFirstConnector(): ConnectorTypes | undefined {
         return this.connectorHandlers[0]?.connector;
     }
 
@@ -483,7 +496,7 @@ abstract class Component {
 
         if (
             this.cell &&
-            Cell.isCell(this.cell) &&
+            isCell(this.cell) &&
             Object.keys(this.cell).length
         ) {
             const board = this.cell.row.layout.board;
@@ -685,7 +698,7 @@ abstract class Component {
      * Set to true if the update should rerender the component.
      */
     public async update(
-        newOptions: Partial<Component.Options>,
+        newOptions: Partial<Options>,
         shouldRerender: boolean = true
     ): Promise<void> {
         const eventObject = {
@@ -701,7 +714,7 @@ abstract class Component {
         }
 
         this.options = merge(this.options, newOptions);
-        const connectorOptions: Array<ConnectorHandler.ConnectorOptions> = (
+        const connectorOptions: Array<ConnectorOptions> = (
             this.options.connector ? (
                 isArray(this.options.connector) ? this.options.connector :
                     [this.options.connector]
@@ -795,7 +808,7 @@ abstract class Component {
      * @param titleOptions
      * The options for the title.
      */
-    public setTitle(titleOptions: Component.TextOptionsType): void {
+    public setTitle(titleOptions: TextOptionsType): void {
         const titleElement = this.titleElement,
             shouldExist =
                 titleOptions &&
@@ -835,7 +848,7 @@ abstract class Component {
      * @param captionOptions
      * The options for the caption.
      */
-    public setCaption(captionOptions: Component.TextOptionsType): void {
+    public setCaption(captionOptions: TextOptionsType): void {
         const captionElement = this.captionElement,
             shouldExist =
                 captionOptions &&
@@ -942,7 +955,7 @@ abstract class Component {
      *
      * @internal
      */
-    public on<TEvent extends Component.EventTypes>(
+    public on<TEvent extends EventTypes>(
         type: TEvent['type'],
         callback: (this: this, e: TEvent) => void
     ): Function {
@@ -950,7 +963,7 @@ abstract class Component {
     }
 
     /** @internal */
-    public emit<TEvent extends Component.EventTypes>(
+    public emit<TEvent extends EventTypes>(
         e: TEvent
     ): void {
         if (!e.target) {
@@ -967,11 +980,11 @@ abstract class Component {
      * @internal
      *
      */
-    public getOptions(): Partial<Component.Options> {
+    public getOptions(): Partial<Options> {
         return diffObjects(this.options, Component.defaultOptions);
     }
 
-    public getEditableOptions(): Component.Options {
+    public getEditableOptions(): Options {
         const component = this;
 
         // When refactoring, limit the copied options to the ones that are
@@ -1035,186 +1048,176 @@ interface Component {
 
 /* *
  *
- *  Class Namespace
+ *  Type Declarations
  *
  * */
 
-namespace Component {
+export type ConnectorOptions = ComponentConnectorOptions;
 
-    export type ConnectorOptions = ConnectorHandler.ConnectorOptions;
+/**
+ * The basic events
+ */
+/** @internal */
+export type EventTypes =
+    SetConnectorsEvent |
+    ResizeEvent |
+    UpdateEvent |
+    TableChangedEvent |
+    LoadEvent |
+    RenderEvent |
+    PresentationModifierEvent;
 
-    /* *
-    *
-    *  Declarations
-    *
-    * */
+export type SetConnectorsEvent =
+    Event<'setConnectors'|'afterSetConnectors', {}>;
+
+/** @internal */
+export type ResizeEvent = Event<'resize', {
+    readonly type: 'resize';
+    width?: number;
+    height?: number;
+}>;
+
+/** @internal */
+export type UpdateEvent = Event<'update' | 'afterUpdate', {
+    options?: Options;
+}>;
+
+/** @internal */
+export type LoadEvent = Event<'load' | 'afterLoad', {}>;
+/** @internal */
+export type RenderEvent = Event<'render' | 'afterRender', {}>;
+
+/** @internal */
+export type TableChangedEvent = Event<'tableChanged', {}>;
+/** @internal */
+export type PresentationModifierEvent =
+    Event<'afterPresentationModifier', { table: DataTable }>;
+
+/** @internal */
+export type Event<
+    EventType extends string,
+    EventRecord extends Record<string, any>> = {
+        readonly type: EventType;
+        target?: Component;
+        detail?: AnyRecord;
+    } & EventRecord;
+
+export interface Options {
 
     /**
-     * The basic events
+     * Cell id, where component is attached.
      */
-    /** @internal */
-    export type EventTypes =
-        SetConnectorsEvent |
-        ResizeEvent |
-        UpdateEvent |
-        TableChangedEvent |
-        LoadEvent |
-        RenderEvent |
-        PresentationModifierEvent;
-
-    export type SetConnectorsEvent =
-        Event<'setConnectors'|'afterSetConnectors', {}>;
-
-    /** @internal */
-    export type ResizeEvent = Event<'resize', {
-        readonly type: 'resize';
-        width?: number;
-        height?: number;
-    }>;
-
-    /** @internal */
-    export type UpdateEvent = Event<'update' | 'afterUpdate', {
-        options?: Options;
-    }>;
-
-    /** @internal */
-    export type LoadEvent = Event<'load' | 'afterLoad', {}>;
-    /** @internal */
-    export type RenderEvent = Event<'render' | 'afterRender', {}>;
-
-    /** @internal */
-    export type TableChangedEvent = Event<'tableChanged', {}>;
-    /** @internal */
-    export type PresentationModifierEvent =
-        Component.Event<'afterPresentationModifier', { table: DataTable }>;
-
-    /** @internal */
-    export type Event<
-        EventType extends string,
-        EventRecord extends Record<string, any>> = {
-            readonly type: EventType;
-            target?: Component;
-            detail?: AnyRecord;
-        } & EventRecord;
-
-    export interface Options {
-
-        /**
-         * Cell id, where component is attached.
-         */
-        renderTo?: string;
-
-        /**
-         * The name of class that is applied to the component's container.
-         */
-        className?: string;
-
-        /**
-         * The type of component like: `HTML`, `KPI`, `Highcharts`, `Grid`,
-         * `Navigator`.
-         */
-        type: keyof ComponentTypeRegistry;
-
-        /**
-         * Allow overwriting gui elements.
-         * @internal
-         */
-        navigationBindings?: Array<AnyRecord>;
-        /**
-         * Events attached to the component : `mount`, `unmount`, `resize`, `update`.
-         *
-         * Try it:
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/events/ | Mount event }
-         */
-        events?: Record<string, Function>;
-        /**
-         * Set of options that are available for editing through sidebar.
-         */
-        editableOptions?: Array<EditableOptions.Options>;
-        /** @internal */
-        editableOptionsBindings?: EditableOptions.OptionsBindings;
-        /**
-         * Sync options. Predefined per component or custom sync options can be
-         * used here.
-         */
-        sync?: Sync.RawOptionsRecord;
-        /**
-         * Connector options
-         */
-        connector?: (ConnectorOptions|Array<ConnectorOptions>);
-        /**
-         * Sets an ID for the component's container.
-         */
-        id?: string;
-        /**
-         * The component's title, which will render at the top.
-         *
-         * Try it:
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/title/ | Changed captions }
-         */
-        title?: TextOptionsType;
-        /**
-         * The component's caption, which will render at the bottom.
-         *
-         * Try it:
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/caption/ | Changed captions }
-         */
-        caption?: TextOptionsType;
-
-        /**
-         * States for the component.
-         */
-        states?: StatesOptions;
-    }
+    renderTo?: string;
 
     /**
-     * States options for the component.
+     * The name of class that is applied to the component's container.
      */
-    export interface StatesOptions {
-        active?: {
-            /**
-             * Whether the component is active. Only used when `enabled` is
-             * `true`.
-             * If `true`, the `highcharts-dashboards-cell-state-active` class
-             * will be added to the component's container.
-             *
-             * Only one component can be active at a time.
-             *
-             * Try it:
-             * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/states/ | Active state }
-             *
-             * @default false
-             */
-            isActive?: boolean;
-
-            /**
-             * Whether to enable the active state.
-             *
-             * @default false
-             */
-            enabled?: boolean;
-        };
-        hover?: {
-            /**
-             * Whether to enable the hover state.
-             *
-             * @default false
-             */
-            enabled?: boolean;
-        };
-    }
-
-    /** @internal */
-    export type ConnectorTypes = DataConnectorType;
+    className?: string;
 
     /**
-     * Allowed types for the text.
-    */
-    export type TextOptionsType = string | false | TextOptions | undefined;
+     * The type of component like: `HTML`, `KPI`, `Highcharts`, `Grid`,
+     * `Navigator`.
+     */
+    type: keyof ComponentTypeRegistry;
 
+    /**
+     * Allow overwriting gui elements.
+     * @internal
+     */
+    navigationBindings?: Array<AnyRecord>;
+    /**
+     * Events attached to the component : `mount`, `unmount`, `resize`, `update`.
+     *
+     * Try it:
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/events/ | Mount event }
+     */
+    events?: Record<string, Function>;
+    /**
+     * Set of options that are available for editing through sidebar.
+     */
+    editableOptions?: Array<EditableOption>;
+    /** @internal */
+    editableOptionsBindings?: EditableOptionsBindings;
+    /**
+     * Sync options. Predefined per component or custom sync options can be
+     * used here.
+     */
+        sync?: SyncRawOptionsRecord;
+    /**
+     * Connector options
+     */
+    connector?: (ConnectorOptions|Array<ConnectorOptions>);
+    /**
+     * Sets an ID for the component's container.
+     */
+    id?: string;
+    /**
+     * The component's title, which will render at the top.
+     *
+     * Try it:
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/title/ | Changed captions }
+     */
+    title?: TextOptionsType;
+    /**
+     * The component's caption, which will render at the bottom.
+     *
+     * Try it:
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/caption/ | Changed captions }
+     */
+    caption?: TextOptionsType;
+
+    /**
+     * States for the component.
+     */
+    states?: StatesOptions;
 }
+
+/**
+ * States options for the component.
+ */
+export interface StatesOptions {
+    active?: {
+        /**
+         * Whether the component is active. Only used when `enabled` is
+         * `true`.
+         * If `true`, the `highcharts-dashboards-cell-state-active` class
+         * will be added to the component's container.
+         *
+         * Only one component can be active at a time.
+         *
+         * Try it:
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/states/ | Active state }
+         *
+         * @default false
+         */
+        isActive?: boolean;
+
+        /**
+         * Whether to enable the active state.
+         *
+         * @default false
+         */
+        enabled?: boolean;
+    };
+    hover?: {
+        /**
+         * Whether to enable the hover state.
+         *
+         * @default false
+         */
+        enabled?: boolean;
+    };
+}
+
+/** @internal */
+export type ConnectorTypes = DataConnectorType;
+
+/**
+ * Allowed types for the text.
+*/
+export type TextOptionsType = string | false | TextOptions | undefined;
 
 export default Component;

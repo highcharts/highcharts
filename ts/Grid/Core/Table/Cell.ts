@@ -22,7 +22,7 @@
  *
  * */
 
-import type DataTable from '../../../Data/DataTable';
+import type { CellType as DataTableCellType } from '../../../Data/DataTable';
 import type TableRow from './Body/TableRow';
 import type HeaderRow from './Header/HeaderRow';
 
@@ -67,7 +67,7 @@ abstract class Cell {
     /**
      * The raw value of the cell.
      */
-    public value: DataTable.CellType;
+    public value: DataTableCellType;
 
     /**
      * An additional, custom class name that can be changed dynamically.

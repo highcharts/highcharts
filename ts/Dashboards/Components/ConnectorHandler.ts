@@ -13,9 +13,13 @@
 
 import type DataModifier from '../../Data/Modifiers/DataModifier';
 
+import type { ConnectorTypes as ComponentConnectorTypes } from './Component';
+
 import Component from './Component';
-import DataTable from '../../Data/DataTable.js';
-import Cell from '../Layout/Cell.js';
+import DataTable, {
+    type SetModifierEvent as DataTableSetModifierEvent
+} from '../../Data/DataTable.js';
+import Cell, { isCell } from '../Layout/Cell.js';
 import Globals from '../Globals.js';
 
 /* *
@@ -55,12 +59,12 @@ class ConnectorHandler {
     /**
      * Connector options for the component.
      */
-    public options: ConnectorHandler.ConnectorOptions;
+    public options: ConnectorOptions;
 
     /**
      * Data connector instance that is used in this connector handler.
      */
-    public connector?: Component.ConnectorTypes;
+    public connector?: ComponentConnectorTypes;
 
     /**
      * The ID of the data connector configuration in the data pool of the
@@ -117,7 +121,7 @@ class ConnectorHandler {
      */
     constructor(
         component: Component,
-        options: ConnectorHandler.ConnectorOptions
+        options: ConnectorOptions
     ) {
         this.component = component;
         this.options = options;
@@ -148,7 +152,7 @@ class ConnectorHandler {
                 dataPool.isNewConnector(connectorId)
             )
         ) {
-            if (Cell.isCell(component.cell)) {
+            if (isCell(component.cell)) {
                 component.cell.setLoadingState();
             }
 
@@ -182,7 +186,7 @@ class ConnectorHandler {
         );
         table.on(
             'afterSetModifier',
-            (e: DataTable.SetModifierEvent): void => {
+            (e: DataTableSetModifierEvent): void => {
                 if (e.type === 'afterSetModifier' && e.modified) {
                     this.setupTableListeners(e.modified);
                     this.component.emit({
@@ -202,7 +206,7 @@ class ConnectorHandler {
      * @param connector
      * The connector to set.
      */
-    public setConnector(connector?: Component.ConnectorTypes): Component {
+    public setConnector(connector?: ComponentConnectorTypes): Component {
         // Clean up old event listeners
         while (this.tableEvents.length) {
             const eventCallback = this.tableEvents.pop();
@@ -274,7 +278,7 @@ class ConnectorHandler {
         if (connector) {
             tableEvents.push(table.on(
                 'afterSetModifier',
-                (e: DataTable.SetModifierEvent): void => {
+                (e: DataTableSetModifierEvent): void => {
                     if (e.type === 'afterSetModifier') {
                         clearTimeout(this.tableEventTimeout);
                         this.tableEventTimeout = Globals.win.setTimeout(
@@ -363,7 +367,7 @@ class ConnectorHandler {
      * The new options to update.
      */
     public updateOptions(
-        newOptions: ConnectorHandler.ConnectorOptions
+        newOptions: ConnectorOptions
     ): void {
         this.options = newOptions;
     }
@@ -380,46 +384,38 @@ class ConnectorHandler {
 }
 
 
-/* *
- *
- *  Namespace
- *
- * */
+/**
+ * Contains information to connect the component to a connector in the data
+ * pool of the dashboard.
+ */
+export interface ConnectorOptions {
 
-namespace ConnectorHandler {
     /**
-     * Contains information to connect the component to a connector in the data
-     * pool of the dashboard.
+     * Whether to allow the transfer of data changes back to the connector
+     * source.
+     *
+     * @internal
      */
-    export interface ConnectorOptions {
+    allowSave?: boolean;
 
-        /**
-         * Whether to allow the transfer of data changes back to the connector
-         * source.
-         *
-         * @internal
-         */
-        allowSave?: boolean;
+    /**
+     * The id of the connector configuration in the data pool of the
+     * dashboard.
+     */
+    id: string;
 
-        /**
-         * The id of the connector configuration in the data pool of the
-         * dashboard.
-         */
-        id: string;
+    /**
+     * The modifier to apply to the data table before presenting it. This
+     * can be changed to be an open, documented option in the future.
+     *
+     * @internal
+     */
+    presentationModifier?: DataModifier;
 
-        /**
-         * The modifier to apply to the data table before presenting it. This
-         * can be changed to be an open, documented option in the future.
-         *
-         * @internal
-         */
-        presentationModifier?: DataModifier;
-
-        /**
-         * Reference to the specific connector data table.
-         */
-        dataTableKey?: string;
-    }
+    /**
+     * Reference to the specific connector data table.
+     */
+    dataTableKey?: string;
 }
 
 export default ConnectorHandler;

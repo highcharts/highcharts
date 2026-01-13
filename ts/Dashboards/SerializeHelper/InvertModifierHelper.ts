@@ -21,11 +21,11 @@
 
 import type { AnyRecord } from '../../Shared/Types';
 import type InvertModifierOptions from '../../Data/Modifiers/InvertModifierOptions';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import type JSON from '../JSON';
+import type { JSONObject } from '../JSON';
 
 import InvertModifier from '../../Data/Modifiers/InvertModifier';
 import Serializable from '../Serializable.js';
+import type { Helper as SerializableHelper, JSON as SerializableJSON } from '../Serializable';
 
 /* *
  *
@@ -43,7 +43,7 @@ import Serializable from '../Serializable.js';
  * Returns the class instance or object, or throws an exception.
  */
 function fromJSON(
-    json: InvertModifierHelper.JSON
+    json: JSON
 ): InvertModifier {
     return new InvertModifier(json.options);
 }
@@ -70,39 +70,29 @@ function jsonSupportFor(
  * @param {InvertModifier} obj
  * Class instance or object to serialize as JSON.
  *
- * @return {InvertModifierHelper.JSON}
+ * @return {JSON}
  * Returns the JSON of the class instance or object.
  */
 function toJSON(
     obj: InvertModifier
-): InvertModifierHelper.JSON {
+): JSON {
     return {
         $class: 'Data.InvertModifier',
-        options: obj.options as InvertModifierHelper.OptionsJSON
+        options: obj.options as OptionsJSON
     };
 }
 
 /* *
  *
- *  Namespace
+ *  Declarations
  *
  * */
 
-namespace InvertModifierHelper {
-
-    /* *
-     *
-     *  Declarations
-     *
-     * */
-
-    export interface JSON extends Serializable.JSON<'Data.InvertModifier'> {
-        options: OptionsJSON;
-    }
-
-    export type OptionsJSON = (JSON.Object&InvertModifierOptions);
-
+export interface JSON extends SerializableJSON<'Data.InvertModifier'> {
+    options: OptionsJSON;
 }
+
+export type OptionsJSON = (JSONObject&InvertModifierOptions);
 
 /* *
  *
@@ -110,7 +100,7 @@ namespace InvertModifierHelper {
  *
  * */
 
-const InvertModifierHelper: Serializable.Helper<InvertModifier, InvertModifierHelper.JSON> = {
+const InvertModifierHelper: SerializableHelper<InvertModifier, JSON> = {
     $class: 'Data.InvertModifier',
     fromJSON,
     jsonSupportFor,

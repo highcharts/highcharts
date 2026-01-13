@@ -24,11 +24,12 @@
 
 import type { ComponentType } from '../Components/ComponentType';
 import type Board from '../Board';
-import type GUIElement from '../Layout/GUIElement';
+import type { BindedGUIElementEvent } from '../Layout/GUIElement';
 import type Cell from '../Layout/Cell';
 import type Layout from '../Layout/Layout';
 import type Row from '../Layout/Row';
 import type Component from '../Components/Component.js';
+import type { Options as ComponentOptions } from '../Components/Component.js';
 
 import ComponentRegistry from '../Components/ComponentRegistry.js';
 import CellHTML from '../Layout/CellHTML.js';
@@ -41,68 +42,60 @@ const {
 
 /* *
  *
- *  Namespace
+ *  Declarations
  *
  * */
 
-namespace Bindings {
+export interface MountedComponent {
+    cell: Cell|CellHTML;
+    component: ComponentType;
+    options: Partial<ComponentOptions>;
+}
 
-    /* *
-     *
-     *  Declarations
-     *
-     * */
+/* *
+ *
+ *  Functions
+ *
+ * */
 
-    export interface MountedComponent {
-        cell: Cell|CellHTML;
-        component: ComponentType;
-        options: Partial<Component.Options>;
+function getGUIElement(
+    idOrElement: string,
+    parentElement?: HTMLElement
+): Cell|Row|Layout|undefined {
+    let guiElement;
+
+    if (
+        typeof idOrElement === 'string' &&
+        document.querySelectorAll('#' + idOrElement).length > 1
+    ) {
+        // eslint-disable-next-line no-console
+        console.warn(
+            `Multiple cells have identical ID %c${idOrElement}%c, potentially leading to unexpected behavior. \nEnsure that each cell has a unique ID on the page.`,
+            'font-weight: bold',
+            ''
+        );
     }
 
-    /* *
-     *
-     *  Functions
-     *
-     * */
+    const container = parentElement ?
+        parentElement.querySelector('#' + idOrElement) :
+        document.getElementById(idOrElement);
 
-    function getGUIElement(
-        idOrElement: string,
-        parentElement?: HTMLElement
-    ): Cell|Row|Layout|undefined {
-        let guiElement;
-
-        if (
-            typeof idOrElement === 'string' &&
-            document.querySelectorAll('#' + idOrElement).length > 1
-        ) {
-            // eslint-disable-next-line no-console
-            console.warn(
-                `Multiple cells have identical ID %c${idOrElement}%c, potentially leading to unexpected behavior. \nEnsure that each cell has a unique ID on the page.`,
-                'font-weight: bold',
-                ''
-            );
-        }
-
-        const container = parentElement ?
-            parentElement.querySelector('#' + idOrElement) :
-            document.getElementById(idOrElement);
-
-        if (container !== null) {
-            fireEvent(container, 'bindedGUIElement', {}, function (
-                e: GUIElement.BindedGUIElementEvent
-            ): void {
-                guiElement = e.guiElement;
-            });
-        }
-
-        return guiElement;
+    if (container !== null) {
+        fireEvent(container, 'bindedGUIElement', {}, function (
+                e: BindedGUIElementEvent
+        ): void {
+            guiElement = e.guiElement;
+        });
     }
 
-    export async function addComponent(
-        options: Partial<ComponentType['options']>,
-        board: Board,
-        cell?: Cell
-    ): Promise<(Component|void)> {
+    return guiElement;
+}
+
+export async function addComponent(
+    options: Partial<ComponentType['options']>,
+    board: Board,
+    cell?: Cell
+): Promise<(Component|void)> {
         const optionsStates = options.states;
         const optionsEvents = options.events;
         const renderTo = options.renderTo;
@@ -242,47 +235,46 @@ namespace Bindings {
 
         fireEvent(component, 'afterLoad');
 
-        return promise;
+    return promise;
+}
+
+export function getCell(
+    idOrElement: string,
+    parentElement?: HTMLElement
+): (Cell|undefined) {
+    const cell = getGUIElement(idOrElement, parentElement);
+
+    if (!(cell && cell.getType() === 'cell')) {
+        return;
     }
 
-    export function getCell(
-        idOrElement: string,
-        parentElement?: HTMLElement
-    ): (Cell|undefined) {
-        const cell = getGUIElement(idOrElement, parentElement);
+    return (cell as Cell);
+}
 
-        if (!(cell && cell.getType() === 'cell')) {
-            return;
-        }
+export function getRow(
+    idOrElement: string,
+    parentElement?: HTMLElement
+): (Row|undefined) {
+    const row = getGUIElement(idOrElement, parentElement);
 
-        return (cell as Cell);
+    if (!(row && row.getType() === 'row')) {
+        return;
     }
 
-    export function getRow(
-        idOrElement: string,
-        parentElement?: HTMLElement
-    ): (Row|undefined) {
-        const row = getGUIElement(idOrElement, parentElement);
+    return (row as Row);
+}
 
-        if (!(row && row.getType() === 'row')) {
-            return;
-        }
+export function getLayout(
+    idOrElement: string,
+    parentElement?: HTMLElement
+): (Layout|undefined) {
+    const layout = getGUIElement(idOrElement, parentElement);
 
-        return (row as Row);
+    if (!(layout && layout.getType() === 'layout')) {
+        return;
     }
 
-    export function getLayout(
-        idOrElement: string,
-        parentElement?: HTMLElement
-    ): (Layout|undefined) {
-        const layout = getGUIElement(idOrElement, parentElement);
-
-        if (!(layout && layout.getType() === 'layout')) {
-            return;
-        }
-
-        return layout as Layout;
-    }
+    return layout as Layout;
 }
 
 /* *
@@ -290,5 +282,12 @@ namespace Bindings {
  *  Default Export
  *
  * */
+
+const Bindings = {
+    addComponent,
+    getCell,
+    getLayout,
+    getRow
+};
 
 export default Bindings;

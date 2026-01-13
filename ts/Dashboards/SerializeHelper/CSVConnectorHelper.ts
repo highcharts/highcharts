@@ -20,13 +20,13 @@
  * */
 
 import type { AnyRecord } from '../../Shared/Types';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import type JSON from '../JSON';
+import type { JSONObject } from '../JSON';
 import type CSVConnectorOptions from '../../Data/Connectors/CSVConnectorOptions';
 
 import CSVConnector from '../../Data/Connectors/CSVConnector.js';
 import DataTableHelper from './DataTableHelper.js';
 import Serializable from '../Serializable.js';
+import type { Helper as SerializableHelper, JSON as SerializableJSON } from '../Serializable';
 import U from '../../Core/Utilities.js';
 const { merge } = U;
 
@@ -39,14 +39,14 @@ const { merge } = U;
 /**
  * Converts the given JSON to a class instance.
  *
- * @param {CSVConnectorHelper.JSON} json
+ * @param {JSON} json
  * JSON to deserialize as a class instance or object.
  *
  * @return {CSVConnector}
  * Returns the class instance or object, or throws an exception.
  */
 function fromJSON(
-    json: CSVConnectorHelper.JSON
+    json: JSON
 ): CSVConnector {
     return new CSVConnector(json.options);
 }
@@ -73,13 +73,13 @@ function jsonSupportFor(
  * @param {CSVConnector} obj
  * Class instance or object to serialize as JSON.
  *
- * @return {CSVConnectorHelper.JSON}
+ * @return {JSON}
  * Returns the JSON of the class instance or object.
  */
 function toJSON(
     obj: CSVConnector
-): CSVConnectorHelper.JSON {
-    const options = merge(obj.options) as CSVConnectorHelper.OptionsJSON;
+): JSON {
+    const options = merge(obj.options) as OptionsJSON;
 
     options.dataTable = DataTableHelper.toJSON(obj.getTable());
 
@@ -91,25 +91,15 @@ function toJSON(
 
 /* *
  *
- *  Namespace
+ *  Declarations
  *
  * */
 
-namespace CSVConnectorHelper {
-
-    /* *
-     *
-     *  Declarations
-     *
-     * */
-
-    export interface JSON extends Serializable.JSON<'Data.CSVConnector'> {
-        options: OptionsJSON;
-    }
-
-    export type OptionsJSON = (JSON.Object&CSVConnectorOptions);
-
+export interface JSON extends SerializableJSON<'Data.CSVConnector'> {
+    options: OptionsJSON;
 }
+
+export type OptionsJSON = (JSONObject&CSVConnectorOptions);
 
 /* *
  *
@@ -117,7 +107,7 @@ namespace CSVConnectorHelper {
  *
  * */
 
-const CSVConnectorHelper: Serializable.Helper<CSVConnector, CSVConnectorHelper.JSON> = {
+const CSVConnectorHelper: SerializableHelper<CSVConnector, JSON> = {
     $class: 'Data.CSVConnector',
     fromJSON,
     jsonSupportFor,

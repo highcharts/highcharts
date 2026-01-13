@@ -18,7 +18,7 @@ import type Component from './Component.js';
 
 class EditableOptions {
 
-    public static defaultBindings: EditableOptions.OptionsBindings = {
+    public static defaultBindings: OptionsBindings = {
         keyMap: {
             color: 'colorPicker',
             title: 'text',
@@ -41,18 +41,18 @@ class EditableOptions {
     };
 
     public component: Component;
-    public bindings: EditableOptions.OptionsBindings;
+    public bindings: OptionsBindings;
 
     constructor(
         component: Component,
-        bindings: EditableOptions.OptionsBindings =
+        bindings: OptionsBindings =
         EditableOptions.defaultBindings
     ) {
         this.component = component;
         this.bindings = bindings;
     }
 
-    public getOptions(): (Array<EditableOptions.Options>) {
+    public getOptions(): (Array<Options>) {
         const options = this.component.options.editableOptions;
 
         if (!options) {
@@ -63,7 +63,7 @@ class EditableOptions {
             const option = options[i];
             if (
                 option.propertyPath?.some(
-                    (path): boolean => path === 'connector'
+                    (path: string): boolean => path === 'connector'
                 )
             ) {
                 const board = this.component.board;
@@ -78,14 +78,19 @@ class EditableOptions {
         return options;
     }
 }
-namespace EditableOptions {
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
     /**
      * Configuration for a single option in editable options. If type is
      * `nested` the options are rendered in the accordion menu, with rest of the
      * options defined in the detailed options.
      */
-    export interface Options {
+export interface Options {
         /**
          * Name of the option which will be displayed on the label.
          */
@@ -117,7 +122,7 @@ namespace EditableOptions {
     /**
      * Options of the single option in the select dropdown.
      */
-    export interface SelectOptions {
+export interface SelectOptions {
         /**
          * Name of the item that should be displayed.
          */
@@ -132,7 +137,7 @@ namespace EditableOptions {
     /**
      * Type of the input to be displayed.
      */
-    export type ElementType =
+export type ElementType =
         | 'input'
         | 'textarea'
         | 'toggle'
@@ -142,7 +147,7 @@ namespace EditableOptions {
     /**
      * Configuration for a single option in detailed options.
      */
-    export interface NestedOptions {
+export interface NestedOptions {
         /**
          * Name of the option that should be displayed.
          */
@@ -162,12 +167,10 @@ namespace EditableOptions {
     }
 
 
-    export interface OptionsBindings {
-        keyMap: Record<string, string>;
-        typeMap: Record<string, string>;
-        skipRedraw: string[]; // Keys of options that should not trigger redraw
-    }
-
+export interface OptionsBindings {
+    keyMap: Record<string, string>;
+    typeMap: Record<string, string>;
+    skipRedraw: string[]; // Keys of options that should not trigger redraw
 }
 
 export default EditableOptions;
