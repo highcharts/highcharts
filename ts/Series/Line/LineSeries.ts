@@ -168,14 +168,13 @@ class LineSeries extends Series {
                 // to avoid known SVG filter bug (#19093)
                 if (!i && options.shadow) {
                     const isInverted = this.chart.inverted;
+                    const filterUnits = { filterUnits: 'userSpaceOnUse' };
                     const shadowOptions = isObject(options.shadow) ?
                         merge(
-                            isInverted ? {} :
-                                { filterUnits: 'userSpaceOnUse' },
+                            isInverted ? {} : filterUnits,
                             options.shadow
                         ) : (
-                            isInverted ? true :
-                                { filterUnits: 'userSpaceOnUse' }
+                            isInverted ? true : filterUnits
                         );
 
                     graph.shadow(shadowOptions);
