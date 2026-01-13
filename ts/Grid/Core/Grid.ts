@@ -1358,7 +1358,7 @@ export class Grid {
         }
 
         if (this.enabledColumns.length > 0) {
-            this.viewport = this.renderTable();
+            this.viewport = await this.renderTable();
             if (viewportMeta && this.viewport) {
                 this.viewport.applyStateMeta(viewportMeta);
             }
@@ -1403,14 +1403,16 @@ export class Grid {
      * @returns
      * The newly rendered table (viewport) of the Grid.
      */
-    private renderTable(): Table {
+    private async renderTable(): Promise<Table> {
         this.tableElement = makeHTMLElement('table', {
             className: Globals.getClassName('tableElement')
         }, this.contentWrapper);
 
         this.tableElement.setAttribute('role', 'grid');
 
-        return new Table(this, this.tableElement);
+        const table = new Table(this, this.tableElement);
+        await table.init();
+        return table;
     }
 
     /**

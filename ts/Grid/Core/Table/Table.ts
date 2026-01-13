@@ -177,7 +177,6 @@ class Table {
         this.rowsVirtualizer = new RowsVirtualizer(this);
 
         fireEvent(this, 'beforeInit');
-        void this.init();
 
         // Add event listeners
         this.resizeObserver = new ResizeObserver(this.onResize);
@@ -206,7 +205,11 @@ class Table {
         }
     }
 
-    private async init(): Promise<void> {
+    /**
+     * Initializes the table. Should be called after creation so that the table
+     * can be asynchronously initialized.
+     */
+    public async init(): Promise<void> {
         try {
             this.grid.showLoading();
 
