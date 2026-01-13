@@ -220,8 +220,8 @@ class Row extends GUIElement {
 
         // Destroy cells.
         if (row.cells) {
-            // Copy to avoid problem with index when shifting array of cells during
-            // the destroy.
+            // Copy to avoid problem with index when shifting array of cells
+            // during the destroy.
             const rowCells = [...row.cells];
             for (let i = 0, iEnd = rowCells.length; i < iEnd; ++i) {
                 if (rowCells[i]) {

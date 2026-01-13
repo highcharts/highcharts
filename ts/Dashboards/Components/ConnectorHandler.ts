@@ -19,7 +19,7 @@ import Component from './Component';
 import DataTable, {
     type SetModifierEvent as DataTableSetModifierEvent
 } from '../../Data/DataTable.js';
-import Cell, { isCell } from '../Layout/Cell.js';
+import { isCell } from '../Layout/Cell.js';
 import Globals from '../Globals.js';
 
 /* *

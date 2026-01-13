@@ -25,7 +25,6 @@ import type JSONConnectorOptions from '../../Data/Connectors/JSONConnectorOption
 
 import JSONConnector from '../../Data/Connectors/JSONConnector.js';
 import DataTableHelper from './DataTableHelper.js';
-import Serializable from '../Serializable.js';
 import type { Helper as SerializableHelper, JSON as SerializableJSON } from '../Serializable';
 import U from '../../Core/Utilities.js';
 const { merge } = U;

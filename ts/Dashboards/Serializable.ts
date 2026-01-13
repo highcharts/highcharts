@@ -79,53 +79,53 @@ interface Serializable<T extends AnyRecord, TJSON extends JSON<string>> {
  */
 export interface Helper<T extends AnyRecord, TJSON extends JSON<string>> {
 
-        /**
-         * @name Serializer.$class
-         * @type {string}
-         */
-        $class: TJSON['$class'];
+    /**
+     * @name Serializer.$class
+     * @type {string}
+     */
+    $class: TJSON['$class'];
 
-        /**
-         * Converts the given JSON to an object.
-         *
-         * @function Serializer.fromJSON
-         *
-         * @param {JSON} json
-         * JSON to deserialize as an object.
-         *
-         * @return {Globals.AnyRecord}
-         * Returns the object, or throws an exception.
-         */
-        fromJSON(json: TJSON): T;
+    /**
+     * Converts the given JSON to an object.
+     *
+     * @function Serializer.fromJSON
+     *
+     * @param {JSON} json
+     * JSON to deserialize as an object.
+     *
+     * @return {Globals.AnyRecord}
+     * Returns the object, or throws an exception.
+     */
+    fromJSON(json: TJSON): T;
 
-        /**
-         * Validates the given object for JSON support.
-         *
-         * @function Serializer.jsonSupportFor
-         *
-         * @param {Globals.AnyRecord} obj
-         * Object to validate.
-         *
-         * @return {boolean}
-         * Returns true, if the helper functions can convert the given object,
-         * otherwise false.
-         */
-        jsonSupportFor(obj: AnyRecord): obj is T;
+    /**
+     * Validates the given object for JSON support.
+     *
+     * @function Serializer.jsonSupportFor
+     *
+     * @param {Globals.AnyRecord} obj
+     * Object to validate.
+     *
+     * @return {boolean}
+     * Returns true, if the helper functions can convert the given object,
+     * otherwise false.
+     */
+    jsonSupportFor(obj: AnyRecord): obj is T;
 
-        /**
-         * Converts the given object to JSON.
-         *
-         * @function Serializer.toJSON
-         *
-         * @param {Globals.AnyRecord} obj
-         * Object to serialize as JSON.
-         *
-         * @return {JSON}
-         * Returns the JSON of the object.
-         */
-        toJSON(obj: T): TJSON;
+    /**
+     * Converts the given object to JSON.
+     *
+     * @function Serializer.toJSON
+     *
+     * @param {Globals.AnyRecord} obj
+     * Object to serialize as JSON.
+     *
+     * @return {JSON}
+     * Returns the JSON of the object.
+     */
+    toJSON(obj: T): TJSON;
 
-    }
+}
 
 /**
  * JSON of a serializable class.

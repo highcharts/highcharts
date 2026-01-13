@@ -516,7 +516,7 @@ export interface Options {
      *
      * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/gui/nested-layout/ | Nested layout}
      **/
-        layout?: LayoutOptions;
+    layout?: LayoutOptions;
 }
 
 /* *

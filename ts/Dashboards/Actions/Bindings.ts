@@ -82,7 +82,7 @@ function getGUIElement(
 
     if (container !== null) {
         fireEvent(container, 'bindedGUIElement', {}, function (
-                e: BindedGUIElementEvent
+            e: BindedGUIElementEvent
         ): void {
             guiElement = e.guiElement;
         });
@@ -96,144 +96,144 @@ export async function addComponent(
     board: Board,
     cell?: Cell
 ): Promise<(Component|void)> {
-        const optionsStates = options.states;
-        const optionsEvents = options.events;
-        const renderTo = options.renderTo;
+    const optionsStates = options.states;
+    const optionsEvents = options.events;
+    const renderTo = options.renderTo;
 
-        if (!renderTo) {
-            // eslint-disable-next-line no-console
-            console.error(
-                'The%c renderTo%c option is required to render the component.',
-                'font-weight: bold',
-                ''
-            );
-            return;
-        }
+    if (!renderTo) {
+        // eslint-disable-next-line no-console
+        console.error(
+            'The%c renderTo%c option is required to render the component.',
+            'font-weight: bold',
+            ''
+        );
+        return;
+    }
 
-        if (
-            board.mountedComponents.filter(
-                (el): boolean => el.options.renderTo === renderTo
-            ).length > 0
-        ) {
-            // eslint-disable-next-line no-console
-            console.error(
-                `A component has already been declared in the cell %c${renderTo}%c use a different cell.`,
-                'font-weight: bold',
-                ''
-            );
-            return;
-        }
+    if (
+        board.mountedComponents.filter(
+            (el): boolean => el.options.renderTo === renderTo
+        ).length > 0
+    ) {
+        // eslint-disable-next-line no-console
+        console.error(
+            `A component has already been declared in the cell %c${renderTo}%c use a different cell.`,
+            'font-weight: bold',
+            ''
+        );
+        return;
+    }
 
-        cell = cell || Bindings.getCell(renderTo, board.container);
+    cell = cell || Bindings.getCell(renderTo, board.container);
 
-        const componentContainer =
-            cell?.container || document.querySelector('#' + renderTo);
+    const componentContainer =
+        cell?.container || document.querySelector('#' + renderTo);
 
-        if (!componentContainer || !options.type) {
-            // eslint-disable-next-line no-console
-            console.error(
-                `The component is unable to find the HTML cell element %c${renderTo}%c to render the content.`,
-                'font-weight: bold',
-                ''
-            );
-            return;
-        }
+    if (!componentContainer || !options.type) {
+        // eslint-disable-next-line no-console
+        console.error(
+            `The component is unable to find the HTML cell element %c${renderTo}%c to render the content.`,
+            'font-weight: bold',
+            ''
+        );
+        return;
+    }
 
-        let ComponentClass =
-            ComponentRegistry.types[options.type] as Class<ComponentType>;
+    let ComponentClass =
+        ComponentRegistry.types[options.type] as Class<ComponentType>;
 
-        if (!ComponentClass) {
-            // eslint-disable-next-line no-console
-            console.error(
-                `The component's type %c${options.type}%c does not exist.`,
-                'font-weight: bold',
-                ''
-            );
-
-            if (cell) {
-                ComponentClass =
-                    ComponentRegistry.types['HTML'] as Class<ComponentType>;
-
-                options.title = {
-                    text: board.editMode?.lang.errorMessage ||
-                        'Something went wrong',
-                    className:
-                        Globals.classNamePrefix + 'component-title-error ' +
-                        Globals.classNamePrefix + 'component-title'
-                };
-            }
-        }
-
-        const component = new ComponentClass(cell, options, board);
-        const promise = component.load()['catch']((e): void => {
-            // eslint-disable-next-line no-console
-            console.error(e);
-            component.update({
-                connector: {
-                    id: ''
-                },
-                title: {
-                    text: board.editMode?.lang.errorMessage ||
-                        'Something went wrong',
-                    className:
-                        Globals.classNamePrefix + 'component-title-error ' +
-                        Globals.classNamePrefix + 'component-title'
-                }
-            });
-        });
+    if (!ComponentClass) {
+        // eslint-disable-next-line no-console
+        console.error(
+            `The component's type %c${options.type}%c does not exist.`,
+            'font-weight: bold',
+            ''
+        );
 
         if (cell) {
-            component.setCell(cell);
-            cell.mountedComponent = component;
+            ComponentClass =
+                ComponentRegistry.types['HTML'] as Class<ComponentType>;
+
+            options.title = {
+                text: board.editMode?.lang.errorMessage ||
+                    'Something went wrong',
+                className:
+                    Globals.classNamePrefix + 'component-title-error ' +
+                    Globals.classNamePrefix + 'component-title'
+            };
+        }
+    }
+
+    const component = new ComponentClass(cell, options, board);
+    const promise = component.load()['catch']((e): void => {
+        // eslint-disable-next-line no-console
+        console.error(e);
+        component.update({
+            connector: {
+                id: ''
+            },
+            title: {
+                text: board.editMode?.lang.errorMessage ||
+                    'Something went wrong',
+                className:
+                    Globals.classNamePrefix + 'component-title-error ' +
+                    Globals.classNamePrefix + 'component-title'
+            }
+        });
+    });
+
+    if (cell) {
+        component.setCell(cell);
+        cell.mountedComponent = component;
+    }
+
+    board.mountedComponents.push({
+        options: options,
+        component: component,
+        cell: cell || new CellHTML({
+            id: renderTo,
+            container: componentContainer as HTMLElement,
+            mountedComponent: component
+        })
+    });
+
+    if (
+        cell &&
+        optionsStates?.active?.enabled &&
+        optionsStates?.active?.isActive
+    ) {
+        cell.setActiveState();
+        component.isActive = true;
+    }
+
+    fireEvent(component, 'mount');
+
+    // Events
+    addEvent(componentContainer, 'click', ():void => {
+        // Call the component's click callback
+        if (optionsEvents && optionsEvents.click) {
+            optionsEvents.click.call(component);
         }
 
-        board.mountedComponents.push({
-            options: options,
-            component: component,
-            cell: cell || new CellHTML({
-                id: renderTo,
-                container: componentContainer as HTMLElement,
-                mountedComponent: component
-            })
-        });
-
+        // Default behavior
         if (
             cell &&
-            optionsStates?.active?.enabled &&
-            optionsStates?.active?.isActive
+            component &&
+            componentContainer &&
+            optionsStates?.active?.enabled
         ) {
             cell.setActiveState();
             component.isActive = true;
         }
-
-        fireEvent(component, 'mount');
-
-        // Events
-        addEvent(componentContainer, 'click', ():void => {
-            // Call the component's click callback
-            if (optionsEvents && optionsEvents.click) {
-                optionsEvents.click.call(component);
-            }
-
-            // Default behavior
-            if (
-                cell &&
-                component &&
-                componentContainer &&
-                optionsStates?.active?.enabled
-            ) {
-                cell.setActiveState();
-                component.isActive = true;
-            }
-        });
+    });
 
 
-        // States
-        if (optionsStates?.hover?.enabled) {
-            componentContainer.classList.add(Globals.classNames.cellHover);
-        }
+    // States
+    if (optionsStates?.hover?.enabled) {
+        componentContainer.classList.add(Globals.classNames.cellHover);
+    }
 
-        fireEvent(component, 'afterLoad');
+    fireEvent(component, 'afterLoad');
 
     return promise;
 }

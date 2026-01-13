@@ -1143,7 +1143,7 @@ export interface Options {
      * Sync options. Predefined per component or custom sync options can be
      * used here.
      */
-        sync?: SyncRawOptionsRecord;
+    sync?: SyncRawOptionsRecord;
     /**
      * Connector options
      */

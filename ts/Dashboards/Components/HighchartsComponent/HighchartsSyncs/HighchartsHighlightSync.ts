@@ -30,7 +30,6 @@ import type {
 } from '../HighchartsComponentOptions';
 
 import Component from '../../Component.js';
-import DataCursor from '../../../../Data/DataCursor.js';
 import U from '../../../Utilities.js';
 const { error } = U;
 
@@ -188,12 +187,14 @@ const syncPair: SyncPair = {
                     for (let i = 0, iEnd = seriesIds.length; i < iEnd; ++i) {
                         const seriesId = seriesIds[i];
                         const connectorHandler: HCConnectorHandler =
-                                component.seriesFromConnector[seriesId];
+                            component.seriesFromConnector[seriesId];
                         const dataTableKey =
                             connectorHandler?.options.dataTableKey;
 
-                        if (
-                            connectorHandler?.connector?.getTable(dataTableKey) !== table) {
+                        const connectorTable =
+                            connectorHandler?.connector?.getTable(dataTableKey);
+
+                        if (connectorTable !== table) {
                             continue;
                         }
 

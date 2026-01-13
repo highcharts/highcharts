@@ -85,86 +85,86 @@ class EditableOptions {
  *
  * */
 
-    /**
-     * Configuration for a single option in editable options. If type is
-     * `nested` the options are rendered in the accordion menu, with rest of the
-     * options defined in the detailed options.
-     */
+/**
+ * Configuration for a single option in editable options. If type is
+ * `nested` the options are rendered in the accordion menu, with rest of the
+ * options defined in the detailed options.
+ */
 export interface Options {
-        /**
-         * Name of the option which will be displayed on the label.
-         */
-        name: string;
-        /**
-         * Type of the editable element.
-         */
-        type: ElementType;
-        /**
-         * Whether render it as a standalone element without a group.
-         */
-        isStandalone?: boolean;
-        /**
-         * Detailed options that should be included in the accordion menu.
-         * Available for `nested` type.
-         */
-        nestedOptions?: Array<NestedOptions>
-        /**
-         * Relative path to the option, that should be changed in the component.
-         * eg: `['chart', 'title', 'text']`
-         */
-        propertyPath?: Array<string>
-        /**
-         * Items that should be included in the select element.
-         */
-        selectOptions?: Array<SelectOptions>;
-    }
-
     /**
-     * Options of the single option in the select dropdown.
+     * Name of the option which will be displayed on the label.
      */
+    name: string;
+    /**
+     * Type of the editable element.
+     */
+    type: ElementType;
+    /**
+     * Whether render it as a standalone element without a group.
+     */
+    isStandalone?: boolean;
+    /**
+     * Detailed options that should be included in the accordion menu.
+     * Available for `nested` type.
+     */
+    nestedOptions?: Array<NestedOptions>;
+    /**
+     * Relative path to the option, that should be changed in the component.
+     * eg: `['chart', 'title', 'text']`
+     */
+    propertyPath?: Array<string>;
+    /**
+     * Items that should be included in the select element.
+     */
+    selectOptions?: Array<SelectOptions>;
+}
+
+/**
+ * Options of the single option in the select dropdown.
+ */
 export interface SelectOptions {
-        /**
-         * Name of the item that should be displayed.
-         */
-        name: string;
-        /**
-         * URL of the icon that should be displayed. It is concatenated with
-         * `iconURLPrefix` option.
-         */
-        iconURL?: string;
-    }
-
     /**
-     * Type of the input to be displayed.
+     * Name of the item that should be displayed.
      */
+    name: string;
+    /**
+     * URL of the icon that should be displayed. It is concatenated with
+     * `iconURLPrefix` option.
+     */
+    iconURL?: string;
+}
+
+/**
+ * Type of the input to be displayed.
+ */
 export type ElementType =
-        | 'input'
-        | 'textarea'
-        | 'toggle'
-        | 'select'
-        | 'nested';
+    | 'input'
+    | 'textarea'
+    | 'toggle'
+    | 'select'
+    | 'nested';
 
-    /**
-     * Configuration for a single option in detailed options.
-     */
+/**
+ * Configuration for a single option in detailed options.
+ */
 export interface NestedOptions {
-        /**
-         * Name of the option that should be displayed.
-         */
-        name: string;
-        /**
-         * Whether the option should have a toggle to be enabled or disabled.
-         */
-        showToggle?: boolean;
-        /**
-         * Relative path to the option, that should be changed in the component.
-         */
-        propertyPath?: Array<string>;
-        /**
-         * Options that should be included in the folded menu.
-         */
-        options: Array<Options>;
-    }
+    /**
+     * Name of the option that should be displayed.
+     */
+    name: string;
+    /**
+     * Whether the option should have a toggle to be enabled or disabled.
+     */
+    showToggle?: boolean;
+    /**
+     * Relative path to the option, that should be changed in the component.
+     */
+    propertyPath?: Array<string>;
+    /**
+     * Options that should be included in the folded menu.
+     */
+    options: Array<Options>;
+}
 
 
 export interface OptionsBindings {
