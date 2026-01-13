@@ -40,7 +40,7 @@ const grid = Grid.grid('container', {
         }
     },
     pagination: {
-        enabled: true,
+        enabled: false,
         pageSize: 10,
         controls: {
             pageSizeSelector: {
@@ -72,6 +72,4 @@ document.getElementById('pagination-toggle').addEventListener('change', e => {
             enabled: checked
         }
     });
-
-    grid.container.style.minHeight = checked ? '' : '600px';
 });

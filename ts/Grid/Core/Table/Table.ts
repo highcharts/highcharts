@@ -206,35 +206,41 @@ class Table {
     }
 
     private async preInit(): Promise<void> {
-        const { tableElement } = this;
-        const renderingOptions = this.grid.options?.rendering;
-        const customClassName = renderingOptions?.table?.className;
+        try {
+            this.grid.showLoading();
 
-        this.virtualRows = await this.shouldVirtualizeRows();
+            const { tableElement } = this;
+            const renderingOptions = this.grid.options?.rendering;
+            const customClassName = renderingOptions?.table?.className;
 
-        if (this.virtualRows) {
+            this.virtualRows = await this.shouldVirtualizeRows();
+
+            if (this.virtualRows) {
+                tableElement.classList.add(
+                    Globals.getClassName('virtualization')
+                );
+            }
+
+            if (renderingOptions?.columns?.resizing?.enabled) {
+                this.columnsResizer = new ColumnsResizer(this);
+            }
+
+            if (customClassName) {
+                tableElement.classList.add(...customClassName.split(/\s+/g));
+            }
             tableElement.classList.add(
-                Globals.getClassName('virtualization')
+                Globals.getClassName('scrollableContent')
             );
+
+            // Load columns
+            await this.loadColumns();
+
+            // Init Table
+            await this.init();
+            this.reflow();
+        } finally {
+            this.grid.hideLoading();
         }
-
-        if (renderingOptions?.columns?.resizing?.enabled) {
-            this.columnsResizer = new ColumnsResizer(this);
-        }
-
-        if (customClassName) {
-            tableElement.classList.add(...customClassName.split(/\s+/g));
-        }
-        tableElement.classList.add(
-            Globals.getClassName('scrollableContent')
-        );
-
-        // Load columns
-        await this.loadColumns();
-
-        // Init Table
-        await this.init();
-        this.reflow();
     }
 
     /**
@@ -332,68 +338,50 @@ class Table {
             return;
         }
 
-        let focusedRowId: number | undefined;
-        if (vp.focusCursor) {
-            focusedRowId = await dp.getRowId(vp.focusCursor[0]);
-        }
-
         vp.grid.querying.pagination.clampPage();
 
-        // Update data
-        const oldRowsCount = vp.rows.length > 0 ?
-            (vp.rows[vp.rows.length - 1]?.index ?? -1) + 1 :
-            0;
-        await vp.grid.querying.proceed();
-        for (const column of vp.columns) {
-            column.loadData();
-        }
+        try {
+            this.grid.showLoading();
 
-        // Update virtualization if needed
-        const shouldVirtualize = await this.shouldVirtualizeRows();
-        let shouldRerender = false;
-        if (this.virtualRows !== shouldVirtualize) {
-            this.virtualRows = shouldVirtualize;
-            vp.tableElement.classList.toggle(
-                Globals.getClassName('virtualization'),
-                shouldVirtualize
-            );
-            shouldRerender = true;
-        }
-
-        const newRowCount = await dp.getRowCount();
-        if (shouldRerender || oldRowsCount !== newRowCount) {
-            // Rerender all rows
-            await vp.rowsVirtualizer.rerender();
-        } else {
-            // Update existing rows - create a snapshot to avoid issues
-            // if array changes during iteration
-            const rowsToUpdate = [...vp.rows];
-            for (let i = 0, iEnd = rowsToUpdate.length; i < iEnd; ++i) {
-                await rowsToUpdate[i].update();
+            // Update data
+            const oldRowsCount = vp.rows.length > 0 ?
+                (vp.rows[vp.rows.length - 1]?.index ?? -1) + 1 :
+                0;
+            await vp.grid.querying.proceed();
+            for (const column of vp.columns) {
+                column.loadData();
             }
-        }
 
-        // Update the pagination controls
-        vp.grid.pagination?.updateControls();
-        vp.reflow();
-
-        // Scroll to the focused row
-        if (focusedRowId !== void 0 && vp.focusCursor) {
-            const newRowIndex = await dp.getRowIndex(focusedRowId);
-            if (newRowIndex !== void 0) {
-                // Scroll to the focused row.
-                vp.scrollToRow(newRowIndex);
-
-                // Focus the cell that was focused before the update.
-                setTimeout((): void => {
-                    if (!defined(vp.focusCursor?.[1])) {
-                        return;
-                    }
-                    vp.rows[
-                        newRowIndex - vp.rows[0].index
-                    ]?.cells[vp.focusCursor[1]].htmlElement.focus();
-                });
+            // Update virtualization if needed
+            const shouldVirtualize = await this.shouldVirtualizeRows();
+            let shouldRerender = false;
+            if (this.virtualRows !== shouldVirtualize) {
+                this.virtualRows = shouldVirtualize;
+                vp.tableElement.classList.toggle(
+                    Globals.getClassName('virtualization'),
+                    shouldVirtualize
+                );
+                shouldRerender = true;
             }
+
+            const newRowCount = await dp.getRowCount();
+            if (shouldRerender || oldRowsCount !== newRowCount) {
+                // Rerender all rows
+                await vp.rowsVirtualizer.rerender();
+            } else {
+                // Update existing rows - create a snapshot to avoid issues
+                // if array changes during iteration
+                const rowsToUpdate = [...vp.rows];
+                for (let i = 0, iEnd = rowsToUpdate.length; i < iEnd; ++i) {
+                    await rowsToUpdate[i].update();
+                }
+            }
+
+            // Update the pagination controls
+            vp.grid.pagination?.updateControls();
+            vp.reflow();
+        } finally {
+            this.grid.hideLoading();
         }
 
         vp.grid.dirtyFlags.delete('rows');
