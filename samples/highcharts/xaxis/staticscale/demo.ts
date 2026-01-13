@@ -8,7 +8,7 @@ Highcharts.chart('container', {
     xAxis: {
         categories: ['Apples', 'Bananas', 'Oranges', 'Pears'],
         staticScale: 50
-    } as any,
+    },
     series: [{
         data: [1, 3, 2, 4]
     }]
