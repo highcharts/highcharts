@@ -11,7 +11,7 @@ function generateData(rowCount) {
     return { product: products, weight: weights };
 }
 
-Grid.grid('container', {
+window.grid = Grid.grid('container', {
     dataTable: {
         columns: generateData(200)
     },
