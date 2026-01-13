@@ -120,7 +120,7 @@ export class LocalDataProvider extends DataProvider {
         );
     }
 
-    public override setValue(
+    public override async setValue(
         value: DataTable.CellType,
         columnId: string,
         rowId: number

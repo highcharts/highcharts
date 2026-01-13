@@ -153,12 +153,13 @@ class TableCell extends Cell {
         updateDataset: boolean = false
     ): Promise<void> {
         const fetchToken = ++this.asyncFetchToken;
+        const { grid } = this.column.viewport;
 
         // TODO: Find a better way to show the cell value being updated.
-        this.htmlElement.style.opacity = '0.1';
+        this.htmlElement.style.opacity = '0.5';
 
         if (!defined(value)) {
-            value = await this.column.viewport.grid.dataProvider?.getValue(
+            value = await grid.dataProvider?.getValue(
                 this.column.id,
                 this.row.index
             );
@@ -170,10 +171,22 @@ class TableCell extends Cell {
             }
         }
 
+        const oldValue = this.value;
         this.value = value;
 
-        if (updateDataset && await this.updateDataset()) {
-            return;
+        if (updateDataset) {
+            try {
+                grid.showLoading();
+                if (await this.updateDataset()) {
+                    return;
+                }
+            } catch (err: unknown) {
+                // eslint-disable-next-line no-console
+                console.error(err);
+                this.value = oldValue;
+            } finally {
+                grid.hideLoading();
+            }
         }
 
         if (this.content) {

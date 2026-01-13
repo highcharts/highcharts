@@ -308,23 +308,29 @@ export class RemoteDataProvider extends DataProvider {
     ): Promise<void> {
         const { setValueCallback } = this.options;
 
-        // If callback is defined, call it to persist to the server
-        if (setValueCallback) {
-            // Get row object from cache for the callback
-            const rowObject = this.getRowObjectFromCache(rowIndex);
+        if (!setValueCallback) {
+            throw new Error(
+                'The `setValueCallback` option is not defined.'
+            );
+        }
 
+        try {
             await setValueCallback.call(
                 this,
                 columnId,
                 rowIndex,
-                value,
-                rowObject
+                value
             );
-        }
 
-        // Data changed on the server; refresh even if the query is unchanged.
-        this.forceNextApplyQuery = true;
-        await this.applyQuery();
+            this.forceNextApplyQuery = true;
+
+            // TODO(optim): Can be optimized by checking if the value was
+            // changed in the specific, queried column.
+
+            await this.applyQuery();
+        } catch {
+            throw new Error('Error persisting value to remote server.');
+        }
     }
 
     /**
@@ -445,15 +451,13 @@ export interface RemoteDataProviderOptions extends DataProviderOptions {
      * Optional callback to persist value changes to the remote server.
      * If not provided, changes will only be cached locally.
      *
-     * The callback receives the full row object from cache, allowing you to
-     * extract any column value (e.g., a unique ID) for your API call.
+     * The callback receives the column ID, row index and value to set.
      */
     setValueCallback?: (
         this: RemoteDataProvider,
         columnId: string,
         rowIndex: number,
-        value: DT.CellType,
-        rowObject: DT.RowObject | undefined
+        value: DT.CellType
     ) => Promise<void>;
 
     /**
