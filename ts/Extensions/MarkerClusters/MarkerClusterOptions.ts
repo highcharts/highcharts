@@ -54,6 +54,17 @@ declare module '../../Core/TooltipOptions' {
 
 export type MarkerClusterAlgorithmValue = ('grid'|'kmeans'|'optimizedKmeans');
 
+/**
+ * Function callback when a cluster is clicked.
+ *
+ * @callback Highcharts.MarkerClusterDrillCallbackFunction
+ *
+ * @param {Highcharts.Point} this
+ *        The point where the event occurred.
+ *
+ * @param {Highcharts.PointClickEventObject} event
+ *        Event arguments.
+ */
 export interface MarkerClusterDrillCallbackFunction {
     (this: Point, event: PointClickEvent): void;
 }

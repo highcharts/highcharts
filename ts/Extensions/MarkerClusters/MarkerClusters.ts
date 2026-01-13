@@ -430,23 +430,3 @@ const MarkerClusters = {
 };
 
 export default MarkerClusters;
-
-/* *
- *
- *  API Options
- *
- * */
-
-/**
- * Function callback when a cluster is clicked.
- *
- * @callback Highcharts.MarkerClusterDrillCallbackFunction
- *
- * @param {Highcharts.Point} this
- *        The point where the event occurred.
- *
- * @param {Highcharts.PointClickEventObject} event
- *        Event arguments.
- */
-
-''; // Keeps doclets above in JS file
