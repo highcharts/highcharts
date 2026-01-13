@@ -421,7 +421,7 @@ class WGLRenderer {
             connectNulls = options.connectNulls,
             // For some reason eslint/TypeScript don't pick up that this is
             // actually used: --- bre1470: it is never read, just set
-            // maxVal: (number|undefined), // eslint-disable-line no-unused-vars
+            // maxVal: (number|undefined),
             points: Array<WGLPoint> =
                 series.points || (false as any),
             sdata = isStacked ? series.data : (xData || rawData),

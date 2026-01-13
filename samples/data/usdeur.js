@@ -1,4 +1,3 @@
-/* eslint no-unused-vars: 0 */
 var usdeur = [
 	[Date.UTC(2010, 0, 1), 0.7537],
 	[Date.UTC(2010, 0, 4), 0.6951],

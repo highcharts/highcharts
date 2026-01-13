@@ -141,12 +141,12 @@ function onTickAfterGetPosition(
         xOrY: keyof PositionObject;
     }
 ): void {
-    const axis = this.axis,
-        xOrY: keyof PositionObject = axis.horiz ? 'x' : 'y',
-        origKey = xOrY ? 'xOrig' : 'yOrig';
+    const axis = this.axis;
 
     if (axis.variwide) {
-        this[origKey] = e.pos[xOrY];
+        const xOrY = axis.horiz ? 'x' : 'y';
+
+        this[`${xOrY}Orig`] = e.pos[xOrY];
         this.postTranslate(e.pos, xOrY, this.pos);
     }
 }
@@ -190,8 +190,8 @@ function wrapTickGetLabelPosition(
     _index: number
 ): PositionObject {
     const args = Array.prototype.slice.call(arguments, 1),
-        xOrY: keyof PositionObject = horiz ? 'x' : 'y',
-        origKey = xOrY ? 'xOrig' : 'yOrig';
+        xOrY = horiz ? 'x' : 'y',
+        origKey: keyof Tick = `${xOrY}Orig`;
 
     // Replace the x with the original x
     if (

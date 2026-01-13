@@ -664,7 +664,7 @@ function getSVG(chart) {
  * @param  {Array} data2 Pixel data for image2.
  * @return {Number}      The amount of different pixels, where 0 is identical
  */
-function compare(data1, data2) { // eslint-disable-line no-unused-vars
+function compare(data1, data2) {
     var i = data1.length,
         diff = 0,
         pixels = [],
@@ -799,7 +799,7 @@ function createCanvas(id) {
  * @param  {String} path  The sample path
  * @return {String}       The image data
  */
-function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
+function compareToReference(chart, path) {
     return new Promise(function (resolve, reject) {
 
         var candidateSVG = getSVG(chart);

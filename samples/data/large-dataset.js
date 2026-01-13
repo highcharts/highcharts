@@ -1,4 +1,3 @@
-/* eslint no-unused-vars: 0 */
 var temperatures = [
     0.1,
     -0.7,
