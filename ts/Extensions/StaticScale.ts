@@ -53,8 +53,8 @@ declare module '../Core/Axis/AxisOptions' {
          * @type      {number}
          * @default   50
          * @since     6.2.0
-         * @product   gantt
-         * @apioption yAxis.staticScale
+         * @product   highcharts highstock gantt
+         * @apioption xAxis.staticScale
          */
         staticScale?: number;
 
