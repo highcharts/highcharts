@@ -145,6 +145,39 @@ export class RemoteDataProvider extends DataProvider {
     }
 
     /**
+     * Evicts the least recently used chunk if the cache limit is reached.
+     * Also cleans up the reverse lookup map for evicted rowIds.
+     */
+    private evictLRUChunkIfNeeded(): void {
+        const { chunksLimit } = this.options;
+
+        if (
+            !chunksLimit ||
+            !this.dataChunks ||
+            this.dataChunks.size < chunksLimit
+        ) {
+            return;
+        }
+
+        // Get the first (oldest/LRU) chunk
+        const oldestKey = this.dataChunks.keys().next().value;
+        if (oldestKey === void 0) {
+            return;
+        }
+
+        const oldestChunk = this.dataChunks.get(oldestKey);
+
+        // Clean up reverse lookup map for evicted chunk's rowIds
+        if (oldestChunk && this.rowIdToChunkInfo) {
+            for (const rowId of oldestChunk.rowIds) {
+                this.rowIdToChunkInfo.delete(rowId);
+            }
+        }
+
+        this.dataChunks.delete(oldestKey);
+    }
+
+    /**
      * Fetches a chunk from the remote server and caches it.
      * Deduplicates concurrent requests for the same chunk.
      *
@@ -159,9 +192,12 @@ export class RemoteDataProvider extends DataProvider {
             this.dataChunks = new Map();
         }
 
-        // Check if chunk is already cached
+        // Check if chunk is already cached (with LRU update)
         const existingChunk = this.dataChunks.get(chunkIndex);
         if (existingChunk) {
+            // Move to end (most recently used) by re-inserting
+            this.dataChunks.delete(chunkIndex);
+            this.dataChunks.set(chunkIndex, existingChunk);
             return existingChunk;
         }
 
@@ -224,6 +260,9 @@ export class RemoteDataProvider extends DataProvider {
                         (_, i): number => i + offset
                     )
                 };
+
+                // Evict LRU chunk if limit is reached
+                this.evictLRUChunkIfNeeded();
 
                 // DataChunks guaranteed to exist (checked at start)
                 this.dataChunks?.set(chunkIndex, chunk);
@@ -527,7 +566,13 @@ export interface RemoteDataProviderOptions extends DataProviderOptions {
     /**
      * The number of rows to fetch per chunk.
      */
-    chunkSize: number;
+    chunkSize?: number;
+
+    /**
+     * Maximum number of chunks to keep in memory. When exceeded, the least
+     * recently used (LRU) chunk is evicted. If not set, all chunks are kept.
+     */
+    chunksLimit?: number;
 }
 
 declare module '../../Core/Data/DataProviderType' {
