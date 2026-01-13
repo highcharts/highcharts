@@ -16,6 +16,11 @@ QUnit.test('Auto rotation and wrapping', function (assert) {
                 'Mar sad asd asd asd as'
             ]
         },
+
+        yAxis: [{
+            id: 'yaxis'
+        }],
+
         series: [
             {
                 name: 'Tokyo',
@@ -85,6 +90,24 @@ QUnit.test('Auto rotation and wrapping', function (assert) {
             `${i} label should be wrapped when not enough space`
         );
     });
+
+    chart.get('yaxis').update({
+        labels: {
+            format: 'A $', // must have some line-breaking ([\-\s\u00AD])
+
+            // Config details in #23993
+            useHTML: true,
+            style: {
+                textOverflow: 'none'
+            }
+        }
+    });
+
+    assert.lessThan(
+        chart.plotLeft, // actually ~72px (+/- font) with text width ~20px
+        80,
+        `Y axis labels shouldn't take up more space than needed`
+    );
 });
 
 QUnit.test('Reset text with with useHTML (#4928)', function (assert) {
