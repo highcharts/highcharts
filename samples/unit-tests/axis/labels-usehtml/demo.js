@@ -563,7 +563,7 @@ QUnit.test('Varying label width with HTML labels (#8809)', function (assert) {
 
     assert.strictEqual(
         chart.xAxis[0].ticks[0].label.element.style.width,
-        '',
+        'auto',
         'After resetting, the label width should be released'
     );
 });

@@ -12,10 +12,11 @@ Highcharts.chart('container', {
             dataLabels: {
                 enabled: true,
                 borderRadius: 5,
-                backgroundColor: 'rgba(252, 255, 197, 0.7)',
+                backgroundColor: '#bada5555',
                 borderWidth: 1,
                 borderColor: '#AAA',
-                format: '{point.series.name}'
+                format: '{point.series.name}',
+                padding: 5
             },
             grouping: false
         }

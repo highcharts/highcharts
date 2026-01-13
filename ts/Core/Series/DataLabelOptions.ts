@@ -151,10 +151,20 @@ export interface DataLabelOptions {
 
     /**
      * The background color or gradient for the data label. Setting it to
-     * `auto` will use the point's color.
+     * `auto` will use the point's color. In addition to
+     * regular colors, there are two special setting for this option:
+     * - `auto` will set the background color the point's color.
+     * - `contrast` will set it to a contrast against the text color, with
+     *   an opacity allowing to see the underlying content. The contrast is
+     *   great enough to ensure readability for the text according to
+     *   accessibility standards.
      *
      * @sample {highcharts} highcharts/plotoptions/series-datalabels-box/
      *         Data labels box options
+     * @sample {highcharts} highcharts/plotoptions/series-datalabels-background-contrast/
+     *         Contrast background color in stacked column
+     * @sample {highcharts} highcharts/series-pie/datalabels-background-contrast/
+     *         Contrast background color in pie
      * @sample {highmaps} maps/plotoptions/series-datalabels-box/
      *         Data labels box options
      * @sample {highmaps} maps/demo/mappoint-datalabels-mapmarker
@@ -183,7 +193,7 @@ export interface DataLabelOptions {
      * @sample {highmaps} maps/plotoptions/series-datalabels-box/
      *         Data labels box options
      *
-     * @default   0
+     * @default   3
      * @since     2.2.1
      */
     borderRadius?: number;
@@ -263,10 +273,11 @@ export interface DataLabelOptions {
     defer?: boolean;
 
     /**
-     * TODO: This is a pie (and derived) series option. It should be
-     * moved to the pie module.
+     * The distance of the data label from the data point. Note that the
+     * `padding` setting also affects the rendered distance, but is not
+     * visible unless the data label has a border or background.
      *
-     * @internal
+     * @product   highcharts highstock gantt
      */
     distance?: number|string;
 
@@ -403,6 +414,10 @@ export interface DataLabelOptions {
      * When either the `borderWidth` or the `backgroundColor` is set,
      * this is the padding within the box.
      *
+     * An array of numbers sets padding for the respective sides. An array
+     * of two numbers repeats the values for the horizontal and vertical
+     * sides.
+     *
      * @sample {highcharts} highcharts/plotoptions/series-datalabels-box/
      *         Data labels box options
      * @sample {highmaps} maps/plotoptions/series-datalabels-box/
@@ -410,7 +425,7 @@ export interface DataLabelOptions {
      * @default 5
      * @since 2.2.1
      */
-    padding?: number;
+    padding?: number|Array<number>;
 
     /**
      * Aligns data labels relative to points. If `center` alignment is
@@ -471,8 +486,12 @@ export interface DataLabelOptions {
      * background. In some cases, especially with grayscale text, the
      * text outline doesn't work well, in which cases it can be disabled
      * by setting it to `"none"`. When `useHTML` is true, the
-     * `textOutline` will not be picked up. In this, case, the same
-     * effect can be achieved through the `text-shadow` CSS property.
+     * `textOutline` will not be picked up. In this case, the same
+     * effect can be acheived through the `text-shadow` CSS property. As a
+     * complementary or alternative to the `textOutline`, a
+     * `dataLabels.backgroundColor` can be used. It provides a more calm
+     * impression and ensures readable text label, at the cost of a risk of
+     * overshadowing the underlying chart elements.
      *
      * For some series types, where each point has an extent, like for
      * example tree maps, the data label may overflow the point. There
@@ -487,6 +506,8 @@ export interface DataLabelOptions {
      *         Long labels truncated with an ellipsis in a pie
      * @sample {highcharts} highcharts/plotoptions/pie-datalabels-overflow-wrap/
      *         Long labels are wrapped in a pie
+     * @sample {highcharts} highcharts/plotoptions/series-datalabels-background-contrast/
+     *         Default text outline and contrast background color
      * @sample {highmaps} maps/demo/color-axis/
      *         Bold labels
      *

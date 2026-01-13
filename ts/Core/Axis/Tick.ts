@@ -48,7 +48,6 @@ const {
     getAlignFactor,
     isNumber,
     merge,
-    objectEach,
     pick
 } = U;
 
@@ -208,9 +207,6 @@ class Tick {
     public mark?: SVGElement;
 
     /** @internal */
-    public movedLabel?: SVGElement;
-
-    /** @internal */
     public options?: DeepPartial<AxisOptions>;
 
     /** @internal */
@@ -275,8 +271,6 @@ class Tick {
             tickPositions = axis.tickPositions,
             isFirst = pos === tickPositions[0],
             isLast = pos === tickPositions[tickPositions.length - 1],
-            animateLabels = (!labelOptions.step || labelOptions.step === 1) &&
-                axis.tickInterval === 1,
             tickPositionInfo = tickPositions.info;
 
         let label = tick.label,
@@ -367,7 +361,7 @@ class Tick {
             }
             return axis.defaultLabelFormatter.call(ctx);
         };
-        const str = labelFormatter.call(ctx, ctx);
+        const text = labelFormatter.call(ctx, ctx);
 
         // Set up conditional formatting based on the format list if existing.
         const list = dateTimeLabelFormats?.list;
@@ -398,38 +392,31 @@ class Tick {
             tick.shortenLabel = void 0;
         }
 
-        // Call only after first render
-        if (animateLabels && axis._addedPlotLB) {
-            tick.moveLabel(str, labelOptions);
-        }
         // First call
-        if (!defined(label) && !tick.movedLabel) {
+        if (!label) {
             /**
              * The rendered text label of the tick.
              * @name Highcharts.Tick#label
              * @type {Highcharts.SVGElement|undefined}
              */
-            tick.label = label = tick.createLabel(
-                str,
-                labelOptions
-            );
+            tick.label = label = tick.createLabel(text, labelOptions);
 
             // Base value to detect change for new calls to getBBox
             tick.rotation = 0;
 
         // Update
-        } else if (label && label.textStr !== str && !animateLabels) {
+        } else if (label.textStr !== text) {
             // When resetting text, also reset the width if dynamically set
             // (#8809)
             if (
                 label.textWidth &&
                 !labelOptions.style.width &&
-                !(label.styles as any).width
+                !label.styles.width
             ) {
-                label.css({ width: null as any });
+                label.css({ width: void 0 });
             }
 
-            label.attr({ text: str });
+            label.attr({ text });
 
             label.textPxLength = label.getBBox().width;
         }
@@ -805,58 +792,6 @@ class Tick {
     }
 
     /**
-     * Try to replace the label if the same one already exists.
-     *
-     * @internal
-     * @function Highcharts.Tick#moveLabel
-     */
-    public moveLabel(str: string, labelOptions: AxisLabelOptions): void {
-        const tick = this,
-            label = tick.label,
-            axis = tick.axis;
-
-        let moved = false,
-            labelPos;
-
-        if (label && label.textStr === str) {
-            tick.movedLabel = label;
-            moved = true;
-            delete tick.label;
-
-        } else { // Find a label with the same string
-            objectEach(axis.ticks, function (currentTick: Tick): void {
-                if (
-                    !moved &&
-                    !currentTick.isNew &&
-                    currentTick !== tick &&
-                    currentTick.label &&
-                    currentTick.label.textStr === str
-                ) {
-                    tick.movedLabel = currentTick.label;
-                    moved = true;
-                    currentTick.labelPos = tick.movedLabel.xy;
-                    delete currentTick.label;
-                }
-            });
-        }
-
-        // Create new label if the actual one is moved
-        if (!moved && (tick.labelPos || label)) {
-            labelPos = tick.labelPos || (label as any).xy;
-
-            tick.movedLabel = tick.createLabel(
-                str,
-                labelOptions,
-                labelPos
-            );
-
-            if (tick.movedLabel) {
-                tick.movedLabel.attr({ opacity: 0 });
-            }
-        }
-    }
-
-    /**
      * Put everything in place
      *
      * @internal
@@ -1156,35 +1091,6 @@ class Tick {
                 tick.isNewLabel = true;
             }
         }
-    }
-
-    /**
-     * Replace labels with the moved ones to perform animation. Additionally
-     * destroy unused labels.
-     *
-     * @internal
-     * @function Highcharts.Tick#replaceMovedLabel
-     */
-    public replaceMovedLabel(): void {
-        const tick = this,
-            label = tick.label,
-            axis = tick.axis;
-
-        // Animate and destroy
-        if (label && !tick.isNew) {
-
-            label.animate(
-                { opacity: 0 },
-                void 0,
-                label.destroy
-            );
-
-            delete tick.label;
-        }
-
-        axis.isDirty = true;
-        tick.label = tick.movedLabel;
-        delete tick.movedLabel;
     }
 }
 

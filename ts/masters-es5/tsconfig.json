@@ -19,7 +19,9 @@
     },
     "exclude": [
         "../Dashboards/**/*.ts",
+        "../Extensions/Autoload/Loader.ts",
         "../Grid/**/*.ts",
+        "../masters/highcharts-autoload.src.ts",
         "../masters-dashboards/**/*.ts",
         "../masters-grid/**/*.ts"
     ],

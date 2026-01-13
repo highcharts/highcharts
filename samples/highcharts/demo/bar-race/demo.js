@@ -238,16 +238,9 @@ function update(increment) {
         pause(btn);
     }
 
-    chart.update(
-        {
-            subtitle: {
-                text: getSubtitle()
-            }
-        },
-        false,
-        false,
-        false
-    );
+    chart.setTitle(void 0, {
+        text: getSubtitle()
+    }, false);
 
     chart.series[0].update({
         name: input.value,

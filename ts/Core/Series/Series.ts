@@ -40,7 +40,6 @@ import type RangeSelector from '../../Stock/RangeSelector/RangeSelector';
 import type SeriesBase from './SeriesBase';
 import type {
     NonPlotOptions,
-    SeriesDataSortingOptions,
     SeriesOptions,
     SeriesStateHoverOptions,
     SeriesZonesOptions
@@ -97,7 +96,6 @@ const {
     find,
     fireEvent,
     getClosestDistance,
-    getNestedProperty,
     insertItem,
     isArray,
     isNumber,
@@ -311,6 +309,7 @@ class Series {
         // GeoHeatMap interpolation
         'isDirtyCanvas',
         'points',
+        'condemnedPoints',
         'dataTable',
 
         'processedData', // #17057
@@ -366,6 +365,14 @@ class Series {
 
     public colorIndex?: number;
 
+    /**
+     * Points that are marked for removal. During deleting of points, whether it
+     * is after adding points with shift, destroying points directly, udating
+     * data or other operations, we render the condemened point one last time
+     * into their final position as we fade them out, then destroy the elements.
+     */
+    public condemnedPoints!: Array<Point>;
+
     public cropped?: boolean;
 
     public data!: Array<Point>;
@@ -373,8 +380,6 @@ class Series {
     public dataMax?: number;
 
     public dataMin?: number;
-
-    public enabledDataSorting?: boolean;
 
     public fillColor?: ColorType;
 
@@ -488,6 +493,8 @@ class Series {
         // the different series and charts. #12959, #13937
         this.eventsToUnbind = [];
 
+        this.condemnedPoints ||= [];
+
         /**
          * Read only. The chart that the series belongs to.
          *
@@ -590,11 +597,7 @@ class Series {
         // point.
         chart.orderItems('series', insertItem(this, chartSeries));
 
-        // Set options for series with sorting and set data later.
-        if (options.dataSorting?.enabled) {
-            series.setDataSortingOptions();
-
-        } else if (!series.points && !series.data) {
+        if (!series.points && !series.data) {
             series.setData(options.data as any, false);
         }
 
@@ -784,29 +787,6 @@ class Series {
         }
         this.xIncrement = xIncrement + pointInterval;
         return xIncrement;
-    }
-
-    /**
-     * Internal function to set properties for series if data sorting is
-     * enabled.
-     *
-     * @internal
-     * @function Highcharts.Series#setDataSortingOptions
-     */
-    public setDataSortingOptions(): void {
-        const options = this.options;
-
-        extend<Series>(this, {
-            requireSorting: false,
-            sorted: false,
-            enabledDataSorting: true,
-            allowDG: false
-        });
-
-        // To allow unsorted data for column series.
-        if (!defined(options.pointRange)) {
-            options.pointRange = 1;
-        }
     }
 
     /**
@@ -1285,7 +1265,7 @@ class Series {
             data.forEach((point, i): void => {
                 // .update doesn't exist on a linked, hidden series (#3709)
                 // (#10187)
-                if (point !== oldData[i].y && !oldData[i].destroyed) {
+                if (point !== oldData[i].y && !oldData[i].condemned) {
                     oldData[i].update(point, false, void 0, false);
                 }
             });
@@ -1387,7 +1367,6 @@ class Series {
             oldDataLength = oldData?.length || 0,
             options = series.options,
             chart = series.chart,
-            dataSorting = options.dataSorting,
             xAxis = series.xAxis,
             turboThreshold = options.turboThreshold,
             table = this.dataTable,
@@ -1418,10 +1397,6 @@ class Series {
 
 
         const dataLength = data.length;
-
-        if (dataSorting?.enabled) {
-            data = this.sortData(data);
-        }
 
         // First try to run Point.update which is cheaper, allows animation, and
         // keeps references to points.
@@ -1604,84 +1579,6 @@ class Series {
         if (redraw) {
             chart.redraw(animation);
         }
-    }
-
-    /**
-     * Internal function to sort series data
-     *
-     * @internal
-     * @function Highcharts.Series#sortData
-     * @param {Array<Highcharts.PointOptionsType>} data
-     * Force data grouping.
-     */
-    public sortData(
-        data: Array<(PointOptions|PointShortOptions)>
-    ): Array<PointOptions> {
-        const series = this,
-            options = series.options,
-            dataSorting: SeriesDataSortingOptions = options.dataSorting as any,
-            sortKey = dataSorting.sortKey || 'y',
-            getPointOptionsObject = function (
-                series: Series,
-                pointOptions: (PointOptions|PointShortOptions)
-            ): PointOptions {
-                return (defined(pointOptions) &&
-                    series.pointClass.prototype.optionsToObject.call({
-                        series: series
-                    }, pointOptions)) || {};
-            };
-
-        data.forEach(function (pointOptions, i): void {
-            data[i] = getPointOptionsObject(series, pointOptions);
-            (data[i] as any).index = i;
-        }, this);
-
-        // Sorting
-        const sortedData: Array<Point> = data.concat().sort((a, b): number => {
-            const aValue = getNestedProperty(
-                sortKey,
-                a
-            ) as (boolean|number|string);
-            const bValue = getNestedProperty(
-                sortKey,
-                b
-            ) as (boolean|number|string);
-            return bValue < aValue ? -1 : bValue > aValue ? 1 : 0;
-        }) as Array<Point>;
-        // Set x value depending on the position in the array
-        sortedData.forEach(function (point, i): void {
-            point.x = i;
-        }, this);
-
-        // Set the same x for linked series points if they don't have their
-        // own sorting
-        if (series.linkedSeries) {
-            series.linkedSeries.forEach(function (linkedSeries): void {
-                const options = linkedSeries.options,
-                    seriesData = options.data as Array<PointOptions>;
-
-                if (
-                    !options.dataSorting?.enabled &&
-                    seriesData
-                ) {
-                    seriesData.forEach(function (pointOptions, i): void {
-                        seriesData[i] = getPointOptionsObject(
-                            linkedSeries,
-                            pointOptions
-                        );
-
-                        if (data[i]) {
-                            seriesData[i].x = (data[i] as any).x;
-                            seriesData[i].index = i;
-                        }
-                    });
-
-                    linkedSeries.setData(seriesData, false);
-                }
-            });
-        }
-
-        return data as any;
     }
 
     /**
@@ -2232,24 +2129,21 @@ class Series {
         this.generatePoints();
 
         const series = this,
-            options = series.options,
-            stacking = options.stacking,
-            xAxis = series.xAxis,
-            enabledDataSorting = series.enabledDataSorting,
-            yAxis = series.yAxis,
-            points = series.points,
+            { options, xAxis, yAxis } = series,
+            { stacking, threshold } = options,
+            { hasRendered, polar } = series.chart,
+            points = series.points.concat(series.condemnedPoints),
             dataLength = points.length,
             pointPlacement = series.pointPlacementToXValue(), // #7860
             dynamicallyPlaced = Boolean(pointPlacement),
-            threshold = options.threshold,
             stackThreshold = options.startFromThreshold ? threshold : 0,
             nullYSubstitute = (
                 options?.nullInteraction &&
                 yAxis.len
             );
         let i,
-            plotX,
-            lastPlotX,
+            plotX: number|undefined,
+            lastPlotX: number|undefined,
             stackIndicator,
             closestPointRangePx = Number.MAX_VALUE;
 
@@ -2262,6 +2156,28 @@ class Series {
         function limitedRange(val: number): number {
             return clamp(val, -1e9, 1e9);
         }
+
+        const getPlotX = (x: number, old?: boolean): number|undefined => {
+            const plotX = xAxis.translate(
+                x, false, false, old, true, pointPlacement
+            );
+            return isNumber(plotX) ? correctFloat(limitedRange(plotX)) : void 0;
+        };
+
+        const getPlotY = (
+            yValue: (number|null|undefined),
+            point: Point,
+            old?: boolean
+        ): number|undefined => {
+            // Set the plotY value, reset it for redraws #3201, #18422
+            if (isNumber(yValue) && point.plotX !== void 0) {
+                const plotY = yAxis.translate(yValue, false, true, old, true);
+                return isNumber(plotY) ? limitedRange(plotY) : void 0;
+            }
+            if (!isNumber(yValue) && nullYSubstitute) {
+                return nullYSubstitute;
+            }
+        };
 
         // Translate each point
         for (i = 0; i < dataLength; i++) {
@@ -2279,12 +2195,7 @@ class Series {
                     ''
             ) + series.stackKey];
 
-            plotX = xAxis.translate( // #3923
-                xValue, false, false, false, true, pointPlacement
-            );
-            point.plotX = isNumber(plotX) ? correctFloat( // #5236
-                limitedRange(plotX) // #3923
-            ) : void 0;
+            point.plotX = plotX = getPlotX(xValue);
 
             // Calculate the bottom y value for stacked series
             if (
@@ -2362,15 +2273,13 @@ class Series {
                 yValue = series.dataModify.modifyValue(yValue, i);
             }
 
-            // Set the plotY value, reset it for redraws #3201, #18422
-            let plotY: number|undefined;
-            if (isNumber(yValue) && point.plotX !== void 0) {
-                plotY = yAxis.translate(yValue, false, true, false, true);
-                plotY = isNumber(plotY) ? limitedRange(plotY) : void 0;
-            } else if (!isNumber(yValue) && nullYSubstitute) {
-                plotY = nullYSubstitute;
-            }
-            point.plotY = plotY;
+            point.plotY = getPlotY(yValue, point);
+
+            // Set the starting point of point entrance animation
+            point.origin = hasRendered && !point.graphic && !polar ? {
+                x: getPlotX(xValue, true),
+                y: getPlotY(yValue, point, true)
+            } : void 0;
 
             point.isInside = this.isPointInside(point);
 
@@ -2390,11 +2299,11 @@ class Series {
             point.negative = (point.y || 0) < (threshold || 0);
 
             // Determine auto enabling of markers (#3635, #5099)
-            if (!point.isNull && point.visible !== false) {
-                if (typeof lastPlotX !== 'undefined') {
+            if (!point.isNull && point.visible !== false && isNumber(plotX)) {
+                if (isNumber(lastPlotX)) {
                     closestPointRangePx = Math.min(
                         closestPointRangePx,
-                        Math.abs(plotX - lastPlotX)
+                        Math.abs((plotX) - lastPlotX)
                     );
                 }
                 lastPlotX = plotX;
@@ -2402,11 +2311,6 @@ class Series {
 
             // Find point zone
             point.zone = this.zones.length ? point.getZone() : void 0;
-
-            // Animate new points with data sorting
-            if (!point.graphic && series.group && enabledDataSorting) {
-                point.isNew = true;
-            }
         }
         series.closestPointRangePx = closestPointRangePx;
 
@@ -2650,7 +2554,10 @@ class Series {
      *
      * @function Highcharts.Series#drawPoints
      */
-    public drawPoints(points: Array<Point> = this.points): void {
+    public drawPoints(points?: Array<Point>): void {
+
+        points ||= this.points.concat(this.condemnedPoints);
+
         const series = this,
             chart = series.chart,
             styledMode = chart.styledMode,
@@ -2711,13 +2618,6 @@ class Series {
                         (point.selected && 'select') as any
                     );
 
-                    // Set starting position for point sliding animation.
-                    if (series.enabledDataSorting) {
-                        point.startXPos = xAxis.reversed ?
-                            -(markerAttribs.width || 0) :
-                            xAxis.width;
-                    }
-
                     const isInside = point.isInside !== false;
                     if (
                         !graphic &&
@@ -2736,28 +2636,28 @@ class Series {
                                     seriesMarkerOptions
                             )
                             .add(markerGroup);
-                        // Sliding animation for new points
-                        if (
-                            series.enabledDataSorting &&
-                            chart.hasRendered
-                        ) {
-                            graphic.attr({
-                                x: point.startXPos
-                            });
+
+                        // New points fade in from old axis position
+                        if (point.origin) {
+                            const attr = point.getOrigin(
+                                point.origin,
+                                markerAttribs
+                            );
+                            if (!styledMode) {
+                                attr.opacity = 0;
+                            }
+                            graphic.attr(attr);
                             verb = 'animate';
                         }
                     }
 
-                    if (graphic && verb === 'animate') { // Update
-                        // Since the marker group isn't clipped, each
-                        // individual marker must be toggled
-                        graphic[isInside ? 'show' : 'hide'](isInside)
-                            .animate(markerAttribs);
-
-                    }
-
-                    // Presentational attributes
                     if (graphic) {
+                        // Updating pre-existing point
+                        if (verb === 'animate') {
+                            graphic?.animate(markerAttribs);
+                        }
+
+                        // Presentational attributes
                         const pointAttr = series.pointAttribs(
                             point,
                             (
@@ -2774,9 +2674,7 @@ class Series {
                                 fill: pointAttr.fill
                             });
                         }
-                    }
 
-                    if (graphic) {
                         graphic.addClass(point.getClassName(), true);
                     }
 
@@ -2971,7 +2869,8 @@ class Series {
             'stroke': stroke,
             'stroke-width': strokeWidth,
             'fill': fill,
-            'opacity': opacity
+            'opacity': point?.condemned || point?.isInside === false ?
+                0 : opacity
         };
     }
 
@@ -3536,6 +3435,7 @@ class Series {
         if (wasDirty) { // #3868, #3945
             delete this.kdTree;
         }
+        this.condemnedPoints.length = 0;
     }
 
     /**
@@ -4497,8 +4397,6 @@ class Series {
 
         series.initialType = initialType;
         chart.linkSeries(); // Links are lost in series.remove (#3028)
-        // Set data for series with sorting enabled if it isn't set yet (#19715)
-        chart.setSortedData();
 
         // #15383: Fire updatedData if the type has changed to keep linked
         // series such as indicators updated
@@ -5060,25 +4958,6 @@ export default Series;
  *
  * @ignore-declaration
  * @typedef {Highcharts.SeriesOptions|Highcharts.Dictionary<*>} Highcharts.SeriesOptionsType
- */
-
-/**
- * Options for `dataSorting`.
- *
- * @interface Highcharts.DataSortingOptionsObject
- * @since 8.0.0
- *//**
- * Enable or disable data sorting for the series.
- * @name Highcharts.DataSortingOptionsObject#enabled
- * @type {boolean|undefined}
- *//**
- * Whether to allow matching points by name in an update.
- * @name Highcharts.DataSortingOptionsObject#matchByName
- * @type {boolean|undefined}
- *//**
- * Determines what data value should be used to sort by.
- * @name Highcharts.DataSortingOptionsObject#sortKey
- * @type {string|undefined}
  */
 
 /**
