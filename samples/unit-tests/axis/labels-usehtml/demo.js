@@ -106,7 +106,7 @@ QUnit.test('Auto rotation and wrapping', function (assert) {
     assert.lessThan(
         chart.plotLeft, // actually ~72px (+/- font) with text width ~20px
         80,
-        `Y axis labels shouldn't take up more space than needed`
+        'Y axis labels shouldn\'t take up more space than needed'
     );
 });
 
