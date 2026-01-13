@@ -1,32 +1,22 @@
-const dataUrl = 'https://dataset-server-hc-production.up.railway.app/data';
-
 const grid = Grid.grid('container', {
     data: {
         providerType: 'remote',
         chunkSize: 50,
-        fetchCallback: async (query, offset, limit) => {
-            console.log(`fetching (offset: ${offset}, limit: ${limit})`);
-
-            // Using RemoteFetchHelper for standardized API requests
-            return Grid.RemoteFetchHelper.fetch({
-                baseUrl: dataUrl,
-                query,
-                offset,
-                limit,
-                columns: [
-                    'employeeId',
-                    'firstName',
-                    'lastName',
-                    'department',
-                    'role',
-                    'city',
-                    'country',
-                    'nationality',
-                    'employmentType',
-                    'projectsAssigned',
-                    'remote'
-                ]
-            });
+        serverApi: {
+            baseUrl: 'https://dataset-server-hc-production.up.railway.app/data',
+            columns: [
+                'employeeId',
+                'firstName',
+                'lastName',
+                'department',
+                'role',
+                'city',
+                'country',
+                'nationality',
+                'employmentType',
+                'projectsAssigned',
+                'remote'
+            ]
         }
     },
     columnDefaults: {

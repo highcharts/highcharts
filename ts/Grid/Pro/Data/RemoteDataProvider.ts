@@ -21,6 +21,7 @@ import type QueryingController from '../../Core/Querying/QueryingController';
 import { DataProvider } from '../../Core/Data/DataProvider.js';
 import DataProviderRegistry from '../../Core/Data/DataProviderRegistry.js';
 import { createQueryFingerprint } from './QuerySerializer.js';
+import RemoteFetchHelper from './RemoteFetchHelper.js';
 
 
 export class RemoteDataProvider extends DataProvider {
@@ -230,12 +231,30 @@ export class RemoteDataProvider extends DataProvider {
                     limit = this.maxChunkSize;
                 }
 
-                const result = await this.options.fetchCallback.call(
-                    this,
-                    this.querying,
-                    offset,
-                    limit
-                );
+                let result: RemoteFetchCallbackResult;
+
+                const { fetchCallback, serverApi } = this.options;
+                if (fetchCallback) {
+                    result = await fetchCallback.call(
+                        this,
+                        this.querying,
+                        offset,
+                        limit
+                    );
+                } else if (serverApi) {
+                    result = await RemoteFetchHelper.fetch({
+                        baseUrl: serverApi.baseUrl,
+                        query: this.querying,
+                        offset,
+                        limit,
+                        columns: serverApi.columns
+                    });
+                } else {
+                    throw new Error(
+                        'RemoteDataProvider: Either `serverApi` or ' +
+                        '`fetchCallback` must be provided in options.'
+                    );
+                }
 
                 this.columnIds = Object.keys(result.columns);
                 this.prePaginationRowCount = result.totalRowCount;
@@ -537,13 +556,39 @@ export interface DataChunk {
     rowIds: number[];
 }
 
+/**
+ * Configuration for the standardized server API.
+ * When provided, the built-in RemoteFetchHelper will be used to fetch data.
+ */
+export interface ServerApiOptions {
+    /**
+     * The base URL of the remote API endpoint.
+     */
+    baseUrl: string;
+
+    /**
+     * Optional list of column IDs to include in the response.
+     * If not provided, all columns will be fetched.
+     */
+    columns?: string[];
+}
+
 export interface RemoteDataProviderOptions extends DataProviderOptions {
     providerType: 'remote';
 
     /**
-     * Callback to fetch data from the remote server.
+     * Configuration for the standardized server API.
+     * If provided, the built-in RemoteFetchHelper will be used to fetch data.
+     * Either `serverApi` or `fetchCallback` must be provided.
      */
-    fetchCallback: (
+    serverApi?: ServerApiOptions;
+
+    /**
+     * Custom callback to fetch data from the remote server.
+     * Use this for non-standard APIs that don't match the RemoteFetchHelper
+     * format. Either `serverApi` or `fetchCallback` must be provided.
+     */
+    fetchCallback?: (
         this: RemoteDataProvider,
         query: QueryingController,
         offset: number,
