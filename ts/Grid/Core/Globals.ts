@@ -48,7 +48,6 @@ export const rawClassNames = {
     rowEven: 'row-even',
     rowOdd: 'row-odd',
     hoveredRow: 'hovered-row',
-    columnElement: 'column',
     hoveredCell: 'hovered-cell',
     hoveredColumn: 'hovered-column',
     syncedRow: 'synced-row',

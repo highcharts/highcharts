@@ -207,15 +207,20 @@ class TableCell extends Cell {
         return true;
     }
 
+    /**
+     * Initialize event listeners for table body cells.
+     *
+     * Most events (click, dblclick, keydown, mousedown, mouseover, mouseout)
+     * are delegated to Table for better performance with virtualization.
+     * Only focus/blur remain on individual cells for focus management.
+     */
     public override initEvents(): void {
-        this.cellEvents.push(['dblclick', (e): void => (
-            this.onDblClick(e as MouseEvent)
-        )]);
-        this.cellEvents.push(['mousedown', (e): void => {
-            this.onMouseDown(e as MouseEvent);
-        }]);
+        this.cellEvents.push(['blur', (): void => this.onBlur()]);
+        this.cellEvents.push(['focus', (): void => this.onFocus()]);
 
-        super.initEvents();
+        this.cellEvents.forEach((pair): void => {
+            this.htmlElement.addEventListener(pair[0], pair[1]);
+        });
     }
 
     /**
@@ -251,12 +256,12 @@ class TableCell extends Cell {
         });
     }
 
-    protected override onMouseOver(): void {
+    public override onMouseOver(): void {
         this.row.viewport.grid.hoverRow(this.row.index);
         super.onMouseOver();
     }
 
-    protected override onMouseOut(): void {
+    public override onMouseOut(): void {
         this.row.viewport.grid.hoverRow();
         super.onMouseOut();
     }
