@@ -20,6 +20,7 @@ import type QueryingController from '../../Core/Querying/QueryingController';
 
 import { DataProvider } from '../../Core/Data/DataProvider.js';
 import DataProviderRegistry from '../../Core/Data/DataProviderRegistry.js';
+import { createQueryFingerprint } from './QuerySerializer.js';
 
 
 export class RemoteDataProvider extends DataProvider {
@@ -42,6 +43,18 @@ export class RemoteDataProvider extends DataProvider {
     private columnIds: string[] | null = null;
     private dataChunks: Map<number, DataChunk> | null = null;
     private pendingChunks: Map<number, Promise<DataChunk>> | null = null;
+
+    /**
+     * Fingerprint of the last applied query; used to avoid clearing caches
+     * when the query did not actually change.
+     */
+    private lastQueryFingerprint: string | null = null;
+
+    /**
+     * Forces next applyQuery() to invalidate caches even if fingerprint matches
+     * (e.g. after a data-changing operation like setValue()).
+     */
+    private forceNextApplyQuery: boolean = false;
 
     /**
      * Returns the effective chunk size.
@@ -309,6 +322,8 @@ export class RemoteDataProvider extends DataProvider {
             );
         }
 
+        // Data changed on the server; refresh even if the query is unchanged.
+        this.forceNextApplyQuery = true;
         await this.applyQuery();
     }
 
@@ -365,11 +380,15 @@ export class RemoteDataProvider extends DataProvider {
     }
 
     public override async applyQuery(): Promise<void> {
-        // TODO: Check if the query fingerprint is the same as the previous one
-        // If it is, do nothing. If not, do the following:
-
-        // eslint-disable-next-line no-console
-        console.log('debug: applyQuery');
+        const fingerprint = createQueryFingerprint(this.querying);
+        if (
+            !this.forceNextApplyQuery &&
+            this.lastQueryFingerprint === fingerprint
+        ) {
+            return;
+        }
+        this.forceNextApplyQuery = false;
+        this.lastQueryFingerprint = fingerprint;
 
         // Clear cached chunks when query changes.
         this.dataChunks = null;
@@ -392,6 +411,8 @@ export class RemoteDataProvider extends DataProvider {
         this.columnIds = null;
         this.prePaginationRowCount = null;
         this.rowCount = null;
+        this.lastQueryFingerprint = null;
+        this.forceNextApplyQuery = false;
     }
 }
 

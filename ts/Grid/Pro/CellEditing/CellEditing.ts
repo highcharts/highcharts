@@ -139,8 +139,8 @@ class CellEditing {
 
         if (submit) {
             const validationErrors: string[] = [];
-            if (!vp.validator.validate(cell, validationErrors)) {
-                vp.validator.initErrorBox(cell, validationErrors);
+            if (!vp.validator?.validate(cell, validationErrors)) {
+                vp.validator?.initErrorBox(cell, validationErrors);
                 this.setA11yAttributes(false);
 
                 return false;
@@ -153,7 +153,7 @@ class CellEditing {
         }
 
         // Hide notification
-        this.viewport.validator.hide();
+        this.viewport.validator?.hide();
 
         // Hide input
         this.destroy();

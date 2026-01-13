@@ -176,7 +176,8 @@ class Table {
 
         this.rowsVirtualizer = new RowsVirtualizer(this);
 
-        void this.preInit();
+        fireEvent(this, 'beforeInit');
+        void this.init();
 
         // Add event listeners
         this.resizeObserver = new ResizeObserver(this.onResize);
@@ -205,7 +206,7 @@ class Table {
         }
     }
 
-    private async preInit(): Promise<void> {
+    private async init(): Promise<void> {
         try {
             this.grid.showLoading();
 
@@ -232,37 +233,25 @@ class Table {
                 Globals.getClassName('scrollableContent')
             );
 
-            // Load columns
             await this.loadColumns();
+            this.setTbodyMinHeight();
 
-            // Init Table
-            await this.init();
-            this.reflow();
+            // Load & render head
+            if (this.grid.options?.rendering?.header?.enabled) {
+                this.header = new TableHeader(this);
+                await this.header.render();
+            }
+
+            // TODO(footer): Load & render footer
+            // this.footer = new TableFooter(this);
+            // this.footer.render();
+
+            await this.rowsVirtualizer.initialRender();
         } finally {
+            fireEvent(this, 'afterInit');
+            this.reflow();
             this.grid.hideLoading();
         }
-    }
-
-    /**
-     * Initializes the data grid table.
-     */
-    private async init(): Promise<void> {
-        fireEvent(this, 'beforeInit');
-
-        this.setTbodyMinHeight();
-
-        // Load & render head
-        if (this.grid.options?.rendering?.header?.enabled) {
-            this.header = new TableHeader(this);
-            await this.header.render();
-        }
-
-        // TODO(footer): Load & render footer
-        // this.footer = new TableFooter(this);
-        // this.footer.render();
-
-        await this.rowsVirtualizer.initialRender();
-        fireEvent(this, 'afterInit');
     }
 
     /**
@@ -502,14 +491,14 @@ class Table {
      * Destroys the grid table.
      */
     public destroy(): void {
-        this.tbodyElement.removeEventListener('focus', this.onTBodyFocus);
-        this.tbodyElement.removeEventListener('scroll', this.onScroll);
-        this.resizeObserver.disconnect();
+        this.tbodyElement?.removeEventListener('focus', this.onTBodyFocus);
+        this.tbodyElement?.removeEventListener('scroll', this.onScroll);
+        this.resizeObserver?.disconnect();
         this.columnsResizer?.removeEventListeners();
         this.header?.destroy();
 
         for (let i = 0, iEnd = this.rows.length; i < iEnd; ++i) {
-            this.rows[i].destroy();
+            this.rows[i]?.destroy();
         }
 
         fireEvent(this, 'afterDestroy');
