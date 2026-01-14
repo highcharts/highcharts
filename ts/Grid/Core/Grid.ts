@@ -299,6 +299,14 @@ export class Grid {
      */
     public readonly dirtyFlags: Set<GridDirtyFlags> = new Set();
 
+    /**
+     * Internal redraw queue used to prevent concurrent `redraw()` calls from
+     * interleaving async DOM work and corrupting the state (for example
+     * rendering duplicate pagination controls when `update()` is called
+     * multiple times without awaiting).
+     */
+    private redrawQueue: Promise<void> = Promise.resolve();
+
     public dataProvider?: DataProviderType;
 
 
@@ -669,11 +677,11 @@ export class Grid {
      * the ones that are currently defined in the user options. When `true`,
      * the columns not defined in the new options will be removed.
      */
-    public async update(
+    public update(
         options: Omit<Options, 'id'> = {},
         redraw = true,
         oneToOne = false
-    ): Promise<void> {
+    ): Promise<void> | void {
         fireEvent(this, 'beforeUpdate', {
             scope: 'grid',
             options,
@@ -686,13 +694,17 @@ export class Grid {
         const flags = this.dirtyFlags;
 
         if (viewport) {
-            if (!this.dataProvider || 'data' in diff || 'dataTable' in diff) {
+            if (
+                !this.dataProvider ||
+                ('data' in diff) ||
+                ('dataTable' in diff)
+            ) {
                 this.loadDataProvider();
 
                 // TODO(update): Sometimes it can be too much, so we need to
-                // check if the columns have changed or just their data. If just
-                // their data, we can just mark the grid.table as dirty instead
-                // of the whole grid.
+                // check if the columns have changed or just their data. If
+                // just their data, we can just mark the grid.table as dirty
+                // instead of the whole grid.
                 flags.add('grid');
             }
 
@@ -710,7 +722,11 @@ export class Grid {
             }
 
             if ('columnDefaults' in diff) {
-                this.loadColumnOptionDiffs(viewport, null, diff.columnDefaults);
+                this.loadColumnOptionDiffs(
+                    viewport,
+                    null,
+                    diff.columnDefaults
+                );
                 delete diff.columnDefaults;
             }
 
@@ -755,16 +771,20 @@ export class Grid {
             flags.add('grid');
         }
 
+        const finish = (): void => {
+            fireEvent(this, 'afterUpdate', {
+                scope: 'grid',
+                options,
+                redraw,
+                oneToOne
+            });
+        };
+
         if (redraw) {
-            await this.redraw();
+            return this.redraw().then(finish);
         }
 
-        fireEvent(this, 'afterUpdate', {
-            scope: 'grid',
-            options,
-            redraw,
-            oneToOne
-        });
+        finish();
     }
 
     /**
@@ -878,71 +898,89 @@ export class Grid {
      * them minimizing the number of DOM operations.
      */
     public async redraw(): Promise<void> {
-        fireEvent(this, 'beforeRedraw');
+        const run = async (): Promise<void> => {
+            fireEvent(this, 'beforeRedraw');
 
-        const flags = this.dirtyFlags;
+            const flags = this.dirtyFlags;
+            const flagsToProcess = new Set(flags);
 
-        if (flags.has('grid')) {
-            await this.render();
+            const { viewport: vp, pagination } = this;
+            const colResizing = vp?.columnResizing;
+            const paginationWasDirty = !!pagination?.isDirtyQuerying;
+            const colResizingWasDirty = !!colResizing?.isDirty;
+
+            if (flagsToProcess.has('grid')) {
+                await this.render(false);
+                for (const flag of flagsToProcess) {
+                    flags.delete(flag);
+                }
+                fireEvent(this, 'afterRedraw');
+                return;
+            }
+
+            if (
+                flagsToProcess.has('sorting') ||
+                flagsToProcess.has('filtering') ||
+                paginationWasDirty
+            ) {
+                this.querying.loadOptions();
+            }
+
+            if (colResizingWasDirty) {
+                colResizing?.loadColumns();
+            }
+
+            if (
+                flagsToProcess.has('rows') ||
+                flagsToProcess.has('sorting') ||
+                flagsToProcess.has('filtering') ||
+                paginationWasDirty
+            ) {
+                await vp?.updateRows();
+            } else if (
+                flagsToProcess.has('reflow') ||
+                colResizingWasDirty
+            ) {
+                vp?.reflow();
+            }
+
+            const columns = vp?.columns ?? [];
+
+            if (
+                flagsToProcess.has('sorting') ||
+                flagsToProcess.has('filtering')
+            ) {
+                for (const column of columns) {
+                    column.header?.toolbar?.refreshState();
+                }
+            }
+
+            if (flagsToProcess.has('filtering')) {
+                for (const column of columns) {
+                    column.filtering?.refreshState();
+                }
+            }
+
+            if (paginationWasDirty) {
+                pagination?.updateControls(true);
+                delete pagination.isDirtyQuerying;
+            }
+
+            if (colResizingWasDirty) {
+                delete colResizing?.isDirty;
+            }
+
+            for (const flag of flagsToProcess) {
+                flags.delete(flag);
+            }
+
             fireEvent(this, 'afterRedraw');
-            return;
-        }
+        };
 
-        const { viewport: vp, pagination } = this;
-        const colResizing = vp?.columnResizing;
-
-        if (
-            flags.has('sorting') ||
-            flags.has('filtering') ||
-            pagination?.isDirtyQuerying
-        ) {
-            this.querying.loadOptions();
-        }
-
-        if (colResizing?.isDirty) {
-            colResizing.loadColumns();
-        }
-
-        if (
-            flags.has('rows') ||
-            flags.has('sorting') ||
-            flags.has('filtering') ||
-            pagination?.isDirtyQuerying
-        ) {
-            await vp?.updateRows();
-        } else if (
-            flags.has('reflow') ||
-            colResizing?.isDirty
-        ) {
-            vp?.reflow();
-        }
-
-        const columns = vp?.columns ?? [];
-
-        if (
-            flags.has('sorting') ||
-            flags.has('filtering')
-        ) {
-            for (const column of columns) {
-                column.header?.toolbar?.refreshState();
-            }
-        }
-
-        if (flags.has('filtering')) {
-            for (const column of columns) {
-                column.filtering?.refreshState();
-            }
-        }
-
-        if (pagination?.isDirtyQuerying) {
-            pagination.updateControls(true);
-        }
-
-        delete pagination?.isDirtyQuerying;
-        delete colResizing?.isDirty;
-        flags.clear();
-
-        fireEvent(this, 'afterRedraw');
+        const queued = this.redrawQueue.then(run, run);
+        // Keep the queue progressing even if one redraw fails.
+        this.redrawQueue = queued['catch']((): void => void 0);
+        return queued;
     }
 
     public updateColumn(
@@ -1134,7 +1172,7 @@ export class Grid {
         }
     }
 
-    private async render(): Promise<void> {
+    private async render(clearDirtyFlags = true): Promise<void> {
         if (this.isRendered) {
             this.destroy(true);
         }
@@ -1151,7 +1189,9 @@ export class Grid {
         await this.renderViewport();
 
         this.isRendered = true;
-        this.dirtyFlags.clear();
+        if (clearDirtyFlags) {
+            this.dirtyFlags.clear();
+        }
     }
 
     /**
