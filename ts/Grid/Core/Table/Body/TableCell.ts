@@ -234,8 +234,7 @@ class TableCell extends Cell {
         const vp = this.column.viewport;
         const { dataProvider: dp } = vp.grid;
 
-        const rowId = this.row.id && await dp?.getRowIndex(this.row.id);
-
+        const rowId = this.row.id;
         if (!dp || rowId === void 0) {
             return false;
         }
