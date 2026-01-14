@@ -25,7 +25,7 @@ const {
     win
 } = H;
 import U from '../Core/Utilities.js';
-import { extend, isObject, isNumber, isString, objectEach } from './Utilities';
+import { extend, isObject, isNumber, isString, objectEach } from './Utilities.js';
 const {
     defined,
     error,
