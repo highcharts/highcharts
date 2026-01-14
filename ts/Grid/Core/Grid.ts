@@ -699,7 +699,15 @@ export class Grid {
                 ('data' in diff) ||
                 ('dataTable' in diff)
             ) {
-                this.loadDataProvider();
+                if ( // Handle backward compatibility
+                    diff.dataTable &&
+                    this.options?.dataTable &&
+                    this.options?.data?.providerType === 'local'
+                ) {
+                    this.options.data.dataTable = this.options.dataTable;
+                }
+
+                this.loadDataProvider(); // Rebuild the data provider
 
                 // TODO(update): Sometimes it can be too much, so we need to
                 // check if the columns have changed or just their data. If
