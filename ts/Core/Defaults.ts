@@ -26,8 +26,7 @@ import H from './Globals.js';
 const {
     isTouchDevice
 } = H;
-import Palette from './Color/Palettes.js';
-const { palette } = Palette;
+import PaletteDefaults from './Color/PaletteDefaults';
 import Time from './Time.js';
 import U from './Utilities.js';
 const {
@@ -71,7 +70,7 @@ declare module './GlobalsBase' {
  */
 const defaultOptions: DefaultOptions = {
 
-    palette,
+    palette: PaletteDefaults,
 
     /**
      * An array containing the default colors for the chart's series. When
@@ -104,7 +103,7 @@ const defaultOptions: DefaultOptions = {
      *     "#91e8e1"
      * ]
      */
-    colors: palette.dataColors,
+    colors: PaletteDefaults.dataColors,
 
     /**
      * Styled mode only. Configuration object for adding SVG definitions for

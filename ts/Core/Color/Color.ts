@@ -25,7 +25,7 @@ import H from '../Globals.js';
 const {
     win
 } = H;
-import Palette from './Palettes.js';
+import Palette from './Palette.js';
 const { applyPalette } = Palette;
 import U from '../Utilities.js';
 const {

@@ -27,7 +27,7 @@ import type Point from '../../Series/Point';
 
 import Color from '../../Color/Color.js';
 const { parse: color } = Color;
-import Palette from '../../Color/Palettes.js';
+import Palette from '../../Color/Palette.js';
 const { applyPalette } = Palette;
 import U from '../../Utilities.js';
 const { isString, merge } = U;

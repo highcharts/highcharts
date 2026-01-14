@@ -664,7 +664,7 @@ namespace DataLabel {
             contrastColor = renderer.getContrast(
                 (isString(plotBackgroundColor) && plotBackgroundColor) ||
                 (isString(backgroundColor) && backgroundColor) ||
-                palette.neutralColor100
+                palette.neutralColor100 as string
             ),
             seriesDlOptions = mergedDataLabelOptions(series);
 
@@ -756,7 +756,7 @@ namespace DataLabel {
                                 labelOptions.color,
                                 style.color,
                                 isString(series.color) ? series.color : void 0,
-                                palette.neutralColor100
+                                palette.neutralColor100 as string
                             );
                             // Get automated contrast color
                             if (style.color === 'contrast') {

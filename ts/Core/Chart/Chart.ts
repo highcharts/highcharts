@@ -75,6 +75,7 @@ const {
     svg,
     win
 } = H;
+import Palette from '../Color/Palette.js';
 import Pointer from '../Pointer.js';
 import RendererRegistry from '../Renderer/RendererRegistry.js';
 import Series from '../Series/Series.js';
@@ -963,27 +964,7 @@ class Chart {
      * @function Highcharts.Chart#setPalette
      */
     public setPalette(): void {
-        const palette = this.options.palette;
-        let css: string = '';
-
-        objectEach(palette, (value, key: string): void => {
-            // Kebab-case the key. Sequences of numbers should be kept but
-            // with a preceding dash.
-            key = key
-                .replace(/([0-9]+)/g, '-$1')
-                .replace(
-                    /[A-Z]/g,
-                    (match): string => `-${match.toLowerCase()}`
-                );
-            css += `--highcharts-${key}: ${value};\n`;
-        });
-        // Add a style tag to the chart renderer box
-        const style = this.renderer.defs.element.querySelector('style') ||
-            doc.createElementNS(H.SVG_NS, 'style');
-        if (!style.parentNode) {
-            this.renderer.defs.element.appendChild(style);
-        }
-        style.textContent = `:root {\n${css}}`;
+        this.palette = new Palette(this, this.options.palette);
     }
 
     /**

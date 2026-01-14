@@ -473,7 +473,7 @@ class Navigator {
                     fill: hasMask ?
                         (
                             navigatorOptions.maskFill ||
-                            (new Color(palette.highlightColor60))
+                            (new Color(palette.highlightColor60 || ''))
                                 .setOpacity(0.3)
                                 .get()
                         ) :

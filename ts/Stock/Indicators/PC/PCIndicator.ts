@@ -25,8 +25,7 @@ import type PCPoint from './PCPoint';
 
 import AU from '../ArrayUtilities.js';
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
-import Palettes from '../../../Core/Color/Palettes.js';
-const { palette } = Palettes;
+import PaletteDefaults from '../../../Core/Color/PaletteDefaults';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const { sma: SMAIndicator } = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
@@ -103,7 +102,7 @@ class PCIndicator extends SMAIndicator {
                  *
                  * @type {Highcharts.ColorString}
                  */
-                lineColor: palette.dataColors[2],
+                lineColor: PaletteDefaults.dataColors[2],
                 /**
                  * Pixel width of the line.
                  */
@@ -118,7 +117,7 @@ class PCIndicator extends SMAIndicator {
                  *
                  * @type {Highcharts.ColorString}
                  */
-                lineColor: palette.dataColors[8],
+                lineColor: PaletteDefaults.dataColors[8],
                 /**
                  * Pixel width of the line.
                  */
