@@ -53,6 +53,7 @@ import RemoteFetchHelper from './RemoteFetchHelper.js';
  */
 export class RemoteDataProvider extends DataProvider {
 
+
     /* *
      *
      *  Static Properties
@@ -60,6 +61,7 @@ export class RemoteDataProvider extends DataProvider {
      * */
 
     private static readonly DEFAULT_CHUNK_SIZE: number = 50;
+
 
     /* *
      *
@@ -113,12 +115,6 @@ export class RemoteDataProvider extends DataProvider {
     private lastQueryFingerprint: string | null = null;
 
     /**
-     * Forces next applyQuery() to invalidate caches even if fingerprint matches
-     * (e.g. after a data-changing operation like setValue()).
-     */
-    private forceNextApplyQuery: boolean = false;
-
-    /**
      * Returns the effective chunk size.
      * When pagination is enabled, uses the page size as chunk size,
      * so that one chunk = one page.
@@ -133,6 +129,7 @@ export class RemoteDataProvider extends DataProvider {
 
         return this.options.chunkSize ?? RemoteDataProvider.DEFAULT_CHUNK_SIZE;
     }
+
 
     /* *
      *
@@ -476,7 +473,7 @@ export class RemoteDataProvider extends DataProvider {
                 value
             );
 
-            this.forceNextApplyQuery = true;
+            this.lastQueryFingerprint = null;
 
             // TODO(optim): Can be optimized by checking if the value was
             // changed in the specific, queried column.
@@ -541,13 +538,9 @@ export class RemoteDataProvider extends DataProvider {
 
     public override async applyQuery(): Promise<void> {
         const fingerprint = createQueryFingerprint(this.querying);
-        if (
-            !this.forceNextApplyQuery &&
-            this.lastQueryFingerprint === fingerprint
-        ) {
+        if (this.lastQueryFingerprint === fingerprint) {
             return;
         }
-        this.forceNextApplyQuery = false;
         this.lastQueryFingerprint = fingerprint;
 
         // Clear cached chunks when query changes.
@@ -574,7 +567,6 @@ export class RemoteDataProvider extends DataProvider {
         this.prePaginationRowCount = null;
         this.rowCount = null;
         this.lastQueryFingerprint = null;
-        this.forceNextApplyQuery = false;
     }
 }
 
