@@ -1186,3 +1186,41 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
         );
     }
 );
+
+QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
+    'Turbo mode with area stacking and mixed data formats (#23730).',
+    async function (assert) {
+        const chart = Highcharts.chart('container', {
+            chart: {
+                type: 'area'
+            },
+            plotOptions: {
+                series: {
+                    turboThreshold: 2
+                },
+                area: {
+                    stacking: 'normal'
+                }
+            },
+            series: [{
+                data: [[0, 1], [1, 1], { x: 2, y: 1 }, [3, 1], [4, 1]]
+            }]
+        });
+        const series = chart.series[0];
+
+        assert.equal(
+            series.areaPath.xMap.length,
+            series.data.length,
+            'All data points should be included in rendering.'
+        );
+
+        chart.addSeries({
+            data: [[2, 1]]
+        });
+
+        assert.ok(
+            true,
+            'No errors when rendering with stacked points.'
+        );
+    }
+);
