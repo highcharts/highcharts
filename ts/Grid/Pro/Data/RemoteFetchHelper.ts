@@ -227,11 +227,26 @@ export function buildUrl(options: RemoteFetchOptions): string {
         params.set('filter', filterJson);
     }
 
-    // Build sort from query.sorting.currentSorting
-    const sorting = query.sorting.currentSorting;
-    if (sorting?.columnId && sorting?.order) {
-        params.set('sortBy', sorting.columnId);
-        params.set('sortOrder', sorting.order);
+    // Build sort from query.sorting state.
+    // Supports multi-column sorting in the dataset server API format:
+    // - sortBy=lastName,firstName&sortOrder=asc,desc
+    // - sortBy=lastName,firstName&sortOrder=asc (when all orders are equal)
+    const sortings = (
+        query.sorting.currentSortings ||
+        (query.sorting.currentSorting ? [query.sorting.currentSorting] : [])
+    ).filter((s): boolean => !!(s?.columnId && s?.order));
+
+    if (sortings.length > 0) {
+        const sortBy = sortings.map((s): string => s.columnId as string);
+        const sortOrders = sortings.map((s): string => s.order as string);
+
+        params.set('sortBy', sortBy.join(','));
+
+        const uniqueOrders = Array.from(new Set(sortOrders));
+        params.set(
+            'sortOrder',
+            uniqueOrders.length === 1 ? uniqueOrders[0] : sortOrders.join(',')
+        );
     }
 
     return `${baseUrl}?${params.toString()}`;
