@@ -187,6 +187,8 @@ abstract class Cell {
      *
      * @param e
      * Keyboard event object.
+     *
+     * @internal
      */
     public onKeyDown(e: KeyboardEvent): void {
         const { row, column } = this;
