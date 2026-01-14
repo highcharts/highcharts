@@ -97,8 +97,8 @@ export abstract class DataProvider {
     ): Promise<DT.RowObject | undefined>;
 
     /**
-     * Returns the current number of rows in the presentation table (after
-     * applying query modifiers).
+     * Returns the current number of rows in the presentation dataset (after
+     * applying all query modifiers).
      */
     public abstract getRowCount(): Promise<number>;
 
