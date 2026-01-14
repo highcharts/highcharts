@@ -36,10 +36,10 @@ import type { Helper as SerializableHelper, JSON as SerializableJSON } from '../
 /**
  * Converts the given JSON to a class instance.
  *
- * @param {ChainModifierSerializer.JSON} json
+ * @param {JSON} json
  * JSON to deserialize as a class instance or object.
  *
- * @return {ChainModifier}
+ * @return {InvertModifier}
  * Returns the class instance or object, or throws an exception.
  */
 function fromJSON(
@@ -51,7 +51,7 @@ function fromJSON(
 /**
  * Validates the given class instance for JSON support.
  *
- * @param {Globals.AnyRecord} obj
+ * @param {AnyRecord} obj
  * Class instance or object to validate.
  *
  * @return {boolean}

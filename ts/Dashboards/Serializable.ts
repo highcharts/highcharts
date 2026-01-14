@@ -44,7 +44,7 @@ interface Serializable<T extends AnyRecord, TJSON extends JSON<string>> {
      * @param {JSON} json
      * JSON to deserialize as a class instance or object.
      *
-     * @return {Globals.AnyRecord}
+     * @return {AnyRecord}
      * Returns the class instance or object, or throws an exception.
      */
     fromJSON(json: TJSON): T;
@@ -93,7 +93,7 @@ export interface Helper<T extends AnyRecord, TJSON extends JSON<string>> {
      * @param {JSON} json
      * JSON to deserialize as an object.
      *
-     * @return {Globals.AnyRecord}
+     * @return {AnyRecord}
      * Returns the object, or throws an exception.
      */
     fromJSON(json: TJSON): T;
@@ -103,7 +103,7 @@ export interface Helper<T extends AnyRecord, TJSON extends JSON<string>> {
      *
      * @function Serializer.jsonSupportFor
      *
-     * @param {Globals.AnyRecord} obj
+     * @param {AnyRecord} obj
      * Object to validate.
      *
      * @return {boolean}
@@ -117,7 +117,7 @@ export interface Helper<T extends AnyRecord, TJSON extends JSON<string>> {
      *
      * @function Serializer.toJSON
      *
-     * @param {Globals.AnyRecord} obj
+     * @param {AnyRecord} obj
      * Object to serialize as JSON.
      *
      * @return {JSON}
@@ -165,7 +165,7 @@ const helperRegistry: Record<string, Helper<AnyRecord, JSON<string>>> = {};
  * @param {JSON} json
  * JSON to create a class instance or object from.
  *
- * @return {Globals.AnyRecord}
+ * @return {AnyRecord}
  * Returns the class instance or object, or throws an exception.
  */
 export function fromJSON(
@@ -252,7 +252,7 @@ export function toJSON(
  *
  * @function Serializable.toJSON
  *
- * @param {Globals.AnyRecord} obj
+ * @param {AnyRecord} obj
  * Class instance or object to serialize as JSON.
  *
  * @return {JSON}

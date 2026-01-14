@@ -225,7 +225,7 @@ abstract class DataConnector implements DataEventEmitter<Event> {
      * @param {string} name
      * The name of the column to be described.
      *
-     * @param {DataConnector.MetaColumn} columnMeta
+     * @param {MetaColumn} columnMeta
      * The metadata to apply to the column.
      */
     public describeColumn(name: string, columnMeta: MetaColumn): void {
@@ -238,7 +238,7 @@ abstract class DataConnector implements DataEventEmitter<Event> {
     /**
      * Method for applying columns meta information to the whole DataConnector.
      *
-     * @param {Highcharts.Dictionary<DataConnector.MetaColumn>} columns
+     * @param {Record<string, MetaColumn>} columns
      * Pairs of column names and MetaColumn objects.
      */
     public describeColumns(columns: Record<string, MetaColumn>): void {

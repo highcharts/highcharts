@@ -158,7 +158,7 @@ class FilterModifier extends DataModifier {
     /**
      * Constructs an instance of the filter modifier.
      *
-     * @param {Partial<FilterModifier.Options>} [options]
+     * @param {Partial<FilterModifierOptions>} [options]
      * Options to configure the filter modifier.
      */
     public constructor(

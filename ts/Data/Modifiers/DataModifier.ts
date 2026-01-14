@@ -179,7 +179,7 @@ abstract class DataModifier implements DataEventEmitter<DataModifierEvent> {
     /**
      * Emits an event on the modifier to all registered callbacks of this event.
      *
-     * @param {DataModifier.Event} [e]
+     * @param {DataModifierEvent} [e]
      * Event object containing additonal event information.
      */
     public emit<E extends DataModifierEvent>(e: E): void {
@@ -248,7 +248,7 @@ abstract class DataModifier implements DataEventEmitter<DataModifierEvent> {
      * @param {string} type
      * Event type as a string.
      *
-     * @param {DataEventEmitter.Callback} callback
+     * @param {DataEventCallback} callback
      * Function to register for an modifier callback.
      *
      * @return {Function}

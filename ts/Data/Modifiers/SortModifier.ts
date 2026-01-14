@@ -138,7 +138,7 @@ class SortModifier extends DataModifier {
     /**
      * Constructs an instance of the sort modifier.
      *
-     * @param {Partial<SortDataModifier.Options>} [options]
+     * @param {Partial<SortModifierOptions>} [options]
      * Options to configure the sort modifier.
      */
     public constructor(
@@ -171,7 +171,7 @@ class SortModifier extends DataModifier {
      * @param {Highcharts.DataTable} table
      * Table with rows to reference.
      *
-     * @return {Array<SortModifier.RowReference>}
+     * @return {Array<SortRowReference>}
      * Array of row references.
      */
     protected getRowReferences(

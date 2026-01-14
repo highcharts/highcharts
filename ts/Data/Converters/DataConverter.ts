@@ -404,7 +404,7 @@ class DataConverter implements DataEventEmitter<Event> {
      * @param {string} type
      * Event type as a string.
      *
-     * @param {DataEventEmitter.Callback} callback
+     * @param {DataEventCallback} callback
      * Function to register for an modifier callback.
      *
      * @return {Function}

@@ -76,7 +76,7 @@ class ChainModifier extends DataModifier {
     /**
      * Constructs an instance of the modifier chain.
      *
-     * @param {Partial<ChainModifier.Options>} [options]
+     * @param {Partial<ChainModifierOptions>} [options]
      * Options to configure the modifier chain.
      *
      * @param {...DataModifier} [chain]

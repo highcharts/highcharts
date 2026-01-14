@@ -51,7 +51,7 @@ function fromJSON(
 /**
  * Validates the given class instance for JSON support.
  *
- * @param {Globals.AnyRecord} obj
+ * @param {AnyRecord} obj
  * Class instance or object to validate.
  *
  * @return {boolean}

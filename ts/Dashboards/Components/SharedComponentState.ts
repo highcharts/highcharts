@@ -79,7 +79,7 @@ class SharedComponentState implements Serializable<SharedComponentState, JSON> {
      * Emits an event on this table to all registered callbacks of the given
      * event.
      *
-     * @param {DataPresentationState.Event} e
+     * @param {Event} e
      * Event object with event information.
      */
     public emit(e: Event): void {
@@ -104,7 +104,7 @@ class SharedComponentState implements Serializable<SharedComponentState, JSON> {
      * Returns a function for `Array.sort` to change the order of an array of
      * column names. Unknown column names come last.
      *
-     * @return {DataPresentationState.ColumnOrderCallback}
+     * @return {ColumnOrderCallback}
      * Sort function to change the order.
      */
     public getColumnSorter(): ColumnOrderCallback {
@@ -148,7 +148,7 @@ class SharedComponentState implements Serializable<SharedComponentState, JSON> {
      * @param {string} type
      * Event type as a string.
      *
-     * @param {DataEventEmitter.Callback} callback
+     * @param {Function} callback
      * Function to register for an event callback.
      *
      * @return {Function}
@@ -167,7 +167,7 @@ class SharedComponentState implements Serializable<SharedComponentState, JSON> {
      * @param {Array<string>} columnOrder
      * Array of column names in order.
      *
-     * @param {DataEventEmitter.Detail} [eventDetail]
+     * @param {AnyRecord} [eventDetail]
      * Custom information for pending events.
      */
     public setColumnOrder(
@@ -281,10 +281,10 @@ class SharedComponentState implements Serializable<SharedComponentState, JSON> {
      * Converts JSON to a presentation state.
      * @internal
      *
-     * @param {DataPresentationState.ClassJSON} json
+     * @param {JSON} json
      * JSON (usually with a $class property) to convert.
      *
-     * @return {DataPresentationState}
+     * @return {SharedComponentState}
      * Class instance from the JSON.
      */
     public fromJSON(
