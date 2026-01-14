@@ -56,12 +56,12 @@ import Series from '../Core/Series/Series.js';
 import Pane from '../Extensions/Pane/Pane.js';
 import RadialAxis from '../Core/Axis/RadialAxis.js';
 import U from '../Core/Utilities.js';
+import { isObject } from '../Shared/Utilities';
 const {
     addEvent,
     defined,
     find,
     isNumber,
-    isObject,
     merge,
     pick,
     pushUnique,

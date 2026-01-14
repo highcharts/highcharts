@@ -27,10 +27,10 @@ import Chart from './Chart/Chart.js';
 import Legend from './Legend/Legend.js';
 import Series from './Series/Series.js';
 import U from './Utilities.js';
+import { objectEach } from '../Shared/Utilities';
 const {
     addEvent,
     isFunction,
-    objectEach,
     removeEvent
 } = U;
 

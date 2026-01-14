@@ -29,9 +29,9 @@ const { parse: color } = Color;
 import H from '../Globals.js';
 const { win } = H;
 import U from '../Utilities.js';
+import { objectEach } from '../../Shared/Utilities';
 const {
-    isNumber,
-    objectEach
+    isNumber
 } = U;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */

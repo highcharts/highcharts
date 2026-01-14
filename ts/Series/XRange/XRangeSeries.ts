@@ -50,7 +50,6 @@ const {
     defined,
     find,
     isNumber,
-    isObject,
     merge,
     pick,
     pushUnique,
@@ -58,7 +57,7 @@ const {
 } = U;
 import XRangeSeriesDefaults from './XRangeSeriesDefaults.js';
 import XRangePoint from './XRangePoint.js';
-import { extend } from '../../Shared/Utilities';
+import { extend, isObject } from '../../Shared/Utilities';
 
 /* *
  *

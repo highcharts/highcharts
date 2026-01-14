@@ -31,10 +31,9 @@ import H from '../Core/Globals.js';
 const { noop } = H;
 import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
-import { extend } from '../Shared/Utilities';
+import { extend, isObject } from '../Shared/Utilities';
 const {
     addEvent,
-    isObject,
     merge,
     relativeLength
 } = U;

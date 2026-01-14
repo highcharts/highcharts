@@ -55,7 +55,6 @@ const {
     destroyObjectProperties,
     error,
     fireEvent,
-    isArray,
     isNumber,
     pick,
     pushUnique,
@@ -64,7 +63,7 @@ const {
 } = U;
 import WGLRenderer from './WGLRenderer.js';
 import DataTableCore from '../../Data/DataTableCore.js';
-import { extend } from '../../Shared/Utilities';
+import { extend, isArray } from '../../Shared/Utilities';
 
 /* *
  *

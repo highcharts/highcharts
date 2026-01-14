@@ -47,7 +47,6 @@ import U from '../../Core/Utilities.js';
 const {
     clamp,
     crisp,
-    isObject,
     merge,
     pick,
     relativeLength,
@@ -55,7 +54,7 @@ const {
 } = U;
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import TextPath from '../../Extensions/TextPath.js';
-import { extend } from '../../Shared/Utilities';
+import { extend, isObject } from '../../Shared/Utilities';
 TextPath.compose(SVGElement);
 
 /* *

@@ -26,9 +26,9 @@ const {
     win
 } = H;
 import U from '../Utilities.js';
+import { isString } from '../../Shared/Utilities';
 const {
     isNumber,
-    isString,
     merge,
     pInt,
     defined

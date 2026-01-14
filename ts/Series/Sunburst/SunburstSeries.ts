@@ -60,14 +60,12 @@ const {
     error,
     fireEvent,
     isNumber,
-    isObject,
-    isString,
     merge,
     splat
 } = U;
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import TextPath from '../../Extensions/TextPath.js';
-import { extend } from '../../Shared/Utilities';
+import { extend, isObject, isString } from '../../Shared/Utilities';
 TextPath.compose(SVGElement);
 
 /* *

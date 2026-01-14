@@ -35,6 +35,7 @@ import Globals from '../../Globals.js';
 import Utilities from '../../../../Core/Utilities.js';
 import TableHeader from './TableHeader.js';
 import ColumnToolbar from './ColumnToolbar/ColumnToolbar.js';
+import { isString } from '../../../../Shared/Utilities';
 
 const {
     makeHTMLElement,
@@ -42,8 +43,7 @@ const {
     createOptionsProxy
 } = GridUtils;
 const {
-    fireEvent,
-    isString
+    fireEvent
 } = Utilities;
 
 

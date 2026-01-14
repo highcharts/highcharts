@@ -27,14 +27,13 @@ const {
     win
 } = H;
 import U from '../../Utilities.js';
+import { isString, objectEach } from '../../../Shared/Utilities';
 const {
     attr,
     createElement,
     css,
     error,
     isFunction,
-    isString,
-    objectEach,
     splat
 } = U;
 const {

@@ -25,6 +25,7 @@ import type {
 import ControlPoint from './ControlPoint.js';
 import MockPoint from './MockPoint.js';
 import U from '../../Core/Utilities.js';
+import { isObject, isString } from '../../Shared/Utilities';
 
 /* *
  *
@@ -359,13 +360,13 @@ namespace ControlTarget {
         }
 
         if (!point || point.series === null) {
-            if (U.isObject(pointOptions)) {
+            if (isObject(pointOptions)) {
                 point = new MockPoint(
                     this.chart,
                     this,
                     pointOptions as AnnotationMockPointOptionsObject
                 );
-            } else if (U.isString(pointOptions)) {
+            } else if (isString(pointOptions)) {
                 point = (this.chart.get(pointOptions) as any) || null;
             } else if (typeof pointOptions === 'function') {
                 const pointConfigOrPoint: (

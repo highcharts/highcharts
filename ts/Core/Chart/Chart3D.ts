@@ -38,9 +38,9 @@ const {
 } = Math3D;
 import Series from '../Series/Series.js';
 import U from '../Utilities.js';
+import { isArray } from '../../Shared/Utilities';
 const {
     addEvent,
-    isArray,
     merge,
     pick,
     wrap

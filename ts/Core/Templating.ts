@@ -30,13 +30,10 @@ const {
     pageLang
 } = G;
 import U from './Utilities.js';
-import { extend } from '../Shared/Utilities';
+import { extend, isArray, isObject, isString } from '../Shared/Utilities';
 const {
     getNestedProperty,
-    isArray,
     isNumber,
-    isObject,
-    isString,
     pick,
     ucfirst
 } = U;

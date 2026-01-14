@@ -28,12 +28,12 @@ import Chart from '../Chart/Chart.js';
 import GeometryUtilities from '../Geometry/GeometryUtilities.js';
 const { pointInPolygon } = GeometryUtilities;
 import U from '../Utilities.js';
+import { objectEach } from '../../Shared/Utilities';
 
 const {
     addEvent,
     getAlignFactor,
     fireEvent,
-    objectEach,
     pick
 } = U;
 

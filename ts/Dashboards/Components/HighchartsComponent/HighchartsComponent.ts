@@ -55,11 +55,11 @@ import U from '../../../Core/Utilities.js';
 const {
     createElement,
     diffObjects,
-    isString,
     merge,
     splat
 } = U;
 import DU from '../../Utilities.js';
+import { isString } from '../../../Shared/Utilities';
 const { deepClone } = DU;
 
 

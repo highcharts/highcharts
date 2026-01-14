@@ -28,9 +28,8 @@ import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const { sma: SMAIndicator } = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
-import { extend } from '../../../Shared/Utilities';
+import { extend, isArray } from '../../../Shared/Utilities';
 const {
-    isArray,
     merge
 } = U;
 

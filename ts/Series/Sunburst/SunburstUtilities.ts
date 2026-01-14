@@ -29,9 +29,9 @@ const {
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 import type SunburstNode from './SunburstNode.js';
+import { isObject } from '../../Shared/Utilities';
 const {
     isNumber,
-    isObject,
     merge
 } = U;
 

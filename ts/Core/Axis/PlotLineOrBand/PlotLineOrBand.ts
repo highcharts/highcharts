@@ -35,6 +35,7 @@ import Axis from '../Axis.js';
 import { Palette } from '../../Color/Palettes.js';
 import PlotLineOrBandAxis from './PlotLineOrBandAxis.js';
 import U from '../../Utilities.js';
+import { objectEach } from '../../../Shared/Utilities';
 const {
     addEvent,
     arrayMax,
@@ -44,7 +45,6 @@ const {
     erase,
     fireEvent,
     merge,
-    objectEach,
     pick
 } = U;
 

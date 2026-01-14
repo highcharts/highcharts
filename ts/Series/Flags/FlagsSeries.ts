@@ -39,13 +39,12 @@ const {
 } = SeriesRegistry;
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import U from '../../Core/Utilities.js';
-import { extend } from '../../Shared/Utilities';
+import { extend, objectEach } from '../../Shared/Utilities';
 const {
     addEvent,
     defined,
     isNumber,
     merge,
-    objectEach,
     wrap
 } = U;
 

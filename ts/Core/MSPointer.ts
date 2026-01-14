@@ -32,12 +32,12 @@ const {
 import Pointer from './Pointer.js';
 import U from './Utilities.js';
 import DOMElementType from './Renderer/DOMElementType';
+import { objectEach } from '../Shared/Utilities';
 const {
     addEvent,
     attr,
     css,
     defined,
-    objectEach,
     pick,
     pushUnique,
     removeEvent

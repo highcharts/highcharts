@@ -26,12 +26,12 @@ import GUIElement from './GUIElement.js';
 import U from '../../Core/Utilities.js';
 import EditGlobals from '../EditMode/EditGlobals.js';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
+import { objectEach } from '../../Shared/Utilities';
 
 const {
     pick,
     defined,
     merge,
-    objectEach,
     fireEvent
 } = U;
 

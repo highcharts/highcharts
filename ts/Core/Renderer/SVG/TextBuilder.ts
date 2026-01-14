@@ -33,12 +33,10 @@ const {
     win
 } = H;
 import U from '../../Utilities.js';
-import { extend } from '../../../Shared/Utilities';
+import { extend, isString, objectEach } from '../../../Shared/Utilities';
 const {
     attr,
     fireEvent,
-    isString,
-    objectEach,
     pick
 } = U;
 

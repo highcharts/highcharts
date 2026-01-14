@@ -49,14 +49,12 @@ import TreeGridTick from './TreeGridTick.js';
 import TU from '../../../Series/TreeUtilities.js';
 const { getLevelOptions } = TU;
 import U from '../../Utilities.js';
+import { isArray, isObject, isString } from '../../../Shared/Utilities';
 const {
     addEvent,
-    isArray,
     splat,
     find,
     fireEvent,
-    isObject,
-    isString,
     merge,
     removeEvent,
     wrap

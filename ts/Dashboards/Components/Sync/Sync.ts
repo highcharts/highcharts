@@ -28,7 +28,8 @@ import SyncEmitter from './Emitter.js';
 import SyncHandler from './Handler.js';
 
 import U from '../../../Core/Utilities.js';
-const { merge, isObject } = U;
+import { isObject } from '../../../Shared/Utilities';
+const { merge } = U;
 
 /* *
  *

@@ -40,13 +40,12 @@ const {
     crisp,
     isNumber,
     merge,
-    objectEach,
     pick
 } = U;
 import WaterfallAxis from '../../Core/Axis/WaterfallAxis.js';
 import WaterfallPoint from './WaterfallPoint.js';
 import WaterfallSeriesDefaults from './WaterfallSeriesDefaults.js';
-import { extend } from '../../Shared/Utilities';
+import { extend, objectEach } from '../../Shared/Utilities';
 
 /* *
  *

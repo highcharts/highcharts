@@ -35,21 +35,14 @@ import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import type Time from './Time';
 
 import H from './Globals.js';
-import { extend } from '../Shared/Utilities';
+import { extend, isArray, isObject, isString, objectEach } from '../Shared/Utilities';
 const {
     charts,
     doc,
     win
 } = H;
 
-/* *
- *
- *  Declarations
- *
- * */
 
-type NonArray<T> = T extends Array<unknown> ? never : T;
-type NonFunction<T> = T extends Function ? never : T;
 type NullType = (null|undefined);
 
 /* *
@@ -396,64 +389,6 @@ function pInt(s: any, mag?: number): number {
     return parseInt(s, mag || 10);
 }
 
-/**
- * Utility function to check for string type.
- *
- * @function Highcharts.isString
- *
- * @param {*} s
- *        The item to check.
- *
- * @return {boolean}
- *         True if the argument is a string.
- */
-function isString(s: unknown): s is string {
-    return typeof s === 'string';
-}
-
-/**
- * Utility function to check if an item is an array.
- *
- * @function Highcharts.isArray
- *
- * @param {*} obj
- *        The item to check.
- *
- * @return {boolean}
- *         True if the argument is an array.
- */
-function isArray(obj: unknown): obj is Array<unknown> {
-    const str = Object.prototype.toString.call(obj);
-
-    return str === '[object Array]' || str === '[object Array Iterator]';
-}
-
-function isObject<T>(obj: T, strict: true): obj is object & NonArray<NonFunction<NonNullable<T>>>;
-function isObject<T>(obj: T, strict?: false): obj is object & NonFunction<NonNullable<T>>;
-/**
- * Utility function to check if an item is of type object.
- *
- * @function Highcharts.isObject
- *
- * @param {*} obj
- *        The item to check.
- *
- * @param {boolean} [strict=false]
- *        Also checks that the object is not an array.
- *
- * @return {boolean}
- *         True if the argument is an object.
- */
-function isObject<T>(
-    obj: T,
-    strict?: boolean
-): obj is object & NonFunction<NonNullable<T>> {
-    return (
-        !!obj &&
-        typeof obj === 'object' &&
-        (!strict || !isArray(obj))
-    ) as any; // eslint-disable-line @typescript-eslint/no-explicit-any
-}
 
 /**
  * Utility function to check if an Object is a HTML Element.
@@ -1609,37 +1544,6 @@ function offset(el: Element): Utilities.OffsetObject {
 
 /* eslint-disable valid-jsdoc */
 /**
- * Iterate over object key pairs in an object.
- *
- * @function Highcharts.objectEach<T>
- *
- * @param {*} obj
- *        The object to iterate over.
- *
- * @param {Highcharts.ObjectEachCallbackFunction<T>} fn
- *        The iterator callback. It passes three arguments:
- *        * value - The property value.
- *        * key - The property key.
- *        * obj - The object that objectEach is being applied to.
- *
- * @param {T} [ctx]
- *        The context.
- */
-function objectEach<TObject, TContext>(
-    obj: TObject,
-    fn: Utilities.ObjectEachCallback<TObject, TContext>,
-    ctx?: TContext
-): void {
-    /* eslint-enable valid-jsdoc */
-    for (const key in obj) {
-        if (Object.hasOwnProperty.call(obj, key)) {
-            fn.call(ctx || obj[key] as unknown as TContext, obj[key], key, obj);
-        }
-    }
-}
-
-/* eslint-disable valid-jsdoc */
-/**
  * Add an event listener.
  *
  * @function Highcharts.addEvent<T>
@@ -2131,14 +2035,7 @@ namespace Utilities {
             index: number
         ): unknown;
     }
-    export interface ObjectEachCallback<TObject, TContext> {
-        (
-            this: TContext,
-            value: TObject[keyof TObject],
-            key: Extract<keyof TObject, string>,
-            obj: TObject
-        ): void;
-    }
+
     export interface OffsetObject {
         /**
          * Height of the element.
@@ -2202,16 +2099,12 @@ interface Utilities {
     getStyle: typeof getStyle;
     /** @internal */
     insertItem: typeof insertItem;
-    isArray: typeof isArray;
     isClass: typeof isClass;
     isDOMElement: typeof isDOMElement;
     isFunction: typeof isFunction;
     isNumber: typeof isNumber;
-    isObject: typeof isObject;
-    isString: typeof isString;
     merge: typeof merge;
     normalizeTickInterval: typeof normalizeTickInterval;
-    objectEach: typeof objectEach;
     offset: typeof offset;
     pad: typeof pad;
     pick: typeof pick;
@@ -2260,16 +2153,12 @@ const Utilities: Utilities = {
     getNestedProperty,
     getStyle,
     insertItem,
-    isArray,
     isClass,
     isDOMElement,
     isFunction,
     isNumber,
-    isObject,
-    isString,
     merge,
     normalizeTickInterval,
-    objectEach,
     offset,
     pad,
     pick,

@@ -25,15 +25,12 @@ const {
     win
 } = H;
 import U from '../Core/Utilities.js';
-import { extend } from './Utilities';
+import { extend, isObject, isString, objectEach } from './Utilities';
 const {
     defined,
     error,
     isNumber,
-    isObject,
-    isString,
     merge,
-    objectEach,
     pad,
     splat,
     timeUnits,

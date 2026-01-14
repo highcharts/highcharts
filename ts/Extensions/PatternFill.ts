@@ -38,7 +38,7 @@ const { getOptions } = D;
 import MapPoint from '../Series/Map/MapPoint';
 import U from '../Core/Utilities.js';
 import { Palette } from '../Core/Color/Palettes';
-import { extend } from '../Shared/Utilities';
+import { extend, isObject } from '../Shared/Utilities';
 const {
     addEvent,
     defined,
@@ -803,7 +803,7 @@ function rendererAddPattern(
 
     // Use an SVG path for the pattern
     if (options.path) {
-        path = U.isObject(options.path) ?
+        path = isObject(options.path) ?
             options.path :
             { d: options.path };
 

@@ -60,7 +60,7 @@ import SVGLabel from './SVGLabel.js';
 import Symbols from './Symbols.js';
 import TextBuilder from './TextBuilder.js';
 import U from '../../Utilities.js';
-import { extend } from '../../../Shared/Utilities';
+import { extend, isArray, isObject, isString } from '../../../Shared/Utilities';
 const {
     addEvent,
     attr,
@@ -69,10 +69,7 @@ const {
     css,
     defined,
     destroyObjectProperties,
-    isArray,
     isNumber,
-    isObject,
-    isString,
     merge,
     pick,
     pInt,

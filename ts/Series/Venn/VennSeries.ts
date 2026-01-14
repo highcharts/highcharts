@@ -64,12 +64,10 @@ import VennPoint from './VennPoint.js';
 import VennSeriesDefaults from './VennSeriesDefaults.js';
 import VennUtils from './VennUtils.js';
 import U from '../../Core/Utilities.js';
-import { extend } from '../../Shared/Utilities';
+import { extend, isArray, isObject } from '../../Shared/Utilities';
 const {
     addEvent,
-    isArray,
     isNumber,
-    isObject,
     merge
 } = U;
 

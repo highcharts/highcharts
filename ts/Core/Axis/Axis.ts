@@ -63,7 +63,7 @@ import H from '../Globals.js';
 const { deg2rad } = H;
 import { Palette } from '../Color/Palettes.js';
 import Tick from './Tick.js';
-import { extend } from '../../Shared/Utilities';
+import { extend, isArray, isString, objectEach } from '../../Shared/Utilities';
 import U from '../Utilities.js';
 const {
     arrayMax,
@@ -77,12 +77,9 @@ const {
     fireEvent,
     getClosestDistance,
     insertItem,
-    isArray,
     isNumber,
-    isString,
     merge,
     normalizeTickInterval,
-    objectEach,
     pick,
     relativeLength,
     removeEvent,

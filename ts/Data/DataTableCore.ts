@@ -31,9 +31,9 @@ import ColumnUtils from './ColumnUtils.js';
 const { setLength, splice } = ColumnUtils;
 
 import U from '../Core/Utilities.js';
+import { objectEach } from '../Shared/Utilities.js';
 const {
     fireEvent,
-    objectEach,
     uniqueKey
 } = U;
 

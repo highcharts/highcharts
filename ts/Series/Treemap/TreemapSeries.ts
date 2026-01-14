@@ -65,7 +65,7 @@ const {
     updateRootId
 } = TU;
 import U from '../../Core/Utilities.js';
-import { extend } from '../../Shared/Utilities';
+import { extend, isArray, isObject, isString } from '../../Shared/Utilities';
 const {
     addEvent,
     arrayMax,
@@ -75,10 +75,7 @@ const {
     defined,
     error,
     fireEvent,
-    isArray,
     isNumber,
-    isObject,
-    isString,
     merge,
     pick,
     pushUnique,

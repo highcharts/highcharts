@@ -39,12 +39,13 @@ import H from '../Globals.js';
 const { dateFormats } = H;
 import Tick from './Tick.js';
 import U from '../Utilities.js';
+import { isArray, isObject as isObjectUtils } from '../../Shared/Utilities';
+
 const {
     addEvent,
     defined,
     erase,
     find,
-    isArray,
     isNumber,
     merge,
     pick,
@@ -202,7 +203,7 @@ function argsToArray(args: IArguments): Array<any> {
 /** @internal */
 function isObject(x: unknown): x is object {
     // Always use strict mode
-    return U.isObject(x, true);
+    return isObjectUtils(x, true);
 }
 
 /** @internal */

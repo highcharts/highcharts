@@ -27,13 +27,13 @@ import type DOMElementType from '../../Core/Renderer/DOMElementType';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
-    isObject,
     pick,
     defined,
     merge
 } = U;
 
 import NBU from '../Annotations/NavigationBindingsUtilities.js';
+import { isObject } from '../../Shared/Utilities';
 const { getAssignedAxis } = NBU;
 
 /* *

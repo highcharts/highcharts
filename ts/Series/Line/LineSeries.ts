@@ -29,10 +29,10 @@ import { Palette } from '../../Core/Color/Palettes.js';
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
+import { isObject } from '../../Shared/Utilities';
 const {
     defined,
-    merge,
-    isObject
+    merge
 } = U;
 
 /* *

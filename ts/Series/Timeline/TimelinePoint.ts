@@ -34,11 +34,11 @@ const {
 } = SeriesRegistry.seriesTypes;
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import U from '../../Core/Utilities.js';
+import { objectEach } from '../../Shared/Utilities';
 const {
     defined,
     isNumber,
     merge,
-    objectEach,
     pick
 } = U;
 

@@ -30,13 +30,12 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import Annotation from './Annotation.js';
 import U from '../../Core/Utilities.js';
+import { isArray, isObject } from '../../Shared/Utilities';
 const {
     addEvent,
     erase,
     find,
     fireEvent,
-    isArray,
-    isObject,
     pick,
     wrap
 } = U;

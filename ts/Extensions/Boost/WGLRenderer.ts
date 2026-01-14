@@ -37,14 +37,13 @@ const { doc, win } = H;
 import U from '../../Core/Utilities.js';
 const {
     isNumber,
-    isObject,
     merge,
-    objectEach,
     pick
 } = U;
 import WGLDrawMode from './WGLDrawMode.js';
 import WGLShader from './WGLShader.js';
 import WGLVertexBuffer from './WGLVertexBuffer.js';
+import { isObject, objectEach } from '../../Shared/Utilities';
 
 /* *
  *

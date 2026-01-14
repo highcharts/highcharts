@@ -28,9 +28,8 @@ import Row from '../Row.js';
 import HeaderCell from './HeaderCell.js';
 import Column from '../Column.js';
 import Globals from '../../Globals.js';
-import Utils from '../../../../Core/Utilities.js';
+import { isString } from '../../../../Shared/Utilities';
 
-const { isString } = Utils;
 
 /* *
  *

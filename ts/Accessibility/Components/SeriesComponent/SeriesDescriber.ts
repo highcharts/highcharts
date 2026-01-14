@@ -49,10 +49,10 @@ const {
     stripHTMLTagsFromString: stripHTMLTags
 } = HTMLUtilities;
 import U from '../../../Core/Utilities.js';
+import { isString } from '../../../Shared/Utilities';
 const {
     find,
     isNumber,
-    isString,
     pick,
     defined
 } = U;

@@ -41,11 +41,11 @@ import Globals from './Globals.js';
 import Layout from './Layout/Layout.js';
 import HTMLComponent from './Components/HTMLComponent/HTMLComponent.js';
 import U from '../Core/Utilities.js';
+import { objectEach } from '../Shared/Utilities';
 const {
     merge,
     addEvent,
     error,
-    objectEach,
     uniqueKey
 } = U;
 

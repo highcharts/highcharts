@@ -29,14 +29,12 @@ const {
     doc,
     supportsPassiveEvents
 } = D;
-import { extend } from '../Shared/Utilities';
+import { extend, isObject, objectEach } from '../Shared/Utilities';
 import U from '../Core/Utilities.js';
 const {
     error: coreError,
     isClass,
     isDOMElement,
-    isObject,
-    objectEach,
     uniqueKey: coreUniqueKey
 } = U;
 

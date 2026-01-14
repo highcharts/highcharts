@@ -28,14 +28,12 @@ import type SVGElement from '../Renderer/SVG/SVGElement';
 
 import Fx from './Fx.js';
 import U from '../Utilities.js';
+import { isArray, isObject, objectEach } from '../../Shared/Utilities';
 const {
     defined,
     getStyle,
-    isArray,
     isNumber,
-    isObject,
     merge,
-    objectEach,
     pick
 } = U;
 

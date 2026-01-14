@@ -34,11 +34,11 @@ import type { TreeGridAxisLabelIconOptions } from './TreeGridAxisOptions';
 
 import { Palette } from '../../Color/Palettes.js';
 import U from '../../Utilities.js';
+import { isObject } from '../../../Shared/Utilities';
 const {
     addEvent,
     correctFloat,
     removeEvent,
-    isObject,
     isNumber,
     pick,
     wrap

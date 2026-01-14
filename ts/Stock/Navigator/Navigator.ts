@@ -45,7 +45,7 @@ import Scrollbar from '../Scrollbar/Scrollbar.js';
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 const { prototype: { symbols } } = SVGRenderer;
 import U from '../../Core/Utilities.js';
-import { extend } from '../../Shared/Utilities';
+import { extend, isArray } from '../../Shared/Utilities';
 const {
     addEvent,
     clamp,
@@ -55,7 +55,6 @@ const {
     erase,
     find,
     fireEvent,
-    isArray,
     isNumber,
     merge,
     pick,
