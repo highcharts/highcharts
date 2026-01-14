@@ -38,13 +38,12 @@ import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../../Core/Utilities.js';
 const {
     fireEvent,
-    isNumber,
     merge
 } = U;
 
 import '../../Core/Defaults.js';
 import '../Scatter/ScatterSeries.js';
-import { extend } from '../../Shared/Utilities';
+import { extend, isNumber } from '../../Shared/Utilities';
 
 /* *
  *

@@ -30,7 +30,8 @@ const {
     ohlc: OHLCSeries
 } = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
-const { crisp, merge } = U;
+import { crisp } from '../../Shared/Utilities';
+const { merge } = U;
 
 /* *
  *

@@ -30,14 +30,13 @@ import DataTableCore from '../../Data/DataTableCore.js';
 import H from '../Globals.js';
 import Series from '../Series/Series.js';
 import U from '../Utilities.js';
-import { isString } from '../../Shared/Utilities.js';
+import { isString, isNumber } from '../../Shared/Utilities.js';
 const {
     addEvent,
     correctFloat,
     css,
     defined,
     error,
-    isNumber,
     pick,
     timeUnits
 } = U;

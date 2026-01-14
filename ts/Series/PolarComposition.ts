@@ -56,12 +56,11 @@ import Series from '../Core/Series/Series.js';
 import Pane from '../Extensions/Pane/Pane.js';
 import RadialAxis from '../Core/Axis/RadialAxis.js';
 import U from '../Core/Utilities.js';
-import { isObject } from '../Shared/Utilities';
+import { clamp, isNumber, isObject } from '../Shared/Utilities';
 const {
     addEvent,
     defined,
     find,
-    isNumber,
     merge,
     pick,
     pushUnique,
@@ -1065,7 +1064,7 @@ function onAfterColumnTranslate(
                             // If starting point is beyond the
                             // range, set it to 0
                             if (defined(start)) {
-                                start = U.clamp(start, 0, visibleRange);
+                                start = clamp(start, 0, visibleRange);
                             }
                         }
                     }

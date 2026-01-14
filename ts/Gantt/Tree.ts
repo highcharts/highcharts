@@ -19,9 +19,8 @@
  * */
 
 import U from '../Core/Utilities.js';
-import { extend } from '../Shared/Utilities.js';
+import { extend, isNumber } from '../Shared/Utilities.js';
 const {
-    isNumber,
     pick
 } = U;
 

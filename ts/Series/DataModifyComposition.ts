@@ -26,14 +26,13 @@ const {
 } = Point.prototype;
 import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
-import { isArray, isString } from '../Shared/Utilities';
+import { isArray, isNumber, isString } from '../Shared/Utilities';
 const {
     addEvent,
     arrayMax,
     arrayMin,
     correctFloat,
     defined,
-    isNumber,
     pick
 } = U;
 

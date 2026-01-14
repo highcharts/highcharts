@@ -31,12 +31,11 @@ import type SVGPath from '../Renderer/SVG/SVGPath';
 
 import StackItem from './Stacking/StackItem.js';
 import U from '../Utilities.js';
-import { isArray } from '../../Shared/Utilities';
+import { isArray, isNumber } from '../../Shared/Utilities';
 const {
     addEvent,
     find,
     fireEvent,
-    isNumber,
     pick
 } = U;
 

@@ -37,12 +37,11 @@ import Point from '../Core/Series/Point.js';
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 import U from '../Core/Utilities.js';
-import { extend, objectEach } from '../Shared/Utilities';
+import { extend, isNumber, objectEach } from '../Shared/Utilities';
 const {
     addEvent,
     defined,
     fireEvent,
-    isNumber,
     merge,
     pick,
     splat

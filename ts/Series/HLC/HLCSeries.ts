@@ -31,12 +31,11 @@ const {
 } = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
 const {
-    crisp,
     merge
 } = U;
 
 import D from '../../Core/Defaults.js';
-import { extend } from '../../Shared/Utilities';
+import { crisp, extend } from '../../Shared/Utilities';
 const { defaultOptions } = D;
 
 /* *

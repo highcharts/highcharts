@@ -45,7 +45,6 @@ const { getLevelOptions, getNodeWidth } = TU;
 import U from '../../Core/Utilities.js';
 const {
     arrayMax,
-    crisp,
     merge,
     pick,
     relativeLength,
@@ -59,7 +58,7 @@ import TreegraphSeriesDefaults from './TreegraphSeriesDefaults.js';
 import TreemapPoint from '../Treemap/TreemapPoint.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import TextPath from '../../Extensions/TextPath.js';
-import { extend } from '../../Shared/Utilities.js';
+import { crisp, extend } from '../../Shared/Utilities.js';
 TextPath.compose(SVGElement);
 /* *
  *

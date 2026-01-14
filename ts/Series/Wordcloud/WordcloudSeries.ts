@@ -39,13 +39,12 @@ const {
 } = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
 const {
-    isNumber,
     merge
 } = U;
 import WordcloudPoint from './WordcloudPoint.js';
 import WordcloudSeriesDefaults from './WordcloudSeriesDefaults.js';
 import WU from './WordcloudUtils.js';
-import { extend, isArray, isObject } from '../../Shared/Utilities';
+import { extend, isArray, isNumber, isObject } from '../../Shared/Utilities';
 const {
     archimedeanSpiral,
     extendPlayingField,

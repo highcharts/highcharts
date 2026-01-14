@@ -29,10 +29,9 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type { YAxisOptions } from '../../Core/Axis/AxisOptions';
 
 import U from '../../Core/Utilities.js';
+import { clamp, isNumber } from '../../Shared/Utilities';
 const {
     addEvent,
-    clamp,
-    isNumber,
     relativeLength
 } = U;
 

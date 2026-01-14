@@ -41,13 +41,10 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-import { extend } from '../../Shared/Utilities';
+import { clamp, extend, isNumber, pInt } from '../../Shared/Utilities';
 const {
-    clamp,
-    isNumber,
     merge,
     pick,
-    pInt,
     defined
 } = U;
 

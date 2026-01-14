@@ -37,11 +37,7 @@ const {
         }
     }
 } = SeriesRegistry;
-import U from '../../Core/Utilities.js';
-import { extend } from '../../Shared/Utilities.js';
-const {
-    isNumber
-} = U;
+import { extend, isNumber } from '../../Shared/Utilities.js';
 
 /* *
  *

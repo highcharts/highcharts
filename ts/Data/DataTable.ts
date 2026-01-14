@@ -35,12 +35,11 @@ import ColumnUtils from './ColumnUtils.js';
 const { splice, setLength } = ColumnUtils;
 
 import U from '../Core/Utilities.js';
-import { extend } from '../Shared/Utilities';
+import { extend, isNumber } from '../Shared/Utilities';
 const {
     addEvent,
     defined,
     fireEvent,
-    isNumber,
     uniqueKey
 } = U;
 

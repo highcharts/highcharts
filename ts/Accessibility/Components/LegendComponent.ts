@@ -37,7 +37,6 @@ import U from '../../Core/Utilities.js';
 const {
     addEvent,
     fireEvent,
-    isNumber,
     pick,
     syncTimeout
 } = U;
@@ -48,6 +47,7 @@ import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 import CU from '../Utils/ChartUtilities.js';
 const { getChartTitle } = CU;
 import HU from '../Utils/HTMLUtilities.js';
+import { isNumber } from '../../Shared/Utilities';
 const {
     stripHTMLTagsFromString: stripHTMLTags,
     addClass,

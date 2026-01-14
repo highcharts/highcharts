@@ -32,9 +32,8 @@ const {
     scatter: { prototype: { pointClass: ScatterPoint } }
 } = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
-import { extend } from '../../Shared/Utilities';
+import { extend, isNumber } from '../../Shared/Utilities';
 const {
-    isNumber,
     pick
 } = U;
 

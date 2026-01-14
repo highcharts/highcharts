@@ -29,11 +29,11 @@ const {
 } = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
 import AnimationOptions from '../../Core/Animation/AnimationOptions';
+import { isNumber } from '../../Shared/Utilities';
 const {
     arrayMax,
     arrayMin,
     correctFloat,
-    isNumber,
     merge
 } = U;
 

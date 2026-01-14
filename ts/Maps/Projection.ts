@@ -42,8 +42,8 @@ const {
 } = PC;
 import ProjectionRegistry from './Projections/ProjectionRegistry.js';
 import U from '../Core/Utilities.js';
+import { clamp } from '../Shared/Utilities';
 const {
-    clamp,
     erase
 } = U;
 

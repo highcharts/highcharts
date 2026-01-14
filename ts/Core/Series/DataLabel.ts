@@ -39,14 +39,13 @@ const { format } = F;
 import { Palette } from '../Color/Palettes.js';
 import R from '../Renderer/RendererUtilities.js';
 import U from '../Utilities.js';
-import { extend, isArray, isString, objectEach } from '../../Shared/Utilities';
+import { extend, isArray, isString, objectEach, pInt } from '../../Shared/Utilities';
 const {
     defined,
     fireEvent,
     getAlignFactor,
     merge,
     pick,
-    pInt,
     splat
 } = U;
 

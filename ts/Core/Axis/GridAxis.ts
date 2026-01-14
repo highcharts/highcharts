@@ -39,14 +39,13 @@ import H from '../Globals.js';
 const { dateFormats } = H;
 import Tick from './Tick.js';
 import U from '../Utilities.js';
-import { isArray, isObject as isObjectUtils } from '../../Shared/Utilities';
+import { isArray, isNumber, isObject as isObjectUtils } from '../../Shared/Utilities';
 
 const {
     addEvent,
     defined,
     erase,
     find,
-    isNumber,
     merge,
     pick,
     timeUnits,

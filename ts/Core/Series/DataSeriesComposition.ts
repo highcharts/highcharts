@@ -30,10 +30,10 @@ import DataTable from '../../Data/DataTable.js';
 import H from '../Globals.js';
 const { composed } = H;
 import U from '../Utilities.js';
+import { isNumber } from '../../Shared/Utilities';
 const {
     addEvent,
     fireEvent,
-    isNumber,
     merge,
     pushUnique,
     wrap

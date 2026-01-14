@@ -23,11 +23,10 @@ import type VariwidePointOptions from './VariwidePointOptions';
 import type VariwideSeries from './VariwideSeries';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import { isNumber } from '../../Shared/Utilities';
 const {
     column: { prototype: { pointClass: ColumnPoint } }
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
-const { isNumber } = U;
 
 /* *
  *

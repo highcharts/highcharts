@@ -38,15 +38,13 @@ import F from '../Templating.js';
 import H from '../Globals.js';
 const { deg2rad } = H;
 import U from '../Utilities.js';
-import { extend, objectEach } from '../../Shared/Utilities.js';
+import { clamp, extend, isNumber, objectEach } from '../../Shared/Utilities.js';
 const {
-    clamp,
     correctFloat,
     defined,
     destroyObjectProperties,
     fireEvent,
     getAlignFactor,
-    isNumber,
     merge,
     pick
 } = U;

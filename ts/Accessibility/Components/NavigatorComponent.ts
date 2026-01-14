@@ -33,7 +33,6 @@ const {
 } = T;
 import U from '../../Core/Utilities.js';
 const {
-    clamp,
     pick,
     syncTimeout
 } = U;
@@ -48,6 +47,7 @@ const {
 } = CU;
 
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import { clamp } from '../../Shared/Utilities.js';
 
 
 /**

@@ -8,6 +8,41 @@
  *
  * */
 
+import type { HTMLDOMElement } from '../Core/Renderer/DOMElementType.js';
+
+/**
+ * Constrain a value to within a lower and upper threshold.
+ *
+ * @internal
+ * @param {number} value The initial value
+ * @param {number} min The lower threshold
+ * @param {number} max The upper threshold
+ * @return {number} Returns a number value within min and max.
+ */
+export function clamp(value: number, min: number, max: number): number {
+    return value > min ? value < max ? value : max : min;
+}
+
+/**
+ * Utility for crisping a line position to the nearest full pixel depening on
+ * the line width
+ * @param {number} value       The raw pixel position
+ * @param {number} lineWidth   The line width
+ * @param {boolean} [inverted] Whether the containing group is inverted.
+ *                             Crisping round numbers on the y-scale need to go
+ *                             to the other side because the coordinate system
+ *                             is flipped (scaleY is -1)
+ * @return {number}            The pixel position to use for a crisp display
+ */
+export function crisp(
+    value: number,
+    lineWidth: number = 0,
+    inverted?: boolean
+): number {
+    const mod = lineWidth % 2 / 2,
+        inverter = inverted ? -1 : 1;
+    return (Math.round(value * inverter - mod) + mod) * inverter;
+}
 
 /**
  * Utility function to extend an object with the members of another.
@@ -32,6 +67,58 @@ export function extend<T extends object>(a: (T|undefined), b: Partial<T>): T {
         (a as any)[n] = (b as any)[n];
     }
     return a;
+}
+
+/**
+ * Utility function to check if an Object is a HTML Element.
+ *
+ * @function Highcharts.isDOMElement
+ *
+ * @param {*} obj
+ *        The item to check.
+ *
+ * @return {boolean}
+ *         True if the argument is a HTML Element.
+ */
+export function isDOMElement(obj: unknown): obj is HTMLDOMElement {
+    return isObject(obj) && typeof (obj as any).nodeType === 'number';
+}
+
+/**
+ * Utility function to check if an Object is a class.
+ *
+ * @function Highcharts.isClass
+ *
+ * @param {object|undefined} obj
+ *        The item to check.
+ *
+ * @return {boolean}
+ *         True if the argument is a class.
+ */
+export function isClass<T>(obj: (object|undefined)): obj is Class<T> {
+    const c: (Function|undefined) = obj?.constructor;
+
+    return !!(
+        isObject(obj, true) &&
+        !isDOMElement(obj) &&
+        ((c as any)?.name && (c as any).name !== 'Object')
+    );
+}
+
+/**
+ * Utility function to check if an item is a number and it is finite (not NaN,
+ * Infinity or -Infinity).
+ *
+ * @function Highcharts.isNumber
+ *
+ * @param {*} n
+ *        The item to check.
+ *
+ * @return {boolean}
+ *         True if the item is a finite number
+ */
+export function isNumber(n: unknown): n is number {
+    return typeof n === 'number' && !isNaN(n) && n < Infinity && n > -Infinity;
 }
 
 /**
@@ -123,6 +210,26 @@ export function objectEach<TObject, TContext>(
         }
     }
 }
+
+/**
+ * Shortcut for parseInt
+ *
+ * @internal
+ * @function Highcharts.pInt
+ *
+ * @param {*} s
+ *        any
+ *
+ * @param {number} [mag]
+ *        Magnitude
+ *
+ * @return {number}
+ *         number
+ */
+export function pInt(s: any, mag?: number): number {
+    return parseInt(s, mag || 10);
+}
+
 
 /* *
  *

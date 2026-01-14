@@ -15,8 +15,8 @@
 'use strict';
 
 import U from '../../Core/Utilities.js';
+import { clamp } from '../../Shared/Utilities.js';
 const {
-    clamp,
     defined,
     pick
 } = U;

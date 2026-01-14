@@ -19,10 +19,7 @@
 
 import DataConverter from './DataConverter';
 import DataTable from '../DataTable.js';
-import U from '../../Core/Utilities.js';
-const {
-    isNumber
-} = U;
+import { isNumber } from '../../Shared/Utilities';
 
 /* *
  *

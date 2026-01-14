@@ -23,10 +23,9 @@ import type XRangePoint from './XRangePoint';
 import type XRangeSeriesOptions from './XRangeSeriesOptions';
 
 import U from '../../Core/Utilities.js';
-import { isObject } from '../../Shared/Utilities';
+import { isObject, isNumber } from '../../Shared/Utilities';
 const {
-    correctFloat,
-    isNumber
+    correctFloat
 } = U;
 
 /* *

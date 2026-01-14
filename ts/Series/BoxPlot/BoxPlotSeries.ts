@@ -29,9 +29,8 @@ import H from '../../Core/Globals.js';
 const { noop } = H;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
-import { extend } from '../../Shared/Utilities';
+import { crisp, extend } from '../../Shared/Utilities';
 const {
-    crisp,
     merge,
     pick,
     relativeLength

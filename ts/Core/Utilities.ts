@@ -34,8 +34,8 @@ import type Series from './Series/Series';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import type Time from './Time';
 
+import { extend, isArray, isClass, isDOMElement, isNumber, isObject, isString, objectEach, pInt } from '../Shared/Utilities';
 import H from './Globals.js';
-import { extend, isArray, isObject, isString, objectEach } from '../Shared/Utilities';
 const {
     charts,
     doc,
@@ -233,39 +233,6 @@ function merge<T>(
     return ret;
 }
 
-/**
- * Constrain a value to within a lower and upper threshold.
- *
- * @internal
- * @param {number} value The initial value
- * @param {number} min The lower threshold
- * @param {number} max The upper threshold
- * @return {number} Returns a number value within min and max.
- */
-function clamp(value: number, min: number, max: number): number {
-    return value > min ? value < max ? value : max : min;
-}
-
-/**
- * Utility for crisping a line position to the nearest full pixel depening on
- * the line width
- * @param {number} value       The raw pixel position
- * @param {number} lineWidth   The line width
- * @param {boolean} [inverted] Whether the containing group is inverted.
- *                             Crisping round numbers on the y-scale need to go
- *                             to the other side because the coordinate system
- *                             is flipped (scaleY is -1)
- * @return {number}            The pixel position to use for a crisp display
- */
-function crisp(
-    value: number,
-    lineWidth: number = 0,
-    inverted?: boolean
-): number {
-    const mod = lineWidth % 2 / 2,
-        inverter = inverted ? -1 : 1;
-    return (Math.round(value * inverter - mod) + mod) * inverter;
-}
 
 // eslint-disable-next-line valid-jsdoc
 /**
@@ -367,79 +334,6 @@ function diffObjects(
     diff(newer, older, ret, 0);
 
     return ret;
-}
-
-
-/**
- * Shortcut for parseInt
- *
- * @internal
- * @function Highcharts.pInt
- *
- * @param {*} s
- *        any
- *
- * @param {number} [mag]
- *        Magnitude
- *
- * @return {number}
- *         number
- */
-function pInt(s: any, mag?: number): number {
-    return parseInt(s, mag || 10);
-}
-
-
-/**
- * Utility function to check if an Object is a HTML Element.
- *
- * @function Highcharts.isDOMElement
- *
- * @param {*} obj
- *        The item to check.
- *
- * @return {boolean}
- *         True if the argument is a HTML Element.
- */
-function isDOMElement(obj: unknown): obj is HTMLDOMElement {
-    return isObject(obj) && typeof (obj as any).nodeType === 'number';
-}
-
-/**
- * Utility function to check if an Object is a class.
- *
- * @function Highcharts.isClass
- *
- * @param {object|undefined} obj
- *        The item to check.
- *
- * @return {boolean}
- *         True if the argument is a class.
- */
-function isClass<T>(obj: (object|undefined)): obj is Class<T> {
-    const c: (Function|undefined) = obj?.constructor;
-
-    return !!(
-        isObject(obj, true) &&
-        !isDOMElement(obj) &&
-        ((c as any)?.name && (c as any).name !== 'Object')
-    );
-}
-
-/**
- * Utility function to check if an item is a number and it is finite (not NaN,
- * Infinity or -Infinity).
- *
- * @function Highcharts.isNumber
- *
- * @param {*} n
- *        The item to check.
- *
- * @return {boolean}
- *         True if the item is a finite number
- */
-function isNumber(n: unknown): n is number {
-    return typeof n === 'number' && !isNaN(n) && n < Infinity && n > -Infinity;
 }
 
 /**
@@ -2072,12 +1966,10 @@ interface Utilities {
     arrayMin: typeof arrayMin;
     attr: typeof attr;
     /** @internal */
-    clamp: typeof clamp;
     clearTimeout: typeof internalClearTimeout;
     correctFloat: typeof correctFloat;
     createElement: typeof createElement;
     /** @internal */
-    crisp: typeof crisp;
     css: typeof css;
     defined: typeof defined;
     destroyObjectProperties: typeof destroyObjectProperties;
@@ -2099,17 +1991,13 @@ interface Utilities {
     getStyle: typeof getStyle;
     /** @internal */
     insertItem: typeof insertItem;
-    isClass: typeof isClass;
-    isDOMElement: typeof isDOMElement;
     isFunction: typeof isFunction;
-    isNumber: typeof isNumber;
     merge: typeof merge;
     normalizeTickInterval: typeof normalizeTickInterval;
     offset: typeof offset;
     pad: typeof pad;
     pick: typeof pick;
     /** @internal */
-    pInt: typeof pInt;
     pushUnique: typeof pushUnique;
     relativeLength: typeof relativeLength;
     removeEvent: typeof removeEvent;
@@ -2132,11 +2020,9 @@ const Utilities: Utilities = {
     arrayMax,
     arrayMin,
     attr,
-    clamp,
     clearTimeout: internalClearTimeout,
     correctFloat,
     createElement,
-    crisp,
     css,
     defined,
     destroyObjectProperties,
@@ -2153,16 +2039,12 @@ const Utilities: Utilities = {
     getNestedProperty,
     getStyle,
     insertItem,
-    isClass,
-    isDOMElement,
     isFunction,
-    isNumber,
     merge,
     normalizeTickInterval,
     offset,
     pad,
     pick,
-    pInt,
     pushUnique,
     relativeLength,
     removeEvent,

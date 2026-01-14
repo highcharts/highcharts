@@ -20,9 +20,9 @@
 import type Pointer from '../../Core/Pointer';
 
 import U from '../../Core/Utilities.js';
+import { isNumber } from '../../Shared/Utilities';
 const {
     defined,
-    isNumber,
     pick
 } = U;
 

@@ -34,11 +34,11 @@ const { format } = T;
 import SeriesRegistry from '../../Series/SeriesRegistry.js';
 const { series: Series } = SeriesRegistry;
 import U from '../../Utilities.js';
+import { isNumber } from '../../../Shared/Utilities';
 const {
     destroyObjectProperties,
     fireEvent,
     getAlignFactor,
-    isNumber,
     pick
 } = U;
 

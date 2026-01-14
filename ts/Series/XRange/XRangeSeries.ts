@@ -45,11 +45,8 @@ const {
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
-    clamp,
-    crisp,
     defined,
     find,
-    isNumber,
     merge,
     pick,
     pushUnique,
@@ -57,7 +54,7 @@ const {
 } = U;
 import XRangeSeriesDefaults from './XRangeSeriesDefaults.js';
 import XRangePoint from './XRangePoint.js';
-import { extend, isObject } from '../../Shared/Utilities';
+import { clamp, crisp, extend, isNumber, isObject } from '../../Shared/Utilities';
 
 /* *
  *

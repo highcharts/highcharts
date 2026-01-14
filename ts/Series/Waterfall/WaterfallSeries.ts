@@ -37,15 +37,13 @@ const {
     arrayMax,
     arrayMin,
     correctFloat,
-    crisp,
-    isNumber,
     merge,
     pick
 } = U;
 import WaterfallAxis from '../../Core/Axis/WaterfallAxis.js';
 import WaterfallPoint from './WaterfallPoint.js';
 import WaterfallSeriesDefaults from './WaterfallSeriesDefaults.js';
-import { extend, objectEach } from '../../Shared/Utilities';
+import { crisp, extend, isNumber, objectEach } from '../../Shared/Utilities';
 
 /* *
  *

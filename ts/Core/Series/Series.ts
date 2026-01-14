@@ -82,13 +82,11 @@ import SVGElement from '../Renderer/SVG/SVGElement.js';
 import T from '../Templating.js';
 const { format } = T;
 import U from '../Utilities.js';
-import { extend, isArray, isString, objectEach } from '../../Shared/Utilities';
+import { clamp, crisp, extend, isArray, isNumber, isString, objectEach } from '../../Shared/Utilities';
 const {
     arrayMax,
     arrayMin,
-    clamp,
     correctFloat,
-    crisp,
     defined,
     destroyObjectProperties,
     diffObjects,
@@ -99,7 +97,6 @@ const {
     getClosestDistance,
     getNestedProperty,
     insertItem,
-    isNumber,
     merge,
     pick,
     removeEvent,

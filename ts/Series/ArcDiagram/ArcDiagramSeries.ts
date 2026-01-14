@@ -32,7 +32,7 @@ import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../../Core/Utilities.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import TextPath from '../../Extensions/TextPath.js';
-import { extend } from '../../Shared/Utilities';
+import { crisp, extend } from '../../Shared/Utilities';
 TextPath.compose(SVGElement);
 
 const { prototype: { symbols } } = SVGRenderer;
@@ -43,7 +43,6 @@ const {
     }
 } = SeriesRegistry;
 const {
-    crisp,
     merge,
     pick,
     relativeLength

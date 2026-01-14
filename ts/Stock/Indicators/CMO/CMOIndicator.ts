@@ -24,7 +24,8 @@ const {
     sma: SMAIndicator
 } = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
-const { isNumber, merge } = U;
+import { isNumber } from '../../../Shared/Utilities';
+const { merge } = U;
 
 /* *
  *

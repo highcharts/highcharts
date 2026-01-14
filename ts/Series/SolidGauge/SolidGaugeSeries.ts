@@ -33,13 +33,10 @@ const {
 import SolidGaugeAxis from '../../Core/Axis/SolidGaugeAxis.js';
 import SolidGaugeSeriesDefaults from './SolidGaugeSeriesDefaults.js';
 import U from '../../Core/Utilities.js';
-import { extend } from '../../Shared/Utilities';
+import { clamp, extend, isNumber, pInt } from '../../Shared/Utilities';
 const {
-    clamp,
-    isNumber,
     merge,
-    pick,
-    pInt
+    pick
 } = U;
 
 /* *

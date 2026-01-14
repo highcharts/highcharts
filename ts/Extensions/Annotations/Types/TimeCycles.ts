@@ -1,7 +1,8 @@
 /* *
  *
  *  Authors: Rafal Sebestjanski and Pawel Lysy
- * *
+ *
+ *
  * */
 
 'use strict';
@@ -24,9 +25,9 @@ import D from '../../../Core/Defaults.js';
 const { defaultOptions } = D;
 import ControlPoint from '../ControlPoint.js';
 import U from '../../../Core/Utilities.js';
+import { isNumber } from '../../../Shared/Utilities';
 const {
     merge,
-    isNumber,
     defined
 } = U;
 

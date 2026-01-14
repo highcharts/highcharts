@@ -35,9 +35,9 @@ const {
     }
 } = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
+import { isNumber } from '../../Shared/Utilities';
 const {
-    defined,
-    isNumber
+    defined
 } = U;
 
 /* *

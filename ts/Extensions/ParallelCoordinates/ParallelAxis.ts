@@ -25,11 +25,11 @@ import type ParallelCoordinates from './ParallelCoordinates';
 
 import ParallelCoordinatesDefaults from './ParallelCoordinatesDefaults.js';
 import U from '../../Core/Utilities.js';
+import { isNumber } from '../../Shared/Utilities';
 const {
     addEvent,
     arrayMax,
     arrayMin,
-    isNumber,
     merge,
     pick
 } = U;

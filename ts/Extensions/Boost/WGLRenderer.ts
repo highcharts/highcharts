@@ -36,14 +36,13 @@ import H from '../../Core/Globals.js';
 const { doc, win } = H;
 import U from '../../Core/Utilities.js';
 const {
-    isNumber,
     merge,
     pick
 } = U;
 import WGLDrawMode from './WGLDrawMode.js';
 import WGLShader from './WGLShader.js';
 import WGLVertexBuffer from './WGLVertexBuffer.js';
-import { isObject, objectEach } from '../../Shared/Utilities';
+import { isNumber, isObject, objectEach } from '../../Shared/Utilities';
 
 /* *
  *

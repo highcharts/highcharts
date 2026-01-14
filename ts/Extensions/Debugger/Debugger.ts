@@ -27,10 +27,10 @@ import ErrorMessages from './ErrorMessages.js';
 import H from '../../Core/Globals.js';
 const { composed } = H;
 import U from '../../Core/Utilities.js';
+import { isNumber } from '../../Shared/Utilities';
 const {
     addEvent,
     find,
-    isNumber,
     pushUnique
 } = U;
 

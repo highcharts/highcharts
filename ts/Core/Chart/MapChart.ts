@@ -31,11 +31,11 @@ const { getOptions } = D;
 import SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
 import U from '../Utilities.js';
 const {
-    isNumber,
     merge,
     pick
 } = U;
 import '../../Maps/MapSymbols.js';
+import { isNumber } from '../../Shared/Utilities';
 
 /* *
  *

@@ -26,11 +26,10 @@ import type { SymbolKey } from './SymbolType';
 
 import SVGElement from './SVGElement.js';
 import U from '../../Utilities.js';
-import { extend } from '../../../Shared/Utilities';
+import { extend, isNumber } from '../../../Shared/Utilities';
 const {
     defined,
     getAlignFactor,
-    isNumber,
     merge,
     pick,
     removeEvent

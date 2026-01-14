@@ -34,10 +34,10 @@ const {
     isPriceIndicatorEnabled
 } = STU;
 import U from '../../Core/Utilities.js';
+import { isNumber } from '../../Shared/Utilities';
 const {
     correctFloat,
     defined,
-    isNumber,
     pick
 } = U;
 
