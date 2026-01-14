@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sebastian Bochan
@@ -402,17 +402,12 @@ namespace Sync {
 
     /** @internal */
     export type OptionsRecord = (
-        // eslint-disable-next-line @typescript-eslint/no-duplicate-type-constituents
-        Record<(SyncEmitter['id']|SyncHandler['id']), OptionsEntry>
+        Record<string, OptionsEntry>
     );
 
     /** @internal */
     export type RawOptionsRecord = (
-        Record<
-            // eslint-disable-next-line @typescript-eslint/no-duplicate-type-constituents
-            (SyncEmitter['id']|SyncHandler['id']),
-            (boolean|OptionsEntry|undefined)
-        >
+        Record<string, boolean | OptionsEntry | undefined>
     );
 }
 

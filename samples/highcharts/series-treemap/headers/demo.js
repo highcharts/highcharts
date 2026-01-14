@@ -119,9 +119,8 @@ const chart = Highcharts.chart('container', {
         align: 'left'
     },
     tooltip: {
-        useHTML: true,
         pointFormat: 'The area of <b>{point.name}</b> is \
-            <b>{point.value} km<sup>2</sup></b>'
+            <b>{point.value} km²</b>'
     }
 });
 

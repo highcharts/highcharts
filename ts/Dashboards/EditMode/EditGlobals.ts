@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sebastian Bochan
@@ -157,7 +157,7 @@ const EditGlobals: EditGlobals = {
             HTML: 'HTML',
             row: 'Row',
             Highcharts: 'Highcharts',
-            DataGrid: 'DataGrid',
+            Grid: 'Grid',
             KPI: 'KPI'
         }
     }
@@ -355,7 +355,7 @@ namespace EditGlobals {
         /**
          * Options for the sidebar and its components.
          */
-        sidebar:SidebarLangOptions
+        sidebar: SidebarLangOptions
         /**
          * @default 'Styles'
          */
@@ -386,9 +386,9 @@ namespace EditGlobals {
          */
         Highcharts: string;
         /**
-         * @default 'DataGrid'
+         * @default 'Grid'
          */
-        DataGrid: string;
+        Grid: string;
         /**
          * @default 'KPI'
          */

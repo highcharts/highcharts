@@ -1,0 +1,7 @@
+---
+ name: Custom column resizing mode Demo
+ authors:
+   - Dawid Dragula
+   - Sebastian Bochan
+ js_wrap: b
+...

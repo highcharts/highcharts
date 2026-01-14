@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sebastian Bochan
@@ -234,7 +234,6 @@ class HTMLComponent extends Component {
 
     public getOptionsOnDrop(): Partial<Options> {
         return {
-            cell: '',
             type: 'HTML',
             elements: [{
                 tagName: 'span',
@@ -244,6 +243,7 @@ class HTMLComponent extends Component {
     }
 
     /**
+     * Constructs the HTML tree.
      * @internal
      */
     private constructTree(): void {

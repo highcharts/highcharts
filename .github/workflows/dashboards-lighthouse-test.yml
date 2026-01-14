@@ -3,9 +3,11 @@ on:
   pull_request:
     branches:
       - 'master'
+      - 'dash/**'
     paths:
       - '.github/workflows/dashboards-lighthouse-test.yml'
       - 'css/dashboards*'
+      - 'css/grid*'
       - 'samples/dashboards/**'
       - 'test/cypress/dashboards/performance/**'
       - 'ts/Dashboards/**'
@@ -56,7 +58,7 @@ jobs:
       - name: Build Dashboards
         run: |
           cd highcharts
-          npx gulp dashboards/scripts
+          npx gulp scripts --product Dashboards
 
       - name: Checkout utils
         uses: actions/checkout@v4
@@ -68,7 +70,7 @@ jobs:
       - name: Install Highcharts Utils
         run: |
           cd utils
-          npm i
+          npm ci
 
       - name: Run cypress via action
         uses: cypress-io/github-action@v5
@@ -109,7 +111,7 @@ jobs:
       - name: Build Dashboards
         run: |
           cd highcharts
-          npx gulp dashboards/scripts
+          npx gulp scripts --product Dashboards
 
       - name: Run cypress via action
         uses: cypress-io/github-action@v5

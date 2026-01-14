@@ -1,83 +1,87 @@
 /* eslint-env node, es6 */
 
-const request = require("request");
 const cheerio = require("cheerio");
 require('colors');
 
-const data = {};
+(async () => {
+    const data = {};
 
-const fromYear = 1924;
-const toYear = 2016;
+    const fromYear = 1924;
+    const toYear = 2016;
 
-const hadOG = {
-    1920: true,
-    1940: true, // Fill in zeroes
-    1944: true
-};
+    const hadOG = {
+        1920: true,
+        1940: true, // Fill in zeroes
+        1944: true
+    };
 
-let done = 0;
+    let done = 0;
 
-const print = (data) => {
-    let series = [];
-    Object.keys(data).forEach((key) => {
-        // Fill in blank years
-        Object.keys(hadOG).forEach((year) => {
-            if (!data[key].values[year]) {
-                data[key].values[year] = 0;
-            }
+    const print = (data) => {
+        let series = [];
+        Object.keys(data).forEach((key) => {
+            // Fill in blank years
+            Object.keys(hadOG).forEach((year) => {
+                if (!data[key].values[year]) {
+                    data[key].values[year] = 0;
+                }
+            });
+
+            Object.keys(data[key].values).forEach((year) => {
+                data[key].data.push([parseInt(year, 10), data[key].values[year]]);
+            });
+            delete data[key].values;
+            data[key].data.sort((a, b) => {
+                return a[0] - b[0];
+            });
+
+            series.push(data[key]);
         });
+        console.log(JSON.stringify(series));
+    };
 
-        Object.keys(data[key].values).forEach((year) => {
-            data[key].data.push([parseInt(year, 10), data[key].values[year]]);
-        });
-        delete data[key].values;
-        data[key].data.sort((a, b) => {
-            return a[0] - b[0];
-        });
+    for (let year = fromYear; year <= toYear; year += 2) {
+        const url = `https://www.sports-reference.com/olympics/winter/${year}/`;
+        const response = await fetch(url);
+        const body = await response.text();
 
-        series.push(data[key]);
-    });
-    console.log(JSON.stringify(series));
-};
-
-for (let year = fromYear; year <= toYear; year += 2) {
-    let url = `https://www.sports-reference.com/olympics/winter/${year}/`;
-    request(url, (err, res, body) => { // eslint-disable-line no-loop-func
-        if (err) {
-            throw err;
+        if (body.includes('File Not Found')) {
+            console.log('File Not Found'.red, year);
+            continue;
         }
 
-        if (body.indexOf('File Not Found') > -1) {
-            console.log('File Not Found'.red, year);
-        } else {
-            console.log('Parsing'.green, year);
-            hadOG[year] = true;
-            let $ = cheerio.load(body);
+        if (body.includes('Rate Limited Request')) {
+            console.log('Rate Limited Request'.red, year);
+            continue;
+        }
 
-            let trs = $('table#countries tbody tr');
-            let row = 0;
-            while (trs[row]) {
-                let country = trs[row].children[3].children[0].children[0].data.trim();
+        console.log('Parsing'.green, year);
+        hadOG[year] = true;
+        let $ = cheerio.load(body);
 
-                let medals = parseInt(trs[row].children[11].children[0].data, 10);
+        let trs = $('table#countries tbody tr');
+        let row = 0;
+        while (trs[row]) {
+            let country = trs[row].children[3].children[0].children[0].data.trim();
 
-                if (!data[country]) {
-                    data[country] = {
-                        name: country,
-                        values: {
+            let medals = parseInt(trs[row].children[11].children[0].data, 10);
 
-                        },
-                        data: []
-                    };
-                }
-                data[country].values[year] = medals;
-                row++;
+            if (!data[country]) {
+                data[country] = {
+                    name: country,
+                    values: {
+
+                    },
+                    data: []
+                };
             }
+            data[country].values[year] = medals;
+            row++;
         }
 
         done++;
         if (done === ((toYear - fromYear) / 2) + 1) {
             print(data);
         }
-    });
-}
+    }
+})();

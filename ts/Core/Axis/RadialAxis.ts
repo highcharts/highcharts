@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -67,31 +68,108 @@ const {
 
 declare module './AxisOptions' {
     interface AxisOptions {
+        /**
+         * In a polar chart, this is the angle of the Y axis in degrees, where
+         * 0 is up and 90 is right. The angle determines the position of the
+         * axis line and the labels, though the coordinate system is unaffected.
+         * Since v8.0.0 this option is also applicable for X axis (inverted
+         * polar).
+         *
+         * @sample {highcharts} highcharts/xaxis/angle/
+         *         Custom X axis' angle on inverted polar chart
+         * @sample {highcharts} highcharts/yaxis/angle/
+         *         Dual axis polar chart
+         *
+         * @default   0
+         * @since     4.2.7
+         * @product   highcharts
+         */
         angle?: number;
+        /**
+         * Polar charts only. Whether the grid lines should draw as a polygon
+         * with straight lines between categories, or as circles. Can be either
+         * `circle` or `polygon`. Since v8.0.0 this option is also applicable
+         * for X axis (inverted polar).
+         *
+         * @sample {highcharts} highcharts/demo/polar-spider/
+         *         Polygon grid lines
+         * @sample {highcharts} highcharts/xaxis/gridlineinterpolation/
+         *         Circle and polygon on inverted polar
+         * @sample {highcharts} highcharts/yaxis/gridlineinterpolation/
+         *         Circle and polygon
+         *
+         * @product    highcharts
+         */
         gridLineInterpolation?: ('circle'|'polygon');
     }
 }
 
+/** @internal */
 declare module './AxisType' {
     interface AxisTypeRegistry {
         RadialAxis: RadialAxis.AxisComposition;
     }
 }
+
 declare module '../Chart/ChartBase'{
     interface ChartBase {
+        /**
+         * The flag is set to `true` if a series of the chart is inverted.
+         */
         inverted?: boolean;
     }
 }
 
 declare module './PlotLineOrBand/PlotBandOptions' {
     interface PlotBandOptions {
+        /**
+         * In a gauge chart, this option determines the inner radius of the
+         * plot band that stretches along the perimeter. It can be given as
+         * a percentage string, like `"100%"`, or as a pixel number, like `100`.
+         * By default, the inner radius is controlled by the [thickness](
+         * #yAxis.plotBands.thickness) option.
+         *
+         * @sample {highcharts} highcharts/xaxis/plotbands-gauge
+         *         Gauge plot band
+         *
+         * @since     2.3
+         * @product   highcharts
+         */
         innerRadius?: (number|string);
+        /**
+         * In a gauge chart, this option determines the outer radius of the
+         * plot band that stretches along the perimeter. It can be given as
+         * a percentage string, like `"100%"`, or as a pixel number, like `100`.
+         *
+         * @sample {highcharts} highcharts/xaxis/plotbands-gauge
+         *         Gauge plot band
+         *
+         * @default   100%
+         * @since     2.3
+         * @product   highcharts
+         */
         outerRadius?: (number|string);
+        /** @internal */
         shape?: PaneBackgroundShapeValue;
+        /**
+         * In a gauge chart, this option sets the width of the plot band
+         * stretching along the perimeter. It can be given as a percentage
+         * string, like `"10%"`, or as a pixel number, like `10`. The default
+         * value 10 is the same as the default [tickLength](#yAxis.tickLength),
+         * thus making the plot band act as a background for the tick markers.
+         *
+         * @sample {highcharts} highcharts/xaxis/plotbands-gauge
+         *         Gauge plot band
+         *
+         * @default   10
+         * @since     2.3
+         * @product   highcharts
+         */
         thickness?: (number|string);
     }
 }
 
+/** @internal */
 declare module './PlotLineOrBand/PlotLineOptions' {
     interface PlotLineOptions {
         chartX?: number;
@@ -108,6 +186,7 @@ declare module './PlotLineOrBand/PlotLineOptions' {
  *
  * */
 
+/** @internal */
 namespace RadialAxis {
 
     /* *
@@ -135,59 +214,200 @@ namespace RadialAxis {
     }
 
     export declare class AxisComposition extends Axis {
+
+        /** @internal */
         angleRad: number;
+
+        /** @internal */
         autoConnect?: boolean;
+
+        /** @internal */
         center: Array<number>;
+
+        /** @internal */
         endAngleRad: number;
+
+        /** @internal */
         isCircular?: boolean;
+
+        /** @internal */
         isHidden?: boolean;
+
+        /** @internal */
         labelCollector?: Chart.LabelCollectorFunction;
+
+        /** @internal */
         max: number;
+
+        /** @internal */
         min: number;
+
+        /** @internal */
         minPointOffset: number;
+
+        /** @internal */
         normalizedEndAngleRad: number;
+
+        /** @internal */
         normalizedStartAngleRad: number;
+
+        /** @internal */
         offset: number;
+
+        /** @internal */
         options: RadialAxisOptions;
+
+        /** @internal */
         pane: Pane;
+
+        /** @internal */
         isRadial: boolean;
+
+        /** @internal */
         sector?: number;
+
+        /** @internal */
         startAngleRad: number;
+
+        /**
+         * Attach and return collecting function for labels in radial axis for
+         * anti-collision.
+         *
+         * @internal
+         */
         createLabelCollector(): Chart.LabelCollectorFunction;
+
+        /**
+         * In case of auto connect, add one closestPointRange to the max value
+         * right before tickPositions are computed, so that ticks will extend
+         * passed the real max.
+         * @internal
+         */
         beforeSetTickPositions(): void;
+
+        /**
+         * Find the correct end values of crosshair in polar.
+         * @internal
+         */
         getCrosshairPosition(
             options: PlotLineOptions,
             x1: number,
             y1: number
         ): [(number | undefined), number, number];
+
+        /**
+         * Get the path for the axis line. This method is also referenced in the
+         * getPlotLinePath method.
+         *
+         * @internal
+         *
+         * @param {number} _lineWidth
+         * Line width is not used.
+         *
+         * @param {number} [radius]
+         * Radius of radial path.
+         *
+         * @param {number} [innerRadius]
+         * Inner radius of radial path.
+         */
         getLinePath(
             lineWidth: number,
             radius?: number,
             innerRadius?: number
         ): SVGPath;
+
+        /**
+         * Wrap the getOffset method to return zero offset for title or labels
+         * in a radial axis.
+         * @internal
+         */
         getOffset(): void;
+
+        /**
+         * Find the path for plot bands along the radial axis.
+         * @internal
+         */
         getPlotBandPath(
             from: number,
             to: number,
             options: PlotBandOptions
         ): SVGPath;
+
+        /**
+         * Find the path for plot lines perpendicular to the radial axis.
+         * @internal
+         */
         getPlotLinePath(options: PlotLineOptions): SVGPath;
+
+        /**
+         * Returns the x, y coordinate of a point given by a value and a pixel
+         * distance from center.
+         *
+         * @internal
+         *
+         * @param {number} value
+         * Point value.
+         *
+         * @param {number} [length]
+         * Distance from center.
+         */
         getPosition(
             value: number,
             length?: number
         ): PositionObject;
+
+        /**
+         * Find the position for the axis title, by default inside the gauge.
+         * @internal
+         */
         getTitlePosition(): PositionObject;
+
+        /**
+         * Translate from intermediate plotX (angle), plotY (axis.len - radius)
+         * to final chart coordinates.
+         *
+         * @internal
+         *
+         * @param {number} angle
+         * Translation angle.
+         *
+         * @param {number} radius
+         * Translation radius.
+         */
         postTranslate(
             angle: number,
             radius: number
         ): PositionObject;
+
+        /**
+         * Override the setAxisSize method to use the arc's circumference as
+         * length. This allows tickPixelInterval to apply to pixel lengths along
+         * the perimeter.
+         * @internal
+         */
         setAxisSize(): void;
+
+        /**
+         * Override setAxisTranslation by setting the translation to the
+         * difference in rotation. This allows the translate method to return
+         * angle for any given value.
+         * @internal
+         */
         setAxisTranslation(): void;
+
+        /**
+         * Merge and set options.
+         * @internal
+         */
         setOptions(userOptions: DeepPartial<RadialAxisOptions>): void;
+
     }
 
     export declare class TickComposition extends Tick {
+
+        /** @internal */
         axis: RadialAxis.AxisComposition;
+
     }
 
     export const radialDefaultOptions: RadialDefaultOptions =
@@ -205,7 +425,7 @@ namespace RadialAxis {
      * In case of auto connect, add one closestPointRange to the max value
      * right before tickPositions are computed, so that ticks will extend
      * passed the real max.
-     * @private
+     * @internal
      */
     function beforeSetTickPositions(
         this: AxisComposition
@@ -239,7 +459,7 @@ namespace RadialAxis {
     /**
      * Augments methods for the value axis.
      *
-     * @private
+     * @internal
      *
      * @param {Highcharts.Axis} AxisClass
      * Axis class to extend.
@@ -308,7 +528,7 @@ namespace RadialAxis {
      * Attach and return collecting function for labels in radial axis for
      * anti-collision.
      *
-     * @private
+     * @internal
      */
     function createLabelCollector(
         this: AxisComposition
@@ -334,7 +554,7 @@ namespace RadialAxis {
 
     /**
      * Creates an empty collector function.
-     * @private
+     * @internal
      */
     function createLabelCollectorHidden(): Chart.LabelCollectorFunction {
         return noop as Chart.LabelCollectorFunction;
@@ -342,7 +562,7 @@ namespace RadialAxis {
 
     /**
      * Find the correct end values of crosshair in polar.
-     * @private
+     * @internal
      */
     function getCrosshairPosition(
         this: AxisComposition,
@@ -405,7 +625,7 @@ namespace RadialAxis {
      * Get the path for the axis line. This method is also referenced in the
      * getPlotLinePath method.
      *
-     * @private
+     * @internal
      * @param {number} _lineWidth
      * Line width is not used.
      * @param {number} [radius]
@@ -490,7 +710,7 @@ namespace RadialAxis {
     /**
      * Find the path for plot bands along the radial axis.
      *
-     * @private
+     * @internal
      */
     function getPlotBandPath(
         this: AxisComposition,
@@ -780,7 +1000,7 @@ namespace RadialAxis {
      * Returns the x, y coordinate of a point given by a value and a pixel
      * distance from center.
      *
-     * @private
+     * @internal
      * @param {number} value
      * Point value.
      * @param {number} [length]
@@ -838,7 +1058,7 @@ namespace RadialAxis {
 
     /**
      * Modify radial axis.
-     * @private
+     * @internal
      *
      * @param {Highcharts.Axis} radialAxis
      * Radial axis to modify.
@@ -861,7 +1081,7 @@ namespace RadialAxis {
 
     /**
      * Modify radial axis as hidden.
-     * @private
+     * @internal
      *
      * @param {Highcharts.Axis} radialAxis
      * Radial axis to modify.
@@ -1250,7 +1470,7 @@ namespace RadialAxis {
      * Translate from intermediate plotX (angle), plotY (axis.len - radius)
      * to final chart coordinates.
      *
-     * @private
+     * @internal
      * @param {number} angle
      * Translation angle.
      * @param {number} radius
@@ -1285,7 +1505,7 @@ namespace RadialAxis {
      * Override the setAxisSize method to use the arc's circumference as
      * length. This allows tickPixelInterval to apply to pixel lengths along
      * the perimeter.
-     * @private
+     * @internal
      */
     function setAxisSize(
         this: AxisComposition
@@ -1330,7 +1550,7 @@ namespace RadialAxis {
      * difference in rotation. This allows the translate method to return
      * angle for any given value.
      *
-     * @private
+     * @internal
      */
     function setAxisTranslation(
         this: AxisComposition
@@ -1474,4 +1694,5 @@ namespace RadialAxis {
  *
  * */
 
+/** @internal */
 export default RadialAxis;

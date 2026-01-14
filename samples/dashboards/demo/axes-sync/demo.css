@@ -1,4 +1,4 @@
-@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 
 body {

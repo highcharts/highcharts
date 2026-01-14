@@ -47,7 +47,11 @@ Grid.grid('container', {
                 msgTable.innerText = `Resized the column '${this.id}' to ` +
                     `${Math.round(this.width * 1000) / 10}%.`;
             },
-            afterSorting: function () {
+            beforeSort: function () {
+                msgTable.innerText = 'Before sorting the column ' +
+                    `'${this.id}'.`;
+            },
+            afterSort: function () {
                 const { order } =
                     this.viewport.grid.querying.sorting.currentSorting;
 
@@ -61,6 +65,14 @@ Grid.grid('container', {
                 default:
                     msgTable.innerText += ' Unsorted.';
                 }
+            },
+            beforeFilter: function () {
+                msgTable.innerText = 'Before filtering the column ' +
+                    `'${this.id}'.`;
+            },
+            afterFilter: function () {
+                msgTable.innerText = 'After filtering the column ' +
+                    `'${this.id}'.`;
             }
         },
         header: {
@@ -88,7 +100,7 @@ Grid.grid('container', {
             format: 'MetaData (unsortable)'
         },
         sorting: {
-            sortable: false
+            enabled: false
         }
     }]
 });

@@ -25,6 +25,10 @@ const  icebergLabels = [
     10, 0, 20, 40, 60, 80, 100, 120, 140, 160, 180
 ];
 
+let chart;
+let tooltipPosition;
+
+
 const iceberg = {
     chart: {
         animation: {
@@ -32,32 +36,17 @@ const iceberg = {
             duration: 3000,
             easing: 'easeOutQuint'
         },
-        styledMode: true,
         margin: 0,
         spacing: 0,
         events: {
             load: function () {
-                const chart = this;
-                const cover = document.getElementsByClassName('cover')[0];
-                const background = document.getElementsByClassName(
-                    'highcharts-background'
-                )[0];
-                const plotBackground = document.getElementsByClassName(
-                    'highcharts-plot-background'
-                )[0];
-                const title = document.getElementsByClassName(
-                    'highcharts-title'
-                )[0];
+                chart = this;
 
-                console.log(chart.chartWidth);
-
-
-                cover.style.fill =  '#30426B';
-                background.style.fill = '#f0f0f0';
-                plotBackground.style.transition = 'none';
-                plotBackground.style.fill = '#f0f0f0';
-                title.style.opacity = 1;
-
+                if (chart.chartHeight <= 400) {
+                    tooltipPosition = { x: 80, y: chart.chartHeight - 100 };
+                } else {
+                    tooltipPosition = { x: 110, y: chart.chartHeight - 140 };
+                }
                 // turn on tooltip
                 chart.update({
                     tooltip: {
@@ -76,7 +65,7 @@ const iceberg = {
                 [].forEach.call(
                     document.querySelectorAll('#charts .iceberg-types'),
                     function (elem) {
-                        elem.style.color = '#000';
+                        elem.style.color = 'var(--text-primary)';
                     }
                 );
 
@@ -159,11 +148,11 @@ const iceberg = {
         }
     },
     title: {
-        text: 'Distribution of Icebergs in Iceberg Alley ' +
+        text: 'Distribution of Icebergs ' +
             '<p style="text-align:center;margin:0px;font-weight:300;' +
             'font-size:0.8em">Newfoundland, Canada</p>',
         useHTML: true,
-        y: 30
+        y: 50
 
     },
     subtitle: {
@@ -241,7 +230,7 @@ const iceberg = {
                     const label = icebergLabels[index];
                     let color = '#fff';
                     if (labelPos > 8) {
-                        color = '#000';
+                        color = 'var(--highcharts-neutral-color-100)';
                     }
                     return `
                 <p style="color:${color};white-space:nowrap;">${label} m</p>
@@ -272,8 +261,7 @@ const iceberg = {
         useHTML: true,
         headerFormat: '',
         positioner: function () {
-            // return { x: 130, y: 365 };
-            return { x: 53, y: 1170 };
+            return tooltipPosition;
         }
     },
     plotOptions: {
@@ -336,6 +324,7 @@ const iceberg = {
         {
             type: 'arearange',
             name: 'bottom',
+            color: '#30426B',
             tooltip: {
                 pointFormatter: function () {
                     return '';
@@ -399,8 +388,8 @@ const iceberg = {
                 pointFormatter: function () {
                     return `<p class="berg-tip" aria-hidden="true">
                     <span>
-                    Pinnacle icebergs</span> - a
-                    large central spire or pyramid.</p>`;
+                    Pinnacle icebergs</span><br> A
+                    large central spire or pyramid</p>`;
                 }
             },
             xAxis: 2,
@@ -444,6 +433,13 @@ const iceberg = {
             visible: true,
             marker: {
                 enabled: false
+            },
+            point: {
+                events: {
+                    mouseOver: function () {
+                        this.series.chart.series[2].setState('hover');
+                    }
+                }
             },
             data: [
                 {
@@ -496,8 +492,8 @@ const iceberg = {
             tooltip: {
                 pointFormatter: function () {
                     return `<p class="berg-tip" aria-hidden="true">
-                            <span>Tabular icebergs</span> -
-                            horizontal and flat-topped.</p>`;
+                            <span>Tabular icebergs</span><br>
+                            horizontal and flat-topped</p>`;
 
                 }
             },
@@ -534,6 +530,13 @@ const iceberg = {
             visible: true,
             marker: {
                 enabled: false
+            },
+            point: {
+                events: {
+                    mouseOver: function () {
+                        this.series.chart.series[4].setState('hover');
+                    }
+                }
             },
             data: [
                 {
@@ -583,8 +586,8 @@ const iceberg = {
             tooltip: {
                 pointFormatter: function () {
                     return `<p class="berg-tip" aria-hidden="true">
-                    <span>Dry Dock icebergs</span> - eroded into a
-                    U shape.</p>`;
+                    <span>Dry Dock icebergs</span><br> Eroded into a
+                    U shape</p>`;
                 }
             },
             accessibility: {
@@ -632,6 +635,13 @@ const iceberg = {
             visible: true,
             marker: {
                 enabled: false
+            },
+            point: {
+                events: {
+                    mouseOver: function () {
+                        this.series.chart.series[6].setState('hover');
+                    }
+                }
             },
             data: [
                 {
@@ -685,8 +695,8 @@ const iceberg = {
             tooltip: {
                 pointFormatter: function () {
                     return `<p class="berg-tip" aria-hidden="true">
-                                <span>Dome icebergs</span> - large,
-                                smooth, rounded tops.</p>`;
+                                <span>Dome icebergs</span> <br>Large,
+                                smooth, rounded tops</p>`;
                 }
             },
             accessibility: {
@@ -733,6 +743,13 @@ const iceberg = {
             visible: true,
             marker: {
                 enabled: false
+            },
+            point: {
+                events: {
+                    mouseOver: function () {
+                        this.series.chart.series[8].setState('hover');
+                    }
+                }
             },
             data: [{
                 x: 12.5,
@@ -784,9 +801,9 @@ const iceberg = {
             tooltip: {
                 pointFormatter: function () {
                     return `<p class="berg-tip" aria-hidden="true">
-                            <span>Wedge icebergs</span> - tabular
+                            <span>Wedge icebergs</span><br> Tabular
                             icebergs that have
-                            tilted.</p>`;
+                            tilted</p>`;
 
                 }
             },
@@ -823,6 +840,13 @@ const iceberg = {
             marker: {
                 enabled: false
             },
+            point: {
+                events: {
+                    mouseOver: function () {
+                        this.series.chart.series[10].setState('hover');
+                    }
+                }
+            },
             data: [{
                 x: 16.12,
                 y: 8
@@ -851,78 +875,92 @@ const iceberg = {
                 y: 8
             }]
         }
-    ],
-    responsive: {
-        rules: [{
-            condition: {
-                maxWidth: 250
-            },
-            chartOptions: {
-                tooltip: {
-                    positioner: function () {
-                        // return { x: 130, y: 365 };
-                        return { x: 50, y: 165 };
-                    }
-                },
-                subtitle: {
-                    y: 200,
-                    x: 0
-                }
-            }
-        },
-        {
-            condition: {
-                minWidth: 251,
-                maxWidth: 300 // /up to 300
-            },
-            chartOptions: {
-                tooltip: {
-                    positioner: function () {
-                        return { x: 50, y: 200 };
-                    }
-                },
-                subtitle: {
-                    y: 240,
-                    x: 0
-                }
-            }
-        },
-        {
-            condition: {
-                minWidth: 301,
-                maxWidth: 499
-            },
-            chartOptions: {
-                tooltip: {
-                    positioner: function () {
-                        // return { x: 130, y: 365 };
-                        return { x: 70, y: 265 };
-                    }
-                },
-                subtitle: {
-                    y: 280,
-                    x: 20
-                }
-            }
-        },
-        {
-            condition: {
-                minWidth: 500
-            },
-            chartOptions: {
-                tooltip: {
-                    positioner: function () {
-                        return { x: 105, y: 360 };
-                    }
-                },
-                subtitle: {
-                    y: 360,
-                    x: 10
-                }
-            }
-        }
-        ]
-    }
+    ]
+    // responsive: {
+    //     rules: [{
+    //         condition: {
+    //             maxWidth: 250
+    //         },
+    //         chartOptions: {
+    //             tooltip: {
+    //                 positioner: function () {
+    //                     // return { x: 130, y: 365 };
+    //                     return { x: 50, y: 165 };
+    //                 }
+    //             },
+    //             subtitle: {
+    //                 y: 200,
+    //                 x: 0
+    //             }
+    //         }
+    //     },
+    //     {
+    //         condition: {
+    //             minWidth: 251,
+    //             maxWidth: 300 // /up to 300
+    //         },
+    //         chartOptions: {
+    //             tooltip: {
+    //                 positioner: function () {
+    //                     return { x: 50, y: 200 };
+    //                 }
+    //             },
+    //             subtitle: {
+    //                 y: 240,
+    //                 x: 0
+    //             }
+    //         }
+    //     },
+    //     {
+    //         condition: {
+    //             minWidth: 301,
+    //             maxWidth: 499
+    //         },
+    //         chartOptions: {
+    //             tooltip: {
+    //                 positioner: function () {
+    //                     // return { x: 130, y: 365 };
+    //                     return { x: 70, y: 265 };
+    //                 }
+    //             },
+    //             subtitle: {
+    //                 y: 280,
+    //                 x: 20
+    //             }
+    //         }
+    //     },
+    //     {
+    //         condition: {
+    //             minWidth: 500,
+    //             maxWidth: 599
+    //         },
+    //         chartOptions: {
+    //             tooltip: {
+    //                 positioner: function () {
+    //                     return { x: 105, y: 360 };
+    //                 }
+    //             },
+    //             subtitle: {
+    //                 y: 360,
+    //                 x: 10
+    //             }
+    //         }
+    //     },
+    //     {
+    //         condition: {
+    //             minWidth: 600,
+    //             maxWidth: 699
+    //         },
+    //         chartOptions: {
+    //             tooltip: {
+    //                 positioner: function () {
+    //                     return { x: 105, y: 460 };
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     ]
+    // }
 };
 
 Highcharts.chart('charts', iceberg);

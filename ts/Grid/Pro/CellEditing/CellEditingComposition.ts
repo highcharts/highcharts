@@ -2,11 +2,11 @@
  *
  *  Grid Cell Editing class.
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -32,7 +32,7 @@ import type Options from '../../Core/Options';
 import type Table from '../../Core/Table/Table';
 import type TableCell from '../../Core/Table/Body/TableCell';
 
-import Defaults from '../../Core/Defaults.js';
+import { defaultOptions as gridDefaultOptions } from '../../Core/Defaults.js';
 import Globals from '../../Core/Globals.js';
 import CellEditing from './CellEditing.js';
 import CellRendererRegistry from '../CellRendering/CellRendererRegistry.js';
@@ -57,242 +57,233 @@ const {
  * */
 
 /**
- * @internal
+ * Default options for the cell editing.
  */
-namespace CellEditingComposition {
-
-    /**
-     * Default options for the cell editing.
-     */
-    const defaultOptions: DeepPartial<Options> = {
+export const defaultOptions: DeepPartial<Options> = {
+    accessibility: {
+        announcements: {
+            cellEditing: true
+        }
+    },
+    lang: {
         accessibility: {
-            announcements: {
-                cellEditing: true
-            }
-        },
-        lang: {
-            accessibility: {
-                cellEditing: {
-                    editable: 'Editable.',
-                    announcements: {
-                        started: 'Entered cell editing mode.',
-                        edited: 'Edited cell value.',
-                        cancelled: 'Editing canceled.',
-                        notValid: 'Provided value is not valid.'
-                    }
+            cellEditing: {
+                editable: 'Editable.',
+                announcements: {
+                    started: 'Entered cell editing mode.',
+                    edited: 'Edited cell value.',
+                    cancelled: 'Editing canceled.',
+                    notValid: 'Provided value is not valid.'
                 }
             }
         }
-    };
+    }
+};
 
 
-    /**
-     * Extends the grid classes with cell editing functionality.
-     *
-     * @param TableClass
-     * The class to extend.
-     *
-     * @param TableCellClass
-     * The class to extend.
-     *
-     * @param ColumnClass
-     * The class to extend.
-     */
-    export function compose(
-        TableClass: typeof Table,
-        TableCellClass: typeof TableCell,
-        ColumnClass: typeof Column
-    ): void {
-        if (!pushUnique(Globals.composed, 'CellEditing')) {
-            return;
-        }
+/**
+ * Extends the grid classes with cell editing functionality.
+ *
+ * @param TableClass
+ * The class to extend.
+ *
+ * @param TableCellClass
+ * The class to extend.
+ *
+ * @param ColumnClass
+ * The class to extend.
+ */
+export function compose(
+    TableClass: typeof Table,
+    TableCellClass: typeof TableCell,
+    ColumnClass: typeof Column
+): void {
+    if (!pushUnique(Globals.composed, 'CellEditing')) {
+        return;
+    }
 
-        merge(true, Defaults.defaultOptions, defaultOptions);
+    merge(true, gridDefaultOptions, defaultOptions);
 
-        addEvent(ColumnClass, 'afterInit', afterColumnInit);
+    addEvent(ColumnClass, 'afterInit', afterColumnInit);
 
-        addEvent(TableClass, 'beforeInit', initTable);
-        addEvent(TableCellClass, 'keyDown', onCellKeyDown);
-        addEvent(TableCellClass, 'dblClick', onCellDblClick);
-        addEvent(TableCellClass, 'afterRender', addEditableCellA11yHint);
-        addEvent(TableCellClass, 'startedEditing', function (): void {
-            announceA11yUserEditedCell(this, 'started');
-        });
+    addEvent(TableClass, 'beforeInit', initTable);
+    addEvent(TableCellClass, 'keyDown', onCellKeyDown);
+    addEvent(TableCellClass, 'dblClick', onCellDblClick);
+    addEvent(TableCellClass, 'afterRender', addEditableCellA11yHint);
+    addEvent(TableCellClass, 'startedEditing', function (): void {
+        announceA11yUserEditedCell(this, 'started');
+    });
 
-        addEvent(
-            TableCellClass,
-            'stoppedEditing',
-            function (e: AnyRecord): void {
-                const cellEvents = merge(
-                    // Backward compatibility
-                    this.column.viewport.grid.options?.events?.cell,
-                    this.column.options.cells?.events
-                );
-
-                if (e.submit) {
-                    cellEvents?.afterEdit?.call(this);
-                }
-
-                announceA11yUserEditedCell(
-                    this,
-                    e.submit ? 'edited' : 'cancelled'
-                );
+    addEvent(
+        TableCellClass,
+        'stoppedEditing',
+        function (this: TableCell, e: AnyRecord): void {
+            if (e.submit) {
+                this.column.options.cells?.events?.afterEdit?.call(this);
             }
-        );
+            announceA11yUserEditedCell(
+                this,
+                e.submit ? 'edited' : 'cancelled'
+            );
+        }
+    );
+
+    addEvent(
+        TableCellClass,
+        'afterEditValue',
+        function (this: TableCell): void {
+            this.column.options.cells?.events?.afterEdit?.call(this);
+            announceA11yUserEditedCell(
+                this,
+                'edited'
+            );
+        }
+    );
+}
+
+/**
+ * Callback function called before table initialization.
+ */
+function initTable(this: Table): void {
+    this.cellEditing = new CellEditing(this);
+}
+
+/**
+ * Creates the edit mode renderer for the column.
+ *
+ * @param column
+ * The column to create the edit mode renderer for.
+ */
+function createEditModeRenderer(column: Column): EditModeRendererType {
+    const editModeOptions = column.options.cells?.editMode;
+    const selectedEditModeRendererTypeName =
+        editModeOptions?.renderer?.type;
+    const viewRendererTypeName =
+        column.options?.cells?.renderer?.type || 'text';
+
+    if (selectedEditModeRendererTypeName) {
+        return new CellRendererRegistry.types[
+            selectedEditModeRendererTypeName
+        ](column, editModeOptions?.renderer || {});
     }
 
-    /**
-     * Callback function called before table initialization.
-     */
-    function initTable(this: Table): void {
-        this.cellEditing = new CellEditing(this);
+    const ViewRendererType =
+        CellRendererRegistry.types[viewRendererTypeName] ||
+        CellRendererRegistry.types.text;
+
+    let editModeRendererTypeName =
+        ViewRendererType.defaultEditingRenderer;
+
+
+    if (typeof editModeRendererTypeName !== 'string') {
+        editModeRendererTypeName =
+            editModeRendererTypeName[column.dataType] || 'textInput';
     }
 
-    /**
-     * Creates the edit mode renderer for the column.
-     *
-     * @param column
-     * The column to create the edit mode renderer for.
-     */
-    function createEditModeRenderer(column: Column): EditModeRendererType {
-        const editModeOptions = column.options.cells?.editMode;
-        const selectedEditModeRendererTypeName =
-            editModeOptions?.renderer?.type;
-        const viewRendererTypeName =
-            column.options?.cells?.renderer?.type || 'text';
+    return new CellRendererRegistry.types[editModeRendererTypeName](
+        column,
+        editModeRendererTypeName === viewRendererTypeName ? merge(
+            column.options.cells?.renderer,
+            { disabled: false }
+        ) || {} : {}
+    );
+}
 
-        if (selectedEditModeRendererTypeName) {
-            return new CellRendererRegistry.types[
-                selectedEditModeRendererTypeName
-            ](column, editModeOptions?.renderer || {});
-        }
+/**
+ * Callback function called after column initialization.
+ */
+function afterColumnInit(this: Column): void {
+    const { options } = this;
 
-        const ViewRendererType =
-            CellRendererRegistry.types[viewRendererTypeName] ||
-            CellRendererRegistry.types.text;
-
-        let editModeRendererTypeName =
-            ViewRendererType.defaultEditingRenderer;
-
-
-        if (typeof editModeRendererTypeName !== 'string') {
-            editModeRendererTypeName =
-                editModeRendererTypeName[column.dataType] || 'textInput';
-        }
-
-        return new CellRendererRegistry.types[editModeRendererTypeName](
-            column,
-            editModeRendererTypeName === viewRendererTypeName ? merge(
-                column.options.cells?.renderer,
-                { disabled: false }
-            ) || {} : {}
-        );
-    }
-
-    /**
-     * Callback function called after column initialization.
-     */
-    function afterColumnInit(this: Column): void {
-        const { options } = this;
-
-        if (
-            options?.cells?.editMode?.enabled ||
-            options?.cells?.editable
-        ) {
-            this.editModeRenderer = createEditModeRenderer(this);
-        }
-    }
-
-    /**
-     * Callback function called when a key is pressed on a cell.
-     *
-     * @param e
-     * The event object.
-     */
-    function onCellKeyDown(
-        this: TableCell,
-        e: GridEvent<TableCell, KeyboardEvent>
-    ): void {
-        if (
-            e.originalEvent?.key !== 'Enter' ||
-            !this.column.editModeRenderer
-        ) {
-            return;
-        }
-
-        this.row.viewport.cellEditing?.startEditing(this);
-    }
-
-    /**
-     * Callback function called when a cell is double clicked.
-     */
-    function onCellDblClick(this: TableCell): void {
-        if (this.column.editModeRenderer) {
-            this.row.viewport.cellEditing?.startEditing(this);
-        }
-    }
-
-    /**
-     * Add the 'editable' hint span element for the editable cell.
-     */
-    function addEditableCellA11yHint(this: TableCell): void {
-        const a11y = this.row.viewport.grid.accessibility;
-        if (!a11y || this.a11yEditableHint?.isConnected) {
-            return;
-        }
-
-        const editableLang = this.row.viewport.grid.options
-            ?.lang?.accessibility?.cellEditing?.editable;
-
-        if (
-            (
-                !this.column.options.cells?.editable &&
-                !this.column.options.cells?.editMode?.enabled
-            ) ||
-            !editableLang
-        ) {
-            return;
-        }
-
-
-        this.a11yEditableHint = makeHTMLElement('span', {
-            className: Globals.getClassName('visuallyHidden'),
-            innerText: ', ' + editableLang
-        }, this.htmlElement);
-    }
-
-    /**
-     * Announce that the cell editing started.
-     *
-     * @param cell
-     * The cell that is being edited.
-     *
-     * @param msgType
-     * The type of the message.
-     */
-    function announceA11yUserEditedCell(
-        cell: TableCell,
-        msgType: 'started'|'edited'|'cancelled'
-    ): void {
-        const a11y = cell.row.viewport.grid.accessibility;
-        if (!a11y) {
-            return;
-        }
-
-        const { options } = a11y.grid;
-        if (!options?.accessibility?.announcements?.cellEditing) {
-            return;
-        }
-
-        const lang = options?.lang?.accessibility?.cellEditing?.announcements;
-        const msg = lang?.[msgType];
-        if (!msg) {
-            return;
-        }
-
-        a11y.announce(msg);
+    if (options?.cells?.editMode?.enabled) {
+        this.editModeRenderer = createEditModeRenderer(this);
     }
 }
+
+/**
+ * Callback function called when a key is pressed on a cell.
+ *
+ * @param e
+ * The event object.
+ */
+function onCellKeyDown(
+    this: TableCell,
+    e: GridEvent<TableCell, KeyboardEvent>
+): void {
+    if (
+        e.originalEvent?.key !== 'Enter' ||
+        !this.column.editModeRenderer
+    ) {
+        return;
+    }
+
+    this.row.viewport.cellEditing?.startEditing(this);
+}
+
+/**
+ * Callback function called when a cell is double clicked.
+ */
+function onCellDblClick(this: TableCell): void {
+    if (this.column.editModeRenderer) {
+        this.row.viewport.cellEditing?.startEditing(this);
+    }
+}
+
+/**
+ * Add the 'editable' hint span element for the editable cell.
+ */
+function addEditableCellA11yHint(this: TableCell): void {
+    const a11y = this.row.viewport.grid.accessibility;
+    if (!a11y || this.a11yEditableHint?.isConnected) {
+        return;
+    }
+
+    const editableLang = this.row.viewport.grid.options
+        ?.lang?.accessibility?.cellEditing?.editable;
+
+    if (!this.column.options.cells?.editMode?.enabled || !editableLang) {
+        return;
+    }
+
+
+    this.a11yEditableHint = makeHTMLElement('span', {
+        className: Globals.getClassName('visuallyHidden'),
+        innerText: ', ' + editableLang
+    }, this.htmlElement);
+}
+
+/**
+ * Announce that the cell editing started.
+ *
+ * @param cell
+ * The cell that is being edited.
+ *
+ * @param msgType
+ * The type of the message.
+ */
+function announceA11yUserEditedCell(
+    cell: TableCell,
+    msgType: 'started'|'edited'|'cancelled'
+): void {
+    const a11y = cell.row.viewport.grid.accessibility;
+    if (!a11y) {
+        return;
+    }
+
+    const { options } = a11y.grid;
+    if (!options?.accessibility?.announcements?.cellEditing) {
+        return;
+    }
+
+    const lang = options?.lang?.accessibility?.cellEditing?.announcements;
+    const msg = lang?.[msgType];
+    if (!msg) {
+        return;
+    }
+
+    a11y.announce(msg);
+}
+
 
 /* *
  *
@@ -423,13 +414,6 @@ declare module '../../Core/Accessibility/A11yOptions' {
 declare module '../../Core/Options' {
     interface ColumnCellOptions {
         /**
-         * @deprecated
-         * Use `editMode.enabled` instead. This option will be removed in the
-         * next major release.
-         */
-        editable?: boolean;
-
-        /**
          * Whether to enabled the cell edit mode functionality. It allows to
          * edit the cell value in a separate input field that is displayed
          * after double-clicking the cell or pressing the Enter key.
@@ -449,4 +433,7 @@ export type EditMsgType = 'started' | 'edited' | 'cancelled';
  *
  * */
 
-export default CellEditingComposition;
+export default {
+    compose,
+    defaultOptions
+};

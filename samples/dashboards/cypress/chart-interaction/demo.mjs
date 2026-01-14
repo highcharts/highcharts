@@ -7,7 +7,6 @@ import HighchartsPlugin from '../../../../code/dashboards/es-modules/Dashboards/
 HighchartsPlugin.custom.connectHighcharts(Highcharts);
 PluginHandler.addPlugin(HighchartsPlugin);
 
-
 Dashboards.board('container', {
     editMode: {
         enabled: true,
@@ -20,12 +19,10 @@ Dashboards.board('container', {
         connectors: [{
             id: 'connector-1',
             type: 'CSV',
-            options: {
-                csv: `$GME,$AMC,$NOK
+            csv: `$GME,$AMC,$NOK
                     4,5,6
                     1,5,2
                     41,23,2`
-            }
         }]
     },
     gui: {
@@ -108,4 +105,15 @@ Dashboards.board('container', {
             highlight: true
         }
     }]
-}, true);
+}, true).then(board => {
+    const editMode = board.editMode,
+        addEvent = Dashboards.addEvent;
+
+    addEvent(editMode, 'cellDestroyed', e => {
+        document.getElementById('cellDestroyed').value = 'cellDestroyed';
+    });
+
+    addEvent(editMode, 'rowDestroyed', e => {
+        document.getElementById('rowDestroyed').value = 'rowDestroyed';
+    });
+});

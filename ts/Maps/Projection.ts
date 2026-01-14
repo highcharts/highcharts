@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2021 Torstein Honsi
+ *  (c) 2021-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -80,7 +81,6 @@ const deg2rad = Math.PI * 2 / 360,
 /**
  * Keep longitude within -180 and 180. This is faster than using the modulo
  * operator, and preserves the distinction between -180 and 180.
- * @private
  */
 const wrapLon = (lon: number): number => {
     // Replacing the if's with while would increase the range, but make it prone
@@ -96,13 +96,11 @@ const wrapLon = (lon: number): number => {
 
 /**
  * Calculate the haversine of an angle.
- * @private
  */
 const hav = (radians: number): number => (1 - Math.cos(radians)) / 2;
 
 /**
 * Calculate the haversine of an angle from two coordinates.
-* @private
 */
 const havFromCoords = (point1: LonLatArray, point2: LonLatArray): number => {
     const cos = Math.cos,
@@ -123,6 +121,7 @@ const havFromCoords = (point1: LonLatArray, point2: LonLatArray): number => {
  *
  * */
 
+/** @internal */
 class Projection {
 
     /* *
@@ -141,7 +140,6 @@ class Projection {
 
     /**
      * Add a projection definition to the registry, accessible by its `name`.
-     * @private
      */
     public static add<T extends ProjectionRegistryName>(
         name: T,
@@ -152,7 +150,6 @@ class Projection {
 
     /**
      * Calculate the distance in meters between two given coordinates.
-     * @private
      */
     public static distance(
         point1: LonLatArray,
@@ -169,7 +166,6 @@ class Projection {
 
     /**
      * Calculate the geodesic line string between two given coordinates.
-     * @private
      */
     public static geodesic(
         point1: LonLatArray,
@@ -278,13 +274,17 @@ class Projection {
 
     public def?: ProjectionDefinition;
 
-    // Whether the chart has points, lines or polygons given as coordinates
-    // with positive up, as opposed to paths in the SVG plane with positive
-    // down.
+    /**
+     * Whether the chart has points, lines or polygons given as coordinates
+     * with positive up, as opposed to paths in the SVG plane with positive
+     * down.
+     */
     public hasCoordinates: boolean = false;
 
-    // Whether the chart has true projection as opposed to pre-projected geojson
-    // as in the legacy map collection.
+    /**
+     * Whether the chart has true projection as opposed to pre-projected geojson
+     * as in the legacy map collection.
+     */
     public hasGeoProjection: boolean = false;
 
     public maxLatitude = 90;
@@ -389,7 +389,6 @@ class Projection {
     /**
      * Take the rotation options and returns the appropriate projection
      * functions.
-     * @private
      */
     public getRotator(
         rotation: ProjectionRotationOption
@@ -459,7 +458,6 @@ class Projection {
     /**
      * Project a lonlat coordinate position to xy. Dynamically overridden when
      * projection is set.
-     * @private
      */
     public forward(
         lonLat: LonLatArray
@@ -470,7 +468,6 @@ class Projection {
     /**
      * Unproject an xy chart coordinate position to lonlat. Dynamically
      * overridden when projection is set.
-     * @private
      */
     public inverse(
         xy: ProjectedXYArray
@@ -677,7 +674,6 @@ class Projection {
 
     /**
      * Take a GeoJSON geometry and return a translated SVGPath.
-     * @private
      */
     public path(geometry: GeoJSONGeometryMultiPoint): SVGPath {
 
@@ -916,4 +912,5 @@ class Projection {
  *
  * */
 
+/** @internal */
 export default Projection;

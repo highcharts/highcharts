@@ -2,11 +2,11 @@
  *
  *  Grid Columns Resizer class.
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -22,6 +22,8 @@
  *  Imports
  *
  * */
+
+import type { GridEventListener } from '../../GridUtils.js';
 
 import Table from '../Table.js';
 import Column from '../Column.js';
@@ -93,7 +95,7 @@ class ColumnsResizer {
     /**
      * The handles and their mouse down event listeners.
      */
-    private handles: Array<[HTMLElement, (e: MouseEvent) => void]> = [];
+    private handles: Array<[HTMLElement, GridEventListener[]]> = [];
 
 
     /* *
@@ -128,15 +130,7 @@ class ColumnsResizer {
     public renderColumnDragHandles(column: Column, cell: Cell): void {
         const vp = column.viewport;
 
-        if (
-            vp.columnsResizer && (
-                vp.columnDistribution.type !== 'full' ||
-                (
-                    vp.grid.enabledColumns &&
-                    column.index < vp.grid.enabledColumns.length - 1
-                )
-            )
-        ) {
+        if (vp.columnsResizer) {
             const handle = makeHTMLElement('div', {
                 className: Globals.getClassName('resizerHandles')
             }, cell.htmlElement);
@@ -165,7 +159,7 @@ class ColumnsResizer {
         const diff = e.pageX - (this.dragStartX || 0);
         const vp = this.viewport;
 
-        vp.columnDistribution.resize(this, diff);
+        vp.columnResizing.resize(this, diff);
 
         vp.reflow();
         vp.rowsVirtualizer.adjustRowHeights();
@@ -183,6 +177,11 @@ class ColumnsResizer {
         this.draggedColumn?.header?.htmlElement?.classList.remove(
             Globals.getClassName('resizedColumn')
         );
+
+
+        if (!this.draggedResizeHandle?.matches(':hover')) {
+            this.draggedResizeHandle?.classList.remove('hovered');
+        }
 
         this.dragStartX = void 0;
         this.draggedColumn = void 0;
@@ -208,14 +207,15 @@ class ColumnsResizer {
         handle: HTMLElement,
         column: Column
     ): void {
-        const onHandleMouseDown = (e: MouseEvent): void => {
+        const onHandleMouseDown = (e: Event): void => {
             const vp = column.viewport;
 
             this.isResizing = true;
+            handle.classList.add('hovered');
 
             vp.reflow();
 
-            this.dragStartX = e.pageX;
+            this.dragStartX = (e as MouseEvent).pageX;
             this.draggedColumn = column;
             this.draggedResizeHandle = handle;
             this.columnStartWidth = column.getWidth();
@@ -227,8 +227,35 @@ class ColumnsResizer {
             );
         };
 
-        this.handles.push([handle, onHandleMouseDown]);
-        handle.addEventListener('mousedown', onHandleMouseDown);
+        const onHandleMouseOver = (): void => {
+            if (this.draggedResizeHandle) {
+                return;
+            }
+            handle.classList.add('hovered');
+        };
+
+        const onHandleMouseOut = (): void => {
+            if (this.draggedResizeHandle) {
+                return;
+            }
+            handle.classList.remove('hovered');
+        };
+
+        const handleListeners: GridEventListener[] = [{
+            eventName: 'mousedown',
+            listener: onHandleMouseDown
+        }, {
+            eventName: 'mouseover',
+            listener: onHandleMouseOver
+        }, {
+            eventName: 'mouseout',
+            listener: onHandleMouseOut
+        }];
+
+        for (const { eventName, listener } of handleListeners) {
+            handle.addEventListener(eventName, listener);
+        }
+        this.handles.push([handle, handleListeners]);
     }
 
     /**
@@ -240,8 +267,11 @@ class ColumnsResizer {
         document.removeEventListener('mouseup', this.onDocumentMouseUp);
 
         for (let i = 0, iEnd = this.handles.length; i < iEnd; i++) {
-            const [handle, listener] = this.handles[i];
-            handle.removeEventListener('mousedown', listener);
+            const [handle, listeners] = this.handles[i];
+
+            for (const { eventName, listener } of listeners) {
+                handle.removeEventListener(eventName, listener);
+            }
         }
     }
 }

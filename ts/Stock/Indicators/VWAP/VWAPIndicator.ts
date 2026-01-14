@@ -1,12 +1,13 @@
 /* *
  *
- *  (c) 2010-2025 Paweł Dalek
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Paweł Dalek
  *
  *  Volume Weighted Average Price (VWAP) indicator for Highcharts Stock
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 

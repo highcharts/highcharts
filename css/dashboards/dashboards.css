@@ -1,9 +1,12 @@
+/* SPDX-License-Identifier: LicenseRef-Highcharts */
+
 /**
  * @license Highcharts Dashboards v@product.version@
  *
  * (c) 2009-2025 Highsoft AS
  *
- * License: www.highcharts.com/license
+ * A commercial license may be required depending on use.
+ * See www.highcharts.com/license
  */
 
 :root,
@@ -79,7 +82,7 @@
     }
 }
 
-.highcharts-datagrid-container {
+.highcharts-grid-container {
     --ig-border-width: 0;
     --ig-row-border-width: 1px;
 }
@@ -353,7 +356,6 @@
     background-color: var(--highcharts-background-color);
     background-clip: border-box;
     border-radius: var(--highcharts-dashboards-border-radius);
-    overflow: hidden;
 }
 
 .highcharts-dashboards-cell > .highcharts-dashboards-component .highcharts-dashboards-component-kpi-chart-container {

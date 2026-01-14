@@ -33,7 +33,7 @@ const rnaNewsConnector = new HighchartsConnectors.Morningstar.RNANewsConnector({
 
 await rnaNewsConnector.load();
 
-new DataGrid.DataGrid('container', {
+new Grid.Grid('container', {
     dataTable: rnaNewsConnector,
     editable: false,
     columns: {
@@ -56,19 +56,17 @@ Dashboards.board('container', {
         connectors: [{
             id: 'rna',
             type: 'MorningstarRNANews',
-            options: {
-                api: {
-                    access: {
-                        token: 'your_access_token'
-                    }
-                },
-                security: {
-                    id: 'GB00BLGZ9862',
-                    idType: 'ISIN'
-                },
-                startDate: '2000-01-01',
-                endDate: '2020-12-31'
-            }
+            api: {
+                access: {
+                    token: 'your_access_token'
+                }
+            },
+            security: {
+                id: 'GB00BLGZ9862',
+                idType: 'ISIN'
+            },
+            startDate: '2000-01-01',
+            endDate: '2020-12-31'
         }]
     },
     components: [
@@ -77,9 +75,9 @@ Dashboards.board('container', {
             connector: {
                 id: 'rna'
             },
-            type: 'DataGrid',
+            type: 'Grid',
             title: 'Regulatory News for Tesco',
-            dataGridOptions: {
+            gridOptions: {
                 editable: false,
                 columns: {
                     Day: {

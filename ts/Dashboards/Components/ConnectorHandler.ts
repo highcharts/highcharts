@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -56,49 +56,47 @@ class ConnectorHandler {
      * Connector options for the component.
      */
     public options: ConnectorHandler.ConnectorOptions;
+
     /**
-     * Connector that allows you to load data via URL or from a local source.
+     * Data connector instance that is used in this connector handler.
      */
     public connector?: Component.ConnectorTypes;
+
     /**
-     * The id of the connector configuration in the data pool of the dashboard.
+     * The ID of the data connector configuration in the data pool of the
+     * dashboard.
      */
     public connectorId?: string;
+
     /**
      * The component that the connector is tied to.
      */
     public component: Component;
+
     /**
-     * The interval for rendering the component on data changes.
-     * @internal
+     * The data table bound to the connector handler.
      */
-    private tableEventTimeout?: number;
-    /**
-     * Event listeners tied to the current DataTable. Used for rerendering the
-     * component on data changes.
-     *
-     * @internal
-     */
-    private tableEvents: Function[] = [];
-    /**
-     * DataModifier that is applied on top of modifiers set on the DataStore.
-     *
-     * @internal
-     */
-    public presentationModifier?: DataModifier;
-    /**
-     * The table being presented, either a result of the above or a way to
-     * modify the table via events.
-     *
-     * @internal
-     */
-    public presentationTable?: DataTable;
+    public dataTable?: DataTable;
+
     /**
      * Helper flag for detecting whether the connector handler has been
      * destroyed, used to check and prevent further operations if the connector
      * handler has been destroyed during asynchronous functions.
      */
     private destroyed?: boolean;
+
+    /**
+     * The interval for rendering the component on data changes.
+     * @internal
+     */
+    private tableEventTimeout?: number;
+
+    /**
+     * Event listeners tied to the current DataTable. Used for rerendering the
+     * component on data changes.
+     * @internal
+     */
+    private tableEvents: Function[] = [];
 
 
     /* *
@@ -172,7 +170,7 @@ class ConnectorHandler {
      * @param table
      * The data table instance for settings and events.
      */
-    public setTable(table: DataTable): void {
+    private setTable(table: DataTable): void {
         // Set up event listeners
         this.clearTableListeners(table);
         this.setupTableListeners(table);
@@ -195,14 +193,7 @@ class ConnectorHandler {
             }
         );
 
-        if (this.presentationModifier) {
-            this.presentationTable =
-                this.presentationModifier.modifyTable(
-                    table.modified.clone()
-                ).modified;
-        } else {
-            this.presentationTable = table;
-        }
+        this.dataTable = table;
     }
 
     /**
@@ -221,18 +212,8 @@ class ConnectorHandler {
         }
 
         this.connector = connector;
-
         if (connector) {
-            const dataTables = connector.dataTables;
-
-            if (this.options.dataTableKey) {
-                // Match a data table used in this component.
-                this.setTable(dataTables[this.options.dataTableKey]);
-
-                // Take the first connector data table if id not provided.
-            } else {
-                this.setTable(Object.values(dataTables)[0]);
-            }
+            this.setTable(connector.getTable(this.options.dataTableKey));
         }
 
         this.addConnectorAssignment();
@@ -293,12 +274,12 @@ class ConnectorHandler {
         if (connector) {
             tableEvents.push(table.on(
                 'afterSetModifier',
-                (e): void => {
+                (e: DataTable.SetModifierEvent): void => {
                     if (e.type === 'afterSetModifier') {
                         clearTimeout(this.tableEventTimeout);
                         this.tableEventTimeout = Globals.win.setTimeout(
                             (): void => {
-                                connector.emit({
+                                this.component.emit({
                                     ...e,
                                     type: 'tableChanged',
                                     targetConnector: connector

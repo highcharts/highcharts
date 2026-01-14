@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Grzegorz Blachlinski, Sebastian Bochan
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Grzegorz Blachlinski, Sebastian Bochan
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -22,7 +23,6 @@ import type NetworkgraphSeriesOptions from '../Networkgraph/NetworkgraphSeriesOp
 import type PackedBubbleDataLabelOptions from './PackedBubbleDataLabelOptions';
 import type PackedBubbleLayout from './PackedBubbleLayout';
 import type PackedBubblePointOptions from './PackedBubblePointOptions';
-import type PackedBubbleSeries from './PackedBubbleSeries';
 import type {
     SeriesEventsOptions,
     SeriesStatesOptions
@@ -203,7 +203,7 @@ export interface PackedBubbleSeriesOptions
 
     sizeBy?: BubbleSizeByValue;
 
-    states?: SeriesStatesOptions<PackedBubbleSeries>;
+    states?: SeriesStatesOptions<PackedBubbleSeriesOptions>;
     stickyTracking: false;
     tooltip?: Partial<TooltipOptions>;
 

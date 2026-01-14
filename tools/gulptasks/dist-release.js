@@ -18,9 +18,10 @@ const { removeFile } = require('@highcharts/highcharts-assembler/src/utilities.j
 const releaseRepos = {
     Highcharts: 'highcharts-dist',
     Grid: {
-        lite: 'grid-lite-dist'
-        // pro: 'grid-pro-dist'
-    }
+        lite: 'grid-lite-dist',
+        pro: 'grid-pro-dist'
+    },
+    Dashboards: 'dashboards-dist'
 };
 
 /**
@@ -50,8 +51,10 @@ async function askUser(question) {
  * @param {string} productName The product name.
  */
 function getHandledRepos(productName) {
-    return productName === 'Grid' ?
-        Object.values(releaseRepos.Grid) : [releaseRepos.Highcharts];
+    const repos = releaseRepos[productName];
+    // Grid has multiple repos (lite and pro), others have single repo
+    return typeof repos === 'object' && !Array.isArray(repos) ?
+        Object.values(repos) : [repos];
 }
 
 /**
@@ -115,17 +118,23 @@ async function npmPublish(push = false, releaseRepo = releaseRepos.Highcharts) {
         const answer = await askUser(
             '\nAbout to publish to npm using \'latest\' tag. To approve, \n' +
             'enter the one time password from your 2FA authentication setup. \n' +
+            'To try without OTP, enter \'Y\'\n' +
             'To abort, enter \'n\': '
         );
         if (answer === 'n') {
             const message = 'Aborted before invoking \'npm publish\'! Command must be run manually to complete the release.';
             throw new Error(message);
         }
-        if (!answer.match(/^\d{6}$/u)) {
+        if (answer !== 'Y' && !answer.match(/^\d{6}$/u)) {
             throw new Error('Invalid OTP. Please enter a 6 digit number.');
         }
+
+        let command = 'npm publish';
+        if (answer !== 'Y') {
+            command += ` --otp=${answer}`;
+        }
         childProcess.execSync(
-            `npm publish --otp=${answer}`,
+            command,
             { cwd: pathToDistRepo }
         );
         log.message('Successfully published to npm!');
@@ -168,7 +177,6 @@ async function removeFilesInFolder(folder, exceptions) {
  * To replace with
  * @param {Array<string>} files The files to update.
  * @param {string} [productName] The product name.
- * Files which should be updated.
  */
 function updateJSONFiles(version, files, productName) {
     log.message('Updating bower.json and package.json for ' + productName + '...');
@@ -183,6 +191,25 @@ function updateJSONFiles(version, files, productName) {
                     json.main ?
                         json.main.replace(/\.js$/u, '.d.ts') :
                         'highcharts.d.ts'
+                );
+
+                if (json.dependencies) {
+                    delete json.dependencies.jspdf;
+                    delete json.dependencies['svg2pdf.js'];
+                }
+
+                json.peerDependencies = Object.assign({}, json.peerDependencies, {
+                    jspdf: '^3.0.0',
+                    'svg2pdf.js': '^2.6.0'
+                });
+
+                json.peerDependenciesMeta = Object.assign(
+                    {},
+                    json.peerDependenciesMeta,
+                    {
+                        jspdf: { optional: true },
+                        'svg2pdf.js': { optional: true }
+                    }
                 );
             }
             json.version = version;
@@ -211,10 +238,10 @@ function copyFiles() {
 
     const files = {
         // 'vendor/canvg.js': join(pathToDistRepo, 'lib/canvg.js'),
-        'vendor/jspdf.js': join(pathToDistRepo, 'lib/jspdf.js'),
-        'vendor/jspdf.src.js': join(pathToDistRepo, 'lib/jspdf.src.js'),
-        'vendor/svg2pdf.js': join(pathToDistRepo, 'lib/svg2pdf.js'),
-        'vendor/svg2pdf.src.js': join(pathToDistRepo, 'lib/svg2pdf.src.js')
+        // 'vendor/jspdf.js': join(pathToDistRepo, 'lib/jspdf.js'),
+        // 'vendor/jspdf.src.js': join(pathToDistRepo, 'lib/jspdf.src.js'),
+        // 'vendor/svg2pdf.js': join(pathToDistRepo, 'lib/svg2pdf.js'),
+        // 'vendor/svg2pdf.src.js': join(pathToDistRepo, 'lib/svg2pdf.src.js')
     };
 
     const filesToIgnore = [
@@ -225,7 +252,6 @@ function copyFiles() {
 
     const pathsToIgnore = [
         'dashboards',
-        'datagrid',
         'grid',
         'es5'
     ];
@@ -272,11 +298,11 @@ function copyGridFiles() {
         {
             from: join('build', 'dist', 'grid-lite', 'code'),
             to: join('..', releaseRepos.Grid.lite)
+        },
+        {
+            from: join('build', 'dist', 'grid-pro', 'code'),
+            to: join('..', releaseRepos.Grid.pro)
         }
-        // {
-        //     from: join('build', 'dist', 'grid-pro', 'code'),
-        //     to: join('..', releaseRepos.Grid.pro)
-        // }
     ];
 
     const filesToIgnore = [
@@ -300,6 +326,43 @@ function copyGridFiles() {
     Object.keys(mapFromTo).forEach(from => {
         const to = mapFromTo[from];
         // libFS.copyAllFiles(from, to);
+        fs.copySync(from, to);
+    });
+    log.message('Files copied successfully!');
+}
+
+/**
+ * Copy the Dashboards JavaScript and CSS files over.
+ */
+function copyDashboardsFiles() {
+    const mapFromTo = {};
+    const folders = [
+        {
+            from: join('build', 'dist', 'dashboards', 'code'),
+            to: join('..', releaseRepos.Dashboards)
+        }
+    ];
+
+    const filesToIgnore = [
+        'package.json'
+    ];
+
+    // Copy all the files in the code folder
+    folders.forEach(folder => {
+        const {
+            from,
+            to
+        } = folder;
+        getFilesInFolder(from, true)
+            .filter(path => !filesToIgnore.some(pattern => path.endsWith(pattern)))
+            .forEach(filename => {
+                mapFromTo[join(from, filename)] = join(to, filename);
+            });
+    });
+
+    // Copy all the files to release repository
+    Object.keys(mapFromTo).forEach(from => {
+        const to = mapFromTo[from];
         fs.copySync(from, to);
     });
     log.message('Files copied successfully!');
@@ -403,6 +466,9 @@ async function checkIfCodeExists(productName) {
         Grid: [
             join('build', 'dist', 'grid-lite', 'code', 'grid-lite.js')
             // join('build', 'dist', 'grid-pro', 'code', 'grid-pro.js')
+        ],
+        Dashboards: [
+            join('build', 'dist', 'dashboards', 'code', 'dashboards.js')
         ]
     };
 
@@ -464,6 +530,9 @@ async function release() {
         updateJSONFiles(version, ['bower', 'package'], productName);
     } else if (productName === 'Grid') {
         copyGridFiles();
+        updateJSONFiles(version, ['package'], productName);
+    } else if (productName === 'Dashboards') {
+        copyDashboardsFiles();
         updateJSONFiles(version, ['package'], productName);
     }
 

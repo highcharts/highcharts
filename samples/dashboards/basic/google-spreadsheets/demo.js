@@ -6,33 +6,29 @@ Dashboards.board('container', {
         connectors: [{
             id: 'conn-raw',
             type: 'GoogleSheets',
-            options: {
-                googleAPIKey: googleApiKey,
-                googleSpreadsheetKey: googleSpreadsheetKey
-            }
+            googleAPIKey: googleApiKey,
+            googleSpreadsheetKey: googleSpreadsheetKey
         }, {
             id: 'conn-mod',
             type: 'GoogleSheets',
-            options: {
-                googleAPIKey: googleApiKey,
-                googleSpreadsheetKey: googleSpreadsheetKey,
-                beforeParse: data => {
-                    // Postfix header items with '*'
-                    data.forEach(row => {
-                        row[0] += '*';
-                    });
+            googleAPIKey: googleApiKey,
+            googleSpreadsheetKey: googleSpreadsheetKey,
+            beforeParse: data => {
+                // Postfix header items with '*'
+                data.forEach(row => {
+                    row[0] += '*';
+                });
 
-                    // Special label from first header item
-                    data[0][0] = '-';
+                // Special label from first header item
+                data[0][0] = '-';
 
-                    // Supply Jane with additional pears
-                    data[2][3] += 20;
+                // Supply Jane with additional pears
+                data[2][3] += 20;
 
-                    // Deprive Joe of his bananas
-                    data[3][4] = 0;
+                // Deprive Joe of his bananas
+                data[3][4] = 0;
 
-                    return data;
-                }
+                return data;
             }
         }]
     },
@@ -41,14 +37,14 @@ Dashboards.board('container', {
         connector: {
             id: 'conn-raw'
         },
-        type: 'DataGrid',
+        type: 'Grid',
         title: 'Google Sheet Raw'
     }, {
         renderTo: 'dashboard-col-1',
         connector: {
             id: 'conn-mod'
         },
-        type: 'DataGrid',
+        type: 'Grid',
         title: 'Google Sheet Modified'
     }]
 });

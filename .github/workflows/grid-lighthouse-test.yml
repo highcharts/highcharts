@@ -3,6 +3,7 @@ on:
   pull_request:
     branches:
       - 'master'
+      - 'grid/**'
     paths:
       - '.github/workflows/grid-lighthouse-test.yml'
       - 'css/grid*'
@@ -64,7 +65,7 @@ jobs:
       - name: Install Highcharts Utils
         run: |
           cd utils
-          npm i
+          npm ci
 
       - name: Run cypress via action
         uses: cypress-io/github-action@v5

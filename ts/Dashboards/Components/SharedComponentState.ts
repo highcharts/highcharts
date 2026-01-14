@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Gøran Slettemark
@@ -40,8 +40,7 @@ const {
  * Contains presentation information like column order, usually in relation to a
  * table instance.
  */
-class SharedComponentState
-implements Serializable<SharedComponentState, SharedComponentState.JSON> {
+class SharedComponentState implements Serializable<SharedComponentState, SharedComponentState.JSON> {
 
     /* *
      *
@@ -96,8 +95,8 @@ implements Serializable<SharedComponentState, SharedComponentState.JSON> {
         return (this.columnOrder || []).slice();
     }
 
-    public getColumnVisibility(columnName: string): boolean | undefined {
-        return this.columnVisibilityMap[columnName];
+    public getColumnVisibility(columnId: string): boolean | undefined {
+        return this.columnVisibilityMap[columnId];
     }
 
     /**
@@ -233,23 +232,24 @@ implements Serializable<SharedComponentState, SharedComponentState.JSON> {
         point?: SharedComponentState.PresentationHoverPointType | HTMLElement,
         eventDetail?: SharedComponentState.HoverPointEventDetails
     ): void {
-        const isDataGrid = eventDetail && eventDetail.isDataGrid;
-        this.hoverPoint = isDataGrid ? void 0 : point;
+        const isGrid = eventDetail && eventDetail.isGrid;
+        this.hoverPoint = isGrid ? void 0 : point;
 
         if (point instanceof HTMLElement) {
-            this.hoverRow = isDataGrid ? point : void 0;
+            this.hoverRow = isGrid ? point : void 0;
         }
 
         this.emit({
             type: 'afterHoverPointChange',
-            hoverPoint: isDataGrid ? void 0 : this.hoverPoint,
-            hoverRow: isDataGrid ? this.hoverRow : void 0,
+            hoverPoint: isGrid ? void 0 : this.hoverPoint,
+            hoverRow: isGrid ? this.hoverRow : void 0,
             detail: eventDetail
         });
     }
 
-    public getHoverPoint():
-    (SharedComponentState.PresentationHoverPointType|undefined) {
+    public getHoverPoint(): (
+        SharedComponentState.PresentationHoverPointType | undefined
+    ) {
         return this.hoverPoint;
     }
 
@@ -360,7 +360,7 @@ namespace SharedComponentState {
      * Event types related to the column order.
      */
     export type ColumnOrderEventType = (
-        'columnOrderChange'|'afterColumnOrderChange'
+        'columnOrderChange' | 'afterColumnOrderChange'
     );
 
     export type ColumnVisibilityEventType = (
@@ -388,7 +388,7 @@ namespace SharedComponentState {
 
     export interface HoverPointEventDetails {
         detail?: AnyRecord;
-        isDataGrid?: boolean;
+        isGrid?: boolean;
         sender?: string
     }
 
@@ -429,7 +429,7 @@ namespace SharedComponentState {
 
     export type ColumnVisibilityType = Record<string, boolean>;
 
-    export type SelectionObjectType = Record<string, { columnName?: string; min?: number; max?: number }>;
+    export type SelectionObjectType = Record<string, { columnId?: string; min?: number; max?: number }>;
 
     export type PresentationHoverPointType = Partial<AnyRecord>;
 
@@ -437,7 +437,7 @@ namespace SharedComponentState {
         type: selectionEventType;
         detail?: AnyRecord,
         reset: boolean;
-        selection: Record<string, {min?: number | undefined; max?: number | undefined}>;
+        selection: Record<string, { min?: number | undefined; max?: number | undefined }>;
     }
 
     /**

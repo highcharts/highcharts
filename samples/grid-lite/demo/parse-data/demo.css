@@ -1,4 +1,4 @@
-@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid.css");
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid-lite.css");
 
 body {
     font-family:
@@ -16,12 +16,12 @@ body {
     color: var(--highcharts-neutral-color-100);
 }
 
-#container {
-    padding: 8px;
+.demo {
+    padding: 8px 12px;
 }
 
 .highcharts-description {
-    padding: 0 10px;
+    padding: 0 8px;
 }
 
 .hcg-table td.text-center,

@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Pawel Lysy
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Pawel Lysy
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -85,7 +86,7 @@ class RenkoSeries extends ColumnSeries {
     }
 
     public getProcessedData(): Series.ProcessedDataObject {
-        const modified = this.dataTable.modified;
+        const modified = this.dataTable.getModified();
         const processedXData: number[] = [];
         const processedYData: number[] = [];
         const processedLowData: number[] = [];

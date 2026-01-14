@@ -4,8 +4,6 @@ Highcharts Dashboards is a JavaScript library for interactive dashboards from th
 
 With built-in data synchronization, ready-made components and completely customizable options, Highcharts Dashboards does all the heavy lifting out of the box, saving you valuable time on your dashboard projects.
 
-Note that this library also includes [Highcharts DataGrid](https://www.highcharts.com/docs/datagrid/general), that can be used as a standalone component outside of Dashboards if needed.
-
 - Official website: [www.highcharts.com](http://www.highcharts.com)
 - Product page: [www.highcharts.com/products/dashboards](https://www.highcharts.com/products/dashboards/)
 - Documentation: [www.highcharts.com/docs/dashboards/installation](https://www.highcharts.com/docs/dashboards/installation)

@@ -1,3 +1,18 @@
+root,
+.highcharts-light {
+    --highcharts-background-color: #fff;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --highcharts-background-color: #141414;
+    }
+}
+
+.highcharts-dark {
+    --highcharts-background-color: #141414;
+}
+
 * {
     font-family:
         -apple-system,
@@ -10,12 +25,6 @@
         "Segoe UI Emoji",
         "Segoe UI Symbol",
         sans-serif;
-}
-
-body.highcharts-light,
-body.highcharts-dark,
-body {
-    background-color: transparent !important;
 }
 
 .highcharts-figure {
