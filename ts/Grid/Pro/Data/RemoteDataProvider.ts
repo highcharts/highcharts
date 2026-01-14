@@ -13,6 +13,15 @@
  *
  * */
 
+'use strict';
+
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type DT from '../../../Data/DataTable';
 import type { DataProviderOptions } from '../../Core/Data/DataProvider';
 import type { ColumnDataType } from '../../Core/Table/Column';
@@ -24,9 +33,39 @@ import { createQueryFingerprint } from './QuerySerializer.js';
 import RemoteFetchHelper from './RemoteFetchHelper.js';
 
 
+/* *
+ *
+ *  Class
+ *
+ * */
+
+/**
+ * Remote data provider for the Grid.
+ *
+ * Fetches tabular data from a remote API in chunks and exposes it through the
+ * standard `DataProvider` interface used by the Grid viewport.
+ *
+ * - Caches fetched chunks (optionally with an LRU eviction policy).
+ * - Deduplicates concurrent requests for the same chunk.
+ * - Uses a query fingerprint to invalidate caches when the query changes.
+ * - Supports either a standardized dataset server API (`serverApi`) or a
+ *   custom `fetchCallback`.
+ */
 export class RemoteDataProvider extends DataProvider {
 
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     private static readonly DEFAULT_CHUNK_SIZE: number = 50;
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
 
     public readonly options!: RemoteDataProviderOptions;
 
@@ -94,6 +133,12 @@ export class RemoteDataProvider extends DataProvider {
 
         return this.options.chunkSize ?? RemoteDataProvider.DEFAULT_CHUNK_SIZE;
     }
+
+    /* *
+     *
+     *  Methods
+     *
+     * */
 
     private async getChunkForRowIndex(rowIndex: number): Promise<DataChunk> {
         // When pagination enabled, all rows for current page are in chunk 0
@@ -371,10 +416,6 @@ export class RemoteDataProvider extends DataProvider {
         return this.getRowObjectFromCache(rowIndex);
     }
 
-    /**
-     * Returns the total row count before pagination.
-     * Used by PaginationController to calculate total pages.
-     */
     public override async getPrePaginationRowCount(): Promise<number> {
         if (this.prePaginationRowCount !== null) {
             return this.prePaginationRowCount;
@@ -384,11 +425,6 @@ export class RemoteDataProvider extends DataProvider {
         return this.prePaginationRowCount ?? 0;
     }
 
-    /**
-     * Returns the row count for the current view (after all modifiers).
-     * When pagination is enabled, returns actual rows on current page.
-     * Otherwise, returns total row count.
-     */
     public override async getRowCount(): Promise<number> {
         if (this.rowCount !== null) {
             return this.rowCount;
@@ -530,7 +566,7 @@ export class RemoteDataProvider extends DataProvider {
         }
     }
 
-    public destroy(): void {
+    public override destroy(): void {
         this.dataChunks = null;
         this.pendingChunks = null;
         this.rowIdToChunkInfo = null;

@@ -13,6 +13,15 @@
  *
  * */
 
+'use strict';
+
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type { DataProviderOptions } from './DataProvider';
 import type QueryingController from '../Querying/QueryingController';
 import type DataTableOptions from '../../../Data/DataTableOptions';
@@ -24,13 +33,56 @@ import ChainModifier from '../../../Data/Modifiers/ChainModifier.js';
 import DataProviderRegistry from './DataProviderRegistry.js';
 
 
+/* *
+ *
+ *  Class
+ *
+ * */
+
+/**
+ * Local data provider for the Grid.
+ *
+ * Uses a DataTable instances to serve data to the grid, applying query
+ * modifiers and persisting edits locally.
+ */
 export class LocalDataProvider extends DataProvider {
 
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    /**
+     * The provider options.
+     */
     public readonly options!: LocalDataProviderOptions;
+
+    /**
+     * The original table. Mutations (e.g. setValue) are applied here.
+     */
     private dataTable?: DataTable;
+
+    /**
+     * The presentation table after applying query modifiers.
+     */
     private presentationTable?: DataTable;
+
+    /**
+     * The row count before pagination is applied.
+     */
     private prePaginationRowCount?: number;
+
+    /**
+     * Unbind callbacks for DataTable events.
+     */
     private dataTableEventDestructors: Function[] = [];
+
+    /* *
+     *
+     *  Constructor
+     *
+     * */
 
     constructor(
         queryingController: QueryingController,
@@ -39,6 +91,12 @@ export class LocalDataProvider extends DataProvider {
         super(queryingController, options);
         this.initDataTable();
     }
+
+    /* *
+     *
+     *  Methods
+     *
+     * */
 
     private initDataTable(): void {
         this.querying.shouldBeUpdated = true;
@@ -106,15 +164,6 @@ export class LocalDataProvider extends DataProvider {
         columnId: string,
         rowIndex: number
     ): Promise<DataTable.CellType> {
-        // Debugging:
-        // return new Promise((resolve): void => {
-        //     setTimeout((): void => {
-        //         resolve(
-        //             this.presentationTable?.getCell(columnId, rowIndex)
-        //         );
-        //     }, Math.random() * 1000);
-        // });
-
         return Promise.resolve(
             this.presentationTable?.getCell(columnId, rowIndex)
         );
@@ -129,6 +178,9 @@ export class LocalDataProvider extends DataProvider {
         return Promise.resolve();
     }
 
+    /**
+     * Applies querying modifiers and updates the presentation table.
+     */
     public override async applyQuery(): Promise<void> {
         const controller = this.querying;
         const originalDataTable = this.dataTable;
@@ -187,6 +239,16 @@ export class LocalDataProvider extends DataProvider {
         ));
     }
 
+    /**
+     * Returns the current data table. When `presentation` is `true`, returns
+     * the presentation table (after modifiers).
+     *
+     * @param presentation
+     * Whether to return the presentation table (after modifiers).
+     *
+     * @return
+     * The data table.
+     */
     public getDataTable(presentation: boolean = false): DataTable | undefined {
         return presentation ? this.presentationTable : this.dataTable;
     }

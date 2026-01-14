@@ -46,7 +46,7 @@ export interface DataProviderTypeRegistry {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 

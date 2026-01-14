@@ -13,6 +13,15 @@
  *
  * */
 
+'use strict';
+
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type DT from '../../../Data/DataTable';
 import type QueryingController from '../Querying/QueryingController';
 import type { ColumnDataType } from '../Table/Column';
@@ -21,10 +30,35 @@ import U from '../../../Core/Utilities.js';
 const { defined } = U;
 
 
+/**
+ * Base class for Grid data providers.
+ *
+ * Data providers are responsible for serving data to the grid, applying query
+ * modifiers and persisting edits.
+ */
 export abstract class DataProvider {
 
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    /**
+     * Querying controller used to build and apply modifiers.
+     */
     protected readonly querying: QueryingController;
+
+    /**
+     * Provider options as passed via `grid.options.data`.
+     */
     protected readonly options: DataProviderOptions;
+
+    /* *
+     *
+     *  Constructor
+     *
+     * */
 
     constructor(
         queryingController: QueryingController,
@@ -34,37 +68,78 @@ export abstract class DataProvider {
         this.options = options;
     }
 
+    /* *
+     *
+     *  Methods
+     *
+     * */
+
+    /**
+     * Returns all available column IDs.
+     */
     public abstract getColumnIds(): Promise<string[]>;
 
+    /**
+     * Returns a stable row id for a given row index (as used by the viewport).
+     */
     public abstract getRowId(rowIndex: number): Promise<number | undefined>;
 
+    /**
+     * Returns the current row index for a given stable row id.
+     */
     public abstract getRowIndex(rowId: number): Promise<number | undefined>;
 
+    /**
+     * Returns a row as an object keyed by column IDs.
+     */
     public abstract getRowObject(
         rowIndex: number
     ): Promise<DT.RowObject | undefined>;
 
+    /**
+     * Returns the current number of rows in the presentation table (after
+     * applying query modifiers).
+     */
     public abstract getRowCount(): Promise<number>;
 
+    /**
+     * Returns the assumed / configured data type for a column.
+     */
     public abstract getColumnDataType(
         columnId: string
     ): Promise<ColumnDataType>;
 
+    /**
+     * Returns a cell value for a given column and row index.
+     */
     public abstract getValue(
         columnId: string,
         rowIndex: number
     ): Promise<DT.CellType>;
 
+    /**
+     * Persists a cell value for a given row id.
+     */
     public abstract setValue(
         value: DT.CellType,
         columnId: string,
         rowId: number
     ): Promise<void>;
 
+    /**
+     * Applies the current query modifiers to update the provider's presentation
+     * state.
+     */
     public abstract applyQuery(): Promise<void>;
 
+    /**
+     * Destroys the provider and releases resources.
+     */
     public abstract destroy(): void;
 
+    /**
+     * Returns the number of items before pagination has been applied.
+     */
     public async getPrePaginationRowCount(): Promise<number> {
         return await this.getRowCount();
     }
@@ -116,6 +191,9 @@ export abstract class DataProvider {
  * A base interface for the data provider options (`grid.options.data`).
  */
 export interface DataProviderOptions {
+    /**
+     * The type of the data provider.
+     */
     providerType: string;
 }
 

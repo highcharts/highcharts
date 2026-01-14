@@ -13,6 +13,15 @@
  *
  * */
 
+'use strict';
+
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type DT from '../../../Data/DataTable';
 import type QueryingController from '../../Core/Querying/QueryingController';
 import type { RemoteFetchCallbackResult } from './RemoteDataProvider';
