@@ -128,7 +128,7 @@ export default class Palette {
 
         let css: string = '';
 
-        objectEach(options, (value, key: string): void => {
+        objectEach(options.light, (value, key: string): void => {
             // Kebab-case the key. Sequences of numbers should be kept but
             // with a preceding dash.
             key = key

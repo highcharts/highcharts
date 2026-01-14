@@ -55,6 +55,7 @@ const { animObject } = A;
 import AxisDefaults from './AxisDefaults.js';
 const { xAxis, yAxis } = AxisDefaults;
 import Color from '../Color/Color.js';
+const { parse: color } = Color;
 import D from '../Defaults.js';
 const { defaultOptions } = D;
 import F from '../Foundation.js';
@@ -4455,8 +4456,7 @@ class Axis {
 
         const options = this.crosshair,
             snap = options?.snap ?? true,
-            chart = this.chart,
-            palette = chart.options.palette;
+            chart = this.chart;
 
         let path,
             pos,
@@ -4548,16 +4548,17 @@ class Axis {
 
                 // Presentational attributes
                 if (!chart.styledMode) {
-                    graphic.attr({
-                        stroke: options.color ||
+                    const stroke = options.color ||
                             (
                                 categorized ?
-                                    Color
-                                        .parse(palette.highlightColor20)
-                                        .setOpacity(0.25)
-                                        .get() :
-                                    palette.neutralColor20
-                            ),
+                                    color(
+                                        'var(--highcharts-highlight-color-20)'
+                                    ).setOpacity(0.25).get() :
+                                    'var(--highcharts-highlight-color-20)'
+                            );
+
+                    graphic.attr({
+                        stroke,
                         'stroke-width': pick(options.width, 1)
                     }).css({
                         'pointer-events': 'none'

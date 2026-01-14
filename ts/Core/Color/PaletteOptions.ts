@@ -22,8 +22,7 @@ import type ColorType from './ColorType';
  *  Declarations
  *
  * */
-
-export interface PaletteOptions {
+interface PaletteColors {
     backgroundColor?: ColorType;
     dataColors?: Array<ColorType>;
     neutralColor100?: ColorType;
@@ -42,6 +41,10 @@ export interface PaletteOptions {
     highlightColor10?: ColorType;
     positiveColor?: ColorType;
     negativeColor?: ColorType;
+}
+
+export interface PaletteOptions {
+    light?: PaletteColors;
 }
 
 

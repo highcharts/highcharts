@@ -67,10 +67,10 @@ async function task() {
 
             // Single color
             if (isHexColor && !isDataColor) {
-                paletteTS += `    /**
-     * ${comment}
-     */
-    ${key}: '${val}',\n`;
+                paletteTS += `        /**
+         * ${comment}
+         */
+        ${key}: '${val}',\n`;
 
             // Array of colors
             } else if (isHexColor && isDataColor) {
@@ -97,13 +97,15 @@ import type PaletteOptions from './PaletteOptions';
  * task.
  * @internal
  */
-export default {\n${paletteTS}
-    /**
-     * ${dataColorsComment}
-     */
-    dataColors: [
-        '${dataColors.join('\',\n        \'')}'
-    ]
+export default {
+    light: {\n${paletteTS}
+        /**
+         * ${dataColorsComment}
+         */
+        dataColors: [
+            '${dataColors.join('\',\n            \'')}'
+        ]
+    }
 } satisfies PaletteOptions;
 `,
         'utf8'

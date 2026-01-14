@@ -503,7 +503,7 @@ class Pointer {
                         selectionMarker.attr({
                             fill:
                                 selectionMarkerFill ||
-                                color(chartOptions.palette.highlightColor80)
+                                color('var(--highcharts-highlight-color-80)')
                                     .setOpacity(0.25).get()
                         });
                     }

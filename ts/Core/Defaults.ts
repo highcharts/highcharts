@@ -103,7 +103,7 @@ const defaultOptions: DefaultOptions = {
      *     "#91e8e1"
      * ]
      */
-    colors: PaletteDefaults.dataColors,
+    colors: PaletteDefaults.light.dataColors,
 
     /**
      * Styled mode only. Configuration object for adding SVG definitions for

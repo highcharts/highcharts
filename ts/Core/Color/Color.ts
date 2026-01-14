@@ -376,7 +376,13 @@ class Color implements ColorBase {
      *         Color with modifications.
      */
     public setOpacity(alpha: number): this {
-        this.rgba[3] = alpha;
+        if (isNumber(this.rgba[0])) {
+            this.rgba[3] = alpha;
+        } else if (Color.useColorMix && isStringColor(this.input)) {
+            this.output = colorMix(
+                this.input, '#0000', 1 - alpha
+            );
+        }
         return this;
     }
 

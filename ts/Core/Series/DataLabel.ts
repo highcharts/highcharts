@@ -660,11 +660,10 @@ namespace DataLabel {
             seriesOptions = series.options,
             renderer = chart.renderer,
             { backgroundColor, plotBackgroundColor } = chart.options.chart,
-            palette = chart.options.palette,
             contrastColor = renderer.getContrast(
                 (isString(plotBackgroundColor) && plotBackgroundColor) ||
                 (isString(backgroundColor) && backgroundColor) ||
-                palette.neutralColor100 as string
+                'var(--highcharts-neutral-color-100)'
             ),
             seriesDlOptions = mergedDataLabelOptions(series);
 
@@ -756,7 +755,7 @@ namespace DataLabel {
                                 labelOptions.color,
                                 style.color,
                                 isString(series.color) ? series.color : void 0,
-                                palette.neutralColor100 as string
+                                'var(--highcharts-neutral-color-100)'
                             );
                             // Get automated contrast color
                             if (style.color === 'contrast') {

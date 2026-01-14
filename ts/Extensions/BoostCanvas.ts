@@ -570,9 +570,8 @@ namespace BoostCanvas {
         if (rawData.length > 99999) {
             chart.options.loading = merge(loadingOptions, {
                 labelStyle: {
-                    backgroundColor: color(
-                        chart.options.palette.backgroundColor
-                    ).setOpacity(0.75).get(),
+                    backgroundColor: color('var(--highcharts-background-color)')
+                        .setOpacity(0.75).get(),
                     padding: '1em',
                     borderRadius: '0.5em'
                 },
