@@ -19,7 +19,7 @@
 
 import DataConverter from './DataConverter';
 import DataTable from '../DataTable.js';
-import { isNumber } from '../../Shared/Utilities';
+import { isNumber } from '../../Shared/Utilities.js';
 
 /* *
  *

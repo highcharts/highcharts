@@ -33,7 +33,7 @@ const {
     column: { prototype: { pointClass: ColumnPoint } }
 } = SeriesRegistry.seriesTypes;
 import XRangeSeries from './XRangeSeries.js';
-import { extend } from '../../Shared/Utilities';
+import { extend } from '../../Shared/Utilities.js';
 
 /* *
  *

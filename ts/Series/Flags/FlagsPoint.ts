@@ -22,7 +22,7 @@ import type CSSObject from '../../Core/Renderer/CSSObject';
 import type FlagsPointOptions from './FlagsPointOptions';
 import type FlagsSeries from './FlagsSeries';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import { isNumber } from '../../Shared/Utilities';
+import { isNumber } from '../../Shared/Utilities.js';
 const {
     column: {
         prototype: {

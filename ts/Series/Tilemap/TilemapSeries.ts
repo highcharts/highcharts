@@ -37,7 +37,7 @@ import TilemapPoint from './TilemapPoint.js';
 import TilemapSeriesDefaults from './TilemapSeriesDefaults.js';
 import TilemapShapes from './TilemapShapes.js';
 import U from '../../Core/Utilities.js';
-import { extend } from '../../Shared/Utilities';
+import { extend } from '../../Shared/Utilities.js';
 const {
     addEvent,
     merge,

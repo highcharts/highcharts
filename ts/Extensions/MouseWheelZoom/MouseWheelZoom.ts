@@ -33,7 +33,7 @@ const {
 } = U;
 
 import NBU from '../Annotations/NavigationBindingsUtilities.js';
-import { isObject } from '../../Shared/Utilities';
+import { isObject } from '../../Shared/Utilities.js';
 const { getAssignedAxis } = NBU;
 
 /* *

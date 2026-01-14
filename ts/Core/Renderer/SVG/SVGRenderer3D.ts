@@ -48,7 +48,7 @@ const {
 } = Math3D;
 import SVGElement3D from './SVGElement3D.js';
 import U from '../../Utilities.js';
-import { extend } from '../../../Shared/Utilities';
+import { extend } from '../../../Shared/Utilities.js';
 const {
     defined,
     merge,

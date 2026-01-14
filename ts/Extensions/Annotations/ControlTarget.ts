@@ -25,7 +25,7 @@ import type {
 import ControlPoint from './ControlPoint.js';
 import MockPoint from './MockPoint.js';
 import U from '../../Core/Utilities.js';
-import { isObject, isString } from '../../Shared/Utilities';
+import { isObject, isString } from '../../Shared/Utilities.js';
 
 /* *
  *

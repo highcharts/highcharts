@@ -64,7 +64,7 @@ const {
 } = CU;
 
 import DU from '../Utilities.js';
-import { isArray, objectEach } from '../../Shared/Utilities';
+import { isArray, objectEach } from '../../Shared/Utilities.js';
 const {
     deepClone,
     uniqueKey

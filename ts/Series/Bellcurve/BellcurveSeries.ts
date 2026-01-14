@@ -27,7 +27,7 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const { areaspline: AreaSplineSeries } = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
 import AnimationOptions from '../../Core/Animation/AnimationOptions';
-import { isNumber } from '../../Shared/Utilities';
+import { isNumber } from '../../Shared/Utilities.js';
 const {
     correctFloat,
     merge

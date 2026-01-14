@@ -38,7 +38,7 @@ const { getOptions } = D;
 import MapPoint from '../Series/Map/MapPoint';
 import U from '../Core/Utilities.js';
 import { Palette } from '../Core/Color/Palettes';
-import { extend, isObject } from '../Shared/Utilities';
+import { extend, isObject } from '../Shared/Utilities.js';
 const {
     addEvent,
     defined,

@@ -41,7 +41,7 @@ const {
     pick
 } = U;
 import VectorSeriesDefaults from './VectorSeriesDefaults.js';
-import { extend } from '../../Shared/Utilities';
+import { extend } from '../../Shared/Utilities.js';
 
 /* *
  *

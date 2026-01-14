@@ -22,7 +22,7 @@ import type BubbleSeries from './BubbleSeries';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import Point from '../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import { extend } from '../../Shared/Utilities';
+import { extend } from '../../Shared/Utilities.js';
 const {
     seriesTypes: {
         scatter: {

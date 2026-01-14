@@ -35,7 +35,7 @@ const {
     pick
 } = U;
 import '../../Maps/MapSymbols.js';
-import { isNumber } from '../../Shared/Utilities';
+import { isNumber } from '../../Shared/Utilities.js';
 
 /* *
  *

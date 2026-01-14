@@ -19,7 +19,7 @@
 
 import type BubbleSeries from '../../Series/Bubble/BubbleSeries';
 import U from '../../Core/Utilities.js';
-import { clamp } from '../../Shared/Utilities';
+import { clamp } from '../../Shared/Utilities.js';
 const {
     error,
     pick

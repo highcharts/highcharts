@@ -36,7 +36,7 @@ const {
     hlc: HLCSeries
 } = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
-import { crisp, extend } from '../../Shared/Utilities';
+import { crisp, extend } from '../../Shared/Utilities.js';
 const {
     addEvent,
     merge,

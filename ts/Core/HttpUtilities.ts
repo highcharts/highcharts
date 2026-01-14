@@ -22,7 +22,7 @@ import type JSON from './JSON';
 import G from '../Core/Globals.js';
 const { win } = G;
 import U from '../Core/Utilities.js';
-import { objectEach } from '../Shared/Utilities';
+import { objectEach } from '../Shared/Utilities.js';
 const {
     discardElement
 } = U;

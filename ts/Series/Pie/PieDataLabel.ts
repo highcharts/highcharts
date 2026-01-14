@@ -35,7 +35,7 @@ const { distribute } = R;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const { series: Series } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-import { clamp, isNumber } from '../../Shared/Utilities';
+import { clamp, isNumber } from '../../Shared/Utilities.js';
 const {
     arrayMax,
     defined,

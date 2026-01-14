@@ -55,7 +55,7 @@ import SonificationSpeaker from './SonificationSpeaker.js';
 import SynthPatch from './SynthPatch.js';
 import InstrumentPresets from './InstrumentPresets.js';
 import timelineFromChart from './TimelineFromChart.js';
-import { extend } from '../../Shared/Utilities';
+import { extend } from '../../Shared/Utilities.js';
 
 
 declare module '../../Core/Chart/ChartBase' {

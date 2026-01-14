@@ -43,7 +43,7 @@ const {
 import WaterfallAxis from '../../Core/Axis/WaterfallAxis.js';
 import WaterfallPoint from './WaterfallPoint.js';
 import WaterfallSeriesDefaults from './WaterfallSeriesDefaults.js';
-import { crisp, extend, isNumber, objectEach } from '../../Shared/Utilities';
+import { crisp, extend, isNumber, objectEach } from '../../Shared/Utilities.js';
 
 /* *
  *

@@ -35,7 +35,7 @@ import Globals from '../../Globals.js';
 import Utilities from '../../../../Core/Utilities.js';
 import TableHeader from './TableHeader.js';
 import ColumnToolbar from './ColumnToolbar/ColumnToolbar.js';
-import { isString } from '../../../../Shared/Utilities';
+import { isString } from '../../../../Shared/Utilities.js';
 
 const {
     makeHTMLElement,

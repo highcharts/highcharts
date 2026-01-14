@@ -26,7 +26,7 @@ const {
     column: ColumnSeries
 } = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
-import { clamp } from '../../Shared/Utilities';
+import { clamp } from '../../Shared/Utilities.js';
 const {
     merge,
     pick

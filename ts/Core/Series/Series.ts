@@ -82,7 +82,7 @@ import SVGElement from '../Renderer/SVG/SVGElement.js';
 import T from '../Templating.js';
 const { format } = T;
 import U from '../Utilities.js';
-import { clamp, crisp, extend, isArray, isNumber, isString, objectEach } from '../../Shared/Utilities';
+import { clamp, crisp, extend, isArray, isNumber, isString, objectEach } from '../../Shared/Utilities.js';
 const {
     arrayMax,
     arrayMin,

@@ -44,7 +44,7 @@ const {
 import WordcloudPoint from './WordcloudPoint.js';
 import WordcloudSeriesDefaults from './WordcloudSeriesDefaults.js';
 import WU from './WordcloudUtils.js';
-import { extend, isArray, isNumber, isObject } from '../../Shared/Utilities';
+import { extend, isArray, isNumber, isObject } from '../../Shared/Utilities.js';
 const {
     archimedeanSpiral,
     extendPlayingField,

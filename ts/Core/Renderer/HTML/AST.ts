@@ -27,7 +27,7 @@ const {
     win
 } = H;
 import U from '../../Utilities.js';
-import { isString, objectEach } from '../../../Shared/Utilities';
+import { isString, objectEach } from '../../../Shared/Utilities.js';
 const {
     attr,
     createElement,

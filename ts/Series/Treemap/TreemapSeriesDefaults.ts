@@ -23,7 +23,7 @@ import type TreemapSeriesOptions from './TreemapSeriesOptions';
 
 import { Palette } from '../../Core/Color/Palettes';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import { isString } from '../../Shared/Utilities';
+import { isString } from '../../Shared/Utilities.js';
 
 /* *
  *

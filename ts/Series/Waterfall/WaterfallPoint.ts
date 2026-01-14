@@ -21,7 +21,7 @@ import type WaterfallSeries from './WaterfallSeries';
 
 import ColumnSeries from '../Column/ColumnSeries.js';
 import Point from '../../Core/Series/Point.js';
-import { isNumber } from '../../Shared/Utilities';
+import { isNumber } from '../../Shared/Utilities.js';
 
 /* *
  *

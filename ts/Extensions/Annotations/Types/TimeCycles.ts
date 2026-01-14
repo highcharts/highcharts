@@ -25,7 +25,7 @@ import D from '../../../Core/Defaults.js';
 const { defaultOptions } = D;
 import ControlPoint from '../ControlPoint.js';
 import U from '../../../Core/Utilities.js';
-import { isNumber } from '../../../Shared/Utilities';
+import { isNumber } from '../../../Shared/Utilities.js';
 const {
     merge,
     defined

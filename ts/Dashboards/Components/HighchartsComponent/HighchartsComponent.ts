@@ -59,7 +59,7 @@ const {
     splat
 } = U;
 import DU from '../../Utilities.js';
-import { isString } from '../../../Shared/Utilities';
+import { isString } from '../../../Shared/Utilities.js';
 const { deepClone } = DU;
 
 

@@ -56,7 +56,7 @@ import Series from '../Core/Series/Series.js';
 import Pane from '../Extensions/Pane/Pane.js';
 import RadialAxis from '../Core/Axis/RadialAxis.js';
 import U from '../Core/Utilities.js';
-import { clamp, isNumber, isObject } from '../Shared/Utilities';
+import { clamp, isNumber, isObject } from '../Shared/Utilities.js';
 const {
     addEvent,
     defined,

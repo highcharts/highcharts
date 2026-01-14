@@ -55,7 +55,7 @@ const {
     isFirefox
 } = H;
 import U from '../../Utilities.js';
-import { crisp, extend, isArray, isNumber, isObject, isString, objectEach, pInt } from '../../../Shared/Utilities';
+import { crisp, extend, isArray, isNumber, isObject, isString, objectEach, pInt } from '../../../Shared/Utilities.js';
 const {
     addEvent,
     attr,

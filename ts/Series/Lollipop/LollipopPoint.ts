@@ -22,7 +22,7 @@ import type LollipopSeries from './LollipopSeries';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import { extend } from '../../Shared/Utilities';
+import { extend } from '../../Shared/Utilities.js';
 const {
     series: {
         prototype: {

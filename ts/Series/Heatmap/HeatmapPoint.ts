@@ -27,7 +27,7 @@ const {
     scatter: { prototype: { pointClass: ScatterPoint } }
 } = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
-import { clamp, extend } from '../../Shared/Utilities';
+import { clamp, extend } from '../../Shared/Utilities.js';
 const {
     defined,
     pick

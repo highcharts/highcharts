@@ -34,7 +34,7 @@ const {
 } = SeriesRegistry.seriesTypes;
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import U from '../../Core/Utilities.js';
-import { isNumber, objectEach } from '../../Shared/Utilities';
+import { isNumber, objectEach } from '../../Shared/Utilities.js';
 const {
     defined,
     merge,

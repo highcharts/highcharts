@@ -43,7 +43,7 @@ const {
 
 import '../../Core/Defaults.js';
 import '../Scatter/ScatterSeries.js';
-import { extend, isNumber } from '../../Shared/Utilities';
+import { extend, isNumber } from '../../Shared/Utilities.js';
 
 /* *
  *

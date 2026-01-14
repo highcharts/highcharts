@@ -33,7 +33,7 @@ const {
 } = GridUtils;
 
 import Utils from '../../../../Core/Utilities.js';
-import { isString } from '../../../../Shared/Utilities';
+import { isString } from '../../../../Shared/Utilities.js';
 const {
     defined
 } = Utils;

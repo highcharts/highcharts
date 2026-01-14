@@ -31,7 +31,7 @@ import D from '../Defaults.js';
 const { defaultOptions } = D;
 import { Palette } from '../Color/Palettes.js';
 import U from '../Utilities.js';
-import { isArray } from '../../Shared/Utilities';
+import { isArray } from '../../Shared/Utilities.js';
 const {
     merge,
     splat

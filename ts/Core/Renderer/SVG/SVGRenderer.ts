@@ -60,7 +60,7 @@ import SVGLabel from './SVGLabel.js';
 import Symbols from './Symbols.js';
 import TextBuilder from './TextBuilder.js';
 import U from '../../Utilities.js';
-import { crisp, extend, isArray, isNumber, isObject, isString, pInt } from '../../../Shared/Utilities';
+import { crisp, extend, isArray, isNumber, isObject, isString, pInt } from '../../../Shared/Utilities.js';
 const {
     addEvent,
     attr,

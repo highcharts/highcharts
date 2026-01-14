@@ -28,7 +28,7 @@ const {
     column: { prototype: { pointClass: ColumnPoint } }
 } = SeriesRegistry.seriesTypes;
 import WordcloudSeries from './WordcloudSeries';
-import { extend } from '../../Shared/Utilities';
+import { extend } from '../../Shared/Utilities.js';
 
 /* *
  *

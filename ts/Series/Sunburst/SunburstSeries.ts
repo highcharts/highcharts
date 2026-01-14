@@ -64,7 +64,7 @@ const {
 } = U;
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import TextPath from '../../Extensions/TextPath.js';
-import { extend, isNumber, isObject, isString } from '../../Shared/Utilities';
+import { extend, isNumber, isObject, isString } from '../../Shared/Utilities.js';
 TextPath.compose(SVGElement);
 
 /* *

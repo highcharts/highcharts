@@ -30,7 +30,7 @@ const {
     sankey: { prototype: { pointClass: SankeyPoint } }
 } = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
-import { pInt } from '../../Shared/Utilities';
+import { pInt } from '../../Shared/Utilities.js';
 const {
     wrap
 } = U;

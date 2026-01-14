@@ -39,7 +39,7 @@ const {
     pick
 } = U;
 import VerletIntegration from './VerletIntegration.js';
-import { clamp } from '../../Shared/Utilities';
+import { clamp } from '../../Shared/Utilities.js';
 
 /* *
  *

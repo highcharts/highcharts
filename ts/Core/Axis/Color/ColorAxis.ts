@@ -44,7 +44,7 @@ import LegendSymbol from '../../Legend/LegendSymbol.js';
 import SeriesRegistry from '../../Series/SeriesRegistry.js';
 import SeriesClass from '../../Series/Series';
 const { series: Series } = SeriesRegistry;
-import { extend, isArray, isNumber } from '../../../Shared/Utilities';
+import { extend, isArray, isNumber } from '../../../Shared/Utilities.js';
 import U from '../../Utilities.js';
 const {
     defined,

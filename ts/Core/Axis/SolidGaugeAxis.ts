@@ -23,7 +23,7 @@ import type RadialAxis from './RadialAxis';
 import type RadialAxisOptions from './RadialAxisOptions';
 
 import ColorAxisBase from './Color/ColorAxisBase';
-import { extend } from '../../Shared/Utilities';
+import { extend } from '../../Shared/Utilities.js';
 
 /* *
  *

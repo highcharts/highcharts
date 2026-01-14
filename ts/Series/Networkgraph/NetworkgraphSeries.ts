@@ -63,7 +63,7 @@ const {
 } = U;
 
 import TextPath from '../../Extensions/TextPath.js';
-import { extend } from '../../Shared/Utilities';
+import { extend } from '../../Shared/Utilities.js';
 TextPath.compose(SVGElement);
 
 /* *

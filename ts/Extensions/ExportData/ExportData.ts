@@ -54,7 +54,7 @@ const {
     win
 } = G;
 import U from '../../Core/Utilities.js';
-import { extend, isNumber } from '../../Shared/Utilities';
+import { extend, isNumber } from '../../Shared/Utilities.js';
 const {
     addEvent,
     defined,

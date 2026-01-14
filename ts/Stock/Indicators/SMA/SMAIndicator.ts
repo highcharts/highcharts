@@ -31,7 +31,7 @@ const {
     line: LineSeries
 } = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
-import { extend, isArray } from '../../../Shared/Utilities';
+import { extend, isArray } from '../../../Shared/Utilities.js';
 const {
     addEvent,
     fireEvent,

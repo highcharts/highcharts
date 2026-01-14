@@ -28,7 +28,7 @@ import Row from '../Row.js';
 import HeaderCell from './HeaderCell.js';
 import Column from '../Column.js';
 import Globals from '../../Globals.js';
-import { isString } from '../../../../Shared/Utilities';
+import { isString } from '../../../../Shared/Utilities.js';
 
 
 /* *

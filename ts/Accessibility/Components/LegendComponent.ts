@@ -47,7 +47,7 @@ import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 import CU from '../Utils/ChartUtilities.js';
 const { getChartTitle } = CU;
 import HU from '../Utils/HTMLUtilities.js';
-import { isNumber } from '../../Shared/Utilities';
+import { isNumber } from '../../Shared/Utilities.js';
 const {
     stripHTMLTagsFromString: stripHTMLTags,
     addClass,

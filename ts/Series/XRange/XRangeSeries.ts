@@ -54,7 +54,7 @@ const {
 } = U;
 import XRangeSeriesDefaults from './XRangeSeriesDefaults.js';
 import XRangePoint from './XRangePoint.js';
-import { clamp, crisp, extend, isNumber, isObject } from '../../Shared/Utilities';
+import { clamp, crisp, extend, isNumber, isObject } from '../../Shared/Utilities.js';
 
 /* *
  *

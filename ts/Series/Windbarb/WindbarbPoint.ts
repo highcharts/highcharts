@@ -21,7 +21,7 @@ import type WindbarbPointOptions from './WindbarbPointOptions';
 
 import ColumnSeries from '../Column/ColumnSeries.js';
 import WindbarbSeries from './WindbarbSeries.js';
-import { isNumber } from '../../Shared/Utilities';
+import { isNumber } from '../../Shared/Utilities.js';
 
 /* *
  *

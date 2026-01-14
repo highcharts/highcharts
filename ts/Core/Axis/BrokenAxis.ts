@@ -31,7 +31,7 @@ import type SVGPath from '../Renderer/SVG/SVGPath';
 
 import StackItem from './Stacking/StackItem.js';
 import U from '../Utilities.js';
-import { isArray, isNumber } from '../../Shared/Utilities';
+import { isArray, isNumber } from '../../Shared/Utilities.js';
 const {
     addEvent,
     find,

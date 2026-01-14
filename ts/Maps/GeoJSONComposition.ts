@@ -34,7 +34,7 @@ const { win } = H;
 import T from '../Core/Templating.js';
 const { format } = T;
 import U from '../Core/Utilities.js';
-import { extend } from '../Shared/Utilities';
+import { extend } from '../Shared/Utilities.js';
 const {
     error,
     merge,

@@ -21,7 +21,7 @@ import type HeatmapPoint from './HeatmapPoint';
 import type HeatmapSeriesOptions from './HeatmapSeriesOptions';
 
 import { Palette } from '../../Core/Color/Palettes.js';
-import { isNumber } from '../../Shared/Utilities';
+import { isNumber } from '../../Shared/Utilities.js';
 
 /* *
  *

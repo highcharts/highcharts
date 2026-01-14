@@ -44,7 +44,7 @@ const {
     pick
 } = U;
 import { Palette } from '../../../Core/Color/Palettes.js';
-import { extend, isNumber } from '../../../Shared/Utilities';
+import { extend, isNumber } from '../../../Shared/Utilities.js';
 
 if (defaultOptions.annotations?.types) {
     /**

@@ -28,7 +28,7 @@ const {
     pick
 } = U;
 import T from '../../Core/Templating.js';
-import { clamp, extend } from '../../Shared/Utilities';
+import { clamp, extend } from '../../Shared/Utilities.js';
 const {
     format
 } = T;

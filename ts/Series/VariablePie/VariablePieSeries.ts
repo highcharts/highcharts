@@ -35,7 +35,7 @@ const {
     pick
 } = U;
 import VariablePieSeriesDefaults from './VariablePieSeriesDefaults.js';
-import { clamp, extend } from '../../Shared/Utilities';
+import { clamp, extend } from '../../Shared/Utilities.js';
 
 /* *
  *

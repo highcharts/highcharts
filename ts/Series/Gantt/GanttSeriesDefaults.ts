@@ -21,7 +21,7 @@
 import type GanttPoint from './GanttPoint';
 import type GanttSeriesOptions from './GanttSeriesOptions';
 
-import { isNumber } from '../../Shared/Utilities';
+import { isNumber } from '../../Shared/Utilities.js';
 
 /* *
  *

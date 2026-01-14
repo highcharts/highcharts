@@ -87,7 +87,7 @@ import U from '../Utilities.js';
 import AST from '../Renderer/HTML/AST.js';
 import { AxisCollectionKey } from '../Axis/AxisOptions';
 import Tick from '../Axis/Tick.js';
-import { extend, isArray, isNumber, isObject, isString, objectEach, pInt } from '../../Shared/Utilities';
+import { extend, isArray, isNumber, isObject, isString, objectEach, pInt } from '../../Shared/Utilities.js';
 const {
     addEvent,
     attr,

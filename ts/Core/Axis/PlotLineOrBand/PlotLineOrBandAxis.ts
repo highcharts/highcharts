@@ -24,7 +24,7 @@ import type PlotLineOrBand from './PlotLineOrBand';
 import type SVGPath from '../../Renderer/SVG/SVGPath';
 
 import U from '../../Utilities.js';
-import { extend, isNumber } from '../../../Shared/Utilities';
+import { extend, isNumber } from '../../../Shared/Utilities.js';
 const {
     erase
 } = U;

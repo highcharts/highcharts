@@ -34,7 +34,7 @@ const { format } = T;
 import SeriesRegistry from '../../Series/SeriesRegistry.js';
 const { series: Series } = SeriesRegistry;
 import U from '../../Utilities.js';
-import { isNumber } from '../../../Shared/Utilities';
+import { isNumber } from '../../../Shared/Utilities.js';
 const {
     destroyObjectProperties,
     fireEvent,

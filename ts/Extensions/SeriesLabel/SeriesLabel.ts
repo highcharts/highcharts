@@ -63,7 +63,7 @@ const {
 } = SLU;
 import U from '../../Core/Utilities.js';
 import { Palette } from '../../Core/Color/Palettes';
-import { extend, isNumber } from '../../Shared/Utilities';
+import { extend, isNumber } from '../../Shared/Utilities.js';
 const {
     addEvent,
     fireEvent,

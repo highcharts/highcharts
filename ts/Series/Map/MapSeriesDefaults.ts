@@ -21,7 +21,7 @@ import type MapPoint from './MapPoint';
 import type MapSeriesOptions from './MapSeriesOptions';
 
 import { Palette } from '../../Core/Color/Palettes.js';
-import { isNumber } from '../../Shared/Utilities';
+import { isNumber } from '../../Shared/Utilities.js';
 
 /* *
  *

@@ -33,7 +33,7 @@ const { format } = F;
 import H from '../../Core/Globals.js';
 const { composed } = H;
 import U from '../../Core/Utilities.js';
-import { extend, isString, objectEach } from '../../Shared/Utilities';
+import { extend, isString, objectEach } from '../../Shared/Utilities.js';
 const {
     addEvent,
     defined,

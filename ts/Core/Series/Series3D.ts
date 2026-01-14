@@ -28,7 +28,7 @@ import Math3D from '../Math3D.js';
 const { perspective } = Math3D;
 import Series from '../Series/Series.js';
 import U from '../Utilities.js';
-import { extend, isNumber } from '../../Shared/Utilities';
+import { extend, isNumber } from '../../Shared/Utilities.js';
 const {
     addEvent,
     merge,

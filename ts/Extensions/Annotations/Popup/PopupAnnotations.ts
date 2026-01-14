@@ -30,7 +30,7 @@ const {
     isFirefox
 } = H;
 import U from '../../../Core/Utilities.js';
-import { isArray, isObject, objectEach } from '../../../Shared/Utilities';
+import { isArray, isObject, objectEach } from '../../../Shared/Utilities.js';
 const {
     createElement,
     pick,

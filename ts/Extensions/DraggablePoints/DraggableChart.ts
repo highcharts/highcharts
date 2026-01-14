@@ -48,7 +48,7 @@ import DragDropDefaults from './DragDropDefaults.js';
 import H from '../../Core/Globals.js';
 const { doc } = H;
 import U from '../../Core/Utilities.js';
-import { isArray } from '../../Shared/Utilities';
+import { isArray } from '../../Shared/Utilities.js';
 const {
     addEvent,
     merge

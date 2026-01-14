@@ -32,7 +32,7 @@ import type VWAPPoint from './VWAPPoint';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const { sma: SMAIndicator } = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
-import { isArray } from '../../../Shared/Utilities';
+import { isArray } from '../../../Shared/Utilities.js';
 const {
     error,
     merge

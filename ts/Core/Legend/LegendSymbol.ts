@@ -26,7 +26,7 @@ import type SVGPath from '../Renderer/SVG/SVGPath';
 import type SymbolOptions from '../Renderer/SVG/SymbolOptions';
 
 import U from '../Utilities.js';
-import { extend } from '../../Shared/Utilities';
+import { extend } from '../../Shared/Utilities.js';
 const {
     merge,
     pick

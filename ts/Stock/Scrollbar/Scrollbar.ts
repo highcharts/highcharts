@@ -35,7 +35,7 @@ const {
 import ScrollbarAxis from '../../Core/Axis/ScrollbarAxis.js';
 import ScrollbarDefaults from './ScrollbarDefaults.js';
 import U from '../../Core/Utilities.js';
-import { crisp, extend } from '../../Shared/Utilities';
+import { crisp, extend } from '../../Shared/Utilities.js';
 const {
     addEvent,
     correctFloat,

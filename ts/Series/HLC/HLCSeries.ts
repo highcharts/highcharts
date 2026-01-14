@@ -35,7 +35,7 @@ const {
 } = U;
 
 import D from '../../Core/Defaults.js';
-import { crisp, extend } from '../../Shared/Utilities';
+import { crisp, extend } from '../../Shared/Utilities.js';
 const { defaultOptions } = D;
 
 /* *

@@ -21,7 +21,7 @@ import type { ApproximationArray } from './ApproximationType';
 
 import ApproximationRegistry from './ApproximationRegistry.js';
 import U from '../../Core/Utilities.js';
-import { extend, isNumber } from '../../Shared/Utilities';
+import { extend, isNumber } from '../../Shared/Utilities.js';
 const {
     arrayMax,
     arrayMin,

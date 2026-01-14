@@ -34,7 +34,7 @@ import type Series from './Series/Series';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import type Time from './Time';
 
-import { extend, isArray, isClass, isDOMElement, isNumber, isObject, isString, objectEach, pInt } from '../Shared/Utilities';
+import { extend, isArray, isClass, isDOMElement, isNumber, isObject, isString, objectEach, pInt } from '../Shared/Utilities.js';
 import H from './Globals.js';
 const {
     charts,

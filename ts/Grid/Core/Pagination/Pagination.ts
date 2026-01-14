@@ -36,7 +36,7 @@ import GridUtils from '../GridUtils.js';
 import Utilities from '../../../Core/Utilities.js';
 import AST from '../../../Core/Renderer/HTML/AST.js';
 import PaginationController from '../Querying/PaginationController';
-import { isObject } from '../../../Shared/Utilities';
+import { isObject } from '../../../Shared/Utilities.js';
 
 const { makeHTMLElement, formatText } = GridUtils;
 const { defined, fireEvent, merge } = Utilities;

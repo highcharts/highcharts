@@ -45,7 +45,7 @@ import Scrollbar from '../Scrollbar/Scrollbar.js';
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 const { prototype: { symbols } } = SVGRenderer;
 import U from '../../Core/Utilities.js';
-import { clamp, extend, isArray, isNumber } from '../../Shared/Utilities';
+import { clamp, extend, isArray, isNumber } from '../../Shared/Utilities.js';
 const {
     addEvent,
     correctFloat,

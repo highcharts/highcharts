@@ -62,7 +62,7 @@ const {
 } = U;
 import WGLRenderer from './WGLRenderer.js';
 import DataTableCore from '../../Data/DataTableCore.js';
-import { extend, isArray, isNumber } from '../../Shared/Utilities';
+import { extend, isArray, isNumber } from '../../Shared/Utilities.js';
 
 /* *
  *

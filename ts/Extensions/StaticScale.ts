@@ -22,7 +22,7 @@ import type Chart from '../Core/Chart/Chart';
 import type Series from '../Core/Series/Series';
 
 import U from '../Core/Utilities.js';
-import { isNumber } from '../Shared/Utilities';
+import { isNumber } from '../Shared/Utilities.js';
 const {
     addEvent,
     defined

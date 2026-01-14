@@ -28,7 +28,7 @@ import type { ConnectorOptions } from '../HighchartsComponentOptions';
 import Component from '../../Component';
 import DataCursor from '../../../../Data/DataCursor';
 import U from '../../../../Core/Utilities.js';
-import { isString } from '../../../../Shared/Utilities';
+import { isString } from '../../../../Shared/Utilities.js';
 const { addEvent } = U;
 
 

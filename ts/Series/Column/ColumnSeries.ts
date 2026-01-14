@@ -40,7 +40,7 @@ const { noop } = H;
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
-import { clamp, crisp, extend, isArray, isNumber, objectEach } from '../../Shared/Utilities';
+import { clamp, crisp, extend, isArray, isNumber, objectEach } from '../../Shared/Utilities.js';
 const {
     defined,
     fireEvent,

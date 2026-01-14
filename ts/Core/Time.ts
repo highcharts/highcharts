@@ -22,7 +22,7 @@ import type TimeTicksInfoObject from './Axis/TimeTicksInfoObject';
 
 import TimeBase from '../Shared/TimeBase.js';
 import U from '../Core/Utilities.js';
-import { extend } from '../Shared/Utilities';
+import { extend } from '../Shared/Utilities.js';
 const {
     defined,
     timeUnits

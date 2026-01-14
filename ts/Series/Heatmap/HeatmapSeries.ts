@@ -48,7 +48,7 @@ const {
 } = U;
 
 import IU from '../InterpolationUtilities.js';
-import { extend, isNumber } from '../../Shared/Utilities';
+import { extend, isNumber } from '../../Shared/Utilities.js';
 const {
     colorFromPoint,
     getContext

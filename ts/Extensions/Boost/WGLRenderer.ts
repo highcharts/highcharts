@@ -42,7 +42,7 @@ const {
 import WGLDrawMode from './WGLDrawMode.js';
 import WGLShader from './WGLShader.js';
 import WGLVertexBuffer from './WGLVertexBuffer.js';
-import { isNumber, isObject, objectEach } from '../../Shared/Utilities';
+import { isNumber, isObject, objectEach } from '../../Shared/Utilities.js';
 
 /* *
  *

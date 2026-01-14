@@ -44,7 +44,7 @@ const {
     pick
 } = U;
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
-import { crisp, extend, isNumber } from '../../Shared/Utilities';
+import { crisp, extend, isNumber } from '../../Shared/Utilities.js';
 import TextPath from '../../Extensions/TextPath.js';
 TextPath.compose(SVGElement);
 

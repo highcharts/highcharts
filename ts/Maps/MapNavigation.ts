@@ -38,7 +38,7 @@ import MapNavigationDefaults from './MapNavigationDefaults.js';
 import MapPointer from './MapPointer.js';
 import MapSymbols from './MapSymbols.js';
 import U from '../Core/Utilities.js';
-import { extend, objectEach } from '../Shared/Utilities';
+import { extend, objectEach } from '../Shared/Utilities.js';
 const {
     addEvent,
     merge,

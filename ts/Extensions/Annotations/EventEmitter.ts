@@ -39,7 +39,7 @@ const {
     isTouchDevice
 } = H;
 import U from '../../Core/Utilities.js';
-import { objectEach } from '../../Shared/Utilities';
+import { objectEach } from '../../Shared/Utilities.js';
 const {
     addEvent,
     fireEvent,
