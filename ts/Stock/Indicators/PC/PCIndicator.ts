@@ -25,7 +25,7 @@ import type PCPoint from './PCPoint';
 
 import AU from '../ArrayUtilities.js';
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
-import PaletteDefaults from '../../../Core/Color/PaletteDefaults';
+import PaletteDefaults from '../../../Core/Color/PaletteDefaults.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const { sma: SMAIndicator } = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
