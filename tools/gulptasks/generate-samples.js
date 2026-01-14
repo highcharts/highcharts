@@ -39,11 +39,15 @@ async function generateSample(configFile, log) {
     delete require.cache[configPath];
 
     // Dynamically import the config with cache busting
-    const configModule = await import(`${configPath}?update=${Date.now()}`);
+    const configModule = await import(
+        `file:///${configPath}?update=${Date.now()}`
+    );
     const config = configModule.default;
 
     // Set the output directory to the same location as the config file
-    config.output = outputDir.replace(/^samples\//u, '');
+    config.output = outputDir
+        .replace(/^samples\//u, '')
+        .replace(/^samples\\/u, ''); // samples\\ for Windows
 
     // Call saveDemoFile (checksum is calculated and saved inside)
     await saveDemoFile(config);
