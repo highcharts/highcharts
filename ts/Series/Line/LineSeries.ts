@@ -166,7 +166,7 @@ class LineSeries extends Series {
                 // Add shadow only to the main series (not zones)
                 // If shadow is defined, use `filterUnits: 'userSpaceOnUse'`
                 // to avoid known SVG filter bug (#19093)
-                if (!i && options.shadow) {
+                if (options.shadow) {
                     const isInverted = this.chart.inverted;
                     const filterUnits = { filterUnits: 'userSpaceOnUse' };
                     const shadowOptions = isObject(options.shadow) ?
