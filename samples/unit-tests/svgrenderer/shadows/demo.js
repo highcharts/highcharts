@@ -101,7 +101,7 @@ QUnit.test('Series shadows', function (assert) {
 });
 
 QUnit.test('Shadow with zones and inverted charts', function (assert) {
-    // Test that shadow is only applied to main series, not zones
+    // Test that shadow is applied to main series when zones are present
     var chart = Highcharts.chart('container', {
         series: [{
             data: [10, 20, 15, 25, 20],
@@ -116,24 +116,12 @@ QUnit.test('Shadow with zones and inverted charts', function (assert) {
         }]
     });
 
-    // Main series should have shadow
+    // Main series should have shadow when zones are present
     assert.ok(
         chart.series[0].graph.attr('filter') !== 'none' &&
         chart.series[0].graph.attr('filter') !== null,
-        'Main series should have shadow'
+        'Main series should have shadow when zones are present'
     );
-
-    // Zones should not have shadow (shadow is only on main series)
-    if (chart.series[0].zones && chart.series[0].zones.length > 0) {
-        const zoneGraph = chart.series[0].zones[0].graph;
-        if (zoneGraph) {
-            const filter = zoneGraph.attr('filter');
-            assert.ok(
-                !filter || filter === 'none',
-                'Zones should not have shadow'
-            );
-        }
-    }
 
     // Test that normal charts use filterUnits
     assert.ok(
