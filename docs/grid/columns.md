@@ -85,6 +85,8 @@ defined as pixels (e.g. `150` or `'150px'`), percentages (e.g. `'20%'`), or
 `'auto'`. Percentage values are always calculated relative to the **total table
 width**.
 
+If left `undefined`, the column will expand to fill any remaining space.
+
 A width of `'auto'` is equivalent to an undefined width, but it takes
 precedence over `columnDefaults.width`.
 
