@@ -3,47 +3,25 @@ sidebar_label: "React"
 ---
 
 # Highcharts Grid with React
-To create a Grid with React, please follow the steps below:
+Use the official React wrapper for Grid Lite or Grid Pro. The wrapper handles
+grid setup/cleanup and loads the Grid CSS for you.
+Requires React 18 or higher.
 
-## 1. Install the Grid package
-Install Grid Lite package with:
+## 1. Install the Grid React wrapper
 ```bash
-npm install @highcharts/grid-lite
-````
-
-## 2. Create a Grid React component:
-
-```tsx
-// GridComponent.tsx
-
-import { useEffect, useRef } from 'react';
-import Grid from '@highcharts/grid-lite/es-modules/masters/grid-lite.src.js';
-import '@highcharts/grid-lite/css/grid-lite.css';
-
-export default function GridComponent(props: { config: Grid.Options }) {
-    const { config } = props;
-    const containerRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        if (containerRef.current) {
-            Grid.grid(containerRef.current, config);
-        }
-    }, [config]);
-
-    return (
-        <div ref={containerRef} />
-    );
-}
+npm install @highcharts/grid-lite-react
+# or
+npm install @highcharts/grid-pro-react
 ```
 
-## 3. Use the component in your application:
+## 2. Render the Grid component
+Grid Lite example:
+
 ```tsx
-// App.tsx
+import { GridLite, type GridOptions } from '@highcharts/grid-lite-react';
 
-import GridComponent from "./components/GridComponent";
-
-function App() {
-    const config: Grid.Options = {
+export default function App() {
+    const options: GridOptions = {
         dataTable: {
             columns: {
                 name: ['Alice', 'Bob', 'Charlie', 'David'],
@@ -51,16 +29,71 @@ function App() {
                 city: ['New York', 'Oslo', 'Paris', 'Tokyo'],
             }
         }
-    }
+    };
 
-    return (
-        <div className="App">
-            <GridComponent config={config} />
-        </div>
-    );
+    return <GridLite options={options} />;
 }
-
-export default App;
 ```
 
-See the live example [here](https://stackblitz.com/edit/highcharts-grid-react-ts-mbvpgi2q).
+For Grid Pro, swap the imports to `@highcharts/grid-pro-react` and render
+`<GridPro options={options} />`.
+
+## 3. Access the Grid instance (optional)
+You can access the underlying Grid instance via a ref or callback:
+
+```tsx
+import { useRef } from 'react';
+import {
+    GridLite,
+    type GridOptions,
+    type GridRefHandle,
+    type GridInstance
+} from '@highcharts/grid-lite-react';
+
+export default function App() {
+    const gridRef = useRef<GridRefHandle<GridOptions> | null>(null);
+    const options: GridOptions = {
+        dataTable: {
+            columns: {
+                name: ['Alice', 'Bob', 'Charlie'],
+                age: [23, 34, 45]
+            }
+        }
+    };
+
+    const onGridReady = (grid: GridInstance<GridOptions>) => {
+        console.log('Grid instance:', grid);
+    };
+
+    return <GridLite options={options} gridRef={gridRef} callback={onGridReady} />;
+}
+```
+
+## 4. Next.js (client-side only)
+Grid uses browser APIs, so disable SSR:
+
+```tsx
+'use client';
+
+import { useState } from 'react';
+import dynamic from 'next/dynamic';
+import { type GridOptions } from '@highcharts/grid-lite-react';
+
+const GridLite = dynamic(
+    () => import('@highcharts/grid-lite-react').then((mod) => mod.GridLite),
+    { ssr: false }
+);
+
+export default function Page() {
+    const [options] = useState<GridOptions>({
+        dataTable: {
+            columns: {
+                name: ['Alice', 'Bob', 'Charlie'],
+                age: [23, 34, 45]
+            }
+        }
+    });
+
+    return <GridLite options={options} />;
+}
+```
