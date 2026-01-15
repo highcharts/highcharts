@@ -71,8 +71,24 @@ function removeHighcharts(removeFromCode = false, product = 'Highcharts') {
         pathsToDelete.push([...folder, 'Grid']);
     }
 
+    const preserveSvgDts = removeFromCode && product === 'Grid';
+    const svgRendererPath = fsLib.path([...folder, 'Core', 'Renderer', 'SVG']);
+
     for (const pathToDelete of pathsToDelete) {
-        fsLib.deleteDirectory(fsLib.path(pathToDelete));
+        const targetPath = fsLib.path(pathToDelete);
+
+        if (preserveSvgDts && targetPath === svgRendererPath) {
+            if (fsLib.isDirectory(targetPath)) {
+                for (const filePath of fsLib.getFilePaths(targetPath, true)) {
+                    if (!filePath.endsWith('.d.ts')) {
+                        fsLib.deleteFile(filePath);
+                    }
+                }
+            }
+            continue;
+        }
+
+        fsLib.deleteDirectory(targetPath);
     }
 }
 
