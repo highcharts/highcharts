@@ -174,7 +174,7 @@ Requires React 18 or higher.
 
 **App.tsx:**
 ```tsx
-import { GridLite, type GridOptions } from '@highcharts/grid-lite-react';
+import { Grid, type GridOptions } from '@highcharts/grid-lite-react';
 
 export default function App() {
     const options: GridOptions = {
@@ -187,12 +187,12 @@ export default function App() {
         }
     };
 
-    return <GridLite options={options} />;
+    return <Grid options={options} />;
 }
 ```
 
 For Grid Pro, swap the imports to `@highcharts/grid-pro-react` and render
-`<GridPro options={options} />`.
+`<Grid options={options} />`.
 
 **[View complete React guide →](https://www.highcharts.com/docs/grid/frameworks/grid-with-react)**
 

@@ -22,7 +22,7 @@ the core Grid package to get the latest features.
 Grid Lite example:
 
 ```tsx
-import { GridLite, type GridOptions } from '@highcharts/grid-lite-react';
+import { Grid, type GridOptions } from '@highcharts/grid-lite-react';
 
 export default function App() {
     const options: GridOptions = {
@@ -35,12 +35,12 @@ export default function App() {
         }
     };
 
-    return <GridLite options={options} />;
+    return <Grid options={options} />;
 }
 ```
 
 For Grid Pro, swap the imports to `@highcharts/grid-pro-react` and render
-`<GridPro options={options} />`.
+`<Grid options={options} />`.
 
 ## 3. Access the Grid instance (optional)
 You can access the underlying Grid instance via a ref or callback:
@@ -48,7 +48,7 @@ You can access the underlying Grid instance via a ref or callback:
 ```tsx
 import { useRef } from 'react';
 import {
-    GridLite,
+    Grid,
     type GridOptions,
     type GridRefHandle,
     type GridInstance
@@ -69,7 +69,7 @@ export default function App() {
         console.log('Grid instance:', grid);
     };
 
-    return <GridLite options={options} gridRef={gridRef} callback={onGridReady} />;
+    return <Grid options={options} ref={gridRef} callback={onGridReady} />;
 }
 ```
 
@@ -83,8 +83,8 @@ import { useState } from 'react';
 import dynamic from 'next/dynamic';
 import { type GridOptions } from '@highcharts/grid-lite-react';
 
-const GridLite = dynamic(
-    () => import('@highcharts/grid-lite-react').then((mod) => mod.GridLite),
+const Grid = dynamic(
+    () => import('@highcharts/grid-lite-react').then((mod) => mod.Grid),
     { ssr: false }
 );
 
@@ -98,6 +98,6 @@ export default function Page() {
         }
     });
 
-    return <GridLite options={options} />;
+    return <Grid options={options} />;
 }
 ```
