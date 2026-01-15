@@ -473,7 +473,7 @@ class Pagination {
         this.firstButton = makeHTMLElement('button', {
             className: Globals.getClassName('button')
         }, container);
-        this.firstButton.appendChild(createGridIcon('paginationFirst'));
+        this.firstButton.appendChild(createGridIcon('doubleChevronLeft'));
         this.firstButton.title = this.lang?.firstPage ?? '';
 
         // Set aria-label for a11y
@@ -515,7 +515,7 @@ class Pagination {
         this.prevButton = makeHTMLElement('button', {
             className: Globals.getClassName('button')
         }, container);
-        this.prevButton.appendChild(createGridIcon('paginationPrevious'));
+        this.prevButton.appendChild(createGridIcon('chevronLeft'));
         this.prevButton.title = this.lang?.previousPage ?? '';
 
         // Set aria-label for a11y
@@ -557,7 +557,7 @@ class Pagination {
         this.nextButton = makeHTMLElement('button', {
             className: Globals.getClassName('button')
         }, container);
-        this.nextButton.appendChild(createGridIcon('paginationNext'));
+        this.nextButton.appendChild(createGridIcon('chevronRight'));
         this.nextButton.title = this.lang?.nextPage ?? '';
 
         // Set aria-label for a11y
@@ -596,7 +596,7 @@ class Pagination {
         this.lastButton = makeHTMLElement('button', {
             className: Globals.getClassName('button')
         }, container);
-        this.lastButton.appendChild(createGridIcon('paginationLast'));
+        this.lastButton.appendChild(createGridIcon('doubleChevronRight'));
         this.lastButton.title = this.lang?.lastPage ?? '';
 
         // Set aria-label for a11y

@@ -118,7 +118,7 @@ class SortToolbarButton extends ToolbarButton {
 
     constructor() {
         super({
-            icon: 'upDownArrows',
+            icon: 'arrowUpDown',
             classNameKey: 'headerCellSortIcon',
             accessibility: {
                 ariaLabel: 'sort'
@@ -189,7 +189,7 @@ class SortToolbarButton extends ToolbarButton {
 
         if (!StateHelpers.isSorted(column) || !columnSorting?.order) {
             this.setActive(false);
-            this.setIcon('upDownArrows');
+            this.setIcon('arrowUpDown');
             this.renderSortPriorityIndicator();
             this.updateA11yLabel(null);
             return;
@@ -197,7 +197,7 @@ class SortToolbarButton extends ToolbarButton {
 
         this.setActive(true);
         this.setIcon(
-            columnSorting.order === 'asc' ? 'sortAsc' : 'sortDesc'
+            columnSorting.order === 'asc' ? 'arrowUp' : 'arrowDown'
         );
 
         const sortIndex = sortings.findIndex((sorting): boolean =>
