@@ -40,6 +40,7 @@ const {
 } = SeriesRegistry;
 const {
     diffObjects,
+    error,
     extend,
     merge,
     normalizeTickInterval
@@ -255,19 +256,25 @@ export default class ContourSeries extends ScatterSeries {
     public async run(): Promise<void> {
         const series = this,
             canvas = series.canvas as HTMLCanvasElement,
+            gpu = navigator.gpu,
             context = series.context = canvas.getContext('webgpu');
+
+        if (!gpu || !context) {
+            error(36, false);
+            return;
+        }
 
         if (context) {
             let device = this.device;
 
             if (!this.adapter) {
-                this.adapter = await navigator.gpu.requestAdapter();
+                this.adapter = await gpu.requestAdapter();
             }
             if (!device && this.adapter) {
                 device = this.device = await this.adapter.requestDevice();
             }
 
-            const canvasFormat = navigator.gpu.getPreferredCanvasFormat();
+            const canvasFormat = gpu.getPreferredCanvasFormat();
 
             if (device) {
                 context.configure({
