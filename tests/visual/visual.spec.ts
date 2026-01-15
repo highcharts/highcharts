@@ -3,7 +3,12 @@
 import type { Page, BrowserContext } from '@playwright/test';
 import { test, expect} from '@playwright/test';
 import { setupRoutes } from '~/fixtures.ts';
-import { getKarmaScripts, getSample, setTestingOptions } from '~/utils.ts';
+import {
+    getKarmaScripts,
+    getSample,
+    setTestingOptions,
+    transpileTS
+} from '~/utils.ts';
 import { join, dirname, relative } from 'node:path';
 import { glob } from 'glob';
 
@@ -129,7 +134,7 @@ test.describe('Visual tests', () => {
         .filter(Boolean)
         .map((value) => value.replace(/\\/g, '/'));
 
-    const samples = glob.sync(['samples/**/demo.js'], {
+    const samples = glob.sync(['samples/**/demo.{js,mjs,ts}'], {
         ignore: [
             'samples/unit-tests/**',
             'samples/issues/**',
@@ -137,63 +142,63 @@ test.describe('Visual tests', () => {
             // --- VISUAL TESTS ---
 
             // Custom data source
-            'samples/highcharts/blog/annotations-aapl-iphone/demo.js',
-            'samples/highcharts/blog/gdp-growth-annual/demo.js',
-            'samples/highcharts/blog/gdp-growth-multiple-request-v2/demo.js',
-            'samples/highcharts/blog/gdp-growth-multiple-request/demo.js',
-            'samples/highcharts/website/xmas-2021/demo.js',
+            'samples/highcharts/blog/annotations-aapl-iphone/demo.{js,mjs,ts}',
+            'samples/highcharts/blog/gdp-growth-annual/demo.{js,mjs,ts}',
+            'samples/highcharts/blog/gdp-growth-multiple-request-v2/demo.{js,mjs,ts}',
+            'samples/highcharts/blog/gdp-growth-multiple-request/demo.{js,mjs,ts}',
+            'samples/highcharts/website/xmas-2021/demo.{js,mjs,ts}',
 
             // Error #13, renders to other divs than #container. Sets global
             // options.
-            'samples/highcharts/demo/bullet-graph/demo.js',
+            'samples/highcharts/demo/bullet-graph/demo.{js,mjs,ts}',
             // Network loading?
-            'samples/highcharts/demo/combo-meteogram/demo.js',
+            'samples/highcharts/demo/combo-meteogram/demo.{js,mjs,ts}',
 
             // CSV data, parser fails - why??
-            'samples/highcharts/demo/line-csv/demo.js',
+            'samples/highcharts/demo/line-csv/demo.{js,mjs,ts}',
 
             // Clock
-            'samples/highcharts/demo/dynamic-update/demo.js',
-            'samples/highcharts/demo/gauge-vu-meter/demo.js',
+            'samples/highcharts/demo/dynamic-update/demo.{js,mjs,ts}',
+            'samples/highcharts/demo/gauge-vu-meter/demo.{js,mjs,ts}',
 
             // Too heavy
-            'samples/highcharts/demo/parallel-coordinates/demo.js',
-            'samples/highcharts/demo/sparkline/demo.js',
+            'samples/highcharts/demo/parallel-coordinates/demo.{js,mjs,ts}',
+            'samples/highcharts/demo/sparkline/demo.{js,mjs,ts}',
 
             // Maps
-            'samples/maps/demo/map-pies/demo.js', // advanced data
-            'samples/maps/demo/us-counties/demo.js', // advanced data
-            'samples/maps/plotoptions/series-animation-true/demo.js', // animation
-            'samples/highcharts/blog/map-europe-electricity-price/demo.js', // strange fails, remove this later
+            'samples/maps/demo/map-pies/demo.{js,mjs,ts}', // advanced data
+            'samples/maps/demo/us-counties/demo.{js,mjs,ts}', // advanced data
+            'samples/maps/plotoptions/series-animation-true/demo.{js,mjs,ts}', // animation
+            'samples/highcharts/blog/map-europe-electricity-price/demo.{js,mjs,ts}', // strange fails, remove this later
 
             // Unknown error
-            'samples/highcharts/boost/arearange/demo.js',
-            'samples/highcharts/boost/scatter-smaller/demo.js',
-            'samples/highcharts/data/google-spreadsheet/demo.js',
+            'samples/highcharts/boost/arearange/demo.{js,mjs,ts}',
+            'samples/highcharts/boost/scatter-smaller/demo.{js,mjs,ts}',
+            'samples/highcharts/data/google-spreadsheet/demo.{js,mjs,ts}',
 
             // Various
-            'samples/highcharts/data/delimiters/demo.js', // data island
-            'samples/highcharts/css/exporting/demo.js', // advanced demo
-            'samples/highcharts/css/pattern/demo.js', // styled mode, setOptions
-            'samples/highcharts/studies/logistics/demo.js', // overriding
+            'samples/highcharts/data/delimiters/demo.{js,mjs,ts}', // data island
+            'samples/highcharts/css/exporting/demo.{js,mjs,ts}', // advanced demo
+            'samples/highcharts/css/pattern/demo.{js,mjs,ts}', // styled mode, setOptions
+            'samples/highcharts/studies/logistics/demo.{js,mjs,ts}', // overriding
 
             // Failing on Edge only
-            'samples/unit-tests/pointer/members/demo.js',
+            'samples/unit-tests/pointer/members/demo.{js,mjs,ts}',
 
             // visual tests excluded for now due to failure
-            'samples/highcharts/demo/funnel3d/demo.js',
-            'samples/highcharts/demo/live-data/demo.js',
-            'samples/highcharts/demo/organization-chart/demo.js',
-            'samples/highcharts/demo/pareto/demo.js',
-            'samples/highcharts/demo/pyramid3d/demo.js',
-            'samples/highcharts/demo/synchronized-charts/demo.js',
+            'samples/highcharts/demo/funnel3d/demo.{js,mjs,ts}',
+            'samples/highcharts/demo/live-data/demo.{js,mjs,ts}',
+            'samples/highcharts/demo/organization-chart/demo.{js,mjs,ts}',
+            'samples/highcharts/demo/pareto/demo.{js,mjs,ts}',
+            'samples/highcharts/demo/pyramid3d/demo.{js,mjs,ts}',
+            'samples/highcharts/demo/synchronized-charts/demo.{js,mjs,ts}',
 
             // Visual test fails due to external library used
-            'samples/highcharts/demo/combo-regression/demo.js',
+            'samples/highcharts/demo/combo-regression/demo.{js,mjs,ts}',
 
-            'samples/grid-pro/**/demo.js', // TODO: Fails as Grid is not defined
-            'samples/grid-lite/**/demo.js', // TODO: Fails as Grid is not defined
-            'samples/dashboards/**/demo.js' // TODO: Fails as Grid is not defined
+            'samples/grid-pro/**/demo.{js,mjs,ts}', // TODO: Fails as Grid is not defined
+            'samples/grid-lite/**/demo.{js,mjs,ts}', // TODO: Fails as Grid is not defined
+            'samples/dashboards/**/demo.{js,mjs,ts}' // TODO: Fails as Grid is not defined
         ],
         absolute: true,
         posix: true,
@@ -220,6 +225,9 @@ test.describe('Visual tests', () => {
             }
 
             const sample = getSample(dirname(samplePath), true);
+            if (sample.script && samplePath.endsWith('.ts')) {
+                sample.script = transpileTS(sample.script);
+            }
 
             if (
                 sample.details?.requiresManualTesting ||

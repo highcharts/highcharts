@@ -1,7 +1,7 @@
 /* eslint-disable playwright/no-conditional-in-test */
 import { Page } from '@playwright/test';
 import { test, setupRoutes } from '~/fixtures.ts';
-import { getKarmaScripts, getSample } from '~/utils.ts';
+import { getKarmaScripts, getSample, transpileTS } from '~/utils.ts';
 import { join, dirname } from 'node:path';
 import { glob } from 'glob';
 
@@ -106,7 +106,7 @@ test.describe('QUnit tests', () => {
         await clearErrorCapture(page);
     });
 
-    const unitTests = glob.sync('samples/unit-tests/**/demo.js', {
+    const unitTests = glob.sync('samples/unit-tests/**/demo.{js,mjs,ts}', {
         absolute: true,
         posix: true,
         nodir: true,
@@ -119,6 +119,10 @@ test.describe('QUnit tests', () => {
             const testStartTime = Date.now();
             const sample = getSample(dirname(qunitTest));
             
+            if (sample.script && qunitTest.endsWith('.ts')) {
+                sample.script = transpileTS(sample.script);
+            }
+
             testResults.total++;
 
             if (!sample.script.includes('QUnit.test')) {

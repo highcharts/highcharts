@@ -9,6 +9,7 @@ import { join, extname, normalize } from 'node:path';
 import { globSync } from 'glob';
 import { load as yamlLoad } from 'js-yaml';
 import { existsSync, readFileSync } from 'node:fs';
+import * as ts from 'typescript';
 
 export async function setTestingOptions(
     page: Page, HC: JSHandle<typeof Highcharts> | undefined = undefined
@@ -91,6 +92,15 @@ export async function getKarmaScripts() {
     );
 
     return files;
+}
+
+export function transpileTS(script: string) {
+    return ts.transpileModule(script, {
+        compilerOptions: {
+            target: ts.ScriptTarget.ES2018,
+            module: ts.ModuleKind.None
+        }
+    }).outputText;
 }
 
 type Details = {
@@ -283,9 +293,11 @@ export function getSample(path: string, injectCSS: boolean = false) {
             const [globPath] = globSync(pattern, { absolute: true });
             const content = readFileSync(globPath, { encoding: 'utf8'});
 
-            obj[type] = type === 'details' ?
-                yamlLoad(content) as object :
-                content;
+            if (type === 'details') {
+                obj[type] = yamlLoad(content) as object;
+            } else {
+                obj[type] = content;
+            }
 
         } catch {/**/}
     }
