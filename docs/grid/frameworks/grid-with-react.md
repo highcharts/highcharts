@@ -14,6 +14,10 @@ npm install @highcharts/grid-lite-react
 npm install @highcharts/grid-pro-react
 ```
 
+Feature updates land in the core Grid package (`@highcharts/grid-lite` or
+`@highcharts/grid-pro`). The React package is the integration layer, so update
+the core Grid package to get the latest features.
+
 ## 2. Render the Grid component
 Grid Lite example:
 
