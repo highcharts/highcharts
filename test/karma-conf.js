@@ -68,7 +68,10 @@ function getHTML(path) {
         .replace(
             /<link[a-z"=:\.\/ ]+(fonts\.googleapis.com|fonts\.gstatic.com)[^>]+>/gi,
             ''
-        );
+        )
+
+        // Escape ${...} template strings
+        .replace(/\$\{/g, '\\${');
 
     return html + '\n';
 }
