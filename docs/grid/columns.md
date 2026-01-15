@@ -85,29 +85,8 @@ defined as pixels (e.g. `150` or `'150px'`), percentages (e.g. `'20%'`), or
 `'auto'`. Percentage values are always calculated relative to the **total table
 width**.
 
-A width of `'auto'` is equivalent to omitting the width and causes the column to
-participate in the distribution of remaining available space.
-
-* **No widths defined (or all set to `'auto'`):**
-  All columns are evenly distributed across the available table width.
-
-* **Some widths defined:**
-  Defined widths (px or %) are applied first; the remaining available space is
-  **evenly distributed** among columns with `width: 'auto'` or no width.
-
-* **Widths exceed table width:**
-  If the total defined width exceeds the available table width, a horizontal
-  scrollbar appears.
-
-* **Widths below table width:**
-  If all columns have defined widths and their total is less than the available
-  table width, unused whitespace appears on the right.
-
-Columns with percentage or `'auto'` widths automatically adjust when the
-container is resized.
-
-It is recommended to configure column widths using this API option rather than
-applying widths via CSS, to ensure consistent layout and behavior.
+A width of `'auto'` is equivalent to an undefined width, but it takes
+precedence over `columnDefaults.width`.
 
 ### Example 1
 
