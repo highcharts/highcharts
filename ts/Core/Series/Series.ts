@@ -1195,7 +1195,8 @@ class Series {
             i,
             point,
             lastIndex: number,
-            succeeded = true;
+            succeeded = true,
+            pointsChanged = false;
 
         this.xIncrement = null;
 
@@ -1287,6 +1288,7 @@ class Series {
                 // (#10187)
                 if (point !== oldData[i].y && !oldData[i].destroyed) {
                     oldData[i].update(point, false, void 0, false);
+                    pointsChanged = true;
                 }
             });
             // Don't add new points since those configs are used above
@@ -1320,6 +1322,17 @@ class Series {
         ) {
             this.xIncrement = arrayMax(xData);
             this.autoIncrement();
+        }
+
+        // Fix axis labels positioning (#17393).
+        // Mark axes as dirty if points changed.
+        if (hasUpdatedByKey || pointsChanged || pointsToAdd.length > 0) {
+            if (this.xAxis) {
+                this.xAxis.isDirty = true;
+            }
+            if (this.yAxis) {
+                this.yAxis.isDirty = true;
+            }
         }
 
         return true;
@@ -1580,7 +1593,10 @@ class Series {
             // Destroy old points
             i = oldDataLength;
             while (i--) {
-                oldData[i]?.destroy();
+                const oldPoint = oldData[i];
+                if (oldPoint && typeof oldPoint.destroy === 'function') {
+                    oldPoint.destroy();
+                }
             }
 
             // Reset minRange (#878)
