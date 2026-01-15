@@ -447,13 +447,21 @@ class HTMLElement extends SVGElement {
                     )
                 ) {
                     const usePxWidth = rotation || scaleX ||
-                        textPxLength > textWidthNum ||
-                        // Set width to prevent over-wrapping (#22609)
-                        willOverWrap;
+                        textPxLength > textWidthNum;
 
                     css(element, {
+                        // #16261
                         width: usePxWidth && isNumber(textWidth) ?
-                            textWidth + 'px' : 'auto', // #16261
+                            textWidth + 'px' :
+                            // Set width to prevent over-wrapping (#22609)
+                            (willOverWrap ?
+                                Math.min(
+                                    // +1 for rounding errors
+                                    textPxLength + 1,
+                                    textWidthNum
+                                ) + 'px' :
+                                'auto'
+                            ),
                         display,
                         whiteSpace: whiteSpace || 'normal' // #3331
                     });

@@ -38,7 +38,7 @@ const { defaultOptions } = D;
  * @sample {highcharts} highcharts/demo/gauge-speedometer/
  *         Speedometer gauge with multiple backgrounds
  *
- * @type         {Array<*>}
+ * @type         {*|Array<*>}
  * @optionparent pane.background
  */
 const background: PaneBackgroundOptions = {
