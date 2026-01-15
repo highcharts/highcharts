@@ -1195,8 +1195,7 @@ class Series {
             i,
             point,
             lastIndex: number,
-            succeeded = true,
-            pointsChanged = false;
+            succeeded = true;
 
         this.xIncrement = null;
 
@@ -1288,11 +1287,20 @@ class Series {
                 // (#10187)
                 if (point !== oldData[i].y && !oldData[i].destroyed) {
                     oldData[i].update(point, false, void 0, false);
-                    pointsChanged = true;
                 }
             });
             // Don't add new points since those configs are used above
             pointsToAdd.length = 0;
+
+            // Fix axis labels positioning (#17393).
+            // Mark axes as dirty.
+            if (this.xAxis) {
+                this.xAxis.isDirty = true;
+            }
+
+            if (this.yAxis) {
+                this.yAxis.isDirty = true;
+            }
 
         // Did not succeed in updating data
         } else {
@@ -1322,17 +1330,6 @@ class Series {
         ) {
             this.xIncrement = arrayMax(xData);
             this.autoIncrement();
-        }
-
-        // Fix axis labels positioning (#17393).
-        // Mark axes as dirty if points changed.
-        if (hasUpdatedByKey || pointsChanged || pointsToAdd.length > 0) {
-            if (this.xAxis) {
-                this.xAxis.isDirty = true;
-            }
-            if (this.yAxis) {
-                this.yAxis.isDirty = true;
-            }
         }
 
         return true;
