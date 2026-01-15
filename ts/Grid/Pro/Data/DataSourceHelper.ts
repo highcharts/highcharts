@@ -293,7 +293,8 @@ export interface DataSourceOptions {
     >;
 
     /**
-     * If `true`, empty query parameters will be omitted from the URL.
+     * If `true`, empty query parameters are omitted from the URL.
+     * @default true
      */
     omitEmpty?: boolean;
 
