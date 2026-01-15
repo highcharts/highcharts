@@ -19,6 +19,9 @@ const grid = Grid.grid('container', {
             //     };
             // },
             // omitEmpty: false
+        },
+        setValueCallback: async (columnId, rowId, value) => {
+            console.log('Setting value:', columnId, rowId, value);
         }
     },
     columnDefaults: {

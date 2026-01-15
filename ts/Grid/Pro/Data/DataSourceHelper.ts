@@ -168,8 +168,8 @@ const defaultParseReponse = async (
     const { data, meta } = await res.json();
     return {
         columns: data || {},
-        totalRowCount: meta.totalRowCount || 0,
-        rowIds: meta.rowIds || []
+        totalRowCount: meta?.totalRowCount || 0,
+        rowIds: meta?.rowIds
     };
 };
 
