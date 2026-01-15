@@ -4,10 +4,21 @@ const grid = Grid.grid('container', {
         dataSource: {
             urlTemplate: 'https://dataset-server-hc-production.up.railway.app' +
                 '/data?format={format}&columnsInclude={columns}&page={page}' +
-                '&pageSize={pageSize}',
+                '&pageSize={pageSize}&filter={filter}&sortBy={sortBy}' +
+                '&sortOrder={sortOrder}',
             templateVariables: {
                 columns: 'employeeId,firstName,lastName'
             }
+            // parseResponse: async res => {
+            //     const json = await res.json();
+            //     console.log('Received response:', json);
+            //     return {
+            //         columns: json.data || {},
+            //         totalRowCount: json.meta.totalRowCount || 0,
+            //         rowIds: json.meta.rowIds || []
+            //     };
+            // },
+            // omitEmpty: false
         }
     },
     columnDefaults: {
