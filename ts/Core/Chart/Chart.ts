@@ -957,17 +957,6 @@ class Chart {
     }
 
     /**
-     * Internal function to add the palette colors as CSS variables to the
-     * DOM
-     *
-     * @internal
-     * @function Highcharts.Chart#setPalette
-     */
-    public setPalette(): void {
-        this.palette = new Palette(this, this.options.palette);
-    }
-
-    /**
      * Internal function to initialize an individual series.
      *
      * @internal
@@ -2153,7 +2142,7 @@ class Chart {
 
         chart.setClassName(optionsChart.className);
         if (!chart.styledMode) {
-            chart.setPalette();
+            this.palette = new Palette(this, this.options.palette);
             chart.renderer.setStyle(optionsChart.style as any);
         } else {
             // Initialize definitions

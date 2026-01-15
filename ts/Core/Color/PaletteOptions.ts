@@ -24,7 +24,7 @@ import type ColorType from './ColorType';
  * */
 interface PaletteColors {
     backgroundColor?: ColorType;
-    dataColors?: Array<ColorType>;
+    colors?: Array<ColorType>;
     neutralColor100?: ColorType;
     neutralColor80?: ColorType;
     neutralColor60?: ColorType;

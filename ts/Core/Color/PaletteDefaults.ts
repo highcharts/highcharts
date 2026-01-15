@@ -77,7 +77,7 @@ export default {
         /**
          * Colors for data series and points
          */
-        dataColors: [
+        colors: [
             '#2caffe',
             '#544fc5',
             '#00e272',

@@ -84,6 +84,8 @@ const defaultOptions: DefaultOptions = {
      * are defined in CSS and applied either through series or point class
      * names, or through the [chart.colorCount](#chart.colorCount) option.
      *
+     * Since v13, the default is a CSS variable based color set.
+     *
      * @sample {highcharts} highcharts/chart/colors/
      *         Assign a global color theme
      * @sample highcharts/members/theme-v10/
@@ -91,19 +93,21 @@ const defaultOptions: DefaultOptions = {
      *
      * @type    {Array<(Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject)>}
      * @default [
-     *     "#2caffe",
-     *     "#544fc5",
-     *     "#00e272",
-     *     "#fe6a35",
-     *     "#6b8abc",
-     *     "#d568fb",
-     *     "#2ee0ca",
-     *     "#fa4b42",
-     *     "#feb56a",
-     *     "#91e8e1"
+     *     "var(--highcharts-color-0)", // #2caffe
+     *     "var(--highcharts-color-1)", // #544fc5
+     *     "var(--highcharts-color-2)", // #00e272
+     *     "var(--highcharts-color-3)", // #fe6a35
+     *     "var(--highcharts-color-4)", // #6b8abc
+     *     "var(--highcharts-color-5)", // #d568fb
+     *     "var(--highcharts-color-6)", // #2ee0ca
+     *     "var(--highcharts-color-7)", // #fa4b42
+     *     "var(--highcharts-color-8)", // #feb56a
+     *     "var(--highcharts-color-9)"  // #91e8e1
      * ]
      */
-    colors: PaletteDefaults.light.dataColors,
+    colors: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(
+        (i: number): string => `var(--highcharts-color-${i})`
+    ),
 
     /**
      * Styled mode only. Configuration object for adding SVG definitions for

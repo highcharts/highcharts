@@ -170,7 +170,7 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
 
         assert.strictEqual(
             hex,
-            desiredColor,
+            Highcharts.Color.names[desiredColor],
             `After updating to empty zones the color should be
             remained, #23571.`
         );

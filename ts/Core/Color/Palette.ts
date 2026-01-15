@@ -25,6 +25,7 @@ import H from '../Globals.js';
 const { doc } = H;
 import U from '../Utilities.js';
 const {
+    isString,
     objectEach,
     merge
 } = U;
@@ -123,26 +124,41 @@ export default class Palette {
     public update(
         options: PaletteOptions
     ): void {
-        this.options = merge(true, this.options, options);
-        options = this.options;
+        options = this.chart.options.palette = merge(
+            true,
+            this.options,
+            options
+        );
 
         let css: string = '';
 
-        objectEach(options.light, (value, key: string): void => {
-            // Kebab-case the key. Sequences of numbers should be kept but
-            // with a preceding dash.
-            key = key
-                .replace(/([0-9]+)/g, '-$1')
-                .replace(
-                    /[A-Z]/g,
-                    (match): string => `-${match.toLowerCase()}`
-                );
-            css += `--highcharts-${key}: ${value};\n`;
+        const addKebab = (color: unknown, key: string): void => {
+            if (isString(color)) {
+                // Kebab-case the key. Sequences of numbers should be kept but
+                // with a preceding dash.
+                key = key
+                    .replace(/([0-9]+)/g, '-$1')
+                    .replace(
+                        /[A-Z]/g,
+                        (match): string => `-${match.toLowerCase()}`
+                    );
+                css += `--highcharts-${key}: ${color};\n`;
+            }
+        };
+
+        // Data colors are stored as an array
+        options.light?.colors?.forEach((color, i): void => {
+            addKebab(color, `color${i}`);
         });
+
+        // The rest are stored as named properties
+        objectEach(options.light, addKebab);
+
         // Add a style tag to the chart renderer box
         const style = this.chart.renderer.defs.element.querySelector('style') ||
             doc.createElementNS(H.SVG_NS, 'style');
         if (!style.parentNode) {
+            (style as HTMLStyleElement).nonce = 'highcharts';
             this.chart.renderer.defs.element.appendChild(style);
         }
         style.textContent = `:root {\n${css}}`;

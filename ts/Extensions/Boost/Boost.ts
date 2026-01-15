@@ -20,7 +20,7 @@
 import type Axis from '../../Core/Axis/Axis';
 import type { AxisSetExtremesEventObject } from '../../Core/Axis/AxisOptions';
 import type Chart from '../../Core/Chart/Chart';
-import type Color from '../../Core/Color/Color';
+import Color from '../../Core/Color/Color';
 import type HTMLElement from '../../Core/Renderer/HTML/HTMLElement';
 import type Series from '../../Core/Series/Series';
 import type SeriesRegistry from '../../Core/Series/SeriesRegistry';
@@ -113,6 +113,19 @@ function compose(
 
     BoostChart.compose(ChartClass, wglMode);
     BoostSeries.compose(SeriesClass, seriesTypes, PointClass, wglMode);
+
+    // Literal resolution of the CSS variable names to actual colors
+    const setHardColorReferences = function (this: Chart): void {
+        this.options.palette.light?.colors?.forEach((color, i): void => {
+            if (ColorClass && typeof color === 'string') {
+                ColorClass.names[
+                    `var(--highcharts-color-${i})`
+                ] = ColorClass.names[color] || color;
+            }
+        });
+    };
+    addEvent(ChartClass, 'beforeRender', setHardColorReferences);
+    addEvent(ChartClass, 'beforeRedraw', setHardColorReferences);
 
     // Handle zooming by touch/pinch or mouse wheel. Assume that boosted charts
     // are too slow for a live preview while dragging. Instead, just scale the

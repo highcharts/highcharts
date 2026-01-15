@@ -509,6 +509,15 @@ if (window.QUnit) {
             }
             Highcharts.addEvent = origAddEvent;
 
+            // Remove Boost's literal colors
+            if (Highcharts.Color) {
+                Object.keys(Highcharts.Color.names).forEach(function (key) {
+                    if (key.indexOf('var(--highcharts-color-') === 0) {
+                        delete Highcharts.Color.names[key];
+                    }
+                });
+            }
+
             // Reset defaultOptions and callbacks if those are mutated. In
             // karma-konf, the scriptBody is inspected to see if these expensive
             // operations are necessary. Visual tests only.
