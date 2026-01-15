@@ -1,22 +1,13 @@
 const grid = Grid.grid('container', {
     data: {
         providerType: 'remote',
-        chunkSize: 50,
-        serverApi: {
-            baseUrl: 'https://dataset-server-hc-production.up.railway.app/data',
-            columns: [
-                'employeeId',
-                'firstName',
-                'lastName',
-                'department',
-                'role',
-                'city',
-                'country',
-                'nationality',
-                'employmentType',
-                'projectsAssigned',
-                'remote'
-            ]
+        dataSource: {
+            urlTemplate: 'https://dataset-server-hc-production.up.railway.app' +
+                '/data?format={format}&columnsInclude={columns}&page={page}' +
+                '&pageSize={pageSize}',
+            templateVariables: {
+                columns: 'employeeId,firstName,lastName'
+            }
         }
     },
     columnDefaults: {

@@ -26,11 +26,12 @@ import type DT from '../../../Data/DataTable';
 import type { DataProviderOptions } from '../../Core/Data/DataProvider';
 import type { ColumnDataType } from '../../Core/Table/Column';
 import type QueryingController from '../../Core/Querying/QueryingController';
+import type { DataSourceOptions } from './DataSourceHelper';
 
 import { DataProvider } from '../../Core/Data/DataProvider.js';
 import DataProviderRegistry from '../../Core/Data/DataProviderRegistry.js';
 import { createQueryFingerprint } from './QuerySerializer.js';
-import RemoteFetchHelper from './RemoteFetchHelper.js';
+import { dataSourceFetch } from './DataSourceHelper.js';
 
 
 /* *
@@ -48,8 +49,6 @@ import RemoteFetchHelper from './RemoteFetchHelper.js';
  * - Caches fetched chunks (optionally with an LRU eviction policy).
  * - Deduplicates concurrent requests for the same chunk.
  * - Uses a query fingerprint to invalidate caches when the query changes.
- * - Supports either a standardized dataset server API (`serverApi`) or a
- *   custom `fetchCallback`.
  */
 export class RemoteDataProvider extends DataProvider {
 
@@ -275,7 +274,7 @@ export class RemoteDataProvider extends DataProvider {
 
                 let result: RemoteFetchCallbackResult;
 
-                const { fetchCallback, serverApi } = this.options;
+                const { fetchCallback, dataSource } = this.options;
                 if (fetchCallback) {
                     result = await fetchCallback.call(
                         this,
@@ -283,17 +282,15 @@ export class RemoteDataProvider extends DataProvider {
                         offset,
                         limit
                     );
-                } else if (serverApi) {
-                    result = await RemoteFetchHelper.fetch({
-                        baseUrl: serverApi.baseUrl,
+                } else if (dataSource) {
+                    result = await dataSourceFetch(dataSource, {
                         query: this.querying,
                         offset,
-                        limit,
-                        columns: serverApi.columns
+                        limit
                     });
                 } else {
                     throw new Error(
-                        'RemoteDataProvider: Either `serverApi` or ' +
+                        'RemoteDataProvider: Either `dataSource` or ' +
                         '`fetchCallback` must be provided in options.'
                     );
                 }
@@ -572,8 +569,6 @@ export class RemoteDataProvider extends DataProvider {
 
 export interface RemoteFetchCallbackResult {
     columns: Record<string, DT.Column>;
-    currentPage: number;
-    pageSize: number;
     totalRowCount: number;
     rowIds?: number[];
 }
@@ -584,37 +579,17 @@ export interface DataChunk {
     rowIds: number[];
 }
 
-/**
- * Configuration for the standardized server API.
- * When provided, the built-in RemoteFetchHelper will be used to fetch data.
- */
-export interface ServerApiOptions {
-    /**
-     * The base URL of the remote API endpoint.
-     */
-    baseUrl: string;
-
-    /**
-     * Optional list of column IDs to include in the response.
-     * If not provided, all columns will be fetched.
-     */
-    columns?: string[];
-}
-
 export interface RemoteDataProviderOptions extends DataProviderOptions {
     providerType: 'remote';
 
     /**
-     * Configuration for the standardized server API.
-     * If provided, the built-in RemoteFetchHelper will be used to fetch data.
-     * Either `serverApi` or `fetchCallback` must be provided.
+     * Serialized data source configuration, alternatively to `fetchCallback`.
      */
-    serverApi?: ServerApiOptions;
+    dataSource?: DataSourceOptions;
 
     /**
-     * Custom callback to fetch data from the remote server.
-     * Use this for non-standard APIs that don't match the RemoteFetchHelper
-     * format. Either `serverApi` or `fetchCallback` must be provided.
+     * Custom callback to fetch data from the remote server. Has higher priority
+     * than `dataSource`.
      */
     fetchCallback?: (
         this: RemoteDataProvider,
