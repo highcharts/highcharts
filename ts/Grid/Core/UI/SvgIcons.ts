@@ -38,7 +38,8 @@ import Globals from '../Globals.js';
  */
 export type GridIconName = (
     'filter' | 'menu' | 'chevronRight' | 'checkmark' | 'upDownArrows' |
-    'sortAsc' | 'sortDesc'
+    'sortAsc' | 'sortDesc' | 'paginationFirst' | 'paginationPrevious' |
+    'paginationNext' | 'paginationLast'
 );
 
 /**
@@ -103,6 +104,40 @@ export const icons: Record<GridIconName, SVGDefinition> = {
         }, {
             d: 'M 10.3333 11.3334 V 0.6667 M 10.3333 0.6667 L 7.6667 3.3334 M 10.3333 0.6667 L 13 3.3334',
             opacity: 0.2
+        }]
+    },
+    paginationFirst: {
+        width: 10,
+        height: 10,
+        children: [{
+            d: 'M5 9L1 5L5 1M9 9L5 5L9 1',
+            'stroke-width': 1.34
+        }]
+    },
+    paginationPrevious: {
+        width: 10,
+        height: 10,
+        viewBox: '0 0 8 10',
+        children: [{
+            d: 'M5 9L1 5L5 1',
+            'stroke-width': 1.34
+        }]
+    },
+    paginationNext: {
+        width: 10,
+        height: 10,
+        viewBox: '0 0 4 10',
+        children: [{
+            d: 'M1 1L5 5L1 9',
+            'stroke-width': 1.34
+        }]
+    },
+    paginationLast: {
+        width: 10,
+        height: 10,
+        children: [{
+            d: 'M5 1L9 5L5 9M1 1L5 5L1 9',
+            'stroke-width': 1.34
         }]
     }
 } as const;

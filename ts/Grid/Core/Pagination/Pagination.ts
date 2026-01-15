@@ -30,7 +30,7 @@ import type {
 } from './PaginationOptions';
 import type { DeepPartial } from '../../../Shared/Types';
 
-import Icons from './Icons.js';
+import { createGridIcon } from '../UI/SvgIcons.js';
 import Globals from '../Globals.js';
 import GridUtils from '../GridUtils.js';
 import Utilities from '../../../Core/Utilities.js';
@@ -471,9 +471,9 @@ class Pagination {
 
         // Create first button
         this.firstButton = makeHTMLElement('button', {
-            className: Globals.getClassName('button'),
-            innerHTML: Icons.first
+            className: Globals.getClassName('button')
         }, container);
+        this.firstButton.appendChild(createGridIcon('paginationFirst'));
         this.firstButton.title = this.lang?.firstPage ?? '';
 
         // Set aria-label for a11y
@@ -513,9 +513,9 @@ class Pagination {
 
         // Create previous button
         this.prevButton = makeHTMLElement('button', {
-            className: Globals.getClassName('button'),
-            innerHTML: Icons.previous
+            className: Globals.getClassName('button')
         }, container);
+        this.prevButton.appendChild(createGridIcon('paginationPrevious'));
         this.prevButton.title = this.lang?.previousPage ?? '';
 
         // Set aria-label for a11y
@@ -555,9 +555,9 @@ class Pagination {
 
         // Create next button
         this.nextButton = makeHTMLElement('button', {
-            className: Globals.getClassName('button'),
-            innerHTML: Icons.next
+            className: Globals.getClassName('button')
         }, container);
+        this.nextButton.appendChild(createGridIcon('paginationNext'));
         this.nextButton.title = this.lang?.nextPage ?? '';
 
         // Set aria-label for a11y
@@ -594,9 +594,9 @@ class Pagination {
 
         // Create last button
         this.lastButton = makeHTMLElement('button', {
-            className: Globals.getClassName('button'),
-            innerHTML: Icons.last
+            className: Globals.getClassName('button')
         }, container);
+        this.lastButton.appendChild(createGridIcon('paginationLast'));
         this.lastButton.title = this.lang?.lastPage ?? '';
 
         // Set aria-label for a11y
