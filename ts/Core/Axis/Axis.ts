@@ -4548,17 +4548,15 @@ class Axis {
 
                 // Presentational attributes
                 if (!chart.styledMode) {
-                    const stroke = options.color ||
+                    graphic.attr({
+                        stroke: options.color ||
                             (
                                 categorized ?
                                     color(
                                         'var(--highcharts-highlight-color-20)'
                                     ).setOpacity(0.25).get() :
-                                    'var(--highcharts-highlight-color-20)'
-                            );
-
-                    graphic.attr({
-                        stroke,
+                                    'var(--highcharts-neutral-color-20)'
+                            ),
                         'stroke-width': pick(options.width, 1)
                     }).css({
                         'pointer-events': 'none'
