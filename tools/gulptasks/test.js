@@ -2,6 +2,8 @@
  * Copyright (C) Highsoft AS
  */
 
+/* eslint-disable node/no-unsupported-features/es-syntax */
+
 const gulp = require('gulp');
 const path = require('path');
 
@@ -71,11 +73,13 @@ function checkJSWrap() {
     }
 }
 
-function checkSamplesConsistency() {
+async function checkSamplesConsistency() {
     const FSLib = require('../libs/fs.js');
     const { existsSync } = require('node:fs');
     const glob = require('glob');
     const LogLib = require('../libs/log');
+    const { calculateChecksum } = await import('../sample-generator/index.ts');
+    const fs = require('fs');
 
     let errors = 0;
 
@@ -103,6 +107,81 @@ function checkSamplesConsistency() {
             }
         }
     });
+
+    // Validate checksums for samples with config.ts
+    const configPaths = glob.sync(
+        FSLib.path(process.cwd() + '/samples/**/config.ts', true)
+    );
+
+    for (const configPath of configPaths) {
+        const dir = path.dirname(configPath);
+        const checksumPath = path.join(dir, '.generated-checksum');
+
+        // Check if any generated files exist
+        const generatedFiles = ['demo.ts', 'demo.html', 'demo.css', 'demo.details'];
+        const hasGeneratedFiles = generatedFiles.some(file =>
+            existsSync(path.join(dir, file)));
+
+        if (!hasGeneratedFiles) {
+            return; // Skip if no generated files
+        }
+
+        // Check if checksum file exists
+        if (existsSync(checksumPath)) {
+            // Calculate current checksum
+            const currentChecksum = await calculateChecksum(dir);
+
+            // Read saved checksum
+            const savedChecksum = fs.readFileSync(checksumPath, 'utf-8').trim();
+
+            // Compare checksums
+            if (savedChecksum !== currentChecksum) {
+                LogLib.failure(
+                    'Generated files have been manually edited instead of being regenerated from config.ts:',
+                    configPath
+                );
+                errors++;
+            }
+
+        } else {
+            // Checksum file is missing. Check if this is a fresh checkout or
+            // if the user has manually edited the generated files.
+            // Compare modification times: if the most recent generated file is
+            // more than one minute newer than config.ts, assume manual edits.
+            const configMtime = fs.statSync(configPath).mtime.getTime();
+            let mostRecentGeneratedMtime = 0;
+
+            for (const file of generatedFiles) {
+                const filePath = path.join(dir, file);
+                if (existsSync(filePath)) {
+                    const mtime = fs.statSync(filePath).mtime.getTime();
+                    if (mtime > mostRecentGeneratedMtime) {
+                        mostRecentGeneratedMtime = mtime;
+                    }
+                }
+            }
+
+            // If generated files are more than 1 minute newer than config.ts,
+            // assume they were manually edited
+            const timeDiffMs = mostRecentGeneratedMtime - configMtime;
+            const oneMinuteMs = 60 * 1000;
+
+            if (timeDiffMs > oneMinuteMs) {
+                const relativePath = path.relative(process.cwd(), configPath),
+                    shortPath = relativePath
+                        .replace(/samples[\/\\]/u, '')
+                        .replace(/\/config\.ts$/u, '');
+                LogLib.failure(
+                    `Generated files have been manually edited instead of being regenerated from config.ts:
+                    - ${relativePath}
+                    - Run \`gulp generate-samples [--samples ${shortPath}]\`
+                      or view it in the Sample Viewer with compile-on-demand enabled`
+                );
+                errors++;
+            }
+            // Otherwise, assume fresh checkout without checksum files - OK
+        }
+    }
 
     if (errors) {
         throw new Error('Samples validation failed');
@@ -301,7 +380,7 @@ specified by config.imageCapture.resultsOutputPath.
     }
 
     checkDocsConsistency();
-    checkSamplesConsistency();
+    await checkSamplesConsistency();
     checkDemosConsistency();
     checkJSWrap();
 
