@@ -169,6 +169,7 @@ npm install @highcharts/grid-lite-react
 npm install @highcharts/grid-pro-react
 ```
 
+The React package is self-contained, so a single install is enough to render the grid.
 Requires React 18 or higher.
 
 **App.tsx:**

@@ -3,11 +3,11 @@ sidebar_label: "React"
 ---
 
 # Highcharts Grid with React
-Use the official React wrapper for Grid Lite or Grid Pro. The wrapper handles
-grid setup/cleanup and loads the Grid CSS for you.
+Use the official React package for Grid Lite or Grid Pro. It is a self-contained
+component package that handles grid setup/cleanup and loads the Grid CSS for you.
 Requires React 18 or higher.
 
-## 1. Install the Grid React wrapper
+## 1. Install the Grid React package
 ```bash
 npm install @highcharts/grid-lite-react
 # or
