@@ -19,6 +19,8 @@
  *  chart.typeDescription -> accessibility.typeDescription
  *  series.description -> series.accessibility.description
  *  series.exposeElementToA11y -> series.accessibility.exposeAsGroupOnly
+ *  series.pointDescriptionFormat ->
+ *      series.accessibility.point.descriptionFormat
  *  series.pointDescriptionFormatter ->
  *      series.accessibility.pointDescriptionFormatter
  *  series.accessibility.pointDescriptionFormatter ->
@@ -116,6 +118,36 @@ declare module '../../Core/Series/SeriesOptions'{
          * @deprecated 8.0.0
          */
         description?: SeriesAccessibilityOptions['description'];
+
+        /**
+         * Deprecated. Use
+         * [plotOptions.series.accessibility.point.descriptionFormatter](#plotOptions.series.accessibility.point.descriptionFormatter)
+         * instead.
+         *
+         * Same as
+         * [accessibility.series.descriptionFormatter](#accessibility.series.descriptionFormatter),
+         * but for an individual series. Overrides the chart wide configuration.
+         *
+         * @requires   modules/accessibility
+         * @since      5.0.12
+         * @deprecated next
+         */
+        pointDescriptionFormatter?: SeriesAccessibilityOptions['point']['descriptionFormatter'];
+
+        /**
+         * Deprecated. Use
+         * [plotOptions.series.accessibility.point.descriptionFormat](#plotOptions.series.accessibility.point.descriptionFormat)
+         * instead.
+         *
+         * Same as
+         * [accessibility.point.descriptionFormat](#accessibility.point.descriptionFormat),
+         * but for an individual series. Overrides the chart wide configuration.
+         *
+         * @requires   modules/accessibility
+         * @since      11.1.0
+         * @deprecated next
+         */
+        pointDescriptionFormat?: SeriesAccessibilityOptions['point']['descriptionFormat'];
     }
 }
 
@@ -248,6 +280,9 @@ function copyDeprecatedSeriesOptions(chart: Chart): void {
     const oldToNewSeriesOptions = {
         description: ['accessibility', 'description'],
         exposeElementToA11y: ['accessibility', 'exposeAsGroupOnly'],
+        pointDescriptionFormat: [
+            'accessibility', 'point', 'descriptionFormat'
+        ],
         pointDescriptionFormatter: [
             'accessibility', 'point', 'descriptionFormatter'
         ],

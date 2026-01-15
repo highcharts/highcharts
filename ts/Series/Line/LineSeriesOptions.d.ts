@@ -15,10 +15,8 @@
  *
  * */
 
-import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import type ColorType from '../../Core/Color/ColorType';
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
-import type { DeepPartial } from '../../Shared/Types';
 import type SeriesOptions from '../../Core/Series/SeriesOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 
@@ -50,9 +48,7 @@ export interface LineSeriesOptions extends SeriesOptions {
     colorAxis?: boolean;
     connectEnds?: boolean;
     dataLabels?: (DataLabelOptions|Array<DataLabelOptions>);
-    description?: string;
     linkedTo?: string;
-    pointDescriptionFormatter?: Function;
     pointStart?: number;
     states?: SeriesStatesOptions<LineSeriesOptions>;
     supportingColor?: ColorType;

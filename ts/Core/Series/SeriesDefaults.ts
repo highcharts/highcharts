@@ -567,23 +567,35 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      */
 
     /**
+     * Deprecated. Use
+     * [plotOptions.series.accessibility.point.descriptionFormat](#plotOptions.series.accessibility.point.descriptionFormat)
+     * instead.
+     *
      * Same as
      * [accessibility.point.descriptionFormat](#accessibility.point.descriptionFormat),
      * but for an individual series. Overrides the chart wide configuration.
      *
-     * @type      {Function}
-     * @since 11.1.0
-     * @apioption plotOptions.series.pointDescriptionFormat
+     * @type       {Function}
+     * @requires   modules/accessibility
+     * @since      11.1.0
+     * @deprecated next
+     * @apioption  plotOptions.series.pointDescriptionFormat
      */
 
     /**
+     * Deprecated. Use
+     * [plotOptions.series.accessibility.point.descriptionFormatter](#plotOptions.series.accessibility.point.descriptionFormatter)
+     * instead.
+     *
      * Same as
      * [accessibility.series.descriptionFormatter](#accessibility.series.descriptionFormatter),
      * but for an individual series. Overrides the chart wide configuration.
      *
-     * @type      {Function}
-     * @since     5.0.12
-     * @apioption plotOptions.series.pointDescriptionFormatter
+     * @type       {Function}
+     * @requires   modules/accessibility
+     * @since      5.0.12
+     * @deprecated next
+     * @apioption  plotOptions.series.pointDescriptionFormatter
      */
 
     /**
