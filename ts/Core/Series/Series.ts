@@ -1593,10 +1593,7 @@ class Series {
             // Destroy old points
             i = oldDataLength;
             while (i--) {
-                const oldPoint = oldData[i];
-                if (oldPoint && typeof oldPoint.destroy === 'function') {
-                    oldPoint.destroy();
-                }
+                oldData[i]?.destroy();
             }
 
             // Reset minRange (#878)
