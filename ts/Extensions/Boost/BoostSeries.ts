@@ -56,13 +56,12 @@ const {
     error,
     fireEvent,
     pick,
-    pushUnique,
     wrap,
     defined
 } = U;
 import WGLRenderer from './WGLRenderer.js';
 import DataTableCore from '../../Data/DataTableCore.js';
-import { extend, isArray, isNumber } from '../../Shared/Utilities.js';
+import { extend, isArray, isNumber, pushUnique } from '../../Shared/Utilities.js';
 
 /* *
  *

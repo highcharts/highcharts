@@ -65,7 +65,7 @@ const {
     updateRootId
 } = TU;
 import U from '../../Core/Utilities.js';
-import { clamp, crisp, extend, isArray, isNumber, isObject, isString } from '../../Shared/Utilities.js';
+import { clamp, crisp, extend, isArray, isNumber, isObject, isString, pushUnique, splat } from '../../Shared/Utilities.js';
 const {
     addEvent,
     arrayMax,
@@ -75,8 +75,6 @@ const {
     fireEvent,
     merge,
     pick,
-    pushUnique,
-    splat,
     stableSort
 } = U;
 

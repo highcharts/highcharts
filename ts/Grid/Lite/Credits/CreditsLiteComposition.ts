@@ -20,9 +20,9 @@ import Globals from '../../../Core/Globals.js';
 import Credits from '../../Core/Credits.js';
 
 import U from '../../../Core/Utilities.js';
+import { pushUnique } from '../../../Shared/Utilities.js';
 const {
-    addEvent,
-    pushUnique
+    addEvent
 } = U;
 
 

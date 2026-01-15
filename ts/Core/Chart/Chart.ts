@@ -87,16 +87,14 @@ import U from '../Utilities.js';
 import AST from '../Renderer/HTML/AST.js';
 import { AxisCollectionKey } from '../Axis/AxisOptions';
 import Tick from '../Axis/Tick.js';
-import { extend, isArray, isNumber, isObject, isString, objectEach, pInt } from '../../Shared/Utilities.js';
+import { diffObjects, erase, extend, isArray, isNumber, isObject, isString, objectEach, pInt, splat } from '../../Shared/Utilities.js';
 const {
     addEvent,
     attr,
     createElement,
     css,
     defined,
-    diffObjects,
     discardElement,
-    erase,
     error,
     find,
     fireEvent,
@@ -106,7 +104,6 @@ const {
     pick,
     relativeLength,
     removeEvent,
-    splat,
     syncTimeout,
     uniqueKey
 } = U;

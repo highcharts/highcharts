@@ -30,10 +30,9 @@ import CU from '../../Series/CenteredUtilities.js';
 import PaneComposition from './PaneComposition.js';
 import PaneDefaults from './PaneDefaults.js';
 import U from '../../Core/Utilities.js';
-import { extend } from '../../Shared/Utilities.js';
+import { extend, splat } from '../../Shared/Utilities.js';
 const {
-    merge,
-    splat
+    merge
 } = U;
 
 /* *

@@ -31,9 +31,9 @@ import HTMLComponentDefaults from './HTMLComponentDefaults.js';
 import HTMLSyncs from './HTMLSyncs/HTMLSyncs.js';
 import DU from '../../Utilities.js';
 import U from '../../../Core/Utilities.js';
+import { diffObjects } from '../../../Shared/Utilities.js';
 const {
-    merge,
-    diffObjects
+    merge
 } = U;
 const { deepClone } = DU;
 

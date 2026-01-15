@@ -30,11 +30,10 @@ const { format } = F;
 import H from '../../Core/Globals.js';
 const { composed } = H;
 import U from '../../Core/Utilities.js';
-import { extend, isNumber } from '../../Shared/Utilities.js';
+import { extend, isNumber, pushUnique } from '../../Shared/Utilities.js';
 const {
     addEvent,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *

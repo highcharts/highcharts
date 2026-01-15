@@ -46,7 +46,7 @@ import R from './Renderer/RendererUtilities.js';
 const { distribute } = R;
 import RendererRegistry from './Renderer/RendererRegistry.js';
 import U from './Utilities.js';
-import { clamp, extend, isArray, isNumber, isObject, isString } from '../Shared/Utilities.js';
+import { clamp, extend, isArray, isNumber, isObject, isString, pushUnique, splat } from '../Shared/Utilities.js';
 const {
     addEvent,
     css,
@@ -56,8 +56,6 @@ const {
     getAlignFactor,
     merge,
     pick,
-    pushUnique,
-    splat,
     syncTimeout
 } = U;
 

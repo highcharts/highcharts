@@ -54,7 +54,7 @@ const { distribute } = R;
 import T from '../Templating.js';
 const { format } = T;
 import U from '../Utilities.js';
-import { isNumber } from '../../Shared/Utilities.js';
+import { isNumber, pushUnique } from '../../Shared/Utilities.js';
 const {
     addEvent,
     createElement,
@@ -65,7 +65,6 @@ const {
     fireEvent,
     merge,
     pick,
-    pushUnique,
     relativeLength,
     stableSort,
     syncTimeout

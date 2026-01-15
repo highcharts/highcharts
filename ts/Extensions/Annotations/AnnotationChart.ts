@@ -30,10 +30,9 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import Annotation from './Annotation.js';
 import U from '../../Core/Utilities.js';
-import { isArray, isObject } from '../../Shared/Utilities.js';
+import { erase, isArray, isObject } from '../../Shared/Utilities.js';
 const {
     addEvent,
-    erase,
     find,
     fireEvent,
     pick,

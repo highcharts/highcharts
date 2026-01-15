@@ -47,8 +47,7 @@ const {
     arrayMax,
     merge,
     pick,
-    relativeLength,
-    splat
+    relativeLength
 } = U;
 
 import TreegraphLink from './TreegraphLink.js';
@@ -58,7 +57,7 @@ import TreegraphSeriesDefaults from './TreegraphSeriesDefaults.js';
 import TreemapPoint from '../Treemap/TreemapPoint.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import TextPath from '../../Extensions/TextPath.js';
-import { crisp, extend } from '../../Shared/Utilities.js';
+import { crisp, extend, splat } from '../../Shared/Utilities.js';
 TextPath.compose(SVGElement);
 /* *
  *

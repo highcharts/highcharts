@@ -28,11 +28,11 @@ import CreditsPro from './CreditsPro.js';
 import Globals from '../../Core/Globals.js';
 import U from '../../../Core/Utilities.js';
 import { defaultOptions } from '../../Core/Defaults.js';
+import { pushUnique } from '../../../Shared/Utilities.js';
 
 const {
     addEvent,
-    merge,
-    pushUnique
+    merge
 } = U;
 
 

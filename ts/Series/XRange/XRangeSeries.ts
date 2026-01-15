@@ -49,12 +49,11 @@ const {
     find,
     merge,
     pick,
-    pushUnique,
     relativeLength
 } = U;
 import XRangeSeriesDefaults from './XRangeSeriesDefaults.js';
 import XRangePoint from './XRangePoint.js';
-import { clamp, crisp, extend, isNumber, isObject } from '../../Shared/Utilities.js';
+import { clamp, crisp, extend, isNumber, isObject, pushUnique } from '../../Shared/Utilities.js';
 
 /* *
  *

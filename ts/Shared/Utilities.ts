@@ -44,6 +44,132 @@ export function crisp(
     return (Math.round(value * inverter - mod) + mod) * inverter;
 }
 
+// eslint-disable-next-line valid-jsdoc
+/**
+ * Return the deep difference between two objects. It can either return the new
+ * properties, or optionally return the old values of new properties.
+ * @internal
+ */
+export function diffObjects(
+    newer: AnyRecord,
+    older: AnyRecord,
+    keepOlder?: boolean,
+    collectionsWithUpdate?: string[]
+): AnyRecord {
+    const ret = {};
+
+    /**
+     * Recurse over a set of options and its current values, and store the
+     * current values in the ret object.
+     */
+    function diff(
+        newer: AnyRecord,
+        older: AnyRecord,
+        ret: AnyRecord,
+        depth: number
+    ): void {
+        const keeper = keepOlder ? older : newer;
+
+        objectEach(newer, function (newerVal, key): void {
+            if (
+                !depth &&
+                collectionsWithUpdate &&
+                collectionsWithUpdate.indexOf(key) > -1 &&
+                older[key]
+            ) {
+                newerVal = splat(newerVal);
+
+                ret[key] = [];
+
+                // Iterate over collections like series, xAxis or yAxis and map
+                // the items by index.
+                for (
+                    let i = 0;
+                    i < Math.max(newerVal.length, older[key].length);
+                    i++
+                ) {
+
+                    // Item exists in current data (#6347)
+                    if (older[key][i]) {
+                        // If the item is missing from the new data, we need to
+                        // save the whole config structure. Like when
+                        // responsively updating from a dual axis layout to a
+                        // single axis and back (#13544).
+                        if (newerVal[i] === void 0) {
+                            ret[key][i] = older[key][i];
+
+                        // Otherwise, proceed
+                        } else {
+                            ret[key][i] = {};
+                            diff(
+                                newerVal[i],
+                                older[key][i],
+                                ret[key][i],
+                                depth + 1
+                            );
+                        }
+                    }
+                }
+            } else if (
+                isObject(newerVal, true) &&
+                !newerVal.nodeType // #10044
+            ) {
+                ret[key] = isArray(newerVal) ? [] : {};
+                diff(newerVal, older[key] || {}, ret[key], depth + 1);
+                // Delete empty nested objects
+                if (
+                    Object.keys(ret[key]).length === 0 &&
+                    // Except colorAxis which is a special case where the empty
+                    // object means it is enabled. Which is unfortunate and we
+                    // should try to find a better way.
+                    !(key === 'colorAxis' && depth === 0)
+                ) {
+                    delete ret[key];
+                }
+
+            } else if (
+                newer[key] !== older[key] ||
+                // If the newer key is explicitly undefined, keep it (#10525)
+                (key in newer && !(key in older))
+            ) {
+
+                if (key !== '__proto__' && key !== 'constructor') {
+                    ret[key] = keeper[key];
+                }
+
+            }
+        });
+    }
+
+    diff(newer, older, ret, 0);
+
+    return ret;
+}
+
+/**
+ * Remove the last occurence of an item from an array.
+ *
+ * @function Highcharts.erase
+ *
+ * @param {Array<*>} arr
+ *        The array.
+ *
+ * @param {*} item
+ *        The item to remove.
+ *
+ * @return {void}
+ */
+export function erase(arr: Array<unknown>, item: unknown): void {
+    let i = arr.length;
+
+    while (i--) {
+        if (arr[i] === item) {
+            arr.splice(i, 1);
+            break;
+        }
+    }
+}
+
 /**
  * Utility function to extend an object with the members of another.
  *
@@ -228,6 +354,42 @@ export function objectEach<TObject, TContext>(
  */
 export function pInt(s: any, mag?: number): number {
     return parseInt(s, mag || 10);
+}
+
+/**
+ * Adds an item to an array, if it is not present in the array.
+ *
+ * @function Highcharts.pushUnique
+ *
+ * @param {Array<unknown>} array
+ * The array to add the item to.
+ *
+ * @param {unknown} item
+ * The item to add.
+ *
+ * @return {boolean}
+ * Returns true, if the item was not present and has been added.
+ */
+export function pushUnique(
+    array: Array<unknown>,
+    item: unknown
+): boolean {
+    return array.indexOf(item) < 0 && !!array.push(item);
+}
+
+/**
+ * Check if an element is an array, and if not, make it into an array.
+ *
+ * @function Highcharts.splat
+ *
+ * @param {*} obj
+ *        The object to splat.
+ *
+ * @return {Array}
+ *         The produced or original array.
+ */
+export function splat<T>(obj: T|Array<T>): Array<T> {
+    return isArray(obj) ? obj : [obj];
 }
 
 

@@ -27,14 +27,13 @@ const {
     win
 } = H;
 import U from '../../Utilities.js';
-import { isString, objectEach } from '../../../Shared/Utilities.js';
+import { isString, objectEach, splat } from '../../../Shared/Utilities.js';
 const {
     attr,
     createElement,
     css,
     error,
-    isFunction,
-    splat
+    isFunction
 } = U;
 const {
     trustedTypes

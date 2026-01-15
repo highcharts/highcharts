@@ -32,9 +32,9 @@ import H from '../../../Core/Globals.js';
 const { composed } = H;
 import Popup from './Popup.js';
 import U from '../../../Core/Utilities.js';
+import { pushUnique } from '../../../Shared/Utilities.js';
 const {
     addEvent,
-    pushUnique,
     wrap
 } = U;
 

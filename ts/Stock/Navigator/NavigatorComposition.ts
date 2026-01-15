@@ -35,10 +35,9 @@ const { getRendererType } = RendererRegistry;
 import StockUtilities from '../../Stock/Utilities/StockUtilities.js';
 const { setFixedRange } = StockUtilities;
 import U from '../../Core/Utilities.js';
-import { extend } from '../../Shared/Utilities.js';
+import { extend, pushUnique } from '../../Shared/Utilities.js';
 const {
-    addEvent,
-    pushUnique
+    addEvent
 } = U;
 
 /* *

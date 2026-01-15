@@ -63,13 +63,12 @@ import MockPoint from './MockPoint.js';
 import Pointer from '../../Core/Pointer.js';
 import PopupComposition from './Popup/PopupComposition.js';
 import U from '../../Core/Utilities.js';
+import { erase, splat } from '../../Shared/Utilities.js';
 const {
     destroyObjectProperties,
-    erase,
     fireEvent,
     merge,
-    pick,
-    splat
+    pick
 } = U;
 
 /* *

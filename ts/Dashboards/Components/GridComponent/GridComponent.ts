@@ -31,9 +31,9 @@ import GridComponentDefaults from './GridComponentDefaults.js';
 import U from '../../../Core/Utilities.js';
 import DU from '../../Utilities.js';
 import SidebarPopup from '../../EditMode/SidebarPopup';
+import { diffObjects } from '../../../Shared/Utilities.js';
 const {
     merge,
-    diffObjects,
     getStyle
 } = U;
 const { deepClone } = DU;

@@ -43,7 +43,7 @@ import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import T from '../../Core/Templating.js';
 const { format } = T;
 import U from '../../Core/Utilities.js';
-import { extend, isString, isNumber, objectEach } from '../../Shared/Utilities.js';
+import { extend, isString, isNumber, objectEach, splat } from '../../Shared/Utilities.js';
 const {
     addEvent,
     createElement,
@@ -53,8 +53,7 @@ const {
     discardElement,
     fireEvent,
     merge,
-    pick,
-    splat
+    pick
 } = U;
 
 /* *

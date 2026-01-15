@@ -82,15 +82,13 @@ import SVGElement from '../Renderer/SVG/SVGElement.js';
 import T from '../Templating.js';
 const { format } = T;
 import U from '../Utilities.js';
-import { clamp, crisp, extend, isArray, isNumber, isString, objectEach } from '../../Shared/Utilities.js';
+import { clamp, crisp, diffObjects, erase, extend, isArray, isNumber, isString, objectEach } from '../../Shared/Utilities.js';
 const {
     arrayMax,
     arrayMin,
     correctFloat,
     defined,
     destroyObjectProperties,
-    diffObjects,
-    erase,
     error,
     find,
     fireEvent,

@@ -29,12 +29,11 @@ import H from '../../Globals.js';
 const { composed, isFirefox } = H;
 import SVGElement from '../SVG/SVGElement.js';
 import U from '../../Utilities.js';
-import { extend, isNumber, pInt } from '../../../Shared/Utilities.js';
+import { extend, isNumber, pInt, pushUnique } from '../../../Shared/Utilities.js';
 const {
     css,
     defined,
-    getAlignFactor,
-    pushUnique
+    getAlignFactor
 } = U;
 
 /* *

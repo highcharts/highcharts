@@ -11,7 +11,7 @@
 
 'use strict';
 
-import { extend } from '../Shared/Utilities.js';
+import { diffObjects, extend } from '../Shared/Utilities.js';
 /* *
  *
  *  Imports
@@ -23,7 +23,6 @@ import type GlobalOptions from './Options';
 
 import U from './Utilities.js';
 const {
-    diffObjects,
     find,
     merge,
     pick,

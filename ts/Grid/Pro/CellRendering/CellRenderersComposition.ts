@@ -31,9 +31,9 @@ import CellRendererRegistry from './CellRendererRegistry.js';
 import Globals from '../../Core/Globals.js';
 
 import U from '../../../Core/Utilities.js';
+import { pushUnique } from '../../../Shared/Utilities.js';
 const {
-    addEvent,
-    pushUnique
+    addEvent
 } = U;
 
 

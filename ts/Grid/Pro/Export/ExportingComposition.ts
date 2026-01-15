@@ -27,8 +27,9 @@ import { defaultOptions } from '../../Core/Defaults.js';
 import Exporting from './Exporting.js';
 import Globals from '../../Core/Globals.js';
 import U from '../../../Core/Utilities.js';
+import { pushUnique } from '../../../Shared/Utilities.js';
 
-const { addEvent, pushUnique } = U;
+const { addEvent } = U;
 
 
 /* *

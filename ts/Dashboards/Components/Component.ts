@@ -53,7 +53,6 @@ const {
     addEvent,
     isFunction,
     getStyle,
-    diffObjects,
     removeEvent
 } = U;
 
@@ -64,7 +63,7 @@ const {
 } = CU;
 
 import DU from '../Utilities.js';
-import { isArray, objectEach } from '../../Shared/Utilities.js';
+import { diffObjects, isArray, objectEach } from '../../Shared/Utilities.js';
 const {
     deepClone,
     uniqueKey

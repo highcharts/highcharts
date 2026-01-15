@@ -74,7 +74,7 @@ const {
 import HU from '../../Core/HttpUtilities.js';
 import RegexLimits from '../RegexLimits.js';
 import U from '../../Core/Utilities.js';
-import { extend, isObject, objectEach } from '../../Shared/Utilities.js';
+import { extend, isObject, objectEach, pushUnique, splat } from '../../Shared/Utilities.js';
 const {
     addEvent,
     clearTimeout,
@@ -86,9 +86,7 @@ const {
     fireEvent,
     merge,
     pick,
-    pushUnique,
     removeEvent,
-    splat,
     uniqueKey
 } = U;
 

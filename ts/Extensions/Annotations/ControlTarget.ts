@@ -25,7 +25,7 @@ import type {
 import ControlPoint from './ControlPoint.js';
 import MockPoint from './MockPoint.js';
 import U from '../../Core/Utilities.js';
-import { isObject, isString } from '../../Shared/Utilities.js';
+import { isObject, isString, splat } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -292,7 +292,7 @@ namespace ControlTarget {
 
         return (
             options.points ||
-            (options.point && U.splat(options.point))
+            (options.point && splat(options.point))
         ) as any;
     }
 

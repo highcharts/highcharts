@@ -26,10 +26,9 @@ import H from '../Globals.js';
 const { composed } = H;
 import StackItem from './Stacking/StackItem.js';
 import U from '../Utilities.js';
-import { objectEach } from '../../Shared/Utilities.js';
+import { objectEach, pushUnique } from '../../Shared/Utilities.js';
 const {
-    addEvent,
-    pushUnique
+    addEvent
 } = U;
 
 /* *

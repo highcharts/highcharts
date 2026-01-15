@@ -39,10 +39,10 @@ const { composed } = H;
 import { Palette } from '../Core/Color/Palettes.js';
 import PlotLineOrBand from '../Core/Axis/PlotLineOrBand/PlotLineOrBand.js';
 import U from '../Core/Utilities.js';
+import { pushUnique } from '../Shared/Utilities.js';
 const {
     addEvent,
     merge,
-    pushUnique,
     wrap
 } = U;
 

@@ -28,11 +28,11 @@ import type Grid from '../Core/Grid';
 
 import U from '../../Core/Utilities.js';
 import Globals from '../../Core/Globals.js';
+import { pushUnique } from '../../Shared/Utilities.js';
 
 const {
     addEvent,
-    fireEvent,
-    pushUnique
+    fireEvent
 } = U;
 
 

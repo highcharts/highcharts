@@ -31,10 +31,10 @@ import AST from '../../Core/Renderer/HTML/AST.js';
 import H from '../../Core/Globals.js';
 const { composed } = H;
 import U from '../../Core/Utilities.js';
+import { pushUnique } from '../../Shared/Utilities.js';
 const {
     addEvent,
-    fireEvent,
-    pushUnique
+    fireEvent
 } = U;
 
 /* *

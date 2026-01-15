@@ -30,11 +30,11 @@ import ParallelAxis from './ParallelAxis.js';
 import ParallelCoordinatesDefaults from './ParallelCoordinatesDefaults.js';
 import ParallelSeries from './ParallelSeries.js';
 import U from '../../Core/Utilities.js';
+import { splat } from '../../Shared/Utilities.js';
 const {
     addEvent,
     defined,
-    merge,
-    splat
+    merge
 } = U;
 
 /* *

@@ -31,13 +31,13 @@ import TilesProviderRegistry from '../../Maps/TilesProviders/TilesProviderRegist
 import TiledWebMapSeriesDefaults from './TiledWebMapSeriesDefaults.js';
 import MapView from '../../Maps/MapView.js';
 import U from '../../Core/Utilities.js';
+import { pushUnique } from '../../Shared/Utilities.js';
 const {
     addEvent,
     defined,
     error,
     merge,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 

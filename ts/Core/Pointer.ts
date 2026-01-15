@@ -42,7 +42,7 @@ const {
 import { Palette } from '../Core/Color/Palettes.js';
 import U from './Utilities.js';
 import SVGAttributes from './Renderer/SVG/SVGAttributes';
-import { extend, isNumber, isObject, objectEach } from '../Shared/Utilities.js';
+import { extend, isNumber, isObject, objectEach, pushUnique, splat } from '../Shared/Utilities.js';
 const {
     addEvent,
     attr,
@@ -50,9 +50,7 @@ const {
     find,
     fireEvent,
     offset,
-    pick,
-    pushUnique,
-    splat
+    pick
 } = U;
 
 /* *

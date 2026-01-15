@@ -31,8 +31,7 @@ const { composed } = H;
 import U from '../../../Core/Utilities.js';
 const {
     addEvent,
-    defined,
-    pushUnique
+    defined
 } = U;
 
 import Announcer from '../../Utils/Announcer.js';
@@ -40,6 +39,7 @@ import ChartUtilities from '../../Utils/ChartUtilities.js';
 const { getChartTitle } = ChartUtilities;
 import EventProvider from '../../Utils/EventProvider.js';
 import SeriesDescriber from './SeriesDescriber.js';
+import { pushUnique } from '../../../Shared/Utilities.js';
 const {
     defaultPointDescriptionFormatter,
     defaultSeriesDescriptionFormatter

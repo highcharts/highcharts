@@ -24,8 +24,8 @@ const {
     line: { prototype: lineProto }
 } = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
+import { pushUnique } from '../../Shared/Utilities.js';
 const {
-    pushUnique,
     wrap
 } = U;
 

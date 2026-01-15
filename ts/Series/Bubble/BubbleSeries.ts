@@ -42,14 +42,13 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-import { clamp, extend, isNumber } from '../../Shared/Utilities.js';
+import { clamp, extend, isNumber, pushUnique } from '../../Shared/Utilities.js';
 const {
     addEvent,
     arrayMax,
     arrayMin,
     merge,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *

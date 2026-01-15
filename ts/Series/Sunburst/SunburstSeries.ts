@@ -59,12 +59,11 @@ const {
     defined,
     error,
     fireEvent,
-    merge,
-    splat
+    merge
 } = U;
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import TextPath from '../../Extensions/TextPath.js';
-import { extend, isNumber, isObject, isString } from '../../Shared/Utilities.js';
+import { extend, isNumber, isObject, isString, splat } from '../../Shared/Utilities.js';
 TextPath.compose(SVGElement);
 
 /* *

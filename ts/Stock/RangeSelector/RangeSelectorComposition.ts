@@ -26,13 +26,12 @@ import H from '../../Core/Globals.js';
 const { composed } = H;
 import RangeSelectorDefaults from './RangeSelectorDefaults.js';
 import U from '../../Core/Utilities.js';
-import { extend, isNumber } from '../../Shared/Utilities.js';
+import { extend, isNumber, pushUnique } from '../../Shared/Utilities.js';
 const {
     addEvent,
     defined,
     merge,
-    pick,
-    pushUnique
+    pick
 } = U;
 
 /* *
