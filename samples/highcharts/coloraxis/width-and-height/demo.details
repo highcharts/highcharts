@@ -1,6 +1,6 @@
 ---
- name: Color axis width and height
+ name: Demo of colorAxis.width and height
  authors:
-   - Hubert Kozik
+   - Torstein Hønsi
  js_wrap: b
 ...
