@@ -858,10 +858,9 @@
     align-items: center;
     gap: 0;
     max-width: 0;
-    margin-left: 4px;
     opacity: 0;
     cursor: pointer;
-    transition: max-width 0.3s ease, margin-left 0.3s ease, opacity 0.3s ease;
+    transition: max-width 0.3s ease, opacity 0.3s ease;
 }
 
 /* Show icons on header cell hover, focus, or when has active icons */
@@ -882,6 +881,10 @@
     align-items: center;
     justify-content: center;
     position: relative;
+}
+
+.hcg-header-cell-icons > :first-child:not(.hcg-header-cell-menu-icon) {
+    margin-left: 6px;
 }
 
 /* Active icon styling - icons that are in an active state */
