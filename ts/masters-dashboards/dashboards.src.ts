@@ -60,7 +60,7 @@ import PluginHandler from '../Dashboards/PluginHandler.js';
 import Sync from '../Dashboards/Components/Sync/Sync.js';
 import Utilities from '../Dashboards/Utilities.js';
 import CoreUtilities from '../Core/Utilities.js';
-import { extend } from '../Shared/Utilities.js';
+import { extend, merge } from '../Shared/Utilities.js';
 
 
 /* *
@@ -76,7 +76,7 @@ declare global {
         board: typeof Board.board;
         boards: typeof Globals.boards;
         error: typeof Utilities.error;
-        merge: typeof Utilities.merge;
+        merge: typeof merge;
         removeEvent: typeof Utilities.removeEvent;
         setOptions: typeof Defaults.setOptions;
         uniqueKey: typeof Utilities.uniqueKey;
@@ -119,7 +119,7 @@ const G = Globals as unknown as Dashboards;
 G.board = Board.board;
 G.addEvent = Utilities.addEvent;
 G.error = Utilities.error;
-G.merge = Utilities.merge;
+G.merge = merge;
 G.removeEvent = Utilities.removeEvent;
 G.setOptions = Defaults.setOptions;
 G.uniqueKey = Utilities.uniqueKey;

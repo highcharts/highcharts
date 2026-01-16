@@ -119,106 +119,6 @@ function addEvent<T>(
         removeEvent(el, type, fn);
     };
 }
-/**
- * Utility function to deep merge two or more objects and return a third object.
- * If the first argument is true, the contents of the second object is copied
- * into the first object. The merge function can also be used with a single
- * object argument to create a deep copy of an object.
- *
- * @function Highcharts.merge<T>
- *
- * @param {boolean} extend
- *        Whether to extend the left-side object (a) or return a whole new
- *        object.
- *
- * @param {T|undefined} a
- *        The first object to extend. When only this is given, the function
- *        returns a deep copy.
- *
- * @param {...Array<object|undefined>} [n]
- *        An object to merge into the previous one.
- *
- * @return {T}
- *         The merged object. If the first argument is true, the return is the
- *         same as the second argument.
- *//**
- * Utility function to deep merge two or more objects and return a third object.
- * The merge function can also be used with a single object argument to create a
- * deep copy of an object.
- *
- * @function Highcharts.merge<T>
- *
- * @param {T|undefined} a
- *        The first object to extend. When only this is given, the function
- *        returns a deep copy.
- *
- * @param {...Array<object|undefined>} [n]
- *        An object to merge into the previous one.
- *
- * @return {T}
- *         The merged object. If the first argument is true, the return is the
- *         same as the second argument.
- */
-function merge<T extends object>(
-    a: (true|T|undefined),
-    ...n: Array<unknown>
-) : T {
-    let copyDepth = 0,
-        obj = {} as T;
-
-    // Descriptive error stack:
-    const copyDepthError = new Error('Recursive copy depth > 100'),
-        doCopy = (copy: any, original: any): any => {
-            // An object is replacing a primitive
-            if (typeof copy !== 'object') {
-                copy = {};
-            }
-
-            if (++copyDepth > 100) {
-                throw copyDepthError;
-            }
-
-            objectEach(original, (value, key): void => {
-
-                // Prototype pollution (#14883)
-                if (key === '__proto__' || key === 'constructor') {
-                    return;
-                }
-
-                // Copy the contents of objects, but not arrays or DOM nodes
-                if (
-                    isObject(value, true) &&
-                    !isClass(value) &&
-                    !isDOMElement(value)
-                ) {
-                    copy[key] = doCopy(copy[key] || {}, value);
-
-                // Primitives and arrays are copied over directly
-                } else {
-                    copy[key] = original[key];
-                }
-            });
-
-            --copyDepth;
-
-            return copy;
-        };
-
-    // If first argument is true, copy into the existing object. Used in
-    // setOptions.
-    if (a === true) {
-        obj = n.shift() as T;
-    } else {
-        n.unshift(a);
-    }
-
-    // For each argument, extend the return
-    for (let i = 0, iEnd = n.length; i < iEnd; ++i) {
-        obj = doCopy(obj, n[i]);
-    }
-
-    return obj;
-}
 
 /**
  * Returns a deep copy of an argument. It differs from `merge` in that it copies
@@ -537,7 +437,6 @@ const Utilities = {
     deepClone,
     error,
     fireEvent,
-    merge,
     removeEvent,
     uniqueKey
 };
