@@ -33,7 +33,7 @@ import type Series from './Series/Series';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import type Time from './Time';
 
-import { extend, isNumber, isObject, isString, objectEach, pInt } from '../Shared/Utilities.js';
+import { css, defined, extend, getMagnitude, isNumber, isObject, isString, objectEach, pInt } from '../Shared/Utilities.js';
 import H from './Globals.js';
 const {
     charts,
@@ -188,21 +188,6 @@ function insertItem(
     return i;
 }
 
-/**
- * Check if an object is null or undefined.
- *
- * @function Highcharts.defined
- *
- * @param {*} obj
- *        The object to check.
- *
- * @return {boolean}
- *         False if the object is null or undefined, otherwise true.
- */
-function defined<T>(obj: T): obj is NonNullable<T> {
-    return typeof obj !== 'undefined' && obj !== null;
-}
-
 function attr(
     elem: DOMElementType,
     prop: (HTMLAttributes|SVGAttributes)
@@ -285,53 +270,6 @@ function attr(
     return ret;
 }
 
-/**
- * Set a timeout if the delay is given, otherwise perform the function
- * synchronously.
- *
- * @function Highcharts.syncTimeout
- *
- * @param {Function} fn
- *        The function callback.
- *
- * @param {number} delay
- *        Delay in milliseconds.
- *
- * @param {*} [context]
- *        An optional context to send to the function callback.
- *
- * @return {number}
- *         An identifier for the timeout that can later be cleared with
- *         Highcharts.clearTimeout. Returns -1 if there is no timeout.
- */
-function syncTimeout(
-    fn: Function,
-    delay: number,
-    context?: unknown
-): number {
-    if (delay > 0) {
-        return setTimeout(fn, delay, context);
-    }
-    fn.call(0, context);
-    return -1;
-}
-
-/**
- * Internal clear timeout. The function checks that the `id` was not removed
- * (e.g. by `chart.destroy()`). For the details see
- * [issue #7901](https://github.com/highcharts/highcharts/issues/7901).
- *
- * @function Highcharts.clearTimeout
- *
- * @param {number|undefined} id
- * Id of a timeout.
- */
-function internalClearTimeout(id: (number|undefined)): void {
-    if (defined(id)) {
-        clearTimeout(id);
-    }
-}
-
 function pick<T1, T2, T3, T4, T5>(...args: [T1, T2, T3, T4, T5]):
 T1 extends NullType ?
     T2 extends NullType ?
@@ -374,26 +312,6 @@ function pick<T>(): T|undefined {
             return arg;
         }
     }
-}
-
-/**
- * Set CSS on a given element.
- *
- * @function Highcharts.css
- *
- * @param {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement} el
- *        An HTML DOM element.
- *
- * @param {Highcharts.CSSObject} styles
- *        Style object with camel case property names.
- *
- * @return {void}
- */
-function css(
-    el: DOMElementType,
-    styles: CSSObject
-): void {
-    extend(el.style, styles as any);
 }
 
 /**
@@ -469,33 +387,6 @@ function extendClass <T, TReturn = T>(
     obj.prototype = new parent(); // eslint-disable-line new-cap
     extend(obj.prototype, members);
     return obj;
-}
-
-/**
- * Left-pad a string to a given length by adding a character repetitively.
- *
- * @function Highcharts.pad
- *
- * @param {number} number
- *        The input string or number.
- *
- * @param {number} [length]
- *        The desired string length.
- *
- * @param {string} [padder=0]
- *        The character to pad with.
- *
- * @return {string}
- *         The padded string.
- */
-function pad(number: number, length?: number, padder?: string): string {
-    return new Array(
-        (length || 2) +
-        1 -
-        String(number)
-            .replace('-', '')
-            .length
-    ).join(padder || '0') + number;
 }
 
 /**
@@ -599,21 +490,6 @@ function wrap<T, K extends FunctionNamesOf<T>>(
             [].slice.call(arguments)
         ) as Parameters<typeof func>);
     } as T[K];
-}
-
-/**
- * Get the magnitude of a number.
- *
- * @function Highcharts.getMagnitude
- *
- * @param {number} num
- *        The number.
- *
- * @return {number}
- *         The magnitude, where 1-9 are magnitude 1, 10-99 magnitude 2 etc.
- */
-function getMagnitude(num: number): number {
-    return Math.pow(10, Math.floor(Math.log(num) / Math.LN10));
 }
 
 /**
@@ -1705,7 +1581,6 @@ interface Utilities {
     arrayMin: typeof arrayMin;
     attr: typeof attr;
     /** @internal */
-    clearTimeout: typeof internalClearTimeout;
     correctFloat: typeof correctFloat;
     createElement: typeof createElement;
     /** @internal */
@@ -1731,14 +1606,12 @@ interface Utilities {
     isFunction: typeof isFunction;
     normalizeTickInterval: typeof normalizeTickInterval;
     offset: typeof offset;
-    pad: typeof pad;
     pick: typeof pick;
     /** @internal */
     relativeLength: typeof relativeLength;
     removeEvent: typeof removeEvent;
     replaceNested: typeof replaceNested;
     stableSort: typeof stableSort;
-    syncTimeout: typeof syncTimeout;
     /** @internal */
     timeUnits: typeof timeUnits;
     /** @internal */
@@ -1754,7 +1627,6 @@ const Utilities: Utilities = {
     arrayMax,
     arrayMin,
     attr,
-    clearTimeout: internalClearTimeout,
     correctFloat,
     createElement,
     css,
@@ -1774,13 +1646,11 @@ const Utilities: Utilities = {
     isFunction,
     normalizeTickInterval,
     offset,
-    pad,
     pick,
     relativeLength,
     removeEvent,
     replaceNested,
     stableSort,
-    syncTimeout,
     timeUnits,
     ucfirst,
     uniqueKey,

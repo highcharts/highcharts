@@ -39,7 +39,7 @@ import ChartUtilities from '../../Utils/ChartUtilities.js';
 const { getChartTitle } = ChartUtilities;
 import EventProvider from '../../Utils/EventProvider.js';
 import SeriesDescriber from './SeriesDescriber.js';
-import { pushUnique } from '../../../Shared/Utilities.js';
+import { internalClearTimeout, pushUnique } from '../../../Shared/Utilities.js';
 const {
     defaultPointDescriptionFormatter,
     defaultSeriesDescriptionFormatter
@@ -307,7 +307,7 @@ class NewDataAnnouncer {
             if (message) {
                 // Is there already one queued?
                 if (this.queuedAnnouncement) {
-                    clearTimeout(this.queuedAnnouncementTimer);
+                    internalClearTimeout(this.queuedAnnouncementTimer);
                 }
 
                 // Build the announcement

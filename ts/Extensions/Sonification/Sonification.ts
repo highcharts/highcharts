@@ -54,7 +54,7 @@ import SonificationSpeaker from './SonificationSpeaker.js';
 import SynthPatch from './SynthPatch.js';
 import InstrumentPresets from './InstrumentPresets.js';
 import timelineFromChart from './TimelineFromChart.js';
-import { extend, merge } from '../../Shared/Utilities.js';
+import { extend, internalClearTimeout, merge } from '../../Shared/Utilities.js';
 
 
 declare module '../../Core/Chart/ChartBase' {
@@ -534,7 +534,7 @@ class Sonification {
         const now = Date.now(),
             updateInterval = sOpts.updateInterval;
         if (now - this.lastUpdate < updateInterval && !this.forceReady) {
-            clearTimeout(this.scheduledUpdate);
+            internalClearTimeout(this.scheduledUpdate);
             this.scheduledUpdate = setTimeout(
                 this.update.bind(this), updateInterval / 2
             );

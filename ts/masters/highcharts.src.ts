@@ -56,7 +56,7 @@ import BorderRadius from '../Extensions/BorderRadius.js';
 import Responsive from '../Core/Responsive.js';
 import Color from '../Core/Color/Color.js';
 import Time from '../Core/Time.js';
-import { clamp, diffObjects, erase, extend, isArray, isClass, isDOMElement, isNumber, isObject, isString, merge, objectEach, pInt, splat } from '../Shared/Utilities.js';
+import { clamp, diffObjects, erase, extend, isArray, isClass, isDOMElement, isNumber, isObject, isString, merge, objectEach, pad, pInt, splat, syncTimeout } from '../Shared/Utilities.js';
 const G: AnyRecord = Highcharts;
 // Classes
 G.AST = AST;
@@ -103,7 +103,9 @@ G.isClass = isClass;
 G.isString = isString;
 G.merge = merge;
 G.pInt = pInt;
+G.pad = pad;
 G.splat = splat;
+G.syncTimeout = syncTimeout;
 G.format = Templating.format;
 G.getDeferredAnimation = Animation.getDeferredAnimation;
 G.getOptions = Defaults.getOptions;

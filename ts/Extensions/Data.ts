@@ -37,7 +37,7 @@ import Point from '../Core/Series/Point.js';
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 import U from '../Core/Utilities.js';
-import { extend, isNumber, merge, objectEach, splat } from '../Shared/Utilities.js';
+import { extend, internalClearTimeout, isNumber, merge, objectEach, splat } from '../Shared/Utilities.js';
 const {
     addEvent,
     defined,
@@ -416,7 +416,7 @@ class Data {
 
         // Always stop old polling when we have new options
         if (this.liveDataTimeout !== void 0) {
-            clearTimeout(this.liveDataTimeout);
+            internalClearTimeout(this.liveDataTimeout);
         }
 
         // This is a two-dimensional array holding the raw, trimmed string
@@ -1245,7 +1245,7 @@ class Data {
                 }
 
                 if (initialFetch) {
-                    clearTimeout(data.liveDataTimeout);
+                    internalClearTimeout(data.liveDataTimeout);
                     chart.liveDataURL = url;
                 }
 

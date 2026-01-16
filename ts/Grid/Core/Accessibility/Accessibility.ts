@@ -33,6 +33,7 @@ import GridUtils from '../GridUtils.js';
 import AST from '../../../Core/Renderer/HTML/AST.js';
 import U from '../../../Core/Utilities.js';
 import HTMLU from '../../../Accessibility/Utils/HTMLUtilities.js';
+import { internalClearTimeout } from '../../../Shared/Utilities.js';
 
 const { formatText } = GridUtils;
 const { replaceNested } = U;
@@ -140,7 +141,7 @@ class Accessibility {
      */
     public announce(msg: string, assertive = false): void {
         if (this.announcerTimeout) {
-            clearTimeout(this.announcerTimeout);
+            internalClearTimeout(this.announcerTimeout);
         }
 
         this.announcerElement.remove();
@@ -540,7 +541,7 @@ class Accessibility {
 
         this.element.remove();
         this.announcerElement.remove();
-        clearTimeout(this.announcerTimeout);
+        internalClearTimeout(this.announcerTimeout);
     }
 }
 

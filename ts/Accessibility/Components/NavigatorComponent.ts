@@ -33,8 +33,7 @@ const {
 } = T;
 import U from '../../Core/Utilities.js';
 const {
-    pick,
-    syncTimeout
+    pick
 } = U;
 import HU from '../Utils/HTMLUtilities.js';
 const {
@@ -47,7 +46,7 @@ const {
 } = CU;
 
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import { clamp } from '../../Shared/Utilities.js';
+import { clamp, internalClearTimeout, syncTimeout } from '../../Shared/Utilities.js';
 
 
 /**
@@ -212,7 +211,7 @@ class NavigatorComponent extends AccessibilityComponent {
      */
     public destroy(): void {
         if (this.updateNavigatorThrottleTimer) {
-            clearTimeout(this.updateNavigatorThrottleTimer);
+            internalClearTimeout(this.updateNavigatorThrottleTimer);
         }
         this.proxyProvider.removeGroup('navigator');
         if (this.announcer) {
@@ -318,7 +317,7 @@ class NavigatorComponent extends AccessibilityComponent {
         // Throttle updates so as not to reduce performance with
         // continuous keypress.
         if (this.updateNavigatorThrottleTimer) {
-            clearTimeout(this.updateNavigatorThrottleTimer);
+            internalClearTimeout(this.updateNavigatorThrottleTimer);
         }
         this.updateNavigatorThrottleTimer = setTimeout(
             performUpdate.bind(this, beforeAnnounce), 20

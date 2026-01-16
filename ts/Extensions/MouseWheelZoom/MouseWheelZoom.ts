@@ -32,7 +32,7 @@ const {
 } = U;
 
 import NBU from '../Annotations/NavigationBindingsUtilities.js';
-import { isObject, merge } from '../../Shared/Utilities.js';
+import { internalClearTimeout, isObject, merge } from '../../Shared/Utilities.js';
 const { getAssignedAxis } = NBU;
 
 /* *
@@ -118,7 +118,7 @@ const zoomBy = function (
 
     if (hasZoomed) {
         if (defined(wheelTimer)) {
-            clearTimeout(wheelTimer);
+            internalClearTimeout(wheelTimer);
         }
 
         // Some time after the last mousewheel event, run drop. In case any of

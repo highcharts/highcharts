@@ -63,7 +63,7 @@ import H from '../Globals.js';
 const { deg2rad } = H;
 import { Palette } from '../Color/Palettes.js';
 import Tick from './Tick.js';
-import { clamp, erase, extend, isArray, isNumber, isString, merge, objectEach, splat } from '../../Shared/Utilities.js';
+import { clamp, erase, extend, isArray, isNumber, isString, merge, objectEach, splat, syncTimeout } from '../../Shared/Utilities.js';
 import U from '../Utilities.js';
 const {
     arrayMax,
@@ -78,8 +78,7 @@ const {
     normalizeTickInterval,
     pick,
     relativeLength,
-    removeEvent,
-    syncTimeout
+    removeEvent
 } = U;
 
 const getNormalizedTickInterval = (

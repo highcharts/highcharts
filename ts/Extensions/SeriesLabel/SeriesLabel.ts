@@ -63,12 +63,11 @@ const {
 } = SLU;
 import U from '../../Core/Utilities.js';
 import { Palette } from '../../Core/Color/Palettes';
-import { extend, isNumber, pushUnique } from '../../Shared/Utilities.js';
+import { extend, internalClearTimeout, isNumber, pushUnique, syncTimeout } from '../../Shared/Utilities.js';
 const {
     addEvent,
     fireEvent,
-    pick,
-    syncTimeout
+    pick
 } = U;
 
 /* *
@@ -981,7 +980,7 @@ function onChartRedraw(this: Chart, e: Event): void {
         chart.labelSeriesMaxSum = 0;
 
         if (chart.seriesLabelTimer) {
-            U.clearTimeout(chart.seriesLabelTimer);
+            internalClearTimeout(chart.seriesLabelTimer);
         }
 
         // Which series should have labels

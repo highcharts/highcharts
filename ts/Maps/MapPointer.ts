@@ -23,7 +23,7 @@ import type Pointer from '../Core/Pointer';
 import type PointerEvent from '../Core/PointerEvent';
 
 import U from '../Core/Utilities.js';
-import { extend } from '../Shared/Utilities.js';
+import { extend, internalClearTimeout } from '../Shared/Utilities.js';
 const {
     defined,
     pick,
@@ -158,7 +158,7 @@ namespace MapPointer {
         if (Math.abs(delta) >= 1) {
             totalWheelDelta += Math.abs(delta);
             if (totalWheelDeltaTimer) {
-                clearTimeout(totalWheelDeltaTimer);
+                internalClearTimeout(totalWheelDeltaTimer);
             }
             totalWheelDeltaTimer = setTimeout((): void => {
                 totalWheelDelta = 0;

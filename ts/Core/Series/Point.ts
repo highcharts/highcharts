@@ -45,14 +45,13 @@ const { defaultOptions } = D;
 import F from '../Templating.js';
 const { format } = F;
 import U from '../Utilities.js';
-import { crisp, erase, extend, isArray, isNumber, isObject, merge } from '../../Shared/Utilities.js';
+import { crisp, erase, extend, isArray, isNumber, isObject, merge, syncTimeout } from '../../Shared/Utilities.js';
 const {
     addEvent,
     fireEvent,
     getNestedProperty,
     isFunction,
     pick,
-    syncTimeout,
     removeEvent,
     uniqueKey
 } = U;

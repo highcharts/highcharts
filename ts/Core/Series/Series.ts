@@ -82,7 +82,7 @@ import SVGElement from '../Renderer/SVG/SVGElement.js';
 import T from '../Templating.js';
 const { format } = T;
 import U from '../Utilities.js';
-import { clamp, crisp, diffObjects, erase, extend, isArray, isNumber, isString, merge, objectEach } from '../../Shared/Utilities.js';
+import { clamp, crisp, diffObjects, erase, extend, internalClearTimeout, isArray, isNumber, isString, merge, objectEach, syncTimeout } from '../../Shared/Utilities.js';
 const {
     arrayMax,
     arrayMin,
@@ -96,8 +96,7 @@ const {
     getNestedProperty,
     insertItem,
     pick,
-    removeEvent,
-    syncTimeout
+    removeEvent
 } = U;
 
 /* *
@@ -3017,7 +3016,7 @@ class Series {
 
         // Clear the animation timeout if we are destroying the series
         // during initial animation
-        U.clearTimeout(series.animationTimeout as any);
+        internalClearTimeout(series.animationTimeout as any);
 
         // Destroy all SVGElements associated to the series
         objectEach(series, function (val: any, prop: string): void {
