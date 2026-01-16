@@ -133,6 +133,11 @@ export interface Options {
      * Options to control the way grid is rendered.
      */
     rendering?: RenderingSettings;
+
+    /**
+     * Performance-related options.
+     */
+    performance?: PerformanceOptions;
 }
 
 /**
@@ -169,6 +174,59 @@ export interface RenderingSettings {
 }
 
 /**
+ * Options that tune performance-sensitive behavior.
+ */
+export interface PerformanceOptions {
+    /**
+     * Options for worker-based filtering and sorting.
+     */
+    workerQuerying?: WorkerQueryingOptions;
+
+    /**
+     * Timing instrumentation for update cycles.
+     */
+    timings?: PerformanceTimingsOptions;
+
+    /**
+     * Skip building row objects for faster rendering in read-only grids.
+     *
+     * @default false
+     */
+    readOnly?: boolean;
+}
+
+/**
+ * Options for the worker-based querying path.
+ */
+export interface WorkerQueryingOptions {
+    /**
+     * Enable worker-based querying (sorting/filtering) for large datasets.
+     *
+     * @default false
+     */
+    enabled?: boolean;
+
+    /**
+     * Minimum number of rows before worker-based querying is used.
+     *
+     * @default 10000
+     */
+    minRows?: number;
+}
+
+/**
+ * Options for timing instrumentation.
+ */
+export interface PerformanceTimingsOptions {
+    /**
+     * Enable timing instrumentation.
+     *
+     * @default false
+     */
+    enabled?: boolean;
+}
+
+/**
  * Options to control the columns rendering.
  */
 export interface ColumnsSettings {
@@ -189,6 +247,42 @@ export interface ColumnsSettings {
      * Options for the columns resizing.
      */
     resizing?: ResizingOptions;
+
+    /**
+     * Columns virtualization option renders only columns visible in the
+     * viewport. In case of large column sets, the enabled option improves
+     * performance and saves memory.
+     *
+     * The option is automatically set to `true` when the number of columns
+     * exceeds the `virtualizationThreshold` option value. If defined, it takes
+     * precedence over the `virtualizationThreshold` option.
+     *
+     * @default false
+     */
+    virtualization?: boolean;
+
+    /**
+     * The columns virtualization threshold option sets the column count limit
+     * at which virtualization is activated. When the number of columns exceeds
+     * this threshold, virtualization is enabled to optimize performance.
+     *
+     * The option has no effect when the `virtualization` option is defined.
+     *
+     * @default 50
+     */
+    virtualizationThreshold?: number;
+
+    /**
+     * Buffer of columns to render outside the visible area from the left and
+     * from the right while scrolling. The bigger the buffer, the less flicker
+     * will be seen while scrolling, but the more columns will have to be
+     * rendered.
+     *
+     * Cannot be lower than 0.
+     *
+     * @default 2
+     */
+    bufferSize?: number;
 }
 
 /**

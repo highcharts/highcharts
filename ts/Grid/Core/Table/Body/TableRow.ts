@@ -25,6 +25,7 @@
 import type Cell from '../Cell';
 import type Column from '../Column';
 import type DataTable from '../../../../Data/DataTable';
+import type { ColumnViewport } from '../Table.js';
 
 import Row from '../Row.js';
 import Table from '../Table.js';
@@ -65,9 +66,20 @@ class TableRow extends Row {
     public id?: number;
 
     /**
+     * Last version tag applied to this row.
+     */
+    private lastVersionTag?: string;
+
+    /**
      * The vertical translation of the row.
      */
     public translateY: number = 0;
+
+    /**
+     * The spacer cells used for column virtualization.
+     */
+    private leftPadCell?: HTMLTableCellElement;
+    private rightPadCell?: HTMLTableCellElement;
 
 
     /* *
@@ -89,6 +101,7 @@ class TableRow extends Row {
         super(viewport);
         this.index = index;
         this.id = viewport.dataTable.getOriginalRowIndex(index);
+        this.lastVersionTag = viewport.dataTable.getVersionTag?.();
 
         this.loadData();
         this.setRowAttributes();
@@ -104,10 +117,42 @@ class TableRow extends Row {
         return new TableCell(this, column);
     }
 
+    public override render(): void {
+        const vp = this.viewport;
+        const columns = vp.columns;
+        const columnViewport = vp.getColumnViewport();
+        const useColumnVirtualization = vp.virtualColumns && columnViewport;
+
+        for (let i = 0, iEnd = columns.length; i < iEnd; i++) {
+            const cell = this.createCell(columns[i]) as TableCell;
+            if (!useColumnVirtualization) {
+                cell.render();
+                continue;
+            }
+            if (i >= columnViewport.start && i <= columnViewport.end) {
+                cell.render();
+            }
+        }
+
+        this.rendered = true;
+
+        if (vp.virtualRows) {
+            this.reflow();
+        }
+
+        if (useColumnVirtualization) {
+            this.updateRenderedColumns(columnViewport);
+        }
+    }
+
     /**
      * Loads the row data from the data table.
      */
     private loadData(): void {
+        if (this.viewport.grid.options?.performance?.readOnly) {
+            return;
+        }
+
         const data = this.viewport.dataTable.getRowObject(this.index);
         if (!data) {
             return;
@@ -121,14 +166,42 @@ class TableRow extends Row {
      * table.
      */
     public update(): void {
-        this.id = this.viewport.dataTable.getOriginalRowIndex(this.index);
+        const table = this.viewport.dataTable;
+        const nextId = table.getOriginalRowIndex(this.index);
+        const versionTag = table.getVersionTag?.();
+        if (this.id === nextId && this.lastVersionTag === versionTag) {
+            return;
+        }
+
+        this.id = nextId;
+        this.lastVersionTag = versionTag;
         this.updateRowAttributes();
 
         this.loadData();
 
-        for (let i = 0, iEnd = this.cells.length; i < iEnd; ++i) {
-            const cell = this.cells[i] as TableCell;
-            void cell.setValue();
+        if (this.viewport.virtualColumns) {
+            const columnViewport = this.viewport.getColumnViewport();
+            if (columnViewport) {
+                for (
+                    let i = columnViewport.start;
+                    i <= columnViewport.end;
+                    ++i
+                ) {
+                    const cell = this.cells[i] as TableCell;
+                    if (cell) {
+                        void cell.setValue();
+                    }
+                }
+            }
+        } else {
+            for (let i = 0, iEnd = this.cells.length; i < iEnd; ++i) {
+                const cell = this.cells[i] as TableCell;
+                void cell.setValue();
+            }
+        }
+
+        if (this.viewport.virtualColumns) {
+            this.updateRenderedColumns(this.viewport.getColumnViewport());
         }
 
         this.reflow();
@@ -150,7 +223,9 @@ class TableRow extends Row {
         }
 
         this.index = index;
-        this.id = this.viewport.dataTable.getOriginalRowIndex(index);
+        const table = this.viewport.dataTable;
+        this.id = table.getOriginalRowIndex(index);
+        this.lastVersionTag = table.getVersionTag?.();
 
         this.htmlElement.setAttribute('data-row-index', index);
         this.updateRowAttributes();
@@ -159,14 +234,158 @@ class TableRow extends Row {
 
         this.loadData();
 
-        for (let i = 0, iEnd = this.cells.length; i < iEnd; ++i) {
-            const cell = this.cells[i] as TableCell;
-            void cell.setValue();
+        if (this.viewport.virtualColumns) {
+            const columnViewport = this.viewport.getColumnViewport();
+            if (columnViewport) {
+                for (
+                    let i = columnViewport.start;
+                    i <= columnViewport.end;
+                    ++i
+                ) {
+                    const cell = this.cells[i] as TableCell;
+                    if (cell) {
+                        void cell.setValue();
+                    }
+                }
+            }
+        } else {
+            for (let i = 0, iEnd = this.cells.length; i < iEnd; ++i) {
+                const cell = this.cells[i] as TableCell;
+                void cell.setValue();
+            }
+        }
+
+        if (this.viewport.virtualColumns) {
+            this.updateRenderedColumns(this.viewport.getColumnViewport());
         }
 
         if (doReflow) {
             this.reflow();
         }
+    }
+
+    /**
+     * Returns the first rendered cell, useful for row height measurements.
+     */
+    public getFirstRenderedCell(): TableCell | undefined {
+        for (let i = 0, iEnd = this.cells.length; i < iEnd; ++i) {
+            const cell = this.cells[i] as TableCell;
+            if (cell?.htmlElement?.isConnected) {
+                return cell;
+            }
+        }
+        return this.cells[0] as TableCell | undefined;
+    }
+
+    /**
+     * Updates which columns are rendered for this row.
+     *
+     * @param columnViewport
+     * Column viewport to apply. If undefined, all columns are rendered.
+     */
+    public updateRenderedColumns(columnViewport?: ColumnViewport): void {
+        const rowEl = this.htmlElement;
+
+        if (!columnViewport) {
+            if (this.leftPadCell?.isConnected) {
+                this.leftPadCell.remove();
+            }
+            if (this.rightPadCell?.isConnected) {
+                this.rightPadCell.remove();
+            }
+
+            for (let i = 0, iEnd = this.cells.length; i < iEnd; ++i) {
+                const cell = this.cells[i] as TableCell;
+                if (!cell) {
+                    continue;
+                }
+                if (!cell.htmlElement.isConnected) {
+                    if (!cell.content) {
+                        cell.render();
+                    } else {
+                        rowEl.appendChild(cell.htmlElement);
+                        cell.reflow();
+                    }
+                }
+                rowEl.appendChild(cell.htmlElement);
+            }
+            return;
+        }
+
+        const nodes: HTMLElement[] = [];
+        if (columnViewport.leftPad > 0) {
+            const leftPadCell = this.getSpacerCell('left');
+            const leftPadWidth = columnViewport.leftPad + 'px';
+            leftPadCell.style.width = leftPadCell.style.maxWidth =
+                leftPadCell.style.minWidth = leftPadWidth;
+            nodes.push(leftPadCell);
+        } else if (this.leftPadCell?.isConnected) {
+            this.leftPadCell.remove();
+        }
+
+        for (let i = columnViewport.start; i <= columnViewport.end; ++i) {
+            const cell = this.cells[i] as TableCell;
+            if (!cell) {
+                continue;
+            }
+            if (!cell.htmlElement.isConnected) {
+                if (!cell.content) {
+                    cell.render();
+                } else {
+                    rowEl.appendChild(cell.htmlElement);
+                    cell.reflow();
+                }
+                void cell.setValue();
+            }
+            nodes.push(cell.htmlElement);
+        }
+
+        if (columnViewport.rightPad > 0) {
+            const rightPadCell = this.getSpacerCell('right');
+            const rightPadWidth = columnViewport.rightPad + 'px';
+            rightPadCell.style.width = rightPadCell.style.maxWidth =
+                rightPadCell.style.minWidth = rightPadWidth;
+            nodes.push(rightPadCell);
+        } else if (this.rightPadCell?.isConnected) {
+            this.rightPadCell.remove();
+        }
+
+        const keep = new Set(nodes);
+        const children = Array.from(rowEl.children) as HTMLElement[];
+        for (let i = 0, iEnd = children.length; i < iEnd; ++i) {
+            const child = children[i];
+            if (!keep.has(child)) {
+                rowEl.removeChild(child);
+            }
+        }
+
+        for (let i = 0, iEnd = nodes.length; i < iEnd; ++i) {
+            rowEl.appendChild(nodes[i]);
+        }
+    }
+
+    private getSpacerCell(side: 'left' | 'right'): HTMLTableCellElement {
+        const existing = side === 'left' ? this.leftPadCell : this.rightPadCell;
+        if (existing) {
+            return existing;
+        }
+
+        const spacer = document.createElement('td');
+        spacer.setAttribute('aria-hidden', 'true');
+        spacer.setAttribute('role', 'presentation');
+        spacer.tabIndex = -1;
+        spacer.style.padding = '0';
+        spacer.style.border = '0';
+        spacer.style.background = 'transparent';
+        spacer.style.pointerEvents = 'none';
+
+        if (side === 'left') {
+            this.leftPadCell = spacer;
+        } else {
+            this.rightPadCell = spacer;
+        }
+
+        return spacer;
     }
 
     /**

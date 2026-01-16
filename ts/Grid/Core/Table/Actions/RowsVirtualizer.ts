@@ -90,6 +90,16 @@ class RowsVirtualizer {
     private readonly rowPool: TableRow[] = [];
 
     /**
+     * Stats for the last render cycle.
+     */
+    public lastRecycleStats?: {
+        created: number;
+        reused: number;
+        pooled: number;
+        kept: number;
+    };
+
+    /**
      * Maximum number of rows to keep in the reuse pool.
      */
     private static readonly MAX_POOL_SIZE = 100;
@@ -153,30 +163,44 @@ class RowsVirtualizer {
     /**
      * Renders the rows in the viewport. It is called when the rows need to be
      * re-rendered, e.g., after a sort or filter operation.
+     *
+     * @param reuseRows
+     * Whether to reuse existing row instances.
      */
-    public rerender(): void {
+    public rerender(reuseRows: boolean = false): void {
         const tbody = this.viewport.tbodyElement;
         let rows = this.viewport.rows;
 
         const oldScrollLeft = tbody.scrollLeft;
         let oldScrollTop: number | undefined;
 
-        if (this.rowPool.length) {
-            for (let i = this.rowPool.length - 1; i >= 0; --i) {
-                this.rowPool[i].destroy();
+        if (!reuseRows) {
+            if (this.rowPool.length) {
+                for (let i = this.rowPool.length - 1; i >= 0; --i) {
+                    this.rowPool[i].destroy();
+                }
+                this.rowPool.length = 0;
             }
-            this.rowPool.length = 0;
-        }
 
-        if (rows.length) {
-            oldScrollTop = tbody.scrollTop;
-            for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
-                rows[i].destroy();
+            if (rows.length) {
+                oldScrollTop = tbody.scrollTop;
+                for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
+                    rows[i].destroy();
+                }
+                rows.length = 0;
             }
-            rows.length = 0;
+        } else if (rows.length) {
+            oldScrollTop = tbody.scrollTop;
         }
 
         this.renderRows(this.rowCursor);
+
+        if (reuseRows) {
+            rows = this.viewport.rows;
+            for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
+                rows[i].update();
+            }
+        }
 
         if (this.viewport.virtualRows) {
 
@@ -255,29 +279,46 @@ class RowsVirtualizer {
         const rowsLn = rows.length;
 
         const lastRow = rows[rowsLn - 1];
+        const lastRowCell = lastRow.getFirstRenderedCell();
+        if (!lastRowCell) {
+            return;
+        }
 
         let rowTop = lastRow.translateY;
         const rowBottom = rowTop + lastRow.htmlElement.offsetHeight;
-        let newHeight = lastRow.cells[0].htmlElement.offsetHeight;
+        let newHeight = lastRowCell.htmlElement.offsetHeight;
         rowTop = rowBottom - newHeight;
 
         lastRow.htmlElement.style.height = newHeight + 'px';
         lastRow.setTranslateY(rowTop);
         for (let j = 0, jEnd = lastRow.cells.length; j < jEnd; ++j) {
-            lastRow.cells[j].htmlElement.style.transform = '';
+            const cell = lastRow.cells[j];
+            if (!cell?.htmlElement?.isConnected) {
+                continue;
+            }
+            cell.htmlElement.style.transform = '';
         }
 
         for (let i = rowsLn - 2; i >= 0; i--) {
             const row = rows[i];
 
-            newHeight = row.cells[0].htmlElement.offsetHeight;
+            const rowCell = row.getFirstRenderedCell();
+            if (!rowCell) {
+                continue;
+            }
+
+            newHeight = rowCell.htmlElement.offsetHeight;
             rowTop -= newHeight;
 
             row.htmlElement.style.height = newHeight + 'px';
 
             row.setTranslateY(rowTop);
             for (let j = 0, jEnd = row.cells.length; j < jEnd; ++j) {
-                row.cells[j].htmlElement.style.transform = '';
+                const cell = row.cells[j];
+                if (!cell?.htmlElement?.isConnected) {
+                    continue;
+                }
+                cell.htmlElement.style.transform = '';
             }
         }
     }
@@ -299,6 +340,20 @@ class RowsVirtualizer {
         }
 
         const isVirtualization = this.viewport.virtualRows;
+        const trackStats = !!vp.grid.options?.performance?.timings?.enabled;
+        this.lastRecycleStats = trackStats ? {
+            created: 0,
+            reused: 0,
+            pooled: 0,
+            kept: 0
+        } : void 0;
+
+        const maxCursor = Math.max(rowCount - 1, 0);
+        if (rowCursor > maxCursor) {
+            rowCursor = maxCursor;
+            this.rowCursor = maxCursor;
+        }
+
         const rowsPerPage = isVirtualization ? Math.ceil(
             (vp.grid.tableElement?.clientHeight || 0) /
             this.defaultRowHeight
@@ -315,15 +370,24 @@ class RowsVirtualizer {
             );
         }
 
-        if (!rows.length) {
-            const last = new TableRow(vp, rowCount - 1);
-            vp.tbodyElement.appendChild(last.htmlElement);
-            last.render();
-            rows.push(last);
-
-            if (isVirtualization) {
-                last.setTranslateY(last.getDefaultTopOffset());
+        if (rows.length) {
+            const lastRowIndex = rowCount - 1;
+            const lastRow = rows[rows.length - 1];
+            if (lastRow.index !== lastRowIndex) {
+                lastRow.reuse(lastRowIndex, false);
+                if (isVirtualization) {
+                    lastRow.setTranslateY(lastRow.getDefaultTopOffset());
+                }
             }
+        }
+
+        if (!rows.length) {
+            const last = this.getOrCreateRow(rowCount - 1);
+            vp.tbodyElement.appendChild(last.htmlElement);
+            if (!last.rendered) {
+                last.render();
+            }
+            rows.push(last);
         }
 
         const from = Math.max(0, Math.min(
@@ -426,15 +490,25 @@ class RowsVirtualizer {
             rows.push(alwaysLastRow);
         }
 
+        if (this.lastRecycleStats) {
+            this.lastRecycleStats.kept = rows.length;
+        }
+
         // Focus the cell if the focus cursor is set
         if (vp.focusCursor) {
             const [rowIndex, columnIndex] = vp.focusCursor;
             const row = rows.find((row): boolean => row.index === rowIndex);
 
             if (row) {
-                row.cells[columnIndex]?.htmlElement.focus({
-                    preventScroll: true
-                });
+                const cell = row.cells[columnIndex];
+                if (cell) {
+                    if (vp.virtualColumns && !cell.htmlElement.isConnected) {
+                        vp.ensureColumnViewport(columnIndex, row.index);
+                    }
+                    cell.htmlElement.focus({
+                        preventScroll: true
+                    });
+                }
             }
         }
 
@@ -445,7 +519,10 @@ class RowsVirtualizer {
         ) {
             const rowIndex = rowCursor - rows[0].index;
             if (rows[rowIndex]) {
-                vp.setFocusAnchorCell(rows[rowIndex].cells[0]);
+                const anchorCell = rows[rowIndex].getFirstRenderedCell();
+                if (anchorCell) {
+                    vp.setFocusAnchorCell(anchorCell);
+                }
             }
         }
     }
@@ -474,12 +551,16 @@ class RowsVirtualizer {
 
         for (let i = 0; i < rowsLn; ++i) {
             const row = rows[i];
+            const measureCell = row.getFirstRenderedCell();
 
             // Reset row height and cell transforms
             row.htmlElement.style.height = '';
-            if (row.cells[0].htmlElement.style.transform) {
+            if (measureCell?.htmlElement.style.transform) {
                 for (let j = 0, jEnd = row.cells.length; j < jEnd; ++j) {
                     const cell = row.cells[j];
+                    if (!cell?.htmlElement?.isConnected) {
+                        continue;
+                    }
                     cell.htmlElement.style.transform = '';
                 }
             }
@@ -490,7 +571,12 @@ class RowsVirtualizer {
                 continue;
             }
 
-            const cellHeight = row.cells[0].htmlElement.offsetHeight;
+            if (!measureCell) {
+                row.htmlElement.style.height = defaultH + 'px';
+                continue;
+            }
+
+            const cellHeight = measureCell.htmlElement.offsetHeight;
             row.htmlElement.style.height = cellHeight + 'px';
 
             // Rows below the first visible row
@@ -510,6 +596,9 @@ class RowsVirtualizer {
 
                 for (let j = 0, jEnd = row.cells.length; j < jEnd; ++j) {
                     const cell = row.cells[j];
+                    if (!cell?.htmlElement?.isConnected) {
+                        continue;
+                    }
                     cell.htmlElement.style.transform = `translateY(${
                         newHeight - cellHeight
                     }px)`;
@@ -563,8 +652,12 @@ class RowsVirtualizer {
         const vp = this.viewport;
         const isVirtualization = vp.virtualRows;
         const pooledRow = this.rowPool.pop();
+        const stats = this.lastRecycleStats;
 
         if (pooledRow) {
+            if (stats) {
+                stats.reused += 1;
+            }
             pooledRow.reuse(index, false);
             if (isVirtualization) {
                 pooledRow.setTranslateY(pooledRow.getDefaultTopOffset());
@@ -572,6 +665,9 @@ class RowsVirtualizer {
             return pooledRow;
         }
 
+        if (stats) {
+            stats.created += 1;
+        }
         const newRow = new TableRow(vp, index);
         newRow.rendered = false;
         if (isVirtualization) {
@@ -590,6 +686,9 @@ class RowsVirtualizer {
         row.htmlElement.remove();
         if (this.rowPool.length < RowsVirtualizer.MAX_POOL_SIZE) {
             this.rowPool.push(row);
+            if (this.lastRecycleStats) {
+                this.lastRecycleStats.pooled += 1;
+            }
         } else {
             row.destroy();
         }

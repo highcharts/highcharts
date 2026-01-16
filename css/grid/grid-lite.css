@@ -580,6 +580,11 @@
     --ig-cell-column-color: var(--hcg-column-even-color, var(--hcg-column-color));
 }
 
+.hcg-table tbody tr td.hcg-column-even {
+    --ig-cell-column-background: var(--hcg-column-even-background, var(--hcg-column-background));
+    --ig-cell-column-color: var(--hcg-column-even-color, var(--hcg-column-color));
+}
+
 .hcg-table tbody td:focus {
     box-shadow: inset var(--ig-focus-ring);
 }

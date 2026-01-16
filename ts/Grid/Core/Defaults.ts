@@ -141,9 +141,21 @@ export const defaultOptions: DeepPartial<Options> = {
             resizing: {
                 enabled: true,
                 mode: 'adjacent'
-            }
+            },
+            bufferSize: 2,
+            virtualizationThreshold: 50
         },
         theme: 'hcg-theme-default'
+    },
+    performance: {
+        workerQuerying: {
+            enabled: false,
+            minRows: 10000
+        },
+        timings: {
+            enabled: false
+        },
+        readOnly: false
     },
     columnDefaults: {
         sorting: {

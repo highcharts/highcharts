@@ -174,6 +174,25 @@ class PaginationController {
             this.querying.grid.dataTable?.rowCount || 0
         )
     ): RangeModifier | undefined {
+        const range = this.getRange(rowsCountBeforePagination);
+        if (!range) {
+            return;
+        }
+
+        return new RangeModifier(range);
+    }
+
+    /**
+     * Returns pagination range and updates total items.
+     *
+     * @param rowsCountBeforePagination
+     * The number of rows before pagination.
+     */
+    public getRange(
+        rowsCountBeforePagination: number = (
+            this.querying.grid.dataTable?.rowCount || 0
+        )
+    ): { start: number; end: number } | undefined {
         if (!this.enabled) {
             return;
         }
@@ -190,10 +209,7 @@ class PaginationController {
 
         this._totalItems = rowsCountBeforePagination;
 
-        return new RangeModifier({
-            start,
-            end
-        });
+        return { start, end };
     }
 }
 

@@ -59,6 +59,11 @@ class TableCell extends Cell {
     public readonly row: TableRow;
 
     /**
+     * Last row key used when updating the cell content.
+     */
+    private lastRowKey?: number;
+
+    /**
      * The column of the cell.
      */
     public override column: Column;
@@ -140,6 +145,13 @@ class TableCell extends Cell {
         value: DataTable.CellType = this.column.data?.[this.row.index],
         updateTable: boolean = false
     ): Promise<void> {
+        const previousValue = this.value;
+        const rowKey = this.row.id ?? this.row.index;
+        const sameRow = this.lastRowKey === rowKey;
+        if (previousValue === value && this.content && sameRow) {
+            return;
+        }
+
         this.value = value;
 
         if (updateTable && await this.updateDataTable()) {
@@ -147,7 +159,9 @@ class TableCell extends Cell {
         }
 
         if (this.content) {
-            this.content.update();
+            if (!sameRow || previousValue !== value) {
+                this.content.update();
+            }
         } else {
             this.content = this.column.createCellContent(this);
         }
@@ -161,6 +175,8 @@ class TableCell extends Cell {
 
         // Add custom class name from column options
         this.setCustomClassName(this.column.options.cells?.className);
+
+        this.lastRowKey = rowKey;
 
         fireEvent(this, 'afterRender', { target: this });
     }

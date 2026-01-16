@@ -317,6 +317,26 @@ class FilteringController {
         this.updateModifier();
     }
 
+    /**
+     * Returns the combined filtering condition for the current state.
+     */
+    public getCondition(): FilterCondition | undefined {
+        const columnConditions = Object.values(this.columnConditions);
+
+        if (!columnConditions.length) {
+            return;
+        }
+
+        if (columnConditions.length === 1) {
+            return columnConditions[0];
+        }
+
+        return {
+            operator: 'and',
+            conditions: columnConditions
+        };
+    }
+
 
     /**
      * Updates the modifier based on the current column conditions.

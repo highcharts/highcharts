@@ -137,6 +137,11 @@ class Table {
     public rowsWidth?: number;
 
     /**
+     * The flag that indicates if the table columns are virtualized.
+     */
+    public virtualColumns: boolean;
+
+    /**
      * The focus cursor position: [rowIndex, columnIndex] or `undefined` if the
      * table cell is not focused.
      */
@@ -152,6 +157,31 @@ class Table {
      * The flag that indicates if the table rows are virtualized.
      */
     public virtualRows: boolean;
+
+    /**
+     * Cached column offsets for virtualization.
+     */
+    private columnOffsets: number[] = [];
+
+    /**
+     * Cached column widths for virtualization.
+     */
+    private columnWidths: number[] = [];
+
+    /**
+     * Cached column viewport data for virtualization.
+     */
+    private columnViewport?: ColumnViewport;
+
+    /**
+     * Whether column metrics should be recalculated.
+     */
+    private columnMetricsDirty = true;
+
+    /**
+     * Tracks the last horizontal scroll position.
+     */
+    private lastScrollLeft?: number;
 
 
     /* *
@@ -198,6 +228,8 @@ class Table {
 
         // Load columns
         this.loadColumns();
+
+        this.virtualColumns = this.shouldVirtualizeColumns();
 
         // Virtualization
         this.virtualRows = this.shouldVirtualizeRows();
@@ -251,7 +283,13 @@ class Table {
         // this.footer = new TableFooter(this);
         // this.footer.render();
 
+        if (this.virtualColumns) {
+            this.updateColumnMetrics();
+            this.columnViewport = this.calculateColumnViewport();
+        }
+
         this.rowsVirtualizer.initialRender();
+        this.updateColumnViewport(true);
         fireEvent(this, 'afterInit');
     }
 
@@ -299,6 +337,61 @@ class Table {
     }
 
     /**
+     * Checks if columns virtualization should be enabled.
+     */
+    private shouldVirtualizeColumns(): boolean {
+        const { grid } = this;
+        const columns = grid.userOptions.rendering?.columns;
+        if (defined(columns?.virtualization)) {
+            return columns.virtualization;
+        }
+
+        const threshold = columns?.virtualizationThreshold ?? 50;
+        return this.columns.length >= threshold;
+    }
+
+    /**
+     * Returns the current column viewport for column virtualization.
+     */
+    public getColumnViewport(): ColumnViewport | undefined {
+        if (!this.virtualColumns) {
+            return void 0;
+        }
+        if (!this.columnViewport) {
+            this.columnViewport = this.calculateColumnViewport();
+        }
+        return this.columnViewport;
+    }
+
+    /**
+     * Ensures the column viewport includes the provided column index.
+     *
+     * @param columnIndex
+     * The column index to include.
+     *
+     * @param rowIndex
+     * Optional row index to keep focus cursor aligned.
+     */
+    public ensureColumnViewport(columnIndex: number, rowIndex?: number): void {
+        if (!this.virtualColumns) {
+            return;
+        }
+
+        if (defined(rowIndex)) {
+            this.focusCursor = [rowIndex, columnIndex];
+        }
+
+        const current = this.columnViewport;
+        if (
+            !current ||
+            columnIndex < current.start ||
+            columnIndex > current.end
+        ) {
+            this.updateColumnViewport(true);
+        }
+    }
+
+    /**
      * Loads the columns of the table.
      */
     private loadColumns(): void {
@@ -323,6 +416,32 @@ class Table {
      */
     public async updateRows(): Promise<void> {
         const vp = this;
+        const trackTimings = !!vp.grid.options?.performance?.timings?.enabled;
+        const now = trackTimings ? (
+            typeof performance !== 'undefined' && performance.now ?
+                performance.now.bind(performance) :
+                Date.now
+        ) : null;
+        const timings = trackTimings ? {
+            totalMs: 0,
+            queryMs: 0,
+            loadColumnsMs: 0,
+            virtualizationMs: 0,
+            rowsMs: 0,
+            reflowMs: 0,
+            paginationMs: 0,
+            focusMs: 0,
+            rowCount: 0,
+            reuseRows: false,
+            recycleStats: void 0 as {
+                created: number;
+                reused: number;
+                pooled: number;
+                kept: number;
+            } | undefined
+        } : null;
+        const totalStart = now ? now() : 0;
+
         let focusedRowId: number | undefined;
         if (vp.focusCursor) {
             focusedRowId = vp.dataTable.getOriginalRowIndex(vp.focusCursor[0]);
@@ -332,27 +451,74 @@ class Table {
 
         // Update data
         const oldRowsCount = (vp.rows[vp.rows.length - 1]?.index ?? -1) + 1;
-        await vp.grid.querying.proceed();
+        if (timings && now) {
+            const start = now();
+            await vp.grid.querying.proceed();
+            timings.queryMs = now() - start;
+        } else {
+            await vp.grid.querying.proceed();
+        }
         vp.dataTable = vp.grid.presentationTable as DataTable;
-        for (const column of vp.columns) {
-            column.loadData();
+        if (timings && now) {
+            const start = now();
+            for (const column of vp.columns) {
+                column.loadData();
+            }
+            timings.loadColumnsMs = now() - start;
+        } else {
+            for (const column of vp.columns) {
+                column.loadData();
+            }
         }
 
         // Update virtualization if needed
-        const shouldVirtualize = this.shouldVirtualizeRows();
+        let shouldVirtualize: boolean;
         let shouldRerender = false;
-        if (this.virtualRows !== shouldVirtualize) {
-            this.virtualRows = shouldVirtualize;
-            vp.tableElement.classList.toggle(
-                Globals.getClassName('virtualization'),
-                shouldVirtualize
-            );
-            shouldRerender = true;
+        if (timings && now) {
+            const start = now();
+            shouldVirtualize = this.shouldVirtualizeRows();
+            if (this.virtualRows !== shouldVirtualize) {
+                this.virtualRows = shouldVirtualize;
+                vp.tableElement.classList.toggle(
+                    Globals.getClassName('virtualization'),
+                    shouldVirtualize
+                );
+                shouldRerender = true;
+            }
+            timings.virtualizationMs = now() - start;
+        } else {
+            shouldVirtualize = this.shouldVirtualizeRows();
+            if (this.virtualRows !== shouldVirtualize) {
+                this.virtualRows = shouldVirtualize;
+                vp.tableElement.classList.toggle(
+                    Globals.getClassName('virtualization'),
+                    shouldVirtualize
+                );
+                shouldRerender = true;
+            }
         }
 
-        if (shouldRerender || oldRowsCount !== vp.dataTable.rowCount) {
+        const rowCountChanged = oldRowsCount !== vp.dataTable.rowCount;
+        const reuseRows = rowCountChanged && !shouldRerender;
+        if (timings) {
+            timings.reuseRows = reuseRows;
+        }
+
+        if (timings && now) {
+            const start = now();
+            if (shouldRerender || rowCountChanged) {
+                // Rerender rows, optionally reusing DOM.
+                vp.rowsVirtualizer.rerender(reuseRows);
+            } else {
+                // Update existing rows
+                for (let i = 0, iEnd = vp.rows.length; i < iEnd; ++i) {
+                    vp.rows[i].update();
+                }
+            }
+            timings.rowsMs = now() - start;
+        } else if (shouldRerender || rowCountChanged) {
             // Rerender all rows
-            vp.rowsVirtualizer.rerender();
+            vp.rowsVirtualizer.rerender(reuseRows);
         } else {
             // Update existing rows
             for (let i = 0, iEnd = vp.rows.length; i < iEnd; ++i) {
@@ -361,11 +527,56 @@ class Table {
         }
 
         // Update the pagination controls
-        vp.grid.pagination?.updateControls();
-        vp.reflow();
+        if (timings && now) {
+            const start = now();
+            vp.grid.pagination?.updateControls();
+            timings.paginationMs = now() - start;
+        } else {
+            vp.grid.pagination?.updateControls();
+        }
+
+        if (timings && now) {
+            const start = now();
+            vp.reflow();
+            timings.reflowMs = now() - start;
+        } else {
+            vp.reflow();
+        }
 
         // Scroll to the focused row
-        if (focusedRowId !== void 0 && vp.focusCursor) {
+        if (timings && now) {
+            const start = now();
+            if (focusedRowId !== void 0 && vp.focusCursor) {
+                const newRowIndex = vp.dataTable.getLocalRowIndex(focusedRowId);
+                if (newRowIndex !== void 0) {
+                    // Scroll to the focused row.
+                    vp.scrollToRow(newRowIndex);
+
+                    // Focus the cell that was focused before the update.
+                    setTimeout((): void => {
+                        if (!defined(vp.focusCursor?.[1])) {
+                            return;
+                        }
+                        const row = vp.rows[
+                            newRowIndex - vp.rows[0].index
+                        ];
+                        const columnIndex = vp.focusCursor[1];
+                        const cell = row?.cells[columnIndex];
+                        if (!cell) {
+                            return;
+                        }
+                        if (
+                            vp.virtualColumns &&
+                            !cell.htmlElement.isConnected
+                        ) {
+                            vp.ensureColumnViewport(columnIndex, row.index);
+                        }
+                        cell.htmlElement.focus();
+                    });
+                }
+            }
+            timings.focusMs = now() - start;
+        } else if (focusedRowId !== void 0 && vp.focusCursor) {
             const newRowIndex = vp.dataTable.getLocalRowIndex(focusedRowId);
             if (newRowIndex !== void 0) {
                 // Scroll to the focused row.
@@ -376,14 +587,34 @@ class Table {
                     if (!defined(vp.focusCursor?.[1])) {
                         return;
                     }
-                    vp.rows[
+                    const row = vp.rows[
                         newRowIndex - vp.rows[0].index
-                    ]?.cells[vp.focusCursor[1]].htmlElement.focus();
+                    ];
+                    const columnIndex = vp.focusCursor[1];
+                    const cell = row?.cells[columnIndex];
+                    if (!cell) {
+                        return;
+                    }
+                    if (
+                        vp.virtualColumns &&
+                        !cell.htmlElement.isConnected
+                    ) {
+                        vp.ensureColumnViewport(columnIndex, row.index);
+                    }
+                    cell.htmlElement.focus();
                 });
             }
         }
 
         vp.grid.dirtyFlags.delete('rows');
+
+        if (timings) {
+            const end = now ? now() : Date.now();
+            timings.totalMs = end - totalStart;
+            timings.rowCount = vp.dataTable.rowCount;
+            timings.recycleStats = vp.rowsVirtualizer.lastRecycleStats;
+            vp.grid.performanceStats = { updateRows: timings };
+        }
     }
 
     /**
@@ -394,6 +625,10 @@ class Table {
         // unnecessary reflows of the table parts.
 
         this.columnResizing.reflow();
+        this.columnMetricsDirty = true;
+        if (this.virtualColumns) {
+            this.updateColumnMetrics();
+        }
 
         // Reflow the head
         this.header?.reflow();
@@ -409,6 +644,10 @@ class Table {
             popup.reflow();
         });
 
+        if (this.virtualColumns) {
+            this.updateColumnViewport(true);
+        }
+
         this.grid.dirtyFlags.delete('reflow');
     }
 
@@ -421,8 +660,10 @@ class Table {
     private onTBodyFocus = (e: FocusEvent): void => {
         e.preventDefault();
 
-        this.rows[this.rowsVirtualizer.rowCursor - this.rows[0].index]
-            ?.cells[0]?.htmlElement.focus();
+        const row = this.rows[
+            this.rowsVirtualizer.rowCursor - this.rows[0].index
+        ];
+        row?.getFirstRenderedCell()?.htmlElement.focus();
     };
 
     /**
@@ -441,6 +682,12 @@ class Table {
         }
 
         this.header?.scrollHorizontally(this.tbodyElement.scrollLeft);
+
+        const scrollLeft = this.tbodyElement.scrollLeft;
+        if (this.virtualColumns && scrollLeft !== this.lastScrollLeft) {
+            this.lastScrollLeft = scrollLeft;
+            this.updateColumnViewport();
+        }
     };
 
     /**
@@ -605,9 +852,174 @@ class Table {
             return;
         }
 
-        // Find cell index by position in row
-        const cellIndex = Array.prototype.indexOf.call(tr.children, td);
-        return row.cells[cellIndex];
+        const columnId = td.getAttribute('data-column-id');
+        if (!columnId) {
+            return;
+        }
+
+        return row.getCell(columnId);
+    }
+
+    /**
+     * Updates cached column metrics used for virtualization.
+     */
+    private updateColumnMetrics(): void {
+        if (
+            !this.columnMetricsDirty &&
+            this.columnOffsets.length === this.columns.length
+        ) {
+            return;
+        }
+
+        const offsets = this.columnOffsets;
+        const widths = this.columnWidths;
+        const columns = this.columns;
+
+        offsets.length = columns.length;
+        widths.length = columns.length;
+
+        let offset = 0;
+        for (let i = 0, iEnd = columns.length; i < iEnd; ++i) {
+            const width = this.columnResizing.getColumnWidth(columns[i]);
+            offsets[i] = offset;
+            widths[i] = width;
+            offset += width;
+        }
+
+        this.columnMetricsDirty = false;
+    }
+
+    /**
+     * Calculates the current column viewport for virtualization.
+     *
+     * @param scrollLeft
+     * The horizontal scroll offset.
+     */
+    private calculateColumnViewport(
+        scrollLeft: number = this.tbodyElement.scrollLeft
+    ): ColumnViewport | undefined {
+        const columnCount = this.columns.length;
+        if (!columnCount) {
+            return;
+        }
+
+        this.updateColumnMetrics();
+
+        const viewportWidth = this.tbodyElement.clientWidth;
+        const leftEdge = Math.max(scrollLeft, 0);
+        const rightEdge = leftEdge + viewportWidth;
+
+        const startIndex = this.findColumnStart(leftEdge);
+        const endIndex = this.findColumnEnd(rightEdge);
+
+        const bufferSize = Math.max(
+            this.grid.userOptions.rendering?.columns?.bufferSize ?? 2,
+            0
+        );
+
+        let start = Math.max(0, startIndex - bufferSize);
+        let end = Math.min(columnCount - 1, endIndex + bufferSize);
+
+        const focusIndex = this.focusCursor?.[1];
+        if (defined(focusIndex)) {
+            start = Math.min(start, focusIndex);
+            end = Math.max(end, focusIndex);
+        }
+
+        const totalWidth = this.columnOffsets[columnCount - 1] +
+            this.columnWidths[columnCount - 1];
+        const leftPad = this.columnOffsets[start] ?? 0;
+        const rightEdgeOffset =
+            this.columnOffsets[end] + this.columnWidths[end];
+        const rightPad = Math.max(totalWidth - rightEdgeOffset, 0);
+
+        return {
+            start,
+            end,
+            leftPad,
+            rightPad
+        };
+    }
+
+    private findColumnStart(leftEdge: number): number {
+        const offsets = this.columnOffsets;
+        const widths = this.columnWidths;
+        let low = 0;
+        let high = offsets.length - 1;
+        let result = 0;
+
+        while (low <= high) {
+            const mid = Math.floor((low + high) / 2);
+            if (offsets[mid] + widths[mid] > leftEdge) {
+                result = mid;
+                high = mid - 1;
+            } else {
+                low = mid + 1;
+            }
+        }
+
+        return result;
+    }
+
+    private findColumnEnd(rightEdge: number): number {
+        const offsets = this.columnOffsets;
+        let low = 0;
+        let high = offsets.length - 1;
+        let result = high;
+
+        while (low <= high) {
+            const mid = Math.floor((low + high) / 2);
+            if (offsets[mid] < rightEdge) {
+                result = mid;
+                low = mid + 1;
+            } else {
+                high = mid - 1;
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Updates the rendered columns for all rendered rows.
+     *
+     * @param force
+     * Whether to force an update even if the viewport did not change.
+     */
+    private updateColumnViewport(force: boolean = false): void {
+        const shouldVirtualize = this.shouldVirtualizeColumns();
+        if (!shouldVirtualize) {
+            if (this.virtualColumns) {
+                this.virtualColumns = false;
+                this.columnViewport = void 0;
+                for (let i = 0, iEnd = this.rows.length; i < iEnd; ++i) {
+                    this.rows[i].updateRenderedColumns();
+                }
+            }
+            return;
+        }
+
+        this.virtualColumns = true;
+        const nextViewport = this.calculateColumnViewport();
+        if (!nextViewport) {
+            return;
+        }
+
+        if (
+            !force &&
+            this.columnViewport &&
+            this.columnViewport.start === nextViewport.start &&
+            this.columnViewport.end === nextViewport.end &&
+            this.columnViewport.leftPad === nextViewport.leftPad &&
+            this.columnViewport.rightPad === nextViewport.rightPad
+        ) {
+            return;
+        }
+
+        this.columnViewport = nextViewport;
+        for (let i = 0, iEnd = this.rows.length; i < iEnd; ++i) {
+            this.rows[i].updateRenderedColumns(nextViewport);
+        }
     }
 
     /**
@@ -669,7 +1081,14 @@ class Table {
         if (meta.focusCursor) {
             const [rowIndex, columnIndex] = meta.focusCursor;
             const row = this.rows[rowIndex - this.rows[0].index];
-            row?.cells[columnIndex]?.htmlElement.focus();
+            const cell = row?.cells[columnIndex];
+            if (!cell) {
+                return;
+            }
+            if (this.virtualColumns && !cell.htmlElement.isConnected) {
+                this.ensureColumnViewport(columnIndex, row.index);
+            }
+            cell.htmlElement.focus();
         }
     }
 
@@ -717,6 +1136,16 @@ class Table {
         // but it should be faster.
         return this.rows.find((row): boolean => row.id === id);
     }
+}
+
+/**
+ * Column viewport data for column virtualization.
+ */
+export interface ColumnViewport {
+    start: number;
+    end: number;
+    leftPad: number;
+    rightPad: number;
 }
 
 /**

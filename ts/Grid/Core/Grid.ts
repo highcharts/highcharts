@@ -211,6 +211,11 @@ export class Grid {
     public presentationTable?: DataTable;
 
     /**
+     * Latest performance timings gathered during updates.
+     */
+    public performanceStats?: Record<string, unknown>;
+
+    /**
      * The HTML element of the table.
      */
     public tableElement?: HTMLTableElement;
@@ -1625,12 +1630,13 @@ export class Grid {
      */
     public getData(modified: boolean = true): string {
         const dataTable = modified ? this.presentationTable : this.dataTable;
-        const tableColumns = dataTable?.columns;
         const outputColumns: Record<string, DataTable.Column> = {};
 
-        if (!this.enabledColumns || !tableColumns) {
+        if (!this.enabledColumns || !dataTable) {
             return '{}';
         }
+
+        const rowCount = dataTable.getRowCount();
 
         const typeParser = (type: ColumnDataType) => {
             const TypeMap: Record<
@@ -1648,15 +1654,18 @@ export class Grid {
             );
         };
 
-        for (const columnId of Object.keys(tableColumns)) {
+        for (const columnId of dataTable.getColumnIds()) {
             const column = this.viewport?.getColumn(columnId);
             if (column) {
-                const columnData = tableColumns[columnId];
+                const columnData = dataTable.getColumn(columnId, true);
+                if (!columnData) {
+                    continue;
+                }
                 const parser = typeParser(column.dataType);
                 outputColumns[columnId] = ((): DataTable.Column => {
-                    const result = [];
-                    for (let i = 0, iEnd = columnData.length; i < iEnd; ++i) {
-                        result.push(parser(columnData[i]));
+                    const result = new Array(rowCount);
+                    for (let i = 0; i < rowCount; ++i) {
+                        result[i] = parser(columnData[i] as DataTable.CellType);
                     }
                     return result;
                 })();

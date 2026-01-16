@@ -239,7 +239,21 @@ abstract class ResizingMode {
      * The minimum width in pixels.
      */
     protected static getMinWidth(column: Column): number {
-        const tableColumnEl = column.cells[0]?.htmlElement;
+        let tableColumnEl: HTMLTableCellElement | undefined =
+            column.cells[0]?.htmlElement;
+        if (tableColumnEl && !tableColumnEl.isConnected) {
+            tableColumnEl = void 0;
+        }
+        if (!tableColumnEl) {
+            const rows = column.viewport.rows;
+            for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
+                const cell = rows[i].cells[column.index];
+                if (cell?.htmlElement?.isConnected) {
+                    tableColumnEl = cell.htmlElement;
+                    break;
+                }
+            }
+        }
         const headerColumnEl = column.header?.htmlElement;
 
         const getElPaddings = (el: HTMLElement): number => (

@@ -124,7 +124,11 @@ abstract class Row {
      */
     public reflow(): void {
         for (let j = 0, jEnd = this.cells.length; j < jEnd; ++j) {
-            this.cells[j].reflow();
+            const cell = this.cells[j];
+            if (!cell?.htmlElement?.isConnected) {
+                continue;
+            }
+            cell.reflow();
         }
 
         const vp = this.viewport;

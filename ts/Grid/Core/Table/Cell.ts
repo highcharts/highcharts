@@ -247,7 +247,15 @@ abstract class Cell {
 
             const nextRow = vp.rows[nextVerticalDir];
             if (nextRow) {
-                nextRow.cells[column.index + dir[1]]?.htmlElement.focus();
+                const nextColumnIndex = column.index + dir[1];
+                const nextCell = nextRow.cells[nextColumnIndex];
+                if (!nextCell) {
+                    return;
+                }
+                if (vp.virtualColumns && !nextCell.htmlElement.isConnected) {
+                    vp.ensureColumnViewport(nextColumnIndex, nextRow.index);
+                }
+                nextCell.htmlElement.focus();
             }
         }
     }

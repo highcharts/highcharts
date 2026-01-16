@@ -257,6 +257,12 @@ export class Column {
      */
     public registerCell(cell: Cell): void {
         cell.htmlElement.setAttribute('data-column-id', this.id);
+        cell.htmlElement.setAttribute('data-column-index', this.index + '');
+        if (this.index % 2 === 1) {
+            cell.htmlElement.classList.add(
+                Globals.getClassName('columnEven')
+            );
+        }
         if (this.options.className) {
             cell.htmlElement.classList.add(
                 ...this.options.className.split(/\s+/g)

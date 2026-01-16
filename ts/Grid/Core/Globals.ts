@@ -69,6 +69,7 @@ export const rawClassNames = {
     noData: 'no-data',
     noPadding: 'no-padding',
     columnFirst: 'column-first',
+    columnEven: 'column-even',
     columnSortable: 'column-sortable',
     columnSortableIcon: 'column-sortable-icon',
     columnSortedAsc: 'column-sorted-asc',

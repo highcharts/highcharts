@@ -182,7 +182,7 @@ export function setHTMLContent(
         const formattedNodes = new AST(content);
         formattedNodes.addToDOM(element);
     } else {
-        element.innerText = content;
+        element.textContent = content;
     }
 }
 

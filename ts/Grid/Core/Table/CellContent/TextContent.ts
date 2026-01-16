@@ -29,6 +29,7 @@ import TableCell from '../Body/TableCell';
 
 import GridUtils from '../../GridUtils.js';
 const {
+    isHTML,
     setHTMLContent
 } = GridUtils;
 
@@ -49,6 +50,16 @@ const {
  * Represents a text type of content.
  */
 class TextContent extends CellContent {
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    private lastContent?: string;
+    private lastIsHTML?: boolean;
+    private textNode?: Text;
 
     /* *
      *
@@ -87,11 +98,34 @@ class TextContent extends CellContent {
     }
 
     public override destroy(): void {
+        this.lastContent = void 0;
+        this.lastIsHTML = void 0;
+        this.textNode = void 0;
         this.cell.htmlElement.innerHTML = AST.emptyHTML;
     }
 
     public override update(): void {
-        setHTMLContent(this.cell.htmlElement, this.format());
+        const content = this.format();
+        if (content === this.lastContent) {
+            return;
+        }
+
+        const html = isHTML(content);
+        if (html) {
+            this.textNode = void 0;
+            setHTMLContent(this.cell.htmlElement, content);
+        } else {
+            if (!this.textNode || this.lastIsHTML) {
+                this.cell.htmlElement.textContent = '';
+                this.textNode = document.createTextNode(content);
+                this.cell.htmlElement.appendChild(this.textNode);
+            } else {
+                this.textNode.nodeValue = content;
+            }
+        }
+
+        this.lastContent = content;
+        this.lastIsHTML = html;
     }
 
     /**
