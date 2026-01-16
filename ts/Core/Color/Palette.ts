@@ -124,7 +124,7 @@ export default class Palette {
             highlightColor = new Color(options.light?.highlightColor || '');
 
         // Interpolate keys
-        [3, 5, 10, 20, 40, 60, 80, 10].forEach((fraction): void => {
+        [3, 5, 10, 20, 40, 60, 80, 100].forEach((fraction): void => {
             interpolated[`neutralColor${fraction}`] = backgroundColor.tweenTo(
                 neutralColor,
                 fraction / 100
