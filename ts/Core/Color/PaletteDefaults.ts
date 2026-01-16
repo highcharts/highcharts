@@ -31,67 +31,12 @@ const palette: PaletteOptions = {
          * Strong text.
          * @type {Highcharts.ColorType}
          */
-        neutralColor100: '#000000',
-        /**
-         * Main text, axis labels and some strokes.
-         * @type {Highcharts.ColorType}
-         */
-        neutralColor80: '#333333',
-        /**
-         * Axis title, connector fallback.
-         * @type {Highcharts.ColorType}
-         */
-        neutralColor60: '#666666',
-        /**
-         * Credits text, export menu stroke.
-         * @type {Highcharts.ColorType}
-         */
-        neutralColor40: '#999999',
-        /**
-         * Disabled texts, button strokes, crosshair etc.
-         * @type {Highcharts.ColorType}
-         */
-        neutralColor20: '#cccccc',
-        /**
-         * Grid lines etc.
-         * @type {Highcharts.ColorType}
-         */
-        neutralColor10: '#e6e6e6',
-        /**
-         * Minor grid lines etc.
-         * @type {Highcharts.ColorType}
-         */
-        neutralColor5: '#f2f2f2',
-        /**
-         * Tooltip background, button fills, map null points.
-         * @type {Highcharts.ColorType}
-         */
-        neutralColor3: '#f7f7f7',
+        neutralColor: '#000000',
         /**
          * Drilldown clickable labels, color axis max color.
          * @type {Highcharts.ColorType}
          */
-        highlightColor100: '#0022ff',
-        /**
-         * Selection marker, menu hover, button hover, chart border, navigator series.
-         * @type {Highcharts.ColorType}
-         */
-        highlightColor80: '#334eff',
-        /**
-         * Navigator mask fill.
-         * @type {Highcharts.ColorType}
-         */
-        highlightColor60: '#667aff',
-        /**
-         * Ticks and axis line.
-         * @type {Highcharts.ColorType}
-         */
-        highlightColor20: '#ccd3ff',
-        /**
-         * Pressed button, color axis min color.
-         * @type {Highcharts.ColorType}
-         */
-        highlightColor10: '#e6e9ff',
+        highlightColor: '#0022ff',
         /**
          * Indicators
          * @type {Highcharts.ColorType}

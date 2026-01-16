@@ -55,15 +55,29 @@ async function task() {
                 .replace(/\s+/ug, ' ');
 
             const parts = line
-                    .replace(/\r/ug, '')
-                    .split(':'),
-                key = parts[0].trim()
-                    .replace(/^--highcharts-/u, '')
-                    // Camelcase
-                    .replace(/-([a-z0-9])/gu, g => g[1].toUpperCase()),
-                val = parts[1].split(';')[0].trim(),
+                .replace(/\r/ug, '')
+                .split(':');
+
+            let key = parts[0].trim()
+                .replace(/^--highcharts-/u, '')
+                // Camelcase
+                .replace(/-([a-z0-9])/gu, g => g[1].toUpperCase());
+
+            const val = parts[1].split(';')[0].trim(),
                 isHexColor = /^#[a-f0-9]{6}/u.test(val),
                 isDataColor = /^color[0-9]+$/u.test(key);
+
+            if (/[0-9]$/u.test(key) && !isDataColor) {
+                if (key === 'neutralColor100') {
+                    key = 'neutralColor';
+                } else if (key === 'highlightColor100') {
+                    key = 'highlightColor';
+                } else {
+                    // Else, skip colors with numbers in the end, these are
+                    // interpolated colors
+                    continue;
+                }
+            }
 
             // Single color
             if (isHexColor && !isDataColor) {

@@ -1,5 +1,7 @@
 Highcharts.chart('container', {
     chart: {
+        borderRadius: 7,
+        borderWidth: 2,
         type: 'column'
     },
     title: {
@@ -10,7 +12,6 @@ Highcharts.chart('container', {
     },
     palette: {
         light: {
-            backgroundColor: '#f0f0f0',
             colors: ['#2caffe', '#544fc5']
         }
     },

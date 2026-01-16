@@ -1,6 +1,5 @@
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
-<script src="https://code.highcharts.com/themes/adaptive.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/@highcharts/controls@0.6.0" type="module"></script>
 
@@ -11,7 +10,13 @@
 <div class="highcharts-controls-wrapper">
   <highcharts-controls>
     <highcharts-group header="Update options">
-      <highcharts-control type="color" path="palette.light.backgroundColor" value="#f0f0f0"></highcharts-control>
+      <highcharts-group-description>
+        Text elements use different blends of the neutral
+        color and background color. The chart border uses the highlight color.
+      </highcharts-group-description>
+      <highcharts-control type="color" path="palette.light.backgroundColor"></highcharts-control>
+      <highcharts-control path="palette.light.neutralColor"></highcharts-control>
+      <highcharts-control path="palette.light.highlightColor"></highcharts-control>
       <highcharts-control path="palette.light.colors[0]" value="#2caffe"></highcharts-control>
       <highcharts-control path="palette.light.colors[1]" value="#544fc5"></highcharts-control>
     </highcharts-group>

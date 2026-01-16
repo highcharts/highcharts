@@ -18,8 +18,10 @@
  * */
 
 import type Chart from '../Chart/Chart';
-import type PaletteOptions from './PaletteOptions';
+import type ColorType from './ColorType';
+import type { PaletteOptions } from './PaletteOptions';
 
+import Color from './Color.js';
 import PaletteDefaults from './PaletteDefaults.js';
 import H from '../Globals.js';
 const { doc } = H;
@@ -116,6 +118,23 @@ export default class Palette {
             }
         };
 
+        const interpolated: Record<string, ColorType> = {},
+            neutralColor = new Color(options.light?.neutralColor || ''),
+            backgroundColor = new Color(options.light?.backgroundColor || ''),
+            highlightColor = new Color(options.light?.highlightColor || '');
+
+        // Interpolate keys
+        [3, 5, 10, 20, 40, 60, 80, 10].forEach((fraction): void => {
+            interpolated[`neutralColor${fraction}`] = backgroundColor.tweenTo(
+                neutralColor,
+                fraction / 100
+            );
+            interpolated[`highlightColor${fraction}`] = backgroundColor.tweenTo(
+                highlightColor,
+                fraction / 100
+            );
+        });
+
         // Data colors are stored as an array
         options.light?.colors?.forEach((color, i): void => {
             addKebab(color, `color${i}`);
@@ -123,6 +142,7 @@ export default class Palette {
 
         // The rest are stored as named properties
         objectEach(options.light, addKebab);
+        objectEach(interpolated, addKebab);
 
         // Add a style tag to the chart renderer box
         const style = this.chart.renderer.defs.element.querySelector('style') ||
