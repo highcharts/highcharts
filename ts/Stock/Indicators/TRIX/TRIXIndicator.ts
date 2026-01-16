@@ -21,9 +21,9 @@ import type TRIXPoint from './TRIXPoint';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const { tema: TEMAIndicator } = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
+import { merge } from '../../../Shared/Utilities.js';
 const {
-    correctFloat,
-    merge
+    correctFloat
 } = U;
 
 /* *

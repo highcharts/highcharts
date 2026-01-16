@@ -26,10 +26,9 @@ import Axis from './Axis.js';
 import D from '../Defaults.js';
 const { defaultOptions } = D;
 import U from '../Utilities.js';
-import { splat } from '../../Shared/Utilities.js';
+import { splat, merge } from '../../Shared/Utilities.js';
 const {
     addEvent,
-    merge,
     pick
 } = U;
 

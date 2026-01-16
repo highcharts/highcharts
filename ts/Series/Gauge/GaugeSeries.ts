@@ -41,9 +41,8 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-import { clamp, extend, isNumber, pInt } from '../../Shared/Utilities.js';
+import { clamp, extend, isNumber, merge, pInt } from '../../Shared/Utilities.js';
 const {
-    merge,
     pick,
     defined
 } = U;

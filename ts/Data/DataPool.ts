@@ -28,10 +28,10 @@ import type DataPoolOptions from './DataPoolOptions';
 
 import DataConnector from './Connectors/DataConnector.js';
 import U from '../Core/Utilities.js';
+import { merge } from '../Shared/Utilities.js';
 const {
     addEvent,
-    fireEvent,
-    merge
+    fireEvent
 } = U;
 
 

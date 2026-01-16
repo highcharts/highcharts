@@ -28,12 +28,11 @@ import U from '../../Core/Utilities.js';
 const {
     addEvent,
     pick,
-    defined,
-    merge
+    defined
 } = U;
 
 import NBU from '../Annotations/NavigationBindingsUtilities.js';
-import { isObject } from '../../Shared/Utilities.js';
+import { isObject, merge } from '../../Shared/Utilities.js';
 const { getAssignedAxis } = NBU;
 
 /* *

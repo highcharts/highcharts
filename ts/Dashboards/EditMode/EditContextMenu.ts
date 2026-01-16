@@ -20,10 +20,10 @@ import MenuItem from './Menu/MenuItem.js';
 import Menu from './Menu/Menu.js';
 import EditMode from './EditMode.js';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
+import { merge } from '../../Shared/Utilities.js';
 
 const {
-    addEvent,
-    merge
+    addEvent
 } = U;
 
 /**

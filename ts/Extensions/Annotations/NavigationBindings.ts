@@ -47,14 +47,13 @@ import NavigationBindingDefaults from './NavigationBindingsDefaults.js';
 import NBU from './NavigationBindingsUtilities.js';
 const { getAssignedAxis, getFieldType } = NBU;
 import U from '../../Core/Utilities.js';
-import { isArray, isNumber, isObject, objectEach, pushUnique } from '../../Shared/Utilities.js';
+import { isArray, isNumber, isObject, merge, objectEach, pushUnique } from '../../Shared/Utilities.js';
 const {
     addEvent,
     attr,
     defined,
     fireEvent,
     isFunction,
-    merge,
     pick
 } = U;
 

@@ -25,11 +25,7 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import MapLineSeriesDefaults from './MapLineSeriesDefaults.js';
 import MapSeries from '../Map/MapSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import U from '../../Core/Utilities.js';
-import { extend } from '../../Shared/Utilities.js';
-const {
-    merge
-} = U;
+import { extend, merge } from '../../Shared/Utilities.js';
 
 /* *
  *

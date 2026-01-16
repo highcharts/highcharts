@@ -33,10 +33,9 @@ import SVGElement3DFunnel from './SVGElement3DFunnel.js';
 import H from '../../Core/Globals.js';
 const { charts } = H;
 import U from '../../Core/Utilities.js';
-import { extend } from '../../Shared/Utilities.js';
+import { extend, merge } from '../../Shared/Utilities.js';
 const {
-    error,
-    merge
+    error
 } = U;
 
 /* *

@@ -40,7 +40,6 @@ import U from '../../Core/Utilities.js';
 const {
     addEvent,
     fireEvent,
-    merge,
     pick
 } = U;
 import H from '../../Core/Globals.js';
@@ -55,7 +54,7 @@ import SonificationSpeaker from './SonificationSpeaker.js';
 import SynthPatch from './SynthPatch.js';
 import InstrumentPresets from './InstrumentPresets.js';
 import timelineFromChart from './TimelineFromChart.js';
-import { extend } from '../../Shared/Utilities.js';
+import { extend, merge } from '../../Shared/Utilities.js';
 
 
 declare module '../../Core/Chart/ChartBase' {

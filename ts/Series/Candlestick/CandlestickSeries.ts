@@ -29,9 +29,7 @@ const {
     column: ColumnSeries,
     ohlc: OHLCSeries
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
-import { crisp } from '../../Shared/Utilities.js';
-const { merge } = U;
+import { crisp, merge } from '../../Shared/Utilities.js';
 
 /* *
  *

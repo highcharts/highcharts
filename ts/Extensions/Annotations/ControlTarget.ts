@@ -24,8 +24,7 @@ import type {
 
 import ControlPoint from './ControlPoint.js';
 import MockPoint from './MockPoint.js';
-import U from '../../Core/Utilities.js';
-import { isObject, isString, splat } from '../../Shared/Utilities.js';
+import { isObject, isString, merge, splat } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -168,7 +167,7 @@ namespace ControlTarget {
             controlPointsOptions = this.options.controlPoints || [];
 
         controlPointsOptions.forEach((controlPointOptions, i): void => {
-            const options = U.merge(
+            const options = merge(
                 this.options.controlPointOptions,
                 controlPointOptions
             );
@@ -219,7 +218,7 @@ namespace ControlTarget {
 
         return {
             relativePosition: anchor,
-            absolutePosition: U.merge(anchor, {
+            absolutePosition: merge(anchor, {
                 x: anchor.x + (
                     point.mock ? plotBox.translateX : chart.plotLeft
                 ),
@@ -238,7 +237,7 @@ namespace ControlTarget {
         const controlProto = ControlTargetClass.prototype;
 
         if (!controlProto.addControlPoints) {
-            U.merge(true, controlProto, {
+            merge(true, controlProto, {
                 addControlPoints,
                 anchor,
                 destroyControlTarget,

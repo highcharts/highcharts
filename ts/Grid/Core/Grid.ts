@@ -45,7 +45,7 @@ import QueryingController from './Querying/QueryingController.js';
 import Globals from './Globals.js';
 import TimeBase from '../../Shared/TimeBase.js';
 import Pagination from './Pagination/Pagination.js';
-import { diffObjects, extend } from '../../Shared/Utilities.js';
+import { diffObjects, extend, merge } from '../../Shared/Utilities.js';
 
 const {
     makeHTMLElement,
@@ -56,7 +56,6 @@ const {
 const {
     defined,
     fireEvent,
-    merge,
     pick
 } = U;
 

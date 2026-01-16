@@ -28,10 +28,9 @@ import DataConverter from './DataConverter.js';
 import DataConverterUtils from './DataConverterUtils.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
-import { isArray, objectEach } from '../../Shared/Utilities.js';
+import { isArray, merge, objectEach } from '../../Shared/Utilities.js';
 const {
-    error,
-    merge
+    error
 } = U;
 
 /* *

@@ -26,8 +26,8 @@ const {
     line: LineSeries
 } = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
+import { merge } from '../../Shared/Utilities.js';
 const {
-    merge,
     pick
 } = U;
 

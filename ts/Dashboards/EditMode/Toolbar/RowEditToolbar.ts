@@ -21,11 +21,10 @@ import EditGlobals from '../EditGlobals.js';
 import MenuItem from '../Menu/MenuItem.js';
 import EditToolbar from './EditToolbar.js';
 import GUIElement from '../../Layout/GUIElement.js';
-import { objectEach } from '../../../Shared/Utilities.js';
+import { merge, objectEach } from '../../../Shared/Utilities.js';
 
 const {
-    fireEvent,
-    merge
+    fireEvent
 } = U;
 
 /**

@@ -22,8 +22,7 @@
 import type ItemSeriesOptions from './ItemSeriesOptions';
 
 import SeriesDefaults from '../../Core/Series/SeriesDefaults.js';
-import U from '../../Core/Utilities.js';
-const { merge } = U;
+import { merge } from '../../Shared/Utilities.js';
 
 /* *
  *

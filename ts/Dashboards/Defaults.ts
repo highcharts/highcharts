@@ -21,8 +21,7 @@
 import type Board from './Board';
 import type { DeepPartial } from '../Shared/Types';
 
-import Utils from '../Core/Utilities.js';
-const { merge } = Utils;
+import { merge } from '../Shared/Utilities.js';
 
 /**
  * Namespace for default options.

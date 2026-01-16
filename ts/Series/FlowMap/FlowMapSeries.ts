@@ -40,13 +40,12 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-import { extend, isArray } from '../../Shared/Utilities.js';
+import { extend, isArray, merge } from '../../Shared/Utilities.js';
 const {
     addEvent,
     arrayMax,
     arrayMin,
     defined,
-    merge,
     pick,
     relativeLength
 } = U;

@@ -53,11 +53,10 @@ import ConnectorHandler from '../../Components/ConnectorHandler';
 import DataConverterUtils from '../../../Data/Converters/DataConverterUtils.js';
 import U from '../../../Core/Utilities.js';
 const {
-    createElement,
-    merge,
+    createElement
 } = U;
 import DU from '../../Utilities.js';
-import { diffObjects, isString, splat } from '../../../Shared/Utilities.js';
+import { diffObjects, isString, merge, splat } from '../../../Shared/Utilities.js';
 const { deepClone } = DU;
 
 

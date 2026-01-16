@@ -32,10 +32,10 @@ import type { ColumnIdsOptions } from '../Connectors/JSONConnectorOptions';
 import DataTable from '../DataTable.js';
 import DataConverterUtils from './DataConverterUtils.js';
 import U from '../../Core/Utilities.js';
+import { merge } from '../../Shared/Utilities.js';
 const {
     addEvent,
-    fireEvent,
-    merge
+    fireEvent
 } = U;
 
 /* *

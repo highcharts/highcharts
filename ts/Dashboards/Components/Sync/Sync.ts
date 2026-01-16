@@ -26,10 +26,7 @@ import type Component from '../Component';
 
 import SyncEmitter from './Emitter.js';
 import SyncHandler from './Handler.js';
-
-import U from '../../../Core/Utilities.js';
-import { isObject } from '../../../Shared/Utilities.js';
-const { merge } = U;
+import { isObject, merge } from '../../../Shared/Utilities.js';
 
 /* *
  *

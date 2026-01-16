@@ -50,12 +50,11 @@ const {
 } = Templating;
 
 import U from '../../../Core/Utilities.js';
-import { diffObjects, isArray, isNumber } from '../../../Shared/Utilities.js';
+import { diffObjects, isArray, isNumber, merge } from '../../../Shared/Utilities.js';
 const {
     createElement,
     css,
     defined,
-    merge,
     isFunction
 } = U;
 

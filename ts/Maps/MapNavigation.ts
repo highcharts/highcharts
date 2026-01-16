@@ -38,10 +38,9 @@ import MapNavigationDefaults from './MapNavigationDefaults.js';
 import MapPointer from './MapPointer.js';
 import MapSymbols from './MapSymbols.js';
 import U from '../Core/Utilities.js';
-import { extend, objectEach, pushUnique } from '../Shared/Utilities.js';
+import { extend, objectEach, merge, pushUnique } from '../Shared/Utilities.js';
 const {
     addEvent,
-    merge,
     pick
 } = U;
 

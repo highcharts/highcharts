@@ -31,10 +31,10 @@ const {
     sma: { prototype: smaProto }
 } = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
+import { merge } from '../../Shared/Utilities.js';
 const {
     defined,
-    error,
-    merge
+    error
 } = U;
 
 /* *

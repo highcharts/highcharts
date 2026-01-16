@@ -45,14 +45,13 @@ import TU from '../TreeUtilities.js';
 const { getLevelOptions, getNodeWidth } = TU;
 import U from '../../Core/Utilities.js';
 const {
-    merge,
     pick,
     relativeLength,
     stableSort
 } = U;
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import TextPath from '../../Extensions/TextPath.js';
-import { clamp, crisp, extend, isObject } from '../../Shared/Utilities.js';
+import { clamp, crisp, extend, isObject, merge } from '../../Shared/Utilities.js';
 TextPath.compose(SVGElement);
 
 /* *

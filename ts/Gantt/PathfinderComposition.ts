@@ -31,10 +31,10 @@ import ConnectorsDefaults from './ConnectorsDefaults.js';
 import D from '../Core/Defaults.js';
 const { setOptions } = D;
 import U from '../Core/Utilities.js';
+import { merge } from '../Shared/Utilities.js';
 const {
     defined,
-    error,
-    merge
+    error
 } = U;
 
 /* *

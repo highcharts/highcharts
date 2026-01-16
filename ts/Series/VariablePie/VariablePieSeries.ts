@@ -31,11 +31,10 @@ const {
     arrayMax,
     arrayMin,
     fireEvent,
-    merge,
     pick
 } = U;
 import VariablePieSeriesDefaults from './VariablePieSeriesDefaults.js';
-import { clamp, extend } from '../../Shared/Utilities.js';
+import { clamp, extend, merge } from '../../Shared/Utilities.js';
 
 /* *
  *

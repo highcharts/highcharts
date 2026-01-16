@@ -33,11 +33,11 @@ import EditRenderer from './EditRenderer.js';
 import GUIElement from '../Layout/GUIElement.js';
 import Layout from '../Layout/Layout.js';
 import U from '../../Core/Utilities.js';
+import { merge } from '../../Shared/Utilities.js';
 const {
     addEvent,
     createElement,
-    fireEvent,
-    merge
+    fireEvent
 } = U;
 
 /* *

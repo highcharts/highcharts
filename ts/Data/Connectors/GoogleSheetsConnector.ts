@@ -32,8 +32,8 @@ import type DataTable from '../DataTable';
 import DataConnector from './DataConnector.js';
 import GoogleSheetsConverter from '../Converters/GoogleSheetsConverter.js';
 import U from '../../Core/Utilities.js';
+import { merge } from '../../Shared/Utilities.js';
 const {
-    merge,
     pick,
     fireEvent
 } = U;

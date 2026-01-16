@@ -37,12 +37,11 @@ const {
 } = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
 const {
-    merge,
     pick
 } = U;
 import WindbarbPoint from './WindbarbPoint.js';
 import WindbarbSeriesDefaults from './WindbarbSeriesDefaults.js';
-import { extend } from '../../Shared/Utilities.js';
+import { extend, merge } from '../../Shared/Utilities.js';
 
 /* *
  *

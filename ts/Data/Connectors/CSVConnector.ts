@@ -30,7 +30,8 @@ import type DataTable from '../DataTable';
 import CSVConverter from '../Converters/CSVConverter.js';
 import DataConnector from './DataConnector.js';
 import U from '../../Core/Utilities.js';
-const { merge, fireEvent } = U;
+import { merge } from '../../Shared/Utilities.js';
+const { fireEvent } = U;
 
 /* *
  *

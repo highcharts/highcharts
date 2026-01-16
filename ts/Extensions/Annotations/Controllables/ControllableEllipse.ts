@@ -24,8 +24,8 @@ import Controllable from './Controllable.js';
 import ControllablePath from './ControllablePath.js';
 import MockPointOptions from '../AnnotationMockPointOptionsObject';
 import U from '../../../Core/Utilities.js';
+import { merge } from '../../../Shared/Utilities.js';
 const {
-    merge,
     defined
 } = U;
 

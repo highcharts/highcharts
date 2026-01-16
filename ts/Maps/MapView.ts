@@ -53,11 +53,10 @@ import MU from './MapUtilities.js';
 const { boundsFromPath } = MU;
 import Projection from './Projection.js';
 import U from '../Core/Utilities.js';
-import { clamp, crisp, isArray, isNumber, isObject, isString, pushUnique } from '../Shared/Utilities.js';
+import { clamp, crisp, isArray, isNumber, isObject, isString, merge, pushUnique } from '../Shared/Utilities.js';
 const {
     addEvent,
     fireEvent,
-    merge,
     pick,
     relativeLength
 } = U;

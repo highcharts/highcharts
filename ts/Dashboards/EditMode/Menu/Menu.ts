@@ -21,10 +21,10 @@ import EditGlobals from '../EditGlobals.js';
 import U from '../../../Core/Utilities.js';
 import MenuItem from './MenuItem.js';
 import MenuItemBindings from './MenuItemBindings.js';
+import { merge } from '../../../Shared/Utilities.js';
 
 const {
-    createElement,
-    merge
+    createElement
 } = U;
 
 class Menu {

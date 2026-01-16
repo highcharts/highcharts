@@ -24,11 +24,10 @@ import U from '../../Core/Utilities.js';
 const {
     defined,
     getNestedProperty,
-    merge,
     pick
 } = U;
 import T from '../../Core/Templating.js';
-import { clamp, extend } from '../../Shared/Utilities.js';
+import { clamp, extend, merge } from '../../Shared/Utilities.js';
 const {
     format
 } = T;

@@ -27,12 +27,8 @@ const {
         treemap: TreemapSeries
     }
 } = SeriesRegistry;
-import U from '../../Core/Utilities.js';
 import type SunburstNode from './SunburstNode.js';
-import { isNumber, isObject } from '../../Shared/Utilities.js';
-const {
-    merge
-} = U;
+import { isNumber, isObject, merge } from '../../Shared/Utilities.js';
 
 /* *
  *

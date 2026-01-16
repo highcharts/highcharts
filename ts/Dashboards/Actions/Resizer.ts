@@ -26,7 +26,6 @@ import GUIElement from '../Layout/GUIElement.js';
 import U from '../../Core/Utilities.js';
 
 const {
-    merge,
     addEvent,
     createElement,
     fireEvent,
@@ -34,6 +33,7 @@ const {
 } = U;
 
 import EditMode from '../EditMode/EditMode';
+import { merge } from '../../Shared/Utilities.js';
 
 /**
  * Class providing a resizing functionality.

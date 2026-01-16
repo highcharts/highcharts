@@ -30,10 +30,9 @@ const {
     candlestick: CandlestickSeries
 } = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
-import { pushUnique } from '../../Shared/Utilities.js';
+import { merge, pushUnique } from '../../Shared/Utilities.js';
 const {
-    addEvent,
-    merge
+    addEvent
 } = U;
 
 /* *

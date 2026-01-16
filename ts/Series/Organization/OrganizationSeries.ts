@@ -40,11 +40,10 @@ const {
 import U from '../../Core/Utilities.js';
 const {
     css,
-    merge,
     pick
 } = U;
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
-import { crisp, extend, isNumber } from '../../Shared/Utilities.js';
+import { crisp, extend, isNumber, merge } from '../../Shared/Utilities.js';
 import TextPath from '../../Extensions/TextPath.js';
 TextPath.compose(SVGElement);
 

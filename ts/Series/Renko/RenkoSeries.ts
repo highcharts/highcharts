@@ -29,8 +29,8 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
 import U from '../../Core/Utilities.js';
 import type AnimationOptions from '../../Core/Animation/AnimationOptions';
-import { extend, isNumber } from '../../Shared/Utilities.js';
-const { merge, relativeLength } = U;
+import { extend, isNumber, merge } from '../../Shared/Utilities.js';
+const { relativeLength } = U;
 
 interface RenkoData {
     x: number;

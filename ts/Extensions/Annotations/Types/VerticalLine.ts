@@ -29,8 +29,8 @@ const { defaultOptions } = D;
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
 import { Palette } from '../../../Core/Color/Palettes';
+import { merge } from '../../../Shared/Utilities.js';
 const {
-    merge,
     pick
 } = U;
 

@@ -36,8 +36,7 @@ const { doc } = H;
 import U from '../Core/Utilities.js';
 const {
     addEvent,
-    fireEvent,
-    merge
+    fireEvent
 } = U;
 import HU from './Utils/HTMLUtilities.js';
 const {
@@ -63,7 +62,7 @@ import highContrastTheme from './HighContrastTheme.js';
 import defaultOptionsA11Y from './Options/A11yDefaults.js';
 import defaultLangOptions from './Options/LangDefaults.js';
 import copyDeprecatedOptions from './Options/DeprecatedOptions.js';
-import { extend } from '../Shared/Utilities.js';
+import { extend, merge } from '../Shared/Utilities.js';
 
 /* *
  *

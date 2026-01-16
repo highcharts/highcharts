@@ -43,12 +43,11 @@ import U from '../../Core/Utilities.js';
 const {
     addEvent,
     fireEvent,
-    merge,
     pick
 } = U;
 
 import IU from '../InterpolationUtilities.js';
-import { extend, isNumber } from '../../Shared/Utilities.js';
+import { extend, isNumber, merge } from '../../Shared/Utilities.js';
 const {
     colorFromPoint,
     getContext

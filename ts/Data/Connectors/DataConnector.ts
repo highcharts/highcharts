@@ -37,10 +37,10 @@ import DataModifier from '../Modifiers/DataModifier.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
 import { DeepPartial } from '../../Shared/Types';
+import { merge } from '../../Shared/Utilities.js';
 const {
     addEvent,
     fireEvent,
-    merge,
     pick
 } = U;
 

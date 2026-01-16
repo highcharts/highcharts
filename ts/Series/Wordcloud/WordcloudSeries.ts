@@ -37,14 +37,10 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     column: ColumnSeries
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
-const {
-    merge
-} = U;
 import WordcloudPoint from './WordcloudPoint.js';
 import WordcloudSeriesDefaults from './WordcloudSeriesDefaults.js';
 import WU from './WordcloudUtils.js';
-import { extend, isArray, isNumber, isObject } from '../../Shared/Utilities.js';
+import { extend, isArray, isNumber, isObject, merge } from '../../Shared/Utilities.js';
 const {
     archimedeanSpiral,
     extendPlayingField,

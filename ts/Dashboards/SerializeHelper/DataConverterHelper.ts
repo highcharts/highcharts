@@ -24,8 +24,7 @@ import JSON from '../JSON';
 
 import DataConverter from '../../Data/Converters/DataConverter.js';
 import Serializable from '../Serializable.js';
-import U from '../../Core/Utilities.js';
-const { merge } = U;
+import { merge } from '../../Shared/Utilities.js';
 
 /* *
  *

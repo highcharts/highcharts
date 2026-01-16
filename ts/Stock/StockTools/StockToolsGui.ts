@@ -34,10 +34,10 @@ const { setOptions } = D;
 import StockToolsDefaults from './StockToolsDefaults.js';
 import Toolbar from './StockToolbar.js';
 import U from '../../Core/Utilities.js';
+import { merge } from '../../Shared/Utilities.js';
 const {
     addEvent,
     getStyle,
-    merge,
     pick
 } = U;
 

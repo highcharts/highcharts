@@ -32,9 +32,9 @@ import type {
 import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
+import { merge } from '../../Shared/Utilities.js';
 const {
-    isFunction,
-    merge
+    isFunction
 } = U;
 
 

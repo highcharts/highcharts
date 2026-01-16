@@ -37,11 +37,7 @@ const {
 } = SeriesRegistry;
 import StaticScale from '../../Extensions/StaticScale.js';
 import TreeGridAxis from '../../Core/Axis/TreeGrid/TreeGridAxis.js';
-import U from '../../Core/Utilities.js';
-import { extend, isNumber } from '../../Shared/Utilities.js';
-const {
-    merge
-} = U;
+import { extend, isNumber, merge } from '../../Shared/Utilities.js';
 
 /* *
  *

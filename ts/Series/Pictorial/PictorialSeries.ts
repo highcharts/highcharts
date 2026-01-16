@@ -36,7 +36,7 @@ import SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../../Core/Utilities.js';
 import { PictorialPathOptions } from './PictorialSeriesOptions';
-import { objectEach } from '../../Shared/Utilities.js';
+import { merge, objectEach } from '../../Shared/Utilities.js';
 
 const ColumnSeries: typeof ColumnSeriesType = SeriesRegistry.seriesTypes.column;
 
@@ -54,7 +54,6 @@ const {
 const {
     addEvent,
     defined,
-    merge,
     pick
 } = U;
 export interface StackShadowOptions {

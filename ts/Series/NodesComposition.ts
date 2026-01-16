@@ -30,11 +30,10 @@ const {
     }
 } = SeriesRegistry;
 import U from '../Core/Utilities.js';
-import { extend } from '../Shared/Utilities.js';
+import { extend, merge } from '../Shared/Utilities.js';
 const {
     defined,
     find,
-    merge,
     pick
 } = U;
 

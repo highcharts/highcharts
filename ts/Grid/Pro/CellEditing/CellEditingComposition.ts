@@ -38,15 +38,14 @@ import CellEditing from './CellEditing.js';
 import CellRendererRegistry from '../CellRendering/CellRendererRegistry.js';
 import GU from '../../Core/GridUtils.js';
 import U from '../../../Core/Utilities.js';
-import { pushUnique } from '../../../Shared/Utilities.js';
+import { merge, pushUnique } from '../../../Shared/Utilities.js';
 
 const {
     makeHTMLElement
 } = GU;
 
 const {
-    addEvent,
-    merge
+    addEvent
 } = U;
 
 

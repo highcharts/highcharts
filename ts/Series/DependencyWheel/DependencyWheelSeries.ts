@@ -35,12 +35,11 @@ const {
 } = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
 const {
-    merge,
     relativeLength
 } = U;
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import TextPath from '../../Extensions/TextPath.js';
-import { extend } from '../../Shared/Utilities.js';
+import { extend, merge } from '../../Shared/Utilities.js';
 TextPath.compose(SVGElement);
 
 /* *

@@ -23,10 +23,10 @@ import {
     downloadURL
 } from '../../Shared/DownloadURL.js';
 import U from '../../Core/Utilities.js';
+import { merge } from '../../Shared/Utilities.js';
 const {
     defined,
-    find,
-    merge
+    find
 } = U;
 
 declare global {

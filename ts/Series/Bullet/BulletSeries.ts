@@ -25,9 +25,8 @@ import BulletSeriesDefaults from './BulletSeriesDefaults.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
-import { extend, isNumber } from '../../Shared/Utilities.js';
+import { extend, isNumber, merge } from '../../Shared/Utilities.js';
 const {
-    merge,
     pick,
     relativeLength
 } = U;

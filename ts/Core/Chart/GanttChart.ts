@@ -30,11 +30,7 @@ import Chart from './Chart.js';
 import D from '../Defaults.js';
 const { defaultOptions } = D;
 import { Palette } from '../Color/Palettes.js';
-import U from '../Utilities.js';
-import { isArray, splat } from '../../Shared/Utilities.js';
-const {
-    merge
-} = U;
+import { isArray, merge, splat } from '../../Shared/Utilities.js';
 
 /* *
  *

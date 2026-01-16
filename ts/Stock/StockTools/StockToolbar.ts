@@ -31,7 +31,7 @@ import type {
 import U from '../../Core/Utilities.js';
 import AST from '../../Core/Renderer/HTML/AST.js';
 import StockToolsUtilities from './StockToolsUtilities.js';
-import { isArray } from '../../Shared/Utilities.js';
+import { isArray, merge } from '../../Shared/Utilities.js';
 const {
     addEvent,
     createElement,
@@ -39,7 +39,6 @@ const {
     defined,
     fireEvent,
     getStyle,
-    merge,
     pick
 } = U;
 const {

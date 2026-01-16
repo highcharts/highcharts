@@ -57,11 +57,10 @@ const {
 } = H;
 import { Palette } from '../Core/Color/Palettes.js';
 import U from '../Core/Utilities.js';
-import { isNumber } from '../Shared/Utilities.js';
+import { isNumber, merge } from '../Shared/Utilities.js';
 const {
     addEvent,
     fireEvent,
-    merge,
     pick,
     wrap
 } = U;

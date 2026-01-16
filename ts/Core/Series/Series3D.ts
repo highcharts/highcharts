@@ -28,10 +28,9 @@ import Math3D from '../Math3D.js';
 const { perspective } = Math3D;
 import Series from '../Series/Series.js';
 import U from '../Utilities.js';
-import { extend, isNumber, pushUnique } from '../../Shared/Utilities.js';
+import { extend, isNumber, merge, pushUnique } from '../../Shared/Utilities.js';
 const {
     addEvent,
-    merge,
     pick
 } = U;
 

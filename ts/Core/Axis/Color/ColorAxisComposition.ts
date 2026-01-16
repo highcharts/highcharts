@@ -31,11 +31,10 @@ import type TreemapSeries from '../../../Series/Treemap/TreemapSeries';
 
 import Color from '../../Color/Color.js';
 const { parse: color } = Color;
-import { extend, splat } from '../../../Shared/Utilities.js';
+import { extend, merge, splat } from '../../../Shared/Utilities.js';
 import U from '../../Utilities.js';
 const {
     addEvent,
-    merge,
     pick
 } = U;
 

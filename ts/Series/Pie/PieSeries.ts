@@ -33,10 +33,9 @@ import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import Symbols from '../../Core/Renderer/SVG/Symbols.js';
 import U from '../../Core/Utilities.js';
-import { clamp, extend } from '../../Shared/Utilities.js';
+import { clamp, extend, merge } from '../../Shared/Utilities.js';
 const {
     fireEvent,
-    merge,
     pick
 } = U;
 

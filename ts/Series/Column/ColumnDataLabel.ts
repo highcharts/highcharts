@@ -29,11 +29,7 @@ import H from '../../Core/Globals.js';
 const { composed } = H;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const { series: Series } = SeriesRegistry;
-import U from '../../Core/Utilities.js';
-import { pushUnique } from '../../Shared/Utilities.js';
-const {
-    merge
-} = U;
+import { merge, pushUnique } from '../../Shared/Utilities.js';
 
 /* *
  *

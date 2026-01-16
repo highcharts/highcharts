@@ -39,9 +39,8 @@ import type XRangePoint from '../../Series/XRange/XRangePoint';
 import DraggableChart from './DraggableChart.js';
 const { flipResizeSide } = DraggableChart;
 import U from '../../Core/Utilities.js';
-import { isNumber } from '../../Shared/Utilities.js';
+import { isNumber, merge } from '../../Shared/Utilities.js';
 const {
-    merge,
     pick
 } = U;
 

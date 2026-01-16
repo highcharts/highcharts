@@ -29,13 +29,9 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     column: ColumnSeries
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
-const {
-    merge
-} = U;
 
 import D from '../../Core/Defaults.js';
-import { crisp, extend } from '../../Shared/Utilities.js';
+import { crisp, extend, merge } from '../../Shared/Utilities.js';
 const { defaultOptions } = D;
 
 /* *

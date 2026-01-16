@@ -21,8 +21,7 @@ import type SVGAttributes from '../../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 
 import ControlTarget from '../ControlTarget.js';
-import U from '../../../Core/Utilities.js';
-const { merge } = U;
+import { merge } from '../../../Shared/Utilities.js';
 
 /* *
  *

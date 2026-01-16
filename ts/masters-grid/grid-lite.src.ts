@@ -33,9 +33,9 @@ import Globals from '../Grid/Core/Globals.js';
 import whcm from '../Accessibility/HighContrastMode.js';
 import Table from '../Grid/Core/Table/Table.js';
 import CreditsLiteComposition from '../Grid/Lite/Credits/CreditsLiteComposition.js';
-import Utilities from '../Core/Utilities.js';
 import SvgIcons from '../Grid/Core/UI/SvgIcons.js';
 import Pagination from '../Grid/Core/Pagination/Pagination.js';
+import { merge } from '../Shared/Utilities.js';
 
 // Fill registries
 import '../Data/Connectors/CSVConnector.js';
@@ -69,7 +69,7 @@ const G = {
     grid: _Grid.grid,
     grids: _Grid.grids,
     isHighContrastModeActive: whcm.isHighContrastModeActive,
-    merge: Utilities.merge,
+    merge: merge,
     Pagination,
     product: 'Grid Lite',
     setOptions: Defaults.setOptions,
@@ -111,7 +111,6 @@ export const {
     grid,
     grids,
     isHighContrastModeActive,
-    merge,
     product,
     setOptions,
     version,

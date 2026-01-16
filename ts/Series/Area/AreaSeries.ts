@@ -33,9 +33,8 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-import { extend, objectEach } from '../../Shared/Utilities.js';
+import { extend, merge, objectEach } from '../../Shared/Utilities.js';
 const {
-    merge,
     pick
 } = U;
 

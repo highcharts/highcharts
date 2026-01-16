@@ -29,13 +29,10 @@ import type {
 import type PSARPoint from './PSARPoint';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+import { merge } from '../../../Shared/Utilities.js';
 const {
     sma: SMAIndicator
 } = SeriesRegistry.seriesTypes;
-import U from '../../../Core/Utilities.js';
-const {
-    merge
-} = U;
 
 /* *
  *

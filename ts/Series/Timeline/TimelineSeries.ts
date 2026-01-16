@@ -43,13 +43,12 @@ const {
 import TimelinePoint from './TimelinePoint.js';
 import TimelineSeriesDefaults from './TimelineSeriesDefaults.js';
 import U from '../../Core/Utilities.js';
-import { extend } from '../../Shared/Utilities.js';
+import { extend, merge } from '../../Shared/Utilities.js';
 const {
     addEvent,
     arrayMax,
     arrayMin,
     defined,
-    merge,
     pick
 } = U;
 
