@@ -69,6 +69,7 @@ async function task() {
             if (isHexColor && !isDataColor) {
                 paletteTS += `        /**
          * ${comment}
+         * @type {Highcharts.ColorType}
          */
         ${key}: '${val}',\n`;
 
@@ -114,6 +115,7 @@ const palette: PaletteOptions = {
     light: {\n${paletteTS}
         /**
          * ${dataColorsComment}
+         * @type {Array<Highcharts.ColorType>}
          */
         colors: [
             '${dataColors.join('\',\n            \'')}'
