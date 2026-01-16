@@ -80,6 +80,8 @@ const WordcloudSeriesDefaults: WordcloudSeriesOptions = {
 
     cropThreshold: Infinity,
 
+    colorKey: 'weight',
+
     /**
      * A threshold determining the minimum font size that can be applied to
      * a word.

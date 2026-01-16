@@ -1,5 +1,5 @@
 ---
- name: Highcharts Stock Demo
+ name: Demo of xAxis.tickPixelInterval
  authors:
    - Torstein Hønsi
  js_wrap: b
