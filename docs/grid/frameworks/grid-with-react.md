@@ -14,26 +14,26 @@ npm install @highcharts/grid-lite-react
 npm install @highcharts/grid-pro-react
 ```
 
-Feature updates land in the core Grid package (`@highcharts/grid-lite` or
-`@highcharts/grid-pro`). The React package is the integration layer, so update
-the core Grid package to get the latest features.
+The core Grid library is included as a dependency. Run `npm update` to get the
+latest compatible version.
 
 ## 2. Render the Grid component
 Grid Lite example:
 
 ```tsx
+import { useState } from 'react';
 import { Grid, type GridOptions } from '@highcharts/grid-lite-react';
 
 export default function App() {
-    const options: GridOptions = {
+    const [options] = useState<GridOptions>({
         dataTable: {
             columns: {
                 name: ['Alice', 'Bob', 'Charlie', 'David'],
                 age: [23, 34, 45, 56],
-                city: ['New York', 'Oslo', 'Paris', 'Tokyo'],
+                city: ['New York', 'Oslo', 'Paris', 'Tokyo']
             }
         }
-    };
+    });
 
     return <Grid options={options} />;
 }
@@ -46,7 +46,7 @@ For Grid Pro, swap the imports to `@highcharts/grid-pro-react` and render
 You can access the underlying Grid instance via a ref or callback:
 
 ```tsx
-import { useRef } from 'react';
+import { useState, useRef } from 'react';
 import {
     Grid,
     type GridOptions,
@@ -55,15 +55,15 @@ import {
 } from '@highcharts/grid-lite-react';
 
 export default function App() {
-    const gridRef = useRef<GridRefHandle<GridOptions> | null>(null);
-    const options: GridOptions = {
+    const [options] = useState<GridOptions>({
         dataTable: {
             columns: {
                 name: ['Alice', 'Bob', 'Charlie'],
                 age: [23, 34, 45]
             }
         }
-    };
+    });
+    const gridRef = useRef<GridRefHandle<GridOptions> | null>(null);
 
     const onGridReady = (grid: GridInstance<GridOptions>) => {
         console.log('Grid instance:', grid);
@@ -73,31 +73,5 @@ export default function App() {
 }
 ```
 
-## 4. Next.js (client-side only)
-Grid uses browser APIs, so disable SSR:
-
-```tsx
-'use client';
-
-import { useState } from 'react';
-import dynamic from 'next/dynamic';
-import { type GridOptions } from '@highcharts/grid-lite-react';
-
-const Grid = dynamic(
-    () => import('@highcharts/grid-lite-react').then((mod) => mod.Grid),
-    { ssr: false }
-);
-
-export default function Page() {
-    const [options] = useState<GridOptions>({
-        dataTable: {
-            columns: {
-                name: ['Alice', 'Bob', 'Charlie'],
-                age: [23, 34, 45]
-            }
-        }
-    });
-
-    return <Grid options={options} />;
-}
-```
+## 4. Next.js
+For Next.js applications, see the dedicated [Next.js integration guide](https://www.highcharts.com/docs/grid/frameworks/grid-with-nextjs).

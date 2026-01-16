@@ -144,6 +144,7 @@ module.exports = {
             {
                 'Frameworks': [
                     'grid/frameworks/grid-with-angular',
+                    'grid/frameworks/grid-with-nextjs',
                     'grid/frameworks/grid-with-react',
                     'grid/frameworks/grid-with-vue'
                 ]
