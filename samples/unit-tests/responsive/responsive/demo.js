@@ -66,9 +66,7 @@ QUnit.test('Adapt height', function (assert) {
     chart.setSize(400);
 
     assert.strictEqual(
-        chart.renderer.applyPalette(
-            chart.options.chart.backgroundColor
-        ),
+        chart.options.chart.backgroundColor,
         'var(--highcharts-background-color)',
         'Chart should have default background'
     );

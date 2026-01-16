@@ -50,8 +50,6 @@ declare module '../Chart/ChartBase' {
 
 /* eslint-disable valid-jsdoc */
 
-const useCSSVariables = true;
-
 /**
  * A Palette class holding the palette colors and lifecycle methods for each
  * chart.
@@ -65,34 +63,6 @@ const useCSSVariables = true;
  *        Palette options
  */
 export default class Palette {
-
-    /**
-     * Apply the current palette to a color string containing palette
-     * templating.
-     */
-    public static applyPalette = (color: string, chart?: Chart): string => {
-        if (useCSSVariables) {
-            return color;
-        }
-
-        // Programmatic replacement of palette variables
-        // @todo This should probably be removed, and supported only as a
-        // workaround snippet
-        const p = chart?.palette.options || PaletteDefaults;
-        return (color.indexOf('var(--highcharts-') !== -1) ?
-            color.replace(
-                /var\(--highcharts-([a-z0-9\-]+)\)/g,
-                (_match: string, name: string): string => {
-                    // Convert kebab-case to camelCase
-                    const camelName = name.replace(
-                        /-([a-z0-9])/g,
-                        (_, char): string => char.toUpperCase()
-                    ) as keyof typeof p;
-                    return (p[camelName] || '#8888') as string;
-                }
-            ) :
-            color;
-    };
 
     public chart: Chart;
     public defaultOptions: PaletteOptions = PaletteDefaults;

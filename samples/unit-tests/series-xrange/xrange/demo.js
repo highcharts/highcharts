@@ -144,9 +144,7 @@ QUnit.test('X-Range', function (assert) {
     point.select();
     assert.strictEqual(
         point.graphic.rect.attr('fill'),
-        chart.renderer.applyPalette(
-            point.series.options.states.select.color
-        ),
+        point.series.options.states.select.color,
         'Correct fill for a point upon point selection (#8104).'
     );
 

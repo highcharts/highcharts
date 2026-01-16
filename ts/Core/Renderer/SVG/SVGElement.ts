@@ -1159,7 +1159,6 @@ class SVGElement implements SVGElementBase {
                     (stops as any).forEach((
                         [offset, stopColor]: [number, ColorString]
                     ): void => {
-                        stopColor = renderer.applyPalette(stopColor);
                         if (stopColor.indexOf('rgba') === 0) {
                             colorObject = Color.parse(stopColor);
                             stopColor = colorObject.get('rgb') as any;
@@ -1293,9 +1292,6 @@ class SVGElement implements SVGElementBase {
                     stylesToApply.fill = stylesToApply.color;
                     delete stylesToApply.color;
                 }
-
-                // Apply palette
-                renderer.applyPalette(stylesToApply);
             }
             css(elem, stylesToApply);
         }
@@ -1496,7 +1492,7 @@ class SVGElement implements SVGElementBase {
         element: SVGDOMElement
     ): void {
         if (typeof value === 'string') {
-            element.setAttribute(key, this.renderer.applyPalette(value));
+            element.setAttribute(key, value);
         } else if (value) {
             this.complexColor(value as any, key, element);
         }

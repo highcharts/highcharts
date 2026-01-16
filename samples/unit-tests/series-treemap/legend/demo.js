@@ -27,7 +27,7 @@ QUnit.test('Legend Item colors', function (assert) {
     point.setVisible(false);
     assert.strictEqual(
         legendSymbol.getAttribute('fill'),
-        chart.renderer.applyPalette(legend.itemHiddenStyle.color),
+        legend.itemHiddenStyle.color,
         'When point is hidden legend item color should equal the legend ' +
         'hidden color'
     );

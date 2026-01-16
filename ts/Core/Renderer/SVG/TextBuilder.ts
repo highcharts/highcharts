@@ -457,8 +457,6 @@ class TextBuilder {
         nodes: AST.Node[]
     ): void {
 
-        const renderer = this.svgElement.renderer;
-
         const modifyChild = (node: AST.Node, i: number): void => {
             const { attributes = {}, children, style = {}, tagName } = node,
                 styledMode = this.renderer.styledMode;
@@ -484,9 +482,6 @@ class TextBuilder {
             if (style?.color) {
                 style.fill = style.color;
             }
-
-            // Apply palette
-            renderer.applyPalette(style);
 
             // Handle breaks
             if (tagName === 'br') {
