@@ -755,57 +755,158 @@
 /* End cell hover & sync */
 
 /* ----------------------------------------------------------
-  START OTHER ELEMENTS
+  START HEADER ELEMENTS
 ------------------------------------------------------------ */
+.hcg-container .hcg-table {
+    .hcg-header-cell-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
 
-.hcg-table thead th .hcg-header-cell-content {
-    width: 100%;
-    display: block;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin: 0;
-    padding: 0;
-    user-select: none; /* Standard syntax */
-    -webkit-user-select: none; /* Safari */
-    -ms-user-select: none; /* IE 10 and IE 11 */
+        /* min-height: 24px; */
+    }
+
+    .hcg-header-cell-content {
+        width: 100%;
+        flex: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+
+        /* display: block; */
+
+        /*
+
+        user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+        */
+    }
+
+    .hcg-header-cell-container.hcg-no-width .hcg-header-cell-content {
+        visibility: hidden;
+        transition: none;
+    }
+
+    .hcg-header-cell-icons {
+        --ig-header-icon-highlight-background:
+            color-mix(
+                in oklch,
+                var(--ig-header-background) 90%,
+                var(--ig-default-color)
+            );
+
+        display: flex;
+        overflow: hidden;
+        align-items: center;
+        max-width: 0;
+        opacity: 0;
+        cursor: pointer;
+        transition: max-width 0.3s ease, opacity 0.3s ease;
+
+        /* gap: 0; */
+    }
+
+    th:is(:hover, :focus-visible) .hcg-header-cell-icons,
+    .hcg-header-cell-icons:has(.hcg-button:focus-visible, .hcg-button.highlighted, .hcg-button.active),
+    .hcg-header-cell-container.hcg-no-width .hcg-header-cell-icons {
+        max-width: 100px;
+        opacity: 1;
+    }
+
+    .hcg-header-cell-container.hcg-no-width .hcg-header-cell-menu-icon {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        margin-left: 0;
+    }
+
+    .hcg-header-cell-icons > :first-child {
+        margin-left: 5px;
+    }
+
+    .hcg-header-cell-icons .hcg-button:hover,
+    .hcg-header-cell-icons .hcg-button.highlighted {
+        background: var(--ig-header-icon-highlight-background);
+    }
+
+    .hcg-active-indicator {
+        position: absolute;
+        top: 2px;
+        right: 2px;
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background: var(--ig-icon-header-hover-color, #626bd0);
+        pointer-events: none;
+    }
+
+    .hcg-sort-priority-indicator {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-left: 2px;
+        height: 20px;
+        padding: 0 2px;
+        border-radius: 4px;
+        background: transparent;
+        color: var(--ig-icon-header-hover-color);
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 1;
+        pointer-events: none;
+    }
+
+    .hcg-header-cell-sort-icon .hcg-button:has(.hcg-sort-priority-indicator) {
+        /* Keep header height stable when showing the multi-sort indicator */
+        padding-top: 2px;
+        padding-bottom: 2px;
+    }
+
+    .hcg-column-resizer {
+        position: absolute;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        top: 0;
+        width: 9px;
+        right: -5px;
+        height: 100%;
+        user-select: none;
+        z-index: 10;
+        cursor: col-resize;
+    }
+
+    .hcg-column-resizer.hovered::after {
+        content: "";
+        width: max(3px, calc(var(--ig-header-column-border-width) + 2px));
+        height: 100%;
+        background: var(--ig-header-color);
+    }
 }
 
-.hcg-table thead th .hcg-header-cell-content span {
+/* .hcg-table thead th .hcg-header-cell-content span {
     flex: 1;
     overflow: hidden;
     text-overflow: ellipsis;
-}
+} */
 
 /* Header cell menu button centered */
-.hcg-header-cell-container.hcg-no-width .hcg-header-cell-menu-icon {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-}
 
-.hcg-header-cell-container.hcg-no-width .hcg-header-cell-content {
-    visibility: hidden;
-    transition: none;
-}
+/* Generic icon button styling - applies to all header icons */
 
-/* Header cell flex container */
-.hcg-header-cell-container {
+/* .hcg-header-cell-icons .hcg-button {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    min-height: 24px;
-    width: 100%;
-}
+    justify-content: center;
+    position: relative;
+} */
 
-.hcg-header-cell-content {
-    flex: 1;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-
-    /* transition: all 0.3s ease; */
-}
+/* ----------------------------------------------------------
+  START OTHER ELEMENTS
+------------------------------------------------------------ */
 
 /* Generic button styling for Grid */
 .hcg-button {
@@ -818,6 +919,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    position: relative;
 }
 
 .hcg-button:hover {
@@ -849,102 +951,6 @@
 .hcg-header-cell-icons .hcg-button.highlighted .hcg-icon,
 .hcg-header-cell-icons .hcg-button.active .hcg-icon {
     color: var(--ig-icon-header-hover-color);
-}
-
-/* Header cell icons container - generic for all icon types */
-.hcg-header-cell-icons {
-    display: flex;
-    overflow: hidden;
-    align-items: center;
-    gap: 0;
-    max-width: 0;
-    opacity: 0;
-    cursor: pointer;
-    transition: max-width 0.3s ease, opacity 0.3s ease;
-}
-
-/* Show icons on header cell hover, focus, or when has active icons */
-.hcg-table thead th:hover .hcg-header-cell-icons,
-.hcg-table thead th:focus-visible .hcg-header-cell-icons,
-.hcg-header-cell-icons:hover,
-.hcg-header-cell-icons:has(.hcg-button:focus-visible),
-.hcg-header-cell-icons:has(.hcg-button.highlighted),
-.hcg-header-cell-icons:has(.hcg-button.active),
-.hcg-header-cell-container.hcg-no-width .hcg-header-cell-icons {
-    max-width: 100px;
-    opacity: 1;
-}
-
-/* Generic icon button styling - applies to all header icons */
-.hcg-header-cell-icons .hcg-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-}
-
-.hcg-header-cell-icons > :first-child:not(.hcg-header-cell-menu-icon) {
-    margin-left: 6px;
-}
-
-/* Active icon styling - icons that are in an active state */
-.hcg-header-cell-icons .hcg-button.highlighted {
-    background: var(--ig-button-hover-background);
-}
-
-/* Active indicator dot (filtering) - positioned at top right of button */
-.hcg-active-indicator {
-    position: absolute;
-    top: 2px;
-    right: 2px;
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    background: var(--ig-icon-header-hover-color, #626bd0);
-    pointer-events: none;
-}
-
-.hcg-sort-priority-indicator {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    margin-left: 2px;
-    height: 20px;
-    padding: 0 2px;
-    border-radius: 4px;
-    background: transparent;
-    color: var(--ig-icon-header-hover-color);
-    font-size: 14px;
-    font-weight: 600;
-    line-height: 1;
-    pointer-events: none;
-}
-
-.hcg-header-cell-sort-icon .hcg-button:has(.hcg-sort-priority-indicator) {
-    /* Keep header height stable when showing the multi-sort indicator */
-    padding-top: 2px;
-    padding-bottom: 2px;
-}
-
-.hcg-table thead th .hcg-column-resizer {
-    position: absolute;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    top: 0;
-    width: 9px;
-    right: -5px;
-    height: 100%;
-    user-select: none;
-    z-index: 10;
-    cursor: col-resize;
-}
-
-.hcg-column-resizer.hovered::after {
-    content: "";
-    width: max(3px, calc(var(--ig-header-column-border-width) + 2px));
-    height: 100%;
-    background: var(--ig-header-color);
 }
 
 /* Sorting */
