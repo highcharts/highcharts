@@ -164,6 +164,15 @@ function setResponsive(this: Grid, matchingRules: RuleOptions[]): void {
             this.options || {},
             true
         );
+        const columnUndoOptions = getColumnUndoOptions.call(
+            this,
+            mergedOptions
+        );
+        if (columnUndoOptions) {
+            undoOptions.columns = columnUndoOptions;
+        } else {
+            syncColumnIds(undoOptions, mergedOptions);
+        }
 
         this.currentResponsive = {
             ruleIds: ruleIdsString,
@@ -173,6 +182,99 @@ function setResponsive(this: Grid, matchingRules: RuleOptions[]): void {
 
         if (!this.updatingResponsive) {
             void this.update(mergedOptions as Options, true);
+        }
+    }
+}
+
+/**
+ * Builds undo options for columns by matching them by id.
+ *
+ * @param this
+ * Reference to Grid.
+ *
+ * @param mergedOptions
+ * The merged responsive options used to apply updates.
+ */
+function getColumnUndoOptions(
+    this: Grid,
+    mergedOptions: DeepPartial<Options>
+): DeepPartial<Options>['columns'] | void {
+    const mergedColumns = mergedOptions.columns;
+    const currentColumns = this.options?.columns;
+
+    if (!mergedColumns || !currentColumns) {
+        return;
+    }
+
+    type ColumnOptions = NonNullable<Options['columns']>[number];
+    const result: Array<DeepPartial<ColumnOptions>> = [];
+    const columnMap = new Map<string, ColumnOptions>();
+
+    for (let i = 0, iEnd = currentColumns.length; i < iEnd; ++i) {
+        const column = currentColumns[i];
+        if (typeof column.id === 'string') {
+            columnMap.set(column.id, column);
+        }
+    }
+
+    for (let i = 0, iEnd = mergedColumns.length; i < iEnd; ++i) {
+        const mergedColumn = mergedColumns[i] as
+            (Record<string, unknown> | undefined);
+        const columnId = (typeof mergedColumn?.id === 'string') ?
+            mergedColumn.id :
+            void 0;
+
+        if (!mergedColumn || !columnId) {
+            continue;
+        }
+
+        const currentColumn = columnMap.get(columnId) as
+            (Record<string, unknown> | undefined);
+
+        if (!currentColumn) {
+            continue;
+        }
+
+        const columnUndo = diffObjects(mergedColumn, currentColumn, true);
+
+        if (Object.keys(columnUndo).length > 0) {
+            (columnUndo as DeepPartial<ColumnOptions>).id = columnId;
+            result.push(columnUndo as DeepPartial<ColumnOptions>);
+        }
+    }
+
+    if (result.length) {
+        return result;
+    }
+}
+
+/**
+ * Ensures column options keep their ids when undoing responsive updates.
+ *
+ * @param undoOptions
+ * The undo options to be updated.
+ *
+ * @param mergedOptions
+ * The merged responsive options used to apply updates.
+ */
+function syncColumnIds(
+    undoOptions: DeepPartial<Options>,
+    mergedOptions: DeepPartial<Options>
+): void {
+    const mergedColumns = mergedOptions.columns;
+    const undoColumns = undoOptions.columns;
+
+    if (!mergedColumns || !undoColumns) {
+        return;
+    }
+
+    for (let i = 0, iEnd = Math.min(mergedColumns.length, undoColumns.length);
+        i < iEnd; ++i) {
+        const mergedColumn = mergedColumns[i] as (Record<string, unknown>|undefined);
+        const undoColumn = undoColumns[i] as (Record<string, unknown>|undefined);
+
+        if (mergedColumn && undoColumn && !('id' in undoColumn)) {
+            undoColumn.id = mergedColumn.id;
         }
     }
 }
@@ -226,13 +328,17 @@ declare module '../Options' {
 
 declare module '../Grid' {
     export default interface Grid {
+        /** @private */
         resizeObserver?: ResizeObserver;
+        /** @private */
         activeRules?: Set<RuleOptions>;
+        /** @private */
         currentResponsive?: {
             ruleIds?: string;
             mergedOptions: DeepPartial<Options>;
             undoOptions: DeepPartial<Options>;
         };
+        /** @private */
         updatingResponsive?: boolean;
     }
 }
