@@ -1355,6 +1355,8 @@ export class Grid {
 
         if (this.enabledColumns.length > 0) {
             this.viewport = this.renderTable();
+this.viewport.tableElement.setAttribute('id', this.id);
+
             if (viewportMeta && this.viewport) {
                 this.viewport.applyStateMeta(viewportMeta);
             }
