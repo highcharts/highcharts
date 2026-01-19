@@ -801,7 +801,7 @@ function hasExtremes(
         colorAxis = series.colorAxis && series.colorAxis.options;
 
     return (
-        dataLength > threshold &&
+        dataLength >= threshold &&
         // Defined yAxis extremes
         isNumber(yAxis.min) &&
         isNumber(yAxis.max) &&
