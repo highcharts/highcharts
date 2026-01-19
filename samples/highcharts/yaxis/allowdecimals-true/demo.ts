@@ -12,4 +12,4 @@ Highcharts.chart('container', {
     series: [{
         data: [0.5, 1.5, 1, 2]
     }]
-} satisfies Highcharts.Options);
+});

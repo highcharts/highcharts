@@ -34,4 +34,4 @@ Highcharts.chart('container', {
             enabled: true
         }
     }]
-} satisfies Highcharts.Options);
+});
