@@ -19,7 +19,10 @@
  *
  * */
 
-import type PluginHandler from '../PluginHandler';
+import type {
+    DashboardsPlugin,
+    Event as PluginHandlerEvent
+} from '../PluginHandler';
 import type { Highcharts as H } from './HighchartsTypes';
 
 import HighchartsComponent from '../Components/HighchartsComponent/HighchartsComponent.js';
@@ -67,7 +70,7 @@ function connectHighcharts(
  * Plugin context provided by the Dashboard.
  */
 function onRegister(
-    e: PluginHandler.Event
+    e: PluginHandlerEvent
 ): void {
     const { ComponentRegistry } = e;
     ComponentRegistry.registerComponent('Highcharts', HighchartsComponent);
@@ -82,7 +85,7 @@ function onRegister(
  * @param {Dashboard.PluginHandler.Event} e
  * Plugin context provided by the Dashboard.
  */
-function onUnregister(e: PluginHandler.Event): void {
+function onUnregister(e: PluginHandlerEvent): void {
 
 }
 
@@ -96,7 +99,7 @@ const HighchartsCustom = {
     connectHighcharts
 };
 
-const HighchartsPlugin: PluginHandler.DashboardsPlugin<typeof HighchartsCustom> = {
+const HighchartsPlugin: DashboardsPlugin<typeof HighchartsCustom> = {
     custom: HighchartsCustom,
     name: 'Highcharts.DashboardsPlugin',
     onRegister,

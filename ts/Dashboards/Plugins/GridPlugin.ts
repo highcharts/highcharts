@@ -21,7 +21,10 @@
  * */
 
 import type { GridNamespace } from './GridTypes';
-import type PluginHandler from '../PluginHandler';
+import type {
+    DashboardsPlugin,
+    Event as PluginHandlerEvent
+} from '../PluginHandler';
 import GridComponent from '../Components/GridComponent/GridComponent.js';
 
 
@@ -61,7 +64,7 @@ function connectGrid(GridNS: GridNamespace): void {
  * Plugin context provided by the Dashboard.
  */
 function onRegister(
-    e: PluginHandler.Event
+    e: PluginHandlerEvent
 ): void {
     const { ComponentRegistry } = e;
     ComponentRegistry.registerComponent('Grid', GridComponent);
@@ -74,7 +77,7 @@ function onRegister(
  * @param {Dashboard.PluginHandler.Event} e Plugin context provided by the Dashboard.
  */
 function onUnregister(
-    e: PluginHandler.Event
+    e: PluginHandlerEvent
 ): void { }
 
 /* *
@@ -87,7 +90,7 @@ const GridCustom = {
     connectGrid
 };
 
-const GridPlugin: PluginHandler.DashboardsPlugin<typeof GridCustom> = {
+const GridPlugin: DashboardsPlugin<typeof GridCustom> = {
     custom: GridCustom,
     name: 'Grid.DashboardsPlugin',
     onRegister,

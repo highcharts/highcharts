@@ -20,7 +20,7 @@
  *
  * */
 
-import type Component from '../Component';
+import type { ConnectorTypes as ComponentConnectorTypes } from '../Component';
 import type { Options } from './GridComponentOptions';
 import type { DeepPartial } from '../../../Shared/Types';
 
@@ -136,7 +136,7 @@ const GridComponentDefaults: DeepPartial<Options> = {
             type: 'input'
         }
     ],
-    onUpdate: (e: KeyboardEvent, connector: Component.ConnectorTypes): void => {
+    onUpdate: (e: KeyboardEvent, connector: ComponentConnectorTypes): void => {
         const inputElement = e.target as HTMLInputElement;
         if (inputElement) {
             const parentRow = inputElement

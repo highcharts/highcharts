@@ -21,10 +21,11 @@
 
 import type { AnyRecord } from '../../Shared/Types';
 import type DataTableOptions from '../../Data/DataTableOptions';
-import type JSON from '../JSON';
+import type { JSONArray, JSONPrimitive } from '../JSON';
 
 import DataTable from '../../Data/DataTable.js';
 import Serializable from '../Serializable.js';
+import type { Helper as SerializableHelper, JSON as SerializableJSON } from '../Serializable';
 
 /* *
  *
@@ -35,14 +36,14 @@ import Serializable from '../Serializable.js';
 /**
  * Converts the given JSON to a class instance.
  *
- * @param {DataTableHelper.JSON} json
+ * @param {JSON} json
  * JSON to deserialize as a class instance or object.
  *
  * @return {DataTable}
  * Returns the class instance or object, or throws an exception.
  */
 function fromJSON(
-    json: DataTableHelper.JSON
+    json: JSON
 ): DataTable {
     return new DataTable({ columns: json.columns, id: json.id });
 }
@@ -50,7 +51,7 @@ function fromJSON(
 /**
  * Validates the given class instance for JSON support.
  *
- * @param {Globals.AnyRecord} obj
+ * @param {AnyRecord} obj
  * Class instance or object to validate.
  *
  * @return {boolean}
@@ -69,13 +70,13 @@ function jsonSupportFor(
  * @param {DataTable} obj
  * Class instance or object to serialize as JSON.
  *
- * @return {DataTableHelper.JSON}
+ * @return {JSON}
  * Returns the JSON of the class instance or object.
  */
 function toJSON(
     obj: DataTable
-): DataTableHelper.JSON {
-    const json: DataTableHelper.JSON = {
+): JSON {
+    const json: JSON = {
         $class: 'Data.DataTable',
         columns: obj.getColumns(void 0, false, true)
     };
@@ -93,23 +94,13 @@ function toJSON(
 
 /* *
  *
- *  Namespace
+ *  Declarations
  *
  * */
 
-namespace DataTableHelper {
+export type ColumnJSON = JSONArray<JSONPrimitive>;
 
-    /* *
-     *
-     *  Declarations
-     *
-     * */
-
-    export type ColumnJSON = JSON.Array<JSON.Primitive>;
-
-    export type JSON = (Serializable.JSON<'Data.DataTable'> & DataTableOptions);
-
-}
+export type JSON = (SerializableJSON<'Data.DataTable'> & DataTableOptions);
 
 /* *
  *
@@ -117,7 +108,7 @@ namespace DataTableHelper {
  *
  * */
 
-const DataTableHelper: Serializable.Helper<DataTable, DataTableHelper.JSON> = {
+const DataTableHelper: SerializableHelper<DataTable, JSON> = {
     $class: 'Data.DataTable',
     fromJSON,
     jsonSupportFor,
