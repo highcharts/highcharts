@@ -58,6 +58,8 @@ class Time extends TimeBase {
         // (#950, #1649, #1760, #3349). Use a reasonable dropout threshold
         // to prevent looping over dense data grouping (#6156).
         if (tickPositions.length < 10000) {
+            // Hourly range, con be configured with:
+            // 'hour.main' and 'day.higherRank'
             if (unitRange <= timeUnits.hour) {
                 tickPositions.forEach((t: number): void => {
                     if (
@@ -72,7 +74,8 @@ class Time extends TimeBase {
                 });
             }
 
-            // Monthly range
+            // Monthly range, can be configured with:
+            // 'month.main' and 'year.higherRank'
             if (
                 unitRange <= timeUnits.month &&
                 unitRange > timeUnits.week
@@ -81,7 +84,7 @@ class Time extends TimeBase {
                     if (
                         i === 1 || this.dateFormat('%m%d', t) === '0101'
                     ) {
-                        higherRanks[t] = 'month';
+                        higherRanks[t] = 'year';
                     }
                 });
             }
