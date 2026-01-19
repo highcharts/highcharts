@@ -41,6 +41,12 @@ export interface ResponsiveOptions {
 
 export interface RuleOptions {
     /**
+     * Unique rule id.
+     * @internal
+     */
+    _id?: string;
+
+    /**
      * A full set of grid options to apply as overrides to the general grid
      * options. The grid options are applied when the given rule is active.
      */

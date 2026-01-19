@@ -21,7 +21,9 @@
  *
  * */
 
+import type { DeepPartial } from '../../../Shared/Types';
 import type Grid from '../../Core/Grid';
+import type { Options } from '../Options';
 import type { ResponsiveOptions, RuleOptions } from './ResponsiveOptions';
 
 import Globals from '../../Core/Globals.js';
@@ -29,8 +31,11 @@ import U from '../../../Core/Utilities.js';
 
 const {
     addEvent,
+    diffObjects,
     defined,
-    pushUnique
+    merge,
+    pushUnique,
+    uniqueKey
 } = U;
 
 
@@ -66,7 +71,6 @@ export function compose(
  */
 function initResizeObserver(this: Grid): void {
     destroyResizeObserver.call(this);
-
     if (!this.container) {
         return;
     }
@@ -92,6 +96,88 @@ function destroyResizeObserver(this: Grid): void {
 }
 
 /**
+ * Checks if the responsive rule matches the current grid size.
+ *
+ * @param this
+ * Reference to Grid.
+ *
+ * @param rule
+ * The responsive rule to check.
+ *
+ * @param entry
+ * The resize observer entry.
+ */
+function matchResponsiveRule(
+    this: Grid,
+    rule: RuleOptions,
+    entry: ResizeObserverEntry
+): boolean {
+    const {
+        maxWidth, maxHeight,
+        minWidth, minHeight,
+        callback
+    } = rule.condition;
+
+    return (
+        (!defined(callback) || callback?.call(this, this)) &&
+        (!defined(maxWidth) || entry.contentRect.width <= maxWidth) &&
+        (!defined(maxHeight) || entry.contentRect.height <= maxHeight) &&
+        (!defined(minWidth) || entry.contentRect.width >= minWidth) &&
+        (!defined(minHeight) || entry.contentRect.height >= minHeight)
+    );
+}
+
+/**
+ * Updates the grid based on the currently active responsive rules.
+ *
+ * @param this
+ * Reference to Grid.
+ *
+ * @param matchingRules
+ * Active responsive rules.
+ */
+function setResponsive(this: Grid, matchingRules: RuleOptions[]): void {
+    const ruleIds = matchingRules.map((rule): string => rule._id as string);
+    const ruleIdsString = (ruleIds.toString() || void 0);
+    const currentRuleIds = this.currentResponsive?.ruleIds;
+
+    if (ruleIdsString === currentRuleIds) {
+        return;
+    }
+
+    if (this.currentResponsive) {
+        const undoOptions = this.currentResponsive.undoOptions;
+        this.currentResponsive = void 0;
+        this.updatingResponsive = true;
+        void this.update(undoOptions as Options, true);
+        this.updatingResponsive = false;
+    }
+
+    if (ruleIdsString) {
+        const mergedOptions = merge(
+            ...matchingRules.map(
+                (rule): DeepPartial<Options> => rule.gridOptions
+            )
+        );
+        const undoOptions = diffObjects(
+            mergedOptions,
+            this.options || {},
+            true
+        );
+
+        this.currentResponsive = {
+            ruleIds: ruleIdsString,
+            mergedOptions,
+            undoOptions
+        };
+
+        if (!this.updatingResponsive) {
+            void this.update(mergedOptions as Options, true);
+        }
+    }
+}
+
+/**
  * Handles the resize event.
  *
  * @param this
@@ -106,31 +192,20 @@ function onResize(this: Grid, entry: ResizeObserverEntry): void {
     }
 
     const rules = this.options?.responsive?.rules || [];
+    const matchingRules: RuleOptions[] = [];
 
     for (const rule of rules) {
-        const {
-            maxWidth, maxHeight,
-            minWidth, minHeight,
-            callback
-        } = rule.condition;
-        const value = (
-            (!defined(callback) || callback?.call(this, this)) &&
-            (!defined(maxWidth) || entry.contentRect.width <= maxWidth) &&
-            (!defined(maxHeight) || entry.contentRect.height <= maxHeight) &&
-            (!defined(minWidth) || entry.contentRect.width >= minWidth) &&
-            (!defined(minHeight) || entry.contentRect.height >= minHeight)
-        );
-
-        const ruleIsActive = this.activeRules.has(rule);
-        if (ruleIsActive !== value) {
-            // TODO: Trigger grid update when rule changes (if the rule is
-            // active, merge the rule's gridOptions with the base options, when
-            // its inactive, remove them from the base options - everything
-            // should remain the same as it was before the specific rule was
-            // activated - for the options affected by the rule)
+        if (typeof rule._id === 'undefined') {
+            rule._id = uniqueKey();
         }
-        this.activeRules[value ? 'add' : 'delete'](rule);
+
+        if (matchResponsiveRule.call(this, rule, entry)) {
+            matchingRules.push(rule);
+        }
     }
+
+    this.activeRules = new Set(matchingRules);
+    setResponsive.call(this, matchingRules);
 }
 
 /* *
@@ -152,7 +227,13 @@ declare module '../Options' {
 declare module '../Grid' {
     export default interface Grid {
         resizeObserver?: ResizeObserver;
-        activeRules?: Set<RuleOptions>
+        activeRules?: Set<RuleOptions>;
+        currentResponsive?: {
+            ruleIds?: string;
+            mergedOptions: DeepPartial<Options>;
+            undoOptions: DeepPartial<Options>;
+        };
+        updatingResponsive?: boolean;
     }
 }
 
