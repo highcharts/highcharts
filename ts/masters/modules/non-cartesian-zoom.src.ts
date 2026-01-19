@@ -6,7 +6,7 @@
  *
  * Non-cartesian series zoom module
  *
- * (c) 2024 Highsoft AS
+ * (c) 2024-2026 Highsoft AS
  * Author: Hubert Kozik
  *
  * A commercial license may be required depending on use.

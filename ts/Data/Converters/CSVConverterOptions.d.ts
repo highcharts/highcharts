@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -19,7 +19,7 @@
 
 import type { CSVBeforeParseCallbackFunction } from '../Connectors/CSVConnectorOptions';
 
-import DataConverter from './DataConverter';
+import type { Options as DataConverterOptions } from './DataConverter';
 
 /* *
  *
@@ -30,7 +30,7 @@ import DataConverter from './DataConverter';
 /**
  * Options of the CSVConverter.
  */
-export interface CSVConverterOptions extends DataConverter.Options {
+export interface CSVConverterOptions extends DataConverterOptions {
     startRow: number;
     endRow: number;
     startColumn: number;

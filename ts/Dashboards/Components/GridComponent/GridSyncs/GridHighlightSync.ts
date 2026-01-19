@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -20,8 +20,8 @@
  *
  * */
 
-import type Sync from '../../Sync/Sync';
-import type DataCursor from '../../../../Data/DataCursor';
+import type { SyncPair } from '../../Sync/Sync';
+import type { Event as DataCursorEvent } from '../../../../Data/DataCursor';
 import type GridComponent from '../GridComponent.js';
 import type { GridHighlightSyncOptions } from '../GridComponentOptions';
 import type { TableCellEvent } from '../../../Plugins/GridTypes';
@@ -40,7 +40,7 @@ const defaultOptions: GridHighlightSyncOptions = {
     autoScroll: false
 };
 
-const syncPair: Sync.SyncPair = {
+const syncPair: SyncPair = {
     emitter: function (this: Component): (() => void) | void {
         if (
             this.type !== 'Grid'
@@ -126,7 +126,7 @@ const syncPair: Sync.SyncPair = {
 
         const table = component.getDataTable();
 
-        const handleCursor = (e: DataCursor.Event): void => {
+        const handleCursor = (e: DataCursorEvent): void => {
             const cursor = e.cursor;
             if (
                 cursor.sourceId === component.id ||
@@ -156,7 +156,7 @@ const syncPair: Sync.SyncPair = {
             grid.syncColumn(column);
         };
 
-        const handleCursorOut = (e: DataCursor.Event): void => {
+        const handleCursorOut = (e: DataCursorEvent): void => {
             const { grid } = component;
             if (grid && e.cursor.sourceId !== component.id) {
                 grid.syncColumn();

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *  Author: Highsoft, Black Label
  *
  *  A commercial license may be required depending on use.
@@ -68,6 +68,18 @@ const {
  *
  * */
 
+/** @internal */
+declare module '../../Core/Globals' {
+    interface GlobalsBase {
+        // TODO: NavigationBindings is a private class. Can be initialized
+        // through either stock-tools or annotations modules. If the class will
+        // become public this would make typing clearer. Alternatively, use
+        // H.composed.
+        NavigationBindings?: NavigationBindings;
+    }
+}
+
+/** @internal */
 declare module '../../Core/Chart/ChartBase'{
     interface ChartBase {
         navigationBindings?: NavigationBindings;
@@ -76,6 +88,7 @@ declare module '../../Core/Chart/ChartBase'{
     }
 }
 
+/** @internal */
 declare module '../../Core/PointerEvent' {
     interface PointerEvent {
         activeAnnotation?: boolean;
@@ -95,7 +108,7 @@ interface NavigationBindingsButtonEventsObject {
 
 /**
  * IE 9-11 polyfill for Element.closest():
- * @private
+ * @internal
  */
 function closestPolyfill(el: Element, s: string): (Element|null) {
     const ElementProto = win.Element.prototype,
@@ -121,9 +134,7 @@ function closestPolyfill(el: Element, s: string): (Element|null) {
     return ret;
 }
 
-/**
- * @private
- */
+/** @internal */
 function onAnnotationRemove(
     this: Annotation
 ): void {
@@ -132,9 +143,7 @@ function onAnnotationRemove(
     }
 }
 
-/**
- * @private
- */
+/** @internal */
 function onChartDestroy(
     this: Chart
 ): void {
@@ -143,9 +152,7 @@ function onChartDestroy(
     }
 }
 
-/**
- * @private
- */
+/** @internal */
 function onChartLoad(
     this: Chart
 ): void {
@@ -161,9 +168,7 @@ function onChartLoad(
     }
 }
 
-/**
- * @private
- */
+/** @internal */
 function onChartRender(
     this: Chart
 ): void {
@@ -224,16 +229,12 @@ function onChartRender(
     }
 }
 
-/**
- * @private
- */
+/** @internal */
 function onNavigationBindingsClosePopup(this: NavigationBindings): void {
     this.deselectAnnotation();
 }
 
-/**
- * @private
- */
+/** @internal */
 function onNavigationBindingsDeselectButton(
     this: NavigationBindings
 ): void {
@@ -242,15 +243,15 @@ function onNavigationBindingsDeselectButton(
 
 /**
  * Show edit-annotation form:
- * @private
+ * @internal
  */
 function selectableAnnotation(annotationType: typeof Annotation): void {
     const originalClick = annotationType.prototype.defaultOptions.events &&
             annotationType.prototype.defaultOptions.events.click;
 
     /**
-     * Select and show popup
-     * @private
+     * Select and show popup.
+     * @internal
      */
     function selectAndShowPopup(
         this: Annotation,
@@ -364,9 +365,7 @@ function selectableAnnotation(annotationType: typeof Annotation): void {
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 class NavigationBindings {
 
     /* *
@@ -531,7 +530,7 @@ class NavigationBindings {
     /**
      * Init all events connected to NavigationBindings.
      *
-     * @private
+     * @internal
      * @function Highcharts.NavigationBindings#initEvents
      */
     public initEvents(): void {
@@ -622,7 +621,7 @@ class NavigationBindings {
     /**
      * Common chart.update() delegation, shared between bindings and exporting.
      *
-     * @private
+     * @internal
      * @function Highcharts.NavigationBindings#initUpdate
      */
     public initUpdate(): void {
@@ -638,7 +637,7 @@ class NavigationBindings {
      * Hook for click on a button, method selects/unselects buttons,
      * then calls `bindings.init` callback.
      *
-     * @private
+     * @internal
      * @function Highcharts.NavigationBindings#bindingsButtonClick
      *
      * @param {Highcharts.HTMLDOMElement} [button]
@@ -712,7 +711,7 @@ class NavigationBindings {
      * then on all subsequent clicks iterate over `steps` array.
      * When finished, calls `end` event.
      *
-     * @private
+     * @internal
      * @function Highcharts.NavigationBindings#bindingsChartClick
      *
      * @param {Highcharts.Chart} chart
@@ -836,7 +835,7 @@ class NavigationBindings {
     /**
      * Hook for mouse move on a chart's container. It calls current step.
      *
-     * @private
+     * @internal
      * @function Highcharts.NavigationBindings#bindingsContainerMouseMove
      *
      * @param {Highcharts.HTMLDOMElement} container
@@ -861,7 +860,7 @@ class NavigationBindings {
      * Translate fields (e.g. `params.period` or `marker.styles.color`) to
      * Highcharts options object (e.g. `{ params: { period } }`).
      *
-     * @private
+     * @internal
      * @function Highcharts.NavigationBindings#fieldsToOptions<T>
      *
      * @param {Highcharts.Dictionary<string>} fields
@@ -952,10 +951,8 @@ class NavigationBindings {
             nestedEditables = editables.nestedOptions,
             type = pick(
                 options.type,
-                options.shapes && options.shapes[0] &&
-                    options.shapes[0].type,
-                options.labels && options.labels[0] &&
-                    options.labels[0].type,
+                options.shapes?.[0]?.type,
+                (options.labels?.[0] as any)?.type,
                 'label'
             ),
             nonEditables = (
@@ -973,7 +970,7 @@ class NavigationBindings {
          * allowed options (with values) to new object, which is last parameter:
          * "parent".
          *
-         * @private
+         * @internal
          *
          * @param {*} option
          *        Atomic type or object/array
@@ -1118,7 +1115,7 @@ class NavigationBindings {
      * Get all class names for all parents in the element. Iterates until finds
      * main container.
      *
-     * @private
+     * @internal
      * @function Highcharts.NavigationBindings#getClickedClassNames
      *
      * @param {Highcharts.HTMLDOMElement} container
@@ -1165,7 +1162,7 @@ class NavigationBindings {
      * Get events bound to a button. It's a custom event delegation to find all
      * events connected to the element.
      *
-     * @private
+     * @internal
      * @function Highcharts.NavigationBindings#getButtonEvents
      *
      * @param {Highcharts.HTMLDOMElement} container
@@ -1202,7 +1199,7 @@ class NavigationBindings {
      * Bindings are just events, so the whole update process is simply
      * removing old events and adding new ones.
      *
-     * @private
+     * @internal
      * @function Highcharts.NavigationBindings#update
      */
     public update(options?: NavigationOptions): void {
@@ -1214,7 +1211,7 @@ class NavigationBindings {
     /**
      * Remove all events created in the navigation.
      *
-     * @private
+     * @internal
      * @function Highcharts.NavigationBindings#removeEvents
      */
     public removeEvents(): void {
@@ -1222,7 +1219,7 @@ class NavigationBindings {
     }
 
     /**
-     * @private
+     * @internal
      * @function Highcharts.NavigationBindings#destroy
      */
     public destroy(): void {
@@ -1237,6 +1234,7 @@ class NavigationBindings {
  *
  * */
 
+/** @internal */
 interface NavigationBindings extends NavigationBindingsBase {
 }
 
@@ -1247,6 +1245,7 @@ interface NavigationBindings extends NavigationBindingsBase {
  *
  * */
 
+/** @internal */
 export default NavigationBindings;
 
 /* *

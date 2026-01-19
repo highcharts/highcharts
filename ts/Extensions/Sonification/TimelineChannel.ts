@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *  Author: Øystein Moseng
  *
  *  Class representing a TimelineChannel with sonification events to play.
@@ -36,7 +36,7 @@ declare global {
 /**
  * Represents a channel of TimelineEvents for an engine (either an instrument
  * or a speaker).
- * @private
+ * @internal
  */
 class TimelineChannel {
     events: Sonification.TimelineEvent[];

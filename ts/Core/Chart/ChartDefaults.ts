@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Honsi
  *
  *  A commercial license may be required depending on use.
@@ -1204,14 +1204,12 @@ const ChartDefaults: ChartOptions = {
              */
             position: {
 
-                /**
-                 * The horizontal alignment of the button.
-                 */
+
+                /** @internal */
                 align: 'right',
 
-                /**
-                 * The horizontal offset of the button.
-                 */
+
+                /** @internal */
                 x: -10,
 
                 /**
@@ -1222,9 +1220,8 @@ const ChartDefaults: ChartOptions = {
                  * @apioption  chart.zooming.resetButton.position.verticalAlign
                  */
 
-                /**
-                 * The vertical offset of the button.
-                 */
+
+                /** @internal */
                 y: 10
             }
         }

@@ -82,7 +82,7 @@ The Boost module contains a WebGL renderer that replaces parts of the SVG render
 * Marker shapes, apart from circles, are not supported.
 * Dash style for lines is not supported.
 * Stacking, and negative colors are not supported.
-* Line width is limited to 1px.
+* Line width is supported, but handled globally. The `lineWidth` setting applies to all boosted line series and individual per-series values are not respected. For consistent behavior, it is recommended to set the width via `plotOptions.line.lineWidth` rather than per series.
 * [`stickyTracking`](https://api.highcharts.com/highcharts/plotOptions.series.stickyTracking) is forced.
 
 The intended way of using the module, is to set thresholds in such a way that the SVG-renderer “takes over” rendering when zooming in. This approach gives the expected interactivity when the points are less dense, coupled with high performance when the point density is high.

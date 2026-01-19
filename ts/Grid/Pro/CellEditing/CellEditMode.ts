@@ -2,7 +2,7 @@
  *
  *  Grid Cell Editing class.
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -21,7 +21,7 @@
  *
  * */
 
-import type DataTable from '../../../Data/DataTable';
+import type { CellType as DataTableCellType } from '../../../Data/DataTable';
 import type TableCell from '../../Core/Table/Body/TableCell';
 
 
@@ -47,7 +47,7 @@ export interface EditModeContent<
     /**
      * Value of the edit mode cell content, parsed according to the column type.
      */
-    readonly value: DataTable.CellType;
+    readonly value: DataTableCellType;
 
     /**
      * Raw value of the edit mode cell content, in a string format.

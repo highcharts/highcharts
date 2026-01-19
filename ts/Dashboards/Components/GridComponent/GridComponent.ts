@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -24,6 +24,8 @@ import type Board from '../../Board';
 import type Cell from '../../Layout/Cell';
 import type { Grid, GridNamespace } from '../../Plugins/GridTypes';
 import type { Options } from './GridComponentOptions';
+
+import type { EventTypes as ComponentEventTypes } from '../Component';
 
 import Component from '../Component.js';
 import GridSyncs from './GridSyncs/GridSyncs.js';
@@ -345,24 +347,15 @@ class GridComponent extends Component {
 
 /* *
  *
- *  Class Namespace
+ *  Type Declarations
  *
  * */
 
-namespace GridComponent {
+/** @private */
+export type ComponentType = GridComponent;
 
-    /* *
-     *
-     *  Declarations
-     *
-     * */
-
-    /** @private */
-    export type ComponentType = GridComponent;
-
-    /** @private */
-    export type ChartComponentEvents = Component.EventTypes;
-}
+/** @private */
+export type ChartComponentEvents = ComponentEventTypes;
 
 /* *
  *

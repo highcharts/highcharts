@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2016 Highsoft AS
+ *  (c) 2016-2026 Highsoft AS
  *  Authors: Øystein Moseng, Lars A. V. Cabrera, Jon Arild Nygard
  *
  *  A commercial license may be required depending on use.

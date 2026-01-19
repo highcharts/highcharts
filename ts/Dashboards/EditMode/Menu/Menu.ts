@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -15,6 +15,7 @@
  * */
 
 import type EditMode from '../EditMode';
+import type { Options as MenuItemOptions } from './MenuItem';
 
 import { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType.js';
 import EditGlobals from '../EditGlobals.js';
@@ -43,7 +44,7 @@ class Menu {
     * */
     constructor(
         parentElement: HTMLDOMElement,
-        options: Menu.Options,
+        options: Options,
         editMode: EditMode,
         parent?: any
     ) {
@@ -68,7 +69,7 @@ class Menu {
     * */
     public parentElement: HTMLDOMElement;
     public editMode: EditMode;
-    public options: Menu.Options;
+    public options: Options;
     public container: HTMLDOMElement;
     public isVisible: boolean;
     public items: Record<string, MenuItem>;
@@ -94,7 +95,7 @@ class Menu {
 
     // ItemsSchemas - default items definitions.
     public initItems(
-        itemsSchemas: Record<string, MenuItem.Options>,
+        itemsSchemas: Record<string, MenuItemOptions>,
         activeItems?: boolean
     ): void {
         const menu = this,
@@ -117,7 +118,7 @@ class Menu {
                 merge(itemSchema, itemConfig);
 
             if (options.id) {
-                item = new MenuItem(menu, options as MenuItem.Options);
+                item = new MenuItem(menu, options as MenuItemOptions);
 
                 // Save initialized item.
                 menu.items[item.options.id] = item;
@@ -187,27 +188,25 @@ class Menu {
     }
 }
 
-namespace Menu {
-    export interface Options {
-        /**
-         * The class name of the menu's container.
-         */
-        className?: string;
-        /**
-         * The list of items in the context menu.
-         * @default ['editMode']
-         */
-        items?: Array<MenuItem.Options|string>;
-        /**
-         * The class name of the menu's items.
-         * Applied to each item in the context menu.
-         */
-        itemsClassName?: string;
-        /**
-         * Whether to enable the context menu.
-         */
-        enabled?: boolean;
-    }
+export interface Options {
+    /**
+     * The class name of the menu's container.
+     */
+    className?: string;
+    /**
+     * The list of items in the context menu.
+     * @default ['editMode']
+     */
+    items?: Array<MenuItemOptions|string>;
+    /**
+     * The class name of the menu's items.
+     * Applied to each item in the context menu.
+     */
+    itemsClassName?: string;
+    /**
+     * Whether to enable the context menu.
+     */
+    enabled?: boolean;
 }
 
 export default Menu;

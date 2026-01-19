@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -48,7 +48,6 @@ export const rawClassNames = {
     rowEven: 'row-even',
     rowOdd: 'row-odd',
     hoveredRow: 'hovered-row',
-    columnElement: 'column',
     hoveredCell: 'hovered-cell',
     hoveredColumn: 'hovered-column',
     syncedRow: 'synced-row',
@@ -74,6 +73,7 @@ export const rawClassNames = {
     columnSortableIcon: 'column-sortable-icon',
     columnSortedAsc: 'column-sorted-asc',
     columnSortedDesc: 'column-sorted-desc',
+    sortPriorityIndicator: 'sort-priority-indicator',
     resizableContent: 'resizable-content',
     resizerHandles: 'column-resizer',
     resizedColumn: 'column-resized',

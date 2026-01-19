@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Honsi
  *
  *  A commercial license may be required depending on use.
@@ -1479,7 +1479,7 @@ class RangeSelector {
                 rangeOptions.text ?? '',
                 0,
                 0,
-                (e: (Event | AnyRecord)): void => {
+                (e): void => {
 
                     // Extract events from button object and call
                     const buttonEvents = (

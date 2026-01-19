@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -21,11 +21,11 @@
  * */
 
 import type { Series } from '../../../Plugins/HighchartsTypes';
-import type Sync from '../../Sync/Sync';
+import type { OptionsEntry, SyncPair } from '../../Sync/Sync';
+import type { Event as DataCursorEvent } from '../../../../Data/DataCursor';
 import type HighchartsComponent from '../HighchartsComponent.js';
 
 import Component from '../../Component';
-import DataCursor from '../../../../Data/DataCursor';
 
 /* *
  *
@@ -33,9 +33,9 @@ import DataCursor from '../../../../Data/DataCursor';
  *
  * */
 
-const defaultOptions: Sync.OptionsEntry = {};
+const defaultOptions: OptionsEntry = {};
 
-const syncPair: Sync.SyncPair = {
+const syncPair: SyncPair = {
     emitter: function (this: Component): (() => void) | void {
         if (this.type !== 'Highcharts') {
             return;
@@ -114,7 +114,7 @@ const syncPair: Sync.SyncPair = {
             }
         };
 
-        const handleShow = (e: DataCursor.Event): void => {
+        const handleShow = (e: DataCursorEvent): void => {
             const chart = component.chart;
             if (!chart || !chart.series?.length) {
                 return;
@@ -127,7 +127,7 @@ const syncPair: Sync.SyncPair = {
             }
         };
 
-        const handleHide = (e: DataCursor.Event): void => {
+        const handleHide = (e: DataCursorEvent): void => {
             const chart = component.chart;
             if (!chart || !chart.series?.length) {
                 return;
