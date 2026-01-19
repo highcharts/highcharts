@@ -17,7 +17,6 @@
  *
  * */
 
-import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import type ColorType from '../../Core/Color/ColorType';
 import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
 import type {
