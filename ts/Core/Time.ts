@@ -74,12 +74,19 @@ class Time extends TimeBase {
                 });
             }
 
+            // Daily and weekly range, can be configured with:
+            // 'day.main', 'week.main' and 'month.higherRank'
+            if (unitRange >= timeUnits.day && unitRange <= timeUnits.week) {
+                tickPositions.forEach((t: number): void => {
+                    if (this.dateFormat('%d', t) === '01') {
+                        higherRanks[t] = 'month';
+                    }
+                });
+            }
+
             // Monthly range, can be configured with:
             // 'month.main' and 'year.higherRank'
-            if (
-                unitRange <= timeUnits.month &&
-                unitRange > timeUnits.week
-            ) {
+            if (unitRange <= timeUnits.month && unitRange > timeUnits.week) {
                 tickPositions.forEach((t: number, i: number): void => {
                     if (
                         i === 1 || this.dateFormat('%m%d', t) === '0101'

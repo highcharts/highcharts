@@ -287,8 +287,8 @@ QUnit.test('Higher ranks general tests, (#22231)', function (assert) {
     );
     assert.strictEqual(
         tickPositions.info.higherRanks[tickPositions[0]],
-        'month',
-        'First tick on full range chart should have a higher rank set as month.'
+        'year',
+        'First tick on full range chart should have a higher rank set as year.'
     );
     assert.strictEqual(
         ticks[tickPositions[1]].label.textStr,
