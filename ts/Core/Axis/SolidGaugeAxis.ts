@@ -9,6 +9,8 @@
  *
  * */
 
+'use strict';
+
 /* *
  *
  *  Imports
