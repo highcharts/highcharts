@@ -2904,18 +2904,6 @@ class Axis {
         axis.setAxisSize();
         const isDirtyAxisLength = axis.len !== axis.old?.len;
 
-        // If axis.len changed, we need to recalculate tickInterval even if
-        // nothing else is dirty. This fixes issue where tickInterval was
-        // calculated with different axis.len and not recalculated when
-        // axis.len changed (#17393).
-        // For datetime axes, tickInterval depends on axis.len (via the formula:
-        // tickInterval = range * tickPixelInterval / axis.len), so we must
-        // recalculate when axis.len changes.
-        const needsTickIntervalRecalc = isDirtyAxisLength &&
-            !axis.options.tickInterval &&
-            !axis.tickAmount &&
-            axis.dateTime;
-
         // Do we really need to go through all this?
         if (
             isDirtyAxisLength ||
@@ -2925,8 +2913,7 @@ class Axis {
             axis.forceRedraw ||
             axis.userMin !== axis.old?.userMin ||
             axis.userMax !== axis.old?.userMax ||
-            axis.alignToOthers() ||
-            needsTickIntervalRecalc
+            axis.alignToOthers()
         ) {
 
             if (stacking && coll === 'yAxis') {
