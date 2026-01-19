@@ -186,6 +186,7 @@ jobs:
         run: |
           npm ci
           npm run build -- --CI true
+          npx gulp scripts-es5
           npx gulp dist-verify
           npx gulp dist-release --force-yes
 
