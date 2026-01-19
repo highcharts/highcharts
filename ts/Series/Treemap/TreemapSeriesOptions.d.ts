@@ -28,13 +28,14 @@ import { PatternObject } from '../../Extensions/PatternFill';
 import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
-import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
+import type {
+    ScatterSeriesOptions,
+    ScatterSeriesTooltipOptions
+} from '../Scatter/ScatterSeriesOptions';
 import type {
     SeriesOptions,
-    SeriesStatesOptions,
-    LegendSymbolType
+    SeriesStatesOptions
 } from '../../Core/Series/SeriesOptions';
-import type TooltipOptions from '../../Core/TooltipOptions';
 import type TreemapPointOptions from './TreemapPointOptions';
 import MarkerClusterOptions from '../../Extensions/MarkerClusters/MarkerClusterOptions';
 
@@ -611,7 +612,10 @@ export interface TreemapSeriesOptions extends ScatterSeriesOptions {
      */
     layoutStartingDirection?: TreemapSeriesLayoutStartingDirectionValue;
 
-    legendSymbol?: LegendSymbolType;
+    /**
+     * @default 'rectangle'
+     */
+    legendSymbol?: ScatterSeriesOptions['legendSymbol'];
 
     /**
      * Used together with the levels and allowTraversingTree options. When
@@ -715,7 +719,7 @@ export interface TreemapSeriesOptions extends ScatterSeriesOptions {
      * @apioption series.treemap.states.hover
      */
 
-    tooltip?:Partial<TooltipOptions>;
+    tooltip?: TreemapSeriesTooltipOptions;
 
     /**
      * The HTML of the grouped nodes point's in the tooltip. Works only for
@@ -738,6 +742,24 @@ export interface TreemapSeriesOptions extends ScatterSeriesOptions {
     traverseUpButton?: TreemapSeriesUpButtonOptions;
 
     traverseToLeaf?: boolean;
+}
+
+export interface TreemapSeriesTooltipOptions
+    extends ScatterSeriesTooltipOptions {
+    /**
+     * @default ''
+     */
+    headerFormat?: ScatterSeriesTooltipOptions['headerFormat'];
+
+    /**
+     * @default '<b>{point.name}</b>: {point.value}<br/>'
+     */
+    pointFormat?: ScatterSeriesTooltipOptions['pointFormat'];
+
+    /**
+     * @default '+ {point.groupedPointsAmount} more...<br/>'
+     */
+    clusterFormat?: ScatterSeriesTooltipOptions['clusterFormat'];
 }
 
 /**

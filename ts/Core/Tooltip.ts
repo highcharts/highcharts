@@ -91,27 +91,6 @@ declare module './Series/SeriesBase' {
     }
 }
 
-declare module './Series/SeriesOptions' {
-    interface SeriesOptions {
-        /**
-         * A configuration object for the tooltip rendering of each single
-         * series. Properties are inherited from [tooltip](#tooltip), but only
-         * the following properties can be defined on a series level.
-         *
-         * @declare   Highcharts.SeriesTooltipOptionsObject
-         * @since     2.3
-         * @extends   tooltip
-         * @excluding animation, backgroundColor, borderColor, borderRadius,
-         *            borderWidth, className, crosshairs, enabled, fixed,
-         *            formatter, headerShape, hideDelay, outside, padding,
-         *            positioner, shadow, shape, shared, snap, split,
-         *            stickOnContact, style, useHTML
-         * @apioption plotOptions.series.tooltip
-         */
-        tooltip?: Partial<TooltipOptions>;
-    }
-}
-
 interface BoxObject extends R.BoxObject {
     anchorX: number;
     anchorY: number;
@@ -349,7 +328,7 @@ class Tooltip {
      *
      * @function Highcharts.Tooltip#defaultFormatter
      *
-     * @param {Highcharts.Tooltip} tooltip
+     * @param {Highcharts.Tooltip} tooltip The tooltip instance.
      *
      * @return {string|Array<string>}
      * Returns a string (single tooltip and shared)
@@ -1910,7 +1889,7 @@ class Tooltip {
      * @internal
      * @function Highcharts.Tooltip#updatePosition
      *
-     * @param {Highcharts.Point} point
+     * @param {Highcharts.Point} point The point object.
      */
     public updatePosition(
         point: Tooltip.PositionerPointObject

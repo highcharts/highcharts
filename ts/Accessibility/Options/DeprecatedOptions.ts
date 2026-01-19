@@ -110,6 +110,10 @@ declare module '../../Core/Options'{
 declare module '../../Core/Series/SeriesOptions'{
     interface SeriesOptions {
         /**
+         * Deprecated. Use
+         * [plotOptions.series.accessibility.description](#plotOptions.series.accessibility.description)
+         * instead.
+         *
          * A description of the series to add to the screen reader information
          * about the series.
          *
@@ -130,9 +134,10 @@ declare module '../../Core/Series/SeriesOptions'{
          *
          * @requires   modules/accessibility
          * @since      5.0.12
-         * @deprecated next
+         * @deprecated 8.0.0
          */
-        pointDescriptionFormatter?: SeriesAccessibilityOptions['point']['descriptionFormatter'];
+        pointDescriptionFormatter?:
+        SeriesAccessibilityOptions['point']['descriptionFormatter'];
 
         /**
          * Deprecated. Use
@@ -147,7 +152,22 @@ declare module '../../Core/Series/SeriesOptions'{
          * @since      11.1.0
          * @deprecated next
          */
-        pointDescriptionFormat?: SeriesAccessibilityOptions['point']['descriptionFormat'];
+        pointDescriptionFormat?:
+        SeriesAccessibilityOptions['point']['descriptionFormat'];
+
+        /**
+         * Deprecated. Use
+         * [series.accessibility.keyboardNavigation](#plotOptions.series.accessibility.keyboardNavigation)
+         * instead.
+         *
+         * If set to `true`, the accessibility module will skip past the points
+         * in this series for keyboard navigation.
+         *
+         * @requires   modules/accessibility
+         * @since      5.0.12
+         * @deprecated 8.0.0
+         */
+        skipKeyboardNavigation?: boolean;
     }
 }
 

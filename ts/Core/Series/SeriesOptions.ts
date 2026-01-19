@@ -291,15 +291,11 @@ export type SeriesMouseOverCallbackFunction =
  */
 export type SeriesShowCallbackFunction = EventCallback<Series, Event>;
 
-export type SeriesFindNearestPointByValue = ('x'|'xy');
-
 /**
  * The SVG value used for the `stroke-linecap` and `stroke-linejoin` of a line
  * graph.
  */
 export type SeriesLinecapValue = ('butt'|'round'|'square');
-
-export type LegendSymbolType = ('areaMarker' | 'lineMarker' | 'rectangle');
 
 /**
  * Helper interface for series types to add options to all series options.
@@ -377,6 +373,20 @@ export interface SeriesOptions {
      * @default {highmaps} false
      */
     animation?: (boolean|DeepPartial<AnimationOptions>);
+
+    /**
+     * For some series, there is a limit that shuts down animation
+     * by default when the total number of points in the chart is too high.
+     * For example, for a column chart and its derivatives, animation does
+     * not run if there is more than 250 points totally. To disable this
+     * cap, set `animationLimit` to `Infinity`. This option works if animation
+     * is fired on individual points, not on a group of points like e.g. during
+     * the initial animation.
+     *
+     * @sample {highcharts} highcharts/plotoptions/series-animationlimit/
+     *         Animation limit on updating individual points
+     */
+    animationLimit?: number;
 
     /**
      * An additional class name to apply to the series' graphical elements.
@@ -592,7 +602,27 @@ export interface SeriesOptions {
      */
     events?: SeriesEventsOptions;
 
-    findNearestPointBy?: SeriesFindNearestPointByValue;
+    /**
+     * Determines whether the series should look for the nearest point
+     * in both dimensions or just the x-dimension when hovering the series.
+     * Defaults to `'xy'` for scatter series and `'x'` for most other
+     * series. If the data has duplicate x-values, it is recommended to
+     * set this to `'xy'` to allow hovering over all points.
+     *
+     * Applies only to series types using nearest neighbor search (not
+     * direct hover) for tooltip.
+     *
+     * @sample {highcharts} highcharts/series/findnearestpointby/
+     *         Different hover behaviors
+     * @sample {highstock} highcharts/series/findnearestpointby/
+     *         Different hover behaviors
+     * @sample {highmaps} highcharts/series/findnearestpointby/
+     *         Different hover behaviors
+     *
+     * @since   5.0.10
+     * @default 'x'
+     */
+    findNearestPointBy?: ('x'|'xy');
 
     /**
      * Whether to use the Y extremes of the total chart width or only the
@@ -921,15 +951,6 @@ export interface SeriesOptions {
      */
     shadow?: (boolean|Partial<ShadowOptionsObject>);
 
-    // TODO: mark as deprecated, add info for the new API, move to a11y dir
-    /**
-     * If set to `true`, the accessibility module will skip past the points
-     * in this series for keyboard navigation.
-     *
-     * @since 5.0.12
-     */
-    skipKeyboardNavigation?: boolean;
-
     /**
      * A collection of options for different series states.
      */
@@ -976,6 +997,26 @@ export interface SeriesOptions {
      */
     stickyTracking?: boolean;
 
+    /**
+     * When a series contains a `data` array that is longer than this, the
+     * Series class looks for data configurations of plain numbers or arrays of
+     * numbers. The first and last valid points are checked. If found, the rest
+     * of the data is assumed to be the same. This saves expensive data checking
+     * and indexing in long series, and makes data-heavy charts render faster.
+     *
+     * Set it to `0` disable.
+     *
+     * Note:
+     * - In boost mode turbo threshold is forced. Only array of numbers or two
+     *   dimensional arrays are allowed.
+     * - In version 11.4.3 and earlier, if object configurations were passed
+     *   beyond the turbo threshold, a warning was logged in the console and the
+     *   data series didn't render.
+     *
+     * @since   2.2
+     * @product highcharts highstock gantt
+     * @default 1000
+     */
     turboThreshold?: number;
 
     /**
@@ -1069,9 +1110,28 @@ export interface SeriesOptions {
      */
     zoneAxis?: 'x'|'y'|'z';
 
+    /**
+     * An array defining zones within a series. Zones can be applied to the
+     * X axis, Y axis or Z axis for bubbles, according to the `zoneAxis`
+     * option. The zone definitions have to be in ascending order regarding
+     * to the value.
+     *
+     * In styled mode, the color zones are styled with the
+     * `.highcharts-zone-{n}` class, or custom classed from the `className`
+     * option
+     * ([view live demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/color-zones/)).
+     *
+     * @see [zoneAxis](#plotOptions.series.zoneAxis)
+     *
+     * @sample {highcharts} highcharts/series/color-zones-simple/
+     *         Color zones
+     * @sample {highstock} highcharts/series/color-zones-simple/
+     *         Color zones
+     *
+     * @since   4.1.0
+     * @product highcharts highstock
+     */
     zones?: Array<SeriesZonesOptions>;
-    legendSymbol?: LegendSymbolType;
-    legendSymbolColor?: ColorType;
 }
 
 export interface SeriesPointOptions {
@@ -1301,10 +1361,56 @@ export type SeriesStepValue = ('center'|'left'|'right');
  * to the value.
  */
 export interface SeriesZonesOptions {
+    /**
+     * Styled mode only. A custom class name for the zone.
+     *
+     * @sample highcharts/css/color-zones/
+     *         Zones styled by class name
+     *
+     * @since 5.0.0
+     */
     className?: string;
+
+    /**
+     * Defines the color of the series.
+     *
+     * @see [series color](#plotOptions.series.color)
+     *
+     * @since   4.1.0
+     * @product highcharts highstock
+     */
     color?: ColorType;
+
+    /**
+     * A name for the dash style to use for the graph.
+     *
+     * @see [plotOptions.series.dashStyle](#plotOptions.series.dashStyle)
+     *
+     * @sample {highcharts|highstock} highcharts/series/color-zones-dashstyle-dot/
+     *         Dashed line indicates prognosis
+     *
+     * @since   4.1.0
+     * @product highcharts highstock
+     */
     dashStyle?: DashStyleValue;
+
+    /**
+     * Defines the fill color for the series (in area type series)
+     *
+     * @see [fillColor](#plotOptions.area.fillColor)
+     *
+     * @since   4.1.0
+     * @product highcharts highstock
+     */
     fillColor?: ColorType;
+
+    /**
+     * The value up to where the zone extends, if undefined the zones
+     * stretches to the last value in the series.
+     *
+     * @since   4.1.0
+     * @product highcharts highstock
+     */
     value?: number;
 }
 

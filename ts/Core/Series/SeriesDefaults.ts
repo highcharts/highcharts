@@ -344,14 +344,18 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      */
 
     /**
+     * Deprecated. Use
+     * [plotOptions.series.accessibility.description](#plotOptions.series.accessibility.description)
+     * instead.
+     *
      * A description of the series to add to the screen reader information
      * about the series.
      *
+     * @deprecated 8.0.0
      * @type      {string}
      * @since     5.0.0
      * @requires  modules/accessibility
      * @apioption plotOptions.series.description
-     * @deprecated 8.0.0
      */
 
     /**
@@ -568,7 +572,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
 
     /**
      * Deprecated. Use
-     * [plotOptions.series.accessibility.point.descriptionFormat](#plotOptions.series.accessibility.point.descriptionFormat)
+     * [series.accessibility.point.descriptionFormat](#plotOptions.series.accessibility.point.descriptionFormat)
      * instead.
      *
      * Same as
@@ -584,7 +588,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
 
     /**
      * Deprecated. Use
-     * [plotOptions.series.accessibility.point.descriptionFormatter](#plotOptions.series.accessibility.point.descriptionFormatter)
+     * [series.accessibility.point.descriptionFormatter](#plotOptions.series.accessibility.point.descriptionFormatter)
      * instead.
      *
      * Same as
@@ -594,7 +598,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @type       {Function}
      * @requires   modules/accessibility
      * @since      5.0.12
-     * @deprecated next
+     * @deprecated 8.0.0
      * @apioption  plotOptions.series.pointDescriptionFormatter
      */
 
@@ -801,12 +805,17 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      */
 
     /**
+     * Deprecated. Use
+     * [series.accessibility.keyboardNavigation](#plotOptions.series.accessibility.keyboardNavigation)
+     * instead.
+     *
      * If set to `true`, the accessibility module will skip past the points
      * in this series for keyboard navigation.
      *
-     * @type      {boolean}
-     * @since     5.0.12
-     * @apioption plotOptions.series.skipKeyboardNavigation
+     * @type       {boolean}
+     * @since      5.0.12
+     * @deprecated 8.0.0
+     * @apioption  plotOptions.series.skipKeyboardNavigation
      */
 
     /**

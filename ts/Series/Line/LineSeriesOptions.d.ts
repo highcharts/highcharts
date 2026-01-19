@@ -29,25 +29,18 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 export interface LineSeriesOptions extends SeriesOptions {
     allAreas?: boolean;
 
-    /**
-     * For some series, there is a limit that shuts down animation
-     * by default when the total number of points in the chart is too high.
-     * For example, for a column chart and its derivatives, animation does
-     * not run if there is more than 250 points totally. To disable this
-     * cap, set `animationLimit` to `Infinity`. This option works if animation
-     * is fired on individual points, not on a group of points like e.g. during
-     * the initial animation.
-     *
-     * @sample {highcharts} highcharts/plotoptions/series-animationlimit/
-     *         Animation limit on updating individual points
-     */
-    animationLimit?: number;
     boostThreshold?: number;
     borderColor?: ColorType;
     borderWidth?: number;
-    colorAxis?: boolean;
+
     connectEnds?: boolean;
     dataLabels?: (DataLabelOptions|Array<DataLabelOptions>);
+
+    /**
+     * @default 'lineMarker'
+     */
+    legendSymbol?: SeriesOptions['legendSymbol'];
+
     linkedTo?: string;
     pointStart?: number;
     states?: SeriesStatesOptions<LineSeriesOptions>;

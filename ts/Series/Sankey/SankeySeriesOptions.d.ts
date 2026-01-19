@@ -19,7 +19,10 @@
 
 import type ColorString from '../../Core/Color/ColorString';
 import type ColorType from '../../Core/Color/ColorType';
-import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
+import type {
+    ColumnSeriesOptions,
+    ColumnSeriesTooltipOptions
+} from '../Column/ColumnSeriesOptions';
 import type NodesComposition from '../NodesComposition';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type SankeyDataLabelOptions from './SankeyDataLabelOptions';
@@ -30,7 +33,6 @@ import type {
 } from './SankeyPointOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type Templating from '../../Core/Templating';
-import type TooltipOptions from '../../Core/TooltipOptions';
 
 /* *
  *
@@ -524,7 +526,7 @@ export interface SankeySeriesOptions extends ColumnSeriesOptions, NodesCompositi
 
 }
 
-export interface SankeySeriesTooltipOptions extends Partial<TooltipOptions> {
+export interface SankeySeriesTooltipOptions extends ColumnSeriesTooltipOptions {
     nodeFormat?: string;
     nodeFormatter?: Templating.FormatterCallback<SankeyPoint>;
 }
