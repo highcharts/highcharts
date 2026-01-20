@@ -33,6 +33,7 @@ import type { ColumnResizingMode } from './Table/ColumnResizing/ColumnResizing';
 import type { ColumnDataType } from './Table/Column';
 import type { DataProviderOptionsType } from './Data/DataProviderType';
 import type DataTable from '../../Data/DataTable';
+import type { CellType as DataTableCellType } from '../../Data/DataTable';
 import type DataTableOptions from '../../Data/DataTableOptions';
 import type Cell from './Table/Cell';
 import type Column from './Table/Column';
@@ -481,7 +482,7 @@ export interface ColumnSortingOptions {
      * A number indicating whether the first value (`a`) is less than (`-1`),
      * equal to (`0`), or greater than (`1`) the second value (`b`).
      */
-    compare?: (a: DataTable.CellType, b: DataTable.CellType) => number;
+    compare?: (a: DataTableCellType, b: DataTableCellType) => number;
 }
 
 /**

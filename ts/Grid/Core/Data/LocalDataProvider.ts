@@ -26,6 +26,10 @@ import type { DataProviderOptions } from './DataProvider';
 import type QueryingController from '../Querying/QueryingController';
 import type DataTableOptions from '../../../Data/DataTableOptions';
 import type { ColumnDataType } from '../Table/Column';
+import type {
+    RowObject as RowObjectType,
+    CellType as DataTableCellType
+} from '../../../Data/DataTable';
 
 import { DataProvider } from './DataProvider.js';
 import DataTable from '../../../Data/DataTable.js';
@@ -148,7 +152,7 @@ export class LocalDataProvider extends DataProvider {
 
     public override getRowObject(
         rowIndex: number
-    ): Promise<DataTable.RowObject | undefined> {
+    ): Promise<RowObjectType | undefined> {
         return Promise.resolve(this.presentationTable?.getRowObject(rowIndex));
     }
 
@@ -163,14 +167,14 @@ export class LocalDataProvider extends DataProvider {
     public override getValue(
         columnId: string,
         rowIndex: number
-    ): Promise<DataTable.CellType> {
+    ): Promise<DataTableCellType> {
         return Promise.resolve(
             this.presentationTable?.getCell(columnId, rowIndex)
         );
     }
 
     public override async setValue(
-        value: DataTable.CellType,
+        value: DataTableCellType,
         columnId: string,
         rowId: number
     ): Promise<void> {
