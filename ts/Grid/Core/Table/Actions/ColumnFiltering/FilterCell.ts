@@ -87,7 +87,7 @@ class FilterCell extends HeaderCell {
         fireEvent(this, 'afterRender', { column, filtering: true });
     }
 
-    protected override onKeyDown(e: KeyboardEvent): void {
+    public override onKeyDown(e: KeyboardEvent): void {
         this.column.filtering?.onKeyDown(e);
 
         if (e.target === this.htmlElement) {
@@ -103,7 +103,7 @@ class FilterCell extends HeaderCell {
         }
     }
 
-    protected override onClick(e: MouseEvent): void {
+    public override onClick(e: MouseEvent): void {
         if (e.target === this.htmlElement) {
             this.htmlElement.focus();
         }

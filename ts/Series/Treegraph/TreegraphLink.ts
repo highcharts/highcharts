@@ -56,7 +56,7 @@ export interface TreegraphLinkOptions extends OrganizationLinkOptions {
      * percentage defines the relative position on the link. For example, a
      * `bendAt` of `50%` means that the link bends in the middle.
      *
-     * @since next
+     * @since 12.5.0
      * @default '50%'
      */
     bendAt?: number|string;

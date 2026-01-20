@@ -1,0 +1,47 @@
+{
+  "parserOptions": {
+    "ecmaVersion": 2022,
+    "sourceType": "module"
+  },
+  "env": {
+    "es2022": true,
+    "node": true
+  },
+  "globals": {
+  },
+  "rules": {
+  },
+  "overrides": [{
+    "files": ["*.ts"],
+    "extends": [
+      "eslint:recommended",
+      "plugin:@typescript-eslint/eslint-recommended",
+      "plugin:@typescript-eslint/recommended",
+      "plugin:@typescript-eslint/recommended-requiring-type-checking"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+      "project": "./tools/sample-generator/tsconfig.json",
+      "sourceType": "module"
+    },
+    "rules": {
+      "func-style": 0,
+      "max-len": [
+        "error",
+          {
+                "code": 80,
+                "comments": 80,
+                "ignoreUrls": true
+            }
+     ],
+      "no-shadow": 0,
+      "node/no-unsupported-features/es-syntax": 0,
+      "@typescript-eslint/no-explicit-any": 0,
+      "@typescript-eslint/no-unsafe-argument": 0,
+      "@typescript-eslint/no-unsafe-call": 0,
+      "@typescript-eslint/no-unsafe-assignment": 0,
+      "@typescript-eslint/no-unsafe-member-access": 0,
+      "@typescript-eslint/no-unsafe-return": 0
+    }
+  }]
+}

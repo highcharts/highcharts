@@ -1,5 +1,5 @@
 ---
- name: Highcharts Demo
+ name: Demo of yAxis.reversedStacks
  authors:
    - Torstein Hønsi
  js_wrap: b

@@ -24,7 +24,7 @@
 
 import type Cell from '../Cell';
 import type Column from '../Column';
-import type DataTable from '../../../../Data/DataTable';
+import type { RowObject as DataTableRowObject } from '../../../../Data/DataTable';
 
 import Row from '../Row.js';
 import Table from '../Table.js';
@@ -52,7 +52,7 @@ class TableRow extends Row {
     /**
      * The row values from the data table in the original column order.
      */
-    public data: DataTable.RowObject = {};
+    public data: DataTableRowObject = {};
 
     /**
      * The local index of the row in the presentation data table.

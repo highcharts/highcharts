@@ -120,17 +120,44 @@ columns: [{
 }]
 ```
 
-The optional `sorting` object consists of three configuration options:
+The optional `sorting` object consists of four configuration options:
 
 - **`enabled`**: A boolean that determines whether the end user can sort a column by clicking on the column header.
 
-- **`order`**: Specifies the initial sorting order for a column. It can be set to `'asc'` (ascending) or `'desc'` (descending). Only the last one will be considered if `order` is defined in multiple columns.
+- **`order`**: Specifies the initial sorting order for a column. It can be set to `'asc'` (ascending) or `'desc'` (descending).
 
-- **`compare`**: Custom compare function to sort the column values. If not set, the default sorting behavior is used. It should return a number indicating whether the first value (`a`) is less than (`-1`), equal to (`0`), or greater than (`1`) the second value (`b`).
+- **`priority`**: Sets the priority of the column when sorting is defined for multiple columns, where lower numbers have higher priority (1 is primary, 2 is secondary, and so on). When no priority is set, the last column in the options list with `sorting.order` becomes the primary sort.
+
+    ```js
+    columns: [{
+        id: "group",
+        sorting: {
+            order: "asc",
+            priority: 2 // secondary sort
+        }
+    }, {
+        id: "score",
+        sorting: {
+            order: "asc",
+            priority: 1 // primary sort
+        }
+    }]
+    ```
+
+- **`compare`**: Custom compare function to sort the column values. If not set, the default sorting behavior is used. It should return a negative number if `a < b`, `0` if `a === b`, and a positive number if `a > b`.
 
 See the [API reference](https://api.highcharts.com/dashboards/#interfaces/Grid_Options.ColumnOptions#sorting).
 
 When the `enabled` option is `true`, clicking the header will toggle the sorting order.
+
+To build a multi-column sort, hold Shift while clicking additional headers. The order is shown as a priority indicator when more than one column is active. You can also set multi-column sorting programmatically, where the order in the array determines the priority (the first element is the primary sort):
+
+```js
+grid.setSorting([
+    { columnId: "group", order: "asc" }, // priority 1
+    { columnId: "score", order: "asc" } // priority 2
+]);
+```
 
 The sorting options are available for individual columns, but the default value for `enabled` can also be set in `columnDefaults.sorting.enabled`.
 

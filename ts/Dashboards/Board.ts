@@ -25,11 +25,15 @@
  * */
 
 import type Component from './Components/Component';
+import type { Options as ComponentOptions } from './Components/Component';
 import type ComponentType from './Components/ComponentType';
 import type DataPoolOptions from '../Data/DataPoolOptions';
 import type { DeepPartial } from '../Shared/Types';
 import type EditMode from './EditMode/EditMode';
+import type { Options as EditModeOptions } from './EditMode/EditMode';
 import type Fullscreen from './EditMode/Fullscreen';
+import type { Options as LayoutOptions } from './Layout/Layout';
+import type { MountedComponent } from './Actions/Bindings';
 
 import Bindings from './Actions/Bindings.js';
 import ComponentRegistry from './Components/ComponentRegistry.js';
@@ -104,7 +108,7 @@ class Board {
      */
     public static board(
         renderTo: (string | globalThis.HTMLElement),
-        options: Board.Options,
+        options: Options,
         async?: boolean
     ): Board;
 
@@ -123,14 +127,14 @@ class Board {
      */
     public static board(
         renderTo: (string | globalThis.HTMLElement),
-        options: Board.Options,
+        options: Options,
         async: true
     ): Promise<Board>;
 
     // Implementation:
     public static board(
         renderTo: (string | globalThis.HTMLElement),
-        options: Board.Options,
+        options: Options,
         async?: boolean
     ): (Board | Promise<Board>) {
         return new Board(renderTo, options).init(async);
@@ -155,7 +159,7 @@ class Board {
      */
     protected constructor(
         renderTo: (string | HTMLElement),
-        options: Board.Options
+        options: Options
     ) {
         this.options = merge(Defaults.defaultOptions, options);
         this.dataPool = new DataPool(options.dataPool);
@@ -270,12 +274,12 @@ class Board {
     /**
      * An array of mounted components on the dashboard.
      */
-    public mountedComponents: Array<Bindings.MountedComponent>;
+    public mountedComponents: Array<MountedComponent>;
 
     /**
      * The options for the dashboard.
      */
-    public options: Board.Options;
+    public options: Options;
 
     /**
      * Reference to ResizeObserver, which allows running 'unobserve'.
@@ -481,9 +485,9 @@ class Board {
      * @returns
      * Dashboards options.
      */
-    public getOptions(): DeepPartial<Board.Options> {
+    public getOptions(): DeepPartial<Options> {
         const board = this,
-            options: DeepPartial<Board.Options> = {
+            options: DeepPartial<Options> = {
                 ...this.options,
                 components: []
             };
@@ -505,7 +509,7 @@ class Board {
             };
             for (let i = 0, iEnd = board.layouts.length; i < iEnd; ++i) {
                 options.gui.layouts?.push(
-                    board.layouts[i].getOptions() as Layout.Options
+                    board.layouts[i].getOptions() as LayoutOptions
                 );
             }
         } else {
@@ -548,105 +552,90 @@ class Board {
 
 /* *
  *
- *  Class Namespace
+ *  Type Declarations
  *
  * */
 
-namespace Board {
-
-    /* *
-     *
-     *  Declarations
-     *
-     * */
-
+/**
+ * Options to configure the board.
+ **/
+export interface Options {
     /**
-     * Options to configure the board.
+     * Data pool with all of the connectors.
      **/
-    export interface Options {
-        /**
-         * Data pool with all of the connectors.
-         **/
-        dataPool?: DataPoolOptions;
-        /**
-         * Options for the GUI. Allows to define graphical elements and its
-         * layout.
-         **/
-        gui?: GUIOptions;
-        /**
-         * Options for the edit mode. Can be used to enable the edit mode and
-         * define all things related to it like the context menu.
-         **/
-        editMode?: EditMode.Options;
-        /**
-         * List of components to add to the board.
-         *
-         * Try it:
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/component-highcharts | Highcharts component}
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/component-html | HTML component}
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/component-kpi | KPI component}
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/custom-component | Custom component}
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/grid-component/grid-options | grid component}
-         *
-         **/
-        components?: Array<Partial<ComponentType['options']>>;
-        /**
-         * General options for the components.
-         **/
-        componentOptions?: Partial<Component.Options>;
-        /**
-         * Events related to the board.
-         */
-        events?: BoardEvents;
-    }
-
-    export interface GUIOptions {
-        /**
-         * Whether the GUI is enabled or not.
-         *
-         * @default true
-         **/
-        enabled?: boolean;
-        /**
-         * General options for the layouts applied to all layouts.
-         **/
-        layoutOptions?: Partial<Layout.Options>;
-        /**
-         * Allows to define graphical elements and its layout. The layout is
-         * defined by the row and cells. The row is a horizontal container for
-         * the cells. The cells are containers for the elements. The layouts
-         * can be nested inside the cells.
-         **/
-        layouts: Array<Layout.Options>;
-    }
-
+    dataPool?: DataPoolOptions;
+    /**
+     * Options for the GUI. Allows to define graphical elements and its
+     * layout.
+     **/
+    gui?: GUIOptions;
+    /**
+     * Options for the edit mode. Can be used to enable the edit mode and
+     * define all things related to it like the context menu.
+     **/
+    editMode?: EditModeOptions;
+    /**
+     * List of components to add to the board.
+     *
+     * Try it:
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/component-highcharts | Highcharts component}
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/component-html | HTML component}
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/component-kpi | KPI component}
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/custom-component | Custom component}
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/grid-component/grid-options | grid component}
+     *
+     **/
+    components?: Array<Partial<ComponentType['options']>>;
+    /**
+     * General options for the components.
+     **/
+    componentOptions?: Partial<ComponentOptions>;
     /**
      * Events related to the board.
      */
-    export interface BoardEvents {
-        /**
-         * Callback function to be called after the board and all components are
-         * initialized.
-         */
-        mounted: MountedEventCallback;
-    }
-
-
-    /**
-     * Callback function to be called when a board event is triggered.
-     */
-    export type MountedEventCallback = (this: Board) => void;
-    /* *
-     *
-     *  Constants
-     *
-     * */
+    events?: BoardEvents;
 }
+
+export interface GUIOptions {
+    /**
+     * Whether the GUI is enabled or not.
+     *
+     * @default true
+     **/
+    enabled?: boolean;
+    /**
+     * General options for the layouts applied to all layouts.
+     **/
+    layoutOptions?: Partial<LayoutOptions>;
+    /**
+     * Allows to define graphical elements and its layout. The layout is
+     * defined by the row and cells. The row is a horizontal container for
+     * the cells. The cells are containers for the elements. The layouts
+     * can be nested inside the cells.
+     **/
+    layouts: Array<LayoutOptions>;
+}
+
+/**
+ * Events related to the board.
+ */
+export interface BoardEvents {
+    /**
+     * Callback function to be called after the board and all components are
+     * initialized.
+     */
+    mounted: MountedEventCallback;
+}
+
+/**
+ * Callback function to be called when a board event is triggered.
+ */
+export type MountedEventCallback = (this: Board) => void;
 
 /* *
  *

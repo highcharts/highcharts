@@ -22,7 +22,7 @@
 
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type ColorString from '../Core/Color/ColorString';
-import type JSON from './JSON';
+import type { JSONObject } from './JSON';
 
 /* *
  *
@@ -30,7 +30,7 @@ import type JSON from './JSON';
  *
  * */
 
-export interface CSSJSONObject extends CSSObject, JSON.Object {
+export interface CSSJSONObject extends CSSObject, JSONObject {
     fill?: ColorString;
     stroke?: string;
 }

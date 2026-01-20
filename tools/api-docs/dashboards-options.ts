@@ -61,6 +61,14 @@ async function addOption(
         TSLib.extractInfoName(codeInfo)
     );
 
+    const isRootDefaultOptions = (
+        !parentItem &&
+        name === 'defaultOptions' &&
+        FSLib.path(codeInfo.meta.file, true).endsWith(
+            FSLib.path(['ts', 'Dashboards', 'Defaults.ts'], true)
+        )
+    );
+
     // Skip recursive traps
 
     const trailingReference =
@@ -283,7 +291,11 @@ async function addOption(
         }
 
         if (typeof item.name === 'string') {
-            item = await DATABASE.setItem(item);
+            item = (
+                isRootDefaultOptions ?
+                    void 0 :
+                    await DATABASE.setItem(item)
+            );
         } else {
             item = void 0;
         }
@@ -339,14 +351,19 @@ async function main() {
 
     // Load root options
 
-    await addOption(
-        void 0,
-        TSLib.resolveReference(
-            TSLib.getSourceInfo(FSLib.path('ts/Dashboards/Board.ts')),
-            'Board.defaultOptions'
-        ),
-        ''
-    );
+    const rootOptionsSourceInfo =
+        TSLib.getSourceInfo(FSLib.path('ts/Dashboards/Defaults.ts'));
+    const rootOptionsInfo =
+        TSLib.resolveReference(rootOptionsSourceInfo, 'defaultOptions');
+
+    if (!rootOptionsInfo) {
+        throw new Error(
+            'Unable to resolve Dashboards root options reference ' +
+            '`defaultOptions` in `ts/Dashboards/Defaults.ts`.'
+        );
+    }
+
+    await addOption(void 0, rootOptionsInfo, '');
 
     // Done
 

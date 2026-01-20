@@ -214,8 +214,8 @@ class AreaSeries extends LineSeries {
                 side: string
             ): void {
                 const point = points[i],
-                    stackedValues = stacking &&
-                        stacks[point.x as any].points[seriesIndex as any],
+                    stackedValues =
+                        stacking && (stacks[point.x].points[seriesIndex]),
                     nullVal = (point as any)[side + 'Null'] || 0,
                     cliffVal = (point as any)[side + 'Cliff'] || 0;
 
@@ -223,21 +223,15 @@ class AreaSeries extends LineSeries {
                     bottom,
                     isNull = true;
 
-                if (cliffVal || nullVal) {
-
-                    top = (nullVal ?
-                        (stackedValues as any)[0] :
-                        (stackedValues as any)[1]
+                if (stackedValues && (cliffVal || nullVal)) {
+                    top = (
+                        nullVal ? stackedValues[0] : stackedValues[1]
                     ) + cliffVal;
-                    bottom = (stackedValues as any)[0] + cliffVal;
+                    bottom = stackedValues[0] + cliffVal;
                     isNull = !!nullVal;
 
-                } else if (
-                    !stacking &&
-                    points[otherI] &&
-                    points[otherI].isNull
-                ) {
-                    top = bottom = threshold as any;
+                } else if (!stacking && points[otherI]?.isNull) {
+                    top = bottom = threshold;
                 }
 
                 // Add to the top and bottom line of the area

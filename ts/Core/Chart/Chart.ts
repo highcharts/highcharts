@@ -3043,6 +3043,7 @@ class Chart {
             creds = merge(
                 true, this.options.credits as Chart.CreditsOptions, credits
             );
+
         if (creds.enabled && !this.credits) {
 
             /**
@@ -3059,16 +3060,28 @@ class Chart {
                 0
             )
                 .addClass('highcharts-credits')
-                .on('click', function (): void {
-                    if (creds.href) {
-                        win.location.href = creds.href;
-                    }
+                .on('click', function (e: PointerEvent): void {
+                    // Fire the event with browser redirect as default function
+                    fireEvent(
+                        chart,
+                        'creditsClick',
+                        e as Event,
+                        (): void => {
+                            if (creds.href) {
+                                win.location.href = creds.href;
+                            }
+                        }
+                    );
                 })
                 .attr({
                     align: (creds.position as any).align,
                     zIndex: 8
                 });
 
+            // If creds.events?.click exists, add it as an event listener
+            if (creds.events?.click) {
+                addEvent(chart, 'creditsClick', creds.events.click);
+            }
 
             if (!chart.styledMode) {
                 this.credits.css(creds.style);
@@ -4660,6 +4673,28 @@ namespace Chart {
          * @default https://www.highcharts.com?credits
          */
         href?: string;
+
+        /**
+         * Events for the credits label.
+         *
+         * @declare Highcharts.CreditsEventsOptionsObject
+         */
+        events?: {
+            /**
+             * Callback function to handle click events on the credits label.
+             * The callback can call `event.preventDefault()` to prevent the
+             * default navigation behavior. Alternatively, you can add a general
+             * event handler using `Highcharts.addEvent(chart, 'creditsClick',
+             * callback)` instead of providing it in the options tree.
+             *
+             * @sample {highcharts} highcharts/credits/events-click/
+             *         Custom click handler
+             *
+             * @param {Event} event
+             *        The click event object.
+             */
+            click?: (event: Event) => void;
+        };
 
         /**
          * Credits for map source to be concatenated with conventional credit

@@ -17,7 +17,7 @@
  *
  * */
 
-import DataConverter from './DataConverter';
+import type { Options as DataConverterOptions } from './DataConverter';
 
 /* *
  *
@@ -28,7 +28,7 @@ import DataConverter from './DataConverter';
 /**
  * Options of the HTMLTableConverter.
  */
-export interface HTMLTableConverterOptions extends DataConverter.Options {
+export interface HTMLTableConverterOptions extends DataConverterOptions {
     startRow: number;
     endRow: number;
     startColumn: number;

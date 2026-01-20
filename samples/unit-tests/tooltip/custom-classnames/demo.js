@@ -101,7 +101,7 @@ QUnit.test(
         // Headless doesn't compute nested styles in CSS file, so it needs to be
         // appended via JS
         const style = document.createElement('style');
-        style.innerText = '.custom div { padding: 10px; }';
+        style.innerText = '.custom span { padding: 10px; }';
         document.head.appendChild(style);
 
         chart.update({

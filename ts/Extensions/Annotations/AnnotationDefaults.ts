@@ -49,7 +49,7 @@ const AnnotationDefaults: AnnotationOptions = {
     /**
      * A class name for styling by CSS.
      *
-     * @since next
+     * @since 12.5.0
      * @type      {string}
      * @apioption annotations.className
      */

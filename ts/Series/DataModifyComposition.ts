@@ -635,7 +635,7 @@ namespace DataModifyComposition {
                     } else {
                         const compareBase = this.series.options.compareBase;
 
-                        value = 100 * (value / compareValue) -
+                        value = 100 * (value / Math.abs(compareValue)) -
                             (compareBase === 100 ? 0 : 100);
                     }
 

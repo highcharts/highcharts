@@ -1,17 +1,21 @@
-QUnit.test('Compare to negative (#4661)', function (assert) {
-    var chart = $('#container')
-        .highcharts('StockChart', {
-            series: [
-                {
-                    data: [-100, -150, -125, -300, -250],
-                    compare: 'percent'
-                }
-            ]
-        })
-        .highcharts();
+QUnit.test('Compare to negative (#4661, #24031)', function (assert) {
+    const chart = Highcharts.stockChart('container', {
+        series: [
+            {
+                data: [-100, -150, -125, -300, -250],
+                compare: 'percent'
+            }
+        ]
+    });
 
     assert.strictEqual(typeof chart.yAxis[0].min, 'number', 'Has a minimum');
     assert.strictEqual(typeof chart.yAxis[0].max, 'number', 'Has a maximum');
+
+    assert.ok(
+        chart.series[0].dataModify.modifyValue(-150, 0) < 0,
+        `If parent series points values are decreasing, the compare percent
+        series modified values should also decrease. (#24031)`
+    );
 });
 
 QUnit.test('Compare in candlesticks', function (assert) {

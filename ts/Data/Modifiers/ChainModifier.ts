@@ -21,7 +21,11 @@
  * */
 
 import type ChainModifierOptions from './ChainModifierOptions';
-import type DataEvent from '../DataEvent';
+import type {
+    DataEvent,
+    DataEventCallback,
+    DataEventDetail
+} from '../DataEvent';
 import type DataModifierEvent from './DataModifierEvent';
 import type {
     DataModifierType,
@@ -72,7 +76,7 @@ class ChainModifier extends DataModifier {
     /**
      * Constructs an instance of the modifier chain.
      *
-     * @param {Partial<ChainModifier.Options>} [options]
+     * @param {Partial<ChainModifierOptions>} [options]
      * Options to configure the modifier chain.
      *
      * @param {...DataModifier} [chain]
@@ -142,12 +146,12 @@ class ChainModifier extends DataModifier {
      * @param {DataModifier} modifier
      * Configured modifier to add.
      *
-     * @param {DataEvent.Detail} [eventDetail]
+     * @param {DataEventDetail} [eventDetail]
      * Custom information for pending events.
      */
     public add(
         modifier: DataModifier,
-        eventDetail?: DataEvent.Detail
+        eventDetail?: DataEventDetail
     ): void {
         this.emit({
             type: 'addModifier',
@@ -167,10 +171,10 @@ class ChainModifier extends DataModifier {
     /**
      * Clears all modifiers from the chain.
      *
-     * @param {DataEvent.Detail} [eventDetail]
+     * @param {DataEventDetail} [eventDetail]
      * Custom information for pending events.
      */
-    public clear(eventDetail?: DataEvent.Detail): void {
+    public clear(eventDetail?: DataEventDetail): void {
         this.emit({
             type: 'clearChain',
             detail: eventDetail
@@ -193,7 +197,7 @@ class ChainModifier extends DataModifier {
      * @param {Highcharts.DataTable} table
      * Table to modify.
      *
-     * @param {DataEvent.Detail} [eventDetail]
+     * @param {DataEventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {Promise<Highcharts.DataTable>}
@@ -201,7 +205,7 @@ class ChainModifier extends DataModifier {
      */
     public async modify(
         table: DataTable,
-        eventDetail?: DataEvent.Detail
+        eventDetail?: DataEventDetail
     ): Promise<DataTable> {
         const modifiers = (
             this.options.reverse ?
@@ -241,7 +245,7 @@ class ChainModifier extends DataModifier {
      * @param {DataTable} table
      * Table to modify.
      *
-     * @param {DataEvent.Detail} [eventDetail]
+     * @param {DataEventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {DataTable}
@@ -252,7 +256,7 @@ class ChainModifier extends DataModifier {
      */
     public modifyTable(
         table: DataTable,
-        eventDetail?: DataEvent.Detail
+        eventDetail?: DataEventDetail
     ): DataTable {
         const chain = this;
 
@@ -299,12 +303,12 @@ class ChainModifier extends DataModifier {
      * @param {DataModifier} modifier
      * Configured modifier to remove.
      *
-     * @param {DataEvent.Detail} [eventDetail]
+     * @param {DataEventDetail} [eventDetail]
      * Custom information for pending events.
      */
     public remove(
         modifier: DataModifier,
-        eventDetail?: DataEvent.Detail
+        eventDetail?: DataEventDetail
     ): void {
         const modifiers = this.chain;
 
@@ -323,13 +327,13 @@ class ChainModifier extends DataModifier {
         });
     }
 
-    public override emit<E extends ChainModifier.Event>(e: E): void {
+    public override emit<E extends Event>(e: E): void {
         fireEvent(this, e.type, e);
     }
 
-    public override on<T extends ChainModifier.Event['type']>(
+    public override on<T extends Event['type']>(
         type: T,
-        callback: DataEvent.Callback<this, Extract<DataModifierEvent, {
+        callback: DataEventCallback<this, Extract<DataModifierEvent, {
             type: T
         }>>
     ): Function {
@@ -340,48 +344,35 @@ class ChainModifier extends DataModifier {
 
 /* *
  *
- *  Class Namespace
+ *  Declarations
  *
  * */
 
 /**
- * Additionally provided types for modifier events and options.
+ * Event information.
  */
-namespace ChainModifier {
+export type Event = ChainEvent | ModifierEvent;
 
-    /* *
-     *
-     *  Declarations
-     *
-     * */
+/**
+ * Event object
+ */
+export interface ChainEvent extends DataEvent {
+    readonly type: (
+        'clearChain'|'afterClearChain'|
+        DataModifierEvent['type']
+    );
+    readonly table?: DataTable;
+}
 
-    /**
-     * Event information.
-     */
-    export type Event = ChainEvent | ModifierEvent;
-
-    /**
-     * Event object
-     */
-    export interface ChainEvent extends DataEvent {
-        readonly type: (
-            'clearChain'|'afterClearChain'|
-            DataModifierEvent['type']
-        );
-        readonly table?: DataTable;
-    }
-
-    /**
-     * Event information for modifier operations.
-     */
-    export interface ModifierEvent extends DataEvent {
-        readonly type: (
-            'addModifier'|'afterAddModifier'|
-            'removeModifier'|'afterRemoveModifier'
-        );
-        readonly modifier: DataModifier;
-    }
-
+/**
+ * Event information for modifier operations.
+ */
+export interface ModifierEvent extends DataEvent {
+    readonly type: (
+        'addModifier'|'afterAddModifier'|
+        'removeModifier'|'afterRemoveModifier'
+    );
+    readonly modifier: DataModifier;
 }
 
 /* *

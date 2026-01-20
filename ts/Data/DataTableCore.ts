@@ -23,8 +23,14 @@
  * */
 
 
-import type DataEvent from './DataEvent.js';
-import type DataTable from './DataTable.js';
+import type { DataEventDetail } from './DataEvent.js';
+import type {
+    CellType as DataTableCellType,
+    Column as DataTableColumn,
+    ColumnCollection as DataTableColumnCollection,
+    Row as DataTableRow,
+    RowObject as DataTableRowObject
+} from './DataTable.js';
 import type DataTableOptions from './DataTableOptions.js';
 
 import ColumnUtils from './ColumnUtils.js';
@@ -115,7 +121,7 @@ class DataTableCore {
 
     public readonly autoId: boolean;
 
-    public readonly columns: Record<string, DataTable.Column>;
+    public readonly columns: Record<string, DataTableColumn>;
 
     public readonly id: string;
 
@@ -197,7 +203,7 @@ class DataTableCore {
         columnId: string,
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         asReference?: true
-    ): (DataTable.Column|undefined) {
+    ): (DataTableColumn|undefined) {
         return this.columns[columnId];
     }
 
@@ -216,13 +222,13 @@ class DataTableCore {
         columnIds?: Array<string>,
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         asReference?: true
-    ): DataTable.ColumnCollection {
+    ): DataTableColumnCollection {
         return (columnIds || Object.keys(this.columns)).reduce(
-            (columns, columnId): DataTable.ColumnCollection => {
+            (columns, columnId): DataTableColumnCollection => {
                 columns[columnId] = this.columns[columnId];
                 return columns;
             },
-            {} as DataTable.ColumnCollection
+            {} as DataTableColumnCollection
         );
     }
 
@@ -241,9 +247,9 @@ class DataTableCore {
     public getRow(
         rowIndex: number,
         columnIds?: Array<string>
-    ): (DataTable.Row|undefined) {
+    ): (DataTableRow|undefined) {
         return (columnIds || Object.keys(this.columns)).map(
-            (key): DataTable.CellType => this.columns[key]?.[rowIndex]
+            (key): DataTableCellType => this.columns[key]?.[rowIndex]
         );
     }
 
@@ -267,9 +273,9 @@ class DataTableCore {
      */
     public setColumn(
         columnId: string,
-        column: DataTable.Column = [],
+        column: DataTableColumn = [],
         rowIndex: number = 0,
-        eventDetail?: DataEvent.Detail
+        eventDetail?: DataEventDetail
     ): void {
         this.setColumns({ [columnId]: column }, rowIndex, eventDetail);
     }
@@ -293,9 +299,9 @@ class DataTableCore {
      * @emits #afterSetColumns
      */
     public setColumns(
-        columns: DataTable.ColumnCollection,
+        columns: DataTableColumnCollection,
         rowIndex?: number,
-        eventDetail?: DataEvent.Detail
+        eventDetail?: DataEventDetail
     ): void {
         let rowCount = this.rowCount;
         objectEach(columns, (column, columnId): void => {
@@ -330,10 +336,10 @@ class DataTableCore {
      * @emits #afterSetRows
      */
     public setRow(
-        row: DataTable.RowObject,
+        row: DataTableRowObject,
         rowIndex: number = this.rowCount,
         insert?: boolean,
-        eventDetail?: DataEvent.Detail
+        eventDetail?: DataEventDetail
     ): void {
         const { columns } = this,
             indexRowCount = insert ? this.rowCount + 1 : rowIndex + 1,

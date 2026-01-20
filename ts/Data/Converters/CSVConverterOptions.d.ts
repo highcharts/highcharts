@@ -19,7 +19,7 @@
 
 import type { CSVBeforeParseCallbackFunction } from '../Connectors/CSVConnectorOptions';
 
-import DataConverter from './DataConverter';
+import type { Options as DataConverterOptions } from './DataConverter';
 
 /* *
  *
@@ -30,7 +30,7 @@ import DataConverter from './DataConverter';
 /**
  * Options of the CSVConverter.
  */
-export interface CSVConverterOptions extends DataConverter.Options {
+export interface CSVConverterOptions extends DataConverterOptions {
     startRow: number;
     endRow: number;
     startColumn: number;

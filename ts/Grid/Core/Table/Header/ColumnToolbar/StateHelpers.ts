@@ -61,16 +61,28 @@ export function isFiltered(column: Column): boolean {
  */
 export function isSorted(column: Column, order?: ('asc'|'desc')): boolean {
     const {
-        currentSorting
+        currentSorting,
+        currentSortings
     } = column.viewport.grid.querying.sorting || {};
 
-    if (currentSorting?.columnId !== column.id) {
+    const columnSorting = (
+        currentSortings?.find((sorting): boolean =>
+            sorting.columnId === column.id
+        ) ||
+        (
+            currentSorting?.columnId === column.id ?
+                currentSorting :
+                void 0
+        )
+    );
+
+    if (!columnSorting?.order) {
         return false;
     }
 
     return order ?
-        currentSorting?.order === order :
-        !!currentSorting?.order;
+        columnSorting.order === order :
+        !!columnSorting.order;
 }
 
 

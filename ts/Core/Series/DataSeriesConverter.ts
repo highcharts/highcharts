@@ -21,10 +21,15 @@
  *
  * */
 
-import type DataEvent from '../../Data/DataEvent';
+import type { DataEventDetail } from '../../Data/DataEvent';
 import type LineSeries from '../../Series/Line/LineSeries';
 import type PointOptions from './PointOptions';
 import type SeriesOptions from './SeriesOptions';
+
+import type {
+    CellType,
+    RowObject
+} from '../../Data/DataTable.js';
 
 import DataTable from '../../Data/DataTable.js';
 import ColumnUtils from '../../Data/ColumnUtils.js';
@@ -183,16 +188,16 @@ class DataSeriesConverter {
      * @param {Array<LineSeries>} allSeries
      * Array of series options to store in the converter.
      *
-     * @param {DataEvent.Detail} eventDetail
+     * @param {DataEventDetail} eventDetail
      * Custom information for pending events.
      */
     public updateTable(
         allSeries: Array<LineSeries>,
-        eventDetail?: DataEvent.Detail
+        eventDetail?: DataEventDetail
     ): void {
         const table = this.table;
 
-        let columns: DataTable.RowObject,
+        let columns: RowObject,
             series,
             seriesMeta,
             pointArrayMap,
@@ -275,7 +280,7 @@ class DataSeriesConverter {
 
                     } else if (elem instanceof Object) {
                         if (needsArrayMap) {
-                            const elemSet = elem as Record<string, DataTable.CellType>;
+                            const elemSet = elem as Record<string, CellType>;
 
                             for (let k = 0; k < pointArrayMapLength; k++) {
                                 yValueName = pointArrayMap[k];

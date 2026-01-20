@@ -2139,9 +2139,6 @@ export interface YAxisOptions extends AxisOptions {
      */
     minColor?: ColorType;
 
-    /** @internal */
-    staticScale?: number;
-
     /**
      * Solid gauge series only. Color stops for the solid gauge. Use this
      * in cases where a linear gradient between a `minColor` and `maxColor`

@@ -1361,6 +1361,13 @@ class SVGElement implements SVGElementBase {
             { element = {} as DOMElementType, renderer, stops } = wrapper,
             ownerSVGElement = (element as SVGDOMElement).ownerSVGElement;
 
+        let parentToClean: (SVGElement|undefined) = (
+                element.nodeName === 'SPAN' &&
+                wrapper.parentGroup ||
+                void 0
+            ),
+            grandParent: SVGElement;
+
         // Remove events
         element.onclick = element.onmouseout = element.onmouseover =
             element.onmousemove = (element as any).point = null;
@@ -1394,6 +1401,18 @@ class SVGElement implements SVGElementBase {
 
         // Remove element
         wrapper.safeRemoveChild(element);
+
+        // In case of useHTML, clean up empty containers emulating SVG groups
+        // (#1960, #2393, #2697).
+        while (
+            parentToClean?.div &&
+            parentToClean.div.childNodes.length === 0
+        ) {
+            grandParent = (parentToClean as any).parentGroup;
+            wrapper.safeRemoveChild((parentToClean as any).div);
+            delete (parentToClean as any).div;
+            parentToClean = grandParent;
+        }
 
         // Remove from alignObjects
         if (wrapper.alignOptions) {
@@ -1698,26 +1717,24 @@ class SVGElement implements SVGElementBase {
      */
     public getBBoxCacheKey(keys: Array<any>): string|void {
 
-        let textStr = this.textStr;
-
         // Avoid undefined and null (#7316)
-        if (!defined(textStr)) {
-            return;
-        }
+        if (defined(this.textStr)) {
+            let textStr = '' + this.textStr;
 
-        // Since numerical labels appear a lot in a chart, we approximate that a
-        // label of n characters has the same bounding box as others of the same
-        // length. Unless there is inner HTML in the label. In that case, leave
-        // the numbers as is (#5899).
-        if (isString(textStr) && textStr.indexOf('<') === -1) {
-            textStr = textStr.replace(/\d/g, '0');
-        }
+            // Since numerical labels appear a lot in a chart, we approximate
+            // that a label of n characters has the same bounding box as others
+            // of the same length. Unless there is inner HTML in the label. In
+            // that case, leave the numbers as is (#5899).
+            if (textStr.indexOf('<') === -1) {
+                textStr = textStr.replace(/\d/g, '0');
+            }
 
-        // Properties that affect bounding box
-        return [
-            textStr,
-            ...keys
-        ].join(',');
+            // Properties that affect bounding box
+            return [
+                textStr,
+                ...keys
+            ].join(',');
+        }
     }
 
     /**
@@ -1901,7 +1918,7 @@ class SVGElement implements SVGElementBase {
          * @name Highcharts.SVGElement#element
          * @type {Highcharts.SVGDOMElement|Highcharts.HTMLDOMElement}
          */
-        this.element = nodeName === 'div' || nodeName === 'body' ?
+        this.element = nodeName === 'span' || nodeName === 'body' ?
             createElement(nodeName) as HTMLDOMElement :
             doc.createElementNS(this.SVG_NS, nodeName) as SVGDOMElement;
 
@@ -2334,6 +2351,7 @@ class SVGElement implements SVGElementBase {
             element,
             foreignObject,
             matrix,
+            padding,
             rotation = 0,
             rotationOriginX,
             rotationOriginY,
@@ -2365,6 +2383,18 @@ class SVGElement implements SVGElementBase {
                 (rotationOriginY ?? element.getAttribute('y') ?? this.y ?? 0) +
                 ')'
             );
+
+            // HTML labels rotation (#20685)
+            if (
+                text?.element.tagName === 'SPAN' &&
+                !text?.foreignObject
+            ) {
+                text.attr({
+                    rotation,
+                    rotationOriginX: (rotationOriginX || 0) - padding,
+                    rotationOriginY: (rotationOriginY || 0) - padding
+                });
+            }
         }
 
         // Apply scale

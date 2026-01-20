@@ -20,11 +20,16 @@
  *
  * */
 
-import type DataEvent from '../DataEvent';
+import type {
+    DataEventDetail
+} from '../DataEvent';
 import type InvertModifierOptions from './InvertModifierOptions';
 
 import DataModifier from './DataModifier.js';
-import DataTable from '../DataTable.js';
+import DataTable, {
+    type ColumnCollection as DataTableColumnCollection,
+    type Row as DataTableRow
+} from '../DataTable.js';
 import U from '../../Core/Utilities.js';
 const { merge } = U;
 
@@ -63,7 +68,7 @@ class InvertModifier extends DataModifier {
     /**
      * Constructs an instance of the invert modifier.
      *
-     * @param {Partial<InvertModifier.Options>} [options]
+     * @param {Partial<InvertModifierOptions>} [options]
      * Options to configure the invert modifier.
      */
     public constructor(
@@ -99,7 +104,7 @@ class InvertModifier extends DataModifier {
      * @param {DataTable} table
      * Table to invert.
      *
-     * @param {DataEvent.Detail} [eventDetail]
+     * @param {DataEventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {DataTable}
@@ -108,7 +113,7 @@ class InvertModifier extends DataModifier {
      */
     public override modifyTable(
         table: DataTable,
-        eventDetail?: DataEvent.Detail
+        eventDetail?: DataEventDetail
     ): DataTable {
         const modifier = this;
 
@@ -121,7 +126,7 @@ class InvertModifier extends DataModifier {
                     (table.deleteColumns(['columnIds']) || {})
                         .columnIds || []
                 ),
-                columns: DataTable.ColumnCollection = {},
+                columns: DataTableColumnCollection = {},
                 columnIds: Array<string> = [];
 
             for (let i = 0, iEnd = columnIdsColumn.length; i < iEnd; ++i) {
@@ -131,7 +136,7 @@ class InvertModifier extends DataModifier {
             for (
                 let i = 0,
                     iEnd = table.getRowCount(),
-                    row: (DataTable.Row|undefined);
+                    row: (DataTableRow|undefined);
                 i < iEnd;
                 ++i
             ) {
@@ -145,12 +150,12 @@ class InvertModifier extends DataModifier {
             modified.setColumns(columns);
 
         } else { // Regular table
-            const columns: DataTable.ColumnCollection = {};
+            const columns: DataTableColumnCollection = {};
 
             for (
                 let i = 0,
                     iEnd = table.getRowCount(),
-                    row: (DataTable.Row|undefined);
+                    row: (DataTableRow|undefined);
                 i < iEnd;
                 ++i
             ) {

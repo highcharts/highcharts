@@ -1,7 +1,20 @@
 <script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/highcharts-more.js"></script>
 <script src="https://code.highcharts.com/modules/coloraxis.js"></script>
-<script src="https://code.highcharts.com/modules/exporting.js"></script>
-<script src="https://code.highcharts.com/modules/export-data.js"></script>
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+<script src="https://code.highcharts.com/themes/adaptive.js"></script>
 
-<div id="container"></div>
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/controls@0.6.0" type="module"></script>
+
+<figure class="highcharts-figure">
+  <div id="container"></div>
+</figure>
+
+<div class="highcharts-controls-wrapper">
+  <highcharts-controls>
+    <highcharts-group header="Update options">
+      <highcharts-control type="number" path="colorAxis.width" value="50%"></highcharts-control>
+      <highcharts-control type="number" path="colorAxis.height" value="10" min="4" max="30"></highcharts-control>
+    </highcharts-group>
+  </highcharts-controls>
+</div>

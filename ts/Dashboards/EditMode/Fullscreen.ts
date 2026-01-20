@@ -146,8 +146,4 @@ class Fullscreen {
     }
 }
 
-namespace Fullscreen {
-
-}
-
 export default Fullscreen;

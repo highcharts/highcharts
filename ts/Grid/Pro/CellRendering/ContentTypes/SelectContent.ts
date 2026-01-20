@@ -22,7 +22,7 @@
  *
  * */
 
-import type DataTable from '../../../../Data/DataTable';
+import type { CellType as DataTableCellType } from '../../../../Data/DataTable';
 import type { EditModeContent } from '../../CellEditing/CellEditMode';
 import type SelectRenderer from '../Renderers/SelectRenderer';
 import type TableCell from '../../../Core/Table/Body/TableCell';
@@ -179,7 +179,7 @@ class SelectContent extends CellContentPro implements EditModeContent {
     /**
      * Gets the value of the select element.
      */
-    public get value(): DataTable.CellType {
+    public get value(): DataTableCellType {
         const val = this.select.value;
         switch (this.cell.column.dataType) {
             case 'datetime':

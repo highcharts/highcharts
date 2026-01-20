@@ -1,6 +1,6 @@
 ---
- name: Highcharts Demo
+ name: Demo of xAxis.gridLineInterpolation
  authors:
-   - Pawel Dalek
+   - Torstein Hønsi
  js_wrap: b
 ...

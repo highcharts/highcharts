@@ -42,14 +42,22 @@ import { Palette } from '../../Core/Color/Palettes.js';
 const exporting: ExportingOptions = {
 
     /**
-     * Allow HTML inside the chart (added through the `useHTML` options),
-     * directly in the exported image. This allows you to preserve complicated
-     * HTML structures like tables or bi-directional text in exported charts.
+     * Experimental setting to allow HTML inside the chart (added through
+     * the `useHTML` options), directly in the exported image. This allows
+     * you to preserve complicated HTML structures like tables or bi-directional
+     * text in exported charts.
      *
+     * Disclaimer: The HTML is rendered in a `foreignObject` tag in the
+     * generated SVG. The official export server is based on PhantomJS,
+     * which supports this, but other SVG clients, like Batik, does not
+     * support it. This also applies to downloaded SVG that you want to
+     * open in a desktop client.
+     *
+     * @type      {boolean}
+     * @default   false
      * @since     4.1.8
      * @apioption exporting.allowHTML
      */
-    allowHTML: true,
 
     /**
      * Allows the end user to sort the data table by clicking on column headers.
