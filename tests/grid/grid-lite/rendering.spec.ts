@@ -25,9 +25,16 @@ test.describe('Rendering types and formatters', () => {
         await expect(cell).toHaveText('');
     });
 
+    test('When header formatter returns null, the header should display column id as fallback', async ({ page }) => {
+        await expect(page.locator('th[data-column-id="date"]')).toHaveText('date');
+    });
+
+    test('When header formatter returns empty string, the header should display column id as fallback', async ({ page }) => {
+        await expect(page.locator('th[data-column-id="thousands"]')).toHaveText('thousands');
+    });
+
     test('Lang options should be used for number formatting', async ({ page }) => {
         await expect(page.locator('td[data-column-id="thousands"]').first()).toHaveText('12_452|4524');
         await expect(page.locator('td[data-column-id="thousands"]').nth(2)).toHaveText('1_234');
     });
 });
-

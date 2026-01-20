@@ -24,12 +24,19 @@
  *
  * */
 
-import type DataEvent from '../DataEvent';
+import type {
+    DataEventDetail
+} from '../DataEvent';
 import type GoogleSheetsConnectorOptions from './GoogleSheetsConnectorOptions';
 import type { GoogleSpreadsheetJSON } from '../Converters/GoogleSheetsConverterOptions';
-import type DataTable from '../DataTable';
+import type {
+    ColumnCollection as DataTableColumnCollection
+} from '../DataTable';
+import type { AnyRecord } from '../../Shared/Types';
 
-import DataConnector from './DataConnector.js';
+import DataConnector, {
+    type Event as DataConnectorEvent
+} from './DataConnector.js';
 import GoogleSheetsConverter from '../Converters/GoogleSheetsConverter.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -50,7 +57,7 @@ interface GoogleError {
         message: string;
         status: string;
         details?: unknown;
-    }
+    };
 }
 
 /* *
@@ -68,10 +75,10 @@ function isGoogleError(
 ): json is GoogleError {
     return (
         typeof json === 'object' && json &&
-        typeof json.error === 'object' && json.error &&
-        typeof json.error.code === 'number' &&
-        typeof json.error.message === 'string' &&
-        typeof json.error.status === 'string'
+typeof json.error === 'object' && json.error &&
+typeof json.error.code === 'number' &&
+typeof json.error.message === 'string' &&
+typeof json.error.status === 'string'
     );
 }
 
@@ -88,10 +95,10 @@ function isGoogleError(
 class GoogleSheetsConnector extends DataConnector {
 
     /* *
-     *
-     *  Static Properties
-     *
-     * */
+ *
+ *  Static Properties
+ *
+ * */
 
     protected static readonly defaultOptions: GoogleSheetsConnectorOptions = {
         id: 'google-sheets-connector',
@@ -104,17 +111,17 @@ class GoogleSheetsConnector extends DataConnector {
     };
 
     /* *
-     *
-     *  Constructor
-     *
-     * */
+ *
+ *  Constructor
+ *
+ * */
 
     /**
-     * Constructs an instance of GoogleSheetsConnector
-     *
-     * @param {Partial<GoogleSheetsConnectorOptions>} [options]
-     * Options for the connector and converter.
-     */
+ * Constructs an instance of GoogleSheetsConnector
+ *
+ * @param {Partial<GoogleSheetsConnectorOptions>} [options]
+ * Options for the connector and converter.
+ */
     public constructor(options: Partial<GoogleSheetsConnectorOptions>) {
         const mergedOptions = merge(
             GoogleSheetsConnector.defaultOptions,
@@ -126,45 +133,45 @@ class GoogleSheetsConnector extends DataConnector {
     }
 
     /* *
-     *
-     *  Properties
-     *
-     * */
+ *
+ *  Properties
+ *
+ * */
 
     public readonly options: GoogleSheetsConnectorOptions;
 
     /**
-     * The attached converter, which can be replaced in the constructor
-     */
+ * The attached converter, which can be replaced in the constructor
+ */
     public converter?: GoogleSheetsConverter;
 
     /* *
-     *
-     *  Functions
-     *
-     * */
+ *
+ *  Functions
+ *
+ * */
 
     /**
-     * Overrides the DataConnector method. Emits an event on the connector to
-     * all registered callbacks of this event.
-     *
-     * @param {GoogleSheetsConnector.Event} e
-     * Event object containing additional event information.
-     */
-    public emit(e: GoogleSheetsConnector.Event): void {
+ * Overrides the DataConnector method. Emits an event on the connector to
+ * all registered callbacks of this event.
+ *
+ * @param {Event} e
+ * Event object containing additional event information.
+ */
+    public emit(e: Event): void {
         fireEvent(this, e.type, e);
     }
 
     /**
-     * Loads data from a Google Spreadsheet.
-     *
-     * @param {DataEvent.Detail} [eventDetail]
-     * Custom information for pending events.
-     *
-     * @return {Promise<this>}
-     * Same connector instance with modified table.
-     */
-    public load(eventDetail?: DataEvent.Detail): Promise<this> {
+ * Loads data from a Google Spreadsheet.
+ *
+ * @param {DataEventDetail} [eventDetail]
+ * Custom information for pending events.
+ *
+ * @return {Promise<this>}
+ * Same connector instance with modified table.
+ */
+    public load(eventDetail?: DataEventDetail): Promise<this> {
         const connector = this;
         const options = connector.options;
         const {
@@ -174,7 +181,7 @@ class GoogleSheetsConnector extends DataConnector {
             googleSpreadsheetKey,
             dataTables
         } = options;
-        const url = GoogleSheetsConnector.buildFetchURL(
+        const url = buildFetchURL(
             googleAPIKey,
             googleSpreadsheetKey,
             options
@@ -220,7 +227,7 @@ class GoogleSheetsConnector extends DataConnector {
                         };
                         return new GoogleSheetsConverter(converterOptions);
                     },
-                    (converter, data): DataTable.ColumnCollection =>
+                    (converter, data): DataTableColumnCollection =>
                         converter.parse({ json: data })
                 );
                 return connector.applyTableModifiers();
@@ -251,101 +258,90 @@ class GoogleSheetsConnector extends DataConnector {
             });
     }
 }
-
 /* *
  *
- *  Class Namespace
+ *  Declarations
  *
  * */
 
-namespace GoogleSheetsConnector {
-
-    /* *
-     *
-     *  Declarations
-     *
-     * */
-
-    export interface Event extends DataConnector.Event {
-        readonly url?: string;
-    }
-
-    export interface FetchURLOptions {
-        onlyColumnIds?: boolean;
-    }
-
-    /* *
-     *
-     *  Constants
-     *
-     * */
-
-    const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-
-    /* *
-     *
-     *  Functions
-     *
-     * */
-
-    /**
-     * Creates GoogleSheets API v4 URL.
-     * @private
-     */
-    export function buildFetchURL(
-        apiKey: string,
-        sheetKey: string,
-        options: Partial<(FetchURLOptions & GoogleSheetsConnectorOptions)> = {}
-    ): string {
-        const url = new URL(`https://sheets.googleapis.com/v4/spreadsheets/${sheetKey}/values/`);
-
-        const range = options.onlyColumnIds ?
-            'A1:Z1' : buildQueryRange(options);
-        url.pathname += range;
-
-        const searchParams = url.searchParams;
-        searchParams.set('alt', 'json');
-
-        if (!options.onlyColumnIds) {
-            searchParams.set('dateTimeRenderOption', 'FORMATTED_STRING');
-            searchParams.set('majorDimension', 'COLUMNS');
-            searchParams.set('valueRenderOption', 'UNFORMATTED_VALUE');
-        }
-        searchParams.set('prettyPrint', 'false');
-        searchParams.set('key', apiKey);
-
-        return url.href;
-    }
-
-    /**
-     * Creates sheets range.
-     * @private
-     */
-    export function buildQueryRange(
-        options: Partial<GoogleSheetsConnectorOptions> = {}
-    ): string {
-        const {
-            endColumn,
-            endRow,
-            googleSpreadsheetRange,
-            startColumn,
-            startRow
-        } = options;
-
-        return googleSpreadsheetRange || (
-            (alphabet[startColumn || 0] || 'A') +
-            (Math.max((startRow || 0), 0) + 1) +
-            ':' +
-            (alphabet[pick(endColumn, 25)] || 'Z') +
-            (
-                endRow ?
-                    Math.max(endRow, 0) :
-                    'Z'
-            )
-        );
-    }
+export interface Event extends DataConnectorEvent {
+    readonly url?: string;
 }
 
+export interface FetchURLOptions {
+    onlyColumnIds?: boolean;
+}
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+/* *
+ *
+ *  Functions
+ *
+ * */
+
+/**
+ * Creates GoogleSheets API v4 URL.
+ * @private
+ */
+export function buildFetchURL(
+    apiKey: string,
+    sheetKey: string,
+    options: Partial<(FetchURLOptions & GoogleSheetsConnectorOptions)> = {}
+): string {
+    const url = new URL(`https://sheets.googleapis.com/v4/spreadsheets/${sheetKey}/values/`);
+
+    const range = options.onlyColumnIds ?
+        'A1:Z1' : buildQueryRange(options);
+    url.pathname += range;
+
+    const searchParams = url.searchParams;
+    searchParams.set('alt', 'json');
+
+    if (!options.onlyColumnIds) {
+        searchParams.set('dateTimeRenderOption', 'FORMATTED_STRING');
+        searchParams.set('majorDimension', 'COLUMNS');
+        searchParams.set('valueRenderOption', 'UNFORMATTED_VALUE');
+    }
+    searchParams.set('prettyPrint', 'false');
+    searchParams.set('key', apiKey);
+
+    return url.href;
+}
+
+/**
+ * Creates sheets range.
+ * @private
+ */
+export function buildQueryRange(
+    options: Partial<GoogleSheetsConnectorOptions> = {}
+): string {
+    const {
+        endColumn,
+        endRow,
+        googleSpreadsheetRange,
+        startColumn,
+        startRow
+    } = options;
+
+    return googleSpreadsheetRange || (
+        (alphabet[startColumn || 0] || 'A') +
+        (Math.max((startRow || 0), 0) + 1) +
+        ':' +
+        (alphabet[pick(endColumn, 25)] || 'Z') +
+        (
+            endRow ?
+                Math.max(endRow, 0) :
+                'Z'
+        )
+    );
+}
 /* *
  *
  *  Declarations

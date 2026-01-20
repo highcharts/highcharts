@@ -37,4 +37,4 @@ Highcharts.chart('container', {
     series: [{
         data: [30]
     }]
-} satisfies Highcharts.Options);
+});

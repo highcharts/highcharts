@@ -24,7 +24,10 @@ import type Chart from '../Chart/Chart';
 import type ColorType from '../Color/ColorType';
 import type DataExtremesObject from './DataExtremesObject';
 import type DataLabelOptions from './DataLabelOptions';
-import type DataTable from '../../Data/DataTable';
+import type {
+    Column,
+    ColumnCollection
+} from '../../Data/DataTable';
 import type { DeepPartial } from '../../Shared/Types';
 import type { EventCallback } from '../Callback';
 import type KDPointSearchObjectBase from './KDPointSearchObjectBase';
@@ -1504,10 +1507,10 @@ class Series {
 
                         table.setColumns(dataColumnKeys.reduce(
                             (columns, columnId, i):
-                            DataTable.ColumnCollection => {
+                            ColumnCollection => {
                                 columns[columnId] = colArray[i];
                                 return columns;
-                            }, {} as DataTable.ColumnCollection));
+                            }, {} as ColumnCollection));
 
                     } else { // [x, y]
                         if (keys) {
@@ -1525,16 +1528,19 @@ class Series {
                         const xData: Array<number> = [],
                             valueData: Array<number|null> = [];
 
-                        if (indexOfX === indexOfY) {
-                            for (const pt of data) {
+                        for (const pt of data) {
+                            if (indexOfX === indexOfY) {
                                 xData.push(this.autoIncrement());
-                                valueData.push((pt as any)[indexOfY]);
+                            } else {
+                                xData.push(
+                                    (pt as any)[indexOfX] ?? (pt as any).x ??
+                                        null
+                                );
                             }
-                        } else {
-                            for (const pt of data) {
-                                xData.push((pt as any)[indexOfX]);
-                                valueData.push((pt as any)[indexOfY]);
-                            }
+
+                            valueData.push(
+                                (pt as any)[indexOfY] ?? (pt as any).y ?? null
+                            );
                         }
                         table.setColumns({
                             x: xData,
@@ -1551,10 +1557,10 @@ class Series {
             if (!runTurbo) {
                 const columns = dataColumnKeys.reduce(
                     (columns, columnId):
-                    DataTable.ColumnCollection => {
+                    ColumnCollection => {
                         columns[columnId] = [];
                         return columns;
-                    }, {} as DataTable.ColumnCollection);
+                    }, {} as ColumnCollection);
                 for (i = 0; i < dataLength; i++) {
                     const pt = series.pointClass.prototype.applyOptions.apply(
                         { series },
@@ -1843,7 +1849,7 @@ class Series {
     ): Series.CropDataObject {
         const xData = table.getColumn('x', true) as Array<number> || [],
             dataLength = xData.length,
-            columns: DataTable.ColumnCollection = {};
+            columns: ColumnCollection = {};
 
         let i,
             j,
@@ -2090,7 +2096,7 @@ class Series {
             yAxisData = customData ?
                 [customData] :
                 (this.keysAffectYAxis || this.pointArrayMap || ['y'])?.map(
-                    (key): DataTable.Column => table.getColumn(key, true) || []
+                    (key): Column => table.getColumn(key, true) || []
                 ) || [],
             xData = this.getColumn('x', true),
             activeYData: number[] = [],

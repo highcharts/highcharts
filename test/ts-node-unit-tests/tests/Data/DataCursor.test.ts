@@ -1,7 +1,12 @@
 import { describe, it } from 'node:test';
 import { deepStrictEqual, strictEqual, ok } from 'node:assert';
 
-import DataCursor from '../../../../ts/Data/DataCursor';
+import DataCursor, { isEqual, isInRange, toRange } from '../../../../ts/Data/DataCursor';
+import type {
+    Event as DataCursorEvent,
+    Range as DataCursorRange,
+    Type as DataCursorType
+} from '../../../../ts/Data/DataCursor';
 import DataTable from '../../../../ts/Data/DataTable';
 
 describe('DataCursor', () => {
@@ -20,16 +25,16 @@ describe('DataCursor', () => {
             let test3Called = false;
             let test2Scope: DataCursor | undefined;
             let test3Scope: DataCursor | undefined;
-            let test2Event: DataCursor.Event | undefined;
-            let test3Event: DataCursor.Event | undefined;
+            let test2Event: DataCursorEvent | undefined;
+            let test3Event: DataCursorEvent | undefined;
 
             cursor
-                .addListener(table.id, 'test2', function (this: DataCursor, e: DataCursor.Event) {
+                .addListener(table.id, 'test2', function (this: DataCursor, e: DataCursorEvent) {
                     test2Called = true;
                     test2Scope = this;
                     test2Event = e;
                 })
-                .addListener(table.id, 'test3', function (this: DataCursor, e: DataCursor.Event) {
+                .addListener(table.id, 'test3', function (this: DataCursor, e: DataCursorEvent) {
                     test3Called = true;
                     test3Scope = this;
                     test3Event = e;
@@ -59,7 +64,7 @@ describe('DataCursor', () => {
             ok(test2Called, 'test2 listener should be called');
             strictEqual(test2Scope, cursor, 'Listener scope should be a DataCursor instance by default.');
 
-            const expectedCursor2: DataCursor.Type = {
+            const expectedCursor2: DataCursorType = {
                 type: 'range',
                 firstRow: 2,
                 lastRow: 9,
@@ -73,7 +78,7 @@ describe('DataCursor', () => {
             ok(test3Called, 'test3 listener should be called');
             strictEqual(test3Scope, cursor, 'Listener scope should be a DataCursor instance by default.');
 
-            const expectedCursor3: DataCursor.Type = {
+            const expectedCursor3: DataCursorType = {
                 type: 'range',
                 firstRow: 0,
                 lastRow: 2,
@@ -89,7 +94,7 @@ describe('DataCursor', () => {
         describe('position cursors', () => {
             it('should be equal with same state', () => {
                 ok(
-                    DataCursor.isEqual({
+                    isEqual({
                         type: 'position',
                         state: 'test1'
                     }, {
@@ -102,7 +107,7 @@ describe('DataCursor', () => {
 
             it('should not be equal with different state', () => {
                 ok(
-                    !DataCursor.isEqual({
+                    !isEqual({
                         type: 'position',
                         state: 'test2a'
                     }, {
@@ -115,7 +120,7 @@ describe('DataCursor', () => {
 
             it('should be equal with same column', () => {
                 ok(
-                    DataCursor.isEqual({
+                    isEqual({
                         type: 'position',
                         column: 'a',
                         state: 'test3'
@@ -130,7 +135,7 @@ describe('DataCursor', () => {
 
             it('should not be equal with different column', () => {
                 ok(
-                    !DataCursor.isEqual({
+                    !isEqual({
                         type: 'position',
                         column: 'a',
                         state: 'test4'
@@ -145,7 +150,7 @@ describe('DataCursor', () => {
 
             it('should not be equal when one has row and other does not', () => {
                 ok(
-                    !DataCursor.isEqual({
+                    !isEqual({
                         type: 'position',
                         column: 'a',
                         row: 0,
@@ -161,7 +166,7 @@ describe('DataCursor', () => {
 
             it('should be equal with same row', () => {
                 ok(
-                    DataCursor.isEqual({
+                    isEqual({
                         type: 'position',
                         column: 'a',
                         row: 0,
@@ -178,7 +183,7 @@ describe('DataCursor', () => {
 
             it('should not be equal with different column and row (including NaN)', () => {
                 ok(
-                    !DataCursor.isEqual({
+                    !isEqual({
                         type: 'position',
                         column: 'a',
                         row: 0,
@@ -186,7 +191,7 @@ describe('DataCursor', () => {
                     }, {
                         type: 'position',
                         column: 'b',
-                        row: NaN,
+                        row: Number.NaN,
                         state: 'test7'
                     }),
                     'Cursors should not be equal.'
@@ -197,7 +202,7 @@ describe('DataCursor', () => {
         describe('mixed cursor types', () => {
             it('should not be equal when types differ', () => {
                 ok(
-                    !DataCursor.isEqual({
+                    !isEqual({
                         type: 'position',
                         column: 'a',
                         row: 0,
@@ -217,7 +222,7 @@ describe('DataCursor', () => {
         describe('range cursors', () => {
             it('should be equal with same range', () => {
                 ok(
-                    DataCursor.isEqual({
+                    isEqual({
                         type: 'range',
                         firstRow: 0,
                         lastRow: 1,
@@ -235,7 +240,7 @@ describe('DataCursor', () => {
 
             it('should not be equal with different range', () => {
                 ok(
-                    !DataCursor.isEqual({
+                    !isEqual({
                         type: 'range',
                         firstRow: 0,
                         lastRow: 1,
@@ -252,7 +257,7 @@ describe('DataCursor', () => {
 
             it('should be equal with empty columns arrays', () => {
                 ok(
-                    DataCursor.isEqual({
+                    isEqual({
                         type: 'range',
                         columns: [],
                         firstRow: 0,
@@ -271,7 +276,7 @@ describe('DataCursor', () => {
 
             it('should not be equal with different columns', () => {
                 ok(
-                    !DataCursor.isEqual({
+                    !isEqual({
                         type: 'range',
                         columns: ['a'],
                         firstRow: 0,
@@ -291,7 +296,7 @@ describe('DataCursor', () => {
     });
 
     describe('isInRange', () => {
-        const cursorRange: DataCursor.Range = {
+        const cursorRange: DataCursorRange = {
             type: 'range',
             columns: ['a', 'b', 'c'],
             firstRow: 0,
@@ -301,7 +306,7 @@ describe('DataCursor', () => {
 
         it('should be in range with valid column', () => {
             ok(
-                DataCursor.isInRange({
+                isInRange({
                     type: 'position',
                     column: 'a',
                     state: 'test1'
@@ -312,7 +317,7 @@ describe('DataCursor', () => {
 
         it('should not be in range with invalid column', () => {
             ok(
-                !DataCursor.isInRange({
+                !isInRange({
                     type: 'position',
                     column: 'z',
                     state: 'test2'
@@ -323,7 +328,7 @@ describe('DataCursor', () => {
 
         it('should be in range with valid column and row', () => {
             ok(
-                DataCursor.isInRange({
+                isInRange({
                     type: 'position',
                     column: 'b',
                     row: 2,
@@ -335,7 +340,7 @@ describe('DataCursor', () => {
 
         it('should not be in range with row out of range', () => {
             ok(
-                !DataCursor.isInRange({
+                !isInRange({
                     type: 'position',
                     column: 'b',
                     row: 20,
@@ -347,7 +352,7 @@ describe('DataCursor', () => {
 
         it('should not be in range with invalid column and valid row', () => {
             ok(
-                !DataCursor.isInRange({
+                !isInRange({
                     type: 'position',
                     column: 'z',
                     row: 2,
@@ -361,7 +366,7 @@ describe('DataCursor', () => {
     describe('toRange', () => {
         it('should convert position with column to range', () => {
             deepStrictEqual(
-                DataCursor.toRange({
+                toRange({
                     type: 'position',
                     column: 'a',
                     state: 'test1'
@@ -379,7 +384,7 @@ describe('DataCursor', () => {
 
         it('should convert position with column and row to range', () => {
             deepStrictEqual(
-                DataCursor.toRange({
+                toRange({
                     type: 'position',
                     column: 'b',
                     row: 343,
@@ -398,7 +403,7 @@ describe('DataCursor', () => {
 
         it('should convert position with only row to range', () => {
             deepStrictEqual(
-                DataCursor.toRange({
+                toRange({
                     type: 'position',
                     row: 729,
                     state: 'test2'

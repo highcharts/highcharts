@@ -23,7 +23,7 @@ import type PositionObject from '../Renderer/PositionObject';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 
 import Geometry from './GeometryUtilities.js';
-import Utilities from '../Utilities';
+import Utilities from '../Utilities.js';
 const {
     getAngleBetweenPoints,
     getCenterOfPoints,
