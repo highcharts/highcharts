@@ -87,8 +87,8 @@ width**.
 
 If left `undefined`, the column will expand to fill any remaining space.
 
-A width of `'auto'` is equivalent to an undefined width, but it takes
-precedence over `columnDefaults.width`.
+A width of `'auto'` is equivalent to an undefined width, and takes
+precedence over `columnDefaults.width` if defined using `columns[].width`.
 
 ### Example 1
 
