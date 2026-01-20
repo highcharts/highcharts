@@ -92,6 +92,9 @@ Grid.grid('container', {
             gridOptions: {
                 caption: { text: 'Mobile: compact view' },
                 header: ['firstName', 'mobile', 'street'],
+                rendering: {
+                    theme: 'hcg-theme-default theme-mobile'
+                },
                 columns: [{
                     id: 'firstName',
                     cells: {
