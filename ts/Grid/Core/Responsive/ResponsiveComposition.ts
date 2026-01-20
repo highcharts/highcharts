@@ -328,17 +328,29 @@ declare module '../Options' {
 
 declare module '../Grid' {
     export default interface Grid {
-        /** @private */
+        /**
+         * Tracks the ResizeObserver instance for the grid.
+         * @private
+         */
         resizeObserver?: ResizeObserver;
-        /** @private */
+        /**
+         * Cache of currently active responsive rules.
+         * @private
+         */
         activeRules?: Set<RuleOptions>;
-        /** @private */
+        /**
+         * Stores merged responsive options and undo data.
+         * @private
+         */
         currentResponsive?: {
             ruleIds?: string;
             mergedOptions: DeepPartial<Options>;
             undoOptions: DeepPartial<Options>;
         };
-        /** @private */
+        /**
+         * Prevents recursive updates during responsive changes.
+         * @private
+         */
         updatingResponsive?: boolean;
     }
 }
