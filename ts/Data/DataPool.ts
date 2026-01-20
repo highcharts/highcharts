@@ -317,13 +317,33 @@ class DataPool implements DataEventEmitter<Event> {
     }
 
 
+    public setConnectorOptions(
+        options: DataConnectorTypeOptions,
+        update?: boolean
+    ): void;
+
+    public setConnectorOptions(
+        options: DataConnectorTypeOptions,
+        update: true
+    ): Promise<void>;
+
+
     /**
      * Sets connector options under the specified `options.id`.
      *
      * @param options
      * Connector options to set.
+     *
+     * @param update
+     * Whether to update the existing connector with the new options and reload
+     * it (`true`) or replace it with a new connector instance (`false`).
+     *
+     * @default true
      */
-    public setConnectorOptions(options: DataConnectorTypeOptions): void {
+    public async setConnectorOptions(
+        options: DataConnectorTypeOptions,
+        update?: boolean
+    ): Promise<void> {
         const connectorsOptions = this.options.connectors;
         const connectorsInstances = this.connectors;
 
@@ -339,13 +359,22 @@ class DataPool implements DataEventEmitter<Event> {
             }
         }
 
-        // TODO: Check if can be refactored
-        if (connectorsInstances[options.id]) {
-            connectorsInstances[options.id].stopPolling();
-            delete connectorsInstances[options.id];
+        let existingConnector: DataConnectorType | undefined =
+            connectorsInstances[options.id];
+
+        if (existingConnector) {
+            if (update) {
+                await existingConnector.update(options, true);
+            } else {
+                existingConnector.stopPolling();
+                existingConnector = void 0;
+                delete connectorsInstances[options.id];
+            }
         }
 
-        connectorsOptions.push(options);
+        if (!existingConnector) {
+            connectorsOptions.push(options);
+        }
 
         this.emit({
             type: 'afterSetConnectorOptions',
