@@ -2968,16 +2968,31 @@ class Chart {
         ) {
 
             const tempWidth = chart.plotWidth,
-                tempHeight = chart.plotHeight;
+                tempHeight = chart.plotHeight,
+                threshold = [1.05, 1.1];
 
             for (const axis of axes) {
+                const horizNum = +(axis.horiz || 0);
                 if (run === 0) {
                     // Get margins by pre-rendering axes
                     axis.setScale();
 
+                    // On datetime axes, consider the tick interval match. A
+                    // match close to 1 means that the current normalized tick
+                    // interval is an insecure match to the requested tick
+                    // interval, on the brink of landing on a higher unit. In
+                    // this case, we should redo the axis to get a more
+                    // appropriate tick interval (#17393).
+                    if (axis.tickIntervalMatch) {
+                        threshold[horizNum] = Math.min(
+                            axis.tickIntervalMatch,
+                            threshold[horizNum]
+                        );
+                    }
+
                 } else if (
-                    (axis.horiz && redoHorizontal) ||
-                    (!axis.horiz && redoVertical)
+                    (horizNum && redoHorizontal) ||
+                    (!horizNum && redoVertical)
                 ) {
                     // Update to reflect the new margins
                     axis.setTickInterval(true);
@@ -2990,8 +3005,10 @@ class Chart {
                 chart.getMargins();
             }
 
-            redoHorizontal = (tempWidth / chart.plotWidth) > (run ? 1 : 1.1);
-            redoVertical = (tempHeight / chart.plotHeight) > (run ? 1 : 1.05);
+            redoHorizontal = (tempWidth / chart.plotWidth) >
+                (run ? 1 : threshold[1]);
+            redoVertical = (tempHeight / chart.plotHeight) >
+                (run ? 1 : threshold[0]);
 
             run++;
         }

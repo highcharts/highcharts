@@ -545,6 +545,9 @@ class Axis {
     public tickInterval!: number;
 
     /** @internal */
+    public tickIntervalMatch?: number;
+
+    /** @internal */
     public tickmarkOffset!: number;
 
     /**
@@ -2366,11 +2369,14 @@ class Axis {
                 error(19, false, this.chart);
 
             } else if (axis.dateTime) {
-                tickPositions = axis.getTimeTicks(
-                    axis.dateTime.normalizeTimeTickInterval(
+                const normalizedInterval = axis.dateTime
+                    .normalizeTimeTickInterval(
                         this.tickInterval,
                         options.units
-                    ),
+                    );
+                axis.tickIntervalMatch = normalizedInterval.match;
+                tickPositions = axis.getTimeTicks(
+                    normalizedInterval,
                     this.min,
                     this.max,
                     options.startOfWeek,
@@ -2438,6 +2444,16 @@ class Axis {
             }
 
         }
+
+        // Ensure the old ticks are removed and new ones added (#17393)
+        if (
+            !this.isDirty &&
+            tickPositions.length !==
+            this.tickPositions?.length
+        ) {
+            this.isDirty = true;
+        }
+
         this.tickPositions = tickPositions;
 
 
