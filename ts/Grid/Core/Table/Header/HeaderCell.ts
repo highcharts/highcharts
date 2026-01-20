@@ -174,9 +174,11 @@ class HeaderCell extends Cell {
             column?.options
         );
         const headerCellOptions = options.header || {};
+        const headerValue = column ?
+            headerCellOptions.formatter?.call(column) : void 0;
 
-        if (column && headerCellOptions.formatter) {
-            this.value = headerCellOptions.formatter.call(column).toString();
+        if (headerValue) {
+            this.value = headerValue.toString();
         } else if (isString(headerCellOptions.format)) {
             this.value = column ?
                 column.format(headerCellOptions.format) :
