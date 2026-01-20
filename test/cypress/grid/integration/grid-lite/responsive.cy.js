@@ -52,6 +52,8 @@ describe('Grid responsive rules.', () => {
         cy.get(captionSelector)
             .should('contain', 'Mobile: compact view');
         assertColumns(['firstName', 'mobile', 'street']);
+        cy.get('#container .hcg-container')
+            .should('have.class', 'theme-mobile');
         cy.get('.hcg-row[data-row-index="0"] td[data-column-id="firstName"]')
             .first()
             .find('a')
@@ -63,6 +65,8 @@ describe('Grid responsive rules.', () => {
         setWrapperWidth(480);
         cy.get(captionSelector)
             .should('contain', 'Mobile: compact view');
+        cy.get('#container .hcg-container')
+            .should('have.class', 'theme-mobile');
 
         setWrapperWidth(980);
         cy.get(captionSelector)
@@ -77,6 +81,8 @@ describe('Grid responsive rules.', () => {
             'state',
             'zip'
         ]);
+        cy.get('#container .hcg-container')
+            .should('not.have.class', 'theme-mobile');
         cy.get('.hcg-row[data-row-index="0"] td[data-column-id="firstName"]')
             .first()
             .should('have.text', 'Liam');
