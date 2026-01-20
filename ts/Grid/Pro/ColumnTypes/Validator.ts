@@ -26,6 +26,7 @@ import type { EditModeContent } from '../CellEditing/CellEditMode';
 import type Table from '../../Core/Table/Table';
 import type TableCell from '../../Core/Table/Body/TableCell';
 import type { CellRendererTypeRegistry } from '../CellRendering/CellRendererType';
+import type { CellType as DataTableCellType } from '../../../Data/DataTable';
 
 import AST from '../../../Core/Renderer/HTML/AST.js';
 import Globals from '../../Core/Globals.js';
@@ -135,8 +136,10 @@ class Validator {
                 // TODO(enhancement): Implement this for remote dataset.
                 const columnData = this.column.data;
                 const isDuplicate = columnData?.some(
-                    (value): boolean => String(value).toLowerCase() ===
+                    (value: DataTableCellType): boolean => (
+                        String(value).toLowerCase() ===
                         rowValueString
+                    )
                 );
 
                 return !isDuplicate;
@@ -157,7 +160,7 @@ class Validator {
                 // TODO(enhancement): Implement this for remote dataset.
                 const columnData = this.column.data;
                 const isDuplicate = columnData?.some(
-                    (value): boolean => value === rawValue
+                    (value: DataTableCellType): boolean => value === rawValue
                 );
 
                 return !isDuplicate;

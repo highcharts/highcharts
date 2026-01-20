@@ -22,7 +22,7 @@
  *
  * */
 
-import type DataTable from '../../../../Data/DataTable';
+import type { CellType as DataTableCellType } from '../../../../Data/DataTable';
 import type Column from '../Column';
 import type TableRow from './TableRow';
 
@@ -127,7 +127,7 @@ class TableCell extends Cell {
      * @param value
      * The new value to set.
      */
-    public async editValue(value: DataTable.CellType): Promise<void> {
+    public async editValue(value: DataTableCellType): Promise<void> {
         if (this.value === value) {
             return;
         }
@@ -149,7 +149,7 @@ class TableCell extends Cell {
      * `false`, meaning the dataset will not be updated.
      */
     public async setValue(
-        value?: DataTable.CellType,
+        value?: DataTableCellType,
         updateDataset: boolean = false
     ): Promise<void> {
         const fetchToken = ++this.asyncFetchToken;

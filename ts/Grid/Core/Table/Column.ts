@@ -28,7 +28,7 @@ import type CellContent from './CellContent/CellContent';
 import type HeaderCell from './Header/HeaderCell';
 import type { DeepPartial } from '../../../Shared/Types';
 import type { NonArrayColumnOptions } from '../Grid';
-import type DT from '../../../Data/DataTable';
+import type { Column as DataTableColumn } from '../../../Data/DataTable';
 
 import Table from './Table.js';
 import Utils from '../../../Core/Utilities.js';
@@ -91,7 +91,7 @@ export class Column {
      * it's not guaranteed to be defined (e.g. when using the lazy loading,
      * `RemoteDataProvider`).
      */
-    public data?: DT.Column;
+    public data?: DataTableColumn;
 
     /**
      * The options of the column as a proxy that provides merged access to

@@ -56,7 +56,7 @@ class Sync {
      */
     constructor(
         component: Component,
-        predefinedSyncConfig: Sync.PredefinedSyncConfig
+        predefinedSyncConfig: PredefinedSyncConfig
     ) {
         this.component = component;
         this.predefinedSyncConfig = predefinedSyncConfig;
@@ -85,7 +85,7 @@ class Sync {
      * different Components, where default syncs are added. Allows overwriting
      * the configuration before creating the dashboard.
      */
-    public static defaultHandlers: Record<string, Sync.OptionsEntry> = {};
+    public static defaultHandlers: Record<string, OptionsEntry> = {};
 
     /**
      * Registry for the sync handlers used within the component.
@@ -105,12 +105,12 @@ class Sync {
     /**
      * The predefined sync configuration.
      */
-    public predefinedSyncConfig: Sync.PredefinedSyncConfig;
+    public predefinedSyncConfig: PredefinedSyncConfig;
 
     /**
      * The emitters and handlers to use for each event
      */
-    public syncConfig: Sync.OptionsRecord;
+    public syncConfig: OptionsRecord;
 
     /**
      * Whether the component is currently syncing.
@@ -132,29 +132,29 @@ class Sync {
      * @returns The sync configuration.
      */
     private static prepareSyncConfig(
-        predefinedConfig: Sync.PredefinedSyncConfig,
-        componentSyncOptions: Sync.RawOptionsRecord = {}
-    ) : Sync.OptionsRecord {
+        predefinedConfig: PredefinedSyncConfig,
+        componentSyncOptions: RawOptionsRecord = {}
+    ) : OptionsRecord {
         const {
             defaultSyncPairs: defaultPairs,
             defaultSyncOptions: defaultOptionsList
         } = predefinedConfig;
 
         return Object.keys(componentSyncOptions).reduce(
-            (acc: Sync.OptionsRecord, syncName): Sync.OptionsRecord => {
+            (acc: OptionsRecord, syncName): OptionsRecord => {
                 if (syncName) {
                     const defaultPair = defaultPairs[syncName];
                     const defaultOptions = defaultOptionsList[syncName];
                     const entry = componentSyncOptions[syncName];
 
-                    const preparedOptions: Sync.OptionsEntry = merge(
+                    const preparedOptions: OptionsEntry = merge(
                         defaultOptions || {},
                         { enabled: isObject(entry) ? entry.enabled : entry },
                         isObject(entry) ? entry : {}
                     );
 
                     if (defaultPair && preparedOptions.enabled) {
-                        const keys: (keyof Sync.SyncPair)[] = [
+                        const keys: (keyof SyncPair)[] = [
                             'emitter',
                             'handler'
                         ];
@@ -253,7 +253,7 @@ class Sync {
                 if (handlerConfig === true) {
                     handlerConfig =
                         Sync.defaultHandlers[id]
-                            .handler as Sync.HandlerConfig;
+                            .handler as HandlerConfig;
                 }
 
                 const handler = new SyncHandler(id, handlerConfig);
@@ -267,7 +267,7 @@ class Sync {
                 if (emitterConfig === true) {
                     emitterConfig =
                         Sync.defaultHandlers[id]
-                            .emitter as Sync.EmitterConfig;
+                            .emitter as EmitterConfig;
                 }
 
                 const emitter = new SyncEmitter(id, emitterConfig);
@@ -317,99 +317,90 @@ class Sync {
 
 /* *
  *
- *  Class Namespace
+ *  Type Declarations
  *
  * */
 
-namespace Sync {
+/** @internal */
+export type EmitterConfig = SyncEmitter['func'];
 
-    /* *
-     *
-     *  Declarations
-     *
-     * */
+/** @internal */
+export type HandlerConfig = SyncHandler['func'];
 
-    /** @internal */
-    export type EmitterConfig = SyncEmitter['func'];
+/** @internal */
+export interface SyncPair {
+    emitter?: EmitterConfig;
+    handler?: HandlerConfig;
+}
 
-    /** @internal */
-    export type HandlerConfig = SyncHandler['func'];
+/**
+ * The configuration used to determine the default sync options, handlers
+ * and emitters for a component.
+ */
+export interface PredefinedSyncConfig {
+    /**
+     * The default sync pairs (emitters and handlers) for the component.
+     */
+    defaultSyncPairs: Record<string, SyncPair>;
+    /**
+     * The default sync options for the component.
+     */
+    defaultSyncOptions: Record<string, OptionsEntry>;
+}
 
-    /** @internal */
-    export interface SyncPair {
-        emitter?: EmitterConfig;
-        handler?: HandlerConfig;
-    }
+export interface OptionsEntry {
 
     /**
-     * The configuration used to determine the default sync options, handlers
-     * and emitters for a component.
+     * Whether the sync should be enabled.
+     *
+     * @default false
      */
-    export interface PredefinedSyncConfig {
-        /**
-         * The default sync pairs (emitters and handlers) for the component.
-         */
-        defaultSyncPairs: Record<string, SyncPair>;
-        /**
-         * The default sync options for the component.
-         */
-        defaultSyncOptions: Record<string, OptionsEntry>;
-    }
+    enabled?: boolean;
 
-    export interface OptionsEntry {
+    /**
+     * Responsible for communicating to the component group that the action
+     * has been triggered on the component.
+     *
+     * If `true` or undefined the default emitter will be used, if `false`
+     * or `null` it will be disabled
+     */
+    emitter?: EmitterConfig | null | boolean;
 
-        /**
-         * Whether the sync should be enabled.
-         *
-         * @default false
-         */
-        enabled?: boolean;
+    /**
+     * The group in which components sharing the same connector should be
+     * synced.
+     *
+     * If `null` or `undefined` the component will be synced with all
+     * components with the same connector.
+     *
+     * Try it:
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/sync/groups | Sync groups for the same connector }
+     *
+     * @default undefined
+     */
+    group?: string;
 
-        /**
-         * Responsible for communicating to the component group that the action
-         * has been triggered on the component.
-         *
-         * If `true` or undefined the default emitter will be used, if `false`
-         * or `null` it will be disabled
-         */
-        emitter?: EmitterConfig | null | boolean;
+    /**
+     * Responsible for _handling_ incoming action from the synced component
+     * group.
+     *
+     * If `true` or undefined the default handler will be used, if `false`
+     * or `null` it will be disabled
+     */
+    handler?: HandlerConfig | null | boolean;
 
-        /**
-         * The group in which components sharing the same connector should be
-         * synced.
-         *
-         * If `null` or `undefined` the component will be synced with all
-         * components with the same connector.
-         *
-         * Try it:
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/sync/groups | Sync groups for the same connector }
-         *
-         * @default undefined
-         */
-        group?: string;
-
-        /**
-         * Responsible for _handling_ incoming action from the synced component
-         * group.
-         *
-         * If `true` or undefined the default handler will be used, if `false`
-         * or `null` it will be disabled
-         */
-        handler?: HandlerConfig | null | boolean;
-
-    }
-
-    /** @internal */
-    export type OptionsRecord = (
-        Record<string, OptionsEntry>
-    );
-
-    /** @internal */
-    export type RawOptionsRecord = (
-        Record<string, boolean | OptionsEntry | undefined>
-    );
 }
+
+/** @internal */
+export type OptionsRecord = (
+    Record<string, OptionsEntry>
+);
+
+/** @internal */
+export type RawOptionsRecord = (
+    Record<string, boolean | OptionsEntry | undefined>
+);
 
 
 /* *

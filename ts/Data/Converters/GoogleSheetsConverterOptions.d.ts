@@ -19,7 +19,7 @@
 
 import type { GoogleSheetsBeforeParseCallbackFunction } from '../Connectors/GoogleSheetsConnectorOptions';
 
-import DataConverter from './DataConverter';
+import type { Options as DataConverterOptions } from './DataConverter';
 
 /* *
  *
@@ -30,7 +30,7 @@ import DataConverter from './DataConverter';
 /**
  * Options of the GoogleSheetsConverter.
  */
-export interface GoogleSheetsConverterOptions extends DataConverter.Options {
+export interface GoogleSheetsConverterOptions extends DataConverterOptions {
     json?: GoogleSpreadsheetJSON;
     beforeParse?: GoogleSheetsBeforeParseCallbackFunction;
 }
