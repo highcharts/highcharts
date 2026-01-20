@@ -142,7 +142,7 @@ class TableCell extends Cell {
      *
      * @param value
      * The raw value to set. If not provided, it will use the value from the
-     * row's pre-loaded data, or fetch it from the data provider as a fallback.
+     * data table for the current row and column.
      *
      * @param updateDataset
      * Whether to update the dataset after setting the content. Defaults to
@@ -152,34 +152,22 @@ class TableCell extends Cell {
         value?: DataTableCellType,
         updateDataset: boolean = false
     ): Promise<void> {
+        const fetchToken = ++this.asyncFetchToken;
         const { grid } = this.column.viewport;
 
+        // TODO(design): Design a better way to show the cell val being updated.
+        this.htmlElement.style.opacity = '0.5';
+
         if (!defined(value)) {
-            const columnId = this.column.id;
+            value = await grid.dataProvider?.getValue(
+                this.column.id,
+                this.row.index
+            );
 
-            // Fast path: read from pre-loaded row data (synchronous).
-            // The row's data is populated by TableRow.loadData() before cells
-            // are rendered, so this should be the common case.
-            if (this.row.data && columnId in this.row.data) {
-                value = this.row.data[columnId];
-            } else {
-                // Slow path: fetch value asynchronously (fallback for edge
-                // cases where row data is not available).
-                const fetchToken = ++this.asyncFetchToken;
-                this.htmlElement.style.opacity = '0.5';
-
-                value = await grid.dataProvider?.getValue(
-                    columnId,
-                    this.row.index
-                );
-
-                // Discard stale response if cell was reused for a different row
-                if (fetchToken !== this.asyncFetchToken) {
-                    this.htmlElement.style.opacity = '';
-                    return;
-                }
-
+            // Discard stale response if cell was reused for a different row
+            if (fetchToken !== this.asyncFetchToken) {
                 this.htmlElement.style.opacity = '';
+                return;
             }
         }
 
@@ -216,6 +204,9 @@ class TableCell extends Cell {
 
         // Add custom class name from column options
         this.setCustomClassName(this.column.options.cells?.className);
+
+        // TODO(design): Remove this after the first part was implemented.
+        this.htmlElement.style.opacity = '';
 
         fireEvent(this, 'afterRender', { target: this });
     }
