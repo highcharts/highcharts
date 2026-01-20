@@ -337,8 +337,6 @@ class DataPool implements DataEventEmitter<Event> {
      * @param update
      * Whether to update the existing connector with the new options and reload
      * it (`true`) or replace it with a new connector instance (`false`).
-     *
-     * @default true
      */
     public async setConnectorOptions(
         options: DataConnectorTypeOptions,
