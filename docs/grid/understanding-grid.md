@@ -84,8 +84,8 @@ For more information on the `caption` option, see the [API reference](https://ap
 {
     header: [
         {
-            columnId: "product"
-            format: "Fruit",
+            columnId: "product",
+            format: "Fruit"
         },
         "weight",
         "price"
