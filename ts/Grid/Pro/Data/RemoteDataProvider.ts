@@ -22,7 +22,11 @@
  *
  * */
 
-import type DT from '../../../Data/DataTable';
+import type {
+    RowObject as RowObjectType,
+    Column as DataTableColumnType,
+    CellType as DataTableCellType
+} from '../../../Data/DataTable';
 import type { DataProviderOptions } from '../../Core/Data/DataProvider';
 import type { ColumnDataType } from '../../Core/Table/Column';
 import type QueryingController from '../../Core/Querying/QueryingController';
@@ -402,7 +406,7 @@ export class RemoteDataProvider extends DataProvider {
 
     public override async getRowObject(
         rowIndex: number
-    ): Promise<DT.RowObject | undefined> {
+    ): Promise<RowObjectType | undefined> {
         // Ensure the chunk is fetched and cached
         await this.getChunkForRowIndex(rowIndex);
 
@@ -431,7 +435,7 @@ export class RemoteDataProvider extends DataProvider {
     public override async getValue(
         columnId: string,
         rowIndex: number
-    ): Promise<DT.CellType> {
+    ): Promise<DataTableCellType> {
         // Get the chunk containing this row
         const chunk = await this.getChunkForRowIndex(rowIndex);
 
@@ -443,14 +447,14 @@ export class RemoteDataProvider extends DataProvider {
         // Get the column from chunk data
         const column = chunk.data[columnId];
         if (!column || localIndex >= column.length) {
-            return null as DT.CellType;
+            return null;
         }
 
         return column[localIndex];
     }
 
     public override async setValue(
-        value: DT.CellType,
+        value: DataTableCellType,
         columnId: string,
         rowId: number
     ): Promise<void> {
@@ -491,7 +495,7 @@ export class RemoteDataProvider extends DataProvider {
      * @returns
      * The row object or undefined if not in cache.
      */
-    private getRowObjectFromCache(rowIndex: number): DT.RowObject | undefined {
+    private getRowObjectFromCache(rowIndex: number): RowObjectType | undefined {
         if (!this.dataChunks || !this.columnIds) {
             return;
         }
@@ -504,13 +508,12 @@ export class RemoteDataProvider extends DataProvider {
         }
 
         const localIndex = this.getLocalIndexInChunk(rowIndex);
-        const rowObject: DT.RowObject = {};
+        const rowObject: RowObjectType = {};
 
         for (const columnId of this.columnIds) {
             const column = chunk.data[columnId];
             rowObject[columnId] = (column && localIndex < column.length) ?
-                column[localIndex] :
-                (null as DT.CellType);
+                column[localIndex] : null;
         }
 
         return rowObject;
@@ -568,14 +571,14 @@ export class RemoteDataProvider extends DataProvider {
 }
 
 export interface RemoteFetchCallbackResult {
-    columns: Record<string, DT.Column>;
+    columns: Record<string, DataTableColumnType>;
     totalRowCount: number;
     rowIds?: number[];
 }
 
 export interface DataChunk {
     index: number;
-    data: Record<string, DT.Column>;
+    data: Record<string, DataTableColumnType>;
     rowIds: number[];
 }
 
@@ -608,7 +611,7 @@ export interface RemoteDataProviderOptions extends DataProviderOptions {
         this: RemoteDataProvider,
         columnId: string,
         rowId: number,
-        value: DT.CellType
+        value: DataTableCellType
     ) => Promise<void>;
 
     /**

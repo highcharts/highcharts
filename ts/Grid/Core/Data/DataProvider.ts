@@ -22,7 +22,11 @@
  *
  * */
 
-import type DT from '../../../Data/DataTable';
+import type {
+    RowObject as RowObjectType,
+    CellType as DataTableCellType,
+    Column as DataTableColumnType
+} from '../../../Data/DataTable';
 import type QueryingController from '../Querying/QueryingController';
 import type { ColumnDataType } from '../Table/Column';
 
@@ -94,7 +98,7 @@ export abstract class DataProvider {
      */
     public abstract getRowObject(
         rowIndex: number
-    ): Promise<DT.RowObject | undefined>;
+    ): Promise<RowObjectType | undefined>;
 
     /**
      * Returns the current number of rows in the presentation dataset (after
@@ -115,13 +119,13 @@ export abstract class DataProvider {
     public abstract getValue(
         columnId: string,
         rowIndex: number
-    ): Promise<DT.CellType>;
+    ): Promise<DataTableCellType>;
 
     /**
      * Persists a cell value for a given row id.
      */
     public abstract setValue(
-        value: DT.CellType,
+        value: DataTableCellType,
         columnId: string,
         rowId: number
     ): Promise<void>;
@@ -155,7 +159,7 @@ export abstract class DataProvider {
      * The id of the column to determine the data type for.
      */
     protected static assumeColumnDataType(
-        columnSample: DT.Column,
+        columnSample: DataTableColumnType,
         columnId: string
     ): ColumnDataType {
         for (let i = 0, iEnd = columnSample.length; i < iEnd; ++i) {
