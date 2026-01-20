@@ -365,7 +365,7 @@ test('Bindings general tests', async ({ page }) => {
         );
 
         await chart.evaluate((c)=>{
-            // Styles in Karma are not loaded!
+            // Style may not be loaded fully at this point
             c.navigationBindings.popup.container.style.position = 'absolute';
         });
 
