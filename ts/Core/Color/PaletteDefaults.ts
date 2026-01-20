@@ -19,6 +19,16 @@ import type PaletteOptions from './PaletteOptions';
  */
 const palette: PaletteOptions = {
     /**
+     * Color scheme to use. When `light dark` is set, the chart will
+     * automatically switch between light and dark mode based on the user's
+     * system preferences.
+     *
+     * @type       {'light dark'|'light'|'dark'}
+     * @default    light dark
+     * @since      13.0.0
+     * @apioption  palette.colorScheme
+     */
+    /**
      * Palette options for dark mode.
      *
      * @extends palette.light

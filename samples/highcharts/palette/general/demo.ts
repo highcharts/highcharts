@@ -3,7 +3,7 @@ Highcharts.chart('container', {
         type: 'column'
     },
     title: {
-        text: 'Demo of <em>palette.light</em> options'
+        text: 'Demo of <em>palette</em> options'
     },
     subtitle: {
         style: {
@@ -15,7 +15,9 @@ Highcharts.chart('container', {
         categories: ['Apples', 'Bananas', 'Oranges', 'Pears']
     },
     palette: {
+        colorScheme: 'light dark',
         light: {
+            backgroundColor: '#ffffff',
             colors: ['#2caffe', '#544fc5']
         }
     },

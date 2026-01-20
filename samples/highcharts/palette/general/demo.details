@@ -1,5 +1,5 @@
 ---
- name: Demo of palette.light options
+ name: Demo of palette options
  authors:
    - Torstein Hønsi
  js_wrap: b

@@ -4,6 +4,10 @@ import type {
 
 export default {
     controls: [{
+        path: 'palette.colorScheme',
+        options: ['light dark', 'light', 'dark'],
+        value: 'light dark'
+    }, {
         path: 'palette.light.backgroundColor'
     }, {
         path: 'palette.light.neutralColor'

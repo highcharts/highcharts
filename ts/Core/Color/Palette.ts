@@ -96,13 +96,14 @@ export default class Palette {
     public update(
         options: PaletteOptions
     ): void {
+        const { container, renderer } = this.chart,
+            rules = { light: '', dark: '' };
+
         options = this.chart.options.palette = merge(
             true,
             this.options,
             options
         );
-
-        const rules = { light: '', dark: '' };
 
         let css = '';
 
@@ -155,18 +156,18 @@ export default class Palette {
         }
 
         // Add a style tag to the chart renderer box
-        const style = this.chart.renderer.defs.element.querySelector('style') ||
+        const style = renderer.defs.element.querySelector('style') ||
             doc.createElementNS(H.SVG_NS, 'style');
         if (!style.parentNode) {
             (style as HTMLStyleElement).nonce = 'highcharts';
-            this.chart.renderer.defs.element.appendChild(style);
+            renderer.defs.element.appendChild(style);
         }
         style.textContent = `:root, .highcharts-light {\n${rules.light}}
         .highcharts-dark {
             ${rules.dark}
         }
         .highcharts-container {
-            color-scheme: light dark;
+            color-scheme: ${options.colorScheme || 'light dark'};
         }
         .highcharts-light .highcharts-container {
             color-scheme: light;
@@ -174,6 +175,14 @@ export default class Palette {
         .highcharts-dark .highcharts-container {
             color-scheme: dark;
         }`;
+
+        // Set the class name of the container
+        container.classList.remove('highcharts-light', 'highcharts-dark');
+        if (options.colorScheme === 'light') {
+            container.classList.add('highcharts-light');
+        } else if (options.colorScheme === 'dark') {
+            container.classList.add('highcharts-dark');
+        }
     }
 
 }
