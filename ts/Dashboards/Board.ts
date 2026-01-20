@@ -488,46 +488,10 @@ class Board {
      * The board instance.
      */
     public update(newOptions: DeepPartial<Options>): Board {
-        const board = this;
-
-        // Merge new options with existing ones
-        board.options = merge(board.options, newOptions);
-
-        // Rebuild components if they changed
-        if (newOptions.components) {
-            // Destroy existing components
-            for (const mountedComponent of board.mountedComponents) {
-                mountedComponent.component.destroy();
-            }
-            board.mountedComponents = [];
-
-            // Add new components
-            board.setComponents(
-                newOptions.components as Array<Partial<ComponentType['options']>>
-            );
-        }
-
-        // Rebuild layouts if they changed
-        if (newOptions.gui?.layouts && board.guiEnabled) {
-            // Destroy existing layouts
-            for (let i = 0, iEnd = board.layouts?.length; i < iEnd; ++i) {
-                board.layouts[i].destroy();
-            }
-            board.layouts = [];
-
-            // Rebuild layouts from merged options
-            const layoutsOptions = board.options.gui?.layouts || [];
-            for (let i = 0, iEnd = layoutsOptions.length; i < iEnd; ++i) {
-                board.layouts.push(
-                    new Layout(
-                        board,
-                        merge({}, board.options.gui?.layoutOptions, layoutsOptions[i])
-                    )
-                );
-            }
-        }
-
-        return board;
+        return new Board(
+            this.container,
+            merge(this.options, newOptions)
+        ).init();
     }
 
     /**
