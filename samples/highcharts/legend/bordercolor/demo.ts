@@ -10,7 +10,7 @@ Highcharts.chart('container', {
     },
     legend: {
         backgroundColor: '#aaaaaa40',
-        borderColor: '#999999',
+        borderColor: 'var(--highcharts-neutral-color-40)',
         borderWidth: 2
     },
     series: [{

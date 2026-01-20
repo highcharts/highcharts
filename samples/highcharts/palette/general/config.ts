@@ -17,11 +17,13 @@ export default {
         value: '#544fc5'
     }],
     controlsDescription: `Text elements use different blends of the neutral
-        color and background color. The chart border uses the highlight color.`,
+        color and background color`,
     chartOptionsExtra: {
-        chart: {
-            borderWidth: 2,
-            borderRadius: 7
+        subtitle: {
+            text: 'This subtitle uses the highlight color',
+            style: {
+                color: 'var(--highcharts-highlight-color)'
+            }
         },
         series: [{
             data: [1, 3, 2, 4]

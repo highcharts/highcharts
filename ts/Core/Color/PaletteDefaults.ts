@@ -19,6 +19,16 @@ import type PaletteOptions from './PaletteOptions';
  */
 const palette: PaletteOptions = {
     /**
+     * Palette options for dark mode.
+     *
+     * @extends palette.light
+     */
+    dark: {
+        backgroundColor: '#141414',
+        neutralColor: '#ffffff',
+        highlightColor: '#2caffe'
+    },
+    /**
      * Palette options for light mode.
      */
     light: {

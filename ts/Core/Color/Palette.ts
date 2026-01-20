@@ -102,7 +102,9 @@ export default class Palette {
             options
         );
 
-        let css: string = '';
+        const rules = { light: '', dark: '' };
+
+        let css = '';
 
         const addKebab = (color: unknown, key: string): void => {
             if (isString(color)) {
@@ -118,31 +120,39 @@ export default class Palette {
             }
         };
 
-        const interpolated: Record<string, ColorType> = {},
-            neutralColor = new Color(options.light?.neutralColor || ''),
-            backgroundColor = new Color(options.light?.backgroundColor || ''),
-            highlightColor = new Color(options.light?.highlightColor || '');
+        for (const colorScheme of ['light', 'dark'] as const) {
+            css = '';
+            const paletteColors = options[colorScheme] || {},
+                interpolated: Record<string, ColorType> = {},
+                neutralColor = new Color(paletteColors?.neutralColor || ''),
+                backgroundColor = new Color(
+                    paletteColors?.backgroundColor || ''
+                ),
+                highlightColor = new Color(paletteColors?.highlightColor || '');
 
-        // Interpolate keys
-        [3, 5, 10, 20, 40, 60, 80, 100].forEach((fraction): void => {
-            interpolated[`neutralColor${fraction}`] = backgroundColor.tweenTo(
-                neutralColor,
-                fraction / 100
-            );
-            interpolated[`highlightColor${fraction}`] = backgroundColor.tweenTo(
-                highlightColor,
-                fraction / 100
-            );
-        });
+            // Interpolate keys
+            [3, 5, 10, 20, 40, 60, 80, 100].forEach((fraction): void => {
+                interpolated[`neutralColor${fraction}`] = backgroundColor.tweenTo(
+                    neutralColor,
+                    fraction / 100
+                );
+                interpolated[`highlightColor${fraction}`] = backgroundColor.tweenTo(
+                    highlightColor,
+                    fraction / 100
+                );
+            });
 
-        // Data colors are stored as an array
-        options.light?.colors?.forEach((color, i): void => {
-            addKebab(color, `color${i}`);
-        });
+            // Data colors are stored as an array
+            paletteColors?.colors?.forEach((color, i): void => {
+                addKebab(color, `color${i}`);
+            });
 
-        // The rest are stored as named properties
-        objectEach(options.light, addKebab);
-        objectEach(interpolated, addKebab);
+            // The rest are stored as named properties
+            objectEach(paletteColors, addKebab);
+            objectEach(interpolated, addKebab);
+
+            rules[colorScheme] = css;
+        }
 
         // Add a style tag to the chart renderer box
         const style = this.chart.renderer.defs.element.querySelector('style') ||
@@ -151,7 +161,19 @@ export default class Palette {
             (style as HTMLStyleElement).nonce = 'highcharts';
             this.chart.renderer.defs.element.appendChild(style);
         }
-        style.textContent = `:root {\n${css}}`;
+        style.textContent = `:root, .highcharts-light {\n${rules.light}}
+        .highcharts-dark {
+            ${rules.dark}
+        }
+        .highcharts-container {
+            color-scheme: light dark;
+        }
+        .highcharts-light .highcharts-container {
+            color-scheme: light;
+        }
+        .highcharts-dark .highcharts-container {
+            color-scheme: dark;
+        }`;
     }
 
 }

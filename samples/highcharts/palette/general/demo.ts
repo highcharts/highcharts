@@ -1,11 +1,15 @@
 Highcharts.chart('container', {
     chart: {
-        borderRadius: 7,
-        borderWidth: 2,
         type: 'column'
     },
     title: {
         text: 'Demo of <em>palette.light</em> options'
+    },
+    subtitle: {
+        style: {
+            color: 'var(--highcharts-highlight-color)'
+        },
+        text: 'This subtitle uses the highlight color'
     },
     xAxis: {
         categories: ['Apples', 'Bananas', 'Oranges', 'Pears']
