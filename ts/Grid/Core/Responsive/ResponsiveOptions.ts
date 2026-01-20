@@ -1,6 +1,6 @@
 /* *
  *
- *  Grid options
+ *  Grid responsive options
  *
  *  (c) 2020-2026 Highsoft AS
  *
@@ -31,6 +31,9 @@ import type Grid from '../Grid';
  *
  * */
 
+/**
+ * Options for the responsive behavior of the grid.
+ */
 export interface ResponsiveOptions {
     /**
      * A set of rules for responsive settings. The rules are executed from
@@ -39,6 +42,9 @@ export interface ResponsiveOptions {
     rules?: Array<RuleOptions>;
 }
 
+/**
+ * A rule for the responsive behavior of the grid.
+ */
 export interface RuleOptions {
     /**
      * Unique rule id.
@@ -58,6 +64,9 @@ export interface RuleOptions {
     condition: RuleConditionOptions;
 }
 
+/**
+ * Conditions for the responsive rule.
+ */
 export interface RuleConditionOptions {
     /**
      * A callback function to gain complete control on when the responsive
