@@ -1071,7 +1071,7 @@ QUnit.test('Point.update with only y value changed', function (assert) {
         // initialTickCount = xAxis.tickPositions.length,
         // initialLabelCount = xAxis.labelGroup.element.childNodes.length,
         point = series.points[0],
-        newY = data1[0][1] + 0.1;
+        newY = data1[0][1];
 
     // Update point with only y value changed
     point.update({ y: newY });

@@ -1292,16 +1292,6 @@ class Series {
             // Don't add new points since those configs are used above
             pointsToAdd.length = 0;
 
-            // Fix axis labels positioning (#17393).
-            // Mark axes as dirty.
-            if (this.xAxis) {
-                this.xAxis.isDirty = true;
-            }
-
-            if (this.yAxis) {
-                this.yAxis.isDirty = true;
-            }
-
         // Did not succeed in updating data
         } else {
             succeeded = false;

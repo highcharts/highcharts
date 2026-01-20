@@ -2962,15 +2962,10 @@ class Chart {
         // Use Math.max to prevent negative plotHeight
         chart.plotHeight = Math.max(chart.plotHeight - expectedSpace, 0);
 
-        // Track if we need extra runs for datetime axes
-        // This will be determined dynamically based on widthRatio (#17393)
-        let effectiveAxisLayoutRuns = axisLayoutRuns;
-
         while (
-            (redoHorizontal || redoVertical || effectiveAxisLayoutRuns > 1) &&
-            run < effectiveAxisLayoutRuns // #19794
+            (redoHorizontal || redoVertical || axisLayoutRuns > 1) &&
+            run < axisLayoutRuns // #19794
         ) {
-
             const tempWidth = chart.plotWidth,
                 tempHeight = chart.plotHeight;
 
@@ -2994,69 +2989,8 @@ class Chart {
                 chart.getMargins();
             }
 
-            // Check if plotWidth/plotHeight changed significantly
-            const widthRatio = tempWidth / chart.plotWidth;
-            const heightRatio = tempHeight / chart.plotHeight;
-            const widthThreshold = run ? 1 : 1.1;
-            const heightThreshold = run ? 1 : 1.05;
-
-            // For datetime axes, check if we need extra runs based on:
-            // 1. Point density (points per pixel) - higher density needs runs
-            // 2. widthRatio proximity to threshold - if close, may need runs
-            // Works for any width/point count combination (#17393)
-            let needsExtraRunsForDateTime = false;
-            let adjustedWidthThreshold = widthThreshold;
-
-            if (run === 0) {
-                axes.forEach((axis): void => {
-                    if (!axis.dateTime) {
-                        return;
-                    }
-
-                    // Find the series with the most points that is visible
-                    let maxPoints = 0;
-                    for (const series of axis.series) {
-                        if (!series.visible) {
-                            return;
-                        }
-                        const seriesData = series.processedData ||
-                            series.data;
-                        if (seriesData && seriesData.length > maxPoints) {
-                            maxPoints = seriesData.length;
-                        }
-                    }
-
-                    if (maxPoints > 0) {
-                        // Calculate point density (points per pixel)
-                        const plotWidth = chart.plotWidth ||
-                            chart.chartWidth || 400;
-                        const pointDensity = maxPoints / plotWidth;
-
-                        // High density (>0.3 pts/px) + widthRatio near
-                        // threshold (1.0-1.1) = potential tickInterval issues
-                        // (#17393)
-                        const hasHighDensity = pointDensity > 0.3;
-                        // WidthRatio near 1.0 means small width changes that
-                        // may require extra layout runs for correct tick calc
-                        const isNearThreshold = widthRatio >= 1.0 &&
-                            widthRatio <= widthThreshold;
-
-                        if (hasHighDensity && isNearThreshold) {
-                            needsExtraRunsForDateTime = true;
-                            // Use lower threshold to catch smaller changes
-                            adjustedWidthThreshold = 1.05;
-                        }
-                    }
-                });
-
-                if (needsExtraRunsForDateTime) {
-                    effectiveAxisLayoutRuns =
-                        Math.max(effectiveAxisLayoutRuns, 3);
-                }
-            }
-
-            redoHorizontal = widthRatio > adjustedWidthThreshold;
-            redoVertical = heightRatio > heightThreshold;
+            redoHorizontal = (tempWidth / chart.plotWidth) > (run ? 1 : 1.1);
+            redoVertical = (tempHeight / chart.plotHeight) > (run ? 1 : 1.05);
 
             run++;
         }
