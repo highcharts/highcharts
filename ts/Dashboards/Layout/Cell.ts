@@ -26,6 +26,7 @@ import type Component from '../Components/Component';
 import type CSSJSONObject from '../CSSJSONObject';
 import type { DeepPartial } from '../../Shared/Types';
 import type LayoutType from './Layout';
+import type { Options as LayoutOptions } from './Layout';
 import type Row from './Row';
 import type CellHTML from './CellHTML.js';
 
@@ -60,7 +61,7 @@ class Cell extends GUIElement {
      * @param {Row} row
      * Reference to the row instance.
      *
-     * @param {Cell.Options} options
+     * @param {Options} options
      * Options for the cell.
      *
      * @param {HTMLElement} cellElement
@@ -68,7 +69,7 @@ class Cell extends GUIElement {
      */
     public constructor(
         row: Row,
-        options: Cell.Options,
+        options: Options,
         cellElement?: HTMLElement
     ) {
         super();
@@ -137,7 +138,7 @@ class Cell extends GUIElement {
     /**
      * The cell options.
      */
-    public options: Cell.Options;
+    public options: Options;
 
     /**
      * Component mounted in the cell.
@@ -225,7 +226,7 @@ class Cell extends GUIElement {
      * @internal
      *
      */
-    public getOptions(): DeepPartial<Cell.Options> {
+    public getOptions(): DeepPartial<Options> {
         const cell = this;
 
         if (cell.options.layout && cell.nestedLayout) {
@@ -450,80 +451,72 @@ class Cell extends GUIElement {
 
 }
 
-/* *
- *
- *  Namespace
- *
- * */
+/**
+ * Checks if a valid cell instance.
+ */
+export function isCell(cell: Cell | CellHTML | undefined): cell is Cell {
+    return (!!cell && 'row' in cell && cell.type === 'cell');
+}
 
-namespace Cell {
+/**
+ * Options for each cell.
+ **/
+export interface Options {
     /**
-     * Checks if a valid cell instance.
-     */
-    export function isCell(cell: Cell | CellHTML | undefined): cell is Cell {
-        return (!!cell && 'row' in cell && cell.type === 'cell');
-    }
-
-    /**
-     * Options for each cell.
+     * Unique cell id.
      **/
-    export interface Options {
-        /**
-         * Unique cell id.
-         **/
-        id: string;
+    id: string;
 
+    /**
+     * Options controlling the edit mode for the cell.
+     **/
+    editMode?: {
         /**
-         * Options controlling the edit mode for the cell.
+         * Individual options for the toolbar items.
          **/
-        editMode?: {
+        toolbarItems?: {
             /**
-             * Individual options for the toolbar items.
-             **/
-            toolbarItems?: {
-                /**
-                 * Options for the `destroy` toolbar item.
-                 */
-                destroy: {
-                    enabled?: boolean;
-                };
-                /**
-                 * Options for the `drag` toolbar item.
-                 */
-                drag: {
-                    enabled?: boolean;
-                };
-                /**
-                 * Options for the `settings` toolbar item.
-                 */
-                settings: {
-                    enabled?: boolean;
-                };
-                /**
-                 * Options for the `viewFullscreen` toolbar item.
-                 */
-                viewFullscreen: {
-                    enabled?: boolean;
-                };
-            }
+             * Options for the `destroy` toolbar item.
+             */
+            destroy: {
+                enabled?: boolean;
+            };
+            /**
+             * Options for the `drag` toolbar item.
+             */
+            drag: {
+                enabled?: boolean;
+            };
+            /**
+             * Options for the `settings` toolbar item.
+             */
+            settings: {
+                enabled?: boolean;
+            };
+            /**
+             * Options for the `viewFullscreen` toolbar item.
+             */
+            viewFullscreen: {
+                enabled?: boolean;
+            };
         }
-        /**
-         * CSS styles for cell container.
-         **/
-        style?: CSSJSONObject;
-        /**
-         * Id of the container that holds the cell.
-         **/
-        parentContainerId?: string;
-        /**
-         * To create a nested layout, add a layout object to a cell.
-         *
-         * Try it:
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/gui/nested-layout/ | Nested layout}
-         **/
-        layout?: LayoutType.Options;
     }
+    /**
+     * CSS styles for cell container.
+     **/
+    style?: CSSJSONObject;
+    /**
+     * Id of the container that holds the cell.
+     **/
+    parentContainerId?: string;
+    /**
+     * To create a nested layout, add a layout object to a cell.
+     *
+     * Try it:
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/gui/nested-layout/ | Nested layout}
+     **/
+    layout?: LayoutOptions;
 }
 
 /* *

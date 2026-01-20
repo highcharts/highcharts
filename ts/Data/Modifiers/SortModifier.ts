@@ -23,12 +23,18 @@
  * */
 
 
-import type DataEvent from '../DataEvent';
+import type {
+    DataEventDetail
+} from '../DataEvent';
 import type SortModifierOptions from './SortModifierOptions';
 import type { SortModifierOrderByOption } from './SortModifierOptions';
 
 import DataModifier from './DataModifier.js';
-import DataTable from '../DataTable.js';
+import DataTable, {
+    type CellType as DataTableCellType,
+    type Column as DataTableColumn,
+    type Row as DataTableRow
+} from '../DataTable.js';
 import U from '../../Core/Utilities.js';
 const { merge } = U;
 
@@ -43,7 +49,7 @@ const { merge } = U;
 /** @private */
 interface SortRowReference {
     index: number;
-    row: DataTable.Row;
+    row: DataTableRow;
 }
 
 
@@ -81,8 +87,8 @@ class SortModifier extends DataModifier {
      * */
 
     private static ascending(
-        a: DataTable.CellType,
-        b: DataTable.CellType
+        a: DataTableCellType,
+        b: DataTableCellType
     ): number {
         return (
             (a || 0) < (b || 0) ? -1 :
@@ -92,8 +98,8 @@ class SortModifier extends DataModifier {
     }
 
     private static descending(
-        a: DataTable.CellType,
-        b: DataTable.CellType
+        a: DataTableCellType,
+        b: DataTableCellType
     ): number {
         return (
             (b || 0) < (a || 0) ? -1 :
@@ -104,13 +110,13 @@ class SortModifier extends DataModifier {
 
     private static compareFactory(
         direction: 'asc' | 'desc',
-        customCompare?: (a: DataTable.CellType, b: DataTable.CellType) => number
-    ): ((a: DataTable.CellType, b: DataTable.CellType) => number) {
+        customCompare?: (a: DataTableCellType, b: DataTableCellType) => number
+    ): ((a: DataTableCellType, b: DataTableCellType) => number) {
         if (customCompare) {
             if (direction === 'desc') {
                 return (
-                    a: DataTable.CellType,
-                    b: DataTable.CellType
+                    a: DataTableCellType,
+                    b: DataTableCellType
                 ): number => -customCompare(a, b);
             }
             return customCompare;
@@ -132,7 +138,7 @@ class SortModifier extends DataModifier {
     /**
      * Constructs an instance of the sort modifier.
      *
-     * @param {Partial<SortDataModifier.Options>} [options]
+     * @param {Partial<SortModifierOptions>} [options]
      * Options to configure the sort modifier.
      */
     public constructor(
@@ -165,7 +171,7 @@ class SortModifier extends DataModifier {
      * @param {Highcharts.DataTable} table
      * Table with rows to reference.
      *
-     * @return {Array<SortModifier.RowReference>}
+     * @return {Array<SortRowReference>}
      * Array of row references.
      */
     protected getRowReferences(
@@ -186,7 +192,7 @@ class SortModifier extends DataModifier {
 
     public override modifyTable(
         table: DataTable,
-        eventDetail?: DataEvent.Detail
+        eventDetail?: DataEventDetail
     ): DataTable {
         const modifier = this;
 
@@ -211,8 +217,8 @@ class SortModifier extends DataModifier {
         const orderByIndexes: Array<{
             columnIndex: number;
             compare: (
-                a: DataTable.CellType,
-                b: DataTable.CellType
+                a: DataTableCellType,
+                b: DataTableCellType
             ) => number;
         }> = [];
 
@@ -251,14 +257,14 @@ class SortModifier extends DataModifier {
         }
 
         if (orderInColumn) {
-            const column: DataTable.Column = [];
+            const column: DataTableColumn = [];
             for (let i = 0; i < rowCount; ++i) {
                 column[rowReferences[i].index] = i;
             }
             modified.setColumns({ [orderInColumn]: column });
         } else {
             const originalIndexes: Array<number | undefined> = [];
-            const rows: Array<DataTable.Row> = [];
+            const rows: Array<DataTableRow> = [];
 
             let rowReference: SortRowReference;
             for (let i = 0; i < rowCount; ++i) {
@@ -277,19 +283,6 @@ class SortModifier extends DataModifier {
 
         return table;
     }
-
-}
-
-/* *
- *
- *  Class Namespace
- *
- * */
-
-/**
- * Additionally provided types for modifier events and options.
- */
-namespace SortModifier {
 
 }
 

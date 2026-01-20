@@ -20,7 +20,7 @@
  *
  * */
 
-import type Sync from '../../Sync/Sync';
+import type { PredefinedSyncConfig } from '../../Sync/Sync';
 import KPIExtremesSync from './KPIExtremesSync.js';
 
 
@@ -30,7 +30,7 @@ import KPIExtremesSync from './KPIExtremesSync.js';
 *
 * */
 
-const predefinedSyncConfig: Sync.PredefinedSyncConfig = {
+const predefinedSyncConfig: PredefinedSyncConfig = {
     defaultSyncPairs: {
         extremes: KPIExtremesSync.syncPair
     },

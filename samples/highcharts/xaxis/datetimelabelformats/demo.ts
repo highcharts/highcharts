@@ -20,4 +20,4 @@ Highcharts.chart('container', {
         pointIntervalUnit: 'day',
         pointStart: '2010-01-01'
     }]
-} satisfies Highcharts.Options);
+});

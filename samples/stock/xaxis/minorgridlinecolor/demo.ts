@@ -15,6 +15,6 @@
         series: [{
             data: data
         }]
-    } satisfies Highcharts.Options);
+    });
 
 })();
