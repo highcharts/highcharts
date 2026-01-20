@@ -174,10 +174,11 @@ Requires React 18 or higher.
 
 **App.tsx:**
 ```tsx
+import { useState } from 'react';
 import { Grid, type GridOptions } from '@highcharts/grid-lite-react';
 
 export default function App() {
-    const options: GridOptions = {
+    const [options] = useState<GridOptions>({
         dataTable: {
             columns: {
                 name: ['Alice', 'Bob', 'Charlie', 'David'],
@@ -185,7 +186,7 @@ export default function App() {
                 city: ['New York', 'Oslo', 'Paris', 'Tokyo'],
             }
         }
-    };
+    });
 
     return <Grid options={options} />;
 }

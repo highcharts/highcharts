@@ -14,8 +14,15 @@ npm install @highcharts/grid-lite-react
 npm install @highcharts/grid-pro-react
 ```
 
-The core Grid library is included as a dependency. Run `npm update` to get the
-latest compatible version.
+The core Grid library is included as a dependency and will be installed
+automatically.
+
+### Updating to newer versions
+- **Minor and patch updates:** Run `npm update` to get the latest compatible version
+- **Major updates:** Install the latest React package which will include the new major version:
+  ```bash
+  npm install @highcharts/grid-lite-react@latest
+  ```
 
 ## 2. Render the Grid component
 Grid Lite example:
@@ -43,7 +50,7 @@ For Grid Pro, swap the imports to `@highcharts/grid-pro-react` and render
 `<Grid options={options} />`.
 
 ## 3. Access the Grid instance (optional)
-You can access the underlying Grid instance via a ref or callback:
+You can access the underlying Grid instance via the `gridRef` prop or a callback:
 
 ```tsx
 import { useState, useRef } from 'react';
@@ -69,9 +76,51 @@ export default function App() {
         console.log('Grid instance:', grid);
     };
 
-    return <Grid options={options} ref={gridRef} callback={onGridReady} />;
+    return <Grid options={options} gridRef={gridRef} callback={onGridReady} />;
 }
 ```
 
-## 4. Next.js
+## 4. Updating the Grid
+When the options object changes, the Grid component automatically updates. Use
+state to manage your options:
+
+```tsx
+import { useState } from 'react';
+import { Grid, type GridOptions } from '@highcharts/grid-lite-react';
+
+export default function App() {
+    const [options, setOptions] = useState<GridOptions>({
+        dataTable: {
+            columns: {
+                name: ['Alice', 'Bob'],
+                age: [23, 34]
+            }
+        }
+    });
+
+    const loadNewData = () => {
+        setOptions({
+            dataTable: {
+                columns: {
+                    name: ['Charlie', 'Diana', 'Eve'],
+                    age: [45, 56, 67]
+                }
+            }
+        });
+    };
+
+    return (
+        <>
+            <Grid options={options} />
+            <button onClick={loadNewData}>Load new data</button>
+        </>
+    );
+}
+```
+
+> **Important:** Always store options in `useState` (not a plain object or `useMemo`).
+> This ensures the Grid only updates when you explicitly change the state, avoiding
+> unnecessary re-renders.
+
+## 5. Next.js
 For Next.js applications, see the dedicated [Next.js integration guide](https://www.highcharts.com/docs/grid/frameworks/grid-with-nextjs).
