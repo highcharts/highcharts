@@ -142,10 +142,11 @@ module.exports = {
             'grid/performance',
             'grid/accessibility',
             {
-                'Wrappers': [
-                    'grid/wrappers/grid-with-angular',
-                    'grid/wrappers/grid-with-react',
-                    'grid/wrappers/grid-with-vue'
+                'Frameworks': [
+                    'grid/frameworks/grid-with-angular',
+                    'grid/frameworks/grid-with-nextjs',
+                    'grid/frameworks/grid-with-react',
+                    'grid/frameworks/grid-with-vue'
                 ]
             }
         ],
