@@ -29,11 +29,7 @@ import Controllable from './Controllable.js';
 import F from '../../../Core/Templating.js';
 const { format } = F;
 import MockPoint from '../MockPoint.js';
-import U from '../../../Core/Utilities.js';
-import { extend, isNumber, pick } from '../../../Shared/Utilities.js';
-const {
-    getAlignFactor
-} = U;
+import { extend, getAlignFactor, isNumber, pick } from '../../../Shared/Utilities.js';
 
 /* *
  *

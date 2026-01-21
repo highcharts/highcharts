@@ -39,13 +39,7 @@ import H from '../../Core/Globals.js';
 const { noop } = H;
 import Legend from '../../Core/Legend/Legend.js';
 import Series from '../../Core/Series/Series.js';
-import U from '../../Core/Utilities.js';
-import { isNumber, merge, pick } from '../../Shared/Utilities.js';
-const {
-    arrayMax,
-    arrayMin,
-    stableSort
-} = U;
+import { arrayMax, arrayMin, isNumber, merge, pick, stableSort } from '../../Shared/Utilities.js';
 
 /* *
  *

@@ -26,10 +26,9 @@ import type Tick from './Tick.js';
 import H from '../Globals.js';
 const { composed } = H;
 import U from '../Utilities.js';
-import { extend, pushUnique } from '../../Shared/Utilities.js';
+import { extend, pushUnique, wrap } from '../../Shared/Utilities.js';
 const {
-    addEvent,
-    wrap
+    addEvent
 } = U;
 
 /* *

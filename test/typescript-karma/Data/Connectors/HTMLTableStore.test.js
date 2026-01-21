@@ -1,10 +1,9 @@
 import HTMLTableConnector from '/base/code/es-modules/Data/Connectors/HTMLTableConnector.js'
 import HTMLTableConverter from '/base/code/es-modules/Data/Converters/HTMLTableConverter.js'
-import U from '/base/code/es-modules/Core/Utilities.js';
 import { registerConnectorEvents } from './utils.js'
 import CSVConnector from '/base/code/es-modules/Data/Connectors/CSVConnector.js';
+import { createElement } from '/base/code/es-modules/Shared/Utilities.js';
 const { test } = QUnit;
-const { createElement } = U;
 
 const tableHTML = `<table id="data">
 <tr>

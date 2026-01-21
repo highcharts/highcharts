@@ -30,11 +30,9 @@ import SeriesRegistry from '../../Series/SeriesRegistry.js';
 const { series: { prototype: seriesProto } } = SeriesRegistry;
 import StackItem from './StackItem.js';
 import U from '../../Utilities.js';
-import { defined, isNumber, objectEach, pick } from '../../../Shared/Utilities.js';
+import { correctFloat, defined, destroyObjectProperties, isNumber, objectEach, pick } from '../../../Shared/Utilities.js';
 const {
     addEvent,
-    correctFloat,
-    destroyObjectProperties,
     fireEvent
 } = U;
 

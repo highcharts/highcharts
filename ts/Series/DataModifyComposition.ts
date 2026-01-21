@@ -26,12 +26,9 @@ const {
 } = Point.prototype;
 import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
-import { defined, isArray, isNumber, isString, pick } from '../Shared/Utilities.js';
+import { arrayMax, arrayMin, correctFloat, defined, isArray, isNumber, isString, pick } from '../Shared/Utilities.js';
 const {
-    addEvent,
-    arrayMax,
-    arrayMin,
-    correctFloat
+    addEvent
 } = U;
 
 /* *

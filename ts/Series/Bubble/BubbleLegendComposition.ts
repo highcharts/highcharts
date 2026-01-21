@@ -31,10 +31,9 @@ const { setOptions } = D;
 import H from '../../Core/Globals.js';
 const { composed } = H;
 import U from '../../Core/Utilities.js';
-import { objectEach, pushUnique } from '../../Shared/Utilities.js';
+import { objectEach, pushUnique, wrap } from '../../Shared/Utilities.js';
 const {
-    addEvent,
-    wrap
+    addEvent
 } = U;
 
 /* *

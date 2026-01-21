@@ -25,11 +25,9 @@ import type ParallelCoordinates from './ParallelCoordinates';
 
 import ParallelCoordinatesDefaults from './ParallelCoordinatesDefaults.js';
 import U from '../../Core/Utilities.js';
-import { isNumber, merge, pick } from '../../Shared/Utilities.js';
+import { arrayMax, arrayMin, isNumber, merge, pick } from '../../Shared/Utilities.js';
 const {
-    addEvent,
-    arrayMax,
-    arrayMin
+    addEvent
 } = U;
 
 /* *

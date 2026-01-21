@@ -29,11 +29,8 @@ const {
         }
     }
 } = SeriesRegistry;
-import U from '../Core/Utilities.js';
-import { defined, extend, merge, pick } from '../Shared/Utilities.js';
-const {
-    find
-} = U;
+import { defined, extend, find, merge, pick } from '../Shared/Utilities.js';
+
 
 /* *
  *

@@ -57,11 +57,7 @@ const {
     stripHTMLTagsFromString,
     visuallyHideElement
 } = HU;
-import U from '../../Core/Utilities.js';
-import { attr, pick } from '../../Shared/Utilities.js';
-const {
-    replaceNested
-} = U;
+import { attr, pick, replaceNested } from '../../Shared/Utilities.js';
 
 
 /* *

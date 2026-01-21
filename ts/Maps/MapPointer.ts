@@ -22,11 +22,7 @@ import type MapNavigation from './MapNavigation';
 import type Pointer from '../Core/Pointer';
 import type PointerEvent from '../Core/PointerEvent';
 
-import U from '../Core/Utilities.js';
-import { defined, extend, internalClearTimeout, pick } from '../Shared/Utilities.js';
-const {
-    wrap
-} = U;
+import { defined, extend, internalClearTimeout, pick, wrap } from '../Shared/Utilities.js';
 
 /* *
  *

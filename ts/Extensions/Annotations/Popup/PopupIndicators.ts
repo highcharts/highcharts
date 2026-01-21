@@ -36,11 +36,9 @@ const { doc } = H;
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
-import { defined, isArray, isObject, objectEach } from '../../../Shared/Utilities.js';
+import { createElement, defined, isArray, isObject, objectEach, stableSort } from '../../../Shared/Utilities.js';
 const {
-    addEvent,
-    createElement,
-    stableSort
+    addEvent
 } = U;
 
 /* *

@@ -35,11 +35,9 @@ const {
 import ScrollbarAxis from '../../Core/Axis/ScrollbarAxis.js';
 import ScrollbarDefaults from './ScrollbarDefaults.js';
 import U from '../../Core/Utilities.js';
-import { crisp, defined, extend, merge, pick, pushUnique } from '../../Shared/Utilities.js';
+import { correctFloat, crisp, defined, destroyObjectProperties, extend, merge, pick, pushUnique } from '../../Shared/Utilities.js';
 const {
     addEvent,
-    correctFloat,
-    destroyObjectProperties,
     fireEvent,
     removeEvent
 } = U;

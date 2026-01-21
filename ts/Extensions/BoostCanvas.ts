@@ -57,11 +57,10 @@ const {
 } = H;
 import { Palette } from '../Core/Color/Palettes.js';
 import U from '../Core/Utilities.js';
-import { internalClearTimeout, isNumber, merge, pick } from '../Shared/Utilities.js';
+import { internalClearTimeout, isNumber, merge, pick, wrap } from '../Shared/Utilities.js';
 const {
     addEvent,
-    fireEvent,
-    wrap
+    fireEvent
 } = U;
 
 /* *

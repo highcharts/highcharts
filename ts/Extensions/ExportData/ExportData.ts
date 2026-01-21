@@ -54,10 +54,9 @@ const {
     win
 } = G;
 import U from '../../Core/Utilities.js';
-import { defined, extend, isNumber, pick, pushUnique } from '../../Shared/Utilities.js';
+import { defined, extend, find, isNumber, pick, pushUnique } from '../../Shared/Utilities.js';
 const {
     addEvent,
-    find,
     fireEvent
 } = U;
 

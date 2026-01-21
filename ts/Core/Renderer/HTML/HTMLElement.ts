@@ -28,12 +28,7 @@ import AST from './AST.js';
 import H from '../../Globals.js';
 const { composed, isFirefox } = H;
 import SVGElement from '../SVG/SVGElement.js';
-import U from '../../Utilities.js';
-import { defined, extend, isNumber, pInt, pushUnique } from '../../../Shared/Utilities.js';
-const {
-    css,
-    getAlignFactor
-} = U;
+import { css, defined, extend, getAlignFactor, isNumber, pInt, pushUnique } from '../../../Shared/Utilities.js';
 
 /* *
  *

@@ -38,12 +38,9 @@ import F from '../Templating.js';
 import H from '../Globals.js';
 const { deg2rad } = H;
 import U from '../Utilities.js';
-import { clamp, defined, extend, isNumber, merge, objectEach, pick } from '../../Shared/Utilities.js';
+import { correctFloat, clamp, defined, extend, isNumber, merge, objectEach, pick, destroyObjectProperties, getAlignFactor } from '../../Shared/Utilities.js';
 const {
-    correctFloat,
-    destroyObjectProperties,
-    fireEvent,
-    getAlignFactor
+    fireEvent
 } = U;
 
 /* *

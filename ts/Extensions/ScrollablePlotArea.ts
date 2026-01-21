@@ -38,11 +38,9 @@ import H from '../Core/Globals.js';
 const { composed } = H;
 import RendererRegistry from '../Core/Renderer/RendererRegistry.js';
 import U from '../Core/Utilities.js';
-import { defined, erase, merge, pushUnique } from '../Shared/Utilities.js';
+import { createElement, css, defined, erase, merge, pushUnique } from '../Shared/Utilities.js';
 const {
-    addEvent,
-    createElement,
-    css
+    addEvent
 } = U;
 
 /* *

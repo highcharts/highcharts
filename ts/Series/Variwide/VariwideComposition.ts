@@ -29,10 +29,9 @@ import H from '../../Core/Globals.js';
 const { composed } = H;
 import VariwidePoint from './VariwidePoint.js';
 import U from '../../Core/Utilities.js';
-import { pushUnique } from '../../Shared/Utilities.js';
+import { pushUnique, wrap } from '../../Shared/Utilities.js';
 const {
-    addEvent,
-    wrap
+    addEvent
 } = U;
 
 /* *

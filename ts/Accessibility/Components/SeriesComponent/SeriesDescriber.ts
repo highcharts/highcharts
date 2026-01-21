@@ -48,11 +48,7 @@ const {
     reverseChildNodes,
     stripHTMLTagsFromString: stripHTMLTags
 } = HTMLUtilities;
-import U from '../../../Core/Utilities.js';
-import { defined, isString, isNumber, pick } from '../../../Shared/Utilities.js';
-const {
-    find
-} = U;
+import { defined, find, isString, isNumber, pick } from '../../../Shared/Utilities.js';
 
 
 /* *

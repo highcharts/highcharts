@@ -31,10 +31,9 @@ import type SVGPath from '../Renderer/SVG/SVGPath';
 
 import StackItem from './Stacking/StackItem.js';
 import U from '../Utilities.js';
-import { isArray, isNumber, pick } from '../../Shared/Utilities.js';
+import { find, isArray, isNumber, pick } from '../../Shared/Utilities.js';
 const {
     addEvent,
-    find,
     fireEvent
 } = U;
 

@@ -25,11 +25,7 @@ import H from '../Globals.js';
 import D from '../Defaults.js';
 const { defaultOptions } = D;
 import Point from './Point.js';
-import U from '../Utilities.js';
-import { extend, merge } from '../../Shared/Utilities.js';
-const {
-    extendClass
-} = U;
+import { extend, extendClass, merge } from '../../Shared/Utilities.js';
 
 /* *
  *

@@ -11,17 +11,12 @@
 
 'use strict';
 
-import { clamp, pick, pushUnique } from '../../Shared/Utilities.js';
 /* *
  *
  *  Imports
  *
  * */
-
-import U from '../Utilities.js';
-const {
-    stableSort
-} = U;
+import { clamp, pick, pushUnique, stableSort } from '../../Shared/Utilities.js';
 
 /* *
  *

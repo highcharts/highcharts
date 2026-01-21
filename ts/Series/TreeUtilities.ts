@@ -26,11 +26,7 @@ import type CoreSeries from '../Core/Series/Series';
 import type ColorType from '../Core/Color/ColorType';
 
 import Color from '../Core/Color/Color.js';
-import U from '../Core/Utilities.js';
-import { extend, isArray, isNumber, isObject, merge, pick } from '../Shared/Utilities.js';
-const {
-    relativeLength
-} = U;
+import { extend, isArray, isNumber, isObject, merge, pick, relativeLength } from '../Shared/Utilities.js';
 
 /* *
  *

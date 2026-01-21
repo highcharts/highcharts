@@ -28,12 +28,10 @@ const {
 } = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
 const {
-    arrayMax,
-    arrayMin,
     fireEvent
 } = U;
 import VariablePieSeriesDefaults from './VariablePieSeriesDefaults.js';
-import { clamp, extend, merge, pick } from '../../Shared/Utilities.js';
+import { arrayMax, arrayMin, clamp, extend, merge, pick } from '../../Shared/Utilities.js';
 
 /* *
  *

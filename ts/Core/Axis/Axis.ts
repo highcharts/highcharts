@@ -63,19 +63,12 @@ import H from '../Globals.js';
 const { deg2rad } = H;
 import { Palette } from '../Color/Palettes.js';
 import Tick from './Tick.js';
-import { clamp, defined, erase, extend, isArray, isNumber, isString, merge, objectEach, pick, splat, syncTimeout } from '../../Shared/Utilities.js';
+import { arrayMax, arrayMin, clamp, correctFloat, defined, destroyObjectProperties, erase, extend, getClosestDistance, isArray, isNumber, isString, merge, normalizeTickInterval, objectEach, pick, relativeLength, splat, syncTimeout } from '../../Shared/Utilities.js';
 import U from '../Utilities.js';
 const {
-    arrayMax,
-    arrayMin,
-    correctFloat,
-    destroyObjectProperties,
     error,
     fireEvent,
-    getClosestDistance,
     insertItem,
-    normalizeTickInterval,
-    relativeLength,
     removeEvent
 } = U;
 

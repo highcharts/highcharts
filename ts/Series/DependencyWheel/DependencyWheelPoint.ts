@@ -29,11 +29,7 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     sankey: { prototype: { pointClass: SankeyPoint } }
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
-import { pInt } from '../../Shared/Utilities.js';
-const {
-    wrap
-} = U;
+import { pInt, wrap } from '../../Shared/Utilities.js';
 
 /* *
  *

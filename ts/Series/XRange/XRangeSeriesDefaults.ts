@@ -22,11 +22,7 @@
 import type XRangePoint from './XRangePoint';
 import type XRangeSeriesOptions from './XRangeSeriesOptions';
 
-import U from '../../Core/Utilities.js';
-import { isObject, isNumber } from '../../Shared/Utilities.js';
-const {
-    correctFloat
-} = U;
+import { isObject, isNumber, correctFloat } from '../../Shared/Utilities.js';
 
 /* *
  *

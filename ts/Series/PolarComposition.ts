@@ -56,13 +56,10 @@ import Series from '../Core/Series/Series.js';
 import Pane from '../Extensions/Pane/Pane.js';
 import RadialAxis from '../Core/Axis/RadialAxis.js';
 import U from '../Core/Utilities.js';
-import { clamp, defined, isNumber, isObject, merge, pick, pushUnique, splat } from '../Shared/Utilities.js';
+import { clamp, defined, find, isNumber, isObject, merge, pick, pushUnique, relativeLength, splat, wrap } from '../Shared/Utilities.js';
 const {
     addEvent,
-    find,
-    relativeLength,
-    uniqueKey,
-    wrap
+    uniqueKey
 } = U;
 
 /* *

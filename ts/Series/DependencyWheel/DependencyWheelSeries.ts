@@ -33,13 +33,9 @@ const {
     pie: PieSeries,
     sankey: SankeySeries
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
-const {
-    relativeLength
-} = U;
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import TextPath from '../../Extensions/TextPath.js';
-import { extend, merge } from '../../Shared/Utilities.js';
+import { extend, merge, relativeLength } from '../../Shared/Utilities.js';
 TextPath.compose(SVGElement);
 
 /* *

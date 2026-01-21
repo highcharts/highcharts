@@ -37,12 +37,8 @@ import PathUtilities from '../PathUtilities.js';
 const {
     sankey: SankeySeries
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
-const {
-    css
-} = U;
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
-import { crisp, extend, isNumber, merge, pick } from '../../Shared/Utilities.js';
+import { crisp, css, extend, isNumber, merge, pick } from '../../Shared/Utilities.js';
 import TextPath from '../../Extensions/TextPath.js';
 TextPath.compose(SVGElement);
 

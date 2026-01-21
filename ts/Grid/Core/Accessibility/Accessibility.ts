@@ -31,12 +31,10 @@ import Globals from '../Globals.js';
 import ColumnFiltering from '../Table/Actions/ColumnFiltering/ColumnFiltering.js';
 import GridUtils from '../GridUtils.js';
 import AST from '../../../Core/Renderer/HTML/AST.js';
-import U from '../../../Core/Utilities.js';
 import HTMLU from '../../../Accessibility/Utils/HTMLUtilities.js';
-import { internalClearTimeout } from '../../../Shared/Utilities.js';
+import { internalClearTimeout, replaceNested } from '../../../Shared/Utilities.js';
 
 const { formatText } = GridUtils;
-const { replaceNested } = U;
 const { getHeadingTagNameForElement } = HTMLU;
 
 

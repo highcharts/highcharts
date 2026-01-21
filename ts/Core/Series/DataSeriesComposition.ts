@@ -30,11 +30,10 @@ import DataTable from '../../Data/DataTable.js';
 import H from '../Globals.js';
 const { composed } = H;
 import U from '../Utilities.js';
-import { isNumber, merge, pushUnique } from '../../Shared/Utilities.js';
+import { isNumber, merge, pushUnique, wrap } from '../../Shared/Utilities.js';
 const {
     addEvent,
-    fireEvent,
-    wrap
+    fireEvent
 } = U;
 
 /* *

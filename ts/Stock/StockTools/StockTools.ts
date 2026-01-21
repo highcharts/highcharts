@@ -33,11 +33,7 @@ const {
     isNotNavigatorYAxis,
     isPriceIndicatorEnabled
 } = STU;
-import U from '../../Core/Utilities.js';
-import { defined, isNumber, pick } from '../../Shared/Utilities.js';
-const {
-    correctFloat
-} = U;
+import { correctFloat, defined, isNumber, pick } from '../../Shared/Utilities.js';
 
 /* *
  *

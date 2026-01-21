@@ -12,7 +12,64 @@ import type CSSObject from '../Core/Renderer/CSSObject';
 import type { DOMElementType, HTMLDOMElement } from '../Core/Renderer/DOMElementType';
 import type HTMLAttributes from '../Core/Renderer/HTML/HTMLAttributes';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
-import type { DeepPartial } from './Types.js';
+import type { DeepPartial, TypedArray } from './Types.js';
+
+import H from '../Core/Globals.js';
+const {
+    doc,
+    win
+} = H;
+
+/**
+ * Non-recursive method to find the lowest member of an array. `Math.min` raises
+ * a maximum call stack size exceeded error in Chrome when trying to apply more
+ * than 150.000 points. This method is slightly slower, but safe.
+ *
+ * @function Highcharts.arrayMin
+ *
+ * @param {Array<*>} data
+ *        An array of numbers.
+ *
+ * @return {number}
+ *         The lowest number.
+ */
+export function arrayMin(data: Array<any>|TypedArray): number {
+    let i = data.length,
+        min = data[0];
+
+    while (i--) {
+        if (data[i] < min) {
+            min = data[i];
+        }
+    }
+    return min;
+}
+
+/**
+ * Non-recursive method to find the lowest member of an array. `Math.max` raises
+ * a maximum call stack size exceeded error in Chrome when trying to apply more
+ * than 150.000 points. This method is slightly slower, but safe.
+ *
+ * @function Highcharts.arrayMax
+ *
+ * @param {Array<*>} data
+ *        An array of numbers.
+ *
+ * @return {number}
+ *         The highest number.
+ */
+export function arrayMax(data: Array<any>|TypedArray): number {
+    let i = data.length,
+        max = data[0];
+
+    while (i--) {
+        if (data[i] > max) {
+            max = data[i];
+        }
+    }
+    return max;
+}
+
 
 export function attr(
     elem: DOMElementType,
@@ -110,6 +167,75 @@ export function clamp(value: number, min: number, max: number): number {
 }
 
 /**
+ * Fix JS round off float errors.
+ *
+ * @function Highcharts.correctFloat
+ *
+ * @param {number} num
+ *        A float number to fix.
+ *
+ * @param {number} [prec=14]
+ *        The precision.
+ *
+ * @return {number}
+ *         The corrected float number.
+ */
+export function correctFloat(num: number, prec?: number): number {
+
+    // When the number is higher than 1e14 use the number (#16275)
+    return num > 1e14 ? num : parseFloat(
+        num.toPrecision(prec || 14)
+    );
+}
+
+/**
+ * Utility function to create an HTML element with attributes and styles.
+ *
+ * @function Highcharts.createElement
+ *
+ * @param {string} tag
+ *        The HTML tag.
+ *
+ * @param {Highcharts.HTMLAttributes} [attribs]
+ *        Attributes as an object of key-value pairs.
+ *
+ * @param {Highcharts.CSSObject} [styles]
+ *        Styles as an object of key-value pairs.
+ *
+ * @param {Highcharts.HTMLDOMElement} [parent]
+ *        The parent HTML object.
+ *
+ * @param {boolean} [nopad=false]
+ *        If true, remove all padding, border and margin.
+ *
+ * @return {Highcharts.HTMLDOMElement}
+ *         The created DOM element.
+ */
+export function createElement(
+    tag: string,
+    attribs?: HTMLAttributes,
+    styles?: CSSObject,
+    parent?: HTMLDOMElement,
+    nopad?: boolean
+): HTMLDOMElement {
+    const el = doc.createElement(tag);
+
+    if (attribs) {
+        extend(el, attribs);
+    }
+    if (nopad) {
+        css(el, { padding: '0', border: 'none', margin: '0' });
+    }
+    if (styles) {
+        css(el, styles);
+    }
+    if (parent) {
+        parent.appendChild(el);
+    }
+    return el;
+}
+
+/**
  * Utility for crisping a line position to the nearest full pixel depening on
  * the line width
  * @param {number} value       The raw pixel position
@@ -163,6 +289,50 @@ export function css(
  */
 export function defined<T>(obj: T): obj is NonNullable<T> {
     return typeof obj !== 'undefined' && obj !== null;
+}
+
+/**
+ * Utility method that destroys any SVGElement instances that are properties on
+ * the given object. It loops all properties and invokes destroy if there is a
+ * destroy method. The property is then delete.
+ *
+ * @function Highcharts.destroyObjectProperties
+ *
+ * @param {*} obj
+ *        The object to destroy properties on.
+ *
+ * @param {*} [except]
+ *        Exception, do not destroy this property, only delete it.
+ */
+export function destroyObjectProperties(
+    obj: any,
+    except?: any,
+    destructablesOnly?: boolean
+): void {
+    objectEach(obj, function (val, n): void {
+        // If the object is non-null and destroy is defined
+        if (val !== except && val?.destroy) {
+            // Invoke the destroy
+            val.destroy();
+        }
+
+        // Delete the property from the object
+        if (val?.destroy || !destructablesOnly) {
+            delete obj[n];
+        }
+    });
+}
+
+/**
+ * Discard a HTML element
+ *
+ * @function Highcharts.discardElement
+ *
+ * @param {Highcharts.HTMLDOMElement} element
+ *        The HTML node to discard.
+ */
+export function discardElement(element?: HTMLDOMElement): void {
+    element?.parentElement?.removeChild(element);
 }
 
 // eslint-disable-next-line valid-jsdoc
@@ -316,6 +486,88 @@ export function extend<T extends object>(a: (T|undefined), b: Partial<T>): T {
     return a;
 }
 
+// eslint-disable-next-line valid-jsdoc
+/**
+ * Extend a prototyped class by new members.
+ *
+ * @deprecated
+ * @function Highcharts.extendClass<T>
+ *
+ * @param {Highcharts.Class<T>} parent
+ *        The parent prototype to inherit.
+ *
+ * @param {Highcharts.Dictionary<*>} members
+ *        A collection of prototype members to add or override compared to the
+ *        parent prototype.
+ *
+ * @return {Highcharts.Class<T>}
+ *         A new prototype.
+ */
+export function extendClass <T, TReturn = T>(
+    parent: Class<T>,
+    members: any
+): Class<TReturn> {
+    const obj: Class<TReturn> = (function (): void {}) as any;
+
+    obj.prototype = new parent(); // eslint-disable-line new-cap
+    extend(obj.prototype, members);
+    return obj;
+}
+
+/**
+ * Convenience function to get the align factor, used several places for
+ * computing positions
+ * @internal
+ */
+export const getAlignFactor = (align: string = ''): number => ({
+    center: 0.5,
+    right: 1,
+    middle: 0.5,
+    bottom: 1
+}[align] || 0);
+
+/**
+ * Find the closest distance between two values of a two-dimensional array
+ * @internal
+ * @function Highcharts.getClosestDistance
+ *
+ * @param {Array<Array<number>>} arrays
+ *          An array of arrays of numbers
+ *
+ * @return {number | undefined}
+ *          The closest distance between values
+ */
+export function getClosestDistance(
+    arrays: (number[]|TypedArray)[],
+    onError?: Function
+): (number|undefined) {
+    const allowNegative = !onError;
+    let closest: number | undefined,
+        loopLength: number,
+        distance: number,
+        i: number;
+
+    arrays.forEach((xData): void => {
+        if (xData.length > 1) {
+            loopLength = xData.length - 1;
+            for (i = loopLength; i > 0; i--) {
+                distance = xData[i] - xData[i - 1];
+                if (distance < 0 && !allowNegative) {
+                    onError?.();
+                    // Only one call
+                    onError = void 0;
+                } else if (distance && (
+                    typeof closest === 'undefined' || distance < closest
+                )) {
+                    closest = distance;
+                }
+            }
+        }
+    });
+
+    return closest;
+}
+
 /**
  * Get the magnitude of a number.
  *
@@ -330,6 +582,188 @@ export function extend<T extends object>(a: (T|undefined), b: Partial<T>): T {
 export function getMagnitude(num: number): number {
     return Math.pow(10, Math.floor(Math.log(num) / Math.LN10));
 }
+
+/**
+ * Returns the value of a property path on a given object.
+ *
+ * @internal
+ * @function getNestedProperty
+ *
+ * @param {string} path
+ * Path to the property, for example `custom.myValue`.
+ *
+ * @param {unknown} obj
+ * Instance containing the property on the specific path.
+ *
+ * @return {unknown}
+ * The unknown property value.
+ */
+export function getNestedProperty(path: string, parent: unknown): unknown {
+    const pathElements = path.split('.');
+
+    while (pathElements.length && defined(parent)) {
+        const pathElement = pathElements.shift();
+
+        // Filter on the key
+        if (
+            typeof pathElement === 'undefined' ||
+            pathElement === '__proto__'
+        ) {
+            return; // Undefined
+        }
+
+        if (pathElement === 'this') {
+            let thisProp;
+            if (isObject(parent)) {
+                thisProp = (parent as Record<string, unknown>)['@this'];
+            }
+            return thisProp ?? parent;
+        }
+
+        const child = (parent as Record<string, unknown>)[
+            pathElement.replace(/[\\'"]/g, '')
+        ] as Record<string, unknown>;
+
+        // Filter on the child
+        if (
+            !defined(child) ||
+            typeof child === 'function' ||
+            typeof child.nodeType === 'number' ||
+            child as unknown === win
+        ) {
+            return; // Undefined
+        }
+
+        // Else, proceed
+        parent = child;
+    }
+    return parent;
+}
+
+export function getStyle(
+    el: HTMLDOMElement,
+    prop: string,
+    toInt: true
+): (number|undefined);
+export function getStyle(
+    el: HTMLDOMElement,
+    prop: string,
+    toInt?: false
+): (number|string|undefined);
+/**
+ * Get the computed CSS value for given element and property, only for numerical
+ * properties. For width and height, the dimension of the inner box (excluding
+ * padding) is returned. Used for fitting the chart within the container.
+ *
+ * @function Highcharts.getStyle
+ *
+ * @param {Highcharts.HTMLDOMElement} el
+ * An HTML element.
+ *
+ * @param {string} prop
+ * The property name.
+ *
+ * @param {boolean} [toInt=true]
+ * Parse to integer.
+ *
+ * @return {number|string|undefined}
+ * The style value.
+ */
+export function getStyle(
+    el: HTMLDOMElement,
+    prop: string,
+    toInt?: boolean
+): (number|string|undefined) {
+    let style: (number|string|undefined);
+
+    // For width and height, return the actual inner pixel size (#4913)
+    if (prop === 'width') {
+
+        let offsetWidth = Math.min(el.offsetWidth, el.scrollWidth);
+
+        // In flex boxes, we need to use getBoundingClientRect and floor it,
+        // because scrollWidth doesn't support subpixel precision (#6427) ...
+        const boundingClientRectWidth = el.getBoundingClientRect?.().width;
+        // ...unless if the containing div or its parents are transform-scaled
+        // down, in which case the boundingClientRect can't be used as it is
+        // also scaled down (#9871, #10498).
+        if (
+            boundingClientRectWidth < offsetWidth &&
+            boundingClientRectWidth >= offsetWidth - 1
+        ) {
+            offsetWidth = Math.floor(boundingClientRectWidth);
+        }
+
+        return Math.max(
+            0, // #8377
+            (
+                offsetWidth -
+                (getStyle(el, 'padding-left', true) || 0) -
+                (getStyle(el, 'padding-right', true) || 0)
+            )
+        );
+    }
+
+    if (prop === 'height') {
+        return Math.max(
+            0, // #8377
+            (
+                Math.min(el.offsetHeight, el.scrollHeight) -
+                (getStyle(el, 'padding-top', true) || 0) -
+                (getStyle(el, 'padding-bottom', true) || 0)
+            )
+        );
+    }
+
+    // Otherwise, get the computed style
+    const css = win.getComputedStyle(el, void 0); // eslint-disable-line no-undefined
+    if (css) {
+        style = css.getPropertyValue(prop);
+        if (pick(toInt, prop !== 'opacity')) {
+            style = pInt(style);
+        }
+    }
+
+    return style;
+}
+
+/**
+ * Return the value of the first element in the array that satisfies the
+ * provided testing function.
+ *
+ * @function Highcharts.find<T>
+ *
+ * @param {Array<T>} arr
+ *        The array to test.
+ *
+ * @param {Function} callback
+ *        The callback function. The function receives the item as the first
+ *        argument. Return `true` if this item satisfies the condition.
+ *
+ * @return {T|undefined}
+ *         The value of the element.
+ */
+export const find = (Array.prototype as any).find ?
+    function<T> (
+        arr: Array<T>,
+        callback: FindCallback<T>
+    ): (T|undefined) {
+        return (arr as any).find(callback as any);
+    } :
+    // Legacy implementation. PhantomJS, IE <= 11 etc. #7223.
+    function<T> (
+        arr: Array<T>,
+        callback: FindCallback<T>
+    ): (T|undefined) {
+        let i;
+        const length = arr.length;
+
+        for (i = 0; i < length; i++) {
+            if (callback(arr[i], i)) { // eslint-disable-line node/callback-return
+                return arr[i];
+            }
+        }
+    };
 
 /**
  * Internal clear timeout. The function checks that the `id` was not removed
@@ -429,6 +863,11 @@ export function isArray(obj: unknown): obj is Array<unknown> {
     const str = Object.prototype.toString.call(obj);
 
     return str === '[object Array]' || str === '[object Array Iterator]';
+}
+
+
+export function isFunction(obj: unknown): obj is Function { // eslint-disable-line
+    return typeof obj === 'function';
 }
 
 export function isObject<T>(obj: T, strict: true): obj is object & NonArray<NonFunction<NonNullable<T>>>;
@@ -555,6 +994,106 @@ export function merge<T>(
     return ret;
 }
 
+/**
+ * Take an interval and normalize it to multiples of round numbers.
+ *
+ * @deprecated
+ * @function Highcharts.normalizeTickInterval
+ *
+ * @param {number} interval
+ *        The raw, un-rounded interval.
+ *
+ * @param {Array<*>} [multiples]
+ *        Allowed multiples.
+ *
+ * @param {number} [magnitude]
+ *        The magnitude of the number.
+ *
+ * @param {boolean} [allowDecimals]
+ *        Whether to allow decimals.
+ *
+ * @param {boolean} [hasTickAmount]
+ *        If it has tickAmount, avoid landing on tick intervals lower than
+ *        original.
+ *
+ * @return {number}
+ *         The normalized interval.
+ *
+ * @todo
+ * Move this function to the Axis prototype. It is here only for historical
+ * reasons.
+ */
+export function normalizeTickInterval(
+    interval: number,
+    multiples?: Array<number>,
+    magnitude?: number,
+    allowDecimals?: boolean,
+    hasTickAmount?: boolean
+): number {
+    let i,
+        retInterval = interval;
+
+    // Round to a tenfold of 1, 2, 2.5 or 5
+    magnitude = pick(magnitude, getMagnitude(interval));
+    const normalized = interval / magnitude;
+
+    // Multiples for a linear scale
+    if (!multiples) {
+        multiples = hasTickAmount ?
+            // Finer grained ticks when the tick amount is hard set, including
+            // when alignTicks is true on multiple axes (#4580).
+            [1, 1.2, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10] :
+
+            // Else, let ticks fall on rounder numbers
+            [1, 2, 2.5, 5, 10];
+
+
+        // The allowDecimals option
+        if (allowDecimals === false) {
+            if (magnitude === 1) {
+                multiples = multiples.filter(function (num: number): boolean {
+                    return num % 1 === 0;
+                });
+            } else if (magnitude <= 0.1) {
+                multiples = [1 / magnitude];
+            }
+        }
+    }
+
+    // Normalize the interval to the nearest multiple
+    for (i = 0; i < multiples.length; i++) {
+        retInterval = multiples[i];
+        // Only allow tick amounts smaller than natural
+        if (
+            (
+                hasTickAmount &&
+                retInterval * magnitude >= interval
+            ) ||
+            (
+                !hasTickAmount &&
+                (
+                    normalized <=
+                    (
+                        multiples[i] +
+                        (multiples[i + 1] || multiples[i])
+                    ) / 2
+                )
+            )
+        ) {
+            break;
+        }
+    }
+
+    // Multiply back to the correct magnitude. Correct floats to appropriate
+    // precision (#6085).
+    retInterval = correctFloat(
+        retInterval * (magnitude as any),
+        -Math.round(Math.log(0.001) / Math.LN10)
+    );
+
+    return retInterval;
+}
+
 /* eslint-disable valid-jsdoc */
 /**
  * Iterate over object key pairs in an object.
@@ -584,6 +1123,34 @@ export function objectEach<TObject, TContext>(
             fn.call(ctx || obj[key] as unknown as TContext, obj[key], key, obj);
         }
     }
+}
+
+/**
+ * Get the element's offset position, corrected for `overflow: auto`.
+ *
+ * @function Highcharts.offset
+ *
+ * @param {global.Element} el
+ *        The DOM element.
+ *
+ * @return {Highcharts.OffsetObject}
+ *         An object containing `left` and `top` properties for the position in
+ *         the page.
+ */
+export function offset(el: Element): OffsetObject {
+    const docElem = doc.documentElement,
+        box = (el.parentElement || el.parentNode) ?
+            el.getBoundingClientRect() :
+            { top: 0, left: 0, width: 0, height: 0 };
+
+    return {
+        top: box.top + (win.pageYOffset || docElem.scrollTop) -
+            (docElem.clientTop || 0),
+        left: box.left + (win.pageXOffset || docElem.scrollLeft) -
+            (docElem.clientLeft || 0),
+        width: box.width,
+        height: box.height
+    };
 }
 
 /**
@@ -698,6 +1265,68 @@ export function pushUnique(
 }
 
 /**
+ * Return a length based on either the integer value, or a percentage of a base.
+ *
+ * @function Highcharts.relativeLength
+ *
+ * @param {Highcharts.RelativeSize} value
+ *        A percentage string or a number.
+ *
+ * @param {number} base
+ *        The full length that represents 100%.
+ *
+ * @param {number} [offset=0]
+ *        A pixel offset to apply for percentage values. Used internally in
+ *        axis positioning.
+ *
+ * @return {number}
+ *         The computed length.
+ */
+export function relativeLength(
+    value: RelativeSize,
+    base: number,
+    offset?: number
+): number {
+    return (/%$/).test(value as any) ?
+        (base * parseFloat(value as any) / 100) + (offset || 0) :
+        parseFloat(value as any);
+}
+
+/**
+ * Replaces text in a string with a given replacement in a loop to catch nested
+ * matches after previous replacements.
+ *
+ * @function Highcharts.replaceNested
+ *
+ * @param {string} text
+ * Text to search and modify.
+ *
+ * @param {...Array<(RegExp|string)>} replacements
+ * One or multiple tuples with search pattern (`[0]: (string|RegExp)`) and
+ * replacement (`[1]: string`) for matching text.
+ *
+ * @return {string}
+ * Text with replacements.
+ */
+export function replaceNested(
+    text: string,
+    ...replacements: Array<[pattern: (string|RegExp), replacement: string]>
+): string {
+    let previous: string,
+        replacement: [(string|RegExp), string];
+
+    do {
+        previous = text;
+
+        for (replacement of replacements) {
+            text = text.replace(replacement[0], replacement[1]);
+        }
+    } while (text !== previous);
+
+    return text;
+}
+
+/**
  * Check if an element is an array, and if not, make it into an array.
  *
  * @function Highcharts.splat
@@ -710,6 +1339,46 @@ export function pushUnique(
  */
 export function splat<T>(obj: T|Array<T>): Array<T> {
     return isArray(obj) ? obj : [obj];
+}
+
+/**
+ * Sort an object array and keep the order of equal items. The ECMAScript
+ * standard does not specify the behaviour when items are equal.
+ *
+ * @function Highcharts.stableSort
+ *
+ * @param {Array<*>} arr
+ *        The array to sort.
+ *
+ * @param {Function} sortFunction
+ *        The function to sort it with, like with regular Array.prototype.sort.
+ */
+export function stableSort<T>(
+    arr: Array<T>,
+    sortFunction: (a: T, b: T) => number
+): void {
+
+    // @todo It seems like Chrome since v70 sorts in a stable way internally,
+    // plus all other browsers do it, so over time we may be able to remove this
+    // function
+    const length = arr.length;
+    let sortValue,
+        i;
+
+    // Add index to each item
+    for (i = 0; i < length; i++) {
+        (arr[i] as any).safeI = i; // Stable sort index
+    }
+
+    arr.sort(function (a: any, b: any): number {
+        sortValue = sortFunction(a, b);
+        return sortValue === 0 ? a.safeI - b.safeI : sortValue;
+    });
+
+    // Remove index from items
+    for (i = 0; i < length; i++) {
+        delete (arr[i] as any).safeI; // Stable sort index
+    }
 }
 
 /**
@@ -743,6 +1412,54 @@ export function syncTimeout(
     return -1;
 }
 
+export function ucfirst(s: unknown): string {
+    return (
+        (isString(s) ?
+            s.substring(0, 1).toUpperCase() + s.substring(1) :
+            String(s))
+    );
+}
+
+/**
+ * Wrap a method with extended functionality, preserving the original function.
+ *
+ * @function Highcharts.wrap
+ *
+ * @param {*} obj
+ *        The context object that the method belongs to. In real cases, this is
+ *        often a prototype.
+ *
+ * @param {string} method
+ *        The name of the method to extend.
+ *
+ * @param {Highcharts.WrapProceedFunction} func
+ *        A wrapper function callback. This function is called with the same
+ *        arguments as the original function, except that the original function
+ *        is unshifted and passed as the first argument.
+ */
+export function wrap<T, K extends FunctionNamesOf<T>>(
+    obj: T,
+    method: K,
+    func: WrapProceedFunction<T[K]&ArrowFunction>
+): void {
+    const proceed = obj[method] as T[K]&ArrowFunction;
+
+    obj[method] = function (this: T): ReturnType<typeof func> {
+        const outerArgs = arguments,
+            scope = this;
+
+        return func.apply(this, [
+            function (): ReturnType<typeof proceed> {
+                return proceed.apply(
+                    scope,
+                    arguments.length ? arguments : outerArgs
+                );
+            }
+        ].concat(
+            [].slice.call(arguments)
+        ) as Parameters<typeof func>);
+    } as T[K];
+}
 
 /* *
  *
@@ -752,7 +1469,12 @@ export function syncTimeout(
 type NullType = (null|undefined);
 type NonArray<T> = T extends Array<unknown> ? never : T;
 type NonFunction<T> = T extends Function ? never : T;
-
+export interface FindCallback<T> {
+    (
+        value: T,
+        index: number
+    ): unknown;
+}
 export interface ObjectEachCallback<TObject, TContext> {
     (
         this: TContext,
@@ -760,4 +1482,27 @@ export interface ObjectEachCallback<TObject, TContext> {
         key: Extract<keyof TObject, string>,
         obj: TObject
     ): void;
+}
+
+export interface OffsetObject {
+    /**
+     * Height of the element.
+     */
+    height: number;
+    /**
+     * Left distance to the page border.
+     */
+    left: number;
+    /**
+     * Top distance to the page border.
+     */
+    top: number;
+    /**
+     * Width of the element.
+     */
+    width: number;
+}
+
+export type RelativeSize = (number|string); interface WrapProceedFunction<T extends ArrowFunction> {
+    (proceed: (T&ArrowFunction), ...args: Array<any>): ReturnType<T>;
 }

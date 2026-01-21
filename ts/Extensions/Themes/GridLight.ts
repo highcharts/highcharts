@@ -23,9 +23,8 @@ import type { DeepPartial } from '../../Shared/Types';
 import type { DefaultOptions } from '../../Core/Options';
 
 import D from '../../Core/Defaults.js';
+import { createElement } from '../../Shared/Utilities.js';
 const { setOptions } = D;
-import U from '../../Core/Utilities.js';
-const { createElement } = U;
 
 /* *
  *

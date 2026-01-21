@@ -22,13 +22,11 @@ import EditMode from '../EditMode/EditMode.js';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
 import GUIElement from '../Layout/GUIElement.js';
 import ContextDetection from './ContextDetection.js';
-import { merge } from '../../Shared/Utilities.js';
+import { createElement, css, merge } from '../../Shared/Utilities.js';
 
 const {
     addEvent,
-    css,
-    fireEvent,
-    createElement
+    fireEvent
 } = U;
 
 /**

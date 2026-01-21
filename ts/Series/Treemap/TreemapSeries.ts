@@ -65,14 +65,11 @@ const {
     updateRootId
 } = TU;
 import U from '../../Core/Utilities.js';
-import { clamp, crisp, defined, extend, isArray, isNumber, isObject, isString, merge, pick, pushUnique, splat } from '../../Shared/Utilities.js';
+import { arrayMax, clamp, correctFloat, crisp, defined, extend, isArray, isNumber, isObject, isString, merge, pick, pushUnique, splat, stableSort } from '../../Shared/Utilities.js';
 const {
     addEvent,
-    arrayMax,
-    correctFloat,
     error,
-    fireEvent,
-    stableSort
+    fireEvent
 } = U;
 
 Series.keepProps.push('simulation', 'hadOutsideDataLabels');

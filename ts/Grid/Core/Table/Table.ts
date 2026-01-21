@@ -36,12 +36,11 @@ import RowsVirtualizer from './Actions/RowsVirtualizer.js';
 import ColumnsResizer from './Actions/ColumnsResizer.js';
 import Globals from '../Globals.js';
 import Cell from './Cell.js';
-import { defined } from '../../../Shared/Utilities.js';
+import { defined, getStyle } from '../../../Shared/Utilities.js';
 
 const { makeHTMLElement } = GridUtils;
 const {
-    fireEvent,
-    getStyle
+    fireEvent
 } = Utils;
 
 /* *

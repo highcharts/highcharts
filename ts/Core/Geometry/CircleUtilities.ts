@@ -23,15 +23,12 @@ import type PositionObject from '../Renderer/PositionObject';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 
 import Geometry from './GeometryUtilities.js';
-import Utilities from '../Utilities';
+import { correctFloat } from '../../Shared/Utilities.js';
 const {
     getAngleBetweenPoints,
     getCenterOfPoints,
     getDistanceBetweenPoints
 } = Geometry;
-const {
-    correctFloat
-} = Utilities;
 
 /* *
  *

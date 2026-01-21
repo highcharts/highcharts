@@ -26,11 +26,7 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     line: LineSeries
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
-import { extend, merge } from '../../Shared/Utilities.js';
-const {
-    correctFloat
-} = U;
+import { correctFloat, extend, merge } from '../../Shared/Utilities.js';
 
 /* *
  *
