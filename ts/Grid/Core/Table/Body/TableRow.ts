@@ -25,6 +25,7 @@
 import type Cell from '../Cell';
 import type Column from '../Column';
 import type { RowObject as DataTableRowObject } from '../../../../Data/DataTable';
+import type { RowId } from '../../Data/DataProvider';
 
 import Row from '../Row.js';
 import Table from '../Table.js';
@@ -62,7 +63,7 @@ class TableRow extends Row {
     /**
      * The index of the row in the original data table (ID).
      */
-    public id?: number;
+    public id?: RowId;
 
     /**
      * The vertical translation of the row.

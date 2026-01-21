@@ -86,12 +86,12 @@ export abstract class DataProvider {
     /**
      * Returns a stable row id for a given row index (as used by the viewport).
      */
-    public abstract getRowId(rowIndex: number): Promise<number | undefined>;
+    public abstract getRowId(rowIndex: number): Promise<RowId | undefined>;
 
     /**
      * Returns the current row index for a given stable row id.
      */
-    public abstract getRowIndex(rowId: number): Promise<number | undefined>;
+    public abstract getRowIndex(rowId: RowId): Promise<number | undefined>;
 
     /**
      * Returns a row as an object keyed by column IDs.
@@ -127,7 +127,7 @@ export abstract class DataProvider {
     public abstract setValue(
         value: DataTableCellType,
         columnId: string,
-        rowId: number
+        rowId: RowId
     ): Promise<void>;
 
     /**
@@ -190,6 +190,17 @@ export abstract class DataProvider {
         return 'string';
     }
 }
+
+/* *
+ *
+ *  Types
+ *
+ * */
+
+/**
+ * A type for the row ID.
+ */
+export type RowId = number | string;
 
 /**
  * A base interface for the data provider options (`grid.options.data`).

@@ -3,22 +3,10 @@ const grid = Grid.grid('container', {
         providerType: 'remote',
         dataSource: {
             urlTemplate: 'https://dataset-server-hc-production.up.railway.app' +
-                '/data?format={format}&columnsInclude={columns}&page={page}' +
-                '&pageSize={pageSize}&filter={filter}&sortBy={sortBy}' +
-                '&sortOrder={sortOrder}',
-            templateVariables: {
-                columns: 'employeeId,firstName,lastName'
-            }
-            // parseResponse: async res => {
-            //     const json = await res.json();
-            //     console.log('Received response:', json);
-            //     return {
-            //         columns: json.data || {},
-            //         totalRowCount: json.meta.totalRowCount || 0,
-            //         rowIds: json.meta.rowIds || []
-            //     };
-            // },
-            // omitEmpty: false
+                '/data?format={format}&columnsInclude=employeeId,firstName,' +
+                'lastName&page={page}&pageSize={pageSize}&filter={filter}&' +
+                'sortBy={sortBy}&sortOrder={sortOrder}',
+            rowIdColumnId: 'employeeId'
         },
         setValueCallback: async (columnId, rowId, value) => {
             console.log('Setting value:', columnId, rowId, value);

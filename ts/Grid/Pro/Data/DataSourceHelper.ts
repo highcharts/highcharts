@@ -302,6 +302,7 @@ export interface DataSourceOptions {
      * Callback to parse the response from the remote server.
      */
     parseResponse?: (res: Response) => Promise<RemoteFetchCallbackResult>;
+
 }
 
 export interface QueryState {

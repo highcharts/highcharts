@@ -22,7 +22,7 @@
  *
  * */
 
-import type { DataProviderOptions } from './DataProvider';
+import type { DataProviderOptions, RowId } from './DataProvider';
 import type QueryingController from '../Querying/QueryingController';
 import type DataTableOptions from '../../../Data/DataTableOptions';
 import type { ColumnDataType } from '../Table/Column';
@@ -138,13 +138,16 @@ export class LocalDataProvider extends DataProvider {
         return Promise.resolve(this.presentationTable?.getColumnIds() ?? []);
     }
 
-    public override getRowId(rowIndex: number): Promise<number | undefined> {
+    public override getRowId(rowIndex: number): Promise<RowId | undefined> {
         return Promise.resolve(
             this.presentationTable?.getOriginalRowIndex(rowIndex)
         );
     }
 
-    public override getRowIndex(rowId: number): Promise<number | undefined> {
+    public override getRowIndex(rowId: RowId): Promise<number | undefined> {
+        if (typeof rowId !== 'number') {
+            return Promise.resolve(void 0);
+        }
         return Promise.resolve(
             this.presentationTable?.getLocalRowIndex(rowId)
         );
@@ -176,8 +179,11 @@ export class LocalDataProvider extends DataProvider {
     public override async setValue(
         value: DataTableCellType,
         columnId: string,
-        rowId: number
+        rowId: RowId
     ): Promise<void> {
+        if (typeof rowId !== 'number') {
+            throw new Error('LocalDataProvider supports only numeric row ids.');
+        }
         this.dataTable?.setCell(columnId, rowId, value);
         return Promise.resolve();
     }

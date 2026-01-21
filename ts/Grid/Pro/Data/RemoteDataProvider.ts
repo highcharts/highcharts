@@ -27,7 +27,7 @@ import type {
     Column as DataTableColumnType,
     CellType as DataTableCellType
 } from '../../../Data/DataTable';
-import type { DataProviderOptions } from '../../Core/Data/DataProvider';
+import type { DataProviderOptions, RowId } from '../../Core/Data/DataProvider';
 import type { ColumnDataType } from '../../Core/Table/Column';
 import type QueryingController from '../../Core/Querying/QueryingController';
 import type { DataSourceOptions } from './DataSourceHelper';
@@ -106,7 +106,7 @@ export class RemoteDataProvider extends DataProvider {
      * Reverse lookup map from rowId to { chunkIndex, localIndex } for O(1)
      * lookup in getRowIndex.
      */
-    private rowIdToChunkInfo: Map<number, {
+    private rowIdToChunkInfo: Map<RowId, {
         chunkIndex: number;
         localIndex: number;
     }> | null = null;
@@ -370,9 +370,10 @@ export class RemoteDataProvider extends DataProvider {
         return this.columnIds ?? [];
     }
 
+
     public override async getRowId(
         rowIndex: number
-    ): Promise<number | undefined> {
+    ): Promise<RowId | undefined> {
         const chunk = await this.getChunkForRowIndex(rowIndex);
         const localIndex = this.getLocalIndexInChunk(rowIndex);
 
@@ -384,7 +385,7 @@ export class RemoteDataProvider extends DataProvider {
     }
 
     public override getRowIndex(
-        rowId: number
+        rowId: RowId
     ): Promise<number | undefined> {
         // Check reverse lookup map (O(1))
         const info = this.rowIdToChunkInfo?.get(rowId);
@@ -456,7 +457,7 @@ export class RemoteDataProvider extends DataProvider {
     public override async setValue(
         value: DataTableCellType,
         columnId: string,
-        rowId: number
+        rowId: RowId
     ): Promise<void> {
         const { setValueCallback } = this.options;
 
@@ -573,13 +574,13 @@ export class RemoteDataProvider extends DataProvider {
 export interface RemoteFetchCallbackResult {
     columns: Record<string, DataTableColumnType>;
     totalRowCount: number;
-    rowIds?: number[];
+    rowIds?: RowId[];
 }
 
 export interface DataChunk {
     index: number;
     data: Record<string, DataTableColumnType>;
-    rowIds: number[];
+    rowIds: RowId[];
 }
 
 export interface RemoteDataProviderOptions extends DataProviderOptions {
@@ -610,7 +611,7 @@ export interface RemoteDataProviderOptions extends DataProviderOptions {
     setValueCallback?: (
         this: RemoteDataProvider,
         columnId: string,
-        rowId: number,
+        rowId: RowId,
         value: DataTableCellType
     ) => Promise<void>;
 
