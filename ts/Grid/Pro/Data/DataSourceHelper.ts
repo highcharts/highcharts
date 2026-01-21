@@ -169,55 +169,6 @@ const defaultTemplateVariables: Record<
     }
 };
 
-/**
- * Tracks last fetch timestamps per DataSourceOptions reference.
- */
-const lastFetchTimestamps = new WeakMap<DataSourceOptions, number>();
-
-/**
- * Serializes fetch interval enforcement per DataSourceOptions reference.
- */
-const fetchIntervalQueue = new WeakMap<DataSourceOptions, Promise<void>>();
-
-/**
- * Enforces a minimum interval between fetch start times for a given options
- * reference, even when calls are concurrent.
- *
- * @param options
- * The data source options reference used as a throttling key.
- *
- * @param minFetchInterval
- * Minimum time (ms) between fetch starts. Non-positive disables throttling.
- */
-const enforceFetchInterval = async (
-    options: DataSourceOptions,
-    minFetchInterval: number
-): Promise<void> => {
-    if (minFetchInterval <= 0) {
-        return;
-    }
-
-    const previous = fetchIntervalQueue.get(options);
-    const queued = typeof previous === 'object' ?
-        previous :
-        Promise.resolve();
-    const current = queued.then(async (): Promise<void> => {
-        const now = Date.now();
-        const lastFetch = lastFetchTimestamps.get(options);
-        if (typeof lastFetch === 'number') {
-            const waitMs = minFetchInterval - (now - lastFetch);
-            if (waitMs > 0) {
-                await new Promise<void>((resolve): void => {
-                    setTimeout(resolve, waitMs);
-                });
-            }
-        }
-        lastFetchTimestamps.set(options, Date.now());
-    });
-    fetchIntervalQueue.set(options, current['catch']((): void => {}));
-    await current;
-};
-
 const defaultParseResponse = async (
     res: Response
 ): Promise<RemoteFetchCallbackResult> => {
@@ -309,15 +260,24 @@ export async function dataSourceFetch(
 ): Promise<RemoteFetchCallbackResult> {
     const {
         parseResponse = defaultParseResponse,
-        fetchTimeout = 30000,
-        minFetchInterval = 0
+        fetchTimeout = 30000
     } = options;
 
     try {
         const url = buildUrl(options, state);
-        await enforceFetchInterval(options, minFetchInterval);
         const controller = fetchTimeout > 0 ? new AbortController() : null;
+        const externalSignal = state.signal;
         let timeoutId: ReturnType<typeof setTimeout> | undefined;
+
+        if (controller && externalSignal) {
+            if (externalSignal.aborted) {
+                controller.abort();
+            } else {
+                externalSignal.addEventListener('abort', (): void => {
+                    controller.abort();
+                }, { once: true });
+            }
+        }
 
         if (controller) {
             timeoutId = setTimeout((): void => {
@@ -326,8 +286,9 @@ export async function dataSourceFetch(
         }
 
         try {
-            const res = controller ?
-                await fetch(url, { signal: controller.signal }) :
+            const signal = controller?.signal ?? externalSignal;
+            const res = signal ?
+                await fetch(url, { signal }) :
                 await fetch(url);
 
             const data = await parseResponse(res);
@@ -350,6 +311,13 @@ export async function dataSourceFetch(
             }
         }
     } catch (err: unknown) {
+        if (err instanceof DOMException && err.name === 'AbortError') {
+            return {
+                columns: {},
+                totalRowCount: 0,
+                rowIds: []
+            };
+        }
         // eslint-disable-next-line no-console
         console.error('Error fetching data from remote server.\n', err);
         return {
@@ -412,12 +380,6 @@ export interface DataSourceOptions {
     fetchTimeout?: number;
 
     /**
-     * Minimum time (ms) between fetches. Set to 0 to disable.
-     * @default 0
-     */
-    minFetchInterval?: number;
-
-    /**
      * ID of a column that contains stable row IDs.
      *
      * If not defined, the row IDs will be extracted from the `meta.rowIds`
@@ -431,6 +393,7 @@ export interface QueryState {
     query: QueryingController;
     offset: number;
     limit: number;
+    signal?: AbortSignal;
 }
 
 /**

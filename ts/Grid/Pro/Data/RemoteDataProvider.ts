@@ -118,6 +118,16 @@ export class RemoteDataProvider extends DataProvider {
     private lastQueryFingerprint: string | null = null;
 
     /**
+     * Epoch used to invalidate stale in-flight requests when the query changes.
+     */
+    private requestEpoch = 0;
+
+    /**
+     * Abort controllers for in-flight requests (latest-only policy).
+     */
+    private pendingControllers: Set<AbortController> = new Set();
+
+    /**
      * Returns the effective chunk size.
      * When pagination is enabled, uses the page size as chunk size,
      * so that one chunk = one page.
@@ -139,6 +149,17 @@ export class RemoteDataProvider extends DataProvider {
      *  Methods
      *
      * */
+
+    private get requestPolicy(): 'latest' | 'all' {
+        return this.options.requestPolicy ?? 'latest';
+    }
+
+    private abortPendingRequests(): void {
+        for (const controller of this.pendingControllers) {
+            controller.abort();
+        }
+        this.pendingControllers.clear();
+    }
 
     private async getChunkForRowIndex(rowIndex: number): Promise<DataChunk> {
         // When pagination enabled, all rows for current page are in chunk 0
@@ -259,6 +280,13 @@ export class RemoteDataProvider extends DataProvider {
         }
 
         // Start a new fetch
+        const requestEpoch = this.requestEpoch;
+        const controller = this.requestPolicy === 'latest' ?
+            new AbortController() :
+            null;
+        if (controller) {
+            this.pendingControllers.add(controller);
+        }
         const fetchPromise = (async (): Promise<DataChunk> => {
             try {
                 const pagination = this.querying.pagination;
@@ -284,19 +312,32 @@ export class RemoteDataProvider extends DataProvider {
                         this,
                         this.querying,
                         offset,
-                        limit
+                        limit,
+                        controller?.signal
                     );
                 } else if (dataSource) {
                     result = await dataSourceFetch(dataSource, {
                         query: this.querying,
                         offset,
-                        limit
+                        limit,
+                        signal: controller?.signal
                     });
                 } else {
                     throw new Error(
                         'RemoteDataProvider: Either `dataSource` or ' +
                         '`fetchCallback` must be provided in options.'
                     );
+                }
+
+                if (
+                    requestEpoch !== this.requestEpoch ||
+                    controller?.signal.aborted
+                ) {
+                    return {
+                        index: chunkIndex,
+                        data: {},
+                        rowIds: []
+                    };
                 }
 
                 this.columnIds = Object.keys(result.columns);
@@ -342,6 +383,16 @@ export class RemoteDataProvider extends DataProvider {
 
                 return chunk;
             } catch (err: unknown) {
+                if (
+                    controller?.signal.aborted ||
+                    (err instanceof DOMException && err.name === 'AbortError')
+                ) {
+                    return {
+                        index: chunkIndex,
+                        data: {},
+                        rowIds: []
+                    };
+                }
                 // eslint-disable-next-line no-console
                 console.error('Error fetching data from remote server.\n', err);
                 return {
@@ -352,6 +403,9 @@ export class RemoteDataProvider extends DataProvider {
             } finally {
                 // Remove from pending requests when done (success or error)
                 this.pendingChunks?.delete(chunkIndex);
+                if (controller) {
+                    this.pendingControllers.delete(controller);
+                }
             }
         })();
 
@@ -550,6 +604,10 @@ export class RemoteDataProvider extends DataProvider {
             return;
         }
         this.lastQueryFingerprint = fingerprint;
+        this.requestEpoch++;
+        if (this.requestPolicy === 'latest') {
+            this.abortPendingRequests();
+        }
 
         // Clear cached chunks when query changes.
         this.dataChunks = null;
@@ -568,6 +626,7 @@ export class RemoteDataProvider extends DataProvider {
     }
 
     public override destroy(): void {
+        this.abortPendingRequests();
         this.dataChunks = null;
         this.pendingChunks = null;
         this.rowIdToChunkInfo = null;
@@ -575,6 +634,7 @@ export class RemoteDataProvider extends DataProvider {
         this.prePaginationRowCount = null;
         this.rowCount = null;
         this.lastQueryFingerprint = null;
+        this.requestEpoch++;
     }
 }
 
@@ -606,7 +666,8 @@ export interface RemoteDataProviderOptions extends DataProviderOptions {
         this: RemoteDataProvider,
         query: QueryingController,
         offset: number,
-        limit: number
+        limit: number,
+        signal?: AbortSignal
     ) => Promise<RemoteFetchCallbackResult>;
 
     /**
@@ -632,6 +693,13 @@ export interface RemoteDataProviderOptions extends DataProviderOptions {
      * recently used (LRU) chunk is evicted. If not set, all chunks are kept.
      */
     chunksLimit?: number;
+
+    /**
+     * Request policy for rapid query changes. `latest` aborts or ignores
+     * in-flight requests so only the final query updates the cache.
+     * @default 'latest'
+     */
+    requestPolicy?: 'latest' | 'all';
 }
 
 declare module '../../Core/Data/DataProviderType' {
