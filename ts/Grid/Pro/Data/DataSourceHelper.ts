@@ -25,8 +25,12 @@
 import type { RowId } from '../../Core/Data/DataProvider';
 import type { RemoteFetchCallbackResult } from './RemoteDataProvider';
 import type QueryingController from '../../Core/Querying/QueryingController';
+import type { ColumnSortingOrder } from '../../Core/Options';
 
 import T from '../../../Core/Templating.js';
+import U from '../../../Core/Utilities.js';
+
+const { defined } = U;
 const { format } = T;
 
 
@@ -96,6 +100,23 @@ function extractFilterConditions(
     return filterColumns;
 }
 
+/**
+ * Returns the active sortings from the query state.
+ *
+ * @param state
+ * The query state.
+ *
+ * @returns
+ * The active sortings.
+ */
+const getActiveSortings = (state: QueryState): ActiveSorting[] => {
+    const { currentSortings, currentSorting } = state.query.sorting;
+    return (currentSortings ?? (currentSorting ? [currentSorting] : [])).filter(
+        (sorting): sorting is ActiveSorting =>
+            defined(sorting?.columnId) && defined(sorting.order)
+    );
+};
+
 const defaultTemplateVariables: Record<
     string, (state: QueryState) => string
 > = {
@@ -126,35 +147,20 @@ const defaultTemplateVariables: Record<
         return JSON.stringify({ columns: filterColumns });
     },
     sortBy: (state: QueryState): string => {
-        const sortings = (
-            state.query.sorting.currentSortings ||
-            (state.query.sorting.currentSorting ?
-                [state.query.sorting.currentSorting] :
-                [])
-        ).filter((sorting): boolean => !!(sorting?.columnId && sorting?.order));
-
+        const sortings = getActiveSortings(state);
         if (!sortings.length) {
             return '';
         }
 
-        return sortings
-            .map((sorting): string => sorting.columnId as string)
-            .join(',');
+        return sortings.map((sorting): string => sorting.columnId).join(',');
     },
     sortOrder: (state: QueryState): string => {
-        const sortings = (
-            state.query.sorting.currentSortings ||
-            (state.query.sorting.currentSorting ?
-                [state.query.sorting.currentSorting] :
-                [])
-        ).filter((sorting): boolean => !!(sorting?.columnId && sorting?.order));
-
+        const sortings = getActiveSortings(state);
         if (!sortings.length) {
             return '';
         }
 
-        const sortOrders = sortings
-            .map((sorting): string => sorting.order as string);
+        const sortOrders = sortings.map((sorting): string => sorting.order);
         const uniqueOrders = Array.from(new Set(sortOrders));
 
         return uniqueOrders.length === 1 ?
@@ -445,3 +451,11 @@ interface FilterConditionLike {
     value?: unknown;
     conditions?: FilterConditionLike[];
 }
+
+/**
+ * Internal interface for active sorting structure.
+ */
+type ActiveSorting = {
+    columnId: string;
+    order: Exclude<ColumnSortingOrder, null>;
+};
