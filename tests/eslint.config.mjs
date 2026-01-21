@@ -21,7 +21,7 @@ export default tseslint.config(
                     ignoreTemplateLiterals: true,
                     ignoreStrings: true,
                     ignoreComments: true,
-                    ignorePattern: "^\\s*(const|let|var|return)?\\s*\\w+:.*\\.(component|chart|series|options|dataTable)\\."
+                    ignorePattern: "^\\s*(const|let|var|return)?\\s*\\w+:.*\\.(component|chart|series|options|dataTable)\\.|^\\s*/.*?/[gimsuy]*\\s*,?\\s*$"
                 }
             ],
             "@stylistic/quotes": ["error", "single"],

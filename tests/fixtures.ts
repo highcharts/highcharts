@@ -283,7 +283,7 @@ export async function setupRoutes(page: Page){
                         return;
                     }
                     
-                    let relativePath = match[1];
+                    const relativePath = match[1];
                     let localPath: string;
                     
                     // Handle grid-lite.js and grid-pro.js
@@ -573,10 +573,11 @@ export async function setupRoutes(page: Page){
                                 if (existsSync(join(__dirname, '..', cssPath))) {
                                     const cssContent = await readFile(join(__dirname, '..', cssPath), 'utf8');
                                     // Replace CDN URLs in CSS @import
-                                    const cssWithReplacedUrls = cssContent.replace(
-                                        /https:\/\/cdn\.jsdelivr\.net\/npm\/@highcharts\/(grid-lite|grid-pro)\/css\/(grid-lite|grid-pro)\.css/gu,
-                                        'https://code.highcharts.com/grid/$2.css'
-                                    );
+                                    const cssWithReplacedUrls = 
+                                        cssContent.replace(
+                                            /https:\/\/cdn\.jsdelivr\.net\/npm\/@highcharts\/(grid-lite|grid-pro)\/css\/(grid-lite|grid-pro)\.css/gu,
+                                            'https://code.highcharts.com/grid/$2.css'
+                                        );
                                     // Inject CSS in head or at the beginning
                                     if (htmlBody.includes('</head>')) {
                                         htmlBody = htmlBody.replace('</head>', `<style>${cssWithReplacedUrls}</style></head>`);
@@ -698,10 +699,11 @@ export async function setupRoutes(page: Page){
                                 if (existsSync(join(__dirname, '..', cssPath))) {
                                     const cssContent = await readFile(join(__dirname, '..', cssPath), 'utf8');
                                     // Replace CDN URLs in CSS @import
-                                    const cssWithReplacedUrls = cssContent.replace(
-                                        /https:\/\/cdn\.jsdelivr\.net\/npm\/@highcharts\/(grid-lite|grid-pro)\/css\/(grid-lite|grid-pro)\.css/gu,
-                                        'https://code.highcharts.com/grid/$2.css'
-                                    );
+                                    const cssWithReplacedUrls = 
+                                        cssContent.replace(
+                                            /https:\/\/cdn\.jsdelivr\.net\/npm\/@highcharts\/(grid-lite|grid-pro)\/css\/(grid-lite|grid-pro)\.css/gu,
+                                            'https://code.highcharts.com/grid/$2.css'
+                                        );
                                     // Inject CSS in head or at the beginning
                                     if (htmlBody.includes('</head>')) {
                                         htmlBody = htmlBody.replace('</head>', `<style>${cssWithReplacedUrls}</style></head>`);
@@ -769,7 +771,8 @@ export async function setupRoutes(page: Page){
                 pattern: '**/dashboards/cypress/**',
                 handler: async (route) => {
                     const url = new URL(route.request().url());
-                    const pathMatch = url.pathname.match(/\/dashboards\/cypress\/(.+)/);
+                    const pathMatch = 
+                        url.pathname.match(/\/dashboards\/cypress\/(.+)/);
                     if (pathMatch) {
                         let relativePath = pathMatch[1];
                         const ext = extname(relativePath);
@@ -823,10 +826,11 @@ export async function setupRoutes(page: Page){
                                 if (existsSync(join(__dirname, '..', cssPath))) {
                                     const cssContent = await readFile(join(__dirname, '..', cssPath), 'utf8');
                                     // Replace CDN URLs in CSS @import
-                                    const cssWithReplacedUrls = cssContent.replace(
-                                        /https:\/\/cdn\.jsdelivr\.net\/npm\/@highcharts\/(grid-lite|grid-pro)\/css\/(grid-lite|grid-pro)\.css/gu,
-                                        'https://code.highcharts.com/grid/$2.css'
-                                    );
+                                    const cssWithReplacedUrls = cssContent
+                                        .replace(
+                                            /https:\/\/cdn\.jsdelivr\.net\/npm\/@highcharts\/(grid-lite|grid-pro)\/css\/(grid-lite|grid-pro)\.css/gu,
+                                            'https://code.highcharts.com/grid/$2.css'
+                                        );
                                     // Inject CSS in head or at the beginning
                                     if (htmlBody.includes('</head>')) {
                                         htmlBody = htmlBody.replace('</head>', `<style>${cssWithReplacedUrls}</style></head>`);
