@@ -1,5 +1,5 @@
 // Create initial dashboard
-let board = Dashboards.board('container', {
+const board = Dashboards.board('container', {
     gui: {
         layouts: [{
             id: 'layout-1',
