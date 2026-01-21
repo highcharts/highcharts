@@ -106,6 +106,13 @@ declare module '../../Series/SeriesOptions' {
     }
 }
 
+declare module '../../Renderer/SVG/SVGElementBase' {
+    interface SVGElementBase {
+        addedToColorAxis?: boolean;
+        crossPos?: number;
+    }
+}
+
 defaultOptions.colorAxis = merge(defaultOptions.xAxis, ColorAxisDefaults);
 
 /* *
@@ -579,7 +586,8 @@ class ColorAxis extends Axis implements ColorAxisBase {
             plotX = point?.plotX,
             plotY = point?.plotY,
             axisPos = axis.pos,
-            axisLen = axis.len;
+            axisLen = axis.len,
+            crosshair = axis.crosshair;
 
         let crossPos;
 
@@ -593,6 +601,9 @@ class ColorAxis extends Axis implements ColorAxisBase {
                 crossPos = axisPos + axisLen + 2;
             }
 
+            // Save old crossPos for animation
+            const oldCrossPos = axis.cross?.crossPos;
+
             point.plotX = crossPos;
             point.plotY = axis.len - crossPos;
 
@@ -600,6 +611,11 @@ class ColorAxis extends Axis implements ColorAxisBase {
 
             point.plotX = plotX;
             point.plotY = plotY;
+
+            // Store current crossPos for next animation
+            if (axis.cross) {
+                axis.cross.crossPos = crossPos;
+            }
 
             if (
                 axis.cross &&
@@ -614,13 +630,48 @@ class ColorAxis extends Axis implements ColorAxisBase {
 
                 if (
                     !axis.chart.styledMode &&
-                    typeof axis.crosshair === 'object'
+                    typeof crosshair === 'object'
                 ) {
                     axis.cross.attr({
-                        fill: axis.crosshair.color
+                        fill: crosshair.color
                     });
                 }
 
+            }
+
+            // Animate marker position using translateY
+            if (
+                axis.cross &&
+                axis.cross.addedToColorAxis &&
+                typeof crosshair === 'object'
+            ) {
+                const animationOptions =
+                    (crosshair as ColorAxis.MarkerOptions).animation;
+
+                // Only animate if animation is explicitly enabled
+                if (animationOptions !== false && animationOptions) {
+                    if (
+                        typeof oldCrossPos === 'number' &&
+                        oldCrossPos !== crossPos
+                    ) {
+                        // Calculate the distance to move
+                        const delta = crossPos - oldCrossPos;
+
+                        // Stop any ongoing animation first
+                        if (axis.cross.stopAnimation) {
+                            axis.cross.stopAnimation();
+                        }
+
+                        // Super.drawCrosshair already positioned marker at
+                        // new location. Move it back to old position, then
+                        // animate to new (translateY: 0)
+                        axis.cross.attr({ translateY: -delta });
+                        axis.cross.animate(
+                            { translateY: 0 },
+                            animationOptions
+                        );
+                    }
+                }
             }
         }
     }
