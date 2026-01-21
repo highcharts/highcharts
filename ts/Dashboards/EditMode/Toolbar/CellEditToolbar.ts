@@ -15,9 +15,13 @@
  * */
 
 import type CellHTML from '../../Layout/CellHTML';
+import type { Options as EditToolbarOptions } from './EditToolbar';
+import type { Options as MenuItemOptions } from '../Menu/MenuItem';
+
+import type { Options as EditModeOptions } from '../EditMode';
 
 import EditMode from '../EditMode.js';
-import Cell from '../../Layout/Cell.js';
+import Cell, { isCell } from '../../Layout/Cell.js';
 import EditGlobals from '../EditGlobals.js';
 import MenuItem from '../Menu/MenuItem.js';
 import EditToolbar from './EditToolbar.js';
@@ -42,7 +46,7 @@ class CellEditToolbar extends EditToolbar {
      *  Static Properties
      *
      * */
-    protected static readonly defaultOptions: CellEditToolbar.Options = {
+    protected static readonly defaultOptions: Options = {
         enabled: true,
         className: EditGlobals.classNames.editToolbar,
         outline: false,
@@ -55,10 +59,10 @@ class CellEditToolbar extends EditToolbar {
     };
 
     public static getItemsConfig(
-        options: EditMode.Options,
+        options: EditModeOptions,
         iconURLPrefix: string
-    ): MenuItem.Options[] {
-        const items: MenuItem.Options[] = [];
+    ): MenuItemOptions[] {
+        const items: MenuItemOptions[] = [];
 
         if (options.dragDrop?.enabled) {
             items.push({
@@ -81,7 +85,7 @@ class CellEditToolbar extends EditToolbar {
                         if (
                             dragDrop &&
                             cellEditToolbar.cell &&
-                            Cell.isCell(cellEditToolbar.cell)
+                            isCell(cellEditToolbar.cell)
                         ) {
                             dragDrop.onDragStart(e, cellEditToolbar.cell);
                         }
@@ -291,7 +295,7 @@ class CellEditToolbar extends EditToolbar {
     public onCellDestroy(): void {
         const toolbar = this;
 
-        if (toolbar.cell && Cell.isCell(toolbar.cell)) {
+        if (toolbar.cell && isCell(toolbar.cell)) {
             const row = toolbar.cell.row;
             const board = toolbar.editMode.board;
             const editMode = toolbar.editMode;
@@ -367,8 +371,6 @@ class CellEditToolbar extends EditToolbar {
     }
 }
 
-namespace CellEditToolbar {
-    export interface Options extends EditToolbar.Options {}
-}
+export interface Options extends EditToolbarOptions {}
 
 export default CellEditToolbar;

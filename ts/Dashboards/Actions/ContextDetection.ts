@@ -23,7 +23,7 @@ class ContextDetection {
 
     public static isGUIElementOnParentEdge(
         mouseContext: Cell,
-        side: ContextDetection.ContextSides
+        side: ContextSides
     ): boolean {
         const visibleElements = (side === 'top' || side === 'bottom') ?
             mouseContext.row.layout.getVisibleRows() :
@@ -50,7 +50,7 @@ class ContextDetection {
         mouseContext: Cell,
         offset: number,
         sideOffset: number,
-        side: ContextDetection.ContextSides
+        side: ContextSides
     ): number {
         // Array of overlapped levels.
         const overlappedLevels =
@@ -78,7 +78,7 @@ class ContextDetection {
         mouseCellContext: Cell,
         e: PointerEvent,
         offset: number
-    ): ContextDetection.ContextDetails {
+    ): ContextDetails {
         let sideOffset;
 
         // Get cell offsets, width, height
@@ -96,7 +96,7 @@ class ContextDetection {
         const topSideY = e.clientY - mouseCellContextOffsets.top;
 
         // Get cell side - right, left, top, bottom
-        let side: ContextDetection.ContextSides = 'bottom';
+        let side: ContextSides = 'bottom';
 
         if (leftSideX >= -offset && leftSideX <= offset) {
             side = 'left';
@@ -156,13 +156,11 @@ class ContextDetection {
     }
 }
 
-namespace ContextDetection {
-    export interface ContextDetails {
-        cell: Cell;
-        side: ContextSides;
-    }
-
-    export type ContextSides = 'right'|'left'|'top'|'bottom';
+export interface ContextDetails {
+    cell: Cell;
+    side: ContextSides;
 }
+
+export type ContextSides = 'right'|'left'|'top'|'bottom';
 
 export default ContextDetection;

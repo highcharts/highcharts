@@ -39,7 +39,8 @@ export const defaultLangOptions: DeepPartial<LangOptions> = {
                 ascending: 'Sorted ascending.',
                 descending: 'Sorted descending.',
                 none: 'Not sorted.'
-            }
+            },
+            priority: 'Priority {priority}.'
         },
         pagination: {
             announcements: {

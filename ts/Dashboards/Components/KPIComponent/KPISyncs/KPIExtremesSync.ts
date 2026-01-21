@@ -20,11 +20,11 @@
  *
  * */
 
-import type Sync from '../../Sync/Sync';
+import type { OptionsEntry, SyncPair } from '../../Sync/Sync';
+import type { Event as DataCursorEvent } from '../../../../Data/DataCursor';
 import type KPIComponent from '../KPIComponent.js';
 
 import Component from '../../Component';
-import DataCursor from '../../../../Data/DataCursor';
 import { defined } from '../../../../Shared/Utilities.js';
 
 
@@ -34,9 +34,9 @@ import { defined } from '../../../../Shared/Utilities.js';
  *
  * */
 
-const defaultOptions: Sync.OptionsEntry = {};
+const defaultOptions: OptionsEntry = {};
 
-const syncPair: Sync.SyncPair = {
+const syncPair: SyncPair = {
     emitter: void 0,
     handler: function (this: Component): (() => void) | void {
         if (this.type !== 'KPI') {
@@ -48,7 +48,7 @@ const syncPair: Sync.SyncPair = {
 
         const { board } = this;
 
-        const handleChangeExtremes = (e: DataCursor.Event): void => {
+        const handleChangeExtremes = (e: DataCursorEvent): void => {
             const cursor = e.cursor;
             if (
                 cursor.type === 'position' &&

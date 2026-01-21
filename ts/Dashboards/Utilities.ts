@@ -23,13 +23,14 @@
  * */
 
 import type { AnyRecord } from '../Shared/Types';
+import type { Class } from './Globals';
 
 import D from './Globals.js';
 const {
     doc,
     supportsPassiveEvents
 } = D;
-import { extend, isClass, isDOMElement, isObject, objectEach } from '../Shared/Utilities.js';
+import { extend, objectEach } from '../Shared/Utilities.js';
 import U from '../Core/Utilities.js';
 const {
     error: coreError,
@@ -64,10 +65,10 @@ const {
  *         A callback function to remove the added event.
  */
 function addEvent<T>(
-    el: (D.Class<T>|T),
+    el: (Class<T>|T),
     type: string,
-    fn: (Utilities.EventCallback<T>|Function),
-    options: Utilities.EventOptions = {}
+    fn: (EventCallback<T>|Function),
+    options: EventOptions = {}
 ): Function {
     /* eslint-enable valid-jsdoc */
 
@@ -110,8 +111,8 @@ function addEvent<T>(
 
     // Order the calls
     events[type].sort((
-        a: Utilities.EventWrapperObject<T>,
-        b: Utilities.EventWrapperObject<T>
+        a: EventWrapperObject<T>,
+        b: EventWrapperObject<T>
     ): number => a.order - b.order);
 
     // Return a function that can be called to remove this event.
@@ -223,7 +224,7 @@ function fireEvent<T>(
     el: T,
     type: string,
     eventArguments?: (AnyRecord|Event),
-    defaultFunction?: (Utilities.EventCallback<T>|Function)
+    defaultFunction?: (EventCallback<T>|Function)
 ): void {
     /* eslint-enable valid-jsdoc */
     eventArguments = eventArguments || {};
@@ -271,7 +272,7 @@ function fireEvent<T>(
             });
         }
 
-        const events: Array<Utilities.EventWrapperObject<any>> = [];
+        const events: Array<EventWrapperObject<any>> = [];
         let object: any = el;
         let multilevel = false;
 
@@ -296,8 +297,8 @@ function fireEvent<T>(
         if (multilevel) {
             // Order the calls
             events.sort((
-                a: Utilities.EventWrapperObject<T>,
-                b: Utilities.EventWrapperObject<T>
+                a: EventWrapperObject<T>,
+                b: EventWrapperObject<T>
             ): number => a.order - b.order);
         }
 
@@ -337,9 +338,9 @@ function fireEvent<T>(
  * @return {void}
  */
 function removeEvent<T>(
-    el: (D.Class<T>|T),
+    el: (Class<T>|T),
     type?: string,
-    fn?: (Utilities.EventCallback<T>|Function)
+    fn?: (EventCallback<T>|Function)
 ): void {
     /* eslint-enable valid-jsdoc */
 
@@ -348,7 +349,7 @@ function removeEvent<T>(
      */
     function removeOneEvent(
         type: string,
-        fn: (Utilities.EventCallback<T>|Function)
+        fn: (EventCallback<T>|Function)
     ): void {
         const removeEventListener = (el as any).removeEventListener;
 
@@ -391,7 +392,7 @@ function removeEvent<T>(
         if (type) {
             const typeEvents = (
                 events[type] || []
-            ) as Utilities.EventWrapperObject<T>[];
+            ) as EventWrapperObject<T>[];
 
             if (fn) {
                 events[type] = typeEvents.filter(
@@ -412,18 +413,16 @@ function removeEvent<T>(
     }
 }
 
-namespace Utilities {
-    export interface EventCallback<T> {
-        (this: T, eventArguments: (AnyRecord|Event)): (boolean|void);
-    }
-    export interface EventWrapperObject<T> {
-        fn: EventCallback<T>;
-        order: number;
-    }
-    export interface EventOptions {
-        order?: number;
-        passive?: boolean;
-    }
+export interface EventCallback<T> {
+    (this: T, eventArguments: (AnyRecord|Event)): (boolean|void);
+}
+export interface EventWrapperObject<T> {
+    fn: EventCallback<T>;
+    order: number;
+}
+export interface EventOptions {
+    order?: number;
+    passive?: boolean;
 }
 
 /* *

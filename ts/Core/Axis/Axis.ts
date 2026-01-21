@@ -3508,7 +3508,7 @@ class Axis {
                         // Speed optimizing, #7656
                         commonWidth < (label.textPxLength || 0) ||
                         // Resetting CSS, #4928
-                        label.element.tagName === 'DIV'
+                        label.element.tagName === 'SPAN'
                     )
                 ) {
                     label.css(extend(css, {

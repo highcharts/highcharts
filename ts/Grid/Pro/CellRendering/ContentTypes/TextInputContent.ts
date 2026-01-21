@@ -22,7 +22,7 @@
  *
  * */
 
-import type DataTable from '../../../../Data/DataTable';
+import type { CellType as DataTableCellType } from '../../../../Data/DataTable';
 import type { EditModeContent } from '../../CellEditing/CellEditMode';
 import type TableCell from '../../../Core/Table/Body/TableCell';
 import type TextInputRenderer from '../Renderers/TextInputRenderer';
@@ -135,7 +135,7 @@ class TextInputContent extends CellContentPro implements EditModeContent {
     /**
      * Gets the value of the input element.
      */
-    public get value(): DataTable.CellType {
+    public get value(): DataTableCellType {
         const val = this.input.value;
         switch (this.cell.column.dataType) {
             case 'datetime':

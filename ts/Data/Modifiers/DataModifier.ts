@@ -21,7 +21,11 @@
  *
  * */
 
-import type DataEvent from '../DataEvent';
+import type {
+    DataEventCallback,
+    DataEventDetail,
+    DataEventEmitter
+} from '../DataEvent';
 import type DataModifierEvent from './DataModifierEvent';
 import type DataModifierOptions from './DataModifierOptions';
 import type DataTable from '../DataTable';
@@ -43,7 +47,47 @@ const {
 /**
  * Abstract class to provide an interface for modifying a table.
  */
-abstract class DataModifier implements DataEvent.Emitter<DataModifierEvent> {
+abstract class DataModifier implements DataEventEmitter<DataModifierEvent> {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
+    /**
+     * Registry as a record object with modifier names and their class
+     * constructor.
+     */
+    public static types = {} as DataModifierTypes;
+
+    /**
+     * Adds a modifier class to the registry. The modifier class has to provide
+     * the `DataModifier.options` property and the `DataModifier.modifyTable`
+     * method to modify the table.
+     *
+     * @private
+     *
+     * @param {string} key
+     * Registry key of the modifier class.
+     *
+     * @param {DataModifierType} DataModifierClass
+     * Modifier class (aka class constructor) to register.
+     *
+     * @return {boolean}
+     * Returns true, if the registration was successful. False is returned, if
+     * their is already a modifier registered with this key.
+     */
+    public static registerType<T extends keyof DataModifierTypes>(
+        key: T,
+        DataModifierClass: DataModifierTypes[T]
+    ): boolean {
+        return (
+            !!key &&
+            !DataModifier.types[key] &&
+            !!(DataModifier.types[key] = DataModifierClass)
+        );
+    }
 
     /* *
      *
@@ -69,7 +113,7 @@ abstract class DataModifier implements DataEvent.Emitter<DataModifierEvent> {
      * @param {DataTable} dataTable
      * The datatable to execute
      *
-     * @param {DataModifier.BenchmarkOptions} options
+     * @param {BenchmarkOptions} options
      * Options. Currently supports `iterations` for number of iterations.
      *
      * @return {Array<number>}
@@ -78,7 +122,7 @@ abstract class DataModifier implements DataEvent.Emitter<DataModifierEvent> {
      */
     public benchmark(
         dataTable: DataTable,
-        options?: DataModifier.BenchmarkOptions
+        options?: BenchmarkOptions
     ): Array<number> {
         const results: Array<number> = [];
         const modifier = this;
@@ -135,7 +179,7 @@ abstract class DataModifier implements DataEvent.Emitter<DataModifierEvent> {
     /**
      * Emits an event on the modifier to all registered callbacks of this event.
      *
-     * @param {DataModifier.Event} [e]
+     * @param {DataModifierEvent} [e]
      * Event object containing additonal event information.
      */
     public emit<E extends DataModifierEvent>(e: E): void {
@@ -150,7 +194,7 @@ abstract class DataModifier implements DataEvent.Emitter<DataModifierEvent> {
      * @param {Highcharts.DataTable} table
      * Table to modify.
      *
-     * @param {DataEvent.Detail} [eventDetail]
+     * @param {DataEventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {Promise<Highcharts.DataTable>}
@@ -158,7 +202,7 @@ abstract class DataModifier implements DataEvent.Emitter<DataModifierEvent> {
      */
     public modify(
         table: DataTable,
-        eventDetail?: DataEvent.Detail
+        eventDetail?: DataEventDetail
     ): Promise<DataTable> {
         const modifier = this;
         return new Promise((resolve, reject): void => {
@@ -186,7 +230,7 @@ abstract class DataModifier implements DataEvent.Emitter<DataModifierEvent> {
      * @param {Highcharts.DataTable} table
      * Table to modify.
      *
-     * @param {DataEvent.Detail} [eventDetail]
+     * @param {DataEventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {Highcharts.DataTable}
@@ -195,7 +239,7 @@ abstract class DataModifier implements DataEvent.Emitter<DataModifierEvent> {
      */
     public abstract modifyTable(
         table: DataTable,
-        eventDetail?: DataEvent.Detail
+        eventDetail?: DataEventDetail
     ): DataTable;
 
     /**
@@ -204,7 +248,7 @@ abstract class DataModifier implements DataEvent.Emitter<DataModifierEvent> {
      * @param {string} type
      * Event type as a string.
      *
-     * @param {DataEventEmitter.Callback} callback
+     * @param {DataEventCallback} callback
      * Function to register for an modifier callback.
      *
      * @return {Function}
@@ -212,7 +256,7 @@ abstract class DataModifier implements DataEvent.Emitter<DataModifierEvent> {
      */
     public on<T extends DataModifierEvent['type']>(
         type: T,
-        callback: DataEvent.Callback<this, Extract<DataModifierEvent, {
+        callback: DataEventCallback<this, Extract<DataModifierEvent, {
             type: T
         }>>
     ): Function {
@@ -223,74 +267,15 @@ abstract class DataModifier implements DataEvent.Emitter<DataModifierEvent> {
 
 /* *
  *
- *  Class Namespace
+ *  Declarations
  *
  * */
 
 /**
  * Additionally provided types for modifier events and options.
  */
-namespace DataModifier {
-
-    /* *
-     *
-     *  Declarations
-     *
-     * */
-
-    /**
-     * Benchmark options.
-     */
-    export interface BenchmarkOptions {
-        iterations: number;
-    }
-
-    /* *
-     *
-     *  Constants
-     *
-     * */
-
-    /**
-     * Registry as a record object with modifier names and their class
-     * constructor.
-     */
-    export const types = {} as DataModifierTypes;
-
-    /* *
-     *
-     *  Functions
-     *
-     * */
-
-    /**
-     * Adds a modifier class to the registry. The modifier class has to provide
-     * the `DataModifier.options` property and the `DataModifier.modifyTable`
-     * method to modify the table.
-     *
-     * @private
-     *
-     * @param {string} key
-     * Registry key of the modifier class.
-     *
-     * @param {DataModifierType} DataModifierClass
-     * Modifier class (aka class constructor) to register.
-     *
-     * @return {boolean}
-     * Returns true, if the registration was successful. False is returned, if
-     * their is already a modifier registered with this key.
-     */
-    export function registerType<T extends keyof DataModifierTypes>(
-        key: T,
-        DataModifierClass: DataModifierTypes[T]
-    ): boolean {
-        return (
-            !!key &&
-            !types[key] &&
-            !!(types[key] = DataModifierClass)
-        );
-    }
-
+export interface BenchmarkOptions {
+    iterations: number;
 }
 
 /* *

@@ -20,7 +20,7 @@
  *
  * */
 
-import type Sync from '../../Sync/Sync';
+import type { PredefinedSyncConfig } from '../../Sync/Sync';
 import HighchartsExtremesSync from './HighchartsExtremesSync.js';
 import HighchartsHighlightSync from './HighchartsHighlightSync.js';
 import HighchartsVisibilitySync from './HighchartsVisibilitySync.js';
@@ -32,7 +32,7 @@ import HighchartsVisibilitySync from './HighchartsVisibilitySync.js';
 *
 * */
 
-const predefinedSyncConfig: Sync.PredefinedSyncConfig = {
+const predefinedSyncConfig: PredefinedSyncConfig = {
     defaultSyncPairs: {
         extremes: HighchartsExtremesSync.syncPair,
         highlight: HighchartsHighlightSync.syncPair,

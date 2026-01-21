@@ -688,24 +688,15 @@ class KPIComponent extends Component {
 
 /* *
  *
- *  Class Namespace
+ *  Type Declarations
  *
  * */
 
-namespace KPIComponent {
+/** @internal */
+export type ComponentType = KPIComponent;
 
-    /* *
-    *
-    *  Declarations
-    *
-    * */
-
-    /** @internal */
-    export type ComponentType = KPIComponent;
-
-    /** @internal */
-    export type FormulaType = keyof typeof KPIComponent.formulaFunctions;
-}
+/** @internal */
+export type FormulaType = keyof typeof KPIComponent.formulaFunctions;
 
 /* *
  *

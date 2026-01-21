@@ -20,7 +20,7 @@
  *
  * */
 
-import type Sync from '../../Sync/Sync';
+import type { PredefinedSyncConfig } from '../../Sync/Sync';
 
 
 /* *
@@ -29,7 +29,7 @@ import type Sync from '../../Sync/Sync';
 *
 * */
 
-const predefinedSyncConfig: Sync.PredefinedSyncConfig = {
+const predefinedSyncConfig: PredefinedSyncConfig = {
     defaultSyncPairs: {},
     defaultSyncOptions: {}
 };

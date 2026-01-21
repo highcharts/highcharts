@@ -17,6 +17,8 @@
 'use strict';
 
 import EditMode from '../EditMode.js';
+import type { Options as MenuOptions } from '../Menu/Menu';
+
 import Menu from '../Menu/Menu.js';
 import { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType.js';
 import GUIElement from '../../Layout/GUIElement.js';
@@ -37,7 +39,7 @@ abstract class EditToolbar {
 
     constructor(
         editMode: EditMode,
-        options: EditToolbar.Options
+        options: Options
     ) {
         this.container = createElement(
             'div',
@@ -83,7 +85,7 @@ abstract class EditToolbar {
     public menu: Menu;
     public isVisible: boolean;
     public iconURLPrefix: string;
-    public options: EditToolbar.Options;
+    public options: Options;
     public outline?: HTMLDOMElement;
 
     /* *
@@ -136,29 +138,27 @@ abstract class EditToolbar {
     }
 }
 
-namespace EditToolbar {
-    export interface Options {
-        /**
-         * Class name for the toolbar.
-         */
-        className: string;
-        /**
-         * Whether or not the toolbar is enabled.
-         */
-        enabled: boolean;
-        /**
-         * Options for the toolbar menu.
-         */
-        menu: Menu.Options;
-        /**
-         * Whether or not to show the outline.
-         */
-        outline: boolean;
-        /**
-         * Class name for the outline.
-         */
-        outlineClassName: string;
-    }
+export interface Options {
+    /**
+     * Class name for the toolbar.
+     */
+    className: string;
+    /**
+     * Whether or not the toolbar is enabled.
+     */
+    enabled: boolean;
+    /**
+     * Options for the toolbar menu.
+     */
+    menu: MenuOptions;
+    /**
+     * Whether or not to show the outline.
+     */
+    outline: boolean;
+    /**
+     * Class name for the outline.
+     */
+    outlineClassName: string;
 }
 
 export default EditToolbar;

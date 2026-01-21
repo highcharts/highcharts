@@ -35,16 +35,20 @@ import type { DeepPartial } from '../../../Shared/Types';
 import type {
     FilterModifierOptions
 } from '../../../Data/Modifiers/FilterModifierOptions';
+import type {
+    Range as NavigatorSyncRange
+} from './NavigatorSyncs/NavigatorSyncUtils';
 
 
 import Component from '../Component.js';
 import Globals from '../../Globals.js';
 import NavigatorComponentDefaults from './NavigatorComponentDefaults.js';
-import DataTable from '../../../Data/DataTable.js';
+import type {
+    Column as DataTableColumn
+} from '../../../Data/DataTable.js';
 import NavigatorSyncs from './NavigatorSyncs/NavigatorSyncs.js';
 import NavigatorSyncUtils from './NavigatorSyncs/NavigatorSyncUtils.js';
 
-import U from '../../../Core/Utilities.js';
 import { diffObjects, isNumber, isString, merge, pick } from '../../../Shared/Utilities.js';
 
 
@@ -423,8 +427,8 @@ class NavigatorComponent extends Component {
             crossfilterOptions.affectNavigator &&
             modifierOptions?.type === 'Filter'
         ) {
-            const appliedRanges: NavigatorSyncUtils.Range[] = [];
-            const rangedColumns: DataTable.Column[] = [];
+            const appliedRanges: NavigatorSyncRange[] = [];
+            const rangedColumns: DataTableColumn[] = [];
             const ranges = NavigatorSyncUtils.toRange(
                 modifierOptions as FilterModifierOptions
             );

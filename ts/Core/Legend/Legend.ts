@@ -1200,13 +1200,14 @@ class Legend {
         legendWidth = (
             options.maxWidth ?
                 Math.min(
-                    legend.widthOption ||
+                    (
+                        legend.widthOption || legend.offsetWidth
+                    ),
                     allowedWidth,
                     relativeLength(
                         options.maxWidth,
                         chart.chartWidth
-                    ) ||
-                Infinity
+                    ) || Infinity
                 ) :
                 (legend.widthOption || legend.offsetWidth)
         ) + padding;

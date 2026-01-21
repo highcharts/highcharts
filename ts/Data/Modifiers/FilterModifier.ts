@@ -22,7 +22,9 @@
  * */
 
 
-import type DataEvent from '../DataEvent';
+import type {
+    DataEventDetail
+} from '../DataEvent';
 import type {
     CallbackCondition,
     FilterCondition,
@@ -30,8 +32,11 @@ import type {
 } from './FilterModifierOptions';
 
 import DataModifier from './DataModifier.js';
-import DataTable from '../DataTable.js';
 import { isFunction, merge } from '../../Shared/Utilities.js';
+import DataTable, {
+    type CellType as DataTableCellType,
+    type RowObject as DataTableRowObject
+} from '../DataTable.js';
 
 
 /* *
@@ -126,7 +131,7 @@ class FilterModifier extends DataModifier {
         }
 
         const { ignoreCase } = condition;
-        const str = (val: DataTable.CellType): string => {
+        const str = (val: DataTableCellType): string => {
             const s = '' + val;
             return (ignoreCase ?? true) ? s.toLowerCase() : s;
         };
@@ -149,7 +154,7 @@ class FilterModifier extends DataModifier {
     /**
      * Constructs an instance of the filter modifier.
      *
-     * @param {Partial<FilterModifier.Options>} [options]
+     * @param {Partial<FilterModifierOptions>} [options]
      * Options to configure the filter modifier.
      */
     public constructor(
@@ -187,7 +192,7 @@ class FilterModifier extends DataModifier {
      * @param {DataTable} table
      * Table to modify.
      *
-     * @param {DataEvent.Detail} [eventDetail]
+     * @param {DataEventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {DataTable}
@@ -196,7 +201,7 @@ class FilterModifier extends DataModifier {
      */
     public override modifyTable(
         table: DataTable,
-        eventDetail?: DataEvent.Detail
+        eventDetail?: DataEventDetail
     ): DataTable {
         const modifier = this;
 
@@ -212,7 +217,7 @@ class FilterModifier extends DataModifier {
 
         const modified = table.getModified();
 
-        const rows: DataTable.RowObject[] = [];
+        const rows: DataTableRowObject[] = [];
         const indexes: Array<number|undefined> = [];
 
         for (

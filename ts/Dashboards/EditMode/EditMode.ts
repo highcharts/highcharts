@@ -21,10 +21,21 @@
  * */
 import type Row from '../Layout/Row';
 import type Board from '../Board';
+import type { GUIOptions as BoardGUIOptions } from '../Board';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
+import type {
+    Options as CellEditToolbarOptions
+} from './Toolbar/CellEditToolbar';
+import type { Options as ConfirmationPopupOptions } from './ConfirmationPopup';
+import type { Options as DragDropOptions } from '../Actions/DragDrop';
+import type { LangOptions } from './EditGlobals';
+import type { Options as EditContextMenuOptions } from './EditContextMenu';
+import type { Options as ResizerOptions } from '../Actions/Resizer';
+import type { Options as RowEditToolbarOptions } from './Toolbar/RowEditToolbar';
+import type { Options as SidebarPopupOptions } from './SidebarPopup';
 
-import Cell from '../Layout/Cell.js';
-import CellHTML from '../Layout/CellHTML.js';
+import Cell, { isCell } from '../Layout/Cell.js';
+import CellHTML, { isCellHTML } from '../Layout/CellHTML.js';
 import EditGlobals from './EditGlobals.js';
 import EditRenderer from './EditRenderer.js';
 import CellEditToolbar from './Toolbar/CellEditToolbar.js';
@@ -67,7 +78,7 @@ class EditMode {
      */
     constructor(
         board: Board,
-        options?: EditMode.Options
+        options?: Options
     ) {
         this.iconsURLPrefix =
             (options && options.iconsURLPrefix) || this.iconsURLPrefix;
@@ -110,7 +121,7 @@ class EditMode {
                         icon: this.iconsURLPrefix + 'add.svg'
                     }
                 }
-            } as EditMode.Options,
+            } as Options,
             options || {}
         );
 
@@ -187,7 +198,7 @@ class EditMode {
     /**
      * Edit mode options.
      */
-    public options: EditMode.Options;
+    public options: Options;
     /**
      * URL from which the icons will be fetched.
      */
@@ -199,7 +210,7 @@ class EditMode {
     /**
      * Language dictionary.
      */
-    public lang: EditGlobals.LangOptions;
+    public lang: LangOptions;
     /**
      * Instance of the toolbar, which is displayed for the cell.
      */
@@ -233,7 +244,7 @@ class EditMode {
     /**
      * @internal
      */
-    public tools: EditMode.Tools;
+    public tools: Tools;
     /**
      * Instance of the confirmation popup.
      */
@@ -262,7 +273,7 @@ class EditMode {
     /**
      * @internal
      */
-    public contextPointer?: EditMode.ContextPointer;
+    public contextPointer?: ContextPointer;
     /**
      * @internal
      */
@@ -482,7 +493,7 @@ class EditMode {
      * The GUI options for the layout.
      *
      */
-    private setLayouts(guiOptions: Board.GUIOptions): void {
+    private setLayouts(guiOptions: BoardGUIOptions): void {
         const board = this.board,
             layoutsOptions = guiOptions.layouts;
 
@@ -564,7 +575,7 @@ class EditMode {
     public setCellEvents(cell: Cell | CellHTML): void {
         const editMode = this;
 
-        if (CellHTML.isCellHTML(cell)) {
+        if (isCellHTML(cell)) {
             addEvent(
                 cell.container,
                 'mouseenter',
@@ -671,7 +682,7 @@ class EditMode {
         editMode.hideToolbars();
 
         // Remove highlight from the context row if exists.
-        if (this.editCellContext && Cell.isCell(this.editCellContext)) {
+        if (this.editCellContext && isCell(this.editCellContext)) {
             this.editCellContext.row?.setHighlight();
         }
 
@@ -970,8 +981,8 @@ class EditMode {
         const oldContext = oldEditCellContext;
 
         if (
-            CellHTML.isCellHTML(editCellContext) ||
-            CellHTML.isCellHTML(oldContext)
+            isCellHTML(editCellContext) ||
+            isCellHTML(oldContext)
         ) {
             editMode.editCellContext = editCellContext;
             editMode.cellToolbar?.showToolbar(editCellContext);
@@ -1064,172 +1075,169 @@ class EditMode {
 
 /* *
  *
- *  Namespace
+ *  Type Declarations
  *
  * */
-namespace EditMode {
-    export interface Options {
-        /**
-         * Context menu options.
-         */
-        contextMenu?: EditContextMenu.Options;
-        /**
-         * Confirmation popup options.
-         */
-        confirmationPopup?: ConfirmationPopup.Options;
-        /**
-         * Whether the edit mode should be enabled for the dashboards.
-         *
-         * Try it:
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/edit-mode/ctx-enabled/ | context enabled}
-         *
-         * @default false
-         *
-         */
-        enabled?: boolean;
-        /**
-         * Drag and drop options.
-         */
-        dragDrop?: DragDrop.Options;
-        /**
-         * The URL prefix for the icons used in the edit mode like the context
-         * menu icons, the row and cell edit toolbar icons, etc.
-         *
-         * @default @product.assetPrefix@/gfx/dashboards-icons/
-         */
-        iconsURLPrefix?: string;
-        /**
-         * Additional Language options.
-         *
-         * Try it:
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/edit-mode/lang/ | Norwegian language}
-         */
-        lang?: EditGlobals.LangOptions;
-        /**
-         * Resize options.
-         */
-        resize?: Resizer.Options;
-        /**
-         * Settings options.
-         */
-        settings?: SettingsOptions;
-        /**
-         * Toolbar options.
-         *
-         * Try it:
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/edit-mode/toolbars-disabled}
-         */
-        toolbars?: Toolbars;
-        /**
-         * Tools options.
-         */
-        tools?: Tools;
-        /**
-         * Fullscreen options.
-         */
-        viewFullscreen?: ViewFullscreenOptions;
-    }
-
+export interface Options {
     /**
-     * Settings options
+     * Context menu options.
      */
-    export interface SettingsOptions {
-        /**
-         * Whether the toolbar settings buttons should be enabled.
-         *
-         * @default true
-         */
-        enabled?: boolean;
-    }
-
-    export interface ViewFullscreenOptions {
-        /**
-         * Whether the view fullscreen button should be enabled.
-         *
-         * @default true
-         */
-        enabled?: boolean;
-    }
-
+    contextMenu?: EditContextMenuOptions;
     /**
-    * Toolbar options.
-    */
-    export interface Toolbars {
-        /**
-        * Options of the cell toolbar.
-        *
-        * When the cell toolbar is disabled, the Add Component button is not
-        * displayed.
-        */
-        cell?: CellEditToolbar.Options;
-        /**
-        * Options of the row toolbar.
-        */
-        row?: RowEditToolbar.Options;
-        /**
-        * Options of the sidebar.
-        */
-        sidebar?: SidebarPopup.Options;
-    }
-
+     * Confirmation popup options.
+     */
+    confirmationPopup?: ConfirmationPopupOptions;
     /**
-    * Tools options.
-    */
-    export interface Tools {
-        /**
-        * Add Component button options.
-        */
-        addComponentBtn?: AddComponentBtn;
-        /**
-        * @internal
-        */
-        contextMenu?: EditContextMenu;
-        /**
-        * @internal
-        */
-        contextButtonElement?: HTMLDOMElement;
-        /**
-        * @internal
-        */
-        standaloneEditToggle?: HTMLDOMElement;
-        /**
-        * @internal
-        */
-        container?: HTMLDOMElement;
-    }
-
+     * Whether the edit mode should be enabled for the dashboards.
+     *
+     * Try it:
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/edit-mode/ctx-enabled/ | context enabled}
+     *
+     * @default false
+     *
+     */
+    enabled?: boolean;
     /**
-    * Add Component Button options.
-    */
-    export interface AddComponentBtn {
-        /**
-         * Whether the Add Component button should be visible.
-         *
-         * Note that the Add Component button is always disabled when cell
-         * toolbars are disabled.
-         *
-         * @default true
-         *
-         */
-        enabled?: boolean;
-        /**
-         * URL to the Add Component button icon.
-         */
-        icon: string;
-    }
+     * Drag and drop options.
+     */
+    dragDrop?: DragDropOptions;
+    /**
+     * The URL prefix for the icons used in the edit mode like the context
+     * menu icons, the row and cell edit toolbar icons, etc.
+     *
+     * @default @product.assetPrefix@/gfx/dashboards-icons/
+     */
+    iconsURLPrefix?: string;
+    /**
+     * Additional Language options.
+     *
+     * Try it:
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/edit-mode/lang/ | Norwegian language}
+     */
+    lang?: LangOptions;
+    /**
+     * Resize options.
+     */
+    resize?: ResizerOptions;
+    /**
+     * Settings options.
+     */
+    settings?: SettingsOptions;
+    /**
+     * Toolbar options.
+     *
+     * Try it:
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/edit-mode/toolbars-disabled}
+     */
+    toolbars?: Toolbars;
+    /**
+     * Tools options.
+     */
+    tools?: Tools;
+    /**
+     * Fullscreen options.
+     */
+    viewFullscreen?: ViewFullscreenOptions;
+}
 
+/**
+ * Settings options
+ */
+export interface SettingsOptions {
+    /**
+     * Whether the toolbar settings buttons should be enabled.
+     *
+     * @default true
+     */
+    enabled?: boolean;
+}
+
+export interface ViewFullscreenOptions {
+    /**
+     * Whether the view fullscreen button should be enabled.
+     *
+     * @default true
+     */
+    enabled?: boolean;
+}
+
+/**
+* Toolbar options.
+*/
+export interface Toolbars {
+    /**
+    * Options of the cell toolbar.
+    *
+    * When the cell toolbar is disabled, the Add Component button is not
+    * displayed.
+    */
+    cell?: CellEditToolbarOptions;
+    /**
+    * Options of the row toolbar.
+    */
+    row?: RowEditToolbarOptions;
+    /**
+    * Options of the sidebar.
+    */
+    sidebar?: SidebarPopupOptions;
+}
+
+/**
+* Tools options.
+*/
+export interface Tools {
+    /**
+    * Add Component button options.
+    */
+    addComponentBtn?: AddComponentBtn;
     /**
     * @internal
     */
-    export interface ContextPointer {
-        isVisible: boolean;
-        element: HTMLDOMElement;
-    }
+    contextMenu?: EditContextMenu;
+    /**
+    * @internal
+    */
+    contextButtonElement?: HTMLDOMElement;
+    /**
+    * @internal
+    */
+    standaloneEditToggle?: HTMLDOMElement;
+    /**
+    * @internal
+    */
+    container?: HTMLDOMElement;
 }
 
+/**
+* Add Component Button options.
+*/
+export interface AddComponentBtn {
+    /**
+     * Whether the Add Component button should be visible.
+     *
+     * Note that the Add Component button is always disabled when cell
+     * toolbars are disabled.
+     *
+     * @default true
+     *
+     */
+    enabled?: boolean;
+    /**
+     * URL to the Add Component button icon.
+     */
+    icon: string;
+}
+
+/**
+* @internal
+*/
+export interface ContextPointer {
+    isVisible: boolean;
+    element: HTMLDOMElement;
+}
 /* *
  *
  *  Default Export

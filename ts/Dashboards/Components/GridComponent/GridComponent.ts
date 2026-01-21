@@ -25,6 +25,8 @@ import type Cell from '../../Layout/Cell';
 import type { Grid, GridNamespace } from '../../Plugins/GridTypes';
 import type { Options } from './GridComponentOptions';
 
+import type { EventTypes as ComponentEventTypes } from '../Component';
+
 import Component from '../Component.js';
 import GridSyncs from './GridSyncs/GridSyncs.js';
 import GridComponentDefaults from './GridComponentDefaults.js';
@@ -340,24 +342,15 @@ class GridComponent extends Component {
 
 /* *
  *
- *  Class Namespace
+ *  Type Declarations
  *
  * */
 
-namespace GridComponent {
+/** @private */
+export type ComponentType = GridComponent;
 
-    /* *
-     *
-     *  Declarations
-     *
-     * */
-
-    /** @private */
-    export type ComponentType = GridComponent;
-
-    /** @private */
-    export type ChartComponentEvents = Component.EventTypes;
-}
+/** @private */
+export type ChartComponentEvents = ComponentEventTypes;
 
 /* *
  *

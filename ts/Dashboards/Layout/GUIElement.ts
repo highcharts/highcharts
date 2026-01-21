@@ -51,9 +51,9 @@ abstract class GUIElement {
     public static getOffsets(
         guiElement: GUIElement,
         referenceElement?: HTMLDOMElement
-    ): GUIElement.Offset {
+    ): Offset {
         const offset =
-            { left: 0, top: 0, right: 0, bottom: 0 } as GUIElement.Offset;
+            { left: 0, top: 0, right: 0, bottom: 0 } as Offset;
 
         if (!guiElement.container) {
             return offset;
@@ -84,8 +84,8 @@ abstract class GUIElement {
      * The dimensions of the guiElement container.
      */
     public static getDimFromOffsets(
-        offsets: GUIElement.Offset
-    ): GUIElement.Dimensions {
+        offsets: Offset
+    ): Dimensions {
         return {
             width: offsets.right - offsets.left,
             height: offsets.bottom - offsets.top
@@ -101,7 +101,7 @@ abstract class GUIElement {
      * @returns
      * The unique id.
      */
-    public static getElementId(elementType: GUIElement.GUIElementType): string {
+    public static getElementId(elementType: GUIElementType): string {
         return (
             Globals.classNamePrefix + elementType + '-' +
             uniqueKey().slice(11)
@@ -152,7 +152,7 @@ abstract class GUIElement {
     /**
      * The type of a GUIElement instance.
      */
-    protected type?: GUIElement.GUIElementType;
+    protected type?: GUIElementType;
 
     /**
      * The function to remove bindedGUIElement
@@ -174,14 +174,14 @@ abstract class GUIElement {
     /**
      * Create or get existing HTML element as a GUIElement container.
      *
-     * @param {GUIElement.ContainerOptions} options
+     * @param {GetElementContainerOptions} options
      * Options.
      *
      * @returns
      * The HTML element for the element container.
      */
     protected getElementContainer(
-        options: GUIElement.GetElementContainerOptions
+        options: GetElementContainerOptions
     ): HTMLElement {
         const guiElement = this;
         let elem: HTMLDOMElement;
@@ -215,7 +215,7 @@ abstract class GUIElement {
         guiElement.removeBindedEventFn = addEvent(
             elem,
             'bindedGUIElement',
-            function (e: GUIElement.BindedGUIElementEvent): void {
+            function (e: BindedGUIElementEvent): void {
                 e.guiElement = guiElement;
                 e.stopImmediatePropagation();
             }
@@ -252,7 +252,7 @@ abstract class GUIElement {
      * @returns
      * The GUIElement instance type
      */
-    public getType(): GUIElement.GUIElementType|undefined {
+    public getType(): GUIElementType|undefined {
         return this.type;
     }
 
@@ -284,34 +284,32 @@ abstract class GUIElement {
     }
 }
 
-namespace GUIElement {
-    export interface GetElementContainerOptions {
-        render?: boolean;
-        parentContainer?: HTMLDOMElement;
-        attribs?: HTMLAttributes;
-        style?: CSSObject;
-        element?: HTMLElement;
-        elementId?: string;
-    }
+export interface GetElementContainerOptions {
+    render?: boolean;
+    parentContainer?: HTMLDOMElement;
+    attribs?: HTMLAttributes;
+    style?: CSSObject;
+    element?: HTMLElement;
+    elementId?: string;
+}
 
-    export interface BindedGUIElementEvent extends Event {
-        guiElement: GUIElement;
-    }
+export interface BindedGUIElementEvent extends Event {
+    guiElement: GUIElement;
+}
 
-    export type GUIElementType =
-        'row'|'cell'|'layout'|'cell-html'|'col-nested'|'col';
+export type GUIElementType =
+    'row'|'cell'|'layout'|'cell-html'|'col-nested'|'col';
 
-    export interface Offset {
-        left: number;
-        top: number;
-        right: number;
-        bottom: number;
-    }
+export interface Offset {
+    left: number;
+    top: number;
+    right: number;
+    bottom: number;
+}
 
-    export interface Dimensions {
-        width: number;
-        height: number;
-    }
+export interface Dimensions {
+    width: number;
+    height: number;
 }
 
 export default GUIElement;

@@ -43,6 +43,8 @@ import type {
 import type MathModifierOptions from '../../../Data/Modifiers/MathModifierOptions';
 import type SidebarPopup from '../../EditMode/SidebarPopup';
 
+import type { EventTypes as ComponentEventTypes } from '../Component';
+
 import Component from '../Component.js';
 import DataConverter from '../../../Data/Converters/DataConverter.js';
 import DataTable from '../../../Data/DataTable.js';
@@ -297,7 +299,7 @@ class HighchartsComponent extends Component {
      */
     private onChartUpdate(
         point: Point,
-        connectorHandler: HighchartsComponent.HCConnectorHandler
+        connectorHandler: HCConnectorHandler
     ): void {
         const table = connectorHandler.dataTable;
         const columnAssignment = connectorHandler.columnAssignment;
@@ -381,7 +383,7 @@ class HighchartsComponent extends Component {
      */
     public updateSeries(): void {
         const { chart } = this;
-        const connectorHandlers: HighchartsComponent.HCConnectorHandler[] =
+        const connectorHandlers: HCConnectorHandler[] =
             this.connectorHandlers;
         if (!chart) {
             return;
@@ -442,7 +444,7 @@ class HighchartsComponent extends Component {
      * @private
      */
     private updateSeriesFromConnector(
-        connectorHandler: HighchartsComponent.HCConnectorHandler
+        connectorHandler: HCConnectorHandler
     ): void {
         const chart = this.chart;
         if (
@@ -555,7 +557,19 @@ class HighchartsComponent extends Component {
      */
     public override destroy(): void {
         // Cleanup references in the global Highcharts scope
-        this.chart?.destroy();
+        // Destroy chart before destroying the component element
+        // to ensure chart has access to its renderTo element
+        if (this.chart && this.chart.renderTo && this.chart.renderer) {
+            try {
+                this.chart.destroy();
+            } catch (e) {
+                // Chart may already be destroyed or renderTo/renderer
+                // may not exist
+                // eslint-disable-next-line no-console
+                console.warn('Error destroying chart:', e);
+            }
+            this.chart = void 0;
+        }
         super.destroy();
     }
 
@@ -728,29 +742,19 @@ class HighchartsComponent extends Component {
 
 /* *
  *
- *  Class Namespace
+ *  Type Declarations
  *
  * */
 
 /** @private */
-namespace HighchartsComponent {
+export type ComponentType = HighchartsComponent;
 
-    /* *
-    *
-    *  Declarations
-    *
-    * */
+/** @private */
+export type ChartComponentEvents = ComponentEventTypes;
 
-    /** @private */
-    export type ComponentType = HighchartsComponent;
-
-    /** @private */
-    export type ChartComponentEvents = Component.EventTypes;
-
-    /** @private */
-    export interface HCConnectorHandler extends ConnectorHandler {
-        columnAssignment?: ColumnAssignmentOptions[];
-    }
+/** @private */
+export interface HCConnectorHandler extends ConnectorHandler {
+    columnAssignment?: ColumnAssignmentOptions[];
 }
 
 /* *

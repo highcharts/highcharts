@@ -23,11 +23,15 @@
  *
  * */
 
-import type DataEvent from '../DataEvent';
+import type {
+    DataEventDetail
+} from '../DataEvent';
 import type HTMLTableConnectorOptions from './HTMLTableConnectorOptions';
 import type HTMLTableConverterOptions from '../Converters/HTMLTableConverterOptions';
 
-import DataConnector from './DataConnector.js';
+import DataConnector, {
+    type Event as DataConnectorEvent
+} from './DataConnector.js';
 import HTMLTableConverter from '../Converters/HTMLTableConverter.js';
 import H from '../../Core/Globals.js';
 import { merge } from '../../Shared/Utilities.js';
@@ -67,11 +71,11 @@ class HTMLTableConnector extends DataConnector {
     /**
      * Constructs an instance of HTMLTableConnector.
      *
-     * @param {HTMLTableConnector.CombinedHTMLTableConnectorOptions} [options]
+     * @param {CombinedHTMLTableConnectorOptions} [options]
      * Options for the connector and converter.
      */
     public constructor(
-        options?: HTMLTableConnector.CombinedHTMLTableConnectorOptions
+        options?: CombinedHTMLTableConnectorOptions
     ) {
         const mergedOptions = merge(HTMLTableConnector.defaultOptions, options);
 
@@ -109,14 +113,14 @@ class HTMLTableConnector extends DataConnector {
     /**
      * Initiates creating the dataconnector from the HTML table
      *
-     * @param {DataEvent.Detail} [eventDetail]
+     * @param {DataEventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @emits HTMLTableConnector#load
      * @emits HTMLTableConnector#afterLoad
      * @emits HTMLTableConnector#loadError
      */
-    public async load(eventDetail?: DataEvent.Detail): Promise<this> {
+    public async load(eventDetail?: DataEventDetail): Promise<this> {
         const connector = this;
         const options = connector.options;
         const converter = connector.converter;
@@ -175,45 +179,32 @@ class HTMLTableConnector extends DataConnector {
 
 /* *
  *
- *  Class Namespace
+ *  Declarations
  *
  * */
 
 /**
- * Types for class-specific options and events
+ * Type for event object fired from HTMLTableConnector
  */
-namespace HTMLTableConnector {
+export interface Event extends DataConnectorEvent {}
 
-    /* *
-     *
-     *  Declarations
-     *
-     * */
-
-    /**
-     * Type for event object fired from HTMLTableConnector
-     */
-    export interface Event extends DataConnector.Event {}
-
-    /**
-     * Options for exporting the connector as an HTML table
-     */
-    export interface ExportOptions {
-        decimalPoint?: string|null;
-        exportIDColumn?: boolean;
-        tableCaption?: string;
-        useLocalDecimalPoint?: boolean;
-        useMultiLevelHeaders?: boolean;
-        useRowspanHeaders?: boolean;
-    }
-
-    /**
-     * Options of the HTMLTable connector and converter.
-     */
-    export type CombinedHTMLTableConnectorOptions =
-        Partial<HTMLTableConnectorOptions> & HTMLTableConverterOptions;
-
+/**
+ * Options for exporting the connector as an HTML table
+ */
+export interface ExportOptions {
+    decimalPoint?: string|null;
+    exportIDColumn?: boolean;
+    tableCaption?: string;
+    useLocalDecimalPoint?: boolean;
+    useMultiLevelHeaders?: boolean;
+    useRowspanHeaders?: boolean;
 }
+
+/**
+ * Options of the HTMLTable connector and converter.
+ */
+export type CombinedHTMLTableConnectorOptions =
+    Partial<HTMLTableConnectorOptions> & HTMLTableConverterOptions;
 
 /* *
  *

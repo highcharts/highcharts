@@ -1,0 +1,6 @@
+---
+ name: Highcharts Dashboards Demo
+ authors:
+   - Highcharts
+ js_wrap: b
+...

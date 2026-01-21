@@ -14,11 +14,16 @@
  *
  * */
 
+import type { Options as EditModeOptions } from '../EditMode';
+
 import EditMode from '../EditMode.js';
 import U from '../../../Core/Utilities.js';
 import Row from '../../Layout/Row.js';
 import EditGlobals from '../EditGlobals.js';
 import MenuItem from '../Menu/MenuItem.js';
+import type { Options as EditToolbarOptions } from './EditToolbar';
+import type { Options as MenuItemOptions } from '../Menu/MenuItem';
+
 import EditToolbar from './EditToolbar.js';
 import GUIElement from '../../Layout/GUIElement.js';
 import { merge, objectEach } from '../../../Shared/Utilities.js';
@@ -37,7 +42,7 @@ class RowEditToolbar extends EditToolbar {
      *
      * */
 
-    protected static readonly defaultOptions: RowEditToolbar.Options = {
+    protected static readonly defaultOptions: Options = {
         enabled: true,
         className: EditGlobals.classNames.editToolbar,
         outline: true,
@@ -50,10 +55,10 @@ class RowEditToolbar extends EditToolbar {
     };
 
     public static getMenuItemsConfig(
-        options: EditMode.Options,
+        options: EditModeOptions,
         iconURLPrefix: string
-    ): MenuItem.Options[] {
-        const items: MenuItem.Options[] = [];
+    ): MenuItemOptions[] {
+        const items: MenuItemOptions[] = [];
 
         if (options.dragDrop?.enabled) {
             items.push({
@@ -246,8 +251,6 @@ class RowEditToolbar extends EditToolbar {
     }
 }
 
-namespace RowEditToolbar {
-    export interface Options extends EditToolbar.Options {}
-}
+export interface Options extends EditToolbarOptions {}
 
 export default RowEditToolbar;
