@@ -115,6 +115,7 @@ class TableRow extends Row {
             this.index
         );
         if (!data) {
+            this.data = {};
             return;
         }
 

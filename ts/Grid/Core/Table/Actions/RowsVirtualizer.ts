@@ -27,6 +27,9 @@ import type { RowsSettings } from '../../Options';
 import Table from '../Table.js';
 import TableRow from '../Body/TableRow.js';
 import Globals from '../../Globals.js';
+import U from '../../../../Core/Utilities.js';
+
+const { defined } = U;
 
 /* *
  *
@@ -338,7 +341,18 @@ class RowsVirtualizer {
         try {
             const { viewport: vp, buffer } = this;
             const rowCount = await vp.grid.dataProvider?.getRowCount();
-            if (!rowCount) {
+            if (!defined(rowCount)) {
+                return;
+            }
+            if (rowCount === 0) {
+                if (vp.rows.length) {
+                    for (let i = 0, iEnd = vp.rows.length; i < iEnd; ++i) {
+                        vp.rows[i].destroy();
+                    }
+                    vp.rows.length = 0;
+                }
+                vp.tbodyElement.innerHTML = '';
+                this.rowCursor = 0;
                 return;
             }
 
