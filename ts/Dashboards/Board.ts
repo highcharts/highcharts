@@ -484,9 +484,6 @@ class Board {
      *
      * @param newOptions
      * The new options to apply to the dashboard.
-     *
-     * @returns
-     * The board instance.
      */
     public update(newOptions: DeepPartial<Options>): void {
         const board = this;
