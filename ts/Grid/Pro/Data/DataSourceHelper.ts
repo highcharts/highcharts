@@ -163,6 +163,55 @@ const defaultTemplateVariables: Record<
     }
 };
 
+/**
+ * Tracks last fetch timestamps per DataSourceOptions reference.
+ */
+const lastFetchTimestamps = new WeakMap<DataSourceOptions, number>();
+
+/**
+ * Serializes fetch interval enforcement per DataSourceOptions reference.
+ */
+const fetchIntervalQueue = new WeakMap<DataSourceOptions, Promise<void>>();
+
+/**
+ * Enforces a minimum interval between fetch start times for a given options
+ * reference, even when calls are concurrent.
+ *
+ * @param options
+ * The data source options reference used as a throttling key.
+ *
+ * @param fetchMinInterval
+ * Minimum time (ms) between fetch starts. Non-positive disables throttling.
+ */
+const enforceFetchInterval = async (
+    options: DataSourceOptions,
+    fetchMinInterval: number
+): Promise<void> => {
+    if (fetchMinInterval <= 0) {
+        return;
+    }
+
+    const previous = fetchIntervalQueue.get(options);
+    const queued = typeof previous === 'object' ?
+        previous :
+        Promise.resolve();
+    const current = queued.then(async (): Promise<void> => {
+        const now = Date.now();
+        const lastFetch = lastFetchTimestamps.get(options);
+        if (typeof lastFetch === 'number') {
+            const waitMs = fetchMinInterval - (now - lastFetch);
+            if (waitMs > 0) {
+                await new Promise<void>((resolve): void => {
+                    setTimeout(resolve, waitMs);
+                });
+            }
+        }
+        lastFetchTimestamps.set(options, Date.now());
+    });
+    fetchIntervalQueue.set(options, current['catch']((): void => {}));
+    await current;
+};
+
 const defaultParseResponse = async (
     res: Response
 ): Promise<RemoteFetchCallbackResult> => {
@@ -256,11 +305,13 @@ export async function dataSourceFetch(
 ): Promise<RemoteFetchCallbackResult> {
     const {
         parseResponse = defaultParseResponse,
-        fetchTimeout = 30000
+        fetchTimeout = 30000,
+        fetchMinInterval = 0
     } = options;
 
     try {
         const url = buildUrl(options, state);
+        await enforceFetchInterval(options, fetchMinInterval);
         const controller = fetchTimeout > 0 ? new AbortController() : null;
         let timeoutId: ReturnType<typeof setTimeout> | undefined;
 
@@ -357,6 +408,12 @@ export interface DataSourceOptions {
      * @default 30000
      */
     fetchTimeout?: number;
+
+    /**
+     * Minimum time (ms) between fetches. Set to 0 to disable.
+     * @default 0
+     */
+    fetchMinInterval?: number;
 
     /**
      * ID of a column that contains stable row IDs.
