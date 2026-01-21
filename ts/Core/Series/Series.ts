@@ -1757,7 +1757,12 @@ class Series {
                         xData[dataLength - 1] > max
                     )
                 ) {
-                    croppedData = this.cropData(table, min, max);
+                    croppedData = this.cropData(
+                        table,
+                        min,
+                        max,
+                        this.cropShoulder
+                    );
 
                     modified = croppedData.modified;
                     cropStart = croppedData.start;
@@ -1845,7 +1850,8 @@ class Series {
     public cropData(
         table: DataTableCore,
         min: number,
-        max: number
+        max: number,
+        cropShoulder: number
     ): Series.CropDataObject {
         const xData = table.getColumn('x', true) as Array<number> || [],
             dataLength = xData.length,
@@ -1856,10 +1862,12 @@ class Series {
             start = 0,
             end = dataLength;
 
+        cropShoulder = pick(cropShoulder, this.cropShoulder);
+
         // Iterate up to find slice start
         for (i = 0; i < dataLength; i++) {
             if (xData[i] >= min) {
-                start = Math.max(0, i - 1);
+                start = Math.max(0, i - cropShoulder);
                 break;
             }
         }
@@ -1867,7 +1875,7 @@ class Series {
         // Proceed to find slice end
         for (j = i; j < dataLength; j++) {
             if (xData[j] > max) {
-                end = j + 1;
+                end = j + cropShoulder;
                 break;
             }
         }
@@ -2102,8 +2110,11 @@ class Series {
             activeYData: number[] = [],
             // Handle X outside the viewed area. This does not work with
             // non-sorted data like scatter (#7639).
-            shoulder = this.requireSorting && !this.is('column') ?
-                1 : 0,
+            shoulder = this.requireSorting ?
+                this.type === 'column' ?
+                    0 :
+                    this.cropShoulder :
+                0,
             // #2117, need to compensate for log X axis
             positiveValuesOnly = yAxis ? yAxis.positiveValuesOnly : false,
             doAll = getExtremesFromAll ||
@@ -4962,6 +4973,7 @@ interface Series extends SeriesBase {
     axisTypes: Array<'xAxis'|'yAxis'|'colorAxis'|'zAxis'>;
     coll: 'series';
     colorCounter: number;
+    cropShoulder: number;
     directTouch: boolean;
     hcEvents?: Record<string, Array<U.EventWrapperObject<Series>>>;
     invertible: boolean;
@@ -4977,6 +4989,7 @@ extend(Series.prototype, {
     axisTypes: ['xAxis', 'yAxis'],
     coll: 'series',
     colorCounter: 0,
+    cropShoulder: 1,
     directTouch: false,
     invertible: true,
     isCartesian: true,

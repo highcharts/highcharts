@@ -209,7 +209,7 @@ class XRangeSeries extends ColumnSeries {
             x2Data = table.getColumn('x2');
 
         table.setColumn('x', x2Data, void 0, { silent: true });
-        const croppedData = super.cropData(table, min, max);
+        const croppedData = super.cropData(table, min, max, this.cropShoulder);
 
         // Re-insert the cropped xData
         table.setColumn(

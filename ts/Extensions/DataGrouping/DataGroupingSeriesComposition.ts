@@ -547,7 +547,8 @@ function applyGrouping(
             croppedData = series.cropData(
                 modified,
                 xAxis.min || 0,
-                xAxis.max || 0
+                xAxis.max || 0,
+                1
             );
             modified = croppedData.modified;
             groupedXData = modified.getColumn('x') as Array<number>;
