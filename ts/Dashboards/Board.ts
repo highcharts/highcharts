@@ -575,8 +575,6 @@ class Board {
                 board.options.components as Array<Partial<ComponentType['options']>>
             );
         }
-
-        return board;
     }
 
     /**
