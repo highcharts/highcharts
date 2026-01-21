@@ -48,8 +48,6 @@ export interface IKHOptions extends SMAOptions {
      */
     chikouLine?: Record<string, CSSObject>;
 
-    gapSize?: number;
-
     /**
      * The styles for Kijun line
      */
