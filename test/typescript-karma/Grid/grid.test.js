@@ -1,7 +1,5 @@
 //@ts-check
-import '/base/code/grid/es-modules/masters/grid-pro.src.js';
-
-const Grid = window.Grid;
+import Grid from '/base/code/grid/es-modules/masters/grid-pro.src.js';
 
 const { test } = QUnit;
 
@@ -165,7 +163,7 @@ test('Grid update methods', async function (assert) {
                 format: 'New One!'
             }
         }],
-        'Varations of updateColumn method should work correctly.'
+        'Variations of updateColumn method should work correctly.'
     );
 
     assert.strictEqual(
@@ -177,6 +175,78 @@ test('Grid update methods', async function (assert) {
     );
 
     grid.viewport?.resizeObserver?.disconnect();
+});
+
+//@ts-ignore
+test('Grid delegates cell events to tbody', async function (assert) {
+    const parentElement = document.getElementById('container');
+    if (!parentElement) {
+        return;
+    }
+
+    const added = [];
+    const originalAddEventListener = EventTarget.prototype.addEventListener;
+    EventTarget.prototype.addEventListener = function (type, listener, options) {
+        added.push({ target: this, type });
+        return originalAddEventListener.call(this, type, listener, options);
+    };
+
+    let grid;
+    try {
+        grid = await Grid.grid(parentElement, {
+            dataTable: {
+                columns: {
+                    product: ['Apples', 'Pears', 'Plums', 'Bananas'],
+                    weight: [100, 40, 0.5, 200],
+                    price: [1.5, 2.53, 5, 4.5]
+                }
+            },
+            columnDefaults: {
+                cells: {
+                    editMode: {
+                        enabled: false
+                    }
+                }
+            }
+        }, true);
+    } finally {
+        EventTarget.prototype.addEventListener = originalAddEventListener;
+    }
+
+    grid.viewport?.resizeObserver?.disconnect();
+
+    const tbody = grid.viewport?.tbodyElement;
+    assert.ok(tbody, 'Table body element should exist.');
+
+    const delegatedEvents = [
+        'click',
+        'dblclick',
+        'mousedown',
+        'mouseover',
+        'mouseout',
+        'keydown'
+    ];
+
+    delegatedEvents.forEach((type) => {
+        assert.ok(
+            added.some((entry) => entry.target === tbody && entry.type === type),
+            'Delegated ' + type + ' listener should be attached to tbody.'
+        );
+    });
+
+    const perCellDelegated = added.filter((entry) => (
+        entry.target instanceof HTMLTableCellElement &&
+        entry.target.tagName === 'TD' &&
+        delegatedEvents.includes(entry.type)
+    ));
+
+    assert.strictEqual(
+        perCellDelegated.length,
+        0,
+        'Delegated events should not be bound to individual cells.'
+    );
+
+    grid?.destroy();
 });
 
 

@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sophie Bremer
@@ -21,7 +21,10 @@
  * */
 
 
-import type DataEvent from './DataEvent';
+import type {
+    DataEventCallback,
+    DataEventEmitter
+} from './DataEvent';
 import type DataConnectorType from './Connectors/DataConnectorType';
 import type { DataConnectorTypeOptions } from './Connectors/DataConnectorType';
 import type DataPoolOptions from './DataPoolOptions';
@@ -51,7 +54,7 @@ const {
  * @param {DataPoolOptions} options
  * Pool options with all connectors.
  */
-class DataPool implements DataEvent.Emitter<DataPool.Event> {
+class DataPool implements DataEventEmitter<Event> {
 
     /* *
      *
@@ -110,10 +113,10 @@ class DataPool implements DataEvent.Emitter<DataPool.Event> {
      * Emits an event on this data pool to all registered callbacks of the given
      * event.
      *
-     * @param {DataTable.Event} e
+     * @param {DataTableEvent} e
      * Event object with event information.
      */
-    public emit(e: DataPool.Event): void {
+    public emit(e: Event): void {
         fireEvent(this, e.type, e);
     }
 
@@ -304,9 +307,9 @@ class DataPool implements DataEvent.Emitter<DataPool.Event> {
      * @return {Function}
      * Function to unregister callback from the event.
      */
-    public on<T extends DataPool.Event['type']>(
+    public on<T extends Event['type']>(
         type: T,
-        callback: DataEvent.Callback<this, Extract<DataPool.Event, {
+        callback: DataEventCallback<this, Extract<Event, {
             type: T
         }>>
     ): Function {
@@ -356,27 +359,16 @@ class DataPool implements DataEvent.Emitter<DataPool.Event> {
 
 /* *
  *
- *  Class Namespace
+ *  Declarations
  *
  * */
 
-
-namespace DataPool {
-
-    /* *
-     *
-     *  Declarations
-     *
-     * */
-
-    export interface Event {
-        type: (
-            'load' | 'afterLoad' | 'setConnectorOptions' |
-            'afterSetConnectorOptions'
-        );
-        options: DataConnectorTypeOptions;
-    }
-
+export interface Event {
+    type: (
+        'load' | 'afterLoad' | 'setConnectorOptions' |
+        'afterSetConnectorOptions'
+    );
+    options: DataConnectorTypeOptions;
 }
 
 

@@ -1,8 +1,10 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
  *
  * */
@@ -393,7 +395,7 @@ class RangeSelector {
                 xAxis.options.min = baseXAxisOptions.min;
                 axisRangeUpdateEvent(); // Remove event
             });
-        } else if (isNumber(newMin) && isNumber(newMax)) {
+        } else if (isNumber(newMin) || isNumber(newMax)) {
             // Existing axis object. Set extremes after render time.
             baseAxis.setExtremes(
                 newMin,
@@ -1473,7 +1475,7 @@ class RangeSelector {
                 rangeOptions.text ?? '',
                 0,
                 0,
-                (e: (Event | AnyRecord)): void => {
+                (e): void => {
 
                     // Extract events from button object and call
                     const buttonEvents = (

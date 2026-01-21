@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: Dashboards and Grid Test
+name: Dashboards Test
 
 # Controls when the workflow will run
 on:
@@ -12,14 +12,10 @@ on:
     paths:
       - '.github/workflows/dashboards-test.yml'
       - 'css/dashboards*'
-      - 'css/grid*'
       - 'samples/dashboards/**'
-      - 'samples/grid-lite/**'
-      - 'samples/grid-pro/**'
       - 'test/cypress/dashboards/visual/**'
       - 'ts/Dashboards/**'
       - 'ts/Data/**'
-      - 'ts/Grid/**'
 
 permissions:
   contents: read # to fetch code (actions/checkout)
@@ -50,7 +46,7 @@ jobs:
       - name: Install Dependencies
         run: |
           cd highcharts
-          npm i
+          npm ci
 
       - name: Build Highcharts
         run: |
@@ -77,7 +73,7 @@ jobs:
       - name: Install Highcharts Utils
         run: |
           cd utils
-          npm i
+          npm ci
 
       - name: Run Cypress test
         uses: cypress-io/github-action@v6

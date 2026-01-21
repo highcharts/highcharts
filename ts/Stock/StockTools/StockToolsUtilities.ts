@@ -2,9 +2,11 @@
  *
  *  Events generator for Stock tools
  *
- *  (c) 2009-2025 Paweł Fus
+ *  (c) 2009-2026 Highsoft AS
+ *  Author: Paweł Fus
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
  *
  * */
@@ -473,14 +475,14 @@ function updateHeight(
     e: PointerEvent,
     annotation: Annotation
 ): void {
-    const options = annotation.options.typeOptions,
+    const options = annotation.options.typeOptions!,
         yAxis = isNumber(options.yAxis) && this.chart.yAxis[options.yAxis];
 
     if (yAxis && options.points) {
         annotation.update({
             typeOptions: {
                 height: yAxis.toValue(e[yAxis.horiz ? 'chartX' : 'chartY']) -
-                    (options.points[1].y || 0)
+                    ((options.points[1] as any).y || 0)
             }
         });
     }
@@ -511,7 +513,7 @@ function updateNthPoint(
         e: PointerEvent,
         annotation: Annotation
     ): void {
-        const options = annotation.options.typeOptions,
+        const options = annotation.options.typeOptions!,
             xAxis = isNumber(options.xAxis) && this.chart.xAxis[options.xAxis],
             yAxis = isNumber(options.yAxis) && this.chart.yAxis[options.yAxis];
 
@@ -557,15 +559,15 @@ function updateRectSize(
     annotation: Annotation
 ): void {
     const chart = annotation.chart,
-        options = annotation.options.typeOptions,
+        options = annotation.options.typeOptions!,
         xAxis = isNumber(options.xAxis) && chart.xAxis[options.xAxis],
         yAxis = isNumber(options.yAxis) && chart.yAxis[options.yAxis];
 
     if (xAxis && yAxis) {
         const x = xAxis.toValue(event[xAxis.horiz ? 'chartX' : 'chartY']),
             y = yAxis.toValue(event[yAxis.horiz ? 'chartX' : 'chartY']),
-            width = x - options.point.x,
-            height = options.point.y - y;
+            width = x - (options.point as any).x,
+            height = (options.point as any).y - y;
 
         annotation.update({
             typeOptions: {

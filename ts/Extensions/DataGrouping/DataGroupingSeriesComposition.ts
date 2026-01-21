@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -22,7 +23,7 @@ import type {
 } from './ApproximationType';
 import type Axis from '../../Core/Axis/Axis';
 import type DataGroupingOptions from './DataGroupingOptions';
-import type DataTable from '../../Data/DataTable';
+import type { ColumnCollection } from '../../Data/DataTable';
 import type IndicatorBase from '../../Stock/Indicators/IndicatorBase';
 import type Point from '../../Core/Series/Point';
 import type {
@@ -63,6 +64,7 @@ const {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Axis/TimeTicksInfoObject' {
     interface TimeTicksInfoObject {
         gapSize?: number;
@@ -71,46 +73,151 @@ declare module '../../Core/Axis/TimeTicksInfoObject' {
 
 declare module '../../Core/Series/PointBase' {
     interface PointBase {
+        /**
+         * Highcharts Stock only. If a point object is created by data
+         * grouping, it doesn't reflect actual points in the raw
+         * data. In this case, the `dataGroup` property holds
+         * information that points back to the raw data.
+         *
+         * - `dataGroup.start` is the index of the first raw data
+         *   point in the group.
+         *
+         * - `dataGroup.length` is the amount of points in the
+         *   group.
+         *
+         * @sample stock/members/point-datagroup
+         *         Click to inspect raw data points
+         *
+         * @product highstock
+         *
+         * @name Highcharts.Point#dataGroup
+         * @type {Highcharts.DataGroupingInfoObject|undefined}
+         */
         dataGroup?: DataGroupingInfoObject;
     }
 }
 
 declare module '../../Core/Series/SeriesBase' {
     interface SeriesBase {
+        /** @internal */
         allGroupedTable?: DataTableCore;
+
+        /** @internal */
         cropStart?: number;
+
+        /** @internal */
         currentDataGrouping?: TimeTicksInfoObject;
+
+        /** @internal */
         dataGroupInfo?: DataGroupingInfoObject;
+
+        /** @internal */
         forceCrop?: boolean;
+
+        /** @internal */
         groupedData?: (Array<Point>|null);
+
+        /** @internal */
         groupMap?: Array<DataGroupingInfoObject>;
+
+        /** @internal */
         groupPixelWidth?: number;
+
+        /** @internal */
         hasGroupedData?: boolean;
+
+        /** @internal */
         hasProcessed?: boolean;
+
+        /** @internal */
         preventGraphAnimation?: boolean;
+
+        /** @internal */
         applyGrouping(hasExtremesChanged: boolean): void;
+
+        /** @internal */
         destroyGroupedData(): void;
+
+        /** @internal */
         generatePoints(): void;
+
+        /** @internal */
         getDGApproximation(): ApproximationKeyValue;
+
+        /**
+         * Highcharts Stock only. Takes parallel arrays of x and y data and
+         * groups the data into intervals defined by groupPositions, a
+         * collection of starting x values for each group.
+         *
+         * @product highstock
+         *
+         * @function Highcharts.Series#groupData
+         * @param {Highcharts.DataTable} table
+         *        The series data table.
+         * @param {Array<number>} groupPositions
+         *        Group positions.
+         * @param {string|Function} [approximation]
+         *        Approximation to use.
+         * @return {Highcharts.DataGroupingResultObject}
+         *         Mapped groups.
+         */
         groupData(
             table: DataTableCore,
-            groupPosition: Array<number>,
+            groupPositions: Array<number>,
             approximation: (string|Function)
         ): DataGroupingResultObject;
     }
 }
 
+/** @internal */
 export type AnchorChoiceType = Record<string, number>;
 
+/**
+ * Highcharts Stock only.
+ *
+ * @product highstock
+ * @interface Highcharts.DataGroupingInfoObject
+ */
 export interface DataGroupingInfoObject {
+    /**
+     * @name Highcharts.DataGroupingInfoObject#length
+     * @type {number}
+     */
     length?: number;
+
+    /**
+     * @name Highcharts.DataGroupingInfoObject#options
+     * @type {Highcharts.SeriesOptionsType|undefined}
+     */
     options?: (PointOptions|PointShortOptions|SeriesTypeOptions);
+
+    /**
+     * @name Highcharts.DataGroupingInfoObject#start
+     * @type {number}
+     */
     start?: number;
+
+    /** @internal */
     groupStart?: number
 }
 
+/**
+ * Highcharts Stock only.
+ *
+ * @product highstock
+ * @interface Highcharts.DataGroupingResultObject
+ */
 export interface DataGroupingResultObject {
+    /**
+     * @name Highcharts.DataGroupingResultObject#modified
+     * @type {Highcharts.DataTableCore}
+     */
     modified: DataTableCore;
+
+    /**
+     * @name Highcharts.DataGroupingResultObject#groupMap
+     * @type {Array<Highcharts.DataGroupingInfoObject>}
+     */
     groupMap: Array<DataGroupingInfoObject>;
 }
 
@@ -128,9 +235,7 @@ const baseGeneratePoints = seriesProto.generatePoints;
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 function adjustExtremes(
     xAxis: Axis,
     groupedXData: Array<number>|Types.TypedArray
@@ -187,9 +292,7 @@ function adjustExtremes(
     }
 }
 
-/**
- * @private
- */
+/** @internal */
 function anchorPoints(
     series: Series,
     groupedXData: Array<number>|Types.TypedArray,
@@ -281,7 +384,7 @@ function anchorPoints(
 /**
  * For the processed data, calculate the grouped data if needed.
  *
- * @private
+ * @internal
  * @function Highcharts.Series#applyGrouping
  */
 function applyGrouping(
@@ -465,9 +568,7 @@ function applyGrouping(
 
 }
 
-/**
- * @private
- */
+/** @internal */
 function compose(
     SeriesClass: typeof Series
 ): void {
@@ -502,7 +603,7 @@ function compose(
 
 /**
  * Destroy the grouped data points. #622, #740
- * @private
+ * @internal
  */
 function destroyGroupedData(
     this: Series
@@ -530,7 +631,7 @@ function destroyGroupedData(
 
 /**
  * Override the generatePoints method by adding a reference to grouped data
- * @private
+ * @internal
  */
 function generatePoints(
     this: Series
@@ -547,7 +648,7 @@ function generatePoints(
 /**
  * Set default approximations to the prototypes if present. Properties are
  * inherited down. Can be overridden for individual series types.
- * @private
+ * @internal
  */
 function getDGApproximation(
     this: Series
@@ -761,7 +862,7 @@ function groupData(
         }
     }
 
-    const columns: DataTable.ColumnCollection = {
+    const columns: ColumnCollection = {
         x: groupedXData
     };
     (pointArrayMap || ['y']).forEach((key, i): void => {
@@ -778,7 +879,7 @@ function groupData(
 /**
  * Handle default options for data grouping. This must be set at runtime because
  * some series types are defined after this.
- * @private
+ * @internal
  */
 function onAfterSetOptions(
     this: Series,
@@ -823,9 +924,7 @@ function onAfterSetOptions(
     }
 }
 
-/**
- * @private
- */
+/** @internal */
 function skipDataGrouping(series: Series, force: boolean): boolean {
     return !(series.isCartesian &&
         !series.isDirty &&
@@ -840,9 +939,11 @@ function skipDataGrouping(series: Series, force: boolean): boolean {
  *
  * */
 
+/** @internal */
 const DataGroupingSeriesComposition = {
     compose,
     groupData
 };
 
+/** @internal */
 export default DataGroupingSeriesComposition;

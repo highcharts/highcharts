@@ -1,7 +1,9 @@
 /* *
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
+*
  * */
 
 /* *
@@ -15,7 +17,6 @@ import type {
     SMAParamsOptions
 } from '../SMA/SMAOptions';
 import type { SeriesStatesOptions } from '../../../Core/Series/SeriesOptions';
-import type WMAIndicator from './WMAIndicator';
 
 /* *
  *
@@ -40,7 +41,7 @@ import type WMAIndicator from './WMAIndicator';
  */
 export interface WMAOptions extends SMAOptions {
     params?: WMAParamsOptions;
-    states?: SeriesStatesOptions<WMAIndicator>;
+    states?: SeriesStatesOptions<WMAOptions>;
 }
 
 export interface WMAParamsOptions extends SMAParamsOptions {

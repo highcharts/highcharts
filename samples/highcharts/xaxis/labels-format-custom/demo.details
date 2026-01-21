@@ -1,5 +1,5 @@
 ---
- name: Highcharts Demo
+ name: Demo of axis labels.format options
  authors:
    - Torstein Hønsi
  js_wrap: b

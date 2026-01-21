@@ -10,7 +10,6 @@
  *
  * */
 
-import type AOIndicator from './AOIndicator';
 import type ColorString from '../../../Core/Color/ColorString';
 import type { SeriesStatesOptions } from '../../../Core/Series/SeriesOptions';
 import type {
@@ -74,7 +73,7 @@ export interface AOOptions extends SMAOptions {
 
     pointPadding?: number;
 
-    states?: SeriesStatesOptions<AOIndicator>;
+    states?: SeriesStatesOptions<AOOptions>;
 }
 
 /* *

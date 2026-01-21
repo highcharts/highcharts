@@ -1,0 +1,12 @@
+#container {
+    max-width: 800px;
+    height: 400px;
+    position: relative;
+    margin: 1em auto;
+}
+
+.fa {
+    /* Because the demo uses font-awesome: Safari doesn't support transform
+    inside foreignObject */
+    transform: none;
+}

@@ -1,7 +1,9 @@
 /* *
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
+*
  * */
 
 /* *
@@ -11,7 +13,6 @@
  * */
 
 import type ColorString from '../../../Core/Color/ColorString';
-import type MACDIndicator from './MACDIndicator';
 import type CSSObject from '../../../Core/Renderer/CSSObject';
 import type {
     SMAOptions,
@@ -54,10 +55,7 @@ export interface MACDGappedExtensionOptions {
  */
 export interface MACDOptions extends SMAOptions {
     params?: MACDParamsOptions;
-    states?: SeriesStatesOptions<MACDIndicator>;
-    /**
-     * @type {number|null}
-     */
+    states?: SeriesStatesOptions<MACDOptions>;
     threshold?: number;
     groupPadding?: number;
     pointPadding?: number;

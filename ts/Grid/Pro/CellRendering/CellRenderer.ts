@@ -2,11 +2,11 @@
  *
  *  Cell Renderer abstract class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -34,12 +34,12 @@ import type CellContent from '../../Core/Table/CellContent/CellContent';
 /**
  * Renderer class that initialize all options per column.
  */
-abstract class CellRenderer {
+export abstract class CellRenderer {
 
     /**
      * Options to control the renderer content.
      */
-    public abstract options: CellRenderer.Options;
+    public abstract options: CellRendererOptions;
 
     /**
      * The column to which the specific renderer belongs.
@@ -70,27 +70,24 @@ abstract class CellRenderer {
  *
  * */
 
-namespace CellRenderer {
-
+/**
+ * Options to control the renderer content.
+ */
+export interface CellRendererOptions {
     /**
-     * Options to control the renderer content.
+     * The cell content type.
+     *
+     * Can be one of the following: `'text'`, `'checkbox'`, `'select'`,
+     * `'textInput'`, `'dateInput'`, `'dateTimeInput'`, `'timeInput'`,
+     * `'numberInput'`, `'sparkline'`.
+     *
+     * You can also create your own custom renderer by extending the
+     * `CellRenderer` class and registering it in the
+     * `CellRendererTypeRegistry`.
+     *
+     * @default 'text'
      */
-    export interface Options {
-        /**
-         * The cell content type.
-         *
-         * Can be one of the following: `'text'`, `'checkbox'`, `'select'`,
-         * `'textInput'`, `'dateInput'`, `'dateTimeInput'`, `'timeInput'`,
-         * `'numberInput'`, `'sparkline'`.
-         *
-         * You can also create your own custom renderer by extending the
-         * `CellRenderer` class and registering it in the
-         * `CellRendererTypeRegistry`.
-         *
-         * @default 'text'
-         */
-        type: string;
-    }
+    type: string;
 }
 
 

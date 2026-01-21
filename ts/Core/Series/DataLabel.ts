@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -58,6 +59,7 @@ const {
  *
  * */
 
+/** @internal */
 declare module './PointBase' {
     interface PointBase {
         bottom?: number;
@@ -77,11 +79,35 @@ declare module './PointBase' {
 
 declare module './PointOptions' {
     interface PointOptions {
-        dataLabels?: (DataLabelOptions|Array<DataLabelOptions>);
+        /**
+         * Individual data label for each point. The options are the same as
+         * the ones for [plotOptions.series.dataLabels](#plotOptions.series.dataLabels)
+         * with exception of `zIndex` which is applied on the data label's
+         * parent group.
+         *
+         * @sample highcharts/point/datalabels/
+         *         Show a label for the last value
+         *
+         * @declare   Highcharts.DataLabelsOptions
+         * @extends   plotOptions.line.dataLabels
+         * @excluding zIndex
+         * @product   highcharts highstock gantt
+         */
+        dataLabels?: (DataLabelOptions | Array<DataLabelOptions>);
+
+        /**
+         * The rank for all this point's data labels in case of collision. If
+         * two data labels are about to overlap, only the one with the highest
+         * `labelrank` will be drawn.
+         *
+         * The `labelrank` set on `series.dataLabels` takes precedence over
+         * this.
+         */
         labelrank?: number;
     }
 }
 
+/** @internal */
 declare module './SeriesBase' {
     interface SeriesBase {
         dataLabelPositioners?: DataLabel.PositionersObject;
@@ -135,10 +161,35 @@ declare module './SeriesBase' {
 
 declare module './SeriesOptions' {
     interface SeriesOptions {
+        /**
+         * Options for the series data labels, appearing next to each data
+         * point.
+         *
+         * Since v6.2.0, multiple data labels can be applied to each single
+         * point by defining them as an array of configs.
+         *
+         * In styled mode, the data labels can be styled with the
+         * `.highcharts-data-label-box` and `.highcharts-data-label` class names
+         * ([see example](https://www.highcharts.com/samples/highcharts/css/series-datalabels)).
+         *
+         * @sample {highcharts} highcharts/plotoptions/series-datalabels-enabled
+         *         Data labels enabled
+         * @sample {highcharts} highcharts/plotoptions/series-datalabels-multiple
+         *         Multiple data labels on a bar series
+         * @sample {highcharts} highcharts/css/series-datalabels
+         *         Styled mode example
+         * @sample {highmaps} maps/demo/color-axis
+         *         Choropleth map with data labels
+         * @sample {highmaps} maps/demo/mappoint-datalabels-mapmarker
+         *         Using data labels as map markers
+         *
+         * @product highcharts highstock highmaps gantt
+         */
         dataLabels?: (DataLabelOptions|Array<DataLabelOptions>);
     }
 }
 
+/** @internal */
 declare module '../../Core/Renderer/SVG/SVGElementBase' {
     interface SVGElementBase {
         options?: DataLabelOptions;
@@ -151,6 +202,7 @@ declare module '../../Core/Renderer/SVG/SVGElementBase' {
  *
  * */
 
+/** @internal */
 namespace DataLabel {
 
     /* *
@@ -228,7 +280,7 @@ namespace DataLabel {
      * Check if this series has data labels, either a series-level setting, or
      * individual. In case of individual point labels, this method is overridden
      * to always return true.
-     * @private
+     * @internal
      */
     function hasDataLabels(this: Series): boolean {
         return mergedDataLabelOptions(this)
@@ -239,7 +291,7 @@ namespace DataLabel {
 
     /**
      * Align each individual data label.
-     * @private
+     * @internal
      */
     function alignDataLabel(
         this: Series,
@@ -444,7 +496,7 @@ namespace DataLabel {
 
     /**
      * Handle the dataLabels.filter option.
-     * @private
+     * @internal
      */
     function applyFilter(
         point: Point,
@@ -477,7 +529,7 @@ namespace DataLabel {
     /**
      * Compose the data label composition onto a series class.
      *
-     * @private
+     * @internal
      * @function compose
      *
      * @param {Highcharts.Series} SeriesClass
@@ -504,9 +556,9 @@ namespace DataLabel {
     }
 
     /**
-     * Create the SVGElement group for dataLabels
+     * Create the SVGElement group for dataLabels.
      *
-     * @private
+     * @internal
      * @function initDataLabelsGroup
      *
      * @param {number} index
@@ -554,7 +606,7 @@ namespace DataLabel {
     /**
      * Init the data labels with the correct animation.
      *
-     * @private
+     * @internal
      * @function initDataLabels
      *
      * @param {number} index
@@ -596,8 +648,8 @@ namespace DataLabel {
     }
 
     /**
-     * Draw the data labels
-     * @private
+     * Draw the data labels.
+     * @internal
      */
     function drawDataLabels(
         this: Series,
@@ -909,7 +961,7 @@ namespace DataLabel {
     /**
      * If data labels fall partly outside the plot area, align them back in, in
      * a way that doesn't hide the point.
-     * @private
+     * @internal
      */
     function justifyDataLabel(
         this: Series,
@@ -997,7 +1049,7 @@ namespace DataLabel {
      * Merge two objects that can be arrays. If one of them is an array, the
      * other is merged into each element. If both are arrays, each element is
      * merged by index. If neither are arrays, we use normal merge.
-     * @private
+     * @internal
      */
     function mergeArrays(
         one: (DataLabelOptions|Array<DataLabelOptions>|undefined),
@@ -1032,7 +1084,7 @@ namespace DataLabel {
 
     /**
      * Merge plotOptions and series options for dataLabels.
-     * @private
+     * @internal
      */
     function mergedDataLabelOptions(
         series: Series
@@ -1052,7 +1104,7 @@ namespace DataLabel {
 
     /**
      * Set starting position for data label sorting animation.
-     * @private
+     * @internal
      */
     function setDataLabelStartPos(
         this: Series,
@@ -1121,6 +1173,7 @@ namespace DataLabel {
  *
  * */
 
+/** @internal */
 export default DataLabel;
 
 /* *

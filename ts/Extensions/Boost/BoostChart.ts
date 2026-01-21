@@ -1,12 +1,11 @@
 /* *
  *
- *  (c) 2019-2025 Highsoft AS
+ *  (c) 2019-2026 Highsoft AS
  *
  *  Boost module: stripped-down renderer for higher performance
  *
  *  License: highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -47,18 +46,21 @@ const {
  *
  * */
 
+/** @internal */
 interface BoostChartAdditions extends BoostTargetAdditions {
     forceChartBoost?: boolean;
     markerGroup?: Series['markerGroup'];
     lineWidthFilter?: SVGElement;
 }
 
+/** @internal */
 export declare class BoostChartComposition extends Chart {
     boosted?: boolean;
     boost: BoostChartAdditions;
     series: Array<BoostSeriesComposition>;
 }
 
+/** @internal */
 declare module '../../Core/Chart/ChartBase'{
     interface ChartBase extends BoostTargetObject {
         boosted?: boolean;
@@ -72,9 +74,7 @@ declare module '../../Core/Chart/ChartBase'{
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 function compose<T extends typeof Chart>(
     ChartClass: T,
     wglMode?: boolean
@@ -92,7 +92,7 @@ function compose<T extends typeof Chart>(
  * For the chart, we need to consider the maximum extent of its Y axes,
  * in case of Highcharts Stock panes and navigator.
  *
- * @private
+ * @internal
  * @function Highcharts.Chart#getBoostClipRect
  */
 function getBoostClipRect(
@@ -154,7 +154,8 @@ function getBoostClipRect(
 
 /**
  * Returns true if the chart is in series boost mode.
- * @private
+ *
+ * @internal
  * @param {Highcharts.Chart} chart
  * Chart to check.
  * @return {boolean}
@@ -254,8 +255,8 @@ function isChartSeriesBoosting(
 }
 
 /**
- * Take care of the canvas blitting
- * @private
+ * Take care of the canvas blitting.
+ * @internal
  */
 function onChartCallback(
     chart: Chart
@@ -263,7 +264,7 @@ function onChartCallback(
 
     /**
      * Convert chart-level canvas to image.
-     * @private
+     * @internal
      */
     function canvasToSVG(): void {
         if (
@@ -277,7 +278,7 @@ function onChartCallback(
 
     /**
      * Clear chart-level canvas.
-     * @private
+     * @internal
      */
     function preRender(): void {
 
@@ -363,7 +364,7 @@ function onChartCallback(
 /**
  * Tolerant max() function.
  *
- * @private
+ * @internal
  * @param {...Array<Array<unknown>>} args
  * Max arguments
  * @return {number}
@@ -394,10 +395,12 @@ function patientMax(...args: Array<Array<unknown>|Types.TypedArray>): number {
  *
  * */
 
+/** @internal */
 const BoostChart = {
     compose,
     getBoostClipRect,
     isChartSeriesBoosting
 };
 
+/** @internal */
 export default BoostChart;

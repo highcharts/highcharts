@@ -2,11 +2,11 @@
  *
  *  Resizing Mode abstract class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -22,7 +22,7 @@
  *
  * */
 
-import type { ColumnResizingMode } from '../../Options';
+import type { ColumnResizingMode } from './ColumnResizing';
 import type Table from '../Table';
 import type Column from '../Column.js';
 import type ColumnsResizer from '../Actions/ColumnsResizer';
@@ -92,6 +92,12 @@ abstract class ResizingMode {
      * should be maintained when the table is destroyed and recreated.
      */
     public invalidated?: boolean;
+
+    /**
+     * Whether the column distribution strategy is dirty. This flag is used to
+     * determine whether the column widths should be re-loaded.
+     */
+    public isDirty?: boolean;
 
 
     /* *
@@ -216,7 +222,6 @@ abstract class ResizingMode {
 
         vp.rowsWidth = rowsWidth;
     }
-
 
     /* *
      *

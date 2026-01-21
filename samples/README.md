@@ -17,21 +17,22 @@ regression tests for issues. The test suite serves a double purpose, in part it
 is simple usage examples or demos used from the API documentation, in part it is
 regression tests.
 
-There are different
-types of tests:
+There are different types of tests:
 
 1. **Auto-visual tests**. Unless otherwise specified in the sample itself, two
 iframes are loaded, one with the current stable release and one with the test
 candidate of Highcharts. The SVG output is rendered on two canvases, these are
 compared pixel by pixel, and the difference is logged. Auto-visual tests are
 less performant than unit tests, and unit tests should be favoured for
-regression tests.
+regression testing.
 
 2. **Manual tests**. Some tests, like some dealing with animation or complicated
 user input, are still manual. In the utils, they are marked with a checkbox to
 the name. We are gradually replacing these with automatic tests. For each manual
 test, there should be a file, `test-notes.md` that instructs the tester on
-what to look for.
+what to look for. To mark a test for manual testing, add
+`requiresManualTesting: true` in the `demo.details` file. Manual tests **cannot
+be placed in the `unit-tests` dir**.
 
 3. **Unit tests**. These samples are designed to run both in our sample viewer
 and in karma. They load QUnit. Unit tests are recognized by a jigsaw puzzle
@@ -44,6 +45,24 @@ pre-commit tests that run via karma, and in CircleCI tests in multiple browsers.
 Run `gulp test` on the root to pre-check. Read more at
 [highcharts/test](https://github.com/highcharts/highcharts/tree/master/test).
 
+
+Sample Generator
+----------------
+
+Some of the auto-visual and manual tests are built using the Sample generator.
+The setup for these is in `config.ts`, and they are built using `gulp
+generate-samples`, or simply by enabling compile-on-demand and running them in
+the Sample viewer. The config syntax is defined in [generator-config.d.ts](https://github.com/highcharts/highcharts/blob/master/tools/sample-generator/generator-config.d.ts).
+
+The Sample Generator creates samples with simple [Highcharts
+Controls](https://github.com/highcharts/controls) for viewers to test options.
+
+The intention of the Sample Generator is
+* to provide a unified look and feel for atomic feature samples
+* to provide manual controls for ourselves to stress test updating and
+  animations
+* to provide manual controls for implementers to see how changing an option
+  affects the chart or grid.
 
 
 Useful Tips for Setting Up Tests

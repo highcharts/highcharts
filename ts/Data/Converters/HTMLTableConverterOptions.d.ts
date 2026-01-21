@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Kamil Kubik
@@ -17,7 +17,7 @@
  *
  * */
 
-import DataConverter from './DataConverter';
+import type { Options as DataConverterOptions } from './DataConverter';
 
 /* *
  *
@@ -28,7 +28,7 @@ import DataConverter from './DataConverter';
 /**
  * Options of the HTMLTableConverter.
  */
-export interface HTMLTableConverterOptions extends DataConverter.Options {
+export interface HTMLTableConverterOptions extends DataConverterOptions {
     startRow: number;
     endRow: number;
     startColumn: number;

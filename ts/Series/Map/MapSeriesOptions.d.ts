@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -18,7 +19,6 @@ import type ColorAxisComposition from '../../Core/Axis/Color/ColorAxisCompositio
 import type ColorType from '../../Core/Color/ColorType';
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type MapPointOptions from './MapPointOptions';
-import type MapSeries from './MapSeries';
 import type {
     PointOptions,
     PointShortOptions,
@@ -212,7 +212,7 @@ export interface MapSeriesOptions
      */
     nullInteraction?: boolean;
 
-    states?: SeriesStatesOptions<MapSeries>;
+    states?: SeriesStatesOptions<MapSeriesOptions>;
 
     /**
      * @ignore-option
