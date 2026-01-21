@@ -45,13 +45,11 @@ const {
     noop
 } = H;
 import U from '../Utilities.js';
-import { extend, isObject, merge, pushUnique, splat } from '../../Shared/Utilities.js';
+import { defined, extend, isObject, merge, pick, pushUnique, splat } from '../../Shared/Utilities.js';
 const {
     addEvent,
     correctFloat,
-    defined,
     fireEvent,
-    pick,
     relativeLength,
     wrap
 } = U;

@@ -24,11 +24,7 @@ import CrookedLine from './CrookedLine.js';
 import D from '../../../Core/Defaults.js';
 const { defaultOptions } = D;
 import ControlPoint from '../ControlPoint.js';
-import U from '../../../Core/Utilities.js';
-import { isNumber, merge } from '../../../Shared/Utilities.js';
-const {
-    defined
-} = U;
+import { defined, isNumber, merge } from '../../../Shared/Utilities.js';
 
 /* *
  *

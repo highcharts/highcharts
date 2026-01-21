@@ -28,11 +28,9 @@ import type SVGElement from '../Renderer/SVG/SVGElement';
 
 import Fx from './Fx.js';
 import U from '../Utilities.js';
-import { isArray, isNumber, isObject, merge, objectEach } from '../../Shared/Utilities.js';
+import { defined, isArray, isNumber, isObject, merge, objectEach, pick } from '../../Shared/Utilities.js';
 const {
-    defined,
-    getStyle,
-    pick
+    getStyle
 } = U;
 
 /* *

@@ -55,17 +55,14 @@ const {
     isFirefox
 } = H;
 import U from '../../Utilities.js';
-import { crisp, erase, extend, isArray, isNumber, isObject, isString, merge, objectEach, pInt, pushUnique, syncTimeout } from '../../../Shared/Utilities.js';
+import { attr, crisp, defined, erase, extend, isArray, isNumber, isObject, isString, merge, objectEach, pInt, pick, pushUnique, syncTimeout } from '../../../Shared/Utilities.js';
 const {
     addEvent,
-    attr,
     createElement,
     css,
-    defined,
     fireEvent,
     getAlignFactor,
     isFunction,
-    pick,
     replaceNested,
     uniqueKey
 } = U;

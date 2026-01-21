@@ -14,13 +14,10 @@
  *
  * */
 
+import { defined } from '../../Shared/Utilities.js';
 import type Cell from '../Layout/Cell.js';
 
 import GUIElement from '../Layout/GUIElement.js';
-import U from '../../Core/Utilities.js';
-const {
-    defined
-} = U;
 
 class ContextDetection {
 

@@ -23,11 +23,7 @@ import BBoxObject from '../../../Core/Renderer/BBoxObject';
 import Controllable from './Controllable.js';
 import ControllablePath from './ControllablePath.js';
 import MockPointOptions from '../AnnotationMockPointOptionsObject';
-import U from '../../../Core/Utilities.js';
-import { merge } from '../../../Shared/Utilities.js';
-const {
-    defined
-} = U;
+import { defined, merge } from '../../../Shared/Utilities.js';
 
 /* *
  *

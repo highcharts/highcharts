@@ -32,11 +32,7 @@ const {
 } = SeriesRegistry.seriesTypes;
 import SolidGaugeAxis from '../../Core/Axis/SolidGaugeAxis.js';
 import SolidGaugeSeriesDefaults from './SolidGaugeSeriesDefaults.js';
-import U from '../../Core/Utilities.js';
-import { clamp, extend, isNumber, merge, pInt } from '../../Shared/Utilities.js';
-const {
-    pick
-} = U;
+import { clamp, extend, isNumber, merge, pInt, pick } from '../../Shared/Utilities.js';
 
 /* *
  *

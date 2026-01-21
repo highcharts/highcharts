@@ -18,16 +18,11 @@ import type Board from '../Board.js';
 import type CSSJSONObject from '../CSSJSONObject';
 import type { DeepPartial } from '../../Shared/Types';
 
-import U from '../../Core/Utilities.js';
-const {
-    pick,
-    defined
-} = U;
-
 import Cell from './Cell.js';
 import Row from './Row.js';
 import GUIElement from './GUIElement.js';
 import Globals from '../Globals.js';
+import { defined, pick } from '../../Shared/Utilities.js';
 
 /**
  * @internal

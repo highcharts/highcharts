@@ -25,13 +25,8 @@ import type { OrganizationLinkOptions } from '../Organization/OrganizationSeries
 import Point from '../../Core/Series/Point.js';
 import TreegraphPoint from './TreegraphPoint.js';
 import TreegraphPointOptions from './TreegraphPointOptions.js';
-import U from '../../Core/Utilities.js';
-
-const {
-    pick
-} = U;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import { extend } from '../../Shared/Utilities.js';
+import { extend, pick } from '../../Shared/Utilities.js';
 const {
     seriesTypes: {
         column: {

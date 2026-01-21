@@ -45,14 +45,12 @@ const {
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
-    defined,
     find,
-    pick,
     relativeLength
 } = U;
 import XRangeSeriesDefaults from './XRangeSeriesDefaults.js';
 import XRangePoint from './XRangePoint.js';
-import { clamp, crisp, extend, isNumber, isObject, merge, pushUnique } from '../../Shared/Utilities.js';
+import { clamp, crisp, defined, extend, isNumber, isObject, merge, pick, pushUnique } from '../../Shared/Utilities.js';
 
 /* *
  *

@@ -31,9 +31,7 @@ const {
     addClass,
     visuallyHideElement
 } = HU;
-import U from '../../Core/Utilities.js';
-import { internalClearTimeout } from '../../Shared/Utilities.js';
-const { attr } = U;
+import { attr, internalClearTimeout } from '../../Shared/Utilities.js';
 
 /* *
  *

@@ -24,25 +24,20 @@ import type {
     TypedArray
 } from '../Shared/Types';
 import type {
-    DOMElementType,
     HTMLDOMElement
 } from './Renderer/DOMElementType';
 import type { EventCallback } from './Callback';
 import type HTMLAttributes from './Renderer/HTML/HTMLAttributes';
 import type Series from './Series/Series';
-import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import type Time from './Time';
 
-import { css, defined, extend, getMagnitude, isNumber, isObject, isString, objectEach, pInt } from '../Shared/Utilities.js';
+import { attr, css, defined, extend, getMagnitude, isNumber, isObject, isString, objectEach, pick, pInt } from '../Shared/Utilities.js';
 import H from './Globals.js';
 const {
     charts,
     doc,
     win
 } = H;
-
-
-type NullType = (null|undefined);
 
 /* *
  *
@@ -186,132 +181,6 @@ function insertItem(
         }
     }
     return i;
-}
-
-function attr(
-    elem: DOMElementType,
-    prop: (HTMLAttributes|SVGAttributes)
-): undefined;
-function attr(
-    elem: DOMElementType,
-    prop: string,
-    value?: undefined
-): (string|null);
-function attr(
-    elem: DOMElementType,
-    prop: string,
-    value: (number|string)
-): undefined;
-/**
- * Set or get an attribute or an object of attributes.
- *
- * To use as a setter, pass a key and a value, or let the second argument be a
- * collection of keys and values. When using a collection, passing a value of
- * `null` or `undefined` will remove the attribute.
- *
- * To use as a getter, pass only a string as the second argument.
- *
- * @function Highcharts.attr
- *
- * @param {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement} elem
- *        The DOM element to receive the attribute(s).
- *
- * @param {string|Highcharts.HTMLAttributes|Highcharts.SVGAttributes} [keyOrAttribs]
- *        The property or an object of key-value pairs.
- *
- * @param {number|string} [value]
- *        The value if a single property is set.
- *
- * @return {string|null|undefined}
- *         When used as a getter, return the value.
- */
-function attr(
-    elem: DOMElementType,
-    keyOrAttribs: (string|HTMLAttributes|SVGAttributes),
-    value?: (number|string)
-): (string|null|undefined) {
-
-    const isGetter = isString(keyOrAttribs) && !defined(value);
-
-    let ret: string|null|undefined;
-
-    const attrSingle = (
-        value: number|string|boolean|undefined,
-        key: string
-    ): void => {
-
-        // Set the value
-        if (defined(value)) {
-            elem.setAttribute(key, value);
-
-        // Get the value
-        } else if (isGetter) {
-            ret = elem.getAttribute(key);
-
-            // IE7 and below cannot get class through getAttribute (#7850)
-            if (!ret && key === 'class') {
-                ret = elem.getAttribute(key + 'Name');
-            }
-
-        // Remove the value
-        } else {
-            elem.removeAttribute(key);
-        }
-    };
-
-    // If keyOrAttribs is a string
-    if (isString(keyOrAttribs)) {
-        attrSingle(value, keyOrAttribs);
-
-    // Else if keyOrAttribs is defined, it is a hash of key/value pairs
-    } else {
-        objectEach(keyOrAttribs, attrSingle);
-    }
-    return ret;
-}
-
-function pick<T1, T2, T3, T4, T5>(...args: [T1, T2, T3, T4, T5]):
-T1 extends NullType ?
-    T2 extends NullType ?
-        T3 extends NullType ?
-            T4 extends NullType ?
-                T5 extends NullType ? undefined : T5 : T4 : T3 : T2 : T1;
-function pick<T1, T2, T3, T4>(...args: [T1, T2, T3, T4]):
-T1 extends NullType ?
-    T2 extends NullType ?
-        T3 extends NullType ?
-            T4 extends NullType ? undefined : T4 : T3 : T2 : T1;
-function pick<T1, T2, T3>(...args: [T1, T2, T3]):
-T1 extends NullType ?
-    T2 extends NullType ?
-        T3 extends NullType ? undefined : T3 : T2 : T1;
-function pick<T1, T2>(...args: [T1, T2]):
-T1 extends NullType ?
-    T2 extends NullType ? undefined : T2 : T1;
-function pick<T1>(...args: [T1]):
-T1 extends NullType ? undefined : T1;
-function pick<T>(...args: Array<T|null|undefined>): T|undefined;
-/* eslint-disable valid-jsdoc */
-/**
- * Return the first value that is not null or undefined.
- *
- * @function Highcharts.pick<T>
- *
- * @param {...Array<T|null|undefined>} items
- *        Variable number of arguments to inspect.
- *
- * @return {T}
- *         The value of the first argument that is not null or undefined.
- */
-function pick<T>(): T|undefined {
-    const args = arguments;
-    const length = args.length;
-    for (let i = 0; i < length; i++) {
-        const arg = args[i];
-        if (typeof arg !== 'undefined' && arg !== null) {
-            return arg;
-        }
-    }
 }
 
 /**
@@ -1579,13 +1448,11 @@ interface Utilities {
     addEvent: typeof addEvent;
     arrayMax: typeof arrayMax;
     arrayMin: typeof arrayMin;
-    attr: typeof attr;
     /** @internal */
     correctFloat: typeof correctFloat;
     createElement: typeof createElement;
     /** @internal */
     css: typeof css;
-    defined: typeof defined;
     destroyObjectProperties: typeof destroyObjectProperties;
     /** @internal */
     discardElement: typeof discardElement;
@@ -1606,7 +1473,6 @@ interface Utilities {
     isFunction: typeof isFunction;
     normalizeTickInterval: typeof normalizeTickInterval;
     offset: typeof offset;
-    pick: typeof pick;
     /** @internal */
     relativeLength: typeof relativeLength;
     removeEvent: typeof removeEvent;
@@ -1626,11 +1492,9 @@ const Utilities: Utilities = {
     addEvent,
     arrayMax,
     arrayMin,
-    attr,
     correctFloat,
     createElement,
     css,
-    defined,
     destroyObjectProperties,
     discardElement,
     error,
@@ -1646,7 +1510,6 @@ const Utilities: Utilities = {
     isFunction,
     normalizeTickInterval,
     offset,
-    pick,
     relativeLength,
     removeEvent,
     replaceNested,

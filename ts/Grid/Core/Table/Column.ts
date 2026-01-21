@@ -39,9 +39,9 @@ import TextContent from './CellContent/TextContent.js';
 import Globals from '../Globals.js';
 import TableCell from './Body/TableCell';
 import GridUtils from '../GridUtils.js';
+import { defined } from '../../../Shared/Utilities.js';
 
 const {
-    defined,
     fireEvent
 } = Utils;
 

@@ -55,13 +55,11 @@ const {
     destroyObjectProperties,
     error,
     fireEvent,
-    pick,
-    wrap,
-    defined
+    wrap
 } = U;
 import WGLRenderer from './WGLRenderer.js';
 import DataTableCore from '../../Data/DataTableCore.js';
-import { extend, isArray, isNumber, pushUnique } from '../../Shared/Utilities.js';
+import { defined, extend, isArray, isNumber, pick, pushUnique } from '../../Shared/Utilities.js';
 
 /* *
  *

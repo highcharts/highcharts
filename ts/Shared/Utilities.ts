@@ -10,7 +10,91 @@
 
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type { DOMElementType, HTMLDOMElement } from '../Core/Renderer/DOMElementType';
+import type HTMLAttributes from '../Core/Renderer/HTML/HTMLAttributes';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type { DeepPartial } from './Types.js';
+
+export function attr(
+    elem: DOMElementType,
+    prop: (HTMLAttributes|SVGAttributes)
+): undefined;
+export function attr(
+    elem: DOMElementType,
+    prop: string,
+    value?: undefined
+): (string|null);
+export function attr(
+    elem: DOMElementType,
+    prop: string,
+    value: (number|string)
+): undefined;
+/**
+ * Set or get an attribute or an object of attributes.
+ *
+ * To use as a setter, pass a key and a value, or let the second argument be a
+ * collection of keys and values. When using a collection, passing a value of
+ * `null` or `undefined` will remove the attribute.
+ *
+ * To use as a getter, pass only a string as the second argument.
+ *
+ * @function Highcharts.attr
+ *
+ * @param {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement} elem
+ *        The DOM element to receive the attribute(s).
+ *
+ * @param {string|Highcharts.HTMLAttributes|Highcharts.SVGAttributes} [keyOrAttribs]
+ *        The property or an object of key-value pairs.
+ *
+ * @param {number|string} [value]
+ *        The value if a single property is set.
+ *
+ * @return {string|null|undefined}
+ *         When used as a getter, return the value.
+ */
+export function attr(
+    elem: DOMElementType,
+    keyOrAttribs: (string|HTMLAttributes|SVGAttributes),
+    value?: (number|string)
+): (string|null|undefined) {
+
+    const isGetter = isString(keyOrAttribs) && !defined(value);
+
+    let ret: string|null|undefined;
+
+    const attrSingle = (
+        value: number|string|boolean|undefined,
+        key: string
+    ): void => {
+
+        // Set the value
+        if (defined(value)) {
+            elem.setAttribute(key, value);
+
+        // Get the value
+        } else if (isGetter) {
+            ret = elem.getAttribute(key);
+
+            // IE7 and below cannot get class through getAttribute (#7850)
+            if (!ret && key === 'class') {
+                ret = elem.getAttribute(key + 'Name');
+            }
+
+        // Remove the value
+        } else {
+            elem.removeAttribute(key);
+        }
+    };
+
+    // If keyOrAttribs is a string
+    if (isString(keyOrAttribs)) {
+        attrSingle(value, keyOrAttribs);
+
+    // Else if keyOrAttribs is defined, it is a hash of key/value pairs
+    } else {
+        objectEach(keyOrAttribs, attrSingle);
+    }
+    return ret;
+}
 
 /**
  * Constrain a value to within a lower and upper threshold.
@@ -529,6 +613,50 @@ export function pad(number: number, length?: number, padder?: string): string {
     ).join(padder || '0') + number;
 }
 
+export function pick<T1, T2, T3, T4, T5>(...args: [T1, T2, T3, T4, T5]):
+T1 extends NullType ?
+    T2 extends NullType ?
+        T3 extends NullType ?
+            T4 extends NullType ?
+                T5 extends NullType ? undefined : T5 : T4 : T3 : T2 : T1;
+export function pick<T1, T2, T3, T4>(...args: [T1, T2, T3, T4]):
+T1 extends NullType ?
+    T2 extends NullType ?
+        T3 extends NullType ?
+            T4 extends NullType ? undefined : T4 : T3 : T2 : T1;
+export function pick<T1, T2, T3>(...args: [T1, T2, T3]):
+T1 extends NullType ?
+    T2 extends NullType ?
+        T3 extends NullType ? undefined : T3 : T2 : T1;
+export function pick<T1, T2>(...args: [T1, T2]):
+T1 extends NullType ?
+    T2 extends NullType ? undefined : T2 : T1;
+export function pick<T1>(...args: [T1]):
+T1 extends NullType ? undefined : T1;
+export function pick<T>(...args: Array<T|null|undefined>): T|undefined;
+/* eslint-disable valid-jsdoc */
+/**
+ * Return the first value that is not null or undefined.
+ *
+ * @function Highcharts.pick<T>
+ *
+ * @param {...Array<T|null|undefined>} items
+ *        Variable number of arguments to inspect.
+ *
+ * @return {T}
+ *         The value of the first argument that is not null or undefined.
+ */
+export function pick<T>(): T|undefined {
+    const args = arguments;
+    const length = args.length;
+    for (let i = 0; i < length; i++) {
+        const arg = args[i];
+        if (typeof arg !== 'undefined' && arg !== null) {
+            return arg;
+        }
+    }
+}
+
 /**
  * Shortcut for parseInt
  *
@@ -621,7 +749,7 @@ export function syncTimeout(
  *  Declarations
  *
  * */
-
+type NullType = (null|undefined);
 type NonArray<T> = T extends Array<unknown> ? never : T;
 type NonFunction<T> = T extends Function ? never : T;
 

@@ -60,15 +60,12 @@ import SVGLabel from './SVGLabel.js';
 import Symbols from './Symbols.js';
 import TextBuilder from './TextBuilder.js';
 import U from '../../Utilities.js';
-import { crisp, extend, isArray, isNumber, isObject, isString, merge, pInt } from '../../../Shared/Utilities.js';
+import { attr, crisp, defined, extend, isArray, isNumber, isObject, isString, merge, pick, pInt } from '../../../Shared/Utilities.js';
 const {
     addEvent,
-    attr,
     createElement,
     css,
-    defined,
     destroyObjectProperties,
-    pick,
     replaceNested,
     uniqueKey
 } = U;

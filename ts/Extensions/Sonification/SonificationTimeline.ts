@@ -23,9 +23,8 @@ import {
     downloadURL
 } from '../../Shared/DownloadURL.js';
 import U from '../../Core/Utilities.js';
-import { merge } from '../../Shared/Utilities.js';
+import { defined, merge } from '../../Shared/Utilities.js';
 const {
-    defined,
     find
 } = U;
 

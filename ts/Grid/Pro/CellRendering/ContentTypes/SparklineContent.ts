@@ -28,11 +28,7 @@ import type TableCell from '../../../Core/Table/Body/TableCell';
 
 import CellContentPro from '../CellContentPro.js';
 import Globals from '../../../Core/Globals.js';
-import U from '../../../../Core/Utilities.js';
-import { merge } from '../../../../Shared/Utilities.js';
-const {
-    defined
-} = U;
+import { defined, merge } from '../../../../Shared/Utilities.js';
 
 
 /* *

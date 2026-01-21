@@ -49,11 +49,9 @@ const {
     stripHTMLTagsFromString: stripHTMLTags
 } = HTMLUtilities;
 import U from '../../../Core/Utilities.js';
-import { isString, isNumber } from '../../../Shared/Utilities.js';
+import { defined, isString, isNumber, pick } from '../../../Shared/Utilities.js';
 const {
-    find,
-    pick,
-    defined
+    find
 } = U;
 
 

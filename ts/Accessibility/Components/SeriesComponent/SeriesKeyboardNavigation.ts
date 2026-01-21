@@ -34,13 +34,13 @@ import H from '../../../Core/Globals.js';
 const { doc } = H;
 import U from '../../../Core/Utilities.js';
 const {
-    defined,
     fireEvent
 } = U;
 
 import KeyboardNavigationHandler from '../../KeyboardNavigationHandler.js';
 import EventProvider from '../../Utils/EventProvider.js';
 import ChartUtilities from '../../Utils/ChartUtilities.js';
+import { defined } from '../../../Shared/Utilities.js';
 const {
     getPointFromXY,
     getSeriesFromName,

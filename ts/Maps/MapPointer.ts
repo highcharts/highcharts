@@ -23,10 +23,8 @@ import type Pointer from '../Core/Pointer';
 import type PointerEvent from '../Core/PointerEvent';
 
 import U from '../Core/Utilities.js';
-import { extend, internalClearTimeout } from '../Shared/Utilities.js';
+import { defined, extend, internalClearTimeout, pick } from '../Shared/Utilities.js';
 const {
-    defined,
-    pick,
     wrap
 } = U;
 

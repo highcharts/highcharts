@@ -47,12 +47,10 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-import { extend, isNumber, merge, splat } from '../../Shared/Utilities.js';
+import { defined, extend, isNumber, merge, pick, splat } from '../../Shared/Utilities.js';
 const {
     addEvent,
-    defined,
-    error,
-    pick
+    error
 } = U;
 
 /* *

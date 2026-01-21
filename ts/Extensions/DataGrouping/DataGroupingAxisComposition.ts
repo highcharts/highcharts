@@ -23,10 +23,9 @@ import type DataGroupingOptions from './DataGroupingOptions';
 
 import DataGroupingDefaults from './DataGroupingDefaults.js';
 import U from '../../Core/Utilities.js';
-import { extend, merge } from '../../Shared/Utilities.js';
+import { extend, merge, pick } from '../../Shared/Utilities.js';
 const {
-    addEvent,
-    pick
+    addEvent
 } = U;
 
 /* *

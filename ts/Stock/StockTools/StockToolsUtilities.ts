@@ -42,9 +42,8 @@ const {
 } = NBU;
 import Series from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
-import { isNumber } from '../../Shared/Utilities.js';
+import { defined, isNumber } from '../../Shared/Utilities.js';
 const {
-    defined,
     fireEvent,
     uniqueKey
 } = U;

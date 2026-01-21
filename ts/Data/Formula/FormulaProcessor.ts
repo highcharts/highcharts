@@ -15,6 +15,7 @@
 'use strict';
 
 
+import { defined } from '../../Shared/Utilities.js';
 /* *
  *
  *  Imports
@@ -45,11 +46,6 @@ const {
     isReference,
     isValue
 } = FormulaTypes;
-
-import U from '../../Core/Utilities.js';
-const {
-    defined
-} = U;
 
 
 /* *

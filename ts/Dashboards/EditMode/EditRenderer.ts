@@ -28,10 +28,9 @@ import type EditMode from './EditMode.js';
 
 import EditGlobals from './EditGlobals.js';
 import U from '../../Core/Utilities.js';
-import { merge } from '../../Shared/Utilities.js';
+import { defined, merge } from '../../Shared/Utilities.js';
 const {
-    createElement,
-    defined
+    createElement
 } = U;
 
 

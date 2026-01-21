@@ -63,11 +63,10 @@ const {
 } = SLU;
 import U from '../../Core/Utilities.js';
 import { Palette } from '../../Core/Color/Palettes';
-import { extend, internalClearTimeout, isNumber, pushUnique, syncTimeout } from '../../Shared/Utilities.js';
+import { extend, internalClearTimeout, isNumber, pick, pushUnique, syncTimeout } from '../../Shared/Utilities.js';
 const {
     addEvent,
-    fireEvent,
-    pick
+    fireEvent
 } = U;
 
 /* *

@@ -40,9 +40,8 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-import { extend, merge } from '../../Shared/Utilities.js';
+import { extend, merge, pick } from '../../Shared/Utilities.js';
 const {
-    pick,
     relativeLength
 } = U;
 

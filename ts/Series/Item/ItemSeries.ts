@@ -33,11 +33,9 @@ const {
     pie: PieSeries
 } = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
-import { extend, isNumber, merge } from '../../Shared/Utilities.js';
+import { defined, extend, isNumber, merge, pick } from '../../Shared/Utilities.js';
 const {
-    defined,
-    fireEvent,
-    pick
+    fireEvent
 } = U;
 
 /* *

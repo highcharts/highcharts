@@ -35,11 +35,7 @@ const {
     heatmap: HeatmapSeries,
     scatter: ScatterSeries
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
-import { clamp } from '../../Shared/Utilities.js';
-const {
-    pick
-} = U;
+import { clamp, pick } from '../../Shared/Utilities.js';
 
 /* *
  *

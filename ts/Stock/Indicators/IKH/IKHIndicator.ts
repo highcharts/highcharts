@@ -38,9 +38,8 @@ const { parse: color } = Color;
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const { sma: SMAIndicator } = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
-import { extend, isArray, isNumber, merge, objectEach } from '../../../Shared/Utilities.js';
+import { defined, extend, isArray, isNumber, merge, objectEach } from '../../../Shared/Utilities.js';
 const {
-    defined,
     getClosestDistance
 } = U;
 

@@ -28,11 +28,7 @@ import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     sma: SMAIndicator
 } = SeriesRegistry.seriesTypes;
-import U from '../../../Core/Utilities.js';
-import { extend, merge } from '../../../Shared/Utilities.js';
-const {
-    pick
-} = U;
+import { extend, merge, pick } from '../../../Shared/Utilities.js';
 
 /* *
  *

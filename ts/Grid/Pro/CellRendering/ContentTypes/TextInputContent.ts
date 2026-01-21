@@ -28,12 +28,8 @@ import type TableCell from '../../../Core/Table/Body/TableCell';
 import type TextInputRenderer from '../Renderers/TextInputRenderer';
 
 import CellContentPro from '../CellContentPro.js';
-import U from '../../../../Core/Utilities.js';
 import Globals from '../../../Core/Globals.js';
-
-const {
-    defined
-} = U;
+import { defined } from '../../../../Shared/Utilities.js';
 
 
 /* *

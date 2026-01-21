@@ -28,10 +28,9 @@ import GraphLayout from '../GraphLayoutComposition.js';
 import PackedBubbleIntegration from './PackedBubbleIntegration.js';
 import ReingoldFruchtermanLayout from '../Networkgraph/ReingoldFruchtermanLayout.js';
 import U from '../../Core/Utilities.js';
+import { defined, pick } from '../../Shared/Utilities.js';
 const {
-    addEvent,
-    defined,
-    pick
+    addEvent
 } = U;
 
 /* *

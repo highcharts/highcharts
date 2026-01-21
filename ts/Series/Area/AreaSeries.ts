@@ -32,11 +32,7 @@ const {
         line: LineSeries
     }
 } = SeriesRegistry;
-import U from '../../Core/Utilities.js';
-import { extend, merge, objectEach } from '../../Shared/Utilities.js';
-const {
-    pick
-} = U;
+import { extend, merge, objectEach, pick } from '../../Shared/Utilities.js';
 
 /* *
  *

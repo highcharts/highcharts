@@ -40,12 +40,7 @@ const {
         column: ColumnSeries
     }
 } = SeriesRegistry;
-import U from '../../Core/Utilities.js';
-import { clamp, extend, isNumber, merge, pInt } from '../../Shared/Utilities.js';
-const {
-    pick,
-    defined
-} = U;
+import { clamp, defined, extend, isNumber, merge, pick, pInt } from '../../Shared/Utilities.js';
 
 
 /* *

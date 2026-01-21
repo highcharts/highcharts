@@ -56,13 +56,12 @@ import U from '../../Core/Utilities.js';
 import SunburstNode from './SunburstNode.js';
 import SunburstSeriesDefaults from './SunburstSeriesDefaults.js';
 const {
-    defined,
     error,
     fireEvent
 } = U;
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import TextPath from '../../Extensions/TextPath.js';
-import { extend, isNumber, isObject, isString, merge, splat } from '../../Shared/Utilities.js';
+import { defined, extend, isNumber, isObject, isString, merge, splat } from '../../Shared/Utilities.js';
 TextPath.compose(SVGElement);
 
 /* *

@@ -23,8 +23,8 @@ import type SankeySeries from './SankeySeries';
 import type SankeyPoint from './SankeyPoint';
 
 import U from '../../Core/Utilities.js';
+import { defined } from '../../Shared/Utilities.js';
 const {
-    defined,
     getAlignFactor,
     relativeLength
 } = U;

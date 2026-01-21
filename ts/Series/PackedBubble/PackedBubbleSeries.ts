@@ -56,13 +56,11 @@ const {
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
-    defined,
-    fireEvent,
-    pick
+    fireEvent
 } = U;
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import TextPath from '../../Extensions/TextPath.js';
-import { clamp, extend, isArray, isNumber, merge } from '../../Shared/Utilities.js';
+import { clamp, defined, extend, isArray, isNumber, merge, pick } from '../../Shared/Utilities.js';
 TextPath.compose(SVGElement);
 
 /* *

@@ -35,11 +35,7 @@ const {
     columnrange: ColumnRangeSeries
 } = SeriesRegistry.seriesTypes;
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
-import U from '../../Core/Utilities.js';
-import { extend, merge } from '../../Shared/Utilities.js';
-const {
-    pick
-} = U;
+import { extend, merge, pick } from '../../Shared/Utilities.js';
 
 /* *
  *

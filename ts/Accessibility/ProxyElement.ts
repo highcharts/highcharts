@@ -43,7 +43,6 @@ import H from '../Core/Globals.js';
 const { doc, win } = H;
 import U from '../Core/Utilities.js';
 const {
-    attr,
     css
 } = U;
 
@@ -51,7 +50,7 @@ import EventProvider from './Utils/EventProvider.js';
 import ChartUtilities from './Utils/ChartUtilities.js';
 const { fireEventOnWrappedOrUnwrappedElement } = ChartUtilities;
 import HTMLUtilities from './Utils/HTMLUtilities.js';
-import { merge } from '../Shared/Utilities.js';
+import { attr, merge } from '../Shared/Utilities.js';
 const {
     cloneMouseEvent,
     cloneTouchEvent,

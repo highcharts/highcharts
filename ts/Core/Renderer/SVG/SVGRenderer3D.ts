@@ -47,12 +47,7 @@ const {
     shapeArea
 } = Math3D;
 import SVGElement3D from './SVGElement3D.js';
-import U from '../../Utilities.js';
-import { extend, merge } from '../../../Shared/Utilities.js';
-const {
-    defined,
-    pick
-} = U;
+import { defined, extend, merge, pick } from '../../../Shared/Utilities.js';
 
 /* *
  *

@@ -26,11 +26,9 @@ import GUIElement from './GUIElement.js';
 import U from '../../Core/Utilities.js';
 import EditGlobals from '../EditMode/EditGlobals.js';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
-import { merge, objectEach } from '../../Shared/Utilities.js';
+import { defined, merge, objectEach, pick } from '../../Shared/Utilities.js';
 
 const {
-    pick,
-    defined,
     fireEvent
 } = U;
 

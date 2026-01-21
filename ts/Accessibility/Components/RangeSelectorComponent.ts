@@ -36,9 +36,9 @@ const {
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 import RangeSelector from '../../Stock/RangeSelector/RangeSelector.js';
 import U from '../../Core/Utilities.js';
+import { attr } from '../../Shared/Utilities.js';
 const {
-    addEvent,
-    attr
+    addEvent
 } = U;
 
 

@@ -30,11 +30,9 @@ import PathfinderAlgorithms from './PathfinderAlgorithms.js';
 import PathfinderComposition, { PointConnectOptionsObject } from './PathfinderComposition.js';
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
-import { splat } from '../Shared/Utilities.js';
+import { defined, pick, splat } from '../Shared/Utilities.js';
 const {
-    addEvent,
-    defined,
-    pick
+    addEvent
 } = U;
 
 /* *

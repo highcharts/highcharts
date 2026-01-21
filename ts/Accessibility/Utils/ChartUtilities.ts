@@ -33,8 +33,8 @@ const { doc } = H;
 import HU from './HTMLUtilities.js';
 const { stripHTMLTagsFromString: stripHTMLTags } = HU;
 import U from '../../Core/Utilities.js';
+import { defined } from '../../Shared/Utilities.js';
 const {
-    defined,
     find,
     fireEvent
 } = U;

@@ -36,13 +36,12 @@ const {
     addEvent,
     arrayMax,
     arrayMin,
-    correctFloat,
-    pick
+    correctFloat
 } = U;
 import WaterfallAxis from '../../Core/Axis/WaterfallAxis.js';
 import WaterfallPoint from './WaterfallPoint.js';
 import WaterfallSeriesDefaults from './WaterfallSeriesDefaults.js';
-import { crisp, extend, isNumber, merge, objectEach } from '../../Shared/Utilities.js';
+import { crisp, extend, isNumber, merge, objectEach, pick } from '../../Shared/Utilities.js';
 
 /* *
  *

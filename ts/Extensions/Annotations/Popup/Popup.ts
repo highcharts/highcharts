@@ -33,12 +33,11 @@ import PopupAnnotations from './PopupAnnotations.js';
 import PopupIndicators from './PopupIndicators.js';
 import PopupTabs from './PopupTabs.js';
 import U from '../../../Core/Utilities.js';
-import { extend } from '../../../Shared/Utilities.js';
+import { extend, pick } from '../../../Shared/Utilities.js';
 const {
     addEvent,
     createElement,
-    fireEvent,
-    pick
+    fireEvent
 } = U;
 
 /* *

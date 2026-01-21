@@ -25,11 +25,7 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import type SymbolOptions from '../Renderer/SVG/SymbolOptions';
 
-import U from '../Utilities.js';
-import { extend, merge } from '../../Shared/Utilities.js';
-const {
-    pick
-} = U;
+import { extend, merge, pick } from '../../Shared/Utilities.js';
 
 /* *
  *

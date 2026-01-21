@@ -24,12 +24,10 @@ import type RangeSelector from '../../Stock/RangeSelector/RangeSelector';
 import H from '../Globals.js';
 const { isTouchDevice } = H;
 import U from '../Utilities.js';
-import { isNumber } from '../../Shared/Utilities.js';
+import { defined, isNumber, pick } from '../../Shared/Utilities.js';
 const {
     addEvent,
-    correctFloat,
-    defined,
-    pick
+    correctFloat
 } = U;
 
 /* *

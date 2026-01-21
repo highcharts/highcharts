@@ -42,12 +42,11 @@ const {
     pie: PieSeries
 } = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
-import { extend, isArray, merge, pushUnique, splat } from '../../Shared/Utilities.js';
+import { extend, isArray, merge, pick, pushUnique, splat } from '../../Shared/Utilities.js';
 const {
     addEvent,
     correctFloat,
     fireEvent,
-    pick,
     relativeLength
 } = U;
 

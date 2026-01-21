@@ -31,10 +31,6 @@ import T from '../../Core/Templating.js';
 const {
     format
 } = T;
-import U from '../../Core/Utilities.js';
-const {
-    pick
-} = U;
 import HU from '../Utils/HTMLUtilities.js';
 const {
     getFakeMouseEvent
@@ -46,7 +42,7 @@ const {
 } = CU;
 
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import { clamp, internalClearTimeout, syncTimeout } from '../../Shared/Utilities.js';
+import { clamp, internalClearTimeout, pick, syncTimeout } from '../../Shared/Utilities.js';
 
 
 /**

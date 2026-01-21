@@ -30,11 +30,10 @@ import U from '../../Core/Utilities.js';
 const {
     arrayMax,
     arrayMin,
-    fireEvent,
-    pick
+    fireEvent
 } = U;
 import VariablePieSeriesDefaults from './VariablePieSeriesDefaults.js';
-import { clamp, extend, merge } from '../../Shared/Utilities.js';
+import { clamp, extend, merge, pick } from '../../Shared/Utilities.js';
 
 /* *
  *

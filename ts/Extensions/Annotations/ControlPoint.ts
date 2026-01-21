@@ -17,11 +17,7 @@ import type ControlTarget from './ControlTarget';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import EventEmitter from './EventEmitter.js';
-import U from '../../Core/Utilities.js';
-import { merge } from '../../Shared/Utilities.js';
-const {
-    pick
-} = U;
+import { merge, pick } from '../../Shared/Utilities.js';
 
 /* *
  *

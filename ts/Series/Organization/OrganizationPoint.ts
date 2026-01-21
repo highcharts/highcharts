@@ -29,10 +29,9 @@ const {
     sankey: { prototype: { pointClass: SankeyPointClass } }
 } = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
+import { defined, pick } from '../../Shared/Utilities.js';
 const {
-    defined,
-    find,
-    pick
+    find
 } = U;
 
 /* *

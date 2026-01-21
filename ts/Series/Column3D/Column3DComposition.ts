@@ -40,10 +40,9 @@ const { composed } = H;
 import Math3D from '../../Core/Math3D.js';
 const { perspective } = Math3D;
 import U from '../../Core/Utilities.js';
-import { extend, pushUnique } from '../../Shared/Utilities.js';
+import { extend, pick, pushUnique } from '../../Shared/Utilities.js';
 const {
     addEvent,
-    pick,
     wrap
 } = U;
 

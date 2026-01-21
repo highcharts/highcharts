@@ -37,11 +37,7 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     column: ColumnSeries
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
-import { extend, isNumber, merge } from '../../Shared/Utilities.js';
-const {
-    pick
-} = U;
+import { extend, isNumber, merge, pick } from '../../Shared/Utilities.js';
 
 /* *
  *

@@ -28,11 +28,7 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import { Palette } from '../../Core/Color/Palettes.js';
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import U from '../../Core/Utilities.js';
-import { isObject, merge } from '../../Shared/Utilities.js';
-const {
-    defined
-} = U;
+import { defined, isObject, merge } from '../../Shared/Utilities.js';
 
 /* *
  *

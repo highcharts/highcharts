@@ -34,11 +34,7 @@ const {
         }
     }
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
-import { isNumber } from '../../Shared/Utilities.js';
-const {
-    defined
-} = U;
+import { defined, isNumber } from '../../Shared/Utilities.js';
 
 /* *
  *

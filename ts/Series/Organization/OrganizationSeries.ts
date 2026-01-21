@@ -39,11 +39,10 @@ const {
 } = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
 const {
-    css,
-    pick
+    css
 } = U;
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
-import { crisp, extend, isNumber, merge } from '../../Shared/Utilities.js';
+import { crisp, extend, isNumber, merge, pick } from '../../Shared/Utilities.js';
 import TextPath from '../../Extensions/TextPath.js';
 TextPath.compose(SVGElement);
 

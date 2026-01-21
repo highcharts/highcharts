@@ -45,10 +45,7 @@ import NavigatorSyncs from './NavigatorSyncs/NavigatorSyncs.js';
 import NavigatorSyncUtils from './NavigatorSyncs/NavigatorSyncUtils.js';
 
 import U from '../../../Core/Utilities.js';
-import { diffObjects, isNumber, isString, merge } from '../../../Shared/Utilities.js';
-const {
-    pick
-} = U;
+import { diffObjects, isNumber, isString, merge, pick } from '../../../Shared/Utilities.js';
 
 
 /* *

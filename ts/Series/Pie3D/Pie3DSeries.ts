@@ -33,11 +33,7 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     pie: PieSeries
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
-import { extend, pushUnique } from '../../Shared/Utilities.js';
-const {
-    pick
-} = U;
+import { extend, pick, pushUnique } from '../../Shared/Utilities.js';
 
 /* *
  *

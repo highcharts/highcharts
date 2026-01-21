@@ -36,11 +36,10 @@ const {
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
-    arrayMax,
-    pick
+    arrayMax
 } = U;
 import VectorSeriesDefaults from './VectorSeriesDefaults.js';
-import { extend, merge } from '../../Shared/Utilities.js';
+import { extend, merge, pick } from '../../Shared/Utilities.js';
 
 /* *
  *

@@ -32,7 +32,6 @@ import H from '../Core/Globals.js';
 const { doc } = H;
 import U from '../Core/Utilities.js';
 const {
-    attr,
     css
 } = U;
 
@@ -44,6 +43,7 @@ const {
     removeChildNodes
 } = HU;
 import ProxyElement from './ProxyElement.js';
+import { attr } from '../Shared/Utilities.js';
 
 
 /**

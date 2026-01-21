@@ -28,9 +28,9 @@ import type Column from '../Column.js';
 import type ColumnsResizer from '../Actions/ColumnsResizer';
 
 import U from '../../../../Core/Utilities.js';
+import { defined } from '../../../../Shared/Utilities.js';
 const {
-    getStyle,
-    defined
+    getStyle
 } = U;
 
 

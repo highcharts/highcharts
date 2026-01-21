@@ -37,12 +37,10 @@ import Point from '../Core/Series/Point.js';
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 import U from '../Core/Utilities.js';
-import { extend, internalClearTimeout, isNumber, merge, objectEach, splat } from '../Shared/Utilities.js';
+import { defined, extend, internalClearTimeout, isNumber, merge, objectEach, pick, splat } from '../Shared/Utilities.js';
 const {
     addEvent,
-    defined,
-    fireEvent,
-    pick
+    fireEvent
 } = U;
 
 /* *

@@ -27,9 +27,9 @@ import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
 import Point from '../Core/Series/Point';
 import BBoxObject from '../Core/Renderer/BBoxObject';
-import { extend, merge } from '../Shared/Utilities.js';
+import { defined, extend, merge } from '../Shared/Utilities.js';
 const { deg2rad } = H;
-const { addEvent, uniqueKey, defined } = U;
+const { addEvent, uniqueKey } = U;
 
 /* *
  *

@@ -35,10 +35,9 @@ const {
     sma: SMAIndicator
 } = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
-import { extend, merge } from '../../../Shared/Utilities.js';
+import { defined, extend, merge } from '../../../Shared/Utilities.js';
 const {
-    correctFloat,
-    defined
+    correctFloat
 } = U;
 
 /* *

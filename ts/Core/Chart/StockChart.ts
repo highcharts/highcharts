@@ -51,12 +51,10 @@ import ScrollbarDefaults from '../../Stock/Scrollbar/ScrollbarDefaults.js';
 import StockUtilities from '../../Stock/Utilities/StockUtilities.js';
 const { setFixedRange } = StockUtilities;
 import U from '../Utilities.js';
-import { clamp, crisp, extend, isNumber, isString, merge, splat } from '../../Shared/Utilities.js';
+import { clamp, crisp, defined, extend, isNumber, isString, merge, pick, splat } from '../../Shared/Utilities.js';
 const {
     addEvent,
-    defined,
-    find,
-    pick
+    find
 } = U;
 
 /* *

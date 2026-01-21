@@ -40,11 +40,10 @@ const { noop } = H;
 import Legend from '../../Core/Legend/Legend.js';
 import Series from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
-import { isNumber, merge } from '../../Shared/Utilities.js';
+import { isNumber, merge, pick } from '../../Shared/Utilities.js';
 const {
     arrayMax,
     arrayMin,
-    pick,
     stableSort
 } = U;
 
