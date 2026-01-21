@@ -171,7 +171,6 @@ class Board {
             false : this.options?.editMode?.enabled;
         this.layouts = [];
         this.mountedComponents = [];
-        this.renderTo = renderTo;
 
         this.initContainer(renderTo);
         this.initEditMode();
@@ -287,11 +286,6 @@ class Board {
      * Reference to ResizeObserver, which allows running 'unobserve'.
      */
     private resizeObserver?: ResizeObserver;
-
-    /**
-     * The DOM element to render to, or its id.
-     */
-    private renderTo?: string | HTMLElement;
 
     /* *
      *
