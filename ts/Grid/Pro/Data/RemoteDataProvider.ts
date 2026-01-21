@@ -481,8 +481,15 @@ export class RemoteDataProvider extends DataProvider {
             // changed in the specific, queried column.
 
             await this.applyQuery();
-        } catch {
-            throw new Error('Error persisting value to remote server.');
+        } catch (err: unknown) {
+            const prefix = 'Error persisting value to remote server.';
+            if (err instanceof Error) {
+                err.message = err.message ?
+                    `${prefix} ${err.message}` :
+                    prefix;
+                throw err;
+            }
+            throw new Error(`${prefix} ${String(err)}`);
         }
     }
 

@@ -100,7 +100,7 @@ const defaultTemplateVariables: Record<
     string, string | ((state: QueryState) => string)
 > = {
     page: (state: QueryState): string => (
-        Math.floor(state.offset / state.limit) + 1
+        Math.floor(state.offset / (state.limit || 1)) + 1
     ).toFixed(),
     pageSize: (state: QueryState): string => state.limit.toFixed(),
     offset: (state: QueryState): string => state.offset.toFixed(),
@@ -166,6 +166,20 @@ const defaultTemplateVariables: Record<
 const defaultParseResponse = async (
     res: Response
 ): Promise<RemoteFetchCallbackResult> => {
+    if (!res.ok) {
+        let message = `DataSourceHelper: request failed with status ${
+            res.status
+        } ${res.statusText}`;
+        try {
+            const body = await res.text();
+            if (body) {
+                message += ` - ${body}`;
+            }
+        } catch {
+            // Ignore response body parsing errors for error responses.
+        }
+        throw new Error(message);
+    }
     const { data, meta } = await res.json();
     return {
         columns: data || {},
@@ -240,7 +254,7 @@ export async function dataSourceFetch(
     options: DataSourceOptions,
     state: QueryState
 ): Promise<RemoteFetchCallbackResult> {
-    const { parseResponse = defaultParseReponse } = options;
+    const { parseResponse = defaultParseResponse } = options;
 
     try {
         const url = buildUrl(options, state);
