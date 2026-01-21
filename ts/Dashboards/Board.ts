@@ -488,7 +488,7 @@ class Board {
      * @returns
      * The board instance.
      */
-    public update(newOptions: DeepPartial<Options>): Board {
+    public update(newOptions: DeepPartial<Options>): void {
         const board = this;
 
         // Merge new options with existing ones
