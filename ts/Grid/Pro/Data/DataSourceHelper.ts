@@ -163,7 +163,7 @@ const defaultTemplateVariables: Record<
     }
 };
 
-const defaultParseReponse = async (
+const defaultParseResponse = async (
     res: Response
 ): Promise<RemoteFetchCallbackResult> => {
     const { data, meta } = await res.json();
