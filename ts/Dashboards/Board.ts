@@ -48,6 +48,7 @@ import U from '../Core/Utilities.js';
 const {
     merge,
     addEvent,
+    createElement,
     error,
     objectEach,
     uniqueKey
@@ -286,7 +287,6 @@ class Board {
      */
     private resizeObserver?: ResizeObserver;
 
-
     /* *
      *
      *  Functions
@@ -422,6 +422,7 @@ class Board {
      */
     public destroy(): void {
         const board = this;
+        const index = this.index;
 
         // Cancel all data connectors pending requests.
         this.dataPool.cancelPendingRequests();
@@ -452,7 +453,7 @@ class Board {
             delete (board as Record<string, any>)[key];
         });
 
-        Globals.boards[this.index] = void 0;
+        Globals.boards[index] = void 0;
 
         return;
     }
@@ -475,6 +476,101 @@ class Board {
                 editModeTools.contextMenu
                     .updatePosition(editModeTools.contextButtonElement);
             }
+        }
+    }
+
+    /**
+     * Update the dashboard with new options.
+     *
+     * @param newOptions
+     * The new options to apply to the dashboard.
+     */
+    public update(newOptions: DeepPartial<Options>): void {
+        const board = this;
+
+        // Merge new options with existing ones
+        board.options = merge(board.options, newOptions);
+
+        // Update dataPool if dataPool options changed
+        if (newOptions.dataPool) {
+            board.dataPool = new DataPool(
+                board.options.dataPool as DataPoolOptions
+            );
+        }
+
+        // Update guiEnabled and editModeEnabled flags if changed
+        if (newOptions.gui !== void 0) {
+            board.guiEnabled = !newOptions.gui ?
+                false : board.options?.gui?.enabled;
+        }
+        if (newOptions.editMode !== void 0) {
+            board.editModeEnabled = !newOptions.editMode ?
+                false : board.options?.editMode?.enabled;
+        }
+
+        // Destroy existing components
+        for (const mountedComponent of board.mountedComponents) {
+            mountedComponent.component.destroy();
+        }
+        board.mountedComponents = [];
+
+        // Destroy existing layouts if GUI is enabled
+        if (board.guiEnabled && board.layouts) {
+            for (let i = 0, iEnd = board.layouts.length; i < iEnd; ++i) {
+                board.layouts[i].destroy();
+            }
+            board.layouts = [];
+
+            // Ensure layoutsWrapper exists
+            if (!board.layoutsWrapper && board.container) {
+                board.layoutsWrapper = createElement(
+                    'div',
+                    {
+                        className: Globals.classNames.layoutsWrapper
+                    },
+                    {},
+                    board.container
+                );
+            }
+
+            // Create new layouts if they are provided
+            if (board.options.gui?.layouts) {
+                const guiOptions = board.options.gui;
+                for (
+                    let i = 0, iEnd = guiOptions.layouts.length;
+                    i < iEnd; ++i
+                ) {
+                    board.layouts.push(
+                        new Layout(
+                            board,
+                            merge(
+                                {},
+                                guiOptions.layoutOptions,
+                                guiOptions.layouts[i]
+                            )
+                        )
+                    );
+                }
+
+                // Re-initialize editMode events if editMode exists
+                if (board.editMode) {
+                    // Re-initialize events for all layouts
+                    let j = 0,
+                    jEnd = board.layouts.length;
+                    for (j; j < jEnd; ++j) {
+                        (board.editMode as any).setLayoutEvents(
+                            board.layouts[j]
+                        );
+                    }
+                }
+            }
+        }
+
+        // Add new components
+        if (board.options.components) {
+            board.setComponents(
+                board.options.components as Array<Partial<ComponentType['options']>>
+            );
         }
     }
 

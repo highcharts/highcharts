@@ -24,4 +24,4 @@ Highcharts.chart('container', {
             4, 2, 4, 5, 5
         ]
     }]
-} satisfies Highcharts.Options);
+});

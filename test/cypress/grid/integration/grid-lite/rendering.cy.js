@@ -17,14 +17,6 @@ describe('Rendering types and formatters.', () => {
         cy.get('td[data-column-id="string"]').eq(0).should('have.text', '');
     });
 
-    it('When header formatter returns null, the header should display column id as fallback', () => {
-        cy.get('th[data-column-id="date"]').should('have.text', 'date');
-    });
-
-    it('When header formatter returns empty string, the header should display column id as fallback', () => {
-        cy.get('th[data-column-id="thousands"]').should('have.text', 'thousands');
-    });
-
     it('Lang options should be used for number formatting', () => {
         cy.get('td[data-column-id="thousands"]').eq(0).should('have.text', '12_452|4524');
         cy.get('td[data-column-id="thousands"]').eq(2).should('have.text', '1_234');

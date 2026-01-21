@@ -19,4 +19,4 @@ Highcharts.chart('container', {
         ],
         type: 'column'
     }]
-} satisfies Highcharts.Options);
+});
