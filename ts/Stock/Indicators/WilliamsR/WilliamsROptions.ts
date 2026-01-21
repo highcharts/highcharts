@@ -40,20 +40,24 @@ import type {
  * @interface Highcharts.WilliamsROptions
  */
 export interface WilliamsROptions extends SMAOptions {
-    /**
-     * @excluding index
-     */
     params?: WilliamsRParamsOptions;
 }
 
 export interface WilliamsRParamsOptions extends SMAParamsOptions {
-    index?: undefined;
     /**
      * Period for Williams %R oscillator
      *
      * @default 14
      */
     period?: number;
+
+    /* *
+     *
+     *  Excluded
+     *
+     * */
+
+    index?: undefined;
 }
 
 /* *

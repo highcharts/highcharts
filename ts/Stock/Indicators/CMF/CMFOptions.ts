@@ -37,21 +37,24 @@ import type {
  * @interface Highcharts.CMFOptions
  */
 export interface CMFOptions extends SMAOptions {
-    /**
-     * @excluding index
-     */
     params?: CMFParamsOptions;
 }
 
 export interface CMFParamsOptions extends SMAParamsOptions {
-    index?: undefined;
-
     /**
      * The id of volume series which is mandatory.
      * For example using OHLC data, volumeSeriesID='volume' means
      * the indicator will be calculated using OHLC and volume values.
      */
     volumeSeriesID?: string;
+
+    /* *
+     *
+     *  Excluded
+     *
+     * */
+
+    index?: undefined;
 }
 
 /* *

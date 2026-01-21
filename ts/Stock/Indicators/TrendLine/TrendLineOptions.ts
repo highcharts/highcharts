@@ -38,14 +38,10 @@ import type {
  * @interface Highcharts.TrendLineOptions
  */
 export interface TrendLineOptions extends SMAOptions {
-    /**
-     * @excluding period
-     */
     params?: TrendLineParamsOptions;
 }
 
 export interface TrendLineParamsOptions extends SMAParamsOptions {
-    period?: undefined;
     /**
      * The point index which indicator calculations will base. For
      * example using OHLC data, index=2 means the indicator will be
@@ -54,6 +50,14 @@ export interface TrendLineParamsOptions extends SMAParamsOptions {
      * @default 3
      */
     index: number;
+
+    /* *
+     *
+     *  Excluded
+     *
+     * */
+
+    period?: undefined;
 }
 
 /* *

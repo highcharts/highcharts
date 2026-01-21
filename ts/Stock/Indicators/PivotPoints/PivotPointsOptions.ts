@@ -37,20 +37,24 @@ import type {
  * @interface Highcharts.PivotPointsOptions
  */
 export interface PivotPointsOptions extends SMAOptions {
-    /**
-     * @excluding index
-     */
     params?: PivotPointsParamsOptions;
 }
 
 export interface PivotPointsParamsOptions extends SMAParamsOptions {
-    index?: undefined;
     /**
      * Algorithm used to calculate resistance and support lines based
      * on pivot points. Implemented algorithms: `'standard'`,
      * `'fibonacci'` and `'camarilla'`
      */
     algorithm?: string;
+
+    /* *
+     *
+     *  Excluded
+     *
+     * */
+
+    index?: undefined;
 }
 
 /* *

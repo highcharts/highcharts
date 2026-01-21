@@ -42,15 +42,11 @@ export interface APOOptions extends EMAOptions {
     /**
      * Parameters used in calculation of Absolute Price Oscillator
      * series points.
-     *
-     * @excluding period
      */
     params?: APOParamsOptions;
 }
 
 export interface APOParamsOptions extends EMAParamsOptions {
-    period?: undefined;
-
     /**
      * Periods for Absolute Price Oscillator calculations.
      *
@@ -59,6 +55,14 @@ export interface APOParamsOptions extends EMAParamsOptions {
      * @since   7.0.0
      */
     periods?: Array<number>;
+
+    /* *
+     *
+     *  Excluded
+     *
+     * */
+
+    period?: undefined;
 }
 
 /* *

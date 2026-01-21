@@ -37,13 +37,16 @@ import type {
  * @interface Highcharts.CCIOptions
  */
 export interface CCIOptions extends SMAOptions {
-    /**
-     * @excluding index
-     */
     params?: CCIParamsOptions;
 }
 
 export interface CCIParamsOptions extends SMAParamsOptions {
+    /* *
+     *
+     *  Excluded
+     *
+     * */
+
     index?: undefined;
 }
 

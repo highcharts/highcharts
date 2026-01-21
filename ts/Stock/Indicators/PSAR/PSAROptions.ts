@@ -38,14 +38,10 @@ import type {
  * @interface Highcharts.PSAROptions
  */
 export interface PSAROptions extends SMAOptions {
-    /**
-     * @excluding period
-     */
     params?: PSARParamsOptions;
 }
 
 export interface PSARParamsOptions extends SMAParamsOptions {
-    period?: undefined;
     /**
      * The initial value for acceleration factor.
      * Acceleration factor is starting with this value
@@ -80,6 +76,14 @@ export interface PSARParamsOptions extends SMAParamsOptions {
      * @since 6.0.0
      */
     decimals?: number;
+
+    /* *
+     *
+     *  Excluded
+     *
+     * */
+
+    period?: undefined;
 }
 
 /* *

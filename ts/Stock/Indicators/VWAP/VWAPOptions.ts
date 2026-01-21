@@ -38,14 +38,10 @@ import type {
  * @interface Highcharts.VWAPOptions
  */
 export interface VWAPOptions extends SMAOptions {
-    /**
-     * @excluding index
-     */
     params?: VWAPParamsOptions;
 }
 
 export interface VWAPParamsOptions extends SMAParamsOptions {
-    index?: undefined;
     /**
      * The id of volume series which is mandatory. For example using
      * OHLC data, volumeSeriesID='volume' means the indicator will be
@@ -54,6 +50,14 @@ export interface VWAPParamsOptions extends SMAParamsOptions {
      * @default volume
      */
     volumeSeriesID?: string;
+
+    /* *
+     *
+     *  Excluded
+     *
+     * */
+
+    index?: undefined;
 }
 
 /* *

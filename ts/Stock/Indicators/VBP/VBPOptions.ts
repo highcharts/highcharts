@@ -49,9 +49,6 @@ export interface VBPOptions extends SMAOptions {
     dataGrouping?: DataGroupingOptions;
     dataLabels?: DataLabelOptions;
     enableMouseTracking?: boolean;
-    /**
-     * @excluding index, period
-     */
     params?: VBPParamsOptions;
     pointPadding?: number;
     volumeDivision?: VBPIndicator.VBPIndicatorStyleOptions;
@@ -60,8 +57,6 @@ export interface VBPOptions extends SMAOptions {
 }
 
 export interface VBPParamsOptions extends SMAParamsOptions {
-    index?: undefined;
-    period?: undefined;
     /**
      * The number of price zones.
      *
@@ -76,6 +71,15 @@ export interface VBPParamsOptions extends SMAParamsOptions {
      * @default volume
      */
     volumeSeriesID: string;
+
+    /* *
+     *
+     *  Excluded
+     *
+     * */
+
+    index?: undefined;
+    period?: undefined;
 }
 
 /* *

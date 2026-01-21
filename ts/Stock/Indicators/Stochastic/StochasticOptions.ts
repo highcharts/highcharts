@@ -48,16 +48,11 @@ import type {
 export interface StochasticOptions extends SMAOptions, MultipleLinesComposition.IndicatorOptions {
     dataGrouping?: DataGroupingOptions;
     marker?: PointMarkerOptions;
-    /**
-     * @excluding index, period
-     */
     params?: StochasticParamsOptions;
     smoothedLine?: StochasticSmoothedLineOptions;
 }
 
 export interface StochasticParamsOptions extends SMAParamsOptions {
-    index?: undefined;
-    period?: undefined;
     /**
      * Periods for Stochastic oscillator: [%K, %D].
      *
@@ -65,6 +60,15 @@ export interface StochasticParamsOptions extends SMAParamsOptions {
      * @default [14, 3]
      */
     periods?: Array<number>;
+
+    /* *
+     *
+     *  Excluded
+     *
+     * */
+
+    index?: undefined;
+    period?: undefined;
 }
 
 export interface StochasticSmoothedLineOptions {

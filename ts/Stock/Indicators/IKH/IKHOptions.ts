@@ -57,9 +57,6 @@ export interface IKHOptions extends SMAOptions {
 
     marker?: PointMarkerOptions;
 
-    /**
-     * @excluding index
-     */
     params?: IKHParamsOptions;
 
     /**
@@ -84,8 +81,6 @@ export interface IKHOptions extends SMAOptions {
 }
 
 export interface IKHParamsOptions extends SMAParamsOptions {
-    index?: undefined;
-
     /**
      * The base period for Tenkan calculations.
      */
@@ -94,6 +89,14 @@ export interface IKHParamsOptions extends SMAParamsOptions {
      * The base period for Senkou Span B calculations
      */
     periodSenkouSpanB?: number;
+
+    /* *
+     *
+     *  Excluded
+     *
+     * */
+
+    index?: undefined;
 }
 
 /** @internal */

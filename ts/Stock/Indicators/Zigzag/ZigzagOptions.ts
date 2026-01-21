@@ -38,15 +38,10 @@ import type {
  * @interface Highcharts.ZigzagOptions
  */
 export interface ZigzagOptions extends SMAOptions {
-    /**
-     * @excluding index, period
-     */
     params?: ZigzagParamsOptions;
 }
 
 export interface ZigzagParamsOptions extends SMAParamsOptions {
-    index?: undefined;
-    period?: undefined;
     /**
      * The point index which indicator calculations will base - low
      * value.
@@ -76,6 +71,15 @@ export interface ZigzagParamsOptions extends SMAParamsOptions {
      * @default 1
      */
     deviation?: number;
+
+    /* *
+     *
+     *  Excluded
+     *
+     * */
+
+    index?: undefined;
+    period?: undefined;
 }
 
 /* *

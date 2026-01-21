@@ -44,20 +44,24 @@ import type { PointMarkerOptions } from '../../../Core/Series/PointOptions';
  */
 export interface OBVOptions extends SMAOptions {
     marker?: PointMarkerOptions;
-    /**
-     * @excluding index, period
-     */
     params?: OBVParamsOptions;
 }
 
 export interface OBVParamsOptions extends SMAParamsOptions {
-    index?: undefined;
-    period?: undefined;
     /**
      * The id of another series to use its data as volume data for the
      * indicator calculation.
      */
     volumeSeriesID?: string;
+
+    /* *
+     *
+     *  Excluded
+     *
+     * */
+
+    index?: undefined;
+    period?: undefined;
 }
 
 /* *

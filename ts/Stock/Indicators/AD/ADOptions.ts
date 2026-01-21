@@ -37,15 +37,10 @@ import type {
  * @interface Highcharts.ADOptions
  */
 export interface ADOptions extends SMAOptions {
-    /**
-     * @excluding index
-     */
     params?: ADParamsOptions;
 }
 
 export interface ADParamsOptions extends SMAParamsOptions {
-    index?: undefined;
-
     /**
      * The id of volume series which is mandatory.
      * For example using OHLC data, volumeSeriesID='volume' means
@@ -54,6 +49,14 @@ export interface ADParamsOptions extends SMAParamsOptions {
      * @since 6.0.0
      */
     volumeSeriesID?: string;
+
+    /* *
+     *
+     *  Excluded
+     *
+     * */
+
+    index?: undefined;
 }
 
 /* *

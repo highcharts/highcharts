@@ -43,9 +43,6 @@ import type {
  * @interface Highcharts.DMIOptions
  */
 export interface DMIOptions extends SMAOptions, MultipleLinesComposition.IndicatorOptions {
-    /**
-     * @excluding index
-     */
     params?: DMIParamsOptions;
 
     /**
@@ -64,6 +61,12 @@ export interface DMILineOptions {
 }
 
 export interface DMIParamsOptions extends SMAParamsOptions {
+    /* *
+     *
+     *  Excluded
+     *
+     * */
+
     index?: undefined;
 }
 
