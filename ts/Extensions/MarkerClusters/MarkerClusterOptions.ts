@@ -248,8 +248,10 @@ export interface MarkerClusterLayoutAlgorithmOptions {
 }
 
 export interface MarkerClusterMarkerOptions extends PointMarkerOptions {
+    enabledThreshold?: undefined;
     lineWidth: number;
     radius: number;
+    states?: undefined;
 }
 
 export interface MarkerClusterStateHoverOptions extends PointMarkerStateHoverOptions {
@@ -337,10 +339,12 @@ export interface MarkerClusterOptions {
 
     /**
      * Options for the cluster marker.
+     *
+     * Defaults to a cluster symbol with radius 15, no line, and a line color
+     * matching the chart background.
      * @extends   plotOptions.series.marker
      * @excluding enabledThreshold, states
      *
-     * @default {"symbol": "cluster", "radius": 15, "lineWidth": 0, "lineColor": "${palette.backgroundColor}"}
      * @requires modules/marker-clusters
      */
     marker: MarkerClusterMarkerOptions;
