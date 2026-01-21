@@ -254,26 +254,46 @@ export async function dataSourceFetch(
     options: DataSourceOptions,
     state: QueryState
 ): Promise<RemoteFetchCallbackResult> {
-    const { parseResponse = defaultParseResponse } = options;
+    const {
+        parseResponse = defaultParseResponse,
+        fetchTimeout = 30000
+    } = options;
 
     try {
         const url = buildUrl(options, state);
-        const res = await fetch(url);
+        const controller = fetchTimeout > 0 ? new AbortController() : null;
+        let timeoutId: ReturnType<typeof setTimeout> | undefined;
 
-        const data = await parseResponse(res);
-        if (options.rowIdColumn) {
-            const rowIdsColumn = data.columns[options.rowIdColumn];
-            if (!rowIdsColumn) {
-                // eslint-disable-next-line no-console
-                console.warn(`DataSourceHelper: rowIdColumn "${
-                    options.rowIdColumn
-                }" not found in response.`);
-                return data;
-            }
-            data.rowIds = rowIdsColumn as RowId[];
+        if (controller) {
+            timeoutId = setTimeout((): void => {
+                controller.abort();
+            }, fetchTimeout);
         }
 
-        return data;
+        try {
+            const res = controller ?
+                await fetch(url, { signal: controller.signal }) :
+                await fetch(url);
+
+            const data = await parseResponse(res);
+            if (options.rowIdColumn) {
+                const rowIdsColumn = data.columns[options.rowIdColumn];
+                if (!rowIdsColumn) {
+                    // eslint-disable-next-line no-console
+                    console.warn(`DataSourceHelper: rowIdColumn "${
+                        options.rowIdColumn
+                    }" not found in response.`);
+                    return data;
+                }
+                data.rowIds = rowIdsColumn as RowId[];
+            }
+
+            return data;
+        } finally {
+            if (timeoutId) {
+                clearTimeout(timeoutId);
+            }
+        }
     } catch (err: unknown) {
         // eslint-disable-next-line no-console
         console.error('Error fetching data from remote server.\n', err);
@@ -331,6 +351,12 @@ export interface DataSourceOptions {
      * Callback to parse the response from the remote server.
      */
     parseResponse?: (res: Response) => Promise<RemoteFetchCallbackResult>;
+
+    /**
+     * Timeout (ms) for the remote request. Set to 0 to disable.
+     * @default 30000
+     */
+    fetchTimeout?: number;
 
     /**
      * ID of a column that contains stable row IDs.
