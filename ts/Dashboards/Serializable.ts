@@ -20,8 +20,7 @@
  * */
 
 import type { AnyRecord } from '../Shared/Types';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import type JSON from './JSON';
+import type { JSONObject } from './JSON';
 
 /* *
  *
@@ -35,17 +34,17 @@ import type JSON from './JSON';
  *
  * @interface Serializable
  */
-interface Serializable<T extends AnyRecord, TJSON extends Serializable.JSON<string>> {
+interface Serializable<T extends AnyRecord, TJSON extends JSON<string>> {
 
     /**
      * Converts the given JSON to a class instance.
      *
      * @function Serializable.fromJSON
      *
-     * @param {Serializable.JSON} json
+     * @param {JSON} json
      * JSON to deserialize as a class instance or object.
      *
-     * @return {Globals.AnyRecord}
+     * @return {AnyRecord}
      * Returns the class instance or object, or throws an exception.
      */
     fromJSON(json: TJSON): T;
@@ -55,7 +54,7 @@ interface Serializable<T extends AnyRecord, TJSON extends Serializable.JSON<stri
      *
      * @function Serializable.toJSON
      *
-     * @return {Serializable.JSON}
+     * @return {JSON}
      * Returns the JSON of the class instance or object.
      */
     toJSON(): TJSON;
@@ -64,7 +63,7 @@ interface Serializable<T extends AnyRecord, TJSON extends Serializable.JSON<stri
 
 /* *
  *
- *  Namespace
+ *  Declarations
  *
  * */
 
@@ -74,226 +73,217 @@ interface Serializable<T extends AnyRecord, TJSON extends Serializable.JSON<stri
  * @internal
  * @private
  */
-namespace Serializable {
 
-    /* *
-     *
-     *  Declarations
-     *
-     * */
+/**
+ * @private
+ */
+export interface Helper<T extends AnyRecord, TJSON extends JSON<string>> {
 
     /**
-     * @private
+     * @name Serializer.$class
+     * @type {string}
      */
-    export interface Helper<T extends AnyRecord, TJSON extends Serializable.JSON<string>> {
+    $class: TJSON['$class'];
 
-        /**
-         * @name Serializer.$class
-         * @type {string}
-         */
-        $class: TJSON['$class'];
+    /**
+     * Converts the given JSON to an object.
+     *
+     * @function Serializer.fromJSON
+     *
+     * @param {JSON} json
+     * JSON to deserialize as an object.
+     *
+     * @return {AnyRecord}
+     * Returns the object, or throws an exception.
+     */
+    fromJSON(json: TJSON): T;
 
-        /**
-         * Converts the given JSON to an object.
-         *
-         * @function Serializer.fromJSON
-         *
-         * @param {Serializable.JSON} json
-         * JSON to deserialize as an object.
-         *
-         * @return {Globals.AnyRecord}
-         * Returns the object, or throws an exception.
-         */
-        fromJSON(json: TJSON): T;
+    /**
+     * Validates the given object for JSON support.
+     *
+     * @function Serializer.jsonSupportFor
+     *
+     * @param {AnyRecord} obj
+     * Object to validate.
+     *
+     * @return {boolean}
+     * Returns true, if the helper functions can convert the given object,
+     * otherwise false.
+     */
+    jsonSupportFor(obj: AnyRecord): obj is T;
 
-        /**
-         * Validates the given object for JSON support.
-         *
-         * @function Serializer.jsonSupportFor
-         *
-         * @param {Globals.AnyRecord} obj
-         * Object to validate.
-         *
-         * @return {boolean}
-         * Returns true, if the helper functions can convert the given object,
-         * otherwise false.
-         */
-        jsonSupportFor(obj: AnyRecord): obj is T;
+    /**
+     * Converts the given object to JSON.
+     *
+     * @function Serializer.toJSON
+     *
+     * @param {AnyRecord} obj
+     * Object to serialize as JSON.
+     *
+     * @return {JSON}
+     * Returns the JSON of the object.
+     */
+    toJSON(obj: T): TJSON;
 
-        /**
-         * Converts the given object to JSON.
-         *
-         * @function Serializer.toJSON
-         *
-         * @param {Globals.AnyRecord} obj
-         * Object to serialize as JSON.
-         *
-         * @return {Serializable.JSON}
-         * Returns the JSON of the object.
-         */
-        toJSON(obj: T): TJSON;
+}
 
+/**
+ * JSON of a serializable class.
+ */
+export interface JSON<T extends string> extends JSONObject {
+    $class: T;
+}
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+/**
+ * Registry of serializable classes.
+ */
+const classRegistry: Record<string, Serializable<AnyRecord, JSON<string>>> = {};
+
+/**
+ * Registry of function sets.
+ */
+const helperRegistry: Record<string, Helper<AnyRecord, JSON<string>>> = {};
+
+/* *
+ *
+ *  Functions
+ *
+ * */
+
+/**
+ * Creates a class instance from the given JSON, if a suitable serializer
+ * has been found.
+ *
+ * @function Serializable.fromJSON
+ *
+ * @param {JSON} json
+ * JSON to create a class instance or object from.
+ *
+ * @return {AnyRecord}
+ * Returns the class instance or object, or throws an exception.
+ */
+export function fromJSON(
+    json: JSON<string>
+): AnyRecord {
+    const $class: string = json.$class;
+
+    if (typeof $class !== 'string') {
+        throw new Error('JSON has no $class property.');
     }
 
-    /**
-     * JSON of a serializable class.
-     */
-    export interface JSON<T extends string> extends JSON.Object {
-        $class: T;
+    const classs = classRegistry[$class];
+
+    if (classs) {
+        return classs.fromJSON(json);
     }
 
-    /* *
-     *
-     *  Constants
-     *
-     * */
+    const helper = helperRegistry[$class];
 
-    /**
-     * Registry of serializable classes.
-     */
-    const classRegistry: Record<string, Serializable<AnyRecord, JSON<string>>> = {};
-
-    /**
-     * Registry of function sets.
-     */
-    const helperRegistry: Record<string, Helper<AnyRecord, JSON<string>>> = {};
-
-    /* *
-     *
-     *  Functions
-     *
-     * */
-
-    /**
-     * Creates a class instance from the given JSON, if a suitable serializer
-     * has been found.
-     *
-     * @function Serializable.fromJSON
-     *
-     * @param {Serializable.JSON} json
-     * JSON to create a class instance or object from.
-     *
-     * @return {Globals.AnyRecord}
-     * Returns the class instance or object, or throws an exception.
-     */
-    export function fromJSON(
-        json: JSON<string>
-    ): AnyRecord {
-        const $class: string = json.$class;
-
-        if (typeof $class !== 'string') {
-            throw new Error('JSON has no $class property.');
-        }
-
-        const classs = classRegistry[$class];
-
-        if (classs) {
-            return classs.fromJSON(json);
-        }
-
-        const helper = helperRegistry[$class];
-
-        if (helper) {
-            return helper.fromJSON(json);
-        }
-
-        throw new Error(`'${$class}' unknown.`);
+    if (helper) {
+        return helper.fromJSON(json);
     }
 
-    /**
-     * Registers a class prototype for the given JSON $class.
-     *
-     * @function Serializable.registerClassPrototype
-     *
-     * @param {string} $class
-     * JSON $class to register for.
-     *
-     * @param {Serializable} classPrototype
-     * Class to register.
-     */
-    export function registerClassPrototype<
-        T extends AnyRecord, TJSON extends JSON<string>>(
-        $class: TJSON['$class'],
-        classPrototype: Serializable<T, TJSON>
-    ): void {
+    throw new Error(`'${$class}' unknown.`);
+}
 
-        if (classRegistry[$class]) {
-            throw new Error(
-                'A serializer for \'' + $class + '\' is already registered.'
-            );
-        }
+/**
+ * Registers a class prototype for the given JSON $class.
+ *
+ * @function Serializable.registerClassPrototype
+ *
+ * @param {string} $class
+ * JSON $class to register for.
+ *
+ * @param {Serializable} classPrototype
+ * Class to register.
+ */
+export function registerClassPrototype<
+    T extends AnyRecord, TJSON extends JSON<string>>(
+    $class: TJSON['$class'],
+    classPrototype: Serializable<T, TJSON>
+): void {
 
-        classRegistry[$class] = classPrototype;
+    if (classRegistry[$class]) {
+        throw new Error(
+            'A serializer for \'' + $class + '\' is already registered.'
+        );
     }
 
-    /**
-     * Registers helper functions for the given JSON $class.
-     *
-     * @function Serializable.registerHelper
-     *
-     * @param {Helper} helperFunctions
-     * Helper functions to register.
-     */
-    export function registerHelper<
-        T extends AnyRecord, TJSON extends JSON<string>>(
-        helperFunctions: Helper<T, TJSON>
-    ): void {
+    classRegistry[$class] = classPrototype;
+}
 
-        if (helperRegistry[helperFunctions.$class]) {
-            throw new Error(
-                'A serializer for \'' + helperFunctions.$class +
-                '\' is already registered.'
-            );
-        }
+/**
+ * Registers helper functions for the given JSON $class.
+ *
+ * @function Serializable.registerHelper
+ *
+ * @param {Helper} helperFunctions
+ * Helper functions to register.
+ */
+export function registerHelper<
+    T extends AnyRecord, TJSON extends JSON<string>>(
+    helperFunctions: Helper<T, TJSON>
+): void {
 
-        helperRegistry[helperFunctions.$class] = helperFunctions;
+    if (helperRegistry[helperFunctions.$class]) {
+        throw new Error(
+            'A serializer for \'' + helperFunctions.$class +
+            '\' is already registered.'
+        );
     }
 
-    export function toJSON<T extends AnyRecord, TJSON extends JSON<string>>(
-        obj: Serializable<T, TJSON>
-    ): TJSON;
-    export function toJSON(
-        obj: AnyRecord
-    ): JSON<string>;
-    /**
-     * Creates JSON from a class instance.
-     *
-     * @function Serializable.toJSON
-     *
-     * @param {Globals.AnyRecord} obj
-     * Class instance or object to serialize as JSON.
-     *
-     * @return {Serializable.JSON}
-     * JSON of the class instance.
-     */
-    export function toJSON(
-        obj: AnyRecord
-    ): JSON<string> {
+    helperRegistry[helperFunctions.$class] = helperFunctions;
+}
 
-        if (
-            typeof obj.fromJSON === 'function' &&
-            typeof obj.toJSON === 'function'
-        ) {
-            return obj.toJSON();
-        }
+export function toJSON<T extends AnyRecord, TJSON extends JSON<string>>(
+    obj: Serializable<T, TJSON>
+): TJSON;
+export function toJSON(
+    obj: AnyRecord
+): JSON<string>;
+/**
+ * Creates JSON from a class instance.
+ *
+ * @function Serializable.toJSON
+ *
+ * @param {AnyRecord} obj
+ * Class instance or object to serialize as JSON.
+ *
+ * @return {JSON}
+ * JSON of the class instance.
+ */
+export function toJSON(
+    obj: AnyRecord
+): JSON<string> {
 
-        const classes = Object.keys(helperRegistry),
-            numberOfHelpers = classes.length;
-
-        let $class: string,
-            serializer: Helper<AnyRecord, JSON<string>>;
-
-        for (let i = 0; i < numberOfHelpers; ++i) {
-            $class = classes[i];
-            serializer = helperRegistry[$class];
-            if (serializer.jsonSupportFor(obj)) {
-                return serializer.toJSON(obj);
-            }
-        }
-
-        throw new Error('Object is not supported.');
+    if (
+        typeof obj.fromJSON === 'function' &&
+        typeof obj.toJSON === 'function'
+    ) {
+        return obj.toJSON();
     }
 
+    const classes = Object.keys(helperRegistry),
+        numberOfHelpers = classes.length;
+
+    let $class: string,
+        serializer: Helper<AnyRecord, JSON<string>>;
+
+    for (let i = 0; i < numberOfHelpers; ++i) {
+        $class = classes[i];
+        serializer = helperRegistry[$class];
+        if (serializer.jsonSupportFor(obj)) {
+            return serializer.toJSON(obj);
+        }
+    }
+
+    throw new Error('Object is not supported.');
 }
 
 /* *
@@ -301,5 +291,12 @@ namespace Serializable {
  *  Default Export
  *
  * */
+
+const Serializable = {
+    fromJSON,
+    registerClassPrototype,
+    registerHelper,
+    toJSON
+};
 
 export default Serializable;

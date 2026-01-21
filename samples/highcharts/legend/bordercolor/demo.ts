@@ -10,10 +10,10 @@ Highcharts.chart('container', {
     },
     legend: {
         backgroundColor: '#aaaaaa40',
-        borderColor: 'var(--highcharts-neutral-color-40)',
+        borderColor: '#999999',
         borderWidth: 2
     },
     series: [{
         data: [1, 3, 2, 4]
     }]
-} satisfies Highcharts.Options);
+});

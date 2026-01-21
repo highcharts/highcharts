@@ -359,7 +359,6 @@ function checkDocsConsistency() {
 async function test(gulpback) {
     const argv = require('yargs').argv;
     const childProcess = require('node:child_process');
-    const fs = require('node:fs');
     const logLib = require('../libs/log');
     const PluginError = require('plugin-error');
 
@@ -392,11 +391,33 @@ specified by config.imageCapture.resultsOutputPath.
         argv.tests ||
         argv.testsAbsolutePath
     );
+
+    // Extract --project parameter from command line arguments
+    // This is passed directly to Playwright, not parsed by yargs
+    // Supports both --project value and --project=value formats
+    let projectParam = null;
+    for (let i = 0; i < process.argv.length; i++) {
+        const arg = process.argv[i];
+        if (arg === '--project' && i + 1 < process.argv.length) {
+            projectParam = process.argv[i + 1];
+            break;
+        } else if (arg.startsWith('--project=')) {
+            projectParam = arg.split('=')[1];
+            break;
+        }
+    }
+
+    // Use different config file for different projects to avoid cache conflicts
+    const configFile = projectParam ?
+        CONFIGURATION_FILE.replace('.json', `_${projectParam}.json`) :
+        CONFIGURATION_FILE;
+
     const runConfig = {
-        configFile: CONFIGURATION_FILE,
+        configFile,
         codeDirectory: CODE_DIRECTORY,
         jsDirectory: JS_DIRECTORY,
-        testsDirectory: TESTS_DIRECTORY
+        testsDirectory: TESTS_DIRECTORY,
+        project: projectParam
     };
 
     const { getProductTests } = require('./lib/test');
@@ -429,12 +450,11 @@ specified by config.imageCapture.resultsOutputPath.
 
         logLib.message('Run `gulp test --help` for available options');
 
-        // Use TypeScript karma for Grid/Dashboards, regular karma for others
-        if (argv.product === 'Grid' || argv.product === 'Dashboards') {
-            const { testKarma } = require('./test-karma');
-            await testKarma(argv);
-        } else {
-            // Conditionally build required code
+        // Visual tests use Karma, unit tests use Playwright
+        const isVisualTest = argv.visualcompare || argv.reference;
+
+        if (isVisualTest) {
+            // Visual comparison tests - keep using Karma
             await gulp.task('scripts')(gulpback);
 
             const testArgumentParts = [];
@@ -464,6 +484,68 @@ specified by config.imageCapture.resultsOutputPath.
                     message: 'Tests failed'
                 });
             }
+        } else {
+            // Unit tests - use Playwright
+            const processLib = require('../libs/process');
+
+            // Conditionally build required code
+            await gulp.task('scripts')(gulpback);
+
+            // Determine which Playwright projects to run
+            const playwrightProjects = [];
+
+            if (argv.product === 'Grid') {
+                playwrightProjects.push('setup-grid-lite', 'setup-grid-pro', 'grid-lite', 'grid-pro', 'grid-shared');
+            } else if (argv.product === 'Dashboards') {
+                playwrightProjects.push('setup-dashboards', 'dashboards');
+            } else {
+                playwrightProjects.push('setup-highcharts', 'qunit');
+            }
+
+            // Always include grid-shared when running grid-lite or grid-pro individually
+            // Check if any grid project is in the list
+            const hasGridLite = playwrightProjects.includes('grid-lite');
+            const hasGridPro = playwrightProjects.includes('grid-pro');
+            if ((hasGridLite || hasGridPro) && !playwrightProjects.includes('grid-shared')) {
+                // Add required setups if not already present
+                if (hasGridLite && !playwrightProjects.includes('setup-grid-lite')) {
+                    playwrightProjects.push('setup-grid-lite');
+                }
+                if (hasGridPro && !playwrightProjects.includes('setup-grid-pro')) {
+                    playwrightProjects.push('setup-grid-pro');
+                }
+                playwrightProjects.push('grid-shared');
+            }
+
+            // Build grep pattern for product-specific tests
+            // Skip grep for Grid/Dashboards as they use different test structure
+            let grepArg = '';
+            if (argv.product !== 'Grid' && argv.product !== 'Dashboards') {
+                if (Array.isArray(productTests) && productTests.length > 0) {
+                    // Convert product test paths to grep pattern
+                    // e.g., ['axis', 'chart'] -> '--grep "unit-tests/(axis|chart)"'
+                    const pattern = productTests.join('|');
+                    grepArg = `--grep "unit-tests/(${pattern})"`;
+                }
+            }
+
+            const projectArgs = playwrightProjects
+                .map(p => `--project=${p}`)
+                .join(' ');
+
+            const command = `npx playwright test ${projectArgs} ${grepArg}`.trim();
+            logLib.message(`Running: ${command}`);
+
+            try {
+                await processLib.exec(command);
+            } catch (error) {
+                if (argv.speak) {
+                    logLib.say('Tests failed!');
+                }
+                throw new PluginError('playwright', {
+                    message: 'Tests failed'
+                });
+            }
         }
 
         if (argv.speak) {
@@ -471,34 +553,6 @@ specified by config.imageCapture.resultsOutputPath.
         }
 
         saveRun(runConfig);
-
-        // Capture console.error, console.warn and console.log
-        const consoleLogPath = `${BASE}/test/console.log`;
-        const consoleLog = await fs.promises.readFile(
-            consoleLogPath,
-            'utf-8'
-        ).catch(() => {});
-        if (consoleLog) {
-            const errors = (consoleLog.match(/ ERROR:/gu) || []).length,
-                warnings = (consoleLog.match(/ WARN:/gu) || []).length,
-                logs = (consoleLog.match(/ LOG:/gu) || []).length;
-
-            const message = [];
-            if (errors) {
-                message.push(`${errors} errors`.red);
-            }
-            if (warnings) {
-                message.push(`${warnings} warnings`.yellow);
-            }
-            if (logs) {
-                message.push(`${logs} logs`);
-            }
-
-            logLib.message(
-                `The browser console logged ${message.join(', ')}.\n` +
-                'They can be reviewed in ' + consoleLogPath.cyan + '.'
-            );
-        }
     }
 }
 

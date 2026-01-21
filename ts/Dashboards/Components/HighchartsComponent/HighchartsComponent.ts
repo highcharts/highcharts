@@ -43,6 +43,8 @@ import type {
 import type MathModifierOptions from '../../../Data/Modifiers/MathModifierOptions';
 import type SidebarPopup from '../../EditMode/SidebarPopup';
 
+import type { EventTypes as ComponentEventTypes } from '../Component';
+
 import Component from '../Component.js';
 import DataConverter from '../../../Data/Converters/DataConverter.js';
 import DataTable from '../../../Data/DataTable.js';
@@ -304,7 +306,7 @@ class HighchartsComponent extends Component {
      */
     private onChartUpdate(
         point: Point,
-        connectorHandler: HighchartsComponent.HCConnectorHandler
+        connectorHandler: HCConnectorHandler
     ): void {
         const table = connectorHandler.dataTable;
         const columnAssignment = connectorHandler.columnAssignment;
@@ -388,7 +390,7 @@ class HighchartsComponent extends Component {
      */
     public updateSeries(): void {
         const { chart } = this;
-        const connectorHandlers: HighchartsComponent.HCConnectorHandler[] =
+        const connectorHandlers: HCConnectorHandler[] =
             this.connectorHandlers;
         if (!chart) {
             return;
@@ -449,7 +451,7 @@ class HighchartsComponent extends Component {
      * @private
      */
     private updateSeriesFromConnector(
-        connectorHandler: HighchartsComponent.HCConnectorHandler
+        connectorHandler: HCConnectorHandler
     ): void {
         const chart = this.chart;
         if (
@@ -735,29 +737,19 @@ class HighchartsComponent extends Component {
 
 /* *
  *
- *  Class Namespace
+ *  Type Declarations
  *
  * */
 
 /** @private */
-namespace HighchartsComponent {
+export type ComponentType = HighchartsComponent;
 
-    /* *
-    *
-    *  Declarations
-    *
-    * */
+/** @private */
+export type ChartComponentEvents = ComponentEventTypes;
 
-    /** @private */
-    export type ComponentType = HighchartsComponent;
-
-    /** @private */
-    export type ChartComponentEvents = Component.EventTypes;
-
-    /** @private */
-    export interface HCConnectorHandler extends ConnectorHandler {
-        columnAssignment?: ColumnAssignmentOptions[];
-    }
+/** @private */
+export interface HCConnectorHandler extends ConnectorHandler {
+    columnAssignment?: ColumnAssignmentOptions[];
 }
 
 /* *

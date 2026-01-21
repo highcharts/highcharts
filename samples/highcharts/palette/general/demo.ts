@@ -17,7 +17,6 @@ Highcharts.chart('container', {
     palette: {
         colorScheme: 'light dark',
         light: {
-            backgroundColor: '#ffffff',
             colors: ['#2caffe', '#544fc5']
         }
     },
@@ -26,4 +25,4 @@ Highcharts.chart('container', {
     }, {
         data: [5, 3, 4, 2]
     }]
-} satisfies Highcharts.Options);
+});
