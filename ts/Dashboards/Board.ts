@@ -566,7 +566,7 @@ class Board {
 
         // Add new components
         if (board.options.components) {
-            board.setComponents(
+            void board.setComponents(
                 board.options.components as Array<Partial<ComponentType['options']>>
             );
         }

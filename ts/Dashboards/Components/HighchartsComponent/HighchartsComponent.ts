@@ -564,7 +564,6 @@ class HighchartsComponent extends Component {
                 this.chart.destroy();
             } catch (e) {
                 // Chart may already be destroyed or renderTo/renderer
-                // may not exist
                 // eslint-disable-next-line no-console
                 console.warn('Error destroying chart:', e);
             }
