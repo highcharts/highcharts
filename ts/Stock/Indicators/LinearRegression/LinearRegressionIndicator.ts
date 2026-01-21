@@ -387,14 +387,15 @@ extend(LinearRegressionIndicator.prototype, {
 
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
-        linearRegression: typeof LinearRegressionIndicator;
+        linearregression: typeof LinearRegressionIndicator;
     }
 }
 
 SeriesRegistry.registerSeriesType(
-    'linearRegression',
+    'linearregression',
     LinearRegressionIndicator
 );
+
 
 /* *
  *
