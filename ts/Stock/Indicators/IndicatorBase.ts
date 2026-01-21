@@ -20,8 +20,8 @@ import type Series from '../../Core/Series/Series';
  *
  * */
 
-/** @internal */
 export interface IndicatorBase extends Series {
+    /** @internal */
     useCommonDataGrouping?: boolean;
 }
 
