@@ -6,7 +6,7 @@ const grid = Grid.grid('container', {
                 '/data?format={format}&columnsInclude=employeeId,firstName,' +
                 'lastName&page={page}&pageSize={pageSize}&filter={filter}&' +
                 'sortBy={sortBy}&sortOrder={sortOrder}',
-            rowIdColumnId: 'employeeId'
+            rowIdColumn: 'employeeId'
         },
         setValueCallback: async (columnId, rowId, value) => {
             console.log('Setting value:', columnId, rowId, value);

@@ -22,6 +22,7 @@
  *
  * */
 
+import type { RowId } from '../../Core/Data/DataProvider';
 import type { RemoteFetchCallbackResult } from './RemoteDataProvider';
 import type QueryingController from '../../Core/Querying/QueryingController';
 
@@ -244,7 +245,21 @@ export async function dataSourceFetch(
     try {
         const url = buildUrl(options, state);
         const res = await fetch(url);
-        return await parseResponse(res);
+
+        const data = await parseResponse(res);
+        if (options.rowIdColumn) {
+            const rowIdsColumn = data.columns[options.rowIdColumn];
+            if (!rowIdsColumn) {
+                // eslint-disable-next-line no-console
+                console.warn(`DataSourceHelper: rowIdColumn "${
+                    options.rowIdColumn
+                }" not found in response.`);
+                return data;
+            }
+            data.rowIds = rowIdsColumn as RowId[];
+        }
+
+        return data;
     } catch (err: unknown) {
         // eslint-disable-next-line no-console
         console.error('Error fetching data from remote server.\n', err);
@@ -303,6 +318,14 @@ export interface DataSourceOptions {
      */
     parseResponse?: (res: Response) => Promise<RemoteFetchCallbackResult>;
 
+    /**
+     * ID of a column that contains stable row IDs.
+     *
+     * If not defined, the row IDs will be extracted from the `meta.rowIds`
+     * property if available. If `meta.rowIds` is also not defined, the row IDs
+     * will default to the indices of the rows in their display order.
+     */
+    rowIdColumn?: string;
 }
 
 export interface QueryState {
