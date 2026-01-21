@@ -68,6 +68,8 @@ export function ChartWithCustomHC () {
 }
 ```
 
+**Note**: To determine which module is needed for a particular option, refer to the "Requires" section in the [API](https://api.highcharts.com/highcharts/).
+
 For more in-depth information on configuring your chart, see the documentation
 for the [Chart and Series](https://www.highcharts.com/docs/react/series-and-chart-types) components,
 and [how to set options](https://www.highcharts.com/docs/react/options).

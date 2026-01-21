@@ -144,6 +144,8 @@ export function ChartWithCustomHC () {
 }
 ```
 
+**Note**: To determine which module is needed for a particular option, refer to the "Requires" section in the [API](https://api.highcharts.com/highcharts/).
+
 
 ## Reactive updates
 
