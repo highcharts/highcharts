@@ -97,7 +97,7 @@ function extractFilterConditions(
 }
 
 const defaultTemplateVariables: Record<
-    string, string | ((state: QueryState) => string)
+    string, (state: QueryState) => string
 > = {
     page: (state: QueryState): string => (
         Math.floor(state.offset / (state.limit || 1)) + 1
@@ -105,7 +105,7 @@ const defaultTemplateVariables: Record<
     pageSize: (state: QueryState): string => state.limit.toFixed(),
     offset: (state: QueryState): string => state.offset.toFixed(),
     limit: (state: QueryState): string => state.limit.toFixed(),
-    format: 'js',
+    format: (): string => 'js',
     filter: (state: QueryState): string => {
         const filterColumns: ApiFilterCondition[] = [];
         type ModifierWithCondition = {
@@ -180,14 +180,14 @@ const fetchIntervalQueue = new WeakMap<DataSourceOptions, Promise<void>>();
  * @param options
  * The data source options reference used as a throttling key.
  *
- * @param fetchMinInterval
+ * @param minFetchInterval
  * Minimum time (ms) between fetch starts. Non-positive disables throttling.
  */
 const enforceFetchInterval = async (
     options: DataSourceOptions,
-    fetchMinInterval: number
+    minFetchInterval: number
 ): Promise<void> => {
-    if (fetchMinInterval <= 0) {
+    if (minFetchInterval <= 0) {
         return;
     }
 
@@ -199,7 +199,7 @@ const enforceFetchInterval = async (
         const now = Date.now();
         const lastFetch = lastFetchTimestamps.get(options);
         if (typeof lastFetch === 'number') {
-            const waitMs = fetchMinInterval - (now - lastFetch);
+            const waitMs = minFetchInterval - (now - lastFetch);
             if (waitMs > 0) {
                 await new Promise<void>((resolve): void => {
                     setTimeout(resolve, waitMs);
@@ -270,9 +270,7 @@ export function buildUrl(
 
         Object.defineProperty(context, key, {
             enumerable: true,
-            get: (): string => (
-                typeof value === 'function' ? value(state) : value
-            )
+            get: (): string => value(state)
         });
     });
 
@@ -306,12 +304,12 @@ export async function dataSourceFetch(
     const {
         parseResponse = defaultParseResponse,
         fetchTimeout = 30000,
-        fetchMinInterval = 0
+        minFetchInterval = 0
     } = options;
 
     try {
         const url = buildUrl(options, state);
-        await enforceFetchInterval(options, fetchMinInterval);
+        await enforceFetchInterval(options, minFetchInterval);
         const controller = fetchTimeout > 0 ? new AbortController() : null;
         let timeoutId: ReturnType<typeof setTimeout> | undefined;
 
@@ -388,9 +386,7 @@ export interface DataSourceOptions {
     /**
      * Template variables to be replaced in the urlTemplate.
      */
-    templateVariables?: Record<
-        string, string | ((state: QueryState) => string)
-    >;
+    templateVariables?: Record<string, (state: QueryState) => string>;
 
     /**
      * If `true`, empty query parameters are omitted from the URL.
@@ -413,7 +409,7 @@ export interface DataSourceOptions {
      * Minimum time (ms) between fetches. Set to 0 to disable.
      * @default 0
      */
-    fetchMinInterval?: number;
+    minFetchInterval?: number;
 
     /**
      * ID of a column that contains stable row IDs.
