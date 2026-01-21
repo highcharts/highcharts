@@ -23,6 +23,15 @@ import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
  *
  * */
 
+export interface IKHMarkerOptions extends PointMarkerOptions {
+    /**
+     * Enable or disable the point marker.
+     *
+     * @default false
+     */
+    enabled?: PointMarkerOptions['enabled'];
+}
+
 /**
  * Ichimoku Kinko Hyo (IKH). This series requires `linkedTo` option to be
  * set.
@@ -53,7 +62,7 @@ export interface IKHOptions extends SMAOptions {
      */
     kijunLine?: Record<string, CSSObject>;
 
-    marker?: PointMarkerOptions;
+    marker?: IKHMarkerOptions;
 
     params?: IKHParamsOptions;
 
