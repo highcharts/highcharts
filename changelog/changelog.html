@@ -15324,6 +15324,41 @@ import &#39;highcharts/modules/accessibility&#39;;
           </div>
           <div class="changelog-container">
             <h3 class="release-header">
+              <a id="highcharts-dashboards-v4.1.0"></a>
+              <span>Highcharts Dashboards v4.1.0 (2026-01-21)</span>
+              <a class="release-header-hashtag" href="#highcharts-dashboards-v4.1.0">#</a>
+              <span class="download-link" ><a href="https://code.highcharts.com/dashboards/zips/Highcharts-Dashboards-4.1.0.zip" title="Download the zip archive for Highcharts Dashboards v4.1.0"><i class="fas fa-download"></i></a></span>
+            </h3>
+            <ul>
+              <li>Added basic <code>board.update()</code> method.</li>
+              <li>Added <code>update</code> argument to DataPool&#39;s <code>setConnectorOptions</code> method. See <a href="https://github.com/highcharts/highcharts/issues/23935">#23935</a>.</li>
+              <li>Added <code>update</code> method to Data Connectors. See <a href="https://github.com/highcharts/highcharts/issues/21583">#21583</a>.</li>
+              <li>Added support for setting global options with <code>Dashboards.setOptions()</code>.</li>
+              <li>Added the possibility to full-screen individual dashboard components, see <a href="https://github.com/highcharts/highcharts/issues/23547">#23547</a>.</li>
+            </ul>
+            <div class="accordion card-group">
+              <div class="card">
+
+                <div id="hd-heading-4-1-0-bug-fixes" class="card-header">
+                  <h4 class="card-title" aria-label="Bug Fixes Highcharts-dashboards v4.1.0">
+                    <button aria-label="Bug Fixes Highcharts-dashboards v4.1.0" aria-expanded="false" class="btn btn-link collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#bug-fixes-hd-4-1-0"><span> Bug fixes </span></button>
+                  </h4>
+                </div>
+                <div id="bug-fixes-hd-4-1-0" class="collapse" aria-labelledby="hd-heading-4-1-0-bug-fixes" data-parent=".accordion">
+                  <div class="card-body">
+                    <ul>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/23952">#23952</a>, wrong reference to nestedLayout.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/23948">#23948</a>, row and cell deleting events were not triggered.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/23862">#23862</a>, highlight sync was incorrect when the connector was used with multiple data tables.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/23859">#23859</a>, the <code>metadata</code> was not cloned in the data table.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/23699">#23699</a>, error in the console when the <code>toggle</code> editable option was added.</li>
+                    </ul>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+            <h3 class="release-header">
               <a id="highcharts-dashboards-v4.0.0"></a>
               <span>Highcharts Dashboards v4.0.0 (2025-10-29)</span>
               <a class="release-header-hashtag" href="#highcharts-dashboards-v4.0.0">#</a>
