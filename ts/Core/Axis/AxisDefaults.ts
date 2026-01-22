@@ -495,29 +495,28 @@ namespace AxisDefaults {
 
         /**
          * For a datetime axis, the scale will automatically adjust to the
-         * appropriate unit. This member gives the default string
-         * representations used for each unit. For intermediate values,
-         * different units may be used, for example the `day` unit can be used
-         * on midnight and `hour` unit be used for intermediate values on the
-         * same axis.
+         * appropriate unit. This member gives the default representations used
+         * for each unit. For boundary values, different units may be used,
+         * for example the `day` unit can be used on midnight, and `year` unit
+         * can be used on January 1st on the same axis.
          *
-         * For an overview of the string or object configuration, see
+         * For easier data interpretation, `day`, `month` and `year` units can
+         * be used and formatted as boundary tick values.
+         *
+         * For an overview of the date time label formats configuration, see
          * [dateFormat](/class-reference/Highcharts.Time#dateFormat).
-         *
-         * For easier data interpretation, day and month ticks can have a higher
-         * rank format, which can be customized on the corresponding time unit.
          *
          * Defaults to:
          * ```js
          * {
-         *     millisecond: '%[HMSL]',
-         *     second: '%[HMS]',
-         *     minute: '%[HM]',
-         *     hour: '%[HM]',
-         *     day: '%[eb]',
-         *     week: '%[eb]',
-         *     month: '%[bY]',
-         *     year: '%Y'
+         *     millisecond: { main: '%[HMSL]' },
+         *     second: { main: '%[HMS]' },
+         *     minute: { main: '%[HM]' },
+         *     hour: { main: '%[HM]' },
+         *     day: { main: '%[eb]', boundary: undefined },
+         *     week: { main: '%[eb]' },
+         *     month: { main: '%[bY]', boundary: undefined },
+         *     year: { main: '%Y', boundary: undefined }
          * }
          * ```
          *
@@ -545,6 +544,7 @@ namespace AxisDefaults {
 
                 /**
                  * @type {string|Highcharts.DateTimeFormatOptions}
+                 * @default '%[HMSL]'
                  * @apioption xAxis.dateTimeLabelFormats.millisecond.main
                  */
                 main: '%[HMSL]',
@@ -563,6 +563,7 @@ namespace AxisDefaults {
 
                 /**
                  * @type {string|Highcharts.DateTimeFormatOptions}
+                 * @default '%[HMS]'
                  * @apioption xAxis.dateTimeLabelFormats.second.main
                  */
                 main: '%[HMS]',
@@ -581,6 +582,7 @@ namespace AxisDefaults {
 
                 /**
                  * @type {string|Highcharts.DateTimeFormatOptions}
+                 * @default '%[HM]'
                  * @apioption xAxis.dateTimeLabelFormats.minute.main
                  */
                 main: '%[HM]',
@@ -599,6 +601,7 @@ namespace AxisDefaults {
 
                 /**
                  * @type {string|Highcharts.DateTimeFormatOptions}
+                 * @default '%[HM]'
                  * @apioption xAxis.dateTimeLabelFormats.hour.main
                  */
                 main: '%[HM]',
@@ -617,6 +620,7 @@ namespace AxisDefaults {
 
                 /**
                  * @type {string|Highcharts.DateTimeFormatOptions}
+                 * @default '%[eb]'
                  * @apioption xAxis.dateTimeLabelFormats.day.main
                  */
                 main: '%[eb]',
@@ -640,6 +644,7 @@ namespace AxisDefaults {
 
                 /**
                  * @type {string|Highcharts.DateTimeFormatOptions}
+                 * @default '%[eb]'
                  * @apioption xAxis.dateTimeLabelFormats.week.main
                  */
                 main: '%[eb]'
@@ -657,6 +662,7 @@ namespace AxisDefaults {
 
                 /**
                  * @type {string|Highcharts.DateTimeFormatOptions}
+                 * @default '%[bY]'
                  * @apioption xAxis.dateTimeLabelFormats.month.main
                  */
                 main: '%[bY]',
@@ -680,9 +686,16 @@ namespace AxisDefaults {
 
                 /**
                  * @type {string|Highcharts.DateTimeFormatOptions}
+                 * @default '%Y'
                  * @apioption xAxis.dateTimeLabelFormats.year.main
                  */
-                main: '%Y'
+                main: '%Y',
+                /**
+                 * @type {string|Highcharts.DateTimeFormatOptions}
+                 * @default undefined
+                 * @apioption xAxis.dateTimeLabelFormats.year.boundary
+                 */
+                boundary: void 0
             }
         },
 
