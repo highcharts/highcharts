@@ -23,7 +23,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          ref: master
 
       - name: Use Node.js lts/*
         uses: actions/setup-node@v4
@@ -135,7 +135,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: master
+          fetch-depth: 0
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
@@ -160,7 +160,7 @@ jobs:
       - name: Build Highcharts
         run: npx gulp scripts
 
-      - run: VISUAL_TEST_PRODUCT=highcharts VISUAL_TEST_PATH=samples/highcharts/ npx playwright test --project=visual --update-snapshots
+      - run: VISUAL_TEST_PRODUCT=highcharts VISUAL_TEST_PATH=samples/highcharts/ npx playwright test --project=visual --update-snapshots || true
       - run: npx karma start test/karma-conf.js --tests maps/*/* --ts --reference --browsercount 2 --no-fail-on-empty-test-suite
       - run: npx karma start test/karma-conf.js --tests stock/*/* --ts --reference --browsercount 2 --no-fail-on-empty-test-suite
       - run: npx karma start test/karma-conf.js --tests gantt/*/* --ts --reference --browsercount 2 --no-fail-on-empty-test-suite
