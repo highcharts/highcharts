@@ -102,7 +102,7 @@ QUnit.test('Panning inverted chart(#4077)', function (assert) {
 });
 
 QUnit.test('Zoom and pan key', function (assert) {
-    var chart = Highcharts.chart('container', {
+    const chart = Highcharts.chart('container', {
             chart: {
                 type: 'line',
                 zoomType: 'xy',
@@ -177,8 +177,8 @@ QUnit.test('Zoom and pan key', function (assert) {
     assert.strictEqual(chart.xAxis[0].min > 0, true, 'Zoomed min');
     assert.strictEqual(chart.xAxis[0].max < 11, true, 'Zoomed max');
 
-    var xExtremes = chart.xAxis[0].getExtremes();
-    var yExtremes = chart.yAxis[0].getExtremes();
+    let xExtremes = chart.xAxis[0].getExtremes(),
+        yExtremes = chart.yAxis[0].getExtremes();
 
     // Pan
     controller.pan([200, 100], [150, 50], { shiftKey: true });
@@ -203,7 +203,7 @@ QUnit.test('Zoom and pan key', function (assert) {
     // delete cache, QUnit header is moving chart
     delete chart.pointer.chartPosition;
     controller.mouseDown(100, 200, { shiftKey: true });
-    for (var x = 110; x < 400; x += 10) {
+    for (let x = 110; x < 400; x += 10) {
         controller.mouseMove(x, 100, { shiftKey: true });
     }
     controller.mouseUp();
@@ -229,6 +229,60 @@ QUnit.test('Zoom and pan key', function (assert) {
         chart.yAxis[0].allExtremes.dataMax,
         300,
         '#15022: allExtremes should have the correct dataMax'
+    );
+
+    chart.update({
+        chart: {
+            zooming: {
+                key: 'alt'
+            }
+        },
+        xAxis: {
+            reversed: false
+        }
+    }, false, false);
+
+    chart.zoomOut();
+
+    controller.pan([150, 100], [250, 150]);
+
+    assert.ok(
+        chart.xAxis[0].min === xExtremes.dataMin &&
+        chart.yAxis[0].max === 314,
+        'Chart should not zoom in without zoomKey pressed, #16583.'
+    );
+
+    controller.pan([150, 100], [250, 150], { altKey: true });
+
+    xExtremes = chart.xAxis[0].getExtremes();
+    yExtremes = chart.yAxis[0].getExtremes();
+
+    assert.ok(
+        xExtremes.max < xExtremes.dataMax,
+        'Has zoomed horizontally with zoomKey pressed, #16583.'
+    );
+
+    assert.ok(
+        yExtremes.max < yExtremes.dataMax,
+        'Haz zoomed vertically with zoomKey pressed, #16583.'
+    );
+
+    controller.pan([350, 100], [150, 100], { shiftKey: true });
+
+    assert.ok(
+        chart.xAxis[0].min > xExtremes.min &&
+        chart.xAxis[0].max > xExtremes.max,
+        'Panning should be working with panKey pressed, #16583.'
+    );
+
+    xExtremes = chart.xAxis[0].getExtremes();
+
+    controller.pan([350, 100], [150, 100]);
+
+    assert.ok(
+        chart.xAxis[0].min === xExtremes.min &&
+        chart.xAxis[0].max === xExtremes.max,
+        'Panning should not be working when panKey is not pressed, #16583.'
     );
 });
 
