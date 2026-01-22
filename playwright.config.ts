@@ -102,7 +102,6 @@ export default defineConfig({
                 }
             },
             dependencies: [
-                'setup-dashboards',
                 'setup-highcharts'
             ],
         },
