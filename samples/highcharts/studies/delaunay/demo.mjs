@@ -1,5 +1,5 @@
 // eslint-disable-next-line node/no-unpublished-import
-import Delaunay from '../../../../code/es-modules/Shared/Delaunay.js';
+import Delaunay from '../../../../code/es-modules/Core/Delaunay.js';
 
 const gl = document.getElementById('canvas').getContext('webgl2');
 const program = createShaderProgram();
