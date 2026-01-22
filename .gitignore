@@ -26,6 +26,8 @@
 /highcharts.com.site-error.log
 /test/last-run.json
 /test/visual-test-results.json
+/test/visual-test-results-karma.json
+/test/visual-test-results-playwright.json
 /test/pr-review-*.json
 /test/cypress/dashboards/cypress/snapshots/
 /utils/issue-by-commit/demo.js
@@ -72,6 +74,7 @@ nbproject/
 /samples/**/candidate.svg
 /samples/**/diff.gif
 /samples/**/reference.svg
+/samples/**/debug/
 
 tmp/
 /yarn.lock

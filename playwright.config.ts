@@ -1,4 +1,4 @@
-import { defineConfig, devices } from '@playwright/test';
+import { defineConfig, devices, type ReporterDescription } from '@playwright/test';
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -9,7 +9,34 @@ export default defineConfig({
     forbidOnly: !!process.env.CI,
     retries: process.env.CI ? 2 : 0,
     workers: process.env.CI ? 2 : undefined,
-    reporter: [['html', { open: 'never' }]],
+    reporter: (() => {
+        const projectArgs: string[] = [];
+        for (let index = 0; index < process.argv.length; index += 1) {
+            const arg = process.argv[index];
+            if (arg === '--project' && process.argv[index + 1]) {
+                projectArgs.push(process.argv[index + 1]);
+                index += 1;
+                continue;
+            }
+            if (arg.startsWith('--project=')) {
+                projectArgs.push(arg.slice('--project='.length));
+            }
+        }
+
+        const shouldAddVisualReporter =
+            projectArgs.length === 0 ||
+            projectArgs.includes('visual');
+
+        const reporters: ReporterDescription[] = [['html', { open: 'never' }]];
+        if (shouldAddVisualReporter) {
+            reporters.push([
+                './tests/visual/visual-reporter.ts',
+                { outputFile: 'test/visual-test-results.json' }
+            ]);
+        }
+
+        return reporters;
+    })(),
     use: {
         trace: 'on-first-retry',
         baseURL: 'http://localhost',
