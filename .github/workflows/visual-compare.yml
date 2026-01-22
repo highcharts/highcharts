@@ -23,7 +23,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: master
+          fetch-depth: 0
 
       - name: Use Node.js lts/*
         uses: actions/setup-node@v4
@@ -152,19 +152,21 @@ jobs:
       - name: Setup Display
         run: sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 &
 
+      - name: Checkout master samples and ts
+        run: |
+          git fetch origin master --depth=1
+          git checkout origin/master -- samples ts
+
       - name: Build Highcharts
         run: npx gulp scripts
 
-      - run: VISUAL_TEST_PRODUCT=highcharts VISUAL_TEST_PATH=samples/highcharts/ VISUAL_TEST_REFERENCE=1 npx playwright test --project=visual --update-snapshots
+      - run: VISUAL_TEST_PRODUCT=highcharts VISUAL_TEST_PATH=samples/highcharts/ npx playwright test --project=visual --update-snapshots
       - run: npx karma start test/karma-conf.js --tests maps/*/* --ts --reference --browsercount 2 --no-fail-on-empty-test-suite
       - run: npx karma start test/karma-conf.js --tests stock/*/* --ts --reference --browsercount 2 --no-fail-on-empty-test-suite
       - run: npx karma start test/karma-conf.js --tests gantt/*/* --ts --reference --browsercount 2 --no-fail-on-empty-test-suite
 
-      - name: Checkout current branch
-        uses: actions/checkout@v4
-        with:
-          clean: false
-          fetch-depth: 0
+      - name: Restore current samples and ts
+        run: git checkout -- samples ts
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
