@@ -168,7 +168,10 @@ test.describe('Visual tests', () => {
         .map((value) => value.trim())
         .filter(Boolean)
         .map((value) => value.replace(/\\/g, '/'));
-    const referenceModeFlag = process.argv.includes('--reference');
+    const referenceModeFlag =
+        process.argv.includes('--reference') ||
+        process.env.VISUAL_TEST_REFERENCE === '1' ||
+        process.env.VISUAL_TEST_REFERENCE === 'true';
 
     const samples = glob.sync(['samples/**/demo.{js,mjs,ts}'], {
         ignore: [
