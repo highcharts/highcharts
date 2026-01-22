@@ -25,8 +25,6 @@ import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 
 export interface IKHMarkerOptions extends PointMarkerOptions {
     /**
-     * Enable or disable the point marker.
-     *
      * @default false
      */
     enabled?: PointMarkerOptions['enabled'];
