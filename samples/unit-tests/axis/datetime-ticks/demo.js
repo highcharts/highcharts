@@ -81,9 +81,9 @@ QUnit.test('Time zone with small interval (#4951)', function (assert) {
     });
 
     assert.strictEqual(
-        Object.keys(chart.xAxis[0].tickPositions.info.higherRanks).length,
+        Object.keys(chart.xAxis[0].tickPositions.info.boundaryTicks).length,
         4,
-        '4 higher ranks found'
+        '4 boundary ticks found'
     );
 
     // Reset
@@ -166,7 +166,7 @@ QUnit.test('Time zone with bigger interval (#4951)', function (assert) {
 });
 
 QUnit.test(
-    'Higher rank applied to first and last labels (#1649, #1760)',
+    'Boundary applied to first and last labels (#1649, #1760)',
     function (assert) {
         Highcharts.setOptions({
             time: {
@@ -206,15 +206,15 @@ QUnit.test(
         });
 
         assert.strictEqual(
-            Object.keys(chart.xAxis[0].tickPositions.info.higherRanks).length,
+            Object.keys(chart.xAxis[0].tickPositions.info.boundaryTicks).length,
             4,
-            '4 higher ranks found'
+            '4 boundary ticks found'
         );
     }
 );
 
 QUnit.test(
-    'Higher rank not showing with negative time offset (#3359)',
+    'Boundary not showing with negative time offset (#3359)',
     function (assert) {
         Highcharts.setOptions({
             time: {
@@ -243,9 +243,9 @@ QUnit.test(
         });
 
         assert.strictEqual(
-            Object.keys(chart.xAxis[0].tickPositions.info.higherRanks).length,
+            Object.keys(chart.xAxis[0].tickPositions.info.boundaryTicks).length,
             2,
-            '2 higher ranks found'
+            '2 boundary ticks found'
         );
 
         // Reset
@@ -258,7 +258,7 @@ QUnit.test(
 );
 
 
-QUnit.test('Higher ranks general tests, (#22231)', function (assert) {
+QUnit.test('Boundary ticks general tests, (#22231)', function (assert) {
     const chart = Highcharts.stockChart('container', {
         series: [{
             type: 'line',
@@ -269,7 +269,7 @@ QUnit.test('Higher ranks general tests, (#22231)', function (assert) {
         xAxis: {
             dateTimeLabelFormats: {
                 month: {
-                    higherRank: '%Y',
+                    boundary: '%Y',
                     main: '%b'
                 }
             }
@@ -283,17 +283,17 @@ QUnit.test('Higher ranks general tests, (#22231)', function (assert) {
     assert.strictEqual(
         ticks[tickPositions[0]].label.textStr,
         '2000',
-        'First tick on full range chart should have a higher rank label.'
+        'First tick on full range chart should have a boundary label.'
     );
     assert.strictEqual(
-        tickPositions.info.higherRanks[tickPositions[0]],
+        tickPositions.info.boundaryTicks[tickPositions[0]],
         'year',
-        'First tick on full range chart should have a higher rank set as year.'
+        'First tick on full range chart should have a boundary set as year.'
     );
     assert.strictEqual(
         ticks[tickPositions[1]].label.textStr,
         'Jul',
-        'Second tick on full range chart should have a main rank applied.'
+        'Second tick on full range chart should have a main format applied.'
     );
 
     // Navigator ticks
@@ -305,7 +305,7 @@ QUnit.test('Higher ranks general tests, (#22231)', function (assert) {
     assert.deepEqual(
         navigatorTickLabels,
         ['2000', '2001', '2002', '2003', '2004'],
-        'Navigator ticks should not be affected by higher ranks.'
+        'Navigator ticks should not be affected by boundaryTicks.'
     );
 
     // Ticks after scrolling
@@ -317,6 +317,6 @@ QUnit.test('Higher ranks general tests, (#22231)', function (assert) {
     assert.strictEqual(
         ticks[tickPositions[0]].label.textStr,
         '2001',
-        'First tick after scrolling should have a higher rank label.'
+        'First tick after scrolling should have a boundary label.'
     );
 });

@@ -623,9 +623,9 @@ namespace AxisDefaults {
                 /**
                  * @type {string|Highcharts.DateTimeFormatOptions}
                  * @default undefined
-                 * @apioption xAxis.dateTimeLabelFormats.day.higherRank
+                 * @apioption xAxis.dateTimeLabelFormats.day.boundary
                  */
-                higherRank: void 0
+                boundary: void 0
             },
             /**
              * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
@@ -663,9 +663,9 @@ namespace AxisDefaults {
                 /**
                  * @type {string|Highcharts.DateTimeFormatOptions}
                  * @default undefined
-                 * @apioption xAxis.dateTimeLabelFormats.month.higherRank
+                 * @apioption xAxis.dateTimeLabelFormats.month.boundary
                  */
-                higherRank: void 0
+                boundary: void 0
             },
             /**
              * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject

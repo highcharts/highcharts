@@ -49,17 +49,17 @@ declare module './Axis/TickPositionsArray'{
  * */
 class Time extends TimeBase {
 
-    public getHigherRanks(
+    public getBoundaryTicks(
         tickPositions: TickPositionsArray,
         unitRange: number
     ): Record<string, string> {
-        const higherRanks = {} as Record<string, string>;
-        // Handle higher ranks. Mark new days if the time is on midnight
+        const boundaryTicks = {} as Record<string, string>;
+        // Handle boundary ticks. Mark new days if the time is on midnight
         // (#950, #1649, #1760, #3349). Use a reasonable dropout threshold
         // to prevent looping over dense data grouping (#6156).
         if (tickPositions.length < 10000) {
             // Hourly range, con be configured with:
-            // 'hour.main' and 'day.higherRank'
+            // 'hour.main' and 'day.boundary'
             if (unitRange <= timeUnits.hour) {
                 tickPositions.forEach((t: number): void => {
                     if (
@@ -69,35 +69,35 @@ class Time extends TimeBase {
                         // Check for local or global midnight
                         this.dateFormat('%H%M%S%L', t) === '000000000'
                     ) {
-                        higherRanks[t] = 'day';
+                        boundaryTicks[t] = 'day';
                     }
                 });
             }
 
             // Daily and weekly range, can be configured with:
-            // 'day.main', 'week.main' and 'month.higherRank'
+            // 'day.main', 'week.main' and 'month.boundary'
             if (unitRange >= timeUnits.day && unitRange <= timeUnits.week) {
                 tickPositions.forEach((t: number): void => {
                     if (this.dateFormat('%d', t) === '01') {
-                        higherRanks[t] = 'month';
+                        boundaryTicks[t] = 'month';
                     }
                 });
             }
 
             // Monthly range, can be configured with:
-            // 'month.main' and 'year.higherRank'
+            // 'month.main' and 'year.boundary'
             if (unitRange <= timeUnits.month && unitRange > timeUnits.week) {
                 tickPositions.forEach((t: number, i: number): void => {
                     if (
                         i === 1 || this.dateFormat('%m%d', t) === '0101'
                     ) {
-                        higherRanks[t] = 'year';
+                        boundaryTicks[t] = 'year';
                     }
                 });
             }
         }
 
-        return higherRanks;
+        return boundaryTicks;
     }
 
     /**
@@ -141,7 +141,7 @@ class Time extends TimeBase {
             ] = time.toParts(min),
             milliseconds = (min || 0) % 1000,
             variableDayLength: boolean|undefined,
-            higherRanks: Record<string, string> = {};
+            boundaryTicks: Record<string, string> = {};
 
         startOfWeek ??= 1;
 
@@ -277,7 +277,7 @@ class Time extends TimeBase {
                     unitRange === timeUnits.hour &&
                     count > 1
                 ) {
-                    // Make sure higher ranks are preserved across DST (#6797,
+                    // Make sure boundary ticks are preserved across DST (#6797,
                     // #7621)
                     t = time.makeTime(
                         year,
@@ -297,7 +297,7 @@ class Time extends TimeBase {
             // Push the last time
             tickPositions.push(t);
 
-            higherRanks = this.getHigherRanks(
+            boundaryTicks = this.getBoundaryTicks(
                 tickPositions,
                 unitRange
             );
@@ -308,7 +308,7 @@ class Time extends TimeBase {
         tickPositions.info = extend<Time.TimeNormalizedObject|TimeTicksInfoObject>(
             normalizedInterval,
             {
-                higherRanks,
+                boundaryTicks,
                 totalRange: unitRange * count
             }
         ) as TimeTicksInfoObject;
@@ -339,7 +339,7 @@ namespace Time {
         from?: DateTimeFormat;
         list?: DateTimeFormat[];
         main: DateTimeFormat;
-        higherRank?: DateTimeFormat;
+        boundary?: DateTimeFormat;
         range?: boolean;
         to?: DateTimeFormat;
     }

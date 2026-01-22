@@ -168,6 +168,13 @@ class Tick {
     public isActive?: boolean;
 
     /**
+     * Whether the tick is a boundary tick.
+     * @name Highcharts.Tick#isBoundary
+     * @type {boolean|undefined}
+     */
+    public isBoundary?: boolean;
+
+    /**
      * True if the tick is the first one on the axis.
      * @name Highcharts.Tick#isFirst
      * @readonly
@@ -294,15 +301,15 @@ class Tick {
         }
 
 
-        // Set the datetime label format. If a higher rank is set for this
+        // Set the datetime label format. If a boundary is set for this
         // position, use that. If not, use the main format.
         if (axis.dateTime) {
             const DTLFormats = options.dateTimeLabelFormats as any;
             if (tickPositionInfo) {
                 const gridDisabled = !options.grid?.enabled,
-                    rankKey = tickPositionInfo.higherRanks[pos],
+                    rankKey = tickPositionInfo.boundaryTicks[pos],
                     format = gridDisabled && rankKey &&
-                        (DTLFormats[rankKey].higherRank ||
+                        (DTLFormats[rankKey].boundary ||
                         DTLFormats[rankKey].main);
 
                 dateTimeLabelFormats = chart.time.resolveDTLFormat(
@@ -331,12 +338,19 @@ class Tick {
          * @type {boolean|undefined}
          */
         tick.isLast = isLast;
+        /**
+         * True if the tick is a boundary tick.
+         * @name Highcharts.Tick#isBoundary
+         * @type {boolean|undefined}
+         */
+        tick.isBoundary = !!tickPositionInfo?.boundaryTicks[pos];
 
         // Get the string
         const ctx: AxisLabelFormatterContextObject = {
             axis,
             chart,
             dateTimeLabelFormat: dateTimeLabelFormat,
+            isBoundary: tick.isBoundary || false,
             isFirst,
             isLast,
             pos,
@@ -1257,7 +1271,7 @@ export default Tick;
  * @interface Highcharts.TimeTicksInfoObject
  * @extends Highcharts.TimeNormalizedObject
  *//**
- * @name Highcharts.TimeTicksInfoObject#higherRanks
+ * @name Highcharts.TimeTicksInfoObject#boundaryTicks
  * @type {Array<string>}
  *//**
  * @name Highcharts.TimeTicksInfoObject#totalRange

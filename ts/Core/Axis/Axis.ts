@@ -2413,8 +2413,8 @@ class Axis {
 
             const info = tickPositions.info;
 
-            // Higher ranks only. If we deal with the first tick on the
-            // whole chart, delete the higher rank from the second tick as there
+            // Boundary ticks only. If we deal with the first tick on the
+            // whole chart, delete the boundary from the second tick as there
             // is no hidden tick before the first visible one.
             if (
                 !this.options.isInternal &&
@@ -2422,7 +2422,7 @@ class Axis {
                 this.min === this.dataMin &&
                 this.min <= tickPositions[0]
             ) {
-                delete info.higherRanks[tickPositions[1]];
+                delete info.boundaryTicks[tickPositions[1]];
             }
 
             // Too dense ticks, keep only the first and last (#4477)

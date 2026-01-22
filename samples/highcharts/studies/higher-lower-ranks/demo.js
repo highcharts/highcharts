@@ -15,7 +15,7 @@ const chart1 = Highcharts.stockChart('container', {
     xAxis: {
         dateTimeLabelFormats: {
             day: {
-                higherRank: '%e. %b - %H:%M'
+                boundary: '%e. %b - %H:%M'
             }
         }
     }
@@ -34,7 +34,7 @@ const chart2 = Highcharts.stockChart('container1', {
     xAxis: {
         dateTimeLabelFormats: {
             month: {
-                higherRank: '%Y',
+                boundary: '%Y',
                 main: '%b'
             }
         }
