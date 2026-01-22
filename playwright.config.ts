@@ -1,4 +1,28 @@
 import { defineConfig, devices } from '@playwright/test';
+import { platform } from 'node:os';
+
+const isWindows = platform() === 'win32';
+
+/**
+ * GPU-related Chrome flags for WebGL/Boost tests.
+ * Windows requires D3D11 ANGLE backend, while Linux/macOS use OpenGL.
+ */
+const gpuArgs = isWindows
+    ? [
+        '--enable-gpu',
+        '--ignore-gpu-blocklist',
+        '--use-angle=d3d11',
+        '--enable-features=Vulkan',
+        '--disable-vulkan-fallback-to-gl-for-testing'
+    ]
+    : [
+        '--enable-gpu',
+        '--ignore-gpu-blocklist',
+        '--enable-zero-copy',
+        '--use-angle=gl',
+        '--use-gl=angle',
+        '--disable-software-rasterizer'
+    ];
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -45,14 +69,7 @@ export default defineConfig({
                 ...devices['Desktop Chrome'],
                 headless: true,
                 launchOptions: {
-                    args: [
-                        '--enable-gpu',
-                        '--ignore-gpu-blocklist',
-                        '--enable-zero-copy',
-                        '--use-angle=gl',
-                        '--use-gl=angle',
-                        '--disable-software-rasterizer'
-                    ]
+                    args: gpuArgs
                 }
             },
             dependencies: ['setup-highcharts'],
@@ -64,14 +81,7 @@ export default defineConfig({
                 ...devices['Desktop Chrome'],
                 headless: true,
                 launchOptions: {
-                    args: [
-                        '--enable-gpu',
-                        '--ignore-gpu-blocklist',
-                        '--enable-zero-copy',
-                        '--use-angle=gl',
-                        '--use-gl=angle',
-                        '--disable-software-rasterizer'
-                    ]
+                    args: gpuArgs
                 }
             },
             dependencies: [
