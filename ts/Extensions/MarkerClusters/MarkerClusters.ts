@@ -65,6 +65,7 @@ const {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/PointBase' {
     interface PointBase {
         isCluster?: boolean;
@@ -73,6 +74,7 @@ declare module '../../Core/Series/PointBase' {
     }
 }
 
+/** @internal */
 declare module '../../Core/Series/SeriesBase' {
     interface SeriesBase {
         markerClusterInfo?: MarkerClusterInfoObject;

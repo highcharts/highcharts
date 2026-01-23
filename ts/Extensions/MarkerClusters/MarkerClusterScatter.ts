@@ -285,9 +285,7 @@ const markerClusterAlgorithms: Record<string, MarkerClusterAlgorithmFunction> = 
             clusterMarkerOptions = (series.options.cluster || {}).marker;
 
         let distance,
-            group: (Record<string, MarkerClusterSplitDataArray>) = {},
-            offset,
-            radius;
+            group: (Record<string, MarkerClusterSplitDataArray>) = {};
 
         if (!series.markerClusterInfo || (
             series.initMaxX && series.initMaxX < extremes.maxX ||
@@ -329,15 +327,14 @@ const markerClusterAlgorithms: Record<string, MarkerClusterAlgorithmFunction> = 
                         Math.pow(dataPointPx.y - clusterPx.y, 2)
                     );
 
-                    if (cluster.clusterZone?.marker?.radius) {
-                        radius = cluster.clusterZone.marker.radius;
-                    } else if (clusterMarkerOptions?.radius) {
-                        radius = clusterMarkerOptions.radius;
-                    } else {
-                        radius = clusterDefaults.marker.radius;
-                    }
+                    const radius = (
+                        cluster.clusterZone?.marker?.radius ??
+                        clusterMarkerOptions?.radius ??
+                        clusterDefaults.marker.radius ??
+                        0
+                    );
 
-                    offset = pointMaxDistance - radius >= 0 ?
+                    const offset = pointMaxDistance - radius >= 0 ?
                         pointMaxDistance - radius : radius;
 
                     if (
@@ -1217,10 +1214,10 @@ function seriesGetClusteredData(
                         options.layoutAlgorithm
                     ),
                     defaultRadius: marker.radius || 3 + (marker.lineWidth || 0),
-                    clusterRadius: (zoneOptions && zoneOptions.radius) ?
-                        zoneOptions.radius :
-                        (options.marker || {}).radius ||
-                            clusterDefaults.marker.radius
+                    clusterRadius: zoneOptions?.radius ??
+                        options.marker?.radius ??
+                        clusterDefaults.marker.radius ??
+                        0
                 });
             } else {
                 clusterPos = {
@@ -1676,7 +1673,7 @@ function seriesPreventClusterCollisions(
                         } else if (clusterMarkerOptions?.radius) {
                             radius = clusterMarkerOptions.radius;
                         } else {
-                            radius = clusterDefaults.marker.radius;
+                            radius = clusterDefaults.marker.radius ?? 0;
                         }
                     }
                 }
