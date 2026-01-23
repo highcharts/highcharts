@@ -93,6 +93,14 @@ export default class ContourSeries extends ScatterSeries {
 
     private buffers?: Record<string, GPUBuffer>;
 
+    private contourTriangles?: Uint32Array;
+
+    private contourVertices?: Float32Array;
+
+    private lineVerticesCount = 0;
+
+    private lineVertexBufferSize = 0;
+
     /* Uniforms:
      * - extremesUniform,
      * - valueExtremesUniform,
@@ -137,6 +145,132 @@ export default class ContourSeries extends ScatterSeries {
         }
 
         return [new Delaunay(points2d).triangles, points3d];
+    }
+
+    /**
+     * Build line segments for contour lines from the triangulation.
+     */
+    private getContourLineVertices(
+        triangles: Uint32Array,
+        vertices: Float32Array
+    ): Float32Array {
+        const interval = this.getContourInterval();
+        if (interval <= 0) {
+            return new Float32Array(0);
+        }
+
+        const offset = this.getContourOffset(),
+            eps = Math.max(interval * 1e-6, 1e-9),
+            lineVertices: number[] = [];
+
+        const processLevel = (
+            level: number,
+            x0: number,
+            y0: number,
+            v0: number,
+            x1: number,
+            y1: number,
+            v1: number,
+            x2: number,
+            y2: number,
+            v2: number
+        ): void => {
+            let count = 0;
+            let ix1 = 0;
+            let iy1 = 0;
+            let ix2 = 0;
+            let iy2 = 0;
+
+            const addPoint = (x: number, y: number): void => {
+                if (count === 0) {
+                    ix1 = x;
+                    iy1 = y;
+                    count = 1;
+                    return;
+                }
+                if (
+                    count === 1 &&
+                    (Math.abs(x - ix1) > eps || Math.abs(y - iy1) > eps)
+                ) {
+                    ix2 = x;
+                    iy2 = y;
+                    count = 2;
+                }
+            };
+
+            const addEdge = (
+                xa: number,
+                ya: number,
+                va: number,
+                xb: number,
+                yb: number,
+                vb: number
+            ): void => {
+                const da = va - level,
+                    db = vb - level;
+
+                if (Math.abs(da) <= eps && Math.abs(db) <= eps) {
+                    return;
+                }
+                if (Math.abs(da) <= eps && Math.abs(db) > eps) {
+                    addPoint(xa, ya);
+                    return;
+                }
+                if (Math.abs(db) <= eps && Math.abs(da) > eps) {
+                    addPoint(xb, yb);
+                    return;
+                }
+                if ((da > eps && db < -eps) || (da < -eps && db > eps)) {
+                    const t = da / (da - db),
+                        x = xa + t * (xb - xa),
+                        y = ya + t * (yb - ya);
+                    addPoint(x, y);
+                }
+            };
+
+            addEdge(x0, y0, v0, x1, y1, v1);
+            addEdge(x1, y1, v1, x2, y2, v2);
+            addEdge(x2, y2, v2, x0, y0, v0);
+
+            if (count === 2) {
+                lineVertices.push(ix1, iy1, ix2, iy2);
+            }
+        };
+
+        for (let i = 0; i < triangles.length; i += 3) {
+            const i0 = triangles[i],
+                i1 = triangles[i + 1],
+                i2 = triangles[i + 2];
+
+            const v0 = vertices[i0 * 3 + 2],
+                v1 = vertices[i1 * 3 + 2],
+                v2 = vertices[i2 * 3 + 2];
+
+            const minVal = Math.min(v0, v1, v2),
+                maxVal = Math.max(v0, v1, v2);
+
+            let level = Math.ceil((minVal - offset) / interval) *
+                interval + offset;
+            const levelEnd = Math.floor((maxVal - offset) / interval) *
+                interval + offset;
+
+            if (level > levelEnd) {
+                continue;
+            }
+
+            const x0 = vertices[i0 * 3],
+                y0 = vertices[i0 * 3 + 1],
+                x1 = vertices[i1 * 3],
+                y1 = vertices[i1 * 3 + 1],
+                x2 = vertices[i2 * 3],
+                y2 = vertices[i2 * 3 + 1];
+
+            for (; level <= levelEnd + eps; level += interval) {
+                processLevel(level, x0, y0, v0, x1, y1, v1, x2, y2, v2);
+            }
+        }
+
+        return new Float32Array(lineVertices);
     }
 
     public render(): void {
@@ -242,7 +376,7 @@ export default class ContourSeries extends ScatterSeries {
         if (this.renderFrame) {
             this.renderFrame();
         } else {
-            this.run();
+            void this.run();
         }
     }
 
@@ -278,6 +412,14 @@ export default class ContourSeries extends ScatterSeries {
                 });
 
                 const [indices, vertices] = this.getContourData();
+                this.contourTriangles = indices;
+                this.contourVertices = vertices;
+                const lineVertices = this.getContourLineVertices(
+                    indices,
+                    vertices
+                );
+                this.lineVerticesCount = lineVertices.length / 2;
+                this.lineVertexBufferSize = 0;
 
                 // WebGPU Buffers grouped under a single object
                 const buffers = this.buffers = {
@@ -340,8 +482,17 @@ export default class ContourSeries extends ScatterSeries {
                     isInvertedUniform: device.createBuffer({
                         size: 4,
                         usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
+                    }),
+
+                    lineVertex: device.createBuffer({
+                        size: Math.max(lineVertices.byteLength, 4),
+                        usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST
                     })
                 };
+                this.lineVertexBufferSize = Math.max(
+                    lineVertices.byteLength,
+                    4
+                );
 
                 const {
                     vertex: vertexBuffer,
@@ -368,6 +519,13 @@ export default class ContourSeries extends ScatterSeries {
                     0,
                     indices as GPUAllowSharedBufferSource
                 );
+                if (buffers.lineVertex && lineVertices.byteLength > 0) {
+                    device.queue.writeBuffer(
+                        buffers.lineVertex,
+                        0,
+                        lineVertices as GPUAllowSharedBufferSource
+                    );
+                }
 
                 const vertexBufferLayout: GPUVertexBufferLayout = {
                     arrayStride: 12,
@@ -398,6 +556,34 @@ export default class ContourSeries extends ScatterSeries {
                     },
                     primitive: {
                         topology: 'triangle-list'
+                    }
+                });
+
+                const lineVertexBufferLayout: GPUVertexBufferLayout = {
+                    arrayStride: 8,
+                    attributes: [{
+                        format: 'float32x2',
+                        offset: 0,
+                        shaderLocation: 0
+                    }] as GPUVertexAttribute[]
+                };
+
+                const linePipeline = device.createRenderPipeline({
+                    layout: 'auto',
+                    vertex: {
+                        module: shaderModule,
+                        entryPoint: 'lineVertexMain',
+                        buffers: [lineVertexBufferLayout]
+                    },
+                    fragment: {
+                        module: shaderModule,
+                        entryPoint: 'lineFragmentMain',
+                        targets: [{
+                            format: canvasFormat
+                        }]
+                    },
+                    primitive: {
+                        topology: 'line-list'
                     }
                 });
 
@@ -466,6 +652,29 @@ export default class ContourSeries extends ScatterSeries {
                     }]
                 });
 
+                const lineBindGroup = device.createBindGroup({
+                    layout: linePipeline.getBindGroupLayout(0),
+                    entries: [{
+                        binding: 0,
+                        resource: {
+                            buffer: extremesUniformBuffer,
+                            label: 'extremesUniformBuffer'
+                        }
+                    }, {
+                        binding: 8,
+                        resource: {
+                            buffer: contourLineColorBuffer,
+                            label: 'contourLineColorBuffer'
+                        }
+                    }, {
+                        binding: 9,
+                        resource: {
+                            buffer: isInvertedUniformBuffer,
+                            label: 'isInvertedUniformBuffer'
+                        }
+                    }]
+                });
+
                 this.renderFrame = function (): void {
                     // Set all uniforms before each frame
                     this.setUniforms(false);
@@ -481,11 +690,25 @@ export default class ContourSeries extends ScatterSeries {
                             storeOp: 'store' as GPUStoreOp
                         }]
                     });
-                    pass.setPipeline(pipeline);
-                    pass.setVertexBuffer(0, vertexBuffer);
-                    pass.setIndexBuffer(indexBuffer, 'uint32');
-                    pass.setBindGroup(0, bindGroup);
-                    pass.drawIndexed(indices.length);
+                    const buffers = this.buffers;
+                    if (buffers) {
+                        pass.setPipeline(pipeline);
+                        pass.setVertexBuffer(0, buffers.vertex);
+                        pass.setIndexBuffer(buffers.index, 'uint32');
+                        pass.setBindGroup(0, bindGroup);
+                        pass.drawIndexed(indices.length);
+
+                        if (
+                            this.getShowContourLines() > 0 &&
+                            this.lineVerticesCount > 0 &&
+                            buffers.lineVertex
+                        ) {
+                            pass.setPipeline(linePipeline);
+                            pass.setVertexBuffer(0, buffers.lineVertex);
+                            pass.setBindGroup(0, lineBindGroup);
+                            pass.draw(this.lineVerticesCount);
+                        }
+                    }
                     pass.end();
 
                     device.queue.submit([encoder.finish()]);
@@ -493,6 +716,53 @@ export default class ContourSeries extends ScatterSeries {
 
                 this.renderFrame();
             }
+        }
+    }
+
+    /**
+     * Update the line vertex buffer after contour changes.
+     */
+    private updateLineVertices(renderFrame = true): void {
+        if (!this.device || !this.buffers) {
+            return;
+        }
+        if (!this.contourTriangles || !this.contourVertices) {
+            return;
+        }
+
+        const lineVertices = this.getContourLineVertices(
+            this.contourTriangles,
+            this.contourVertices
+        );
+        this.lineVerticesCount = lineVertices.length / 2;
+
+        if (lineVertices.byteLength === 0) {
+            if (renderFrame) {
+                this.renderFrame?.();
+            }
+            return;
+        }
+
+        if (
+            !this.buffers.lineVertex ||
+            this.lineVertexBufferSize < lineVertices.byteLength
+        ) {
+            this.buffers.lineVertex = this.device.createBuffer({
+                size: lineVertices.byteLength,
+                usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST
+            });
+            this.lineVertexBufferSize = lineVertices.byteLength;
+        }
+
+        this.device.queue.writeBuffer(
+            this.buffers.lineVertex,
+            0,
+            lineVertices as GPUAllowSharedBufferSource
+        );
+        this.setShowContourLinesUniform(false);
+
+        if (renderFrame) {
+            this.renderFrame?.();
         }
     }
 
@@ -543,6 +813,7 @@ export default class ContourSeries extends ScatterSeries {
                 0,
                 new Float32Array([this.getContourInterval()])
             );
+            this.updateLineVertices(false);
             if (renderFrame) {
                 this.renderFrame?.();
             }
@@ -559,6 +830,7 @@ export default class ContourSeries extends ScatterSeries {
                 0,
                 new Float32Array([this.getContourOffset()])
             );
+            this.updateLineVertices(false);
             if (renderFrame) {
                 this.renderFrame?.();
             }
@@ -586,10 +858,14 @@ export default class ContourSeries extends ScatterSeries {
      */
     public setShowContourLinesUniform(renderFrame = true): void {
         if (this.device && this.buffers?.showContourLinesUniform) {
+            const showLines = this.getShowContourLines(),
+                useLinePipeline = this.lineVerticesCount > 0,
+                interval = this.getContourInterval(),
+                lineValue = (useLinePipeline || interval <= 0) ? 0 : showLines;
             this.device.queue.writeBuffer(
                 this.buffers.showContourLinesUniform,
                 0,
-                new Float32Array([this.getShowContourLines()])
+                new Float32Array([lineValue])
             );
             if (renderFrame) {
                 this.renderFrame?.();
@@ -843,6 +1119,9 @@ export default class ContourSeries extends ScatterSeries {
     }
 }
 
+/**
+ * Symbol helper for the contour marker.
+ */
 function cross(
     x: number,
     y: number,

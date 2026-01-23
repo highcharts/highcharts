@@ -29,6 +29,14 @@ struct VertexOutput {
     @location(1) valExtremes: vec2f,
 }
 
+struct LineVertexInput {
+    @location(0) pos: vec2f
+}
+
+struct LineVertexOutput {
+    @builtin(position) pos: vec4f
+}
+
 @group(0) @binding(0) var<uniform> uExtremes: vec4f;
 @group(0) @binding(1) var<uniform> uValueExtremes: vec2f;
 @group(0) @binding(9) var<uniform> uIsInverted: u32;
@@ -57,6 +65,30 @@ fn vertexMain(input: VertexInput) -> VertexOutput {
     output.originalPos = pos.xyz;
     output.pos = vec4f(posX, posY, 0, 1);
 
+    return output;
+}
+
+@vertex
+fn lineVertexMain(input: LineVertexInput) -> LineVertexOutput {
+    var output: LineVertexOutput;
+    let pos = vec3f(input.pos.x, input.pos.y, 0.0);
+
+    let xMin = uExtremes[0];
+    let xMax = uExtremes[1];
+    let yMin = uExtremes[2];
+    let yMax = uExtremes[3];
+
+    var posX: f32;
+    var posY: f32;
+    if (uIsInverted > 0u) {
+        posX = (1.0 - (pos.y - yMin) / (yMax - yMin)) * 2.0 - 1.0;
+        posY = (1.0 - (pos.x - xMin) / (xMax - xMin)) * 2.0 - 1.0;
+    } else {
+        posX = (pos.x - xMin) / (xMax - xMin) * 2.0 - 1.0;
+        posY = (pos.y - yMin) / (yMax - yMin) * 2.0 - 1.0;
+    }
+
+    output.pos = vec4f(posX, posY, 0, 1);
     return output;
 }
 
@@ -100,25 +132,27 @@ fn fragmentMain(input: FragmentInput) -> @location(0) vec4f {
 
     // Contour lines
     let lineWidth: f32 = 1.0;
+    var lineMask: f32 = 1.0;
+    if (uShowContourLines > 0u && uContourInterval > 0.0) {
+        let val_dx: f32 = dpdx(val);
+        let val_dy: f32 = dpdy(val);
+        let gradient: f32 = length(vec2f(val_dx, val_dy));
 
-    let val_dx: f32 = dpdx(val);
-    let val_dy: f32 = dpdy(val);
-    let gradient: f32 = length(vec2f(val_dx, val_dy));
+        let epsilon: f32 = 0.0001;
+        let adjustedLineWidth: f32 = lineWidth * gradient + epsilon;
 
-    let epsilon: f32 = 0.0001;
-    let adjustedLineWidth: f32 = lineWidth * gradient + epsilon;
+        let adjustedVal: f32 = val - uContourOffset;
+        let valDiv: f32 = adjustedVal / uContourInterval;
+        let valMod: f32 = adjustedVal - uContourInterval * floor(valDiv);
 
-    let adjustedVal: f32 = val - uContourOffset;
-    let valDiv: f32 = adjustedVal / uContourInterval;
-    let valMod: f32 = adjustedVal - uContourInterval * floor(valDiv);
-
-    let lineMask: f32 = smoothstep(0.0, adjustedLineWidth, valMod) * (
-        1.0 - smoothstep(
-            uContourInterval - adjustedLineWidth,
-            uContourInterval,
-            valMod
-        )
-    );
+        lineMask = smoothstep(0.0, adjustedLineWidth, valMod) * (
+            1.0 - smoothstep(
+                uContourInterval - adjustedLineWidth,
+                uContourInterval,
+                valMod
+            )
+        );
+    }
 
     // Background color
     let minHeight: f32 = input.valExtremes.x;
@@ -146,6 +180,11 @@ fn fragmentMain(input: FragmentInput) -> @location(0) vec4f {
     }
 
     return vec4(pixelColor, 1.0);
+}
+
+@fragment
+fn lineFragmentMain() -> @location(0) vec4f {
+    return vec4(uContourLineColor, 1.0);
 }
 
 `;
