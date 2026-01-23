@@ -605,6 +605,12 @@ namespace AxisDefaults {
                  * @apioption xAxis.dateTimeLabelFormats.hour.main
                  */
                 main: '%[HM]',
+                /**
+                 * @type {string|Highcharts.DateTimeFormatOptions}
+                 * @default undefined
+                 * @apioption xAxis.dateTimeLabelFormats.hour.boundary
+                 */
+                boundary: void 0,
                 range: false
             },
             /**
