@@ -180,7 +180,11 @@ class GridComponent extends Component {
 
     public override onTableChanged(): void {
         const { grid } = this;
-        if (!grid) {
+        if (
+            !grid?.dataProvider ||
+            !('getDataTable' in grid.dataProvider) ||
+            !this.connectorHandlers?.length
+        ) {
             return;
         }
 
@@ -207,7 +211,12 @@ class GridComponent extends Component {
                 if (enabledColumns?.[index] !== newColumn) {
                     // If the visible columns have changed,
                     // update the whole grid.
-                    void grid.update({ dataTable });
+                    void grid.update({
+                        data: {
+                            providerType: 'local',
+                            dataTable
+                        }
+                    });
                     return;
                 }
 
@@ -215,8 +224,15 @@ class GridComponent extends Component {
             }
         }
 
-        // TODO: Decide what to do with this when data provider is used instead.
-        // grid.dataTable = dataTable;
+        if (grid.dataProvider.getDataTable() !== dataTable) {
+            void grid.update({
+                data: {
+                    providerType: 'local',
+                    dataTable
+                }
+            });
+            return;
+        }
 
         // Data has changed and the whole grid is not re-rendered, so mark in
         // the querying that data table was modified.

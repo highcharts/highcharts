@@ -24,6 +24,7 @@
 
 import type TableRow from './Body/TableRow';
 import type DataTable from '../../../Data/DataTable';
+import type { RowId } from '../Data/DataProvider';
 
 import GridUtils from '../GridUtils.js';
 import Utils from '../../../Core/Utilities.js';
@@ -709,10 +710,7 @@ class Table {
      * @param id
      * The ID of the row.
      */
-    public getRow(id: number): TableRow | undefined {
-        // TODO(optim): Change `find` to a method using `getLocalRowIndex`
-        // and rows[presentationRowIndex - firstRowIndex]. Needs more testing,
-        // but it should be faster.
+    public getRow(id: RowId): TableRow | undefined {
         return this.rows.find((row): boolean => row.id === id);
     }
 }
