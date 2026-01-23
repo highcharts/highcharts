@@ -148,7 +148,7 @@ class GridComponent extends Component {
         if (!this.grid) {
             this.grid = this.constructGrid();
         } else {
-            this.grid.renderViewport();
+            void this.grid.renderViewport();
         }
 
         this.grid.initialContainerHeight =
@@ -187,13 +187,13 @@ class GridComponent extends Component {
         // Check if the grid is of the legacy version (not using the data
         // provider).
         if (!('dataProvider' in grid)) {
-            this.onTableChangedLegacy();
             // eslint-disable-next-line no-console
             console.warn(
                 'GridComponent: Legacy Grid detected. Using legacy handler ' +
                 'for table changes. Consider upgrading the Highcharts Grid ' +
                 'Library to the latest version.'
             );
+            this.onTableChangedLegacy();
             return;
         }
 
@@ -207,7 +207,10 @@ class GridComponent extends Component {
 
         const dataTable = this.getDataTable()?.getModified();
         if (!dataTable) {
-            void grid.update({ dataTable: void 0 });
+            void grid.update({
+                dataTable: void 0,
+                data: void 0
+            });
             return;
         }
 
@@ -291,7 +294,7 @@ class GridComponent extends Component {
                 if (enabledColumns?.[index] !== newColumn) {
                     // If the visible columns have changed,
                     // update the whole grid.
-                    grid.update({ dataTable });
+                    void grid.update({ dataTable });
                     return;
                 }
 
