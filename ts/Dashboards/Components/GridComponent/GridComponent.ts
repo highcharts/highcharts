@@ -180,6 +180,23 @@ class GridComponent extends Component {
 
     public override onTableChanged(): void {
         const { grid } = this;
+        if (!grid) {
+            return;
+        }
+
+        // Check if the grid is of the legacy version (not using the data
+        // provider).
+        if (!('dataProvider' in grid)) {
+            this.onTableChangedLegacy();
+            // eslint-disable-next-line no-console
+            console.warn(
+                'GridComponent: Legacy Grid detected. Using legacy handler ' +
+                'for table changes. Consider upgrading the Highcharts Grid ' +
+                'Library to the latest version.'
+            );
+            return;
+        }
+
         if (
             !grid?.dataProvider ||
             !('getDataTable' in grid.dataProvider) ||
@@ -233,6 +250,57 @@ class GridComponent extends Component {
             });
             return;
         }
+
+        // Data has changed and the whole grid is not re-rendered, so mark in
+        // the querying that data table was modified.
+        grid.querying.shouldBeUpdated = true;
+
+        // If the column names have not changed, just update the rows.
+        void grid.viewport?.updateRows();
+    }
+
+    /**
+     * Legacy handler for table changes.
+     */
+    private onTableChangedLegacy(): void {
+        const { grid } = this;
+        if (!grid) {
+            return;
+        }
+
+        const dataTable = this.getDataTable()?.getModified();
+        if (!dataTable) {
+            void grid.update({ dataTable: void 0 });
+            return;
+        }
+
+        if (!grid.options?.header) {
+            // If the header is not defined, we need to check if the column
+            // names have changed, so we can update the whole grid. If they
+            // have not changed, we can just update the rows (more efficient).
+
+            const newColumnIds = dataTable.getColumnIds();
+            const { columnOptionsMap, enabledColumns } = grid;
+
+            let index = 0;
+            for (const newColumn of newColumnIds) {
+                if (columnOptionsMap[newColumn]?.options?.enabled === false) {
+                    continue;
+                }
+
+                if (enabledColumns?.[index] !== newColumn) {
+                    // If the visible columns have changed,
+                    // update the whole grid.
+                    grid.update({ dataTable });
+                    return;
+                }
+
+                index++;
+            }
+        }
+
+        // Workaround for legacy Grid component.
+        (grid as { dataTable: typeof dataTable }).dataTable = dataTable;
 
         // Data has changed and the whole grid is not re-rendered, so mark in
         // the querying that data table was modified.
