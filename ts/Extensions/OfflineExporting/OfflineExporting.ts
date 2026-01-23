@@ -88,13 +88,13 @@ declare module '../../Core/GlobalsBase' {
          * object:
          *
          * - **filename:** Name of resulting downloaded file without extension.
-         * Default is `chart`.         *
+         * Default is `chart`.
          * - **type:** File type of resulting download. Default is `image/png`.
          * - **scale:** Scaling factor of downloaded image compared to source.
-         * Default is `1`.
-         * - **libURL:** URL pointing to location of dependency scripts to download
-         * on demand. Default is the exporting.libURL option of the global
-         * Highcharts options pointing to our server.
+         * Default is `2`.
+         * - **libURL:** URL pointing to location of dependency scripts to
+         * download on demand. Default is the `exporting.libURL` option of the
+         * global Highcharts options pointing to our server.
          *
          * @deprecated 11.4.4
          *
