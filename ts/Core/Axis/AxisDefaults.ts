@@ -496,12 +496,12 @@ namespace AxisDefaults {
         /**
          * For a datetime axis, the scale will automatically adjust to the
          * appropriate unit. This member gives the default representations used
-         * for each unit. For boundary values, different units may be used,
-         * for example the `day` unit can be used on midnight, and `year` unit
-         * can be used on January 1st on the same axis.
+         * for each unit. For boundary values, time units from one level higher
+         * unit can be used, for example the `day` unit can be used on midnight,
+         * and the `week` unit can be used on the first day of the week.
          *
-         * For easier data interpretation, `day`, `month` and `year` units can
-         * be used and formatted as boundary tick values.
+         * For easier data interpretation, `hour`, `day`, `week`, `month` and
+         * `year` units can be used and formatted as boundary tick values.
          *
          * For an overview of the date time label formats configuration, see
          * [dateFormat](/class-reference/Highcharts.Time#dateFormat).
@@ -512,9 +512,9 @@ namespace AxisDefaults {
          *     millisecond: { main: '%[HMSL]' },
          *     second: { main: '%[HMS]' },
          *     minute: { main: '%[HM]' },
-         *     hour: { main: '%[HM]' },
+         *     hour: { main: '%[HM]', boundary: undefined },
          *     day: { main: '%[eb]', boundary: '%[eb]' },
-         *     week: { main: '%[eb]' },
+         *     week: { main: '%[eb]', boundary: 'undefined },
          *     month: { main: '%[bY]', boundary: undefined },
          *     year: { main: '%Y', boundary: undefined }
          * }
@@ -647,7 +647,13 @@ namespace AxisDefaults {
                  * @default '%[eb]'
                  * @apioption xAxis.dateTimeLabelFormats.week.main
                  */
-                main: '%[eb]'
+                main: '%[eb]',
+                /**
+                 * @type {string|Highcharts.DateTimeFormatOptions}
+                 * @default undefined
+                 * @apioption xAxis.dateTimeLabelFormats.week.boundary
+                 */
+                boundary: void 0
             },
             /**
              * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject

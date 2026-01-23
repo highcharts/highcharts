@@ -58,6 +58,15 @@ class Time extends TimeBase {
         // (#950, #1649, #1760, #3349). Use a reasonable dropout threshold
         // to prevent looping over dense data grouping (#6156).
         if (tickPositions.length < 10000) {
+            // Minute range, can be configured with:
+            // 'minute.main' and 'hour.boundary'
+            if (unitRange <= timeUnits.minute && unitRange > timeUnits.second) {
+                tickPositions.forEach((t: number): void => {
+                    if (this.dateFormat('%M', t) === '00') {
+                        boundaryTicks[t] = 'hour';
+                    }
+                });
+            }
             // Hourly range, con be configured with:
             // 'hour.main' and 'day.boundary'
             if (unitRange <= timeUnits.hour) {
@@ -74,9 +83,19 @@ class Time extends TimeBase {
                 });
             }
 
-            // Daily and weekly range, can be configured with:
-            // 'day.main', 'week.main' and 'month.boundary'
-            if (unitRange >= timeUnits.day && unitRange <= timeUnits.week) {
+            // Daily range, can be configured with:
+            // 'day.main', and 'week.boundary'
+            if (unitRange <= timeUnits.day && unitRange > timeUnits.hour) {
+                tickPositions.forEach((t: number): void => {
+                    if (this.dateFormat('%d', t) === '01') {
+                        boundaryTicks[t] = 'week';
+                    }
+                });
+            }
+
+            // Weekly range, can be configured with:
+            // 'week.main' and 'month.boundary'
+            if (unitRange <= timeUnits.week && unitRange > timeUnits.day) {
                 tickPositions.forEach((t: number): void => {
                     if (this.dateFormat('%d', t) === '01') {
                         boundaryTicks[t] = 'month';
