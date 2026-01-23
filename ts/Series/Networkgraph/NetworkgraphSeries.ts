@@ -56,14 +56,11 @@ const {
 
 import U from '../../Core/Utilities.js';
 const {
-    addEvent,
-    defined,
-    extend,
-    merge,
-    pick
+    addEvent
 } = U;
 
 import TextPath from '../../Extensions/TextPath.js';
+import { defined, extend, merge, pick } from '../../Shared/Utilities.js';
 TextPath.compose(SVGElement);
 
 /* *

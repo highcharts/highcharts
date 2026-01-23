@@ -49,11 +49,9 @@ import GUIElement from '../Layout/GUIElement.js';
 import Globals from '../Globals.js';
 import Layout from '../Layout/Layout.js';
 import U from '../../Core/Utilities.js';
+import { createElement, css, merge } from '../../Shared/Utilities.js';
 const {
-    addEvent,
-    createElement,
-    css,
-    merge
+    addEvent
 } = U;
 
 /* *

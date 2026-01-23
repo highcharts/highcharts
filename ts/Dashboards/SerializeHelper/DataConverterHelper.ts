@@ -20,14 +20,13 @@
  * */
 
 import type { JSONObject } from '../JSON';
+import type { Helper as SerializableHelper, JSON as SerializableJSON } from '../Serializable';
 
 import DataConverter, {
     type Options as DataConverterOptions
 } from '../../Data/Converters/DataConverter.js';
 import Serializable from '../Serializable.js';
-import type { Helper as SerializableHelper, JSON as SerializableJSON } from '../Serializable';
-import U from '../../Core/Utilities.js';
-const { merge } = U;
+import { merge } from '../../Shared/Utilities.js';
 
 /* *
  *

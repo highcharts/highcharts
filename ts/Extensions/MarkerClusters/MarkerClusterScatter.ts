@@ -52,18 +52,10 @@ import DataTableCore from '../../Data/DataTableCore.js';
 import MarkerClusterDefaults from './MarkerClusterDefaults.js';
 const { cluster: clusterDefaults } = MarkerClusterDefaults;
 import U from '../../Core/Utilities.js';
+import { defined, objectEach, isArray, isNumber, isObject, merge, syncTimeout, relativeLength, isFunction } from '../../Shared/Utilities.js';
 const {
     addEvent,
-    defined,
-    error,
-    isArray,
-    isFunction,
-    isObject,
-    isNumber,
-    merge,
-    objectEach,
-    relativeLength,
-    syncTimeout
+    error
 } = U;
 
 /* *

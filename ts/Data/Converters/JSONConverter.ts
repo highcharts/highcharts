@@ -33,11 +33,9 @@ import type {
     ColumnCollection as DataTableColumnCollection
 } from '../DataTable.js';
 import U from '../../Core/Utilities.js';
+import { isArray, merge, objectEach } from '../../Shared/Utilities.js';
 const {
-    error,
-    isArray,
-    merge,
-    objectEach
+    error
 } = U;
 
 /* *

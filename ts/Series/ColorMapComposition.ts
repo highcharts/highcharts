@@ -29,9 +29,9 @@ const {
 } = SeriesRegistry.seriesTypes;
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import U from '../Core/Utilities.js';
+import { defined } from '../Shared/Utilities.js';
 const {
-    addEvent,
-    defined
+    addEvent
 } = U;
 
 /* *

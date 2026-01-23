@@ -20,10 +20,9 @@
 import type Axis from './Axis';
 
 import U from '../Utilities.js';
+import { normalizeTickInterval, pick } from '../../Shared/Utilities.js';
 const {
-    addEvent,
-    normalizeTickInterval,
-    pick
+    addEvent
 } = U;
 
 /* *

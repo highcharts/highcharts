@@ -45,12 +45,10 @@ import Globals from './Globals.js';
 import Layout from './Layout/Layout.js';
 import HTMLComponent from './Components/HTMLComponent/HTMLComponent.js';
 import U from '../Core/Utilities.js';
+import { createElement, merge, objectEach } from '../Shared/Utilities.js';
 const {
-    merge,
     addEvent,
-    createElement,
     error,
-    objectEach,
     uniqueKey
 } = U;
 

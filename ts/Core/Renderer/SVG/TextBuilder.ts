@@ -33,13 +33,9 @@ const {
     win
 } = H;
 import U from '../../Utilities.js';
+import { attr, extend, isString, objectEach, pick } from '../../../Shared/Utilities.js';
 const {
-    attr,
-    extend,
-    fireEvent,
-    isString,
-    objectEach,
-    pick
+    fireEvent
 } = U;
 
 // Function used to test string length including an ellipsis

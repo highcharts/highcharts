@@ -27,9 +27,9 @@ import D from '../../Core/Defaults.js';
 const { setOptions } = D;
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
+import { createElement } from '../../Shared/Utilities.js';
 const {
-    addEvent,
-    createElement
+    addEvent
 } = U;
 
 /* *

@@ -33,8 +33,9 @@ import U from '../../../../../Core/Utilities.js';
 import GU from '../../../GridUtils.js';
 import Globals from '../../../Globals.js';
 import { conditionsMap } from './FilteringTypes.js';
+import { defined } from '../../../../../Shared/Utilities.js';
 
-const { defined, fireEvent } = U;
+const { fireEvent } = U;
 const { makeHTMLElement } = GU;
 
 /* *

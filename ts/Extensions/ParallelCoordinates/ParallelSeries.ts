@@ -29,15 +29,10 @@ const { composed } = H;
 import T from '../../Core/Templating.js';
 const { format } = T;
 import U from '../../Core/Utilities.js';
+import { defined, erase, extend, isArray, isNumber, pushUnique } from '../../Shared/Utilities.js';
 const {
     addEvent,
-    defined,
-    erase,
-    extend,
-    insertItem,
-    isArray,
-    isNumber,
-    pushUnique
+    insertItem
 } = U;
 
 /* *

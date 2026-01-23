@@ -26,10 +26,9 @@ import type Series from '../../Core/Series/Series';
 import H from '../../Core/Globals.js';
 const { isTouchDevice } = H;
 import U from '../../Core/Utilities.js';
+import { merge, pick, pushUnique } from '../../Shared/Utilities.js';
 const {
-    addEvent,
-    merge,
-    pick
+    addEvent
 } = U;
 
 /* *
@@ -89,7 +88,7 @@ function compose(
     NavigatorClass: typeof Navigator
 ): void {
 
-    if (U.pushUnique(composedMembers, ChartClass)) {
+    if (pushUnique(composedMembers, ChartClass)) {
         const chartProto = ChartClass.prototype;
         NavigatorConstructor = NavigatorClass;
 

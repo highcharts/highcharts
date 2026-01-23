@@ -11,11 +11,9 @@ import type Pointer from '../../Core/Pointer';
 import type Series from '../../Core/Series/Series';
 
 import U from '../../Core/Utilities.js';
+import { correctFloat, defined, pick } from '../../Shared/Utilities.js';
 const {
-    addEvent,
-    correctFloat,
-    defined,
-    pick
+    addEvent
 } = U;
 
 /* *

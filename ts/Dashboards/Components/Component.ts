@@ -60,15 +60,8 @@ const { classNamePrefix } = Globals;
 
 import U from '../../Core/Utilities.js';
 const {
-    createElement,
-    isArray,
-    merge,
     fireEvent,
     addEvent,
-    objectEach,
-    isFunction,
-    getStyle,
-    diffObjects,
     removeEvent
 } = U;
 
@@ -79,6 +72,7 @@ const {
 } = CU;
 
 import DU from '../Utilities.js';
+import { createElement, diffObjects, getStyle, isArray, isFunction, merge, objectEach } from '../../Shared/Utilities.js';
 const {
     deepClone,
     uniqueKey

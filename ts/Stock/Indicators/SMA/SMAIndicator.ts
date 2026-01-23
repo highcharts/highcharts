@@ -31,14 +31,11 @@ const {
     line: LineSeries
 } = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
+import { extend, isArray, merge, pick } from '../../../Shared/Utilities.js';
 const {
     addEvent,
     fireEvent,
-    error,
-    extend,
-    isArray,
-    merge,
-    pick
+    error
 } = U;
 
 /* *

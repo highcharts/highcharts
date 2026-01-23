@@ -26,11 +26,10 @@ import G from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
 import Axis from '../../Core/Axis/Axis.js';
 import standaloneNavigatorDefaults from './StandaloneNavigatorDefaults.js';
+import { merge, pick } from '../../Shared/Utilities.js';
 const {
-    merge,
     addEvent,
-    fireEvent,
-    pick
+    fireEvent
 } = U;
 
 declare module '../../Core/GlobalsBase' {

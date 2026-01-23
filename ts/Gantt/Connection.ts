@@ -32,11 +32,9 @@ import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
+import { defined, merge, objectEach } from '../Shared/Utilities.js';
 const {
-    defined,
-    error,
-    merge,
-    objectEach
+    error
 } = U;
 
 /* *

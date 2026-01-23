@@ -31,7 +31,8 @@ import type {
 
 import Component from '../../Component';
 import U from '../../../../Core/Utilities.js';
-const { addEvent, isString } = U;
+import { isString } from '../../../../Shared/Utilities.js';
+const { addEvent } = U;
 
 
 /* *

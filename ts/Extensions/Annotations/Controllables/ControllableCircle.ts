@@ -17,8 +17,7 @@ import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 
 import Controllable from './Controllable.js';
 import ControllablePath from './ControllablePath.js';
-import U from '../../../Core/Utilities.js';
-const { merge } = U;
+import { merge } from '../../../Shared/Utilities.js';
 
 /* *
  *

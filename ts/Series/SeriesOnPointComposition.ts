@@ -30,12 +30,9 @@ const { bubble } = SeriesRegistry.seriesTypes;
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import U from '../Core/Utilities.js';
+import { defined, find, isNumber, pushUnique } from '../Shared/Utilities.js';
 const {
-    addEvent,
-    defined,
-    find,
-    isNumber,
-    pushUnique
+    addEvent
 } = U;
 
 /* *

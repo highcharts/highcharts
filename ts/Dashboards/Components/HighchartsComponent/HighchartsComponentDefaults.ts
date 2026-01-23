@@ -25,8 +25,8 @@ import type Options from './HighchartsComponentOptions';
 
 import Component from '../Component.js';
 import U from '../../../Core/Utilities.js';
+import { merge } from '../../../Shared/Utilities.js';
 const {
-    merge,
     uniqueKey
 } = U;
 

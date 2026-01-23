@@ -39,11 +39,9 @@ const {
 } = Math3D;
 import Tick3D from './Tick3DComposition.js';
 import U from '../Utilities.js';
+import { merge, pick, wrap } from '../../Shared/Utilities.js';
 const {
-    addEvent,
-    merge,
-    pick,
-    wrap
+    addEvent
 } = U;
 
 /* *

@@ -49,9 +49,9 @@ const {
 } = STU;
 import U from '../../Core/Utilities.js';
 import FibonacciTimeZones from '../../Extensions/Annotations/Types/FibonacciTimeZones';
+import { merge } from '../../Shared/Utilities.js';
 const {
-    fireEvent,
-    merge
+    fireEvent
 } = U;
 
 /* *

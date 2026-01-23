@@ -25,8 +25,9 @@ import type Pagination from '../../Core/Pagination/Pagination';
 
 import Utilities from '../../../Core/Utilities.js';
 import Globals from '../../../Core/Globals.js';
+import { pushUnique } from '../../../Shared/Utilities.js';
 
-const { addEvent, pushUnique } = Utilities;
+const { addEvent } = Utilities;
 
 
 /* *

@@ -20,11 +20,10 @@ import type HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes';
 
 import Globals from '../Globals.js';
 import U from '../../Core/Utilities.js';
+import { createElement, objectEach } from '../../Shared/Utilities.js';
 const {
     addEvent,
-    createElement,
     uniqueKey,
-    objectEach,
     error
 } = U;
 

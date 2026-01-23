@@ -18,12 +18,7 @@
  *
  * */
 
-import U from '../Core/Utilities.js';
-const {
-    extend,
-    isNumber,
-    pick
-} = U;
+import { extend, isNumber, pick } from '../Shared/Utilities.js';
 
 /* *
  *

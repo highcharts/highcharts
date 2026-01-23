@@ -85,31 +85,12 @@ import SVGElement from '../Renderer/SVG/SVGElement.js';
 import T from '../Templating.js';
 const { format } = T;
 import U from '../Utilities.js';
+import { arrayMax, arrayMin, clamp, correctFloat, crisp, defined, destroyObjectProperties, diffObjects, erase, extend, find, getClosestDistance, getNestedProperty, internalClearTimeout, isArray, isNumber, isString, merge, objectEach, pick, syncTimeout } from '../../Shared/Utilities.js';
 const {
-    arrayMax,
-    arrayMin,
-    clamp,
-    correctFloat,
-    crisp,
-    defined,
-    destroyObjectProperties,
-    diffObjects,
-    erase,
     error,
-    extend,
-    find,
     fireEvent,
-    getClosestDistance,
-    getNestedProperty,
     insertItem,
-    isArray,
-    isNumber,
-    isString,
-    merge,
-    objectEach,
-    pick,
-    removeEvent,
-    syncTimeout
+    removeEvent
 } = U;
 
 /* *
@@ -3032,7 +3013,7 @@ class Series {
 
         // Clear the animation timeout if we are destroying the series
         // during initial animation
-        U.clearTimeout(series.animationTimeout as any);
+        internalClearTimeout(series.animationTimeout as any);
 
         // Destroy all SVGElements associated to the series
         objectEach(series, function (val: any, prop: string): void {

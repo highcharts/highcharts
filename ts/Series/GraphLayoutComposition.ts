@@ -28,9 +28,9 @@ const { setAnimation } = A;
 import H from '../Core/Globals.js';
 const { composed } = H;
 import U from '../Core/Utilities.js';
+import { pushUnique } from '../Shared/Utilities.js';
 const {
-    addEvent,
-    pushUnique
+    addEvent
 } = U;
 
 /* *

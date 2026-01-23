@@ -25,10 +25,10 @@ import type { AnyRecord } from '../../Shared/Types';
 import Serializable from '../Serializable.js';
 import type { JSON as SerializableJSON } from '../Serializable';
 import U from '../../Core/Utilities.js';
+import { merge } from '../../Shared/Utilities.js';
 const {
     addEvent,
-    fireEvent,
-    merge
+    fireEvent
 } = U;
 
 /* *

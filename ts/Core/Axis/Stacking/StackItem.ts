@@ -34,12 +34,9 @@ const { format } = T;
 import SeriesRegistry from '../../Series/SeriesRegistry.js';
 const { series: Series } = SeriesRegistry;
 import U from '../../Utilities.js';
+import { destroyObjectProperties, getAlignFactor, isNumber, pick } from '../../../Shared/Utilities.js';
 const {
-    destroyObjectProperties,
-    fireEvent,
-    getAlignFactor,
-    isNumber,
-    pick
+    fireEvent
 } = U;
 
 /* *

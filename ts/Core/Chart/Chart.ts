@@ -87,33 +87,12 @@ import U from '../Utilities.js';
 import AST from '../Renderer/HTML/AST.js';
 import { AxisCollectionKey } from '../Axis/AxisOptions';
 import Tick from '../Axis/Tick.js';
+import { attr, createElement, css, defined, diffObjects, discardElement, erase, extend, find, getAlignFactor, getStyle, internalClearTimeout, isArray, isNumber, isObject, isString, merge, objectEach, pick, pInt, relativeLength, splat, syncTimeout } from '../../Shared/Utilities.js';
 const {
     addEvent,
-    attr,
-    createElement,
-    css,
-    defined,
-    diffObjects,
-    discardElement,
-    erase,
     error,
-    extend,
-    find,
     fireEvent,
-    getAlignFactor,
-    getStyle,
-    isArray,
-    isNumber,
-    isObject,
-    isString,
-    merge,
-    objectEach,
-    pick,
-    pInt,
-    relativeLength,
     removeEvent,
-    splat,
-    syncTimeout,
     uniqueKey
 } = U;
 
@@ -2285,7 +2264,7 @@ class Chart {
                 containerBox.width !== oldBox.width ||
                 containerBox.height !== oldBox.height
             ) {
-                U.clearTimeout(chart.reflowTimeout);
+                internalClearTimeout(chart.reflowTimeout);
                 // When called from window.resize, e is set, else it's called
                 // directly (#2224)
                 chart.reflowTimeout = syncTimeout(function (): void {

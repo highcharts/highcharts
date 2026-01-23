@@ -60,23 +60,9 @@ import SVGLabel from './SVGLabel.js';
 import Symbols from './Symbols.js';
 import TextBuilder from './TextBuilder.js';
 import U from '../../Utilities.js';
+import { attr, createElement, crisp, css, defined, destroyObjectProperties, extend, isArray, isNumber, isObject, isString, merge, pick, pInt, replaceNested } from '../../../Shared/Utilities.js';
 const {
     addEvent,
-    attr,
-    createElement,
-    crisp,
-    css,
-    defined,
-    destroyObjectProperties,
-    extend,
-    isArray,
-    isNumber,
-    isObject,
-    isString,
-    merge,
-    pick,
-    pInt,
-    replaceNested,
     uniqueKey
 } = U;
 

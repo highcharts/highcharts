@@ -25,14 +25,13 @@ import GUIElement from '../Layout/GUIElement.js';
 import U from '../../Core/Utilities.js';
 
 const {
-    merge,
     addEvent,
-    createElement,
     fireEvent,
     removeEvent
 } = U;
 
 import EditMode from '../EditMode/EditMode';
+import { createElement, merge } from '../../Shared/Utilities.js';
 
 /**
  * Class providing a resizing functionality.

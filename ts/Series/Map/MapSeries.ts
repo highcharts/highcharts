@@ -58,19 +58,9 @@ const {
     scatter: ScatterSeries
 } = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
+import { defined, extend, find, getNestedProperty, isArray, isNumber, isObject, merge, objectEach, pick, splat } from '../../Shared/Utilities.js';
 const {
-    extend,
-    find,
-    fireEvent,
-    getNestedProperty,
-    isArray,
-    defined,
-    isNumber,
-    isObject,
-    merge,
-    objectEach,
-    pick,
-    splat
+    fireEvent
 } = U;
 
 /* *

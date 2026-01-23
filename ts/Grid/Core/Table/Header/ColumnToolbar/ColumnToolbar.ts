@@ -31,10 +31,9 @@ import ToolbarButton from '../../../UI/ToolbarButton.js';
 import SortToolbarButton from './ToolbarButtons/SortToolbarButton.js';
 import FilterToolbarButton from './ToolbarButtons/FilterToolbarButton.js';
 import MenuToolbarButton from './ToolbarButtons/MenuToolbarButton.js';
-import U from '../../../../../Core/Utilities.js';
+import { getStyle } from '../../../../../Shared/Utilities.js';
 
 const { makeHTMLElement } = GridUtils;
-const { getStyle } = U;
 
 
 /* *

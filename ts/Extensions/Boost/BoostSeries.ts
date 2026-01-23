@@ -52,19 +52,12 @@ const {
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
-    destroyObjectProperties,
     error,
-    extend,
-    fireEvent,
-    isArray,
-    isNumber,
-    pick,
-    pushUnique,
-    wrap,
-    defined
+    fireEvent
 } = U;
 import WGLRenderer from './WGLRenderer.js';
 import DataTableCore from '../../Data/DataTableCore.js';
+import { defined, destroyObjectProperties, extend, isArray, isNumber, pick, pushUnique, wrap } from '../../Shared/Utilities.js';
 
 /* *
  *

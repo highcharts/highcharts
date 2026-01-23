@@ -33,20 +33,12 @@ const {
 } = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
 const {
-    addEvent,
-    arrayMax,
-    arrayMin,
-    correctFloat,
-    crisp,
-    extend,
-    isNumber,
-    merge,
-    objectEach,
-    pick
+    addEvent
 } = U;
 import WaterfallAxis from '../../Core/Axis/WaterfallAxis.js';
 import WaterfallPoint from './WaterfallPoint.js';
 import WaterfallSeriesDefaults from './WaterfallSeriesDefaults.js';
+import { arrayMax, arrayMin, correctFloat, crisp, extend, isNumber, merge, objectEach, pick } from '../../Shared/Utilities.js';
 
 /* *
  *

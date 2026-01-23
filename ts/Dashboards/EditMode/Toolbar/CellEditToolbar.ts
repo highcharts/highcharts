@@ -31,10 +31,9 @@ const {
     isFirefox
 } = H;
 import U from '../../../Core/Utilities.js';
+import { merge, objectEach } from '../../../Shared/Utilities.js';
 const {
-    merge,
-    fireEvent,
-    objectEach
+    fireEvent
 } = U;
 
 

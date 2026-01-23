@@ -40,12 +40,10 @@ import ColumnUtils from './ColumnUtils.js';
 const { splice, setLength } = ColumnUtils;
 
 import U from '../Core/Utilities.js';
+import { defined, extend, isNumber } from '../Shared/Utilities.js';
 const {
     addEvent,
-    defined,
-    extend,
     fireEvent,
-    isNumber,
     uniqueKey
 } = U;
 

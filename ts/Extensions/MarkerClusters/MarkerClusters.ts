@@ -48,14 +48,10 @@ const { composed } = H;
 import MarkerClusterDefaults from './MarkerClusterDefaults.js';
 import MarkerClusterScatter from './MarkerClusterScatter.js';
 import U from '../../Core/Utilities.js';
+import { defined, isFunction, merge, pushUnique, syncTimeout } from '../../Shared/Utilities.js';
 const {
     addEvent,
-    defined,
-    error,
-    isFunction,
-    merge,
-    pushUnique,
-    syncTimeout
+    error
 } = U;
 
 /* *

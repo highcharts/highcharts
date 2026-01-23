@@ -35,17 +35,10 @@ import Axis from '../Axis.js';
 import { Palette } from '../../Color/Palettes.js';
 import PlotLineOrBandAxis from './PlotLineOrBandAxis.js';
 import U from '../../Utilities.js';
+import { arrayMax, arrayMin, defined, destroyObjectProperties, erase, merge, objectEach, pick } from '../../../Shared/Utilities.js';
 const {
     addEvent,
-    arrayMax,
-    arrayMin,
-    defined,
-    destroyObjectProperties,
-    erase,
-    fireEvent,
-    merge,
-    objectEach,
-    pick
+    fireEvent
 } = U;
 
 /* *

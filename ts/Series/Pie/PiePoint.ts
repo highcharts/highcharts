@@ -30,13 +30,9 @@ import A from '../../Core/Animation/AnimationUtilities.js';
 const { setAnimation } = A;
 import Point from '../../Core/Series/Point.js';
 import U from '../../Core/Utilities.js';
+import { defined, extend, isNumber, pick, relativeLength } from '../../Shared/Utilities.js';
 const {
-    addEvent,
-    defined,
-    extend,
-    isNumber,
-    pick,
-    relativeLength
+    addEvent
 } = U;
 
 /* *

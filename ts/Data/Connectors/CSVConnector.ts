@@ -36,7 +36,8 @@ import DataConnector, {
     type Event as DataConnectorEvent
 } from './DataConnector.js';
 import U from '../../Core/Utilities.js';
-const { merge, fireEvent } = U;
+import { merge } from '../../Shared/Utilities.js';
+const { fireEvent } = U;
 
 /* *
  *

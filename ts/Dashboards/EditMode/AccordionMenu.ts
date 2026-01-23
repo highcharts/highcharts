@@ -30,9 +30,8 @@ import EditRenderer from './EditRenderer.js';
 import U from '../../Core/Utilities.js';
 import EditGlobals from './EditGlobals.js';
 import ConfirmationPopup from './ConfirmationPopup.js';
+import { createElement, merge } from '../../Shared/Utilities.js';
 const {
-    createElement,
-    merge,
     error,
     fireEvent
 } = U;

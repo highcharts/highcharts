@@ -33,13 +33,10 @@ import QuadTree from './QuadTree.js';
 import QuadTreeNode from './QuadTreeNode.js';
 import U from '../../Core/Utilities.js';
 const {
-    clamp,
-    defined,
-    isFunction,
-    fireEvent,
-    pick
+    fireEvent
 } = U;
 import VerletIntegration from './VerletIntegration.js';
+import { clamp, defined, isFunction, pick } from '../../Shared/Utilities.js';
 
 /* *
  *

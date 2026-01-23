@@ -20,10 +20,9 @@
 import type Chart from '../Core/Chart/Chart';
 
 import U from '../Core/Utilities.js';
+import { merge, pick } from '../Shared/Utilities.js';
 const {
-    error,
-    merge,
-    pick
+    error
 } = U;
 
 /* *

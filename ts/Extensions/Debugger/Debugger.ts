@@ -27,11 +27,9 @@ import ErrorMessages from './ErrorMessages.js';
 import H from '../../Core/Globals.js';
 const { composed } = H;
 import U from '../../Core/Utilities.js';
+import { find, isNumber, pushUnique } from '../../Shared/Utilities.js';
 const {
-    addEvent,
-    find,
-    isNumber,
-    pushUnique
+    addEvent
 } = U;
 
 /* *

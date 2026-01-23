@@ -26,14 +26,11 @@ import type DOMElementType from '../../Core/Renderer/DOMElementType';
 
 import U from '../../Core/Utilities.js';
 const {
-    addEvent,
-    isObject,
-    pick,
-    defined,
-    merge
+    addEvent
 } = U;
 
 import NBU from '../Annotations/NavigationBindingsUtilities.js';
+import { defined, internalClearTimeout, isObject, merge, pick } from '../../Shared/Utilities.js';
 const { getAssignedAxis } = NBU;
 
 /* *
@@ -119,7 +116,7 @@ const zoomBy = function (
 
     if (hasZoomed) {
         if (defined(wheelTimer)) {
-            clearTimeout(wheelTimer);
+            internalClearTimeout(wheelTimer);
         }
 
         // Some time after the last mousewheel event, run drop. In case any of

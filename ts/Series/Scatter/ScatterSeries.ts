@@ -27,10 +27,9 @@ const {
     line: LineSeries
 } = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
+import { extend, merge } from '../../Shared/Utilities.js';
 const {
-    addEvent,
-    extend,
-    merge
+    addEvent
 } = U;
 
 /* *

@@ -46,24 +46,10 @@ import R from './Renderer/RendererUtilities.js';
 const { distribute } = R;
 import RendererRegistry from './Renderer/RendererRegistry.js';
 import U from './Utilities.js';
+import { clamp, css, discardElement, extend, getAlignFactor, internalClearTimeout, isArray, isNumber, isObject, isString, merge, pick, pushUnique, splat, syncTimeout } from '../Shared/Utilities.js';
 const {
     addEvent,
-    clamp,
-    css,
-    clearTimeout,
-    discardElement,
-    extend,
-    fireEvent,
-    getAlignFactor,
-    isArray,
-    isNumber,
-    isObject,
-    isString,
-    merge,
-    pick,
-    pushUnique,
-    splat,
-    syncTimeout
+    fireEvent
 } = U;
 
 /* *
@@ -379,7 +365,7 @@ class Tooltip {
             this.renderer = this.renderer.destroy() as any;
             discardElement(this.container);
         }
-        clearTimeout(this.hideTimer);
+        internalClearTimeout(this.hideTimer);
     }
 
     /**
@@ -926,7 +912,7 @@ class Tooltip {
         const tooltip = this;
 
         // Disallow duplicate timers (#1728, #1766)
-        clearTimeout(this.hideTimer);
+        internalClearTimeout(this.hideTimer);
         delay = pick(delay, this.options.hideDelay);
         if (!this.isHidden) {
             this.hideTimer = syncTimeout(function (): void {
@@ -1126,7 +1112,7 @@ class Tooltip {
             return;
         }
 
-        clearTimeout(this.hideTimer);
+        internalClearTimeout(this.hideTimer);
 
         // A switch saying if this specific tooltip configuration allows shared
         // or split modes
@@ -1783,7 +1769,7 @@ class Tooltip {
             // For a rapid move going outside of the elements keeping the
             // tooltip visible, cancel the hide (#23512).
             addEvent(tooltip.tracker.element, 'mouseenter', (): void => {
-                clearTimeout(tooltip.hideTimer);
+                internalClearTimeout(tooltip.hideTimer);
             });
 
             if (!chart.styledMode) {

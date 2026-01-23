@@ -54,21 +54,10 @@ const { distribute } = R;
 import T from '../Templating.js';
 const { format } = T;
 import U from '../Utilities.js';
+import { createElement, css, defined, discardElement, find, isNumber, merge, pick, pushUnique, relativeLength, stableSort, syncTimeout } from '../../Shared/Utilities.js';
 const {
     addEvent,
-    createElement,
-    css,
-    defined,
-    discardElement,
-    find,
-    fireEvent,
-    isNumber,
-    merge,
-    pick,
-    pushUnique,
-    relativeLength,
-    stableSort,
-    syncTimeout
+    fireEvent
 } = U;
 
 /* *

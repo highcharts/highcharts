@@ -30,9 +30,9 @@ import { Palette } from './Color/Palettes.js';
 import Palettes from './Color/Palettes.js';
 import Time from './Time.js';
 import U from './Utilities.js';
+import { merge } from '../Shared/Utilities.js';
 const {
-    fireEvent,
-    merge
+    fireEvent
 } = U;
 
 /* *

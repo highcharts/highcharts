@@ -45,11 +45,9 @@ const { initDragDrop } = DraggableChart;
 import DragDropDefaults from './DragDropDefaults.js';
 import DragDropProps from './DragDropProps.js';
 import U from '../../Core/Utilities.js';
+import { clamp, isNumber, merge } from '../../Shared/Utilities.js';
 const {
-    addEvent,
-    clamp,
-    isNumber,
-    merge
+    addEvent
 } = U;
 
 /* *

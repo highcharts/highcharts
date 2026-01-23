@@ -37,8 +37,8 @@ const {
     convertToNumber
 } = ColumnUtils;
 import U from '../Utilities.js';
+import { defined } from '../../Shared/Utilities.js';
 const {
-    defined,
     uniqueKey
 } = U;
 

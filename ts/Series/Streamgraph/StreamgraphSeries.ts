@@ -28,10 +28,9 @@ const {
 } = SeriesRegistry.seriesTypes;
 import StreamgraphSeriesDefaults from './StreamgraphSeriesDefaults.js';
 import U from '../../Core/Utilities.js';
+import { extend, merge } from '../../Shared/Utilities.js';
 const {
-    addEvent,
-    merge,
-    extend
+    addEvent
 } = U;
 
 /**
