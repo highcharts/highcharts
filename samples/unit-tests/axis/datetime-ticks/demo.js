@@ -271,6 +271,10 @@ QUnit.test('Boundary ticks general tests, (#22231)', function (assert) {
                 month: {
                     boundary: '%Y',
                     main: '%b'
+                },
+                year: {
+                    boundary: '%Y',
+                    main: '%Y'
                 }
             }
         }
@@ -318,5 +322,20 @@ QUnit.test('Boundary ticks general tests, (#22231)', function (assert) {
         ticks[tickPositions[0]].label.textStr,
         '2001',
         'First tick after scrolling should have a boundary label.'
+    );
+
+    chart.xAxis[0].update({
+        labels: {
+            format: '{#if isBoundary}BOUNDARY{else}{text}{/if}'
+        }
+    });
+
+    ticks = chart.xAxis[0].ticks;
+    tickPositions = chart.xAxis[0].tickPositions;
+
+    assert.strictEqual(
+        ticks[tickPositions[0]].label.textStr,
+        'BOUNDARY',
+        'Boundary tick should be formatted with template string.'
     );
 });

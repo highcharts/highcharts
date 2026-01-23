@@ -88,9 +88,7 @@ class Time extends TimeBase {
             // 'month.main' and 'year.boundary'
             if (unitRange <= timeUnits.month && unitRange > timeUnits.week) {
                 tickPositions.forEach((t: number, i: number): void => {
-                    if (
-                        i === 1 || this.dateFormat('%m%d', t) === '0101'
-                    ) {
+                    if (i === 1 || this.dateFormat('%m%d', t) === '0101') {
                         boundaryTicks[t] = 'year';
                     }
                 });

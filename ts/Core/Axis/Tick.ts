@@ -302,19 +302,17 @@ class Tick {
 
 
         // Set the datetime label format. If a boundary is set for this
-        // position, use that. If not, use the main format.
+        // position, use that. If not, use the main format from base ticks.
         if (axis.dateTime) {
             const DTLFormats = options.dateTimeLabelFormats as any;
             if (tickPositionInfo) {
                 const gridDisabled = !options.grid?.enabled,
                     rankKey = tickPositionInfo.boundaryTicks[pos],
                     format = gridDisabled && rankKey &&
-                        (DTLFormats[rankKey].boundary ||
-                        DTLFormats[rankKey].main);
+                        DTLFormats[rankKey].boundary ||
+                        DTLFormats[tickPositionInfo.unitName];
 
-                dateTimeLabelFormats = chart.time.resolveDTLFormat(
-                    format || DTLFormats[tickPositionInfo.unitName]
-                );
+                dateTimeLabelFormats = chart.time.resolveDTLFormat(format);
                 dateTimeLabelFormat = dateTimeLabelFormats.main;
             } else if (isNumber(value)) { // #1441
                 dateTimeLabelFormat = axis.dateTime.getXDateFormat(

@@ -513,7 +513,7 @@ namespace AxisDefaults {
          *     second: { main: '%[HMS]' },
          *     minute: { main: '%[HM]' },
          *     hour: { main: '%[HM]' },
-         *     day: { main: '%[eb]', boundary: undefined },
+         *     day: { main: '%[eb]', boundary: '%[eb]' },
          *     week: { main: '%[eb]' },
          *     month: { main: '%[bY]', boundary: undefined },
          *     year: { main: '%Y', boundary: undefined }
@@ -626,10 +626,10 @@ namespace AxisDefaults {
                 main: '%[eb]',
                 /**
                  * @type {string|Highcharts.DateTimeFormatOptions}
-                 * @default undefined
+                 * @default '%[eb]'
                  * @apioption xAxis.dateTimeLabelFormats.day.boundary
                  */
-                boundary: void 0
+                boundary: '%[eb]'
             },
             /**
              * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
