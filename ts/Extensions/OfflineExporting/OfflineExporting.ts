@@ -19,7 +19,7 @@
  *
  * */
 
-import type Exporting from '../Exporting/Exporting';
+import type { Exporting } from '../Exporting/Exporting';
 import type {
     DOMElementType,
     HTMLDOMElement,
@@ -63,9 +63,12 @@ const {
 declare module '../../Core/Chart/ChartBase' {
     interface ChartBase {
         /**
-         * Deprecated in favor of [Exporting.exportChart](https://api.highcharts.com/class-reference/Highcharts.Exporting#exportChart).
+         * Deprecated. Use
+         * [Exporting.exportChart](https://api.highcharts.com/class-reference/Highcharts.Exporting#exportChart)
+         * instead.
          *
-         * @deprecated */
+         * @deprecated 12.2.0
+         */
         exportChartLocal(
             exportingOptions?: ExportingOptions,
             chartOptions?: Options
@@ -73,9 +76,35 @@ declare module '../../Core/Chart/ChartBase' {
     }
 }
 
+
 declare module '../../Core/GlobalsBase' {
     interface GlobalsBase {
-        Exporting: typeof Exporting
+        /**
+         * Deprecated. Use
+         * [Exporting.downloadSVG](https://api.highcharts.com/class-reference/Highcharts.Exporting#downloadSVG)
+         * instead.
+         *
+         * Get data URL to an image of an SVG and call download on it options
+         * object:
+         *
+         * - **filename:** Name of resulting downloaded file without extension.
+         * Default is `chart`.         *
+         * - **type:** File type of resulting download. Default is `image/png`.
+         * - **scale:** Scaling factor of downloaded image compared to source.
+         * Default is `1`.
+         * - **libURL:** URL pointing to location of dependency scripts to download
+         * on demand. Default is the exporting.libURL option of the global
+         * Highcharts options pointing to our server.
+         *
+         * @deprecated 11.4.4
+         *
+         * @param {string} svg
+         * The generated SVG
+         *
+         * @param {Highcharts.ExportingOptions} options
+         * The exporting options
+         */
+        downloadSVGLocal: Exporting.DownloadSVGFunction;
     }
 }
 
@@ -186,11 +215,11 @@ namespace OfflineExporting {
         // Update with defaults of the offline exporting module
         setOptions(OfflineExportingDefaults);
 
-        // Additionaly, extend the menuItems with the offline exporting variants
+        // Additionally, extend menuItems with the offline exporting variants
         const menuItems =
             getOptions().exporting?.buttons?.contextButton?.menuItems;
-        menuItems && menuItems.push('downloadPDF');
 
+        menuItems?.push('downloadPDF');
     }
 
     /**
