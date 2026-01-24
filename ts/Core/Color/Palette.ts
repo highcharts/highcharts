@@ -27,6 +27,7 @@ import H from '../Globals.js';
 const { doc } = H;
 import U from '../Utilities.js';
 const {
+    diffObjects,
     isString,
     objectEach,
     merge
@@ -43,6 +44,31 @@ declare module '../Chart/ChartBase' {
     }
 }
 
+/* *
+ * Build the text content for the style tag
+ */
+const getStyles = (
+    specifier: string,
+    rules: Record<string, string>
+): string =>
+    `${specifier || ':root'},
+${specifier} .highcharts-light,
+.highcharts-light ${specifier} {
+${rules.light}
+}
+${specifier} .highcharts-dark,
+.highcharts-dark ${specifier} {
+${rules.dark}
+}
+.highcharts-container {
+  color-scheme: 'light dark';
+}
+.highcharts-container.highcharts-light  {
+  color-scheme: light;
+}
+.highcharts-container.highcharts-dark {
+  color-scheme: dark;
+}`;
 
 /* *
  *
@@ -96,7 +122,7 @@ export default class Palette {
     public update(
         options: PaletteOptions
     ): void {
-        const { container, renderer } = this.chart,
+        const { container } = this.chart,
             rules = { light: '', dark: '' };
 
         options = this.chart.options.palette = merge(
@@ -104,6 +130,10 @@ export default class Palette {
             this.options,
             options
         );
+
+        const hasSpecificPalette = Object.keys(
+            diffObjects(options, this.defaultOptions)
+        ).length > 0;
 
         let css = '';
 
@@ -117,7 +147,7 @@ export default class Palette {
                         /[A-Z]/g,
                         (match): string => `-${match.toLowerCase()}`
                     );
-                css += `--highcharts-${key}: ${color};\n`;
+                css += `  --highcharts-${key}: ${color};\n`;
             }
         };
 
@@ -133,14 +163,10 @@ export default class Palette {
 
             // Interpolate keys
             [3, 5, 10, 20, 40, 60, 80, 100].forEach((fraction): void => {
-                interpolated[`neutralColor${fraction}`] = backgroundColor.tweenTo(
-                    neutralColor,
-                    fraction / 100
-                );
-                interpolated[`highlightColor${fraction}`] = backgroundColor.tweenTo(
-                    highlightColor,
-                    fraction / 100
-                );
+                interpolated[`neutralColor${fraction}`] = backgroundColor
+                    .tweenTo(neutralColor, fraction / 100);
+                interpolated[`highlightColor${fraction}`] = backgroundColor
+                    .tweenTo(highlightColor, fraction / 100);
             });
 
             // Data colors are stored as an array
@@ -156,25 +182,21 @@ export default class Palette {
         }
 
         // Add a style tag to the chart renderer box
-        const style = renderer.defs.element.querySelector('style') ||
-            doc.createElementNS(H.SVG_NS, 'style');
+        const styleParent = hasSpecificPalette ? container : doc.head,
+            specifier = hasSpecificPalette ?
+                `*[data-highcharts-chart="${this.chart.index}"]` :
+                '',
+            style: HTMLStyleElement = styleParent
+                .querySelector('style.highcharts-palette') ||
+                doc.createElement('style');
+
         if (!style.parentNode) {
-            (style as HTMLStyleElement).nonce = 'highcharts';
-            renderer.defs.element.appendChild(style);
+            style.nonce = 'highcharts';
+            style.className = 'highcharts-palette';
+            styleParent.appendChild(style);
         }
-        style.textContent = `:root, .highcharts-light {\n${rules.light}}
-        .highcharts-dark {
-            ${rules.dark}
-        }
-        .highcharts-container {
-            color-scheme: ${options.colorScheme || 'light dark'};
-        }
-        .highcharts-light .highcharts-container {
-            color-scheme: light;
-        }
-        .highcharts-dark .highcharts-container {
-            color-scheme: dark;
-        }`;
+
+        style.textContent = getStyles(specifier, rules);
 
         // Set the class name of the container
         container.classList.remove('highcharts-light', 'highcharts-dark');

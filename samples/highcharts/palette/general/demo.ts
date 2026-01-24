@@ -17,7 +17,10 @@ Highcharts.chart('container', {
     palette: {
         colorScheme: 'light dark',
         light: {
-            colors: ['#2caffe', '#544fc5']
+            backgroundColor: '#ffffff',
+            colors: ['#2caffe', '#544fc5'],
+            highlightColor: '#0022ff',
+            neutralColor: '#000000'
         }
     },
     series: [{
