@@ -357,8 +357,8 @@ async function getPathMeta(config: SampleGeneratorConfig): Promise<MetaList> {
         }
         const node = await findNodeByPath(path);
         if (!node) {
-            console.warn(colors.yellow(
-                `No node found for path: ${path}, ` +
+            console.log(colors.gray(
+                `  - ${path} not found in tree.json, ` +
                 'trying to build control anyway.'
             ));
             // continue;
