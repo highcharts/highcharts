@@ -714,13 +714,17 @@ npx playwright show-trace playwright-report/data/<trace-id>.zip
 
 | Variable | Description |
 |----------|-------------|
-| `VISUAL_TEST_PATH` | Run single visual test path (e.g., `samples/highcharts/demo/line-basic`) |
 | `NO_REWRITES` | Skip route rewrites, test against live CDN |
+| `QUNIT_TEST_PATH` | Glob-enabled QUNit test path (e.g., `unit-tests/rangeselector/*`) |
 | `QUNIT_VERBOSE` | Show detailed output for passing QUnit tests |
+| `VISUAL_TEST_PATH` | Run single visual test path (e.g., `samples/highcharts/demo/line-basic`) |
 
 Examples:
 
 ```sh
+# Run single QUnit test
+QUNIT_TEST_PATH=unit-tests/rangeselector/update npx playwright test --project=qunit
+
 # Run single visual test
 VISUAL_TEST_PATH=samples/highcharts/demo/line-basic npx playwright test --project=visual
 
