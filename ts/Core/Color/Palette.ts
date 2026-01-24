@@ -111,36 +111,28 @@ export default class Palette {
     }
 
     /**
-     * Update the palette with new options. May be called directly as
-     * `chart.palette.update()` or indirectly from `chart.update({ palette })`.
+     * Inject the CSS for the palette into the document head or chart
+     * container.
      *
-     * @function Highcharts.Palette#update
+     * @internal
      *
      * @param {Highcharts.PaletteOptions} options
-     *        New palette options
+     *        Palette options
      */
-    public update(
+    public injectCSS(
         options: PaletteOptions
     ): void {
-        const { container } = this.chart,
-            rules = { light: '', dark: '' };
-
-        options = this.chart.options.palette = merge(
-            true,
-            this.options,
-            options
-        );
-
-        const hasSpecificPalette = Object.keys(
-            diffObjects(options, this.defaultOptions)
-        ).length > 0;
+        const rules = { light: '', dark: '' },
+            hasSpecificPalette = Object.keys(
+                diffObjects(options, this.defaultOptions)
+            ).length > 0;
 
         let css = '';
 
         const addKebab = (color: unknown, key: string): void => {
             if (isString(color)) {
-                // Kebab-case the key. Sequences of numbers should be kept but
-                // with a preceding dash.
+                // Kebab-case the key. Sequences of numbers should be kept
+                // but with a preceding dash.
                 key = key
                     .replace(/([0-9]+)/g, '-$1')
                     .replace(
@@ -159,7 +151,9 @@ export default class Palette {
                 backgroundColor = new Color(
                     paletteColors?.backgroundColor || ''
                 ),
-                highlightColor = new Color(paletteColors?.highlightColor || '');
+                highlightColor = new Color(
+                    paletteColors?.highlightColor || ''
+                );
 
             // Interpolate keys
             [3, 5, 10, 20, 40, 60, 80, 100].forEach((fraction): void => {
@@ -182,7 +176,8 @@ export default class Palette {
         }
 
         // Add a style tag to the chart renderer box
-        const styleParent = hasSpecificPalette ? container : doc.head,
+        const styleParent = hasSpecificPalette ?
+                this.chart.container : doc.head,
             specifier = hasSpecificPalette ?
                 `*[data-highcharts-chart="${this.chart.index}"]` :
                 '',
@@ -197,13 +192,38 @@ export default class Palette {
         }
 
         style.textContent = getStyles(specifier, rules);
+    }
+
+    /**
+     * Update the palette with new options. May be called directly as
+     * `chart.palette.update()` or indirectly from `chart.update({ palette })`.
+     *
+     * @function Highcharts.Palette#update
+     *
+     * @param {Highcharts.PaletteOptions} options
+     *        New palette options
+     */
+    public update(
+        options: PaletteOptions
+    ): void {
+        const { classList } = this.chart.container;
+
+        options = this.chart.options.palette = merge(
+            true,
+            this.options,
+            options
+        );
+
+        if (options.injectCSS !== false) {
+            this.injectCSS(options);
+        }
 
         // Set the class name of the container
-        container.classList.remove('highcharts-light', 'highcharts-dark');
+        classList.remove('highcharts-light', 'highcharts-dark');
         if (options.colorScheme === 'light') {
-            container.classList.add('highcharts-light');
+            classList.add('highcharts-light');
         } else if (options.colorScheme === 'dark') {
-            container.classList.add('highcharts-dark');
+            classList.add('highcharts-dark');
         }
     }
 

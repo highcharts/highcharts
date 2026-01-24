@@ -32,6 +32,7 @@ export interface PaletteColors {
 }
 
 export interface PaletteOptions {
+    injectCSS?: boolean;
     colorScheme?: 'light dark' |'light' | 'dark';
     dark?: PaletteColors;
     light?: PaletteColors;
