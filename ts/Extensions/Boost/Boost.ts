@@ -24,7 +24,6 @@ import Color from '../../Core/Color/Color';
 import type HTMLElement from '../../Core/Renderer/HTML/HTMLElement';
 import type Series from '../../Core/Series/Series';
 import type SeriesRegistry from '../../Core/Series/SeriesRegistry';
-import type { SVGDOMElement } from '../../Core/Renderer/DOMElementType';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type Point from '../../Core/Series/Point';
 
@@ -39,7 +38,6 @@ import NamedColors from './NamedColors.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
-    attr,
     error
 } = U;
 
@@ -119,32 +117,28 @@ function compose(
     // Literal resolution of the CSS variable names to actual colors
     const setHardColorReferences = function (this: Chart): void {
         // Add a color checking circle inside the chart for testing
-        const colorChecker = this.renderer.box.querySelector(
-            '.highcharts-color-checker'
-        ) || doc.createElementNS('http://www.w3.org/2000/svg', 'circle');
-
-        if (!colorChecker.parentNode) {
-            attr(colorChecker as SVGDOMElement, {
+        const colorChecker = this.renderer.circle(0, 0, 1)
+            .attr({
                 'class': 'highcharts-color-checker',
                 r: 1,
                 opacity: 0
-            });
-            this.renderer.box.appendChild(colorChecker);
-        }
+            })
+            .add();
 
         // Resolve the colors. This will change with dynamic updates of the
         // palette
         this.options.palette.light?.colors?.forEach((color, i): void => {
             if (ColorClass && typeof color === 'string') {
-                colorChecker.setAttribute(
+                colorChecker.attr(
                     'fill',
                     `var(--highcharts-color-${i})`
                 );
                 ColorClass.names[`var(--highcharts-color-${i})`] = win
-                    .getComputedStyle(colorChecker)
+                    .getComputedStyle(colorChecker.element)
                     .getPropertyValue('fill') || color;
             }
         });
+        colorChecker.destroy();
     };
     addEvent(ChartClass, 'beforeRender', setHardColorReferences);
     addEvent(ChartClass, 'beforeRedraw', setHardColorReferences);

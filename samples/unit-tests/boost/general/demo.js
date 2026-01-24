@@ -159,7 +159,6 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
 
         const svg = chart.renderTo.querySelector('svg'),
             imageEl = svg.querySelector('.highcharts-boost-canvas'),
-            desiredColor = chart.series[0].color,
             point = chart.series[0].points[2];
 
         const x = point.plotX + chart.plotLeft,
@@ -170,7 +169,7 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
 
         assert.strictEqual(
             hex,
-            Highcharts.Color.names[desiredColor],
+            '#2caffe',
             `After updating to empty zones the color should be
             remained, #23571.`
         );
