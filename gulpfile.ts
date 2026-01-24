@@ -68,7 +68,6 @@ Gulp.registry(new GulpForwardReference());
     'lint-dts',
     'lint-samples',
     'lint-ts',
-    'palette',
     'prep-release',
     'prepare-react-samples',
     'reset-clone',
