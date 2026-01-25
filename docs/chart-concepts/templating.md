@@ -8,11 +8,11 @@ Expressions in format strings are enclosed by `{single brackets}`. They can be s
 
 **Variables** and properties are inserted directly inside the bracket, for example `"The point value at {point.x} is {point.y}"`. Nested properties are supported using the dot notation. Arrays are also indexed using dot notation, for example `{series.xAxis.categories.0}`, or more practical, with a subexpression `{series.xAxis.categories.(point.x)}`
 
-**Numbers** are formatted with a subset of float formatting conventions from the C library function `sprintf`. The formatting is appended inside the expression, separated from the value by a colon. Note that even though a dot and a comma symbolizes the decimal point and the thousands separator respectively, how it is actually rendered depends on the [language settings](https://api.highcharts.com/highcharts/lang). For example:
+**Numbers** are formatted with a subset of float formatting conventions from the C library function `sprintf`. The formatting is appended inside the expression, separated from the value by a colon. Note that even though a dot and a comma symbolizes the decimal point and the thousands separator respectively, how it is actually rendered depends on the browser locale, therefore will be displayed differently in different regions. To ensure identical number formatting across users set the desired format in [language settings](https://api.highcharts.com/highcharts/lang). For example:
 
-*   Two decimal places: `"{point.y:.2f}"` [[Demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/labels/two-decimal-places)]
-*   Thousands separator, no decimal places: `{point.y:,.0f}` [[Demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/labels/no-decimal-places)]
-*   Thousands separator, one decimal place: `{point.y:,.1f}` [[Demo, internationalized](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/labels/one-decimal-place)]
+*   Two decimal places:  `"{point.y:.2f}"` [[Demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/labels/two-decimal-places)]
+*   Default thousands separator from browser locale, no decimal places: `{point.y:,.0f}` [[Demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/labels/no-decimal-places)]
+*   Forced thousands separator with one decimal place after a coma: `{point.y:,.1f}` [[Demo, internationalized](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/labels/one-decimal-place)]
 
 **Dates** allow, like numbers, the format to be appended behind a colon. The format conventions allowed are the same as those of [Highcharts.dateFormat()](https://api.highcharts.com/class-reference/Highcharts.Time#dateFormat). For example:
 
