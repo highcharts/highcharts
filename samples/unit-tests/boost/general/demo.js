@@ -408,6 +408,12 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
             chart.series[0].points[0].graphic.element.isConnected,
             'After disabling boost, marker should be added to DOM, #22950.'
         );
+
+        assert.strictEqual(
+            chart.series[0].boosted,
+            false,
+            'After disabling boost, the series should not be boosted (#23662).'
+        );
     }
 );
 
