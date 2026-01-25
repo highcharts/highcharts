@@ -1,0 +1,248 @@
+.hcg-container,
+.highcharts-light .hcg-container {
+    --ig-default-color: #000000;
+    --ig-default-background: #ffffff;
+    --ig-negative-default-color: #c10008;
+    --ig-negative-default-border-color: #e7000b;
+    --ig-negative-default-background: #fef3f2;
+    --ig-neutral-default-color: #884b00;
+    --ig-neutral-default-border-color: #d18700;
+    --ig-neutral-default-background: #fefce8;
+    --ig-positive-default-color: #008236;
+    --ig-positive-default-border-color: #00a63e;
+    --ig-positive-default-background: #effdf4;
+    --ig-highlight-color-5: #f3f6fe;
+
+    /* GUI elements - Light mode */
+    --hcg-popup-background: #f6f6f6;
+    --hcg-popup-border-color: #e8e8e8;
+    --hcg-popup-border: 1px solid var(--hcg-popup-border-color);
+    --hcg-context-menu-item-hover-background: #ffffff;
+    --hcg-context-menu-item-hover-border: 1px solid #e8e8e8;
+    --hcg-context-menu-item-active-background: #e1e3ff;
+    --hcg-context-menu-item-active-border: 1px solid #c3c8ff;
+}
+
+@media (prefers-color-scheme: dark) {
+    .hcg-container {
+        --ig-default-color: #ffffff;
+        --ig-default-background: #000000;
+        --ig-negative-default-color: #ffb3b3;
+        --ig-negative-default-border-color: #7a1e1e;
+        --ig-negative-default-background: #3d0e0b;
+        --ig-neutral-default-color: #ffe8c1;
+        --ig-neutral-default-border-color: #7d5c20;
+        --ig-neutral-default-background: #3b2a11;
+        --ig-positive-default-color: #a6f8c1;
+        --ig-positive-default-border-color: #1e6f3e;
+        --ig-positive-default-background: #0a3e1a;
+        --ig-highlight-color-5: #202124;
+
+        /* GUI elements - Dark mode */
+        --hcg-popup-background: #272727;
+        --hcg-popup-border-color: #4f4f4f;
+        --hcg-popup-border: 1px solid var(--hcg-popup-border-color);
+        --hcg-context-menu-item-hover-background: #3b3b3b;
+        --hcg-context-menu-item-hover-border: 1px solid #4f4f4f;
+        --hcg-context-menu-item-active-background: #3f4699;
+        --hcg-context-menu-item-active-border: 1px solid #4a55c9;
+    }
+}
+
+.highcharts-dark .hcg-container {
+    --ig-default-color: #ffffff;
+    --ig-default-background: #000000;
+    --ig-negative-default-color: #ffb3b3;
+    --ig-negative-default-border-color: #7a1e1e;
+    --ig-negative-default-background: #3d0e0b;
+    --ig-neutral-default-color: #ffe8c1;
+    --ig-neutral-default-border-color: #7d5c20;
+    --ig-neutral-default-background: #3b2a11;
+    --ig-positive-default-color: #a6f8c1;
+    --ig-positive-default-border-color: #1e6f3e;
+    --ig-positive-default-background: #0a3e1a;
+    --ig-highlight-color-5: #202124;
+
+    /* GUI elements - Dark mode */
+    --hcg-popup-background: #272727;
+    --hcg-popup-border-color: #4f4f4f;
+    --hcg-popup-border: 1px solid var(--hcg-popup-border-color);
+    --hcg-context-menu-item-hover-background: #3b3b3b;
+    --hcg-context-menu-item-hover-border: 1px solid #4f4f4f;
+    --hcg-context-menu-item-active-background: #3f4699;
+    --hcg-context-menu-item-active-border: 1px solid #4a55c9;
+}
+
+/*  ==== End Grid Color Scheme  ==== */
+
+/*  ==== Start Highcharts Variables  ==== */
+:root,
+.highcharts-light {
+    --highcharts-background-color: #ffffff;
+    --highcharts-neutral-color-100: #000000;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --highcharts-background-color: #141414;
+        --highcharts-neutral-color-100: #ffffff;
+    }
+}
+
+.highcharts-dark {
+    --highcharts-background-color: #141414;
+    --highcharts-neutral-color-100: #ffffff;
+}
+
+/*  ==== End Highcharts Variables  ==== */
+
+/* stylelint-disable max-line-length */
+
+/* ==== Start Grid Variables ==== */
+.hcg-container {
+    --ig-hover-opacity: var(--hcg-hover-opacity, 100%);
+    --ig-sync-opacity: var(--hcg-sync-opacity, var(--ig-hover-opacity));
+
+    /* Global fonts */
+    --ig-default-font-family: -apple-system, "BlinkMacSystemFont", "Segoe UI", "Roboto", "Helvetica", "Arial", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+    --ig-font-weight: var(--hcg-font-weight, normal);
+    --ig-font-size: var(--hcg-font-size, 1rem);
+    --ig-font-family: var(--hcg-font-family, var(--ig-default-font-family));
+    --ig-color: var(--hcg-color, var(--ig-default-color));
+    --ig-font: var(--ig-font-weight) var(--ig-font-size) var(--ig-font-family);
+    --ig-text-align: var(--hcg-text-align, left);
+
+    /* Link fonts */
+    --ig-link-color: var(--hcg-link-color, inherit);
+    --ig-link-text-decoration: var(--hcg-link-text-decoration, underline);
+    --ig-link-hovered-color: var(--hcg-link-hovered-color, var(--ig-link-color));
+    --ig-link-hovered-text-decoration: var(--hcg-link-hovered-text-decoration, none);
+    --ig-link-font-weight: var(--hcg-link-font-weight, inherit);
+
+    /* Caption fonts */
+    --ig-caption-font-weight: var(--hcg-caption-font-weight, var(--ig-font-weight));
+    --ig-caption-font-size: var(--hcg-caption-font-size, var(--ig-font-size));
+    --ig-caption-font-family: var(--hcg-caption-font-family, var(--ig-font-family));
+    --ig-caption-color: var(--hcg-caption-color, var(--ig-color));
+    --ig-caption-font: var(--ig-caption-font-weight) var(--ig-caption-font-size) var(--ig-caption-font-family);
+    --ig-caption-text-align: var(--hcg-caption-text-align, var(--ig-text-align));
+
+    /* Description fonts */
+    --ig-description-font-weight: var(--hcg-description-font-weight, var(--ig-font-weight));
+    --ig-description-font-size: var(--hcg-description-font-size, var(--ig-font-size));
+    --ig-description-font-family: var(--hcg-description-font-family, var(--ig-font-family));
+    --ig-description-color: var(--hcg-description-color, var(--ig-color));
+    --ig-description-font: var(--ig-description-font-weight) var(--ig-description-font-size) var(--ig-description-font-family);
+    --ig-description-text-align: var(--hcg-description-text-align, var(--ig-text-align));
+
+    /* Pagination fonts */
+    --ig-pagination-font-weight: var(--hcg-pagination-font-weight, var(--ig-font-weight));
+    --ig-pagination-font-size: var(--hcg-pagination-font-size, var(--ig-font-size));
+    --ig-pagination-font-family: var(--hcg-pagination-font-family, var(--ig-font-family));
+    --ig-pagination-color: var(--hcg-pagination-color, var(--ig-color));
+    --ig-pagination-font: var(--ig-pagination-font-weight) var(--ig-pagination-font-size) var(--ig-pagination-font-family);
+
+    /* Default borders */
+    --ig-border-radius: var(--hcg-border-radius, 0);
+    --ig-border-width: var(--hcg-border-width, 0);
+    --ig-border-style: var(--hcg-border-style, solid);
+    --ig-border-color: var(--hcg-border-color, var(--ig-color));
+    --ig-border: var(--ig-border-width) var(--ig-border-style) var(--ig-border-color);
+
+    /* Row borders */
+    --ig-row-border-width: var(--hcg-row-border-width, var(--ig-border-width));
+    --ig-row-border-style: var(--hcg-row-border-style, var(--ig-border-style));
+    --ig-row-border-color: var(--hcg-row-border-color, var(--ig-border-color));
+    --ig-row-border: var(--ig-row-border-width) var(--ig-row-border-style) var(--ig-row-border-color);
+
+    /* Header row borders */
+    --ig-header-row-border-width: var(--hcg-header-row-border-width, var(--ig-row-border-width));
+    --ig-header-row-border-style: var(--hcg-header-row-border-style, var(--ig-row-border-style));
+    --ig-header-row-border-color: var(--hcg-header-row-border-color, var(--ig-row-border-color));
+    --ig-header-row-border: var(--ig-header-row-border-width) var(--ig-header-row-border-style) var(--ig-header-row-border-color);
+
+    /* Column borders */
+    --ig-column-border-width: var(--hcg-column-border-width, var(--ig-border-width));
+    --ig-column-border-style: var(--hcg-column-border-style, var(--ig-border-style));
+    --ig-column-border-color: var(--hcg-column-border-color, var(--ig-border-color));
+    --ig-column-border: var(--ig-column-border-width) var(--ig-column-border-style) var(--ig-column-border-color);
+
+    /* Header column borders */
+    --ig-header-column-border-width: var(--hcg-header-column-border-width, var(--ig-column-border-width));
+    --ig-header-column-border-style: var(--hcg-header-column-border-style, var(--ig-column-border-style));
+    --ig-header-column-border-color: var(--hcg-header-column-border-color, var(--ig-column-border-color));
+    --ig-header-column-border: var(--ig-header-column-border-width) var(--ig-header-column-border-style) var(--ig-header-column-border-color);
+
+    /* Default padding */
+    --ig-horizontal-padding: var(--hcg-horizontal-padding, var(--hcg-padding, 0));
+    --ig-vertical-padding: var(--hcg-vertical-padding, var(--hcg-padding, 0));
+    --ig-padding: var(--ig-vertical-padding) var(--ig-horizontal-padding);
+
+    /* Header padding */
+    --ig-header-horizontal-padding: var(--hcg-header-horizontal-padding, var(--hcg-header-padding, var(--ig-horizontal-padding)));
+    --ig-header-vertical-padding: var(--hcg-header-vertical-padding, var(--hcg-header-padding, var(--ig-vertical-padding)));
+    --ig-header-padding: var(--ig-header-vertical-padding) var(--ig-header-horizontal-padding) var(--ig-header-vertical-padding) var(--ig-header-horizontal-padding);
+
+    /* Caption padding */
+    --ig-caption-horizontal-padding: var(--hcg-caption-horizontal-padding, var(--hcg-caption-padding, var(--ig-horizontal-padding)));
+    --ig-caption-vertical-padding: var(--hcg-caption-vertical-padding, var(--hcg-caption-padding, var(--ig-vertical-padding)));
+    --ig-caption-padding: 0 var(--ig-caption-horizontal-padding) var(--ig-caption-vertical-padding) var(--ig-caption-horizontal-padding);
+
+    /* Description padding */
+    --ig-description-horizontal-padding: var(--hcg-description-horizontal-padding, var(--hcg-description-padding, var(--ig-horizontal-padding)));
+    --ig-description-vertical-padding: var(--hcg-description-vertical-padding, var(--hcg-description-padding, var(--ig-vertical-padding)));
+    --ig-description-padding: var(--ig-description-vertical-padding) var(--ig-description-horizontal-padding) 0 var(--ig-description-horizontal-padding);
+
+    /* Pagination padding */
+    --ig-pagination-horizontal-padding: var(--hcg-pagination-horizontal-padding, var(--hcg-pagination-padding, var(--ig-horizontal-padding)));
+    --ig-pagination-vertical-padding: var(--hcg-pagination-vertical-padding, var(--hcg-pagination-padding, var(--ig-vertical-padding)));
+    --ig-pagination-padding: var(--ig-pagination-vertical-padding) var(--ig-pagination-horizontal-padding) var(--ig-pagination-vertical-padding) var(--ig-pagination-horizontal-padding);
+
+    /* Loading indicator */
+    --ig-loader-color: var(--hcg-loader-color, var(--ig-color));
+
+    /* Default backgrounds and colors */
+    --ig-background: var(--hcg-background, transparent);
+    --ig-pagination-background: var(--hcg-pagination-background, transparent);
+
+    /* Accessibility */
+    --ig-focus-ring-color: var(--hcg-focus-ring-color, var(--ig-color));
+    --ig-focus-ring-width: var(--hcg-focus-ring-width, 2px);
+    --ig-focus-ring: 0 0 0 var(--ig-focus-ring-width) var(--ig-focus-ring-color);
+
+    /* Input styles */
+    --ig-input-font-weight: var(--hcg-input-font-weight, normal);
+    --ig-input-font-size: var(--hcg-input-font-size, 0.9em);
+    --ig-input-font-family: var(--hcg-input-font-family, var(--ig-font-family));
+    --ig-input-color: var(--hcg-input-color, var(--ig-color));
+    --ig-input-font: var(--ig-input-font-weight) var(--ig-input-font-size) var(--ig-input-font-family);
+    --ig-input-text-align: var(--hcg-input-text-align, var(--ig-text-align));
+    --ig-input-border-radius: var(--hcg-input-border-radius, 0);
+    --ig-input-border-width: var(--hcg-input-border-width, 1px);
+    --ig-input-border-style: var(--hcg-input-border-style, solid);
+    --ig-input-border-color: var(--hcg-input-border-color, var(--ig-color));
+    --ig-input-border: var(--ig-input-border-width) var(--ig-input-border-style) var(--ig-input-border-color);
+    --ig-input-background: var(--hcg-input-background, var(--highcharts-background-color));
+    --ig-input-hover-border-color: var(--hcg-input-hover-border-color, var(--ig-input-border-color));
+
+    /* CSS helpers */
+    --ig-highlight-border-size: var(--hcg-highlight-border-size, 1px);
+
+    /* Negative colors */
+    --ig-negative-border-color: var(--hcg-negative-border-color, var(--ig-negative-default-border-color));
+    --ig-negative-border-size: var(--hcg-negative-border-size, var(--ig-highlight-border-size));
+    --ig-negative-background: var(--hcg-negative-background, var(--ig-negative-default-background));
+    --ig-negative-color: var(--hcg-negative-color, var(--ig-color));
+
+    /* Neutral colors */
+    --ig-neutral-border-color: var(--hcg-neutral-border-color, var(--ig-neutral-default-border-color));
+    --ig-neutral-border-size: var(--hcg-neutral-border-size, var(--ig-highlight-border-size));
+    --ig-neutral-background: var(--hcg-neutral-background, var(--ig-neutral-default-background));
+    --ig-neutral-color: var(--hcg-neutral-color, var(--ig-color));
+
+    /* Positive colors */
+    --ig-positive-border-color: var(--hcg-positive-border-color, var(--ig-positive-default-border-color));
+    --ig-positive-border-size: var(--hcg-positive-border-size, var(--ig-highlight-border-size));
+    --ig-positive-background: var(--hcg-positive-background, var(--ig-positive-default-background));
+    --ig-positive-color: var(--hcg-positive-color, var(--ig-color));
+}
