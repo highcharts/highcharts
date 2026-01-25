@@ -60,6 +60,11 @@ ${specifier} .highcharts-dark,
 .highcharts-dark ${specifier} {
 ${rules.dark}
 }
+@media (prefers-color-scheme: dark) {
+    ${specifier || ':root'} {
+${rules.dark}
+    }
+}
 .highcharts-container {
   color-scheme: 'light dark';
 }
