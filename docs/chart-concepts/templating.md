@@ -12,7 +12,7 @@ Expressions in format strings are enclosed by `{single brackets}`. They can be s
 
 *   Two decimal places:  `"{point.y:.2f}"` [[Demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/labels/two-decimal-places)]
 *   Default thousands separator from browser locale, no decimal places: `{point.y:,.0f}` [[Demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/labels/no-decimal-places)]
-*   Forced thousands separator with one decimal place after a coma: `{point.y:,.1f}` [[Demo, internationalized](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/labels/one-decimal-place)]
+*   Forced thousands separator with one decimal place after a comma: `{point.y:,.1f}` [[Demo, internationalized](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/labels/one-decimal-place)]
 
 **Dates** allow, like numbers, the format to be appended behind a colon. The format conventions allowed are the same as those of [Highcharts.dateFormat()](https://api.highcharts.com/class-reference/Highcharts.Time#dateFormat). For example:
 
