@@ -1459,6 +1459,7 @@ export class Grid {
      * reference, it should be used instead of creating a new one.
      */
     private loadDataTable(): void {
+
         this.querying.shouldBeUpdated = true;
 
         // Unregister all events attached to the previous data table.
@@ -1485,6 +1486,7 @@ export class Grid {
             'afterSetColumns',
             'afterSetRows'
         ] as const).forEach((eventName): void => {
+
             this.dataTableEventDestructors.push(dt.on(eventName, (): void => {
                 this.querying.shouldBeUpdated = true;
             }));
@@ -1544,7 +1546,7 @@ export class Grid {
         this.isRendered = false;
         const dgIndex = Grid.grids.findIndex((dg): boolean => dg === this);
 
-        this.dataTableEventDestructors.forEach((fn): void => fn());
+        this.dataTableEventDestructors?.forEach((fn): void => fn());
         this.accessibility?.destroy();
         this.pagination?.destroy();
         this.viewport?.destroy();
