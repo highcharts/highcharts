@@ -1651,27 +1651,14 @@ function wrapSeriesGetExtremes(
 ): DataExtremesObject {
 
     if (this.boosted) {
-        // During panning, return the series object which contains dataMin and
-        // dataMax. This check must come before hasExtremes to ensure panning
-        // works correctly when extremes are set.
+        if (hasExtremes(this)) {
+            return {};
+        }
         if (this.xAxis.isPanning || this.yAxis.isPanning) {
             // Do not re-compute the extremes during panning, because looping
             // the data is expensive. The `this` contains the `dataMin` and
             // `dataMax` to use.
             return this;
-        }
-        // Check if this is called with forceExtremesFromAll (panning init).
-        // If so, always compute extremes even if hasExtremes returns true.
-        const forceExtremesFromAll = arguments[1];
-        if (forceExtremesFromAll) {
-            return proceed.apply(this, [].slice.call(arguments, 1));
-        }
-        // If extremes are set and current range >= set range, return empty
-        // object to skip expensive computation. hasExtremes now checks if
-        // current range < set range and allows extremes calculation for
-        // panning in that case.
-        if (hasExtremes(this)) {
-            return {};
         }
     }
     return proceed.apply(this, [].slice.call(arguments, 1));
