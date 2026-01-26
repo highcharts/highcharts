@@ -357,8 +357,8 @@ async function getPathMeta(config: SampleGeneratorConfig): Promise<MetaList> {
         }
         const node = await findNodeByPath(path);
         if (!node) {
-            console.warn(colors.yellow(
-                `No node found for path: ${path}, ` +
+            console.log(colors.gray(
+                `  - ${path} not found in tree.json, ` +
                 'trying to build control anyway.'
             ));
             // continue;
@@ -882,9 +882,11 @@ export async function getDemoTS(
         ].join('\n') + '\n\n    ';
     }
 
+    // Build the TS. Would like to have `satisfies Highcharts.Options` here, but
+    // that breaks jsFiddle. Revisit later.
     ts += `Highcharts.${factory}('container', ${
         chartOptions
-    } satisfies Highcharts.Options);\n`
+    });\n`
         // Some cases, for example tooltip.borderWidth, have defaultValue as
         // "undefined" in tree.json
         .replace(/"undefined"/gu, 'undefined');
