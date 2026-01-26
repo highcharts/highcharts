@@ -356,9 +356,9 @@ export interface ColumnOptions {
     sorting?: ColumnSortingOptions;
 
     /**
-     * The width of the column. It can be set in pixels or as a percentage of
-     * the table width. If unset, the width is distributed evenly between all
-     * columns.
+     * The width of the column. It can be set in pixels, as a percentage of the
+     * table width, or `'auto'`. If unset or `'auto'`, the width is distributed
+     * evenly between columns without a fixed width.
      *
      * This option does not work with the `resizing` option set to `full`.
      *

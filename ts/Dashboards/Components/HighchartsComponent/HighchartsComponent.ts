@@ -564,7 +564,18 @@ class HighchartsComponent extends Component {
      */
     public override destroy(): void {
         // Cleanup references in the global Highcharts scope
-        this.chart?.destroy();
+        // Destroy chart before destroying the component element
+        // to ensure chart has access to its renderTo element
+        if (this.chart && this.chart.renderTo && this.chart.renderer) {
+            try {
+                this.chart.destroy();
+            } catch (e) {
+                // Chart may already be destroyed or renderTo/renderer
+                // eslint-disable-next-line no-console
+                console.warn('Error destroying chart:', e);
+            }
+            this.chart = void 0;
+        }
         super.destroy();
     }
 
