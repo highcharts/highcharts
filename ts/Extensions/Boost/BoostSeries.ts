@@ -796,24 +796,60 @@ function hasExtremes(
     }
 
     const dataLength = series.dataTable.getModified().rowCount,
-        xAxis = series.xAxis && series.xAxis.options,
-        yAxis = series.yAxis && series.yAxis.options,
+        yAxis = series.yAxis,
+        xAxis = series.xAxis,
+        xAxisOptions = xAxis?.options,
+        yAxisOptions = yAxis?.options,
         colorAxis = series.colorAxis && series.colorAxis.options;
 
-    return (
-        dataLength >= threshold &&
-        // Defined yAxis extremes
-        isNumber(yAxis.min) &&
-        isNumber(yAxis.max) &&
-        // Defined (and required) xAxis extremes
-        (!checkX ||
-            (isNumber(xAxis.min) && isNumber(xAxis.max))
-        ) &&
-        // Defined (e.g. heatmap) colorAxis extremes
-        (!colorAxis ||
-            (isNumber(colorAxis.min) && isNumber(colorAxis.max))
+    // Check if extremes are defined in options
+    if (
+        dataLength < threshold ||
+        !isNumber(yAxisOptions?.min) ||
+        !isNumber(yAxisOptions?.max) ||
+        (checkX &&
+            (!isNumber(xAxisOptions?.min) || !isNumber(xAxisOptions?.max))) ||
+        (colorAxis && (!isNumber(colorAxis.min) || !isNumber(colorAxis.max)))
+    ) {
+        return false;
+    }
+
+    // #24029 - If allExtremes not calculated yet or current range < set range,
+    // allow extremes calculation for panning
+    if (
+        yAxis &&
+        (
+            !yAxis.allExtremes ||
+            (
+                isNumber(yAxis.min) &&
+                isNumber(yAxis.max) &&
+                isNumber(yAxisOptions?.min) &&
+                isNumber(yAxisOptions?.max) &&
+                (yAxis.max - yAxis.min) < (yAxisOptions.max - yAxisOptions.min)
+            )
         )
-    );
+    ) {
+        return false;
+    }
+
+    // Check xAxis if checkX is true
+    if (checkX && xAxis) {
+        if (
+            !xAxis.allExtremes ||
+            (
+                isNumber(xAxis.min) &&
+                isNumber(xAxis.max) &&
+                isNumber(xAxisOptions?.min) &&
+                isNumber(xAxisOptions?.max) &&
+                (xAxis.max - xAxis.min) < (xAxisOptions.max - xAxisOptions.min)
+            )
+        ) {
+            return false;
+        }
+    }
+
+    // Current range >= set range and allExtremes is calculated
+    return true;
 }
 
 /**
@@ -1615,14 +1651,27 @@ function wrapSeriesGetExtremes(
 ): DataExtremesObject {
 
     if (this.boosted) {
-        if (hasExtremes(this)) {
-            return {};
-        }
+        // During panning, return the series object which contains dataMin and
+        // dataMax. This check must come before hasExtremes to ensure panning
+        // works correctly when extremes are set.
         if (this.xAxis.isPanning || this.yAxis.isPanning) {
             // Do not re-compute the extremes during panning, because looping
             // the data is expensive. The `this` contains the `dataMin` and
             // `dataMax` to use.
             return this;
+        }
+        // Check if this is called with forceExtremesFromAll (panning init).
+        // If so, always compute extremes even if hasExtremes returns true.
+        const forceExtremesFromAll = arguments[1];
+        if (forceExtremesFromAll) {
+            return proceed.apply(this, [].slice.call(arguments, 1));
+        }
+        // If extremes are set and current range >= set range, return empty
+        // object to skip expensive computation. hasExtremes now checks if
+        // current range < set range and allows extremes calculation for
+        // panning in that case.
+        if (hasExtremes(this)) {
+            return {};
         }
     }
     return proceed.apply(this, [].slice.call(arguments, 1));
