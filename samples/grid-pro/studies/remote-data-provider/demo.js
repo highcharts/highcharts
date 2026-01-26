@@ -2,7 +2,7 @@ const grid = Grid.grid('container', {
     data: {
         providerType: 'remote',
         dataSource: {
-            urlTemplate: 'https://dataset-server-hc-production.up.railway.app' +
+            urlTemplate: 'https://demo-data-server.highstage.dev' +
                 '/data?format={format}&columnsInclude=employeeId,firstName,' +
                 'lastName&page={page}&pageSize={pageSize}&filter={filter}&' +
                 'sortBy={sortBy}&sortOrder={sortOrder}',
