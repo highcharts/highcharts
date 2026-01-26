@@ -93,6 +93,12 @@ export default class ContourSeries extends ScatterSeries {
 
     private buffers?: Record<string, GPUBuffer>;
 
+    public renderPromise?: Promise<void>;
+
+    public readbackPromise?: Promise<void>;
+
+    public readbackData?: Uint8Array;
+
     /* Uniforms:
      * - extremesUniform,
      * - valueExtremesUniform,
@@ -218,6 +224,7 @@ export default class ContourSeries extends ScatterSeries {
             );
             group.element.appendChild(this.foreignObject);
             this.canvas = document.createElement('canvas');
+            this.canvas.id = 'webgpu-canvas';
             this.foreignObject.appendChild(this.canvas);
         }
 
@@ -249,7 +256,7 @@ export default class ContourSeries extends ScatterSeries {
         if (this.renderFrame) {
             this.renderFrame();
         } else {
-            this.run();
+            this.renderPromise = this.run();
         }
     }
 
@@ -281,7 +288,11 @@ export default class ContourSeries extends ScatterSeries {
                     device: device,
                     format: canvasFormat,
                     colorSpace: 'display-p3',
-                    alphaMode: 'premultiplied'
+                    alphaMode: 'premultiplied',
+                    usage: (
+                        GPUTextureUsage.RENDER_ATTACHMENT |
+                        GPUTextureUsage.COPY_SRC
+                    )
                 });
 
                 const [indices, vertices] = this.getContourData();
@@ -347,6 +358,10 @@ export default class ContourSeries extends ScatterSeries {
                     isInvertedUniform: device.createBuffer({
                         size: 4,
                         usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
+                    }),
+                    contourImg: device.createBuffer({
+                        size: Float32Array.BYTES_PER_ELEMENT * 4,
+                        usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ
                     })
                 };
 
@@ -473,11 +488,22 @@ export default class ContourSeries extends ScatterSeries {
                     }]
                 });
 
+                let readback: GPUBuffer;
+
                 this.renderFrame = function (): void {
-                    // Set all uniforms before each frame
                     this.setUniforms(false);
 
-                    // Render the frame
+                    context.configure({
+                        device,
+                        format: canvasFormat,
+                        colorSpace: 'display-p3',
+                        alphaMode: 'premultiplied',
+                        usage: (
+                            GPUTextureUsage.RENDER_ATTACHMENT |
+                            GPUTextureUsage.COPY_SRC
+                        )
+                    });
+
                     const encoder = device.createCommandEncoder();
 
                     const pass = encoder.beginRenderPass({
@@ -488,6 +514,7 @@ export default class ContourSeries extends ScatterSeries {
                             storeOp: 'store' as GPUStoreOp
                         }]
                     });
+
                     pass.setPipeline(pipeline);
                     pass.setVertexBuffer(0, vertexBuffer);
                     pass.setIndexBuffer(indexBuffer, 'uint32');
@@ -495,7 +522,53 @@ export default class ContourSeries extends ScatterSeries {
                     pass.drawIndexed(indices.length);
                     pass.end();
 
+                    const exporting = this.chart.exporting;
+
+                    if (exporting && this.buffers) {
+                        const width = canvas.width;
+                        const height = canvas.height;
+                        const bytesPerPixel = 4;
+                        const bytesPerRow = (
+                            Math.ceil((width * bytesPerPixel) / 256) * 256
+                        );
+
+                        this.buffers.readback = (
+                            readback = device.createBuffer({
+                                size: bytesPerRow * height,
+                                usage: (
+                                    GPUBufferUsage.COPY_DST |
+                                    GPUBufferUsage.MAP_READ
+                                )
+                            })
+                        );
+
+                        encoder.copyTextureToBuffer(
+                            { texture: context.getCurrentTexture() },
+                            {
+                                buffer: readback,
+                                bytesPerRow,
+                                rowsPerImage: height
+                            },
+                            { width, height, depthOrArrayLayers: 1 }
+                        );
+                    }
+
                     device.queue.submit([encoder.finish()]);
+
+                    if (exporting) {
+                        this.readbackPromise = (
+                            readback
+                                .mapAsync(GPUMapMode.READ)
+                                .then((): void => {
+                                    const src = new Uint8Array(
+                                        readback.getMappedRange()
+                                    );
+                                    this.readbackData = new Uint8Array(src);
+                                    // Optionally strip row padding here.
+                                    readback.unmap();
+                                })
+                        );
+                    }
                 };
 
                 this.renderFrame();

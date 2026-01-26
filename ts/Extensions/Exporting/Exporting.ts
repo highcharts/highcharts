@@ -1634,6 +1634,66 @@ class Exporting {
                 chartOptions
             );
 
+        const contour = chart.series.find(
+            (
+                (s): boolean => s.type === 'contour'
+            )
+        );
+
+        if (contour) {
+            let readback = (contour as any).buffers?.readback;
+
+            const dst = document.createElement('canvas');
+            const srcCanvas = document.querySelector('canvas');
+
+            if (srcCanvas) {
+                const width = dst.width = srcCanvas.width;
+                const height = dst.height = srcCanvas.height;
+
+                const ctx = dst.getContext('2d');
+                if (!ctx) {
+                    throw new Error('2D context unavailable');
+                }
+
+
+                if (!readback) {
+                    (contour as any).readbackPromise.then((): void => {
+                        readback = (contour as any).buffers?.readback;
+                        const src = (contour as any).readbackData;
+                        const imageData = new ImageData(
+                            new Uint8ClampedArray(
+                                src.buffer,
+                                src.byteOffset,
+                                width * height * 4
+                            ),
+                            width,
+                            height
+                        );
+                        ctx.putImageData(imageData, 0, 0);
+
+                        readback.unmap();
+                    });
+                } else {
+                    const src = (contour as any).readbackData;
+                    const imageData = new ImageData(
+                        new Uint8ClampedArray(
+                            src.buffer,
+                            src.byteOffset,
+                            width * height * 4
+                        ),
+                        width,
+                        height
+                    );
+                    ctx.putImageData(imageData, 0, 0);
+
+                    readback.unmap();
+                }
+            }
+
+
+            return '<svg></svg>';
+        }
+
         // Use userOptions to make the options chain in series right (#3881)
         options.plotOptions = merge(
             chart.userOptions.plotOptions,
