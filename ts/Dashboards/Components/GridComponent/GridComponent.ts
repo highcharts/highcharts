@@ -122,22 +122,28 @@ class GridComponent extends Component {
     public override async update(options: Partial<Options>): Promise<void> {
         await super.update(options);
         this.setOptions();
+        const grid = this.grid;
 
-        if (this.grid) {
-            this.grid.update(
+        if (grid) {
+            grid.update(
                 options.gridOptions,
                 false
             );
 
             const table = this.getDataTable();
 
-            if (this.grid?.viewport?.dataTable?.id !== table?.id) {
-                this.grid.update({
+            if (table && grid.viewport?.dataTable?.id !== table.id) {
+                grid.update({
                     dataTable: table?.getModified()
                 }, false);
             }
 
-            await this.grid.redraw();
+            if (options.gridOptions?.dataTable && this.options.gridOptions) {
+                this.options.gridOptions.dataTable =
+                    options.gridOptions.dataTable;
+            }
+
+            await grid.redraw();
         }
 
         this.emit({ type: 'afterUpdate' });
