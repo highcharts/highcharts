@@ -237,10 +237,10 @@ export interface TreegraphSeriesOptions extends TreemapSeriesOptions {
      */
     reversed?: boolean;
 
-    tooltip?: TreegraphSeriesToolipOptions;
+    tooltip?: TreegraphSeriesTooltipOptions;
 }
 
-export interface TreegraphSeriesToolipOptions
+export interface TreegraphSeriesTooltipOptions
     extends TreemapSeriesTooltipOptions {
     /**
      * @default '{point.id}'

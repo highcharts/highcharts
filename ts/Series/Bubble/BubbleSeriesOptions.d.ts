@@ -33,7 +33,7 @@ export interface BubbleSeriesOptions extends ScatterSeriesOptions {
     sizeBy?: BubbleSizeByValue;
     sizeByAbsoluteValue?: boolean;
 
-    tooltip?: BubbleSeriesTooltipOptions,
+    tooltip?: BubbleSeriesTooltipOptions;
 
     zMax?: number;
     zMin?: number;

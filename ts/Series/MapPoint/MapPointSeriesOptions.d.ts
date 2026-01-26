@@ -122,7 +122,7 @@ export interface MapPointSeriesTooltipOptions
     /**
      * @default '{#if point.name}{point.name}{else}Lat: {point.lat}, Lon: {point.lon}{/if}'
      */
-    pointFormat: ScatterSeriesTooltipOptions['pointFormat'];
+    pointFormat?: ScatterSeriesTooltipOptions['pointFormat'];
 }
 
 /* *
