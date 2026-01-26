@@ -138,6 +138,7 @@ class GridComponent extends Component {
                 }, false);
             }
 
+            // #24067 Update the dataTable in the options if it has changed
             if (options.gridOptions?.dataTable && this.options.gridOptions) {
                 this.options.gridOptions.dataTable =
                     options.gridOptions.dataTable;
