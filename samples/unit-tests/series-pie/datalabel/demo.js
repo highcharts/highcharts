@@ -782,3 +782,31 @@ QUnit.test(
             'ConnectorShape should be merged with defaults'
         );
     });
+
+QUnit.test(
+    'Data label with negative distance after point toggle (#21725)',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+            series: [{
+                type: 'pie',
+                data: [20, 17, 10, 10, 6, 34],
+                dataLabels: {
+                    distance: -20
+                },
+                showInLegend: true
+            }]
+        });
+
+        const point = chart.series[0].points[5];
+
+        // Toggle visibility off and on
+        point.setVisible(false, true);
+        point.setVisible(true, true);
+
+        assert.notEqual(
+            point.dataLabel.attr('opacity'),
+            0,
+            'The dataLabel should be visible after visibility toggle'
+        );
+    }
+);
