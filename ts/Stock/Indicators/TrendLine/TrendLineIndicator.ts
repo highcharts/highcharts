@@ -190,6 +190,7 @@ extend(TrendLineIndicator.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         trendline: typeof TrendLineIndicator;

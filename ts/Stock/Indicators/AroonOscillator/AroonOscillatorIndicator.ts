@@ -159,6 +159,7 @@ MultipleLinesComposition.compose(AroonIndicator);
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         aroonoscillator: typeof AroonOscillatorIndicator;

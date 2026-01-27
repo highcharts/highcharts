@@ -137,6 +137,7 @@ interface NATRIndicator {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         natr: typeof NATRIndicator;

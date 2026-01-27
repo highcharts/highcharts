@@ -185,6 +185,7 @@ extend(WilliamsRIndicator.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         williamsr: typeof WilliamsRIndicator;

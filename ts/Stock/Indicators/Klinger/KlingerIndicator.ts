@@ -403,6 +403,7 @@ MultipleLinesComposition.compose(KlingerIndicator);
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         klinger: typeof KlingerIndicator;

@@ -230,6 +230,7 @@ interface RSIIndicator {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         rsi: typeof RSIIndicator;

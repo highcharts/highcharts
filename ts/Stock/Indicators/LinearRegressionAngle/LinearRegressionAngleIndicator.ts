@@ -139,6 +139,7 @@ extend(LinearRegressionAngleIndicator.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         linearRegressionAngle: typeof LinearRegressionAngleIndicator;

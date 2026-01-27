@@ -952,6 +952,7 @@ extend(IKHIndicator.prototype, {
 
 ApproximationRegistry['ichimoku-averages'] = ichimokuAverages;
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         ikh: typeof IKHIndicator;

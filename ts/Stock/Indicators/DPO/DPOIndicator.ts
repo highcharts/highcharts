@@ -218,6 +218,7 @@ extend(DPOIndicator.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         dpo: typeof DPOIndicator;

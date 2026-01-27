@@ -121,6 +121,7 @@ interface TRIXIndicator {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         trix: typeof TRIXIndicator;

@@ -316,6 +316,7 @@ MultipleLinesComposition.compose(BBIndicator);
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         bb: typeof BBIndicator;

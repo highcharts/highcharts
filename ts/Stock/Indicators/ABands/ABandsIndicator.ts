@@ -287,6 +287,7 @@ MultipleLinesComposition.compose(ABandsIndicator);
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         abands: typeof ABandsIndicator;

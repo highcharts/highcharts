@@ -260,6 +260,7 @@ interface VWAPIndicator {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         vwap: typeof VWAPIndicator;

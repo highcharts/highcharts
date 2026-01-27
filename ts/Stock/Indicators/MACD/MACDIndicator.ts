@@ -531,6 +531,7 @@ extend(MACDIndicator.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         macd: typeof MACDIndicator;

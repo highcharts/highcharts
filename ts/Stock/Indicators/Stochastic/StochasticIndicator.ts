@@ -290,6 +290,7 @@ MultipleLinesComposition.compose(StochasticIndicator);
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         stochastic: typeof StochasticIndicator;

@@ -231,6 +231,7 @@ interface WMAIndicator {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         wma: typeof WMAIndicator;

@@ -942,6 +942,7 @@ namespace VBPIndicator {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         vbp: typeof VBPIndicator;

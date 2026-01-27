@@ -276,6 +276,7 @@ extend(MFIIndicator.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         mfi: typeof MFIIndicator;

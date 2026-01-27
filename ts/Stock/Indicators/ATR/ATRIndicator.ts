@@ -229,6 +229,8 @@ interface ATRIndicator {
  *  Registry
  *
  * */
+
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         atr: typeof ATRIndicator;

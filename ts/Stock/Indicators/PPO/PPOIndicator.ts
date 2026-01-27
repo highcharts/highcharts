@@ -201,6 +201,7 @@ extend(PPOIndicator.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         ppo: typeof PPOIndicator;

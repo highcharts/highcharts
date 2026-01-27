@@ -200,6 +200,7 @@ interface CMOIndicator {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         cmo: typeof CMOIndicator;

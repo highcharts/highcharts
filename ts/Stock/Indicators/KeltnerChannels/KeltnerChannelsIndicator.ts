@@ -275,6 +275,7 @@ MultipleLinesComposition.compose(KeltnerChannelsIndicator);
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         keltnerchannels: typeof KeltnerChannelsIndicator;
