@@ -123,6 +123,13 @@ const exporting: ExportingOptions = {
      * exception is thrown instead. Receives two parameters, the exporting
      * options, and the error from the module.
      *
+     * Since v13, PDF client-side export dependencies are opt-in. If `jsPDF` and
+     * `svg2pdf` are not present on `window` and `exporting.libURL` is not
+     * defined, a console warning is emitted on chart load. When fallback is
+     * disabled and no `exporting.error` handler is defined, the thrown error
+     * will use the underlying error message when available (for example,
+     * missing `jsPDF`/`svg2pdf`) instead of always throwing error `#28`.
+     *
      * @see [fallbackToExportServer](#exporting.fallbackToExportServer)
      *
      * @type      {Highcharts.ExportingErrorCallbackFunction}
@@ -142,6 +149,13 @@ const exporting: ExportingOptions = {
      * It is recommended to define the [exporting.error](#exporting.error)
      * handler if disabling fallback, in order to notify users in case export
      * fails.
+     *
+     * Since v13, PDF client-side export dependencies are not auto-loaded unless
+     * `exporting.libURL` is defined (or the scripts are already present on
+     * the page). If dependencies are missing and no `exporting.libURL` is
+     * configured, a console warning is emitted on chart load. Disabling
+     * fallback without defining `exporting.error` will throw the underlying
+     * error message when available.
      *
      * @type      {boolean}
      * @default   true

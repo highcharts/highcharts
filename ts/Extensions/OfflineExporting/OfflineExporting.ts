@@ -249,7 +249,9 @@ namespace OfflineExporting {
         }
 
         addEvent(Chart, 'load', function (this: Chart): void {
-            if (hasPdfDependencies()) {
+            // The load event also runs for server-export chart copies.
+            // Skip warnings in that case.
+            if (this.renderer.forExport || hasPdfDependencies()) {
                 return;
             }
 
