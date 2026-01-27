@@ -18,7 +18,7 @@ import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import Controllable from './Controllable.js';
 import ControllablePath from './ControllablePath.js';
 import U from '../../../Core/Utilities.js';
-const { merge } = U;
+const { defined, merge } = U;
 
 /* *
  *
@@ -89,13 +89,25 @@ class ControllableCircle extends Controllable {
     public redraw(animation?: boolean): void {
 
         if (this.graphic) {
-            const position = this.anchor(this.points[0]).absolutePosition;
+            const point = this.points[0],
+                position = this.anchor(point).absolutePosition,
+                userRadius = this.options.r;
 
-            if (position) {
+            if (position && defined(userRadius) && defined(point.x)) {
+                const xAxis = defined(this.options.xAxis) ?
+                        this.chart.xAxis[this.options.xAxis] : void 0,
+                    yAxis = defined(this.options.yAxis) ?
+                        this.chart.yAxis[this.options.yAxis] : void 0;
+
+                const r = this.calculateAnnotationSize(
+                    point.x,
+                    userRadius,
+                    xAxis || yAxis
+                );
                 this.graphic[animation ? 'animate' : 'attr']({
                     x: position.x,
                     y: position.y,
-                    r: this.options.r
+                    r
                 });
             } else {
                 this.graphic.attr({

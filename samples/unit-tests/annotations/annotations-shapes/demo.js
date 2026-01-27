@@ -262,6 +262,16 @@ QUnit.test('Basic shape annotations', function (assert) {
                 height: 100,
                 xAxis: 0,
                 yAxis: 0
+            }, {
+                point: {
+                    x: 1,
+                    y: 50,
+                    xAxis: 0,
+                    yAxis: 0
+                },
+                type: 'circle',
+                r: 1,
+                xAxis: 0
             }]
         }]
     });
@@ -269,19 +279,30 @@ QUnit.test('Basic shape annotations', function (assert) {
     const xAxis = chart.xAxis[0],
         yAxis = chart.yAxis[0],
         rect = chart.annotations[0].shapes[0],
+        circle = chart.annotations[0].shapes[1],
         // Draw from x=3 to x=4
-        width = Math.abs(xAxis.toPixels(4) - xAxis.toPixels(3)),
+        rectWidth = Math.abs(xAxis.toPixels(4) - xAxis.toPixels(3)),
         // Draw from y=150 to y=250
-        height = Math.abs(yAxis.toPixels(250) - yAxis.toPixels(150));
+        rectHeight = Math.abs(yAxis.toPixels(250) - yAxis.toPixels(150)),
+        // Draw from x=2 to x=4
+        circleRadius = Math.abs(xAxis.toPixels(4) - xAxis.toPixels(2)) / 2;
 
-    assert.strictEqual(
-        width,
+    assert.close(
+        rectWidth,
         Number(rect.graphic.element.getAttribute('width')),
+        0.01,
         'Rect annotation created with axis units width is correct.'
     );
-    assert.strictEqual(
-        height,
+    assert.close(
+        rectHeight,
         Number(rect.graphic.element.getAttribute('height')),
+        0.01,
         'Rect annotation created with axis units height is correct.'
+    );
+    assert.close(
+        circleRadius,
+        Number(circle.graphic.element.getAttribute('r')),
+        0.01,
+        'Circle annotation created with axis units radius is correct.'
     );
 });
