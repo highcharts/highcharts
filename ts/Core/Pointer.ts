@@ -519,7 +519,7 @@ class Pointer {
             // Panning
             if (
                 clickedInside && !selectionMarker && panningEnabled &&
-                (this.zoomOrPankeyPressed(e, panKey))
+                (this.checkActionKey(e, panKey))
             ) {
                 chart.pan(e, panning as any);
             }
@@ -958,7 +958,7 @@ class Pointer {
     }
 
     /**
-     * Check whether the zoomKey or panKey is pressed.
+     * Check whether the configured action key allows the interaction.
      *
      * @internal
      * @param {Event} e
@@ -966,9 +966,10 @@ class Pointer {
      * @param {string | undefined} key
      *        Zoom or pan key.
      * @return {boolean}
-     *         True if the zoom or pan key is pressed. False otherwise.
+     *         True if the key is undefined
+     *         or if the action key is pressed. False otherwise.
      */
-    private zoomOrPankeyPressed(e: Event, key: string | undefined): boolean {
+    private checkActionKey(e: Event, key: string | undefined): boolean {
         return typeof key === 'undefined' || (e as any)[`${key}Key`];
     }
 
@@ -2173,7 +2174,7 @@ class Pointer {
         this.zoomHor = (zoomX && !inverted) || (zoomY && inverted);
         this.zoomVert = (zoomY && !inverted) || (zoomX && inverted);
         this.hasZoom = (zoomX || zoomY) &&
-            (this.zoomOrPankeyPressed(e, chart.zooming.key));
+            (this.checkActionKey(e, chart.zooming.key));
 
     }
 }
