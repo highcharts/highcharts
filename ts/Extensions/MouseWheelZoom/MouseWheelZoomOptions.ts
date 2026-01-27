@@ -16,7 +16,7 @@
  * */
 
 
-import type ChartZoomingOptions from '../../Core/Chart/ChartOptions';
+import type { ChartZoomingOptions } from '../../Core/Chart/ChartOptions';
 
 /* *
  *
