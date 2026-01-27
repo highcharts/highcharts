@@ -68,7 +68,6 @@ QUnit.test('Panning when yAxis min/max are set (#24029)', function (assert) {
     );
 
     // xAxis extremes should have changed after xAxis panning
-    console.log(chart.xAxis[0].min, xAxisZoomExtremes.min);
     assert.ok(
         chart.xAxis[0].min !== xAxisZoomExtremes.min ||
         chart.xAxis[0].max !== xAxisZoomExtremes.max,
