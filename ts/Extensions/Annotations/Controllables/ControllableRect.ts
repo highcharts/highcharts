@@ -107,32 +107,26 @@ class ControllableRect extends Controllable {
 
         if (this.graphic) {
             const point = this.points[0],
-                position = this.anchor(point).absolutePosition;
+                position = this.anchor(point).absolutePosition,
+                userWidth = this.options.width,
+                userHeight = this.options.height;
 
-            if (position) {
-                const options = this.options,
-                    chart = this.annotation.chart,
-                    xAxis =
-                        defined(options.xAxis) && chart.xAxis[options.xAxis],
-                    yAxis =
-                        defined(options.yAxis) && chart.yAxis[options.yAxis];
+            if (
+                position &&
+                defined(point.x) &&
+                defined(point.y) &&
+                defined(userWidth) &&
+                defined(userHeight)
+            ) {
+                const xAxis = defined(this.options.xAxis) ?
+                        this.chart.xAxis[this.options.xAxis] : void 0,
+                    yAxis = defined(this.options.yAxis) ?
+                        this.chart.yAxis[this.options.yAxis] : void 0;
 
-                let width = options.width,
-                    height = options.height;
-
-                if (xAxis && width && defined(point.x)) {
-                    const startPixel = xAxis.toPixels(point.x, true),
-                        endPixel = xAxis.toPixels(point.x + width, true);
-
-                    width = Math.abs(endPixel - startPixel);
-                }
-
-                if (yAxis && height && defined(point.y)) {
-                    const startPixel = yAxis.toPixels(point.y, true),
-                        endPixel = yAxis.toPixels(point.y + height, true);
-
-                    height = Math.abs(endPixel - startPixel);
-                }
+                const width =
+                    this.calculateAnnotationSize(point.x, userWidth, xAxis);
+                const height =
+                    this.calculateAnnotationSize(point.y, userHeight, yAxis);
 
                 this.graphic[animation ? 'animate' : 'attr']({
                     x: position.x,
