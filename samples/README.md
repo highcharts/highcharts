@@ -35,14 +35,15 @@ what to look for. To mark a test for manual testing, add
 be placed in the `unit-tests` dir**.
 
 3. **Unit tests**. These samples are designed to run both in our sample viewer
-and in karma. They load QUnit. Unit tests are recognized by a jigsaw puzzle
-piece next to the name. QUnit is loaded in the `demo.details` files and the
-required HTML must be present in `demo.html`. The recommended way to add a new
-test is to copy and modify an existing one.
+and via Playwright's QUnit runner. They load QUnit. Unit tests are recognized by
+a jigsaw puzzle piece next to the name. QUnit is loaded in the `demo.details`
+files and the required HTML must be present in `demo.html`. The recommended way
+to add a new test is to copy and modify an existing one.
 
 The tests that are added to `/samples/unit-tests` are also part of the
-pre-commit tests that run via karma, and in CircleCI tests in multiple browsers.
-Run `gulp test` on the root to pre-check. Read more at
+pre-commit tests that run via Playwright, and in CI tests in multiple browsers.
+Run `gulp test` on the root to pre-check, or `npm test` to run all Playwright
+tests. Read more at
 [highcharts/test](https://github.com/highcharts/highcharts/tree/master/test).
 
 

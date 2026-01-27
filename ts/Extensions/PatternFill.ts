@@ -450,21 +450,28 @@ function onPointAfterInit(
 ): void {
     const point = this,
         colorOptions: (PatternObject|undefined) =
-            point.options.color as any;
+            (point.color || point.options.color) as any;
 
     // Only do this if we have defined a specific color on this point. Otherwise
     // we will end up trying to re-add the series color for each point.
-    if (colorOptions && colorOptions.pattern) {
+    if (
+        colorOptions &&
+        (
+            colorOptions.pattern ||
+            colorOptions.patternIndex !== void 0
+        )
+    ) {
         // Move path definition to object, allows for merge with series path
         // definition
-        if (typeof colorOptions.pattern.path === 'string') {
+        if (typeof colorOptions.pattern?.path === 'string') {
             colorOptions.pattern.path = {
                 d: colorOptions.pattern.path
             };
         }
         // Merge with series options
         point.color = point.options.color = merge(
-            point.series.options.color as any, colorOptions
+            point.series.options.color as any,
+            colorOptions
         );
     }
 }

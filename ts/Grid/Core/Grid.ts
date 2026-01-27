@@ -1355,6 +1355,8 @@ export class Grid {
 
         if (this.enabledColumns.length > 0) {
             this.viewport = this.renderTable();
+            this.viewport.tableElement.setAttribute('id', this.id);
+
             if (viewportMeta && this.viewport) {
                 this.viewport.applyStateMeta(viewportMeta);
             }
@@ -1537,6 +1539,8 @@ export class Grid {
      * after destruction by calling the `render` method.
      */
     public destroy(onlyDOM = false): void {
+        fireEvent(this, 'beforeDestroy');
+
         this.isRendered = false;
         const dgIndex = Grid.grids.findIndex((dg): boolean => dg === this);
 
