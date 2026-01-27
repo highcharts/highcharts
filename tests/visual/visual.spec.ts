@@ -74,6 +74,7 @@ const pageTemplate = (bodyContent = '') =>
 
 test.describe('Visual tests', () => {
     test.describe.configure({
+        mode: 'serial',
         timeout: CHART_LOAD_TIMEOUT_MS + 5_000,
     });
 
