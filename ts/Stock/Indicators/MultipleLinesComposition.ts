@@ -43,6 +43,7 @@ const {
  *
  * */
 
+/** @internal */
 namespace MultipleLinesComposition {
 
     /* *
@@ -426,4 +427,5 @@ namespace MultipleLinesComposition {
  *
  * */
 
+/** @internal */
 export default MultipleLinesComposition;

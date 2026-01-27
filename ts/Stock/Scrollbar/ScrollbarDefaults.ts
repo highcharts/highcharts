@@ -258,4 +258,5 @@ const ScrollbarDefaults: ScrollbarOptions = {
  *
  * */
 
+/** @internal */
 export default ScrollbarDefaults;

@@ -20,6 +20,7 @@ import type LineSeries from '../../Series/Line/LineSeries';
  *
  * */
 
+/** @internal */
 export interface IndicatorValuesObject<
     /* eslint-disable-next-line */
     TLinkedSeries extends LineSeries

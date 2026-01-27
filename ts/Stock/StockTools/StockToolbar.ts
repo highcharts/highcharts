@@ -825,6 +825,7 @@ class Toolbar {
  *
  * */
 
+/** @internal */
 interface Toolbar {
     /**
      * Mapping JSON fields to CSS classes.

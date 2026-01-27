@@ -47,6 +47,7 @@ declare module '../../Core/Chart/ChartBase'{
     }
 }
 
+/** @internal */
 declare module '../../Core/Renderer/SVG/SymbolType' {
     interface SymbolTypeRegistry {
         'navigator-handle': SymbolFunction;

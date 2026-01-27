@@ -33,6 +33,7 @@ const {
     pick
 } = U;
 
+/** @internal */
 declare module '../../Core/GlobalsBase' {
     interface GlobalsBase {
         navigators: Array<StandaloneNavigator>;
@@ -50,6 +51,7 @@ declare module '../../Core/GlobalsBase' {
  * creating a standalone navigator component that synchronizes the extremes
  * across multiple bound charts.
  *
+ * @internal
  * @class
  * @name Highcharts.StandaloneNavigator
  *
@@ -455,6 +457,7 @@ class StandaloneNavigator {
     }
 }
 
+/** @internal */
 export default StandaloneNavigator;
 
 /* *

@@ -47,6 +47,7 @@ const {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Chart/ChartBase'{
     interface ChartBase {
         stockTools?: Toolbar;
@@ -55,6 +56,7 @@ declare module '../../Core/Chart/ChartBase'{
     }
 }
 
+/** @internal */
 declare module '../../Core/Options'{
     interface LangOptions {
         stockTools?: LangStockToolsOptions;
