@@ -20,6 +20,7 @@ import type SMAPoint from '../SMA/SMAPoint';
  *
  * */
 
+/** @internal */
 declare class SupertrendPoint extends SMAPoint {
     public series: SupertrendIndicator;
     public y: number;
@@ -31,4 +32,5 @@ declare class SupertrendPoint extends SMAPoint {
  *
  * */
 
+/** @internal */
 export default SupertrendPoint;

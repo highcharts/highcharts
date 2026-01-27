@@ -252,6 +252,7 @@ class KeltnerChannelsIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface KeltnerChannelsIndicator extends MultipleLinesComposition.IndicatorComposition {
     nameBase: string;
     nameComponents: Array<string>;

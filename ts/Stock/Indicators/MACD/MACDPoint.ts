@@ -21,6 +21,7 @@ import type SMAPoint from '../SMA/SMAPoint';
  *
  * */
 
+/** @internal */
 declare class MACDPoint extends SMAPoint {
     public series: MACDIndicator;
     public signal: number;
@@ -36,4 +37,5 @@ declare class MACDPoint extends SMAPoint {
  *
  * */
 
+/** @internal */
 export default MACDPoint;

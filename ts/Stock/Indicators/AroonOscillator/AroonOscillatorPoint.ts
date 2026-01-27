@@ -20,6 +20,7 @@ import type AroonPoint from '../Aroon/AroonPoint';
  *
  * */
 
+/** @internal */
 declare class AroonOscillatorPoint extends AroonPoint {
     public series: AroonOscillatorIndicator;
 }
@@ -30,4 +31,5 @@ declare class AroonOscillatorPoint extends AroonPoint {
  *
  * */
 
+/** @internal */
 export default AroonOscillatorPoint;

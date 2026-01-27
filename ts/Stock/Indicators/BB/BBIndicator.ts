@@ -294,6 +294,7 @@ class BBIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface BBIndicator extends MultipleLinesComposition.IndicatorComposition {
     linesApiNames: Array<string>;
     nameComponents: Array<string>;

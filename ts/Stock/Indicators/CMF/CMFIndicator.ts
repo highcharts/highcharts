@@ -326,6 +326,7 @@ class CMFIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface CMFIndicator {
     pointClass: typeof CMFPoint;
 }

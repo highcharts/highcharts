@@ -21,6 +21,7 @@ import type SMAPoint from '../SMA/SMAPoint';
  *
  * */
 
+/** @internal */
 declare class EMAPoint extends SMAPoint {
     public series: EMAIndicator;
 }
@@ -31,4 +32,5 @@ declare class EMAPoint extends SMAPoint {
  *
  * */
 
+/** @internal */
 export default EMAPoint;

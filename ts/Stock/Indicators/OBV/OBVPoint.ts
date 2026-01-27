@@ -21,6 +21,7 @@ import type SMAPoint from '../SMA/SMAPoint';
  *
  * */
 
+/** @internal */
 declare class OBVPoint extends SMAPoint {
     public series: OBVIndicator;
 }
@@ -31,4 +32,5 @@ declare class OBVPoint extends SMAPoint {
  *
  * */
 
+/** @internal */
 export default OBVPoint;

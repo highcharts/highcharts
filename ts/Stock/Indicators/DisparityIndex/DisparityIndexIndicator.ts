@@ -196,6 +196,7 @@ class DisparityIndexIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface DisparityIndexIndicator {
     nameBase: string;
     nameComponents: Array<string>;

@@ -105,6 +105,7 @@ class LinearRegressionInterceptIndicator extends LinearRegressionIndicator {
  *
  * */
 
+/** @internal */
 interface LinearRegressionInterceptIndicator {
     pointClass: typeof LinearRegressionInterceptPoint;
     nameBase: string;

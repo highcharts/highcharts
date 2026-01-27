@@ -160,6 +160,7 @@ class MomentumIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface MomentumIndicator {
     pointClass: typeof MomentumPoint;
     nameBase: string;

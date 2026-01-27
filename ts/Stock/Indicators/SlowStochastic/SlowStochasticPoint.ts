@@ -21,6 +21,7 @@ import type StochasticPoint from '../Stochastic/StochasticPoint';
  *
  * */
 
+/** @internal */
 declare class SlowStochasticPoint extends StochasticPoint {
     public series: SlowStochasticIndicator;
 }
@@ -31,4 +32,5 @@ declare class SlowStochasticPoint extends StochasticPoint {
  *
  * */
 
+/** @internal */
 export default SlowStochasticPoint;

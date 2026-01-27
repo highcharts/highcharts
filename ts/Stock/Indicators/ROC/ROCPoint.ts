@@ -21,6 +21,7 @@ import type SMAPoint from '../SMA/SMAPoint';
  *
  * */
 
+/** @internal */
 declare class ROCPoint extends SMAPoint {
     public series: ROCIndicator;
 }
@@ -31,4 +32,5 @@ declare class ROCPoint extends SMAPoint {
  *
  * */
 
+/** @internal */
 export default ROCPoint;

@@ -269,6 +269,7 @@ class ZigzagIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface ZigzagIndicator {
     nameComponents: Array<string>;
     nameSuffixes: Array<string>;

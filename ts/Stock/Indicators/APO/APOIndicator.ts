@@ -177,6 +177,7 @@ class APOIndicator extends EMAIndicator {
  *
  * */
 
+/** @internal */
 interface APOIndicator {
     nameBase: string;
     nameComponents: Array<string>;

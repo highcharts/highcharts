@@ -21,6 +21,7 @@ import type SMAPoint from '../SMA/SMAPoint';
  *
  * */
 
+/** @internal */
 declare class IKHPoint extends SMAPoint {
     public series: IKHIndicator;
     public tenkanSen: number;
@@ -41,4 +42,5 @@ declare class IKHPoint extends SMAPoint {
  *
  * */
 
+/** @internal */
 export default IKHPoint;

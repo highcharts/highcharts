@@ -21,6 +21,7 @@ import type SMAPoint from '../SMA/SMAPoint';
  *
  * */
 
+/** @internal */
 declare class RSIPoint extends SMAPoint {
     public series: RSIIndicator;
 }
@@ -31,4 +32,5 @@ declare class RSIPoint extends SMAPoint {
  *
  * */
 
+/** @internal */
 export default RSIPoint;

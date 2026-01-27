@@ -21,6 +21,7 @@ import type SMAPoint from '../SMA/SMAPoint';
  *
  * */
 
+/** @internal */
 declare class DMIPoint extends SMAPoint {
     public minusDI?: number;
     public plusDI?: number;
@@ -33,4 +34,5 @@ declare class DMIPoint extends SMAPoint {
  *
  * */
 
+/** @internal */
 export default DMIPoint;

@@ -23,6 +23,7 @@ import type LinearRegressionPoint from
  *
  * */
 
+/** @internal */
 declare class LinearRegressionSlopesPoint extends LinearRegressionPoint {
     public series: LinearRegressionSlopesIndicator;
 }
@@ -33,4 +34,5 @@ declare class LinearRegressionSlopesPoint extends LinearRegressionPoint {
  *
  * */
 
+/** @internal */
 export default LinearRegressionSlopesPoint;

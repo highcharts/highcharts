@@ -502,6 +502,7 @@ class MACDIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface MACDIndicator {
     crispCol: typeof ColumnSeries.prototype.crispCol;
     getColumnMetrics: typeof ColumnSeries.prototype.getColumnMetrics;

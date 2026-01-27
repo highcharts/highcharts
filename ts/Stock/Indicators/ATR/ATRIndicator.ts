@@ -220,6 +220,7 @@ class ATRIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface ATRIndicator {
     pointClass: typeof ATRPoint;
 }

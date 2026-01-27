@@ -888,6 +888,7 @@ class VBPIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface VBPIndicator {
     nameBase: string;
     nameComponents: Array<string>;

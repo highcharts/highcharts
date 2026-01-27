@@ -190,6 +190,7 @@ class CMOIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface CMOIndicator {
     pointClass: typeof CMOPoint;
 }

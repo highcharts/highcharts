@@ -21,6 +21,7 @@ import type SMAPoint from '../SMA/SMAPoint';
  *
  * */
 
+/** @internal */
 declare class VWAPPoint extends SMAPoint {
     public series: VWAPIndicator;
 }
@@ -31,4 +32,5 @@ declare class VWAPPoint extends SMAPoint {
  *
  * */
 
+/** @internal */
 export default VWAPPoint;

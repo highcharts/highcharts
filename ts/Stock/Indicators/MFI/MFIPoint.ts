@@ -20,6 +20,7 @@ import type SMAPoint from '../SMA/SMAPoint';
  *
  * */
 
+/** @internal */
 declare class MFIPoint extends SMAPoint {
     public series: MFIIndicator;
 }
@@ -30,4 +31,5 @@ declare class MFIPoint extends SMAPoint {
  *
  * */
 
+/** @internal */
 export default MFIPoint;

@@ -377,6 +377,7 @@ class KlingerIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface KlingerIndicator extends MultipleLinesComposition.IndicatorComposition {
     linesApiNames: Array<string>;
     nameBase: string;

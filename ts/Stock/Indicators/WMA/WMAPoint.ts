@@ -21,6 +21,7 @@ import type SMAPoint from '../SMA/SMAPoint';
  *
  * */
 
+/** @internal */
 declare class WMAPoint extends SMAPoint {
     public series: WMAIndicator;
 }
@@ -31,4 +32,5 @@ declare class WMAPoint extends SMAPoint {
  *
  * */
 
+/** @internal */
 export default WMAPoint;

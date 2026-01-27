@@ -252,6 +252,7 @@ class AOIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface AOIndicator {
     nameBase: string;
     nameComponents: Array<string>|undefined;

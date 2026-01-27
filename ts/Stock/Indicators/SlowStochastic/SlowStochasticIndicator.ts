@@ -168,6 +168,7 @@ class SlowStochasticIndicator extends StochasticIndicator {
  *
  * */
 
+/** @internal */
 interface SlowStochasticIndicator {
     pointClass: typeof SlowStochasticPoint;
     nameBase: string;

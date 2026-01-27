@@ -250,6 +250,7 @@ class VWAPIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface VWAPIndicator {
     pointClass: typeof VWAPPoint;
 }

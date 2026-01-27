@@ -354,6 +354,7 @@ class DMIIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface DMIIndicator extends MultipleLinesComposition.IndicatorComposition {
     nameBase: string;
     pointArrayMap: Array<keyof DMIPoint>;

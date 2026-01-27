@@ -21,6 +21,7 @@ import type SMAPoint from '../SMA/SMAPoint';
  *
  * */
 
+/** @internal */
 declare class CCIPoint extends SMAPoint {
     public series: CCIIndicator;
 }
@@ -31,4 +32,5 @@ declare class CCIPoint extends SMAPoint {
  *
  * */
 
+/** @internal */
 export default CCIPoint;

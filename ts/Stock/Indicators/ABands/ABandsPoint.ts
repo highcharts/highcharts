@@ -21,6 +21,7 @@ import type SMAPoint from '../SMA/SMAPoint';
  *
  * */
 
+/** @internal */
 declare class ABandsPoint extends SMAPoint {
     public middle?: number;
     public series: ABandsIndicator;
@@ -32,4 +33,5 @@ declare class ABandsPoint extends SMAPoint {
  *
  * */
 
+/** @internal */
 export default ABandsPoint;

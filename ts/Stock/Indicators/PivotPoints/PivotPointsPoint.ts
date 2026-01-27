@@ -56,6 +56,7 @@ function destroyExtraLabels(
  *
  * */
 
+/** @internal */
 class PivotPointsPoint extends SMAPoint {
 
     /* *
@@ -95,4 +96,5 @@ class PivotPointsPoint extends SMAPoint {
  *
  * */
 
+/** @internal */
 export default PivotPointsPoint;

@@ -21,6 +21,7 @@ import type SMAPoint from '../SMA/SMAPoint';
  *
  * */
 
+/** @internal */
 declare class KeltnerChannelsPoint extends SMAPoint {
     public middle?: number;
     public series: KeltnerChannelsIndicator;
@@ -32,4 +33,5 @@ declare class KeltnerChannelsPoint extends SMAPoint {
  *
  * */
 
+/** @internal */
 export default KeltnerChannelsPoint;

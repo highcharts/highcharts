@@ -220,6 +220,7 @@ class RSIIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface RSIIndicator {
     pointClass: typeof RSIPoint;
 }

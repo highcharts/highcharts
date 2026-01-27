@@ -32,4 +32,5 @@ export interface IndicatorValuesObject<
     yData: NonNullable<IndicatorLinkedSeriesBase['yData']>;
 }
 
+/** @internal */
 export default IndicatorValuesObject;

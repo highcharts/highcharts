@@ -104,6 +104,7 @@ class LinearRegressionSlopesIndicator extends LinearRegressionIndicator {
  *
  * */
 
+/** @internal */
 interface LinearRegressionSlopesIndicator {
     pointClass: typeof LinearRegressionSlopesPoint;
     nameBase: string;

@@ -22,6 +22,7 @@ import type EMAPoint from '../EMA/EMAPoint';
  *
  * */
 
+/** @internal */
 declare class APOPoint extends EMAPoint {
     public series: APOIndicator;
 }
@@ -32,4 +33,5 @@ declare class APOPoint extends EMAPoint {
  *
  * */
 
+/** @internal */
 export default APOPoint;
