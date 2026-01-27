@@ -545,9 +545,6 @@ class Axis {
     public tickInterval!: number;
 
     /** @internal */
-    public tickIntervalMatch?: number;
-
-    /** @internal */
     public tickmarkOffset!: number;
 
     /**
@@ -2369,14 +2366,11 @@ class Axis {
                 error(19, false, this.chart);
 
             } else if (axis.dateTime) {
-                const normalizedInterval = axis.dateTime
-                    .normalizeTimeTickInterval(
+                tickPositions = axis.getTimeTicks(
+                    axis.dateTime.normalizeTimeTickInterval(
                         this.tickInterval,
                         options.units
-                    );
-                axis.tickIntervalMatch = normalizedInterval.match;
-                tickPositions = axis.getTimeTicks(
-                    normalizedInterval,
+                    ),
                     this.min,
                     this.max,
                     options.startOfWeek,

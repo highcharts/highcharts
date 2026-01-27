@@ -2983,9 +2983,10 @@ class Chart {
                     // interval, on the brink of landing on a higher unit. In
                     // this case, we should redo the axis to get a more
                     // appropriate tick interval (#17393).
-                    if (axis.tickIntervalMatch) {
+                    const tickIntervalMatch = axis.tickPositions?.info?.match;
+                    if (tickIntervalMatch) {
                         threshold[horizNum] = Math.min(
-                            axis.tickIntervalMatch,
+                            tickIntervalMatch,
                             threshold[horizNum]
                         );
                     }
