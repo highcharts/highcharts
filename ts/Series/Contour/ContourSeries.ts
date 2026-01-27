@@ -95,8 +95,6 @@ export default class ContourSeries extends ScatterSeries {
 
     public renderPromise?: Promise<void>;
 
-    public readbackPromise?: Promise<void>;
-
     public readbackData?: Uint8Array;
 
     /* Uniforms:
@@ -212,6 +210,11 @@ export default class ContourSeries extends ScatterSeries {
     }
 
     public override drawPoints(): void {
+        if (this.chart.renderer.forExport) {
+            // Export path: skip WebGPU; getSVG will inject <image>.
+            return;
+        }
+
         const { group } = this;
         if (!group) {
             return;
@@ -256,7 +259,7 @@ export default class ContourSeries extends ScatterSeries {
         if (this.renderFrame) {
             this.renderFrame();
         } else {
-            this.renderPromise = this.run();
+            this.run();
         }
     }
 
@@ -556,18 +559,16 @@ export default class ContourSeries extends ScatterSeries {
                     device.queue.submit([encoder.finish()]);
 
                     if (exporting) {
-                        this.readbackPromise = (
-                            readback
-                                .mapAsync(GPUMapMode.READ)
-                                .then((): void => {
-                                    const src = new Uint8Array(
-                                        readback.getMappedRange()
-                                    );
-                                    this.readbackData = new Uint8Array(src);
-                                    // Optionally strip row padding here.
-                                    readback.unmap();
-                                })
-                        );
+                        readback
+                            .mapAsync(GPUMapMode.READ)
+                            .then((): void => {
+                                const src = new Uint8Array(
+                                    readback.getMappedRange()
+                                );
+                                this.readbackData = new Uint8Array(src);
+                                // Optionally strip row padding here.
+                                readback.unmap();
+                            });
                     }
                 };
 

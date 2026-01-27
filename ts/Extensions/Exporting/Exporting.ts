@@ -1632,7 +1632,8 @@ class Exporting {
             options: (Options | undefined) = merge<Options>(
                 chart.options,
                 chartOptions
-            );
+            ),
+            webgpuCanvasImage: SVGElement | undefined;
 
         const contour = chart.series.find(
             (
@@ -1645,35 +1646,14 @@ class Exporting {
 
             const dst = document.createElement('canvas');
             const srcCanvas = document.querySelector('canvas');
+            const ctx = dst.getContext('2d');
 
-            if (srcCanvas) {
+            if (srcCanvas && ctx) {
                 const width = dst.width = srcCanvas.width;
                 const height = dst.height = srcCanvas.height;
 
-                const ctx = dst.getContext('2d');
-                if (!ctx) {
-                    throw new Error('2D context unavailable');
-                }
-
-
-                if (!readback) {
-                    (contour as any).readbackPromise.then((): void => {
-                        readback = (contour as any).buffers?.readback;
-                        const src = (contour as any).readbackData;
-                        const imageData = new ImageData(
-                            new Uint8ClampedArray(
-                                src.buffer,
-                                src.byteOffset,
-                                width * height * 4
-                            ),
-                            width,
-                            height
-                        );
-                        ctx.putImageData(imageData, 0, 0);
-
-                        readback.unmap();
-                    });
-                } else {
+                const webgpuToImage = (): SVGElement => {
+                    readback = (contour as any).buffers?.readback;
                     const src = (contour as any).readbackData;
                     const imageData = new ImageData(
                         new Uint8ClampedArray(
@@ -1687,11 +1667,20 @@ class Exporting {
                     ctx.putImageData(imageData, 0, 0);
 
                     readback.unmap();
+
+                    return chart.renderer.image(
+                        dst.toDataURL(),
+                        0,
+                        0,
+                        width,
+                        height
+                    );
+                };
+
+                if (readback) {
+                    webgpuCanvasImage = webgpuToImage();
                 }
             }
-
-
-            return '<svg></svg>';
         }
 
         // Use userOptions to make the options chain in series right (#3881)
@@ -1851,6 +1840,39 @@ class Exporting {
             chart.styledMode ||
             options.exporting?.applyStyleSheets
         ) || '';
+
+        if (webgpuCanvasImage) {
+
+            if (this.options.local) {
+                webgpuCanvasImage.element.setAttributeNS(
+                    'http://www.w3.org/1999/xlink',
+                    'href',
+                    webgpuCanvasImage.element.getAttribute('href') || ''
+                );
+
+                const contourCopy = chartCopy
+                    .series
+                    .find((s): boolean => s.type === 'contour') as any;
+
+                webgpuCanvasImage.add(contourCopy.group);
+            } else {
+                const dataURL = (
+                    webgpuCanvasImage.element.getAttribute('href') ||
+                    webgpuCanvasImage.element.getAttribute('xlink:href') || ''
+                );
+                const imgTag = `<image href="${dataURL}" xlink:href="${dataURL}"/>`;
+
+                const contourGroupPattern = new RegExp(
+                    '(<g[^>]*class="[^"]*\\bhighcharts-contour-series\\b' +
+                    '[^"]*"[^>]*>)([\\s\\S]*?)</g>'
+                );
+
+                svg = svg.replace(
+                    contourGroupPattern,
+                    `$1$2${imgTag}</g>`
+                );
+            }
+        }
 
         fireEvent(chart, 'getSVG', { chartCopy: chartCopy });
 
