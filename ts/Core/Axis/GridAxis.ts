@@ -158,6 +158,8 @@ export interface GridAxisOptions {
      *         Left axis as a table
      * @sample gantt/demo/treegrid-columns
      *         Collapsible tree grid with columns
+     * @sample gantt/grid-axis/horizontal-columns
+     *         Horizontal grid axis with columns rendered as rows
      *
      */
     columns?: Array<AxisOptions>;
@@ -499,7 +501,7 @@ function onAfterInit(this: Axis): void {
             const column = new Axis(
                 axis.chart,
                 columnOptions,
-                'yAxis'
+                axis.coll
             ) as GridAxisComposition;
             column.grid.isColumn = true;
             column.grid.columnIndex = columnIndex;
@@ -1601,6 +1603,8 @@ export default GridAxis;
  *         Left axis as a table
  * @sample gantt/demo/treegrid-columns
  *         Collapsible tree grid with columns
+ * @sample gantt/grid-axis/horizontal-columns
+ *         Horizontal grid axis with columns rendered as rows
  *
  * @type      {Array<Highcharts.XAxisOptions>}
  * @apioption xAxis.grid.columns
