@@ -133,6 +133,25 @@ svg { display: block; }
         }
         return null;
     });
+    await page.evaluate(async () => {
+        const images = Array.from(document.querySelectorAll('image'));
+        if (!images.length) {
+            return;
+        }
+        await Promise.all(images.map((image) => {
+            const href = image.getAttribute('href') ??
+                image.getAttribute('xlink:href');
+            if (!href) {
+                return Promise.resolve();
+            }
+            return new Promise<void>((resolve) => {
+                const loader = new Image();
+                loader.onload = () => resolve();
+                loader.onerror = () => resolve();
+                loader.src = href;
+            });
+        }));
+    });
     await page.evaluate(
         () => new Promise(requestAnimationFrame)
     );

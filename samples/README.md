@@ -24,7 +24,8 @@ iframes are loaded, one with the current stable release and one with the test
 candidate of Highcharts. The SVG output is rendered on two canvases, these are
 compared pixel by pixel, and the difference is logged. Auto-visual tests are
 less performant than unit tests, and unit tests should be favoured for
-regression testing.
+regression testing. In CI, Playwright runs the visual comparisons and writes
+`reference.svg`, `candidate.svg`, and `diff.gif` into sample directories.
 
 2. **Manual tests**. Some tests, like some dealing with animation or complicated
 user input, are still manual. In the utils, they are marked with a checkbox to
@@ -227,4 +228,3 @@ Our samples serve different purposes. They must run on jsFiddle, in our local te
 4. To find the abbreviated commit hash of step 3, run this command: `git log --format="%h" -n 1`. The result may look like `0002e9cd00`.
 5. Copy this commit hash and replace the `sha` part of step 2 in your sample or multiple samples using the same data. The result may look like this: `https://cdn.jsdelivr.net/gh/highcharts/highcharts@0002e9cd00/samples/data/{filename}`.
 6. Commit again. Now your sample should work in all scenarios.
-

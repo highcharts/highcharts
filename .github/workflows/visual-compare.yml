@@ -119,12 +119,10 @@ jobs:
 
 
   visual_compare:
-    timeout-minutes: 20
+    timeout-minutes: 60
     runs-on: ubuntu-latest
     env:
       DISPLAY: :99
-      VISUAL_TEST_PRODUCT: highcharts
-      VISUAL_TEST_PATH: samples/highcharts/
     strategy:
       matrix:
         node-version: [lts/*]
@@ -158,10 +156,25 @@ jobs:
       - name: Generate samples
         run: npx tsc -p samples --skipLibCheck --noEmitOnError false || true
 
-      - run: npx playwright test --project=visual --update-snapshots || true
-      - run: npx karma start test/karma-conf.js --tests maps/*/* --ts --reference --browsercount 2 --no-fail-on-empty-test-suite
-      - run: npx karma start test/karma-conf.js --tests stock/*/* --ts --reference --browsercount 2 --no-fail-on-empty-test-suite
-      - run: npx karma start test/karma-conf.js --tests gantt/*/* --ts --reference --browsercount 2 --no-fail-on-empty-test-suite
+      - name: Generate references (Highcharts)
+        run: PLAYWRIGHT_HTML_REPORT=playwright-report/master/highcharts npx playwright test --project=visual --update-snapshots --output test-results/master/highcharts || true
+        env:
+          VISUAL_TEST_PRODUCT: highcharts
+
+      - name: Generate references (Maps)
+        run: PLAYWRIGHT_HTML_REPORT=playwright-report/master/maps npx playwright test --project=visual --update-snapshots --output test-results/master/maps || true
+        env:
+          VISUAL_TEST_PRODUCT: maps
+
+      - name: Generate references (Stock)
+        run: PLAYWRIGHT_HTML_REPORT=playwright-report/master/stock npx playwright test --project=visual --update-snapshots --output test-results/master/stock || true
+        env:
+          VISUAL_TEST_PRODUCT: stock
+
+      - name: Generate references (Gantt)
+        run: PLAYWRIGHT_HTML_REPORT=playwright-report/master/gantt npx playwright test --project=visual --update-snapshots --output test-results/master/gantt || true
+        env:
+          VISUAL_TEST_PRODUCT: gantt
 
       - name: Show git status after reference
         run: git status --short
@@ -175,10 +188,25 @@ jobs:
       - name: Build Highcharts
         run: npx gulp scripts
 
-      - run: npx playwright test --project=visual || true
-      - run: npx karma start test/karma-conf.js --tests stock/*/* --ts --single-run --browsercount 2 --visualcompare || true
-      - run: npx karma start test/karma-conf.js --tests maps/*/* --ts --single-run --browsercount 2 --visualcompare || true
-      - run: npx karma start test/karma-conf.js --tests gantt/*/* --ts --single-run --browsercount 2 --visualcompare || true
+      - name: Run visual comparison (Highcharts)
+        run: PLAYWRIGHT_HTML_REPORT=playwright-report/pr/highcharts npx playwright test --project=visual --output test-results/pr/highcharts || true
+        env:
+          VISUAL_TEST_PRODUCT: highcharts
+
+      - name: Run visual comparison (Maps)
+        run: PLAYWRIGHT_HTML_REPORT=playwright-report/pr/maps npx playwright test --project=visual --output test-results/pr/maps || true
+        env:
+          VISUAL_TEST_PRODUCT: maps
+
+      - name: Run visual comparison (Stock)
+        run: PLAYWRIGHT_HTML_REPORT=playwright-report/pr/stock npx playwright test --project=visual --output test-results/pr/stock || true
+        env:
+          VISUAL_TEST_PRODUCT: stock
+
+      - name: Run visual comparison (Gantt)
+        run: PLAYWRIGHT_HTML_REPORT=playwright-report/pr/gantt npx playwright test --project=visual --output test-results/pr/gantt || true
+        env:
+          VISUAL_TEST_PRODUCT: gantt
 
       - name: Generate visual test report
         run: |

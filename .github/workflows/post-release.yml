@@ -23,7 +23,7 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{secrets.VISUAL_TESTS_AWS_ACCESS_KEY_ID}}
       AWS_SECRET_ACCESS_KEY: ${{secrets.VISUAL_TESTS_AWS_SECRET_ACCESS_KEY}}
       AWS_REGION: ${{secrets.VISUAL_TESTS_AWS_REGION}}
-      BROWSER_COUNT: 2
+      DISPLAY: :99
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -34,25 +34,30 @@ jobs:
       - run: echo ${{github.ref_name}}
 
       - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 &
       - run: npx gulp scripts
+      - run: npx tsc -p samples --skipLibCheck --noEmitOnError false || true
 
-      - run: |
-          npx karma start test/karma-conf.js \
-            --tests highcharts/*/* \
-            --reference --browsercount $BROWSERCOUNT \
-            --no-fail-on-empty-test-suite
-          npx karma start test/karma-conf.js \
-            --tests stock/*/* \
-            --reference --browsercount $BROWSERCOUNT \
-            --no-fail-on-empty-test-suite
-          npx karma start test/karma-conf.js \
-            --tests maps/*/* \
-            --reference --browsercount $BROWSERCOUNT \
-            --no-fail-on-empty-test-suite
-          npx karma start test/karma-conf.js \
-            --tests gantt/*/* \
-            --reference --browsercount $BROWSERCOUNT \
-            --no-fail-on-empty-test-suite
+      - name: Generate references (Highcharts)
+        run: PLAYWRIGHT_HTML_REPORT=playwright-report/release/highcharts npx playwright test --project=visual --update-snapshots --output test-results/release/highcharts
+        env:
+          VISUAL_TEST_PRODUCT: highcharts
+
+      - name: Generate references (Stock)
+        run: PLAYWRIGHT_HTML_REPORT=playwright-report/release/stock npx playwright test --project=visual --update-snapshots --output test-results/release/stock
+        env:
+          VISUAL_TEST_PRODUCT: stock
+
+      - name: Generate references (Maps)
+        run: PLAYWRIGHT_HTML_REPORT=playwright-report/release/maps npx playwright test --project=visual --update-snapshots --output test-results/release/maps
+        env:
+          VISUAL_TEST_PRODUCT: maps
+
+      - name: Generate references (Gantt)
+        run: PLAYWRIGHT_HTML_REPORT=playwright-report/release/gantt npx playwright test --project=visual --update-snapshots --output test-results/release/gantt
+        env:
+          VISUAL_TEST_PRODUCT: gantt
 
       - run: mkdir -p tmp/latest
 
@@ -70,5 +75,3 @@ jobs:
           npx gulp dist-testresults \
             --tag ${{github.ref_name}} \
             --bucket ${{ secrets.VISUAL_TESTS_S3_BUCKET }}
-
-

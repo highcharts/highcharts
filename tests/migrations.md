@@ -307,32 +307,34 @@ npx playwright test --project=setup-dashboards --project=dashboards
 npm test
 ```
 
-## Karma to Playwright Migration (Partial)
+## Karma to Playwright Migration
 
-As of this migration, unit tests (`samples/unit-tests/`) now run through
-Playwright's QUnit bridge instead of Karma directly. Visual comparison tests
-still use Karma.
+As of this migration, unit tests (`samples/unit-tests/`) and visual comparison
+tests run through Playwright instead of Karma.
 
 ### What Changed
 
 1. **`gulp test` command** - Now routes unit tests to Playwright (via QUnit
-   runner) instead of Karma. Visual tests (`--visualcompare`, `--reference`)
-   still use Karma.
+   runner) instead of Karma.
 
-2. **npm scripts** - Updated to use Playwright:
+2. **Visual comparison** - Runs in Playwright's `visual` project and writes
+   `reference.svg`, `candidate.svg`, `diff.gif`, plus `test/visual-test-results.json`.
+   Use `VISUAL_TEST_PRODUCT` and `VISUAL_TEST_PATH` to scope the run.
+
+3. **npm scripts** - Updated to use Playwright:
    - `npm test` - Runs all Playwright tests
    - `npm run testall` - Runs all Playwright tests
 
-3. **Timezone tests** - Now use Playwright's browser timezone emulation instead
+4. **Timezone tests** - Now use Playwright's browser timezone emulation instead
    of changing system timezone. See `tests/qunit/timezone.spec.ts`.
 
-4. **BrowserStack** - Removed. Playwright's built-in Chromium, Firefox, and
+5. **BrowserStack** - Removed. Playwright's built-in Chromium, Firefox, and
    WebKit browsers provide cross-browser coverage.
 
-### What Still Uses Karma
+### Remaining Karma Usage
 
-- Visual comparison tests (SVG reference/candidate generation)
-- The visual comparison CI workflows (`visual-compare.yml`, `nightly.yml`)
+- Karma is no longer used for visual comparison in CI. The remaining Karma setup
+  is kept for legacy tooling where needed.
 
 ### Removed Karma Features
 
