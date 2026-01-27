@@ -164,6 +164,9 @@ namespace ConnectionComposition {
      *
      * */
 
+    /**
+     *
+     */
     export function compose(
         ChartClass: typeof Chart,
         PathfinderClass: typeof Pathfinder,

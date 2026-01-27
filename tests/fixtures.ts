@@ -12,10 +12,13 @@ import type Highcharts from '~code/esm/highcharts.src';
 
 import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
-import { join, extname } from 'node:path/posix';
+import { join, extname, dirname } from 'node:path/posix';
+import { fileURLToPath } from 'node:url';
 
 import { test as base } from '@playwright/test';
 import { getKarmaScripts, setTestingOptions } from './utils';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const contentTypes: Record<string, string> = {
     '.js': 'application/javascript',
@@ -1145,7 +1148,7 @@ export async function createChart(
     ) {
         for (const script of await getKarmaScripts()) {
             await page.addScriptTag({
-                path: script
+                path: script as string
             });
         }
 

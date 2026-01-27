@@ -102,6 +102,9 @@ function applyGrouping(
     });
 }
 
+/**
+ *
+ */
 function compose(
     AxisClass: typeof Axis
 ): void {
