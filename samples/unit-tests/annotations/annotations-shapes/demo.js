@@ -238,3 +238,50 @@ QUnit.test('Drawing path with a marker', function (assert) {
         'Start marker is correctly attached to the annotation\'s path'
     );
 });
+
+// 4
+QUnit.test('Basic shape annotations', function (assert) {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            width: 600,
+            height: 400
+        },
+        series: [{
+            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0]
+        }],
+        annotations: [{
+            shapes: [{
+                point: {
+                    x: 3,
+                    y: 150,
+                    xAxis: 0,
+                    yAxis: 0
+                },
+                type: 'rect',
+                width: 1,
+                height: 100,
+                xAxis: 0,
+                yAxis: 0
+            }]
+        }]
+    });
+
+    const xAxis = chart.xAxis[0],
+        yAxis = chart.yAxis[0],
+        rect = chart.annotations[0].shapes[0],
+        // Draw from x=3 to x=4
+        width = Math.abs(xAxis.toPixels(4) - xAxis.toPixels(3)),
+        // Draw from y=150 to y=250
+        height = Math.abs(yAxis.toPixels(250) - yAxis.toPixels(150));
+
+    assert.strictEqual(
+        width,
+        Number(rect.graphic.element.getAttribute('width')),
+        'Rect annotation created with axis units width is correct.'
+    );
+    assert.strictEqual(
+        height,
+        Number(rect.graphic.element.getAttribute('height')),
+        'Rect annotation created with axis units height is correct.'
+    );
+});

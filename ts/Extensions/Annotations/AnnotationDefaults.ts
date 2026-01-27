@@ -557,7 +557,7 @@ const AnnotationDefaults: AnnotationOptions = {
 
         /**
          * The type of the shape.
-         * Available options are circle, rect and ellipse.
+         * Available options are circle, rect, ellipse and path.
          *
          * @sample highcharts/annotations/shape/
          *         Basic shape annotation

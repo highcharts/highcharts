@@ -18,7 +18,7 @@ import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import Controllable from './Controllable.js';
 import ControllablePath from './ControllablePath.js';
 import U from '../../../Core/Utilities.js';
-const { merge } = U;
+const { defined, merge } = U;
 
 /* *
  *
@@ -106,14 +106,39 @@ class ControllableRect extends Controllable {
     public redraw(animation?: boolean): void {
 
         if (this.graphic) {
-            const position = this.anchor(this.points[0]).absolutePosition;
+            const point = this.points[0],
+                position = this.anchor(point).absolutePosition;
 
             if (position) {
+                const options = this.options,
+                    chart = this.annotation.chart,
+                    xAxis =
+                        defined(options.xAxis) && chart.xAxis[options.xAxis],
+                    yAxis =
+                        defined(options.yAxis) && chart.yAxis[options.yAxis];
+
+                let width = options.width,
+                    height = options.height;
+
+                if (xAxis && width && defined(point.x)) {
+                    const startPixel = xAxis.toPixels(point.x, true),
+                        endPixel = xAxis.toPixels(point.x + width, true);
+
+                    width = Math.abs(endPixel - startPixel);
+                }
+
+                if (yAxis && height && defined(point.y)) {
+                    const startPixel = yAxis.toPixels(point.y, true),
+                        endPixel = yAxis.toPixels(point.y + height, true);
+
+                    height = Math.abs(endPixel - startPixel);
+                }
+
                 this.graphic[animation ? 'animate' : 'attr']({
                     x: position.x,
                     y: position.y,
-                    width: this.options.width,
-                    height: this.options.height
+                    width,
+                    height
                 });
             } else {
                 this.attr({
