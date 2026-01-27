@@ -127,6 +127,15 @@ svg { display: block; }
 </style></head><body>${svgContent}</body></html>`;
 
     await page.setContent(html, { waitUntil: 'domcontentloaded' });
+    await page.evaluate(() => {
+        if ('ready' in document.fonts) {
+            return document.fonts.ready;
+        }
+        return null;
+    });
+    await page.evaluate(
+        () => new Promise(requestAnimationFrame)
+    );
     const buffer = await page.screenshot({
         clip: { x: 0, y: 0, width: CANVAS_WIDTH, height: CANVAS_HEIGHT }
     });
