@@ -786,6 +786,8 @@ function exitBoost(
  *
  * Returns true when we should allow extremes calculation
  * (allExtremes not set yet or current range < options range).
+ *
+ * @internal
  */
 function axisNeedsExtremes(
     axis: Axis | undefined,
