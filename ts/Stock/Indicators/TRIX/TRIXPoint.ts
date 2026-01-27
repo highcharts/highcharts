@@ -12,8 +12,8 @@
  *
  * */
 
-import type SMAPoint from '../SMA/SMAPoint';
-import type TRIXIndicator from './TRIXIndicator';
+import type TEMAPoint from '../TEMA/TEMAPoint';
+import type TEMAIndicator from '../TEMA/TEMAIndicator';
 
 /* *
  *
@@ -21,7 +21,13 @@ import type TRIXIndicator from './TRIXIndicator';
  *
  * */
 
-declare class TRIXPoint extends SMAPoint {
+/** @internal */
+interface TRIXIndicator extends TEMAIndicator {
+    pointClass: typeof TRIXPoint;
+}
+
+/** @internal */
+declare class TRIXPoint extends TEMAPoint {
     public series: TRIXIndicator;
 }
 
@@ -31,4 +37,5 @@ declare class TRIXPoint extends SMAPoint {
  *
  * */
 
+/** @internal */
 export default TRIXPoint;

@@ -301,6 +301,17 @@ namespace TEMAIndicator {
 
 /* *
  *
+ *  Class Prototype
+ *
+ * */
+
+/** @internal */
+interface TEMAIndicator {
+    pointClass: typeof TEMAPoint;
+}
+
+/* *
+ *
  *  Registry
  *
  * */
@@ -311,6 +322,7 @@ declare module '../../../Core/Series/SeriesType' {
         tema: typeof TEMAIndicator;
     }
 }
+
 SeriesRegistry.registerSeriesType('tema', TEMAIndicator);
 
 /* *
