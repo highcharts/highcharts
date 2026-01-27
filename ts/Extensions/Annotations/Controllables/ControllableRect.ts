@@ -107,26 +107,27 @@ class ControllableRect extends Controllable {
 
         if (this.graphic) {
             const point = this.points[0],
-                position = this.anchor(point).absolutePosition,
-                userWidth = this.options.width,
-                userHeight = this.options.height;
+                position = this.anchor(point).absolutePosition;
 
-            if (
-                position &&
-                defined(point.x) &&
-                defined(point.y) &&
-                defined(userWidth) &&
-                defined(userHeight)
-            ) {
+            let width = this.options.width,
+                height = this.options.height;
+
+            if (position) {
                 const xAxis = defined(this.options.xAxis) ?
                         this.chart.xAxis[this.options.xAxis] : void 0,
                     yAxis = defined(this.options.yAxis) ?
                         this.chart.yAxis[this.options.yAxis] : void 0;
 
-                const width =
-                    this.calculateAnnotationSize(point.x, userWidth, xAxis);
-                const height =
-                    this.calculateAnnotationSize(point.y, userHeight, yAxis);
+                if (xAxis && defined(point.x) && defined(width)) {
+                    width = this.calculateAnnotationSize(
+                        point.x, width, xAxis
+                    );
+                }
+                if (yAxis && defined(point.y) && defined(height)) {
+                    height = this.calculateAnnotationSize(
+                        point.y, height, yAxis
+                    );
+                }
 
                 this.graphic[animation ? 'animate' : 'attr']({
                     x: position.x,

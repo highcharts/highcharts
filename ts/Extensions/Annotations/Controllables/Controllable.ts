@@ -179,12 +179,8 @@ abstract class Controllable implements ControlTarget {
      * @internal
      */
     public calculateAnnotationSize(
-        startPoint: number, value: number, axis?: Axis
+        startPoint: number, value: number, axis: Axis
     ): number {
-        if (!axis) {
-            return value;
-        }
-
         const startPixel = axis.toPixels(startPoint, true),
             endPixel = axis.toPixels(startPoint + value, true);
 

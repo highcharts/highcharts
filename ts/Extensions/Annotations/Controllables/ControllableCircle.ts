@@ -90,20 +90,26 @@ class ControllableCircle extends Controllable {
 
         if (this.graphic) {
             const point = this.points[0],
-                position = this.anchor(point).absolutePosition,
-                userRadius = this.options.r;
+                position = this.anchor(point).absolutePosition;
 
-            if (position && defined(userRadius) && defined(point.x)) {
+            let r = this.options.r;
+
+            if (position && defined(r)) {
                 const xAxis = defined(this.options.xAxis) ?
                         this.chart.xAxis[this.options.xAxis] : void 0,
                     yAxis = defined(this.options.yAxis) ?
                         this.chart.yAxis[this.options.yAxis] : void 0;
 
-                const r = this.calculateAnnotationSize(
-                    point.x,
-                    userRadius,
-                    xAxis || yAxis
-                );
+                if (xAxis && defined(point.x)) {
+                    r = this.calculateAnnotationSize(
+                        point.x, r, xAxis
+                    );
+                } else if (yAxis && defined(point.y)) {
+                    r = this.calculateAnnotationSize(
+                        point.y, r, yAxis
+                    );
+                }
+
                 this.graphic[animation ? 'animate' : 'attr']({
                     x: position.x,
                     y: position.y,
