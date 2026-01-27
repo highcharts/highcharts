@@ -272,8 +272,8 @@ QUnit.test('Basic shape annotations', function (assert) {
                 },
                 type: 'circle',
                 fill: '#00f000',
-                r: 1,
-                xAxis: 0
+                r: 50,
+                yAxis: 0
             }, {
                 points: [{
                     x: 1,
@@ -303,9 +303,9 @@ QUnit.test('Basic shape annotations', function (assert) {
         rectWidth = Math.abs(xAxis.toPixels(4) - xAxis.toPixels(3)),
         // Draw from y=150 to y=250
         rectHeight = Math.abs(yAxis.toPixels(250) - yAxis.toPixels(150)),
-        // Draw from x=2 to x=4, radius = 1
-        circleRadius = Math.abs(xAxis.toPixels(4) - xAxis.toPixels(2)) / 2,
-        // Draw from y=100 to y=200, radiusY = 50
+        // Draw from y=0 to y=100, radius = 50 yAxis units
+        circleRadius = Math.abs(yAxis.toPixels(100) - yAxis.toPixels(0)) / 2,
+        // Draw from y=150 to y=250, radiusY = 50 yAxis units
         ellipseRadiusY =
             Math.abs(yAxis.toPixels(250) - yAxis.toPixels(150)) / 2;
 

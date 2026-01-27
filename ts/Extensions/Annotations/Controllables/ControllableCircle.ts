@@ -95,16 +95,10 @@ class ControllableCircle extends Controllable {
             let r = this.options.r;
 
             if (position && defined(r)) {
-                const xAxis = defined(this.options.xAxis) ?
-                        this.chart.xAxis[this.options.xAxis] : void 0,
-                    yAxis = defined(this.options.yAxis) ?
-                        this.chart.yAxis[this.options.yAxis] : void 0;
+                const yAxis = defined(this.options.yAxis) ?
+                    this.chart.yAxis[this.options.yAxis] : void 0;
 
-                if (xAxis && defined(point.x)) {
-                    r = this.calculateAnnotationSize(
-                        point.x, r, xAxis
-                    );
-                } else if (yAxis && defined(point.y)) {
+                if (yAxis && defined(point.y)) {
                     r = this.calculateAnnotationSize(
                         point.y, r, yAxis
                     );
