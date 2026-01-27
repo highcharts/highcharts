@@ -65,6 +65,8 @@ const {
 } = U;
 import WGLRenderer from './WGLRenderer.js';
 import DataTableCore from '../../Data/DataTableCore.js';
+import AxisOptions from '../../Core/Axis/AxisOptions';
+import Axis from '../../Core/Axis/Axis';
 
 /* *
  *
@@ -780,6 +782,32 @@ function exitBoost(
 }
 
 /**
+ * Helper to check if an axis still needs extremes calculated.
+ *
+ * Returns true when we should allow extremes calculation
+ * (allExtremes not set yet or current range < options range).
+ */
+function axisNeedsExtremes(
+    axis: Axis | undefined,
+    axisOptions: AxisOptions | undefined
+): boolean {
+    return !!(
+        axis &&
+        (
+            !axis.allExtremes ||
+            (
+                isNumber(axis.min) &&
+                isNumber(axis.max) &&
+                isNumber(axisOptions?.min) &&
+                isNumber(axisOptions?.max) &&
+                (axis.max - axis.min) <
+                    (axisOptions.max - axisOptions.min)
+            )
+        )
+    );
+}
+
+/**
  * @internal
  * @function Highcharts.Series#hasExtremes
  */
@@ -817,35 +845,10 @@ function hasExtremes(
     // #24029 - If allExtremes not calculated yet or current range < set range,
     // allow extremes calculation for panning
     if (
-        yAxis &&
-        (
-            !yAxis.allExtremes ||
-            (
-                isNumber(yAxis.min) &&
-                isNumber(yAxis.max) &&
-                isNumber(yAxisOptions?.min) &&
-                isNumber(yAxisOptions?.max) &&
-                (yAxis.max - yAxis.min) < (yAxisOptions.max - yAxisOptions.min)
-            )
-        )
+        axisNeedsExtremes(yAxis, yAxisOptions) ||
+        (checkX && axisNeedsExtremes(xAxis, xAxisOptions))
     ) {
         return false;
-    }
-
-    // Check xAxis if checkX is true
-    if (checkX && xAxis) {
-        if (
-            !xAxis.allExtremes ||
-            (
-                isNumber(xAxis.min) &&
-                isNumber(xAxis.max) &&
-                isNumber(xAxisOptions?.min) &&
-                isNumber(xAxisOptions?.max) &&
-                (xAxis.max - xAxis.min) < (xAxisOptions.max - xAxisOptions.min)
-            )
-        ) {
-            return false;
-        }
     }
 
     // Current range >= set range and allExtremes is calculated
