@@ -21,12 +21,15 @@
  * */
 
 import type { Axis, Series } from '../../../Plugins/HighchartsTypes';
-import type Sync from '../../Sync/Sync';
+import type { OptionsEntry, SyncPair } from '../../Sync/Sync';
 import type HighchartsComponent from '../HighchartsComponent.js';
 import type { ConnectorOptions } from '../HighchartsComponentOptions';
+import type {
+    Event as DataCursorEvent,
+    Type as DataCursorType
+} from '../../../../Data/DataCursor';
 
 import Component from '../../Component';
-import DataCursor from '../../../../Data/DataCursor';
 import U from '../../../../Core/Utilities.js';
 const { addEvent, isString } = U;
 
@@ -37,9 +40,9 @@ const { addEvent, isString } = U;
  *
  * */
 
-const defaultOptions: Sync.OptionsEntry = {};
+const defaultOptions: OptionsEntry = {};
 
-const syncPair: Sync.SyncPair = {
+const syncPair: SyncPair = {
     emitter: function (this: Component): (() => void) | void {
         if (this.type !== 'Highcharts') {
             return;
@@ -82,12 +85,12 @@ const syncPair: Sync.SyncPair = {
                             (point): boolean => point.isInside || false
                         );
 
-                        const minCursorData: DataCursor.Type = {
+                        const minCursorData: DataCursorType = {
                             type: 'position',
                             state: `${axis.coll}.extremes.min${groupKey}`
                         };
 
-                        const maxCursorData: DataCursor.Type = {
+                        const maxCursorData: DataCursorType = {
                             type: 'position',
                             state: `${axis.coll}.extremes.max${groupKey}`
                         };
@@ -240,7 +243,7 @@ const syncPair: Sync.SyncPair = {
             const unregisterCallbacks: (() => void)[] = [];
 
             dimensions.forEach((dimension): void => {
-                const handleUpdateExtremes = (e: DataCursor.Event): void => {
+                const handleUpdateExtremes = (e: DataCursorEvent): void => {
                     const { cursor, event } = e;
 
                     if (cursor.type === 'position') {

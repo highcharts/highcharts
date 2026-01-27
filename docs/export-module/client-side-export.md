@@ -1,7 +1,11 @@
 Client side export
 ===
 
-The offline-exporting module allows for image export of charts without sending data to an external server. This is the solution if you:
+### Local exports by default
+
+Starting from version 12.3.0, the [exporting.js](https://code.highcharts.com/modules/exporting.src.js) module handles exports to PNG, JPEG and SVG formats locally by default, without requiring the [offline-exporting.js](https://code.highcharts.com/modules/offline-exporting.src.js) module. This behavior is controlled by the [exporting.local](https://api.highcharts.com/highcharts/exporting.local) option, which is set to `true` by default.
+
+Offline exporting logic allows for image export of charts without sending data to an external server. This is the solution if you:
 
 *   Want to avoid having users send your chart configs to Highsoft's servers
 *   Want to save the cost of setting up your own server
@@ -9,13 +13,19 @@ The offline-exporting module allows for image export of charts without sending d
 
 [View it live on jsFiddle](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/exporting/offline-download-demo/).
 
+Setting the [exporting.local](https://api.highcharts.com/highcharts/exporting.local) to `false` will send export requests to the remote export server.
+
+### The offline-exporting module
+
+The only exception, which requires the [offline-exporting.js](https://code.highcharts.com/modules/offline-exporting.js) module for local export, is the **PDF format**.
+
 The module makes use of modern browser technology to accomplish this, and therefore does not work flawlessly with older browsers. For a detailed table of supported browsers, see below. In the case of an unsupported browser, the module will by default fall back to the export server, but this can be disabled with the [exporting.fallbackToExportServer](https://api.highcharts.com/highcharts/exporting.fallbackToExportServer) option.
 
-Internet Explorer requires the [canvg](https://code.google.com/p/canvg/) library in order to export to PNG and to export charts with embedded images. PDF export also requires the [jsPDF](https://github.com/yWorks/jsPDF) and [svg2pdf](https://github.com/yWorks/svg2pdf.js) for all browsers. Highcharts will only load these files on demand when [exporting.libURL](https://api.highcharts.com/highcharts/exporting.libURL) is explicitly set. Otherwise, include the scripts on the page yourself. If the scripts have already been loaded by the page, Highcharts will not load them again. Note that even when loading these files, no chart data is sent to our server.
+Additionally, Internet Explorer requires the [canvg](https://code.google.com/p/canvg/) library in order to export to PNG and to export charts with embedded images. PDF export also requires the [jsPDF](https://github.com/parallax/jsPDF) and [svg2pdf](https://github.com/yWorks/svg2pdf.js) for all browsers. Highcharts will only load these files on demand when [exporting.libURL](https://api.highcharts.com/highcharts/exporting.libURL) is explicitly set. Otherwise, include the scripts on the page yourself. If the scripts have already been loaded by the page, Highcharts will not load them again. Note that even when loading these files, no chart data is sent to our server.
 
 PDF does not support exporting with images and will fall back to the export server.
 
-*Note*: PDF export in the client-side export module is an opt-in feature. Enabling PDF export (for example, by adding `downloadPDF` to `contextButton.menuItems`) requires external third-party libraries. These libraries are not provided, licensed, or warrantied under the Highcharts license and Highcharts cannot take responsibility for their security or maintenance.
+*Note*: PDF export in the client-side export module is an opt-in feature. Enabling local PDF export (for example, by adding `downloadPDF` to `contextButton.menuItems`) requires external third-party libraries. These libraries are not provided, licensed, or warrantied under the Highcharts license and Highcharts cannot take responsibility for their security or maintenance.
 
 To use the module, simply include it after the exporting module. The exporting module is a required dependency even if fallback is disabled.
 

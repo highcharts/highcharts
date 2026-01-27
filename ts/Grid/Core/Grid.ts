@@ -31,6 +31,10 @@ import type {
     IndividualColumnOptions
 } from './Options';
 import type DataTableOptions from '../../Data/DataTableOptions';
+import type {
+    CellType as DataTableCellType,
+    Column as DataTableColumn
+} from '../../Data/DataTable';
 import type Column from './Table/Column';
 import type { ColumnDataType, NoIdColumnOptions } from './Table/Column';
 import type Popup from './UI/Popup.js';
@@ -1351,6 +1355,8 @@ export class Grid {
 
         if (this.enabledColumns.length > 0) {
             this.viewport = this.renderTable();
+            this.viewport.tableElement.setAttribute('id', this.id);
+
             if (viewportMeta && this.viewport) {
                 this.viewport.applyStateMeta(viewportMeta);
             }
@@ -1453,6 +1459,7 @@ export class Grid {
      * reference, it should be used instead of creating a new one.
      */
     private loadDataTable(): void {
+
         this.querying.shouldBeUpdated = true;
 
         // Unregister all events attached to the previous data table.
@@ -1479,6 +1486,7 @@ export class Grid {
             'afterSetColumns',
             'afterSetRows'
         ] as const).forEach((eventName): void => {
+
             this.dataTableEventDestructors.push(dt.on(eventName, (): void => {
                 this.querying.shouldBeUpdated = true;
             }));
@@ -1533,10 +1541,12 @@ export class Grid {
      * after destruction by calling the `render` method.
      */
     public destroy(onlyDOM = false): void {
+        fireEvent(this, 'beforeDestroy');
+
         this.isRendered = false;
         const dgIndex = Grid.grids.findIndex((dg): boolean => dg === this);
 
-        this.dataTableEventDestructors.forEach((fn): void => fn());
+        this.dataTableEventDestructors?.forEach((fn): void => fn());
         this.accessibility?.destroy();
         this.pagination?.destroy();
         this.viewport?.destroy();
@@ -1626,7 +1636,7 @@ export class Grid {
     public getData(modified: boolean = true): string {
         const dataTable = modified ? this.presentationTable : this.dataTable;
         const tableColumns = dataTable?.columns;
-        const outputColumns: Record<string, DataTable.Column> = {};
+        const outputColumns: Record<string, DataTableColumn> = {};
 
         if (!this.enabledColumns || !tableColumns) {
             return '{}';
@@ -1635,7 +1645,7 @@ export class Grid {
         const typeParser = (type: ColumnDataType) => {
             const TypeMap: Record<
                 ColumnDataType,
-                (value: DataTable.CellType) => DataTable.CellType
+                (value: DataTableCellType) => DataTableCellType
             > = {
                 number: Number,
                 datetime: Number,
@@ -1643,7 +1653,7 @@ export class Grid {
                 'boolean': Boolean
             };
 
-            return (value: DataTable.CellType): DataTable.CellType | null => (
+            return (value: DataTableCellType): DataTableCellType | null => (
                 defined(value) ? TypeMap[type](value) : null
             );
         };
@@ -1653,7 +1663,7 @@ export class Grid {
             if (column) {
                 const columnData = tableColumns[columnId];
                 const parser = typeParser(column.dataType);
-                outputColumns[columnId] = ((): DataTable.Column => {
+                outputColumns[columnId] = ((): DataTableColumn => {
                     const result = [];
                     for (let i = 0, iEnd = columnData.length; i < iEnd; ++i) {
                         result.push(parser(columnData[i]));

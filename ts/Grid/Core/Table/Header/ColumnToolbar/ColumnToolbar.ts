@@ -216,6 +216,13 @@ class HeaderCellToolbar implements Toolbar {
         }
 
         if (!shouldBeMinimized) {
+            // Ensure we reset any "minimized only" header state. This can
+            // happen if the grid was initialized in a hidden container
+            // (e.g. display:none) where widths measure as 0. (#24002)
+            this.isMenuCentered = void 0;
+            this.column.header?.container?.classList.remove(
+                Globals.getClassName('noWidth')
+            );
             return;
         }
 
