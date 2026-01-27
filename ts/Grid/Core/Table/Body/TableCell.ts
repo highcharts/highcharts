@@ -246,11 +246,9 @@ class TableCell extends Cell {
             rowId
         );
 
-        // TODO(optim): Handle cases where the whole viewport should not
-        // be updated (no sorting & filtering in the edited column). Then:
-        // if (shouldUpdateAllRows) {
-        //    return false;
-        // }
+        if (vp.grid.querying.willNotModify()) {
+            return false;
+        }
 
         await vp.updateRows();
         return true;
