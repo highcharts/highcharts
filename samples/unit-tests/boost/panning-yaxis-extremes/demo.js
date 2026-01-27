@@ -1,4 +1,4 @@
-QUnit.test('Boost panning should work correctly when yAxis min/max are set, #24029', function (assert) {
+QUnit.test('Panning when yAxis min/max are set (#24029)', function (assert) {
     // Generate test data
     const data = [];
     for (let i = 0; i < 500000; i++) {
