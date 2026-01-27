@@ -37,6 +37,8 @@ const {
 
 /** @internal */
 interface EllipseShapeOptions extends ControllableShapeOptions {
+    yAxis: number;
+    xAxis: number;
     ry: number;
 }
 
@@ -223,7 +225,7 @@ class ControllableEllipse extends Controllable {
             angle += 180;
         }
 
-        const ry = this.getRY(cx, cy);
+        const ry = this.getRY();
 
         return { cx, cy, rx, ry, angle };
     }
@@ -231,20 +233,11 @@ class ControllableEllipse extends Controllable {
     /**
      * Get the value of minor radius of the ellipse.
      */
-    public getRY(cx: number, cy: number): number {
-        const xAxis = defined(this.options.xAxis) ?
-            this.chart.xAxis[this.options.xAxis] : void 0;
-        const yAxis = defined(this.options.yAxis) ?
-            this.chart.yAxis[this.options.yAxis] : void 0;
-        let ry = this.options.ry;
-
-        if (xAxis && defined(cx)) {
-            ry = this.calculateAnnotationSize(cx, ry, xAxis);
-        } else if (yAxis && defined(cy)) {
-            ry = this.calculateAnnotationSize(cy, ry, yAxis);
-        }
-
-        return ry;
+    public getRY(): number {
+        const yAxis = this.getYAxis();
+        return defined(yAxis) ?
+            Math.abs(yAxis.toPixels(this.options.ry) - yAxis.toPixels(0)) :
+            this.options.ry;
     }
 
     /**
@@ -252,7 +245,7 @@ class ControllableEllipse extends Controllable {
      */
     public getYAxis(): AxisType {
         const yAxisIndex = (this.options as EllipseShapeOptions).yAxis;
-        return this.chart.yAxis[yAxisIndex || 0];
+        return this.chart.yAxis[yAxisIndex];
     }
 
     /**
