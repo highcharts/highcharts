@@ -91,13 +91,19 @@ namespace OfflineExporting {
 
     /* *
      *
-     *  Functions
+     *  Constants
      *
      * */
 
     const defaultLibURL = ExportingDefaults.exporting?.libURL;
     const missingLibWarning = 'Warning: exporting.libURL not defined, PDF ' +
         'client side export will not work';
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     /**
      * Check if the PDF export dependencies are already loaded on window.
@@ -108,7 +114,7 @@ namespace OfflineExporting {
         return !!(
             win &&
             win.jspdf?.jsPDF &&
-            (win as any).svg2pdf
+            win.svg2pdf
         );
     }
 
@@ -127,11 +133,12 @@ namespace OfflineExporting {
         }
 
         const optionsLibURL = chart.options.exporting?.libURL;
+        const exportingLibURL = exportingOptions?.libURL;
         if (
-            exportingOptions?.libURL &&
-            exportingOptions.libURL !== optionsLibURL
+            exportingLibURL &&
+            exportingLibURL !== optionsLibURL
         ) {
-            return exportingOptions.libURL;
+            return exportingLibURL;
         }
 
         if (
@@ -210,7 +217,7 @@ namespace OfflineExporting {
                                         `${normalizedLibURL}jspdf.js`
                                     );
                                 }
-                                if (!(win as any).svg2pdf) {
+                                if (!win.svg2pdf) {
                                     await getScript(
                                         `${normalizedLibURL}svg2pdf.js`
                                     );
