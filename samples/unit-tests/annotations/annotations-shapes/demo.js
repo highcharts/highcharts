@@ -258,6 +258,7 @@ QUnit.test('Basic shape annotations', function (assert) {
                     yAxis: 0
                 },
                 type: 'rect',
+                fill: '#f00000',
                 width: 1,
                 height: 100,
                 xAxis: 0,
@@ -270,8 +271,25 @@ QUnit.test('Basic shape annotations', function (assert) {
                     yAxis: 0
                 },
                 type: 'circle',
+                fill: '#00f000',
                 r: 1,
                 xAxis: 0
+            }, {
+                points: [{
+                    x: 1,
+                    y: 150,
+                    xAxis: 0,
+                    yAxis: 0
+                }, {
+                    x: 3,
+                    y: 150,
+                    xAxis: 0,
+                    yAxis: 0
+                }],
+                type: 'ellipse',
+                fill: '#0000f0',
+                ry: 50,
+                yAxis: 0
             }]
         }]
     });
@@ -280,12 +298,16 @@ QUnit.test('Basic shape annotations', function (assert) {
         yAxis = chart.yAxis[0],
         rect = chart.annotations[0].shapes[0],
         circle = chart.annotations[0].shapes[1],
+        ellipse = chart.annotations[0].shapes[2],
         // Draw from x=3 to x=4
         rectWidth = Math.abs(xAxis.toPixels(4) - xAxis.toPixels(3)),
         // Draw from y=150 to y=250
         rectHeight = Math.abs(yAxis.toPixels(250) - yAxis.toPixels(150)),
-        // Draw from x=2 to x=4
-        circleRadius = Math.abs(xAxis.toPixels(4) - xAxis.toPixels(2)) / 2;
+        // Draw from x=2 to x=4, radius = 1
+        circleRadius = Math.abs(xAxis.toPixels(4) - xAxis.toPixels(2)) / 2,
+        // Draw from y=100 to y=200, radiusY = 50
+        ellipseRadiusY =
+            Math.abs(yAxis.toPixels(250) - yAxis.toPixels(150)) / 2;
 
     assert.close(
         rectWidth,
@@ -304,5 +326,11 @@ QUnit.test('Basic shape annotations', function (assert) {
         Number(circle.graphic.element.getAttribute('r')),
         0.01,
         'Circle annotation created with axis units radius is correct.'
+    );
+    assert.close(
+        ellipseRadiusY,
+        Number(ellipse.graphic.element.getAttribute('ry')),
+        0.01,
+        'Ellipse annotation created with axis units radius is correct.'
     );
 });
