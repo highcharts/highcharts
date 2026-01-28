@@ -88,6 +88,57 @@ class Cell extends GUIElement {
             rowOptions = row.options || {},
             cellClassName = layoutOptions.cellClassName || '';
 
+        const cellStyle = options.style || {};
+        const elementStyle = merge(
+            layoutOptions.style,
+            rowOptions.style,
+            cellStyle
+        );
+
+        const heightValue =
+            typeof options.height !== 'undefined' ?
+                options.height :
+                cellStyle.height;
+
+        if (typeof heightValue !== 'undefined') {
+            this.height = typeof heightValue === 'number' ?
+                heightValue + 'px' :
+                String(heightValue);
+            elementStyle.height = this.height;
+            options.height = this.height;
+        }
+
+        const widthSource =
+            typeof options.width !== 'undefined' ?
+                options.width :
+                cellStyle.flex;
+
+        if (
+            typeof widthSource === 'string' ||
+            typeof widthSource === 'number'
+        ) {
+            let flexValue: string | undefined;
+
+            if (
+                typeof widthSource === 'string' &&
+                widthSource.indexOf(' ') !== -1
+            ) {
+                flexValue = widthSource;
+            } else if (widthSource === 'auto') {
+                flexValue = '1 1 0%';
+            } else {
+                const cellWidth = this.convertWidthToValue(widthSource);
+                if (cellWidth) {
+                    flexValue = '0 0 ' + cellWidth;
+                }
+            }
+
+            if (flexValue) {
+                elementStyle.flex = flexValue;
+                options.width = flexValue;
+            }
+        }
+
         this.container = this.getElementContainer({
             render: row.layout.board.guiEnabled,
             parentContainer: parentContainer,
@@ -98,14 +149,7 @@ class Cell extends GUIElement {
             },
             element: cellElement,
             elementId: options.id,
-            style: merge(
-                layoutOptions.style,
-                rowOptions.style,
-                options.style,
-                {
-                    height: this.height
-                }
-            )
+            style: elementStyle
         });
 
         // Nested layout
@@ -328,26 +372,30 @@ class Cell extends GUIElement {
             editMode = cell.row.layout.board.editMode;
 
         if (cell.container) {
-            if (width) {
+            if (typeof width !== 'undefined') {
                 if (
                     width === 'auto' &&
                     cell.container.style.flex !== '1 1 0%'
                 ) {
                     cell.container.style.flex = '1 1 0%';
+                    cell.options.width = cell.container.style.flex;
                 } else {
                     const cellWidth = cell.convertWidthToValue(width);
 
-                    if (
-                        cellWidth &&
-                        cell.container.style.flex !== '0 0 ' + cellWidth
-                    ) {
+                    if (cellWidth) {
                         cell.container.style.flex = '0 0 ' + cellWidth;
+                        cell.options.width = cell.container.style.flex;
                     }
                 }
             }
 
-            if (height) {
-                cell.height = cell.container.style.height = height + 'px';
+            if (typeof height !== 'undefined') {
+                const heightValue = (typeof height === 'number' ?
+                    height + 'px' :
+                    height);
+
+                cell.height = cell.container.style.height = heightValue;
+                cell.options.height = heightValue;
             }
 
             if (editMode) {
@@ -505,6 +553,14 @@ export interface Options {
      * CSS styles for cell container.
      **/
     style?: CSSJSONObject;
+    /**
+     * Set width of the cell.
+     **/
+    width?: (string|number);
+    /**
+     * Set height of the cell.
+     **/
+    height?: (string|number);
     /**
      * Id of the container that holds the cell.
      **/
