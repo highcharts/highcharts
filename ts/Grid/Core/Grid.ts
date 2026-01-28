@@ -279,7 +279,7 @@ export class Grid {
     /**
      * The unique ID of the Grid.
      */
-    public id: string;
+    public readonly id: string;
 
     /**
      * The list of currently shown popups.

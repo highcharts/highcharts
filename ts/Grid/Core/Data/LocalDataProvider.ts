@@ -40,6 +40,11 @@ import DataTable from '../../../Data/DataTable.js';
 import ChainModifier from '../../../Data/Modifiers/ChainModifier.js';
 import DataConnector from '../../../Data/Connectors/DataConnector.js';
 import DataProviderRegistry from './DataProviderRegistry.js';
+import U from '../../../Core/Utilities.js';
+
+const {
+    uniqueKey
+} = U;
 
 
 /* *
@@ -191,39 +196,14 @@ export class LocalDataProvider extends DataProvider {
         this.connector = void 0;
     }
 
-    private isConnectorOptions(
-        connector: unknown
-    ): connector is DataConnectorTypeOptions {
-        const record = connector as Record<string, unknown> | null;
-        if (!record || typeof record !== 'object') {
-            return false;
-        }
-
-        const type = record.type;
-        const id = record.id;
-        if (typeof type !== 'string' || typeof id !== 'string') {
-            return false;
-        }
-
-        const connectorTypes = DataConnector.types as unknown as
-            Record<string, unknown>;
-        return !!connectorTypes[type];
-    }
-
-    private isConnectorInstance(
-        connector: DataConnectorTypeOptions | DataConnectorType
-    ): connector is DataConnectorType {
-        return typeof (connector as DataConnectorType).getTable === 'function';
-    }
-
     private async initConnector(
-        connectorInput: DataConnectorTypeOptions | DataConnectorType
+        connectorInput: GridDataConnectorTypeOptions | DataConnectorType
     ): Promise<void> {
         let connector: DataConnectorType;
 
-        if (this.isConnectorInstance(connectorInput)) {
+        if (LocalDataProvider.isConnectorInstance(connectorInput)) {
             connector = connectorInput;
-        } else if (this.isConnectorOptions(connectorInput)) {
+        } else {
             const ConnectorClass =
                 DataConnector.types[connectorInput.type] as
                 Class<DataConnectorType> | undefined;
@@ -234,9 +214,11 @@ export class LocalDataProvider extends DataProvider {
                 );
             }
 
+            if (!connectorInput.id) {
+                connectorInput.id = 'connector-' + uniqueKey();
+            }
+
             connector = new ConnectorClass(connectorInput);
-        } else {
-            return;
         }
 
         this.connector = connector;
@@ -398,7 +380,25 @@ export class LocalDataProvider extends DataProvider {
     public getDataTable(presentation: boolean = false): DataTable | undefined {
         return presentation ? this.presentationTable : this.dataTable;
     }
+
+    /**
+     * Checks if the object is an instance of DataConnector.
+     *
+     * @param connector
+     * The object to check.
+     *
+     * @returns `true` if the object is an instance of DataConnector, `false`
+     * otherwise.
+     */
+    private static isConnectorInstance(
+        connector: GridDataConnectorTypeOptions | DataConnectorType
+    ): connector is DataConnectorType {
+        return 'getTable' in connector;
+    }
 }
+
+export type GridDataConnectorTypeOptions =
+    Omit<DataConnectorTypeOptions, 'id'> & { id?: string };
 
 export interface LocalDataProviderOptions extends DataProviderOptions {
     providerType?: 'local';
@@ -411,7 +411,7 @@ export interface LocalDataProviderOptions extends DataProviderOptions {
     /**
      * Connector instance or options used to populate the data table.
      */
-    connector?: DataConnectorTypeOptions | DataConnectorType;
+    connector?: GridDataConnectorTypeOptions | DataConnectorType;
 
     /**
      * Automatically update the grid when the data table changes. It is disabled
