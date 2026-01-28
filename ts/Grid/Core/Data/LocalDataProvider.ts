@@ -29,6 +29,7 @@ import type {
     RowObject as RowObjectType,
     CellType as DataTableCellType
 } from '../../../Data/DataTable';
+import type { DataEvent } from '../../../Data/DataEvent';
 import type DataConnectorType from '../../../Data/Connectors/DataConnectorType';
 import type {
     DataConnectorTypeOptions
@@ -146,16 +147,14 @@ export class LocalDataProvider extends DataProvider {
         this.prePaginationRowCount = this.presentationTable?.rowCount ?? 0;
 
         for (const eventName of LocalDataProvider.tableChangeEventNames) {
-            const fn = table.on(eventName, (): void => {
-                void this.handleTableChange();
+            const fn = table.on(eventName, (e: DataEvent): void => {
+                void this.handleTableChange(e);
             });
             this.dataTableEventDestructors.push(fn);
         }
     }
 
-    private async handleTableChange(
-        /// eventName: typeof LocalDataProvider.tableChangeEventNames[number]
-    ): Promise<void> {
+    private async handleTableChange(e: DataEvent): Promise<void> {
         this.querying.shouldBeUpdated = true;
 
         const grid = this.querying.grid;
@@ -163,7 +162,13 @@ export class LocalDataProvider extends DataProvider {
             return;
         }
 
-        await grid.viewport.updateRows();
+        if (e.type === 'afterSetCell' && e.detail?.fromGrid) {
+            return;
+        }
+
+        if (this.options.updateOnChange) {
+            await grid.viewport.updateRows();
+        }
 
         // TODO: Handle this when Pagination emits proper events.
         // grid.dirtyFlags.add((
@@ -314,7 +319,7 @@ export class LocalDataProvider extends DataProvider {
         if (typeof rowId !== 'number') {
             throw new Error('LocalDataProvider supports only numeric row ids.');
         }
-        this.dataTable?.setCell(columnId, rowId, value);
+        this.dataTable?.setCell(columnId, rowId, value, { fromGrid: true });
         return Promise.resolve();
     }
 
@@ -397,8 +402,27 @@ export class LocalDataProvider extends DataProvider {
 
 export interface LocalDataProviderOptions extends DataProviderOptions {
     providerType?: 'local';
+
+    /**
+     * The data table used by the provider.
+     */
     dataTable?: DataTable | DataTableOptions;
+
+    /**
+     * Connector instance or options used to populate the data table.
+     */
     connector?: DataConnectorTypeOptions | DataConnectorType;
+
+    /**
+     * Automatically update the grid when the data table changes. It is disabled
+     * by default unles the pagination is enabled.
+     *
+     * Use this option if you want the polling to update the grid when the data
+     * table changes.
+     *
+     * @default false
+     */
+    updateOnChange?: boolean;
 }
 
 declare module './DataProviderType' {

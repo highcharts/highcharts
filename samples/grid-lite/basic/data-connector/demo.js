@@ -6,7 +6,8 @@ Grid.grid('container', {
             enablePolling: true,
             dataRefreshRate: 1,
             csvURL: 'https://demo-live-data.highcharts.com/time-data.csv'
-        }
+        },
+        updateOnChange: true
     },
     columnDefaults: {
         filtering: {
