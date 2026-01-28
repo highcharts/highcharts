@@ -17,10 +17,12 @@
 
 import type BoxPlotPoint from './BoxPlotPoint';
 import type BoxPlotPointOptions from './BoxPlotPointOptions';
-import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
+import type {
+    ColumnSeriesOptions,
+    ColumnSeriesTooltipOptions
+} from '../Column/ColumnSeriesOptions';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type TooltipOptions from '../../Core/TooltipOptions';
 
 /* *
  *
@@ -451,9 +453,17 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      */
     lineWidth?: number;
 
-    tooltip?: Partial<TooltipOptions>;
+    tooltip?: BoxPlotSeriesTooltipOptions;
 
     threshold?: number|null;
+}
+
+export interface BoxPlotSeriesTooltipOptions
+    extends ColumnSeriesTooltipOptions {
+    /**
+     * @default '<span style="color:{point.color}">\u25CF</span> <b>{series.name}</b><br/>Maximum: {point.high}<br/>Upper quartile: {point.q3}<br/>Median: {point.median}<br/>Lower quartile: {point.q1}<br/>Minimum: {point.low}<br/>'
+     */
+    pointFormat?: ColumnSeriesTooltipOptions['pointFormat'];
 }
 
 /* *

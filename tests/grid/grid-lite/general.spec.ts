@@ -339,8 +339,8 @@ test('Grid delegates cell events to tbody', async ({ page }) => {
         }
 
         const added: { target: EventTarget; type: string }[] = [];
-        const originalAddEventListener =
-            EventTarget.prototype.addEventListener.bind(EventTarget.prototype);
+        // eslint-disable-next-line @typescript-eslint/unbound-method
+        const originalAddEventListener = EventTarget.prototype.addEventListener;
         EventTarget.prototype.addEventListener = function (
             this: EventTarget,
             type: string,
