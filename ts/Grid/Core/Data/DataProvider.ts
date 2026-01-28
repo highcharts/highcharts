@@ -58,6 +58,12 @@ export abstract class DataProvider {
      */
     protected readonly options: DataProviderOptions;
 
+    /**
+     * Flag indicating whether the data provider has been initialized.
+     */
+    public initialized: boolean = false;
+
+
     /* *
      *
      *  Constructor
@@ -77,6 +83,14 @@ export abstract class DataProvider {
      *  Methods
      *
      * */
+
+    /**
+     * Initializes the data provider.
+     */
+    public init(): Promise<void> {
+        this.initialized = true;
+        return Promise.resolve();
+    }
 
     /**
      * Returns all available column IDs.
@@ -139,7 +153,9 @@ export abstract class DataProvider {
     /**
      * Destroys the provider and releases resources.
      */
-    public abstract destroy(): void;
+    public destroy(): void {
+        this.initialized = false;
+    }
 
     /**
      * Returns the number of items before pagination has been applied.
@@ -208,8 +224,10 @@ export type RowId = number | string;
 export interface DataProviderOptions {
     /**
      * The type of the data provider.
+     *
+     * @default 'local'
      */
-    providerType: string;
+    providerType?: string;
 }
 
 

@@ -23,17 +23,21 @@
  * */
 
 import type { DataProviderOptions, RowId } from './DataProvider';
-import type QueryingController from '../Querying/QueryingController';
 import type DataTableOptions from '../../../Data/DataTableOptions';
 import type { ColumnDataType } from '../Table/Column';
 import type {
     RowObject as RowObjectType,
     CellType as DataTableCellType
 } from '../../../Data/DataTable';
+import type DataConnectorType from '../../../Data/Connectors/DataConnectorType';
+import type {
+    DataConnectorTypeOptions
+} from '../../../Data/Connectors/DataConnectorType';
 
 import { DataProvider } from './DataProvider.js';
 import DataTable from '../../../Data/DataTable.js';
 import ChainModifier from '../../../Data/Modifiers/ChainModifier.js';
+import DataConnector from '../../../Data/Connectors/DataConnector.js';
 import DataProviderRegistry from './DataProviderRegistry.js';
 
 
@@ -50,6 +54,14 @@ import DataProviderRegistry from './DataProviderRegistry.js';
  * modifiers and persisting edits locally.
  */
 export class LocalDataProvider extends DataProvider {
+
+    public static readonly tableChangeEventNames = [
+        'afterDeleteColumns',
+        'afterDeleteRows',
+        'afterSetCell',
+        'afterSetColumns',
+        'afterSetRows'
+    ] as const;
 
     /* *
      *
@@ -68,6 +80,11 @@ export class LocalDataProvider extends DataProvider {
     private dataTable?: DataTable;
 
     /**
+     * The connector instance used to populate the table.
+     */
+    private connector?: DataConnectorType;
+
+    /**
      * The presentation table after applying query modifiers.
      */
     private presentationTable?: DataTable;
@@ -82,19 +99,11 @@ export class LocalDataProvider extends DataProvider {
      */
     private dataTableEventDestructors: Function[] = [];
 
-    /* *
-     *
-     *  Constructor
-     *
-     * */
+    /**
+     * Unbind callbacks for connector events.
+     */
+    private connectorEventDestructors: Function[] = [];
 
-    constructor(
-        queryingController: QueryingController,
-        options: LocalDataProviderOptions
-    ) {
-        super(queryingController, options);
-        this.initDataTable();
-    }
 
     /* *
      *
@@ -102,35 +111,156 @@ export class LocalDataProvider extends DataProvider {
      *
      * */
 
-    private initDataTable(): void {
-        this.querying.shouldBeUpdated = true;
+    public override async init(): Promise<void> {
+        if (this.initialized) {
+            return;
+        }
 
-        // Unregister all events attached to the previous data table.
-        this.dataTableEventDestructors.forEach((fn): void => fn());
+        await this.initDataTable();
+        this.initialized = true;
+    }
+
+    private async initDataTable(): Promise<void> {
+        this.querying.shouldBeUpdated = true;
+        this.clearDataTableEvents();
+        this.clearConnector();
+
+        if (this.options.connector) {
+            await this.initConnector(this.options.connector);
+            return;
+        }
+
         const tableOptions = this.options.dataTable;
 
         // If the table is passed as a reference, it should be used instead of
         // creating a new one.
-        if ((tableOptions as DataTable)?.clone) {
-            this.dataTable = tableOptions as DataTable;
-        } else {
-            this.dataTable = new DataTable(tableOptions as DataTableOptions);
-        }
+        const dataTable = tableOptions && 'clone' in tableOptions ?
+            tableOptions : new DataTable(tableOptions || {});
 
-        this.presentationTable = this.dataTable?.getModified();
+        this.setDataTable(dataTable);
+    }
+
+    private setDataTable(table: DataTable): void {
+        this.dataTable = table;
+        this.presentationTable = table.getModified();
         this.prePaginationRowCount = this.presentationTable?.rowCount ?? 0;
 
-        for (const eventName of [
-            'afterDeleteColumns',
-            'afterDeleteRows',
-            'afterSetCell',
-            'afterSetColumns',
-            'afterSetRows'
-        ] as const) {
-            const fn = this.dataTable.on(eventName, (): void => {
-                this.querying.shouldBeUpdated = true;
+        for (const eventName of LocalDataProvider.tableChangeEventNames) {
+            const fn = table.on(eventName, (): void => {
+                void this.handleTableChange();
             });
             this.dataTableEventDestructors.push(fn);
+        }
+    }
+
+    private async handleTableChange(
+        /// eventName: typeof LocalDataProvider.tableChangeEventNames[number]
+    ): Promise<void> {
+        this.querying.shouldBeUpdated = true;
+
+        const grid = this.querying.grid;
+        if (!grid?.viewport) {
+            return;
+        }
+
+        await grid.viewport.updateRows();
+
+        // TODO: Handle this when Pagination emits proper events.
+        // grid.dirtyFlags.add((
+        //     eventName === 'afterDeleteColumns' ||
+        //     eventName === 'afterSetColumns'
+        // ) ? 'grid' : 'rows');
+
+        // await grid.redraw();
+    }
+
+    private clearDataTableEvents(): void {
+        this.dataTableEventDestructors.forEach((fn): void => fn());
+        this.dataTableEventDestructors.length = 0;
+    }
+
+    private clearConnector(): void {
+        this.connectorEventDestructors.forEach((fn): void => fn());
+        this.connectorEventDestructors.length = 0;
+        this.connector?.stopPolling();
+        this.connector = void 0;
+    }
+
+    private isConnectorOptions(
+        connector: unknown
+    ): connector is DataConnectorTypeOptions {
+        const record = connector as Record<string, unknown> | null;
+        if (!record || typeof record !== 'object') {
+            return false;
+        }
+
+        const type = record.type;
+        const id = record.id;
+        if (typeof type !== 'string' || typeof id !== 'string') {
+            return false;
+        }
+
+        const connectorTypes = DataConnector.types as unknown as
+            Record<string, unknown>;
+        return !!connectorTypes[type];
+    }
+
+    private isConnectorInstance(
+        connector: DataConnectorTypeOptions | DataConnectorType
+    ): connector is DataConnectorType {
+        return typeof (connector as DataConnectorType).getTable === 'function';
+    }
+
+    private async initConnector(
+        connectorInput: DataConnectorTypeOptions | DataConnectorType
+    ): Promise<void> {
+        let connector: DataConnectorType;
+
+        if (this.isConnectorInstance(connectorInput)) {
+            connector = connectorInput;
+        } else if (this.isConnectorOptions(connectorInput)) {
+            const ConnectorClass =
+                DataConnector.types[connectorInput.type] as
+                Class<DataConnectorType> | undefined;
+
+            if (!ConnectorClass) {
+                throw new Error(
+                    `Connector type not found. (${connectorInput.type})`
+                );
+            }
+
+            connector = new ConnectorClass(connectorInput);
+        } else {
+            return;
+        }
+
+        this.connector = connector;
+
+        this.connectorEventDestructors.push(
+            connector.on('afterLoad', (): void => {
+                this.querying.shouldBeUpdated = true;
+            })
+        );
+
+        this.setDataTable(connector.getTable());
+
+        if (
+            'enablePolling' in connector.options &&
+            connector.options.enablePolling &&
+            !connector.polling &&
+            'dataRefreshRate' in connector.options
+        ) {
+            connector.startPolling(
+                Math.max(connector.options.dataRefreshRate || 0, 1) * 1000
+            );
+        }
+
+        if (!connector.loaded) {
+            try {
+                await connector.load();
+            } catch {
+                return;
+            }
         }
     }
 
@@ -226,8 +356,9 @@ export class LocalDataProvider extends DataProvider {
     }
 
     public override destroy(): void {
-        this.dataTableEventDestructors.forEach((fn): void => fn());
-        this.dataTableEventDestructors.length = 0;
+        this.clearDataTableEvents();
+        this.clearConnector();
+        super.destroy();
     }
 
     public override getColumnDataType(
@@ -265,8 +396,9 @@ export class LocalDataProvider extends DataProvider {
 }
 
 export interface LocalDataProviderOptions extends DataProviderOptions {
-    providerType: 'local';
-    dataTable: DataTable | DataTableOptions;
+    providerType?: 'local';
+    dataTable?: DataTable | DataTableOptions;
+    connector?: DataConnectorTypeOptions | DataConnectorType;
 }
 
 declare module './DataProviderType' {
