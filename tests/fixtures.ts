@@ -532,6 +532,18 @@ export async function setupRoutes(page: Page){
                 handler: fulfillTilePlaceholder
             },
             {
+                pattern: /https:\/\/(?:[a-c]\.)?tile\.openstreetmap\.fr\/hot\/\d+\/\d+\/\d+\.png/iu,
+                handler: fulfillTilePlaceholder
+            },
+            {
+                pattern: /https:\/\/(?:[a-c]\.)?tile\.opentopomap\.org\/\d+\/\d+\/\d+\.png/iu,
+                handler: fulfillTilePlaceholder
+            },
+            {
+                pattern: /https:\/\/stamen-tiles-[a-d]\.a\.ssl\.fastly\.net\/(?:toner|toner-background|toner-lite|terrain|terrain-background|watercolor)\/\d+\/\d+\/\d+\.png/iu,
+                handler: fulfillTilePlaceholder
+            },
+            {
                 pattern: /https:\/\/basemap\.nationalmap\.gov\/arcgis\/rest\/services\/USGS[^/]*\/MapServer\/tile\/\d+\/\d+\/\d+/iu,
                 handler: fulfillTilePlaceholder
             },

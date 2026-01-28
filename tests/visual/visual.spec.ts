@@ -387,12 +387,60 @@ test.describe('Visual tests', () => {
                     async ({ maxAttempts, retryDelay, timeoutMs }) => {
                         const Highcharts = (window as VisualWindow).Highcharts;
 
+                        const isTiledWebMapReady = (chart) => {
+                            if (!chart || !chart.series) {
+                                return true;
+                            }
+
+                            const tiledSeries = chart.series
+                                .filter(series =>
+                                    series &&
+                                    series.type === 'tiledwebmap' &&
+                                    series.visible !== false
+                                );
+
+                            if (!tiledSeries.length) {
+                                return true;
+                            }
+
+                            const zoom = typeof chart.mapView?.zoom === 'number' ?
+                                Math.floor(chart.mapView.zoom) :
+                                null;
+                            const zoomKey = zoom === null ? 
+                                null : String(Math.max(0, zoom));
+
+                            return tiledSeries.every(series => {
+                                const tiles = (series as {
+                                    tiles?: Record<string, { loaded?: boolean }>
+                                }).tiles;
+                                if (!tiles) {
+                                    return false;
+                                }
+
+                                if (zoomKey && tiles[zoomKey]?.loaded) {
+                                    return true;
+                                }
+
+                                return Object.values(tiles)
+                                    .some(tile => Boolean(tile?.loaded));
+                            });
+                        };
+
                         // Modern while loop approach instead of recursion
                         let attempts = 0;
                         while (attempts < maxAttempts) {
                             const chart = Highcharts?.charts?.at(-1);
 
                             if (chart || document.getElementsByTagName('svg').length) {
+                                if (chart && !isTiledWebMapReady(chart)) {
+                                    attempts++;
+                                    await new Promise(
+                                        resolve => 
+                                            setTimeout(resolve, retryDelay)
+                                    );
+                                    continue;
+                                }
+
                                 // Chart exists, prepare shot like karma-setup.js:prepareShot
                                 if (Highcharts?.prepareShot && chart) {
                                     Highcharts.prepareShot(chart);
