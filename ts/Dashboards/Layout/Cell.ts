@@ -471,6 +471,8 @@ class Cell extends GUIElement {
                 String(heightValue);
             elementStyle.height = this.height;
             options.height = this.height;
+        } else if (defined(elementStyle.height)) {
+            delete elementStyle.height;
         }
 
         const widthSource = defined(options.width) ?
