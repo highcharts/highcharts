@@ -12,6 +12,7 @@
  * */
 
 import type Annotation from '../Annotation';
+import type AnnotationMockPointOptionsObject from '../AnnotationMockPointOptionsObject';
 import type { ControllableShapeOptions } from './ControllableOptions';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 
@@ -91,6 +92,22 @@ class ControllableRect extends Controllable {
      *  Functions
      *
      * */
+
+    public init(
+        annotation: Annotation,
+        options: ControllableShapeOptions,
+        index: number
+    ): void {
+        const { point, xAxis, yAxis } = options;
+        if (defined(xAxis) && point) {
+            (point as AnnotationMockPointOptionsObject).xAxis = xAxis;
+        }
+        if (defined(yAxis) && point) {
+            (point as AnnotationMockPointOptionsObject).yAxis = yAxis;
+        }
+
+        super.init(annotation, options, index);
+    }
 
     public render(parent: SVGElement): void {
         const attrs = this.attrsFromOptions(this.options);

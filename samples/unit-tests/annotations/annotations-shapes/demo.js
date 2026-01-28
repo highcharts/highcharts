@@ -253,9 +253,7 @@ QUnit.test('Basic shape annotations', function (assert) {
             shapes: [{
                 point: {
                     x: 3,
-                    y: 150,
-                    xAxis: 0,
-                    yAxis: 0
+                    y: 150
                 },
                 type: 'rect',
                 fill: '#f00000',
@@ -266,29 +264,25 @@ QUnit.test('Basic shape annotations', function (assert) {
             }, {
                 point: {
                     x: 1,
-                    y: 50,
-                    xAxis: 0,
-                    yAxis: 0
+                    y: 50
                 },
                 type: 'circle',
                 fill: '#00f000',
                 r: 50,
+                xAxis: 0,
                 yAxis: 0
             }, {
                 points: [{
                     x: 1,
-                    y: 150,
-                    xAxis: 0,
-                    yAxis: 0
+                    y: 150
                 }, {
                     x: 3,
-                    y: 150,
-                    xAxis: 0,
-                    yAxis: 0
+                    y: 150
                 }],
                 type: 'ellipse',
                 fill: '#0000f0',
                 ry: 50,
+                xAxis: 0,
                 yAxis: 0
             }]
         }]
@@ -309,6 +303,7 @@ QUnit.test('Basic shape annotations', function (assert) {
         ellipseRadiusY =
             Math.abs(yAxis.toPixels(250) - yAxis.toPixels(150)) / 2;
 
+    // Annotations dimensions
     assert.close(
         rectWidth,
         Number(rect.graphic.element.getAttribute('width')),
@@ -332,5 +327,43 @@ QUnit.test('Basic shape annotations', function (assert) {
         Number(ellipse.graphic.element.getAttribute('ry')),
         0.01,
         'Ellipse annotation created with axis units radius is correct.'
+    );
+
+    // Annotations positions
+    assert.close(
+        rect.graphic.element.getAttribute('x'),
+        xAxis.toPixels(3),
+        0.01,
+        'Rect annotation created with xAxis units position is correct.'
+    );
+    assert.close(
+        rect.graphic.element.getAttribute('y'),
+        yAxis.toPixels(150),
+        0.01,
+        'Rect annotation created with yAxis units position is correct.'
+    );
+    assert.close(
+        circle.graphic.element.getAttribute('cx'),
+        xAxis.toPixels(1),
+        0.01,
+        'Circle annotation created with xAxis units position is correct.'
+    );
+    assert.close(
+        circle.graphic.element.getAttribute('cy'),
+        yAxis.toPixels(50),
+        0.01,
+        'Circle annotation created with yAxis units position is correct.'
+    );
+    assert.close(
+        ellipse.graphic.element.getAttribute('cx'),
+        xAxis.toPixels(2),
+        0.01,
+        'Ellipse annotation created with xAxis units position is correct.'
+    );
+    assert.close(
+        ellipse.graphic.element.getAttribute('cy'),
+        yAxis.toPixels(150),
+        0.01,
+        'Ellipse annotation created with yAxis units position is correct.'
     );
 });
