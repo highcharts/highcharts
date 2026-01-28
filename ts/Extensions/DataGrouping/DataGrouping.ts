@@ -44,9 +44,6 @@ const {
  *
  * */
 
-/**
- *
- */
 function compose(
     AxisClass: typeof Axis,
     SeriesClass: typeof Series,

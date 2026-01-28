@@ -35,9 +35,6 @@ const {
  *
  * */
 
-/**
- *
- */
 function average(
     arr: ApproximationArray
 ): (null|number|undefined) {
@@ -71,9 +68,6 @@ function averages(): (Array<(null|number|undefined)>|undefined) { // #5479
     return typeof ret[0] === 'undefined' ? void 0 : ret;
 }
 
-/**
- *
- */
 function close(
     arr: ApproximationArray
 ): (null|number|undefined) {
@@ -82,9 +76,6 @@ function close(
         (arr.hasNulls ? null : void 0);
 }
 
-/**
- *
- */
 function high(
     arr: ApproximationArray
 ): (null|number|undefined) {
@@ -115,9 +106,6 @@ function hlc(
     }
 }
 
-/**
- *
- */
 function low(
     arr: ApproximationArray
 ): (null|number|undefined) {
@@ -126,9 +114,6 @@ function low(
         (arr.hasNulls ? null : void 0);
 }
 
-/**
- *
- */
 function ohlc(
     open: ApproximationArray,
     high: ApproximationArray,
@@ -150,18 +135,12 @@ function ohlc(
     }
 }
 
-/**
- *
- */
 function open(
     arr: ApproximationArray
 ): (null|number|undefined) {
     return arr.length ? arr[0] : ((arr as any).hasNulls ? null : void 0);
 }
 
-/**
- *
- */
 function range(
     low: ApproximationArray,
     high: ApproximationArray
@@ -177,9 +156,6 @@ function range(
     // Else, return is undefined
 }
 
-/**
- *
- */
 function sum(
     arr: ApproximationArray
 ): (null|number|undefined) {

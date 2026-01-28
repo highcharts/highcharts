@@ -5,14 +5,11 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import type { JSHandle, Page } from '@playwright/test';
 
-import { join, extname, normalize, dirname } from 'node:path';
+import { join, extname, normalize } from 'node:path';
 import { globSync } from 'glob';
 import { load as yamlLoad } from 'js-yaml';
 import { existsSync, readFileSync } from 'node:fs';
 import * as ts from 'typescript';
-import { fileURLToPath } from 'node:url';
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export async function setTestingOptions(
     page: Page, HC: JSHandle<typeof Highcharts> | undefined = undefined
@@ -88,11 +85,11 @@ export async function setTestingOptions(
 
 }
 
-export async function getKarmaScripts(): Promise<string[]> {
+export async function getKarmaScripts() {
     const { default: files } = await import(
         '../test/karma-files.json',
         { with: { type: 'json'} }
-    ) as { default: string[] };
+    );
 
     return files;
 }

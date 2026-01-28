@@ -1,10 +1,7 @@
 import type Highcharts from '~code/esm/highcharts.src';
 import { test, expect, createChart } from '~/fixtures.ts';
 import { readFileSync } from 'node:fs';
-import { join, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
+import { join } from 'node:path';
 
 // Note: have to get the css this way, as it has to be passed to createChart
 // the right timing
