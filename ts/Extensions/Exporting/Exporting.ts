@@ -1849,6 +1849,31 @@ class Exporting {
                     'href',
                     webgpuCanvasImage.element.getAttribute('href') || ''
                 );
+                webgpuCanvasImage.element.setAttributeNS(
+                    'http://www.w3.org/1999/xlink',
+                    'preserveAspectRatio',
+                    'none'
+                );
+                webgpuCanvasImage.element.setAttributeNS(
+                    'http://www.w3.org/1999/xlink',
+                    'width',
+                    `${chartCopy.plotWidth}`
+                );
+                webgpuCanvasImage.element.setAttributeNS(
+                    'http://www.w3.org/1999/xlink',
+                    'height',
+                    `${chartCopy.plotHeight}`
+                );
+                webgpuCanvasImage.element.setAttributeNS(
+                    'http://www.w3.org/1999/xlink',
+                    'x',
+                    '0'
+                );
+                webgpuCanvasImage.element.setAttributeNS(
+                    'http://www.w3.org/1999/xlink',
+                    'y',
+                    '0'
+                );
 
                 const contourCopy = chartCopy
                     .series
@@ -1860,7 +1885,13 @@ class Exporting {
                     webgpuCanvasImage.element.getAttribute('href') ||
                     webgpuCanvasImage.element.getAttribute('xlink:href') || ''
                 );
-                const imgTag = `<image href="${dataURL}" xlink:href="${dataURL}"/>`;
+                const imgTag = (
+                    `<image preserveAspectRatio="none" x="0" y="0" width="${
+                        this.options.width
+                    }" href="${
+                        dataURL
+                    }" />`
+                );
 
                 const contourGroupPattern = new RegExp(
                     '(<g[^>]*class="[^"]*\\bhighcharts-contour-series\\b' +

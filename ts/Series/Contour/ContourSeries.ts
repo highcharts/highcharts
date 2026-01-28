@@ -565,8 +565,35 @@ export default class ContourSeries extends ScatterSeries {
                                 const src = new Uint8Array(
                                     readback.getMappedRange()
                                 );
-                                this.readbackData = new Uint8Array(src);
-                                // Optionally strip row padding here.
+                                const readbackData = (
+                                    this.readbackData = new Uint8Array(src)
+                                );
+                                const width = canvas.width;
+                                const height = canvas.height;
+                                const bytesPerPixel = 4;
+                                const bytesPerRow = (
+                                    Math.ceil(
+                                        (width * bytesPerPixel) / 256
+                                    ) * 256
+                                );
+                                const packed = new Uint8Array(
+                                    width * height * bytesPerPixel
+                                );
+
+                                for (let y = 0; y < height; y++) {
+                                    const srcOffset = y * bytesPerRow;
+                                    const dstOffset = y * width * bytesPerPixel;
+                                    packed.set(
+                                        readbackData.subarray(
+                                            srcOffset,
+                                            srcOffset + width * bytesPerPixel
+                                        ),
+                                        dstOffset
+                                    );
+                                }
+
+                                this.readbackData = packed;
+
                                 readback.unmap();
                             });
                     }
