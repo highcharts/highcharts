@@ -103,7 +103,7 @@ class TableHeader {
     /**
      * Renders the table head content.
      */
-    public render(): void {
+    public async render(): Promise<void> {
         const vp = this.viewport;
 
         if (!vp.grid.enabledColumns) {
@@ -113,7 +113,7 @@ class TableHeader {
         // Render regular, multiple level rows.
         for (let i = 0, iEnd = this.levels; i < iEnd; i++) {
             const row = new HeaderRow(vp, i + 1); // Avoid indexing from 0
-            row.renderContent(i);
+            await row.renderContent(i);
             this.rows.push(row);
         }
 
@@ -125,7 +125,7 @@ class TableHeader {
             ) || false
         )) {
             const row = new FilterRow(vp);
-            row.renderContent();
+            await row.renderContent();
             this.rows.push(row);
         }
     }

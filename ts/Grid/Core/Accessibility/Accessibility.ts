@@ -303,7 +303,7 @@ class Accessibility {
     /**
      * Set a11y options for the Grid.
      */
-    public setA11yOptions(): void {
+    public async setA11yOptions(): Promise<void> {
         const grid = this.grid;
         const tableEl = grid.tableElement;
 
@@ -313,7 +313,7 @@ class Accessibility {
 
         tableEl.setAttribute(
             'aria-rowcount',
-            grid.dataTable?.getRowCount() || 0
+            await grid.dataProvider?.getRowCount() || 0
         );
 
         if (grid.captionElement) {
