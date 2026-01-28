@@ -175,7 +175,7 @@ export class LocalDataProvider extends DataProvider {
             await grid.viewport.updateRows();
         }
 
-        // TODO: Handle this when Pagination emits proper events.
+        // TODO: Handle this when Polling emits proper events.
         // grid.dirtyFlags.add((
         //     eventName === 'afterDeleteColumns' ||
         //     eventName === 'afterSetColumns'
