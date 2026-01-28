@@ -62,6 +62,9 @@ const CHART_LOAD_TIMEOUT_MS =
 
 const defaultPageContent = '<div id="container" style="width: 600px; margin 0 auto"></div>';
 
+const getRelativeSamplePath = (samplePath: string): string =>
+    relative(process.cwd(), samplePath).replace(/\\/g, '/');
+
 const pageTemplate = (bodyContent = '') =>
     `<!DOCTYPE html>
 <html>
@@ -244,7 +247,7 @@ test.describe('Visual tests', () => {
     });
 
     const filteredSamples = samples.filter((samplePath) => {
-        const relativePath = relative(process.cwd(), samplePath).replace(/\\/g, '/');
+        const relativePath = getRelativeSamplePath(samplePath);
 
         if (productFilters.length) {
             const matchesProduct = productFilters.some((product) =>

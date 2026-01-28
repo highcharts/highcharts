@@ -25,6 +25,20 @@ const contentTypes: Record<string, string> = {
     '.svg': 'image/svg+xml'
 };
 
+const tilePlaceholderPath = 'test/testimage.png';
+
+async function fulfillTilePlaceholder(route: Route): Promise<void> {
+    await route.fulfill({
+        path: tilePlaceholderPath,
+        contentType: 'image/png'
+    });
+
+    test.info().annotations.push({
+        type: 'redirect',
+        description: `${route.request().url()} --> ${tilePlaceholderPath}`
+    });
+}
+
 async function replaceHCCode(route: Route) {
     const url = route.request().url();
     let relativePath = url.split('/code.highcharts.com/')[1]
@@ -512,6 +526,14 @@ export async function setupRoutes(page: Page){
             {
                 pattern: '**/**/mapdata/**',
                 handler: replaceMapData
+            },
+            {
+                pattern: /https:\/\/(?:[a-c]\.)?tile\.openstreetmap\.org\/\d+\/\d+\/\d+\.png/iu,
+                handler: fulfillTilePlaceholder
+            },
+            {
+                pattern: /https:\/\/basemap\.nationalmap\.gov\/arcgis\/rest\/services\/USGS[^/]*\/MapServer\/tile\/\d+\/\d+\/\d+/iu,
+                handler: fulfillTilePlaceholder
             },
             {
                 pattern: '**/**/{samples/graphics}/**',

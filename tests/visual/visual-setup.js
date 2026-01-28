@@ -56,6 +56,64 @@
 
         Highcharts.useSerialIds(true);
 
+        Highcharts.setOptions({
+            chart: {
+                animation: false
+            },
+            lang: {
+                locale: 'en-GB'
+            },
+            plotOptions: {
+                series: {
+                    animation: false,
+                    kdNow: true,
+                    dataLabels: {
+                        defer: false
+                    },
+                    states: {
+                        hover: {
+                            animation: false
+                        },
+                        select: {
+                            animation: false
+                        },
+                        inactive: {
+                            animation: false
+                        },
+                        normal: {
+                            animation: false
+                        }
+                    },
+                    label: {
+                        enabled: false
+                    }
+                },
+                networkgraph: {
+                    layoutAlgorithm: {
+                        enableSimulation: false,
+                        maxIterations: 10
+                    }
+                },
+                packedbubble: {
+                    layoutAlgorithm: {
+                        enableSimulation: false,
+                        maxIterations: 10
+                    }
+                }
+            },
+            stockTools: {
+                gui: {
+                    enabled: false
+                }
+            },
+            tooltip: {
+                animation: false
+            },
+            drilldown: {
+                animation: false
+            }
+        });
+
         if (!Highcharts.clonedDefaultOptions) {
             Highcharts.clonedDefaultOptions =
                 deepClone(Highcharts.defaultOptions);
