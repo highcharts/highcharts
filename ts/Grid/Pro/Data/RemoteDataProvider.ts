@@ -635,6 +635,7 @@ export class RemoteDataProvider extends DataProvider {
         this.rowCount = null;
         this.lastQueryFingerprint = null;
         this.requestEpoch++;
+        super.destroy();
     }
 }
 
