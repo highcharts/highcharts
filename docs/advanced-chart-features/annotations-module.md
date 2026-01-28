@@ -73,11 +73,11 @@ Common options for all annotations in all charts in the page can otherwise be se
 The shapes option
 -----------------
 
-Similar to the labels option, the shapes option defines a shape object. This object requires the `type` property such as `circle`, `rect`, `ellipse`, and `path`.
+Similar to the labels option, the shapes option defines a shape object. This object requires the `type` property such as `circle`, `rect`, `ellipse`, or `path`.
 
-The `ellipse` and `path` type require to define points property as an array of points, whereas `point` and `circle` take only one point to render.
+The `ellipse` and `path` types require defining points property as an array of points, whereas `point` and `circle` take only one point to render.
 
-`xAxis` and `yAxis` can be used on point level, to convert `x` and `y` values to axis units, and on `shapes` or `shapeOptions` level, to convert points and size values like `width`, `height`, `ry`, `r`.
+`xAxis` and `yAxis` can be used on point level, to convert `x` and `y` values to axis units, and on `shapes` or `shapeOptions` level, to convert points and size values like `width`, `height`, `ry` and `r`.
 
 Read more about basic shapes annotations at [annotations shapeOptions API](https://api.highcharts.com/highcharts/annotations.shapeOptions).
 
