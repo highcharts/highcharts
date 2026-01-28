@@ -44,7 +44,7 @@ const {
 /**
  * The line series is the base type and is therefor the series base prototype.
  *
- * @private
+ * @internal
  */
 class LineSeries extends Series {
 
@@ -193,7 +193,7 @@ class LineSeries extends Series {
     /**
      * Get the graph path.
      *
-     * @private
+     * @internal
      */
     public getGraphPath(
         points?: Array<LinePoint>,

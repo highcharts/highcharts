@@ -162,7 +162,7 @@ namespace ColumnDataLabel {
      *
      * */
 
-    /** @private */
+    /** @internal */
     export function compose(PieSeriesClass: typeof PieSeries): void {
 
         DataLabel.compose(Series);
@@ -180,7 +180,7 @@ namespace ColumnDataLabel {
 
     }
 
-    /** @private */
+    /** @internal */
     function getDataLabelPosition(
         this: PieSeries,
         point: PiePoint,
@@ -252,8 +252,8 @@ namespace ColumnDataLabel {
     }
 
     /**
-     * Override the base drawDataLabels method by pie specific functionality
-     * @private
+     * Override the base drawDataLabels method by pie specific functionality.
+     * @internal
      */
     function drawDataLabels(
         this: PieSeries
@@ -683,7 +683,7 @@ namespace ColumnDataLabel {
     /**
      * Perform the final placement of the data labels after we have verified
      * that they fall within the plot area.
-     * @private
+     * @internal
      */
     function placeDataLabels(
         this: PieSeries
@@ -730,7 +730,7 @@ namespace ColumnDataLabel {
      * Verify whether the data labels are allowed to draw, or we should run more
      * translation and data label positioning to keep them inside the plot area.
      * Returns true when data labels are ready to draw.
-     * @private
+     * @internal
      */
     function verifyDataLabelOverflow(
         this: PieSeries,
