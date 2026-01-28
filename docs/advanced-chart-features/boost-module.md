@@ -37,7 +37,9 @@ The main boost configuration is set in the `boost` property in the chart options
     boost: {
         useGPUTranslations: true,
         // Chart-level boost when there are more than 5 series in the chart
-        seriesThreshold: 5
+        seriesThreshold: 5,
+        // Points processed per frame when building the k-d tree
+        chunkSize: 5000
     },
 
     title: {
@@ -94,6 +96,7 @@ Optimizing tips
 
 * Set the extremes ([min](https://api.highcharts.com/highcharts/xAxis.min) and [max](https://api.highcharts.com/highcharts/xAxis.max)) explicitly on the `xAxis` and `yAxis` in order for Highcharts to avoid computing the extremes. In a scatter chart with 1M points, this may reduce the rendering time by ~10%.
 * If the value increments on both the X and Y axis aren't small, consider setting [`useGPUTranslations`](https://api.highcharts.com/highcharts/boost.useGPUTranslations) to true. If you do this and the increments are small (e.g. datetime axis with small time increments) it may cause rendering issues due to floating point rounding errors, so this should be considered case by case.
+* Tune [`chunkSize`](https://api.highcharts.com/highcharts/boost.chunkSize) to balance UI responsiveness against k-d tree build time in boost mode.
 
 
 Getting timing information
