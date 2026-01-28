@@ -25,29 +25,45 @@ Highcharts.chart('container', {
     },
 
     annotations: [{
+        shapeOptions: {
+            // Convert all points and sizes of shapes to axis units
+            xAxis: 0,
+            yAxis: 0
+        },
         shapes: [{
-            point: '0',
             type: 'circle',
+            // Use series key as point
+            point: '0',
             r: 10
         }, {
-            point: '3',
             type: 'rect',
-            width: 20,
-            height: 20,
-            x: -10,
-            y: -25
+            // Use axis units as rect coordinates
+            point: {
+                x: 3,
+                y: 150
+            },
+            width: 0.5,
+            height: 50
         }, {
-            fill: 'none',
-            stroke: 'red',
-            strokeWidth: 3,
             type: 'path',
             points: ['0', '3', {
                 x: 6,
-                y: 195,
-                xAxis: 0,
-                yAxis: 0
+                y: 195
             }],
+            fill: 'none',
+            stroke: 'red',
+            strokeWidth: 3,
             markerEnd: 'arrow'
+        }, {
+            type: 'ellipse',
+            points: [{
+                x: 1,
+                y: 200
+            }, {
+                x: 3,
+                y: 200
+            }],
+            ry: 50
         }],
         labels: [{
             point: {
