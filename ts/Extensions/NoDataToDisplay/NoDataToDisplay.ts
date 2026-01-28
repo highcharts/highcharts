@@ -20,8 +20,8 @@
  *
  * */
 
-import type NoDataOptions from './NoDataOptions';
-import type Options from '../../Core/Options';
+import type { NoDataOptions } from './NoDataOptions';
+import type { Options } from '../../Core/Options';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
@@ -42,21 +42,59 @@ const {
 
 declare module '../../Core/Chart/ChartBase' {
     interface ChartBase {
+        /**
+         * The no-data label instance.
+         *
+         * @internal
+         * @requires modules/no-data-to-display
+         */
         noDataLabel?: SVGElement;
-        /** @requires modules/no-data-to-display */
+
+        /**
+         * Display a no-data message.
+         *
+         * @internal
+         * @requires modules/no-data-to-display
+         */
         showNoData(str?: string): void;
-        /** @requires modules/no-data-to-display */
+
+        /**
+         * Hide the no-data message.
+         *
+         * @internal
+         * @requires modules/no-data-to-display
+         */
         hideNoData(): void;
-        /** @requires modules/no-data-to-display */
+
+        /**
+         * Whether the chart has visible data.
+         *
+         * @internal
+         * @requires modules/no-data-to-display
+         */
         hasData(): (boolean|undefined);
     }
 }
 
-declare module '../../Core/Options'{
+declare module '../../Core/Options' {
     interface LangOptions {
+        /**
+         * The text to display when the chart contains no data.
+         *
+         * @since    3.0.8
+         * @requires modules/no-data-to-display
+         * @default 'No data to display'
+         */
         noData?: string;
     }
     interface Options {
+        /**
+         * Options for displaying a message like "No data to display".
+         *
+         * @since        3.0.8
+         * @requires     modules/no-data-to-display
+         * @optionparent noData
+         */
         noData?: NoDataOptions;
     }
 }
@@ -204,8 +242,10 @@ function onChartRender(
  *
  * */
 
+/** @internal */
 const NoDataToDisplay = {
     compose
 };
 
+/** @internal */
 export default NoDataToDisplay;
