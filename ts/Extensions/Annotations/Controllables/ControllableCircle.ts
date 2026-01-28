@@ -93,11 +93,13 @@ class ControllableCircle extends Controllable {
         index: number
     ): void {
         const { point, xAxis, yAxis } = options;
-        if (defined(xAxis) && point) {
-            (point as AnnotationMockPointOptionsObject).xAxis = xAxis;
-        }
-        if (defined(yAxis) && point) {
-            (point as AnnotationMockPointOptionsObject).yAxis = yAxis;
+        if (point && typeof point !== 'string') {
+            if (defined(xAxis)) {
+                (point as AnnotationMockPointOptionsObject).xAxis = xAxis;
+            }
+            if (defined(yAxis)) {
+                (point as AnnotationMockPointOptionsObject).yAxis = yAxis;
+            }
         }
 
         super.init(annotation, options, index);

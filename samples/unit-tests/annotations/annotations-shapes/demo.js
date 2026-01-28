@@ -247,7 +247,15 @@ QUnit.test('Basic shape annotations', function (assert) {
             height: 400
         },
         series: [{
-            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0]
+            keys: ['y', 'id'],
+            data: [
+                [29.9, '0'],
+                [71.5, '1'],
+                [106.4, '2'],
+                [129.2, '3'],
+                [144.0, '4'],
+                [176.0, '5']
+            ]
         }],
         annotations: [{
             shapes: [{
@@ -365,5 +373,21 @@ QUnit.test('Basic shape annotations', function (assert) {
         yAxis.toPixels(150),
         0.01,
         'Ellipse annotation created with yAxis units position is correct.'
+    );
+
+    // Add annotation with point as series key
+    chart.addAnnotation({
+        shapes: [{
+            points: '4',
+            type: 'circle',
+            r: 20,
+            xAxis: 0,
+            yAxis: 0
+        }]
+    });
+
+    assert.ok(
+        true,
+        'Adding annotation with point as series key should not throw an error.'
     );
 });
