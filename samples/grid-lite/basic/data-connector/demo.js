@@ -9,6 +9,11 @@ Grid.grid('container', {
         },
         updateOnChange: true
     },
+    columnDefaults: {
+        filtering: {
+            enabled: true
+        }
+    },
     columns: [{
         id: 'Time',
         dataType: 'datetime'
