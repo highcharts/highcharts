@@ -1,0 +1,24 @@
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/grid-lite.js"></script>
+
+<div id="container" class="grid-wrapper">
+    <div>
+        <div class="label">Auto update</div>
+        <div id="container-auto" class="hcg-theme-default"></div>
+        <div class="controls">
+            <button id="auto-set-cell">Set cell (auto)</button>
+                <button id="auto-edit-cell">Edit cell (grid)</button>
+            <button id="auto-reset-counter">Reset counter (auto)</button>
+            <input id="auto-update-count" class="counter" value="0" readonly>
+        </div>
+    </div>
+    <div>
+        <div class="label">Manual update</div>
+        <div id="container-manual" class="hcg-theme-default"></div>
+        <div class="controls">
+            <button id="manual-set-cell">Set cell (manual)</button>
+            <button id="manual-update-rows">Update rows (manual)</button>
+            <button id="manual-reset-counter">Reset counter (manual)</button>
+            <input id="manual-update-count" class="counter" value="0" readonly>
+        </div>
+    </div>
+</div>
