@@ -73,8 +73,6 @@ class DashboardsAccessibility {
     }
 }
 
-/// namespace DashboardsAccessibility { }
-
 /* *
  *
  *  Default Export

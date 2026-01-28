@@ -19,6 +19,7 @@
 
 import type ColorType from '../../Core/Color/ColorType';
 import type ColumnPointOptions from '../Column/ColumnPointOptions';
+import type { PointDataLabelOptionsModifier } from '../../Core/Series/DataLabel';
 import type SankeyDataLabelOptions from './SankeyDataLabelOptions';
 import type NodesComposition from '../NodesComposition';
 
@@ -47,7 +48,10 @@ export interface SankeyPointOptions extends ColumnPointOptions, NodesComposition
     /**
      * @product highcharts
      */
-    dataLabels?: (SankeyDataLabelOptions|Array<SankeyDataLabelOptions>);
+    dataLabels?: (
+        SankeyPointDataLabelOptions |
+        Array<SankeyPointDataLabelOptions>
+    );
 
     /**
      * The node that the link runs from.
@@ -85,6 +89,9 @@ export interface SankeyPointOptions extends ColumnPointOptions, NodesComposition
     width?: number;
 
 }
+
+export type SankeyPointDataLabelOptions =
+    SankeyDataLabelOptions & PointDataLabelOptionsModifier;
 
 /* *
  *

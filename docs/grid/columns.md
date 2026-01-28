@@ -80,19 +80,41 @@ Suppose you need more advanced formatting that is not supported through templati
 
 ## Width
 
-Column widths in **Highcharts Grid** are controlled via the `column.width` option. You can specify widths in pixels (e.g. `150`) or percentages (e.g. `'20%'`). If left `undefined`, the column will expand to fill any remaining space.
+Column widths are configured using the `columns[].width` option. Widths can be
+defined as pixels (e.g. `150` or `'150px'`), percentages (e.g. `'20%'`), or
+`'auto'`. Percentage values are always calculated relative to the **total table
+width**.
 
-Example:
-```ts
+If left `undefined`, the column will expand to fill any remaining space.
+
+A width of `'auto'` is equivalent to an undefined width, and takes
+precedence over `columnDefaults.width` if defined using `columns[].width`.
+
+### Example 1
+
+```js
 columns: [{
-    id: 'product',
+    id: 'column_1',
     width: 150 // fixed at 150px
 }, {
-    id: 'price',
+    id: 'column_2',
     width: '20%' // 20% of the table width
 }, {
-    id: 'stock'
-    // no width set - occupies remaining space
+    id: 'column_3' // no width, so expands to share remaining space
+}]
+```
+
+### Example 2
+
+```js
+columnDefaults: {
+    width: 50 // all columns will be 50px wide
+},
+columns: [{
+    id: 'column_1' // no width set, take the default value (50px)
+}, {
+    id: 'column_2',
+    width: 'auto' // opt out of the default and take remaining space
 }]
 ```
 
