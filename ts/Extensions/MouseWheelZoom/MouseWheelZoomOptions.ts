@@ -102,7 +102,7 @@ export interface MouseWheelZoomOptions {
      * wheel.
      *
      * @default   false
-     * @since {next}
+     * @since 12.5.0
      * @requires  modules/mouse-wheel-zoom
      * @sample    {highcharts} highcharts/mouse-wheel-zoom/reset-zoom-button
      *            Enable reset zoom button for mouse wheel zooming
