@@ -349,22 +349,18 @@ function onChartRender(
                                 point.shapeArgs?.height
                             ); // #4118
 
-                            const isPie = series.type === 'pie';
-
                             // Allow overlap if the option is explicitly true
                             if (
                                 // #13449
                                 options.allowOverlap ??
 
-                                // Pie labels have a separate placement
+                                // Pie labels outside have a separate placement
                                 // logic, skip the overlap logic
-                                isPie // #21725
+                                Number(options.distance) > 0
                             ) {
                                 label.oldOpacity = label.opacity;
                                 label.newOpacity = 1;
                                 hideOrShow(label, chart);
-
-                            // Do not allow overlap
                             } else {
                                 labels.push(label);
                             }
