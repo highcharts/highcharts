@@ -36,6 +36,8 @@ import type { CellType as DataTableCellType } from '../../Data/DataTable';
 import type DataTableOptions from '../../Data/DataTableOptions';
 import type Cell from './Table/Cell';
 import type Column from './Table/Column';
+import type TableCell from './Table/Body/TableCell';
+import type { GridIconName } from './UI/SvgIcons';
 import type { LangOptionsCore } from '../../Shared/LangOptionsCore';
 import type {
     Condition as ColumnFilteringCondition
@@ -64,6 +66,62 @@ export type HeaderFormatterCallback = (this: Column) => string;
  * Column sorting order type.
  */
 export type ColumnSortingOrder = 'asc' | 'desc' | null;
+
+/**
+ * Context information passed to a cell context menu item callback.
+ */
+export interface CellContextMenuContext {
+    cell: TableCell;
+    row: TableCell['row'];
+    column: TableCell['column'];
+}
+
+/**
+ * Options for a single cell context menu item.
+ */
+export interface CellContextMenuItemOptions {
+    /**
+     * The label shown in the menu.
+     */
+    label: string;
+
+    /**
+     * Optional icon name for the menu item.
+     */
+    icon?: GridIconName;
+
+    /**
+     * Whether the menu item should be disabled.
+     */
+    disabled?: boolean;
+
+    /**
+     * Whether to render a divider instead of a button.
+     */
+    separator?: boolean;
+
+    /**
+     * Callback executed when the menu item is clicked.
+     */
+    onClick?: (this: CellContextMenuContext, e: MouseEvent) => void;
+}
+
+/**
+ * Cell context menu options.
+ */
+export interface CellContextMenuOptions {
+    /**
+     * Whether the cell context menu is enabled.
+     *
+     * @default true
+     */
+    enabled?: boolean;
+
+    /**
+     * List of items to show in the cell context menu.
+     */
+    items?: Array<CellContextMenuItemOptions>;
+}
 
 
 /**
@@ -403,6 +461,12 @@ export interface ColumnCellOptions {
      * A string to be set as a table cell's content.
      */
     formatter?: CellFormatterCallback;
+
+    /**
+     * Context menu options for table body cells. When configured, a custom
+     * context menu will be shown on right-click.
+     */
+    contextMenu?: CellContextMenuOptions;
 }
 
 /**
