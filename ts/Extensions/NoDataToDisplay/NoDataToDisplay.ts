@@ -40,6 +40,7 @@ const {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Chart/ChartBase' {
     interface ChartBase {
         /**
@@ -76,6 +77,7 @@ declare module '../../Core/Chart/ChartBase' {
     }
 }
 
+/** @internal */
 declare module '../../Core/Options' {
     interface LangOptions {
         /**
