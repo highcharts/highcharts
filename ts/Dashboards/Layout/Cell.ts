@@ -35,6 +35,7 @@ import Globals from '../Globals.js';
 import GUIElement from './GUIElement.js';
 import U from '../../Core/Utilities.js';
 const {
+    defined,
     merge,
     fireEvent
 } = U;
@@ -95,49 +96,7 @@ class Cell extends GUIElement {
             cellStyle
         );
 
-        const heightValue =
-            typeof options.height !== 'undefined' ?
-                options.height :
-                cellStyle.height;
-
-        if (typeof heightValue !== 'undefined') {
-            this.height = typeof heightValue === 'number' ?
-                heightValue + 'px' :
-                String(heightValue);
-            elementStyle.height = this.height;
-            options.height = this.height;
-        }
-
-        const widthSource =
-            typeof options.width !== 'undefined' ?
-                options.width :
-                cellStyle.flex;
-
-        if (
-            typeof widthSource === 'string' ||
-            typeof widthSource === 'number'
-        ) {
-            let flexValue: string | undefined;
-
-            if (
-                typeof widthSource === 'string' &&
-                widthSource.indexOf(' ') !== -1
-            ) {
-                flexValue = widthSource;
-            } else if (widthSource === 'auto') {
-                flexValue = '1 1 0%';
-            } else {
-                const cellWidth = this.convertWidthToValue(widthSource);
-                if (cellWidth) {
-                    flexValue = '0 0 ' + cellWidth;
-                }
-            }
-
-            if (flexValue) {
-                elementStyle.flex = flexValue;
-                options.width = flexValue;
-            }
-        }
+        this.applySizeOptions(options, cellStyle, elementStyle);
 
         this.container = this.getElementContainer({
             render: row.layout.board.guiEnabled,
@@ -372,7 +331,7 @@ class Cell extends GUIElement {
             editMode = cell.row.layout.board.editMode;
 
         if (cell.container) {
-            if (typeof width !== 'undefined') {
+            if (defined(width)) {
                 if (
                     width === 'auto' &&
                     cell.container.style.flex !== '1 1 0%'
@@ -389,7 +348,7 @@ class Cell extends GUIElement {
                 }
             }
 
-            if (typeof height !== 'undefined') {
+            if (defined(height)) {
                 const heightValue = (typeof height === 'number' ?
                     height + 'px' :
                     height);
@@ -495,6 +454,55 @@ class Cell extends GUIElement {
             return width;
         }
         return GUIElement.getPercentageWidth(width) || '';
+    }
+
+    private applySizeOptions(
+        options: Options,
+        cellStyle: CSSJSONObject,
+        elementStyle: CSSJSONObject
+    ): void {
+        const heightValue = defined(options.height) ?
+            options.height :
+            cellStyle.height;
+
+        if (defined(heightValue)) {
+            this.height = typeof heightValue === 'number' ?
+                heightValue + 'px' :
+                String(heightValue);
+            elementStyle.height = this.height;
+            options.height = this.height;
+        }
+
+        const widthSource = defined(options.width) ?
+            options.width :
+            cellStyle.flex;
+
+        if (
+            defined(widthSource) &&
+            (typeof widthSource === 'string' ||
+            typeof widthSource === 'number')
+        ) {
+            let flexValue: string | undefined;
+
+            if (
+                typeof widthSource === 'string' &&
+                widthSource.indexOf(' ') !== -1
+            ) {
+                flexValue = widthSource;
+            } else if (widthSource === 'auto') {
+                flexValue = '1 1 0%';
+            } else {
+                const cellWidth = this.convertWidthToValue(widthSource);
+                if (cellWidth) {
+                    flexValue = '0 0 ' + cellWidth;
+                }
+            }
+
+            if (flexValue) {
+                elementStyle.flex = flexValue;
+                options.width = flexValue;
+            }
+        }
     }
 
 }
