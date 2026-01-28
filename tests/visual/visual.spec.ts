@@ -432,6 +432,10 @@ test.describe('Visual tests', () => {
                             const chart = Highcharts?.charts?.at(-1);
 
                             if (chart || document.getElementsByTagName('svg').length) {
+                                if (document.fonts && document.fonts.status !== 'loaded') {
+                                    await document.fonts.ready;
+                                }
+
                                 if (chart && !isTiledWebMapReady(chart)) {
                                     attempts++;
                                     await new Promise(

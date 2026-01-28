@@ -58,7 +58,10 @@
 
         Highcharts.setOptions({
             chart: {
-                animation: false
+                animation: false,
+                style: {
+                    fontFamily: 'DejaVu Sans, Arial, sans-serif'
+                }
             },
             lang: {
                 locale: 'en-GB'
