@@ -23,8 +23,6 @@ import type { PaletteOptions } from './PaletteOptions';
 
 import Color from './Color.js';
 import PaletteDefaults from './PaletteDefaults.js';
-import H from '../Globals.js';
-const { doc } = H;
 import U from '../Utilities.js';
 const {
     diffObjects,
@@ -53,10 +51,12 @@ const getStyles = (
 ): string =>
     `${specifier || ':root'},
 ${specifier} .highcharts-light,
+${specifier}.highcharts-light,
 .highcharts-light ${specifier} {
 ${rules.light}
 }
 ${specifier} .highcharts-dark,
+${specifier}.highcharts-dark,
 .highcharts-dark ${specifier} {
 ${rules.dark}
 }
@@ -128,6 +128,9 @@ export default class Palette {
         options: PaletteOptions
     ): void {
         const rules = { light: '', dark: '' },
+            chart = this.chart,
+            container = chart.container,
+            className = chart.options.chart.className,
             hasSpecificPalette = Object.keys(
                 diffObjects(options, this.defaultOptions)
             ).length > 0;
@@ -181,19 +184,23 @@ export default class Palette {
         }
 
         // Add a style tag to the chart renderer box
-        const styleParent = hasSpecificPalette ?
-                this.chart.container : doc.head,
+        const defs = this.chart.renderer.defs.element,
             specifier = hasSpecificPalette ?
-                `*[data-highcharts-chart="${this.chart.index}"]` :
-                '',
-            style: HTMLStyleElement = styleParent
-                .querySelector('style.highcharts-palette') ||
-                doc.createElement('style');
+                (
+                    className ?
+                        `.${className}` :
+                        `*[data-highcharts-chart="${this.chart.index}"]`
+                ) :
+                '';
+
+        const style: HTMLStyleElement = defs
+            .querySelector('style.highcharts-palette') ||
+            container.ownerDocument.createElement('style');
 
         if (!style.parentNode) {
             style.nonce = 'highcharts';
             style.className = 'highcharts-palette';
-            styleParent.appendChild(style);
+            defs.appendChild(style);
         }
 
         style.textContent = getStyles(specifier, rules);
