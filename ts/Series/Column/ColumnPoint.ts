@@ -35,7 +35,7 @@ declare module '../../Core/Series/PointBase' {
 
 export class ColumnPoint extends Point {
     allowShadow?: boolean;
-    barX?: number;
+    barX!: number;
     group?: SVGElement;
     opacity?: number;
     options!: ColumnPointOptions;
