@@ -195,6 +195,22 @@ const exporting: ExportingOptions = {
      */
 
     /**
+     * Whether to include isolated styles defined inside a Shadow DOM when
+     * exporting the chart.
+     *
+     * Shadow DOM styles are normally isolated from the main document and are
+     * not picked up by the exporting. When enabled, these styles are applied
+     * during export so they can be correctly inlined and rendered in the
+     * exported output.
+     *
+     * @type      {boolean}
+     * @default   true
+     * @since     12.5.1
+     * @apioption exporting.includeShadowDomStyles
+     */
+    includeShadowDomStyles: false,
+
+    /**
      * Path where Highcharts will look for export module dependencies to
      * load on demand if they don't already exist on `window`. Should currently
      * point to location of [CanVG](https://github.com/canvg/canvg) library,
