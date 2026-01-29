@@ -528,12 +528,12 @@ export default class ContourSeries extends ScatterSeries {
                     const exporting = this.chart.exporting;
 
                     if (exporting && this.buffers) {
-                        const width = canvas.width;
-                        const height = canvas.height;
-                        const bytesPerPixel = 4;
-                        const bytesPerRow = (
-                            Math.ceil((width * bytesPerPixel) / 256) * 256
-                        );
+                        const width = canvas.width,
+                            height = canvas.height,
+                            bytesPerPixel = 4,
+                            bytesPerRow = (
+                                Math.ceil((width * bytesPerPixel) / 256) * 256
+                            );
 
                         this.buffers.readback = (
                             readback = device.createBuffer({
@@ -563,33 +563,42 @@ export default class ContourSeries extends ScatterSeries {
                             .mapAsync(GPUMapMode.READ)
                             .then((): void => {
                                 const src = new Uint8Array(
-                                    readback.getMappedRange()
-                                );
-                                const readbackData = (
-                                    this.readbackData = new Uint8Array(src)
-                                );
-                                const width = canvas.width;
-                                const height = canvas.height;
-                                const bytesPerPixel = 4;
-                                const bytesPerRow = (
-                                    Math.ceil(
-                                        (width * bytesPerPixel) / 256
-                                    ) * 256
-                                );
-                                const packed = new Uint8Array(
-                                    width * height * bytesPerPixel
-                                );
+                                        readback.getMappedRange()
+                                    ),
+                                    readbackData = new Uint8Array(src),
+                                    width = canvas.width,
+                                    height = canvas.height,
+                                    bytesPerPixel = 4,
+                                    bytesPerRow = (
+                                        Math.ceil(
+                                            (width * bytesPerPixel) / 256
+                                        ) * 256
+                                    ),
+                                    packed = new Uint8Array(
+                                        width * height * bytesPerPixel
+                                    );
 
                                 for (let y = 0; y < height; y++) {
-                                    const srcOffset = y * bytesPerRow;
-                                    const dstOffset = y * width * bytesPerPixel;
-                                    packed.set(
-                                        readbackData.subarray(
-                                            srcOffset,
-                                            srcOffset + width * bytesPerPixel
-                                        ),
-                                        dstOffset
-                                    );
+                                    const srcOffset = y * bytesPerRow,
+                                        dstOffset = y * width * bytesPerPixel;
+
+                                    for (
+                                        let x = 0;
+                                        x < width * bytesPerPixel;
+                                        x += 4
+                                    ) {
+                                        const srcIndex = srcOffset + x,
+                                            dstIndex = dstOffset + x;
+
+                                        packed[dstIndex] =
+                                            readbackData[srcIndex + 2];
+                                        packed[dstIndex + 1] =
+                                            readbackData[srcIndex + 1];
+                                        packed[dstIndex + 2] =
+                                            readbackData[srcIndex];
+                                        packed[dstIndex + 3] =
+                                            readbackData[srcIndex + 3];
+                                    }
                                 }
 
                                 this.readbackData = packed;
