@@ -1,0 +1,14 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid-lite.css");
+
+.hcg-theme-default {
+    --hcg-column-border-width: 1px;
+}
+
+#container {
+    height: 250px;
+}
+
+.demo {
+    padding: 8px;
+    font-family: sans-serif;
+}

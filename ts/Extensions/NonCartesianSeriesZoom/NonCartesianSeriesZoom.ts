@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2024 Hubert Kozik
+ *  (c) 2024-2026 Highsoft AS
+ *  Author: Hubert Kozik
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -20,6 +21,7 @@ import type Chart from '../../Core/Chart/Chart';
 import type Series from '../../Core/Series/Series';
 import type Point from '../../Core/Series/Point';
 import type Tooltip from '../../Core/Tooltip';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import H from '../../Core/Globals.js';
 const { composed } = H;
 
@@ -46,8 +48,9 @@ interface Zooming {
     panY: number;
 }
 
-declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase {
+        dataLabelsParentGroups?: Array<SVGElement>;
         zooming?: Zooming
     }
 }
@@ -60,7 +63,7 @@ declare module '../../Core/Series/SeriesLike' {
 
 /**
  * Logic for non-cartesian series zooming and panning
- * @private
+ * @internal
  */
 function onTransform(
     this: Chart,
@@ -251,7 +254,7 @@ function onTransform(
 
 /**
  * Apply zoom into series plot box
- * @private
+ * @internal
  */
 function onGetPlotBox(
     this: Series,
@@ -332,12 +335,12 @@ function onGetPlotBox(
 
 /**
  * Clip series and data labels group with zoom rect
- * @private
+ * @internal
  */
 function onAfterDrawChartBox(this: Chart): void {
     const chart = this;
 
-    let clipRect;
+    let clipRect: SVGElement | undefined;
 
     if (chart.series.find((series): boolean => !!series.zooming)) {
         chart.zoomClipRect ||= chart.renderer.clipRect();
@@ -355,12 +358,16 @@ function onAfterDrawChartBox(this: Chart): void {
     }
 
     chart.seriesGroup?.clip(clipRect);
-    chart.dataLabelsGroup?.clip(clipRect);
+    chart.series.forEach((series): void => {
+        series.dataLabelsParentGroups?.forEach((dataLabelsGroup): void => {
+            dataLabelsGroup.clip(clipRect);
+        });
+    });
 }
 
 /**
  * Adjust tooltip position to scaled series group
- * @private
+ * @internal
  */
 function onGetAnchor(params: {
     point: Point,
@@ -381,6 +388,10 @@ function onGetAnchor(params: {
     }
 }
 
+/**
+ * Adjust series group props
+ * @internal
+ */
 function onAfterSetChartSize(
     this: Chart,
     params: ({ skipAxes: boolean })
@@ -399,6 +410,22 @@ function onAfterSetChartSize(
     }
 }
 
+/**
+ * Create data labels parent group for clipping purposes after zoom-in
+ * @internal
+ */
+function onInitDataLabelsGroup(
+    this: Series,
+    { index, zIndex }: { index: number, zIndex: number }
+): void {
+    if (this.hasDataLabels?.()) {
+        this.dataLabelsParentGroups ||= [];
+        this.dataLabelsParentGroups[index] ||= this.chart.renderer.g()
+            .attr({ zIndex })
+            .add();
+    }
+}
+
 /* *
  *
  *  Class
@@ -408,7 +435,7 @@ function onAfterSetChartSize(
 /**
  * The series type
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.tiledwebmap
  *
@@ -431,6 +458,7 @@ class NonCartesianSeriesZoom {
             addEvent(ChartClass, 'transform', onTransform);
             addEvent(ChartClass, 'afterSetChartSize', onAfterSetChartSize);
             addEvent(SeriesClass, 'getPlotBox', onGetPlotBox);
+            addEvent(SeriesClass, 'initDataLabelsGroup', onInitDataLabelsGroup);
             addEvent(TooltipClass, 'getAnchor', onGetAnchor);
         }
     }

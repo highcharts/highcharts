@@ -2,11 +2,12 @@
  *
  *  Organization chart module
  *
- *  (c) 2018-2025 Torstein Honsi
+ *  (c) 2018-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -18,7 +19,6 @@
 
 import type ColorString from '../../Core/Color/ColorString';
 import type OrganizationDataLabelOptions from './OrganizationDataLabelOptions';
-import type OrganizationSeries from './OrganizationSeries';
 import type {
     SankeySeriesLevelOptions,
     SankeySeriesNodeOptions,
@@ -43,7 +43,7 @@ declare module '../Sankey/SankeySeriesOptions' {
     }
 }
 
-export type OrganizationLinkTypeValues = 'curved' | 'straight' | 'default';
+export type OrganizationLinkTypeValues = 'curved' | 'straight' | 'orthogonal';
 
 export type OrganizationNodesLayoutValue = ('normal'|'hanging');
 
@@ -66,7 +66,7 @@ export interface OrganizationSeriesLevelOptions extends SankeySeriesLevelOptions
     linkColor?: ColorString;
     linkLineWidth?: number;
     link?: OrganizationLinkOptions;
-    states: SeriesStatesOptions<OrganizationSeries>;
+    states: SeriesStatesOptions<OrganizationSeriesOptions>;
 }
 
 export interface OrganizationSeriesNodeOptions extends SankeySeriesNodeOptions {
@@ -88,7 +88,7 @@ export interface OrganizationSeriesOptions extends SankeySeriesOptions {
     linkRadius?: number;
     minNodeLength?: number;
     nodes?: Array<OrganizationSeriesNodeOptions>;
-    states?: SeriesStatesOptions<OrganizationSeries>;
+    states?: SeriesStatesOptions<OrganizationSeriesOptions>;
 }
 
 /* *

@@ -1,6 +1,6 @@
-@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid.css");
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid-lite.css");
 
-* {
+body {
     font-family:
         -apple-system,
         BlinkMacSystemFont,
@@ -12,73 +12,35 @@
         "Segoe UI Emoji",
         "Segoe UI Symbol",
         sans-serif;
+    background: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
 }
 
-#container {
-    height: 408px;
-    padding: 20px;
+.demo {
+    padding: 8px 12px;
 }
 
 .highcharts-description {
-    padding: 0 20px;
+    padding: 0 8px;
 }
 
-.my-theme,
-.highcharts-light .my-theme {
-    --hcg-color: #333;
-    --hcg-background: #fff;
-    --hcg-border-radius: 5px;
-    --hcg-border-width: 1px;
-    --hcg-column-border-width: 0;
-    --hcg-row-border-color: #e8e8e8;
-    --hcg-row-even-background: #fbfbfb;
-    --hcg-caption-font-size: 18px;
-    --hcg-header-column-border-color: #dfdfdf;
-    --hcg-header-row-border-color: #dfdfdf;
-    --hcg-padding: 15px;
-    --hcg-font-size: 14px;
-    --hcg-border-color: #e5e5e5;
-    --hcg-header-color: #fff;
-    --hcg-header-background: #6c7ae0;
-    --hcg-header-column-border-width: 1px;
-    --hcg-header-vertical-padding: 10px;
-    --hcg-header-hovered-background: #7b88e3;
-    --hcg-row-border-width: 1px;
-    --hcg-cell-hovered-column-background: #fcebf5;
-    --hcg-cell-hovered-row-background: #fcebf5;
-    --hcg-cell-hovered-background: #e03e9c;
-    --hcg-cell-hovered-header-background: #7b88e3;
-    --hcg-cell-hovered-color: #fff;
+.highcharts-light .opacity-theme,
+.opacity-theme {
+    --hcg-header-background: #c8c8e0;
+    --hcg-hover-opacity: 5%;
+    --hcg-row-hover-background: blue;
+    --hcg-column-hover-background: blue;
+    --hcg-header-hover-opacity: 0%;
 }
 
 @media (prefers-color-scheme: dark) {
-    .my-theme {
-        --hcg-color: #eee;
-        --hcg-background: #292929;
-        --hcg-row-border-color: #434343;
-        --hcg-header-row-border-color: #525252;
-        --hcg-row-even-background: #2e2e2e;
-        --hcg-header-column-border-color: #4e4e4e;
-        --hcg-border-color: #646a9e;
-        --hcg-header-background: #343a6c;
-        --hcg-cell-hovered-column-background: #3d3d3d;
-        --hcg-cell-hovered-row-background: #3d3d3d;
-        --hcg-cell-hovered-background: #841857;
-        --hcg-cell-hovered-header-background: #4b5297;
+    .opacity-theme {
+        --hcg-header-background: #131343;
+        --hcg-hover-opacity: 20%;
     }
 }
 
-.highcharts-dark .my-theme {
-    --hcg-color: #eee;
-    --hcg-background: #292929;
-    --hcg-row-border-color: #434343;
-    --hcg-header-row-border-color: #525252;
-    --hcg-row-even-background: #2e2e2e;
-    --hcg-header-column-border-color: #4e4e4e;
-    --hcg-border-color: #646a9e;
-    --hcg-header-background: #343a6c;
-    --hcg-cell-hovered-column-background: #3d3d3d;
-    --hcg-cell-hovered-row-background: #3d3d3d;
-    --hcg-cell-hovered-background: #841857;
-    --hcg-cell-hovered-header-background: #4b5297;
+.highcharts-dark .opacity-theme {
+    --hcg-header-background: #131343;
+    --hcg-hover-opacity: 20%;
 }

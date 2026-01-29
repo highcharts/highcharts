@@ -1,4 +1,4 @@
-describe('DataGrid Header visibility.', () => {
+describe('Grid Header visibility.', () => {
     before(() => {
         cy.visit('grid-lite/basic/header-visibility');
     });

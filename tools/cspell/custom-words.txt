@@ -95,8 +95,6 @@ yourtheme
 hollowcandlestick
 contextbutton
 drillup
-datagrid
-datagrids
 unsets
 editmode
 formular
@@ -206,3 +204,7 @@ sparklines
 preconfigured
 datepicker
 specific
+EMEA
+dendrogram
+datagrid
+ucfirst

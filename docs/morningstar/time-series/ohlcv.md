@@ -8,14 +8,16 @@
 
  ## How to use OHLCV
 
- In order to fetch a OHLCV time series, specify series type 
+ In order to fetch a OHLCV time series, specify series type
  `OHLCV` in the Time Series Connector options.
 
  ```js
  const ohlcvConnector = new HighchartsConnectors.Morningstar.TimeSeriesConnector({
-     postman: {
-         environmentJSON: postmanJSON
-     },
+    api: {
+        access: {
+            token: 'your_access_token'
+        }
+    },
      series: {
          type: 'OHLCV'
      },
@@ -28,5 +30,5 @@
 
  ## Relevant demos
 
- - **Highcharts Stock + Morningstar OHLCV TimeSeries**: Shows how to use 
+ - **Highcharts Stock + Morningstar OHLCV TimeSeries**: Shows how to use
  TimeSeriesConnector to retrieve OHLCV time series and display in an OHLC chart.

@@ -26,9 +26,7 @@ class TotalRevenueHTML extends HTMLComponent {
     }
 
     getTotalRevenue() {
-        const connector = this.getFirstConnector();
-        const table = connector.table.modified;
-
+        const table = this.getDataTable().getModified();
         return table.columns.Revenue.reduce((acc, cur) => acc + cur);
     }
 }
@@ -40,18 +38,16 @@ Dashboards.board('container', {
         connectors: [{
             id: 'data',
             type: 'JSON',
-            options: {
-                data: [
-                    ['Product Name', 'Quantity', 'Revenue', 'Category'],
-                    ['Laptop', 100, 2000, 'Electronics'],
-                    ['Smartphone', 150, 3300, 'Electronics'],
-                    ['Desk Chair', 120, 2160, 'Furniture'],
-                    ['Coffee Maker', 90, 1890, 'Appliances'],
-                    ['Headphones', 200, 3200, 'Electronics'],
-                    ['Dining Table', 130, 2470, 'Furniture'],
-                    ['Refrigerator', 170, 2890, 'Appliances']
-                ]
-            }
+            data: [
+                ['Product Name', 'Quantity', 'Revenue', 'Category'],
+                ['Laptop', 100, 2000, 'Electronics'],
+                ['Smartphone', 150, 3300, 'Electronics'],
+                ['Desk Chair', 120, 2160, 'Furniture'],
+                ['Coffee Maker', 90, 1890, 'Appliances'],
+                ['Headphones', 200, 3200, 'Electronics'],
+                ['Dining Table', 130, 2470, 'Furniture'],
+                ['Refrigerator', 170, 2890, 'Appliances']
+            ]
         }]
     },
     gui: {
@@ -105,7 +101,7 @@ Dashboards.board('container', {
             }]
         }
     }, {
-        type: 'DataGrid',
+        type: 'Grid',
         renderTo: 'cell-id-2',
         connector: {
             id: 'data'
@@ -113,7 +109,7 @@ Dashboards.board('container', {
         sync: {
             highlight: true
         },
-        dataGridOptions: {
+        gridOptions: {
             columns: [{
                 id: 'Revenue',
                 header: {

@@ -12,6 +12,17 @@
         sans-serif;
 }
 
-#container {
-    height: 300px;
+.highcharts-figure {
+    max-width: 800px;
+    margin: 1em auto;
+}
+
+.highcharts-controls-wrapper {
+    max-width: 800px;
+    margin: 1em auto;
+    padding: 0 10px;
+}
+
+highcharts-controls {
+    display: inline-block;
 }

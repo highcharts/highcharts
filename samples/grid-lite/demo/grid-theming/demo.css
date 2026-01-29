@@ -1,6 +1,6 @@
-@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid.css");
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid-lite.css");
 
-* {
+body {
     font-family:
         -apple-system,
         BlinkMacSystemFont,
@@ -12,14 +12,22 @@
         "Segoe UI Emoji",
         "Segoe UI Symbol",
         sans-serif;
+    background: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
 }
 
-#container {
-    padding: 12px;
+:root,
+.highcharts-light {
+    --code-background: #f7f7f7;
+    --code-border: #e1e1e1;
+}
+
+.demo {
+    padding: 8px 12px;
 }
 
 .highcharts-description {
-    padding: 0 20px;
+    padding: 0 8px;
 }
 
 .table-wrapper {
@@ -31,8 +39,8 @@
  * If there are multiple grids on the same page that share some styling it is
  * recommended to apply these variables to the outer .hcg-container element.
  */
-.hcg-container,
-.highcharts-light .hcg-container {
+.theme-base,
+.highcharts-light .theme-base {
     --hcg-caption-font-size: 20px;
     --hcg-caption-color: #333;
     --hcg-description-font-size: 14px;
@@ -53,8 +61,9 @@
 .highcharts-light .hcg-description code {
     font-family: Consolas, "courier new", monospace;
     line-height: 1em;
-    background: #f7f7f7;
-    border: 1px solid #e1e1e1;
+    background: var(--code-background);
+    border: 1px solid var(--code-border);
+    color: var(--highcharts-neutral-color-100);
     padding: 2px 4px;
     border-radius: 5px;
     display: inline-block;
@@ -67,6 +76,7 @@
     --hcg-header-vertical-padding: 7px;
     --hcg-border-radius: 0;
     --hcg-row-border-width: 0;
+    --hcg-header-row-border-width: 1px;
 }
 
 .my-theme,
@@ -79,39 +89,61 @@
     --hcg-padding: 10px;
     --hcg-header-background: #002933;
     --hcg-row-even-background: #e9faff;
-    --hcg-cell-hovered-header-background: #1a3f48;
-    --hcg-cell-hovered-border-width: 1px;
-    --hcg-cell-hovered-column-border-width: 1px;
-    --hcg-cell-hovered-column-border-color: #f2f2f2;
-    --hcg-header-hovered-background: #1a3f48;
-    --hcg-cell-hovered-border-color: var(--my-hover-color);
-    --hcg-cell-hovered-header-color: var(--my-hover-color);
-    --hcg-cell-hovered-row-color: var(--my-hover-color);
-    --hcg-cell-hovered-column-color: var(--my-hover-color);
-    --hcg-header-hovered-color: var(--my-hover-color);
+    --hcg-column-hover-header-background: #1a3f48;
+    --hcg-cell-hover-header-color: var(--my-hover-color);
+    --hcg-row-hover-color: var(--my-hover-color);
+    --hcg-column-hover-color: var(--my-hover-color);
+    --hcg-column-hover-background: #fcfbfb;
+    --hcg-header-hover-color: var(--my-hover-color);
+
+    /* Button styles */
+    --hcg-button-color: #fff;
+    --hcg-button-border-radius: 6px;
+    --hcg-button-hover-color: var(--my-hover-color);
+    --hcg-button-hover-background: #1a3f48;
+
+    /* Icon styles */
+    --hcg-icon-hover-color: #666;
+    --hcg-icon-header-hover-color: var(--my-hover-color);
 }
 
 .opacity-theme,
 .highcharts-light .opacity-theme {
     /* Define some custom properties. */
-    --hover-color: 255, 255, 255;
-    --gradient-from-color: rgb(172, 50, 228);
-    --gradient-to-color: rgb(72, 1, 255);
+    --header-background: 255 255 255;
+    --hover-background: #fff;
+    --gradient-from-color: #ac32e4;
+    --gradient-to-color: #4801ff;
 
     /* Apply the custom properties in the theme. */
-    --hcg-background: linear-gradient(-68deg, var(--gradient-from-color), var(--gradient-to-color));
-    --hcg-header-background: rgba(var(--hover-color), 0.32);
-    --hcg-cell-hovered-column-background: rgba(var(--hover-color), 0.1);
-    --hcg-cell-hovered-row-background: rgba(var(--hover-color), 0.1);
-    --hcg-cell-hovered-background: rgba(var(--hover-color), 0.2);
-    --hcg-header-hovered-background: rgba(var(--hover-color), 0.15);
-    --hcg-color: rgb(255, 255, 255);
+    --hcg-color: #fff;
     --hcg-border-radius: 15px;
     --hcg-font-size: 15px;
     --hcg-padding: 10px;
+    --hcg-background: linear-gradient(-68deg, var(--gradient-from-color), var(--gradient-to-color));
+    --hcg-header-background: rgb(var(--header-background) / 30%);
+    --hcg-hover-opacity: 10%;
+    --hcg-column-hover-background: var(--hover-background);
+    --hcg-row-hover-background: var(--hover-background);
+    --hcg-header-hover-opacity: 20%;
+
+    /* Button styles */
+    --hcg-button-color: rgb(255 255 255 / 80%);
+    --hcg-button-border-radius: 6px;
+    --hcg-button-hover-color: rgb(255 255 255);
+    --hcg-button-hover-background: rgb(255 255 255 / 30%);
+}
+
+.highcharts-light .opacity-theme .hcg-menu-item-label {
+    color: #000;
 }
 
 @media (prefers-color-scheme: dark) {
+    :root {
+        --code-background: #2a2a2a;
+        --code-border: #4a4a4a;
+    }
+
     .hcg-container {
         --hcg-caption-color: #eee;
         --hcg-description-color: #eee;
@@ -123,20 +155,24 @@
         --hcg-color: #eee;
         --hcg-background: #003947;
         --hcg-row-even-background: #004556;
-        --hcg-cell-hovered-column-border-color: #4b4b4b;
+        --hcg-column-hover-background: #003643;
+
+        /* Icon styles */
+        --hcg-icon-hover-color: #eee;
+        --hcg-icon-header-hover-color: var(--my-hover-color);
     }
 
     .opacity-theme {
         /* In dark mode we only need to adjust the custom properties. */
-        --base-color: 0, 0, 0;
-        --gradient-from-color: rgb(102, 20, 140);
-        --gradient-to-color: rgb(50, 13, 144);
+        --header-background: 0 0 0;
+        --gradient-from-color: #66148c;
+        --gradient-to-color: #320d90;
     }
+}
 
-    .hcg-description code {
-        background: #222;
-        border-color: #474747;
-    }
+.highcharts-dark {
+    --code-background: #2a2a2a;
+    --code-border: #4a4a4a;
 }
 
 .highcharts-dark .hcg-container {
@@ -150,17 +186,17 @@
     --hcg-color: #eee;
     --hcg-background: #003947;
     --hcg-row-even-background: #004556;
-    --hcg-cell-hovered-column-border-color: #4b4b4b;
+    --hcg-column-hover-background: #003643;
+
+    /* Icon styles */
+    --hcg-icon-hover-color: #eee;
+    --hcg-icon-header-hover-color: var(--my-hover-color);
 }
 
 .highcharts-dark .opacity-theme {
     /* In dark mode we only need to adjust the custom properties. */
-    --base-color: 0, 0, 0;
-    --gradient-from-color: rgb(102, 20, 140);
-    --gradient-to-color: rgb(50, 13, 144);
-}
-
-.highcharts-dark .hcg-description code {
-    background: #222;
-    border-color: #474747;
+    --header-background: 0 0 0;
+    --hover-background: #000;
+    --gradient-from-color: #66148c;
+    --gradient-to-color: #320d90;
 }

@@ -2,15 +2,16 @@
  *
  *  Grid Accessibility class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
  *  - Sebastian Bochan
+ *  - Kamil Kubik
  *
  * */
 
@@ -23,13 +24,19 @@
  * */
 
 import type Grid from '../Grid';
-import type { ColumnSortingOrder } from '../Options';
+import type { ColumnSortingOrder, FilteringCondition } from '../Options';
 import whcm from '../../../Accessibility/HighContrastMode.js';
 
 import Globals from '../Globals.js';
+import ColumnFiltering from '../Table/Actions/ColumnFiltering/ColumnFiltering.js';
 import GridUtils from '../GridUtils.js';
+import AST from '../../../Core/Renderer/HTML/AST.js';
+import U from '../../../Core/Utilities.js';
+import HTMLU from '../../../Accessibility/Utils/HTMLUtilities.js';
 
-const { makeHTMLElement } = GridUtils;
+const { formatText } = GridUtils;
+const { replaceNested } = U;
+const { getHeadingTagNameForElement } = HTMLU;
 
 
 /**
@@ -63,6 +70,15 @@ class Accessibility {
      */
     private announcerTimeout?: number;
 
+    /**
+     * The before Grid screen reader section element.
+     */
+    private beforeGridElement: HTMLElement | null = null;
+
+    /**
+     * The after Grid screen reader section element.
+     */
+    private afterGridElement: HTMLElement | null = null;
 
     /* *
     *
@@ -94,26 +110,6 @@ class Accessibility {
     *  Methods
     *
     * */
-
-    /**
-     * Add the 'sortable' hint span element for the sortable column.
-     *
-     * @param element
-     * The element to add the description to.
-     */
-    public addSortableColumnHint(element: HTMLElement): void {
-        const sortableLang =
-            this.grid.options?.lang?.accessibility?.sorting?.sortable;
-
-        if (!sortableLang) {
-            return;
-        }
-
-        makeHTMLElement('span', {
-            className: Globals.getClassName('visuallyHidden'),
-            innerText: ', ' + sortableLang
-        }, element);
-    }
 
     /**
      * Add the description to the header cell.
@@ -153,7 +149,9 @@ class Accessibility {
         );
 
         this.element.appendChild(this.announcerElement);
-        this.announcerElement.textContent = msg;
+        requestAnimationFrame((): void => {
+            this.announcerElement.textContent = msg;
+        });
 
         this.announcerTimeout = setTimeout((): void => {
             this.announcerElement.remove();
@@ -207,9 +205,67 @@ class Accessibility {
      */
     public setColumnSortState(
         thElement: HTMLElement,
-        state: Accessibility.AriaSortState
+        state: AriaSortState
     ): void {
         thElement?.setAttribute('aria-sort', state);
+    }
+
+    /**
+     * Announce the message to the screen reader that the user filtered the
+     * column.
+     *
+     * @param filteredColumnValues
+     * The values of the filtered column.
+     *
+     * @param filteringApplied
+     * Whether the filtering was applied or cleared.
+     */
+    public userFilteredColumn(
+        filteredColumnValues: FilteredColumnValues,
+        filteringApplied: boolean
+    ): void {
+        const { columnId, condition, value, rowsCount } = filteredColumnValues;
+        const { lang, accessibility } = this.grid.options || {};
+
+        if (!accessibility?.announcements?.filtering) {
+            return;
+        }
+
+        const announcementsLang = lang?.accessibility?.filtering?.announcements;
+
+        let msg: string | undefined;
+
+        if (filteringApplied && condition) {
+            const parsedCondition =
+                ColumnFiltering.parseCamelCaseToReadable(condition);
+
+            if (
+                condition === 'empty' ||
+                condition === 'notEmpty' ||
+                condition === 'false' ||
+                condition === 'true'
+            ) {
+                msg = formatText(announcementsLang?.emptyFilterApplied || '', {
+                    columnId,
+                    condition: parsedCondition,
+                    rowsCount: rowsCount
+                });
+            } else {
+                msg = formatText(announcementsLang?.filterApplied || '', {
+                    columnId,
+                    condition: parsedCondition,
+                    value: value?.toString() || '',
+                    rowsCount: rowsCount
+                });
+            }
+        } else {
+            msg = formatText(announcementsLang?.filterCleared || '', {
+                columnId,
+                rowsCount: rowsCount
+            });
+        }
+
+        this.announce(msg, true);
     }
 
     /**
@@ -278,9 +334,210 @@ class Accessibility {
     }
 
     /**
+     * Adds the screen reader section before or after the Grid.
+     *
+     * @param placement
+     * Either 'before' or 'after'.
+     */
+    public addScreenReaderSection(placement: 'before' | 'after'): void {
+        const grid = this.grid;
+        const isBefore = placement === 'before';
+
+        // Get the screen reader section content.
+        const defaultFormatter = isBefore ?
+            this.defaultBeforeFormatter() :
+            this.defaultAfterFormatter();
+        const formatter = grid.options?.accessibility?.screenReaderSection?.[
+            `${placement}GridFormatter`
+        ];
+        const content = formatter ? formatter(grid) : defaultFormatter;
+
+        // Create the screen reader section element.
+        const sectionElement = this[`${placement}GridElement`] = (
+            this[`${placement}GridElement`] || document.createElement('div')
+        );
+
+        // Create the hidden element.
+        const hiddenElement =
+            sectionElement.firstChild as HTMLElement ||
+            document.createElement('div');
+        if (content) {
+            this.setScreenReaderSectionAttributes(sectionElement, placement);
+            AST.setElementHTML(hiddenElement, content);
+
+            // Append only if not already a child.
+            if (hiddenElement.parentNode !== sectionElement) {
+                sectionElement.appendChild(hiddenElement);
+            }
+
+            // Insert only if not already in the DOM.
+            const gridContainer = grid.container;
+            if (!sectionElement.parentNode && gridContainer) {
+                if (isBefore) {
+                    gridContainer.insertBefore(
+                        sectionElement, gridContainer.firstChild
+                    );
+                } else {
+                    gridContainer.appendChild(sectionElement);
+                }
+            }
+
+            hiddenElement.classList.add(Globals.getClassName('visuallyHidden'));
+        } else {
+            if (sectionElement.parentNode) {
+                sectionElement.parentNode.removeChild(sectionElement);
+            }
+            this[`${placement}GridElement`] = null;
+        }
+    }
+
+    /**
+     * Sets the accessibility attributes for the screen reader section.
+     *
+     * @param sectionElement
+     * The section element.
+     *
+     * @param placement
+     * Either 'before' or 'after'.
+     */
+    public setScreenReaderSectionAttributes(
+        sectionElement: HTMLElement,
+        placement: 'before' | 'after'
+    ): void {
+        const grid = this.grid;
+        sectionElement.setAttribute(
+            'id',
+            `grid-screen-reader-region-${placement}-${grid.id}`
+        );
+
+        const regionLabel =
+            grid.options?.lang?.accessibility?.screenReaderSection?.[
+                `${placement}RegionLabel`
+            ];
+        if (regionLabel) {
+            sectionElement.setAttribute('aria-label', regionLabel);
+            sectionElement.setAttribute('role', 'region');
+        }
+
+        // Position the section relatively to the Grid.
+        sectionElement.style.position = 'relative';
+    }
+
+    /**
+     * Gets the default formatter for the before-Grid screen reader section.
+     * @private
+     */
+    private defaultBeforeFormatter(): string {
+        const grid = this.grid;
+        const { container, dataTable, options } = grid;
+        const format =
+            options?.accessibility?.screenReaderSection?.beforeGridFormat;
+
+        if (!format || !container) {
+            return '';
+        }
+
+        const gridTitle = options?.caption?.text;
+
+        let formattedGridTitle = '';
+        if (gridTitle) {
+            if (this.isWrappedInHeadingTag(gridTitle)) {
+                formattedGridTitle = gridTitle;
+            } else {
+                const headingTag = getHeadingTagNameForElement(container);
+                formattedGridTitle =
+                    `<${headingTag}>${gridTitle}</${headingTag}>`;
+            }
+        }
+
+        const context = {
+            gridTitle: formattedGridTitle,
+            gridDescription: options?.description?.text || '',
+            rowCount: dataTable?.rowCount || 0,
+            columnCount: (dataTable?.getColumnIds() || []).length
+        };
+
+        const formattedString = this.formatTemplateString(format, context);
+        return this.stripEmptyHTMLTags(formattedString);
+    }
+
+    /**
+     * Checks if a string is already wrapped in a heading tag (h1-h6).
+     * @private
+     *
+     * @param text
+     * The text to check.
+     *
+     * @returns
+     * True if the text is wrapped in a heading tag.
+     */
+    private isWrappedInHeadingTag(text: string): boolean {
+        return /^<h([1-6])[^>]*>[\s\S]*<\/h\1>$/i.test(text.trim());
+    }
+
+    /**
+     * Formats a string with template variables.
+     *
+     * @param format
+     * The format string.
+     *
+     * @param context
+     * The context object.
+     *
+     * @private
+     */
+    private formatTemplateString(
+        format: string,
+        context: Record<string, unknown>
+    ): string {
+        return format.replace(/\{(\w+)\}/g, (_, key): string => (
+            key in context ? String(context[key]) : `{${key}}`
+        ));
+    }
+
+    /**
+     * Gets the default formatter for the after-Grid screen reader section.
+     * @private
+     */
+    private defaultAfterFormatter(): string {
+        const grid = this.grid;
+        const format = grid.options?.accessibility?.screenReaderSection
+            ?.afterGridFormat;
+
+        if (!format) {
+            return '';
+        }
+        return this.stripEmptyHTMLTags(format);
+    }
+
+    /**
+     * Strips empty HTML tags from a string recursively.
+     *
+     * @param string
+     * The string to strip empty HTML tags from.
+     *
+     * @private
+     */
+    private stripEmptyHTMLTags(string: string): string {
+        return replaceNested(string, [/<([\w\-.:!]+)\b[^<>]*>\s*<\/\1>/g, '']);
+    }
+
+    /**
      * Destroy the accessibility controller.
      */
     public destroy(): void {
+        // Removes the screen reader before section.
+        const beforeGridElement = this.beforeGridElement;
+        if (beforeGridElement?.parentNode) {
+            beforeGridElement.parentNode.removeChild(beforeGridElement);
+        }
+
+        // Removes the screen reader after section.
+        const afterGridElement = this.afterGridElement;
+        if (afterGridElement?.parentNode) {
+            afterGridElement.parentNode.removeChild(afterGridElement);
+        }
+
         this.element.remove();
         this.announcerElement.remove();
         clearTimeout(this.announcerTimeout);
@@ -290,16 +547,22 @@ class Accessibility {
 
 /* *
  *
- *  Class Namespace
+ *  Declarations
  *
  * */
 
-namespace Accessibility {
-    /**
-     * The possible states of the aria-sort attribute.
-     */
-    export type AriaSortState = 'ascending' | 'descending' | 'none';
-}
+/**
+ * The possible states of the aria-sort attribute.
+ */
+export type AriaSortState = 'ascending' | 'descending' | 'none';
+
+/**
+ * The values of the filtered column.
+ */
+export type FilteredColumnValues = FilteringCondition & {
+    columnId: string;
+    rowsCount: number;
+};
 
 
 /* *

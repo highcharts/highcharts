@@ -64,7 +64,7 @@ You can read more about Data Modifiers [here](https://www.highcharts.com/docs/da
 
 The ' columnDefaults ' object defines default options for all columns in the grid, such as the column sorter, column resizer, value editor, cell format, etc., and the `columns[]` array of objects can be used to override defaults in selected columns if needed. Note that most options in `columnDefaults` are mirrored 1:1 in the `columns[]` array of objects.
 
-Learn more about `columns[]` in our [Columns article](https://www.highcharts.com/docs/grid/columns) or see the API reference for [columnDefaults](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.Options-1#columnDefaults) and [columns[]](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.Options-1#columns).
+Learn more about `columns[]` in our [Columns article](https://www.highcharts.com/docs/grid/columns) or see the API reference for [columnDefaults](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.Options#columnDefaults) and [columns[]](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.Options#columns).
 
 ## caption
 ```js
@@ -77,7 +77,7 @@ Learn more about `columns[]` in our [Columns article](https://www.highcharts.com
 
 The code snippet above shows how to insert a caption, or title, above the grid.
 
-For more information on the `caption` option, see the [API reference](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.Options-1#caption).
+For more information on the `caption` option, see the [API reference](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.Options#caption).
 
 ## header[]
 ```js
@@ -131,17 +131,72 @@ The `rendering` option object can be used to configure options related to perfor
 
 For more information on rendering options, please read our article on [Performance and rendering](https://www.highcharts.com/docs/grid/performance) or see the [API reference](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.RenderingSettings).
 
+## responsive
+Use `responsive.rules` to apply different Grid options at different container sizes. Each rule contains a `condition` (such as `maxWidth` or `minWidth`) and a `gridOptions` object that will be merged into the base options when the rule matches.
+
+```js
+Grid.grid('container', {
+    dataTable: { columns: data },
+    responsive: {
+        rules: [{
+            condition: { maxWidth: 800 },
+            gridOptions: { header: ['firstName', 'email', 'mobile'] }
+        }]
+    }
+});
+```
+
+See a live sample [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-lite/basic/responsive-rules/).
+
+See the [API reference](https://api.highcharts.com/grid/#interfaces/Grid_Core_Responsive_ResponsiveOptions.ResponsiveOptions) for available rule options.
+
+## pagination
+The `pagination` option object enables you to split large datasets into manageable pages, improving performance and user experience. When enabled, pagination displays a subset of data at a time with navigation controls.
+
+```js
+{
+    pagination: {
+        enabled: true,
+        pageSize: 25,
+        position: 'bottom',
+        controls: {
+            pageSizeSelector: {
+                enabled: true,
+                options: [10, 25, 50, 100]
+            },
+            pageInfo: {
+                enabled: true
+            },
+            firstLastButtons: {
+                enabled: true
+            },
+            previousNextButtons: {
+                enabled: true
+            },
+            pageButtons: {
+                enabled: true,
+                count: 5
+            }
+        }
+    }
+}
+```
+
+The pagination controls include page size selection, page information display, first/last page buttons, previous/next buttons, and numbered page buttons. You can also configure pagination events (in the Grid Pro version) to respond to page changes and page size modifications.
+
+For more information on pagination options and events, see the [Pagination article](https://www.highcharts.com/docs/grid/pagination) or the [API reference](https://api.highcharts.com/grid/#interfaces/Grid_Core_Pagination_PaginationOptions.PaginationOptions).
+
 ## events __grid_pro__
 Highcharts Grid Pro supports several event listeners that can be added to the header, columns and cells. These provide custom functionality and extendibility of Grid. Read more about events in the [Events article](https://www.highcharts.com/docs/grid/events).
 
 ## setOptions()
-When adding multiple grids to the same page, it is recommended to set default options globally using the `setOptions()` method. This approach is more efficient than configuring each Grid individually. For an overview of all default options see the [API reference](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.Options-1#columnDefaults).
+When adding multiple grids to the same page, it is recommended to set default options globally using the `setOptions()` method. This approach is more efficient than configuring each Grid individually. For an overview of all default options see the [API reference](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.Options#columnDefaults).
 
 ```js
 Grid.setOptions({
     columnDefaults: {
         sorting: {
-            sortable: false
+            enabled: false
         }
     }
 })

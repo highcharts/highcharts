@@ -31,8 +31,7 @@ Highcharts.chart('container', {
                         style: {
                             textOutline: '5px contrast',
                             fontSize: 18
-                        },
-                        zIndex: 9
+                        }
                     },
                     borderWidth: 3
                 }

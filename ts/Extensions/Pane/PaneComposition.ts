@@ -4,6 +4,7 @@
  *
  * */
 
+import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type Chart from '../../Core/Chart/Chart';
 import type Pane from './Pane';
 import type Pointer from '../../Core/Pointer';
@@ -23,8 +24,8 @@ const {
  *
  * */
 
-declare module '../../Core/Chart/ChartLike'{
-    interface ChartLike {
+declare module '../../Core/Chart/ChartBase'{
+    interface ChartBase {
         hoverPane?: Pane;
         pane?: Array<Pane>;
         getHoverPane?(eventArgs: any): (Pane|undefined);
@@ -43,7 +44,7 @@ export interface PaneChart extends Chart {
  *
  * */
 
-/** @private */
+/** @internal */
 function chartGetHoverPane(
     this: PaneChart,
     eventArgs: {
@@ -68,10 +69,47 @@ function chartGetHoverPane(
     return hoverPane;
 }
 
-/** @private */
+/**
+ * Adjusts the clipBox based on the position of panes.
+ * @internal
+ */
+function onSetClip(
+    this: Series,
+    {
+        clipBox
+    }: {
+        clipBox: BBoxObject
+    }
+): void {
+    if (
+        !this.xAxis ||
+        !this.yAxis ||
+        (!this.chart.angular && !this.chart.polar)
+    ) {
+        return;
+    }
+
+    const { plotWidth, plotHeight } = this.chart,
+        smallestSize = Math.min(plotWidth, plotHeight),
+        xPane = this.xAxis.pane,
+        yPane = this.yAxis.pane;
+
+    if (xPane && xPane.axis) {
+        clipBox.x += xPane.center[0] -
+            (xPane.center[2] / smallestSize) * plotWidth / 2;
+    }
+
+    if (yPane && yPane.axis) {
+        clipBox.y += yPane.center[1] -
+            (yPane.center[2] / smallestSize) * plotHeight / 2;
+    }
+}
+
+/** @internal */
 function compose(
     ChartClass: typeof Chart,
-    PointerClass: typeof Pointer
+    PointerClass: typeof Pointer,
+    SeriesClass: typeof Series
 ): void {
     const chartProto = ChartClass.prototype as PaneChart;
 
@@ -87,13 +125,15 @@ function compose(
             'beforeGetHoverData',
             onPointerBeforeGetHoverData
         );
+
+        addEvent(SeriesClass, 'setClip', onSetClip);
     }
 
 }
 
 /**
  * Check whether element is inside or outside pane.
- * @private
+ * @internal
  * @param  {number} x
  * Element's x coordinate
  * @param  {number} y
@@ -162,7 +202,7 @@ function isInsidePane(
 
 /**
  * Check if (x, y) position is within pane for polar.
- * @private
+ * @internal
  */
 function onChartAfterIsInsiderPlot(
     this: Chart,
@@ -215,7 +255,7 @@ function onPointerAfterGetHoverData(
     }
 }
 
-/** @private */
+/** @internal */
 function onPointerBeforeGetHoverData(
     this: Pointer,
     eventArgs: {

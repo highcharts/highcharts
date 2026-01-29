@@ -2,11 +2,11 @@
  *
  *  Grid Cell abstract class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -22,12 +22,18 @@
  *
  * */
 
-import type DataTable from '../../../Data/DataTable';
+import type { CellType as DataTableCellType } from '../../../Data/DataTable';
 import type TableRow from './Body/TableRow';
+import type HeaderRow from './Header/HeaderRow';
 
 import Column from './Column';
 import Row from './Row';
 import Templating from '../../../Core/Templating.js';
+import U from '../../../Core/Utilities.js';
+
+const {
+    fireEvent
+} = U;
 
 
 /* *
@@ -61,7 +67,7 @@ abstract class Cell {
     /**
      * The raw value of the cell.
      */
-    public value: DataTable.CellType;
+    public value: DataTableCellType;
 
     /**
      * An additional, custom class name that can be changed dynamically.
@@ -100,6 +106,10 @@ abstract class Cell {
         this.htmlElement = this.init();
         this.htmlElement.setAttribute('tabindex', '-1');
 
+        if (!this.column?.options.cells?.editMode?.enabled) {
+            this.htmlElement.setAttribute('aria-readonly', 'true');
+        }
+
         this.initEvents();
     }
 
@@ -115,7 +125,11 @@ abstract class Cell {
      * @internal
      */
     protected init(): HTMLTableCellElement {
-        return document.createElement('td', {});
+        const cell = document.createElement('td', {});
+
+        cell.setAttribute('role', 'gridcell');
+
+        return cell;
     }
 
     /**
@@ -131,6 +145,12 @@ abstract class Cell {
         this.cellEvents.push(['keydown', (e): void => {
             this.onKeyDown(e as KeyboardEvent);
         }]);
+        this.cellEvents.push(['mouseout', (): void => {
+            this.onMouseOut();
+        }]);
+        this.cellEvents.push(['mouseover', (): void => {
+            this.onMouseOver();
+        }]);
 
         this.cellEvents.forEach((pair): void => {
             this.htmlElement.addEventListener(pair[0], pair[1]);
@@ -138,35 +158,28 @@ abstract class Cell {
     }
 
     /**
-     * Handles user click on the cell.
+     * Handles user click on the cell. If Enter key is pressed, it will be
+     * handled by the `onClick` method.
      *
      * @param e
-     * Mouse event object.
+     * Mouse event object or keyboard event object when Enter key is pressed.
      *
      * @internal
      */
-    protected abstract onClick(e: MouseEvent): void;
+    public abstract onClick(e: MouseEvent|KeyboardEvent): void;
 
     /**
      * Handles the focus event on the cell.
      */
     protected onFocus(): void {
-        const vp = this.row.viewport;
-        const focusAnchor = vp.rowsVirtualizer.focusAnchorCell?.htmlElement;
-
-        focusAnchor?.setAttribute('tabindex', '-1');
+        this.row.viewport.setFocusAnchorCell(this);
     }
 
     /**
      * Handles the blur event on the cell.
      */
     protected onBlur(): void {
-        const vp = this.row.viewport;
-        const focusAnchor = vp.rowsVirtualizer.focusAnchorCell?.htmlElement;
-
-        focusAnchor?.setAttribute('tabindex', '0');
-
-        delete vp.focusCursor;
+        delete this.row.viewport.focusCursor;
     }
 
     /**
@@ -174,14 +187,30 @@ abstract class Cell {
      *
      * @param e
      * Keyboard event object.
+     *
+     * @internal
      */
-    protected onKeyDown(e: KeyboardEvent): void {
+    public onKeyDown(e: KeyboardEvent): void {
         const { row, column } = this;
         if (!column) {
             return;
         }
 
         const vp = row.viewport;
+        const { header } = vp;
+
+        const getVerticalPos = (): number => {
+            if ((row as TableRow).index !== void 0) {
+                return (row as TableRow).index - vp.rows[0].index;
+            }
+
+            const level = (row as HeaderRow).level;
+            if (!header || level === void 0) {
+                return 0;
+            }
+
+            return Math.max(level, header.levels) - header.rows.length - 1;
+        };
 
         const changeFocusKeys: Record<typeof e.key, [number, number]> = {
             ArrowDown: [1, 0],
@@ -192,28 +221,61 @@ abstract class Cell {
 
         const dir = changeFocusKeys[e.key];
 
+        if (e.key === 'Enter') {
+            this.onClick(e);
+        }
+
         if (dir) {
             e.preventDefault();
             e.stopPropagation();
 
-            const localRowIndex = (row as TableRow).index === void 0 ? -1 : (
-                (row as TableRow).index - vp.rows[0].index
-            );
-
+            const { header } = vp;
+            const localRowIndex = getVerticalPos();
             const nextVerticalDir = localRowIndex + dir[0];
 
-            if (nextVerticalDir < 0 && vp.header) {
-                vp.columns[column.index + dir[1]]?.header?.htmlElement.focus();
+            if (nextVerticalDir < 0 && header) {
+                const extraRowIdx = header.rows.length + nextVerticalDir;
+                if (extraRowIdx + 1 > header.levels) {
+                    header.rows[extraRowIdx]
+                        .cells[column.index + dir[1]]?.htmlElement.focus();
+                } else {
+                    vp.columns[column.index + dir[1]]
+                        ?.header?.htmlElement.focus();
+                }
                 return;
             }
 
             const nextRow = vp.rows[nextVerticalDir];
-
-
             if (nextRow) {
                 nextRow.cells[column.index + dir[1]]?.htmlElement.focus();
             }
         }
+    }
+
+    /**
+     * Handles the mouse over event on the cell.
+     * @internal
+     */
+    public onMouseOver(): void {
+        const { grid } = this.row.viewport;
+        grid.hoverColumn(this.column?.id);
+
+        fireEvent(this, 'mouseOver', {
+            target: this
+        });
+    }
+
+    /**
+     * Handles the mouse out event on the cell.
+     * @internal
+     */
+    public onMouseOut(): void {
+        const { grid } = this.row.viewport;
+        grid.hoverColumn();
+
+        fireEvent(this, 'mouseOut', {
+            target: this
+        });
     }
 
     /**
@@ -291,17 +353,6 @@ abstract class Cell {
         this.row.unregisterCell(this);
         this.htmlElement.remove();
     }
-}
-
-
-/* *
- *
- *  Class Namespace
- *
- * */
-
-namespace Cell {
-
 }
 
 

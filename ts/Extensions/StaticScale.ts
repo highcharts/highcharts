@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2016-2025 Torstein Honsi, Lars Cabrera
+ *  (c) 2016-2026 Highsoft AS
+ *  Author: Torstein Honsi, Lars Cabrera
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -35,16 +36,43 @@ const {
 
 declare module '../Core/Axis/AxisOptions' {
     interface AxisOptions {
+
+        /**
+         * For vertical axes only. Setting the static scale ensures that each
+         * tick unit is translated into a fixed pixel height. For example,
+         * setting the static scale to 24 results in each Y axis category
+         * taking up 24 pixels, and the height of the chart adjusts. Adding or
+         * removing items will make the chart resize.
+         *
+         * @sample {gantt} gantt/xrange-series/demo/
+         *         X-range series with static scale
+         * @sample {highcharts} highcharts/xaxis/staticscale
+         *         Static scale on X axis (horizontal bar chart)
+         *
+         * @requires  modules/static-scale
+         * @type      {number}
+         * @default   50
+         * @since     6.2.0
+         * @product   highcharts highstock gantt
+         * @apioption xAxis.staticScale
+         */
         staticScale?: number;
+
     }
 }
 
-declare module '../Core/Chart/ChartLike'{
-    interface ChartLike {
+declare module '../Core/Chart/ChartBase'{
+    interface ChartBase {
+
+        /** @internal */
         redrawTrigger?: string;
+
+        /** @internal */
         initiatedScale?: boolean;
+
         /** @requires modules/static-scale */
         adjustHeight(): void;
+
     }
 }
 
@@ -54,7 +82,7 @@ declare module '../Core/Chart/ChartLike'{
  *
  * */
 
-/** @private */
+/** @internal */
 function compose(
     AxisClass: typeof Axis,
     ChartClass: typeof Chart
@@ -71,7 +99,7 @@ function compose(
 
 }
 
-/** @private */
+/** @internal */
 function onAxisAfterSetOptions(
     this: Axis
 ): void {
@@ -88,7 +116,7 @@ function onAxisAfterSetOptions(
     }
 }
 
-/** @private */
+/** @internal */
 function chartAdjustHeight(
     this: Chart
 ): void {
@@ -169,14 +197,17 @@ export default StaticScale;
  * height of the chart adjusts. Adding or removing items will make the chart
  * resize.
  *
- * @sample gantt/xrange-series/demo/
+ * @sample {gantt} gantt/xrange-series/demo/
  *         X-range series with static scale
+ * @sample {highcharts} highcharts/xaxis/staticscale
+ *         Static scale on X axis (horizontal bar chart)
  *
+ * @requires  modules/static-scale
  * @type      {number}
  * @default   50
  * @since     6.2.0
- * @product   gantt
- * @apioption yAxis.staticScale
+ * @product   highcharts highstock gantt
+ * @apioption xAxis.staticScale
  */
 
 ''; // Keeps doclets above in JS file

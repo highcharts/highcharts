@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sebastian Bochan
@@ -24,8 +24,11 @@
 
 import type Component from '../Components/Component';
 import type CSSJSONObject from '../CSSJSONObject';
+import type { DeepPartial } from '../../Shared/Types';
 import type LayoutType from './Layout';
+import type { Options as LayoutOptions } from './Layout';
 import type Row from './Row';
+import type CellHTML from './CellHTML.js';
 
 import EditGlobals from '../EditMode/EditGlobals.js';
 import Globals from '../Globals.js';
@@ -58,7 +61,7 @@ class Cell extends GUIElement {
      * @param {Row} row
      * Reference to the row instance.
      *
-     * @param {Cell.Options} options
+     * @param {Options} options
      * Options for the cell.
      *
      * @param {HTMLElement} cellElement
@@ -66,7 +69,7 @@ class Cell extends GUIElement {
      */
     public constructor(
         row: Row,
-        options: Cell.Options,
+        options: Options,
         cellElement?: HTMLElement
     ) {
         super();
@@ -85,16 +88,6 @@ class Cell extends GUIElement {
             rowOptions = row.options || {},
             cellClassName = layoutOptions.cellClassName || '';
 
-        let cellHeight;
-
-        if (options.height) {
-            if (typeof options.height === 'number') {
-                cellHeight = options.height + 'px';
-            } else {
-                cellHeight = options.height;
-            }
-        }
-
         this.container = this.getElementContainer({
             render: row.layout.board.guiEnabled,
             parentContainer: parentContainer,
@@ -110,7 +103,7 @@ class Cell extends GUIElement {
                 rowOptions.style,
                 options.style,
                 {
-                    height: cellHeight
+                    height: this.height
                 }
             )
         });
@@ -145,7 +138,7 @@ class Cell extends GUIElement {
     /**
      * The cell options.
      */
-    public options: Cell.Options;
+    public options: Options;
 
     /**
      * Component mounted in the cell.
@@ -166,6 +159,12 @@ class Cell extends GUIElement {
      * HTML container of a GUIElement.
      */
     public container: HTMLElement;
+
+    /**
+     * Declared height of the cell.
+     */
+    private height?: string;
+
     /* *
      *
      *  Functions
@@ -227,8 +226,17 @@ class Cell extends GUIElement {
      * @internal
      *
      */
-    public getOptions(): Globals.DeepPartial<Cell.Options> {
-        return this.options;
+    public getOptions(): DeepPartial<Options> {
+        const cell = this;
+
+        if (cell.options.layout && cell.nestedLayout) {
+            return {
+                ...cell.options,
+                layout: cell.nestedLayout.getOptions()
+            };
+        }
+
+        return cell.options;
     }
 
     protected changeVisibility(
@@ -335,14 +343,11 @@ class Cell extends GUIElement {
                     ) {
                         cell.container.style.flex = '0 0 ' + cellWidth;
                     }
-
-                    cell.options.width = cellWidth;
                 }
             }
 
             if (height) {
-                cell.options.height = cell.container.style.height =
-                    height + 'px';
+                cell.height = cell.container.style.height = height + 'px';
             }
 
             if (editMode) {
@@ -446,112 +451,72 @@ class Cell extends GUIElement {
 
 }
 
-/* *
- *
- *  Namespace
- *
- * */
+/**
+ * Checks if a valid cell instance.
+ */
+export function isCell(cell: Cell | CellHTML | undefined): cell is Cell {
+    return (!!cell && 'row' in cell && cell.type === 'cell');
+}
 
-namespace Cell {
+/**
+ * Options for each cell.
+ **/
+export interface Options {
     /**
-     * Checks if a valid cell instance.
-     */
-    export function isCell(cell: unknown): cell is Cell {
-        return cell instanceof Cell;
-    }
-
-    /**
-     * Responsive options of the cell.
-     *
-     * @deprecated
-     */
-    export interface CellResponsiveOptions {
-        /**
-         * The width, that should the cell have in the given responsive mode.
-         *
-         * @deprecated
-         *
-         */
-        width: (string|number);
-    }
-
-    /**
-     * Options for each cell.
+     * Unique cell id.
      **/
-    export interface Options {
-        /**
-         * Unique cell id.
-         **/
-        id: string;
+    id: string;
 
+    /**
+     * Options controlling the edit mode for the cell.
+     **/
+    editMode?: {
         /**
-         * Options controlling the edit mode for the cell.
+         * Individual options for the toolbar items.
          **/
-        editMode?: {
+        toolbarItems?: {
             /**
-             * Individual options for the toolbar items.
-             **/
-            toolbarItems?: {
-                /**
-                 * Options for the `destroy` toolbar item.
-                 */
-                destroy: {
-                    enabled?: boolean;
-                };
-                /**
-                 * Options for the `settings` toolbar item.
-                 */
-                drag: {
-                    enabled?: boolean;
-                };
-                /**
-                 * Options for the `settings` toolbar item.
-                 */
-                settings: {
-                    enabled?: boolean;
-                };
-            }
+             * Options for the `destroy` toolbar item.
+             */
+            destroy: {
+                enabled?: boolean;
+            };
+            /**
+             * Options for the `drag` toolbar item.
+             */
+            drag: {
+                enabled?: boolean;
+            };
+            /**
+             * Options for the `settings` toolbar item.
+             */
+            settings: {
+                enabled?: boolean;
+            };
+            /**
+             * Options for the `viewFullscreen` toolbar item.
+             */
+            viewFullscreen: {
+                enabled?: boolean;
+            };
         }
-        /**
-         * Width of the cell. Can be a percentage value, pixels or a fraction.
-         *
-         * The fraction converts value into percents like in CSS grid is.
-         * For example `1/3` means `33.333%`.
-         *
-         * @deprecated
-         *
-         **/
-        width?: (string|number);
-        /**
-         * Height of the cell.
-         *
-         * @deprecated
-         *
-         * **/
-        height?: (string|number);
-        /**
-         * CSS styles for cell container.
-         **/
-        style?: CSSJSONObject;
-        /**
-         * Id of the container that holds the cell.
-         **/
-        parentContainerId?: string;
-        /**
-         * To create a nested layout, add a layout object to a cell.
-         *
-         * Try it:
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/gui/nested-layout/ | Nested layout}
-         **/
-        layout?: LayoutType.Options;
-        /**
-         * Options for responsive design.
-         *
-         * @deprecated
-         **/
-        responsive?: Record<string, CellResponsiveOptions>;
     }
+    /**
+     * CSS styles for cell container.
+     **/
+    style?: CSSJSONObject;
+    /**
+     * Id of the container that holds the cell.
+     **/
+    parentContainerId?: string;
+    /**
+     * To create a nested layout, add a layout object to a cell.
+     *
+     * Try it:
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/gui/nested-layout/ | Nested layout}
+     **/
+    layout?: LayoutOptions;
 }
 
 /* *

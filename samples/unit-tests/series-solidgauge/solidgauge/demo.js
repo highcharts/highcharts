@@ -183,6 +183,41 @@ QUnit.test('Solid gauge: defaults & legend', function (assert) {
         chart.series[0].points[0].graphic.element.getAttribute('fill'),
         'Series legend item: color taken from series'
     );
+
+    chart.update({
+        chart: {
+            height: 675,
+            width: 350,
+            animation: false
+        },
+        pane: [
+            {
+                center: ['75%', '80%'],
+                size: '100%',
+                endAngle: 90.0,
+                startAngle: -90.0
+            }
+        ],
+        yAxis: {
+            min: 0
+        }
+    });
+
+    assert.close(
+        chart.series[0].xAxis.pane.center[0] - chart.plotWidth / 2,
+        chart.sharedClips[chart.series[0].sharedClipKey].attr('x'),
+        1.5,
+        `Solig gauge series clip should calculate pane horizontal offset,
+        #22890.`
+    );
+
+    assert.close(
+        chart.series[0].xAxis.pane.center[1] - chart.plotHeight / 2,
+        chart.sharedClips[chart.series[0].sharedClipKey].attr('y'),
+        1.5,
+        `Solig gauge series clip should calculate pane vertical offset,
+        #22890.`
+    );
 });
 
 QUnit.test('Solid gauge null point (#10630)', function (assert) {
