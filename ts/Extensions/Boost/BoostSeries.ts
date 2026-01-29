@@ -65,8 +65,8 @@ const {
 } = U;
 import WGLRenderer from './WGLRenderer.js';
 import DataTableCore from '../../Data/DataTableCore.js';
-import AxisOptions from '../../Core/Axis/AxisOptions';
-import Axis from '../../Core/Axis/Axis';
+import type AxisOptions from '../../Core/Axis/AxisOptions';
+import type Axis from '../../Core/Axis/Axis';
 
 /* *
  *
@@ -793,19 +793,22 @@ function axisNeedsExtremes(
     axis: Axis | undefined,
     axisOptions: AxisOptions | undefined
 ): boolean {
+    if (!axis) {
+        return false;
+    }
+
+    // Fast path: if allExtremes not calculated yet, allow extremes calculation
+    if (!axis.allExtremes) {
+        return true;
+    }
+
+    // Check if current range < options range (for panning)
     return !!(
-        axis &&
-        (
-            !axis.allExtremes ||
-            (
-                isNumber(axis.min) &&
-                isNumber(axis.max) &&
-                isNumber(axisOptions?.min) &&
-                isNumber(axisOptions?.max) &&
-                (axis.max - axis.min) <
-                    (axisOptions.max - axisOptions.min)
-            )
-        )
+        isNumber(axis.min) &&
+        isNumber(axis.max) &&
+        isNumber(axisOptions?.min) &&
+        isNumber(axisOptions?.max) &&
+        (axis.max - axis.min) < (axisOptions.max - axisOptions.min)
     );
 }
 
@@ -844,8 +847,14 @@ function hasExtremes(
         return false;
     }
 
-    // #24029 - If allExtremes not calculated yet or current range < set range,
-    // allow extremes calculation for panning
+    // Fast path for first render: if allExtremes not calculated yet,
+    // return false immediately (same as original behavior before changes)
+    if (!yAxis?.allExtremes || (checkX && !xAxis?.allExtremes)) {
+        return false;
+    }
+
+    // #24029 - Check if current range < options range (for panning)
+    // Only check this if allExtremes is already calculated
     if (
         axisNeedsExtremes(yAxis, yAxisOptions) ||
         (checkX && axisNeedsExtremes(xAxis, xAxisOptions))
@@ -1656,6 +1665,8 @@ function wrapSeriesGetExtremes(
 ): DataExtremesObject {
 
     if (this.boosted) {
+        // We're in zoom mode (user-defined extremes exist)
+        // Check if we can skip extremes calculation
         if (hasExtremes(this)) {
             return {};
         }
