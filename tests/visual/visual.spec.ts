@@ -56,7 +56,7 @@ function transformVisualSampleScript(script: string | undefined): string {
 
 const GOOGLE_FONT_LINK_REGEX =
     /<link[a-z"=:./ ]+(fonts\.googleapis\.com|fonts\.gstatic\.com)[^>]+>/gi;
-const DEMO_CSS_IMPORT_REGEX = /@import [^;]+;/;
+const DEMO_CSS_IMPORT_REGEX = /@import [^;]+;/g;
 
 function stripGoogleFontLinks(html: string | undefined): string | undefined {
     if (!html) {

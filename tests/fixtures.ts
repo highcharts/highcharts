@@ -399,6 +399,24 @@ export async function setupRoutes(page: Page){
                 }
             },
             {
+                pattern: 'https://fonts.gstatic.com/**',
+                handler: async (route) => {
+                    const url = route.request().url();
+
+                    test.info().annotations.push({
+                        type: 'redirect',
+                        description: `${url} --> (blocked font file)`
+                    });
+
+                    // Return empty response for font files to prevent loading
+                    await route.fulfill({
+                        status: 200,
+                        contentType: 'font/woff2',
+                        body: Buffer.alloc(0)
+                    });
+                }
+            },
+            {
                 pattern: '**/font-awesome/**',
                 handler: async (route) => {
                     const url = route.request().url();
