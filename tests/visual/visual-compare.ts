@@ -269,6 +269,10 @@ function countDiffPixels(
     return diff;
 }
 
+function normalizeSvgForCompare(svgContent: string): string {
+    return svgContent.replace(/\s+/g, ' ').trim();
+}
+
 export async function compareSVG(
     samplePath: string,
     svgContent: string,
@@ -299,6 +303,17 @@ export async function compareSVG(
         const message =
             `Missing reference.svg for ${sampleDir}: ${(error as Error).message}`;
         throw new Error(message);
+    }
+
+    const normalizedReference = normalizeSvgForCompare(referenceSvg);
+    const normalizedCandidate = normalizeSvgForCompare(svgContent);
+    if (normalizedReference === normalizedCandidate) {
+        return {
+            passed: true,
+            diffPixels: 0,
+            candidatePath,
+            referencePath
+        };
     }
 
     const referencePng = await renderSvgToPng(referenceSvg);
