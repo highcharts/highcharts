@@ -14,11 +14,12 @@
                     items: [{
                         label: 'Show context',
                         icon: 'menu',
-                        onClick: function () {
+                        // `ctx` is the cell context.
+                        onClick: function (ctx) {
                             doc.getElementById('cellContextMenuResult').value =
-                                this.row.index + '|' +
-                                this.column.id + '|' +
-                                this.cell.value;
+                                ctx.row.index + '|' +
+                                ctx.column.id + '|' +
+                                ctx.cell.value;
                         }
                     }]
                 }

@@ -1,7 +1,7 @@
 ---
- name: Cell context menu
+name: Cell context menu
 
-  authors:
-   - Mikkel Espolin Birkeland
+authors:
+  - Mikkel Espolin Birkeland
 
- ...
+...

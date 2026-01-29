@@ -70,8 +70,10 @@
                 contextMenu: {
                     items: [{
                         label: 'Copy cell content',
-                        onClick: function () {
-                            const value = String(this.cell.value);
+                        icon: 'clipboard',
+                        // `ctx` is the cell context
+                        onClick: function (ctx) {
+                            const value = String(ctx.cell.value);
 
                             copyToClipboard(value)
                                 .then(function () {
@@ -89,16 +91,17 @@
                     }, {
                         separator: true
                     }, {
-                        label: 'Add new row here',
-                        onClick: function () {
-                            const grid = this.cell.row.viewport.grid;
+                        label: 'Add row',
+                        icon: 'plus',
+                        onClick: function (ctx) {
+                            const grid = ctx.cell.row.viewport.grid;
                             const dt = grid.dataTable;
 
                             if (!dt) {
                                 return;
                             }
 
-                            const insertAt = this.row.id;
+                            const insertAt = ctx.row.id;
                             if (typeof insertAt !== 'number') {
                                 return;
                             }
@@ -118,15 +121,16 @@
                         }
                     }, {
                         label: 'Delete row',
-                        onClick: function () {
-                            const grid = this.cell.row.viewport.grid;
+                        icon: 'trash',
+                        onClick: function (ctx) {
+                            const grid = ctx.cell.row.viewport.grid;
                             const dt = grid.dataTable;
 
                             if (!dt) {
                                 return;
                             }
 
-                            const deleteAt = this.row.id;
+                            const deleteAt = ctx.row.id;
                             if (typeof deleteAt !== 'number') {
                                 return;
                             }

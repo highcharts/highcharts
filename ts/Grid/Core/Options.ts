@@ -79,7 +79,7 @@ export interface CellContextMenuContext {
 /**
  * Options for a single cell context menu item.
  */
-export interface CellContextMenuItemOptions {
+export interface CellContextMenuActionItemOptions {
     /**
      * The label shown in the menu.
      */
@@ -98,13 +98,42 @@ export interface CellContextMenuItemOptions {
     /**
      * Whether to render a divider instead of a button.
      */
-    separator?: boolean;
+    separator?: false;
 
     /**
      * Callback executed when the menu item is clicked.
+     *
+     * The cell context is available on `this` and is also passed as the first
+     * argument to support arrow functions.
      */
-    onClick?: (this: CellContextMenuContext, e: MouseEvent) => void;
+    onClick?: (
+        this: CellContextMenuContext,
+        context: CellContextMenuContext
+    ) => void;
 }
+
+/**
+ * Options for a divider item in the cell context menu.
+ */
+export interface CellContextMenuDividerItemOptions {
+    /**
+     * Whether to render a divider instead of a button.
+     */
+    separator: true;
+
+    /**
+     * Optional label for accessibility or testing.
+     * Not rendered as a clickable item.
+     */
+    label?: string;
+}
+
+/**
+ * Options for a single cell context menu item.
+ */
+export type CellContextMenuItemOptions =
+    CellContextMenuDividerItemOptions |
+    CellContextMenuActionItemOptions;
 
 /**
  * Cell context menu options.

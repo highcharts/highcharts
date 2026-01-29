@@ -104,7 +104,11 @@ class CellContextMenu extends ContextMenu {
                         return;
                     }
 
-                    item.onClick?.call(ctx, e);
+                    void e;
+
+                    // Pass the cell context both as `this` (Highcharts-style)
+                    // and as an argument so arrow functions can use it.
+                    item.onClick?.call(ctx, ctx);
 
                     // Auto-close after click (typical context menu behavior)
                     this.hide();
