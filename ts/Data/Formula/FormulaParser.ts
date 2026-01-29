@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sophie Bremer
@@ -31,6 +31,10 @@ import type {
     Reference,
     Value
 } from './FormulaTypes.js';
+import U from '../../Core/Utilities.js';
+const {
+    isString
+} = U;
 
 
 /* *
@@ -444,6 +448,23 @@ function parseArguments(
     return args;
 }
 
+/**
+ * Checks if there's one of the following operator before the negative number
+ * value: '*', '/' or '^'.
+ *
+ * Used to properly indicate a negative value reference or negate a directly
+ * passed number value.
+ */
+function negativeReference(formula: Formula): boolean {
+    const formulaLength = formula.length;
+    const priorFormula = formula[formulaLength - 2];
+    return (
+        formula[formulaLength - 1] === '-' &&
+        isString(priorFormula) &&
+        !!priorFormula.match(/\*|\/|\^/)
+    );
+}
+
 
 /**
  * Converts a spreadsheet formula string into a formula array. Throws a
@@ -506,6 +527,11 @@ function parseFormula(
                 reference.rowRelative = true;
             }
 
+            if (negativeReference(formula)) {
+                formula.pop();
+                reference.isNegative = true;
+            }
+
             formula.push(reference);
 
             next = next.substring(match[0].length).trim();
@@ -542,6 +568,11 @@ function parseFormula(
                 reference.rowRelative = true;
             }
 
+            if (negativeReference(formula)) {
+                formula.pop();
+                reference.isNegative = true;
+            }
+
             formula.push(reference);
 
             next = next.substring(match[0].length).trim();
@@ -572,7 +603,15 @@ function parseFormula(
         // Check for a number value
         match = next.match(decimalRegExp);
         if (match) {
-            formula.push(parseFloat(match[0]));
+            let number = parseFloat(match[0]);
+            // If the current value is multiplication-related and the previous
+            // one is a minus sign, set the current value to negative and remove
+            // the minus sign.
+            if (negativeReference(formula)) {
+                formula.pop();
+                number = -number;
+            }
+            formula.push(number);
 
             next = next.substring(match[0].length).trim();
 

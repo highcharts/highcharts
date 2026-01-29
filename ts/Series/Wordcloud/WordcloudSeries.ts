@@ -1,13 +1,13 @@
 /* *
  *
- *  Experimental Highcharts module which enables visualization of a word cloud.
+ *  Highcharts module which enables visualization of a word cloud.
  *
- *  (c) 2016-2024 Highsoft AS
+ *  (c) 2016-2026 Highsoft AS
  *  Authors: Jon Arild Nygard
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  * */
 
 'use strict';
@@ -99,6 +99,8 @@ class WordcloudSeries extends ColumnSeries {
      *
      * */
     public data!: Array<WordcloudPoint>;
+    public defaultScale?: number;
+    public field?: WordcloudSeries.WordcloudFieldObject;
     public options!: WordcloudSeriesOptions;
     public points!: Array<WordcloudPoint>;
 
@@ -153,6 +155,15 @@ class WordcloudSeries extends ColumnSeries {
     }
 
     public drawPoints(): void {
+        if (
+            this.zooming ||
+            (
+                this.defaultScale &&
+                this.group.scaleX !== this.defaultScale
+            )
+        ) {
+            return;
+        }
         const series = this,
             hasRendered = series.hasRendered,
             xAxis = series.xAxis,
@@ -344,10 +355,13 @@ class WordcloudSeries extends ColumnSeries {
         testElement = testElement.destroy() as any;
 
         // Scale the series group to fit within the plotArea.
-        const scale = getScale(xAxis.len, yAxis.len, field);
+        series.defaultScale = getScale(xAxis.len, yAxis.len, field);
+
+        series.field = field;
+
         series.group.attr({
-            scaleX: scale,
-            scaleY: scale
+            scaleX: series.defaultScale,
+            scaleY: series.defaultScale
         });
     }
 
@@ -362,23 +376,137 @@ class WordcloudSeries extends ColumnSeries {
         );
     }
 
-    public getPlotBox(): Series.PlotBoxTransform {
+    public getPlotBox(name?: string): Series.PlotBoxTransform {
         const series = this,
-            chart = series.chart,
-            inverted = chart.inverted,
+            { chart, group, zooming } = this,
+            { plotSizeX = 0, plotSizeY = 0, inverted } = chart,
             // Swap axes for inverted (#2339)
             xAxis = series[(inverted ? 'yAxis' : 'xAxis')],
             yAxis = series[(inverted ? 'xAxis' : 'yAxis')],
             width = xAxis ? xAxis.len : chart.plotWidth,
             height = yAxis ? yAxis.len : chart.plotHeight,
             x = xAxis ? xAxis.left : chart.plotLeft,
-            y = yAxis ? yAxis.top : chart.plotTop;
+            y = yAxis ? yAxis.top : chart.plotTop,
+            field = series.field;
+
+        let left = 0,
+            top = 0,
+            translateX = x + width / 2,
+            translateY = y + height / 2,
+            initLeft = translateX,
+            initTop = translateY,
+            scale = series.defaultScale || 1,
+            seriesHeight = 0,
+            seriesWidth = 0;
+
+        if (field) {
+            seriesHeight =
+                Math.max(Math.abs(field.top), Math.abs(field.bottom)) * 2;
+            seriesWidth =
+                Math.max(Math.abs(field.left), Math.abs(field.right)) * 2;
+        }
+
+        if (inverted) {
+            [seriesWidth, seriesHeight] = [seriesHeight, seriesWidth];
+        }
+
+        if (group && zooming) {
+            // Uncomment this block to visualize the zooming
+            // bounding box and the point, which is normalized
+            // position to zoom-in
+            // chart.renderer.rect(
+            //    (plotSizeX - seriesWidth) / 2 + zooming.x * plotSizeX +
+            //        chart.plotLeft,
+            //    (plotSizeY - seriesHeight) / 2 + zooming.y * plotSizeY +
+            //        chart.plotTop,
+            //    zooming.width * plotSizeX,
+            //    zooming.height * plotSizeY,
+            //    0,
+            //    2
+            // ).attr({
+            //    stroke: 'red'
+            // }).add();
+
+            // chart.renderer.circle(
+            //    (plotSizeX - seriesWidth) / 2 + zooming.zoomX * plotSizeX +
+            //        chart.plotLeft,
+            //    (plotSizeY - seriesHeight) / 2 + zooming.zoomY * plotSizeY +
+            //        chart.plotTop,
+            //    2
+            // ).attr({
+            //    stroke: 'blue'
+            // }).add();
+
+            scale = Math.max(zooming.scale, series.defaultScale || 1);
+
+            const newWidth = Math.max(seriesWidth * scale, width),
+                newHeight = Math.max(seriesHeight * scale, height),
+                newMiddleX = x + newWidth / 2,
+                newMiddleY = y + newHeight / 2,
+                scaleDiff = scale - (group.scaleX || 1);
+
+            left = scaleDiff * (
+                (plotSizeX - seriesWidth) / 2 +
+                    zooming.zoomX * plotSizeX - width / 2
+            );
+            top = scaleDiff * (
+                (plotSizeY - seriesHeight) / 2 +
+                    zooming.zoomY * plotSizeY - height / 2
+            );
+
+            if (name === 'series') {
+                zooming.x = Math.max(
+                    0,
+                    Math.min(
+                        1 - zooming.width,
+                        zooming.x + (zooming.panX / zooming.scale)
+                    )
+                );
+                left += zooming.panX * plotSizeX;
+                zooming.panX = 0;
+                zooming.y = Math.max(
+                    0,
+                    Math.min(
+                        1 - zooming.height,
+                        zooming.y + (zooming.panY / zooming.scale)
+                    )
+                );
+                top += zooming.panY * plotSizeY;
+                zooming.panY = 0;
+            }
+
+            if (isNumber(group.translateX) && isNumber(group.translateY)) {
+                initLeft = group.translateX;
+                initTop = group.translateY;
+            }
+
+            translateX = initLeft - left;
+            translateY = initTop - top;
+
+            // Do not allow to move outside the chart
+            // Vertical lock
+            if (translateY > newMiddleY) {
+                translateY = newMiddleY;
+            } else if (
+                translateY < 2 * y + height - newMiddleY
+            ) {
+                translateY = 2 * y + height - newMiddleY;
+            }
+            // Horizontal lock
+            if (translateX > newMiddleX) {
+                translateX = newMiddleX;
+            } else if (
+                translateX < 2 * x + width - newMiddleX
+            ) {
+                translateX = 2 * x + width - newMiddleX;
+            }
+        }
 
         return {
-            translateX: x + (width / 2),
-            translateY: y + (height / 2),
-            scaleX: 1, // #1623
-            scaleY: 1
+            translateX: translateX,
+            translateY: translateY,
+            scaleX: scale,
+            scaleY: scale
         };
     }
 }

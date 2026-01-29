@@ -35,19 +35,16 @@ typeof HighchartsExport === 'function' && HighchartsExport(Highcharts);
 
 Because of the nature of UMD, async support for Highcharts modules was limited to certain setups only.
 The new UMD is now consistently expecting synchronous loading in all setups.
-For an asynchronous approach, one needs to use the ESM variants, which can be found in the `highcharts/es-modules/masters/` path.
+For an asynchronous approach, one needs to use the ESM variants, which can be found via the `highcharts/esm/` path.
 
 * HTML Example:
-  Note that this is not recommend for production, as ES modules in a browser should always be bundled.
-  Otherwise the latency will be noticeable, as the browser needs to load all the small master
-  modules. We are planning to serve pre-bundled ESM modules in the future.
   ```html
   <script type="module">
-  import Highcharts from 'https://code.highcharts.com/es-modules/masters/highcharts.src.js';
-  import 'https://code.highcharts.com/es-modules/masters/highcharts-more.src.js';
-  import 'https://code.highcharts.com/es-modules/masters/modules/exporting.src.js';
-  import 'https://code.highcharts.com/es-modules/masters/modules/accessibility.src.js';
-  </scripts>
+  import Highcharts from 'https://code.highcharts.com/esm/highcharts.js';
+  import 'https://code.highcharts.com/esm/highcharts-more.js';
+  import 'https://code.highcharts.com/esm/modules/exporting.js';
+  import 'https://code.highcharts.com/esm/modules/accessibility.js';
+  </script>
   ```
 
 * Node.js Example:

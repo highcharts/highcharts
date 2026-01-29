@@ -1,12 +1,11 @@
 /* *
  *
- *  (c) 2019-2024 Highsoft AS
+ *  (c) 2019-2026 Highsoft AS
  *
  *  Boost module: stripped-down renderer for higher performance
  *
  *  License: highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -29,6 +28,8 @@ import type { SeriesZonesOptions } from '../../Core/Series/SeriesOptions';
 import type { WGLDrawModeValue } from './WGLDrawMode';
 import type WGLOptions from './WGLOptions';
 
+import BoostChart from './BoostChart.js';
+const { getBoostClipRect } = BoostChart;
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import H from '../../Core/Globals.js';
@@ -51,18 +52,22 @@ import WGLVertexBuffer from './WGLVertexBuffer.js';
  *
  * */
 
+/** @internal */
 interface WGLNode {
     levelDynamic?: number;
 }
 
+/** @internal */
 interface WGLPoint extends Point {
     node?: WGLNode;
 }
 
+/** @internal */
 interface WGLRendererCallbackFunction {
     (renderer: WGLRenderer): void;
 }
 
+/** @internal */
 interface WGLSeriesObject {
     colorData: Array<number>;
     drawMode: WGLDrawModeValue;
@@ -77,10 +82,12 @@ interface WGLSeriesObject {
     zMin: number;
 }
 
+/** @internal */
 interface WGLTextureCallbackFunction {
     (ctx: CanvasRenderingContext2D): void;
 }
 
+/** @internal */
 interface WGLTextureObject {
     isReady: boolean;
     texture: HTMLCanvasElement;
@@ -89,9 +96,10 @@ interface WGLTextureObject {
 
 /**
  * Internal types
- * @private
+ * @internal
  */
 declare global {
+    /** @internal */
     interface CanvasRenderingContext2D {
         FUNC_MIN: number;
         /** @deprecated */
@@ -105,6 +113,7 @@ declare global {
             CanvasImageSmoothing['imageSmoothingEnabled']
         );
     }
+    /** @internal */
     interface WebGLRenderingContext {
         /** @deprecated */
         readonly FUNC_MIN: number;
@@ -155,7 +164,7 @@ const contexts = [
  *   encoding values in the color data.
  * - Need to figure out a way to transform the data quicker
  *
- * @private
+ * @internal
  *
  * @param {Function} postRenderCallback
  */
@@ -168,8 +177,9 @@ class WGLRenderer {
      * */
 
     /**
-     * Returns an orthographic perspective matrix
-     * @private
+     * Returns an orthographic perspective matrix.
+     *
+     * @internal
      * @param {number} width
      * the width of the viewport in pixels
      * @param {number} height
@@ -187,9 +197,7 @@ class WGLRenderer {
         ];
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     private static seriesPointCount(series: Series): number {
         let isStacked: boolean,
             xData: Array<number>,
@@ -299,16 +307,12 @@ class WGLRenderer {
      *
      * */
 
-    /**
-     * @private
-     */
+    /** @internal */
     private getPixelRatio(): number {
         return this.settings.pixelRatio || win.devicePixelRatio || 1;
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     public setOptions(options: BoostOptions): void {
 
         // The pixelRatio defaults to 1. This is an antipattern, we should
@@ -322,7 +326,7 @@ class WGLRenderer {
 
     /**
      * Allocate a float buffer to fit all series
-     * @private
+     * @internal
      */
     public allocateBuffer(chart: Chart): void {
         const vbuffer = this.vbuffer;
@@ -342,9 +346,7 @@ class WGLRenderer {
         vbuffer && vbuffer.allocate(s);
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     public allocateBufferForSingleSeries(series: Series): void {
         const vbuffer = this.vbuffer;
 
@@ -363,7 +365,7 @@ class WGLRenderer {
 
     /**
      * Clear the depth and color buffer
-     * @private
+     * @internal
      */
     public clear(): void {
         const gl = this.gl;
@@ -372,10 +374,10 @@ class WGLRenderer {
     }
 
     /**
-     * Push data for a single series
+     * Push data for a single series.
      * This calculates additional vertices and transforms the data to be
-     * aligned correctly in memory
-     * @private
+     * aligned correctly in memory.
+     * @internal
      */
     private pushSeriesData(
         series: Series,
@@ -411,10 +413,9 @@ class WGLRenderer {
             /// threshold = options.threshold,
             // yBottom = chart.yAxis[0].getThreshold(threshold),
             // hasThreshold = isNumber(threshold),
-            // colorByPoint = series.options.colorByPoint,
+            colorByPoint = series.options.colorByPoint,
             // This is required for color by point, so make sure this is
             // uncommented if enabling that
-            // colorIndex = 0,
             // Required for color axis support
             // caxis,
             connectNulls = options.connectNulls,
@@ -454,14 +455,15 @@ class WGLRenderer {
             low: number|undefined|null,
             nextInside = false,
             prevInside = false,
-            pcolor: Color.RGBA = false as any,
+            pcolor: Color.RGBA | undefined = void 0,
             isXInside = false,
             isYInside = true,
             firstPoint = true,
-            zoneColors: Array<Color.RGBA>,
+            zoneColors: Array<Color.RGBA> = [],
             zoneDefColor: (Color.RGBA|undefined) = false as any,
             gapSize: number = false as any,
-            vlen = 0;
+            vlen = 0,
+            colorIndex = 0;
 
         if (options.boostData && options.boostData.length > 0) {
             return;
@@ -473,7 +475,7 @@ class WGLRenderer {
                 options.gapSize;
         }
 
-        if (zones) {
+        if (zones && zones.length) { // #23571
             zoneColors = [];
 
             zones.forEach((zone, i): void => {
@@ -510,7 +512,7 @@ class WGLRenderer {
 
         /**
          * Push color to color buffer - need to do this per vertex.
-         * @private
+         * @internal
          */
         const pushColor = (color?: Color.RGBA): void => {
             if (color) {
@@ -523,7 +525,7 @@ class WGLRenderer {
 
         /**
          * Push a vertice to the data buffer.
-         * @private
+         * @internal
          */
         const vertice = (
             x: number,
@@ -557,9 +559,7 @@ class WGLRenderer {
             }
         };
 
-        /**
-         * @private
-         */
+        /** @internal */
         const closeSegment = (): void => {
             if (inst.segments.length) {
                 inst.segments[
@@ -570,7 +570,7 @@ class WGLRenderer {
 
         /**
          * Create a new segment for the current set.
-         * @private
+         * @internal
          */
         const beginSegment = (): void => {
             // Insert a segment on the series.
@@ -597,7 +597,7 @@ class WGLRenderer {
 
         /**
          * Push a rectangle to the data buffer.
-         * @private
+         * @internal
          */
         const pushRect = (
             x: number,
@@ -679,7 +679,7 @@ class WGLRenderer {
                     swidth = pointAttr['stroke-width'] || 0;
 
                     // Handle point colors
-                    pcolor = color(pointAttr.fill).rgba as any;
+                    pcolor = color(pointAttr.fill).rgba;
                     pcolor[0] /= 255.0;
                     pcolor[1] /= 255.0;
                     pcolor[2] /= 255.0;
@@ -758,28 +758,37 @@ class WGLRenderer {
                 break;
             }
 
-            // Uncomment this to enable color by point.
-            // This currently left disabled as the charts look really ugly
-            // when enabled and there's a lot of points.
-            // Leaving in for the future (tm).
-            // if (colorByPoint) {
-            //     colorIndex = ++colorIndex %
-            //         series.chart.options.colors.length;
-            //     pcolor = toRGBAFast(series.chart.options.colors[colorIndex]);
-            //     pcolor[0] /= 255.0;
-            //     pcolor[1] /= 255.0;
-            //     pcolor[2] /= 255.0;
-            // }
-
             // Handle the point.color option (#5999)
             const pointOptions = rawData && rawData[i];
-            if (!useRaw && isObject(pointOptions, true)) {
-                if (pointOptions.color) {
-                    pcolor = color(pointOptions.color).rgba as any;
-                    pcolor[0] /= 255.0;
-                    pcolor[1] /= 255.0;
-                    pcolor[2] /= 255.0;
+            if (!useRaw) {
+                let rgba: Color.RGBA|undefined;
+                if (isObject(pointOptions, true) && pointOptions.color) {
+                    rgba = color(pointOptions.color).rgba;
                 }
+
+                const colorKeyIndex = series.options.keys?.indexOf('color');
+                if (
+                    Array.isArray(pointOptions) &&
+                    colorKeyIndex &&
+                    typeof pointOptions[colorKeyIndex] === 'string'
+                ) {
+                    rgba = color(pointOptions[colorKeyIndex]).rgba;
+                } else if (colorByPoint && chart.options.colors) {
+                    colorIndex = colorIndex %
+                        chart.options.colors.length;
+
+                    rgba = color(chart.options.colors[colorIndex]).rgba;
+                }
+
+                if (rgba) {
+                    pcolor = rgba;
+                    pcolor[0] = rgba[0] / 255.0;
+                    pcolor[1] = rgba[1] / 255.0;
+                    pcolor[2] = rgba[2] / 255.0;
+                    pcolor[3] = rgba[3];
+                }
+
+                colorIndex++;
             }
 
             if (useRaw) {
@@ -924,41 +933,31 @@ class WGLRenderer {
             }
 
             // Note: Boost requires that zones are sorted!
-            if (zones) {
+            if (zones && zones.length) { // #23571
                 let zoneColor: Color.RGBA|undefined;
+                const pointValue = zoneAxis === 'x' ? x : y;
+                // Match getZone() logic: find zone where value > point value
+                let zoneIndex: number|undefined;
                 zones.some(( // eslint-disable-line no-loop-func
                     zone: SeriesZonesOptions,
                     i: number
                 ): boolean => {
-                    const last: SeriesZonesOptions = (zones as any)[i - 1];
-
-                    if (zoneAxis === 'x') {
-                        if (
-                            typeof zone.value !== 'undefined' &&
-                            x <= zone.value
-                        ) {
-                            if (
-                                zoneColors[i] &&
-                                (!last || x >= (last.value as any))
-                            ) {
-                                zoneColor = zoneColors[i];
-                            }
-                            return true;
-                        }
-                        return false;
-                    }
-
-                    if (typeof zone.value !== 'undefined' && y <= zone.value) {
-                        if (
-                            zoneColors[i] &&
-                            (!last || y >= (last.value as any))
-                        ) {
-                            zoneColor = zoneColors[i];
-                        }
+                    if (
+                        typeof zone.value !== 'undefined' &&
+                        pointValue < zone.value
+                    ) {
+                        zoneIndex = i;
                         return true;
                     }
                     return false;
                 });
+
+                if (
+                    typeof zoneIndex !== 'undefined' &&
+                    zoneColors[zoneIndex]
+                ) {
+                    zoneColor = zoneColors[zoneIndex];
+                }
 
                 pcolor = zoneColor || zoneDefColor || pcolor;
             }
@@ -1058,7 +1057,7 @@ class WGLRenderer {
                 }
 
                 // Need to add an extra point here
-                vertice(x, minVal as any, 0 as any, 0, pcolor);
+                vertice(x, minVal as any, false, 0, pcolor);
             }
 
             // Do step line if enabled.
@@ -1069,7 +1068,7 @@ class WGLRenderer {
                 vertice(
                     x,
                     lastY,
-                    0 as any,
+                    false,
                     2,
                     pcolor
                 );
@@ -1078,7 +1077,7 @@ class WGLRenderer {
             vertice(
                 x,
                 y,
-                0 as any,
+                false,
                 series.type === 'bubble' ? (z || 1) : 2,
                 pcolor
             );
@@ -1149,9 +1148,10 @@ class WGLRenderer {
     }
 
     /**
-     * Push a series to the renderer
-     * If we render the series immediately, we don't have to loop later
-     * @private
+     * Push a series to the renderer.
+     * If we render the series immediately, we don't have to loop later.
+     *
+     * @internal
      * @param {Highchart.Series} s
      * The series to push.
      */
@@ -1204,8 +1204,8 @@ class WGLRenderer {
     /**
      * Flush the renderer.
      * This removes pushed series and vertices.
-     * Should be called after clearing and before rendering
-     * @private
+     * Should be called after clearing and before rendering.
+     * @internal
      */
     private flush(): void {
         const vbuffer = this.vbuffer;
@@ -1220,8 +1220,9 @@ class WGLRenderer {
     }
 
     /**
-     * Pass x-axis to shader
-     * @private
+     * Pass x-axis to shader.
+     *
+     * @internal
      * @param {Highcharts.Axis} axis
      * The x-axis.
      */
@@ -1236,6 +1237,7 @@ class WGLRenderer {
 
         shader.setUniform('xAxisTrans', axis.transA * pixelRatio);
         shader.setUniform('xAxisMin', axis.min as any);
+        shader.setUniform('xAxisMax', axis.max as any);
         shader.setUniform('xAxisMinPad', axis.minPixelPadding * pixelRatio);
         shader.setUniform('xAxisPointRange', axis.pointRange);
         shader.setUniform('xAxisLen', axis.len * pixelRatio);
@@ -1246,8 +1248,9 @@ class WGLRenderer {
     }
 
     /**
-     * Pass y-axis to shader
-     * @private
+     * Pass y-axis to shader.
+     *
+     * @internal
      * @param {Highcharts.Axis} axis
      * The y-axis.
      */
@@ -1262,6 +1265,7 @@ class WGLRenderer {
 
         shader.setUniform('yAxisTrans', axis.transA * pixelRatio);
         shader.setUniform('yAxisMin', axis.min as any);
+        shader.setUniform('yAxisMax', axis.max as any);
         shader.setUniform('yAxisMinPad', axis.minPixelPadding * pixelRatio);
         shader.setUniform('yAxisPointRange', axis.pointRange);
         shader.setUniform('yAxisLen', axis.len * pixelRatio);
@@ -1272,8 +1276,9 @@ class WGLRenderer {
     }
 
     /**
-     * Set the translation threshold
-     * @private
+     * Set the translation threshold.
+     *
+     * @internal
      * @param {boolean} has
      * Has threshold flag.
      * @param {numbe} translation
@@ -1291,9 +1296,9 @@ class WGLRenderer {
     }
 
     /**
-     * Render the data
+     * Render the data.
      * This renders all pushed series.
-     * @private
+     * @internal
      */
     private renderChart(chart: Chart): (false|undefined) {
         const gl = this.gl,
@@ -1521,6 +1526,11 @@ class WGLRenderer {
             // Do the actual rendering
             // If the line width is < 0, skip rendering of the lines. See #7833.
             if (lineWidth > 0 || s.drawMode !== 'LINE_STRIP') {
+                const { x: cx, y: cy, width: cw, height: ch } =
+                    getBoostClipRect(chart, s.series);
+
+                gl.enable(gl.SCISSOR_TEST);
+                gl.scissor(cx, height - cy - ch, cw, ch);
                 for (sindex = 0; sindex < s.segments.length; sindex++) {
                     vbuffer.render(
                         s.segments[sindex].from,
@@ -1528,6 +1538,7 @@ class WGLRenderer {
                         s.drawMode
                     );
                 }
+                gl.disable(gl.SCISSOR_TEST);
             }
 
             if (s.hasMarkers && showMarkers) {
@@ -1559,8 +1570,8 @@ class WGLRenderer {
     }
 
     /**
-     * Render the data when ready
-     * @private
+     * Render the data when ready.
+     * @internal
      */
     public render(chart: Chart): (false|undefined) {
         this.clear();
@@ -1579,9 +1590,9 @@ class WGLRenderer {
     }
 
     /**
-     * Set the viewport size in pixels
+     * Set the viewport size in pixels.
      * Creates an orthographic perspective matrix and applies it.
-     * @private
+     * @internal
      */
     public setSize(width: number, height: number): void {
         const shader = this.shader;
@@ -1599,8 +1610,8 @@ class WGLRenderer {
     }
 
     /**
-     * Init OpenGL
-     * @private
+     * Init OpenGL.
+     * @internal
      */
     public init(canvas?: HTMLCanvasElement, noFlush?: boolean): boolean {
         const settings = this.settings;
@@ -1721,7 +1732,7 @@ class WGLRenderer {
                 gl.bindTexture(gl.TEXTURE_2D, null);
 
                 props.isReady = true;
-            } catch (e) {
+            } catch {
                 // Silent error
             }
         };
@@ -1782,7 +1793,7 @@ class WGLRenderer {
     }
 
     /**
-     * @private
+     * @internal
      * @todo use it
      */
     public destroy(): void {
@@ -1821,4 +1832,5 @@ class WGLRenderer {
  *
  * */
 
+/** @internal */
 export default WGLRenderer;

@@ -1,6 +1,5 @@
 /* *
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -12,15 +11,63 @@
  *
  * */
 
-import type {
-    ControllableLabelOptions
-} from '../Controllables/ControllableOptions';
 import type ColorType from '../../../Core/Color/ColorType';
 
 import Annotation from '../Annotation.js';
 import CrookedLine from './CrookedLine.js';
+import D from '../../../Core/Defaults.js';
+const { defaultOptions } = D;
 import U from '../../../Core/Utilities.js';
+import { Palette } from '../../../Core/Color/Palettes';
+import { AnnotationLabelOptionsOptions } from '../AnnotationOptions';
 const { merge } = U;
+
+if (defaultOptions.annotations?.types) {
+    defaultOptions.annotations.types.elliottWave = merge(
+        defaultOptions.annotations.types.crookedLine,
+        /**
+         * Options for the elliott wave annotation type.
+         *
+         * @sample highcharts/annotations-advanced/elliott-wave/
+         *         Elliott wave
+         *
+         * @extends      annotations.types.crookedLine
+         * @product      highstock
+         * @optionparent annotations.types.elliottWave
+         */
+        {
+            typeOptions: {
+
+                /**
+                 * @extends   annotations.types.crookedLine.labelOptions
+                 * @apioption annotations.types.elliottWave.typeOptions.points.label
+                 */
+
+                /**
+                 * @ignore-option
+                 */
+                labels: ['(0)', '(A)', '(B)', '(C)', '(D)', '(E)'],
+                line: {
+                    strokeWidth: 1
+                }
+            },
+
+            labelOptions: {
+                align: 'center',
+                allowOverlap: true,
+                crop: true,
+                overflow: 'none',
+                type: 'rect',
+                backgroundColor: 'none',
+                borderWidth: 0,
+                y: -5,
+                style: {
+                    color: Palette.neutralColor80
+                }
+            }
+        }
+    );
+}
 
 /* *
  *
@@ -28,6 +75,7 @@ const { merge } = U;
  *
  * */
 
+/** @internal */
 class ElliottWave extends CrookedLine {
 
     /* *
@@ -41,14 +89,18 @@ class ElliottWave extends CrookedLine {
             const typeOptions = (
                     this.options.typeOptions as ElliottWave.TypeOptions
                 ),
-                label = this.initLabel(merge(
-                    point.label, {
-                        text: typeOptions.labels[i],
-                        point: function (target: any): any {
-                            return target.annotation.points[i];
+                label = this.initLabel(
+                    merge(
+                        point.label,
+                        {
+                            text: typeOptions.labels[i],
+                            point: function (target: any): any {
+                                return target.annotation.points[i];
+                            }
                         }
-                    }
-                ), false as any);
+                    ),
+                    false as any
+                );
 
             point.label = label.options;
         });
@@ -61,51 +113,10 @@ class ElliottWave extends CrookedLine {
  *
  * */
 
+/** @internal */
 interface ElliottWave {
-    defaultOptions: CrookedLine['defaultOptions'];
+
 }
-
-ElliottWave.prototype.defaultOptions = merge(
-    CrookedLine.prototype.defaultOptions,
-    /**
-     * An elliott wave annotation.
-     *
-     * @sample highcharts/annotations-advanced/elliott-wave/
-     *         Elliott wave
-     *
-     * @extends      annotations.crookedLine
-     * @product      highstock
-     * @optionparent annotations.elliottWave
-     */
-    {
-        typeOptions: {
-
-            /**
-             * @extends   annotations.crookedLine.labelOptions
-             * @apioption annotations.elliottWave.typeOptions.points.label
-             */
-
-            /**
-             * @ignore-option
-             */
-            labels: ['(0)', '(A)', '(B)', '(C)', '(D)', '(E)'],
-            line: {
-                strokeWidth: 1
-            }
-        },
-
-        labelOptions: {
-            align: 'center',
-            allowOverlap: true,
-            crop: true,
-            overflow: 'none' as any,
-            type: 'rect',
-            backgroundColor: 'none',
-            borderWidth: 0,
-            y: -5
-        }
-    }
-);
 
 /* *
  *
@@ -114,16 +125,28 @@ ElliottWave.prototype.defaultOptions = merge(
  * */
 
 namespace ElliottWave {
-    export interface LabelOptions extends ControllableLabelOptions {
+    export interface LabelOptions extends AnnotationLabelOptionsOptions {
         backgroundColor: ColorType;
         borderWidth: number;
         y: number;
     }
+
+    /**
+     * Options for the elliott wave annotation type.
+     *
+     * @sample highcharts/annotations-advanced/elliott-wave/
+     *         Elliott wave
+     *
+     * @extends      annotations.types.crookedLine
+     * @product      highstock
+     * @optionparent annotations.types.elliottWave
+     */
     export interface Options extends CrookedLine.Options {
         labelOptions: LabelOptions;
         typeOptions: TypeOptions;
     }
     export interface TypeOptions extends CrookedLine.TypeOptions {
+        /** @internal */
         labels: Array<string>;
     }
 }
@@ -134,6 +157,7 @@ namespace ElliottWave {
  *
  * */
 
+/** @internal */
 declare module './AnnotationType' {
     interface AnnotationTypeRegistry {
         elliottWave: typeof ElliottWave;

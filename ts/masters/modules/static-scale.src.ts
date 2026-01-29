@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LicenseRef-Highcharts
 /**
  * @license Highcharts Gantt JS v@product.version@ (@product.date@)
  * @module highcharts/modules/static-scale
@@ -5,9 +6,11 @@
  *
  * StaticScale
  *
- * (c) 2016-2024 Torstein Honsi, Lars A. V. Cabrera
+ * (c) 2016-2026 Highsoft AS
+ * Author: Torstein Honsi, Lars A. V. Cabrera
  *
- * License: www.highcharts.com/license
+ * A commercial license may be required depending on use.
+ * See www.highcharts.com/license
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';

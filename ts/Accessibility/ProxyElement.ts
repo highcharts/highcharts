@@ -1,6 +1,7 @@
 /* *
  *
- *  (c) 2009-2024 Øystein Moseng
+ *  (c) 2009-2026 Highsoft AS
+ *  Author: Øystein Moseng
  *
  *  Proxy elements are used to shadow SVG elements in HTML for assistive
  *  technology, such as screen readers or voice input software.
@@ -8,9 +9,9 @@
  *  The ProxyElement class represents such an element, and deals with
  *  overlay positioning and mirroring events for the target.
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -214,10 +215,8 @@ class ProxyElement {
         const stringHasNoTooltip = (s: string): boolean => (
             s.indexOf('highcharts-no-tooltip') > -1
         );
-        const legend = this.chart.legend;
-        const groupDiv = legend.group && legend.group.div;
         const noTooltipOnGroup = stringHasNoTooltip(
-            groupDiv && groupDiv.className || ''
+            this.chart.legend?.group?.div?.className || ''
         );
         const targetClassName = this.getTargetAttr(
             this.target.click,

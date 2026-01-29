@@ -1,5 +1,5 @@
 ---
- name: Highcharts Stock Demo
+ name: Demo of yAxis.scrollbar.enabled and showFull
  authors:
    - Torstein Hønsi
  js_wrap: b

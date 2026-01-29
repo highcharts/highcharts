@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -26,13 +27,13 @@ import type {
     HTMLDOMElement,
     SVGDOMElement
 } from '../DOMElementType';
-import type EventCallback from '../../../Core/EventCallback';
+import type { EventCallback } from '../../../Core/Callback';
 import type FontMetricsObject from '../FontMetricsObject';
 import type PositionObject from '../PositionObject';
 import type ShadowOptionsObject from '../ShadowOptionsObject';
 import type SVGAttributes from './SVGAttributes';
 import type SVGPath from './SVGPath';
-import type SVGRendererLike from './SVGRendererLike';
+import type SVGRendererBase from './SVGRendererBase';
 import type SymbolOptions from './SymbolOptions';
 import type { SymbolKey } from './SymbolType';
 
@@ -145,7 +146,7 @@ let hasInternalReferenceBug: (boolean|undefined);
  *        some cases, but not when set explicitly through `.attr` and `.css`
  *        etc.
  */
-class SVGRenderer implements SVGRendererLike {
+class SVGRenderer implements SVGRendererBase {
 
     /**
      * The root `svg` node of the renderer.
@@ -174,7 +175,7 @@ class SVGRenderer implements SVGRendererLike {
     /**
      * Page url used for internal references.
      *
-     * @private
+     * @internal
      * @name Highcharts.SVGRenderer#url
      * @type {string}
      */
@@ -301,25 +302,95 @@ class SVGRenderer implements SVGRendererLike {
      *
      * */
 
+
+    /** @internal */
     public alignedObjects: Array<SVGElement>;
+
+    /** @internal */
     public allowHTML?: boolean;
+
+    /**
+     * The root `svg` node of the renderer.
+     *
+     * @name Highcharts.SVGRenderer#box
+     * @type {Highcharts.SVGDOMElement}
+     */
     public box: globalThis.SVGElement;
+
+    /**
+     * The wrapper for the root `svg` node of the renderer.
+     *
+     * @name Highcharts.SVGRenderer#boxWrapper
+     * @type {Highcharts.SVGElement}
+     */
     public boxWrapper: SVGElement;
+
+    /** @internal */
     public cache: Record<string, BBoxObject>;
+
+    /** @internal */
     public cacheKeys: Array<string>;
+
+    /** @internal */
     public chartIndex!: number;
+
+    /**
+     * A pointer to the `defs` node of the root SVG.
+     *
+     * @name Highcharts.SVGRenderer#defs
+     * @type {Highcharts.SVGElement}
+     */
     public defs: SVGElement;
+
+    /**
+     * Whether the rendered content is intended for export.
+     *
+     * @name Highcharts.SVGRenderer#forExport
+     * @type {boolean | undefined}
+     */
     public forExport?: boolean;
+
+    /** @internal */
     public globalAnimation!: (boolean|Partial<AnimationOptions>);
+
+    /** @internal */
     public gradients: Record<string, SVGElement>;
+
+    /** @internal */
     public height!: number;
+
+    /** @internal */
     public imgCount: number;
+
+    /** @internal */
     public rootFontSize: string|undefined;
+
+    /** @internal */
     public style!: CSSObject;
+
+    /** @internal */
     public styledMode?: boolean;
+
+    /** @internal */
     public unSubPixelFix?: Function;
+
+    /**
+     * Page url used for internal references.
+     *
+     * @internal
+     * @name Highcharts.SVGRenderer#url
+     * @type {string}
+     */
     public url: string;
+
+    /** @internal */
     public width!: number;
+
+    /** @internal */
+    public x = 0;
+
+    /** @internal */
+    public y = 0;
 
     /* *
      *
@@ -362,6 +433,8 @@ class SVGRenderer implements SVGRendererLike {
      * - Firefox <= 51 (January 2017)
      * - Safari/Mac <= 12.1 (2018 or 2019)
      * - Safari/iOS <= 13
+     *
+     * @internal
      *
      * @todo Remove this hack when time has passed. All the affected browsers
      * are evergreens, so it is increasingly unlikely that users are affected by
@@ -445,12 +518,10 @@ class SVGRenderer implements SVGRendererLike {
     /**
      * Get the global style setting for the renderer.
      *
-     * @private
+     * @internal
      * @function Highcharts.SVGRenderer#getStyle
-     *
      * @param {Highcharts.CSSObject} style
      * Style settings.
-     *
      * @return {Highcharts.CSSObject}
      * The style settings mixed with defaults.
      */
@@ -547,7 +618,7 @@ class SVGRenderer implements SVGRendererLike {
      * reference. Used internally from the {@link SVGElement#colorGradient}
      * function.
      *
-     * @private
+     * @internal
      * @function Highcharts.SVGRenderer#getRadialAttr
      */
     public getRadialAttr(
@@ -566,11 +637,10 @@ class SVGRenderer implements SVGRendererLike {
     /**
      * Create a drop shadow definition and return its id
      *
-     * @private
+     * @internal
      * @function Highcharts.SVGRenderer#shadowDefinition
-     *
-     * @param {boolean|Highcharts.ShadowOptionsObject} [shadowOptions] The
-     *        shadow options. If `true`, the default options are applied
+     * @param {boolean|Highcharts.ShadowOptionsObject} [shadowOptions]
+     * The shadow options. If `true`, the default options are applied.
      */
     public shadowDefinition(
         shadowOptions: Partial<ShadowOptionsObject>
@@ -609,9 +679,8 @@ class SVGRenderer implements SVGRendererLike {
      * Get shadow filter content.
      * NOTE! Overridden in es5 module for IE11 compatibility.
      *
-     * @private
+     * @internal
      * @function Highcharts.SVGRenderer#getShadowFilterContent
-     *
      * @param {ShadowOptionsObject} options
      * The shadow options.
      * @return {Array<AST.Node>}
@@ -638,9 +707,8 @@ class SVGRenderer implements SVGRendererLike {
      * text features like `width`, `text-overflow`, `white-space`, and also
      * attributes like `href` and `style`.
      *
-     * @private
+     * @internal
      * @function Highcharts.SVGRenderer#buildText
-     *
      * @param {Highcharts.SVGElement} wrapper
      * The parent SVGElement.
      */
@@ -662,20 +730,45 @@ class SVGRenderer implements SVGRendererLike {
      * The contrast color, either `#000000` or `#FFFFFF`.
      */
     public getContrast(color: ColorString): ColorString {
+
+        if (color === 'transparent') {
+            return '#000000';
+        }
         // #6216, #17273
-        const rgba = Color.parse(color).rgba
-            .map((b8): number => {
-                const c = b8 / 255;
-                return c <= 0.03928 ?
-                    c / 12.92 :
-                    Math.pow((c + 0.055) / 1.055, 2.4);
-            });
+        const rgba256 = Color.parse(color).rgba,
+            // For each rgb channel, compute the luminosity based on all
+            // channels. Subtract this from 0.5 and multiply by a huge number,
+            // so that all colors with luminosity < 0.5 result in a negative
+            // number, and all colors > 0.5 end up very high. This is then
+            // clamped into the range 0-1, to result in either black or white.
+            // The subtraction of 0.5, multiplication by 9e9, and clamping are
+            // workarounds for lack of support for the round() function. As of
+            // 2025, it is too fresh in Chrome, and doesn't work in Safari.
+            channelFunc =
+            ' clamp(0,calc(9e9*(0.5 - (0.2126*r + 0.7152*g + 0.0722*b))),1)';
 
-        // Relative luminance
-        const l = 0.2126 * rgba[0] + 0.7152 * rgba[1] + 0.0722 * rgba[2];
+        // The color is parsable by the Color class parsers
+        if (isNumber(rgba256[0]) || !Color.useColorMix) {
+            const rgba = rgba256.map((b8): number => {
+                    const c = b8 / 255;
+                    return c <= 0.04 ?
+                        c / 12.92 :
+                        Math.pow((c + 0.055) / 1.055, 2.4);
+                }),
+                // Relative luminance
+                l = 0.2126 * rgba[0] + 0.7152 * rgba[1] + 0.0722 * rgba[2];
 
-        // Use white or black based on which provides more contrast
-        return 1.05 / (l + 0.05) > (l + 0.05) / 0.05 ? '#FFFFFF' : '#000000';
+            // Use white or black based on which provides more contrast
+            return 1.05 / (l + 0.05) > (l + 0.05) / 0.05 ?
+                '#FFFFFF' :
+                '#000000';
+        }
+
+        // Not parsable, use CSS functions instead
+        return 'color(' +
+            'from ' + color + ' srgb' +
+            channelFunc + channelFunc + channelFunc +
+        ')';
     }
 
     /**
@@ -982,7 +1075,45 @@ class SVGRenderer implements SVGRendererLike {
         return wrapper.attr(attribs);
     }
 
+    /**
+     * Draw and return an arc. Overloaded function that takes arguments object.
+     *
+     * @param attribs
+     * Initial SVG attributes.
+     *
+     * @return
+     * The generated wrapper element.
+     */
     public arc(attribs?: SVGAttributes): SVGElement;
+    /**
+     * Draw and return an arc.
+     *
+     * @sample highcharts/members/renderer-arc/
+     *         Drawing an arc
+     *
+     * @param x
+     * Center X position.
+     *
+     * @param y
+     * Center Y position.
+     *
+     * @param r
+     * The outer radius' of the arc.
+     *
+     * @param innerR
+     * Inner radius like used in donut charts.
+     *
+     * @param start
+     * The starting angle of the arc in radians, where 0 is to the right and
+     * `-Math.PI/2` is up.
+     *
+     * @param end
+     * The ending angle of the arc in radians, where 0 is to the right and
+     * `-Math.PI/2` is up.
+     *
+     * @return
+     * The generated wrapper element.
+     */
     public arc(
         x?: number,
         y?: number,
@@ -1165,7 +1296,8 @@ class SVGRenderer implements SVGRendererLike {
      * @function Highcharts.SVGRenderer#roundedRect
      *
      * @param {Highcharts.SVGAttributes} attribs
-     *      Attributes
+     * Attributes.
+     *
      * @return {Highcharts.SVGElement}
      * The generated wrapper element.
      */
@@ -1227,11 +1359,11 @@ class SVGRenderer implements SVGRendererLike {
      * @function Highcharts.SVGRenderer#g
      *
      * @param {string} [name]
-     *        The group will be given a class name of `highcharts-{name}`. This
-     *        can be used for styling and scripting.
+     * The group will be given a class name of `highcharts-{name}`. This can be
+     * used for styling and scripting.
      *
      * @return {Highcharts.SVGElement}
-     *         The generated wrapper element.
+     * The generated wrapper element.
      */
     public g(name?: string): SVGElement {
         const elem = this.createElement('g');
@@ -1252,26 +1384,25 @@ class SVGRenderer implements SVGRendererLike {
      * @function Highcharts.SVGRenderer#image
      *
      * @param {string} href
-     *        The image source.
+     * The image source.
      *
      * @param {number} [x]
-     *        The X position.
+     * The X position.
      *
      * @param {number} [y]
-     *        The Y position.
+     * The Y position.
      *
      * @param {number} [width]
-     *        The image width. If omitted, it defaults to the image file width.
+     * The image width. If omitted, it defaults to the image file width.
      *
      * @param {number} [height]
-     *        The image height. If omitted it defaults to the image file
-     *        height.
+     * The image height. If omitted it defaults to the image file height.
      *
      * @param {Function} [onload]
-     *        Event handler for image load.
+     * Event handler for image load.
      *
      * @return {Highcharts.SVGElement}
-     *         The generated wrapper element.
+     * The generated wrapper element.
      */
     public image(
         href: string,
@@ -1563,7 +1694,38 @@ class SVGRenderer implements SVGRendererLike {
         return obj as any;
     }
 
+    /** @internal */
     public clipRect(attribs: SVGAttributes): SVGRenderer.ClipRectElement;
+    /**
+     * Define a clipping rectangle. The clipping rectangle is later applied
+     * to {@link SVGElement} objects through the {@link SVGElement#clip}
+     * function.
+     *
+     * This function is deprecated as of v11.2. Instead, use a regular shape
+     * (`rect`, `path` etc), and the `SVGElement.clipTo` function.
+     *
+     * @example
+     * let circle = renderer.circle(100, 100, 100)
+     *     .attr({ fill: 'red' })
+     *     .add();
+     * let clipRect = renderer.clipRect(100, 100, 100, 100);
+     *
+     * // Leave only the lower right quarter visible
+     * circle.clip(clipRect);
+     *
+     * @deprecated
+     *
+     * @param x
+     *
+     * @param y
+     *
+     * @param width
+     *
+     * @param height
+     *
+     * @return
+     * A clipping rectangle.
+     */
     public clipRect(
         x?: number,
         y?: number,
@@ -1600,7 +1762,7 @@ class SVGRenderer implements SVGRendererLike {
      * @param {number} [height]
      *
      * @return {Highcharts.ClipRectElement}
-     *         A clipping rectangle.
+     * A clipping rectangle.
      */
     public clipRect(
         x?: (number|SVGAttributes),
@@ -1699,18 +1861,18 @@ class SVGRenderer implements SVGRendererLike {
      *
      * @function Highcharts.SVGRenderer#fontMetrics
      *
-     * @param {Highcharts.SVGElement|Highcharts.SVGDOMElement|number} [element]
-     *        The element to inspect for a current font size. If a number is
-     *        given, it's used as a fall back for direct font size in pixels.
+     * @param {Highcharts.SVGElement|Highcharts.SVGDOMElement|number} ref
+     * The element to inspect for a current font size. If a number is given,
+     * it's used as a fall back for direct font size in pixels.
      *
      * @return {Highcharts.FontMetricsObject}
-     *         The font metrics.
+     * The font metrics.
      */
     public fontMetrics(
-        element: (DOMElementType|SVGElement)
+        ref: (DOMElementType|SVGElement|number)
     ): FontMetricsObject {
-        const f = pInt(
-            SVGElement.prototype.getStyle.call(element, 'font-size') || 0
+        const f = isNumber(ref) ? ref : pInt(
+            (SVGElement.prototype.getStyle.call(ref, 'font-size') || 0)
         );
 
         // Empirical values found by comparing font size and bounding box
@@ -1732,7 +1894,7 @@ class SVGRenderer implements SVGRendererLike {
     /**
      * Correct X and Y positioning of a label for rotation (#1764).
      *
-     * @private
+     * @internal
      * @function Highcharts.SVGRenderer#rotCorr
      */
     public rotCorr(
@@ -1758,7 +1920,7 @@ class SVGRenderer implements SVGRendererLike {
      * It is used in maps to parse the `path` option, and in SVGRenderer.dSetter
      * to support legacy paths from demos.
      *
-     * @private
+     * @internal
      * @function Highcharts.SVGRenderer#pathToSegments
      */
     public pathToSegments(
@@ -2013,41 +2175,41 @@ class SVGRenderer implements SVGRendererLike {
      * @function Highcharts.SVGRenderer#label
      *
      * @param {string} str
-     *        The initial text string or (subset) HTML to render.
+     * The initial text string or (subset) HTML to render.
      *
      * @param {number} x
-     *        The x position of the label's left side.
+     * The x position of the label's left side.
      *
      * @param {number} [y]
-     *        The y position of the label's top side or baseline, depending on
-     *        the `baseline` parameter.
+     * The y position of the label's top side or baseline, depending on the
+     * `baseline` parameter.
      *
      * @param {string} [shape='rect']
-     *        The shape of the label's border/background, if any. Defaults to
-     *        `rect`. Other possible values are `callout` or other shapes
-     *        defined in {@link Highcharts.SVGRenderer#symbols}.
+     * The shape of the label's border/background, if any. Defaults to `rect`.
+     * Other possible values are `callout` or other shapes defined in
+     * {@link Highcharts.SVGRenderer#symbols}.
      *
      * @param {number} [anchorX]
-     *        In case the `shape` has a pointer, like a flag, this is the
-     *        coordinates it should be pinned to.
+     * In case the `shape` has a pointer, like a flag, this is the coordinates
+     * it should be pinned to.
      *
      * @param {number} [anchorY]
-     *        In case the `shape` has a pointer, like a flag, this is the
-     *        coordinates it should be pinned to.
+     * In case the `shape` has a pointer, like a flag, this is the coordinates
+     * it should be pinned to.
      *
      * @param {boolean} [useHTML=false]
-     *        Whether to use HTML to render the label.
+     * Whether to use HTML to render the label.
      *
      * @param {boolean} [baseline=false]
-     *        Whether to position the label relative to the text baseline,
-     *        like {@link Highcharts.SVGRenderer#text|renderer.text}, or to the
-     *        upper border of the rectangle.
+     * Whether to position the label relative to the text baseline, like
+     * {@link Highcharts.SVGRenderer#text|renderer.text}, or to the upper border
+     * of the rectangle.
      *
      * @param {string} [className]
-     *        Class name for the group.
+     * Class name for the group.
      *
      * @return {Highcharts.SVGElement}
-     *         The generated label.
+     * The generated label.
      */
     public label(
         str: string,
@@ -2077,7 +2239,7 @@ class SVGRenderer implements SVGRendererLike {
     /**
      * Re-align all aligned elements.
      *
-     * @private
+     * @internal
      * @function Highcharts.SVGRenderer#alignElements
      */
     public alignElements(): void {
@@ -2091,12 +2253,50 @@ class SVGRenderer implements SVGRendererLike {
  *
  * */
 
-interface SVGRenderer extends SVGRendererLike {
+interface SVGRenderer extends SVGRendererBase {
+
+    /**
+     * A pointer to the renderer's associated Element class.
+     *
+     * @name Highcharts.SVGRenderer#Element
+     * @type {Highcharts.SVGElement}
+     */
     Element: typeof SVGElement;
+
     SVG_NS: string;
+
+    /**
+     * A collection of characters mapped to HTML entities. When `useHTML` on an
+     * element is true, these entities will be rendered correctly by HTML. In
+     * the SVG pseudo-HTML, they need to be unescaped back to simple characters,
+     * so for example `&lt;` will render as `<`.
+     *
+     * @example
+     * // Add support for unescaping quotes
+     * Highcharts.SVGRenderer.prototype.escapes['"'] = '&quot;';
+     *
+     * @name Highcharts.SVGRenderer#escapes
+     * @type {Highcharts.Dictionary<string>}
+     */
     escapes: Record<string, string>;
+
+    /**
+     * An extendable collection of functions for defining symbol paths.
+     *
+     * @name Highcharts.SVGRenderer#symbols
+     * @type {Highcharts.SymbolDictionary}
+     */
     symbols: typeof Symbols;
+
+    /**
+     * Dummy function for plugins, called every time the renderer is updated.
+     * Prior to Highcharts 5, this was used for the canvg renderer.
+     *
+     * @deprecated
+     * @function Highcharts.SVGRenderer#draw
+     */
     draw: Function;
+
 }
 extend(SVGRenderer.prototype, {
 

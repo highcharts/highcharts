@@ -2,13 +2,13 @@
  *
  *  Marker clusters module.
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
  *
  *  Author: Wojciech Chmiel
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -43,6 +43,7 @@ import type { PointClickEvent } from '../../Core/Series/PointOptions';
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import type ScatterPoint from '../../Series/Scatter/ScatterPoint';
 import type ScatterSeries from '../../Series/Scatter/ScatterSeries';
+import type ScatterSeriesOptions from '../../Series/Scatter/ScatterSeriesOptions';
 import type Series from '../../Core/Series/Series';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
@@ -117,8 +118,14 @@ const markerClusterAlgorithms: Record<string, MarkerClusterAlgorithmFunction> = 
             clusters: Array<KmeansClusterObject> = [],
             noise = [],
             group: Record<string, MarkerClusterSplitDataArray> = {},
-            pointMaxDistance = options.processedDistance ||
-                clusterDefaults.layoutAlgorithm.distance,
+            pointMaxDistance = Number(
+                options.processedDistance ??
+                relativeLength(
+                    options.distance ||
+                    clusterDefaults.layoutAlgorithm.distance,
+                    series.chart.plotWidth
+                )
+            ),
             iterations = options.iterations,
             // Max pixel difference beetwen new and old cluster position.
             maxClusterShift = 1;
@@ -130,7 +137,7 @@ const markerClusterAlgorithms: Record<string, MarkerClusterAlgorithmFunction> = 
             tempPos,
             pointClusterDistance: Array<Record<string, number>> = [];
 
-        options.processedGridSize = options.processedDistance;
+        options.processedGridSize = pointMaxDistance;
 
         // Use grid method to get groupedData object.
         const groupedData = series.markerClusterAlgorithms ?
@@ -265,16 +272,20 @@ const markerClusterAlgorithms: Record<string, MarkerClusterAlgorithmFunction> = 
         options: MarkerClusterLayoutAlgorithmOptions
     ): Record<string, MarkerClusterSplitDataArray> {
         const series = this,
-            pointMaxDistance = options.processedDistance ||
-                clusterDefaults.layoutAlgorithm.gridSize,
+            pointMaxDistance = Number(
+                options.processedDistance ??
+                relativeLength(
+                    options.distance ||
+                    clusterDefaults.layoutAlgorithm.gridSize,
+                    series.chart.plotWidth
+                )
+            ),
 
             extremes = series.getRealExtremes(),
             clusterMarkerOptions = (series.options.cluster || {}).marker;
 
         let distance,
-            group: (Record<string, MarkerClusterSplitDataArray>) = {},
-            offset,
-            radius;
+            group: (Record<string, MarkerClusterSplitDataArray>) = {};
 
         if (!series.markerClusterInfo || (
             series.initMaxX && series.initMaxX < extremes.maxX ||
@@ -316,15 +327,14 @@ const markerClusterAlgorithms: Record<string, MarkerClusterAlgorithmFunction> = 
                         Math.pow(dataPointPx.y - clusterPx.y, 2)
                     );
 
-                    if (cluster.clusterZone?.marker?.radius) {
-                        radius = cluster.clusterZone.marker.radius;
-                    } else if (clusterMarkerOptions?.radius) {
-                        radius = clusterMarkerOptions.radius;
-                    } else {
-                        radius = clusterDefaults.marker.radius;
-                    }
+                    const radius = (
+                        cluster.clusterZone?.marker?.radius ??
+                        clusterMarkerOptions?.radius ??
+                        clusterDefaults.marker.radius ??
+                        0
+                    );
 
-                    offset = pointMaxDistance - radius >= 0 ?
+                    const offset = pointMaxDistance - radius >= 0 ?
                         pointMaxDistance - radius : radius;
 
                     if (
@@ -368,7 +378,7 @@ let baseGeneratePoints: ScatterSeries['generatePoints'],
     /**
      * Points that ids are included in the oldPointsStateId array are hidden
      * before animation. Other ones are destroyed.
-     * @private
+     * @internal
      */
     oldPointsStateId: Array<string> = [],
     stateIdCounter = 0;
@@ -379,7 +389,10 @@ let baseGeneratePoints: ScatterSeries['generatePoints'],
  *
  * */
 
-/** @private */
+/**
+ * Compose marker cluster scatter hooks.
+ * @internal
+ */
 function compose(
     highchartsDefaultOptions: Options,
     ScatterSeriesClass: typeof ScatterSeries
@@ -422,7 +435,7 @@ function compose(
 
 /**
  * Util function.
- * @private
+ * @internal
  */
 function destroyOldPoints(
     oldState: Record<string, MarkerClusterPointsState>
@@ -434,7 +447,7 @@ function destroyOldPoints(
 
 /**
  * Util function.
- * @private
+ * @internal
  */
 function fadeInElement(
     elem: SVGElement,
@@ -446,7 +459,7 @@ function fadeInElement(
 
 /**
  * Util function.
- * @private
+ * @internal
  */
 function fadeInNewPointAndDestoryOld(
     newPointObj: MarkerClusterPointsState,
@@ -465,7 +478,7 @@ function fadeInNewPointAndDestoryOld(
 
 /**
  * Util function.
- * @private
+ * @internal
  */
 function fadeInStatePoint(
     stateObj: MarkerClusterPointsState,
@@ -489,7 +502,7 @@ function fadeInStatePoint(
 
 /**
  * Util function.
- * @private
+ * @internal
  */
 function getClusterPosition(
     points: Array<PositionObject>
@@ -513,7 +526,7 @@ function getClusterPosition(
 /**
  * Util function.Prepare array with sorted data objects to be compared in
  * getPointsState method.
- * @private
+ * @internal
  */
 function getDataState(
     clusteredData: MarkerClusterInfoObject,
@@ -543,7 +556,7 @@ function getDataState(
 
 /**
  * Util function. Generate unique stateId for a state element.
- * @private
+ * @internal
  */
 function getStateId(): string {
     return Math.random().toString(36).substring(2, 7) + '-' + stateIdCounter++;
@@ -551,7 +564,7 @@ function getStateId(): string {
 
 /**
  * Util function.
- * @private
+ * @internal
  */
 function hideStatePoint(
     stateObj: MarkerClusterPointsState,
@@ -569,7 +582,10 @@ function hideStatePoint(
     }
 }
 
-/** @private */
+/**
+ * Handle point drill-to-cluster click.
+ * @internal
+ */
 function onPointDrillToCluster(
     this: ScatterPoint,
     event: PointClickEvent
@@ -584,7 +600,8 @@ function onPointDrillToCluster(
             series = point.series,
             { xAxis, yAxis, chart } = series,
             { inverted, mapView, pointer } = chart,
-            drillToCluster = series.options.cluster?.drillToCluster;
+            drillToCluster = (series.options as ScatterSeriesOptions)
+                .cluster?.drillToCluster;
 
         if (drillToCluster && point.clusteredData) {
             const sortedDataX = point.clusteredData
@@ -649,7 +666,7 @@ function onPointDrillToCluster(
 
 /**
  * Util function.
- * @private
+ * @internal
  */
 function pixelsToValues(
     series: Series,
@@ -665,7 +682,10 @@ function pixelsToValues(
     };
 }
 
-/** @private */
+/**
+ * Animate cluster point transitions.
+ * @internal
+ */
 function seriesAnimateClusterPoint(
     this: ScatterSeries,
     clusterObj: ClusterAndNoiseObject
@@ -821,7 +841,7 @@ function seriesAnimateClusterPoint(
 
 /**
  * Destroy clustered data points.
- * @private
+ * @internal
  */
 function seriesDestroyClusteredData(
     this: ScatterSeries
@@ -836,7 +856,7 @@ function seriesDestroyClusteredData(
 
 /**
  * Override the generatePoints method by adding a reference to grouped data.
- * @private
+ * @internal
  */
 function seriesGeneratePoints(
     this: ScatterSeries
@@ -1076,7 +1096,10 @@ function seriesGeneratePoints(
     }
 }
 
-/** @private */
+/**
+ * Calculate distances from a point to all clusters.
+ * @internal
+ */
 function seriesGetClusterDistancesFromPoint(
     this: ScatterSeries,
     clusters: Array<KmeansClusterObject>,
@@ -1104,7 +1127,10 @@ function seriesGetClusterDistancesFromPoint(
     );
 }
 
-/** @private */
+/**
+ * Build clustered data from grouped data.
+ * @internal
+ */
 function seriesGetClusteredData(
     this: ScatterSeries,
     groupedData: Record<string, MarkerClusterSplitDataArray>,
@@ -1188,10 +1214,10 @@ function seriesGetClusteredData(
                         options.layoutAlgorithm
                     ),
                     defaultRadius: marker.radius || 3 + (marker.lineWidth || 0),
-                    clusterRadius: (zoneOptions && zoneOptions.radius) ?
-                        zoneOptions.radius :
-                        (options.marker || {}).radius ||
-                            clusterDefaults.marker.radius
+                    clusterRadius: zoneOptions?.radius ??
+                        options.marker?.radius ??
+                        clusterDefaults.marker.radius ??
+                        0
                 });
             } else {
                 clusterPos = {
@@ -1292,7 +1318,10 @@ function seriesGetClusteredData(
     };
 }
 
-/** @private */
+/**
+ * Resolve plot offsets for clustering calculations.
+ * @internal
+ */
 function seriesGetGridOffset(
     this: ScatterSeries
 ): Record<string, number> {
@@ -1322,7 +1351,7 @@ function seriesGetGridOffset(
 /**
  * Point state used when animation is enabled to compare and bind old points
  * with new ones.
- * @private
+ * @internal
  */
 function seriesGetPointsState(
     this: ScatterSeries,
@@ -1387,7 +1416,10 @@ function seriesGetPointsState(
     return state;
 }
 
-/** @private */
+/**
+ * Resolve the real extremes for the cluster calculations.
+ * @internal
+ */
 function seriesGetRealExtremes(
     this: ScatterSeries
 ): Record<string, number> {
@@ -1415,7 +1447,10 @@ function seriesGetRealExtremes(
     };
 }
 
-/** @private */
+/**
+ * Normalize grid size based on the current scale.
+ * @internal
+ */
 function seriesGetScaledGridSize(
     this: ScatterSeries,
     options: MarkerClusterLayoutAlgorithmOptions
@@ -1423,8 +1458,13 @@ function seriesGetScaledGridSize(
     const series = this,
         xAxis = series.xAxis,
         mapView = series.chart.mapView,
-        processedGridSize = options.processedGridSize ||
-            clusterDefaults.layoutAlgorithm.gridSize;
+        processedGridSize = Number(
+            options.processedGridSize ??
+            relativeLength(
+                options.gridSize || clusterDefaults.layoutAlgorithm.gridSize,
+                series.chart.plotWidth
+            )
+        );
 
     let search = true,
         k = 1,
@@ -1467,7 +1507,7 @@ function seriesGetScaledGridSize(
 
 /**
  * Hide clustered data points.
- * @private
+ * @internal
  */
 function seriesHideClusteredData(
     this: ScatterSeries
@@ -1499,7 +1539,7 @@ function seriesHideClusteredData(
 
 /**
  * Check if user algorithm result is valid groupedDataObject.
- * @private
+ * @internal
  */
 function seriesIsValidGroupedDataObject(
     groupedData: Record<string, MarkerClusterSplitDataArray>
@@ -1529,7 +1569,10 @@ function seriesIsValidGroupedDataObject(
     return result;
 }
 
-/** @private */
+/**
+ * Resolve a collision-free cluster position.
+ * @internal
+ */
 function seriesPreventClusterCollisions(
     this: ScatterSeries,
     props: MarkerClusterPreventCollisionObject
@@ -1630,7 +1673,7 @@ function seriesPreventClusterCollisions(
                         } else if (clusterMarkerOptions?.radius) {
                             radius = clusterMarkerOptions.radius;
                         } else {
-                            radius = clusterDefaults.marker.radius;
+                            radius = clusterDefaults.marker.radius ?? 0;
                         }
                     }
                 }
@@ -1680,7 +1723,7 @@ function seriesPreventClusterCollisions(
 
 /**
  * Util function.
- * @private
+ * @internal
  */
 function valuesToPixels(
     series: Series,
@@ -1702,8 +1745,10 @@ function valuesToPixels(
  *
  * */
 
+/** @internal */
 const MarkerClusterScatter = {
     compose
 };
 
+/** @internal */
 export default MarkerClusterScatter;

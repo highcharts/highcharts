@@ -1,12 +1,12 @@
 /* *
  *
- *  (c) 2010-2024 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *
  *  Author: Sebastian Domas
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -20,16 +20,13 @@
 
 import type BellcurvePoint from './BellcurvePoint';
 import type BellcurveSeriesOptions from './BellcurveSeriesOptions';
-import type {
-    PointOptions,
-    PointShortOptions
-} from '../../Core/Series/PointOptions';
 
 import BellcurveSeriesDefaults from './BellcurveSeriesDefaults.js';
 import DerivedComposition from '../DerivedComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const { areaspline: AreaSplineSeries } = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
+import AnimationOptions from '../../Core/Animation/AnimationOptions';
 const {
     correctFloat,
     isNumber,
@@ -135,6 +132,32 @@ class BellcurveSeries extends AreaSplineSeries {
      *
      * */
 
+    public setData(
+        data: number[]|undefined,
+        redraw: boolean = true,
+        animation?: (boolean|Partial<AnimationOptions>),
+        updatePoints?: boolean
+    ): void {
+        let alteredData;
+        if (typeof data !== 'undefined' && data.length > 0) {
+            data = data.filter(isNumber),
+            this.setMean(data);
+            this.setStandardDeviation(data);
+            alteredData = this.derivedData(
+                this.mean || 0,
+                this.standardDeviation || 0
+            );
+        }
+
+        super.setData.call(
+            this,
+            alteredData,
+            redraw,
+            animation,
+            updatePoints
+        );
+    }
+
     public derivedData(
         mean: number,
         standardDeviation: number
@@ -158,41 +181,35 @@ class BellcurveSeries extends AreaSplineSeries {
         return data;
     }
 
-    public setDerivedData(): Array<(PointOptions|PointShortOptions)> {
+    public setDerivedData(): void {
         const series = this;
 
-        if (series.baseSeries?.getColumn('y').length || 0 > 1) {
-            series.setMean();
-            series.setStandardDeviation();
+        if (series.baseSeries?.getColumn('y').length) {
             series.setData(
-                series.derivedData(
-                    series.mean || 0,
-                    series.standardDeviation || 0
-                ),
+                series.baseSeries?.getColumn('y'),
                 false,
                 void 0,
                 false
             );
         }
-        return (void 0) as any;
     }
 
-    public setMean(): void {
+    public setMean(data: number[]): void {
         const series = this;
 
         series.mean = correctFloat(
             BellcurveSeries.mean(
-                series.baseSeries?.getColumn('y') || []
+                data || []
             ) as any
         );
     }
 
-    public setStandardDeviation(): void {
+    public setStandardDeviation(data: number[]): void {
         const series = this;
 
         series.standardDeviation = correctFloat(
             BellcurveSeries.standardDeviation(
-                series.baseSeries?.getColumn('y') || [],
+                data || [],
                 series.mean as any
             ) as any
         );

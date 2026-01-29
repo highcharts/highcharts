@@ -1,4 +1,4 @@
-* {
+body {
     font-family:
         -apple-system,
         BlinkMacSystemFont,
@@ -10,10 +10,12 @@
         "Segoe UI Emoji",
         "Segoe UI Symbol",
         sans-serif;
+    background: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
 }
 
 .selectors-container {
-    background: #f2f2f2;
+    background: #aaa2;
     margin-bottom: 1rem;
     font-size: 0;
 }

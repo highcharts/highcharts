@@ -11,7 +11,6 @@ Highcharts.chart('container', {
         text: '(In October 2020)'
     },
     tooltip: {
-        useHTML: true,
         pointFormat: '<b>{point.name}:</b> {point.value} USD b$'
     },
     plotOptions: {

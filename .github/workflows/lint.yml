@@ -2,7 +2,7 @@ name: Linting
 
 on:
   pull_request:
-    branches: [ 'master' ]
+    branches: [ 'master', 'dash/**', 'grid/**' ]
     paths:
       - 'ts/**'
       - 'samples/**'
@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [lts/iron]
+        node-version: [lts/*]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -33,7 +33,7 @@ jobs:
           cache: 'npm'
 
       - name: Install Dependencies
-        run: npm i
+        run: npm ci
 
       - name: Lint (ts)
         run: npx gulp lint
@@ -47,7 +47,7 @@ jobs:
     needs: lint_hc
     strategy:
       matrix:
-        node-version: [lts/iron]
+        node-version: [lts/*]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -59,7 +59,7 @@ jobs:
           cache: 'npm'
 
       - name: Install Dependencies
-        run: npm i
+        run: npm ci
 
       - name: Build definitions
         run: npx gulp jsdoc-dts
@@ -72,7 +72,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [lts/iron]
+        node-version: [lts/*]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -84,10 +84,10 @@ jobs:
           cache: 'npm'
 
       - name: Install Dependencies
-        run: npm i
+        run: npm ci
 
-      - name: Lint samples JS
-        run: npx eslint -c samples/.eslintrc "samples/**/*.js"
+      - name: Lint samples TS and JS
+        run: npx eslint -c samples/.eslintrc "samples/**/*.{js,ts}"
 
       - name: Lint samples CSS
         run: npx stylelint --config .stylelintrc.json "samples/**/*.css"

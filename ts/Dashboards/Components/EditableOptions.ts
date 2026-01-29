@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sebastian Bochan
@@ -18,7 +18,7 @@ import type Component from './Component.js';
 
 class EditableOptions {
 
-    public static defaultBindings: EditableOptions.OptionsBindings = {
+    public static defaultBindings: OptionsBindings = {
         keyMap: {
             color: 'colorPicker',
             title: 'text',
@@ -41,18 +41,18 @@ class EditableOptions {
     };
 
     public component: Component;
-    public bindings: EditableOptions.OptionsBindings;
+    public bindings: OptionsBindings;
 
     constructor(
         component: Component,
-        bindings: EditableOptions.OptionsBindings =
+        bindings: OptionsBindings =
         EditableOptions.defaultBindings
     ) {
         this.component = component;
         this.bindings = bindings;
     }
 
-    public getOptions(): (Array<EditableOptions.Options>) {
+    public getOptions(): (Array<Options>) {
         const options = this.component.options.editableOptions;
 
         if (!options) {
@@ -63,7 +63,7 @@ class EditableOptions {
             const option = options[i];
             if (
                 option.propertyPath?.some(
-                    (path): boolean => path === 'connector'
+                    (path: string): boolean => path === 'connector'
                 )
             ) {
                 const board = this.component.board;
@@ -78,96 +78,99 @@ class EditableOptions {
         return options;
     }
 }
-namespace EditableOptions {
 
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+/**
+ * Configuration for a single option in editable options. If type is
+ * `nested` the options are rendered in the accordion menu, with rest of the
+ * options defined in the detailed options.
+ */
+export interface Options {
     /**
-     * Configuration for a single option in editable options. If type is
-     * `nested` the options are rendered in the accordion menu, with rest of the
-     * options defined in the detailed options.
+     * Name of the option which will be displayed on the label.
      */
-    export interface Options {
-        /**
-         * Name of the option which will be displayed on the label.
-         */
-        name: string;
-        /**
-         * Type of the editable element.
-         */
-        type: ElementType;
-        /**
-         * Whether render it as a standalone element without a group.
-         */
-        isStandalone?: boolean;
-        /**
-         * Detailed options that should be included in the accordion menu.
-         * Available for `nested` type.
-         */
-        nestedOptions?: Array<NestedOptions>
-        /**
-         * Relative path to the option, that should be changed in the component.
-         * eg: `['chart', 'title', 'text']`
-         */
-        propertyPath?: Array<string>
-        /**
-         * Items that should be included in the select element.
-         */
-        selectOptions?: Array<SelectOptions>;
-    }
-
+    name: string;
     /**
-     * Options of the single option in the select dropdown.
+     * Type of the editable element.
      */
-    export interface SelectOptions {
-        /**
-         * Name of the item that should be displayed.
-         */
-        name: string;
-        /**
-         * URL of the icon that should be displayed. It is concatenated with
-         * `iconURLPrefix` option.
-         */
-        iconURL?: string;
-    }
-
+    type: ElementType;
     /**
-     * Type of the input to be displayed.
+     * Whether render it as a standalone element without a group.
      */
-    export type ElementType =
-        | 'input'
-        | 'textarea'
-        | 'toggle'
-        | 'select'
-        | 'nested';
-
+    isStandalone?: boolean;
     /**
-     * Configuration for a single option in detailed options.
+     * Detailed options that should be included in the accordion menu.
+     * Available for `nested` type.
      */
-    export interface NestedOptions {
-        /**
-         * Name of the option that should be displayed.
-         */
-        name: string;
-        /**
-         * Whether the option should have a toggle to be enabled or disabled.
-         */
-        showToggle?: boolean;
-        /**
-         * Relative path to the option, that should be changed in the component.
-         */
-        propertyPath?: Array<string>;
-        /**
-         * Options that should be included in the folded menu.
-         */
-        options: Array<Options>;
-    }
+    nestedOptions?: Array<NestedOptions>;
+    /**
+     * Relative path to the option, that should be changed in the component.
+     * eg: `['chart', 'title', 'text']`
+     */
+    propertyPath?: Array<string>;
+    /**
+     * Items that should be included in the select element.
+     */
+    selectOptions?: Array<SelectOptions>;
+}
+
+/**
+ * Options of the single option in the select dropdown.
+ */
+export interface SelectOptions {
+    /**
+     * Name of the item that should be displayed.
+     */
+    name: string;
+    /**
+     * URL of the icon that should be displayed. It is concatenated with
+     * `iconURLPrefix` option.
+     */
+    iconURL?: string;
+}
+
+/**
+ * Type of the input to be displayed.
+ */
+export type ElementType =
+    | 'input'
+    | 'textarea'
+    | 'toggle'
+    | 'select'
+    | 'nested';
+
+/**
+ * Configuration for a single option in detailed options.
+ */
+export interface NestedOptions {
+    /**
+     * Name of the option that should be displayed.
+     */
+    name: string;
+    /**
+     * Whether the option should have a toggle to be enabled or disabled.
+     */
+    showToggle?: boolean;
+    /**
+     * Relative path to the option, that should be changed in the component.
+     */
+    propertyPath?: Array<string>;
+    /**
+     * Options that should be included in the folded menu.
+     */
+    options: Array<Options>;
+}
 
 
-    export interface OptionsBindings {
-        keyMap: Record<string, string>;
-        typeMap: Record<string, string>;
-        skipRedraw: string[]; // Keys of options that should not trigger redraw
-    }
-
+export interface OptionsBindings {
+    keyMap: Record<string, string>;
+    typeMap: Record<string, string>;
+    skipRedraw: string[]; // Keys of options that should not trigger redraw
 }
 
 export default EditableOptions;

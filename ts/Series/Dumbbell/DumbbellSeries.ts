@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2024 Sebastian Bochan, Rafal Sebestjanski
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Sebastian Bochan, Rafal Sebestjanski
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -322,7 +323,10 @@ class DumbbellSeries extends AreaRangeSeries {
                 (upperGraphic.element as any).point = point;
                 upperGraphic.addClass('highcharts-lollipop-high');
             }
-            (point.connector?.element as any).point = point;
+
+            if (point.connector) {
+                (point.connector.element as any).point = point;
+            }
 
             if (lowerGraphic) {
                 zoneColor = point.zone && point.zone.color;

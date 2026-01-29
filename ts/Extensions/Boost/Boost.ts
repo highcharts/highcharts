@@ -1,12 +1,11 @@
 /* *
  *
- *  (c) 2019-2024 Highsoft AS
+ *  (c) 2019-2026 Highsoft AS
  *
  *  Boost module: stripped-down renderer for higher performance
  *
  *  License: highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -44,6 +43,28 @@ const {
 
 /* *
  *
+ *  Declarations
+ *
+ * */
+
+declare module '../../Core/GlobalsBase.d.ts' {
+    interface GlobalsBase {
+        /**
+         * Returns true if the current browser supports WebGL.
+         *
+         * @requires modules/boost
+         *
+         * @function Highcharts.hasWebGLSupport
+         *
+         * @return {boolean}
+         * `true` if the browser supports WebGL.
+         */
+        hasWebGLSupport?: typeof hasWebGLSupport;
+    }
+}
+
+/* *
+ *
  *  Constants
  *
  * */
@@ -61,9 +82,7 @@ const contexts = [
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 function compose(
     ChartClass: typeof Chart,
     AxisClass: typeof Axis,
@@ -165,7 +184,7 @@ function hasWebGLSupport(): boolean {
                 if (typeof gl !== 'undefined' && gl !== null) {
                     return true;
                 }
-            } catch (e) {
+            } catch {
                 // Silent error
             }
         }
@@ -180,11 +199,13 @@ function hasWebGLSupport(): boolean {
  *
  * */
 
+/** @internal */
 const Boost = {
     compose,
     hasWebGLSupport
 };
 
+/** @internal */
 export default Boost;
 
 /* *
@@ -219,6 +240,10 @@ export default Boost;
  *         Line chart with hundreds of series
  * @sample highcharts/boost/scatter
  *         Scatter chart
+ * @sample highcharts/boost/scatter-pointcolor
+ *         Scatter chart with colored points
+ * @sample highcharts/boost/scatter-colorbypoint
+ *         Scatter chart with colorByPoint
  * @sample highcharts/boost/area
  *         Area chart
  * @sample highcharts/boost/arearange

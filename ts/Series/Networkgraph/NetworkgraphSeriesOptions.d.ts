@@ -2,11 +2,12 @@
  *
  *  Networkgraph series
  *
- *  (c) 2010-2024 Paweł Fus
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Paweł Fus
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -16,7 +17,6 @@
  *
  * */
 
-import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import type ColorType from '../../Core/Color/ColorType';
 import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
 import type {
@@ -50,15 +50,16 @@ import type {
  * */
 
 declare module '../../Core/Series/SeriesOptions' {
-    interface SeriesStateInactiveOptions
-    {
-        animation?: (boolean|Partial<AnimationOptions>);
+    interface SeriesStateInactiveOptions {
         linkOpacity?: number;
     }
 }
 
 export interface NetworkgraphDataLabelsFormatterCallbackFunction {
-    (this: Point|NetworkgraphPoint): (number|string|null|undefined);
+    (
+        this: Point|NetworkgraphPoint,
+        options: DataLabelOptions
+    ): (number|string|null|undefined);
 }
 
 export interface NetworkgraphDataLabelsOptions
@@ -250,7 +251,7 @@ export interface NetworkgraphSeriesOptions
      */
     nodes?: Array<NetworkgraphPointOptions>;
 
-    states?: SeriesStatesOptions<NetworkgraphSeries>;
+    states?: SeriesStatesOptions<NetworkgraphSeriesOptions>;
 
     /**
      * The opposite state of a hover for a single point link. Applied

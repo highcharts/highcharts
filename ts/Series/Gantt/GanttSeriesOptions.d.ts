@@ -1,12 +1,12 @@
 /* *
  *
- *  (c) 2016-2024 Highsoft AS
+ *  (c) 2016-2026 Highsoft AS
  *
  *  Author: Lars A. V. Cabrera
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -24,13 +24,14 @@ import type {
 } from '../../Gantt/ConnectorsOptions';
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type GanttPointOptions from './GanttPointOptions';
-import type GanttSeries from './GanttSeries';
 import type {
     SeriesEventsOptions,
     SeriesStatesOptions
 } from '../../Core/Series/SeriesOptions';
-import type TooltipOptions from '../../Core/TooltipOptions';
-import type XRangeSeriesOptions from '../XRange/XRangeSeriesOptions';
+import type {
+    XRangeSeriesOptions,
+    XRangeSeriesTooltipOptions
+} from '../XRange/XRangeSeriesOptions';
 
 /* *
  *
@@ -117,10 +118,21 @@ export interface GanttSeriesOptions extends XRangeSeriesOptions {
 
     grouping?: boolean;
 
-    states?: SeriesStatesOptions<GanttSeries>;
+    states?: SeriesStatesOptions<GanttSeriesOptions>;
 
-    tooltip?: Partial<TooltipOptions>;
+    tooltip?: GanttSeriesTooltipOptions;
+}
 
+export interface GanttSeriesTooltipOptions extends XRangeSeriesTooltipOptions {
+    /**
+     * @default '<span style="font-size: 0.8em">{series.name}</span><br/>'
+     */
+    headerFormat?: XRangeSeriesTooltipOptions['headerFormat'];
+
+    /**
+     * @default function (this): string { [internal code] }
+     */
+    pointFormatter?: XRangeSeriesTooltipOptions['pointFormatter'];
 }
 
 /* *

@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sebastian Bochan
@@ -17,11 +17,9 @@
 'use strict';
 
 import type CSSJSONObject from '../CSSJSONObject';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import type JSON from '../JSON';
+import type { DeepPartial } from '../../Shared/Types';
 import type Layout from './Layout';
-import type Serializable from '../Serializable';
-
+import type { Options as CellOptions } from './Cell';
 
 import Globals from '../Globals.js';
 import Cell from './Cell.js';
@@ -48,36 +46,6 @@ class Row extends GUIElement {
     *
     * */
 
-    /** @internal */
-    public static fromJSON(
-        json: Row.JSON,
-        layout?: Layout
-    ): (Row|undefined) {
-        if (layout) {
-            const options = json.options;
-
-            let id = options.containerId || '';
-
-            if (id && layout.copyId) {
-                id = id + '_' + layout.copyId;
-            }
-
-            return new Row(
-                layout,
-                {
-                    id: id,
-                    parentContainerId:
-                        (layout.container && layout.container.id) ||
-                        options.parentContainerId,
-                    cellsJSON: options.cells,
-                    style: options.style
-                }
-            );
-        }
-
-        return void 0;
-    }
-
     public static setContainerHeight(
         rowContainer: HTMLDOMElement,
         height?: number | string
@@ -98,7 +66,7 @@ class Row extends GUIElement {
      * @param {Layout} layout
      * Reference to the layout instance.
      *
-     * @param {Row.Options} options
+     * @param {Options} options
      * Options for the row.
      *
      * @param {HTMLElement} rowElement
@@ -106,7 +74,7 @@ class Row extends GUIElement {
      */
     public constructor(
         layout: Layout,
-        options: Row.Options,
+        options: Options,
         rowElement?: HTMLElement
     ) {
         super();
@@ -142,11 +110,6 @@ class Row extends GUIElement {
         if (this.options.cells) {
             this.setCells();
         }
-
-        // Init rows from JSON.
-        if (options.cellsJSON && !this.cells.length) {
-            this.setCellsFromJSON(options.cellsJSON);
-        }
     }
 
     /* *
@@ -168,7 +131,7 @@ class Row extends GUIElement {
     /**
      * The row options.
      */
-    public options: Row.Options;
+    public options: Options;
 
     /**
      * The type of GUI element.
@@ -211,57 +174,10 @@ class Row extends GUIElement {
         }
     }
 
-    /** @internal */
-    public setCellsFromJSON(
-        json: Array<Cell.JSON>
-    ): void {
-        const row = this,
-            componentsToMount = [];
-
-        let cell,
-            cellJSON;
-
-        // Set cells.
-        for (let i = 0, iEnd = json.length; i < iEnd; ++i) {
-            cellJSON = json[i];
-            cell = Cell.fromJSON({
-                $class: cellJSON.$class,
-                options: {
-                    containerId: cellJSON.options.containerId,
-                    parentContainerId: cellJSON.options.parentContainerId,
-                    width: cellJSON.options.width,
-                    height: cellJSON.options.height,
-                    style: cellJSON.options.style,
-                    layoutJSON: cellJSON.options.layoutJSON,
-                    mountedComponentJSON: void 0 // Will be mounted later.
-                }
-            }, row);
-
-            if (cell) {
-                row.cells.push(cell);
-
-                if (cellJSON.options.mountedComponentJSON) {
-                    componentsToMount.push({
-                        cell: cell,
-                        // eslint-disable-next-line
-                        mountedComponentJSON: cellJSON.options.mountedComponentJSON
-                    });
-                }
-            }
-        }
-
-        // Mount components.
-        for (let i = 0, iEnd = componentsToMount.length; i < iEnd; ++i) {
-            componentsToMount[i].cell.mountComponentFromJSON(
-                componentsToMount[i].mountedComponentJSON
-            );
-        }
-    }
-
     /**
      * Add a new Cell instance to the row cells array.
      *
-     * @param {Cell.Options} [options]
+     * @param {CellOptions} [options]
      * Options for the row cell.
      *
      * @param {HTMLElement} [cellElement]
@@ -271,7 +187,7 @@ class Row extends GUIElement {
      * Returns the Cell object.
      */
     public addCell(
-        options: Cell.Options,
+        options: CellOptions,
         cellElement?: HTMLElement,
         index?: number
     ): Cell {
@@ -299,14 +215,18 @@ class Row extends GUIElement {
     public destroy(): void {
         const row = this;
         const { layout } = row;
-        // Copy to avoid problem with index when shifting array of cells during
-        // the destroy.
-        const rowCells = [...row.cells];
+        const board = row.layout.board;
+        const editMode = board.editMode;
 
         // Destroy cells.
-        for (let i = 0, iEnd = rowCells?.length; i < iEnd; ++i) {
-            if (rowCells[i]) {
-                rowCells[i].destroy();
+        if (row.cells) {
+            // Copy to avoid problem with index when shifting array of cells
+            // during the destroy.
+            const rowCells = [...row.cells];
+            for (let i = 0, iEnd = rowCells.length; i < iEnd; ++i) {
+                if (rowCells[i]) {
+                    rowCells[i].destroy();
+                }
             }
         }
 
@@ -319,34 +239,11 @@ class Row extends GUIElement {
                 layout.destroy();
             }
         }
-    }
 
-    /**
-     * Converts the class instance to a class JSON.
-     * @internal
-     *
-     * @return {Row.JSON}
-     * Class JSON of this Row instance.
-     */
-    public toJSON(): Row.JSON {
-        const row = this,
-            layoutContainerId = (row.layout.container || {}).id || '',
-            cells = [];
-
-        // Get cells JSON.
-        for (let i = 0, iEnd = row.cells.length; i < iEnd; ++i) {
-            cells.push(row.cells[i].toJSON());
-        }
-
-        return {
-            $class: 'Dashboards.Layout.Row',
-            options: {
-                containerId: (row.container as HTMLElement).id,
-                parentContainerId: layoutContainerId,
-                cells: cells,
-                style: row.options.style
-            }
-        };
+        fireEvent(editMode, 'rowDestroyed', {
+            target: row,
+            board: board
+        });
     }
 
     /**
@@ -357,7 +254,7 @@ class Row extends GUIElement {
      * @internal
      *
      */
-    public getOptions(): Globals.DeepPartial<Row.Options> {
+    public getOptions(): DeepPartial<Options> {
         const row = this,
             cells = [];
 
@@ -471,18 +368,22 @@ class Row extends GUIElement {
         this.changeVisibility(true, 'flex');
     }
 
-    public setHighlight(): void {
-        const container = this.container;
-
-        container.classList.toggle(EditGlobals.classNames.rowContextHighlight);
+    public setHighlight(remove?: boolean): void {
+        const classList = this.container.classList;
+        const highlightClass = EditGlobals.classNames.rowContextHighlight;
+        if (remove === true) {
+            classList.remove(highlightClass);
+        } else {
+            classList.toggle(highlightClass, !remove);
+        }
     }
 
     // Row can have cells below each others.
     // This method returns cells split into levels.
-    public getRowLevels(): Array<Row.RowLevel> {
+    public getRowLevels(): Array<RowLevel> {
         const row = this,
-            rowLevels: Record<string, Row.RowLevel> = {},
-            rowLevelsArray: Array<Row.RowLevel> = [];
+            rowLevels: Record<string, RowLevel> = {},
+            rowLevelsArray: Array<RowLevel> = [];
 
         let cell, cellOffsets;
 
@@ -519,7 +420,7 @@ class Row extends GUIElement {
     // on a specific Y position.
     public getRowLevelInfo(
         posY: number
-    ): Row.RowLevelInfo|undefined {
+    ): RowLevelInfo|undefined {
         const rowLevels = this.getRowLevels();
 
         let rowLevelInfo;
@@ -538,95 +439,72 @@ class Row extends GUIElement {
     }
 }
 
-namespace Row {
+/**
+ * Options for the row.
+ **/
+export interface Options {
     /**
-     * @internal
+     * A unique id for the row.
      **/
-    export interface JSON extends Serializable.JSON<'Dashboards.Layout.Row'> {
-        options: OptionsJSON;
-    }
-
+    id?: string;
     /**
-     * Options for the row.
+     * Options controlling the edit mode for the cell.
      **/
-    export interface Options {
+    editMode?: {
         /**
-         * A unique id for the row.
+         * Individual options for the toolbar items.
          **/
-        id?: string;
-        /**
-         * Options controlling the edit mode for the cell.
-         **/
-        editMode?: {
+        toolbarItems?: {
             /**
-             * Individual options for the toolbar items.
-             **/
-            toolbarItems?: {
-                /**
-                 * Options for the `destroy` toolbar item.
-                 */
-                destroy: {
-                    enabled?: boolean;
-                };
-                /**
-                 * Options for the `settings` toolbar item.
-                 */
-                drag: {
-                    enabled?: boolean;
-                };
-                /**
-                 * Options for the `settings` toolbar item.
-                 */
-                settings: {
-                    enabled?: boolean;
-                };
-            }
+             * Options for the `destroy` toolbar item.
+             */
+            destroy: {
+                enabled?: boolean;
+            };
+            /**
+             * Options for the `settings` toolbar item.
+             */
+            drag: {
+                enabled?: boolean;
+            };
+            /**
+             * Options for the `settings` toolbar item.
+             */
+            settings: {
+                enabled?: boolean;
+            };
         }
-        /**
-         * The id of the container element.
-         **/
-        parentContainerId?: string;
-        /**
-         * An array of cells to be added to the row.
-         **/
-        cells?: Array<Cell.Options>;
-        /**
-         * CSS styles for the row.
-         **/
-        style?: CSSJSONObject;
-        /**
-         * @internal
-         **/
-        cellsJSON?: Array<Cell.JSON>;
     }
-
     /**
-     * @internal
+     * The id of the container element.
      **/
-    export interface OptionsJSON extends JSON.Object {
-        containerId: string;
-        parentContainerId: string;
-        cells: Array<Cell.JSON>;
-        style?: CSSJSONObject;
-    }
-
+    parentContainerId?: string;
     /**
-     * @internal
+     * An array of cells to be added to the row.
      **/
-    export interface RowLevel {
-        top: number;
-        bottom: number;
-        cells: Array<Cell>;
-    }
-
+    cells?: Array<CellOptions>;
     /**
-     * @internal
+     * CSS styles for the row.
      **/
-    export interface RowLevelInfo {
-        index: number; // Level position in RowLevels Array
-        rowLevels: Array<RowLevel>;
-        rowLevel: RowLevel;
-    }
+    style?: CSSJSONObject;
+}
+
+/**
+ * @internal
+ **/
+export interface RowLevel {
+    top: number;
+    bottom: number;
+    cells: Array<Cell>;
+}
+
+/**
+ * @internal
+ **/
+export interface RowLevelInfo {
+    index: number; // Level position in RowLevels Array
+    rowLevels: Array<RowLevel>;
+    rowLevel: RowLevel;
 }
 
 export default Row;

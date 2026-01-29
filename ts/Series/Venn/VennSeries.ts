@@ -1,17 +1,17 @@
 /* *
  *
- *  Experimental Highcharts module which enables visualization of a Venn
+ *  Highcharts module which enables visualization of a Venn
  *  diagram.
  *
- *  (c) 2016-2024 Highsoft AS
+ *  (c) 2016-2026 Highsoft AS
  *  Authors: Jon Arild Nygard
  *
  *  Layout algorithm by Ben Frederickson:
  *  https://www.benfrederickson.com/better-venn-diagrams/
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -649,8 +649,9 @@ class VennSeries extends ScatterSeries {
                             width: dataLabelWidth
                         }
                     } as DataLabelOptions,
-                    isObject(dlOptions, true) ? dlOptions : void 0
-                );
+                    isObject(dlOptions, true) ? dlOptions : void 0,
+                    { zIndex: void 0 }
+                ) as DataLabelOptions & { zIndex: undefined };
             }
 
             // Set name for usage in tooltip and in data label.
@@ -689,7 +690,7 @@ addEvent(VennSeries, 'afterSetOptions', function (
     e: { options: VennSeriesOptions }
 ): void {
     const options = e.options,
-        states: SeriesStatesOptions<VennSeries> = options.states || {};
+        states: SeriesStatesOptions<VennSeriesOptions> = options.states || {};
 
     if (this.is('venn')) {
         // Explicitly disable all halo options.

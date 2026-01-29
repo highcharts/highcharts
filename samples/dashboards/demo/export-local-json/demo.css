@@ -1,0 +1,102 @@
+@import url("https://code.highcharts.com/css/highcharts.css");
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
+@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+
+body {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
+    background: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
+}
+
+#csv {
+    display: none;
+}
+
+#output {
+    width: 600px;
+    height: 300px;
+    border-color: var(--highcharts-neutral-color-5);
+    background: var(--highcharts-neutral-color-3);
+}
+
+.highcharts-description {
+    margin-top: 1em;
+}
+
+.buttons-wrapper {
+    padding: 12px;
+    background-color: var(--highcharts-background-color);
+    box-shadow: none;
+    margin: 1em;
+}
+
+.ls-status {
+    font-weight: bold;
+}
+
+#ls-status-content {
+    color: var(--highcharts-color-7);
+}
+
+.button-row {
+    margin: 10px -10px;
+}
+
+.highcharts-demo-button {
+    background: var(--highcharts-neutral-color-5);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 0.8rem;
+    padding: 0.5rem 1.5rem;
+    margin: 0.5rem -5px 0.5rem 10px;
+    transition: background 250ms;
+}
+
+.highcharts-demo-button:hover {
+    background: var(--highcharts-neutral-color-10);
+}
+
+#dashboard-col-1 .highcharts-color-0 {
+    fill: var(--highcharts-color-2);
+    stroke: var(--highcharts-color-2);
+}
+
+.highcharts-plot-line {
+    stroke-dasharray: 2px;
+    stroke: var(--highcharts-color-3);
+}
+
+.highcharts-plot-line-label {
+    fill: var(--highcharts-color-3);
+}
+
+.highcharts-dashboards-edit-menu .highcharts-dashboards-edit-toggle-container {
+    padding: 0;
+}
+
+.highcharts-dashboards-edit-menu .highcharts-dashboards-edit-label-text {
+    margin-right: 10px;
+}
+
+.highcharts-dashboards-edit-menu .highcharts-dashboards-edit-button {
+    border: 1px solid var(--highcharts-neutral-color-20);
+    padding: 5px;
+}
+
+@media (prefers-color-scheme: dark) {
+    .highcharts-demo-button {
+        background-color: var(--highcharts-neutral-color-80);
+    }
+}

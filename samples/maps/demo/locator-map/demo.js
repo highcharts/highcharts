@@ -312,10 +312,10 @@ Highcharts.addEvent(Highcharts.Chart, 'afterInit', async function () {
                 },
                 enableMouseTracking: false,
                 animationLimit: 500,
-                borderColor: '#fff',
+                borderColor: 'var(--highcharts-background-color, #fff)',
                 borderWidth: 0.25,
                 clip: false,
-                nullColor: '#e0e0e0',
+                nullColor: 'var(--highcharts-neutral-color-10, #e0e0e0)',
                 states: {
                     inactive: {
                         enabled: false

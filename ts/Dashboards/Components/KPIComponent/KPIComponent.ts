@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sebastian Bochan
@@ -73,47 +73,6 @@ const {
  *
  */
 class KPIComponent extends Component {
-
-    /* *
-     *
-     *  Static functions
-     *
-     * */
-
-    /**
-     * Creates component from JSON.
-     *
-     * @param json
-     * Set of component options, used for creating the KPI component.
-     *
-     * @param cell
-     * Instance of cell, where component is attached.
-     *
-     * @returns
-     * KPI component based on config from JSON.
-     *
-     * @internal
-     */
-    public static fromJSON(
-        json: KPIComponent.ClassJSON,
-        cell: Cell
-    ): KPIComponent {
-        const options = json.options;
-        const chartOptions =
-            options.chartOptions && JSON.parse(options.chartOptions);
-        const subtitle = JSON.parse(options.subtitle || '{}');
-        const title = options.title && JSON.parse(options.title);
-
-        return new KPIComponent(
-            cell,
-            merge(options as any, {
-                chartOptions,
-                title,
-                subtitle
-            })
-        );
-    }
-
     /* *
      *
      *  Static properties
@@ -439,9 +398,8 @@ class KPIComponent extends Component {
      */
     private getFormulaValue(): string|number|undefined {
         const formula = this.options.formula;
-        const connector = this.getFirstConnector();
-        const table = connector?.table.modified;
-        const column = table?.getColumn(this.options.columnName);
+        const table = this.getDataTable();
+        const column = table?.getColumn(this.options.columnId);
 
         if (!column || !formula) {
             return;
@@ -485,18 +443,16 @@ class KPIComponent extends Component {
             return this.options.value;
         }
 
-        const connector = this.getFirstConnector();
-
-        if (connector && this.options.columnName) {
+        const dataTable = this.getDataTable()?.getModified();
+        if (dataTable && this.options.columnId) {
             if (defined(this.options.formula)) {
                 return this.getFormulaValue();
             }
 
-            const table = connector.table.modified,
-                column = table.getColumn(this.options.columnName),
+            const column = dataTable.getColumn(this.options.columnId),
                 length = column?.length || 0;
 
-            return table.getCellAsString(this.options.columnName, length - 1);
+            return String(dataTable.getCell(this.options.columnId, length - 1));
         }
     }
 
@@ -709,7 +665,6 @@ class KPIComponent extends Component {
         const connectorsIds =
             sidebar.editMode.board.dataPool.getConnectorIds();
         let options: Partial<Options> = {
-            cell: '',
             type: 'KPI'
         };
 
@@ -726,40 +681,9 @@ class KPIComponent extends Component {
     }
 
     /**
-     * Converts the class instance to a class JSON.
-     *
-     * @returns
-     * Class JSON of this Component instance.
-     *
-     * @internal
-     */
-    public toJSON(): KPIComponent.ClassJSON {
-        const base = super.toJSON();
-        const json: KPIComponent.ClassJSON = {
-            ...base,
-            type: 'KPI',
-            options: {
-                ...base.options,
-                type: 'KPI',
-                value: this.options.value,
-                subtitle: JSON.stringify(this.options.subtitle),
-                title: JSON.stringify(this.options.title),
-                threshold: this.options.threshold,
-                thresholdColors: this.options.thresholdColors,
-                chartOptions: JSON.stringify(this.options.chartOptions),
-                valueFormat: this.options.valueFormat
-            }
-        };
-
-        this.emit({ type: 'toJSON', json: base });
-
-        return json;
-    }
-
-    /**
      * Get the KPI component's options.
      * @returns
-     * The JSON of KPI component's options.
+     * KPI component's options.
      *
      * @internal
      *
@@ -774,41 +698,15 @@ class KPIComponent extends Component {
 
 /* *
  *
- *  Class Namespace
+ *  Type Declarations
  *
  * */
 
-namespace KPIComponent {
+/** @internal */
+export type ComponentType = KPIComponent;
 
-    /* *
-    *
-    *  Declarations
-    *
-    * */
-
-    /** @internal */
-    export type ComponentType = KPIComponent;
-
-    /** @internal */
-    export type FormulaType = keyof typeof KPIComponent.formulaFunctions;
-
-    /** @internal */
-    export interface ClassJSON extends Component.JSON {
-        options: ComponentJSONOptions;
-    }
-
-    /** @internal */
-    export interface ComponentJSONOptions extends Component.ComponentOptionsJSON {
-        title?: string;
-        chartOptions?: string;
-        threshold?: number|Array<number>;
-        thresholdColors?: Array<string>;
-        type: 'KPI';
-        value?: number|string;
-        subtitle?: string;
-        valueFormat?: string;
-    }
-}
+/** @internal */
+export type FormulaType = keyof typeof KPIComponent.formulaFunctions;
 
 /* *
  *

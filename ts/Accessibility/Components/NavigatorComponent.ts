@@ -1,13 +1,13 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
  *  Accessibility component for the navigator.
  *
  *  Author: Øystein Moseng
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -255,7 +255,9 @@ class NavigatorComponent extends AccessibilityComponent {
     private updateNavigator(beforeAnnounce?: () => void): void {
         const performUpdate = (beforeAnnounce?: () => void): void => {
             const chart = this.chart,
-                { navigator, pointer } = chart;
+                { navigator, pointer } = chart,
+                keyboardNavigation =
+                    this.chart.accessibility?.keyboardNavigation;
             if (
                 navigator &&
                 pointer &&
@@ -289,6 +291,11 @@ class NavigatorComponent extends AccessibilityComponent {
                             );
                         }
                     });
+
+                // If navigating by keyboard, do not reset #22122
+                if (keyboardNavigation) {
+                    keyboardNavigation.keyboardReset = false;
+                }
 
                 if (beforeAnnounce) {
                     beforeAnnounce();

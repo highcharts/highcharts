@@ -7,49 +7,54 @@ For example you may map Y-values to the instrument pitch, to result in a sound t
 
 The below chart demonstrates some of the different audio parameters you can map to with the sonification module, and what they do:
 
-<iframe style="width: 100%; height: 822px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/sonification/mapping-overview allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 822px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/sonification/mapping-overview" allow="fullscreen"></iframe>
 
 Configuration
 ------------
 
 There are several ways to define mapping for tracks in Highcharts. The easiest one is fixed mapping, where an audio parameter gets a fixed value:
 
-    sonification: {
-        duration: 4000,
-        defaultInstrumentOptions: {
-            instrument: 'saxophone',
-            mapping: {
-                volume: 0.4,
-                pan: 0,
-                noteDuration: 300,
-                pitch: 'a3'
-            }
+```js
+sonification: {
+    duration: 4000,
+    defaultInstrumentOptions: {
+        instrument: 'saxophone',
+        mapping: {
+            volume: 0.4,
+            pan: 0,
+            noteDuration: 300,
+            pitch: 'a3'
         }
     }
+}
+```
 
 With the above configuration, the audio values stay fixed and do not change. For every data point we will play the note "A3" for 300 milliseconds, at 0.4 volume, in the center of the stereo field. Obviously this does not communicate a lot, so we would prefer to map something to a data property:
 
-    mapping: {
-        volume: 0.4,
-        pan: 0,
-        noteDuration: 300,
-        pitch: 'y'
-    }
+```js
+mapping: {
+    volume: 0.4,
+    pan: 0,
+    noteDuration: 300,
+    pitch: 'y'
+}
+```
 
 By changing the pitch mapping to `"y"`, the pitch of the instrument will change as the Y-values change. Lower Y-values will cause a lower pitch, and higher values will cause a higher pitch. We can map any of the parameters to any data point property. Use dot notation to access nested properties.
 
 Often we want to define the pitch range for the instrument. This can be done by passing a configuration object to the mapping parameter:
-
-    mapping: {
-        volume: 0.4,
-        pan: 0,
-        noteDuration: 300,
-        pitch: {
-            mapTo: 'y',
-            min: 'c3',
-            max: 'g6'
-        }
+```js
+mapping: {
+    volume: 0.4,
+    pan: 0,
+    noteDuration: 300,
+    pitch: {
+        mapTo: 'y',
+        min: 'c3',
+        max: 'g6'
     }
+}
+```
 
 Now we are mapping to this instrument range, so that the lowest Y-value will play a "c3" note, and the highest a "g6" note.
 
@@ -72,18 +77,20 @@ Sonification is both a science and an art, and while there is no definitive "rig
 
 It is entirely possible to map the same data property to multiple audio parameters, and this is often a good idea. For example, you could map Y-values to both volume, duration, and pitch to emphasise the importance of a change in Y-value for a particular dataset.
 
-    sonification: {
-        duration: 4000,
-        defaultInstrumentOptions: {
-            instrument: 'saxophone',
-            mapping: {
-                pan: 0,
-                volume: 'y',
-                noteDuration: 'y',
-                pitch: 'y'
-            }
+```js
+sonification: {
+    duration: 4000,
+    defaultInstrumentOptions: {
+        instrument: 'saxophone',
+        mapping: {
+            pan: 0,
+            volume: 'y',
+            noteDuration: 'y',
+            pitch: 'y'
         }
     }
+}
+```
 
 **Information Overload:**
 

@@ -1,12 +1,13 @@
 /* *
  *
- *  (c) 2009-2024 Øystein Moseng
+ *  (c) 2009-2026 Highsoft AS
+ *  Author: Øystein Moseng
  *
  *  Handling for Windows High Contrast Mode.
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -35,14 +36,14 @@ const {
  *
  * */
 
-declare module '../Core/Chart/ChartLike'{
-    interface ChartLike {
+declare module '../Core/Chart/ChartBase'{
+    interface ChartBase {
         highContrastModeActive?: boolean;
     }
 }
 
-declare module '../Core/Series/PointLike' {
-    interface PointLike {
+declare module '../Core/Series/PointBase' {
+    interface PointBase {
         borderColor?: ColorType;
     }
 }
@@ -61,12 +62,6 @@ declare module '../Core/Series/PointLike' {
  * @return {boolean} Returns true if the browser is in High Contrast mode.
  */
 function isHighContrastModeActive(): boolean {
-    // Use media query on Edge, but not on IE
-    const isEdge = /(Edg)/.test(win.navigator.userAgent);
-    if (win.matchMedia && isEdge) {
-        return win.matchMedia('(-ms-high-contrast: active)').matches;
-    }
-
     // Test BG image for IE
     if (isMS && win.getComputedStyle) {
         const testDiv = doc.createElement('div');

@@ -2,11 +2,12 @@
  *
  *  Networkgraph series
  *
- *  (c) 2010-2024 Paweł Fus
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Paweł Fus
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -38,14 +39,14 @@ const {
  *
  * */
 
-declare module '../Core/Chart/ChartLike' {
-    interface ChartLike {
+declare module '../Core/Chart/ChartBase' {
+    interface ChartBase {
         graphLayoutsLookup?: Array<GraphLayoutType>;
     }
 }
 
-declare module '../Core/Series/PointLike' {
-    interface PointLike {
+declare module '../Core/Series/PointBase' {
+    interface PointBase {
         dispX?: number;
         dispY?: number;
         fromNode?: Point;
@@ -58,8 +59,8 @@ declare module '../Core/Series/PointLike' {
     }
 }
 
-declare module '../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../Core/Series/SeriesBase' {
+    interface SeriesBase {
         forces?: Array<string>;
     }
 }
@@ -183,7 +184,8 @@ function onChartRender(
         }
     };
 
-    if (this.graphLayoutsLookup) {
+    // Don't animate layout when series is dragged
+    if (this.graphLayoutsLookup && !this.pointer?.hasDragged) {
         setAnimation(false, this);
         // Start simulation
         this.graphLayoutsLookup.forEach((layout): void => layout.start());

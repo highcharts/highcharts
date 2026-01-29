@@ -19,6 +19,11 @@ Expressions in format strings are enclosed by `{single brackets}`. They can be s
 *   Full date: `{value:%Y-%m-%d}` [[Demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/labels/full-date)]
 *   Locale-aware full date: `{value:%[Ymd]}` [[Demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/labels/full-date)]
 
+_Note: Locale-aware formats use names from the active locale.  
+To apply custom names from `lang.months`, `lang.weekdays`, etc., use non-locale-aware formats._
+
+For example, `{value:%b}` uses `lang.shortMonths`, while `{value:%[b]}` follows the locale.
+
 ## Helpers
 Helpers define either a conditional block or a function to be used in an expression. Highcharts includes a number of [built-in helpers](#built-in-helpers), and allows custom helpers to be added.
 
@@ -103,6 +108,7 @@ format: '{log}'
 * **multiply**. Multiply two numbers. For example `{multiply value 1000}`. [Demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-datalabels-format-subexpression).
 * **ne**. Not equal, JavaScript `!=`. Doubles as block helper and subexpression.
 * **subtract**. Subtract the second number from the first. Example `{subtract 5 2}` prints 3.
+* **ucfirst**. Uppercase the first character in a string. For example `{ucfirst point.key}`.
 * **#unless**. The inverse of `#if`. `{#unless point.isNull}The value is {point.y}{/unless}`.
 
 ## Limitations

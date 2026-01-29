@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2024 Pawel Lysy
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Pawel Lysy
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -19,7 +20,8 @@
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 
 const getLinkPath = {
-    'default': getDefaultPath,
+    'default': getOrthogonalPath,
+    orthogonal: getOrthogonalPath,
     straight: getStraightPath,
     curved: getCurvedPath
 };
@@ -33,6 +35,7 @@ interface PathParams {
     y1: number;
     x2: number;
     y2: number;
+    bendAt?: number;
     offset?: number;
     radius?: number;
     width?: number;
@@ -43,18 +46,30 @@ interface PathParams {
 /**
  *
  */
-function getDefaultPath(pathParams: PathParams): SVGPath {
+function getOrthogonalPath(pathParams: PathParams): SVGPath {
     const {
         x1,
         y1,
         x2,
         y2,
+        bendAt,
         width = 0,
         inverted = false,
         radius,
         parentVisible
     } = pathParams;
-    const path: SVGPath = [
+
+    if (parentVisible) {
+        const bend = bendAt ?? (width / 2);
+        return applyRadius([
+            ['M', x1, y1],
+            ['L', x1 + bend * (inverted ? -1 : 1), y1],
+            ['L', x1 + bend * (inverted ? -1 : 1), y2],
+            ['L', x2, y2]
+        ], radius);
+    }
+
+    return [
         ['M', x1, y1],
         ['L', x1, y1],
         ['C', x1, y1, x1, y2, x1, y2],
@@ -62,18 +77,6 @@ function getDefaultPath(pathParams: PathParams): SVGPath {
         ['C', x1, y1, x1, y2, x1, y2],
         ['L', x1, y2]
     ];
-
-    return parentVisible ?
-        applyRadius(
-            [
-                ['M', x1, y1],
-                ['L', x1 + width * (inverted ? -0.5 : 0.5), y1],
-                ['L', x1 + width * (inverted ? -0.5 : 0.5), y2],
-                ['L', x2, y2]
-            ],
-            radius
-        ) :
-        path;
 }
 /**
  *

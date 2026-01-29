@@ -3,7 +3,6 @@ Highcharts.chart('container', {
         text: 'Average Rainfall'
     },
     subtitle: {
-        useHTML: true,
         text: 'Source: <a href="http://www.worldclimate.com">worldclimate</a> '
     },
     xAxis: {

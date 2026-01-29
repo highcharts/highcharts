@@ -2,10 +2,11 @@ name: Linting docs
 
 on:
   pull_request:
-    branches: [ 'master' ]
+    branches: [ 'master', 'dash/**', 'grid/**' ]
     paths:
       - 'docs/**'
       - 'tools/cspell/*'
+      - 'tools/docs-preview/*'
       - '.github/workflows/lint-docs.yml'
 
 permissions:
@@ -21,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [lts/iron]
+        node-version: [lts/*]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -33,7 +34,19 @@ jobs:
           cache: 'npm'
 
       - name: Install Dependencies
-        run: npm i
+        run: npm ci
 
       - name: Check spelling
         run: npm run lint-docs
+
+      - name: Build preview
+        run: npm run build --workspace=docs-preview
+
+      - name: Store artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: docs-build
+          path: |
+            tools/docs-preview/build
+
+

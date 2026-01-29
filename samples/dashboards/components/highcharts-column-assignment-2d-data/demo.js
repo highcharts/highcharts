@@ -3,11 +3,9 @@ Dashboards.board('container', {
         connectors: [{
             id: 'data',
             type: 'JSON',
-            options: {
-                firstRowAsNames: false,
-                columnNames: ['time', 'open', 'high', 'low', 'close'],
-                dataUrl: 'https://www.highcharts.com/samples/data/new-intraday.json'
-            }
+            firstRowAsNames: false,
+            columnIds: ['time', 'open', 'high', 'low', 'close'],
+            dataUrl: 'https://www.highcharts.com/samples/data/new-intraday.json'
         }]
     },
     gui: {
@@ -41,20 +39,25 @@ Dashboards.board('container', {
         }
     }, {
         renderTo: 'dashboard-col-1',
-        type: 'DataGrid',
+        type: 'Grid',
         connector: {
             id: 'data'
         },
-        dataGridOptions: {
+        gridOptions: {
             columnDefaults: {
                 cells: {
-                    editable: true
+                    editMode: {
+                        enabled: true
+                    }
                 }
             },
             columns: [{
                 id: 'time',
                 cells: {
-                    editable: false
+                    editMode: {
+                        enabled: false
+                    },
+                    format: '{value:%[ebYHM]}'
                 }
             }]
         }

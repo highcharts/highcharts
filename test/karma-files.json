@@ -15,6 +15,7 @@
     "code/modules/map.src.js",
     "code/modules/gantt.src.js",
 
+    "code/modules/datagrouping.src.js",
     "code/modules/exporting.src.js",
     "code/modules/parallel-coordinates.src.js",
     "code/modules/accessibility.src.js",
@@ -41,6 +42,7 @@
     "code/modules/geoheatmap.src.js",
     "code/modules/pyramid3d.src.js",
     "code/modules/networkgraph.src.js",
+    "code/modules/non-cartesian-zoom.src.js",
     "code/modules/pareto.src.js",
     "code/modules/pattern-fill.src.js",
     "code/modules/pictorial.src.js",
@@ -81,7 +83,7 @@
     "code/indicators/indicators-all.src.js",
 
     "node_modules/@highcharts/map-collection/countries/gb/gb-all.js",
-    "node_modules/@highcharts/map-collection/custom/british-isles-all.js",
+    "node_modules/@highcharts/map-collection/custom/british-isles.js",
     "samples/data/maps/bn-all.js",
     "samples/data/maps/ad-all.js",
     "samples/data/maps/europe.js",

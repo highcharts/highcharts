@@ -1,12 +1,11 @@
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
-@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
 
 #csv {
     display: none;
 }
 
 .inputs {
-    text-align: right;
     padding: 8px 16px;
     background-color: var(--highcharts-neutral-color-5);
     user-select: none;

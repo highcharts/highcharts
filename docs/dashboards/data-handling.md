@@ -26,20 +26,20 @@ delivery service brings new products to the warehouse for storage.
 
 Each `DataConnector` loads data from a source and sometimes also saves data
 changes. All connectors manage the data in a `DataTable`, which is accessible via
-`DataConnector.table` property. Some connectors support source polling to update
+`DataConnector.getTable()` method. Some connectors support source polling to update
 the `DataTable` with new data from the source.
 
 **Dashboards** provides several types of `DataConnector`, depending on the data source.
 
 | Name | `connector.type` option |
 |------|-------------------------|
-| [CSVConnector](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Connectors_CSVConnectorOptions.CSVConnectorOptions-1.html) | `'CSV'` |
-| [JSONConnector](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Connectors_JSONConnectorOptions.JSONConnectorOptions-1.html) | `'JSON'` |
-| [GoogleSheetsConnector](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Connectors_GoogleSheetsConnectorOptions.GoogleSheetsConnectorOptions-1.html) | `'GoogleSheets'` |
-| [HTMLTableConnector](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Connectors_HTMLTableConnectorOptions.HTMLTableConnectorOptions-1.html) | `'HTMLTable'` |
+| [CSVConnector](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Connectors_CSVConnectorOptions.CSVConnectorOptions.html) | `'CSV'` |
+| [JSONConnector](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Connectors_JSONConnectorOptions.JSONConnectorOptions.html) | `'JSON'` |
+| [GoogleSheetsConnector](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Connectors_GoogleSheetsConnectorOptions.GoogleSheetsConnectorOptions.html) | `'GoogleSheets'` |
+| [HTMLTableConnector](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Connectors_HTMLTableConnectorOptions.HTMLTableConnectorOptions.html) | `'HTMLTable'` |
 
-Each of those types has its specific options. For example, the [CSVConnector](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Connectors_CSVConnectorOptions.CSVConnectorOptions-1.html)
-has two data input options. Directly as a string - `options.csv`, or as a URL from which the CSV file is fetched - `options.csvURL`.
+Each of those types has its specific options. For example, the [CSVConnector](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Connectors_CSVConnectorOptions.CSVConnectorOptions.html)
+has two data input options. Directly as a string - `csv`, or as a URL from which the CSV file is fetched - `csvURL`.
 
 ### Examples
 ```js
@@ -47,9 +47,7 @@ dataPool: {
     connectors: [{
         id: 'my-csv-connector',
         type: 'CSV',
-        options: {
-            csvURL: 'https://demo-live-data.highcharts.com/updating-set.csv'
-        }
+        csvURL: 'https://demo-live-data.highcharts.com/updating-set.csv'
     }]
 }
 ```
@@ -59,9 +57,7 @@ dataPool: {
     connectors: [{
         id: 'my-json-connector',
         type: 'JSON',
-        options: {
-            dataUrl: 'https://demo-live-data.highcharts.com/instance-details.json',
-        }
+        dataUrl: 'https://demo-live-data.highcharts.com/instance-details.json',
     }]
 }
 ```
@@ -70,11 +66,9 @@ dataPool: {
 dataPool: {
     connectors: [{
         id: 'my-google-sheets-connector',
-            type: 'GoogleSheets',
-            options: {
-                googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk',
-                googleSpreadsheetKey: '1U17c4GljMWpgk1bcTvUzIuWT8vdOnlCBHTm5S8Jh8tw'
-            }
+        type: 'GoogleSheets',
+        googleAPIKey: 'AIzaSyCQ0Jh8OFRShXam8adBbBcctlbeeA-qJOk',
+        googleSpreadsheetKey: '1U17c4GljMWpgk1bcTvUzIuWT8vdOnlCBHTm5S8Jh8tw'
     }]
 }
 ```
@@ -84,9 +78,7 @@ dataPool: {
     connectors: [{
         id: 'my-html-table-connector',
         type: 'HTMLTable',
-        options: {
-            table: 'table-element-id',
-        }
+        htmlTable: 'table-element-id',
     }]
 }
 ```
@@ -110,7 +102,7 @@ They can change the products as needed and store the modified versions separatel
 Data tables can automatically modify data during their lifetime with
 the help of modifiers. Each table can have only one modifier, but this modifier
 might call additional modifiers. If a `DataModifier` changes the `DataTable`,
-changes are available on a clone in the `DataTable.modified` property.
+changes are available on a clone through the `DataTable.getModified()` method.
 
 
 ## DataCursor
@@ -121,4 +113,4 @@ This can be, for example, highlights, markers, or selections. It
 supports multiple tables and statuses simultaneously. Each dashboard has a `DataCursor`
 accessible via the `Board.dataCursor` property.
 
-<iframe style="width: 100%; height: 450px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/sync/datacursor-sync" allow="fullscreen"></iframe>
+The `DataCursor` is used under the hood in the synchronization system of the dashboards. See [synchronization article](https://www.highcharts.com/docs/dashboards/synchronize-components) for more information.

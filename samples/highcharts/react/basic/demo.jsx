@@ -1,6 +1,6 @@
-import React from  'react';
+import React from 'react';
 import ReactDOM from 'react-dom';
-import { Chart, Series, Title } from 'highcharts-react-official';
+import { Chart, Series, Title } from '@highcharts/react';
 
 export default function ChartComponent() {
     return (

@@ -2,11 +2,12 @@
  *
  *  Popup generator for Stock tools
  *
- *  (c) 2009-2024 Sebastian Bochan
+ *  (c) 2009-2026 Highsoft AS
+ *  Author: Sebastian Bochan
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -43,6 +44,7 @@ const {
  *
  * */
 
+/** @internal */
 interface PopupConfigObject {
     annotation: Annotation;
     formType: string;
@@ -56,9 +58,7 @@ interface PopupConfigObject {
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 function compose(
     NagivationBindingsClass: typeof NavigationBindings,
     PointerClass: typeof Pointer
@@ -85,18 +85,14 @@ function compose(
 
 }
 
-/**
- * @private
- */
+/** @internal */
 function onNavigationBindingsClosePopup(this: NavigationBindings): void {
     if (this.popup) {
         this.popup.closePopup();
     }
 }
 
-/**
- * @private
- */
+/** @internal */
 function onNavigationBindingsShowPopup(
     this: NavigationBindings,
     config: PopupConfigObject
@@ -126,7 +122,7 @@ function onNavigationBindingsShowPopup(
 /**
  * `onContainerMouseDown` blocks internal popup events, due to e.preventDefault.
  * Related issue #4606
- * @private
+ * @internal
  */
 function wrapPointerOnContainerMouserDown(
     this: Pointer,
@@ -148,8 +144,10 @@ function wrapPointerOnContainerMouserDown(
  *
  * */
 
+/** @internal */
 const PopupComposition = {
     compose
 };
 
+/** @internal */
 export default PopupComposition;

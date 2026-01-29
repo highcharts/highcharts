@@ -1,11 +1,11 @@
 /* *
  *
- *  (c) 2016 Highsoft AS
+ *  (c) 2016-2026 Highsoft AS
  *  Authors: Jon Arild Nygard
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -18,9 +18,15 @@
  * */
 
 import type Axis from '../Axis';
-import type { AxisBreakOptions, AxisCollectionKey } from '../AxisOptions';
+import type {
+    AxisBreakOptions,
+    AxisCollectionKey,
+    AxisLabelOptions,
+    AxisOptions
+} from '../AxisOptions';
 import type Chart from '../../Chart/Chart';
 import type { ChartAddSeriesEventObject } from '../../Chart/ChartOptions';
+import type { DeepPartial } from '../../../Shared/Types';
 import type GanttPoint from '../../../Series/Gantt/GanttPoint';
 import type GanttPointOptions from '../../../Series/Gantt/GanttPointOptions';
 import type GanttSeries from '../../../Series/Gantt/GanttSeries';
@@ -30,10 +36,6 @@ import type {
 } from '../../Series/PointOptions';
 import type Series from '../../Series/Series';
 import type Tick from '../Tick';
-import type {
-    TreeGridAxisLabelOptions,
-    TreeGridAxisOptions
-} from './TreeGridOptions';
 import type {
     TreeGetOptionsObject,
     TreeNode,
@@ -56,7 +58,6 @@ const {
     isObject,
     isString,
     merge,
-    pick,
     removeEvent,
     wrap
 } = U;
@@ -67,24 +68,28 @@ const {
  *
  * */
 
+/** @internal */
 declare module '../AxisComposition' {
     interface AxisComposition {
         treeGrid?: TreeGridAxisComposition['treeGrid'];
     }
 }
 
-declare module '../AxisLike' {
-    interface AxisLike {
+/** @internal */
+declare module '../AxisBase' {
+    interface AxisBase {
         utils: TreeGridAxisUtilsObject;
     }
 }
 
+/** @internal */
 declare module '../AxisType' {
     interface AxisTypeRegistry {
         TreeGridAxis: TreeGridAxisComposition;
     }
 }
 
+/** @internal */
 declare module '../../Series/PointOptions' {
     interface PointOptions extends TreePointOptionsObject {
         collapsed?: boolean;
@@ -92,10 +97,13 @@ declare module '../../Series/PointOptions' {
     }
 }
 
+/** @internal */
 interface AxisBreakObject extends AxisBreakOptions {
-    showPoints: boolean;
+    showPoints?: boolean;
+    maxOffset?: number;
 }
 
+/** @internal */
 interface GridNode {
     children: Array<GridNode>;
     collapsed?: boolean;
@@ -111,26 +119,30 @@ interface GridNode {
     tickmarkOffset?: number;
 }
 
+/** @internal */
 export declare class TreeGridAxisComposition extends Axis {
     dataMax: number;
     dataMin: number;
     max: number;
     min: number;
-    options: TreeGridAxisOptions;
+    options: AxisOptions;
     series: Array<GanttSeries>;
     treeGrid: TreeGridAxisAdditions;
 }
 
+/** @internal */
 interface TreeGridAxisUtilsObject {
     getNode: typeof Tree['getNode'];
 }
 
+/** @internal */
 interface TreeGridNode extends TreeNode {
     data: PointOptions;
     pos: number;
     seriesIndex: number;
 }
 
+/** @internal */
 interface TreeGridObject {
     categories: Array<string>;
     mapOfIdToNode: Record<string, TreeGridNode>;
@@ -145,6 +157,7 @@ interface TreeGridObject {
  *
  * */
 
+/** @internal */
 let TickConstructor: (typeof Tick|undefined);
 
 /* *
@@ -154,28 +167,17 @@ let TickConstructor: (typeof Tick|undefined);
  * */
 
 /**
- * @private
+ * Creates a break object from a node.
+ * @internal
+ * @param {Object} node
+ * The node to create a break object from.
  */
 function getBreakFromNode(
-    node: GridNode,
-    max: number
+    node: GridNode
 ): AxisBreakObject {
-    const to = node.collapseEnd || 0;
-
-    let from = node.collapseStart || 0;
-
-    // In broken-axis, the axis.max is minimized until it is not within a
-    // break. Therefore, if break.to is larger than axis.max, the axis.to
-    // should not add the 0.5 axis.tickMarkOffset, to avoid adding a break
-    // larger than axis.max.
-    // TODO consider simplifying broken-axis and this might solve itself
-    if (to >= max) {
-        from -= 0.5;
-    }
-
     return {
-        from: from,
-        to: to,
+        from: node.collapseStart || 0,
+        to: node.collapseEnd || 0,
         showPoints: false
     };
 }
@@ -184,7 +186,7 @@ function getBreakFromNode(
  * Creates a tree structure of the data, and the treegrid. Calculates
  * categories, and y-values of points based on the tree.
  *
- * @private
+ * @internal
  * @function getTreeGridFromData
  *
  * @param {Array<Highcharts.GanttPointOptions>} data
@@ -300,10 +302,7 @@ function getTreeGridFromData(
 
             // If one of the points are collapsed, then start the grid node
             // in collapsed state.
-            if (
-                gridNode &&
-                data.collapsed === true
-            ) {
+            if (gridNode && data.collapsed === true) {
                 gridNode.collapsed = true;
             }
 
@@ -381,7 +380,7 @@ function getTreeGridFromData(
 
 /**
  * Builds the tree of categories and calculates its positions.
- * @private
+ * @internal
  * @param {Object} e Event object
  * @param {Object} e.target The chart instance which the event was fired on.
  * @param {object[]} e.target.axes The axes of the chart.
@@ -399,7 +398,7 @@ function onBeforeRender(
         (axis): boolean => axis.type === 'treegrid'
     ) as Array<TreeGridAxisComposition>).forEach(
         function (axis: TreeGridAxisComposition): void {
-            const options = axis.options || {},
+            const options = axis.options,
                 labelOptions = options.labels,
                 uniqueNames = axis.uniqueNames,
                 max = chart.time.parse(options.max),
@@ -423,7 +422,6 @@ function onBeforeRender(
                 treeGrid: TreeGridObject;
 
             if (isDirty) {
-
                 const seriesHasPrimitivePoints: boolean[] = [];
 
                 // Concatenate data from all series assigned to this axis.
@@ -432,14 +430,10 @@ function onBeforeRender(
                         firstPoint = seriesData[0],
                         // Check if the first point is a simple array of values.
                         // If so we assume that this is the case for all points.
-                        foundPrimitivePoint = (
-                            Array.isArray(firstPoint) &&
-                                !(firstPoint as any).find(
-                                    (value: any): boolean => (
-                                        typeof value === 'object'
-                                    )
-                                )
-                        );
+                        foundPrimitivePoint = Array.isArray(firstPoint) &&
+                            !firstPoint.find(
+                                (value): boolean => (typeof value === 'object')
+                            );
 
                     seriesHasPrimitivePoints.push(foundPrimitivePoint);
 
@@ -464,10 +458,8 @@ function onBeforeRender(
                             if (isObject(pointOptions, true)) {
                                 // Set series index on data. Removed again
                                 // after use.
-                                (pointOptions as PointOptions).seriesIndex = (
-                                    numberOfSeries
-                                );
-                                arr.push(pointOptions as PointOptions);
+                                pointOptions.seriesIndex = numberOfSeries;
+                                arr.push(pointOptions);
                             }
                         });
                         // Increment series index
@@ -513,11 +505,7 @@ function onBeforeRender(
 
                         if (
                             seriesHasPrimitivePoints[index] ||
-                            (
-                                isArray(d) &&
-                                series.options.keys &&
-                                series.options.keys.length
-                            )
+                            (isArray(d) && series.options.keys?.length)
                         ) {
                             // Get the axisData from the data array used to
                             // build the treeGrid where has been modified
@@ -527,7 +515,7 @@ function onBeforeRender(
                                 const toArray = splat(d);
                                 if (
                                     toArray.indexOf(point.x || 0) >= 0 &&
-                                        toArray.indexOf(point.x2 || 0) >= 0
+                                    toArray.indexOf(point.x2 || 0) >= 0
                                 ) {
                                     d = point;
                                 }
@@ -560,7 +548,7 @@ function onBeforeRender(
 /**
  * Generates a tick for initial positioning.
  *
- * @private
+ * @internal
  * @function Highcharts.GridAxis#generateTick
  *
  * @param {Function} proceed
@@ -580,7 +568,7 @@ function wrapGenerateTick(
         ticks = axis.ticks;
     let tick = ticks[pos],
         levelOptions,
-        options: (DeepPartial<TreeGridAxisOptions> | undefined),
+        options: (DeepPartial<AxisOptions> | undefined),
         gridNode;
 
     if (
@@ -617,14 +605,12 @@ function wrapGenerateTick(
     }
 }
 
-/**
- * @private
- */
+/** @internal */
 function wrapInit(
     this: TreeGridAxisComposition,
     proceed: Function,
     chart: Chart,
-    userOptions: TreeGridAxisOptions,
+    userOptions: AxisOptions,
     coll: AxisCollectionKey
 ): void {
     const axis = this,
@@ -648,8 +634,7 @@ function wrapInit(
         ): void {
             if (e.options.data) {
                 const treeGrid = getTreeGridFromData(
-                    (
-                        e.options.data as any),
+                    e.options.data as GanttPointOptions[],
                     userOptions.uniqueNames || false,
                     1
                 );
@@ -663,30 +648,28 @@ function wrapInit(
         // Collapse all nodes in axis.treegrid.collapsednodes
         // where collapsed equals true.
         addEvent(axis, 'foundExtremes', function (): void {
-            if (axis.treeGrid.collapsedNodes) {
-                axis.treeGrid.collapsedNodes.forEach(function (
-                    node: GridNode
-                ): void {
-                    const breaks = axis.treeGrid.collapse(node);
+            axis.treeGrid.collapsedNodes?.forEach(function (
+                node: GridNode
+            ): void {
+                const breaks = axis.treeGrid.collapse(node);
 
-                    if (axis.brokenAxis) {
-                        axis.brokenAxis.setBreaks(breaks, false);
+                if (axis.brokenAxis) {
+                    axis.brokenAxis.setBreaks(breaks, false);
 
-                        // Remove the node from the axis collapsedNodes
-                        if (axis.treeGrid.collapsedNodes) {
-                            axis.treeGrid.collapsedNodes = axis.treeGrid
-                                .collapsedNodes
-                                .filter((n): boolean => (
-                                    (
-                                        node.collapseStart !==
-                                        n.collapseStart
-                                    ) ||
-                                    node.collapseEnd !== n.collapseEnd
-                                ));
-                        }
+                    // Remove the node from the axis collapsedNodes
+                    if (axis.treeGrid.collapsedNodes) {
+                        axis.treeGrid.collapsedNodes = axis.treeGrid
+                            .collapsedNodes
+                            .filter((n): boolean => (
+                                (
+                                    node.collapseStart !==
+                                    n.collapseStart
+                                ) ||
+                                node.collapseEnd !== n.collapseEnd
+                            ));
                     }
-                });
-            }
+                }
+            });
         });
 
         // If staticScale is not defined on the yAxis
@@ -712,18 +695,16 @@ function wrapInit(
                 align: 'left',
 
                 /**
-                * Set options on specific levels in a tree grid axis. Takes
-                * precedence over labels options.
-                *
-                * @sample {gantt} gantt/treegrid-axis/labels-levels
-                *         Levels on TreeGrid Labels
-                *
-                * @type      {Array<*>}
-                * @product   gantt
-                * @apioption yAxis.labels.levels
-                *
-                * @private
-                */
+                 * Set options on specific levels in a tree grid axis. Takes
+                 * precedence over labels options.
+                 *
+                 * @sample {gantt} gantt/treegrid-axis/labels-levels
+                 *         Levels on TreeGrid Labels
+                 *
+                 * @type      {Array<*>}
+                 * @product   gantt
+                 * @apioption yAxis.labels.levels
+                 */
                 levels: [{
                     /**
                     * Specify the level which the options within this object
@@ -733,7 +714,7 @@ function wrapInit(
                     * @product   gantt
                     * @apioption yAxis.labels.levels.level
                     *
-                    * @private
+                    * @internal
                     */
                     level: void 0
                 }, {
@@ -743,7 +724,7 @@ function wrapInit(
                      * @product   gantt
                      * @apioption yAxis.labels.levels.style
                      *
-                     * @private
+                     * @internal
                      */
                     style: {
                         /** @ignore-option */
@@ -758,7 +739,7 @@ function wrapInit(
                  * @product      gantt
                  * @optionparent yAxis.labels.symbol
                  *
-                 * @private
+                 * @internal
                  */
                 symbol: {
                     /**
@@ -767,7 +748,7 @@ function wrapInit(
                      *
                      * @type {Highcharts.SymbolKeyValue}
                      *
-                     * @private
+                     * @internal
                      */
                     type: 'triangle',
                     x: -5,
@@ -797,7 +778,7 @@ function wrapInit(
 /**
  * Set the tick positions, tickInterval, axis min and max.
  *
- * @private
+ * @internal
  * @function Highcharts.GridAxis#setTickInterval
  *
  * @param {Function} proceed
@@ -832,16 +813,10 @@ function wrapSetTickInterval(
             [];
 
         if (linkedParent) {
-
             const linkedParentExtremes = linkedParent.getExtremes();
-            axis.min = pick(
-                linkedParentExtremes.min,
-                linkedParentExtremes.dataMin
-            );
-            axis.max = pick(
-                linkedParentExtremes.max,
-                linkedParentExtremes.dataMax
-            );
+
+            axis.min = linkedParentExtremes.min ?? linkedParentExtremes.dataMin;
+            axis.max = linkedParentExtremes.max ?? linkedParentExtremes.dataMax;
             axis.tickPositions = linkedParent.tickPositions;
         }
         axis.linkedParent = linkedParent;
@@ -853,7 +828,7 @@ function wrapSetTickInterval(
 /**
  * Wrap axis redraw to remove TreeGrid events from ticks
  *
- * @private
+ * @internal
  * @function Highcharts.GridAxis#redraw
  *
  * @param {Function} proceed
@@ -885,7 +860,7 @@ function wrapRedraw(
  * */
 
 /**
- * @private
+ * @internal
  * @class
  */
 class TreeGridAxisAdditions {
@@ -896,9 +871,7 @@ class TreeGridAxisAdditions {
      *
      * */
 
-    /**
-     * @private
-     */
+    /** @internal */
     public static compose<T extends typeof Axis>(
         AxisClass: T,
         ChartClass: typeof Chart,
@@ -939,9 +912,7 @@ class TreeGridAxisAdditions {
      *
      * */
 
-    /**
-     * @private
-     */
+    /** @internal */
     public constructor(axis: TreeGridAxisComposition) {
         this.axis = axis;
     }
@@ -952,11 +923,27 @@ class TreeGridAxisAdditions {
      *
      * */
 
+
+    /** @internal */
+    public adjustedMax?: number;
+
+    /** @internal */
     public axis: TreeGridAxisComposition;
-    public mapOfPosToGridNode?: Record<string, GridNode>;
-    public mapOptionsToLevel?: Record<string, TreeGridAxisLabelOptions>;
-    public tree?: TreeNode;
+
+    /** @internal */
     public collapsedNodes?: GridNode[];
+
+    /** @internal */
+    public mapOfPosToGridNode?: Record<string, GridNode>;
+
+    /** @internal */
+    public mapOptionsToLevel?: Record<string, AxisLabelOptions>;
+
+    /** @internal */
+    public pendingSizeAdjustment: number = 0;
+
+    /** @internal */
+    public tree?: TreeNode;
 
     /* *
      *
@@ -967,7 +954,7 @@ class TreeGridAxisAdditions {
     /**
      * Set the collapse status.
      *
-     * @private
+     * @internal
      *
      * @param {Highcharts.Axis} axis
      * The axis to check against.
@@ -982,14 +969,12 @@ class TreeGridAxisAdditions {
         axis.series.forEach(function (series): void {
             const data = series.options.data;
             if (node.id && data) {
-                const point = chart.get(node.id),
-                    dataPoint = data[series.data.indexOf(
-                        point as GanttPoint
-                    )];
+                const point = chart.get(node.id) as GanttPoint,
+                    dataPoint = data[series.data.indexOf(point)];
 
                 if (point && dataPoint) {
-                    (point as GanttPoint).collapsed = node.collapsed;
-                    (dataPoint as GanttPoint).collapsed = node.collapsed;
+                    point.collapsed = node.collapsed;
+                    dataPoint.collapsed = node.collapsed;
                 }
             }
         });
@@ -998,7 +983,7 @@ class TreeGridAxisAdditions {
     /**
      * Calculates the new axis breaks to collapse a node.
      *
-     * @private
+     * @internal
      *
      * @param {Highcharts.Axis} axis
      * The axis to check against.
@@ -1014,8 +999,8 @@ class TreeGridAxisAdditions {
      */
     public collapse(node: GridNode): Array<AxisBreakOptions> {
         const axis = this.axis,
-            breaks = (axis.options.breaks || []),
-            obj = getBreakFromNode(node, axis.max);
+            breaks = axis.options.breaks || [],
+            obj = getBreakFromNode(node);
 
         breaks.push(obj);
         // Change the collapsed flag #13838
@@ -1028,7 +1013,7 @@ class TreeGridAxisAdditions {
     /**
      * Calculates the new axis breaks to expand a node.
      *
-     * @private
+     * @internal
      *
      * @param {Highcharts.Axis} axis
      * The axis to check against.
@@ -1044,15 +1029,14 @@ class TreeGridAxisAdditions {
      */
     public expand(node: GridNode): Array<AxisBreakOptions> {
         const axis = this.axis,
-            breaks = (axis.options.breaks || []),
-            obj = getBreakFromNode(node, axis.max);
+            obj = getBreakFromNode(node);
 
         // Change the collapsed flag #13838
         node.collapsed = false;
         axis.treeGrid.setCollapsedStatus(node);
 
         // Remove the break from the axis breaks array.
-        return breaks.reduce(
+        return axis.options.breaks?.reduce(
             function (arr, b): Array<AxisBreakOptions> {
                 if (b.to !== obj.to || b.from !== obj.from) {
                     arr.push(b);
@@ -1060,14 +1044,14 @@ class TreeGridAxisAdditions {
                 return arr;
             },
             [] as Array<AxisBreakOptions>
-        );
+        ) || [];
     }
 
     /**
      * Creates a list of positions for the ticks on the axis. Filters out
      * positions that are outside min and max, or is inside an axis break.
      *
-     * @private
+     * @internal
      *
      * @return {Array<number>}
      * List of positions.
@@ -1093,23 +1077,17 @@ class TreeGridAxisAdditions {
                 }
                 return arr;
             },
-            [] as Array<number>
+            []
         );
     }
 
     /**
      * Check if a node is collapsed.
      *
-     * @private
-     *
-     * @param {Highcharts.Axis} axis
-     * The axis to check against.
+     * @internal
      *
      * @param {Object} node
      * The node to check if is collapsed.
-     *
-     * @param {number} pos
-     * The tick position to collapse.
      *
      * @return {boolean}
      * Returns true if collapsed, false if expanded.
@@ -1117,7 +1095,7 @@ class TreeGridAxisAdditions {
     public isCollapsed(node: GridNode): boolean {
         const axis = this.axis,
             breaks = (axis.options.breaks || []),
-            obj = getBreakFromNode(node, axis.max);
+            obj = getBreakFromNode(node);
 
         return breaks.some(function (b): boolean {
             return b.from === obj.from && b.to === obj.to;
@@ -1129,7 +1107,7 @@ class TreeGridAxisAdditions {
      * state of a node. If it is collapsed it will be expanded, and if it is
      * expanded it will be collapsed.
      *
-     * @private
+     * @internal
      *
      * @param {Highcharts.Axis} axis
      * The axis to check against.
@@ -1156,4 +1134,5 @@ class TreeGridAxisAdditions {
  *
  * */
 
+/** @internal */
 export default TreeGridAxisAdditions;

@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -18,7 +19,6 @@ import type ColorAxisComposition from '../../Core/Axis/Color/ColorAxisCompositio
 import type ColorType from '../../Core/Color/ColorType';
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type MapPointOptions from './MapPointOptions';
-import type MapSeries from './MapSeries';
 import type {
     PointOptions,
     PointShortOptions,
@@ -27,10 +27,9 @@ import type {
 import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
 import type {
     SeriesStatesOptions,
-    SeriesLinecapValue,
-    LegendSymbolType
+    SeriesLinecapValue
 } from '../../Core/Series/SeriesOptions';
-import type TooltipOptions from '../../Core/TooltipOptions';
+import { ScatterSeriesTooltipOptions } from '../Scatter/ScatterSeriesOptions';
 
 /* *
  *
@@ -172,7 +171,10 @@ export interface MapSeriesOptions
 
     dataLabels?: (DataLabelOptions|Array<DataLabelOptions>);
 
-    legendSymbol?: LegendSymbolType;
+    /**
+     * @default 'rectangle'
+     */
+    legendSymbol?: ScatterSeriesOptions['legendSymbol'];
 
     /**
      * The SVG value used for the `stroke-linecap` and `stroke-linejoin` of
@@ -212,15 +214,26 @@ export interface MapSeriesOptions
      */
     nullInteraction?: boolean;
 
-    states?: SeriesStatesOptions<MapSeries>;
+    states?: SeriesStatesOptions<MapSeriesOptions>;
 
     /**
      * @ignore-option
      */
     turboThreshold?: number;
 
-    tooltip?: Partial<TooltipOptions>;
+    tooltip?: MapSeriesTooltipOptions;
+}
 
+export interface MapSeriesTooltipOptions extends ScatterSeriesTooltipOptions {
+    /**
+     * @default true
+     */
+    followPointer?: ScatterSeriesTooltipOptions['followPointer'];
+
+    /**
+     * @default '{point.name}: {point.value}<br/>'
+     */
+    pointFormat?: ScatterSeriesTooltipOptions['pointFormat'];
 }
 
 /* *

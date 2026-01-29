@@ -1,10 +1,12 @@
+// SPDX-License-Identifier: LicenseRef-Highcharts
 /**
  *
- *  (c) 2010-2024 Wojciech Chmiel
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Wojciech Chmiel
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -54,7 +56,7 @@ namespace MultipleLinesComposition {
         linesApiNames: Array<string>;
         nextPoints?: Array<SMAPoint>;
         options: IndicatorOptions;
-        pointArrayMap: Array<keyof this['pointClass']['prototype']>;
+        pointArrayMap: string[];
         pointValKey: string;
     }
 
@@ -374,7 +376,7 @@ namespace MultipleLinesComposition {
         const pointColl: Array<number> = [];
 
         (this.pointArrayMap || []).forEach((propertyName): void => {
-            pointColl.push(point[propertyName] as number);
+            pointColl.push(point[propertyName as keyof Point] as number);
         });
 
         return pointColl;
@@ -399,7 +401,7 @@ namespace MultipleLinesComposition {
 
         this.points.forEach((point): void => {
             pointArrayMap.forEach((propertyName, i): void => {
-                value = point[propertyName] as number;
+                value = point[propertyName as keyof SMAPoint] as number;
 
                 // If the modifier, like for example compare exists,
                 // modified the original value by that method, #15867.

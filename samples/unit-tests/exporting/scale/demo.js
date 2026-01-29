@@ -1,4 +1,4 @@
-QUnit.skip('Exported chart scale', function (assert) {
+QUnit.skip('Exported chart scale', async function (assert) {
     var chart = Highcharts.chart('container', {
             title: {
                 text: 'Highcharts exporting scale demo'
@@ -49,7 +49,7 @@ QUnit.skip('Exported chart scale', function (assert) {
         done = assert.async(),
         count = 0;
 
-    function testScale(scale) {
+    async function testScale(scale) {
         var originalPost = Highcharts.HttpUtilities.post;
 
         Highcharts.HttpUtilities.post = function (url, data) {
@@ -110,11 +110,11 @@ QUnit.skip('Exported chart scale', function (assert) {
             });
         };
 
-        chart.exportChart({
+        await chart.exporting.exportChart({
             scale: scale
         });
     }
 
-    testScale(1);
-    testScale(2);
+    await testScale(1);
+    await testScale(2);
 });

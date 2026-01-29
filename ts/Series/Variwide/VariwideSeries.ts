@@ -2,11 +2,12 @@
  *
  *  Highcharts variwide module
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -19,6 +20,8 @@
  * */
 
 import type StackingAxis from '../../Core/Axis/Stacking/StackingAxis';
+import type Types from '../../Shared/Types';
+import type RangeSelector from '../../Stock/RangeSelector/RangeSelector';
 import type VariwideSeriesOptions from './VariwideSeriesOptions';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -31,6 +34,8 @@ import VariwideSeriesDefaults from './VariwideSeriesDefaults.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
+    arrayMin,
+    arrayMax,
     crisp,
     extend,
     merge,
@@ -234,6 +239,18 @@ class VariwideSeries extends ColumnSeries {
                 }
             }
         }
+    }
+
+    public getXExtremes(
+        xData: Array<number>|Types.TypedArray
+    ): RangeSelector.RangeObject {
+        const max = arrayMax(xData),
+            maxZ = this.getColumn('z')[xData.indexOf(max)];
+
+        return {
+            min: arrayMin(xData),
+            max: max + (this.xAxis.categories ? 0 : maxZ)
+        };
     }
 }
 

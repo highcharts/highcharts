@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sebastian Bochan
@@ -56,23 +56,27 @@ class Fullscreen {
 
     /**
      * Toggles displaying the board in fullscreen mode.
+     *
+     * @param container
+     * The container to be displayed in fullscreen mode.
      */
-    public toggle(): void {
+    public toggle(container?: HTMLElement): void {
         const fullscreen = this,
             isOpen = this.isOpen;
 
-        fullscreen[isOpen ? 'close' : 'open']();
+        fullscreen[isOpen ? 'close' : 'open'](container);
     }
 
     /**
      * Display board in fullscreen.
      */
-    public open(): void {
+    public open(container?: HTMLElement): void {
         if (this.isOpen) {
             return;
         }
-        const fullscreen = this,
-            board = fullscreen.board;
+        const fullscreen = this;
+        const board = fullscreen.board;
+        const elementToFullscreen = container || board.boardWrapper;
 
         // Handle exitFullscreen() method when user clicks 'Escape' button.
         const unbindChange = addEvent(
@@ -93,10 +97,9 @@ class Fullscreen {
             unbindChange();
         };
 
-        const promise = board.boardWrapper.requestFullscreen();
+        const promise = elementToFullscreen.requestFullscreen();
 
-        // eslint-disable-next-line highcharts/quote-members
-        promise.catch((): void => {
+        promise['catch']((): void => {
             throw new Error('Full screen is not supported.');
         });
     }
@@ -105,8 +108,8 @@ class Fullscreen {
      * Stops displaying the dashboard in fullscreen mode.
      */
     public close(): void {
-        const fullscreen = this,
-            board = fullscreen.board;
+        const fullscreen = this;
+        const board = fullscreen.board;
 
         // Don't fire exitFullscreen() when user exited using 'Escape' button.
         if (
@@ -141,10 +144,6 @@ class Fullscreen {
                 (this.isOpen ? lang.exitFullscreen : lang.viewFullscreen) || '';
         }
     }
-}
-
-namespace Fullscreen {
-
 }
 
 export default Fullscreen;

@@ -199,7 +199,7 @@ const renderChart = data => {
 
                 // Color the level 2 headers with the combined performance of
                 // its children
-                if (point.node.level === 2) {
+                if (point.node.level === 2 && Number.isFinite(point.value)) {
                     const previousValue = point.node.children
                         .reduce(
                             (acc, child) => acc + (child.point.value || 0) -
@@ -210,7 +210,7 @@ const renderChart = data => {
 
                     // Percentage change from previous value to point.value
                     const perf = 100 * (point.value - previousValue) /
-                        previousValue;
+                        (previousValue || 1);
 
                     point.custom = {
                         performance: (perf < 0 ? '' : '+') +

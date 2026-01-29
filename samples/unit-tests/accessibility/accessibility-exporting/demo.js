@@ -26,7 +26,7 @@ QUnit.test('Exporting button and menu HTML/ARIA markup', function (assert) {
         'Exporting button should update aria-expanded on click'
     );
 
-    const innerMenu = chart.exportContextMenu.firstChild;
+    const innerMenu = chart.exporting.contextMenuEl.firstChild;
 
     assert.strictEqual(
         innerMenu.tagName.toLowerCase(),
@@ -62,7 +62,7 @@ QUnit.test(
                     enabled: true
                 }
             }),
-            svg = chart.getSVGForExport(),
+            svg = chart.exporting.getSVGForExport(),
             hasHTMLElements = svg.match(
                 // eslint-disable-next-line max-len
                 /<(div|p|h[1-7]|button|a|li|ul|ol|table|input|select)(\s[^>]+)?>/gu
@@ -98,8 +98,8 @@ QUnit.test(
 
         // These two functions move "highcharts-container" when
         // user selects printing
-        chart.beforePrint();
-        chart.afterPrint();
+        chart.exporting?.beforePrint();
+        chart.exporting?.afterPrint();
 
         for (const [elementIndex, candidateId, testMessage]  of [
             [
@@ -118,11 +118,23 @@ QUnit.test(
                 '"screen-reader-after" should be below "highcharts-container"'
             ]
         ]) {
-            assert.strictEqual(
-                renderToChildren[elementIndex].id,
-                candidateId,
-                testMessage
-            );
+            const childId = renderToChildren[elementIndex].id;
+
+            if (candidateId.includes('screen-reader-region-before')) {
+                assert.ok(
+                    childId.startsWith(
+                        'highcharts-screen-reader-region-before'
+                    ),
+                    testMessage
+                );
+            } else if (candidateId.includes('screen-reader-region-after')) {
+                assert.ok(
+                    childId.startsWith('highcharts-screen-reader-region-after'),
+                    testMessage
+                );
+            } else {
+                assert.strictEqual(childId, candidateId, testMessage);
+            }
         }
     }
 );

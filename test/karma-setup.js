@@ -27,6 +27,48 @@ var demoHTML = document.createElement('div');
 demoHTML.setAttribute('id', 'demo-html');
 document.body.appendChild(demoHTML);
 
+// Deep clone function to save and restore the default options
+function deepClone(obj, seen = new WeakMap()) {
+    if (obj === null || typeof obj !== 'object') {
+        return obj; // Return primitives as-is
+    }
+
+    if (seen.has(obj)) {
+        return seen.get(obj); // Handle circular references
+    }
+
+    if (Array.isArray(obj)) {
+        const arr = [];
+        seen.set(obj, arr);
+        for (let i = 0; i < obj.length; i++) {
+            arr[i] = deepClone(obj[i], seen);
+        }
+        return arr;
+    }
+
+    const clone = {};
+    seen.set(obj, clone);
+
+    for (const key of Object.keys(obj)) {
+        const val = obj[key];
+        if (typeof val === 'function') {
+            clone[key] = val; // Copy functions by reference
+        } else {
+            clone[key] = deepClone(val, seen);
+        }
+    }
+
+    // Preserve explicitly undefined properties that are enumerable
+    const allKeys = Reflect.ownKeys(obj);
+    for (const key of allKeys) {
+        if (!clone.hasOwnProperty(key) && Object.prototype.hasOwnProperty.call(obj, key)) {
+            clone[key] = obj[key];
+        }
+    }
+
+    return clone;
+};
+
 
 var currentTests = [];
 
@@ -100,62 +142,46 @@ Highcharts.setOptions({
     }
 
 });
-// Save default functions from the default options, as they are not stringified
-// to JSON
-/*
-function handleDefaultOptionsFunctions(save) {
-    var defaultOptionsFunctions = {};
-    function saveDefaultOptionsFunctions(original, path) {
-        Highcharts.objectEach(original, function (value, key) {
-            if (
-                Highcharts.isObject(value, true) &&
-                !Highcharts.isClass(value) &&
-                !Highcharts.isDOMElement(value)
-            ) {
-                // Recurse
-                saveDefaultOptionsFunctions(original[key], (path ? path + '.' : '') + key);
-
-            } else if (save && typeof value === 'function') {
-                defaultOptionsFunctions[path + '.' + key] = value;
-
-            } else if ( // restore
-                !save &&
-                typeof value === 'function'
-            ) {
-                console.log('restore', path + '.' + key)
-                original[key] = defaultOptionsFunctions[path + '.' + key];
-            }
-        });
-    }
-    saveDefaultOptionsFunctions(Highcharts.defaultOptions, '');
-}
-handleDefaultOptionsFunctions(true);
-*/
-const getUndefinedRecursive = (result, obj) => {
-    for (const [key, value] of Object.entries(obj)) {
-          if (value === void 0) {
-            result[key] = void 0;
-        }
-        if (value && typeof value === 'object' && !Array.isArray(value)) {
-            result[key] = {};
-            getUndefinedRecursive(result[key], value);
-            if (!Object.keys(result[key]).length) {
-                delete result[key];
-            }
-        }
-    }
-    return result;
-};
-Highcharts.defaultOptionsRaw = JSON.stringify(Highcharts.defaultOptions);
-// Some options are undefined by default, we need to save them because JSON
-// doesn't serialize undefined values.
-Highcharts.explicitUndefineds = getUndefinedRecursive(
-    {},
-    Highcharts.defaultOptions
-);
+Highcharts.clonedDefaultOptions = deepClone(Highcharts.defaultOptions);
 Highcharts.callbacksRaw = Highcharts.Chart.prototype.callbacks.slice(0);
 Highcharts.radialDefaultOptionsRaw =
     JSON.stringify(Highcharts.RadialAxis.radialDefaultOptions);
+
+function resolveJSONSource(url) {
+    if (!url || !window.JSONSources) {
+        return undefined;
+    }
+
+    var sources = window.JSONSources;
+    var variants = [url];
+    var hashIndex = url.indexOf('#');
+
+    if (hashIndex >= 0) {
+        variants.push(url.slice(0, hashIndex));
+    }
+
+    var queryIndex = url.indexOf('?');
+
+    if (queryIndex >= 0) {
+        variants.push(url.slice(0, queryIndex));
+    }
+
+    var withoutTrailingSlash = url.replace(/\/+$/, '');
+
+    if (withoutTrailingSlash && withoutTrailingSlash !== url) {
+        variants.push(withoutTrailingSlash);
+    }
+
+    for (var i = 0; i < variants.length; ++i) {
+        var candidate = variants[i];
+
+        if (candidate && Object.prototype.hasOwnProperty.call(sources, candidate)) {
+            return sources[candidate];
+        }
+    }
+
+    return undefined;
+}
 
 // Hijack XHMLHttpRequest to run local JSON sources
 var open = XMLHttpRequest.prototype.open;
@@ -166,7 +192,8 @@ XMLHttpRequest.prototype.open = function (type, url) {
 }
 
 XMLHttpRequest.prototype.send = function () {
-    var localData = this.requestURL && window.JSONSources[this.requestURL];
+    var localData = resolveJSONSource(this.requestURL);
+
     if (localData) {
         Object.defineProperty(this, 'readyState', {
             get: function () { return 4; }
@@ -186,9 +213,18 @@ XMLHttpRequest.prototype.send = function () {
 
 // Hijack fetch to run local sources.
 if (window.Promise) {
-    window.fetch = function (url) {
+    var nativeFetch = typeof window.fetch === 'function' ?
+        window.fetch.bind(window) :
+        undefined;
+
+    window.fetch = function (input, init) {
+        var requestURL = typeof input === 'string' ?
+            input :
+            (input && input.url ? input.url : '' + input);
+
         return new Promise(function (resolve, reject) {
-            var localData = url && window.JSONSources[url];
+            var localData = resolveJSONSource(requestURL);
+
             if (localData) {
                 // Fake the return
                 resolve({
@@ -196,7 +232,7 @@ if (window.Promise) {
                     status: 200,
                     statusText: 'OK',
                     type: 'basic',
-                    url: url,
+                    url: requestURL,
                     json: function () {
                         return localData;
                     },
@@ -204,8 +240,13 @@ if (window.Promise) {
                         return localData;
                     }
                 });
+            } else if (nativeFetch) {
+                nativeFetch(input, init).then(resolve).catch(reject);
             } else {
-                reject('Sample error, URL "' + url + '" missing in JSONSources (trying to fetch)');
+                reject(
+                    'Sample error, URL "' + requestURL +
+                    '" missing in JSONSources (trying to fetch)'
+                );
             }
         });
     };
@@ -213,7 +254,9 @@ if (window.Promise) {
 
 function resetDefaultOptions(testName) {
 
-    var defaultOptionsRaw = JSON.parse(Highcharts.defaultOptionsRaw);
+    var defaultOptionsClonedFromOriginal = deepClone(
+        Highcharts.clonedDefaultOptions
+    );
 
     // Before running setOptions, delete properties that are undefined by
     // default. For example, in `highcharts/members/setoptions`, properties like
@@ -239,15 +282,17 @@ function resetDefaultOptions(testName) {
         });
     }
 
-    deleteAddedProperties(Highcharts.defaultOptions, defaultOptionsRaw);
+    deleteAddedProperties(
+        Highcharts.defaultOptions,
+        defaultOptionsClonedFromOriginal
+    );
 
     // Delete functions (not automated as they are not serialized in JSON)
     delete Highcharts.defaultOptions.global.getTimezoneOffset;
     delete Highcharts.defaultOptions.time.getTimezoneOffset;
 
     Highcharts.setOptions(Highcharts.merge(
-        defaultOptionsRaw,
-        Highcharts.explicitUndefineds
+        defaultOptionsClonedFromOriginal
     ));
 
     // Restore radial axis defaults
@@ -551,7 +596,7 @@ Highcharts.prepareShot = function (chart) {
 
         while (i--) {
             if (
-                points[i] &&
+                points[i]?.visible &&
                 !points[i].isNull &&
                 !( // Map point with no extent, like Aruba
                     points[i].shapeArgs &&
@@ -564,6 +609,28 @@ Highcharts.prepareShot = function (chart) {
                 break;
             }
         }
+
+        // Breaks inside foreign objects are considered tainted canvas
+		// ¯\_(ツ)_/¯
+        [].forEach.call(
+			chart.container.querySelectorAll('foreignObject br'),
+			function (br) {
+				br.parentNode.replaceChild(document.createElement('div'), br);
+			}
+		);
+
+        // Replace images in foreign objects
+        [].forEach.call(
+			chart.container.querySelectorAll('foreignObject img'),
+			function (img) {
+				const div = document.createElement('div');
+                div.style.width = '16px';
+                div.style.height = '16px';
+                div.style.position = 'inline-block';
+                div.style.backgroundColor = '#ddd';
+                img.parentNode.replaceChild(div, img);
+			}
+		);
     }
 };
 
@@ -719,17 +786,39 @@ function saveSVGSnapshot(svg, path) {
     }
 }
 
+// Ported from the offline-exporting module
+function svgToDataUrl(svg) {
+    var DOMURL = (window.URL || window.webkitURL || window);
+
+    // Webkit and not chrome
+    var userAgent = window.navigator.userAgent;
+    var webKit = (
+        userAgent.indexOf('WebKit') > -1 &&
+        userAgent.indexOf('Chrome') < 0
+    );
+
+    try {
+        // Safari requires data URI since it doesn't allow navigation to
+        // blob URLs. ForeignObjects also don't work well in Blobs in Chrome
+        // (#14780).
+        if (!webKit && svg.indexOf('<foreignObject') === -1) {
+            return DOMURL.createObjectURL(new window.Blob([svg], {
+                type: 'image/svg+xml;charset-utf-16'
+            }));
+        }
+    } catch (e) {
+        // Ignore
+    }
+    return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
+}
+
 
 function svgToPixels(svg, canvas) {
     var DOMURL = (window.URL || window.webkitURL || window);
     var ctx = canvas.getContext && canvas.getContext('2d');
 
-    // Invalidate images, loading external images will throw an error
-    // svg = svg.replace(/xlink:href/g, 'data-href');
-    var blob = new Blob([svg], { type: 'image/svg+xml' });
-
     var img = new Image(CANVAS_WIDTH, CANVAS_HEIGHT);
-    img.src = DOMURL.createObjectURL(blob);
+    img.src = svgToDataUrl(svg);
 
     return new Promise(function (resolve, reject) {
         img.onload = function () {
@@ -775,10 +864,14 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
 
         loadReferenceSVG(path)
             .then(function (referenceSVG) {
-                return Promise.all([
-                    svgToPixels(referenceSVG, referenceCanvas),
-                    candidatePixels
-                ]);
+                return Promise
+                    .all([
+                        svgToPixels(referenceSVG, referenceCanvas),
+                        candidatePixels
+                    ])
+                    .catch(function (err) {
+                        reject(err);
+                    });
             })
             .then(function (pixelsInFile) {
                 var referencePixels = pixelsInFile[0];

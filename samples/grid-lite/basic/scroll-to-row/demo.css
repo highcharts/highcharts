@@ -1,0 +1,29 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid-lite.css");
+
+body {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
+}
+
+#demo {
+    padding: 8px;
+}
+
+#container {
+    margin-bottom: 15px;
+    height: 400px;
+    width: 100%;
+}
+
+.custom-caption-class {
+    text-decoration: underline;
+}

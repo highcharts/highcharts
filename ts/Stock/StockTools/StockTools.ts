@@ -1,12 +1,14 @@
+// SPDX-License-Identifier: LicenseRef-Highcharts
 /**
  *
  *  Events generator for Stock tools
  *
- *  (c) 2009-2024 Paweł Fus
+ *  (c) 2009-2026 Highsoft AS
+ *  Author: Paweł Fus
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -23,8 +25,6 @@ import type AxisType from '../../Core/Axis/AxisType';
 import D from '../../Core/Defaults.js';
 const { setOptions } = D;
 import NavigationBindings from '../../Extensions/Annotations/NavigationBindings.js';
-import NBU from '../../Extensions/Annotations/NavigationBindingsUtilities.js';
-const { getAssignedAxis } = NBU;
 import Series from '../../Core/Series/Series.js';
 import StockToolsBindings from './StockToolsBindings.js';
 import StockToolsDefaults from './StockToolsDefaults.js';
@@ -47,8 +47,8 @@ const {
  *
  * */
 
-declare module '../../Extensions/Annotations/NavigationBindingsLike' {
-    interface NavigationBindingsLike {
+declare module '../../Extensions/Annotations/NavigationBindingsBase' {
+    interface NavigationBindingsBase {
         /** @requires modules/stock-tools */
         utils: Partial<typeof STU>;
         /** @requires modules/stock-tools */
@@ -115,7 +115,7 @@ function compose(
         navigationProto.utils = navigationProto.utils || {};
         navigationProto.utils.indicatorsWithAxes = STU.indicatorsWithAxes;
         navigationProto.utils.indicatorsWithVolume = STU.indicatorsWithVolume;
-        navigationProto.utils.getAssignedAxis = getAssignedAxis;
+        navigationProto.utils.getAssignedAxis = STU.getAssignedAxis;
         navigationProto.utils.isPriceIndicatorEnabled = isPriceIndicatorEnabled;
         navigationProto.utils.manageIndicators = STU.manageIndicators;
 

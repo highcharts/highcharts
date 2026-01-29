@@ -12,7 +12,6 @@ Highcharts.chart('container', {
     },
 
     legend: {
-        useHTML: true,
         layout: 'proximate',
         align: 'right'
     },

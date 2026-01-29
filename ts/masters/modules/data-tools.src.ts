@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LicenseRef-Highcharts
 /**
  * @license Highcharts JS v@product.version@ (@product.date@)
  * @module highcharts/modules/data-tools
@@ -5,9 +6,10 @@
  *
  * Highcharts
  *
- * (c) 2010-2024 Highsoft AS
+ * (c) 2010-2026 Highsoft AS
  *
- * License: www.highcharts.com/license
+ * A commercial license may be required depending on use.
+ * See www.highcharts.com/license
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';
@@ -27,6 +29,7 @@ import '../../Data/Modifiers/InvertModifier.js';
 import '../../Data/Modifiers/MathModifier.js';
 import '../../Data/Modifiers/RangeModifier.js';
 import '../../Data/Modifiers/SortModifier.js';
+import '../../Data/Modifiers/FilterModifier.js';
 const G: AnyRecord = Highcharts;
 G.DataConnector = G.DataConnector || DataConnector;
 G.DataConverter = G.DataConverter || DataConverter;

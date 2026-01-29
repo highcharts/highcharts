@@ -1,0 +1,6 @@
+---
+ name: Multiple dataTables custom connector
+ authors:
+   - Kamil Kubik
+ js_wrap: b
+...

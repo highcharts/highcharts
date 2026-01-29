@@ -12,6 +12,8 @@ body {
         "Segoe UI Emoji",
         "Segoe UI Symbol",
         sans-serif;
+    background: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
 }
 
 :root,
@@ -25,7 +27,6 @@ body {
     --highcharts-neutral-color-100: #000;
     --highcharts-neutral-color-5: #f2f2f2;
     --highcharts-neutral-color-3: #f7f7f7;
-    --highcharts-neutral-color-0: #fff;
 
     /* General */
     --highcharts-background-color: #fff;
@@ -48,8 +49,22 @@ body {
         --highcharts-neutral-color-100: rgb(255, 255, 255);
         --highcharts-neutral-color-5: rgb(61, 61, 61);
         --highcharts-neutral-color-3: rgb(57, 57, 57);
-        --highcharts-neutral-color-0: rgb(0, 0, 0);
     }
+}
+
+.highcharts-dark {
+    /* Colors for data series and points */
+    --highcharts-color-0: #93cbae;
+    --highcharts-color-5: #c4c4c4;
+
+    /* Extra colors */
+    --gray: #333;
+
+    /* UI colors */
+    --highcharts-background-color: #333;
+    --highcharts-neutral-color-100: rgb(255, 255, 255);
+    --highcharts-neutral-color-5: rgb(61, 61, 61);
+    --highcharts-neutral-color-3: rgb(57, 57, 57);
 }
 
 #container {
@@ -145,7 +160,7 @@ body {
 }
 
 #dashboard-chart-2 .highcharts-data-label text {
-    fill: var(--highcharts-neutral-color-0);
+    fill: var(--highcharts-background-color);
 }
 
 .highcharts-plot-line {

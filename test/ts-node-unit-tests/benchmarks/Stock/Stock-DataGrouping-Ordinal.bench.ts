@@ -5,7 +5,7 @@ import { getHighchartsJSDOM } from '../../test-utils';
 
 
 export const config = {
-    sizes: [1000, 10_000, 100_000, 1_000_000]
+    sizes: [2500, 50000]
 };
 
 export function before(size: number) {

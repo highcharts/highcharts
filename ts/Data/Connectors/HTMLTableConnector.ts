@@ -1,16 +1,17 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Torstein Hønsi
  *  - Gøran Slettemark
  *  - Wojciech Chmiel
  *  - Sophie Bremer
+ *  - Kamil Kubik
  *
  * */
 
@@ -22,14 +23,18 @@
  *
  * */
 
-import type DataEvent from '../DataEvent';
+import type {
+    DataEventDetail
+} from '../DataEvent';
 import type HTMLTableConnectorOptions from './HTMLTableConnectorOptions';
-import type Types from '../../Shared/Types';
+import type HTMLTableConverterOptions from '../Converters/HTMLTableConverterOptions';
 
-import DataConnector from './DataConnector.js';
+import DataConnector, {
+    type Event as DataConnectorEvent
+} from './DataConnector.js';
+import HTMLTableConverter from '../Converters/HTMLTableConverter.js';
 import H from '../../Core/Globals.js';
 const { win } = H;
-import HTMLTableConverter from '../Converters/HTMLTableConverter.js';
 import U from '../../Core/Utilities.js';
 const { merge } = U;
 
@@ -53,7 +58,9 @@ class HTMLTableConnector extends DataConnector {
      * */
 
     protected static readonly defaultOptions: HTMLTableConnectorOptions = {
-        table: ''
+        id: 'HTML-table-connector',
+        type: 'HTMLTable',
+        htmlTable: ''
     };
 
     /* *
@@ -65,18 +72,18 @@ class HTMLTableConnector extends DataConnector {
     /**
      * Constructs an instance of HTMLTableConnector.
      *
-     * @param {HTMLTableConnector.UserOptions} [options]
+     * @param {CombinedHTMLTableConnectorOptions} [options]
      * Options for the connector and converter.
      */
     public constructor(
-        options?: HTMLTableConnector.UserOptions
+        options?: CombinedHTMLTableConnectorOptions
     ) {
         const mergedOptions = merge(HTMLTableConnector.defaultOptions, options);
 
         super(mergedOptions);
+        this.options = mergedOptions;
 
         this.converter = new HTMLTableConverter(mergedOptions);
-        this.options = mergedOptions;
     }
 
     /* *
@@ -94,7 +101,7 @@ class HTMLTableConnector extends DataConnector {
     /**
      * The attached parser, which can be replaced in the constructor
      */
-    public readonly converter: HTMLTableConverter;
+    public converter: HTMLTableConverter;
 
     /**
      * The table element to create the connector from. Is either supplied
@@ -107,39 +114,33 @@ class HTMLTableConnector extends DataConnector {
     /**
      * Initiates creating the dataconnector from the HTML table
      *
-     * @param {DataEvent.Detail} [eventDetail]
+     * @param {DataEventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @emits HTMLTableConnector#load
      * @emits HTMLTableConnector#afterLoad
      * @emits HTMLTableConnector#loadError
      */
-    public load(
-        eventDetail?: DataEvent.Detail
-    ): Promise<this> {
-        const connector = this,
-            converter = connector.converter,
-            table = connector.table,
-            {
-                dataModifier,
-                table: tableHTML
-            } = connector.options;
+    public async load(eventDetail?: DataEventDetail): Promise<this> {
+        const connector = this;
+        const options = connector.options;
+        const converter = connector.converter;
+        const table = connector.getTable();
+        const htmlTable = options.htmlTable;
 
-        connector.emit<HTMLTableConnector.Event>({
+        connector.emit({
             type: 'load',
-            detail: eventDetail,
-            table,
-            tableElement: connector.tableElement
+            detail: eventDetail
         });
 
 
         let tableElement: (HTMLElement|null);
 
-        if (typeof tableHTML === 'string') {
-            connector.tableID = tableHTML;
-            tableElement = win.document.getElementById(tableHTML);
+        if (typeof htmlTable === 'string') {
+            connector.tableID = htmlTable;
+            tableElement = win.document.getElementById(htmlTable);
         } else {
-            tableElement = tableHTML;
+            tableElement = htmlTable;
             connector.tableID = tableElement.id;
         }
 
@@ -149,97 +150,62 @@ class HTMLTableConnector extends DataConnector {
             const error =
                 'HTML table not provided, or element with ID not found';
 
-            connector.emit<HTMLTableConnector.Event>({
+            connector.emit({
                 type: 'loadError',
                 detail: eventDetail,
-                error,
-                table
+                error
             });
 
             return Promise.reject(new Error(error));
         }
 
-        converter.parse(
-            merge({ tableElement: connector.tableElement }, connector.options),
+        const columns = converter.parse(
+            merge({ tableElement: connector.tableElement }, options),
             eventDetail
         );
 
         // If already loaded, clear the current rows
         table.deleteColumns();
-        table.setColumns(converter.getTable().getColumns());
+        table.setColumns(columns);
 
-        return connector
-            .setModifierOptions(dataModifier)
-            .then((): this => {
-                connector.emit<HTMLTableConnector.Event>({
-                    type: 'afterLoad',
-                    detail: eventDetail,
-                    table,
-                    tableElement: connector.tableElement
-                });
-                return connector;
-            });
+        await connector.applyTableModifiers();
+        connector.emit({
+            type: 'afterLoad',
+            detail: eventDetail
+        });
+        return connector;
     }
 
 }
 
 /* *
  *
- *  Class Namespace
+ *  Declarations
  *
  * */
 
 /**
- * Types for class-specific options and events
+ * Type for event object fired from HTMLTableConnector
  */
-namespace HTMLTableConnector {
+export interface Event extends DataConnectorEvent {}
 
-    /* *
-     *
-     *  Declarations
-     *
-     * */
-
-    /**
-     * Type for event object fired from HTMLTableConnector
-     */
-    export type Event = (ErrorEvent|LoadEvent);
-
-    /**
-     * Provided event object on errors within HTMLTableConnector
-     */
-    export type ErrorEvent = DataConnector.ErrorEvent;
-
-    /**
-     * Options for exporting the connector as an HTML table
-     */
-    export interface ExportOptions {
-        decimalPoint?: string|null;
-        exportIDColumn?: boolean;
-        tableCaption?: string;
-        useLocalDecimalPoint?: boolean;
-        useMultiLevelHeaders?: boolean;
-        useRowspanHeaders?: boolean;
-        usePresentationOrder?: boolean;
-    }
-
-    /**
-     * Provided event object on load events within HTMLTableConnector
-     */
-    export interface LoadEvent extends DataConnector.LoadEvent {
-        tableElement?: (HTMLElement|null);
-    }
-
-    /**
-     * Available options for constructor and converter of the
-     * HTMLTableConnector.
-     */
-    export type UserOptions = (
-        Types.DeepPartial<HTMLTableConnectorOptions>&
-        HTMLTableConverter.UserOptions
-    );
-
+/**
+ * Options for exporting the connector as an HTML table
+ */
+export interface ExportOptions {
+    decimalPoint?: string|null;
+    exportIDColumn?: boolean;
+    tableCaption?: string;
+    useLocalDecimalPoint?: boolean;
+    useMultiLevelHeaders?: boolean;
+    useRowspanHeaders?: boolean;
 }
+
+/**
+ * Options of the HTMLTable connector and converter.
+ */
+export type CombinedHTMLTableConnectorOptions =
+    Partial<HTMLTableConnectorOptions> & HTMLTableConverterOptions;
 
 /* *
  *

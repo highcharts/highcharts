@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -58,8 +59,8 @@ const {
  *
  * */
 
-declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase {
         barW?: number;
         pointXOffset?: number;
     }
@@ -494,6 +495,11 @@ class ColumnSeries extends Series {
         const series = this,
             chart = series.chart,
             options = series.options,
+            // For points whithout graphics (null points) this value is used
+            // to reserve space around the point such that:
+            //      - normal/null points are spaced similarily,
+            //      - focusborders of null points are like those of "0" points
+            // This ensures consistent dimensions between null/normal points.
             dense = series.dense =
                 (series.closestPointRange as any) * series.xAxis.transA < 2,
             borderWidth = series.borderWidth = pick(
@@ -636,7 +642,7 @@ class ColumnSeries extends Series {
                 // #3169, drilldown from null must have a position to work from.
                 // #6585, dataLabel should be placed on xAxis, not floating in
                 // the middle of the chart.
-                point.isNull ? translatedThreshold : barY,
+                barY,
                 barW,
                 point.isNull ? 0 : barH
             );
@@ -675,6 +681,7 @@ class ColumnSeries extends Series {
             p2o = (this as any).pointAttrToOptions || {},
             strokeOption = p2o.stroke || 'borderColor',
             strokeWidthOption = p2o['stroke-width'] || 'borderWidth';
+
         let stateOptions: SeriesStateHoverOptions,
             zone,
             brightness,
@@ -690,7 +697,9 @@ class ColumnSeries extends Series {
             strokeWidth = (point && (point as any)[strokeWidthOption]) ||
                 (options as any)[strokeWidthOption] ||
                 (this as any)[strokeWidthOption] || 0,
-            opacity = pick(point && point.opacity, options.opacity, 1);
+            opacity = (point?.isNull && options.nullInteraction) ?
+                0 :
+                (point?.opacity ?? options.opacity ?? 1);
 
         // Handle zone colors
         if (point && this.zones.length) {
@@ -715,9 +724,7 @@ class ColumnSeries extends Series {
             stateOptions = merge(
                 (options.states as any)[state],
                 // #6401
-                point.options.states &&
-                (point.options.states as any)[state] ||
-                {}
+                point.options.states?.[state] || {}
             );
             brightness = stateOptions.brightness;
             fill =
@@ -760,6 +767,7 @@ class ColumnSeries extends Series {
         const series = this,
             chart = this.chart,
             options = series.options,
+            nullInteraction = options.nullInteraction,
             renderer = chart.renderer,
             animationLimit = options.animationLimit || 250;
         let shapeArgs;
@@ -772,7 +780,7 @@ class ColumnSeries extends Series {
                 verb = graphic && chart.pointCount < animationLimit ?
                     'animate' : 'attr';
 
-            if (isNumber(plotY) && point.y !== null) {
+            if (isNumber(plotY) && (point.y !== null || nullInteraction)) {
                 shapeArgs = point.shapeArgs;
 
                 // When updating a series between 2d and 3d or cartesian and
@@ -850,23 +858,27 @@ class ColumnSeries extends Series {
             onMouseOver = function (e: PointerEvent): void {
                 pointer?.normalize(e);
 
-                const point = pointer?.getPointFromEvent(e),
-                    // Run point events only for points inside plot area, #21136
-                    isInsidePlot = chart.scrollablePlotArea ?
-                        chart.isInsidePlot(
-                            e.chartX - chart.plotLeft,
-                            e.chartY - chart.plotTop,
-                            {
-                                visiblePlotOnly: true
-                            }
-                        ) : true;
+                const point = pointer?.getPointFromEvent(e);
 
                 // Undefined on graph in scatterchart
                 if (
                     pointer &&
                     point &&
                     series.options.enableMouseTracking &&
-                    isInsidePlot
+                    (
+                    // Run point events only for points inside plot area, #21136
+                        chart.isInsidePlot(
+                            e.chartX - chart.plotLeft,
+                            e.chartY - chart.plotTop,
+                            {
+                                visiblePlotOnly: true
+                            }
+                        ) ||
+                        pointer?.inClass(
+                            e.target as any,
+                            'highcharts-data-label'
+                        )
+                    )
                 ) {
                     pointer.isDirectTouch = true;
                     point.onMouseOver(e);
@@ -894,23 +906,34 @@ class ColumnSeries extends Series {
 
         // Add the event listeners, we need to do this only once
         if (!series._hasTracking) {
-            (series.trackerGroups as any).forEach(function (key: string): void {
-                if ((series as any)[key]) {
-                    // We don't always have dataLabelsGroup
-                    (series as any)[key]
-                        .addClass('highcharts-tracker')
-                        .on('mouseover', onMouseOver)
-                        .on('mouseout', function (e: PointerEvent): void {
-                            pointer?.onTrackerMouseOut(e);
-                        })
-                        .on('touchstart', onMouseOver);
-
-                    if (!chart.styledMode && series.options.cursor) {
-                        (series as any)[key]
-                            .css({ cursor: series.options.cursor });
+            series.trackerGroups?.reduce(
+                (acc, key): (SVGElement|undefined)[] => {
+                    if (key === 'dataLabelsGroup') {
+                        acc.push(...(series.dataLabelsGroups || []));
+                    } else {
+                        acc.push((series as any)[key]);
                     }
+                    return acc;
+                },
+                [] as (SVGElement|undefined)[]
+            ).forEach((group: SVGElement|undefined): void => {
+                if (!group) {
+                    // Skip undefined
+                    return;
+                }
+
+                group.addClass('highcharts-tracker')
+                    .on('mouseover', onMouseOver)
+                    .on('mouseout', function (e: PointerEvent): void {
+                        pointer?.onTrackerMouseOut(e);
+                    })
+                    .on('touchstart', onMouseOver);
+
+                if (!chart.styledMode && series.options.cursor) {
+                    group.css({ cursor: series.options.cursor });
                 }
             });
+
             series._hasTracking = true;
         }
 

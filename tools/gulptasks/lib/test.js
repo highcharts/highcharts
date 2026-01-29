@@ -34,6 +34,7 @@ function getProducts(logPaths) {
         products = [
             'Core',
             'Dashboards',
+            'Grid',
             'Gantt',
             'Maps',
             'Stock',
@@ -69,7 +70,7 @@ function getProducts(logPaths) {
             if (['Shared', 'Data'].indexOf(pathParts[1]) !== -1) {
                 mark('Core');
                 mark('Dashboards');
-            } else if (pathParts[1] === 'DataGrid') {
+            } else if (pathParts[1] === 'Grid') {
                 mark('Dashboards');
             }
         }
@@ -95,7 +96,7 @@ function checkProduct(product) {
 
 /**
  * Checks if tests should run
- * @param {{ configFile: string, codeDirectory: string, jsDirectory: string, testsDirectory: string }}} config
+ * @param {{ configFile: string, codeDirectory: string, jsDirectory: string, testsDirectory: string, project?: string }} config
  * Configuration
  *
  * @return {Promise<boolean>}
@@ -105,7 +106,8 @@ async function shouldRun({
     configFile,
     codeDirectory,
     jsDirectory,
-    testsDirectory
+    testsDirectory,
+    project
 }) {
 
     const fs = require('fs');
@@ -116,13 +118,20 @@ async function shouldRun({
     let configuration = {
         latestCodeHash: '',
         latestJsHash: '',
-        latestTestsHash: ''
+        latestTestsHash: '',
+        project: ''
     };
 
     if (fs.existsSync(configFile)) {
         configuration = JSON.parse(
             fs.readFileSync(configFile).toString()
         );
+    }
+
+    // If project parameter is provided and differs from cached project,
+    // force rebuild
+    if (project && configuration.project !== project) {
+        return true;
     }
 
     const latestCodeHash = fsLib.getDirectoryHash(
@@ -159,7 +168,7 @@ async function shouldRun({
 
 /**
  * Saves test run information
- * @param {{ configFile: string, codeDirectory: string, jsDirectory: string, testsDirectory: string }} config
+ * @param {{ configFile: string, codeDirectory: string, jsDirectory: string, testsDirectory: string, project?: string }} config
  * Configuration
  *
  * @return {void}
@@ -168,7 +177,8 @@ function saveRun({
     configFile,
     codeDirectory,
     jsDirectory,
-    testsDirectory
+    testsDirectory,
+    project
 }) {
 
     const FS = require('fs');
@@ -188,7 +198,8 @@ function saveRun({
     const configuration = {
         latestCodeHash,
         latestJsHash,
-        latestTestsHash
+        latestTestsHash,
+        project: project || ''
     };
 
     FS.writeFileSync(configFile, JSON.stringify(configuration));
@@ -286,7 +297,7 @@ Runs tests for products affected by modified files staged for commit.
 
 --product
 Comma separated list of products to test.
-Available products are Core, Gantt, Maps, Stock and Dashboards.
+Available products are Core, Gantt, Maps, Stock, Dashboards and Grid.
 
 --speak
 Says if tests failed or succeeded.

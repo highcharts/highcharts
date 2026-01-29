@@ -2,13 +2,13 @@
  *
  *  This module implements sunburst charts in Highcharts.
  *
- *  (c) 2016-2024 Highsoft AS
+ *  (c) 2016-2026 Highsoft AS
  *
  *  Authors: Jon Arild Nygard
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -597,17 +597,13 @@ class SunburstSeries extends TreemapSeries {
             addedHack = false;
 
         if (hackDataLabelAnimation) {
-            (series.dataLabelsGroup as any).attr({ opacity: 0 });
+            series.dataLabelsGroup!.attr({ opacity: 0 });
             animateLabels = function (): void {
-                const s = series;
-
                 animateLabelsCalled = true;
-                if (s.dataLabelsGroup) {
-                    s.dataLabelsGroup.animate({
-                        opacity: 1,
-                        visibility: 'inherit'
-                    });
-                }
+                series.dataLabelsGroup!.animate({
+                    opacity: 1,
+                    visibility: 'inherit'
+                });
             };
         }
         for (const point of points) {
@@ -632,16 +628,16 @@ class SunburstSeries extends TreemapSeries {
 
             if (hasRendered && animation) {
                 animationInfo = getAnimation(shape, {
-                    center: center,
-                    point: point,
-                    radians: radians,
-                    innerR: innerR,
-                    idRoot: idRoot,
-                    idPreviousRoot: idPreviousRoot,
-                    shapeExisting: shapeExisting,
-                    shapeRoot: shapeRoot,
-                    shapePreviousRoot: shapePreviousRoot,
-                    visible: visible
+                    center,
+                    point,
+                    radians,
+                    innerR,
+                    idRoot,
+                    idPreviousRoot,
+                    shapeExisting,
+                    shapeRoot,
+                    shapePreviousRoot,
+                    visible
                 });
             } else {
                 // When animation is disabled, attr is called from animation.
@@ -661,12 +657,15 @@ class SunburstSeries extends TreemapSeries {
                 isInside: visible,
                 isNull: !visible // Used for dataLabels & point.draw
             });
-            point.dlOptions = getDlOptions({
-                point: point,
-                level: level,
-                optionsPoint: point.options,
-                shapeArgs: shape
-            });
+            point.dlOptions = {
+                ...getDlOptions({
+                    point,
+                    level,
+                    optionsPoint: point.options,
+                    shapeArgs: shape
+                }),
+                zIndex: void 0
+            };
             if (!addedHack && visible) {
                 addedHack = true;
                 onComplete = animateLabels;
@@ -680,9 +679,9 @@ class SunburstSeries extends TreemapSeries {
                         (point.selected && 'select') as any
                     ) as any)
                 ),
-                onComplete: onComplete,
-                group: group,
-                renderer: renderer,
+                onComplete,
+                group,
+                renderer,
                 shapeType: 'arc',
                 shapeArgs: shape
             });
@@ -698,7 +697,7 @@ class SunburstSeries extends TreemapSeries {
             // If animateLabels is called before labels were hidden, then call
             // it again.
             if (animateLabelsCalled) {
-                (animateLabels as any)();
+                animateLabels?.();
             }
         } else {
             ColumnSeries.prototype.drawDataLabels.call(series);

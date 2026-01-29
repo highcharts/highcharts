@@ -61,3 +61,39 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test(
+    'Relative X value with turboThreshold',
+    assert => {
+        const chart = Highcharts.chart('container', {
+            series: [{
+                data: [
+                    [0, 1],
+                    [1, 3],
+                    [2, 2],
+                    [3, 4]
+                ],
+                type: 'column',
+                relativeXValue: true,
+                turboThreshold: 1,
+                pointStart: '2025-05-23',
+                pointIntervalUnit: 'day'
+            }],
+            xAxis: {
+                type: 'datetime'
+            }
+        });
+
+        assert.strictEqual(
+            chart.xAxis[0].tickPositions[2],
+            Date.UTC(2025, 4, 25),
+            'X = 2, pointStart and interval unit should apply'
+        );
+
+        assert.strictEqual(
+            chart.series[0].points[2].x,
+            Date.UTC(2025, 4, 25),
+            'X = 2, pointStart and interval unit should apply'
+        );
+    }
+);

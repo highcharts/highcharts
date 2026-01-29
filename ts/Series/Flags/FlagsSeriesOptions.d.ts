@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -16,13 +17,14 @@
 
 import type { AlignValue } from '../../Core/Renderer/AlignObject';
 import type ColorType from '../../Core/Color/ColorType';
-import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
+import type {
+    ColumnSeriesOptions,
+    ColumnSeriesTooltipOptions
+} from '../Column/ColumnSeriesOptions';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type FlagsPointOptions from './FlagsPointOptions';
-import type FlagsSeries from './FlagsSeries';
 import type { FlagsShapeValue } from './FlagsPointOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type TooltipOptions from '../../Core/TooltipOptions';
 
 /* *
  *
@@ -175,7 +177,7 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
      */
     stackDistance?: number;
 
-    states?: SeriesStatesOptions<FlagsSeries>;
+    states?: SeriesStatesOptions<FlagsSeriesOptions>;
 
     /**
      * The text styles of the flag.
@@ -299,14 +301,27 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
      * value, so the tooltip rather displays the `text` option for each
      * point.
      *
-     * @extends plotOptions.series.tooltip
-     *
-     * @excluding changeDecimals, valueDecimals, valuePrefix, valueSuffix
-     *
      * @product highstock
      */
-    tooltip?: Partial<TooltipOptions>;
+    tooltip?: FlagsSeriesTooltipOptions;
+}
 
+export interface FlagsSeriesTooltipOptions extends ColumnSeriesTooltipOptions {
+    /**
+     * @default '{point.text}'
+     */
+    pointFormat?: string;
+
+    /* *
+     *
+     *  Excluded
+     *
+     * */
+
+    changeDecimals?: undefined;
+    valueDecimals?: undefined;
+    valuePrefix?: undefined;
+    valueSuffix?: undefined;
 }
 
 /* *

@@ -1,12 +1,12 @@
 /* *
  *
- *  (c) 2010-2024 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *
  *  Author: Paweł Potaczek
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -34,8 +34,6 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import Chart from '../../Core/Chart/Chart.js';
-import Color from '../../Core/Color/Color.js';
-const { parse: color } = Color;
 import F from '../../Core/Templating.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
@@ -57,20 +55,20 @@ const {
  *
  * */
 
-declare module '../../Core/Legend/LegendLike' {
-    interface LegendLike {
+declare module '../../Core/Legend/LegendBase' {
+    interface LegendBase {
         bubbleLegend?: BubbleLegendItem;
     }
 }
 
-declare module '../../Core/Series/PointLike' {
-    interface PointLike {
+declare module '../../Core/Series/PointBase' {
+    interface PointBase {
         isBubble?: boolean;
     }
 }
 
-declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase {
         ignoreSeries?: boolean;
         isBubble?: boolean;
     }
@@ -261,14 +259,11 @@ class BubbleLegendItem {
                     options.borderColor,
                     series.color
                 );
-                bubbleAttribs.fill = pick(
-                    range.color,
-                    options.color,
-                    fillOpacity !== 1 ?
-                        color(series.color).setOpacity(fillOpacity)
-                            .get('rgba') :
-                        series.color
-                );
+                bubbleAttribs.fill = range.color || options.color;
+                if (!bubbleAttribs.fill) {
+                    bubbleAttribs.fill = series.color;
+                    bubbleAttribs['fill-opacity'] = fillOpacity ?? 1;
+                }
                 connectorAttribs.stroke = pick(
                     range.connectorColor,
                     options.connectorColor,

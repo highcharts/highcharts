@@ -32,5 +32,5 @@ const chart = Highcharts.chart('container', {
 
 // the button handler
 document.getElementById('button').addEventListener('click', () => {
-    chart.print();
+    chart.exporting.print();
 });

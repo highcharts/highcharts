@@ -1,12 +1,11 @@
 /* *
  *
- *  (c) 2019-2024 Highsoft AS
+ *  (c) 2019-2026 Highsoft AS
  *
  *  Boost module: stripped-down renderer for higher performance
  *
  *  License: highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -26,6 +25,7 @@ import type { SeriesTypeRegistry } from '../../Core/Series/SeriesType';
  *
  * */
 
+/** @internal */
 export type WGLDrawModeValue = (
     'LINE_STRIP' |
     'LINES' |
@@ -39,6 +39,7 @@ export type WGLDrawModeValue = (
  *
  * */
 
+/** @internal */
 const WGLDrawMode: Record<keyof SeriesTypeRegistry, WGLDrawModeValue> = {
     'area': 'LINES',
     'arearange': 'LINES',
@@ -59,4 +60,5 @@ const WGLDrawMode: Record<keyof SeriesTypeRegistry, WGLDrawModeValue> = {
  *
  * */
 
+/** @internal */
 export default WGLDrawMode;

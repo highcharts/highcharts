@@ -1,13 +1,15 @@
+// SPDX-License-Identifier: LicenseRef-Highcharts
 /**
  * @license Highstock JS v@product.version@ (@product.date@)
  * @module highcharts/indicators/cmf
  * @requires highcharts
  * @requires highcharts/modules/stock
  *
- * (c) 2010-2024 Highsoft AS
+ * (c) 2010-2026 Highsoft AS
  * Author: Sebastian Domas
  *
- * License: www.highcharts.com/license
+ * A commercial license may be required depending on use.
+ * See www.highcharts.com/license
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';

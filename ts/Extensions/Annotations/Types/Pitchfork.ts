@@ -1,6 +1,5 @@
 /* *
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -13,15 +12,62 @@
  * */
 
 import type { AnnotationPointType } from '../AnnotationSeries';
-import type { ControllableShapeOptions } from '../Controllables/ControllableOptions';
+import type {
+    AnnotationShapeOptionsOptions
+} from '../AnnotationOptions';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
-import type MockPointOptions from '../MockPointOptions';
+import type MockPointOptions from '../AnnotationMockPointOptionsObject';
 
 import Annotation from '../Annotation.js';
+import D from '../../../Core/Defaults.js';
+const { defaultOptions } = D;
 import InfinityLine from './InfinityLine.js';
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
 const { merge } = U;
+
+if (defaultOptions.annotations?.types) {
+    defaultOptions.annotations.types.pitchfork = merge(
+        defaultOptions.annotations.types.infinityLine,
+        /**
+         * Options for the pitchfork annotation type.
+         *
+         * @sample highcharts/annotations-advanced/pitchfork/
+         *         Pitchfork
+         *
+         * @extends      annotations.types.infinityLine
+         * @product      highstock
+         * @optionparent annotations.types.pitchfork
+         */
+        {
+            /**
+             * @excluding line
+             */
+            typeOptions: {
+                /**
+                 * Inner background options.
+                 *
+                 * @extends   annotations.shapeOptions
+                 * @excluding height, r, type, width
+                 */
+                innerBackground: {
+                    fill: 'rgba(130, 170, 255, 0.4)',
+                    strokeWidth: 0
+                },
+                /**
+                 * Outer background options.
+                 *
+                 * @extends   annotations.shapeOptions
+                 * @excluding height, r, type, width
+                 */
+                outerBackground: {
+                    fill: 'rgba(156, 229, 161, 0.4)',
+                    strokeWidth: 0
+                }
+            }
+        }
+    );
+}
 
 /* *
  *
@@ -29,13 +75,8 @@ const { merge } = U;
  *
  * */
 
+/** @internal */
 class Pitchfork extends InfinityLine {
-
-    /* *
-     *
-     *  Static Properties
-     *
-     * */
 
     public static topLineEdgePoint = Pitchfork.outerLineEdgePoint(1);
     public static bottomLineEdgePoint = Pitchfork.outerLineEdgePoint(0);
@@ -214,47 +255,10 @@ class Pitchfork extends InfinityLine {
  *
  * */
 
+/** @internal */
 interface Pitchfork {
     defaultOptions: InfinityLine['defaultOptions'];
 }
-
-Pitchfork.prototype.defaultOptions = merge(
-    InfinityLine.prototype.defaultOptions,
-    /**
-     * A pitchfork annotation.
-     *
-     * @sample highcharts/annotations-advanced/pitchfork/
-     *         Pitchfork
-     *
-     * @extends      annotations.infinityLine
-     * @product      highstock
-     * @optionparent annotations.pitchfork
-     */
-    {
-        typeOptions: {
-            /**
-             * Inner background options.
-             *
-             * @extends   annotations.crookedLine.shapeOptions
-             * @excluding height, r, type, width
-             */
-            innerBackground: {
-                fill: 'rgba(130, 170, 255, 0.4)',
-                strokeWidth: 0
-            },
-            /**
-             * Outer background options.
-             *
-             * @extends   annotations.crookedLine.shapeOptions
-             * @excluding height, r, type, width
-             */
-            outerBackground: {
-                fill: 'rgba(156, 229, 161, 0.4)',
-                strokeWidth: 0
-            }
-        }
-    }
-);
 
 /* *
  *
@@ -263,12 +267,35 @@ Pitchfork.prototype.defaultOptions = merge(
  * */
 
 namespace Pitchfork {
+    /**
+     * Options for the pitchfork annotation type.
+     *
+     * @sample highcharts/annotations-advanced/pitchfork/
+     *         Pitchfork
+     *
+     * @extends      annotations.types.infinityLine
+     * @product      highstock
+     * @optionparent annotations.types.pitchfork
+     */
     export interface Options extends InfinityLine.Options {
         typeOptions: TypeOptions;
     }
     export interface TypeOptions extends InfinityLine.TypeOptions {
-        innerBackground: ControllableShapeOptions;
-        outerBackground: ControllableShapeOptions;
+        /**
+         * Inner background options.
+         *
+         * @extends   annotations.shapeOptions
+         * @excluding height, r, type, width
+         */
+        innerBackground: AnnotationShapeOptionsOptions;
+
+        /**
+         * Outer background options.
+         *
+         * @extends   annotations.shapeOptions
+         * @excluding height, r, type, width
+         */
+        outerBackground: AnnotationShapeOptionsOptions;
     }
 }
 
@@ -278,6 +305,7 @@ namespace Pitchfork {
  *
  * */
 
+/** @internal */
 declare module './AnnotationType'{
     interface AnnotationTypeRegistry {
         pitchfork: typeof Pitchfork;

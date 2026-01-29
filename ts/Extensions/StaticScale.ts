@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2016-2024 Torstein Honsi, Lars Cabrera
+ *  (c) 2016-2026 Highsoft AS
+ *  Author: Torstein Honsi, Lars Cabrera
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -24,8 +25,7 @@ import U from '../Core/Utilities.js';
 const {
     addEvent,
     defined,
-    isNumber,
-    pick
+    isNumber
 } = U;
 
 /* *
@@ -36,16 +36,43 @@ const {
 
 declare module '../Core/Axis/AxisOptions' {
     interface AxisOptions {
+
+        /**
+         * For vertical axes only. Setting the static scale ensures that each
+         * tick unit is translated into a fixed pixel height. For example,
+         * setting the static scale to 24 results in each Y axis category
+         * taking up 24 pixels, and the height of the chart adjusts. Adding or
+         * removing items will make the chart resize.
+         *
+         * @sample {gantt} gantt/xrange-series/demo/
+         *         X-range series with static scale
+         * @sample {highcharts} highcharts/xaxis/staticscale
+         *         Static scale on X axis (horizontal bar chart)
+         *
+         * @requires  modules/static-scale
+         * @type      {number}
+         * @default   50
+         * @since     6.2.0
+         * @product   highcharts highstock gantt
+         * @apioption xAxis.staticScale
+         */
         staticScale?: number;
+
     }
 }
 
-declare module '../Core/Chart/ChartLike'{
-    interface ChartLike {
+declare module '../Core/Chart/ChartBase'{
+    interface ChartBase {
+
+        /** @internal */
         redrawTrigger?: string;
+
+        /** @internal */
         initiatedScale?: boolean;
+
         /** @requires modules/static-scale */
         adjustHeight(): void;
+
     }
 }
 
@@ -55,7 +82,7 @@ declare module '../Core/Chart/ChartLike'{
  *
  * */
 
-/** @private */
+/** @internal */
 function compose(
     AxisClass: typeof Axis,
     ChartClass: typeof Chart
@@ -72,27 +99,24 @@ function compose(
 
 }
 
-/** @private */
+/** @internal */
 function onAxisAfterSetOptions(
     this: Axis
 ): void {
-    const chartOptions = this.chart.options.chart;
+    const chartOptions = this.chart.userOptions.chart;
     if (
         !this.horiz &&
         isNumber(this.options.staticScale) &&
         (
-            !(chartOptions as any).height ||
-            (
-                (chartOptions as any).scrollablePlotArea &&
-                (chartOptions as any).scrollablePlotArea.minHeight
-            )
+            !chartOptions?.height ||
+            chartOptions.scrollablePlotArea?.minHeight
         )
     ) {
         this.staticScale = this.options.staticScale;
     }
 }
 
-/** @private */
+/** @internal */
 function chartAdjustHeight(
     this: Chart
 ): void {
@@ -101,27 +125,30 @@ function chartAdjustHeight(
     if (chart.redrawTrigger !== 'adjustHeight') {
         for (const axis of (chart.axes || [])) {
             const chart = axis.chart,
-                animate =
-                    !!chart.initiatedScale &&
-                    (chart.options as any).animation,
                 staticScale = axis.options.staticScale;
 
-            if (axis.staticScale && defined(axis.min)) {
-                let height = pick(
-                    axis.brokenAxis && axis.brokenAxis.unitLength,
-                    (axis.max as any) + axis.tickInterval - axis.min
-                ) * (staticScale as any);
-
+            if (
+                axis.staticScale &&
+                staticScale &&
+                defined(axis.min) &&
+                defined(axis.max)
+            ) {
+                let height = (axis.brokenAxis?.unitLength ??
+                    (axis.max + axis.tickInterval - axis.min)) * (staticScale);
 
                 // Minimum height is 1 x staticScale.
-                height = Math.max(height, staticScale as any);
+                height = Math.max(height, staticScale);
 
                 const diff = height - chart.plotHeight;
 
                 if (!chart.scrollablePixelsY && Math.abs(diff) >= 1) {
                     chart.plotHeight = height;
                     chart.redrawTrigger = 'adjustHeight';
-                    chart.setSize(void 0, chart.chartHeight + diff, animate);
+                    chart.setSize(
+                        void 0,
+                        chart.chartHeight + diff,
+                        chart.initiatedScale ? void 0 : false
+                    );
                 }
 
                 // Make sure clip rects have the right height before initial
@@ -142,7 +169,7 @@ function chartAdjustHeight(
         }
         this.initiatedScale = true;
     }
-    this.redrawTrigger = null as any;
+    this.redrawTrigger = void 0;
 }
 
 /* *
@@ -170,14 +197,17 @@ export default StaticScale;
  * height of the chart adjusts. Adding or removing items will make the chart
  * resize.
  *
- * @sample gantt/xrange-series/demo/
+ * @sample {gantt} gantt/xrange-series/demo/
  *         X-range series with static scale
+ * @sample {highcharts} highcharts/xaxis/staticscale
+ *         Static scale on X axis (horizontal bar chart)
  *
+ * @requires  modules/static-scale
  * @type      {number}
  * @default   50
  * @since     6.2.0
- * @product   gantt
- * @apioption yAxis.staticScale
+ * @product   highcharts highstock gantt
+ * @apioption xAxis.staticScale
  */
 
 ''; // Keeps doclets above in JS file

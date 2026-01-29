@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -16,7 +17,6 @@
 
 import type AreaRangeDataLabelOptions from './AreaRangeDataLabelOptions';
 import type AreaRangePointOptions from './AreaRangePointOptions';
-import type AreaRangeSeries from './AreaRangeSeries';
 import type AreaSeriesOptions from '../Area/AreaSeriesOptions';
 import type ColorType from '../../Core/Color/ColorType';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
@@ -58,7 +58,7 @@ export interface AreaRangeSeriesOptions extends AreaSeriesOptions {
         Array<AreaRangeDataLabelOptions>
     );
 
-    states?: SeriesStatesOptions<AreaRangeSeries>;
+    states?: SeriesStatesOptions<AreaRangeSeriesOptions>;
 
     trackByArea?: boolean;
 

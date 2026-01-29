@@ -66,7 +66,6 @@
             enabled: false
         },
         tooltip: {
-            useHTML: true,
             headerFormat: '<b>{point.key}</b>:<br/>',
             pointFormat: '{point.info}'
         },

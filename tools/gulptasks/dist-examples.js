@@ -4,6 +4,7 @@
 
 /* eslint no-use-before-define: 0 */
 
+const Babel = require('@babel/core');
 const Gulp = require('gulp');
 const Path = require('path');
 const { readFileSync } = require('node:fs');
@@ -66,7 +67,6 @@ function indexTemplate(options) {
             }
             ul.nav > li {
                 list-style: none;
-                display: black
             }
             div > ul > li {
                 padding-bottom: 0.5em;
@@ -89,6 +89,18 @@ function indexTemplate(options) {
             }
             li a:hover {
                 text-decoration: underline;
+            }
+            @media (prefers-color-scheme: dark) {
+                body {
+                    background-color: #141414;
+                    color: #ddd;
+                }
+                li a {
+                    color: #2caffe;
+                }
+                button span {
+                    color: #fff
+                }
             }
         </style>
     </head>
@@ -160,7 +172,7 @@ async function createExamples(title, sourcePath, targetPath, template) {
         let path;
 
         const content = [
-            'html', 'css', 'js'
+            'html', 'css', 'js', 'ts'
         ].reduce(
             (obj, ext) => {
                 path = Path.join(directoryPath, 'demo.' + ext);
@@ -173,6 +185,14 @@ async function createExamples(title, sourcePath, targetPath, template) {
             },
             { title }
         );
+
+        if (content.ts) {
+            content.js = '/* eslint-disable */\n' +
+                Babel.transformSync(content.ts, {
+                    presets: ['@babel/preset-typescript'],
+                    filename: Path.join(directoryPath, 'demo.ts')
+                }).code;
+        }
 
         const sample = assembleSample(template, content);
 
@@ -275,28 +295,53 @@ function convertURLToLocal(str) {
  */
 function distExamples() {
     const FS = require('fs');
+    const argv = require('yargs').argv;
+    const distProduct = argv.product || 'Highcharts';
 
     return new Promise((resolve, reject) => {
 
         const promises = [];
-        const samplesSubfolder = {
-            highcharts: {
-                path: ['highcharts', 'demo'],
-                title: 'Highcharts'
-            },
-            highstock: {
-                path: ['stock', 'demo'],
-                title: 'Highstock'
-            },
-            highmaps: {
-                path: ['maps', 'demo'],
-                title: 'Highmaps'
-            },
-            gantt: {
-                path: ['gantt', 'demo'],
-                title: 'Highcharts Gantt'
-            }
-        };
+        let samplesSubfolder = {};
+
+        if (distProduct === 'Highcharts') {
+            samplesSubfolder = {
+                highcharts: {
+                    path: ['highcharts', 'demo'],
+                    title: 'Highcharts'
+                },
+                highstock: {
+                    path: ['stock', 'demo'],
+                    title: 'Highstock'
+                },
+                highmaps: {
+                    path: ['maps', 'demo'],
+                    title: 'Highmaps'
+                },
+                gantt: {
+                    path: ['gantt', 'demo'],
+                    title: 'Highcharts Gantt'
+                }
+            };
+        } else if (distProduct === 'Grid') {
+            samplesSubfolder = {
+                'grid-lite': {
+                    path: ['grid', 'demo'],
+                    title: 'Highcharts Grid Lite'
+                },
+                'grid-pro': {
+                    path: ['grid', 'demo'],
+                    title: 'Highcharts Grid Pro'
+                }
+            };
+        } else if (distProduct === 'Dashboards') {
+            samplesSubfolder = {
+                dashboards: {
+                    path: ['dashboards', 'demo'],
+                    title: 'Highcharts Dashboards'
+                }
+            };
+        }
+
         const template = FS
             .readFileSync(TEMPLATE_FILE)
             .toString();

@@ -1,12 +1,17 @@
 @import url("https://code.highcharts.com/css/highcharts.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
-@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
 
 /* Colors */
 :root {
     --highcharts-dashboards-green: #20d17e;
     --highcharts-dashboards-orange: #feaa61;
     --highcharts-dashboards-green-transparent: #20d17e30;
+}
+
+body {
+    background: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
 }
 
 /* General */
@@ -16,7 +21,7 @@
 }
 
 .highcharts-background {
-    fill: var(--highcharts-neutral-color-0);
+    fill: var(--highcharts-background-color);
 }
 
 .highcharts-color-0 {
@@ -31,13 +36,12 @@
 
 /* Rows and cells */
 .highcharts-dashboards-row#row-1 {
-    background-color: var(--highcharts-neutral-color-5);
     border-radius: 20px;
     padding: 10px;
 }
 
 .highcharts-dashboards-cell > .highcharts-dashboards-component {
-    background-color: var(--highcharts-neutral-color-0);
+    background-color: var(--highcharts-background-color);
     border-radius: 20px;
     padding: 10px;
     text-align: left;
@@ -62,6 +66,14 @@
     font-weight: bold;
 }
 
+/* Grid theme */
+
+.hcg-custom-theme {
+    --hcg-padding: 10px;
+    --hcg-row-border-width: 1px;
+    --hcg-header-background: transparent;
+}
+
 /* Components specific */
 #dashboard-row-1-cell-2 .highcharts-dashboards-component-subtitle {
     color: var(--highcharts-dashboards-orange);
@@ -84,39 +96,6 @@
 #dashboard-row-3-cell-1 .highcharts-color-0 {
     stroke: var(--highcharts-dashboards-orange);
     fill: var(--highcharts-dashboards-orange);
-}
-
-#dashboard-row-3-cell-3 .highcharts-datagrid-container {
-    border: none;
-    font-weight: 100;
-}
-
-.highcharts-datagrid-container table {
-    border: 0;
-}
-
-.highcharts-datagrid-container tbody {
-    background-color: var(--highcharts-neutral-color-0);
-}
-
-.highcharts-datagrid-container {
-    background-color: transparent;
-}
-
-#dashboard-row-3-cell-3 .highcharts-datagrid-table th {
-    background-color: var(--highcharts-neutral-color-0);
-}
-
-#dashboard-row-3-cell-3 .highcharts-datagrid-row {
-    background-color: var(--highcharts-neutral-color-0);
-}
-
-#dashboard-row-3-cell-3 .highcharts-datagrid-hovered-column {
-    background: none;
-}
-
-#dashboard-row-3-cell-3 .highcharts-datagrid-hovered-row td {
-    background: var(--highcharts-dashboards-green-transparent);
 }
 
 /* Custom classes and ids */

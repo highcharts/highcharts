@@ -1,12 +1,13 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
  *  Scatter 3D series.
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -55,8 +56,6 @@ const Scatter3DSeriesDefaults: Scatter3DSeriesOptions = {
 /**
  * A `scatter3d` series. If the [type](#series.scatter3d.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
- *
- * scatter3d](#plotOptions.scatter3d).
  *
  * @extends   series,plotOptions.scatter3d
  * @excluding boostThreshold, boostBlending

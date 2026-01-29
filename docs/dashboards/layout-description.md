@@ -22,12 +22,10 @@ npm install @highcharts/dashboards
 and import it in your project like:
 ```js
 import * as Dashboards from '@highcharts/dashboards';
-import LayoutModule from '@highcharts/dashboards/modules/layout';
-
-LayoutModule(Dashboards);
+import '@highcharts/dashboards/modules/layout';
 ```
 
-If you use ESM, you can also import the modules directly from the package:
+If you use ESM, you can import the modules as follows:
 
 ```js
 import Dashboards from '@highcharts/dashboards/es-modules/masters/dashboards.src.js';
@@ -42,7 +40,7 @@ Each row can have its own style defined, and its cells can be defined as a JS ob
 Each row consists of at least one cell, but there can be many cells in the same row. These cells are the containers for the components or the nested layout.
 
 ## Nested layout demo
-<iframe style="width: 100%; height: 600px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/gui/nested-layout" allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 600px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/gui/nested-layout?force-light-theme" allow="fullscreen"></iframe>
 
 ## How the dashboard layout engine makes your dashboard responsive
 The layout calculates the position of the components. Generally, each row is placed in columns, and cells are placed in rows. When dealing with the resizer module, things get more complicated, which lets you change the width and height of the row and cell. The dashboard layout engine is based on Flexbox, and by setting width and height in percentage values, cell and row sizes are adjusted dynamically when the outer container resizes. This can happen in nested layouts when several rows are positioned inside a cell, which can also be resized.

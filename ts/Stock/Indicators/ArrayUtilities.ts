@@ -1,10 +1,12 @@
+// SPDX-License-Identifier: LicenseRef-Highcharts
 /**
  *
- *  (c) 2010-2024 Pawel Fus & Daniel Studencki
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Pawel Fus & Daniel Studencki
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 

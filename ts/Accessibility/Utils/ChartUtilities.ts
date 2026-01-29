@@ -1,12 +1,13 @@
 /* *
  *
- *  (c) 2009-2024 Øystein Moseng
+ *  (c) 2009-2026 Highsoft AS
+ *  Author: Øystein Moseng
  *
  *  Utils for dealing with charts.
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -101,9 +102,18 @@ function getAxisDescription(axis: Axis): string {
         axis.options.accessibility?.description ||
         axis.axisTitle?.textStr ||
         axis.options.id ||
-        axis.categories && 'categories' ||
-        axis.dateTime && 'Time' ||
-        'values'
+        axis.categories && axis.chart.langFormat(
+            'accessibility.axis.defaultAxisNames.categories',
+            {}
+        ) ||
+        axis.dateTime && axis.chart.langFormat(
+            'accessibility.axis.defaultAxisNames.time',
+            {}
+        ) ||
+        axis.chart.langFormat(
+            'accessibility.axis.defaultAxisNames.values',
+            {}
+        )
     );
 }
 

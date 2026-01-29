@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -37,20 +38,23 @@ const {
  *
  * */
 
+/** @internal */
 declare module './AxisComposition' {
     interface AxisComposition {
         waterfall?: WaterfallAxis['waterfall'];
     }
 }
 
+/** @internal */
 declare module '../../Core/Axis/AxisType' {
     interface AxisTypeRegistry {
         WaterfallAxis: WaterfallAxis;
     }
 }
 
+/** @internal */
 interface WaterfallAxis extends StackingAxis {
-    waterfall: WaterfallAxis.Composition;
+    waterfall?: WaterfallAxis.Composition;
 }
 
 /* *
@@ -59,6 +63,7 @@ interface WaterfallAxis extends StackingAxis {
  *
  * */
 
+/** @internal */
 namespace WaterfallAxis {
 
     /* *
@@ -74,16 +79,37 @@ namespace WaterfallAxis {
     }
 
     export interface StacksItemObject {
+
+        /** @internal */
         absoluteNeg?: number;
+
+        /** @internal */
         absolutePos?: number;
+
+        /** @internal */
         connectorThreshold?: number;
+
+        /** @internal */
         label?: SVGLabel;
+
+        /** @internal */
         negTotal: number;
+
+        /** @internal */
         posTotal: number;
+
+        /** @internal */
         stackState: Array<number>;
+
+        /** @internal */
         stackTotal: number;
+
+        /** @internal */
         stateIndex: number;
+
+        /** @internal */
         threshold: number;
+
     }
 
     /* *
@@ -92,9 +118,7 @@ namespace WaterfallAxis {
      *
      * */
 
-    /**
-     * @private
-     */
+    /** @internal */
     export function compose(
         AxisClass: typeof Axis,
         ChartClass: typeof Chart
@@ -110,12 +134,10 @@ namespace WaterfallAxis {
 
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     function onAxisAfterBuildStacks(this: Axis): void {
         const axis = this as WaterfallAxis,
-            stacks = axis.waterfall.stacks;
+            stacks = axis.waterfall?.stacks;
 
         if (stacks) {
             stacks.changed = false;
@@ -123,24 +145,20 @@ namespace WaterfallAxis {
         }
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     function onAxisAfterRender(this: Axis): void {
         const axis = this as WaterfallAxis,
             stackLabelOptions = axis.options.stackLabels;
 
         if (
             stackLabelOptions?.enabled &&
-            axis.waterfall.stacks
+            axis.waterfall?.stacks
         ) {
             axis.waterfall.renderStackTotals();
         }
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     function onAxisInit(this: Axis): void {
         const axis = this;
 
@@ -149,9 +167,7 @@ namespace WaterfallAxis {
         }
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     function onChartBeforeRedraw(this: Chart): void {
         const axes = this.axes as Array<WaterfallAxis>,
             series = this.series;
@@ -159,7 +175,7 @@ namespace WaterfallAxis {
         for (const serie of series) {
             if (serie.options.stacking) {
                 for (const axis of axes) {
-                    if (!axis.isXAxis) {
+                    if (!axis.isXAxis && axis.waterfall) {
                         axis.waterfall.stacks.changed = true;
                     }
                 }
@@ -174,6 +190,7 @@ namespace WaterfallAxis {
      *
      * */
 
+    /** @internal */
     export class Composition {
 
         /* *
@@ -196,7 +213,9 @@ namespace WaterfallAxis {
          * */
 
         public axis: WaterfallAxis;
+
         public dummyStackItem?: StackItem;
+
         public stacks: StacksObject;
 
         /* *
@@ -209,12 +228,12 @@ namespace WaterfallAxis {
          * Calls StackItem.prototype.render function that creates and renders
          * stack total label for each waterfall stack item.
          *
-         * @private
+         * @internal
          * @function Highcharts.Axis#renderWaterfallStackTotals
          */
         public renderStackTotals(): void {
             const yAxis = this.axis,
-                waterfallStacks = yAxis.waterfall.stacks,
+                waterfallStacks = yAxis.waterfall?.stacks,
                 stackTotalGroup = yAxis.stacking?.stackTotalGroup,
                 dummyStackItem = new StackItem(
                     yAxis,
@@ -261,4 +280,5 @@ namespace WaterfallAxis {
  *
  * */
 
+/** @internal */
 export default WaterfallAxis;

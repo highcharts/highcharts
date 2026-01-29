@@ -57,7 +57,6 @@ const dirDist50 = '#E8544E',
         },
 
         tooltip: {
-            useHTML: true,
             headerFormat: '',
             pointFormat: '<b>{point.id}</b>'
         },

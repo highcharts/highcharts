@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -188,7 +189,7 @@ class TimeBase {
      * initializing Highcharts, after running `Highcharts.setOptions` and on
      * `Chart.update`.
      *
-     * @private
+     * @internal
      * @function Highcharts.Time#update
      *
      * @param {Highcharts.TimeOptions} [options]
@@ -201,7 +202,7 @@ class TimeBase {
         this.dTLCache = {};
         this.options = options = merge(true, this.options, options);
 
-        const { timezoneOffset, useUTC } = options;
+        const { timezoneOffset, useUTC, locale } = options;
 
         // Allow using a different Date class
         this.Date = options.Date || win.Date || Date;
@@ -228,6 +229,11 @@ class TimeBase {
             timezone?.indexOf('Etc/GMT') !== 0;
 
         this.timezone = timezone;
+
+        // Update locale.
+        if (this.lang && locale) {
+            this.lang.locale = locale;
+        }
 
         // Assign default time formats from locale strings
         (
@@ -807,7 +813,7 @@ class TimeBase {
     /**
      * Resolve legacy formats of dateTimeLabelFormats (strings and arrays) into
      * an object.
-     * @private
+     * @internal
      * @param {string|Array<T>|Highcharts.Dictionary<T>} f
      * General format description
      * @return {Highcharts.Dictionary<T>}
@@ -836,7 +842,7 @@ class TimeBase {
     /**
      * Get the optimal date format for a point, based on a range.
      *
-     * @private
+     * @internal
      * @function Highcharts.Time#getDateFormat
      *
      * @param {number} range
@@ -924,7 +930,7 @@ namespace TimeBase {
 
     export interface DateTimeFormatOptions extends Intl.DateTimeFormatOptions {
         dateStyle?: 'full'|'long'|'medium'|'short';
-        fractionalSecondDigits?: number;
+        fractionalSecondDigits?: 1|2|3;
         prefix?: string;
         suffix?: string;
         timeStyle?: 'full'|'long'|'medium'|'short';
@@ -1124,7 +1130,7 @@ export default TimeBase;
  * The number of fractional digits to use. 3 means milliseconds.
  *
  * @name Highcharts.DateTimeFormatOptions#fractionalSecondDigits
- * @type {number|undefined}
+ * @type {1|2|3|undefined}
  *//**
  * The representation of the time zone name.
  *

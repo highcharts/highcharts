@@ -1,5 +1,5 @@
 @import url("https://code.highcharts.com/css/highcharts.css");
-@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 
 .highcharts-description {
@@ -7,7 +7,7 @@
 }
 
 .cloud-monitoring-data-controls {
-    background-color: var(--dashboard-bck-gray);
+    background-color: var(--highcharts-neutral-color-10);
     border-bottom: 1px solid #a5abb1;
     padding: 20px 15px;
 }
@@ -17,18 +17,26 @@
     /* Colors for data series and points */
     --highcharts-color-0: #33a29d;
     --highcharts-color-2: #fe9d00;
-
-    /* Extra colors */
-    --bck-gray: #f1f5f9;
-    --dashboard-bck-gray: #e4eaf1;
 }
 
 body {
-    background-color: var(--bck-gray);
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
+    background: var(--highcharts-neutral-color-5);
+    color: var(--highcharts-neutral-color-100);
 }
 
 .highcharts-dashboards-wrapper {
-    background-color: var(--dashboard-bck-gray);
+    background-color: var(--highcharts-neutral-color-10);
     min-height: 1000px;
 }
 
@@ -83,59 +91,35 @@ body {
     vertical-align: middle;
 }
 
-#instances-table .highcharts-datagrid-row {
+#instances-table .highcharts-grid-row {
     cursor: pointer;
 }
 
-#instances-table .highcharts-datagrid-row.current {
+#instances-table .highcharts-grid-row.current {
     background-color: var(--highcharts-neutral-color-10);
     pointer-events: none;
 }
 
-#instances-table .highcharts-datagrid-hovered-row {
+#instances-table .highcharts-grid-hovered-row {
     background-color: var(--highcharts-neutral-color-10);
 }
 
-#instances-table .highcharts-datagrid-row td[data-column-id="HealthIndicator"] {
+#instances-table .highcharts-grid-row td[data-column-id="HealthIndicator"] {
     text-align: center;
 }
 
-#instances-table .highcharts-datagrid-row {
-    height: 50px;
-}
-
-#instances-table .highcharts-datagrid-row img {
+#instances-table .highcharts-grid-row img {
     margin-top: 5px;
     width: 30px;
     height: 30px;
 }
 
-#instances-table .highcharts-datagrid-table th {
+#instances-table .highcharts-grid-table th {
     height: 35px;
 }
 
-#instances-table .highcharts-datagrid-hovered-column {
-    background: none;
-}
-
-#instances-table .highcharts-datagrid-table {
+#instances-table .highcharts-grid-table {
     border-width: 1px 0 0;
-}
-
-#instances-table .highcharts-datagrid-column[data-column-id="InstanceId"] {
-    width: 31%;
-}
-
-#instances-table .highcharts-datagrid-column[data-column-id="InstanceType"] {
-    width: 19%;
-}
-
-#instances-table .highcharts-datagrid-column[data-column-id="PublicIpAddress"] {
-    width: 24%;
-}
-
-#instances-table .highcharts-datagrid-column[data-column-id="State"] {
-    width: 16%;
 }
 
 .health-title {

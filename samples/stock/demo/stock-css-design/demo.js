@@ -90,7 +90,7 @@
             split: false,
             shared: true,
             headerShape: 'callout',
-            shadow: false,
+            fixed: true,
             format: `<span style="font-size: 1.4em">{point.series.name}</span>
 O<span style="color:${colorTemplate}";>{point.open}</span>
 H<span style="color:${colorTemplate}";>{point.high}</span>
@@ -100,8 +100,7 @@ C<span style="color:${colorTemplate}";>{point.close}
 {(multiply (divide (subtract point.open point.close) point.close) 100):.2f}%
 </span>
 <br>
-Volume<span style="color:${colorTemplate}";>{points.1.y}</span>`,
-            positioner: () => ({ x: 60, y: 0 })
+Volume<span style="color:${colorTemplate}";>{points.1.y}</span>`
         },
         series: [{
             type: 'candlestick',

@@ -1,16 +1,16 @@
 /* *
  *
- *  (c) 2010-2024 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *
  *  Author: Øystein Moseng
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
  *  Accessible high-contrast theme for Highcharts. Specifically tailored
  *  towards 3:1 contrast against white/off-white backgrounds. Neighboring
  *  colors are tested for color blindness.
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -22,6 +22,7 @@
  *
  * */
 
+import type { DeepPartial } from '../../Shared/Types';
 import type { DefaultOptions } from '../../Core/Options';
 
 import D from '../../Core/Defaults.js';

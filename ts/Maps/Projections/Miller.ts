@@ -1,5 +1,15 @@
 /* *
- * Miller projection
+ *
+ *  Miller projection
+ *
+ *  (c) 2021-2026 Highsoft AS
+ *
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
+ *
+ *  Authors:
+ *  - Torstein Honsi
+ *
  * */
 
 'use strict';
@@ -33,6 +43,19 @@ const quarterPI = Math.PI / 4,
  *
  * */
 
+/**
+ * The Miller cylindrical projection is a modified Mercator projection, proposed
+ * by Osborn Maitland Miller in 1942. Compared to Mercator, the vertical
+ * exaggeration of polar areas is smaller, so the relative size of areas is
+ * more correct.
+ *
+ * Highcharts used this as the default map projection for world maps until the
+ * Map Collection v2.0 and Highcharts v10.0, when projection math was moved to
+ * the client side and EqualEarth chosen as the default world map projection.
+ *
+ * @class
+ * @name Highcharts.Miller
+ */
 class Miller implements ProjectionDefinition {
 
     /* *
@@ -41,6 +64,7 @@ class Miller implements ProjectionDefinition {
      *
      * */
 
+    /** @internal */
     public bounds: MapBounds = {
         x1: -200.37508342789243,
         x2: 200.37508342789243,

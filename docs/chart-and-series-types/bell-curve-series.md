@@ -1,20 +1,28 @@
 Bell curve
 ===
 
-A bell curve series is a graphical representation of a normal (Gaussian) probability distribution. Bell curve is used to visualize the probability of occurring outcomes. The curve is bell-shaped, and its center top point is the mean of the base data.
+A bell curve series is a graphical representation of a normal (Gaussian) probability distribution. Bell curve is used to visualize the probability of occurring outcomes. The curve is bell-shaped, and its center top point is the mean of the base data. The module [modules/histogram-bellcurve.js](https://code.highcharts.com/modules/histogram-bellcurve.js) is required for this chart.
 
 _For more detailed samples and documentation check the [API.](https://api.highcharts.com/highcharts/plotOptions.bellcurve)_
 
-<iframe style="width: 100%; height: 500px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/demo/bellcurve allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 500px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/demo/bellcurve" allow="fullscreen"></iframe>
 
 Click [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/bellcurve/) to check the code.
 
-How to create a Bell Curve
+Prerequisites for a good visualization
 --------------------------
 
-The bell curve requires the following module [modules/histogram-bellcurve.js](https://code.highcharts.com/maps/modules/histogram-bellcurve.js).
+To implement this chart type properly, there are a few assumptions that must be met:
 
-The bell curve series is an areaspline series with self-setting data. Unlike most other Highcharts series, the [data](https://api.highcharts.com/highcharts/series.bellcurve) property is not available - it is set internally based on the base series data (more precisely y values of the data).
+1. The input data must be one-dimensional. The chart describes a statistical attribute of one attribute. Visualizing the normal distribution of multiple attributes requires multiple series.
+
+2. The chart assumes an underlying normal distribution in the data. The chart type will derive a normal distribution from any data, but if the data itself is not normally distributed, the visualization becomes misleading and wrong.
+
+How to create a Bell Curve based on Derived Data
+--------------------------
+
+The bell curve series is an areaspline series with self-setting data. The [data](https://api.highcharts.com/highcharts/series.bellcurve) property can be substituted by a base series (more precisely y values of the data).
+
 
 **Two steps are required to create a bell curve:**
 
@@ -22,16 +30,16 @@ The bell curve series is an areaspline series with self-setting data. Unlike mos
 
 2. Set `baseSeries` to the right data series’ `id` or `index`.
 
-    
-        series: [{
-            type: 'bellcurve',
-            xAxis: 1,
-            yAxis: 1,
-            baseSeries: 1
-        }, {
-            data: [3.5, 3, 3.2, 3.1, 3.6, 3.9, 3.4]
-        }]
-    
+```js
+series: [{
+    type: 'bellcurve',
+    xAxis: 1,
+    yAxis: 1,
+    baseSeries: 1
+}, {
+    data: [3.5, 3, 3.2, 3.1, 3.6, 3.9, 3.4]
+}]
+```
 
 Setting the Bell Curve
 ----------------------
@@ -51,9 +59,9 @@ series: [{
     ...
 }]
 ```
-    
 
-<iframe style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/plotoptions/bellcurve-intervals-pointsininterval allow="fullscreen"></iframe>
+
+<iframe style="width: 100%; height: 450px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/plotoptions/bellcurve-intervals-pointsininterval" allow="fullscreen"></iframe>
 
 Click [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/bellcurve-intervals-pointsininterval) to check the code.
 

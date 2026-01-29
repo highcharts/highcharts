@@ -24,6 +24,27 @@ module.exports = {
         { from: 'chart-concepts/navigator', to: 'stock/navigator' },
         { from: 'chart-concepts/range-selector', to: 'stock/range-selector' },
         { from: 'chart-concepts/accessibility', to: 'accessibility/accessibility-module' },
-        { from: 'accessibility/sonification', to: 'sonification/getting-started' }
+        { from: 'accessibility/sonification', to: 'sonification/getting-started' },
+        { from: 'datagrid/general', to: 'grid/general' },
+        { from: 'datagrid/installation', to: 'grid/installation' },
+        { from: 'datagrid/understanding-datagrid', to: 'grid/understanding-grid' },
+        { from: 'datagrid/columns', to: 'grid/columns' },
+        { from: 'datagrid/header', to: 'grid/header' },
+        { from: 'datagrid/events', to: 'grid/events' },
+        { from: 'datagrid/performance', to: 'grid/performance' },
+        { from: 'datagrid/style-by-css', to: 'grid/theming/theming' },
+        { from: 'datagrid/accessibility', to: 'grid/accessibility' },
+        { from: 'datagrid/datagrid-v2-migration', to: 'dashboards/grid-migration' },
+        { from: 'datagrid/datagrid-with-angular', to: 'grid/frameworks/grid-with-angular' },
+        { from: 'datagrid/datagrid-with-react', to: 'grid/frameworks/grid-with-react' },
+        { from: 'datagrid/datagrid-with-vue', to: 'grid/frameworks/grid-with-vue' },
+        { from: 'grid/wrappers/grid-with-angular', to: 'grid/frameworks/grid-with-angular' },
+        { from: 'grid/wrappers/grid-with-react', to: 'grid/frameworks/grid-with-react' },
+        { from: 'grid/wrappers/grid-with-vue', to: 'grid/frameworks/grid-with-vue' },
+        { from: 'dashboards/dashboards-with-angular', to: 'dashboards/wrappers/dashboards-with-angular' },
+        { from: 'dashboards/dashboards-with-react', to: 'dashboards/wrappers/dashboards-with-react' },
+        { from: 'dashboards/dashboards-with-vue', to: 'dashboards/wrappers/dashboards-with-vue' },
+        // Special case for xmlns schema in Map Collection
+        { from: 'mc', to: 'maps/map-collection#map-properties' }
     ]
 };

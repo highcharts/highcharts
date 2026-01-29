@@ -13,8 +13,8 @@
 
 /* eslint-env node, es6 */
 /* eslint-disable no-console */
-const Highcharts = require('../code/highcharts.src.js')();
-require('../code/modules/datagrouping.src.js')(Highcharts);
+const Highcharts = require('../code/highcharts.src.js');
+require('../code/modules/datagrouping.src.js');
 
 // Generate some random, high-resolution data. This function emulates raw data
 // with an hourly resolution that we want to group into days.

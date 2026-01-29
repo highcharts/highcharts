@@ -14,7 +14,7 @@ Highcharts.navigator('container', {
 ```
 The configuration options for the Standalone Navigator are the same as those for a chart navigator, and can be found in the [API documentation](https://api.highcharts.com/highstock/navigator).
 
-<iframe style="width: 100%; height: 650px; border: none;" src=https://www.highcharts.com/samples/embed/stock/standalone-navigator/styled-standalone-navigator allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 650px; border: none;" src="https://www.highcharts.com/samples/embed/stock/standalone-navigator/styled-standalone-navigator" allow="fullscreen"></iframe>
 
 ## Including the Standalone Navigator in a Project
 The Standalone Navigator can be included in a project in two ways:

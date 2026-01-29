@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Karol Kolodziej
@@ -31,9 +31,13 @@ import type DataConnectorOptions from './DataConnectorOptions';
  */
 export interface HTMLTableConnectorOptions extends DataConnectorOptions {
     /**
-     * The id of the HTML table element to load or a reference to the HTML.
+     * The corresponding connector type.
      */
-    table: (string|HTMLElement);
+    type: 'HTMLTable';
+    /**
+     * The id of the HTML data table element to load or a reference to the HTML.
+     */
+    htmlTable: string | HTMLElement;
 }
 
 /* *

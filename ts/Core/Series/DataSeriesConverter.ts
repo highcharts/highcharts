@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2020-2024 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sebastian Bochan
@@ -21,12 +21,21 @@
  *
  * */
 
-import type DataEvent from '../../Data/DataEvent';
+import type { DataEventDetail } from '../../Data/DataEvent';
 import type LineSeries from '../../Series/Line/LineSeries';
 import type PointOptions from './PointOptions';
 import type SeriesOptions from './SeriesOptions';
 
+import type {
+    CellType,
+    RowObject
+} from '../../Data/DataTable.js';
+
 import DataTable from '../../Data/DataTable.js';
+import ColumnUtils from '../../Data/ColumnUtils.js';
+const {
+    convertToNumber
+} = ColumnUtils;
 import U from '../Utilities.js';
 const {
     defined,
@@ -43,7 +52,7 @@ const {
  * Class to convert Highcharts series data to table and get series data from the
  * table.
  *
- * @private
+ * @internal
  */
 class DataSeriesConverter {
 
@@ -126,7 +135,7 @@ class DataSeriesConverter {
             for (let i = 0, iEnd = table.getRowCount(); i < iEnd; i++) {
                 isCellFound = false;
                 pointOptions = {
-                    x: table.getCellAsNumber('x', i, true)
+                    x: convertToNumber(table.getCell('x', i), true)
                 };
 
                 for (let j = 0, jEnd = pointArrayMap.length; j < jEnd; j++) {
@@ -135,10 +144,8 @@ class DataSeriesConverter {
 
                     if (typeof cell !== 'undefined') {
                         isCellFound = true;
-                        pointOptions[pointArrayMap[j]] = table.getCellAsNumber(
-                            cellName,
-                            i
-                        );
+                        pointOptions[pointArrayMap[j]] =
+                            convertToNumber(table.getCell(cellName, i));
                     }
                 }
 
@@ -181,16 +188,16 @@ class DataSeriesConverter {
      * @param {Array<LineSeries>} allSeries
      * Array of series options to store in the converter.
      *
-     * @param {DataEvent.Detail} eventDetail
+     * @param {DataEventDetail} eventDetail
      * Custom information for pending events.
      */
     public updateTable(
         allSeries: Array<LineSeries>,
-        eventDetail?: DataEvent.Detail
+        eventDetail?: DataEventDetail
     ): void {
         const table = this.table;
 
-        let columns: DataTable.RowObject,
+        let columns: RowObject,
             series,
             seriesMeta,
             pointArrayMap,
@@ -273,7 +280,7 @@ class DataSeriesConverter {
 
                     } else if (elem instanceof Object) {
                         if (needsArrayMap) {
-                            const elemSet = elem as Record<string, DataTable.CellType>;
+                            const elemSet = elem as Record<string, CellType>;
 
                             for (let k = 0; k < pointArrayMapLength; k++) {
                                 yValueName = pointArrayMap[k];
@@ -309,6 +316,7 @@ class DataSeriesConverter {
  *
  * */
 
+/** @internal */
 namespace DataSeriesConverter {
 
     /* *
@@ -335,4 +343,5 @@ namespace DataSeriesConverter {
  *
  * */
 
+/** @internal */
 export default DataSeriesConverter;

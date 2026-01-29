@@ -3,6 +3,7 @@ on:
   pull_request:
     branches:
       - 'master'
+      - 'dash/**'
     paths:
       - 'ts/Dashboards/**'
       - 'ts/Data/**'
@@ -23,9 +24,9 @@ jobs:
     continue-on-error: true
     strategy:
       matrix:
-        node-version: [lts/iron]
+        node-version: [lts/*]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: master
 
@@ -35,28 +36,35 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
 
-      - run: npm i
+      - run: npm ci
 
       - name: Build Highcharts
         run: npx gulp scripts
+
+      - name: Build Grid
+        run: npx gulp scripts --product Grid
+
       - name: Build Dashboards
-        run: npx gulp dashboards/scripts
+        run: npx gulp scripts --product Dashboards
 
       - name: Benchmark
         continue-on-error: true
         run: cd test/ts-node-unit-tests && node --import tsx bench.ts --context base --pattern Dashboards/
 
       - name: Checkout current branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
            clean: false # do not remove files from previous run
-      - run: npm i
+      - run: npm ci
 
       - name: Build Highcharts
         run: npx gulp scripts
 
+      - name: Build Grid
+        run: npx gulp scripts --product Grid
+
       - name: Build Dashboards
-        run: npx gulp dashboards/scripts
+        run: npx gulp scripts --product Dashboards
 
       - name: Benchmark
         run: cd test/ts-node-unit-tests && node --import tsx bench.ts --context actual --pattern Dashboards/
@@ -72,7 +80,7 @@ jobs:
             tmp/benchmarks
 
       - name: Comment on PR
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           github-token: ${{secrets.PR_COMMENT_TOKEN}}
           script: |

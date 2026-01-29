@@ -1,16 +1,17 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Torstein Hønsi
  *  - Christer Vasseng
  *  - Gøran Slettemark
  *  - Sophie Bremer
+ *  - Kamil Kubik
  *
  * */
 
@@ -22,14 +23,20 @@
  *
  * */
 
-import type DataEvent from '../DataEvent';
+import type {
+    DataEventDetail
+} from '../DataEvent';
 import type CSVConnectorOptions from './CSVConnectorOptions';
-import type Types from '../../Shared/Types';
+import type {
+    ColumnCollection as DataTableColumnCollection
+} from '../DataTable';
 
 import CSVConverter from '../Converters/CSVConverter.js';
-import DataConnector from './DataConnector.js';
+import DataConnector, {
+    type Event as DataConnectorEvent
+} from './DataConnector.js';
 import U from '../../Core/Utilities.js';
-const { merge } = U;
+const { merge, fireEvent } = U;
 
 /* *
  *
@@ -51,6 +58,8 @@ class CSVConnector extends DataConnector {
      * */
 
     protected static readonly defaultOptions: CSVConnectorOptions = {
+        id: 'csv-connector',
+        type: 'CSV',
         csv: '',
         csvURL: '',
         enablePolling: false,
@@ -67,17 +76,13 @@ class CSVConnector extends DataConnector {
     /**
      * Constructs an instance of CSVConnector.
      *
-     * @param {CSVConnector.UserOptions} [options]
+     * @param {Partial<CSVConnectorOptions>} [options]
      * Options for the connector and converter.
      */
-    public constructor(
-        options?: CSVConnector.UserOptions
-    ) {
+    public constructor(options?: Partial<CSVConnectorOptions>) {
         const mergedOptions = merge(CSVConnector.defaultOptions, options);
 
         super(mergedOptions);
-
-        this.converter = new CSVConverter(mergedOptions);
         this.options = mergedOptions;
 
         if (mergedOptions.enablePolling) {
@@ -102,7 +107,7 @@ class CSVConnector extends DataConnector {
     /**
      * The attached parser, which can be replaced in the constructor
      */
-    public readonly converter: CSVConverter;
+    public converter?: CSVConverter;
 
     /* *
      *
@@ -111,65 +116,87 @@ class CSVConnector extends DataConnector {
      * */
 
     /**
+     * Overrides the DataConnector method. Emits an event on the connector to
+     * all registered callbacks of this event.
+     *
+     * @param {Event} e
+     * Event object containing additional event information.
+     */
+    public emit(e: Event): void {
+        fireEvent(this, e.type, e);
+    }
+
+    /**
      * Initiates the loading of the CSV source to the connector
      *
-     * @param {DataEvent.Detail} [eventDetail]
+     * @param {DataEventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @emits CSVConnector#load
      * @emits CSVConnector#afterLoad
      */
-    public load(eventDetail?: DataEvent.Detail): Promise<this> {
-        const connector = this,
-            converter = connector.converter,
-            table = connector.table,
-            {
-                csv,
-                csvURL,
-                dataModifier
-            } = connector.options;
+    public load(eventDetail?: DataEventDetail): Promise<this> {
+        const connector = this;
+        const options = connector.options;
+        const { csv, csvURL, dataTables, decimalPoint } = options;
 
-        connector.emit<CSVConnector.Event>({
+        connector.emit({
             type: 'load',
-            csv,
-            detail: eventDetail,
-            table
+            csv
         });
-
 
         return Promise
             .resolve(
                 csvURL ?
-                    fetch(csvURL).then(
+                    fetch(csvURL, {
+                        signal: connector?.pollingController?.signal
+                    }).then(
                         (response): Promise<string> => response.text()
                     ) :
                     csv || ''
             )
             .then((csv): Promise<string> => {
                 if (csv) {
-                    // If already loaded, clear the current rows
-                    table.deleteColumns();
-                    converter.parse({ csv });
-                    table.setColumns(converter.getTable().getColumns());
+                    this.initConverters<string>(
+                        csv,
+                        (key): CSVConverter => {
+                            const tableOptions = dataTables?.find(
+                                (dataTable): boolean => dataTable.key === key
+                            );
+
+                            // The data table options takes precedence over the
+                            // connector options.
+                            const {
+                                firstRowAsNames = options.firstRowAsNames,
+                                beforeParse = options.beforeParse
+                            } = tableOptions || {};
+                            const converterOptions = {
+                                decimalPoint,
+                                firstRowAsNames,
+                                beforeParse
+                            };
+                            return new CSVConverter(
+                                merge(options, converterOptions));
+                        },
+                        (converter, data): DataTableColumnCollection =>
+                            converter.parse({ csv: data })
+                    );
                 }
-                return connector
-                    .setModifierOptions(dataModifier)
-                    .then((): string => csv);
+
+                return connector.applyTableModifiers().then((): string => csv);
             })
             .then((csv): this => {
-                connector.emit<CSVConnector.Event>({
+                connector.emit({
                     type: 'afterLoad',
-                    csv,
                     detail: eventDetail,
-                    table
+                    csv
                 });
                 return connector;
             })['catch']((error): never => {
-                connector.emit<CSVConnector.Event>({
+                connector.emit({
                     type: 'loadError',
                     detail: eventDetail,
-                    error,
-                    table
+                    error
                 });
                 throw error;
             });
@@ -179,53 +206,20 @@ class CSVConnector extends DataConnector {
 
 /* *
  *
- *  Class Namespace
+ *  Declarations
  *
  * */
 
 /**
- * Types for class-specific options and events.
+ * Event objects fired from CSVConnector events.
  */
-namespace CSVConnector {
-
-    /* *
-     *
-     *  Declarations
-     *
-     * */
-
-    /**
-     * Event objects fired from CSVConnector events.
-     */
-    export type Event = (ErrorEvent|LoadEvent);
-
-    /**
-     * The event object that is provided on errors within CSVConnector.
-     */
-    export interface ErrorEvent extends DataConnector.ErrorEvent {
-        csv?: string;
-    }
-
-    /**
-     * The event object that is provided on load events within CSVConnector.
-     */
-    export interface LoadEvent extends DataConnector.LoadEvent {
-        csv?: string;
-    }
-
-    /**
-     * Available options for constructor and converter of the CSVConnector.
-     */
-    export type UserOptions = (
-        Types.DeepPartial<CSVConnectorOptions>&
-        CSVConverter.UserOptions
-    );
-
+export interface Event extends DataConnectorEvent {
+    readonly csv?: string;
 }
 
 /* *
  *
- *  Registry
+ *  Declarations
  *
  * */
 
@@ -234,6 +228,12 @@ declare module './DataConnectorType' {
         CSV: typeof CSVConnector;
     }
 }
+
+/* *
+ *
+ *  Registry
+ *
+ * */
 
 DataConnector.registerType('CSV', CSVConnector);
 

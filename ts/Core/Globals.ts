@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -16,9 +17,8 @@
  *
  * */
 
-import type ButtonThemeObject from './Renderer/SVG/ButtonThemeObject';
 import type { HTMLDOMElement } from './Renderer/DOMElementType';
-import type GlobalsLike from './GlobalsLike';
+import type GlobalsBase from './GlobalsBase';
 
 /* *
  *
@@ -31,10 +31,6 @@ declare global {
     type AnyRecord = Record<string, any>;
 
     type ArrowFunction = (...args: any) => any;
-
-    type DeepPartial<T> = {
-        [K in keyof T]?: (T[K]|DeepPartial<T[K]>);
-    };
 
     type ExtractArrayType<T> = T extends (infer U)[] ? U : never;
 
@@ -84,12 +80,12 @@ declare global {
 
     interface Element {
         /**
-         * @private
+         * @internal
          * @requires Core/Renderer/SVG/SVGElement
          */
         gradient?: string;
         /**
-         * @private
+         * @internal
          * @requires Core/Renderer/SVG/SVGElement
          */
         radialReference?: Array<number>;
@@ -117,12 +113,21 @@ declare global {
     }
 
     interface Math {
+        /**
+         * Easing definition
+         *
+         * @param pos
+         * Current position, ranging from 0 to 1.
+         *
+         * @return
+         * Ease result
+         */
         easeInOutSine(pos: number): number;
     }
 
     interface SVGElement {
         /**
-         * @private
+         * @internal
          * @requires Core/Renderer/SVG/SVGElement
          */
         cutHeight?: number;
@@ -141,22 +146,6 @@ declare global {
         webkitAudioContext?: typeof AudioContext;
         /** @deprecated */
         webkitURL?: typeof URL;
-    }
-
-    interface GlobalOptions {
-        buttonTheme: ButtonThemeObject;
-        /** @deprecated */
-        canvasToolsURL?: string;
-        /** @deprecated */
-        Date?: Function;
-        /** @deprecated */
-        getTimezoneOffset?: Function;
-        /** @deprecated */
-        timezone?: string;
-        /** @deprecated */
-        timezoneOffset?: number;
-        /** @deprecated */
-        useUTC?: boolean;
     }
 
     namespace Intl {
@@ -179,7 +168,7 @@ declare global {
 
 /**
  * Shared Highcharts properties.
- * @private
+ * @internal
  */
 namespace Globals {
 
@@ -212,7 +201,7 @@ namespace Globals {
         isTouchDevice = /(Mobile|Android|Windows Phone)/.test(userAgent),
         isWebKit = userAgent.indexOf('AppleWebKit') !== -1,
         deg2rad = Math.PI * 2 / 360,
-        marginNames: GlobalsLike['marginNames'] = [
+        marginNames: GlobalsBase['marginNames'] = [
             'plotTop',
             'marginRight',
             'marginBottom',
@@ -249,12 +238,12 @@ namespace Globals {
      * @name Highcharts.charts
      * @type {Array<Highcharts.Chart|undefined>}
      */
-    export const charts: GlobalsLike['charts'] = [];
+    export const charts: GlobalsBase['charts'] = [];
 
     /**
      * A shared registry between all bundles to keep track of applied
      * compositions.
-     * @private
+     * @internal
      */
     export const composed: Array<string> = [];
 
@@ -278,19 +267,17 @@ namespace Globals {
      * @name Highcharts.dateFormats
      * @type {Record<string, Highcharts.TimeFormatCallbackFunction>}
      */
-    export const dateFormats: GlobalsLike['dateFormats'] = {};
+    export const dateFormats: GlobalsBase['dateFormats'] = {};
 
     /**
-     * @private
+     * @internal
      * @deprecated
      * @todo Use only `Core/Series/SeriesRegistry.seriesTypes`
      */
-    export const seriesTypes = {} as GlobalsLike['seriesTypes'];
+    export const seriesTypes = {} as GlobalsBase['seriesTypes'];
 
-    /**
-     * @private
-     */
-    export const symbolSizes: GlobalsLike['symbolSizes'] = {};
+    /** @internal */
+    export const symbolSizes: GlobalsBase['symbolSizes'] = {};
 
     /* *
      *
@@ -309,7 +296,7 @@ namespace Globals {
  *
  * */
 
-export default Globals as unknown as GlobalsLike;
+export default Globals as unknown as GlobalsBase;
 
 /* *
  *

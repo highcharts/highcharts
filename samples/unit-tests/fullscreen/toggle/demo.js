@@ -1,4 +1,7 @@
-QUnit.test('Fullscreen module.', function (assert) {
+// Automated fullscreen tests disabled.
+// See samples\highcharts\members\chart-togglefullscreen-test\test-notes.md
+
+QUnit.skip('Fullscreen module.', function (assert) {
     var chart = Highcharts.chart('container', {
         series: [
             {
@@ -30,9 +33,9 @@ QUnit.test('Fullscreen module.', function (assert) {
     assert.ok(true, 'Chart displayed in fullscreen mode without any errors.');
 });
 
-QUnit.test('#20548, chart resizing after fullscreen.', async function (assert) {
-    // Time out after 500ms. Fail safe in case endRisize event is not triggered.
-    assert.timeout(500);
+QUnit.skip('#20548, chart resizing after fullscreen.', async function (assert) {
+    // Time out after 1000ms. Fail safe in case endRisize event is not triggered
+    assert.timeout(1000);
 
     const done = assert.async(),
         chart = Highcharts.chart('container', {

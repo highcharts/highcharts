@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -20,8 +20,8 @@
  *
  * */
 
-import type { Axis } from '../../../Plugins/HighchartsTypes';
-import type Sync from '../../Sync/Sync';
+import type { AxisExtremesObject } from '../../../Plugins/HighchartsTypes';
+import type { SyncPair } from '../../Sync/Sync';
 import type NavigatorComponent from '../NavigatorComponent.js';
 import type {
     CrossfilterSyncOptions
@@ -32,7 +32,7 @@ import DataModifier from '../../../../Data/Modifiers/DataModifier.js';
 import NavigatorSyncUtils from './NavigatorSyncUtils.js';
 import U from '../../../../Core/Utilities.js';
 
-const { Range: RangeModifier } = DataModifier.types;
+const { Filter: FilterModifier } = DataModifier.types;
 const { addEvent } = U;
 
 
@@ -46,7 +46,7 @@ const defaultOptions: CrossfilterSyncOptions = {
     affectNavigator: false
 };
 
-const syncPair: Sync.SyncPair = {
+const syncPair: SyncPair = {
     emitter: function (this: Component): Function | void {
         if (this.type !== 'Navigator') {
             return;
@@ -56,30 +56,38 @@ const syncPair: Sync.SyncPair = {
         const groupKey = syncOptions.group ? ':' + syncOptions.group : '';
 
         const afterSetExtremes = async (
-            extremes: Axis.ExtremesObject
+            extremes: AxisExtremesObject
         ): Promise<void> => {
             if (component.connectorHandlers?.[0]?.connector) {
-                const table = component.connectorHandlers[0].connector.table,
+                const table =
+                    component.connectorHandlers[0].connector.getTable(),
                     dataCursor = component.board.dataCursor,
                     filterColumn = component.getColumnAssignment()[0],
                     [min, max] = component.getAxisExtremes();
 
                 let modifier = table.getModifier();
 
-                if (modifier instanceof RangeModifier) {
+                if (modifier instanceof FilterModifier) {
                     NavigatorSyncUtils.setRangeOptions(
-                        modifier.options.ranges,
+                        modifier.options,
                         filterColumn,
                         min,
                         max
                     );
                 } else {
-                    modifier = new RangeModifier({
-                        ranges: [{
-                            column: filterColumn,
-                            maxValue: max,
-                            minValue: min
-                        }]
+                    modifier = new FilterModifier({
+                        condition: {
+                            operator: 'and',
+                            conditions: [{
+                                columnId: filterColumn,
+                                operator: '>=',
+                                value: min
+                            }, {
+                                columnId: filterColumn,
+                                operator: '<=',
+                                value: max
+                            }]
+                        }
                     });
                 }
 
@@ -114,7 +122,7 @@ const syncPair: Sync.SyncPair = {
         return addEvent(
             component.chart.xAxis[0],
             'afterSetExtremes',
-            function (extremes: Axis.ExtremesObject): void {
+            function (extremes: AxisExtremesObject): void {
                 clearTimeout(delay);
                 delay = setTimeout(afterSetExtremes, 50, this, extremes);
             }
@@ -129,4 +137,5 @@ const syncPair: Sync.SyncPair = {
 *  Default export
 *
 * */
+
 export default { defaultOptions, syncPair };

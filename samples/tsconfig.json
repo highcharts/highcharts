@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         "downlevelIteration": true,
-        "sourceMap": true,
+        "sourceMap": false,
         "noEmitOnError": true,
         "noImplicitAny": true,
         "noImplicitThis": true,
@@ -10,11 +10,18 @@
         "baseUrl": "../",
         "module": "none",
         "moduleResolution": "node",
-        "target": "es5",
+        "target": "ES2022",
         "lib": [
             "dom",
-            "es5"
+            "ES2015",
+            "ES2017.SharedMemory"
         ],
+        "paths": {
+            "highcharts": ["code/highcharts"],
+            "highcharts/*": ["code/*"],
+            "@highcharts/dashboards": ["code/dashboards/dashboards"],
+            "@highcharts/dashboards/*": ["code/dashboards/dashboards/*"]
+        },
         "types": [
             // disable node types
         ]
@@ -23,6 +30,10 @@
         "tsglobal.d.ts",
     ],
     "include": [
+        "gantt/**/*.ts",
+        "highcharts/**/*.ts",
+        "maps/**/*.ts",
+        "stock/**/*.ts",
         "unit-tests/**/*.ts"
     ]
 }

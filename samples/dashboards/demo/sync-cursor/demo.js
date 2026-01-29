@@ -8,9 +8,7 @@ Dashboards.board('container', {
         connectors: [{
             id: 'VegeTable',
             type: 'CSV',
-            options: {
-                csv: document.querySelector('#csv').innerHTML
-            }
+            csv: document.querySelector('#csv').innerHTML
         }]
     },
     gui: {

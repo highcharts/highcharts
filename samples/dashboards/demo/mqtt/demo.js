@@ -102,15 +102,17 @@ const intakeConfig = {
     }
 };
 
-// Common chart options for Highcharts components
-const commonChartOptions = {
+Highcharts.setOptions({
+    chart: {
+        styledMode: true
+    },
     title: {
         text: ''
     },
     legend: {
         enabled: false
     }
-};
+});
 
 
 // HTML component for displaying power plant, reservoir and
@@ -118,12 +120,7 @@ const commonChartOptions = {
 // is available, it is displayed here.
 const infoComponent = {
     type: 'HTML',
-    renderTo: 'el-info',
-    chartOptions: {
-        chart: {
-            styledMode: false
-        }
-    }
+    renderTo: 'el-info'
 };
 
 // Highcharts map with points for power plant, reservoirs and intakes.
@@ -133,9 +130,7 @@ const mapComponent = {
     chartConstructor: 'mapChart',
     title: '',
     chartOptions: {
-        ...commonChartOptions,
         chart: {
-            styledMode: false,
             margin: 0
         },
         mapNavigation: {
@@ -202,10 +197,8 @@ const kpiComponent = {
     type: 'KPI',
     renderTo: 'el-kpi',
     chartOptions: {
-        ...commonChartOptions,
         chart: {
-            type: 'solidgauge',
-            styledMode: true
+            type: 'solidgauge'
         },
         pane: {
             background: {
@@ -263,7 +256,6 @@ const chartComponent = {
         }
     },
     chartOptions: {
-        ...commonChartOptions,
         chart: {
             type: 'spline'
         },
@@ -286,11 +278,11 @@ const chartComponent = {
     }
 };
 
-// Datagrid displaying the history of generated power
+// Grid displaying the history of generated power
 // over the last 'n' hours. Oldest measurements at the top.
-const datagridComponent = {
-    type: 'DataGrid',
-    renderTo: 'el-datagrid',
+const gridComponent = {
+    type: 'Grid',
+    renderTo: 'el-grid',
     connector: {
         id: defaultConnId
     },
@@ -300,9 +292,15 @@ const datagridComponent = {
             autoScroll: true
         }
     },
-    dataGridOptions: {
+    gridOptions: {
         credits: {
             enabled: false
+        },
+        rendering: {
+            rows: {
+                virtualization: true,
+                minVisibleRows: 5
+            }
         },
         columns: [{
             id: 'time',
@@ -348,6 +346,50 @@ function setVisibility(visible) {
     }
 }
 
+function dataParser(data) {
+    if (!data.aggs) {
+        return data;
+    }
+
+    // Extract power production data
+    const modifiedData = [];
+    const idx = activeItem.generatorId - 1;
+    const aggData = data.aggs[idx];
+
+    // Timezone offset in milliseconds
+    const tzOffset = new Date().getTimezoneOffset() * 60000;
+
+    if (useHistoricalData) {
+        // Get measurement history
+        const hist = aggData.P_hist;
+        let ts = new Date(hist.start).valueOf() - tzOffset;
+        const interval = dataBugWorkaround ? 1000 : hist.res * 1000;
+        const histLen = hist.values.length;
+
+        for (let j = 0; j < histLen; j++) {
+            const power = hist.values[j];
+
+            // Add row with historical data
+            modifiedData.push([ts, power]);
+
+            // Next measurement
+            ts += interval;
+        }
+    } else {
+        // Use latest measurement only
+        let ts;
+        if (dataBugWorkaround) {
+            ts = new Date().valueOf();
+        } else {
+            ts = aggData.ts_iso;
+        }
+        ts -= tzOffset;
+        modifiedData.push([ts, aggData.P_gen]);
+    }
+
+    return modifiedData;
+}
+
 // Creates the dashboard
 async function createDashboard() {
 
@@ -361,50 +403,6 @@ async function createDashboard() {
         components: dashConfig.components
     });
 
-    function dataParser(data) {
-        if (!data.aggs) {
-            return data;
-        }
-
-        // Extract power production data
-        const modifiedData = [];
-        const idx = activeItem.generatorId - 1;
-        const aggData = data.aggs[idx];
-
-        // Timezone offset in milliseconds
-        const tzOffset = new Date().getTimezoneOffset() * 60000;
-
-        if (useHistoricalData) {
-            // Get measurement history
-            const hist = aggData.P_hist;
-            let ts = new Date(hist.start).valueOf() - tzOffset;
-            const interval = dataBugWorkaround ? 1000 : hist.res * 1000;
-            const histLen = hist.values.length;
-
-            for (let j = 0; j < histLen; j++) {
-                const power = hist.values[j];
-
-                // Add row with historical data
-                modifiedData.push([ts, power]);
-
-                // Next measurement
-                ts += interval;
-            }
-        } else {
-            // Use latest measurement only
-            let ts;
-            if (dataBugWorkaround) {
-                ts = new Date().valueOf();
-            } else {
-                ts = aggData.ts_iso;
-            }
-            ts -= tzOffset;
-            modifiedData.push([ts, aggData.P_gen]);
-        }
-
-        return modifiedData;
-    }
-
     async function createDashConfig() {
         const dashConfig = {
             connectors: [],
@@ -417,8 +415,8 @@ async function createDashboard() {
                 kpiComponent,
                 // Chart component for displaying generated power (history)
                 chartComponent,
-                // Datagrid component for displaying generated power (history)
-                datagridComponent
+                // Grid component for displaying generated power (history)
+                gridComponent
             ]
         };
 
@@ -438,50 +436,47 @@ async function createDashboard() {
         return {
             id: connId,
             type: 'MQTT',
-            options: {
-                ...mqttLinkConfig,
-                topic: topic,
-                autoConnect: true,
-                autoSubscribe: true,
-                autoReset: true, // Clear data table on subscribe
-                maxRows: 24, // Maximum number of rows in the data table
-
-                columnNames: ['time', 'power'],
-                beforeParse: data => dataParser(data),
-                connectEvent: event => {
-                    const { connected, host, port } = event.detail;
-                    controlBar.setConnectState(connected);
-                    if (connected) {
-                        controlBar.showStatus(`${host}:${port}`);
-                    } else {
-                        controlBar.showStatus('');
-                    }
-                    // eslint-disable-next-line max-len
-                    printLog(`Client ${connected ? 'connected' : 'disconnected'}: host: ${host}, port: ${port}`);
-                },
-                subscribeEvent: event => {
-                    const { subscribed, topic } = event.detail;
-                    printLog(
-                        // eslint-disable-next-line max-len
-                        `Client ${subscribed ? 'subscribed' : 'unsubscribed'}: ${topic}`
-                    );
-                },
-                packetEvent: async event => {
-                    const { topic, count } = event.detail;
-                    printLog(`Packet #${count} received: ${topic}`);
-
-                    if (count === 1) {
-                        // First packet received, make dashboard visible
-                        setVisibility(true);
-                    }
-                    await dashboardUpdate(event.data, connId, count);
-                },
-                errorEvent: event => {
-                    const { code, message } = event.detail;
-                    printLog(`${message} (error code #${code})`);
-                    controlBar.showError(message);
-                    controlBar.setConnectState(false);
+            ...mqttLinkConfig,
+            topic: topic,
+            autoConnect: true,
+            autoSubscribe: true,
+            autoReset: true, // Clear data table on subscribe
+            maxRows: 24, // Maximum number of rows in the data table
+            columnIds: ['time', 'power'],
+            beforeParse: data => dataParser(data),
+            connectEvent: event => {
+                const { connected, host, port } = event.detail;
+                controlBar.setConnectState(connected);
+                if (connected) {
+                    controlBar.showStatus(`${host}:${port}`);
+                } else {
+                    controlBar.showStatus('');
                 }
+                // eslint-disable-next-line max-len
+                printLog(`Client ${connected ? 'connected' : 'disconnected'}: host: ${host}, port: ${port}`);
+            },
+            subscribeEvent: event => {
+                const { subscribed, topic } = event.detail;
+                printLog(
+                    // eslint-disable-next-line max-len
+                    `Client ${subscribed ? 'subscribed' : 'unsubscribed'}: ${topic}`
+                );
+            },
+            packetEvent: async event => {
+                const { topic, count } = event.detail;
+                printLog(`Packet #${count} received: ${topic}`);
+
+                if (count === 1) {
+                    // First packet received, make dashboard visible
+                    setVisibility(true);
+                }
+                await dashboardUpdate(event.data, connId, count);
+            },
+            errorEvent: event => {
+                const { code, message } = event.detail;
+                printLog(`${message} (error code #${code})`);
+                controlBar.showError(message);
+                controlBar.setConnectState(false);
             }
         };
     }
@@ -703,13 +698,15 @@ async function dashboardUpdate(mqttData, connId, pktCount) {
     // Update info component (Custom HTML)
     await updateInfoHtml(mqttData);
 
-    // Update KPI, chart and datagrid components
+    // Update KPI, chart and Grid components
 
     const idx = activeItem.generatorId - 1;
     const aggInfo = mqttData.aggs[idx];
 
     // Get data from connector
-    const dataTable = await dashboard.dataPool.getConnectorTable(connId);
+    const dataTable = await dashboard.dataPool
+        .getConnector(connId || defaultConnId)
+        .then(connector => connector.getTable());
     const rowCount = await dataTable.getRowCount();
     if (rowCount === 0) {
         return;
@@ -736,7 +733,7 @@ async function dashboardUpdate(mqttData, connId, pktCount) {
         title: aggName + ' (latest)'
     });
 
-    // Chart and data grid get automatically updated on every packet,
+    // Chart and data Grid get automatically updated on every packet,
     // so range and title are set only once.
     if (pktCount > 1) {
         return;
@@ -752,8 +749,8 @@ async function dashboardUpdate(mqttData, connId, pktCount) {
         title: aggName + ' (history)'
     });
 
-    // Datagrid
-    const gridComp = dashboard.getComponentByCellId('el-datagrid');
+    // Grid
+    const gridComp = dashboard.getComponentByCellId('el-grid');
     await gridComp.update({
         connector: {
             id: connId
@@ -913,7 +910,7 @@ class ControlBar {
 
         // Subscribe to the new power plant topic
         const topic = powPlantList[plant].topic;
-        const connName = topicMap[topic];
+        const connName = topicMap[topic] || defaultConnId;
         const connector = await dashboard.dataPool.getConnector(connName);
         await connector.subscribe();
 
@@ -963,6 +960,7 @@ function startTopicDiscovery() {
         topic: 'prod/+/+/overview',
         autoConnect: true,
         autoSubscribe: true,
+        beforeParse: data => dataParser(data),
         connectEvent: event => {
             const { connected, host, port } = event.detail;
             controlBar.setConnectState(connected);
@@ -1246,7 +1244,7 @@ class MQTTConnector extends DataConnector {
      */
     async reset() {
         const connector = this,
-            table = connector.table;
+            table = connector.getTable();
 
         connector.packetCount = 0;
         await table.deleteColumns();
@@ -1368,7 +1366,7 @@ class MQTTConnector extends DataConnector {
         // Executes in Paho.Client context
         const connector = connectorTable[this.clientId],
             converter = connector.converter,
-            connTable = connector.table;
+            connTable = connector.getTable();
 
         // Parse the packets
         let data;
@@ -1387,36 +1385,21 @@ class MQTTConnector extends DataConnector {
             return; // Skip invalid packets
         }
 
-        converter.parse({ data });
-        const convTable = converter.getTable();
+        const columns = converter.parse({ data });
         const nRowsCurrent = connTable.getRowCount();
 
         if (nRowsCurrent === 0) {
             // Initialize the table on first packet
-            connTable.setColumns(convTable.getColumns());
+            connTable.setColumns(columns);
         } else {
-            const maxRows = connector.options.maxRows;
-            const nRowsParsed = convTable.getRowCount();
-
-            if (nRowsParsed === 1) {
-                const rows = convTable.getRows();
-                // One row, append to table
-                if (nRowsCurrent === maxRows) {
-                    // Remove the oldest row
-                    connTable.deleteRows(0, 1);
-                }
-                connTable.setRows(rows);
-            } else {
-                // Multiple rows, replace table content
-                const rows = convTable.getRows();
-
-                if (nRowsParsed >= maxRows) {
-                    // Get the newest 'maxRows' rows
-                    rows.splice(0, nRowsParsed - maxRows);
-                    connTable.deleteRows();
-                }
-                connTable.setRows(rows);
+            // Remove the oldest row if at max capacity
+            if (nRowsCurrent >= connector.options.maxRows) {
+                connTable.deleteRows(0, 1);
             }
+
+            // Add a new row from parsed columns
+            const newRow = Object.values(columns).map(col => col[0]);
+            connTable.setRows([newRow], connTable.getRowCount());
         }
         connector.packetCount++;
 

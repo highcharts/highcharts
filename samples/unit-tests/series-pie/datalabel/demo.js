@@ -86,6 +86,37 @@ QUnit.test('Pie data labels general tests', function (assert) {
         ['Slice 5', 'Slice 4', 'Slice 3', 'Slice 2', 'Slice 1'],
         'Data labels should be ordered by point index (#21336)'
     );
+
+    chart = Highcharts.chart('container', {
+        series: [{
+            type: 'pie',
+            data: [{
+                name: 'Some random text 1',
+                y: 30
+            }, {
+                name: 'Some random text 2',
+                y: 29
+            }, {
+                name: 'Some random text 5, plus a little bit more text',
+                y: 5
+            }]
+        }]
+    });
+
+    const prevX = chart.series[0].points[2].dataLabel.getBBox().x,
+        prevW = chart.chartWidth,
+        prevH = chart.chartHeight;
+
+    chart.setSize(1920, 1080);
+    chart.setSize(prevW, prevH);
+
+    assert.close(
+        prevX,
+        chart.series[0].points[2].dataLabel.getBBox().x,
+        5.5,
+        `Data labels x position should be the same after changing and reversing
+        chart size, #23595.`
+    );
 });
 
 QUnit.test(
@@ -504,12 +535,16 @@ QUnit.test(
             '#15909: Hidden point with useHTML dataLabels should not throw'
         );
 
-        Highcharts.fireEvent(points[0].dataLabel.div, 'mouseover', {
-            which: 1,
-            pageX: offset.left +
-                points[0].dataLabel.dataLabelPosition.natural.x,
-            pageY: offset.top + points[0].dataLabel.dataLabelPosition.natural.y
-        });
+        Highcharts.fireEvent(
+            // Parallel HTML || Foreign object
+            points[0].dataLabel.div || points[0].dataLabel.element,
+            'mouseover', {
+                which: 1,
+                pageX: offset.left +
+                    points[0].dataLabel.dataLabelPosition.natural.x,
+                pageY: offset.top +
+                    points[0].dataLabel.dataLabelPosition.natural.y
+            });
 
         assert.strictEqual(
             points[0] === chart.hoverPoint,
@@ -517,12 +552,16 @@ QUnit.test(
             'First point hovered.'
         );
 
-        Highcharts.fireEvent(points[4].dataLabel.div, 'mouseover', {
-            which: 1,
-            pageX: offset.left +
-                points[4].dataLabel.dataLabelPosition.natural.x,
-            pageY: offset.top + points[4].dataLabel.dataLabelPosition.natural.y
-        });
+        Highcharts.fireEvent(
+            // Parallel HTML || Foreign object
+            points[4].dataLabel.div || points[4].dataLabel.element,
+            'mouseover', {
+                which: 1,
+                pageX: offset.left +
+                    points[4].dataLabel.dataLabelPosition.natural.x,
+                pageY: offset.top +
+                    points[4].dataLabel.dataLabelPosition.natural.y
+            });
 
         assert.strictEqual(
             points[4] === chart.hoverPoint,
@@ -534,7 +573,7 @@ QUnit.test(
             pageX: offset.left +
                 points[4].dataLabel.dataLabelPosition.natural.x,
             pageY: offset.top + points[4].dataLabel.dataLabelPosition.y,
-            target: points[4].dataLabel.div
+            target: points[4].dataLabel.div || points[4].dataLabel.element
         });
 
         assert.strictEqual(clicked, true, 'Click event on dataLabel works.');

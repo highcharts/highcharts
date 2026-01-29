@@ -35,10 +35,19 @@ QUnit.test('Hover color', function (assert) {
             ]
         }),
         point1 = chart.series[0].points[0],
+        { top, left } = Highcharts.offset(chart.container),
+        getPageCoords = point => {
+            const [x, y] = point.pos();
+            return {
+                pageX: x + left,
+                pageY: y + top
+            };
+        },
+        p1Coords = getPageCoords(point1),
         point2 = chart.series[0].points[1],
         { fireEvent } = Highcharts;
 
-    fireEvent(point1.graphic.element, 'mouseover');
+    fireEvent(point1.graphic.element, 'mouseover', p1Coords);
 
     assert.strictEqual(
         point1.graphic.element.getAttribute('fill'),
@@ -52,8 +61,8 @@ QUnit.test('Hover color', function (assert) {
         'Point2 does not have red fill'
     );
 
-    fireEvent(point1.graphic.element, 'mouseout');
-    fireEvent(point2.graphic.element, 'mouseover');
+    fireEvent(point1.graphic.element, 'mouseout', p1Coords);
+    fireEvent(point2.graphic.element, 'mouseover', getPageCoords(point2));
 
     assert.strictEqual(
         point2.graphic.element.getAttribute('fill'),

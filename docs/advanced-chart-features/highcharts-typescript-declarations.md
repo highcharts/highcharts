@@ -133,12 +133,12 @@ between competing product bundles.
 
 - For browser-side (target: ES6) projects use:
   ```ts
-  import Highcharts from 'highcharts/es-modules/masters/highcharts.src.js';
+  import Highcharts from 'highcharts/esm/highcharts.js';
   ```
   Other possible product bundles are:
-  - `..masters/highcharts-gantt.src.js`
-  - `..masters/highmaps.src.js`
-  - `..masters/highstock.src.js`
+  - `highcharts-gantt.js`
+  - `highmaps.js`
+  - `highstock.js`
 
 - For server-side (target: Node.js) projects use:
   ```ts
@@ -153,17 +153,16 @@ between competing product bundles.
 ### Highcharts Modules
 
 With the help of Highcharts modules you can extend a Highcharts bundle with
-additional functionality, for example to provide A11y controls. 
+additional functionality, for example to provide A11y controls.
 
 - For browser-side (target: ES6) projects use:
   ```ts
-  import 'highcharts/es-modules/masters/modules/accessibility.src.js';
+  import 'highcharts/esm/modules/accessibility.js';
   ```
 
 - For server-side (target: Node.js) projects use:
   ```ts
-  import Accessibility from 'highcharts/modules/accessibility';
-  Accessibility(Highcharts);
+  import 'highcharts/modules/accessibility';
   ```
 
 
@@ -255,7 +254,7 @@ Highcharts.Point.prototype.highlight = function (
 
 Note: If you like to replace existing functionality of Highcharts, listen to the
 Highcharts events instead of overwriting functions and methods. That way you can
-avoid many unintended side effects. 
+avoid many unintended side effects.
 
 
 
@@ -269,7 +268,7 @@ For full fail-proofed development you may convert your project's source code to
 TypeScript. The initial step is:
 
 ```sh
-npm install typescript && npx tsc --init 
+npm install typescript && npx tsc --init
 ```
 
 More information about migrating JavaScript projects to TypeScript can be found
@@ -283,7 +282,7 @@ If you previously used TypeScript declarations for Highcharts like
 `@types/highcharts`, you should uninstall them to prevent any mismatch:
 
 ```sh
-npm uninstall @types/highcharts 
+npm uninstall @types/highcharts
 ```
 
 
@@ -302,7 +301,7 @@ options explicitly to the desired type and you get more helpful error messages:
 series: [{
     type: "line",
     data: [1, 2, "3", 4, 5]
-} as Highcharts.LineSeriesOptions] 
+} as Highcharts.LineSeriesOptions]
 ```
 
 

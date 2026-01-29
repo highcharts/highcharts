@@ -1,13 +1,56 @@
 Test Runner
 ===========
 
-Use `gulp test` to run the tests using karma and QUnit. All tests in the
-`samples/unit-tests` directory will run. For debugging, it may be convenient to
-use the visual [Highcharts Utils].
+## Unit Tests (Playwright)
+
+Unit tests are now primarily run using Playwright with the QUnit test runner.
+All tests in the `samples/unit-tests` directory will run through Playwright.
+
+### Running Tests
+
+```bash
+# Run all unit tests via Playwright
+npx playwright test --project=setup-highcharts --project=qunit
+
+# Run tests for a specific product
+npx gulp test --product Core
+
+# Run tests for modified files (pre-commit)
+npx gulp test --modified
+
+# Run all Playwright tests (including dashboards, highcharts, etc.)
+npm test
+```
+
+### Running Timezone Tests
+
+Timezone tests verify that Highcharts handles time conversions correctly across
+different browser timezones:
+
+```bash
+npx playwright test --project=setup-highcharts --project=highcharts tests/highcharts/time/
+```
+
+## Visual Tests (Karma)
+
+Visual comparison tests still use Karma for generating and comparing SVG
+reference images:
+
+```bash
+# Generate reference images
+npx karma start test/karma-conf.js --tests highcharts/*/* --reference
+
+# Compare against reference
+npx karma start test/karma-conf.js --tests highcharts/*/* --visualcompare
+```
+
+## Writing Tests
+
+For debugging, it may be convenient to use the visual [Highcharts Utils].
 
 Tests will run on _pre-commit_ and will block committing in case of failure.
 
-#### Features
+### Features
 - *Testing animation*. Animation is by default disabled by
   `Highcharts.setOptions`. For testing animations, `TestUtilities.lolex` is
   available. It emulates animation in sync. Use the utility functions
@@ -20,7 +63,7 @@ Tests will run on _pre-commit_ and will block committing in case of failure.
   (except functions) and reverse them after each test case, which is faster than
   the classic destruction and creation of charts for each test.
 
-#### Optimize for Speed
+### Optimize for Speed
 We want fast running tests. The time it takes to run the test suite is largely
 limited by the time it takes to create chart instances. Therefore, we want to
 limit the number of charts in the test suite.
@@ -34,21 +77,20 @@ limit the number of charts in the test suite.
   only needs an `SVGRenderer` instance, colors can test directly against the
   `Color` object, data parsing directly against the `Data` object.
 
-#### Troubleshooting
+### Troubleshooting
 - All the Highcharts files, including modules and indicators, are loaded in the
   test runner. A badly written module can cause errors downstream. If you
   can't pinpoint an error, try removing files from `test/karma-files.json`.
 - Similar to the above, all tests run in the same thread, so a badly written 
-  test may cause errors downstream. Try limiting the number of tests that run
-  by modifying the glob in the `files` config in `tests/karma-config.js`.
+  test may cause errors downstream.
 - Also keep in mind, that `TestTemplate` creates additional charts that are kept
   between tests. It is therefore advisable to limit DOM operations to your own
   `Chart.container` element.
 - Traditionally, the Highcharts unit tests have a `demo.html` file where the
-  tests in `demo.js` run. In karma/QUnit, the `demo.html` file is not included.
-  If the test depends on things like the width of the container or other DOM 
-  elements, this must be set up by JavaScript in `demo.js`. A fixed size chart
-  is better defined with the `chart.width` option.
+  tests in `demo.js` run. In Playwright/QUnit, the `demo.html` file is not
+  included. If the test depends on things like the width of the container or
+  other DOM elements, this must be set up by JavaScript in `demo.js`. A fixed
+  size chart is better defined with the `chart.width` option.
 - Don't use global variables. ESLint should raise an error on this on
   pre-commit. If several of the tests in the same `demo.js` share a function or
   variables, wrap it all in an IIFE.
@@ -60,7 +102,7 @@ limit the number of charts in the test suite.
   to reset them. Since the visual tests double as educational demos for the
   public, it is not recommended to have teardown code in `demo.js`.
 
-#### Link References
+### Link References
 - Highchars Utils: https://github.com/highcharts/highcharts-utils
 
 [Highcharts Utils]: https://github.com/highcharts/highcharts-utils

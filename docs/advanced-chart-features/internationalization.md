@@ -81,7 +81,7 @@ Note that the language options have to be set before initializing the chart with
 If you want to create a custom language module, you can do so by following these steps:
 
 1. Download and install the [Highcharts repo](https://github.com/highcharts/highcharts) from Github.
-2. Translate the `i18n/lang.json` file to the language of your choosing.
+2. Translate the `i18n/highcharts/lang.json` file to the language of your choosing.
 Save the translated JSON file in the `i18n` folder and name it after the relevant locale.
 3. Generate a TypeScript module by running `npx gulp lang-build`. The output file will appear in the `ts/masters/i18n/` folder.
 4. Generate a JavaScript file by running `npx gulp scripts`. The JS file will be placed in the `code/i18n/` folder.

@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -72,13 +73,14 @@ class BubblePoint extends ScatterPoint {
 
         if (this.series.chart.inverted) {
             const pos = this.pos() || [0, 0],
-                { xAxis, yAxis, chart } = this.series;
+                { xAxis, yAxis, chart } = this.series,
+                diameter = computedSize * 2;
 
             return chart.renderer.symbols.circle(
-                xAxis.len - pos[1] - computedSize,
-                yAxis.len - pos[0] - computedSize,
-                computedSize * 2,
-                computedSize * 2
+                (xAxis?.len || 0) - pos[1] - computedSize,
+                (yAxis?.len || 0) - pos[0] - computedSize,
+                diameter,
+                diameter
             );
         }
 

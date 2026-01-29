@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LicenseRef-Highcharts
 /**
  * @license Highcharts JS v@product.version@ (@product.date@)
  * @module highcharts/highcharts-3d
@@ -5,7 +6,10 @@
  *
  * 3D features for Highcharts JS
  *
- * License: www.highcharts.com/license
+ * (c) 2009-2026 Highsoft AS
+ *
+ * A commercial license may be required depending on use.
+ * See www.highcharts.com/license
  */
 'use strict';
 import Highcharts from '../Core/Globals.js';
@@ -22,7 +26,7 @@ import Pie3DSeries from '../Series/Pie3D/Pie3DSeries.js';
 import '../Series/Scatter3D/Scatter3DSeries.js';
 const G: AnyRecord = Highcharts;
 // Compositions
-Area3DSeries.compose(G.seriesTypes.area);
+Area3DSeries.compose(G.Series.types.area);
 Axis3DComposition.compose(G.Axis, G.Tick);
 Chart3D.compose(G.Chart, G.Fx);
 Column3DComposition.compose(G.Series, StackItem);

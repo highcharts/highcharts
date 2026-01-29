@@ -40,7 +40,8 @@ ES modules like this:
  *
  * (c) 2009-2024 Highcharts AS
  *
- * License: www.highcharts.com/license
+ * A commercial license may be required depending on use.
+ * See www.highcharts.com/license
  */
 'use strict';
 import Highcharts from '../Core/Globals.js';
@@ -99,7 +100,7 @@ custom package file either as an ES6 module...
     <body>
         <div id="container"></div>
         <script type="module">
-            import Highcharts from './es-modules/masters/custom.src.js';
+            import Highcharts from './esm/custom.js';
             Highcharts.chart('container', {
                 series: [{
                     type: 'line',

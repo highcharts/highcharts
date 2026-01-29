@@ -8,8 +8,7 @@ Highcharts.theme = {
     yAxis: {
         gridLineColor: '#B71C1C',
         labels: {
-            format: '{value} C',
-            useHTML: true
+            format: '{value} C'
         }
     },
     plotOptions: {
@@ -35,8 +34,7 @@ Highcharts.chart('container', {
         reversed: true,
         tickPositions: false,
         labels: {
-            format: '{value}',
-            useHTML: true
+            format: '{value}'
         }
     },
     credits: {

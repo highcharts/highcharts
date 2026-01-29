@@ -1,0 +1,12 @@
+---
+name: Minimal Grid
+authors:
+  - Sebastian Bochan
+js_wrap: b
+tags:
+  - Highcharts Grid demo
+categories:
+  - General:
+        priority: 10
+use_png_thumbnail: true
+...

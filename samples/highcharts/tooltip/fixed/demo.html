@@ -1,0 +1,26 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/controls@0.4.0" type="module"></script>
+
+<figure class="highcharts-figure">
+    <div id="container"></div>
+</figure>
+
+<div class="highcharts-controls-wrapper">
+    <highcharts-controls>
+        <highcharts-control path="tooltip.fixed"></highcharts-control>
+        <highcharts-control path="tooltip.position.align" value="left"
+            options="left,center,right"></highcharts-control>
+        <highcharts-control path="tooltip.position.verticalAlign"
+            value="top" options="top,middle,bottom"></highcharts-control>
+        <highcharts-control path="tooltip.position.relativeTo" value="pane"
+            options="pane,chart,plotBox,spacingBox"></highcharts-control>
+        <highcharts-control path="tooltip.position.x"></highcharts-control>
+        <highcharts-control path="tooltip.position.y"></highcharts-control>
+        <highcharts-control path="tooltip.split"
+            type="boolean" value="false"></highcharts-control>
+        <highcharts-control path="tooltip.shared"
+            type="boolean" value="false"></highcharts-control>
+        <highcharts-control path="tooltip.outside"
+            type="boolean" value="false"></highcharts-control>
+    </highcharts-controls>
+</div>

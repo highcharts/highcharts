@@ -2,13 +2,13 @@
  *
  *  Marker clusters module.
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
  *
  *  Author: Wojciech Chmiel
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -53,7 +53,7 @@ let symbols: typeof Symbols;
 
 /**
  * Cluster symbol.
- * @private
+ * @internal
  */
 function cluster(
     x: number,
@@ -87,7 +87,8 @@ function cluster(
 }
 
 /**
- * @private
+ * Register marker cluster symbols.
+ * @internal
  */
 function compose(
     SVGRendererClass: typeof SVGRenderer
@@ -103,8 +104,10 @@ function compose(
  *
  * */
 
+/** @internal */
 const MarkerClusterSymbols = {
     compose
 };
 
+/** @internal */
 export default MarkerClusterSymbols;

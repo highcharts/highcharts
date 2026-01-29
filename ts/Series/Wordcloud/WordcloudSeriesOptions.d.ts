@@ -2,12 +2,12 @@
  *
  *  Experimental Highcharts module which enables visualization of a word cloud.
  *
- *  (c) 2016-2024 Highsoft AS
+ *  (c) 2016-2026 Highsoft AS
  *  Authors: Jon Arild Nygard
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  * */
 
 /* *
@@ -16,16 +16,17 @@
  *
  * */
 
-import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
+import type {
+    ColumnSeriesOptions,
+    ColumnSeriesTooltipOptions
+} from '../Column/ColumnSeriesOptions';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type {
     PointOptions,
     PointShortOptions
 } from '../../Core/Series/PointOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type TooltipOptions from '../../Core/TooltipOptions';
 import type WordcloudPointOptions from './WordcloudPointOptions';
-import type WordcloudSeries from './WordcloudSeries';
 
 /* *
  *
@@ -172,7 +173,7 @@ export interface WordcloudSeriesOptions extends ColumnSeriesOptions {
      */
     spiral?: string;
 
-    states?: SeriesStatesOptions<WordcloudSeries>;
+    states?: SeriesStatesOptions<WordcloudSeriesOptions>;
 
     /**
      * CSS styles for the words.
@@ -183,8 +184,21 @@ export interface WordcloudSeriesOptions extends ColumnSeriesOptions {
      */
     style?: CSSObject;
 
-    tooltip?: Partial<TooltipOptions>;
+    tooltip?: WordcloudSeriesTooltipOptions;
 
+}
+
+export interface WordcloudSeriesTooltipOptions
+    extends ColumnSeriesTooltipOptions {
+    /**
+     * @default true
+     */
+    followPointer?: ColumnSeriesTooltipOptions['followPointer'];
+
+    /**
+     * @default '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.weight}</b><br/>'
+     */
+    pointFormat?: ColumnSeriesTooltipOptions['pointFormat'];
 }
 
 interface WordcloudSeriesAnimationOptions {

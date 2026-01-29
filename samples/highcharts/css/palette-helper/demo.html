@@ -1,7 +1,27 @@
 <script src="https://code.highcharts.com/stock/highstock.js"></script>
+<script src="https://code.highcharts.com/highcharts-more.js"></script>
+<script src="https://code.highcharts.com/highcharts-3d.js"></script>
 <script src="https://code.highcharts.com/maps/modules/map.js"></script>
+<script src="https://code.highcharts.com/gantt/modules/gantt.js"></script>
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+<script src="https://code.highcharts.com/modules/drilldown.js"></script>
+<script src="https://code.highcharts.com/modules/annotations-advanced.js"></script>
 <script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/stock/modules/price-indicator.js"></script>
+
+<script src="https://code.highcharts.com/modules/sankey.js"></script>
+<script src="https://code.highcharts.com/modules/dependency-wheel.js"></script>
+<script src="https://code.highcharts.com/modules/funnel.js"></script>
+<script src="https://code.highcharts.com/modules/histogram-bellcurve.js"></script>
+<script src="https://code.highcharts.com/modules/item-series.js"></script>
+<script src="https://code.highcharts.com/modules/organization.js"></script>
+<script src="https://code.highcharts.com/modules/solid-gauge.js"></script>
+<script src="https://code.highcharts.com/modules/sunburst.js"></script>
+<script src="https://code.highcharts.com/modules/timeline.js"></script>
+<script src="https://code.highcharts.com/modules/treemap.js"></script>
+<script src="https://code.highcharts.com/modules/treegraph.js"></script>
+
+
 <script src="https://cdn.jsdelivr.net/gh/c0bra/color-scheme-js/lib/color-scheme.min.js"></script>
 
 <div class="demo-content">
@@ -73,9 +93,16 @@
         Remember that the <a href="https://code.highcharts.com/css/highcharts.css">
         highcharts.css</a> file must be imported first.</p>
     <pre id="css"></pre>
+
     <h3>JavaScript output</h3>
     <p>If you're <em>not</em> using styled mode, this JSON structure can be
     applied using <a href="https://api.highcharts.com/class-reference/Highcharts#.setOptions">
     Highcharts.setOptions</a> to set the global theme.</p>
     <pre id="js"></pre>
+
+    <h3>JavaScript with CSS variables</h3>
+    <p>As above, but can be combined with the CSS variables of the CSS output to
+        create a dynamic theme, for example supporting light/dark mode.
+    </p>
+    <pre id="js-css-variables"></pre>
 </div>

@@ -40,7 +40,7 @@ QUnit.test('Set basemap on chart object', function (assert) {
     );
 
     series.update({
-        data: [{ 'hc-key': 'ad-6407' }, { 'hc-key': 'ad-6406', value: null }],
+        data: [{ 'hc-key': 'ad-07' }, { 'hc-key': 'ad-06', value: null }],
         mapData: Highcharts.maps['countries/ad/ad-all']
     });
 
@@ -102,7 +102,6 @@ QUnit.test('Set basemap on chart object', function (assert) {
         `The first point from a map source should be bn-te, its name should
         be taken from a map source.`
     );
-
     chart.series[0].setData(
         [{
             'hc-key': 'bn-be',

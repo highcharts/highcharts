@@ -39,7 +39,7 @@ Highcharts.chart('container', {
             // default background
         }, {
             // reflex for supported browsers
-            backgroundColor: Highcharts.svg ? {
+            backgroundColor: {
                 radialGradient: {
                     cx: 0.5,
                     cy: -0.4,
@@ -49,7 +49,7 @@ Highcharts.chart('container', {
                     [0.5, 'rgba(255, 255, 255, 0.2)'],
                     [0.5, 'rgba(200, 200, 200, 0.2)']
                 ]
-            } : null
+            }
         }]
     },
 
@@ -70,13 +70,11 @@ Highcharts.chart('container', {
         minorTickLength: 5,
         minorTickPosition: 'inside',
         minorGridLineWidth: 0,
-        minorTickColor: '#666',
 
         tickInterval: 1,
         tickWidth: 4,
         tickPosition: 'inside',
         tickLength: 10,
-        tickColor: '#666',
         title: {
             text: 'Powered by<br/>Highcharts',
             style: {

@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sophie Bremer
@@ -21,7 +21,10 @@
  * */
 
 
-import type Component from '../Component';
+import type {
+    ConnectorOptions as ComponentConnectorOptions,
+    Options as ComponentOptions
+} from '../Component';
 import type AST from '../../../Core/Renderer/HTML/AST';
 
 /* *
@@ -30,11 +33,11 @@ import type AST from '../../../Core/Renderer/HTML/AST';
  *
  * */
 
-export interface Options extends Component.Options {
+export interface Options extends ComponentOptions {
     /**
      * Connector options
      */
-    connector?: Component.ConnectorOptions;
+    connector?: ComponentConnectorOptions;
 
     /**
      * Array of HTML elements, declared as string or node.

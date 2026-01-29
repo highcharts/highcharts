@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LicenseRef-Highcharts
 /**
  * @license Highcharts JS v@product.version@ (@product.date@)
  * @module highcharts/modules/arrow-symbols
@@ -5,9 +6,11 @@
  *
  * Arrow Symbols
  *
- * (c) 2017-2024 Lars A. V. Cabrera
+ * (c) 2017-2026 Highsoft AS
+ * Author: Lars A. V. Cabrera
  *
- * License: www.highcharts.com/license
+ * A commercial license may be required depending on use.
+ * See www.highcharts.com/license
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';

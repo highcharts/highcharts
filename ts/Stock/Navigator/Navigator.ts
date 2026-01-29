@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -19,6 +20,7 @@
 import type AxisOptions from '../../Core/Axis/AxisOptions';
 import type Chart from '../../Core/Chart/Chart.js';
 import type CSSObject from '../../Core/Renderer/CSSObject';
+import type { DeepPartial } from '../../Shared/Types';
 import type { NavigatorAxisComposition } from '../../Core/Axis/NavigatorAxisComposition';
 import type {
     NavigatorHandlesOptions,
@@ -1082,7 +1084,7 @@ class Navigator {
         // In iOS, a mousemove event with e.pageX === 0 is fired when holding
         // the finger down in the center of the scrollbar. This should be
         // ignored.
-        if (!(e as any).touches || (e as any).touches[0].pageX !== 0) { // #4696
+        if (!e.touches || e.touches[0].pageX !== 0) { // #4696
 
             e = chart.pointer?.normalize(e) || e;
             chartX = e.chartX;
@@ -1112,30 +1114,29 @@ class Navigator {
                     chartX - left
                 );
             // Drag scrollbar or open area in navigator
-            } else if (navigator.grabbedCenter) {
+            } else if (navigator.grabbedCenter && dragOffset) {
                 navigator.hasDragged = true;
-                if (chartX < (dragOffset as any)) { // Outside left
+                if (chartX < dragOffset) { // Outside left
                     chartX = dragOffset;
                 // Outside right
                 } else if (
                     chartX >
-                    navigatorSize + (dragOffset as any) - range
+                    navigatorSize + dragOffset - range
                 ) {
-                    chartX = navigatorSize + (dragOffset as any) - range;
+                    chartX = navigatorSize + dragOffset - range;
                 }
 
                 navigator.render(
                     0,
                     0,
-                    (chartX as any) - (dragOffset as any),
-                    (chartX as any) - (dragOffset as any) + range
+                    chartX - dragOffset,
+                    chartX - dragOffset + range
                 );
             }
             if (
                 navigator.hasDragged &&
-                navigator.scrollbar &&
                 pick(
-                    navigator.scrollbar.options.liveRedraw,
+                    navigator.scrollbarOptions?.liveRedraw,
 
                     // By default, don't run live redraw on touch
                     // devices or if the chart is in boost.
@@ -1452,7 +1453,7 @@ class Navigator {
                 navigatorAxis: {
                     fake: true
                 },
-                translate: function (value: number, reverse?: boolean): void {
+                translate: function (value: number, reverse?: boolean): number {
                     const axis = chart.xAxis[0],
                         ext = axis.getExtremes(),
                         scrollTrackWidth = axis.len - 2 * scrollButtonSize,

@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sophie Bremer
@@ -19,14 +19,15 @@
  *
  * */
 
-import type Globals from '../Globals';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import type JSON from '../JSON';
+import type { AnyRecord } from '../../Shared/Types';
+import type { JSONObject } from '../JSON';
 import type HTMLTableConnectorOptions from '../../Data/Connectors/HTMLTableConnectorOptions';
+import type HTMLTableConverterOptions from '../../Data/Converters/HTMLTableConverterOptions';
 
 import DataTableHelper from './DataTableHelper.js';
 import HTMLTableConnector from '../../Data/Connectors/HTMLTableConnector.js';
 import Serializable from '../Serializable.js';
+import type { Helper as SerializableHelper, JSON as SerializableJSON } from '../Serializable';
 import U from '../../Core/Utilities.js';
 const { merge } = U;
 
@@ -39,14 +40,14 @@ const { merge } = U;
 /**
  * Converts the given JSON to a class instance.
  *
- * @param {HTMLTableConnectorHelper.JSON} json
+ * @param {JSON} json
  * JSON to deserialize as a class instance or object.
  *
  * @return {HTMLTableConnector}
  * Returns the class instance or object, or throws an exception.
  */
 function fromJSON(
-    json: HTMLTableConnectorHelper.JSON
+    json: JSON
 ): HTMLTableConnector {
     return new HTMLTableConnector(json.options);
 }
@@ -54,7 +55,7 @@ function fromJSON(
 /**
  * Validates the given class instance for JSON support.
  *
- * @param {Globals.AnyRecord} obj
+ * @param {AnyRecord} obj
  * Class instance or object to validate.
  *
  * @return {boolean}
@@ -62,7 +63,7 @@ function fromJSON(
  * false.
  */
 function jsonSupportFor(
-    obj: Globals.AnyRecord
+    obj: AnyRecord
 ): obj is HTMLTableConnector {
     return obj instanceof HTMLTableConnector;
 }
@@ -73,15 +74,15 @@ function jsonSupportFor(
  * @param {HTMLTableConnector} obj
  * Class instance or object to serialize as JSON.
  *
- * @return {HTMLTableConnectorHelper.JSON}
+ * @return {JSON}
  * Returns the JSON of the class instance or object.
  */
 function toJSON(
     obj: HTMLTableConnector
-): HTMLTableConnectorHelper.JSON {
-    const options = merge(obj.options) as HTMLTableConnectorHelper.OptionsJSON;
+): JSON {
+    const options = merge(obj.options) as OptionsJSON;
 
-    options.dataTable = DataTableHelper.toJSON(obj.table);
+    options.dataTable = DataTableHelper.toJSON(obj.getTable());
 
     return {
         $class: 'Data.HTMLTableConnector',
@@ -91,25 +92,16 @@ function toJSON(
 
 /* *
  *
- *  Namespace
+ *  Declarations
  *
  * */
 
-namespace HTMLTableConnectorHelper {
-
-    /* *
-     *
-     *  Declarations
-     *
-     * */
-
-    export interface JSON extends Serializable.JSON<'Data.HTMLTableConnector'> {
-        options: OptionsJSON;
-    }
-
-    export type OptionsJSON = (JSON.Object&HTMLTableConnectorOptions);
-
+export interface JSON extends SerializableJSON<'Data.HTMLTableConnector'> {
+    options: OptionsJSON;
 }
+
+export type OptionsJSON =
+    JSONObject & HTMLTableConnectorOptions & HTMLTableConverterOptions;
 
 /* *
  *
@@ -117,7 +109,7 @@ namespace HTMLTableConnectorHelper {
  *
  * */
 
-const HTMLTableConnectorHelper: Serializable.Helper<HTMLTableConnector, HTMLTableConnectorHelper.JSON> = {
+const HTMLTableConnectorHelper: SerializableHelper<HTMLTableConnector, JSON> = {
     $class: 'Data.HTMLTableConnector',
     fromJSON,
     jsonSupportFor,

@@ -2,11 +2,12 @@
  *
  *  Parallel coordinates module
  *
- *  (c) 2010-2024 Pawel Fus
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Pawel Fus
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -20,6 +21,7 @@
 
 import type Axis from '../../Core/Axis/Axis';
 import type Chart from '../../Core/Chart/Chart';
+import type { DeepPartial } from '../../Shared/Types';
 import type Options from '../../Core/Options';
 import type Series from '../../Core/Series/Series';
 import type SeriesOptions from '../../Core/Series/SeriesOptions';
@@ -41,8 +43,8 @@ const {
  *
  * */
 
-declare module '../../Core/Chart/ChartLike'{
-    interface ChartLike {
+declare module '../../Core/Chart/ChartBase'{
+    interface ChartBase {
         hasParallelCoordinates?: boolean;
         parallelInfo?: ParallelCoordinates.InfoObject;
         /** @requires modules/parallel-coordinates */
@@ -95,7 +97,7 @@ class ChartAdditions {
      * - check only first series for number of points and assume the rest is the
      *   same
      *
-     * @private
+     * @internal
      * @function Highcharts.Chart#setParallelInfo
      * @param {Highcharts.Options} options
      * User options
@@ -157,7 +159,7 @@ namespace ParallelCoordinates {
      *
      * */
 
-    /** @private */
+    /** @internal */
     export function compose(
         AxisClass: typeof Axis,
         ChartClass: typeof Chart,
@@ -189,7 +191,7 @@ namespace ParallelCoordinates {
 
     /**
      * Initialize parallelCoordinates
-     * @private
+     * @internal
      */
     function onChartInit(
         this: ChartComposition,
@@ -261,7 +263,7 @@ namespace ParallelCoordinates {
 
     /**
      * Initialize parallelCoordinates
-     * @private
+     * @internal
      */
     function onChartUpdate(
         this: ChartComposition,

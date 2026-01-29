@@ -66,10 +66,15 @@ function exec(command, options = {}) {
 
     const silent = options.silent;
 
+    function toStdOut(data) {
+        process.stdout.write(data);
+    }
+
     return new Promise((resolve, reject) => {
+        let cli;
 
         try {
-            const cli = ChildProcess.exec(command, options, (error, stdout) => {
+            cli = ChildProcess.exec(command, options, (error, stdout) => {
 
                 if (error) {
                     LogLib.failure(error);
@@ -88,15 +93,27 @@ function exec(command, options = {}) {
                     );
                 }
 
+                if (!silent) {
+                    cli.stdout.off('data', toStdOut);
+                }
+
                 resolve(stdout);
             });
 
             if (!silent) {
-                cli.stdout.on('data', data => process.stdout.write(data));
+                cli.stdout.on('data', toStdOut);
             }
+
         } catch (error) {
+
             LogLib.failure(error);
+
+            if (cli && !silent) {
+                cli.stdout.off('data', toStdOut);
+            }
+
             reject(error);
+
         }
 
     });

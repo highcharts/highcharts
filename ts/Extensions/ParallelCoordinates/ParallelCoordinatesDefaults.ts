@@ -2,11 +2,12 @@
  *
  *  Parallel coordinates module
  *
- *  (c) 2010-2024 Pawel Fus
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Pawel Fus
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 

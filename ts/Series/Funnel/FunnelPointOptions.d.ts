@@ -2,11 +2,12 @@
  *
  *  Highcharts funnel module
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -18,6 +19,7 @@
 
 import type FunnelDataLabelOptions from './FunnelDataLabelOptions';
 import type PiePointOptions from '../Pie/PiePointOptions';
+import type { PointDataLabelOptionsModifier } from '../../Core/Series/DataLabel';
 
 /* *
  *
@@ -26,8 +28,14 @@ import type PiePointOptions from '../Pie/PiePointOptions';
  * */
 
 export interface FunnelPointOptions extends PiePointOptions {
-    dataLabels?: FunnelDataLabelOptions;
+    dataLabels?: (
+        FunnelPointDataLabelOptions |
+        Array<FunnelPointDataLabelOptions>
+    );
 }
+
+export type FunnelPointDataLabelOptions =
+    FunnelDataLabelOptions & PointDataLabelOptionsModifier;
 
 /* *
  *

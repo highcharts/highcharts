@@ -1,0 +1,91 @@
+{
+    "$schema": "https://typedoc.org/schema.json",
+    "categorizeByGroup": false,
+    "customCss": "../dashboards/api-docs/typedoc/assets/custom.css",
+    "basePath": "../../../ts/",
+    "disableSources": true,
+    "entryPoints": [
+        "../../../ts/Data/DataTable.ts",
+        "../../../ts/Data/DataTableOptions.ts",
+
+        "../../../ts/Grid/Core/Accessibility/A11yOptions.ts",
+        "../../../ts/Grid/Core/Accessibility/Accessibility.ts",
+        "../../../ts/Grid/Core/Table/Actions/ColumnSorting.ts",
+        "../../../ts/Grid/Core/Table/Actions/ColumnsResizer.ts",
+        "../../../ts/Grid/Core/Table/Actions/RowsVirtualizer.ts",
+        "../../../ts/Grid/Core/Table/Actions/ColumnFiltering/ColumnFiltering.ts",
+        "../../../ts/Grid/Core/Table/Actions/ColumnFiltering/FilteringTypes.d.ts",
+        "../../../ts/Grid/Core/Table/Body/TableCell.ts",
+        "../../../ts/Grid/Core/Table/Body/TableRow.ts",
+        "../../../ts/Grid/Core/Table/Header/HeaderCell.ts",
+        "../../../ts/Grid/Core/Table/Header/HeaderRow.ts",
+        "../../../ts/Grid/Core/Table/Header/TableHeader.ts",
+        "../../../ts/Grid/Core/Table/Cell.ts",
+        "../../../ts/Grid/Core/Table/Column.ts",
+        "../../../ts/Grid/Core/Table/Row.ts",
+        "../../../ts/Grid/Core/Table/Table.ts",
+        "../../../ts/Grid/Core/Defaults.ts",
+        "../../../ts/Grid/Core/Grid.ts",
+        "../../../ts/Grid/Core/GridUtils.ts",
+        "../../../ts/Grid/Core/Options.ts",
+
+        "../../../ts/Grid/Core/Table/ColumnResizing/ColumnResizing.ts",
+        "../../../ts/Grid/Core/Table/ColumnResizing/ResizingMode.ts",
+        "../../../ts/Grid/Core/Table/ColumnResizing/AdjacentResizingMode.ts",
+        "../../../ts/Grid/Core/Table/ColumnResizing/IndependentResizingMode.ts",
+
+        "../../../ts/Grid/Core/Table/CellContent/CellContent.ts",
+        "../../../ts/Grid/Core/Table/CellContent/TextContent.ts",
+
+        "../../../ts/Grid/Pro/CellEditing/CellEditing.ts",
+        "../../../ts/Grid/Pro/CellEditing/CellEditMode.d.ts",
+        "../../../ts/Grid/Pro/CellEditing/CellEditingComposition.ts",
+        "../../../ts/Grid/Pro/Credits/CreditsPro.ts",
+        "../../../ts/Grid/Pro/GridEvents.ts",
+
+        "../../../ts/Grid/Pro/ColumnTypes/Validator.ts",
+        "../../../ts/Grid/Pro/ColumnTypes/ColumnDataType.d.ts",
+
+        "../../../ts/Grid/Pro/CellRendering/CellRenderer.ts",
+        "../../../ts/Grid/Pro/CellRendering/CellRendererType.d.ts",
+        "../../../ts/Grid/Pro/CellRendering/CellRendererRegistry.ts",
+        "../../../ts/Grid/Pro/CellRendering/CellContentPro.ts",
+
+        "../../../ts/Grid/Pro/CellRendering/Renderers/CheckboxRenderer.ts",
+        "../../../ts/Grid/Pro/CellRendering/Renderers/DateInputRenderer.ts",
+        "../../../ts/Grid/Pro/CellRendering/Renderers/DateTimeInputRenderer.ts",
+        "../../../ts/Grid/Pro/CellRendering/Renderers/TimeInputRenderer.ts",
+        "../../../ts/Grid/Pro/CellRendering/Renderers/NumberInputRenderer.ts",
+        "../../../ts/Grid/Pro/CellRendering/Renderers/SelectRenderer.ts",
+        "../../../ts/Grid/Pro/CellRendering/Renderers/SparklineRenderer.ts",
+        "../../../ts/Grid/Pro/CellRendering/Renderers/TextInputRenderer.ts",
+        "../../../ts/Grid/Pro/CellRendering/Renderers/TextRenderer.ts",
+
+        "../../../ts/Grid/Pro/CellRendering/ContentTypes/CheckboxContent.ts",
+        "../../../ts/Grid/Pro/CellRendering/ContentTypes/DateInputContent.ts",
+        "../../../ts/Grid/Pro/CellRendering/ContentTypes/DateTimeInputContent.ts",
+        "../../../ts/Grid/Pro/CellRendering/ContentTypes/TimeInputContent.ts",
+        "../../../ts/Grid/Pro/CellRendering/ContentTypes/NumberInputContent.ts",
+        "../../../ts/Grid/Pro/CellRendering/ContentTypes/SelectContent.ts",
+        "../../../ts/Grid/Pro/CellRendering/ContentTypes/SparklineContent.ts",
+        "../../../ts/Grid/Pro/CellRendering/ContentTypes/TextInputContent.ts",
+
+        "../../../ts/Grid/Core/Pagination/PaginationOptions.d.ts",
+        "../../../ts/Grid/Core/Pagination/Pagination.ts",
+
+        "../../../ts/Grid/Core/Responsive/ResponsiveOptions.ts"
+    ],
+    "entryPointStrategy": "expand",
+    "excludeInternal": true,
+    "excludePrivate": true,
+    "hideGenerator": true,
+    "lang": "en",
+    "name": "Highcharts Grid",
+    "out": "../../../build/api/grid/typedoc/",
+    "plugin": [
+        "typedoc-plugin-rename-defaults"
+    ],
+    "readme": "./api-docs.md",
+    "titleLink": "https://api.highcharts.com/grid/typedoc/index.html",
+    "visibilityFilters": {}
+}

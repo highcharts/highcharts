@@ -9,6 +9,62 @@
  */
 var path = require('path');
 
+/**
+ * Parse markdown content and extract structured data for JSON output.
+ * @param {string} mdContent The markdown content to parse
+ * @return {Object} Parsed content with version, date, features, upgradeNotes, bugFixes
+ */
+function parseMarkdownForJSON(mdContent) {
+    const lines = mdContent.split('\n');
+    const result = {
+        version: '',
+        date: '',
+        features: [],
+        upgradeNotes: [],
+        bugFixes: []
+    };
+
+    let currentSection = 'features';
+
+    for (const line of lines) {
+        const trimmedLine = line.trim();
+
+        // Parse header line: # Changelog for Highcharts v12.5.0 (2026-01-12)
+        if (trimmedLine.startsWith('# Changelog for')) {
+            const versionMatch = trimmedLine.match(/v([\d.]+(?:-\w+)?)/u);
+            const dateMatch = trimmedLine.match(/\((\d{4}-\d{2}-\d{2})\)/u);
+
+            if (versionMatch) {
+                result.version = versionMatch[1];
+            }
+            if (dateMatch) {
+                result.date = dateMatch[1];
+            }
+            continue;
+        }
+
+        // Detect section changes
+        if (trimmedLine === '## Upgrade notes') {
+            currentSection = 'upgradeNotes';
+            continue;
+        }
+        if (trimmedLine === '## Bug fixes') {
+            currentSection = 'bugFixes';
+            continue;
+        }
+
+        // Parse list items (lines starting with "- ")
+        if (trimmedLine.startsWith('- ')) {
+            const content = trimmedLine.slice(2).trim();
+            if (content) {
+                result[currentSection].push(content);
+            }
+        }
+    }
+
+    return result;
+}
+
 function generateHTML() {
     return new Promise(function (resolve, reject) {
         var marked = require('marked'),
@@ -41,6 +97,11 @@ function generateHTML() {
             name: 'highcharts-dashboards',
             changelogId: 'hd-changelog',
             offset: 'hd-'
+        }, {
+            header: 'Highcharts Grid',
+            name: 'highcharts-grid',
+            changelogId: 'hGrid-changelog',
+            offset: 'hGrid-'
         }];
 
         var changelog = {
@@ -113,8 +174,9 @@ function generateHTML() {
                 <a href="#highcharts-stock">Highcharts Stock</a>,
                 <a href="#highcharts-maps">Highcharts Maps</a>,
                 <a href="#highcharts-gantt">Highcharts Gantt</a>,
-                <a href="#highcharts-dashboards">Highcharts Dashboards</a>. Go to the
-                <a href="download">Download</a> page to get the latest version.</p>`
+                <a href="#highcharts-dashboards">Highcharts Dashboards</a>.
+                <a href="#highcharts-grid">Highcharts Grid</a>.
+                Go to the <a href="download">Download</a> page to get the latest version.</p>`
             );
         }
         function productHeaderHTMLStructure(product) {
@@ -129,6 +191,9 @@ function generateHTML() {
             if (name === 'highcharts-dashboards') {
                 return 'https://code.highcharts.com/dashboards/zips/';
             }
+            if (name === 'highcharts-grid') {
+                return 'https://code.highcharts.com/grid/zips/';
+            }
 
             return 'https://code.highcharts.com/zips/';
         }
@@ -136,7 +201,8 @@ function generateHTML() {
             var filePrefixMap = {
                 'highcharts-stock': 'Highstock',
                 'highcharts-maps': 'Highmaps',
-                'highcharts-dashboards': 'Highcharts-Dashboards'
+                'highcharts-dashboards': 'Highcharts-Dashboards',
+                'highcharts-grid': 'Highcharts-Grid'
             };
             if (semver.satisfies(version, '>=8.1.0') || (name === 'highcharts' || name === 'highcharts-gantt')) {
                 return name
@@ -292,14 +358,111 @@ function generateHTML() {
     });
 }
 
-// If called directly, run generateHTML now. Otherwise, it's called from
+/**
+ * Generate a JSON file containing the changelog tree structure.
+ * @return {Promise} Resolves with the output file path
+ */
+function generateJSON() {
+    return new Promise(function (resolve, reject) {
+        var fs = require('fs'),
+            semver = require('semver');
+
+        var products = [{
+            header: 'Highcharts',
+            name: 'highcharts'
+        }, {
+            header: 'Highcharts Stock',
+            name: 'highcharts-stock'
+        }, {
+            header: 'Highcharts Maps',
+            name: 'highcharts-maps'
+        }, {
+            header: 'Highcharts Gantt',
+            name: 'highcharts-gantt'
+        }, {
+            header: 'Highcharts Dashboards',
+            name: 'highcharts-dashboards'
+        }, {
+            header: 'Highcharts Grid',
+            name: 'highcharts-grid'
+        }];
+
+        function getSortedDirFiles(files) {
+            const versionFiles = files.map(file => file.replace('.md', ''));
+            const sortedVersions = versionFiles
+                .filter(v => semver.valid(v.replace('-modified', '')))
+                .sort((v1, v2) => {
+                    if (v1.includes(v2) && v1.includes('-modified')) {
+                        return -1;
+                    }
+                    if (v2.includes(v1) && v2.includes('-modified')) {
+                        return 1;
+                    }
+                    return semver.rcompare(v1, v2);
+                });
+            return sortedVersions.map(file => file + '.md');
+        }
+
+        const tree = {
+            generated: new Date().toISOString(),
+            products: {}
+        };
+
+        products.forEach(product => {
+            const productDir = path.join(__dirname, product.name);
+
+            // Check if directory exists
+            if (!fs.existsSync(productDir)) {
+                console.warn(`Warning: Directory ${productDir} does not exist, skipping.`);
+                return;
+            }
+
+            const files = fs.readdirSync(productDir);
+            const sortedFiles = getSortedDirFiles(files);
+
+            tree.products[product.name] = {
+                name: product.header,
+                versions: []
+            };
+
+            sortedFiles.forEach(file => {
+                const content = fs.readFileSync(
+                    path.join(productDir, file),
+                    'utf8'
+                );
+
+                const parsed = parseMarkdownForJSON(content);
+
+                tree.products[product.name].versions.push({
+                    version: parsed.version,
+                    date: parsed.date,
+                    features: parsed.features,
+                    upgradeNotes: parsed.upgradeNotes,
+                    bugFixes: parsed.bugFixes
+                });
+            });
+        });
+
+        const outputFile = path.join(__dirname, 'changelog-tree.json');
+        fs.writeFile(outputFile, JSON.stringify(tree, null, 2), function (err) {
+            if (err) {
+                reject(err);
+            }
+            resolve({ outputFile });
+        });
+    });
+}
+
+// If called directly, run generateHTML and generateJSON now. Otherwise, it's called from
 // upload.js
 if (require.main === module) {
-    generateHTML()
-        .then(params => {
-            console.log(params.outputFile + ' was successfully created!');
+    Promise.all([generateHTML(), generateJSON()])
+        .then(results => {
+            results.forEach(result => {
+                console.log(result.outputFile + ' was successfully created!');
+            });
         })
         .catch(e => console.error(e));
 }
 
-module.exports = { generateHTML };
+module.exports = { generateHTML, generateJSON };

@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -15,14 +16,10 @@
  * */
 
 import type AreaPointOptions from './AreaPointOptions';
-import type AreaSeries from './AreaSeries';
 import type ColorType from '../../Core/Color/ColorType';
 import type LineSeriesOptions from '../Line/LineSeriesOptions';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
-import type {
-    SeriesStatesOptions,
-    LegendSymbolType
-} from '../../Core/Series/SeriesOptions';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 
 /* *
  *
@@ -137,7 +134,7 @@ export interface AreaSeriesOptions extends LineSeriesOptions {
      */
     negativeFillColor?: ColorType;
 
-    states?: SeriesStatesOptions<AreaSeries>;
+    states?: SeriesStatesOptions<AreaSeriesOptions>;
 
     /**
      * An array of data points for the series. For the `area` series type,
@@ -210,7 +207,10 @@ export interface AreaSeriesOptions extends LineSeriesOptions {
      */
     data?: Array<(AreaPointOptions|PointShortOptions)>;
 
-    legendSymbol?: LegendSymbolType;
+    /**
+     * @default 'areaMarker'
+     */
+    legendSymbol?: LineSeriesOptions['legendSymbol'];
 
     /**
      * The Y axis value to serve as the base for the area, for

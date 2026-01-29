@@ -1,12 +1,13 @@
 /* *
  *
- *  (c) 2009-2024 Øystein Moseng
+ *  (c) 2009-2026 Highsoft AS
+ *  Author: Øystein Moseng
  *
- *  Place desriptions on a series and its points.
+ *  Place descriptions on a series and its points.
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -63,8 +64,8 @@ const {
  *
  * */
 
-declare module '../../../Core/Series/PointLike' {
-    interface PointLike {
+declare module '../../../Core/Series/PointBase' {
+    interface PointBase {
         /** @requires modules/accessibility */
         hasMockGraphic?: boolean;
     }
@@ -92,11 +93,13 @@ function findFirstPointWithGraphic(
         return null;
     }
 
+    const nullInteraction = point.series.options?.nullInteraction;
+
     return find(point.series.data, function (p: Point): boolean {
         return !!(
             p &&
             typeof p.index !== 'undefined' &&
-            p.index > sourcePointIndex &&
+            (nullInteraction || p.index > sourcePointIndex) &&
             p.graphic &&
             p.graphic.element
         );

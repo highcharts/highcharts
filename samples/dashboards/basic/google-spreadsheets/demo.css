@@ -1,4 +1,4 @@
-@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
 
 body {
     font-family:
@@ -16,6 +16,8 @@ body {
 
 #container {
     padding: 10px;
+    background-color: var(--hcg-background);
+    color: var(--hcg-color);
 }
 
 .row {
@@ -35,7 +37,7 @@ body {
     height: 250px;
 }
 
-.highcharts-datagrid-container {
+.highcharts-grid-container {
     min-height: auto;
 }
 

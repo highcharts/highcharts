@@ -1,39 +1,41 @@
+const gridOptions = {
+    type: 'Grid',
+    connector: {
+        id: 'vegetables'
+    },
+    sync: {
+        highlight: true
+    },
+    gridOptions: {
+        credits: {
+            enabled: false
+        }
+    }
+};
 const board = Dashboards.board('container', {
     dataPool: {
         connectors: [{
             id: 'vegetables',
             type: 'CSV',
-            options: {
-                csv: document.querySelector('#csv').innerHTML
-            }
+            csv: document.querySelector('#csv').innerHTML
         }]
     },
     gui: {
         layouts: [{
             rows: [{
                 cells: [{
-                    id: 'datagrid'
-                }, {
                     id: 'chart'
+                }]
+            }, {
+                cells: [{
+                    id: 'grid-0'
+                }, {
+                    id: 'grid-1'
                 }]
             }]
         }]
     },
     components: [{
-        type: 'DataGrid',
-        renderTo: 'datagrid',
-        connector: {
-            id: 'vegetables'
-        },
-        sync: {
-            highlight: true
-        },
-        dataGridOptions: {
-            credits: {
-                enabled: false
-            }
-        }
-    }, {
         type: 'Highcharts',
         renderTo: 'chart',
         connector: {
@@ -55,6 +57,12 @@ const board = Dashboards.board('container', {
                 crosshair: true
             }
         }
+    }, {
+        renderTo: 'grid-0',
+        ...gridOptions
+    }, {
+        renderTo: 'grid-1',
+        ...gridOptions
     }]
 });
 
@@ -67,10 +75,10 @@ const optionsCbx = document.querySelectorAll('.option');
 
 optionsCbx.forEach(checkbox => {
     checkbox.addEventListener('change', () => {
-        const value = checkbox.dataset.value;
-        const { checked } = checkbox;
+        const { checked, dataset } = checkbox;
+        const checkboxDataValue = dataset.value;
 
-        if (value === 'enabled') {
+        if (checkboxDataValue === 'enabled') {
             optionsCbx.forEach(cbx => {
                 if (cbx.dataset.value !== 'enabled') {
                     cbx.disabled = !checked;
@@ -78,12 +86,16 @@ optionsCbx.forEach(checkbox => {
             });
         }
 
-        board.mountedComponents[1].component.update({
-            sync: {
-                highlight: {
-                    [value]: checked
+        const componentIndices =
+            checkbox.id === 'cbx-grid-enabled' ? [1, 2] : [0];
+        componentIndices.forEach(index => {
+            board.mountedComponents[index].component.update({
+                sync: {
+                    highlight: {
+                        [checkboxDataValue]: checked
+                    }
                 }
-            }
+            });
         });
     });
 });

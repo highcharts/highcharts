@@ -21,12 +21,10 @@ Include the JavaScript files in the `<head>` section of your web page as shown b
 
 This will load Highcharts from our Content Delivery Network, where we host the files worldwide. An overview of the files available on the CDN can be found on [code.highcharts.com](https://code.highcharts.com). Specific versions can also be loaded.
 
-*Note: We do not recommend loading the latest version automatically in production environments, as new versions may in rare occasions not be backwards-compatible.*
-
-Here is an example of loading the latest v10 minor version:
+Here is an example of loading the latest v12 minor version:
 
 ```html
-    <script src="https://code.highcharts.com/10/highcharts.js"></script>
+    <script src="https://code.highcharts.com/12/highcharts.js"></script>
 ```
 
 ### 3. Load the files from your own server

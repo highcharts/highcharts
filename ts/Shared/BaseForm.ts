@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -42,6 +42,10 @@ abstract class BaseForm {
         iconsURL: string
     ) {
         this.iconsURL = iconsURL;
+
+        if (iconsURL === 'renderer') {
+            this.iconsURL = 'https://code.highcharts.com/@product.version@/gfx/stock-icons/';
+        }
 
         this.container = this.createPopupContainer(parentDiv);
 
@@ -113,15 +117,14 @@ abstract class BaseForm {
             this.container
         );
 
-        if (iconsURL === 'renderer') {
-            iconsURL = 'https://code.highcharts.com/@product.version@/gfx/stock-icons/';
-        }
-
-        closeButton.style['background-image' as any] = 'url(' +
-                (
-                    iconsURL.match(/png|svg|jpeg|jpg|gif/ig) ?
-                        iconsURL : iconsURL + 'close.svg'
-                ) + ')';
+        createElement('span', {
+            className: 'highcharts-icon'
+        }, {
+            backgroundImage: 'url(' + (
+                iconsURL.match(/png|svg|jpeg|jpg|gif/ig) ?
+                    iconsURL : iconsURL + 'close.svg'
+            ) + ')'
+        }, closeButton);
 
         ['click', 'touchstart'].forEach((eventName: string): void => {
             addEvent(

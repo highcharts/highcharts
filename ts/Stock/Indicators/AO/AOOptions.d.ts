@@ -1,8 +1,8 @@
 /* *
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  * */
 
 /* *
@@ -11,7 +11,6 @@
  *
  * */
 
-import type AOIndicator from './AOIndicator';
 import type ColorString from '../../../Core/Color/ColorString';
 import type { SeriesStatesOptions } from '../../../Core/Series/SeriesOptions';
 import type {
@@ -29,7 +28,7 @@ export interface AOOptions extends SMAOptions {
     groupPadding?: number;
     lowerBarColor?: ColorString;
     pointPadding?: number;
-    states?: SeriesStatesOptions<AOIndicator>;
+    states?: SeriesStatesOptions<AOOptions>;
     threshold?: number;
 }
 

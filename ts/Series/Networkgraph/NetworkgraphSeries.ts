@@ -2,11 +2,12 @@
  *
  *  Networkgraph series
  *
- *  (c) 2010-2024 Paweł Fus
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Paweł Fus
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -71,8 +72,8 @@ TextPath.compose(SVGElement);
  *
  * */
 
-declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase {
         layout?: ReingoldFruchtermanLayout;
     }
 }

@@ -1,0 +1,54 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
+
+body {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
+    background: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
+}
+
+.demo {
+    padding: 8px 12px;
+}
+
+.highcharts-description {
+    padding: 0 8px;
+}
+
+.hide {
+    display: none;
+}
+
+#grid {
+    margin-top: 8px;
+}
+
+.theme-custom,
+.highcharts-light .theme-custom {
+    --hcg-header-background: #dff9e7;
+    --hcg-header-color: #2f2b38;
+    --hcg-cell-hover-background: #5749ad;
+    --hcg-cell-hover-color: white;
+    --hcg-border-radius: 5px;
+}
+
+@media (prefers-color-scheme: dark) {
+    .theme-custom {
+        --hcg-header-background: #2f2b38;
+        --hcg-header-color: #dff9e7;
+    }
+}
+
+.highcharts-dark .theme-custom {
+    --hcg-header-background: #2f2b38;
+    --hcg-header-color: #dff9e7;
+}

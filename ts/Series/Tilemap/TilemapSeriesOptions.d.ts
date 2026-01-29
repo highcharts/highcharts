@@ -2,12 +2,12 @@
  *
  *  Tilemaps module
  *
- *  (c) 2010-2024 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Øystein Moseng
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -24,7 +24,6 @@ import type {
 } from '../../Core/Series/PointOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type TilemapPointOptions from './TilemapPointOptions';
-import type TilemapSeries from './TilemapSeries';
 
 /* *
  *
@@ -192,7 +191,7 @@ export interface TilemapSeriesOptions extends HeatmapSeriesOptions {
      */
     rowsize?: number;
 
-    state?: SeriesStatesOptions<TilemapSeries>;
+    state?: SeriesStatesOptions<TilemapSeriesOptions>;
 
     states?: TilemapSeriesStatesOptions;
 

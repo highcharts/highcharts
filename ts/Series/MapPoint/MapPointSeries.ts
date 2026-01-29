@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -96,9 +97,10 @@ class MapPointSeries extends ScatterSeries {
 
     public drawDataLabels(): void {
         super.drawDataLabels();
-        if (this.dataLabelsGroup) {
-            this.dataLabelsGroup.clip(this.chart.clipRect);
-        }
+
+        this.dataLabelsGroups?.forEach((g): void => {
+            g?.clip(this.chart.clipRect);
+        });
     }
 
     /**

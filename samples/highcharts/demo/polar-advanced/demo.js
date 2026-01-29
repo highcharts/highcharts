@@ -192,18 +192,13 @@ Highcharts.chart('container', {
     },
     tooltip: {
         animation: false,
-        backgroundColor: undefined,
+        backgroundColor: 'none',
+        fixed: true,
         hideDelay: 0,
         useHTML: true,
-
-        // This function positions our tooltip in the center,
-        // regardless of viewport or chart dimensions.
-        positioner: function (labelWidth, labelHeight) {
-            const { chartWidth, chartHeight } = this.chart;
-            return {
-                x: (chartWidth / 2) - (labelWidth / 2),
-                y: (chartHeight / 2) - (labelHeight / 2)
-            };
+        position: {
+            align: 'center',
+            verticalAlign: 'middle'
         }
     },
     colorAxis: [{

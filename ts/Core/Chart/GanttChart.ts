@@ -1,12 +1,12 @@
 /* *
  *
- *  (c) 2016-2024 Highsoft AS
+ *  (c) 2016-2026 Highsoft AS
  *
  *  Author: Lars A. V. Cabrera
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -22,6 +22,7 @@ import type {
     AxisOptions,
     YAxisOptions
 } from '../Axis/AxisOptions';
+import type { DeepPartial } from '../../Shared/Types';
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type Options from '../Options';
 
@@ -44,6 +45,8 @@ const {
 
 declare module '../Options' {
     interface Options {
+
+        /** @internal */
         isGantt?: boolean;
     }
 }
@@ -150,7 +153,8 @@ class GanttChart extends Chart {
                 // Defaults
                 {
                     grid: {
-                        borderColor: Palette.neutralColor20,
+                        borderColor: defaultOptions.xAxis?.grid?.borderColor ||
+                            Palette.neutralColor20,
                         enabled: true
                     },
                     opposite: defaultOptions.xAxis?.opposite ??
@@ -174,7 +178,8 @@ class GanttChart extends Chart {
             // Defaults
             {
                 grid: {
-                    borderColor: Palette.neutralColor20,
+                    borderColor: defaultOptions.yAxis?.grid?.borderColor ||
+                        Palette.neutralColor20,
                     enabled: true
                 },
 
@@ -200,6 +205,7 @@ class GanttChart extends Chart {
  *
  * */
 
+/** @internal */
 namespace GanttChart {
 
     /* *

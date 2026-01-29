@@ -2,13 +2,13 @@
  *
  *  This module implements sunburst charts in Highcharts.
  *
- *  (c) 2016-2024 Highsoft AS
+ *  (c) 2016-2026 Highsoft AS
  *
  *  Authors: Jon Arild Nygard
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -18,6 +18,7 @@
  *
  * */
 
+import type { PointDataLabelOptionsModifier } from '../../Core/Series/DataLabel';
 import type { SunburstDataLabelOptions } from './SunburstSeriesOptions';
 import type TreemapPointOptions from '../Treemap/TreemapPointOptions';
 
@@ -32,7 +33,10 @@ export interface SunburstPointOptions extends TreemapPointOptions {
     /**
      * @product highcharts
      */
-    dataLabels?: (SunburstDataLabelOptions|Array<SunburstDataLabelOptions>);
+    dataLabels?: (
+        SunburstPointDataLabelOptions |
+        Array<SunburstPointDataLabelOptions>
+    );
 
     /**
      * Use this option to build a tree structure. The value should be the id of
@@ -75,6 +79,9 @@ export interface SunburstPointOptions extends TreemapPointOptions {
     y?: undefined;
 
 }
+
+export type SunburstPointDataLabelOptions =
+    SunburstDataLabelOptions & PointDataLabelOptionsModifier;
 
 /* *
  *

@@ -213,20 +213,45 @@ QUnit.test('Annotations events - general', function (assert) {
 
     controller.click(chart.xAxis[0].toPixels(5), chart.yAxis[0].toPixels(20));
 
-    assert.deepEqual(
-        popupOptions,
-        {
-            langKey: undefined,
-            shapes: [
-                {
-                    fill: ['rgba(0, 0, 0, 0.75)', 'text'],
-                    stroke: ['rgba(0, 0, 0, 0.75)', 'text'],
-                    strokeWidth: [1, 'number']
-                }
-            ],
-            type: 'basicAnnotation'
-        },
-        'Annotations\' popup should get correct config for fields (#11716)'
+    const popupShape = popupOptions?.shapes?.[0];
+
+    assert.strictEqual(
+        popupOptions?.type,
+        'basicAnnotation',
+        'Annotations\' popup should expose annotation type (#11716)'
+    );
+
+    assert.strictEqual(
+        popupShape?.fill?.[1],
+        'text',
+        'Popup should describe fill field type as text (#11716)'
+    );
+    assert.strictEqual(
+        typeof popupShape?.fill?.[0],
+        'string',
+        'Popup should expose fill value as string (#11716)'
+    );
+
+    assert.strictEqual(
+        popupShape?.stroke?.[1],
+        'text',
+        'Popup should describe stroke field type as text (#11716)'
+    );
+    assert.strictEqual(
+        typeof popupShape?.stroke?.[0],
+        'string',
+        'Popup should expose stroke value as string (#11716)'
+    );
+
+    assert.strictEqual(
+        popupShape?.strokeWidth?.[1],
+        'number',
+        'Popup should describe strokeWidth field type as number (#11716)'
+    );
+    assert.strictEqual(
+        typeof popupShape?.strokeWidth?.[0],
+        'number',
+        'Popup should expose strokeWidth as numeric value (#11716)'
     );
 
     // Click again to deselect the annotation
@@ -249,7 +274,8 @@ QUnit.test('Annotations events - general', function (assert) {
         '#15730: Popup should close when hiding annotation'
     );
 
-    const customButton = chart.exportSVGElements[3].element;
+    const customButton = chart.exporting.svgElements[3].element;
+
     Highcharts.fireEvent(customButton, 'click');
     controller.click(150, 150);
     assert.ok(

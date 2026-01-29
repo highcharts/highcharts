@@ -1,6 +1,5 @@
 /* *
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -13,24 +12,85 @@
  * */
 
 import type {
+    AnnotationLabelOptions,
     AnnotationOptions,
+    AnnotationShapeOptionsOptions,
     AnnotationTypeOptions
 } from '../AnnotationOptions';
 import type { AnnotationPointType } from '../AnnotationSeries';
 import type Controllable from '../Controllables/Controllable';
 import type {
-    ControllableLabelOptions,
-    ControllableShapeOptions
-} from '../Controllables/ControllableOptions';
-import type MockPointOptions from '../MockPointOptions';
+    AnnotationMockPointOptionsObject
+} from '../AnnotationMockPointOptionsObject';
 
 import Annotation from '../Annotation.js';
+import D from '../../../Core/Defaults.js';
+const { defaultOptions } = D;
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
+import { Palette } from '../../../Core/Color/Palettes';
 const {
     merge,
     pick
 } = U;
+
+if (defaultOptions.annotations?.types) {
+    /**
+     * Options for the vertical line annotation type.
+     *
+     * @sample highcharts/annotations-advanced/vertical-line/
+     *         Vertical line
+     *
+     * @extends      annotations.types.crookedLine
+     * @excluding    labels, shapes, controlPointOptions
+     * @product      highstock
+     * @optionparent annotations.types.verticalLine
+     */
+    defaultOptions.annotations.types.verticalLine = {
+        typeOptions: {
+            /**
+             * @ignore
+             */
+            yOffset: 10,
+
+            /**
+             * Label options.
+             *
+             * @extends annotations.types.crookedLine.labelOptions
+             */
+            label: {
+                offset: -40,
+                point: function (target: Controllable): AnnotationPointType {
+                    return target.annotation.points[0];
+                },
+                allowOverlap: true,
+                backgroundColor: 'none',
+                borderWidth: 0,
+                crop: true,
+                overflow: 'none',
+                shape: 'rect',
+                text: '{y:.2f}'
+            },
+
+            /**
+             * Connector options.
+             *
+             * @extends   annotations.shapeOptions
+             * @excluding height, r, type, width
+             */
+            connector: {
+                strokeWidth: 1,
+                markerEnd: 'arrow'
+            }
+        } as any,
+        labelOptions: {
+            style: {
+                color: Palette.neutralColor80,
+                fontSize: '0.7em'
+            }
+        }
+    };
+}
 
 /* *
  *
@@ -38,6 +98,7 @@ const {
  *
  * */
 
+/** @internal */
 class VerticalLine extends Annotation {
 
     /* *
@@ -48,14 +109,14 @@ class VerticalLine extends Annotation {
 
     public static connectorFirstPoint(
         target: Controllable
-    ): MockPointOptions {
+    ): AnnotationMockPointOptionsObject {
         const annotation = target.annotation as VerticalLine,
             chart = annotation.chart,
             inverted = chart.inverted,
             point = annotation.points[0],
-            left = pick(point.series.yAxis && point.series.yAxis.left, 0),
-            top = pick(point.series.yAxis && point.series.yAxis.top, 0),
-            offset = annotation.options.typeOptions.label.offset,
+            left = pick(point.series.yAxis?.left, 0),
+            top = pick(point.series.yAxis?.top, 0),
+            offset = annotation.options.typeOptions?.label?.offset || 0,
             y = MockPoint.pointToPixels(point, true)[inverted ? 'x' : 'y'];
 
         return {
@@ -68,7 +129,7 @@ class VerticalLine extends Annotation {
 
     public static connectorSecondPoint(
         target: Controllable
-    ): MockPointOptions {
+    ): AnnotationMockPointOptionsObject {
         const annotation = target.annotation as VerticalLine,
             chart = annotation.chart,
             inverted = chart.inverted,
@@ -78,9 +139,9 @@ class VerticalLine extends Annotation {
             top = pick(point.series.yAxis && point.series.yAxis.top, 0),
             y = MockPoint.pointToPixels(point, true)[inverted ? 'x' : 'y'];
 
-        let yOffset = typeOptions.yOffset;
+        let yOffset = typeOptions?.yOffset || 0;
 
-        if (typeOptions.label.offset < 0) {
+        if ((typeOptions?.label?.offset || 0) < 0) {
             yOffset *= -1;
         }
 
@@ -98,12 +159,16 @@ class VerticalLine extends Annotation {
      *
      * */
 
-    public getPointsOptions(): Array<MockPointOptions> {
-        return [this.options.typeOptions.point];
+    public getPointsOptions(): Array<
+        string |
+        AnnotationMockPointOptionsObject
+    > {
+        return this.options.typeOptions?.point ?
+            [this.options.typeOptions.point] : [];
     }
 
     public addShapes(): void {
-        const typeOptions = this.options.typeOptions,
+        const typeOptions = this.options.typeOptions!,
             connector = this.initShape(
                 merge(typeOptions.connector, {
                     type: 'path',
@@ -116,24 +181,28 @@ class VerticalLine extends Annotation {
                 0
             );
 
-        typeOptions.connector = connector.options;
-        this.userOptions.typeOptions.point = typeOptions.point;
+        typeOptions.connector = connector.options as
+            VerticalLine.TypeConnectorOptions;
+
+        // Update to be able to save the chart after drag (#18584).
+        (this.userOptions.typeOptions ||= {}).point = typeOptions.point;
     }
 
     public addLabels(): void {
-        const typeOptions = this.options.typeOptions,
-            labelOptions = typeOptions.label;
+        const typeOptions = this.options.typeOptions!,
+            labelOptions = typeOptions.label,
+            offset = labelOptions?.offset || 0;
 
         let x = 0,
-            y = labelOptions.offset,
-            verticalAlign = (labelOptions.offset as any) < 0 ? 'bottom' : 'top',
+            y = offset,
+            verticalAlign = offset < 0 ? 'bottom' : 'top',
             align = 'center';
 
         if (this.chart.inverted) {
-            x = labelOptions.offset as any;
+            x = offset;
             y = 0;
             verticalAlign = 'middle';
-            align = (labelOptions.offset as any) < 0 ? 'right' : 'left';
+            align = offset < 0 ? 'right' : 'left';
         }
 
         const label = (this.initLabel as any)(
@@ -147,7 +216,6 @@ class VerticalLine extends Annotation {
 
         typeOptions.label = label.options;
     }
-
 }
 
 /* *
@@ -156,65 +224,11 @@ class VerticalLine extends Annotation {
  *
  * */
 
+/** @internal */
 interface VerticalLine {
     defaultOptions: Annotation['defaultOptions'];
     options: VerticalLine.Options;
 }
-
-VerticalLine.prototype.defaultOptions = merge(
-    Annotation.prototype.defaultOptions,
-    /**
-     * A vertical line annotation.
-     *
-     * @sample highcharts/annotations-advanced/vertical-line/
-     *         Vertical line
-     *
-     * @extends      annotations.crookedLine
-     * @excluding    labels, shapes, controlPointOptions
-     * @product      highstock
-     * @optionparent annotations.verticalLine
-     */
-    {
-        typeOptions: {
-            /**
-             * @ignore
-             */
-            yOffset: 10,
-
-            /**
-             * Label options.
-             *
-             * @extends annotations.crookedLine.labelOptions
-             */
-            label: {
-                offset: -40,
-                point: function (
-                    target: Controllable
-                ): AnnotationPointType {
-                    return target.annotation.points[0];
-                } as any,
-                allowOverlap: true,
-                backgroundColor: 'none',
-                borderWidth: 0,
-                crop: true,
-                overflow: 'none' as any,
-                shape: 'rect',
-                text: '{y:.2f}'
-            },
-
-            /**
-             * Connector options.
-             *
-             * @extends   annotations.crookedLine.shapeOptions
-             * @excluding height, r, type, width
-             */
-            connector: {
-                strokeWidth: 1,
-                markerEnd: 'arrow'
-            }
-        }
-    }
-);
 
 /* *
  *
@@ -223,16 +237,46 @@ VerticalLine.prototype.defaultOptions = merge(
  * */
 
 namespace VerticalLine {
+    /**
+     * Options for the vertical line annotation type.
+     *
+     * @sample highcharts/annotations-advanced/vertical-line/
+     *         Vertical line
+     *
+     * @extends      annotations.types.crookedLine
+     * @excluding    labels, shapes, controlPointOptions
+     * @product      highstock
+     * @optionparent annotations.types.verticalLine
+     */
     export interface Options extends AnnotationOptions {
-        typeOptions: TypeOptions;
+        typeOptions?: TypeOptions;
     }
-    export interface TypeLabelOptions extends ControllableLabelOptions {
-        offset: number;
+    export interface TypeLabelOptions extends AnnotationLabelOptions {
+        offset?: number;
     }
     export interface TypeOptions extends AnnotationTypeOptions {
-        connector: Partial<ControllableShapeOptions>;
-        label: TypeLabelOptions;
-        yOffset: number;
+        /**
+         * Connector options.
+         *
+         * @excluding height, r, type, width
+         */
+        connector?: TypeConnectorOptions;
+
+        /**
+         * Label options.
+         */
+        label?: TypeLabelOptions;
+
+        /** @internal */
+        yOffset?: number;
+    }
+
+    export interface TypeConnectorOptions
+        extends AnnotationShapeOptionsOptions {
+        height?: undefined;
+        r?: undefined;
+        type?: undefined;
+        width?: undefined;
     }
 }
 
@@ -242,6 +286,7 @@ namespace VerticalLine {
  *
  * */
 
+/** @internal */
 declare module './AnnotationType'{
     interface AnnotationTypeRegistry {
         verticalLine: typeof VerticalLine;

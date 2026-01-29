@@ -1,12 +1,13 @@
 /* *
  *
- *  (c) 2010-2024 Paweł Dalek
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Paweł Dalek
  *
  *  Volume Weighted Average Price (VWAP) indicator for Highcharts Stock
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -19,7 +20,7 @@
  * */
 
 import type Chart from '../../../Core/Chart/Chart';
-import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -108,7 +109,7 @@ class VWAPIndicator extends SMAIndicator {
      * */
 
     public getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries&IndicatorLinkedSeriesLike,
+        series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: VWAPParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const indicator = this,

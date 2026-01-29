@@ -2,11 +2,12 @@
  *
  *  Popup generator for Stock tools
  *
- *  (c) 2009-2024 Sebastian Bochan
+ *  (c) 2009-2026 Highsoft AS
+ *  Author: Sebastian Bochan
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -47,7 +48,8 @@ const {
 /**
  * Create annotation simple form.
  * It contains fields with param names.
- * @private
+ *
+ * @internal
  * @param {Highcharts.Chart} chart
  * Chart
  * @param {Object} options
@@ -127,7 +129,8 @@ function addForm(
 /**
  * Create annotation simple form. It contains two buttons
  * (edit / remove) and text label.
- * @private
+ *
+ * @internal
  * @param {Highcharts.Chart} - chart
  * @param {Highcharts.AnnotationsOptions} - options
  * @param {Function} - on click callback
@@ -194,8 +197,11 @@ function addToolbar(
     );
 
     button.className += ' highcharts-annotation-edit-button';
-    button.style['background-image' as any] = 'url(' +
-        this.iconsURL + 'edit.svg)';
+    createElement('span', {
+        className: 'highcharts-icon'
+    }, {
+        backgroundImage: `url(${this.iconsURL}edit.svg)`
+    }, button);
 
     button = this.addButton(
         popupDiv,
@@ -206,13 +212,17 @@ function addToolbar(
     );
 
     button.className += ' highcharts-annotation-remove-button';
-    button.style['background-image' as any] = 'url(' +
-        this.iconsURL + 'destroy.svg)';
+    createElement('span', {
+        className: 'highcharts-icon'
+    }, {
+        backgroundImage: `url(${this.iconsURL}destroy.svg)`
+    }, button);
 }
 
 /**
  * Create annotation's form fields.
- * @private
+ *
+ * @internal
  * @param {Highcharts.HTMLDOMElement} parentDiv
  * Div where inputs are placed
  * @param {Highcharts.Chart} chart
@@ -328,9 +338,11 @@ function addFormFields(
  *
  * */
 
+/** @internal */
 const PopupAnnotations = {
     addForm,
     addToolbar
 };
 
+/** @internal */
 export default PopupAnnotations;

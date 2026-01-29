@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sebastian Bochan
@@ -24,14 +24,12 @@
 
 import type Component from '../Components/Component';
 import type CSSJSONObject from '../CSSJSONObject';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import type JSON from '../JSON';
+import type { DeepPartial } from '../../Shared/Types';
 import type LayoutType from './Layout';
+import type { Options as LayoutOptions } from './Layout';
 import type Row from './Row';
-import type Serializable from '../Serializable';
+import type CellHTML from './CellHTML.js';
 
-import Bindings from '../Actions/Bindings.js';
-const { componentFromJSON } = Bindings;
 import EditGlobals from '../EditMode/EditGlobals.js';
 import Globals from '../Globals.js';
 import GUIElement from './GUIElement.js';
@@ -51,45 +49,6 @@ const {
  * @internal
  **/
 class Cell extends GUIElement {
-
-    /* *
-     *
-     *  Static Properties
-     *
-     * */
-
-    /** @internal */
-    public static fromJSON(
-        json: Cell.JSON,
-        row?: Row
-    ): (Cell|undefined) {
-        if (row) {
-            const options = json.options;
-
-            let id = options.containerId;
-
-            if (row.layout.copyId) {
-                id = id + '_' + row.layout.copyId;
-            }
-
-            return new Cell(
-                row,
-                {
-                    id: id,
-                    parentContainerId: (row.container && row.container.id) ||
-                        options.parentContainerId,
-                    mountedComponentJSON: options.mountedComponentJSON,
-                    style: options.style,
-                    layoutJSON: options.layoutJSON,
-                    width: options.width,
-                    height: options.height
-                }
-            );
-        }
-
-        return void 0;
-    }
-
     /* *
      *
      *  Constructor
@@ -102,7 +61,7 @@ class Cell extends GUIElement {
      * @param {Row} row
      * Reference to the row instance.
      *
-     * @param {Cell.Options} options
+     * @param {Options} options
      * Options for the cell.
      *
      * @param {HTMLElement} cellElement
@@ -110,7 +69,7 @@ class Cell extends GUIElement {
      */
     public constructor(
         row: Row,
-        options: Cell.Options,
+        options: Options,
         cellElement?: HTMLElement
     ) {
         super();
@@ -129,16 +88,6 @@ class Cell extends GUIElement {
             rowOptions = row.options || {},
             cellClassName = layoutOptions.cellClassName || '';
 
-        let cellHeight;
-
-        if (options.height) {
-            if (typeof options.height === 'number') {
-                cellHeight = options.height + 'px';
-            } else {
-                cellHeight = options.height;
-            }
-        }
-
         this.container = this.getElementContainer({
             render: row.layout.board.guiEnabled,
             parentContainer: parentContainer,
@@ -154,34 +103,14 @@ class Cell extends GUIElement {
                 rowOptions.style,
                 options.style,
                 {
-                    height: cellHeight
+                    height: this.height
                 }
             )
         });
 
-        // Mount component from JSON.
-        if (this.options.mountedComponentJSON) {
-            this.mountComponentFromJSON(this.options.mountedComponentJSON);
-        }
-
         // Nested layout
         if (this.options.layout) {
             this.setNestedLayout();
-        }
-        if (this.options.layoutJSON) {
-            const layout = this.row.layout,
-                board = layout.board,
-                layoutFromJSON = (
-                    layout.constructor as typeof LayoutType
-                ).fromJSON;
-
-            this.nestedLayout = layoutFromJSON(
-                merge(this.options.layoutJSON, {
-                    parentContainerId: this.options.id
-                }),
-                board,
-                this
-            );
         }
     }
 
@@ -209,7 +138,7 @@ class Cell extends GUIElement {
     /**
      * The cell options.
      */
-    public options: Cell.Options;
+    public options: Options;
 
     /**
      * Component mounted in the cell.
@@ -230,6 +159,12 @@ class Cell extends GUIElement {
      * HTML container of a GUIElement.
      */
     public container: HTMLElement;
+
+    /**
+     * Declared height of the cell.
+     */
+    private height?: string;
+
     /* *
      *
      *  Functions
@@ -258,35 +193,6 @@ class Cell extends GUIElement {
             this
         );
     }
-    /**
-     * Mount component from JSON.
-     * @internal
-     *
-     * @param {Component.JSON} [json]
-     * Component JSON.
-     *
-     * @return {boolean}
-     * Returns true, if the component created from JSON is mounted,
-     * otherwise false.
-     */
-    public mountComponentFromJSON(
-        json: Component.JSON
-    ): boolean {
-        const cell = this;
-
-        if (cell.id !== json.options.parentElement) {
-            json.options.parentElement = cell.id;
-        }
-
-        const component = componentFromJSON(json);
-
-        if (component) {
-            cell.mountedComponent = component;
-            return true;
-        }
-
-        return false;
-    }
 
     /**
      * Destroy the element, its container, event hooks
@@ -313,32 +219,6 @@ class Cell extends GUIElement {
     }
 
     /**
-     * Converts the class instance to a class JSON.
-     * @internal
-     *
-     * @return {Cell.JSON}
-     * Class JSON of this Cell instance.
-     */
-    public toJSON(): Cell.JSON {
-        const cell = this,
-            rowContainerId = (cell.row.container || {}).id || '';
-
-        return {
-            $class: 'Dashboards.Layout.Cell',
-            options: {
-                containerId: (cell.container as HTMLElement).id,
-                parentContainerId: rowContainerId,
-                width: cell.options.width,
-                height: cell.options.height,
-                mountedComponentJSON:
-                    cell.mountedComponent && cell.mountedComponent.toJSON(),
-                style: cell.options.style,
-                layoutJSON: cell.nestedLayout && cell.nestedLayout.toJSON()
-            }
-        };
-    }
-
-    /**
      * Get the cell's options.
      * @returns
      * The JSON of cell's options.
@@ -346,8 +226,17 @@ class Cell extends GUIElement {
      * @internal
      *
      */
-    public getOptions(): Globals.DeepPartial<Cell.Options> {
-        return this.options;
+    public getOptions(): DeepPartial<Options> {
+        const cell = this;
+
+        if (cell.options.layout && cell.nestedLayout) {
+            return {
+                ...cell.options,
+                layout: cell.nestedLayout.getOptions()
+            };
+        }
+
+        return cell.options;
     }
 
     protected changeVisibility(
@@ -454,14 +343,11 @@ class Cell extends GUIElement {
                     ) {
                         cell.container.style.flex = '0 0 ' + cellWidth;
                     }
-
-                    cell.options.width = cellWidth;
                 }
             }
 
             if (height) {
-                cell.options.height = cell.container.style.height =
-                    height + 'px';
+                cell.height = cell.container.style.height = height + 'px';
             }
 
             if (editMode) {
@@ -487,7 +373,7 @@ class Cell extends GUIElement {
 
     public setHighlight(remove?: boolean): void {
         const cell = this,
-            editMode = cell.row.layout.board.editMode;
+            editMode = cell.row?.layout.board.editMode;
 
         if (cell.container && editMode) {
             const cnt = cell.container,
@@ -565,140 +451,72 @@ class Cell extends GUIElement {
 
 }
 
-/* *
- *
- *  Namespace
- *
- * */
+/**
+ * Checks if a valid cell instance.
+ */
+export function isCell(cell: Cell | CellHTML | undefined): cell is Cell {
+    return (!!cell && 'row' in cell && cell.type === 'cell');
+}
 
-namespace Cell {
+/**
+ * Options for each cell.
+ **/
+export interface Options {
     /**
-     * Checks if a valid cell instance.
-     */
-    export function isCell(cell: unknown): cell is Cell {
-        return cell instanceof Cell;
-    }
-
-    /**
-     * Responsive options of the cell.
-     *
-     * @deprecated
-     */
-    export interface CellResponsiveOptions {
-        /**
-         * The width, that should the cell have in the given responsive mode.
-         *
-         * @deprecated
-         *
-         */
-        width: (string|number);
-    }
-
-    /**
-     * @internal
+     * Unique cell id.
      **/
-    export interface JSON extends Serializable.JSON<'Dashboards.Layout.Cell'> {
-        options: OptionsJSON;
-    }
+    id: string;
 
     /**
-     * Options for each cell.
+     * Options controlling the edit mode for the cell.
      **/
-    export interface Options {
+    editMode?: {
         /**
-         * Unique cell id.
+         * Individual options for the toolbar items.
          **/
-        id: string;
-
-        /**
-         * Options controlling the edit mode for the cell.
-         **/
-        editMode?: {
+        toolbarItems?: {
             /**
-             * Individual options for the toolbar items.
-             **/
-            toolbarItems?: {
-                /**
-                 * Options for the `destroy` toolbar item.
-                 */
-                destroy: {
-                    enabled?: boolean;
-                };
-                /**
-                 * Options for the `settings` toolbar item.
-                 */
-                drag: {
-                    enabled?: boolean;
-                };
-                /**
-                 * Options for the `settings` toolbar item.
-                 */
-                settings: {
-                    enabled?: boolean;
-                };
-            }
+             * Options for the `destroy` toolbar item.
+             */
+            destroy: {
+                enabled?: boolean;
+            };
+            /**
+             * Options for the `drag` toolbar item.
+             */
+            drag: {
+                enabled?: boolean;
+            };
+            /**
+             * Options for the `settings` toolbar item.
+             */
+            settings: {
+                enabled?: boolean;
+            };
+            /**
+             * Options for the `viewFullscreen` toolbar item.
+             */
+            viewFullscreen: {
+                enabled?: boolean;
+            };
         }
-        /**
-         * Width of the cell. Can be a percentage value, pixels or a fraction.
-         *
-         * The fraction converts value into percents like in CSS grid is.
-         * For example `1/3` means `33.333%`.
-         *
-         * @deprecated
-         *
-         **/
-        width?: (string|number);
-        /**
-         * Height of the cell.
-         *
-         * @deprecated
-         *
-         * **/
-        height?: (string|number);
-        /**
-         * CSS styles for cell container.
-         **/
-        style?: CSSJSONObject;
-        /**
-         * Id of the container that holds the cell.
-         **/
-        parentContainerId?: string;
-        /**
-         * @internal
-         **/
-        mountedComponentJSON?: Component.JSON;
-        /**
-         * To create a nested layout, add a layout object to a cell.
-         *
-         * Try it:
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/gui/nested-layout/ | Nested layout}
-         **/
-        layout?: LayoutType.Options;
-        /**
-         * To create nested layout from JSON config.
-         */
-        layoutJSON?: LayoutType.JSON;
-        /**
-         * Options for responsive design.
-         *
-         * @deprecated
-         **/
-        responsive?: Record<string, CellResponsiveOptions>;
     }
-
     /**
-     * @internal
+     * CSS styles for cell container.
      **/
-    export interface OptionsJSON extends JSON.Object {
-        width?: (string|number);
-        height?: (string|number);
-        containerId: string;
-        parentContainerId: string;
-        mountedComponentJSON?: Component.JSON;
-        style?: CSSJSONObject;
-        layoutJSON?: LayoutType.JSON;
-    }
+    style?: CSSJSONObject;
+    /**
+     * Id of the container that holds the cell.
+     **/
+    parentContainerId?: string;
+    /**
+     * To create a nested layout, add a layout object to a cell.
+     *
+     * Try it:
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/gui/nested-layout/ | Nested layout}
+     **/
+    layout?: LayoutOptions;
 }
 
 /* *

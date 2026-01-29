@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -20,7 +20,7 @@
  *
  * */
 
-import type Sync from '../../Sync/Sync';
+import type { PredefinedSyncConfig } from '../../Sync/Sync';
 import NavigatorCrossfilterSync from './NavigatorCrossfilterSync.js';
 import NavigatorExtremesSync from './NavigatorExtremesSync.js';
 
@@ -31,7 +31,7 @@ import NavigatorExtremesSync from './NavigatorExtremesSync.js';
 *
 * */
 
-const predefinedSyncConfig: Sync.PredefinedSyncConfig = {
+const predefinedSyncConfig: PredefinedSyncConfig = {
     defaultSyncPairs: {
         crossfilter: NavigatorCrossfilterSync.syncPair,
         extremes: NavigatorExtremesSync.syncPair

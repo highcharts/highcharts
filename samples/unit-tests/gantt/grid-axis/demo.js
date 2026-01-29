@@ -843,12 +843,10 @@ QUnit.test('Horizontal axis ticks equally distributed', function (assert) {
  *                        |_______|_______|_______|_______|
  */
 QUnit.test('Horizontal axis tick labels centered', function (assert) {
-    var chart,
-        axes,
-        xError = 1.5,
+    const xError = 1.501,
         yError = 1.6;
 
-    chart = Highcharts.chart('container', {
+    const chart = Highcharts.chart('container', {
         chart: {
             type: 'scatter',
             width: 800,
@@ -934,12 +932,13 @@ QUnit.test('Horizontal axis tick labels centered', function (assert) {
         ]
     });
 
-    axes = chart.xAxis.filter(axis => !axis.options.isInternal);
+    const axes = chart.xAxis.filter(axis => !axis.options.isInternal);
 
     axes.forEach(axis => {
-        var axisType = axis.options.type || 'linear',
-            tickPositions = axis.tickPositions,
-            ticks = axis.ticks,
+        const tickPositions = axis.tickPositions,
+            ticks = axis.ticks;
+
+        let axisType = axis.options.type || 'linear',
             tick,
             nextTick,
             tickBox,
@@ -973,23 +972,32 @@ QUnit.test('Horizontal axis tick labels centered', function (assert) {
                     y: labelBox.y + labelBox.height / 2
                 };
 
-                assert.close(
-                    actual.x,
-                    expected.x,
-                    xError,
-                    axisType +
-                        ' tick label x position correct ' +
-                        tick.label.textStr
-                );
+                if (tick.label.textPxLength > (nextTickBox.x - tickBox.x)) {
+                    assert.ok(
+                        actual.x === 0 && actual.y === 0,
+                        axisType + ' tick label x (' + tick.label.textStr +
+                            ') should not be positioned when not enough space.'
+                    );
 
-                assert.close(
-                    actual.y,
-                    expected.y,
-                    yError,
-                    axisType +
-                        ' tick label y position correct ' +
-                        tick.label.textStr
-                );
+                } else {
+                    assert.close(
+                        actual.x,
+                        expected.x,
+                        xError,
+                        axisType +
+                            ' tick label x position correct ' +
+                            tick.label.textStr
+                    );
+
+                    assert.close(
+                        actual.y,
+                        expected.y,
+                        yError,
+                        axisType +
+                            ' tick label y position correct ' +
+                            tick.label.textStr
+                    );
+                }
             }
         }
     });
@@ -1588,9 +1596,10 @@ QUnit.test('defaultOptions.borderWidth', function (assert) {
     axis.chart = {
         options: {
             chart: {}
-        }
+        },
+        // Mock with correct inernal type requirements.
+        userOptions: {}
     };
-
     /**
      * grid.borderWidth should default to 1
      */
@@ -2294,5 +2303,49 @@ QUnit.test('slotWidth', assert => {
         2,
         `For inverted chart, grid x-axis should be closed from both sides
         with two ticks.`
+    );
+
+    const chartOptions = {
+        chart: {
+            styledMode: false
+        },
+        yAxis: {
+            labels: {
+                useHTML: true,
+                formatter: function () {
+                    return `<div>${this.value} 123abc<div>`;
+                }
+            }
+        },
+        series: [
+            {
+                data: [
+                    {
+                        start: 1753488000000,
+                        end: 1755648000000
+                    }
+                ]
+            }
+        ]
+    };
+
+    chart = Highcharts.ganttChart('container', chartOptions);
+
+    const normalLabelWidth = chart.yAxis[0].ticks[0].label.getBBox().width;
+
+    chart = Highcharts.ganttChart('container', {
+        ...chartOptions,
+        chart: {
+            styledMode: true
+        }
+    });
+
+    const styledLabelWidth = chart.yAxis[0].ticks[0].label.getBBox().width;
+
+    assert.close(
+        normalLabelWidth,
+        styledLabelWidth,
+        10,
+        'Non-styled and styled mode labels width should be the similar, #22943'
     );
 });

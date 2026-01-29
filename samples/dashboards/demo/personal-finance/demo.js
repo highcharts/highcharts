@@ -8,16 +8,14 @@ Dashboards.board('container', {
         connectors: [{
             id: 'transactions',
             type: 'JSON',
-            options: {
-                firstRowAsNames: false,
-                columnNames: ['id', 'Receiver', 'Amount', 'Balance'],
-                data: [
-                    ['rsf934fds', 'John Doe', 100, 1000],
-                    ['f0efnakr', 'Anna Smith', 200, 800],
-                    ['mfaiks12', 'Robert Johnson', 300, 500],
-                    ['15fqmfk', 'Susan Williams', 400, 100]
-                ]
-            }
+            firstRowAsNames: false,
+            columnIds: ['id', 'Receiver', 'Amount', 'Balance'],
+            data: [
+                ['rsf934fds', 'John Doe', 100, 1000],
+                ['f0efnakr', 'Anna Smith', 200, 800],
+                ['mfaiks12', 'Robert Johnson', 300, 500],
+                ['15fqmfk', 'Susan Williams', 400, 100]
+            ]
         }]
     },
     gui: {
@@ -221,10 +219,13 @@ Dashboards.board('container', {
             id: 'transactions'
         },
         title: 'Transactions',
-        type: 'DataGrid',
-        dataGridOptions: {
+        type: 'Grid',
+        gridOptions: {
             credits: {
                 enabled: false
+            },
+            rendering: {
+                theme: 'hcg-custom-theme'
             }
         }
     }]

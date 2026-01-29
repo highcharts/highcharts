@@ -11,7 +11,6 @@
         "../../../ts/Dashboards/Layout/Cell.ts",
         "../../../ts/Dashboards/Layout/Layout.ts",
         "../../../ts/Dashboards/Layout/Row.ts",
-
         // EditMode
         "../../../ts/Dashboards/Actions/Resizer.ts",
         "../../../ts/Dashboards/EditMode/ConfirmationPopup.ts",
@@ -23,16 +22,16 @@
         "../../../ts/Dashboards/EditMode/Toolbar/SidebarEditToolbar.ts",
         "../../../ts/Dashboards/EditMode/SidebarPopup.ts",
         "../../../ts/Dashboards/EditMode/EditGlobals.ts",
-
         // Components
         "../../../ts/Dashboards/Components/Component.ts",
         "../../../ts/Dashboards/Components/ComponentOptions.ts",
+        "../../../ts/Dashboards/Components/ComponentType.d.ts",
         "../../../ts/Dashboards/Components/ConnectorHandler.ts",
         "../../../ts/Dashboards/Components/EditableOptions.ts",
         "../../../ts/Dashboards/Components/HTMLComponent/HTMLComponent.ts",
         "../../../ts/Dashboards/Components/HTMLComponent/HTMLComponentOptions.ts",
-        "../../../ts/Dashboards/Components/DataGridComponent/DataGridComponent.ts",
-        "../../../ts/Dashboards/Components/DataGridComponent/DataGridComponentOptions.ts",
+        "../../../ts/Dashboards/Components/GridComponent/GridComponent.ts",
+        "../../../ts/Dashboards/Components/GridComponent/GridComponentOptions.ts",
         "../../../ts/Dashboards/Components/HighchartsComponent/HighchartsComponent.ts",
         "../../../ts/Dashboards/Components/HighchartsComponent/HighchartsComponentOptions.ts",
         "../../../ts/Dashboards/Components/KPIComponent/KPIComponent.ts",
@@ -42,13 +41,18 @@
         "../../../ts/Dashboards/Components/Sync/Sync.ts",
         "../../../ts/Dashboards/Components/TextOptions.d.ts",
         "../../../ts/Dashboards/PluginHandler.ts",
-
         // Connectors
         "../../../ts/Data/Connectors/CSVConnectorOptions.d.ts",
         "../../../ts/Data/Connectors/JSONConnectorOptions.d.ts",
         "../../../ts/Data/Connectors/DataConnectorOptions.d.ts",
         "../../../ts/Data/Connectors/GoogleSheetsConnectorOptions.d.ts",
         "../../../ts/Data/Connectors/HTMLTableConnectorOptions.d.ts",
+
+        // Converters
+        "../../../ts/Data/Converters/JSONConverterOptions.d.ts",
+        "../../../ts/Data/Converters/CSVConverterOptions.d.ts",
+        "../../../ts/Data/Converters/GoogleSheetsConverterOptions.d.ts",
+        "../../../ts/Data/Converters/HTMLTableConverterOptions.d.ts",
 
         // Modifiers
         "../../../ts/Data/Modifiers/DataModifier.ts",
@@ -62,48 +66,21 @@
         "../../../ts/Data/Modifiers/RangeModifierOptions.ts",
         "../../../ts/Data/Modifiers/ChainModifier.ts",
         "../../../ts/Data/Modifiers/ChainModifierOptions.ts",
-
+        "../../../ts/Data/Modifiers/InvertModifier.ts",
+        "../../../ts/Data/Modifiers/InvertModifierOptions.ts",
+        "../../../ts/Data/Modifiers/FilterModifier.ts",
+        "../../../ts/Data/Modifiers/FilterModifierOptions.ts",
         // DataLayer
         "../../../ts/Data/DataPool.ts",
-        "../../../ts/Data/DataPoolOptions.ts",
+        "../../../ts/Data/DataPoolOptions.d.ts",
         "../../../ts/Data/DataTable.ts",
-        "../../../ts/Data/DataTableOptions.ts",
-
-        // DataGrid
-        "../../../ts/DataGrid/DataGrid.ts",
-        "../../../ts/DataGrid/Defaults.ts",
-        "../../../ts/DataGrid/Options.ts",
-        "../../../ts/DataGrid/Table/Cell.ts",
-        "../../../ts/DataGrid/Table/Column.ts",
-        "../../../ts/DataGrid/Table/Row.ts",
-        "../../../ts/DataGrid/Table/Table.ts",
-        "../../../ts/DataGrid/Table/Header/TableHeader.ts",
-        "../../../ts/DataGrid/Globals.ts",
-        "../../../ts/DataGrid/Utils.ts",
-
-        // DataGrid - Header
-        "../../../ts/DataGrid/Header/HeaderCell.ts",
-        "../../../ts/DataGrid/Header/HeaderRow.ts",
-        "../../../ts/DataGrid/Header/TableHeader.ts",
-
-        // DataGrid - Content
-        "../../../ts/DataGrid/Content/TableCell.ts",
-        "../../../ts/DataGrid/Content/TableRow.ts",
-
-        "../../../ts/DataGrid/Table/Actions/CellEditing.ts",
-        "../../../ts/DataGrid/Table/Actions/ColumnsResizer.ts",
-        "../../../ts/DataGrid/Table/Actions/ColumnSorting.ts",
-        "../../../ts/DataGrid/Table/Actions/RowsVirtualizer.ts",
-
-        // DataGrid - A11y
-        "../../../ts/DataGrid/Accessibility/A11yOptions.ts",
-        "../../../ts/DataGrid/Accessibility/Accessibility.ts"
+        "../../../ts/Data/DataTableOptions.ts"
     ],
     "entryPointStrategy": "expand",
     "excludeInternal": true,
     "excludePrivate": true,
     "hideGenerator": true,
-    "htmlLang": "en",
+    "lang": "en",
     "name": "Highcharts Dashboards",
     "out": "../../../build/api/dashboards/typedoc/",
     "plugin": [

@@ -1,12 +1,12 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
  *  Authors: Øystein Moseng, Torstein Hønsi, Jon A. Nygård
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -18,23 +18,7 @@
  *
  * */
 
-import type {
-    DragDropGuideBoxOptions,
-    DragDropHandleOptions,
-    DragDropOptions
-} from './DragDropOptions';
-
-/* *
- *
- *  Declarations
- *
- * */
-
-interface DragDropDefaults extends DragDropOptions {
-    dragSensitivity: number;
-    dragHandle: DragDropHandleOptions;
-    guideBox: Record<string, DragDropGuideBoxOptions>;
-}
+import type DragDropOptions from './DragDropOptions';
 
 /* *
  *
@@ -73,8 +57,9 @@ interface DragDropDefaults extends DragDropOptions {
  * @since        6.2.0
  * @requires     modules/draggable-points
  * @optionparent plotOptions.series.dragDrop
+ * @internal
  */
-const DragDropDefaults: DragDropDefaults = {
+const DragDropDefaults: DragDropOptions = {
 
     /**
      * Set the minimum X value the points can be moved to.
@@ -425,4 +410,5 @@ const DragDropDefaults: DragDropDefaults = {
  *
  * */
 
+/** @internal */
 export default DragDropDefaults;

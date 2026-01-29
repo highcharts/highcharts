@@ -4,7 +4,6 @@
         'https://www.highcharts.com/samples/data/marathon.json'
     ).then(response => response.json());
 
-
     Highcharts.chart('container', {
         chart: {
             type: 'spline',
@@ -40,7 +39,11 @@
                         }
                     }
                 },
+                shadow: false,
                 states: {
+                    inactive: {
+                        enabled: false
+                    },
                     hover: {
                         halo: {
                             size: 0
@@ -55,8 +58,9 @@
             }
         },
         tooltip: {
+            followPointer: true,
             pointFormat: '<span style="color:{point.color}">\u25CF</span>' +
-                    '{series.name}: <b>{point.formattedValue}</b><br/>'
+                    'Runner {series.index}: <b>{point.formattedValue}</b><br/>'
         },
         xAxis: {
             categories: [
@@ -100,11 +104,9 @@
             categories: ['Before', 'After']
         }],
         colors: ['rgba(11, 200, 200, 0.1)'],
-        series: data.map(function (set, i) {
+        series: data.map(function (set) {
             return {
-                name: 'Runner ' + i,
-                data: set,
-                shadow: false
+                data: set
             };
         })
     });

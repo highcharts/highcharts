@@ -32,15 +32,13 @@ Highcharts.setOptions({
         }
     },
     tooltip: {
-        positioner: function () {
-            return {
-                // right aligned
-                x: this.chart.chartWidth - this.label.width,
-                y: 10 // align to title
-            };
+        fixed: true,
+        position: {
+            align: 'right',
+            relativeTo: 'spacingBox',
+            y: -2
         },
-        borderWidth: 0,
-        backgroundColor: 'none',
+        padding: 2,
         pointFormat: '{point.y}',
         headerFormat: '',
         shadow: false,
@@ -53,20 +51,18 @@ Dashboards.board('container', {
         connectors: [{
             id: 'activity-data',
             type: 'JSON',
-            options: {
-                beforeParse: function (data) {
-                    return [
-                        data.xData,
-                        data.datasets[0].data,
-                        data.datasets[1].data,
-                        data.datasets[2].data
-                    ];
-                },
-                dataUrl: 'https://www.highcharts.com/samples/data/activity.json',
-                firstRowAsNames: false,
-                orientation: 'columns',
-                columnNames: ['x', 'Speed', 'Elevation', 'Heart rate']
-            }
+            beforeParse: function (data) {
+                return [
+                    data.xData,
+                    data.datasets[0].data,
+                    data.datasets[1].data,
+                    data.datasets[2].data
+                ];
+            },
+            dataUrl: 'https://www.highcharts.com/samples/data/activity.json',
+            firstRowAsNames: false,
+            orientation: 'columns',
+            columnIds: ['x', 'Speed', 'Elevation', 'Heart rate']
         }]
     },
     components: [{

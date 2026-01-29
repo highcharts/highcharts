@@ -25,7 +25,6 @@ Highcharts.chart('container', {
         tickInterval: 1,
         labels: {
             align: 'right',
-            useHTML: true,
             allowOverlap: true,
             step: 1,
             y: 3,
@@ -62,7 +61,10 @@ Highcharts.chart('container', {
             borderWidth: 0,
             pointPadding: 0,
             groupPadding: 0.15,
-            borderRadius: '50%'
+            borderRadius: {
+                radius: '50%',
+                where: 'all'
+            }
         }
     },
     series: [{

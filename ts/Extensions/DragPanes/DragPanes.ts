@@ -2,13 +2,13 @@
  *
  *  Plugin for resizing axes / panes in a chart.
  *
- *  (c) 2010-2024 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *
  *  Author: Kacper Madej
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -21,10 +21,11 @@
  * */
 
 import type Axis from '../../Core/Axis/Axis';
-import type AxisResizerOptions from './AxisResizerOptions';
+import type AxisResizeOptions from './AxisResizeOptions';
 import type Pointer from '../../Core/Pointer';
 
 import AxisResizer from './AxisResizer.js';
+import AxisResizerDefaults from './AxisResizerDefaults.js';
 import D from '../../Core/Defaults.js';
 const { defaultOptions } = D;
 import U from '../../Core/Utilities.js';
@@ -40,20 +41,60 @@ const {
  *
  * */
 
-declare module '../../Core/Axis/AxisLike' {
-    interface AxisLike {
+/** @internal */
+declare module '../../Core/Axis/AxisBase' {
+    interface AxisBase {
         resizer?: AxisResizer;
     }
 }
 
 declare module '../../Core/Axis/AxisOptions' {
-    interface AxisOptions extends AxisResizerOptions {
-        // Nothing more to add
+    interface AxisOptions {
+        /**
+         * Maximal size of a resizable axis. Could be set as a percent
+         * of plot area or pixel size.
+         *
+         * @sample {highstock} stock/yaxis/resize-min-max-length
+         *         minLength and maxLength
+         *
+         * @type      {number|string}
+         * @product   highstock
+         * @requires  modules/drag-panes
+         * @apioption yAxis.maxLength
+         */
+        maxLength?: (number|string);
+
+        /**
+         * Minimal size of a resizable axis. Could be set as a percent
+         * of plot area or pixel size.
+         *
+         * @sample {highstock} stock/yaxis/resize-min-max-length
+         *         minLength and maxLength
+         *
+         * @type      {number|string}
+         * @product   highstock
+         * @requires  modules/drag-panes
+         * @apioption yAxis.minLength
+         */
+        minLength?: (number|string);
+
+        /**
+         * Options for axis resizing. It adds a thick line between panes which
+         * the user can drag in order to resize the panes.
+         *
+         * @sample {highstock} stock/demo/candlestick-and-volume
+         *         Axis resizing enabled
+         *
+         * @product      highstock
+         * @requires     modules/drag-panes
+         */
+        resize?: AxisResizeOptions;
     }
 }
 
-declare module '../../Core/Chart/ChartLike' {
-    interface ChartLike {
+/** @internal */
+declare module '../../Core/Chart/ChartBase' {
+    interface ChartBase {
         activeResizer?: boolean;
     }
 }
@@ -64,16 +105,14 @@ declare module '../../Core/Chart/ChartLike' {
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 function compose(
     AxisClass: typeof Axis,
     PointerClass: typeof Pointer
 ): void {
 
     if (!AxisClass.keepProps.includes('resizer')) {
-        merge(true, defaultOptions.yAxis, AxisResizer.resizerOptions);
+        merge(true, defaultOptions.yAxis, AxisResizerDefaults);
 
         // Keep resizer reference on axis update
         AxisClass.keepProps.push('resizer');
@@ -97,7 +136,7 @@ function compose(
 
 /**
  * Add new AxisResizer, update or remove it
- * @private
+ * @internal
  */
 function onAxisAfterRender(
     this: Axis
@@ -133,7 +172,7 @@ function onAxisAfterRender(
 
 /**
  * Clear resizer on axis remove.
- * @private
+ * @internal
  */
 function onAxisDestroy(
     this: Axis,
@@ -149,7 +188,7 @@ function onAxisDestroy(
 /**
  * Prevent default drag action detection while dragging a control line of
  * AxisResizer. (#7563)
- * @private
+ * @internal
  */
 function wrapPointerDrag(
     this: Pointer,
@@ -164,7 +203,7 @@ function wrapPointerDrag(
 
 /**
  * Prevent any hover effects while dragging a control line of AxisResizer.
- * @private
+ * @internal
  */
 function wrapPointerRunPointActions(
     this: Pointer,
@@ -183,8 +222,10 @@ function wrapPointerRunPointActions(
  *
  * */
 
+/** @internal */
 const DragPanes = {
     compose
 };
 
+/** @internal */
 export default DragPanes;

@@ -1,11 +1,12 @@
 /* *
- *  (c) 2010-2024 Rafal Sebestjanski
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Rafal Sebestjanski
  *
  *  Disparity Index technical indicator for Highcharts Stock
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -22,7 +23,7 @@ import type {
     DisparityIndexParamsOptions
 } from './DisparityIndexOptions';
 import type DisparityIndexPoint from './DisparityIndexPoint';
-import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
@@ -138,7 +139,7 @@ class DisparityIndexIndicator extends SMAIndicator {
     }
 
     public getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries&IndicatorLinkedSeriesLike,
+        series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: DisparityIndexParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const index = params.index,

@@ -54,8 +54,8 @@
             data: [],
             affectsMapView: false,
             mapData: world,
-            borderColor: 'white',
-            nullColor: '#ddeedd',
+            borderColor: 'var(--highcharts-background-color, white)',
+            nullColor: '#6a63',
             accessibility: {
                 exposeAsGroupOnly: true
             }
@@ -65,7 +65,10 @@
             borderColor: '#666',
             dataLabels: {
                 enabled: true,
-                nullFormat: '{point.name}'
+                nullFormat: '{point.name}',
+                style: {
+                    color: 'var(--highcharts-neutral-color-100, black)'
+                }
             },
             accessibility: {
                 point: {

@@ -2,11 +2,12 @@
  *
  *  Networkgraph series
  *
- *  (c) 2010-2024 Paweł Fus
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Paweł Fus
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -183,6 +184,13 @@ function onMouseDown(
     point: DragNodesPoint,
     event: PointerEvent
 ): void {
+    const { panKey } = this.chart.options.chart,
+        panKeyPressed = panKey && event[`${panKey}Key`];
+
+    if (panKeyPressed) {
+        return;
+    }
+
     const normalizedEvent = this.chart.pointer?.normalize(event) || event;
 
     point.fixedPosition = {

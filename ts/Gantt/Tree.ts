@@ -1,12 +1,12 @@
 /* *
  *
- *  (c) 2016-2024 Highsoft AS
+ *  (c) 2016-2026 Highsoft AS
  *
  *  Authors: Jon Arild Nygard
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -31,11 +31,13 @@ const {
  *
  * */
 
+/** @internal */
 export interface TreeGetOptionsObject {
     after?: Function;
     before?: Function;
 }
 
+/** @internal */
 export interface TreeNode {
     children: Array<TreeNode>;
     data: (TreePointOptionsObject|null);
@@ -47,6 +49,7 @@ export interface TreeNode {
     parent: string;
 }
 
+/** @internal */
 export interface TreePointOptionsObject {
     end?: number;
     id?: string;
@@ -64,7 +67,7 @@ export interface TreePointOptionsObject {
 /**
  * Creates an object map from parent id to children's index.
  *
- * @private
+ * @internal
  * @function Highcharts.Tree#getListOfParents
  *
  * @param {Array<*>} data
@@ -116,7 +119,7 @@ function getListOfParents(
     return listOfParents;
 }
 
-/** @private */
+/** @internal */
 function getNode(
     id: string,
     parent: (string|null),
@@ -205,7 +208,7 @@ function getNode(
     return node as TreeNode;
 }
 
-/** @private */
+/** @internal */
 function getTree(
     data: Array<TreePointOptionsObject>,
     options: TreeGetOptionsObject
@@ -219,9 +222,11 @@ function getTree(
  *
  * */
 
+/** @internal */
 const Tree = {
     getNode,
     getTree
 };
 
+/** @internal */
 export default Tree;

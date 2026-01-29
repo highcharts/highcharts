@@ -2,13 +2,13 @@
  *
  *  Timeline Series.
  *
- *  (c) 2010-2024 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *
  *  Author: Daniel Studencki
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -19,15 +19,13 @@
  * */
 
 import type {
-    LegendSymbolType,
     SeriesStatesOptions
 } from '../../Core/Series/SeriesOptions';
 import type LineSeriesOptions from '../Line/LineSeriesOptions';
 import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
+import type { SeriesTooltipOptions } from '../../Core/TooltipOptions';
 import type TimelineDataLabelOptions from './TimelineDataLabelOptions';
 import type TimelinePointOptions from './TimelinePointOptions';
-import type TimelineSeries from './TimelineSeries';
-import type TooltipOptions from '../../Core/TooltipOptions';
 
 /* *
  *
@@ -124,7 +122,7 @@ export interface TimelineSeriesOptions extends LineSeriesOptions {
 
     ignoreHiddenPoint?: boolean;
 
-    legendSymbol?: LegendSymbolType;
+    legendSymbol?: LineSeriesOptions['legendSymbol'];
 
     legendType?: ('point'|'series');
 
@@ -141,12 +139,23 @@ export interface TimelineSeriesOptions extends LineSeriesOptions {
 
     showInLegend?: boolean;
 
-    states?: SeriesStatesOptions<TimelineSeries>;
+    states?: SeriesStatesOptions<TimelineSeriesOptions>;
 
     stickyTracking?: boolean;
 
-    tooltip?: Partial<TooltipOptions>;
+    tooltip?: TimelineSeriesTooltipOptions;
+}
 
+export interface TimelineSeriesTooltipOptions extends SeriesTooltipOptions {
+    /**
+     * @default '<span style="color:{point.color}">\u25CF</span> <span style="font-size: 0.8em"> {point.key}</span><br/>'
+     */
+    headerFormat?: SeriesTooltipOptions['headerFormat'];
+
+    /**
+     * @default '{point.description}'
+     */
+    pointFormat?: SeriesTooltipOptions['pointFormat'];
 }
 
 /* *

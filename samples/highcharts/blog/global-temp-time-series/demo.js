@@ -8,8 +8,7 @@ Highcharts.theme = {
     yAxis: {
         gridLineColor: '#B71C1C',
         labels: {
-            format: '{value} C',
-            useHTML: true
+            format: '{value} C'
         }
     },
     plotOptions: {

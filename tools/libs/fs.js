@@ -104,16 +104,14 @@ function copyFile(fileSourcePath, fileTargetPath) {
 }
 
 /**
- * Deletes a directory.
+ * Deletes a directory recursivly.
  *
  * @param {string} directoryPath
  *        Directory path
  *
- * @param {boolean} [includeEntries]
- *        Set to true to remove containing entries as well
- *
- * @param {Function | undefined} [filterCallback]
- *        Callback to return `true` for files to delete.
+ * @param {Function} [filterCallback]
+ *        Callback to return `true` for files to delete, otherwise will
+ *        eventually fail.
  *
  * @return {void}
  *
@@ -121,31 +119,28 @@ function copyFile(fileSourcePath, fileTargetPath) {
  */
 function deleteDirectory(
     directoryPath,
-    includeEntries = true,
-    filterCallback = void 0
+    filterCallback
 ) {
     if (!FS.existsSync(directoryPath)) {
         return;
     }
 
-    if (includeEntries) {
-        if (!filterCallback) {
-            FS.rmSync(directoryPath, { recursive: true });
-            return;
-        }
-
+    if (filterCallback) {
         getDirectoryPaths(directoryPath).forEach(
-            path => deleteDirectory(path, true, filterCallback)
+            path => deleteDirectory(path, filterCallback)
         );
 
         for (const filePath of getFilePaths(directoryPath)) {
             if (filterCallback(filePath) === true) {
-                deleteFile(filePath, true);
+                deleteFile(filePath);
             }
         }
+
+        FS.rmdirSync(directoryPath);
+    } else {
+        FS.rmSync(directoryPath, { recursive: true });
     }
 
-    FS.rmdirSync(directoryPath);
 }
 
 /**
@@ -569,7 +564,10 @@ function normalizePath(
     sourcePath = Path.posix.dirname(path(sourcePath, true));
     targetPath = path(targetPath, true);
 
-    if (!targetPath.startsWith('.')) {
+    if (
+        !targetPath.startsWith('./') &&
+        !targetPath.startsWith('../')
+    ) {
         targetPath = Path.posix.relative(sourcePath, targetPath);
     }
 
@@ -603,7 +601,7 @@ function parentPath(
  * Converts from POSIX path to the system-specific path by default. Set the flag
  * to convert to POSIX.
  *
- * @param {string|Array<string>} path
+ * @param {string|Array<string>} pathToConvert
  * Path to convert.
  *
  * @param {boolean} [toPosix]
@@ -613,23 +611,30 @@ function parentPath(
  * Converted path.
  */
 function path(
-    path,
+    pathToConvert,
     toPosix
 ) {
 
-    if (typeof path !== 'string') {
-        path = Path.join(...path);
-    }
-
     if (Path.sep !== Path.posix.sep) {
+
+        if (typeof pathToConvert !== 'string') {
+            pathToConvert = Path.join(
+                ...pathToConvert.map(ptc => path(ptc, toPosix))
+            );
+        }
+
         return (
             toPosix ?
-                path.replaceAll(SEP, PSEP) :
-                path.replaceAll(PSEP, SEP)
+                pathToConvert.replaceAll(SEP, PSEP) :
+                pathToConvert.replaceAll(PSEP, SEP)
         );
     }
 
-    return path;
+    if (typeof pathToConvert !== 'string') {
+        pathToConvert = Path.join(...pathToConvert);
+    }
+
+    return pathToConvert;
 }
 
 /**

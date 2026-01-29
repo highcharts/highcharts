@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Karol Kolodziej
@@ -21,9 +21,13 @@
  * */
 
 
-import type ConnectorHandler from '../ConnectorHandler.js';
-import type Component from '../Component';
-import type Sync from '../Sync/Sync';
+import type { ConnectorOptions as ConnectorHandlerOptions } from '../ConnectorHandler';
+import type { Options as ComponentOptions } from '../Component';
+import type {
+    OptionsEntry as SyncOptionsEntry,
+    OptionsRecord as SyncOptionsRecord,
+    RawOptionsRecord as SyncRawOptionsRecord
+} from '../Sync/Sync';
 import type {
     Options as HighchartsOptions
 } from '../../Plugins/HighchartsTypes';
@@ -43,14 +47,14 @@ export type ConstructorType = (
 );
 
 
-export interface Options extends Component.Options {
+export interface Options extends ComponentOptions {
     /**
      * Whether to allow the component to edit the store to which it is
      * attached.
      *
      * Try it:
      *
-     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/datagrid-sync/ | Allow connector update comparison}
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/demo/grid-sync/ | Allow connector update comparison}
      *
      * @default true
      */
@@ -69,7 +73,7 @@ export interface Options extends Component.Options {
     /**
      * Connector options for the component.
      */
-    connector?: (ConnectorOptions|Array<ConnectorOptions>);
+    connector?: (ConnectorOptions | Array<ConnectorOptions>);
 
     /**
      * Type of the component.
@@ -93,15 +97,6 @@ export interface Options extends Component.Options {
     chartID?: string;
 
     /**
-     * @deprecated
-     * This option is deprecated and does not work anymore.
-     *
-     * Use [`connector.columnAssignment`](Dashboards_Components_HighchartsComponent_HighchartsComponentOptions.ConnectorOptions#columnAssignment) instead.
-     *
-    */
-    columnAssignment?: Record<string, string | Record<string, string>>;
-
-    /**
      * Defines which elements should be synced.
      * ```
      * Example:
@@ -123,13 +118,13 @@ export interface Options extends Component.Options {
     /**
     * Sync options for the component.
     */
-    syncHandlers?: Sync.OptionsRecord;
+    syncHandlers?: SyncOptionsRecord;
 }
 
 /**
  * Highcharts component connector options.
  */
-export interface ConnectorOptions extends ConnectorHandler.ConnectorOptions {
+export interface ConnectorOptions extends ConnectorHandlerOptions {
     /**
      * It allows to assign the data from the connector to specific series in the
      * chart in different ways using series IDs and column names.
@@ -220,9 +215,9 @@ export interface ColumnAssignmentOptions {
  * }
  * ```
  */
-export interface SyncOptions extends Sync.RawOptionsRecord {
+export interface SyncOptions extends SyncRawOptionsRecord {
     /**
-     * Extremes sync is available for Highcharts, KPI, DataGrid and
+     * Extremes sync is available for Highcharts, KPI, Grid and
      * Navigator components. Sets a common range of displayed data. For the
      * KPI Component sets the last value.
      *
@@ -232,9 +227,9 @@ export interface SyncOptions extends Sync.RawOptionsRecord {
      *
      * @default false
      */
-    extremes?: boolean|Sync.OptionsEntry;
+    extremes?: boolean | SyncOptionsEntry;
     /**
-     * Highlight sync is available for Highcharts and DataGrid components.
+     * Highlight sync is available for Highcharts and Grid components.
      * It allows to highlight hovered corresponding rows in the table and
      * chart points.
      *
@@ -244,9 +239,9 @@ export interface SyncOptions extends Sync.RawOptionsRecord {
      *
      * @default false
      */
-    highlight?: boolean|HighchartsHighlightSyncOptions;
+    highlight?: boolean | HighchartsHighlightSyncOptions;
     /**
-     * Visibility sync is available for Highcharts and DataGrid components.
+     * Visibility sync is available for Highcharts and Grid components.
      * Synchronizes the visibility of data from a hidden/shown series.
      *
      * Try it:
@@ -255,7 +250,7 @@ export interface SyncOptions extends Sync.RawOptionsRecord {
      *
      * @default false
      */
-    visibility?: boolean|Sync.OptionsEntry;
+    visibility?: boolean | SyncOptionsEntry;
 }
 
 /**
@@ -271,7 +266,7 @@ export interface SyncOptions extends Sync.RawOptionsRecord {
  * }
  * ```
  */
-export interface HighchartsHighlightSyncOptions extends Sync.OptionsEntry {
+export interface HighchartsHighlightSyncOptions extends SyncOptionsEntry {
     /**
      * ID of the series that should be affected by the highlight. If not
      * defined, the appropriate series will be found according to the column
@@ -283,7 +278,7 @@ export interface HighchartsHighlightSyncOptions extends Sync.OptionsEntry {
      *
      * @default null
      */
-    affectedSeriesId?: string|null;
+    affectedSeriesId?: string | null;
     /**
      * Whether the marker should be synced. When hovering over a point in
      * other component in the same group, the 'hover' state is enabled at

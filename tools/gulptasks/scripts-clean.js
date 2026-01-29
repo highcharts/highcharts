@@ -3,7 +3,6 @@
  */
 
 const gulp = require('gulp');
-const path = require('path');
 
 /* *
  *
@@ -11,9 +10,10 @@ const path = require('path');
  *
  * */
 
-const TARGET_DIRECTORIES = [
+const PATHS_TO_DELETE = [
     'build',
-    'code'
+    'code',
+    'webpack.log'
 ];
 
 /* *
@@ -32,12 +32,38 @@ function task() {
 
     const fs = require('../libs/fs');
     const log = require('../libs/log');
+    const skipBuildClean = process.env.HIGHCHARTS_SKIP_BUILD_CLEAN === 'true';
+    const skipCodeClean = process.env.HIGHCHARTS_SKIP_CODE_CLEAN === 'true';
+
+    const pathsToDelete = PATHS_TO_DELETE.filter(path => {
+        if (skipBuildClean && path === 'build') {
+            return false;
+        }
+
+        if (skipCodeClean && path === 'code') {
+            return false;
+        }
+
+        return true;
+    });
 
     return new Promise((resolve, reject) => {
         try {
-            for (const directory of TARGET_DIRECTORIES) {
-                log.message('Cleaning', directory, '...');
-                fs.deleteDirectory(directory, true);
+            if (skipBuildClean) {
+                log.message('Preserving build directory (with-deps sequence).');
+            }
+
+            if (skipCodeClean) {
+                log.message('Preserving code directory (with-deps sequence).');
+            }
+
+            for (const ptd of pathsToDelete) {
+                log.message('Cleaning', ptd, '...');
+                if (fs.isDirectory(ptd)) {
+                    fs.deleteDirectory(ptd);
+                } else {
+                    fs.deleteFile(ptd);
+                }
             }
             log.success('Cleaned');
             resolve();

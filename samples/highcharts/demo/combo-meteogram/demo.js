@@ -340,7 +340,6 @@ Meteogram.prototype.getChartOptions = function () {
 
         tooltip: {
             shared: true,
-            useHTML: true,
             headerFormat:
                 '<small>{point.x:%A, %b %e, %H:%M} - ' +
                 '{point.point.to:%H:%M}</small><br>' +
@@ -394,7 +393,7 @@ Meteogram.prototype.getChartOptions = function () {
             },
             plotLines: [{ // zero plane
                 value: 0,
-                color: '#BBBBBB',
+                color: 'var(--highcharts-neutral-color-20, #bbb)',
                 width: 1,
                 zIndex: 2
             }],
@@ -498,7 +497,7 @@ Meteogram.prototype.getChartOptions = function () {
                 },
                 style: {
                     fontSize: '8px',
-                    color: 'gray'
+                    color: 'var(--highcharts-neutral-color-60, gray)'
                 }
             }
         }, {
@@ -519,7 +518,7 @@ Meteogram.prototype.getChartOptions = function () {
                 },
                 style: {
                     fontSize: '8px',
-                    color: '#666'
+                    color: 'var(--highcharts-neutral-color-60, gray)'
                 }
             },
             tooltip: {

@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sebastian Bochan
@@ -25,6 +25,7 @@
 import type MenuItem from './Menu/MenuItem.js';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type EditMode from './EditMode.js';
+import type { LangAccessibilityOptions, LangOptions } from './EditGlobals';
 
 import EditGlobals from './EditGlobals.js';
 import U from '../../Core/Utilities.js';
@@ -448,7 +449,7 @@ function renderToggle(
     const lang = options.lang,
         value = options.value,
         title = options.title || options.name,
-        langKey = options.langKey as keyof EditGlobals.LangAccessibilityOptions;
+        langKey = options.langKey as keyof LangAccessibilityOptions;
 
     if (options.isNested) {
         const labeledToggleWrapper = createElement(
@@ -903,7 +904,7 @@ export interface ToggleFormFieldOptions {
     onchange?: (value: boolean) => void;
     id: string;
     name: string;
-    lang: EditGlobals.LangOptions;
+    lang: LangOptions;
     langKey?: string;
     isNested?: boolean;
 }
@@ -916,7 +917,7 @@ export interface NestedHeaderFormFieldOptions {
     isEnabled?: boolean;
     isNested?: boolean;
     iconsURLPrefix?: string;
-    lang: EditGlobals.LangOptions;
+    lang: LangOptions;
 }
 
 export type RendererElement = (

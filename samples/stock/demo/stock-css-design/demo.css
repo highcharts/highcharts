@@ -2,6 +2,22 @@
 @import url("https://code.highcharts.com/css/stocktools/gui.css");
 @import url("https://code.highcharts.com/css/highcharts.css");
 
+body {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
+    background: #19191b;
+    color: #fff;
+}
+
 :root {
     --highcharts-background-color: #19191b;
     --highcharts-color-1: #9689e6;

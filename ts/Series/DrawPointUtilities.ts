@@ -1,6 +1,5 @@
 /* *
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -80,7 +79,7 @@ function draw(
     params.attribs = {
         ...params.attribs,
         'class': point.getClassName()
-    } || {};
+    };
 
     if ((point.shouldDraw())) {
         if (!graphic) {

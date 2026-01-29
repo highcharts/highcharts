@@ -2,13 +2,13 @@
  *
  *  Plugin for resizing axes / panes in a chart.
  *
- *  (c) 2010-2024 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *
  *  Author: Kacper Madej
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -21,13 +21,13 @@
  * */
 
 import type Axis from '../../Core/Axis/Axis';
-import type { YAxisOptions } from '../../Core/Axis/AxisOptions';
-import type { AxisResizeOptions } from './AxisResizerOptions';
+import type AxisResizeOptions from './AxisResizeOptions';
+import type { DeepPartial } from '../../Shared/Types';
 import type PointerEvent from '../../Core/PointerEvent';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type { YAxisOptions } from '../../Core/Axis/AxisOptions';
 
-import AxisResizerDefaults from './AxisResizerDefaults.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -45,7 +45,7 @@ const {
 /**
  * The AxisResizer class.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.AxisResizer
  *
@@ -53,16 +53,6 @@ const {
  *        Main axis for the AxisResizer.
  */
 class AxisResizer {
-
-    /* *
-     *
-     *  Static Properties
-     *
-     * */
-
-    // Default options for AxisResizer.
-    public static resizerOptions = AxisResizerDefaults;
-
     /* *
      *
      *  Constructor
@@ -376,7 +366,7 @@ class AxisResizer {
                     // Normalize height to option limits
                     height = normalize(axis.len - yDelta, minLength, maxLength);
 
-                    // Adjust top, so the axis looks like shrinked from top
+                    // Adjust top, so the axis looks like shrank from top
                     top = axis.top + yDelta;
 
                     // Check for plot area limits
@@ -476,4 +466,5 @@ class AxisResizer {
  *
  * */
 
+/** @internal */
 export default AxisResizer;

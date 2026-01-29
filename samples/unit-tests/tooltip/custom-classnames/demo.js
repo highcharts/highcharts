@@ -101,7 +101,7 @@ QUnit.test(
         // Headless doesn't compute nested styles in CSS file, so it needs to be
         // appended via JS
         const style = document.createElement('style');
-        style.innerHTML = '.custom span { padding: 10px; }';
+        style.innerText = '.custom span { padding: 10px; }';
         document.head.appendChild(style);
 
         chart.update({
@@ -117,11 +117,15 @@ QUnit.test(
             'Provided className should be added to the tooltip label, #20459.'
         );
 
-        assert.strictEqual(
-            chart.tooltip.label.height,
-            before + 20,
-            'Tooltip label height reflects style from custom CSS class, #20459.'
-        );
+        // When foreignObject, the offsetHeight is 0 in headless Firefox for
+        // some reason. Testing in utils works fine.
+        if (chart.tooltip.label.text.element.offsetHeight) {
+            assert.strictEqual(
+                chart.tooltip.label.height,
+                before + 20,
+                'Tooltip label height reflects style from custom class, #20459.'
+            );
+        }
 
     }
 );

@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -19,6 +20,7 @@
 import type AnimationOptions from './AnimationOptions';
 import type Chart from '../Chart/Chart';
 import type CSSObject from '../Renderer/CSSObject';
+import type { DeepPartial } from '../../Shared/Types';
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type Series from '../Series/Series';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
@@ -273,3 +275,42 @@ const animationExports = {
  * */
 
 export default animationExports;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
+
+
+/**
+ * An animation configuration. Animation configurations can also be defined as
+ * booleans, where `false` turns off animation and `true` defaults to a duration
+ * of 500ms and defer of 0ms.
+ *
+ * @interface Highcharts.AnimationOptionsObject
+ *//**
+ * A callback function to execute when the animation finishes.
+ * @name Highcharts.AnimationOptionsObject#complete
+ * @type {Function|undefined}
+ *//**
+ * The animation defer in milliseconds.
+ * @name Highcharts.AnimationOptionsObject#defer
+ * @type {number|undefined}
+ *//**
+ * The animation duration in milliseconds.
+ * @name Highcharts.AnimationOptionsObject#duration
+ * @type {number|undefined}
+ *//**
+ * The name of an easing function as defined on the `Math` object.
+ * @name Highcharts.AnimationOptionsObject#easing
+ * @type {string|Function|undefined}
+ *//**
+ * A callback function to execute on each step of each attribute or CSS property
+ * that's being animated. The first argument contains information about the
+ * animation and progress.
+ * @name Highcharts.AnimationOptionsObject#step
+ * @type {Function|undefined}
+ */
+
+''; // Keeps doclets in JS file

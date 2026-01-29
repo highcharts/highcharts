@@ -20,7 +20,7 @@ QUnit.test('Series.drawDataLabels', function (assert) {
         series: [
             {
                 dataLabels: { enabled: false }, // Disable data labels
-                data: [{}] // Create one null point
+                data: [{ y: 1 }]
             }
         ]
     });

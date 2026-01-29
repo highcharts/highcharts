@@ -41,7 +41,7 @@ export default async function benchmarkTest(
 
   performance.mark('Start');
 
-  chart.getDataRows();
+  chart.exporting.getDataRows();
 
   performance.mark('End');
 

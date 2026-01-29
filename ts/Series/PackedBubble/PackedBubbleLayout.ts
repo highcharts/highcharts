@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2024 Grzegorz Blachlinski, Sebastian Bochan
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Grzegorz Blachlinski, Sebastian Bochan
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -39,8 +40,8 @@ const {
  *
  * */
 
-declare module '../../Core/Chart/ChartLike' {
-    interface ChartLike {
+declare module '../../Core/Chart/ChartBase' {
+    interface ChartBase {
         allDataPoints?: Array<PackedBubbleSeries.Data>;
         allParentNodes: Array<PackedBubblePoint>;
         getSelectedParentNodes(): Array<PackedBubblePoint>;

@@ -1,11 +1,13 @@
+// SPDX-License-Identifier: LicenseRef-Highcharts
 /**
- * (c) 2009-2024 Sebastian Bochann
+ * (c) 2009-2026 Highsoft AS
+ * Author: Sebastian Bochann
  *
  * Price indicator for Highcharts
  *
- * License: www.highcharts.com/license
+ * A commercial license may be required depending on use.
+ * See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  */
 
 'use strict';
@@ -36,34 +38,90 @@ const {
  *
  * */
 
-declare module '../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../Core/Series/SeriesBase' {
+    interface SeriesBase {
+
+        /** @internal */
         lastPrice?: SVGElement;
+
+        /** @internal */
         lastPriceLabel?: SVGElement;
+
+        /** @internal */
         lastVisiblePrice?: SVGElement;
+
+        /** @internal */
         lastVisiblePriceLabel?: SVGElement;
+
     }
 }
 
 declare module '../Core/Series/SeriesOptions' {
     interface SeriesOptions {
+
+        /**
+         * @see {@link plotOptions.series.lastPrice}
+         *
+         * @internal
+         */
         lastPrice?: LastPriceOptions;
+
+        /**
+         * @see {@link plotOptions.series.lastVisiblePrice}
+         *
+         * @internal
+         */
         lastVisiblePrice?: LastVisiblePriceOptions;
+
     }
 }
 
 export interface LastPriceOptions extends AxisCrosshairOptions {
+
+    /**
+     * Enable or disable the indicator.
+     *
+     * @product   highstock
+     * @default   false
+     */
     enabled?: boolean;
+
 }
 
 export interface LastVisiblePriceOptions {
+
+    /**
+     * Enable or disable the indicator.
+     *
+     * @product   highstock
+     * @default   false
+     */
     enabled?: boolean;
+
+    /**
+     * @since     7.0.0
+     */
     label?: LastVisiblePriceLabelOptions;
+
 }
 
 export interface LastVisiblePriceLabelOptions {
+
+    /**
+     * Flag to enable `lastVisiblePrice` label.
+     *
+     * @since     7.0
+     * @product   highstock
+     */
     enabled: true;
+
+    /**
+     * The color of the line of last visible price.
+     *
+     * @internal
+     */
     color?: ColorType;
+
 }
 
 /* *
@@ -72,18 +130,45 @@ export interface LastVisiblePriceLabelOptions {
  *
  * */
 
-/** @private */
+/** @internal */
 function compose(
     SeriesClass: typeof Series
 ): void {
 
     if (pushUnique(composed, 'PriceIndication')) {
         addEvent(SeriesClass, 'afterRender', onSeriesAfterRender);
+        addEvent(SeriesClass, 'hide', onSeriesHide);
     }
 
 }
 
-/** @private */
+
+/**
+ * Hides price indication when parent series is hidden. Showing the indicator is
+ * handled by the `onSeriesAfterRender` function.
+ *
+ * @internal
+ *
+ */
+function onSeriesHide(
+    this: Series
+): void {
+    const series = this;
+    (
+        [
+            'lastPrice',
+            'lastPriceLabel',
+            'lastVisiblePrice',
+            'lastVisiblePriceLabel'
+        ] as ('lastPrice'|'lastPriceLabel'|'lastVisiblePrice'|
+            'lastVisiblePriceLabel')[]
+    ).forEach((key): void => {
+        series[key]?.hide();
+    });
+}
+
+
+/** @internal */
 function onSeriesAfterRender(
     this: Series
 ): void {
@@ -94,7 +179,8 @@ function onSeriesAfterRender(
 
     if (
         (lastVisiblePrice || lastPrice) &&
-         seriesOptions.id !== 'highcharts-navigator-series'
+         seriesOptions.id !== 'highcharts-navigator-series' &&
+         series.visible
     ) {
         const xAxis = series.xAxis,
             yAxis = series.yAxis,

@@ -10,7 +10,6 @@ Highcharts.chart('container', {
         text: 'Coffee consumption'
     },
     tooltip: {
-        useHTML: true,
         pointFormat: '<b>{point.name}:</b> {point.y}</sub>'
     },
     plotOptions: {

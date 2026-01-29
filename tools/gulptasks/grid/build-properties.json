@@ -1,0 +1,13 @@
+{
+  "version": "2.2.0",
+  "products": {
+    "Highcharts Grid Lite": {
+      "cdnpath": null,
+      "distpath": "/grid-lite"
+    },
+    "Highcharts Grid Pro": {
+      "cdnpath": null,
+      "distpath": "/grid-pro"
+    }
+  }
+}

@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -14,14 +15,12 @@
  *
  * */
 import type ColorType from '../../Core/Color/ColorType';
-import type {
-    LegendSymbolType,
-    SeriesStatesOptions
-} from '../../Core/Series/SeriesOptions';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type PolygonPointOptions from './PolygonPointOptions';
-import type PolygonSeries from './PolygonSeries';
-import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
-import type TooltipOptions from '../../Core/TooltipOptions';
+import type {
+    ScatterSeriesOptions,
+    ScatterSeriesTooltipOptions
+} from '../Scatter/ScatterSeriesOptions';
 import type {
     PointMarkerOptions,
     PointShortOptions
@@ -140,18 +139,32 @@ interface PolygonSeriesOptions extends ScatterSeriesOptions {
 
     fillColor?: ColorType;
 
-    legendSymbol?: LegendSymbolType;
+    /**
+     * @default 'rectangle'
+     */
+    legendSymbol?: ScatterSeriesOptions['legendSymbol'];
 
     marker?: PointMarkerOptions;
 
-    states?: SeriesStatesOptions<PolygonSeries>;
+    states?: SeriesStatesOptions<PolygonSeriesOptions>;
 
     stickyTracking?: boolean;
 
     trackByArea?: boolean;
 
-    tooltip?: Partial<TooltipOptions>;
+    tooltip?: PolygonSeriesTooltipOptions;
+}
 
+export interface PolygonSeriesTooltipOptions extends ScatterSeriesTooltipOptions {
+    /**
+     * @default true
+     */
+    followPointer?: ScatterSeriesTooltipOptions['followPointer'];
+
+    /**
+     * @default ''
+     */
+    pointFormat?: ScatterSeriesTooltipOptions['pointFormat'];
 }
 
 /* *

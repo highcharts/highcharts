@@ -47,17 +47,17 @@
         },
 
         tooltip: {
+            fixed: true,
             backgroundColor: 'none',
-            borderWidth: 0,
-            shadow: false,
             useHTML: true,
             padding: 0,
             pointFormat: '<span class="f32"><span class="flag ' +
                 '{point.properties.hc-key}">' +
                     '</span></span> {point.name}<br>' +
                     '<span style="font-size:30px">{point.value}/km²</span>',
-            positioner: function () {
-                return { x: 0, y: 250 };
+            position: {
+                verticalAlign: 'middle',
+                y: 50
             }
         },
 

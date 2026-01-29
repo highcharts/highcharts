@@ -2,13 +2,13 @@
  *
  *  Marker clusters module.
  *
- *  (c) 2010-2024 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
  *
  *  Author: Wojciech Chmiel
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -53,9 +53,8 @@ import { Palette } from '../../Core/Color/Palettes.js';
  *
  * @product      highcharts highmaps
  * @since 8.0.0
+ * @requires     modules/marker-clusters
  * @optionparent plotOptions.scatter.cluster
- *
- * @private
  */
 const cluster: MarkerClusterOptions = {
 
@@ -66,6 +65,8 @@ const cluster: MarkerClusterOptions = {
      *         Maps marker clusters
      * @sample highcharts/marker-clusters/basic
      *         Scatter marker clusters
+     *
+     * @requires modules/marker-clusters
      */
     enabled: false,
 
@@ -75,6 +76,8 @@ const cluster: MarkerClusterOptions = {
      *
      * @sample highcharts/marker-clusters/grid
      *         Prevent overlapping
+     *
+     * @requires modules/marker-clusters
      */
     allowOverlap: true,
 
@@ -82,6 +85,7 @@ const cluster: MarkerClusterOptions = {
      * Options for the cluster marker animation.
      * @type    {boolean|Partial<Highcharts.AnimationOptionsObject>}
      * @default { "duration": 500 }
+     * @requires modules/marker-clusters
      */
     animation: {
         /** @ignore-option */
@@ -90,6 +94,8 @@ const cluster: MarkerClusterOptions = {
 
     /**
      * Zoom the plot area to the cluster points range when a cluster is clicked.
+     *
+     * @requires modules/marker-clusters
      */
     drillToCluster: true,
 
@@ -99,6 +105,8 @@ const cluster: MarkerClusterOptions = {
      *
      * @sample highcharts/marker-clusters/basic
      *         At least three points in the cluster
+     *
+     * @requires modules/marker-clusters
      */
     minimumClusterSize: 2,
 
@@ -106,6 +114,8 @@ const cluster: MarkerClusterOptions = {
      * Options for layout algorithm. Inside there
      * are options to change the type of the algorithm, gridSize,
      * distance or iterations.
+     *
+     * @requires modules/marker-clusters
      */
     layoutAlgorithm: {
 
@@ -183,6 +193,7 @@ const cluster: MarkerClusterOptions = {
          *
          * @type {string|Function}
          * @see [cluster.minimumClusterSize](#plotOptions.scatter.cluster.minimumClusterSize)
+         * @requires modules/marker-clusters
          * @apioption plotOptions.scatter.cluster.layoutAlgorithm.type
          */
 
@@ -193,6 +204,7 @@ const cluster: MarkerClusterOptions = {
          * of the plot area width.
          *
          * @type    {number|string}
+         * @requires modules/marker-clusters
          */
         gridSize: 50,
 
@@ -202,6 +214,7 @@ const cluster: MarkerClusterOptions = {
          * repeated to find clusters positions.
          *
          * @type    {number}
+         * @requires modules/marker-clusters
          * @apioption plotOptions.scatter.cluster.layoutAlgorithm.iterations
          */
 
@@ -213,6 +226,7 @@ const cluster: MarkerClusterOptions = {
          * defining a percentage of the plot area width.
          *
          * @type    {number|string}
+         * @requires modules/marker-clusters
          */
         distance: 40,
 
@@ -221,6 +235,8 @@ const cluster: MarkerClusterOptions = {
          * than the kmeansThreshold the `grid` algorithm is used to find
          * clusters, otherwise `kmeans`. It ensures good performance on
          * large datasets and better clusters arrangement after the zoom.
+         *
+         * @requires modules/marker-clusters
          */
         kmeansThreshold: 100
 
@@ -231,6 +247,7 @@ const cluster: MarkerClusterOptions = {
      * @type      {Highcharts.PointMarkerOptionsObject}
      * @extends   plotOptions.series.marker
      * @excluding enabledThreshold, states
+     * @requires  modules/marker-clusters
      */
     marker: {
         /** @internal */
@@ -252,6 +269,7 @@ const cluster: MarkerClusterOptions = {
      * @type      {Highcharts.MarkerClusterDrillCallbackFunction}
      * @product   highcharts highmaps
      * @see [cluster.drillToCluster](#plotOptions.scatter.cluster.drillToCluster)
+     * @requires  modules/marker-clusters
      * @apioption plotOptions.scatter.cluster.events.drillToCluster
      */
 
@@ -270,6 +288,7 @@ const cluster: MarkerClusterOptions = {
      *
      * @type      {Array<*>}
      * @product   highcharts highmaps
+     * @requires  modules/marker-clusters
      * @apioption plotOptions.scatter.cluster.zones
      */
 
@@ -280,6 +299,7 @@ const cluster: MarkerClusterOptions = {
      *         Zones styled by class name
      *
      * @type      {string}
+     * @requires  modules/marker-clusters
      * @apioption plotOptions.scatter.cluster.zones.className
      */
 
@@ -289,6 +309,7 @@ const cluster: MarkerClusterOptions = {
      * @see [cluster.marker](#plotOptions.scatter.cluster.marker)
      * @extends   plotOptions.scatter.cluster.marker
      * @product   highcharts highmaps
+     * @requires  modules/marker-clusters
      * @apioption plotOptions.scatter.cluster.zones.marker
      */
 
@@ -297,6 +318,7 @@ const cluster: MarkerClusterOptions = {
      *
      * @type      {number}
      * @product   highcharts highmaps
+     * @requires  modules/marker-clusters
      * @apioption plotOptions.scatter.cluster.zones.from
      */
 
@@ -305,6 +327,7 @@ const cluster: MarkerClusterOptions = {
      *
      * @type      {number}
      * @product   highcharts highmaps
+     * @requires  modules/marker-clusters
      * @apioption plotOptions.scatter.cluster.zones.to
      */
 
@@ -314,12 +337,14 @@ const cluster: MarkerClusterOptions = {
      * state is used.
      *
      * @type      {Highcharts.ColorType}
+     * @requires  modules/marker-clusters
      * @apioption plotOptions.scatter.cluster.states.hover.fillColor
      */
 
     /**
      * Options for the cluster data labels.
      * @type    {Highcharts.DataLabelsOptions}
+     * @requires modules/marker-clusters
      */
     dataLabels: {
         /** @internal */
@@ -358,6 +383,7 @@ const tooltip: Partial<TooltipOptions> = {
      *
      * @type      {string}
      * @default   Clustered points: {point.clusterPointsAmount}
+     * @requires  modules/marker-clusters
      * @apioption tooltip.clusterFormat
      */
     clusterFormat: '<span>Clustered points: ' +
@@ -371,9 +397,11 @@ const tooltip: Partial<TooltipOptions> = {
  *
  * */
 
+/** @internal */
 const MarkerClusterDefaults = {
     cluster,
     tooltip
 };
 
+/** @internal */
 export default MarkerClusterDefaults;

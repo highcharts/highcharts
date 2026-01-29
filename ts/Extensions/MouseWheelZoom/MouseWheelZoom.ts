@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2023 Torstein Honsi, Askel Eirik Johansson
+ *  (c) 2023-2026 Highsoft AS
+ *  Author: Torstein Honsi, Askel Eirik Johansson
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -18,7 +19,7 @@
 
 import type Chart from '../../Core/Chart/Chart';
 import type Axis from '../../Core/Axis/Axis';
-import type GlobalsLike from '../../Core/GlobalsLike';
+import type GlobalsBase from '../../Core/GlobalsBase';
 import type PointerEvent from '../../Core/PointerEvent';
 import type MouseWheelZoomOptions from './MouseWheelZoomOptions';
 import type DOMElementType from '../../Core/Renderer/DOMElementType';
@@ -41,14 +42,14 @@ const { getAssignedAxis } = NBU;
  *
  * */
 
-const composedClasses: Array<(Function|GlobalsLike)> = [],
+const composedClasses: Array<(Function|GlobalsBase)> = [],
     defaultOptions: MouseWheelZoomOptions = {
         enabled: true,
-        sensitivity: 1.1
+        sensitivity: 1.1,
+        showResetButton: false
     };
 
 let wheelTimer: number;
-
 
 /* *
  *
@@ -56,9 +57,7 @@ let wheelTimer: number;
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 const optionsToObject = (
     options?: boolean|MouseWheelZoomOptions
 ): MouseWheelZoomOptions => {
@@ -71,9 +70,7 @@ const optionsToObject = (
 };
 
 
-/**
- * @private
- */
+/** @internal */
 const zoomBy = function (
     chart: Chart,
     howMuch: number,
@@ -116,7 +113,8 @@ const zoomBy = function (
             width: 10 * howMuch,
             height: 10 * howMuch
         },
-        trigger: 'mousewheel'
+        trigger: 'mousewheel',
+        allowResetButton: options.showResetButton
     });
 
     if (hasZoomed) {
@@ -135,9 +133,7 @@ const zoomBy = function (
     return hasZoomed;
 };
 
-/**
- * @private
- */
+/** @internal */
 function onAfterGetContainer(this: Chart): void {
     const wheelZoomOptions = optionsToObject(this.zooming.mouseWheel);
 
@@ -191,9 +187,7 @@ function onAfterGetContainer(this: Chart): void {
 }
 
 
-/**
- * @private
- */
+/** @internal */
 function compose(
     ChartClass: typeof Chart
 ): void {
@@ -211,10 +205,12 @@ function compose(
  *
  * */
 
+/** @internal */
 const MouseWheelZoomComposition = {
     compose
 };
 
+/** @internal */
 export default MouseWheelZoomComposition;
 
 /* *
@@ -286,6 +282,20 @@ export default MouseWheelZoomComposition;
  * @since 11.1.0
  * @requires  modules/mouse-wheel-zoom
  * @apioption chart.zooming.mouseWheel.type
+ */
+
+/**
+ * Whether to enable the reset zoom button when zooming with the mouse wheel.
+ *
+ * @type      {boolean}
+ * @default   false
+ * @since {next}
+ * @requires  modules/mouse-wheel-zoom
+ * @sample    {highcharts} highcharts/mouse-wheel-zoom/reset-zoom-button
+ *            Enable reset zoom button for mouse wheel zooming
+ * @sample    {highstock} stock/mouse-wheel-zoom/reset-zoom-button
+ *            Enable reset zoom button for mouse wheel zooming
+ * @apioption chart.zooming.mouseWheel.showResetButton
  */
 
 (''); // Keeps doclets above in JS file

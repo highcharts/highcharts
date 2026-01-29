@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2024 Torstein Honsi, Magdalena Gut
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi, Magdalena Gut
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -164,7 +165,7 @@ class PictorialSeries extends ColumnSeries {
 
         // Initialize the animation. Set up the clipping rectangle.
         if (init && group) {
-            const clipBox = this.getClipBox();
+            const clipBox = chart.getClipBox(this);
             // Create temporary animation clips
             if (!animationClipRect) {
                 clipBox.y = clipBox.height;
@@ -182,7 +183,7 @@ class PictorialSeries extends ColumnSeries {
             // Only first series in this pane
             !animationClipRect.hasClass('highcharts-animating')
         ) {
-            const finalBox = this.getClipBox();
+            const finalBox = chart.getClipBox(this);
 
             animationClipRect
                 .addClass('highcharts-animating')

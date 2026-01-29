@@ -1,12 +1,13 @@
 /* *
  *
- *  (c) 2009-2024 Øystein Moseng
+ *  (c) 2009-2026 Highsoft AS
+ *  Author: Øystein Moseng
  *
  *  Class representing a TimelineChannel with sonification events to play.
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -35,7 +36,7 @@ declare global {
 /**
  * Represents a channel of TimelineEvents for an engine (either an instrument
  * or a speaker).
- * @private
+ * @internal
  */
 class TimelineChannel {
     events: Sonification.TimelineEvent[];

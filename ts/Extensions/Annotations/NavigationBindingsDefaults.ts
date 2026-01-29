@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2009-2024 Highsoft, Black Label
+ *  (c) 2009-2026 Highsoft AS
+ *  Author: Highsoft, Black Label
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -18,11 +19,10 @@
 
 import type Annotation from './Annotation';
 import type ControllableEllipse from './Controllables/ControllableEllipse';
-import type {
-    LangOptions,
-    NavigationOptions
-} from './NavigationBindingsOptions';
-import type MockPointOptions from './MockPointOptions';
+import type { DeepPartial } from '../../Shared/Types';
+import type { LangOptions } from '../../Core/Options';
+import type { NavigationOptions } from '../Exporting/NavigationOptions';
+import type MockPointOptions from './AnnotationMockPointOptionsObject';
 import type NavigationBindings from './NavigationBindings';
 import type PointerEvent from '../../Core/PointerEvent';
 
@@ -43,7 +43,7 @@ const {
 /**
  * @optionparent lang
  */
-const lang: LangOptions = {
+const lang: DeepPartial<LangOptions> = {
 
     /**
      * Configure the Popup strings in the chart. Requires the
@@ -109,6 +109,7 @@ const navigation: NavigationOptions = {
      * @type      {string}
      */
     bindingsClassName: 'highcharts-bindings-container',
+
     /**
      * Bindings definitions for custom HTML buttons. Each binding implements
      * simple event-driven interface:
@@ -148,6 +149,14 @@ const navigation: NavigationOptions = {
         circleAnnotation: {
             /** @ignore-option */
             className: 'highcharts-circle-annotation',
+
+            /**
+             * Options to customize the bindings' annotation shapes and labels.
+             * @type      {Highcharts.AnnotationsOptions}
+             * @extends   navigation.annotationsOptions
+             * @apioption navigation.bindings.circleAnnotation.annotationsOptions
+             */
+
             /** @ignore-option */
             start: function (
                 this: NavigationBindings,
@@ -206,9 +215,9 @@ const navigation: NavigationOptions = {
                     ) {
                         const inverted = this.chart.inverted,
                             x = this.chart.xAxis[mockPointOpts.xAxis]
-                                .toPixels(mockPointOpts.x),
+                                .toPixels(mockPointOpts.x as number),
                             y = this.chart.yAxis[mockPointOpts.yAxis]
-                                .toPixels(mockPointOpts.y);
+                                .toPixels(mockPointOpts.y as number);
 
                         distance = Math.max(
                             Math.sqrt(
@@ -234,7 +243,7 @@ const navigation: NavigationOptions = {
             ]
         },
         /**
-         * A ellipse annotation bindings. Includes `start` and two events in
+         * An ellipse annotation bindings. Includes `start` and two events in
          * `steps` array. First updates the second point, responsible for a
          * rx width, and second updates the ry width.
          *
@@ -243,6 +252,13 @@ const navigation: NavigationOptions = {
          */
         ellipseAnnotation: {
             className: 'highcharts-ellipse-annotation',
+            /**
+             * Options to customize the bindings' annotation shapes and labels.
+             * @type      {Highcharts.AnnotationsOptions}
+             * @extends   navigation.annotationsOptions
+             * @apioption navigation.bindings.ellipseAnnotation.annotationsOptions
+             */
+
             start: function (
                 this: NavigationBindings,
                 e: PointerEvent
@@ -341,6 +357,13 @@ const navigation: NavigationOptions = {
         rectangleAnnotation: {
             /** @ignore-option */
             className: 'highcharts-rectangle-annotation',
+            /**
+             * Options to customize the bindings' annotation shapes and labels.
+             * @type      {Highcharts.AnnotationsOptions}
+             * @extends   navigation.annotationsOptions
+             * @apioption navigation.bindings.rectangleAnnotation.annotationsOptions
+             */
+
             /** @ignore-option */
             start: function (
                 this: NavigationBindings,
@@ -432,6 +455,13 @@ const navigation: NavigationOptions = {
         labelAnnotation: {
             /** @ignore-option */
             className: 'highcharts-label-annotation',
+            /**
+             * Options to customize the bindings' annotation shapes and labels.
+             * @type      {Highcharts.AnnotationsOptions}
+             * @extends   navigation.annotationsOptions
+             * @apioption navigation.bindings.labelAnnotation.annotationsOptions
+             */
+
             /** @ignore-option */
             start: function (
                 this: NavigationBindings,
@@ -562,9 +592,11 @@ const navigation: NavigationOptions = {
  *
  * */
 
+/** @internal */
 const NavigationBindingDefaults = {
     lang,
     navigation
 };
 
+/** @internal */
 export default NavigationBindingDefaults;
