@@ -25,7 +25,7 @@
 
 import type Axis from '../../Core/Axis/Axis';
 import type { EventCallback } from '../../Core/Callback';
-import type Exporting from '../Exporting/Exporting';
+import type { Exporting } from '../Exporting/Exporting';
 import type HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type {
@@ -71,71 +71,97 @@ const {
  *
  * */
 
-/** @internal */
 declare module '../../Core/Chart/ChartBase'{
     interface ChartBase {
         /**
-         * Deprecated in favor of [Exporting.downloadCSV](https://api.highcharts.com/class-reference/Highcharts.Exporting#downloadCSV).
+         * Deprecated. Use
+         * [Exporting.downloadCSV](https://api.highcharts.com/class-reference/Highcharts.Exporting#downloadCSV)
+         * instead.
          *
-         * @deprecated */
+         * @deprecated 12.2.0
+         */
         downloadCSV(): void;
 
         /**
-         * Deprecated in favor of [Exporting.downloadXLS](https://api.highcharts.com/class-reference/Highcharts.Exporting#downloadXLS).
+         * Deprecated. Use
+         * [Exporting.downloadXLS](https://api.highcharts.com/class-reference/Highcharts.Exporting#downloadXLS)
+         * instead.
          *
-         * @deprecated */
+         * @deprecated 12.2.0
+         */
         downloadXLS(): void;
 
         /**
-         * Deprecated in favor of [Exporting.getCSV](https://api.highcharts.com/class-reference/Highcharts.Exporting#getCSV).
+         * Deprecated. Use
+         * [Exporting.getCSV](https://api.highcharts.com/class-reference/Highcharts.Exporting#getCSV)
+         * instead.
          *
-         * @deprecated */
+         * @deprecated 12.2.0
+         */
         getCSV(
             useLocalDecimalPoint?: boolean
         ): (string | undefined);
 
         /**
-         * Deprecated in favor of [Exporting.getDataRows](https://api.highcharts.com/class-reference/Highcharts.Exporting#getDataRows).
+         * Deprecated. Use
+         * [Exporting.getDataRows](https://api.highcharts.com/class-reference/Highcharts.Exporting#getDataRows)
+         * instead.
          *
-         * @deprecated */
+         * @deprecated 12.2.0
+         */
         getDataRows(
             multiLevelHeaders?: boolean
         ): (Array<Array<(number | string)>> | undefined);
 
         /**
-         * Deprecated in favor of [Exporting.getTable](https://api.highcharts.com/class-reference/Highcharts.Exporting#getTable).
+         * Deprecated. Use
+         * [Exporting.getTable](https://api.highcharts.com/class-reference/Highcharts.Exporting#getTable)
+         * instead.
          *
-         * @deprecated */
+         * @deprecated 12.2.0
+         */
         getTable(
             useLocalDecimalPoint?: boolean
         ): (string | undefined);
 
         /**
-         * Deprecated in favor of [Exporting.getTableAST](https://api.highcharts.com/class-reference/Highcharts.Exporting#getTableAST).
+         * Deprecated. Use
+         * [Exporting.getTableAST](https://api.highcharts.com/class-reference/Highcharts.Exporting#getTableAST)
+         * instead.
          *
-         * @deprecated */
+         * @deprecated 12.2.0
+         */
         getTableAST(
             useLocalDecimalPoint?: boolean
         ): (AST.Node | undefined);
 
         /**
-         * Deprecated in favor of [Exporting.hideData](https://api.highcharts.com/class-reference/Highcharts.Exporting#hideData).
+         * Deprecated. Use
+         * [Exporting.hideData](https://api.highcharts.com/class-reference/Highcharts.Exporting#hideData)
+         * instead.
          *
-         * @deprecated */
+         * @deprecated 12.2.0
+         */
         hideData(): void;
 
         /**
-         * Deprecated in favor of [Exporting.toggleDataTable](https://api.highcharts.com/class-reference/Highcharts.Exporting#toggleDataTable).
+         * Deprecated. Use
+         * [Exporting.toggleDataTable](https://api.highcharts.com/class-reference/Highcharts.Exporting#toggleDataTable)
+         * instead.
          *
-         * @deprecated */
+         * @deprecated 12.2.0
+         */
         toggleDataTable(
             show?: boolean
         ): void;
 
         /**
-         * Deprecated in favor of [Exporting.viewData](https://api.highcharts.com/class-reference/Highcharts.Exporting#viewData).
+         * Deprecated. Use
+         * [Exporting.viewData](https://api.highcharts.com/class-reference/Highcharts.Exporting#viewData)
+         * instead.
          *
-         * @deprecated */
+         * @deprecated 12.2.0
+         */
         viewData(): void;
     }
 }
@@ -503,7 +529,7 @@ namespace ExportData {
             // Update with defaults of the export data module
             setOptions(ExportDataDefaults);
 
-            // Additionaly, extend the menuItems with the export data variants
+            // Additionally, extend the menuItems with the export data variants
             const menuItems =
                 getOptions().exporting?.buttons?.contextButton?.menuItems;
             menuItems && menuItems.push(
