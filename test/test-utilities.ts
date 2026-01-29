@@ -145,7 +145,7 @@ class TestUtilities {
      * @param clock
      * The clock object
      */
-    private static lolexRunAndUninstall (clock?: LolexClock) { // eslint-disable-line no-unused-vars
+    private static lolexRunAndUninstall (clock?: LolexClock) {
 
         if (!clock || !lolex) {
             return;

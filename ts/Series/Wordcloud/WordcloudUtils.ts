@@ -335,7 +335,6 @@ function archimedeanSpiral(
  */
 function squareSpiral(
     attempt: number,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     params?: WordcloudSeries.WordcloudSpiralParamsObject
 ): (boolean|PositionObject) {
     const a = attempt * 4,

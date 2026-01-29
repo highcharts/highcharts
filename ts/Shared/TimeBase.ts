@@ -192,7 +192,7 @@ class TimeBase {
      * @internal
      * @function Highcharts.Time#update
      *
-     * @param {Highcharts.TimeOptions} [options]
+     * @param {Highcharts.TimeOptions} [options] Time options
      *
      */
     public update(
@@ -538,7 +538,6 @@ class TimeBase {
      */
     public getTimezoneOffset(timestamp: number|Date): number {
         if (this.timezone !== 'UTC') {
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const [date, gmt, hours, colon, minutes = 0] =
                 this.dateTimeFormat(
                     { timeZoneName: 'shortOffset' },

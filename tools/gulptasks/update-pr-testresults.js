@@ -91,7 +91,7 @@ function readTestResultsFile(filePath) {
     return false;
 }
 
-// eslint-disable-next-line no-unused-vars,require-jsdoc
+// eslint-disable-next-line require-jsdoc
 function completeTask(message) {
     if (!argv.failSilently) {
         return Promise.reject(new Error(message));
