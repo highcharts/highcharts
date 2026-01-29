@@ -26,6 +26,23 @@ In order to use a series that is not part of the main Highcharts bundle, you can
 either [load the required module](https://www.highcharts.com/docs/react/options#setting-a-custom-highcharts-instance)
 from the main `highcharts` package, or use the series component for that series.
 
+### Adjust series options
+
+If you wish to adjust series options, use the `options` prop:
+```jsx
+<Series
+  id="series"
+  type="column"
+  data={[1, 2, 3]}
+  options={{
+    name: 'series',
+    color: 'red'
+  }}
+/>
+```
+
+**Note:** The `id` and `className` attributes can be set either via `options` or directly on `Series`.
+
 ## Add series dynamically
 
 Because `Series` components are regular React components, you can create them from
@@ -200,7 +217,7 @@ export function MapsChart() {
 }
 ```
 
-### Bubble
+## Bubble
 
 Use the `BubbleSeries` component for bubble charts. Data points are three-dimensional tuples `[x, y, z]`.
 
@@ -262,6 +279,81 @@ export default function ChartComponent() {
 ReactDOM.createRoot(
     document.querySelector('#container')
 )?.render(<ChartComponent />);
+```
+
+## Drill down
+
+Use the `Drilldown` component for drilldown series by mirroring the [Highcharts configuration](https://www.highcharts.com/docs/chart-concepts/drilldown).
+You can define an `id` for each drilldown series directly on `Series`.
+
+```jsx
+import { Chart, Series } from '@highcharts/react';
+import { Drilldown } from '@highcharts/react/options/Drilldown';
+
+export function DrilldownChart() {
+  return (
+    <Chart
+      options={{
+        chart: {
+          type: 'column'
+        },
+        xAxis: {
+          type: 'category'
+        },
+        legend: {
+          enabled: false
+        }
+      }}
+    >
+      <Series
+        data={[
+          {
+            name: 'Animals',
+            y: 5,
+            drilldown: 'animals'
+          },
+          {
+            name: 'Fruits',
+            y: 2,
+            drilldown: 'fruits'
+          },
+          {
+            name: 'Cars',
+            y: 4,
+            drilldown: 'cars'
+          }
+        ]}
+        options={{ name: 'Things', colorByPoint: true }}
+      />
+      <Drilldown>
+        <Series
+          id="animals"
+          data={[
+            ['Cats', 3],
+            ['Dogs', 5],
+            ['Cows', 2]
+          ]}
+        />
+        <Series
+          id="fruits"
+          data={[
+            ['Apples', 2],
+            ['Oranges', 5],
+            ['Bananas', 1]
+          ]}
+        />
+        <Series
+          id="cars"
+          data={[
+            ['Toyota', 3],
+            ['Opel', 2],
+            ['Volkswagen', 2]
+          ]}
+        />
+      </Drilldown>
+    </Chart>
+  );
+}
 ```
 
 **Live demo:**
