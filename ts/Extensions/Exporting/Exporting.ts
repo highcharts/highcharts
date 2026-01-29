@@ -1632,8 +1632,7 @@ class Exporting {
             options: (Options | undefined) = merge<Options>(
                 chart.options,
                 chartOptions
-            ),
-            webgpuCanvasImage: SVGElement | undefined;
+            );
 
         // Use userOptions to make the options chain in series right (#3881)
         options.plotOptions = merge(
@@ -1809,12 +1808,12 @@ class Exporting {
                     { colorSpace: 'display-p3' }
                 );
 
-            if (srcCanvas && ctx) {
+            if (src && srcCanvas && ctx) {
                 const width = dstCanvas.width = srcCanvas.width,
                     height = dstCanvas.height = srcCanvas.height;
 
-                const webgpuToImage = (): SVGElement => {
-                    const imageData = new ImageData(
+                ctx.putImageData(
+                    new ImageData(
                         new Uint8ClampedArray(
                             src.buffer,
                             src.byteOffset,
@@ -1823,61 +1822,55 @@ class Exporting {
                         width,
                         height,
                         { colorSpace: 'display-p3' }
-                    );
-                    ctx.putImageData(imageData, 0, 0);
+                    ),
+                    0,
+                    0
+                );
 
-                    return chart.renderer.image(
-                        dstCanvas.toDataURL(),
-                        0,
-                        0,
-                        chartCopy.plotWidth,
-                        chartCopy.plotHeight
-                    );
-                };
+                const webgpuCanvasImage = chart.renderer.image(
+                    dstCanvas.toDataURL(),
+                    0,
+                    0,
+                    chartCopy.plotWidth,
+                    chartCopy.plotHeight
+                );
 
-                if (src) {
-                    webgpuCanvasImage = webgpuToImage();
+                if (this.options.local) {
+                    webgpuCanvasImage.element.setAttributeNS(
+                        'http://www.w3.org/1999/xlink',
+                        'href',
+                        webgpuCanvasImage.element.getAttribute('href') || ''
+                    );
+
+                    const contourCopy = chartCopy
+                        .series
+                        .find((s): boolean => s.type === 'contour') as any;
+
+                    webgpuCanvasImage.add(contourCopy.group);
+                } else {
+                    const dataURL = (
+                        webgpuCanvasImage.element.getAttribute('href') ||
+                        webgpuCanvasImage.element.getAttribute(
+                            'xlink:href'
+                        ) ||
+                        ''
+                    );
+                    const imgTag = (
+                        `<image href="${
+                            dataURL
+                        }" />`
+                    );
+
+                    const contourGroupPattern = new RegExp(
+                        '(<g[^>]*class="[^"]*\\bhighcharts-contour-series\\b' +
+                        '[^"]*"[^>]*>)([\\s\\S]*?)</g>'
+                    );
+
+                    svg = svg.replace(
+                        contourGroupPattern,
+                        `$1$2${imgTag}</g>`
+                    );
                 }
-            }
-        }
-
-
-        if (webgpuCanvasImage) {
-
-            if (this.options.local) {
-                webgpuCanvasImage.element.setAttributeNS(
-                    'http://www.w3.org/1999/xlink',
-                    'href',
-                    webgpuCanvasImage.element.getAttribute('href') || ''
-                );
-
-                const contourCopy = chartCopy
-                    .series
-                    .find((s): boolean => s.type === 'contour') as any;
-
-                webgpuCanvasImage.add(contourCopy.group);
-            } else {
-                const dataURL = (
-                    webgpuCanvasImage.element.getAttribute('href') ||
-                    webgpuCanvasImage.element.getAttribute('xlink:href') || ''
-                );
-                const imgTag = (
-                    `<image preserveAspectRatio="none" x="0" y="0" width="${
-                        this.options.width
-                    }" href="${
-                        dataURL
-                    }" />`
-                );
-
-                const contourGroupPattern = new RegExp(
-                    '(<g[^>]*class="[^"]*\\bhighcharts-contour-series\\b' +
-                    '[^"]*"[^>]*>)([\\s\\S]*?)</g>'
-                );
-
-                svg = svg.replace(
-                    contourGroupPattern,
-                    `$1$2${imgTag}</g>`
-                );
             }
         }
 
