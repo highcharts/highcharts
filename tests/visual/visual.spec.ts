@@ -1,7 +1,6 @@
-/* eslint-disable playwright/no-conditional-expect */
 /* eslint-disable playwright/no-conditional-in-test */
 import type { Page, BrowserContext } from '@playwright/test';
-import { test, expect} from '@playwright/test';
+import { test } from '@playwright/test';
 import { setupRoutes } from '~/fixtures.ts';
 import {
     getKarmaScripts,
@@ -11,6 +10,34 @@ import {
 } from '~/utils.ts';
 import { join, dirname, relative } from 'node:path';
 import { glob } from 'glob';
+import { compareSVG, closeCompareBrowser } from './visual-compare';
+
+type HighchartsChart = {
+    container?: HTMLElement;
+    renderer?: { forExport?: boolean };
+    styledMode?: boolean;
+};
+
+type HighchartsNamespace = {
+    charts?: Array<HighchartsChart | undefined>;
+    prepareShot?: (chart: HighchartsChart) => void;
+    setOptions?: (options: { 
+        chart?: { events?: { load?: () => void } 
+        } }) => void;
+};
+
+type VisualWindow = Window & {
+    Highcharts?: HighchartsNamespace;
+    setHCStyles?: (chart: HighchartsChart) => void;
+    highchartsCSS?: string;
+    HCVisualSetup?: {
+        initialized?: boolean;
+        configure?: (options: { mode: string }) => void;
+        markOptionsClean?: () => void;
+        beforeSample?: () => void;
+        afterSample?: () => void;
+    };
+};
 
 function transformVisualSampleScript(script: string | undefined): string {
     let transformed = script ?? '';
@@ -27,6 +54,26 @@ function transformVisualSampleScript(script: string | undefined): string {
     return `;(function () {\n${transformed.trim()}\n}).call(window);`;
 }
 
+const GOOGLE_FONT_LINK_REGEX =
+    /<link[a-z"=:./ ]+(fonts\.googleapis\.com|fonts\.gstatic\.com)[^>]+>/gi;
+const DEMO_CSS_IMPORT_REGEX = /@import [^;]+;/g;
+
+function stripGoogleFontLinks(html: string | undefined): string | undefined {
+    if (!html) {
+        return html;
+    }
+
+    return html.replace(GOOGLE_FONT_LINK_REGEX, '');
+}
+
+function stripDemoCssImports(css: string | undefined): string | undefined {
+    if (!css) {
+        return css;
+    }
+
+    return css.replace(DEMO_CSS_IMPORT_REGEX, '');
+}
+
 const FIXED_CLOCK_TIME = '2024-01-01T00:00:00.000Z';
 const MAX_CHART_LOAD_ATTEMPTS = 100;
 const CHART_LOAD_RETRY_DELAY_MS = 100;
@@ -34,6 +81,9 @@ const CHART_LOAD_TIMEOUT_MS =
     MAX_CHART_LOAD_ATTEMPTS * CHART_LOAD_RETRY_DELAY_MS;
 
 const defaultPageContent = '<div id="container" style="width: 600px; margin 0 auto"></div>';
+
+const getRelativeSamplePath = (samplePath: string): string =>
+    relative(process.cwd(), samplePath).replace(/\\/g, '/');
 
 const pageTemplate = (bodyContent = '') =>
     `<!DOCTYPE html>
@@ -47,7 +97,8 @@ const pageTemplate = (bodyContent = '') =>
 
 test.describe('Visual tests', () => {
     test.describe.configure({
-        timeout: 5_000,
+        mode: 'serial',
+        timeout: CHART_LOAD_TIMEOUT_MS + 5_000,
     });
 
     let page: Page | undefined;
@@ -110,7 +161,9 @@ test.describe('Visual tests', () => {
             const elementsToRemove = document.querySelectorAll(
                 '#visual-test-script, #visual-test-styles'
             );
-            elementsToRemove.forEach((el) => el.remove());
+            for (const element of elementsToRemove) {
+                element.remove();
+            }
         });
 
         await page.evaluate(() => window.HCVisualSetup?.afterSample());
@@ -129,6 +182,12 @@ test.describe('Visual tests', () => {
 
     const pathEnv = process.env.VISUAL_TEST_PATH ?? '';
     const pathFilters = pathEnv
+        .split(/[,;\n]/)
+        .map((value) => value.trim())
+        .filter(Boolean)
+        .map((value) => value.replace(/\\/g, '/'));
+    const productEnv = process.env.VISUAL_TEST_PRODUCT ?? '';
+    const productFilters = productEnv
         .split(/[,;\n]/)
         .map((value) => value.trim())
         .filter(Boolean)
@@ -207,19 +266,32 @@ test.describe('Visual tests', () => {
         windowsPathsNoEscape: true
     });
 
-    const filteredSamples = pathFilters.length ?
-        samples.filter((samplePath) => {
-            const relativePath = relative(process.cwd(), samplePath).replace(/\\/g, '/');
+    const filteredSamples = samples.filter((samplePath) => {
+        const relativePath = getRelativeSamplePath(samplePath);
+
+        if (productFilters.length) {
+            const matchesProduct = productFilters.some((product) =>
+                relativePath.includes(`samples/${product}/`)
+            );
+            if (!matchesProduct) {
+                return false;
+            }
+        }
+
+        if (pathFilters.length) {
             return pathFilters.some(
                 (pathFilter) =>
                     relativePath.includes(pathFilter) ||
                     samplePath.includes(pathFilter)
             );
-        }) :
-        samples;
+        }
+
+        return true;
+    });
 
     for (const samplePath of filteredSamples){
-        test(samplePath + '', async () =>{
+        // eslint-disable-next-line playwright/expect-expect
+        test(`${samplePath}`, async () =>{
             if (context) {
                 await context.clock.setFixedTime(FIXED_CLOCK_TIME);
             }
@@ -227,6 +299,16 @@ test.describe('Visual tests', () => {
             const sample = getSample(dirname(samplePath), true);
             if (sample.script && samplePath.endsWith('.ts')) {
                 sample.script = transpileTS(sample.script);
+            }
+
+            sample.html = stripGoogleFontLinks(sample.html);
+
+            const hasModuleImports = sample.script ?
+                /^\s*import\s/m.test(sample.script) :
+                false;
+            if (hasModuleImports) {
+                // eslint-disable-next-line playwright/no-skipped-test
+                test.skip();
             }
 
             if (
@@ -241,24 +323,28 @@ test.describe('Visual tests', () => {
                 throw new Error('Page not initialized');
             }
 
+            const sampleHtml = sample.html ?? defaultPageContent;
+
             await page.evaluate(body => {
                 window.HCVisualSetup?.beforeSample();
 
                 const testContainer = document.querySelector('div[data-test-container]');
                 testContainer.innerHTML = body;
-            }, sample.html ?? defaultPageContent);
+            }, sampleHtml);
 
             await setTestingOptions(page);
 
             await page.evaluate(() => {
                 window.HCVisualSetup?.markOptionsClean();
 
-                if (window.Highcharts) {
-                    (window.Highcharts as any).setOptions({
+                const hcWindow = window as VisualWindow;
+                if (hcWindow.Highcharts?.setOptions) {
+                    hcWindow.Highcharts.setOptions({
                         chart: {
                             events: {
                                 load: function () {
-                                    (window as any).setHCStyles(this);
+                                    (window as VisualWindow)
+                                        .setHCStyles?.(this as HighchartsChart);
                                 }
                             }
                         }
@@ -271,11 +357,14 @@ test.describe('Visual tests', () => {
                 sample.script
             );
             const isStyledMode = transformedScript.indexOf('styledMode: true') !== -1;
+            const demoCss = isStyledMode ?
+                stripDemoCssImports(sample.css) :
+                sample.css;
 
             if (isStyledMode) {
                 // Add highcharts.css
                 const highchartsCSS = await page.evaluate(() => {
-                    return (window as any).highchartsCSS || '';
+                    return (window as VisualWindow).highchartsCSS || '';
                 });
 
                 if (highchartsCSS) {
@@ -283,27 +372,33 @@ test.describe('Visual tests', () => {
                         content: highchartsCSS
                     });
                     await styleHandle.evaluate(
-                        (el: HTMLStyleElement) => el.id = 'highcharts.css'
+                        (el: HTMLStyleElement) => {
+                            el.id = 'highcharts.css';
+                        }
                     );
                 }
 
                 // Add demo.css if exists (for styled mode, use id 'demo.css' for SVG injection)
-                if (sample.css) {
+                if (demoCss) {
                     const styleHandle = await page.addStyleTag({
-                        content: sample.css
+                        content: demoCss
                     });
                     await styleHandle.evaluate(
-                        (el: HTMLStyleElement) => el.id = 'demo.css'
+                        (el: HTMLStyleElement) => {
+                            el.id = 'demo.css';
+                        }
                     );
                 }
             } else {
                 // For non-styled mode, add demo.css with standard id
-                if (sample.css) {
+                if (demoCss) {
                     const styleHandle = await page.addStyleTag({
-                        content: sample.css
+                        content: demoCss
                     });
                     await styleHandle.evaluate(
-                        (el: HTMLStyleElement) => el.id = 'visual-test-styles'
+                        (el: HTMLStyleElement) => {
+                            el.id = 'visual-test-styles';
+                        }
                     );
                 }
             }
@@ -315,9 +410,48 @@ test.describe('Visual tests', () => {
 
             try {
                 // Wait for chart to load, similar to karma-conf.js waitForChartToLoad
-                const { chartCount, svgContent } = await page.evaluate(
+                const { svgContent } = await page.evaluate(
                     async ({ maxAttempts, retryDelay, timeoutMs }) => {
-                        const Highcharts = (window as any).Highcharts;
+                        const Highcharts = (window as VisualWindow).Highcharts;
+
+                        const isTiledWebMapReady = (chart) => {
+                            if (!chart || !chart.series) {
+                                return true;
+                            }
+
+                            const tiledSeries = chart.series
+                                .filter(series =>
+                                    series &&
+                                    series.type === 'tiledwebmap' &&
+                                    series.visible !== false
+                                );
+
+                            if (!tiledSeries.length) {
+                                return true;
+                            }
+
+                            const zoom = typeof chart.mapView?.zoom === 'number' ?
+                                Math.floor(chart.mapView.zoom) :
+                                null;
+                            const zoomKey = zoom === null ? 
+                                null : String(Math.max(0, zoom));
+
+                            return tiledSeries.every(series => {
+                                const tiles = (series as {
+                                    tiles?: Record<string, { loaded?: boolean }>
+                                }).tiles;
+                                if (!tiles) {
+                                    return false;
+                                }
+
+                                if (zoomKey && tiles[zoomKey]?.loaded) {
+                                    return true;
+                                }
+
+                                return Object.values(tiles)
+                                    .some(tile => Boolean(tile?.loaded));
+                            });
+                        };
 
                         // Modern while loop approach instead of recursion
                         let attempts = 0;
@@ -325,24 +459,38 @@ test.describe('Visual tests', () => {
                             const chart = Highcharts?.charts?.at(-1);
 
                             if (chart || document.getElementsByTagName('svg').length) {
+                                if (document.fonts && document.fonts.status !== 'loaded') {
+                                    await document.fonts.ready;
+                                }
+
+                                if (chart && !isTiledWebMapReady(chart)) {
+                                    attempts++;
+                                    await new Promise(
+                                        resolve => 
+                                            setTimeout(resolve, retryDelay)
+                                    );
+                                    continue;
+                                }
+
                                 // Chart exists, prepare shot like karma-setup.js:prepareShot
-                                if (Highcharts && chart) {
+                                if (Highcharts?.prepareShot && chart) {
                                     Highcharts.prepareShot(chart);
                                 }
 
                                 // Extract SVG similar to karma-setup.js:getSVG
                                 const validCharts = Highcharts?.charts?.filter(
-                                    (c: any) => c &&
-                                        c.container &&
-                                        !c.renderer?.forExport
+                                    candidate => Boolean(
+                                        candidate?.container &&
+                                        !candidate?.renderer?.forExport
+                                    )
                                 ) || [];
 
                                 const count = validCharts.length;
                                 let svg: string | null = null;
 
                                 if (count >= 1 && validCharts[0]) {
-                                    const container = validCharts[0].container;
-                                    const svgElement = container.querySelector('svg');
+                                    const container = validCharts[0]?.container;
+                                    const svgElement = container?.querySelector('svg');
 
                                     if (svgElement) {
                                         // Step 1: Extract SVG and add xmlns:xlink namespace
@@ -352,7 +500,7 @@ test.describe('Visual tests', () => {
                                         );
 
                                         // Step 2: For styled mode, inject CSS into SVG like karma-setup.js
-                                        if (validCharts[0].styledMode) {
+                                        if (validCharts[0]?.styledMode) {
                                             // Inject Highcharts base CSS
                                             const highchartsCSS = document.getElementById('highcharts.css');
                                             if (highchartsCSS) {
@@ -411,28 +559,43 @@ test.describe('Visual tests', () => {
                 );
 
                 if (svgContent) {
-                    expect(svgContent).toMatchSnapshot(`${samplePath}.svg`);
-                }
-
-                if (svgContent && chartCount === 1) {
-                    // For single chart, still take screenshot but don't compare
-                    await page.screenshot({ fullPage: true });
-                } else {
-                    await expect(page).toHaveScreenshot({
-                        fullPage: true
-                    });
-                }
-            } catch {
-                // noop
-            } finally {
-                if (page && scriptHandle) {
-                    await scriptHandle.evaluate(
-                        (element: HTMLScriptElement) => {
-                            element.id = 'visual-test-script';
+                    const updateSnapshots = test.info().config.updateSnapshots;
+                    const referenceMode = !['missing', 'none'].some(
+                        (mode) => updateSnapshots.includes(mode)
+                    );
+                    const comparison = await compareSVG(
+                        samplePath, 
+                        svgContent, {
+                            generateDiff: true,
+                            referenceMode
                         }
                     );
+
+                    if (!comparison.passed) {
+                        throw new Error(
+                            `Visual diff ${comparison.diffPixels} pixels.`
+                        );
+                    }
+                }
+
+                await page.screenshot({ fullPage: true });
+            } finally {
+                if (page && scriptHandle && !page.isClosed()) {
+                    try {
+                        await scriptHandle.evaluate(
+                            (element: HTMLScriptElement) => {
+                                element.id = 'visual-test-script';
+                            }
+                        );
+                    } catch {
+                        // Ignore cleanup failures if the page closed.
+                    }
                 }
             }
         });
     }
+
+    test.afterAll(async () => {
+        await closeCompareBrowser();
+    });
 });

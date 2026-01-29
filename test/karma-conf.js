@@ -4,12 +4,9 @@ const fs = require('fs');
 const yaml = require('js-yaml');
 const path = require('path');
 const os = require('os');
-const { getLatestCommitShaSync } = require('../tools/libs/git');
 const log = require('../tools/libs/log');
 const aliases = require('../samples/data/json-sources/index.json');
 
-const VISUAL_TEST_REPORT_PATH = 'test/visual-test-results.json';
-const version = require('../package.json').version;
 
 const highchartsCSS = fs.readFileSync(
     path.join(__dirname, '../code/css/highcharts.css'),
@@ -406,8 +403,7 @@ module.exports = function (config) {
         concurrency: Infinity,
         reportSlowerThan: 3000,
         plugins: [
-            'karma-*',
-            require('./karma-imagecapture-reporter.js')
+            'karma-*'
         ],
         sharding: {
           specMatcher: /(spec|test|demo)s?\.js/i
@@ -448,7 +444,7 @@ module.exports = function (config) {
 
         preprocessors: {
             '**/unit-tests/*/*/demo.js': ['generic'],
-            // Preprocess the visual tests
+            // Preprocess sample tests
             '**/highcharts/*/*/demo.js': ['generic'],
             '**/maps/*/*/demo.js': ['generic'],
             '**/stock/*/*/demo.js': ['generic'],
@@ -458,9 +454,7 @@ module.exports = function (config) {
         },
 
         /*
-         The preprocessor intervenes with the visual tests and transform them
-         to unit tests by comparing a bitmap of the genearated SVG to the
-         reference image and asserting the difference.
+         Transform samples into QUnit tests.
          */
         genericPreprocessor: {
             rules: [{
@@ -546,85 +540,17 @@ module.exports = function (config) {
                     // Skipped from demo.details
                     if (handleDetails(path) === false) {
                         file.path = file.originalPath + '.preprocessed.js';
-                        if (argv.visualcompare) {
-                            // QUnit will explode when all tests within a module are skipped. Omitting test instead.
-                            done(`console.log('Not adding test ${path} due to being skipped from demo.details');`);
-                        } else {
-                            done(`QUnit.skip('${path}');`);
-                        }
+                        done(`QUnit.skip('${path}');`);
                         return;
                     }
 
-                    let assertion;
-
-                    // Set reference image
-                    if (argv.reference) {
-                        assertion = `
-                            let svg = getSVG(chart);
-                            saveSVGSnapshot(svg, '${path}/reference.svg');
-
-                            assert.ok(
-                                svg,
-                                '${path}: SVG and reference.svg file should be generated'
-                            );
-                            done();
-                        `;
-
-                    } else if (argv.visualcompare) {
-                        if (!argv.remotelocation && !fs.existsSync(
-                            `./samples/${path}/reference.svg`
-                        )) {
-                            console.log(
-                                'Reference file doesn\'t exist: '.yellow +
-                                ` ./samples/${path}/reference.svg`
-                            );
-                            file.path = file.originalPath + '.preprocessed.js';
-                            // QUnit will explode when all tests within a module are skipped. Omitting test instead.
-                            done(`console.log('Not adding test ${path} due to non-existing reference.svg file.');`);
-                            return;
-                        }
-                        assertion = `
-                        compareToReference(chart, '${path}')
-                            .then(actual => {
-                                assert.strictEqual(
-                                    actual,
-                                    0,
-                                    'Different pixels\\n' +
-                                    '- http://utils.highcharts.local/samples/#test/${path}\\n' +
-                                    '- samples/${path}/reference.svg\\n' +
-                                    '- samples/${path}/diff.gif'
-                                );
-                            })
-                            .catch(err => {
-                                assert.ok(false, err);
-                                console.error(err);
-                            })
-                            .finally(() => {
-                                done();
-                            });
-                        `;
-                    }
                     file.path = file.originalPath + '.preprocessed.js';
-                    const testTemplate = createVisualTestTemplate(argv, path, js, assertion);
+                    const testTemplate = createVisualTestTemplate(path, js);
                     done(testTemplate);
                 }
             }]
         }
     };
-
-    if (argv.reference) {
-        saveGitShaToTestReportFile();
-        options.referenceRun = true;
-    }
-
-    if (argv.visualcompare || argv.reference) {
-        options.reporters.push('imagecapture');
-        options.imageCapture = {
-            resultsOutputPath: VISUAL_TEST_REPORT_PATH,
-        };
-        options.browserDisconnectTolerance = 1; // default 0
-        options.browserDisconnectTimeout = 30000; // default 2000
-    }
 
     if (browsers.some(browser => /^(Mac|Win)\./.test(browser))) {
         let properties = getProperties();
@@ -702,7 +628,7 @@ module.exports = function (config) {
     config.set(options);
 };
 
-function createVisualTestTemplate(argv, samplePath, scriptBody, assertion) {
+function createVisualTestTemplate(samplePath, scriptBody) {
     // Don't do intervals (typically for gauge samples, add point etc)
     scriptBody = scriptBody.replace('setInterval', 'Highcharts.noop');
 
@@ -810,10 +736,6 @@ function createVisualTestTemplate(argv, samplePath, scriptBody, assertion) {
                 now: Date.UTC(2019, 7, 1)
             });
 
-            /*
-             * we expect 2 callbacks if --visualcompare argument is supplied,
-             * one for the test comparison and one for checking if chart exists.
-             */
             var done = assert.async();
 
             ${scriptBody}
@@ -825,10 +747,8 @@ function createVisualTestTemplate(argv, samplePath, scriptBody, assertion) {
                 ];
 
                 if (chart || document.getElementsByTagName('svg').length) {
-                    ${assertion ? assertion : `
-                        assert.ok(true, 'Chart and SVG should exist.');
-                        done();
-                    `}
+                    assert.ok(true, 'Chart and SVG should exist.');
+                    done();
                     assert.test.resets = ${resets};
                 } else if (attempts < 100) {
                     originalSetTimeout(waitForChartToLoad, 100);
@@ -847,14 +767,4 @@ function createVisualTestTemplate(argv, samplePath, scriptBody, assertion) {
             TestUtilities.lolexUninstall(clock);
         });
     `;
-}
-
-function saveGitShaToTestReportFile() {
-    const metaData = {
-        meta: {
-            referenceGitSha: getLatestCommitShaSync(),
-            referenceVersion: version
-        }
-    };
-    fs.writeFileSync(VISUAL_TEST_REPORT_PATH, JSON.stringify(metaData, null, ' '));
 }
