@@ -21,7 +21,7 @@
  * */
 
 import type { LangOptions } from '../../Core/Options';
-import type NoDataOptions from './NoDataOptions';
+import type { NoDataOptions } from './NoDataOptions';
 
 import { Palette } from '../../Core/Color/Palettes.js';
 
@@ -46,6 +46,7 @@ const lang: Partial<LangOptions> = {
      * @since    3.0.8
      * @product  highcharts highstock
      * @requires modules/no-data-to-display
+     * @default  'No data to display'
      */
     noData: 'No data to display'
 };
@@ -62,6 +63,7 @@ const lang: Partial<LangOptions> = {
  *
  * @product      highcharts highstock gantt
  * @requires     modules/no-data-to-display
+ * @since        3.0.8
  * @optionparent noData
  */
 const noData: NoDataOptions = {
@@ -72,6 +74,7 @@ const noData: NoDataOptions = {
      * @type      {Highcharts.SVGAttributes}
      * @since     3.0.8
      * @product   highcharts highstock gantt
+     * @requires  modules/no-data-to-display
      * @apioption noData.attr
      */
     attr: {
@@ -86,6 +89,7 @@ const noData: NoDataOptions = {
      * @default   false
      * @since     4.1.10
      * @product   highcharts highstock gantt
+     * @requires  modules/no-data-to-display
      * @apioption noData.useHTML
      */
 
@@ -94,16 +98,25 @@ const noData: NoDataOptions = {
      *
      * @type  {Highcharts.AlignObject}
      * @since 3.0.8
+     * @requires modules/no-data-to-display
      */
     position: {
 
         /**
          * Horizontal offset of the label, in pixels.
+         *
+         * @since    3.0.8
+         * @requires modules/no-data-to-display
+         * @default  0
          */
         x: 0,
 
         /**
          * Vertical offset of the label, in pixels.
+         *
+         * @since    3.0.8
+         * @requires modules/no-data-to-display
+         * @default  0
          */
         y: 0,
 
@@ -111,6 +124,9 @@ const noData: NoDataOptions = {
          * Horizontal alignment of the label.
          *
          * @type {Highcharts.AlignValue}
+         * @since    3.0.8
+         * @requires modules/no-data-to-display
+         * @default  'center'
          */
         align: 'center',
 
@@ -118,6 +134,9 @@ const noData: NoDataOptions = {
          * Vertical alignment of the label.
          *
          * @type {Highcharts.VerticalAlignValue}
+         * @since    3.0.8
+         * @requires modules/no-data-to-display
+         * @default  'middle'
          */
         verticalAlign: 'middle'
     },
@@ -129,6 +148,8 @@ const noData: NoDataOptions = {
      *         Styled no-data text
      *
      * @type {Highcharts.CSSObject}
+     * @since    3.0.8
+     * @requires modules/no-data-to-display
      */
     style: {
         /** @ignore */
@@ -147,9 +168,11 @@ const noData: NoDataOptions = {
  *
  * */
 
+/** @internal */
 const NoDataDefaults = {
     lang,
     noData
 };
 
+/** @internal */
 export default NoDataDefaults;
