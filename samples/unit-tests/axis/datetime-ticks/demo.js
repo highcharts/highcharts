@@ -242,10 +242,14 @@ QUnit.test(
             ]
         });
 
+        const dayBoundaryCount = Object.values(
+            chart.xAxis[0].tickPositions.info.boundaryTicks
+        ).filter(t => t === 'day').length;
+
         assert.strictEqual(
-            Object.keys(chart.xAxis[0].tickPositions.info.boundaryTicks).length,
+            dayBoundaryCount,
             2,
-            '2 boundary ticks found'
+            '2 boundary ticks with value "day" found'
         );
 
         // Reset

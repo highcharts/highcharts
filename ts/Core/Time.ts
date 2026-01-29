@@ -52,66 +52,41 @@ class Time extends TimeBase {
     public getBoundaryTicks(
         tickPositions: TickPositionsArray,
         unitRange: number
-    ): Record<string, string> {
-        const boundaryTicks = {} as Record<string, string>;
-        // Handle boundary ticks. Mark new days if the time is on midnight
-        // (#950, #1649, #1760, #3349). Use a reasonable dropout threshold
+    ): Record<number, string> {
+        const boundaryTicks = {} as Record<number, string>;
+        // Handle boundary ticks. Use a reasonable dropout threshold
         // to prevent looping over dense data grouping (#6156).
         if (tickPositions.length < 10000) {
-            // Minute range, can be configured with:
-            // 'minute.main' and 'hour.boundary'
-            if (unitRange <= timeUnits.minute && unitRange > timeUnits.second) {
-                tickPositions.forEach((t: number): void => {
-                    if (this.dateFormat('%M', t) === '00') {
-                        boundaryTicks[t] = 'hour';
-                    }
-                });
-            }
-            // Hourly range, con be configured with:
-            // 'hour.main' and 'day.boundary'
-            if (unitRange <= timeUnits.hour) {
-                tickPositions.forEach((t: number): void => {
-                    if (
-                        // Speed optimization, no need to run dateFormat
-                        // unless we're on a full or half hour
-                        t % 1800000 === 0 &&
-                        // Check for local or global midnight
-                        this.dateFormat('%H%M%S%L', t) === '000000000'
-                    ) {
-                        boundaryTicks[t] = 'day';
-                    }
-                });
-            }
-
-            // Daily range, can be configured with:
-            // 'day.main', and 'week.boundary'
-            if (unitRange <= timeUnits.day && unitRange > timeUnits.hour) {
-                tickPositions.forEach((t: number): void => {
-                    if (this.dateFormat('%d', t) === '01') {
-                        boundaryTicks[t] = 'week';
-                    }
-                });
-            }
-
-            // Weekly range, can be configured with:
-            // 'week.main' and 'month.boundary'
-            if (unitRange <= timeUnits.week && unitRange > timeUnits.day) {
-                tickPositions.forEach((t: number): void => {
-                    if (this.dateFormat('%d', t) === '01') {
-                        boundaryTicks[t] = 'month';
-                    }
-                });
-            }
-
-            // Monthly range, can be configured with:
-            // 'month.main' and 'year.boundary'
-            if (unitRange <= timeUnits.month && unitRange > timeUnits.week) {
-                tickPositions.forEach((t: number, i: number): void => {
-                    if (i === 1 || this.dateFormat('%m%d', t) === '0101') {
-                        boundaryTicks[t] = 'year';
-                    }
-                });
-            }
+            tickPositions.forEach((t: number, i: number): void => {
+                if (
+                    unitRange < timeUnits.hour &&
+                    this.dateFormat('%M', t) === '00'
+                ) {
+                    boundaryTicks[t] = 'hour';
+                }
+                if (
+                    unitRange < timeUnits.day &&
+                    this.dateFormat('%H%M%S%L', t) === '000000000'
+                ) {
+                    boundaryTicks[t] = 'day';
+                }
+                if (
+                    unitRange < timeUnits.month &&
+                    this.dateFormat('%d', t) === '01'
+                ) {
+                    boundaryTicks[t] = 'month';
+                }
+                if (
+                    unitRange < timeUnits.year &&
+                    this.dateFormat('%m%d', t) === '0101'
+                ) {
+                    boundaryTicks[t] = 'year';
+                }
+                // Mark first monthly tick as year boundary when scrolling
+                if (unitRange === timeUnits.month && i === 1) {
+                    boundaryTicks[t] = 'year';
+                }
+            });
         }
 
         return boundaryTicks;
@@ -157,8 +132,7 @@ class Time extends TimeBase {
                 seconds
             ] = time.toParts(min),
             milliseconds = (min || 0) % 1000,
-            variableDayLength: boolean|undefined,
-            boundaryTicks: Record<string, string> = {};
+            variableDayLength: boolean|undefined;
 
         startOfWeek ??= 1;
 
@@ -313,11 +287,6 @@ class Time extends TimeBase {
 
             // Push the last time
             tickPositions.push(t);
-
-            boundaryTicks = this.getBoundaryTicks(
-                tickPositions,
-                unitRange
-            );
         }
 
 
@@ -325,7 +294,7 @@ class Time extends TimeBase {
         tickPositions.info = extend<Time.TimeNormalizedObject|TimeTicksInfoObject>(
             normalizedInterval,
             {
-                boundaryTicks,
+                boundaryTicks: this.getBoundaryTicks(tickPositions, unitRange),
                 totalRange: unitRange * count
             }
         ) as TimeTicksInfoObject;

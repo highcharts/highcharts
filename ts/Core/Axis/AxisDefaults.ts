@@ -498,9 +498,9 @@ namespace AxisDefaults {
          * appropriate unit. This member gives the default representations used
          * for each unit. For boundary values, time units from one level higher
          * unit can be used, for example the `day` unit can be used on midnight,
-         * and the `week` unit can be used on the first day of the week.
+         * and the `month` unit can be used on the first day of the week.
          *
-         * For easier data interpretation, `hour`, `day`, `week`, `month` and
+         * For easier data interpretation, `hour`, `day`, `month` and
          * `year` units can be used and formatted as boundary tick values.
          *
          * For an overview of the date time label formats configuration, see
@@ -514,7 +514,7 @@ namespace AxisDefaults {
          *     minute: { main: '%[HM]' },
          *     hour: { main: '%[HM]', boundary: undefined },
          *     day: { main: '%[eb]', boundary: '%[eb]' },
-         *     week: { main: '%[eb]', boundary: 'undefined },
+         *     week: { main: '%[eb]' },
          *     month: { main: '%[bY]', boundary: undefined },
          *     year: { main: '%Y', boundary: undefined }
          * }
@@ -653,13 +653,7 @@ namespace AxisDefaults {
                  * @default '%[eb]'
                  * @apioption xAxis.dateTimeLabelFormats.week.main
                  */
-                main: '%[eb]',
-                /**
-                 * @type {string|Highcharts.DateTimeFormatOptions}
-                 * @default undefined
-                 * @apioption xAxis.dateTimeLabelFormats.week.boundary
-                 */
-                boundary: void 0
+                main: '%[eb]'
             },
             /**
              * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
