@@ -495,26 +495,28 @@ namespace AxisDefaults {
 
         /**
          * For a datetime axis, the scale will automatically adjust to the
-         * appropriate unit. This member gives the default string
-         * representations used for each unit. For intermediate values,
-         * different units may be used, for example the `day` unit can be used
-         * on midnight and `hour` unit be used for intermediate values on the
-         * same axis.
+         * appropriate unit. This member gives the default representations used
+         * for each unit. For boundary values, time units from one level higher
+         * unit can be used, for example the `day` unit can be used on midnight,
+         * and the `week` unit can be used on the first day of the week.
          *
-         * For an overview of the string or object configuration, see
+         * For easier data interpretation, `hour`, `day`, `week`, `month` and
+         * `year` units can be used and formatted as boundary tick values.
+         *
+         * For an overview of the date time label formats configuration, see
          * [dateFormat](/class-reference/Highcharts.Time#dateFormat).
          *
          * Defaults to:
          * ```js
          * {
-         *     millisecond: '%[HMSL]',
-         *     second: '%[HMS]',
-         *     minute: '%[HM]',
-         *     hour: '%[HM]',
-         *     day: '%[eb]',
-         *     week: '%[eb]',
-         *     month: '%[bY]',
-         *     year: '%Y'
+         *     millisecond: { main: '%[HMSL]' },
+         *     second: { main: '%[HMS]' },
+         *     minute: { main: '%[HM]' },
+         *     hour: { main: '%[HM]', boundary: undefined },
+         *     day: { main: '%[eb]', boundary: '%[eb]' },
+         *     week: { main: '%[eb]', boundary: 'undefined },
+         *     month: { main: '%[bY]', boundary: undefined },
+         *     year: { main: '%Y', boundary: undefined }
          * }
          * ```
          *
@@ -542,6 +544,7 @@ namespace AxisDefaults {
 
                 /**
                  * @type {string|Highcharts.DateTimeFormatOptions}
+                 * @default '%[HMSL]'
                  * @apioption xAxis.dateTimeLabelFormats.millisecond.main
                  */
                 main: '%[HMSL]',
@@ -560,6 +563,7 @@ namespace AxisDefaults {
 
                 /**
                  * @type {string|Highcharts.DateTimeFormatOptions}
+                 * @default '%[HMS]'
                  * @apioption xAxis.dateTimeLabelFormats.second.main
                  */
                 main: '%[HMS]',
@@ -578,6 +582,7 @@ namespace AxisDefaults {
 
                 /**
                  * @type {string|Highcharts.DateTimeFormatOptions}
+                 * @default '%[HM]'
                  * @apioption xAxis.dateTimeLabelFormats.minute.main
                  */
                 main: '%[HM]',
@@ -596,9 +601,16 @@ namespace AxisDefaults {
 
                 /**
                  * @type {string|Highcharts.DateTimeFormatOptions}
+                 * @default '%[HM]'
                  * @apioption xAxis.dateTimeLabelFormats.hour.main
                  */
                 main: '%[HM]',
+                /**
+                 * @type {string|Highcharts.DateTimeFormatOptions}
+                 * @default undefined
+                 * @apioption xAxis.dateTimeLabelFormats.hour.boundary
+                 */
+                boundary: void 0,
                 range: false
             },
             /**
@@ -614,9 +626,16 @@ namespace AxisDefaults {
 
                 /**
                  * @type {string|Highcharts.DateTimeFormatOptions}
+                 * @default '%[eb]'
                  * @apioption xAxis.dateTimeLabelFormats.day.main
                  */
-                main: '%[eb]'
+                main: '%[eb]',
+                /**
+                 * @type {string|Highcharts.DateTimeFormatOptions}
+                 * @default '%[eb]'
+                 * @apioption xAxis.dateTimeLabelFormats.day.boundary
+                 */
+                boundary: '%[eb]'
             },
             /**
              * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
@@ -631,9 +650,16 @@ namespace AxisDefaults {
 
                 /**
                  * @type {string|Highcharts.DateTimeFormatOptions}
+                 * @default '%[eb]'
                  * @apioption xAxis.dateTimeLabelFormats.week.main
                  */
-                main: '%[eb]'
+                main: '%[eb]',
+                /**
+                 * @type {string|Highcharts.DateTimeFormatOptions}
+                 * @default undefined
+                 * @apioption xAxis.dateTimeLabelFormats.week.boundary
+                 */
+                boundary: void 0
             },
             /**
              * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
@@ -648,9 +674,16 @@ namespace AxisDefaults {
 
                 /**
                  * @type {string|Highcharts.DateTimeFormatOptions}
+                 * @default '%[bY]'
                  * @apioption xAxis.dateTimeLabelFormats.month.main
                  */
-                main: '%[bY]'
+                main: '%[bY]',
+                /**
+                 * @type {string|Highcharts.DateTimeFormatOptions}
+                 * @default undefined
+                 * @apioption xAxis.dateTimeLabelFormats.month.boundary
+                 */
+                boundary: void 0
             },
             /**
              * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
@@ -665,9 +698,16 @@ namespace AxisDefaults {
 
                 /**
                  * @type {string|Highcharts.DateTimeFormatOptions}
+                 * @default '%Y'
                  * @apioption xAxis.dateTimeLabelFormats.year.main
                  */
-                main: '%Y'
+                main: '%Y',
+                /**
+                 * @type {string|Highcharts.DateTimeFormatOptions}
+                 * @default undefined
+                 * @apioption xAxis.dateTimeLabelFormats.year.boundary
+                 */
+                boundary: void 0
             }
         },
 

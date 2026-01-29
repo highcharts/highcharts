@@ -24,7 +24,7 @@ import type Time from '../Time';
  * */
 
 export interface TimeTicksInfoObject extends Time.TimeNormalizedObject {
-    higherRanks: Record<string, string>;
+    boundaryTicks: Record<string, string>;
     totalRange: number;
 }
 
