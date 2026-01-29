@@ -41,9 +41,7 @@ const {
  * */
 
 // Utils:
-/**
- * @private
- */
+/** @internal */
 function accumulateAverage(
     points: Array<[number, (number|Array<number>)]>,
     xVal: Array<number>,
@@ -57,9 +55,7 @@ function accumulateAverage(
     points.push([xValue, yValue]);
 }
 
-/**
- * @private
- */
+/** @internal */
 function weightedSumArray(
     array: Array<[(number|null), (number|Array<number>)]>,
     pLen: number
@@ -80,9 +76,7 @@ function weightedSumArray(
         })[1] as any) / denominator;
 }
 
-/**
- * @private
- */
+/** @internal */
 function populateAverage(
     points: Array<[number, (number|Array<number>)]>,
     xVal: Array<number>,
@@ -107,7 +101,7 @@ function populateAverage(
 /**
  * The SMA series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.wma
  *
@@ -125,7 +119,7 @@ class WMAIndicator extends SMAIndicator {
      * Weighted moving average indicator (WMA). This series requires `linkedTo`
      * option to be set.
      *
-     * @sample stock/indicators/wma
+     * @sample {highstock} stock/indicators/wma
      *         Weighted moving average indicator
      *
      * @extends      plotOptions.sma
@@ -227,6 +221,7 @@ class WMAIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface WMAIndicator {
     pointClass: typeof WMAPoint;
 }
@@ -237,6 +232,7 @@ interface WMAIndicator {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         wma: typeof WMAIndicator;
@@ -251,6 +247,7 @@ SeriesRegistry.registerSeriesType('wma', WMAIndicator);
  *
  * */
 
+/** @internal */
 export default WMAIndicator;
 
 /* *

@@ -47,7 +47,7 @@ const {
 /**
  * The Volume Weighted Average Price (VWAP) series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.vwap
  *
@@ -66,7 +66,7 @@ class VWAPIndicator extends SMAIndicator {
      *
      * This series requires `linkedTo` option to be set.
      *
-     * @sample stock/indicators/vwap
+     * @sample {highstock} stock/indicators/vwap
      *         Volume Weighted Average Price indicator
      *
      * @extends      plotOptions.sma
@@ -155,7 +155,7 @@ class VWAPIndicator extends SMAIndicator {
      * Main algorithm used to calculate Volume Weighted Average Price (VWAP)
      * values
      *
-     * @private
+     * @internal
      *
      * @param {boolean} isOHLC
      * Says if data has OHLC format
@@ -250,6 +250,7 @@ class VWAPIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface VWAPIndicator {
     pointClass: typeof VWAPPoint;
 }
@@ -260,6 +261,7 @@ interface VWAPIndicator {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         vwap: typeof VWAPIndicator;
@@ -274,6 +276,7 @@ SeriesRegistry.registerSeriesType('vwap', VWAPIndicator);
  *
  * */
 
+/** @internal */
 export default VWAPIndicator;
 
 /* *

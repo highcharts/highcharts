@@ -43,7 +43,7 @@ const {
 /**
  * The EMA series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.ema
  *
@@ -61,7 +61,7 @@ class EMAIndicator extends SMAIndicator {
      * Exponential moving average indicator (EMA). This series requires the
      * `linkedTo` option to be set.
      *
-     * @sample stock/indicators/ema
+     * @sample {highstock} stock/indicators/ema
      * Exponential moving average indicator
      *
      * @extends      plotOptions.sma
@@ -216,6 +216,7 @@ class EMAIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface EMAIndicator {
     pointClass: typeof EMAPoint;
 }
@@ -226,6 +227,7 @@ interface EMAIndicator {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         ema: typeof EMAIndicator;
@@ -239,6 +241,7 @@ SeriesRegistry.registerSeriesType('ema', EMAIndicator);
  *
  * */
 
+/** @internal */
 export default EMAIndicator;
 
 /* *

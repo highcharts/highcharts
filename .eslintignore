@@ -19,5 +19,3 @@ tools/jsdoc/storage/**/*.js
 tools/move-doclets.mjs
 ts/**/*.js
 vendor/**/*
-tests/qunit/vendor/**
-playwright.config.ts

@@ -41,9 +41,7 @@ const {
 
 // Utils:
 
-/**
- * @private
- */
+/** @internal */
 function accumulateAverage(
     points: Array<[number, Array<number>]>,
     xVal: Array<number>,
@@ -56,9 +54,7 @@ function accumulateAverage(
     points.push([xValue, yValue]);
 }
 
-/**
- * @private
- */
+/** @internal */
 function getTR(
     currentPoint: Array<number>,
     prevPoint: Array<number>
@@ -73,9 +69,7 @@ function getTR(
     return TR;
 }
 
-/**
- * @private
- */
+/** @internal */
 function populateAverage(
     points: Array<[number, Array<number>]>,
     xVal: Array<number>,
@@ -100,7 +94,7 @@ function populateAverage(
 /**
  * The ATR series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.atr
  *
@@ -118,7 +112,7 @@ class ATRIndicator extends SMAIndicator {
      * Average true range indicator (ATR). This series requires `linkedTo`
      * option to be set.
      *
-     * @sample stock/indicators/atr
+     * @sample {highstock} stock/indicators/atr
      *         ATR indicator
      *
      * @extends      plotOptions.sma
@@ -226,6 +220,7 @@ class ATRIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface ATRIndicator {
     pointClass: typeof ATRPoint;
 }
@@ -235,6 +230,8 @@ interface ATRIndicator {
  *  Registry
  *
  * */
+
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         atr: typeof ATRIndicator;
@@ -249,6 +246,7 @@ SeriesRegistry.registerSeriesType('atr', ATRIndicator);
  *
  * */
 
+/** @internal */
 export default ATRIndicator;
 
 /* *

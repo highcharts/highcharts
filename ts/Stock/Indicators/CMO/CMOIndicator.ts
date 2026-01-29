@@ -35,7 +35,7 @@ const { isNumber, merge } = U;
 /**
  * The CMO series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.cmo
  *
@@ -54,7 +54,7 @@ class CMOIndicator extends SMAIndicator {
      * requires the `linkedTo` option to be set and should be loaded after
      * the `stock/indicators/indicators.js` file.
      *
-     * @sample stock/indicators/cmo
+     * @sample {highstock} stock/indicators/cmo
      *         CMO indicator
      *
      * @extends      plotOptions.sma
@@ -190,6 +190,7 @@ class CMOIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface CMOIndicator {
     pointClass: typeof CMOPoint;
 }
@@ -200,6 +201,7 @@ interface CMOIndicator {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         cmo: typeof CMOIndicator;
@@ -214,6 +216,7 @@ SeriesRegistry.registerSeriesType('cmo', CMOIndicator);
  *
  * */
 
+/** @internal */
 export default CMOIndicator;
 
 /* *
