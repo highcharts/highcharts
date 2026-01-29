@@ -1917,8 +1917,8 @@ class Exporting {
 
         // Find the shadow DOM root node
         while (node) {
-            rootNode = node.getRootNode();
-            if (rootNode?.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
+            rootNode = node.getRootNode() as ShadowRoot;
+            if (rootNode && typeof rootNode.host === 'object') {
                 break;
             }
             node = node.parentNode;
@@ -1927,7 +1927,7 @@ class Exporting {
 
         // Append shadow DOM styles into copied chart's container so the
         // getComputedStyle sees them
-        (rootNode as Document)?.querySelectorAll('style').forEach(
+        rootNode?.querySelectorAll('style').forEach(
             (style: HTMLStyleElement): void => {
                 const clonedStyle = style.cloneNode(true) as HTMLStyleElement;
                 chartCopy.container.appendChild(clonedStyle);

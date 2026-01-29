@@ -204,7 +204,6 @@ const exporting: ExportingOptions = {
      * exported output.
      *
      * @type      {boolean}
-     * @default   true
      * @since     12.5.1
      * @apioption exporting.includeShadowDomStyles
      */

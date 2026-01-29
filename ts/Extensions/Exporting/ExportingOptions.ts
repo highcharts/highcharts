@@ -330,7 +330,7 @@ export interface ExportingOptions {
      * exported output.
      *
      * @type      {boolean}
-     * @default   true
+     * @default   false
      * @since     12.5.1
      * @apioption exporting.includeShadowDomStyles
      */
