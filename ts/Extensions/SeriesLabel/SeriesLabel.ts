@@ -62,7 +62,6 @@ const {
     intersectRect
 } = SLU;
 import U from '../../Core/Utilities.js';
-import { Palette } from '../../Core/Color/Palettes';
 const {
     addEvent,
     extend,
@@ -533,7 +532,7 @@ function drawSeriesLabels(chart: Chart): void {
 
                 if (!chart.renderer.styledMode) {
                     const color = typeof series.color === 'string' ?
-                        series.color : Palette.neutralColor60;
+                        series.color : 'var(--highcharts-neutral-color-60)';
                     label.css(extend<CSSObject>({
                         color: onArea ?
                             chart.renderer.getContrast(color) :

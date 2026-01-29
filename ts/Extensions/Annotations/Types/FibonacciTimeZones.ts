@@ -24,7 +24,6 @@ import D from '../../../Core/Defaults.js';
 const { defaultOptions } = D;
 import InfinityLine from './InfinityLine.js';
 import MockPoint from '../MockPoint.js';
-import { Palette } from '../../../Core/Color/Palettes';
 import U from '../../../Core/Utilities.js';
 import { AnnotationMockPointFunction } from '../AnnotationOptions';
 const { merge } = U;
@@ -61,7 +60,7 @@ if (defaultOptions.annotations?.types) {
                      * @since     9.3.0
                      * @apioption annotations.types.fibonacciTimeZones.typeOptions.line.stroke
                      */
-                    stroke: Palette.neutralColor80,
+                    stroke: 'var(--highcharts-neutral-color-80)',
                     /**
                      * The width of the lines.
                      *

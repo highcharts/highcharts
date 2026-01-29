@@ -50,7 +50,8 @@ QUnit.test('CSS variables should be set', function (assert) {
 
 });
 
-QUnit.test(
+// Skipped due to implementing variable-driven palette in v13
+QUnit.skip(
     'CSS variables should be not be set when styled mode is false',
     function (assert) {
         const container = document.querySelector('#container');

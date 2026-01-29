@@ -37,7 +37,6 @@ import Chart from '../../Core/Chart/Chart.js';
 import D from '../../Core/Defaults.js';
 const { defaultOptions } = D;
 import H from '../../Core/Globals.js';
-import { Palette } from '../../Core/Color/Palettes.js';
 import RangeSelectorComposition from './RangeSelectorComposition.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import T from '../../Core/Templating.js';
@@ -1052,7 +1051,7 @@ class RangeSelector {
             label.css(merge(chartStyle, options.labelStyle));
 
             dateBox.css(merge({
-                color: Palette.neutralColor80
+                color: 'var(--highcharts-neutral-color-80)'
             }, chartStyle, options.inputStyle));
 
             css(input, extend<CSSObject>({

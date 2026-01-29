@@ -20,7 +20,6 @@
 import type HeatmapPoint from './HeatmapPoint';
 import type HeatmapSeriesOptions from './HeatmapSeriesOptions';
 
-import { Palette } from '../../Core/Color/Palettes.js';
 import U from '../../Core/Utilities.js';
 const { isNumber } = U;
 
@@ -146,7 +145,7 @@ const HeatmapSeriesDefaults: HeatmapSeriesOptions = {
      *
      * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
-    nullColor: Palette.neutralColor3,
+    nullColor: 'var(--highcharts-neutral-color-3)',
 
     dataLabels: {
         formatter: function (): string { // #2945

@@ -75,6 +75,7 @@ const {
     svg,
     win
 } = H;
+import Palette from '../Color/Palette.js';
 import Pointer from '../Pointer.js';
 import RendererRegistry from '../Renderer/RendererRegistry.js';
 import Series from '../Series/Series.js';
@@ -789,7 +790,7 @@ class Chart {
         // Fire the event with a default function
         fireEvent(this, 'init', { args: arguments }, function (): void {
 
-            const options = merge(defaultOptions, userOptions), // Do the merge
+            const options = merge(defaultOptions, userOptions),
                 optionsChart = options.chart,
                 renderTo = this.renderTo || optionsChart.renderTo;
 
@@ -2134,6 +2135,7 @@ class Chart {
 
         chart.setClassName(optionsChart.className);
         if (!chart.styledMode) {
+            this.palette = new Palette(this, this.options.palette);
             chart.renderer.setStyle(optionsChart.style as any);
         } else {
             // Initialize definitions

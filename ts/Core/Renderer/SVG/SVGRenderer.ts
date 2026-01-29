@@ -734,6 +734,7 @@ class SVGRenderer implements SVGRendererBase {
         if (color === 'transparent') {
             return '#000000';
         }
+
         // #6216, #17273
         const rgba256 = Color.parse(color).rgba,
             // For each rgb channel, compute the luminosity based on all
@@ -2464,7 +2465,7 @@ export default SVGRenderer;
  * The shadow color.
  * @name    Highcharts.ShadowOptionsObject#color
  * @type    {Highcharts.ColorString|undefined}
- * @default ${palette.neutralColor100}
+ * @default $var(--highcharts-neutral-color-100)
  *//**
  * The horizontal offset from the element.
  *
