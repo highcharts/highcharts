@@ -105,7 +105,8 @@ class SparklineContent extends CellContentPro {
             },
             pie: {
                 slicedOffset: 0,
-                borderRadius: 0
+                borderRadius: 0,
+                innerSize: '50%'
             }
         }
     };
