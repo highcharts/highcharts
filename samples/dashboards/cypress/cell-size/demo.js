@@ -37,11 +37,10 @@ let savedOptions = {
     }]
 };
 
-let lastBoard;
+let board;
 
 async function renderBoard() {
     const board = await Dashboards.board('container', savedOptions, true);
-    lastBoard = board;
     return board;
 }
 
@@ -51,8 +50,8 @@ const render = document.getElementById('render');
 renderBoard();
 
 destroy.addEventListener('click', () => {
-    savedOptions = lastBoard.getOptions();
-    lastBoard.destroy();
+    savedOptions = board.getOptions();
+    board.destroy();
 });
 
 render.addEventListener('click', () => {
