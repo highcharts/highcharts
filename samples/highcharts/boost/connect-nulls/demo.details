@@ -1,6 +1,6 @@
 ---
- name: Highcharts Demo
+ name: Demo of series.connectNulls
  authors:
-   - Christer Vasseng 
+   - Torstein Hønsi
  js_wrap: b
 ...
