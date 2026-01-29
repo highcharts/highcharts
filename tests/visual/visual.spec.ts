@@ -54,6 +54,26 @@ function transformVisualSampleScript(script: string | undefined): string {
     return `;(function () {\n${transformed.trim()}\n}).call(window);`;
 }
 
+const GOOGLE_FONT_LINK_REGEX =
+    /<link[a-z"=:./ ]+(fonts\.googleapis\.com|fonts\.gstatic\.com)[^>]+>/gi;
+const DEMO_CSS_IMPORT_REGEX = /@import [^;]+;/;
+
+function stripGoogleFontLinks(html: string | undefined): string | undefined {
+    if (!html) {
+        return html;
+    }
+
+    return html.replace(GOOGLE_FONT_LINK_REGEX, '');
+}
+
+function stripDemoCssImports(css: string | undefined): string | undefined {
+    if (!css) {
+        return css;
+    }
+
+    return css.replace(DEMO_CSS_IMPORT_REGEX, '');
+}
+
 const FIXED_CLOCK_TIME = '2024-01-01T00:00:00.000Z';
 const MAX_CHART_LOAD_ATTEMPTS = 100;
 const CHART_LOAD_RETRY_DELAY_MS = 100;
@@ -281,6 +301,8 @@ test.describe('Visual tests', () => {
                 sample.script = transpileTS(sample.script);
             }
 
+            sample.html = stripGoogleFontLinks(sample.html);
+
             const hasModuleImports = sample.script ?
                 /^\s*import\s/m.test(sample.script) :
                 false;
@@ -301,12 +323,14 @@ test.describe('Visual tests', () => {
                 throw new Error('Page not initialized');
             }
 
+            const sampleHtml = sample.html ?? defaultPageContent;
+
             await page.evaluate(body => {
                 window.HCVisualSetup?.beforeSample();
 
                 const testContainer = document.querySelector('div[data-test-container]');
                 testContainer.innerHTML = body;
-            }, sample.html ?? defaultPageContent);
+            }, sampleHtml);
 
             await setTestingOptions(page);
 
@@ -333,6 +357,9 @@ test.describe('Visual tests', () => {
                 sample.script
             );
             const isStyledMode = transformedScript.indexOf('styledMode: true') !== -1;
+            const demoCss = isStyledMode ?
+                stripDemoCssImports(sample.css) :
+                sample.css;
 
             if (isStyledMode) {
                 // Add highcharts.css
@@ -352,9 +379,9 @@ test.describe('Visual tests', () => {
                 }
 
                 // Add demo.css if exists (for styled mode, use id 'demo.css' for SVG injection)
-                if (sample.css) {
+                if (demoCss) {
                     const styleHandle = await page.addStyleTag({
-                        content: sample.css
+                        content: demoCss
                     });
                     await styleHandle.evaluate(
                         (el: HTMLStyleElement) => {
@@ -364,9 +391,9 @@ test.describe('Visual tests', () => {
                 }
             } else {
                 // For non-styled mode, add demo.css with standard id
-                if (sample.css) {
+                if (demoCss) {
                     const styleHandle = await page.addStyleTag({
-                        content: sample.css
+                        content: demoCss
                     });
                     await styleHandle.evaluate(
                         (el: HTMLStyleElement) => {
