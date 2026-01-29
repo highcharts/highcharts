@@ -304,6 +304,7 @@ const grid = Grid.grid('container', {
                             type: 'pie'
                         },
                         series: [{
+                            innerSize: '50%',
                             data: [{
                                 name: 'Used',
                                 y: data,
