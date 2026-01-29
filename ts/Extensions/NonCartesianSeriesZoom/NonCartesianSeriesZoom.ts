@@ -36,21 +36,25 @@ const {
  *  Declarations
  *
  * */
-interface Zooming {
-    x: number;
-    y: number;
-    height: number;
-    width: number;
-    zoomX: number;
-    zoomY: number;
+/** @internal */
+type Zooming = {
+    x: number,
+    y: number,
+    height: number,
+    width: number,
+    zoomX: number,
+    zoomY: number,
     scale: number,
-    panX: number;
-    panY: number;
-}
+    panX: number,
+    panY: number
+};
 
+/** @internal */
 declare module '../../Core/Series/SeriesBase' {
     interface SeriesBase {
+        /** @internal */
         dataLabelsParentGroups?: Array<SVGElement>;
+        /** @internal */
         zooming?: Zooming
     }
 }
@@ -470,6 +474,7 @@ class NonCartesianSeriesZoom {
  *
  * */
 
+/** @internal */
 export default NonCartesianSeriesZoom;
 
 /* *
