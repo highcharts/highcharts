@@ -31,7 +31,6 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import type SVGRenderer from '../Renderer/SVG/SVGRenderer';
-import type Time from '../Time.js';
 import type TimeTicksInfoObject from './TimeTicksInfoObject';
 
 import F from '../Templating.js';
@@ -169,6 +168,13 @@ class Tick {
     public isActive?: boolean;
 
     /**
+     * Whether the tick is a boundary tick.
+     * @name Highcharts.Tick#isBoundary
+     * @type {boolean|undefined}
+     */
+    public isBoundary?: boolean;
+
+    /**
      * True if the tick is the first one on the axis.
      * @name Highcharts.Tick#isFirst
      * @readonly
@@ -295,25 +301,22 @@ class Tick {
         }
 
 
-        // Set the datetime label format. If a higher rank is set for this
-        // position, use that. If not, use the general format.
+        // Set the datetime label format. If a boundary is set for this
+        // position, use that. If not, use the main format from base ticks.
         if (axis.dateTime) {
+            const DTLFormats = options.dateTimeLabelFormats as any;
             if (tickPositionInfo) {
-                dateTimeLabelFormats = chart.time.resolveDTLFormat(
-                    (options.dateTimeLabelFormats as any)[
-                        (
-                            !options.grid?.enabled &&
-                            tickPositionInfo.higherRanks[pos]
-                        ) ||
-                        tickPositionInfo.unitName
-                    ]
-                );
+                const gridDisabled = !options.grid?.enabled,
+                    rankKey = tickPositionInfo.boundaryTicks[pos],
+                    format = gridDisabled && rankKey &&
+                        DTLFormats[rankKey].boundary ||
+                        DTLFormats[tickPositionInfo.unitName];
+
+                dateTimeLabelFormats = chart.time.resolveDTLFormat(format);
                 dateTimeLabelFormat = dateTimeLabelFormats.main;
             } else if (isNumber(value)) { // #1441
                 dateTimeLabelFormat = axis.dateTime.getXDateFormat(
-                    value,
-                    options.dateTimeLabelFormats ||
-                        {} as Time.DateTimeLabelFormatsOption
+                    value, DTLFormats || {}
                 );
             }
         }
@@ -333,12 +336,19 @@ class Tick {
          * @type {boolean|undefined}
          */
         tick.isLast = isLast;
+        /**
+         * True if the tick is a boundary tick.
+         * @name Highcharts.Tick#isBoundary
+         * @type {boolean|undefined}
+         */
+        tick.isBoundary = !!tickPositionInfo?.boundaryTicks[pos];
 
         // Get the string
         const ctx: AxisLabelFormatterContextObject = {
             axis,
             chart,
             dateTimeLabelFormat: dateTimeLabelFormat,
+            isBoundary: tick.isBoundary || false,
             isFirst,
             isLast,
             pos,
@@ -1259,7 +1269,7 @@ export default Tick;
  * @interface Highcharts.TimeTicksInfoObject
  * @extends Highcharts.TimeNormalizedObject
  *//**
- * @name Highcharts.TimeTicksInfoObject#higherRanks
+ * @name Highcharts.TimeTicksInfoObject#boundaryTicks
  * @type {Array<string>}
  *//**
  * @name Highcharts.TimeTicksInfoObject#totalRange
