@@ -784,8 +784,7 @@ function exitBoost(
 /**
  * Helper to check if an axis still needs extremes calculated.
  *
- * Returns true when we should allow extremes calculation
- * (allExtremes not set yet or current range < options range).
+ * Returns true when current range < options range (for panning).
  *
  * @internal
  */
@@ -795,11 +794,6 @@ function axisNeedsExtremes(
 ): boolean {
     if (!axis) {
         return false;
-    }
-
-    // Fast path: if allExtremes not calculated yet, allow extremes calculation
-    if (!axis.allExtremes) {
-        return true;
     }
 
     // Check if current range < options range (for panning)
@@ -854,7 +848,6 @@ function hasExtremes(
     }
 
     // #24029 - Check if current range < options range (for panning)
-    // Only check this if allExtremes is already calculated
     if (
         axisNeedsExtremes(yAxis, yAxisOptions) ||
         (checkX && axisNeedsExtremes(xAxis, xAxisOptions))
