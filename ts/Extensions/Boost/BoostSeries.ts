@@ -65,6 +65,8 @@ const {
 } = U;
 import WGLRenderer from './WGLRenderer.js';
 import DataTableCore from '../../Data/DataTableCore.js';
+import AxisOptions from '../../Core/Axis/AxisOptions';
+import Axis from '../../Core/Axis/Axis';
 
 /* *
  *
@@ -780,6 +782,34 @@ function exitBoost(
 }
 
 /**
+ * Helper to check if an axis still needs extremes calculated.
+ *
+ * Returns true when we should allow extremes calculation
+ * (allExtremes not set yet or current range < options range).
+ *
+ * @internal
+ */
+function axisNeedsExtremes(
+    axis: Axis | undefined,
+    axisOptions: AxisOptions | undefined
+): boolean {
+    return !!(
+        axis &&
+        (
+            !axis.allExtremes ||
+            (
+                isNumber(axis.min) &&
+                isNumber(axis.max) &&
+                isNumber(axisOptions?.min) &&
+                isNumber(axisOptions?.max) &&
+                (axis.max - axis.min) <
+                    (axisOptions.max - axisOptions.min)
+            )
+        )
+    );
+}
+
+/**
  * @internal
  * @function Highcharts.Series#hasExtremes
  */
@@ -796,24 +826,35 @@ function hasExtremes(
     }
 
     const dataLength = series.dataTable.getModified().rowCount,
-        xAxis = series.xAxis && series.xAxis.options,
-        yAxis = series.yAxis && series.yAxis.options,
+        yAxis = series.yAxis,
+        xAxis = series.xAxis,
+        xAxisOptions = xAxis?.options,
+        yAxisOptions = yAxis?.options,
         colorAxis = series.colorAxis && series.colorAxis.options;
 
-    return (
-        dataLength >= threshold &&
-        // Defined yAxis extremes
-        isNumber(yAxis.min) &&
-        isNumber(yAxis.max) &&
-        // Defined (and required) xAxis extremes
-        (!checkX ||
-            (isNumber(xAxis.min) && isNumber(xAxis.max))
-        ) &&
-        // Defined (e.g. heatmap) colorAxis extremes
-        (!colorAxis ||
-            (isNumber(colorAxis.min) && isNumber(colorAxis.max))
-        )
-    );
+    // Check if extremes are defined in options
+    if (
+        dataLength < threshold ||
+        !isNumber(yAxisOptions?.min) ||
+        !isNumber(yAxisOptions?.max) ||
+        (checkX &&
+            (!isNumber(xAxisOptions?.min) || !isNumber(xAxisOptions?.max))) ||
+        (colorAxis && (!isNumber(colorAxis.min) || !isNumber(colorAxis.max)))
+    ) {
+        return false;
+    }
+
+    // #24029 - If allExtremes not calculated yet or current range < set range,
+    // allow extremes calculation for panning
+    if (
+        axisNeedsExtremes(yAxis, yAxisOptions) ||
+        (checkX && axisNeedsExtremes(xAxis, xAxisOptions))
+    ) {
+        return false;
+    }
+
+    // Current range >= set range and allExtremes is calculated
+    return true;
 }
 
 /**
