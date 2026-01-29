@@ -540,10 +540,6 @@ test.describe('Layout Tests', () => {
     test('Cell width persists after destroy/render', async ({ page }) => {
         await page.goto('/dashboards/cypress/cell-size', { waitUntil: 'networkidle' });
 
-        await page.waitForFunction(() => {
-            return Boolean((window as any).Dashboards?.boards?.length);
-        }, { timeout: 10000 });
-
         const widthBeforeDestroy = await page.evaluate(() => {
             const Dashboards = (window as any).Dashboards;
             const board = Dashboards.boards[Dashboards.boards.length - 1];
@@ -554,11 +550,6 @@ test.describe('Layout Tests', () => {
 
         await page.locator('#destroy').click();
         await page.locator('#render').click();
-
-        await page.waitForFunction(() => {
-            const Dashboards = (window as any).Dashboards;
-            return Boolean(Dashboards?.boards?.length);
-        }, { timeout: 10000 });
 
         const widthAfterRender = await page.evaluate(() => {
             const Dashboards = (window as any).Dashboards;
