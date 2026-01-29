@@ -1804,7 +1804,10 @@ class Exporting {
             const dstCanvas = document.createElement('canvas'),
                 srcCanvas = document.querySelector('canvas'),
                 src = (contour as any).readbackData,
-                ctx = dstCanvas.getContext('2d');
+                ctx = dstCanvas.getContext(
+                    '2d',
+                    { colorSpace: 'display-p3' }
+                );
 
             if (srcCanvas && ctx) {
                 const width = dstCanvas.width = srcCanvas.width,
@@ -1818,7 +1821,8 @@ class Exporting {
                             width * height * 4
                         ),
                         width,
-                        height
+                        height,
+                        { colorSpace: 'display-p3' }
                     );
                     ctx.putImageData(imageData, 0, 0);
 

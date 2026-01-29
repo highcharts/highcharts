@@ -496,17 +496,6 @@ export default class ContourSeries extends ScatterSeries {
                 this.renderFrame = function (): void {
                     this.setUniforms(false);
 
-                    context.configure({
-                        device,
-                        format: canvasFormat,
-                        colorSpace: 'display-p3',
-                        alphaMode: 'premultiplied',
-                        usage: (
-                            GPUTextureUsage.RENDER_ATTACHMENT |
-                            GPUTextureUsage.COPY_SRC
-                        )
-                    });
-
                     const encoder = device.createCommandEncoder();
 
                     const pass = encoder.beginRenderPass({
