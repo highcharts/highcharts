@@ -144,10 +144,9 @@ const MapSeriesDefaults: MapSeriesOptions = {
      * @sample maps/plotoptions/series-allareas-false/
      *         All areas set to false
      *
-     * @type      {boolean}
-     * @default   true
-     * @product   highmaps
-     * @apioption plotOptions.series.allAreas
+     * @type    {boolean}
+     * @default true
+     * @product highmaps
      *
      * @private
      */

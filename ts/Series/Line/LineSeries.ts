@@ -44,7 +44,7 @@ const {
 /**
  * The line series is the base type and is therefor the series base prototype.
  *
- * @private
+ * @internal
  */
 class LineSeries extends Series {
 
@@ -54,16 +54,23 @@ class LineSeries extends Series {
      *
      * */
 
-    public static defaultOptions = merge(
+    public static defaultOptions: LineSeriesOptions = merge(
         Series.defaultOptions,
-        /**
-         * General options for all series types.
-         *
-         * @optionparent plotOptions.series
-         */
         {
+            /**
+             * What type of legend symbol to render for this series. Can be one
+             * of `areaMarker`, `lineMarker` or `rectangle`.
+             *
+             * @sample {highcharts} highcharts/series/legend-symbol/
+             *         Change the legend symbol
+             *
+             * @type      {string}
+             * @default   lineMarker
+             * @since     11.0.1
+             * @apioption plotOptions.line.legendSymbol
+             */
             legendSymbol: 'lineMarker'
-        } as PlotOptionsOf<LineSeries>
+        }
     );
 
     /* *
@@ -193,7 +200,7 @@ class LineSeries extends Series {
     /**
      * Get the graph path.
      *
-     * @private
+     * @internal
      */
     public getGraphPath(
         points?: Array<LinePoint>,
@@ -352,6 +359,7 @@ class LineSeries extends Series {
  *
  * */
 
+/** @internal */
 interface LineSeries {
     pointClass: typeof LinePoint;
 }
@@ -362,6 +370,7 @@ interface LineSeries {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         line: typeof LineSeries;
@@ -375,6 +384,7 @@ SeriesRegistry.registerSeriesType('line', LineSeries);
  *
  * */
 
+/** @internal */
 export default LineSeries;
 
 /* *

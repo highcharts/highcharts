@@ -24,9 +24,6 @@ import type PointOptions from '../../Core/Series/PointOptions';
  * */
 
 declare module '../../Core/Series/PointOptions' {
-    interface PointOptions {
-        keys?: Array<string>;
-    }
     interface PointMarkerStateHoverOptions {
         /**
          * The radius of the point marker. In hover state, it

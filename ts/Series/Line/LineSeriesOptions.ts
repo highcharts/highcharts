@@ -26,25 +26,32 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *
  * */
 
+/**
+ * A line series displays information as a series of data points connected by
+ * straight line segments.
+ *
+ * @sample {highcharts} highcharts/demo/line-chart/
+ *         Line chart
+ * @sample {highstock} stock/demo/basic-line/
+ *         Line chart
+ *
+ * @product highcharts highstock
+ */
 export interface LineSeriesOptions extends SeriesOptions {
-    allAreas?: boolean;
-
-    boostThreshold?: number;
-    borderColor?: ColorType;
-    borderWidth?: number;
-
-    connectEnds?: boolean;
-    dataLabels?: (DataLabelOptions|Array<DataLabelOptions>);
-
     /**
      * @default 'lineMarker'
      */
     legendSymbol?: SeriesOptions['legendSymbol'];
 
+    // TODO: verify & +doclet or move to the correct location or/and interface
+    boostThreshold?: number;
+    borderColor?: ColorType;
+    borderWidth?: number;
+    connectEnds?: boolean;
+    dataLabels?: (DataLabelOptions|Array<DataLabelOptions>);
     linkedTo?: string;
     pointStart?: number;
     states?: SeriesStatesOptions<LineSeriesOptions>;
-    supportingColor?: ColorType;
 }
 
 /* *

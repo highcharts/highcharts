@@ -614,7 +614,7 @@ function wrapSeriesAlignDataLabel(
             seriesOptions: ColumnSeriesOptions = series.options,
             inside = pick(options.inside, !!series.options.stacking),
             options3d = chart.options.chart.options3d as any,
-            xOffset = point.pointWidth / 2 || 0;
+            xOffset = (point.pointWidth || 0) / 2;
 
         let dLPosition = {
             x: alignTo.x + xOffset,

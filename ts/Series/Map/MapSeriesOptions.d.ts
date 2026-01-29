@@ -38,23 +38,6 @@ import { ScatterSeriesTooltipOptions } from '../Scatter/ScatterSeriesOptions';
  * */
 
 /**
- * Whether all areas of the map defined in `mapData` should be rendered.
- * If `true`, areas which don't correspond to a data point, are rendered
- * as `null` points. If `false`, those areas are skipped.
- *
- * @sample maps/plotoptions/series-allareas-false/
- *         All areas set to false
- *
- * @type {boolean}
- *
- * @default true
- *
- * @product highmaps
- *
- * @apioption plotOptions.series.allAreas
- */
-
-/**
  * The border color of the map areas.
  *
  * In styled mode, the border stroke is given in the `.highcharts-point`
@@ -161,6 +144,18 @@ export interface MapSeriesOptions
      * @since 10.0.0
      */
     affectsMapView?: boolean;
+
+    /**
+     * Whether all areas of the map defined in `mapData` should be rendered.
+     * If `true`, areas which don't correspond to a data point, are rendered
+     * as `null` points. If `false`, those areas are skipped.
+     *
+     * @sample maps/plotoptions/series-allareas-false/
+     *         All areas set to false
+     *
+     * @default true
+     */
+    allAreas?: boolean;
 
     /**
      * @default value
