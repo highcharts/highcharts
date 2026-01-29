@@ -1872,8 +1872,8 @@ class Exporting {
         const exporting = chartCopy.exporting;
 
         // Prepare shadow DOM styles
-        if (exporting?.options.includeShadowDomStyles) {
-            this.applyShadowDomStyles(chartCopy);
+        if (exporting?.options.includeShadowDOMStyles) {
+            this.applyShadowDOMStyles(chartCopy);
         }
 
         // Get the SVG from the container's innerHTML
@@ -1897,14 +1897,14 @@ class Exporting {
      * Apply styles from the shadow DOM.
      *
      * @internal
-     * @function Highcharts.Exporting#applyShadowDomStyles
+     * @function Highcharts.Exporting#applyShadowDOMStyles
      *
      * @param {Highcharts.Chart} chartCopy
      * The copy of a chart for the export process.
      *
      * @requires modules/exporting
      */
-    public applyShadowDomStyles(
+    public applyShadowDOMStyles(
         chartCopy: Chart
     ): void {
         // Get the original chart

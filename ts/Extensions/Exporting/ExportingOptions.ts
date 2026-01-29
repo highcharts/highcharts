@@ -332,9 +332,9 @@ export interface ExportingOptions {
      * @type      {boolean}
      * @default   false
      * @since     12.5.1
-     * @apioption exporting.includeShadowDomStyles
+     * @apioption exporting.includeShadowDOMStyles
      */
-    includeShadowDomStyles?: boolean;
+    includeShadowDOMStyles?: boolean;
 
     /**
      * Path where Highcharts will look for export module dependencies to

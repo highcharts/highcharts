@@ -205,9 +205,9 @@ const exporting: ExportingOptions = {
      *
      * @type      {boolean}
      * @since     12.5.1
-     * @apioption exporting.includeShadowDomStyles
+     * @apioption exporting.includeShadowDOMStyles
      */
-    includeShadowDomStyles: false,
+    includeShadowDOMStyles: false,
 
     /**
      * Path where Highcharts will look for export module dependencies to
