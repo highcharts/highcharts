@@ -1607,7 +1607,7 @@ class Exporting {
                 exportingOptions.error(exportingOptions, err);
             } else {
                 // Fallback disabled
-                error(28, true);
+                error(err?.message || 28, true, this.chart);
             }
         } else if (exportingOptions.type === 'application/pdf') {
             // The local must be false to fallback to server for PDF export
