@@ -56,6 +56,8 @@ function transformVisualSampleScript(script: string | undefined): string {
 
 const GOOGLE_FONT_LINK_REGEX =
     /<link[a-z"=:./ ]+(fonts\.googleapis\.com|fonts\.gstatic\.com)[^>]+>/gi;
+const SCRIPT_TAG_REGEX =
+    /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi;
 const DEMO_CSS_IMPORT_REGEX = /@import [^;]+;/g;
 
 function stripGoogleFontLinks(html: string | undefined): string | undefined {
@@ -64,6 +66,14 @@ function stripGoogleFontLinks(html: string | undefined): string | undefined {
     }
 
     return html.replace(GOOGLE_FONT_LINK_REGEX, '');
+}
+
+function stripScriptTags(html: string | undefined): string | undefined {
+    if (!html) {
+        return html;
+    }
+
+    return html.replace(SCRIPT_TAG_REGEX, '');
 }
 
 function stripDemoCssImports(css: string | undefined): string | undefined {
@@ -301,7 +311,7 @@ test.describe('Visual tests', () => {
                 sample.script = transpileTS(sample.script);
             }
 
-            sample.html = stripGoogleFontLinks(sample.html);
+            sample.html = stripGoogleFontLinks(stripScriptTags(sample.html));
 
             const hasModuleImports = sample.script ?
                 /^\s*import\s/m.test(sample.script) :
@@ -336,20 +346,6 @@ test.describe('Visual tests', () => {
 
             await page.evaluate(() => {
                 window.HCVisualSetup?.markOptionsClean();
-
-                const hcWindow = window as VisualWindow;
-                if (hcWindow.Highcharts?.setOptions) {
-                    hcWindow.Highcharts.setOptions({
-                        chart: {
-                            events: {
-                                load: function () {
-                                    (window as VisualWindow)
-                                        .setHCStyles?.(this as HighchartsChart);
-                                }
-                            }
-                        }
-                    });
-                }
             });
 
             // Inject CSS for styled mode like karma-conf.js does
@@ -359,7 +355,7 @@ test.describe('Visual tests', () => {
             const isStyledMode = transformedScript.indexOf('styledMode: true') !== -1;
             const demoCss = isStyledMode ?
                 stripDemoCssImports(sample.css) :
-                sample.css;
+                undefined;
 
             if (isStyledMode) {
                 // Add highcharts.css
@@ -386,18 +382,6 @@ test.describe('Visual tests', () => {
                     await styleHandle.evaluate(
                         (el: HTMLStyleElement) => {
                             el.id = 'demo.css';
-                        }
-                    );
-                }
-            } else {
-                // For non-styled mode, add demo.css with standard id
-                if (demoCss) {
-                    const styleHandle = await page.addStyleTag({
-                        content: demoCss
-                    });
-                    await styleHandle.evaluate(
-                        (el: HTMLStyleElement) => {
-                            el.id = 'visual-test-styles';
                         }
                     );
                 }
