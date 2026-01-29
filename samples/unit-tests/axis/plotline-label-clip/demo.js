@@ -4,6 +4,7 @@ QUnit.test('Plot line label outside plot area (#22758)', function (assert) {
             plotLines: [{
                 value: 100,
                 label: {
+                    clip: true,
                     // eslint-disable-next-line max-len
                     text: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. '
                 }
@@ -15,12 +16,13 @@ QUnit.test('Plot line label outside plot area (#22758)', function (assert) {
     });
 
     var plotLine = chart.yAxis[0].plotLinesAndBands[0],
-        labelBBox = plotLine.label.element.getBoundingClientRect(),
-        containerBBox = chart.container.getBoundingClientRect(),
-        plotRight = containerBBox.left + chart.plotLeft + chart.plotWidth;
+        label = plotLine.label,
+        labelRight = label.alignAttr.x + label.getBBox().width,
+        plotRight = chart.plotLeft + chart.plotWidth;
 
     assert.ok(
-        labelBBox.right <= plotRight,
-        'Plot line label should not extend beyond plot area right edge. '
+        labelRight <= plotRight,
+        'Plot line label should not extend beyond plot area right edge. ' +
+        'Label right: ' + labelRight + ', Plot area right: ' + plotRight
     );
 });
