@@ -118,12 +118,11 @@ export class LocalDataProvider extends DataProvider {
      * */
 
     public override async init(): Promise<void> {
-        if (this.initialized) {
+        if (this.dataTable) {
             return;
         }
 
         await this.initDataTable();
-        this.initialized = true;
     }
 
     private async initDataTable(): Promise<void> {
@@ -345,7 +344,6 @@ export class LocalDataProvider extends DataProvider {
     public override destroy(): void {
         this.clearDataTableEvents();
         this.clearConnector();
-        super.destroy();
     }
 
     public override getColumnDataType(

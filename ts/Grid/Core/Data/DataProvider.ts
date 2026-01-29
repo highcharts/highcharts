@@ -58,11 +58,6 @@ export abstract class DataProvider {
      */
     protected readonly options: DataProviderOptions;
 
-    /**
-     * Flag indicating whether the data provider has been initialized.
-     */
-    public initialized: boolean = false;
-
 
     /* *
      *
@@ -88,7 +83,6 @@ export abstract class DataProvider {
      * Initializes the data provider.
      */
     public init(): Promise<void> {
-        this.initialized = true;
         return Promise.resolve();
     }
 
@@ -153,9 +147,7 @@ export abstract class DataProvider {
     /**
      * Destroys the provider and releases resources.
      */
-    public destroy(): void {
-        this.initialized = false;
-    }
+    public abstract destroy(): void;
 
     /**
      * Returns the number of items before pagination has been applied.
