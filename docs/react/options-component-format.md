@@ -89,6 +89,25 @@ function ChartComponent() {
 
 **Note:** The `data-hc-option` attributes links the elements to `tooltip.headerFormat`, `tooltip.pointFormat`, and `tooltip.footerFormat`.
 
+## Custom HTML Rendering
+
+By default, the integration uses a lightweight built-in function to convert React elements to HTML strings when processing React components as children of chart option components. This serves as an alternative to React's `renderToStaticMarkup` from `react-dom/server`, avoiding the need to bundle React's server rendering package and keeping your application's bundle size minimal.
+
+If you need different rendering behavior, you can provide a custom renderer via the `renderToHTML` prop. This accepts any function that takes a React element and returns an HTML string, including `renderToStaticMarkup` itself:
+
+```jsx
+import { renderToStaticMarkup } from 'react-dom/server';
+
+<Chart renderToHTML={renderToStaticMarkup}>
+  <Series type="column" data={[1, 2, 3]} />
+
+  <Tooltip>
+    // Custom HTML Rendering
+    <TooltipFormat />
+  </Tooltip>
+</Chart>
+```
+
 ## Caveats
 
 As the components within the chart are parsed statically into Highcharts options, state changes within custom components will not be reflected.

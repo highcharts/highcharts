@@ -12,7 +12,7 @@
 
 import type LinearRegressionOptions from
     '../LinearRegression/LinearRegressionOptions';
-import type TooltipOptions from '../../../Core/TooltipOptions';
+import type { SeriesTooltipOptions } from '../../../Core/TooltipOptions';
 
 /* *
  *
@@ -36,7 +36,7 @@ import type TooltipOptions from '../../../Core/TooltipOptions';
  * @interface Highcharts.LinearRegressionAngleOptions
  */
 export interface LinearRegressionAngleOptions extends LinearRegressionOptions {
-    tooltip?: Partial<TooltipOptions>;
+    tooltip?: Partial<SeriesTooltipOptions>;
 }
 
 /* *

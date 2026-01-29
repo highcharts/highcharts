@@ -37,4 +37,4 @@ Highcharts.chart('container', {
         radius: '100%',
         type: 'solidgauge'
     }]
-} satisfies Highcharts.Options);
+});

@@ -18,4 +18,4 @@ Highcharts.chart('container', {
             54.4
         ]
     }]
-} satisfies Highcharts.Options);
+});

@@ -112,7 +112,7 @@
     ],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
-      "project": "./samples/tsconfig.json",
+      "project": ["./tsconfig.json", "samples/tsconfig.json", "highcharts/samples/tsconfig.json"],
       "sourceType": "module"
     },
     "rules": {
