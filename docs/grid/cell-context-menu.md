@@ -35,6 +35,11 @@ Grid.grid('container', {
 
 If `items` is empty or missing, the browser's native context menu is kept.
 
+## Keyboard access
+
+When a cell is focused, open the context menu using the `ContextMenu` key or
+`Shift+F10`.
+
 ## Menu items
 
 Each item supports:
