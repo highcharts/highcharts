@@ -85,19 +85,66 @@ class RowsVirtualizer {
     public rowSettings?: RowsSettings;
 
     /**
+     * Cached max element height in CSS pixels.
+     */
+    private static maxElementHeight?: number;
+
+    /**
      * The maximum height of a HTML element in most browsers.
      * Firefox has a lower limit than other browsers.
      */
-    private static readonly MAX_ELEMENT_HEIGHT: number = (
-        (navigator.userAgent.indexOf('Firefox') > -1 ? 6000000 : 31000000) /
-        (window.devicePixelRatio || 1)
-    );
+    private static getMaxElementHeight(): number {
+        if (RowsVirtualizer.maxElementHeight !== void 0) {
+            return RowsVirtualizer.maxElementHeight;
+        }
+
+        const isFirefox = Globals.userAgent.indexOf('Firefox') > -1;
+        const fallbackMax = (
+            (isFirefox ? 6000000 : 31000000) /
+            (window.devicePixelRatio || 1)
+        );
+
+        if (!document.body) {
+            RowsVirtualizer.maxElementHeight = fallbackMax;
+            return RowsVirtualizer.maxElementHeight;
+        }
+
+        let res = 1000000;
+        const testUpTo = isFirefox ? 6000000 : 1000000000;
+        const div = document.createElement('div');
+        document.body.appendChild(div);
+
+        let done = false;
+        while (!done) {
+            const test = res * 2;
+            div.style.height = test + 'px';
+
+            if (test > testUpTo || div.clientHeight !== test) {
+                done = true;
+                continue;
+            }
+            res = test;
+        }
+
+        div.remove();
+        const safeMax = 16000000;
+        RowsVirtualizer.maxElementHeight = Math.min(
+            res || fallbackMax,
+            safeMax
+        );
+        return RowsVirtualizer.maxElementHeight;
+    }
 
     /**
      * The total number of rows in the data table.
      * @internal
      */
     public rowCount: number;
+
+    /**
+     * The maximum height of the scrollable element in CSS pixels.
+     */
+    private maxElementHeight: number;
 
     /**
      * The total height of the grid, used when the Grid height
@@ -133,7 +180,6 @@ class RowsVirtualizer {
      */
     private scrollQueued = false;
 
-
     /* *
     *
     *  Constructor
@@ -155,6 +201,7 @@ class RowsVirtualizer {
         this.strictRowHeights = this.rowSettings.strictHeights as boolean;
         this.buffer = Math.max(this.rowSettings.bufferSize as number, 0);
         this.defaultRowHeight = this.getDefaultRowHeight();
+        this.maxElementHeight = RowsVirtualizer.getMaxElementHeight();
 
         if (this.strictRowHeights) {
             viewport.tbodyElement.classList.add(
@@ -263,12 +310,14 @@ class RowsVirtualizer {
         const { defaultRowHeight: rowHeight } = this;
         const lastScrollTop = target.scrollTop;
 
-        const scrollDenominator = RowsVirtualizer.MAX_ELEMENT_HEIGHT -
-            target.offsetHeight;
+        const scrollDenominator = this.maxElementHeight -
+            target.clientHeight;
         const scrollPercentage = scrollDenominator > 0 ?
             lastScrollTop / scrollDenominator :
             0;
-        this.scrollOffset = scrollPercentage * this.gridHeightOverflow;
+        this.scrollOffset = Math.floor(
+            scrollPercentage * this.gridHeightOverflow
+        );
 
         if (this.preventScroll) {
             if (lastScrollTop <= target.scrollTop) {
@@ -380,7 +429,7 @@ class RowsVirtualizer {
             if (isVirtualization) {
                 const topOffset = Math.min(
                     last.getDefaultTopOffset(),
-                    RowsVirtualizer.MAX_ELEMENT_HEIGHT -
+                    this.maxElementHeight -
                     last.htmlElement.offsetHeight
                 );
                 last.setTranslateY(topOffset);
@@ -475,7 +524,7 @@ class RowsVirtualizer {
                 if (isVirtualization) {
                     const topOffset = Math.min(
                         row.getDefaultTopOffset(),
-                        RowsVirtualizer.MAX_ELEMENT_HEIGHT -
+                        this.maxElementHeight -
                         row.htmlElement.offsetHeight
                     );
                     row.setTranslateY(topOffset);
@@ -695,7 +744,7 @@ class RowsVirtualizer {
         this.rowCount = this.viewport.dataTable.getRowCount();
         this.totalGridHeight = this.rowCount * this.defaultRowHeight;
         this.gridHeightOverflow = Math.max(
-            this.totalGridHeight - RowsVirtualizer.MAX_ELEMENT_HEIGHT,
+            this.totalGridHeight - this.maxElementHeight,
             0
         );
     }
@@ -717,11 +766,11 @@ class RowsVirtualizer {
 
         if (isSecondToLastRowVisible && this.gridHeightOverflow > 0) {
             lastRow.setTranslateY(
-                RowsVirtualizer.MAX_ELEMENT_HEIGHT -
+                this.maxElementHeight -
                 lastRow.htmlElement.offsetHeight
             );
 
-            let bottomOffset = RowsVirtualizer.MAX_ELEMENT_HEIGHT -
+            let bottomOffset = this.maxElementHeight -
                 lastRow.htmlElement.offsetHeight;
 
             for (let i = rowsLn - 2; i >= 0; i--) {
@@ -739,7 +788,7 @@ class RowsVirtualizer {
         }
         if (this.gridHeightOverflow > 0) {
             lastRow.setTranslateY(
-                RowsVirtualizer.MAX_ELEMENT_HEIGHT
+                this.maxElementHeight
             );
             return;
         }
@@ -750,6 +799,7 @@ class RowsVirtualizer {
             );
         }
     }
+
 }
 
 
