@@ -1792,25 +1792,30 @@ class Exporting {
             options.exporting?.applyStyleSheets
         ) || '';
 
+        for (const series of chart.series) {
+            if (series.type !== 'contour') {
+                continue;
+            }
 
-        const contour = chart.series.find(
-            (
-                (s): boolean => s.type === 'contour'
-            )
-        );
-
-        if (contour) {
             const dstCanvas = document.createElement('canvas'),
-                srcCanvas = document.querySelector('canvas'),
-                src = (contour as any).readbackData,
+                srcCanvas = (series as any).canvas,
+                src = (series as any).readbackData,
                 ctx = dstCanvas.getContext(
                     '2d',
                     { colorSpace: 'display-p3' }
                 );
 
             if (src && srcCanvas && ctx) {
-                const width = dstCanvas.width = srcCanvas.width,
-                    height = dstCanvas.height = srcCanvas.height;
+                const width = (
+                        dstCanvas.width = (
+                            srcCanvas as HTMLCanvasElement
+                        ).width
+                    ),
+                    height = (
+                        dstCanvas.height = (
+                            srcCanvas as HTMLCanvasElement
+                        ).height
+                    );
 
                 ctx.putImageData(
                     new ImageData(
@@ -1842,11 +1847,9 @@ class Exporting {
                         webgpuCanvasImage.element.getAttribute('href') || ''
                     );
 
-                    const contourCopy = chartCopy
-                        .series
-                        .find((s): boolean => s.type === 'contour') as any;
-
-                    webgpuCanvasImage.add(contourCopy.group);
+                    webgpuCanvasImage.add(
+                        chartCopy.series[series.index].group
+                    );
                 } else {
                     const dataURL = (
                         webgpuCanvasImage.element.getAttribute('href') ||

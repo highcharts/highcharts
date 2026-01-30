@@ -227,7 +227,6 @@ export default class ContourSeries extends ScatterSeries {
             );
             group.element.appendChild(this.foreignObject);
             this.canvas = document.createElement('canvas');
-            this.canvas.id = 'webgpu-canvas';
             this.foreignObject.appendChild(this.canvas);
         }
 
