@@ -491,8 +491,6 @@ class Legend {
      * Returns a style object or null if it fails or isn't applicable.
      */
     private getSafePointAttribs(item: (Series|Point)): SVGAttributes | null {
-        // Data classes and some other legend items don't have pointAttribs
-        // or the .is() method.
         if (
             !item ||
             typeof (item as any).pointAttribs !== 'function' ||
@@ -504,21 +502,16 @@ class Legend {
         const series = item as Series,
             options = series.options,
             pointArrayMap = series.pointArrayMap || [],
-            // Now safe to call .is()
-            isBubble = series.is('bubble') || series.is('packedbubble'),
-            isComplex = isBubble ||
-                pointArrayMap.length > 1 ||
-                (pointArrayMap.length === 1 && pointArrayMap[0] !== 'y');
+            // Check for complex data series (OHLC, Ranges)
+            isComplex = (pointArrayMap.length > 1 ||
+                (pointArrayMap.length === 1 && pointArrayMap[0] !== 'y')) &&
+                !series.is('bubble');
 
-        if (
-            options.colorByPoint ||
-            isComplex ||
-            series.colorKey === 'value'
-        ) {
+        if (options.colorByPoint || isComplex || series.colorKey === 'value') {
             return null;
         }
 
-        // Check for Maps specifically without relying on the name 'map'
+        // Map shape protection
         if ((series.parallelArrays || []).indexOf('path') !== -1) {
             return null;
         }
@@ -582,36 +575,28 @@ class Legend {
             if (symbol) {
                 const series = item as Series;
                 const isMarker = marker && symbol.isMarker;
-
-                // 1. Safely get the point attributes
                 const pointAttribs = this.getSafePointAttribs(series);
 
-                // 2. Check if we got usable visual styles
-                const hasFillOrBorder = !!pointAttribs && (
+                const hasVisuals = !!pointAttribs && (
                     typeof pointAttribs.fill !== 'undefined' ||
                     (typeof pointAttribs['stroke-width'] !== 'undefined' &&
                     Number(pointAttribs['stroke-width']) > 0)
                 );
 
-                // 3. Apply styles based on conditions
                 if (isMarker && pointAttribs) {
-                    // Case 1: Marker-based series (scatter/line).
-                    // Use all attributes.
                     symbol.attr(colorizeHidden(pointAttribs));
-
-                } else if (!isMarker && hasFillOrBorder && pointAttribs) {
-                    // Case 2: Non-marker with fill/border (bar/area).
-                    // Use only visual attrs to avoid geometry-related leaks.
-
+                } else if (!isMarker && hasVisuals && pointAttribs) {
+                    // Case for Columns, Areas, and now Bubbles
                     symbol.attr(colorizeHidden({
                         fill: pointAttribs.fill,
                         stroke: pointAttribs.stroke,
                         'stroke-width': pointAttribs['stroke-width'],
-                        opacity: pointAttribs.opacity
+                        opacity: pointAttribs.opacity,
+                        // Add fill-opacity for Bubble series consistency
+                        'fill-opacity': pointAttribs['fill-opacity']
                     }));
-
                 } else {
-                    // Case 3: Fallback, use the basic series color.
+                    // Fallback for Maps/Financial
                     symbol.attr(colorizeHidden({ fill: item.color }));
                 }
             }
