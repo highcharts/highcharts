@@ -43,6 +43,10 @@ abstract class BaseForm {
     ) {
         this.iconsURL = iconsURL;
 
+        if (iconsURL === 'renderer') {
+            this.iconsURL = 'https://code.highcharts.com/@product.version@/gfx/stock-icons/';
+        }
+
         this.container = this.createPopupContainer(parentDiv);
 
         this.closeButton = this.addCloseButton();
@@ -101,8 +105,9 @@ abstract class BaseForm {
     protected addCloseButton(
         className: string = 'highcharts-popup-close'
     ): HTMLElement {
-        const popup = this,
-            iconsURL = this.iconsURL;
+        const popup = this;
+
+        let iconsURL = this.iconsURL;
 
         // Create close popup button.
         const closeButton = createElement(
