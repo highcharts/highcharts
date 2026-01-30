@@ -38,8 +38,47 @@ declare module './Options' {
 
 declare module './Series/SeriesOptions' {
     interface SeriesOptions {
-        tooltip?: Partial<TooltipOptions>;
+        /**
+         * A configuration object for the tooltip rendering of each single
+         * series. Properties are inherited from [tooltip](#tooltip), but only
+         * the following properties can be defined on a series level.
+         *
+         * @since 2.3
+         */
+        tooltip?: SeriesTooltipOptions;
     }
+}
+
+export interface SeriesTooltipOptions extends Partial<TooltipOptions> {
+    /* *
+     *
+     *  Excluded
+     *
+     * */
+
+    animation?: undefined;
+    backgroundColor?: undefined;
+    borderColor?: undefined;
+    borderRadius?: undefined;
+    borderWidth?: undefined;
+    className?: undefined;
+    crosshairs?: undefined;
+    enabled?: undefined;
+    fixed?: undefined;
+    formatter?: undefined;
+    headerShape?: undefined;
+    hideDelay?: undefined;
+    outside?: undefined;
+    padding?: undefined;
+    positioner?: undefined;
+    shadow?: undefined;
+    shape?: undefined;
+    shared?: undefined;
+    snap?: undefined;
+    split?: undefined;
+    stickOnContact?: undefined;
+    style?: undefined;
+    useHTML?: undefined;
 }
 
 /**

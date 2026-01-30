@@ -32,7 +32,7 @@ if (!reducedMotion) {
 
 // common data label format for the pie chart
 function pieLabels() {
-    let color = '--var(text-primary)';
+    let color = '#000';
     if (this.index === 0) {
         color = '#fff';
     }
