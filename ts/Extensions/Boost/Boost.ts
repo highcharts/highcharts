@@ -138,6 +138,27 @@ function compose(
                     .getPropertyValue('fill') || color;
             }
         });
+
+        // Resolve highlight colors
+        // @todo Resolve all colors
+        if (ColorClass) {
+            colorChecker.attr(
+                'fill',
+                'var(--highcharts-highlight-color-10)'
+            );
+            ColorClass.names['var(--highcharts-highlight-color-10)'] = win
+                .getComputedStyle(colorChecker.element)
+                .getPropertyValue('fill') || 'none';
+
+            colorChecker.attr(
+                'fill',
+                'var(--highcharts-highlight-color-100)'
+            );
+            ColorClass.names['var(--highcharts-highlight-color-100)'] = win
+                .getComputedStyle(colorChecker.element)
+                .getPropertyValue('fill') || 'none';
+        }
+
         colorChecker.destroy();
     };
     addEvent(ChartClass, 'beforeRender', setHardColorReferences);

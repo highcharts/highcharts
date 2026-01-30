@@ -148,6 +148,36 @@ const contexts = [
     'webkit-3d'
 ];
 
+const colorCache: Record<string, string> = {};
+
+/*
+ * Resolve CSS color expressions like color-mix
+ * @internal
+ */
+const resolveColorExpression = (input: string): string => {
+    if (colorCache[input]) {
+        return colorCache[input];
+    }
+
+    /* eslint-disable-next-line max-len */
+    const colorMixRegex = /^color-mix\(in srgb,([a-z\(\)0-9\-]+),([a-z\(\)0-9\-]+) ([0-9\.%]+)/,
+        result = colorMixRegex.exec(input);
+
+    if (result) {
+        const weight = parseFloat(result[3]) / 100,
+            color1 = result[1],
+            color2 = result[2],
+            color = new Color(color1).tweenTo(
+                new Color(color2),
+                weight
+            ) as string;
+
+        colorCache[input] = color;
+        return color;
+    }
+    return input;
+};
+
 /* *
  *
  *  Class
@@ -677,6 +707,10 @@ class WGLRenderer {
                         pointAttr = point.series.pointAttribs(point);
 
                     swidth = pointAttr['stroke-width'] || 0;
+
+                    if (typeof pointAttr.fill === 'string') {
+                        pointAttr.fill = resolveColorExpression(pointAttr.fill);
+                    }
 
                     // Handle point colors
                     pcolor = color(pointAttr.fill).rgba;
