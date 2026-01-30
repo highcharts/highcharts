@@ -874,6 +874,14 @@ class ColumnSeries extends Series {
                                 visiblePlotOnly: true
                             }
                         ) ||
+                        // Added condtion for scatter points on the edge, #24096
+                        (
+                            series.type === 'scatter' &&
+                            pointer?.inClass(
+                                e.target as any,
+                                'highcharts-point'
+                            )
+                        ) ||
                         pointer?.inClass(
                             e.target as any,
                             'highcharts-data-label'
