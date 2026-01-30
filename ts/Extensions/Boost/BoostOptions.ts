@@ -267,11 +267,7 @@ declare module '../../Core/Series/SeriesOptions' {
         /**
          * Sets the color blending in the boost module.
          *
-         * @type       {string}
-         * @default    undefined
-         * @validvalue ["add", "multiply", "darken"]
          * @requires   modules/boost
-         * @apioption  plotOptions.series.boostBlending
          */
         boostBlending?: BoostBlendingValue;
 
@@ -290,10 +286,8 @@ declare module '../../Core/Series/SeriesOptions' {
          * outside the visible plot area, and the `boostThreshold` won't take
          * effect.
          *
-         * @type      {number}
-         * @default   5000
-         * @requires  modules/boost
-         * @apioption plotOptions.series.boostThreshold
+         * @default  5000
+         * @requires modules/boost
          */
         boostThreshold?: number;
     }

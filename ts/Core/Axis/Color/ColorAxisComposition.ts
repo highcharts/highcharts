@@ -66,7 +66,7 @@ declare module '../../Series/SeriesBase' {
  *
  * */
 
-namespace ColorAxisComposition {
+export namespace ColorAxisComposition {
 
     /* *
      *

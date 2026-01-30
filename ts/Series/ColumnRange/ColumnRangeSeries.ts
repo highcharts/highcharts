@@ -244,7 +244,7 @@ class ColumnRangeSeries extends AreaRangeSeries {
                         y + height,
                         y,
                         start,
-                        start + point.pointWidth
+                        start + (point.pointWidth || 0)
                     );
                 } else {
 

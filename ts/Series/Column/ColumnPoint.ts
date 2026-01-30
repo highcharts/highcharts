@@ -17,8 +17,9 @@
 
 import type ColumnSeries from './ColumnSeries';
 import type ColumnPointOptions from './ColumnPointOptions';
-import type Point from '../../Core/Series/Point.js';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+
+import Point from '../../Core/Series/Point.js';
 
 /* *
  *
@@ -34,12 +35,12 @@ declare module '../../Core/Series/PointBase' {
 
 export class ColumnPoint extends Point {
     allowShadow?: boolean;
-    barX: number;
+    barX!: number;
     group?: SVGElement;
     opacity?: number;
-    options: ColumnPointOptions;
-    pointWidth: number;
-    series: ColumnSeries;
+    options!: ColumnPointOptions;
+    pointWidth?: number;
+    series!: ColumnSeries;
 }
 
 /* *
