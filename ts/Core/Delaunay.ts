@@ -47,6 +47,30 @@ class Delaunay<T extends Float32Array|Float64Array = Float32Array> {
      */
     private readonly ids: Uint32Array;
 
+    /**
+     * Numerical tolerance for geometric predicates.
+     */
+    private readonly epsilon: number;
+
+    /**
+     * Minimum X value used for normalization.
+     */
+    private readonly minX: number;
+
+    /**
+     * Minimum Y value used for normalization.
+     */
+    private readonly minY: number;
+
+    /**
+     * Inverse X scale factor used for normalization.
+     */
+    private readonly invScaleX: number;
+
+    /**
+     * Inverse Y scale factor used for normalization.
+     */
+    private readonly invScaleY: number;
 
     /* *
      *
@@ -63,10 +87,47 @@ class Delaunay<T extends Float32Array|Float64Array = Float32Array> {
     constructor(points: T) {
         this.points = points;
 
-        const n = points.length >>> 1,
-            ids = new Uint32Array(n),
-            x = (i: number): number => points[i << 1],
-            y = (i: number): number => points[(i << 1) + 1];
+        const n = points.length >>> 1;
+
+        // Floating-point error multiplier used by geometric predicates.
+        this.epsilon = 4 * Number.EPSILON;
+
+        let minX = Infinity,
+            maxX = -Infinity,
+            minY = Infinity,
+            maxY = -Infinity;
+
+        for (let i = 0; i < n; i++) {
+            const px = points[i << 1],
+                py = points[(i << 1) + 1];
+
+            if (px < minX) {
+                minX = px;
+            }
+            if (px > maxX) {
+                maxX = px;
+            }
+            if (py < minY) {
+                minY = py;
+            }
+            if (py > maxY) {
+                maxY = py;
+            }
+        }
+
+        const rangeX = maxX - minX || 1,
+            rangeY = maxY - minY || 1;
+
+        this.minX = minX;
+        this.minY = minY;
+        this.invScaleX = 1 / rangeX;
+        this.invScaleY = 1 / rangeY;
+
+        const ids = new Uint32Array(n),
+            x = (i: number): number =>
+                (points[i << 1] - minX) * this.invScaleX,
+            y = (i: number): number =>
+                (points[(i << 1) + 1] - minY) * this.invScaleY;
 
         for (let i = 0; i < n; i++) {
             ids[i] = i;
@@ -109,14 +170,24 @@ class Delaunay<T extends Float32Array|Float64Array = Float32Array> {
         }
 
         const points = this.points,
-            x = (i: number): number => points[i << 1],
-            y = (i: number): number => points[(i << 1) + 1];
+            { minX, minY, invScaleX, invScaleY } = this,
+            x = (i: number): number =>
+                (points[i << 1] - minX) * invScaleX,
+            y = (i: number): number =>
+                (points[(i << 1) + 1] - minY) * invScaleY;
 
         // Determine if three points are in counter-clockwise order.
         const orient = (a: number, b: number, c: number): boolean => {
             const ax = x(a),
-                ay = y(a);
-            return (x(b) - ax) * (y(c) - ay) - (y(b) - ay) * (x(c) - ax) > 0;
+                ay = y(a),
+                bx = x(b) - ax,
+                by = y(b) - ay,
+                cx = x(c) - ax,
+                cy = y(c) - ay,
+                det = bx * cy - by * cx,
+                err = (Math.abs(bx * cy) + Math.abs(by * cx)) * this.epsilon;
+
+            return det > err;
         };
 
         // Determine if a point (d) is inside the circumcircle of a triangle
@@ -140,13 +211,18 @@ class Delaunay<T extends Float32Array|Float64Array = Float32Array> {
                 cy = y(c) - y(d),
                 aa = ax * ax + ay * ay,
                 bb = bx * bx + by * by,
-                cc = cx * cx + cy * cy;
+                cc = cx * cx + cy * cy,
+                term1 = by * cc - bb * cy,
+                term2 = bx * cc - bb * cx,
+                term3 = bx * cy - by * cx,
+                det = ax * term1 - ay * term2 + aa * term3,
+                err = (
+                    Math.abs(ax * term1) +
+                    Math.abs(ay * term2) +
+                    Math.abs(aa * term3)
+                ) * this.epsilon;
 
-            return (
-                ax * (by * cc - bb * cy) -
-                ay * (bx * cc - bb * cx) +
-                aa * (bx * cy - by * cx)
-            ) > 0;
+            return det > err;
         };
 
         // Data structures for the quad-edge data structure.
