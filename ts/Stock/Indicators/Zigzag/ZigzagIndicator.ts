@@ -43,7 +43,7 @@ const {
 /**
  * The Zig Zag series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.zigzag
  *
@@ -63,7 +63,7 @@ class ZigzagIndicator extends SMAIndicator {
      *
      * This series requires `linkedTo` option to be set.
      *
-     * @sample stock/indicators/zigzag
+     * @sample {highstock} stock/indicators/zigzag
      *         Zig Zag indicator
      *
      * @extends      plotOptions.sma
@@ -269,6 +269,7 @@ class ZigzagIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface ZigzagIndicator {
     nameComponents: Array<string>;
     nameSuffixes: Array<string>;
@@ -288,6 +289,7 @@ extend(ZigzagIndicator.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         zigzag: typeof ZigzagIndicator;
@@ -302,6 +304,7 @@ SeriesRegistry.registerSeriesType('zigzag', ZigzagIndicator);
  *
  * */
 
+/** @internal */
 export default ZigzagIndicator;
 
 /* *

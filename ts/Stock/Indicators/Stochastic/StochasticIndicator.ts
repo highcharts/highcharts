@@ -43,7 +43,7 @@ const {
 /**
  * The Stochastic series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.stochastic
  *
@@ -61,7 +61,7 @@ class StochasticIndicator extends SMAIndicator {
      * Stochastic oscillator. This series requires the `linkedTo` option to be
      * set and should be loaded after the `stock/indicators/indicators.js` file.
      *
-     * @sample stock/indicators/stochastic
+     * @sample {highstock} stock/indicators/stochastic
      *         Stochastic oscillator
      *
      * @extends      plotOptions.sma
@@ -262,6 +262,7 @@ class StochasticIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface StochasticIndicator extends MultipleLinesComposition.IndicatorComposition {
     linesApiNames: Array<string>;
     nameBase: string;
@@ -290,6 +291,7 @@ MultipleLinesComposition.compose(StochasticIndicator);
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         stochastic: typeof StochasticIndicator;
@@ -303,6 +305,7 @@ SeriesRegistry.registerSeriesType('stochastic', StochasticIndicator);
  *
  * */
 
+/** @internal */
 export default StochasticIndicator;
 
 /* *
