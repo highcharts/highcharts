@@ -490,17 +490,27 @@ class Legend {
      * @return {Highcharts.SVGAttributes|null}
      * Returns a style object or null if it fails or isn't applicable.
      */
-    private getSafePointAttribs(series: Series): SVGAttributes | null {
-        const pointAttribs = series.pointAttribs,
+    private getSafePointAttribs(item: (Series|Point)): SVGAttributes | null {
+        // Data classes and some other legend items don't have pointAttribs
+        // or the .is() method.
+        if (
+            !item ||
+            typeof (item as any).pointAttribs !== 'function' ||
+            typeof (item as any).is !== 'function'
+        ) {
+            return null;
+        }
+
+        const series = item as Series,
             options = series.options,
             pointArrayMap = series.pointArrayMap || [],
-            // Standard series (line, column, bar) have ['y'] or no map.
-            // Complex series (ohlc, range) have ['open', 'high', ...]
-            isComplex = pointArrayMap.length > 1 ||
+            // Now safe to call .is()
+            isBubble = series.is('bubble') || series.is('packedbubble'),
+            isComplex = isBubble ||
+                pointArrayMap.length > 1 ||
                 (pointArrayMap.length === 1 && pointArrayMap[0] !== 'y');
 
         if (
-            typeof pointAttribs !== 'function' ||
             options.colorByPoint ||
             isComplex ||
             series.colorKey === 'value'
@@ -508,7 +518,12 @@ class Legend {
             return null;
         }
 
-        const attribs = pointAttribs.call(series, void 0, 'normal');
+        // Check for Maps specifically without relying on the name 'map'
+        if ((series.parallelArrays || []).indexOf('path') !== -1) {
+            return null;
+        }
+
+        const attribs = series.pointAttribs(void 0, 'normal');
 
         return (attribs && typeof attribs === 'object') ?
             (attribs as SVGAttributes) :
