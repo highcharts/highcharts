@@ -15,21 +15,22 @@
  *
  * */
 
-import type ColorAxisComposition from '../../Core/Axis/Color/ColorAxisComposition';
-import type ColorType from '../../Core/Color/ColorType';
-import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
-import type MapPointOptions from './MapPointOptions';
+import type {
+    ColorAxisComposition
+} from '../../Core/Axis/Color/ColorAxisComposition';
+import type { ColorType } from '../../Core/Color/ColorType';
+import type { DataLabelOptions } from '../../Core/Series/DataLabelOptions';
+import type { MapPointOptions } from './MapPointOptions';
 import type {
     PointOptions,
     PointShortOptions,
     PointMarkerOptions
 } from '../../Core/Series/PointOptions';
-import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
+import type { ScatterSeriesOptions } from '../Scatter/ScatterSeriesOptions';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type {
-    SeriesStatesOptions,
-    SeriesLinecapValue
-} from '../../Core/Series/SeriesOptions';
-import { ScatterSeriesTooltipOptions } from '../Scatter/ScatterSeriesOptions';
+    ScatterSeriesTooltipOptions
+} from '../Scatter/ScatterSeriesOptions';
 
 /* *
  *
@@ -172,16 +173,17 @@ export interface MapSeriesOptions
     legendSymbol?: ScatterSeriesOptions['legendSymbol'];
 
     /**
+     * @productdesc {highmaps}
      * The SVG value used for the `stroke-linecap` and `stroke-linejoin` of
      * the map borders. Round means that borders are rounded in the ends and
      * bends.
      *
-     * @sample maps/demo/mappoint-mapmarker/
+     * @sample {highmaps} maps/demo/mappoint-mapmarker/
      *         Backdrop coastline with round linecap
      *
      * @since 10.3.3
      */
-    linecap?: SeriesLinecapValue;
+    linecap?: ScatterSeriesOptions['linecap'];
 
     /**
      * @ignore-option

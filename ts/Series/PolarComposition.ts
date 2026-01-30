@@ -113,6 +113,16 @@ declare module '../Core/Series/SeriesBase' {
 
 declare module '../Core/Series/SeriesOptions' {
     interface SeriesOptions {
+        /**
+         * Polar charts only. Whether to connect the ends of a line series
+         * plot across the extremes.
+         *
+         * @sample {highcharts} highcharts/plotoptions/line-connectends-false/
+         *         Do not connect
+         *
+         * @since   2.3.0
+         * @product highcharts
+         */
         connectEnds?: boolean;
     }
 }
