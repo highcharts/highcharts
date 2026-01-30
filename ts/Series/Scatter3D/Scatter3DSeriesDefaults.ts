@@ -57,8 +57,6 @@ const Scatter3DSeriesDefaults: Scatter3DSeriesOptions = {
  * A `scatter3d` series. If the [type](#series.scatter3d.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
  *
- * scatter3d](#plotOptions.scatter3d).
- *
  * @extends   series,plotOptions.scatter3d
  * @excluding boostThreshold, boostBlending
  * @product   highcharts

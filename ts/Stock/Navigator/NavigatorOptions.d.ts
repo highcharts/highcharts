@@ -54,7 +54,31 @@ declare module '../../Core/Options'{
 declare module '../../Core/Series/SeriesOptions' {
     interface SeriesOptions {
         fillOpacity?: number;
+
+        /**
+         * Options for the corresponding navigator series if `showInNavigator`
+         * is `true` for this series. Available options are the same as any
+         * series, documented at [plotOptions](#plotOptions.series) and
+         * [series](#series).
+         *
+         * These options are merged with options in [navigator.series](
+         * #navigator.series), and will take precedence if the same option is
+         * defined both places.
+         *
+         * @see [navigator.series](#navigator.series)
+         *
+         * @since   5.0.0
+         * @product highstock
+         */
         navigatorOptions?: SeriesOptions;
+
+        /**
+         * Whether or not to show the series in the navigator. Takes precedence
+         * over [navigator.baseSeries](#navigator.baseSeries) if defined.
+         *
+         * @since     5.0.0
+         * @product   highstock
+         */
         showInNavigator?: boolean;
     }
 }

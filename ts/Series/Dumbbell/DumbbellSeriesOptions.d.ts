@@ -19,10 +19,7 @@ import type AreaRangeSeriesOptions from '../AreaRange/AreaRangeSeriesOptions';
 import type ColorString from '../../Core/Color/ColorString';
 import type ColorType from '../../Core/Color/ColorType';
 import type DumbbellPointOptions from './DumbbellPointOptions';
-import type {
-    LegendSymbolType,
-    SeriesStatesOptions
-} from '../../Core/Series/SeriesOptions';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type {
     PointMarkerOptions,
     PointShortOptions
@@ -197,7 +194,10 @@ interface DumbbellSeriesOptions extends AreaRangeSeriesOptions {
      */
     data?: Array<(DumbbellPointOptions|PointShortOptions)>;
 
-    legendSymbol?: LegendSymbolType;
+    /**
+     * @default 'rectangle'
+     */
+    legendSymbol?: AreaRangeSeriesOptions['legendSymbol'];
 
     crisp?: boolean;
 

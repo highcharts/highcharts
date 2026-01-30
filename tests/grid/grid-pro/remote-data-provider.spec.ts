@@ -37,7 +37,7 @@ async function runRemoteScenario(
 
     return await page.evaluate(async ({ options, mode }) => {
         const api = (window as any).remoteDataProviderTest;
-        api.createGrid(options);
+        await api.createGrid(options);
 
         const grid = api.getGrid();
         const dp = grid?.dataProvider;

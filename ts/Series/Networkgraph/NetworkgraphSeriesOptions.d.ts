@@ -17,7 +17,6 @@
  *
  * */
 
-import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import type ColorType from '../../Core/Color/ColorType';
 import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
 import type {
@@ -51,9 +50,7 @@ import type {
  * */
 
 declare module '../../Core/Series/SeriesOptions' {
-    interface SeriesStateInactiveOptions
-    {
-        animation?: (boolean|Partial<AnimationOptions>);
+    interface SeriesStateInactiveOptions {
         linkOpacity?: number;
     }
 }

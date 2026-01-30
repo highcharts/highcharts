@@ -21,9 +21,11 @@ import type {
     PointMarkerOptions,
     PointShortOptions
 } from '../../Core/Series/PointOptions';
-import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
+import type {
+    ScatterSeriesOptions,
+    ScatterSeriesTooltipOptions
+} from '../Scatter/ScatterSeriesOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type TooltipOptions from '../../Core/TooltipOptions';
 import type VectorPointOptions from './VectorPointOptions';
 
 /* *
@@ -144,7 +146,7 @@ export interface VectorSeriesOptions extends ScatterSeriesOptions {
 
     states?: SeriesStatesOptions<VectorSeriesOptions>;
 
-    tooltip?: Partial<TooltipOptions>;
+    tooltip?: VectorSeriesTooltipOptions;
 
     /**
      * Maximum length of the arrows in the vector plot. The individual arrow
@@ -152,6 +154,14 @@ export interface VectorSeriesOptions extends ScatterSeriesOptions {
      */
     vectorLength?: number;
 
+}
+
+export interface VectorSeriesTooltipOptions
+    extends ScatterSeriesTooltipOptions {
+    /**
+     * @default '[{point.x}, {point.y}] Length: {point.length} Direction: {point.direction}°'
+     */
+    pointFormat?: ScatterSeriesTooltipOptions['pointFormat'];
 }
 
 /* *

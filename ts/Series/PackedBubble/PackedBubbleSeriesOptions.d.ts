@@ -17,6 +17,7 @@
 
 import type {
     BubbleSeriesOptions,
+    BubbleSeriesTooltipOptions,
     BubbleSizeByValue
 } from '../Bubble/BubbleSeriesOptions';
 import type NetworkgraphSeriesOptions from '../Networkgraph/NetworkgraphSeriesOptions';
@@ -31,7 +32,6 @@ import type {
     PointMarkerOptions,
     PointShortOptions
 } from '../../Core/Series/PointOptions';
-import type TooltipOptions from '../../Core/TooltipOptions';
 
 /* *
  *
@@ -204,8 +204,10 @@ export interface PackedBubbleSeriesOptions
     sizeBy?: BubbleSizeByValue;
 
     states?: SeriesStatesOptions<PackedBubbleSeriesOptions>;
+
     stickyTracking: false;
-    tooltip?: Partial<TooltipOptions>;
+
+    tooltip?: PackedBubbleSeriesTooltipOptions;
 
     /**
      * An option is giving a possibility to choose between using simulation
@@ -224,6 +226,14 @@ export interface PackedBubbleSeriesOptions
 
     zoneAxis?: ('x'|'y'|'z'|undefined);
 
+}
+
+export interface PackedBubbleSeriesTooltipOptions
+    extends BubbleSeriesTooltipOptions {
+    /**
+     * @default 'Value: {point.value}'
+     */
+    pointFormat?: BubbleSeriesTooltipOptions['pointFormat'];
 }
 
 /* *

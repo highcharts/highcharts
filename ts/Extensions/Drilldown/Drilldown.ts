@@ -237,7 +237,6 @@ declare module '../../Core/Series/PointOptions' {
     }
 }
 
-
 declare module '../../Core/Renderer/SVG/SVGElementBase' {
     interface SVGElementBase {
         /**

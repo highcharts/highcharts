@@ -180,6 +180,8 @@ abstract class ResizingMode {
     public loadColumn(column: Column): void {
         const rawWidth = column.options.width;
         if (!defined(rawWidth) || rawWidth === 'auto') {
+            delete this.columnWidths[column.id];
+            delete this.columnWidthUnits[column.id];
             return;
         }
 
