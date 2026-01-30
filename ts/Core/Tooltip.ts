@@ -546,6 +546,8 @@ class Tooltip {
                         ) || [].join(' ')
                     )
                 );
+
+                // For picking up the specific palette
                 container.dataset['highchartsChart'] = chart.index.toString();
 
                 // We need to set pointerEvents = 'none' as otherwise it makes
