@@ -35,7 +35,10 @@ import Grid from '../Grid.js';
 import RowsVirtualizer from './Actions/RowsVirtualizer.js';
 import ColumnsResizer from './Actions/ColumnsResizer.js';
 import Globals from '../Globals.js';
+import type TableCell from './Body/TableCell';
+
 import Cell from './Cell.js';
+import CellContextMenu from './Body/CellContextMenu.js';
 
 const { makeHTMLElement } = GridUtils;
 const {
@@ -221,6 +224,10 @@ class Table {
         // Delegated cell events
         this.tbodyElement.addEventListener('click', this.onCellClick);
         this.tbodyElement.addEventListener('dblclick', this.onCellDblClick);
+        this.tbodyElement.addEventListener(
+            'contextmenu',
+            this.onCellContextMenu
+        );
         this.tbodyElement.addEventListener('mousedown', this.onCellMouseDown);
         this.tbodyElement.addEventListener('mouseover', this.onCellMouseOver);
         this.tbodyElement.addEventListener('mouseout', this.onCellMouseOut);
@@ -467,6 +474,22 @@ class Table {
     };
 
     /**
+     * Delegated context menu handler for cells.
+     * @param e Mouse event
+     */
+    private onCellContextMenu = (e: MouseEvent): void => {
+        const cell = this.getCellFromElement(e.target);
+        if (!cell || !('column' in cell) || !('row' in cell)) {
+            return;
+        }
+
+        const tableCell = cell as TableCell;
+        if (this.openCellContextMenu(tableCell, e.clientX, e.clientY)) {
+            e.preventDefault();
+        }
+    };
+
+    /**
      * Delegated mousedown handler for cells.
      * @param e Mouse event
      */
@@ -505,10 +528,77 @@ class Table {
      */
     private onCellKeyDown = (e: KeyboardEvent): void => {
         const cell = this.getCellFromElement(e.target);
-        if (cell) {
-            (cell as { onKeyDown(e: KeyboardEvent): void }).onKeyDown(e);
+        if (!cell) {
+            return;
         }
+
+        const isContextMenuKey = (
+            e.key === 'ContextMenu' || (e.key === 'F10' && e.shiftKey)
+        );
+
+        if (isContextMenuKey && 'column' in cell && 'row' in cell) {
+            const tableCell = cell as TableCell;
+            const rect = tableCell.htmlElement.getBoundingClientRect();
+            const opened = this.openCellContextMenu(
+                tableCell,
+                rect.left + 4,
+                rect.bottom - 2
+            );
+
+            if (opened) {
+                e.preventDefault();
+                e.stopPropagation();
+                return;
+            }
+        }
+
+        (cell as { onKeyDown(e: KeyboardEvent): void }).onKeyDown(e);
     };
+
+    /**
+     * Opens a cell context menu if configured and enabled.
+     *
+     * @param tableCell
+     * The target cell.
+     *
+     * @param clientX
+     * The viewport X coordinate for anchoring.
+     *
+     * @param clientY
+     * The viewport Y coordinate for anchoring.
+     *
+     * @returns
+     * True if the menu was opened.
+     */
+    private openCellContextMenu(
+        tableCell: TableCell,
+        clientX: number,
+        clientY: number
+    ): boolean {
+        const options = tableCell.column?.options.cells?.contextMenu;
+
+        if (options?.enabled === false) {
+            return false;
+        }
+
+        const items = options?.items || [];
+        if (!items.length) {
+            return false; // Keep native browser menu
+        }
+
+        // Close any existing popups before opening a new menu.
+        // Copy to array to avoid mutation during iteration.
+        for (const popup of Array.from(this.grid.popups)) {
+            popup.hide();
+        }
+
+        new CellContextMenu(this.grid, tableCell, items).showAt(
+            clientX,
+            clientY
+        );
+
+        return true;
+    }
 
     /**
      * Scrolls the table to the specified row.
@@ -618,6 +708,10 @@ class Table {
         this.tbodyElement.removeEventListener('scroll', this.onScroll);
         this.tbodyElement.removeEventListener('click', this.onCellClick);
         this.tbodyElement.removeEventListener('dblclick', this.onCellDblClick);
+        this.tbodyElement.removeEventListener(
+            'contextmenu',
+            this.onCellContextMenu
+        );
         this.tbodyElement.removeEventListener(
             'mousedown', this.onCellMouseDown
         );
