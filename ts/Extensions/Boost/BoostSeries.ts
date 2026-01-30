@@ -65,8 +65,6 @@ const {
 } = U;
 import WGLRenderer from './WGLRenderer.js';
 import DataTableCore from '../../Data/DataTableCore.js';
-import type AxisOptions from '../../Core/Axis/AxisOptions';
-import type Axis from '../../Core/Axis/Axis';
 
 /* *
  *
@@ -782,31 +780,8 @@ function exitBoost(
 }
 
 /**
- * Helper to check if an axis still needs extremes calculated.
- *
- * Returns true when current range < options range (for panning).
- *
- * @internal
- */
-function axisNeedsExtremes(
-    axis: Axis | undefined,
-    axisOptions: AxisOptions | undefined
-): boolean {
-    if (!axis) {
-        return false;
-    }
-
-    // Check if current range < options range (for panning)
-    return !!(
-        isNumber(axis.min) &&
-        isNumber(axis.max) &&
-        isNumber(axisOptions?.min) &&
-        isNumber(axisOptions?.max) &&
-        (axis.max - axis.min) < (axisOptions.max - axisOptions.min)
-    );
-}
-
-/**
+ * True when we know extremes and can skip the expensive data loop
+ * (explicit axis min/max, or panning with allExtremes).
  * @internal
  * @function Highcharts.Series#hasExtremes
  */
@@ -814,49 +789,31 @@ function hasExtremes(
     series: Series,
     checkX?: boolean
 ): boolean {
-    const options = series.options,
-        threshold = pick(options.boostThreshold, Number.MAX_VALUE);
-
-    // Return early if boost is disabled.
+    const threshold = pick(series.options.boostThreshold, Number.MAX_VALUE);
     if (threshold === 0) {
-        return false;
+        return true;
     }
+    const yOpts = series.yAxis?.options,
+        xOpts = series.xAxis?.options,
+        cOpts = series.colorAxis?.options;
 
-    const dataLength = series.dataTable.getModified().rowCount,
-        yAxis = series.yAxis,
-        xAxis = series.xAxis,
-        xAxisOptions = xAxis?.options,
-        yAxisOptions = yAxis?.options,
-        colorAxis = series.colorAxis && series.colorAxis.options;
-
-    // Check if extremes are defined in options
     if (
-        dataLength < threshold ||
-        !isNumber(yAxisOptions?.min) ||
-        !isNumber(yAxisOptions?.max) ||
-        (checkX &&
-            (!isNumber(xAxisOptions?.min) || !isNumber(xAxisOptions?.max))) ||
-        (colorAxis && (!isNumber(colorAxis.min) || !isNumber(colorAxis.max)))
+        isNumber(yOpts?.min) &&
+        isNumber(yOpts?.max) &&
+        (!checkX || (isNumber(xOpts?.min) && isNumber(xOpts?.max))) &&
+        (!cOpts || (isNumber(cOpts.min) && isNumber(cOpts.max)))
     ) {
-        return false;
+        return true;
     }
-
-    // Fast path for first render: if allExtremes not calculated yet,
-    // return false immediately (same as original behavior before changes)
-    if (!yAxis?.allExtremes || (checkX && !xAxis?.allExtremes)) {
-        return false;
+    const dataLength = series.dataTable.getModified().rowCount;
+    if (dataLength < threshold) {
+        return true;
     }
-
-    // #24029 - Check if current range < options range (for panning)
-    if (
-        axisNeedsExtremes(yAxis, yAxisOptions) ||
-        (checkX && axisNeedsExtremes(xAxis, xAxisOptions))
-    ) {
-        return false;
-    }
-
-    // Current range >= set range and allExtremes is calculated
-    return true;
+    return !!(
+        (series.yAxis?.isPanning || (checkX && series.xAxis?.isPanning)) &&
+        series.yAxis?.allExtremes &&
+        (!checkX || series.xAxis?.allExtremes)
+    );
 }
 
 /**
@@ -1658,16 +1615,13 @@ function wrapSeriesGetExtremes(
 ): DataExtremesObject {
 
     if (this.boosted) {
-        // We're in zoom mode (user-defined extremes exist)
-        // Check if we can skip extremes calculation
-        if (hasExtremes(this)) {
+        if (hasExtremes(this, true)) {
+            // Panning: use existing dataMin/dataMax from series.
+            if (this.xAxis.isPanning || this.yAxis.isPanning) {
+                return this;
+            }
+            // Explicit options: core should use axis min/max.
             return {};
-        }
-        if (this.xAxis.isPanning || this.yAxis.isPanning) {
-            // Do not re-compute the extremes during panning, because looping
-            // the data is expensive. The `this` contains the `dataMin` and
-            // `dataMax` to use.
-            return this;
         }
     }
     return proceed.apply(this, [].slice.call(arguments, 1));
