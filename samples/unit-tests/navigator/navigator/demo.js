@@ -60,6 +60,26 @@ QUnit.test(
             'image',
             'Navigator handles should be updated to images. (#21660)'
         );
+
+        const plotSizeYBefore = chart.plotSizeY;
+        chart.update({
+            navigator: {
+                enabled: false
+            }
+        });
+
+        chart.update({
+            navigator: {
+                enabled: true
+            }
+        });
+        const plotSizeYAfter = chart.plotSizeY;
+
+        assert.strictEqual(
+            plotSizeYBefore,
+            plotSizeYAfter,
+            'Navigator toggle should not shrink the chart. (#21775)'
+        );
     }
 );
 
