@@ -780,8 +780,7 @@ function exitBoost(
 }
 
 /**
- * True when we know extremes and can skip the expensive data loop
- * (explicit axis min/max, or panning with allExtremes).
+ * True when we can skip the expensive data loop (processData/getExtremes).
  * @internal
  * @function Highcharts.Series#hasExtremes
  */
@@ -789,26 +788,31 @@ function hasExtremes(
     series: Series,
     checkX?: boolean
 ): boolean {
-    const threshold = pick(series.options.boostThreshold, Number.MAX_VALUE);
+    const options = series.options,
+        threshold = pick(options.boostThreshold, Number.MAX_VALUE);
+
     if (threshold === 0) {
-        return true;
+        return false;
     }
-    const yOpts = series.yAxis?.options,
-        xOpts = series.xAxis?.options,
-        cOpts = series.colorAxis?.options;
+
+    const dataLength = series.dataTable.getModified().rowCount,
+        xAxis = series.xAxis && series.xAxis.options,
+        yAxis = series.yAxis && series.yAxis.options,
+        colorAxis = series.colorAxis && series.colorAxis.options;
 
     if (
-        isNumber(yOpts?.min) &&
-        isNumber(yOpts?.max) &&
-        (!checkX || (isNumber(xOpts?.min) && isNumber(xOpts?.max))) &&
-        (!cOpts || (isNumber(cOpts.min) && isNumber(cOpts.max)))
+        isNumber(yAxis?.min) &&
+        isNumber(yAxis?.max) &&
+        (!checkX || (isNumber(xAxis?.min) && isNumber(xAxis?.max))) &&
+        (!colorAxis || (isNumber(colorAxis.min) && isNumber(colorAxis.max)))
     ) {
-        return true;
+        return isNumber(series.dataMin) && isNumber(series.dataMax);
     }
-    const dataLength = series.dataTable.getModified().rowCount;
+
     if (dataLength < threshold) {
         return true;
     }
+
     return !!(
         (series.yAxis?.isPanning || (checkX && series.xAxis?.isPanning)) &&
         series.yAxis?.allExtremes &&
@@ -1616,11 +1620,9 @@ function wrapSeriesGetExtremes(
 
     if (this.boosted) {
         if (hasExtremes(this, true)) {
-            // Panning: use existing dataMin/dataMax from series.
             if (this.xAxis.isPanning || this.yAxis.isPanning) {
                 return this;
             }
-            // Explicit options: core should use axis min/max.
             return {};
         }
     }
