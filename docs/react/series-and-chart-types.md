@@ -296,15 +296,11 @@ export function DrilldownChart() {
       options={{
         chart: {
           type: 'column'
-        },
-        xAxis: {
-          type: 'category'
-        },
-        legend: {
-          enabled: false
         }
       }}
     >
+      <XAxis type="category" />
+      <Legend enabled={false} />
       <Series
         data={[
           {
