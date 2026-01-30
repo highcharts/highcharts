@@ -478,41 +478,41 @@ class Legend {
     }
 
     /**
-    * Tries to safely get the default point attributes for a series.
-    * Returns a style object or null if it fails or isn't applicable.
-    */
-    private getSafePointAttribs(series: Series): (SVGAttributes|null) {
-        const MAP_LIKE_SERIES_TYPES: Record<string, boolean> = {
-            'map': true,
-            'mapline': true,
-            'mappoint': true,
-            'tilemap': true,
-            'mapbubble': true
-        };
+     * Safely gets default point attributes for a series to be used
+     * in the legend.
+     *
+     * @internal
+     * @function Highcharts.Legend#getSafePointAttribs
+     *
+     * @param {Highcharts.Series} series
+     * The series to get attributes from.
+     *
+     * @return {Highcharts.SVGAttributes|null}
+     * Returns a style object or null if it fails or isn't applicable.
+     */
+    private getSafePointAttribs(series: Series): SVGAttributes | null {
+        const pointAttribs = series.pointAttribs,
+            options = series.options,
+            pointArrayMap = series.pointArrayMap || [],
+            // Standard series (line, column, bar) have ['y'] or no map.
+            // Complex series (ohlc, range) have ['open', 'high', ...]
+            isComplex = pointArrayMap.length > 1 ||
+                (pointArrayMap.length === 1 && pointArrayMap[0] !== 'y');
 
-        const isMapLike = MAP_LIKE_SERIES_TYPES[series.type];
-
-        // Don't try for map-like series or if function doesn't exist
-        if (isMapLike || typeof series.pointAttribs !== 'function') {
+        if (
+            typeof pointAttribs !== 'function' ||
+            options.colorByPoint ||
+            isComplex ||
+            series.colorKey === 'value'
+        ) {
             return null;
         }
 
-        try {
-            // Try to get default attributes for a 'normal' state
-            const result = series.pointAttribs(void 0, 'normal');
+        const attribs = pointAttribs.call(series, void 0, 'normal');
 
-            // Validate it's a usable object before returning (BUG FIX)
-            if (result && typeof result === 'object') {
-                return result;
-            }
-
-        } catch {
-            // Fail silently: some series implementations require
-            // a real Point and will throw an error here. We back off
-            // and return null.
-        }
-
-        return null; // Fallback
+        return (attribs && typeof attribs === 'object') ?
+            (attribs as SVGAttributes) :
+            null;
     }
 
     /**
@@ -587,20 +587,16 @@ class Legend {
                 } else if (!isMarker && hasFillOrBorder && pointAttribs) {
                     // Case 2: Non-marker with fill/border (bar/area).
                     // Use only visual attrs to avoid geometry-related leaks.
-                    const { fill, stroke, opacity } = pointAttribs;
-                    const sw = pointAttribs['stroke-width'];
 
                     symbol.attr(colorizeHidden({
-                        fill,
-                        stroke,
-                        'stroke-width': sw,
-                        opacity
+                        fill: pointAttribs.fill,
+                        stroke: pointAttribs.stroke,
+                        'stroke-width': pointAttribs['stroke-width'],
+                        opacity: pointAttribs.opacity
                     }));
 
                 } else {
-                    // Case 3: Fallback (e.g., try/catch failed
-                    // or no fill/border).
-                    // Use the basic series color.
+                    // Case 3: Fallback, use the basic series color.
                     symbol.attr(colorizeHidden({ fill: item.color }));
                 }
             }
