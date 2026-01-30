@@ -131,7 +131,6 @@ export default class Palette {
     ): void {
         const rules = { light: '', dark: '' },
             renderer = this.renderer,
-            className = charts?.[renderer.chartIndex]?.options.chart.className,
             hasSpecificPalette = Object.keys(
                 diffObjects(options, this.defaultOptions)
             ).length > 0;
@@ -187,11 +186,7 @@ export default class Palette {
         // Add a style tag to the chart renderer box
         const defs = renderer.defs.element,
             specifier = hasSpecificPalette ?
-                (
-                    className ?
-                        `.${className}` :
-                        `*[data-highcharts-chart="${renderer.chartIndex}"]`
-                ) :
+                `*[data-highcharts-chart="${renderer.chartIndex}"]` :
                 '',
             style: HTMLStyleElement = defs
                 .querySelector('style.highcharts-palette') ||

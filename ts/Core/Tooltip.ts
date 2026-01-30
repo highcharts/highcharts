@@ -546,6 +546,8 @@ class Tooltip {
                         ) || [].join(' ')
                     )
                 );
+                container.dataset['highchartsChart'] = chart.index.toString();
+
                 // We need to set pointerEvents = 'none' as otherwise it makes
                 // the area under the tooltip non-hoverable even after the
                 // tooltip disappears, #19035.
