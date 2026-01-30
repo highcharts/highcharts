@@ -2,11 +2,12 @@
  *
  *  Organization chart module
  *
- *  (c) 2018-2025 Torstein Honsi
+ *  (c) 2018-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -31,7 +32,8 @@ import type SankeyPoint from '../Sankey/SankeyPoint';
 
 export interface OrganizationDataLabelsFormatterCallbackFunction {
     (
-        this: (Point|OrganizationPoint|SankeyPoint)
+        this: (Point|OrganizationPoint|SankeyPoint),
+        options: OrganizationDataLabelOptions|SankeyDataLabelOptions
     ): (string|undefined);
 }
 

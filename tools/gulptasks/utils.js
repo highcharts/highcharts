@@ -2,6 +2,8 @@
  * Copyright (C) Highsoft AS
  */
 
+const processLib = require('../libs/process');
+
 /* *
  *
  *  Constants
@@ -27,6 +29,27 @@ function validateProduct(name) {
     return true;
 }
 
+/**
+ * Build the code for the given products.
+ * @param  {string[]} products
+ *         The products to build.
+ * @return {Promise<void>}
+ *         Promise to keep
+ */
+async function buildCode(products) {
+    for (const product of products) {
+        if (!validateProduct(product)) {
+            continue;
+        }
+
+        if (product === 'Highcharts') {
+            await processLib.exec('npx gulp scripts');
+        } else {
+            await processLib.exec(`npx gulp scripts --product ${product}`);
+        }
+    }
+}
+
 /* *
  *
  *  Exports
@@ -35,5 +58,6 @@ function validateProduct(name) {
 
 
 module.exports = {
-    validateProduct
+    validateProduct,
+    buildCode
 };

@@ -69,14 +69,22 @@ const loadPulls = async (
             `GET /repos/highcharts/highcharts/git/matching-refs/tags/${product === 'Dashboards' ? 'dash' : 'grid'}`,
             { owner, repo }
         );
-        const productLastTagSha = productTags.data[productTags.data.length - 1].object.sha;
-        const tagCommit = await octokit.rest.git.getTag({
-            owner,
-            repo,
-            tag_sha: productLastTagSha
-        });
 
-        lastTagSha = tagCommit.data.object.sha;
+        if (productTags.data.length) {
+            const { object } = productTags.data[productTags.data.length - 1];
+
+            if (object.type === 'tag') {
+                const tagCommit = await octokit.rest.git.getTag({
+                    owner,
+                    repo,
+                    tag_sha: object.sha
+                });
+                lastTagSha = tagCommit.data.object.sha;
+            } else {
+                // Lightweight tags point directly to the commit
+                lastTagSha = object.sha;
+            }
+        }
     }
 
     const ref = since || lastTagSha;

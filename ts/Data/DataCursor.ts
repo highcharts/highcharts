@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sophie Bremer
@@ -56,7 +56,7 @@ class DataCursor {
 
 
     public constructor(
-        stateMap: DataCursor.StateMap = {}
+        stateMap: StateMap = {}
     ) {
         this.emittingRegister = [];
         this.listenerMap = {};
@@ -80,13 +80,13 @@ class DataCursor {
     /**
      * Contains listeners of states on tables.
      */
-    public readonly listenerMap: DataCursor.ListenerMap;
+    public readonly listenerMap: ListenerMap;
 
 
     /**
      * Contains lasting states that are kept over multiple changes.
      */
-    public readonly stateMap: DataCursor.StateMap;
+    public readonly stateMap: StateMap;
 
 
     /* *
@@ -101,7 +101,7 @@ class DataCursor {
      *
      * @example
      * ```TypeScript
-     * dataCursor.addListener(myTable.id, 'hover', (e: DataCursor.Event) => {
+     * dataCursor.addListener(myTable.id, 'hover', (e: DataCursorEvent) => {
      *     if (e.cursor.type === 'position') {
      *         console.log(`Hover over row #${e.cursor.row}.`);
      *     }
@@ -110,22 +110,22 @@ class DataCursor {
      *
      * @function #addListener
      *
-     * @param {Data.DataCursor.TableId} tableId
+     * @param {Data.DataCursorTableId} tableId
      * The ID of the table to listen to.
      *
-     * @param {Data.DataCursor.State} state
+     * @param {Data.DataCursorState} state
      * The state on the table to listen to.
      *
-     * @param {Data.DataCursor.Listener} listener
+     * @param {Data.DataCursorListener} listener
      * The listener to register.
      *
      * @return {Data.DataCursor}
      * Returns the DataCursor instance for a call chain.
      */
     public addListener(
-        tableId: DataCursor.TableId,
-        state: DataCursor.State,
-        listener: DataCursor.Listener
+        tableId: TableId,
+        state: State,
+        listener: Listener
     ): this {
         const listenerMap = this.listenerMap[tableId] = (
             this.listenerMap[tableId] ||
@@ -146,7 +146,7 @@ class DataCursor {
      * @private
      */
     private buildEmittingTag(
-        e: DataCursor.Event
+        e: Event
     ): string {
         return (
             e.cursor.type === 'position' ?
@@ -186,7 +186,7 @@ class DataCursor {
      * @param {Data.DataTable} table
      * The related table of the cursor.
      *
-     * @param {Data.DataCursor.Type} cursor
+     * @param {Data.DataCursorType} cursor
      * The state cursor to emit.
      *
      * @param {Event} [event]
@@ -201,8 +201,8 @@ class DataCursor {
      */
     public emitCursor(
         table: DataTable,
-        cursor: DataCursor.Type,
-        event?: Event,
+        cursor: Type,
+        event?: globalThis.Event,
         lasting?: boolean
     ): this {
         const tableId = table.id,
@@ -225,12 +225,12 @@ class DataCursor {
                     stateMap[cursor.state] = cursors;
                 }
 
-                if (DataCursor.getIndex(cursor, cursors) === -1) {
+                if (getIndex(cursor, cursors) === -1) {
                     cursors.push(cursor);
                 }
             }
 
-            const e: DataCursor.Event = {
+            const e: Event = {
                 cursor,
                 cursors,
                 table
@@ -275,7 +275,7 @@ class DataCursor {
      * @param {string} tableId
      * ID of the related cursor table.
      *
-     * @param {Data.DataCursor.Type} cursor
+     * @param {Data.DataCursorType} cursor
      * Copy or reference of the cursor.
      *
      * @return {Data.DataCursor}
@@ -283,7 +283,7 @@ class DataCursor {
      */
     public remitCursor(
         tableId: string,
-        cursor: DataCursor.Type
+        cursor: Type
     ): this {
         const cursors = (
             this.stateMap[tableId] &&
@@ -291,7 +291,7 @@ class DataCursor {
         );
 
         if (cursors) {
-            const index = DataCursor.getIndex(cursor, cursors);
+            const index = getIndex(cursor, cursors);
 
             if (index >= 0) {
                 cursors.splice(index, 1);
@@ -307,22 +307,22 @@ class DataCursor {
      *
      * @function #addListener
      *
-     * @param {Data.DataCursor.TableId} tableId
+     * @param {Data.DataCursorTableId} tableId
      * The ID of the table the listener is connected to.
      *
-     * @param {Data.DataCursor.State} state
+     * @param {Data.DataCursorState} state
      * The state on the table the listener is listening to.
      *
-     * @param {Data.DataCursor.Listener} listener
+     * @param {Data.DataCursorListener} listener
      * The listener to deregister.
      *
      * @return {Data.DataCursor}
      * Returns the DataCursor instance for a call chain.
      */
     public removeListener(
-        tableId: DataCursor.TableId,
-        state: DataCursor.State,
-        listener: DataCursor.Listener
+        tableId: TableId,
+        state: State,
+        listener: Listener
     ): this {
         const listeners = (
             this.listenerMap[tableId] &&
@@ -346,264 +346,247 @@ class DataCursor {
 
 /* *
  *
- *  Class Namespace
+ *  Declarations
+ *
+ * */
+
+export type Type = (
+    | Position
+    | Range
+);
+
+export interface Position {
+    type: 'position';
+    column?: string;
+    row?: number;
+    state: State;
+    sourceId?: string;
+}
+
+export interface Range {
+    type: 'range';
+    columns?: Array<string>;
+    firstRow: number;
+    lastRow: number;
+    state: State;
+    sourceId?: string;
+}
+
+export interface Event {
+    cursor: Type;
+    cursors: Array<Type>;
+    event?: globalThis.Event;
+    table: DataTable;
+}
+
+export type Listener = (this: DataCursor, e: Event) => void;
+
+export type ListenerMap = Record<TableId, Record<State, Array<Listener>>>;
+
+export type State = string;
+
+export type StateMap = Record<TableId, Record<State, Array<Type>>>;
+
+export type TableId = string;
+
+export type TableMap = Record<TableId, DataTable>;
+
+
+/* *
+ *
+ *  Functions
  *
  * */
 
 
 /**
- * @class Data.DataCursor
+ * Finds the index of an cursor in an array.
+ * @private
  */
-namespace DataCursor {
+export function getIndex(
+    needle: Type,
+    cursors: Array<Type>
+): number {
 
+    if (needle.type === 'position') {
+        for (let cursor, i = 0, iEnd = cursors.length; i < iEnd; ++i) {
+            cursor = cursors[i];
 
-    /* *
-     *
-     *  Declarations
-     *
-     * */
-
-
-    export type Type = (
-        | Position
-        | Range
-    );
-
-    export interface Position {
-        type: 'position';
-        column?: string;
-        row?: number;
-        state: State;
-        sourceId?: string;
-    }
-
-    export interface Range {
-        type: 'range';
-        columns?: Array<string>;
-        firstRow: number;
-        lastRow: number;
-        state: State;
-        sourceId?: string;
-    }
-
-    export interface Event {
-        cursor: Type;
-        cursors: Array<Type>;
-        event?: globalThis.Event;
-        table: DataTable;
-    }
-
-    export type Listener = (this: DataCursor, e: Event) => void;
-
-    export type ListenerMap = Record<TableId, Record<State, Array<Listener>>>;
-
-    export type State = string;
-
-    export type StateMap = Record<TableId, Record<State, Array<Type>>>;
-
-    export type TableId = string;
-
-    export type TableMap = Record<TableId, DataTable>;
-
-
-    /* *
-     *
-     *  Functions
-     *
-     * */
-
-
-    /**
-     * Finds the index of an cursor in an array.
-     * @private
-     */
-    export function getIndex(
-        needle: DataCursor.Type,
-        cursors: Array<DataCursor.Type>
-    ): number {
-
-        if (needle.type === 'position') {
-            for (let cursor, i = 0, iEnd = cursors.length; i < iEnd; ++i) {
-                cursor = cursors[i];
-
-                if (
-                    cursor.type === 'position' &&
-                    cursor.state === needle.state &&
-                    cursor.column === needle.column &&
-                    cursor.row === needle.row
-                ) {
-                    return i;
-                }
-            }
-        } else {
-            const columnNeedle = JSON.stringify(needle.columns);
-
-            for (let cursor, i = 0, iEnd = cursors.length; i < iEnd; ++i) {
-                cursor = cursors[i];
-
-                if (
-                    cursor.type === 'range' &&
-                    cursor.state === needle.state &&
-                    cursor.firstRow === needle.firstRow &&
-                    cursor.lastRow === needle.lastRow &&
-                    JSON.stringify(cursor.columns) === columnNeedle
-                ) {
-                    return i;
-                }
+            if (
+                cursor.type === 'position' &&
+                cursor.state === needle.state &&
+                cursor.column === needle.column &&
+                cursor.row === needle.row
+            ) {
+                return i;
             }
         }
+    } else {
+        const columnNeedle = JSON.stringify(needle.columns);
 
-        return -1;
+        for (let cursor, i = 0, iEnd = cursors.length; i < iEnd; ++i) {
+            cursor = cursors[i];
+
+            if (
+                cursor.type === 'range' &&
+                cursor.state === needle.state &&
+                cursor.firstRow === needle.firstRow &&
+                cursor.lastRow === needle.lastRow &&
+                JSON.stringify(cursor.columns) === columnNeedle
+            ) {
+                return i;
+            }
+        }
     }
 
-    /**
-     * Checks whether two cursor share the same properties.
-     * @private
-     */
-    export function isEqual(
-        cursorA: Type,
-        cursorB: Type
-    ): boolean {
-        if (cursorA.type === 'position' && cursorB.type === 'position') {
-            return (
-                cursorA.column === cursorB.column &&
-                cursorA.row === cursorB.row &&
-                cursorA.state === cursorB.state
-            );
-        }
-        if (cursorA.type === 'range' && cursorB.type === 'range') {
-            return (
-                cursorA.firstRow === cursorB.firstRow &&
-                cursorA.lastRow === cursorB.lastRow &&
-                (
-                    JSON.stringify(cursorA.columns) ===
-                    JSON.stringify(cursorB.columns)
-                )
-            );
-        }
-        return false;
-    }
+    return -1;
+}
 
-
-    /**
-     * Checks whether a cursor is in a range.
-     * @private
-     */
-    export function isInRange(
-        needle: Type,
-        range: Type
-    ): boolean {
-
-        if (range.type === 'position') {
-            range = toRange(range);
-        }
-
-        if (needle.type === 'position') {
-            needle = toRange(needle, range);
-        }
-
-        const needleColumns = needle.columns;
-        const rangeColumns = range.columns;
-
+/**
+ * Checks whether two cursor share the same properties.
+ * @private
+ */
+export function isEqual(
+    cursorA: Type,
+    cursorB: Type
+): boolean {
+    if (cursorA.type === 'position' && cursorB.type === 'position') {
         return (
-            needle.firstRow >= range.firstRow &&
-            needle.lastRow <= range.lastRow &&
+            cursorA.column === cursorB.column &&
+            cursorA.row === cursorB.row &&
+            cursorA.state === cursorB.state
+        );
+    }
+    if (cursorA.type === 'range' && cursorB.type === 'range') {
+        return (
+            cursorA.firstRow === cursorB.firstRow &&
+            cursorA.lastRow === cursorB.lastRow &&
             (
-                !needleColumns ||
-                !rangeColumns ||
-                needleColumns.every(
-                    (column): boolean => rangeColumns.indexOf(column) >= 0
-                )
+                JSON.stringify(cursorA.columns) ===
+                JSON.stringify(cursorB.columns)
             )
         );
     }
+    return false;
+}
 
 
-    /**
-     * @private
-     */
-    export function toPositions(
-        cursor: Type
-    ): Array<Position> {
+/**
+ * Checks whether a cursor is in a range.
+ * @private
+ */
+export function isInRange(
+    needle: Type,
+    range: Type
+): boolean {
 
-        if (cursor.type === 'position') {
-            return [cursor];
+    if (range.type === 'position') {
+        range = toRange(range);
+    }
+
+    if (needle.type === 'position') {
+        needle = toRange(needle, range);
+    }
+
+    const needleColumns = needle.columns;
+    const rangeColumns = range.columns;
+
+    return (
+        needle.firstRow >= range.firstRow &&
+        needle.lastRow <= range.lastRow &&
+        (
+            !needleColumns ||
+            !rangeColumns ||
+            needleColumns.every(
+                (column): boolean => rangeColumns.indexOf(column) >= 0
+            )
+        )
+    );
+}
+
+
+/**
+ * @private
+ */
+export function toPositions(
+    cursor: Type
+): Array<Position> {
+
+    if (cursor.type === 'position') {
+        return [cursor];
+    }
+
+    const columns = (cursor.columns || []);
+    const positions: Array<Position> = [];
+    const state = cursor.state;
+
+    for (
+        let row = cursor.firstRow,
+            rowEnd = cursor.lastRow;
+        row < rowEnd;
+        ++row
+    ) {
+
+        if (!columns.length) {
+            positions.push({
+                type: 'position',
+                row,
+                state
+            });
+            continue;
         }
-
-        const columns = (cursor.columns || []);
-        const positions: Array<Position> = [];
-        const state = cursor.state;
 
         for (
-            let row = cursor.firstRow,
-                rowEnd = cursor.lastRow;
-            row < rowEnd;
-            ++row
+            let column = 0,
+                columnEnd = columns.length;
+            column < columnEnd;
+            ++column
         ) {
-
-            if (!columns.length) {
-                positions.push({
-                    type: 'position',
-                    row,
-                    state
-                });
-                continue;
-            }
-
-            for (
-                let column = 0,
-                    columnEnd = columns.length;
-                column < columnEnd;
-                ++column
-            ) {
-                positions.push({
-                    type: 'position',
-                    column: columns[column],
-                    row,
-                    state
-                });
-            }
+            positions.push({
+                type: 'position',
+                column: columns[column],
+                row,
+                state
+            });
         }
-
-        return positions;
     }
 
+    return positions;
+}
 
-    /**
-     * @private
-     */
-    export function toRange(
-        cursor: Type,
-        defaultRange?: Range
-    ): Range {
 
-        if (cursor.type === 'range') {
-            return cursor;
-        }
+/**
+ * @private
+ */
+export function toRange(
+    cursor: Type,
+    defaultRange?: Range
+): Range {
 
-        const range: Range = {
-            type: 'range',
-            firstRow: (
-                cursor.row ??
-                (defaultRange && defaultRange.firstRow) ??
-                0
-            ),
-            lastRow: (
-                cursor.row ??
-                (defaultRange && defaultRange.lastRow) ??
-                Number.MAX_VALUE
-            ),
-            state: cursor.state
-        };
-
-        if (typeof cursor.column !== 'undefined') {
-            range.columns = [cursor.column];
-        }
-
-        return range;
+    if (cursor.type === 'range') {
+        return cursor;
     }
 
+    const range: Range = {
+        type: 'range',
+        firstRow: (
+            cursor.row ??
+            (defaultRange && defaultRange.firstRow) ??
+            0
+        ),
+        lastRow: (
+            cursor.row ??
+            (defaultRange && defaultRange.lastRow) ??
+            Number.MAX_VALUE
+        ),
+        state: cursor.state
+    };
 
+    if (typeof cursor.column !== 'undefined') {
+        range.columns = [cursor.column];
+    }
+
+    return range;
 }
 
 

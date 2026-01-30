@@ -17,12 +17,18 @@ if (chartArray.length > 1) {
     chartToShow = chartArray[1];
 }
 
+const colors = [
+    '#8087E8', '#A3EDBA', '#F19E53', '#6699A1',
+    '#E1D369', '#87B4E7', '#DA6D85', '#BBBAC5'
+];
+
 // dependency wheel
 function dependencyWheel() {
     Highcharts.chart('container', {
         title: {
             text: ''
         },
+        colors: colors,
         credits: {
             enabled: false
         },
@@ -66,7 +72,10 @@ function dependencyWheel() {
             type: 'dependencywheel',
             name: 'Dependency wheel series',
             dataLabels: {
-                color: '#333',
+                color: 'var(--highcharts-neutral-color-100)',
+                style: {
+                    textOutline: 'none'
+                },
                 textPath: {
                     enabled: true
                 },
@@ -106,6 +115,7 @@ function area() {
         chart: {
             type: 'area'
         },
+        colors: colors,
         exporting: {
             enabled: false
         },
@@ -152,11 +162,9 @@ function area() {
         plotOptions: {
             area: {
                 stacking: 'percent',
-                lineColor: '#ffffff',
                 lineWidth: 1,
                 marker: {
-                    lineWidth: 1,
-                    lineColor: '#ffffff'
+                    lineWidth: 1
                 }
             }
         },
@@ -301,6 +309,7 @@ function range() {
         exporting: {
             enabled: false
         },
+        colors: colors,
         title: {
             text: ''
         },
@@ -396,6 +405,7 @@ function bubble() {
         credits: {
             enabled: false
         },
+        colors: colors,
         exporting: {
             enabled: false
         },
@@ -406,18 +416,10 @@ function bubble() {
             }
         },
         tooltip: {
-            useHTML: true,
-            pointFormat: '<b>{point.name}:</b> {point.value}m CO<sub>2</sub>'
+            pointFormat: '<b>{point.name}:</b> {point.value}m CO₂'
         },
         legend: {
-            enabled: true,
-            floating: true,
-            itemDistance: 5,
-            symbolPadding: 2,
-            labelFormatter: function () {
-                return this.options.id;
-                // '{point.id}'
-            }
+            enabled: false
         },
         plotOptions: {
             packedbubble: {
@@ -438,7 +440,6 @@ function bubble() {
                         value: 250
                     },
                     style: {
-                        color: 'black',
                         textOutline: 'none',
                         fontWeight: 'normal'
                     }

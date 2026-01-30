@@ -2,11 +2,11 @@
  *
  *  Grid ColumnFiltering class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -24,7 +24,7 @@
  *
  * */
 
-import type Column from '../../Column';
+import type { Column, ColumnDataType } from '../../Column';
 import type { Condition } from './FilteringTypes';
 import type FilterCell from './FilterCell.js';
 import type { FilteringCondition } from '../../../Options';
@@ -153,6 +153,30 @@ class ColumnFiltering {
     }
 
     /**
+     * Refreshes the state of the filtering content by updating the select,
+     * input and clear button according to the column filtering options.
+     * @internal
+     */
+    public refreshState(): void {
+        const colFilteringOptions = this.column.options.filtering;
+        if (this.filterSelect) {
+            this.filterSelect.value =
+                colFilteringOptions?.condition ??
+                conditionsMap[this.column.dataType][0];
+        }
+
+        if (this.filterInput) {
+            this.filterInput.value = '' + (colFilteringOptions?.value ?? '');
+        }
+
+        if (this.clearButton) {
+            this.clearButton.disabled = !this.isFilteringApplied();
+        }
+
+        this.disableInputIfNeeded();
+    }
+
+    /**
      * Render the filtering content in the container.
      *
      * @param container
@@ -277,8 +301,13 @@ class ColumnFiltering {
             }
         }
 
-        // Update the userOptions.
-        void this.column.update({ filtering: condition }, false);
+        this.column.setOptions({
+            filtering: {
+                condition: condition.condition,
+                value: condition.value
+            }
+        });
+
         filteringController.addColumnFilterCondition(columnId, condition);
         this.disableInputIfNeeded();
 
@@ -307,10 +336,12 @@ class ColumnFiltering {
      */
     private renderFilteringInput(
         inputWrapper: HTMLElement,
-        columnType: Exclude<Column.DataType, 'boolean'>
+        columnType: Exclude<ColumnDataType, 'boolean'>
     ): void {
         // Render the input element.
-        this.filterInput = makeHTMLElement('input', {}, inputWrapper);
+        this.filterInput = makeHTMLElement('input', {
+            className: Globals.getClassName('input')
+        }, inputWrapper);
         this.filterInput.setAttribute('tabindex', '-1');
 
         const column = this.column;
@@ -369,7 +400,9 @@ class ColumnFiltering {
      */
     private renderConditionSelect(inputWrapper: HTMLElement): void {
         // Render the select element.
-        this.filterSelect = makeHTMLElement('select', {}, inputWrapper);
+        this.filterSelect = makeHTMLElement('select', {
+            className: Globals.getClassName('input')
+        }, inputWrapper);
         this.filterSelect.setAttribute('tabindex', '-1');
 
         const column = this.column;

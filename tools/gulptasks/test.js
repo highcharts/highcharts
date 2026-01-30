@@ -2,6 +2,8 @@
  * Copyright (C) Highsoft AS
  */
 
+/* eslint-disable node/no-unsupported-features/es-syntax */
+
 const gulp = require('gulp');
 const path = require('path');
 
@@ -71,11 +73,13 @@ function checkJSWrap() {
     }
 }
 
-function checkSamplesConsistency() {
+async function checkSamplesConsistency() {
     const FSLib = require('../libs/fs.js');
     const { existsSync } = require('node:fs');
     const glob = require('glob');
     const LogLib = require('../libs/log');
+    const { calculateChecksum } = await import('../sample-generator/index.ts');
+    const fs = require('fs');
 
     let errors = 0;
 
@@ -103,6 +107,93 @@ function checkSamplesConsistency() {
             }
         }
     });
+
+    // Validate checksums for samples with config.ts
+    const configPaths = glob.sync(
+        FSLib.path(process.cwd() + '/samples/**/config.ts', true)
+    );
+
+
+    // Check generated sample files against stored checksums
+    const sampleGeneratorErrors = [];
+    for (const configPath of configPaths) {
+        const dir = path.dirname(configPath);
+        const checksumPath = path.join(dir, '.generated-checksum');
+        const relativePath = path.relative(process.cwd(), configPath),
+            shortPath = relativePath
+                .replace(/samples[\/\\]/u, '')
+                .replace(/\/config\.ts$/u, '');
+
+        // Check if any generated files exist
+        const generatedFiles = ['demo.ts', 'demo.html', 'demo.css', 'demo.details'];
+        const hasGeneratedFiles = generatedFiles.some(file =>
+            existsSync(path.join(dir, file)));
+
+        if (!hasGeneratedFiles) {
+            return; // Skip if no generated files
+        }
+
+        const checksumExists = existsSync(checksumPath);
+        let checksumMisMatch = false;
+
+        // Check if checksum matches
+        if (checksumExists) {
+            // Calculate current checksum
+            const currentChecksum = await calculateChecksum(dir);
+
+            // Read saved checksum
+            const savedChecksum = fs.readFileSync(checksumPath, 'utf-8').trim();
+
+            // Compare checksums
+            if (savedChecksum !== currentChecksum) {
+                checksumMisMatch = true;
+            }
+        }
+
+        if (!checksumExists || checksumMisMatch) {
+            // Checksum file is missing or not matching. Check if this is a fresh
+            // checkout or if the user has manually edited the generated files.
+            // Compare modification times: if the most recent generated file is more
+            // than one minute newer than config.ts, assume manual edits.
+            const configMtime = fs.statSync(configPath).mtime.getTime();
+            let mostRecentGeneratedMtime = 0;
+
+            for (const file of generatedFiles) {
+                const filePath = path.join(dir, file);
+                if (existsSync(filePath)) {
+                    const mtime = fs.statSync(filePath).mtime.getTime();
+                    if (mtime > mostRecentGeneratedMtime) {
+                        mostRecentGeneratedMtime = mtime;
+                    }
+                }
+            }
+
+            // If generated files are more than 1 minute newer than config.ts,
+            // assume they were manually edited
+            const timeDiffMs = mostRecentGeneratedMtime - configMtime;
+            const oneMinuteMs = 60 * 1000;
+
+            if (timeDiffMs > oneMinuteMs) {
+                sampleGeneratorErrors.push(relativePath);
+                errors++;
+            }
+            // Otherwise, assume fresh checkout without checksum files - OK
+        }
+    }
+    if (sampleGeneratorErrors.length) {
+        if (sampleGeneratorErrors.length < 3) {
+            LogLib.failure(
+                `Generated samples not in sync with config.ts:
+                - ${sampleGeneratorErrors.join('\n- ')}`
+            );
+        } else {
+            LogLib.failure(
+                `${sampleGeneratorErrors.length}/${configPaths.length} generated samples not in sync with config.ts:
+                - Run \`gulp generate-samples\``
+            );
+        }
+    }
+
 
     if (errors) {
         throw new Error('Samples validation failed');
@@ -280,7 +371,6 @@ function checkDocsConsistency() {
 async function test(gulpback) {
     const argv = require('yargs').argv;
     const childProcess = require('node:child_process');
-    const fs = require('node:fs');
     const logLib = require('../libs/log');
     const PluginError = require('plugin-error');
 
@@ -302,7 +392,7 @@ specified by config.imageCapture.resultsOutputPath.
     }
 
     checkDocsConsistency();
-    checkSamplesConsistency();
+    await checkSamplesConsistency();
     checkDemosConsistency();
     checkJSWrap();
 
@@ -313,11 +403,33 @@ specified by config.imageCapture.resultsOutputPath.
         argv.tests ||
         argv.testsAbsolutePath
     );
+
+    // Extract --project parameter from command line arguments
+    // This is passed directly to Playwright, not parsed by yargs
+    // Supports both --project value and --project=value formats
+    let projectParam = null;
+    for (let i = 0; i < process.argv.length; i++) {
+        const arg = process.argv[i];
+        if (arg === '--project' && i + 1 < process.argv.length) {
+            projectParam = process.argv[i + 1];
+            break;
+        } else if (arg.startsWith('--project=')) {
+            projectParam = arg.split('=')[1];
+            break;
+        }
+    }
+
+    // Use different config file for different projects to avoid cache conflicts
+    const configFile = projectParam ?
+        CONFIGURATION_FILE.replace('.json', `_${projectParam}.json`) :
+        CONFIGURATION_FILE;
+
     const runConfig = {
-        configFile: CONFIGURATION_FILE,
+        configFile,
         codeDirectory: CODE_DIRECTORY,
         jsDirectory: JS_DIRECTORY,
-        testsDirectory: TESTS_DIRECTORY
+        testsDirectory: TESTS_DIRECTORY,
+        project: projectParam
     };
 
     const { getProductTests } = require('./lib/test');
@@ -329,9 +441,6 @@ specified by config.imageCapture.resultsOutputPath.
         logLib.message('No tests to run, exiting early');
         return;
     }
-
-    // Conditionally build required code
-    await gulp.task('scripts')(gulpback);
 
     const shouldRunTests = forceRun ||
         (await shouldRun(runConfig).catch(error => {
@@ -353,11 +462,13 @@ specified by config.imageCapture.resultsOutputPath.
 
         logLib.message('Run `gulp test --help` for available options');
 
-        // Use TypeScript karma for Grid/Dashboards, regular karma for others
-        if (argv.product === 'Grid' || argv.product === 'Dashboards') {
-            const { testKarma } = require('./test-karma');
-            await testKarma(argv);
-        } else {
+        // Visual tests use Karma, unit tests use Playwright
+        const isVisualTest = argv.visualcompare || argv.reference;
+
+        if (isVisualTest) {
+            // Visual comparison tests - keep using Karma
+            await gulp.task('scripts')(gulpback);
+
             const testArgumentParts = [];
 
             if (Array.isArray(productTests)) {
@@ -385,6 +496,68 @@ specified by config.imageCapture.resultsOutputPath.
                     message: 'Tests failed'
                 });
             }
+        } else {
+            // Unit tests - use Playwright
+            const processLib = require('../libs/process');
+
+            // Conditionally build required code
+            await gulp.task('scripts')(gulpback);
+
+            // Determine which Playwright projects to run
+            const playwrightProjects = [];
+
+            if (argv.product === 'Grid') {
+                playwrightProjects.push('setup-grid-lite', 'setup-grid-pro', 'grid-lite', 'grid-pro', 'grid-shared');
+            } else if (argv.product === 'Dashboards') {
+                playwrightProjects.push('setup-dashboards', 'dashboards');
+            } else {
+                playwrightProjects.push('setup-highcharts', 'qunit');
+            }
+
+            // Always include grid-shared when running grid-lite or grid-pro individually
+            // Check if any grid project is in the list
+            const hasGridLite = playwrightProjects.includes('grid-lite');
+            const hasGridPro = playwrightProjects.includes('grid-pro');
+            if ((hasGridLite || hasGridPro) && !playwrightProjects.includes('grid-shared')) {
+                // Add required setups if not already present
+                if (hasGridLite && !playwrightProjects.includes('setup-grid-lite')) {
+                    playwrightProjects.push('setup-grid-lite');
+                }
+                if (hasGridPro && !playwrightProjects.includes('setup-grid-pro')) {
+                    playwrightProjects.push('setup-grid-pro');
+                }
+                playwrightProjects.push('grid-shared');
+            }
+
+            // Build grep pattern for product-specific tests
+            // Skip grep for Grid/Dashboards as they use different test structure
+            let grepArg = '';
+            if (argv.product !== 'Grid' && argv.product !== 'Dashboards') {
+                if (Array.isArray(productTests) && productTests.length > 0) {
+                    // Convert product test paths to grep pattern
+                    // e.g., ['axis', 'chart'] -> '--grep "unit-tests/(axis|chart)"'
+                    const pattern = productTests.join('|');
+                    grepArg = `--grep "unit-tests/(${pattern})"`;
+                }
+            }
+
+            const projectArgs = playwrightProjects
+                .map(p => `--project=${p}`)
+                .join(' ');
+
+            const command = `npx playwright test ${projectArgs} ${grepArg}`.trim();
+            logLib.message(`Running: ${command}`);
+
+            try {
+                await processLib.exec(command);
+            } catch (error) {
+                if (argv.speak) {
+                    logLib.say('Tests failed!');
+                }
+                throw new PluginError('playwright', {
+                    message: 'Tests failed'
+                });
+            }
         }
 
         if (argv.speak) {
@@ -392,34 +565,6 @@ specified by config.imageCapture.resultsOutputPath.
         }
 
         saveRun(runConfig);
-
-        // Capture console.error, console.warn and console.log
-        const consoleLogPath = `${BASE}/test/console.log`;
-        const consoleLog = await fs.promises.readFile(
-            consoleLogPath,
-            'utf-8'
-        ).catch(() => {});
-        if (consoleLog) {
-            const errors = (consoleLog.match(/ ERROR:/gu) || []).length,
-                warnings = (consoleLog.match(/ WARN:/gu) || []).length,
-                logs = (consoleLog.match(/ LOG:/gu) || []).length;
-
-            const message = [];
-            if (errors) {
-                message.push(`${errors} errors`.red);
-            }
-            if (warnings) {
-                message.push(`${warnings} warnings`.yellow);
-            }
-            if (logs) {
-                message.push(`${logs} logs`);
-            }
-
-            logLib.message(
-                `The browser console logged ${message.join(', ')}.\n` +
-                'They can be reviewed in ' + consoleLogPath.cyan + '.'
-            );
-        }
     }
 }
 

@@ -1,0 +1,98 @@
+name: Grid Test
+
+on:
+  push:
+    branches: ['master', 'grid/**']
+  pull_request:
+    branches: ['master', 'grid/**']
+    paths:
+      - '.github/workflows/grid-test.yml'
+      - 'css/grid*'
+      - 'samples/grid-lite/**'
+      - 'samples/grid-pro/**'
+      - 'test/cypress/grid/visual/**'
+      - 'test/cypress/grid/integration/**'
+      - 'ts/Data/**'
+      - 'ts/Grid/**'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  grid_playwright:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm i
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run Grid Tests
+        run: npx playwright test --project=setup-highcharts --project=setup-dashboards --project=dashboards --grep grid
+
+  grid_cypress:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: highcharts
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+          cache-dependency-path: highcharts/package-lock.json
+
+      - name: Install Dependencies
+        run: |
+          cd highcharts
+          npm ci
+
+      - name: Build Highcharts
+        run: |
+          cd highcharts
+          npx gulp scripts
+
+      - name: Build Grid
+        run: |
+          cd highcharts
+          npx gulp scripts --product Grid
+
+      - name: Build Dashboards
+        run: |
+          cd highcharts
+          npx gulp scripts --product Dashboards
+
+      - name: Checkout utils
+        uses: actions/checkout@v4
+        with:
+          repository: highcharts/highcharts-utils
+          path: utils
+          fetch-depth: 1
+
+      - name: Install Highcharts Utils
+        run: |
+          cd utils
+          npm ci
+
+      - name: Run Grid Cypress Tests
+        uses: cypress-io/github-action@v6
+        with:
+          start: node ../utils/server --localOnly
+          wait-on: 'http://localhost:3031/grid/grid-lite.js http://localhost:3031/grid/grid-pro.js'
+          browser: chrome
+          working-directory: highcharts
+          config-file: test/cypress/grid/config.mjs
+          install: false

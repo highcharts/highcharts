@@ -297,7 +297,7 @@ body {
     --hcg-cell-hovered-row-background: var(--color-hover-background);
 }
 
-.grid-container {
+.highcharts-grid-container {
     min-height: 260px;
 }
 

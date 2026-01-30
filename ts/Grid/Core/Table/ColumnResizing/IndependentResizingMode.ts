@@ -2,11 +2,11 @@
  *
  *  Independent Resizing Mode class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -63,18 +63,20 @@ class IndependentResizingMode extends ResizingMode {
         ) * 10) / 10;
         this.columnWidthUnits[column.id] = 0; // Set to px
 
-        // Change width units of all columns on the right to px.
+        // Change width units of all columns to px.
         const vp = this.viewport;
-        const colIndex = column.index;
-        for (let i = colIndex; i < vp.columns.length; ++i) {
-            const rightCol = vp.columns[i];
-            const rcWidth = this.columnWidths[rightCol.id] =
-                rightCol.getWidth();
-            this.columnWidthUnits[rightCol.id] = 0; // Set to px
-            rightCol.update({ width: rcWidth }, false);
+        for (let i = 0; i < vp.columns.length; ++i) {
+            const col = vp.columns[i];
+            if (col.id === column.id) {
+                continue;
+            }
+
+            const colWidth = this.columnWidths[col.id] = col.getWidth();
+            this.columnWidthUnits[col.id] = 0; // Set to px
+            col.setOptions({ width: colWidth });
         }
 
-        column.update({ width }, false);
+        column.setOptions({ width });
     }
 
 }
