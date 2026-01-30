@@ -124,6 +124,9 @@ export const defaultOptions: DeepPartial<Options> = {
             afterGridFormat: 'End of Grid.'
         }
     },
+    data: {
+        providerType: 'local'
+    },
     time: {
         timezone: 'UTC'
     },
