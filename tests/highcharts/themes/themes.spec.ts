@@ -71,7 +71,7 @@ const themeCases: ThemeCase[] = [
     {
         name: 'grid-light',
         expected: {
-            titleColor: '#333333',
+            titleColor: 'var(--highcharts-neutral-color-80)',
             titleTextTransform: 'uppercase',
             themeTitleColor: null,
             themeTitleTextTransform: 'uppercase'

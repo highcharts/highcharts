@@ -55,13 +55,13 @@ const { animObject } = A;
 import AxisDefaults from './AxisDefaults.js';
 const { xAxis, yAxis } = AxisDefaults;
 import Color from '../Color/Color.js';
+const { parse: color } = Color;
 import D from '../Defaults.js';
 const { defaultOptions } = D;
 import F from '../Foundation.js';
 const { registerEventOptions } = F;
 import H from '../Globals.js';
 const { deg2rad } = H;
-import { Palette } from '../Color/Palettes.js';
 import Tick from './Tick.js';
 import U from '../Utilities.js';
 const {
@@ -4589,11 +4589,10 @@ class Axis {
                         stroke: options.color ||
                             (
                                 categorized ?
-                                    Color
-                                        .parse(Palette.highlightColor20)
-                                        .setOpacity(0.25)
-                                        .get() :
-                                    Palette.neutralColor20
+                                    color(
+                                        'var(--highcharts-highlight-color-20)'
+                                    ).setOpacity(0.25).get() :
+                                    'var(--highcharts-neutral-color-20)'
                             ),
                         'stroke-width': pick(options.width, 1)
                     }).css({

@@ -25,7 +25,6 @@ import type SplinePoint from '../Spline/SplinePoint';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
-import { Palette } from '../../Core/Color/Palettes.js';
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
@@ -142,7 +141,7 @@ class LineSeries extends Series {
                         owner.color ||
                         this.color ||
                         // When colorByPoint = true
-                        Palette.neutralColor20
+                        'var(--highcharts-neutral-color-20)'
                     ),
                     'stroke-width': options.lineWidth || 0,
                     // Polygon series use filled graph

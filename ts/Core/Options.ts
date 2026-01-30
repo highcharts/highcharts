@@ -18,6 +18,7 @@ import type ButtonThemeObject from './Renderer/SVG/ButtonThemeObject';
 import type Chart from './Chart/Chart';
 import type ColorString from './Color/ColorString';
 import type CSSObject from './Renderer/CSSObject';
+import type PaletteOptions from './Color/PaletteOptions';
 import type { SeriesTypePlotOptions } from './Series/SeriesType';
 import type { SymbolKey } from './Renderer/SVG/SymbolType';
 import type { LangOptionsCore } from '../Shared/LangOptionsCore';
@@ -330,6 +331,10 @@ export interface Options {
      * state following a call to `chart.showLoading`.
      */
     loading?: LoadingOptions;
+    /**
+     * The color palette to use.
+     */
+    palette: PaletteOptions;
     /**
      * The plotOptions is a wrapper object for config objects for each series
      * type. The config objects for each series can also be overridden for
