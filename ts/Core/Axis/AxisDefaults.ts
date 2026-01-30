@@ -3261,7 +3261,7 @@ namespace AxisDefaults {
                 /** @internal */
                 fontWeight: 'bold',
                 /** @internal */
-                textOutline: '1px contrast'
+                textOutline: '2px contrast'
             }
         },
         gridLineWidth: 1,
