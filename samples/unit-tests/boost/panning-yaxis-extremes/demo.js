@@ -1,9 +1,12 @@
 QUnit.test('Panning when yAxis min/max are set (#24029)', function (assert) {
     // Generate test data
-    const data = [];
-    for (let i = 0; i < 500000; i++) {
+    const data = [],
+        n = 500000;
+    for (let i = 0; i < n; i++) {
         data.push([i, Math.sin(i / 10) * 10 + 10]);
     }
+
+    let callsToProcessData = 0;
 
     const chart = Highcharts.chart('container', {
         chart: {
@@ -20,7 +23,9 @@ QUnit.test('Panning when yAxis min/max are set (#24029)', function (assert) {
             useGPUTranslations: true
         },
         xAxis: {
-            type: 'datetime'
+            type: 'datetime',
+            min: 0,
+            max: n
         },
         yAxis: {
             min: -5,
@@ -28,9 +33,20 @@ QUnit.test('Panning when yAxis min/max are set (#24029)', function (assert) {
         },
         series: [{
             data: data,
-            lineWidth: 0.5
+            lineWidth: 0.5,
+            events: {
+                afterProcessData: function () {
+                    callsToProcessData++;
+                }
+            }
         }]
     });
+
+    assert.strictEqual(
+        callsToProcessData,
+        0,
+        'When both axes have min/max set, processData should not be called'
+    );
 
     // // 1. Zoom to a specific part of the chart
     const controller = new TestController(chart);
