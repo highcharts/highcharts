@@ -34,6 +34,7 @@ import type DataConnectorType from '../../../Data/Connectors/DataConnectorType';
 import type {
     DataConnectorTypeOptions
 } from '../../../Data/Connectors/DataConnectorType';
+import type { MakeOptional } from '../../../Shared/Types';
 
 import { DataProvider } from './DataProvider.js';
 import DataTable from '../../../Data/DataTable.js';
@@ -396,7 +397,7 @@ export class LocalDataProvider extends DataProvider {
 }
 
 export type GridDataConnectorTypeOptions =
-    Omit<DataConnectorTypeOptions, 'id'> & { id?: string };
+    MakeOptional<DataConnectorTypeOptions, 'id'>;
 
 export interface LocalDataProviderOptions extends DataProviderOptions {
     providerType?: 'local';
