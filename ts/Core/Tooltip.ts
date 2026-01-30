@@ -558,7 +558,7 @@ class Tooltip {
                     top: '1px',
                     pointerEvents: 'none',
                     zIndex: Math.max(
-                        this.options.style.zIndex || 0,
+                        options.style.zIndex || 0,
                         (chartStyle?.zIndex || 0) + 3
                     )
                 });
