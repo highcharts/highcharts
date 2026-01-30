@@ -261,7 +261,6 @@ export function getBlobFromContent(
             ['\uFEFF' + content], // #7084
             { type: type }
         ));
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
         // Ignore
     }
