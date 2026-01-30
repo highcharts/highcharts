@@ -1,5 +1,4 @@
 /* *
- * SPDX-License-Identifier: LicenseRef-Highcharts
  *
  *
  *  A commercial license may be required depending on use.
