@@ -44,27 +44,43 @@ declare module '../Chart/ChartBase' {
     }
 }
 
+type CSSVars = {
+    light: { [key: string]: string };
+    dark: { [key: string]: string };
+};
+
 /* *
  * Build the text content for the style tag
  */
 const getStyles = (
     specifier: string,
-    rules: Record<string, string>
-): string =>
-    `${specifier || ':root'},
+    cssVars: CSSVars
+): string => {
+
+    const reduceToCSS = (vars: { [key: string]: string }): string => {
+        let css = '';
+        objectEach(vars, (value, key): void => {
+            css += `  ${key}: ${value};\n`;
+        });
+        return css;
+    };
+
+    const light = reduceToCSS(cssVars.light),
+        dark = reduceToCSS(cssVars.dark);
+    const css = `${specifier || ':root'},
 ${specifier} .highcharts-light,
 ${specifier}.highcharts-light,
 .highcharts-light ${specifier} {
-${rules.light}
+${light}
 }
 ${specifier} .highcharts-dark,
 ${specifier}.highcharts-dark,
 .highcharts-dark ${specifier} {
-${rules.dark}
+${dark}
 }
 @media (prefers-color-scheme: dark) {
     ${specifier || ':root'} {
-${rules.dark}
+${dark}
     }
 }
 .highcharts-container {
@@ -76,6 +92,8 @@ ${rules.dark}
 .highcharts-container.highcharts-dark {
   color-scheme: dark;
 }`;
+    return css;
+};
 
 /* *
  *
@@ -102,6 +120,7 @@ export default class Palette {
     public defaultOptions: PaletteOptions = PaletteDefaults;
     public options: PaletteOptions = merge(PaletteDefaults);
     public renderer: SVGRenderer;
+    public cssVars: CSSVars = { light: {}, dark: {} };
 
     /* *
      *
@@ -129,13 +148,12 @@ export default class Palette {
     public injectCSS(
         options: PaletteOptions
     ): void {
-        const rules = { light: '', dark: '' },
-            renderer = this.renderer,
+        const { cssVars, renderer } = this,
             hasSpecificPalette = Object.keys(
                 diffObjects(options, this.defaultOptions)
             ).length > 0;
 
-        let css = '';
+        let colorScheme: 'light' | 'dark' = 'light';
 
         const addKebab = (color: unknown, key: string): void => {
             if (isString(color)) {
@@ -147,13 +165,12 @@ export default class Palette {
                         /[A-Z]/g,
                         (match): string => `-${match.toLowerCase()}`
                     );
-                css += `  --highcharts-${key}: ${color};\n`;
+                cssVars[colorScheme][`--highcharts-${key}`] = color;
             }
         };
 
-        for (const colorScheme of ['light', 'dark'] as const) {
-            css = '';
-            const paletteColors = options[colorScheme] || {},
+        for (const cScheme of ['light', 'dark'] as const) {
+            const paletteColors = options[cScheme] || {},
                 interpolated: Record<string, ColorType> = {},
                 neutralColor = new Color(paletteColors?.neutralColor || ''),
                 backgroundColor = new Color(
@@ -162,6 +179,8 @@ export default class Palette {
                 highlightColor = new Color(
                     paletteColors?.highlightColor || ''
                 );
+
+            colorScheme = cScheme;
 
             // Interpolate keys
             [3, 5, 10, 20, 40, 60, 80, 100].forEach((fraction): void => {
@@ -179,8 +198,6 @@ export default class Palette {
             // The rest are stored as named properties
             objectEach(paletteColors, addKebab);
             objectEach(interpolated, addKebab);
-
-            rules[colorScheme] = css;
         }
 
         // Add a style tag to the chart renderer box
@@ -198,7 +215,7 @@ export default class Palette {
             defs.appendChild(style);
         }
 
-        style.textContent = getStyles(specifier, rules);
+        style.textContent = getStyles(specifier, cssVars);
     }
 
     /**
