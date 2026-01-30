@@ -1875,6 +1875,91 @@ class Exporting {
             options.exporting?.applyStyleSheets
         ) || '';
 
+        for (const series of chart.series) {
+            if (series.type !== 'contour') {
+                continue;
+            }
+
+            const dstCanvas = document.createElement('canvas'),
+                srcCanvas = (series as any).canvas,
+                src = (series as any).readbackData,
+                ctx = dstCanvas.getContext(
+                    '2d',
+                    { colorSpace: 'display-p3' }
+                );
+
+            if (src && srcCanvas && ctx) {
+                const width = (
+                        dstCanvas.width = (
+                            srcCanvas as HTMLCanvasElement
+                        ).width
+                    ),
+                    height = (
+                        dstCanvas.height = (
+                            srcCanvas as HTMLCanvasElement
+                        ).height
+                    );
+
+                ctx.putImageData(
+                    new ImageData(
+                        new Uint8ClampedArray(
+                            src.buffer,
+                            src.byteOffset,
+                            width * height * 4
+                        ),
+                        width,
+                        height,
+                        { colorSpace: 'display-p3' }
+                    ),
+                    0,
+                    0
+                );
+
+                const webgpuCanvasImage = chart.renderer.image(
+                    dstCanvas.toDataURL(),
+                    0,
+                    0,
+                    chartCopy.plotWidth,
+                    chartCopy.plotHeight
+                );
+
+                if (this.options.local) {
+                    webgpuCanvasImage.element.setAttributeNS(
+                        'http://www.w3.org/1999/xlink',
+                        'href',
+                        webgpuCanvasImage.element.getAttribute('href') || ''
+                    );
+
+                    webgpuCanvasImage.add(
+                        chartCopy.series[series.index].group
+                    );
+                } else {
+                    const dataURL = (
+                        webgpuCanvasImage.element.getAttribute('href') ||
+                        webgpuCanvasImage.element.getAttribute(
+                            'xlink:href'
+                        ) ||
+                        ''
+                    );
+                    const imgTag = (
+                        `<image href="${
+                            dataURL
+                        }" />`
+                    );
+
+                    const contourGroupPattern = new RegExp(
+                        '(<g[^>]*class="[^"]*\\bhighcharts-contour-series\\b' +
+                        '[^"]*"[^>]*>)([\\s\\S]*?)</g>'
+                    );
+
+                    svg = svg.replace(
+                        contourGroupPattern,
+                        `$1$2${imgTag}</g>`
+                    );
+                }
+            }
+        }
+
         fireEvent(chart, 'getSVG', { chartCopy: chartCopy });
 
         svg = Exporting.sanitizeSVG(svg, options);
