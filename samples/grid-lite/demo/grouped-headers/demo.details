@@ -1,12 +1,14 @@
 ---
-name: Cell formatting
+name: Grouped headers
 authors:
   - Karol Kolodziej
 js_wrap: b
+alt_text: >-
+  Data grid with multi-level grouped headers
 tags:
   - Highcharts Grid demo
 categories:
   - General:
-        priority: 50
+        priority: 30
 use_png_thumbnail: true
 ...

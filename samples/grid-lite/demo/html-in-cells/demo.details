@@ -1,15 +1,14 @@
 ---
-name: Accessibility
+name: HTML in cells
 authors:
-  - Dawid Dragula
+  - Karol Kolodziej
 js_wrap: b
 alt_text: >-
-  Accessible data grid for all users
+  Display custom HTML in data grid cells safely
 tags:
   - Highcharts Grid demo
 categories:
   - General:
-        priority: 80
+        priority: 60
 use_png_thumbnail: true
-is_pro: true
 ...

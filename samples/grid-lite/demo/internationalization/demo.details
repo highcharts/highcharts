@@ -1,8 +1,10 @@
 ---
-name: Grid Internationalization
+name: Internationalization
 authors:
   - Dawid Dragula
 js_wrap: b
+alt_text: >-
+  Multi-language support for data grids
 tags:
   - Highcharts Grid demo
 categories:
