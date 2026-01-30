@@ -1,6 +1,6 @@
 # Cell context menu
 
-Highcharts Grid supports a basic context menu for table body cells. When
+Highcharts Grid supports context menus for table body cells. When
 configured, a custom menu is shown on right-click, and each menu item triggers a
 user-provided callback with access to the clicked cell and its row/column.
 
@@ -66,4 +66,3 @@ onClick: function (ctx) {
 ## Demo
 
 <iframe src="https://www.highcharts.com/samples/embed/grid/demo/cell-context-menu?force-light-theme" allow="fullscreen"></iframe>
-

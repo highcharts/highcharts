@@ -1402,6 +1402,7 @@ th.hcg-column-sortable > .hcg-column-sortable-icon {
     cursor: pointer;
 }
 
+.hcg-menu-item:focus,
 .hcg-menu-item:focus-visible {
     outline: none;
     box-shadow: var(--ig-focus-ring);

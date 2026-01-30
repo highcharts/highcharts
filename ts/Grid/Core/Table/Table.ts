@@ -484,29 +484,9 @@ class Table {
         }
 
         const tableCell = cell as TableCell;
-        const options = tableCell.column?.options.cells?.contextMenu;
-
-        if (options?.enabled === false) {
-            return;
+        if (this.openCellContextMenu(tableCell, e.clientX, e.clientY)) {
+            e.preventDefault();
         }
-
-        const items = options?.items || [];
-        if (!items.length) {
-            return; // Keep native browser menu
-        }
-
-        e.preventDefault();
-
-        // Close any existing popups before opening a new menu.
-        // Copy to array to avoid mutation during iteration.
-        for (const popup of Array.from(this.grid.popups)) {
-            popup.hide();
-        }
-
-        new CellContextMenu(this.grid, tableCell, items).showAt(
-            e.clientX,
-            e.clientY
-        );
     };
 
     /**
@@ -548,10 +528,77 @@ class Table {
      */
     private onCellKeyDown = (e: KeyboardEvent): void => {
         const cell = this.getCellFromElement(e.target);
-        if (cell) {
-            (cell as { onKeyDown(e: KeyboardEvent): void }).onKeyDown(e);
+        if (!cell) {
+            return;
         }
+
+        const isContextMenuKey = (
+            e.key === 'ContextMenu' || (e.key === 'F10' && e.shiftKey)
+        );
+
+        if (isContextMenuKey && 'column' in cell && 'row' in cell) {
+            const tableCell = cell as TableCell;
+            const rect = tableCell.htmlElement.getBoundingClientRect();
+            const opened = this.openCellContextMenu(
+                tableCell,
+                rect.left + 4,
+                rect.bottom - 2
+            );
+
+            if (opened) {
+                e.preventDefault();
+                e.stopPropagation();
+                return;
+            }
+        }
+
+        (cell as { onKeyDown(e: KeyboardEvent): void }).onKeyDown(e);
     };
+
+    /**
+     * Opens a cell context menu if configured and enabled.
+     *
+     * @param tableCell
+     * The target cell.
+     *
+     * @param clientX
+     * The viewport X coordinate for anchoring.
+     *
+     * @param clientY
+     * The viewport Y coordinate for anchoring.
+     *
+     * @returns
+     * True if the menu was opened.
+     */
+    private openCellContextMenu(
+        tableCell: TableCell,
+        clientX: number,
+        clientY: number
+    ): boolean {
+        const options = tableCell.column?.options.cells?.contextMenu;
+
+        if (options?.enabled === false) {
+            return false;
+        }
+
+        const items = options?.items || [];
+        if (!items.length) {
+            return false; // Keep native browser menu
+        }
+
+        // Close any existing popups before opening a new menu.
+        // Copy to array to avoid mutation during iteration.
+        for (const popup of Array.from(this.grid.popups)) {
+            popup.hide();
+        }
+
+        new CellContextMenu(this.grid, tableCell, items).showAt(
+            clientX,
+            clientY
+        );
+
+        return true;
+    }
 
     /**
      * Scrolls the table to the specified row.
