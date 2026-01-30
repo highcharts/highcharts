@@ -586,15 +586,33 @@ class Legend {
                 if (isMarker && pointAttribs) {
                     symbol.attr(colorizeHidden(pointAttribs));
                 } else if (!isMarker && hasVisuals && pointAttribs) {
-                    // Case for Columns, Areas, and now Bubbles
-                    symbol.attr(colorizeHidden({
+                    const options = series.options,
+                        attrStrokeWidth = Number(pointAttribs['stroke-width']);
+
+                    const isInternalAntialiasingBorder =
+                        attrStrokeWidth === 1 &&
+                        pointAttribs.stroke === pointAttribs.fill &&
+                        typeof options.borderWidth === 'undefined';
+
+                    const finalStrokeWidth = isInternalAntialiasingBorder ?
+                        0 : attrStrokeWidth;
+
+                    // Apply attributes while filtering out 'undefined'
+                    const attrs: SVGAttributes = {
                         fill: pointAttribs.fill,
                         stroke: pointAttribs.stroke,
-                        'stroke-width': pointAttribs['stroke-width'],
-                        opacity: pointAttribs.opacity,
-                        // Add fill-opacity for Bubble series consistency
-                        'fill-opacity': pointAttribs['fill-opacity']
-                    }));
+                        'stroke-width': finalStrokeWidth
+                    };
+
+                    if (typeof pointAttribs.opacity !== 'undefined') {
+                        attrs.opacity = pointAttribs.opacity;
+                    }
+                    if (typeof pointAttribs['fill-opacity'] !== 'undefined') {
+                        attrs['fill-opacity'] = pointAttribs['fill-opacity'];
+                    }
+
+                    symbol.attr(colorizeHidden(attrs));
+
                 } else {
                     // Fallback for Maps/Financial
                     symbol.attr(colorizeHidden({ fill: item.color }));
