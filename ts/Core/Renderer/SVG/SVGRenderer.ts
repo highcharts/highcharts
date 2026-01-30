@@ -29,6 +29,7 @@ import type {
 } from '../DOMElementType';
 import type { EventCallback } from '../../../Core/Callback';
 import type FontMetricsObject from '../FontMetricsObject';
+import type { PaletteOptions } from '../../Color/PaletteOptions';
 import type PositionObject from '../PositionObject';
 import type ShadowOptionsObject from '../ShadowOptionsObject';
 import type SVGAttributes from './SVGAttributes';
@@ -54,6 +55,7 @@ const {
     symbolSizes,
     win
 } = H;
+import Palette from '../../Color/Palette';
 import RendererRegistry from '../RendererRegistry.js';
 import SVGElement from './SVGElement.js';
 import SVGLabel from './SVGLabel.js';
@@ -217,7 +219,9 @@ class SVGRenderer implements SVGRendererBase {
         style?: CSSObject,
         forExport?: boolean,
         allowHTML?: boolean,
-        styledMode?: boolean
+        styledMode?: boolean,
+        palette?: PaletteOptions,
+        chartIndex?: number
     ) {
         const renderer = this,
             boxWrapper = renderer
@@ -227,10 +231,6 @@ class SVGRenderer implements SVGRendererBase {
                     'class': 'highcharts-root'
                 }),
             element = boxWrapper.element as SVGDOMElement;
-
-        if (!styledMode) {
-            boxWrapper.css(this.getStyle(style || {}));
-        }
 
         container.appendChild(element);
 
@@ -249,7 +249,6 @@ class SVGRenderer implements SVGRendererBase {
 
         this.url = this.getReferenceURL();
 
-
         // Add description
         const desc = this.createElement('desc').add();
         desc.element.appendChild(
@@ -260,6 +259,7 @@ class SVGRenderer implements SVGRendererBase {
         this.allowHTML = allowHTML;
         this.forExport = forExport;
         this.styledMode = styledMode;
+        this.chartIndex = chartIndex || 0;
         this.gradients = {}; // Object where gradient SvgElements are stored
         this.cache = {}; // Cache for numerical bounding boxes
         this.cacheKeys = [];
@@ -267,6 +267,13 @@ class SVGRenderer implements SVGRendererBase {
         this.rootFontSize = boxWrapper.getStyle('font-size');
 
         renderer.setSize(width, height, false);
+
+        if (!styledMode) {
+            boxWrapper.css(this.getStyle(style || {}));
+
+            // Create the palette
+            this.palette = new Palette(this, palette || defaultOptions.palette);
+        }
 
         // Issue 110 workaround:
         // In Firefox, if a div is positioned by percentage, its pixel position
@@ -332,7 +339,7 @@ class SVGRenderer implements SVGRendererBase {
     public cacheKeys: Array<string>;
 
     /** @internal */
-    public chartIndex!: number;
+    public chartIndex: number;
 
     /**
      * A pointer to the `defs` node of the root SVG.
@@ -361,6 +368,15 @@ class SVGRenderer implements SVGRendererBase {
 
     /** @internal */
     public imgCount: number;
+
+    /**
+     * The palette instance associated with the renderer. Typically the same
+     * as the chart's palette.
+     *
+     * @name Highcharts.SVGRenderer#palette
+     * @type {Highcharts.Palette|undefined}
+     */
+    public palette?: Palette;
 
     /** @internal */
     public rootFontSize: string|undefined;

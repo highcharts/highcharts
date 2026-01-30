@@ -17,11 +17,13 @@
  *
  * */
 
-import type Chart from '../Chart/Chart';
 import type ColorType from './ColorType';
 import type { PaletteOptions } from './PaletteOptions';
+import type SVGRenderer from '../Renderer/SVG/SVGRenderer';
 
 import Color from './Color.js';
+import H from '../Globals.js';
+const { charts } = H;
 import PaletteDefaults from './PaletteDefaults.js';
 import U from '../Utilities.js';
 const {
@@ -38,7 +40,7 @@ const {
  * */
 declare module '../Chart/ChartBase' {
     interface ChartBase {
-        palette: Palette;
+        palette: Palette|undefined;
     }
 }
 
@@ -97,9 +99,9 @@ ${rules.dark}
  */
 export default class Palette {
 
-    public chart: Chart;
     public defaultOptions: PaletteOptions = PaletteDefaults;
     public options: PaletteOptions = merge(PaletteDefaults);
+    public renderer: SVGRenderer;
 
     /* *
      *
@@ -108,10 +110,10 @@ export default class Palette {
      * */
 
     public constructor(
-        chart: Chart,
+        renderer: SVGRenderer,
         options: PaletteOptions
     ) {
-        this.chart = chart;
+        this.renderer = renderer;
         this.update(options);
     }
 
@@ -128,9 +130,8 @@ export default class Palette {
         options: PaletteOptions
     ): void {
         const rules = { light: '', dark: '' },
-            chart = this.chart,
-            container = chart.container,
-            className = chart.options.chart.className,
+            renderer = this.renderer,
+            className = charts?.[renderer.chartIndex]?.options.chart.className,
             hasSpecificPalette = Object.keys(
                 diffObjects(options, this.defaultOptions)
             ).length > 0;
@@ -184,18 +185,17 @@ export default class Palette {
         }
 
         // Add a style tag to the chart renderer box
-        const defs = this.chart.renderer.defs.element,
+        const defs = renderer.defs.element,
             specifier = hasSpecificPalette ?
                 (
                     className ?
                         `.${className}` :
-                        `*[data-highcharts-chart="${this.chart.index}"]`
+                        `*[data-highcharts-chart="${renderer.chartIndex}"]`
                 ) :
-                '';
-
-        const style: HTMLStyleElement = defs
-            .querySelector('style.highcharts-palette') ||
-            container.ownerDocument.createElement('style');
+                '',
+            style: HTMLStyleElement = defs
+                .querySelector('style.highcharts-palette') ||
+                renderer.box.ownerDocument.createElement('style');
 
         if (!style.parentNode) {
             style.nonce = 'highcharts';
@@ -218,24 +218,27 @@ export default class Palette {
     public update(
         options: PaletteOptions
     ): void {
-        const { classList } = this.chart.container;
+        const { classList } = this.renderer.box.parentElement || {},
+            chart = charts?.[this.renderer.chartIndex];
 
-        options = this.chart.options.palette = merge(
-            true,
-            this.options,
-            options
-        );
+        options = merge(true, this.options, options);
+
+        if (chart) {
+            chart.options.palette = options;
+        }
 
         if (options.injectCSS !== false) {
             this.injectCSS(options);
         }
 
         // Set the class name of the container
-        classList.remove('highcharts-light', 'highcharts-dark');
-        if (options.colorScheme === 'light') {
-            classList.add('highcharts-light');
-        } else if (options.colorScheme === 'dark') {
-            classList.add('highcharts-dark');
+        if (classList) {
+            classList.remove('highcharts-light', 'highcharts-dark');
+            if (options.colorScheme === 'light') {
+                classList.add('highcharts-light');
+            } else if (options.colorScheme === 'dark') {
+                classList.add('highcharts-dark');
+            }
         }
     }
 

@@ -75,7 +75,6 @@ const {
     svg,
     win
 } = H;
-import Palette from '../Color/Palette.js';
 import Pointer from '../Pointer.js';
 import RendererRegistry from '../Renderer/RendererRegistry.js';
 import Series from '../Series/Series.js';
@@ -2133,7 +2132,9 @@ class Chart {
             void 0,
             optionsChart.forExport,
             options.exporting?.allowHTML,
-            chart.styledMode
+            chart.styledMode,
+            options.palette,
+            chart.index
         );
 
         // Set the initial animation from the options
@@ -2142,17 +2143,15 @@ class Chart {
 
         chart.setClassName(optionsChart.className);
         if (!chart.styledMode) {
-            this.palette = new Palette(this, this.options.palette);
             chart.renderer.setStyle(optionsChart.style as any);
+            this.palette = chart.renderer.palette;
+
         } else {
             // Initialize definitions
             for (const key in options.defs) { // eslint-disable-line guard-for-in
                 this.renderer.definition((options.defs as any)[key]);
             }
         }
-
-        // Add a reference to the charts index
-        chart.renderer.chartIndex = chart.index;
 
         fireEvent(this, 'afterGetContainer');
     }
