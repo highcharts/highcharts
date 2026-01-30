@@ -252,6 +252,7 @@ class Pagination {
     public render(): void {
         const position = this.options?.position;
         const grid = this.grid;
+        const alignmentClass = this.getAlignmentClass();
 
         this.oldTotalItems = this.controller.totalItems;
 
@@ -270,7 +271,9 @@ class Pagination {
             this.contentWrapper = makeHTMLElement(
                 'nav',
                 {
-                    className: Globals.getClassName('paginationWrapper')
+                    className: alignmentClass ?
+                        `${Globals.getClassName('paginationWrapper')} ${alignmentClass}` :
+                        Globals.getClassName('paginationWrapper')
                 },
                 position === 'footer' ?
                     this.paginationContainer : grid.contentWrapper
@@ -289,6 +292,21 @@ class Pagination {
 
         // Update button states after rendering
         this.updateButtonStates();
+    }
+
+    private getAlignmentClass(): string | undefined {
+        const alignment = this.options?.alignment;
+
+        switch (alignment) {
+            case 'left':
+                return Globals.getClassName('paginationLeft');
+            case 'center':
+                return Globals.getClassName('paginationCenter');
+            case 'right':
+                return Globals.getClassName('paginationRight');
+            case 'distributed':
+                return Globals.getClassName('paginationDistributed');
+        }
     }
 
     /**
