@@ -902,7 +902,7 @@ class Navigator {
      * Remove the mouse and touch events for the shades and handles only.
      *
      * @private
-     * @function Highcharts.Navigator#addShadesAndHandelsEvents
+     * @function Highcharts.Navigator#removeShadesAndHandelsEvents
      */
     public removeShadesAndHandlesEvents(): void {
         this.shadesAndHandlesEventsToUnbind.forEach(
