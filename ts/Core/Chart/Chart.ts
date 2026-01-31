@@ -363,6 +363,11 @@ class Chart {
         c?: Chart.CallbackFunction
         /* eslint-enable @typescript-eslint/no-unused-vars */
     ) {
+        // Return early if there's no browser API (server environment).
+        if (typeof doc === 'undefined') {
+            return;
+        }
+
         const args = [
             // ES5 builds fail unless we cast it to an Array
             ...arguments as unknown as Array<any>
