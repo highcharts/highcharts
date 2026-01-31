@@ -154,27 +154,39 @@ const colorCache: Record<string, string> = {};
  * Resolve CSS color expressions like color-mix
  * @internal
  */
-const resolveColorExpression = (input: string): string => {
+const resolveColorExpression = (chart: Chart, input: string): string => {
     if (colorCache[input]) {
         return colorCache[input];
     }
 
-    /* eslint-disable-next-line max-len */
-    const colorMixRegex = /^color-mix\(in srgb,([a-z\(\)0-9\-]+),([a-z\(\)0-9\-]+) ([0-9\.%]+)/,
-        result = colorMixRegex.exec(input);
-
-    if (result) {
-        const weight = parseFloat(result[3]) / 100,
-            color1 = result[1],
-            color2 = result[2],
-            color = new Color(color1).tweenTo(
-                new Color(color2),
-                weight
-            ) as string;
-
-        colorCache[input] = color;
-        return color;
+    // Color variable from the palette
+    const paletteMatch = input.indexOf('var(') === 0 &&
+        chart.palette?.cssVars.light[input.slice(4, -1).trim()];
+    if (paletteMatch) {
+        colorCache[input] = paletteMatch;
+        return paletteMatch;
     }
+
+    // Color mix expression
+    if (input.indexOf('color-mix(') === 0) {
+        /* eslint-disable-next-line max-len */
+        const colorMixRegex = /^color-mix\(in srgb,([a-z0-9\(\)\-\#]+),([a-z0-9\(\)\-\#]+) ([0-9\.%]+)/,
+            result = colorMixRegex.exec(input);
+
+        if (result) {
+            const weight = parseFloat(result[3]) / 100,
+                color1 = resolveColorExpression(chart, result[1]),
+                color2 = resolveColorExpression(chart, result[2]),
+                color = new Color(color1).tweenTo(
+                    new Color(color2),
+                    weight
+                ) as string;
+
+            colorCache[input] = color;
+            return color;
+        }
+    }
+
     return input;
 };
 
@@ -709,7 +721,9 @@ class WGLRenderer {
                     swidth = pointAttr['stroke-width'] || 0;
 
                     if (typeof pointAttr.fill === 'string') {
-                        pointAttr.fill = resolveColorExpression(pointAttr.fill);
+                        pointAttr.fill = resolveColorExpression(
+                            chart, pointAttr.fill
+                        );
                     }
 
                     // Handle point colors
@@ -728,7 +742,14 @@ class WGLRenderer {
                     // If there's stroking, we do an additional rect
                     if (series.is('treemap')) {
                         swidth = swidth || 1;
-                        scolor = color(pointAttr.stroke).rgba as any;
+
+                        if (typeof pointAttr.stroke === 'string') {
+                            pointAttr.stroke = resolveColorExpression(
+                                chart, pointAttr.stroke
+                            );
+                        }
+
+                        scolor = color(pointAttr.stroke).rgba;
 
                         scolor[0] /= 255.0;
                         scolor[1] /= 255.0;
@@ -1464,6 +1485,8 @@ class WGLRenderer {
                     pick((options as any).fillOpacity, 1.0)
                 ).get();
             }
+
+            fillColor = resolveColorExpression(chart, fillColor);
 
             scolor = color(fillColor).rgba;
 

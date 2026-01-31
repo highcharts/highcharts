@@ -114,36 +114,6 @@ function compose(
     BoostChart.compose(ChartClass, wglMode);
     BoostSeries.compose(SeriesClass, seriesTypes, PointClass, wglMode);
 
-    // Literal resolution of the CSS variable names to actual colors
-    const setHardColorReferences = function (this: Chart): void {
-        // Add a color checking circle inside the chart for testing
-        const colorChecker = this.renderer.circle(0, 0, 1)
-            .attr({
-                'class': 'highcharts-color-checker',
-                r: 1,
-                opacity: 0
-            })
-            .add();
-
-        // Resolve the colors. This will change with dynamic updates of the
-        // palette
-        this.options.palette.light?.colors?.forEach((color, i): void => {
-            if (ColorClass && typeof color === 'string') {
-                colorChecker.attr(
-                    'fill',
-                    `var(--highcharts-color-${i})`
-                );
-                ColorClass.names[`var(--highcharts-color-${i})`] = win
-                    .getComputedStyle(colorChecker.element)
-                    .getPropertyValue('fill') || color;
-            }
-        });
-
-        colorChecker.destroy();
-    };
-    addEvent(ChartClass, 'beforeRender', setHardColorReferences);
-    addEvent(ChartClass, 'beforeRedraw', setHardColorReferences);
-
     // Handle zooming by touch/pinch or mouse wheel. Assume that boosted charts
     // are too slow for a live preview while dragging. Instead, just scale the
     // div while `isPanning`.
