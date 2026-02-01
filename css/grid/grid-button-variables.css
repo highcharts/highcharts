@@ -97,6 +97,13 @@
         border-color: var(--ig-button-border-color);
         border-radius: var(--ig-button-border-radius);
 
+        &.hcg-button-selected,
+        &.hcg-button-selected:hover:not(thead th *) {
+            color: var(--ig-button-selected-color);
+            background: var(--ig-button-selected-background);
+            border-color: var(--ig-button-selected-border-color);
+        }
+
         &.hcg-button-selected::after {
             background: var(--ig-button-selected-color);
         }
@@ -110,13 +117,6 @@
             color: var(--ig-button-hover-color);
             background: var(--ig-button-hover-background);
             border-color: var(--ig-button-hover-border-color);
-        }
-
-        &.hcg-button-selected,
-        &.hcg-button-selected:hover:not(thead th *) {
-            color: var(--ig-button-selected-color);
-            background: var(--ig-button-selected-background);
-            border-color: var(--ig-button-selected-border-color);
         }
 
         &:focus-visible {
