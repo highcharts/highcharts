@@ -1,0 +1,345 @@
+/* stylelint-disable max-line-length */
+.hcg-container {
+    .hcg-table {
+        /* Row borders */
+        --ig-row-border-width: var(--hcg-row-border-width, var(--ig-border-width));
+        --ig-row-border-style: var(--hcg-row-border-style, var(--ig-border-style));
+        --ig-row-border-color: var(--hcg-row-border-color, var(--ig-border-color));
+        --ig-row-border: var(--ig-row-border-width) var(--ig-row-border-style) var(--ig-row-border-color);
+
+        /* Header row borders */
+        --ig-header-row-border-width: var(--hcg-header-row-border-width, var(--ig-row-border-width));
+        --ig-header-row-border-style: var(--hcg-header-row-border-style, var(--ig-row-border-style));
+        --ig-header-row-border-color: var(--hcg-header-row-border-color, var(--ig-row-border-color));
+        --ig-header-row-border: var(--ig-header-row-border-width) var(--ig-header-row-border-style) var(--ig-header-row-border-color);
+
+        /* Column borders */
+        --ig-column-border-width: var(--hcg-column-border-width, var(--ig-border-width));
+        --ig-column-border-style: var(--hcg-column-border-style, var(--ig-border-style));
+        --ig-column-border-color: var(--hcg-column-border-color, var(--ig-border-color));
+        --ig-column-border: var(--ig-column-border-width) var(--ig-column-border-style) var(--ig-column-border-color);
+
+        /* Header column borders */
+        --ig-header-column-border-width: var(--hcg-header-column-border-width, var(--ig-column-border-width));
+        --ig-header-column-border-style: var(--hcg-header-column-border-style, var(--ig-column-border-style));
+        --ig-header-column-border-color: var(--hcg-header-column-border-color, var(--ig-column-border-color));
+        --ig-header-column-border: var(--ig-header-column-border-width) var(--ig-header-column-border-style) var(--ig-header-column-border-color);
+
+        border: var(--ig-border);
+        background: var(--ig-background);
+        border-radius: var(--ig-border-radius);
+    }
+
+    .hcg-table thead th {
+        --ig-header-column-background: var(--hcg-column-background);
+        --ig-header-background: var(--hcg-header-background, var(--hcg-cell-background, var(--ig-header-column-background, transparent)));
+        --ig-header-column-color: var(--hcg-column-color, var(--hcg-cell-color, var(--ig-color, inherit)));
+        --ig-header-base-color: var(--hcg-header-color, var(--ig-header-column-color));
+        --ig-header-current-color: var(--ig-header-base-color);
+        --ig-header-hover-opacity: var(--hcg-header-hover-opacity, var(--hcg-column-hover-header-opacity, var(--hcg-column-hover-opacity, var(--ig-hover-opacity))));
+
+        border-right: var(--ig-header-column-border);
+        border-bottom: var(--ig-header-row-border);
+        background: var(--ig-header-background);
+        color: var(--ig-header-current-color);
+        padding-top: var(--hcg-header-vertical-padding, var(--hcg-header-padding, var(--ig-vertical-padding)));
+        padding-right: var(--hcg-header-horizontal-padding, var(--hcg-header-padding, var(--ig-horizontal-padding)));
+        padding-bottom: var(--hcg-header-vertical-padding, var(--hcg-header-padding, var(--ig-vertical-padding)));
+        padding-left: var(--hcg-header-horizontal-padding, var(--hcg-header-padding, var(--ig-horizontal-padding)));
+    }
+
+    .hcg-table thead th:nth-child(even) {
+        --ig-header-column-background: var(--hcg-column-even-background, var(--hcg-column-background));
+        --ig-header-background: var(--hcg-header-even-background, var(--hcg-header-background, var(--hcg-cell-background, var(--ig-header-column-background, transparent))));
+        --ig-header-column-color: var(--hcg-column-even-color, var(--hcg-column-color, var(--hcg-cell-color, var(--ig-color, inherit))));
+        --ig-header-base-color: var(--hcg-header-even-color, var(--hcg-header-color, var(--ig-header-column-color)));
+        --ig-header-current-color: var(--ig-header-base-color);
+    }
+
+    .hcg-table thead th .hcg-header-cell-content {
+        --ig-header-font-weight: var(--hcg-header-font-weight, var(--hcg-cell-font-weight, var(--ig-font-weight)));
+        --ig-header-font-size: var(--hcg-header-font-size, var(--hcg-cell-font-size, var(--ig-font-size)));
+        --ig-header-font-family: var(--hcg-header-font-family, var(--hcg-cell-font-family, var(--ig-font-family)));
+        --ig-header-font: var(--ig-header-font-weight) var(--ig-header-font-size) var(--ig-header-font-family);
+        --ig-header-text-align: var(--hcg-header-text-align, var(--hcg-cell-text-align, var(--ig-text-align)));
+
+        font: var(--ig-header-font);
+        text-align: var(--ig-header-text-align);
+    }
+
+    .hcg-table thead tr:first-of-type th:first-child {
+        border-top-left-radius: var(--ig-border-radius);
+    }
+
+    .hcg-table thead tr:first-of-type th:last-child {
+        border-top-right-radius: var(--ig-border-radius);
+    }
+
+    .hcg-table thead th:focus-visible {
+        outline: none;
+        box-shadow: inset var(--ig-focus-ring);
+    }
+
+    /* Start header hover & sync */
+    .hcg-table th:hover {
+        --ig-header-hover-background:
+            color-mix(
+                in srgb,
+                var(--hcg-header-hovered-background, var(--hcg-header-hover-background, var(--hcg-column-hover-header-background, var(--hcg-column-hover-background, var(--ig-header-background))))) var(--ig-header-hover-opacity),
+                var(--ig-header-background) calc(100% - var(--ig-header-hover-opacity))
+            );
+
+        background: var(--ig-header-hover-background);
+        --ig-header-color:
+            var(
+                --hcg-header-hovered-color,
+                var(
+                    --hcg-header-hover-color,
+                    var(--hcg-column-hover-header-color, var(--hcg-column-hover-color, var(--ig-header-base-color)))
+                )
+            );
+        --ig-header-current-color: var(--ig-header-color);
+
+        color: var(--ig-header-current-color);
+    }
+
+    /* End header hover & sync */
+
+    /* <tbody> */
+    .hcg-table tbody tr:last-of-type td:first-child {
+        border-bottom-left-radius: var(--ig-border-radius);
+    }
+
+    .hcg-table tbody tr:last-of-type td:last-child {
+        border-bottom-right-radius: var(--ig-border-radius);
+    }
+
+    .hcg-table tbody {
+        border-bottom-left-radius: var(--hcg-border-radius);
+        border-bottom-right-radius: var(--hcg-border-radius);
+    }
+
+    .hcg-table tbody tr {
+        --ig-row-background-current: var(--hcg-row-background);
+        --ig-row-color-current: var(--hcg-row-color);
+    }
+
+    .hcg-table tbody tr.hcg-row-even {
+        --ig-row-background-current: var(--hcg-row-even-background, var(--hcg-row-background));
+        --ig-row-color-current: var(--hcg-row-even-color, var(--hcg-row-color));
+    }
+
+    .hcg-table tbody tr.hcg-mocked-row td,
+    .hcg-table tbody tr td {
+        --ig-cell-column-background: var(--hcg-column-background);
+        --ig-cell-column-color: var(--hcg-column-color);
+        --ig-cell-base-background: var(--hcg-cell-background, var(--ig-row-background-current, var(--ig-cell-column-background, transparent)));
+        --ig-column-layer: var(--ig-cell-base-background);
+        --ig-cell-hover-background-helper: var(--hcg-cell-hovered-background, var(--hcg-cell-hover-background));
+        --ig-cell-hover-background: var(--ig-cell-hover-background-helper, var(--ig-row-hover-color, var(--ig-column-layer)));
+        --ig-cell-hover-opacity-helper: var(--hcg-cell-hover-opacity);
+        --ig-cell-hover-opacity: var(--ig-cell-hover-opacity-helper, var(--ig-hover-opacity));
+        --ig-cell-active-opacity: var(--ig-cell-hover-opacity);
+        --ig-cell-sync-opacity: var(--hcg-cell-sync-opacity, var(--hcg-sync-opacity, var(--ig-cell-hover-opacity)));
+        --ig-cell-base-color: var(--hcg-cell-color, var(--ig-row-color-current, var(--ig-cell-column-color, var(--ig-color, inherit))));
+        --ig-column-text-layer: var(--ig-cell-base-color);
+        --ig-row-hover-text-color: var(--ig-column-text-layer);
+        --ig-cell-hover-text-color: var(--ig-row-hover-text-color);
+        --ig-cell-font-weight: var(--hcg-cell-font-weight, var(--ig-font-weight));
+        --ig-cell-font-size: var(--hcg-cell-font-size, var(--ig-font-size));
+        --ig-cell-font-family: var(--hcg-cell-font-family, var(--ig-font-family));
+        --ig-cell-font: var(--ig-cell-font-weight) var(--ig-cell-font-size) var(--ig-cell-font-family);
+        --ig-cell-text-align: var(--hcg-cell-text-align, var(--ig-text-align));
+
+        background: var(--ig-column-layer);
+        color: var(--ig-cell-hover-text-color);
+        border-right: var(--ig-column-border);
+        border-bottom: var(--ig-row-border);
+        padding: var(--ig-padding);
+        font: var(--ig-cell-font);
+        text-align: var(--ig-cell-text-align);
+    }
+
+    .hcg-table tbody tr td:nth-child(even) {
+        --ig-cell-column-background: var(--hcg-column-even-background, var(--hcg-column-background));
+        --ig-cell-column-color: var(--hcg-column-even-color, var(--hcg-column-color));
+    }
+
+    .hcg-table tbody td:focus {
+        box-shadow: inset var(--ig-focus-ring);
+    }
+
+    /* Start column hover & sync */
+    .hcg-table td.hcg-hovered-column {
+        --ig-column-layer:
+            color-mix(
+                in srgb,
+                var(--hcg-cell-hovered-column-background, var(--hcg-column-hover-background, var(--ig-cell-base-background))) var(--hcg-column-hover-opacity, var(--ig-hover-opacity)),
+                var(--ig-cell-base-background) calc(100% - var(--hcg-column-hover-opacity, var(--ig-hover-opacity)))
+            );
+        --ig-column-text-layer: var(--hcg-cell-hovered-column-color, var(--hcg-column-hover-color, var(--ig-cell-base-color)));
+    }
+
+    .hcg-table td.hcg-synced-column {
+        --ig-column-layer:
+            color-mix(
+                in srgb,
+                var(
+                    --hcg-cell-synced-column-background,
+                    var(--hcg-cell-hovered-column-background, var(--hcg-column-sync-background, var(--hcg-column-hover-background, var(--ig-cell-base-background))))
+                ) var(--hcg-column-sync-opacity, var(--hcg-sync-opacity, var(--hcg-column-hover-opacity, var(--ig-hover-opacity)))),
+                var(--ig-cell-base-background)
+                calc(100% - var(--hcg-column-sync-opacity, var(--hcg-sync-opacity, var(--hcg-column-hover-opacity, var(--ig-hover-opacity)))))
+            );
+        --ig-column-text-layer:
+            var(
+                --hcg-cell-synced-column-color,
+                var(--hcg-cell-hovered-column-color, var(--hcg-column-sync-color, var(--hcg-column-hover-color, var(--ig-cell-base-color))))
+            );
+    }
+
+    .hcg-table th.hcg-hovered-column:not(:hover) {
+        --ig-header-column-hover-color:
+            color-mix(
+                in srgb,
+                var(--hcg-cell-hovered-header-background, var(--hcg-column-hover-header-background, var(--hcg-column-hover-background, var(--ig-header-background)))) var(--hcg-column-hover-header-opacity, var(--hcg-column-hover-opacity, var(--ig-hover-opacity))),
+                var(--ig-header-background) calc(100% - var(--hcg-column-hover-header-opacity, var(--hcg-column-hover-opacity, var(--ig-hover-opacity))))
+            );
+        --ig-header-color: var(--hcg-cell-hovered-header-color, var(--hcg-column-hover-header-color, var(--hcg-column-hover-color, var(--ig-header-base-color))));
+        --ig-header-current-color: var(--ig-header-color);
+
+        background: var(--ig-header-column-hover-color);
+        color: var(--ig-header-current-color);
+    }
+
+    .hcg-table th.hcg-synced-column:not(:hover) {
+        --ig-header-sync-opacity:
+            var(
+                --hcg-header-sync-opacity,
+                var(
+                    --hcg-column-sync-header-opacity,
+                    var(--hcg-sync-opacity, var(--hcg-column-hover-header-opacity, var(--hcg-column-hover-opacity, var(--ig-hover-opacity))))
+                )
+            );
+        --ig-header-column-hover-color:
+            color-mix(
+                in srgb,
+                var(
+                    --hcg-cell-synced-header-background,
+                    var(
+                        --hcg-cell-hovered-header-background,
+                        var(
+                            --hcg-column-sync-header-background,
+                            var(--hcg-column-hover-header-background, var(--hcg-column-hover-background, var(--ig-header-background)))
+                        )
+                    )
+                ) var(--ig-header-sync-opacity),
+                var(--ig-header-background)
+                calc(
+                    100% - var(
+                        --ig-header-sync-opacity
+                    )
+                )
+            );
+        --ig-header-color:
+            var(
+                --hcg-cell-synced-header-color,
+                var(
+                    --hcg-cell-hovered-header-color,
+                    var(--hcg-column-sync-header-color, var(--hcg-column-hover-header-color, var(--hcg-column-hover-color, var(--ig-header-base-color))))
+                )
+            );
+        --ig-header-current-color: var(--ig-header-color);
+
+        background: var(--ig-header-column-hover-color);
+        color: var(--ig-header-current-color);
+    }
+
+    /* End column hover & sync */
+
+    /* Start row hover & sync */
+    .hcg-table tr:hover td {
+        --ig-row-hover-color:
+            color-mix(
+                in srgb,
+                var(--hcg-cell-hovered-row-background, var(--hcg-row-hover-background, var(--ig-column-layer))) var(--hcg-row-hover-opacity, var(--ig-hover-opacity)),
+                var(--ig-column-layer) calc(100% - var(--hcg-row-hover-opacity, var(--ig-hover-opacity)))
+            );
+        --ig-row-hover-text-color: var(--hcg-cell-hovered-row-color, var(--hcg-row-hover-color, var(--ig-column-text-layer)));
+        --ig-cell-hover-text-color: var(--ig-row-hover-text-color);
+
+        background: var(--ig-row-hover-color);
+        color: var(--ig-cell-hover-text-color);
+    }
+
+    .hcg-table tr.hcg-synced-row td {
+        --ig-row-hover-color:
+            color-mix(
+                in srgb,
+                var(
+                    --hcg-cell-synced-row-background,
+                    var(--hcg-cell-hovered-row-background, var(--hcg-row-sync-background, var(--hcg-row-hover-background, var(--ig-column-layer))))
+                )
+                var(--hcg-row-sync-opacity, var(--hcg-sync-opacity, var(--hcg-row-hover-opacity, var(--ig-hover-opacity)))),
+                var(--ig-column-layer)
+                calc(100% - var(--hcg-row-sync-opacity, var(--hcg-sync-opacity, var(--hcg-row-hover-opacity, var(--ig-hover-opacity)))))
+            );
+        --ig-row-hover-text-color:
+            var(
+                --hcg-cell-synced-row-color,
+                var(--hcg-cell-hovered-row-color, var(--hcg-row-sync-color, var(--hcg-row-hover-color, var(--ig-column-text-layer))))
+            );
+        --ig-cell-hover-text-color: var(--ig-row-hover-text-color);
+
+        background: var(--ig-row-hover-color);
+        color: var(--ig-cell-hover-text-color);
+    }
+
+    /* End row hover & sync */
+
+    /* Start cell hover & sync */
+    .hcg-table td:hover,
+    .hcg-table tr:hover td:hover,
+    .hcg-table td.hcg-hovered-column:hover {
+        --ig-cell-hover-layer:
+            color-mix(
+                in srgb,
+                var(--ig-cell-hover-background) var(--ig-cell-hover-opacity),
+                var(--ig-row-hover-color, var(--ig-column-layer)) calc(100% - var(--ig-cell-hover-opacity))
+            );
+        --ig-cell-hover-text-color: var(--hcg-cell-hovered-color, var(--hcg-cell-hover-color, var(--ig-row-hover-text-color)));
+
+        background: var(--ig-cell-hover-layer);
+        color: var(--ig-cell-hover-text-color);
+    }
+
+    .hcg-table tr.hcg-synced-row td.hcg-synced-column {
+        --ig-cell-hover-layer:
+            color-mix(
+                in srgb,
+                var(
+                    --hcg-cell-synced-background,
+                    var(
+                        --hcg-cell-hovered-background,
+                        var(--hcg-cell-sync-background, var(--hcg-cell-hover-background, var(--ig-row-hover-color, var(--ig-column-layer))))
+                    )
+                ) var(--hcg-cell-synced-opacity, var(--hcg-cell-sync-opacity, var(--hcg-sync-opacity, var(--hcg-cell-hover-opacity, var(--ig-cell-hover-opacity))))),
+                var(--ig-row-hover-color, var(--ig-column-layer))
+                calc(100% - var(--hcg-cell-synced-opacity, var(--hcg-cell-sync-opacity, var(--hcg-sync-opacity, var(--hcg-cell-hover-opacity, var(--ig-cell-hover-opacity))))))
+            );
+        --ig-cell-hover-text-color:
+            var(
+                --hcg-cell-synced-color,
+                var(--hcg-cell-hovered-color, var(--hcg-cell-sync-color, var(--hcg-cell-hover-color, var(--ig-row-hover-text-color))))
+            );
+
+        background: var(--ig-cell-hover-layer);
+        color: var(--ig-cell-hover-text-color);
+    }
+
+    /* End cell hover & sync */
+
+    .hcg-table tfoot td {
+        border-top: var(--ig-row-border);
+    }
+}

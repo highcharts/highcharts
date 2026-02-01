@@ -1,0 +1,46 @@
+/* stylelint-disable max-line-length */
+.hcg-theme-default,
+.highcharts-light .hcg-theme-default {
+    /* Primary colors */
+    --hcg-color: var(--highcharts-neutral-color-100);
+    --hcg-background: var(--highcharts-background-color);
+    --hcg-border-radius: 5px;
+    --hcg-border-width: 1px;
+    --hcg-font-size: 15px;
+    --hcg-caption-font-size: 18px;
+    --hcg-padding: 15px;
+    --hcg-header-vertical-padding: 10px;
+    --hcg-pagination-vertical-padding: 10px;
+    --hcg-input-border-radius: 6px;
+    --hcg-input-border-color: #d1d1d1;
+    --hcg-input-hover-border-color: #9d9d9d;
+    --hcg-focus-ring-color: #626bd0;
+    --hcg-button-border-radius: 6px;
+    --hcg-button-hover-color: #000000;
+    --hcg-button-hover-background: #e8e8e8;
+    --hcg-button-border-color: transparent;
+    --hcg-cell-button-border-color: #d1d1d1;
+    --hcg-header-button-background: transparent;
+
+    @media (prefers-color-scheme: dark) {
+        .hcg-theme-default {
+            --hcg-color: var(--highcharts-neutral-color-100);
+            --hcg-background: var(--highcharts-background-color);
+            --hcg-input-border-color: #4f4f4f;
+            --hcg-input-hover-border-color: #646464;
+        }
+    }
+}
+
+.highcharts-dark .hcg-theme-default {
+    --hcg-color: var(--highcharts-neutral-color-100);
+    --hcg-background: var(--highcharts-background-color);
+    --hcg-input-border-color: #4f4f4f;
+    --hcg-input-hover-border-color: #646464;
+}
+
+.hcg-theme-default {
+    --hcg-border-color: var(--highcharts-neutral-color-20, color-mix(in srgb, var(--hcg-color, #000000) 10%, var(--hcg-background, #ffffff)));
+    --hcg-row-hover-background: var(--ig-highlight-color-5, color-mix(in srgb, var(--hcg-color, #000000) 3%, var(--hcg-background, #ffffff)));
+    --hcg-row-even-background: var(--highcharts-neutral-color-3, color-mix(in srgb, var(--hcg-color, #000000) 2%, var(--hcg-background, #ffffff)));
+}
