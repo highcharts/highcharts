@@ -85,13 +85,6 @@
     --ig-font: var(--ig-font-weight) var(--ig-font-size) var(--ig-font-family);
     --ig-text-align: var(--hcg-text-align, left);
 
-    /* Link fonts */
-    --ig-link-color: var(--hcg-link-color, inherit);
-    --ig-link-text-decoration: var(--hcg-link-text-decoration, underline);
-    --ig-link-hovered-color: var(--hcg-link-hovered-color, var(--ig-link-color));
-    --ig-link-hovered-text-decoration: var(--hcg-link-hovered-text-decoration, none);
-    --ig-link-font-weight: var(--hcg-link-font-weight, inherit);
-
     /* Default borders */
     --ig-border-radius: var(--hcg-border-radius, 0);
     --ig-border-width: var(--hcg-border-width, 0);
@@ -135,4 +128,6 @@
     --ig-positive-border-size: var(--hcg-positive-border-size, var(--ig-highlight-border-size));
     --ig-positive-background: var(--hcg-positive-background, var(--ig-positive-default-background));
     --ig-positive-color: var(--hcg-positive-color, var(--ig-color));
+
+    font: var(--ig-font);
 }

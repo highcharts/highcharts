@@ -51,5 +51,9 @@
         &:focus-visible {
             box-shadow: var(--ig-input-focus-ring);
         }
+
+        &[type="checkbox"]:checked::before {
+            background-color: var(--ig-input-color);
+        }
     }
 }

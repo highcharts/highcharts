@@ -67,6 +67,11 @@
         text-align: var(--ig-header-text-align);
     }
 
+    .hcg-column-resizer.hovered::after {
+        width: max(3px, calc(var(--ig-header-column-border-width) + 2px));
+        background: var(--ig-header-color);
+    }
+
     .hcg-table thead tr:first-of-type th:first-child {
         border-top-left-radius: var(--ig-border-radius);
     }

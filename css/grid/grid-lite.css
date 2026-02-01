@@ -14,6 +14,7 @@
 @import url("./grid-base-variables.css");
 @import url("./grid-popup-variables.css");
 @import url("./grid-menu-variables.css");
+@import url("./grid-link-variables.css");
 @import url("./grid-input-variables.css");
 @import url("./grid-button-variables.css");
 @import url("./grid-caption-variables.css");
@@ -32,7 +33,6 @@
     height: 100%;
     overflow: hidden;
     box-sizing: border-box;
-    font: var(--ig-font);
     color-scheme: light dark;
     max-height: inherit;
 }
@@ -89,7 +89,6 @@
             margin: 0.05rem;
             mask: center/contain no-repeat;
             mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 13l4 4L19 7'/%3E%3C/svg%3E");
-            background-color: var(--ig-input-color);
         }
     }
 
@@ -302,7 +301,7 @@
     }
 
     .hcg-header-cell-icons .hcg-header-cell-menu-icon button {
-        padding-inline: calc(var(--ig-header-button-padding) / 2);
+        padding-inline: 3px;
     }
 
     .hcg-header-cell-icons > :first-child {
@@ -325,9 +324,7 @@
 
     .hcg-column-resizer.hovered::after {
         content: "";
-        width: max(3px, calc(var(--ig-header-column-border-width) + 2px));
         height: 100%;
-        background: var(--ig-header-color);
     }
 }
 
@@ -559,7 +556,6 @@
     display: inline;
     vertical-align: baseline;
     font: inherit;
-    color: var(--ig-color);
     font-size: 0.625rem;
     white-space: nowrap;
     font-weight: normal;
@@ -581,18 +577,6 @@
 /* ----------------------------------------------------------
   OTHER ELEMENTS
 ------------------------------------------------------------ */
-
-/* Links */
-.hcg-container a {
-    color: var(--ig-link-color);
-    text-decoration: var(--ig-link-text-decoration);
-    font-weight: var(--ig-link-font-weight);
-}
-
-.hcg-container a:hover {
-    color: var(--ig-link-hovered-color);
-    text-decoration: var(--ig-link-hovered-text-decoration);
-}
 
 /* Sorting */
 .hcg-table thead th.hcg-column-sortable {
@@ -625,11 +609,13 @@
     width: 100%;
     height: 100%;
     gap: 10px;
-    color: var(--ig-loader-color);
+    color: light-dark(#000000, #ffffff);
 }
 
 .hcg-loading-wrapper .hcg-spinner {
-    border-top: 5px solid var(--ig-loader-color);
+    border-top-width: 5px;
+    border-top-style: solid;
+    border-top-color: light-dark(#000000, #ffffff);
     border-radius: 50%;
     width: 30px;
     height: 30px;
