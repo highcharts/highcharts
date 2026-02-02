@@ -1,0 +1,21 @@
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/grid-lite.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/controls@0.6.0" type="module"></script>
+
+<div id="container"></div>
+
+<div class="content">
+    <p>Use the control to change the pagination alignment. The wrapper updates between left, center, right, and distributed.</p>
+</div>
+
+<div class="highcharts-controls-wrapper">
+    <highcharts-controls target="#container">
+        <highcharts-group header="Pagination alignment">
+            <highcharts-control
+                type="select"
+                path="pagination.alignment"
+                options="left,center,right,distributed"
+                value="center">
+            </highcharts-control>
+        </highcharts-group>
+    </highcharts-controls>
+</div>
