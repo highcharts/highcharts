@@ -159,6 +159,12 @@ class Pagination {
      */
     public isDirtyQuerying?: boolean;
 
+    /**
+     * Whether the pagination alignment class should be updated.
+     * @internal
+     */
+    public isDirtyAlignment?: boolean;
+
 
     /* *
     *
@@ -230,6 +236,11 @@ class Pagination {
             this.isDirtyQuerying = true;
             delete diff.page;
             delete diff.pageSize;
+        }
+
+        if ('alignment' in diff) {
+            this.isDirtyAlignment = true;
+            delete diff.alignment;
         }
 
         // TODO: Optimize more options here.
@@ -306,6 +317,26 @@ class Pagination {
                 return Globals.getClassName('paginationRight');
             case 'distributed':
                 return Globals.getClassName('paginationDistributed');
+        }
+    }
+
+    public updateAlignmentClass(): void {
+        const wrapper = this.contentWrapper;
+
+        if (!wrapper) {
+            return;
+        }
+
+        wrapper.classList.remove(
+            Globals.getClassName('paginationLeft'),
+            Globals.getClassName('paginationCenter'),
+            Globals.getClassName('paginationRight'),
+            Globals.getClassName('paginationDistributed')
+        );
+
+        const alignmentClass = this.getAlignmentClass();
+        if (alignmentClass) {
+            wrapper.classList.add(alignmentClass);
         }
     }
 
