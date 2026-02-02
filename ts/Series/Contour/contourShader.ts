@@ -105,7 +105,7 @@ fn fragmentMain(input: FragmentInput) -> @location(0) vec4f {
     let val_dy: f32 = dpdy(val);
     let gradient: f32 = length(vec2f(val_dx, val_dy));
 
-    let epsilon: f32 = 0.0001;
+    let epsilon: f32 = max(uContourInterval * 1.0e-6, 1.0e-12);
     let adjustedLineWidth: f32 = lineWidth * gradient + epsilon;
 
     let adjustedVal: f32 = val - uContourOffset;
