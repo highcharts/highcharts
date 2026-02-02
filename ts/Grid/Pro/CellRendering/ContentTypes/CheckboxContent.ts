@@ -2,11 +2,11 @@
  *
  *  Checkbox Cell Content class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -23,7 +23,7 @@
  * */
 
 import type CheckboxRenderer from '../Renderers/CheckboxRenderer';
-import type DataTable from '../../../../Data/DataTable';
+import type { CellType as DataTableCellType } from '../../../../Data/DataTable';
 import type { EditModeContent } from '../../CellEditing/CellEditMode';
 import type TableCell from '../../../Core/Table/Body/TableCell';
 
@@ -88,9 +88,10 @@ class CheckboxContent extends CellContentPro implements EditModeContent {
         input.tabIndex = -1;
         input.type = 'checkbox';
         input.name = cell.column.id + '-' + cell.row.id;
+        input.classList.add(Globals.getClassName('input'));
 
         if (options.attributes) {
-            Object.entries(options.attributes).forEach(([key, value]):void => {
+            Object.entries(options.attributes).forEach(([key, value]): void => {
                 input.setAttribute(key, value);
             });
         }
@@ -98,7 +99,6 @@ class CheckboxContent extends CellContentPro implements EditModeContent {
         this.update();
 
         parentElement.appendChild(this.input);
-        input.classList.add(Globals.classNamePrefix + 'field-auto-width');
 
         input.addEventListener('change', this.onChange);
         input.addEventListener('keydown', this.onKeyDown);
@@ -121,7 +121,7 @@ class CheckboxContent extends CellContentPro implements EditModeContent {
         return this.input.checked ? 'true' : 'false';
     }
 
-    public get value(): DataTable.CellType {
+    public get value(): DataTableCellType {
         const val = this.input.checked;
         switch (this.cell.column.dataType) {
             case 'datetime':
@@ -156,7 +156,7 @@ class CheckboxContent extends CellContentPro implements EditModeContent {
         if (this.changeHandler) {
             this.changeHandler(e);
         } else {
-            void this.cell.setValue(this.value, true);
+            void this.cell.editValue(this.value);
         }
     };
 

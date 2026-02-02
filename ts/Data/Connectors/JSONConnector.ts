@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Pawel Lysy
@@ -20,12 +20,18 @@
  *
  * */
 
-import type DataEvent from '../DataEvent';
+import type {
+    DataEventDetail
+} from '../DataEvent';
 import type JSONConnectorOptions from './JSONConnectorOptions';
 import type { JSONData } from '../Converters/JSONConverterOptions';
-import type DataTable from '../DataTable';
+import type {
+    ColumnCollection as DataTableColumnCollection
+} from '../DataTable';
 
-import DataConnector from './DataConnector.js';
+import DataConnector, {
+    type Event as DataConnectorEvent
+} from './DataConnector.js';
 import JSONConverter from '../Converters/JSONConverter.js';
 import U from '../../Core/Utilities.js';
 const { merge, fireEvent } = U;
@@ -111,23 +117,23 @@ class JSONConnector extends DataConnector {
      * Overrides the DataConnector method. Emits an event on the connector to
      * all registered callbacks of this event.
      *
-     * @param {JSONConnector.Event} e
+     * @param {Event} e
      * Event object containing additional event information.
      */
-    public emit(e: JSONConnector.Event): void {
+    public emit(e: Event): void {
         fireEvent(this, e.type, e);
     }
 
     /**
      * Initiates the loading of the JSON source to the connector
      *
-     * @param {DataEvent.Detail} [eventDetail]
+     * @param {DataEventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @emits JSONConnector#load
      * @emits JSONConnector#afterLoad
      */
-    public load(eventDetail?: DataEvent.Detail): Promise<this> {
+    public load(eventDetail?: DataEventDetail): Promise<this> {
         const connector = this;
         const options = connector.options;
         const { data, dataUrl, dataTables } = options;
@@ -181,7 +187,7 @@ class JSONConnector extends DataConnector {
                             };
                             return new JSONConverter(converterOptions);
                         },
-                        (converter, data): DataTable.ColumnCollection =>
+                        (converter, data): DataTableColumnCollection =>
                             converter.parse({ data })
                     );
                 }
@@ -209,27 +215,15 @@ class JSONConnector extends DataConnector {
 
 /* *
  *
- *  Class Namespace
+ *  Declarations
  *
  * */
 
 /**
- * Types for class-specific options and events.
+ * Event objects fired from JSONConnector events.
  */
-namespace JSONConnector {
-
-    /* *
-     *
-     *  Declarations
-     *
-     * */
-
-    /**
-     * Event objects fired from JSONConnector events.
-     */
-    export interface Event extends DataConnector.Event {
-        readonly data?: JSONData;
-    }
+export interface Event extends DataConnectorEvent {
+    readonly data?: JSONData;
 }
 
 /* *

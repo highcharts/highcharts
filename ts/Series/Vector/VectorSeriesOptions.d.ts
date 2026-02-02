@@ -2,11 +2,12 @@
  *
  *  Vector plot series module
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -20,11 +21,12 @@ import type {
     PointMarkerOptions,
     PointShortOptions
 } from '../../Core/Series/PointOptions';
-import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
+import type {
+    ScatterSeriesOptions,
+    ScatterSeriesTooltipOptions
+} from '../Scatter/ScatterSeriesOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type TooltipOptions from '../../Core/TooltipOptions';
 import type VectorPointOptions from './VectorPointOptions';
-import type VectorSeries from './VectorSeries';
 
 /* *
  *
@@ -142,9 +144,9 @@ export interface VectorSeriesOptions extends ScatterSeriesOptions {
      */
     rotationOrigin?: VectorRotationOriginValue;
 
-    states?: SeriesStatesOptions<VectorSeries>;
+    states?: SeriesStatesOptions<VectorSeriesOptions>;
 
-    tooltip?: Partial<TooltipOptions>;
+    tooltip?: VectorSeriesTooltipOptions;
 
     /**
      * Maximum length of the arrows in the vector plot. The individual arrow
@@ -152,6 +154,14 @@ export interface VectorSeriesOptions extends ScatterSeriesOptions {
      */
     vectorLength?: number;
 
+}
+
+export interface VectorSeriesTooltipOptions
+    extends ScatterSeriesTooltipOptions {
+    /**
+     * @default '[{point.x}, {point.y}] Length: {point.length} Direction: {point.direction}°'
+     */
+    pointFormat?: ScatterSeriesTooltipOptions['pointFormat'];
 }
 
 /* *

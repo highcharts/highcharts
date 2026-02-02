@@ -44,6 +44,11 @@ Dashboards.board('container', {
                 propertyPath: ['title'],
                 type: 'input'
             }, {
+                isStandalone: true,
+                name: 'Legend',
+                type: 'toggle',
+                propertyPath: ['chartOptions', 'legend', 'enabled']
+            }, {
                 name: 'chartOptions',
                 type: 'nested',
                 nestedOptions: [{

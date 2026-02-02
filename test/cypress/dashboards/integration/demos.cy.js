@@ -4,7 +4,6 @@ const excludeList = [
     'gui/layout',
     'components/component-error-handler',
     'basic/google-spreadsheets',
-    'data/googlesheets-tutorial',
     'demo/personal-portfolio'
 ];
 

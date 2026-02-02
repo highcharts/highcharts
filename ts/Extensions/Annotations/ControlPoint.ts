@@ -1,6 +1,5 @@
 /* *
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -30,8 +29,9 @@ const {
  *
  * */
 
-declare module './MockPointOptions' {
-    interface MockPointOptions {
+/** @internal */
+declare module './AnnotationMockPointOptionsObject' {
+    interface AnnotationMockPointOptionsObject {
         controlPoint?: ControlPointOptions;
     }
 }
@@ -93,23 +93,29 @@ class ControlPoint extends EventEmitter {
      *
      * */
 
+    /** @internal */
     public chart: AnnotationChart;
 
+    /** @internal */
     public graphic!: SVGElement;
 
+    /** @internal */
     public index: number;
 
     /**
      * List of events for `annotation.options.events` that should not be
      * added to `annotation.graphic` but to the `annotation`.
-     * @private
+     *
+     * @internal
      * @name Highcharts.AnnotationControlPoint#nonDOMEvents
      * @type {Array<string>}
      */
     public nonDOMEvents = ['drag'];
 
+    /** @internal */
     public options: ControlPointOptions;
 
+    /** @internal */
     public target: ControlTarget;
 
     /* *
@@ -120,7 +126,7 @@ class ControlPoint extends EventEmitter {
 
     /**
      * Destroy the control point.
-     * @private
+     * @internal
      */
     public destroy(): void {
         super.destroy();
@@ -136,7 +142,8 @@ class ControlPoint extends EventEmitter {
 
     /**
      * Redraw the control point.
-     * @private
+     *
+     * @internal
      * @param {boolean} [animation]
      */
     public redraw(animation?: boolean): void {
@@ -147,7 +154,7 @@ class ControlPoint extends EventEmitter {
 
     /**
      * Render the control point.
-     * @private
+     * @internal
      */
     public render(): void {
         const chart = this.chart,

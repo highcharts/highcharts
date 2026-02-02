@@ -16,6 +16,21 @@ body {
     color: var(--highcharts-neutral-color-100);
 }
 
+:root,
+.highcharts-light {
+    --anchor-color: #007bff;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --anchor-color: #8ec3fc;
+    }
+}
+
+.highcharts-dark {
+    --anchor-color: #8ec3fc;
+}
+
 .demo {
     padding: 8px 12px;
 }
@@ -24,17 +39,10 @@ body {
     padding: 0 8px;
 }
 
-.highcharts-data-label > span,
-.highcharts-light .highcharts-data-label > span {
-    color: #000 !important;
+.highcharts-description a {
+    color: var(--anchor-color);
 }
 
-@media (prefers-color-scheme: dark) {
-    .highcharts-data-label > span {
-        color: #fff !important;
-    }
-}
-
-.highcharts-dark .highcharts-data-label > span {
-    color: #fff !important;
+.spark-label {
+    color: var(--hcg-color);
 }

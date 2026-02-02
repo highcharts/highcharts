@@ -2,11 +2,12 @@
  *
  *  Networkgraph series
  *
- *  (c) 2010-2025 Paweł Fus
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Paweł Fus
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -25,6 +26,7 @@ import type {
     PointMarkerOptions,
     PointOptions
 } from '../../Core/Series/PointOptions';
+import type { PointDataLabelOptionsModifier } from '../../Core/Series/DataLabel';
 
 /* *
  *
@@ -33,7 +35,7 @@ import type {
  * */
 
 declare module '../../Core/Series/PointOptions' {
-    interface PointStateInactiveOptions
+    interface PointMarkerStateInactiveOptions
     {
         animation?: (boolean|Partial<AnimationOptions>);
     }
@@ -46,13 +48,19 @@ declare module '../../Core/Series/PointOptions' {
  */
 export interface NetworkgraphDataOptions extends PointOptions {
 
-    dataLabels?: (NetworkgraphDataLabelsOptions|Array<NetworkgraphDataLabelsOptions>);
+    dataLabels?: (
+        NetworkgraphPointDataLabelsOptions |
+        Array<NetworkgraphPointDataLabelsOptions>
+    );
 
     from?: string;
 
     to?: string;
 
 }
+
+export type NetworkgraphPointDataLabelsOptions =
+    NetworkgraphDataLabelsOptions & PointDataLabelOptionsModifier;
 
 /**
  * @product highcharts
@@ -83,7 +91,10 @@ export interface NetworkgraphPointOptions
      *
      * @apioption series.networkgraph.nodes.dataLabels
      */
-    dataLabels?: (NetworkgraphDataLabelsOptions|Array<NetworkgraphDataLabelsOptions>);
+    dataLabels?: (
+        NetworkgraphPointDataLabelsOptions |
+        Array<NetworkgraphPointDataLabelsOptions>
+    );
 
     /**
      * The id of the auto-generated node, referring to the `from` or `to`

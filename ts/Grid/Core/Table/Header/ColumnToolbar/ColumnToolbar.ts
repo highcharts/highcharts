@@ -2,11 +2,11 @@
  *
  *  Grid Header Cell Toolbar class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -112,8 +112,10 @@ class HeaderCellToolbar implements Toolbar {
      */
     private renderFull(): void {
         const columnOptions = this.column.options;
+        const sortingEnabled = columnOptions.sorting?.enabled ??
+            columnOptions.sorting?.sortable;
 
-        if (columnOptions.sorting?.sortable) {
+        if (sortingEnabled) {
             new SortToolbarButton().add(this);
         }
 
@@ -127,8 +129,11 @@ class HeaderCellToolbar implements Toolbar {
 
     private renderMinimized(): void {
         const columnOptions = this.column.options;
+        const sortingEnabled = columnOptions.sorting?.enabled ??
+            columnOptions.sorting?.sortable;
+
         if (
-            columnOptions.sorting?.sortable || (
+            sortingEnabled || (
                 columnOptions.filtering?.enabled &&
                 !columnOptions.filtering.inline
             )
@@ -172,6 +177,16 @@ class HeaderCellToolbar implements Toolbar {
     }
 
     /**
+     * Refreshes the state of the toolbar buttons.
+     * @internal
+     */
+    public refreshState(): void {
+        for (const button of this.buttons) {
+            button.refreshState();
+        }
+    }
+
+    /**
      * Destroys all buttons of the toolbar.
      */
     public clearButtons(): void {
@@ -201,6 +216,13 @@ class HeaderCellToolbar implements Toolbar {
         }
 
         if (!shouldBeMinimized) {
+            // Ensure we reset any "minimized only" header state. This can
+            // happen if the grid was initialized in a hidden container
+            // (e.g. display:none) where widths measure as 0. (#24002)
+            this.isMenuCentered = void 0;
+            this.column.header?.container?.classList.remove(
+                Globals.getClassName('noWidth')
+            );
             return;
         }
 
@@ -235,6 +257,7 @@ class HeaderCellToolbar implements Toolbar {
             destroyer();
         }
         this.eventListenerDestroyers.length = 0;
+        this.clearButtons();
 
         this.columnResizeObserver?.disconnect();
         delete this.columnResizeObserver;
