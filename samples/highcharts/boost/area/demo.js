@@ -57,8 +57,10 @@ Highcharts.chart('container', {
     },
 
     series: [{
-        data: data
+        data: data,
+        colorIndex: 1
     }]
 
 });
+
 console.timeEnd('area');

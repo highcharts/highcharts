@@ -154,14 +154,17 @@ const colorCache: Record<string, string> = {};
  * Resolve CSS color expressions like color-mix
  * @internal
  */
-const resolveColorExpression = (chart: Chart, input: string): string => {
+const resolveColorExpression = (
+    cssVars: Record<string, string>,
+    input: string
+): string => {
     if (colorCache[input]) {
         return colorCache[input];
     }
 
     // Color variable from the palette
     const paletteMatch = input.indexOf('var(') === 0 &&
-        chart.palette?.cssVars.light[input.slice(4, -1).trim()];
+        cssVars[input.slice(4, -1).trim()];
     if (paletteMatch) {
         colorCache[input] = paletteMatch;
         return paletteMatch;
@@ -175,8 +178,8 @@ const resolveColorExpression = (chart: Chart, input: string): string => {
 
         if (result) {
             const weight = parseFloat(result[3]) / 100,
-                color1 = resolveColorExpression(chart, result[1]),
-                color2 = resolveColorExpression(chart, result[2]),
+                color1 = resolveColorExpression(cssVars, result[1]),
+                color2 = resolveColorExpression(cssVars, result[2]),
                 color = new Color(color1).tweenTo(
                     new Color(color2),
                     weight
@@ -517,6 +520,26 @@ class WGLRenderer {
                 options.gapSize;
         }
 
+        // Detect the current color scheme
+        if (chart.boost) {
+            const probe = chart.renderer.circle(0, 0, 1)
+                    .attr({ fill: 'var(--highcharts-background-color)' })
+                    .add(),
+                actualFill = new Color(
+                    getComputedStyle(probe.element).getPropertyValue('fill')
+                ).get(),
+                darkFill = new Color(
+                    chart.palette?.cssVars.dark[
+                        '--highcharts-background-color'
+                    ] || ''
+                ).get();
+            probe.destroy();
+            chart.boost.cssVars = chart.palette?.cssVars[
+                actualFill === darkFill ? 'dark' : 'light'
+            ];
+        }
+
+        // Handle zones
         if (zones && zones.length) { // #23571
             zoneColors = [];
 
@@ -722,7 +745,7 @@ class WGLRenderer {
 
                     if (typeof pointAttr.fill === 'string') {
                         pointAttr.fill = resolveColorExpression(
-                            chart, pointAttr.fill
+                            chart.boost?.cssVars || {}, pointAttr.fill
                         );
                     }
 
@@ -745,7 +768,7 @@ class WGLRenderer {
 
                         if (typeof pointAttr.stroke === 'string') {
                             pointAttr.stroke = resolveColorExpression(
-                                chart, pointAttr.stroke
+                                chart.boost?.cssVars || {}, pointAttr.stroke
                             );
                         }
 
@@ -1486,7 +1509,10 @@ class WGLRenderer {
                 ).get();
             }
 
-            fillColor = resolveColorExpression(chart, fillColor);
+            fillColor = resolveColorExpression(
+                chart.boost?.cssVars || {},
+                fillColor
+            );
 
             scolor = color(fillColor).rgba;
 
