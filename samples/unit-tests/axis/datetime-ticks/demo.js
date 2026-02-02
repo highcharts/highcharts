@@ -330,7 +330,7 @@ QUnit.test('Boundary ticks general tests, (#22231)', function (assert) {
 
     chart.xAxis[0].update({
         labels: {
-            format: '{#if isBoundary}BOUNDARY{else}{text}{/if}'
+            format: '{#if (eq boundary "year")}BOUNDARY{/if}'
         }
     });
 

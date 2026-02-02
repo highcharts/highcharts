@@ -388,9 +388,9 @@ export interface AxisLabelFormatterContextObject {
     dateTimeLabelFormat?: Time.DateTimeFormat;
 
     /**
-     * Whether the label belongs to a boundary tick on the axis.
+     * The boundary value of the label.
      */
-    isBoundary: boolean;
+    boundary?: string;
 
     /**
      * Whether the label belongs to the first tick on the axis.

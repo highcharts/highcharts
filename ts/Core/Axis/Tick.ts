@@ -168,11 +168,11 @@ class Tick {
     public isActive?: boolean;
 
     /**
-     * Whether the tick is a boundary tick.
-     * @name Highcharts.Tick#isBoundary
-     * @type {boolean|undefined}
+     * The boundary value of the tick.
+     * @name Highcharts.Tick#boundary
+     * @type {string|undefined}
      */
-    public isBoundary?: boolean;
+    public boundary?: string;
 
     /**
      * True if the tick is the first one on the axis.
@@ -283,7 +283,8 @@ class Tick {
             isLast = pos === tickPositions[tickPositions.length - 1],
             animateLabels = (!labelOptions.step || labelOptions.step === 1) &&
                 axis.tickInterval === 1,
-            tickPositionInfo = tickPositions.info;
+            tickPositionInfo = tickPositions.info,
+            boundary = tickPositionInfo?.boundaryTicks[pos];
 
         let label = tick.label,
             dateTimeLabelFormat,
@@ -306,11 +307,23 @@ class Tick {
         if (axis.dateTime) {
             const DTLFormats = options.dateTimeLabelFormats as any;
             if (tickPositionInfo) {
-                const gridDisabled = !options.grid?.enabled,
-                    rankKey = tickPositionInfo.boundaryTicks[pos],
-                    format = gridDisabled && rankKey &&
-                        DTLFormats[rankKey].boundary ||
-                        DTLFormats[tickPositionInfo.unitName];
+                const boundariesMap = {
+                    millisecond: 'hour',
+                    second: 'hour',
+                    minute: 'hour',
+                    hour: 'day',
+                    day: 'month',
+                    week: 'month',
+                    month: 'year',
+                    year: 'year'
+                };
+                const unitName = tickPositionInfo.unitName,
+                    boundaryKey = boundariesMap[unitName],
+                    format = !options.grid?.enabled &&
+                        boundary &&
+                        boundaryKey &&
+                        DTLFormats[boundaryKey].boundary ||
+                        DTLFormats[unitName];
 
                 dateTimeLabelFormats = chart.time.resolveDTLFormat(format);
                 dateTimeLabelFormat = dateTimeLabelFormats.main;
@@ -337,18 +350,18 @@ class Tick {
          */
         tick.isLast = isLast;
         /**
-         * True if the tick is a boundary tick.
-         * @name Highcharts.Tick#isBoundary
-         * @type {boolean|undefined}
+         * The boundary value of the tick.
+         * @name Highcharts.Tick#boundary
+         * @type {string|undefined}
          */
-        tick.isBoundary = !!tickPositionInfo?.boundaryTicks[pos];
+        tick.boundary = boundary;
 
         // Get the string
         const ctx: AxisLabelFormatterContextObject = {
             axis,
             chart,
             dateTimeLabelFormat: dateTimeLabelFormat,
-            isBoundary: tick.isBoundary || false,
+            boundary,
             isFirst,
             isLast,
             pos,
