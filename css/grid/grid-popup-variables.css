@@ -1,7 +1,7 @@
 /* stylelint-disable max-line-length */
 .hcg-container .hcg-popup,
 .highcharts-light .hcg-container .hcg-popup {
-    --ig-popup-color: var(--hcg-popup-color, var(--ig-color));
+    --ig-popup-color: var(--hcg-popup-color, var(--ig-default-color));
     --ig-popup-background: var(--hcg-popup-background, #f6f6f6);
     --ig-popup-border-color: var(--hcg-popup-border-color, #e8e8e8);
 }
