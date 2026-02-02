@@ -119,8 +119,11 @@ function resolveSampleDir(samplePath: string): string {
     return normalized;
 }
 
-async function renderSvgToPng(svgContent: string): Promise<PngInstance> {
-    const page = await getRenderPage();
+async function renderSvgToPng(
+    svgContent: string,
+    renderPage?: Page
+): Promise<PngInstance> {
+    const page = renderPage ?? await getRenderPage();
     const html = `<!DOCTYPE html><html><head><style>
 body { margin: 0; background: #fff; }
 svg { display: block; }
@@ -272,7 +275,11 @@ function countDiffPixels(
 export async function compareSVG(
     samplePath: string,
     svgContent: string,
-    options: { generateDiff?: boolean; referenceMode?: boolean } = {}
+    options: {
+        generateDiff?: boolean;
+        referenceMode?: boolean;
+        renderPage?: Page;
+    } = {}
 ): Promise<ComparisonResult> {
     const sampleDir = resolveSampleDir(samplePath);
     const candidatePath = join(sampleDir, 'candidate.svg');
@@ -301,8 +308,17 @@ export async function compareSVG(
         throw new Error(message);
     }
 
-    const referencePng = await renderSvgToPng(referenceSvg);
-    const candidatePng = await renderSvgToPng(svgContent);
+    if (referenceSvg === svgContent) {
+        return {
+            passed: true,
+            diffPixels: 0,
+            candidatePath,
+            referencePath
+        };
+    }
+
+    const referencePng = await renderSvgToPng(referenceSvg, options.renderPage);
+    const candidatePng = await renderSvgToPng(svgContent, options.renderPage);
 
     if (shouldWriteDebug(samplePath)) {
         writeDebugImages(sampleDir, referencePng, candidatePng);
@@ -313,7 +329,12 @@ export async function compareSVG(
     const passed = diffPixels === 0;
 
     if (!passed && options.generateDiff) {
-        await generateDiffGif(referencePath, candidatePath, diffPath);
+        await generateDiffGif(
+            referencePath,
+            candidatePath,
+            diffPath,
+            options.renderPage
+        );
     }
 
     const resolvedDiffPath =
@@ -331,13 +352,14 @@ export async function compareSVG(
 export async function generateDiffGif(
     referencePath: string,
     candidatePath: string,
-    outputPath: string
+    outputPath: string,
+    renderPage?: Page
 ): Promise<void> {
     const referenceSvg = readFileSync(referencePath, 'utf8');
     const candidateSvg = readFileSync(candidatePath, 'utf8');
 
-    const referencePng = await renderSvgToPng(referenceSvg);
-    const candidatePng = await renderSvgToPng(candidateSvg);
+    const referencePng = await renderSvgToPng(referenceSvg, renderPage);
+    const candidatePng = await renderSvgToPng(candidateSvg, renderPage);
 
     const frames = [referencePng.data, candidatePng.data];
     const combinedData = new Uint8Array(

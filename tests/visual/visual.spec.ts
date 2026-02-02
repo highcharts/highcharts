@@ -90,7 +90,8 @@ const CHART_LOAD_RETRY_DELAY_MS = 100;
 const CHART_LOAD_TIMEOUT_MS =
     MAX_CHART_LOAD_ATTEMPTS * CHART_LOAD_RETRY_DELAY_MS;
 
-const defaultPageContent = '<div id="container" style="width: 600px; margin 0 auto"></div>';
+const defaultPageContent =
+    '<div id="container" style="width: 600px; margin: 0 auto;"></div>';
 
 const getRelativeSamplePath = (samplePath: string): string =>
     relative(process.cwd(), samplePath).replace(/\\/g, '/');
@@ -98,6 +99,13 @@ const getRelativeSamplePath = (samplePath: string): string =>
 const pageTemplate = (bodyContent = '') =>
     `<!DOCTYPE html>
 <html>
+    <head>
+        <style>
+            body {
+                margin: 0;
+            }
+        </style>
+    </head>
     <body>
         <div data-test-container>
             ${bodyContent}
@@ -113,6 +121,8 @@ test.describe('Visual tests', () => {
 
     let page: Page | undefined;
     let context: BrowserContext | undefined;
+    let renderPage: Page | undefined;
+    let renderContext: BrowserContext | undefined;
 
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     process.once('SIGINT', async () => {
@@ -133,6 +143,15 @@ test.describe('Visual tests', () => {
         });
 
         await context.setOffline(true);
+
+        renderContext ??= await browser.newContext({
+            viewport: { width: 600, height: 400 },
+            deviceScaleFactor: 1,
+            colorScheme: 'light'
+        });
+        await renderContext.setOffline(true);
+        renderPage = await renderContext.newPage();
+        await setupRoutes(renderPage);
 
         await context.clock.install({ time: FIXED_CLOCK_TIME });
         page = await context.newPage();
@@ -551,7 +570,8 @@ test.describe('Visual tests', () => {
                         samplePath, 
                         svgContent, {
                             generateDiff: true,
-                            referenceMode
+                            referenceMode,
+                            renderPage
                         }
                     );
 
@@ -562,7 +582,7 @@ test.describe('Visual tests', () => {
                     }
                 }
 
-                await page.screenshot({ fullPage: true });
+                // await page.screenshot({ fullPage: true });
             } finally {
                 if (page && scriptHandle && !page.isClosed()) {
                     try {
@@ -580,6 +600,14 @@ test.describe('Visual tests', () => {
     }
 
     test.afterAll(async () => {
+        if (renderPage) {
+            await renderPage.close();
+            renderPage = undefined;
+        }
+        if (renderContext) {
+            await renderContext.close();
+            renderContext = undefined;
+        }
         await closeCompareBrowser();
     });
 });
