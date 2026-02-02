@@ -809,8 +809,10 @@ function hasExtremes(
         return isNumber(series.dataMin) && isNumber(series.dataMax);
     }
 
+    // When below threshold the series is not boosted; axis needs real
+    // extremes from getExtremes (e.g. multi-series #22183).
     if (dataLength < threshold) {
-        return true;
+        return false;
     }
 
     return !!(
@@ -1620,7 +1622,7 @@ function wrapSeriesGetExtremes(
 
     if (this.boosted) {
         if (hasExtremes(this, true)) {
-            if (this.xAxis.isPanning || this.yAxis.isPanning) {
+            if (this.xAxis?.isPanning || this.yAxis?.isPanning) {
                 return this;
             }
             return {};
