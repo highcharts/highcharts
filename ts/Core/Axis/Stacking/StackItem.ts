@@ -33,11 +33,7 @@ import T from '../../Templating.js';
 const { format } = T;
 import SeriesRegistry from '../../Series/SeriesRegistry.js';
 const { series: Series } = SeriesRegistry;
-import U from '../../Utilities.js';
-import { destroyObjectProperties, getAlignFactor, isNumber, pick } from '../../../Shared/Utilities.js';
-const {
-    fireEvent
-} = U;
+import { destroyObjectProperties, fireEvent, getAlignFactor, isNumber, pick } from '../../../Shared/Utilities.js';
 
 /* *
  *

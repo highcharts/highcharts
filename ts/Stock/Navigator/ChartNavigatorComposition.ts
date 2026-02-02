@@ -25,11 +25,7 @@ import type Series from '../../Core/Series/Series';
 
 import H from '../../Core/Globals.js';
 const { isTouchDevice } = H;
-import U from '../../Core/Utilities.js';
-import { merge, pick, pushUnique } from '../../Shared/Utilities.js';
-const {
-    addEvent
-} = U;
+import { addEvent, merge, pick, pushUnique } from '../../Shared/Utilities.js';
 
 /* *
  *

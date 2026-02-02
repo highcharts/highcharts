@@ -33,11 +33,7 @@ import type Types from '../../Shared/Types';
 import BoostableMap from './BoostableMap.js';
 import H from '../../Core/Globals.js';
 const { composed } = H;
-import U from '../../Core/Utilities.js';
-import { pick, pushUnique } from '../../Shared/Utilities.js';
-const {
-    addEvent
-} = U;
+import { addEvent, pick, pushUnique } from '../../Shared/Utilities.js';
 
 /* *
  *

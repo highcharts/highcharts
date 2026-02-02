@@ -30,9 +30,7 @@ import type {
 } from '../../../../Data/DataCursor';
 
 import Component from '../../Component';
-import U from '../../../../Core/Utilities.js';
-import { isString } from '../../../../Shared/Utilities.js';
-const { addEvent } = U;
+import { addEvent, isString } from '../../../../Shared/Utilities.js';
 
 
 /* *

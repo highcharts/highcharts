@@ -36,11 +36,7 @@ const {
     atr: ATRIndicator,
     sma: SMAIndicator
 } = SeriesRegistry.seriesTypes;
-import U from '../../../Core/Utilities.js';
-import { correctFloat, extend, isArray, isNumber, merge, objectEach } from '../../../Shared/Utilities.js';
-const {
-    addEvent
-} = U;
+import { addEvent, correctFloat, extend, isArray, isNumber, merge, objectEach } from '../../../Shared/Utilities.js';
 
 /* *
  *

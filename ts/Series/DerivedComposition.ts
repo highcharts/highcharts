@@ -18,11 +18,7 @@ import type { DeepPartial } from '../Shared/Types';
 import H from '../Core/Globals.js';
 const { noop } = H;
 import Series from '../Core/Series/Series.js';
-import U from '../Core/Utilities.js';
-import { defined } from '../Shared/Utilities.js';
-const {
-    addEvent
-} = U;
+import { addEvent, defined } from '../Shared/Utilities.js';
 
 /* *
  *

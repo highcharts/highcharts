@@ -64,13 +64,8 @@ const {
     getLevelOptions,
     updateRootId
 } = TU;
-import U from '../../Core/Utilities.js';
-import { arrayMax, clamp, correctFloat, crisp, defined, extend, isArray, isNumber, isObject, isString, merge, pick, pushUnique, splat, stableSort } from '../../Shared/Utilities.js';
-const {
-    addEvent,
-    error,
-    fireEvent
-} = U;
+import { addEvent, arrayMax, clamp, correctFloat, crisp, defined, extend, fireEvent, isArray, isNumber, isObject, isString, merge, pick, pushUnique, splat, stableSort } from '../../Shared/Utilities.js';
+import { error } from '../../Core/Utilities.js';
 
 Series.keepProps.push('simulation', 'hadOutsideDataLabels');
 

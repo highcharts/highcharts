@@ -33,11 +33,7 @@ import D from '../../Core/Defaults.js';
 const { setOptions } = D;
 import StockToolsDefaults from './StockToolsDefaults.js';
 import Toolbar from './StockToolbar.js';
-import U from '../../Core/Utilities.js';
-import { getStyle, merge, pick } from '../../Shared/Utilities.js';
-const {
-    addEvent
-} = U;
+import { addEvent, getStyle, merge, pick } from '../../Shared/Utilities.js';
 
 /* *
  *

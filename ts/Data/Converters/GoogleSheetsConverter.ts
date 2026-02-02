@@ -34,11 +34,8 @@ import type {
     ColumnCollection as DataTableColumnCollection
 } from '../DataTable.js';
 import DataConverterUtils from './DataConverterUtils.js';
-import U from '../../Core/Utilities.js';
 import { merge } from '../../Shared/Utilities.js';
-const {
-    uniqueKey
-} = U;
+import { uniqueKey } from '../../Core/Utilities.js';
 
 /* *
  *

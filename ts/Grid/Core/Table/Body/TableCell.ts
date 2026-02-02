@@ -29,12 +29,7 @@ import type TableRow from './TableRow';
 import Globals from '../../Globals.js';
 import Cell from '../Cell.js';
 import CellContent from '../CellContent/CellContent.js';
-
-import Utils from '../../../../Core/Utilities.js';
-const {
-    fireEvent
-} = Utils;
-
+import { fireEvent } from '../../../../Shared/Utilities.js';
 
 /* *
  *

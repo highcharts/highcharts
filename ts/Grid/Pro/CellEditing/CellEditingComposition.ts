@@ -37,16 +37,11 @@ import Globals from '../../Core/Globals.js';
 import CellEditing from './CellEditing.js';
 import CellRendererRegistry from '../CellRendering/CellRendererRegistry.js';
 import GU from '../../Core/GridUtils.js';
-import U from '../../../Core/Utilities.js';
-import { merge, pushUnique } from '../../../Shared/Utilities.js';
+import { addEvent, merge, pushUnique } from '../../../Shared/Utilities.js';
 
 const {
     makeHTMLElement
 } = GU;
-
-const {
-    addEvent
-} = U;
 
 
 /* *

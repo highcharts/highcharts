@@ -24,13 +24,8 @@ import type PointerEvent from '../../Core/PointerEvent';
 import type MouseWheelZoomOptions from './MouseWheelZoomOptions';
 import type DOMElementType from '../../Core/Renderer/DOMElementType';
 
-import U from '../../Core/Utilities.js';
-const {
-    addEvent
-} = U;
-
 import NBU from '../Annotations/NavigationBindingsUtilities.js';
-import { defined, internalClearTimeout, isObject, merge, pick } from '../../Shared/Utilities.js';
+import { addEvent, defined, internalClearTimeout, isObject, merge, pick } from '../../Shared/Utilities.js';
 const { getAssignedAxis } = NBU;
 
 /* *

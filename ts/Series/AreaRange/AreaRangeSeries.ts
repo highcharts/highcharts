@@ -41,12 +41,7 @@ const {
         prototype: columnProto
     }
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
-import { defined, extend, isArray, isNumber, merge, pick } from '../../Shared/Utilities.js';
-
-const {
-    addEvent
-} = U;
+import { addEvent, defined, extend, isArray, isNumber, merge, pick } from '../../Shared/Utilities.js';
 
 /* *
  *

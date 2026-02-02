@@ -38,11 +38,7 @@ import F from '../Templating.js';
 const { format } = F;
 import { Palette } from '../Color/Palettes.js';
 import R from '../Renderer/RendererUtilities.js';
-import U from '../Utilities.js';
-import { defined, extend, getAlignFactor, isArray, isString, merge, objectEach, pick, pInt, splat } from '../../Shared/Utilities.js';
-const {
-    fireEvent
-} = U;
+import { defined, extend, fireEvent, getAlignFactor, isArray, isString, merge, objectEach, pick, pInt, splat } from '../../Shared/Utilities.js';
 
 /* *
  *

@@ -30,11 +30,8 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     sma: { prototype: smaProto }
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
 import { defined, merge } from '../../Shared/Utilities.js';
-const {
-    error
-} = U;
+import { error } from '../../Core/Utilities.js';
 
 /* *
  *

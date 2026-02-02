@@ -30,13 +30,8 @@ const { map: MapSeries } = SeriesRegistry.seriesTypes;
 import TilesProviderRegistry from '../../Maps/TilesProviders/TilesProviderRegistry.js';
 import TiledWebMapSeriesDefaults from './TiledWebMapSeriesDefaults.js';
 import MapView from '../../Maps/MapView.js';
-import U from '../../Core/Utilities.js';
-import { defined, merge, pick, pushUnique } from '../../Shared/Utilities.js';
-const {
-    addEvent,
-    error
-} = U;
-
+import { addEvent, defined, merge, pick, pushUnique } from '../../Shared/Utilities.js';
+import { error } from '../../Core/Utilities.js';
 
 /* *
  *

@@ -46,12 +46,12 @@ import { defaultOptions } from './Defaults.js';
 import GridUtils from './GridUtils.js';
 import DataTable from '../../Data/DataTable.js';
 import Table from './Table/Table.js';
-import U from '../../Core/Utilities.js';
 import QueryingController from './Querying/QueryingController.js';
 import Globals from './Globals.js';
 import TimeBase from '../../Shared/TimeBase.js';
 import Pagination from './Pagination/Pagination.js';
-import { defined, diffObjects, extend, merge, pick } from '../../Shared/Utilities.js';
+import { defined, diffObjects, extend, fireEvent, merge, pick } from '../../Shared/Utilities.js';
+import { uniqueKey } from '../../Core/Utilities.js';
 
 const {
     makeHTMLElement,
@@ -59,9 +59,6 @@ const {
     createOptionsProxy
 } = GridUtils;
 
-const {
-    fireEvent
-} = U;
 
 
 /* *
@@ -344,7 +341,7 @@ export class Grid {
         this.renderTo = renderTo;
 
         this.loadUserOptions(options);
-        this.id = this.options?.id || U.uniqueKey();
+        this.id = this.options?.id || uniqueKey();
         this.querying = new QueryingController(this);
         this.locale = this.options?.lang?.locale || (
             (this.container?.closest('[lang]') as HTMLElement | null)?.lang

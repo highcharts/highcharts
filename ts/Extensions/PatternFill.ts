@@ -36,13 +36,8 @@ const { animObject } = A;
 import D from '../Core/Defaults.js';
 const { getOptions } = D;
 import MapPoint from '../Series/Map/MapPoint';
-import U from '../Core/Utilities.js';
 import { Palette } from '../Core/Color/Palettes';
-import { defined, erase, extend, isObject, merge, pick, wrap } from '../Shared/Utilities.js';
-const {
-    addEvent,
-    removeEvent
-} = U;
+import { addEvent, defined, erase, extend, isObject, merge, pick, removeEvent, wrap } from '../Shared/Utilities.js';
 
 /* *
  *

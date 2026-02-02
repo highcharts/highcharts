@@ -62,11 +62,7 @@ import EventEmitter from './EventEmitter.js';
 import MockPoint from './MockPoint.js';
 import Pointer from '../../Core/Pointer.js';
 import PopupComposition from './Popup/PopupComposition.js';
-import U from '../../Core/Utilities.js';
-import { destroyObjectProperties, erase, merge, pick, splat } from '../../Shared/Utilities.js';
-const {
-    fireEvent
-} = U;
+import { destroyObjectProperties, erase, fireEvent, merge, pick, splat } from '../../Shared/Utilities.js';
 
 /* *
  *

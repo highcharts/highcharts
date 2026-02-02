@@ -44,13 +44,8 @@ import Defaults from './Defaults.js';
 import Globals from './Globals.js';
 import Layout from './Layout/Layout.js';
 import HTMLComponent from './Components/HTMLComponent/HTMLComponent.js';
-import U from '../Core/Utilities.js';
-import { createElement, merge, objectEach } from '../Shared/Utilities.js';
-const {
-    addEvent,
-    error,
-    uniqueKey
-} = U;
+import { addEvent, createElement, merge, objectEach } from '../Shared/Utilities.js';
+import { error, uniqueKey } from '../Core/Utilities.js';
 
 /* *
  *

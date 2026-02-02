@@ -31,11 +31,10 @@ const {
     supportsPassiveEvents
 } = D;
 import { extend, objectEach } from '../Shared/Utilities.js';
-import U from '../Core/Utilities.js';
-const {
-    error: coreError,
-    uniqueKey: coreUniqueKey
-} = U;
+import {
+    error as coreError,
+    uniqueKey as coreUniqueKey
+} from '../Core/Utilities.js'
 
 /* *
  *

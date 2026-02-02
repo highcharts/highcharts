@@ -43,14 +43,8 @@ import D from '../Defaults.js';
 const { defaultOptions } = D;
 import F from '../Templating.js';
 const { format } = F;
-import U from '../Utilities.js';
-import { crisp, erase, extend, getNestedProperty, isArray, isFunction, isNumber, isObject, merge, pick, syncTimeout } from '../../Shared/Utilities.js';
-const {
-    addEvent,
-    fireEvent,
-    removeEvent,
-    uniqueKey
-} = U;
+import { addEvent, crisp, erase, type EventWrapperObject, extend, fireEvent, getNestedProperty, isArray, isFunction, isNumber, isObject, merge, pick, removeEvent, syncTimeout } from '../../Shared/Utilities.js';
+import { uniqueKey } from '../Utilities.js';
 
 /* *
  *
@@ -1891,7 +1885,7 @@ interface Point extends PointBase {
      */
     hcEvents?: Record<
         string,
-        Array<U.EventWrapperObject<Series>> & { userEvent?: boolean }
+        Array<EventWrapperObject<Series>> & { userEvent?: boolean }
     >;
 }
 

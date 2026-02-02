@@ -28,11 +28,7 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type { YAxisOptions } from '../../Core/Axis/AxisOptions';
 
-import U from '../../Core/Utilities.js';
-import { clamp, isNumber, relativeLength } from '../../Shared/Utilities.js';
-const {
-    addEvent
-} = U;
+import { addEvent, clamp, isNumber, relativeLength } from '../../Shared/Utilities.js';
 
 /* *
  *

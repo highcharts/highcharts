@@ -28,11 +28,7 @@ import type Tick from '../../Core/Axis/Tick';
 import H from '../../Core/Globals.js';
 const { composed } = H;
 import VariwidePoint from './VariwidePoint.js';
-import U from '../../Core/Utilities.js';
-import { pushUnique, wrap } from '../../Shared/Utilities.js';
-const {
-    addEvent
-} = U;
+import { addEvent, pushUnique, wrap } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -76,7 +72,6 @@ function compose(
 
         addEvent(AxisClass, 'afterDrawCrosshair', onAxisAfterDrawCrosshair);
         addEvent(AxisClass, 'afterRender', onAxisAfterRender);
-
         addEvent(TickClass, 'afterGetPosition', onTickAfterGetPosition);
 
         tickProto.postTranslate = tickPostTranslate;

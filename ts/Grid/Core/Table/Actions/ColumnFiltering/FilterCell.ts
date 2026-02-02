@@ -25,10 +25,7 @@ import type Row from '../../Row.js';
 import type Column from '../../Column.js';
 
 import HeaderCell from '../../Header/HeaderCell.js';
-import U from '../../../../../Core/Utilities.js';
-
-const { fireEvent } = U;
-
+import { fireEvent } from '../../../../../Shared/Utilities.js';
 
 /* *
  *

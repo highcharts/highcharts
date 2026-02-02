@@ -27,13 +27,7 @@ import type SVGElement from '../Renderer/SVG/SVGElement';
 import Chart from '../Chart/Chart.js';
 import GeometryUtilities from '../Geometry/GeometryUtilities.js';
 const { pointInPolygon } = GeometryUtilities;
-import U from '../Utilities.js';
-import { getAlignFactor, objectEach, pick } from '../../Shared/Utilities.js';
-
-const {
-    addEvent,
-    fireEvent
-} = U;
+import { addEvent, fireEvent, getAlignFactor, objectEach, pick } from '../../Shared/Utilities.js';
 
 /* *
  *

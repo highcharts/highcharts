@@ -23,11 +23,7 @@ import type ScrollbarOptions from '../../Stock/Scrollbar/ScrollbarOptions';
 
 import H from '../Globals.js';
 const { composed } = H;
-import U from '../Utilities.js';
-import { correctFloat, defined, pick, pushUnique } from '../../Shared/Utilities.js';
-const {
-    addEvent
-} = U;
+import { addEvent, correctFloat, defined, pick, pushUnique } from '../../Shared/Utilities.js';
 
 /* *
  *

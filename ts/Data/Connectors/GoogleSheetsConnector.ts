@@ -38,11 +38,7 @@ import DataConnector, {
     type Event as DataConnectorEvent
 } from './DataConnector.js';
 import GoogleSheetsConverter from '../Converters/GoogleSheetsConverter.js';
-import U from '../../Core/Utilities.js';
-import { merge, pick } from '../../Shared/Utilities.js';
-const {
-    fireEvent
-} = U;
+import { fireEvent, merge, pick } from '../../Shared/Utilities.js';
 
 /* *
  *

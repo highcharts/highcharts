@@ -28,11 +28,8 @@ import Series from '../../../Core/Series/Series';
 const {
     sma: SMAIndicator
 } = SeriesRegistry.seriesTypes;
-import U from '../../../Core/Utilities.js';
 import { extend, isNumber, merge } from '../../../Shared/Utilities.js';
-const {
-    error
-} = U;
+import { error } from '../../../Core/Utilities.js';
 
 /* *
  *

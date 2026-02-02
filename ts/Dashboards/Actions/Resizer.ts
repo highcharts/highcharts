@@ -22,16 +22,8 @@ import type { JSON as SerializableJSON } from '../Serializable';
 import EditGlobals from '../EditMode/EditGlobals.js';
 import GUIElement from '../Layout/GUIElement.js';
 
-import U from '../../Core/Utilities.js';
-
-const {
-    addEvent,
-    fireEvent,
-    removeEvent
-} = U;
-
 import EditMode from '../EditMode/EditMode';
-import { createElement, merge } from '../../Shared/Utilities.js';
+import { addEvent, createElement, fireEvent, merge, removeEvent } from '../../Shared/Utilities.js';
 
 /**
  * Class providing a resizing functionality.

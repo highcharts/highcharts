@@ -36,12 +36,8 @@ import type DataTableOptions from './DataTableOptions.js';
 import ColumnUtils from './ColumnUtils.js';
 const { setLength, splice } = ColumnUtils;
 
-import U from '../Core/Utilities.js';
-import { objectEach } from '../Shared/Utilities.js';
-const {
-    fireEvent,
-    uniqueKey
-} = U;
+import { fireEvent, objectEach } from '../Shared/Utilities.js';
+import { uniqueKey } from '../Core/Utilities.js';
 
 
 /* *

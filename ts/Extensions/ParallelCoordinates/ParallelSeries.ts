@@ -28,12 +28,8 @@ import H from '../../Core/Globals.js';
 const { composed } = H;
 import T from '../../Core/Templating.js';
 const { format } = T;
-import U from '../../Core/Utilities.js';
-import { defined, erase, extend, isArray, isNumber, pushUnique } from '../../Shared/Utilities.js';
-const {
-    addEvent,
-    insertItem
-} = U;
+import { addEvent, defined, erase, extend, isArray, isNumber, pushUnique } from '../../Shared/Utilities.js';
+import { insertItem } from '../../Core/Utilities.js';
 
 /* *
  *

@@ -24,11 +24,7 @@ import type AxisOptions from '../../Core/Axis/AxisOptions';
 import type ParallelCoordinates from './ParallelCoordinates';
 
 import ParallelCoordinatesDefaults from './ParallelCoordinatesDefaults.js';
-import U from '../../Core/Utilities.js';
-import { arrayMax, arrayMin, isNumber, merge, pick } from '../../Shared/Utilities.js';
-const {
-    addEvent
-} = U;
+import { addEvent, arrayMax, arrayMin, isNumber, merge, pick } from '../../Shared/Utilities.js';
 
 /* *
  *

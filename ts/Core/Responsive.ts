@@ -20,11 +20,8 @@ import { diffObjects, extend, find, merge, pick } from '../Shared/Utilities.js';
 
 import type Chart from './Chart/Chart.js';
 import type GlobalOptions from './Options';
+import { uniqueKey } from './Utilities.js';
 
-import U from './Utilities.js';
-const {
-    uniqueKey
-} = U;
 
 /* *
  *

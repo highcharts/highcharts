@@ -29,12 +29,7 @@ import Axis from '../Axis.js';
 import SeriesRegistry from '../../Series/SeriesRegistry.js';
 const { series: { prototype: seriesProto } } = SeriesRegistry;
 import StackItem from './StackItem.js';
-import U from '../../Utilities.js';
-import { correctFloat, defined, destroyObjectProperties, isNumber, objectEach, pick } from '../../../Shared/Utilities.js';
-const {
-    addEvent,
-    fireEvent
-} = U;
+import { addEvent, correctFloat, defined, destroyObjectProperties, fireEvent, isNumber, objectEach, pick } from '../../../Shared/Utilities.js';
 
 /* *
  *

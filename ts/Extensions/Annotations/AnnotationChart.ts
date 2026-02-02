@@ -29,12 +29,7 @@ import type Pointer from '../../Core/Pointer';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import Annotation from './Annotation.js';
-import U from '../../Core/Utilities.js';
-import { erase, find, isArray, isObject, pick, wrap } from '../../Shared/Utilities.js';
-const {
-    addEvent,
-    fireEvent
-} = U;
+import { addEvent, erase, find, fireEvent, isArray, isObject, pick, wrap } from '../../Shared/Utilities.js';
 
 /* *
  *

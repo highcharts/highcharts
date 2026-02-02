@@ -41,12 +41,8 @@ const {
     getFieldType
 } = NBU;
 import Series from '../../Core/Series/Series.js';
-import U from '../../Core/Utilities.js';
-import { defined, isNumber } from '../../Shared/Utilities.js';
-const {
-    fireEvent,
-    uniqueKey
-} = U;
+import { defined, fireEvent, isNumber } from '../../Shared/Utilities.js';
+import { uniqueKey } from '../../Core/Utilities.js';
 
 /* *
  *

@@ -28,11 +28,7 @@ import AxisResizer from './AxisResizer.js';
 import AxisResizerDefaults from './AxisResizerDefaults.js';
 import D from '../../Core/Defaults.js';
 const { defaultOptions } = D;
-import U from '../../Core/Utilities.js';
-import { merge, wrap } from '../../Shared/Utilities.js';
-const {
-    addEvent
-} = U;
+import { addEvent, merge, wrap } from '../../Shared/Utilities.js';
 
 /* *
  *

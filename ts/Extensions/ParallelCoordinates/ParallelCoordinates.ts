@@ -29,11 +29,7 @@ import type SeriesOptions from '../../Core/Series/SeriesOptions';
 import ParallelAxis from './ParallelAxis.js';
 import ParallelCoordinatesDefaults from './ParallelCoordinatesDefaults.js';
 import ParallelSeries from './ParallelSeries.js';
-import U from '../../Core/Utilities.js';
-import { defined, merge, splat } from '../../Shared/Utilities.js';
-const {
-    addEvent
-} = U;
+import { addEvent, defined, merge, splat } from '../../Shared/Utilities.js';
 
 /* *
  *

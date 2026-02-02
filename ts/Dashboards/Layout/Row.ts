@@ -24,14 +24,9 @@ import type { Options as CellOptions } from './Cell';
 import Globals from '../Globals.js';
 import Cell from './Cell.js';
 import GUIElement from './GUIElement.js';
-import U from '../../Core/Utilities.js';
 import EditGlobals from '../EditMode/EditGlobals.js';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
-import { defined, merge, objectEach, pick } from '../../Shared/Utilities.js';
-
-const {
-    fireEvent
-} = U;
+import { defined, fireEvent, merge, objectEach, pick } from '../../Shared/Utilities.js';
 
 /**
  * @internal

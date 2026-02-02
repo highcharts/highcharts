@@ -32,11 +32,7 @@ import PieSeriesDefaults from './PieSeriesDefaults.js';
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import Symbols from '../../Core/Renderer/SVG/Symbols.js';
-import U from '../../Core/Utilities.js';
-import { clamp, extend, merge, pick } from '../../Shared/Utilities.js';
-const {
-    fireEvent
-} = U;
+import { clamp, extend, fireEvent, merge, pick } from '../../Shared/Utilities.js';
 
 /* *
  *

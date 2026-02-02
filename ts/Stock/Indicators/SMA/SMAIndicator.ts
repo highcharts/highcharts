@@ -30,13 +30,8 @@ import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     line: LineSeries
 } = SeriesRegistry.seriesTypes;
-import U from '../../../Core/Utilities.js';
-import { extend, isArray, merge, pick } from '../../../Shared/Utilities.js';
-const {
-    addEvent,
-    fireEvent,
-    error
-} = U;
+import { addEvent, extend, fireEvent, isArray, merge, pick } from '../../../Shared/Utilities.js';
+import { error } from '../../../Core/Utilities.js';
 
 /* *
  *

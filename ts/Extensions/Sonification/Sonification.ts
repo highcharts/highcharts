@@ -36,11 +36,6 @@ const {
     defaultOptions,
     getOptions
 } = D;
-import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    fireEvent
-} = U;
 import H from '../../Core/Globals.js';
 const {
     doc,
@@ -53,7 +48,7 @@ import SonificationSpeaker from './SonificationSpeaker.js';
 import SynthPatch from './SynthPatch.js';
 import InstrumentPresets from './InstrumentPresets.js';
 import timelineFromChart from './TimelineFromChart.js';
-import { extend, internalClearTimeout, merge, pick } from '../../Shared/Utilities.js';
+import { addEvent, extend, fireEvent, internalClearTimeout, merge, pick } from '../../Shared/Utilities.js';
 
 
 declare module '../../Core/Chart/ChartBase' {

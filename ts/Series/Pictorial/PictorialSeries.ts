@@ -34,9 +34,8 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import StackItem from '../../Core/Axis/Stacking/StackItem.js';
 import SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
-import U from '../../Core/Utilities.js';
 import { PictorialPathOptions } from './PictorialSeriesOptions';
-import { defined, merge, objectEach, pick } from '../../Shared/Utilities.js';
+import { addEvent, defined, merge, objectEach, pick } from '../../Shared/Utilities.js';
 
 const ColumnSeries: typeof ColumnSeriesType = SeriesRegistry.seriesTypes.column;
 
@@ -51,9 +50,6 @@ const {
     rescalePatternFill
 } = PictorialUtilities;
 
-const {
-    addEvent
-} = U;
 export interface StackShadowOptions {
     borderColor?: ColorType;
     borderWidth?: number;

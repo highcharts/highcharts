@@ -30,12 +30,7 @@ import type Series from '../Series/Series';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 
 import StackItem from './Stacking/StackItem.js';
-import U from '../Utilities.js';
-import { find, isArray, isNumber, pick } from '../../Shared/Utilities.js';
-const {
-    addEvent,
-    fireEvent
-} = U;
+import { addEvent, find, fireEvent, isArray, isNumber, pick } from '../../Shared/Utilities.js';
 
 /* *
  *

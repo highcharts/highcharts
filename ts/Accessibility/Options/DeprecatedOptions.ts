@@ -81,11 +81,8 @@ import type Series from '../../Core/Series/Series';
 
 import Axis from '../../Core/Axis/Axis.js';
 import Chart from '../../Core/Chart/Chart.js';
-import U from '../../Core/Utilities.js';
 import { pick } from '../../Shared/Utilities.js';
-const {
-    error
-} = U;
+import { error } from '../../Core/Utilities.js';
 
 /* *
  *

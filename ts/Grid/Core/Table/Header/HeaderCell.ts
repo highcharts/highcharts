@@ -32,20 +32,15 @@ import Row from '../Row';
 import GridUtils from '../../GridUtils.js';
 import ColumnSorting from '../Actions/ColumnSorting.js';
 import Globals from '../../Globals.js';
-import Utilities from '../../../../Core/Utilities.js';
 import TableHeader from './TableHeader.js';
 import ColumnToolbar from './ColumnToolbar/ColumnToolbar.js';
-import { isString } from '../../../../Shared/Utilities.js';
+import { fireEvent, isString } from '../../../../Shared/Utilities.js';
 
 const {
     makeHTMLElement,
     setHTMLContent,
     createOptionsProxy
 } = GridUtils;
-const {
-    fireEvent
-} = Utilities;
-
 
 /* *
  *

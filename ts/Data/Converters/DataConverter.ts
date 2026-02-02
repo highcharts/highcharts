@@ -37,12 +37,7 @@ import DataTable, {
     type Column as DataTableColumn
 } from '../DataTable.js';
 import DataConverterUtils from './DataConverterUtils.js';
-import U from '../../Core/Utilities.js';
-import { merge } from '../../Shared/Utilities.js';
-const {
-    addEvent,
-    fireEvent
-} = U;
+import { addEvent, fireEvent, merge } from '../../Shared/Utilities.js';
 
 /* *
  *

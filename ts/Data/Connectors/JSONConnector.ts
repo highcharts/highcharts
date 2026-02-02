@@ -33,9 +33,7 @@ import DataConnector, {
     type Event as DataConnectorEvent
 } from './DataConnector.js';
 import JSONConverter from '../Converters/JSONConverter.js';
-import U from '../../Core/Utilities.js';
-import { merge } from '../../Shared/Utilities.js';
-const { fireEvent } = U;
+import { fireEvent, merge } from '../../Shared/Utilities.js';
 
 /* *
  *

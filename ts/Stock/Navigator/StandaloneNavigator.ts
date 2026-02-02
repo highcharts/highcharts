@@ -23,14 +23,9 @@ import type { Options } from '../../Core/Options';
 import Chart from '../../Core/Chart/Chart.js';
 import Navigator, { SetRangeEvent } from './Navigator.js';
 import G from '../../Core/Globals.js';
-import U from '../../Core/Utilities.js';
 import Axis from '../../Core/Axis/Axis.js';
 import standaloneNavigatorDefaults from './StandaloneNavigatorDefaults.js';
-import { merge, pick } from '../../Shared/Utilities.js';
-const {
-    addEvent,
-    fireEvent
-} = U;
+import { addEvent, fireEvent, merge, pick } from '../../Shared/Utilities.js';
 
 declare module '../../Core/GlobalsBase' {
     interface GlobalsBase {

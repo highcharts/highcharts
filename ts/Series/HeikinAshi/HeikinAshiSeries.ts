@@ -29,11 +29,7 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     candlestick: CandlestickSeries
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
-import { merge, pushUnique } from '../../Shared/Utilities.js';
-const {
-    addEvent
-} = U;
+import { addEvent, merge, pushUnique } from '../../Shared/Utilities.js';
 
 /* *
  *

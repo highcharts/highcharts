@@ -21,11 +21,7 @@ import type Axis from '../Core/Axis/Axis';
 import type Chart from '../Core/Chart/Chart';
 import type Series from '../Core/Series/Series';
 
-import U from '../Core/Utilities.js';
-import { defined, isNumber } from '../Shared/Utilities.js';
-const {
-    addEvent
-} = U;
+import { addEvent, defined, isNumber } from '../Shared/Utilities.js';
 
 /* *
  *

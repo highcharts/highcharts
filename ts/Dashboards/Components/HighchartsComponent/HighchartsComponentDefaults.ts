@@ -24,11 +24,8 @@ import type { DeepPartial } from '../../../Shared/Types';
 import type Options from './HighchartsComponentOptions';
 
 import Component from '../Component.js';
-import U from '../../../Core/Utilities.js';
 import { merge } from '../../../Shared/Utilities.js';
-const {
-    uniqueKey
-} = U;
+import { uniqueKey } from '../../../Core/Utilities.js';
 
 
 /* *

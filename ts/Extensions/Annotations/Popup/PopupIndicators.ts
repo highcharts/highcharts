@@ -35,11 +35,7 @@ import H from '../../../Core/Globals.js';
 const { doc } = H;
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
-import U from '../../../Core/Utilities.js';
-import { createElement, defined, isArray, isObject, objectEach, stableSort } from '../../../Shared/Utilities.js';
-const {
-    addEvent
-} = U;
+import { addEvent, createElement, defined, isArray, isObject, objectEach, stableSort } from '../../../Shared/Utilities.js';
 
 /* *
  *

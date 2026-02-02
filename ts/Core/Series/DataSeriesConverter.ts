@@ -36,11 +36,8 @@ import ColumnUtils from '../../Data/ColumnUtils.js';
 const {
     convertToNumber
 } = ColumnUtils;
-import U from '../Utilities.js';
 import { defined } from '../../Shared/Utilities.js';
-const {
-    uniqueKey
-} = U;
+import { uniqueKey } from '../Utilities.js';
 
 /* *
  *

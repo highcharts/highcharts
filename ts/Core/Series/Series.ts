@@ -82,14 +82,8 @@ const { seriesTypes } = SeriesRegistry;
 import SVGElement from '../Renderer/SVG/SVGElement.js';
 import T from '../Templating.js';
 const { format } = T;
-import U from '../Utilities.js';
-import { arrayMax, arrayMin, clamp, correctFloat, crisp, defined, destroyObjectProperties, diffObjects, erase, extend, find, getClosestDistance, getNestedProperty, internalClearTimeout, isArray, isNumber, isString, merge, objectEach, pick, syncTimeout } from '../../Shared/Utilities.js';
-const {
-    error,
-    fireEvent,
-    insertItem,
-    removeEvent
-} = U;
+import { error, insertItem } from '../Utilities.js';
+import { arrayMax, arrayMin, clamp, correctFloat, crisp, defined, destroyObjectProperties, diffObjects, erase, type EventWrapperObject, extend, find, fireEvent, getClosestDistance, getNestedProperty, internalClearTimeout, isArray, isNumber, isString, merge, objectEach, pick, removeEvent, syncTimeout } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -5133,7 +5127,7 @@ interface Series extends SeriesBase {
     directTouch: boolean;
 
     /** @internal */
-    hcEvents?: Record<string, Array<U.EventWrapperObject<Series>>>;
+    hcEvents?: Record<string, Array<EventWrapperObject<Series>>>;
 
     /** @internal */
     invertible: boolean;

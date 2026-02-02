@@ -10,7 +10,6 @@
  */
 'use strict';
 import Highcharts from '../Core/Globals.js';
-import Utilities from '../Core/Utilities.js';
 import Defaults from '../Core/Defaults.js';
 import Fx from '../Core/Animation/Fx.js';
 import Animation from '../Core/Animation/AnimationUtilities.js';
@@ -56,7 +55,8 @@ import BorderRadius from '../Extensions/BorderRadius.js';
 import Responsive from '../Core/Responsive.js';
 import Color from '../Core/Color/Color.js';
 import Time from '../Core/Time.js';
-import { arrayMax, arrayMin, attr, clamp, correctFloat, createElement, css, defined, destroyObjectProperties, diffObjects, discardElement, erase, extend, extendClass, find, getStyle, isArray, isClass, isDOMElement, isFunction, isNumber, isObject, isString, merge, normalizeTickInterval, objectEach, offset, pad, pick, pInt, relativeLength, splat, stableSort, syncTimeout, wrap } from '../Shared/Utilities.js';
+import { addEvent, arrayMax, arrayMin, attr, clamp, correctFloat, createElement, css, defined, destroyObjectProperties, diffObjects, discardElement, erase, extend, extendClass, find, fireEvent, getStyle, isArray, isClass, isDOMElement, isFunction, isNumber, isObject, isString, merge, normalizeTickInterval, objectEach, offset, pad, pick, pInt, relativeLength, removeEvent, splat, stableSort, syncTimeout, wrap } from '../Shared/Utilities.js';
+import { error, uniqueKey } from '../Core/Utilities.js';
 const G: AnyRecord = Highcharts;
 // Classes
 G.AST = AST;
@@ -83,6 +83,11 @@ G.Tick = Tick;
 G.Time = Time;
 G.Tooltip = Tooltip;
 // Utilities
+G.addEvent = addEvent;
+G.removeEvent = removeEvent;
+G.fireEvent = fireEvent;
+G.uniqueKey = uniqueKey;
+G.error = error;
 G.arrayMax = arrayMax;
 G.arrayMin = arrayMin;
 G.attr = attr;
@@ -151,6 +156,5 @@ Responsive.compose(G.Chart);
 ScrollablePlotArea.compose(G.Axis, G.Chart, G.Series);
 StackingAxis.compose(G.Axis, G.Chart, G.Series);
 Tooltip.compose(G.Pointer);
-extend(G, Utilities);
 // Default Export
 export default G;

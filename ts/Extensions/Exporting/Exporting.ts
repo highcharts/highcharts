@@ -73,15 +73,8 @@ const {
 } = G;
 import HU from '../../Core/HttpUtilities.js';
 import RegexLimits from '../RegexLimits.js';
-import U from '../../Core/Utilities.js';
-import { createElement, css, discardElement, extend, find, internalClearTimeout, isObject, merge, objectEach, pick, pushUnique, splat } from '../../Shared/Utilities.js';
-const {
-    addEvent,
-    error,
-    fireEvent,
-    removeEvent,
-    uniqueKey
-} = U;
+import { addEvent, createElement, css, discardElement, extend, find, fireEvent, internalClearTimeout, isObject, merge, objectEach, pick, pushUnique, removeEvent, splat } from '../../Shared/Utilities.js';
+import { error, uniqueKey } from '../../Core/Utilities.js';
 
 AST.allowedAttributes.push(
     'data-z-index',

@@ -26,11 +26,7 @@ import type Series from '../../Core/Series/Series';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const { series: { prototype: seriesProto } } = SeriesRegistry;
-import U from '../../Core/Utilities.js';
-import { defined } from '../../Shared/Utilities.js';
-const {
-    fireEvent
-} = U;
+import { defined, fireEvent } from '../../Shared/Utilities.js';
 
 /* *
  *

@@ -11,6 +11,7 @@
 
 'use strict';
 
+import { error } from '../../Core/Utilities.js';
 /* *
  *
  *  Imports
@@ -18,11 +19,7 @@
  * */
 
 import type BubbleSeries from '../../Series/Bubble/BubbleSeries';
-import U from '../../Core/Utilities.js';
 import { clamp, pick } from '../../Shared/Utilities.js';
-const {
-    error
-} = U;
 
 /* *
  *

@@ -25,7 +25,6 @@
 import type TableRow from './Body/TableRow';
 
 import GridUtils from '../GridUtils.js';
-import Utils from '../../../Core/Utilities.js';
 import DataTable from '../../../Data/DataTable.js';
 import ColumnResizing from './ColumnResizing/ColumnResizing.js';
 import ColumnResizingMode from './ColumnResizing/ResizingMode.js';
@@ -36,12 +35,9 @@ import RowsVirtualizer from './Actions/RowsVirtualizer.js';
 import ColumnsResizer from './Actions/ColumnsResizer.js';
 import Globals from '../Globals.js';
 import Cell from './Cell.js';
-import { defined, getStyle } from '../../../Shared/Utilities.js';
+import { defined, fireEvent, getStyle } from '../../../Shared/Utilities.js';
 
 const { makeHTMLElement } = GridUtils;
-const {
-    fireEvent
-} = Utils;
 
 /* *
  *

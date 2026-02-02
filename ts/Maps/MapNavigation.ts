@@ -37,11 +37,7 @@ const { composed } = H;
 import MapNavigationDefaults from './MapNavigationDefaults.js';
 import MapPointer from './MapPointer.js';
 import MapSymbols from './MapSymbols.js';
-import U from '../Core/Utilities.js';
-import { extend, objectEach, merge, pick, pushUnique } from '../Shared/Utilities.js';
-const {
-    addEvent
-} = U;
+import { extend, objectEach, merge, pick, pushUnique, addEvent } from '../Shared/Utilities.js';
 
 /* *
  *

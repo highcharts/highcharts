@@ -40,13 +40,8 @@ const {
     isTouchDevice
 } = H;
 import { Palette } from '../Core/Color/Palettes.js';
-import U from './Utilities.js';
 import SVGAttributes from './Renderer/SVG/SVGAttributes';
-import { attr, css, extend, find, isNumber, isObject, objectEach, offset, pick, pushUnique, splat } from '../Shared/Utilities.js';
-const {
-    addEvent,
-    fireEvent
-} = U;
+import { addEvent, attr, css, extend, find, fireEvent, isNumber, isObject, objectEach, offset, pick, pushUnique, splat } from '../Shared/Utilities.js';
 
 /* *
  *

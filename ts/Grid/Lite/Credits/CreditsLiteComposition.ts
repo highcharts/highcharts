@@ -19,11 +19,7 @@ import Table from '../../Core/Table/Table';
 import Globals from '../../../Core/Globals.js';
 import Credits from '../../Core/Credits.js';
 
-import U from '../../../Core/Utilities.js';
-import { pushUnique } from '../../../Shared/Utilities.js';
-const {
-    addEvent
-} = U;
+import { addEvent, pushUnique } from '../../../Shared/Utilities.js';
 
 
 /* *

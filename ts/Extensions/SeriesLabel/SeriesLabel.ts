@@ -61,13 +61,8 @@ const {
     boxIntersectLine,
     intersectRect
 } = SLU;
-import U from '../../Core/Utilities.js';
 import { Palette } from '../../Core/Color/Palettes';
-import { extend, internalClearTimeout, isNumber, pick, pushUnique, syncTimeout } from '../../Shared/Utilities.js';
-const {
-    addEvent,
-    fireEvent
-} = U;
+import { addEvent, extend, fireEvent, internalClearTimeout, isNumber, pick, pushUnique, syncTimeout } from '../../Shared/Utilities.js';
 
 /* *
  *

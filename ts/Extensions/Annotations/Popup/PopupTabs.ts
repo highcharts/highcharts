@@ -25,11 +25,7 @@ import type Popup from './Popup';
 
 import H from '../../../Core/Globals.js';
 const { doc } = H;
-import U from '../../../Core/Utilities.js';
-import { createElement } from '../../../Shared/Utilities.js';
-const {
-    addEvent
-} = U;
+import { addEvent, createElement } from '../../../Shared/Utilities.js';
 
 /* *
  *

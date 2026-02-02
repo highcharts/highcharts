@@ -29,11 +29,7 @@ import Chart from '../Core/Chart/Chart.js';
 import PathfinderAlgorithms from './PathfinderAlgorithms.js';
 import PathfinderComposition, { PointConnectOptionsObject } from './PathfinderComposition.js';
 import Point from '../Core/Series/Point.js';
-import U from '../Core/Utilities.js';
-import { defined, pick, splat } from '../Shared/Utilities.js';
-const {
-    addEvent
-} = U;
+import { addEvent, defined, pick, splat } from '../Shared/Utilities.js';
 
 /* *
  *

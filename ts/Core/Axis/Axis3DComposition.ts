@@ -38,11 +38,7 @@ const {
     shapeArea
 } = Math3D;
 import Tick3D from './Tick3DComposition.js';
-import U from '../Utilities.js';
-import { merge, pick, wrap } from '../../Shared/Utilities.js';
-const {
-    addEvent
-} = U;
+import { addEvent, merge, pick, wrap } from '../../Shared/Utilities.js';
 
 /* *
  *

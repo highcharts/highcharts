@@ -36,12 +36,7 @@ const { ajax } = HU;
 import Point from '../Core/Series/Point.js';
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
-import U from '../Core/Utilities.js';
-import { defined, extend, internalClearTimeout, isNumber, merge, objectEach, pick, splat } from '../Shared/Utilities.js';
-const {
-    addEvent,
-    fireEvent
-} = U;
+import { addEvent, defined, extend, fireEvent, internalClearTimeout, isNumber, merge, objectEach, pick, splat } from '../Shared/Utilities.js';
 
 /* *
  *

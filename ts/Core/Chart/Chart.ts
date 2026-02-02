@@ -83,18 +83,12 @@ const { seriesTypes } = SeriesRegistry;
 import SVGElement from '../Renderer/SVG/SVGElement';
 import SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
 import Time from '../Time.js';
-import U from '../Utilities.js';
 import AST from '../Renderer/HTML/AST.js';
 import { AxisCollectionKey } from '../Axis/AxisOptions';
 import Tick from '../Axis/Tick.js';
-import { attr, createElement, css, defined, diffObjects, discardElement, erase, extend, find, getAlignFactor, getStyle, internalClearTimeout, isArray, isNumber, isObject, isString, merge, objectEach, pick, pInt, relativeLength, splat, syncTimeout } from '../../Shared/Utilities.js';
-const {
-    addEvent,
-    error,
-    fireEvent,
-    removeEvent,
-    uniqueKey
-} = U;
+import { addEvent, attr, createElement, css, defined, diffObjects, discardElement, erase, extend, find, fireEvent, getAlignFactor, getStyle, internalClearTimeout, isArray, isNumber, isObject, isString, merge, objectEach, pick, pInt, relativeLength, removeEvent, splat, syncTimeout } from '../../Shared/Utilities.js';
+import { error, uniqueKey } from '../Utilities.js';
+
 
 /* *
  *

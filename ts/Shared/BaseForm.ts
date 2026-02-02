@@ -17,11 +17,7 @@
  * */
 
 import AST from '../Core/Renderer/HTML/AST.js';
-import U from '../Core/Utilities.js';
-import { createElement } from './Utilities.js';
-const {
-    addEvent
-} = U;
+import { addEvent, createElement } from './Utilities.js';
 
 /* *
  *
