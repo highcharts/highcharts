@@ -297,7 +297,8 @@ namespace DateTimeAxis{
             let unit = units[units.length - 1], // Default unit is years
                 interval = timeUnits[unit[0]],
                 multiples = unit[1],
-                i;
+                i,
+                match: number|undefined;
 
             // Loop through the units to find the one that best fits the
             // tickInterval
@@ -318,6 +319,7 @@ namespace DateTimeAxis{
 
                     // Break and keep the current unit
                     if (tickInterval <= lessThan) {
+                        match = lessThan / tickInterval;
                         break;
                     }
                 }
@@ -340,7 +342,8 @@ namespace DateTimeAxis{
             return {
                 unitRange: interval,
                 count: count,
-                unitName: unit[0]
+                unitName: unit[0],
+                match
             };
         }
 
