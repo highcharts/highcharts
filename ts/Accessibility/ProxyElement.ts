@@ -210,10 +210,8 @@ class ProxyElement {
         const stringHasNoTooltip = (s: string): boolean => (
             s.indexOf('highcharts-no-tooltip') > -1
         );
-        const legend = this.chart.legend;
-        const groupDiv = legend.group && legend.group.div;
         const noTooltipOnGroup = stringHasNoTooltip(
-            groupDiv && groupDiv.className || ''
+            this.chart.legend?.group?.div?.className || ''
         );
         const targetClassName = this.getTargetAttr(
             this.target.click,

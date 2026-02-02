@@ -28,7 +28,6 @@ import type {
     PointOptions,
     PointShortOptions
 } from './PointOptions';
-import type { PointTypeOptions } from './PointType';
 import type Series from './Series';
 import type { StatesOptionsKey } from './StatesOptions';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
@@ -154,26 +153,17 @@ class Point {
     /**
      * For categorized axes this property holds the category name for the
      * point. For other axes it holds the X value.
-     *
-     * @name Highcharts.Point#category
-     * @type {number|string}
      */
     public category: (number|string);
 
     /**
      * The point's current color.
-     *
-     * @name Highcharts.Point#color
-     * @type {Highcharts.ColorType|undefined}
      */
     public color?: ColorType;
 
     /**
      * The point's current color index, used in styled mode instead of
      * `color`. The color index is inserted in class names used for styling.
-     *
-     * @name Highcharts.Point#colorIndex
-     * @type {number|undefined}
      */
     public colorIndex?: number;
 
@@ -1893,9 +1883,12 @@ class Point {
  *
  * */
 
-/** @internal */
 interface Point extends PointBase {
-    // Merge extensions with point class
+    /**
+     * Merge extensions with point class.
+     *
+     * @internal
+     */
     hcEvents?: Record<
         string,
         Array<U.EventWrapperObject<Series>> & { userEvent?: boolean }
@@ -1908,19 +1901,12 @@ interface Point extends PointBase {
  *
  * */
 
+/** @internal */
 namespace Point {
+    /** @internal */
     export interface GraphicalProps {
         singular: Array<string>;
         plural: Array<string>;
-    }
-    export interface SeriesPointsOptions {
-        events?: PointEventsOptions;
-    }
-    export interface UpdateCallbackFunction {
-        (this: Point, event: UpdateEventObject): void;
-    }
-    export interface UpdateEventObject {
-        options?: PointTypeOptions;
     }
 }
 

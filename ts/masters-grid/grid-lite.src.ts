@@ -35,6 +35,7 @@ import Table from '../Grid/Core/Table/Table.js';
 import CreditsLiteComposition from '../Grid/Lite/Credits/CreditsLiteComposition.js';
 import SvgIcons from '../Grid/Core/UI/SvgIcons.js';
 import Pagination from '../Grid/Core/Pagination/Pagination.js';
+import ResponsiveComposition from '../Grid/Core/Responsive/ResponsiveComposition.js';
 import { merge } from '../Shared/Utilities.js';
 
 // Fill registries
@@ -81,6 +82,7 @@ const G = {
 };
 
 CreditsLiteComposition.compose(G.Grid, G.Table);
+ResponsiveComposition.compose(G.Grid);
 
 
 /* *

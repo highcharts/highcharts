@@ -202,10 +202,12 @@ function compose(
  *
  * */
 
+/** @internal */
 const MouseWheelZoomComposition = {
     compose
 };
 
+/** @internal */
 export default MouseWheelZoomComposition;
 
 /* *

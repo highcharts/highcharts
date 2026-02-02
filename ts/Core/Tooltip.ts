@@ -77,12 +77,6 @@ declare module './Series/SeriesBase' {
     }
 }
 
-declare module './Series/SeriesOptions' {
-    interface SeriesOptions {
-        tooltip?: Partial<TooltipOptions>;
-    }
-}
-
 interface BoxObject extends R.BoxObject {
     anchorX: number;
     anchorY: number;
@@ -320,7 +314,7 @@ class Tooltip {
      *
      * @function Highcharts.Tooltip#defaultFormatter
      *
-     * @param {Highcharts.Tooltip} tooltip
+     * @param {Highcharts.Tooltip} tooltip The tooltip instance.
      *
      * @return {string|Array<string>}
      * Returns a string (single tooltip and shared)
@@ -1881,7 +1875,7 @@ class Tooltip {
      * @internal
      * @function Highcharts.Tooltip#updatePosition
      *
-     * @param {Highcharts.Point} point
+     * @param {Highcharts.Point} point The point object.
      */
     public updatePosition(
         point: Tooltip.PositionerPointObject

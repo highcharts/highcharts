@@ -39,6 +39,7 @@ const {
  *
  * */
 
+/** @internal */
 declare module './PointBase' {
     interface PointBase {
         plotZ?: number;
@@ -46,6 +47,7 @@ declare module './PointBase' {
     }
 }
 
+/** @internal */
 declare module './SeriesBase' {
     interface SeriesBase {
         zAxis?: ZAxis;
@@ -62,6 +64,7 @@ declare module './SeriesBase' {
  *
  * */
 
+/** @internal */
 class Series3D extends Series {
 
     /* *
@@ -171,4 +174,5 @@ class Series3D extends Series {
  *
  * */
 
+/** @internal */
 export default Series3D;

@@ -113,9 +113,16 @@ async function checkSamplesConsistency() {
         FSLib.path(process.cwd() + '/samples/**/config.ts', true)
     );
 
+
+    // Check generated sample files against stored checksums
+    const sampleGeneratorErrors = [];
     for (const configPath of configPaths) {
         const dir = path.dirname(configPath);
         const checksumPath = path.join(dir, '.generated-checksum');
+        const relativePath = path.relative(process.cwd(), configPath),
+            shortPath = relativePath
+                .replace(/samples[\/\\]/u, '')
+                .replace(/\/config\.ts$/u, '');
 
         // Check if any generated files exist
         const generatedFiles = ['demo.ts', 'demo.html', 'demo.css', 'demo.details'];
@@ -126,8 +133,11 @@ async function checkSamplesConsistency() {
             return; // Skip if no generated files
         }
 
-        // Check if checksum file exists
-        if (existsSync(checksumPath)) {
+        const checksumExists = existsSync(checksumPath);
+        let checksumMisMatch = false;
+
+        // Check if checksum matches
+        if (checksumExists) {
             // Calculate current checksum
             const currentChecksum = await calculateChecksum(dir);
 
@@ -136,18 +146,15 @@ async function checkSamplesConsistency() {
 
             // Compare checksums
             if (savedChecksum !== currentChecksum) {
-                LogLib.failure(
-                    'Generated files have been manually edited instead of being regenerated from config.ts:',
-                    configPath
-                );
-                errors++;
+                checksumMisMatch = true;
             }
+        }
 
-        } else {
-            // Checksum file is missing. Check if this is a fresh checkout or
-            // if the user has manually edited the generated files.
-            // Compare modification times: if the most recent generated file is
-            // more than one minute newer than config.ts, assume manual edits.
+        if (!checksumExists || checksumMisMatch) {
+            // Checksum file is missing or not matching. Check if this is a fresh
+            // checkout or if the user has manually edited the generated files.
+            // Compare modification times: if the most recent generated file is more
+            // than one minute newer than config.ts, assume manual edits.
             const configMtime = fs.statSync(configPath).mtime.getTime();
             let mostRecentGeneratedMtime = 0;
 
@@ -167,21 +174,26 @@ async function checkSamplesConsistency() {
             const oneMinuteMs = 60 * 1000;
 
             if (timeDiffMs > oneMinuteMs) {
-                const relativePath = path.relative(process.cwd(), configPath),
-                    shortPath = relativePath
-                        .replace(/samples[\/\\]/u, '')
-                        .replace(/\/config\.ts$/u, '');
-                LogLib.failure(
-                    `Generated files have been manually edited instead of being regenerated from config.ts:
-                    - ${relativePath}
-                    - Run \`gulp generate-samples [--samples ${shortPath}]\`
-                      or view it in the Sample Viewer with compile-on-demand enabled`
-                );
+                sampleGeneratorErrors.push(relativePath);
                 errors++;
             }
             // Otherwise, assume fresh checkout without checksum files - OK
         }
     }
+    if (sampleGeneratorErrors.length) {
+        if (sampleGeneratorErrors.length < 3) {
+            LogLib.failure(
+                `Generated samples not in sync with config.ts:
+                - ${sampleGeneratorErrors.join('\n- ')}`
+            );
+        } else {
+            LogLib.failure(
+                `${sampleGeneratorErrors.length}/${configPaths.length} generated samples not in sync with config.ts:
+                - Run \`gulp generate-samples\``
+            );
+        }
+    }
+
 
     if (errors) {
         throw new Error('Samples validation failed');

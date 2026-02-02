@@ -1,8 +1,5 @@
 {
     "extends": "../.eslintrc",
-    "parserOptions": {
-        "project": "./ts/masters-dashboards/tsconfig.json"
-    },
     "rules": {
       "jsdoc/require-param": 0,
       "jsdoc/require-param-description": 0,

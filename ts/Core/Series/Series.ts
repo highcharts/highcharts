@@ -36,8 +36,7 @@ import type LineSeries from '../../Series/Line/LineSeries';
 import type PointerEvent from '../PointerEvent';
 import type {
     PointOptions,
-    PointShortOptions,
-    PointMarkerStateHoverOptions
+    PointShortOptions
 } from './PointOptions';
 import type RangeSelector from '../../Stock/RangeSelector/RangeSelector';
 import type SeriesBase from './SeriesBase';
@@ -45,7 +44,6 @@ import type {
     NonPlotOptions,
     SeriesDataSortingOptions,
     SeriesOptions,
-    SeriesStateHoverOptions,
     SeriesZonesOptions
 } from './SeriesOptions';
 import type {
@@ -99,12 +97,14 @@ const {
  *
  * */
 
+/** @internal */
 declare module '../Chart/ChartBase'{
     interface ChartBase {
         runTrackerClick?: boolean;
     }
 }
 
+/** @internal */
 declare module '../Renderer/SVG/SVGElementBase' {
     interface SVGElementBase {
         survive?: boolean;
@@ -116,8 +116,6 @@ declare module './PointBase' {
         /**
          * Contains the point's index in the `Series.points` array.
          *
-         * @name Highcharts.Point#index
-         * @type {number}
          * @readonly
          */
         index: number;
@@ -133,8 +131,6 @@ declare module './PointBase' {
          * of the axis.
          *
          * @see Highcharts.Point#pos
-         * @name Highcharts.Point#plotX
-         * @type {number|undefined}
          */
         plotX?: number;
 
@@ -149,13 +145,12 @@ declare module './PointBase' {
          * of the `yAxis`.
          *
          * @see Highcharts.Point#pos
-         * @name Highcharts.Point#plotY
-         * @type {number|undefined}
          */
         plotY?: number;
     }
 }
 
+/** @internal */
 declare module './SeriesBase' {
     interface SeriesBase {
         _hasPointMarkers?: boolean;
@@ -166,6 +161,7 @@ declare module './SeriesBase' {
     }
 }
 
+/** @internal */
 interface KDNode {
     [side: string]: (KDNode|Point|undefined);
     left?: KDNode;
@@ -173,6 +169,7 @@ interface KDNode {
     right?: KDNode;
 }
 
+/** @internal */
 interface KDPointSearchObject extends KDPointSearchObjectBase {
 }
 
@@ -244,6 +241,7 @@ class Series {
      *
      * */
 
+    /** @internal */
     public static readonly defaultOptions = SeriesDefaults;
 
     /**
@@ -275,7 +273,9 @@ class Series {
     public static readonly registerType = SeriesRegistry.registerSeriesType;
 
     /**
-     * Properties to keep after update
+     * Properties to keep after update.
+     *
+     * @internal
      */
     public static keepProps = [
         'colorIndex',
@@ -287,7 +287,9 @@ class Series {
 
     /**
      * Properties to keep after update if the point instances should be
-     * preserved
+     * preserved.
+     *
+     * @internal
      */
     public static keepPropsForPoints = [
         'data',
@@ -328,123 +330,420 @@ class Series {
      *
      * */
 
+    /** @internal */
     public _hasTracking?: boolean;
 
+    /** @internal */
     public _i!: number;
 
+    /** @internal */
     public animationTimeout?: number;
 
+    /** @internal */
     public area?: SVGElement;
 
+    /** @internal */
     public basePointRange?: number;
 
+    /** @internal */
     public buildingKdTree?: boolean;
 
+    /**
+     * Read only. The chart that the series belongs to.
+     */
     public chart!: Chart;
 
+    /** @internal */
     public closestPointRange?: number;
 
+    /** @internal */
     public closestPointRangePx?: number;
 
+    /**
+     * Series color as used by the legend and some series types.
+     */
     public color?: (ColorType);
 
+    /** @internal */
     public colorIndex?: number;
 
+    /** @internal */
     public cropped?: boolean;
 
+    /**
+     * Read only. An array containing those values converted to points.
+     * In case the series data length exceeds the `cropThreshold`, or if
+     * the data is grouped, `series.data` doesn't contain all the
+     * points. Also, in case a series is hidden, the `data` array may be
+     * empty. In case of cropping, the `data` array may contain `undefined`
+     * values, instead of points. To access raw values,
+     * `series.options.data` will always be up to date. `Series.data` only
+     * contains the points that have been created on demand. To modify the
+     * data, use
+     * {@link Highcharts.Series#setData} or
+     * {@link Highcharts.Point#update}.
+     *
+     * @see Series.points
+     */
     public data!: Array<Point>;
 
+    /**
+     * Contains the maximum value of the series' data point. Some series
+     * types like `networkgraph` do not support this property as they
+     * lack a `y`-value.
+     *
+     * @readonly
+     */
     public dataMax?: number;
 
+    /**
+     * Contains the minimum value of the series' data point. Some series
+     * types like `networkgraph` do not support this property as they
+     * lack a `y`-value.
+     *
+     * @readonly
+     */
     public dataMin?: number;
 
+    /** @internal */
     public enabledDataSorting?: boolean;
 
+    /** @internal */
     public fillColor?: ColorType;
 
+    /** @internal */
     public finishedAnimating?: boolean;
 
+    /** @internal */
     public getExtremesFromAll?: boolean;
 
+    /** @internal */
     public graph?: SVGElement;
 
+    /** @internal */
     public graphPath?: SVGPath;
 
+    /** @internal */
     public group?: SVGElement;
 
+    /** @internal */
     public eventOptions!: Record<string, EventCallback<Series, Event>>;
 
+    /** @internal */
     public eventsToUnbind!: Array<Function>;
 
+    /** @internal */
     public halo?: SVGElement;
 
+    /** @internal */
     public hasCartesianSeries?: Chart['hasCartesianSeries'];
 
+    /** @internal */
     public hasRendered?: boolean;
 
+    /** @internal */
     public id?: string;
 
+    /**
+     * Contains the series' index in the `Chart.series` array.
+     *
+     * @readonly
+     */
     public index!: number;
 
+    /** @internal */
     public initialType?: string;
 
+    /** @internal */
     public isDirty?: boolean;
 
+    /** @internal */
     public isDirtyData?: boolean;
 
+    /** @internal */
     public isRadialSeries?: boolean;
 
+    /** @internal */
     public kdTree?: KDNode;
 
+    /**
+     * The parent series of the current series, if the current
+     * series has a [linkedTo](https://api.highcharts.com/highcharts/series.line.linkedTo)
+     * setting.
+     *
+     * @readonly
+     */
     public linkedParent?: Series;
 
+    /**
+     * All child series that are linked to the current series through the
+     * [linkedTo](https://api.highcharts.com/highcharts/series.line.linkedTo)
+     * option.
+     *
+     * @readonly
+     */
     public linkedSeries!: Array<Series>;
 
-    public options!: SeriesOptions;
-
+    /** @internal */
     public markerGroup?: SVGElement;
 
+    /**
+     * The series name as given in the options. Defaults to "Series {n}".
+     */
+    public name!: string;
+
+    /** @internal */
     public opacity?: number;
 
+    /** @internal */
     public optionalAxis?: string;
 
+    /**
+     * Read only. The series' current options. To update, use
+     * {@link Series#update}.
+     */
+    public options!: SeriesOptions;
+
+    /** @internal */
     public pointInterval?: number;
 
+    /**
+     * An array containing all currently visible point objects. In case
+     * of cropping, the cropped-away points are not part of this array.
+     * The `series.points` array starts at `series.cropStart` compared
+     * to `series.data` and `series.options.data`. If however the series
+     * data is grouped, these can't be correlated one to one. To modify
+     * the data, use {@link Highcharts.Series#setData} or
+     * {@link Highcharts.Point#update}.
+     */
     public points!: Array<Point>;
 
+    /** @internal */
     public pointValKey?: string;
 
+    /**
+     * Read only. The series' selected state as set by
+     * {@link Highcharts.Series#select}.
+     */
     public selected?: boolean;
 
+    /** @internal */
     public sharedClipKey?: string;
 
+    /** @internal */
+    public state?: StatesOptionsKey;
+
+    /** @internal */
     public stateMarkerGraphic?: SVGElement;
 
+    /** @internal */
     public stickyTracking?: boolean;
 
+    /** @internal */
     public symbol?: SymbolKey;
 
+    /** @internal */
     public symbolIndex?: number;
 
+    /** @internal */
     public dataTable!: DataTableCore;
 
+    /** @internal */
     public tooltipOptions!: TooltipOptions;
 
+    /** @internal */
     public tracker?: SVGElement;
 
+    /** @internal */
     public trackerGroups?: Array<string>;
 
+    /**
+     * Read only. The series' type, like "line", "area", "column" etc.
+     * The type in the series options anc can be altered using
+     * {@link Series#update}.
+     */
+    public type!: string;
+
+    /**
+     * Contains series options by the user without defaults.
+     */
     public userOptions!: DeepPartial<SeriesTypeOptions>;
 
+    /**
+     * Read only. The series' visibility state as set by
+     * {@link Series#show}, {@link Series#hide}, or in the initial
+     * configuration. True by default.
+     *
+     * @default true
+     */
+    public visible!: boolean;
+
+    /**
+     * Read only. The unique xAxis object associated
+     * with the series.
+     */
     public xAxis!: AxisType;
 
+    /** @internal */
     public xIncrement?: (number|null);
 
+    /**
+     * Read only. The unique yAxis object associated
+     * with the series.
+     */
     public yAxis!: AxisType;
 
+    /** @internal */
     public zoneAxis: 'x'|'y'|'z' = 'y';
 
+    /** @internal */
     public zones!: Array<Series.ZoneObject>;
+
+    /* *
+     *
+     *  API JSDoc doclet copies for uninitialized properties
+     *
+     * */
+
+    /**
+     * Read only. The chart that the series belongs to.
+     *
+     * @name Highcharts.Series#chart
+     * @type {Highcharts.Chart}
+     */
+    /**
+     * Series color as used by the legend and some series types.
+     * @name Highcharts.Series#color
+     * @type {Highcharts.ColorType|undefined}
+     */
+    /**
+     * Read only. An array containing those values converted to points.
+     * In case the series data length exceeds the `cropThreshold`, or if
+     * the data is grouped, `series.data` doesn't contain all the
+     * points. Also, in case a series is hidden, the `data` array may be
+     * empty. In case of cropping, the `data` array may contain `undefined`
+     * values, instead of points. To access raw values,
+     * `series.options.data` will always be up to date. `Series.data` only
+     * contains the points that have been created on demand. To modify the
+     * data, use
+     * {@link Highcharts.Series#setData} or
+     * {@link Highcharts.Point#update}.
+     *
+     * @see Series.points
+     *
+     * @name Highcharts.Series#data
+     * @type {Array<Highcharts.Point>}
+     */
+    /**
+     * Contains the maximum value of the series' data point. Some series
+     * types like `networkgraph` do not support this property as they
+     * lack a `y`-value.
+     * @name Highcharts.Series#dataMax
+     * @type {number|undefined}
+     * @readonly
+     */
+    /**
+     * Contains the minimum value of the series' data point. Some series
+     * types like `networkgraph` do not support this property as they
+     * lack a `y`-value.
+     * @name Highcharts.Series#dataMin
+     * @type {number|undefined}
+     * @readonly
+     */
+    /**
+     * Contains the series' index in the `Chart.series` array.
+     *
+     * @name Highcharts.Series#index
+     * @type {number}
+     * @readonly
+     */
+    /**
+     * The parent series of the current series, if the current
+     * series has a [linkedTo](https://api.highcharts.com/highcharts/series.line.linkedTo)
+     * setting.
+     *
+     * @name Highcharts.Series#linkedParent
+     * @type {Highcharts.Series}
+     * @readonly
+     */
+    /**
+     * All child series that are linked to the current series through the
+     * [linkedTo](https://api.highcharts.com/highcharts/series.line.linkedTo)
+     * option.
+     *
+     * @name Highcharts.Series#linkedSeries
+     * @type {Array<Highcharts.Series>}
+     * @readonly
+     */
+    /**
+     * The series name as given in the options. Defaults to
+     * "Series {n}".
+     *
+     * @name Highcharts.Series#name
+     * @type {string}
+     */
+    /**
+     * Read only. The series' current options. To update, use
+     * {@link Series#update}.
+     *
+     * @name Highcharts.Series#options
+     * @type {Highcharts.SeriesOptionsType}
+     */
+    /**
+     * An array containing all currently visible point objects. In case
+     * of cropping, the cropped-away points are not part of this array.
+     * The `series.points` array starts at `series.cropStart` compared
+     * to `series.data` and `series.options.data`. If however the series
+     * data is grouped, these can't be correlated one to one. To modify
+     * the data, use {@link Highcharts.Series#setData} or
+     * {@link Highcharts.Point#update}.
+     *
+     * @name Highcharts.Series#points
+     * @type {Array<Highcharts.Point>}
+     */
+    /**
+     * Read only. The series' selected state as set by {@link
+     * Highcharts.Series#select}.
+     *
+     * @name Highcharts.Series#selected
+     * @type {boolean}
+     */
+    /**
+     * Read only. The series' type, like "line", "area", "column" etc.
+     * The type in the series options anc can be altered using
+     * {@link Series#update}.
+     *
+     * @name Highcharts.Series#type
+     * @type {string}
+     */
+    /**
+     * Read only. The series' visibility state as set by
+     * {@link Series#show}, {@link Series#hide}, or in the initial
+     * configuration. True by default.
+     *
+     * @name Highcharts.Series#visible
+     * @type {boolean}
+     * @default true
+     */
+    /**
+     * Read only. The unique xAxis object associated
+     * with the series.
+     *
+     * @name Highcharts.Series#xAxis
+     * @type {Highcharts.Axis}
+     */
+    /**
+     * Read only. The unique yAxis object associated
+     * with the series.
+     *
+     * @name Highcharts.Series#yAxis
+     * @type {Highcharts.Axis}
+     */
+    /**
+     * Contains series options by the user without defaults.
+     * @name Highcharts.Series#userOptions
+     * @type {Highcharts.SeriesOptionsType}
+     */
 
     /* *
      *
@@ -453,7 +752,7 @@ class Series {
      * */
 
     /* eslint-disable valid-jsdoc */
-
+    /** @internal */
     public init(
         chart: Chart,
         userOptions: DeepPartial<SeriesTypeOptions>
@@ -472,73 +771,20 @@ class Series {
         // the different series and charts. #12959, #13937
         this.eventsToUnbind = [];
 
-        /**
-         * Read only. The chart that the series belongs to.
-         *
-         * @name Highcharts.Series#chart
-         * @type {Highcharts.Chart}
-         */
         series.chart = chart;
-
-        /**
-         * Read only. The series' type, like "line", "area", "column" etc.
-         * The type in the series options anc can be altered using
-         * {@link Series#update}.
-         *
-         * @name Highcharts.Series#type
-         * @type {string}
-         */
-
-        /**
-         * Read only. The series' current options. To update, use
-         * {@link Series#update}.
-         *
-         * @name Highcharts.Series#options
-         * @type {Highcharts.SeriesOptionsType}
-         */
         series.options = series.setOptions(userOptions);
+
         const options = series.options,
             visible = options.visible !== false;
 
-        /**
-         * All child series that are linked to the current series through the
-         * [linkedTo](https://api.highcharts.com/highcharts/series.line.linkedTo)
-         * option.
-         *
-         * @name Highcharts.Series#linkedSeries
-         * @type {Array<Highcharts.Series>}
-         * @readonly
-         */
         series.linkedSeries = [];
         // Bind the axes
         series.bindAxes();
 
         extend<Series>(series, {
-            /**
-             * The series name as given in the options. Defaults to
-             * "Series {n}".
-             *
-             * @name Highcharts.Series#name
-             * @type {string}
-             */
             name: options.name,
             state: '',
-            /**
-             * Read only. The series' visibility state as set by {@link
-             * Series#show}, {@link Series#hide}, or in the initial
-             * configuration.
-             *
-             * @name Highcharts.Series#visible
-             * @type {boolean}
-             */
-            visible, // True by default
-            /**
-             * Read only. The series' selected state as set by {@link
-             * Highcharts.Series#select}.
-             *
-             * @name Highcharts.Series#selected
-             * @type {boolean}
-             */
+            visible,
             selected: options.selected === true // False by default
         });
 
@@ -638,20 +884,6 @@ class Series {
                         insertItem(series, axis.series);
 
                         // Set this series.xAxis or series.yAxis reference
-                        /**
-                         * Read only. The unique xAxis object associated
-                         * with the series.
-                         *
-                         * @name Highcharts.Series#xAxis
-                         * @type {Highcharts.Axis}
-                         */
-                        /**
-                         * Read only. The unique yAxis object associated
-                         * with the series.
-                         *
-                         * @name Highcharts.Series#yAxis
-                         * @type {Highcharts.Axis}
-                         */
                         (series as any)[coll] = axis;
 
                         // Mark dirty for redraw
@@ -837,11 +1069,6 @@ class Series {
         );
 
         // Use copy to prevent undetected changes (#9762)
-        /**
-         * Contains series options by the user without defaults.
-         * @name Highcharts.Series#userOptions
-         * @type {Highcharts.SeriesOptionsType}
-         */
         this.userOptions = e.userOptions;
 
         const options: SeriesTypeOptions = merge(
@@ -854,7 +1081,7 @@ class Series {
         );
 
         // The tooltip options are merged between global and series specific
-        // options. Importance order ascendingly:
+        // options. Importance in ascending order:
         // globals: (1)tooltip, (2)plotOptions.series,
         // (3)plotOptions[this.type]
         // init userOptions with possible later updates: 4-6 like 1-3 and
@@ -1309,6 +1536,7 @@ class Series {
         return true;
     }
 
+    /** @internal */
     public dataColumnKeys(): Array<string> {
         return ['x', ...(this.pointArrayMap || ['y'])];
     }
@@ -1319,7 +1547,7 @@ class Series {
      * `updatePoints`), and may later be mutated when updating the chart
      * data.
      *
-     * Note the difference in behaviour when setting the same amount of
+     * Note the difference in behavior when setting the same amount of
      * points, or a different amount of points, as handled by the
      * `updatePoints` parameter.
      *
@@ -1991,38 +2219,8 @@ class Series {
             }
         }
 
-        /**
-         * Read only. An array containing those values converted to points.
-         * In case the series data length exceeds the `cropThreshold`, or if
-         * the data is grouped, `series.data` doesn't contain all the
-         * points. Also, in case a series is hidden, the `data` array may be
-         * empty. In case of cropping, the `data` array may contain `undefined`
-         * values, instead of points. To access raw values,
-         * `series.options.data` will always be up to date. `Series.data` only
-         * contains the points that have been created on demand. To modify the
-         * data, use
-         * {@link Highcharts.Series#setData} or
-         * {@link Highcharts.Point#update}.
-         *
-         * @see Series.points
-         *
-         * @name Highcharts.Series#data
-         * @type {Array<Highcharts.Point>}
-         */
         series.data = data;
 
-        /**
-         * An array containing all currently visible point objects. In case
-         * of cropping, the cropped-away points are not part of this array.
-         * The `series.points` array starts at `series.cropStart` compared
-         * to `series.data` and `series.options.data`. If however the series
-         * data is grouped, these can't be correlated one to one. To modify
-         * the data, use {@link Highcharts.Series#setData} or
-         * {@link Highcharts.Point#update}.
-         *
-         * @name Highcharts.Series#points
-         * @type {Array<Highcharts.Point>}
-         */
         series.points = points;
 
         fireEvent(this, 'afterGeneratePoints');
@@ -2153,24 +2351,7 @@ class Series {
     public applyExtremes(): DataExtremesObject {
         const dataExtremes = this.getExtremes();
 
-        /**
-         * Contains the minimum value of the series' data point. Some series
-         * types like `networkgraph` do not support this property as they
-         * lack a `y`-value.
-         * @name Highcharts.Series#dataMin
-         * @type {number|undefined}
-         * @readonly
-         */
         this.dataMin = dataExtremes.dataMin;
-
-        /**
-         * Contains the maximum value of the series' data point. Some series
-         * types like `networkgraph` do not support this property as they
-         * lack a `y`-value.
-         * @name Highcharts.Series#dataMax
-         * @type {number|undefined}
-         * @readonly
-         */
         this.dataMax = dataExtremes.dataMax;
 
         return dataExtremes;
@@ -2630,10 +2811,10 @@ class Series {
 
     /**
      * Draw the markers for line-like series types, and columns or other
-     * graphical representation for {@link Point} objects for other series
-     * types. The resulting element is typically stored as
-     * {@link Point.graphic}, and is created on the first call and updated
-     * and moved on subsequent calls.
+     * graphical representation for {@link Highcharts.Point} objects for other
+     * series types. The resulting element is typically stored as
+     * {@link Highcharts.Point#graphic}, and is created on the first call and
+     * updated and moved on subsequent calls.
      *
      * @function Highcharts.Series#drawPoints
      */
@@ -2805,8 +2986,8 @@ class Series {
             ),
             attribs: SVGAttributes = {};
 
-        let seriesStateOptions: SeriesStateHoverOptions,
-            pointStateOptions: PointMarkerStateHoverOptions,
+        let seriesStateOptions,
+            pointStateOptions,
             radius: number|undefined = pick(
                 pointMarkerOptions.radius,
                 seriesMarkerOptions?.radius
@@ -2814,9 +2995,8 @@ class Series {
 
         // Handle hover and select states
         if (state) {
-            seriesStateOptions = (seriesMarkerOptions as any).states[state];
-            pointStateOptions = pointMarkerOptions.states &&
-                (pointMarkerOptions.states as any)[state];
+            seriesStateOptions = seriesMarkerOptions?.states?.[state];
+            pointStateOptions = pointMarkerOptions.states?.[state];
 
             radius = pick(
                 pointStateOptions?.radius,
@@ -4940,17 +5120,39 @@ class Series {
  * */
 
 interface Series extends SeriesBase {
+    /** @internal */
     axisTypes: Array<'xAxis'|'yAxis'|'colorAxis'|'zAxis'>;
+
+    /** @internal */
     coll: 'series';
+
+    /** @internal */
     colorCounter: number;
+
+    /** @internal */
     directTouch: boolean;
+
+    /** @internal */
     hcEvents?: Record<string, Array<U.EventWrapperObject<Series>>>;
+
+    /** @internal */
     invertible: boolean;
+
+    /** @internal */
     isCartesian: boolean;
+
+    /** @internal */
     kdAxisArray: Array<keyof KDPointSearchObject>;
+
+    /** @internal */
     parallelArrays: Array<string>;
+
     pointClass: typeof Point;
+
+    /** @internal */
     requireSorting: boolean;
+
+    /** @internal */
     sorted: boolean;
 }
 
@@ -4984,12 +5186,16 @@ namespace Series {
      *
      * */
 
+    /** @internal */
     export interface CropDataObject {
         end: number;
         modified: DataTableCore;
         start: number;
     }
 
+    /**
+     * Translation and scale for the plot area of a series.
+     */
     export interface PlotBoxTransform extends SVGAttributes {
         scaleX: number;
         scaleY: number;
@@ -4997,6 +5203,7 @@ namespace Series {
         translateY: number;
     }
 
+    /** @internal */
     export interface ProcessedDataObject {
         cropped: (boolean|undefined);
         cropStart: number;
@@ -5130,7 +5337,7 @@ export default Series;
  */
 
 /**
- * Function callback when a series is clicked. Return false to cancel toogle
+ * Function callback when a series is clicked. Return false to cancel toggle
  * actions.
  *
  * @callback Highcharts.SeriesClickCallbackFunction
@@ -5171,54 +5378,6 @@ export default Series;
  * graph.
  *
  * @typedef {"butt"|"round"|"square"|string} Highcharts.SeriesLinecapValue
- */
-
-/**
- * Gets fired when the legend item belonging to the series is clicked. The
- * default action is to toggle the visibility of the series. This can be
- * prevented by returning `false` or calling `event.preventDefault()`.
- *
- * **Note:** This option is deprecated in favor of
- * Highcharts.LegendItemClickCallbackFunction.
- *
- * @deprecated 11.4.4
- * @callback Highcharts.SeriesLegendItemClickCallbackFunction
- *
- * @param {Highcharts.Series} this
- *        The series where the event occurred.
- *
- * @param {Highcharts.SeriesLegendItemClickEventObject} event
- *        The event that occurred.
- */
-
-/**
- * Information about the event.
- *
- * **Note:** This option is deprecated in favor of
- * Highcharts.LegendItemClickEventObject.
- *
- * @deprecated 11.4.4
- * @interface Highcharts.SeriesLegendItemClickEventObject
- *//**
- * Related browser event.
- * @name Highcharts.SeriesLegendItemClickEventObject#browserEvent
- * @type {global.PointerEvent}
- *//**
- * Whether the default action has been prevented (`true`) or not.
- * @name Highcharts.SeriesLegendItemClickEventObject#defaultPrevented
- * @type {boolean|undefined}
- *//**
- * Prevent the default action of toggle the visibility of the series.
- * @name Highcharts.SeriesLegendItemClickEventObject#preventDefault
- * @type {Function}
- *//**
- * Related series.
- * @name Highcharts.SeriesCheckboxClickEventObject#target
- * @type {Highcharts.Series}
- *//**
- * Event type.
- * @name Highcharts.SeriesCheckboxClickEventObject#type
- * @type {"checkboxClick"}
  */
 
 /**

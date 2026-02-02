@@ -69,6 +69,15 @@ declare module '../../Core/Chart/ChartBase' {
 }
 declare module '../../Core/Series/SeriesBase' {
     interface SeriesBase {
+        /**
+         * Play a sonification of a series.
+         *
+         * @function Highcharts.Series#sonify
+         * @param {Highcharts.SonificationChartEventCallback} [onEnd]
+         * Callback to call after play completed
+         *
+         * @requires modules/sonification
+         */
         sonify: (onEnd?: globalThis.Sonification.ChartCallback) => void;
     }
 }

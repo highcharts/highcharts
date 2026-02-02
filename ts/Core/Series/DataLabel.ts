@@ -78,13 +78,8 @@ declare module './PointOptions' {
          *
          * @sample highcharts/point/datalabels/
          *         Show a label for the last value
-         *
-         * @declare   Highcharts.DataLabelsOptions
-         * @extends   plotOptions.line.dataLabels
-         * @excluding zIndex
-         * @product   highcharts highstock gantt
          */
-        dataLabels?: (DataLabelOptions | Array<DataLabelOptions>);
+        dataLabels?: (PointDataLabelOptions | Array<PointDataLabelOptions>);
 
         /**
          * The rank for all this point's data labels in case of collision. If
@@ -97,6 +92,19 @@ declare module './PointOptions' {
         labelrank?: number;
     }
 }
+
+export interface PointDataLabelOptionsModifier {
+    /* *
+     *
+     *  Excluded
+     *
+     * */
+
+    zIndex?: undefined;
+}
+
+export type PointDataLabelOptions =
+    DataLabelOptions & PointDataLabelOptionsModifier;
 
 /** @internal */
 declare module './SeriesBase' {
@@ -173,8 +181,6 @@ declare module './SeriesOptions' {
          *         Choropleth map with data labels
          * @sample {highmaps} maps/demo/mappoint-datalabels-mapmarker
          *         Using data labels as map markers
-         *
-         * @product highcharts highstock highmaps gantt
          */
         dataLabels?: (DataLabelOptions|Array<DataLabelOptions>);
     }

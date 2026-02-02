@@ -39,6 +39,8 @@ import HeaderCell from '../Grid/Core/Table/Header/HeaderCell.js';
 import TableCell from '../Grid/Core/Table/Body/TableCell.js';
 import SvgIcons from '../Grid/Core/UI/SvgIcons.js';
 
+import ResponsiveComposition from '../Grid/Core/Responsive/ResponsiveComposition.js';
+
 import GridEvents from '../Grid/Pro/GridEvents.js';
 import CellEditingComposition from '../Grid/Pro/CellEditing/CellEditingComposition.js';
 import CreditsProComposition from '../Grid/Pro/Credits/CreditsProComposition.js';
@@ -138,6 +140,7 @@ ExportingComposition.compose(G.Grid);
 ValidatorComposition.compose(G.Table);
 CellRenderersComposition.compose(G.Column);
 PaginationComposition.compose(G.Pagination);
+ResponsiveComposition.compose(G.Grid);
 
 
 /* *
