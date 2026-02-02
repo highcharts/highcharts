@@ -930,16 +930,7 @@ export class Grid {
             }
         }
 
-        if (pagination?.isDirtyQuerying) {
-            pagination.updateControls(true);
-        }
-
-        if (pagination?.isDirtyAlignment) {
-            pagination.updateAlignmentClass();
-        }
-
-        delete pagination?.isDirtyQuerying;
-        delete pagination?.isDirtyAlignment;
+        pagination?.redraw();
         delete colResizing?.isDirty;
         flags.clear();
 

@@ -340,6 +340,19 @@ class Pagination {
         }
     }
 
+    public redraw(): void {
+        if (this.isDirtyQuerying) {
+            this.updateControls(true);
+        }
+
+        if (this.isDirtyAlignment) {
+            this.updateAlignmentClass();
+        }
+
+        delete this.isDirtyQuerying;
+        delete this.isDirtyAlignment;
+    }
+
     /**
      * Render pagination in a tfoot element.
      */
