@@ -103,7 +103,7 @@ export default class ContourSeries extends ScatterSeries {
      * - contourInterval,
      * - contourOffset,
      * - smoothColoring,
-     * - showContourLines,
+     * - lineWidth,
      * - contourLineColor
      * - colorAxisStops
      * - colorAxisStopsCount
@@ -186,10 +186,10 @@ export default class ContourSeries extends ScatterSeries {
         options = diffObjects(options, this.userOptions);
         const uniformOptions = [
             'smoothColoring',
-            'showContourLines',
             'contourInterval',
             'contourOffset',
-            'lineColor'
+            'lineColor',
+            'lineWidth'
         ] as const;
 
         for (const key of uniformOptions) {
@@ -336,7 +336,7 @@ export default class ContourSeries extends ScatterSeries {
                         usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
                     }),
 
-                    showContourLinesUniform: device.createBuffer({
+                    lineWidthUniform: device.createBuffer({
                         size: 4,
                         usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
                     }),
@@ -351,7 +351,6 @@ export default class ContourSeries extends ScatterSeries {
                         usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
                     }),
 
-                    // Let's assume the color axis has at most 64 stops
                     colorAxisStopsUniform: device.createBuffer({
                         size: Float32Array.BYTES_PER_ELEMENT * 64,
                         usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST
@@ -360,10 +359,6 @@ export default class ContourSeries extends ScatterSeries {
                     isInvertedUniform: device.createBuffer({
                         size: 4,
                         usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
-                    }),
-                    contourImg: device.createBuffer({
-                        size: Float32Array.BYTES_PER_ELEMENT * 4,
-                        usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ
                     })
                 };
 
@@ -375,7 +370,7 @@ export default class ContourSeries extends ScatterSeries {
                     contourIntervalUniform: contourIntervalUniformBuffer,
                     contourOffsetUniform: contourOffsetUniformBuffer,
                     smoothColoringUniform: smoothColoringUniformBuffer,
-                    showContourLinesUniform: showContourLinesUniformBuffer,
+                    lineWidthUniform: lineWidthUniformBuffer,
                     contourLineColor: contourLineColorBuffer,
                     colorAxisStopsCountUniform: colAxisStopsCountUniformBuffer,
                     colorAxisStopsUniform: colorAxisStopsUniformBuffer,
@@ -472,8 +467,8 @@ export default class ContourSeries extends ScatterSeries {
                     }, {
                         binding: 7,
                         resource: {
-                            buffer: showContourLinesUniformBuffer,
-                            label: 'showContourLinesUniformBuffer'
+                            buffer: lineWidthUniformBuffer,
+                            label: 'lineWidthUniformBuffer'
                         }
                     }, {
                         binding: 8,
@@ -495,16 +490,16 @@ export default class ContourSeries extends ScatterSeries {
                 this.renderFrame = function (): void {
                     this.setUniforms(false);
 
-                    const encoder = device.createCommandEncoder();
-
-                    const pass = encoder.beginRenderPass({
-                        colorAttachments: [{
-                            view: context.getCurrentTexture().createView(),
-                            loadOp: 'clear' as GPULoadOp,
-                            clearValue: [0, 0, 0, 0],
-                            storeOp: 'store' as GPUStoreOp
-                        }]
-                    });
+                    const encoder = device.createCommandEncoder(),
+                        currentTexture = context.getCurrentTexture(),
+                        pass = encoder.beginRenderPass({
+                            colorAttachments: [{
+                                view: currentTexture.createView(),
+                                loadOp: 'clear' as GPULoadOp,
+                                clearValue: [0, 0, 0, 0],
+                                storeOp: 'store' as GPUStoreOp
+                            }]
+                        });
 
                     pass.setPipeline(pipeline);
                     pass.setVertexBuffer(0, vertexBuffer);
@@ -534,7 +529,7 @@ export default class ContourSeries extends ScatterSeries {
                         );
 
                         encoder.copyTextureToBuffer(
-                            { texture: context.getCurrentTexture() },
+                            { texture: currentTexture },
                             {
                                 buffer: readback,
                                 bytesPerRow,
@@ -629,7 +624,7 @@ export default class ContourSeries extends ScatterSeries {
         this.setContourIntervalUniform(false);
         this.setContourOffsetUniform(false);
         this.setSmoothColoringUniform(false);
-        this.setShowContourLinesUniform(false);
+        this.setLineWidthUniform(false);
         this.setContourLineColorUniform(false);
         this.setIsInvertedUniform(renderFrame);
     }
@@ -687,14 +682,14 @@ export default class ContourSeries extends ScatterSeries {
     }
 
     /**
-     * Set the show contour lines uniform according to the series options.
+     * Set the line width uniform according to the series options.
      */
-    public setShowContourLinesUniform(renderFrame = true): void {
-        if (this.device && this.buffers?.showContourLinesUniform) {
+    public setLineWidthUniform(renderFrame = true): void {
+        if (this.device && this.buffers?.lineWidthUniform) {
             this.device.queue.writeBuffer(
-                this.buffers.showContourLinesUniform,
+                this.buffers.lineWidthUniform,
                 0,
-                new Float32Array([this.getShowContourLines()])
+                new Float32Array([this.getLineWidth()])
             );
             if (renderFrame) {
                 this.renderFrame?.();
@@ -801,7 +796,6 @@ export default class ContourSeries extends ScatterSeries {
      * WebGPU uniform.
      */
     private getContourInterval(): number {
-
         const interval = this.options.contourInterval ?? ((): number => {
             const [min, max] = this.getValueAxisExtremes(),
                 range = max - min;
@@ -812,6 +806,7 @@ export default class ContourSeries extends ScatterSeries {
         if (isNaN(interval) || interval <= 0) {
             return -1;
         }
+
         return interval;
     }
 
@@ -839,7 +834,7 @@ export default class ContourSeries extends ScatterSeries {
      * Returns the lineWidth from the series options, which controlls the
      * visibility of contour lines, in format of the WebGPU uniform.
      */
-    private getShowContourLines(): number {
+    private getLineWidth(): number {
         return this.userOptions.lineWidth ?? 1;
     }
 

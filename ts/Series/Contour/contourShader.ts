@@ -72,7 +72,7 @@ struct FragmentInput {
 @group(0) @binding(4) var<uniform> uContourInterval: f32;
 @group(0) @binding(5) var<uniform> uContourOffset: f32;
 @group(0) @binding(6) var<uniform> uSmoothColoring: u32;
-@group(0) @binding(7) var<uniform> uShowContourLines: u32;
+@group(0) @binding(7) var<uniform> uContourLineWidth: f32;
 @group(0) @binding(8) var<uniform> uContourLineColor: vec3f;
 
 fn getColor(value: f32) -> vec3<f32> {
@@ -99,7 +99,7 @@ fn fragmentMain(input: FragmentInput) -> @location(0) vec4f {
     let val = input.originalPos.z;
 
     // Contour lines
-    let lineWidth: f32 = 1.0;
+    let lineWidth: f32 = uContourLineWidth;
 
     let val_dx: f32 = dpdx(val);
     let val_dy: f32 = dpdy(val);
@@ -141,7 +141,7 @@ fn fragmentMain(input: FragmentInput) -> @location(0) vec4f {
 
     // Mix
     var pixelColor = bgColor;
-    if (uShowContourLines > 0u) {
+    if (lineWidth > 0.0) {
         pixelColor = mix(uContourLineColor, pixelColor, lineMask);
     }
 
