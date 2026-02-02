@@ -607,7 +607,7 @@ export interface TooltipOptions {
     * @default 0
     * @since next
     */
-    showDelay: number,
+    showDelay?: number,
 
     /**
      * Proximity snap for graphs or single points. It defaults to 10 for
