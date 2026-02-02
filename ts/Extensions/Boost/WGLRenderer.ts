@@ -477,7 +477,7 @@ class WGLRenderer {
             chartDestroyed = typeof chart.index === 'undefined',
             drawAsBar = asBar[series.type],
             zoneAxis = options.zoneAxis || 'y',
-            zones = options.zones || false,
+            zones = options.zones,
             threshold: number = options.threshold as any,
             pixelRatio = this.getPixelRatio();
 
@@ -538,14 +538,17 @@ class WGLRenderer {
                 actualFill === darkFill ? 'dark' : 'light'
             ];
         }
+        const cssVars = chart.boost?.cssVars || {};
 
         // Handle zones
-        if (zones && zones.length) { // #23571
+        if (zones?.length) { // #23571
             zoneColors = [];
 
             zones.forEach((zone, i): void => {
-                if (zone.color) {
-                    const zoneColor = color(zone.color).rgba as Color.RGBA;
+                if (typeof zone.color === 'string') {
+                    const zoneColor = color(resolveColorExpression(
+                        cssVars, zone.color
+                    )).rgba;
                     zoneColor[0] /= 255.0;
                     zoneColor[1] /= 255.0;
                     zoneColor[2] /= 255.0;
@@ -562,7 +565,10 @@ class WGLRenderer {
                     (series.pointAttribs && series.pointAttribs().fill) ||
                     series.color
                 );
-                zoneDefColor = color(seriesColor).rgba as Color.RGBA;
+                zoneDefColor = color(
+                    typeof seriesColor === 'string' ?
+                        resolveColorExpression(cssVars, seriesColor) : ''
+                ).rgba as Color.RGBA;
                 zoneDefColor[0] /= 255.0;
                 zoneDefColor[1] /= 255.0;
                 zoneDefColor[2] /= 255.0;
@@ -745,7 +751,7 @@ class WGLRenderer {
 
                     if (typeof pointAttr.fill === 'string') {
                         pointAttr.fill = resolveColorExpression(
-                            chart.boost?.cssVars || {}, pointAttr.fill
+                            cssVars, pointAttr.fill
                         );
                     }
 
@@ -768,7 +774,7 @@ class WGLRenderer {
 
                         if (typeof pointAttr.stroke === 'string') {
                             pointAttr.stroke = resolveColorExpression(
-                                chart.boost?.cssVars || {}, pointAttr.stroke
+                                cssVars, pointAttr.stroke
                             );
                         }
 
@@ -1011,7 +1017,7 @@ class WGLRenderer {
             }
 
             // Note: Boost requires that zones are sorted!
-            if (zones && zones.length) { // #23571
+            if (zones?.length) { // #23571
                 let zoneColor: Color.RGBA|undefined;
                 const pointValue = zoneAxis === 'x' ? x : y;
                 // Match getZone() logic: find zone where value > point value
