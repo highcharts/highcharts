@@ -39,6 +39,14 @@ import PaginationController from '../Querying/PaginationController';
 
 const { makeHTMLElement, formatText } = GridUtils;
 const { defined, fireEvent, isObject, merge } = Utilities;
+const paginationAlignments = [
+    'left',
+    'center',
+    'right',
+    'distributed'
+] as const;
+const alignmentClassName = (alignment: string): string =>
+    `${Globals.classNamePrefix}pagination-${alignment}`;
 
 /**
  *  Representing the pagination functionalities for the Grid.
@@ -305,19 +313,10 @@ class Pagination {
         this.updateButtonStates();
     }
 
-    private getAlignmentClass(): string | undefined {
-        const alignment = this.options?.alignment;
+    private getAlignmentClass(): string {
+        const alignment = this.options?.alignment || 'distributed';
 
-        switch (alignment) {
-            case 'left':
-                return Globals.getClassName('paginationLeft');
-            case 'center':
-                return Globals.getClassName('paginationCenter');
-            case 'right':
-                return Globals.getClassName('paginationRight');
-            case 'distributed':
-                return Globals.getClassName('paginationDistributed');
-        }
+        return alignmentClassName(alignment);
     }
 
     public updateAlignmentClass(): void {
@@ -327,17 +326,12 @@ class Pagination {
             return;
         }
 
-        wrapper.classList.remove(
-            Globals.getClassName('paginationLeft'),
-            Globals.getClassName('paginationCenter'),
-            Globals.getClassName('paginationRight'),
-            Globals.getClassName('paginationDistributed')
-        );
+        const alignmentClasses = paginationAlignments.map(alignmentClassName);
+
+        wrapper.classList.remove(...alignmentClasses);
 
         const alignmentClass = this.getAlignmentClass();
-        if (alignmentClass) {
-            wrapper.classList.add(alignmentClass);
-        }
+        wrapper.classList.add(alignmentClass);
     }
 
     public redraw(): void {
