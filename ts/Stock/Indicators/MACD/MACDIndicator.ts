@@ -218,7 +218,12 @@ class MACDIndicator extends SMAIndicator {
                     !this.options.signalLine.styles.lineColor
                 ) {
                     this.options.colorIndex = this.colorIndex + 1;
-                    this.getCyclic('color', void 0, this.chart.options.colors);
+                    this.getCyclic(
+                        'color',
+                        void 0,
+                        this.chart.options.colors ||
+                        this.chart.palette?.dataColors
+                    );
                     this.options.signalLine.styles.lineColor =
                         this.color as ColorString;
                 }
@@ -228,7 +233,12 @@ class MACDIndicator extends SMAIndicator {
                     !this.options.macdLine.styles.lineColor
                 ) {
                     this.options.colorIndex = this.colorIndex + 1;
-                    this.getCyclic('color', void 0, this.chart.options.colors);
+                    this.getCyclic(
+                        'color',
+                        void 0,
+                        this.chart.options.colors ||
+                        this.chart.palette?.dataColors
+                    );
                     this.options.macdLine.styles.lineColor =
                         this.color as ColorString;
                 }

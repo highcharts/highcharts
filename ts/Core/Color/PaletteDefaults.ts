@@ -90,7 +90,12 @@ const palette: PaletteOptions = {
 
         /**
          * Colors for data series and points
-         * @type {Array<Highcharts.ColorType>}
+         *
+         * @sample highcharts/palette/data-colors-points
+         *         Colors for points
+         * @sample highcharts/palette/data-colors-series
+         *         Colors for series
+         * @type   {Array<Highcharts.ColorType>}
          */
         colors: [
             '#2caffe',

@@ -1026,7 +1026,8 @@ class Series {
      * @function Highcharts.Series#getColor
      */
     public getColor(): void {
-        if (this.chart.styledMode) {
+        const chart = this.chart;
+        if (chart.styledMode) {
             this.getCyclic('color');
 
         } else if (this.options.colorByPoint) {
@@ -1036,8 +1037,9 @@ class Series {
             this.getCyclic(
                 'color',
                 this.options.color ||
-                (defaultOptions.plotOptions as any)[this.type].color,
-                this.chart.options.colors
+                defaultOptions.plotOptions[this.type]?.color,
+                chart.options.colors ||
+                chart.palette?.dataColors
             );
         }
     }

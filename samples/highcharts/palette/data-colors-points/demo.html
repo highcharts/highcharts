@@ -1,0 +1,22 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/controls@0.6.0" type="module"></script>
+
+<figure class="highcharts-figure">
+  <div id="container"></div>
+</figure>
+
+<div class="highcharts-controls-wrapper">
+  <highcharts-controls>
+    <highcharts-group header="Update options">
+      <highcharts-control path="palette.colorScheme" value="light dark" options="light dark,light,dark"></highcharts-control>
+      <highcharts-control path="palette.light.colors[0]" value="#2caffe"></highcharts-control>
+      <highcharts-control path="palette.light.colors[1]" value="#544fc5"></highcharts-control>
+      <highcharts-control path="palette.light.colors[2]" value="#00e272"></highcharts-control>
+      <highcharts-control path="palette.dark.colors[0]" value="#2caffe"></highcharts-control>
+      <highcharts-control path="palette.dark.colors[1]" value="#00e272"></highcharts-control>
+      <highcharts-control path="palette.dark.colors[2]" value="#efdf00"></highcharts-control>
+    </highcharts-group>
+  </highcharts-controls>
+</div>

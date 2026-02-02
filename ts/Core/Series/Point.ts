@@ -1129,23 +1129,25 @@ class Point {
      * @function Highcharts.Point#resolveColor
      */
     public resolveColor(): void {
-        const series = this.series,
-            optionsChart = series.chart.options.chart,
-            styledMode = series.chart.styledMode;
+        const { options, series } = this,
+            chart = series.chart,
+            optionsChart = chart.options.chart,
+            styledMode = chart.styledMode;
 
-        let color,
-            colors,
+        let color: ColorType|undefined,
             colorCount = optionsChart.colorCount,
-            colorIndex: number;
+            colorIndex: number|undefined;
 
         // Remove points nonZonedColor for later recalculation
         delete this.nonZonedColor;
-
         if (series.options.colorByPoint) {
             if (!styledMode) {
-                colors = series.options.colors || series.chart.options.colors;
-                color = (colors as any)[series.colorCounter];
-                colorCount = (colors as any).length;
+                const colors = series.options.colors ||
+                    chart.options.colors ||
+                    chart.palette?.dataColors;
+
+                color = colors?.[series.colorCounter];
+                colorCount = colors?.length;
             }
             colorIndex = series.colorCounter;
             series.colorCounter++;
@@ -1157,14 +1159,11 @@ class Point {
             if (!styledMode) {
                 color = series.color;
             }
-            colorIndex = series.colorIndex as any;
+            colorIndex = series.colorIndex;
         }
 
-
-        this.colorIndex = pick(this.options.colorIndex, colorIndex);
-
-
-        this.color = pick(this.options.color, color);
+        this.colorIndex = options.colorIndex ?? colorIndex;
+        this.color = options.color ?? color;
     }
 
     /**

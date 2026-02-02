@@ -30,6 +30,7 @@ import PaletteDefaults from './Color/PaletteDefaults.js';
 import Time from './Time.js';
 import U from './Utilities.js';
 const {
+    extend,
     fireEvent,
     merge
 } = U;
@@ -73,6 +74,10 @@ const defaultOptions: DefaultOptions = {
     palette: PaletteDefaults,
 
     /**
+     * This option has been deprecated, use the
+     * [palette.light.colors](#palette.light.colors) and/or
+     * [palette.dark.colors](#palette.dark.colors) option instead.
+     *
      * An array containing the default colors for the chart's series. When
      * all colors are used, new colors are pulled from the start again.
      *
@@ -84,30 +89,16 @@ const defaultOptions: DefaultOptions = {
      * are defined in CSS and applied either through series or point class
      * names, or through the [chart.colorCount](#chart.colorCount) option.
      *
-     * Since v13, the default is a CSS variable based color set.
-     *
      * @sample {highcharts} highcharts/chart/colors/
      *         Assign a global color theme
      * @sample highcharts/members/theme-v10/
      *         Latest release styled like version 10
      *
      * @type    {Array<(Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject)>}
-     * @default [
-     *     "var(--highcharts-color-0)", // #2caffe
-     *     "var(--highcharts-color-1)", // #544fc5
-     *     "var(--highcharts-color-2)", // #00e272
-     *     "var(--highcharts-color-3)", // #fe6a35
-     *     "var(--highcharts-color-4)", // #6b8abc
-     *     "var(--highcharts-color-5)", // #d568fb
-     *     "var(--highcharts-color-6)", // #2ee0ca
-     *     "var(--highcharts-color-7)", // #fa4b42
-     *     "var(--highcharts-color-8)", // #feb56a
-     *     "var(--highcharts-color-9)"  // #91e8e1
-     * ]
+     * @default undefined
+     * @deprecated
+     * @apioption colors
      */
-    colors: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(
-        (i: number): string => `var(--highcharts-color-${i})`
-    ),
 
     /**
      * Styled mode only. Configuration object for adding SVG definitions for
@@ -2972,7 +2963,15 @@ const defaultTime = new Time(defaultOptions.time, defaultOptions.lang);
  * Default options.
  */
 function getOptions(): DefaultOptions {
-    return defaultOptions;
+    return extend(
+        // Legacy support: keep colors as CSS variables
+        {
+            colors: PaletteDefaults.light?.colors?.map(
+                (c, i): string => `var(--highcharts-color-${i})`
+            )
+        },
+        defaultOptions
+    ) as DefaultOptions;
 }
 
 /**

@@ -8,22 +8,19 @@ QUnit.test('series.color: default to series.colors[0].', function (assert) {
                 }
             ]
         }),
-        color = chart.options.colors[0],
         series = chart.series[0];
     assert.strictEqual(
         series.color,
-        color,
-        'The series object has the property color with value of ' + color + '.'
+        'var(--highcharts-color-0)',
+        'The series object should have color 0'
     );
     const result = !!H.find(series.points, function (p) {
-        return p.color !== color;
+        return p.color !== 'var(--highcharts-color-0)';
     });
     assert.strictEqual(
         result,
         false,
-        'All points in the series has the property color with value of ' +
-            color +
-            '.'
+        'All points in the series should have color 0'
     );
 });
 

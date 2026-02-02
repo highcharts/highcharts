@@ -279,6 +279,10 @@ export interface NumberFormatterCallbackFunction {
  */
 export interface Options {
     /**
+     * This option has been deprecated, use the
+     * [palette.light.colors](#palette.light.colors) and/or
+     * [palette.dark.colors](#palette.dark.colors) option instead.
+     *
      * An array containing the default colors for the chart's series. When
      * all colors are used, new colors are pulled from the start again.
      *
@@ -295,18 +299,8 @@ export interface Options {
      * @sample highcharts/members/theme-v10/
      *         Latest release styled like version 10
      *
-     * @default [
-     *     "#2caffe",
-     *     "#544fc5",
-     *     "#00e272",
-     *     "#fe6a35",
-     *     "#6b8abc",
-     *     "#d568fb",
-     *     "#2ee0ca",
-     *     "#fa4b42",
-     *     "#feb56a",
-     *     "#91e8e1"
-     * ]
+     * @default undefined
+     * @deprecated
      */
     colors?: Array<ColorString>;
     /**

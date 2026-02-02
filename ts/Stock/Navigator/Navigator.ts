@@ -1810,6 +1810,9 @@ class Navigator {
             !(baseSeries && baseSeries.length) ||
             isArray(chartNavigatorSeriesOptions)
         ) {
+            const colors = chart.options.colors ||
+                chart.palette?.dataColors ||
+                [];
             navigator.hasNavigatorData = false;
             // Allow navigator.series to be an array
             chartNavigatorSeriesOptions =
@@ -1832,8 +1835,8 @@ class Navigator {
                         color: chart.series[i] &&
                         !chart.series[i].options.isInternal &&
                         chart.series[i].color ||
-                        (chart.options.colors as any)[i] ||
-                        (chart.options.colors as any)[0]
+                        colors[i] ||
+                        colors[0]
                     },
                     navSeriesMixin,
                     userSeriesOptions

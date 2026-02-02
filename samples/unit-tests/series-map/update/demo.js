@@ -52,8 +52,8 @@ QUnit.test('Chart update with map', assert => {
         getAttribs('fill'),
         {
             germany: 'var(--highcharts-neutral-color-3)',
-            iceland: Highcharts.getOptions().colors[0],
-            norway: Highcharts.getOptions().colors[0]
+            iceland: 'var(--highcharts-color-0)',
+            norway: 'var(--highcharts-color-0)'
         },
         'Fill colors should reflect data'
     );
@@ -98,7 +98,7 @@ QUnit.test('Chart update with map', assert => {
         getAttribs('fill'),
         {
             germany: 'var(--highcharts-neutral-color-3)',
-            iceland: Highcharts.getOptions().colors[0],
+            iceland: 'var(--highcharts-color-0)',
             norway: 'var(--highcharts-neutral-color-3)'
         },
         'Fill colors should reflect data'

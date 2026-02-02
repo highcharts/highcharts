@@ -122,6 +122,7 @@ export default class Palette {
     public options: PaletteOptions = merge(PaletteDefaults);
     public renderer: SVGRenderer;
     public cssVars: CSSVars = { light: {}, dark: {} };
+    public dataColors?: Array<ColorType>;
 
     /* *
      *
@@ -245,6 +246,10 @@ export default class Palette {
         if (chart) {
             chart.options.palette = options;
         }
+
+        this.dataColors = options.light?.colors?.map(
+            (c, i): ColorType => `var(--highcharts-color-${i})`
+        );
 
         if (options.injectCSS !== false) {
             this.injectCSS(options);

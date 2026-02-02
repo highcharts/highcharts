@@ -95,8 +95,8 @@ QUnit.test(
 
         assert.strictEqual(
             chart.series[0].legendItem.symbol.attr('fill'),
-            chart.options.colors[0],
-            `First symbol should be set to default color when 
+            'var(--highcharts-color-0)',
+            `First symbol should be set to default color when
             series.legendColor is undefined.`
         );
 
@@ -120,7 +120,7 @@ QUnit.test(
         assert.strictEqual(
             chart.series[2].points[0].legendItem.symbol.attr('fill'),
             newColor,
-            `First symbol of pie series should be red when 
+            `First symbol of pie series should be red when
             series.legendColor is set to red.`
         );
 
@@ -130,8 +130,8 @@ QUnit.test(
 
         assert.strictEqual(
             chart.series[2].points[0].legendItem.symbol.attr('fill'),
-            chart.options.colors[0],
-            `First symbol of pie series should be set to default color when 
+            'var(--highcharts-color-0)',
+            `First symbol of pie series should be set to default color when
             series.legendColor is undefined.`
         );
     }
