@@ -292,13 +292,19 @@ class RowsVirtualizer {
     private renderRows(rowCursor: number): void {
         const { viewport: vp, buffer } = this;
         const rowCount = vp.dataTable.getRowCount();
+        const isVirtualization = this.viewport.virtualRows;
+
+        if (isVirtualization && vp.grid.popups.size) {
+            for (const popup of Array.from(vp.grid.popups)) {
+                popup.hide();
+            }
+        }
 
         // Stop rendering if there are no rows to render.
         if (rowCount < 1) {
             return;
         }
 
-        const isVirtualization = this.viewport.virtualRows;
         const rowsPerPage = isVirtualization ? Math.ceil(
             (vp.grid.tableElement?.clientHeight || 0) /
             this.defaultRowHeight
