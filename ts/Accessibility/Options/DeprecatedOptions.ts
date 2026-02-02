@@ -1,12 +1,13 @@
 /* *
  *
- *  (c) 2009-2025 Øystein Moseng
+ *  (c) 2009-2026 Highsoft AS
+ *  Author: Øystein Moseng
  *
  *  Default options for accessibility.
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -18,6 +19,8 @@
  *  chart.typeDescription -> accessibility.typeDescription
  *  series.description -> series.accessibility.description
  *  series.exposeElementToA11y -> series.accessibility.exposeAsGroupOnly
+ *  series.pointDescriptionFormat ->
+ *      series.accessibility.point.descriptionFormat
  *  series.pointDescriptionFormatter ->
  *      series.accessibility.pointDescriptionFormatter
  *  series.accessibility.pointDescriptionFormatter ->
@@ -101,6 +104,70 @@ declare module '../../Core/Options'{
     interface Options {
         /** @deprecated */
         exposeElementToA11y?: SeriesAccessibilityOptions['exposeAsGroupOnly'];
+    }
+}
+
+declare module '../../Core/Series/SeriesOptions'{
+    interface SeriesOptions {
+        /**
+         * Deprecated. Use
+         * [plotOptions.series.accessibility.description](#plotOptions.series.accessibility.description)
+         * instead.
+         *
+         * A description of the series to add to the screen reader information
+         * about the series.
+         *
+         * @since      5.0.0
+         * @requires   modules/accessibility
+         * @deprecated 8.0.0
+         */
+        description?: SeriesAccessibilityOptions['description'];
+
+        /**
+         * Deprecated. Use
+         * [plotOptions.series.accessibility.point.descriptionFormatter](#plotOptions.series.accessibility.point.descriptionFormatter)
+         * instead.
+         *
+         * Same as
+         * [accessibility.series.descriptionFormatter](#accessibility.series.descriptionFormatter),
+         * but for an individual series. Overrides the chart wide configuration.
+         *
+         * @requires   modules/accessibility
+         * @since      5.0.12
+         * @deprecated 8.0.0
+         */
+        pointDescriptionFormatter?:
+        SeriesAccessibilityOptions['point']['descriptionFormatter'];
+
+        /**
+         * Deprecated. Use
+         * [plotOptions.series.accessibility.point.descriptionFormat](#plotOptions.series.accessibility.point.descriptionFormat)
+         * instead.
+         *
+         * Same as
+         * [accessibility.point.descriptionFormat](#accessibility.point.descriptionFormat),
+         * but for an individual series. Overrides the chart wide configuration.
+         *
+         * @requires   modules/accessibility
+         * @since      11.1.0
+         * @deprecated next
+         */
+        pointDescriptionFormat?:
+        SeriesAccessibilityOptions['point']['descriptionFormat'];
+
+        /**
+         * Deprecated. Use
+         * [series.accessibility.keyboardNavigation](#plotOptions.series.accessibility.keyboardNavigation)
+         * instead.
+         *
+         * If set to `true`, the accessibility module will skip past the points
+         * in this series for keyboard navigation.
+         *
+         * @requires   modules/accessibility
+         * @since      5.0.12
+         * @deprecated 8.0.0
+         */
+        skipKeyboardNavigation?: boolean;
     }
 }
 
@@ -233,6 +300,9 @@ function copyDeprecatedSeriesOptions(chart: Chart): void {
     const oldToNewSeriesOptions = {
         description: ['accessibility', 'description'],
         exposeElementToA11y: ['accessibility', 'exposeAsGroupOnly'],
+        pointDescriptionFormat: [
+            'accessibility', 'point', 'descriptionFormat'
+        ],
         pointDescriptionFormatter: [
             'accessibility', 'point', 'descriptionFormatter'
         ],

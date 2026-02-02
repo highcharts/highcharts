@@ -1,6 +1,6 @@
 ---
-name: Reversed Y axis
-authors:
-  - Torstein Hønsi
-js_wrap: b
+ name: Demo of yAxis.reversed
+ authors:
+   - Torstein Hønsi
+ js_wrap: b
 ...

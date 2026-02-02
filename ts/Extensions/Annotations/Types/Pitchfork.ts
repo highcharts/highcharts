@@ -1,6 +1,5 @@
 /* *
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -13,9 +12,11 @@
  * */
 
 import type { AnnotationPointType } from '../AnnotationSeries';
-import type { ControllableShapeOptions } from '../Controllables/ControllableOptions';
+import type {
+    AnnotationShapeOptionsOptions
+} from '../AnnotationOptions';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
-import type MockPointOptions from '../MockPointOptions';
+import type MockPointOptions from '../AnnotationMockPointOptionsObject';
 
 import Annotation from '../Annotation.js';
 import D from '../../../Core/Defaults.js';
@@ -25,7 +26,7 @@ import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
 const { merge } = U;
 
-if (defaultOptions.annotations) {
+if (defaultOptions.annotations?.types) {
     defaultOptions.annotations.types.pitchfork = merge(
         defaultOptions.annotations.types.infinityLine,
         /**
@@ -74,6 +75,7 @@ if (defaultOptions.annotations) {
  *
  * */
 
+/** @internal */
 class Pitchfork extends InfinityLine {
 
     public static topLineEdgePoint = Pitchfork.outerLineEdgePoint(1);
@@ -253,6 +255,7 @@ class Pitchfork extends InfinityLine {
  *
  * */
 
+/** @internal */
 interface Pitchfork {
     defaultOptions: InfinityLine['defaultOptions'];
 }
@@ -264,12 +267,35 @@ interface Pitchfork {
  * */
 
 namespace Pitchfork {
+    /**
+     * Options for the pitchfork annotation type.
+     *
+     * @sample highcharts/annotations-advanced/pitchfork/
+     *         Pitchfork
+     *
+     * @extends      annotations.types.infinityLine
+     * @product      highstock
+     * @optionparent annotations.types.pitchfork
+     */
     export interface Options extends InfinityLine.Options {
         typeOptions: TypeOptions;
     }
     export interface TypeOptions extends InfinityLine.TypeOptions {
-        innerBackground: ControllableShapeOptions;
-        outerBackground: ControllableShapeOptions;
+        /**
+         * Inner background options.
+         *
+         * @extends   annotations.shapeOptions
+         * @excluding height, r, type, width
+         */
+        innerBackground: AnnotationShapeOptionsOptions;
+
+        /**
+         * Outer background options.
+         *
+         * @extends   annotations.shapeOptions
+         * @excluding height, r, type, width
+         */
+        outerBackground: AnnotationShapeOptionsOptions;
     }
 }
 
@@ -279,6 +305,7 @@ namespace Pitchfork {
  *
  * */
 
+/** @internal */
 declare module './AnnotationType'{
     interface AnnotationTypeRegistry {
         pitchfork: typeof Pitchfork;

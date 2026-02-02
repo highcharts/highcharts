@@ -19,7 +19,7 @@ QUnit.test('Hide label with useHTML (#4938)', function (assert) {
     );
 });
 
-QUnit.test('Legend rtl and useHTML(#4449)', function (assert) {
+QUnit.test('Legend rtl and useHTML (#4449)', function (assert) {
     var ren = new Highcharts.Renderer(
         document.getElementById('container'),
         500,

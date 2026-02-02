@@ -52,13 +52,12 @@ By default, rows adjust their height to fit all content, which can reduce perfor
 ```
 These options can be used to configure how the table should be rendered.
 
-[`table.className`](https://api.highcharts.com/grid/#interfaces/Grid_Options.TableSettings#className) is appended to the `<table>` element.
+[`table.className`](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.TableSettings#className) is appended to the `<table>` element.
 
-[`header.enabled: false`](https://api.highcharts.com/grid/#interfaces/Grid_Options.HeaderSettings#enabled) disables all [column headers](https://www.highcharts.com/docs/grid/header) by not rendering the `thead` element.
+[`header.enabled: false`](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.HeaderSettings#enabled) disables all [column headers](https://www.highcharts.com/docs/grid/header) by not rendering the `thead` element.
 
 [`columns.resizing.mode`](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.ResizingOptions#mode) is used to configure initial column widths.
 
 [`columns.resizing.mode: "full"`](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.ResizingOptions#mode) renders a full width (`width: 100%;`) responsive table with evenly distributed column widths. `columns.resizing.mode: "fixed"` renders a table were columns have a fixed width in pixels. It should be set to support your specific use case.
-
 
 

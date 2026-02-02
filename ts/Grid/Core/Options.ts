@@ -2,11 +2,11 @@
  *
  *  Grid options
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -25,9 +25,14 @@ import type {
     HeaderCellA11yOptions,
     LangAccessibilityOptions
 } from './Accessibility/A11yOptions';
-import type { PaginationLangOptions, PaginationOptions } from './Pagination/PaginationOptions';
-import type ColumnResizing from './Table/ColumnResizing/ColumnResizing';
+import type {
+    PaginationLangOptions,
+    PaginationOptions
+} from './Pagination/PaginationOptions';
+import type { ColumnResizingMode } from './Table/ColumnResizing/ColumnResizing';
+import type { ColumnDataType } from './Table/Column';
 import type DataTable from '../../Data/DataTable';
+import type { CellType as DataTableCellType } from '../../Data/DataTable';
 import type DataTableOptions from '../../Data/DataTableOptions';
 import type Cell from './Table/Cell';
 import type Column from './Table/Column';
@@ -44,15 +49,16 @@ import type {
  * */
 
 /**
- * The resizing strategy of the columns in the grid structure.
- */
-export type ColumnResizingMode = ColumnResizing.ModeType;
-
-/**
  * Callback function to be called when a header event is triggered. Returns a
  * formatted cell's string.
  */
 export type CellFormatterCallback = (this: Cell) => string;
+
+/**
+ * Callback function to be called when a header event is triggered. Returns a
+ * formatted header's string.
+ */
+export type HeaderFormatterCallback = (this: Column) => string;
 
 /**
  * Column sorting order type.
@@ -107,7 +113,7 @@ export interface Options {
      *
      * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-lite/basic/grouped-headers | Grouped headers}
      */
-    header?: Array<GroupedHeaderOptions|string>;
+    header?: Array<GroupedHeaderOptions | string>;
 
     /**
      * The unique id of the grid. It is generated automatically, if not set.
@@ -326,7 +332,7 @@ export interface ColumnOptions {
      * If not set, the data type is inferred from the first cell in the
      * column.
      */
-    dataType?: Column.DataType;
+    dataType?: ColumnDataType;
 
     /**
      * Options for all the header cells in the column.
@@ -341,9 +347,9 @@ export interface ColumnOptions {
     sorting?: ColumnSortingOptions;
 
     /**
-     * The width of the column. It can be set in pixels or as a percentage of
-     * the table width. If unset, the width is distributed evenly between all
-     * columns.
+     * The width of the column. It can be set in pixels, as a percentage of the
+     * table width, or `'auto'`. If unset or `'auto'`, the width is distributed
+     * evenly between columns without a fixed width.
      *
      * This option does not work with the `resizing` option set to `full`.
      *
@@ -425,7 +431,7 @@ export interface ColumnHeaderOptions {
      * @return
      * A string to be set as a header cell's content.
      */
-    formatter?: CellFormatterCallback;
+    formatter?: HeaderFormatterCallback;
 }
 
 /**
@@ -444,6 +450,12 @@ export interface ColumnSortingOptions {
      *
      * @default true
      */
+    enabled?: boolean;
+
+    /**
+     * @deprecated
+     * Use `enabled` instead
+     */
     sortable?: boolean;
 
     /**
@@ -461,7 +473,7 @@ export interface ColumnSortingOptions {
      * A number indicating whether the first value (`a`) is less than (`-1`),
      * equal to (`0`), or greater than (`1`) the second value (`b`).
      */
-    compare?: (a: DataTable.CellType, b: DataTable.CellType) => number;
+    compare?: (a: DataTableCellType, b: DataTableCellType) => number;
 }
 
 /**
@@ -475,6 +487,12 @@ export interface IndividualColumnSortingOptions extends ColumnSortingOptions {
      * @default null
      */
     order?: ColumnSortingOrder;
+
+    /**
+     * Priority of this column when multiple columns are sorted. Lower numbers
+     * have higher priority.
+     */
+    priority?: number;
 }
 
 /**

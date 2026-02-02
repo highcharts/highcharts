@@ -1,9 +1,12 @@
+/* SPDX-License-Identifier: LicenseRef-Highcharts */
+
 /**
  * @license Highcharts Grid Pro v@product.version@
  *
  * (c) 2009-2025 Highsoft AS
  *
- * License: www.highcharts.com/license
+ * A commercial license may be required depending on use.
+ * See www.highcharts.com/license
  */
 
 @import url("./grid-lite.css");
@@ -124,12 +127,11 @@
     justify-content: center;
 }
 
-.hcg-cell-editing-container:has(input[type="checkbox"]) {
+.hcg-cell-editing-container:has(.hcg-input[type="checkbox"]) {
     padding: var(--ig-padding);
 }
 
-.hcg-table tbody td.hcg-edited-cell input:not([type="checkbox"]),
-.hcg-table tbody td.hcg-edited-cell select {
+.hcg-table tbody td.hcg-edited-cell .hcg-input:not([type="checkbox"]) {
     border-width: 0;
     position: absolute;
     top: 0;
@@ -139,21 +141,20 @@
     outline: none;
     float: left;
     font: var(--ig-font);
-    background: transparent;
+    background-color: transparent;
     color: unset;
     padding: var(--ig-padding);
     max-height: unset;
     height: unset;
     border-radius: unset;
-    line-height: inherit;
+    line-height: 1.2em;
 }
 
 .hcg-table tbody td.hcg-edited-cell select {
-    appearance: base-select;
+    appearance: none;
 }
 
-.hcg-table tbody td.hcg-edited-cell-error input,
-.hcg-table tbody td.hcg-edited-cell-error select {
+.hcg-table tbody td.hcg-edited-cell-error .hcg-input {
     color: var(--ig-color);
     box-shadow: inset 0 0 0 var(--ig-focus-ring-width) var(--ig-negative-border-color) !important;
     background-color: var(--ig-negative-background) !important;

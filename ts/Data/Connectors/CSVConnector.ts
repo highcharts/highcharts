@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Torstein Hønsi
@@ -23,12 +23,18 @@
  *
  * */
 
-import type DataEvent from '../DataEvent';
+import type {
+    DataEventDetail
+} from '../DataEvent';
 import type CSVConnectorOptions from './CSVConnectorOptions';
-import type DataTable from '../DataTable';
+import type {
+    ColumnCollection as DataTableColumnCollection
+} from '../DataTable';
 
 import CSVConverter from '../Converters/CSVConverter.js';
-import DataConnector from './DataConnector.js';
+import DataConnector, {
+    type Event as DataConnectorEvent
+} from './DataConnector.js';
 import U from '../../Core/Utilities.js';
 const { merge, fireEvent } = U;
 
@@ -113,23 +119,23 @@ class CSVConnector extends DataConnector {
      * Overrides the DataConnector method. Emits an event on the connector to
      * all registered callbacks of this event.
      *
-     * @param {CSVConnector.Event} e
+     * @param {Event} e
      * Event object containing additional event information.
      */
-    public emit(e: CSVConnector.Event): void {
+    public emit(e: Event): void {
         fireEvent(this, e.type, e);
     }
 
     /**
      * Initiates the loading of the CSV source to the connector
      *
-     * @param {DataEvent.Detail} [eventDetail]
+     * @param {DataEventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @emits CSVConnector#load
      * @emits CSVConnector#afterLoad
      */
-    public load(eventDetail?: DataEvent.Detail): Promise<this> {
+    public load(eventDetail?: DataEventDetail): Promise<this> {
         const connector = this;
         const options = connector.options;
         const { csv, csvURL, dataTables, decimalPoint } = options;
@@ -172,7 +178,7 @@ class CSVConnector extends DataConnector {
                             return new CSVConverter(
                                 merge(options, converterOptions));
                         },
-                        (converter, data): DataTable.ColumnCollection =>
+                        (converter, data): DataTableColumnCollection =>
                             converter.parse({ csv: data })
                     );
                 }
@@ -200,27 +206,15 @@ class CSVConnector extends DataConnector {
 
 /* *
  *
- *  Class Namespace
+ *  Declarations
  *
  * */
 
 /**
- * Types for class-specific options and events.
+ * Event objects fired from CSVConnector events.
  */
-namespace CSVConnector {
-
-    /* *
-     *
-     *  Declarations
-     *
-     * */
-
-    /**
-     * Event objects fired from CSVConnector events.
-     */
-    export interface Event extends DataConnector.Event {
-        readonly csv?: string;
-    }
+export interface Event extends DataConnectorEvent {
+    readonly csv?: string;
 }
 
 /* *

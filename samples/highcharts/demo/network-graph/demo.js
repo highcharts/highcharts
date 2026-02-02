@@ -63,6 +63,7 @@ Highcharts.chart('container', {
         networkgraph: {
             keys: ['from', 'to'],
             layoutAlgorithm: {
+                maxIterations: 72,
                 enableSimulation: true,
                 friction: -0.9,
                 gravitationalConstant:

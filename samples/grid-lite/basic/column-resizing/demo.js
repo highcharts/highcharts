@@ -1,77 +1,134 @@
-const grid = Grid.grid('container', {
-    dataTable: {
-        columns: {
-            product: Array.from({ length: 40 }, (_, i) => `A${i}`),
-            weight: Array.from({ length: 40 }, (_, i) => `B${i}`),
-            price: Array.from({ length: 40 }, (_, i) => `C${i}`),
-            icon: Array.from({ length: 40 }, (_, i) => `E${i}`),
-            meta: Array.from({ length: 40 }, (_, i) => `F${i}`)
+const columnIds = ['A', 'B', 'C', 'D', 'E'];
+Grid.setOptions({
+    columnDefaults: {
+        cells: {
+            formatter() {
+                const rawWidth = this.column.options.width;
+                if (rawWidth === 'auto' || rawWidth === void 0) {
+                    return 'auto';
+                }
+
+                if (typeof rawWidth === 'number') {
+                    return `${Math.round(this.column.getWidth() * 10) / 10}px`;
+                }
+
+                return rawWidth;
+            }
         }
     },
-    columns: [{
-        id: 'product',
-        header: {
-            format: '20% width'
-        },
-        width: '20%'
-    }, {
-        id: 'weight',
-        header: {
-            format: '100px width'
-        },
-        width: '100px'
-    }, {
-        id: 'price',
-        header: {
-            format: 'Not defined width'
+    dataTable: {
+        columns: columnIds.reduce((acc, columnId) => {
+            acc[columnId] = [''];
+            return acc;
+        }, {})
+    },
+    rendering: {
+        rows: {
+            minVisibleRows: 1
         }
-    }, {
-        id: 'icon',
-        header: {
-            format: '15% width'
-        },
-        width: '15%'
-    }, {
-        id: 'meta',
-        header: {
-            format: 'Not defined width'
-        }
-    }]
+    }
 });
 
-document.getElementById('select-distr').addEventListener('change', e => {
-    grid.update({
+const grids = [
+    Grid.grid('grid-adjacent', {
+        caption: {
+            text: 'Adjacent resizing'
+        },
         rendering: {
             columns: {
                 resizing: {
-                    mode: e.target.value
+                    mode: 'adjacent'
                 }
             }
         }
-    });
-});
-
-document.getElementById('cbx-virt').addEventListener('change', e => {
-    grid.update({
+    }),
+    Grid.grid('grid-independent', {
+        caption: {
+            text: 'Independent resizing'
+        },
         rendering: {
-            rows: {
-                virtualization: e.target.checked
+            columns: {
+                resizing: {
+                    mode: 'independent'
+                }
             }
         }
+    }),
+    Grid.grid('grid-distributed', {
+        caption: {
+            text: 'Distributed resizing'
+        },
+        rendering: {
+            columns: {
+                resizing: {
+                    mode: 'distributed'
+                }
+            }
+        }
+    })
+];
+
+
+// =============== HELPERS ===============
+
+const resetButtons = document.querySelectorAll('[data-grid-index]');
+const updateWidthRow = grid => {
+    const row = grid?.viewport?.rows?.[0];
+    row?.update();
+};
+
+const findGridForTarget = target => grids.find(
+    grid => grid?.container && grid.container.contains(target)
+);
+
+let updateScheduled = false;
+const scheduleGridUpdate = grid => {
+    if (updateScheduled || !grid) {
+        return;
+    }
+
+    updateScheduled = true;
+    requestAnimationFrame(() => {
+        updateScheduled = false;
+        updateWidthRow(grid);
+    });
+};
+
+const handleResizePointer = event => {
+    const grid = findGridForTarget(event.target);
+    if (!grid) {
+        return;
+    }
+
+    scheduleGridUpdate(grid);
+};
+
+document.addEventListener('mousedown', handleResizePointer);
+document.addEventListener('mousemove', event => {
+    if (event.buttons !== 1) {
+        return;
+    }
+
+    handleResizePointer(event);
+});
+
+resetButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        const index = Number(button.getAttribute('data-grid-index'));
+        const grid = grids[index];
+        if (!grid) {
+            return;
+        }
+
+        grid.update({
+            columns: columnIds.map(id => ({
+                id,
+                width: 'auto'
+            }))
+        });
+
+        requestAnimationFrame(() => updateWidthRow(grid));
     });
 });
 
-document.getElementById('btn-remove-widths').addEventListener('click', () => {
-    grid.update({
-        columns: [{
-            id: 'product',
-            width: void 0
-        }, {
-            id: 'weight',
-            width: void 0
-        }, {
-            id: 'icon',
-            width: void 0
-        }]
-    });
-});
+requestAnimationFrame(() => grids.forEach(updateWidthRow));

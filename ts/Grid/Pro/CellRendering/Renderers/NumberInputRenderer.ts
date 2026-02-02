@@ -2,11 +2,11 @@
  *
  *  Date Input Cell Renderer class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sebastian Bochan
@@ -29,8 +29,8 @@ import type {
     EditModeRendererTypeName
 } from '../../CellEditing/CellEditingComposition';
 
-import CellRenderer from '../CellRenderer.js';
-import CellRendererRegistry from '../CellRendererRegistry.js';
+import { CellRenderer, CellRendererOptions } from '../CellRenderer.js';
+import { registerRenderer } from '../CellRendererRegistry.js';
 import NumberInputContent from '../ContentTypes/NumberInputContent.js';
 
 import U from '../../../../Core/Utilities.js';
@@ -59,11 +59,11 @@ class NumberInputRenderer extends CellRenderer implements EditModeRenderer {
     /**
      * Default options for the date input renderer.
      */
-    public static defaultOptions: NumberInputRenderer.Options = {
+    public static defaultOptions: NumberInputRendererOptions = {
         type: 'numberInput'
     };
 
-    public override options: NumberInputRenderer.Options;
+    public override options: NumberInputRendererOptions;
 
 
     /* *
@@ -72,7 +72,7 @@ class NumberInputRenderer extends CellRenderer implements EditModeRenderer {
      *
      * */
 
-    public constructor(column: Column, options: Partial<CellRenderer.Options>) {
+    public constructor(column: Column, options: Partial<CellRendererOptions>) {
         super(column);
         this.options = merge(NumberInputRenderer.defaultOptions, options);
     }
@@ -96,37 +96,34 @@ class NumberInputRenderer extends CellRenderer implements EditModeRenderer {
 
 /* *
  *
- *  Namespace
+ *  Declarations
  *
  * */
 
-namespace NumberInputRenderer {
+/**
+ * Options to control the number input renderer content.
+ */
+export interface NumberInputRendererOptions extends CellRendererOptions {
+    type: 'numberInput';
 
     /**
-     * Options to control the number input renderer content.
+     * Whether the number input is disabled.
      */
-    export interface Options extends CellRenderer.Options {
-        type: 'numberInput';
-
-        /**
-         * Whether the number input is disabled.
-         */
-        disabled?: boolean;
-
-        /**
-         * Attributes to control the number input.
-         */
-        attributes?: NumberInputAttributes;
-    }
+    disabled?: boolean;
 
     /**
      * Attributes to control the number input.
      */
-    export interface NumberInputAttributes {
-        min?: number;
-        max?: number;
-        step?: number;
-    }
+    attributes?: NumberInputAttributes;
+}
+
+/**
+ * Attributes to control the number input.
+ */
+export interface NumberInputAttributes {
+    min?: number;
+    max?: number;
+    step?: number;
 }
 
 
@@ -142,7 +139,7 @@ declare module '../CellRendererType' {
     }
 }
 
-CellRendererRegistry.registerRenderer('numberInput', NumberInputRenderer);
+registerRenderer('numberInput', NumberInputRenderer);
 
 
 /* *

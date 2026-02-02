@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sophie Bremer
@@ -23,8 +23,14 @@
  * */
 
 
-import type DataEvent from './DataEvent.js';
-import type DataTable from './DataTable.js';
+import type { DataEventDetail } from './DataEvent.js';
+import type {
+    CellType as DataTableCellType,
+    Column as DataTableColumn,
+    ColumnCollection as DataTableColumnCollection,
+    Row as DataTableRow,
+    RowObject as DataTableRowObject
+} from './DataTable.js';
 import type DataTableOptions from './DataTableOptions.js';
 
 import ColumnUtils from './ColumnUtils.js';
@@ -115,7 +121,7 @@ class DataTableCore {
 
     public readonly autoId: boolean;
 
-    public readonly columns: Record<string, DataTable.Column>;
+    public readonly columns: Record<string, DataTableColumn>;
 
     public readonly id: string;
 
@@ -197,7 +203,7 @@ class DataTableCore {
         columnId: string,
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         asReference?: true
-    ): (DataTable.Column|undefined) {
+    ): (DataTableColumn|undefined) {
         return this.columns[columnId];
     }
 
@@ -216,13 +222,13 @@ class DataTableCore {
         columnIds?: Array<string>,
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         asReference?: true
-    ): DataTable.ColumnCollection {
+    ): DataTableColumnCollection {
         return (columnIds || Object.keys(this.columns)).reduce(
-            (columns, columnId): DataTable.ColumnCollection => {
+            (columns, columnId): DataTableColumnCollection => {
                 columns[columnId] = this.columns[columnId];
                 return columns;
             },
-            {} as DataTable.ColumnCollection
+            {} as DataTableColumnCollection
         );
     }
 
@@ -241,9 +247,9 @@ class DataTableCore {
     public getRow(
         rowIndex: number,
         columnIds?: Array<string>
-    ): (DataTable.Row|undefined) {
+    ): (DataTableRow|undefined) {
         return (columnIds || Object.keys(this.columns)).map(
-            (key): DataTable.CellType => this.columns[key]?.[rowIndex]
+            (key): DataTableCellType => this.columns[key]?.[rowIndex]
         );
     }
 
@@ -267,9 +273,9 @@ class DataTableCore {
      */
     public setColumn(
         columnId: string,
-        column: DataTable.Column = [],
+        column: DataTableColumn = [],
         rowIndex: number = 0,
-        eventDetail?: DataEvent.Detail
+        eventDetail?: DataEventDetail
     ): void {
         this.setColumns({ [columnId]: column }, rowIndex, eventDetail);
     }
@@ -293,9 +299,9 @@ class DataTableCore {
      * @emits #afterSetColumns
      */
     public setColumns(
-        columns: DataTable.ColumnCollection,
+        columns: DataTableColumnCollection,
         rowIndex?: number,
-        eventDetail?: DataEvent.Detail
+        eventDetail?: DataEventDetail
     ): void {
         let rowCount = this.rowCount;
         objectEach(columns, (column, columnId): void => {
@@ -330,17 +336,30 @@ class DataTableCore {
      * @emits #afterSetRows
      */
     public setRow(
-        row: DataTable.RowObject,
+        row: DataTableRowObject,
         rowIndex: number = this.rowCount,
         insert?: boolean,
-        eventDetail?: DataEvent.Detail
+        eventDetail?: DataEventDetail
     ): void {
         const { columns } = this,
-            indexRowCount = insert ? this.rowCount + 1 : rowIndex + 1;
+            indexRowCount = insert ? this.rowCount + 1 : rowIndex + 1,
+            rowKeys = Object.keys(row);
 
-        objectEach(row, (cellValue, columnId): void => {
-            let column = columns[columnId] ||
-                eventDetail?.addColumns !== false && new Array(indexRowCount);
+        if (eventDetail?.addColumns !== false) {
+            for (let i = 0, iEnd = rowKeys.length; i < iEnd; i++) {
+                const key = rowKeys[i];
+
+                if (!columns[key]) {
+                    columns[key] = [];
+                }
+            }
+        }
+
+        objectEach(columns, (column, columnId): void => {
+            if (!column && eventDetail?.addColumns !== false) {
+                column = new Array(indexRowCount);
+            }
+
             if (column) {
                 if (insert) {
                     column = splice(
@@ -348,10 +367,10 @@ class DataTableCore {
                         rowIndex,
                         0,
                         true,
-                        [cellValue]
+                        [row[columnId] ?? null]
                     ).array;
                 } else {
-                    column[rowIndex] = cellValue;
+                    column[rowIndex] = row[columnId] ?? null;
                 }
                 columns[columnId] = column;
             }
@@ -368,11 +387,11 @@ class DataTableCore {
     }
 
     /**
-     * Returns the medified (clone) or the original data table if the modified
+     * Returns the modified (clone) or the original data table if the modified
      * one does not exist.
      *
      * @return {Highcharts.DataTableCore}
-     * The medified (clone) or the original data table.
+     * The modified (clone) or the original data table.
      */
     public getModified(): this {
         return this.modified || this;

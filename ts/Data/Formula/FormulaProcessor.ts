@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sophie Bremer
@@ -23,6 +23,7 @@
 
 
 import type DataTable from '../DataTable';
+import type { CellType as DataTableCellType } from '../DataTable';
 import type {
     Arguments,
     Formula,
@@ -370,7 +371,7 @@ function getRangeValues(
     for (
         let i = 0,
             iEnd = columnIds.length,
-            cell: DataTable.CellType;
+            cell: DataTableCellType;
         i < iEnd;
         ++i
     ) {

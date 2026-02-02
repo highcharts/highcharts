@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Karol Kolodziej
@@ -21,7 +21,10 @@
  * */
 
 import type { GridNamespace } from './GridTypes';
-import type PluginHandler from '../PluginHandler';
+import type {
+    DashboardsPlugin,
+    Event as PluginHandlerEvent
+} from '../PluginHandler';
 import GridComponent from '../Components/GridComponent/GridComponent.js';
 
 
@@ -61,7 +64,7 @@ function connectGrid(GridNS: GridNamespace): void {
  * Plugin context provided by the Dashboard.
  */
 function onRegister(
-    e: PluginHandler.Event
+    e: PluginHandlerEvent
 ): void {
     const { ComponentRegistry } = e;
     ComponentRegistry.registerComponent('Grid', GridComponent);
@@ -75,7 +78,7 @@ function onRegister(
  */
 function onUnregister(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    e: PluginHandler.Event
+    e: PluginHandlerEvent
 ): void { }
 
 /* *
@@ -88,7 +91,7 @@ const GridCustom = {
     connectGrid
 };
 
-const GridPlugin: PluginHandler.DashboardsPlugin<typeof GridCustom> = {
+const GridPlugin: DashboardsPlugin<typeof GridCustom> = {
     custom: GridCustom,
     name: 'Grid.DashboardsPlugin',
     onRegister,

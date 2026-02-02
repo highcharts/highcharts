@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -20,16 +20,16 @@
  *
  * */
 
-import type { Point } from '../../../Plugins/HighchartsTypes';
-import type Sync from '../../Sync/Sync';
-import type HCComponent from '../HighchartsComponent.js';
+import type { Point, Series } from '../../../Plugins/HighchartsTypes';
+import type { SyncPair } from '../../Sync/Sync';
+import type { Event as DataCursorEvent } from '../../../../Data/DataCursor';
+import type HighchartsComponent from '../HighchartsComponent.js';
+import type { HCConnectorHandler } from '../HighchartsComponent.js';
 import type {
     HighchartsHighlightSyncOptions
 } from '../HighchartsComponentOptions';
-import type { Series } from '../../../Plugins/HighchartsTypes';
 
 import Component from '../../Component.js';
-import DataCursor from '../../../../Data/DataCursor.js';
 import U from '../../../Utilities.js';
 const { error } = U;
 
@@ -47,12 +47,12 @@ const defaultOptions: HighchartsHighlightSyncOptions = {
     showCrosshair: true
 };
 
-const syncPair: Sync.SyncPair = {
+const syncPair: SyncPair = {
     emitter: function (this: Component): (() => void) | void {
         if (this.type !== 'Highcharts') {
             return;
         }
-        const component = this as HCComponent;
+        const component = this as HighchartsComponent;
 
         const { chart, board } = component;
         const highlightOptions =
@@ -68,9 +68,10 @@ const syncPair: Sync.SyncPair = {
         for (let i = 0, iEnd = chart.series?.length ?? 0; i < iEnd; ++i) {
             const series = chart.series[i];
             const seriesId = series.options.id ?? '';
-            const connectorHandler: HCComponent.HCConnectorHandler =
+            const connectorHandler: HCConnectorHandler =
                 component.seriesFromConnector[seriesId];
-            const table = connectorHandler?.connector?.getTable();
+            const connectorId = connectorHandler?.options.id;
+            const table = this.getDataTable(connectorId);
             let columnId: string | undefined;
 
             if (!table) {
@@ -78,7 +79,7 @@ const syncPair: Sync.SyncPair = {
             }
 
             const presTable = table?.getModified();
-            const colAssignment = connectorHandler.columnAssignment?.find(
+            const colAssignment = connectorHandler?.columnAssignment?.find(
                 (s): boolean => s.seriesId === seriesId
             );
             // TODO: Better way to recognize the column name.
@@ -145,14 +146,14 @@ const syncPair: Sync.SyncPair = {
         if (this.type !== 'Highcharts') {
             return;
         }
-        const component = this as HCComponent;
+        const component = this as HighchartsComponent;
         const groupKey = this.sync.syncConfig.highlight.group ?
             ':' + this.sync.syncConfig.highlight.group : '';
 
         const { chart, board } = component;
 
         const getHoveredPoint = (
-            e: DataCursor.Event
+            e: DataCursorEvent
         ): Point | undefined => {
             const { table, cursor } = e;
             const highlightOptions = this.sync
@@ -185,10 +186,15 @@ const syncPair: Sync.SyncPair = {
 
                     for (let i = 0, iEnd = seriesIds.length; i < iEnd; ++i) {
                         const seriesId = seriesIds[i];
-                        const connectorHandler: HCComponent.HCConnectorHandler =
-                                component.seriesFromConnector[seriesId];
+                        const connectorHandler: HCConnectorHandler =
+                            component.seriesFromConnector[seriesId];
+                        const dataTableKey =
+                            connectorHandler?.options.dataTableKey;
 
-                        if (connectorHandler?.connector?.getTable() !== table) {
+                        const connectorTable =
+                            connectorHandler?.connector?.getTable(dataTableKey);
+
+                        if (connectorTable !== table) {
                             continue;
                         }
 
@@ -241,7 +247,7 @@ const syncPair: Sync.SyncPair = {
             }
         };
 
-        const handleCursor = (e: DataCursor.Event): void => {
+        const handleCursor = (e: DataCursorEvent): void => {
             const highlightOptions = this.sync
                 .syncConfig.highlight as HighchartsHighlightSyncOptions;
 
@@ -302,7 +308,7 @@ const syncPair: Sync.SyncPair = {
             }
         };
 
-        const handleCursorOut = (e: DataCursor.Event): void => {
+        const handleCursorOut = (e: DataCursorEvent): void => {
             const highlightOptions = this.sync
                 .syncConfig.highlight as HighchartsHighlightSyncOptions;
 
@@ -389,12 +395,15 @@ const syncPair: Sync.SyncPair = {
         const registerCursorListeners = (): void => {
             const { dataCursor: cursor } = board;
             const { connectorHandlers } = this;
+
             if (!cursor) {
                 return;
             }
 
             for (let i = 0, iEnd = connectorHandlers.length; i < iEnd; ++i) {
-                const table = connectorHandlers[i]?.connector?.getTable();
+                const connectorId = connectorHandlers[i]?.options.id;
+                const table = this.getDataTable(connectorId);
+
                 if (!table) {
                     continue;
                 }
