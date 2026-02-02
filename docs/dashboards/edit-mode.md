@@ -21,12 +21,10 @@ npm install highcharts @highcharts/dashboards
 and import it in your project like:
 ```js
 import * as Dashboards from '@highcharts/dashboards';
-import LayoutModule from '@highcharts/dashboards/modules/layout';
-
-LayoutModule(Dashboards);
+import '@highcharts/dashboards/modules/layout';
 ```
 
-If you use ESM, you can also import the modules directly from the package:
+If you use ESM, you can import the modules as follows:
 
 ```js
 import Dashboards from '@highcharts/dashboards/es-modules/masters/dashboards.src.js';
@@ -100,7 +98,8 @@ The `editableOptions` property is an array of objects, where each object represe
     - `toggle` - a toggle switch,
     - `select` - a select input requiring `selectOptions` property,
     - `nested` - a nested category, requiring `nestedOptions` property,
-- `isStandalone` - a boolean value that indicates whether the category should be displayed as a standalone category or as a part of the parent category.
+- `isStandalone` - a boolean value that indicates whether the category should be displayed as a standalone category or as a part of the parent category,
+- `showToggle` - renders a toggle switch for the specific element- useful for nested elements or parent-level options (e.g., toggling the legend without editing its internal settings).
 
 
 ```js
@@ -112,30 +111,48 @@ The `editableOptions` property is an array of objects, where each object represe
         name: 'Component title',
         propertyPath: ['title'],
         type: 'input'
-      }, {
+    }, {
+        isStandalone: true,
+        name: 'Legend',
+        type: 'toggle',
+        propertyPath: ['chartOptions', 'legend', 'enabled']
+    }, {
         name: 'chartOptions',
         type: 'nested',
         nestedOptions: [{
-          name: 'Marker Radius',
-          options: [{
-            name: 'Marker Radius',
-            propertyPath: [
-              'chartOptions',
-              'plotOptions',
-              'series',
-              'marker',
-              'radius'
-            ],
-            type: 'select',
-            selectOptions: [{
-              name: 3
-            }, {
-              name: 5
+            name: 'line chart',
+            options: [{
+                name: 'Marker Radius',
+                propertyPath: [
+                    'chartOptions',
+                    'plotOptions',
+                    'series',
+                    'marker',
+                    'radius'
+                ],
+                type: 'select',
+                selectOptions: [{
+                    name: 3
+                }, {
+                    name: 5
+                }]
             }]
-          }]
+        }, {
+            name: 'dataLabels',
+            propertyPath: [
+                'chartOptions',
+                'plotOptions',
+                'series',
+                'dataLabels',
+                'enabled'
+            ],
+            showToggle: true
         }]
-      }
-    ]
+    }, {
+        name: 'connectorName',
+        propertyPath: ['connector', 'id'],
+        type: 'select'
+    }],
 ```
 See how it works in the [edit mode live example](https://www.highcharts.com/samples/embed/dashboards/edit-mode/editableoptions).
 
@@ -199,7 +216,7 @@ See the live demo [here](https://jsfiddle.net/gh/get/library/pure/highcharts/hig
 All default styles for the edit mode are defined in the `dashboards.css` file. It can be imported to your project by adding the following line to your CSS file:
 
 ```css
-@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 ```
 
 You can override them by adding your own styles to your project, for example:

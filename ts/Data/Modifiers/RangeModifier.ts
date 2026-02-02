@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sophie Bremer
@@ -23,11 +23,10 @@
  * */
 
 
-import type DataEvent from '../DataEvent';
 import type {
-    RangeModifierOptions,
-    RangeModifierRangeOptions
-} from './RangeModifierOptions';
+    DataEventDetail
+} from '../DataEvent';
+import type { RangeModifierOptions } from './RangeModifierOptions';
 
 import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
@@ -45,8 +44,7 @@ const {
 
 
 /**
- * Filters out table rows with a specific value range.
- *
+ * Slices the table rows based on the specified range.
  */
 class RangeModifier extends DataModifier {
 
@@ -63,7 +61,8 @@ class RangeModifier extends DataModifier {
      */
     public static readonly defaultOptions: RangeModifierOptions = {
         type: 'Range',
-        ranges: []
+        start: 0,
+        end: Infinity
     };
 
 
@@ -77,7 +76,7 @@ class RangeModifier extends DataModifier {
     /**
      * Constructs an instance of the range modifier.
      *
-     * @param {Partial<RangeModifier.Options>} [options]
+     * @param {Partial<RangeModifierOptions>} [options]
      * Options to configure the range modifier.
      */
     public constructor(
@@ -110,117 +109,41 @@ class RangeModifier extends DataModifier {
 
 
     /**
-     * Replaces table rows with filtered rows.
+     * Replaces table rows with ranged rows. If the given table does not have
+     * defined a `modified` property, the filtering is applied in-place on the
+     * original table rather than on a `modified` copy.
      *
      * @param {DataTable} table
      * Table to modify.
      *
-     * @param {DataEvent.Detail} [eventDetail]
+     * @param {DataEventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {DataTable}
-     * Table with `modified` property as a reference.
+     * Table with `modified` property as a reference or modified table, if
+     * `modified` property of the original table is undefined.
      */
-    public modifyTable<T extends DataTable>(
-        table: T,
-        eventDetail?: DataEvent.Detail
-    ): T {
+    public override modifyTable(
+        table: DataTable,
+        eventDetail?: DataEventDetail
+    ): DataTable {
         const modifier = this;
 
         modifier.emit({ type: 'modify', detail: eventDetail, table });
-        let indexes: Array<number|undefined> = [];
 
-        const {
-            additive,
-            ranges,
-            strict
-        } = modifier.options;
+        let { start, end } = modifier.options;
+        start = Math.max(0, start || 0);
+        end = Math.min(end || Infinity, table.getRowCount());
+        const length = Math.max(end - start, 0);
 
-        if (ranges.length) {
-            const modified = table.modified;
+        const modified = table.getModified();
 
-            let columns = table.getColumns(),
-                rows: Array<DataTable.Row> = [];
-
-            for (
-                let i = 0,
-                    iEnd = ranges.length,
-                    range: RangeModifierRangeOptions,
-                    rangeColumn: DataTable.Column;
-                i < iEnd;
-                ++i
-            ) {
-                range = ranges[i];
-
-                if (
-                    strict &&
-                    typeof range.minValue !== typeof range.maxValue
-                ) {
-                    continue;
-                }
-
-                if (i > 0 && !additive) {
-                    modified.deleteRows();
-                    modified.setRows(rows);
-                    modified.setOriginalRowIndexes(indexes, true);
-                    columns = modified.getColumns();
-                    rows = [];
-                    indexes = [];
-                }
-
-                rangeColumn = (columns[range.column] || []);
-
-                for (
-                    let j = 0,
-                        jEnd = rangeColumn.length,
-                        cell: DataTable.CellType,
-                        row: DataTable.Row | undefined,
-                        originalRowIndex: number | undefined;
-                    j < jEnd;
-                    ++j
-                ) {
-                    cell = rangeColumn[j];
-
-                    switch (typeof cell) {
-                        default:
-                            continue;
-                        case 'boolean':
-                        case 'number':
-                        case 'string':
-                            break;
-                    }
-
-                    if (
-                        strict &&
-                        typeof cell !== typeof range.minValue
-                    ) {
-                        continue;
-                    }
-
-                    if (
-                        cell >= range.minValue &&
-                        cell <= range.maxValue
-                    ) {
-                        if (additive) {
-                            row = table.getRow(j);
-                            originalRowIndex = table.getOriginalRowIndex(j);
-                        } else {
-                            row = modified.getRow(j);
-                            originalRowIndex = modified.getOriginalRowIndex(j);
-                        }
-
-                        if (row) {
-                            rows.push(row);
-                            indexes.push(originalRowIndex);
-                        }
-                    }
-                }
-            }
-
-            modified.deleteRows();
-            modified.setRows(rows);
-            modified.setOriginalRowIndexes(indexes);
-        }
+        modified.deleteRows();
+        modified.setRows(table.getRows(start, length));
+        modified.setOriginalRowIndexes(Array.from(
+            { length },
+            (_, i): number | undefined => table.getOriginalRowIndex(start + i)
+        ));
 
         modifier.emit({ type: 'afterModify', detail: eventDetail, table });
 

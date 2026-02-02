@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -53,12 +54,17 @@ const stringWithEllipsis = (text: string, currentIndex: number): string =>
 
 /**
  * SVG Text Builder
- * @private
+ * @internal
  * @class
  * @name Highcharts.TextBuilder
  */
 class TextBuilder {
 
+    /**
+     * Constructs a new TextBuilder instance.
+     * @internal
+     * @param svgElement The SVG element to build text for.
+     */
     public constructor(svgElement: SVGElement) {
         const textStyles = svgElement.styles;
 
@@ -73,22 +79,46 @@ class TextBuilder {
         this.noWrap = Boolean(textStyles?.whiteSpace === 'nowrap');
     }
 
+    /**
+     * Whether to use ellipsis for text overflow.
+     * @internal
+     */
     public ellipsis: boolean;
+    /**
+     * The maximum number of lines to display.
+     * @internal
+     */
     public lineClamp?: number;
+    /**
+     * Whether to disable text wrapping.
+     * @internal
+     */
     public noWrap: boolean;
+    /**
+     * The SVG renderer.
+     * @internal
+     */
     public renderer: SVGRenderer;
+    /**
+     * The SVG element associated with this TextBuilder.
+     * @internal
+     */
     public svgElement: SVGElement;
+
+    /** @internal */
     public textLineHeight: any;
+
+    /** @internal */
     public textOutline: any;
+
+    /** @internal */
     public width?: number;
 
     /**
      * Build an SVG representation of the pseudo HTML given in the object's
      * svgElement.
      *
-     * @private
-     *
-     * @return {void}.
+     * @internal
      */
     public buildSVG(): void {
         const wrapper = this.svgElement,
@@ -188,9 +218,7 @@ class TextBuilder {
      * Modify the DOM of the generated SVG structure. This function only does
      * operations that cannot be done until the elements are attached to the
      * DOM, like doing layout based on rendered metrics of the added elements.
-     *
-     * @private
-     *
+     * @internal
      */
     private modifyDOM(): void {
 
@@ -399,9 +427,11 @@ class TextBuilder {
 
     /**
      * Get the rendered line height of a <text>, <tspan> or pure text node.
-     * @private
-     * @param {DOMElementType|Text} node The node to check for
-     * @return {number} The rendered line height
+     * @internal
+     * @param {DOMElementType|Text} node
+     * The node to check for.
+     * @return {number}
+     * The rendered line height.
      */
     private getLineHeight(node: DOMElementType|Text): number {
         // If the node is a text node, use its parent
@@ -421,10 +451,7 @@ class TextBuilder {
      * much heavy lifting as we can here, before doing the final processing in
      * the modifyDOM function. The original data is mutated.
      *
-     * @private
-     *
      * @param {ASTNode[]} nodes The AST nodes
-     *
      */
     private modifyTree(
         nodes: AST.Node[]
@@ -632,15 +659,17 @@ class TextBuilder {
         svgElement.rotation = rotation; // Apply rotation again.
     }
 
-    /*
+    /**
      * Un-escape HTML entities based on the public `renderer.escapes` list
      *
-     * @private
+     * @param {string} inputStr
+     * The string to unescape
      *
-     * @param {string} inputStr The string to unescape
-     * @param {Array<string>} [except] Exceptions
+     * @param {Array<string>} [except]
+     * Exceptions
      *
-     * @return {string} The processed string
+     * @return {string}
+     * The processed string
      */
     private unescapeEntities(
         inputStr: string,
@@ -661,4 +690,5 @@ class TextBuilder {
     }
 }
 
+/** @internal */
 export default TextBuilder;

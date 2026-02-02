@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -16,6 +17,7 @@
  *
  * */
 
+import type { DeepPartial } from '../Shared/Types';
 import type { DefaultOptions, Options } from './Options';
 import type Legend from './Legend/Legend';
 
@@ -39,8 +41,14 @@ const {
  *
  * */
 
-declare module './GlobalsLike' {
-    interface GlobalsLike {
+declare module './GlobalsBase' {
+    interface GlobalsBase {
+        /**
+         * Global default settings.
+         *
+         * @name Highcharts.defaultOptions
+         * @type {Highcharts.Options}
+         */
         defaultOptions: DefaultOptions;
         time: Time;
     }
@@ -59,7 +67,7 @@ declare module './GlobalsLike' {
  * @type {Highcharts.Options}
  *//**
  * @optionparent
- * @private
+ * @internal
  */
 const defaultOptions: DefaultOptions = {
 
@@ -318,16 +326,17 @@ const defaultOptions: DefaultOptions = {
         resetZoom: 'Reset zoom',
 
         /**
-         * The tooltip title for the label appearing when a chart is zoomed.
-         *
-         * @since 1.2.4
-         */
-        /**
          * The default title of the Y axis
          *
          * @since 12.2.0
          */
         yAxisTitle: 'Values',
+
+        /**
+         * The tooltip title for the label appearing when a chart is zoomed.
+         *
+         * @since 1.2.4
+         */
         resetZoomTitle: 'Reset zoom level 1:1'
     },
 
@@ -545,7 +554,7 @@ const defaultOptions: DefaultOptions = {
          * `"UTC"`. Setting `useUTC` to false is equivalent to setting
          * `time.timezone` to `undefined`.
          *
-         * @see [time.timezone](#timezone)
+         * @see [timezone](#time.timezone)
          *
          * @sample {highcharts} highcharts/time/useutc-true/
          *         True by default
@@ -787,28 +796,6 @@ const defaultOptions: DefaultOptions = {
          * @default   false
          * @since     2.1
          * @apioption subtitle.floating
-         */
-
-        /**
-         * CSS styles for the title.
-         *
-         * In styled mode, the subtitle style is given in the
-         * `.highcharts-subtitle` class.
-         *
-         * @sample {highcharts} highcharts/subtitle/style/
-         *         Custom color and weight
-         * @sample {highcharts} highcharts/css/titles/
-         *         Styled mode
-         * @sample {highstock} stock/chart/subtitle-style
-         *         Custom color and weight
-         * @sample {highstock} highcharts/css/titles/
-         *         Styled mode
-         * @sample {highmaps} highcharts/css/titles/
-         *         Styled mode
-         *
-         * @type      {Highcharts.CSSObject}
-         * @default   {"color": "#666666"}
-         * @apioption subtitle.style
          */
 
         /**
@@ -1127,7 +1114,7 @@ const defaultOptions: DefaultOptions = {
          *
          * @declare Highcharts.LegendEventsOptionsObject
          *
-         * @private
+         * @internal
          */
         events: {},
 
@@ -1313,6 +1300,17 @@ const defaultOptions: DefaultOptions = {
          * @default   12
          * @since     2.1
          * @apioption legend.margin
+         */
+
+        /**
+         * Maximum width for the legend. Can be a percentage of the chart width,
+         * or an integer representing how many pixels wide the legend can be.
+         *
+         * @sample {highcharts} highcharts/legend/maxwidth/
+         *         Max width set to 7%
+         *
+         * @type      {number|string}
+         * @apioption legend.maxWidth
          */
 
         /**
@@ -2024,8 +2022,17 @@ const defaultOptions: DefaultOptions = {
          */
 
         /**
-         * A CSS class name to apply to the tooltip's container div,
-         * allowing unique CSS styling for each chart.
+         * A CSS class name to apply to the tooltip, allowing unique CSS
+         * styling for each chart.
+         *
+         * **Note:** The class is applied to the SVG element of the tooltip
+         * (the tooltip label group), not to a container div. This allows you
+         * to style the tooltip using CSS applicable to SVG elements.
+         *
+         * When [tooltip.outside](#tooltip.outside) is `true`, a separate
+         * container div with class `highcharts-tooltip-container` is created
+         * as the parent to the SVG tooltip element, but the `className` option
+         * is still applied to the SVG element itself, not to the container.
          *
          * @type      {string}
          * @apioption tooltip.className
@@ -2309,37 +2316,6 @@ const defaultOptions: DefaultOptions = {
          * @since     5.0.0
          * @product   highcharts highstock
          * @apioption tooltip.split
-         */
-
-        /**
-         * Prevents the tooltip from switching or closing, when touched or
-         * pointed.
-         *
-         * @sample highcharts/tooltip/stickoncontact/
-         *         Tooltip sticks on pointer contact
-         *
-         * @type      {boolean}
-         * @since     8.0.1
-         * @apioption tooltip.stickOnContact
-         */
-
-        /**
-         * Use HTML to render the contents of the tooltip instead of SVG. Using
-         * HTML allows advanced formatting like tables and images in the
-         * tooltip. It is also recommended for rtl languages as it works around
-         * rtl bugs in early Firefox.
-         *
-         * @sample {highcharts|highstock} highcharts/tooltip/footerformat/
-         *         A table for value alignment
-         * @sample {highcharts|highstock} highcharts/tooltip/fullhtml/
-         *         Full HTML tooltip
-         * @sample {highmaps} maps/tooltip/usehtml/
-         *         Pure HTML tooltip
-         *
-         * @type      {boolean}
-         * @default   false
-         * @since     2.2
-         * @apioption tooltip.useHTML
          */
 
         /**
@@ -2681,6 +2657,9 @@ const defaultOptions: DefaultOptions = {
          * contains the category name, x value or datetime string depending on
          * the type of axis. For datetime axes, the `point.key` date format can
          * be set using `tooltip.xDateFormat`.
+         * In v12+, locale-aware date names follow the browser's casing and can
+         * be lower-case, so use the `ucfirst` helper (for example
+         * `{ucfirst point.key}`) if you want a capitalized header.
          *
          * @sample {highcharts} highcharts/tooltip/footerformat/
          *         An HTML table in the tooltip
@@ -2801,13 +2780,14 @@ const defaultOptions: DefaultOptions = {
          */
 
         /**
-         * Prevents the tooltip from switching or closing when touched or
+         * Prevents the tooltip from switching or closing, when touched or
          * pointed.
          *
          * @sample highcharts/tooltip/stickoncontact/
          *         Tooltip sticks on pointer contact
          *
-         * @since 8.0.1
+         * @type      {boolean}
+         * @since     8.0.1
          */
         stickOnContact: false,
 
@@ -2848,7 +2828,7 @@ const defaultOptions: DefaultOptions = {
          * @sample {highmaps} maps/tooltip/usehtml/
          *         Pure HTML tooltip
          *
-         * @since 2.2
+         * @since     2.2
          */
         useHTML: false
     },

@@ -1,12 +1,13 @@
 /* *
  *
- *  (c) 2009-2025 Øystein Moseng
+ *  (c) 2009-2026 Highsoft AS
+ *  Author: Øystein Moseng
  *
- *  Place desriptions on a series and its points.
+ *  Place descriptions on a series and its points.
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -63,8 +64,8 @@ const {
  *
  * */
 
-declare module '../../../Core/Series/PointLike' {
-    interface PointLike {
+declare module '../../../Core/Series/PointBase' {
+    interface PointBase {
         /** @requires modules/accessibility */
         hasMockGraphic?: boolean;
     }

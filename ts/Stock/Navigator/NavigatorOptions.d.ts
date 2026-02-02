@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -18,12 +19,13 @@ import type {
     AxisOptions,
     YAxisOptions
 } from '../../Core/Axis/AxisOptions';
+import type ChartOptions from '../../Core/Chart/ChartOptions';
 import type ColorType from '../../Core/Color/ColorType';
+import type { DeepPartial } from '../../Shared/Types';
 import type RangeSelector from '../RangeSelector/RangeSelector';
 import type { SymbolTypeRegistry } from '../../Core/Renderer/SVG/SymbolType';
 import type { SeriesTypeOptions } from '../../Core/Series/SeriesType';
 import type Utilities from '../../Core/Utilities';
-import type ChartOptions from '../../Core/Chart/ChartOptions';
 
 /* *
  *
@@ -52,7 +54,31 @@ declare module '../../Core/Options'{
 declare module '../../Core/Series/SeriesOptions' {
     interface SeriesOptions {
         fillOpacity?: number;
+
+        /**
+         * Options for the corresponding navigator series if `showInNavigator`
+         * is `true` for this series. Available options are the same as any
+         * series, documented at [plotOptions](#plotOptions.series) and
+         * [series](#series).
+         *
+         * These options are merged with options in [navigator.series](
+         * #navigator.series), and will take precedence if the same option is
+         * defined both places.
+         *
+         * @see [navigator.series](#navigator.series)
+         *
+         * @since   5.0.0
+         * @product highstock
+         */
         navigatorOptions?: SeriesOptions;
+
+        /**
+         * Whether or not to show the series in the navigator. Takes precedence
+         * over [navigator.baseSeries](#navigator.baseSeries) if defined.
+         *
+         * @since     5.0.0
+         * @product   highstock
+         */
         showInNavigator?: boolean;
     }
 }

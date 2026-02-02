@@ -1,6 +1,5 @@
 /* *
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -14,6 +13,7 @@
 
 import type Chart from '../Core/Chart/Chart';
 import type CoreSeriesOptions from '../Core/Series/SeriesOptions';
+import type { DeepPartial } from '../Shared/Types';
 
 import H from '../Core/Globals.js';
 const { noop } = H;
@@ -30,8 +30,8 @@ const {
  *
  * */
 
-declare module '../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../Core/Series/SeriesBase' {
+    interface SeriesBase {
         hasDerivedData?: DerivedComposition.SeriesComposition['hasDerivedData'];
     }
 }

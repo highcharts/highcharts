@@ -1,16 +1,17 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sebastian Bochan
  *  - Wojciech Chmiel
  *  - Gøran Slettemark
  *  - Sophie Bremer
+ *  - Dawid Dragula
  *
  * */
 
@@ -22,22 +23,36 @@
  *
  * */
 
+import type { AnyRecord } from '../../Shared/Types';
 import type Board from '../Board';
 import type {
     ComponentType,
     ComponentTypeRegistry
 } from './ComponentType';
-import type TextOptions from './TextOptions';
+import type DataConnectorType from '../../Data/Connectors/DataConnectorType';
 import type Row from '../Layout/Row';
 import type SidebarPopup from '../EditMode/SidebarPopup';
-import type DataConnectorType from '../../Data/Connectors/DataConnectorType';
+import type TextOptions from './TextOptions';
 
-import Cell from '../Layout/Cell.js';
+import Cell, { isCell } from '../Layout/Cell.js';
 import CellHTML from '../Layout/CellHTML.js';
 import CallbackRegistry from '../CallbackRegistry.js';
+import type { ConnectorOptions as ComponentConnectorOptions } from './ConnectorHandler';
+
 import ConnectorHandler from './ConnectorHandler.js';
 import DataTable from '../../Data/DataTable.js';
+import type {
+    Options as EditableOption,
+    OptionsBindings as EditableOptionsBindings
+} from './EditableOptions';
+
 import EditableOptions from './EditableOptions.js';
+import type {
+    OptionsRecord as SyncOptionsRecord,
+    PredefinedSyncConfig,
+    RawOptionsRecord as SyncRawOptionsRecord
+} from './Sync/Sync';
+
 import Sync from './Sync/Sync.js';
 
 import Globals from '../Globals.js';
@@ -76,16 +91,7 @@ const {
  * */
 
 /**
- *
- * Abstract Class of component.
- *
- * @internal
- *
- */
-
-/**
- * Abstract Class of component.
- * @internal
+ * Abstract class of component.
  */
 abstract class Component {
 
@@ -96,15 +102,17 @@ abstract class Component {
      * */
 
     /**
-     *
      * Creates HTML text element like header or title
      *
      * @param tagName
      * HTML tag name used as wrapper of text like `h2` or `p`.
+     *
      * @param elementName
      * Name of element
+     *
      * @param textOptions
      * The options for the component
+     *
      * @returns
      * HTML object when title is created, otherwise undefined
      *
@@ -113,7 +121,7 @@ abstract class Component {
     public static createTextElement(
         tagName: string,
         elementName: string,
-        textOptions: Component.TextOptionsType
+        textOptions: TextOptionsType
     ): HTMLElement | undefined {
         if (typeof textOptions === 'object') {
             const { className, text, style } = textOptions;
@@ -139,25 +147,28 @@ abstract class Component {
         }
     }
 
+
     /* *
      *
-     *  Properties
+     *  Static Properties
      *
      * */
 
     /** @internal */
     public static Sync = Sync;
+
     /**
      * Predefined sync config for component.
      */
-    public static predefinedSyncConfig: Sync.PredefinedSyncConfig = {
+    public static predefinedSyncConfig: PredefinedSyncConfig = {
         defaultSyncOptions: {},
         defaultSyncPairs: {}
     };
+
     /**
      * Default options of the component.
      */
-    public static defaultOptions: Partial<Component.Options> = {
+    public static defaultOptions: Partial<Options> = {
         className: `${classNamePrefix}component`,
         id: '',
         title: false,
@@ -173,80 +184,97 @@ abstract class Component {
             type: 'input'
         }]
     };
+
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
     /**
      * The HTML element or id of HTML element that is used for appending
      * a component.
-     *
      * @internal
      */
     public parentElement: HTMLElement;
+
     /**
      * Instance of cell, where component is attached.
-     *
      * @internal
      */
     public cell: Cell|CellHTML;
+
     /**
-     * The connector handlers for the component.
+     * The connector handlers for the component. They are used to handle the
+     * connector options and data tables.
      */
     public connectorHandlers: ConnectorHandler[] = [];
+
     /**
-     * @internal
      * The board the component belongs to
-     * */
+     * @internal
+     */
     public board: Board;
+
     /**
      * Size of the component (width and height).
      */
     protected dimensions: { width: number | null; height: number | null };
+
     /**
      * The HTML element where the component is.
-     *
      * @internal
      */
     public element: HTMLElement;
+
     /**
      * The HTML element where the title is.
+     * @internal
      */
     public titleElement?: HTMLElement;
+
     /**
      * Whether the component state is active.
      */
     public isActive?: boolean;
+
     /**
      * The HTML element where the caption is.
      */
     public captionElement?: HTMLElement;
+
     /**
      * The HTML element where the component's content is.
-     *
      * @internal
      */
     public contentElement: HTMLElement;
+
     /**
      * The options for the component.
-     * */
-    public options: Component.Options;
+     */
+    public options: Options;
+
     /**
      * Sets an ID for the component's `div`.
      */
     public id: string;
+
     /**
      * An array of options marked as editable by the UI.
-     *
      */
     public editableOptions: EditableOptions;
+
     /**
      * Registry of callbacks registered on the component. Used in the Highcharts
      * component to keep track of chart events.
-     *
      * @internal
      */
     public callbackRegistry = new CallbackRegistry();
+
     /**
      * Event listeners tied to the parent cell. Used for rendering/resizing the
      * component on interactions.
-     *
      * @internal
      */
     private cellListeners: Function[] = [];
@@ -258,27 +286,28 @@ abstract class Component {
     private resizeObserver?: ResizeObserver;
 
     /**
+     * The sync handlers for the component.
+     */
+    protected syncHandlers?: SyncOptionsRecord;
+
+    /**
+     * The sync handler for the component.
      * @internal
      */
-    protected syncHandlers?: Sync.OptionsRecord;
-
-    /** @internal */
     public sync: Sync;
 
     /**
      * Timeouts for calls to `Component.resizeTo()`.
-     *
      * @internal
-    /* *
      */
     protected resizeTimeouts: number[] = [];
 
     /**
      * Timeouts for resizing the content. I.e. `chart.setSize()`.
-     *
      * @internal
-     * */
+     */
     protected innerResizeTimeouts: number[] = [];
+
 
     /* *
      *
@@ -297,17 +326,17 @@ abstract class Component {
      */
     constructor(
         cell: Cell,
-        options: Partial<Component.Options>,
+        options: Partial<Options>,
         board?: Board
     ) {
-        const renderTo = options.renderTo || options.cell;
+        const renderTo = options.renderTo;
         this.board = board || cell?.row?.layout?.board || {};
         this.parentElement =
             cell?.container || document.querySelector('#' + renderTo);
         this.cell = cell;
 
         this.options = merge(
-            Component.defaultOptions as Required<Component.Options>,
+            Component.defaultOptions as Required<Options>,
             options
         );
 
@@ -369,13 +398,13 @@ abstract class Component {
             this.attachCellListeners();
 
             this.on('update', (): void => {
-                if (Cell.isCell(this.cell)) {
+                if (isCell(this.cell)) {
                     this.cell.setLoadingState();
                 }
             });
 
             this.on('afterRender', (): void => {
-                if (Cell.isCell(this.cell)) {
+                if (isCell(this.cell)) {
                     this.cell.setLoadingState(false);
                 }
             });
@@ -396,7 +425,7 @@ abstract class Component {
     /**
      * Function fired when component's data source's data is changed.
      */
-    public abstract onTableChanged(e?: Component.EventTypes): void;
+    public abstract onTableChanged(e?: EventTypes): void;
 
     /**
      * Returns the component's options when it is dropped from the sidebar.
@@ -415,14 +444,45 @@ abstract class Component {
      * Returns the first connector of the component if it exists.
      *
      * @internal
+     * @deprecated
      */
-    public getFirstConnector(): Component.ConnectorTypes | undefined {
+    public getFirstConnector(): ConnectorTypes | undefined {
         return this.connectorHandlers[0]?.connector;
     }
 
     /**
-     * Setup listeners on cell/other things up the chain
+     * Returns the data table connected to the component by the `connectorId`
+     * and `dataTableKey`. If both args are undefined, the first data table is
+     * returned.
      *
+     * @param connectorId
+     * The id of the connector.
+     *
+     * @param dataTableKey
+     * The key of the data table within the connector.
+     *
+     * @returns
+     * The data table, or undefined if no matching handler is found.
+     */
+    public getDataTable(
+        connectorId?: string,
+        dataTableKey?: string
+    ): DataTable | undefined {
+        for (const handler of this.connectorHandlers) {
+            if ((
+                !connectorId ||
+                handler.options.id === connectorId
+            ) && (
+                !dataTableKey ||
+                handler.options.dataTableKey === dataTableKey
+            )) {
+                return handler.dataTable;
+            }
+        }
+    }
+
+    /**
+     * Setup listeners on cell/other things up the chain
      * @internal
      */
     private attachCellListeners(): void {
@@ -436,7 +496,7 @@ abstract class Component {
 
         if (
             this.cell &&
-            Cell.isCell(this.cell) &&
+            isCell(this.cell) &&
             Object.keys(this.cell).length
         ) {
             const board = this.cell.row.layout.board;
@@ -469,8 +529,10 @@ abstract class Component {
 
     /**
      * Set a parent cell.
+     *
      * @param cell
      * Instance of a cell.
+     *
      * @param resize
      * Flag that allow to resize the component.
      *
@@ -510,6 +572,7 @@ abstract class Component {
      *
      * @returns
      * Current height as number.
+     *
      * @internal
      */
     private getContentHeight(): number {
@@ -526,10 +589,12 @@ abstract class Component {
 
     /**
      * Resize the component
+     *
      * @param width
      * The width to set the component to.
      * Can be pixels, a percentage string or null.
      * Null will unset the style
+     *
      * @param height
      * The height to set the component to.
      * Can be pixels, a percentage string or null.
@@ -561,8 +626,10 @@ abstract class Component {
      * It's a temporary alternative for the `resize` method. It sets the strict
      * pixel height for the component so that the content can be distributed in
      * the right way, without looping the resizers in the content and container.
+     *
      * @param width
      * The width to set the component to.
+     *
      * @param height
      * The height to set the component to.
      */
@@ -597,6 +664,7 @@ abstract class Component {
 
     /**
      * Adjusts size of component to parent's cell size when animation is done.
+     *
      * @param element
      * HTML element that is resized.
      */
@@ -622,6 +690,7 @@ abstract class Component {
 
     /**
      * Handles updating via options.
+     *
      * @param newOptions
      * The options to apply.
      *
@@ -629,7 +698,7 @@ abstract class Component {
      * Set to true if the update should rerender the component.
      */
     public async update(
-        newOptions: Partial<Component.Options>,
+        newOptions: Partial<Options>,
         shouldRerender: boolean = true
     ): Promise<void> {
         const eventObject = {
@@ -645,7 +714,7 @@ abstract class Component {
         }
 
         this.options = merge(this.options, newOptions);
-        const connectorOptions: Array<ConnectorHandler.ConnectorOptions> = (
+        const connectorOptions: Array<ConnectorOptions> = (
             this.options.connector ? (
                 isArray(this.options.connector) ? this.options.connector :
                     [this.options.connector]
@@ -657,18 +726,22 @@ abstract class Component {
 
         if (!connectorsHaveChanged) {
             for (let i = 0, iEnd = connectorOptions.length; i < iEnd; i++) {
-                const oldOpt = this.connectorHandlers[i]?.options;
-                const newOpt = connectorOptions[i];
+                const oldOptions = this.connectorHandlers[i]?.options;
+                const newOptions = connectorOptions[i];
 
-                if (
-                    newOpt?.id !== oldOpt?.id ||
-                    newOpt?.dataTableKey !== oldOpt?.dataTableKey
-                ) {
+                // Check if the connector id has changed.
+                if (oldOptions.id !== newOptions.id) {
                     connectorsHaveChanged = true;
                     break;
                 }
 
-                this.connectorHandlers[i].updateOptions(connectorOptions[i]);
+                // Check if the data table key has changed.
+                if (oldOptions.dataTableKey !== newOptions.dataTableKey) {
+                    connectorsHaveChanged = true;
+                    break;
+                }
+
+                this.connectorHandlers[i].updateOptions(newOptions);
             }
         }
 
@@ -735,7 +808,7 @@ abstract class Component {
      * @param titleOptions
      * The options for the title.
      */
-    public setTitle(titleOptions: Component.TextOptionsType): void {
+    public setTitle(titleOptions: TextOptionsType): void {
         const titleElement = this.titleElement,
             shouldExist =
                 titleOptions &&
@@ -775,7 +848,7 @@ abstract class Component {
      * @param captionOptions
      * The options for the caption.
      */
-    public setCaption(captionOptions: Component.TextOptionsType): void {
+    public setCaption(captionOptions: TextOptionsType): void {
         const captionElement = this.captionElement,
             shouldExist =
                 captionOptions &&
@@ -868,8 +941,21 @@ abstract class Component {
         this.element.remove();
     }
 
-    /** @internal */
-    public on<TEvent extends Component.EventTypes>(
+    /**
+     * Adds an event listener to the component.
+     *
+     * @param type
+     * The type of event to listen for.
+     *
+     * @param callback
+     * The callback to call when the event is triggered.
+     *
+     * @returns
+     * The function to remove the event listener.
+     *
+     * @internal
+     */
+    public on<TEvent extends EventTypes>(
         type: TEvent['type'],
         callback: (this: this, e: TEvent) => void
     ): Function {
@@ -877,7 +963,7 @@ abstract class Component {
     }
 
     /** @internal */
-    public emit<TEvent extends Component.EventTypes>(
+    public emit<TEvent extends EventTypes>(
         e: TEvent
     ): void {
         if (!e.target) {
@@ -894,11 +980,11 @@ abstract class Component {
      * @internal
      *
      */
-    public getOptions(): Partial<Component.Options> {
+    public getOptions(): Partial<Options> {
         return diffObjects(this.options, Component.defaultOptions);
     }
 
-    public getEditableOptions(): Component.Options {
+    public getEditableOptions(): Options {
         const component = this;
 
         // When refactoring, limit the copied options to the ones that are
@@ -962,191 +1048,176 @@ interface Component {
 
 /* *
  *
- *  Class Namespace
+ *  Type Declarations
  *
  * */
 
-namespace Component {
+export type ConnectorOptions = ComponentConnectorOptions;
 
-    export type ConnectorOptions = ConnectorHandler.ConnectorOptions;
+/**
+ * The basic events
+ */
+/** @internal */
+export type EventTypes =
+    SetConnectorsEvent |
+    ResizeEvent |
+    UpdateEvent |
+    TableChangedEvent |
+    LoadEvent |
+    RenderEvent |
+    PresentationModifierEvent;
 
-    /* *
-    *
-    *  Declarations
-    *
-    * */
+export type SetConnectorsEvent =
+    Event<'setConnectors'|'afterSetConnectors', {}>;
+
+/** @internal */
+export type ResizeEvent = Event<'resize', {
+    readonly type: 'resize';
+    width?: number;
+    height?: number;
+}>;
+
+/** @internal */
+export type UpdateEvent = Event<'update' | 'afterUpdate', {
+    options?: Options;
+}>;
+
+/** @internal */
+export type LoadEvent = Event<'load' | 'afterLoad', {}>;
+/** @internal */
+export type RenderEvent = Event<'render' | 'afterRender', {}>;
+
+/** @internal */
+export type TableChangedEvent = Event<'tableChanged', {}>;
+/** @internal */
+export type PresentationModifierEvent =
+    Event<'afterPresentationModifier', { table: DataTable }>;
+
+/** @internal */
+export type Event<
+    EventType extends string,
+    EventRecord extends Record<string, any>> = {
+        readonly type: EventType;
+        target?: Component;
+        detail?: AnyRecord;
+    } & EventRecord;
+
+export interface Options {
 
     /**
-     * The basic events
+     * Cell id, where component is attached.
      */
-    /** @internal */
-    export type EventTypes =
-        SetConnectorsEvent |
-        ResizeEvent |
-        UpdateEvent |
-        TableChangedEvent |
-        LoadEvent |
-        RenderEvent |
-        PresentationModifierEvent;
-
-    export type SetConnectorsEvent =
-        Event<'setConnectors'|'afterSetConnectors', {}>;
-
-    /** @internal */
-    export type ResizeEvent = Event<'resize', {
-        readonly type: 'resize';
-        width?: number;
-        height?: number;
-    }>;
-
-    /** @internal */
-    export type UpdateEvent = Event<'update' | 'afterUpdate', {
-        options?: Options;
-    }>;
-
-    /** @internal */
-    export type LoadEvent = Event<'load' | 'afterLoad', {}>;
-    /** @internal */
-    export type RenderEvent = Event<'render' | 'afterRender', {}>;
-
-    /** @internal */
-    export type TableChangedEvent = Event<'tableChanged', {}>;
-    /** @internal */
-    export type PresentationModifierEvent =
-        Component.Event<'afterPresentationModifier', { table: DataTable }>;
-
-    /** @internal */
-    export type Event<
-        EventType extends string,
-        EventRecord extends Record<string, any>> = {
-            readonly type: EventType;
-            target?: Component;
-            detail?: Globals.AnyRecord;
-        } & EventRecord;
-
-    export interface Options {
-
-        /**
-         * Cell id, where component is attached.
-         * Deprecated, use `renderTo` instead.
-         *
-         * @deprecated
-         */
-        cell?: string;
-
-        /**
-         * Cell id, where component is attached.
-         */
-        renderTo?: string;
-
-        /**
-         * The name of class that is applied to the component's container.
-         */
-        className?: string;
-
-        /**
-         * The type of component like: `HTML`, `KPI`, `Highcharts`, `Grid`,
-         * `Navigator`.
-         */
-        type: keyof ComponentTypeRegistry;
-
-        /**
-         * Allow overwriting gui elements.
-         * @internal
-         */
-        navigationBindings?: Array<Globals.AnyRecord>;
-        /**
-         * Events attached to the component : `mount`, `unmount`, `resize`, `update`.
-         *
-         * Try it:
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/events/ | Mount event }
-         */
-        events?: Record<string, Function>;
-        /**
-         * Set of options that are available for editing through sidebar.
-         */
-        editableOptions?: Array<EditableOptions.Options>;
-        /** @internal */
-        editableOptionsBindings?: EditableOptions.OptionsBindings;
-        /** @internal */
-        sync?: Sync.RawOptionsRecord;
-        /**
-         * Connector options
-         */
-        connector?: (ConnectorOptions|Array<ConnectorOptions>);
-        /**
-         * Sets an ID for the component's container.
-         */
-        id?: string;
-        /**
-         * The component's title, which will render at the top.
-         *
-         * Try it:
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/title/ | Changed captions }
-         */
-        title?: TextOptionsType;
-        /**
-         * The component's caption, which will render at the bottom.
-         *
-         * Try it:
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/caption/ | Changed captions }
-         */
-        caption?: TextOptionsType;
-
-        /**
-         * States for the component.
-         */
-        states?: StatesOptions;
-    }
+    renderTo?: string;
 
     /**
-     * States options for the component.
+     * The name of class that is applied to the component's container.
      */
-    export interface StatesOptions {
-        active?: {
-            /**
-             * Whether the component is active. Only used when `enabled` is
-             * `true`.
-             * If `true`, the `highcharts-dashboards-cell-state-active` class
-             * will be added to the component's container.
-             *
-             * Only one component can be active at a time.
-             *
-             * Try it:
-             * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/states/ | Active state }
-             *
-             * @default false
-             */
-            isActive?: boolean;
-
-            /**
-             * Whether to enable the active state.
-             *
-             * @default false
-             */
-            enabled?: boolean;
-        };
-        hover?: {
-            /**
-             * Whether to enable the hover state.
-             *
-             * @default false
-             */
-            enabled?: boolean;
-        };
-    }
-
-    /** @internal */
-    export type ConnectorTypes = DataConnectorType;
+    className?: string;
 
     /**
-     * Allowed types for the text.
-    */
-    export type TextOptionsType = string | false | TextOptions | undefined;
+     * The type of component like: `HTML`, `KPI`, `Highcharts`, `Grid`,
+     * `Navigator`.
+     */
+    type: keyof ComponentTypeRegistry;
 
+    /**
+     * Allow overwriting gui elements.
+     * @internal
+     */
+    navigationBindings?: Array<AnyRecord>;
+    /**
+     * Events attached to the component : `mount`, `unmount`, `resize`, `update`.
+     *
+     * Try it:
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/events/ | Mount event }
+     */
+    events?: Record<string, Function>;
+    /**
+     * Set of options that are available for editing through sidebar.
+     */
+    editableOptions?: Array<EditableOption>;
+    /** @internal */
+    editableOptionsBindings?: EditableOptionsBindings;
+    /**
+     * Sync options. Predefined per component or custom sync options can be
+     * used here.
+     */
+    sync?: SyncRawOptionsRecord;
+    /**
+     * Connector options
+     */
+    connector?: (ConnectorOptions|Array<ConnectorOptions>);
+    /**
+     * Sets an ID for the component's container.
+     */
+    id?: string;
+    /**
+     * The component's title, which will render at the top.
+     *
+     * Try it:
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/title/ | Changed captions }
+     */
+    title?: TextOptionsType;
+    /**
+     * The component's caption, which will render at the bottom.
+     *
+     * Try it:
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/caption/ | Changed captions }
+     */
+    caption?: TextOptionsType;
+
+    /**
+     * States for the component.
+     */
+    states?: StatesOptions;
 }
+
+/**
+ * States options for the component.
+ */
+export interface StatesOptions {
+    active?: {
+        /**
+         * Whether the component is active. Only used when `enabled` is
+         * `true`.
+         * If `true`, the `highcharts-dashboards-cell-state-active` class
+         * will be added to the component's container.
+         *
+         * Only one component can be active at a time.
+         *
+         * Try it:
+         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/component-options/states/ | Active state }
+         *
+         * @default false
+         */
+        isActive?: boolean;
+
+        /**
+         * Whether to enable the active state.
+         *
+         * @default false
+         */
+        enabled?: boolean;
+    };
+    hover?: {
+        /**
+         * Whether to enable the hover state.
+         *
+         * @default false
+         */
+        enabled?: boolean;
+    };
+}
+
+/** @internal */
+export type ConnectorTypes = DataConnectorType;
+
+/**
+ * Allowed types for the text.
+*/
+export type TextOptionsType = string | false | TextOptions | undefined;
 
 export default Component;

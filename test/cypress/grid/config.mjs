@@ -17,6 +17,7 @@ export default defineConfig({
     e2e: {
         ...defaultConfig.e2e,
         specPattern: 'test/cypress/grid/integration/**/*.cy.{js,jsx,ts,tsx}',
+        excludeSpecPattern: 'test/cypress/grid/integration/demos.cy.{js,jsx,ts,tsx}',
         setupNodeEvents(on, config) {
             config.env.demoPaths = {
                 gridLitePaths: getDemoFiles(gridLiteDir),

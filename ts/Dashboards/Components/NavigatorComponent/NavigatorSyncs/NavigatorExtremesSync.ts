@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -20,17 +20,17 @@
  *
  * */
 
-import type { Axis } from '../../../Plugins/HighchartsTypes';
-import type Sync from '../../Sync/Sync';
+import type { AxisExtremesObject } from '../../../Plugins/HighchartsTypes';
+import type { OptionsEntry, SyncPair } from '../../Sync/Sync';
+import type { Event as DataCursorEvent } from '../../../../Data/DataCursor';
 
 import Component from '../../Component';
-import DataCursor from '../../../../Data/DataCursor';
 import DataModifier from '../../../../Data/Modifiers/DataModifier.js';
 import NavigatorComponent from '../NavigatorComponent.js';
 import NavigatorSyncUtils from './NavigatorSyncUtils.js';
 import U from '../../../../Core/Utilities.js';
 
-const { Range: RangeModifier } = DataModifier.types;
+const { Filter: FilterModifier } = DataModifier.types;
 const { addEvent, pick, defined } = U;
 
 
@@ -40,9 +40,9 @@ const { addEvent, pick, defined } = U;
  *
  * */
 
-const defaultOptions: Sync.OptionsEntry = {};
+const defaultOptions: OptionsEntry = {};
 
-const syncPair: Sync.SyncPair = {
+const syncPair: SyncPair = {
     emitter: function (this: Component): Function | void {
         if (this.type !== 'Navigator') {
             return;
@@ -52,10 +52,11 @@ const syncPair: Sync.SyncPair = {
         const groupKey = syncOptions.group ? ':' + syncOptions.group : '';
 
         const afterSetExtremes = (
-            extremes: Axis.ExtremesObject
+            extremes: AxisExtremesObject
         ): void => {
             if (component.connectorHandlers?.[0]?.connector) {
-                const table = component.connectorHandlers[0].connector.table,
+                const table =
+                    component.connectorHandlers[0].connector.getTable(),
                     dataCursor = component.board.dataCursor,
                     filterColumn = component.getColumnAssignment()[0],
                     [min, max] = component.getAxisExtremes();
@@ -89,7 +90,7 @@ const syncPair: Sync.SyncPair = {
         return addEvent(
             component.chart.xAxis[0],
             'afterSetExtremes',
-            function (extremes: Axis.ExtremesObject): void {
+            function (extremes: AxisExtremesObject): void {
                 clearTimeout(delay);
                 delay = setTimeout(afterSetExtremes, 50, this, extremes);
             }
@@ -105,17 +106,17 @@ const syncPair: Sync.SyncPair = {
 
         const dataCursor = component.board.dataCursor;
 
-        const extremesListener = (e: DataCursor.Event): void => {
+        const extremesListener = (e: DataCursorEvent): void => {
             const cursor = e.cursor;
 
             if (!component.connectorHandlers?.[0]?.connector) {
                 return;
             }
 
-            const table = component.connectorHandlers[0].connector.table;
+            const table = component.connectorHandlers[0].connector.getTable();
 
             // Assume first column with unique keys as fallback
-            let extremesColumn = table.getColumnNames()[0],
+            let extremesColumn = table.getColumnIds()[0],
                 maxIndex = table.getRowCount(),
                 minIndex = 0;
 
@@ -138,29 +139,27 @@ const syncPair: Sync.SyncPair = {
 
             if (
                 typeof extremesColumn === 'string' &&
-                modifier instanceof RangeModifier
+                modifier instanceof FilterModifier
             ) {
-                const ranges = modifier.options.ranges,
-                    min = table.getCell(extremesColumn, minIndex),
-                    max = table.getCell(extremesColumn, maxIndex);
+                const min = table.getCell(extremesColumn, minIndex);
+                const max = table.getCell(extremesColumn, maxIndex);
 
                 if (defined(max) && defined(min)) {
-                    NavigatorSyncUtils.unsetRangeOptions(
-                        ranges, extremesColumn
+                    NavigatorSyncUtils.setRangeOptions(
+                        modifier.options,
+                        extremesColumn,
+                        min,
+                        max
                     );
 
-                    ranges.unshift({
-                        column: extremesColumn,
-                        maxValue: max,
-                        minValue: min
-                    });
-                    table.setModifier(modifier);
+                    void table.setModifier(modifier);
                 }
             }
         };
 
         const registerCursorListeners = (): void => {
-            const table = component.connectorHandlers?.[0]?.connector?.table;
+            const table =
+                component.connectorHandlers?.[0]?.connector?.getTable();
 
             if (table) {
                 dataCursor.addListener(
@@ -182,7 +181,8 @@ const syncPair: Sync.SyncPair = {
         };
 
         const unregisterCursorListeners = (): void => {
-            const table = component.connectorHandlers?.[0]?.connector?.table;
+            const table =
+                component.connectorHandlers?.[0]?.connector?.getTable();
 
             if (table) {
                 dataCursor.removeListener(

@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2009-2025 Torstein Honsi
+ *  (c) 2009-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -78,8 +79,8 @@ const {
  *
  * */
 
-declare module '../../Core/Chart/ChartLike'{
-    interface ChartLike {
+declare module '../../Core/Chart/ChartBase'{
+    interface ChartBase {
         boxesToAvoid?: Array<LabelIntersectBoxObject>;
         labelSeries?: Array<Series>;
         labelSeriesMaxSum?: number;
@@ -87,8 +88,8 @@ declare module '../../Core/Chart/ChartLike'{
     }
 }
 
-declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase {
         interpolatedPoints?: Array<ControlPoint>;
         labelBySeries?: SVGElement;
         sum?: number;
@@ -139,7 +140,7 @@ const labelDistance = 3;
 
 /**
  * Check whether a proposed label position is clear of other elements.
- * @private
+ * @internal
  */
 function checkClearPoint(
     series: Series,
@@ -169,7 +170,7 @@ function checkClearPoint(
      * Get the weight in order to determine the ideal position. Larger distance
      * to other series gives more weight. Smaller distance to the actual point
      * (connector points only) gives more weight.
-     * @private
+     * @internal
      */
     function getWeight(
         distToOthersSquared: number,
@@ -355,9 +356,7 @@ function checkClearPoint(
 
 }
 
-/**
- * @private
- */
+/** @internal */
 function compose(
     ChartClass: typeof Chart,
     SVGRendererClass: typeof SVGRenderer
@@ -380,7 +379,7 @@ function compose(
  * redraw. It runs in  a timeout to prevent locking, and loops over all series,
  * taking all series and labels into account when placing the labels.
  *
- * @private
+ * @internal
  * @function Highcharts.Chart#drawSeriesLabels
  */
 function drawSeriesLabels(chart: Chart): void {
@@ -473,7 +472,7 @@ function drawSeriesLabels(chart: Chart): void {
         }
 
         /**
-         * @private
+         * @internal
          */
         function insidePane(
             x: number,
@@ -497,7 +496,7 @@ function drawSeriesLabels(chart: Chart): void {
         }
 
         /**
-         * @private
+         * @internal
          */
         function destroyLabel(): void {
             if (label) {
@@ -769,7 +768,7 @@ function drawSeriesLabels(chart: Chart): void {
  * Points to avoid. In addition to actual data points, the label should avoid
  * interpolated positions.
  *
- * @private
+ * @internal
  * @function Highcharts.Series#getPointsOnGraph
  */
 function getPointsOnGraph(series: Series): (Array<ControlPoint>|undefined) {
@@ -809,7 +808,7 @@ function getPointsOnGraph(series: Series): (Array<ControlPoint>|undefined) {
      * Push the point to the interpolated points, but only if that position in
      * the grid has not been occupied. As a performance optimization, we divide
      * the plot area into a grid and only add one point per series (#9815).
-     * @private
+     * @internal
      */
     function pushDiscrete(point: ControlPoint): void {
         const cellSize = 8,
@@ -956,7 +955,7 @@ function getPointsOnGraph(series: Series): (Array<ControlPoint>|undefined) {
  * Overridable function to return series-specific font sizes for the labels. By
  * default it returns bigger font sizes for series with the greater sum of y
  * values.
- * @private
+ * @internal
  */
 function labelFontSize(
     series: Series,
@@ -971,7 +970,7 @@ function labelFontSize(
 
 /**
  * Prepare drawing series labels.
- * @private
+ * @internal
  */
 function onChartRedraw(this: Chart, e: Event): void {
 
@@ -1053,7 +1052,7 @@ function onChartRedraw(this: Chart, e: Event): void {
 
 /**
  * General symbol definition for labels with connector.
- * @private
+ * @internal
  */
 function symbolConnector(
     x: number,

@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sebastian Bochan
@@ -25,16 +25,22 @@
  * */
 
 import type Component from './Components/Component';
+import type { Options as ComponentOptions } from './Components/Component';
 import type ComponentType from './Components/ComponentType';
 import type DataPoolOptions from '../Data/DataPoolOptions';
+import type { DeepPartial } from '../Shared/Types';
 import type EditMode from './EditMode/EditMode';
+import type { Options as EditModeOptions } from './EditMode/EditMode';
 import type Fullscreen from './EditMode/Fullscreen';
+import type { Options as LayoutOptions } from './Layout/Layout';
+import type { MountedComponent } from './Actions/Bindings';
 
 import Bindings from './Actions/Bindings.js';
 import ComponentRegistry from './Components/ComponentRegistry.js';
 import DashboardsAccessibility from './Accessibility/DashboardsAccessibility.js';
 import DataCursor from '../Data/DataCursor.js';
 import DataPool from '../Data/DataPool.js';
+import Defaults from './Defaults.js';
 import Globals from './Globals.js';
 import Layout from './Layout/Layout.js';
 import HTMLComponent from './Components/HTMLComponent/HTMLComponent.js';
@@ -42,6 +48,7 @@ import U from '../Core/Utilities.js';
 const {
     merge,
     addEvent,
+    createElement,
     error,
     objectEach,
     uniqueKey
@@ -69,7 +76,7 @@ const {
  *          }]
  *      },
  *      components: [{
- *          cell: 'dashboard-col-0',
+ *          renderTo: 'dashboard-col-0',
  *          type: 'Highcharts',
  *          chartOptions: {
  *              series: [{
@@ -102,7 +109,7 @@ class Board {
      */
     public static board(
         renderTo: (string | globalThis.HTMLElement),
-        options: Board.Options,
+        options: Options,
         async?: boolean
     ): Board;
 
@@ -121,14 +128,14 @@ class Board {
      */
     public static board(
         renderTo: (string | globalThis.HTMLElement),
-        options: Board.Options,
+        options: Options,
         async: true
     ): Promise<Board>;
 
     // Implementation:
     public static board(
         renderTo: (string | globalThis.HTMLElement),
-        options: Board.Options,
+        options: Options,
         async?: boolean
     ): (Board | Promise<Board>) {
         return new Board(renderTo, options).init(async);
@@ -153,9 +160,9 @@ class Board {
      */
     protected constructor(
         renderTo: (string | HTMLElement),
-        options: Board.Options
+        options: Options
     ) {
-        this.options = merge(Board.defaultOptions, options);
+        this.options = merge(Defaults.defaultOptions, options);
         this.dataPool = new DataPool(options.dataPool);
         this.id = uniqueKey();
         this.guiEnabled = !options.gui ?
@@ -187,20 +194,20 @@ class Board {
     /**
      * The accessibility module for the dashboard.
      * @internal
-     * */
+     */
     public a11y: DashboardsAccessibility;
 
     /**
      * The container referenced by the `renderTo` option when creating the
      * dashboard.
      * @internal
-     * */
+     */
     public boardWrapper!: HTMLElement;
 
     /**
      * The main container for the dashboard. Created inside the element
      * specified by user when creating the dashboard.
-     * */
+     */
     public container!: HTMLElement;
 
     /**
@@ -210,78 +217,75 @@ class Board {
     public componentTypes = ComponentRegistry.types;
 
     /**
-     * The data cursor instance used for interacting with the data.
-     * @internal
-     * */
+     * The data cursor instance used for emitting events on the data.
+     */
     public dataCursor: DataCursor;
 
     /**
      * The data pool instance with all the connectors.
-     * */
+     */
     public dataPool: DataPool;
 
     /**
      * The edit mode instance. Used to handle editing the dashboard.
      * @internal
-     * */
+     */
     public editMode?: EditMode;
 
     /**
      * The fullscreen instance. Controls the fullscreen mode.
      * @internal
-     * */
+     */
     public fullscreen?: Fullscreen;
 
     /**
      * Flag to determine if the GUI is enabled.
      * @internal
-     * */
+     */
     public guiEnabled?: boolean;
 
     /**
      * Flag to determine if the EditMode is enabled.
      * @internal
-     * */
+     */
     public editModeEnabled?: boolean;
 
     /**
      * The unique id of the dashboard, it is generated automatically.
-     * */
+     */
     public readonly id: string;
 
     /**
      * Index of the board in the global boards array. Allows to access the
      * specific one when having multiple dashboards.
-     * */
+     */
     public readonly index: number;
 
     /**
      * An array of generated layouts.
-     * */
+     */
     public layouts: Array<Layout>;
 
     /**
      * The wrapper for the layouts.
      * @internal
-     * */
+     */
     public layoutsWrapper?: globalThis.HTMLElement;
 
     /**
      * An array of mounted components on the dashboard.
-     * */
-    public mountedComponents: Array<Bindings.MountedComponent>;
+     */
+    public mountedComponents: Array<MountedComponent>;
 
     /**
      * The options for the dashboard.
-     * */
-    public options: Board.Options;
+     */
+    public options: Options;
 
     /**
      * Reference to ResizeObserver, which allows running 'unobserve'.
-     * @internal
      */
     private resizeObserver?: ResizeObserver;
-
 
     /* *
      *
@@ -381,11 +385,11 @@ class Board {
     /**
      * Inits creating a layouts and setup the EditMode tools.
      * @internal
-     *
      */
-    private initEditMode():void {
-        if (Dashboards.EditMode) {
-            this.editMode = new Dashboards.EditMode(
+    private initEditMode(): void {
+        const { EditMode } = Globals.win.Dashboards;
+        if (EditMode) {
+            this.editMode = new EditMode(
                 this,
                 this.options.editMode
             );
@@ -418,6 +422,7 @@ class Board {
      */
     public destroy(): void {
         const board = this;
+        const index = this.index;
 
         // Cancel all data connectors pending requests.
         this.dataPool.cancelPendingRequests();
@@ -448,7 +453,7 @@ class Board {
             delete (board as Record<string, any>)[key];
         });
 
-        Globals.boards[this.index] = void 0;
+        Globals.boards[index] = void 0;
 
         return;
     }
@@ -475,15 +480,110 @@ class Board {
     }
 
     /**
+     * Update the dashboard with new options.
+     *
+     * @param newOptions
+     * The new options to apply to the dashboard.
+     */
+    public update(newOptions: DeepPartial<Options>): void {
+        const board = this;
+
+        // Merge new options with existing ones
+        board.options = merge(board.options, newOptions);
+
+        // Update dataPool if dataPool options changed
+        if (newOptions.dataPool) {
+            board.dataPool = new DataPool(
+                board.options.dataPool as DataPoolOptions
+            );
+        }
+
+        // Update guiEnabled and editModeEnabled flags if changed
+        if (newOptions.gui !== void 0) {
+            board.guiEnabled = !newOptions.gui ?
+                false : board.options?.gui?.enabled;
+        }
+        if (newOptions.editMode !== void 0) {
+            board.editModeEnabled = !newOptions.editMode ?
+                false : board.options?.editMode?.enabled;
+        }
+
+        // Destroy existing components
+        for (const mountedComponent of board.mountedComponents) {
+            mountedComponent.component.destroy();
+        }
+        board.mountedComponents = [];
+
+        // Destroy existing layouts if GUI is enabled
+        if (board.guiEnabled && board.layouts) {
+            for (let i = 0, iEnd = board.layouts.length; i < iEnd; ++i) {
+                board.layouts[i].destroy();
+            }
+            board.layouts = [];
+
+            // Ensure layoutsWrapper exists
+            if (!board.layoutsWrapper && board.container) {
+                board.layoutsWrapper = createElement(
+                    'div',
+                    {
+                        className: Globals.classNames.layoutsWrapper
+                    },
+                    {},
+                    board.container
+                );
+            }
+
+            // Create new layouts if they are provided
+            if (board.options.gui?.layouts) {
+                const guiOptions = board.options.gui;
+                for (
+                    let i = 0, iEnd = guiOptions.layouts.length;
+                    i < iEnd; ++i
+                ) {
+                    board.layouts.push(
+                        new Layout(
+                            board,
+                            merge(
+                                {},
+                                guiOptions.layoutOptions,
+                                guiOptions.layouts[i]
+                            )
+                        )
+                    );
+                }
+
+                // Re-initialize editMode events if editMode exists
+                if (board.editMode) {
+                    // Re-initialize events for all layouts
+                    let j = 0;
+                    const jEnd = board.layouts.length;
+                    for (j; j < jEnd; ++j) {
+                        (board.editMode as any).setLayoutEvents(
+                            board.layouts[j]
+                        );
+                    }
+                }
+            }
+        }
+
+        // Add new components
+        if (board.options.components) {
+            void board.setComponents(
+                board.options.components as Array<Partial<ComponentType['options']>>
+            );
+        }
+    }
+
+    /**
      * Convert the current state of board's options into JSON. The function does
      * not support converting functions or events into JSON object.
      *
      * @returns
      * Dashboards options.
      */
-    public getOptions(): Globals.DeepPartial<Board.Options> {
+    public getOptions(): DeepPartial<Options> {
         const board = this,
-            options: Globals.DeepPartial<Board.Options> = {
+            options: DeepPartial<Options> = {
                 ...this.options,
                 components: []
             };
@@ -505,7 +605,7 @@ class Board {
             };
             for (let i = 0, iEnd = board.layouts.length; i < iEnd; ++i) {
                 options.gui.layouts?.push(
-                    board.layouts[i].getOptions() as Layout.Options
+                    board.layouts[i].getOptions() as LayoutOptions
                 );
             }
         } else {
@@ -548,121 +648,90 @@ class Board {
 
 /* *
  *
- *  Class Namespace
+ *  Type Declarations
  *
  * */
 
-namespace Board {
-
-    /* *
-     *
-     *  Declarations
-     *
-     * */
-
+/**
+ * Options to configure the board.
+ **/
+export interface Options {
     /**
-     * Options to configure the board.
+     * Data pool with all of the connectors.
      **/
-    export interface Options {
-        /**
-         * Data pool with all of the connectors.
-         **/
-        dataPool?: DataPoolOptions;
-        /**
-         * Options for the GUI. Allows to define graphical elements and its
-         * layout.
-         **/
-        gui?: GUIOptions;
-        /**
-         * Options for the edit mode. Can be used to enable the edit mode and
-         * define all things related to it like the context menu.
-         **/
-        editMode?: EditMode.Options;
-        /**
-         * List of components to add to the board.
-         *
-         * Try it:
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/component-highcharts | Highcharts component}
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/component-html | HTML component}
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/component-kpi | KPI component}
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/custom-component | Custom component}
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/grid-component/grid-options | Datagrid component}
-         *
-         **/
-        components?: Array<Partial<ComponentType['options']>>;
-        /**
-         * General options for the components.
-         **/
-        componentOptions?: Partial<Component.Options>;
-        /**
-         * Events related to the board.
-         */
-        events?: BoardEvents;
-    }
-
-    export interface GUIOptions {
-        /**
-         * Whether the GUI is enabled or not.
-         *
-         * @default true
-         **/
-        enabled?: boolean;
-        /**
-         * General options for the layouts applied to all layouts.
-         **/
-        layoutOptions?: Partial<Layout.Options>;
-        /**
-         * Allows to define graphical elements and its layout. The layout is
-         * defined by the row and cells. The row is a horizontal container for
-         * the cells. The cells are containers for the elements. The layouts
-         * can be nested inside the cells.
-         **/
-        layouts: Array<Layout.Options>;
-    }
-
+    dataPool?: DataPoolOptions;
+    /**
+     * Options for the GUI. Allows to define graphical elements and its
+     * layout.
+     **/
+    gui?: GUIOptions;
+    /**
+     * Options for the edit mode. Can be used to enable the edit mode and
+     * define all things related to it like the context menu.
+     **/
+    editMode?: EditModeOptions;
+    /**
+     * List of components to add to the board.
+     *
+     * Try it:
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/component-highcharts | Highcharts component}
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/component-html | HTML component}
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/component-kpi | KPI component}
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/components/custom-component | Custom component}
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/grid-component/grid-options | grid component}
+     *
+     **/
+    components?: Array<Partial<ComponentType['options']>>;
+    /**
+     * General options for the components.
+     **/
+    componentOptions?: Partial<ComponentOptions>;
     /**
      * Events related to the board.
      */
-    export interface BoardEvents {
-        /**
-         * Callback function to be called after the board and all components are
-         * initialized.
-         */
-        mounted: MountedEventCallback;
-    }
-
-
-    /**
-     * Callback function to be called when a board event is triggered.
-     */
-    export type MountedEventCallback = (this: Board) => void;
-    /* *
-     *
-     *  Constants
-     *
-     * */
-
-    /**
-     * Global dashboard settings.
-     */
-    export const defaultOptions: Board.Options = {
-        gui: {
-            enabled: true,
-            layoutOptions: {
-                rowClassName: void 0,
-                cellClassName: void 0
-            },
-            layouts: []
-        },
-        components: []
-    };
-
+    events?: BoardEvents;
 }
+
+export interface GUIOptions {
+    /**
+     * Whether the GUI is enabled or not.
+     *
+     * @default true
+     **/
+    enabled?: boolean;
+    /**
+     * General options for the layouts applied to all layouts.
+     **/
+    layoutOptions?: Partial<LayoutOptions>;
+    /**
+     * Allows to define graphical elements and its layout. The layout is
+     * defined by the row and cells. The row is a horizontal container for
+     * the cells. The cells are containers for the elements. The layouts
+     * can be nested inside the cells.
+     **/
+    layouts: Array<LayoutOptions>;
+}
+
+/**
+ * Events related to the board.
+ */
+export interface BoardEvents {
+    /**
+     * Callback function to be called after the board and all components are
+     * initialized.
+     */
+    mounted: MountedEventCallback;
+}
+
+/**
+ * Callback function to be called when a board event is triggered.
+ */
+export type MountedEventCallback = (this: Board) => void;
 
 /* *
  *

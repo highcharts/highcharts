@@ -17,11 +17,9 @@ Dashboards.board('container', {
         connectors: [{
             id: 'Economy',
             type: 'CSV',
-            options: {
-                csv: document.getElementById('csv').innerHTML,
-                decimalPoint: '.',
-                itemDelimiter: ','
-            }
+            csv: document.getElementById('csv').innerHTML,
+            decimalPoint: '.',
+            itemDelimiter: ','
         }]
     },
     editMode: {
@@ -103,11 +101,11 @@ Dashboards.board('container', {
         }
     }, {
         renderTo: 'bottom',
-        type: 'DataGrid',
+        type: 'Grid',
         connector: {
             id: 'Economy'
         },
-        dataGridOptions: {
+        gridOptions: {
             credits: {
                 enabled: false
             },

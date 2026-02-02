@@ -3,17 +3,17 @@ describe('Sync when new connector added to components.', () => {
         cy.visit('/dashboards/cypress/component-with-no-connector');
     });
 
-    it('Chart and DataGridComponent should have synced hover events.', () => {
-        cy.get('tr.highcharts-datagrid-row').eq(0).as('firstCell');
+    it('Chart and GridComponent should have synced hover events.', () => {
+        cy.get('tr.hcg-row').eq(0).as('firstCell');
 
-        // Hover over DataGridComponent.
+        // Hover over GridComponent.
         cy.get('@firstCell').trigger('mouseover');
-        cy.get('@firstCell').should('have.class', 'highcharts-datagrid-hovered-row');
+        cy.get('@firstCell').should('have.class', 'hcg-hovered-row');
 
         cy.chart().then(chart =>{
             assert.notOk(
                 chart.tooltip.isHidden,
-                'When hovering over DataGrid, chart should have tooltip.'
+                'When hovering over Grid, chart should have tooltip.'
             )
         })
     });

@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sophie Bremer
@@ -25,6 +25,12 @@ import type {
     PointShortOptions
 } from './PointOptions';
 import type Series from './Series';
+import type {
+    CellType,
+    Column,
+    ColumnCollection,
+    Event as DataTableEvent
+} from '../../Data/DataTable.js';
 
 import DataTable from '../../Data/DataTable.js';
 import H from '../Globals.js';
@@ -45,18 +51,29 @@ const {
  *
  * */
 
-declare module './SeriesLike' {
-    interface SeriesLike {
+/** @internal */
+declare module './SeriesBase' {
+    interface SeriesBase {
         datas?: DataSeriesAdditions;
     }
 }
 
+// Unmark as internal when in the future.
+/** @internal */
 declare module './SeriesOptions' {
     interface SeriesOptions {
+        /* *
+        * Indicates data is structured as columns instead of rows.
+        *
+        * @type      {boolean}
+        * @since     Future
+        * @apioption plotOptions.series.dataAsColumns
+        */
         dataAsColumns?: boolean;
     }
 }
 
+/** @internal */
 export declare class DataSeriesComposition extends Series {
     datas: DataSeriesAdditions;
 }
@@ -67,9 +84,7 @@ export declare class DataSeriesComposition extends Series {
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 function wrapSeriesGeneratePoints(
     this: DataSeriesComposition,
     proceed: DataSeriesComposition['generatePoints']
@@ -108,9 +123,7 @@ function wrapSeriesGeneratePoints(
     fireEvent(this, 'afterGeneratePoints');
 }
 
-/**
- * @private
- */
+/** @internal */
 function wrapSeriesSetData(
     this: DataSeriesComposition,
     proceed: DataSeriesComposition['setData'],
@@ -130,7 +143,7 @@ function wrapSeriesSetData(
             merge(true, data)
     );
 
-    const columns: DataTable.ColumnCollection = {},
+    const columns: ColumnCollection = {},
         keys = (this.options.keys || this.parallelArrays).slice();
 
     if (isNumber(data[0]) || keys.length === 1) {
@@ -155,7 +168,7 @@ function wrapSeriesSetData(
             ++i
         ) {
             if (data[i] instanceof Array) {
-                columns[keys[i]] = data[i] as Array<DataTable.CellType>;
+                columns[keys[i]] = data[i] as Array<CellType>;
             }
         }
     }
@@ -169,6 +182,7 @@ function wrapSeriesSetData(
  *
  * */
 
+/** @internal */
 class DataSeriesAdditions {
 
     /* *
@@ -178,7 +192,7 @@ class DataSeriesAdditions {
      * */
 
     /**
-     * @private
+     * @internal
      */
     public static compose(
         SeriesClass: typeof Series
@@ -208,7 +222,7 @@ class DataSeriesAdditions {
     public constructor(
         series: DataSeriesComposition
     ) {
-        const columns: DataTable.ColumnCollection = {},
+        const columns: ColumnCollection = {},
             keys = series.parallelArrays;
 
         for (let i = 0, iEnd = keys.length; i < iEnd; ++i) {
@@ -241,7 +255,7 @@ class DataSeriesAdditions {
 
     /**
      * Triggers processing and redrawing
-     * @private
+     * @internal
      */
     public processTable(
         redraw?: boolean,
@@ -266,7 +280,7 @@ class DataSeriesAdditions {
 
     /**
      * Experimental integration of the data layer
-     * @private
+     * @internal
      */
     public setTable(
         table: DataTable,
@@ -308,7 +322,7 @@ class DataSeriesAdditions {
             }
         }
 
-        let column: (Readonly<DataTable.Column>|undefined),
+        let column: (Readonly<Column>|undefined),
             failure = false,
             indexAsX = false;
 
@@ -331,14 +345,14 @@ class DataSeriesAdditions {
 
         if (failure) {
             // Fallback to index
-            const columnNames = table.getColumnNames(),
-                emptyColumn: DataTable.Column = [];
+            const columnIds = table.getColumnIds(),
+                emptyColumn: Column = [];
 
             emptyColumn.length = rowCount;
 
             let columnOffset = 0;
 
-            if (columnNames.length === keys.length - 1) {
+            if (columnIds.length === keys.length - 1) {
                 // Table index becomes x
                 columnOffset = 1;
                 indexAsX = true;
@@ -350,7 +364,7 @@ class DataSeriesAdditions {
                 i < iEnd;
                 ++i
             ) {
-                column = table.getColumn(columnNames[i], true);
+                column = table.getColumn(columnIds[i], true);
                 key = keys[i];
 
                 anySeries[`${key}Data`] = column || emptyColumn.slice();
@@ -381,8 +395,8 @@ class DataSeriesAdditions {
     }
 
     /**
-     * Stops synchronisation of table changes with series.
-     * @private
+     * Stops synchronization of table changes with series.
+     * @internal
      */
     public syncOff(): void {
         const unlisteners = this.unlisteners;
@@ -396,7 +410,7 @@ class DataSeriesAdditions {
 
     /**
      * Activates synchronization of table changes with series.
-     * @private
+     * @internal
      */
     public syncOn(): void {
         if (this.unlisteners.length) {
@@ -406,24 +420,30 @@ class DataSeriesAdditions {
         const series = this.series,
             table = this.table,
             anySeries: AnyRecord = series,
-            onChange = (e: DataTable.Event): void => {
-                if (e.type === 'afterDeleteColumns') {
+            onChange = (e: DataTableEvent): void => {
+                const type = e.type;
+                if (type === 'afterDeleteColumns') {
                     // Deletion affects all points
                     this.setTable(table, true);
                     return;
                 }
-                if (e.type === 'afterDeleteRows') {
+                if (type === 'afterDeleteRows') {
+                    const { rowIndex, rowCount } = e;
+
                     if (
-                        e.rowIndex > 0 &&
-                        e.rowIndex + e.rowCount < series.points.length
+                        Array.isArray(rowIndex) ||
+                        (
+                            rowIndex > 0 &&
+                            rowIndex + rowCount < series.points.length
+                        )
                     ) {
                         // Deletion affects trailing points
                         this.setTable(table, true);
                         return;
                     }
                     for (
-                        let i = e.rowIndex,
-                            iEnd = i + e.rowCount;
+                        let i = rowIndex,
+                            iEnd = i + rowCount;
                         i < iEnd;
                         ++i
                     ) {
@@ -431,9 +451,12 @@ class DataSeriesAdditions {
                     }
                 }
                 if (this.indexAsX) {
-                    if (e.type === 'afterSetCell') {
+                    if (type === 'afterSetCell') {
                         anySeries.xData[e.rowIndex] = e.rowIndex;
-                    } else if (e.type === 'afterSetRows') {
+                    } else if (
+                        type === 'afterSetRows' &&
+                        isNumber(e.rowIndex)
+                    ) {
                         for (
                             let i = e.rowIndex,
                                 iEnd = i + e.rowCount;
@@ -464,6 +487,7 @@ class DataSeriesAdditions {
  *
  * */
 
+/** @internal */
 export default DataSeriesAdditions;
 
 /* *

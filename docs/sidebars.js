@@ -33,7 +33,8 @@ module.exports = {
             'chart-concepts/3d-charts',
             'chart-concepts/responsive',
             'chart-concepts/security',
-            'chart-concepts/dataviz-glossary'
+            'chart-concepts/dataviz-glossary',
+            'chart-concepts/common-events'
         ],
         'Stock': [
             'stock/getting-started-stock',
@@ -101,7 +102,7 @@ module.exports = {
             'dashboards/edit-mode',
             'dashboards/types-of-components',
             'dashboards/grid-component',
-            'dashboards/grid-standalone',
+            'dashboards/grid-migration',
             'dashboards/kpi-component',
             'dashboards/highcharts-component',
             'dashboards/html-component',
@@ -116,7 +117,6 @@ module.exports = {
             'dashboards/custom-component',
             'dashboards/installation-with-es-modules',
             'dashboards/get-options',
-            'dashboards/grid-migration',
             'dashboards/frequently-asked-questions',
         ],
         'Grid': [
@@ -128,20 +128,25 @@ module.exports = {
             'grid/cell-editing',
             'grid/cell-renderers',
             'grid/sparklines',
+            'grid/column-filtering',
             'grid/events',
+            'grid/exporting',
+            'grid/pagination',
             {
                 'Theming': [
                     'grid/theming/theming',
                     'grid/theming/theming-variables',
+                    'grid/theming/conditional-theming',
                 ]
             },
             'grid/performance',
             'grid/accessibility',
             {
-                'Wrappers': [
-                    'grid/wrappers/grid-with-angular',
-                    'grid/wrappers/grid-with-react',
-                    'grid/wrappers/grid-with-vue'
+                'Frameworks': [
+                    'grid/frameworks/grid-with-angular',
+                    'grid/frameworks/grid-with-nextjs',
+                    'grid/frameworks/grid-with-react',
+                    'grid/frameworks/grid-with-vue'
                 ]
             }
         ],
@@ -241,6 +246,9 @@ module.exports = {
                     'morningstar/security-details',
                     'morningstar/security-compare',
                     'morningstar/x-ray',
+                    'morningstar/performance',
+                    'morningstar/hypo-performance',
+                    'morningstar/dws-connector',
                     {
                         'Time Series': [
                             'morningstar/time-series/time-series',
@@ -299,13 +307,14 @@ module.exports = {
             'flutter/your-first-chart',
             'flutter/highcharts-bundling'
         ],
-        'React integration (beta)': [
+        'React integration': [
             'react/getting-started',
             'react/series-and-chart-types',
             'react/options',
             'react/options-component-format',
             'react/nextjs',
-            'react/component-children'
+            'react/component-children',
+            'react/v4-migration-guide'
         ]
     }
 };

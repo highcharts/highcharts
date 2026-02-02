@@ -11,15 +11,17 @@ Use the `RNANewsConnector` to load regulatory news announcements.
 In dashboards, this connector is called `MorningstarRNANews`
 
 Specify the security to retrieve in the options along with a postman environment
-file for authentication, and other parameters such as `startDate`, `endDate` 
+file for authentication, and other parameters such as `startDate`, `endDate`
 or `maxStories`.
 
 ### RNANews with Morningstar standalone for Highcharts:
 
 ```js
 const rnaNewsConnector = new HighchartsConnectors.Morningstar.RNANewsConnector({
-    postman: {
-        environmentJSON: postmanJSON
+    api: {
+        access: {
+            token: 'your_access_token'
+        }
     },
     security: {
         id: 'GB00BLGZ9862',
@@ -31,18 +33,18 @@ const rnaNewsConnector = new HighchartsConnectors.Morningstar.RNANewsConnector({
 
 await rnaNewsConnector.load();
 
-new DataGrid.DataGrid('container', {
+new Grid.grid('container', {
     dataTable: rnaNewsConnector,
-    editable: false,
-    columns: {
-      Day: {
-        cellFormatter: function () {
-            return new Date(this.value)
-                .toISOString()
-                .substring(0, 10);
+    columns: [{
+        id: 'Day',
+        cells: {
+            formatter: function() {
+                return new Date(this.value)
+                    .toISOString()
+                    .substring(0, 10);
+            }
         }
-      }
-    }
+    }]
 });
 ```
 
@@ -54,17 +56,17 @@ Dashboards.board('container', {
         connectors: [{
             id: 'rna',
             type: 'MorningstarRNANews',
-            options: {
-                postman: {
-                    environmentJSON: postmanJSON
-                },
-                security: {
-                    id: 'GB00BLGZ9862',
-                    idType: 'ISIN'
-                },
-                startDate: '2000-01-01',
-                endDate: '2020-12-31'
-            }
+            api: {
+                access: {
+                    token: 'your_access_token'
+                }
+            },
+            security: {
+                id: 'GB00BLGZ9862',
+                idType: 'ISIN'
+            },
+            startDate: '2000-01-01',
+            endDate: '2020-12-31'
         }]
     },
     components: [
@@ -73,19 +75,19 @@ Dashboards.board('container', {
             connector: {
                 id: 'rna'
             },
-            type: 'DataGrid',
+            type: 'Grid',
             title: 'Regulatory News for Tesco',
-            dataGridOptions: {
-                editable: false,
-                columns: {
-                    Day: {
-                        cellFormatter: function () {
+            gridOptions: {
+                columns: [{
+                    id: 'Day',
+                    cells: {
+                        formatter: function() {
                             return new Date(this.value)
                                 .toISOString()
                                 .substring(0, 10);
                         }
                     }
-                }
+                }]
             }
         }
     ]
@@ -98,7 +100,7 @@ For more details, see [Morningstar’s RNANews API].
 
 You will find examples of how to use RNANewsConnector in our demos.
 
-- **Highcharts Dashboards + Morningstar RNA News**: Shows how to use 
+- **Highcharts Dashboards + Morningstar RNA News**: Shows how to use
 RNANewsConnector in dashboards to retrieve RNANews for Tesco.
 
 [Morningstar’s RNANews API]: https://developer.morningstar.com/direct-web-services/documentation/api-reference/time-series/regulatory-news-announcements

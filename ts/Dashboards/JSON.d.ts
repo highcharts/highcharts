@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sophie Bremer
@@ -17,45 +17,33 @@
  *
  * */
 
-export namespace JSON {
-
-    /**
-     * Type structor of arrays as it is supported in JSON.
-     */
-    export interface Array<T extends (Primitive|Type)=(Primitive|Type)> extends globalThis.Array<T> {
-        [index: number]: T;
-    }
-
-    /**
-     * Class API for JSON.stringify.
-     */
-    export interface Builder {
-        toJSON(): Type;
-    }
-
-    /**
-     * Type structure of a record object as it is supported in JSON.
-     */
-    export interface Object<T extends (Primitive|Type)=(Primitive|Type)> {
-        [key: string]: T;
-    }
-
-    /**
-     * All primitive types, that are supported in JSON.
-     */
-    export type Primitive = (boolean|number|string|null|undefined);
-
-    /**
-     * All object types, that are supported in JSON.
-     */
-    export type Type = (Array|Object);
-
+/**
+ * Type structor of arrays as it is supported in JSON.
+ */
+export interface JSONArray<T extends (JSONPrimitive|JSONType)=(JSONPrimitive|JSONType)> extends globalThis.Array<T> {
+    [index: number]: T;
 }
 
-/* *
- *
- *  Default Export
- *
- * */
+/**
+ * Class API for JSON.stringify.
+ */
+export interface JSONBuilder {
+    toJSON(): JSONType;
+}
 
-export default JSON;
+/**
+ * Type structure of a record object as it is supported in JSON.
+ */
+export interface JSONObject<T extends (JSONPrimitive|JSONType)=(JSONPrimitive|JSONType)> {
+    [key: string]: T;
+}
+
+/**
+ * All primitive types, that are supported in JSON.
+ */
+export type JSONPrimitive = (boolean|number|string|null|undefined);
+
+/**
+ * All object types, that are supported in JSON.
+ */
+export type JSONType = (JSONArray|JSONObject);
