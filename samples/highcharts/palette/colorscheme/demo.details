@@ -1,0 +1,6 @@
+---
+ name: Demo of palette.colorScheme
+ authors:
+   - Torstein Hønsi
+ js_wrap: b
+...

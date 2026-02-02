@@ -2001,7 +2001,11 @@ class Chart {
      * The additional class name.
      */
     public setClassName(className?: string): void {
-        this.container.className = 'highcharts-container ' + (className || '');
+        const classList = this.container.classList;
+        classList.add.apply(
+            classList,
+            ['highcharts-container', className].filter(Boolean) as string[]
+        );
     }
 
     /**

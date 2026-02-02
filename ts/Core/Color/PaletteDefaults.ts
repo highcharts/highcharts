@@ -28,6 +28,9 @@ const palette: PaletteOptions = {
      * automatically switch between light and dark mode based on the user's
      * system preferences.
      *
+     * @sample     highcharts/palette/colorscheme
+     *             Dark color scheme
+     *
      * @type       {'light dark'|'light'|'dark'}
      * @default    light dark
      * @since      13.0.0
