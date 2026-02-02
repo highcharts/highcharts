@@ -94,7 +94,7 @@ import {
     syncTimeout,
     wrap
 } from '../Shared/Utilities.js';
-import { error, timeUnits, uniqueKey, useSerialIds } from '../Core/Utilities.js';
+import { error, insertItem, timeUnits, uniqueKey, useSerialIds } from '../Core/Utilities.js';
 
 const G: AnyRecord = Highcharts;
 
@@ -154,6 +154,7 @@ G.getDeferredAnimation = Animation.getDeferredAnimation;
 G.getMagnitude = getMagnitude;
 G.getOptions = Defaults.getOptions;
 G.getStyle = getStyle;
+G.insertItem = insertItem;
 G.isArray = isArray;
 G.isClass = isClass;
 G.isDOMElement = isDOMElement;
