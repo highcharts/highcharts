@@ -28,6 +28,7 @@ import PaletteDefaults from './PaletteDefaults.js';
 import U from '../Utilities.js';
 const {
     diffObjects,
+    extend,
     isString,
     objectEach,
     merge
@@ -198,6 +199,12 @@ export default class Palette {
             // The rest are stored as named properties
             objectEach(paletteColors, addKebab);
             objectEach(interpolated, addKebab);
+
+            // Default to the light scheme, the dark scheme doesn't define
+            // all colors.
+            if (cScheme === 'light') {
+                extend(cssVars.dark, cssVars.light);
+            }
         }
 
         // Add a style tag to the chart renderer box
