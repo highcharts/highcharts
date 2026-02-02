@@ -48,8 +48,13 @@ export default interface ContourSeriesOptions extends ScatterSeriesOptions {
     contourInterval?: number;
 
     /**
-     * The offset for contour line positioning. Shifts where lines are drawn
-     * relative to the data values.
+     * The offset for contour line positioning. Shifts the contour levels so
+     * lines and bands are drawn at `contourOffset + n * contourInterval`
+     * instead of `n * contourInterval`.
+     *
+     * Example: with `contourInterval: 10` and `contourOffset: 5`, levels are
+     * at 5, 15, 25, etc. Use this to align levels with a reference value
+     * without changing the data. Non-positive values are treated as 0.
      *
      * @sample {highcharts} highcharts/series-contour/contour-simple/
      *         Contour plot with lines
