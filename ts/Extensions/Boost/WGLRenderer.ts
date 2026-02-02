@@ -455,18 +455,13 @@ class WGLRenderer {
                 series.getColumn('z').length ? series.getColumn('z') : void 0
             ) || (options as any).zData || series.getColumn('z', true),
             useRaw = !xData || xData.length === 0,
-            /// threshold = options.threshold,
-            // yBottom = chart.yAxis[0].getThreshold(threshold),
-            // hasThreshold = isNumber(threshold),
-            colorByPoint = series.options.colorByPoint,
-            // This is required for color by point, so make sure this is
-            // uncommented if enabling that
-            // Required for color axis support
-            // caxis,
-            connectNulls = options.connectNulls,
-            // For some reason eslint/TypeScript don't pick up that this is
-            // actually used: --- bre1470: it is never read, just set
-            // maxVal: (number|undefined), // eslint-disable-line no-unused-vars
+            {
+                colorByPoint,
+                connectNulls,
+                threshold,
+                zoneAxis = 'y',
+                zones
+            } = options,
             points: Array<WGLPoint> =
                 series.points || (false as any),
             sdata = isStacked ? series.data : (xData || rawData),
@@ -476,9 +471,6 @@ class WGLRenderer {
             cullYThreshold = 1,
             chartDestroyed = typeof chart.index === 'undefined',
             drawAsBar = asBar[series.type],
-            zoneAxis = options.zoneAxis || 'y',
-            zones = options.zones,
-            threshold: number = options.threshold as any,
             pixelRatio = this.getPixelRatio();
 
         let plotWidth = series.chart.plotWidth,
@@ -861,7 +853,9 @@ class WGLRenderer {
                     colorIndex = colorIndex %
                         chart.options.colors.length;
 
-                    rgba = color(chart.options.colors[colorIndex]).rgba;
+                    rgba = color(resolveColorExpression(
+                        cssVars, chart.options.colors[colorIndex]
+                    )).rgba;
                 }
 
                 if (rgba) {
@@ -1132,7 +1126,7 @@ class WGLRenderer {
                     yAxis.logarithmic // #16850
                 ) {
                     minVal = Math.max(
-                        threshold === null ? yMin : threshold, // #5268
+                        threshold ?? yMin, // #5268
                         yMin
                     ); // #8731
                 }
