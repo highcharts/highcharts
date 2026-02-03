@@ -34,9 +34,31 @@ import type Time from '../../Core/Time';
 
 declare module '../../Core/Options'{
     interface LangOptions {
+        /**
+         * The text for the label for the "from" input box in the range
+         * selector. Since v9.0, this string is empty as the label is not
+         * rendered by default.
+         *
+         * @product highstock gantt
+         */
         rangeSelectorFrom?: string;
+        /**
+         * The text for the label for the "to" input box in the range selector.
+         *
+         * @product highstock gantt
+         */
         rangeSelectorTo?: string;
+        /**
+         * The text for the label for the range selector buttons.
+         *
+         * @product highstock gantt
+         */
         rangeSelectorZoom?: string;
+        /**
+         * The default text for the rangeselector buttons.
+         *
+         * @since 12.2.0
+         */
         rangeSelector?: Partial<Record<RangeSelectorButtonLangKey, string>>;
     }
     interface Options {

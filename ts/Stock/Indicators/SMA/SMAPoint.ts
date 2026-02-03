@@ -21,7 +21,7 @@ import type SMAIndicator from './SMAIndicator';
  *
  * */
 
-
+/** @internal */
 declare class SMAPoint extends LinePoint {
     public series: SMAIndicator;
 }
@@ -32,5 +32,5 @@ declare class SMAPoint extends LinePoint {
  *
  * */
 
-
+/** @internal */
 export default SMAPoint;

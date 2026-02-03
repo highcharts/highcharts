@@ -421,6 +421,7 @@ class PivotPointsIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface PivotPointsIndicator{
     nameBase: string;
     pointArrayMap: Array<string>;

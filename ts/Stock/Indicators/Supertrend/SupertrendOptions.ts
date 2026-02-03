@@ -99,12 +99,14 @@ export interface SupertrendParamsOptions extends SMAParamsOptions {
     index?: undefined;
 }
 
+/** @internal */
 export interface SupertrendLinkedParentPointObject extends LinePoint {
     close: number;
     index: number;
     x: number;
 }
 
+/** @internal */
 export interface SupertrendLinkedParentObject extends LineSeries {
     data: Array<SupertrendLinkedParentPointObject>;
     points: Array<SupertrendLinkedParentPointObject>;
@@ -112,20 +114,24 @@ export interface SupertrendLinkedParentObject extends LineSeries {
     yData: Array<Array<number>>;
 }
 
+/** @internal */
 export interface SupertrendGappedExtensionObject {
     options?: SupertrendGappedExtensionOptions;
 }
 
+/** @internal */
 export interface SupertrendGappedExtensionOptions {
     gapSize?: number;
 }
 
+/** @internal */
 export interface SupertrendGroupedPointsObject {
     bottom: Array<SupertrendPoint>;
     intersect: Array<SupertrendPoint>;
     top: Array<SupertrendPoint>;
 }
 
+/** @internal */
 export interface SupertrendLineObject {
     [index: string]: (AnyRecord|undefined);
 }

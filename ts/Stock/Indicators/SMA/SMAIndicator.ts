@@ -47,12 +47,14 @@ const {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesOptions' {
     interface SeriesOptions {
         useOhlcData?: boolean;
     }
 }
 
+/** @internal */
 interface CalculateOnObject {
     chart: string;
     xAxis?: string;
@@ -597,7 +599,7 @@ class SMAIndicator extends LineSeries {
  *
  * */
 
-
+/** @internal */
 interface SMAIndicator extends IndicatorBase {
     calculateOn: CalculateOnObject;
     hasDerivedData: boolean;
