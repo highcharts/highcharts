@@ -4,10 +4,6 @@ const cases = [
     {
         name: 'Grid Lite',
         url: '/grid-lite/cypress/cell-context-menu'
-    },
-    {
-        name: 'Grid Pro',
-        url: '/grid-pro/cypress/cell-context-menu'
     }
 ];
 
