@@ -176,7 +176,7 @@ declare module '../../Core/Chart/ChartBase' {
          *
          * @deprecated 11.4.1
          */
-        getSVG(chartOptions?: Partial<Options>): (string | void);
+        getSVG(chartOptions?: Partial<Options>): Promise<string | void>;
 
         /**
          * Deprecated in favor of [Exporting.print](https://api.highcharts.com/class-reference/Highcharts.Exporting#print).
@@ -1643,6 +1643,32 @@ class Exporting {
         }
         this.resolveCSSVariables();
 
+        // Move canvas contents over to SVG image elements
+        chart.container.querySelectorAll('canvas').forEach(function (
+            canvas: HTMLCanvasElement
+        ): void {
+            const imageDataURL = canvas.toDataURL('image/png'),
+                foreignObject = canvas.parentNode,
+                imageElem = chart.renderer.image(
+                    imageDataURL,
+                    0,
+                    0,
+                    canvas.width,
+                    canvas.height
+                );
+
+            css(imageElem.element, {
+                width: canvas.style.width,
+                height: canvas.style.height
+            });
+
+            foreignObject.parentNode.insertBefore(
+                imageElem.element,
+                foreignObject
+            );
+            foreignObject.remove();
+        });
+
         return chart.container.innerHTML;
     }
 
@@ -1705,9 +1731,9 @@ class Exporting {
      *
      * @requires modules/exporting
      */
-    public getSVG(
+    public async getSVG(
         chartOptions?: Partial<Options>
-    ): string {
+    ): Promise<string> {
         const chart = this.chart;
         let svg,
             seriesOptions: DeepPartial<SeriesTypeOptions>,
@@ -1811,10 +1837,14 @@ class Exporting {
         options.colorAxis = chart.userOptions.colorAxis;
 
         // Generate the chart copy
-        const chartCopy = new (chart.constructor as typeof Chart)(
-            options,
-            chart.callback
-        );
+        const chartCopy: Chart = await new Promise((resolve): Chart =>
+            new (chart.constructor as typeof Chart)(
+                options as Options,
+                function (e): void {
+                    chart.callback?.call(this, e);
+                    resolve(this);
+                }
+            ));
 
         // Axis options and series options  (#2022, #3900, #5982)
         if (chartOptions) {
@@ -1875,91 +1905,6 @@ class Exporting {
             options.exporting?.applyStyleSheets
         ) || '';
 
-        for (const series of chart.series) {
-            if (series.type !== 'contour') {
-                continue;
-            }
-
-            const dstCanvas = document.createElement('canvas'),
-                srcCanvas = (series as any).canvas,
-                src = (series as any).readbackData,
-                ctx = dstCanvas.getContext(
-                    '2d',
-                    { colorSpace: 'display-p3' }
-                );
-
-            if (src && srcCanvas && ctx) {
-                const width = (
-                        dstCanvas.width = (
-                            srcCanvas as HTMLCanvasElement
-                        ).width
-                    ),
-                    height = (
-                        dstCanvas.height = (
-                            srcCanvas as HTMLCanvasElement
-                        ).height
-                    );
-
-                ctx.putImageData(
-                    new ImageData(
-                        new Uint8ClampedArray(
-                            src.buffer,
-                            src.byteOffset,
-                            width * height * 4
-                        ),
-                        width,
-                        height,
-                        { colorSpace: 'display-p3' }
-                    ),
-                    0,
-                    0
-                );
-
-                const webgpuCanvasImage = chart.renderer.image(
-                    dstCanvas.toDataURL(),
-                    0,
-                    0,
-                    chartCopy.plotWidth,
-                    chartCopy.plotHeight
-                );
-
-                if (this.options.local) {
-                    webgpuCanvasImage.element.setAttributeNS(
-                        'http://www.w3.org/1999/xlink',
-                        'href',
-                        webgpuCanvasImage.element.getAttribute('href') || ''
-                    );
-
-                    webgpuCanvasImage.add(
-                        chartCopy.series[series.index].group
-                    );
-                } else {
-                    const dataURL = (
-                        webgpuCanvasImage.element.getAttribute('href') ||
-                        webgpuCanvasImage.element.getAttribute(
-                            'xlink:href'
-                        ) ||
-                        ''
-                    );
-                    const imgTag = (
-                        `<image href="${
-                            dataURL
-                        }" />`
-                    );
-
-                    const contourGroupPattern = new RegExp(
-                        '(<g[^>]*class="[^"]*\\bhighcharts-contour-series\\b' +
-                        '[^"]*"[^>]*>)([\\s\\S]*?)</g>'
-                    );
-
-                    svg = svg.replace(
-                        contourGroupPattern,
-                        `$1$2${imgTag}</g>`
-                    );
-                }
-            }
-        }
-
         fireEvent(chart, 'getSVG', { chartCopy: chartCopy });
 
         svg = Exporting.sanitizeSVG(svg, options);
@@ -1989,12 +1934,12 @@ class Exporting {
      *
      * @requires modules/exporting
      */
-    public getSVGForExport(
+    public async getSVGForExport(
         exportingOptions?: ExportingOptions,
         chartOptions?: Partial<Options>
-    ): string {
+    ): Promise<string> {
         const currentExportingOptions: ExportingOptions = this.options;
-        return this.getSVG(merge(
+        const svg = await this.getSVG(merge(
             { chart: { borderRadius: 0 } },
             currentExportingOptions.chartOptions,
             chartOptions,
@@ -2011,6 +1956,7 @@ class Exporting {
                 }
             }
         ));
+        return svg;
     }
 
     /**
@@ -2389,7 +2335,7 @@ class Exporting {
 
         try {
             // Trigger hook to get chart copy
-            this.getSVGForExport(exportingOptions, chartOptions);
+            await this.getSVGForExport(exportingOptions, chartOptions);
 
             // Get the static array
             const imagesArray = images ? Array.from(images) : [];
@@ -2848,11 +2794,11 @@ namespace Exporting {
             ): (string | void) {
                 return this.exporting?.getFilename();
             },
-            getSVG: function (
+            getSVG: async function (
                 this: Chart,
                 chartOptions?: Partial<Options>
-            ): (string | void) {
-                return this.exporting?.getSVG(chartOptions);
+            ): Promise<string | void> {
+                return await this.exporting?.getSVG(chartOptions);
             },
             print: function (
                 this: Chart
@@ -2928,24 +2874,30 @@ namespace Exporting {
         // testing of export
         // let button, viewImage, viewSource;
         // if (!chart.renderer.forExport) {
-        //     viewImage = function (): void {
+        //     viewImage = async function (): Promise<void> {
         //         const div = doc.createElement('div');
-        //         div.innerHTML = chart.exporting?.getSVGForExport() || '';
+        //         div.style.margin = '10px';
+        //         div.innerHTML = await chart.exporting?.getSVGForExport() ||
+        //             '';
         //         chart.renderTo.parentNode.appendChild(div);
         //     };
 
-        //     viewSource = function (): void {
+        //     viewSource = async function (): Promise<void> {
         //         const pre = doc.createElement('pre');
-        //         pre.innerHTML = chart.exporting?.getSVGForExport()
+        //         pre.style.margin = '10px';
+        //         pre.innerHTML = (
+        //             await chart.exporting?.getSVGForExport() || ''
+        //         )
         //             .replace(/</g, '\n&lt;')
-        //             .replace(/>/g, '&gt;') || '';
+        //             .replace(/>/g, '&gt;');
         //         chart.renderTo.parentNode.appendChild(pre);
         //     };
 
-        //     viewImage();
+        //     viewImage().catch;
 
         //     // View SVG Image
         //     button = doc.createElement('button');
+        //     button.style.margin = '10px';
         //     button.innerHTML = 'View SVG Image';
         //     chart.renderTo.parentNode.appendChild(button);
         //     button.onclick = viewImage;
