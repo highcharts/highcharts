@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -13,9 +13,13 @@
 
 import type DataModifier from '../../Data/Modifiers/DataModifier';
 
+import type { ConnectorTypes as ComponentConnectorTypes } from './Component';
+
 import Component from './Component';
-import DataTable from '../../Data/DataTable.js';
-import Cell from '../Layout/Cell.js';
+import DataTable, {
+    type SetModifierEvent as DataTableSetModifierEvent
+} from '../../Data/DataTable.js';
+import { isCell } from '../Layout/Cell.js';
 import Globals from '../Globals.js';
 
 /* *
@@ -55,50 +59,48 @@ class ConnectorHandler {
     /**
      * Connector options for the component.
      */
-    public options: ConnectorHandler.ConnectorOptions;
+    public options: ConnectorOptions;
+
     /**
-     * Connector that allows you to load data via URL or from a local source.
+     * Data connector instance that is used in this connector handler.
      */
-    public connector?: Component.ConnectorTypes;
+    public connector?: ComponentConnectorTypes;
+
     /**
-     * The id of the connector configuration in the data pool of the dashboard.
+     * The ID of the data connector configuration in the data pool of the
+     * dashboard.
      */
     public connectorId?: string;
+
     /**
      * The component that the connector is tied to.
      */
     public component: Component;
+
     /**
-     * The interval for rendering the component on data changes.
-     * @internal
+     * The data table bound to the connector handler.
      */
-    private tableEventTimeout?: number;
-    /**
-     * Event listeners tied to the current DataTable. Used for rerendering the
-     * component on data changes.
-     *
-     * @internal
-     */
-    private tableEvents: Function[] = [];
-    /**
-     * DataModifier that is applied on top of modifiers set on the DataStore.
-     *
-     * @internal
-     */
-    public presentationModifier?: DataModifier;
-    /**
-     * The table being presented, either a result of the above or a way to
-     * modify the table via events.
-     *
-     * @internal
-     */
-    public presentationTable?: DataTable;
+    public dataTable?: DataTable;
+
     /**
      * Helper flag for detecting whether the connector handler has been
      * destroyed, used to check and prevent further operations if the connector
      * handler has been destroyed during asynchronous functions.
      */
     private destroyed?: boolean;
+
+    /**
+     * The interval for rendering the component on data changes.
+     * @internal
+     */
+    private tableEventTimeout?: number;
+
+    /**
+     * Event listeners tied to the current DataTable. Used for rerendering the
+     * component on data changes.
+     * @internal
+     */
+    private tableEvents: Function[] = [];
 
 
     /* *
@@ -119,7 +121,7 @@ class ConnectorHandler {
      */
     constructor(
         component: Component,
-        options: ConnectorHandler.ConnectorOptions
+        options: ConnectorOptions
     ) {
         this.component = component;
         this.options = options;
@@ -150,7 +152,7 @@ class ConnectorHandler {
                 dataPool.isNewConnector(connectorId)
             )
         ) {
-            if (Cell.isCell(component.cell)) {
+            if (isCell(component.cell)) {
                 component.cell.setLoadingState();
             }
 
@@ -172,7 +174,7 @@ class ConnectorHandler {
      * @param table
      * The data table instance for settings and events.
      */
-    public setTable(table: DataTable): void {
+    private setTable(table: DataTable): void {
         // Set up event listeners
         this.clearTableListeners(table);
         this.setupTableListeners(table);
@@ -184,7 +186,7 @@ class ConnectorHandler {
         );
         table.on(
             'afterSetModifier',
-            (e: DataTable.SetModifierEvent): void => {
+            (e: DataTableSetModifierEvent): void => {
                 if (e.type === 'afterSetModifier' && e.modified) {
                     this.setupTableListeners(e.modified);
                     this.component.emit({
@@ -195,14 +197,7 @@ class ConnectorHandler {
             }
         );
 
-        if (this.presentationModifier) {
-            this.presentationTable =
-                this.presentationModifier.modifyTable(
-                    table.getModified().clone()
-                ).getModified();
-        } else {
-            this.presentationTable = table;
-        }
+        this.dataTable = table;
     }
 
     /**
@@ -211,7 +206,7 @@ class ConnectorHandler {
      * @param connector
      * The connector to set.
      */
-    public setConnector(connector?: Component.ConnectorTypes): Component {
+    public setConnector(connector?: ComponentConnectorTypes): Component {
         // Clean up old event listeners
         while (this.tableEvents.length) {
             const eventCallback = this.tableEvents.pop();
@@ -221,18 +216,8 @@ class ConnectorHandler {
         }
 
         this.connector = connector;
-
         if (connector) {
-            const dataTables = connector.dataTables;
-
-            if (this.options.dataTableKey) {
-                // Match a data table used in this component.
-                this.setTable(dataTables[this.options.dataTableKey]);
-
-                // Take the first connector data table if id not provided.
-            } else {
-                this.setTable(Object.values(dataTables)[0]);
-            }
+            this.setTable(connector.getTable(this.options.dataTableKey));
         }
 
         this.addConnectorAssignment();
@@ -293,7 +278,7 @@ class ConnectorHandler {
         if (connector) {
             tableEvents.push(table.on(
                 'afterSetModifier',
-                (e: DataTable.SetModifierEvent): void => {
+                (e: DataTableSetModifierEvent): void => {
                     if (e.type === 'afterSetModifier') {
                         clearTimeout(this.tableEventTimeout);
                         this.tableEventTimeout = Globals.win.setTimeout(
@@ -382,7 +367,7 @@ class ConnectorHandler {
      * The new options to update.
      */
     public updateOptions(
-        newOptions: ConnectorHandler.ConnectorOptions
+        newOptions: ConnectorOptions
     ): void {
         this.options = newOptions;
     }
@@ -399,46 +384,38 @@ class ConnectorHandler {
 }
 
 
-/* *
- *
- *  Namespace
- *
- * */
+/**
+ * Contains information to connect the component to a connector in the data
+ * pool of the dashboard.
+ */
+export interface ConnectorOptions {
 
-namespace ConnectorHandler {
     /**
-     * Contains information to connect the component to a connector in the data
-     * pool of the dashboard.
+     * Whether to allow the transfer of data changes back to the connector
+     * source.
+     *
+     * @internal
      */
-    export interface ConnectorOptions {
+    allowSave?: boolean;
 
-        /**
-         * Whether to allow the transfer of data changes back to the connector
-         * source.
-         *
-         * @internal
-         */
-        allowSave?: boolean;
+    /**
+     * The id of the connector configuration in the data pool of the
+     * dashboard.
+     */
+    id: string;
 
-        /**
-         * The id of the connector configuration in the data pool of the
-         * dashboard.
-         */
-        id: string;
+    /**
+     * The modifier to apply to the data table before presenting it. This
+     * can be changed to be an open, documented option in the future.
+     *
+     * @internal
+     */
+    presentationModifier?: DataModifier;
 
-        /**
-         * The modifier to apply to the data table before presenting it. This
-         * can be changed to be an open, documented option in the future.
-         *
-         * @internal
-         */
-        presentationModifier?: DataModifier;
-
-        /**
-         * Reference to the specific connector data table.
-         */
-        dataTableKey?: string;
-    }
+    /**
+     * Reference to the specific connector data table.
+     */
+    dataTableKey?: string;
 }
 
 export default ConnectorHandler;

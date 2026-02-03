@@ -1,5 +1,5 @@
 ---
- name: Highcharts Stock Demo
+ name: Demo of yAxis.gridLineColor
  authors:
    - Torstein Hønsi
  js_wrap: b

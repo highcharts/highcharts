@@ -734,6 +734,7 @@ button.dot {
 
 .highcharts-tooltip {
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+    color: var(--text-primary);
 }
 
 .highcharts-tooltip-box {
@@ -1030,6 +1031,10 @@ button.dot {
 }
 
 /* Grid theme */
+
+#grid-container .highcharts-background {
+    fill: transparent;
+}
 
 .hcg-custom-theme {
     --hcg-padding: 10px;

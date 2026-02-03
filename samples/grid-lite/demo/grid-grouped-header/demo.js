@@ -31,7 +31,7 @@ Grid.grid('container', {
         }
     },
     rendering: {
-        theme: 'my-theme'
+        theme: 'hcg-theme-default opacity-theme'
     },
     /*
      * Use the header API option to define the grouped header structure,

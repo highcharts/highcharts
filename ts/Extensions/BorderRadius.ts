@@ -4,9 +4,9 @@
  *
  *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -46,31 +46,92 @@ const {
  * */
 
 export interface BorderRadiusOptionsObject {
+
+    /**
+     * The border radius. A number signifies pixels. A percentage string, like
+     * for example `50%`, signifies a relative size. For columns this is
+     * relative to the column width, for pies it is relative to the radius and
+     * the inner radius.
+     */
     radius: number|string;
+
+    /**
+     * The scope of the rounding for column charts. In a stacked column chart,
+     * the value `point` means each single point will get rounded corners. The
+     * value `stack` means the rounding will apply to the full stack, so that
+     * only points close to the top or bottom will receive rounding.
+     */
     scope: 'point'|'stack';
+
+    /**
+     * For column charts, where in the point or stack to apply rounding. The
+     * `end` value means only those corners at the point value will be rounded,
+     * leaving the corners at the base or threshold unrounded. This is the most
+     * intuitive behaviour. The `all` value means also the base will be
+     * rounded.
+     */
     where?: 'end'|'all';
+
 }
 
 declare module '../Core/Renderer/SVG/SVGAttributes' {
     interface SVGAttributes {
+
+        /**
+         * The border radius. A number signifies pixels. A percentage string,
+         * like for example `50%`, signifies a relative size. For columns this
+         * is relative to the column width, for pies it is relative to the
+         * radius and the inner radius.
+         */
         borderRadius?: number|string;
+
         /** The height of the border-radius box  */
         brBoxHeight?: number;
+
         /** The y position of the border-radius box  */
         brBoxY?: number;
+
         /** Corresponding to the `borderRadius.where` option */
         brEnd?: boolean;
+
+        /** @internal */
         brStart?: boolean;
+
     }
 }
 
 declare module '../Core/Renderer/SVG/SymbolOptions' {
     interface SymbolOptions {
+
+        /**
+         * The border radius. A number signifies pixels. A percentage string,
+         * like for example `50%`, signifies a relative size. For columns this
+         * is relative to the column width, for pies it is relative to the
+         * radius and the inner radius.
+         */
         borderRadius?: number|string;
+
+        /**
+         * The height of the border-radius box.
+         * @internal
+         */
         brBoxHeight?: number;
+
+        /**
+         * The y position of the border-radius box.
+         * @internal
+         */
         brBoxY?: number;
+
+        /**
+         * Corresponding to the `borderRadius.where` option.
+         * @internal
+         */
         brEnd?: boolean;
+
+        /** @internal */
         brStart?: boolean;
+
     }
 }
 
@@ -102,9 +163,7 @@ let oldRoundedRect: SVGRenderer['symbols']['roundedRect'] = noop as any;
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 function applyBorderRadius(
     path: SVGPath,
     i: number,
@@ -212,7 +271,7 @@ function applyBorderRadius(
 
 /**
  * Extend arc with borderRadius.
- * @private
+ * @internal
  */
 function arc(
     x: number,
@@ -272,7 +331,7 @@ function arc(
     return path;
 }
 
-/** @private */
+/** @internal */
 function seriesOnAfterColumnTranslate(
     this: ColumnSeries
 ): void {
@@ -365,7 +424,7 @@ function seriesOnAfterColumnTranslate(
                     relativeLength(borderRadius.radius, width),
                     width / 2,
                     // Cap to the height, but not if where is `end`
-                    where === 'all' ? height / 2 : Infinity
+                    where === 'all' ? brBoxHeight / 2 : Infinity
                 ) || 0;
 
                 // If the `where` option is 'end', cut off the
@@ -388,7 +447,7 @@ function seriesOnAfterColumnTranslate(
     }
 }
 
-/** @private */
+/** @internal */
 function compose(
     SeriesClass: typeof Series,
     SVGElementClass: typeof SVGElement,
@@ -428,7 +487,7 @@ function compose(
 
 }
 
-/** @private */
+/** @internal */
 function optionsToObject(
     options?: number|string|Partial<BorderRadiusOptionsObject>,
     seriesBROptions?: Partial<BorderRadiusOptionsObject>
@@ -439,7 +498,7 @@ function optionsToObject(
     return merge(defaultBorderRadiusOptions, seriesBROptions, options);
 }
 
-/** @private */
+/** @internal */
 function pieSeriesOnAfterTranslate(
     this: PieSeries
 ): void {
@@ -458,7 +517,7 @@ function pieSeriesOnAfterTranslate(
 
 /**
  * Extend roundedRect with individual cutting through rOffset.
- * @private
+ * @internal
  */
 function roundedRect(
     x: number,
@@ -613,6 +672,11 @@ export default BorderRadius;
  * example `50%`, signifies a relative size. For columns this is relative to the
  * column width, for pies it is relative to the radius and the inner radius.
  *
+ * @sample  {highcharts} highcharts/plotoptions/column-borderradius/
+ *          Rounded columns
+ * @sample  highcharts/plotoptions/series-border-radius
+ *          Column and pie with rounded border
+ *
  * @name Highcharts.BorderRadiusOptionsObject#radius
  * @type {string|number}
  *//**
@@ -620,6 +684,9 @@ export default BorderRadius;
  * value `point` means each single point will get rounded corners. The value
  * `stack` means the rounding will apply to the full stack, so that only points
  * close to the top or bottom will receive rounding.
+ *
+ * @sample  {highcharts} highcharts/plotoptions/column-borderradius/
+ *          Rounded columns
  *
  * @name Highcharts.BorderRadiusOptionsObject#scope
  * @validvalue ["point", "stack"]
@@ -629,6 +696,9 @@ export default BorderRadius;
  * value means only those corners at the point value will be rounded, leaving
  * the corners at the base or threshold unrounded. This is the most intuitive
  * behaviour. The `all` value means also the base will be rounded.
+ *
+ * @sample  {highcharts} highcharts/plotoptions/column-borderradius-where-all
+ *          Rounding on all corners
  *
  * @name Highcharts.BorderRadiusOptionsObject#where
  * @validvalue ["all", "end"]
