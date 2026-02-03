@@ -1,6 +1,6 @@
 QUnit.test(
     'Treegraph series',
-    function (assert) {
+    async function (assert) {
         const chart = Highcharts.chart('container', {
                 series: [{
                     type: 'treegraph',
@@ -195,7 +195,7 @@ QUnit.test(
             'Multiple nodes should collapse simultaneously (#19552).'
         );
 
-        const exportedSVG = chart.exporting.getSVGForExport(),
+        const exportedSVG = await chart.exporting.getSVGForExport(),
             selector = '#container .highcharts-series-1' +
                 ' .highcharts-level-group-3 path',
             inChartPos = +document.querySelectorAll(selector)[0]
