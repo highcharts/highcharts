@@ -18,7 +18,6 @@
  *
  * */
 
-import type Chart from '../../Core/Chart/Chart.js';
 import type ContourSeriesOptions from './ContourSeriesOptions';
 import type { DeepPartial } from '../../Shared/Types';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
@@ -117,10 +116,6 @@ export default class ContourSeries extends ScatterSeries {
      *
      * */
 
-    public init(chart: Chart, options: ContourSeriesOptions): void {
-        super.init(chart, options);
-    }
-
     public getContourData(): [Uint32Array, Float32Array] {
         const points = this.points,
             len = points.length,
@@ -141,35 +136,6 @@ export default class ContourSeries extends ScatterSeries {
         }
 
         return [new Delaunay(points2d).triangles, points3d];
-    }
-
-    public render(): void {
-        const { chart, options } = this,
-            visibility: 'hidden'|'inherit'|'visible' = this.visible ?
-                'inherit' : 'hidden',
-            zIndex = options.zIndex;
-
-        const targetGroup = chart.seriesGroup;
-
-        this.plotGroup(
-            'group',
-            'series',
-            visibility,
-            zIndex,
-            targetGroup
-        );
-
-        const { group } = this;
-        if (group && group?.parentGroup !== targetGroup) {
-            group.parentGroup = targetGroup;
-            // Can be improved by checking the exact zIndex of the series and
-            // placing it after the first element with a lower zIndex.
-            targetGroup?.element.prepend(group.element);
-        }
-
-        super.render();
-        this.renderFrame = void 0;
-        this.drawPoints();
     }
 
     public override update(

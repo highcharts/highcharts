@@ -18,14 +18,10 @@
  * */
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import U from '../../Core/Utilities.js';
 
 const {
     scatter: { prototype: { pointClass: ScatterPoint } }
 } = SeriesRegistry.seriesTypes;
-const {
-    extend
-} = U;
 
 
 /* *
@@ -44,19 +40,6 @@ class ContourPoint extends ScatterPoint {
 
 
 }
-
-
-/* *
- *
- *  Registration
- *
- * */
-
-extend(ContourPoint.prototype, {
-    dataLabelOnNull: true,
-    ttBelow: false
-});
-
 
 /* *
  *
