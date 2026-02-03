@@ -740,6 +740,10 @@ class RowsVirtualizer {
         return defaultRowHeight;
     }
 
+    /**
+     * Updates cached row count and derived grid height metrics used for
+     * overflow-aware scrolling.
+     */
     private updateGridMetrics(): void {
         this.rowCount = this.viewport.dataTable.getRowCount();
         this.totalGridHeight = this.rowCount * this.defaultRowHeight;
@@ -749,6 +753,11 @@ class RowsVirtualizer {
         );
     }
 
+    /**
+     * Updates row translate offsets based on scroll scaling. When the grid
+     * exceeds the max element height, it keeps the bottom rows aligned to the
+     * maximum scrollable height.
+     */
     private adjustRowOffsets(): void {
         const { rows } = this.viewport;
         const rowsLn = rows.length;
