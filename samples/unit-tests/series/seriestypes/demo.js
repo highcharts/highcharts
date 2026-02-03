@@ -44,25 +44,26 @@ Object.keys(Highcharts.Series.types).forEach(function (type) {
 });
 
 QUnit.test('#13277: Event listener memory leak', assert => {
-    Object.keys(Highcharts.Series.types).forEach(type => {
-        if (
-            !('linkedTo' in Highcharts.defaultOptions.plotOptions[type]) &&
-            type !== 'scatter3d' &&
-            type !== 'map' &&
-            type !== 'mapline' && // Transform error on redraw
-            type !== 'contour' // WebGPU not available in Playwright?
-        ) {
-            const chart = Highcharts.chart('container', {
-                chart: {
-                    type: type
-                },
-                series: [
-                    {
-                        name: 'Test series'
-                    }
-                ]
-            });
+    const types = Object.keys(Highcharts.Series.types)
+            .filter(type => (
+                !('linkedTo' in Highcharts.defaultOptions.plotOptions[type]) &&
+                type !== 'scatter3d' &&
+                type !== 'map' &&
+                type !== 'mapline' // Transform error on redraw
+            )),
+        done = assert.async(types.length);
 
+    types.forEach(type => {
+        Highcharts.chart('container', {
+            chart: {
+                type: type
+            },
+            series: [
+                {
+                    name: 'Test series'
+                }
+            ]
+        }, function (chart) {
             const eventCount = el => {
                 let count = 0;
                 // eslint-disable-next-line
@@ -89,6 +90,8 @@ QUnit.test('#13277: Event listener memory leak', assert => {
                 beforeChart,
                 `${type} update() should not leak into chart.hcEvents`
             );
-        }
+
+            done();
+        });
     });
 });
