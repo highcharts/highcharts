@@ -68,15 +68,6 @@ export type HeaderFormatterCallback = (this: Column) => string;
 export type ColumnSortingOrder = 'asc' | 'desc' | null;
 
 /**
- * Context information passed to a cell context menu item callback.
- */
-export interface CellContextMenuContext {
-    cell: TableCell;
-    row: TableCell['row'];
-    column: TableCell['column'];
-}
-
-/**
  * Options for a single cell context menu item.
  */
 export interface CellContextMenuActionItemOptions {
@@ -103,12 +94,12 @@ export interface CellContextMenuActionItemOptions {
     /**
      * Callback executed when the menu item is clicked.
      *
-     * The cell context is available on `this` and is also passed as the first
-     * argument to support arrow functions.
+     * The cell is available on `this` and is also passed as the first argument
+     * to support arrow functions.
      */
     onClick?: (
-        this: CellContextMenuContext,
-        context: CellContextMenuContext
+        this: TableCell,
+        cell: TableCell
     ) => void;
 }
 
