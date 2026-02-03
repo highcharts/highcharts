@@ -156,6 +156,10 @@ class Table {
      */
     public virtualRows: boolean;
 
+    /**
+     * Cell context menu instance (lazy created).
+     */
+    private cellContextMenu?: CellContextMenu;
 
     /* *
     *
@@ -586,16 +590,24 @@ class Table {
             return false; // Keep native browser menu
         }
 
+        if (!this.cellContextMenu) {
+            this.cellContextMenu = new CellContextMenu(this.grid);
+        }
+
         // Close any existing popups before opening a new menu.
         // Copy to array to avoid mutation during iteration.
         for (const popup of Array.from(this.grid.popups)) {
-            popup.hide();
+            if (popup !== this.cellContextMenu) {
+                popup.hide();
+            }
         }
 
-        new CellContextMenu(this.grid, tableCell, items).showAt(
-            clientX,
-            clientY
-        );
+        if (this.cellContextMenu.isVisible) {
+            this.cellContextMenu.hide();
+        }
+
+        this.cellContextMenu.setContext(tableCell, items);
+        this.cellContextMenu.showAt(clientX, clientY);
 
         return true;
     }
@@ -723,6 +735,8 @@ class Table {
         this.resizeObserver.disconnect();
         this.columnsResizer?.removeEventListeners();
         this.header?.destroy();
+        this.cellContextMenu?.hide();
+        delete this.cellContextMenu;
 
         for (let i = 0, iEnd = this.rows.length; i < iEnd; ++i) {
             this.rows[i].destroy();

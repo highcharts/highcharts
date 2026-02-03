@@ -66,13 +66,14 @@ test.describe('Cell Context Menu', () => {
             }, { timeout: 10000 });
         });
 
-        test('Context menu closes after virtualized row reuse', async ({ page }) => {
+        test('Context menu stays open after scrolling and keeps context', async ({ page }) => {
             const initialState = await page.evaluate(() => {
                 const grid = (window as any).Grid.grids[0];
                 const vp = grid.viewport;
                 return {
                     virtual: vp.virtualRows,
-                    firstIndex: vp.rows[0]?.index ?? null
+                    firstIndex: vp.rows[0]?.index ?? null,
+                    rowHeight: vp.rowsVirtualizer?.defaultRowHeight ?? 24
                 };
             });
 
@@ -80,7 +81,7 @@ test.describe('Cell Context Menu', () => {
             expect(initialState.firstIndex).not.toBeNull();
 
             const productCell = page.locator(
-                'tbody tr[data-row-index="0"] td[data-column-id="product"]'
+                'tbody tr[data-row-index="1"] td[data-column-id="product"]'
             );
 
             await productCell.click({ button: 'right' });
@@ -88,13 +89,16 @@ test.describe('Cell Context Menu', () => {
             const popup = page.locator('.hcg-popup');
             await expect(popup).toBeVisible();
 
-            await page.evaluate(() => {
+            const initialBox = await popup.boundingBox();
+            expect(initialBox, 'Popup should have a bounding box.').not.toBeNull();
+
+            await page.evaluate((rowHeight) => {
                 const grid = (window as any).Grid.grids[0];
                 const vp = grid.viewport;
                 const target = vp.tbodyElement;
-                target.scrollTop = target.scrollHeight;
+                target.scrollTop += rowHeight * 100;
                 target.dispatchEvent(new Event('scroll'));
-            });
+            }, initialState.rowHeight);
 
             await page.waitForFunction((firstIndex: number | null) => {
                 const grid = (window as any).Grid.grids[0];
@@ -102,7 +106,18 @@ test.describe('Cell Context Menu', () => {
                 return vp.rows[0]?.index !== firstIndex;
             }, initialState.firstIndex, { timeout: 10000 });
 
-            await expect(popup).toBeHidden();
+            await expect(popup).toBeVisible();
+
+            const nextBox = await popup.boundingBox();
+            expect(nextBox, 'Popup should have a bounding box after scroll.').not.toBeNull();
+
+            if (initialBox && nextBox) {
+                expect(Math.abs(nextBox.x - initialBox.x)).toBeLessThan(2);
+                expect(Math.abs(nextBox.y - initialBox.y)).toBeLessThan(2);
+            }
+
+            await page.locator('.hcg-menu-item', { hasText: 'Show context' }).click();
+            await expect(page.locator('#cellContextMenuResult')).toHaveValue('1|product|Pears');
         });
     });
 });

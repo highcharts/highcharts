@@ -20,7 +20,6 @@
  *
  * */
 
-import type Grid from '../../Grid';
 import type TableCell from './TableCell';
 import type {
     CellContextMenuItemOptions,
@@ -38,21 +37,21 @@ import ContextMenuButton from '../../UI/ContextMenuButton.js';
 
 class CellContextMenu extends ContextMenu {
 
-    public readonly cell: TableCell;
+    public cell?: TableCell;
 
-    private readonly items: Array<CellContextMenuItemOptions>;
+    private items: Array<CellContextMenuItemOptions> = [];
 
     private cursorAnchorElement?: HTMLElement;
 
-    constructor(
-        grid: Grid,
+    private context?: CellContextMenuContext;
+
+    public setContext(
         cell: TableCell,
         items: Array<CellContextMenuItemOptions>
-    ) {
-        super(grid);
-
+    ): void {
         this.cell = cell;
         this.items = items;
+        this.context = this.getContextSnapshot(cell);
     }
 
     public showAt(clientX: number, clientY: number): void {
@@ -83,12 +82,10 @@ class CellContextMenu extends ContextMenu {
     }
 
     protected override renderContent(): void {
-        const cell = this.cell;
-        const ctx: CellContextMenuContext = {
-            cell,
-            row: cell.row,
-            column: cell.column
-        };
+        const ctx = this.context;
+        if (!ctx) {
+            return;
+        }
 
         for (const item of this.items) {
             if (item.separator) {
@@ -126,6 +123,28 @@ class CellContextMenu extends ContextMenu {
                 );
             }
         }
+    }
+
+    private getContextSnapshot(cell: TableCell): CellContextMenuContext {
+        type Mutable<T> = { -readonly [K in keyof T]: T[K] };
+        const cloneWithProto = <T extends object>(source: T): T => {
+            const clone = Object.create(Object.getPrototypeOf(source));
+            return Object.assign(clone, source);
+        };
+
+        const rowSnapshot = cloneWithProto(cell.row);
+        const columnSnapshot = cloneWithProto(cell.column);
+        const cellSnapshot = cloneWithProto(cell) as TableCell;
+
+        (cellSnapshot as Mutable<TableCell>).row =
+            rowSnapshot as TableCell['row'];
+        cellSnapshot.column = columnSnapshot as TableCell['column'];
+
+        return {
+            cell: cellSnapshot,
+            row: rowSnapshot as TableCell['row'],
+            column: columnSnapshot as TableCell['column']
+        };
     }
 }
 

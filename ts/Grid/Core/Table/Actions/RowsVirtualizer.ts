@@ -296,7 +296,9 @@ class RowsVirtualizer {
 
         if (isVirtualization && vp.grid.popups.size) {
             for (const popup of Array.from(vp.grid.popups)) {
-                popup.hide();
+                if (popup.anchorElement && !popup.anchorElement.isConnected) {
+                    popup.hide();
+                }
             }
         }
 

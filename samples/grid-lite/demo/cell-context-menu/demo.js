@@ -33,6 +33,165 @@ function copyToClipboard(text) {
     return navigator.clipboard.writeText(text);
 }
 
+let newColumnCount = 1;
+let columnOrder = [];
+
+function getNextColumnId(existingIds) {
+    let id = '';
+
+    do {
+        id = 'new column ' + newColumnCount;
+        newColumnCount += 1;
+    } while (existingIds.indexOf(id) !== -1);
+
+    return id;
+}
+
+function addRowBelow(ctx) {
+    const grid = ctx.cell.row.viewport.grid;
+    const dt = grid.dataTable;
+
+    if (!dt) {
+        return;
+    }
+
+    const insertAt = ctx.row.id;
+    if (typeof insertAt !== 'number') {
+        return;
+    }
+
+    const insertAtIndex = insertAt + 1;
+
+    logEvent(
+        'Added new row below position ' + insertAt + '.'
+    );
+
+    dt.setRow({
+        product: 'New item',
+        weight: null,
+        price: null
+    }, insertAtIndex, true);
+
+    // Re-apply modifiers (if any) and update rendering.
+    void grid.viewport.updateRows();
+}
+
+function addRowAbove(ctx) {
+    const grid = ctx.cell.row.viewport.grid;
+    const dt = grid.dataTable;
+
+    if (!dt) {
+        return;
+    }
+
+    const insertAt = ctx.row.id;
+    if (typeof insertAt !== 'number') {
+        return;
+    }
+
+    logEvent(
+        'Added new row above position ' + insertAt + '.'
+    );
+
+    dt.setRow({
+        product: 'New item',
+        weight: null,
+        price: null
+    }, insertAt, true);
+
+    // Re-apply modifiers (if any) and update rendering.
+    void grid.viewport.updateRows();
+}
+
+function addColumnLeft(ctx) {
+    const grid = ctx.cell.row.viewport.grid;
+    const dt = grid.dataTable;
+
+    if (!dt) {
+        return;
+    }
+
+    if (!columnOrder.length) {
+        columnOrder = dt.getColumnIds();
+    }
+
+    const columnIds = columnOrder.slice();
+    const currentIndex = columnIds.indexOf(ctx.column.id);
+    const insertIndex = currentIndex < 0 ? columnIds.length : currentIndex;
+    const newColumnId = getNextColumnId(columnIds);
+    dt.setColumn(newColumnId, []);
+
+    columnIds.splice(insertIndex, 0, newColumnId);
+    columnOrder = columnIds;
+
+    logEvent('Added column "' + newColumnId + '" to the left.');
+
+    void grid.update({
+        rendering: {
+            columns: {
+                included: columnIds
+            }
+        }
+    });
+}
+
+function addColumnRight(ctx) {
+    const grid = ctx.cell.row.viewport.grid;
+    const dt = grid.dataTable;
+
+    if (!dt) {
+        return;
+    }
+
+    if (!columnOrder.length) {
+        columnOrder = dt.getColumnIds();
+    }
+
+    const columnIds = columnOrder.slice();
+    const currentIndex = columnIds.indexOf(ctx.column.id);
+    const insertIndex = currentIndex < 0 ?
+        columnIds.length :
+        currentIndex + 1;
+    const newColumnId = getNextColumnId(columnIds);
+    dt.setColumn(newColumnId, []);
+
+    columnIds.splice(insertIndex, 0, newColumnId);
+    columnOrder = columnIds;
+
+    logEvent('Added column "' + newColumnId + '" to the right.');
+
+    void grid.update({
+        rendering: {
+            columns: {
+                included: columnIds
+            }
+        }
+    });
+}
+
+function deleteRow(ctx) {
+    const grid = ctx.cell.row.viewport.grid;
+    const dt = grid.dataTable;
+
+    if (!dt) {
+        return;
+    }
+
+    const deleteAt = ctx.row.id;
+    if (typeof deleteAt !== 'number') {
+        return;
+    }
+
+    logEvent(
+        'Deleted row at position ' + deleteAt + '.'
+    );
+
+    dt.deleteRows(deleteAt, 1);
+
+    // Re-apply modifiers (if any) and update rendering.
+    void grid.viewport.updateRows();
+}
+
 const menuItems = [{
     label: 'Copy cell content',
     icon: 'clipboard',
@@ -51,61 +210,25 @@ const menuItems = [{
 }, {
     separator: true
 }, {
+    label: 'Add row above',
+    icon: 'addRowAbove',
+    onClick: addRowAbove
+}, {
     label: 'Add row below',
-    icon: 'plus',
-    onClick: function (ctx) {
-        const grid = ctx.cell.row.viewport.grid;
-        const dt = grid.dataTable;
-
-        if (!dt) {
-            return;
-        }
-
-        const insertAt = ctx.row.id;
-        if (typeof insertAt !== 'number') {
-            return;
-        }
-
-        const insertAtIndex = insertAt + 1;
-
-        logEvent(
-            'Added new row below position ' + insertAt + '.'
-        );
-
-        dt.setRow({
-            product: 'New item',
-            weight: null,
-            price: null
-        }, insertAtIndex, true);
-
-        // Re-apply modifiers (if any) and update rendering.
-        void grid.viewport.updateRows();
-    }
+    icon: 'addRowBelow',
+    onClick: addRowBelow
+}, {
+    label: 'Add column left',
+    icon: 'addColumnLeft',
+    onClick: addColumnLeft
+}, {
+    label: 'Add column right',
+    icon: 'addColumnRight',
+    onClick: addColumnRight
 }, {
     label: 'Delete row',
     icon: 'trash',
-    onClick: function (ctx) {
-        const grid = ctx.cell.row.viewport.grid;
-        const dt = grid.dataTable;
-
-        if (!dt) {
-            return;
-        }
-
-        const deleteAt = ctx.row.id;
-        if (typeof deleteAt !== 'number') {
-            return;
-        }
-
-        logEvent(
-            'Deleted row at position ' + deleteAt + '.'
-        );
-
-        dt.deleteRows(deleteAt, 1);
-
-        // Re-apply modifiers (if any) and update rendering.
-        void grid.viewport.updateRows();
-    }
+    onClick: deleteRow
 }];
 
 Grid.grid('container', {

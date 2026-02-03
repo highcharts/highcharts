@@ -1,11 +1,19 @@
 (function () {
     const doc = document;
+    const rows = 200;
+    const products = [];
+    const weights = [];
+
+    for (let i = 0; i < rows; i++) {
+        products.push('Product ' + (i + 1));
+        weights.push(i + 1);
+    }
 
     Grid.grid('container', {
         dataTable: {
             columns: {
-                product: ['Apples', 'Pears', 'Plums', 'Bananas'],
-                weight: [100, 40, 0.5, 200]
+                product: products,
+                weight: weights
             }
         },
         columnDefaults: {
