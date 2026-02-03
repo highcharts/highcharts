@@ -378,12 +378,12 @@ function createAndAttachRenderer(
 ): WGLRenderer {
     const ChartClass = chart.constructor as typeof Chart,
         targetGroup = chart.seriesGroup || series.group,
-        alpha = 1;
+        alpha = 1,
+        foSupported: boolean = typeof SVGForeignObjectElement !== 'undefined';
 
     let width = chart.chartWidth,
         height = chart.chartHeight,
         target: BoostTargetObject = chart,
-        foSupported: boolean = typeof SVGForeignObjectElement !== 'undefined',
         hasClickHandler = false;
 
     if (isChartSeriesBoosting(chart)) {
@@ -400,13 +400,6 @@ function createAndAttachRenderer(
         target.boost as Required<BoostTargetAdditions> ||
         {} as Required<BoostTargetAdditions>;
 
-    // Support for foreignObject is flimsy as best.
-    // IE does not support it, and Chrome has a bug which messes up
-    // the canvas draw order.
-    // As such, we force the Image fallback for now, but leaving the
-    // actual Canvas path in-place in case this changes in the future.
-    foSupported = false;
-
     if (!mainCanvas) {
         mainCanvas = doc.createElement('canvas');
     }
@@ -416,7 +409,15 @@ function createAndAttachRenderer(
 
         // Fall back to image tag if foreignObject isn't supported,
         // or if we're exporting.
-        if (chart.renderer.forExport || !foSupported) {
+        if (
+            chart.renderer.forExport ||
+            !foSupported ||
+            (
+                series.options.lineWidth &&
+                series.options.lineWidth > 1 &&
+                series.is('line')
+            )
+        ) {
             target.renderTarget = boost.target = chart.renderer.image(
                 '',
                 0,
