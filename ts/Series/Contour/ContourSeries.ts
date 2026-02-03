@@ -95,8 +95,6 @@ export default class ContourSeries extends ScatterSeries {
 
     public renderPromise?: Promise<void>;
 
-    public readbackData?: Uint8Array;
-
     /* Uniforms:
      * - extremesUniform,
      * - valueExtremesUniform,
@@ -203,11 +201,6 @@ export default class ContourSeries extends ScatterSeries {
     }
 
     public override drawPoints(): void {
-        if (this.chart.renderer.forExport) {
-            // Export path: skip WebGPU; getSVG will inject <image>.
-            return;
-        }
-
         const { group } = this;
         if (!group) {
             return;
@@ -257,9 +250,13 @@ export default class ContourSeries extends ScatterSeries {
 
     public async run(): Promise<void> {
         const series = this,
+            chart = series.chart,
+            renderer = chart.renderer,
             canvas = series.canvas as HTMLCanvasElement,
             gpu = navigator.gpu,
             context = series.context = canvas.getContext('webgpu');
+
+        renderer.asyncCounter += 1;
 
         if (!gpu || !context) {
             error(36, false);
@@ -478,8 +475,6 @@ export default class ContourSeries extends ScatterSeries {
                     }]
                 });
 
-                let readback: GPUBuffer;
-
                 this.renderFrame = function (): void {
                     this.setUniforms(false);
 
@@ -501,91 +496,16 @@ export default class ContourSeries extends ScatterSeries {
                     pass.drawIndexed(indices.length);
                     pass.end();
 
-                    const exporting = this.chart.exporting;
-
-                    if (exporting && this.buffers) {
-                        const width = canvas.width,
-                            height = canvas.height,
-                            bytesPerPixel = 4,
-                            bytesPerRow = (
-                                Math.ceil((width * bytesPerPixel) / 256) * 256
-                            );
-
-                        this.buffers.readback = (
-                            readback = device.createBuffer({
-                                size: bytesPerRow * height,
-                                usage: (
-                                    GPUBufferUsage.COPY_DST |
-                                    GPUBufferUsage.MAP_READ
-                                )
-                            })
-                        );
-
-                        encoder.copyTextureToBuffer(
-                            { texture: currentTexture },
-                            {
-                                buffer: readback,
-                                bytesPerRow,
-                                rowsPerImage: height
-                            },
-                            { width, height, depthOrArrayLayers: 1 }
-                        );
-                    }
-
                     device.queue.submit([encoder.finish()]);
-
-                    if (exporting) {
-                        readback
-                            .mapAsync(GPUMapMode.READ)
-                            .then((): void => {
-                                const src = new Uint8Array(
-                                        readback.getMappedRange()
-                                    ),
-                                    readbackData = new Uint8Array(src),
-                                    width = canvas.width,
-                                    height = canvas.height,
-                                    bytesPerPixel = 4,
-                                    bytesPerRow = (
-                                        Math.ceil(
-                                            (width * bytesPerPixel) / 256
-                                        ) * 256
-                                    ),
-                                    packed = new Uint8Array(
-                                        width * height * bytesPerPixel
-                                    );
-
-                                for (let y = 0; y < height; y++) {
-                                    const srcOffset = y * bytesPerRow,
-                                        dstOffset = y * width * bytesPerPixel;
-
-                                    for (
-                                        let x = 0;
-                                        x < width * bytesPerPixel;
-                                        x += 4
-                                    ) {
-                                        const srcIndex = srcOffset + x,
-                                            dstIndex = dstOffset + x;
-
-                                        packed[dstIndex] =
-                                            readbackData[srcIndex + 2];
-                                        packed[dstIndex + 1] =
-                                            readbackData[srcIndex + 1];
-                                        packed[dstIndex + 2] =
-                                            readbackData[srcIndex];
-                                        packed[dstIndex + 3] =
-                                            readbackData[srcIndex + 3];
-                                    }
-                                }
-
-                                this.readbackData = packed;
-
-                                readback.unmap();
-                            });
-                    }
                 };
 
                 this.renderFrame();
             }
+        }
+
+        renderer.asyncCounter--;
+        if (!renderer.asyncCounter && chart && !chart.hasLoaded) {
+            chart.onload();
         }
     }
 
