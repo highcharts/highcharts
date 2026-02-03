@@ -24,7 +24,7 @@ Contours use the color axis to map values to colors. See the docs article on
 Use [contourInterval](https://api.highcharts.com/highcharts/plotOptions.contour.contourInterval)
 and [contourOffset](https://api.highcharts.com/highcharts/plotOptions.contour.contourOffset)
 to control the spacing and alignment of contour lines. To show or hide the
-lines, use [showContourLines](https://api.highcharts.com/highcharts/plotOptions.contour.showContourLines).
+lines, modify the [lineWidth](https://api.highcharts.com/highcharts/plotOptions.contour.lineWidth).
 You can also enable [smoothColoring](https://api.highcharts.com/highcharts/plotOptions.contour.smoothColoring)
 for a smoother gradient between levels.
 
