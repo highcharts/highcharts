@@ -48,7 +48,7 @@ QUnit.test('Panning when yAxis min/max are set (#24029)', function (assert) {
         'When both axes have min/max set, processData should not be called'
     );
 
-    // // 1. Zoom to a specific part of the chart
+    // 1. Zoom to a specific part of the chart
     const controller = new TestController(chart);
 
     // Zoom in
@@ -66,15 +66,7 @@ QUnit.test('Panning when yAxis min/max are set (#24029)', function (assert) {
     const xAxisZoomExtremes = chart.xAxis[0].getExtremes();
 
     // Pan
-    controller.mouseDown(
-        200,
-        150, { shiftKey: true }
-    );
-    controller.mouseMove(
-        210,
-        160, { shiftKey: true }
-    );
-    controller.mouseUp();
+    controller.pan([chart.plotWidth - 50, 200], [0, 200]);
 
     // yAxis extremes should have changed after yAxis panning
     assert.ok(
@@ -83,7 +75,7 @@ QUnit.test('Panning when yAxis min/max are set (#24029)', function (assert) {
         'yAxis extremes should change after yAxis panning'
     );
 
-    // xAxis extremes should have changed after xAxis panning
+    // // xAxis extremes should have changed after xAxis panning
     assert.ok(
         chart.xAxis[0].min !== xAxisZoomExtremes.min ||
         chart.xAxis[0].max !== xAxisZoomExtremes.max,

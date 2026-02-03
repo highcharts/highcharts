@@ -800,25 +800,12 @@ function hasExtremes(
         yAxis = series.yAxis && series.yAxis.options,
         colorAxis = series.colorAxis && series.colorAxis.options;
 
-    if (
+    return (
+        dataLength >= threshold &&
         isNumber(yAxis?.min) &&
         isNumber(yAxis?.max) &&
         (!checkX || (isNumber(xAxis?.min) && isNumber(xAxis?.max))) &&
         (!colorAxis || (isNumber(colorAxis.min) && isNumber(colorAxis.max)))
-    ) {
-        return isNumber(series.dataMin) && isNumber(series.dataMax);
-    }
-
-    // When below threshold the series is not boosted; axis needs real
-    // extremes from getExtremes (e.g. multi-series #22183).
-    if (dataLength < threshold) {
-        return false;
-    }
-
-    return !!(
-        (series.yAxis?.isPanning || (checkX && series.xAxis?.isPanning)) &&
-        series.yAxis?.allExtremes &&
-        (!checkX || series.xAxis?.allExtremes)
     );
 }
 
@@ -1622,10 +1609,10 @@ function wrapSeriesGetExtremes(
 
     if (this.boosted) {
         if (hasExtremes(this, true)) {
-            if (this.xAxis?.isPanning || this.yAxis?.isPanning) {
-                return this;
-            }
             return {};
+        }
+        if (this.xAxis?.isPanning || this.yAxis?.isPanning) {
+            return this;
         }
     }
     return proceed.apply(this, [].slice.call(arguments, 1));
