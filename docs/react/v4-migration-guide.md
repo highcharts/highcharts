@@ -38,9 +38,11 @@ Replace all import statements in your React components:
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 
-// After (@highcharts/react) - Highcharts import no longer required in most cases
-import HighchartsReact from '@highcharts/react';
+// After (@highcharts/react)
+import { Chart, Series, Title } from '@highcharts/react';
 ```
+
+**Note:** Highcharts import is no longer required in most cases.
 
 ### Step 4: Verify Core Dependencies
 
@@ -112,30 +114,38 @@ The migration from `highcharts-react-official` to `@highcharts/react` includes s
 
 ```javascript
 // Before
+import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 
-// After - Simplified import, no Highcharts dependency needed
-import HighchartsReact from '@highcharts/react';
+// After - chart and its options as React components
+import { Chart, Series, Title } from '@highcharts/react';
 ```
 
 ### Component Props Interface
 
-**Change**: The `highcharts` prop is now optional:
+**Change**: Define chart and its options using React components. The `highcharts` prop is no longer required.
 
+**Before** (`highcharts-react-official`):
 ```javascript
-// Before (both props required)
 <HighchartsReact
   highcharts={Highcharts}
   options={chartOptions}
   ref={chartRef}
 />
-
-// After (only options required)
-<HighchartsReact
-  options={chartOptions}
-  ref={chartRef}
-/>
 ```
+
+**After** (`@highcharts/react`):
+```javascript
+<Chart>
+  <Title>Basic Chart</Title>
+  <Series
+    type="line"
+    data={[1, 2, 3, 4, 5]}
+  />
+</Chart>
+```
+
+**Note:** While you can still pass `options` as a prop to the `Chart` component, we recommend using dedicated React components instead.
 
 ### Module Resolution
 
