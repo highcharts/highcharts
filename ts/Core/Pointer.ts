@@ -46,6 +46,7 @@ const {
     addEvent,
     attr,
     css,
+    defined,
     extend,
     find,
     fireEvent,
@@ -970,7 +971,7 @@ class Pointer {
      *         or if the action key is pressed. False otherwise.
      */
     private checkActionKey(e: Event, key: string | undefined): boolean {
-        return typeof key === 'undefined' || (e as any)[`${key}Key`];
+        return !defined(key) || (e as any)[`${key}Key`];
     }
 
     /** @internal */
