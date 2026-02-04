@@ -298,9 +298,7 @@ QUnit.test('Basic shape annotations', function (assert) {
 
     const xAxis = chart.xAxis[0],
         yAxis = chart.yAxis[0],
-        rect = chart.annotations[0].shapes[0],
-        circle = chart.annotations[0].shapes[1],
-        ellipse = chart.annotations[0].shapes[2],
+        shapes = chart.annotations[0].shapes,
         // Draw from x=3 to x=4
         rectWidth = Math.abs(xAxis.toPixels(4) - xAxis.toPixels(3)),
         // Draw from y=150 to y=250
@@ -314,62 +312,62 @@ QUnit.test('Basic shape annotations', function (assert) {
     // Annotations dimensions
     assert.close(
         rectWidth,
-        Number(rect.graphic.element.getAttribute('width')),
+        Number(shapes[0].graphic.element.getAttribute('width')),
         0.01,
         'Rect annotation created with axis units width is correct.'
     );
     assert.close(
         rectHeight,
-        Number(rect.graphic.element.getAttribute('height')),
+        Number(shapes[0].graphic.element.getAttribute('height')),
         0.01,
         'Rect annotation created with axis units height is correct.'
     );
     assert.close(
         circleRadius,
-        Number(circle.graphic.element.getAttribute('r')),
+        Number(shapes[1].graphic.element.getAttribute('r')),
         0.01,
         'Circle annotation created with axis units radius is correct.'
     );
     assert.close(
         ellipseRadiusY,
-        Number(ellipse.graphic.element.getAttribute('ry')),
+        Number(shapes[2].graphic.element.getAttribute('ry')),
         0.01,
         'Ellipse annotation created with axis units radius is correct.'
     );
 
     // Annotations positions
     assert.close(
-        rect.graphic.element.getAttribute('x'),
+        shapes[0].graphic.element.getAttribute('x'),
         xAxis.toPixels(3),
         0.01,
         'Rect annotation created with xAxis units position is correct.'
     );
     assert.close(
-        rect.graphic.element.getAttribute('y'),
+        shapes[0].graphic.element.getAttribute('y'),
         yAxis.toPixels(150),
         0.01,
         'Rect annotation created with yAxis units position is correct.'
     );
     assert.close(
-        circle.graphic.element.getAttribute('cx'),
+        shapes[1].graphic.element.getAttribute('cx'),
         xAxis.toPixels(1),
         0.01,
         'Circle annotation created with xAxis units position is correct.'
     );
     assert.close(
-        circle.graphic.element.getAttribute('cy'),
+        shapes[1].graphic.element.getAttribute('cy'),
         yAxis.toPixels(50),
         0.01,
         'Circle annotation created with yAxis units position is correct.'
     );
     assert.close(
-        ellipse.graphic.element.getAttribute('cx'),
+        shapes[2].graphic.element.getAttribute('cx'),
         xAxis.toPixels(2),
         0.01,
         'Ellipse annotation created with xAxis units position is correct.'
     );
     assert.close(
-        ellipse.graphic.element.getAttribute('cy'),
+        shapes[2].graphic.element.getAttribute('cy'),
         yAxis.toPixels(150),
         0.01,
         'Ellipse annotation created with yAxis units position is correct.'

@@ -111,9 +111,9 @@ class ControllableCircle extends Controllable {
             const point = this.points[0],
                 position = this.anchor(point).absolutePosition;
 
-            let r = this.options.r;
+            let r = this.options.r || 0;
 
-            if (position && defined(r)) {
+            if (position) {
                 const yAxis = defined(this.options.yAxis) ?
                     this.chart.yAxis[this.options.yAxis] : void 0;
 
