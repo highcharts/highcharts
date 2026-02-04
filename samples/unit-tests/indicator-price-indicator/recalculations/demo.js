@@ -432,7 +432,11 @@ QUnit.test(
                     }
                 }]
             }),
-            button = chart.stockTools.listWrapper.childNodes[0].childNodes[0];
+            button = chart.stockTools.listWrapper.childNodes[0].childNodes[0],
+            currentPriceHideIcon =
+                chart.stockTools.getIcon('current-price-hide.svg'),
+            currentPriceShowIcon =
+                chart.stockTools.getIcon('current-price-show.svg');
 
         assert.ok(
             chart.series[0].lastPrice,
@@ -442,9 +446,9 @@ QUnit.test(
             chart.series[0].lastVisiblePrice,
             'The lastVisiblePrice should not exist.'
         );
-        assert.ok(
-            button.childNodes[0].style['background-image']
-                .indexOf('hide') !== -1,
+        assert.strictEqual(
+            currentPriceHideIcon,
+            button.childNodes[0].style['background-image'],
             'When the chart initialized with the price indicator, the button ' +
                 'should show an icon to hide.'
         );
@@ -461,9 +465,10 @@ QUnit.test(
             chart.series[0].lastVisiblePrice,
             'The lastVisiblePrice should not exist.'
         );
-        assert.ok(
-            button.childNodes[0].style['background-image']
-                .indexOf('show') !== -1,
+
+        assert.strictEqual(
+            currentPriceShowIcon,
+            button.childNodes[0].style['background-image'],
             'After a click, the button should suggest a possibility to ' +
             'show a price indicator.'
         );
@@ -480,9 +485,9 @@ QUnit.test(
             chart.series[0].lastVisiblePrice,
             'The lastVisiblePrice should exist.'
         );
-        assert.ok(
-            button.childNodes[0].style['background-image']
-                .indexOf('hide') !== -1,
+        assert.strictEqual(
+            currentPriceHideIcon,
+            button.childNodes[0].style['background-image'],
             'After the second click, the button should change again.'
         );
 
@@ -491,9 +496,9 @@ QUnit.test(
                 enabled: false
             }
         });
-        assert.ok(
-            button.childNodes[0].style['background-image']
-                .indexOf('hide') !== -1,
+        assert.strictEqual(
+            currentPriceHideIcon,
+            button.childNodes[0].style['background-image'],
             'After an update, the button should suggest a possibility to ' +
             'hide a price indicator.'
         );
@@ -508,9 +513,9 @@ QUnit.test(
             chart.series[0].lastVisiblePrice,
             'The lastVisiblePrice should not exist.'
         );
-        assert.ok(
-            button.childNodes[0].style['background-image']
-                .indexOf('show') !== -1,
+        assert.strictEqual(
+            currentPriceShowIcon,
+            button.childNodes[0].style['background-image'],
             'After an update and click, the button should suggest a ' +
             'possibility to show a price indicator again.'
         );

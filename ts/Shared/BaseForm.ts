@@ -107,7 +107,7 @@ abstract class BaseForm {
     ): HTMLElement {
         const popup = this;
 
-        let iconsURL = this.iconsURL;
+        const iconsURL = this.iconsURL;
 
         // Create close popup button.
         const closeButton = createElement(
