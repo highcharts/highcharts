@@ -365,6 +365,7 @@ class Chart {
     ) {
         // Return early if there's no browser API (server environment).
         if (typeof doc === 'undefined') {
+            error(36, false, this);
             return;
         }
 
