@@ -499,6 +499,7 @@ import &#39;highcharts/modules/accessibility&#39;;
                       <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/21650">#21650</a>, the data module was not successfully updating the x-axis in some cases.</li>
                       <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/21255">#21255</a>, tooltip with <a href="https://api.highcharts.com/highcharts/tooltip.outside">outside</a> rendered outside viewport, making <code>document.documentElement</code> expand.</li>
                       <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/21605">#21605</a>, legend text was not vertically aligned with the symbol.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/19623">#19623</a>, errors in custom build when the Pointer class was not added.</li>
                     </ul>
 
                   </div>
@@ -2431,7 +2432,7 @@ import &#39;highcharts/modules/accessibility&#39;;
               <li>Added <a href="https://www.highcharts.com/docs/advanced-chart-features/data-sorting">data sorting</a> with animations on update.</li>
               <li>Added <a href="https://www.highcharts.com/docs/advanced-chart-features/marker-clusters">marker clusters </a> for scatter and map point series.</li>
               <li>Added new option <a href="https://api.highcharts.com/highcharts/accessibility.linkedDescription">accessibility.linkedDescription</a>.</li>
-              <li>Added new accessibility options with more flexibility for customizing the hidden screen reader regions. See #12095.</li>
+              <li>Added new accessibility options with more flexibility for customizing the hidden screen reader regions. See <a href="https://github.com/highcharts/highcharts/issues/12095">#12095</a>.</li>
               <li>Added <a href="https://www.highcharts.com/demo/flame">flame chart demo</a>.</li>
             </ul>
             <div class="accordion card-group">
@@ -15323,6 +15324,41 @@ import &#39;highcharts/modules/accessibility&#39;;
           </div>
           <div class="changelog-container">
             <h3 class="release-header">
+              <a id="highcharts-dashboards-v4.1.0"></a>
+              <span>Highcharts Dashboards v4.1.0 (2026-01-21)</span>
+              <a class="release-header-hashtag" href="#highcharts-dashboards-v4.1.0">#</a>
+              <span class="download-link" ><a href="https://code.highcharts.com/dashboards/zips/Highcharts-Dashboards-4.1.0.zip" title="Download the zip archive for Highcharts Dashboards v4.1.0"><i class="fas fa-download"></i></a></span>
+            </h3>
+            <ul>
+              <li>Added basic <code>board.update()</code> method.</li>
+              <li>Added <code>update</code> argument to DataPool&#39;s <code>setConnectorOptions</code> method. See <a href="https://github.com/highcharts/highcharts/issues/23935">#23935</a>.</li>
+              <li>Added <code>update</code> method to Data Connectors. See <a href="https://github.com/highcharts/highcharts/issues/21583">#21583</a>.</li>
+              <li>Added support for setting global options with <code>Dashboards.setOptions()</code>.</li>
+              <li>Added the possibility to full-screen individual dashboard components, see <a href="https://github.com/highcharts/highcharts/issues/23547">#23547</a>.</li>
+            </ul>
+            <div class="accordion card-group">
+              <div class="card">
+
+                <div id="hd-heading-4-1-0-bug-fixes" class="card-header">
+                  <h4 class="card-title" aria-label="Bug Fixes Highcharts-dashboards v4.1.0">
+                    <button aria-label="Bug Fixes Highcharts-dashboards v4.1.0" aria-expanded="false" class="btn btn-link collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#bug-fixes-hd-4-1-0"><span> Bug fixes </span></button>
+                  </h4>
+                </div>
+                <div id="bug-fixes-hd-4-1-0" class="collapse" aria-labelledby="hd-heading-4-1-0-bug-fixes" data-parent=".accordion">
+                  <div class="card-body">
+                    <ul>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/23952">#23952</a>, wrong reference to nestedLayout.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/23948">#23948</a>, row and cell deleting events were not triggered.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/23862">#23862</a>, highlight sync was incorrect when the connector was used with multiple data tables.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/23859">#23859</a>, the <code>metadata</code> was not cloned in the data table.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/23699">#23699</a>, error in the console when the <code>toggle</code> editable option was added.</li>
+                    </ul>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+            <h3 class="release-header">
               <a id="highcharts-dashboards-v4.0.0"></a>
               <span>Highcharts Dashboards v4.0.0 (2025-10-29)</span>
               <a class="release-header-hashtag" href="#highcharts-dashboards-v4.0.0">#</a>
@@ -16065,6 +16101,58 @@ import &#39;highcharts/modules/accessibility&#39;;
             <h2 id="highcharts-grid">Highcharts Grid</h2>
           </div>
           <div class="changelog-container">
+            <h3 class="release-header">
+              <a id="highcharts-grid-v2.2.0"></a>
+              <span>Highcharts Grid v2.2.0 (2026-01-13)</span>
+              <a class="release-header-hashtag" href="#highcharts-grid-v2.2.0">#</a>
+              <span class="download-link" ><a href="https://code.highcharts.com/grid/zips/Highcharts-Grid-2.2.0.zip" title="Download the zip archive for Highcharts Grid v2.2.0"><i class="fas fa-download"></i></a></span>
+            </h3>
+            <ul>
+              <li><strong>Grid:</strong> Enhanced CSS to allow theming of individual columns, cells etc. and added new hover opacity variables.</li>
+              <li><strong>Grid:</strong> Added multi‑column sorting for Grid, including Shift‑click additive sorting.</li>
+              <li><strong>Grid Pro:</strong> Added <code>arrayNumber</code>, <code>json</code> and <code>sparlinke</code> validators.</li>
+              <li><strong>Grid:</strong> Improved Grid virtualization performance by reusing row elements, batching scroll updates to animation.</li>
+              <li><strong>Grid:</strong> Added Grid screen reader region before and after elements.</li>
+              <li><strong>Grid:</strong> Supported array of indices for the <code>dataTable</code> <code>deleteRows</code> method.</li>
+              <li><strong>Grid:</strong> Deprecated <code>sorting.sortable</code> and replaced with <code>sorting.enabled</code> in Grid column options for consistency with other Grid options.</li>
+              <li><strong>Grid:</strong> Optimized Grid by using fewer event listeners on cells.</li>
+            </ul>
+            <div class="accordion card-group">
+              <div class="card">
+                <div id="hGrid-heading-2-2-0-upgrade-notes" class="card-header">
+                  <h4 class="card-title">
+                    <button aria-label="Upgrade Notes Highcharts-grid v2.2.0" aria-expanded="false" class="btn btn-link collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#upgrade-notes-hGrid-2-2-0"><span> Upgrade notes </span></button>
+                  </h4>
+                </div>
+                <div id="upgrade-notes-hGrid-2-2-0" class="collapse" aria-labelledby="hGrid-heading-2-2-0-bug-fixes" data-parent=".accordion">
+                  <div class="card-body">
+                    <ul>
+                      <li>The <code>sorting.sortable</code> option has been deprecated. Use <code>sorting.enabled</code> instead to enable or disable sorting on columns.</li>
+                    </ul>
+
+                  </div>
+                </div>
+                <div id="hGrid-heading-2-2-0-bug-fixes" class="card-header">
+                  <h4 class="card-title" aria-label="Bug Fixes Highcharts-grid v2.2.0">
+                    <button aria-label="Bug Fixes Highcharts-grid v2.2.0" aria-expanded="false" class="btn btn-link collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#bug-fixes-hGrid-2-2-0"><span> Bug fixes </span></button>
+                  </h4>
+                </div>
+                <div id="bug-fixes-hGrid-2-2-0" class="collapse" aria-labelledby="hGrid-heading-2-2-0-bug-fixes" data-parent=".accordion">
+                  <div class="card-body">
+                    <ul>
+                      <li><strong>Grid:</strong> Fixed <a href="https://github.com/highcharts/highcharts/issues/24002">#24002</a>, header rendering issue when shown after being initialized hidden.</li>
+                      <li><strong>Grid:</strong> Reduced the type dependency tree from Core so it&#39;s not needed anymore to use <code>&quot;skipLibCheck&quot;: false</code> when using the library in typescript environment.</li>
+                      <li><strong>Grid:</strong> The afterRender events was not triggered when grid rerender.</li>
+                      <li><strong>Grid:</strong> Fixed missing width update in columnDefaults.</li>
+                      <li><strong>Grid:</strong> Fixed the wrong Grid height on specific parent container styles (flexbox, <code>max-height</code>).</li>
+                      <li><strong>Grid:</strong> Use lang options (<code>decimalPoint</code> and <code>thousandsSep</code>) for formatting the number in cells.</li>
+                      <li><strong>Grid:</strong> Unified format and formatter header references to column.</li>
+                    </ul>
+
+                  </div>
+                </div>
+              </div>
+            </div>
             <h3 class="release-header">
               <a id="highcharts-grid-v2.1.1"></a>
               <span>Highcharts Grid v2.1.1 (2025-12-10)</span>

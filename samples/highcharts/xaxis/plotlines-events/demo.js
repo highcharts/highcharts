@@ -1,6 +1,9 @@
 const report = document.getElementById('report');
 
 Highcharts.chart('container', {
+    title: {
+        text: 'Demo of plot line events'
+    },
     xAxis: {
         plotLines: [{ // mark the weekend
             color: 'red',

@@ -148,6 +148,13 @@ export declare class BoostSeriesComposition extends Series {
 
 const CHUNK_SIZE = 3000;
 
+/**
+ * Default boost threshold.
+ *
+ * @internal
+ */
+const DEFAULT_BOOST_THRESHOLD = 5000;
+
 /* *
  *
  *  Variables
@@ -268,7 +275,7 @@ function compose<T extends typeof Series>(
         Boostables.forEach((type: string): void => {
             const typePlotOptions = plotOptions[type];
             if (typePlotOptions) {
-                typePlotOptions.boostThreshold = 5000;
+                typePlotOptions.boostThreshold = DEFAULT_BOOST_THRESHOLD;
                 typePlotOptions.boostData = [];
                 seriesTypes[type].prototype.fillOpacity = true;
             }
@@ -773,6 +780,7 @@ function exitBoost(
 }
 
 /**
+ * True when we can skip the expensive data loop (processData/getExtremes).
  * @internal
  * @function Highcharts.Series#hasExtremes
  */
@@ -781,23 +789,24 @@ function hasExtremes(
     checkX?: boolean
 ): boolean {
     const options = series.options,
-        dataLength = series.dataTable.getModified().rowCount,
+        threshold = pick(options.boostThreshold, Number.MAX_VALUE);
+
+    if (threshold === 0) {
+        return false;
+    }
+
+    const dataLength = series.dataTable.getModified().rowCount,
         xAxis = series.xAxis && series.xAxis.options,
         yAxis = series.yAxis && series.yAxis.options,
         colorAxis = series.colorAxis && series.colorAxis.options;
 
-    return dataLength > pick(options.boostThreshold, Number.MAX_VALUE) &&
-            // Defined yAxis extremes
-            isNumber(yAxis.min) &&
-            isNumber(yAxis.max) &&
-            // Defined (and required) xAxis extremes
-            (!checkX ||
-                (isNumber(xAxis.min) && isNumber(xAxis.max))
-            ) &&
-            // Defined (e.g. heatmap) colorAxis extremes
-            (!colorAxis ||
-                (isNumber(colorAxis.min) && isNumber(colorAxis.max))
-            );
+    return (
+        dataLength >= threshold &&
+        isNumber(yAxis?.min) &&
+        isNumber(yAxis?.max) &&
+        (!checkX || (isNumber(xAxis?.min) && isNumber(xAxis?.max))) &&
+        (!colorAxis || (isNumber(colorAxis.min) && isNumber(colorAxis.max)))
+    );
 }
 
 /**
@@ -811,17 +820,15 @@ const getSeriesBoosting = (
     series: BoostSeriesComposition,
     data?: Array<(PointOptions|PointShortOptions)>|Types.TypedArray
 ): boolean => {
-    // Check if will be grouped.
-    if (series.forceCrop) {
+    const { options, forceCrop, chart } = series,
+        threshold = pick(options.boostThreshold, Number.MAX_VALUE);
+
+    // Return early if either will be grouped or boost is disabled.
+    if (forceCrop || threshold === 0) {
         return false;
     }
-    return (
-        isChartSeriesBoosting(series.chart) ||
-        (
-            (data ? data.length : 0) >=
-            pick(series.options.boostThreshold, Number.MAX_VALUE)
-        )
-    );
+
+    return isChartSeriesBoosting(chart) || (data?.length ?? 0) >= threshold;
 };
 
 /**
@@ -1601,13 +1608,10 @@ function wrapSeriesGetExtremes(
 ): DataExtremesObject {
 
     if (this.boosted) {
-        if (hasExtremes(this)) {
+        if (hasExtremes(this, true)) {
             return {};
         }
-        if (this.xAxis.isPanning || this.yAxis.isPanning) {
-            // Do not re-compute the extremes during panning, because looping
-            // the data is expensive. The `this` contains the `dataMin` and
-            // `dataMax` to use.
+        if (this.xAxis?.isPanning || this.yAxis?.isPanning) {
             return this;
         }
     }

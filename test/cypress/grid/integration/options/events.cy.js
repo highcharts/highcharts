@@ -225,8 +225,15 @@ describe('Grid Pro - virtualization and delegated events.', () => {
     });
 
     it('Events work after scrolling to new rows', () => {
-        // Scroll down to rows that weren't initially rendered
-        cy.get('#container tbody').scrollTo(0, 3000);
+        // Use Grid instance to calculate exact scroll position
+        cy.window().its('grid').then(grid => {
+            const rowHeight = grid.viewport.rowsVirtualizer.defaultRowHeight;
+            const targetRowIndex = 80;
+            const scrollPosition = targetRowIndex * rowHeight;
+
+            // Scroll to the calculated position
+            cy.get('#container tbody').scrollTo(0, scrollPosition);
+        });
 
         // Wait for virtualization to render new rows
         cy.get('.hcg-row[data-row-index="80"]').should('exist');
