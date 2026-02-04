@@ -1253,21 +1253,21 @@ export class Grid {
      * @internal
      */
     public renderCaption(): void {
-        const caption = this.options?.caption;
-        if (!caption?.text || !this.contentWrapper) {
+        const captionOptions = this.options?.caption;
+        if (!captionOptions?.text || !this.contentWrapper) {
             return;
         }
 
-        const tag = caption.htmlTag?.toLowerCase();
+        const tag = captionOptions.htmlTag?.toLowerCase();
         const tagName = tag && AST.allowedTags.includes(tag) ? tag : 'div';
         const defaultClass = Globals.getClassName('captionElement');
-        const className = caption.className ?
-            `${defaultClass} ${caption.className}` : defaultClass;
+        const className = captionOptions.className ?
+            `${defaultClass} ${captionOptions.className}` : defaultClass;
 
         this.captionElement = new AST([{
             tagName,
             attributes: { 'class': className, id: this.id + '-caption' },
-            textContent: caption.text
+            textContent: captionOptions.text
         }]).addToDOM(this.contentWrapper) as HTMLElement;
     }
 
