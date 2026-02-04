@@ -559,6 +559,8 @@ export function erase(arr: Array<unknown>, item: unknown): void {
 /**
  * Utility function to extend an object with the members of another.
  *
+ * @function Highcharts.extend<T>
+ *
  * @param {T|undefined} a
  *        The object to be extended.
  *
@@ -568,7 +570,7 @@ export function erase(arr: Array<unknown>, item: unknown): void {
  * @return {T}
  *         Object a, the original object.
  */
-export function extend<T extends object>(a: (T|undefined), b: Partial<T>): T {
+export function extend<T>(a: (T|undefined), b: Partial<T>): T {
     /* eslint-enable valid-jsdoc */
     let n;
 
