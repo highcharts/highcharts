@@ -53,9 +53,9 @@ import TimeBase from '../../Shared/TimeBase.js';
 import Pagination from './Pagination/Pagination.js';
 
 const {
-    createOptionsProxy,
     makeHTMLElement,
-    setHTMLContent
+    setHTMLContent,
+    createOptionsProxy
 } = GridUtils;
 
 const {
@@ -1260,10 +1260,9 @@ export class Grid {
 
         const tag = caption.htmlTag?.toLowerCase();
         const tagName = tag && AST.allowedTags.includes(tag) ? tag : 'div';
-        const className = [
-            Globals.getClassName('captionElement'),
-            caption.className
-        ].filter(Boolean).join(' ');
+        const defaultClass = Globals.getClassName('captionElement');
+        const className = caption.className ?
+            `${defaultClass} ${caption.className}` : defaultClass;
 
         this.captionElement = new AST([{
             tagName,
