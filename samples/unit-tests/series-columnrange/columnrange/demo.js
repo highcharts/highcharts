@@ -58,7 +58,6 @@ QUnit.test('Column range with series.keys and x categories, #23961', assert => {
     const series = chart.series[0];
     const point = series.points[0];
 
-    assert.ok(series, 'Chart should have series');
     assert.strictEqual(series.points.length, 4, 'Should have 4 points');
 
     assert.ok(
