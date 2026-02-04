@@ -100,12 +100,6 @@ declare module '../../Series/SeriesBase' {
     }
 }
 
-declare module '../../Series/SeriesOptions' {
-    interface SeriesOptions {
-        colorKey?: string;
-    }
-}
-
 defaultOptions.colorAxis = merge(defaultOptions.xAxis, ColorAxisDefaults);
 
 /* *

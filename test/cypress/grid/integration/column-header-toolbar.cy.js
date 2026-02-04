@@ -27,7 +27,7 @@ describe('Column Header Toolbar', () => {
         cy.get('.hcg-popup-content input')
             .type('{backspace}{backspace}{backspace}{backspace}');
         cy.get('.hcg-button.active').should('have.length', 0);
-        cy.get('#container').click();
+        cy.get('#container').click({ force: true });
         cy.get('.hcg-popup-content').should('not.exist');
     });
 

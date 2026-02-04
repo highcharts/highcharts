@@ -20,7 +20,7 @@
  * */
 
 import type XAxisOptions from '../Core/Axis/AxisOptions';
-import type DataConverter from '../Data/Converters/DataConverter';
+import type { DateFormatObject } from '../Data/Converters/DataConverter';
 import type JSON from '../Core/JSON';
 import type Options from '../Core/Options';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
@@ -1674,7 +1674,7 @@ class Data {
      * @name Highcharts.Data#dateFormats
      * @type {Highcharts.Dictionary<Highcharts.DataDateFormatObject>}
      */
-    public dateFormats: Record<string, DataConverter.DateFormatObject> = {
+    public dateFormats: Record<string, DateFormatObject> = {
         'YYYY/mm/dd': {
             regex: /^(\d{4})[\-\/\.](\d{1,2})[\-\/\.](\d{1,2})$/,
             parser: function (match: (RegExpMatchArray|null)): number {

@@ -32,6 +32,7 @@ import type {
 import type { ColumnResizingMode } from './Table/ColumnResizing/ColumnResizing';
 import type { ColumnDataType } from './Table/Column';
 import type DataTable from '../../Data/DataTable';
+import type { CellType as DataTableCellType } from '../../Data/DataTable';
 import type DataTableOptions from '../../Data/DataTableOptions';
 import type Cell from './Table/Cell';
 import type Column from './Table/Column';
@@ -346,9 +347,9 @@ export interface ColumnOptions {
     sorting?: ColumnSortingOptions;
 
     /**
-     * The width of the column. It can be set in pixels or as a percentage of
-     * the table width. If unset, the width is distributed evenly between all
-     * columns.
+     * The width of the column. It can be set in pixels, as a percentage of the
+     * table width, or `'auto'`. If unset or `'auto'`, the width is distributed
+     * evenly between columns without a fixed width.
      *
      * This option does not work with the `resizing` option set to `full`.
      *
@@ -472,7 +473,7 @@ export interface ColumnSortingOptions {
      * A number indicating whether the first value (`a`) is less than (`-1`),
      * equal to (`0`), or greater than (`1`) the second value (`b`).
      */
-    compare?: (a: DataTable.CellType, b: DataTable.CellType) => number;
+    compare?: (a: DataTableCellType, b: DataTableCellType) => number;
 }
 
 /**
@@ -486,6 +487,12 @@ export interface IndividualColumnSortingOptions extends ColumnSortingOptions {
      * @default null
      */
     order?: ColumnSortingOrder;
+
+    /**
+     * Priority of this column when multiple columns are sorted. Lower numbers
+     * have higher priority.
+     */
+    priority?: number;
 }
 
 /**
@@ -530,6 +537,16 @@ export interface CaptionOptions {
      * The custom CSS class name for the table caption.
      */
     className?: string;
+
+    /**
+     * The HTML tag to use for the caption. When set, the caption is rendered
+     * as that element (e.g. `h1`, `p`, `span`). Must be one of
+     * [AST.allowedTags](https://api.highcharts.com/class-reference/Highcharts.AST#allowedTags)
+     * (e.g. `div`, `p`, `span`, `h1`–`h6`).
+     *
+     * @default 'div'
+     */
+    htmlTag?: string;
 
     /**
      * The caption of the grid.

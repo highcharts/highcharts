@@ -85,11 +85,104 @@ declare module '../Chart/ChartBase' {
 
 declare module '../Series/SeriesOptions' {
     interface SeriesOptions {
+        /**
+         * The sequential index of the series in the legend.
+         *
+         * @see [legend.reversed](#legend.reversed)
+         *
+         * @see [yAxis.reversedStacks](#yAxis.reversedStacks)
+         *
+         * @sample {highcharts|highstock} highcharts/series/legendindex/
+         * Legend in opposite order
+         */
         legendIndex?: number;
+
+        /** @internal */
         legendType?: ('point'|'series');
+
+        /**
+         * If true, a checkbox is displayed next to the legend item to allow
+         * selecting the series. The state of the checkbox is determined by
+         * the `selected` option.
+         *
+         * @productdesc {highmaps}
+         * Note that if a `colorAxis` is defined, the color axis is represented
+         * in the legend, not the series.
+         *
+         * @sample {highcharts} highcharts/plotoptions/series-showcheckbox-true/
+         * Show select box
+         *
+         * @since 1.2.0
+         * @default false
+         */
         showCheckbox?: boolean;
+
+        /**
+         * Whether to display this particular series or series type in the
+         * legend. Standalone series are shown in legend by default, and linked
+         * series are not. Since v7.2.0 it is possible to show series that use
+         * colorAxis by setting this option to `true`.
+         *
+         * @sample {highcharts} highcharts/plotoptions/series-showinlegend/
+         * One series in the legend, one hidden
+         */
         showInLegend?: boolean;
     }
+    interface SeriesEventsOptions {
+        /**
+         * Fires when the checkbox next to the series' name in the legend is
+         * clicked. One parameter, `event`, is passed to the function. The state
+         * of the checkbox is found by `event.checked`. The checked item is
+         * found by `event.item`. Return `false` to prevent the default action
+         * which is to toggle the select state of the series.
+         *
+         * @sample {highcharts} highcharts/plotoptions/series-events-checkboxclick/
+         * Alert checkbox status
+         *
+         * @since 1.2.0
+         */
+        checkboxClick?: SeriesCheckboxClickCallbackFunction;
+    }
+}
+
+/**
+ * Function callback when the checkbox next to the series' name in the legend is
+ * clicked.
+ *
+ * @callback Highcharts.SeriesCheckboxClickCallbackFunction
+ *
+ * @param {Highcharts.Series} this
+ *        The series where the event occurred.
+ *
+ * @param {Highcharts.SeriesCheckboxClickEventObject} event
+ *        Event arguments.
+ */
+export type SeriesCheckboxClickCallbackFunction =
+    EventCallback<Series, SeriesCheckboxClickEventObject>;
+
+/**
+ * Event information regarding check of a series box.
+ */
+export interface SeriesCheckboxClickEventObject {
+    /**
+     * Whether the box has been checked.
+     */
+    checked: boolean;
+
+    /**
+     * Related series.
+     */
+    item: Series;
+
+    /**
+     * Related series.
+     */
+    target: Series;
+
+    /**
+     * Event type.
+     */
+    type: 'checkboxClick';
 }
 
 interface BoxObject extends R.BoxObject {
@@ -1211,13 +1304,14 @@ class Legend {
         legendWidth = (
             options.maxWidth ?
                 Math.min(
-                    legend.widthOption ||
+                    (
+                        legend.widthOption || legend.offsetWidth
+                    ),
                     allowedWidth,
                     relativeLength(
                         options.maxWidth,
                         chart.chartWidth
-                    ) ||
-                Infinity
+                    ) || Infinity
                 ) :
                 (legend.widthOption || legend.offsetWidth)
         ) + padding;
@@ -1986,10 +2080,6 @@ export default Legend;
  */
 
 /**
- * Series color as used by the legend and some series types.
- * @name Highcharts.Series#color
- * @type {Highcharts.ColorType|undefined}
- *//**
  * Legend data for the series.
  * @name Highcharts.Series#legendItem
  * @type {Highcharts.LegendItemObject|undefined}

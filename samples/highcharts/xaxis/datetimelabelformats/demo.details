@@ -1,5 +1,5 @@
 ---
- name: Highcharts Demo
+ name: Demo of xAxis.dateTimeLabelFormats.day
  authors:
    - Torstein Hønsi
  js_wrap: b

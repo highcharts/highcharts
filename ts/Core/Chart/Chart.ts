@@ -1046,13 +1046,6 @@ class Chart {
             for (let i = fromIndex, iEnd = collection.length; i < iEnd; ++i) {
                 const item = collection[i];
                 if (item) {
-                    /**
-                     * Contains the series' index in the `Chart.series` array.
-                     *
-                     * @name Highcharts.Series#index
-                     * @type {number}
-                     * @readonly
-                     */
                     item.index = i;
 
                     if (item instanceof Series) {
@@ -2837,15 +2830,7 @@ class Chart {
                 linkedParent.linkedParent !== series
             ) {
                 linkedParent.linkedSeries.push(series);
-                /**
-                 * The parent series of the current series, if the current
-                 * series has a [linkedTo](https://api.highcharts.com/highcharts/series.line.linkedTo)
-                 * setting.
-                 *
-                 * @name Highcharts.Series#linkedParent
-                 * @type {Highcharts.Series}
-                 * @readonly
-                 */
+
                 series.linkedParent = linkedParent;
 
                 series.visible = (
@@ -2962,16 +2947,32 @@ class Chart {
         ) {
 
             const tempWidth = chart.plotWidth,
-                tempHeight = chart.plotHeight;
+                tempHeight = chart.plotHeight,
+                threshold = [1.05, 1.1];
 
             for (const axis of axes) {
+                const horizNum = +(axis.horiz || 0);
                 if (run === 0) {
                     // Get margins by pre-rendering axes
                     axis.setScale();
 
+                    // On datetime axes, consider the tick interval match. A
+                    // match close to 1 means that the current normalized tick
+                    // interval is an insecure match to the requested tick
+                    // interval, on the brink of landing on a higher unit. In
+                    // this case, we should redo the axis to get a more
+                    // appropriate tick interval (#17393).
+                    const tickIntervalMatch = axis.tickPositions?.info?.match;
+                    if (tickIntervalMatch) {
+                        threshold[horizNum] = Math.min(
+                            tickIntervalMatch,
+                            threshold[horizNum]
+                        );
+                    }
+
                 } else if (
-                    (axis.horiz && redoHorizontal) ||
-                    (!axis.horiz && redoVertical)
+                    (horizNum && redoHorizontal) ||
+                    (!horizNum && redoVertical)
                 ) {
                     // Update to reflect the new margins
                     axis.setTickInterval(true);
@@ -2984,8 +2985,10 @@ class Chart {
                 chart.getMargins();
             }
 
-            redoHorizontal = (tempWidth / chart.plotWidth) > (run ? 1 : 1.1);
-            redoVertical = (tempHeight / chart.plotHeight) > (run ? 1 : 1.05);
+            redoHorizontal = (tempWidth / chart.plotWidth) >
+                (run ? 1 : threshold[1]);
+            redoVertical = (tempHeight / chart.plotHeight) >
+                (run ? 1 : threshold[0]);
 
             run++;
         }
@@ -3037,6 +3040,7 @@ class Chart {
             creds = merge(
                 true, this.options.credits as Chart.CreditsOptions, credits
             );
+
         if (creds.enabled && !this.credits) {
 
             /**
@@ -3053,16 +3057,28 @@ class Chart {
                 0
             )
                 .addClass('highcharts-credits')
-                .on('click', function (): void {
-                    if (creds.href) {
-                        win.location.href = creds.href;
-                    }
+                .on('click', function (e: PointerEvent): void {
+                    // Fire the event with browser redirect as default function
+                    fireEvent(
+                        chart,
+                        'creditsClick',
+                        e as Event,
+                        (): void => {
+                            if (creds.href) {
+                                win.location.href = creds.href;
+                            }
+                        }
+                    );
                 })
                 .attr({
                     align: (creds.position as any).align,
                     zIndex: 8
                 });
 
+            // If creds.events?.click exists, add it as an event listener
+            if (creds.events?.click) {
+                addEvent(chart, 'creditsClick', creds.events.click);
+            }
 
             if (!chart.styledMode) {
                 this.credits.css(creds.style);
@@ -4648,6 +4664,28 @@ namespace Chart {
          * @default https://www.highcharts.com?credits
          */
         href?: string;
+
+        /**
+         * Events for the credits label.
+         *
+         * @declare Highcharts.CreditsEventsOptionsObject
+         */
+        events?: {
+            /**
+             * Callback function to handle click events on the credits label.
+             * The callback can call `event.preventDefault()` to prevent the
+             * default navigation behavior. Alternatively, you can add a general
+             * event handler using `Highcharts.addEvent(chart, 'creditsClick',
+             * callback)` instead of providing it in the options tree.
+             *
+             * @sample {highcharts} highcharts/credits/events-click/
+             *         Custom click handler
+             *
+             * @param {Event} event
+             *        The click event object.
+             */
+            click?: (event: Event) => void;
+        };
 
         /**
          * Credits for map source to be concatenated with conventional credit

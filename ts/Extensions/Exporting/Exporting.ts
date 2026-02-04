@@ -416,14 +416,17 @@ class Exporting {
     }
 
     /** @internal */
-    private static async fetchCSS(href: string): Promise<CSSStyleSheet> {
-        const content = await fetch(href)
-            .then((res): Promise<string> => res.text());
+    private static async fetchCSS(href: string): Promise<CSSStyleSheet | void> {
+        try {
+            const res = await fetch(href);
+            const content = await res.text();
+            const newSheet = new CSSStyleSheet();
+            newSheet.replaceSync(content);
 
-        const newSheet = new CSSStyleSheet();
-        newSheet.replaceSync(content);
-
-        return newSheet;
+            return newSheet;
+        } catch {
+            error(`Warning: Failed to fetch CSS from ${href}`, false);
+        }
     }
 
     /** @internal */
@@ -435,7 +438,9 @@ class Exporting {
             for (const rule of Array.from(sheet.cssRules)) {
                 if (rule instanceof CSSImportRule) {
                     const sheet = await Exporting.fetchCSS(rule.href);
-                    await Exporting.handleStyleSheet(sheet, resultArray);
+                    if (sheet) {
+                        await Exporting.handleStyleSheet(sheet, resultArray);
+                    }
                 }
 
                 if (rule instanceof CSSFontFaceRule) {
@@ -462,7 +467,9 @@ class Exporting {
         } catch {
             if (sheet.href) {
                 const newSheet = await Exporting.fetchCSS(sheet.href);
-                await Exporting.handleStyleSheet(newSheet, resultArray);
+                if (newSheet) {
+                    await Exporting.handleStyleSheet(newSheet, resultArray);
+                }
             }
         }
     }
@@ -618,30 +625,6 @@ class Exporting {
     }
 
     /**
-     * Prepare the SVG DOM for exporting
-     *
-     * @private
-     */
-    public static sanitizeDOM(
-        svg: SVGDOMElement
-    ): void {
-        // Increase the size of foreignObjects to avoid clipping when the
-        // applied font size in the export is larger than the on-screen font
-        // size.
-        svg.querySelectorAll('foreignObject').forEach((fo): void => {
-            ['width', 'height'].forEach((attr): void => {
-                const value = fo.getAttribute(attr);
-                if (value) {
-                    fo.setAttribute(
-                        attr,
-                        Math.ceil(parseInt(value, 10) * 1.15)
-                    );
-                }
-            });
-        });
-    }
-
-    /**
      * A collection of fixes on the produced SVG to account for expand
      * properties and browser bugs. Returns a cleaned SVG.
      *
@@ -664,9 +647,31 @@ class Exporting {
         /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
         options?: Options
     ): string {
-        svg = svg
+        const split = svg.indexOf('</svg>') + 6,
+            useForeignObject = svg.indexOf('<foreignObject') > -1;
+        let html = svg.substr(split);
+
+        // Remove any HTML added to the container after the SVG (#894, #9087)
+        svg = svg.substr(0, split);
+
+        if (useForeignObject) {
             // Some tags needs to be closed in xhtml (#13726)
-            .replace(/(<(?:img|br).*?(?=\>))>/g, '$1 />')
+            svg = svg.replace(/(<(?:img|br).*?(?=\>))>/g, '$1 />');
+
+        // Move HTML into a foreignObject
+        } else if (html && options?.exporting?.allowHTML) {
+            html = '<foreignObject x="0" y="0" ' +
+                    'width="' + options.chart.width + '" ' +
+                    'height="' + options.chart.height + '">' +
+                '<body xmlns="http://www.w3.org/1999/xhtml">' +
+                // Some tags needs to be closed in xhtml (#13726)
+                html.replace(/(<(?:img|br).*?(?=\>))>/g, '$1 />') +
+                '</body>' +
+                '</foreignObject>';
+            svg = svg.replace('</svg>', html + '</svg>');
+        }
+
+        svg = svg
             .replace(/zIndex="[^"]+"/g, '')
             .replace(/symbolName="[^"]+"/g, '')
             .replace(/jQuery\d+="[^"]+"/g, '')
@@ -1645,7 +1650,6 @@ class Exporting {
         }
         this.resolveCSSVariables();
 
-        Exporting.sanitizeDOM(chart.renderer.box);
         return chart.container.innerHTML;
     }
 

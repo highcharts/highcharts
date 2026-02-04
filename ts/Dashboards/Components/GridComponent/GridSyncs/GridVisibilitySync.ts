@@ -20,11 +20,11 @@
  *
  * */
 
-import type Sync from '../../Sync/Sync';
+import type { OptionsEntry, SyncPair } from '../../Sync/Sync';
+import type { Event as DataCursorEvent } from '../../../../Data/DataCursor';
 import type GridComponent from '../GridComponent.js';
 
 import Component from '../../Component';
-import DataCursor from '../../../../Data/DataCursor';
 
 
 /* *
@@ -33,9 +33,9 @@ import DataCursor from '../../../../Data/DataCursor';
  *
  * */
 
-const defaultOptions: Sync.OptionsEntry = {};
+const defaultOptions: OptionsEntry = {};
 
-const syncPair: Sync.SyncPair = {
+const syncPair: SyncPair = {
     emitter: void 0,
     handler: function (this: Component): (() => void) | void {
         if (
@@ -50,7 +50,7 @@ const syncPair: Sync.SyncPair = {
 
         const { board } = component;
 
-        const handleVisibilityChange = (e: DataCursor.Event): void => {
+        const handleVisibilityChange = (e: DataCursorEvent): void => {
             const cursor = e.cursor,
                 grid = component.grid;
             if (!(grid && cursor.type === 'position' && cursor.column)) {
