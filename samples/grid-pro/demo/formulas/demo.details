@@ -1,8 +1,10 @@
 ---
-name: Formulas in Grid
+name: Formulas
 authors:
   - Sebastian Bochan
 js_wrap: b
+alt_text: >-
+  Spreadsheet-style formulas in a data grid
 tags:
   - Highcharts Grid demo
 categories:
