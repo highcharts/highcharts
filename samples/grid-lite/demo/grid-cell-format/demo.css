@@ -20,6 +20,11 @@ body {
 .highcharts-light {
     --code-background: #f7f7f7;
     --code-border: #e1e1e1;
+    --highlight-color: #e2e2e2;
+    --highlight-border-color: #cec184;
+    --high-color: #348700;
+    --low-color: #d8003a;
+    --row-highlight-color: #e7ffe7;
 }
 
 .demo {
@@ -39,14 +44,6 @@ code {
     padding: 2px 4px;
     border-radius: 5px;
     display: inline-block;
-}
-
-:root {
-    --highlight-color: #e2e2e2;
-    --highlight-border-color: #cec184;
-    --high-color: #348700;
-    --low-color: #d8003a;
-    --row-highlight-color: #e7ffe7;
 }
 
 @media (prefers-color-scheme: dark) {
