@@ -1,3 +1,5 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
+
 #container {
     height: 300px;
 }
