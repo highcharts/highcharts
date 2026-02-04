@@ -53,9 +53,9 @@ import TimeBase from '../../Shared/TimeBase.js';
 import Pagination from './Pagination/Pagination.js';
 
 const {
+    createOptionsProxy,
     makeHTMLElement,
-    setHTMLContent,
-    createOptionsProxy
+    setHTMLContent
 } = GridUtils;
 
 const {
@@ -1253,27 +1253,23 @@ export class Grid {
      * @internal
      */
     public renderCaption(): void {
-        const captionOptions = this.options?.caption;
-        const captionText = captionOptions?.text;
-
-        if (!captionText) {
+        const caption = this.options?.caption;
+        if (!caption?.text || !this.contentWrapper) {
             return;
         }
 
-        // Create a caption element.
-        this.captionElement = makeHTMLElement('div', {
-            className: Globals.getClassName('captionElement'),
-            id: this.id + '-caption'
-        }, this.contentWrapper);
+        const tag = caption.htmlTag?.toLowerCase();
+        const tagName = tag && AST.allowedTags.includes(tag) ? tag : 'div';
+        const className = [
+            Globals.getClassName('captionElement'),
+            caption.className
+        ].filter(Boolean).join(' ');
 
-        // Render the caption element content.
-        setHTMLContent(this.captionElement, captionText);
-
-        if (captionOptions.className) {
-            this.captionElement.classList.add(
-                ...captionOptions.className.split(/\s+/g)
-            );
-        }
+        this.captionElement = new AST([{
+            tagName,
+            attributes: { 'class': className, id: this.id + '-caption' },
+            textContent: caption.text
+        }]).addToDOM(this.contentWrapper) as HTMLElement;
     }
 
     /**
