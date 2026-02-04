@@ -33,3 +33,45 @@ QUnit.test('Column range and column series.', assert => {
         'Column range points and columns should be aligned, #17912.'
     );
 });
+
+QUnit.test('Column range with series.keys and x categories, #23961', assert => {
+    const isNumber = Highcharts.isNumber;
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'columnrange'
+        },
+        xAxis: {
+            type: 'category'
+        },
+        series: [{
+            type: 'columnrange',
+            data: [
+                ['Jan', -9.5, 8],
+                ['Feb', -7.8, 8.3],
+                ['Mar', -13.1, 9.2],
+                ['Apr', -4.4, 15.7]
+            ],
+            keys: ['x', 'low', 'high']
+        }]
+    });
+
+    const series = chart.series[0];
+    const point = series.points[0];
+
+    assert.ok(series, 'Chart should have series');
+    assert.strictEqual(series.points.length, 4, 'Should have 4 points');
+
+    assert.ok(
+        isNumber(point.x) && point.x >= 0,
+        'First point have numeric category index (got: ' + point.x + ')'
+    );
+    assert.ok(
+        isNumber(point.low) && isNumber(point.high),
+        'First point should have low and high'
+    );
+    assert.ok(
+        isNumber(point.shapeArgs?.width) && point.shapeArgs.width > 0,
+        'First point should have valid shapeArgs.width for rendering'
+    );
+    assert.ok(point.graphic, 'First point should have rendered graphic');
+});

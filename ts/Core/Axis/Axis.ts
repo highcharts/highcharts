@@ -1776,7 +1776,10 @@ class Axis {
 
         point.series.requireSorting = false;
 
-        if (!defined(nameX)) {
+        if (!defined(nameX) || isString(nameX)) {
+            if (isString(nameX)) {
+                point.name = point.options.x as string;
+            }
             nameX = this.uniqueNames && names ?
                 (
                     explicitCategories ?

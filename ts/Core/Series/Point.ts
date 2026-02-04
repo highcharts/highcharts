@@ -54,6 +54,7 @@ const {
     isArray,
     isFunction,
     isNumber,
+    isString,
     isObject,
     merge,
     pick,
@@ -671,11 +672,14 @@ class Point {
         } else if (isNumber(options.x) && series.options.relativeXValue) {
             point.x = series.autoIncrement(options.x);
 
-        // If x is a string, try to parse it to a datetime
-        } else if (typeof point.x === 'string') {
-            x ??= series.chart.time.parse(point.x);
-            if (isNumber(x)) {
-                point.x = x;
+        } else if (isString(point.x)) {
+            if (series.xAxis?.hasNames) {
+                point.x = series.xAxis.nameToX(point);
+            } else {
+                x ??= series.chart.time.parse(point.x);
+                if (isNumber(x)) {
+                    point.x = x;
+                }
             }
         }
 
