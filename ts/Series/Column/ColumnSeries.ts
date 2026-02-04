@@ -149,7 +149,7 @@ class ColumnSeries extends Series {
             options = series.options,
             { clipOffset, inverted } = this.chart,
             attr: SVGAttributes = {},
-            translateProp: 'translateX'|'translateY' = inverted ?
+            translateProp: 'translateX' | 'translateY' = inverted ?
                 'translateX' :
                 'translateY';
         let translateStart: number,
@@ -251,7 +251,7 @@ class ColumnSeries extends Series {
             // Keep backward compatibility: reversed xAxis had reversed
             // stacks
             reverseStacks = (xAxis.reversed && !reversedStacks) ||
-            (!xAxis.reversed && reversedStacks),
+                (!xAxis.reversed && reversedStacks),
             stackGroups: Record<string, number> = {};
         let stackKey,
             columnCount = 0;
@@ -269,10 +269,11 @@ class ColumnSeries extends Series {
 
                 if (
                     otherSeries.type === series.type &&
+                    otherSeries.visible &&
                     otherSeries.reserveSpace() &&
                     yAxis.len === otherYAxis.len &&
                     yAxis.pos === otherYAxis.pos
-                ) { // #642, #2086
+                ) { // #642, #2086, #24128
                     if (
                         otherOptions.stacking &&
                         otherOptions.stacking !== 'group'
@@ -294,15 +295,15 @@ class ColumnSeries extends Series {
         }
 
         const categoryWidth = Math.min(
-                Math.abs(xAxis.transA) * (
-                    (!xAxis.brokenAxis?.hasBreaks && xAxis.ordinal?.slope) ||
-                    options.pointRange ||
-                    xAxis.closestPointRange ||
-                    xAxis.tickInterval ||
-                    1
-                ), // #2610
-                xAxis.len // #1535
-            ),
+            Math.abs(xAxis.transA) * (
+                (!xAxis.brokenAxis?.hasBreaks && xAxis.ordinal?.slope) ||
+                options.pointRange ||
+                xAxis.closestPointRange ||
+                xAxis.tickInterval ||
+                1
+            ), // #2610
+            xAxis.len // #1535
+        ),
             groupPadding = categoryWidth * (options.groupPadding as any),
             groupWidth = categoryWidth - 2 * groupPadding,
             pointOffsetWidth = groupWidth / (columnCount || 1),
@@ -319,12 +320,12 @@ class ColumnSeries extends Series {
             // #1251, #3737
             colIndex = (series.columnIndex || 0) + (reverseStacks ? 1 : 0),
             pointXOffset =
-            pointPadding +
-            (
-                groupPadding +
-                colIndex * pointOffsetWidth -
-                (categoryWidth / 2)
-            ) * (reverseStacks ? -1 : 1);
+                pointPadding +
+                (
+                    groupPadding +
+                    colIndex * pointOffsetWidth -
+                    (categoryWidth / 2)
+                ) * (reverseStacks ? -1 : 1);
 
         // Save it for reading in linked series (Error bars particularly)
         series.columnMetrics = {
@@ -413,8 +414,8 @@ class ColumnSeries extends Series {
                 this.xAxis.stacking?.stacks,
                 (stack: Record<string, StackItem>): void => {
                     const points = typeof point.x === 'number' ?
-                            stack[point.x.toString()]?.points :
-                            void 0,
+                        stack[point.x.toString()]?.points :
+                        void 0,
                         pointValues = points?.[this.index],
                         yStackMap: Record<string, number> = {};
 
@@ -446,7 +447,7 @@ class ColumnSeries extends Series {
                             // stacks, not the amount of series (#20550).
                             .filter((index): boolean => {
                                 const otherOptions = this.chart.series[index]
-                                        .options,
+                                    .options,
                                     yStack = otherOptions.stacking &&
                                         otherOptions.stack;
 
@@ -519,7 +520,7 @@ class ColumnSeries extends Series {
                 yAxis.getThreshold(threshold as any);
         // Postprocessed for border width
         let seriesBarW = series.barW =
-                Math.max(seriesPointWidth, 1 + 2 * borderWidth);
+            Math.max(seriesPointWidth, 1 + 2 * borderWidth);
 
         // When the pointPadding is 0, we want the columns to be packed
         // tightly, so we allow individual columns to have individual sizes.
@@ -554,7 +555,7 @@ class ColumnSeries extends Series {
             if (minPointLength && Math.abs(barH) < minPointLength) {
                 barH = minPointLength;
                 up = (!yAxis.reversed && !point.negative) ||
-                (yAxis.reversed && point.negative);
+                    (yAxis.reversed && point.negative);
 
                 // Reverse zeros if there's no positive value in the series
                 // in visible range (#7046)
@@ -866,7 +867,8 @@ class ColumnSeries extends Series {
                     point &&
                     series.options.enableMouseTracking &&
                     (
-                    // Run point events only for points inside plot area, #21136
+                        // Run point events only for points inside plot,
+                        // #21136
                         chart.isInsidePlot(
                             e.chartX - chart.plotLeft,
                             e.chartY - chart.plotTop,
@@ -907,7 +909,7 @@ class ColumnSeries extends Series {
         // Add the event listeners, we need to do this only once
         if (!series._hasTracking) {
             series.trackerGroups?.reduce(
-                (acc, key): (SVGElement|undefined)[] => {
+                (acc, key): (SVGElement | undefined)[] => {
                     if (key === 'dataLabelsGroup') {
                         acc.push(...(series.dataLabelsGroups || []));
                     } else {
@@ -915,8 +917,8 @@ class ColumnSeries extends Series {
                     }
                     return acc;
                 },
-                [] as (SVGElement|undefined)[]
-            ).forEach((group: SVGElement|undefined): void => {
+                [] as (SVGElement | undefined)[]
+            ).forEach((group: SVGElement | undefined): void => {
                 if (!group) {
                     // Skip undefined
                     return;
@@ -1022,13 +1024,13 @@ export default ColumnSeries;
  * @private
  * @interface Highcharts.ColumnMetricsObject
  *//**
- * Width of the columns.
- * @name Highcharts.ColumnMetricsObject#width
- * @type {number}
- *//**
- * Offset of the columns.
- * @name Highcharts.ColumnMetricsObject#offset
- * @type {number}
- */
+* Width of the columns.
+* @name Highcharts.ColumnMetricsObject#width
+* @type {number}
+*//**
+* Offset of the columns.
+* @name Highcharts.ColumnMetricsObject#offset
+* @type {number}
+*/
 
 ''; // Detach doclets above
