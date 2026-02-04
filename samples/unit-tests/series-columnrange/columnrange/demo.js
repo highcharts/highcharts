@@ -57,12 +57,13 @@ QUnit.test('Column range with series.keys and x categories, #23961', assert => {
 
     const series = chart.series[0];
     const point = series.points[0];
+    const xAxis = chart.xAxis[0];
 
     assert.strictEqual(series.points.length, 4, 'Should have 4 points');
 
     assert.ok(
         isNumber(point.x) && point.x >= 0,
-        'First point have numeric category index (got: ' + point.x + ')'
+        'First point should have numeric category index (got: ' + point.x + ')'
     );
     assert.ok(
         isNumber(point.low) && isNumber(point.high),
@@ -73,4 +74,18 @@ QUnit.test('Column range with series.keys and x categories, #23961', assert => {
         'First point should have valid shapeArgs.width for rendering'
     );
     assert.ok(point.graphic, 'First point should have rendered graphic');
+
+    assert.ok(
+        xAxis.tickPositions.length > 0 && isNumber(xAxis.tickPositions[0]),
+        'First tick position should be a number'
+    );
+
+    xAxis.update({ type: 'category' }, true);
+
+    const firstTickPos = xAxis.tickPositions[0];
+    assert.strictEqual(
+        xAxis.ticks[firstTickPos]?.label?.textStr,
+        'Jan',
+        'First tick label should be Jan'
+    );
 });

@@ -673,7 +673,7 @@ class Point {
             point.x = series.autoIncrement(options.x);
 
         } else if (isString(point.x)) {
-            if (series.xAxis?.hasNames) {
+            if (series.xAxis) {
                 point.x = series.xAxis.nameToX(point);
             } else {
                 x ??= series.chart.time.parse(point.x);
