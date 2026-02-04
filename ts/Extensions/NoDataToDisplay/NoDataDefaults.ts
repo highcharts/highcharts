@@ -46,7 +46,7 @@ const lang: Partial<LangOptions> = {
      * @since    3.0.8
      * @product  highcharts highstock
      * @requires modules/no-data-to-display
-     * @default  'No data to display'
+     * @default  No data to display
      */
     noData: 'No data to display'
 };
@@ -72,7 +72,6 @@ const noData: NoDataOptions = {
      * An object of additional SVG attributes for the no-data label.
      *
      * @type      {Highcharts.SVGAttributes}
-     * @since     3.0.8
      * @product   highcharts highstock gantt
      * @requires  modules/no-data-to-display
      * @apioption noData.attr
@@ -97,7 +96,6 @@ const noData: NoDataOptions = {
      * The position of the no-data label, relative to the plot area.
      *
      * @type  {Highcharts.AlignObject}
-     * @since 3.0.8
      * @requires modules/no-data-to-display
      */
     position: {
@@ -105,7 +103,6 @@ const noData: NoDataOptions = {
         /**
          * Horizontal offset of the label, in pixels.
          *
-         * @since    3.0.8
          * @requires modules/no-data-to-display
          * @default  0
          */
@@ -114,7 +111,6 @@ const noData: NoDataOptions = {
         /**
          * Vertical offset of the label, in pixels.
          *
-         * @since    3.0.8
          * @requires modules/no-data-to-display
          * @default  0
          */
@@ -124,9 +120,8 @@ const noData: NoDataOptions = {
          * Horizontal alignment of the label.
          *
          * @type {Highcharts.AlignValue}
-         * @since    3.0.8
          * @requires modules/no-data-to-display
-         * @default  'center'
+         * @default  center
          */
         align: 'center',
 
@@ -134,9 +129,8 @@ const noData: NoDataOptions = {
          * Vertical alignment of the label.
          *
          * @type {Highcharts.VerticalAlignValue}
-         * @since    3.0.8
          * @requires modules/no-data-to-display
-         * @default  'middle'
+         * @default  middle
          */
         verticalAlign: 'middle'
     },
@@ -148,7 +142,6 @@ const noData: NoDataOptions = {
      *         Styled no-data text
      *
      * @type {Highcharts.CSSObject}
-     * @since    3.0.8
      * @requires modules/no-data-to-display
      */
     style: {

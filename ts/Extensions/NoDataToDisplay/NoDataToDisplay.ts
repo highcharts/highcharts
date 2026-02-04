@@ -77,7 +77,6 @@ declare module '../../Core/Chart/ChartBase' {
     }
 }
 
-/** @internal */
 declare module '../../Core/Options' {
     interface LangOptions {
         /**
@@ -95,7 +94,6 @@ declare module '../../Core/Options' {
          *
          * @since        3.0.8
          * @requires     modules/no-data-to-display
-         * @optionparent noData
          */
         noData?: NoDataOptions;
     }
