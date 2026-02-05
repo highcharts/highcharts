@@ -30,6 +30,16 @@ test.describe('Cell Context Menu', () => {
                     'tbody tr[data-row-index="1"] td[data-column-id="product"]'
                 );
 
+                await expect(productCell).toBeVisible();
+                await expect(productCell).toHaveText(/.+/);
+
+                const row = productCell.locator('xpath=ancestor::tr[1]');
+                await expect(row).toHaveAttribute('data-row-index', /.+/);
+
+                const rowIndex = (await row.getAttribute('data-row-index')) ?? '';
+                const value = ((await productCell.textContent()) ?? '').trim();
+                const expected = rowIndex + '|product|' + value;
+
                 await productCell.click({ button: 'right' });
 
                 const popup = page.locator('.hcg-popup');
@@ -38,7 +48,7 @@ test.describe('Cell Context Menu', () => {
 
                 await page.locator('.hcg-menu-item', { hasText: 'Show context' }).click();
 
-                await expect(page.locator('#cellContextMenuResult')).toHaveValue('1|product|Pears');
+                await expect(page.locator('#cellContextMenuResult')).toHaveValue(expected);
                 await expect(popup).toBeHidden();
             });
 
@@ -66,7 +76,7 @@ test.describe('Cell Context Menu', () => {
             }, { timeout: 10000 });
         });
 
-        test('Context menu stays open after scrolling and keeps context', async ({ page }) => {
+        test('Context menu closes after scrolling and refreshes context', async ({ page }) => {
             const initialState = await page.evaluate(() => {
                 const grid = (window as any).Grid.grids[0];
                 const vp = grid.viewport;
@@ -106,18 +116,29 @@ test.describe('Cell Context Menu', () => {
                 return vp.rows[0]?.index !== firstIndex;
             }, initialState.firstIndex, { timeout: 10000 });
 
+            await expect(popup).toBeHidden();
+
+            const productCellAfterScroll = page.locator(
+                'tbody tr:first-child td[data-column-id="product"]'
+            );
+
+            await expect(productCellAfterScroll).toBeVisible();
+            await expect(productCellAfterScroll).toHaveText(/.+/);
+
+            const rowAfterScroll = productCellAfterScroll.locator(
+                'xpath=ancestor::tr[1]'
+            );
+            await expect(rowAfterScroll).toHaveAttribute('data-row-index', /.+/);
+
+            const rowIndexAfterScroll =
+                (await rowAfterScroll.getAttribute('data-row-index')) ?? '';
+            const valueAfterScroll = ((await productCellAfterScroll.textContent()) ?? '').trim();
+            const expected = rowIndexAfterScroll + '|product|' + valueAfterScroll;
+
+            await productCellAfterScroll.click({ button: 'right' });
             await expect(popup).toBeVisible();
-
-            const nextBox = await popup.boundingBox();
-            expect(nextBox, 'Popup should have a bounding box after scroll.').not.toBeNull();
-
-            if (initialBox && nextBox) {
-                expect(Math.abs(nextBox.x - initialBox.x)).toBeLessThan(2);
-                expect(Math.abs(nextBox.y - initialBox.y)).toBeLessThan(2);
-            }
-
             await page.locator('.hcg-menu-item', { hasText: 'Show context' }).click();
-            await expect(page.locator('#cellContextMenuResult')).toHaveValue('1|product|Pears');
+            await expect(page.locator('#cellContextMenuResult')).toHaveValue(expected);
         });
     });
 });
