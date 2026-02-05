@@ -26,6 +26,72 @@ In order to use a series that is not part of the main Highcharts bundle, you can
 either [load the required module](https://www.highcharts.com/docs/react/options#setting-a-custom-highcharts-instance)
 from the main `highcharts` package, or use the series component for that series.
 
+## Add series dynamically
+
+Because `Series` components are regular React components, you can create them from
+state or props. This makes it straightforward to add new series at runtime:
+
+```jsx
+import React from 'react';
+import { Chart, Series, Subtitle, Title } from '@highcharts/react';
+
+const seriesCatalog = [
+  { id: 'line', name: 'Line', type: 'line', data: [5, 7, 6, 8, 9] },
+  { id: 'area', name: 'Area', type: 'area', data: [3, 4, 3, 5, 6] },
+  { id: 'column', name: 'Column', type: 'column', data: [2, 3, 4, 3, 5] }
+];
+
+export default function ChartComponent() {
+    const [activeSeriesIds, setActiveSeriesIds] = React.useState(() => [seriesCatalog[0].id]);
+
+    const toggleSeries = React.useCallback(seriesId => {
+        setActiveSeriesIds(current => {
+            if (current.includes(seriesId)) {
+                return current.filter(id => id !== seriesId);
+            }
+
+            return [...current, seriesId];
+        });
+    }, []);
+
+    const activeSeries = React.useMemo(
+        () => seriesCatalog.filter(series => activeSeriesIds.includes(series.id)),
+        [activeSeriesIds]
+    );
+
+    return (
+        <div className="dynamic-basics-demo">
+            <Chart>
+            {/* ... chart options ... */}
+            {activeSeries.map(series => (
+                <Series
+                    key={series.id}
+                    type={series.type}
+                    data={series.data}
+                    options={{
+                            ...series.options,
+                            id: series.id,
+                            name: series.name
+                        }}
+                    />
+                ))}
+            </Chart>
+
+            <SeriesControls
+                activeSeriesIds={activeSeriesIds}
+                onToggleSeries={toggleSeries}
+            />
+        </div>
+    );
+}
+```
+
+This basic example uses the generic `Series` component for built-in chart types. For a more advanced
+pattern that wires up Stock indicators dynamically, see the dedicated
+[`Dynamic React indicators` sample](https://www.highcharts.com/samples/highcharts/react/dynamic-indicators).
+
+<iframe src="https://www.highcharts.com/samples/embed/highcharts/react/dynamic-basics" title="Dynamic series chart demo showing add/remove series on user input"></iframe>
+
 
 ## Series type components
 
@@ -200,9 +266,9 @@ ReactDOM.createRoot(
 
 **Live demo:**
 
-<iframe src="https://www.highcharts.com/samples/embed/highcharts/react/bubble" style="width: 100%; height: 600px; border: 0;"></iframe>
+<iframe src="https://www.highcharts.com/samples/embed/highcharts/react/bubble" title="Bubble chart demo with multiple data series"></iframe>
 
 
 **Live demo:**
 
-<iframe src="https://www.highcharts.com/samples/embed/highcharts/react/venn-diagram" style="width: 100%; height: 600px; border: 0;"></iframe>
+<iframe src="https://www.highcharts.com/samples/embed/highcharts/react/venn-diagram" title="Venn diagram demo"></iframe>

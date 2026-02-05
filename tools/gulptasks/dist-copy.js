@@ -37,14 +37,9 @@ const CODE_FILTER = {
         ['es-modules', 'masters', 'highmaps.'],
         ['es-modules', 'masters', 'highstock.'],
         ['es-modules', 'masters', 'indicators'],
-        ['es-modules', 'masters', 'modules', 'canvasrenderer.experimental.'],
         ['es-modules', 'masters', 'modules', 'data-tools.'],
-        ['es-modules', 'masters', 'modules', 'map.'],
-        ['es-modules', 'modules', 'canvasrenderer.experimental.'],
-        ['es-modules', 'modules', 'map.'],
-        ['indicators'],
-        ['modules', 'canvasrenderer.experimental.'],
-        ['modules', 'map.']
+        ['indicators']
+
     ].map(
         filePath => Path.join(CODE_DIRECTORY, ...filePath)
     ),
@@ -59,16 +54,13 @@ const CODE_FILTER = {
         ['es-modules', 'masters', 'highcharts-gantt.'],
         ['es-modules', 'masters', 'highmaps.'],
         ['es-modules', 'masters', 'modules', 'broken-axis.'],
-        ['es-modules', 'masters', 'modules', 'canvasrenderer.experimental.'],
         ['es-modules', 'masters', 'modules', 'data-tools.'],
         ['es-modules', 'masters', 'modules', 'gantt.'],
         ['es-modules', 'masters', 'modules', 'map.'],
         ['es-modules', 'modules', 'broken-axis.'],
-        ['es-modules', 'modules', 'canvasrenderer.experimental.'],
         ['es-modules', 'modules', 'gantt.'],
         ['es-modules', 'modules', 'map.'],
         ['modules', 'broken-axis.'],
-        ['modules', 'canvasrenderer.experimental.'],
         ['modules', 'gantt.'],
         ['modules', 'map.']
     ].map(
@@ -84,19 +76,16 @@ const CODE_FILTER = {
         ['es-modules', 'masters', 'highstock.'],
         ['es-modules', 'masters', 'indicators'],
         ['es-modules', 'masters', 'modules', 'broken-axis.'],
-        ['es-modules', 'masters', 'modules', 'canvasrenderer.experimental.'],
         ['es-modules', 'masters', 'modules', 'data-tools.'],
         ['es-modules', 'masters', 'modules', 'gantt.'],
         ['es-modules', 'masters', 'modules', 'series-label.'],
         ['es-modules', 'masters', 'modules', 'solid-gauge.'],
         ['es-modules', 'modules', 'broken-axis.'],
-        ['es-modules', 'modules', 'canvasrenderer.experimental.'],
         ['es-modules', 'modules', 'gantt.'],
         ['es-modules', 'modules', 'series-label.'],
         ['es-modules', 'modules', 'solid-gauge.'],
         ['indicators'],
         ['modules', 'broken-axis.'],
-        ['modules', 'canvasrenderer.experimental.'],
         ['modules', 'gantt.'],
         ['modules', 'series-label.'],
         ['modules', 'solid-gauge.']
@@ -118,19 +107,16 @@ const CODE_FILTER = {
         ['es-modules', 'masters', 'highmaps.'],
         ['es-modules', 'masters', 'highstock.'],
         ['es-modules', 'masters', 'indicators'],
-        ['es-modules', 'masters', 'modules', 'canvasrenderer.experimental.'],
         ['es-modules', 'masters', 'modules', 'data-tools.'],
         ['es-modules', 'masters', 'modules', 'map.'],
         ['es-modules', 'masters', 'modules', 'series-label.'],
         ['es-modules', 'masters', 'modules', 'solid-gauge.'],
         ['es-modules', 'masters', 'modules', 'stock.'],
-        ['es-modules', 'modules', 'canvasrenderer.experimental.'],
         ['es-modules', 'modules', 'map.'],
         ['es-modules', 'modules', 'series-label.'],
         ['es-modules', 'modules', 'solid-gauge.'],
         ['es-modules', 'modules', 'stock.'],
         ['indicators'],
-        ['modules', 'canvasrenderer.experimental.'],
         ['modules', 'map.'],
         ['modules', 'series-label.'],
         ['modules', 'solid-gauge.'],
@@ -278,7 +264,7 @@ function distCopy() {
             }
             if (distProduct === 'Dashboards') {
                 const dashGfx = Path.join(CODE_DIRECTORY, product, 'gfx');
-                directory = Path.join(TARGET_DIRECTORY, product, 'code', 'gfx');
+                directory = Path.join(TARGET_DIRECTORY, product, 'gfx');
                 FsLib.copyAllFiles(dashGfx, directory, true, file => (
                     file.includes('dashboards')
                 ));

@@ -59,9 +59,7 @@ and import it in your project like:
 ```js
 import * as Dashboards from '@highcharts/dashboards';
 import * as Highcharts from 'highcharts';
-import LayoutModule from '@highcharts/dashboards/modules/layout';
-
-LayoutModule(Dashboards);
+import '@highcharts/dashboards/modules/layout';
 
 Dashboards.HighchartsPlugin.custom.connectHighcharts(Highcharts);
 Dashboards.PluginHandler.addPlugin(Dashboards.HighchartsPlugin);
@@ -77,7 +75,7 @@ Importing only dashboards CSS file is enough:
 ```
 
 Also, be aware that we prepared the component so it was minimalist.
-To achieve that, some of the chart options are already set. You can find the `defaultChartOptions` in the [API](https://api.highcharts.com/dashboards/#classes/Dashboards_Components_KPIComponent_KPIComponent.KPIComponent-1#defaultChartOptions).
+To achieve that, some of the chart options are already set. You can find the `defaultChartOptions` in the [API](https://api.highcharts.com/dashboards/#classes/Dashboards_Components_KPIComponent_KPIComponent.KPIComponent#defaultChartOptions).
 
 ### Chart options
 Define chart options for the KPI.
@@ -173,6 +171,5 @@ The KPI Component allows users to sync the component with other components in Da
 
 ## API options
 For the full set of available options, see the [API](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_KPIComponent_KPIComponentOptions.Options).
-
 
 

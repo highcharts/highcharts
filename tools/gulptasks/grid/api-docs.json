@@ -39,6 +39,7 @@
 
         "../../../ts/Grid/Pro/CellEditing/CellEditing.ts",
         "../../../ts/Grid/Pro/CellEditing/CellEditMode.d.ts",
+        "../../../ts/Grid/Pro/CellEditing/CellEditingComposition.ts",
         "../../../ts/Grid/Pro/Credits/CreditsPro.ts",
         "../../../ts/Grid/Pro/GridEvents.ts",
 
@@ -70,7 +71,9 @@
         "../../../ts/Grid/Pro/CellRendering/ContentTypes/TextInputContent.ts",
 
         "../../../ts/Grid/Core/Pagination/PaginationOptions.d.ts",
-        "../../../ts/Grid/Core/Pagination/Pagination.ts"
+        "../../../ts/Grid/Core/Pagination/Pagination.ts",
+
+        "../../../ts/Grid/Core/Responsive/ResponsiveOptions.ts"
     ],
     "entryPointStrategy": "expand",
     "excludeInternal": true,

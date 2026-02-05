@@ -2,11 +2,11 @@
  *
  *  Grid Table Viewport class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -181,17 +181,11 @@ class Table {
         const customClassName = dgOptions?.rendering?.table?.className;
 
         this.columnResizing = ColumnResizing.initMode(this);
-        this.virtualRows = this.shouldVirtualizeRows();
 
         if (dgOptions?.rendering?.header?.enabled) {
             this.theadElement = makeHTMLElement('thead', {}, tableElement);
         }
         this.tbodyElement = makeHTMLElement('tbody', {}, tableElement);
-        if (this.virtualRows) {
-            tableElement.classList.add(
-                Globals.getClassName('virtualization')
-            );
-        }
 
         if (dgOptions?.rendering?.columns?.resizing?.enabled) {
             this.columnsResizer = new ColumnsResizer(this);
@@ -206,6 +200,12 @@ class Table {
         this.loadColumns();
 
         // Virtualization
+        this.virtualRows = this.shouldVirtualizeRows();
+        if (this.virtualRows) {
+            tableElement.classList.add(
+                Globals.getClassName('virtualization')
+            );
+        }
         this.rowsVirtualizer = new RowsVirtualizer(this);
 
         // Init Table
@@ -217,6 +217,14 @@ class Table {
 
         this.tbodyElement.addEventListener('scroll', this.onScroll);
         this.tbodyElement.addEventListener('focus', this.onTBodyFocus);
+
+        // Delegated cell events
+        this.tbodyElement.addEventListener('click', this.onCellClick);
+        this.tbodyElement.addEventListener('dblclick', this.onCellDblClick);
+        this.tbodyElement.addEventListener('mousedown', this.onCellMouseDown);
+        this.tbodyElement.addEventListener('mouseover', this.onCellMouseOver);
+        this.tbodyElement.addEventListener('mouseout', this.onCellMouseOut);
+        this.tbodyElement.addEventListener('keydown', this.onCellKeyDown);
     }
 
     /* *
@@ -282,11 +290,12 @@ class Table {
         // instead of the original data table row count.
         const rowCount = Number(grid.dataTable?.rowCount);
         const threshold = rows?.virtualizationThreshold ?? 50;
-        const paginationPageSize = grid.pagination?.currentPageSize;
 
-        return paginationPageSize ?
-            paginationPageSize >= threshold :
-            rowCount >= threshold;
+        if (grid.pagination) {
+            return grid.querying.pagination.currentPageSize >= threshold;
+        }
+
+        return rowCount >= threshold;
     }
 
     /**
@@ -319,7 +328,7 @@ class Table {
             focusedRowId = vp.dataTable.getOriginalRowIndex(vp.focusCursor[0]);
         }
 
-        vp.grid.pagination?.clampCurrentPage();
+        vp.grid.querying.pagination.clampPage();
 
         // Update data
         const oldRowsCount = (vp.rows[vp.rows.length - 1]?.index ?? -1) + 1;
@@ -373,12 +382,17 @@ class Table {
                 });
             }
         }
+
+        vp.grid.dirtyFlags.delete('rows');
     }
 
     /**
      * Reflows the table's content dimensions.
      */
     public reflow(): void {
+        // TODO: More `needsReflow` logic can be added in the future to avoid
+        // unnecessary reflows of the table parts.
+
         this.columnResizing.reflow();
 
         // Reflow the head
@@ -394,6 +408,8 @@ class Table {
         this.grid.popups.forEach((popup): void => {
             popup.reflow();
         });
+
+        this.grid.dirtyFlags.delete('reflow');
     }
 
     /**
@@ -425,6 +441,73 @@ class Table {
         }
 
         this.header?.scrollHorizontally(this.tbodyElement.scrollLeft);
+    };
+
+    /**
+     * Delegated click handler for cells.
+     * @param e Mouse event
+     */
+    private onCellClick = (e: MouseEvent): void => {
+        const cell = this.getCellFromElement(e.target);
+        if (cell) {
+            (cell as { onClick(e: MouseEvent | KeyboardEvent): void })
+                .onClick(e);
+        }
+    };
+
+    /**
+     * Delegated double-click handler for cells.
+     * @param e Mouse event
+     */
+    private onCellDblClick = (e: MouseEvent): void => {
+        const cell = this.getCellFromElement(e.target);
+        if (cell && 'onDblClick' in cell) {
+            (cell as { onDblClick(e: MouseEvent): void }).onDblClick(e);
+        }
+    };
+
+    /**
+     * Delegated mousedown handler for cells.
+     * @param e Mouse event
+     */
+    private onCellMouseDown = (e: MouseEvent): void => {
+        const cell = this.getCellFromElement(e.target);
+        if (cell && 'onMouseDown' in cell) {
+            (cell as { onMouseDown(e: MouseEvent): void }).onMouseDown(e);
+        }
+    };
+
+    /**
+     * Delegated mouseover handler for cells.
+     * @param e Mouse event
+     */
+    private onCellMouseOver = (e: MouseEvent): void => {
+        const cell = this.getCellFromElement(e.target);
+        if (cell) {
+            (cell as { onMouseOver(): void }).onMouseOver();
+        }
+    };
+
+    /**
+     * Delegated mouseout handler for cells.
+     * @param e Mouse event
+     */
+    private onCellMouseOut = (e: MouseEvent): void => {
+        const cell = this.getCellFromElement(e.target);
+        if (cell) {
+            (cell as { onMouseOut(): void }).onMouseOut();
+        }
+    };
+
+    /**
+     * Delegated keydown handler for cells.
+     * @param e Keyboard event
+     */
+    private onCellKeyDown = (e: KeyboardEvent): void => {
+        const cell = this.getCellFromElement(e.target);
+        if (cell) {
+            (cell as { onKeyDown(e: KeyboardEvent): void }).onKeyDown(e);
+        }
     };
 
     /**
@@ -485,11 +568,64 @@ class Table {
     }
 
     /**
+     * Finds a cell from a DOM element within the table body.
+     *
+     * @param element
+     * The DOM element to find the cell for (typically event.target).
+     *
+     * @returns
+     * The Cell instance or undefined if not found.
+     *
+     * @internal
+     */
+    public getCellFromElement(element: EventTarget | null): Cell | undefined {
+        if (!(element instanceof Element)) {
+            return;
+        }
+
+        const td = element.closest('td');
+        if (!td) {
+            return;
+        }
+
+        const tr = td.parentElement;
+        if (!tr) {
+            return;
+        }
+
+        const rowIndexAttr = tr.getAttribute('data-row-index');
+        if (rowIndexAttr === null) {
+            return;
+        }
+
+        const rowIndex = parseInt(rowIndexAttr, 10);
+        const firstRowIndex = this.rows[0]?.index ?? 0;
+        const row = this.rows[rowIndex - firstRowIndex];
+        if (!row) {
+            return;
+        }
+
+        // Find cell index by position in row
+        const cellIndex = Array.prototype.indexOf.call(tr.children, td);
+        return row.cells[cellIndex];
+    }
+
+    /**
      * Destroys the grid table.
      */
     public destroy(): void {
         this.tbodyElement.removeEventListener('focus', this.onTBodyFocus);
         this.tbodyElement.removeEventListener('scroll', this.onScroll);
+        this.tbodyElement.removeEventListener('click', this.onCellClick);
+        this.tbodyElement.removeEventListener('dblclick', this.onCellDblClick);
+        this.tbodyElement.removeEventListener(
+            'mousedown', this.onCellMouseDown
+        );
+        this.tbodyElement.removeEventListener(
+            'mouseover', this.onCellMouseOver
+        );
+        this.tbodyElement.removeEventListener('mouseout', this.onCellMouseOut);
+        this.tbodyElement.removeEventListener('keydown', this.onCellKeyDown);
         this.resizeObserver.disconnect();
         this.columnsResizer?.removeEventListeners();
         this.header?.destroy();
@@ -508,7 +644,7 @@ class Table {
      * @returns
      * The viewport state metadata.
      */
-    public getStateMeta(): Table.ViewportStateMetadata {
+    public getStateMeta(): ViewportStateMetadata {
         return {
             scrollTop: this.tbodyElement.scrollTop,
             scrollLeft: this.tbodyElement.scrollLeft,
@@ -525,7 +661,7 @@ class Table {
      * The viewport state metadata.
      */
     public applyStateMeta(
-        meta: Table.ViewportStateMetadata
+        meta: ViewportStateMetadata
     ): void {
         this.tbodyElement.scrollTop = meta.scrollTop;
         this.tbodyElement.scrollLeft = meta.scrollLeft;
@@ -583,18 +719,15 @@ class Table {
     }
 }
 
-namespace Table {
-
-    /**
-     * Represents the metadata of the viewport state. It is used to save the
-     * state of the viewport and restore it when the data grid is re-rendered.
-     */
-    export interface ViewportStateMetadata {
-        scrollTop: number;
-        scrollLeft: number;
-        columnResizing: ColumnResizingMode;
-        focusCursor?: [number, number];
-    }
+/**
+ * Represents the metadata of the viewport state. It is used to save the
+ * state of the viewport and restore it when the data grid is re-rendered.
+ */
+export interface ViewportStateMetadata {
+    scrollTop: number;
+    scrollLeft: number;
+    columnResizing: ColumnResizingMode;
+    focusCursor?: [number, number];
 }
 
 

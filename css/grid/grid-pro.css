@@ -1,16 +1,20 @@
+/* SPDX-License-Identifier: LicenseRef-Highcharts */
+
 /**
  * @license Highcharts Grid Pro v@product.version@
  *
  * (c) 2009-2025 Highsoft AS
  *
- * License: www.highcharts.com/license
+ * A commercial license may be required depending on use.
+ * See www.highcharts.com/license
  */
 
 @import url("./grid-lite.css");
 
 /* Grid Pro specific styles */
 
-.hcg-container {
+.hcg-container,
+.highcharts-light .hcg-container {
     /* Credits fonts */
     --ig-credits-font-weight: var(--hcg-credits-font-weight, var(--ig-font-weight));
     --ig-credits-font-size: var(--hcg-credits-font-size, 0.9em);
@@ -84,14 +88,23 @@
         var(
             --ig-notification-border-width
         ) var(--ig-notification-border-style) var(--ig-notification-border-color);
+
+    /*  Editable cell */
+    --ig-cell-editable-background: #dbeaff;
+}
+
+@media (prefers-color-scheme: dark) {
+    .hcg-container {
+        --ig-cell-editable-background: #2d415e;
+    }
+}
+
+.highcharts-dark .hcg-container {
+    --ig-cell-editable-background: #2d415e;
 }
 
 .hcg-no-padding {
     padding: 0 !important;
-}
-
-.hcg-table tbody td.hcg-edited-cell {
-    padding: 0;
 }
 
 .hcg-cell-editing-container {
@@ -102,20 +115,19 @@
     left: 0;
     padding: inherit;
     z-index: 1;
-    background: #dbeaff;
-    color: #141414;
+    background: var(--ig-cell-editable-background);
+    color: var(--ig-color);
     box-shadow: inset var(--ig-focus-ring);
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.hcg-cell-editing-container:has(input[type="checkbox"]) {
+.hcg-cell-editing-container:has(.hcg-input[type="checkbox"]) {
     padding: var(--ig-padding);
 }
 
-.hcg-table tbody td.hcg-edited-cell input:not([type="checkbox"]),
-.hcg-table tbody td.hcg-edited-cell select {
+.hcg-table tbody td.hcg-edited-cell .hcg-input:not([type="checkbox"]) {
     border-width: 0;
     position: absolute;
     top: 0;
@@ -125,21 +137,20 @@
     outline: none;
     float: left;
     font: var(--ig-font);
-    background: transparent;
+    background-color: transparent;
     color: unset;
     padding: var(--ig-padding);
     max-height: unset;
     height: unset;
     border-radius: unset;
-    line-height: inherit;
+    line-height: 1.2em;
 }
 
 .hcg-table tbody td.hcg-edited-cell select {
-    appearance: base-select;
+    appearance: none;
 }
 
-.hcg-table tbody td.hcg-edited-cell-error input,
-.hcg-table tbody td.hcg-edited-cell-error select {
+.hcg-table tbody td.hcg-edited-cell-error .hcg-input {
     color: var(--ig-color);
     box-shadow: inset 0 0 0 var(--ig-focus-ring-width) var(--ig-negative-border-color) !important;
     background-color: var(--ig-negative-background) !important;

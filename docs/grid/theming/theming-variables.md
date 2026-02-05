@@ -28,47 +28,71 @@ Global font variables apply to all sections of the grid unless overridden.
 
 Use these prefixes to refine fonts for specific sections.
 
-| Section Prefix    | Fallback |
-| ----------------- | -------- |
-| --hcg-header      | Globals  |
-| --hcg-description | Globals  |
-| --hcg-caption     | Globals  |
+| Section Prefix    | Fallback   |
+| ----------------- | ---------- |
+| --hcg-cell        | Globals    |
+| --hcg-header      | --hcg-cell |
+| --hcg-description | Globals    |
+| --hcg-caption     | Globals    |
 
 ### Example
 
-This example sets a base font family and size for the entire grid, and caption uses a larger font size.
+This example sets a base font family and size for the entire grid, caption uses a larger font size and column headers are bold.
 
 ```css
 .theme-custom {
     --hcg-font-family: Arial, sans-serif;
     --hcg-font-size: 14px;
     --hcg-caption-font-size: 20px;
+    --hcg-header-font-weigth: bold;
 }
 ```
 
-## Backgrounds
+## Table backgrounds and colors
+
+**Note:**: If you created a custom theme before Highcharts Grid 2.2, you should read the section below on [deprecated and removed variables](https://www.highcharts.com/docs/grid/theming/theming-variables#deprecated-and-removed-variables).
 
 ### Globals
 
-The global background variable apply to header and all rows unless overridden.
+An HTML table does not have an explicit layering model, but the theming system is based on a layered approach: the table forms the base layer, followed by columns, then rows, with cells on top. As a result, if e.g. columns and rows use the same background color, the row background takes precedence and the column background will not be visible. While this distinction is usually irrelevant in static themes, it becomes important when styling specific elements, such as highlighting an individual column. 
 
 | Variable         | Default Value | Valid Values                                                              |
 | ---------------- | ------------- | ------------------------------------------------------------------------- |
 | --hcg-background | transparent   | [background](https://developer.mozilla.org/en-US/docs/Web/CSS/background) |
+| --hcg-color       | Fonts Global | [color](https://developer.mozilla.org/en-US/docs/Web/CSS/color)           |
+| --hcg-hover-opacity \* | 100% | [opacity](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/opacity)             |
 
-### Section Prefixes
+\* Only applies to hover state background (see below)
 
-Use these prefixes to refine backgrounds for specific sections.
+### Base Section Prefixes
+
+Use these prefixes to set base backgrounds and colors for specific sections.
 
 | Section Prefix | Fallback  |
 | -------------- | --------- |
-| --hcg-header   | Globals   |
-| --hcg-row      | Globals   |
+| --hcg-column      | Globals   |
+| --hcg-column-even | --hcg-column |
+| --hcg-row      | --hcg-column   |
 | --hcg-row-even | --hcg-row |
+| --hcg-cell   | --hcg-row   |
+| --hcg-header   | --hcg-cell   |
+| --hcg-header-even   | --hcg-header   |
+
+### Hover Section Prefixes
+
+Use these prefixes to set backgrounds and colors for hover states.
+
+| Section Prefix            | Fallback |
+| ------------------------- | -------- |
+| --hcg-column-hover        | --hcg-column     |
+| --hcg-column-hover-header | --hcg-column-hover     |
+| --hcg-row-hover           | --hcg-row     |
+| --hcg-cell-hover          | --hcg-cell     |
+| --hcg-header-hover        | --hcg-column-hover      |
 
 ### Example
 
-This example sets a base background color for the entire grid. Header and even rows then use darker colors. In addition the header uses a brighter font color for increased contrast.
+This example sets a base background color for the entire grid. Header and even rows then use darker colors. On row hover it will be colored with a transparent red, due to `--hcg-row-hover-opacity`. In addition the header uses a brighter font color for increased contrast.
 
 ```css
 .theme-custom {
@@ -76,8 +100,30 @@ This example sets a base background color for the entire grid. Header and even r
     --hcg-header-background: #505050;
     --hcg-row-even-background: #cbcbcb;
     --hcg-header-color: #dedede;
+    --hcg-row-hover-color: red;
+    --hcg-row-hover-opacity: 5%;
 }
 ```
+
+**Tip:** If you need hover backgrounds for multiple sections, such as row, column and cell it's often best to use one single hover color, and then adjust opacity if needed. This approach also makes sure that odd rows or columns have their own matching tint.
+
+```css
+.opacity-theme {
+    --my-hover-color: blue;
+    --hcg-hover-opacity: 5%;
+    --hcg-column-even-background: #cbcbcb;
+    --hcg-row-hover-background: var(--my-hover-color);
+    --hcg-column-hover-background: var(--my-hover-color);
+    --hcg-cell-hover-background: var(--my-hover-color);
+    --hcg-cell-hover-opacity: 50%; /* Override to make cell hover stand out more */
+}
+```
+
+### Sync Section Prefixes
+
+When using Highcharts Grid as a component in Highcharts Dashboards, [synchronization highlights cells, rows and columns](https://www.highcharts.com/docs/dashboards/synchronize-components). By default the hover states are used for sync as well, but can be overridden by using sync section prefixes instead.
+
+All hover section prefixes have their sync equiequivalent, so e.g. `--hcg-column-hover-color` can be overriden by `--hcg-column-sync-color`.
 
 ## Borders
 
@@ -154,76 +200,6 @@ This example sets global padding to 8px, reduces vertical padding for headers, a
 }
 ```
 
-## Hover states
-
-### Globals
-
-When hovering over cells in the grid you can apply hover states to the cell, row, column and/or column header. The following global variables are available for hover states:
-
---hcg-color  
---hcg-background  
---hcg-border-width  
---hcg-border-style  
---hcg-border-color
-
-### Section Prefixes
-
-Use prefixes to define specific background, color and border for cell, row, column and/or column header.
-
-| Section Prefix            | Fallback |
-| ------------------------- | -------- |
-| --hcg-cell-hovered        | None     |
-| --hcg-cell-hovered-row    | None     |
-| --hcg-cell-hovered-column | None     |
-| --hcg-cell-hovered-header | None     |
-| --hcg-header-hovered      | None     |
-
-### Example
-
-This example starts with a global table background color. It adds a darker background for headers, alternating row colors, and hover states for rows and columns. In addition a border is added to the column.
-
-```css
-.theme-custom {
-    --hcg-background: #aaaaaa;
-    --hcg-header-background: #888888;
-    --hcg-row-even-background: #aeaeae;
-    --hcg-cell-hovered-row-background: #999999;
-    --hcg-cell-hovered-column-background: #999999;
-    --hcg-cell-hovered-column-border-width: 1px;
-    --hcg-cell-hovered-column-border-color: #d27676;
-}
-```
-
-## Sync states
-
-When using Highcharts Grid as a component in Highcharts Dashboards, [synchronization highlights cells, rows and columns](https://www.highcharts.com/docs/dashboards/synchronize-components). By default hover states are used for sync as well, but can be overridden by using sync section prefixes instead.
-
-### Section Prefixes
-
-| Section Prefix           | Fallback                  |
-| ------------------------ | ------------------------- |
-| --hcg-cell-synced        | --hcg-cell-hovered        |
-| --hcg-cell-synced-row    | --hcg-cell-hovered-row    |
-| --hcg-cell-synced-column | --hcg-cell-hovered-column |
-| --hcg-cell-synced-header | --hcg-cell-hovered-header |
-| --hcg-header-synced      | --hcg-header-hovered      |
-
-### Example
-
-This example starts with a global table background color. It adds a darker background for headers, alternating row colors, and hover states for rows and columns. In addition a border is added to the column.
-
-```css
-.theme-custom {
-    --hcg-background: #aaaaaa;
-    --hcg-header-background: #888888;
-    --hcg-row-even-background: #aeaeae;
-    --hcg-cell-hovered-row-background: #999999;
-    --hcg-cell-hovered-column-background: #999999;
-    --hcg-cell-hovered-column-border-width: 1px;
-    --hcg-cell-hovered-column-border-color: #d27676;
-}
-```
-
 ## Links
 
 If `format` or `formatter` are used to insert links in table cells, or caption/description, the following variables can be used to style them. Color and font weight is always inherited from the parent element.
@@ -236,85 +212,41 @@ If `format` or `formatter` are used to insert links in table cells, or caption/d
 | --hcg-link-hovered-color           | Parent        | [color](https://developer.mozilla.org/en-US/docs/Web/CSS/color)                     |
 | --hcg-link-hovered-text-decoration | underline     | [text-decoration](https://developer.mozilla.org/en-US/docs/Web/CSS/text-decoration) |
 
-## Pagination
-
-### Globals
-
-Global pagination variables define the appearance of pagination controls including buttons, page info, and page size selector.
-
-| Variable                                    | Default Value   | Valid Values                                                                        |
-| ------------------------------------------- | --------------- | ----------------------------------------------------------------------------------- |
-| --hcg-pagination-button-background         | #ffffff         | [background](https://developer.mozilla.org/en-US/docs/Web/CSS/background)          |
-| --hcg-pagination-button-color              | #000000         | [color](https://developer.mozilla.org/en-US/docs/Web/CSS/color)                    |
-| --hcg-pagination-button-background-active  | #000000         | [background](https://developer.mozilla.org/en-US/docs/Web/CSS/background)          |
-| --hcg-pagination-button-color-active       | #ffffff         | [color](https://developer.mozilla.org/en-US/docs/Web/CSS/color)                    |
-| --hcg-pagination-button-border             | #e8e8e8         | [border-color](https://developer.mozilla.org/en-US/docs/Web/CSS/border-color)      |
-| --hcg-pagination-button-border-hover       | #000000         | [border-color](https://developer.mozilla.org/en-US/docs/Web/CSS/border-color)      |
-| --hcg-pagination-icon-color                | #000000         | [color](https://developer.mozilla.org/en-US/docs/Web/CSS/color)                    |
-| --hcg-pagination-padding                   | 10px 0px        | [padding](https://developer.mozilla.org/en-US/docs/Web/CSS/padding)                |
-
-### Example
-
-This example customizes pagination styling with a custom color scheme and larger font size.
-
-```css
-.theme-custom {
-    --hcg-pagination-button-background: #f0f0f0;
-    --hcg-pagination-button-color: #333333;
-    --hcg-pagination-button-background-active: #007acc;
-    --hcg-pagination-button-color-active: #ffffff;
-    --hcg-pagination-button-border: #cccccc;
-    --hcg-pagination-button-border-hover: #007acc;
-    --hcg-pagination-icon-color: #666666;
-    --hcg-pagination-padding: 12px 0px;
-}
-```
-
 ## Putting It All Together
 
-Define a few global variables for a consistent base style. Use section-specific prefixes to refine headers, captions, rows, and columns. Use your own custom variables to avoid repetition.
+Define a few global variables for a consistent base style. Use section-specific prefixes to refine headers, captions, rows, and columns and more. Use your own custom variables to avoid repetition.
+
+Check our [theming demo](https://www.highcharts.com/demo/grid/grid-theming) to see theming in action.
+
+## Deprecated and removed variables
+
+### Section Prefixes
+
+If you created a custom theme before **Highcharts Grid 2.2**, you should review it to see whether it uses any of these deprecated section prefixes and update it accordingly. The behavior remains unchanged; only the prefix have been updated.
+
+| Deprecated prefix         | New prefix                |
+| ------------------------- | ------------------------- |
+| --hcg-cell-hovered        | --hcg-cell-hover          |
+| --hcg-cell-hovered-row    | --hcg-row-hover           |
+| --hcg-cell-hovered-column | --hcg-column-hover        |
+| --hcg-cell-hovered-header | --hcg-column-hover-header |
+| --hcg-header-hovered      | --hcg-header-hover        |
+| --hcg-cell-synced         | --hcg-cell-sync           |
+| --hcg-cell-synced-row     | --hcg-row-sync            |
+| --hcg-cell-synced-column  | --hcg-column-sync         |
+| --hcg-cell-synced-header  | --hcg-column-sync-header  |
+| --hcg-header-synced       | --hcg-header-sync         |
+
+So e.g. the deprecated variable `--hcg-cell-hovered-header-background` is now `--hcg-column-hover-header-background`.
+
+### Hover/sync Globals
+
+The following global variables for styling borders in hover and sync states were removed in **Highcharts Grid 2.2** and are no longer supported for theming:
 
 ```css
-.my-theme {
-    --my-hover-color: #ff0000;
-
-    --hcg-font-size: 15px;
-    --hcg-color: #666666;
-    --hcg-header-color: #ffffff;
-    --hcg-background: #ffffff;
-    --hcg-padding: 10px;
-    --hcg-header-background: #002933;
-    --hcg-row-even-background: #e9faff;
-    --hcg-cell-hovered-header-background: #1a3f48;
-    --hcg-cell-hovered-border-width: 1px;
-    --hcg-cell-hovered-column-border-width: 1px;
-    --hcg-cell-hovered-column-border-color: #f2f2f2;
-    --hcg-header-hovered-background: #1a3f48;
-    --hcg-cell-hovered-border-color: var(--my-hover-color);
-    --hcg-cell-hovered-header-color: var(--my-hover-color);
-    --hcg-cell-hovered-row-color: var(--my-hover-color);
-    --hcg-cell-hovered-column-color: var(--my-hover-color);
-    --hcg-header-hovered-color: var(--my-hover-color);
-    
-    /* Pagination styling */
-    --hcg-pagination-button-background: #f8f9fa;
-    --hcg-pagination-button-color: #495057;
-    --hcg-pagination-button-background-active: var(--my-hover-color);
-    --hcg-pagination-button-color-active: #ffffff;
-    --hcg-pagination-button-border: #dee2e6;
-    --hcg-pagination-button-border-hover: var(--my-hover-color);
-    --hcg-pagination-icon-color: #6c757d;
-    --hcg-pagination-padding: 12px 0px;
-}
+--hcg-border-width  
+--hcg-border-style  
+--hcg-border-color
 ```
 
-Check our [theming demo](https://www.highcharts.com/demo/grid/grid-theming) to see this theme in practice.
-
-## Summary
-
-1. Define global variables for fonts, borders, padding, backgrounds, and pagination.
-2. Use section-specific prefixes to refine specific areas.
-3. The Grid falls back to global values when no section-specific variable is defined.
-4. Pagination variables automatically adapt to light and dark modes for optimal contrast.
-
-This system ensures flexible, maintainable, and consistent theming across all grid components.
+This change was made due to low demand and to avoid increasing the size and complexity of the default CSS. Hover borders can still be styled using alternative approaches depending on the specific use case; guidance is provided in the [Conditional theming article](https://www.highcharts.com/docs/grid/theming/conditional-theming).

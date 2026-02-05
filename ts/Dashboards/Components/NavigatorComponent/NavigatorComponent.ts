@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sophie Bremer
@@ -35,12 +35,17 @@ import type { DeepPartial } from '../../../Shared/Types';
 import type {
     FilterModifierOptions
 } from '../../../Data/Modifiers/FilterModifierOptions';
+import type {
+    Range as NavigatorSyncRange
+} from './NavigatorSyncs/NavigatorSyncUtils';
 
 
 import Component from '../Component.js';
 import Globals from '../../Globals.js';
 import NavigatorComponentDefaults from './NavigatorComponentDefaults.js';
-import DataTable from '../../../Data/DataTable.js';
+import type {
+    Column as DataTableColumn
+} from '../../../Data/DataTable.js';
 import NavigatorSyncs from './NavigatorSyncs/NavigatorSyncs.js';
 import NavigatorSyncUtils from './NavigatorSyncs/NavigatorSyncUtils.js';
 
@@ -237,10 +242,9 @@ class NavigatorComponent extends Component {
             }
         }
 
-        const connector = this.getFirstConnector();
-
-        if (connector) {
-            const columns = connector.getTable().getColumnIds();
+        const table = this.getDataTable();
+        if (table) {
+            const columns = table.getColumnIds();
 
             if (columns.length) {
                 return [columns[0], 'y'];
@@ -348,11 +352,10 @@ class NavigatorComponent extends Component {
     /** @private */
     private renderNavigator(): void {
         const chart = this.chart;
-        const connector = this.getFirstConnector();
+        const table = this.getDataTable();
 
-        if (connector) {
-            const table = connector.getTable(),
-                column = this.getColumnAssignment(),
+        if (table) {
+            const column = this.getColumnAssignment(),
                 columnValues = table.getColumn(column[0], true) || [];
 
             let data: (
@@ -383,7 +386,7 @@ class NavigatorComponent extends Component {
     private generateCrossfilterData(): [number, number | null][] {
         const crossfilterOptions =
             this.sync.syncConfig.crossfilter as CrossfilterSyncOptions;
-        const table = this.getFirstConnector()?.getTable();
+        const table = this.getDataTable();
         const columnValues = table?.getColumn(
             this.getColumnAssignment()[0], true
         ) || [];
@@ -431,8 +434,8 @@ class NavigatorComponent extends Component {
             crossfilterOptions.affectNavigator &&
             modifierOptions?.type === 'Filter'
         ) {
-            const appliedRanges: NavigatorSyncUtils.Range[] = [];
-            const rangedColumns: DataTable.Column[] = [];
+            const appliedRanges: NavigatorSyncRange[] = [];
+            const rangedColumns: DataTableColumn[] = [];
             const ranges = NavigatorSyncUtils.toRange(
                 modifierOptions as FilterModifierOptions
             );
