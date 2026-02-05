@@ -72,13 +72,13 @@ class Time extends TimeBase {
                 }
                 if (
                     unitRange < timeUnits.month &&
-                    this.dateFormat('%d', t) === '01'
+                    this.dateFormat('%d%H%M%S%L', t) === '01000000000'
                 ) {
                     boundaryTicks[t] = 'month';
                 }
                 if (
                     unitRange < timeUnits.year &&
-                    this.dateFormat('%m%d', t) === '0101'
+                    this.dateFormat('%m%d%H%M%S%L', t) === '0101000000000'
                 ) {
                     boundaryTicks[t] = 'year';
                 }
