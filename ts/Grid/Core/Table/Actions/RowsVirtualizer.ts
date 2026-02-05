@@ -395,8 +395,8 @@ class RowsVirtualizer {
      */
     private renderRows(rowCursor: number): void {
         const { viewport: vp, buffer } = this;
-        const rowCount = vp.dataTable.getRowCount();
         this.updateGridMetrics();
+        const rowCount = this.rowCount;
         const isVirtualization = this.viewport.virtualRows;
 
         if (isVirtualization && vp.grid.popups.size) {
@@ -406,9 +406,6 @@ class RowsVirtualizer {
                 }
             }
         }
-        
-        const rowCount = this.rowCount;
-
         // Stop rendering if there are no rows to render.
         if (rowCount < 1) {
             return;
