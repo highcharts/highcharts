@@ -318,6 +318,7 @@ class Axis {
      * @type {boolean|Highcharts.AxisCrosshairOptions}
      */
     public crosshair?: AxisCrosshairOptions;
+    public crossShowTimer?: number;
 
     /** @internal */
     public dataMax?: number;
@@ -4493,12 +4494,12 @@ class Axis {
 
         const options = this.crosshair,
             snap = options?.snap ?? true,
-            chart = this.chart;
+            chart = this.chart,
+            graphic = this.cross;
 
-        let path,
+        let path: SVGPath | null | undefined,
             pos,
-            categorized,
-            graphic = this.cross,
+            categorized: boolean | undefined,
             crossOptions: Axis.PlotLinePathOptions;
 
         fireEvent(this, 'drawCrosshair', { e: e, point: point });
@@ -4517,6 +4518,7 @@ class Axis {
         ) {
             this.hideCrosshair();
         } else {
+            clearTimeout(this.crossShowTimer);
 
             // Get the path
             if (!snap) {
@@ -4569,54 +4571,80 @@ class Axis {
 
             categorized = this.categories && !this.isRadial;
 
-            // Draw the cross
-            if (!graphic) {
-                this.cross = graphic = chart.renderer
-                    .path()
-                    .addClass(
-                        'highcharts-crosshair highcharts-crosshair-' +
-                        (categorized ? 'category ' : 'thin ') +
-                        (options.className || '')
-                    )
-                    .attr({
-                        zIndex: pick(options.zIndex, 2)
-                    })
-                    .add();
+            // Define the logic that shows or updates the crosshair.
+            // This will be called either immediately or after a delay.
+            const doShow = (): void => {
+                // Get the *current* crosshair, in case it was
+                // created by another call while this one was delayed.
+                let currentCross = this.cross;
 
-                // Presentational attributes
-                if (!chart.styledMode) {
-                    graphic.attr({
-                        stroke: options.color ||
-                            (
-                                categorized ?
-                                    Color
-                                        .parse(Palette.highlightColor20)
-                                        .setOpacity(0.25)
-                                        .get() :
-                                    Palette.neutralColor20
-                            ),
-                        'stroke-width': pick(options.width, 1)
-                    }).css({
-                        'pointer-events': 'none'
-                    });
-                    if (options.dashStyle) {
-                        graphic.attr({
-                            dashstyle: options.dashStyle
+                // Draw the cross
+                if (!currentCross) {
+                    this.cross = currentCross = chart.renderer
+                        .path()
+                        .addClass(
+                            'highcharts-crosshair highcharts-crosshair-' +
+                            (categorized ? 'category ' : 'thin ') +
+                            (options.className || '')
+                        )
+                        .attr({
+                            zIndex: pick(options.zIndex, 2)
+                        })
+                        .add();
+
+                    // Presentational attributes
+                    if (!chart.styledMode) {
+                        currentCross.attr({
+                            stroke: options.color ||
+                                (
+                                    categorized ?
+                                        Color
+                                            .parse(Palette.highlightColor20)
+                                            .setOpacity(0.25)
+                                            .get() :
+                                        Palette.neutralColor20
+                                ),
+                            'stroke-width': pick(options.width, 1)
+                        }).css({
+                            'pointer-events': 'none'
                         });
+                        if (options.dashStyle) {
+                            currentCross.attr({
+                                dashstyle: options.dashStyle
+                            });
+                        }
                     }
                 }
-            }
 
-            graphic.show().attr({
-                d: path
-            });
-
-            if (categorized && !(options as any).width) {
-                graphic.attr({
-                    'stroke-width': this.transA
+                currentCross.show().attr({
+                    d: path as SVGPath
                 });
+
+                if (categorized && !(options).width) {
+                    currentCross.attr({
+                        'stroke-width': this.transA
+                    });
+                }
+                this.cross ? this.cross.e = e : null;
+            };
+
+            // Get delay and visibility
+            const showDelay = pick(options.showDelay, 0);
+
+            // Check if the crosshair is currently hidden.
+            // 'graphic' is the state from the *start* of the function.
+            const isHidden = !graphic ||
+            graphic.attr('visibility') === 'hidden';
+
+            if (!isHidden || showDelay === 0) {
+                // Show immediately if already visible or no delay
+                doShow();
+            } else {
+                // Delay showing
+                this.crossShowTimer = setTimeout((): void => {
+                    doShow();
+                }, showDelay);
             }
-            (this.cross as any).e = e;
         }
 
         fireEvent(this, 'afterDrawCrosshair', { e: e, point: point });
@@ -4628,6 +4656,8 @@ class Axis {
      * @function Highcharts.Axis#hideCrosshair
      */
     public hideCrosshair(): void {
+        clearTimeout(this.crossShowTimer);
+
         if (this.cross) {
             this.cross.hide();
         }
