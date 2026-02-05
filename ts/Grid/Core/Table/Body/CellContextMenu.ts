@@ -41,6 +41,7 @@ class CellContextMenu extends ContextMenu {
     public cell?: TableCell;
 
     private cursorAnchorElement?: HTMLElement;
+    private removeCellOutdateListener?: ReturnType<typeof addEvent>;
 
     public showAt(cell: TableCell, clientX: number, clientY: number): void {
         const wrapper = this.grid.contentWrapper;
@@ -49,10 +50,10 @@ class CellContextMenu extends ContextMenu {
         }
 
         this.cell = cell;
-        const removeListener = addEvent(cell, 'outdate', (): void => {
+        this.removeCellOutdateListener?.();
+        this.removeCellOutdateListener = addEvent(cell, 'outdate', (): void => {
             this.hide();
             delete this.cell;
-            removeListener();
         });
 
         const rect = wrapper.getBoundingClientRect();
@@ -73,7 +74,9 @@ class CellContextMenu extends ContextMenu {
     public override hide(): void {
         super.hide();
         this.cursorAnchorElement?.remove();
+        this.removeCellOutdateListener?.();
         delete this.cursorAnchorElement;
+        delete this.removeCellOutdateListener;
     }
 
     protected override renderContent(): void {
