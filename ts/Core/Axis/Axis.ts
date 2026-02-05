@@ -118,8 +118,35 @@ extend(defaultOptions, { xAxis, yAxis: merge(xAxis, yAxis) });
 
 declare module '../Series/SeriesOptions' {
     interface SeriesOptions {
+        /**
+         * When this is true, the series will not cause the Y axis to cross
+         * the zero plane (or [threshold](#plotOptions.series.threshold) option)
+         * unless the data actually crosses the plane.
+         *
+         * For example, if `softThreshold` is `false`, a series of 0, 1, 2,
+         * 3 will make the Y axis show negative values according to the
+         * `minPadding` option. If `softThreshold` is `true`, the Y axis starts
+         * at 0.
+         *
+         * @since   4.1.9
+         * @product highcharts highstock
+         * @default true
+         */
         softThreshold?: boolean;
+
         startFromThreshold?: boolean;
+
+        /**
+         * The threshold, also called zero level or base level. For line type
+         * series this is only used in conjunction with
+         * [negativeColor](#plotOptions.series.negativeColor).
+         *
+         * @see [softThreshold](#plotOptions.series.softThreshold).
+         *
+         * @default 0
+         * @since   3.0
+         * @product highcharts highstock
+         */
         threshold?: number|null;
     }
 }
@@ -2452,6 +2479,16 @@ class Axis {
             }
 
         }
+
+        // Ensure the old ticks are removed and new ones added (#17393)
+        if (
+            !this.isDirty &&
+            tickPositions.length !==
+            this.tickPositions?.length
+        ) {
+            this.isDirty = true;
+        }
+
         this.tickPositions = tickPositions;
 
 

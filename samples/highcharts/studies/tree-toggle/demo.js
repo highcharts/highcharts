@@ -1,11 +1,9 @@
-const chart = Highcharts.chart('container', {
+Highcharts.chart('container', {
     chart: {
         type: 'treemap'
     },
     plotOptions: {
         treemap: {
-            layoutAlgorithm: 'stripes',
-            alternateStartingDirection: true,
             levels: [{
                 level: 1,
                 layoutAlgorithm: 'sliceAndDice',
@@ -21,8 +19,10 @@ const chart = Highcharts.chart('container', {
             }]
         },
         treegraph: {
+            borderRadius: 10,
             marker: {
                 symbol: 'rect',
+                borderRadius: '50%',
                 width: '25%'
             }
         }
@@ -119,14 +119,3 @@ const chart = Highcharts.chart('container', {
             'The area of <b>{point.name}</b> is <b>{point.value} km²</b>'
     }
 });
-
-Array.from(document.querySelectorAll('.highcharts-figure button'))
-    .forEach(btn => {
-        btn.addEventListener('click', e => {
-            chart.update({
-                chart: {
-                    type: e.target.id
-                }
-            });
-        });
-    });

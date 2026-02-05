@@ -261,7 +261,6 @@ QUnit.test(
     }
 );
 
-
 QUnit.test('Boundary ticks general tests, (#22231)', function (assert) {
     const chart = Highcharts.stockChart('container', {
         series: [{
@@ -342,4 +341,78 @@ QUnit.test('Boundary ticks general tests, (#22231)', function (assert) {
         'BOUNDARY',
         'Boundary tick should be formatted with template string.'
     );
+});
+
+QUnit.test('Tick layout versus updates (#17393)', assert => {
+    for (let date = 8; date <= 28; date++) {
+        // Pad to two digits
+        const day = date.toString().padStart(2, '0');
+        const chart = Highcharts.chart('container', {
+            chart: {
+                width: 800
+            },
+            xAxis: {
+                type: 'datetime'
+            },
+
+            series: [{
+                data: [
+                    ['2017-01-15', 0.9557],
+                    ['2017-01-18', 0.963],
+                    // Fails from 11. through 24.
+                    [`2017-06-${day}`, 0.8914]
+                ]
+            }]
+        });
+
+        const initialTickAmount = chart.xAxis[0].tickPositions.length;
+
+        chart.series[0].points[0].update({
+            y: chart.series[0].points[0].y + 0.01
+        }, true, false);
+
+        assert.strictEqual(
+            chart.xAxis[0].tickPositions.length,
+            initialTickAmount,
+            `Tick amount should be stable for date 2017-06-${day}`
+        );
+    }
+});
+
+QUnit.test('Tick layout versus setData (#17393)', assert => {
+    for (let date = 8; date <= 28; date++) {
+        // Pad to two digits
+        const day = date.toString().padStart(2, '0');
+        const chart = Highcharts.chart('container', {
+            chart: {
+                width: 800
+            },
+            xAxis: {
+                type: 'datetime'
+            },
+
+            series: [{
+                data: [
+                    ['2017-01-15', 0.9557],
+                    ['2017-01-18', 0.963],
+                    // Fails from 11. through 24.
+                    [`2017-06-${day}`, 0.8914]
+                ]
+            }]
+        });
+
+        const initialTickAmount = chart.xAxis[0].tickPositions.length;
+
+        chart.series[0].setData([
+            ['2017-01-15', 0.9657],
+            ['2017-01-18', 0.973],
+            [`2017-06-${day}`, 0.9014]
+        ], true, false);
+
+        assert.strictEqual(
+            chart.xAxis[0].tickPositions.length,
+            initialTickAmount,
+            `Tick amount should be stable for date 2017-06-${day} after setData`
+        );
+    }
 });

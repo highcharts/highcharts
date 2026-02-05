@@ -347,9 +347,9 @@ export interface ColumnOptions {
     sorting?: ColumnSortingOptions;
 
     /**
-     * The width of the column. It can be set in pixels or as a percentage of
-     * the table width. If unset, the width is distributed evenly between all
-     * columns.
+     * The width of the column. It can be set in pixels, as a percentage of the
+     * table width, or `'auto'`. If unset or `'auto'`, the width is distributed
+     * evenly between columns without a fixed width.
      *
      * This option does not work with the `resizing` option set to `full`.
      *
@@ -537,6 +537,16 @@ export interface CaptionOptions {
      * The custom CSS class name for the table caption.
      */
     className?: string;
+
+    /**
+     * The HTML tag to use for the caption. When set, the caption is rendered
+     * as that element (e.g. `h1`, `p`, `span`). Must be one of
+     * [AST.allowedTags](https://api.highcharts.com/class-reference/Highcharts.AST#allowedTags)
+     * (e.g. `div`, `p`, `span`, `h1`–`h6`).
+     *
+     * @default 'div'
+     */
+    htmlTag?: string;
 
     /**
      * The caption of the grid.

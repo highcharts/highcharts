@@ -930,11 +930,7 @@ export class Grid {
             }
         }
 
-        if (pagination?.isDirtyQuerying) {
-            pagination.updateControls(true);
-        }
-
-        delete pagination?.isDirtyQuerying;
+        pagination?.redraw();
         delete colResizing?.isDirty;
         flags.clear();
 
@@ -1258,26 +1254,21 @@ export class Grid {
      */
     public renderCaption(): void {
         const captionOptions = this.options?.caption;
-        const captionText = captionOptions?.text;
-
-        if (!captionText) {
+        if (!captionOptions?.text || !this.contentWrapper) {
             return;
         }
 
-        // Create a caption element.
-        this.captionElement = makeHTMLElement('div', {
-            className: Globals.getClassName('captionElement'),
-            id: this.id + '-caption'
-        }, this.contentWrapper);
+        const tag = captionOptions.htmlTag?.toLowerCase();
+        const tagName = tag && AST.allowedTags.includes(tag) ? tag : 'div';
+        const defaultClass = Globals.getClassName('captionElement');
+        const className = captionOptions.className ?
+            `${defaultClass} ${captionOptions.className}` : defaultClass;
 
-        // Render the caption element content.
-        setHTMLContent(this.captionElement, captionText);
-
-        if (captionOptions.className) {
-            this.captionElement.classList.add(
-                ...captionOptions.className.split(/\s+/g)
-            );
-        }
+        this.captionElement = new AST([{
+            tagName,
+            attributes: { 'class': className, id: this.id + '-caption' },
+            textContent: captionOptions.text
+        }]).addToDOM(this.contentWrapper) as HTMLElement;
     }
 
     /**
@@ -1459,6 +1450,7 @@ export class Grid {
      * reference, it should be used instead of creating a new one.
      */
     private loadDataTable(): void {
+
         this.querying.shouldBeUpdated = true;
 
         // Unregister all events attached to the previous data table.
@@ -1485,6 +1477,7 @@ export class Grid {
             'afterSetColumns',
             'afterSetRows'
         ] as const).forEach((eventName): void => {
+
             this.dataTableEventDestructors.push(dt.on(eventName, (): void => {
                 this.querying.shouldBeUpdated = true;
             }));
@@ -1539,10 +1532,12 @@ export class Grid {
      * after destruction by calling the `render` method.
      */
     public destroy(onlyDOM = false): void {
+        fireEvent(this, 'beforeDestroy');
+
         this.isRendered = false;
         const dgIndex = Grid.grids.findIndex((dg): boolean => dg === this);
 
-        this.dataTableEventDestructors.forEach((fn): void => fn());
+        this.dataTableEventDestructors?.forEach((fn): void => fn());
         this.accessibility?.destroy();
         this.pagination?.destroy();
         this.viewport?.destroy();

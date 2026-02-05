@@ -354,6 +354,14 @@ namespace Time {
          */
         count: number;
         /**
+         * A value for how well the returned tick interval fits the input
+         * interval. Ranges close to but above 1 indicate that the fit is bad,
+         * where 1 is a perfect fit for the _next_ higher interval. For example,
+         * if the algorithm lands on weekly ticks but the match is 1.01, it is
+         * very close to monthly ticks.
+         */
+        match?: number;
+        /**
          * The name of the time unit.
          */
         unitName: TimeUnit;

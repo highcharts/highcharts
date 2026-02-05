@@ -42,6 +42,17 @@ declare module '../Options' {
 
 declare module '../Series/SeriesOptions' {
     interface SeriesEventsOptions {
+        /**
+         * Fires when the legend item belonging to the series is clicked. One
+         * parameter, `event`, is passed to the function. The default action
+         * is to toggle the visibility of the series. This can be prevented
+         * by returning `false` or calling `event.preventDefault()`.
+         *
+         * **Note:** This option is deprecated in favor of
+         * [legend.events.itemClick](#legend.events.itemClick).
+         *
+         * @deprecated 11.4.4
+         */
         legendItemClick?: LegendItemClickCallback;
     }
 }

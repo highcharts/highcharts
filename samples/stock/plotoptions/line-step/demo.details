@@ -1,5 +1,5 @@
 ---
- name: Highcharts Stock Demo
+ name: Demo of series.step
  authors:
    - Torstein Hønsi
  js_wrap: b

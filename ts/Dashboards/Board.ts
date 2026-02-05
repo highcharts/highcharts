@@ -555,8 +555,8 @@ class Board {
                 // Re-initialize editMode events if editMode exists
                 if (board.editMode) {
                     // Re-initialize events for all layouts
-                    let j = 0,
-                    jEnd = board.layouts.length;
+                    let j = 0;
+                    const jEnd = board.layouts.length;
                     for (j; j < jEnd; ++j) {
                         (board.editMode as any).setLayoutEvents(
                             board.layouts[j]
@@ -568,7 +568,7 @@ class Board {
 
         // Add new components
         if (board.options.components) {
-            board.setComponents(
+            void board.setComponents(
                 board.options.components as Array<Partial<ComponentType['options']>>
             );
         }
