@@ -29,7 +29,9 @@ import TableRow from '../Body/TableRow.js';
 import Globals from '../../Globals.js';
 import U from '../../../../Core/Utilities.js';
 
-const { defined } = U;
+const {
+    defined
+} = U;
 
 /* *
  *
@@ -195,7 +197,8 @@ class RowsVirtualizer {
         await this.renderRows(this.rowCursor);
 
         if (this.viewport.virtualRows) {
-            if (oldScrollTop !== void 0) {
+
+            if (defined(oldScrollTop)) {
                 tbody.scrollTop = oldScrollTop;
             }
         }
@@ -409,8 +412,8 @@ class RowsVirtualizer {
             const currentTo = rows[rows.length - 1]?.index;
             const hasOverlap = (
                 rows.length > 0 &&
-                currentFrom !== void 0 &&
-                currentTo !== void 0 &&
+                defined(currentFrom) &&
+                defined(currentTo) &&
                 !(to < currentFrom || from > currentTo)
             );
 
