@@ -25,7 +25,8 @@ import { fileURLToPath } from 'url';
 import { loadExportedTypes } from './load-types.ts';
 import config from './config-example.ts';
 
-// Import Highcharts and modules so that we can read default options
+// Import Highcharts and modules so that we can read default options. If this
+// import fails, run `gulp scripts` first.
 import Highcharts from '../../code/esm/highcharts.src.js';
 import '../../code/esm/highcharts-more.src.js';
 import '../../code/esm/highcharts-3d.src.js';
@@ -280,9 +281,9 @@ async function generateChartConfig(
     }
 
     if (config.dataFile) {
-        Highcharts.merge(true, chartOptions, {
-            series: [{ data: 'data' }]
-        });
+        chartOptions.series ||= [];
+        chartOptions.series[0] ||= {};
+        chartOptions.series[0].data = 'data';
     }
 
     for (const { defaultValue, path, overrideValue } of metaList) {
