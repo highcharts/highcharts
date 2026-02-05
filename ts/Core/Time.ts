@@ -52,8 +52,8 @@ class Time extends TimeBase {
     public getBoundaryTicks(
         tickPositions: TickPositionsArray,
         unitRange: number
-    ): Record<number, string> {
-        const boundaryTicks = {} as Record<number, string>;
+    ): Record<number, Time.TimeUnit> {
+        const boundaryTicks: Record<number, Time.TimeUnit> = {};
         // Handle boundary ticks. Use a reasonable dropout threshold
         // to prevent looping over dense data grouping (#6156).
         if (tickPositions.length < 10000) {
@@ -332,7 +332,6 @@ namespace Time {
 
     export type DateTimeLabelFormatOption = (
         DateTimeFormat|
-        Array<string>|
         Time.DateTimeLabelFormatObject
     );
     export type DateTimeLabelFormatsOption = (

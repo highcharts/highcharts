@@ -31,6 +31,7 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import type SVGRenderer from '../Renderer/SVG/SVGRenderer';
+import type Time from '../Time.js';
 import type TimeTicksInfoObject from './TimeTicksInfoObject';
 
 import F from '../Templating.js';
@@ -284,7 +285,8 @@ class Tick {
             animateLabels = (!labelOptions.step || labelOptions.step === 1) &&
                 axis.tickInterval === 1,
             tickPositionInfo = tickPositions.info,
-            boundary = tickPositionInfo?.boundaryTicks[pos];
+            boundary = tickPositionInfo?.boundaryTicks[pos],
+            DTLFormats = options.dateTimeLabelFormats;
 
         let label = tick.label,
             dateTimeLabelFormat,
@@ -304,10 +306,9 @@ class Tick {
 
         // Set the datetime label format. If a boundary is set for this
         // position, use that. If not, use the main format from base ticks.
-        if (axis.dateTime) {
-            const DTLFormats = options.dateTimeLabelFormats as any;
+        if (axis.dateTime && DTLFormats) {
             if (tickPositionInfo) {
-                const boundariesMap = {
+                const boundariesMap: Record<Time.TimeUnit, Time.TimeUnit> = {
                     millisecond: 'hour',
                     second: 'hour',
                     minute: 'hour',
@@ -322,7 +323,8 @@ class Tick {
                     format = !options.grid?.enabled &&
                         boundary &&
                         boundaryKey &&
-                        DTLFormats[boundaryKey].boundary ||
+                        (DTLFormats[boundaryKey] as
+                            Time.DateTimeLabelFormatObject).boundary ||
                         DTLFormats[unitName];
 
                 dateTimeLabelFormats = chart.time.resolveDTLFormat(format);
