@@ -78,6 +78,27 @@ declare module './Chart/ChartBase'{
     }
 }
 
+/**
+ *
+ *  Functions
+ *
+ */
+
+/**
+ * Check whether the configured action key allows the interaction.
+ *
+ * @internal
+ * @param {Event} e
+ *        A mouse event.
+ * @param {string | undefined} key
+ *        Zoom or pan key.
+ * @return {boolean}
+ *         True if the key is undefined
+ *         or if the action key is pressed. False otherwise.
+ */
+const checkActionKey = (e: Event, key: string | undefined): boolean =>
+    !defined(key) || (e as any)[`${key}Key`];
+
 /* *
  *
  *  Class
@@ -520,7 +541,7 @@ class Pointer {
             // Panning
             if (
                 clickedInside && !selectionMarker && panningEnabled &&
-                (this.checkActionKey(e, panKey))
+                (checkActionKey(e, panKey))
             ) {
                 chart.pan(e, panning as any);
             }
@@ -956,22 +977,6 @@ class Pointer {
             target = (target as any).parentNode;
         }
         return point;
-    }
-
-    /**
-     * Check whether the configured action key allows the interaction.
-     *
-     * @internal
-     * @param {Event} e
-     *        A mouse event.
-     * @param {string | undefined} key
-     *        Zoom or pan key.
-     * @return {boolean}
-     *         True if the key is undefined
-     *         or if the action key is pressed. False otherwise.
-     */
-    private checkActionKey(e: Event, key: string | undefined): boolean {
-        return !defined(key) || (e as any)[`${key}Key`];
     }
 
     /** @internal */
@@ -2175,7 +2180,7 @@ class Pointer {
         this.zoomHor = (zoomX && !inverted) || (zoomY && inverted);
         this.zoomVert = (zoomY && !inverted) || (zoomX && inverted);
         this.hasZoom = (zoomX || zoomY) &&
-            (this.checkActionKey(e, chart.zooming.key));
+            (checkActionKey(e, chart.zooming.key));
 
     }
 }
