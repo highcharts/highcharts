@@ -39,6 +39,15 @@ import { defined, fireEvent, isObject, merge } from '../../../Shared/Utilities.j
 
 const { makeHTMLElement, formatText } = GridUtils;
 
+const paginationAlignments = [
+    'left',
+    'center',
+    'right',
+    'distributed'
+] as const;
+const alignmentClassName = (alignment: string): string =>
+    `${Globals.classNamePrefix}pagination-${alignment}`;
+
 /**
  *  Representing the pagination functionalities for the Grid.
  */
@@ -158,6 +167,12 @@ class Pagination {
      */
     public isDirtyQuerying?: boolean;
 
+    /**
+     * Whether the pagination alignment class should be updated.
+     * @internal
+     */
+    public isDirtyAlignment?: boolean;
+
 
     /* *
     *
@@ -231,6 +246,11 @@ class Pagination {
             delete diff.pageSize;
         }
 
+        if ('alignment' in diff) {
+            this.isDirtyAlignment = true;
+            delete diff.alignment;
+        }
+
         // TODO: Optimize more options here.
 
         if (Object.keys(diff).length > 0) {
@@ -251,6 +271,7 @@ class Pagination {
     public render(): void {
         const position = this.options?.position;
         const grid = this.grid;
+        const alignmentClass = this.getAlignmentClass();
 
         this.oldTotalItems = this.controller.totalItems;
 
@@ -269,7 +290,9 @@ class Pagination {
             this.contentWrapper = makeHTMLElement(
                 'nav',
                 {
-                    className: Globals.getClassName('paginationWrapper')
+                    className: alignmentClass ?
+                        `${Globals.getClassName('paginationWrapper')} ${alignmentClass}` :
+                        Globals.getClassName('paginationWrapper')
                 },
                 position === 'footer' ?
                     this.paginationContainer : grid.contentWrapper
@@ -288,6 +311,40 @@ class Pagination {
 
         // Update button states after rendering
         this.updateButtonStates();
+    }
+
+    private getAlignmentClass(): string {
+        const alignment = this.options?.alignment || 'distributed';
+
+        return alignmentClassName(alignment);
+    }
+
+    public updateAlignmentClass(): void {
+        const wrapper = this.contentWrapper;
+
+        if (!wrapper) {
+            return;
+        }
+
+        const alignmentClasses = paginationAlignments.map(alignmentClassName);
+
+        wrapper.classList.remove(...alignmentClasses);
+
+        const alignmentClass = this.getAlignmentClass();
+        wrapper.classList.add(alignmentClass);
+    }
+
+    public redraw(): void {
+        if (this.isDirtyQuerying) {
+            this.updateControls(true);
+        }
+
+        if (this.isDirtyAlignment) {
+            this.updateAlignmentClass();
+        }
+
+        delete this.isDirtyQuerying;
+        delete this.isDirtyAlignment;
     }
 
     /**
