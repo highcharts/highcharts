@@ -15,11 +15,7 @@
  *
  * */
 
-import type { DeepPartial } from '../../Shared/Types';
 import type PointBase from './PointBase';
-import type SeriesOptions from './SeriesOptions';
-import type { StatesOptionsKey } from './StatesOptions';
-import type SVGElement from '../Renderer/SVG/SVGElement';
 
 /* *
  *
@@ -35,25 +31,8 @@ import type SVGElement from '../Renderer/SVG/SVGElement';
  * definition file.
  */
 export interface SeriesBase {
-    colorIndex?: number;
-    finishedAnimating?: boolean;
-    index?: number;
-    isDirty?: boolean;
-    group?: SVGElement;
-    linkedParent?: SeriesBase;
-    linkedSeries: Array<SeriesBase>;
-    markerGroup?: SVGElement;
-    name: string;
-    opacity?: number;
-    options: SeriesOptions;
+    /** @internal */
     points: Array<PointBase>;
-    state?: StatesOptionsKey;
-    type: string;
-    userOptions: DeepPartial<SeriesOptions>;
-    visible: boolean;
-    render(): void;
-    translate(): void;
-    update(options: DeepPartial<SeriesOptions>): void;
 }
 
 /* *

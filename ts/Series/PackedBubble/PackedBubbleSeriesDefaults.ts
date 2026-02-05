@@ -75,9 +75,11 @@ const PackedBubbleSeriesDefaults: PackedBubbleSeriesOptions = {
     sizeBy: 'area',
     zoneAxis: 'y',
     crisp: false,
+
     tooltip: {
         pointFormat: 'Value: {point.value}'
     },
+
     /**
      * Flag to determine if nodes are draggable or not. Available for
      * graph with useSimulation set to true only.
