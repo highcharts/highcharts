@@ -361,8 +361,6 @@ function onChartRender(
                                 label.oldOpacity = label.opacity;
                                 label.newOpacity = 1;
                                 hideOrShow(label, chart);
-
-                            // Do not allow overlap
                             } else {
                                 labels.push(label);
                             }
