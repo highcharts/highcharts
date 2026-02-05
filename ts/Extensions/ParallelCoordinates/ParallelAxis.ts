@@ -43,12 +43,24 @@ const {
 declare module '../../Core/Axis/AxisOptions' {
     interface AxisOptions {
         angle?: number;
+
+        /**
+         * Parallel coordinates only. Format that will be used for point.y and
+         * available in [tooltip.pointFormat](#tooltip.pointFormat) as
+         * `{point.formattedValue}`.
+         *
+         * @since    6.0.0
+         * @requires modules/parallel-coordinates
+         */
         tooltipValueFormat?: string;
     }
 }
 
 declare module '../../Core/Axis/AxisComposition' {
     interface AxisComposition {
+        /**
+         * @internal
+         */
         parallelCoordinates?: ParallelAxis.Composition['parallelCoordinates'];
     }
 }
@@ -287,4 +299,5 @@ namespace ParallelAxis {
  *
  * */
 
+/** @internal */
 export default ParallelAxis;

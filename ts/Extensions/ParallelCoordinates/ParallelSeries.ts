@@ -54,6 +54,7 @@ namespace ParallelSeries {
      *
      * */
 
+    /** @internal */
     export declare class Composition extends Series {
         chart: ParallelCoordinates.ChartComposition;
     }
@@ -256,4 +257,5 @@ namespace ParallelSeries {
  *
  * */
 
+/** @internal */
 export default ParallelSeries;
