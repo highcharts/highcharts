@@ -60,7 +60,7 @@ import PluginHandler from '../Dashboards/PluginHandler.js';
 import Sync from '../Dashboards/Components/Sync/Sync.js';
 import Utilities from '../Dashboards/Utilities.js';
 import { addEvent, merge, removeEvent } from '../Shared/Utilities.js';
-import { uniqueKey } from '../Core/Utilities';
+import { uniqueKey } from '../Core/Utilities.js';
 
 
 /* *
