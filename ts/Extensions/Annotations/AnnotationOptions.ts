@@ -614,6 +614,9 @@ export interface AnnotationShapeOptionsOptions {
      * This option is used for `rect` shape
      * [width](#annotations.shapeOptions.width), and all
      * [shapes points](#annotations.shapes.points) coordinates.
+     *
+     * @sample highcharts/annotations/shapes-axis-units/
+     *         Shapes created with axis units
      **/
     xAxis?: number;
 
@@ -626,6 +629,9 @@ export interface AnnotationShapeOptionsOptions {
      * [radius](#annotations.shapeOptions.r), `ellipse`
      * [y direction radius](#annotations.shapeOptions.ry), and all
      * [shapes points](#annotations.shapes.points) coordinates.
+     *
+     * @sample highcharts/annotations/shapes-axis-units/
+     *         Shapes created with axis units
      **/
     yAxis?: number;
 

@@ -51,7 +51,8 @@ annotations: [{
             y: 100,
             xAxis: 0
         }
-    }],
+    }]
+}]
 ```
 
 Both annotation configurations are represented on this chart (see below). Try to zoom in and out to see the differences:
@@ -81,38 +82,31 @@ The `ellipse` and `path` types require defining points property as an array of p
 
 Read more about basic shapes annotations at [annotations shapeOptions API](https://api.highcharts.com/highcharts/annotations.shapeOptions).
 
+Examples of shapes created with axis units
+-----------------
+
+Circle configuration:
 ```js
 annotations: [{
-    shapes: [{
-        type: 'path',
-        points: ['0', '3', {
-            x: 6,
-            y: 195,
-            // Axes defined on point level
-            xAxis: 0,
-            yAxis: 0
-        }]
-    }, {
-        points: [{
-            x: 1,
-            y: 150
-        }, {
-            x: 3,
-            y: 150
-        }],
-        type: 'ellipse',
-        ry: 50,
-        // Axes defined on shapes level
+    shapeOptions: {
         xAxis: 0,
         yAxis: 0
+    },
+    shapes: [{
+        point: {
+            x: 1,
+            y: 50
+        },
+        type: 'circle',
+        r: 50
     }]
 }]
 ```
 
+Rect configuration:
 ```js
 annotations: [{
     shapeOptions: {
-        // Axes defined on shapeOptions level
         xAxis: 0,
         yAxis: 0
     },
@@ -124,13 +118,48 @@ annotations: [{
         type: 'rect',
         width: 1,
         height: 100
-    }, {
-        point: {
+    }]
+}]
+```
+Ellipse configuration:
+```js
+annotations: [{
+    shapeOptions: {
+        xAxis: 0,
+        yAxis: 0
+    },
+    shapes: [{
+        points: [{
             x: 1,
-            y: 50
-        },
-        type: 'circle',
-        r: 50
+            y: 150
+        }, {
+            x: 2.5,
+            y: 150
+        }],
+        type: 'ellipse',
+        ry: 50
+    }]
+}]
+```
+Path configuration:
+```js
+annotations: [{
+    shapeOptions: {
+        xAxis: 0,
+        yAxis: 0
+    },
+    shapes: [{
+        type: 'path',
+        points: [{
+            x: 0,
+            y: 300
+        }, {
+            x: 4,
+            y: 180
+        }, {
+            x: 6,
+            y: 195,
+        }]
     }]
 }]
 ```

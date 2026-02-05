@@ -528,6 +528,8 @@ const AnnotationDefaults: AnnotationOptions = {
          * [width](#annotations.shapeOptions.width), and all shapes points
          * coordinates.
          *
+         * @sample highcharts/annotations/shapes-axis-units/
+         *         Shapes created with axis units
          * @type      {number}
          * @apioption annotations.shapeOptions.xAxis
          **/
@@ -542,6 +544,8 @@ const AnnotationDefaults: AnnotationOptions = {
          * [y direction radius](#annotations.shapeOptions.ry), and all shapes
          * points coordinates.
          *
+         * @sample highcharts/annotations/shapes-axis-units/
+         *         Shapes created with axis units
          * @type      {number}
          * @apioption annotations.shapeOptions.yAxis
          **/
