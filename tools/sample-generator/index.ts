@@ -281,9 +281,9 @@ async function generateChartConfig(
     }
 
     if (config.dataFile) {
-        Highcharts.merge(true, chartOptions, {
-            series: [{ data: 'data' }]
-        });
+        chartOptions.series ||= [];
+        chartOptions.series[0] ||= {};
+        chartOptions.series[0].data = 'data';
     }
 
     for (const { defaultValue, path, overrideValue } of metaList) {
