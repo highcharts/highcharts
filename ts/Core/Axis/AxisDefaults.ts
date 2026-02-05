@@ -548,6 +548,17 @@ namespace AxisDefaults {
                  * @apioption xAxis.dateTimeLabelFormats.millisecond.main
                  */
                 main: '%[HMSL]',
+                /**
+                 * When `false`, this time unit is treated as a point in time
+                 * rather than a range. In Gantt charts, when grid axis is
+                 * enabled, point-in-time ticks get left-aligned in the grid
+                 * cell by default.
+                 *
+                 * @type  {boolean}
+                 * @default false
+                 * @product gantt
+                 * @apioption xAxis.dateTimeLabelFormats.millisecond.range
+                 */
                 range: false
             },
             /**
@@ -567,6 +578,17 @@ namespace AxisDefaults {
                  * @apioption xAxis.dateTimeLabelFormats.second.main
                  */
                 main: '%[HMS]',
+                /**
+                 * When `false`, this time unit is treated as a point in time
+                 * rather than a range. In Gantt charts, when grid axis is
+                 * enabled, point-in-time ticks get left-aligned in the grid
+                 * cell by default.
+                 *
+                 * @type  {boolean}
+                 * @default false
+                 * @product gantt
+                 * @apioption xAxis.dateTimeLabelFormats.second.range
+                 */
                 range: false
             },
             /**
@@ -586,6 +608,17 @@ namespace AxisDefaults {
                  * @apioption xAxis.dateTimeLabelFormats.minute.main
                  */
                 main: '%[HM]',
+                /**
+                 * When `false`, this time unit is treated as a point in time
+                 * rather than a range. In Gantt charts, when grid axis is
+                 * enabled, point-in-time ticks get left-aligned in the grid
+                 * cell by default.
+                 *
+                 * @type  {boolean}
+                 * @default false
+                 * @product gantt
+                 * @apioption xAxis.dateTimeLabelFormats.minute.range
+                 */
                 range: false
             },
             /**
@@ -606,11 +639,25 @@ namespace AxisDefaults {
                  */
                 main: '%[HM]',
                 /**
+                 * Label format that should be used when a tick is a boundary
+                 * tick, e.g. start of day, start of year, etc.
+                 *
                  * @type {string|Highcharts.DateTimeFormatOptions}
                  * @default undefined
                  * @apioption xAxis.dateTimeLabelFormats.hour.boundary
                  */
                 boundary: void 0,
+                /**
+                 * When `false`, this time unit is treated as a point in time
+                 * rather than a range. In Gantt charts, when grid axis is
+                 * enabled, point-in-time ticks get left-aligned in the grid
+                 * cell by default.
+                 *
+                 * @type  {boolean}
+                 * @default false
+                 * @product gantt
+                 * @apioption xAxis.dateTimeLabelFormats.hour.range
+                 */
                 range: false
             },
             /**
@@ -631,6 +678,9 @@ namespace AxisDefaults {
                  */
                 main: '%[eb]',
                 /**
+                 * Label format that should be used when a tick is a boundary
+                 * tick, e.g. start of day, start of year, etc.
+                 *
                  * @type {string|Highcharts.DateTimeFormatOptions}
                  * @default '%[eb]'
                  * @apioption xAxis.dateTimeLabelFormats.day.boundary
@@ -673,6 +723,9 @@ namespace AxisDefaults {
                  */
                 main: '%[bY]',
                 /**
+                 * Label format that should be used when a tick is a boundary
+                 * tick, e.g. start of day, start of year, etc.
+                 *
                  * @type {string|Highcharts.DateTimeFormatOptions}
                  * @default undefined
                  * @apioption xAxis.dateTimeLabelFormats.month.boundary
@@ -697,6 +750,9 @@ namespace AxisDefaults {
                  */
                 main: '%Y',
                 /**
+                 * Label format that should be used when a tick is a boundary
+                 * tick, e.g. start of day, start of year, etc.
+                 *
                  * @type {string|Highcharts.DateTimeFormatOptions}
                  * @default undefined
                  * @apioption xAxis.dateTimeLabelFormats.year.boundary
