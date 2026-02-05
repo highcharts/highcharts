@@ -40,9 +40,6 @@ QUnit.test('Column range with series.keys and x categories, #23961', assert => {
         chart: {
             type: 'columnrange'
         },
-        xAxis: {
-            type: 'category'
-        },
         series: [{
             type: 'columnrange',
             data: [

@@ -673,8 +673,16 @@ class Point {
             point.x = series.autoIncrement(options.x);
 
         } else if (isString(point.x)) {
-            if (series.xAxis?.hasNames || series.options.keys) {
-                point.x = series.xAxis.nameToX(point);
+            const xAxis = series.xAxis;
+
+            // #23961 Handle x values for categories, keys and columnrange.
+            if (
+                xAxis?.options.type === 'category' ||
+                xAxis?.hasNames ||
+                (series.options.keys && !xAxis?.options.type)
+            ) {
+                point.name = point.x;
+                point.x = xAxis.nameToX(point);
             } else {
                 x ??= series.chart.time.parse(point.x);
                 if (isNumber(x)) {
