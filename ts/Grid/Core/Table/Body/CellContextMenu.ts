@@ -21,13 +21,14 @@
  * */
 
 import type TableCell from './TableCell';
-import type {
-    CellContextMenuItemOptions,
-    CellContextMenuContext
-} from '../../Options';
 
 import ContextMenu from '../../UI/ContextMenu.js';
 import ContextMenuButton from '../../UI/ContextMenuButton.js';
+import U from '../../../../Core/Utilities.js';
+
+const {
+    addEvent
+} = U;
 
 /* *
  *
@@ -39,26 +40,21 @@ class CellContextMenu extends ContextMenu {
 
     public cell?: TableCell;
 
-    private items: Array<CellContextMenuItemOptions> = [];
-
     private cursorAnchorElement?: HTMLElement;
+    private removeCellOutdateListener?: ReturnType<typeof addEvent>;
 
-    private context?: CellContextMenuContext;
-
-    public setContext(
-        cell: TableCell,
-        items: Array<CellContextMenuItemOptions>
-    ): void {
-        this.cell = cell;
-        this.items = items;
-        this.context = this.getContextSnapshot(cell);
-    }
-
-    public showAt(clientX: number, clientY: number): void {
+    public showAt(cell: TableCell, clientX: number, clientY: number): void {
         const wrapper = this.grid.contentWrapper;
         if (!wrapper) {
             return;
         }
+
+        this.cell = cell;
+        this.removeCellOutdateListener?.();
+        this.removeCellOutdateListener = addEvent(cell, 'outdate', (): void => {
+            this.hide();
+            delete this.cell;
+        });
 
         const rect = wrapper.getBoundingClientRect();
 
@@ -78,16 +74,20 @@ class CellContextMenu extends ContextMenu {
     public override hide(): void {
         super.hide();
         this.cursorAnchorElement?.remove();
+        this.removeCellOutdateListener?.();
         delete this.cursorAnchorElement;
+        delete this.removeCellOutdateListener;
     }
 
     protected override renderContent(): void {
-        const ctx = this.context;
-        if (!ctx) {
+        const { cell } = this;
+        if (!cell) {
             return;
         }
 
-        for (const item of this.items) {
+        const items = cell.column?.options.cells?.contextMenu?.items || [];
+
+        for (const item of items) {
             if (item.separator) {
                 this.addDivider();
                 continue;
@@ -96,20 +96,13 @@ class CellContextMenu extends ContextMenu {
             const btn = new ContextMenuButton({
                 label: item.label,
                 icon: item.icon,
-                onClick: (e): void => {
+                onClick: (): void => {
                     if (item.disabled) {
                         return;
                     }
 
-                    void e;
-
-                    // Pass the cell context both as `this` (Highcharts-style)
-                    // and as an argument so arrow functions can use it.
-                    item.onClick?.call(ctx, ctx);
-
-                    // Auto-close after click (typical context menu behavior)
+                    item.onClick?.call(cell, cell);
                     this.hide();
-
                 }
             }).add(this);
 
@@ -123,28 +116,6 @@ class CellContextMenu extends ContextMenu {
                 );
             }
         }
-    }
-
-    private getContextSnapshot(cell: TableCell): CellContextMenuContext {
-        type Mutable<T> = { -readonly [K in keyof T]: T[K] };
-        const cloneWithProto = <T extends object>(source: T): T => {
-            const clone = Object.create(Object.getPrototypeOf(source));
-            return Object.assign(clone, source);
-        };
-
-        const rowSnapshot = cloneWithProto(cell.row);
-        const columnSnapshot = cloneWithProto(cell.column);
-        const cellSnapshot = cloneWithProto(cell) as TableCell;
-
-        (cellSnapshot as Mutable<TableCell>).row =
-            rowSnapshot as TableCell['row'];
-        cellSnapshot.column = columnSnapshot as TableCell['column'];
-
-        return {
-            cell: cellSnapshot,
-            row: rowSnapshot as TableCell['row'],
-            column: columnSnapshot as TableCell['column']
-        };
     }
 }
 

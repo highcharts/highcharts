@@ -606,8 +606,7 @@ class Table {
             this.cellContextMenu.hide();
         }
 
-        this.cellContextMenu.setContext(tableCell, items);
-        this.cellContextMenu.showAt(clientX, clientY);
+        this.cellContextMenu.showAt(tableCell, clientX, clientY);
 
         return true;
     }

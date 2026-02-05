@@ -22,12 +22,11 @@
                     items: [{
                         label: 'Show context',
                         icon: 'menu',
-                        // `ctx` is the cell context.
-                        onClick: function (ctx) {
+                        onClick: function (cell) {
                             doc.getElementById('cellContextMenuResult').value =
-                                ctx.row.index + '|' +
-                                ctx.column.id + '|' +
-                                ctx.cell.value;
+                                cell.row.index + '|' +
+                                cell.column.id + '|' +
+                                cell.value;
                         }
                     }]
                 }

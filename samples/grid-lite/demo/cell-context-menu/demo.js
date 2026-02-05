@@ -47,15 +47,15 @@ function getNextColumnId(existingIds) {
     return id;
 }
 
-function addRowBelow(ctx) {
-    const grid = ctx.cell.row.viewport.grid;
+function addRowBelow(cell) {
+    const grid = cell.row.viewport.grid;
     const dt = grid.dataTable;
 
     if (!dt) {
         return;
     }
 
-    const insertAt = ctx.row.id;
+    const insertAt = cell.row.id;
     if (typeof insertAt !== 'number') {
         return;
     }
@@ -76,15 +76,15 @@ function addRowBelow(ctx) {
     void grid.viewport.updateRows();
 }
 
-function addRowAbove(ctx) {
-    const grid = ctx.cell.row.viewport.grid;
+function addRowAbove(cell) {
+    const grid = cell.row.viewport.grid;
     const dt = grid.dataTable;
 
     if (!dt) {
         return;
     }
 
-    const insertAt = ctx.row.id;
+    const insertAt = cell.row.id;
     if (typeof insertAt !== 'number') {
         return;
     }
@@ -103,8 +103,8 @@ function addRowAbove(ctx) {
     void grid.viewport.updateRows();
 }
 
-function addColumnLeft(ctx) {
-    const grid = ctx.cell.row.viewport.grid;
+function addColumnLeft(cell) {
+    const grid = cell.row.viewport.grid;
     const dt = grid.dataTable;
 
     if (!dt) {
@@ -116,7 +116,7 @@ function addColumnLeft(ctx) {
     }
 
     const columnIds = columnOrder.slice();
-    const currentIndex = columnIds.indexOf(ctx.column.id);
+    const currentIndex = columnIds.indexOf(cell.column.id);
     const insertIndex = currentIndex < 0 ? columnIds.length : currentIndex;
     const newColumnId = getNextColumnId(columnIds);
     dt.setColumn(newColumnId, []);
@@ -135,8 +135,8 @@ function addColumnLeft(ctx) {
     });
 }
 
-function addColumnRight(ctx) {
-    const grid = ctx.cell.row.viewport.grid;
+function addColumnRight(cell) {
+    const grid = cell.row.viewport.grid;
     const dt = grid.dataTable;
 
     if (!dt) {
@@ -148,7 +148,7 @@ function addColumnRight(ctx) {
     }
 
     const columnIds = columnOrder.slice();
-    const currentIndex = columnIds.indexOf(ctx.column.id);
+    const currentIndex = columnIds.indexOf(cell.column.id);
     const insertIndex = currentIndex < 0 ?
         columnIds.length :
         currentIndex + 1;
@@ -169,15 +169,15 @@ function addColumnRight(ctx) {
     });
 }
 
-function deleteRow(ctx) {
-    const grid = ctx.cell.row.viewport.grid;
+function deleteRow(cell) {
+    const grid = cell.row.viewport.grid;
     const dt = grid.dataTable;
 
     if (!dt) {
         return;
     }
 
-    const deleteAt = ctx.row.id;
+    const deleteAt = cell.row.id;
     if (typeof deleteAt !== 'number') {
         return;
     }
@@ -195,9 +195,8 @@ function deleteRow(ctx) {
 const menuItems = [{
     label: 'Copy cell content',
     icon: 'clipboard',
-    // `ctx` is the cell context
-    onClick: function (ctx) {
-        const value = String(ctx.cell.value);
+    onClick: function (cell) {
+        const value = String(cell.value);
 
         copyToClipboard(value)
             .then(function () {

@@ -23,8 +23,8 @@ Grid.grid('container', {
             contextMenu: {
                 items: [{
                     label: 'Show context',
-                    onClick: function (ctx) {
-                        console.log(ctx.cell, ctx.row, ctx.column);
+                    onClick: function (cell) {
+                        console.log(cell, cell.row, cell.column);
                     }
                 }]
             }
@@ -48,23 +48,23 @@ Each item supports:
 - `icon`: Optional built-in Grid icon name (see `GridIconName` in the API)
 - `separator: true`: Renders a divider instead of a clickable item
 - `disabled: true`: Disables the item
-- `onClick(ctx)`: Callback invoked when the item is clicked
+- `onClick(cell)`: Callback invoked when the item is clicked
 
 ## Callback context
 
-The menu item callback receives a single `ctx` argument:
+The menu item callback receives a single `cell` argument:
 
-- `ctx.cell`: Clicked table cell
-- `ctx.row`: Corresponding row
-- `ctx.column`: Corresponding column
+- `cell`: Clicked table cell
+- `cell.row`: Corresponding row
+- `cell.column`: Corresponding column
 
 For compatibility with Highcharts-style callbacks, `this` is also bound to the
 same context object when using `function () { ... }` callbacks:
 
 ```js
-onClick: function (ctx) {
-    console.log(this === ctx); // true
-    console.log(ctx.cell.value);
+onClick: function (cell) {
+    console.log(this === cell); // true
+    console.log(cell.value);
 }
 ```
 
