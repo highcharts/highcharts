@@ -66,9 +66,9 @@ const {
 
 import DU from '../Utilities.js';
 import { addEvent, createElement, diffObjects, fireEvent, getStyle, isArray, isFunction, merge, objectEach, removeEvent } from '../../Shared/Utilities.js';
+import { uniqueKey } from '../../Core/Utilities.js';
 const {
-    deepClone,
-    uniqueKey
+    deepClone
 } = DU;
 
 /* *
