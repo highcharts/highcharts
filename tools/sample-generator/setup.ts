@@ -93,12 +93,24 @@ function addChildren(node: any) {
         let options: string[] | undefined;
         if (node.doclet.values) {
             options = JSON.parse(node.doclet.values.replace(/'/gu, '"'));
+
+        // Pick up TS types
         } else if (
             types[mainType] &&
             Array.isArray(types[mainType]) &&
             types[mainType].length < 4
         ) {
             options = types[mainType];
+
+        // Pick up the @validvalue doclet
+        } else if (node.doclet.type?.names.length > 1) {
+            // Keep only string literals
+            const opts = node.doclet.type?.names
+                .filter((n: string) => n.startsWith('"') && n.endsWith('"'))
+                .map((n: string) => n.slice(1, -1));
+            if (opts.length) {
+                options = opts;
+            }
         }
 
         let defaultValue = realDefaults[name] ?? node.meta.default;
