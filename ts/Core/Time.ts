@@ -58,27 +58,37 @@ class Time extends TimeBase {
         // to prevent looping over dense data grouping (#6156).
         if (tickPositions.length < 10000) {
             tickPositions.forEach((t: number, i: number): void => {
-                if (
-                    unitRange < timeUnits.hour &&
-                    this.dateFormat('%M', t) === '00'
-                ) {
+                const [
+                    , // Unused 'year' var
+                    month,
+                    dayOfMonth,
+                    hours,
+                    minutes,
+                    seconds,
+                    milliseconds
+                ] = this.toParts(t);
+
+                const isMidnight =
+                    !hours && !minutes && !seconds && !milliseconds;
+
+                if (unitRange < timeUnits.hour && minutes === 0) {
                     boundaryTicks[t] = 'hour';
                 }
-                if (
-                    unitRange < timeUnits.day &&
-                    this.dateFormat('%H%M%S%L', t) === '000000000'
-                ) {
+                if (unitRange < timeUnits.day && isMidnight) {
                     boundaryTicks[t] = 'day';
                 }
                 if (
                     unitRange < timeUnits.month &&
-                    this.dateFormat('%d%H%M%S%L', t) === '01000000000'
+                    dayOfMonth === 1 &&
+                    isMidnight
                 ) {
                     boundaryTicks[t] = 'month';
                 }
                 if (
                     unitRange < timeUnits.year &&
-                    this.dateFormat('%m%d%H%M%S%L', t) === '0101000000000'
+                    month === 0 &&
+                    dayOfMonth === 1 &&
+                    isMidnight
                 ) {
                     boundaryTicks[t] = 'year';
                 }
