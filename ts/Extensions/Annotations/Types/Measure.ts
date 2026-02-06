@@ -1276,10 +1276,6 @@ namespace Measure {
          * Defaults to true.
          */
         enabled: boolean;
-<<<<<<< HEAD
-        formatter?: Templating.Es6FormatterCallback<Measure>;
-=======
-
         /**
          * Formatter function for the label text.
          *
@@ -1337,7 +1333,6 @@ namespace Measure {
          * @type    {Highcharts.CSSObject}
          * @default {"color": "#666666", "fontSize": "11px"}
          */
->>>>>>> master
         style: CSSObject;
     }
     export interface MeasureTypeOptions extends AnnotationTypeOptions {
