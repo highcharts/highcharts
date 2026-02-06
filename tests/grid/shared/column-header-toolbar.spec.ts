@@ -44,19 +44,19 @@ test.describe('Column Header Toolbar', () => {
 
     test('One active button is present', async ({ page }) => {
         await page.setViewportSize({ width: 1900, height: 600 });
-        await expect(page.locator('.hcg-button.active')).toHaveCount(1);
+        await expect(page.locator('.hcg-button.hcg-button-selected')).toHaveCount(1);
     });
 
     test('Clicking filter button opens menu', async ({ page }) => {
         await page.setViewportSize({ width: 1900, height: 600 });
-        await page.locator('.hcg-button.active').first().click();
+        await page.locator('.hcg-button.hcg-button-selected').first().click();
         await expect(page.locator('.hcg-popup-content')).toHaveCount(1);
     });
 
     test('Clearing filter condition disactivates button', async ({ page }) => {
         await page.setViewportSize({ width: 1900, height: 600 });
         // First open the popup if not already open
-        const activeButton = page.locator('.hcg-button.active').first();
+        const activeButton = page.locator('.hcg-button.hcg-button-selected').first();
         await activeButton.click();
         await expect(page.locator('.hcg-popup-content')).toBeVisible();
         
@@ -66,10 +66,10 @@ test.describe('Column Header Toolbar', () => {
         await input.clear();
         // Wait for button state to update
         await page.waitForFunction(() => {
-            const activeButtons = document.querySelectorAll('.hcg-button.active');
+            const activeButtons = document.querySelectorAll('.hcg-button.hcg-button-selected');
             return activeButtons.length === 0;
         }, { timeout: 5000 });
-        await expect(page.locator('.hcg-button.active')).toHaveCount(0);
+        await expect(page.locator('.hcg-button.hcg-button-selected')).toHaveCount(0);
         await page.locator('#container').click();
         await expect(page.locator('.hcg-popup-content')).toBeHidden();
     });
@@ -86,7 +86,7 @@ test.describe('Column Header Toolbar', () => {
         });
         // Wait for state to update
         await page.waitForFunction(() => {
-            const activeButtons = document.querySelectorAll('.hcg-button.active');
+            const activeButtons = document.querySelectorAll('.hcg-button.hcg-button-selected');
             return activeButtons.length <= 1;
         }, { timeout: 5000 });
         
@@ -96,28 +96,28 @@ test.describe('Column Header Toolbar', () => {
         });
         // Wait for button state to update
         await page.waitForFunction(() => {
-            const activeButtons = document.querySelectorAll('.hcg-button.active');
+            const activeButtons = document.querySelectorAll('.hcg-button.hcg-button-selected');
             return activeButtons.length === 1;
         }, { timeout: 5000 });
-        await expect(page.locator('.hcg-button.active')).toHaveCount(1);
+        await expect(page.locator('.hcg-button.hcg-button-selected')).toHaveCount(1);
     });
 
     test('Shrinking window minifies toolbar', async ({ page }) => {
         await page.setViewportSize({ width: 800, height: 600 });
-        const activeButton = page.locator('.hcg-button.active').first();
+        const activeButton = page.locator('.hcg-button.hcg-button-selected').first();
         await expect(activeButton.locator('..')).toHaveClass(/hcg-header-cell-menu-icon/);
     });
 
     test('Clicking menu icon opens menu', async ({ page }) => {
         await page.setViewportSize({ width: 800, height: 600 });
-        await page.locator('.hcg-button.active').click();
+        await page.locator('.hcg-button.hcg-button-selected').click();
         await expect(page.locator('.hcg-popup')).toHaveCount(1);
     });
 
     test('Can navigate menu with keyboard to filtering', async ({ page }) => {
         await page.setViewportSize({ width: 800, height: 600 });
         // First open the menu by clicking the active button
-        const activeButton = page.locator('.hcg-button.active').first();
+        const activeButton = page.locator('.hcg-button.hcg-button-selected').first();
         await activeButton.click();
         await expect(page.locator('.hcg-popup')).toBeVisible();
         
@@ -177,4 +177,3 @@ test.describe('Column Header Toolbar', () => {
         await expect(parent).toHaveAttribute('data-row-id');
     });
 });
-

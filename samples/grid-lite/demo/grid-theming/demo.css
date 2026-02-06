@@ -45,6 +45,8 @@ body {
     --hcg-caption-color: #333;
     --hcg-description-font-size: 14px;
     --hcg-description-color: #333;
+    --hcg-button-border-color: transparent;
+    --hcg-button-border-radius: 6px;
 }
 
 /*
@@ -93,18 +95,7 @@ body {
     --hcg-cell-hover-header-color: var(--my-hover-color);
     --hcg-row-hover-color: var(--my-hover-color);
     --hcg-column-hover-color: var(--my-hover-color);
-    --hcg-column-hover-background: #fcfbfb;
     --hcg-header-hover-color: var(--my-hover-color);
-
-    /* Button styles */
-    --hcg-button-color: #fff;
-    --hcg-button-border-radius: 6px;
-    --hcg-button-hover-color: var(--my-hover-color);
-    --hcg-button-hover-background: #1a3f48;
-
-    /* Icon styles */
-    --hcg-icon-hover-color: #666;
-    --hcg-icon-header-hover-color: var(--my-hover-color);
 }
 
 .opacity-theme,
@@ -126,16 +117,7 @@ body {
     --hcg-column-hover-background: var(--hover-background);
     --hcg-row-hover-background: var(--hover-background);
     --hcg-header-hover-opacity: 20%;
-
-    /* Button styles */
-    --hcg-button-color: rgb(255 255 255 / 80%);
-    --hcg-button-border-radius: 6px;
-    --hcg-button-hover-color: rgb(255 255 255);
-    --hcg-button-hover-background: rgb(255 255 255 / 30%);
-}
-
-.highcharts-light .opacity-theme .hcg-menu-item-label {
-    color: #000;
+    --hcg-header-button-hover-background: var(--gradient-from-color);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -156,10 +138,6 @@ body {
         --hcg-background: #003947;
         --hcg-row-even-background: #004556;
         --hcg-column-hover-background: #003643;
-
-        /* Icon styles */
-        --hcg-icon-hover-color: #eee;
-        --hcg-icon-header-hover-color: var(--my-hover-color);
     }
 
     .opacity-theme {
@@ -186,11 +164,6 @@ body {
     --hcg-color: #eee;
     --hcg-background: #003947;
     --hcg-row-even-background: #004556;
-    --hcg-column-hover-background: #003643;
-
-    /* Icon styles */
-    --hcg-icon-hover-color: #eee;
-    --hcg-icon-header-hover-color: var(--my-hover-color);
 }
 
 .highcharts-dark .opacity-theme {

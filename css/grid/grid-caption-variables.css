@@ -1,0 +1,12 @@
+/* stylelint-disable max-line-length */
+.hcg-container .hcg-caption {
+    color: var(--hcg-caption-color, var(--ig-color));
+    font-weight: var(--hcg-caption-font-weight, var(--ig-font-weight));
+    font-size: var(--hcg-caption-font-size, var(--ig-font-size));
+    font-family: var(--hcg-caption-font-family, var(--ig-font-family));
+    text-align: var(--hcg-caption-text-align, var(--ig-text-align));
+    padding-top: 0;
+    padding-right: var(--hcg-caption-horizontal-padding, var(--hcg-caption-padding, var(--ig-horizontal-padding)));
+    padding-bottom: var(--hcg-caption-vertical-padding, var(--hcg-caption-padding, var(--ig-vertical-padding)));
+    padding-left: var(--hcg-caption-horizontal-padding, var(--hcg-caption-padding, var(--ig-horizontal-padding)));
+}

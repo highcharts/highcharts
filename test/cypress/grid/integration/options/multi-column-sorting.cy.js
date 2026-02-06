@@ -22,11 +22,11 @@ describe('Grid multi-column sorting.', () => {
             ).to.deep.equal(expectedOrder);
         });
 
-        cy.get('th[data-column-id="group"] .hcg-sort-priority-indicator')
+        cy.get('th[data-column-id="group"] .hcg-button span')
             .should('have.text', '1');
-        cy.get('th[data-column-id="score"] .hcg-sort-priority-indicator')
+        cy.get('th[data-column-id="score"] .hcg-button span')
             .should('have.text', '2');
-        cy.get('th[data-column-id="id"] .hcg-sort-priority-indicator')
+        cy.get('th[data-column-id="id"] .hcg-button span')
             .should('have.text', '3');
     });
 
