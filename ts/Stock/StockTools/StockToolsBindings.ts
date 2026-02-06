@@ -1947,8 +1947,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
             button: HTMLDOMElement
         ): void {
             const chart = this.chart,
-                gui: Toolbar = chart.stockTools as any,
-                iconsURL = gui.getIconsURL();
+                gui: Toolbar = chart.stockTools as any;
 
             this.toggledAnnotations = !this.toggledAnnotations;
 
@@ -1962,12 +1961,10 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
             if (gui && gui.guiEnabled) {
                 if (this.toggledAnnotations) {
                     (button.firstChild as any).style['background-image'] =
-                        'url("' + iconsURL +
-                            'annotations-hidden.svg")';
+                        gui.getIcon('annotations-hidden.svg');
                 } else {
                     (button.firstChild as any).style['background-image'] =
-                        'url("' + iconsURL +
-                            'annotations-visible.svg")';
+                        gui.getIcon('annotations-visible.svg');
                 }
             }
 
