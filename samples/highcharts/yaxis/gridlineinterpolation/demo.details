@@ -1,6 +1,4 @@
 ---
- name: Demo of yAxis.gridLineInterpolation
- authors:
-   - Torstein Hønsi
- js_wrap: b
+name: Demo of yAxis.gridLineInterpolation
+js_wrap: b
 ...
