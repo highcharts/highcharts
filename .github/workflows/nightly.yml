@@ -218,7 +218,7 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{secrets.VISUAL_TESTS_AWS_ACCESS_KEY_ID}}
       AWS_SECRET_ACCESS_KEY: ${{secrets.VISUAL_TESTS_AWS_SECRET_ACCESS_KEY}}
       AWS_REGION: ${{secrets.VISUAL_TESTS_AWS_REGION}}
-      BROWSER_COUNT: 2
+      DISPLAY: :99
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -232,6 +232,12 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Setup Display
+        run: sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 &
+
       - name: Set application version env var
         run: |
           echo "HIGHCHARTS_VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
@@ -240,10 +246,28 @@ jobs:
       - name: Build Highcharts
         run: npx gulp scripts
 
-      - run: npx karma start test/karma-conf.js --tests highcharts/*/* --reference --browsercount ${BROWSER_COUNT} --no-fail-on-empty-test-suite
-      - run: npx karma start test/karma-conf.js --tests maps/*/* --reference --browsercount ${BROWSER_COUNT} --no-fail-on-empty-test-suite
-      - run: npx karma start test/karma-conf.js --tests stock/*/* --reference --browsercount ${BROWSER_COUNT} --no-fail-on-empty-test-suite
-      - run: npx karma start test/karma-conf.js --tests gantt/*/* --reference --browsercount ${BROWSER_COUNT} --no-fail-on-empty-test-suite
+      - name: Generate samples
+        run: npx tsc -p samples --skipLibCheck --noEmitOnError false || true
+
+      - name: Generate references (Highcharts)
+        run: PLAYWRIGHT_HTML_REPORT=playwright-report/nightly/reference/highcharts npx playwright test --project=visual --update-snapshots --output test-results/nightly/reference/highcharts
+        env:
+          VISUAL_TEST_PRODUCT: highcharts
+
+      - name: Generate references (Maps)
+        run: PLAYWRIGHT_HTML_REPORT=playwright-report/nightly/reference/maps npx playwright test --project=visual --update-snapshots --output test-results/nightly/reference/maps
+        env:
+          VISUAL_TEST_PRODUCT: maps
+
+      - name: Generate references (Stock)
+        run: PLAYWRIGHT_HTML_REPORT=playwright-report/nightly/reference/stock npx playwright test --project=visual --update-snapshots --output test-results/nightly/reference/stock
+        env:
+          VISUAL_TEST_PRODUCT: stock
+
+      - name: Generate references (Gantt)
+        run: PLAYWRIGHT_HTML_REPORT=playwright-report/nightly/reference/gantt npx playwright test --project=visual --update-snapshots --output test-results/nightly/reference/gantt
+        env:
+          VISUAL_TEST_PRODUCT: gantt
 
       - name: Sync references from S3
         run: |
@@ -258,10 +282,25 @@ jobs:
           --bucket ${HIGHCHARTS_VISUAL_TESTS_BUCKET}
 
 
-      - run: npx karma start test/karma-conf.js --tests highcharts/*/* --single-run --browsercount ${BROWSER_COUNT} --visualcompare || true
-      - run: npx karma start test/karma-conf.js --tests stock/*/* --single-run --browsercount ${BROWSER_COUNT} --visualcompare || true
-      - run: npx karma start test/karma-conf.js --tests maps/*/* --single-run --browsercount ${BROWSER_COUNT} --visualcompare || true
-      - run: npx karma start test/karma-conf.js --tests gantt/*/* --single-run --browsercount ${BROWSER_COUNT} --visualcompare || true
+      - name: Run visual comparison (Highcharts)
+        run: PLAYWRIGHT_HTML_REPORT=playwright-report/nightly/compare/highcharts npx playwright test --project=visual --output test-results/nightly/compare/highcharts || true
+        env:
+          VISUAL_TEST_PRODUCT: highcharts
+
+      - name: Run visual comparison (Stock)
+        run: PLAYWRIGHT_HTML_REPORT=playwright-report/nightly/compare/stock npx playwright test --project=visual --output test-results/nightly/compare/stock || true
+        env:
+          VISUAL_TEST_PRODUCT: stock
+
+      - name: Run visual comparison (Maps)
+        run: PLAYWRIGHT_HTML_REPORT=playwright-report/nightly/compare/maps npx playwright test --project=visual --output test-results/nightly/compare/maps || true
+        env:
+          VISUAL_TEST_PRODUCT: maps
+
+      - name: Run visual comparison (Gantt)
+        run: PLAYWRIGHT_HTML_REPORT=playwright-report/nightly/compare/gantt npx playwright test --project=visual --output test-results/nightly/compare/gantt || true
+        env:
+          VISUAL_TEST_PRODUCT: gantt
 
       - run: sudo apt-get update -y
       - run: sudo apt-get install -y librsvg2-bin
@@ -378,4 +417,3 @@ jobs:
           payload-file-path: "24hoursofhighcharts.json"
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NIGHTLY_CHANGES_WEBHOOK }}
-
