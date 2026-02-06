@@ -9,7 +9,11 @@ Highcharts.chart('container', {
         sankey: {
             allowNodeToggle: true,
             disabledNodeHeight: 20,
-            disabledNodeColor: 'gray'
+            disabledNodeColor: 'gray',
+            nodeWidth: 10,
+            minLinkWidth: 2,
+            minNodeHeight: 100,
+            nodePadding: 10
         }
     },
     series: [{

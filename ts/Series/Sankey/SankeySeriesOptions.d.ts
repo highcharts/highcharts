@@ -159,6 +159,11 @@ export interface SankeySeriesNodeOptions {
     height?: number;
 
     /**
+     * The minimum height of the node.
+     */
+    minHeight?: number;
+
+    /**
      * Whether the node is disabled.
      */
     disabled?: boolean;
@@ -424,6 +429,11 @@ export interface SankeySeriesOptions extends ColumnSeriesOptions, NodesCompositi
      * @default 0
      */
     minLinkWidth?: number;
+
+    /**
+     * The minimum height of all nodes.
+     */
+    minNodeHeight?: number;
 
     /**
      * Determines which side of the chart the nodes are to be aligned to. When

@@ -26,6 +26,7 @@ import U from '../../Core/Utilities.js';
 const {
     defined,
     getAlignFactor,
+    pick,
     relativeLength
 } = U;
 
@@ -125,9 +126,15 @@ namespace SankeyColumnComposition {
             if (this.isNodeDisabled(node)) {
                 return this.series.options.disabledNodeHeight || 0;
             }
+            const minNodeHeight = pick(
+                node.options.minHeight,
+                this.series.options.minNodeHeight,
+                0
+            );
             return Math.max(
                 node.getSum() * factor,
-                this.series.options.minLinkWidth || 0
+                this.series.options.minLinkWidth || 0,
+                minNodeHeight
             );
         }
 

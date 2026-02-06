@@ -69,6 +69,8 @@ export interface SankeyPointOptions extends ColumnPointOptions, NodesComposition
 
     height?: number;
 
+    minHeight?: number;
+
     level?: number;
 
     linkColorMode?: ('from'|'gradient'|'to');

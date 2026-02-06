@@ -315,6 +315,15 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
     nodePadding: 10,
 
     /**
+     * The minimum height of all nodes.
+     *
+     * @type      {number}
+     * @default   0
+     * @apioption plotOptions.sankey.minNodeHeight
+     */
+    minNodeHeight: 0,
+
+    /**
      * The distance between nodes in a sankey diagram in the longitudinal
      * direction. The longitudinal direction means the direction that the chart
      * flows - in a horizontal chart the distance is horizontal, in an inverted
@@ -527,6 +536,13 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
  * @type      {number}
  * @since     11.3.0
  * @apioption series.sankey.nodes.height
+ */
+
+/**
+ * The minimum height of the node.
+ *
+ * @type      {number}
+ * @apioption series.sankey.nodes.minHeight
  */
 
 /**

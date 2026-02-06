@@ -360,6 +360,34 @@ QUnit.test('Sankey node disable toggle', function (assert) {
     );
 });
 
+QUnit.test('Sankey minNodeHeight option', function (assert) {
+    const chart = Highcharts.chart('container', {
+        plotOptions: {
+            sankey: {
+                minNodeHeight: 100
+            }
+        },
+        series: [{
+            type: 'sankey',
+            keys: ['from', 'to', 'weight'],
+            data: [
+                ['A', 'B', 1],
+                ['B', 'C', 1]
+            ]
+        }]
+    });
+
+    const series = chart.series[0],
+        nodeB = series.nodes.filter(function (node) {
+            return node.id === 'B';
+        })[0];
+
+    assert.ok(
+        nodeB.shapeArgs.height >= 100,
+        'Node height respects minNodeHeight'
+    );
+});
+
 QUnit.test('Sankey column option', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {

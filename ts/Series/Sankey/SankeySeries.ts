@@ -657,11 +657,17 @@ class SankeySeries extends ColumnSeries {
             { borderRadius, borderWidth = 0 } = options,
             sum = node.getSum(),
             isDisabled = !!node.options.disabled,
+            minNodeHeight = pick(
+                node.options.minHeight,
+                options.minNodeHeight,
+                0
+            ),
             nodeHeight = isDisabled ?
                 (options.disabledNodeHeight || 0) :
                 Math.max(
                     Math.round(sum * translationFactor),
-                    this.options.minLinkWidth as any
+                    this.options.minLinkWidth as any,
+                    minNodeHeight
                 ),
             nodeWidth = Math.round(this.nodeWidth),
             nodeOffset = column.sankeyColumn.offset(node, translationFactor),
@@ -718,6 +724,10 @@ class SankeySeries extends ColumnSeries {
                 height = isDisabled ?
                     (options.disabledNodeHeight || 0) :
                     (node.options.width || options.width || nodeHeight);
+            }
+
+            if (!isDisabled && minNodeHeight) {
+                height = Math.max(height, minNodeHeight);
             }
 
             // Calculate data label options for the point
