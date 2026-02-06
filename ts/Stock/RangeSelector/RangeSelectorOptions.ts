@@ -210,8 +210,6 @@ export interface RangeSelectorButtonOptions {
 
 /**
  * Possible values for the range selector button type.
- *
- * @typedef {string} Highcharts.RangeSelectorButtonTypeValue
  */
 export type RangeSelectorButtonTypeValue = (
     'all'|'day'|'hour'|'millisecond'|'minute'|'month'|'second'|'week'|
