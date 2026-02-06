@@ -1,8 +1,10 @@
 ---
-name: Grid performance
+name: Large dataset
 authors:
   - Karol Kolodziej
 js_wrap: b
+alt_text: >-
+  Data grid performance with large datasets
 tags:
   - Highcharts Grid demo
 categories:
