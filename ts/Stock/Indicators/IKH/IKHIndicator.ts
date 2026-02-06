@@ -37,16 +37,7 @@ import Color from '../../../Core/Color/Color.js';
 const { parse: color } = Color;
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const { sma: SMAIndicator } = SeriesRegistry.seriesTypes;
-import U from '../../../Core/Utilities.js';
-const {
-    defined,
-    extend,
-    isArray,
-    isNumber,
-    getClosestDistance,
-    merge,
-    objectEach
-} = U;
+import { defined, extend, getClosestDistance, isArray, isNumber, merge, objectEach } from '../../../Shared/Utilities.js';
 
 /* *
  *

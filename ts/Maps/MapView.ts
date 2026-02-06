@@ -52,21 +52,7 @@ const { topo2geo } = GeoJSONComposition;
 import MU from './MapUtilities.js';
 const { boundsFromPath } = MU;
 import Projection from './Projection.js';
-import U from '../Core/Utilities.js';
-const {
-    addEvent,
-    clamp,
-    crisp,
-    fireEvent,
-    isArray,
-    isNumber,
-    isObject,
-    isString,
-    merge,
-    pick,
-    pushUnique,
-    relativeLength
-} = U;
+import { addEvent, clamp, crisp, fireEvent, isArray, isNumber, isObject, isString, merge, pick, pushUnique, relativeLength } from '../Shared/Utilities.js';
 
 /* *
  *

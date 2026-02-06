@@ -39,15 +39,7 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
-import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    extend,
-    fireEvent,
-    merge,
-    pick,
-    syncTimeout
-} = U;
+import { addEvent, extend, fireEvent, merge, pick, syncTimeout } from '../../Shared/Utilities.js';
 
 /* *
  *

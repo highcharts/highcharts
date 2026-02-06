@@ -22,12 +22,12 @@
 import type { AnyRecord } from '../../Shared/Types';
 import type { JSONObject } from '../JSON';
 import type JSONConnectorOptions from '../../Data/Connectors/JSONConnectorOptions';
+import type { Helper as SerializableHelper, JSON as SerializableJSON } from '../Serializable';
 
 import JSONConnector from '../../Data/Connectors/JSONConnector.js';
 import DataTableHelper from './DataTableHelper.js';
-import type { Helper as SerializableHelper, JSON as SerializableJSON } from '../Serializable';
-import U from '../../Core/Utilities.js';
-const { merge } = U;
+import { merge } from '../../Shared/Utilities.js';
+
 
 /* *
  *

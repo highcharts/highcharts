@@ -28,11 +28,7 @@ import { EditModeContent } from './CellEditMode.js';
 import TableCell from '../../Core/Table/Body/TableCell.js';
 import Table from '../../Core/Table/Table.js';
 import Globals from '../../Core/Globals.js';
-import U from '../../../Core/Utilities.js';
-
-const {
-    fireEvent
-} = U;
+import { fireEvent } from '../../../Shared/Utilities.js';
 
 
 /* *

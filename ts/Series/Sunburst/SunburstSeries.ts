@@ -52,22 +52,12 @@ const {
     setTreeValues,
     updateRootId
 } = TU;
-import U from '../../Core/Utilities.js';
 import SunburstNode from './SunburstNode.js';
 import SunburstSeriesDefaults from './SunburstSeriesDefaults.js';
-const {
-    defined,
-    error,
-    extend,
-    fireEvent,
-    isNumber,
-    isObject,
-    isString,
-    merge,
-    splat
-} = U;
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import TextPath from '../../Extensions/TextPath.js';
+import { defined, extend, fireEvent, isNumber, isObject, isString, merge, splat } from '../../Shared/Utilities.js';
+import { error } from '../../Core/Utilities.js';
 TextPath.compose(SVGElement);
 
 /* *

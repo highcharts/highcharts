@@ -44,21 +44,7 @@ const {
     composed,
     noop
 } = H;
-import U from '../Utilities.js';
-const {
-    addEvent,
-    correctFloat,
-    defined,
-    extend,
-    fireEvent,
-    isObject,
-    merge,
-    pick,
-    pushUnique,
-    relativeLength,
-    splat,
-    wrap
-} = U;
+import { addEvent, correctFloat, defined, extend, fireEvent, isObject, merge, pick, pushUnique, relativeLength, splat, wrap } from '../../Shared/Utilities.js';
 
 /* *
  *

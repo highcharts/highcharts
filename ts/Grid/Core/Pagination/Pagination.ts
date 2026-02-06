@@ -33,12 +33,12 @@ import type { DeepPartial } from '../../../Shared/Types';
 import Icons from './Icons.js';
 import Globals from '../Globals.js';
 import GridUtils from '../GridUtils.js';
-import Utilities from '../../../Core/Utilities.js';
 import AST from '../../../Core/Renderer/HTML/AST.js';
 import PaginationController from '../Querying/PaginationController';
+import { defined, fireEvent, isObject, merge } from '../../../Shared/Utilities.js';
 
 const { makeHTMLElement, formatText } = GridUtils;
-const { defined, fireEvent, isObject, merge } = Utilities;
+
 const paginationAlignments = [
     'left',
     'center',

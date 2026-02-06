@@ -32,14 +32,7 @@ const { getOptions } = D;
 import PopupAnnotations from './PopupAnnotations.js';
 import PopupIndicators from './PopupIndicators.js';
 import PopupTabs from './PopupTabs.js';
-import U from '../../../Core/Utilities.js';
-const {
-    addEvent,
-    createElement,
-    extend,
-    fireEvent,
-    pick
-} = U;
+import { addEvent, createElement, extend, fireEvent, pick } from '../../../Shared/Utilities.js';
 
 /* *
  *

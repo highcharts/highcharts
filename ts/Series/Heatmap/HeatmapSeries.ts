@@ -39,17 +39,9 @@ const {
 } = SeriesRegistry;
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 const { prototype: { symbols } } = SVGRenderer;
-import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    extend,
-    fireEvent,
-    isNumber,
-    merge,
-    pick
-} = U;
 
 import IU from '../InterpolationUtilities.js';
+import { addEvent, extend, fireEvent, isNumber, merge, pick } from '../../Shared/Utilities.js';
 const {
     colorFromPoint,
     getContext

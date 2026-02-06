@@ -20,14 +20,7 @@
 import type { ApproximationArray } from './ApproximationType';
 
 import ApproximationRegistry from './ApproximationRegistry.js';
-import U from '../../Core/Utilities.js';
-const {
-    arrayMax,
-    arrayMin,
-    correctFloat,
-    extend,
-    isNumber
-} = U;
+import { arrayMax, arrayMin, correctFloat, extend, isNumber } from '../../Shared/Utilities.js';
 
 /* *
  *

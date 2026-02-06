@@ -35,14 +35,7 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     hlc: HLCSeries
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    crisp,
-    extend,
-    merge,
-    pushUnique
-} = U;
+import { addEvent, crisp, extend, merge, pushUnique } from '../../Shared/Utilities.js';
 
 /* *
  *

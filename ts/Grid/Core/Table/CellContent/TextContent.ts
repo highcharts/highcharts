@@ -31,12 +31,7 @@ import GridUtils from '../../GridUtils.js';
 const {
     setHTMLContent
 } = GridUtils;
-
-import Utils from '../../../../Core/Utilities.js';
-const {
-    defined,
-    isString
-} = Utils;
+import { defined, isString } from '../../../../Shared/Utilities.js';
 
 
 /* *

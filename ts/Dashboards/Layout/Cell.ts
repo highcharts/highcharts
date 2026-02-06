@@ -33,12 +33,7 @@ import type CellHTML from './CellHTML.js';
 import EditGlobals from '../EditMode/EditGlobals.js';
 import Globals from '../Globals.js';
 import GUIElement from './GUIElement.js';
-import U from '../../Core/Utilities.js';
-const {
-    defined,
-    merge,
-    fireEvent
-} = U;
+import { defined, fireEvent, merge } from '../../Shared/Utilities.js';
 
 /* *
  *

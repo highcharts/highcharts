@@ -26,14 +26,8 @@ import type Grid from '../../Core/Grid';
 
 import CreditsPro from './CreditsPro.js';
 import Globals from '../../Core/Globals.js';
-import U from '../../../Core/Utilities.js';
 import { defaultOptions } from '../../Core/Defaults.js';
-
-const {
-    addEvent,
-    merge,
-    pushUnique
-} = U;
+import { addEvent, merge, pushUnique } from '../../../Shared/Utilities.js';
 
 
 /* *

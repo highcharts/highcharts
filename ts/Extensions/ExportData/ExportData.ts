@@ -53,17 +53,7 @@ const {
     doc,
     win
 } = G;
-import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    defined,
-    extend,
-    find,
-    fireEvent,
-    isNumber,
-    pick,
-    pushUnique
-} = U;
+import { addEvent, defined, extend, find, fireEvent, isNumber, pick, pushUnique } from '../../Shared/Utilities.js';
 
 /* *
  *

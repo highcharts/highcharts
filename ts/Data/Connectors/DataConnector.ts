@@ -41,14 +41,8 @@ import DataModifier from '../Modifiers/DataModifier.js';
 import DataTable, {
     type ColumnCollection as DataTableColumnCollection
 } from '../DataTable.js';
-import U from '../../Core/Utilities.js';
 import { DeepPartial } from '../../Shared/Types';
-const {
-    addEvent,
-    fireEvent,
-    merge,
-    pick
-} = U;
+import { addEvent, fireEvent, merge, pick } from '../../Shared/Utilities.js';
 
 /* *
  *

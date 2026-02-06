@@ -32,15 +32,7 @@ const {
     SVG_NS,
     win
 } = H;
-import U from '../../Utilities.js';
-const {
-    attr,
-    extend,
-    fireEvent,
-    isString,
-    objectEach,
-    pick
-} = U;
+import { attr, extend, fireEvent, isString, objectEach, pick } from '../../../Shared/Utilities.js';
 
 // Function used to test string length including an ellipsis
 const stringWithEllipsis = (text: string, currentIndex: number): string =>

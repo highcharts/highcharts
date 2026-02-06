@@ -41,18 +41,7 @@ const {
         scatter: ScatterSeries
     }
 } = SeriesRegistry;
-import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    arrayMax,
-    arrayMin,
-    clamp,
-    extend,
-    isNumber,
-    merge,
-    pick,
-    pushUnique
-} = U;
+import { addEvent, arrayMax, arrayMin, clamp, extend, isNumber, merge, pick, pushUnique } from '../../Shared/Utilities.js';
 
 /* *
  *

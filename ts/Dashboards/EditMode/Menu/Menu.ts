@@ -19,14 +19,9 @@ import type { Options as MenuItemOptions } from './MenuItem';
 
 import { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType.js';
 import EditGlobals from '../EditGlobals.js';
-import U from '../../../Core/Utilities.js';
 import MenuItem from './MenuItem.js';
 import MenuItemBindings from './MenuItemBindings.js';
-
-const {
-    createElement,
-    merge
-} = U;
+import { createElement, merge } from '../../../Shared/Utilities.js';
 
 class Menu {
     /* *

@@ -27,15 +27,8 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     column: ColumnSeries
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
 import AnimationOptions from '../../Core/Animation/AnimationOptions';
-const {
-    arrayMax,
-    arrayMin,
-    correctFloat,
-    isNumber,
-    merge
-} = U;
+import { arrayMax, arrayMin, correctFloat, isNumber, merge } from '../../Shared/Utilities.js';
 
 /* ************************************************************************** *
  *  HISTOGRAM

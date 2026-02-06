@@ -51,19 +51,7 @@ import H from '../../Core/Globals.js';
 const { noop } = H;
 import DrilldownDefaults from './DrilldownDefaults.js';
 import DrilldownSeries from './DrilldownSeries.js';
-import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    defined,
-    diffObjects,
-    extend,
-    fireEvent,
-    merge,
-    objectEach,
-    pick,
-    removeEvent,
-    syncTimeout
-} = U;
+import { diffObjects, defined, extend, merge, objectEach, pick, syncTimeout, fireEvent, addEvent, removeEvent } from '../../Shared/Utilities.js';
 
 /* *
  *

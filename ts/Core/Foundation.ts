@@ -26,13 +26,7 @@ import Axis from './Axis/Axis.js';
 import Chart from './Chart/Chart.js';
 import Legend from './Legend/Legend.js';
 import Series from './Series/Series.js';
-import U from './Utilities.js';
-const {
-    addEvent,
-    isFunction,
-    objectEach,
-    removeEvent
-} = U;
+import { addEvent, isFunction, objectEach, removeEvent } from '../Shared/Utilities.js';
 
 /* *
  *

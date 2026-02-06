@@ -52,20 +52,8 @@ const { animObject } = A;
 import DataTableCore from '../../Data/DataTableCore.js';
 import MarkerClusterDefaults from './MarkerClusterDefaults.js';
 const { cluster: clusterDefaults } = MarkerClusterDefaults;
-import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    defined,
-    error,
-    isArray,
-    isFunction,
-    isObject,
-    isNumber,
-    merge,
-    objectEach,
-    relativeLength,
-    syncTimeout
-} = U;
+import { defined, objectEach, isArray, isNumber, isObject, merge, syncTimeout, relativeLength, isFunction, addEvent } from '../../Shared/Utilities.js';
+import { error } from '../../Core/Utilities.js';
 
 /* *
  *

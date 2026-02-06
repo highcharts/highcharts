@@ -54,16 +54,8 @@ const {
     initDataLabelsDefer
 } = D;
 
-import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    defined,
-    extend,
-    merge,
-    pick
-} = U;
-
 import TextPath from '../../Extensions/TextPath.js';
+import { addEvent, defined, extend, merge, pick } from '../../Shared/Utilities.js';
 TextPath.compose(SVGElement);
 
 /* *

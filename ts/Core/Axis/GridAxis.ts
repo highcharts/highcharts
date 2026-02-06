@@ -38,19 +38,8 @@ import Chart from '../Chart/Chart.js';
 import H from '../Globals.js';
 const { dateFormats } = H;
 import Tick from './Tick.js';
-import U from '../Utilities.js';
-const {
-    addEvent,
-    defined,
-    erase,
-    find,
-    isArray,
-    isNumber,
-    merge,
-    pick,
-    timeUnits,
-    wrap
-} = U;
+import { defined, find, erase, isArray, isNumber, isObject as isObjectUtils, merge, pick, wrap, addEvent } from '../../Shared/Utilities.js';
+import { timeUnits } from '../Utilities.js';
 
 /* *
  *
@@ -204,7 +193,7 @@ function argsToArray(args: IArguments): Array<any> {
 /** @internal */
 function isObject(x: unknown): x is object {
     // Always use strict mode
-    return U.isObject(x, true);
+    return isObjectUtils(x, true);
 }
 
 /** @internal */

@@ -56,15 +56,7 @@ const {
     noop
 } = H;
 import { Palette } from '../Core/Color/Palettes.js';
-import U from '../Core/Utilities.js';
-const {
-    addEvent,
-    fireEvent,
-    isNumber,
-    merge,
-    pick,
-    wrap
-} = U;
+import { addEvent, fireEvent, internalClearTimeout, isNumber, merge, pick, wrap } from '../Shared/Utilities.js';
 
 /* *
  *
@@ -582,7 +574,7 @@ namespace BoostCanvas {
                     opacity: 1
                 }
             });
-            U.clearTimeout(destroyLoadingDiv);
+            internalClearTimeout(destroyLoadingDiv);
             chart.showLoading('Drawing...');
             chart.options.loading = loadingOptions; // Reset
         }

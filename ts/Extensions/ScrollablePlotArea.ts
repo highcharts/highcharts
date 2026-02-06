@@ -37,16 +37,7 @@ const { stop } = A;
 import H from '../Core/Globals.js';
 const { composed } = H;
 import RendererRegistry from '../Core/Renderer/RendererRegistry.js';
-import U from '../Core/Utilities.js';
-const {
-    addEvent,
-    createElement,
-    css,
-    defined,
-    erase,
-    merge,
-    pushUnique
-} = U;
+import { addEvent, createElement, css, defined, erase, merge, pushUnique } from '../Shared/Utilities.js';
 
 /* *
  *
