@@ -87,6 +87,8 @@ export interface StochasticSmoothedLineOptions {
 export interface StochasticSmoothedLineStyleOptions extends CSSObject {
     /**
      * Pixel width of the line.
+     *
+     * @default 1
      */
     lineWidth?: number;
 

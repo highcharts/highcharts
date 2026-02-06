@@ -100,6 +100,8 @@ export interface MACDLineOptions {
 export interface MACDLineStyleOptions extends CSSObject {
     /**
      * Pixel width of the line.
+     *
+     * @default 1
      */
     lineWidth?: number;
     /**

@@ -62,6 +62,11 @@ export interface ABandsOptions extends SMAOptions, MultipleLinesComposition.Indi
 
     bottomLine?: Record<string, CSSObject>;
 
+    /**
+     * Pixel width of the main line.
+     *
+     * @default 1
+     */
     lineWidth?: number;
 
     params?: ABandsParamsOptions;
