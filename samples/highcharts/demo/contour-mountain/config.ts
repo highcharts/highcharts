@@ -38,7 +38,7 @@ export default {
             priority: 1
         }]
     },
-    chartOptionsExtra:{
+    chartOptionsExtra: {
         chart: {
             height: 500,
             zooming: {

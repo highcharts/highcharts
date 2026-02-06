@@ -1,11 +1,12 @@
 ---
- name: Mountain elevation with contour series
- authors:
-   - Dawid Dragula
- js_wrap: b
- tags:
+name: Mountain elevation with contour series
+js_wrap: b
+authors:
+  - Dawid Dragula
+  - Markus Knutson Barstad
+tags:
   - Highcharts demo
- categories:
+categories:
   - Heat and tree maps:
-      priority: 1
+    priority: 1
 ...
