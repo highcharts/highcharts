@@ -388,6 +388,32 @@ QUnit.test('Sankey minNodeHeight option', function (assert) {
     );
 });
 
+QUnit.test('Sankey disabled node sum in tooltip', function (assert) {
+    const chart = Highcharts.chart('container', {
+        series: [{
+            type: 'sankey',
+            keys: ['from', 'to', 'weight'],
+            data: [
+                ['A', 'B', 5],
+                ['B', 'C', 2]
+            ]
+        }]
+    });
+
+    const series = chart.series[0],
+        nodeB = series.nodes.filter(function (node) {
+            return node.id === 'B';
+        })[0];
+
+    nodeB.toggleDisabled();
+
+    assert.strictEqual(
+        nodeB.sum,
+        5,
+        'Disabled node keeps original sum for tooltip'
+    );
+});
+
 QUnit.test('Sankey column option', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {

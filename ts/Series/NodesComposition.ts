@@ -86,6 +86,7 @@ namespace NodesComposition {
         public weight?: number;
         public y?: (number|null);
         public getSum(): number;
+        public getSumAll(): number;
         public hasShape(): boolean;
         public init(
             series: SeriesComposition,
@@ -216,6 +217,23 @@ namespace NodesComposition {
                     if (!isLinkDisabled(link)) {
                         sumFrom += link.weight || 0;
                     }
+                });
+                return Math.max(sumTo, sumFrom);
+            };
+
+            /**
+             * Return the largest sum without disabled filtering.
+             * @private
+             */
+            newNode.getSumAll = function (): number {
+                let sumTo = 0,
+                    sumFrom = 0;
+
+                newNode.linksTo.forEach((link): void => {
+                    sumTo += link.weight || 0;
+                });
+                newNode.linksFrom.forEach((link): void => {
+                    sumFrom += link.weight || 0;
                 });
                 return Math.max(sumTo, sumFrom);
             };

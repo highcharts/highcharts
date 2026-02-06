@@ -656,6 +656,7 @@ class SankeySeries extends ColumnSeries {
             options = this.options,
             { borderRadius, borderWidth = 0 } = options,
             sum = node.getSum(),
+            sumAll = node.getSumAll(),
             isDisabled = !!node.options.disabled,
             minNodeHeight = pick(
                 node.options.minHeight,
@@ -691,7 +692,7 @@ class SankeySeries extends ColumnSeries {
                 (chart.plotSizeX as any) - left :
                 left,
             hasShape = !!(sum || isDisabled);
-        node.sum = sum;
+        node.sum = sumAll;
         // If node sum is 0, don't render the rect #12453 (unless disabled)
         if (hasShape) {
             // Draw the node
