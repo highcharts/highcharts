@@ -51,6 +51,7 @@ import '../Data/Modifiers/SortModifier.js';
 import '../Data/Modifiers/FilterModifier.js';
 
 import '../Grid/Core/Data/LocalDataProvider.js';
+import '../Grid/Core/Responsive/ResponsiveComposition.js';
 
 
 /* *
