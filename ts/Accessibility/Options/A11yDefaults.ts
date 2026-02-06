@@ -22,8 +22,6 @@
 import type A11yOptions from './A11yOptions';
 import type { DeepPartial } from '../../Shared/Types';
 
-import { Palette } from '../../Core/Color/Palettes.js';
-
 /* *
  *
  *  API Options
@@ -643,7 +641,7 @@ const Options: DeepPartial<A11yOptions> = {
                  */
                 style: {
                     /** @internal */
-                    color: Palette.highlightColor80,
+                    color: 'var(--highcharts-highlight-color-80)',
                     /** @internal */
                     lineWidth: 2,
                     /** @internal */

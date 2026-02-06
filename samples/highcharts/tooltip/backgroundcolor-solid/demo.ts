@@ -1,7 +1,18 @@
 Highcharts.chart('container', {
 
+    title: {
+        text: 'Inverted tooltip colors'
+    },
+
+    subtitle: {
+        text: 'Dark tooltip for light theme, and vice versa'
+    },
+
     tooltip: {
-        backgroundColor: '#FCFFC5'
+        backgroundColor: 'light-dark(#141414, #fff)',
+        style: {
+            color: 'light-dark(#fff, #000)'
+        }
     },
 
     xAxis: {

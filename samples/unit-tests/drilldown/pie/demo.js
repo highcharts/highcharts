@@ -427,17 +427,17 @@ QUnit.test(
             point.doDrilldown();
             initialPos = chart.drilldownLevels[0].lowerSeries.data[4].graphic
                 .attr('start');
-            previousColor = chart.options.colors[0];
+            previousColor = 'var(--highcharts-color-0)';
 
             assert.strictEqual(
                 chart.drilldownLevels[0].lowerSeries.data[0].color,
-                chart.options.colors[0],
+                'var(--highcharts-color-0)',
                 'Color of the first slice is correct'
             );
 
             assert.strictEqual(
                 chart.drilldownLevels[0].lowerSeries.data[3].color,
-                chart.options.colors[3],
+                'var(--highcharts-color-3)',
                 'Color of the fourth slice is correct'
             );
 
@@ -517,8 +517,8 @@ QUnit.test(
                 );
 
                 assert.strictEqual(
-                    Highcharts.color(tweeningGraphic.attr('fill')).get(),
-                    Highcharts.color(chart.options.colors[3]).get(),
+                    tweeningGraphic.attr('fill'),
+                    'var(--highcharts-color-3)',
                     'Time 1500 - Fill color should match options after ' +
                     'finished tweening'
                 );

@@ -183,7 +183,7 @@ QUnit.test('Flowmap API options.', assert => {
 
     assert.strictEqual(
         series.points[1].graphic.attr('fill'),
-        chart.options.colors[series.index],
+        `var(--highcharts-color-${series.index})`,
         'The point with a weight defined on a series level should be drawn.'
     );
 

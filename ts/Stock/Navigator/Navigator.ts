@@ -34,6 +34,8 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import Axis from '../../Core/Axis/Axis.js';
+import Color from '../../Core/Color/Color.js';
+const { parse: color } = Color;
 import ChartNavigatorComposition from './ChartNavigatorComposition.js';
 import D from '../../Core/Defaults.js';
 const { defaultOptions } = D;
@@ -468,7 +470,14 @@ class Navigator {
 
             if (!chart.styledMode) {
                 shade.attr({
-                    fill: hasMask ? navigatorOptions.maskFill : 'rgba(0,0,0,0)'
+                    fill: hasMask ?
+                        (
+                            navigatorOptions.maskFill ||
+                            color('var(--highcharts-highlight-color-60)')
+                                .setOpacity(0.3)
+                                .get()
+                        ) :
+                        'rgba(0,0,0,0)'
                 });
 
                 if (index === 1) {
@@ -1800,6 +1809,9 @@ class Navigator {
             !(baseSeries && baseSeries.length) ||
             isArray(chartNavigatorSeriesOptions)
         ) {
+            const colors = chart.options.colors ||
+                chart.palette?.dataColors ||
+                [];
             navigator.hasNavigatorData = false;
             // Allow navigator.series to be an array
             chartNavigatorSeriesOptions =
@@ -1822,8 +1834,8 @@ class Navigator {
                         color: chart.series[i] &&
                         !chart.series[i].options.isInternal &&
                         chart.series[i].color ||
-                        (chart.options.colors as any)[i] ||
-                        (chart.options.colors as any)[0]
+                        colors[i] ||
+                        colors[0]
                     },
                     navSeriesMixin,
                     userSeriesOptions

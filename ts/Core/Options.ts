@@ -18,6 +18,7 @@ import type ButtonThemeObject from './Renderer/SVG/ButtonThemeObject';
 import type Chart from './Chart/Chart';
 import type ColorString from './Color/ColorString';
 import type CSSObject from './Renderer/CSSObject';
+import type PaletteOptions from './Color/PaletteOptions';
 import type { SeriesTypePlotOptions } from './Series/SeriesType';
 import type { SymbolKey } from './Renderer/SVG/SymbolType';
 import type { LangOptionsCore } from '../Shared/LangOptionsCore';
@@ -278,6 +279,10 @@ export interface NumberFormatterCallbackFunction {
  */
 export interface Options {
     /**
+     * This option has been deprecated, use the
+     * [palette.light.colors](#palette.light.colors) and/or
+     * [palette.dark.colors](#palette.dark.colors) option instead.
+     *
      * An array containing the default colors for the chart's series. When
      * all colors are used, new colors are pulled from the start again.
      *
@@ -294,18 +299,8 @@ export interface Options {
      * @sample highcharts/members/theme-v10/
      *         Latest release styled like version 10
      *
-     * @default [
-     *     "#2caffe",
-     *     "#544fc5",
-     *     "#00e272",
-     *     "#fe6a35",
-     *     "#6b8abc",
-     *     "#d568fb",
-     *     "#2ee0ca",
-     *     "#fa4b42",
-     *     "#feb56a",
-     *     "#91e8e1"
-     * ]
+     * @default undefined
+     * @deprecated
      */
     colors?: Array<ColorString>;
     /**
@@ -330,6 +325,10 @@ export interface Options {
      * state following a call to `chart.showLoading`.
      */
     loading?: LoadingOptions;
+    /**
+     * The color palette to use.
+     */
+    palette: PaletteOptions;
     /**
      * The plotOptions is a wrapper object for config objects for each series
      * type. The config objects for each series can also be overridden for

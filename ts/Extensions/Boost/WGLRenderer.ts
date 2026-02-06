@@ -148,6 +148,51 @@ const contexts = [
     'webkit-3d'
 ];
 
+const colorCache: Record<string, string> = {};
+
+/*
+ * Resolve CSS color expressions like color-mix
+ * @internal
+ */
+const resolveColorExpression = (
+    cssVars: Record<string, string>,
+    input: string
+): string => {
+    if (colorCache[input]) {
+        return colorCache[input];
+    }
+
+    // Color variable from the palette
+    const paletteMatch = input.indexOf('var(') === 0 &&
+        cssVars[input.slice(4, -1).trim()];
+    if (paletteMatch) {
+        colorCache[input] = paletteMatch;
+        return paletteMatch;
+    }
+
+    // Color mix expression
+    if (input.indexOf('color-mix(') === 0) {
+        /* eslint-disable-next-line max-len */
+        const colorMixRegex = /^color-mix\(in srgb,([a-z0-9\(\)\-\#]+),([a-z0-9\(\)\-\#]+) ([0-9\.%]+)/,
+            result = colorMixRegex.exec(input);
+
+        if (result) {
+            const weight = parseFloat(result[3]) / 100,
+                color1 = resolveColorExpression(cssVars, result[1]),
+                color2 = resolveColorExpression(cssVars, result[2]),
+                color = new Color(color1).tweenTo(
+                    new Color(color2),
+                    weight
+                ) as string;
+
+            colorCache[input] = color;
+            return color;
+        }
+    }
+
+    return input;
+};
+
 /* *
  *
  *  Class
@@ -410,18 +455,13 @@ class WGLRenderer {
                 series.getColumn('z').length ? series.getColumn('z') : void 0
             ) || (options as any).zData || series.getColumn('z', true),
             useRaw = !xData || xData.length === 0,
-            /// threshold = options.threshold,
-            // yBottom = chart.yAxis[0].getThreshold(threshold),
-            // hasThreshold = isNumber(threshold),
-            colorByPoint = series.options.colorByPoint,
-            // This is required for color by point, so make sure this is
-            // uncommented if enabling that
-            // Required for color axis support
-            // caxis,
-            connectNulls = options.connectNulls,
-            // For some reason eslint/TypeScript don't pick up that this is
-            // actually used: --- bre1470: it is never read, just set
-            // maxVal: (number|undefined), // eslint-disable-line no-unused-vars
+            {
+                colorByPoint,
+                connectNulls,
+                threshold,
+                zoneAxis = 'y',
+                zones
+            } = options,
             points: Array<WGLPoint> =
                 series.points || (false as any),
             sdata = isStacked ? series.data : (xData || rawData),
@@ -431,9 +471,6 @@ class WGLRenderer {
             cullYThreshold = 1,
             chartDestroyed = typeof chart.index === 'undefined',
             drawAsBar = asBar[series.type],
-            zoneAxis = options.zoneAxis || 'y',
-            zones = options.zones || false,
-            threshold: number = options.threshold as any,
             pixelRatio = this.getPixelRatio();
 
         let plotWidth = series.chart.plotWidth,
@@ -475,12 +512,35 @@ class WGLRenderer {
                 options.gapSize;
         }
 
-        if (zones && zones.length) { // #23571
+        // Detect the current color scheme
+        if (chart.boost) {
+            const probe = chart.renderer.circle(0, 0, 1)
+                    .attr({ fill: 'var(--highcharts-background-color)' })
+                    .add(),
+                actualFill = new Color(
+                    getComputedStyle(probe.element).getPropertyValue('fill')
+                ).get(),
+                darkFill = new Color(
+                    chart.palette?.cssVars.dark[
+                        '--highcharts-background-color'
+                    ] || ''
+                ).get();
+            probe.destroy();
+            chart.boost.cssVars = chart.palette?.cssVars[
+                actualFill === darkFill ? 'dark' : 'light'
+            ];
+        }
+        const cssVars = chart.boost?.cssVars || {};
+
+        // Handle zones
+        if (zones?.length) { // #23571
             zoneColors = [];
 
             zones.forEach((zone, i): void => {
-                if (zone.color) {
-                    const zoneColor = color(zone.color).rgba as Color.RGBA;
+                if (typeof zone.color === 'string') {
+                    const zoneColor = color(resolveColorExpression(
+                        cssVars, zone.color
+                    )).rgba;
                     zoneColor[0] /= 255.0;
                     zoneColor[1] /= 255.0;
                     zoneColor[2] /= 255.0;
@@ -497,7 +557,10 @@ class WGLRenderer {
                     (series.pointAttribs && series.pointAttribs().fill) ||
                     series.color
                 );
-                zoneDefColor = color(seriesColor).rgba as Color.RGBA;
+                zoneDefColor = color(
+                    typeof seriesColor === 'string' ?
+                        resolveColorExpression(cssVars, seriesColor) : ''
+                ).rgba as Color.RGBA;
                 zoneDefColor[0] /= 255.0;
                 zoneDefColor[1] /= 255.0;
                 zoneDefColor[2] /= 255.0;
@@ -678,6 +741,12 @@ class WGLRenderer {
 
                     swidth = pointAttr['stroke-width'] || 0;
 
+                    if (typeof pointAttr.fill === 'string') {
+                        pointAttr.fill = resolveColorExpression(
+                            cssVars, pointAttr.fill
+                        );
+                    }
+
                     // Handle point colors
                     pcolor = color(pointAttr.fill).rgba;
                     pcolor[0] /= 255.0;
@@ -694,7 +763,14 @@ class WGLRenderer {
                     // If there's stroking, we do an additional rect
                     if (series.is('treemap')) {
                         swidth = swidth || 1;
-                        scolor = color(pointAttr.stroke).rgba as any;
+
+                        if (typeof pointAttr.stroke === 'string') {
+                            pointAttr.stroke = resolveColorExpression(
+                                cssVars, pointAttr.stroke
+                            );
+                        }
+
+                        scolor = color(pointAttr.stroke).rgba;
 
                         scolor[0] /= 255.0;
                         scolor[1] /= 255.0;
@@ -777,7 +853,9 @@ class WGLRenderer {
                     colorIndex = colorIndex %
                         chart.options.colors.length;
 
-                    rgba = color(chart.options.colors[colorIndex]).rgba;
+                    rgba = color(resolveColorExpression(
+                        cssVars, chart.options.colors[colorIndex]
+                    )).rgba;
                 }
 
                 if (rgba) {
@@ -933,7 +1011,7 @@ class WGLRenderer {
             }
 
             // Note: Boost requires that zones are sorted!
-            if (zones && zones.length) { // #23571
+            if (zones?.length) { // #23571
                 let zoneColor: Color.RGBA|undefined;
                 const pointValue = zoneAxis === 'x' ? x : y;
                 // Match getZone() logic: find zone where value > point value
@@ -1048,7 +1126,7 @@ class WGLRenderer {
                     yAxis.logarithmic // #16850
                 ) {
                     minVal = Math.max(
-                        threshold === null ? yMin : threshold, // #5268
+                        threshold ?? yMin, // #5268
                         yMin
                     ); // #8731
                 }
@@ -1430,6 +1508,11 @@ class WGLRenderer {
                     pick((options as any).fillOpacity, 1.0)
                 ).get();
             }
+
+            fillColor = resolveColorExpression(
+                chart.boost?.cssVars || {},
+                fillColor
+            );
 
             scolor = color(fillColor).rgba;
 
