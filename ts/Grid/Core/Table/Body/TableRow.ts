@@ -2,11 +2,11 @@
  *
  *  Grid TableRow class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -24,7 +24,7 @@
 
 import type Cell from '../Cell';
 import type Column from '../Column';
-import type DataTable from '../../../../Data/DataTable';
+import type { RowObject as DataTableRowObject } from '../../../../Data/DataTable';
 
 import Row from '../Row.js';
 import Table from '../Table.js';
@@ -52,7 +52,7 @@ class TableRow extends Row {
     /**
      * The row values from the data table in the original column order.
      */
-    public data: DataTable.RowObject = {};
+    public data: DataTableRowObject = {};
 
     /**
      * The local index of the row in the presentation data table.
@@ -135,6 +135,41 @@ class TableRow extends Row {
     }
 
     /**
+     * Reuses the row instance for a new index.
+     *
+     * @param index
+     * The index of the row in the data table.
+     *
+     * @param doReflow
+     * Whether to reflow the row after updating the cells.
+     */
+    public reuse(index: number, doReflow: boolean = true): void {
+        if (this.index === index) {
+            this.update();
+            return;
+        }
+
+        this.index = index;
+        this.id = this.viewport.dataTable.getOriginalRowIndex(index);
+
+        this.htmlElement.setAttribute('data-row-index', index);
+        this.updateRowAttributes();
+        this.updateParityClass();
+        this.updateStateClasses();
+
+        this.loadData();
+
+        for (let i = 0, iEnd = this.cells.length; i < iEnd; ++i) {
+            const cell = this.cells[i] as TableCell;
+            void cell.setValue();
+        }
+
+        if (doReflow) {
+            this.reflow();
+        }
+    }
+
+    /**
      * Adds or removes the hovered CSS class to the row element.
      *
      * @param hovered
@@ -181,15 +216,8 @@ class TableRow extends Row {
         this.updateRowAttributes();
 
         // Indexing from 0, so rows with even index are odd.
-        el.classList.add(Globals.getClassName(idx % 2 ? 'rowEven' : 'rowOdd'));
-
-        if (this.viewport.grid.hoveredRowIndex === idx) {
-            el.classList.add(Globals.getClassName('hoveredRow'));
-        }
-
-        if (this.viewport.grid.syncedRowIndex === idx) {
-            el.classList.add(Globals.getClassName('syncedRow'));
-        }
+        this.updateParityClass();
+        this.updateStateClasses();
     }
 
     /**
@@ -209,6 +237,41 @@ class TableRow extends Row {
 
         // Calculate levels of header, 1 to avoid indexing from 0
         a11y?.setRowIndex(el, idx + (vp.header?.rows.length ?? 0) + 1);
+    }
+
+    /**
+     * Updates the row parity class based on index.
+     */
+    private updateParityClass(): void {
+        const el = this.htmlElement;
+        el.classList.remove(
+            Globals.getClassName('rowEven'),
+            Globals.getClassName('rowOdd')
+        );
+
+        // Indexing from 0, so rows with even index are odd.
+        el.classList.add(
+            Globals.getClassName(this.index % 2 ? 'rowEven' : 'rowOdd')
+        );
+    }
+
+    /**
+     * Updates the hovered and synced classes based on grid state.
+     */
+    private updateStateClasses(): void {
+        const el = this.htmlElement;
+        el.classList.remove(
+            Globals.getClassName('hoveredRow'),
+            Globals.getClassName('syncedRow')
+        );
+
+        if (this.viewport.grid.hoveredRowIndex === this.index) {
+            el.classList.add(Globals.getClassName('hoveredRow'));
+        }
+
+        if (this.viewport.grid.syncedRowIndex === this.index) {
+            el.classList.add(Globals.getClassName('syncedRow'));
+        }
     }
 
     /**

@@ -131,6 +131,25 @@ The `rendering` option object can be used to configure options related to perfor
 
 For more information on rendering options, please read our article on [Performance and rendering](https://www.highcharts.com/docs/grid/performance) or see the [API reference](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.RenderingSettings).
 
+## responsive
+Use `responsive.rules` to apply different Grid options at different container sizes. Each rule contains a `condition` (such as `maxWidth` or `minWidth`) and a `gridOptions` object that will be merged into the base options when the rule matches.
+
+```js
+Grid.grid('container', {
+    dataTable: { columns: data },
+    responsive: {
+        rules: [{
+            condition: { maxWidth: 800 },
+            gridOptions: { header: ['firstName', 'email', 'mobile'] }
+        }]
+    }
+});
+```
+
+See a live sample [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-lite/basic/responsive-rules/).
+
+See the [API reference](https://api.highcharts.com/grid/#interfaces/Grid_Core_Responsive_ResponsiveOptions.ResponsiveOptions) for available rule options.
+
 ## pagination
 The `pagination` option object enables you to split large datasets into manageable pages, improving performance and user experience. When enabled, pagination displays a subset of data at a time with navigation controls.
 
@@ -177,7 +196,7 @@ When adding multiple grids to the same page, it is recommended to set default op
 Grid.setOptions({
     columnDefaults: {
         sorting: {
-            sortable: false
+            enabled: false
         }
     }
 })

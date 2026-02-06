@@ -1,12 +1,12 @@
 /* *
  *
- *  (c) 2014-2025 Highsoft AS
+ *  (c) 2014-2026 Highsoft AS
  *
  *  Authors: Jon Arild Nygard / Oystein Moseng
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -227,18 +227,6 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
     tooltip: {
         headerFormat: '',
         pointFormat: '<b>{point.name}</b>: {point.value}<br/>',
-        /**
-         * The HTML of the grouped point's nodes in the tooltip. Works only for
-         * Treemap series grouping and analogously to
-         * [pointFormat](#tooltip.pointFormat).
-         *
-         * The grouped nodes point tooltip can be also formatted using
-         * `tooltip.formatter` callback function and `point.isGroupNode` flag.
-         *
-         * @type      {string}
-         * @default   '+ {point.groupedPointsAmount} more...'
-         * @apioption tooltip.clusterFormat
-         */
         clusterFormat: '+ {point.groupedPointsAmount} more...<br/>'
     },
 

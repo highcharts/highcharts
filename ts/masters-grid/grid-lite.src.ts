@@ -1,10 +1,12 @@
+// SPDX-License-Identifier: LicenseRef-Highcharts
 /**
  * @license Highcharts Grid v@product.version@ (@product.date@)
  * @module grid/grid-lite
  *
- * (c) 2009-2025 Highsoft AS
+ * (c) 2009-2026 Highsoft AS
  *
- * License: www.highcharts.com/license
+ * A commercial license may be required depending on use.
+ * See www.highcharts.com/license
  */
 
 
@@ -34,6 +36,7 @@ import CreditsLiteComposition from '../Grid/Lite/Credits/CreditsLiteComposition.
 import Utilities from '../Core/Utilities.js';
 import SvgIcons from '../Grid/Core/UI/SvgIcons.js';
 import Pagination from '../Grid/Core/Pagination/Pagination.js';
+import ResponsiveComposition from '../Grid/Core/Responsive/ResponsiveComposition.js';
 
 // Fill registries
 import '../Data/Connectors/CSVConnector.js';
@@ -79,6 +82,7 @@ const G = {
 };
 
 CreditsLiteComposition.compose(G.Grid, G.Table);
+ResponsiveComposition.compose(G.Grid);
 
 
 /* *
@@ -96,6 +100,8 @@ export {
     DataModifier,
     DataPool,
     DataTable,
+    _Grid as Grid,
+    _Options as Options,
     Pagination,
     SvgIcons,
     Table,
@@ -104,7 +110,6 @@ export {
 
 export const {
     defaultOptions,
-    Grid,
     grid,
     grids,
     isHighContrastModeActive,

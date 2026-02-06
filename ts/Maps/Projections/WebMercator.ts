@@ -2,9 +2,10 @@
  *
  *  Web Mercator projection, used for most online map tile services
  *
- *  (c) 2021-2025 Highsoft AS
+ *  (c) 2021-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
  *  Authors:
  *  - Torstein Honsi

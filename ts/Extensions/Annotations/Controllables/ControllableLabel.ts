@@ -1,6 +1,5 @@
 /* *
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -44,13 +43,16 @@ const {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Renderer/SVG/SymbolType' {
+    /** @internal */
     interface SymbolTypeRegistry {
         /** @requires Extensions/ControllableLabel */
         connector: SymbolFunction;
     }
 }
 
+/** @internal */
 interface ControllableAlignObject extends AlignObject {
     height?: number;
     width?: number;
@@ -63,8 +65,8 @@ interface ControllableAlignObject extends AlignObject {
  * */
 
 /**
- * General symbol definition for labels with connector
- * @private
+ * General symbol definition for labels with connector.
+ * @internal
  */
 function symbolConnector(
     x: number,
@@ -123,9 +125,9 @@ function symbolConnector(
 /**
  * A controllable label class.
  *
+ * @internal
  * @requires modules/annotations
  *
- * @private
  * @class
  * @name Highcharts.AnnotationControllableLabel
  *
@@ -346,6 +348,8 @@ class ControllableLabel extends Controllable {
         }
 
         // Local options:
+        this.options.x ||= 0;
+        this.options.y ||= 0;
         this.options.x += dx;
         this.options.y += dy;
 
@@ -381,12 +385,14 @@ class ControllableLabel extends Controllable {
             .add(parent);
 
         if (!this.annotation.chart.styledMode) {
-            if (style.color === 'contrast') {
+            if (style?.color === 'contrast') {
                 const background = (
-                    ControllableLabel.shapesWithoutBackground.indexOf(
-                        options.shape
-                    ) > -1 ||
-                    options.backgroundColor === 'none'
+                    (
+                        !options.shape ||
+                        ControllableLabel.shapesWithoutBackground.indexOf(
+                            options.shape
+                        ) > -1
+                    ) || options.backgroundColor === 'none'
                 ) ?
                     chartBackground :
                     options.backgroundColor;
@@ -398,7 +404,7 @@ class ControllableLabel extends Controllable {
                 );
             }
             this.graphic
-                .css(options.style)
+                .css(options.style || {})
                 .shadow(options.shadow);
         }
 
@@ -579,6 +585,7 @@ class ControllableLabel extends Controllable {
  *
  * */
 
+/** @internal */
 interface ControllableLabel {
     collection: 'labels';
     itemType: 'label';
@@ -591,6 +598,7 @@ interface ControllableLabel {
  *
  * */
 
+/** @internal */
 declare module './ControllableType' {
     interface ControllableLabelTypeRegistry {
         label: typeof ControllableLabel;
@@ -603,4 +611,5 @@ declare module './ControllableType' {
  *
  * */
 
+/** @internal */
 export default ControllableLabel;

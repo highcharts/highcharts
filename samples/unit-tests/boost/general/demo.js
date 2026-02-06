@@ -79,6 +79,7 @@ async function sampleImagePixelAtSVGPoint(svg, imageEl, svgX, svgY) {
 QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
     'Set extremes when boosted',
     async function (assert) {
+
         const chart = Highcharts.chart('container', {
             chart: {
                 type: 'column',
@@ -161,28 +162,18 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
             desiredColor = chart.series[0].color,
             point = chart.series[0].points[2];
 
-        let clock = null;
-        try {
-            clock = TestUtilities.lolexInstall();
-            await (async () => {
-                const x = point.plotX + chart.plotLeft,
-                    y = point.plotY + chart.plotTop;
+        const x = point.plotX + chart.plotLeft,
+            y = point.plotY + chart.plotTop;
 
-                const { hex } =
-                    await sampleImagePixelAtSVGPoint(svg, imageEl, x, y);
+        const { hex } =
+            await sampleImagePixelAtSVGPoint(svg, imageEl, x, y);
 
-                assert.strictEqual(
-                    hex,
-                    desiredColor,
-                    `After updating to empty zones the color should be
-                    remained, #23571.`
-                );
-
-                TestUtilities.lolexRunAndUninstall(clock);
-            })();
-        } finally {
-            TestUtilities.lolexUninstall(clock);
-        }
+        assert.strictEqual(
+            hex,
+            desiredColor,
+            `After updating to empty zones the color should be
+            remained, #23571.`
+        );
     }
 );
 
@@ -418,6 +409,12 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
             chart.series[0].points[0].graphic.element.isConnected,
             'After disabling boost, marker should be added to DOM, #22950.'
         );
+
+        assert.strictEqual(
+            chart.series[0].boosted,
+            false,
+            'After disabling boost, the series should not be boosted (#23662).'
+        );
     }
 );
 
@@ -463,44 +460,6 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
             },
             series: [{}, {}],
             tooltip: {}
-        });
-    }
-);
-
-QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
-    `Error handler while the series is not declared as an array of numbers and
-    turbo threshold enabled, #13957.`,
-    function (assert) {
-        const done = assert.async(),
-            remove = Highcharts.addEvent(
-                Highcharts,
-                'displayError',
-                function (e) {
-                    assert.strictEqual(
-                        e.code, 12, 'Error 12 should be ' +
-                        'invoked'
-                    );
-                    remove();
-                    done();
-                }
-            );
-        Highcharts.stockChart('container', {
-            series: [
-                {
-                    data: [
-                        [1, 2],
-                        {
-                            x: 2,
-                            y: 46.7407
-                        },
-                        [3, 46.6135],
-                        [4, 47.0005],
-                        [5, 48.1701],
-                        [6, 47.5816]
-                    ],
-                    turboThreshold: 2
-                }
-            ]
         });
     }
 );
@@ -1126,6 +1085,109 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
             'hidden',
             `Halo shouldn't be rendered in wrong position between hovering
             points from multiple series on multiple y-axes, #21176.`
+        );
+    }
+);
+
+QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
+    'Boost with zones',
+    async function (assert) {
+        const chart = Highcharts.chart('container', {
+            chart: {
+                type: 'scatter'
+            },
+            title: {
+                text: 'Highcharts Zone Coloring with boost v12.4'
+            },
+            boost: {
+                enabled: true,
+                useGPUTranslations: true
+            },
+            plotOptions: {
+                series: {
+                    boostThreshold: 1,
+                    marker: { radius: 20 }
+                }
+            },
+            xAxis: { min: 0, max: 100 },
+            yAxis: { min: 0, max: 100 },
+            series: [{
+                name: 'Data',
+                data: [
+                    [10, 10], [20, 20], [30, 30], [40, 40], [50, 50],
+                    [60, 60], [70, 70], [80, 80], [90, 90]
+                ],
+                color: 'rgba(128, 128, 128, 0.5)',
+                zones: [{ // Red < 50
+                    value: 50,
+                    color: '#ff0000'
+                }, { // Blue >= 50
+                    color: '#0000ff'
+                }]
+            }]
+        });
+
+        const svg = chart.renderTo.querySelector('svg'),
+            imageEl = svg.querySelector('.highcharts-boost-canvas');
+
+        let x = chart.series[0].points[1].plotX + chart.plotLeft,
+            y = chart.series[0].points[1].plotY + chart.plotTop;
+        const { hex } =
+            await sampleImagePixelAtSVGPoint(svg, imageEl, x, y);
+
+        assert.strictEqual(
+            hex,
+            '#ff0000',
+            'The second point should be red.'
+        );
+
+        x = chart.series[0].points[8].plotX + chart.plotLeft;
+        y = chart.series[0].points[8].plotY + chart.plotTop;
+        const { hex: hex2 } =
+            await sampleImagePixelAtSVGPoint(svg, imageEl, x, y);
+
+        assert.strictEqual(
+            hex2,
+            '#0000ff',
+            'The last point should be blue.'
+        );
+    }
+);
+
+QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
+    'Turbo mode with area stacking and mixed data formats (#23730).',
+    async function (assert) {
+        const chart = Highcharts.chart('container', {
+            chart: {
+                type: 'area'
+            },
+            plotOptions: {
+                series: {
+                    turboThreshold: 2
+                },
+                area: {
+                    stacking: 'normal'
+                }
+            },
+            series: [{
+                data: [[0, 1], [1, 1], { x: 2, y: 1 }, [3, 1], [4, 1]]
+            }]
+        });
+        const series = chart.series[0];
+
+        assert.equal(
+            series.areaPath.xMap.length,
+            series.data.length,
+            'All data points should be included in rendering.'
+        );
+
+        chart.addSeries({
+            data: [[2, 1]]
+        });
+
+        assert.ok(
+            true,
+            'No errors when rendering with stacked points.'
         );
     }
 );

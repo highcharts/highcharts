@@ -28,3 +28,25 @@ describe('Grid rows removal.', () => {
         cy.get('tbody').should('be.empty');
     });
 });
+
+describe('Rendering size.', () => {
+    before(() => {
+        cy.visit('/grid-lite/cypress/rendering-size');
+    });
+
+    it('Fixed height grid.', () => {
+        cy.get('#container').should('have.css', 'height', '200px');
+    });
+
+    it('Percentage height grid inside fixed container.', () => {
+        cy.get('#grid2').should('have.css', 'height', '200px');
+    });
+
+    it('Max height inside fixed container.', () => {
+        cy.get('#grid3').should('have.css', 'height', '180px');
+    });
+
+    it('Flex grow inside fixed flexbox.', () => {
+        cy.get('#grid4').should('have.css', 'height', '200px');
+    });
+});

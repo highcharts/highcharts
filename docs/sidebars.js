@@ -136,15 +136,17 @@ module.exports = {
                 'Theming': [
                     'grid/theming/theming',
                     'grid/theming/theming-variables',
+                    'grid/theming/conditional-theming',
                 ]
             },
             'grid/performance',
             'grid/accessibility',
             {
-                'Wrappers': [
-                    'grid/wrappers/grid-with-angular',
-                    'grid/wrappers/grid-with-react',
-                    'grid/wrappers/grid-with-vue'
+                'Frameworks': [
+                    'grid/frameworks/grid-with-angular',
+                    'grid/frameworks/grid-with-nextjs',
+                    'grid/frameworks/grid-with-react',
+                    'grid/frameworks/grid-with-vue'
                 ]
             }
         ],
@@ -246,6 +248,7 @@ module.exports = {
                     'morningstar/x-ray',
                     'morningstar/performance',
                     'morningstar/hypo-performance',
+                    'morningstar/dws-connector',
                     {
                         'Time Series': [
                             'morningstar/time-series/time-series',

@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sebastian Bochan
@@ -62,7 +62,7 @@ class ConfirmationPopup extends BaseForm {
         parentDiv: HTMLElement,
         iconsURL: string,
         editMode: EditMode,
-        options?: ConfirmationPopup.Options
+        options?: Options
     ) {
         iconsURL =
             options && options.close && options.close.icon ?
@@ -96,11 +96,11 @@ class ConfirmationPopup extends BaseForm {
     /**
      * Options for confirmation popup.
      */
-    public options?: ConfirmationPopup.Options;
+    public options?: Options;
     /**
      * Show options for confirmation popup.
      */
-    public contentOptions?: ConfirmationPopup.ContentOptions;
+    public contentOptions?: ContentOptions;
 
     /* *
     *
@@ -221,7 +221,7 @@ class ConfirmationPopup extends BaseForm {
      * Options for confirmation popup.
      */
     public show(
-        options: ConfirmationPopup.ContentOptions
+        options: ContentOptions
     ): void {
         this.contentOptions = options;
         this.showPopup();
@@ -238,47 +238,45 @@ class ConfirmationPopup extends BaseForm {
     }
 }
 
-namespace ConfirmationPopup {
+/**
+ * Options for confirmation popup.
+ */
+export interface Options {
     /**
-     * Options for confirmation popup.
+     * Close icon
+     *
+     * Try it:
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/edit-mode/change-close-icon/ | Change close icon}
      */
-    export interface Options {
-        /**
-         * Close icon
-         *
-         * Try it:
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/edit-mode/change-close-icon/ | Change close icon}
-         */
-        close: CloseIcon;
-    }
+    close: CloseIcon;
+}
 
+/**
+ * Close icon options.
+ */
+export interface CloseIcon {
     /**
-     * Close icon options.
+     * Icon's URL.
      */
-    export interface CloseIcon {
-        /**
-         * Icon's URL.
-         */
-        icon: string;
-    }
+    icon: string;
+}
 
-    export interface ContentOptions {
-        confirmButton: ConfirmButton;
-        cancelButton: ConfirmButton;
-        text: string;
-    }
+export interface ContentOptions {
+    confirmButton: ConfirmButton;
+    cancelButton: ConfirmButton;
+    text: string;
+}
 
-    export interface ConfirmButton {
-        value: string;
-        callback: Function;
-        context?: RowEditToolbar|CellEditToolbar;
-    }
+export interface ConfirmButton {
+    value: string;
+    callback: Function;
+    context?: RowEditToolbar|CellEditToolbar;
+}
 
-    export interface CancelButton{
-        value: string;
-        callback: Function;
-    }
+export interface CancelButton{
+    value: string;
+    callback: Function;
 }
 
 export default ConfirmationPopup;

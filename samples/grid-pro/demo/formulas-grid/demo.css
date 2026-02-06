@@ -25,10 +25,6 @@ body {
     :root {
         --anchor-color: #8ec3fc;
     }
-
-    .highcharts-data-label > span {
-        color: #fff !important;
-    }
 }
 
 .highcharts-dark {
@@ -47,11 +43,6 @@ body {
     color: var(--anchor-color);
 }
 
-.highcharts-data-label > span,
-.highcharts-light .highcharts-data-label > span {
-    color: #000 !important;
-}
-
-.highcharts-dark .highcharts-data-label > span {
-    color: #fff !important;
+.spark-label {
+    color: var(--hcg-color);
 }

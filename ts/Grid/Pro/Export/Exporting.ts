@@ -2,11 +2,11 @@
  *
  *  Grid Exporting class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Karol Kolodziej
@@ -23,15 +23,15 @@
 
 import type Grid from '../../Core/Grid';
 import type { ExportingOptions } from '../../Core/Options';
-import type DataTable from '../../../Data/DataTable';
+import type { CellType as DataTableCellType } from '../../../Data/DataTable';
 import type { ColumnDataType } from '../../Core/Table/Column';
 
-import DownloadURL from '../../../Shared/DownloadURL.js';
+import {
+    downloadURL,
+    getBlobFromContent
+} from '../../../Shared/DownloadURL.js';
 import U from '../../../Core/Utilities.js';
-
-const { downloadURL, getBlobFromContent } = DownloadURL;
 const { defined } = U;
-
 
 /* *
  *
@@ -166,7 +166,7 @@ class Exporting {
         const columnIds = grid.enabledColumns ?? [];
         const columnsCount = columnIds?.length;
         const csvRows: string[] = [];
-        const rowArray: DataTable.CellType[][] = [];
+        const rowArray: DataTableCellType[][] = [];
 
         // Add the names as the first row if they should be exported
         if (exportNames) {
@@ -177,23 +177,23 @@ class Exporting {
 
         const typeParser = (
             type: ColumnDataType
-        ): ((val: DataTable.CellType) => string) => {
+        ): ((val: DataTableCellType) => string) => {
             switch (type) {
                 case 'number':
                 case 'datetime':
-                    return (val: DataTable.CellType): string => (
+                    return (val: DataTableCellType): string => (
                         defined(val) ?
                             String(val).replace('.', decimalPoint) :
                             ''
                     );
                 case 'string':
-                    return (val: DataTable.CellType): string => (
+                    return (val: DataTableCellType): string => (
                         defined(val) ?
                             `"${val}"` :
                             ''
                     );
                 case 'boolean':
-                    return (val: DataTable.CellType): string => (
+                    return (val: DataTableCellType): string => (
                         defined(val) ?
                             (val ? 'TRUE' : 'FALSE') :
                             ''

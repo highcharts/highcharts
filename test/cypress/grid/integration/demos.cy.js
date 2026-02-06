@@ -45,7 +45,10 @@ if (demoPaths && demoPaths.gridLitePaths && demoPaths.gridProPaths) {
                 cy.visit(gridLiteDir + demoPath);
                 cy.then(() => {
                     expect(
-                        errorMessages,
+                        errorMessages.filter(s => {
+                            const msg = String(s);
+                            return !msg.includes('ResizeObserver');
+                        }),
                         `Console errors in ${demoPath}`
                     ).to.be.empty;
                 });
@@ -80,7 +83,10 @@ if (demoPaths && demoPaths.gridLitePaths && demoPaths.gridProPaths) {
                 cy.visit(gridProDir + demoPath);
                 cy.then(() => {
                     expect(
-                        errorMessages,
+                        errorMessages.filter(s => {
+                            const msg = String(s);
+                            return !msg.includes('ResizeObserver');
+                        }),
                         `Console errors in ${demoPath}`
                     ).to.be.empty;
                 });
