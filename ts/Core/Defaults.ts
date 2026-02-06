@@ -96,8 +96,8 @@ const defaultOptions: DefaultOptions = {
      *
      * @type    {Array<(Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject)>}
      * @default undefined
+     * @apioption colors
      */
-    colors: void 0,
 
     /**
      * Styled mode only. Configuration object for adding SVG definitions for
