@@ -17,6 +17,8 @@ const QUNIT_SCRIPT = join('tests', 'qunit', 'vendor', `qunit-${QUNIT_VERSION}.js
 const QUNIT_STYLES = join('tests', 'qunit', 'vendor', `qunit-${QUNIT_VERSION}.css`);
 
 test.describe('QUnit tests', () => {
+    const pathEnv = process.env.QUNIT_TEST_PATH ?? 'unit-tests/*/*';
+
     test.describe.configure({
         timeout: 30_000,
         retries: 1 // retry once
@@ -25,7 +27,7 @@ test.describe('QUnit tests', () => {
     // Set up page in advance to share browser between tests
     // which saves setup time for each test
     let page: Page;
-    
+
     // Track test results for summary
     const testResults = {
         passed: 0,
@@ -71,7 +73,7 @@ test.describe('QUnit tests', () => {
 
         await page.evaluate(() => {
             const qunit = window.QUnit;
-            
+
             qunit.testStart(() => {
                 if (window.Highcharts) {
                     window.Highcharts.setOptions({
@@ -101,12 +103,12 @@ test.describe('QUnit tests', () => {
             const testScript = document.querySelector('#test-script');
             if (testScript) testScript.remove();
         });
-        
+
         // Clear all error capture data
         await clearErrorCapture(page);
     });
 
-    const unitTests = glob.sync('samples/unit-tests/**/demo.{js,mjs,ts}', {
+    const unitTests = glob.sync(`samples/${pathEnv}/demo.{js,mjs,ts}`, {
         absolute: true,
         posix: true,
         nodir: true,
@@ -118,7 +120,7 @@ test.describe('QUnit tests', () => {
         test(qunitTest + '', async () =>{
             const testStartTime = Date.now();
             const sample = getSample(dirname(qunitTest));
-            
+
             if (sample.script && qunitTest.endsWith('.ts')) {
                 sample.script = transpileTS(sample.script);
             }
@@ -135,11 +137,11 @@ test.describe('QUnit tests', () => {
             await setupEnhancedQUnitCallbacks(page);
 
             const scriptLoadStart = Date.now();
-            
+
             try {
                 // Load script with timeout handling
-                const scriptPromise = page.addScriptTag({ 
-                    content: sample.script 
+                const scriptPromise = page.addScriptTag({
+                    content: sample.script
                 });
                 const script = await waitForScriptLoadWithTimeout(
                     page,
@@ -154,69 +156,69 @@ test.describe('QUnit tests', () => {
 
                 // Wait for QUnit results with enhanced timeout handling
                 const results = await waitForQUnitWithTimeout(
-                    page, 
-                    qunitTest, 
+                    page,
+                    qunitTest,
                     30000
                 );
-                
+
                 const { failed, total } = await (results as any).jsonValue();
 
                 if (Number(failed) > 0){
                     // Track failed test
                     testResults.failed++;
-                    
+
                     // Capture comprehensive error details
                     const errorDetails = await captureQUnitErrorDetails(
-                        page, 
+                        page,
                         qunitTest
                     );
                     const scriptLoadTime = scriptLoadEnd - scriptLoadStart;
                     errorDetails.timing.scriptLoad = scriptLoadTime;
                     errorDetails.timing.total = Date.now() - testStartTime;
-                    
+
                     // Create formatted error output
                     const detailedError = formatQUnitErrorDetails(errorDetails);
-                    
+
                     // Fail the Playwright test with the detailed error message
                     // Don't use expect() to avoid duplicated output
                     throw new Error(detailedError);
                 } else {
                     // Track passed test
                     testResults.passed++;
-                    
+
                     // Log success output only in verbose mode
                     const outputConfig = getOutputConfig();
                     if (outputConfig.verbose) {
                         const testExecutionTime = Date.now() - testStartTime;
                         const verboseOutput = createVerbosePassedOutput(
-                            qunitTest, 
-                            Number(total), 
+                            qunitTest,
+                            Number(total),
                             testExecutionTime
                         );
                         console.log(verboseOutput);
                     }
                     // Non-verbose mode: no output for passing tests
                 }
-                
+
             } catch (error) {
                 // Handle timeout errors with enhanced diagnostics
                 if (error && typeof error === 'object' && 'context' in error) {
                     const timeoutError = error as TimeoutError;
-                    
+
                     // Attempt recovery
                     const recovery = await attemptTimeoutRecovery(
-                        page, 
+                        page,
                         timeoutError
                     );
-                    
+
                     let errorMessage = `⏰ Timeout Error in ${timeoutError.context.phase}:\n`;
                     errorMessage += `Test: ${qunitTest}\n`;
                     errorMessage += `Timeout: ${timeoutError.context.timeout}ms\n`;
                     errorMessage += `Recovery: ${recovery.message}\n\n`;
                     errorMessage += timeoutError.message;
-                    
+
                     console.error(errorMessage);
-                    
+
                     if (recovery.recovered) {
                         // If recovery was successful, try to get results
                         try {
@@ -226,14 +228,14 @@ test.describe('QUnit tests', () => {
                             if (results && results.failed === 0) {
                                 // Track recovered test as passed
                                 testResults.passed++;
-                                
+
                                 const outputConfig = getOutputConfig();
                                 if (outputConfig.verbose) {
                                     const timing = Date.now() - testStartTime;
-                                    const verboseOutput = 
+                                    const verboseOutput =
                                         createVerbosePassedOutput(
-                                            qunitTest, 
-                                            results.total, 
+                                            qunitTest,
+                                            results.total,
                                             timing
                                         );
                                     const recoveredMsg = `🔄 Recovered: ${verboseOutput}`;
@@ -246,7 +248,7 @@ test.describe('QUnit tests', () => {
                             // Recovery didn't work, fall through to error
                         }
                     }
-                    
+
                     // Track failed test
                     testResults.failed++;
                     throw new Error(errorMessage);

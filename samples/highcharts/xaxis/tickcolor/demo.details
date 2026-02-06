@@ -1,6 +1,4 @@
 ---
- name: Demo of xAxis.tickColor
- authors:
-   - Torstein Hønsi
- js_wrap: b
+name: Demo of xAxis.tickColor
+js_wrap: b
 ...

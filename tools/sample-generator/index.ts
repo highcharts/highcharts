@@ -13,6 +13,7 @@
 
 import type {
     ControlOptions,
+    Details,
     SampleGeneratorConfig
 } from './generator-config.d.ts';
 
@@ -25,7 +26,8 @@ import { fileURLToPath } from 'url';
 import { loadExportedTypes } from './load-types.ts';
 import config from './config-example.ts';
 
-// Import Highcharts and modules so that we can read default options
+// Import Highcharts and modules so that we can read default options. If this
+// import fails, run `gulp scripts` first.
 import Highcharts from '../../code/esm/highcharts.src.js';
 import '../../code/esm/highcharts-more.src.js';
 import '../../code/esm/highcharts-3d.src.js';
@@ -280,9 +282,9 @@ async function generateChartConfig(
     }
 
     if (config.dataFile) {
-        Highcharts.merge(true, chartOptions, {
-            series: [{ data: 'data' }]
-        });
+        chartOptions.series ||= [];
+        chartOptions.series[0] ||= {};
+        chartOptions.series[0].data = 'data';
     }
 
     for (const { defaultValue, path, overrideValue } of metaList) {
@@ -357,8 +359,8 @@ async function getPathMeta(config: SampleGeneratorConfig): Promise<MetaList> {
         }
         const node = await findNodeByPath(path);
         if (!node) {
-            console.warn(colors.yellow(
-                `No node found for path: ${path}, ` +
+            console.log(colors.gray(
+                `  - ${path} not found in tree.json, ` +
                 'trying to build control anyway.'
             ));
             // continue;
@@ -898,6 +900,119 @@ export async function getDemoTS(
     return ts;
 }
 
+/**
+ * Convert a plain JS object into a simple YAML string.
+ * Supports: objects, arrays, strings, numbers, booleans, null.
+ * (No anchors/refs, no fancy YAML types.)
+ *
+ * @param {object} value The JavaScript object to convert to YAML.
+ */
+function objectToYml(value: unknown): string {
+    const isPlainObject = (v: unknown): v is Record<string, unknown> =>
+        !!v && typeof v === 'object' && !Array.isArray(v);
+
+    const quote = (s: string) => {
+        // Quote when empty, contains special chars, leading/trailing
+        // whitespace, or could be misread as YAML boolean/null/number-ish.
+        const needsQuotes =
+            s === '' ||
+            /^\s|\s$/u.test(s) ||
+            /[:\-[\]{},#&*!|>'"%@`]/u.test(s) ||
+            /\n/u.test(s) ||
+            /^(true|false|null|~|yes|no|on|off)$/iu.test(s) ||
+            /^[-+]?\d+(\.\d+)?$/u.test(s);
+
+        if (!needsQuotes) {
+            return s;
+        }
+        // Use double-quotes and escape backslash and quotes + newlines
+        return `"${s
+            .replace(/\\/gu, '\\\\')
+            .replace(/"/gu, '\\"')
+            .replace(/\n/gu, '\\n')}"`;
+    };
+
+    const scalarToYml = (v: unknown): string => {
+        if (v === null) {
+            return 'null';
+        }
+        if (v === void 0) {
+            return 'null';
+        }
+        if (typeof v === 'string') {
+            return quote(v);
+        }
+        if (typeof v === 'number') {
+            return Number.isFinite(v) ? String(v) : quote(String(v));
+        }
+        if (typeof v === 'boolean') {
+            return v ? 'true' : 'false';
+        }
+        // Fallback: stringify unknowns as strings
+        return quote(String(v));
+    };
+
+    const indentStr = (n: number) => '  '.repeat(n);
+
+    const render = (v: unknown, indent: number): string => {
+        if (Array.isArray(v)) {
+            if (v.length === 0) {
+                return '[]';
+            }
+            return v
+                .map(item => {
+                    if (Array.isArray(item) || isPlainObject(item)) {
+                        if (isPlainObject(item) && item.key) {
+                            // Special case for details.yml, where we want to
+                            // keep the "key: value" structure on the same line,
+                            // and put the rest of the object on the next line
+                            const { key, ...rest } = item as any;
+                            const inner = render(rest, indent + 1);
+                            return `${indentStr(indent)}- ${key}:\n${inner}`;
+                        }
+                        const inner = render(item, indent + 1);
+                        // Put complex item on next line
+                        return `${indentStr(indent)}- ${
+                            inner.includes('\n') ?
+                                '\n' + inner :
+                                inner
+                        }`;
+                    }
+                    return `${indentStr(indent)}- ${scalarToYml(item)}`;
+                })
+                .join('\n');
+        }
+
+        if (isPlainObject(v)) {
+            const entries = Object.entries(v);
+            if (entries.length === 0) {
+                return '{}';
+            }
+
+            return entries
+                .map(([k, val]) => {
+                    const key = quote(k)
+                        // Keep keys mostly bare, still safe-ish
+                        .replace(/^"|"$/gu, '');
+                    if (Array.isArray(val) || isPlainObject(val)) {
+                        const inner = render(val, indent + 1);
+                        return `${indentStr(indent)}${key}:\n${inner}`;
+                    }
+                    return `${
+                        indentStr(indent)
+                    }${key}: ${scalarToYml(val)}`;
+                })
+                .join('\n');
+        }
+
+        return `${indentStr(indent)}${scalarToYml(v)}`;
+    };
+
+    return '---\n' + render(value, 0) + '\n...';
+
+}
+
+
 // Function to get CSS from template
 export async function getDemoCSS(config: SampleGeneratorConfig) {
     let css = await loadTemplate('demo.css');
@@ -909,21 +1024,25 @@ export async function getDemoCSS(config: SampleGeneratorConfig) {
     return css;
 }
 
-export async function getDemoDetails(config: SampleGeneratorConfig) {
-    let details = await loadTemplate('demo.details');
-
+function getDemoDetails(config: SampleGeneratorConfig): string {
     const paths = config.controls ?
         config.controls
             .filter(control => control.inTitle !== false)
             .map(control => control.path) :
         config.paths || [];
 
-    details = details
-        .replace('Highcharts Demo', generateTitle(paths))
-        .replace(/<em>/gu, '')
-        .replace(/<\/em>/gu, '');
+    const details: Details = Highcharts.merge({
+        name: generateTitle(paths)
+            .replace(/<em>/gu, '')
+            .replace(/<\/em>/gu, ''),
+        /* eslint-disable-next-line camelcase */
+        js_wrap: 'b'
+    }, config.details || {});
 
-    return details;
+    // Convert to YML
+    const detailsYml = objectToYml(details);
+
+    return detailsYml;
 }
 
 // Function to save the generated configuration to Highcharts Samples
@@ -974,12 +1093,12 @@ export async function saveDemoFile(config: SampleGeneratorConfig) {
     }
 
     // Build all assets in parallel based on per-path mainTypes
-    const [html, css, ts, details] = await Promise.all([
+    const [html, css, ts] = await Promise.all([
         getDemoHTML(config, metaList),
         getDemoCSS(config),
-        getDemoTS(config, metaList),
-        getDemoDetails(config)
+        getDemoTS(config, metaList)
     ]);
+    const details = getDemoDetails(config);
 
     const outputDir = join(
         dirname(fileURLToPath(import.meta.url)),

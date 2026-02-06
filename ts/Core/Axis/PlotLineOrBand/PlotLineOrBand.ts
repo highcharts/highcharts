@@ -449,9 +449,9 @@ class PlotLineOrBand {
                                         axis.top
                                     ) : (
                                         optionsLabel.clip ?
-                                            axis.width :
+                                            (axis.width + axis.left) :
                                             axis.chart.chartWidth
-                                    ) - (label.alignAttr.x - axis.left)
+                                    ) - label.alignAttr.x
                             ) :
                             bBoxWidth
                     )

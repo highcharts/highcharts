@@ -276,6 +276,14 @@ QUnit.test('General tests', function (assert) {
                         textAlign: 'left',
                         text: 'label'
                     }
+                }, {
+                    value: 12000,
+                    color: 'red',
+                    label: {
+                        clip: true,
+                        // eslint-disable-next-line max-len
+                        text: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. '
+                    }
                 }
             ]
         },
@@ -340,6 +348,16 @@ QUnit.test('General tests', function (assert) {
         area #15777.`
     );
 
+    var longLabelPlotLine = chart.yAxis[0].plotLinesAndBands[2],
+        longLabel = longLabelPlotLine.label,
+        labelRight = longLabel.alignAttr.x + longLabel.getBBox().width,
+        plotRight = chart.plotLeft + chart.plotWidth;
+
+    assert.ok(
+        labelRight <= plotRight,
+        'Plot line label with clip: true should not extend beyond plot area ' +
+        'right edge #22758.'
+    );
 
     // Radial Axes plot lines
     var plotLineValue = 27,
