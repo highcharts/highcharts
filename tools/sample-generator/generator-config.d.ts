@@ -58,7 +58,14 @@ export interface Details {
     /** Whether the sample requires manual testing */
     requiresManualTesting?: boolean;
     /** Additional tags for the demo, used in the generated sample details */
-    tags?: ('Highcharts demo')[];
+    tags?: (
+        'Highcharts Dashboards demo' |
+        'Highcharts demo' |
+        'Highcharts Gantt demo' |
+        'Highcharts Grid demo' |
+        'Highcharts Maps demo' |
+        'Highcharts Stock demo'
+    )[];
     /**
      * Whether to use a PNG thumbnail instead of an SVG thumbnail in the demo
      * page
