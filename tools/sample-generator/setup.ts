@@ -110,6 +110,7 @@ function addChildren(node: any) {
                 .map((n: string) => n.slice(1, -1));
             if (opts.length) {
                 options = opts;
+                mainType = void 0;
             }
         }
 

@@ -62,7 +62,6 @@
   },
   {
     "name": "accessibility.keyboardNavigation.seriesNavigation.mode",
-    "mainType": "\"normal\"",
     "options": [
       "normal",
       "serialize"
@@ -773,7 +772,6 @@
   },
   {
     "name": "annotations.types.measure.typeOptions.crosshairY.markerEnd",
-    "mainType": "\"none\"",
     "options": [
       "none",
       "arrow"
@@ -1237,7 +1235,6 @@
   },
   {
     "name": "chart.options3d.axisLabelPosition",
-    "mainType": "\"auto\"",
     "options": [
       "auto"
     ],
@@ -1277,7 +1274,6 @@
   },
   {
     "name": "chart.options3d.frame.bottom.visible",
-    "mainType": "boolean",
     "options": [
       "default",
       "auto"
@@ -1324,7 +1320,6 @@
   },
   {
     "name": "chart.panKey",
-    "mainType": "\"alt\"",
     "options": [
       "alt",
       "ctrl",
@@ -1339,7 +1334,6 @@
   },
   {
     "name": "chart.panning.type",
-    "mainType": "\"x\"",
     "options": [
       "x",
       "y",
@@ -1398,7 +1392,6 @@
   },
   {
     "name": "chart.pinchType",
-    "mainType": "\"x\"",
     "options": [
       "x",
       "y",
@@ -1553,7 +1546,6 @@
   },
   {
     "name": "chart.zoomKey",
-    "mainType": "\"alt\"",
     "options": [
       "alt",
       "ctrl",
@@ -1563,7 +1555,6 @@
   },
   {
     "name": "chart.zoomType",
-    "mainType": "\"x\"",
     "options": [
       "x",
       "y",
@@ -1572,7 +1563,6 @@
   },
   {
     "name": "chart.zooming.key",
-    "mainType": "\"alt\"",
     "options": [
       "alt",
       "ctrl",
@@ -1594,7 +1584,6 @@
   },
   {
     "name": "chart.zooming.mouseWheel.type",
-    "mainType": "\"x\"",
     "options": [
       "x",
       "y",
@@ -1603,7 +1592,6 @@
   },
   {
     "name": "chart.zooming.pinchType",
-    "mainType": "\"x\"",
     "options": [
       "x",
       "y",
@@ -1638,7 +1626,6 @@
   },
   {
     "name": "chart.zooming.type",
-    "mainType": "\"x\"",
     "options": [
       "x",
       "y",
@@ -1651,7 +1638,6 @@
   },
   {
     "name": "colorAxis.dataClassColor",
-    "mainType": "\"tween\"",
     "options": [
       "tween",
       "category"
@@ -1988,7 +1974,6 @@
   },
   {
     "name": "data.dateFormat",
-    "mainType": "\"YYYY/mm/dd\"",
     "options": [
       "YYYY/mm/dd",
       "dd/mm/YYYY",
@@ -2265,7 +2250,6 @@
   },
   {
     "name": "exporting.buttons.contextButton.symbol",
-    "mainType": "SymbolKeyValue",
     "options": [
       "menu",
       "menuball"
@@ -6991,7 +6975,6 @@
   },
   {
     "name": "plotOptions.flags.onKey",
-    "mainType": "\"y\"",
     "options": [
       "y",
       "open",
@@ -7693,7 +7676,6 @@
   },
   {
     "name": "plotOptions.histogram.binsNumber",
-    "mainType": "\"square-root\"",
     "options": [
       "square-root",
       "sturges",
@@ -7754,7 +7736,6 @@
   },
   {
     "name": "plotOptions.hlc.pointValKey",
-    "mainType": "\"high\"",
     "options": [
       "high",
       "low",
@@ -8518,7 +8499,6 @@
   },
   {
     "name": "plotOptions.networkgraph.layoutAlgorithm.approximation",
-    "mainType": "\"barnes-hut\"",
     "options": [
       "barnes-hut",
       "none"
@@ -8551,7 +8531,6 @@
   },
   {
     "name": "plotOptions.networkgraph.layoutAlgorithm.initialPositions",
-    "mainType": "\"circle\"",
     "options": [
       "circle",
       "random"
@@ -8560,7 +8539,6 @@
   },
   {
     "name": "plotOptions.networkgraph.layoutAlgorithm.integration",
-    "mainType": "\"euler\"",
     "options": [
       "euler",
       "verlet"
@@ -8887,7 +8865,6 @@
   },
   {
     "name": "plotOptions.packedbubble.layoutAlgorithm.initialPositions",
-    "mainType": "\"circle\"",
     "options": [
       "circle",
       "random"
@@ -9998,7 +9975,6 @@
   },
   {
     "name": "plotOptions.series.boostBlending",
-    "mainType": "\"add\"",
     "options": [
       "add",
       "multiply",
@@ -10043,7 +10019,6 @@
   },
   {
     "name": "plotOptions.series.compare",
-    "mainType": "\"percent\"",
     "options": [
       "percent",
       "value"
@@ -10213,7 +10188,6 @@
   },
   {
     "name": "plotOptions.series.dataLabels.filter.operator",
-    "mainType": "\">\"",
     "options": [
       ">",
       "<",
@@ -10494,7 +10468,6 @@
   },
   {
     "name": "plotOptions.series.gapUnit",
-    "mainType": "\"relative\"",
     "options": [
       "relative",
       "value"
@@ -10890,7 +10863,6 @@
   },
   {
     "name": "plotOptions.series.pointIntervalUnit",
-    "mainType": "\"day\"",
     "options": [
       "day",
       "month",
@@ -10972,7 +10944,6 @@
   },
   {
     "name": "plotOptions.series.stacking",
-    "mainType": "\"normal\"",
     "options": [
       "normal",
       "overlap",
@@ -11063,7 +11034,6 @@
   },
   {
     "name": "plotOptions.series.step",
-    "mainType": "\"left\"",
     "options": [
       "left",
       "center",
@@ -11184,7 +11154,6 @@
   },
   {
     "name": "plotOptions.solidgauge.linecap",
-    "mainType": "\"square\"",
     "options": [
       "square",
       "round"
@@ -11316,7 +11285,6 @@
   },
   {
     "name": "plotOptions.sunburst.dataLabels.rotationMode",
-    "mainType": "\"auto\"",
     "options": [
       "auto",
       "perpendicular",
@@ -12069,7 +12037,6 @@
   },
   {
     "name": "plotOptions.treemap.levels.layoutAlgorithm",
-    "mainType": "\"sliceAndDice\"",
     "options": [
       "sliceAndDice",
       "stripes",
@@ -12079,7 +12046,6 @@
   },
   {
     "name": "plotOptions.treemap.levels.layoutStartingDirection",
-    "mainType": "\"vertical\"",
     "options": [
       "vertical",
       "horizontal"
@@ -12091,7 +12057,6 @@
   },
   {
     "name": "plotOptions.treemap.nodeSizeBy",
-    "mainType": "\"group\"",
     "options": [
       "group",
       "leaf"
@@ -13976,7 +13941,6 @@
   },
   {
     "name": "series.map.data.geometry.type",
-    "mainType": "\"LineString\"",
     "options": [
       "LineString",
       "Polygon",
@@ -14957,7 +14921,6 @@
   },
   {
     "name": "sonification.defaultInstrumentOptions.mapping.time.mapFunction",
-    "mainType": "\"linear\"",
     "options": [
       "linear",
       "logarithmic"
@@ -14981,7 +14944,6 @@
   },
   {
     "name": "sonification.defaultInstrumentOptions.mapping.time.within",
-    "mainType": "\"chart\"",
     "options": [
       "chart",
       "series",
@@ -15020,7 +14982,6 @@
   },
   {
     "name": "sonification.defaultInstrumentOptions.type",
-    "mainType": "\"instrument\"",
     "options": [
       "instrument",
       "speech"
@@ -15090,7 +15051,6 @@
   },
   {
     "name": "sonification.defaultSpeechOptions.type",
-    "mainType": "\"instrument\"",
     "options": [
       "instrument",
       "speech"
@@ -15156,7 +15116,6 @@
   },
   {
     "name": "sonification.globalContextTracks.valueMapFunction",
-    "mainType": "\"linear\"",
     "options": [
       "linear",
       "logarithmic"
@@ -15191,7 +15150,6 @@
   },
   {
     "name": "sonification.order",
-    "mainType": "\"sequential\"",
     "options": [
       "sequential",
       "simultaneous"
@@ -15200,7 +15158,6 @@
   },
   {
     "name": "sonification.pointGrouping.algorithm",
-    "mainType": "\"minmax\"",
     "options": [
       "minmax",
       "first",
@@ -15786,7 +15743,6 @@
   },
   {
     "name": "tooltip.position.relativeTo",
-    "mainType": "\"pane\"",
     "options": [
       "pane",
       "chart",
@@ -16171,7 +16127,6 @@
   },
   {
     "name": "xAxis.gridLineInterpolation",
-    "mainType": "\"circle\"",
     "options": [
       "circle",
       "polygon"
@@ -16802,7 +16757,6 @@
   },
   {
     "name": "xAxis.title.position3d",
-    "mainType": "\"offset\"",
     "options": [
       "offset",
       "chart",
