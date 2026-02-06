@@ -57,6 +57,11 @@ class RowsVirtualizer {
     public rowCursor = 0;
 
     /**
+     * Start index of the scrollable row segment in the presentation table.
+     */
+    public rowStartIndex = 0;
+
+    /**
      * The viewport (table) of the data grid.
      */
     public readonly viewport: Table;
@@ -202,6 +207,7 @@ class RowsVirtualizer {
         this.buffer = Math.max(this.rowSettings.bufferSize as number, 0);
         this.defaultRowHeight = this.getDefaultRowHeight();
         this.maxElementHeight = RowsVirtualizer.getMaxElementHeight();
+        this.rowCursor = this.rowStartIndex;
 
         if (this.strictRowHeights) {
             viewport.tbodyElement.classList.add(
@@ -227,6 +233,7 @@ class RowsVirtualizer {
         }
 
         this.updateGridMetrics();
+        this.viewport.renderPinnedRows();
 
         // Load & render rows
         this.renderRows(this.rowCursor);
@@ -243,6 +250,7 @@ class RowsVirtualizer {
      */
     public rerender(): void {
         this.updateGridMetrics();
+        this.viewport.renderPinnedRows();
 
         const tbody = this.viewport.tbodyElement;
         let rows = this.viewport.rows;
@@ -332,8 +340,14 @@ class RowsVirtualizer {
             (target.scrollTop / rowHeight) +
             (this.scrollOffset / rowHeight)
         );
-        const maxRowCursor = Math.max(0, this.rowCount - 1);
-        rowCursor = Math.min(rowCursor, maxRowCursor);
+        const maxRowCursor = Math.max(
+            this.rowStartIndex,
+            this.rowStartIndex + this.rowCount - 1
+        );
+        rowCursor = Math.min(
+            this.rowStartIndex + rowCursor,
+            maxRowCursor
+        );
         if (this.rowCursor !== rowCursor) {
             this.renderRows(rowCursor);
         }
@@ -397,6 +411,8 @@ class RowsVirtualizer {
         const { viewport: vp, buffer } = this;
         this.updateGridMetrics();
         const rowCount = this.rowCount;
+        const rowStart = this.rowStartIndex;
+        const rowEnd = rowStart + rowCount - 1;
         const isVirtualization = this.viewport.virtualRows;
 
         if (isVirtualization && vp.grid.popups.size) {
@@ -428,7 +444,7 @@ class RowsVirtualizer {
         }
 
         if (!rows.length) {
-            const last = new TableRow(vp, rowCount - 1);
+            const last = new TableRow(vp, rowEnd);
             vp.tbodyElement.appendChild(last.htmlElement);
             last.render();
             rows.push(last);
@@ -443,9 +459,9 @@ class RowsVirtualizer {
             }
         }
 
-        const from = Math.max(0, Math.min(
+        const from = Math.max(rowStart, Math.min(
             rowCursor - buffer,
-            rowCount - rowsPerPage
+            rowEnd - rowsPerPage + 1
         ));
         const to = Math.min(
             rowCursor + rowsPerPage + buffer,
@@ -568,7 +584,7 @@ class RowsVirtualizer {
             (!vp.focusCursor || !vp.focusAnchorCell?.row.rendered) &&
             rows.length > 0
         ) {
-            const rowIndex = rowCursor - rows[0].index;
+            const rowIndex = Math.max(0, rowCursor - rows[0].index);
             if (rows[rowIndex]) {
                 vp.setFocusAnchorCell(rows[rowIndex].cells[0]);
             }
@@ -628,7 +644,8 @@ class RowsVirtualizer {
                 const newHeight = Math.floor(
                     cellHeight - (cellHeight - defaultH) * (
                         tbodyElement.scrollTop / defaultH - Math.floor(
-                            cursor - this.scrollOffset / defaultH
+                            (cursor - this.rowStartIndex) -
+                            this.scrollOffset / defaultH
                         )
                     )
                 );
@@ -752,11 +769,18 @@ class RowsVirtualizer {
      * overflow-aware scrolling.
      */
     private updateGridMetrics(): void {
-        this.rowCount = this.viewport.dataTable.getRowCount();
+        const rowPinningMeta = this.viewport.grid.rowPinningMeta;
+        this.rowStartIndex = rowPinningMeta?.topCount || 0;
+        this.rowCount = rowPinningMeta?.scrollableCount ??
+            this.viewport.dataTable.getRowCount();
         this.totalGridHeight = this.rowCount * this.defaultRowHeight;
         this.gridHeightOverflow = Math.max(
             this.totalGridHeight - this.maxElementHeight,
             0
+        );
+        this.rowCursor = Math.min(
+            Math.max(this.rowCursor, this.rowStartIndex),
+            Math.max(this.rowStartIndex, this.rowStartIndex + this.rowCount - 1)
         );
     }
 

@@ -23,13 +23,17 @@
  * */
 
 import type DataTable from '../../../Data/DataTable.js';
+import type { CellType as DataTableCellType } from '../../../Data/DataTable.js';
+import type { RowObject as DataTableRowObject } from '../../../Data/DataTable.js';
 import type DataModifier from '../../../Data/Modifiers/DataModifier.js';
 import type Grid from '../Grid.js';
+import type RowPinningController from '../../Pro/RowPinning/RowPinningController.js';
 
 import ChainModifier from '../../../Data/Modifiers/ChainModifier.js';
 import SortingController from './SortingController.js';
 import FilteringController from './FilteringController.js';
 import PaginationController from './PaginationController.js';
+import DataTableClass from '../../../Data/DataTable.js';
 
 /* *
  *
@@ -155,6 +159,15 @@ class QueryingController {
             return;
         }
 
+        const rowPinning = (this.grid as {
+            rowPinning?: RowPinningController;
+        }).rowPinning;
+
+        if (rowPinning?.isEnabled()) {
+            await this.modifyDataWithRowPinning(originalDataTable, rowPinning);
+            return;
+        }
+
         const groupedModifiers = this.getGroupedModifiers();
         let interTable: DataTable;
 
@@ -178,7 +191,151 @@ class QueryingController {
         }
 
         this.grid.presentationTable = interTable;
+        delete this.grid.rowPinningMeta;
         this.shouldBeUpdated = false;
+    }
+
+    private async modifyDataWithRowPinning(
+        originalDataTable: DataTable,
+        rowPinning: RowPinningController
+    ): Promise<void> {
+        const groupedTable = await this.applyGroupedModifiers(
+            originalDataTable
+        );
+        const groupedOriginalIndexes = QueryingController.getOriginalIndexes(
+            groupedTable
+        );
+
+        const sortingActive = !!this.sorting.modifier;
+        const filteringActive = !!this.filtering.modifier;
+
+        let sortingOriginalIndexes: (number[]|undefined);
+        if (
+            sortingActive &&
+            filteringActive &&
+            rowPinning.isSortingIncluded() &&
+            !rowPinning.isFilteringIncluded()
+        ) {
+            sortingOriginalIndexes = QueryingController.getOriginalIndexes(
+                await this.applySortingOnlyModifier(originalDataTable)
+            );
+        }
+
+        const pinned = rowPinning.computePinnedState(originalDataTable, {
+            groupedOriginalIndexes,
+            sortingOriginalIndexes,
+            sortingActive,
+            filteringActive
+        });
+
+        const pinnedOriginalIndexSet = new Set<number>([
+            ...pinned.topOriginalIndexes,
+            ...pinned.bottomOriginalIndexes
+        ]);
+        const nonPinnedOriginalIndexes = groupedOriginalIndexes.filter((
+            idx
+        ): boolean => !pinnedOriginalIndexSet.has(idx));
+
+        let paginatedNonPinnedOriginalIndexes = nonPinnedOriginalIndexes;
+        const paginationModifier = this.pagination.createModifier(
+            nonPinnedOriginalIndexes.length
+        );
+        if (paginationModifier) {
+            const nonPinnedTable =
+                QueryingController.createTableFromOriginalIndexes(
+                    originalDataTable,
+                    nonPinnedOriginalIndexes
+                );
+            await paginationModifier.modify(nonPinnedTable);
+
+            paginatedNonPinnedOriginalIndexes =
+                QueryingController.getOriginalIndexes(
+                    nonPinnedTable.getModified()
+                );
+        }
+
+        const finalOriginalIndexes = [
+            ...pinned.topOriginalIndexes,
+            ...paginatedNonPinnedOriginalIndexes,
+            ...pinned.bottomOriginalIndexes
+        ];
+
+        this.grid.presentationTable =
+            QueryingController.createTableFromOriginalIndexes(
+                originalDataTable,
+                finalOriginalIndexes
+            );
+        this.grid.rowPinningMeta = {
+            topCount: pinned.topOriginalIndexes.length,
+            bottomCount: pinned.bottomOriginalIndexes.length,
+            scrollableCount: paginatedNonPinnedOriginalIndexes.length,
+            topRowIds: pinned.topRowIds.slice(),
+            bottomRowIds: pinned.bottomRowIds.slice()
+        };
+        this.shouldBeUpdated = false;
+    }
+
+    private async applyGroupedModifiers(
+        originalDataTable: DataTable
+    ): Promise<DataTable> {
+        const groupedModifiers = this.getGroupedModifiers();
+
+        if (!groupedModifiers.length) {
+            return originalDataTable.getModified();
+        }
+
+        const chainModifier = new ChainModifier({}, ...groupedModifiers);
+        const dataTableCopy = originalDataTable.clone();
+        await chainModifier.modify(dataTableCopy.getModified());
+        return dataTableCopy.getModified();
+    }
+
+    private async applySortingOnlyModifier(
+        originalDataTable: DataTable
+    ): Promise<DataTable> {
+        const sortingModifier = this.sorting.modifier;
+        if (!sortingModifier) {
+            return originalDataTable.getModified();
+        }
+
+        const tableCopy = originalDataTable.clone();
+        await sortingModifier.modify(tableCopy.getModified());
+        return tableCopy.getModified();
+    }
+
+    private static createTableFromOriginalIndexes(
+        originalDataTable: DataTable,
+        originalIndexes: number[]
+    ): DataTable {
+        const columnIds = originalDataTable.getColumnIds();
+        const columns: Record<string, DataTableCellType[]> = {};
+
+        for (const columnId of columnIds) {
+            columns[columnId] = [];
+        }
+
+        const table = new DataTableClass({
+            columns
+        });
+        const rows = originalIndexes.map((index): DataTableRowObject => (
+            originalDataTable.getRowObject(index, columnIds) || {}
+        ));
+
+        table.setRows(rows);
+        table.setOriginalRowIndexes(originalIndexes);
+
+        return table.getModified();
+    }
+
+    private static getOriginalIndexes(table: DataTable): number[] {
+        const result: number[] = [];
+        for (let i = 0, iEnd = table.getRowCount(); i < iEnd; ++i) {
+            const originalIndex = table.getOriginalRowIndex(i);
+            if (typeof originalIndex === 'number') {
+                result.push(originalIndex);
+            }
+        }
+        return result;
     }
 }
 

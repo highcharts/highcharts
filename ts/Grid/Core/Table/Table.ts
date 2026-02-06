@@ -22,7 +22,7 @@
  *
  * */
 
-import type TableRow from './Body/TableRow';
+import TableRow from './Body/TableRow.js';
 
 import GridUtils from '../GridUtils.js';
 import Utils from '../../../Core/Utilities.js';
@@ -94,6 +94,16 @@ class Table {
     public readonly tbodyElement: HTMLElement;
 
     /**
+     * The HTML element containing top pinned rows.
+     */
+    public readonly pinnedTopTbodyElement: HTMLElement;
+
+    /**
+     * The HTML element containing bottom pinned rows.
+     */
+    public readonly pinnedBottomTbodyElement: HTMLElement;
+
+    /**
      * The head of the table.
      */
     public header?: TableHeader;
@@ -107,6 +117,16 @@ class Table {
      * The visible rows of the table.
      */
     public rows: TableRow[] = [];
+
+    /**
+     * The rendered top pinned rows.
+     */
+    public pinnedTopRows: TableRow[] = [];
+
+    /**
+     * The rendered bottom pinned rows.
+     */
+    public pinnedBottomRows: TableRow[] = [];
 
     /**
      * The resize observer for the table container.
@@ -161,6 +181,11 @@ class Table {
      */
     private cellContextMenu?: CellContextMenu;
 
+    /**
+     * Whether pinned scrollbar compensation is queued for next frame.
+     */
+    private pinnedScrollbarCompensationQueued = false;
+
     /* *
     *
     *  Constructor
@@ -192,7 +217,20 @@ class Table {
         if (dgOptions?.rendering?.header?.enabled) {
             this.theadElement = makeHTMLElement('thead', {}, tableElement);
         }
+        this.pinnedTopTbodyElement = makeHTMLElement(
+            'tbody',
+            { className: Globals.getClassName('pinnedTopTbodyElement') },
+            tableElement
+        );
         this.tbodyElement = makeHTMLElement('tbody', {}, tableElement);
+        this.tbodyElement.classList.add(
+            Globals.getClassName('scrollableTbodyElement')
+        );
+        this.pinnedBottomTbodyElement = makeHTMLElement(
+            'tbody',
+            { className: Globals.getClassName('pinnedBottomTbodyElement') },
+            tableElement
+        );
 
         if (dgOptions?.rendering?.columns?.resizing?.enabled) {
             this.columnsResizer = new ColumnsResizer(this);
@@ -223,19 +261,9 @@ class Table {
         this.resizeObserver.observe(tableElement);
 
         this.tbodyElement.addEventListener('scroll', this.onScroll);
-        this.tbodyElement.addEventListener('focus', this.onTBodyFocus);
-
-        // Delegated cell events
-        this.tbodyElement.addEventListener('click', this.onCellClick);
-        this.tbodyElement.addEventListener('dblclick', this.onCellDblClick);
-        this.tbodyElement.addEventListener(
-            'contextmenu',
-            this.onCellContextMenu
-        );
-        this.tbodyElement.addEventListener('mousedown', this.onCellMouseDown);
-        this.tbodyElement.addEventListener('mouseover', this.onCellMouseOver);
-        this.tbodyElement.addEventListener('mouseout', this.onCellMouseOut);
-        this.tbodyElement.addEventListener('keydown', this.onCellKeyDown);
+        this.addBodyEventListeners(this.tbodyElement);
+        this.addBodyEventListeners(this.pinnedTopTbodyElement);
+        this.addBodyEventListeners(this.pinnedBottomTbodyElement);
     }
 
     /* *
@@ -262,8 +290,33 @@ class Table {
         // this.footer = new TableFooter(this);
         // this.footer.render();
 
+        // Ensure row widths are ready before first row render to prevent
+        // initial pinned-row misalignment.
+        this.columnResizing.reflow();
         this.rowsVirtualizer.initialRender();
         fireEvent(this, 'afterInit');
+    }
+
+    private addBodyEventListeners(body: HTMLElement): void {
+        body.addEventListener('focus', this.onTBodyFocus);
+        body.addEventListener('click', this.onCellClick);
+        body.addEventListener('dblclick', this.onCellDblClick);
+        body.addEventListener('contextmenu', this.onCellContextMenu);
+        body.addEventListener('mousedown', this.onCellMouseDown);
+        body.addEventListener('mouseover', this.onCellMouseOver);
+        body.addEventListener('mouseout', this.onCellMouseOut);
+        body.addEventListener('keydown', this.onCellKeyDown);
+    }
+
+    private removeBodyEventListeners(body: HTMLElement): void {
+        body.removeEventListener('focus', this.onTBodyFocus);
+        body.removeEventListener('click', this.onCellClick);
+        body.removeEventListener('dblclick', this.onCellDblClick);
+        body.removeEventListener('contextmenu', this.onCellContextMenu);
+        body.removeEventListener('mousedown', this.onCellMouseDown);
+        body.removeEventListener('mouseover', this.onCellMouseOver);
+        body.removeEventListener('mouseout', this.onCellMouseOut);
+        body.removeEventListener('keydown', this.onCellKeyDown);
     }
 
     /**
@@ -297,9 +350,10 @@ class Table {
             return rows.virtualization;
         }
 
-        // Consider changing this to use the presentation table row count
-        // instead of the original data table row count.
-        const rowCount = Number(grid.dataTable?.rowCount);
+        const rowCount = Number(
+            grid.rowPinningMeta?.scrollableCount ??
+            grid.dataTable?.rowCount
+        );
         const threshold = rows?.virtualizationThreshold ?? 50;
 
         if (grid.pagination) {
@@ -335,6 +389,7 @@ class Table {
     public async updateRows(): Promise<void> {
         const vp = this;
         let focusedRowId: number | undefined;
+        const oldPinningMeta = vp.grid.rowPinningMeta;
         if (vp.focusCursor) {
             focusedRowId = vp.dataTable.getOriginalRowIndex(vp.focusCursor[0]);
         }
@@ -343,7 +398,10 @@ class Table {
 
         // Update data
         const oldRowsCount = (vp.rows[vp.rows.length - 1]?.index ?? -1) + 1;
-        await vp.grid.querying.proceed();
+        const forceQuerying = !!(vp.grid as {
+            rowPinning?: { isEnabled(): boolean };
+        }).rowPinning?.isEnabled();
+        await vp.grid.querying.proceed(forceQuerying);
         vp.dataTable = vp.grid.presentationTable as DataTable;
         for (const column of vp.columns) {
             column.loadData();
@@ -352,12 +410,26 @@ class Table {
         // Update virtualization if needed
         const shouldVirtualize = this.shouldVirtualizeRows();
         let shouldRerender = false;
+        const newPinningMeta = vp.grid.rowPinningMeta;
+        const pinningMetaChanged = (
+            oldPinningMeta?.topCount !== newPinningMeta?.topCount ||
+            oldPinningMeta?.bottomCount !== newPinningMeta?.bottomCount ||
+            oldPinningMeta?.scrollableCount !==
+                newPinningMeta?.scrollableCount ||
+            oldPinningMeta?.topRowIds.join('|') !==
+                newPinningMeta?.topRowIds.join('|') ||
+            oldPinningMeta?.bottomRowIds.join('|') !==
+                newPinningMeta?.bottomRowIds.join('|')
+        );
         if (this.virtualRows !== shouldVirtualize) {
             this.virtualRows = shouldVirtualize;
             vp.tableElement.classList.toggle(
                 Globals.getClassName('virtualization'),
                 shouldVirtualize
             );
+            shouldRerender = true;
+        }
+        if (pinningMetaChanged) {
             shouldRerender = true;
         }
 
@@ -387,9 +459,8 @@ class Table {
                     if (!defined(vp.focusCursor?.[1])) {
                         return;
                     }
-                    vp.rows[
-                        newRowIndex - vp.rows[0].index
-                    ]?.cells[vp.focusCursor[1]].htmlElement.focus();
+                    vp.getRenderedRowByIndex(newRowIndex)
+                        ?.cells[vp.focusCursor[1]].htmlElement.focus();
                 });
             }
         }
@@ -411,6 +482,15 @@ class Table {
 
         // Reflow rows content dimensions
         this.rowsVirtualizer.reflowRows();
+        for (let i = 0, iEnd = this.pinnedTopRows.length; i < iEnd; ++i) {
+            this.pinnedTopRows[i].reflow();
+        }
+        for (let i = 0, iEnd = this.pinnedBottomRows.length; i < iEnd; ++i) {
+            this.pinnedBottomRows[i].reflow();
+        }
+        this.applyPinnedHeightConstraints();
+        this.applyPinnedScrollbarCompensation();
+        this.syncPinnedHorizontalScroll(this.tbodyElement.scrollLeft);
 
         // Reflow the pagination
         this.grid.pagination?.reflow();
@@ -431,9 +511,7 @@ class Table {
      */
     private onTBodyFocus = (e: FocusEvent): void => {
         e.preventDefault();
-
-        this.rows[this.rowsVirtualizer.rowCursor - this.rows[0].index]
-            ?.cells[0]?.htmlElement.focus();
+        this.getRenderedRows()[0]?.cells[0]?.htmlElement.focus();
     };
 
     /**
@@ -450,6 +528,8 @@ class Table {
         if (this.virtualRows) {
             this.rowsVirtualizer.scroll();
         }
+
+        this.syncPinnedHorizontalScroll(this.tbodyElement.scrollLeft);
 
         this.header?.scrollHorizontally(this.tbodyElement.scrollLeft);
     };
@@ -620,21 +700,33 @@ class Table {
      * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-lite/basic/scroll-to-row | Scroll to row}
      */
     public scrollToRow(index: number): void {
+        const topPinnedCount = this.grid.rowPinningMeta?.topCount || 0;
         if (this.virtualRows) {
-            this.tbodyElement.scrollTop =
-                index * this.rowsVirtualizer.defaultRowHeight;
+            this.tbodyElement.scrollTop = Math.max(
+                0,
+                (index - topPinnedCount) * this.rowsVirtualizer.defaultRowHeight
+            );
             return;
         }
 
         const rowClass = '.' + Globals.getClassName('rowElement');
-        const firstRowTop = this.tbodyElement
-            .querySelectorAll(rowClass)[0]
-            .getBoundingClientRect().top;
+        const scrollableIndex = Math.max(0, index - topPinnedCount);
+        const rows = this.tbodyElement.querySelectorAll(rowClass);
+        const firstRow = rows[0];
+        const safeIndex = Math.min(
+            scrollableIndex,
+            Math.max(0, rows.length - 1)
+        );
+        const targetRow = rows[safeIndex];
+
+        if (!firstRow || !targetRow) {
+            return;
+        }
+
+        const firstRowTop = firstRow.getBoundingClientRect().top;
 
         this.tbodyElement.scrollTop = (
-            this.tbodyElement
-                .querySelectorAll(rowClass)[index]
-                .getBoundingClientRect().top
+            targetRow.getBoundingClientRect().top
         ) - firstRowTop;
     }
 
@@ -700,8 +792,7 @@ class Table {
         }
 
         const rowIndex = parseInt(rowIndexAttr, 10);
-        const firstRowIndex = this.rows[0]?.index ?? 0;
-        const row = this.rows[rowIndex - firstRowIndex];
+        const row = this.getRenderedRowByIndex(rowIndex);
         if (!row) {
             return;
         }
@@ -715,22 +806,10 @@ class Table {
      * Destroys the grid table.
      */
     public destroy(): void {
-        this.tbodyElement.removeEventListener('focus', this.onTBodyFocus);
         this.tbodyElement.removeEventListener('scroll', this.onScroll);
-        this.tbodyElement.removeEventListener('click', this.onCellClick);
-        this.tbodyElement.removeEventListener('dblclick', this.onCellDblClick);
-        this.tbodyElement.removeEventListener(
-            'contextmenu',
-            this.onCellContextMenu
-        );
-        this.tbodyElement.removeEventListener(
-            'mousedown', this.onCellMouseDown
-        );
-        this.tbodyElement.removeEventListener(
-            'mouseover', this.onCellMouseOver
-        );
-        this.tbodyElement.removeEventListener('mouseout', this.onCellMouseOut);
-        this.tbodyElement.removeEventListener('keydown', this.onCellKeyDown);
+        this.removeBodyEventListeners(this.tbodyElement);
+        this.removeBodyEventListeners(this.pinnedTopTbodyElement);
+        this.removeBodyEventListeners(this.pinnedBottomTbodyElement);
         this.resizeObserver.disconnect();
         this.columnsResizer?.removeEventListeners();
         this.header?.destroy();
@@ -739,6 +818,12 @@ class Table {
 
         for (let i = 0, iEnd = this.rows.length; i < iEnd; ++i) {
             this.rows[i].destroy();
+        }
+        for (let i = 0, iEnd = this.pinnedTopRows.length; i < iEnd; ++i) {
+            this.pinnedTopRows[i].destroy();
+        }
+        for (let i = 0, iEnd = this.pinnedBottomRows.length; i < iEnd; ++i) {
+            this.pinnedBottomRows[i].destroy();
         }
 
         fireEvent(this, 'afterDestroy');
@@ -772,10 +857,11 @@ class Table {
     ): void {
         this.tbodyElement.scrollTop = meta.scrollTop;
         this.tbodyElement.scrollLeft = meta.scrollLeft;
+        this.syncPinnedHorizontalScroll(meta.scrollLeft);
 
         if (meta.focusCursor) {
             const [rowIndex, columnIndex] = meta.focusCursor;
-            const row = this.rows[rowIndex - this.rows[0].index];
+            const row = this.getRenderedRowByIndex(rowIndex);
             row?.cells[columnIndex]?.htmlElement.focus();
         }
     }
@@ -819,10 +905,261 @@ class Table {
      * The ID of the row.
      */
     public getRow(id: number): TableRow | undefined {
-        // TODO: Change `find` to a method using `vp.dataTable.getLocalRowIndex`
-        // and rows[presentationRowIndex - firstRowIndex]. Needs more testing,
-        // but it should be faster.
-        return this.rows.find((row): boolean => row.id === id);
+        return this.getRenderedRows().find((row): boolean => row.id === id);
+    }
+
+    /**
+     * Returns all rendered rows in visual order.
+     *
+     * @internal
+     */
+    public getRenderedRows(): TableRow[] {
+        return [
+            ...this.pinnedTopRows,
+            ...this.rows,
+            ...this.pinnedBottomRows
+        ];
+    }
+
+    /**
+     * Returns the rendered row with the provided presentation index.
+     *
+     * @param index
+     * The row index in the presentation table.
+     *
+     * @internal
+     */
+    public getRenderedRowByIndex(index: number): TableRow | undefined {
+        return this.getRenderedRows()
+            .find((row): boolean => row.index === index);
+    }
+
+    /**
+     * Re-renders top and bottom pinned rows using current row pinning meta.
+     *
+     * @internal
+     */
+    public renderPinnedRows(): void {
+        const meta = this.grid.rowPinningMeta;
+        const topCount = meta?.topCount || 0;
+        const bottomCount = meta?.bottomCount || 0;
+        const rowCount = this.dataTable.getRowCount();
+
+        this.syncPinnedRows(
+            this.pinnedTopRows,
+            this.pinnedTopTbodyElement,
+            0,
+            topCount
+        );
+        this.syncPinnedRows(
+            this.pinnedBottomRows,
+            this.pinnedBottomTbodyElement,
+            rowCount - bottomCount,
+            bottomCount
+        );
+
+        this.pinnedTopTbodyElement.classList.toggle(
+            Globals.getClassName('pinnedTbodyElementActive'),
+            topCount > 0
+        );
+        this.pinnedBottomTbodyElement.classList.toggle(
+            Globals.getClassName('pinnedTbodyElementActive'),
+            bottomCount > 0
+        );
+        this.tbodyElement.style.display = (
+            meta &&
+            meta.scrollableCount < 1 &&
+            topCount + bottomCount > 0
+        ) ?
+            'none' :
+            '';
+        this.syncPinnedHorizontalScroll(this.tbodyElement.scrollLeft);
+
+        this.applyPinnedHeightConstraints();
+        this.applyPinnedScrollbarCompensation();
+    }
+
+    private syncPinnedHorizontalScroll(scrollLeft: number): void {
+        this.pinnedTopTbodyElement.scrollLeft = scrollLeft;
+        this.pinnedBottomTbodyElement.scrollLeft = scrollLeft;
+
+        const offset = -scrollLeft;
+        const transform = offset ? `translateX(${offset}px)` : '';
+
+        for (let i = 0, iEnd = this.pinnedTopRows.length; i < iEnd; ++i) {
+            this.pinnedTopRows[i].htmlElement.style.transform = transform;
+        }
+        for (
+            let i = 0, iEnd = this.pinnedBottomRows.length;
+            i < iEnd;
+            ++i
+        ) {
+            this.pinnedBottomRows[i].htmlElement.style.transform = transform;
+        }
+    }
+
+    private syncPinnedRows(
+        targetRows: TableRow[],
+        tbody: HTMLElement,
+        startIndex: number,
+        count: number
+    ): void {
+        const safeCount = Math.max(0, count);
+        const safeStart = Math.max(0, startIndex);
+
+        while (targetRows.length > safeCount) {
+            targetRows.pop()?.destroy();
+        }
+
+        for (let i = 0; i < safeCount; ++i) {
+            const rowIndex = safeStart + i;
+            let row = targetRows[i];
+
+            if (!row) {
+                row = new TableRow(this, rowIndex);
+                targetRows.push(row);
+                tbody.appendChild(row.htmlElement);
+                row.render();
+                row.reflow();
+                continue;
+            }
+
+            row.reuse(rowIndex, false);
+            row.reflow();
+            if (!row.htmlElement.isConnected) {
+                tbody.appendChild(row.htmlElement);
+            }
+        }
+    }
+
+    /**
+     * Applies max-height constraints to pinned areas.
+     */
+    private applyPinnedHeightConstraints(): void {
+        const pinnedOptions =
+            this.grid.options?.rendering?.rows?.pinned ||
+            this.grid.userOptions.rendering?.rows?.pinned;
+        this.applyPinnedHeightConstraint(
+            this.pinnedTopTbodyElement,
+            pinnedOptions?.maxTopHeight
+        );
+        this.applyPinnedHeightConstraint(
+            this.pinnedBottomTbodyElement,
+            pinnedOptions?.maxBottomHeight
+        );
+    }
+
+    /**
+     * Applies a single pinned area max-height constraint.
+     *
+     * @param tbody
+     * Pinned tbody element.
+     *
+     * @param option
+     * Max-height option value.
+     */
+    private applyPinnedHeightConstraint(
+        tbody: HTMLElement,
+        option: number|string|undefined
+    ): void {
+        const maxHeight = this.resolvePinnedHeight(option);
+        if (!maxHeight) {
+            tbody.style.maxHeight = '';
+            tbody.style.overflowY = '';
+            return;
+        }
+
+        tbody.style.maxHeight = maxHeight;
+        tbody.style.overflowY = 'auto';
+        tbody.style.overflowX = 'hidden';
+    }
+
+    /**
+     * Keeps pinned sections aligned with the scrollable tbody content width by
+     * compensating for the vertical scrollbar gutter.
+     */
+    private applyPinnedScrollbarCompensation(): void {
+        const scrollableBody = this.tbodyElement;
+        const mainGutterWidth = Math.max(
+            0,
+            scrollableBody.offsetWidth - scrollableBody.clientWidth
+        );
+        const applyToPinnedBody = (pinnedBody: HTMLElement): void => {
+            const pinnedGutterWidth = Math.max(
+                0,
+                pinnedBody.offsetWidth - pinnedBody.clientWidth
+            );
+            const compensation = Math.max(
+                0,
+                mainGutterWidth - pinnedGutterWidth
+            );
+
+            pinnedBody.style.width = compensation > 0 ?
+                `calc(100% - ${compensation}px)` :
+                '';
+        };
+
+        applyToPinnedBody(this.pinnedTopTbodyElement);
+        applyToPinnedBody(this.pinnedBottomTbodyElement);
+
+        if (!this.pinnedScrollbarCompensationQueued) {
+            this.pinnedScrollbarCompensationQueued = true;
+            requestAnimationFrame((): void => {
+                this.pinnedScrollbarCompensationQueued = false;
+                applyToPinnedBody(this.pinnedTopTbodyElement);
+                applyToPinnedBody(this.pinnedBottomTbodyElement);
+            });
+        }
+    }
+
+    /**
+     * Resolves pinned max height option to pixels.
+     *
+     * @param value
+     * Max height option.
+     */
+    private resolvePinnedHeight(
+        value: number|string|undefined
+    ): string|undefined {
+        if (value === void 0 || value === null) {
+            return;
+        }
+
+        if (typeof value === 'number') {
+            return value >= 0 ? `${value}px` : void 0;
+        }
+
+        const trimmed = value.trim();
+        if (!trimmed) {
+            return;
+        }
+
+        if (trimmed.endsWith('%')) {
+            const ratio = parseFloat(trimmed.slice(0, -1));
+            if (!isFinite(ratio) || ratio < 0) {
+                return;
+            }
+
+            const referenceHeight = this.tableElement.clientHeight;
+            if (!referenceHeight) {
+                return;
+            }
+
+            return `${Math.max(0, referenceHeight * ratio / 100)}px`;
+        }
+
+        if (trimmed.endsWith('px')) {
+            const pixels = parseFloat(trimmed.slice(0, -2));
+            if (isFinite(pixels) && pixels >= 0) {
+                return `${pixels}px`;
+            }
+            return;
+        }
+
+        const numeric = parseFloat(trimmed);
+        if (isFinite(numeric) && numeric >= 0) {
+            return `${numeric}px`;
+        }
     }
 }
 

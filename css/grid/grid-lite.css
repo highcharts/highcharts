@@ -377,14 +377,21 @@
 }
 
 /* <tbody> */
-.hcg-table.hcg-scrollable-content tbody {
+.hcg-table.hcg-scrollable-content tbody.hcg-tbody-scrollable {
     height: 100%;
     overflow: auto;
     min-height: 0;
     flex: 1;
 }
 
-.hcg-table.hcg-virtualization tbody {
+.hcg-table tbody.hcg-tbody-pinned-top,
+.hcg-table tbody.hcg-tbody-pinned-bottom {
+    display: block;
+    overflow: hidden;
+    flex: 0 0 auto;
+}
+
+.hcg-table.hcg-virtualization tbody.hcg-tbody-scrollable {
     display: block;
     position: relative;
 }
@@ -415,11 +422,11 @@
     border-bottom: none;
 }
 
-.hcg-table.hcg-scrollable-content tbody tr {
+.hcg-table.hcg-scrollable-content tbody.hcg-tbody-scrollable tr {
     display: block;
 }
 
-.hcg-table.hcg-virtualization tbody tr {
+.hcg-table.hcg-virtualization tbody.hcg-tbody-scrollable tr {
     position: absolute;
 }
 
@@ -521,17 +528,43 @@
 /* End header hover & sync */
 
 /* <tbody> */
-.hcg-table tbody tr:last-of-type td:first-child {
+.hcg-table tbody.hcg-tbody-scrollable tr:last-of-type td:first-child {
     border-bottom-left-radius: var(--ig-border-radius);
 }
 
-.hcg-table tbody tr:last-of-type td:last-child {
+.hcg-table tbody.hcg-tbody-scrollable tr:last-of-type td:last-child {
     border-bottom-right-radius: var(--ig-border-radius);
 }
 
 .hcg-table tbody {
     border-bottom-left-radius: var(--hcg-border-radius);
     border-bottom-right-radius: var(--hcg-border-radius);
+}
+
+.hcg-table tbody.hcg-tbody-pinned-top.hcg-tbody-pinned-active {
+    border-bottom:
+        2px solid
+        var(--hcg-pinned-separator-color, var(--ig-row-border-color));
+    box-shadow:
+        0 2px 0
+        color-mix(
+            in srgb,
+            var(--hcg-pinned-separator-color, var(--ig-row-border-color)) 25%,
+            transparent
+        );
+}
+
+.hcg-table tbody.hcg-tbody-pinned-bottom.hcg-tbody-pinned-active {
+    border-top:
+        2px solid
+        var(--hcg-pinned-separator-color, var(--ig-row-border-color));
+    box-shadow:
+        0 -2px 0
+        color-mix(
+            in srgb,
+            var(--hcg-pinned-separator-color, var(--ig-row-border-color)) 25%,
+            transparent
+        );
 }
 
 .hcg-table tbody tr {
@@ -578,6 +611,16 @@
 .hcg-table tbody tr td:nth-child(even) {
     --ig-cell-column-background: var(--hcg-column-even-background, var(--hcg-column-background));
     --ig-cell-column-color: var(--hcg-column-even-color, var(--hcg-column-color));
+}
+
+.hcg-table thead th:last-child {
+    border-right: var(--ig-header-column-border);
+}
+
+.hcg-table tbody.hcg-tbody-scrollable td:last-of-type,
+.hcg-table tbody.hcg-tbody-pinned-top td:last-of-type,
+.hcg-table tbody.hcg-tbody-pinned-bottom td:last-of-type {
+    border-right: var(--ig-column-border);
 }
 
 .hcg-table tbody td:focus {

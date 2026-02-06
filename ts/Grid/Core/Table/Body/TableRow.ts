@@ -299,7 +299,10 @@ class TableRow extends Row {
      * @internal
      */
     public getDefaultTopOffset(): number {
-        return this.index * this.viewport.rowsVirtualizer.defaultRowHeight;
+        const rowStartIndex = this.viewport.rowsVirtualizer?.rowStartIndex || 0;
+        const relativeIndex = Math.max(0, this.index - rowStartIndex);
+
+        return relativeIndex * this.viewport.rowsVirtualizer.defaultRowHeight;
     }
 }
 
