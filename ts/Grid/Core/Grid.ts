@@ -967,7 +967,7 @@ export class Grid {
                 }
             }
 
-            if (flags.has('filtering')) {
+            if (flagsToProcess.has('filtering')) {
                 for (const column of columns) {
                     column.filtering?.refreshState();
                 }
@@ -975,7 +975,10 @@ export class Grid {
 
             pagination?.redraw();
             delete colResizing?.isDirty;
-            flagsToProcess.clear();
+
+            for (const flag of ['sorting', 'filtering'] as const) {
+                flags.delete(flag);
+            }
 
             fireEvent(this, 'afterRedraw');
         };
