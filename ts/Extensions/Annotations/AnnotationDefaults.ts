@@ -525,8 +525,9 @@ const AnnotationDefaults: AnnotationOptions = {
          * points coordinates conversion.
          *
          * This option is used for `rect` shape
-         * [width](#annotations.shapeOptions.width), and all shapes points
-         * coordinates.
+         * [width](#annotations.shapeOptions.width), and all shapes
+         * [point](#annotations.shapes.point) and
+         * [points](#annotations.shapes.points) coordinates.
          *
          * @sample highcharts/annotations/shapes-axis-units/
          *         Shapes created with axis units
@@ -542,7 +543,8 @@ const AnnotationDefaults: AnnotationOptions = {
          * [height](#annotations.shapeOptions.height), `circle` shape
          * [radius](#annotations.shapeOptions.r), `ellipse`
          * [y direction radius](#annotations.shapeOptions.ry), and all shapes
-         * points coordinates.
+         * [point](#annotations.shapes.point) and
+         * [points](#annotations.shapes.points) coordinates.
          *
          * @sample highcharts/annotations/shapes-axis-units/
          *         Shapes created with axis units
@@ -577,7 +579,7 @@ const AnnotationDefaults: AnnotationOptions = {
 
         /**
          * The type of the shape.
-         * Available options are circle, rect, ellipse and path.
+         * Available options are `circle`, `rect`, `ellipse` and `path`.
          *
          * @sample highcharts/annotations/shape/
          *         Basic shape annotation

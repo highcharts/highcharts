@@ -164,6 +164,8 @@ annotations: [{
 }]
 ```
 
+<iframe style="width: 100%; height: 432px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/annotations/shapes-axis-units" allow="fullscreen"></iframe>
+
 Defining markers for the path
 -----------------------------
 
