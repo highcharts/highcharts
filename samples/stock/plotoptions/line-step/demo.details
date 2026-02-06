@@ -1,6 +1,6 @@
 ---
- name: Demo of series.step
- authors:
-   - Torstein Hønsi
- js_wrap: b
+name: Demo of series.step
+authors:
+  - Torstein Hønsi
+js_wrap: b
 ...
