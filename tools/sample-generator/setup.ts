@@ -9,6 +9,10 @@
 
 /* eslint-disable guard-for-in, no-console, no-underscore-dangle */
 
+import type {
+    FlatTreeNode
+} from './generator-config.d.ts';
+
 import { promises as fs } from 'fs';
 import { loadExportedTypes } from './load-types.ts';
 import { join } from 'path';
@@ -57,24 +61,33 @@ const treeJson = await fs.readFile(
 );
 
 const tree = JSON.parse(treeJson);
-const flat = [];
+const flat: FlatTreeNode[] = [];
 function addChildren(node: any) {
 
     // Root node
     if (node._meta?.version) {
         Object.values(node).forEach(addChildren);
-    }
 
-    if (node.children && Object.keys(node.children).length) {
-        Object.values(node.children).forEach(addChildren);
-
-    // Leaf node
+    //
     } else if (node.meta) {
         const name = node.meta.fullname;
-        const mainType = node.doclet.type?.names[0].replace('Highcharts.', '');
+        const extendsPath = node.doclet['extends'];
+
+        let mainType = node.doclet.type?.names[0].replace('Highcharts.', '');
+
+        if (node.children && Object.keys(node.children).length) {
+            Object.values(node.children).forEach(addChildren);
+
+            if (!extendsPath) {
+                return;
+            }
+        }
 
         if (mainType === '*') {
-            return;
+            mainType = void 0;
+            if (!extendsPath) {
+                return;
+            }
         }
 
         let options: string[] | undefined;
@@ -92,12 +105,21 @@ function addChildren(node: any) {
         if (defaultValue === 'undefined') {
             defaultValue = void 0;
         }
-        flat.push({
+
+        const flatNode: FlatTreeNode = {
             name,
             mainType,
             options,
-            default: defaultValue
-        });
+            default: defaultValue,
+            extendsPath
+        };
+
+        // Just name, no useful info
+        if (Object.values(flatNode).filter(v => v !== void 0).length === 1) {
+            return;
+        }
+
+        flat.push(flatNode);
     }
 }
 

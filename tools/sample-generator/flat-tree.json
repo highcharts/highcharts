@@ -405,11 +405,17 @@
   },
   {
     "name": "annotations.labels.controlPoints",
-    "mainType": "Array.<AnnotationControlPointOptionsObject>"
+    "mainType": "Array.<AnnotationControlPointOptionsObject>",
+    "extendsPath": "annotations.controlPointOptions"
   },
   {
     "name": "annotations.labels.point",
     "mainType": "AnnotationMockPointOptions"
+  },
+  {
+    "name": "annotations.labels",
+    "mainType": "Array.<*>",
+    "extendsPath": "annotations.labelOptions"
   },
   {
     "name": "annotations.shapeOptions.dashStyle",
@@ -470,7 +476,8 @@
   },
   {
     "name": "annotations.shapes.controlPoints",
-    "mainType": "Array.<AnnotationControlPointOptionsObject>"
+    "mainType": "Array.<AnnotationControlPointOptionsObject>",
+    "extendsPath": "annotations.controlPointOptions"
   },
   {
     "name": "annotations.shapes.markerEnd",
@@ -482,25 +489,34 @@
   },
   {
     "name": "annotations.shapes.point",
-    "mainType": "AnnotationMockPointOptions"
+    "mainType": "AnnotationMockPointOptions",
+    "extendsPath": "annotations.labels.point"
   },
   {
     "name": "annotations.shapes.points",
-    "mainType": "Array.<AnnotationMockPointOptions>"
+    "mainType": "Array.<AnnotationMockPointOptions>",
+    "extendsPath": "annotations.labels.point"
+  },
+  {
+    "name": "annotations.shapes",
+    "mainType": "Array.<*>",
+    "extendsPath": "annotations.shapeOptions"
   },
   {
     "name": "annotations.type",
     "mainType": "string"
   },
   {
-    "name": "annotations.typeOptions.background"
+    "name": "annotations.typeOptions.background",
+    "extendsPath": "annotations.shapeOptions"
   },
   {
     "name": "annotations.typeOptions.height",
     "mainType": "number"
   },
   {
-    "name": "annotations.typeOptions.line"
+    "name": "annotations.typeOptions.line",
+    "extendsPath": "annotations.shapeOptions"
   },
   {
     "name": "annotations.typeOptions.point",
@@ -523,7 +539,12 @@
     "mainType": "number"
   },
   {
-    "name": "annotations.types.crookedLine.labelOptions"
+    "name": "annotations.types.crookedLine.controlPointOptions",
+    "extendsPath": "annotations.controlPointOptions"
+  },
+  {
+    "name": "annotations.types.crookedLine.labelOptions",
+    "extendsPath": "annotations.labelOptions"
   },
   {
     "name": "annotations.types.crookedLine.typeOptions.line.fill",
@@ -603,7 +624,12 @@
     "default": 1
   },
   {
-    "name": "annotations.types.elliottWave.typeOptions.points.label"
+    "name": "annotations.types.elliottWave.typeOptions.points.label",
+    "extendsPath": "annotations.types.crookedLine.labelOptions"
+  },
+  {
+    "name": "annotations.types.elliottWave",
+    "extendsPath": "annotations.types.crookedLine"
   },
   {
     "name": "annotations.types.fibonacci.labelOptions.align",
@@ -656,16 +682,14 @@
     "default": 0
   },
   {
-    "name": "annotations.types.fibonacci.typeOptions.backgroundColors"
-  },
-  {
     "name": "annotations.types.fibonacci.typeOptions.height",
     "mainType": "number",
     "default": 2
   },
   {
     "name": "annotations.types.fibonacci.typeOptions.labels",
-    "mainType": "Array.<*>"
+    "mainType": "Array.<*>",
+    "extendsPath": "annotations.types.crookedLine.labelOptions"
   },
   {
     "name": "annotations.types.fibonacci.typeOptions.lineColor",
@@ -673,11 +697,12 @@
     "default": "#999999"
   },
   {
-    "name": "annotations.types.fibonacci.typeOptions.lineColors"
-  },
-  {
     "name": "annotations.types.fibonacci.typeOptions.reversed",
     "mainType": "boolean"
+  },
+  {
+    "name": "annotations.types.fibonacci",
+    "extendsPath": "annotations.types.crookedLine"
   },
   {
     "name": "annotations.types.fibonacciTimeZones.typeOptions.line.fill",
@@ -692,10 +717,12 @@
     "mainType": "number"
   },
   {
-    "name": "annotations.types.fibonacciTimeZones.typeOptions.points"
+    "name": "annotations.types.fibonacciTimeZones",
+    "extendsPath": "annotations.types.crookedLine"
   },
   {
-    "name": "annotations.types.infinityLine"
+    "name": "annotations.types.infinityLine",
+    "extendsPath": "annotations.types.crookedLine"
   },
   {
     "name": "annotations.types.measure.typeOptions.background.fill",
@@ -785,6 +812,10 @@
     "default": 0
   },
   {
+    "name": "annotations.types.measure",
+    "extendsPath": "annotations.types.crookedLine"
+  },
+  {
     "name": "annotations.types.pitchfork.typeOptions.innerBackground.fill",
     "mainType": "string",
     "default": "rgba(130, 170, 255, 0.4)"
@@ -793,6 +824,10 @@
     "name": "annotations.types.pitchfork.typeOptions.innerBackground.strokeWidth",
     "mainType": "number",
     "default": 0
+  },
+  {
+    "name": "annotations.types.pitchfork.typeOptions.innerBackground",
+    "extendsPath": "annotations.shapeOptions"
   },
   {
     "name": "annotations.types.pitchfork.typeOptions.outerBackground.fill",
@@ -805,7 +840,20 @@
     "default": 0
   },
   {
-    "name": "annotations.types.timeCycles.typeOptions.points"
+    "name": "annotations.types.pitchfork.typeOptions.outerBackground",
+    "extendsPath": "annotations.shapeOptions"
+  },
+  {
+    "name": "annotations.types.pitchfork",
+    "extendsPath": "annotations.types.infinityLine"
+  },
+  {
+    "name": "annotations.types.timeCycles",
+    "extendsPath": "annotations.types.crookedLine"
+  },
+  {
+    "name": "annotations.types.tunnel.controlPointOptions",
+    "extendsPath": "annotations.types.crookedLine.controlPointOptions"
   },
   {
     "name": "annotations.types.tunnel.typeOptions.background.fill",
@@ -823,9 +871,17 @@
     "default": -2
   },
   {
+    "name": "annotations.types.tunnel.typeOptions.heightControlPoint",
+    "extendsPath": "annotations.types.crookedLine.controlPointOptions"
+  },
+  {
     "name": "annotations.types.tunnel.typeOptions.line.strokeWidth",
     "mainType": "number",
     "default": 1
+  },
+  {
+    "name": "annotations.types.tunnel",
+    "extendsPath": "annotations.types.crookedLine"
   },
   {
     "name": "annotations.types.verticalLine.labelOptions.style.color",
@@ -846,6 +902,10 @@
     "name": "annotations.types.verticalLine.typeOptions.connector.strokeWidth",
     "mainType": "number",
     "default": 1
+  },
+  {
+    "name": "annotations.types.verticalLine.typeOptions.connector",
+    "extendsPath": "annotations.shapeOptions"
   },
   {
     "name": "annotations.types.verticalLine.typeOptions.label.allowOverlap",
@@ -886,6 +946,14 @@
     "name": "annotations.types.verticalLine.typeOptions.label.text",
     "mainType": "string",
     "default": "{y:.2f}"
+  },
+  {
+    "name": "annotations.types.verticalLine.typeOptions.label",
+    "extendsPath": "annotations.types.crookedLine.labelOptions"
+  },
+  {
+    "name": "annotations.types.verticalLine",
+    "extendsPath": "annotations.types.crookedLine"
   },
   {
     "name": "annotations.visible",
@@ -1185,7 +1253,8 @@
     "default": true
   },
   {
-    "name": "chart.options3d.frame.back"
+    "name": "chart.options3d.frame.back",
+    "extendsPath": "chart.options3d.frame.bottom"
   },
   {
     "name": "chart.options3d.frame.bottom.color",
@@ -1200,13 +1269,16 @@
     "mainType": "boolean"
   },
   {
-    "name": "chart.options3d.frame.front"
+    "name": "chart.options3d.frame.front",
+    "extendsPath": "chart.options3d.frame.bottom"
   },
   {
-    "name": "chart.options3d.frame.left"
+    "name": "chart.options3d.frame.left",
+    "extendsPath": "chart.options3d.frame.bottom"
   },
   {
-    "name": "chart.options3d.frame.right"
+    "name": "chart.options3d.frame.right",
+    "extendsPath": "chart.options3d.frame.bottom"
   },
   {
     "name": "chart.options3d.frame.side.color",
@@ -1222,7 +1294,8 @@
     "default": 1
   },
   {
-    "name": "chart.options3d.frame.top"
+    "name": "chart.options3d.frame.top",
+    "extendsPath": "chart.options3d.frame.bottom"
   },
   {
     "name": "chart.options3d.frame.visible",
@@ -1287,6 +1360,10 @@
     "name": "chart.parallelAxes.title.text",
     "mainType": "string",
     "default": ""
+  },
+  {
+    "name": "chart.parallelAxes",
+    "extendsPath": "yAxis"
   },
   {
     "name": "chart.parallelCoordinates",
@@ -1572,6 +1649,10 @@
     "default": 0
   },
   {
+    "name": "colorAxis.labels",
+    "extendsPath": "xAxis.labels"
+  },
+  {
     "name": "colorAxis.layout",
     "mainType": "string"
   },
@@ -1657,6 +1738,10 @@
     "mainType": "number"
   },
   {
+    "name": "colorAxis",
+    "extendsPath": "xAxis"
+  },
+  {
     "name": "colors",
     "mainType": "Array.<(ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject)>"
   },
@@ -1676,6 +1761,10 @@
     "name": "connectors.endMarker.symbol",
     "mainType": "string",
     "default": "arrow-filled"
+  },
+  {
+    "name": "connectors.endMarker",
+    "extendsPath": "connectors.marker"
   },
   {
     "name": "connectors.lineColor",
@@ -1750,6 +1839,10 @@
     "name": "connectors.startMarker.symbol",
     "mainType": "string",
     "default": "diamond"
+  },
+  {
+    "name": "connectors.startMarker",
+    "extendsPath": "connectors.marker"
   },
   {
     "name": "connectors.type",
@@ -2007,7 +2100,8 @@
     "mainType": "boolean"
   },
   {
-    "name": "drilldown.breadcrumbs"
+    "name": "drilldown.breadcrumbs",
+    "extendsPath": "navigation.breadcrumbs"
   },
   {
     "name": "drilldown.drillUpButton.position.align",
@@ -2107,6 +2201,10 @@
   {
     "name": "exporting.buttons.contextButton.x",
     "mainType": "number"
+  },
+  {
+    "name": "exporting.buttons.contextButton",
+    "extendsPath": "navigation.buttonOptions"
   },
   {
     "name": "exporting.chartOptions",
@@ -2281,9 +2379,6 @@
     "name": "exporting.type",
     "mainType": "ExportingMimeTypeValue",
     "default": "image/png"
-  },
-  {
-    "name": "exporting.url"
   },
   {
     "name": "exporting.useMultiLevelHeaders",
@@ -2981,9 +3076,6 @@
     "name": "lang.downloadXLS",
     "mainType": "string",
     "default": "Download XLS"
-  },
-  {
-    "name": "lang.drillUpText"
   },
   {
     "name": "lang.exitFullscreen",
@@ -4596,6 +4688,10 @@
     "default": 0
   },
   {
+    "name": "mapNavigation.buttons.zoomIn",
+    "extendsPath": "mapNavigation.buttonOptions"
+  },
+  {
     "name": "mapNavigation.buttons.zoomOut.onclick",
     "mainType": "function"
   },
@@ -4608,6 +4704,10 @@
     "name": "mapNavigation.buttons.zoomOut.y",
     "mainType": "number",
     "default": 28
+  },
+  {
+    "name": "mapNavigation.buttons.zoomOut",
+    "extendsPath": "mapNavigation.buttonOptions"
   },
   {
     "name": "mapNavigation.enableButtons",
@@ -4697,7 +4797,13 @@
   },
   {
     "name": "mapView.insets.projection",
-    "mainType": "Object"
+    "mainType": "Object",
+    "extendsPath": "mapView.projection"
+  },
+  {
+    "name": "mapView.insets",
+    "mainType": "Array.<Object>",
+    "extendsPath": "mapView.insetOptions"
   },
   {
     "name": "mapView.maxZoom",
@@ -4726,31 +4832,38 @@
   },
   {
     "name": "navigation.annotationsOptions",
-    "mainType": "AnnotationsOptions"
+    "mainType": "AnnotationsOptions",
+    "extendsPath": "annotations"
   },
   {
     "name": "navigation.bindings.arrowInfinityLine.annotationsOptions",
-    "mainType": "AnnotationsOptions"
+    "mainType": "AnnotationsOptions",
+    "extendsPath": "navigation.annotationsOptions"
   },
   {
     "name": "navigation.bindings.arrowRay.annotationsOptions",
-    "mainType": "AnnotationsOptions"
+    "mainType": "AnnotationsOptions",
+    "extendsPath": "navigation.annotationsOptions"
   },
   {
     "name": "navigation.bindings.arrowSegment.annotationsOptions",
-    "mainType": "AnnotationsOptions"
+    "mainType": "AnnotationsOptions",
+    "extendsPath": "navigation.annotationsOptions"
   },
   {
     "name": "navigation.bindings.circleAnnotation.annotationsOptions",
-    "mainType": "AnnotationsOptions"
+    "mainType": "AnnotationsOptions",
+    "extendsPath": "navigation.annotationsOptions"
   },
   {
     "name": "navigation.bindings.crooked3.annotationsOptions",
-    "mainType": "AnnotationsOptions"
+    "mainType": "AnnotationsOptions",
+    "extendsPath": "navigation.annotationsOptions"
   },
   {
     "name": "navigation.bindings.crooked5.annotationsOptions",
-    "mainType": "AnnotationsOptions"
+    "mainType": "AnnotationsOptions",
+    "extendsPath": "navigation.annotationsOptions"
   },
   {
     "name": "navigation.bindings.currentPriceIndicator",
@@ -4758,15 +4871,18 @@
   },
   {
     "name": "navigation.bindings.elliott3.annotationsOptions",
-    "mainType": "AnnotationsOptions"
+    "mainType": "AnnotationsOptions",
+    "extendsPath": "navigation.annotationsOptions"
   },
   {
     "name": "navigation.bindings.elliott5.annotationsOptions",
-    "mainType": "AnnotationsOptions"
+    "mainType": "AnnotationsOptions",
+    "extendsPath": "navigation.annotationsOptions"
   },
   {
     "name": "navigation.bindings.ellipseAnnotation.annotationsOptions",
-    "mainType": "AnnotationsOptions"
+    "mainType": "AnnotationsOptions",
+    "extendsPath": "navigation.annotationsOptions"
   },
   {
     "name": "navigation.bindings.ellipseAnnotation.className",
@@ -4775,7 +4891,8 @@
   },
   {
     "name": "navigation.bindings.fibonacci.annotationsOptions",
-    "mainType": "AnnotationsOptions"
+    "mainType": "AnnotationsOptions",
+    "extendsPath": "navigation.annotationsOptions"
   },
   {
     "name": "navigation.bindings.fibonacci.className",
@@ -4784,7 +4901,8 @@
   },
   {
     "name": "navigation.bindings.fibonacciTimeZones.annotationsOptions",
-    "mainType": "AnnotationsOptions"
+    "mainType": "AnnotationsOptions",
+    "extendsPath": "navigation.annotationsOptions"
   },
   {
     "name": "navigation.bindings.flagCirclepin",
@@ -4809,7 +4927,8 @@
   },
   {
     "name": "navigation.bindings.horizontalLine.annotationsOptions",
-    "mainType": "AnnotationsOptions"
+    "mainType": "AnnotationsOptions",
+    "extendsPath": "navigation.annotationsOptions"
   },
   {
     "name": "navigation.bindings.indicators",
@@ -4817,39 +4936,48 @@
   },
   {
     "name": "navigation.bindings.infinityLine.annotationsOptions",
-    "mainType": "AnnotationsOptions"
+    "mainType": "AnnotationsOptions",
+    "extendsPath": "navigation.annotationsOptions"
   },
   {
     "name": "navigation.bindings.labelAnnotation.annotationsOptions",
-    "mainType": "AnnotationsOptions"
+    "mainType": "AnnotationsOptions",
+    "extendsPath": "navigation.annotationsOptions"
   },
   {
     "name": "navigation.bindings.measureX.annotationsOptions",
-    "mainType": "AnnotationsOptions"
+    "mainType": "AnnotationsOptions",
+    "extendsPath": "navigation.annotationsOptions"
   },
   {
     "name": "navigation.bindings.measureXY.annotationsOptions",
-    "mainType": "AnnotationsOptions"
+    "mainType": "AnnotationsOptions",
+    "extendsPath": "navigation.annotationsOptions"
   },
   {
     "name": "navigation.bindings.measureY.annotationsOptions",
-    "mainType": "AnnotationsOptions"
+    "mainType": "AnnotationsOptions",
+    "extendsPath": "navigation.annotationsOptions"
   },
   {
     "name": "navigation.bindings.parallelChannel.annotationsOptions",
-    "mainType": "AnnotationsOptions"
+    "mainType": "AnnotationsOptions",
+    "extendsPath": "navigation.annotationsOptions"
   },
   {
     "name": "navigation.bindings.pitchfork.annotationsOptions",
-    "mainType": "AnnotationsOptions"
+    "mainType": "AnnotationsOptions",
+    "extendsPath": "navigation.annotationsOptions"
   },
   {
     "name": "navigation.bindings.ray.annotationsOptions",
-    "mainType": "AnnotationsOptions"
+    "mainType": "AnnotationsOptions",
+    "extendsPath": "navigation.annotationsOptions"
   },
   {
     "name": "navigation.bindings.rectangleAnnotation.annotationsOptions",
-    "mainType": "AnnotationsOptions"
+    "mainType": "AnnotationsOptions",
+    "extendsPath": "navigation.annotationsOptions"
   },
   {
     "name": "navigation.bindings.saveChart.noDataState",
@@ -4858,7 +4986,8 @@
   },
   {
     "name": "navigation.bindings.segment.annotationsOptions",
-    "mainType": "AnnotationsOptions"
+    "mainType": "AnnotationsOptions",
+    "extendsPath": "navigation.annotationsOptions"
   },
   {
     "name": "navigation.bindings.seriesTypeCandlestick",
@@ -4887,7 +5016,8 @@
   },
   {
     "name": "navigation.bindings.timeCycles.annotationsOptions",
-    "mainType": "AnnotationsOptions"
+    "mainType": "AnnotationsOptions",
+    "extendsPath": "navigation.annotationsOptions"
   },
   {
     "name": "navigation.bindings.timeCycles.className",
@@ -4900,19 +5030,23 @@
   },
   {
     "name": "navigation.bindings.verticalArrow.annotationsOptions",
-    "mainType": "AnnotationsOptions"
+    "mainType": "AnnotationsOptions",
+    "extendsPath": "navigation.annotationsOptions"
   },
   {
     "name": "navigation.bindings.verticalCounter.annotationsOptions",
-    "mainType": "AnnotationsOptions"
+    "mainType": "AnnotationsOptions",
+    "extendsPath": "navigation.annotationsOptions"
   },
   {
     "name": "navigation.bindings.verticalLabel.annotationsOptions",
-    "mainType": "AnnotationsOptions"
+    "mainType": "AnnotationsOptions",
+    "extendsPath": "navigation.annotationsOptions"
   },
   {
     "name": "navigation.bindings.verticalLine.annotationsOptions",
-    "mainType": "AnnotationsOptions"
+    "mainType": "AnnotationsOptions",
+    "extendsPath": "navigation.annotationsOptions"
   },
   {
     "name": "navigation.bindings.zoomX",
@@ -5303,6 +5437,10 @@
     "default": "lastPoint"
   },
   {
+    "name": "navigator.series.dataGrouping",
+    "extendsPath": "plotOptions.series.dataGrouping"
+  },
+  {
     "name": "navigator.series.dataLabels.enabled",
     "mainType": "boolean",
     "default": false
@@ -5311,6 +5449,10 @@
     "name": "navigator.series.dataLabels.zIndex",
     "mainType": "number",
     "default": 2
+  },
+  {
+    "name": "navigator.series.dataLabels",
+    "extendsPath": "plotOptions.series.dataLabels"
   },
   {
     "name": "navigator.series.fillOpacity",
@@ -5414,6 +5556,10 @@
     "default": 200
   },
   {
+    "name": "navigator.xAxis",
+    "extendsPath": "xAxis"
+  },
+  {
     "name": "navigator.yAxis.className",
     "mainType": "string",
     "default": "highcharts-navigator-yaxis"
@@ -5471,6 +5617,10 @@
   {
     "name": "navigator.yAxis.title.text",
     "mainType": "string"
+  },
+  {
+    "name": "navigator.yAxis",
+    "extendsPath": "yAxis"
   },
   {
     "name": "noData.attr",
@@ -5605,6 +5755,10 @@
     "default": 1
   },
   {
+    "name": "plotOptions.abands",
+    "extendsPath": "plotOptions.sma"
+  },
+  {
     "name": "plotOptions.ad.params.index",
     "mainType": "string"
   },
@@ -5612,6 +5766,10 @@
     "name": "plotOptions.ad.params.volumeSeriesID",
     "mainType": "string",
     "default": "volume"
+  },
+  {
+    "name": "plotOptions.ad",
+    "extendsPath": "plotOptions.sma"
   },
   {
     "name": "plotOptions.ao.crisp",
@@ -5657,12 +5815,20 @@
     "default": 0
   },
   {
+    "name": "plotOptions.ao",
+    "extendsPath": "plotOptions.sma"
+  },
+  {
     "name": "plotOptions.apo.params.period",
     "mainType": "string"
   },
   {
     "name": "plotOptions.apo.params.periods",
     "mainType": "Array.<number>"
+  },
+  {
+    "name": "plotOptions.apo",
+    "extendsPath": "plotOptions.ema"
   },
   {
     "name": "plotOptions.arcdiagram.centeredLinks",
@@ -5672,6 +5838,10 @@
   {
     "name": "plotOptions.arcdiagram.dataLabels.linkTextPath.attributes",
     "mainType": "SVGAttributes"
+  },
+  {
+    "name": "plotOptions.arcdiagram.dataLabels.linkTextPath",
+    "extendsPath": "plotOptions.networkgraph.dataLabels.linkTextPath"
   },
   {
     "name": "plotOptions.arcdiagram.equalNodes",
@@ -5694,12 +5864,17 @@
     "default": "circle"
   },
   {
+    "name": "plotOptions.arcdiagram.marker",
+    "extendsPath": "plotOptions.series.marker"
+  },
+  {
     "name": "plotOptions.arcdiagram.reversed",
     "mainType": "boolean",
     "default": false
   },
   {
-    "name": "plotOptions.area.color"
+    "name": "plotOptions.arcdiagram",
+    "extendsPath": "plotOptions.sankey"
   },
   {
     "name": "plotOptions.area.fillColor",
@@ -5732,7 +5907,8 @@
     "mainType": "boolean"
   },
   {
-    "name": "plotOptions.arearange.color"
+    "name": "plotOptions.area",
+    "extendsPath": "plotOptions.line"
   },
   {
     "name": "plotOptions.arearange.colorKey",
@@ -5775,18 +5951,17 @@
     "mainType": "boolean"
   },
   {
-    "name": "plotOptions.arearange.fillColor"
-  },
-  {
-    "name": "plotOptions.arearange.fillOpacity"
-  },
-  {
     "name": "plotOptions.arearange.lineWidth",
     "mainType": "number",
     "default": 1
   },
   {
-    "name": "plotOptions.arearange.lowMarker.symbol"
+    "name": "plotOptions.arearange.lowMarker.symbol",
+    "extendsPath": "plotOptions.series.marker.symbol"
+  },
+  {
+    "name": "plotOptions.arearange.lowMarker",
+    "extendsPath": "plotOptions.series.marker"
   },
   {
     "name": "plotOptions.arearange.shadow",
@@ -5808,24 +5983,24 @@
     "default": true
   },
   {
-    "name": "plotOptions.areaspline.color"
-  },
-  {
-    "name": "plotOptions.areaspline.fillColor"
+    "name": "plotOptions.arearange",
+    "extendsPath": "plotOptions.area"
   },
   {
     "name": "plotOptions.areaspline.fillOpacity",
     "mainType": "number"
   },
   {
-    "name": "plotOptions.areasplinerange.color"
-  },
-  {
-    "name": "plotOptions.areasplinerange.fillColor"
+    "name": "plotOptions.areaspline",
+    "extendsPath": "plotOptions.area"
   },
   {
     "name": "plotOptions.areasplinerange.fillOpacity",
     "mainType": "number"
+  },
+  {
+    "name": "plotOptions.areasplinerange",
+    "extendsPath": "plotOptions.arearange"
   },
   {
     "name": "plotOptions.aroon.aroonDown.styles.lineColor",
@@ -5861,16 +6036,29 @@
     "default": "<span style=\"color:{point.color}\">●</span><b> {series.name}</b><br/>Aroon Up: {point.y}<br/>Aroon Down: {point.aroonDown}<br/>"
   },
   {
+    "name": "plotOptions.aroon",
+    "extendsPath": "plotOptions.sma"
+  },
+  {
     "name": "plotOptions.aroonoscillator.tooltip.pointFormat",
     "mainType": "string",
     "default": "<span style=\"color:{point.color}\">●</span><b> {series.name}</b>: {point.y}"
+  },
+  {
+    "name": "plotOptions.aroonoscillator",
+    "extendsPath": "plotOptions.aroon"
   },
   {
     "name": "plotOptions.atr.params.index",
     "mainType": "string"
   },
   {
-    "name": "plotOptions.bar"
+    "name": "plotOptions.atr",
+    "extendsPath": "plotOptions.sma"
+  },
+  {
+    "name": "plotOptions.bar",
+    "extendsPath": "plotOptions.column"
   },
   {
     "name": "plotOptions.bb.bottomLine.styles.lineColor",
@@ -5925,13 +6113,12 @@
     "default": 1
   },
   {
-    "name": "plotOptions.bellcurve.color"
+    "name": "plotOptions.bb.topLine",
+    "extendsPath": "plotOptions.bb.bottomLine"
   },
   {
-    "name": "plotOptions.bellcurve.fillColor"
-  },
-  {
-    "name": "plotOptions.bellcurve.fillOpacity"
+    "name": "plotOptions.bb",
+    "extendsPath": "plotOptions.sma"
   },
   {
     "name": "plotOptions.bellcurve.intervals",
@@ -5947,6 +6134,10 @@
     "name": "plotOptions.bellcurve.pointsInInterval",
     "mainType": "number",
     "default": 3
+  },
+  {
+    "name": "plotOptions.bellcurve",
+    "extendsPath": "plotOptions.areaspline"
   },
   {
     "name": "plotOptions.boxplot.boxDashStyle",
@@ -6036,6 +6227,10 @@
     "default": 2
   },
   {
+    "name": "plotOptions.boxplot",
+    "extendsPath": "plotOptions.column"
+  },
+  {
     "name": "plotOptions.bubble.animationLimit",
     "mainType": "number",
     "default": 250
@@ -6077,6 +6272,10 @@
     "name": "plotOptions.bubble.marker.symbol",
     "mainType": "SymbolKeyValue",
     "default": "circle"
+  },
+  {
+    "name": "plotOptions.bubble.marker",
+    "extendsPath": "plotOptions.series.marker"
   },
   {
     "name": "plotOptions.bubble.maxSize",
@@ -6143,6 +6342,10 @@
     "default": "z"
   },
   {
+    "name": "plotOptions.bubble",
+    "extendsPath": "plotOptions.scatter"
+  },
+  {
     "name": "plotOptions.bullet.dragDrop.draggableTarget",
     "mainType": "boolean"
   },
@@ -6180,6 +6383,10 @@
     "default": "<span style=\"color:{series.color}\">●</span> {series.name}: <b>{point.y}</b>. Target: <b>{point.target}</b><br/>"
   },
   {
+    "name": "plotOptions.bullet",
+    "extendsPath": "plotOptions.column"
+  },
+  {
     "name": "plotOptions.candlestick.lineColor",
     "mainType": "ColorString",
     "default": "#000000"
@@ -6209,8 +6416,16 @@
     "mainType": "ColorString"
   },
   {
+    "name": "plotOptions.candlestick",
+    "extendsPath": "plotOptions.ohlc"
+  },
+  {
     "name": "plotOptions.cci.params.index",
     "mainType": "string"
+  },
+  {
+    "name": "plotOptions.cci",
+    "extendsPath": "plotOptions.sma"
   },
   {
     "name": "plotOptions.chaikin.params.index",
@@ -6231,6 +6446,10 @@
     "default": "volume"
   },
   {
+    "name": "plotOptions.chaikin",
+    "extendsPath": "plotOptions.ema"
+  },
+  {
     "name": "plotOptions.cmf.params.index",
     "mainType": "string"
   },
@@ -6238,6 +6457,10 @@
     "name": "plotOptions.cmf.params.volumeSeriesID",
     "mainType": "string",
     "default": "volume"
+  },
+  {
+    "name": "plotOptions.cmf",
+    "extendsPath": "plotOptions.sma"
   },
   {
     "name": "plotOptions.cmo.params.index",
@@ -6248,6 +6471,10 @@
     "name": "plotOptions.cmo.params.period",
     "mainType": "number",
     "default": 20
+  },
+  {
+    "name": "plotOptions.cmo",
+    "extendsPath": "plotOptions.sma"
   },
   {
     "name": "plotOptions.column.borderColor",
@@ -6367,6 +6594,10 @@
     "mainType": "ColorString"
   },
   {
+    "name": "plotOptions.column.states.hover",
+    "extendsPath": "plotOptions.series.states.hover"
+  },
+  {
     "name": "plotOptions.column.states.select.borderColor",
     "mainType": "ColorString",
     "default": "#000000"
@@ -6375,6 +6606,10 @@
     "name": "plotOptions.column.states.select.color",
     "mainType": "ColorString",
     "default": "#cccccc"
+  },
+  {
+    "name": "plotOptions.column.states.select",
+    "extendsPath": "plotOptions.series.states.select"
   },
   {
     "name": "plotOptions.column.stickyTracking",
@@ -6392,7 +6627,12 @@
     "default": 6
   },
   {
-    "name": "plotOptions.columnpyramid"
+    "name": "plotOptions.column",
+    "extendsPath": "plotOptions.line"
+  },
+  {
+    "name": "plotOptions.columnpyramid",
+    "extendsPath": "plotOptions.column"
   },
   {
     "name": "plotOptions.columnrange.borderRadius.where",
@@ -6400,7 +6640,8 @@
     "default": "all"
   },
   {
-    "name": "plotOptions.columnrange.dataLabels"
+    "name": "plotOptions.columnrange.dataLabels",
+    "extendsPath": "plotOptions.arearange.dataLabels"
   },
   {
     "name": "plotOptions.columnrange.dragDrop.draggableHigh",
@@ -6416,10 +6657,16 @@
     "default": "rectangle"
   },
   {
-    "name": "plotOptions.cylinder"
+    "name": "plotOptions.columnrange",
+    "extendsPath": "plotOptions.column"
   },
   {
-    "name": "plotOptions.dema"
+    "name": "plotOptions.cylinder",
+    "extendsPath": "plotOptions.column"
+  },
+  {
+    "name": "plotOptions.dema",
+    "extendsPath": "plotOptions.ema"
   },
   {
     "name": "plotOptions.dependencywheel.borderRadius",
@@ -6439,18 +6686,6 @@
     "mainType": "number"
   },
   {
-    "name": "plotOptions.dependencywheel.dataLabels.format"
-  },
-  {
-    "name": "plotOptions.dependencywheel.dataLabels.formatter"
-  },
-  {
-    "name": "plotOptions.dependencywheel.dataLabels.nodeFormat"
-  },
-  {
-    "name": "plotOptions.dependencywheel.dataLabels.nodeFormatter"
-  },
-  {
     "name": "plotOptions.dependencywheel.dataLabels.textPath.attributes.dy",
     "mainType": "SVGAttributes"
   },
@@ -6462,6 +6697,10 @@
     "name": "plotOptions.dependencywheel.startAngle",
     "mainType": "number",
     "default": 0
+  },
+  {
+    "name": "plotOptions.dependencywheel",
+    "extendsPath": "plotOptions.sankey"
   },
   {
     "name": "plotOptions.disparityindex.dataGrouping.approximation",
@@ -6482,6 +6721,10 @@
     "name": "plotOptions.disparityindex.params.index",
     "mainType": "number",
     "default": 3
+  },
+  {
+    "name": "plotOptions.disparityindex",
+    "extendsPath": "plotOptions.sma"
   },
   {
     "name": "plotOptions.dmi.dataGrouping.approximation",
@@ -6523,6 +6766,10 @@
     "default": "<span style=\"color: {point.color}\">●</span><b> {series.name}</b><br/><span style=\"color: {point.color}\">DX</span>: {point.y}<br/><span style=\"color: {point.series.options.plusDILine.styles.lineColor}\">+DI</span>: {point.plusDI}<br/><span style=\"color: {point.series.options.minusDILine.styles.lineColor}\">-DI</span>: {point.minusDI}<br/>"
   },
   {
+    "name": "plotOptions.dmi",
+    "extendsPath": "plotOptions.sma"
+  },
+  {
     "name": "plotOptions.dpo.params.index",
     "mainType": "number",
     "default": 0
@@ -6531,6 +6778,10 @@
     "name": "plotOptions.dpo.params.period",
     "mainType": "number",
     "default": 21
+  },
+  {
+    "name": "plotOptions.dpo",
+    "extendsPath": "plotOptions.sma"
   },
   {
     "name": "plotOptions.dumbbell.connectorColor",
@@ -6562,7 +6813,12 @@
     "default": "#333333"
   },
   {
-    "name": "plotOptions.dumbbell.lowMarker.symbol"
+    "name": "plotOptions.dumbbell.lowMarker.symbol",
+    "extendsPath": "plotOptions.series.marker.symbol"
+  },
+  {
+    "name": "plotOptions.dumbbell.lowMarker",
+    "extendsPath": "plotOptions.series.marker"
   },
   {
     "name": "plotOptions.dumbbell.pointPadding",
@@ -6580,6 +6836,10 @@
     "default": 1
   },
   {
+    "name": "plotOptions.dumbbell",
+    "extendsPath": "plotOptions.arearange"
+  },
+  {
     "name": "plotOptions.ema.params.index",
     "mainType": "number",
     "default": 3
@@ -6588,6 +6848,10 @@
     "name": "plotOptions.ema.params.period",
     "mainType": "number",
     "default": 9
+  },
+  {
+    "name": "plotOptions.ema",
+    "extendsPath": "plotOptions.sma"
   },
   {
     "name": "plotOptions.errorbar.color",
@@ -6613,6 +6877,10 @@
     "name": "plotOptions.errorbar.whiskerWidth",
     "mainType": "number",
     "default": null
+  },
+  {
+    "name": "plotOptions.errorbar",
+    "extendsPath": "plotOptions.boxplot"
   },
   {
     "name": "plotOptions.flags.allowOverlapX",
@@ -6676,6 +6944,10 @@
     "default": "#000000"
   },
   {
+    "name": "plotOptions.flags.states.hover",
+    "extendsPath": "plotOptions.column.states.hover"
+  },
+  {
     "name": "plotOptions.flags.style",
     "mainType": "CSSObject"
   },
@@ -6704,6 +6976,10 @@
     "default": "{point.text}"
   },
   {
+    "name": "plotOptions.flags.tooltip",
+    "extendsPath": "plotOptions.series.tooltip"
+  },
+  {
     "name": "plotOptions.flags.useHTML",
     "mainType": "boolean"
   },
@@ -6715,6 +6991,10 @@
     "name": "plotOptions.flags.y",
     "mainType": "number",
     "default": -30
+  },
+  {
+    "name": "plotOptions.flags",
+    "extendsPath": "plotOptions.column"
   },
   {
     "name": "plotOptions.flowmap.animation",
@@ -6773,9 +7053,6 @@
     "default": 5
   },
   {
-    "name": "plotOptions.flowmap.opacity"
-  },
-  {
     "name": "plotOptions.flowmap.weight",
     "mainType": "number"
   },
@@ -6783,6 +7060,10 @@
     "name": "plotOptions.flowmap.width",
     "mainType": "number",
     "default": 1
+  },
+  {
+    "name": "plotOptions.flowmap",
+    "extendsPath": "plotOptions.mapline"
   },
   {
     "name": "plotOptions.funnel.animation",
@@ -6829,9 +7110,6 @@
     "default": false
   },
   {
-    "name": "plotOptions.funnel.states.hover"
-  },
-  {
     "name": "plotOptions.funnel.states.select.borderColor",
     "mainType": "ColorString",
     "default": "#000000"
@@ -6845,6 +7123,10 @@
     "name": "plotOptions.funnel.width",
     "mainType": "number",
     "default": "90%"
+  },
+  {
+    "name": "plotOptions.funnel",
+    "extendsPath": "plotOptions.pie"
   },
   {
     "name": "plotOptions.funnel3d.animation",
@@ -6917,6 +7199,10 @@
     "default": "90%"
   },
   {
+    "name": "plotOptions.funnel3d",
+    "extendsPath": "plotOptions.column"
+  },
+  {
     "name": "plotOptions.gantt.connectors.animation.reversed",
     "mainType": "boolean",
     "default": true
@@ -6985,12 +7271,13 @@
     "default": false
   },
   {
-    "name": "plotOptions.gantt.partialFill"
-  },
-  {
     "name": "plotOptions.gantt.tooltip.headerFormat",
     "mainType": "string",
     "default": "<span style=\"font-size: 0.8em\">{series.name}</span><br/>"
+  },
+  {
+    "name": "plotOptions.gantt",
+    "extendsPath": "plotOptions.xrange"
   },
   {
     "name": "plotOptions.gauge.dataLabels.borderColor",
@@ -7120,6 +7407,10 @@
     "mainType": "boolean"
   },
   {
+    "name": "plotOptions.gauge",
+    "extendsPath": "plotOptions.line"
+  },
+  {
     "name": "plotOptions.geoheatmap.borderWidth",
     "mainType": "number"
   },
@@ -7161,6 +7452,10 @@
     "name": "plotOptions.geoheatmap.tooltip.pointFormat",
     "mainType": "string",
     "default": "Lat: {point.lat}, Lon: {point.lon}, Value: {point.value}<br/>"
+  },
+  {
+    "name": "plotOptions.geoheatmap",
+    "extendsPath": "plotOptions.map"
   },
   {
     "name": "plotOptions.heatmap.animation",
@@ -7294,9 +7589,17 @@
     "default": "{point.x}, {point.y}: {point.value}<br/>"
   },
   {
+    "name": "plotOptions.heatmap",
+    "extendsPath": "plotOptions.scatter"
+  },
+  {
     "name": "plotOptions.heikinashi.dataGrouping.groupAll",
     "mainType": "boolean",
     "default": true
+  },
+  {
+    "name": "plotOptions.heikinashi",
+    "extendsPath": "plotOptions.candlestick"
   },
   {
     "name": "plotOptions.histogram.binWidth",
@@ -7338,6 +7641,10 @@
     "default": "<span style=\"font-size: 0.8em\">{point.x} - {point.x2}</span><br/><span style=\"color:{point.color}\">●</span> {series.name} <b>{point.y}</b><br/>"
   },
   {
+    "name": "plotOptions.histogram",
+    "extendsPath": "plotOptions.column"
+  },
+  {
     "name": "plotOptions.hlc.colorKey",
     "mainType": "string"
   },
@@ -7364,6 +7671,10 @@
     "default": 3
   },
   {
+    "name": "plotOptions.hlc.states.hover",
+    "extendsPath": "plotOptions.column.states.hover"
+  },
+  {
     "name": "plotOptions.hlc.stickyTracking",
     "mainType": "boolean",
     "default": true
@@ -7377,6 +7688,10 @@
     "name": "plotOptions.hlc.tooltip.pointFormat",
     "mainType": "string",
     "default": "<span style=\"color:{point.color}\">●</span> <b> {series.name}</b><br/>{series.chart.options.lang.stockHigh}: {point.high}<br/>{series.chart.options.lang.stockLow}: {point.low}<br/>{series.chart.options.lang.stockClose}: {point.close}<br/>"
+  },
+  {
+    "name": "plotOptions.hlc",
+    "extendsPath": "plotOptions.column"
   },
   {
     "name": "plotOptions.hollowcandlestick.color",
@@ -7407,6 +7722,10 @@
     "name": "plotOptions.hollowcandlestick.upLineColor",
     "mainType": "ColorType",
     "default": "#06b535"
+  },
+  {
+    "name": "plotOptions.hollowcandlestick",
+    "extendsPath": "plotOptions.candlestick"
   },
   {
     "name": "plotOptions.ikh.chikouLine.styles.lineColor",
@@ -7496,6 +7815,10 @@
     "default": "<span style=\"color:{point.color}\">●</span> <b> {series.name}</b><br/>TENKAN SEN: {point.tenkanSen:.3f}<br/>KIJUN SEN: {point.kijunSen:.3f}<br/>CHIKOU SPAN: {point.chikouSpan:.3f}<br/>SENKOU SPAN A: {point.senkouSpanA:.3f}<br/>SENKOU SPAN B: {point.senkouSpanB:.3f}<br/>"
   },
   {
+    "name": "plotOptions.ikh",
+    "extendsPath": "plotOptions.sma"
+  },
+  {
     "name": "plotOptions.item.crisp",
     "mainType": "boolean",
     "default": false
@@ -7520,7 +7843,8 @@
     "default": "vertical"
   },
   {
-    "name": "plotOptions.item.marker"
+    "name": "plotOptions.item.marker",
+    "extendsPath": "plotOptions.series.marker"
   },
   {
     "name": "plotOptions.item.rows",
@@ -7534,6 +7858,10 @@
   {
     "name": "plotOptions.item.startAngle",
     "mainType": "undefined"
+  },
+  {
+    "name": "plotOptions.item",
+    "extendsPath": "plotOptions.pie"
   },
   {
     "name": "plotOptions.keltnerchannels.bottomLine.styles.lineColor",
@@ -7578,6 +7906,14 @@
     "default": 1
   },
   {
+    "name": "plotOptions.keltnerchannels.topLine",
+    "extendsPath": "plotOptions.keltnerchannels.bottomLine"
+  },
+  {
+    "name": "plotOptions.keltnerchannels",
+    "extendsPath": "plotOptions.sma"
+  },
+  {
     "name": "plotOptions.klinger.dataGrouping.approximation",
     "mainType": "string",
     "default": "averages"
@@ -7618,12 +7954,20 @@
     "default": "<span style=\"color: {point.color}\">●</span><b> {series.name}</b><br/><span style=\"color: {point.color}\">Klinger</span>: {point.y}<br/><span style=\"color: {point.series.options.signalLine.styles.lineColor}\">Signal</span>: {point.signal}<br/>"
   },
   {
+    "name": "plotOptions.klinger",
+    "extendsPath": "plotOptions.sma"
+  },
+  {
     "name": "plotOptions.line.linecap",
     "mainType": "SeriesLinecapValue"
   },
   {
     "name": "plotOptions.line.useOhlcData",
     "mainType": "boolean"
+  },
+  {
+    "name": "plotOptions.line",
+    "extendsPath": "plotOptions.series"
   },
   {
     "name": "plotOptions.linearregression.params.xAxisUnit",
@@ -7636,15 +7980,25 @@
     "default": 4
   },
   {
+    "name": "plotOptions.linearregression",
+    "extendsPath": "plotOptions.sma"
+  },
+  {
     "name": "plotOptions.linearregressionangle.tooltip.pointFormat",
     "mainType": "string",
     "default": "<span style=\"color:{point.color}\">●</span>{series.name}: <b>{point.y}°</b><br/>"
   },
   {
-    "name": "plotOptions.linearregressionintercept"
+    "name": "plotOptions.linearregressionangle",
+    "extendsPath": "plotOptions.linearregression"
   },
   {
-    "name": "plotOptions.linearregressionslope"
+    "name": "plotOptions.linearregressionintercept",
+    "extendsPath": "plotOptions.linearregression"
+  },
+  {
+    "name": "plotOptions.linearregressionslope",
+    "extendsPath": "plotOptions.linearregression"
   },
   {
     "name": "plotOptions.lollipop.dataLabels.align",
@@ -7662,6 +8016,10 @@
     "name": "plotOptions.lollipop.pointRange",
     "mainType": "number",
     "default": 1
+  },
+  {
+    "name": "plotOptions.lollipop",
+    "extendsPath": "plotOptions.dumbbell"
   },
   {
     "name": "plotOptions.macd.crisp",
@@ -7688,7 +8046,8 @@
     "default": 1
   },
   {
-    "name": "plotOptions.macd.macdLine.zones"
+    "name": "plotOptions.macd.macdLine.zones",
+    "extendsPath": "plotOptions.macd.zones"
   },
   {
     "name": "plotOptions.macd.minPointLength",
@@ -7730,7 +8089,8 @@
     "default": 1
   },
   {
-    "name": "plotOptions.macd.signalLine.zones"
+    "name": "plotOptions.macd.signalLine.zones",
+    "extendsPath": "plotOptions.macd.zones"
   },
   {
     "name": "plotOptions.macd.states.hover.halo.size",
@@ -7746,6 +8106,10 @@
     "name": "plotOptions.macd.tooltip.pointFormat",
     "mainType": "string",
     "default": "<span style=\"color:{point.color}\">●</span> <b> {series.name}</b><br/>Value: {point.MACD}<br/>Signal: {point.signal}<br/>Histogram: {point.y}<br/>"
+  },
+  {
+    "name": "plotOptions.macd",
+    "extendsPath": "plotOptions.sma"
   },
   {
     "name": "plotOptions.map.affectsMapView",
@@ -7829,6 +8193,10 @@
     "default": "{point.name}: {point.value}<br/>"
   },
   {
+    "name": "plotOptions.map",
+    "extendsPath": "plotOptions.scatter"
+  },
+  {
     "name": "plotOptions.mapbubble.animationLimit",
     "mainType": "number",
     "default": 500
@@ -7903,6 +8271,10 @@
     "default": 0
   },
   {
+    "name": "plotOptions.mapbubble",
+    "extendsPath": "plotOptions.bubble"
+  },
+  {
     "name": "plotOptions.mapline.fillColor",
     "mainType": "ColorString",
     "default": "none"
@@ -7920,6 +8292,10 @@
   {
     "name": "plotOptions.mapline.states.hover.lineWidth",
     "mainType": "number"
+  },
+  {
+    "name": "plotOptions.mapline",
+    "extendsPath": "plotOptions.map"
   },
   {
     "name": "plotOptions.mappoint.dataLabels.crop",
@@ -7957,6 +8333,11 @@
     "default": "{#if point.name}{point.name}{else}Lat: {point.lat}, Lon: {point.lon}{/if}"
   },
   {
+    "name": "plotOptions.mappoint",
+    "mainType": "number",
+    "extendsPath": "plotOptions.scatter"
+  },
+  {
     "name": "plotOptions.mfi.params.decimals",
     "mainType": "number",
     "default": 4
@@ -7971,14 +8352,26 @@
     "default": "volume"
   },
   {
+    "name": "plotOptions.mfi",
+    "extendsPath": "plotOptions.sma"
+  },
+  {
     "name": "plotOptions.momentum.params.index",
     "mainType": "number",
     "default": 3
   },
   {
+    "name": "plotOptions.momentum",
+    "extendsPath": "plotOptions.sma"
+  },
+  {
     "name": "plotOptions.natr.tooltip.valueSuffix",
     "mainType": "string",
     "default": "%"
+  },
+  {
+    "name": "plotOptions.natr",
+    "extendsPath": "plotOptions.atr"
   },
   {
     "name": "plotOptions.networkgraph.dataLabels.animation.defer",
@@ -7995,19 +8388,17 @@
     "mainType": "string"
   },
   {
-    "name": "plotOptions.networkgraph.dataLabels.formatter"
-  },
-  {
     "name": "plotOptions.networkgraph.dataLabels.linkFormat",
     "mainType": "string"
-  },
-  {
-    "name": "plotOptions.networkgraph.dataLabels.linkFormatter"
   },
   {
     "name": "plotOptions.networkgraph.dataLabels.linkTextPath.enabled",
     "mainType": "boolean",
     "default": true
+  },
+  {
+    "name": "plotOptions.networkgraph.dataLabels.linkTextPath",
+    "extendsPath": "plotOptions.networkgraph.dataLabels.textPath"
   },
   {
     "name": "plotOptions.networkgraph.dataLabels.style.transition",
@@ -8026,7 +8417,8 @@
   },
   {
     "name": "plotOptions.networkgraph.inactiveOtherPoints",
-    "default": true
+    "default": true,
+    "extendsPath": "plotOptions.series.inactiveOtherPoints"
   },
   {
     "name": "plotOptions.networkgraph.layoutAlgorithm.approximation",
@@ -8147,6 +8539,10 @@
     "default": false
   },
   {
+    "name": "plotOptions.networkgraph",
+    "extendsPath": "plotOptions.line"
+  },
+  {
     "name": "plotOptions.obv.marker.enabled",
     "mainType": "boolean",
     "default": false
@@ -8168,6 +8564,10 @@
     "name": "plotOptions.obv.tooltip.valueDecimals",
     "mainType": "number",
     "default": 0
+  },
+  {
+    "name": "plotOptions.obv",
+    "extendsPath": "plotOptions.sma"
   },
   {
     "name": "plotOptions.ohlc.dataGrouping.approximation",
@@ -8202,6 +8602,10 @@
   {
     "name": "plotOptions.ohlc.upColor",
     "mainType": "ColorString"
+  },
+  {
+    "name": "plotOptions.ohlc",
+    "extendsPath": "plotOptions.hlc"
   },
   {
     "name": "plotOptions.organization.borderColor",
@@ -8293,6 +8697,10 @@
     "default": "{point.name}<br>{point.title}<br>{point.description}"
   },
   {
+    "name": "plotOptions.organization",
+    "extendsPath": "plotOptions.sankey"
+  },
+  {
     "name": "plotOptions.packedbubble.crisp",
     "mainType": "boolean",
     "default": false
@@ -8331,7 +8739,8 @@
     "default": "opacity 2000ms"
   },
   {
-    "name": "plotOptions.packedbubble.dataLabels.textPath"
+    "name": "plotOptions.packedbubble.dataLabels.textPath",
+    "extendsPath": "plotOptions.series.dataLabels.textPath"
   },
   {
     "name": "plotOptions.packedbubble.draggable",
@@ -8365,7 +8774,8 @@
   },
   {
     "name": "plotOptions.packedbubble.layoutAlgorithm.initialPositionRadius",
-    "default": 20
+    "default": 20,
+    "extendsPath": "plotOptions.networkgraph.layoutAlgorithm.initialPositionRadius"
   },
   {
     "name": "plotOptions.packedbubble.layoutAlgorithm.initialPositions",
@@ -8408,6 +8818,10 @@
     "default": "circle"
   },
   {
+    "name": "plotOptions.packedbubble.layoutAlgorithm.parentNodeOptions.marker",
+    "extendsPath": "plotOptions.series.marker"
+  },
+  {
     "name": "plotOptions.packedbubble.layoutAlgorithm.parentNodeOptions.maxIterations",
     "mainType": "number",
     "default": 400
@@ -8423,6 +8837,10 @@
     "default": true
   },
   {
+    "name": "plotOptions.packedbubble.layoutAlgorithm.parentNodeOptions",
+    "extendsPath": "plotOptions.networkgraph.layoutAlgorithm"
+  },
+  {
     "name": "plotOptions.packedbubble.layoutAlgorithm.seriesInteraction",
     "mainType": "boolean",
     "default": true
@@ -8431,6 +8849,10 @@
     "name": "plotOptions.packedbubble.layoutAlgorithm.splitSeries",
     "mainType": "boolean",
     "default": false
+  },
+  {
+    "name": "plotOptions.packedbubble.layoutAlgorithm",
+    "extendsPath": "plotOptions.networkgraph.layoutAlgorithm"
   },
   {
     "name": "plotOptions.packedbubble.maxSize",
@@ -8473,9 +8895,17 @@
     "default": "y"
   },
   {
+    "name": "plotOptions.packedbubble",
+    "extendsPath": "plotOptions.bubble"
+  },
+  {
     "name": "plotOptions.pareto.zIndex",
     "mainType": "number",
     "default": 3
+  },
+  {
+    "name": "plotOptions.pareto",
+    "extendsPath": "plotOptions.line"
   },
   {
     "name": "plotOptions.pc.bottomLine.styles.lineColor",
@@ -8519,9 +8949,17 @@
     "default": 1
   },
   {
+    "name": "plotOptions.pc",
+    "extendsPath": "plotOptions.sma"
+  },
+  {
     "name": "plotOptions.pictorial.borderWidth",
     "mainType": "number",
     "default": 0
+  },
+  {
+    "name": "plotOptions.pictorial",
+    "extendsPath": "plotOptions.column"
   },
   {
     "name": "plotOptions.pie.borderColor",
@@ -8609,6 +9047,10 @@
     "mainType": "CSSObject"
   },
   {
+    "name": "plotOptions.pie.dataLabels",
+    "extendsPath": "plotOptions.series.dataLabels"
+  },
+  {
     "name": "plotOptions.pie.depth",
     "mainType": "number"
   },
@@ -8631,7 +9073,8 @@
   },
   {
     "name": "plotOptions.pie.inactiveOtherPoints",
-    "default": true
+    "default": true,
+    "extendsPath": "plotOptions.series.inactiveOtherPoints"
   },
   {
     "name": "plotOptions.pie.innerSize",
@@ -8670,6 +9113,10 @@
     "default": 0.1
   },
   {
+    "name": "plotOptions.pie.states.hover",
+    "extendsPath": "plotOptions.series.states.hover"
+  },
+  {
     "name": "plotOptions.pie.stickyTracking",
     "mainType": "boolean",
     "default": false
@@ -8682,6 +9129,10 @@
     "name": "plotOptions.pie.tooltip.followPointer",
     "mainType": "boolean",
     "default": true
+  },
+  {
+    "name": "plotOptions.pie",
+    "extendsPath": "plotOptions.line"
   },
   {
     "name": "plotOptions.pivotpoints.dataGrouping.approximation",
@@ -8721,6 +9172,10 @@
     "name": "plotOptions.pivotpoints.params.period",
     "mainType": "number",
     "default": 28
+  },
+  {
+    "name": "plotOptions.pivotpoints",
+    "extendsPath": "plotOptions.sma"
   },
   {
     "name": "plotOptions.pointandfigure.boxSize",
@@ -8778,6 +9233,10 @@
     "default": "cross"
   },
   {
+    "name": "plotOptions.pointandfigure.markerUp",
+    "extendsPath": "plotOptions.series.marker"
+  },
+  {
     "name": "plotOptions.pointandfigure.pointPadding",
     "mainType": "number",
     "default": 0.1
@@ -8801,6 +9260,10 @@
     "name": "plotOptions.pointandfigure.turboThreshold",
     "mainType": "number",
     "default": 0
+  },
+  {
+    "name": "plotOptions.pointandfigure",
+    "extendsPath": "plotOptions.scatter"
   },
   {
     "name": "plotOptions.polygon.legendSymbol",
@@ -8838,12 +9301,20 @@
     "default": true
   },
   {
+    "name": "plotOptions.polygon",
+    "extendsPath": "plotOptions.scatter"
+  },
+  {
     "name": "plotOptions.ppo.params.period",
     "mainType": "string"
   },
   {
     "name": "plotOptions.ppo.params.periods",
     "mainType": "Array.<number>"
+  },
+  {
+    "name": "plotOptions.ppo",
+    "extendsPath": "plotOptions.ema"
   },
   {
     "name": "plotOptions.priceenvelopes.bottomLine.styles.lineColor",
@@ -8890,6 +9361,14 @@
     "default": 1
   },
   {
+    "name": "plotOptions.priceenvelopes.topLine",
+    "extendsPath": "plotOptions.priceenvelopes.bottomLine"
+  },
+  {
+    "name": "plotOptions.priceenvelopes",
+    "extendsPath": "plotOptions.sma"
+  },
+  {
     "name": "plotOptions.psar.lineWidth",
     "mainType": "number",
     "default": 0
@@ -8934,7 +9413,12 @@
     "default": 0
   },
   {
-    "name": "plotOptions.pyramid"
+    "name": "plotOptions.psar",
+    "extendsPath": "plotOptions.sma"
+  },
+  {
+    "name": "plotOptions.pyramid",
+    "extendsPath": "plotOptions.funnel"
   },
   {
     "name": "plotOptions.pyramid3d.dataLabels.verticalAlign",
@@ -8955,6 +9439,10 @@
     "name": "plotOptions.pyramid3d.reversed",
     "mainType": "boolean",
     "default": true
+  },
+  {
+    "name": "plotOptions.pyramid3d",
+    "extendsPath": "plotOptions.funnel3d"
   },
   {
     "name": "plotOptions.renko.borderRadius.where",
@@ -9012,6 +9500,10 @@
     "default": "<span style=\"color:{point.color}\">●</span> {series.name}: <b>{point.low:.2f} - {point.y:.2f}</b><br/>"
   },
   {
+    "name": "plotOptions.renko",
+    "extendsPath": "plotOptions.column"
+  },
+  {
     "name": "plotOptions.roc.params.index",
     "mainType": "number",
     "default": 3
@@ -9022,6 +9514,10 @@
     "default": 9
   },
   {
+    "name": "plotOptions.roc",
+    "extendsPath": "plotOptions.sma"
+  },
+  {
     "name": "plotOptions.rsi.params.decimals",
     "mainType": "number",
     "default": 4
@@ -9030,6 +9526,10 @@
     "name": "plotOptions.rsi.params.index",
     "mainType": "number",
     "default": 3
+  },
+  {
+    "name": "plotOptions.rsi",
+    "extendsPath": "plotOptions.sma"
   },
   {
     "name": "plotOptions.sankey.borderWidth",
@@ -9084,7 +9584,8 @@
   },
   {
     "name": "plotOptions.sankey.inactiveOtherPoints",
-    "default": true
+    "default": true,
+    "extendsPath": "plotOptions.series.inactiveOtherPoints"
   },
   {
     "name": "plotOptions.sankey.levels.borderColor",
@@ -9103,7 +9604,8 @@
     "mainType": "boolean"
   },
   {
-    "name": "plotOptions.sankey.levels.dataLabels"
+    "name": "plotOptions.sankey.levels.dataLabels",
+    "extendsPath": "plotOptions.sankey.dataLabels"
   },
   {
     "name": "plotOptions.sankey.levels.level",
@@ -9114,7 +9616,8 @@
     "mainType": "number"
   },
   {
-    "name": "plotOptions.sankey.levels.states"
+    "name": "plotOptions.sankey.levels.states",
+    "extendsPath": "plotOptions.sankey.states"
   },
   {
     "name": "plotOptions.sankey.linkColorMode",
@@ -9204,6 +9707,10 @@
     "default": "{point.fromNode.name} → {point.toNode.name}: <b>{point.weight}</b><br/>"
   },
   {
+    "name": "plotOptions.sankey",
+    "extendsPath": "plotOptions.column"
+  },
+  {
     "name": "plotOptions.scatter.cluster.allowOverlap",
     "mainType": "boolean",
     "default": true
@@ -9251,7 +9758,8 @@
   },
   {
     "name": "plotOptions.scatter.cluster.marker",
-    "mainType": "PointMarkerOptionsObject"
+    "mainType": "PointMarkerOptionsObject",
+    "extendsPath": "plotOptions.series.marker"
   },
   {
     "name": "plotOptions.scatter.cluster.minimumClusterSize",
@@ -9271,7 +9779,8 @@
     "mainType": "number"
   },
   {
-    "name": "plotOptions.scatter.cluster.zones.marker"
+    "name": "plotOptions.scatter.cluster.zones.marker",
+    "extendsPath": "plotOptions.scatter.cluster.marker"
   },
   {
     "name": "plotOptions.scatter.cluster.zones.to",
@@ -9318,9 +9827,17 @@
     "default": "x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>"
   },
   {
+    "name": "plotOptions.scatter",
+    "extendsPath": "plotOptions.line"
+  },
+  {
     "name": "plotOptions.scatter3d.tooltip.pointFormat",
     "mainType": "string",
     "default": "x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>z: <b>{point.z}</b><br/>"
+  },
+  {
+    "name": "plotOptions.scatter3d",
+    "extendsPath": "plotOptions.scatter"
   },
   {
     "name": "plotOptions.series.accessibility.description",
@@ -9345,6 +9862,10 @@
   {
     "name": "plotOptions.series.accessibility.point.descriptionFormatter",
     "mainType": "ScreenReaderFormatterCallbackFunction.<Highcharts.Point>"
+  },
+  {
+    "name": "plotOptions.series.accessibility.point",
+    "extendsPath": "accessibility.point"
   },
   {
     "name": "plotOptions.series.allAreas",
@@ -9428,7 +9949,8 @@
     "mainType": "boolean"
   },
   {
-    "name": "plotOptions.series.connectors"
+    "name": "plotOptions.series.connectors",
+    "extendsPath": "connectors"
   },
   {
     "name": "plotOptions.series.crisp",
@@ -9928,41 +10450,24 @@
     "mainType": "boolean"
   },
   {
-    "name": "plotOptions.series.lastPrice.label.align"
-  },
-  {
-    "name": "plotOptions.series.lastPrice.label.backgroundColor"
-  },
-  {
-    "name": "plotOptions.series.lastPrice.label.borderColor"
-  },
-  {
-    "name": "plotOptions.series.lastPrice.label.borderRadius"
-  },
-  {
     "name": "plotOptions.series.lastPrice.label.borderWidth",
     "mainType": "number"
-  },
-  {
-    "name": "plotOptions.series.lastPrice.label.enabled"
   },
   {
     "name": "plotOptions.series.lastPrice.label.format",
     "mainType": "string"
   },
   {
-    "name": "plotOptions.series.lastPrice.label.formatter"
-  },
-  {
     "name": "plotOptions.series.lastPrice.label.padding",
     "mainType": "number"
   },
   {
-    "name": "plotOptions.series.lastPrice.label.shape"
-  },
-  {
     "name": "plotOptions.series.lastPrice.label.style",
     "mainType": "CSSObject"
+  },
+  {
+    "name": "plotOptions.series.lastPrice.label",
+    "extendsPath": "yAxis.crosshair.label"
   },
   {
     "name": "plotOptions.series.lastPrice.width",
@@ -9979,12 +10484,6 @@
   {
     "name": "plotOptions.series.lastVisiblePrice.enabled",
     "mainType": "boolean"
-  },
-  {
-    "name": "plotOptions.series.lastVisiblePrice.label.align"
-  },
-  {
-    "name": "plotOptions.series.lastVisiblePrice.label.backgroundColor"
   },
   {
     "name": "plotOptions.series.lastVisiblePrice.label.borderColor",
@@ -10007,18 +10506,16 @@
     "mainType": "string"
   },
   {
-    "name": "plotOptions.series.lastVisiblePrice.label.formatter"
-  },
-  {
     "name": "plotOptions.series.lastVisiblePrice.label.padding",
     "mainType": "number"
   },
   {
-    "name": "plotOptions.series.lastVisiblePrice.label.shape"
-  },
-  {
     "name": "plotOptions.series.lastVisiblePrice.label.style",
     "mainType": "CSSObject"
+  },
+  {
+    "name": "plotOptions.series.lastVisiblePrice.label",
+    "extendsPath": "yAxis.crosshair.label"
   },
   {
     "name": "plotOptions.series.lastVisiblePrice.width",
@@ -10309,24 +10806,29 @@
   },
   {
     "name": "plotOptions.series.sonification.contextTracks",
-    "mainType": "Array.<*>"
+    "mainType": "Array.<*>",
+    "extendsPath": "sonification.globalContextTracks"
   },
   {
-    "name": "plotOptions.series.sonification.defaultInstrumentOptions"
+    "name": "plotOptions.series.sonification.defaultInstrumentOptions",
+    "extendsPath": "sonification.defaultInstrumentOptions"
   },
   {
-    "name": "plotOptions.series.sonification.defaultSpeechOptions"
+    "name": "plotOptions.series.sonification.defaultSpeechOptions",
+    "extendsPath": "sonification.defaultSpeechOptions"
   },
   {
     "name": "plotOptions.series.sonification.enabled",
     "mainType": "boolean"
   },
   {
-    "name": "plotOptions.series.sonification.pointGrouping"
+    "name": "plotOptions.series.sonification.pointGrouping",
+    "extendsPath": "sonification.pointGrouping"
   },
   {
     "name": "plotOptions.series.sonification.tracks",
-    "mainType": "Array.<*>"
+    "mainType": "Array.<*>",
+    "extendsPath": "sonification.globalTracks"
   },
   {
     "name": "plotOptions.series.stacking",
@@ -10377,7 +10879,8 @@
     "default": 1
   },
   {
-    "name": "plotOptions.series.states.hover.marker"
+    "name": "plotOptions.series.states.hover.marker",
+    "extendsPath": "plotOptions.series.marker"
   },
   {
     "name": "plotOptions.series.states.inactive.animation.duration",
@@ -10408,6 +10911,10 @@
     "mainType": "ColorString"
   },
   {
+    "name": "plotOptions.series.states.select",
+    "extendsPath": "plotOptions.series.states.hover"
+  },
+  {
     "name": "plotOptions.series.step",
     "mainType": "\"left\""
   },
@@ -10421,7 +10928,8 @@
     "mainType": "number"
   },
   {
-    "name": "plotOptions.series.tooltip"
+    "name": "plotOptions.series.tooltip",
+    "extendsPath": "tooltip"
   },
   {
     "name": "plotOptions.series.turboThreshold",
@@ -10469,6 +10977,10 @@
     "mainType": "Array.<number, number, number>"
   },
   {
+    "name": "plotOptions.slowstochastic",
+    "extendsPath": "plotOptions.stochastic"
+  },
+  {
     "name": "plotOptions.sma.compareToMain",
     "mainType": "boolean",
     "default": false
@@ -10495,6 +11007,10 @@
     "name": "plotOptions.sma.tooltip.valueDecimals",
     "mainType": "number",
     "default": 4
+  },
+  {
+    "name": "plotOptions.sma",
+    "extendsPath": "plotOptions.line"
   },
   {
     "name": "plotOptions.solidgauge.borderRadius",
@@ -10535,7 +11051,12 @@
     "mainType": "number"
   },
   {
-    "name": "plotOptions.spline"
+    "name": "plotOptions.solidgauge",
+    "extendsPath": "plotOptions.gauge"
+  },
+  {
+    "name": "plotOptions.spline",
+    "extendsPath": "plotOptions.series"
   },
   {
     "name": "plotOptions.stochastic.dataGrouping.approximation",
@@ -10574,10 +11095,8 @@
     "default": "<span style=\"color:{point.color}\">●</span><b> {series.name}</b><br/>%K: {point.y}<br/>%D: {point.smoothed}<br/>"
   },
   {
-    "name": "plotOptions.streamgraph.color"
-  },
-  {
-    "name": "plotOptions.streamgraph.fillColor"
+    "name": "plotOptions.stochastic",
+    "extendsPath": "plotOptions.sma"
   },
   {
     "name": "plotOptions.streamgraph.fillOpacity",
@@ -10600,6 +11119,10 @@
     "default": "stream"
   },
   {
+    "name": "plotOptions.streamgraph",
+    "extendsPath": "plotOptions.areaspline"
+  },
+  {
     "name": "plotOptions.sunburst.allowDrillToNode",
     "mainType": "boolean"
   },
@@ -10608,7 +11131,8 @@
     "mainType": "boolean"
   },
   {
-    "name": "plotOptions.sunburst.breadcrumbs"
+    "name": "plotOptions.sunburst.breadcrumbs",
+    "extendsPath": "navigation.breadcrumbs"
   },
   {
     "name": "plotOptions.sunburst.center",
@@ -10688,7 +11212,8 @@
     "mainType": "number"
   },
   {
-    "name": "plotOptions.sunburst.levels.dataLabels"
+    "name": "plotOptions.sunburst.levels.dataLabels",
+    "extendsPath": "plotOptions.sunburst.dataLabels"
   },
   {
     "name": "plotOptions.sunburst.levels.level",
@@ -10708,7 +11233,12 @@
     "default": 10
   },
   {
-    "name": "plotOptions.sunburst.traverseUpButton"
+    "name": "plotOptions.sunburst.traverseUpButton",
+    "extendsPath": "plotOptions.treemap.traverseUpButton"
+  },
+  {
+    "name": "plotOptions.sunburst",
+    "extendsPath": "plotOptions.pie"
   },
   {
     "name": "plotOptions.supertrend.changeTrendLine.styles.dashStyle",
@@ -10750,7 +11280,12 @@
     "default": "#06b535"
   },
   {
-    "name": "plotOptions.tema"
+    "name": "plotOptions.supertrend",
+    "extendsPath": "plotOptions.sma"
+  },
+  {
+    "name": "plotOptions.tema",
+    "extendsPath": "plotOptions.ema"
   },
   {
     "name": "plotOptions.tiledwebmap.provider.apiKey",
@@ -10776,6 +11311,10 @@
     "name": "plotOptions.tiledwebmap.states.inactive.enabled",
     "mainType": "boolean",
     "default": false
+  },
+  {
+    "name": "plotOptions.tiledwebmap",
+    "extendsPath": "plotOptions.map"
   },
   {
     "name": "plotOptions.tilemap.colsize",
@@ -10814,6 +11353,10 @@
     "name": "plotOptions.tilemap.tileShape",
     "mainType": "TilemapShapeValue",
     "default": "hexagon"
+  },
+  {
+    "name": "plotOptions.tilemap",
+    "extendsPath": "plotOptions.heatmap"
   },
   {
     "name": "plotOptions.timeline.colorByPoint",
@@ -10877,9 +11420,6 @@
     "name": "plotOptions.timeline.dataLabels.enabled",
     "mainType": "boolean",
     "default": true
-  },
-  {
-    "name": "plotOptions.timeline.dataLabels.formatter"
   },
   {
     "name": "plotOptions.timeline.dataLabels.shadow",
@@ -10956,6 +11496,10 @@
     "default": "{point.description}"
   },
   {
+    "name": "plotOptions.timeline",
+    "extendsPath": "plotOptions.line"
+  },
+  {
     "name": "plotOptions.treegraph.collapseButton.enabled",
     "mainType": "boolean",
     "default": true
@@ -11026,6 +11570,10 @@
     "default": "50%"
   },
   {
+    "name": "plotOptions.treegraph.dataLabels.linkTextPath",
+    "extendsPath": "plotOptions.treegraph.dataLabels.textPath"
+  },
+  {
     "name": "plotOptions.treegraph.dataLabels.padding",
     "mainType": "number",
     "default": 5
@@ -11045,7 +11593,8 @@
     "default": false
   },
   {
-    "name": "plotOptions.treegraph.levels.dataLabels"
+    "name": "plotOptions.treegraph.levels.dataLabels",
+    "extendsPath": "plotOptions.treegraph.dataLabels"
   },
   {
     "name": "plotOptions.treegraph.link.bendAt",
@@ -11101,6 +11650,10 @@
     "default": "circle"
   },
   {
+    "name": "plotOptions.treegraph.marker",
+    "extendsPath": "plotOptions.series.marker"
+  },
+  {
     "name": "plotOptions.treegraph.nodeDistance",
     "mainType": "number",
     "default": 30
@@ -11123,6 +11676,14 @@
     "name": "plotOptions.treegraph.tooltip.pointFormat",
     "mainType": "string",
     "default": "{point.id}"
+  },
+  {
+    "name": "plotOptions.treegraph.tooltip",
+    "extendsPath": "plotOptions.series.tooltip"
+  },
+  {
+    "name": "plotOptions.treegraph",
+    "extendsPath": "plotOptions.treemap"
   },
   {
     "name": "plotOptions.treemap.allowDrillToNode",
@@ -11159,7 +11720,8 @@
     "default": 1
   },
   {
-    "name": "plotOptions.treemap.breadcrumbs"
+    "name": "plotOptions.treemap.breadcrumbs",
+    "extendsPath": "navigation.breadcrumbs"
   },
   {
     "name": "plotOptions.treemap.cluster.className",
@@ -11340,7 +11902,8 @@
     "mainType": "number"
   },
   {
-    "name": "plotOptions.treemap.levels.dataLabels"
+    "name": "plotOptions.treemap.levels.dataLabels",
+    "extendsPath": "plotOptions.treemap.dataLabels"
   },
   {
     "name": "plotOptions.treemap.levels.layoutAlgorithm",
@@ -11383,7 +11946,8 @@
   },
   {
     "name": "plotOptions.treemap.states.hover.halo",
-    "default": false
+    "default": false,
+    "extendsPath": "plotOptions.heatmap.states.hover.halo"
   },
   {
     "name": "plotOptions.treemap.states.hover.opacity",
@@ -11394,6 +11958,14 @@
     "name": "plotOptions.treemap.states.hover.shadow",
     "mainType": "boolean",
     "default": false
+  },
+  {
+    "name": "plotOptions.treemap.states.hover",
+    "extendsPath": "plotOptions.heatmap.states.hover"
+  },
+  {
+    "name": "plotOptions.treemap.states",
+    "extendsPath": "plotOptions.heatmap.states"
   },
   {
     "name": "plotOptions.treemap.tooltip.clusterFormat",
@@ -11445,6 +12017,10 @@
     "default": 10
   },
   {
+    "name": "plotOptions.treemap",
+    "extendsPath": "plotOptions.scatter"
+  },
+  {
     "name": "plotOptions.trendline.params.index",
     "mainType": "number",
     "default": 3
@@ -11454,7 +12030,12 @@
     "mainType": "string"
   },
   {
-    "name": "plotOptions.trix"
+    "name": "plotOptions.trendline",
+    "extendsPath": "plotOptions.sma"
+  },
+  {
+    "name": "plotOptions.trix",
+    "extendsPath": "plotOptions.tema"
   },
   {
     "name": "plotOptions.variablepie.maxPointSize",
@@ -11489,6 +12070,10 @@
     "mainType": "number"
   },
   {
+    "name": "plotOptions.variablepie",
+    "extendsPath": "plotOptions.pie"
+  },
+  {
     "name": "plotOptions.variwide.groupPadding",
     "mainType": "number",
     "default": 0
@@ -11497,6 +12082,10 @@
     "name": "plotOptions.variwide.pointPadding",
     "mainType": "number",
     "default": 0
+  },
+  {
+    "name": "plotOptions.variwide",
+    "extendsPath": "plotOptions.column"
   },
   {
     "name": "plotOptions.vbp.animationLimit",
@@ -11601,6 +12190,10 @@
     "mainType": "CSSObject"
   },
   {
+    "name": "plotOptions.vbp",
+    "extendsPath": "plotOptions.sma"
+  },
+  {
     "name": "plotOptions.vector.lineWidth",
     "mainType": "number",
     "default": 2
@@ -11633,6 +12226,10 @@
     "name": "plotOptions.vector.vectorLength",
     "mainType": "number",
     "default": 20
+  },
+  {
+    "name": "plotOptions.vector",
+    "extendsPath": "plotOptions.scatter"
   },
   {
     "name": "plotOptions.venn.borderColor",
@@ -11676,7 +12273,8 @@
   },
   {
     "name": "plotOptions.venn.inactiveOtherPoints",
-    "default": true
+    "default": true,
+    "extendsPath": "plotOptions.series.inactiveOtherPoints"
   },
   {
     "name": "plotOptions.venn.legendSymbol",
@@ -11729,6 +12327,10 @@
     "default": "{point.name}: {point.value}"
   },
   {
+    "name": "plotOptions.venn",
+    "extendsPath": "plotOptions.scatter"
+  },
+  {
     "name": "plotOptions.vwap.params.index",
     "mainType": "string"
   },
@@ -11741,6 +12343,10 @@
     "name": "plotOptions.vwap.params.volumeSeriesID",
     "mainType": "string",
     "default": "volume"
+  },
+  {
+    "name": "plotOptions.vwap",
+    "extendsPath": "plotOptions.sma"
   },
   {
     "name": "plotOptions.waterfall.borderColor",
@@ -11776,6 +12382,10 @@
     "mainType": "ColorString"
   },
   {
+    "name": "plotOptions.waterfall",
+    "extendsPath": "plotOptions.column"
+  },
+  {
     "name": "plotOptions.williamsr.params.index",
     "mainType": "string"
   },
@@ -11783,6 +12393,10 @@
     "name": "plotOptions.williamsr.params.period",
     "mainType": "number",
     "default": 14
+  },
+  {
+    "name": "plotOptions.williamsr",
+    "extendsPath": "plotOptions.sma"
   },
   {
     "name": "plotOptions.windbarb.colorKey",
@@ -11840,6 +12454,10 @@
     "default": -20
   },
   {
+    "name": "plotOptions.windbarb",
+    "extendsPath": "plotOptions.column"
+  },
+  {
     "name": "plotOptions.wma.params.index",
     "mainType": "number",
     "default": 3
@@ -11848,6 +12466,10 @@
     "name": "plotOptions.wma.params.period",
     "mainType": "number",
     "default": 9
+  },
+  {
+    "name": "plotOptions.wma",
+    "extendsPath": "plotOptions.sma"
   },
   {
     "name": "plotOptions.wordcloud.borderWidth",
@@ -11928,6 +12550,10 @@
     "default": "<span style=\"color:{point.color}\">●</span> {series.name}: <b>{point.weight}</b><br/>"
   },
   {
+    "name": "plotOptions.wordcloud",
+    "extendsPath": "plotOptions.column"
+  },
+  {
     "name": "plotOptions.xrange.borderRadius",
     "mainType": "number",
     "default": 3
@@ -11980,6 +12606,10 @@
     "default": "<span style=\"color:{point.color}\">●</span> {series.name}: <b>{point.yCategory}</b><br/>"
   },
   {
+    "name": "plotOptions.xrange",
+    "extendsPath": "plotOptions.column"
+  },
+  {
     "name": "plotOptions.zigzag.params.deviation",
     "mainType": "number",
     "default": 1
@@ -12001,6 +12631,10 @@
   {
     "name": "plotOptions.zigzag.params.period",
     "mainType": "string"
+  },
+  {
+    "name": "plotOptions.zigzag",
+    "extendsPath": "plotOptions.sma"
   },
   {
     "name": "rangeSelector.allButtonsEnabled",
@@ -12039,6 +12673,10 @@
   {
     "name": "rangeSelector.buttons.count",
     "mainType": "number"
+  },
+  {
+    "name": "rangeSelector.buttons.dataGrouping",
+    "extendsPath": "plotOptions.series.dataGrouping"
   },
   {
     "name": "rangeSelector.buttons.events.click",
@@ -12312,16 +12950,20 @@
     "default": 3
   },
   {
-    "name": "series.abands"
+    "name": "series.abands",
+    "extendsPath": "series,plotOptions.abands"
   },
   {
-    "name": "series.ad"
+    "name": "series.ad",
+    "extendsPath": "series,plotOptions.ad"
   },
   {
-    "name": "series.ao"
+    "name": "series.ao",
+    "extendsPath": "series,plotOptions.ao"
   },
   {
-    "name": "series.apo"
+    "name": "series.apo",
+    "extendsPath": "series,plotOptions.apo"
   },
   {
     "name": "series.arcdiagram.data.dataLabels",
@@ -12332,6 +12974,11 @@
     "mainType": "number"
   },
   {
+    "name": "series.arcdiagram.data",
+    "mainType": "Array.<*>",
+    "extendsPath": "series.sankey.data"
+  },
+  {
     "name": "series.arcdiagram.linkRadius",
     "mainType": "number"
   },
@@ -12340,34 +12987,38 @@
     "mainType": "number"
   },
   {
-    "name": "series.arcdiagram.marker"
+    "name": "series.arcdiagram.marker",
+    "extendsPath": "plotOptions.series.marker"
   },
   {
     "name": "series.arcdiagram.nodes.dataLabels",
     "mainType": "SeriesArcDiagramDataLabelsOptionsObject"
   },
   {
+    "name": "series.arcdiagram.nodes",
+    "mainType": "Array.<*>",
+    "extendsPath": "series.sankey.nodes"
+  },
+  {
     "name": "series.arcdiagram.offset",
     "mainType": "string"
   },
   {
-    "name": "series.area.color"
+    "name": "series.arcdiagram",
+    "extendsPath": "series,plotOptions.arcdiagram"
   },
   {
     "name": "series.area.data",
-    "mainType": "Array.<(number|Array.<(number|string), (number|null)>|null|*)>"
+    "mainType": "Array.<(number|Array.<(number|string), (number|null)>|null|*)>",
+    "extendsPath": "series.line.data"
   },
   {
-    "name": "series.area.fillColor"
+    "name": "series.area",
+    "extendsPath": "series,plotOptions.area"
   },
   {
-    "name": "series.area.fillOpacity"
-  },
-  {
-    "name": "series.arearange.color"
-  },
-  {
-    "name": "series.arearange.data.dataLabels"
+    "name": "series.arearange.data.dataLabels",
+    "extendsPath": "series.arearange.dataLabels"
   },
   {
     "name": "series.arearange.data.high",
@@ -12378,73 +13029,72 @@
     "mainType": "number"
   },
   {
-    "name": "series.arearange.fillColor"
+    "name": "series.arearange.data",
+    "mainType": "Array.<(Array.<(number|string), number>|Array.<(number|string), number, number>|*)>",
+    "extendsPath": "series.line.data"
   },
   {
-    "name": "series.arearange.fillOpacity"
-  },
-  {
-    "name": "series.areaspline.color"
+    "name": "series.arearange",
+    "extendsPath": "series,plotOptions.arearange"
   },
   {
     "name": "series.areaspline.data",
-    "mainType": "Array.<(number|Array.<(number|string), (number|null)>|null|*)>"
-  },
-  {
-    "name": "series.areaspline.fillColor"
+    "mainType": "Array.<(number|Array.<(number|string), (number|null)>|null|*)>",
+    "extendsPath": "series.line.data"
   },
   {
     "name": "series.areaspline.fillOpacity",
     "mainType": "number"
   },
   {
-    "name": "series.areasplinerange.color"
+    "name": "series.areaspline",
+    "extendsPath": "series,plotOptions.areaspline"
   },
   {
     "name": "series.areasplinerange.data",
-    "mainType": "Array.<(Array.<(number|string), number>|Array.<(number|string), number, number>|*)>"
-  },
-  {
-    "name": "series.areasplinerange.fillColor"
+    "mainType": "Array.<(Array.<(number|string), number>|Array.<(number|string), number, number>|*)>",
+    "extendsPath": "series.arearange.data"
   },
   {
     "name": "series.areasplinerange.fillOpacity",
     "mainType": "number"
   },
   {
-    "name": "series.aroon"
+    "name": "series.areasplinerange",
+    "extendsPath": "series,plotOptions.areasplinerange"
   },
   {
-    "name": "series.aroonoscillator"
+    "name": "series.aroon",
+    "extendsPath": "series,plotOptions.aroon"
   },
   {
-    "name": "series.atr"
+    "name": "series.aroonoscillator",
+    "extendsPath": "series,plotOptions.aroonoscillator"
+  },
+  {
+    "name": "series.atr",
+    "extendsPath": "series,plotOptions.atr"
   },
   {
     "name": "series.bar.data",
-    "mainType": "Array.<(number|Array.<(number|string), (number|null)>|null|*)>"
+    "mainType": "Array.<(number|Array.<(number|string), (number|null)>|null|*)>",
+    "extendsPath": "series.column.data"
   },
   {
-    "name": "series.bar.states.hover"
+    "name": "series.bar",
+    "extendsPath": "series,plotOptions.bar"
   },
   {
-    "name": "series.bar.states.select"
-  },
-  {
-    "name": "series.bb"
+    "name": "series.bb",
+    "extendsPath": "series,plotOptions.bb"
   },
   {
     "name": "series.bellcurve.baseSeries",
     "mainType": "number"
   },
   {
-    "name": "series.bellcurve.color"
-  },
-  {
-    "name": "series.bellcurve.fillColor"
-  },
-  {
-    "name": "series.bellcurve.fillOpacity"
+    "name": "series.bellcurve",
+    "extendsPath": "series,plotOptions.bellcurve"
   },
   {
     "name": "series.boxplot.data.boxDashStyle",
@@ -12483,43 +13133,72 @@
     "mainType": "DashStyleValue"
   },
   {
-    "name": "series.bubble.data.marker"
+    "name": "series.boxplot.data",
+    "mainType": "Array.<(Array.<(number|string), number, number, number, number>|Array.<(number|string), number, number, number, number, number>|*)>",
+    "extendsPath": "series.line.data"
+  },
+  {
+    "name": "series.boxplot",
+    "extendsPath": "series,plotOptions.boxplot"
+  },
+  {
+    "name": "series.bubble.data.marker",
+    "extendsPath": "series.line.data.marker"
   },
   {
     "name": "series.bubble.data.z",
     "mainType": "number"
   },
   {
-    "name": "series.bubble.marker"
+    "name": "series.bubble.data",
+    "mainType": "Array.<(Array.<(number|string), number>|Array.<(number|string), number, number>|*)>",
+    "extendsPath": "series.line.data"
+  },
+  {
+    "name": "series.bubble",
+    "extendsPath": "series,plotOptions.bubble"
   },
   {
     "name": "series.bullet.data.target",
     "mainType": "number"
   },
   {
-    "name": "series.bullet.data.targetOptions"
+    "name": "series.bullet.data.targetOptions",
+    "extendsPath": "plotOptions.bullet.targetOptions"
   },
   {
-    "name": "series.bullet.states.hover"
+    "name": "series.bullet.data",
+    "mainType": "Array.<(Array.<(number|string), number>|Array.<(number|string), number, number>|*)>",
+    "extendsPath": "series.column.data"
   },
   {
-    "name": "series.bullet.states.select"
+    "name": "series.bullet",
+    "extendsPath": "series,plotOptions.bullet"
   },
   {
     "name": "series.candlestick.data",
-    "mainType": "Array.<(Array.<(number|string), number, number, number>|Array.<(number|string), number, number, number, number>|*)>"
+    "mainType": "Array.<(Array.<(number|string), number, number, number>|Array.<(number|string), number, number, number, number>|*)>",
+    "extendsPath": "series.ohlc.data"
   },
   {
-    "name": "series.cci"
+    "name": "series.candlestick",
+    "extendsPath": "series,plotOptions.candlestick"
   },
   {
-    "name": "series.chaikin"
+    "name": "series.cci",
+    "extendsPath": "series,plotOptions.cci"
   },
   {
-    "name": "series.cmf"
+    "name": "series.chaikin",
+    "extendsPath": "series,plotOptions.chaikin"
   },
   {
-    "name": "series.cmo"
+    "name": "series.cmf",
+    "extendsPath": "series,plotOptions.cmf"
+  },
+  {
+    "name": "series.cmo",
+    "extendsPath": "series,plotOptions.cmo"
   },
   {
     "name": "series.column.data.borderColor",
@@ -12538,55 +13217,78 @@
     "mainType": "number"
   },
   {
-    "name": "series.column.data.states"
+    "name": "series.column.data.states",
+    "extendsPath": "series.column.states"
   },
   {
-    "name": "series.column.states.hover"
+    "name": "series.column.data",
+    "mainType": "Array.<(number|Array.<(number|string), (number|null)>|null|*)>",
+    "extendsPath": "series.line.data"
   },
   {
-    "name": "series.column.states.select"
+    "name": "series.column",
+    "extendsPath": "series,plotOptions.column"
   },
   {
     "name": "series.columnpyramid.data",
-    "mainType": "Array.<(number|Array.<(number|string), (number|null)>|null|*)>"
+    "mainType": "Array.<(number|Array.<(number|string), (number|null)>|null|*)>",
+    "extendsPath": "series.line.data"
   },
   {
-    "name": "series.columnpyramid.states.hover"
+    "name": "series.columnpyramid",
+    "extendsPath": "series,plotOptions.columnpyramid"
   },
   {
-    "name": "series.columnpyramid.states.select"
+    "name": "series.columnrange.data.dataLabels",
+    "extendsPath": "series.columnrange.dataLabels"
   },
   {
-    "name": "series.columnrange.data.dataLabels"
+    "name": "series.columnrange.data",
+    "mainType": "Array.<(Array.<(number|string), number>|Array.<(number|string), number, number>|*)>",
+    "extendsPath": "series.arearange.data"
   },
   {
-    "name": "series.columnrange.states.hover"
-  },
-  {
-    "name": "series.columnrange.states.select"
+    "name": "series.columnrange",
+    "extendsPath": "series,plotOptions.columnrange"
   },
   {
     "name": "series.cylinder.data",
-    "mainType": "Array.<(number|Array.<(number|string), (number|null)>|null|*)>"
+    "mainType": "Array.<(number|Array.<(number|string), (number|null)>|null|*)>",
+    "extendsPath": "series.column.data"
   },
   {
-    "name": "series.dema"
+    "name": "series.cylinder",
+    "extendsPath": "series,plotOptions.cylinder"
+  },
+  {
+    "name": "series.dema",
+    "extendsPath": "series,plotOptions.dema"
   },
   {
     "name": "series.dependencywheel.data",
-    "mainType": "Array.<(Array.<string, string, number>|*)>"
+    "mainType": "Array.<(Array.<string, string, number>|*)>",
+    "extendsPath": "series.sankey.data"
   },
   {
-    "name": "series.dependencywheel.nodes.dataLabels"
+    "name": "series.dependencywheel.nodes",
+    "mainType": "Array.<*>",
+    "extendsPath": "series.sankey.nodes"
   },
   {
-    "name": "series.disparityindex"
+    "name": "series.dependencywheel",
+    "extendsPath": "series,plotOptions.dependencywheel"
   },
   {
-    "name": "series.dmi"
+    "name": "series.disparityindex",
+    "extendsPath": "series,plotOptions.disparityindex"
   },
   {
-    "name": "series.dpo"
+    "name": "series.dmi",
+    "extendsPath": "series,plotOptions.dmi"
+  },
+  {
+    "name": "series.dpo",
+    "extendsPath": "series,plotOptions.dpo"
   },
   {
     "name": "series.dumbbell.data.connectorColor",
@@ -12601,15 +13303,30 @@
     "mainType": "ColorString"
   },
   {
+    "name": "series.dumbbell.data",
+    "mainType": "Array.<(Array.<(number|string), number>|Array.<(number|string), number, number>|*)>",
+    "extendsPath": "series.arearange.data"
+  },
+  {
     "name": "series.dumbbell.lowColor",
     "mainType": "ColorString"
   },
   {
-    "name": "series.ema"
+    "name": "series.dumbbell",
+    "extendsPath": "series,plotOptions.dumbbell"
+  },
+  {
+    "name": "series.ema",
+    "extendsPath": "series,plotOptions.ema"
   },
   {
     "name": "series.errorbar.data",
-    "mainType": "Array.<(Array.<(number|string), number>|Array.<(number|string), number, number>|*)>"
+    "mainType": "Array.<(Array.<(number|string), number>|Array.<(number|string), number, number>|*)>",
+    "extendsPath": "series.arearange.data"
+  },
+  {
+    "name": "series.errorbar",
+    "extendsPath": "series,plotOptions.errorbar"
   },
   {
     "name": "series.flags.data.fillColor",
@@ -12622,6 +13339,15 @@
   {
     "name": "series.flags.data.title",
     "mainType": "string"
+  },
+  {
+    "name": "series.flags.data",
+    "mainType": "Array.<*>",
+    "extendsPath": "series.line.data"
+  },
+  {
+    "name": "series.flags",
+    "extendsPath": "series,plotOptions.flags"
   },
   {
     "name": "series.flowmap.data.curveFactor",
@@ -12676,12 +13402,30 @@
     "mainType": "number"
   },
   {
+    "name": "series.flowmap",
+    "extendsPath": "series,plotOptions.flowmap"
+  },
+  {
     "name": "series.funnel.data",
-    "mainType": "Array.<(number|null|*)>"
+    "mainType": "Array.<(number|null|*)>",
+    "extendsPath": "series.pie.data"
+  },
+  {
+    "name": "series.funnel",
+    "extendsPath": "series,plotOptions.funnel"
   },
   {
     "name": "series.funnel3d.data.gradientForSides",
     "mainType": "boolean"
+  },
+  {
+    "name": "series.funnel3d.data",
+    "mainType": "Array.<(number|Array.<number>|*)>",
+    "extendsPath": "series.column.data"
+  },
+  {
+    "name": "series.funnel3d",
+    "extendsPath": "series,plotOptions.funnel3d"
   },
   {
     "name": "series.gantt.data.collapsed",
@@ -12696,8 +13440,14 @@
     "mainType": "ColorString"
   },
   {
+    "name": "series.gantt.data.completed",
+    "mainType": "number",
+    "extendsPath": "series.xrange.data.partialFill"
+  },
+  {
     "name": "series.gantt.data.dependency",
-    "mainType": "string"
+    "mainType": "string",
+    "extendsPath": "series.xrange.data.connect"
   },
   {
     "name": "series.gantt.data.end",
@@ -12724,11 +13474,22 @@
     "mainType": "number"
   },
   {
-    "name": "series.gantt.events"
+    "name": "series.gantt.data",
+    "mainType": "Array.<*>",
+    "extendsPath": "series.xrange.data"
+  },
+  {
+    "name": "series.gantt",
+    "extendsPath": "series,plotOptions.gantt"
   },
   {
     "name": "series.gauge.data",
-    "mainType": "Array.<(number|null|*)>"
+    "mainType": "Array.<(number|null|*)>",
+    "extendsPath": "series.line.data"
+  },
+  {
+    "name": "series.gauge",
+    "extendsPath": "series,plotOptions.gauge"
   },
   {
     "name": "series.geoheatmap.data.color",
@@ -12737,6 +13498,15 @@
   {
     "name": "series.geoheatmap.data.value",
     "mainType": "number"
+  },
+  {
+    "name": "series.geoheatmap.data",
+    "mainType": "Array.<(Array.<number>|*)>",
+    "extendsPath": "series.map.data"
+  },
+  {
+    "name": "series.geoheatmap",
+    "extendsPath": "series,plotOptions.geoheatmap"
   },
   {
     "name": "series.heatmap.data.color",
@@ -12795,6 +13565,11 @@
     "mainType": "number"
   },
   {
+    "name": "series.heatmap.data",
+    "mainType": "Array.<(Array.<number>|*)>",
+    "extendsPath": "series.line.data"
+  },
+  {
     "name": "series.heatmap.marker.states.hover.height",
     "mainType": "number"
   },
@@ -12823,27 +13598,55 @@
     "mainType": "number"
   },
   {
+    "name": "series.heatmap",
+    "extendsPath": "series,plotOptions.heatmap"
+  },
+  {
     "name": "series.heikinashi.data",
-    "mainType": "Array.<(Array.<(number|string), number, number, number>|Array.<(number|string), number, number, number, number>|*)>"
+    "mainType": "Array.<(Array.<(number|string), number, number, number>|Array.<(number|string), number, number, number, number>|*)>",
+    "extendsPath": "series.candlestick.data"
+  },
+  {
+    "name": "series.heikinashi",
+    "extendsPath": "series,plotOptions.heikinashi"
   },
   {
     "name": "series.histogram.baseSeries",
     "mainType": "number"
   },
   {
+    "name": "series.histogram",
+    "extendsPath": "series,plotOptions.histogram"
+  },
+  {
     "name": "series.hlc.data.close",
     "mainType": "number"
   },
   {
+    "name": "series.hlc.data",
+    "mainType": "Array.<(Array.<(number|string), number, number>|Array.<(number|string), number, number, number>|*)>",
+    "extendsPath": "series.arearange.data"
+  },
+  {
+    "name": "series.hlc",
+    "extendsPath": "series,plotOptions.hlc"
+  },
+  {
     "name": "series.hollowcandlestick.data",
-    "mainType": "Array.<(Array.<(number|string), number, number, number>|Array.<(number|string), number, number, number, number>|*)>"
+    "mainType": "Array.<(Array.<(number|string), number, number, number>|Array.<(number|string), number, number, number, number>|*)>",
+    "extendsPath": "series.candlestick.data"
+  },
+  {
+    "name": "series.hollowcandlestick",
+    "extendsPath": "series,plotOptions.hollowcandlestick"
   },
   {
     "name": "series.id",
     "mainType": "string"
   },
   {
-    "name": "series.ikh"
+    "name": "series.ikh",
+    "extendsPath": "series,plotOptions.ikh"
   },
   {
     "name": "series.index",
@@ -12851,16 +13654,20 @@
   },
   {
     "name": "series.item.data",
-    "mainType": "Array.<(number|Array.<string, (number|null)>|null|*)>"
+    "mainType": "Array.<(number|Array.<string, (number|null)>|null|*)>",
+    "extendsPath": "series.pie.data"
   },
   {
-    "name": "series.item.events"
+    "name": "series.item",
+    "extendsPath": "series,plotOptions.item"
   },
   {
-    "name": "series.keltnerchannels"
+    "name": "series.keltnerchannels",
+    "extendsPath": "series,plotOptions.keltnerchannels"
   },
   {
-    "name": "series.klinger"
+    "name": "series.klinger",
+    "extendsPath": "series,plotOptions.klinger"
   },
   {
     "name": "series.legendIndex",
@@ -12891,18 +13698,24 @@
     "mainType": "Dictionary.<*>"
   },
   {
+    "name": "series.line.data.dataLabels",
+    "extendsPath": "plotOptions.line.dataLabels"
+  },
+  {
     "name": "series.line.data.description",
     "mainType": "string"
   },
   {
-    "name": "series.line.data.dragDrop"
+    "name": "series.line.data.dragDrop",
+    "extendsPath": "plotOptions.series.dragDrop"
   },
   {
     "name": "series.line.data.drilldown",
     "mainType": "string"
   },
   {
-    "name": "series.line.data.events"
+    "name": "series.line.data.events",
+    "extendsPath": "plotOptions.series.point.events"
   },
   {
     "name": "series.line.data.id",
@@ -12913,7 +13726,8 @@
     "mainType": "number"
   },
   {
-    "name": "series.line.data.marker"
+    "name": "series.line.data.marker",
+    "extendsPath": "plotOptions.series.marker"
   },
   {
     "name": "series.line.data.name",
@@ -12932,23 +13746,37 @@
     "mainType": "number"
   },
   {
-    "name": "series.linearregression"
+    "name": "series.line",
+    "extendsPath": "series,plotOptions.line"
   },
   {
-    "name": "series.linearregressionangle"
+    "name": "series.linearregression",
+    "extendsPath": "series,plotOptions.linearregression"
   },
   {
-    "name": "series.linearregressionintercept"
+    "name": "series.linearregressionangle",
+    "extendsPath": "series,plotOptions.linearregressionangle"
   },
   {
-    "name": "series.linearregressionslope"
+    "name": "series.linearregressionintercept",
+    "extendsPath": "series,plotOptions.linearregressionintercept"
+  },
+  {
+    "name": "series.linearregressionslope",
+    "extendsPath": "series,plotOptions.linearregressionslope"
   },
   {
     "name": "series.lollipop.data",
-    "mainType": "Array.<(number|Array.<(number|string), (number|null)>|null|*)>"
+    "mainType": "Array.<(number|Array.<(number|string), (number|null)>|null|*)>",
+    "extendsPath": "series.dumbbell.data"
   },
   {
-    "name": "series.macd"
+    "name": "series.lollipop",
+    "extendsPath": "series,plotOptions.lollipop"
+  },
+  {
+    "name": "series.macd",
+    "extendsPath": "series,plotOptions.macd"
   },
   {
     "name": "series.map.data.color",
@@ -12963,7 +13791,8 @@
     "mainType": "string"
   },
   {
-    "name": "series.map.data.events"
+    "name": "series.map.data.events",
+    "extendsPath": "plotOptions.series.point.events"
   },
   {
     "name": "series.map.data.geometry.coordinates",
@@ -12998,11 +13827,16 @@
     "mainType": "string"
   },
   {
-    "name": "series.map.data.states"
+    "name": "series.map.data.states",
+    "extendsPath": "plotOptions.map.states"
   },
   {
     "name": "series.map.data.value",
     "mainType": "number"
+  },
+  {
+    "name": "series.map",
+    "extendsPath": "series,plotOptions.map"
   },
   {
     "name": "series.mapData",
@@ -13013,11 +13847,26 @@
     "mainType": "number"
   },
   {
-    "name": "series.mapbubble.marker"
+    "name": "series.mapbubble.data",
+    "mainType": "Array.<(number|null|*)>",
+    "extendsPath": "series.mappoint.data"
+  },
+  {
+    "name": "series.mapbubble",
+    "extendsPath": "series,plotOptions.mapbubble"
   },
   {
     "name": "series.mapline.data.lineWidth",
     "mainType": "number"
+  },
+  {
+    "name": "series.mapline.data",
+    "mainType": "Array.<(number|Array.<string, (number|null)>|null|*)>",
+    "extendsPath": "series.map.data"
+  },
+  {
+    "name": "series.mapline",
+    "extendsPath": "series,plotOptions.mapline"
   },
   {
     "name": "series.mappoint.data.geometry.coordinates",
@@ -13044,17 +13893,29 @@
     "mainType": "number"
   },
   {
-    "name": "series.mfi"
+    "name": "series.mappoint.data",
+    "mainType": "Array.<(number|Array.<number, (number|null)>|null|*)>",
+    "extendsPath": "series.map.data"
   },
   {
-    "name": "series.momentum"
+    "name": "series.mappoint",
+    "extendsPath": "series,plotOptions.mappoint"
+  },
+  {
+    "name": "series.mfi",
+    "extendsPath": "series,plotOptions.mfi"
+  },
+  {
+    "name": "series.momentum",
+    "extendsPath": "series,plotOptions.momentum"
   },
   {
     "name": "series.name",
     "mainType": "string"
   },
   {
-    "name": "series.natr"
+    "name": "series.natr",
+    "extendsPath": "series,plotOptions.natr"
   },
   {
     "name": "series.networkgraph.data.dataLabels",
@@ -13067,6 +13928,11 @@
   {
     "name": "series.networkgraph.data.to",
     "mainType": "string"
+  },
+  {
+    "name": "series.networkgraph.data",
+    "mainType": "Array.<(Object|Array|number)>",
+    "extendsPath": "series.line.data"
   },
   {
     "name": "series.networkgraph.events.afterSimulation",
@@ -13089,7 +13955,8 @@
     "mainType": "string"
   },
   {
-    "name": "series.networkgraph.nodes.marker"
+    "name": "series.networkgraph.nodes.marker",
+    "extendsPath": "plotOptions.networkgraph.marker"
   },
   {
     "name": "series.networkgraph.nodes.mass",
@@ -13100,7 +13967,12 @@
     "mainType": "string"
   },
   {
-    "name": "series.obv"
+    "name": "series.networkgraph",
+    "extendsPath": "series,plotOptions.networkgraph"
+  },
+  {
+    "name": "series.obv",
+    "extendsPath": "series,plotOptions.obv"
   },
   {
     "name": "series.ohlc.data.close",
@@ -13111,8 +13983,22 @@
     "mainType": "number"
   },
   {
+    "name": "series.ohlc.data",
+    "mainType": "Array.<(Array.<(number|string), number, number, number>|Array.<(number|string), number, number, number, number>|*)>",
+    "extendsPath": "series.arearange.data"
+  },
+  {
+    "name": "series.ohlc",
+    "extendsPath": "series,plotOptions.ohlc"
+  },
+  {
     "name": "series.organization.data.dataLabels",
     "mainType": "SeriesOrganizationDataLabelsOptionsObject"
+  },
+  {
+    "name": "series.organization.data",
+    "mainType": "Array.<*>",
+    "extendsPath": "series.sankey.data"
   },
   {
     "name": "series.organization.dataLabels.linkFormat",
@@ -13133,12 +14019,6 @@
   {
     "name": "series.organization.linkColor",
     "mainType": "ColorString"
-  },
-  {
-    "name": "series.organization.linkLineWidth"
-  },
-  {
-    "name": "series.organization.linkRadius"
   },
   {
     "name": "series.organization.nodes.dataLabels",
@@ -13165,11 +14045,27 @@
     "mainType": "string"
   },
   {
+    "name": "series.organization.nodes",
+    "mainType": "Array.<*>",
+    "extendsPath": "series.sankey.nodes"
+  },
+  {
+    "name": "series.organization",
+    "extendsPath": "series,plotOptions.organization"
+  },
+  {
     "name": "series.packedbubble.data.dataLabels",
     "mainType": "SeriesPackedBubbleDataLabelsOptionsObject"
   },
   {
-    "name": "series.packedbubble.marker"
+    "name": "series.packedbubble.data",
+    "mainType": "Array.<(Object|Array)>",
+    "extendsPath": "series.line.data"
+  },
+  {
+    "name": "series.packedbubble",
+    "mainType": "Object",
+    "extendsPath": "series,plotOptions.packedbubble"
   },
   {
     "name": "series.pareto.baseSeries",
@@ -13177,14 +14073,21 @@
   },
   {
     "name": "series.pareto.data",
-    "mainType": "Array.<(Array.<(number|string)>|*)>"
+    "mainType": "Array.<(Array.<(number|string)>|*)>",
+    "extendsPath": "series.column.data"
   },
   {
-    "name": "series.pc"
+    "name": "series.pareto",
+    "extendsPath": "series,plotOptions.pareto"
+  },
+  {
+    "name": "series.pc",
+    "extendsPath": "series,plotOptions.pc"
   },
   {
     "name": "series.pictorial.data",
-    "mainType": "Array.<(Array.<(number|string), number>|Array.<(number|string), number, number>|*)>"
+    "mainType": "Array.<(Array.<(number|string), number>|Array.<(number|string), number, number>|*)>",
+    "extendsPath": "series.column.data"
   },
   {
     "name": "series.pictorial.paths.definition",
@@ -13193,6 +14096,10 @@
   {
     "name": "series.pictorial.paths.max",
     "mainType": "number"
+  },
+  {
+    "name": "series.pictorial",
+    "extendsPath": "series,plotOptions.pictorial"
   },
   {
     "name": "series.pie.data.dataLabels",
@@ -13207,48 +14114,86 @@
     "mainType": "boolean"
   },
   {
-    "name": "series.pie.dataLabels"
+    "name": "series.pie.data",
+    "mainType": "Array.<(number|Array.<string, (number|null)>|null|*)>",
+    "extendsPath": "series.line.data"
   },
   {
-    "name": "series.pie.events"
+    "name": "series.pie.dataLabels",
+    "extendsPath": "plotOptions.pie.dataLabels"
   },
   {
-    "name": "series.pivotpoints"
+    "name": "series.pie",
+    "extendsPath": "series,plotOptions.pie"
+  },
+  {
+    "name": "series.pivotpoints",
+    "extendsPath": "series,plotOptions.pivotpoints"
   },
   {
     "name": "series.pointandfigure.data",
-    "mainType": "Array.<(Array.<number, number>|*)>"
+    "mainType": "Array.<(Array.<number, number>|*)>",
+    "extendsPath": "series.scatter.data"
+  },
+  {
+    "name": "series.pointandfigure",
+    "extendsPath": "series,plotOptions.pointandfigure"
   },
   {
     "name": "series.polygon.data",
-    "mainType": "Array.<(number|Array.<(number|string), (number|null)>|null|*)>"
+    "mainType": "Array.<(number|Array.<(number|string), (number|null)>|null|*)>",
+    "extendsPath": "series.line.data"
   },
   {
-    "name": "series.ppo"
+    "name": "series.polygon",
+    "extendsPath": "series,plotOptions.polygon"
   },
   {
-    "name": "series.priceenvelopes"
+    "name": "series.ppo",
+    "extendsPath": "series,plotOptions.ppo"
   },
   {
-    "name": "series.psar"
+    "name": "series.priceenvelopes",
+    "extendsPath": "series,plotOptions.priceenvelopes"
+  },
+  {
+    "name": "series.psar",
+    "extendsPath": "series,plotOptions.psar"
   },
   {
     "name": "series.pyramid.data",
-    "mainType": "Array.<(number|null|*)>"
+    "mainType": "Array.<(number|null|*)>",
+    "extendsPath": "series.pie.data"
+  },
+  {
+    "name": "series.pyramid",
+    "extendsPath": "series,plotOptions.pyramid"
   },
   {
     "name": "series.pyramid3d.data",
-    "mainType": "Array.<(number|Array.<number>|*)>"
+    "mainType": "Array.<(number|Array.<number>|*)>",
+    "extendsPath": "series.funnel3d.data"
+  },
+  {
+    "name": "series.pyramid3d",
+    "extendsPath": "series,plotOptions.pyramid3d"
   },
   {
     "name": "series.renko.data",
-    "mainType": "Array.<(Array.<number, number>|*)>"
+    "mainType": "Array.<(Array.<number, number>|*)>",
+    "extendsPath": "series.column.data"
   },
   {
-    "name": "series.roc"
+    "name": "series.renko",
+    "extendsPath": "series,plotOptions.renko"
   },
   {
-    "name": "series.rsi"
+    "name": "series.roc",
+    "extendsPath": "series,plotOptions.roc"
+  },
+  {
+    "name": "series.rsi",
+    "extendsPath": "series,plotOptions.rsi"
   },
   {
     "name": "series.sankey.data.color",
@@ -13275,6 +14220,11 @@
     "mainType": "number"
   },
   {
+    "name": "series.sankey.data",
+    "mainType": "Array.<*>",
+    "extendsPath": "series.line.data"
+  },
+  {
     "name": "series.sankey.nodes.color",
     "mainType": "ColorString"
   },
@@ -13287,7 +14237,8 @@
     "mainType": "number"
   },
   {
-    "name": "series.sankey.nodes.dataLabels"
+    "name": "series.sankey.nodes.dataLabels",
+    "extendsPath": "plotOptions.sankey.dataLabels"
   },
   {
     "name": "series.sankey.nodes.height",
@@ -13318,18 +14269,38 @@
     "mainType": "number"
   },
   {
+    "name": "series.sankey",
+    "extendsPath": "series,plotOptions.sankey"
+  },
+  {
     "name": "series.scatter.data",
-    "mainType": "Array.<(number|Array.<(number|string), (number|null)>|null|*)>"
+    "mainType": "Array.<(number|Array.<(number|string), (number|null)>|null|*)>",
+    "extendsPath": "series.line.data"
+  },
+  {
+    "name": "series.scatter",
+    "extendsPath": "series,plotOptions.scatter"
   },
   {
     "name": "series.scatter3d.data.z",
     "mainType": "number"
   },
   {
-    "name": "series.slowstochastic"
+    "name": "series.scatter3d.data",
+    "mainType": "Array.<(Array.<number>|*)>",
+    "extendsPath": "series.scatter.data"
   },
   {
-    "name": "series.sma"
+    "name": "series.scatter3d",
+    "extendsPath": "series,plotOptions.scatter3d"
+  },
+  {
+    "name": "series.slowstochastic",
+    "extendsPath": "series,plotOptions.slowstochastic"
+  },
+  {
+    "name": "series.sma",
+    "extendsPath": "series,plotOptions.sma"
   },
   {
     "name": "series.solidgauge.data.innerRadius",
@@ -13340,29 +14311,43 @@
     "mainType": "string"
   },
   {
+    "name": "series.solidgauge.data",
+    "mainType": "Array.<(number|null|*)>",
+    "extendsPath": "series.gauge.data"
+  },
+  {
+    "name": "series.solidgauge",
+    "extendsPath": "series,plotOptions.solidgauge"
+  },
+  {
     "name": "series.spline.data",
-    "mainType": "Array.<(number|Array.<(number|string), (number|null)>|null|*)>"
+    "mainType": "Array.<(number|Array.<(number|string), (number|null)>|null|*)>",
+    "extendsPath": "series.line.data"
+  },
+  {
+    "name": "series.spline",
+    "extendsPath": "series,plotOptions.spline"
   },
   {
     "name": "series.stack",
     "mainType": "number"
   },
   {
-    "name": "series.stochastic"
-  },
-  {
-    "name": "series.streamgraph.color"
+    "name": "series.stochastic",
+    "extendsPath": "series,plotOptions.stochastic"
   },
   {
     "name": "series.streamgraph.data",
-    "mainType": "Array.<(number|Array.<(number|string), (number|null)>|null|*)>"
-  },
-  {
-    "name": "series.streamgraph.fillColor"
+    "mainType": "Array.<(number|Array.<(number|string), (number|null)>|null|*)>",
+    "extendsPath": "series.line.data"
   },
   {
     "name": "series.streamgraph.fillOpacity",
     "mainType": "number"
+  },
+  {
+    "name": "series.streamgraph",
+    "extendsPath": "series,plotOptions.streamgraph"
   },
   {
     "name": "series.sunburst.data.dataLabels",
@@ -13381,13 +14366,25 @@
     "mainType": "number"
   },
   {
-    "name": "series.supertrend"
+    "name": "series.sunburst.data",
+    "mainType": "Array.<(number|null|*)>",
+    "extendsPath": "series.treemap.data"
   },
   {
-    "name": "series.tema"
+    "name": "series.sunburst",
+    "extendsPath": "series,plotOptions.sunburst"
   },
   {
-    "name": "series.tiledwebmap"
+    "name": "series.supertrend",
+    "extendsPath": "series,plotOptions.supertrend"
+  },
+  {
+    "name": "series.tema",
+    "extendsPath": "series,plotOptions.tema"
+  },
+  {
+    "name": "series.tiledwebmap",
+    "extendsPath": "series,plotOptions.tiledwebmap"
   },
   {
     "name": "series.tilemap.data.color",
@@ -13402,6 +14399,15 @@
     "mainType": "number"
   },
   {
+    "name": "series.tilemap.data",
+    "mainType": "Array.<(Array.<(number|string), number>|Array.<(number|string), number, number>|*)>",
+    "extendsPath": "series.heatmap.data"
+  },
+  {
+    "name": "series.tilemap",
+    "extendsPath": "series,plotOptions.tilemap"
+  },
+  {
     "name": "series.timeline.data.description",
     "mainType": "string"
   },
@@ -13414,7 +14420,13 @@
     "mainType": "string"
   },
   {
-    "name": "series.treegraph.data.collapseButton"
+    "name": "series.timeline.data",
+    "mainType": "Array.<*>",
+    "extendsPath": "series.line.data"
+  },
+  {
+    "name": "series.timeline",
+    "extendsPath": "series,plotOptions.timeline"
   },
   {
     "name": "series.treegraph.data.collapsed",
@@ -13425,14 +14437,25 @@
     "mainType": "SeriesTreegraphDataLabelsOptionsObject"
   },
   {
+    "name": "series.treegraph.data",
+    "mainType": "Array.<*>",
+    "extendsPath": "series.treemap.data"
+  },
+  {
     "name": "series.treegraph.levels.collapsed",
     "mainType": "boolean"
   },
   {
-    "name": "series.treegraph.levels.marker"
+    "name": "series.treegraph.levels.marker",
+    "extendsPath": "series.treegraph.marker"
   },
   {
-    "name": "series.treegraph.marker"
+    "name": "series.treegraph.marker",
+    "extendsPath": "plotOptions.series.marker"
+  },
+  {
+    "name": "series.treegraph",
+    "extendsPath": "series,plotOptions.treegraph"
   },
   {
     "name": "series.treemap.data.colorValue",
@@ -13447,10 +14470,21 @@
     "mainType": "number"
   },
   {
-    "name": "series.trendline"
+    "name": "series.treemap.data",
+    "mainType": "Array.<(number|null|*)>",
+    "extendsPath": "series.heatmap.data"
   },
   {
-    "name": "series.trix"
+    "name": "series.treemap",
+    "extendsPath": "series,plotOptions.treemap"
+  },
+  {
+    "name": "series.trendline",
+    "extendsPath": "series,plotOptions.trendline"
+  },
+  {
+    "name": "series.trix",
+    "extendsPath": "series,plotOptions.trix"
   },
   {
     "name": "series.type",
@@ -13461,11 +14495,30 @@
     "mainType": "number"
   },
   {
+    "name": "series.variablepie.data",
+    "mainType": "Array.<(Array.<(number|string), number>|*)>",
+    "extendsPath": "series.pie.data"
+  },
+  {
+    "name": "series.variablepie",
+    "extendsPath": "series,plotOptions.variablepie"
+  },
+  {
     "name": "series.variwide.data.z",
     "mainType": "number"
   },
   {
-    "name": "series.vbp"
+    "name": "series.variwide.data",
+    "mainType": "Array.<(Array.<(number|string), number>|Array.<(number|string), number, number>|*)>",
+    "extendsPath": "series.line.data"
+  },
+  {
+    "name": "series.variwide",
+    "extendsPath": "series,plotOptions.variwide"
+  },
+  {
+    "name": "series.vbp",
+    "extendsPath": "series,plotOptions.vbp"
   },
   {
     "name": "series.vector.data.direction",
@@ -13474,6 +14527,15 @@
   {
     "name": "series.vector.data.length",
     "mainType": "number"
+  },
+  {
+    "name": "series.vector.data",
+    "mainType": "Array.<(Array.<(number|string), number, number, number>|*)>",
+    "extendsPath": "series.line.data"
+  },
+  {
+    "name": "series.vector",
+    "extendsPath": "series,plotOptions.vector"
   },
   {
     "name": "series.venn.data.name",
@@ -13488,13 +14550,17 @@
     "mainType": "number"
   },
   {
-    "name": "series.venn.states.hover"
+    "name": "series.venn.data",
+    "mainType": "Array.<*>",
+    "extendsPath": "series.scatter.data"
   },
   {
-    "name": "series.venn.states.select"
+    "name": "series.venn",
+    "extendsPath": "series,plotOptions.venn"
   },
   {
-    "name": "series.vwap"
+    "name": "series.vwap",
+    "extendsPath": "series,plotOptions.vwap"
   },
   {
     "name": "series.waterfall.data.isIntermediateSum",
@@ -13505,7 +14571,17 @@
     "mainType": "boolean"
   },
   {
-    "name": "series.williamsr"
+    "name": "series.waterfall.data",
+    "mainType": "Array.<(number|Array.<(number|string), (number|null)>|null|*)>",
+    "extendsPath": "series.line.data"
+  },
+  {
+    "name": "series.waterfall",
+    "extendsPath": "series,plotOptions.waterfall"
+  },
+  {
+    "name": "series.williamsr",
+    "extendsPath": "series,plotOptions.williamsr"
   },
   {
     "name": "series.windbarb.data.direction",
@@ -13516,7 +14592,17 @@
     "mainType": "number"
   },
   {
-    "name": "series.wma"
+    "name": "series.windbarb.data",
+    "mainType": "Array.<(Array.<(number|string), number, number>|*)>",
+    "extendsPath": "series.line.data"
+  },
+  {
+    "name": "series.windbarb",
+    "extendsPath": "series,plotOptions.windbarb"
+  },
+  {
+    "name": "series.wma",
+    "extendsPath": "series,plotOptions.wma"
   },
   {
     "name": "series.wordcloud.data.name",
@@ -13527,12 +14613,26 @@
     "mainType": "number"
   },
   {
+    "name": "series.wordcloud.data",
+    "mainType": "Array.<(Array.<string, number>|*)>",
+    "extendsPath": "series.line.data"
+  },
+  {
+    "name": "series.wordcloud",
+    "extendsPath": "series,plotOptions.wordcloud"
+  },
+  {
     "name": "series.xAxis",
     "mainType": "number"
   },
   {
     "name": "series.xrange.data.connect.to",
     "mainType": "string"
+  },
+  {
+    "name": "series.xrange.data.connect",
+    "mainType": "string",
+    "extendsPath": "plotOptions.series.connectors"
   },
   {
     "name": "series.xrange.data.partialFill.amount",
@@ -13555,6 +14655,15 @@
     "mainType": "number"
   },
   {
+    "name": "series.xrange.data",
+    "mainType": "Array.<*>",
+    "extendsPath": "series.line.data"
+  },
+  {
+    "name": "series.xrange",
+    "extendsPath": "series,plotOptions.xrange"
+  },
+  {
     "name": "series.yAxis",
     "mainType": "number"
   },
@@ -13563,7 +14672,8 @@
     "mainType": "number"
   },
   {
-    "name": "series.zigzag"
+    "name": "series.zigzag",
+    "extendsPath": "series,plotOptions.zigzag"
   },
   {
     "name": "series.zoomEnabled",
@@ -13600,28 +14710,35 @@
     "default": "piano"
   },
   {
-    "name": "sonification.defaultInstrumentOptions.mapping.frequency"
+    "name": "sonification.defaultInstrumentOptions.mapping.frequency",
+    "extendsPath": "sonification.defaultInstrumentOptions.mapping.time"
   },
   {
     "name": "sonification.defaultInstrumentOptions.mapping.gapBetweenNotes",
-    "default": 100
+    "default": 100,
+    "extendsPath": "sonification.defaultInstrumentOptions.mapping.time"
   },
   {
-    "name": "sonification.defaultInstrumentOptions.mapping.highpass"
+    "name": "sonification.defaultInstrumentOptions.mapping.highpass",
+    "extendsPath": "sonification.defaultInstrumentOptions.mapping.lowpass"
   },
   {
-    "name": "sonification.defaultInstrumentOptions.mapping.lowpass.frequency"
+    "name": "sonification.defaultInstrumentOptions.mapping.lowpass.frequency",
+    "extendsPath": "sonification.defaultInstrumentOptions.mapping.time"
   },
   {
-    "name": "sonification.defaultInstrumentOptions.mapping.lowpass.resonance"
+    "name": "sonification.defaultInstrumentOptions.mapping.lowpass.resonance",
+    "extendsPath": "sonification.defaultInstrumentOptions.mapping.time"
   },
   {
     "name": "sonification.defaultInstrumentOptions.mapping.noteDuration",
-    "default": 200
+    "default": 200,
+    "extendsPath": "sonification.defaultInstrumentOptions.mapping.time"
   },
   {
     "name": "sonification.defaultInstrumentOptions.mapping.pan",
-    "default": "x"
+    "default": "x",
+    "extendsPath": "sonification.defaultInstrumentOptions.mapping.time"
   },
   {
     "name": "sonification.defaultInstrumentOptions.mapping.pitch.mapTo",
@@ -13648,7 +14765,13 @@
     "default": "yAxis"
   },
   {
-    "name": "sonification.defaultInstrumentOptions.mapping.playDelay"
+    "name": "sonification.defaultInstrumentOptions.mapping.pitch",
+    "mainType": "string",
+    "extendsPath": "sonification.defaultInstrumentOptions.mapping.time"
+  },
+  {
+    "name": "sonification.defaultInstrumentOptions.mapping.playDelay",
+    "extendsPath": "sonification.defaultInstrumentOptions.mapping.time"
   },
   {
     "name": "sonification.defaultInstrumentOptions.mapping.time.mapFunction",
@@ -13675,20 +14798,24 @@
     "mainType": "\"chart\""
   },
   {
-    "name": "sonification.defaultInstrumentOptions.mapping.tremolo.depth"
+    "name": "sonification.defaultInstrumentOptions.mapping.tremolo.depth",
+    "extendsPath": "sonification.defaultInstrumentOptions.mapping.time"
   },
   {
-    "name": "sonification.defaultInstrumentOptions.mapping.tremolo.speed"
+    "name": "sonification.defaultInstrumentOptions.mapping.tremolo.speed",
+    "extendsPath": "sonification.defaultInstrumentOptions.mapping.time"
   },
   {
-    "name": "sonification.defaultInstrumentOptions.mapping.volume"
+    "name": "sonification.defaultInstrumentOptions.mapping.volume",
+    "extendsPath": "sonification.defaultInstrumentOptions.mapping.time"
   },
   {
     "name": "sonification.defaultInstrumentOptions.midiName",
     "mainType": "string"
   },
   {
-    "name": "sonification.defaultInstrumentOptions.pointGrouping"
+    "name": "sonification.defaultInstrumentOptions.pointGrouping",
+    "extendsPath": "sonification.pointGrouping"
   },
   {
     "name": "sonification.defaultInstrumentOptions.roundToMusicalNotes",
@@ -13725,11 +14852,18 @@
     "mainType": "string"
   },
   {
-    "name": "sonification.defaultSpeechOptions.mapping.playDelay"
+    "name": "sonification.defaultSpeechOptions.mapping.pitch",
+    "mainType": "string",
+    "extendsPath": "sonification.defaultInstrumentOptions.mapping.time"
+  },
+  {
+    "name": "sonification.defaultSpeechOptions.mapping.playDelay",
+    "extendsPath": "sonification.defaultInstrumentOptions.mapping.time"
   },
   {
     "name": "sonification.defaultSpeechOptions.mapping.rate",
-    "default": 1.3
+    "default": 1.3,
+    "extendsPath": "sonification.defaultInstrumentOptions.mapping.time"
   },
   {
     "name": "sonification.defaultSpeechOptions.mapping.text",
@@ -13737,11 +14871,17 @@
   },
   {
     "name": "sonification.defaultSpeechOptions.mapping.time",
-    "default": "x"
+    "default": "x",
+    "extendsPath": "sonification.defaultInstrumentOptions.mapping.time"
   },
   {
     "name": "sonification.defaultSpeechOptions.mapping.volume",
-    "default": 0.4
+    "default": 0.4,
+    "extendsPath": "sonification.defaultInstrumentOptions.mapping.volume"
+  },
+  {
+    "name": "sonification.defaultSpeechOptions.mapping",
+    "extendsPath": "sonification.defaultInstrumentOptions.mapping"
   },
   {
     "name": "sonification.defaultSpeechOptions.pointGrouping.algorithm",
@@ -13755,6 +14895,10 @@
   {
     "name": "sonification.defaultSpeechOptions.type",
     "mainType": "\"instrument\""
+  },
+  {
+    "name": "sonification.defaultSpeechOptions",
+    "extendsPath": "sonification.defaultInstrumentOptions"
   },
   {
     "name": "sonification.duration",
@@ -13819,10 +14963,22 @@
     "mainType": "string"
   },
   {
-    "name": "sonification.globalTracks.mapping.rate"
+    "name": "sonification.globalContextTracks",
+    "mainType": "Array.<*>",
+    "extendsPath": "sonification.globalTracks"
   },
   {
-    "name": "sonification.globalTracks.mapping.text"
+    "name": "sonification.globalTracks.mapping.rate",
+    "extendsPath": "sonification.defaultSpeechOptions.mapping.rate"
+  },
+  {
+    "name": "sonification.globalTracks.mapping.text",
+    "extendsPath": "sonification.defaultSpeechOptions.mapping.text"
+  },
+  {
+    "name": "sonification.globalTracks",
+    "mainType": "Array.<*>",
+    "extendsPath": "sonification.defaultInstrumentOptions"
   },
   {
     "name": "sonification.masterVolume",
@@ -14153,9 +15309,6 @@
     "name": "stockTools.gui.enabled",
     "mainType": "boolean",
     "default": true
-  },
-  {
-    "name": "stockTools.gui.iconsURL"
   },
   {
     "name": "stockTools.gui.toolbarClassName",
@@ -14638,6 +15791,11 @@
   {
     "name": "xAxis.currentDateIndicator.label.format",
     "mainType": "string"
+  },
+  {
+    "name": "xAxis.currentDateIndicator",
+    "mainType": "boolean",
+    "extendsPath": "xAxis.plotLines"
   },
   {
     "name": "xAxis.dateTimeLabelFormats.day.list",
@@ -15302,6 +16460,10 @@
     "mainType": "boolean"
   },
   {
+    "name": "xAxis.scrollbar",
+    "extendsPath": "scrollbar"
+  },
+  {
     "name": "xAxis.showEmpty",
     "mainType": "boolean",
     "default": true
@@ -15564,12 +16726,13 @@
     "mainType": "number"
   },
   {
+    "name": "yAxis.labels",
+    "extendsPath": "xAxis.labels"
+  },
+  {
     "name": "yAxis.lineWidth",
     "mainType": "number",
     "default": 0
-  },
-  {
-    "name": "yAxis.max"
   },
   {
     "name": "yAxis.maxColor",
@@ -15583,9 +16746,6 @@
     "name": "yAxis.maxPadding",
     "mainType": "number",
     "default": 0.05
-  },
-  {
-    "name": "yAxis.min"
   },
   {
     "name": "yAxis.minColor",
@@ -15617,8 +16777,14 @@
     "mainType": "number"
   },
   {
+    "name": "yAxis.plotBands",
+    "mainType": "Array.<*>",
+    "extendsPath": "xAxis.plotBands"
+  },
+  {
     "name": "yAxis.plotLines",
-    "mainType": "Array.<*>"
+    "mainType": "Array.<*>",
+    "extendsPath": "xAxis.plotLines"
   },
   {
     "name": "yAxis.resize.controlledAxis.next",
@@ -15695,6 +16861,10 @@
   {
     "name": "yAxis.scrollbar.zIndex",
     "mainType": "number"
+  },
+  {
+    "name": "yAxis.scrollbar",
+    "extendsPath": "scrollbar"
   },
   {
     "name": "yAxis.showLastLabel",
@@ -15862,5 +17032,13 @@
   {
     "name": "yAxis.type",
     "mainType": "AxisTypeValue"
+  },
+  {
+    "name": "yAxis",
+    "extendsPath": "xAxis"
+  },
+  {
+    "name": "zAxis",
+    "extendsPath": "xAxis"
   }
 ]

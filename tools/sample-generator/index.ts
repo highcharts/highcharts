@@ -9,11 +9,12 @@
  * - `node tools/sample-generator/index.ts`
  */
 
-/* eslint-disable no-console */
+/* eslint-disable no-console, node/no-unpublished-import */
 
 import type {
     ControlOptions,
     Details,
+    FlatTreeNode,
     SampleGeneratorConfig
 } from './generator-config.d.ts';
 
@@ -23,8 +24,14 @@ import { dirname, join } from 'path';
 import { promises as fs } from 'fs';
 import { fileURLToPath } from 'url';
 
-import { loadExportedTypes } from './load-types.ts';
 import config from './config-example.ts';
+
+// The precompiled, flattenend abstract of tree.json. Compiled with
+// `node tools/sample-generator/setup.ts`.
+const flatTree: FlatTreeNode[] = JSON.parse(await fs.readFile(
+    join(dirname(fileURLToPath(import.meta.url)), 'flat-tree.json'),
+    'utf-8'
+));
 
 // Import Highcharts and modules so that we can read default options. If this
 // import fails, run `gulp scripts` first.
@@ -43,21 +50,13 @@ import * as selectHandler from './type-handlers/select.ts';
 import * as colorHandler from './type-handlers/color.ts';
 import * as textHandler from './type-handlers/text.ts';
 
-const types = await loadExportedTypes('code/highcharts.d.ts')
-    .catch(() => {
-        console.error(colors.red(
-            'Failed to load exported types from code/highcharts.d.ts. ' +
-            'Run `gulp jsdoc-dts` first.'
-        ));
-    });
-
 const executedDirectly = import.meta.url === process.argv[1] ||
     import.meta.url === `file://${process.argv[1]}`;
 
 interface MetaData {
     controlOptions?: ControlOptions;
     path: string;
-    node: any;
+    node: FlatTreeNode;
     mainType: string;
     options?: string[];
     defaultValue?: any;
@@ -115,44 +114,6 @@ function parsePathOverride(
     }
 
     return { path, overrideValue };
-}
-
-// Load the tree.json file
-export async function loadTree() {
-    const data = await fs.readFile(
-        '../highcharts/build/api/highcharts/tree.json',
-        'utf-8'
-    );
-    return JSON.parse(data);
-}
-
-// Find the node with the specified path
-export async function findNodeByPath(path: string) {
-    const tree = await loadTree();
-
-    const keys = path.split('.').map(key => key.replace(/\[(\d+)\]/gu, ''));
-    let currentNode = tree;
-
-    const extendNode = async (node: any) => {
-        if (node.doclet.extends) {
-            const parentNode = await findNodeByPath(node.doclet.extends);
-            if (parentNode) {
-                node.children = { ...parentNode.children, ...node.children };
-            }
-        }
-        return node;
-    };
-
-    for (const key of keys) {
-        const childNode = (currentNode)[key] || currentNode.children[key];
-        if (childNode) {
-            currentNode = await extendNode(childNode);
-        } else {
-            return null;
-        }
-    }
-
-    return currentNode;
 }
 
 // Function to generate sophisticated titles based on path analysis
@@ -341,13 +302,8 @@ async function generateChartConfig(
     return orderedChartOptions;
 }
 
-// Helper to compute mainType
-function getMainType(node: any) {
-    return node?.doclet.type?.names[0].replace('Highcharts.', '');
-}
-
 // Build a list of metadata for each path
-async function getPathMeta(config: SampleGeneratorConfig): Promise<MetaList> {
+function getPathMeta(config: SampleGeneratorConfig): MetaList {
     const list: MetaList = [];
     for (const controlOptions of config.controls || config.paths || []) {
         let path: string, overrideValue: any;
@@ -357,57 +313,68 @@ async function getPathMeta(config: SampleGeneratorConfig): Promise<MetaList> {
             path = controlOptions.path;
             overrideValue = controlOptions.value;
         }
-        const node = await findNodeByPath(path);
+
+        // Replace array indices for lookup in flat tree
+        const name = path.replace(/\[\d+\]/gu, '');
+
+        let node = flatTree.find(n => n.name === name);
+        if (!node) {
+            const keys = path.split('.').map(
+                k => k.replace(/\[\d+\]/gu, '[*]')
+            );
+
+            // If the node is not found, start at the root and see if each
+            // parent extends another node. If it does, copy the options from
+            // the extended node until we find the path or run out of extends.
+            let currentPath = '';
+            for (const key of keys) {
+                currentPath += (currentPath ? '.' : '') + key;
+                const curPath = currentPath;
+                const currentNode = flatTree.find(n => n.name === curPath);
+                if (currentNode?.extendsPath) {
+                    flatTree
+                        .filter(
+                            n => n.name.startsWith(
+                                currentNode.extendsPath + '.'
+                            )
+                        )
+                        .forEach(n => {
+                            const copyName = n.name.replace(
+                                currentNode.extendsPath + '.',
+                                curPath + '.'
+                            );
+                            if (!flatTree.some(
+                                node => node.name === copyName
+                            )) {
+                                flatTree.push({
+                                    ...n,
+                                    name: copyName
+                                });
+                            }
+                        });
+                }
+            }
+
+            node = flatTree.find(n => n.name === name);
+        }
+
         if (!node) {
             console.log(colors.gray(
-                `  - ${path} not found in tree.json, ` +
+                `  - ${path} not found in flat-tree.json, ` +
                 'trying to build control anyway.'
             ));
-            // continue;
         }
 
-        if (!types) {
-            throw new Error(
-                'E2: Exported types not loaded. Run gulp jsdoc-dts first.'
-            );
-        }
-
-        const mainType = getMainType(node);
-        let options: string[] | undefined;
-        if (node?.doclet.values) {
-            options = JSON.parse(node.doclet.values);
-        } else if (
-            types[mainType] &&
-            Array.isArray(types[mainType]) &&
-            types[mainType].length < 4
-        ) {
-            options = types[mainType];
-        }
-
-        const defaultFromDocs = node?.doclet.defaultValue ?? node?.meta.default,
-            defaultFromCode = getNestedValue(defaultOptions, path),
-            // If the two defaults are the same, we skip setting it explicitly
-            // because the Controls will pick it up from Highcharts defaults
-            defaultValue = (
-                defaultFromCode === defaultFromDocs &&
-                // Except for ColorString, where CSS variables complicate things
-                mainType !== 'ColorString'
-            ) ?
-                void 0 :
-                defaultFromDocs;
+        const { default: defaultValue, mainType, options } = node || {};
 
         if (executedDirectly) {
             if (overrideValue !== void 0) {
                 console.log(colors.green(
                     `Using override for ${path}: ${overrideValue}`
                 ));
-            } else if (defaultFromCode !== void 0) {
+            } else if (defaultValue !== void 0) {
                 console.log(colors.green(
-                    `Found default from code for ${path}: ${defaultFromCode}`
-                ));
-            } else if (defaultFromDocs !== void 0) {
-                console.log(colors.green(
-                    `Found default from docs for ${path}: ${defaultFromDocs}`
+                    `Found default for ${path}: ${defaultValue}`
                 ));
             } else {
                 console.warn(colors.yellow(
@@ -475,6 +442,7 @@ function pickHandler(meta: MetaData) {
     }
 
     // Get it from validvalues. Case: xAxis.gridLineInterpolation.
+    /*
     if (meta.node?.doclet.type?.names.every(name => (
         typeof name === 'string' &&
         /^"[A-Za-z0-9_]*"$/u.test(name)
@@ -484,6 +452,7 @@ function pickHandler(meta: MetaData) {
         )));
         return { kind: 'select', mod: selectHandler } as const;
     }
+        */
 
     /*
     if (typeof value === 'number') {
@@ -1087,7 +1056,7 @@ async function saveChecksum(outputDir: string): Promise<void> {
 }
 
 export async function saveDemoFile(config: SampleGeneratorConfig) {
-    const metaList = await getPathMeta(config);
+    const metaList = getPathMeta(config);
     if (!metaList.length && config.paths) {
         throw new Error(`No nodes found for paths: ${config.paths.join(', ')}`);
     }
