@@ -188,6 +188,17 @@ namespace NodesComposition {
             newNode.linksTo = [];
             newNode.linksFrom = [];
 
+            const isSankey = this.type === 'sankey';
+            const isLinkDisabled = (link: PointComposition): boolean => (
+                isSankey &&
+                !!(
+                    (link.fromNode &&
+                        (link.fromNode.options as any)?.disabled) ||
+                    (link.toNode &&
+                        (link.toNode.options as any)?.disabled)
+                )
+            );
+
             /**
              * Return the largest sum of either the incoming or outgoing links.
              * @private
@@ -197,10 +208,14 @@ namespace NodesComposition {
                     sumFrom = 0;
 
                 newNode.linksTo.forEach((link): void => {
-                    sumTo += link.weight || 0;
+                    if (!isLinkDisabled(link)) {
+                        sumTo += link.weight || 0;
+                    }
                 });
                 newNode.linksFrom.forEach((link): void => {
-                    sumFrom += link.weight || 0;
+                    if (!isLinkDisabled(link)) {
+                        sumFrom += link.weight || 0;
+                    }
                 });
                 return Math.max(sumTo, sumFrom);
             };
@@ -215,10 +230,16 @@ namespace NodesComposition {
                 let offset = 0;
 
                 for (let i = 0; i < (newNode as any)[coll].length; i++) {
-                    if ((newNode as any)[coll][i] === point) {
+                    const link = (newNode as any)[coll][i];
+
+                    if (isLinkDisabled(link)) {
+                        continue;
+                    }
+
+                    if (link === point) {
                         return offset;
                     }
-                    offset += (newNode as any)[coll][i].weight;
+                    offset += link.weight || 0;
                 }
             };
 

@@ -523,12 +523,19 @@ function defaultPointDescriptionFormatter(
         userDescText = description ? ' ' + description : '',
         seriesNameText = shouldExposeSeriesName ? ' ' + series.name + '.' : '',
         annotationsDesc = getPointAnnotationDescription(point),
-        pointAnnotationsText = annotationsDesc ? ' ' + annotationsDesc : '';
+        pointAnnotationsText = annotationsDesc ? ' ' + annotationsDesc : '',
+        isDisabledSankeyNode = !!(
+            series.type === 'sankey' &&
+            (point as any).isNode &&
+            (point.options as any)?.disabled
+        ),
+        disabledText = isDisabledSankeyNode ? ' (disabled)' : '';
 
     point.accessibility = point.accessibility || {};
     point.accessibility.valueDescription = valText;
 
-    return valText + userDescText + seriesNameText + pointAnnotationsText;
+    return valText + disabledText + userDescText + seriesNameText +
+        pointAnnotationsText;
 }
 
 

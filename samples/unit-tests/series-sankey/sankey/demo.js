@@ -284,6 +284,82 @@ QUnit.test('Sankey nodeFormat, nodeFormatter', function (assert) {
     );
 });
 
+QUnit.test('Sankey node disable toggle', function (assert) {
+    const chart = Highcharts.chart('container', {
+        plotOptions: {
+            sankey: {
+                disabledNodeHeight: 10,
+                disabledNodeColor: 'gray'
+            }
+        },
+        series: [{
+            type: 'sankey',
+            keys: ['from', 'to', 'weight'],
+            data: [
+                ['A', 'B', 3],
+                ['B', 'C', 2]
+            ]
+        }]
+    });
+
+    const series = chart.series[0],
+        nodeB = series.nodes.filter(function (node) {
+            return node.id === 'B';
+        })[0],
+        linkAB = series.points.filter(function (point) {
+            return point.from === 'A' && point.to === 'B';
+        })[0];
+
+    assert.strictEqual(
+        nodeB.options.disabled,
+        undefined,
+        'Node starts enabled'
+    );
+
+    nodeB.toggleDisabled();
+
+    assert.strictEqual(
+        nodeB.options.disabled,
+        true,
+        'Node is disabled after toggle'
+    );
+
+    assert.strictEqual(
+        nodeB.shapeArgs.height,
+        10,
+        'Disabled node height is applied'
+    );
+
+    assert.strictEqual(
+        nodeB.dlOptions.style.color,
+        'gray',
+        'Disabled node data label is gray'
+    );
+
+    assert.ok(
+        !linkAB.graphic,
+        'Links connected to disabled node are hidden'
+    );
+
+    nodeB.toggleDisabled();
+
+    assert.strictEqual(
+        nodeB.options.disabled,
+        false,
+        'Node is enabled after second toggle'
+    );
+
+    assert.ok(
+        nodeB.shapeArgs.height > 10,
+        'Node height restored on enable'
+    );
+
+    assert.ok(
+        linkAB.graphic,
+        'Links connected to enabled node are shown'
+    );
+});
+
 QUnit.test('Sankey column option', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
@@ -589,7 +665,7 @@ QUnit.test('Sankey and circular data', function (assert) {
     assert.ok(
         numberOfCurves > 4,
         'The link should have a complex, circular structure, ' +
-            'not direct (#12882)'
+        'not direct (#12882)'
     );
 
     chart.series[0].setData([
@@ -756,7 +832,7 @@ QUnit.test(
             chart.series[0].nodes[4].id,
             'Netherlands',
             'This node id(position) should not been have changed ' +
-                'after the update (#12453)'
+            'after the update (#12453)'
         );
     }
 );
@@ -792,7 +868,7 @@ QUnit.test('Test null data in sankey #12666', function (assert) {
         chart.series[0].nodes[2].sum,
         59,
         'For this node value from the point with linkTo null should ' +
-            'be added to sum (#12666)'
+        'be added to sum (#12666)'
     );
 });
 
@@ -836,7 +912,7 @@ QUnit.test('Wrong spacings when zero minLinkWidth #13308', function (assert) {
         newMinLinkWidth,
         1,
         'For this node the difference of the nodeY value should be equal ' +
-            'to the new minLinkWidth after the update (#13308)'
+        'to the new minLinkWidth after the update (#13308)'
     );
 
     assert.close(
@@ -844,7 +920,7 @@ QUnit.test('Wrong spacings when zero minLinkWidth #13308', function (assert) {
         factorAfterUpdate,
         0.02,
         'The translate-factor value should not be changed significantly ' +
-            'while changing the minLinkWidth (#13308)'
+        'while changing the minLinkWidth (#13308)'
     );
 
     const node = chart.series[0].nodes[4],

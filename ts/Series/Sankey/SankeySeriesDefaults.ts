@@ -131,6 +131,16 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
 
     },
 
+    point: {
+        events: {
+            click: function (): void {
+                if ((this as SankeyPoint).isNode) {
+                    (this as SankeyPoint).toggleDisabled();
+                }
+            }
+        }
+    },
+
     /**
      * @default   true
      * @extends   plotOptions.series.inactiveOtherPoints
@@ -327,6 +337,33 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
      */
     nodeDistance: 30,
 
+    /**
+     * Allow toggling nodes between enabled and disabled states by clicking.
+     *
+     * @type {boolean}
+     * @default true
+     * @apioption plotOptions.sankey.allowNodeToggle
+     */
+    allowNodeToggle: true,
+
+    /**
+     * The height of a disabled node in pixels.
+     *
+     * @type {number}
+     * @default 10
+     * @apioption plotOptions.sankey.disabledNodeHeight
+     */
+    disabledNodeHeight: 10,
+
+    /**
+     * The color of a disabled node and its data label.
+     *
+     * @type {Highcharts.ColorString}
+     * @default 'gray'
+     * @apioption plotOptions.sankey.disabledNodeColor
+     */
+    disabledNodeColor: 'gray',
+
     showInLegend: false,
 
     states: {
@@ -490,6 +527,16 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
  * @type      {number}
  * @since     11.3.0
  * @apioption series.sankey.nodes.height
+ */
+
+/**
+ * Whether the node is disabled. Disabled nodes use the
+ * `disabledNodeHeight` and `disabledNodeColor` options, and their links
+ * are hidden and excluded from layout.
+ *
+ * @type      {boolean}
+ * @default   false
+ * @apioption series.sankey.nodes.disabled
  */
 
 /**
