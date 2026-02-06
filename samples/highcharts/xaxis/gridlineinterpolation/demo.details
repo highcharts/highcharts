@@ -1,6 +1,4 @@
 ---
- name: Demo of xAxis.gridLineInterpolation
- authors:
-   - Torstein Hønsi
- js_wrap: b
+name: Demo of xAxis.gridLineInterpolation
+js_wrap: b
 ...
