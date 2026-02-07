@@ -86,6 +86,7 @@ namespace NodesComposition {
         public weight?: number;
         public y?: (number|null);
         public getSum(): number;
+        public getSumAll(): number;
         public hasShape(): boolean;
         public init(
             series: SeriesComposition,
@@ -188,11 +189,43 @@ namespace NodesComposition {
             newNode.linksTo = [];
             newNode.linksFrom = [];
 
+            const isSankey = this.type === 'sankey';
+            const isLinkDisabled = (link: PointComposition): boolean => (
+                isSankey &&
+                !!(
+                    (link.fromNode &&
+                        (link.fromNode.options as any)?.disabled) ||
+                    (link.toNode &&
+                        (link.toNode.options as any)?.disabled)
+                )
+            );
+
             /**
              * Return the largest sum of either the incoming or outgoing links.
              * @private
              */
             newNode.getSum = function (): number {
+                let sumTo = 0,
+                    sumFrom = 0;
+
+                newNode.linksTo.forEach((link): void => {
+                    if (!isLinkDisabled(link)) {
+                        sumTo += link.weight || 0;
+                    }
+                });
+                newNode.linksFrom.forEach((link): void => {
+                    if (!isLinkDisabled(link)) {
+                        sumFrom += link.weight || 0;
+                    }
+                });
+                return Math.max(sumTo, sumFrom);
+            };
+
+            /**
+             * Return the largest sum without disabled filtering.
+             * @private
+             */
+            newNode.getSumAll = function (): number {
                 let sumTo = 0,
                     sumFrom = 0;
 
@@ -215,10 +248,16 @@ namespace NodesComposition {
                 let offset = 0;
 
                 for (let i = 0; i < (newNode as any)[coll].length; i++) {
-                    if ((newNode as any)[coll][i] === point) {
+                    const link = (newNode as any)[coll][i];
+
+                    if (isLinkDisabled(link)) {
+                        continue;
+                    }
+
+                    if (link === point) {
                         return offset;
                     }
-                    offset += (newNode as any)[coll][i].weight;
+                    offset += link.weight || 0;
                 }
             };
 

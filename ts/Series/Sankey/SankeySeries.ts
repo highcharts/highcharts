@@ -196,7 +196,7 @@ class SankeySeries extends ColumnSeries {
         if (typeof node.level === 'undefined') {
             node.level = level;
             for (const link of node.linksFrom) {
-                if (link.toNode) {
+                if (link.toNode && !series.isLinkDisabled(link)) {
                     series.order(link.toNode, level + 1);
                 }
             }
@@ -294,12 +294,17 @@ class SankeySeries extends ColumnSeries {
                     (series.options as any)[key]
                 );
                 return obj;
-            }, {}),
-            color = pick(
-                stateOptions.color,
-                options.color,
-                values.colorByPoint ? point.color : levelOptions.color
-            );
+            }, {});
+
+        let color = pick(
+            stateOptions.color,
+            options.color,
+            values.colorByPoint ? point.color : levelOptions.color
+        );
+
+        if (point.isNode && point.options.disabled) {
+            color = series.options.disabledNodeColor || color;
+        }
 
         // Node attributes
         if (point.isNode) {
@@ -326,6 +331,12 @@ class SankeySeries extends ColumnSeries {
     public drawPoints(): void {
         ColumnSeries.prototype.drawPoints.call(this, this.points);
         ColumnSeries.prototype.drawPoints.call(this, this.nodes);
+
+        for (const node of this.nodes) {
+            if (node.graphic) {
+                node.graphic.css({ cursor: 'pointer' });
+            }
+        }
     }
 
     public drawDataLabels(): void {
@@ -365,6 +376,10 @@ class SankeySeries extends ColumnSeries {
             ),
             Infinity
         );
+
+        if (!isFinite(this.translationFactor)) {
+            this.translationFactor = 0;
+        }
 
 
         this.colDistance =
@@ -407,6 +422,16 @@ class SankeySeries extends ColumnSeries {
         for (const node of this.nodes) {
             // Translate the links from this node
             for (const linkPoint of node.linksFrom) {
+                if (series.isLinkDisabled(linkPoint)) {
+                    linkPoint.plotX = null as any;
+                    linkPoint.plotY = null as any;
+                    linkPoint.x = null as any;
+                    linkPoint.y = null as any;
+                    linkPoint.shapeArgs = void 0;
+                    linkPoint.dlBox = void 0;
+                    linkPoint.tooltipPos = void 0;
+                    continue;
+                }
                 // If weight is 0 - don't render the link path #12453,
                 // render null points (for organization chart)
                 if ((linkPoint.weight || linkPoint.isNull) && linkPoint.to) {
@@ -415,6 +440,13 @@ class SankeySeries extends ColumnSeries {
                 }
             }
         }
+    }
+
+    private isLinkDisabled(point: SankeyPoint): boolean {
+        return !!(
+            point.fromNode?.options?.disabled ||
+            point.toNode?.options?.disabled
+        );
     }
 
     /**
@@ -624,10 +656,20 @@ class SankeySeries extends ColumnSeries {
             options = this.options,
             { borderRadius, borderWidth = 0 } = options,
             sum = node.getSum(),
-            nodeHeight = Math.max(
-                Math.round(sum * translationFactor),
-                this.options.minLinkWidth as any
+            sumAll = node.getSumAll(),
+            isDisabled = !!node.options.disabled,
+            minNodeHeight = pick(
+                node.options.minHeight,
+                options.minNodeHeight,
+                0
             ),
+            nodeHeight = isDisabled ?
+                (options.disabledNodeHeight || 0) :
+                Math.max(
+                    Math.round(sum * translationFactor),
+                    this.options.minLinkWidth as any,
+                    minNodeHeight
+                ),
             nodeWidth = Math.round(this.nodeWidth),
             nodeOffset = column.sankeyColumn.offset(node, translationFactor),
             fromNodeTop = crisp(pick(
@@ -648,10 +690,11 @@ class SankeySeries extends ColumnSeries {
             ] || 0, nodeWidth),
             nodeLeft = chart.inverted ?
                 (chart.plotSizeX as any) - left :
-                left;
-        node.sum = sum;
-        // If node sum is 0, don't render the rect #12453
-        if (sum) {
+                left,
+            hasShape = !!(sum || isDisabled);
+        node.sum = sumAll;
+        // If node sum is 0, don't render the rect #12453 (unless disabled)
+        if (hasShape) {
             // Draw the node
             node.shapeType = 'roundedRect';
 
@@ -661,7 +704,9 @@ class SankeySeries extends ColumnSeries {
             let x = nodeLeft,
                 y = fromNodeTop,
                 width = node.options.width || options.width || nodeWidth,
-                height = node.options.height || options.height || nodeHeight;
+                height = isDisabled ?
+                    (options.disabledNodeHeight || 0) :
+                    (node.options.height || options.height || nodeHeight);
 
             // Border radius should not greater than half the height of the node
             // #18956
@@ -674,8 +719,16 @@ class SankeySeries extends ColumnSeries {
             if (chart.inverted) {
                 x = nodeLeft - nodeWidth;
                 y = (chart.plotSizeY as any) - fromNodeTop - nodeHeight;
-                width = node.options.height || options.height || nodeWidth;
-                height = node.options.width || options.width || nodeHeight;
+                width = isDisabled ?
+                    (options.disabledNodeHeight || 0) :
+                    (node.options.height || options.height || nodeWidth);
+                height = isDisabled ?
+                    (options.disabledNodeHeight || 0) :
+                    (node.options.width || options.width || nodeHeight);
+            }
+
+            if (!isDisabled && minNodeHeight) {
+                height = Math.max(height, minNodeHeight);
             }
 
             // Calculate data label options for the point
@@ -686,6 +739,15 @@ class SankeySeries extends ColumnSeries {
                 }),
                 zIndex: void 0
             };
+
+            if (isDisabled) {
+                node.dlOptions.style = merge(
+                    node.dlOptions.style || {},
+                    {
+                        color: options.disabledNodeColor
+                    }
+                );
+            }
 
             // Pass test in drawPoints
             node.plotX = 1;

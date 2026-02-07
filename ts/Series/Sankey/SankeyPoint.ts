@@ -81,6 +81,51 @@ class SankeyPoint extends ColumnSeries.prototype.pointClass {
 
     public weight?: number;
 
+    public toggleDisabled(): void {
+        if (!this.isNode) {
+            return;
+        }
+
+        const series = this.series;
+
+        if (series.options.allowNodeToggle === false) {
+            return;
+        }
+
+        for (const node of series.nodes) {
+            if (!defined(node.options.column) && defined(node.column)) {
+                node.options.column = node.column;
+            }
+        }
+
+        const disabled = !this.options.disabled;
+        this.options.disabled = disabled;
+
+        if (series.options.nodes) {
+            const nodeOptions = series.options.nodes.find(
+                (node): boolean => node.id === this.id
+            );
+            if (nodeOptions) {
+                nodeOptions.disabled = disabled;
+            }
+
+            for (const nodeOptionsItem of series.options.nodes) {
+                const node = series.nodes.find(
+                    (point): boolean => point.id === nodeOptionsItem.id
+                );
+                if (
+                    node &&
+                    !defined(nodeOptionsItem.column) &&
+                    defined(node.column)
+                ) {
+                    nodeOptionsItem.column = node.column;
+                }
+            }
+        }
+
+        series.redraw();
+    }
+
     /* *
      *
      *  Functions
@@ -107,8 +152,12 @@ class SankeyPoint extends ColumnSeries.prototype.pointClass {
      * @private
      */
     public getClassName(): string {
-        return (this.isNode ? 'highcharts-node ' : 'highcharts-link ') +
-        Point.prototype.getClassName.call(this);
+        return (
+            (this.isNode ? 'highcharts-node ' : 'highcharts-link ') +
+            (this.isNode && this.options.disabled ?
+                'highcharts-node-disabled ' : '') +
+            Point.prototype.getClassName.call(this)
+        );
     }
 
     /**
@@ -120,11 +169,19 @@ class SankeyPoint extends ColumnSeries.prototype.pointClass {
     public getFromNode(): { fromNode?: SankeyPoint, fromColumn: number } {
         const node = this;
 
+        const isLinkDisabled = (link: SankeyPoint): boolean => !!(
+            link.fromNode?.options?.disabled ||
+            link.toNode?.options?.disabled
+        );
+
         let fromColumn = -1,
             fromNode;
 
         for (let i = 0; i < node.linksTo.length; i++) {
             const point = node.linksTo[i];
+            if (isLinkDisabled(point)) {
+                continue;
+            }
             if (
                 (point.fromNode.column as any) > fromColumn &&
                 point.fromNode !== node // #16080
@@ -145,8 +202,14 @@ class SankeyPoint extends ColumnSeries.prototype.pointClass {
         const node = this;
 
         if (!defined(node.options.column)) {
+            const activeLinksTo = node.linksTo.filter(
+                (link): boolean => !(
+                    link.fromNode?.options?.disabled ||
+                    link.toNode?.options?.disabled
+                )
+            );
             // No links to this node, place it left
-            if (node.linksTo.length === 0) {
+            if (activeLinksTo.length === 0) {
                 node.column = 0;
             } else {
                 node.column = node.getFromNode().fromColumn + 1;
