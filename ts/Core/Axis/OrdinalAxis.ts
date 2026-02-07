@@ -120,7 +120,7 @@ namespace OrdinalAxis {
             startOfWeek: number,
             positions?: Array<number>|Types.TypedArray,
             closestDistance?: number,
-            findHigherRanks?: boolean
+            findBoundaryTicks?: boolean
         ): TickPositionsArray;
 
         /** @internal */
@@ -211,10 +211,10 @@ namespace OrdinalAxis {
         startOfWeek?: number,
         positions: Array<number> = [],
         closestDistance: number = 0,
-        findHigherRanks?: boolean
+        findBoundaryTicks?: boolean
     ): TickPositionsArray {
 
-        const higherRanks = {} as Record<string, string>,
+        const boundaryTicks = {} as Record<string, string>,
             tickPixelIntervalOption = this.options.tickPixelInterval,
             time = this.chart.time,
             // Record all the start positions of a segment, to use when
@@ -222,7 +222,7 @@ namespace OrdinalAxis {
             segmentStarts = [];
         let end,
             segmentPositions,
-            hasCrossedHigherRank,
+            hasCrossedBoundary,
             info,
             outsideMax,
             start = 0,
@@ -304,9 +304,9 @@ namespace OrdinalAxis {
         if (segmentPositions) {
             info = (segmentPositions as any).info;
 
-            // Optionally identify ticks with higher rank, for example
+            // Optionally identify ticks with boundary, for example
             // when the ticks have crossed midnight.
-            if (findHigherRanks && info.unitRange <= timeUnits.hour) {
+            if (findBoundaryTicks && info.unitRange <= timeUnits.hour) {
                 end = groupPositions.length - 1;
 
                 // Compare points two by two
@@ -315,17 +315,17 @@ namespace OrdinalAxis {
                         time.dateFormat('%d', groupPositions[start]) !==
                         time.dateFormat('%d', groupPositions[start - 1])
                     ) {
-                        higherRanks[groupPositions[start]] = 'day';
-                        hasCrossedHigherRank = true;
+                        boundaryTicks[groupPositions[start]] = 'day';
+                        hasCrossedBoundary = true;
                     }
                 }
 
                 // If the complete array has crossed midnight, we want
-                // to mark the first positions also as higher rank
-                if (hasCrossedHigherRank) {
-                    higherRanks[groupPositions[0]] = 'day';
+                // to mark the first positions also as boundary
+                if (hasCrossedBoundary) {
+                    boundaryTicks[groupPositions[0]] = 'day';
                 }
-                info.higherRanks = higherRanks;
+                info.boundaryTicks = boundaryTicks;
             }
 
             // Save the info
@@ -338,7 +338,7 @@ namespace OrdinalAxis {
         // Don't show ticks within a gap in the ordinal axis, where the
         // space between two points is greater than a portion of the tick
         // pixel interval
-        if (findHigherRanks && defined(tickPixelIntervalOption)) {
+        if (findBoundaryTicks && defined(tickPixelIntervalOption)) {
 
             const length = groupPositions.length,
                 translatedArr = [],
@@ -385,11 +385,11 @@ namespace OrdinalAxis {
                     (medianDistance === null || distance < medianDistance * 0.8)
                 ) {
 
-                    // Is this a higher ranked position with a normal
+                    // Is this a boundary position with a normal
                     // position to the right?
                     if (
-                        higherRanks[groupPositions[i]] &&
-                        !higherRanks[groupPositions[i + 1]]
+                        boundaryTicks[groupPositions[i]] &&
+                        !boundaryTicks[groupPositions[i + 1]]
                     ) {
 
                         // Yes: remove the lower ranked neighbour to the

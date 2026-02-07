@@ -2438,6 +2438,20 @@ class Axis {
                 }
             }
 
+            const info = tickPositions.info;
+
+            // Boundary ticks only. If we deal with the first tick on the
+            // whole chart, delete the boundary from the second tick as there
+            // is no hidden tick before the first visible one.
+            if (
+                !this.options.isInternal &&
+                info &&
+                this.min === this.dataMin &&
+                this.min <= tickPositions[0]
+            ) {
+                delete info.boundaryTicks[tickPositions[1]];
+            }
+
             // Too dense ticks, keep only the first and last (#4477)
             if (tickPositions.length > this.len) {
                 tickPositions = [
