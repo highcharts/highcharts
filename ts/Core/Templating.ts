@@ -558,6 +558,9 @@ namespace Templating {
     export interface FormatterCallback<T> {
         (this: T): string;
     }
+    export interface Es6FormatterCallback<T> {
+        (this: T, ctx: T): string;
+    }
     export interface OwnerOptions {
         /**
          * Language options. See {@link Highcharts.LangOptions} for details.

@@ -357,7 +357,7 @@ class NewDataAnnouncer {
         // User supplied formatter?
         if (annOptions.announcementFormatter) {
             const formatterRes = annOptions.announcementFormatter(
-                dirtySeries, newSeries, newPoint
+                dirtySeries, newSeries, newPoint, this
             );
             if (formatterRes !== false) {
                 return formatterRes.length ? formatterRes : null;

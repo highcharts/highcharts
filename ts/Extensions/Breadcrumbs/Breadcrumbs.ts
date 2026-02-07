@@ -574,7 +574,8 @@ class Breadcrumbs {
                         callDefaultEvent = buttonEvents.call(
                             breadcrumbs,
                             e as any,
-                            breadcrumb
+                            breadcrumb,
+                            breadcrumbs
                         );
                     }
 
@@ -896,9 +897,6 @@ export default Breadcrumbs;
  *
  * @param {Highcharts.BreadcrumbOptions} options
  * Breadcrumb options.
- *
- * @param {global.Event} e
- * Event arguments.
  */
 
 /**

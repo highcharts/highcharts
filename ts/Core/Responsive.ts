@@ -82,7 +82,7 @@ namespace Responsive {
      * */
 
     export interface CallbackFunction {
-        (this: Chart): boolean;
+        (this: Chart, ctx: Chart): boolean;
     }
 
     /** @internal */
@@ -272,7 +272,7 @@ namespace Responsive {
                 );
             };
 
-        if (fn.call(this)) {
+        if (fn.call(this, this)) {
             matches.push(rule._id as any);
         }
     }
