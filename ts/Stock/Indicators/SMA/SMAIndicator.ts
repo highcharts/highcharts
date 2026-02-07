@@ -47,12 +47,7 @@ const {
  *
  * */
 
-declare module '../../../Core/Series/SeriesOptions' {
-    interface SeriesOptions {
-        useOhlcData?: boolean;
-    }
-}
-
+/** @internal */
 interface CalculateOnObject {
     chart: string;
     xAxis?: string;
@@ -63,7 +58,7 @@ interface CalculateOnObject {
  *
  * Return the parent series values in the legacy two-dimensional yData
  * format
- * @private
+ * @internal
  */
 const tableToMultiYData = <TLinkedSeries extends LineSeriesType>(
     series: TLinkedSeries,
@@ -99,7 +94,7 @@ const tableToMultiYData = <TLinkedSeries extends LineSeriesType>(
 /**
  * The SMA series type.
  *
- * @private
+ * @internal
  */
 class SMAIndicator extends LineSeries {
 
@@ -110,22 +105,10 @@ class SMAIndicator extends LineSeries {
      * */
 
     /**
-     * The parameter allows setting line series type and use OHLC indicators.
-     * Data in OHLC format is required.
-     *
-     * @sample {highstock} stock/indicators/use-ohlc-data
-     *         Use OHLC data format to plot line chart
-     *
-     * @type      {boolean}
-     * @product   highstock
-     * @apioption plotOptions.line.useOhlcData
-     */
-
-    /**
      * Simple moving average indicator (SMA). This series requires `linkedTo`
      * option to be set.
      *
-     * @sample stock/indicators/sma
+     * @sample {highstock} stock/indicators/sma
      *         Simple moving average indicator
      *
      * @extends      plotOptions.line
@@ -223,9 +206,7 @@ class SMAIndicator extends LineSeries {
      *
      * */
 
-    /**
-     * @private
-     */
+    /** @internal */
     public destroy(): void {
         this.dataEventsToUnbind.forEach(function (
             unbinder: Function
@@ -235,9 +216,7 @@ class SMAIndicator extends LineSeries {
         super.destroy.apply(this, arguments);
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     public getName(): string {
         const params: Array<string> = [];
         let name = this.name;
@@ -261,9 +240,7 @@ class SMAIndicator extends LineSeries {
         return name;
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeriesType>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: SMAParamsOptions
@@ -319,9 +296,7 @@ class SMAIndicator extends LineSeries {
         } as IndicatorValuesObject<TLinkedSeries>;
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     public init(
         chart: Chart,
         options: SMAOptions
@@ -417,9 +392,7 @@ class SMAIndicator extends LineSeries {
         indicator.eventsToUnbind.push(linkedSeriesUnbiner);
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     public recalculateValues(): void {
         const croppedDataValues = [],
             indicator = this,
@@ -578,9 +551,7 @@ class SMAIndicator extends LineSeries {
 
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     public processData(): (boolean|undefined) {
         const series = this,
             compareToMain = series.options.compareToMain,
@@ -609,6 +580,7 @@ class SMAIndicator extends LineSeries {
  *
  * */
 
+/** @internal */
 interface SMAIndicator extends IndicatorBase {
     calculateOn: CalculateOnObject;
     hasDerivedData: boolean;
@@ -634,6 +606,7 @@ extend(SMAIndicator.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         sma: typeof SMAIndicator;
@@ -647,6 +620,7 @@ SeriesRegistry.registerSeriesType('sma', SMAIndicator);
  *
  * */
 
+/** @internal */
 export default SMAIndicator;
 
 /* *

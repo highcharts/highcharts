@@ -1,5 +1,4 @@
-// SPDX-License-Identifier: LicenseRef-Highcharts
-/**
+/* *
  *
  *  (c) 2010-2026 Highsoft AS
  *  Author: Wojciech Chmiel
@@ -43,6 +42,7 @@ const {
  *
  * */
 
+/** @internal */
 namespace MultipleLinesComposition {
 
     /* *
@@ -77,7 +77,7 @@ namespace MultipleLinesComposition {
      * Notice that linesApiNames should have decreased amount of elements
      * relative to pointArrayMap (without pointValKey).
      *
-     * @private
+     * @internal
      * @type {Array<string>}
      */
     const linesApiNames = ['bottomLine'];
@@ -89,7 +89,7 @@ namespace MultipleLinesComposition {
      * Also it should be consistent with amount of lines calculated in
      * getValues method from your implementation.
      *
-     * @private
+     * @internal
      * @type {Array<string>}
      */
     const pointArrayMap = ['top', 'bottom'];
@@ -100,7 +100,7 @@ namespace MultipleLinesComposition {
      * be disabled for some indicators, leave this option as an empty array.
      * Names should be the same as the names in the pointArrayMap.
      *
-     * @private
+     * @internal
      * @type {Array<string>}
      */
     const areaLinesNames: Array<string> = ['top'];
@@ -108,7 +108,7 @@ namespace MultipleLinesComposition {
     /**
      * Main line id.
      *
-     * @private
+     * @internal
      * @type {string}
      */
     const pointValKey = 'top';
@@ -127,7 +127,7 @@ namespace MultipleLinesComposition {
      * should be consistent with the amount of lines calculated in the
      * `getValues` method.
      *
-     * @private
+     * @internal
      */
     export function compose<T extends typeof SMAIndicator>(
         IndicatorClass: T
@@ -164,7 +164,7 @@ namespace MultipleLinesComposition {
     /**
      * Generate the API name of the line
      *
-     * @private
+     * @internal
      * @param propertyName name of the line
      */
     function getLineName(
@@ -180,7 +180,7 @@ namespace MultipleLinesComposition {
     /**
      * Create translatedLines Collection based on pointArrayMap.
      *
-     * @private
+     * @internal
      * @param {string} [excludedValue]
      *        Main line id
      * @return {Array<string>}
@@ -204,7 +204,7 @@ namespace MultipleLinesComposition {
     /**
      * Draw main and additional lines.
      *
-     * @private
+     * @internal
      */
     function indicatorDrawGraph(
         this: SMAIndicator
@@ -327,7 +327,7 @@ namespace MultipleLinesComposition {
      * Create the path based on points provided as argument.
      * If indicator.nextPoints option is defined, create the areaFill.
      *
-     * @private
+     * @internal
      * @param points Points on which the path should be created
      */
     function indicatorGetGraphPath(
@@ -363,7 +363,7 @@ namespace MultipleLinesComposition {
     }
 
     /**
-     * @private
+     * @internal
      * @param {Highcharts.Point} point
      *        Indicator point
      * @return {Array<number>}
@@ -385,7 +385,7 @@ namespace MultipleLinesComposition {
     /**
      * Add lines plot pixel values.
      *
-     * @private
+     * @internal
      */
     function indicatorTranslate(
         this: IndicatorComposition
@@ -426,4 +426,5 @@ namespace MultipleLinesComposition {
  *
  * */
 
+/** @internal */
 export default MultipleLinesComposition;
