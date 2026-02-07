@@ -7,9 +7,7 @@
  * Usage with gulp:
  * - Define config.ts files in sample directories
  * - If you have changed anything in the Highcharts options structure, working
- *   on new or changed defaults etc., run
- *      `gulp scripts && gulp jsdoc-dts && node tools/sample-generator/setup.ts`
- *   to have the changed API reflected in the generator. Usually not needed.
+ *   on new or changed defaults etc., run `gulp sample-generator --setup`.
  * - `gulp sample-generator`
  *
  * Direct usage:
