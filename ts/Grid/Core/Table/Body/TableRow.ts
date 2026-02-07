@@ -25,6 +25,7 @@
 import type Cell from '../Cell';
 import type Column from '../Column';
 import type { RowObject as DataTableRowObject } from '../../../../Data/DataTable';
+import type { RowId } from '../../Data/DataProvider';
 
 import Row from '../Row.js';
 import Table from '../Table.js';
@@ -67,7 +68,7 @@ class TableRow extends Row {
     /**
      * The index of the row in the original data table (ID).
      */
-    public id?: number;
+    public id?: RowId;
 
     /**
      * The vertical translation of the row.
@@ -93,10 +94,6 @@ class TableRow extends Row {
     constructor(viewport: Table, index: number) {
         super(viewport);
         this.index = index;
-        this.id = viewport.dataTable.getOriginalRowIndex(index);
-
-        this.loadData();
-        this.setRowAttributes();
     }
 
     /* *
@@ -105,6 +102,12 @@ class TableRow extends Row {
     *
     * */
 
+    public async init(): Promise<void> {
+        this.id = await this.viewport.grid.dataProvider?.getRowId(this.index);
+        await this.loadData();
+        this.setRowAttributes();
+    }
+
     public override createCell(column: Column): Cell {
         return new TableCell(this, column);
     }
@@ -112,9 +115,12 @@ class TableRow extends Row {
     /**
      * Loads the row data from the data table.
      */
-    private loadData(): void {
-        const data = this.viewport.dataTable.getRowObject(this.index);
+    private async loadData(): Promise<void> {
+        const data = await this.viewport.grid.dataProvider?.getRowObject(
+            this.index
+        );
         if (!data) {
+            this.data = {};
             return;
         }
 
@@ -125,15 +131,15 @@ class TableRow extends Row {
      * Updates the row data and its cells with the latest values from the data
      * table.
      */
-    public update(): void {
-        this.id = this.viewport.dataTable.getOriginalRowIndex(this.index);
+    public async update(): Promise<void> {
+        this.id = await this.viewport.grid.dataProvider?.getRowId(this.index);
         this.updateRowAttributes();
 
-        this.loadData();
+        await this.loadData();
 
         for (let i = 0, iEnd = this.cells.length; i < iEnd; ++i) {
             const cell = this.cells[i] as TableCell;
-            void cell.setValue();
+            await cell.setValue();
         }
 
         this.reflow();
@@ -148,29 +154,29 @@ class TableRow extends Row {
      * @param doReflow
      * Whether to reflow the row after updating the cells.
      */
-    public reuse(index: number, doReflow: boolean = true): void {
+    public async reuse(index: number, doReflow: boolean = true): Promise<void> {
         for (let i = 0, iEnd = this.cells.length; i < iEnd; ++i) {
             fireEvent(this.cells[i], 'outdate');
         }
 
         if (this.index === index) {
-            this.update();
+            await this.update();
             return;
         }
 
         this.index = index;
-        this.id = this.viewport.dataTable.getOriginalRowIndex(index);
+        this.id = await this.viewport.grid.dataProvider?.getRowId(index);
 
         this.htmlElement.setAttribute('data-row-index', index);
         this.updateRowAttributes();
         this.updateParityClass();
         this.updateStateClasses();
 
-        this.loadData();
+        await this.loadData();
 
         for (let i = 0, iEnd = this.cells.length; i < iEnd; ++i) {
             const cell = this.cells[i] as TableCell;
-            void cell.setValue();
+            await cell.setValue();
         }
 
         if (doReflow) {
