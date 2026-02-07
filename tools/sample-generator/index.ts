@@ -4,7 +4,15 @@
  * Generates a Highcharts sample based on specified option paths,
  * creating HTML controls to manipulate those options at runtime.
  *
- * Usage:
+ * Usage with gulp:
+ * - Define config.ts files in sample directories
+ * - If you have changed anything in the Highcharts options structure, working
+ *   on new or changed defaults etc., run
+ *      `gulp scripts && gulp jsdoc-dts && node tools/sample-generator/setup.ts`
+ *   to have the changed API reflected in the generator. Usually not needed.
+ * - `gulp sample-generator`
+ *
+ * Direct usage:
  * - Define desired option paths in the `paths` array.
  * - `node tools/sample-generator/index.ts`
  */
@@ -26,22 +34,6 @@ import { fileURLToPath } from 'url';
 
 import config from './config-example.ts';
 
-// The precompiled, flattenend abstract of tree.json. Compiled with
-// `node tools/sample-generator/setup.ts`.
-const flatTree: FlatTreeNode[] = JSON.parse(await fs.readFile(
-    join(dirname(fileURLToPath(import.meta.url)), 'flat-tree.json'),
-    'utf-8'
-));
-
-// Import Highcharts and modules so that we can read default options. If this
-// import fails, run `gulp scripts` first.
-import Highcharts from '../../code/esm/highcharts.src.js';
-import '../../code/esm/highcharts-more.src.js';
-import '../../code/esm/highcharts-3d.src.js';
-import '../../code/esm/modules/stock.src.js';
-import '../../code/esm/modules/map.src.js';
-import '../../code/esm/modules/gantt.src.js';
-
 // Type handlers
 import * as booleanHandler from './type-handlers/boolean.ts';
 import * as genericHandler from './type-handlers/generic.ts';
@@ -49,10 +41,6 @@ import * as numberHandler from './type-handlers/number.ts';
 import * as selectHandler from './type-handlers/select.ts';
 import * as colorHandler from './type-handlers/color.ts';
 import * as textHandler from './type-handlers/text.ts';
-
-const executedDirectly = import.meta.url === process.argv[1] ||
-    import.meta.url === `file://${process.argv[1]}`;
-
 interface MetaData {
     controlOptions?: ControlOptions;
     path: string;
@@ -65,18 +53,74 @@ interface MetaData {
 
 type MetaList = Array<MetaData>;
 
-const defaultOptions = Highcharts.getOptions();
+const executedDirectly = import.meta.url === process.argv[1] ||
+    import.meta.url === `file://${process.argv[1]}`;
 
-// --- Template helpers -------------------------------------------------------
+// The precompiled, flattenend abstract of tree.json. Compiled with
+// `node tools/sample-generator/setup.ts`.
+const flatTree: FlatTreeNode[] = JSON.parse(await fs.readFile(
+    join(dirname(fileURLToPath(import.meta.url)), 'flat-tree.json'),
+    'utf-8'
+));
+
+// The deep merge function from Highcharts
+function merge<T>(
+    extendOrSource: true | T,
+    ...sources: Array<Partial<T> | undefined>
+): T {
+    let i,
+        args = [extendOrSource, ...sources],
+        ret = {} as T;
+    const doCopy = function (copy: any, original: any): any {
+        // An object is replacing a primitive
+        if (typeof copy !== 'object') {
+            copy = {};
+        }
+
+        Object.entries(original).forEach(([key, value]) => {
+
+            // Prototype pollution (#14883)
+            if (key === '__proto__' || key === 'constructor') {
+                return;
+            }
+
+            // Copy the contents of objects, but not arrays or DOM nodes
+            if (
+                typeof value === 'object' &&
+                !Array.isArray(value) &&
+                value !== null
+            ) {
+                copy[key] = doCopy(copy[key] || {}, value);
+
+            // Primitives and arrays are copied over directly
+            } else {
+                copy[key] = original[key];
+            }
+        });
+        return copy;
+    };
+
+    // If first argument is true, copy into the existing object. Used in
+    // setOptions.
+    if (extendOrSource === true) {
+        ret = args[1] as T;
+        args = Array.prototype.slice.call(args, 2);
+    }
+
+    // For each argument, extend the return
+    const len = args.length;
+    for (i = 0; i < len; i++) {
+        ret = doCopy(ret, args[i]);
+    }
+
+    return ret;
+}
+
+// Template helpers
 async function loadTemplate(fileName: string) {
     // Templates live in ./tpl relative to this file
     const path = new URL(`./tpl/${fileName}`, import.meta.url);
     return await fs.readFile(path, 'utf-8');
-}
-
-// Get a nested value from an object given a dot-separated path.
-function getNestedValue(obj: any, path: string): any {
-    return path.split('.').reduce((current, key): any => current?.[key], obj);
 }
 
 // Parse override values from path definitions
@@ -228,18 +272,18 @@ async function generateChartConfig(
     for (const optionsTpl of config.templates || ['column', 'categories-4']) {
         const tplModule = await import(`./tpl/chart-options/${optionsTpl}.ts`);
         const tplOptions = tplModule.default;
-        Highcharts.merge(true, chartOptions, tplOptions);
+        merge(true, chartOptions, tplOptions);
     }
 
     const titlePaths = metaList
         .filter(meta => meta.controlOptions?.inTitle !== false)
         .map(meta => meta.path);
-    Highcharts.merge(true, chartOptions, {
+    merge(true, chartOptions, {
         title: { text: generateTitle(titlePaths) }
     });
 
     if (chartOptionsExtra) {
-        Highcharts.merge(true, chartOptions, chartOptionsExtra);
+        merge(true, chartOptions, chartOptionsExtra);
     }
 
     if (config.dataFile) {
@@ -1000,7 +1044,7 @@ function getDemoDetails(config: SampleGeneratorConfig): string {
             .map(control => control.path) :
         config.paths || [];
 
-    const details: Details = Highcharts.merge({
+    const details: Details = merge({
         name: generateTitle(paths)
             .replace(/<em>/gu, '')
             .replace(/<\/em>/gu, ''),
