@@ -1238,6 +1238,9 @@ const defaultOptions: DefaultOptions = {
          * for each legend label. Available variables relates to properties on
          * the series, or the point in case of pies.
          *
+         * @sample {highcharts} highcharts/legend/labelformat/
+         *         Add text
+         *
          * @type      {string}
          * @default   {name}
          * @since     1.3

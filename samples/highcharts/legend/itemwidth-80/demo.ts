@@ -1,15 +1,13 @@
 Highcharts.chart('container', {
-
     chart: {
-        marginBottom: 120,
         width: 500
     },
-
-    legend: {
-        // itemWidth: null // => default
-        // alignColumns: true  // => default
+    title: {
+        text: 'Demo of <em>legend.itemWidth</em>'
     },
-
+    legend: {
+        itemWidth: 100
+    },
     series: [{
         data: [6, 4, 2],
         name: 'First'

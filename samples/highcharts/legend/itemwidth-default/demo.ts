@@ -1,17 +1,14 @@
 Highcharts.chart('container', {
-
     chart: {
         width: 500
     },
-
     title: {
-        text: 'Legend <em>itemWidth</em> option'
+        text: 'Demo of <em>legend.itemWidth</em> and <em>alignColumns</em>'
     },
-
     legend: {
-        itemWidth: 100
+        alignColumns: true,
+        itemWidth: 0
     },
-
     series: [{
         data: [6, 4, 2],
         name: 'First'
