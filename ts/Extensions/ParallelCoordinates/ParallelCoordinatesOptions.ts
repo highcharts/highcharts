@@ -33,7 +33,20 @@ declare module '../../Core/Chart/ChartOptions' {
 }
 
 interface ParallelCoordinatesOptions {
+    /**
+     * Common options for all yAxes rendered in a parallel coordinates plot.
+     *
+     * @since    6.0.0
+     * @requires modules/parallel-coordinates
+     */
     parallelAxes?: DeepPartial<AxisOptions>;
+
+    /**
+     * Flag to render charts as a parallel coordinates plot.
+     *
+     * @since    6.0.0
+     * @requires modules/parallel-coordinates
+     */
     parallelCoordinates?: boolean;
 }
 

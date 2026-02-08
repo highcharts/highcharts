@@ -46,8 +46,14 @@ const {
 declare module '../../Core/Chart/ChartBase'{
     interface ChartBase {
         hasParallelCoordinates?: boolean;
+        /**
+         * @internal
+         */
         parallelInfo?: ParallelCoordinates.InfoObject;
-        /** @requires modules/parallel-coordinates */
+        /**
+         * @internal
+         * @requires modules/parallel-coordinates
+         */
         setParallelInfo(options: DeepPartial<Options>): void;
     }
 }
@@ -58,6 +64,7 @@ declare module '../../Core/Chart/ChartBase'{
  *
  * */
 
+/** @internal */
 class ChartAdditions {
 
     /* *
@@ -144,14 +151,16 @@ namespace ParallelCoordinates {
      *
      * */
 
+    /** @internal */
     export declare class ChartComposition extends Chart {
         hasParallelCoordinates?: boolean;
         parallelInfo: InfoObject;
     }
 
-    export interface InfoObject {
+    /** @internal */
+    export type InfoObject = {
         counter: number;
-    }
+    };
 
     /* *
      *
@@ -304,4 +313,5 @@ namespace ParallelCoordinates {
  *
  * */
 
+/** @internal */
 export default ParallelCoordinates;
