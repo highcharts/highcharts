@@ -51,6 +51,7 @@ const {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Renderer/SVG/SVGElementBase' {
     interface SVGElementBase {
         connector?: SVGElement;
@@ -64,6 +65,7 @@ declare module '../../Core/Renderer/SVG/SVGElementBase' {
  *
  * */
 
+/** @internal */
 namespace ColumnDataLabel {
 
     /* *
@@ -816,4 +818,5 @@ namespace ColumnDataLabel {
  *
  * */
 
+/** @internal */
 export default ColumnDataLabel;
