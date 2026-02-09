@@ -541,41 +541,57 @@ namespace ColumnDataLabel {
                             // Check against other internal labels in
                             // the same series
                             for (const otherPoint of series.points) {
-                                const otherLabel = otherPoint.dataLabel;
-                                const otherPos = otherLabel?.dataLabelPosition;
-                                const otherCoords = otherPos?.posAttribs;
-                                if (
-                                    !otherLabel ||
-                                    otherLabel === dataLabel ||
-                                    !otherLabel.visible ||
-                                    (otherPos?.distance ?? 0) > 0 ||
-                                    otherPos?.attribs?.visibility ===
-                                    'hidden' ||
-                                    !isNumber(otherCoords?.x) ||
-                                    !isNumber(otherCoords?.y)
+                                for (
+                                    const otherLabel of (
+                                        otherPoint.dataLabels ||
+                                        []
+                                    )
                                 ) {
-                                    continue;
-                                }
+                                    const otherPos =
+                                    otherLabel?.dataLabelPosition;
+                                    const otherCoords = otherPos?.posAttribs;
 
-                                const otherBBox = otherLabel.getBBox();
-                                const { x: oX, y: oY } = otherCoords as {
-                                    x: number, y: number
-                                };
-
-                                const isOverlapping = (
-                                    currentBBox.x < oX + otherBBox.width &&
-                                    currentBBox.x + currentBBox.width > oX &&
-                                    currentBBox.y < oY + otherBBox.height &&
-                                    currentBBox.y + currentBBox.height > oY
-                                );
-
-                                if (isOverlapping) {
-                                    // If they overlap, hide the one with
-                                    // the smaller value
-                                    if ((point.y ?? 0) < (otherPoint.y ?? 0)) {
-                                        visibility = 'hidden';
-                                        break;
+                                    if (
+                                        !otherLabel ||
+                                        otherLabel === dataLabel ||
+                                        !otherLabel.visible ||
+                                        (otherPos?.distance ?? 0) > 0 ||
+                                        otherPos?.attribs?.visibility ===
+                                        'hidden' ||
+                                        !isNumber(otherCoords?.x) ||
+                                        !isNumber(otherCoords?.y)
+                                    ) {
+                                        continue;
                                     }
+
+                                    const otherBBox = otherLabel.getBBox();
+                                    const { x: oX, y: oY } = otherCoords as {
+                                        x: number, y: number
+                                    };
+
+                                    const isOverlapping = (
+                                        currentBBox.x < oX + otherBBox.width &&
+                                        currentBBox.x + currentBBox.width >
+                                        oX &&
+                                        currentBBox.y < oY + otherBBox.height &&
+                                        currentBBox.y + currentBBox.height > oY
+                                    );
+
+                                    if (isOverlapping) {
+                                        // If they overlap, hide the one with
+                                        // smaller value
+                                        if (
+                                            (point.y ?? 0) < (otherPoint.y ?? 0)
+                                        ) {
+                                            visibility = 'hidden';
+                                            break;
+                                        }
+                                    }
+                                }
+                                // If already hidden, no need to check
+                                // other points
+                                if (visibility === 'hidden') {
+                                    break;
                                 }
                             }
                         }
