@@ -200,7 +200,7 @@ function addToolbar(
     createElement('span', {
         className: 'highcharts-icon'
     }, {
-        backgroundImage: `url(${this.iconsURL}edit.svg)`
+        backgroundImage: this.getIcon('edit.svg')
     }, button);
 
     button = this.addButton(
@@ -215,7 +215,7 @@ function addToolbar(
     createElement('span', {
         className: 'highcharts-icon'
     }, {
-        backgroundImage: `url(${this.iconsURL}destroy.svg)`
+        backgroundImage: this.getIcon('destroy.svg')
     }, button);
 }
 
