@@ -529,7 +529,6 @@ class Navigator {
                     navigator.removeShadesAndHandlesEvents();
                     // Re-add the events with new elements:
                     navigator.addShadesAndHandlesEvents();
-                // If the navigator symbol changed, update its path and name
                 }
                 if (chart.inverted) {
                     navigator.handles[index].attr({
@@ -852,8 +851,6 @@ class Navigator {
         ): void {
             navigator.onMouseUp(e);
         };
-
-        // Add shades and handles mousedown events
 
         eventsToUnbind.push(
             // Add mouse move and mouseup events. These are bind to doc/div,
