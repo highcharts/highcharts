@@ -738,6 +738,7 @@ export interface AxisOptions {
      * scale axes.
      *
      * @see [minTickInterval](#xAxis.minTickInterval)
+     * @see [uniformDecimals](#xAxis.uniformDecimals)
      *
      * @sample {highcharts|highstock} highcharts/yaxis/allowdecimals-true/
      *         True by default
@@ -1850,6 +1851,18 @@ export interface AxisOptions {
      * @product highcharts gantt
      */
     type?: AxisTypeValue;
+
+    /**
+     * When `true`, if any tick has decimals, all axis labels show the
+     * same number of decimal places that is matched to the highest number
+     * of decimal places in the tickPositions.
+     *
+     * @sample highcharts/yaxis/uniformdecimals/
+     *
+     * @since next
+     * @default undefined
+     */
+    uniformDecimals?: boolean;
 
     /**
      * Applies only when the axis `type` is `category`. When `uniqueNames`

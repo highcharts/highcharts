@@ -998,7 +998,18 @@ class Axis {
 
         let i = numericSymbols?.length,
             multi,
-            ret: (string|undefined);
+            ret: (string|undefined),
+            decimals = -1;
+
+        // Uniform decimals for linear axes, #24122.
+        if (axis.options.uniformDecimals && axis.type === 'linear') {
+            for (let j = 0; j < axis.tickPositions.length; j++) {
+                decimals = Math.max(
+                    decimals,
+                    axis.tickPositions[j].toString().split('.')[1]?.length || 0
+                );
+            }
+        }
 
         if (categories) {
             ret = `${this.value}`;
@@ -1029,7 +1040,7 @@ class Axis {
                     value !== 0
                 ) { // #5480
                     ret = numberFormatter(
-                        value / multi, -1
+                        value / multi, decimals
                     ) + numericSymbols[i];
                 }
             }
@@ -1037,9 +1048,9 @@ class Axis {
 
         if (typeof ret === 'undefined') {
             if (Math.abs(value) >= 10000) { // Add thousands separators
-                ret = numberFormatter(value, -1);
+                ret = numberFormatter(value, decimals);
             } else { // Small numbers
-                ret = numberFormatter(value, -1, void 0, ''); // #2466
+                ret = numberFormatter(value, decimals, void 0, ''); // #2466
             }
         }
 

@@ -84,6 +84,7 @@ namespace AxisDefaults {
          * scale axes.
          *
          * @see [minTickInterval](#xAxis.minTickInterval)
+         * @see [uniformDecimals](#xAxis.uniformDecimals)
          *
          * @sample {highcharts|highstock} highcharts/yaxis/allowdecimals-true/
          *         True by default
@@ -2137,6 +2138,20 @@ namespace AxisDefaults {
          * @product highcharts gantt
          * @apioption xAxis.type
          */
+
+        /**
+         * When `true`, if any tick has decimals, all axis labels show the
+         * same number of decimal places that is matched to the highest number
+         * of decimal places in the tickPositions.
+         *
+         * @sample highcharts/yaxis/uniformdecimals/
+         *         Uniform decimals enabled on both axes
+         *
+         * @since next
+         * @type      {boolean|undefined}
+         * @default undefined
+         */
+        uniformDecimals: void 0,
 
         /**
          * If there are multiple axes on the same side of the chart, the pixel

@@ -1475,7 +1475,7 @@ QUnit.test('Label ellipsis and resetting categories', assert => {
     );
 });
 
-QUnit.test('Correct float (#6085)', function (assert) {
+QUnit.test('Axis labels floating point precision', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
             height: 400
@@ -1503,11 +1503,23 @@ QUnit.test('Correct float (#6085)', function (assert) {
 
     assert.ok(
         chart.yAxis[0].tickPositions.toString().length < 28,
-        'No long floating points here'
+        'No long floating points here, #6085'
     );
     assert.ok(
         chart.yAxis[1].tickPositions.toString().length < 28,
-        'No long floating points here'
+        'No long floating points here, #6085'
+    );
+
+    chart.update({
+        yAxis: [{
+            uniformDecimals: true
+        }]
+    });
+
+    assert.deepEqual(
+        chart.yAxis[0].tickPositions,
+        [-3.2, -2.4, -1.6, -0.8, 0, 0.8],
+        'Uniform decimals should be applied, #24122'
     );
 });
 
