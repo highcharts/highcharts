@@ -1476,7 +1476,7 @@ QUnit.test('Label ellipsis and resetting categories', assert => {
 });
 
 QUnit.test('Axis labels floating point precision', function (assert) {
-    var chart = Highcharts.chart('container', {
+    const chart = Highcharts.chart('container', {
         chart: {
             height: 400
         },
