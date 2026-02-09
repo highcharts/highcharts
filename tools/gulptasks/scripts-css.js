@@ -45,7 +45,8 @@ const gridConfig = {
     target: TARGET_DIRECTORY + '/grid/css/modules',
     replacePath: 'css/grid/',
     exclude: [
-        '.stylelintrc'
+        '.stylelintrc',
+        'grid.css' // deprecated, will be removed from the bundle
     ]
 };
 
