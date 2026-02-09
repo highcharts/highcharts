@@ -2,7 +2,7 @@
  *
  *  Timeline Series.
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *
  *  Author: Daniel Studencki
  *
@@ -28,9 +28,6 @@ import type RangeSelector from '../../Stock/RangeSelector/RangeSelector';
 import type TimelineDataLabelOptions from './TimelineDataLabelOptions';
 import type TimelinePointOptions from './TimelinePointOptions';
 import type TimelineSeriesOptions from './TimelineSeriesOptions';
-import type {
-    PointMarkerOptions
-} from '../../Core/Series/PointOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
@@ -215,7 +212,12 @@ class TimelineSeries extends LineSeries {
                         dataLabelsOptions.alternate && visibilityIndex % 2
                     ) ? 'right' : 'left';
                 }
-                point.options.dataLabels = merge(defaults, point.userDLOptions);
+                point.options.dataLabels = merge(
+                    defaults,
+                    point.userDLOptions,
+                    // Forced. Point level limitations.
+                    { zIndex: void 0 }
+                );
                 visibilityIndex++;
             }
         }
@@ -380,21 +382,19 @@ class TimelineSeries extends LineSeries {
         state?: StatesOptionsKey
     ): SVGAttributes {
         const series = this,
-            seriesMarkerOptions: PointMarkerOptions = (
-                series.options.marker as any
-            ),
+            seriesMarkerOptions = series.options.marker,
             pointMarkerOptions = point.marker || {},
             symbol = (
-                pointMarkerOptions.symbol || seriesMarkerOptions.symbol
+                pointMarkerOptions.symbol || seriesMarkerOptions?.symbol
             ),
             width = pick<number|undefined, number|undefined, number>(
                 pointMarkerOptions.width,
-                seriesMarkerOptions.width,
+                seriesMarkerOptions?.width,
                 series.closestPointRangePx as any
             ),
             height = pick<number|undefined, number>(
                 pointMarkerOptions.height,
-                seriesMarkerOptions.height as any
+                seriesMarkerOptions?.height as any
             );
 
         let seriesStateOptions,
@@ -409,7 +409,7 @@ class TimelineSeries extends LineSeries {
 
         // Handle hover and select states
         if (state) {
-            seriesStateOptions = seriesMarkerOptions.states?.[state];
+            seriesStateOptions = seriesMarkerOptions?.states?.[state];
             pointStateOptions = pointMarkerOptions.states?.[state];
 
             radius = pick(

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -23,11 +23,11 @@ import type EditMode from './EditMode';
 import type Row from '../Layout/Row';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
-import CellHTML from '../Layout/CellHTML.js';
+import CellHTML, { isCellHTML } from '../Layout/CellHTML.js';
 import AccordionMenu from './AccordionMenu.js';
 import BaseForm from '../../Shared/BaseForm.js';
 import Bindings from '../Actions/Bindings.js';
-import Cell from '../Layout/Cell.js';
+import Cell, { isCell } from '../Layout/Cell.js';
 import EditGlobals from './EditGlobals.js';
 import EditRenderer from './EditRenderer.js';
 import GUIElement from '../Layout/GUIElement.js';
@@ -178,7 +178,7 @@ class SidebarPopup extends BaseForm {
     /**
      * Options used in the sidebar.
      */
-    public options: SidebarPopup.Options = {
+    public options: Options = {
         components: ['HTML', 'row', 'Highcharts', 'Grid', 'KPI']
     };
 
@@ -190,7 +190,7 @@ class SidebarPopup extends BaseForm {
     /**
      * List of components that can be added to the board.
      */
-    private componentsList: Array<SidebarPopup.AddComponentDetails> = [];
+    private componentsList: Array<AddComponentDetails> = [];
 
     /**
      * Content wrapper for sticking.
@@ -291,7 +291,7 @@ class SidebarPopup extends BaseForm {
 
         // Remove highlight from the row.
         if (
-            Cell.isCell(editMode.editCellContext) &&
+            isCell(editMode.editCellContext) &&
             editMode.editCellContext.row
         ) {
             editMode.editCellContext.row.setHighlight();
@@ -554,7 +554,7 @@ class SidebarPopup extends BaseForm {
             editMode.setEditOverlay(true);
         }
 
-        if (Cell.isCell(editCellContext) && editCellContext.row) {
+        if (isCell(editCellContext) && editCellContext.row) {
             editMode.showToolbars(['cell', 'row'], editCellContext);
             editCellContext.row.setHighlight(true);
             editCellContext.setHighlight(true);
@@ -564,7 +564,7 @@ class SidebarPopup extends BaseForm {
                 );
             }
         } else if (
-            CellHTML.isCellHTML(editCellContext) && editMode.cellToolbar
+            isCellHTML(editCellContext) && editMode.cellToolbar
         ) {
             editMode.cellToolbar.showToolbar(editCellContext);
             editCellContext.setHighlight();
@@ -626,11 +626,11 @@ class SidebarPopup extends BaseForm {
      */
     private getComponentsList(
         components: Array<string>
-    ): Array<SidebarPopup.AddComponentDetails> {
+    ): Array<AddComponentDetails> {
         const sidebar = this,
             editMode = sidebar.editMode,
             componentTypes = editMode.board.componentTypes,
-            componentList: Array<SidebarPopup.AddComponentDetails> = [];
+            componentList: Array<AddComponentDetails> = [];
 
         components.forEach((componentName: string): void => {
             const component = componentTypes[
@@ -714,28 +714,20 @@ class SidebarPopup extends BaseForm {
     }
 }
 
-/* *
- *
- *  Namespace
- *
- * */
-namespace SidebarPopup {
+/**
+ * Options used to configure the sidebar.
+ */
+export interface Options {
+    components?: Array<string>;
+}
 
-    /**
-     * Options used to configure the sidebar.
-     */
-    export interface Options {
-        components?: Array<string>;
-    }
-
-    /**
-     * Contains the name of the component and the function that is called when
-     * the component is dropped.
-     */
-    export interface AddComponentDetails {
-        text: string;
-        onDrop: Function;
-    }
+/**
+ * Contains the name of the component and the function that is called when
+ * the component is dropped.
+ */
+export interface AddComponentDetails {
+    text: string;
+    onDrop: Function;
 }
 /* *
  *

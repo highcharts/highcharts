@@ -3,7 +3,7 @@
  * @license Highcharts Grid Pro v@product.version@ (@product.date@)
  * @module grid/grid-pro
  *
- * (c) 2009-2025 Highsoft AS
+ * (c) 2009-2026 Highsoft AS
  *
  * A commercial license may be required depending on use.
  * See www.highcharts.com/license
@@ -38,6 +38,8 @@ import Column from '../Grid/Core/Table/Column.js';
 import HeaderCell from '../Grid/Core/Table/Header/HeaderCell.js';
 import TableCell from '../Grid/Core/Table/Body/TableCell.js';
 import SvgIcons from '../Grid/Core/UI/SvgIcons.js';
+
+import ResponsiveComposition from '../Grid/Core/Responsive/ResponsiveComposition.js';
 
 import GridEvents from '../Grid/Pro/GridEvents.js';
 import CellEditingComposition from '../Grid/Pro/CellEditing/CellEditingComposition.js';
@@ -138,6 +140,7 @@ ExportingComposition.compose(G.Grid);
 ValidatorComposition.compose(G.Table);
 CellRenderersComposition.compose(G.Column);
 PaginationComposition.compose(G.Pagination);
+ResponsiveComposition.compose(G.Grid);
 
 
 /* *

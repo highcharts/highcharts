@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2023 Highsoft AS
+ *  (c) 2023-2026 Highsoft AS
  *  Author: Torstein Honsi, Askel Eirik Johansson
  *
  *  A commercial license may be required depending on use.
@@ -57,9 +57,7 @@ let wheelTimer: number;
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 const optionsToObject = (
     options?: boolean|MouseWheelZoomOptions
 ): MouseWheelZoomOptions => {
@@ -72,9 +70,7 @@ const optionsToObject = (
 };
 
 
-/**
- * @private
- */
+/** @internal */
 const zoomBy = function (
     chart: Chart,
     howMuch: number,
@@ -137,9 +133,7 @@ const zoomBy = function (
     return hasZoomed;
 };
 
-/**
- * @private
- */
+/** @internal */
 function onAfterGetContainer(this: Chart): void {
     const wheelZoomOptions = optionsToObject(this.zooming.mouseWheel);
 
@@ -193,9 +187,7 @@ function onAfterGetContainer(this: Chart): void {
 }
 
 
-/**
- * @private
- */
+/** @internal */
 function compose(
     ChartClass: typeof Chart
 ): void {
@@ -213,10 +205,12 @@ function compose(
  *
  * */
 
+/** @internal */
 const MouseWheelZoomComposition = {
     compose
 };
 
+/** @internal */
 export default MouseWheelZoomComposition;
 
 /* *

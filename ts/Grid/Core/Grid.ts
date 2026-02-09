@@ -2,7 +2,7 @@
  *
  *  Highcharts Grid class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -24,15 +24,21 @@
  * */
 
 import type {
+    ColumnSortingOrder,
+    IndividualColumnSortingOptions,
     Options,
     GroupedHeaderOptions,
     IndividualColumnOptions
 } from './Options';
 import type DataTableOptions from '../../Data/DataTableOptions';
+import type {
+    CellType as DataTableCellType,
+    Column as DataTableColumn
+} from '../../Data/DataTable';
+import type Column from './Table/Column';
 import type { ColumnDataType, NoIdColumnOptions } from './Table/Column';
 import type Popup from './UI/Popup.js';
 import type { DeepPartial } from '../../Shared/Types';
-import type Column from './Table/Column';
 
 import Accessibility from './Accessibility/Accessibility.js';
 import AST from '../../Core/Renderer/HTML/AST.js';
@@ -924,11 +930,7 @@ export class Grid {
             }
         }
 
-        if (pagination?.isDirtyQuerying) {
-            pagination.updateControls(true);
-        }
-
-        delete pagination?.isDirtyQuerying;
+        pagination?.redraw();
         delete colResizing?.isDirty;
         flags.clear();
 
@@ -1002,6 +1004,126 @@ export class Grid {
             overwrite,
             columnId
         });
+    }
+
+    /**
+     * Sets the sorting order for one or more columns. Provide the sortings
+     * in priority order. Use `null` to clear sorting.
+     *
+     * @param sortings
+     * The sorting definition in priority order.
+     */
+    public async setSorting(
+        sortings: Array<{
+            columnId: string;
+            order: ColumnSortingOrder;
+        }> | null
+    ): Promise<void> {
+        const viewport = this.viewport;
+        if (!viewport) {
+            return;
+        }
+
+        if (viewport.validator?.errorCell) {
+            return;
+        }
+
+        const normalized = (sortings || []).filter((sorting): boolean => !!(
+            sorting.columnId && sorting.order
+        ));
+
+        const sortingController = this.querying.sorting;
+        const previousSortings = sortingController.currentSortings || [];
+        const eventColumnIds = new Set<string>();
+        for (const sorting of previousSortings) {
+            if (sorting.columnId) {
+                eventColumnIds.add(sorting.columnId);
+            }
+        }
+        for (const sorting of normalized) {
+            eventColumnIds.add(sorting.columnId);
+        }
+
+        const eventColumns = Array.from(eventColumnIds)
+            .map((
+                columnId
+            ): { column: Column; order: ColumnSortingOrder } | null => {
+                const column = viewport.getColumn(columnId);
+                if (!column) {
+                    return null;
+                }
+                const order = normalized.find((sorting): boolean =>
+                    sorting.columnId === columnId
+                )?.order || null;
+                return { column, order };
+            })
+            .filter((
+                item
+            ): item is { column: Column; order: ColumnSortingOrder } =>
+                !!item
+            );
+
+        for (const { column, order } of eventColumns) {
+            [column, this].forEach((source): void => {
+                fireEvent(source, 'beforeSort', {
+                    target: column,
+                    order
+                });
+            });
+        }
+
+        sortingController.setSorting(normalized);
+        await viewport.updateRows();
+
+        const currentSortings = sortingController.currentSortings || [];
+        const hasMultiple = currentSortings.length > 1;
+
+        for (const column of viewport.columns) {
+            const sortingIndex = currentSortings.findIndex((
+                sorting
+            ): boolean => sorting.columnId === column.id);
+
+            if (sortingIndex !== -1 && currentSortings[sortingIndex].order) {
+                const sorting = currentSortings[sortingIndex];
+                const sortingOptions: IndividualColumnSortingOptions = {
+                    order: sorting.order
+                };
+
+                if (hasMultiple) {
+                    sortingOptions.priority = sortingIndex + 1;
+                }
+
+                column.setOptions({ sorting: sortingOptions });
+
+                if (!hasMultiple) {
+                    delete column.options.sorting?.priority;
+                }
+            } else {
+                delete column.options.sorting?.order;
+                delete column.options.sorting?.priority;
+                if (
+                    column.options.sorting &&
+                    Object.keys(column.options.sorting).length < 1
+                ) {
+                    delete column.options.sorting;
+                }
+            }
+
+            column.sorting?.refreshHeaderAttributes();
+        }
+
+        this.accessibility?.userSortedColumn(
+            currentSortings[0]?.order || null
+        );
+
+        for (const { column, order } of eventColumns) {
+            [column, this].forEach((source): void => {
+                fireEvent(source, 'afterSort', {
+                    target: column,
+                    order
+                });
+            });
+        }
     }
 
     private async render(): Promise<void> {
@@ -1132,26 +1254,21 @@ export class Grid {
      */
     public renderCaption(): void {
         const captionOptions = this.options?.caption;
-        const captionText = captionOptions?.text;
-
-        if (!captionText) {
+        if (!captionOptions?.text || !this.contentWrapper) {
             return;
         }
 
-        // Create a caption element.
-        this.captionElement = makeHTMLElement('div', {
-            className: Globals.getClassName('captionElement'),
-            id: this.id + '-caption'
-        }, this.contentWrapper);
+        const tag = captionOptions.htmlTag?.toLowerCase();
+        const tagName = tag && AST.allowedTags.includes(tag) ? tag : 'div';
+        const defaultClass = Globals.getClassName('captionElement');
+        const className = captionOptions.className ?
+            `${defaultClass} ${captionOptions.className}` : defaultClass;
 
-        // Render the caption element content.
-        setHTMLContent(this.captionElement, captionText);
-
-        if (captionOptions.className) {
-            this.captionElement.classList.add(
-                ...captionOptions.className.split(/\s+/g)
-            );
-        }
+        this.captionElement = new AST([{
+            tagName,
+            attributes: { 'class': className, id: this.id + '-caption' },
+            textContent: captionOptions.text
+        }]).addToDOM(this.contentWrapper) as HTMLElement;
     }
 
     /**
@@ -1229,6 +1346,8 @@ export class Grid {
 
         if (this.enabledColumns.length > 0) {
             this.viewport = this.renderTable();
+            this.viewport.tableElement.setAttribute('id', this.id);
+
             if (viewportMeta && this.viewport) {
                 this.viewport.applyStateMeta(viewportMeta);
             }
@@ -1331,6 +1450,7 @@ export class Grid {
      * reference, it should be used instead of creating a new one.
      */
     private loadDataTable(): void {
+
         this.querying.shouldBeUpdated = true;
 
         // Unregister all events attached to the previous data table.
@@ -1357,6 +1477,7 @@ export class Grid {
             'afterSetColumns',
             'afterSetRows'
         ] as const).forEach((eventName): void => {
+
             this.dataTableEventDestructors.push(dt.on(eventName, (): void => {
                 this.querying.shouldBeUpdated = true;
             }));
@@ -1411,10 +1532,12 @@ export class Grid {
      * after destruction by calling the `render` method.
      */
     public destroy(onlyDOM = false): void {
+        fireEvent(this, 'beforeDestroy');
+
         this.isRendered = false;
         const dgIndex = Grid.grids.findIndex((dg): boolean => dg === this);
 
-        this.dataTableEventDestructors.forEach((fn): void => fn());
+        this.dataTableEventDestructors?.forEach((fn): void => fn());
         this.accessibility?.destroy();
         this.pagination?.destroy();
         this.viewport?.destroy();
@@ -1504,7 +1627,7 @@ export class Grid {
     public getData(modified: boolean = true): string {
         const dataTable = modified ? this.presentationTable : this.dataTable;
         const tableColumns = dataTable?.columns;
-        const outputColumns: Record<string, DataTable.Column> = {};
+        const outputColumns: Record<string, DataTableColumn> = {};
 
         if (!this.enabledColumns || !tableColumns) {
             return '{}';
@@ -1513,7 +1636,7 @@ export class Grid {
         const typeParser = (type: ColumnDataType) => {
             const TypeMap: Record<
                 ColumnDataType,
-                (value: DataTable.CellType) => DataTable.CellType
+                (value: DataTableCellType) => DataTableCellType
             > = {
                 number: Number,
                 datetime: Number,
@@ -1521,7 +1644,7 @@ export class Grid {
                 'boolean': Boolean
             };
 
-            return (value: DataTable.CellType): DataTable.CellType | null => (
+            return (value: DataTableCellType): DataTableCellType | null => (
                 defined(value) ? TypeMap[type](value) : null
             );
         };
@@ -1531,7 +1654,7 @@ export class Grid {
             if (column) {
                 const columnData = tableColumns[columnId];
                 const parser = typeParser(column.dataType);
-                outputColumns[columnId] = ((): DataTable.Column => {
+                outputColumns[columnId] = ((): DataTableColumn => {
                     const result = [];
                     for (let i = 0, iEnd = columnData.length; i < iEnd; ++i) {
                         result.push(parser(columnData[i]));

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Honsi
  *
  *  A commercial license may be required depending on use.
@@ -1100,7 +1100,7 @@ class Navigator {
         // In iOS, a mousemove event with e.pageX === 0 is fired when holding
         // the finger down in the center of the scrollbar. This should be
         // ignored.
-        if (!(e as any).touches || (e as any).touches[0].pageX !== 0) { // #4696
+        if (!e.touches || e.touches[0].pageX !== 0) { // #4696
 
             e = chart.pointer?.normalize(e) || e;
             chartX = e.chartX;
@@ -1130,30 +1130,29 @@ class Navigator {
                     chartX - left
                 );
             // Drag scrollbar or open area in navigator
-            } else if (navigator.grabbedCenter) {
+            } else if (navigator.grabbedCenter && dragOffset) {
                 navigator.hasDragged = true;
-                if (chartX < (dragOffset as any)) { // Outside left
+                if (chartX < dragOffset) { // Outside left
                     chartX = dragOffset;
                 // Outside right
                 } else if (
                     chartX >
-                    navigatorSize + (dragOffset as any) - range
+                    navigatorSize + dragOffset - range
                 ) {
-                    chartX = navigatorSize + (dragOffset as any) - range;
+                    chartX = navigatorSize + dragOffset - range;
                 }
 
                 navigator.render(
                     0,
                     0,
-                    (chartX as any) - (dragOffset as any),
-                    (chartX as any) - (dragOffset as any) + range
+                    chartX - dragOffset,
+                    chartX - dragOffset + range
                 );
             }
             if (
                 navigator.hasDragged &&
-                navigator.scrollbar &&
                 pick(
-                    navigator.scrollbar.options.liveRedraw,
+                    navigator.scrollbarOptions?.liveRedraw,
 
                     // By default, don't run live redraw on touch
                     // devices or if the chart is in boost.

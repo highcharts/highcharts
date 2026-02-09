@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *  Author: Øystein Moseng
  *
  *  Accessibility component class definition
@@ -20,7 +20,7 @@
  * */
 
 import type Accessibility from './Accessibility';
-import type EventCallback from '../Core/EventCallback';
+import type { EventCallback } from '../Core/Callback';
 import type { DOMElementType } from '../Core/Renderer/DOMElementType';
 import type HTMLElement from '../Core/Renderer/HTML/HTMLElement';
 import type KeyboardNavigationHandler from './KeyboardNavigationHandler';

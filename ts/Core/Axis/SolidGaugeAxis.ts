@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Honsi
  *
  *  A commercial license may be required depending on use.
@@ -22,7 +22,7 @@ import type Pane from '../../Extensions/Pane/Pane';
 import type RadialAxis from './RadialAxis';
 import type RadialAxisOptions from './RadialAxisOptions';
 
-import ColorAxisBase from './Color/ColorAxisBase';
+import ColorAxisBase from './Color/ColorAxisBase.js';
 import U from '../Utilities.js';
 const { extend } = U;
 
@@ -32,9 +32,7 @@ const { extend } = U;
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 interface SolidGaugeAxis extends ColorAxisBase, RadialAxis.AxisComposition {
     center: Array<number>;
     coll: AxisCollectionKey;
@@ -50,9 +48,7 @@ interface SolidGaugeAxis extends ColorAxisBase, RadialAxis.AxisComposition {
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 function init(
     axis: RadialAxis.AxisComposition
 ): void {
@@ -65,8 +61,10 @@ function init(
  *
  * */
 
+/** @internal */
 const SolidGaugeAxis = {
     init
 };
 
+/** @internal */
 export default SolidGaugeAxis;

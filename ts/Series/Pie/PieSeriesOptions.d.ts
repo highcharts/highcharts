@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Honsi
  *
  *  A commercial license may be required depending on use.
@@ -31,7 +31,7 @@ import type {
     SeriesEventsOptions,
     SeriesStatesOptions
 } from '../../Core/Series/SeriesOptions';
-import type TooltipOptions from '../../Core/TooltipOptions';
+import { SeriesTooltipOptions } from '../../Core/TooltipOptions';
 
 /* *
  *
@@ -491,8 +491,14 @@ export interface PieSeriesOptions extends LineSeriesOptions {
      */
     thickness?: number;
 
-    tooltip?: Partial<TooltipOptions>;
+    tooltip?: PieSeriesTooltipOptions;
+}
 
+export interface PieSeriesTooltipOptions extends SeriesTooltipOptions {
+    /**
+     * @default true
+     */
+    followPointer?: SeriesTooltipOptions['followPointer'];
 }
 
 /* *

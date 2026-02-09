@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2016-2025 Highsoft AS
+ *  (c) 2016-2026 Highsoft AS
  *
  *  Author: Lars A. V. Cabrera
  *
@@ -28,8 +28,10 @@ import type {
     SeriesEventsOptions,
     SeriesStatesOptions
 } from '../../Core/Series/SeriesOptions';
-import type TooltipOptions from '../../Core/TooltipOptions';
-import type XRangeSeriesOptions from '../XRange/XRangeSeriesOptions';
+import type {
+    XRangeSeriesOptions,
+    XRangeSeriesTooltipOptions
+} from '../XRange/XRangeSeriesOptions';
 
 /* *
  *
@@ -118,8 +120,19 @@ export interface GanttSeriesOptions extends XRangeSeriesOptions {
 
     states?: SeriesStatesOptions<GanttSeriesOptions>;
 
-    tooltip?: Partial<TooltipOptions>;
+    tooltip?: GanttSeriesTooltipOptions;
+}
 
+export interface GanttSeriesTooltipOptions extends XRangeSeriesTooltipOptions {
+    /**
+     * @default '<span style="font-size: 0.8em">{series.name}</span><br/>'
+     */
+    headerFormat?: XRangeSeriesTooltipOptions['headerFormat'];
+
+    /**
+     * @default function (this): string { [internal code] }
+     */
+    pointFormatter?: XRangeSeriesTooltipOptions['pointFormatter'];
 }
 
 /* *

@@ -2,7 +2,7 @@
  *
  *  This module implements sunburst charts in Highcharts.
  *
- *  (c) 2016-2025 Highsoft AS
+ *  (c) 2016-2026 Highsoft AS
  *
  *  Authors: Jon Arild Nygard
  *
@@ -18,7 +18,6 @@
  *
  * */
 
-import type BreadcrumbsOptions from '../../Extensions/Breadcrumbs/BreadcrumbsOptions';
 import type ColorString from '../../Core/Color/ColorString';
 import type ColorType from '../../Core/Color/ColorType';
 import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
@@ -227,16 +226,6 @@ export interface SunburstSeriesOptions extends TreemapSeriesOptions {
      * @product highcharts
      */
     allowTraversingTree?: boolean;
-
-    /**
-     * Options for the breadcrumbs, the navigation at the top leading the
-     * way up through the traversed levels.
-     *
-     * @since 10.0.0
-     *
-     * @product highcharts
-     */
-    breadcrumbs?: BreadcrumbsOptions;
 
     /**
      * The center of the sunburst chart relative to the plot area. Can be
