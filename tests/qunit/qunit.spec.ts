@@ -177,7 +177,13 @@ test.describe('QUnit tests', () => {
                     errorDetails.timing.total = Date.now() - testStartTime;
 
                     // Create formatted error output
-                    const detailedError = formatQUnitErrorDetails(errorDetails);
+                    const outputConfig = getOutputConfig();
+                    const detailedError = formatQUnitErrorDetails(
+                        errorDetails, 
+                        {
+                            verbose: outputConfig.verbose
+                        }
+                    );
 
                     // Fail the Playwright test with the detailed error message
                     // Don't use expect() to avoid duplicated output
