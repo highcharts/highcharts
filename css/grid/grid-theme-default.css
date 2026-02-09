@@ -19,15 +19,21 @@
     --hcg-button-hover-background: #e8e8e8;
     --hcg-button-border-color: transparent;
     --hcg-cell-button-border-color: #d1d1d1;
+    --hcg-button-color: #141414;
     --hcg-header-button-background: transparent;
+    --hcg-pagination-button-selected-background: #000000;
+    --hcg-pagination-button-selected-color: #ffffff;
 
     @media (prefers-color-scheme: dark) {
         .hcg-theme-default {
             --hcg-input-border-color: #4f4f4f;
             --hcg-input-hover-border-color: #646464;
+            --hcg-button-color: #ffffff;
             --hcg-button-hover-color: #ffffff;
             --hcg-button-hover-background: #3f3f3f;
             --hcg-cell-button-border-color: #646464;
+            --hcg-pagination-button-selected-background: #ffffff;
+            --hcg-pagination-button-selected-color: #000000;
         }
     }
 }
@@ -35,9 +41,12 @@
 .highcharts-dark .hcg-theme-default {
     --hcg-input-border-color: #4f4f4f;
     --hcg-input-hover-border-color: #646464;
+    --hcg-button-color: #ffffff;
     --hcg-button-hover-color: #ffffff;
     --hcg-button-hover-background: #3f3f3f;
     --hcg-cell-button-border-color: #646464;
+    --hcg-pagination-button-selected-background: #ffffff;
+    --hcg-pagination-button-selected-color: #000000;
 }
 
 .hcg-theme-default {

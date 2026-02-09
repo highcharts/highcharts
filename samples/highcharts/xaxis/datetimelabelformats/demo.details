@@ -1,6 +1,4 @@
 ---
- name: Demo of xAxis.dateTimeLabelFormats.day
- authors:
-   - Torstein Hønsi
- js_wrap: b
+name: Demo of xAxis.dateTimeLabelFormats.day
+js_wrap: b
 ...

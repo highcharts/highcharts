@@ -1,6 +1,4 @@
 ---
- name: Demo of yAxis.minPadding
- authors:
-   - Torstein Hønsi
- js_wrap: b
+name: Demo of yAxis.minPadding
+js_wrap: b
 ...
