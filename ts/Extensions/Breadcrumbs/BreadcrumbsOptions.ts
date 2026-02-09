@@ -30,6 +30,7 @@ import type {
     PointShortOptions
 } from '../../Core/Series/PointOptions';
 import type SeriesOptions from '../../Core/Series/SeriesOptions';
+import type Breadcrumbs from './Breadcrumbs';
 
 /* *
  *
@@ -191,17 +192,21 @@ export interface BreadcrumbsButtonsFormatter {
  *
  * @callback Highcharts.BreadcrumbsClickCallbackFunction
  *
- * @param {Highcharts.Event} event
+ * @param {Highcharts.Event} e
  * Event.
  *
- * @param {Highcharts.BreadcrumbOptions} options
+ * @param {Highcharts.BreadcrumbOptions} breadcrumb
  * Breadcrumb options.
  *
- * @param {global.Event} e
- * Event arguments.
+ * @param {Highcharts.Breadcrumbs} ctx
+ * Breadcrumbs instance.
  */
 export interface BreadcrumbsClickCallbackFunction {
-    (e: Event, breadcrumb: BreadcrumbOptions): (boolean|undefined);
+    (
+        e: Event,
+        breadcrumb: BreadcrumbOptions,
+        ctx: Breadcrumbs
+    ): (boolean|undefined);
 }
 
 export interface BreadcrumbsOptions {

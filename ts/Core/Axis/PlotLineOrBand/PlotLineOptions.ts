@@ -74,7 +74,7 @@ export interface PlotLineLabelOptions {
      * @sample {highcharts} highcharts/xaxis/plotlines-plotbands-label-formatter
      *         Label formatters for plot line and plot band.
      */
-    formatter?: Templating.FormatterCallback<PlotLineOrBand>;
+    formatter?: Templating.Es6FormatterCallback<PlotLineOrBand>;
 
     /**
      * Rotation of the text label in degrees. Defaults to 0 for horizontal plot

@@ -1325,7 +1325,7 @@ namespace Measure {
          * @type {Function}
          *
          */
-        formatter?: Templating.FormatterCallback<Measure>;
+        formatter?: Templating.Es6FormatterCallback<Measure>;
 
         /**
          * CSS styles for the measure label.

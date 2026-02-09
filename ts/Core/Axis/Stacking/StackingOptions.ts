@@ -247,7 +247,7 @@ export interface StackLabelOptions {
      * @since   2.1.5
      * @product highcharts
      */
-    formatter?: Templating.FormatterCallback<StackItem>;
+    formatter?: Templating.Es6FormatterCallback<StackItem>;
 
     /**
      * How to handle stack total labels that flow outside the plot area.

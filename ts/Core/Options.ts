@@ -260,6 +260,9 @@ export interface LoadingOptions {
  * The thousands separator, defaults to the one given in the lang options, or a
  * space character.
  *
+ * @param {Highcharts.Chart} [ctx]
+ * The chart context for the callback.
+ *
  * @return {string}
  * The formatted number.
  */
@@ -269,7 +272,8 @@ export interface NumberFormatterCallbackFunction {
         number: number,
         decimals: number,
         decimalPoint?: string,
-        thousandsSep?: string
+        thousandsSep?: string,
+        ctx?: Chart
     ): string;
 }
 

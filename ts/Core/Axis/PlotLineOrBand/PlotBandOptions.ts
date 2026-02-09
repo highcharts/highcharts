@@ -90,7 +90,7 @@ export interface PlotBandLabelOptions {
      *
      * @internal
      */
-    formatter?: Templating.FormatterCallback<PlotLineOrBand>;
+    formatter?: Templating.Es6FormatterCallback<PlotLineOrBand>;
 
     /**
      * Wether or not the text of the label can exceed the width of the label.
