@@ -17,7 +17,7 @@
  *
  * */
 
-import type SeriesLabelOptions from './SeriesLabelOptions';
+import type { SeriesLabelOptions } from './SeriesLabelOptions';
 
 /* *
  *
@@ -45,12 +45,14 @@ import type SeriesLabelOptions from './SeriesLabelOptions';
  * @since    6.0.0
  * @product  highcharts highstock gantt
  * @requires modules/series-label
- * @optionparent plotOptions.series.label
  */
 const SeriesLabelDefaults: SeriesLabelOptions = {
 
     /**
      * Enable the series label per series.
+     *
+     * @default  true
+     * @requires modules/series-label
      */
     enabled: true,
 
@@ -61,12 +63,18 @@ const SeriesLabelDefaults: SeriesLabelOptions = {
      * algorithm with systematically search for open spaces in the
      * whole plot area. Visually, it may also result in a more
      * cluttered chart, though more of the series will be labeled.
+     *
+     * @default  false
+     * @requires modules/series-label
      */
     connectorAllowed: false,
 
     /**
      * If the label is closer than this to a neighbour graph, draw a
      * connector.
+     *
+     * @default  24
+     * @requires modules/series-label
      */
     connectorNeighbourDistance: 24,
 
@@ -79,60 +87,65 @@ const SeriesLabelDefaults: SeriesLabelOptions = {
      *
      * @type string
      * @since 8.1.0
+     * @requires modules/series-label
      */
     format: void 0,
 
     /**
      * Callback function to format each of the series' labels. The
-     * `this` keyword refers to the series object. By default the
-     * `formatter` is undefined and the `series.name` is rendered.
+     * `this` keyword refers to the series object.
      *
      * @type {Highcharts.FormatterCallbackFunction<Series>}
      * @since 8.1.0
+     * @requires modules/series-label
      */
     formatter: void 0,
 
     /**
      * For area-like series, allow the font size to vary so that
-     * small areas get a smaller font size. The default applies this
-     * effect to area-like series but not line-like series.
+     * small areas get a smaller font size.
      *
      * @sample highcharts/demo/streamgraph
      *         Min and max font size on a streamgraph
      * @type   {number|null}
+     * @default null
+     * @requires modules/series-label
      */
     minFontSize: null,
 
     /**
      * For area-like series, allow the font size to vary so that
-     * small areas get a smaller font size. The default applies this
-     * effect to area-like series but not line-like series.
+     * small areas get a smaller font size.
      *
      * @sample highcharts/demo/streamgraph
      *         Min and max font size on a streamgraph
      *
      * @type   {number|null}
+     * @default null
+     * @requires modules/series-label
      */
     maxFontSize: null,
 
     /**
-     * Draw the label on the area of an area series. By default it
-     * is drawn on the area. Set it to `false` to draw it next to
-     * the graph instead.
+     * Draw the label on the area of an area series. Set it to
+     * `false` to draw it next to the graph instead.
      *
      * @type {boolean|null}
+     * @default null
+     * @requires modules/series-label
      */
     onArea: null,
 
     /**
-     * Styles for the series label. The color defaults to the series
-     * color, or a contrast color if `onArea`.
+     * Styles for the series label.
      *
      * @type {Highcharts.CSSObject}
+     * @requires modules/series-label
      */
     style: {
         /**
          * @type {number|string}
+         * @default "0.8em"
          */
         fontSize: '0.8em',
         /** @internal */
@@ -141,6 +154,9 @@ const SeriesLabelDefaults: SeriesLabelOptions = {
 
     /**
      * Whether to use HTML to render the series label.
+     *
+     * @default  false
+     * @requires modules/series-label
      */
     useHTML: false,
 
@@ -149,6 +165,7 @@ const SeriesLabelDefaults: SeriesLabelOptions = {
      * item has a `left`, `right`, `top` and `bottom` property.
      *
      * @type {Array<Highcharts.LabelIntersectBoxObject>}
+     * @requires modules/series-label
      */
     boxesToAvoid: []
 
@@ -160,4 +177,5 @@ const SeriesLabelDefaults: SeriesLabelOptions = {
  *
  * */
 
+/** @internal */
 export default SeriesLabelDefaults;
