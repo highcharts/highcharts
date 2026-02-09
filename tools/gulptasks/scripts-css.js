@@ -42,8 +42,8 @@ const gridConfig = {
     sources: [
         'css/grid/'
     ],
-    target: TARGET_DIRECTORY + '/grid/',
-    replacePath: 'grid/',
+    target: TARGET_DIRECTORY + '/grid/css/modules',
+    replacePath: 'css/grid/',
     exclude: [
         '.stylelintrc'
     ]
@@ -177,7 +177,7 @@ function scriptCSS(argv) {
             copyCSS(gridConfig);
             bundleGridCSS();
             replaceProductVersionInFiles(
-                require('path').join(gridConfig.target, 'css'),
+                require('path').join(TARGET_DIRECTORY, 'grid', 'css'),
                 './grid/build-properties.json'
             );
             log.success('Copied grid CSS');
