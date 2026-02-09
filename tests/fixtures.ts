@@ -121,6 +121,25 @@ async function replaceHCCode(route: Route) {
 
     if (
         rootPath === 'code' &&
+        relativePath.startsWith('grid/') &&
+        relativePath.endsWith('.css')
+    ) {
+        const cssTail = relativePath.replace(/^grid\//u, '');
+        const gridModulesCss = join('grid', 'css', 'modules', cssTail);
+        const gridModulesCssPath = join(
+            __dirname,
+            '..',
+            rootPath,
+            gridModulesCss
+        );
+
+        if (existsSync(gridModulesCssPath)) {
+            resolvedRelativePath = gridModulesCss;
+        }
+    }
+
+    if (
+        rootPath === 'code' &&
         relativePath.startsWith('css/') &&
         relativePath.endsWith('.css')
     ) {
