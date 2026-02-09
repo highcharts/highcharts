@@ -1,6 +1,4 @@
 ---
- name: Demo of yAxis.stackLabels.rotation
- authors:
-   - Torstein Hønsi
- js_wrap: b
+name: Demo of yAxis.stackLabels.rotation
+js_wrap: b
 ...

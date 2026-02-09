@@ -7,6 +7,12 @@ type RemoteScenarioOptions = {
         chunkSize?: number;
         chunksLimit?: number;
     };
+    columns?: Array<{
+        id: string;
+        sorting?: {
+            order?: 'asc' | 'desc';
+        };
+    }>;
     pagination?: {
         enabled: boolean;
         page?: number;
@@ -14,7 +20,7 @@ type RemoteScenarioOptions = {
     };
 };
 
-type RemoteScenarioMode = 'cache' | 'pagination' | 'lru';
+type RemoteScenarioMode = 'cache' | 'pagination' | 'lru' | 'sorting';
 
 type CacheState = {
     chunkKeys: number[];
@@ -67,6 +73,9 @@ async function runRemoteScenario(
             result.rowId0 = await dp.getRowId(0);
             await dp.getRowId(2);
             result.cacheState = api.getCacheState();
+        } else if (mode === 'sorting') {
+            result.rowId0 = await dp.getRowId(0);
+            result.rowId1 = await dp.getRowId(1);
         }
 
         return {
@@ -136,5 +145,29 @@ test.describe('RemoteDataProvider', () => {
         ]));
         const cacheState = result.cacheState as CacheState;
         expect(cacheState.chunkCount).toBe(1);
+    });
+
+    test('handles sorting in remote fetch callback', async ({ page }) => {
+        const result = await runRemoteScenario(
+            page,
+            {
+                totalRowCount: 5,
+                data: { chunkSize: 2 },
+                columns: [{
+                    id: 'name',
+                    sorting: {
+                        order: 'desc'
+                    }
+                }]
+            },
+            'sorting'
+        );
+
+        expect(result.error).toBeUndefined();
+        expect(result.fetchCalls).toEqual(expect.arrayContaining([
+            { offset: 0, limit: 2 }
+        ]));
+        expect(result.rowId0).toBe('row-4');
+        expect(result.rowId1).toBe('row-3');
     });
 });

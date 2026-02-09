@@ -5,15 +5,12 @@
         totalRowCount: 5
     };
 
-    function createFetchResult(offset, limit) {
-        const count = Math.max(
-            0,
-            Math.min(limit, state.totalRowCount - offset)
+    function createFetchResult(offset, limit, orderedIds) {
+        const safeIds = orderedIds || Array.from(
+            { length: state.totalRowCount },
+            (_, i) => i
         );
-        const ids = Array.from(
-            { length: count },
-            (_, i) => offset + i
-        );
+        const ids = safeIds.slice(offset, offset + limit);
         return {
             columns: {
                 id: ids,
@@ -24,11 +21,26 @@
         };
     }
 
+    function getSortedIds(query) {
+        const ids = Array.from(
+            { length: state.totalRowCount },
+            (_, i) => i
+        );
+        const sortingOrder = query?.sorting?.currentSorting?.order;
+
+        if (sortingOrder === 'desc') {
+            ids.reverse();
+        }
+
+        return ids;
+    }
+
     async function createGrid(options) {
         const {
             totalRowCount = 5,
             data = {},
-            pagination = { enabled: false }
+            pagination = { enabled: false },
+            columns
         } = options || {};
 
         state.totalRowCount = totalRowCount;
@@ -42,11 +54,13 @@
             data: {
                 providerType: 'remote',
                 ...data,
-                fetchCallback: (_query, offset, limit) => {
+                fetchCallback: (query, offset, limit) => {
+                    const sortedIds = getSortedIds(query);
                     state.fetchCalls.push({ offset, limit });
-                    return createFetchResult(offset, limit);
+                    return createFetchResult(offset, limit, sortedIds);
                 }
             },
+            columns,
             pagination
         }, true);
 

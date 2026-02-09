@@ -30,6 +30,49 @@ export interface ControlOptions {
      */
     value?: number | string | boolean;
 }
+
+export interface Details {
+    /** An alternative text for the demo */
+    alt_text?: string;
+    /** The demo authors, used in the generated sample details */
+    authors?: string[];
+    /**
+     * Additional categories for the demo, used in the generated sample details,
+     * places the demo in the given category on www.highcharts.com/demo. The
+     * key is the category name, and the value is an object with additional
+     * category details, for example the demo's priority within the category.
+     * */
+    categories?: Array<{
+        /** The category name */
+        key: string;
+        /** The demo's priority within the category */
+        priority?: number;
+    }>;
+    /**
+     * The js_wrap option for the demo, used in the generated sample details,
+     * defining how jsFiddle should insert the demo code.
+     */
+    js_wrap?: 'b';
+    /** The demo name, used in the generated sample title and file name */
+    name: string;
+    /** Whether the sample requires manual testing */
+    requiresManualTesting?: boolean;
+    /** Additional tags for the demo, used in the generated sample details */
+    tags?: (
+        'Highcharts Dashboards demo' |
+        'Highcharts demo' |
+        'Highcharts Gantt demo' |
+        'Highcharts Grid demo' |
+        'Highcharts Maps demo' |
+        'Highcharts Stock demo'
+    )[];
+    /**
+     * Whether to use a PNG thumbnail instead of an SVG thumbnail in the demo
+     * page
+     */
+    use_png_thumbnail?: boolean;
+}
+
 export interface SampleGeneratorConfig {
     /**
      * Additional chart options to merge in, extending the options from
@@ -50,6 +93,11 @@ export interface SampleGeneratorConfig {
      * @example 'usdeur.json'
      */
     dataFile?: string;
+    /**
+     * Additional details for the demo, serialized into YML and used for
+     * `demo.details`.
+     */
+    details?: Details;
     /**
      * The chart factory function to use, for example `chart` in
      * `Highcharts.chart()`
