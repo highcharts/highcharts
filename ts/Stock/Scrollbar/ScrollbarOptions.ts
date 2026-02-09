@@ -192,7 +192,22 @@ export interface ScrollbarOptions {
      */
     minWidth?: number;
 
-    /** @ignore-option */
+    /**
+     * Defines the position of the scrollbar. By default, it is positioned
+     * on the opposite of the main axis (right side of the chart).
+     * However, in the case of RTL languages could be set to `false`
+     * which positions the scrollbar on the left.
+     *
+     * Works only for vertical axes.
+     * This means yAxis in a non-inverted chart and xAxis in the inverted.
+     *
+     * @sample stock/yaxis/scrollbar-opposite/
+     *         A scrollbar not on the opposite side
+     *
+     * @type      {boolean}
+     * @default   true
+     * @since 9.3.0
+     */
     opposite?: boolean;
 
     /**
@@ -212,7 +227,15 @@ export interface ScrollbarOptions {
      */
     showFull?: boolean;
 
-    /** @internal */
+    /**
+     * The width of a vertical scrollbar or height of a horizontal
+     * scrollbar. Defaults to 20 on touch devices.
+     *
+     * @type      {number}
+     * @default   14
+     * @since     4.2.6
+     * @product   highstock
+     */
     size?: number;
 
     /** @internal */
@@ -259,6 +282,8 @@ export interface ScrollbarOptions {
 
     /**
      * The z index of the scrollbar group.
+     *
+     * @default 3
      */
     zIndex?: number;
 }
