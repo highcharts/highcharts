@@ -904,12 +904,11 @@ class TreemapSeries extends ScatterSeries {
                     style.lineClamp ??= Math.floor(height / 16);
                     style.visibility = 'inherit';
 
-                    // Make the label box itself fill the width
-                    if (options.headers) {
-                        point.dataLabel?.attr({
-                            width: dataLabelWidth
-                        });
-                    }
+                    // Make the label box itself fill the width. Reset when
+                    // no longer header (#23100).
+                    point.dataLabel?.attr({
+                        width: options.headers ? dataLabelWidth : void 0
+                    });
 
                 // Hide labels for shapes that are too small
                 } else {

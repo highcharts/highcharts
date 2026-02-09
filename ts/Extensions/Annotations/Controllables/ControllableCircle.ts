@@ -12,12 +12,13 @@
  * */
 
 import type Annotation from '../Annotation';
+import type AnnotationMockPointOptionsObject from '../AnnotationMockPointOptionsObject';
 import type { ControllableShapeOptions } from './ControllableOptions';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 
 import Controllable from './Controllable.js';
 import ControllablePath from './ControllablePath.js';
-import { merge } from '../../../Shared/Utilities.js';
+import { defined, merge } from '../../../Shared/Utilities.js';
 
 /* *
  *
@@ -85,16 +86,46 @@ class ControllableCircle extends Controllable {
      *
      * */
 
+    public init(
+        annotation: Annotation,
+        options: ControllableShapeOptions,
+        index: number
+    ): void {
+        const { point, xAxis, yAxis } = options;
+        if (point && typeof point !== 'string') {
+            if (defined(xAxis)) {
+                (point as AnnotationMockPointOptionsObject).xAxis = xAxis;
+            }
+            if (defined(yAxis)) {
+                (point as AnnotationMockPointOptionsObject).yAxis = yAxis;
+            }
+        }
+
+        super.init(annotation, options, index);
+    }
+
     public redraw(animation?: boolean): void {
 
         if (this.graphic) {
-            const position = this.anchor(this.points[0]).absolutePosition;
+            const point = this.points[0],
+                position = this.anchor(point).absolutePosition;
+
+            let r = this.options.r || 0;
 
             if (position) {
+                const yAxis = defined(this.options.yAxis) ?
+                    this.chart.yAxis[this.options.yAxis] : void 0;
+
+                if (yAxis && defined(point.y)) {
+                    r = this.calculateAnnotationSize(
+                        point.y, r, yAxis
+                    );
+                }
+
                 this.graphic[animation ? 'animate' : 'attr']({
                     x: position.x,
                     y: position.y,
-                    r: this.options.r
+                    r
                 });
             } else {
                 this.graphic.attr({

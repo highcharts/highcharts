@@ -127,7 +127,9 @@ class ControllableEllipse extends Controllable {
         if (defined(options.yAxis)) {
             (options.points as Array<MockPointOptions>).forEach(
                 (point): void => {
-                    point.yAxis = options.yAxis;
+                    if (point && typeof point !== 'string') {
+                        point.yAxis = options.yAxis;
+                    }
                 }
             );
         }
@@ -135,7 +137,9 @@ class ControllableEllipse extends Controllable {
         if (defined(options.xAxis)) {
             (options.points as Array<MockPointOptions>).forEach(
                 (point): void => {
-                    point.xAxis = options.xAxis;
+                    if (point && typeof point !== 'string') {
+                        point.xAxis = options.xAxis;
+                    }
                 }
             );
         }

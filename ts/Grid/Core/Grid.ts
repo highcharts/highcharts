@@ -50,7 +50,14 @@ import QueryingController from './Querying/QueryingController.js';
 import Globals from './Globals.js';
 import TimeBase from '../../Shared/TimeBase.js';
 import Pagination from './Pagination/Pagination.js';
-import { defined, diffObjects, extend, fireEvent, merge, pick } from '../../Shared/Utilities.js';
+import {
+    defined,
+    diffObjects,
+    extend,
+    fireEvent,
+    merge,
+    pick
+} from '../../Shared/Utilities.js';
 import { uniqueKey } from '../../Core/Utilities.js';
 
 const {

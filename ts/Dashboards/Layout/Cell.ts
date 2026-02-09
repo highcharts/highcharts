@@ -197,6 +197,8 @@ class Cell extends GUIElement {
      * and mounted component.
      */
     public destroy(): void {
+        fireEvent(this, 'outdate');
+
         const cell = this;
         const { row } = cell;
 

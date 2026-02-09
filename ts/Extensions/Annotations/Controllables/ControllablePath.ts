@@ -15,6 +15,7 @@ import type Annotation from '../Annotation';
 import type AST from '../../../Core/Renderer/HTML/AST';
 import type Chart from '../../../Core/Chart/Chart';
 import type { ControllableShapeOptions } from './ControllableOptions';
+import type MockPointOptions from '../AnnotationMockPointOptionsObject';
 import type SVGAttributes from '../../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
@@ -112,6 +113,7 @@ const TRACKER_FILL = 'rgba(192,192,192,' + (H.svg ? 0.0001 : 0.002) + ')';
  *  Functions
  *
  * */
+
 
 /** @internal */
 function createMarkerSetter(
@@ -273,6 +275,34 @@ class ControllablePath extends Controllable {
      *  Functions
      *
      * */
+
+    public init(
+        annotation: Annotation,
+        options: ControllableShapeOptions,
+        index: number
+    ): void {
+        if (defined(options.yAxis)) {
+            (options.points as Array<MockPointOptions>).forEach(
+                (point): void => {
+                    if (point && typeof point !== 'string') {
+                        point.yAxis = options.yAxis;
+                    }
+                }
+            );
+        }
+
+        if (defined(options.xAxis)) {
+            (options.points as Array<MockPointOptions>).forEach(
+                (point): void => {
+                    if (point && typeof point !== 'string') {
+                        point.xAxis = options.xAxis;
+                    }
+                }
+            );
+        }
+
+        super.init(annotation, options, index);
+    }
 
     /**
      * Map the controllable path to 'd' path attribute.
