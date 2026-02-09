@@ -39,7 +39,15 @@ const {
 } = SeriesRegistry.seriesTypes;
 import TimelinePoint from './TimelinePoint.js';
 import TimelineSeriesDefaults from './TimelineSeriesDefaults.js';
-import { addEvent, arrayMax, arrayMin, defined, extend, merge, pick } from '../../Shared/Utilities.js';
+import {
+    addEvent,
+    arrayMax,
+    arrayMin,
+    defined,
+    extend,
+    merge,
+    pick
+} from '../../Shared/Utilities.js';
 
 /* *
  *

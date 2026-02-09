@@ -32,7 +32,13 @@ import GraphLayout from '../GraphLayoutComposition.js';
 import QuadTree from './QuadTree.js';
 import QuadTreeNode from './QuadTreeNode.js';
 import VerletIntegration from './VerletIntegration.js';
-import { clamp, defined, fireEvent, isFunction, pick } from '../../Shared/Utilities.js';
+import {
+    clamp,
+    defined,
+    fireEvent,
+    isFunction,
+    pick
+} from '../../Shared/Utilities.js';
 
 /* *
  *

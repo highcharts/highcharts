@@ -44,7 +44,23 @@ import NavigatorComposition from './NavigatorComposition.js';
 import Scrollbar from '../Scrollbar/Scrollbar.js';
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 const { prototype: { symbols } } = SVGRenderer;
-import { addEvent, clamp, correctFloat, defined, destroyObjectProperties, erase, extend, find, fireEvent, isArray, isNumber, merge, pick, removeEvent, splat } from '../../Shared/Utilities.js';
+import {
+    addEvent,
+    clamp,
+    correctFloat,
+    defined,
+    destroyObjectProperties,
+    erase,
+    extend,
+    find,
+    fireEvent,
+    isArray,
+    isNumber,
+    merge,
+    pick,
+    removeEvent,
+    splat
+} from '../../Shared/Utilities.js';
 
 /* *
  *

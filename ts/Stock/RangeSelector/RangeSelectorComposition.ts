@@ -25,7 +25,15 @@ const { defaultOptions } = D;
 import H from '../../Core/Globals.js';
 const { composed } = H;
 import RangeSelectorDefaults from './RangeSelectorDefaults.js';
-import { addEvent, defined, extend, isNumber, merge, pick, pushUnique } from '../../Shared/Utilities.js';
+import {
+    addEvent,
+    defined,
+    extend,
+    isNumber,
+    merge,
+    pick,
+    pushUnique
+} from '../../Shared/Utilities.js';
 
 /* *
  *

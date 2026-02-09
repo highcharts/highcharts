@@ -37,7 +37,17 @@ import D from '../Core/Defaults.js';
 const { getOptions } = D;
 import MapPoint from '../Series/Map/MapPoint';
 import { Palette } from '../Core/Color/Palettes';
-import { addEvent, defined, erase, extend, isObject, merge, pick, removeEvent, wrap } from '../Shared/Utilities.js';
+import {
+    addEvent,
+    defined,
+    erase,
+    extend,
+    isObject,
+    merge,
+    pick,
+    removeEvent,
+    wrap
+} from '../Shared/Utilities.js';
 
 /* *
  *

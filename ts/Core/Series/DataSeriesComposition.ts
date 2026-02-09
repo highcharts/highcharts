@@ -35,7 +35,14 @@ import type {
 import DataTable from '../../Data/DataTable.js';
 import H from '../Globals.js';
 const { composed } = H;
-import { addEvent, fireEvent, isNumber, merge, pushUnique, wrap } from '../../Shared/Utilities.js';
+import {
+    addEvent,
+    fireEvent,
+    isNumber,
+    merge,
+    pushUnique,
+    wrap
+} from '../../Shared/Utilities.js';
 
 /* *
  *

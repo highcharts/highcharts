@@ -33,7 +33,15 @@ import type { TreeGridAxisComposition } from './TreeGridAxis';
 import type { TreeGridAxisLabelIconOptions } from './TreeGridAxisOptions';
 
 import { Palette } from '../../Color/Palettes.js';
-import { addEvent, correctFloat, isNumber, isObject, pick, removeEvent, wrap } from '../../../Shared/Utilities.js';
+import {
+    addEvent,
+    correctFloat,
+    isNumber,
+    isObject,
+    pick,
+    removeEvent,
+    wrap
+} from '../../../Shared/Utilities.js';
 
 /* *
  *

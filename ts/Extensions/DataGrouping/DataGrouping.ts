@@ -29,7 +29,13 @@ import F from '../../Core/Templating.js';
 const { format } = F;
 import H from '../../Core/Globals.js';
 const { composed } = H;
-import { addEvent, extend, isNumber, pick, pushUnique } from '../../Shared/Utilities.js';
+import {
+    addEvent,
+    extend,
+    isNumber,
+    pick,
+    pushUnique
+} from '../../Shared/Utilities.js';
 
 /* *
  *

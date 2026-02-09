@@ -24,7 +24,13 @@ import BulletPoint from './BulletPoint.js';
 import BulletSeriesDefaults from './BulletSeriesDefaults.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import { extend, isNumber, merge, pick, relativeLength } from '../../Shared/Utilities.js';
+import {
+    extend,
+    isNumber,
+    merge,
+    pick,
+    relativeLength
+} from '../../Shared/Utilities.js';
 
 /* *
  *

@@ -42,7 +42,12 @@ const {
 } = CU;
 
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import { clamp, internalClearTimeout, pick, syncTimeout } from '../../Shared/Utilities.js';
+import {
+    clamp,
+    internalClearTimeout,
+    pick,
+    syncTimeout
+} from '../../Shared/Utilities.js';
 
 
 /**

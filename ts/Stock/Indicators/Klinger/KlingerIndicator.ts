@@ -29,7 +29,12 @@ const {
     ema: EMAIndicator,
     sma: SMAIndicator
 } = SeriesRegistry.seriesTypes;
-import { correctFloat, extend, isArray, merge } from '../../../Shared/Utilities.js';
+import {
+    correctFloat,
+    extend,
+    isArray,
+    merge
+} from '../../../Shared/Utilities.js';
 import { error } from '../../../Core/Utilities.js';
 
 /* *

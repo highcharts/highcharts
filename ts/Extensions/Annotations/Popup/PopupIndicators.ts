@@ -35,7 +35,15 @@ import H from '../../../Core/Globals.js';
 const { doc } = H;
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
-import { addEvent, createElement, defined, isArray, isObject, objectEach, stableSort } from '../../../Shared/Utilities.js';
+import {
+    addEvent,
+    createElement,
+    defined,
+    isArray,
+    isObject,
+    objectEach,
+    stableSort
+} from '../../../Shared/Utilities.js';
 
 /* *
  *

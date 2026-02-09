@@ -21,7 +21,14 @@ import SonificationTimeline from './SonificationTimeline.js';
 import SonificationInstrument from './SonificationInstrument.js';
 import SonificationSpeaker from './SonificationSpeaker.js';
 import T from '../../Core/Templating.js';
-import { clamp, defined, extend, getNestedProperty, merge, pick } from '../../Shared/Utilities.js';
+import {
+    clamp,
+    defined,
+    extend,
+    getNestedProperty,
+    merge,
+    pick
+} from '../../Shared/Utilities.js';
 const {
     format
 } = T;

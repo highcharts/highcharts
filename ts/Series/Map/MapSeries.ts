@@ -57,7 +57,20 @@ const {
     column: ColumnSeries,
     scatter: ScatterSeries
 } = SeriesRegistry.seriesTypes;
-import { defined, extend, find, fireEvent, getNestedProperty, isArray, isNumber, isObject, merge, objectEach, pick, splat } from '../../Shared/Utilities.js';
+import {
+    defined,
+    extend,
+    find,
+    fireEvent,
+    getNestedProperty,
+    isArray,
+    isNumber,
+    isObject,
+    merge,
+    objectEach,
+    pick,
+    splat
+} from '../../Shared/Utilities.js';
 
 /* *
  *

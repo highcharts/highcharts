@@ -29,7 +29,16 @@ import G from './Globals.js';
 const {
     pageLang
 } = G;
-import { extend, getNestedProperty, isArray, isNumber, isObject, isString, pick, ucfirst } from '../Shared/Utilities.js';
+import {
+    extend,
+    getNestedProperty,
+    isArray,
+    isNumber,
+    isObject,
+    isString,
+    pick,
+    ucfirst
+} from '../Shared/Utilities.js';
 
 /** @internal */
 interface MatchObject {

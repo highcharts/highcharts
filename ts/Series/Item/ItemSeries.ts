@@ -32,7 +32,14 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     pie: PieSeries
 } = SeriesRegistry.seriesTypes;
-import { defined, extend, fireEvent, isNumber, merge, pick } from '../../Shared/Utilities.js';
+import {
+    defined,
+    extend,
+    fireEvent,
+    isNumber,
+    merge,
+    pick
+} from '../../Shared/Utilities.js';
 
 /* *
  *

@@ -45,7 +45,25 @@ import { Palette } from './Color/Palettes.js';
 import R from './Renderer/RendererUtilities.js';
 const { distribute } = R;
 import RendererRegistry from './Renderer/RendererRegistry.js';
-import { addEvent, clamp, css, discardElement, extend, fireEvent, getAlignFactor, internalClearTimeout, isArray, isNumber, isObject, isString, merge, pick, pushUnique, splat, syncTimeout } from '../Shared/Utilities.js';
+import {
+    addEvent,
+    clamp,
+    css,
+    discardElement,
+    extend,
+    fireEvent,
+    getAlignFactor,
+    internalClearTimeout,
+    isArray,
+    isNumber,
+    isObject,
+    isString,
+    merge,
+    pick,
+    pushUnique,
+    splat,
+    syncTimeout
+} from '../Shared/Utilities.js';
 
 /* *
  *

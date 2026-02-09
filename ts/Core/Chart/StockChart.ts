@@ -50,7 +50,19 @@ import RangeSelectorDefaults from '../../Stock/RangeSelector/RangeSelectorDefaul
 import ScrollbarDefaults from '../../Stock/Scrollbar/ScrollbarDefaults.js';
 import StockUtilities from '../../Stock/Utilities/StockUtilities.js';
 const { setFixedRange } = StockUtilities;
-import { addEvent, clamp, crisp, defined, extend, find, isNumber, isString, merge, pick, splat } from '../../Shared/Utilities.js';
+import {
+    addEvent,
+    clamp,
+    crisp,
+    defined,
+    extend,
+    find,
+    isNumber,
+    isString,
+    merge,
+    pick,
+    splat
+} from '../../Shared/Utilities.js';
 
 /* *
  *

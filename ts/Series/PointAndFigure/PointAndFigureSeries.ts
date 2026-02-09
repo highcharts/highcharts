@@ -28,7 +28,13 @@ import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 
 import H from '../../Core/Globals.js';
 import Series from '../../Core/Series/Series.js';
-import { extend, isNumber, merge, pushUnique, relativeLength } from '../../Shared/Utilities.js';
+import {
+    extend,
+    isNumber,
+    merge,
+    pushUnique,
+    relativeLength
+} from '../../Shared/Utilities.js';
 const { composed } = H;
 const {
     scatter: ScatterSeries,

@@ -22,7 +22,11 @@
 import type SankeySeries from './SankeySeries';
 import type SankeyPoint from './SankeyPoint';
 
-import { defined, getAlignFactor, relativeLength } from '../../Shared/Utilities.js';
+import {
+    defined,
+    getAlignFactor,
+    relativeLength
+} from '../../Shared/Utilities.js';
 
 /* *
  *

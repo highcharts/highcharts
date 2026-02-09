@@ -33,7 +33,12 @@ import ChartUtilities from '../../Utils/ChartUtilities.js';
 const { getChartTitle } = ChartUtilities;
 import EventProvider from '../../Utils/EventProvider.js';
 import SeriesDescriber from './SeriesDescriber.js';
-import { addEvent, defined, internalClearTimeout, pushUnique } from '../../../Shared/Utilities.js';
+import {
+    addEvent,
+    defined,
+    internalClearTimeout,
+    pushUnique
+} from '../../../Shared/Utilities.js';
 const {
     defaultPointDescriptionFormatter,
     defaultSeriesDescriptionFormatter

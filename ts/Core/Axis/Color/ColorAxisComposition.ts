@@ -31,7 +31,13 @@ import type TreemapSeries from '../../../Series/Treemap/TreemapSeries';
 
 import Color from '../../Color/Color.js';
 const { parse: color } = Color;
-import { addEvent, extend, merge, pick, splat } from '../../../Shared/Utilities.js';
+import {
+    addEvent,
+    extend,
+    merge,
+    pick,
+    splat
+} from '../../../Shared/Utilities.js';
 
 /* *
  *

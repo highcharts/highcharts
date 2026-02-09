@@ -29,7 +29,15 @@ import Axis from './Axis.js';
 import DataTableCore from '../../Data/DataTableCore.js';
 import H from '../Globals.js';
 import Series from '../Series/Series.js';
-import { correctFloat, defined, isString, isNumber, pick, css, addEvent } from '../../Shared/Utilities.js';
+import {
+    correctFloat,
+    defined,
+    isString,
+    isNumber,
+    pick,
+    css,
+    addEvent
+} from '../../Shared/Utilities.js';
 import { error, timeUnits } from '../Utilities.js';
 
 /* *

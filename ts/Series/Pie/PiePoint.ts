@@ -29,7 +29,14 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { setAnimation } = A;
 import Point from '../../Core/Series/Point.js';
-import { addEvent, defined, extend, isNumber, pick, relativeLength } from '../../Shared/Utilities.js';
+import {
+    addEvent,
+    defined,
+    extend,
+    isNumber,
+    pick,
+    relativeLength
+} from '../../Shared/Utilities.js';
 
 /* *
  *

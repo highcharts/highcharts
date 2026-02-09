@@ -38,7 +38,13 @@ const {
     doc,
     isTouchDevice
 } = H;
-import { addEvent, fireEvent, objectEach, pick, removeEvent } from '../../Shared/Utilities.js';
+import {
+    addEvent,
+    fireEvent,
+    objectEach,
+    pick,
+    removeEvent
+} from '../../Shared/Utilities.js';
 
 /* *
  *

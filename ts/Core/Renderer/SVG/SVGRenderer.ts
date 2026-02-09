@@ -59,7 +59,24 @@ import SVGElement from './SVGElement.js';
 import SVGLabel from './SVGLabel.js';
 import Symbols from './Symbols.js';
 import TextBuilder from './TextBuilder.js';
-import { addEvent, attr, createElement, crisp, css, defined, destroyObjectProperties, extend, isArray, isNumber, isObject, isString, merge, pick, pInt, replaceNested } from '../../../Shared/Utilities.js';
+import {
+    addEvent,
+    attr,
+    createElement,
+    crisp,
+    css,
+    defined,
+    destroyObjectProperties,
+    extend,
+    isArray,
+    isNumber,
+    isObject,
+    isString,
+    merge,
+    pick,
+    pInt,
+    replaceNested
+} from '../../../Shared/Utilities.js';
 import { uniqueKey } from '../../Utilities.js';
 
 /* *

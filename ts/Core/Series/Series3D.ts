@@ -27,7 +27,14 @@ const { composed } = H;
 import Math3D from '../Math3D.js';
 const { perspective } = Math3D;
 import Series from '../Series/Series.js';
-import { addEvent, extend, isNumber, merge, pick, pushUnique } from '../../Shared/Utilities.js';
+import {
+    addEvent,
+    extend,
+    isNumber,
+    merge,
+    pick,
+    pushUnique
+} from '../../Shared/Utilities.js';
 
 /* *
  *

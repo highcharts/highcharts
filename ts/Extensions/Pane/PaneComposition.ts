@@ -10,7 +10,12 @@ import type Pane from './Pane';
 import type Pointer from '../../Core/Pointer';
 import type Series from '../../Core/Series/Series';
 
-import { addEvent, correctFloat, defined, pick } from '../../Shared/Utilities.js';
+import {
+    addEvent,
+    correctFloat,
+    defined,
+    pick
+} from '../../Shared/Utilities.js';
 
 /* *
  *

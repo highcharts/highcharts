@@ -38,7 +38,13 @@ import ControlPoint from '../ControlPoint.js';
 import D from '../../../Core/Defaults.js';
 const { defaultOptions } = D;
 import { Palette } from '../../../Core/Color/Palettes.js';
-import { defined, extend, isNumber, merge, pick } from '../../../Shared/Utilities.js';
+import {
+    defined,
+    extend,
+    isNumber,
+    merge,
+    pick
+} from '../../../Shared/Utilities.js';
 
 if (defaultOptions.annotations?.types) {
     /**

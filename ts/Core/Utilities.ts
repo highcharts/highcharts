@@ -22,7 +22,14 @@ import type Series from './Series/Series';
 import type Time from './Time';
 import type Chart from './Chart/Chart';
 
-import { attr, fireEvent, isNumber, isString, objectEach, pick } from '../Shared/Utilities.js';
+import {
+    attr,
+    fireEvent,
+    isNumber,
+    isString,
+    objectEach,
+    pick
+} from '../Shared/Utilities.js';
 import H from './Globals.js';
 const {
     charts,

@@ -19,7 +19,11 @@
 
 import type Axis from './Axis';
 
-import { addEvent, normalizeTickInterval, pick } from '../../Shared/Utilities.js';
+import {
+    addEvent,
+    normalizeTickInterval,
+    pick
+} from '../../Shared/Utilities.js';
 
 /* *
  *

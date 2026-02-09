@@ -42,7 +42,22 @@ import RangeSelectorComposition from './RangeSelectorComposition.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import T from '../../Core/Templating.js';
 const { format } = T;
-import { createElement, defined, extend, isString, isNumber, merge, objectEach, pick, splat, discardElement, destroyObjectProperties, css, addEvent, fireEvent } from '../../Shared/Utilities.js';
+import {
+    createElement,
+    defined,
+    extend,
+    isString,
+    isNumber,
+    merge,
+    objectEach,
+    pick,
+    splat,
+    discardElement,
+    destroyObjectProperties,
+    css,
+    addEvent,
+    fireEvent
+} from '../../Shared/Utilities.js';
 
 /* *
  *

@@ -24,7 +24,18 @@ const {
     pageLang,
     win
 } = H;
-import { defined, extend, isObject, isNumber, isString, merge, objectEach, pad, splat, ucfirst } from './Utilities.js';
+import {
+    defined,
+    extend,
+    isObject,
+    isNumber,
+    isString,
+    merge,
+    objectEach,
+    pad,
+    splat,
+    ucfirst
+} from './Utilities.js';
 import { error, timeUnits } from '../Core/Utilities.js';
 
 /* *

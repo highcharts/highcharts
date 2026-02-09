@@ -35,7 +35,14 @@ const {
         }
     }
 } = SeriesRegistry;
-import { addEvent, clamp, extend, isNumber, merge, pick } from '../../Shared/Utilities.js';
+import {
+    addEvent,
+    clamp,
+    extend,
+    isNumber,
+    merge,
+    pick
+} from '../../Shared/Utilities.js';
 
 /* *
  *

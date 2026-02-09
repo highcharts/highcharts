@@ -41,7 +41,18 @@ const {
     column: ColumnSeries,
     pie: PieSeries
 } = SeriesRegistry.seriesTypes;
-import { addEvent, correctFloat, extend, fireEvent, isArray, merge, pick, pushUnique, relativeLength, splat } from '../../Shared/Utilities.js';
+import {
+    addEvent,
+    correctFloat,
+    extend,
+    fireEvent,
+    isArray,
+    merge,
+    pick,
+    pushUnique,
+    relativeLength,
+    splat
+} from '../../Shared/Utilities.js';
 
 /* *
  *

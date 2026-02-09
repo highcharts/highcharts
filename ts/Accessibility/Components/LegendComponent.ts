@@ -40,7 +40,13 @@ import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 import CU from '../Utils/ChartUtilities.js';
 const { getChartTitle } = CU;
 import HU from '../Utils/HTMLUtilities.js';
-import { addEvent, fireEvent, isNumber, pick, syncTimeout } from '../../Shared/Utilities.js';
+import {
+    addEvent,
+    fireEvent,
+    isNumber,
+    pick,
+    syncTimeout
+} from '../../Shared/Utilities.js';
 const {
     stripHTMLTagsFromString: stripHTMLTags,
     addClass,

@@ -62,7 +62,16 @@ const {
     intersectRect
 } = SLU;
 import { Palette } from '../../Core/Color/Palettes';
-import { addEvent, extend, fireEvent, internalClearTimeout, isNumber, pick, pushUnique, syncTimeout } from '../../Shared/Utilities.js';
+import {
+    addEvent,
+    extend,
+    fireEvent,
+    internalClearTimeout,
+    isNumber,
+    pick,
+    pushUnique,
+    syncTimeout
+} from '../../Shared/Utilities.js';
 
 /* *
  *

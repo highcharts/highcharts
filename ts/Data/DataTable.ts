@@ -39,7 +39,13 @@ import DataTableCore from './DataTableCore.js';
 import ColumnUtils from './ColumnUtils.js';
 const { splice, setLength } = ColumnUtils;
 
-import { addEvent, defined, extend, fireEvent, isNumber } from '../Shared/Utilities.js';
+import {
+    addEvent,
+    defined,
+    extend,
+    fireEvent,
+    isNumber
+} from '../Shared/Utilities.js';
 import { uniqueKey } from '../Core/Utilities.js';
 
 

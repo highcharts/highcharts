@@ -46,7 +46,15 @@ const {
         prototype: seriesProto
     }
 } = SeriesRegistry;
-import { addEvent, defined, extend, isNumber, merge, pick, splat } from '../../Shared/Utilities.js';
+import {
+    addEvent,
+    defined,
+    extend,
+    isNumber,
+    merge,
+    pick,
+    splat
+} from '../../Shared/Utilities.js';
 import { error } from '../../Core/Utilities.js';
 
 /* *

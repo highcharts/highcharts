@@ -20,7 +20,13 @@
 import type { ApproximationArray } from './ApproximationType';
 
 import ApproximationRegistry from './ApproximationRegistry.js';
-import { arrayMax, arrayMin, correctFloat, extend, isNumber } from '../../Shared/Utilities.js';
+import {
+    arrayMax,
+    arrayMin,
+    correctFloat,
+    extend,
+    isNumber
+} from '../../Shared/Utilities.js';
 
 /* *
  *

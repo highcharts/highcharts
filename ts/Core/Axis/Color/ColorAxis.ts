@@ -44,7 +44,16 @@ import LegendSymbol from '../../Legend/LegendSymbol.js';
 import SeriesRegistry from '../../Series/SeriesRegistry.js';
 import SeriesClass from '../../Series/Series';
 const { series: Series } = SeriesRegistry;
-import { defined, extend, fireEvent, isArray, isNumber, merge, pick, relativeLength } from '../../../Shared/Utilities.js';
+import {
+    defined,
+    extend,
+    fireEvent,
+    isArray,
+    isNumber,
+    merge,
+    pick,
+    relativeLength
+} from '../../../Shared/Utilities.js';
 
 /* *
  *

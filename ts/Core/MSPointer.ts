@@ -31,7 +31,16 @@ const {
 } = H;
 import Pointer from './Pointer.js';
 import DOMElementType from './Renderer/DOMElementType';
-import { addEvent, attr, css, defined, objectEach, pick, pushUnique, removeEvent } from '../Shared/Utilities.js';
+import {
+    addEvent,
+    attr,
+    css,
+    defined,
+    objectEach,
+    pick,
+    pushUnique,
+    removeEvent
+} from '../Shared/Utilities.js';
 
 /* *
  *

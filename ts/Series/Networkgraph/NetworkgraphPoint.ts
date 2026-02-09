@@ -36,7 +36,13 @@ const {
         }
     }
 } = SeriesRegistry;
-import { addEvent, css, defined, extend, pick } from '../../Shared/Utilities.js';
+import {
+    addEvent,
+    css,
+    defined,
+    extend,
+    pick
+} from '../../Shared/Utilities.js';
 
 /* *
  *

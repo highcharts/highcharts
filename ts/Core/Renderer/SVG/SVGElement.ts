@@ -54,7 +54,30 @@ const {
     win,
     isFirefox
 } = H;
-import { addEvent, attr, createElement, crisp, css, defined, erase, extend, fireEvent, getAlignFactor, isArray, isFunction, isNumber, isObject, isString, merge, objectEach, pInt, pick, pushUnique, replaceNested, syncTimeout } from '../../../Shared/Utilities.js';
+import {
+    addEvent,
+    attr,
+    createElement,
+    crisp,
+    css,
+    defined,
+    erase,
+    extend,
+    fireEvent,
+    getAlignFactor,
+    isArray,
+    isFunction,
+    isNumber,
+    isObject,
+    isString,
+    merge,
+    objectEach,
+    pInt,
+    pick,
+    pushUnique,
+    replaceNested,
+    syncTimeout
+} from '../../../Shared/Utilities.js';
 import { uniqueKey } from '../../Utilities.js';
 
 /* *

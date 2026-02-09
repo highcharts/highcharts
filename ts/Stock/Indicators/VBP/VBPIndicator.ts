@@ -48,7 +48,16 @@ const {
     },
     sma: SMAIndicator
 } = SeriesRegistry.seriesTypes;
-import { addEvent, arrayMax, arrayMin, correctFloat, defined, extend, isArray, merge } from '../../../Shared/Utilities.js';
+import {
+    addEvent,
+    arrayMax,
+    arrayMin,
+    correctFloat,
+    defined,
+    extend,
+    isArray,
+    merge
+} from '../../../Shared/Utilities.js';
 import { error } from '../../../Core/Utilities.js';
 
 /* *

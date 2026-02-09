@@ -86,7 +86,34 @@ import Time from '../Time.js';
 import AST from '../Renderer/HTML/AST.js';
 import { AxisCollectionKey } from '../Axis/AxisOptions';
 import Tick from '../Axis/Tick.js';
-import { addEvent, attr, createElement, css, defined, diffObjects, discardElement, erase, extend, find, fireEvent, getAlignFactor, getStyle, internalClearTimeout, isArray, isNumber, isObject, isString, merge, objectEach, pick, pInt, relativeLength, removeEvent, splat, syncTimeout } from '../../Shared/Utilities.js';
+import {
+    addEvent,
+    attr,
+    createElement,
+    css,
+    defined,
+    diffObjects,
+    discardElement,
+    erase,
+    extend,
+    find,
+    fireEvent,
+    getAlignFactor,
+    getStyle,
+    internalClearTimeout,
+    isArray,
+    isNumber,
+    isObject,
+    isString,
+    merge,
+    objectEach,
+    pick,
+    pInt,
+    relativeLength,
+    removeEvent,
+    splat,
+    syncTimeout
+} from '../../Shared/Utilities.js';
 import { error, uniqueKey } from '../Utilities.js';
 
 

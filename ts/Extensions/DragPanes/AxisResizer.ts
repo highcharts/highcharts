@@ -28,7 +28,12 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type { YAxisOptions } from '../../Core/Axis/AxisOptions';
 
-import { addEvent, clamp, isNumber, relativeLength } from '../../Shared/Utilities.js';
+import {
+    addEvent,
+    clamp,
+    isNumber,
+    relativeLength
+} from '../../Shared/Utilities.js';
 
 /* *
  *

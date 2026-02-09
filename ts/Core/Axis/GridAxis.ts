@@ -38,7 +38,18 @@ import Chart from '../Chart/Chart.js';
 import H from '../Globals.js';
 const { dateFormats } = H;
 import Tick from './Tick.js';
-import { defined, find, erase, isArray, isNumber, isObject as isObjectUtils, merge, pick, wrap, addEvent } from '../../Shared/Utilities.js';
+import {
+    defined,
+    find,
+    erase,
+    isArray,
+    isNumber,
+    isObject as isObjectUtils,
+    merge,
+    pick,
+    wrap,
+    addEvent
+} from '../../Shared/Utilities.js';
 import { timeUnits } from '../Utilities.js';
 
 /* *

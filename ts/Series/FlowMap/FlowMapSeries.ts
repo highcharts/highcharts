@@ -39,7 +39,17 @@ const {
         mapline: MapLineSeries
     }
 } = SeriesRegistry;
-import { addEvent, arrayMax, arrayMin, defined, extend, isArray, merge, pick, relativeLength } from '../../Shared/Utilities.js';
+import {
+    addEvent,
+    arrayMax,
+    arrayMin,
+    defined,
+    extend,
+    isArray,
+    merge,
+    pick,
+    relativeLength
+} from '../../Shared/Utilities.js';
 
 /**
  * The flowmap series type

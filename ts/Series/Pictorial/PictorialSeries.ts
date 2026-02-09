@@ -35,7 +35,13 @@ import StackItem from '../../Core/Axis/Stacking/StackItem.js';
 import SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import { PictorialPathOptions } from './PictorialSeriesOptions';
-import { addEvent, defined, merge, objectEach, pick } from '../../Shared/Utilities.js';
+import {
+    addEvent,
+    defined,
+    merge,
+    objectEach,
+    pick
+} from '../../Shared/Utilities.js';
 
 const ColumnSeries: typeof ColumnSeriesType = SeriesRegistry.seriesTypes.column;
 

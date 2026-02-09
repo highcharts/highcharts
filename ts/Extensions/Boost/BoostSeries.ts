@@ -51,7 +51,18 @@ const {
 } = H;
 import WGLRenderer from './WGLRenderer.js';
 import DataTableCore from '../../Data/DataTableCore.js';
-import { addEvent, defined, destroyObjectProperties, extend, fireEvent, isArray, isNumber, pick, pushUnique, wrap } from '../../Shared/Utilities.js';
+import {
+    addEvent,
+    defined,
+    destroyObjectProperties,
+    extend,
+    fireEvent,
+    isArray,
+    isNumber,
+    pick,
+    pushUnique,
+    wrap
+} from '../../Shared/Utilities.js';
 import { error } from '../../Core/Utilities.js';
 
 /* *

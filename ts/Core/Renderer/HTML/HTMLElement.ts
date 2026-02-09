@@ -29,7 +29,17 @@ import AST from './AST.js';
 import H from '../../Globals.js';
 const { composed, isFirefox } = H;
 import SVGElement from '../SVG/SVGElement.js';
-import { attr, createElement, css, defined, extend, getAlignFactor, isNumber, pInt, pushUnique } from '../../../Shared/Utilities.js';
+import {
+    attr,
+    createElement,
+    css,
+    defined,
+    extend,
+    getAlignFactor,
+    isNumber,
+    pInt,
+    pushUnique
+} from '../../../Shared/Utilities.js';
 
 
 /* *

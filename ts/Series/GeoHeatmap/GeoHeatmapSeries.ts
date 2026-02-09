@@ -48,7 +48,14 @@ const {
         map: MapSeries
     }
 } = SeriesRegistry;
-import { addEvent, extend, isNumber, isObject, merge, pick } from '../../Shared/Utilities.js';
+import {
+    addEvent,
+    extend,
+    isNumber,
+    isObject,
+    merge,
+    pick
+} from '../../Shared/Utilities.js';
 import { error } from '../../Core/Utilities.js';
 
 /**

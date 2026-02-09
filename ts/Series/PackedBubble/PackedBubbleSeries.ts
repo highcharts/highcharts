@@ -55,7 +55,17 @@ const {
 } = D;
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import TextPath from '../../Extensions/TextPath.js';
-import { addEvent, clamp, defined, extend, fireEvent, isArray, isNumber, merge, pick } from '../../Shared/Utilities.js';
+import {
+    addEvent,
+    clamp,
+    defined,
+    extend,
+    fireEvent,
+    isArray,
+    isNumber,
+    merge,
+    pick
+} from '../../Shared/Utilities.js';
 TextPath.compose(SVGElement);
 
 /* *

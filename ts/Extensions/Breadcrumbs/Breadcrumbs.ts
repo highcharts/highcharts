@@ -32,7 +32,17 @@ import F from '../../Core/Templating.js';
 const { format } = F;
 import H from '../../Core/Globals.js';
 const { composed } = H;
-import { addEvent, defined, extend, fireEvent, isString, merge, objectEach, pick, pushUnique } from '../../Shared/Utilities.js';
+import {
+    addEvent,
+    defined,
+    extend,
+    fireEvent,
+    isString,
+    merge,
+    objectEach,
+    pick,
+    pushUnique
+} from '../../Shared/Utilities.js';
 
 /* *
  *

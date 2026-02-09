@@ -50,7 +50,15 @@ import TreegraphSeriesDefaults from './TreegraphSeriesDefaults.js';
 import TreemapPoint from '../Treemap/TreemapPoint.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import TextPath from '../../Extensions/TextPath.js';
-import { arrayMax, crisp, extend, merge, pick, relativeLength, splat } from '../../Shared/Utilities.js';
+import {
+    arrayMax,
+    crisp,
+    extend,
+    merge,
+    pick,
+    relativeLength,
+    splat
+} from '../../Shared/Utilities.js';
 TextPath.compose(SVGElement);
 /* *
  *

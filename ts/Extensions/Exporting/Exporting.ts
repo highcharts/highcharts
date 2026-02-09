@@ -73,7 +73,23 @@ const {
 } = G;
 import HU from '../../Core/HttpUtilities.js';
 import RegexLimits from '../RegexLimits.js';
-import { addEvent, createElement, css, discardElement, extend, find, fireEvent, internalClearTimeout, isObject, merge, objectEach, pick, pushUnique, removeEvent, splat } from '../../Shared/Utilities.js';
+import {
+    addEvent,
+    createElement,
+    css,
+    discardElement,
+    extend,
+    find,
+    fireEvent,
+    internalClearTimeout,
+    isObject,
+    merge,
+    objectEach,
+    pick,
+    pushUnique,
+    removeEvent,
+    splat
+} from '../../Shared/Utilities.js';
 import { error, uniqueKey } from '../../Core/Utilities.js';
 
 AST.allowedAttributes.push(

@@ -41,7 +41,21 @@ const {
 } = H;
 import { Palette } from '../Core/Color/Palettes.js';
 import SVGAttributes from './Renderer/SVG/SVGAttributes';
-import { addEvent, attr, css, extend, find, fireEvent, isNumber, isObject, objectEach, offset, pick, pushUnique, splat } from '../Shared/Utilities.js';
+import {
+    addEvent,
+    attr,
+    css,
+    extend,
+    find,
+    fireEvent,
+    isNumber,
+    isObject,
+    objectEach,
+    offset,
+    pick,
+    pushUnique,
+    splat
+} from '../Shared/Utilities.js';
 
 /* *
  *

@@ -26,7 +26,12 @@ const { setOptions } = D;
 import ErrorMessages from './ErrorMessages.js';
 import H from '../../Core/Globals.js';
 const { composed } = H;
-import { addEvent, find, isNumber, pushUnique } from '../../Shared/Utilities.js';
+import {
+    addEvent,
+    find,
+    isNumber,
+    pushUnique
+} from '../../Shared/Utilities.js';
 import { type ErrorMessageEventObject } from '../../Core/Utilities.js';
 
 /* *

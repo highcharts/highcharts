@@ -29,7 +29,12 @@ import Controllable from './Controllable.js';
 import F from '../../../Core/Templating.js';
 const { format } = F;
 import MockPoint from '../MockPoint.js';
-import { extend, getAlignFactor, isNumber, pick } from '../../../Shared/Utilities.js';
+import {
+    extend,
+    getAlignFactor,
+    isNumber,
+    pick
+} from '../../../Shared/Utilities.js';
 
 /* *
  *

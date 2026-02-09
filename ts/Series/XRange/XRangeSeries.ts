@@ -44,7 +44,20 @@ const {
 } = SeriesRegistry.seriesTypes;
 import XRangeSeriesDefaults from './XRangeSeriesDefaults.js';
 import XRangePoint from './XRangePoint.js';
-import { addEvent, clamp, crisp, defined, extend, find, isNumber, isObject, merge, pick, pushUnique, relativeLength } from '../../Shared/Utilities.js';
+import {
+    addEvent,
+    clamp,
+    crisp,
+    defined,
+    extend,
+    find,
+    isNumber,
+    isObject,
+    merge,
+    pick,
+    pushUnique,
+    relativeLength
+} from '../../Shared/Utilities.js';
 
 /* *
  *

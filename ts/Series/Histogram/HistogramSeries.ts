@@ -28,7 +28,13 @@ const {
     column: ColumnSeries
 } = SeriesRegistry.seriesTypes;
 import AnimationOptions from '../../Core/Animation/AnimationOptions';
-import { arrayMax, arrayMin, correctFloat, isNumber, merge } from '../../Shared/Utilities.js';
+import {
+    arrayMax,
+    arrayMin,
+    correctFloat,
+    isNumber,
+    merge
+} from '../../Shared/Utilities.js';
 
 /* ************************************************************************** *
  *  HISTOGRAM

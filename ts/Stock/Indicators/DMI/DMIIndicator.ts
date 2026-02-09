@@ -33,7 +33,12 @@ import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     sma: SMAIndicator
 } = SeriesRegistry.seriesTypes;
-import { correctFloat, extend, isArray, merge } from '../../../Shared/Utilities.js';
+import {
+    correctFloat,
+    extend,
+    isArray,
+    merge
+} from '../../../Shared/Utilities.js';
 
 /* *
  *

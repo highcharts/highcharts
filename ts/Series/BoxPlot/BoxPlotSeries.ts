@@ -28,7 +28,13 @@ import ColumnSeries from '../Column/ColumnSeries.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import { crisp, extend, merge, pick, relativeLength } from '../../Shared/Utilities.js';
+import {
+    crisp,
+    extend,
+    merge,
+    pick,
+    relativeLength
+} from '../../Shared/Utilities.js';
 
 /* *
  *

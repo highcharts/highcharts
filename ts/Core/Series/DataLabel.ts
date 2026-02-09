@@ -38,7 +38,19 @@ import F from '../Templating.js';
 const { format } = F;
 import { Palette } from '../Color/Palettes.js';
 import R from '../Renderer/RendererUtilities.js';
-import { defined, extend, fireEvent, getAlignFactor, isArray, isString, merge, objectEach, pick, pInt, splat } from '../../Shared/Utilities.js';
+import {
+    defined,
+    extend,
+    fireEvent,
+    getAlignFactor,
+    isArray,
+    isString,
+    merge,
+    objectEach,
+    pick,
+    pInt,
+    splat
+} from '../../Shared/Utilities.js';
 
 /* *
  *

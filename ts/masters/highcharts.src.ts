@@ -94,7 +94,13 @@ import {
     syncTimeout,
     wrap
 } from '../Shared/Utilities.js';
-import { error, insertItem, timeUnits, uniqueKey, useSerialIds } from '../Core/Utilities.js';
+import {
+    error,
+    insertItem,
+    timeUnits,
+    uniqueKey,
+    useSerialIds
+} from '../Core/Utilities.js';
 
 const G: AnyRecord = Highcharts;
 

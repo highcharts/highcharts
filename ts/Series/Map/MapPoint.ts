@@ -33,7 +33,12 @@ import MU from '../../Maps/MapUtilities.js';
 const { boundsFromPath } = MU;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const ScatterPoint = SeriesRegistry.seriesTypes.scatter.prototype.pointClass;
-import { extend, internalClearTimeout, isNumber, pick } from '../../Shared/Utilities.js';
+import {
+    extend,
+    internalClearTimeout,
+    isNumber,
+    pick
+} from '../../Shared/Utilities.js';
 
 /* *
  *

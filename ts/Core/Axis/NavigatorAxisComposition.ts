@@ -23,7 +23,13 @@ import type RangeSelector from '../../Stock/RangeSelector/RangeSelector';
 
 import H from '../Globals.js';
 const { isTouchDevice } = H;
-import { addEvent, correctFloat, defined, isNumber, pick } from '../../Shared/Utilities.js';
+import {
+    addEvent,
+    correctFloat,
+    defined,
+    isNumber,
+    pick
+} from '../../Shared/Utilities.js';
 
 /* *
  *

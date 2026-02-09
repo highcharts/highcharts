@@ -40,7 +40,15 @@ const {
         column: ColumnSeries
     }
 } = SeriesRegistry;
-import { clamp, defined, extend, isNumber, merge, pick, pInt } from '../../Shared/Utilities.js';
+import {
+    clamp,
+    defined,
+    extend,
+    isNumber,
+    merge,
+    pick,
+    pInt
+} from '../../Shared/Utilities.js';
 
 
 /* *

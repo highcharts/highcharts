@@ -25,7 +25,13 @@ import H from '../Globals.js';
 const {
     win
 } = H;
-import { defined, isNumber, isString, merge, pInt } from '../../Shared/Utilities.js';
+import {
+    defined,
+    isNumber,
+    isString,
+    merge,
+    pInt
+} from '../../Shared/Utilities.js';
 
 /* *
  *

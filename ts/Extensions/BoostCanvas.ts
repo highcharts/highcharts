@@ -56,7 +56,15 @@ const {
     noop
 } = H;
 import { Palette } from '../Core/Color/Palettes.js';
-import { addEvent, fireEvent, internalClearTimeout, isNumber, merge, pick, wrap } from '../Shared/Utilities.js';
+import {
+    addEvent,
+    fireEvent,
+    internalClearTimeout,
+    isNumber,
+    merge,
+    pick,
+    wrap
+} from '../Shared/Utilities.js';
 
 /* *
  *

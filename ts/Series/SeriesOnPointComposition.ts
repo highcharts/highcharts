@@ -29,7 +29,13 @@ import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
 const { bubble } = SeriesRegistry.seriesTypes;
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
-import { addEvent, defined, find, isNumber, pushUnique } from '../Shared/Utilities.js';
+import {
+    addEvent,
+    defined,
+    find,
+    isNumber,
+    pushUnique
+} from '../Shared/Utilities.js';
 
 /* *
  *

@@ -34,7 +34,19 @@ const {
 } = H;
 import ScrollbarAxis from '../../Core/Axis/ScrollbarAxis.js';
 import ScrollbarDefaults from './ScrollbarDefaults.js';
-import { addEvent, correctFloat, crisp, defined, destroyObjectProperties, extend, fireEvent, merge, pick, pushUnique, removeEvent } from '../../Shared/Utilities.js';
+import {
+    addEvent,
+    correctFloat,
+    crisp,
+    defined,
+    destroyObjectProperties,
+    extend,
+    fireEvent,
+    merge,
+    pick,
+    pushUnique,
+    removeEvent
+} from '../../Shared/Utilities.js';
 
 /* *
  *

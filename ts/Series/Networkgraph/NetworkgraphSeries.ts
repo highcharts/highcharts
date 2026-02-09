@@ -55,7 +55,13 @@ const {
 } = D;
 
 import TextPath from '../../Extensions/TextPath.js';
-import { addEvent, defined, extend, merge, pick } from '../../Shared/Utilities.js';
+import {
+    addEvent,
+    defined,
+    extend,
+    merge,
+    pick
+} from '../../Shared/Utilities.js';
 TextPath.compose(SVGElement);
 
 /* *

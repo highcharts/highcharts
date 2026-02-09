@@ -43,7 +43,23 @@ import D from '../Defaults.js';
 const { defaultOptions } = D;
 import F from '../Templating.js';
 const { format } = F;
-import { addEvent, crisp, erase, type EventWrapperObject, extend, fireEvent, getNestedProperty, isArray, isFunction, isNumber, isObject, merge, pick, removeEvent, syncTimeout } from '../../Shared/Utilities.js';
+import {
+    addEvent,
+    crisp,
+    erase,
+    type EventWrapperObject,
+    extend,
+    fireEvent,
+    getNestedProperty,
+    isArray,
+    isFunction,
+    isNumber,
+    isObject,
+    merge,
+    pick,
+    removeEvent,
+    syncTimeout
+} from '../../Shared/Utilities.js';
 import { uniqueKey } from '../Utilities.js';
 
 /* *

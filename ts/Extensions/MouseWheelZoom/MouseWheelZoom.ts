@@ -25,7 +25,14 @@ import type MouseWheelZoomOptions from './MouseWheelZoomOptions';
 import type DOMElementType from '../../Core/Renderer/DOMElementType';
 
 import NBU from '../Annotations/NavigationBindingsUtilities.js';
-import { addEvent, defined, internalClearTimeout, isObject, merge, pick } from '../../Shared/Utilities.js';
+import {
+    addEvent,
+    defined,
+    internalClearTimeout,
+    isObject,
+    merge,
+    pick
+} from '../../Shared/Utilities.js';
 const { getAssignedAxis } = NBU;
 
 /* *
