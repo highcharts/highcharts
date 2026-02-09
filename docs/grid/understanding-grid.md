@@ -5,23 +5,38 @@ At its core Grid consists of a data source that is rendered in x number of colum
 
 The following provides an introduction to the various root configuration objects in Grid:
 
-## dataTable
+## data
 ```js
 {
-    dataTable: {
-        columns: {
-            product: ["Apple", "Pear", "Orange", "Banana"],
-            weight: [182, 178, 150, 120],
-            price: [3.5, 2.5, 3, 2.2],
-            vitamin_a: [54,27,225,64]
+    data: {
+        dataTable: {
+            columns: {
+                product: ["Apple", "Pear", "Orange", "Banana"],
+                weight: [182, 178, 150, 120],
+                price: [3.5, 2.5, 3, 2.2],
+                vitamin_a: [54,27,225,64]
+            }
         }
     }
 }
 ```
 
-The `dataTable` object is the only required option for proper rendering of Grid, and `dataTable.columns` creates an instance of the DataTable class. This class has key-value pairs, where the key is used for the header cell, and the value is an array of values for the corresponding row cells.
+The `data` object defines how Grid receives, prepares, and updates data. The only required option for rendering is `data.dataTable`. You can pass either serialized options (from which Grid creates a `DataTable`) or an existing `DataTable` instance. The DataTable class stores key-value pairs: each key becomes a header label, and each value is an array with the corresponding column values. When users edit cells (for example via edit mode), Grid writes changes back through the configured data provider.
+
+```js
+{
+    data: {
+        dataTable: { // data table instance or options
+            columns: data
+        }
+    }
+}
+```
 
 Read more about [data handling and the DataTable class](https://www.highcharts.com/docs/dashboards/data-table).
+
+### Data providers
+Grid reads and writes data through a data provider. The default `LocalDataProvider` works with an in-memory `DataTable`, but you can register a custom provider for other data sources. In Grid Pro, the `RemoteDataProvider` is available for server-backed data and on-demand paging. For details and configuration examples, see the [Data providers article](https://www.highcharts.com/docs/grid/data-providers).
 
 ### Data modifiers
 
@@ -136,7 +151,7 @@ Use `responsive.rules` to apply different Grid options at different container si
 
 ```js
 Grid.grid('container', {
-    dataTable: { columns: data },
+    data: { dataTable: { columns: data } },
     responsive: {
         rules: [{
             condition: { maxWidth: 800 },

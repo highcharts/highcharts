@@ -125,6 +125,7 @@ module.exports = {
             'grid/understanding-grid',
             'grid/columns',
             'grid/header',
+            'grid/data-providers',
             'grid/cell-editing',
             'grid/cell-renderers',
             'grid/cell-context-menu',

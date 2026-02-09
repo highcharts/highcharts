@@ -23,10 +23,11 @@
  * */
 
 import TableRow from './Body/TableRow.js';
+import type DataTable from '../../../Data/DataTable';
+import type { RowId } from '../Data/DataProvider';
 
 import GridUtils from '../GridUtils.js';
 import Utils from '../../../Core/Utilities.js';
-import DataTable from '../../../Data/DataTable.js';
 import ColumnResizing from './ColumnResizing/ColumnResizing.js';
 import ColumnResizingMode from './ColumnResizing/ResizingMode.js';
 import Column from './Column.js';
@@ -68,15 +69,6 @@ class Table {
      * The data grid instance which the table (viewport) belongs to.
      */
     public readonly grid: Grid;
-
-    /**
-     * The presentation version of the data table. It has applied modifiers
-     * and is ready to be rendered.
-     *
-     * If you want to modify the data table, you should use the original
-     * instance that is stored in the `grid.dataTable` property.
-     */
-    public dataTable: DataTable;
 
     /**
      * The HTML element of the table.
@@ -174,7 +166,7 @@ class Table {
     /**
      * The flag that indicates if the table rows are virtualized.
      */
-    public virtualRows: boolean;
+    public virtualRows: boolean = true;
 
     /**
      * Cell context menu instance (lazy created).
@@ -207,14 +199,10 @@ class Table {
     ) {
         this.grid = grid;
         this.tableElement = tableElement;
-        this.dataTable = this.grid.presentationTable as DataTable;
-
-        const dgOptions = grid.options;
-        const customClassName = dgOptions?.rendering?.table?.className;
 
         this.columnResizing = ColumnResizing.initMode(this);
 
-        if (dgOptions?.rendering?.header?.enabled) {
+        if (grid.options?.rendering?.header?.enabled) {
             this.theadElement = makeHTMLElement('thead', {}, tableElement);
         }
         this.pinnedTopTbodyElement = makeHTMLElement(
@@ -232,29 +220,9 @@ class Table {
             tableElement
         );
 
-        if (dgOptions?.rendering?.columns?.resizing?.enabled) {
-            this.columnsResizer = new ColumnsResizer(this);
-        }
-
-        if (customClassName) {
-            tableElement.classList.add(...customClassName.split(/\s+/g));
-        }
-        tableElement.classList.add(Globals.getClassName('scrollableContent'));
-
-        // Load columns
-        this.loadColumns();
-
-        // Virtualization
-        this.virtualRows = this.shouldVirtualizeRows();
-        if (this.virtualRows) {
-            tableElement.classList.add(
-                Globals.getClassName('virtualization')
-            );
-        }
         this.rowsVirtualizer = new RowsVirtualizer(this);
 
-        // Init Table
-        this.init();
+        fireEvent(this, 'beforeInit');
 
         // Add event listeners
         this.resizeObserver = new ResizeObserver(this.onResize);
@@ -273,28 +241,70 @@ class Table {
     * */
 
     /**
-     * Initializes the data grid table.
+     * The presentation version of the data table. It has applied modifiers
+     * and is ready to be rendered.
+     *
+     * @deprecated Use `grid.dataProvider` instead.
      */
-    private init(): void {
-        fireEvent(this, 'beforeInit');
-
-        this.setTbodyMinHeight();
-
-        // Load & render head
-        if (this.grid.options?.rendering?.header?.enabled) {
-            this.header = new TableHeader(this);
-            this.header.render();
+    public get dataTable(): DataTable | undefined {
+        const dp = this.grid.dataProvider;
+        if (dp && 'getDataTable' in dp) {
+            return dp.getDataTable();
         }
+    }
 
-        // TODO: Load & render footer
-        // this.footer = new TableFooter(this);
-        // this.footer.render();
+    /**
+     * Initializes the table. Should be called after creation so that the table
+     * can be asynchronously initialized.
+     */
+    public async init(): Promise<void> {
+        try {
+            this.grid.showLoading();
+            const { tableElement } = this;
+            const renderingOptions = this.grid.options?.rendering;
+            const customClassName = renderingOptions?.table?.className;
 
-        // Ensure row widths are ready before first row render to prevent
-        // initial pinned-row misalignment.
-        this.columnResizing.reflow();
-        this.rowsVirtualizer.initialRender();
-        fireEvent(this, 'afterInit');
+            this.virtualRows = await this.shouldVirtualizeRows();
+
+            if (this.virtualRows) {
+                tableElement.classList.add(
+                    Globals.getClassName('virtualization')
+                );
+            }
+
+            if (renderingOptions?.columns?.resizing?.enabled) {
+                this.columnsResizer = new ColumnsResizer(this);
+            }
+
+            if (customClassName) {
+                tableElement.classList.add(...customClassName.split(/\s+/g));
+            }
+            tableElement.classList.add(
+                Globals.getClassName('scrollableContent')
+            );
+
+            await this.loadColumns();
+            this.setTbodyMinHeight();
+
+            // Load & render head
+            if (this.grid.options?.rendering?.header?.enabled) {
+                this.header = new TableHeader(this);
+                await this.header.render();
+            }
+
+            // TODO(footer): Load & render footer
+            // this.footer = new TableFooter(this);
+            // this.footer.render();
+
+            // Ensure row widths are ready before first row render to prevent
+            // initial pinned-row misalignment.
+            this.columnResizing.reflow();
+            await this.rowsVirtualizer.initialRender();
+        } finally {
+            fireEvent(this, 'afterInit');
+            this.reflow();
+            this.grid.hideLoading();
+        }
     }
 
     private addBodyEventListeners(body: HTMLElement): void {
@@ -343,17 +353,17 @@ class Table {
      * @returns
      * Whether rows virtualization should be enabled.
      */
-    private shouldVirtualizeRows(): boolean {
+    private async shouldVirtualizeRows(): Promise<boolean> {
         const { grid } = this;
         const rows = grid.userOptions.rendering?.rows;
         if (defined(rows?.virtualization)) {
             return rows.virtualization;
         }
 
-        const rowCount = Number(
+        const rowCount = (
             grid.rowPinningMeta?.scrollableCount ??
-            grid.dataTable?.rowCount
-        );
+            await this.grid.dataProvider?.getRowCount()
+        ) ?? 0;
         const threshold = rows?.virtualizationThreshold ?? 50;
 
         if (grid.pagination) {
@@ -366,7 +376,7 @@ class Table {
     /**
      * Loads the columns of the table.
      */
-    private loadColumns(): void {
+    private async loadColumns(): Promise<void> {
         const { enabledColumns } = this.grid;
         if (!enabledColumns) {
             return;
@@ -375,9 +385,9 @@ class Table {
         let columnId: string;
         for (let i = 0, iEnd = enabledColumns.length; i < iEnd; ++i) {
             columnId = enabledColumns[i];
-            this.columns.push(
-                new Column(this, columnId, i)
-            );
+            const column = new Column(this, columnId, i);
+            await column.init();
+            this.columns.push(column);
         }
 
         this.columnResizing.loadColumns();
@@ -388,81 +398,93 @@ class Table {
      */
     public async updateRows(): Promise<void> {
         const vp = this;
-        let focusedRowId: number | undefined;
+        const { dataProvider: dp } = vp.grid;
+        if (!dp) {
+            return;
+        }
         const oldPinningMeta = vp.grid.rowPinningMeta;
+        let focusedRowId: RowId | undefined;
         if (vp.focusCursor) {
-            focusedRowId = vp.dataTable.getOriginalRowIndex(vp.focusCursor[0]);
+            focusedRowId = await dp.getRowId(vp.focusCursor[0]);
         }
 
-        vp.grid.querying.pagination.clampPage();
+        try {
+            this.grid.showLoading();
 
-        // Update data
-        const oldRowsCount = (vp.rows[vp.rows.length - 1]?.index ?? -1) + 1;
-        const forceQuerying = !!(vp.grid as {
-            rowPinning?: { isEnabled(): boolean };
-        }).rowPinning?.isEnabled();
-        await vp.grid.querying.proceed(forceQuerying);
-        vp.dataTable = vp.grid.presentationTable as DataTable;
-        for (const column of vp.columns) {
-            column.loadData();
-        }
+            // Update data
+            const oldRowsCount = vp.rows.length > 0 ?
+                (vp.rows[vp.rows.length - 1]?.index ?? -1) + 1 :
+                0;
+            const forceQuerying = !!(vp.grid as {
+                rowPinning?: { isEnabled(): boolean };
+            }).rowPinning?.isEnabled();
+            await vp.grid.querying.proceed(forceQuerying);
+            vp.grid.querying.pagination.clampPage();
+            if (vp.grid.querying.shouldBeUpdated) {
+                await vp.grid.querying.proceed(forceQuerying);
+            }
+            for (const column of vp.columns) {
+                column.loadData();
+            }
 
-        // Update virtualization if needed
-        const shouldVirtualize = this.shouldVirtualizeRows();
-        let shouldRerender = false;
-        const newPinningMeta = vp.grid.rowPinningMeta;
-        const pinningMetaChanged = (
-            oldPinningMeta?.topCount !== newPinningMeta?.topCount ||
-            oldPinningMeta?.bottomCount !== newPinningMeta?.bottomCount ||
-            oldPinningMeta?.scrollableCount !==
-                newPinningMeta?.scrollableCount ||
-            oldPinningMeta?.topRowIds.join('|') !==
-                newPinningMeta?.topRowIds.join('|') ||
-            oldPinningMeta?.bottomRowIds.join('|') !==
-                newPinningMeta?.bottomRowIds.join('|')
-        );
-        if (this.virtualRows !== shouldVirtualize) {
-            this.virtualRows = shouldVirtualize;
-            vp.tableElement.classList.toggle(
-                Globals.getClassName('virtualization'),
-                shouldVirtualize
+            // Update virtualization if needed
+            const shouldVirtualize = await this.shouldVirtualizeRows();
+            let shouldRerender = false;
+            if (this.virtualRows !== shouldVirtualize) {
+                this.virtualRows = shouldVirtualize;
+                vp.tableElement.classList.toggle(
+                    Globals.getClassName('virtualization'),
+                    shouldVirtualize
+                );
+                shouldRerender = true;
+            }
+            const newPinningMeta = vp.grid.rowPinningMeta;
+            const pinningMetaChanged = (
+                oldPinningMeta?.topCount !== newPinningMeta?.topCount ||
+                oldPinningMeta?.bottomCount !== newPinningMeta?.bottomCount ||
+                oldPinningMeta?.scrollableCount !==
+                    newPinningMeta?.scrollableCount ||
+                oldPinningMeta?.topRowIds.join('|') !==
+                    newPinningMeta?.topRowIds.join('|') ||
+                oldPinningMeta?.bottomRowIds.join('|') !==
+                    newPinningMeta?.bottomRowIds.join('|')
             );
-            shouldRerender = true;
-        }
-        if (pinningMetaChanged) {
-            shouldRerender = true;
-        }
-
-        if (shouldRerender || oldRowsCount !== vp.dataTable.rowCount) {
-            // Rerender all rows
-            vp.rowsVirtualizer.rerender();
-        } else {
-            // Update existing rows
-            for (let i = 0, iEnd = vp.rows.length; i < iEnd; ++i) {
-                vp.rows[i].update();
+            if (pinningMetaChanged) {
+                shouldRerender = true;
             }
-        }
 
-        // Update the pagination controls
-        vp.grid.pagination?.updateControls();
-        vp.reflow();
-
-        // Scroll to the focused row
-        if (focusedRowId !== void 0 && vp.focusCursor) {
-            const newRowIndex = vp.dataTable.getLocalRowIndex(focusedRowId);
-            if (newRowIndex !== void 0) {
-                // Scroll to the focused row.
-                vp.scrollToRow(newRowIndex);
-
-                // Focus the cell that was focused before the update.
-                setTimeout((): void => {
-                    if (!defined(vp.focusCursor?.[1])) {
-                        return;
-                    }
-                    vp.getRenderedRowByIndex(newRowIndex)
-                        ?.cells[vp.focusCursor[1]].htmlElement.focus();
-                });
+            const newRowCount = await dp.getRowCount();
+            if (shouldRerender || oldRowsCount !== newRowCount) {
+                // Rerender all rows
+                await vp.rowsVirtualizer.rerender();
+            } else {
+                // Update existing rows - create a snapshot to avoid issues
+                // if array changes during iteration
+                const rowsToUpdate = [...vp.getRenderedRows()];
+                for (let i = 0, iEnd = rowsToUpdate.length; i < iEnd; ++i) {
+                    await rowsToUpdate[i].update();
+                }
             }
+
+            // Update the pagination controls
+            vp.grid.pagination?.updateControls();
+            vp.reflow();
+
+            if (focusedRowId !== void 0 && vp.focusCursor) {
+                const newRowIndex = await dp.getRowIndex(focusedRowId);
+                if (newRowIndex !== void 0) {
+                    vp.scrollToRow(newRowIndex);
+                    setTimeout((): void => {
+                        if (!defined(vp.focusCursor?.[1])) {
+                            return;
+                        }
+                        vp.getRenderedRowByIndex(newRowIndex)
+                            ?.cells[vp.focusCursor[1]].htmlElement.focus();
+                    });
+                }
+            }
+        } finally {
+            this.grid.hideLoading();
         }
 
         vp.grid.dirtyFlags.delete('rows');
@@ -472,9 +494,6 @@ class Table {
      * Reflows the table's content dimensions.
      */
     public reflow(): void {
-        // TODO: More `needsReflow` logic can be added in the future to avoid
-        // unnecessary reflows of the table parts.
-
         this.columnResizing.reflow();
 
         // Reflow the head
@@ -526,7 +545,7 @@ class Table {
      */
     private onScroll = (): void => {
         if (this.virtualRows) {
-            this.rowsVirtualizer.scroll();
+            void this.rowsVirtualizer.scroll();
         }
 
         this.syncPinnedHorizontalScroll(this.tbodyElement.scrollLeft);
@@ -817,7 +836,7 @@ class Table {
         delete this.cellContextMenu;
 
         for (let i = 0, iEnd = this.rows.length; i < iEnd; ++i) {
-            this.rows[i].destroy();
+            this.rows[i]?.destroy();
         }
         for (let i = 0, iEnd = this.pinnedTopRows.length; i < iEnd; ++i) {
             this.pinnedTopRows[i].destroy();
@@ -904,7 +923,7 @@ class Table {
      * @param id
      * The ID of the row.
      */
-    public getRow(id: number): TableRow | undefined {
+    public getRow(id: RowId): TableRow | undefined {
         return this.getRenderedRows().find((row): boolean => row.id === id);
     }
 
@@ -939,19 +958,19 @@ class Table {
      *
      * @internal
      */
-    public renderPinnedRows(): void {
+    public async renderPinnedRows(): Promise<void> {
         const meta = this.grid.rowPinningMeta;
         const topCount = meta?.topCount || 0;
         const bottomCount = meta?.bottomCount || 0;
-        const rowCount = this.dataTable.getRowCount();
+        const rowCount = await this.grid.dataProvider?.getRowCount() || 0;
 
-        this.syncPinnedRows(
+        await this.syncPinnedRows(
             this.pinnedTopRows,
             this.pinnedTopTbodyElement,
             0,
             topCount
         );
-        this.syncPinnedRows(
+        await this.syncPinnedRows(
             this.pinnedBottomRows,
             this.pinnedBottomTbodyElement,
             rowCount - bottomCount,
@@ -998,12 +1017,12 @@ class Table {
         }
     }
 
-    private syncPinnedRows(
+    private async syncPinnedRows(
         targetRows: TableRow[],
         tbody: HTMLElement,
         startIndex: number,
         count: number
-    ): void {
+    ): Promise<void> {
         const safeCount = Math.max(0, count);
         const safeStart = Math.max(0, startIndex);
 
@@ -1018,13 +1037,14 @@ class Table {
             if (!row) {
                 row = new TableRow(this, rowIndex);
                 targetRows.push(row);
+                await row.init();
                 tbody.appendChild(row.htmlElement);
-                row.render();
+                await row.render();
                 row.reflow();
                 continue;
             }
 
-            row.reuse(rowIndex, false);
+            await row.reuse(rowIndex, false);
             row.reflow();
             if (!row.htmlElement.isConnected) {
                 tbody.appendChild(row.htmlElement);

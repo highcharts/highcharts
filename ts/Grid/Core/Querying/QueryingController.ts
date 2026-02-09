@@ -151,47 +151,20 @@ class QueryingController {
     }
 
     /**
-     * Apply all modifiers to the data table.
+     * Apply all modifiers to the data provider.
      */
     private async modifyData(): Promise<void> {
         const originalDataTable = this.grid.dataTable;
-        if (!originalDataTable) {
-            return;
-        }
-
         const rowPinning = (this.grid as {
             rowPinning?: RowPinningController;
         }).rowPinning;
 
-        if (rowPinning?.isEnabled()) {
+        if (rowPinning?.isEnabled() && originalDataTable) {
             await this.modifyDataWithRowPinning(originalDataTable, rowPinning);
             return;
         }
-
-        const groupedModifiers = this.getGroupedModifiers();
-        let interTable: DataTable;
-
-        // Grouped modifiers
-        if (groupedModifiers.length > 0) {
-            const chainModifier = new ChainModifier({}, ...groupedModifiers);
-            const dataTableCopy = originalDataTable.clone();
-            await chainModifier.modify(dataTableCopy.getModified());
-            interTable = dataTableCopy.getModified();
-        } else {
-            interTable = originalDataTable.getModified();
-        }
-
-        // Pagination modifier
-        const paginationModifier =
-            this.pagination.createModifier(interTable.rowCount);
-        if (paginationModifier) {
-            interTable = interTable.clone();
-            await paginationModifier.modify(interTable);
-            interTable = interTable.getModified();
-        }
-
-        this.grid.presentationTable = interTable;
         delete this.grid.rowPinningMeta;
+        await this.grid.dataProvider?.applyQuery();
         this.shouldBeUpdated = false;
     }
 
