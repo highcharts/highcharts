@@ -301,3 +301,28 @@ QUnit.test('Set min/max size', function (assert) {
         by the previous series that has been removed, #17486.`
     );
 });
+
+QUnit.test('Bubble zMin update, #24138.', function (assert) {
+    var chart = Highcharts.chart('container', {
+            chart: {
+                type: 'bubble'
+            },
+            series: [{
+                zMin: 0,
+                data: [
+                    [1, 1, 5],
+                    [2, 2, 10],
+                    [3, 3, 15]
+                ]
+            }]
+        }),
+        radiusBefore = chart.series[0].data[0].marker.radius;
+
+    chart.series[0].update({ zMin: 10 });
+
+    assert.notStrictEqual(
+        chart.series[0].data[0].marker.radius,
+        radiusBefore,
+        'Radius should update after zMin change.'
+    );
+});

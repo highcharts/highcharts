@@ -1,6 +1,4 @@
 ---
- name: Demo of xAxis.showLastLabel
- authors:
-   - Torstein Hønsi
- js_wrap: b
+name: Demo of xAxis.showLastLabel
+js_wrap: b
 ...

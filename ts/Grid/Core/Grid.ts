@@ -930,11 +930,7 @@ export class Grid {
             }
         }
 
-        if (pagination?.isDirtyQuerying) {
-            pagination.updateControls(true);
-        }
-
-        delete pagination?.isDirtyQuerying;
+        pagination?.redraw();
         delete colResizing?.isDirty;
         flags.clear();
 
@@ -1258,26 +1254,21 @@ export class Grid {
      */
     public renderCaption(): void {
         const captionOptions = this.options?.caption;
-        const captionText = captionOptions?.text;
-
-        if (!captionText) {
+        if (!captionOptions?.text || !this.contentWrapper) {
             return;
         }
 
-        // Create a caption element.
-        this.captionElement = makeHTMLElement('div', {
-            className: Globals.getClassName('captionElement'),
-            id: this.id + '-caption'
-        }, this.contentWrapper);
+        const tag = captionOptions.htmlTag?.toLowerCase();
+        const tagName = tag && AST.allowedTags.includes(tag) ? tag : 'div';
+        const defaultClass = Globals.getClassName('captionElement');
+        const className = captionOptions.className ?
+            `${defaultClass} ${captionOptions.className}` : defaultClass;
 
-        // Render the caption element content.
-        setHTMLContent(this.captionElement, captionText);
-
-        if (captionOptions.className) {
-            this.captionElement.classList.add(
-                ...captionOptions.className.split(/\s+/g)
-            );
-        }
+        this.captionElement = new AST([{
+            tagName,
+            attributes: { 'class': className, id: this.id + '-caption' },
+            textContent: captionOptions.text
+        }]).addToDOM(this.contentWrapper) as HTMLElement;
     }
 
     /**
