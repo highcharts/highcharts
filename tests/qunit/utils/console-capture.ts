@@ -18,13 +18,73 @@ export interface ConsoleCapture {
     warnings: ConsoleLogEntry[];
 }
 
+const ERROR_EVENT_LEVELS = new Set([
+    'error',
+    'pageerror',
+    'unhandled error',
+    'unhandled rejection',
+    'requestfailed',
+    'crash'
+]);
+
+function normalizeLevel(level: string): ConsoleLogEntry['level'] {
+    const normalized = level.toLowerCase();
+
+    if (normalized === 'warn' || normalized === 'warning') {
+        return 'warn';
+    }
+
+    if (normalized === 'info') {
+        return 'info';
+    }
+
+    if (normalized === 'debug') {
+        return 'debug';
+    }
+
+    if (ERROR_EVENT_LEVELS.has(normalized)) {
+        return 'error';
+    }
+
+    return 'log';
+}
+
 /**
  * Sets up comprehensive console log capture with filtering and formatting
  */
 export async function setupConsoleCapture(page: Page): Promise<void> {
+    const pushBrowserLogEntry = (
+        level: string,
+        message: string,
+        timestamp: number
+    ): void => {
+        const isError = normalizeLevel(level) === 'error';
+        void page.evaluate(
+            ({ entryLevel, entryMessage, entryTimestamp, entryIsError }) => {
+                window.__qunitBrowserLogs__ ??= [];
+                window.__qunitConsoleErrors__ ??= [];
+
+                const entry =
+                    `[${new Date(entryTimestamp).toISOString()}] ` +
+                    `[${entryLevel.toUpperCase()}] ${entryMessage}`;
+                window.__qunitBrowserLogs__.push(entry);
+
+                if (entryIsError) {
+                    window.__qunitConsoleErrors__.push(entry);
+                }
+            }, {
+                entryLevel: level,
+                entryMessage: message,
+                entryTimestamp: timestamp,
+                entryIsError: isError
+            }).catch(() => {
+            // Ignore race conditions during page/context teardown.
+        });
+    };
+
     // Listen to console events from Playwright
     page.on('console', (msg) => {
-        const level = msg.type() as ConsoleLogEntry['level'];
+        const level = msg.type();
         const text = msg.text();
         const timestamp = Date.now();
         
@@ -33,18 +93,24 @@ export async function setupConsoleCapture(page: Page): Promise<void> {
             return;
         }
         
-        // Add to browser-side storage
-        void page.evaluate(({ level, text, timestamp }) => {
-            window.__qunitBrowserLogs__ ??= [];
-            window.__qunitConsoleErrors__ ??= [];
-            
-            const entry = `[${new Date(timestamp).toISOString()}] [${level.toUpperCase()}] ${text}`;
-            window.__qunitBrowserLogs__.push(entry);
-            
-            if (level === 'error') {
-                window.__qunitConsoleErrors__.push(entry);
-            }
-        }, { level, text, timestamp });
+        pushBrowserLogEntry(level, text, timestamp);
+    });
+
+    // Capture non-console browser events that also show up in Playwright UI
+    page.on('pageerror', error => {
+        const stack = error.stack ? `\n${error.stack}` : '';
+        const message = `${error.message}${stack}`;
+        pushBrowserLogEntry('pageerror', message, Date.now());
+    });
+
+    page.on('requestfailed', request => {
+        const errorText = request.failure()?.errorText || 'Unknown failure';
+        const message = `${request.method()} ${request.url()} - ${errorText}`;
+        pushBrowserLogEntry('requestfailed', message, Date.now());
+    });
+
+    page.on('crash', () => {
+        pushBrowserLogEntry('crash', 'Page crashed during test execution', Date.now());
     });
     
     // Setup browser-side console interception for more detailed capture
@@ -169,23 +235,33 @@ export async function getCapturedConsoleLogs(
     const logs: ConsoleLogEntry[] = [];
     const errors: ConsoleLogEntry[] = [];
     const warnings: ConsoleLogEntry[] = [];
+    const seenLogEntries = new Set<string>();
     
     browserLogs.forEach(logEntry => {
-        const match = logEntry.match(/^\[(.*?)\] \[(.*?)\] (.*)$/);
+        const match = logEntry.match(/^\[(.*?)\] \[(.*?)\] ([\s\S]*)$/);
         if (match) {
-            const [, timestamp, level, message] = match;
+            const [, timestamp, rawLevel, message] = match;
+            const level = normalizeLevel(rawLevel);
+            const normalizedMessage = `[${level.toUpperCase()}] ${message}`;
+            const entryKey = `${level}|${message}`;
+
+            if (seenLogEntries.has(entryKey)) {
+                return;
+            }
+            seenLogEntries.add(entryKey);
+
             const entry: ConsoleLogEntry = {
-                level: level.toLowerCase() as ConsoleLogEntry['level'],
-                message,
+                level,
+                message: normalizedMessage,
                 timestamp: new Date(timestamp).getTime(),
                 args: [message]
             };
             
             logs.push(entry);
             
-            if (level.toLowerCase() === 'error') {
+            if (level === 'error') {
                 errors.push(entry);
-            } else if (level.toLowerCase() === 'warn') {
+            } else if (level === 'warn') {
                 warnings.push(entry);
             }
         }
@@ -228,49 +304,6 @@ export function formatConsoleLogs(capture: ConsoleCapture): string {
     }
     
     return sections.join('\n\n');
-}
-
-/**
- * Filters console logs to remove noise and focus on relevant information
- */
-export function filterRelevantLogs(capture: ConsoleCapture): ConsoleCapture {
-    const isRelevant = (entry: ConsoleLogEntry): boolean => {
-        const message = entry.message.toLowerCase();
-        
-        // Always include errors
-        if (entry.level === 'error') return true;
-        
-        // Include warnings that might be test-related
-        if (entry.level === 'warn' && (
-            message.includes('test') ||
-            message.includes('assert') ||
-            message.includes('qunit') ||
-            message.includes('highcharts')
-        )) return true;
-        
-        // Exclude common noise
-        if (message.includes('favicon') ||
-            message.includes('livereload') ||
-            message.includes('websocket') ||
-            message.includes('devtools')
-        ) return false;
-        
-        // Include logs that might indicate test issues
-        if (message.includes('failed') ||
-            message.includes('error') ||
-            message.includes('exception') ||
-            message.includes('undefined') ||
-            message.includes('null')
-        ) return true;
-        
-        return false;
-    };
-    
-    return {
-        logs: capture.logs.filter(isRelevant),
-        errors: capture.errors, // Always keep all errors
-        warnings: capture.warnings.filter(isRelevant)
-    };
 }
 
 /**

@@ -2,36 +2,55 @@
  * Enhanced error formatting utilities for QUnit test failures
  */
 
+import colors from 'colors/safe';
 import type { QUnitFailedTest, QUnitFailedAssertion, QUnitErrorDetails } from '~/qunit/types.ts';
+
+interface FormatQUnitErrorDetailsOptions {
+    verbose?: boolean;
+}
 
 /**
  * Formats a failed test with enhanced error information
  */
-export function formatFailedTest(test: QUnitFailedTest): string {
-    const header = `❌ ${test.module ? `${test.module} > ` : ''}${test.name}`;
-    const runtime = `   Runtime: ${test.runtime}ms`;
-    
+export function formatFailedTest(
+    test: QUnitFailedTest,
+    testPath?: string
+): string {
+    const header = colors.red(
+        `❌ ${test.module ? `${test.module} > ` : ''}${test.name}`
+    );
+    const runtime = colors.gray(`   Runtime: ${test.runtime}ms`);
+
     const failures = test.failures.map((failure, index) => {
         return `   ${index + 1}. ${failure}`;
     }).join('\n');
-    
-    const stack = test.stack ? `\n   Stack trace:\n${formatStackTrace(test.stack)}` : '';
-    
+
+    const stack = test.stack ?
+        `\n${colors.gray('   Stack trace:')}\n${formatStackTrace(test.stack, testPath)}` :
+        '';
+
     return `${header}\n${runtime}\n${failures}${stack}`;
 }
 
 /**
  * Formats a failed assertion with detailed information
  */
-export function formatFailedAssertion(assertion: QUnitFailedAssertion): string {
-    const header = `❌ ${assertion.module ? `${assertion.module} > ` : ''}${assertion.name}`;
+export function formatFailedAssertion(
+    assertion: QUnitFailedAssertion,
+    testPath?: string
+): string {
+    const header = colors.red(
+        `❌ ${assertion.module ? `${assertion.module} > ` : ''}${assertion.name}`
+    );
     const message = `   Message: ${assertion.message}`;
-    const actual = `   Actual: ${formatValue(assertion.actual)}`;
-    const expected = `   Expected: ${formatValue(assertion.expected)}`;
-    const runtime = `   Runtime: ${assertion.runtime}ms`;
-    
-    const stack = assertion.stack ? `\n   Stack trace:\n${formatStackTrace(assertion.stack)}` : '';
-    
+    const actual = `   Actual: ${colors.red(formatValue(assertion.actual))}`;
+    const expected = `   Expected: ${colors.green(formatValue(assertion.expected))}`;
+    const runtime = colors.gray(`   Runtime: ${assertion.runtime}ms`);
+
+    const stack = assertion.stack ?
+        `\n${colors.gray('   Stack trace:')}\n${formatStackTrace(assertion.stack, testPath)}` :
+        '';
+
     return `${header}\n${message}\n${actual}\n${expected}\n${runtime}${stack}`;
 }
 
@@ -39,11 +58,15 @@ export function formatFailedAssertion(assertion: QUnitFailedAssertion): string {
  * Formats the complete error details for a test failure
  */
 export function formatQUnitErrorDetails(
-    errorDetails: QUnitErrorDetails
+    errorDetails: QUnitErrorDetails,
+    options: FormatQUnitErrorDetailsOptions = {}
 ): string {
-    const header = `🔍 QUnit Test Failure Details for: ${errorDetails.testPath}`;
-    const separator = '='.repeat(80);
-    
+    const { verbose = false } = options;
+    const header = colors.cyan(
+        `🔍 QUnit Test Failure Details for: ${errorDetails.testPath}`
+    );
+    const separator = colors.gray('='.repeat(80));
+
     const summary = `
 📊 Test Summary:
    Total: ${errorDetails.qunitResults.total}
@@ -60,23 +83,42 @@ export function formatQUnitErrorDetails(
     const deduplicatedAssertions = 
         deduplicateFailedAssertions(errorDetails.failedAssertions);
 
-    const failedTests = errorDetails.failedTests.length > 0 
-        ? `\n🚫 Failed Tests:\n${errorDetails.failedTests.map(formatFailedTest).join('\n\n')}`
+    const failedTests = errorDetails.failedTests.length > 0
+        ? `\n${colors.yellow('🚫 Failed Tests:')}\n${
+            errorDetails.failedTests.map(
+                test => formatFailedTest(test, errorDetails.testPath)
+            ).join('\n\n')
+        }`
         : '';
 
     const failedAssertions = deduplicatedAssertions.length > 0
-        ? `\n❗ Failed Assertions:\n${deduplicatedAssertions.map(formatFailedAssertion).join('\n\n')}`
+        ? `\n${colors.yellow('❗ Failed Assertions:')}\n${
+            deduplicatedAssertions.map(
+                assertion => formatFailedAssertion(assertion, errorDetails.testPath)
+            ).join('\n\n')
+        }`
         : '';
+
+    const browserLogSet = new Set(errorDetails.browserLogs);
+    const nonDuplicateConsoleErrors = errorDetails.consoleErrors.filter(
+        error => !browserLogSet.has(error)
+    );
 
     const browserLogs = errorDetails.browserLogs.length > 0
-        ? `\n📝 Browser Logs:\n${errorDetails.browserLogs.map(log => `   ${log}`).join('\n')}`
+        ? `\n${colors.cyan('📝 Browser Logs:')}\n${
+            errorDetails.browserLogs.map(log => `   ${log}`).join('\n')
+        }`
         : '';
 
-    const consoleErrors = errorDetails.consoleErrors.length > 0
-        ? `\n🚨 Console Errors:\n${errorDetails.consoleErrors.map(error => `   ${error}`).join('\n')}`
+    const consoleErrors = nonDuplicateConsoleErrors.length > 0
+        ? `\n${colors.red('🚨 Console Errors:')}\n${
+            nonDuplicateConsoleErrors.map(error => `   ${colors.red(error)}`).join('\n')
+        }`
         : '';
 
-    return `${header}\n${separator}${summary}${failedTests}${failedAssertions}${browserLogs}${consoleErrors}\n${separator}`;
+    const summarySection = verbose ? colors.gray(summary) : '';
+
+    return `${header}\n${separator}${summarySection}${failedTests}${failedAssertions}${browserLogs}${consoleErrors}\n${separator}`;
 }
 
 /**
@@ -122,9 +164,10 @@ function formatValue(value: unknown): string {
 /**
  * Formats a stack trace for better readability
  */
-function formatStackTrace(stack: string): string {
+function formatStackTrace(stack: string, testPath?: string): string {
     return stack
         .split('\n')
+        .map(line => testPath ? line.replace('<anonymous>:', `${testPath}:`) : line)
         .map(line => `     ${line.trim()}`)
         .filter(line => line.trim().length > 0)
         .join('\n');

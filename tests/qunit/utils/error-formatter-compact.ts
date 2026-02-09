@@ -68,12 +68,17 @@ Timing: script load: ${
         ? deduplicatedAssertions.map((ass) => formatFailedAssertion(ass, errorDetails)).join('\n\n')
         : '';
 
+    const browserLogSet = new Set(errorDetails.browserLogs);
+    const nonDuplicateConsoleErrors = errorDetails.consoleErrors.filter(
+        error => !browserLogSet.has(error)
+    );
+
     const browserLogs = errorDetails.browserLogs.length > 0
         ? `\n\nBrowser Logs:\n${errorDetails.browserLogs.map(log => `   ${log}`).join('\n')}`
         : '';
 
-    const consoleErrors = errorDetails.consoleErrors.length > 0
-        ? `\n\nConsole Errors:\n${errorDetails.consoleErrors.map(error => `   ${error}`).join('\n')}`
+    const consoleErrors = nonDuplicateConsoleErrors.length > 0
+        ? `\n\nConsole Errors:\n${nonDuplicateConsoleErrors.map(error => `   ${error}`).join('\n')}`
         : '';
 
     return `${summary}\n${failedAssertions}${browserLogs}${consoleErrors}\n`;
@@ -112,12 +117,17 @@ export function formatQUnitErrorDetailsVerbose(
         ? `\n❗ Failed Assertions:\n${deduplicatedAssertions.map(formatFailedAssertion).join('\n\n')}`
         : '';
 
+    const browserLogSet = new Set(errorDetails.browserLogs);
+    const nonDuplicateConsoleErrors = errorDetails.consoleErrors.filter(
+        error => !browserLogSet.has(error)
+    );
+
     const browserLogs = errorDetails.browserLogs.length > 0
         ? `\n📝 Browser Logs:\n${errorDetails.browserLogs.map(log => `   ${log}`).join('\n')}`
         : '';
 
-    const consoleErrors = errorDetails.consoleErrors.length > 0
-        ? `\n🚨 Console Errors:\n${errorDetails.consoleErrors.map(error => `   ${error}`).join('\n')}`
+    const consoleErrors = nonDuplicateConsoleErrors.length > 0
+        ? `\n🚨 Console Errors:\n${nonDuplicateConsoleErrors.map(error => `   ${error}`).join('\n')}`
         : '';
 
     return `${header}\n${separator}${summary}${failedTests}${failedAssertions}${browserLogs}${consoleErrors}\n${separator}`;
