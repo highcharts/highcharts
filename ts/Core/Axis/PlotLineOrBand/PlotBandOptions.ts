@@ -263,7 +263,6 @@ export interface PlotBandOptions {
     color?: ColorType;
 
     /**
-    /**
      * Use a palette color by index instead of a direct color. Applies the class
      * highcharts-color-{n} and CSS variable --highcharts-color-{n}. If both
      * color and colorIndex are set, color takes precedence.
