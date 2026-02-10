@@ -6,7 +6,7 @@ import colors from 'colors/safe';
 import type { QUnitFailedAssertion, QUnitErrorDetails } from '~/qunit/types.ts';
 
 // Disables the line linking to the playwright trace file
-process.env.PLAYWRIGHT_NO_COPY_PROMPT = '0';
+process.env.PLAYWRIGHT_NO_COPY_PROMPT = '1';
 
 const MAX_STACK_TRACE_LINES = 3;
 
