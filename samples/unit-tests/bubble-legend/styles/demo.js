@@ -1,5 +1,6 @@
 QUnit.test('Bubble legend ranges', function (assert) {
     var bubbleLegendItem,
+        bubbleLegendFormatterCtx,
         seriesItem,
         chart = Highcharts.chart('container', {
             legend: {
@@ -8,7 +9,8 @@ QUnit.test('Bubble legend ranges', function (assert) {
                 bubbleLegend: {
                     enabled: true,
                     labels: {
-                        formatter: function () {
+                        formatter: ctx => {
+                            bubbleLegendFormatterCtx = ctx;
                             return 'some text';
                         }
                     },
@@ -43,6 +45,12 @@ QUnit.test('Bubble legend ranges', function (assert) {
         chart.legend.allItems[1].symbols.labels[1].textStr === 'some text',
         true,
         'Correct label text'
+    );
+
+    assert.strictEqual(
+        chart.legend.bubbleLegend.ranges.indexOf(bubbleLegendFormatterCtx) > -1,
+        true,
+        'Bubble legend formatter got range ctx as the last argument'
     );
 
     bubbleLegendItem = chart.legend.bubbleLegend.legendItem.group;

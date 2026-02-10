@@ -785,7 +785,7 @@ class TimeBase {
                         format = format.replace(
                             '%' + key,
                             typeof val === 'function' ?
-                                val.call(time, timestamp) :
+                                val.call(time, timestamp, time) :
                                 val
                         );
                     }

@@ -528,7 +528,7 @@ class BubbleLegendItem {
         const { numberFormatter } = this.chart;
 
         return format ? F.format(format, range, this.chart) :
-            formatter ? formatter.call(range) :
+            formatter ? formatter.call(range, range) :
                 numberFormatter(range.value, 1);
     }
 

@@ -605,7 +605,11 @@ QUnit.module('Format', () => {
         );
 
         // Format %O as timezone offset to local time (#22329)
-        Highcharts.dateFormats.O = () => '+0100';
+        let dateFormatCtx;
+        Highcharts.dateFormats.O = (timestamp, ctx) => {
+            dateFormatCtx = ctx;
+            return '+0100';
+        };
         assert.strictEqual(
             format(
                 '{ucfirst (point.key:%d.%m.%Y %H:%M:%S %O)}',
@@ -617,6 +621,11 @@ QUnit.module('Format', () => {
             ),
             '11.12.2024 00:00:00 +0100',
             'Custom date format with plus sign'
+        );
+        assert.strictEqual(
+            dateFormatCtx,
+            Highcharts.time,
+            'Custom date format callback got time ctx as the last argument'
         );
         delete Highcharts.dateFormats.O;
 

@@ -293,7 +293,8 @@ class Tooltip {
                 point.tooltipFormatter
             ).call(
                 point,
-                (tooltipOptions as any)[formatPrefix + 'Format'] || ''
+                (tooltipOptions as any)[formatPrefix + 'Format'] || '',
+                point
             );
         });
     }
