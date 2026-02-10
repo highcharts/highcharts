@@ -33,7 +33,7 @@ const { isNumber } = U;
  * @excluding    boostThreshold, boostBlending,connectEnds, connectNulls,
  *               cropThreshold, dataSorting, dragDrop, jitter,
  *               legendSymbolColor, keys, pointPlacement, sizeByAbsoluteValue,
- *               step, xAxis, yAxis, zMax, zMin
+ *               step, xAxis, yAxis
  * @product      highcharts
  * @since        7.0.0
  * @requires     highcharts-more
@@ -79,6 +79,36 @@ const PackedBubbleSeriesDefaults: PackedBubbleSeriesOptions = {
     tooltip: {
         pointFormat: 'Value: {point.value}'
     },
+
+    /**
+     * The minimum for the Z value range. Defaults to the lowest Z value
+     * in the data.
+     *
+     * @see [zMax](#plotOptions.packedbubble.zMax)
+     *
+     * @sample {highcharts} highcharts/plotoptions/bubble-zmin-zmax/
+     *         Z has a possible range of 0-100
+     *
+     * @type      {number}
+     * @since     7.0.0
+     * @product   highcharts
+     * @apioption plotOptions.packedbubble.zMin
+     */
+
+    /**
+     * The maximum for the Z value range. Defaults to the highest Z value
+     * in the data.
+     *
+     * @see [zMin](#plotOptions.packedbubble.zMin)
+     *
+     * @sample {highcharts} highcharts/plotoptions/bubble-zmin-zmax/
+     *         Z has a possible range of 0-100
+     *
+     * @type      {number}
+     * @since     7.0.0
+     * @product   highcharts
+     * @apioption plotOptions.packedbubble.zMax
+     */
 
     /**
      * Flag to determine if nodes are draggable or not. Available for
