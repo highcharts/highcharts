@@ -462,32 +462,17 @@ function onRendererComplexColor(
         if (forceHashId || !pattern.id) {
             // Make a copy so we don't accidentally edit options when setting ID
             pattern = merge({}, pattern);
-            let patternId = 'highcharts-pattern-' + chartIndex + '-' +
-                hashFromObject(pattern) + hashFromObject(pattern, true);
 
-            // Handle anchored patterns - create unique ID per point
+            // Handle anchored patterns - include the point's
+            // position in the pattern before hashing, so each
+            // point gets a unique ID.
             if (pattern.anchorToPoint) {
-                // Get point identifier from element attributes or generate one
-                const elementClass = element.getAttribute('class') || '',
-                    pointIndex =
-                        elementClass.match(/highcharts-point-(\d+)/)?.[1] ||
-                        ((): string => {
-                            const bbox = (element as any).getBBox ?
-                                (element as any).getBBox() : null;
-                            return bbox ?
-                                String(
-                                    Math.round(bbox.x * 100) + '_' +
-                                    Math.round(bbox.y * 100) + '_' +
-                                    Math.round(bbox.width * 100) + '_' +
-                                    Math.round(bbox.height * 100)
-                                ) :
-                                Math.random().toString(36).substr(2, 9);
-                        })();
-                patternId += '-anchored-' + pointIndex;
                 pattern = createAnchoredPattern(pattern, element);
             }
 
-            pattern.id = patternId;
+            pattern.id = 'highcharts-pattern-' + chartIndex + '-' +
+                hashFromObject(pattern) + hashFromObject(pattern, true) +
+                (pattern.anchorToPoint ? '-anchored' : '');
         }
 
         // Add it. This function does nothing if an element with this ID
