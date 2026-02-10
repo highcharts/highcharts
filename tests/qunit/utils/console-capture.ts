@@ -235,26 +235,18 @@ export async function getCapturedConsoleLogs(
     const logs: ConsoleLogEntry[] = [];
     const errors: ConsoleLogEntry[] = [];
     const warnings: ConsoleLogEntry[] = [];
-    const seenLogEntries = new Set<string>();
     
     browserLogs.forEach(logEntry => {
         const match = logEntry.match(/^\[(.*?)\] \[(.*?)\] ([\s\S]*)$/);
         if (match) {
-            const [, timestamp, rawLevel, message] = match;
+            const [, timestamp, rawLevel] = match;
             const level = normalizeLevel(rawLevel);
-            const normalizedMessage = `[${level.toUpperCase()}] ${message}`;
-            const entryKey = `${level}|${message}`;
-
-            if (seenLogEntries.has(entryKey)) {
-                return;
-            }
-            seenLogEntries.add(entryKey);
 
             const entry: ConsoleLogEntry = {
                 level,
-                message: normalizedMessage,
+                message: logEntry,
                 timestamp: new Date(timestamp).getTime(),
-                args: [message]
+                args: [logEntry]
             };
             
             logs.push(entry);
@@ -264,7 +256,15 @@ export async function getCapturedConsoleLogs(
             } else if (level === 'warn') {
                 warnings.push(entry);
             }
+            return;
         }
+
+        logs.push({
+            level: 'log',
+            message: String(logEntry),
+            timestamp: Date.now(),
+            args: [logEntry]
+        });
     });
     
     return { logs, errors, warnings };
@@ -279,11 +279,6 @@ export function formatConsoleLogs(capture: ConsoleCapture): string {
     }
     
     const sections = [];
-    
-    if (capture.errors.length > 0) {
-        sections.push(`🚨 Console Errors (${capture.errors.length}):`);
-        sections.push(capture.errors.map(entry => `   ${entry.message}`).join('\n'));
-    }
     
     if (capture.warnings.length > 0) {
         sections.push(`⚠️  Console Warnings (${capture.warnings.length}):`);

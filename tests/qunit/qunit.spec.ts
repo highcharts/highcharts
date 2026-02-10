@@ -3,6 +3,7 @@ import { Page } from '@playwright/test';
 import { test, setupRoutes } from '~/fixtures.ts';
 import { getKarmaScripts, getSample, transpileTS } from '~/utils.ts';
 import { join, dirname } from 'node:path';
+import { appendFile, writeFile, unlink } from 'node:fs/promises';
 import { glob } from 'glob';
 
 import '~/qunit/types.ts'; // Import for global type declarations
@@ -15,18 +16,133 @@ import { getOutputConfig, createVerbosePassedOutput } from '~/qunit/utils/output
 const QUNIT_VERSION = '2.4.0';
 const QUNIT_SCRIPT = join('tests', 'qunit', 'vendor', `qunit-${QUNIT_VERSION}.js`);
 const QUNIT_STYLES = join('tests', 'qunit', 'vendor', `qunit-${QUNIT_VERSION}.css`);
+const QUNIT_CONSOLE_LOG_GLOB = join('tests', 'qunit', 'console-worker-*.log');
+const QUNIT_CONSOLE_LOG_NOTE_MARKER = join(
+    'tests',
+    'qunit',
+    '.console-log-note-printed.log'
+);
+
+function getQUnitConsoleLogPath(workerIndex: number): string {
+    return join('tests', 'qunit', `console-worker-${workerIndex}.log`);
+}
+
+async function unlinkIfExists(filePath: string): Promise<void> {
+    try {
+        await unlink(filePath);
+    } catch (error) {
+        const err = error as NodeJS.ErrnoException;
+        if (err.code !== 'ENOENT') {
+            throw error;
+        }
+    }
+}
+
+async function clearPreviousWorkerLogs(): Promise<void> {
+    const existingWorkerLogs = glob.sync(QUNIT_CONSOLE_LOG_GLOB, {
+        nodir: true
+    });
+
+    await Promise.all(existingWorkerLogs.map(unlinkIfExists));
+}
+
+function sanitizeFailureOutput(output: string): string {
+    const sanitizedLines = output
+        .split('\n')
+        .filter(line => {
+            const normalized = line.toLowerCase();
+            const trimmed = line.trimStart().toLowerCase();
+            const isStackFrame = trimmed.startsWith('at ');
+            const isNoisyStackFrame =
+                isStackFrame && (
+                    normalized.includes('chrome://juggler/') ||
+                    normalized.includes('debugger eval code') ||
+                    normalized.includes('evalute@') ||
+                    normalized.includes('node:internal') ||
+                    normalized.includes('@playwright')
+                );
+
+            return !isNoisyStackFrame;
+        });
+
+    const cleanedLines = sanitizedLines.filter((line, index) => {
+        if (!line.toLowerCase().includes('stack trace:')) {
+            return true;
+        }
+
+        for (let i = index + 1; i < sanitizedLines.length; i++) {
+            const candidate = sanitizedLines[i].trim();
+            if (!candidate) {
+                continue;
+            }
+            return candidate.startsWith('at ');
+        }
+
+        return false;
+    });
+
+    return cleanedLines
+        .join('\n   ')
+        .replace(/^\s\s\s:/mg, '   ');
+}
+
+function createMessageOnlyError(output: string): Error {
+    const message = sanitizeFailureOutput(output);
+    const error = new Error(message);
+    // Suppress Playwright/Node stack frame rendering for formatted QUnit failures.
+    error.stack = undefined;
+    return error;
+}
+
+async function appendBrowserLogsToFile(
+    testPath: string,
+    browserLogs: string[],
+    logFilePath: string
+): Promise<void> {
+    if (browserLogs.length === 0) {
+        return;
+    }
+
+    const separator = '-'.repeat(80);
+    const content = [
+        `[${new Date().toISOString()}] ${testPath}`,
+        ...browserLogs.map(log => `  ${log}`),
+        separator,
+        ''
+    ].join('\n');
+
+    await appendFile(logFilePath, content, 'utf8');
+}
+
+async function logBrowserLogsNoteOnce(
+    logFilePath: string = QUNIT_CONSOLE_LOG_GLOB
+): Promise<void> {
+    try {
+        await writeFile(
+            QUNIT_CONSOLE_LOG_NOTE_MARKER,
+            `${new Date().toISOString()}\n`,
+            { flag: 'wx' }
+        );
+        console.log(`🗒 Browser logs: ${logFilePath}`);
+    } catch (error) {
+        const err = error as NodeJS.ErrnoException;
+        if (err.code !== 'EEXIST') {
+            throw error;
+        }
+    }
+}
 
 test.describe('QUnit tests', () => {
     const pathEnv = process.env.QUNIT_TEST_PATH ?? 'unit-tests/*/*';
 
     test.describe.configure({
         timeout: 30_000,
-        retries: 1 // retry once
     });
 
     // Set up page in advance to share browser between tests
     // which saves setup time for each test
     let page: Page;
+    let qunitConsoleLogPath = getQUnitConsoleLogPath(0);
 
     // Track test results for summary
     const testResults = {
@@ -35,7 +151,20 @@ test.describe('QUnit tests', () => {
         total: 0
     };
 
-    test.beforeAll(async ({ browser }) => {
+    test.beforeAll(async ({ browser }, testInfo) => {
+        qunitConsoleLogPath = getQUnitConsoleLogPath(testInfo.workerIndex);
+
+        if (testInfo.workerIndex === 0) {
+            await unlinkIfExists(QUNIT_CONSOLE_LOG_NOTE_MARKER);
+            await clearPreviousWorkerLogs();
+        }
+
+        await writeFile(
+            qunitConsoleLogPath,
+            `QUnit browser logs (${new Date().toISOString()})\n\n`,
+            'utf8'
+        );
+
         const context = await browser.newContext({
             viewport: { width: 800, height: 600 }
         });
@@ -95,6 +224,9 @@ test.describe('QUnit tests', () => {
     });
 
     test.afterAll(async ({ browser }) => {
+        if (testResults.failed > 0) {
+            await logBrowserLogsNoteOnce();
+        }
         await browser.close();
     });
 
@@ -172,6 +304,11 @@ test.describe('QUnit tests', () => {
                         page,
                         qunitTest
                     );
+                    await appendBrowserLogsToFile(
+                        qunitTest,
+                        errorDetails.browserLogs,
+                        qunitConsoleLogPath
+                    );
                     const scriptLoadTime = scriptLoadEnd - scriptLoadStart;
                     errorDetails.timing.scriptLoad = scriptLoadTime;
                     errorDetails.timing.total = Date.now() - testStartTime;
@@ -181,13 +318,15 @@ test.describe('QUnit tests', () => {
                     const detailedError = formatQUnitErrorDetails(
                         errorDetails, 
                         {
-                            verbose: outputConfig.verbose
+                            verbose: outputConfig.verbose,
+                            logFilePath: qunitConsoleLogPath,
+                            includeLogFileNote: false
                         }
                     );
 
                     // Fail the Playwright test with the detailed error message
                     // Don't use expect() to avoid duplicated output
-                    throw new Error(detailedError);
+                    throw createMessageOnlyError(detailedError);
                 } else {
                     // Track passed test
                     testResults.passed++;
@@ -222,6 +361,7 @@ test.describe('QUnit tests', () => {
                     errorMessage += `Timeout: ${timeoutError.context.timeout}ms\n`;
                     errorMessage += `Recovery: ${recovery.message}\n\n`;
                     errorMessage += timeoutError.message;
+                    errorMessage = sanitizeFailureOutput(errorMessage);
 
                     console.error(errorMessage);
 
@@ -257,7 +397,7 @@ test.describe('QUnit tests', () => {
 
                     // Track failed test
                     testResults.failed++;
-                    throw new Error(errorMessage);
+                    throw createMessageOnlyError(errorMessage);
                 } else {
                     // Re-throw the error as-is if it's already an Error
                     // (e.g., from QUnit test failures above - count already incremented)
@@ -267,7 +407,7 @@ test.describe('QUnit tests', () => {
                     // Handle other types of errors
                     testResults.failed++;
                     const errorMessage = `❌ Test execution error: ${error}\nTest: ${qunitTest}`;
-                    throw new Error(errorMessage);
+                    throw createMessageOnlyError(errorMessage);
                 }
             }
         });
