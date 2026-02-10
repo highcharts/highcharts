@@ -1,4 +1,7 @@
 const chart = Highcharts.chart('container', {
+    title: {
+        text: 'Demo of plot line id'
+    },
     xAxis: {
         categories: [
             'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',

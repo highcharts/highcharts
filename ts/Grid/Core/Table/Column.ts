@@ -2,7 +2,7 @@
  *
  *  Grid Column class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -28,9 +28,9 @@ import type CellContent from './CellContent/CellContent';
 import type HeaderCell from './Header/HeaderCell';
 import type { DeepPartial } from '../../../Shared/Types';
 import type { NonArrayColumnOptions } from '../Grid';
+import type { Column as DataTableColumn } from '../../../Data/DataTable';
 
 import Table from './Table.js';
-import DataTable from '../../../Data/DataTable.js';
 import Utils from '../../../Core/Utilities.js';
 import ColumnSorting from './Actions/ColumnSorting';
 import ColumnFiltering from './Actions/ColumnFiltering/ColumnFiltering.js';
@@ -90,7 +90,7 @@ export class Column {
     /**
      * The data of the column.
      */
-    public data?: DataTable.Column;
+    public data?: DataTableColumn;
 
     /**
      * The options of the column as a proxy that provides merged access to

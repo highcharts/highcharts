@@ -2,7 +2,7 @@
  *
  *  Variable Pie module for Highcharts
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Grzegorz Blachliński
  *
  *  A commercial license may be required depending on use.
@@ -17,10 +17,12 @@
  *
  * */
 
-import type PieSeriesOptions from '../Pie/PieSeriesOptions';
+import type {
+    PieSeriesOptions,
+    PieSeriesTooltipOptions
+} from '../Pie/PieSeriesOptions';
 import type PointShortOptions from '../../Core/Series/PointOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type TooltipOptions from '../../Core/TooltipOptions';
 import type VariablePiePointOptions from './VariablePiePointOptions';
 
 /* *
@@ -158,7 +160,7 @@ export interface VariablePieSeriesOptions extends PieSeriesOptions {
 
     states?: SeriesStatesOptions<VariablePieSeriesOptions>;
 
-    tooltip?: Partial<TooltipOptions>;
+    tooltip?: VariablePieSeriesTooltipOptions;
 
     /**
      * The maximum possible z value for the point's radius calculation. If
@@ -187,6 +189,14 @@ export interface VariablePieSeriesOptions extends PieSeriesOptions {
      */
     zMin?: number;
 
+}
+
+export interface VariablePieSeriesTooltipOptions
+    extends PieSeriesTooltipOptions {
+    /**
+     * @default '<span style="color:{point.color}">\u25CF</span> {series.name}<br/>Value: {point.y}<br/>Size: {point.z}<br/>'
+     */
+    pointFormat?: PieSeriesTooltipOptions['pointFormat'];
 }
 
 export type VariablePieSizeByValue = ('area'|'radius');

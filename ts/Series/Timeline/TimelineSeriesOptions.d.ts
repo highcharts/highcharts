@@ -2,7 +2,7 @@
  *
  *  Timeline Series.
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *
  *  Author: Daniel Studencki
  *
@@ -19,14 +19,13 @@
  * */
 
 import type {
-    LegendSymbolType,
     SeriesStatesOptions
 } from '../../Core/Series/SeriesOptions';
 import type LineSeriesOptions from '../Line/LineSeriesOptions';
 import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
+import type { SeriesTooltipOptions } from '../../Core/TooltipOptions';
 import type TimelineDataLabelOptions from './TimelineDataLabelOptions';
 import type TimelinePointOptions from './TimelinePointOptions';
-import type TooltipOptions from '../../Core/TooltipOptions';
 
 /* *
  *
@@ -123,7 +122,7 @@ export interface TimelineSeriesOptions extends LineSeriesOptions {
 
     ignoreHiddenPoint?: boolean;
 
-    legendSymbol?: LegendSymbolType;
+    legendSymbol?: LineSeriesOptions['legendSymbol'];
 
     legendType?: ('point'|'series');
 
@@ -144,8 +143,19 @@ export interface TimelineSeriesOptions extends LineSeriesOptions {
 
     stickyTracking?: boolean;
 
-    tooltip?: Partial<TooltipOptions>;
+    tooltip?: TimelineSeriesTooltipOptions;
+}
 
+export interface TimelineSeriesTooltipOptions extends SeriesTooltipOptions {
+    /**
+     * @default '<span style="color:{point.color}">\u25CF</span> <span style="font-size: 0.8em"> {point.key}</span><br/>'
+     */
+    headerFormat?: SeriesTooltipOptions['headerFormat'];
+
+    /**
+     * @default '{point.description}'
+     */
+    pointFormat?: SeriesTooltipOptions['pointFormat'];
 }
 
 /* *

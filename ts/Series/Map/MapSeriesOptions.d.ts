@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Honsi
  *
  *  A commercial license may be required depending on use.
@@ -27,10 +27,9 @@ import type {
 import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
 import type {
     SeriesStatesOptions,
-    SeriesLinecapValue,
-    LegendSymbolType
+    SeriesLinecapValue
 } from '../../Core/Series/SeriesOptions';
-import type TooltipOptions from '../../Core/TooltipOptions';
+import { ScatterSeriesTooltipOptions } from '../Scatter/ScatterSeriesOptions';
 
 /* *
  *
@@ -172,7 +171,10 @@ export interface MapSeriesOptions
 
     dataLabels?: (DataLabelOptions|Array<DataLabelOptions>);
 
-    legendSymbol?: LegendSymbolType;
+    /**
+     * @default 'rectangle'
+     */
+    legendSymbol?: ScatterSeriesOptions['legendSymbol'];
 
     /**
      * The SVG value used for the `stroke-linecap` and `stroke-linejoin` of
@@ -219,8 +221,19 @@ export interface MapSeriesOptions
      */
     turboThreshold?: number;
 
-    tooltip?: Partial<TooltipOptions>;
+    tooltip?: MapSeriesTooltipOptions;
+}
 
+export interface MapSeriesTooltipOptions extends ScatterSeriesTooltipOptions {
+    /**
+     * @default true
+     */
+    followPointer?: ScatterSeriesTooltipOptions['followPointer'];
+
+    /**
+     * @default '{point.name}: {point.value}<br/>'
+     */
+    pointFormat?: ScatterSeriesTooltipOptions['pointFormat'];
 }
 
 /* *

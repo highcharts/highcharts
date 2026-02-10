@@ -1,6 +1,4 @@
 ---
- name: Highcharts Demo
- authors:
-   - Paweł Fus
- js_wrap: b
+name: Demo of yAxis.labels.distance
+js_wrap: b
 ...

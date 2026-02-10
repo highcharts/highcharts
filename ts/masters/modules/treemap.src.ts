@@ -4,7 +4,7 @@
  * @module highcharts/modules/treemap
  * @requires highcharts
  *
- * (c) 2014-2025 Highsoft AS
+ * (c) 2014-2026 Highsoft AS
  * Authors: Jon Arild Nygard / Oystein Moseng
  *
  * A commercial license may be required depending on use.

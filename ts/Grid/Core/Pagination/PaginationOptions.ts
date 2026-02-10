@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2024 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Honsi
  *
  *  A commercial license may be required depending on use.
@@ -173,6 +173,11 @@ export interface PaginationOptions {
      * @default 'bottom'
      */
     position?: string;
+
+    /**
+     * Alignment of the pagination elements within the wrapper.
+     */
+    alignment?: 'left' | 'center' | 'right' | 'distributed';
 
     /**
      * Controls options for pagination UI elements.

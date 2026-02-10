@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Honsi
  *
  *  Extension for 3d axes
@@ -19,7 +19,7 @@
  *
  * */
 
-import type Axis3DOptions from './Axis3DOptions';
+import type AxisOptions from './AxisOptions';
 
 /* *
  *
@@ -135,7 +135,7 @@ const Axis3DDefaults = {
          */
         skew3d: null
     }
-} as Axis3DOptions;
+} as AxisOptions;
 
 /* *
  *

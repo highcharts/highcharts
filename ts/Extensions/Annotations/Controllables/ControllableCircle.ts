@@ -12,13 +12,14 @@
  * */
 
 import type Annotation from '../Annotation';
+import type AnnotationMockPointOptionsObject from '../AnnotationMockPointOptionsObject';
 import type { ControllableShapeOptions } from './ControllableOptions';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 
 import Controllable from './Controllable.js';
 import ControllablePath from './ControllablePath.js';
 import U from '../../../Core/Utilities.js';
-const { merge } = U;
+const { defined, merge } = U;
 
 /* *
  *
@@ -29,9 +30,9 @@ const { merge } = U;
 /**
  * A controllable circle class.
  *
+ * @internal
  * @requires modules/annotations
  *
- * @private
  * @class
  * @name Highcharts.AnnotationControllableCircle
  *
@@ -86,19 +87,46 @@ class ControllableCircle extends Controllable {
      *
      * */
 
-    /**
-     * @private
-     */
+    public init(
+        annotation: Annotation,
+        options: ControllableShapeOptions,
+        index: number
+    ): void {
+        const { point, xAxis, yAxis } = options;
+        if (point && typeof point !== 'string') {
+            if (defined(xAxis)) {
+                (point as AnnotationMockPointOptionsObject).xAxis = xAxis;
+            }
+            if (defined(yAxis)) {
+                (point as AnnotationMockPointOptionsObject).yAxis = yAxis;
+            }
+        }
+
+        super.init(annotation, options, index);
+    }
+
     public redraw(animation?: boolean): void {
 
         if (this.graphic) {
-            const position = this.anchor(this.points[0]).absolutePosition;
+            const point = this.points[0],
+                position = this.anchor(point).absolutePosition;
+
+            let r = this.options.r || 0;
 
             if (position) {
+                const yAxis = defined(this.options.yAxis) ?
+                    this.chart.yAxis[this.options.yAxis] : void 0;
+
+                if (yAxis && defined(point.y)) {
+                    r = this.calculateAnnotationSize(
+                        point.y, r, yAxis
+                    );
+                }
+
                 this.graphic[animation ? 'animate' : 'attr']({
                     x: position.x,
                     y: position.y,
-                    r: this.options.r
+                    r
                 });
             } else {
                 this.graphic.attr({
@@ -113,9 +141,6 @@ class ControllableCircle extends Controllable {
         super.redraw.call(this, animation);
     }
 
-    /**
-     * @private
-     */
     public render(parent: SVGElement): void {
         const attrs = this.attrsFromOptions(this.options);
 
@@ -129,7 +154,8 @@ class ControllableCircle extends Controllable {
 
     /**
      * Set the radius.
-     * @private
+     *
+     * @internal
      * @param {number} r
      *        A radius to be set
      */
@@ -145,6 +171,7 @@ class ControllableCircle extends Controllable {
  *
  * */
 
+/** @internal */
 interface ControllableCircle {
     collection: 'shapes';
     itemType: 'shape';
@@ -157,6 +184,7 @@ interface ControllableCircle {
  *
  * */
 
+/** @internal */
 declare module './ControllableType' {
     interface ControllableShapeTypeRegistry {
         circle: typeof ControllableCircle;
@@ -169,4 +197,5 @@ declare module './ControllableType' {
  *
  * */
 
+/** @internal */
 export default ControllableCircle;

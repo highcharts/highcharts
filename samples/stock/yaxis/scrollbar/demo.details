@@ -1,6 +1,4 @@
 ---
- name: Highcharts Stock Demo
- authors:
-   - Torstein Hønsi
- js_wrap: b
+name: Demo of yAxis.scrollbar.enabled and showFull
+js_wrap: b
 ...

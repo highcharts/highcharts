@@ -2,7 +2,7 @@
  *
  *  Wind barb series module
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Honsi
  *
  *  A commercial license may be required depending on use.
@@ -17,10 +17,12 @@
  *
  * */
 
-import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
+import type {
+    ColumnSeriesOptions,
+    ColumnSeriesTooltipOptions
+} from '../Column/ColumnSeriesOptions';
 import type PointShortOptions from '../../Core/Series/PointOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type TooltipOptions from '../../Core/TooltipOptions';
 import type WindbarbPointOptions from './WindbarbPointOptions';
 
 /* *
@@ -158,7 +160,7 @@ export interface WindbarbSeriesOptions extends ColumnSeriesOptions {
 
     states?: SeriesStatesOptions<WindbarbSeriesOptions>;
 
-    tooltip?: Partial<TooltipOptions>;
+    tooltip?: WindbarbSeriesTooltipOptions;
 
     /**
      * Pixel length of the stems.
@@ -182,6 +184,18 @@ export interface WindbarbSeriesOptions extends ColumnSeriesOptions {
      */
     yOffset?: number;
 
+}
+
+export interface WindbarbSeriesTooltipOptions extends ColumnSeriesTooltipOptions {
+    /**
+     * The default point format for the wind barb tooltip. Note the
+     * `point.beaufort` property that refers to the Beaufort wind scale.
+     * The names can be internationalized by modifying
+     * `Highcharts.seriesTypes.windbarb.prototype.beaufortNames`.
+     *
+     * @default '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.value}</b> ({point.beaufort})<br/>'
+     */
+    pointFormat?: ColumnSeriesTooltipOptions['pointFormat'];
 }
 
 /**

@@ -2,7 +2,7 @@
  *
  *  X-range series module
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Honsi, Lars A. V. Cabrera
  *
  *  A commercial license may be required depending on use.
@@ -17,10 +17,12 @@
  *
  * */
 
-import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
+import type {
+    ColumnSeriesOptions,
+    ColumnSeriesTooltipOptions
+} from '../Column/ColumnSeriesOptions';
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type TooltipOptions from '../../Core/TooltipOptions';
 import type XRangePointOptions from './XRangePointOptions';
 import type { XRangePointPartialFillOptions } from './XRangePointOptions';
 
@@ -134,8 +136,25 @@ export interface XRangeSeriesOptions extends ColumnSeriesOptions {
 
     states?: SeriesStatesOptions<XRangeSeriesOptions>;
 
-    tooltip?: Partial<TooltipOptions>;
+    tooltip?: XRangeSeriesTooltipOptions;
 
+}
+
+export interface XRangeSeriesTooltipOptions extends ColumnSeriesTooltipOptions {
+    /**
+     * @default '+ {point.groupedPointsAmount} more...<br/>'
+     */
+    clusterFormat?: ColumnSeriesTooltipOptions['clusterFormat'];
+
+    /**
+     * @default '<span style="font-size: 0.8em">{ucfirst point.x} - {point.x2}</span><br/>'
+     */
+    headerFormat?: ColumnSeriesTooltipOptions['headerFormat'];
+
+    /**
+     * @default '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.yCategory}</b><br/>'
+     */
+    pointFormat?: ColumnSeriesTooltipOptions['pointFormat'];
 }
 
 /* *

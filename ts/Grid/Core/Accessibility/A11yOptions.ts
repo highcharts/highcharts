@@ -2,7 +2,7 @@
  *
  *  Grid Accessibility options
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -144,6 +144,14 @@ export interface SortingLangA11yOptions {
          */
         none?: string;
     }
+
+    /**
+     * The message for multi-column sort priority. Use `{priority}` to insert
+     * the priority index.
+     *
+     * @default 'Priority {priority}.'
+     */
+    priority?: string;
 }
 
 /**
