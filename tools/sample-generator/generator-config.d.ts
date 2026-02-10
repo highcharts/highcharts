@@ -73,6 +73,14 @@ export interface Details {
     use_png_thumbnail?: boolean;
 }
 
+export type FlatTreeNode = {
+    default?: any;
+    extendsPath?: string;
+    mainType?: string;
+    name: string;
+    options?: string[];
+}
+
 export interface SampleGeneratorConfig {
     /**
      * Additional chart options to merge in, extending the options from

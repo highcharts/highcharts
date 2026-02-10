@@ -1,0 +1,82 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid-lite.css");
+
+body {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
+    background: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
+}
+
+.demo {
+    padding: 8px 12px;
+}
+
+#container {
+    height: 320px;
+}
+
+.event-log {
+    margin: 12px 0 8px;
+    padding: 10px 12px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.6);
+}
+
+.event-log-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.event-log-header button {
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    background: rgba(255, 255, 255, 0.9);
+    cursor: pointer;
+}
+
+.event-log-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    max-height: 160px;
+    overflow: auto;
+    font-family:
+        ui-monospace,
+        SFMono-Regular,
+        Menlo,
+        Monaco,
+        Consolas,
+        "Liberation Mono",
+        "Courier New",
+        monospace;
+    font-size: 12px;
+    line-height: 1.35;
+}
+
+.event-log-list li {
+    padding: 4px 0;
+    border-top: 1px dashed rgba(0, 0, 0, 0.12);
+}
+
+.event-log-list li:first-child {
+    border-top: 0;
+}
+
+.highcharts-description {
+    max-width: 60rem;
+    padding: 0 8px;
+}

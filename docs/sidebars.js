@@ -127,6 +127,7 @@ module.exports = {
             'grid/header',
             'grid/cell-editing',
             'grid/cell-renderers',
+            'grid/cell-context-menu',
             'grid/sparklines',
             'grid/column-filtering',
             'grid/events',
