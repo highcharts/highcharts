@@ -3,33 +3,17 @@
  */
 
 import colors from 'colors/safe';
-import type { QUnitFailedTest, QUnitFailedAssertion, QUnitErrorDetails } from '~/qunit/types.ts';
+import type { QUnitFailedAssertion, QUnitErrorDetails } from '~/qunit/types.ts';
+
+// Disables the line linking to the playwright trace file
+process.env.PLAYWRIGHT_NO_COPY_PROMPT = '0';
+
+const MAX_STACK_TRACE_LINES = 3;
 
 interface FormatQUnitErrorDetailsOptions {
     verbose?: boolean;
-}
-
-/**
- * Formats a failed test with enhanced error information
- */
-export function formatFailedTest(
-    test: QUnitFailedTest,
-    testPath?: string
-): string {
-    const header = colors.red(
-        `❌ ${test.module ? `${test.module} > ` : ''}${test.name}`
-    );
-    const runtime = colors.gray(`   Runtime: ${test.runtime}ms`);
-
-    const failures = test.failures.map((failure, index) => {
-        return `   ${index + 1}. ${failure}`;
-    }).join('\n');
-
-    const stack = test.stack ?
-        `\n${colors.gray('   Stack trace:')}\n${formatStackTrace(test.stack, testPath)}` :
-        '';
-
-    return `${header}\n${runtime}\n${failures}${stack}`;
+    logFilePath?: string;
+    includeLogFileNote?: boolean;
 }
 
 /**
@@ -42,16 +26,22 @@ export function formatFailedAssertion(
     const header = colors.red(
         `❌ ${assertion.module ? `${assertion.module} > ` : ''}${assertion.name}`
     );
-    const message = `   Message: ${assertion.message}`;
-    const actual = `   Actual: ${colors.red(formatValue(assertion.actual))}`;
-    const expected = `   Expected: ${colors.green(formatValue(assertion.expected))}`;
-    const runtime = colors.gray(`   Runtime: ${assertion.runtime}ms`);
+    const message = `Message: ${assertion.message}`;
+    const actual = `Actual: ${colors.red(formatValue(assertion.actual))}`;
+    const expected = `Expected: ${colors.green(formatValue(assertion.expected))}`;
 
-    const stack = assertion.stack ?
-        `\n${colors.gray('   Stack trace:')}\n${formatStackTrace(assertion.stack, testPath)}` :
+    const stackTrace = formatStackTrace(assertion.stack, testPath);
+    const stack = stackTrace.trim().length > 0 ?
+        `\n${colors.gray('   Stack trace:')}\n${stackTrace}` :
         '';
 
-    return `${header}\n${message}\n${actual}\n${expected}\n${runtime}${stack}`;
+    const hasMultiLineValues = [actual, expected].some(v => v.includes('\n'));
+    const valueSeparator = hasMultiLineValues ? `\n${' '.repeat(3)}` : ' - ';
+
+    return `${header}
+   ${actual}${valueSeparator}${expected}
+   ${message}
+   ${stack}`;
 }
 
 /**
@@ -61,11 +51,11 @@ export function formatQUnitErrorDetails(
     errorDetails: QUnitErrorDetails,
     options: FormatQUnitErrorDetailsOptions = {}
 ): string {
-    const { verbose = false } = options;
-    const header = colors.cyan(
-        `🔍 QUnit Test Failure Details for: ${errorDetails.testPath}`
-    );
-    const separator = colors.gray('='.repeat(80));
+    const {
+        verbose = false,
+        logFilePath = 'tests/qunit/console-worker-*.log',
+        includeLogFileNote = true
+    } = options;
 
     const summary = `
 📊 Test Summary:
@@ -83,42 +73,48 @@ export function formatQUnitErrorDetails(
     const deduplicatedAssertions = 
         deduplicateFailedAssertions(errorDetails.failedAssertions);
 
-    const failedTests = errorDetails.failedTests.length > 0
-        ? `\n${colors.yellow('🚫 Failed Tests:')}\n${
-            errorDetails.failedTests.map(
-                test => formatFailedTest(test, errorDetails.testPath)
-            ).join('\n\n')
-        }`
-        : '';
-
     const failedAssertions = deduplicatedAssertions.length > 0
-        ? `\n${colors.yellow('❗ Failed Assertions:')}\n${
+        ? `${
             deduplicatedAssertions.map(
-                assertion => formatFailedAssertion(assertion, errorDetails.testPath)
+                assertion => formatFailedAssertion(
+                    assertion, 
+                    errorDetails.testPath
+                )
             ).join('\n\n')
         }`
-        : '';
+        : errorDetails.failedTests.length > 0
+            ? `\n${colors.yellow('🚫 Failed Tests:')}\n${
+                errorDetails.failedTests.map(
+                    test => `   x ${test.name}`
+                ).join('\n')
+            }`
+            : '';
 
-    const browserLogSet = new Set(errorDetails.browserLogs);
-    const nonDuplicateConsoleErrors = errorDetails.consoleErrors.filter(
-        error => !browserLogSet.has(error)
-    );
-
-    const browserLogs = errorDetails.browserLogs.length > 0
+    const browserLogs = verbose && errorDetails.browserLogs.length > 0
         ? `\n${colors.cyan('📝 Browser Logs:')}\n${
             errorDetails.browserLogs.map(log => `   ${log}`).join('\n')
         }`
         : '';
 
-    const consoleErrors = nonDuplicateConsoleErrors.length > 0
-        ? `\n${colors.red('🚨 Console Errors:')}\n${
-            nonDuplicateConsoleErrors.map(error => `   ${colors.red(error)}`).join('\n')
+    const browserErrorCount = errorDetails.consoleErrors.length;
+    const browserErrors = browserErrorCount > 0
+        ? `${colors.red(
+            `🚨 ${browserErrorCount} browser error${browserErrorCount === 1 ? '' : 's'}`
+        )}${
+            verbose
+                ? `\n${errorDetails.consoleErrors
+                    .map(error => `   ${colors.red(error)}`)
+                    .join('\n')}`
+                : ''
         }`
         : '';
 
     const summarySection = verbose ? colors.gray(summary) : '';
+    const logFileNote = includeLogFileNote && browserErrorCount > 0
+        ? `\n${colors.gray(`🗒 Browser logs: ${logFilePath}`)}`
+        : '';
 
-    return `${header}\n${separator}${summarySection}${failedTests}${failedAssertions}${browserLogs}${consoleErrors}\n${separator}`;
+    return `${summarySection}${failedAssertions}${failedAssertions.length ? '\n' : ''}${browserErrors}${browserLogs}${logFileNote}`;
 }
 
 /**
@@ -164,12 +160,17 @@ function formatValue(value: unknown): string {
 /**
  * Formats a stack trace for better readability
  */
-function formatStackTrace(stack: string, testPath?: string): string {
+function formatStackTrace(stack?: string, testPath?: string): string {
+    if (!stack) {
+        return '';
+    }
+
     return stack
         .split('\n')
         .map(line => testPath ? line.replace('<anonymous>:', `${testPath}:`) : line)
         .map(line => `     ${line.trim()}`)
         .filter(line => line.trim().length > 0)
+        .slice(0, MAX_STACK_TRACE_LINES)
         .join('\n');
 }
 
@@ -203,7 +204,7 @@ export function createErrorSummary(errorDetails: QUnitErrorDetails): string {
         failureTypes.push(`${errorDetails.failedAssertions.length} assertion failure(s)`);
     }
     if (errorDetails.consoleErrors.length > 0) {
-        failureTypes.push(`${errorDetails.consoleErrors.length} console error(s)`);
+        failureTypes.push(`${errorDetails.consoleErrors.length} browser error(s)`);
     }
     
     return `❌ ${testPath}: ${failedCount}/${totalCount} failed - ${failureTypes.join(', ')}`;
