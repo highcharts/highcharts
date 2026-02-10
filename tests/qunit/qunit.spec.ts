@@ -3,7 +3,7 @@ import { Page } from '@playwright/test';
 import { test, setupRoutes } from '~/fixtures.ts';
 import { getKarmaScripts, getSample, transpileTS } from '~/utils.ts';
 import { join, dirname } from 'node:path';
-import { appendFile, writeFile, unlink } from 'node:fs/promises';
+import { appendFile, writeFile } from 'node:fs/promises';
 import { glob } from 'glob';
 
 import '~/qunit/types.ts'; // Import for global type declarations
@@ -16,34 +16,32 @@ import { getOutputConfig, createVerbosePassedOutput } from '~/qunit/utils/output
 const QUNIT_VERSION = '2.4.0';
 const QUNIT_SCRIPT = join('tests', 'qunit', 'vendor', `qunit-${QUNIT_VERSION}.js`);
 const QUNIT_STYLES = join('tests', 'qunit', 'vendor', `qunit-${QUNIT_VERSION}.css`);
-const QUNIT_CONSOLE_LOG_GLOB = join('tests', 'qunit', 'console-worker-*.log');
 const QUNIT_CONSOLE_LOG_NOTE_MARKER = join(
     'tests',
     'qunit',
     '.console-log-note-printed.log'
 );
 
-function getQUnitConsoleLogPath(workerIndex: number): string {
-    return join('tests', 'qunit', `console-worker-${workerIndex}.log`);
+function getQUnitConsoleLogPath(parallelIndex: number): string {
+    return join('tests', 'qunit', `console-worker-${parallelIndex}.log`);
 }
 
-async function unlinkIfExists(filePath: string): Promise<void> {
+async function ensureQUnitConsoleLogFile(logFilePath: string): Promise<void> {
     try {
-        await unlink(filePath);
+        await writeFile(
+            logFilePath,
+            `QUnit browser logs (${new Date().toISOString()})\n\n`,
+            {
+                encoding: 'utf8',
+                flag: 'wx'
+            }
+        );
     } catch (error) {
         const err = error as NodeJS.ErrnoException;
-        if (err.code !== 'ENOENT') {
+        if (err.code !== 'EEXIST') {
             throw error;
         }
     }
-}
-
-async function clearPreviousWorkerLogs(): Promise<void> {
-    const existingWorkerLogs = glob.sync(QUNIT_CONSOLE_LOG_GLOB, {
-        nodir: true
-    });
-
-    await Promise.all(existingWorkerLogs.map(unlinkIfExists));
 }
 
 function sanitizeFailureOutput(output: string): string {
@@ -114,16 +112,13 @@ async function appendBrowserLogsToFile(
     await appendFile(logFilePath, content, 'utf8');
 }
 
-async function logBrowserLogsNoteOnce(
-    logFilePath: string = QUNIT_CONSOLE_LOG_GLOB
-): Promise<void> {
+async function markBrowserLogsNoteNeeded(): Promise<void> {
     try {
         await writeFile(
             QUNIT_CONSOLE_LOG_NOTE_MARKER,
             `${new Date().toISOString()}\n`,
             { flag: 'wx' }
         );
-        console.log(`🗒 Browser logs: ${logFilePath}`);
     } catch (error) {
         const err = error as NodeJS.ErrnoException;
         if (err.code !== 'EEXIST') {
@@ -152,18 +147,9 @@ test.describe('QUnit tests', () => {
     };
 
     test.beforeAll(async ({ browser }, testInfo) => {
-        qunitConsoleLogPath = getQUnitConsoleLogPath(testInfo.workerIndex);
+        qunitConsoleLogPath = getQUnitConsoleLogPath(testInfo.parallelIndex);
 
-        if (testInfo.workerIndex === 0) {
-            await unlinkIfExists(QUNIT_CONSOLE_LOG_NOTE_MARKER);
-            await clearPreviousWorkerLogs();
-        }
-
-        await writeFile(
-            qunitConsoleLogPath,
-            `QUnit browser logs (${new Date().toISOString()})\n\n`,
-            'utf8'
-        );
+        await ensureQUnitConsoleLogFile(qunitConsoleLogPath);
 
         const context = await browser.newContext({
             viewport: { width: 800, height: 600 }
@@ -225,7 +211,7 @@ test.describe('QUnit tests', () => {
 
     test.afterAll(async ({ browser }) => {
         if (testResults.failed > 0) {
-            await logBrowserLogsNoteOnce();
+            await markBrowserLogsNoteNeeded();
         }
         await browser.close();
     });

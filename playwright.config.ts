@@ -9,7 +9,11 @@ export default defineConfig({
     forbidOnly: !!process.env.CI,
     retries: 0,
     workers: process.env.CI ? 2 : undefined,
-    reporter: [['html', { open: 'never' }]],
+    reporter: [
+        [process.env.CI ? 'dot' : 'line'],
+        ['html', { open: 'never' }],
+        ['./tests/qunit/utils/browser-log-note-reporter.ts']
+    ],
     use: {
         trace: 'on-first-retry',
         baseURL: 'http://localhost',
