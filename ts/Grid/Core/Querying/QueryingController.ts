@@ -24,7 +24,7 @@
 
 import type DataModifier from '../../../Data/Modifiers/DataModifier.js';
 import type Grid from '../Grid.js';
-import type RowPinningController from '../../Pro/RowPinning/RowPinningController.js';
+import type RowPinningController from '../RowPinning/RowPinningController.js';
 
 import SortingController from './SortingController.js';
 import FilteringController from './FilteringController.js';

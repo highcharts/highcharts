@@ -2,7 +2,7 @@
 sidebar_label: "Row pinning"
 ---
 
-# Row pinning (Grid Pro)
+# Row pinning (Grid Lite)
 
 Row pinning lets you keep selected rows visible at the top or bottom while the
 main rows scroll normally.
@@ -85,8 +85,8 @@ rendering: {
 - Row pinning works with both local and remote data providers.
 - With remote providers, `resolve(row)` may require scanning rows to derive
   initial state, which can be expensive on very large datasets.
-- Row pinning is available in **Grid Pro**.
+- Row pinning is available in **Grid Lite** and **Grid Pro**.
 
 ## Demo
 
-<iframe src="https://www.highcharts.com/samples/embed/grid-pro/demo/row-pinning?force-light-theme" allow="fullscreen"></iframe>
+<iframe src="https://www.highcharts.com/samples/embed/grid-lite/demo/row-pinning?force-light-theme" allow="fullscreen"></iframe>

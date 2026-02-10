@@ -158,7 +158,7 @@ declare module '../../Core/Options' {
         rowIdColumn?: string;
 
         /**
-         * Row pinning options (Grid Pro only).
+         * Row pinning options.
          */
         pinned?: RowPinningOptions;
     }
@@ -167,7 +167,7 @@ declare module '../../Core/Options' {
 declare module '../../Core/Grid' {
     export default interface Grid {
         /**
-         * Row pinning controller instance (Grid Pro only).
+         * Row pinning controller instance.
          */
         rowPinning?: RowPinningController;
 

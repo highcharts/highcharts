@@ -1,8 +1,8 @@
 import { test, expect } from '~/fixtures.ts';
 
-test.describe('Grid Pro row pinning', () => {
+test.describe('Grid Lite row pinning', () => {
     test.beforeEach(async ({ page }) => {
-        await page.goto('grid-pro/cypress/row-pinning');
+        await page.goto('grid-lite/cypress/row-pinning');
 
         await page.waitForFunction(() => {
             return typeof (window as any).grid !== 'undefined';
