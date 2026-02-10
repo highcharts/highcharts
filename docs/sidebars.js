@@ -312,6 +312,7 @@ module.exports = {
             'react/getting-started',
             'react/series-and-chart-types',
             'react/options',
+            'react/data-handling',
             'react/options-component-format',
             'react/nextjs',
             'react/component-children',
