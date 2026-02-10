@@ -55,7 +55,7 @@ function sanitizeFailureOutput(output: string): string {
                 isStackFrame && (
                     normalized.includes('chrome://juggler/') ||
                     normalized.includes('debugger eval code') ||
-                    normalized.includes('evalute@') ||
+                    normalized.includes('evaluate@') ||
                     normalized.includes('node:internal') ||
                     normalized.includes('@playwright')
                 );
