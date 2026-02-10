@@ -93,6 +93,8 @@ export interface ControllableShapeOptions extends ControllableOptions {
     strokeWidth?: number;
     type?: string;
     width?: number;
+    xAxis?: number;
+    yAxis?: number;
 }
 
 /* *

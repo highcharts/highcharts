@@ -1,6 +1,4 @@
 ---
- name: Demo of xAxis.labels.reserveSpace
- authors:
-   - Torstein Hønsi
- js_wrap: b
+name: Demo of xAxis.labels.reserveSpace
+js_wrap: b
 ...
