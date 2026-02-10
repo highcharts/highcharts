@@ -58,39 +58,39 @@ const getStyles = (
     cssVars: CSSVars
 ): string => {
 
-    const reduceToCSS = (vars: { [key: string]: string }): string => {
+    const reduceToCSS = (
+        /**
+         * For browsers that don't support color-scheme and light-dark, we need
+         * to first set the CSS variables as the light scheme.
+         */
+        supportsColorScheme?: boolean
+    ): string => {
         let css = '';
-        objectEach(vars, (value, key): void => {
-            css += `  ${key}: ${value};\n`;
+        objectEach(cssVars.light, (value, key): void => {
+            css += supportsColorScheme && value !== cssVars.dark[key] ?
+                `  ${key}: light-dark(${value}, ${cssVars.dark[key]});\n` :
+                `  ${key}: ${value};\n`;
         });
         return css;
     };
 
-    const light = reduceToCSS(cssVars.light),
-        dark = reduceToCSS(cssVars.dark);
-    const css = `${specifier || ':root'},
-${specifier} .highcharts-light,
-${specifier}.highcharts-light,
-.highcharts-light ${specifier} {
-${light}
+    const legacy = reduceToCSS(),
+        lightDark = reduceToCSS(true);
+    const css = `${specifier || ':root'} {
+${legacy}
 }
-${specifier} .highcharts-dark,
-${specifier}.highcharts-dark,
-.highcharts-dark ${specifier} {
-${dark}
-}
-@media (prefers-color-scheme: dark) {
-    ${specifier || ':root'} {
-${dark}
-    }
+@supports (color: light-dark(#fff, #000)) {
+  ${specifier || ':root'} {
+${lightDark}
+  }
 }
 .highcharts-container {
-  color-scheme: 'light dark';
+  color-scheme: light dark;
 }
-.highcharts-container.highcharts-light  {
+.highcharts-light .highcharts-container {
   color-scheme: light;
 }
-.highcharts-container.highcharts-dark {
+.highcharts-dark .highcharts-container {
   color-scheme: dark;
 }`;
     return css;
@@ -238,7 +238,7 @@ export default class Palette {
     public update(
         options: PaletteOptions
     ): void {
-        const { classList } = this.renderer.box.parentElement || {},
+        const renderTo = this.renderer.box.parentElement,
             chart = charts?.[this.renderer.chartIndex];
 
         options = merge(true, this.options, options);
@@ -255,13 +255,14 @@ export default class Palette {
             this.injectCSS(options);
         }
 
-        // Set the class name of the container
-        if (classList) {
-            classList.remove('highcharts-light', 'highcharts-dark');
-            if (options.colorScheme === 'light') {
-                classList.add('highcharts-light');
-            } else if (options.colorScheme === 'dark') {
-                classList.add('highcharts-dark');
+        if (renderTo) {
+            if (
+                isString(options.colorScheme) &&
+                ['light', 'dark'].includes(options.colorScheme)
+            ) {
+                renderTo.style.colorScheme = options.colorScheme;
+            } else {
+                renderTo.style.removeProperty('color-scheme');
             }
         }
     }

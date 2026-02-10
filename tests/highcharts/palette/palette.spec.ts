@@ -84,7 +84,7 @@ test.describe('global and specific palette', () => {
             document.body.classList.remove('highcharts-dark');
             document.querySelector(
                 '.specific-palette-chart'
-            )?.classList.add('highcharts-dark');
+            )?.parentElement.classList.add('highcharts-dark');
         });
 
         // The global chart should now be back to light mode
@@ -100,7 +100,7 @@ test.describe('global and specific palette', () => {
             document.body.classList.remove('highcharts-dark');
             document.querySelector(
                 '.specific-palette-chart'
-            )?.classList.remove('highcharts-dark');
+            )?.parentElement.classList.remove('highcharts-dark');
 
             // Set specific chart palette to dark mode
             const specificChart = Highcharts.charts.find(
