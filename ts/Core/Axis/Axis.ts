@@ -1004,9 +1004,15 @@ class Axis {
         // Uniform decimals for linear axes, #24122.
         if (axis.options.uniformDecimals && axis.type === 'linear') {
             for (let j = 0; j < axis.tickPositions.length; j++) {
+                const tickLabel = axis.tickPositions[j].toString();
+
+                if (tickLabel.includes('e')) { // Scientific notation
+                    decimals = -1;
+                    break;
+                }
                 decimals = Math.max(
                     decimals,
-                    axis.tickPositions[j].toString().split('.')[1]?.length || 0
+                    tickLabel.split('.')[1]?.length || -1
                 );
             }
         }

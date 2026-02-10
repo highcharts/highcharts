@@ -2142,12 +2142,13 @@ namespace AxisDefaults {
         /**
          * When `true`, if any tick has decimals, all axis labels show the
          * same number of decimal places that is matched to the highest number
-         * of decimal places in the tickPositions.
+         * of decimal places in the tickPositions. If scientific notation is
+         * used this option is ignored.
          *
          * @sample highcharts/yaxis/uniformdecimals/
          *         Uniform decimals enabled on both axes
          *
-         * @since   7.0.3
+         * @since   next
          * @type    {boolean|undefined}
          * @default undefined
          */

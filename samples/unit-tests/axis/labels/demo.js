@@ -1510,6 +1510,7 @@ QUnit.test('Axis labels floating point precision', function (assert) {
         'No long floating points here, #6085'
     );
 
+    // #24122
     chart.update({
         yAxis: [{
             uniformDecimals: true
@@ -1525,6 +1526,22 @@ QUnit.test('Axis labels floating point precision', function (assert) {
         yAxisUniformLabels,
         ['0.0', '-3.2', '-2.4', '-1.6', '-0.8', '0.8'],
         'Uniform decimals should be applied, #24122'
+    );
+
+    chart.series[0].setData([
+        9.888550207585507e-7,
+        9.566888695224366e-7,
+        9.217248059141058e-7
+    ]);
+    const yAxisUniformLabelsScientific = [];
+    for (const tick of Object.values(chart.yAxis[0].ticks)) {
+        yAxisUniformLabelsScientific.push(tick.label.textStr);
+    }
+
+    assert.deepEqual(
+        yAxisUniformLabelsScientific,
+        ['9e-7', '9.2e-7', '9.4e-7', '9.6e-7', '9.8e-7', '0.000001'],
+        'Uniform decimals should NOT be applied for scientific notation, #24122'
     );
 });
 
