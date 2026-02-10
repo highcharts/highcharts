@@ -41,7 +41,6 @@ import type AreaSeriesOptions from './AreaSeriesOptions';
  * @extends      plotOptions.line
  * @excluding    useOhlcData
  * @product      highcharts highstock
- * @optionparent plotOptions.area
  */
 const AreaSeriesDefaults: AreaSeriesOptions = {
 

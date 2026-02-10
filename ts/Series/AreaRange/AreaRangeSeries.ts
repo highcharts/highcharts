@@ -72,7 +72,6 @@ const {
  * @product      highcharts highstock
  * @excluding    stack, stacking
  * @requires     highcharts-more
- * @optionparent plotOptions.arearange
  *
  * @private
  */

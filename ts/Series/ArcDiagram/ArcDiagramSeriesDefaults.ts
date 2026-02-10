@@ -51,7 +51,6 @@ import type ArcDiagramSeriesOptions from './ArcDiagramSeriesOptions';
  *               nodeAlignment, nodePadding, centerInCategory, pointInterval,
  *               pointIntervalUnit, pointPlacement, pointStart, relativeXValue,
  *               softThreshold, stack, stacking, step, xAxis, yAxis
- * @optionparent plotOptions.arcdiagram
  */
 const ArcDiagramSeriesDefaults: ArcDiagramSeriesOptions = {
 
@@ -105,7 +104,6 @@ const ArcDiagramSeriesDefaults: ArcDiagramSeriesOptions = {
 
             /**
              * @type    {Highcharts.SVGAttributes}
-             * @default {"startOffset":"25%"}
              */
             attributes: {
 
@@ -128,7 +126,6 @@ const ArcDiagramSeriesDefaults: ArcDiagramSeriesOptions = {
      *
      * @type    {number}
      * @since 10.0.0
-     * @default undefined
      * @product highcharts
      * @apioption series.arcdiagram.linkRadius
      */
@@ -142,7 +139,6 @@ const ArcDiagramSeriesDefaults: ArcDiagramSeriesOptions = {
      *
      * @type    {number}
      * @since 10.0.0
-     * @default undefined
      * @product highcharts
      * @apioption series.arcdiagram.linkWeight
      */
@@ -286,7 +282,6 @@ const ArcDiagramSeriesDefaults: ArcDiagramSeriesOptions = {
  *
  * @type {number}
  * @since 10.0.0
- * @default undefined
  * @product highcharts
  * @apioption series.arcdiagram.data.linkWeight
  */

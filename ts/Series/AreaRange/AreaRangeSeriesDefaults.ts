@@ -38,7 +38,6 @@ import type AreaRangeSeriesOptions from './AreaRangeSeriesOptions';
  * @product      highcharts highstock
  * @excluding    stack, stacking
  * @requires     highcharts-more
- * @optionparent plotOptions.arearange
  *
  * @private
  */
@@ -274,7 +273,6 @@ const AreaRangeSeriesDefaults: AreaRangeSeriesOptions = {
  *
  * @declare   Highcharts.PointMarkerOptionsObject
  * @extends   plotOptions.series.marker
- * @default   undefined
  * @product   highcharts highstock
  * @apioption plotOptions.arearange.lowMarker
  */
