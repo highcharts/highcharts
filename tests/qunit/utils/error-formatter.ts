@@ -40,8 +40,7 @@ export function formatFailedAssertion(
 
     return `${header}
    ${actual}${valueSeparator}${expected}
-   ${message}
-   ${stack}`;
+   ${message}${stack}`;
 }
 
 /**
