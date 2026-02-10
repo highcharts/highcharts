@@ -155,8 +155,7 @@ const areaRangeSeriesOptions: AreaRangeSeriesOptions = {
      * @exclude x, y
      * @since   2.3.0
      * @product highcharts highstock
-     *
-     * @private
+     * @apioption plotOptions.arearange.dataLabels
      */
     dataLabels: {
 
