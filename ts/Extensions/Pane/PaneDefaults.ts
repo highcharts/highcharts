@@ -55,7 +55,7 @@ const background: PaneBackgroundOptions = {
      *         Panes styled by CSS
      *
      * @type      {string}
-     * @default   "highcharts-pane"
+     * @default   'highcharts-pane'
      * @since     5.0.0
      * @requires  highcharts-more
      * @apioption pane.background.className
