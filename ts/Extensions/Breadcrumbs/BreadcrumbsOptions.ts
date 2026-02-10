@@ -152,14 +152,13 @@ export interface BreadcrumbsAlignOptions {
 
 export interface BreadcrumbsButtonsEventsOptions {
     /**
-     * Fires when clicking on the breadcrumbs button. Two arguments are
-     * passed to the function. First breadcrumb button as an SVG element.
-     * Second is the breadcrumbs class, containing reference to the chart,
-     * series etc.
+     * Fires when clicking on a breadcrumb button. Two arguments are passed
+     * to the function. First is the click event. Second is the breadcrumb
+     * options for the clicked button.
      *
      * ```js
-     * click: function(button, breadcrumbs) {
-     *   console.log(button);
+     * click: function (e, breadcrumb) {
+     *   console.log(breadcrumb.level);
      * }
      * ```
      *
@@ -197,9 +196,6 @@ export interface BreadcrumbsButtonsFormatter {
  *
  * @param {Highcharts.BreadcrumbOptions} breadcrumb
  * Breadcrumb options.
- *
- * @param {Highcharts.Breadcrumbs} ctx
- * Breadcrumbs instance.
  */
 export interface BreadcrumbsClickCallbackFunction {
     (
