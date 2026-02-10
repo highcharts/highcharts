@@ -57,9 +57,9 @@ const grid = Grid.grid('container', {
     },
     rendering: {
         rows: {
-            rowIdColumn: 'id',
             virtualizationThreshold: 20,
             pinned: {
+                idColumn: 'id',
                 top: ['ROW-001'],
                 bottom: ['ROW-060'],
                 maxTopHeight: 80,

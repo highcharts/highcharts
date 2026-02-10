@@ -406,11 +406,11 @@ export class LocalDataProvider extends DataProvider {
         rowIndex: number
     ): RowId {
         const row = table.getRowObject(rowIndex);
-        const rowIdColumn = this.querying.grid.options
-            ?.rendering?.rows?.rowIdColumn;
+        const idColumn = this.querying.grid.options
+            ?.rendering?.rows?.pinned?.idColumn;
 
-        if (row && rowIdColumn && table.hasColumns([rowIdColumn])) {
-            const value = row[rowIdColumn];
+        if (row && idColumn && table.hasColumns([idColumn])) {
+            const value = row[idColumn];
             if (typeof value === 'string' || typeof value === 'number') {
                 return value;
             }

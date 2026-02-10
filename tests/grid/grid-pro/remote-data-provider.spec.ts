@@ -184,8 +184,8 @@ test.describe('RemoteDataProvider', () => {
                 totalRowCount: 8,
                 rendering: {
                     rows: {
-                        rowIdColumn: 'id',
                         pinned: {
+                            idColumn: 'id',
                             top: ['row-0'],
                             bottom: ['row-7']
                         }
@@ -259,8 +259,8 @@ test.describe('RemoteDataProvider', () => {
                 totalRowCount: 6,
                 rendering: {
                     rows: {
-                        rowIdColumn: 'id',
                         pinned: {
+                            idColumn: 'id',
                             top: [],
                             bottom: []
                         }
@@ -332,8 +332,8 @@ test.describe('RemoteDataProvider', () => {
                 totalRowCount: 6,
                 rendering: {
                     rows: {
-                        rowIdColumn: 'id',
                         pinned: {
+                            idColumn: 'id',
                             top: ['row-missing-a'],
                             bottom: ['row-missing-b']
                         }
@@ -387,8 +387,8 @@ test.describe('RemoteDataProvider', () => {
                 },
                 rendering: {
                     rows: {
-                        rowIdColumn: 'id',
                         pinned: {
+                            idColumn: 'id',
                             top: [],
                             bottom: []
                         }
@@ -461,8 +461,8 @@ test.describe('RemoteDataProvider', () => {
                 }],
                 rendering: {
                     rows: {
-                        rowIdColumn: 'id',
                         pinned: {
+                            idColumn: 'id',
                             top: ['row-0'],
                             bottom: ['row-19']
                         }

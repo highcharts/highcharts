@@ -31,7 +31,7 @@ function updatePinnedSummary(grid) {
 }
 
 function getRowId(cell) {
-    return cell.row.data.id;
+    return cell.row.id;
 }
 
 function pinToTop(cell) {
@@ -73,11 +73,10 @@ const grid = Grid.grid('container', {
     },
     rendering: {
         rows: {
-            rowIdColumn: 'id',
             virtualizationThreshold: 30,
             pinned: {
-                top: ['SKU-001'],
-                bottom: ['SKU-080']
+                top: [0],
+                bottom: [rowCount - 1]
             }
         }
     },

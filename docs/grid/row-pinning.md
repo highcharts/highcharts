@@ -16,8 +16,8 @@ area and rendered in dedicated pinned sections.
 Grid.grid('container', {
     rendering: {
         rows: {
-            rowIdColumn: 'id',
             pinned: {
+                idColumn: 'id',
                 top: ['row-001'],
                 bottom: ['row-999']
             }
@@ -26,7 +26,8 @@ Grid.grid('container', {
 });
 ```
 
-Use `rowIdColumn` to define stable row identity for persistence and restore.
+Use `pinned.idColumn` to define stable row identity for persistence and
+restore.
 If it is not set, Grid uses the original row index.
 
 ## Runtime API

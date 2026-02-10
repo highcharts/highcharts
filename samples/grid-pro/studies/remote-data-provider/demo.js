@@ -91,7 +91,9 @@ const grid = Grid.grid('container', {
     },
     rendering: {
         rows: {
-            rowIdColumn: 'employeeId'
+            pinned: {
+                idColumn: 'employeeId'
+            }
         }
     },
     pagination: {

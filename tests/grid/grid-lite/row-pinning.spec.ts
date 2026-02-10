@@ -856,8 +856,8 @@ test.describe('Grid Lite row pinning', () => {
                     },
                     rendering: {
                         rows: {
-                            rowIdColumn: 'id',
                             pinned: {
+                                idColumn: 'id',
                                 top: ['ROW-001'],
                                 bottom: ['ROW-060']
                             }
@@ -889,8 +889,8 @@ test.describe('Grid Lite row pinning', () => {
             await grid.update({
                 rendering: {
                     rows: {
-                        rowIdColumn: 'id',
                         pinned: {
+                            idColumn: 'id',
                             top: ['ROW-MISSING-1'],
                             bottom: ['ROW-MISSING-2']
                         }
@@ -1007,8 +1007,8 @@ test.describe('Grid Lite row pinning', () => {
                 },
                 rendering: {
                     rows: {
-                        rowIdColumn: 'id',
                         pinned: {
+                            idColumn: 'id',
                             top: ['1'],
                             bottom: []
                         }

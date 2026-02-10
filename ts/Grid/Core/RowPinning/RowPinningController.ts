@@ -110,7 +110,7 @@ class RowPinningController {
         const hash = JSON.stringify({
             top,
             bottom,
-            rowIdColumn: rowsOptions?.rowIdColumn,
+            idColumn: pinnedOptions?.idColumn,
             sorting: pinnedOptions?.sorting || 'exclude',
             filtering: pinnedOptions?.filtering || 'exclude'
         });
@@ -647,9 +647,9 @@ class RowPinningController {
         row: DataTableRowObject,
         table: DataTable
     ): (RowId|undefined) {
-        const rowIdColumn = this.grid.options?.rendering?.rows?.rowIdColumn;
-        if (rowIdColumn && table.hasColumns([rowIdColumn])) {
-            const rowId = row[rowIdColumn];
+        const idColumn = this.grid.options?.rendering?.rows?.pinned?.idColumn;
+        if (idColumn && table.hasColumns([idColumn])) {
+            const rowId = row[idColumn];
             if (typeof rowId === 'string' || typeof rowId === 'number') {
                 return rowId;
             }

@@ -153,11 +153,6 @@ export type GridRowId = (string|number);
 declare module '../../Core/Options' {
     interface RowsSettings {
         /**
-         * Row identity column used by row pinning and persisted pinned state.
-         */
-        rowIdColumn?: string;
-
-        /**
          * Row pinning options.
          */
         pinned?: RowPinningOptions;
@@ -196,6 +191,10 @@ declare module '../../Core/Grid' {
 }
 
 export interface RowPinningOptions {
+    /**
+     * Column used as stable row identity for row pinning.
+     */
+    idColumn?: string;
     top?: GridRowId[];
     bottom?: GridRowId[];
     maxTopHeight?: number|string;
