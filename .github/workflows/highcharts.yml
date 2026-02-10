@@ -14,6 +14,7 @@ on:
       - '!samples/grid-lite/**'
       - '!samples/grid-pro/**'
       - 'test/**'
+      - 'tests/qunit/**'
       - 'ts/**'
       - '!ts/Dashboards/**'
       - '!ts/Grid/**'
