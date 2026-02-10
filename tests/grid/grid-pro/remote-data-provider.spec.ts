@@ -170,4 +170,360 @@ test.describe('RemoteDataProvider', () => {
         expect(result.rowId0).toBe('row-4');
         expect(result.rowId1).toBe('row-3');
     });
+
+    test('supports row pinning state with remote provider', async ({ page }) => {
+        await page.goto('/grid-pro/cypress/remote-data-provider');
+        await page.waitForFunction(() => {
+            const api = (window as any).remoteDataProviderTest;
+            return !!(api && api.createGrid && api.getGrid);
+        });
+
+        const result = await page.evaluate(async () => {
+            const api = (window as any).remoteDataProviderTest;
+            api.createGrid({
+                totalRowCount: 8,
+                rendering: {
+                    rows: {
+                        rowIdColumn: 'id',
+                        pinned: {
+                            top: ['row-0'],
+                            bottom: ['row-7']
+                        }
+                    }
+                },
+                pagination: {
+                    enabled: true,
+                    page: 1,
+                    pageSize: 2
+                }
+            });
+
+            const grid = api.getGrid();
+            await new Promise<void>((resolve) => {
+                const tick = (): void => {
+                    if (
+                        grid &&
+                        grid.viewport &&
+                        grid.viewport.tbodyElement
+                    ) {
+                        resolve();
+                        return;
+                    }
+                    requestAnimationFrame(tick);
+                };
+                tick();
+            });
+            const pinned = grid.getPinnedRows();
+
+            const topIds = Array.from(
+                grid.viewport.pinnedTopTbodyElement.querySelectorAll(
+                    'td[data-column-id="id"]'
+                )
+            ).map((el: Element) => (el.textContent || '').trim());
+            const bottomIds = Array.from(
+                grid.viewport.pinnedBottomTbodyElement.querySelectorAll(
+                    'td[data-column-id="id"]'
+                )
+            ).map((el: Element) => (el.textContent || '').trim());
+            const scrollableIds = Array.from(
+                grid.viewport.tbodyElement.querySelectorAll(
+                    'td[data-column-id="id"]'
+                )
+            ).map((el: Element) => (el.textContent || '').trim());
+
+            return {
+                pinned,
+                topIds,
+                bottomIds,
+                scrollableIds
+            };
+        });
+
+        expect(result.pinned.top).toEqual(['row-0']);
+        expect(result.pinned.bottom).toEqual(['row-7']);
+        expect(result.topIds).toEqual(['0']);
+        expect(result.bottomIds).toEqual(['7']);
+        expect(result.scrollableIds).toEqual(['1', '2']);
+    });
+
+    test('pinRow and unpinRow update remote provider active view', async ({ page }) => {
+        await page.goto('/grid-pro/cypress/remote-data-provider');
+        await page.waitForFunction(() => {
+            const api = (window as any).remoteDataProviderTest;
+            return !!(api && api.createGrid && api.getGrid);
+        });
+
+        const result = await page.evaluate(async () => {
+            const api = (window as any).remoteDataProviderTest;
+            api.createGrid({
+                totalRowCount: 6,
+                rendering: {
+                    rows: {
+                        rowIdColumn: 'id',
+                        pinned: {
+                            top: [],
+                            bottom: []
+                        }
+                    }
+                }
+            });
+
+            const grid = api.getGrid();
+            await new Promise<void>((resolve) => {
+                const tick = (): void => {
+                    if (
+                        grid &&
+                        grid.viewport &&
+                        grid.viewport.tbodyElement
+                    ) {
+                        resolve();
+                        return;
+                    }
+                    requestAnimationFrame(tick);
+                };
+                tick();
+            });
+
+            await grid.pinRow('row-3', 'top');
+            await new Promise((resolve) => setTimeout(resolve, 0));
+            const afterPin = {
+                pinned: grid.getPinnedRows(),
+                topIds: Array.from(
+                    grid.viewport.pinnedTopTbodyElement.querySelectorAll(
+                        'td[data-column-id="id"]'
+                    )
+                ).map((el: Element) => (el.textContent || '').trim()),
+                scrollableHas3: grid.viewport.tbodyElement.textContent.includes('3')
+            };
+
+            await grid.unpinRow('row-3');
+            await new Promise((resolve) => setTimeout(resolve, 0));
+            const afterUnpin = {
+                pinned: grid.getPinnedRows(),
+                topIds: Array.from(
+                    grid.viewport.pinnedTopTbodyElement.querySelectorAll(
+                        'td[data-column-id="id"]'
+                    )
+                ).map((el: Element) => (el.textContent || '').trim()),
+                scrollableHas3: grid.viewport.tbodyElement.textContent.includes('3')
+            };
+
+            return { afterPin, afterUnpin };
+        });
+
+        expect(result.afterPin.pinned.top).toEqual(['row-3']);
+        expect(result.afterPin.topIds).toEqual(['3']);
+        expect(result.afterPin.scrollableHas3).toBe(false);
+        expect(result.afterUnpin.pinned.top).toEqual([]);
+        expect(result.afterUnpin.topIds).toEqual([]);
+        expect(result.afterUnpin.scrollableHas3).toBe(true);
+    });
+
+    test('getPinnedRows returns empty effective state for missing ids in remote mode', async ({ page }) => {
+        await page.goto('/grid-pro/cypress/remote-data-provider');
+        await page.waitForFunction(() => {
+            const api = (window as any).remoteDataProviderTest;
+            return !!(api && api.createGrid && api.getGrid);
+        });
+
+        const result = await page.evaluate(async () => {
+            const api = (window as any).remoteDataProviderTest;
+            api.createGrid({
+                totalRowCount: 6,
+                rendering: {
+                    rows: {
+                        rowIdColumn: 'id',
+                        pinned: {
+                            top: ['row-missing-a'],
+                            bottom: ['row-missing-b']
+                        }
+                    }
+                }
+            });
+
+            const grid = api.getGrid();
+            await new Promise<void>((resolve) => {
+                const tick = (): void => {
+                    if (
+                        grid &&
+                        grid.viewport &&
+                        grid.viewport.tbodyElement
+                    ) {
+                        resolve();
+                        return;
+                    }
+                    requestAnimationFrame(tick);
+                };
+                tick();
+            });
+
+            return {
+                pinned: grid.getPinnedRows(),
+                topRows: grid.viewport.pinnedTopRows.length,
+                bottomRows: grid.viewport.pinnedBottomRows.length
+            };
+        });
+
+        expect(result.pinned.top).toEqual([]);
+        expect(result.pinned.bottom).toEqual([]);
+        expect(result.topRows).toBe(0);
+        expect(result.bottomRows).toBe(0);
+    });
+
+    test('keeps a consistent final state during async pin/query races', async ({ page }) => {
+        await page.goto('/grid-pro/cypress/remote-data-provider');
+        await page.waitForFunction(() => {
+            const api = (window as any).remoteDataProviderTest;
+            return !!(api && api.createGrid && api.getGrid);
+        });
+
+        const result = await page.evaluate(async () => {
+            const api = (window as any).remoteDataProviderTest;
+            api.createGrid({
+                totalRowCount: 20,
+                data: {
+                    chunkSize: 5,
+                    fetchDelayMs: 35
+                },
+                rendering: {
+                    rows: {
+                        rowIdColumn: 'id',
+                        pinned: {
+                            top: [],
+                            bottom: []
+                        }
+                    }
+                }
+            });
+
+            const grid = api.getGrid();
+            await Promise.all([
+                grid.pinRow('row-3', 'top'),
+                grid.update({
+                    columns: [{
+                        id: 'name',
+                        sorting: {
+                            order: 'desc'
+                        }
+                    }]
+                }),
+                grid.unpinRow('row-3'),
+                grid.pinRow('row-6', 'bottom')
+            ]);
+            await new Promise((resolve) => setTimeout(resolve, 80));
+
+            const pinned = grid.getPinnedRows();
+            const bottomIds = Array.from(
+                grid.viewport.pinnedBottomTbodyElement.querySelectorAll(
+                    'td[data-column-id="id"]'
+                )
+            ).map((el: Element) => (el.textContent || '').trim());
+            const scrollableIds = Array.from(
+                grid.viewport.tbodyElement.querySelectorAll(
+                    'td[data-column-id="id"]'
+                )
+            ).map((el: Element) => (el.textContent || '').trim());
+
+            return {
+                pinned,
+                bottomIds,
+                scrollableIds
+            };
+        });
+
+        expect(result.pinned.top).toEqual([]);
+        expect(result.pinned.bottom).toEqual(['row-6']);
+        expect(result.bottomIds).toEqual(['6']);
+        expect(result.scrollableIds).not.toContain('6');
+    });
+
+    test('preserves pinned visibility across remote sorting and pagination transitions', async ({ page }) => {
+        await page.goto('/grid-pro/cypress/remote-data-provider');
+        await page.waitForFunction(() => {
+            const api = (window as any).remoteDataProviderTest;
+            return !!(api && api.createGrid && api.getGrid);
+        });
+
+        const result = await page.evaluate(async () => {
+            const api = (window as any).remoteDataProviderTest;
+            api.createGrid({
+                totalRowCount: 20,
+                pagination: {
+                    enabled: true,
+                    page: 2,
+                    pageSize: 5
+                },
+                columns: [{
+                    id: 'name',
+                    sorting: {
+                        order: 'asc'
+                    }
+                }],
+                rendering: {
+                    rows: {
+                        rowIdColumn: 'id',
+                        pinned: {
+                            top: ['row-0'],
+                            bottom: ['row-19']
+                        }
+                    }
+                }
+            });
+
+            const grid = api.getGrid();
+            await new Promise<void>((resolve) => {
+                const tick = (): void => {
+                    if (
+                        grid &&
+                        grid.viewport &&
+                        grid.viewport.tbodyElement
+                    ) {
+                        resolve();
+                        return;
+                    }
+                    requestAnimationFrame(tick);
+                };
+                tick();
+            });
+            const readIds = (): string[] => Array.from(
+                grid.viewport.tbodyElement.querySelectorAll(
+                    'td[data-column-id="id"]'
+                )
+            ).map((el: Element) => (el.textContent || '').trim());
+
+            const ascPage2 = readIds();
+
+            await grid.update({
+                columns: [{
+                    id: 'name',
+                    sorting: {
+                        order: 'desc'
+                    }
+                }]
+            });
+            const descPage2 = readIds();
+
+            await grid.update({
+                pagination: {
+                    enabled: true,
+                    page: 3,
+                    pageSize: 5
+                }
+            });
+            const descPage3 = readIds();
+
+            return {
+                pinned: grid.getPinnedRows(),
+                ascPage2,
+                descPage2,
+                descPage3
+            };
+        });
+
+        expect(result.pinned.top).toEqual(['row-0']);
+        expect(result.pinned.bottom).toEqual(['row-19']);
+        expect(result.ascPage2).toEqual(['6', '7', '8', '9', '10']);
+        expect(result.descPage2).toEqual(['13', '12', '11', '10', '9']);
+        expect(result.descPage3).toEqual(['8', '7', '6', '5', '4']);
+    });
 });

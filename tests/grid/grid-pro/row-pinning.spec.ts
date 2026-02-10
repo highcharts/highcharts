@@ -882,6 +882,154 @@ test.describe('Grid Pro row pinning', () => {
         expect(state.scrollableRows).toBe(0);
     });
 
+    test('getPinnedRows returns empty effective state for missing ids after recompute', async ({ page }) => {
+        const state = await page.evaluate(async () => {
+            const grid = (window as any).grid;
+
+            await grid.update({
+                rendering: {
+                    rows: {
+                        rowIdColumn: 'id',
+                        pinned: {
+                            top: ['ROW-MISSING-1'],
+                            bottom: ['ROW-MISSING-2']
+                        }
+                    }
+                }
+            });
+
+            return {
+                pinned: grid.getPinnedRows(),
+                topRows: grid.viewport.pinnedTopRows.length,
+                bottomRows: grid.viewport.pinnedBottomRows.length
+            };
+        });
+
+        expect(state.pinned.top).toEqual([]);
+        expect(state.pinned.bottom).toEqual([]);
+        expect(state.topRows).toBe(0);
+        expect(state.bottomRows).toBe(0);
+    });
+
+    test('keeps focus continuity when a focused row is pinned and unpinned', async ({ page }) => {
+        const state = await page.evaluate(async () => {
+            const grid = (window as any).grid;
+            const getActiveRowId = (): string | undefined => {
+                const active = document.activeElement as HTMLElement | null;
+                if (!active) {
+                    return;
+                }
+                const row = active.closest('tr');
+                if (!row) {
+                    return;
+                }
+                const idCell = row.querySelector('td[data-column-id="id"]');
+                return idCell?.textContent?.trim();
+            };
+
+            const targetRowCell = grid.viewport.tbodyElement.querySelector(
+                'tr[data-row-index="5"] td[data-column-id="product"]'
+            ) as HTMLElement | null;
+            targetRowCell?.focus();
+            const before = getActiveRowId();
+
+            await grid.pinRow('ROW-006', 'top');
+            await new Promise((resolve) => setTimeout(resolve, 0));
+            const afterPin = getActiveRowId();
+
+            await grid.unpinRow('ROW-006');
+            await new Promise((resolve) => setTimeout(resolve, 0));
+            const afterUnpin = getActiveRowId();
+
+            return {
+                before,
+                afterPin,
+                afterUnpin
+            };
+        });
+
+        expect(state.before).toBe('ROW-006');
+        expect(state.afterPin).toBe('ROW-006');
+        expect(state.afterUnpin).toBe('ROW-006');
+    });
+
+    test('renders one tbody when pinning is inactive and multiple when active', async ({ page }) => {
+        const state = await page.evaluate(async () => {
+            const grid = (window as any).grid;
+            const countBodies = (): number => (
+                grid.viewport.tableElement.querySelectorAll('tbody').length
+            );
+
+            await grid.update({
+                rendering: {
+                    rows: {
+                        pinned: {
+                            top: [],
+                            bottom: []
+                        }
+                    }
+                }
+            });
+            const initialCount = countBodies();
+
+            await grid.pinRow('ROW-006', 'top');
+            await new Promise((resolve) => setTimeout(resolve, 0));
+            const activeCount = countBodies();
+
+            await grid.unpinRow('ROW-006');
+            await new Promise((resolve) => setTimeout(resolve, 0));
+            const inactiveCount = countBodies();
+
+            return {
+                initialCount,
+                activeCount,
+                inactiveCount
+            };
+        });
+
+        expect(state.initialCount).toBe(1);
+        expect(state.activeCount).toBeGreaterThan(1);
+        expect(state.inactiveCount).toBe(1);
+    });
+
+    test('treats numeric and string row ids deterministically', async ({ page }) => {
+        const state = await page.evaluate(async () => {
+            const grid = (window as any).grid;
+
+            await grid.update({
+                dataTable: {
+                    columns: {
+                        id: [1, 2, 3],
+                        product: ['A', 'B', 'C'],
+                        group: ['X', 'Y', 'Z'],
+                        stock: [10, 20, 30]
+                    }
+                },
+                rendering: {
+                    rows: {
+                        rowIdColumn: 'id',
+                        pinned: {
+                            top: ['1'],
+                            bottom: []
+                        }
+                    }
+                }
+            });
+
+            const stringPinned = grid.getPinnedRows();
+            await grid.pinRow(1, 'top');
+            const numericPinned = grid.getPinnedRows();
+
+            return {
+                stringPinned,
+                numericPinned
+            };
+        });
+
+        expect(state.stringPinned.top).toEqual([]);
+        expect(state.numericPinned.top).toEqual([1]);
+    });
+
     test('All rows pinned collapses empty scrollable area', async ({ page }) => {
         const state = await page.evaluate(async () => {
             const grid = (window as any).grid;

@@ -82,6 +82,9 @@ rendering: {
 
 - Pinned rows are always visible and are not paginated.
 - A row cannot be both pinned and scrollable at the same time.
+- Row pinning works with both local and remote data providers.
+- With remote providers, `resolve(row)` may require scanning rows to derive
+  initial state, which can be expensive on very large datasets.
 - Row pinning is available in **Grid Pro**.
 
 ## Demo

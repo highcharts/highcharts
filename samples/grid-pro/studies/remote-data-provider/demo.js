@@ -1,3 +1,53 @@
+const topPinned = document.getElementById('topPinned');
+const bottomPinned = document.getElementById('bottomPinned');
+
+function updatePinnedSummary(grid) {
+    const pinned = grid.getPinnedRows();
+
+    if (topPinned) {
+        topPinned.textContent = pinned.top.length ?
+            pinned.top.join(', ') :
+            'None';
+    }
+
+    if (bottomPinned) {
+        bottomPinned.textContent = pinned.bottom.length ?
+            pinned.bottom.join(', ') :
+            'None';
+    }
+}
+
+function getRowId(cell) {
+    return cell.row.id ?? cell.row.data.employeeId;
+}
+
+function pinToTop(cell) {
+    const grid = cell.row.viewport.grid;
+    const rowId = getRowId(cell);
+
+    void grid.pinRow(rowId, 'top').then(() => {
+        updatePinnedSummary(grid);
+    });
+}
+
+function pinToBottom(cell) {
+    const grid = cell.row.viewport.grid;
+    const rowId = getRowId(cell);
+
+    void grid.pinRow(rowId, 'bottom').then(() => {
+        updatePinnedSummary(grid);
+    });
+}
+
+function unpinRow(cell) {
+    const grid = cell.row.viewport.grid;
+    const rowId = getRowId(cell);
+
+    void grid.unpinRow(rowId).then(() => {
+        updatePinnedSummary(grid);
+    });
+}
+
 const grid = Grid.grid('container', {
     data: {
         providerType: 'remote',
@@ -19,7 +69,29 @@ const grid = Grid.grid('container', {
         cells: {
             editMode: {
                 enabled: true
+            },
+            contextMenu: {
+                items: [{
+                    label: 'Pin row to top',
+                    icon: 'addRowAbove',
+                    onClick: pinToTop
+                }, {
+                    label: 'Pin row to bottom',
+                    icon: 'addRowBelow',
+                    onClick: pinToBottom
+                }, {
+                    separator: true
+                }, {
+                    label: 'Unpin row',
+                    icon: 'trash',
+                    onClick: unpinRow
+                }]
             }
+        }
+    },
+    rendering: {
+        rows: {
+            rowIdColumn: 'employeeId'
         }
     },
     pagination: {
@@ -47,12 +119,16 @@ const grid = Grid.grid('container', {
     }
 });
 
+updatePinnedSummary(grid);
+
 // Pagination toggle
 document.getElementById('pagination-toggle').addEventListener('change', e => {
     const checked = e.target.checked;
-    grid.update({
+    void grid.update({
         pagination: {
             enabled: checked
         }
+    }).then(() => {
+        updatePinnedSummary(grid);
     });
 });

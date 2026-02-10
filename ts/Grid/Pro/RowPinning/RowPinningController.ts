@@ -23,6 +23,11 @@
 
 import type Grid from '../../Core/Grid';
 import type DataTable from '../../../Data/DataTable';
+import type { RowObject as DataTableRowObject } from '../../../Data/DataTable';
+import type {
+    DataProvider,
+    ProviderPinningViewState
+} from '../../Core/Data/DataProvider';
 
 /* *
  *
@@ -47,6 +52,24 @@ export interface ComputePinnedStateContext {
     filteringActive: boolean;
 }
 
+export interface ComputePinnedStateForProviderContext {
+    sortingActive: boolean;
+    filteringActive: boolean;
+    paginationEnabled: boolean;
+    currentPage: number;
+    currentPageSize: number;
+}
+
+export interface ProviderPinningResult {
+    topRowIds: RowId[];
+    bottomRowIds: RowId[];
+    scrollableRowIds: RowId[];
+    activeRowIds: RowId[];
+    topCount: number;
+    bottomCount: number;
+    scrollableCount: number;
+}
+
 /* *
  *
  *  Class
@@ -65,7 +88,15 @@ class RowPinningController {
 
     private warnedDuplicateRowIds: Set<RowId> = new Set();
 
+    private warnedExpensiveResolve = false;
+
     private optionsHash = '';
+
+    private effectiveTopRowIds: RowId[] = [];
+
+    private effectiveBottomRowIds: RowId[] = [];
+
+    private hasEffectivePinnedState = false;
 
     constructor(grid: Grid) {
         this.grid = grid;
@@ -93,6 +124,9 @@ class RowPinningController {
         this.bottomRowIds = RowPinningController.uniqueRowIds(bottom).filter((
             rowId
         ): boolean => !this.topRowIds.includes(rowId));
+        this.effectiveTopRowIds.length = 0;
+        this.effectiveBottomRowIds.length = 0;
+        this.hasEffectivePinnedState = false;
     }
 
     public isEnabled(): boolean {
@@ -153,6 +187,10 @@ class RowPinningController {
         } else {
             source.push(rowId);
         }
+
+        this.effectiveTopRowIds.length = 0;
+        this.effectiveBottomRowIds.length = 0;
+        this.hasEffectivePinnedState = false;
     }
 
     public unpinRow(rowId: RowId): void {
@@ -169,9 +207,19 @@ class RowPinningController {
         }
 
         this.explicitUnpinned.add(rowId);
+        this.effectiveTopRowIds.length = 0;
+        this.effectiveBottomRowIds.length = 0;
+        this.hasEffectivePinnedState = false;
     }
 
     public getPinnedRows(): { top: RowId[]; bottom: RowId[] } {
+        if (this.hasEffectivePinnedState) {
+            return {
+                top: this.effectiveTopRowIds.slice(),
+                bottom: this.effectiveBottomRowIds.slice()
+            };
+        }
+
         return {
             top: this.topRowIds.slice(),
             bottom: this.bottomRowIds.slice()
@@ -302,7 +350,7 @@ class RowPinningController {
             bottomOriginalIndexes.sort(sortBySourcePosition);
         }
 
-        return {
+        const result = {
             topOriginalIndexes,
             bottomOriginalIndexes,
             topRowIds: topOriginalIndexes.map((idx): RowId|undefined => (
@@ -312,6 +360,222 @@ class RowPinningController {
                 this.getRowIdFromOriginalIndex(idx, originalTable)
             )).filter((rowId): rowId is RowId => rowId !== void 0)
         };
+
+        this.effectiveTopRowIds = result.topRowIds.slice();
+        this.effectiveBottomRowIds = result.bottomRowIds.slice();
+        this.hasEffectivePinnedState = true;
+
+        return result;
+    }
+
+    public async computePinnedStateForProvider(
+        dataProvider: DataProvider,
+        context: ComputePinnedStateForProviderContext
+    ): Promise<ProviderPinningResult> {
+        this.loadOptions();
+
+        const rawRowCount = await dataProvider.getScopedRowCount('raw');
+        const rawRowIds: RowId[] = [];
+        const rawRowsById = new Map<RowId, DataTableRowObject>();
+
+        if (
+            rawRowCount > 1000 &&
+            this.grid.options?.rendering?.rows?.pinned?.resolve
+        ) {
+            this.warnResolveScan();
+        }
+
+        for (let i = 0; i < rawRowCount; ++i) {
+            const rowId = await dataProvider.getScopedRowId(i, 'raw');
+            if (rowId === void 0) {
+                continue;
+            }
+            rawRowIds.push(rowId as RowId);
+            const row = await dataProvider.getScopedRowObject(i, 'raw');
+            if (row) {
+                rawRowsById.set(rowId as RowId, row);
+            }
+        }
+
+        const rawRowIdSet = new Set<RowId>(rawRowIds);
+        const topRowIds: RowId[] = [];
+        const bottomRowIds: RowId[] = [];
+        const used = new Set<RowId>();
+
+        for (const rowId of this.topRowIds) {
+            if (used.has(rowId) || !rawRowIdSet.has(rowId)) {
+                continue;
+            }
+            topRowIds.push(rowId);
+            used.add(rowId);
+        }
+
+        for (const rowId of this.bottomRowIds) {
+            if (used.has(rowId) || !rawRowIdSet.has(rowId)) {
+                continue;
+            }
+            bottomRowIds.push(rowId);
+            used.add(rowId);
+        }
+
+        const resolve = this.grid.options?.rendering?.rows?.pinned?.resolve;
+        if (resolve) {
+            for (const rowId of rawRowIds) {
+                if (used.has(rowId) || this.explicitUnpinned.has(rowId)) {
+                    continue;
+                }
+                const row = rawRowsById.get(rowId);
+                if (!row) {
+                    continue;
+                }
+                let position: ('top'|'bottom'|null|undefined);
+                try {
+                    position = resolve(row);
+                } catch {
+                    continue;
+                }
+                if (position === 'top') {
+                    topRowIds.push(rowId);
+                    used.add(rowId);
+                } else if (position === 'bottom') {
+                    bottomRowIds.push(rowId);
+                    used.add(rowId);
+                }
+            }
+        }
+
+        const groupedRowCount = await dataProvider.getScopedRowCount('grouped');
+        const groupedRowIds: RowId[] = [];
+        for (let i = 0; i < groupedRowCount; ++i) {
+            const rowId = await dataProvider.getScopedRowId(i, 'grouped');
+            if (rowId !== void 0) {
+                groupedRowIds.push(rowId as RowId);
+            }
+        }
+
+        let sortingOnlyRowIds: RowId[] = groupedRowIds;
+        if (
+            context.sortingActive &&
+            context.filteringActive &&
+            this.isSortingIncluded() &&
+            !this.isFilteringIncluded()
+        ) {
+            const sortingOnlyCount = await dataProvider.getScopedRowCount(
+                'sortingOnly'
+            );
+            sortingOnlyRowIds = [];
+            for (let i = 0; i < sortingOnlyCount; ++i) {
+                const rowId = await dataProvider.getScopedRowId(
+                    i,
+                    'sortingOnly'
+                );
+                if (rowId !== void 0) {
+                    sortingOnlyRowIds.push(rowId as RowId);
+                }
+            }
+        }
+
+        let effectiveTop = topRowIds.slice();
+        let effectiveBottom = bottomRowIds.slice();
+        if (context.filteringActive && this.isFilteringIncluded()) {
+            const groupedSet = new Set(groupedRowIds);
+            effectiveTop = effectiveTop.filter((rowId): boolean =>
+                groupedSet.has(rowId)
+            );
+            effectiveBottom = effectiveBottom.filter((rowId): boolean =>
+                groupedSet.has(rowId)
+            );
+        }
+
+        if (context.sortingActive && this.isSortingIncluded()) {
+            const sourceOrder = (
+                context.filteringActive && !this.isFilteringIncluded() ?
+                    sortingOnlyRowIds :
+                    groupedRowIds
+            );
+            const sourcePosition = createRowIdPositionMap(sourceOrder);
+            const sortBySourcePosition = (a: RowId, b: RowId): number => {
+                const aPos = sourcePosition.get(a);
+                const bPos = sourcePosition.get(b);
+                if (aPos !== void 0 && bPos !== void 0) {
+                    return aPos - bPos;
+                }
+                if (aPos !== void 0) {
+                    return -1;
+                }
+                if (bPos !== void 0) {
+                    return 1;
+                }
+                return String(a).localeCompare(String(b));
+            };
+            effectiveTop.sort(sortBySourcePosition);
+            effectiveBottom.sort(sortBySourcePosition);
+        }
+
+        const pinnedSet = new Set<RowId>([
+            ...effectiveTop,
+            ...effectiveBottom
+        ]);
+        const nonPinned = groupedRowIds.filter((rowId): boolean =>
+            !pinnedSet.has(rowId)
+        );
+
+        let scrollableRowIds = nonPinned;
+        if (context.paginationEnabled) {
+            const start = Math.max(
+                0,
+                (context.currentPage - 1) * context.currentPageSize
+            );
+            scrollableRowIds = nonPinned.slice(
+                start,
+                start + context.currentPageSize
+            );
+        }
+
+        this.effectiveTopRowIds = effectiveTop.slice();
+        this.effectiveBottomRowIds = effectiveBottom.slice();
+        this.hasEffectivePinnedState = true;
+
+        return {
+            topRowIds: effectiveTop,
+            bottomRowIds: effectiveBottom,
+            scrollableRowIds,
+            activeRowIds: [
+                ...effectiveTop,
+                ...scrollableRowIds,
+                ...effectiveBottom
+            ],
+            topCount: effectiveTop.length,
+            bottomCount: effectiveBottom.length,
+            scrollableCount: scrollableRowIds.length
+        };
+    }
+
+    public createProviderPinningViewState(
+        result: ProviderPinningResult
+    ): ProviderPinningViewState {
+        return {
+            topRowIds: result.topRowIds.slice(),
+            bottomRowIds: result.bottomRowIds.slice(),
+            scrollableRowIds: result.scrollableRowIds.slice(),
+            activeRowIds: result.activeRowIds.slice(),
+            topCount: result.topCount,
+            bottomCount: result.bottomCount,
+            scrollableCount: result.scrollableCount
+        };
+    }
+
+    private warnResolveScan(): void {
+        if (this.warnedExpensiveResolve) {
+            return;
+        }
+
+        this.warnedExpensiveResolve = true;
+        // eslint-disable-next-line no-console
+        console.warn(
+            'Grid row pinning: resolve(row) scans raw provider rows. ' +
+            'This may be expensive for large remote datasets.'
+        );
     }
 
     private static uniqueRowIds(values: unknown[]): RowId[] {
@@ -380,7 +644,7 @@ class RowPinningController {
 
     private getRowIdFromOriginalRow(
         originalIndex: number,
-        row: Record<string, unknown>,
+        row: DataTableRowObject,
         table: DataTable
     ): (RowId|undefined) {
         const rowIdColumn = this.grid.options?.rendering?.rows?.rowIdColumn;
@@ -394,6 +658,20 @@ class RowPinningController {
 
         return originalIndex;
     }
+}
+
+/**
+ * Create fast lookup map for row positions.
+ *
+ * @param rowIds
+ * Row IDs in source order.
+ */
+function createRowIdPositionMap(rowIds: RowId[]): Map<RowId, number> {
+    const map = new Map<RowId, number>();
+    for (let i = 0, iEnd = rowIds.length; i < iEnd; ++i) {
+        map.set(rowIds[i], i);
+    }
+    return map;
 }
 
 /* *

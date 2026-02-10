@@ -40,8 +40,13 @@
             totalRowCount = 5,
             data = {},
             pagination = { enabled: false },
-            columns
+            columns,
+            rendering
         } = options || {};
+        const {
+            fetchDelayMs = 0,
+            ...providerData
+        } = data;
 
         state.totalRowCount = totalRowCount;
         state.fetchCalls.length = 0;
@@ -53,15 +58,21 @@
         state.grid = Grid.grid('container', {
             data: {
                 providerType: 'remote',
-                ...data,
-                fetchCallback: (query, offset, limit) => {
+                ...providerData,
+                fetchCallback: async (query, offset, limit) => {
                     const sortedIds = getSortedIds(query);
                     state.fetchCalls.push({ offset, limit });
+                    if (fetchDelayMs > 0) {
+                        await new Promise(resolve =>
+                            setTimeout(resolve, fetchDelayMs)
+                        );
+                    }
                     return createFetchResult(offset, limit, sortedIds);
                 }
             },
             columns,
-            pagination
+            pagination,
+            rendering
         });
 
         return state.grid;

@@ -207,8 +207,7 @@ class Table {
         }
         this.pinnedTopTbodyElement = makeHTMLElement(
             'tbody',
-            { className: Globals.getClassName('pinnedTopTbodyElement') },
-            tableElement
+            { className: Globals.getClassName('pinnedTopTbodyElement') }
         );
         this.tbodyElement = makeHTMLElement('tbody', {}, tableElement);
         this.tbodyElement.classList.add(
@@ -216,8 +215,7 @@ class Table {
         );
         this.pinnedBottomTbodyElement = makeHTMLElement(
             'tbody',
-            { className: Globals.getClassName('pinnedBottomTbodyElement') },
-            tableElement
+            { className: Globals.getClassName('pinnedBottomTbodyElement') }
         );
 
         this.rowsVirtualizer = new RowsVirtualizer(this);
@@ -960,6 +958,18 @@ class Table {
      */
     public async renderPinnedRows(): Promise<void> {
         const meta = this.grid.rowPinningMeta;
+        const hasPinning = !!meta;
+        this.ensurePinnedBodiesRendered(hasPinning);
+
+        if (!hasPinning) {
+            this.pinnedTopRows.forEach((row): void => row.destroy());
+            this.pinnedBottomRows.forEach((row): void => row.destroy());
+            this.pinnedTopRows.length = 0;
+            this.pinnedBottomRows.length = 0;
+            this.tbodyElement.style.display = '';
+            return;
+        }
+
         const topCount = meta?.topCount || 0;
         const bottomCount = meta?.bottomCount || 0;
         const rowCount = await this.grid.dataProvider?.getRowCount() || 0;
@@ -999,6 +1009,10 @@ class Table {
     }
 
     private syncPinnedHorizontalScroll(scrollLeft: number): void {
+        if (!this.pinnedTopTbodyElement.isConnected) {
+            return;
+        }
+
         this.pinnedTopTbodyElement.scrollLeft = scrollLeft;
         this.pinnedBottomTbodyElement.scrollLeft = scrollLeft;
 
@@ -1105,6 +1119,10 @@ class Table {
             scrollableBody.offsetWidth - scrollableBody.clientWidth
         );
         const applyToPinnedBody = (pinnedBody: HTMLElement): void => {
+            if (!pinnedBody.isConnected) {
+                pinnedBody.style.width = '';
+                return;
+            }
             const pinnedGutterWidth = Math.max(
                 0,
                 pinnedBody.offsetWidth - pinnedBody.clientWidth
@@ -1129,6 +1147,44 @@ class Table {
                 applyToPinnedBody(this.pinnedTopTbodyElement);
                 applyToPinnedBody(this.pinnedBottomTbodyElement);
             });
+        }
+    }
+
+    /**
+     * Ensure pinned tbody elements are attached only when row pinning is
+     * active, keeping a single tbody in the default non-pinning mode.
+     *
+     * @param shouldRender
+     * Whether pinned tbody elements should be attached.
+     */
+    private ensurePinnedBodiesRendered(shouldRender: boolean): void {
+        const {
+            tableElement,
+            pinnedTopTbodyElement,
+            pinnedBottomTbodyElement
+        } = this;
+        const topConnected = (
+            pinnedTopTbodyElement.parentElement === tableElement
+        );
+        const bottomConnected = (
+            pinnedBottomTbodyElement.parentElement === tableElement
+        );
+
+        if (!shouldRender) {
+            if (topConnected) {
+                pinnedTopTbodyElement.remove();
+            }
+            if (bottomConnected) {
+                pinnedBottomTbodyElement.remove();
+            }
+            return;
+        }
+
+        if (!topConnected) {
+            tableElement.insertBefore(pinnedTopTbodyElement, this.tbodyElement);
+        }
+        if (!bottomConnected) {
+            tableElement.appendChild(pinnedBottomTbodyElement);
         }
     }
 

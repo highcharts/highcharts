@@ -10,6 +10,22 @@
     user-select: none;
 }
 
+.panel {
+    margin-top: 12px;
+    padding: 10px;
+    border: 1px solid #d8d8d8;
+    border-radius: 4px;
+    background: #fafafa;
+}
+
+.panel h4 {
+    margin: 0 0 8px;
+}
+
+.panel p {
+    margin: 4px 0;
+}
+
 .hcg-container {
     min-height: 600px;
 }

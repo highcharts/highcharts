@@ -123,3 +123,12 @@ Grid.grid('container', {
     }
 });
 ```
+
+## Row pinning support
+Row pinning is provider-aware and works with both `local` and `remote`
+providers.
+
+- Pinned rows are rendered in dedicated top/bottom sections and excluded from
+  the scrollable area.
+- Pagination applies only to scrollable rows; pinned rows remain visible.
+- Sorting/filtering include/exclude behavior is the same across providers.
