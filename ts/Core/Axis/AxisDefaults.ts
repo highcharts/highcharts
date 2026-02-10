@@ -2147,8 +2147,8 @@ namespace AxisDefaults {
          * @sample highcharts/yaxis/uniformdecimals/
          *         Uniform decimals enabled on both axes
          *
-         * @since next
-         * @type      {boolean|undefined}
+         * @since   7.0.3
+         * @type    {boolean|undefined}
          * @default undefined
          */
         uniformDecimals: void 0,

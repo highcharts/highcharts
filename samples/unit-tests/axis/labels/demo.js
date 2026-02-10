@@ -1516,9 +1516,14 @@ QUnit.test('Axis labels floating point precision', function (assert) {
         }]
     });
 
+    const yAxisUniformLabels = [];
+    for (const tick of Object.values(chart.yAxis[0].ticks)) {
+        yAxisUniformLabels.push(tick.label.textStr);
+    }
+
     assert.deepEqual(
-        chart.yAxis[0].tickPositions,
-        [-3.2, -2.4, -1.6, -0.8, 0, 0.8],
+        yAxisUniformLabels,
+        ['0.0', '-3.2', '-2.4', '-1.6', '-0.8', '0.8'],
         'Uniform decimals should be applied, #24122'
     );
 });

@@ -1859,7 +1859,7 @@ export interface AxisOptions {
      *
      * @sample highcharts/yaxis/uniformdecimals/
      *
-     * @since next
+     * @since   next
      * @default undefined
      */
     uniformDecimals?: boolean;
