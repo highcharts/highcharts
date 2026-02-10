@@ -364,7 +364,7 @@ class Chart {
         /* eslint-enable @typescript-eslint/no-unused-vars */
     ) {
         // Return early if there's no browser API (server environment).
-        if (typeof doc === 'undefined') {
+        if (!doc) {
             error(36, false, this);
             return;
         }
