@@ -10,13 +10,6 @@ You should store **dynamic data** that changes over time in state, and keep **st
 import React, { useState } from 'react';
 import { Chart, Title, PlotOptions, Series } from '@highcharts/react';
 
-const PLOT_OPTIONS_SERIES = {
-  dataLabels: {
-    enabled: true,
-    format: '{y}'
-  }
-};
-
 export default function MyChart() {
   const [series, setSeries] = useState({
     data: [1, 2, 3, 4, 5],
@@ -28,7 +21,14 @@ export default function MyChart() {
   return (
     <Chart>
       <Title>My Chart</Title>
-      <PlotOptions series={PLOT_OPTIONS_SERIES} />
+      <PlotOptions
+        series={{
+          dataLabels: {
+            enabled: true,
+            format: '{y}'
+          }
+        }}
+      />
       <Series data={series.data} options={series.options} />
     </Chart>
   );
@@ -73,17 +73,17 @@ By default, Highcharts mutates chart data for performance and memory efficiency 
 import React, { useState } from 'react';
 import { Chart, Series } from '@highcharts/react';
 
-const CHART_OPTIONS = {
-  chart: {
-    allowMutatingData: true
-  }
-};
-
 export default function MyChart() {
   const [data, setData] = useState([1, 2, 3, 4, 5]);
 
   return (
-    <Chart options={CHART_OPTIONS}>
+    <Chart
+      options={{
+        chart: {
+          allowMutatingData: true
+        }
+      }}
+    >
       <Series data={data} />
     </Chart>
   );
