@@ -224,8 +224,17 @@ Highcharts.chart("container", {
 
 ### Arrow Functions and Callback Context
 
-Many Highcharts callbacks bind `this` to a context object. This means regular
-functions are still the safest default:
+For user-supplied option callbacks, Highcharts provides an explicit context
+argument (typically named `ctx`). This makes arrow functions a first-class
+option without losing access to callback context:
+
+```javascript
+labels: {
+  formatter: (ctx) => `Value: ${ctx.value}`
+}
+```
+
+Regular functions are still supported:
 
 ```javascript
 labels: {
@@ -235,16 +244,8 @@ labels: {
 }
 ```
 
-If a callback supports an explicit context argument (often named `ctx`), arrow
-functions can be used without relying on `this` binding:
-
-```javascript
-labels: {
-  formatter: (ctx) => `Value: ${ctx.value}`
-}
-```
-
-Not all callbacks expose a `ctx` argument, so check the specific API option.
+For lower-level extension hooks (for example `addEvent` and `wrap`), `this`
+binding still matters, so regular functions are recommended there.
 
 ## Dealing with Promises and Asynchronous Data in Highcharts
 
