@@ -27,7 +27,7 @@ import type DashStyleValue from '../../../Core/Renderer/DashStyleValue';
 import type {
     DataLabelsOverflowValue
 } from '../../../Core/Series/DataLabelOptions';
-import type Templating from '../../../Core/Templating';
+import type ControllableLabel from './ControllableLabel';
 import type {
     ShadowOptionsObject
 } from '../../../Core/Renderer/ShadowOptionsObject';
@@ -39,6 +39,15 @@ import type { SymbolKey } from '../../../Core/Renderer/SVG/SymbolType';
  *  Declarations
  *
  * */
+
+/** @internal */
+export interface ControllableLabelFormatterCallbackFunction {
+    (
+        this: AnnotationPoint,
+        label?: ControllableLabel,
+        ctx?: AnnotationPoint
+    ): string;
+}
 
 /** @internal */
 export interface ControllableLabelOptions extends ControllableOptions {
@@ -53,7 +62,7 @@ export interface ControllableLabelOptions extends ControllableOptions {
     dashStyle?: DashStyleValue;
     distance?: number;
     format?: string;
-    formatter?: Templating.FormatterCallback<AnnotationPoint>;
+    formatter?: ControllableLabelFormatterCallbackFunction;
     includeInDataExport?: boolean;
     overflow?: DataLabelsOverflowValue;
     padding?: number;
