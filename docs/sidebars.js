@@ -134,6 +134,7 @@ module.exports = {
             'grid/events',
             'grid/exporting',
             'grid/pagination',
+            'grid/sticky-rows',
             {
                 'Theming': [
                     'grid/theming/theming',

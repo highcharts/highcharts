@@ -123,3 +123,9 @@ Grid.grid('container', {
     }
 });
 ```
+
+## Sticky rows with providers
+
+Sticky rows work with both local and remote providers. Sticky resolution is
+applied after the active query state is computed, so sticky behavior follows
+the current sorted/filtered/paginated view.

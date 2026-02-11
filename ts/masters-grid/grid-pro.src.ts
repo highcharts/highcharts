@@ -40,6 +40,7 @@ import TableCell from '../Grid/Core/Table/Body/TableCell.js';
 import SvgIcons from '../Grid/Core/UI/SvgIcons.js';
 
 import ResponsiveComposition from '../Grid/Core/Responsive/ResponsiveComposition.js';
+import RowStickyComposition from '../Grid/Core/RowSticky/RowStickyComposition.js';
 
 import GridEvents from '../Grid/Pro/GridEvents.js';
 import CellEditingComposition from '../Grid/Pro/CellEditing/CellEditingComposition.js';
@@ -147,6 +148,7 @@ ValidatorComposition.compose(G.Table);
 CellRenderersComposition.compose(G.Column);
 PaginationComposition.compose(G.Pagination);
 ResponsiveComposition.compose(G.Grid);
+RowStickyComposition.compose(G.Grid);
 
 
 /* *

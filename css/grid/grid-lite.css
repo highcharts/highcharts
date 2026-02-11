@@ -432,6 +432,57 @@
     outline: none;
 }
 
+.hcg-sticky-rows-container {
+    position: absolute;
+    z-index: 4;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.hcg-sticky-rows-container .hcg-table {
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+    background: var(--highcharts-background-color);
+    width: max-content;
+}
+
+.hcg-sticky-rows-container .hcg-table tbody {
+    height: auto;
+    flex: 0;
+    overflow: visible;
+}
+
+.hcg-sticky-rows-container .hcg-table tbody tr {
+    display: block;
+    position: relative;
+    --ig-row-background-current:
+        var(
+            --hcg-row-background,
+            var(--highcharts-background-color)
+        );
+}
+
+.hcg-sticky-rows-container .hcg-table tbody tr.hcg-row-even {
+    --ig-row-background-current:
+        var(
+            --hcg-row-even-background,
+            var(--hcg-row-background, var(--highcharts-background-color))
+        );
+}
+
+.hcg-sticky-rows-container .hcg-table tbody tr td {
+    pointer-events: auto;
+}
+
+.hcg-sticky-rows-top {
+    border-bottom: 1px solid var(--ig-row-border-color);
+}
+
+.hcg-sticky-rows-bottom {
+    border-top: 1px solid var(--ig-row-border-color);
+}
+
 /* ----------------------------------------------------------
   START THEMABLE TABLE ELEMENTS
 ------------------------------------------------------------ */

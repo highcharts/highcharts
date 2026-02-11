@@ -33,7 +33,10 @@ import type { ColumnResizingMode } from './Table/ColumnResizing/ColumnResizing';
 import type { ColumnDataType } from './Table/Column';
 import type { DataProviderOptionsType } from './Data/DataProviderType';
 import type DataTable from '../../Data/DataTable';
-import type { CellType as DataTableCellType } from '../../Data/DataTable';
+import type {
+    CellType as DataTableCellType,
+    RowObject as DataTableRowObject
+} from '../../Data/DataTable';
 import type DataTableOptions from '../../Data/DataTableOptions';
 import type Cell from './Table/Cell';
 import type Column from './Table/Column';
@@ -377,6 +380,37 @@ export interface RowsSettings {
      * @default 50
      */
     virtualizationThreshold?: number;
+
+    /**
+     * Options for sticky rows. Sticky rows stay visible while scrolling and
+     * dynamically stick to the top or bottom edge of the viewport depending
+     * on where the row is in the current view.
+     */
+    sticky?: RowStickyOptions;
+}
+
+/**
+ * Sticky rows options.
+ */
+export interface RowStickyOptions {
+    /**
+     * Explicit list of row IDs that should be sticky.
+     */
+    ids?: Array<string | number>;
+
+    /**
+     * Optional row object column used to resolve row IDs.
+     * When not set, provider row IDs are used.
+     */
+    idColumn?: string;
+
+    /**
+     * Optional callback to mark rows as sticky based on row data.
+     * Returning `true` marks the row as sticky.
+     */
+    resolve?: (
+        row: DataTableRowObject
+    ) => (boolean | null | undefined);
 }
 
 /**

@@ -40,6 +40,8 @@ import type Column from './Table/Column';
 import type { ColumnDataType, NoIdColumnOptions } from './Table/Column';
 import type Popup from './UI/Popup.js';
 import type { DeepPartial } from '../../Shared/Types';
+import type { RowStickyMeta } from './RowSticky/RowStickyController';
+import type RowStickyController from './RowSticky/RowStickyController';
 
 import Accessibility from './Accessibility/Accessibility.js';
 import AST from '../../Core/Renderer/HTML/AST.js';
@@ -259,6 +261,18 @@ export class Grid {
      * @internal
      */
     public querying: QueryingController;
+
+    /**
+     * Row sticky metadata for the current queried dataset.
+     * @internal
+     */
+    public rowStickyMeta?: RowStickyMeta;
+
+    /**
+     * Sticky rows controller.
+     * @internal
+     */
+    public rowSticky?: RowStickyController;
 
     /**
      * The time instance.

@@ -245,7 +245,7 @@ class RowsVirtualizer {
             this.viewport.reflow();
         }
 
-        this.updateGridMetrics();
+        await this.updateGridMetrics();
 
         // Load & render rows
         await this.renderRows(this.rowCursor);

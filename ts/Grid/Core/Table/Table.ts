@@ -22,7 +22,6 @@
  *
  * */
 
-import type TableRow from './Body/TableRow';
 import type DataTable from '../../../Data/DataTable';
 import type { RowId } from '../Data/DataProvider';
 
@@ -40,6 +39,7 @@ import type TableCell from './Body/TableCell';
 
 import Cell from './Cell.js';
 import CellContextMenu from './Body/CellContextMenu.js';
+import TableRow from './Body/TableRow.js';
 
 const { makeHTMLElement } = GridUtils;
 const {
@@ -152,6 +152,42 @@ class Table {
      * Cell context menu instance (lazy created).
      */
     private cellContextMenu?: CellContextMenu;
+
+    /**
+     * Sticky row container rendered above the table body.
+     */
+    private stickyTopContainer?: HTMLElement;
+
+    /**
+     * Sticky row container rendered below the table body.
+     */
+    private stickyBottomContainer?: HTMLElement;
+
+    /**
+     * Sticky top table body.
+     */
+    private stickyTopTbodyElement?: HTMLElement;
+
+    /**
+     * Sticky bottom table body.
+     */
+    private stickyBottomTbodyElement?: HTMLElement;
+
+    /**
+     * Cache for sticky row instances by row index.
+     */
+    private stickyRows: Map<number, TableRow> = new Map();
+
+    /**
+     * Sticky rows currently rendered in the top container.
+     */
+    private stickyTopIndexes: number[] = [];
+
+    /**
+     * Sticky rows currently rendered in the bottom container.
+     */
+    private stickyBottomIndexes: number[] = [];
+
 
     /* *
     *
@@ -270,6 +306,7 @@ class Table {
             // this.footer.render();
 
             await this.rowsVirtualizer.initialRender();
+            await this.updateStickyRows();
         } finally {
             fireEvent(this, 'afterInit');
             this.reflow();
@@ -293,6 +330,275 @@ class Table {
                 minVisibleRows * this.rowsVirtualizer.defaultRowHeight
             ) + 'px';
         }
+    }
+
+    /**
+     * Creates sticky row containers. These are rendered outside the table
+     * semantics (`aria-hidden`) and mirror sticky rows only.
+     */
+    private createStickyContainers(): void {
+        const wrapper = this.grid.contentWrapper;
+        if (!wrapper) {
+            return;
+        }
+
+        const createContainer = (
+            position: 'stickyRowsTop' | 'stickyRowsBottom'
+        ): {
+            container: HTMLElement;
+            tbody: HTMLElement;
+        } => {
+            const container = makeHTMLElement('div', {
+                className: (
+                    Globals.getClassName('stickyRowsContainer') + ' ' +
+                    Globals.getClassName(position)
+                )
+            }, wrapper);
+            container.setAttribute('aria-hidden', 'true');
+
+            const table = makeHTMLElement('table', {
+                className: Globals.getClassName('tableElement')
+            }, container);
+            const tbody = makeHTMLElement('tbody', {}, table);
+
+            for (const eventName of [
+                'click',
+                'dblclick',
+                'contextmenu',
+                'mousedown',
+                'mouseover',
+                'mouseout'
+            ] as const) {
+                const handler = {
+                    click: this.onCellClick,
+                    dblclick: this.onCellDblClick,
+                    contextmenu: this.onCellContextMenu,
+                    mousedown: this.onCellMouseDown,
+                    mouseover: this.onCellMouseOver,
+                    mouseout: this.onCellMouseOut
+                }[eventName];
+
+                tbody.addEventListener(eventName, handler);
+            }
+
+            return { container, tbody };
+        };
+
+        const top = createContainer('stickyRowsTop');
+        const bottom = createContainer('stickyRowsBottom');
+
+        this.stickyTopContainer = top.container;
+        this.stickyTopTbodyElement = top.tbody;
+        this.stickyBottomContainer = bottom.container;
+        this.stickyBottomTbodyElement = bottom.tbody;
+    }
+
+    private destroyStickyContainers(): void {
+        const removeListeners = (tbody: HTMLElement | undefined): void => {
+            if (!tbody) {
+                return;
+            }
+
+            tbody.removeEventListener('click', this.onCellClick);
+            tbody.removeEventListener('dblclick', this.onCellDblClick);
+            tbody.removeEventListener('contextmenu', this.onCellContextMenu);
+            tbody.removeEventListener('mousedown', this.onCellMouseDown);
+            tbody.removeEventListener('mouseover', this.onCellMouseOver);
+            tbody.removeEventListener('mouseout', this.onCellMouseOut);
+        };
+
+        removeListeners(this.stickyTopTbodyElement);
+        removeListeners(this.stickyBottomTbodyElement);
+
+        this.stickyTopContainer?.remove();
+        this.stickyBottomContainer?.remove();
+        delete this.stickyTopContainer;
+        delete this.stickyBottomContainer;
+        delete this.stickyTopTbodyElement;
+        delete this.stickyBottomTbodyElement;
+
+        this.stickyTopIndexes.length = 0;
+        this.stickyBottomIndexes.length = 0;
+
+        for (const row of this.stickyRows.values()) {
+            row.destroy();
+        }
+        this.stickyRows.clear();
+    }
+
+    private syncStickyContainersGeometry(): void {
+        const wrapper = this.grid.contentWrapper;
+        const top = this.stickyTopContainer;
+        const bottom = this.stickyBottomContainer;
+
+        if (!wrapper || !top || !bottom) {
+            return;
+        }
+
+        const wrapperRect = wrapper.getBoundingClientRect();
+        const tbodyRect = this.tbodyElement.getBoundingClientRect();
+
+        const topOffset = tbodyRect.top - wrapperRect.top;
+        const leftOffset = tbodyRect.left - wrapperRect.left;
+
+        const apply = (container: HTMLElement, isTop: boolean): void => {
+            container.style.left = leftOffset + 'px';
+            container.style.width = this.tbodyElement.clientWidth + 'px';
+
+            if (isTop) {
+                container.style.top = topOffset + 'px';
+                container.style.bottom = '';
+            } else {
+                container.style.top = '';
+                container.style.bottom = (
+                    wrapperRect.bottom - tbodyRect.bottom
+                ) + 'px';
+            }
+        };
+
+        apply(top, true);
+        apply(bottom, false);
+
+        this.syncStickyHorizontalScroll();
+    }
+
+    private syncStickyHorizontalScroll(): void {
+        const scrollLeft = this.tbodyElement.scrollLeft;
+
+        if (this.stickyTopContainer?.firstElementChild) {
+            (
+                this.stickyTopContainer.firstElementChild as HTMLElement
+            ).style.transform = `translateX(${-scrollLeft}px)`;
+        }
+
+        if (this.stickyBottomContainer?.firstElementChild) {
+            (
+                this.stickyBottomContainer.firstElementChild as HTMLElement
+            ).style.transform = `translateX(${-scrollLeft}px)`;
+        }
+    }
+
+    private async updateStickyRows(): Promise<void> {
+        const stickyMeta = this.grid.rowStickyMeta;
+        const rowIndexes = stickyMeta?.stickyRowIndexes || [];
+
+        if (!rowIndexes.length) {
+            this.destroyStickyContainers();
+            return;
+        }
+
+        if (!this.stickyTopContainer || !this.stickyBottomContainer) {
+            this.createStickyContainers();
+        }
+
+        const topTbody = this.stickyTopTbodyElement;
+        const bottomTbody = this.stickyBottomTbodyElement;
+        const topContainer = this.stickyTopContainer;
+        const bottomContainer = this.stickyBottomContainer;
+
+        if (!topTbody || !bottomTbody || !topContainer || !bottomContainer) {
+            return;
+        }
+
+        const rowCount = await this.grid.dataProvider?.getRowCount() || 0;
+        if (!rowCount) {
+            return;
+        }
+
+        let visibleFrom: number;
+        let visibleTo: number;
+
+        if (this.virtualRows) {
+            const rowHeight = this.rowsVirtualizer.defaultRowHeight ||
+                this.rows[0]?.htmlElement.offsetHeight ||
+                1;
+
+            visibleFrom = Math.max(0, Math.floor(
+                this.tbodyElement.scrollTop / rowHeight
+            ));
+            visibleTo = Math.min(
+                rowCount - 1,
+                Math.ceil(
+                    (
+                        this.tbodyElement.scrollTop +
+                        this.tbodyElement.clientHeight
+                    ) / rowHeight
+                ) - 1
+            );
+        } else {
+            const rowHeight = this.rows[0]?.htmlElement.offsetHeight ||
+                this.rowsVirtualizer.defaultRowHeight;
+
+            visibleFrom = Math.max(0, Math.floor(
+                this.tbodyElement.scrollTop / rowHeight
+            ));
+            visibleTo = Math.min(
+                rowCount - 1,
+                Math.ceil(
+                    (
+                        this.tbodyElement.scrollTop +
+                        this.tbodyElement.clientHeight
+                    ) / rowHeight
+                ) - 1
+            );
+        }
+
+        const topIndexes = rowIndexes.filter((index): boolean =>
+            index < visibleFrom
+        );
+        const bottomIndexes = rowIndexes.filter((index): boolean =>
+            index > visibleTo
+        );
+
+        if (
+            areArraysEqual(this.stickyTopIndexes, topIndexes) &&
+            areArraysEqual(this.stickyBottomIndexes, bottomIndexes)
+        ) {
+            this.syncStickyContainersGeometry();
+            return;
+        }
+
+        this.stickyTopIndexes = topIndexes;
+        this.stickyBottomIndexes = bottomIndexes;
+        const renderRows = async (
+            indexes: number[],
+            tbody: HTMLElement
+        ): Promise<void> => {
+            tbody.innerHTML = '';
+            const fragment = document.createDocumentFragment();
+
+            for (let i = 0, iEnd = indexes.length; i < iEnd; ++i) {
+                const index = indexes[i];
+                let row = this.stickyRows.get(index);
+                if (!row) {
+                    row = new TableRow(this, index);
+                    await row.init();
+                    await row.render();
+                    this.stickyRows.set(index, row);
+                } else {
+                    await row.reuse(index, false);
+                }
+
+                row.reflow();
+                row.htmlElement.style.height = '';
+                row.htmlElement.style.transform = '';
+
+                for (const cell of row.cells) {
+                    cell.htmlElement.style.transform = '';
+                }
+
+                fragment.appendChild(row.htmlElement);
+            }
+
+            tbody.appendChild(fragment);
+        };
+
+        await renderRows(topIndexes, topTbody);
+        await renderRows(bottomIndexes, bottomTbody);
+
+        topContainer.style.display = topIndexes.length ? '' : 'none';
+        bottomContainer.style.display = bottomIndexes.length ? '' : 'none';
+        this.syncStickyContainersGeometry();
     }
 
     /**
@@ -391,6 +697,7 @@ class Table {
 
             // Update the pagination controls
             vp.grid.pagination?.updateControls();
+            await this.updateStickyRows();
             vp.reflow();
         } finally {
             this.grid.hideLoading();
@@ -410,6 +717,7 @@ class Table {
 
         // Reflow rows content dimensions
         this.rowsVirtualizer.reflowRows();
+        this.syncStickyContainersGeometry();
 
         // Reflow the pagination
         this.grid.pagination?.reflow();
@@ -448,9 +756,15 @@ class Table {
     private onScroll = (): void => {
         if (this.virtualRows) {
             void this.rowsVirtualizer.scroll();
+            requestAnimationFrame((): void => {
+                void this.updateStickyRows();
+            });
+        } else {
+            void this.updateStickyRows();
         }
 
         this.header?.scrollHorizontally(this.tbodyElement.scrollLeft);
+        this.syncStickyHorizontalScroll();
     };
 
     /**
@@ -700,7 +1014,8 @@ class Table {
 
         const rowIndex = parseInt(rowIndexAttr, 10);
         const firstRowIndex = this.rows[0]?.index ?? 0;
-        const row = this.rows[rowIndex - firstRowIndex];
+        const row = this.rows[rowIndex - firstRowIndex] ||
+            this.stickyRows.get(rowIndex);
         if (!row) {
             return;
         }
@@ -731,6 +1046,7 @@ class Table {
         this.tbodyElement.removeEventListener('mouseout', this.onCellMouseOut);
         this.tbodyElement.removeEventListener('keydown', this.onCellKeyDown);
         this.resizeObserver.disconnect();
+        this.destroyStickyContainers();
         this.columnsResizer?.removeEventListeners();
         this.header?.destroy();
         this.cellContextMenu?.hide();
@@ -771,6 +1087,8 @@ class Table {
     ): void {
         this.tbodyElement.scrollTop = meta.scrollTop;
         this.tbodyElement.scrollLeft = meta.scrollLeft;
+        this.syncStickyHorizontalScroll();
+        void this.updateStickyRows();
 
         if (meta.focusCursor) {
             const [rowIndex, columnIndex] = meta.focusCursor;
@@ -820,6 +1138,29 @@ class Table {
     public getRow(id: RowId): TableRow | undefined {
         return this.rows.find((row): boolean => row.id === id);
     }
+}
+
+/**
+ * Returns true when both arrays contain exactly the same values in order.
+ *
+ * @param a
+ * First array.
+ *
+ * @param b
+ * Second array.
+ */
+function areArraysEqual(a: number[], b: number[]): boolean {
+    if (a.length !== b.length) {
+        return false;
+    }
+
+    for (let i = 0, iEnd = a.length; i < iEnd; ++i) {
+        if (a[i] !== b[i]) {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 /**

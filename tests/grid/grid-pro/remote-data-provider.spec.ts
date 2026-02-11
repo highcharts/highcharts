@@ -170,4 +170,104 @@ test.describe('RemoteDataProvider', () => {
         expect(result.rowId0).toBe('row-4');
         expect(result.rowId1).toBe('row-3');
     });
+
+    test('supports sticky rows with remote provider and virtualization', async ({
+        page
+    }) => {
+        await page.goto('/grid-pro/cypress/remote-data-provider');
+        await page.waitForFunction(() => {
+            const api = (window as any).remoteDataProviderTest;
+            return !!(api && api.createGrid && api.getGrid);
+        });
+
+        await page.evaluate(() => {
+            const api = (window as any).remoteDataProviderTest;
+            api.createGrid({
+                totalRowCount: 80,
+                data: {
+                    chunkSize: 200
+                },
+                rendering: {
+                    rows: {
+                        virtualization: true,
+                        virtualizationThreshold: 20,
+                        sticky: {
+                            idColumn: 'id',
+                            ids: [5, 20, 70]
+                        }
+                    }
+                }
+            });
+        });
+
+        await page.waitForFunction(() => {
+            const grid = (window as any).remoteDataProviderTest.getGrid();
+            return !!grid?.viewport?.rowsVirtualizer;
+        });
+
+        const result = await page.evaluate(async () => {
+            const api = (window as any).remoteDataProviderTest;
+            const grid = api.getGrid();
+            const vp = grid.viewport;
+            const rowCount = await grid.dataProvider.getRowCount();
+
+            await new Promise((resolve) => window.setTimeout(resolve, 0));
+
+            const rowHeight = vp.rowsVirtualizer.defaultRowHeight ||
+                vp.rows[0]?.htmlElement.offsetHeight ||
+                1;
+            vp.tbodyElement.scrollTop = rowHeight * 60;
+            vp.tbodyElement.dispatchEvent(new Event('scroll'));
+
+            await new Promise((resolve) => window.setTimeout(resolve, 0));
+
+            const visibleFrom = Math.max(
+                0,
+                Math.floor(vp.tbodyElement.scrollTop / rowHeight)
+            );
+            const excluded = new Set(
+                (grid.getStickyRows() || []).map(
+                    (id: string | number) => String(id)
+                )
+            );
+
+            let target: { index: number; id: number } = { index: -1, id: -1 };
+            for (const row of vp.rows) {
+                if (
+                    row.index < visibleFrom &&
+                    row.index > 0 &&
+                    row.index < rowCount - 1 &&
+                    !excluded.has(String(row.data.id))
+                ) {
+                    target = {
+                        index: row.index,
+                        id: Number(row.data.id)
+                    };
+                    break;
+                }
+            }
+
+            if (target.index === -1) {
+                return {
+                    target,
+                    stickyTopIndexes: vp.stickyTopIndexes || [],
+                    stickyRows: grid.getStickyRows() || []
+                };
+            }
+
+            await grid.stickRow(target.id);
+
+            return {
+                target,
+                stickyRows: grid.getStickyRows() || [],
+                stickyMetaIds: grid.rowStickyMeta?.stickyRowIds || [],
+                stickyMetaIndexes: grid.rowStickyMeta?.stickyRowIndexes || []
+            };
+        });
+
+        expect(result.target.index).toBeGreaterThan(-1);
+        expect(result.stickyRows).toContain(result.target.id);
+        expect(result.stickyMetaIds).toContain(result.target.id);
+        expect(result.stickyMetaIndexes).toContain(result.target.index);
+    });
 });

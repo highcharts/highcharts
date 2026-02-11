@@ -40,7 +40,8 @@
             totalRowCount = 5,
             data = {},
             pagination = { enabled: false },
-            columns
+            columns,
+            rendering
         } = options || {};
 
         state.totalRowCount = totalRowCount;
@@ -61,6 +62,7 @@
                 }
             },
             columns,
+            rendering,
             pagination
         });
 

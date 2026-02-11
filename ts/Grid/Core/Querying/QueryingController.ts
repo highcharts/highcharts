@@ -149,6 +149,15 @@ class QueryingController {
      */
     private async modifyData(): Promise<void> {
         await this.grid.dataProvider?.applyQuery();
+
+        const rowSticky = this.grid.rowSticky;
+        if (rowSticky?.isEnabled()) {
+            this.grid.rowStickyMeta = await rowSticky.computeStickyState();
+        } else {
+            rowSticky?.resetEffectiveState();
+            delete this.grid.rowStickyMeta;
+        }
+
         this.shouldBeUpdated = false;
     }
 }
