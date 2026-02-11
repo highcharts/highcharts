@@ -86,6 +86,8 @@ if the issue is already reported.
 
 ## Contributing Code
 
+Note: We strongly encourage contributors to open an issue for discussion before investing significant time in a pull request, especially for non-trivial changes. See details below.
+
 ### Licensing And Legal
 
 Please note that when you contribute code to the Highcharts repository that code 
