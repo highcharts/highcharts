@@ -8,6 +8,8 @@ export default {
         options: ['light dark', 'light', 'dark'],
         value: 'light dark'
     }, {
+        type: 'separator'
+    }, {
         path: 'palette.light.colors[0]',
         value: '#2caffe'
     }, {
@@ -16,6 +18,8 @@ export default {
     }, {
         path: 'palette.light.colors[2]',
         value: '#00e272'
+    }, {
+        type: 'separator'
     }, {
         path: 'palette.dark.colors[0]',
         value: '#2caffe'
