@@ -23,6 +23,7 @@
 
 import type Grid from '../Grid';
 import type { RowId } from '../Data/DataProvider';
+import type { StickyActionType } from './RowStickyController';
 
 import Globals from '../Globals.js';
 import RowStickyController from './RowStickyController.js';
@@ -30,6 +31,7 @@ import U from '../../../Core/Utilities.js';
 
 const {
     addEvent,
+    fireEvent,
     pushUnique
 } = U;
 
@@ -64,9 +66,7 @@ export function compose(
             index?: number
         ): Promise<void> {
             this.rowSticky?.stickRow(rowId, index);
-            this.querying.shouldBeUpdated = true;
-            this.dirtyFlags.add('rows');
-            return this.redraw();
+            return applyStickyRowChange(this, rowId, 'stick');
         };
     }
 
@@ -76,9 +76,19 @@ export function compose(
             rowId: RowId
         ): Promise<void> {
             this.rowSticky?.unstickRow(rowId);
-            this.querying.shouldBeUpdated = true;
-            this.dirtyFlags.add('rows');
-            return this.redraw();
+            return applyStickyRowChange(this, rowId, 'unstick');
+        };
+    }
+
+    if (!gridProto.toggleStickyRow) {
+        gridProto.toggleStickyRow = function (
+            this: Grid,
+            rowId: RowId,
+            index?: number
+        ): Promise<void> {
+            const action = this.rowSticky?.toggleStickyRow(rowId, index) ||
+                'stick';
+            return applyStickyRowChange(this, rowId, action);
         };
     }
 
@@ -96,6 +106,34 @@ function initRowStickyController(this: Grid): void {
     this.rowSticky = new RowStickyController(this);
 }
 
+/**
+ * Applies sticky change side effects and emits a single completion event.
+ *
+ * @param grid
+ * Grid instance being updated.
+ *
+ * @param rowId
+ * Row ID that triggered the sticky change.
+ *
+ * @param action
+ * Effective sticky action (`stick` or `unstick`).
+ */
+async function applyStickyRowChange(
+    grid: Grid,
+    rowId: RowId,
+    action: StickyActionType
+): Promise<void> {
+    grid.querying.shouldBeUpdated = true;
+    grid.dirtyFlags.add('rows');
+    await grid.redraw();
+
+    fireEvent(grid, 'afterStickyRowsChange', {
+        rowId,
+        action,
+        stickyRows: grid.getStickyRows ? grid.getStickyRows() : []
+    });
+}
+
 
 /* *
  *
@@ -108,6 +146,7 @@ declare module '../Grid' {
         rowSticky?: RowStickyController;
         stickRow?: (rowId: RowId, index?: number) => Promise<void>;
         unstickRow?: (rowId: RowId) => Promise<void>;
+        toggleStickyRow?: (rowId: RowId, index?: number) => Promise<void>;
         getStickyRows?: () => RowId[];
     }
 }

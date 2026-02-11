@@ -148,6 +148,24 @@ class RowStickyController {
         this.hasEffectiveStickyState = false;
     }
 
+    public isStickyRow(rowId: RowId): boolean {
+        return this.getStickyRows().indexOf(rowId) !== -1;
+    }
+
+    public toggleStickyRow(rowId: RowId, index?: number): StickyActionType {
+        const action: StickyActionType = this.isStickyRow(rowId) ?
+            'unstick' :
+            'stick';
+
+        if (action === 'unstick') {
+            this.unstickRow(rowId);
+        } else {
+            this.stickRow(rowId, index);
+        }
+
+        return action;
+    }
+
     public getStickyRows(): RowId[] {
         return this.hasEffectiveStickyState ?
             [...this.effectiveStickyRowIds] :
@@ -329,6 +347,8 @@ export interface RowStickyMeta {
     stickyRowIndexes: number[];
     stickyRowIndexSet: Set<number>;
 }
+
+export type StickyActionType = 'stick' | 'unstick';
 
 
 /* *

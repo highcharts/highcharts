@@ -97,6 +97,29 @@ Returns currently sticky row IDs.
 const stickyIds = grid.getStickyRows();
 ```
 
+### `grid.toggleStickyRow(rowId, index?)`
+
+Toggles sticky state for a row ID at runtime.
+
+If the row is sticky, it will be unstuck. If it is not sticky, it will be
+added to sticky rows (optionally at `index`).
+
+```js
+await grid.toggleStickyRow('SKU-040');
+```
+
+## Events
+
+### `afterStickyRowsChange`
+
+Fires after a sticky state change is applied and the grid redraw is complete.
+
+Event payload:
+
+- `rowId`: row ID that triggered the change
+- `action`: `'stick' | 'unstick'` (effective action after toggle resolution)
+- `stickyRows`: current effective sticky row IDs
+
 ## Behavior notes
 
 - Sticky rows use one semantic table body for Grid content.

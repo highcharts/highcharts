@@ -270,4 +270,70 @@ test.describe('RemoteDataProvider', () => {
         expect(result.stickyMetaIds).toContain(result.target.id);
         expect(result.stickyMetaIndexes).toContain(result.target.index);
     });
+
+    test('supports toggleStickyRow and emits sticky change events', async ({
+        page
+    }) => {
+        await page.goto('/grid-pro/cypress/remote-data-provider');
+        await page.waitForFunction(() => {
+            const api = (window as any).remoteDataProviderTest;
+            return !!(api && api.createGrid && api.getGrid);
+        });
+
+        const result = await page.evaluate(async () => {
+            const api = (window as any).remoteDataProviderTest;
+            api.createGrid({
+                totalRowCount: 40,
+                data: {
+                    chunkSize: 80
+                },
+                rendering: {
+                    rows: {
+                        sticky: {
+                            idColumn: 'id',
+                            ids: [5]
+                        }
+                    }
+                }
+            });
+
+            const grid = api.getGrid();
+            (window as any).stickyRowsEvents = [];
+            grid.hcEvents = grid.hcEvents || {};
+            grid.hcEvents.afterStickyRowsChange =
+                grid.hcEvents.afterStickyRowsChange || [];
+
+            grid.hcEvents.afterStickyRowsChange.push({
+                fn: function (e: any): void {
+                    (window as any).stickyRowsEvents.push({
+                        rowId: e.rowId,
+                        action: e.action,
+                        stickyRows: e.stickyRows
+                    });
+                }
+            });
+
+            if (typeof grid.toggleStickyRow !== 'function') {
+                return {
+                    hasToggle: false,
+                    events: [],
+                    stickyRows: []
+                };
+            }
+
+            await grid.toggleStickyRow(5);
+
+            return {
+                hasToggle: true,
+                events: (window as any).stickyRowsEvents,
+                stickyRows: grid.getStickyRows()
+            };
+        });
+
+        expect(result.hasToggle).toBe(true);
+        expect(result.events.length).toBeGreaterThanOrEqual(1);
+        expect(result.events[0].rowId).toBe(5);
+        expect(result.events[0].action).toBe('unstick');
+        expect(result.stickyRows).not.toContain(5);
+    });
 });
