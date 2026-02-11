@@ -83,7 +83,6 @@ QUnit.test('Breadcrumbs format', function (assert) {
         'The breadcrumbs separators group should be destroyed.'
     );
 
-
     chart.series[0].points[0].doDrilldown();
 
     // Update with arrow function

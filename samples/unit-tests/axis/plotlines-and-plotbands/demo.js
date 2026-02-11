@@ -760,10 +760,14 @@ QUnit.test(
 QUnit.test(
     '#13375: Click event on dynamically added plotBands.',
     function (assert) {
-        var plotBandClicked,
-            chart = Highcharts.chart('container', {
+        let plotBandClicked;
+
+        const chart = Highcharts.chart('container', {
                 series: []
-            });
+            }),
+            { plotLeft, plotTop } = chart,
+            top = plotTop - 20,
+            left = plotLeft - 20;
 
         chart.xAxis[0].addPlotBand({
             from: 0,
@@ -781,16 +785,19 @@ QUnit.test(
         });
 
         const controller = new TestController(chart);
+
+        let { plotX, plotY } = chart.series[0].data[2];
+
         controller.triggerEvent(
             'mouseover',
-            chart.series[0].data[2].plotX + chart.plotLeft - 20,
-            chart.series[0].data[2].plotY + chart.plotTop - 20,
+            plotX + left,
+            plotY + top,
             {},
             false
         );
         controller.click(
-            chart.series[0].data[2].plotX + chart.plotLeft - 20,
-            chart.series[0].data[2].plotY + chart.plotTop - 20,
+            plotX + left,
+            plotY + top,
             {},
             false
         );
@@ -815,16 +822,18 @@ QUnit.test(
             }
         });
 
+        ({ plotX, plotY } = chart.series[0].data[5]);
+
         controller.triggerEvent(
             'mouseover',
-            chart.series[0].data[4].plotX + chart.plotLeft - 20,
-            chart.series[0].data[4].plotY + chart.plotTop - 20,
+            plotX + left,
+            plotY + top,
             {},
             false
         );
         controller.click(
-            chart.series[0].data[4].plotX + chart.plotLeft - 20,
-            chart.series[0].data[4].plotY + chart.plotTop - 20,
+            plotX + left,
+            plotY + top,
             {},
             false
         );

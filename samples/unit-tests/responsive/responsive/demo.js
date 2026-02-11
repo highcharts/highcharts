@@ -116,11 +116,11 @@ QUnit.test('Callback', function (assert) {
             rules: [
                 {
                     condition: {
-                        callback: () => condition
+                        callback: ctx => ctx && true
                     },
                     chartOptions: {
                         chart: {
-                            width: 600
+                            width: 800
                         }
                     }
                 }
@@ -130,8 +130,8 @@ QUnit.test('Callback', function (assert) {
 
     assert.strictEqual(
         chart.chartWidth,
-        600,
-        'Responsive callback can be arrow function'
+        800,
+        'Responsive callback receives ctx'
     );
 });
 

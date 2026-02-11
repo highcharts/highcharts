@@ -2431,8 +2431,8 @@ QUnit.test(
         );
 
         assert.strictEqual(
-            labelText.indexOf('ctx') !== -1,
-            true,
+            labelText,
+            'ctx',
             'Arrow-function numberFormatter should use ctx when formatting.'
         );
     }

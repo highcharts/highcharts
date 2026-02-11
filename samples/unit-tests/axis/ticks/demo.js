@@ -353,7 +353,6 @@ QUnit.test('Ticks for a single point.', function (assert) {
         tickPositioner: function () {}
     });
 
-
     assert.strictEqual(
         chart.yAxis[0].min,
         -0.3,
