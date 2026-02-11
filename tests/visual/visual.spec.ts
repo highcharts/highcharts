@@ -699,13 +699,19 @@ test.describe('Visual tests', () => {
                 );
 
                 try {
-                    await expect(
-                        renderPage.locator('#visual-render-frame')
-                    ).toHaveScreenshot(snapshotName, {
+                    const screenshot = await renderPage.screenshot({
+                        clip: {
+                            x: 0,
+                            y: 0,
+                            width: RENDER_WIDTH,
+                            height: RENDER_HEIGHT
+                        },
                         animations: 'disabled',
                         caret: 'hide',
-                        maxDiffPixels: 0,
                         scale: 'css'
+                    });
+                    expect(screenshot).toMatchSnapshot(snapshotName, {
+                        maxDiffPixels: 0
                     });
                 } catch (error) {
                     if (
