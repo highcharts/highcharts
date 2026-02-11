@@ -344,21 +344,7 @@ export async function compareSVG(
         };
     }
 
-    const referencePng = await renderSvgToPng(
-        currentReferenceSvg,
-        options.renderPage
-    );
-    const candidatePng = await renderSvgToPng(svgContent, options.renderPage);
-
-    if (shouldWriteDebug(samplePath)) {
-        writeDebugImages(sampleDir, referencePng, candidatePng);
-    }
-
-
-    const diffPixels = countDiffPixels(referencePng, candidatePng);
-    const passed = diffPixels === 0;
-
-    if (!passed && updateMode === 'changed') {
+    if (updateMode === 'changed') {
         writeFileSync(referencePath, svgContent);
         return {
             passed: true,
@@ -368,6 +354,31 @@ export async function compareSVG(
             referenceUpdated: true
         };
     }
+
+    const debugMode = shouldWriteDebug(samplePath);
+    if (!options.generateDiff && !debugMode) {
+        return {
+            passed: false,
+            diffPixels: 1,
+            candidatePath,
+            referencePath,
+            referenceUpdated: false
+        };
+    }
+
+    const referencePng = await renderSvgToPng(
+        currentReferenceSvg,
+        options.renderPage
+    );
+    const candidatePng = await renderSvgToPng(svgContent, options.renderPage);
+
+    if (debugMode) {
+        writeDebugImages(sampleDir, referencePng, candidatePng);
+    }
+
+
+    const diffPixels = countDiffPixels(referencePng, candidatePng);
+    const passed = diffPixels === 0;
 
     if (!passed && options.generateDiff) {
         await generateDiffGif(

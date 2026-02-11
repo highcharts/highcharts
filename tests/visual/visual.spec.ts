@@ -684,7 +684,7 @@ test.describe('Visual tests', () => {
                 const comparison = await compareSVG(
                     samplePath,
                     svgContent, {
-                        generateDiff: true,
+                        generateDiff: false,
                         updateMode,
                         renderPage
                     }
