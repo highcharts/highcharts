@@ -92,10 +92,7 @@
         /* UI colors */
         --highcharts-background-color: #141414;
 
-        /*
-            Neutral color variations
-            https://www.highcharts.com/samples/highcharts/css/palette-helper
-        */
+        /* Neutral color variations */
         --highcharts-neutral-color-100: #ffffff;
         --highcharts-neutral-color-80: #d0d0d0;
         --highcharts-neutral-color-60: #a1a1a1;
@@ -151,10 +148,7 @@
     /* UI colors */
     --highcharts-background-color: #141414;
 
-    /*
-        Neutral color variations
-        https://www.highcharts.com/samples/highcharts/css/palette-helper
-    */
+    /* Neutral color variations */
     --highcharts-neutral-color-100: #ffffff;
     --highcharts-neutral-color-80: #d0d0d0;
     --highcharts-neutral-color-60: #a1a1a1;
