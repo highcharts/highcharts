@@ -1,6 +1,6 @@
 /* eslint-disable playwright/no-conditional-in-test */
 import type { Page, BrowserContext } from '@playwright/test';
-import { test } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import { setupRoutes } from '~/fixtures.ts';
 import {
     getKarmaScripts,
@@ -8,9 +8,15 @@ import {
     setTestingOptions,
     transpileTS
 } from '~/utils.ts';
+import { createHash } from 'node:crypto';
+import { existsSync } from 'node:fs';
 import { join, dirname, relative } from 'node:path';
 import { glob } from 'glob';
-import { compareSVG, closeCompareBrowser } from './visual-compare';
+import {
+    closeCompareBrowser,
+    compareSVG,
+    generateDiffGif
+} from './visual-compare';
 
 type HighchartsChart = {
     container?: HTMLElement;
@@ -38,6 +44,8 @@ type VisualWindow = Window & {
         afterSample?: () => void;
     };
 };
+
+type SnapshotUpdateMode = 'all' | 'changed' | 'missing' | 'none';
 
 function transformVisualSampleScript(script: string | undefined): string {
     let transformed = script ?? '';
@@ -89,12 +97,114 @@ const MAX_CHART_LOAD_ATTEMPTS = 100;
 const CHART_LOAD_RETRY_DELAY_MS = 100;
 const CHART_LOAD_TIMEOUT_MS =
     MAX_CHART_LOAD_ATTEMPTS * CHART_LOAD_RETRY_DELAY_MS;
+const RENDER_WIDTH = 600;
+const RENDER_HEIGHT = 400;
+const SNAPSHOT_NAME_MAX_LENGTH = 90;
 
 const defaultPageContent =
     '<div id="container" style="width: 600px; margin: 0 auto;"></div>';
 
 const getRelativeSamplePath = (samplePath: string): string =>
     relative(process.cwd(), samplePath).replace(/\\/g, '/');
+
+function getSnapshotUpdateMode(value: unknown): SnapshotUpdateMode {
+    const normalized =
+        typeof value === 'string' ? value.toLowerCase() : 'missing';
+
+    if (normalized.includes('all')) {
+        return 'all';
+    }
+
+    if (normalized.includes('changed')) {
+        return 'changed';
+    }
+
+    if (normalized.includes('none')) {
+        return 'none';
+    }
+
+    return 'missing';
+}
+
+function sanitizeSnapshotSegment(value: string): string {
+    return value
+        .replace(/[^a-zA-Z0-9/-]+/g, '-')
+        .replace(/[\\/]+/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '')
+        .toLowerCase();
+}
+
+function getSnapshotName(
+    samplePath: string,
+    projectName: string,
+    browserName?: string
+): string {
+    const relativePath = getRelativeSamplePath(samplePath)
+        .replace(/\/demo\.(js|mjs|ts)$/u, '')
+        .replace(/^samples\//, '');
+    const readableSegment = sanitizeSnapshotSegment(relativePath)
+        .slice(0, SNAPSHOT_NAME_MAX_LENGTH) || 'sample';
+    const hash = createHash('sha1').update(relativePath).digest('hex').slice(0, 10);
+    const suffix = sanitizeSnapshotSegment(
+        `${projectName}-${browserName ?? 'browser'}`
+    ) || 'visual-browser';
+
+    return `${readableSegment}-${hash}-${suffix}.png`;
+}
+
+const renderTemplate = (svgContent: string) =>
+    `<!DOCTYPE html><html><head><style>
+body { margin: 0; background: #fff; }
+#visual-render-frame {
+    width: ${RENDER_WIDTH}px;
+    height: ${RENDER_HEIGHT}px;
+    overflow: hidden;
+}
+svg { display: block; }
+</style></head><body>
+<div id="visual-render-frame">${svgContent}</div>
+</body></html>`;
+
+async function prepareRenderPageForScreenshot(
+    currentRenderPage: Page,
+    svgContent: string
+): Promise<void> {
+    await currentRenderPage.setContent(renderTemplate(svgContent), {
+        waitUntil: 'domcontentloaded'
+    });
+    await currentRenderPage.evaluate(() => {
+        if ('ready' in document.fonts) {
+            return document.fonts.ready;
+        }
+        return null;
+    });
+
+    await currentRenderPage.evaluate(async () => {
+        const images = Array.from(document.querySelectorAll('image'));
+        if (!images.length) {
+            return;
+        }
+
+        await Promise.all(images.map((image) => {
+            const href = image.getAttribute('href') ??
+                image.getAttribute('xlink:href');
+            if (!href) {
+                return Promise.resolve();
+            }
+            return new Promise<void>((resolve) => {
+                const loader = new Image();
+                loader.onload = () => resolve();
+                loader.onerror = () => resolve();
+                loader.src = href;
+            });
+        }));
+    });
+
+    await currentRenderPage.evaluate(
+        () => new Promise(requestAnimationFrame)
+    );
+}
 
 const pageTemplate = (bodyContent = '') =>
     `<!DOCTYPE html>
@@ -145,7 +255,7 @@ test.describe('Visual tests', () => {
         await context.setOffline(true);
 
         renderContext ??= await browser.newContext({
-            viewport: { width: 600, height: 400 },
+            viewport: { width: RENDER_WIDTH, height: RENDER_HEIGHT },
             deviceScaleFactor: 1,
             colorScheme: 'light'
         });
@@ -319,7 +429,6 @@ test.describe('Visual tests', () => {
     });
 
     for (const samplePath of filteredSamples){
-        // eslint-disable-next-line playwright/expect-expect
         test(`${samplePath}`, async () =>{
             if (context) {
                 await context.clock.setFixedTime(FIXED_CLOCK_TIME);
@@ -561,25 +670,60 @@ test.describe('Visual tests', () => {
                     }
                 );
 
-                if (svgContent) {
-                    const updateSnapshots = test.info().config.updateSnapshots;
-                    const referenceMode = !['missing', 'none'].some(
-                        (mode) => updateSnapshots.includes(mode)
-                    );
-                    const comparison = await compareSVG(
-                        samplePath, 
-                        svgContent, {
-                            generateDiff: true,
-                            referenceMode,
-                            renderPage
-                        }
-                    );
+                if (!svgContent) {
+                    return;
+                }
 
-                    if (!comparison.passed) {
-                        throw new Error(
-                            `Visual diff ${comparison.diffPixels} pixels.`
+                if (!renderPage) {
+                    throw new Error('Render page not initialized');
+                }
+
+                const updateMode = getSnapshotUpdateMode(
+                    test.info().config.updateSnapshots
+                );
+                const comparison = await compareSVG(
+                    samplePath,
+                    svgContent, {
+                        generateDiff: true,
+                        updateMode,
+                        renderPage
+                    }
+                );
+
+                await prepareRenderPageForScreenshot(renderPage, svgContent);
+                const browserName = context?.browser()?.browserType().name();
+                const snapshotName = getSnapshotName(
+                    samplePath,
+                    test.info().project.name,
+                    browserName
+                );
+
+                try {
+                    await expect(
+                        renderPage.locator('#visual-render-frame')
+                    ).toHaveScreenshot(snapshotName, {
+                        animations: 'disabled',
+                        caret: 'hide',
+                        maxDiffPixels: 0,
+                        scale: 'css'
+                    });
+                } catch (error) {
+                    if (
+                        existsSync(comparison.referencePath) &&
+                        existsSync(comparison.candidatePath)
+                    ) {
+                        await generateDiffGif(
+                            comparison.referencePath,
+                            comparison.candidatePath,
+                            join(
+                                dirname(comparison.candidatePath),
+                                'diff.gif'
+                            ),
+                            renderPage
                         );
                     }
+
+                    throw error;
                 }
 
                 // await page.screenshot({ fullPage: true });

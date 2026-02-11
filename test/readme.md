@@ -33,8 +33,11 @@ npx playwright test --project=setup-highcharts --project=highcharts tests/highch
 
 ## Visual Tests (Playwright)
 
-Visual comparison tests run in Playwright and write
-`reference.svg`, `candidate.svg`, and `diff.gif` into sample directories:
+Visual comparison tests run in Playwright. Pass/fail uses Playwright screenshot
+assertions (`toHaveScreenshot`) with baselines in
+`tests/visual/visual.spec.ts-snapshots/`. The run still writes
+`reference.svg`, `candidate.svg`, and `diff.gif` into sample directories for
+the existing visual review tooling:
 
 ```bash
 # Generate reference images for a product

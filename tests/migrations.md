@@ -317,9 +317,11 @@ tests run through Playwright instead of Karma.
 1. **`gulp test` command** - Now routes unit tests to Playwright (via QUnit
    runner) instead of Karma.
 
-2. **Visual comparison** - Runs in Playwright's `visual` project and writes
-   `reference.svg`, `candidate.svg`, `diff.gif`, plus `test/visual-test-results.json`.
-   Use `VISUAL_TEST_PRODUCT` and `VISUAL_TEST_PATH` to scope the run.
+2. **Visual comparison** - Runs in Playwright's `visual` project. Pass/fail is
+   based on Playwright screenshot assertions (`toHaveScreenshot`) while still
+   writing `reference.svg`, `candidate.svg`, `diff.gif`, plus
+   `test/visual-test-results.json`. Use `VISUAL_TEST_PRODUCT` and
+   `VISUAL_TEST_PATH` to scope the run.
 
 3. **npm scripts** - Updated to use Playwright:
    - `npm test` - Runs all Playwright tests

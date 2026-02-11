@@ -10,8 +10,11 @@ export interface ComparisonResult {
     diffPixels: number;
     candidatePath: string;
     referencePath: string;
+    referenceUpdated: boolean;
     diffPath?: string;
 }
+
+type SnapshotUpdateMode = 'all' | 'changed' | 'missing' | 'none';
 
 type PngInstance = {
     width: number;
@@ -277,7 +280,7 @@ export async function compareSVG(
     svgContent: string,
     options: {
         generateDiff?: boolean;
-        referenceMode?: boolean;
+        updateMode?: SnapshotUpdateMode;
         renderPage?: Page;
     } = {}
 ): Promise<ComparisonResult> {
@@ -285,39 +288,66 @@ export async function compareSVG(
     const candidatePath = join(sampleDir, 'candidate.svg');
     const referencePath = join(sampleDir, 'reference.svg');
     const diffPath = join(sampleDir, 'diff.gif');
+    const updateMode = options.updateMode ?? 'none';
 
     mkdirSync(sampleDir, { recursive: true });
-    if (options.referenceMode) {
+
+    let referenceSvg: string | null = null;
+    try {
+        referenceSvg = readFileSync(referencePath, 'utf8');
+    } catch {
+        referenceSvg = null;
+    }
+
+    const hasReference = referenceSvg !== null;
+    const shouldUpdateMissingReference =
+        !hasReference &&
+        updateMode !== 'none';
+
+    if (shouldUpdateMissingReference) {
         writeFileSync(referencePath, svgContent);
         return {
             passed: true,
             diffPixels: 0,
             candidatePath,
-            referencePath
+            referencePath,
+            referenceUpdated: true
         };
     }
 
-    writeFileSync(candidatePath, svgContent);
-
-    let referenceSvg = '';
-    try {
-        referenceSvg = readFileSync(referencePath, 'utf8');
-    } catch (error) {
-        const message =
-            `Missing reference.svg for ${sampleDir}: ${(error as Error).message}`;
-        throw new Error(message);
+    if (!hasReference) {
+        writeFileSync(candidatePath, svgContent);
+        throw new Error(`Missing reference.svg for ${sampleDir}`);
     }
 
-    if (referenceSvg === svgContent) {
+    if (updateMode === 'all') {
+        writeFileSync(referencePath, svgContent);
         return {
             passed: true,
             diffPixels: 0,
             candidatePath,
-            referencePath
+            referencePath,
+            referenceUpdated: true
         };
     }
 
-    const referencePng = await renderSvgToPng(referenceSvg, options.renderPage);
+    writeFileSync(candidatePath, svgContent);
+    const currentReferenceSvg = referenceSvg;
+
+    if (currentReferenceSvg === svgContent) {
+        return {
+            passed: true,
+            diffPixels: 0,
+            candidatePath,
+            referencePath,
+            referenceUpdated: false
+        };
+    }
+
+    const referencePng = await renderSvgToPng(
+        currentReferenceSvg,
+        options.renderPage
+    );
     const candidatePng = await renderSvgToPng(svgContent, options.renderPage);
 
     if (shouldWriteDebug(samplePath)) {
@@ -327,6 +357,17 @@ export async function compareSVG(
 
     const diffPixels = countDiffPixels(referencePng, candidatePng);
     const passed = diffPixels === 0;
+
+    if (!passed && updateMode === 'changed') {
+        writeFileSync(referencePath, svgContent);
+        return {
+            passed: true,
+            diffPixels: 0,
+            candidatePath,
+            referencePath,
+            referenceUpdated: true
+        };
+    }
 
     if (!passed && options.generateDiff) {
         await generateDiffGif(
@@ -345,6 +386,7 @@ export async function compareSVG(
         diffPixels,
         candidatePath,
         referencePath,
+        referenceUpdated: false,
         diffPath: resolvedDiffPath
     };
 }
