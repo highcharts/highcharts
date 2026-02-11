@@ -225,8 +225,9 @@ Highcharts.chart("container", {
 ### Arrow Functions and Callback Context
 
 For user-supplied option callbacks, Highcharts provides an explicit context
-argument (typically named `ctx`). This makes arrow functions a first-class
-option without losing access to callback context:
+argument (typically named `ctx`). The `ctx` argument is always passed as the
+last callback argument: `callback(arg1, arg2, ..., ctx)`. This makes arrow
+functions a first-class option without losing access to callback context:
 
 ```javascript
 labels: {
