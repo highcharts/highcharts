@@ -87,6 +87,7 @@ const ArcDiagramSeriesDefaults: ArcDiagramSeriesOptions = {
      * string by default.
      *
      * @declare Highcharts.SeriesArcDiagramDataLabelsOptionsObject
+     * @apioption plotOptions.arcdiagram.dataLabels
      */
     dataLabels: {
 
@@ -210,6 +211,12 @@ const ArcDiagramSeriesDefaults: ArcDiagramSeriesOptions = {
  * @requires  modules/sankey
  * @requires  modules/arc-diagram
  * @apioption series.arcdiagram
+ */
+
+/**
+ * @type      {Highcharts.SeriesArcDiagramDataLabelsOptionsObject|Array<Highcharts.SeriesArcDiagramDataLabelsOptionsObject>}
+ * @product   highcharts
+ * @apioption series.arcdiagram.dataLabels
  */
 
 /**
