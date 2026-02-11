@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Honsi
  *
  *  A commercial license may be required depending on use.
@@ -60,7 +60,17 @@ export interface StatesOptions {
     select?: StateSelectOptions;
 }
 
+/**
+ * Possible key values for the series state options.
+ */
 export type StatesOptionsKey = (''|keyof StatesOptions);
+
+/**
+ * Possible key values for the point state options.
+ *
+ * @typedef {"hover"|"inactive"|"normal"|"select"} Highcharts.PointStateValue
+ */
+export type PointStateValue = StatesOptionsKey;
 
 /* *
  *

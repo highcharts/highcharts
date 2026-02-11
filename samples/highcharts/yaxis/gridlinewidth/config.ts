@@ -1,0 +1,12 @@
+import type {
+    SampleGeneratorConfig
+} from '../../../../tools/sample-generator/generator-config.d.ts';
+
+export default {
+    controls: [{
+        path: 'yAxis.gridLineWidth',
+        value: 2,
+        min: 0,
+        max: 5
+    }]
+} satisfies SampleGeneratorConfig;

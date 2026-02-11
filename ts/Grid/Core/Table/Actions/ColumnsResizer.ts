@@ -2,7 +2,7 @@
  *
  *  Grid Columns Resizer class.
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -162,7 +162,6 @@ class ColumnsResizer {
         vp.columnResizing.resize(this, diff);
 
         vp.reflow();
-        vp.rowsVirtualizer.adjustRowHeights();
 
         fireEvent(this.draggedColumn, 'afterResize', {
             target: this.draggedColumn,

@@ -1,6 +1,4 @@
 ---
- name: Highcharts Stock Demo
- authors:
-   - Torstein Hønsi
- js_wrap: b
+name: Demo of yAxis.plotLines options
+js_wrap: b
 ...

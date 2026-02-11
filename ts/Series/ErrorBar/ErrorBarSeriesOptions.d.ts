@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Honsi
  *
  *  A commercial license may be required depending on use.
@@ -20,7 +20,7 @@ import type ColorType from '../../Core/Color/ColorType';
 import type ErrorBarPointOptions from './ErrorBarPointOptions';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type TooltipOptions from '../../Core/TooltipOptions';
+import { BoxPlotSeriesTooltipOptions } from '../BoxPlot/BoxPlotSeriesOptions';
 
 /* *
  *
@@ -162,7 +162,7 @@ export interface ErrorBarSeriesOptions extends BoxPlotSeriesOptions {
 
     states?: SeriesStatesOptions<ErrorBarSeriesOptions>;
 
-    tooltip?: Partial<TooltipOptions>;
+    tooltip?: ErrorBarSeriesTooltipOptions;
 
     /**
      * The line width of the whiskers, the horizontal lines marking
@@ -180,6 +180,14 @@ export interface ErrorBarSeriesOptions extends BoxPlotSeriesOptions {
      */
     whiskerWidth?: number;
 
+}
+
+export interface ErrorBarSeriesTooltipOptions
+    extends BoxPlotSeriesTooltipOptions {
+    /**
+     * @default '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.low}</b> - <b>{point.high}</b><br/>'
+     */
+    pointFormat?: BoxPlotSeriesTooltipOptions['pointFormat'];
 }
 
 /* *

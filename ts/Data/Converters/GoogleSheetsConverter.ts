@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -23,11 +23,16 @@
  *
  * */
 
-import type DataEvent from '../DataEvent';
+import type {
+    DataEventDetail
+} from '../DataEvent';
 import type GoogleSheetsConverterOptions from './GoogleSheetsConverterOptions';
 
 import DataConverter from './DataConverter.js';
-import DataTable from '../DataTable.js';
+import type {
+    BasicColumn as DataTableBasicColumn,
+    ColumnCollection as DataTableColumnCollection
+} from '../DataTable.js';
 import DataConverterUtils from './DataConverterUtils.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -108,7 +113,7 @@ class GoogleSheetsConverter extends DataConverter {
      * @param {Partial<GoogleSheetsConverterOptions>}[options]
      * Options for the parser
      *
-     * @param {DataEvent.Detail} [eventDetail]
+     * @param {DataEventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @emits GoogleSheetsParser#parse
@@ -116,15 +121,15 @@ class GoogleSheetsConverter extends DataConverter {
      */
     public parse(
         options: Partial<GoogleSheetsConverterOptions>,
-        eventDetail?: DataEvent.Detail
-    ): DataTable.ColumnCollection {
+        eventDetail?: DataEventDetail
+    ): DataTableColumnCollection {
         const converter = this,
             parseOptions = merge(converter.options, options);
 
         let columnsArray = ((
             parseOptions.json?.values
         ) || []).map(
-            (column): DataTable.BasicColumn => column.slice()
+            (column): DataTableBasicColumn => column.slice()
         );
 
         if (columnsArray.length === 0) {

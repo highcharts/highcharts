@@ -82,4 +82,55 @@ describe('Grid Pro - validation.', () => {
             .should('be.visible')
             .should('contain', 'Value must be unique within this column (case-insensitive).');
     });
+
+    it('Array number validation.', () => {
+        // Act
+        cy.editGridCell(1, 'csvString', '2,5,5something');
+
+        // Assert
+        cy.get('.hcg-notification-error')
+            .eq(0)
+            .should('be.visible')
+            .should('contain', 'Value should be a list of numbers separated by commas.');
+
+        // Act
+        cy.editGridCell(1, 'csvString', '2,5,6');
+
+        // Assert
+        cy.get('.hcg-notification-error').should('not.exist');
+    });
+
+    it('JSON validation.', () => {
+        // Act
+        cy.editGridCell(1, 'columnJSON', '2, 451, something');
+
+        // Assert
+        cy.get('.hcg-notification-error')
+            .eq(0)
+            .should('be.visible')
+            .should('contain', 'Value should be a valid JSON.');
+
+        // Act
+        cy.editGridCell(1, 'columnJSON', '[1, 2, 3]');
+
+        // Assert
+        cy.get('.hcg-notification-error').should('not.exist');
+    });
+
+    it('Default sparkline validator.', () => {
+        // Act
+        cy.editGridCell(1, 'defaultValidator', '[1, 2, 3re]');
+
+        // Assert
+        cy.get('.hcg-notification-error')
+            .eq(0)
+            .should('be.visible')
+            .should('contain', 'Value should be a valid JSON or a list of numbers separated by commas.');
+
+        // Act
+        cy.editGridCell(1, 'defaultValidator', '[1, 2, 3, 4]');
+
+        // Assert
+        cy.get('.hcg-notification-error').should('not.exist');
+    });
 });

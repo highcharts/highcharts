@@ -1,0 +1,84 @@
+QUnit.test('Panning when yAxis min/max are set (#24029)', function (assert) {
+    // Generate test data
+    const data = [],
+        n = 500000;
+    for (let i = 0; i < n; i++) {
+        data.push([i, Math.sin(i / 10) * 10 + 10]);
+    }
+
+    let callsToProcessData = 0;
+
+    const chart = Highcharts.chart('container', {
+        chart: {
+            zooming: {
+                type: 'xy'
+            },
+            panning: {
+                enabled: true,
+                type: 'xy'
+            },
+            panKey: 'shift'
+        },
+        boost: {
+            useGPUTranslations: true
+        },
+        xAxis: {
+            type: 'datetime',
+            min: 0,
+            max: n
+        },
+        yAxis: {
+            min: -5,
+            max: 25
+        },
+        series: [{
+            data: data,
+            lineWidth: 0.5,
+            events: {
+                afterProcessData: function () {
+                    callsToProcessData++;
+                }
+            }
+        }]
+    });
+
+    assert.strictEqual(
+        callsToProcessData,
+        0,
+        'When both axes have min/max set, processData should not be called'
+    );
+
+    // 1. Zoom to a specific part of the chart
+    const controller = new TestController(chart);
+
+    // Zoom in
+    controller.mouseDown(
+        200,
+        150
+    );
+    controller.mouseMove(
+        210,
+        160
+    );
+    controller.mouseUp();
+
+    const yAxisZoomExtremes = chart.yAxis[0].getExtremes();
+    const xAxisZoomExtremes = chart.xAxis[0].getExtremes();
+
+    // Pan
+    controller.pan([chart.plotWidth - 50, 200], [0, 200]);
+
+    // yAxis extremes should have changed after yAxis panning
+    assert.ok(
+        chart.yAxis[0].min !== yAxisZoomExtremes.min ||
+        chart.yAxis[0].max !== yAxisZoomExtremes.max,
+        'yAxis extremes should change after yAxis panning'
+    );
+
+    // // xAxis extremes should have changed after xAxis panning
+    assert.ok(
+        chart.xAxis[0].min !== xAxisZoomExtremes.min ||
+        chart.xAxis[0].max !== xAxisZoomExtremes.max,
+        'xAxis extremes should change after xAxis panning'
+    );
+});

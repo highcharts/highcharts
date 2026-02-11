@@ -1,11 +1,21 @@
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/highcharts-more.js"></script>
-
 <script src="https://code.highcharts.com/modules/solid-gauge.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+<script src="https://code.highcharts.com/themes/adaptive.js"></script>
 
-<div style="width: 600px; height: 400px; margin: 0 auto">
-    <div id="container-speed" style="width: 300px; height: 200px; float: left"></div>
-    <div id="container-rpm" style="width: 300px; height: 200px; float: left"></div>
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/controls@0.7.0" type="module"></script>
+
+<figure class="highcharts-figure">
+  <div id="container"></div>
+</figure>
+
+<div class="highcharts-controls-wrapper">
+  <highcharts-controls>
+    <highcharts-group header="Update options">
+      <highcharts-control type="color" path="yAxis.minColor" value="#ffffff"></highcharts-control>
+      <highcharts-control type="color" path="yAxis.maxColor" value="#000000"></highcharts-control>
+      <highcharts-control path="series[0].data[0]" value="30"></highcharts-control>
+    </highcharts-group>
+  </highcharts-controls>
 </div>
-
-<div class="info">Y axis minColor/maxColor demo. Minimum color is white, maximum color is black</div>

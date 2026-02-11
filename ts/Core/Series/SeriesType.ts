@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Honsi
  *
  *  A commercial license may be required depending on use.
@@ -32,7 +32,12 @@ export type SeriesType = (
 );
 
 /**
- * All possible series options.
+ * This is a placeholder type of the possible series options for
+ * [Highcharts](../highcharts/series), [Highcharts Stock](../highstock/series),
+ * [Highmaps](../highmaps/series), and [Gantt](../gantt/series).
+ *
+ * In TypeScript is this dynamically generated to reference all possible types
+ * of series options.
  */
 export type SeriesTypeOptions = SeriesType['options'];
 

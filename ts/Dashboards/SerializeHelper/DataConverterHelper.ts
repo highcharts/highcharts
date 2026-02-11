@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -19,11 +19,13 @@
  *
  * */
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import JSON from '../JSON';
+import type { JSONObject } from '../JSON';
 
-import DataConverter from '../../Data/Converters/DataConverter.js';
+import DataConverter, {
+    type Options as DataConverterOptions
+} from '../../Data/Converters/DataConverter.js';
 import Serializable from '../Serializable.js';
+import type { Helper as SerializableHelper, JSON as SerializableJSON } from '../Serializable';
 import U from '../../Core/Utilities.js';
 const { merge } = U;
 
@@ -38,7 +40,7 @@ const { merge } = U;
  * @param json Serialized object
  * @return {DataConverter} New Data Converter object created from serialized object
  */
-function fromJSON(json: DataConverterHelper.JSON): DataConverter {
+function fromJSON(json: JSON): DataConverter {
     return new DataConverter(json.options);
 }
 
@@ -56,34 +58,24 @@ function jsonSupportFor(obj: unknown): obj is DataConverter {
  * @param obj Object to serialize
  * @return Serialized object
  */
-function toJSON(obj: DataConverter): DataConverterHelper.JSON {
+function toJSON(obj: DataConverter): JSON {
     return {
         $class: 'Data.DataConverter',
-        options: merge(obj.options) as DataConverterHelper.OptionsJSON
+        options: merge(obj.options) as OptionsJSON
     };
 }
 
 /*
  *
- *  Namespace
+ *  Declarations
  *
  * */
 
-namespace DataConverterHelper {
-
-    /* *
-     *
-     *  Declarations
-     *
-     * */
-
-    export interface JSON extends Serializable.JSON<'Data.DataConverter'>{
-        options: OptionsJSON;
-    }
-
-    export type OptionsJSON = (JSON.Object&DataConverter.Options);
-
+export interface JSON extends SerializableJSON<'Data.DataConverter'>{
+    options: OptionsJSON;
 }
+
+export type OptionsJSON = (JSONObject&DataConverterOptions);
 
 /* *
  *
@@ -91,7 +83,7 @@ namespace DataConverterHelper {
  *
  * */
 
-const DataConverterHelper: Serializable.Helper<DataConverter, DataConverterHelper.JSON> = {
+const DataConverterHelper: SerializableHelper<DataConverter, JSON> = {
     $class: 'Data.DataConverter',
     fromJSON,
     jsonSupportFor,

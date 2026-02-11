@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -19,6 +19,7 @@
  *
  * */
 
+import type { AnyRecord } from '../../Shared/Types';
 import type Column from '../Core/Table/Column';
 import type TableCell from '../Core/Table/Body/TableCell';
 import type HeaderCell from '../Core/Table/Header/HeaderCell';

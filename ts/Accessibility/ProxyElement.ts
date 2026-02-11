@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *  Author: Øystein Moseng
  *
  *  Proxy elements are used to shadow SVG elements in HTML for assistive
@@ -215,10 +215,8 @@ class ProxyElement {
         const stringHasNoTooltip = (s: string): boolean => (
             s.indexOf('highcharts-no-tooltip') > -1
         );
-        const legend = this.chart.legend;
-        const groupDiv = legend.group && legend.group.div;
         const noTooltipOnGroup = stringHasNoTooltip(
-            groupDiv && groupDiv.className || ''
+            this.chart.legend?.group?.div?.className || ''
         );
         const targetClassName = this.getTargetAttr(
             this.target.click,

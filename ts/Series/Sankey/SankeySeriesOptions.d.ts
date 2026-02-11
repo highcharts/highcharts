@@ -2,7 +2,7 @@
  *
  *  Sankey diagram module
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Honsi
  *
  *  A commercial license may be required depending on use.
@@ -19,15 +19,20 @@
 
 import type ColorString from '../../Core/Color/ColorString';
 import type ColorType from '../../Core/Color/ColorType';
-import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
+import type {
+    ColumnSeriesOptions,
+    ColumnSeriesTooltipOptions
+} from '../Column/ColumnSeriesOptions';
 import type NodesComposition from '../NodesComposition';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type SankeyDataLabelOptions from './SankeyDataLabelOptions';
 import type SankeyPoint from './SankeyPoint';
-import type SankeyPointOptions from './SankeyPointOptions';
+import type {
+    SankeyPointOptions,
+    SankeyPointDataLabelOptions
+} from './SankeyPointOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type Templating from '../../Core/Templating';
-import type TooltipOptions from '../../Core/TooltipOptions';
 
 /* *
  *
@@ -138,7 +143,10 @@ export interface SankeySeriesNodeOptions {
      * Individual data label for each node. The options are the same as
      * the ones for [series.sankey.dataLabels](#series.sankey.dataLabels).
      */
-    dataLabels?: SankeyDataLabelOptions;
+    dataLabels?: (
+        SankeyPointDataLabelOptions |
+        Array<SankeyPointDataLabelOptions>
+    );
 
     /**
      * The height of the node.
@@ -518,7 +526,7 @@ export interface SankeySeriesOptions extends ColumnSeriesOptions, NodesCompositi
 
 }
 
-export interface SankeySeriesTooltipOptions extends Partial<TooltipOptions> {
+export interface SankeySeriesTooltipOptions extends ColumnSeriesTooltipOptions {
     nodeFormat?: string;
     nodeFormatter?: Templating.FormatterCallback<SankeyPoint>;
 }
