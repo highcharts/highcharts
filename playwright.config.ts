@@ -7,7 +7,7 @@ export default defineConfig({
     testDir: './tests',
     fullyParallel: true,
     forbidOnly: !!process.env.CI,
-    retries: process.env.CI ? 2 : 0,
+    retries: 0,
     workers: process.env.CI ? 2 : undefined,
     reporter: (() => {
         const projectArgs: string[] = [];
@@ -27,7 +27,11 @@ export default defineConfig({
             projectArgs.length === 0 ||
             projectArgs.includes('visual');
 
-        const reporters: ReporterDescription[] = [['html', { open: 'never' }]];
+        const reporters: ReporterDescription[] = [
+            [process.env.CI ? 'dot' : 'line'],
+            ['html', { open: 'never' }],
+            ['./tests/qunit/utils/browser-log-note-reporter.ts']
+        ];
         if (shouldAddVisualReporter) {
             reporters.push([
                 './tests/visual/visual-reporter.ts',
@@ -80,7 +84,8 @@ export default defineConfig({
                         '--use-gl=angle',
                         '--disable-software-rasterizer'
                     ]
-                }
+                },
+                trace: 'off'
             },
             dependencies: ['setup-highcharts'],
         },
@@ -111,6 +116,7 @@ export default defineConfig({
             use: {
                 ...devices['Desktop Firefox'],
                 headless: true,
+                trace: 'off'
             },
             dependencies: ['setup-highcharts'],
         },
