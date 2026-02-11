@@ -135,6 +135,18 @@ async function replaceHCCode(route: Route) {
 
         if (existsSync(gridModulesCssPath)) {
             resolvedRelativePath = gridModulesCss;
+        } else {
+            const gridCssCandidate = join('grid', 'css', cssTail);
+            const gridCssPath = join(
+                __dirname,
+                '..',
+                rootPath,
+                gridCssCandidate
+            );
+
+            if (existsSync(gridCssPath)) {
+                resolvedRelativePath = gridCssCandidate;
+            }
         }
     }
 
@@ -154,22 +166,6 @@ async function replaceHCCode(route: Route) {
         if (existsSync(dashboardsGridCssPath)) {
             resolvedRootPath = '';
             resolvedRelativePath = dashboardsGridCss;
-        }
-    }
-
-    if (rootPath === 'code' && relativePath.startsWith('grid/') &&
-        relativePath.endsWith('.css')) {
-        const gridCssCandidate = join('grid', 'css',
-            relativePath.replace(/^grid\//u, ''));
-        const gridCssPath = join(
-            __dirname,
-            '..',
-            rootPath,
-            gridCssCandidate
-        );
-
-        if (existsSync(gridCssPath)) {
-            resolvedRelativePath = gridCssCandidate;
         }
     }
 
