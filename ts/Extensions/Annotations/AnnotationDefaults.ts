@@ -512,7 +512,9 @@ const AnnotationDefaults: AnnotationOptions = {
     shapeOptions: {
 
         /**
-         * The radius of the shape in y direction. Used for the ellipse.
+         * The radius of the `ellipse` shape in y direction. Can be defined in
+         * pixels or yAxis units, if
+         * [shapes.yAxis](#annotations.shapeOptions.yAxis) index is defined.
          *
          * @sample highcharts/annotations/ellipse/
          *         Ellipse annotation
@@ -522,24 +524,42 @@ const AnnotationDefaults: AnnotationOptions = {
          **/
 
         /**
-         * The xAxis index to which the points should be attached.
-         * Used for the ellipse.
+         * The xAxis index which should be used for annotation's sizes and
+         * points coordinates conversion.
          *
+         * This option is used for `rect` shape
+         * [width](#annotations.shapeOptions.width), and all shapes
+         * [point](#annotations.shapes.point) and
+         * [points](#annotations.shapes.points) coordinates.
+         *
+         * @sample highcharts/annotations/shapes-axis-units/
+         *         Shapes created with axis units
          * @type      {number}
          * @apioption annotations.shapeOptions.xAxis
          **/
 
         /**
-         * The yAxis index to which the points should be attached.
-         * Used for the ellipse.
+         * The yAxis index which should be used for annotation's sizes and
+         * points coordinates conversion.
          *
+         * This option is used for `rect` shape
+         * [height](#annotations.shapeOptions.height), `circle` shape
+         * [radius](#annotations.shapeOptions.r), `ellipse`
+         * [y direction radius](#annotations.shapeOptions.ry), and all shapes
+         * [point](#annotations.shapes.point) and
+         * [points](#annotations.shapes.points) coordinates.
+         *
+         * @sample highcharts/annotations/shapes-axis-units/
+         *         Shapes created with axis units
          * @type      {number}
          * @apioption annotations.shapeOptions.yAxis
          **/
 
 
         /**
-         * The width of the shape.
+         * The width of the `rect` shape. Can be defined in pixels or xAxis
+         * units, if [shapes.xAxis](#annotations.shapeOptions.xAxis) index is
+         * defined.
          *
          * @sample highcharts/annotations/shape/
          *         Basic shape annotation
@@ -549,7 +569,9 @@ const AnnotationDefaults: AnnotationOptions = {
          **/
 
         /**
-         * The height of the shape.
+         * The height of the `rect` shape. Can be defined in pixels or yAxis
+         * units, if [shapes.yAxis](#annotations.shapeOptions.yAxis) index is
+         * defined.
          *
          * @sample highcharts/annotations/shape/
          *         Basic shape annotation
@@ -560,7 +582,7 @@ const AnnotationDefaults: AnnotationOptions = {
 
         /**
          * The type of the shape.
-         * Available options are circle, rect and ellipse.
+         * Available options are `circle`, `rect`, `ellipse` and `path`.
          *
          * @sample highcharts/annotations/shape/
          *         Basic shape annotation
@@ -625,7 +647,9 @@ const AnnotationDefaults: AnnotationOptions = {
         fill: 'rgba(0, 0, 0, 0.75)',
 
         /**
-         * The radius of the shape.
+         * The radius of the `circle` shape. Can be defined in pixels or yAxis
+         * units, if [shapes.yAxis](#annotations.shapeOptions.yAxis) index is
+         * defined.
          *
          * @sample highcharts/annotations/shape/
          *         Basic shape annotation
