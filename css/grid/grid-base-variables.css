@@ -69,8 +69,6 @@
 
 /*  ==== End Highcharts Variables  ==== */
 
-/* stylelint-disable max-line-length */
-
 /* ==== Start Grid Variables ==== */
 .hcg-container {
     --ig-hover-opacity: var(--hcg-hover-opacity, 100%);

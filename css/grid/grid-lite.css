@@ -9,8 +9,6 @@
  * See www.highcharts.com/license
  */
 
-/* stylelint-disable max-line-length */
-
 @import url("./grid-base-variables.css");
 @import url("./grid-popup-variables.css");
 @import url("./grid-menu-variables.css");

@@ -1,4 +1,3 @@
-/* stylelint-disable max-line-length */
 .hcg-container .hcg-popup,
 .highcharts-light .hcg-container .hcg-popup {
     --ig-popup-color: var(--hcg-popup-color, var(--ig-default-color));

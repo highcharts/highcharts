@@ -1,4 +1,3 @@
-/* stylelint-disable max-line-length */
 .hcg-container {
     --ig-link-color: var(--hcg-link-color, inherit);
     --ig-link-text-decoration: var(--hcg-link-text-decoration, underline);
