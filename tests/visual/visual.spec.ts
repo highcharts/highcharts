@@ -62,27 +62,7 @@ function transformVisualSampleScript(script: string | undefined): string {
     return `;(function () {\n${transformed.trim()}\n}).call(window);`;
 }
 
-const GOOGLE_FONT_LINK_REGEX =
-    /<link[a-z"=:./ ]+(fonts\.googleapis\.com|fonts\.gstatic\.com)[^>]+>/gi;
-const SCRIPT_TAG_REGEX =
-    /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi;
 const DEMO_CSS_IMPORT_REGEX = /@import [^;]+;/g;
-
-function stripGoogleFontLinks(html: string | undefined): string | undefined {
-    if (!html) {
-        return html;
-    }
-
-    return html.replace(GOOGLE_FONT_LINK_REGEX, '');
-}
-
-function stripScriptTags(html: string | undefined): string | undefined {
-    if (!html) {
-        return html;
-    }
-
-    return html.replace(SCRIPT_TAG_REGEX, '');
-}
 
 function stripDemoCssImports(css: string | undefined): string | undefined {
     if (!css) {
@@ -225,7 +205,6 @@ const pageTemplate = (bodyContent = '') =>
 
 test.describe('Visual tests', () => {
     test.describe.configure({
-        mode: 'serial',
         timeout: CHART_LOAD_TIMEOUT_MS + 5_000,
     });
 
@@ -439,8 +418,6 @@ test.describe('Visual tests', () => {
                 sample.script = transpileTS(sample.script);
             }
 
-            sample.html = stripGoogleFontLinks(stripScriptTags(sample.html));
-
             const hasModuleImports = sample.script ?
                 /^\s*import\s/m.test(sample.script) :
                 false;
@@ -467,7 +444,28 @@ test.describe('Visual tests', () => {
                 window.HCVisualSetup?.beforeSample();
 
                 const testContainer = document.querySelector('div[data-test-container]');
-                testContainer.innerHTML = body;
+
+                if (!testContainer) {
+                    return;
+                }
+
+                const template = document.createElement('template');
+                template.innerHTML = body;
+
+                const scripts = template.content.querySelectorAll('script');
+                for (const script of scripts) {
+                    script.remove();
+                }
+
+                const links = template.content.querySelectorAll('link[href]');
+                for (const link of links) {
+                    const href = link.getAttribute('href') || '';
+                    if (/fonts\.googleapis\.com|fonts\.gstatic\.com/i.test(href)) {
+                        link.remove();
+                    }
+                }
+
+                testContainer.replaceChildren(template.content);
             }, sampleHtml);
 
             await setTestingOptions(page);

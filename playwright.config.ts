@@ -92,6 +92,7 @@ export default defineConfig({
         {
             name: 'visual',
             testDir: './tests/visual',
+            workers: 1,
             use: {
                 ...devices['Desktop Chrome'],
                 headless: true,
