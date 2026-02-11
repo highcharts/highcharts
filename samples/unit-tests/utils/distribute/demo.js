@@ -178,4 +178,31 @@
 
         assert.strictEqual(verify(boxes), true, 'Equal, unranked boxes');
     });
+
+    QUnit.test('Equal ranked boxes are decimated (#23541)', function (assert) {
+        var boxes = [];
+
+        for (var i = 0, ie = 400; i < ie; ++i) {
+            boxes[i] = {
+                size: 20,
+                target: i * 2,
+                rank: 1
+            };
+        }
+
+        Highcharts.distribute(boxes, len, 100);
+
+        assert.strictEqual(
+            verify(boxes),
+            true,
+            'Equal ranked boxes should be distributed within bounds'
+        );
+        assert.strictEqual(
+            boxes.filter(function (box) {
+                return typeof box.pos === 'number';
+            }).length <= len / 20,
+            true,
+            'Equal ranked boxes should be decimated to fit the length'
+        );
+    });
 }());

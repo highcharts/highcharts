@@ -116,10 +116,11 @@ namespace RendererUtilities {
             stableSort(boxes, sortByRank);
             equalRank = boxes[0].rank === boxes[boxes.length - 1].rank;
 
-            // When the boxes have equal rank (pie data labels, flags - #10073),
-            // decimate the boxes by starting in the middle and gradually remove
-            // more items inside the array. When they are sorted by rank, just
-            // remove the ones with the lowest rank from the end.
+            // When all boxes have equal rank (pie data labels, flags - #10073),
+            // decimate from the center outwards by repeatedly splitting index
+            // ranges. This guarantees progress and avoids cursor/step stalling
+            // on repeated indices (#23541). When ranks differ, remove the
+            // lowest ranked boxes from the end.
             if (equalRank) {
                 const ranges: Array<[number, number]> = [[0, boxesLength - 1]];
 
