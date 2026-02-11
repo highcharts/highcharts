@@ -83,9 +83,6 @@ const NVIDIAPriceConnector =
             shadow: false,
             fixed: true
         },
-        navigation: {
-            iconsURL: 'renderer'
-        },
         series: [{
             type: 'candlestick',
             id: 'nvidia-candlestick',

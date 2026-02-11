@@ -207,7 +207,7 @@ abstract class BaseForm {
      * @return {string} Icon string
      */
     public getIcon(iconName: string): string {
-        let iconsURL = this.getIconsURL();
+        const iconsURL = this.getIconsURL();
         let icon = (BaseFormIcons as any)[iconName];
         let iconString;
 
@@ -216,9 +216,14 @@ abstract class BaseForm {
 
             iconString = `url("data:image/svg+xml;charset=utf-8,${icon}")`;
         } else {
-            if (iconsURL === 'renderer') {
-                iconsURL = 'https://code.highcharts.com/gfx/stock-icons/';
+            if (
+                iconsURL.startsWith('http') &&
+                iconsURL.match(/png|svg|jpeg|jpg|gif/ig)
+            ) {
+                // Absolute icon URL support
+                return `url("${iconsURL}")`;
             }
+
             iconString = `url("${iconsURL}${iconName}")`;
         }
 

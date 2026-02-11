@@ -831,7 +831,7 @@ class Toolbar {
      * @return {string} Icon string
      */
     getIcon(iconName: string): string {
-        let iconsURL = this.getIconsURL();
+        const iconsURL = this.getIconsURL();
         let icon = (StockToolsIcons as any)[iconName];
         let iconString;
 
@@ -840,9 +840,14 @@ class Toolbar {
 
             iconString = `url("data:image/svg+xml;charset=utf-8,${icon}")`;
         } else {
-            if (iconsURL === 'renderer') {
-                iconsURL = 'https://code.highcharts.com/gfx/stock-icons/';
+            // Absolute icon URL support
+            if (
+                iconsURL.startsWith('http') &&
+                iconsURL.match(/png|svg|jpeg|jpg|gif/ig)
+            ) {
+                return `url("${iconsURL}")`;
             }
+
             iconString = `url("${iconsURL}${iconName}")`;
         }
 

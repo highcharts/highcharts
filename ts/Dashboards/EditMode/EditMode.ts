@@ -90,7 +90,7 @@ class EditMode {
             {
                 confirmationPopup: {
                     close: {
-                        icon: this.iconsURLPrefix
+                        icon: this.iconsURLPrefix + 'close.svg'
                     }
                 },
                 contextMenu: {
