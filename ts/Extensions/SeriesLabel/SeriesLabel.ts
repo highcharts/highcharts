@@ -123,7 +123,6 @@ declare module '../../Core/Series/SeriesOptions' {
          * Series label options for this series.
          *
          * @since    6.0.0
-         * @requires modules/series-label
          */
         label?: SeriesLabelOptions;
     }

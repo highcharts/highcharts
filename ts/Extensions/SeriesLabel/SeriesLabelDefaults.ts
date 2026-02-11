@@ -41,10 +41,10 @@ import type { SeriesLabelOptions } from './SeriesLabelOptions';
  * @sample highcharts/series-label/stock-chart
  *         Stock chart
  *
- * @declare  Highcharts.SeriesLabelOptionsObject
+ * @type     {object}
  * @since    6.0.0
  * @product  highcharts highstock gantt
- * @requires modules/series-label
+ * @apioption plotOptions.series.label
  */
 const SeriesLabelDefaults: SeriesLabelOptions = {
 
@@ -52,7 +52,6 @@ const SeriesLabelDefaults: SeriesLabelOptions = {
      * Enable the series label per series.
      *
      * @default  true
-     * @requires modules/series-label
      */
     enabled: true,
 
@@ -65,7 +64,6 @@ const SeriesLabelDefaults: SeriesLabelOptions = {
      * cluttered chart, though more of the series will be labeled.
      *
      * @default  false
-     * @requires modules/series-label
      */
     connectorAllowed: false,
 
@@ -74,7 +72,6 @@ const SeriesLabelDefaults: SeriesLabelOptions = {
      * connector.
      *
      * @default  24
-     * @requires modules/series-label
      */
     connectorNeighbourDistance: 24,
 
@@ -87,7 +84,6 @@ const SeriesLabelDefaults: SeriesLabelOptions = {
      *
      * @type string
      * @since 8.1.0
-     * @requires modules/series-label
      */
     format: void 0,
 
@@ -97,7 +93,6 @@ const SeriesLabelDefaults: SeriesLabelOptions = {
      *
      * @type {Highcharts.FormatterCallbackFunction<Series>}
      * @since 8.1.0
-     * @requires modules/series-label
      */
     formatter: void 0,
 
@@ -109,7 +104,6 @@ const SeriesLabelDefaults: SeriesLabelOptions = {
      *         Min and max font size on a streamgraph
      * @type   {number|null}
      * @default null
-     * @requires modules/series-label
      */
     minFontSize: null,
 
@@ -122,7 +116,6 @@ const SeriesLabelDefaults: SeriesLabelOptions = {
      *
      * @type   {number|null}
      * @default null
-     * @requires modules/series-label
      */
     maxFontSize: null,
 
@@ -132,7 +125,6 @@ const SeriesLabelDefaults: SeriesLabelOptions = {
      *
      * @type {boolean|null}
      * @default null
-     * @requires modules/series-label
      */
     onArea: null,
 
@@ -140,7 +132,6 @@ const SeriesLabelDefaults: SeriesLabelOptions = {
      * Styles for the series label.
      *
      * @type {Highcharts.CSSObject}
-     * @requires modules/series-label
      */
     style: {
         /**
@@ -156,7 +147,6 @@ const SeriesLabelDefaults: SeriesLabelOptions = {
      * Whether to use HTML to render the series label.
      *
      * @default  false
-     * @requires modules/series-label
      */
     useHTML: false,
 
@@ -165,7 +155,6 @@ const SeriesLabelDefaults: SeriesLabelOptions = {
      * item has a `left`, `right`, `top` and `bottom` property.
      *
      * @type {Array<Highcharts.LabelIntersectBoxObject>}
-     * @requires modules/series-label
      */
     boxesToAvoid: []
 
